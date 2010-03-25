@@ -46,6 +46,7 @@
 #include <QObject>
 #include <qmobilityglobal.h>
 #include <qcontact.h>
+#include <qversitproperty.h>
 
 QTM_BEGIN_NAMESPACE
 

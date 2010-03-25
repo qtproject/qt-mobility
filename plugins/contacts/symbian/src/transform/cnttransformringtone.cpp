@@ -52,15 +52,15 @@ QList<CContactItemField *> CntTransformRingtone::transformDetailL(const QContact
 
     const QContactRingtone &ringtone(static_cast<const QContactRingtone&>(detail));
 
-    if (ringtone.audioRingtone().isValid()) {
+    if (ringtone.audioRingtoneUrl().isValid()) {
         transformToTextFieldL(detail, fieldList,
-            ringtone.audioRingtone().toString(), KUidContactFieldRingTone,
+            ringtone.audioRingtoneUrl().toString(), KUidContactFieldRingTone,
             KUidContactFieldVCardMapUnknown, false);
 	}
 
-    if (ringtone.videoRingtone().isValid()) {
+    if (ringtone.videoRingtoneUrl().isValid()) {
         transformToTextFieldL(detail, fieldList,
-            ringtone.videoRingtone().toString(), KUidContactFieldVideoRingTone,
+            ringtone.videoRingtoneUrl().toString(), KUidContactFieldVideoRingTone,
             KUidContactFieldVCardMapUnknown, false);
     }
 
@@ -76,10 +76,10 @@ QContactDetail *CntTransformRingtone::transformItemField(const CContactItemField
     QString ringtoneString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 
     if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
-        ringtone->setAudioRingtone(ringtoneString);
+        ringtone->setAudioRingtoneUrl(ringtoneString);
 	}
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
-        ringtone->setVideoRingtone(ringtoneString);
+        ringtone->setVideoRingtoneUrl(ringtoneString);
     }
 
     // XXX need to remove old one somehow

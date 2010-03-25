@@ -222,7 +222,11 @@ bool QVersitContactImporterPrivate::createName(
             name = QContactName(static_cast<QContactName>(detail));
     }
 
-    QStringList values = property.value().split(QLatin1Char(';'));
+    QVariant variant = property.variantValue();
+    if (property.valueType() != QVersitProperty::CompoundType
+            || variant.type() != QVariant::StringList)
+        return false;
+    QStringList values = variant.toStringList();
     name.setLastName(takeFirst(values));
     name.setFirstName(takeFirst(values));
     name.setMiddleName(takeFirst(values));
@@ -255,7 +259,11 @@ bool QVersitContactImporterPrivate::createAddress(
 {
     QContactAddress address;
 
-    QStringList addressParts = property.value().split(QLatin1Char(';'));
+    QVariant variant = property.variantValue();
+    if (property.valueType() != QVersitProperty::CompoundType
+            || variant.type() != QVariant::StringList)
+        return false;
+    QStringList addressParts = variant.toStringList();
     address.setPostOfficeBox(takeFirst(addressParts));
     // There is no setter for the Extended Address in QContactAddress:
     if (!addressParts.isEmpty())
@@ -312,16 +320,12 @@ bool QVersitContactImporterPrivate::createOrganization(
 void QVersitContactImporterPrivate::setOrganizationNames(
     QContactOrganization& organization, const QVersitProperty& property) const
 {
-    QString value = property.value();
-    int firstSemicolon = value.indexOf(QLatin1Char(';'));
-    if (firstSemicolon >= 0) {
-        organization.setName(value.left(firstSemicolon));
-        QString departmentsStr(value.mid(firstSemicolon+1));
-        QStringList departments =
-            departmentsStr.split(QLatin1Char(';'), QString::SkipEmptyParts);
-        organization.setDepartment(departments);
-    } else {
-        organization.setName(value);
+    QVariant variant = property.variantValue();
+    if (property.valueType() == QVersitProperty::CompoundType
+        && variant.type() == QVariant::StringList) {
+        QStringList values = variant.toStringList();
+        organization.setName(takeFirst(values));
+        organization.setDepartment(values);
     }
 }
 
@@ -395,7 +399,11 @@ bool QVersitContactImporterPrivate::createBirthday(
 bool QVersitContactImporterPrivate::createNicknames(
     const QVersitProperty& property, QContact* contact) const
 {
-    QStringList values = property.value().split(QLatin1Char(','), QString::SkipEmptyParts);
+    QVariant variant = property.variantValue();
+    if (property.valueType() != QVersitProperty::ListType
+            || variant.type() != QVariant::StringList)
+        return false;
+    QStringList values = variant.toStringList();
     QStringList contexts = extractContexts(property);
     foreach(const QString& value, values) {
         QContactNickname nickName;
@@ -411,7 +419,11 @@ bool QVersitContactImporterPrivate::createNicknames(
 bool QVersitContactImporterPrivate::createTags(
     const QVersitProperty& property, QContact* contact) const
 {
-    QStringList values = property.value().split(QLatin1Char(','), QString::SkipEmptyParts);
+    QVariant variant = property.variantValue();
+    if (property.valueType() != QVersitProperty::ListType
+            || variant.type() != QVariant::StringList)
+        return false;
+    QStringList values = variant.toStringList();
     QStringList contexts = extractContexts(property);
     foreach(const QString& value, values) {
         QContactTag tag;
@@ -455,7 +467,7 @@ bool QVersitContactImporterPrivate::createRingtone(const QVersitProperty &proper
     QByteArray data;
     if (saveDataFromProperty(property, &location, &data) && !location.isEmpty()) {
         QContactRingtone ringtone;
-        ringtone.setAudioRingtone(location);
+        ringtone.setAudioRingtoneUrl(location);
         saveDetailWithContext(contact, &ringtone, extractContexts(property));
         return true;
     }
@@ -501,7 +513,11 @@ bool QVersitContactImporterPrivate::createGeoLocation(
     const QVersitProperty& property, QContact* contact) const
 {
     QContactGeoLocation geo;
-    QStringList values = property.value().split(QLatin1Char(','));
+    QVariant variant = property.variantValue();
+    if (property.valueType() != QVersitProperty::CompoundType
+            || variant.type() != QVariant::StringList)
+        return false;
+    QStringList values = variant.toStringList();
     geo.setLongitude(takeFirst(values).toDouble());
     geo.setLatitude(takeFirst(values).toDouble());
 
@@ -520,7 +536,12 @@ bool QVersitContactImporterPrivate::createFamily(
     if (property.name() == QLatin1String("X-SPOUSE")) {
         family.setSpouse(val);
     } else if (property.name() == QLatin1String("X-CHILDREN")) {
-        family.setChildren(val.split(QLatin1String(",")));
+        QVariant variant = property.variantValue();
+        if (property.valueType() != QVersitProperty::ListType
+                || variant.type() != QVariant::StringList)
+            return false;
+        QStringList values = variant.toStringList();
+        family.setChildren(values);
     }
 
     saveDetailWithContext(contact, &family, extractContexts(property));

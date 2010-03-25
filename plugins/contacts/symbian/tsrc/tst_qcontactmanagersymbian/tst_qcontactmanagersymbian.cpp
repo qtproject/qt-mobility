@@ -411,7 +411,7 @@ void tst_QContactManagerSymbian::ringTone()
     // Set audio ringtone
     QContactRingtone tone = testContact.detail(QContactRingtone::DefinitionName);
     QUrl audioRingtone(audio);
-    tone.setAudioRingtone(audioRingtone);
+    tone.setAudioRingtoneUrl(audioRingtone);
     QVERIFY(testContact.saveDetail(&tone));
     QVERIFY(m_cm->saveContact(&testContact));
 
@@ -419,13 +419,13 @@ void tst_QContactManagerSymbian::ringTone()
     testContact = m_cm->contact(m_contactId.localId());
     tone = testContact.detail(QContactRingtone::DefinitionName);
     QVERIFY(!tone.isEmpty());
-    QCOMPARE(tone.audioRingtone(), audioRingtone);
-    QCOMPARE(tone.videoRingtone(), QUrl());
-    QCOMPARE(tone.vibrationRingtone(), QUrl());
+    QCOMPARE(tone.audioRingtoneUrl(), audioRingtone);
+    QCOMPARE(tone.videoRingtoneUrl(), QUrl());
+    QCOMPARE(tone.vibrationRingtoneUrl(), QUrl());
 
     // Set video ringtone
     QUrl videoRingtone(video);
-    tone.setVideoRingtone(videoRingtone);
+    tone.setVideoRingtoneUrl(videoRingtone);
     QVERIFY(testContact.saveDetail(&tone));
     QVERIFY(m_cm->saveContact(&testContact));
 
@@ -433,9 +433,9 @@ void tst_QContactManagerSymbian::ringTone()
     testContact = m_cm->contact(m_contactId.localId());
     tone = testContact.detail(QContactRingtone::DefinitionName);
     QVERIFY(!tone.isEmpty());
-    QCOMPARE(tone.audioRingtone(), audioRingtone);
-    QCOMPARE(tone.videoRingtone(), videoRingtone);
-    QCOMPARE(tone.vibrationRingtone(), QUrl());
+    QCOMPARE(tone.audioRingtoneUrl(), audioRingtone);
+    QCOMPARE(tone.videoRingtoneUrl(), videoRingtone);
+    QCOMPARE(tone.vibrationRingtoneUrl(), QUrl());
 }
 
 void tst_QContactManagerSymbian::displayLabel_data()
