@@ -639,10 +639,23 @@ bool QContactManager::removeContacts(QList<QContactLocalId>* contactIds, QMap<in
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
 
+  If the given list of contact ids \a contactIds is empty, the function will return false
+  and calling error() will return \c QContactManager::BadArgumentError.  If the list is non-empty
+  and contains ids which do not identify a valid contact in the manager, the function will
+  remove any contacts which are identified by ids in the \a contactIds list, insert
+  \c QContactManager::DoesNotExist entries into the \a errorMap for the indices of invalid ids
+  in the \a contactIds list, return false, and set the overall operation error to
+  \c QContactManager::DoesNotExistError.
+
   \sa QContactManager::removeContact()
  */
 bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
+    if (contactIds.isEmpty()) {
+        d->m_error = QContactManager::BadArgumentError;
+        return false;
+    }
+
     if (errorMap)
         errorMap->clear();
     return d->m_engine->removeContacts(contactIds, errorMap, &d->m_error);

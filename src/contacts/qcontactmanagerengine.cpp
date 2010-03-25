@@ -1485,6 +1485,12 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
 
+  If the list contains ids which do not identify a valid contact in the manager, the function will
+  remove any contacts which are identified by ids in the \a contactIds list, insert
+  \c QContactManager::DoesNotExist entries into the \a errorMap for the indices of invalid ids
+  in the \a contactIds list, return false, and set the overall operation error to
+  \c QContactManager::DoesNotExistError.
+
   Any errors encountered during this operation should be stored to
   \a error.
 

@@ -47,7 +47,7 @@
 QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
-QmlContact::QmlContact(QContact& contact, QObject *parent)
+QmlContact::QmlContact(const QContact& contact, QObject *parent)
     : QObject(parent), m_contact(contact)
 {   
 }
