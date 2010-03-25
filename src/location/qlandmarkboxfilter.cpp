@@ -40,9 +40,37 @@
 ****************************************************************************/
 
 #include "qlandmarkboxfilter.h"
+#include "qlandmarkfilter_p.h"
 #include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkBoxFilterPrivate : public QLandmarkFilterPrivate
+{
+public:
+    QLandmarkBoxFilterPrivate();
+    QLandmarkBoxFilterPrivate(const QLandmarkBoxFilterPrivate &other);
+    ~QLandmarkBoxFilterPrivate();
+
+    QGeoCoordinate topLeftCoord;
+    QGeoCoordinate bottomRightCoord;
+};
+
+QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate()
+    : QLandmarkFilterPrivate()
+{
+}
+
+QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QLandmarkBoxFilterPrivate &other)
+    : QLandmarkFilterPrivate(other),
+      topLeftCoord(other.topLeftCoord),
+      bottomRightCoord(other.bottomRightCoord)
+{
+}
+
+QLandmarkBoxFilterPrivate::~QLandmarkBoxFilterPrivate()
+{
+}
 
 /*!
     \class QLandmarkBoxFilter
@@ -56,7 +84,10 @@ QTM_BEGIN_NAMESPACE
 */
 QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &topLeft,
                                        const QGeoCoordinate &bottomRight)
+    : QLandmarkFilter(*new QLandmarkBoxFilterPrivate)
 {
+    Q_UNUSED(topLeft);
+    Q_UNUSED(bottomRight);
     //TODO: implement
 }
 

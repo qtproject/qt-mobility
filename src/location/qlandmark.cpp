@@ -57,7 +57,10 @@ QTM_USE_NAMESPACE
 
 // ----- QLandmarkPrivate -----
 
-QLandmarkPrivate::QLandmarkPrivate() {}
+QLandmarkPrivate::QLandmarkPrivate()
+    : QSharedData()
+{
+}
 
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
     : QSharedData(other),

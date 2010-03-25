@@ -50,6 +50,7 @@ QTM_BEGIN_NAMESPACE
 class QLandmarkUnionFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkUnionFilter : public QLandmarkFilter
 {
+public:
     QLandmarkUnionFilter();
     virtual ~QLandmarkUnionFilter();
 

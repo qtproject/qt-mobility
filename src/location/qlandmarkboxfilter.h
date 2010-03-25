@@ -61,8 +61,6 @@ public:
 
     QGeoCoordinate bottomRightCoordinate();
     void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
-private:
-    QLandmarkBoxFilterPrivate *d;
 };
 
 QTM_END_NAMESPACE

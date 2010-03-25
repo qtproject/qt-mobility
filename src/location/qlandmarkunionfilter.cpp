@@ -40,8 +40,34 @@
 ****************************************************************************/
 
 #include "qlandmarkunionfilter.h"
+#include "qlandmarkfilter_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkUnionFilterPrivate : public QLandmarkFilterPrivate
+{
+public:
+    QLandmarkUnionFilterPrivate();
+    QLandmarkUnionFilterPrivate(const QLandmarkUnionFilterPrivate &other);
+    ~QLandmarkUnionFilterPrivate();
+
+    QList<QLandmarkFilter> filters;
+};
+
+QLandmarkUnionFilterPrivate::QLandmarkUnionFilterPrivate()
+    : QLandmarkFilterPrivate()
+{
+}
+
+QLandmarkUnionFilterPrivate::QLandmarkUnionFilterPrivate(const QLandmarkUnionFilterPrivate &other)
+    : QLandmarkFilterPrivate(other),
+      filters(other.filters)
+{
+}
+
+QLandmarkUnionFilterPrivate::~QLandmarkUnionFilterPrivate()
+{
+}
 
 /*!
     \class QLandmarkUnionFilter
@@ -57,6 +83,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a new union filter.
 */
 QLandmarkUnionFilter::QLandmarkUnionFilter()
+    : QLandmarkFilter(*new QLandmarkUnionFilterPrivate)
 {
 }
 

@@ -40,14 +40,34 @@
 ****************************************************************************/
 
 #include "qlandmarkfilter.h"
+#include "qlandmarkfilter_p.h"
 
-//TODO: move this when category filter is moved.
+#include "qlandmarkintersectionfilter.h"
+#include "qlandmarkunionfilter.h"
+
 #include "qlandmarkcategoryid.h"
 #include "qlandmarkid.h"
 #include "qgeocoordinate.h"
 
-
 QTM_BEGIN_NAMESPACE
+
+QLandmarkFilterPrivate::QLandmarkFilterPrivate()
+    : QSharedData(),
+      type(QLandmarkFilter::DefaultFilter),
+      maxMatches(-1)
+{
+}
+
+QLandmarkFilterPrivate::QLandmarkFilterPrivate(const QLandmarkFilterPrivate &other)
+    : QSharedData(other),
+      type(other.type),
+      maxMatches(other.maxMatches)
+{
+}
+
+QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
+{
+}
 
 /*!
     \class QLandmarkFilter
@@ -93,10 +113,16 @@ QLandmarkFilter::QLandmarkFilter()
     //TODO: implement
 }
 
+QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
+    :d(other.d)
+{
+}
+
 /*!
     \internal
 */
-QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *dd)
+QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate &dd)
+    :d(&dd)
 {
     //TODO: implement
 }
@@ -114,7 +140,7 @@ QLandmarkFilter::~QLandmarkFilter()
 */
 QLandmarkFilter::FilterType QLandmarkFilter::type() const
 {
-    return QLandmarkFilter::LandmarkInvalidFilter;
+    return QLandmarkFilter::InvalidFilter;
 }
 
 /*!
@@ -157,6 +183,35 @@ bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
 QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter &other)
 {
     return *this;
+}
+
+/*!
+ \relates QLandmarkFilter
+ Returns a filter which is the intersection of the \a left and \a right filters
+ \sa QLandmarkIntersectionFilter
+ */
+const QLandmarkFilter operator&(const QLandmarkFilter& left, const QLandmarkFilter& right)
+{
+    /* TODO implement better handling when left or right is an intersection filter */
+
+    /* usual fallback case */
+    QLandmarkIntersectionFilter nif;
+    nif << left << right;
+    return nif;
+}
+
+/*!
+ \relates QLandmarkFilter
+ Returns a filter which is the union of the \a left and \a right filters
+ \sa QLandmarkUnionFilter
+ */
+const QLandmarkFilter operator|(const QLandmarkFilter& left, const QLandmarkFilter& right)
+{
+    /* TODO implement better handling when left or right is a union filter */
+    /* usual fallback case */
+    QLandmarkUnionFilter nif;
+    nif << left << right;
+    return nif;
 }
 
 QTM_END_NAMESPACE
