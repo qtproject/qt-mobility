@@ -95,7 +95,6 @@ symbian: {
             "ELSE" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
             "ENDIF" \
-            "\"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/mobapicontactspluginsymbiansim.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbiansim.dll\""
 
         qtmobilitydeployment.pkg_postrules += contacts
 
