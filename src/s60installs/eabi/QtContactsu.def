@@ -147,9 +147,9 @@ EXPORTS
 	_ZN10QtMobility16QContactPresence22FieldPresenceStateTextE @ 146 NONAME DATA 18
 	_ZN10QtMobility16QContactPresence26FieldPresenceStateImageUrlE @ 147 NONAME DATA 22
 	_ZN10QtMobility16QContactRingtone14DefinitionNameE @ 148 NONAME DATA 9
-	_ZN10QtMobility16QContactRingtone18FieldAudioRingtoneE @ 149 NONAME DATA 14
-	_ZN10QtMobility16QContactRingtone18FieldVideoRingtoneE @ 150 NONAME DATA 14
-	_ZN10QtMobility16QContactRingtone22FieldVibrationRingtoneE @ 151 NONAME DATA 18
+	_ZN10QtMobility16QContactRingtone21FieldAudioRingtoneUrlE @ 149 NONAME DATA 17
+	_ZN10QtMobility16QContactRingtone21FieldVideoRingtoneUrlE @ 150 NONAME DATA 17
+	_ZN10QtMobility16QContactRingtone25FieldVibrationRingtoneUrlE @ 151 NONAME DATA 21
 	_ZN10QtMobility17QContactChangeSet11dataChangedEv @ 152 NONAME
 	_ZN10QtMobility17QContactChangeSet11emitSignalsEPNS_21QContactManagerEngineE @ 153 NONAME
 	_ZN10QtMobility17QContactChangeSet14setDataChangedEb @ 154 NONAME
@@ -767,68 +767,68 @@ EXPORTS
 	_ZNK10QtMobility8QContact7isEmptyEv @ 766 NONAME
 	_ZNK10QtMobility8QContact7localIdEv @ 767 NONAME
 	_ZNK10QtMobility8QContacteqERKS0_ @ 768 NONAME
-	_ZTIN10QtMobility12QContactNameE @ 769 NONAME
-	_ZTIN10QtMobility12QContactTypeE @ 770 NONAME
-	_ZTIN10QtMobility14QContactActionE @ 771 NONAME
-	_ZTIN10QtMobility14QContactDetailE @ 772 NONAME
-	_ZTIN10QtMobility14QContactFilterE @ 773 NONAME
-	_ZTIN10QtMobility15QContactManagerE @ 774 NONAME
-	_ZTIN10QtMobility17QContactTimestampE @ 775 NONAME
-	_ZTIN10QtMobility19QContactSaveRequestE @ 776 NONAME
-	_ZTIN10QtMobility19QContactUnionFilterE @ 777 NONAME
-	_ZTIN10QtMobility20QContactActionFilterE @ 778 NONAME
-	_ZTIN10QtMobility20QContactDetailFilterE @ 779 NONAME
-	_ZTIN10QtMobility20QContactDisplayLabelE @ 780 NONAME
-	_ZTIN10QtMobility20QContactFetchRequestE @ 781 NONAME
-	_ZTIN10QtMobility20QContactOrganizationE @ 782 NONAME
-	_ZTIN10QtMobility21QContactActionFactoryE @ 783 NONAME
-	_ZTIN10QtMobility21QContactInvalidFilterE @ 784 NONAME
-	_ZTIN10QtMobility21QContactLocalIdFilterE @ 785 NONAME
-	_ZTIN10QtMobility21QContactManagerEngineE @ 786 NONAME
-	_ZTIN10QtMobility21QContactRemoveRequestE @ 787 NONAME
-	_ZTIN10QtMobility23QContactAbstractRequestE @ 788 NONAME
-	_ZTIN10QtMobility23QContactChangeLogFilterE @ 789 NONAME
-	_ZTIN10QtMobility25QContactDetailRangeFilterE @ 790 NONAME
-	_ZTIN10QtMobility26QContactIntersectionFilterE @ 791 NONAME
-	_ZTIN10QtMobility26QContactRelationshipFilterE @ 792 NONAME
-	_ZTIN10QtMobility27QContactLocalIdFetchRequestE @ 793 NONAME
-	_ZTIN10QtMobility28QContactManagerEngineFactoryE @ 794 NONAME
-	_ZTIN10QtMobility31QContactRelationshipSaveRequestE @ 795 NONAME
-	_ZTIN10QtMobility32QContactRelationshipFetchRequestE @ 796 NONAME
-	_ZTIN10QtMobility33QContactRelationshipRemoveRequestE @ 797 NONAME
-	_ZTIN10QtMobility35QContactDetailDefinitionSaveRequestE @ 798 NONAME
-	_ZTIN10QtMobility36QContactDetailDefinitionFetchRequestE @ 799 NONAME
-	_ZTIN10QtMobility37QContactDetailDefinitionRemoveRequestE @ 800 NONAME
-	_ZTVN10QtMobility12QContactNameE @ 801 NONAME
-	_ZTVN10QtMobility12QContactTypeE @ 802 NONAME
-	_ZTVN10QtMobility14QContactActionE @ 803 NONAME
-	_ZTVN10QtMobility14QContactDetailE @ 804 NONAME
-	_ZTVN10QtMobility14QContactFilterE @ 805 NONAME
-	_ZTVN10QtMobility15QContactManagerE @ 806 NONAME
-	_ZTVN10QtMobility17QContactTimestampE @ 807 NONAME
-	_ZTVN10QtMobility19QContactSaveRequestE @ 808 NONAME
-	_ZTVN10QtMobility19QContactUnionFilterE @ 809 NONAME
-	_ZTVN10QtMobility20QContactActionFilterE @ 810 NONAME
-	_ZTVN10QtMobility20QContactDetailFilterE @ 811 NONAME
-	_ZTVN10QtMobility20QContactDisplayLabelE @ 812 NONAME
-	_ZTVN10QtMobility20QContactFetchRequestE @ 813 NONAME
-	_ZTVN10QtMobility20QContactOrganizationE @ 814 NONAME
-	_ZTVN10QtMobility21QContactActionFactoryE @ 815 NONAME
-	_ZTVN10QtMobility21QContactInvalidFilterE @ 816 NONAME
-	_ZTVN10QtMobility21QContactLocalIdFilterE @ 817 NONAME
-	_ZTVN10QtMobility21QContactManagerEngineE @ 818 NONAME
-	_ZTVN10QtMobility21QContactRemoveRequestE @ 819 NONAME
-	_ZTVN10QtMobility23QContactAbstractRequestE @ 820 NONAME
-	_ZTVN10QtMobility23QContactChangeLogFilterE @ 821 NONAME
-	_ZTVN10QtMobility25QContactDetailRangeFilterE @ 822 NONAME
-	_ZTVN10QtMobility26QContactIntersectionFilterE @ 823 NONAME
-	_ZTVN10QtMobility26QContactRelationshipFilterE @ 824 NONAME
-	_ZTVN10QtMobility27QContactLocalIdFetchRequestE @ 825 NONAME
-	_ZTVN10QtMobility28QContactManagerEngineFactoryE @ 826 NONAME
-	_ZTVN10QtMobility31QContactRelationshipSaveRequestE @ 827 NONAME
-	_ZTVN10QtMobility32QContactRelationshipFetchRequestE @ 828 NONAME
-	_ZTVN10QtMobility33QContactRelationshipRemoveRequestE @ 829 NONAME
-	_ZTVN10QtMobility35QContactDetailDefinitionSaveRequestE @ 830 NONAME
-	_ZTVN10QtMobility36QContactDetailDefinitionFetchRequestE @ 831 NONAME
-	_ZTVN10QtMobility37QContactDetailDefinitionRemoveRequestE @ 832 NONAME
+	_ZTIN10QtMobility12QContactNameE @ 769 NONAME ; #<TI>#
+	_ZTIN10QtMobility12QContactTypeE @ 770 NONAME ; #<TI>#
+	_ZTIN10QtMobility14QContactActionE @ 771 NONAME ; #<TI>#
+	_ZTIN10QtMobility14QContactDetailE @ 772 NONAME ; #<TI>#
+	_ZTIN10QtMobility14QContactFilterE @ 773 NONAME ; #<TI>#
+	_ZTIN10QtMobility15QContactManagerE @ 774 NONAME ; #<TI>#
+	_ZTIN10QtMobility17QContactTimestampE @ 775 NONAME ; #<TI>#
+	_ZTIN10QtMobility19QContactSaveRequestE @ 776 NONAME ; #<TI>#
+	_ZTIN10QtMobility19QContactUnionFilterE @ 777 NONAME ; #<TI>#
+	_ZTIN10QtMobility20QContactActionFilterE @ 778 NONAME ; #<TI>#
+	_ZTIN10QtMobility20QContactDetailFilterE @ 779 NONAME ; #<TI>#
+	_ZTIN10QtMobility20QContactDisplayLabelE @ 780 NONAME ; #<TI>#
+	_ZTIN10QtMobility20QContactFetchRequestE @ 781 NONAME ; #<TI>#
+	_ZTIN10QtMobility20QContactOrganizationE @ 782 NONAME ; #<TI>#
+	_ZTIN10QtMobility21QContactActionFactoryE @ 783 NONAME ; #<TI>#
+	_ZTIN10QtMobility21QContactInvalidFilterE @ 784 NONAME ; #<TI>#
+	_ZTIN10QtMobility21QContactLocalIdFilterE @ 785 NONAME ; #<TI>#
+	_ZTIN10QtMobility21QContactManagerEngineE @ 786 NONAME ; #<TI>#
+	_ZTIN10QtMobility21QContactRemoveRequestE @ 787 NONAME ; #<TI>#
+	_ZTIN10QtMobility23QContactAbstractRequestE @ 788 NONAME ; #<TI>#
+	_ZTIN10QtMobility23QContactChangeLogFilterE @ 789 NONAME ; #<TI>#
+	_ZTIN10QtMobility25QContactDetailRangeFilterE @ 790 NONAME ; #<TI>#
+	_ZTIN10QtMobility26QContactIntersectionFilterE @ 791 NONAME ; #<TI>#
+	_ZTIN10QtMobility26QContactRelationshipFilterE @ 792 NONAME ; #<TI>#
+	_ZTIN10QtMobility27QContactLocalIdFetchRequestE @ 793 NONAME ; #<TI>#
+	_ZTIN10QtMobility28QContactManagerEngineFactoryE @ 794 NONAME ; #<TI>#
+	_ZTIN10QtMobility31QContactRelationshipSaveRequestE @ 795 NONAME ; #<TI>#
+	_ZTIN10QtMobility32QContactRelationshipFetchRequestE @ 796 NONAME ; #<TI>#
+	_ZTIN10QtMobility33QContactRelationshipRemoveRequestE @ 797 NONAME ; #<TI>#
+	_ZTIN10QtMobility35QContactDetailDefinitionSaveRequestE @ 798 NONAME ; #<TI>#
+	_ZTIN10QtMobility36QContactDetailDefinitionFetchRequestE @ 799 NONAME ; #<TI>#
+	_ZTIN10QtMobility37QContactDetailDefinitionRemoveRequestE @ 800 NONAME ; #<TI>#
+	_ZTVN10QtMobility12QContactNameE @ 801 NONAME ; #<VT>#
+	_ZTVN10QtMobility12QContactTypeE @ 802 NONAME ; #<VT>#
+	_ZTVN10QtMobility14QContactActionE @ 803 NONAME ; #<VT>#
+	_ZTVN10QtMobility14QContactDetailE @ 804 NONAME ; #<VT>#
+	_ZTVN10QtMobility14QContactFilterE @ 805 NONAME ; #<VT>#
+	_ZTVN10QtMobility15QContactManagerE @ 806 NONAME ; #<VT>#
+	_ZTVN10QtMobility17QContactTimestampE @ 807 NONAME ; #<VT>#
+	_ZTVN10QtMobility19QContactSaveRequestE @ 808 NONAME ; #<VT>#
+	_ZTVN10QtMobility19QContactUnionFilterE @ 809 NONAME ; #<VT>#
+	_ZTVN10QtMobility20QContactActionFilterE @ 810 NONAME ; #<VT>#
+	_ZTVN10QtMobility20QContactDetailFilterE @ 811 NONAME ; #<VT>#
+	_ZTVN10QtMobility20QContactDisplayLabelE @ 812 NONAME ; #<VT>#
+	_ZTVN10QtMobility20QContactFetchRequestE @ 813 NONAME ; #<VT>#
+	_ZTVN10QtMobility20QContactOrganizationE @ 814 NONAME ; #<VT>#
+	_ZTVN10QtMobility21QContactActionFactoryE @ 815 NONAME ; #<VT>#
+	_ZTVN10QtMobility21QContactInvalidFilterE @ 816 NONAME ; #<VT>#
+	_ZTVN10QtMobility21QContactLocalIdFilterE @ 817 NONAME ; #<VT>#
+	_ZTVN10QtMobility21QContactManagerEngineE @ 818 NONAME ; #<VT>#
+	_ZTVN10QtMobility21QContactRemoveRequestE @ 819 NONAME ; #<VT>#
+	_ZTVN10QtMobility23QContactAbstractRequestE @ 820 NONAME ; #<VT>#
+	_ZTVN10QtMobility23QContactChangeLogFilterE @ 821 NONAME ; #<VT>#
+	_ZTVN10QtMobility25QContactDetailRangeFilterE @ 822 NONAME ; #<VT>#
+	_ZTVN10QtMobility26QContactIntersectionFilterE @ 823 NONAME ; #<VT>#
+	_ZTVN10QtMobility26QContactRelationshipFilterE @ 824 NONAME ; #<VT>#
+	_ZTVN10QtMobility27QContactLocalIdFetchRequestE @ 825 NONAME ; #<VT>#
+	_ZTVN10QtMobility28QContactManagerEngineFactoryE @ 826 NONAME ; #<VT>#
+	_ZTVN10QtMobility31QContactRelationshipSaveRequestE @ 827 NONAME ; #<VT>#
+	_ZTVN10QtMobility32QContactRelationshipFetchRequestE @ 828 NONAME ; #<VT>#
+	_ZTVN10QtMobility33QContactRelationshipRemoveRequestE @ 829 NONAME ; #<VT>#
+	_ZTVN10QtMobility35QContactDetailDefinitionSaveRequestE @ 830 NONAME ; #<VT>#
+	_ZTVN10QtMobility36QContactDetailDefinitionFetchRequestE @ 831 NONAME ; #<VT>#
+	_ZTVN10QtMobility37QContactDetailDefinitionRemoveRequestE @ 832 NONAME ; #<VT>#
 
