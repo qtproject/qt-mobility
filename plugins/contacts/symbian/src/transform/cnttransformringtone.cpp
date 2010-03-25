@@ -156,7 +156,7 @@ void CntTransformRingtone::detailDefinitions(QMap<QString, QContactDetailDefinit
         // Context not supported in symbian back-end, remove
         fields.remove(QContactRingtone::FieldContext);
         // nor vibe thingy
-        fields.remove(QContactRingtone::FieldVibrationRingtone);
+        fields.remove(QContactRingtone::FieldVibrationRingtoneUrl);
 
         d.setFields(fields);
         d.setUnique(true);
