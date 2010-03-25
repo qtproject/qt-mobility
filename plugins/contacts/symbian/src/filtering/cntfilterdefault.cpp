@@ -60,14 +60,14 @@ QList<QContactLocalId> CntFilterDefault::contacts(
         const QContactFilter &filter,
         const QList<QContactSortOrder> &sortOrders,
         bool &filterSupportedflag,
-        QContactManager::Error &error)  
+        QContactManager::Error* error)
 {
     Q_UNUSED(sortOrders);
     Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if(!filterSupported(filter))
             {
-            error =  QContactManager::NotSupportedError;
+            *error = QContactManager::NotSupportedError;
             return QList<QContactLocalId>();
             }
     QList<QContactLocalId> idList;
@@ -77,7 +77,7 @@ QList<QContactLocalId> CntFilterDefault::contacts(
     createSelectQuery( filter,sqlQuery,error);
     
     //fetch the contacts
-    if(error == QContactManager::NoError)
+    if(*error == QContactManager::NoError)
     {
         idList =  m_srvConnection.searchContacts(sqlQuery, error);
     }
@@ -101,13 +101,13 @@ bool CntFilterDefault::filterSupported(const QContactFilter& filter)
 
 void CntFilterDefault::createSelectQuery(const QContactFilter& filter,
                               QString& sqlQuery,
-                              QContactManager::Error& error)
+                              QContactManager::Error* error)
 
 {
     //Check if any invalid filter is passed 
     if(!filterSupported(filter))
             {
-            error =  QContactManager::NotSupportedError;
+            *error =  QContactManager::NotSupportedError;
             }
    //For default filter, just return the below query
     sqlQuery = "SELECT DISTINCT contact_id FROM  contact WHERE (type_flags>>24)=0 OR (type_flags>>24)=3";

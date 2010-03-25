@@ -50,7 +50,7 @@ QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
     , m_surface(new QX11VideoSurface)
     , m_videoSink(reinterpret_cast<GstElement*>(QVideoSurfaceGstSink::createSink(m_surface)))
-    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
+    , m_aspectRatioMode(Qt::KeepAspectRatio)
     , m_fullScreen(false)
 {
     if (m_videoSink) {
@@ -92,12 +92,12 @@ void QGstreamerVideoOverlay::setDisplayRect(const QRect &rect)
     setScaledDisplayRect();
 }
 
-QVideoWidget::AspectRatioMode QGstreamerVideoOverlay::aspectRatioMode() const
+Qt::AspectRatioMode QGstreamerVideoOverlay::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void QGstreamerVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
+void QGstreamerVideoOverlay::setAspectRatioMode(Qt::AspectRatioMode mode)
 {
     m_aspectRatioMode = mode;
 
@@ -190,21 +190,36 @@ void QGstreamerVideoOverlay::surfaceFormatChanged()
 
 void QGstreamerVideoOverlay::setScaledDisplayRect()
 {
-    switch (m_aspectRatioMode) {
-    case QVideoWidget::KeepAspectRatio:
-        {
-            QSize size = m_surface->surfaceFormat().viewport().size();
+    QRect formatViewport = m_surface->surfaceFormat().viewport();
 
+    switch (m_aspectRatioMode) {
+    case Qt::KeepAspectRatio:
+        {
+            QSize size = formatViewport.size();
             size.scale(m_displayRect.size(), Qt::KeepAspectRatio);
 
             QRect rect(QPoint(0, 0), size);
             rect.moveCenter(m_displayRect.center());
 
             m_surface->setDisplayRect(rect);
+            m_surface->setViewport(formatViewport);
         }
         break;
-    case QVideoWidget::IgnoreAspectRatio:
+    case Qt::IgnoreAspectRatio:
         m_surface->setDisplayRect(m_displayRect);
+        m_surface->setViewport(formatViewport);
+        break;
+    case Qt::KeepAspectRatioByExpanding:
+        {
+            QSize size = m_displayRect.size();
+            size.scale(formatViewport.size(), Qt::KeepAspectRatio);
+
+            QRect viewport(QPoint(0, 0), size);
+            viewport.moveCenter(formatViewport.center());
+
+            m_surface->setDisplayRect(m_displayRect);
+            m_surface->setViewport(viewport);
+        }
         break;
     };
 }

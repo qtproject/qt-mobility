@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include "qmessageid.h"
 
+#include <qhash.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -123,7 +124,7 @@ bool QMessageId::isValid() const
 
 uint qHash(const QMessageId &id)
 {
-    //TODO: return qHash(id.toString());
+    return qHash(id.toString());
 }
 
 QTM_END_NAMESPACE

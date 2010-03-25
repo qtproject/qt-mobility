@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "qmessagefolderid.h"
 #include "qmessagefolderid_p.h"
-#include <qhash>
+#include <qhash.h>
 
 QTM_BEGIN_NAMESPACE
 

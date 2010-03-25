@@ -68,15 +68,16 @@ class CntSimStore : public QObject
 {
 Q_OBJECT
 public:
-    CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error &error);
+    CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error* error);
     ~CntSimStore();
     
     QString storeName();
     TSimStoreInfo storeInfo();
     
-    bool read(int index, int numSlots, QContactManager::Error &error);
-    bool write(const QContact &contact, QContactManager::Error &error);
-    bool remove(int index, QContactManager::Error &error);
+    bool read(int index, int numSlots, QContactManager::Error* error);
+    bool write(const QContact &contact, QContactManager::Error* error);
+    bool remove(int index, QContactManager::Error* error);
+    bool getReservedSlots(QContactManager::Error* error);
     
     void cancel();
     bool isBusy();
@@ -90,6 +91,7 @@ signals:
     void readComplete(QList<QContact> contacts, QContactManager::Error error);
     void writeComplete(QContact contacts, QContactManager::Error error);
     void removeComplete(QContactManager::Error error);
+    void getReservedSlotsComplete(QList<int> reservedSlots, QContactManager::Error error);
     
 private:
     CntSimStorePrivate *d_ptr;

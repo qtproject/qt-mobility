@@ -62,10 +62,10 @@ public:
     const char* GenderUnspecified;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGender, "Gender")
-    Q_DECLARE_LATIN1_LITERAL(FieldGender, "Gender");
-    Q_DECLARE_LATIN1_LITERAL(GenderMale, "Male");
-    Q_DECLARE_LATIN1_LITERAL(GenderFemale, "Female");
-    Q_DECLARE_LATIN1_LITERAL(GenderUnspecified, "Unspecified");
+    Q_DECLARE_LATIN1_CONSTANT(FieldGender, "Gender");
+    Q_DECLARE_LATIN1_CONSTANT(GenderMale, "Male");
+    Q_DECLARE_LATIN1_CONSTANT(GenderFemale, "Female");
+    Q_DECLARE_LATIN1_CONSTANT(GenderUnspecified, "Unspecified");
 #endif
 
     void setGender(const QString& gender) {setValue(FieldGender, gender);}

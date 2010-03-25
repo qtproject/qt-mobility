@@ -41,6 +41,8 @@
 #include "qmessagefolderid.h"
 #include "qmessagefolderid_p.h"
 
+#include <qhash.h>
+
 QTM_BEGIN_NAMESPACE
 
 QMessageFolderId::QMessageFolderId()
@@ -124,7 +126,7 @@ bool QMessageFolderId::isValid() const
 
 uint qHash(const QMessageFolderId &id)
 {
-    //TODO: return qHash(id.toString());
+    return qHash(id.toString());
 }
 
 QTM_END_NAMESPACE

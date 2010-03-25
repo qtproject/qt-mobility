@@ -41,6 +41,8 @@
 #include "qmessageaccountid.h"
 #include "qmessageaccountid_p.h"
 
+#include <qhash.h>
+
 QTM_BEGIN_NAMESPACE
 
 QMessageAccountId::QMessageAccountId()
@@ -99,10 +101,10 @@ bool QMessageAccountId::operator<(const QMessageAccountId& other) const
     long left = 0;
     long right = 0;
     if (d_ptr) {
-        left = d_ptr->_id.toLong();
+        left = qHash(d_ptr->_id);
     }
     if (other.d_ptr) {
-        right = other.d_ptr->_id.toLong();
+        right = qHash(other.d_ptr->_id);
     }
 
     return (left < right);
@@ -124,7 +126,7 @@ bool QMessageAccountId::isValid() const
 
 uint qHash(const QMessageAccountId &id)
 {
-    //TODO: return qHash(id.toString());
+    return qHash(id.toString());
 }
 
 QTM_END_NAMESPACE

@@ -284,8 +284,6 @@ QString QSystemNetworkInfoPrivate::getNetworkNameForConnectionPath(const QString
             settingsConIface.reset(new QNetworkManagerSettingsConnection(activeCon->serviceName(),activeCon->connection().path(), this));
             if(settingsConIface->isValid()) {
                 return settingsConIface->getId();
-            } else {
-                //qWarning() << "not valid";
             }
         }
     }
@@ -360,7 +358,6 @@ void QSystemNetworkInfoPrivate::nmPropertiesChanged( const QString & path, QMap<
             accessPointIface->setConnections();
             if(!connect(accessPointIface, SIGNAL(propertiesChanged(const QString &,QMap<QString,QVariant>)),
                         this,SLOT(nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>)))) {
-             //   qWarning() << "connect is false";
             }
 
         }
@@ -505,8 +502,9 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
-    QSystemNetworkInfo::NetworkMode mode;
+    QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
 
+#if !defined(QT_NO_NETWORKMANAGER)
     bool anyDefaultRoute = false;
 
     QMapIterator<QString, QString> i(activePaths);
@@ -523,12 +521,9 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
         }
         devicepath = i.value();
     }
+#endif
 
-    if(!anyDefaultRoute) {
-       mode = QSystemNetworkInfo::UnknownMode;
-    }
-
-    return QSystemNetworkInfo::UnknownMode;
+    return mode;
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)
@@ -565,12 +560,12 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-        return QLatin1String("Sim Not Available");
+        return QLatin1String("");
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-        return QLatin1String("Sim Not Available");
+        return QLatin1String("");
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
@@ -591,7 +586,7 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 }
 
  QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QSystemScreenSaverLinuxCommonPrivate *parent)
-         : QSystemScreenSaverLinuxCommonPrivate(parent)
+         : QSystemScreenSaverLinuxCommonPrivate(parent), currentPid(0)
  {
      kdeIsRunning = false;
      gnomeIsRunning = false;
@@ -600,6 +595,24 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
  QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
  {
+     if(currentPid != 0) {
+         QDBusConnection dbusConnection = QDBusConnection::sessionBus();
+
+         QStringList ifaceList;
+         ifaceList <<  QLatin1String("org.freedesktop.ScreenSaver");
+         ifaceList << QLatin1String("org.gnome.ScreenSaver");
+         QDBusInterface *connectionInterface;
+         foreach(const QString iface, ifaceList) {
+             connectionInterface = new QDBusInterface(QLatin1String(iface.toLatin1()),
+                                                      QLatin1String("/ScreenSaver"),
+                                                      QLatin1String(iface.toLatin1()),
+                                                      dbusConnection);
+             if(connectionInterface->isValid()) {
+                 QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("UnInhibit"),
+                                                                     currentPid);
+             }
+         }
+     }
  }
 
  bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
@@ -618,15 +631,14 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
                                                       QLatin1String("/ScreenSaver"),
                                                       QLatin1String(iface.toLatin1()),
                                                       dbusConnection);
-             QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("Inhibit"),
-                                                                 QString::number((int)pid),
-                                                                 QLatin1String("QSystemScreenSaver"));
-             if(reply.isValid()) {
-                 currentPid = reply.value();
-              //   qWarning() << "Inhibit" << currentPid;
-                 return reply.isValid();
-             } else {
-                 qWarning() << reply.error();
+             if(connectionInterface->isValid()) {
+                 QDBusReply<uint> reply =  connectionInterface->call(QLatin1String("Inhibit"),
+                                                                     QString::number((int)pid),
+                                                                     QLatin1String("QSystemScreenSaver"));
+                 if(reply.isValid()) {
+                     currentPid = reply.value();
+                     return reply.isValid();
+                 }
              }
          }
 #endif
@@ -647,23 +659,12 @@ bool QSystemDeviceInfoPrivate::isDeviceLocked()
 
 bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
-    if(kdeIsRunning) {
-        QString kdeSSConfig;
-        if(QDir( QDir::homePath()+QLatin1String("/.kde4/")).exists()) {
-            kdeSSConfig = QDir::homePath()+QLatin1String("/.kde4/share/config/kscreensaverrc");
-        } else if(QDir(QDir::homePath()+QLatin1String("/.kde/")).exists()) {
-            kdeSSConfig = QDir::homePath()+QLatin1String("/.kde/share/config/kscreensaverrc");
+    if(kdeIsRunning || gnomeIsRunning) {
+        if(currentPid != 0) {
+            return true;
+        } else {
+            return false;
         }
-        QSettings kdeScreenSaveConfig(kdeSSConfig, QSettings::IniFormat);
-        kdeScreenSaveConfig.beginGroup(QLatin1String("ScreenSaver"));
-        if(kdeScreenSaveConfig.status() == QSettings::NoError) {
-            if(kdeScreenSaveConfig.value(QLatin1String("Enabled")).toBool() == false) {
-            } else {
-                return true;
-            }
-        }
-    } else if(gnomeIsRunning) {
-
     }
 
 #ifdef Q_WS_X11

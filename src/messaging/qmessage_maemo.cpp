@@ -53,6 +53,16 @@ QMessage QMessagePrivate::from(const QMessageId &id)
     return result;
 }
 
+QMessagePrivate* QMessagePrivate::implementation(const QMessage &message)
+{
+    return message.d_ptr;
+}
+
+QMessageContentContainerPrivate* QMessagePrivate::containerImplementation(const QMessage &message)
+{
+    return ((QMessageContentContainer*)&message)->d_ptr;
+}
+
 QString QMessagePrivate::senderName(const QMessage &message)
 {
     return message.d_ptr->_senderName;
@@ -79,12 +89,6 @@ void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFol
     message.d_ptr->_standardFolder = sf;
     message.d_ptr->_modified = true;
 }
-
-QMessagePrivate* QMessagePrivate::implementation(const QMessage &message)
-{
-    return message.d_ptr;
-}
-
 
 QMessage::QMessage()
  : d_ptr(new QMessagePrivate(this))

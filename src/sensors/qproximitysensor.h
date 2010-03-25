@@ -51,11 +51,11 @@ class QProximityReadingPrivate;
 class Q_SENSORS_EXPORT QProximityReading : public QSensorReading
 {
     Q_OBJECT
-    Q_PROPERTY(qreal distance READ distance)
+    Q_PROPERTY(bool close READ close)
     DECLARE_READING(QProximityReading)
 public:
-    qreal distance() const;
-    void setDistance(qreal distance);
+    bool close() const;
+    void setClose(bool close);
 };
 
 class Q_SENSORS_EXPORT QProximityFilter : public QSensorFilter
@@ -70,8 +70,7 @@ class Q_SENSORS_EXPORT QProximitySensor : public QSensor
 {
     Q_OBJECT
 public:
-    explicit QProximitySensor(QObject *parent = 0) : QSensor(parent)
-    { setType(QProximitySensor::type); }
+    explicit QProximitySensor(QObject *parent = 0) : QSensor(QProximitySensor::type, parent) {}
     virtual ~QProximitySensor() {}
     QProximityReading *reading() const { return static_cast<QProximityReading*>(QSensor::reading()); }
     static const char *type;

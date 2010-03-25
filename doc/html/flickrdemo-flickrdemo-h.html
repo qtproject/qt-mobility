@@ -165,17 +165,12 @@
     public:
         PictureDialog(const QString&amp; filePath, const QString&amp; pictureName, QWidget* parent = 0);
 
-    private slots:
-        void clicked(QAbstractButton *button);
-
     private:
         static const QSize imageSize;
 
         QLabel *label;
         QLabel *imageLabel;
         QDialogButtonBox *buttonBox;
-        QPushButton *keepButton;
-        QPushButton *discardButton;
     };
 
     #endif <span class="comment">// FLICKRDEMO_H</span></pre>

@@ -46,105 +46,17 @@
 #include <QMutex>
 
 #include "qtcontacts.h"
+#include "qcontactmaemo5debug_p.h"
 
-#include <libosso-abook/osso-abook-init.h>
-#include <libosso-abook/osso-abook-types.h>
-#include <libosso-abook/osso-abook-waitable.h>
-#include <libosso-abook/osso-abook-presence.h>
-#include <libosso-abook/osso-abook-avatar.h>
-#include <libmcclient/mc-profile.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include <libmcclient/mc-account.h>
 
-extern "C" {
-        typedef void GtkWindow;
-	struct _OssoABookContact {
-		EContact parent;
-	};
-	
-	OssoABookRoster*    osso_abook_roster_new               (const char *name,
-                                                                 EBookView *book_view,
-                                                                 const char *vcard_field);
-	gboolean            osso_abook_roster_is_running        (OssoABookRoster *roster);
-	void                osso_abook_roster_start             (OssoABookRoster *roster);
-
-	gboolean            osso_abook_contact_has_valid_name   (OssoABookContact *contact);
-	gboolean            osso_abook_contact_is_roster_contact(OssoABookContact *contact);
-
-	OssoABookRoster*    osso_abook_aggregator_get_default   (GError **error);
-	GList*              osso_abook_aggregator_list_master_contacts
-                                                                (OssoABookAggregator *aggregator);
-	unsigned            osso_abook_aggregator_get_master_contact_count
-                                                                (OssoABookAggregator *aggregator);
-	GList*              osso_abook_aggregator_lookup        (OssoABookAggregator *aggregator,
-                                                                 const char *uid);
-	const char*         osso_abook_contact_get_uid          (OssoABookContact *contact); 
-	EBook*              osso_abook_roster_get_book          (OssoABookRoster *roster);
-	char*               osso_abook_contact_to_string        (OssoABookContact *contact,
-                                                                 EVCardFormat format,
-                                                                 gboolean inline_avatar);
-	char*               osso_abook_contact_get_value        (EContact *contact,
-                                                                 const char *attr_name);
-        GList*              osso_abook_aggregator_find_contacts (OssoABookAggregator *aggregator,
-                                                                 EBookQuery *query);
-        GList*              osso_abook_contact_get_values       (EContact *contact,
-                                                                 const char *attr_name);
-        GList*              osso_abook_contact_get_attributes   (EContact *contact,
-                                                                 const char *attr_name);
-	GList*              osso_abook_contact_get_roster_contacts
-                                                                (OssoABookContact *master_contact);
-	McProfile*          osso_abook_contact_get_profile      (OssoABookContact *contact);
-	gboolean            osso_abook_contact_delete           (OssoABookContact *contact,
-                                                                 EBook *book,
-                                                                 GtkWindow *window);
-	GList*              osso_abook_aggregator_find_contacts (OssoABookAggregator *aggregator,
-                                                                 EBookQuery *query);
-	const char*         osso_abook_contact_get_display_name (OssoABookContact *contact);
-	GdkPixbuf*          osso_abook_avatar_get_image_rounded (OssoABookAvatar *avatar,
-                                                                 int width,
-                                                                 int height,
-                                                                 gboolean crop,
-                                                                 int radius,
-                                                                 const guint8 border_color[4]);
-	OssoABookContact*   osso_abook_contact_new              (void);
-	//TEST
-	guint               osso_abook_contact_async_add        (OssoABookContact *contact,
-                                                                 EBook *book,
-                                                                 EBookIdCallback callback,
-                                                                 gpointer user_data);
-	guint               osso_abook_contact_async_commit     (OssoABookContact *contact,
-                                                                 EBook *book,
-                                                                 EBookCallback callback,
-                                                                 gpointer user_data);
-	gboolean            osso_abook_contact_add_value        (EContact *contact,
-                                                                 const char *attr_name,
-                                                                 GCompareFunc value_check,
-                                                                 const char *value);
-	
-}
+#include "osso-abook-workaround.h"
+#include "qcontactidshash.h"
 
 QTM_USE_NAMESPACE
 
-/* QContactIDsHash stores abookContact IDs (strings)*/
-class QContactIDsHash{
-public:
-  QContactIDsHash(): key(1){};
-  ~QContactIDsHash(){ };
-  /* Append */
-  QContactIDsHash& operator<< (const QByteArray& eContactId){ m_localIds[key] = eContactId; key++; return (*this); };
-  
-  /* Find */
-  const char* operator[] (const QContactLocalId localId) { return m_localIds.value(localId).constData(); };
-  const QContactLocalId operator[] (const QByteArray& eContactId) { return m_localIds.key(eContactId, 0); };
-
-  /* Remove */ //TEST Remove functions not used nor tested yet
-  bool remove(const QContactLocalId localId){ return (m_localIds.remove(localId) == 1) ? true : false;};
-  bool remove(const QByteArray& eContactId){ const QContactLocalId hashKey= m_localIds.key(eContactId, 0); return remove(hashKey); };
-  
-private:
-  uint key; //LocalID
-  QHash<QContactLocalId, QByteArray> m_localIds; //[int/QContactLocalId Maemo5LocalId, QByteArray eContactID]
-};
+//Contains Data shared with contact changes/added/removed callbacks
+struct cbSharedData;
 
 class QContactABook : public QObject
 {
@@ -152,19 +64,28 @@ class QContactABook : public QObject
   
 public:  
   QContactABook(QObject* parent = 0);
-  virtual ~QContactABook();
+  ~QContactABook();
   
-  QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-  //QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-  QContact* getQContact(const QContactLocalId& contactId, QContactManager::Error& error) const;
-  bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-  bool saveContact(QContact* contact, QContactManager::Error& error);
+  QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+  //QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+  QContact* getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const;
+  bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
+  bool saveContact(QContact* contact, QContactManager::Error* error);
+
+  QContactLocalId selfContactId(QContactManager::Error* errors) const;
 
 Q_SIGNALS:
   void savingJobDone();
-
+  void contactsAdded(const QList<QContactLocalId>& contactIds);
+  void contactsChanged(const QList<QContactLocalId>& contactIds);
+  void contactsRemoved(const QList<QContactLocalId>& contactIds);
+  
 public:
-  void savingJobFinished(){ emit savingJobDone(); };
+  // Members used by callbacks
+  void _contactsAdded(const QList<QContactLocalId>& contactIds ){ emit contactsAdded(contactIds); };
+  void _contactsRemoved(const QList<QContactLocalId>& contactIds ){ emit contactsRemoved(contactIds); };
+  void _contactsChanged(const QList<QContactLocalId>& contactIds ){ emit contactsChanged(contactIds); };
+  void _savingJobFinished(){ emit savingJobDone(); };
   
 private:
   void initAddressBook();
@@ -174,31 +95,35 @@ private:
   
   OssoABookContact* getAContact(const QContactLocalId& contactId) const;
   
-  /* Searching */
+  /* Filtering */
+  bool contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const;
   EBookQuery* convert(const QContactFilter& filter) const;
   
   /* Reading - eContact/abookContact to QContact methods */
   QContact* convert(EContact *eContact) const;
-
-  QContactId createContactId(EContact *eContact) const;
-  QList<QContactAddress*> createAddressDetail(EContact *eContact) const;
-  QContactName* createNameDetail(EContact *eContact) const;
-  QContactNickname* createNicknameDetail(EContact *eContact) const;
-  QList<QContactEmailAddress*> createEmailDetail(EContact *eContact) const;
-  //QContactAnniversary*  createAnniversaryDetail(EContact *eContact) const; NOT SUPPORTED BY MAEMO5
-  QContactAvatar* createAvatarDetail(EContact *eContact) const;
-  QContactBirthday* createBirthdayDetail(EContact *eContact) const;
-  QContactGender* createGenderDetail(EContact *eContact) const;
-  QContactGuid* createGuidDetail(EContact *eContact) const;
-  QContactNote* createNoteDetail(EContact *eContact) const;
-  QList<QContactOnlineAccount*> createOnlineAccountDetail(EContact *eContact) const;
-  QContactOrganization* createOrganizationDetail(EContact *eContact) const;
-  QList<QContactPhoneNumber*> createPhoneDetail(EContact *eContact) const; 
-  QContactTimestamp* createTimestampDetail(EContact *eContact) const; 
-  QContactUrl* createUrlDetail(EContact *eContact) const;
+  
+  QContactId getContactId(EContact *eContact) const;
+  QList<QContactAddress*> getAddressDetail(EContact *eContact) const;
+  QContactName* getNameDetail(EContact *eContact) const;
+  QContactNickname* getNicknameDetail(EContact *eContact) const;
+  QList<QContactEmailAddress*> getEmailDetail(EContact *eContact) const;
+  QContactAvatar* getAvatarDetail(EContact *eContact) const;
+  QContactBirthday* getBirthdayDetail(EContact *eContact) const;
+  QContactGender* getGenderDetail(EContact *eContact) const;
+  QContactGuid* getGuidDetail(EContact *eContact) const;
+  QContactNote* getNoteDetail(EContact *eContact) const;
+  QList<QContactOnlineAccount*> getOnlineAccountDetail(EContact *eContact) const;
+  QContactOrganization* getOrganizationDetail(EContact *eContact) const;
+  QList<QContactPhoneNumber*> getPhoneDetail(EContact *eContact) const;
+  QList<QContactPresence*> getPresenceDetail(EContact *eContact) const;
+  QContactTimestamp* getTimestampDetail(EContact *eContact) const; 
+  QContactThumbnail* getThumbnailDetail(EContact *eContact) const;
+  QContactUrl* getUrlDetail(EContact *eContact) const;
   
   /* Saving - QContact to abookContact */
   OssoABookContact* convert(const QContact *contact) const;
+  
+  /* Save QDetails in OssoABookContact attributes */
   void setAddressDetail(const OssoABookContact* aContact, const QContactAddress& detail) const;
   void setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const;
   void setBirthdayDetail(const OssoABookContact* aContact, const QContactBirthday& detail) const;
@@ -210,12 +135,15 @@ private:
   void setOnlineAccountDetail(const OssoABookContact* aContact, const QContactOnlineAccount& detail) const;
   void setOrganizationDetail(const OssoABookContact* aContact, const QContactOrganization& detail) const;
   void setPhoneDetail(const OssoABookContact* aContact, const QContactPhoneNumber& detail) const;
+  void setPresenceDetail(const OssoABookContact* aContact, const QContactPresence& detail) const;
+  void setThumbnailDetail(const OssoABookContact* aContact, const QContactThumbnail& detail) const;
   void setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const;
   
   /* Internal Vars */
   OssoABookAggregator *m_abookAgregator;
   mutable QContactIDsHash m_localIds; //Converts QLocalId <=> eContactId
   QMutex m_saveContactMutex;
+  cbSharedData *cbSD;
 };
 
 #endif

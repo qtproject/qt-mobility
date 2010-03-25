@@ -67,27 +67,29 @@ MessagingHelper::~MessagingHelper()
 
 void MessagingHelper::filterAccounts(QMessageAccountIdList& accountIds, const QMessageAccountFilter& filter)
 {
-    QMessageAccountFilterPrivate* pf = QMessageAccountFilterPrivate::implementation(filter);
-    if ((pf->_field == QMessageAccountFilterPrivate::None) &&
-        (pf->_filterList.count() == 0)) {
-        if (pf->_notFilter) {
-            // There is only one filter: empty ~QMessageFilter()
-            // => accountIds must be cleared
-            accountIds.clear();
-            return;
-        } else {
-            // There is only one filter: empty QMessageFilter()
-            // => accountIds list can remain intact
-            return;
+    if (accountIds.count() && !filter.isEmpty()) {
+        QMessageAccountFilterPrivate* pf = QMessageAccountFilterPrivate::implementation(filter);
+        if ((pf->_field == QMessageAccountFilterPrivate::None) &&
+            (pf->_filterList.count() == 0)) {
+            if (pf->_notFilter) {
+                // There is only one filter: empty ~QMessageFilter()
+                // => accountIds must be cleared
+                accountIds.clear();
+                return;
+            } else {
+                // There is only one filter: empty QMessageFilter()
+                // => accountIds list can remain intact
+                return;
+            }
         }
-    }
 
-    if (pf->_valid) {
-        QMessageStore* store = QMessageStore::instance();
-        for (int i=accountIds.count()-1; i >= 0; i--) {
-            QMessageAccount account = store->account(accountIds[i]);
-            if (!pf->filter(account)) {
-                accountIds.removeAt(i);
+        if (pf->_valid) {
+            QMessageStore* store = QMessageStore::instance();
+            for (int i=accountIds.count()-1; i >= 0; i--) {
+                QMessageAccount account = store->account(accountIds[i]);
+                if (!pf->filter(account)) {
+                    accountIds.removeAt(i);
+                }
             }
         }
     }
@@ -103,12 +105,18 @@ bool MessagingHelper::accountLessThan(const QMessageAccountId accountId1, const 
 
 void MessagingHelper::orderAccounts(QMessageAccountIdList& accountIds, const QMessageAccountSortOrder &sortOrder)
 {
-    messagingHelper()->m_AccountSortOrder = (QMessageAccountSortOrder*)&sortOrder;
-    qSort(accountIds.begin(), accountIds.end(), MessagingHelper::accountLessThan);
+    if (!sortOrder.isEmpty()) {
+        messagingHelper()->m_AccountSortOrder = (QMessageAccountSortOrder*)&sortOrder;
+        qSort(accountIds.begin(), accountIds.end(), MessagingHelper::accountLessThan);
+    }
 }
 
 void MessagingHelper::applyOffsetAndLimitToAccountIdList(QMessageAccountIdList& accountIds, int limit, int offset)
 {
+    if (accountIds.count() == 0) {
+        return;
+    }
+
     if (offset > 0) {
         if (offset > accountIds.count()) {
             accountIds.clear();
@@ -127,27 +135,29 @@ void MessagingHelper::applyOffsetAndLimitToAccountIdList(QMessageAccountIdList& 
 
 void MessagingHelper::filterFolders(QMessageFolderIdList& folderIds, const QMessageFolderFilter& filter)
 {
-    QMessageFolderFilterPrivate* pf = QMessageFolderFilterPrivate::implementation(filter);
-    if ((pf->_field == QMessageFolderFilterPrivate::None) &&
-        (pf->_filterList.count() == 0)) {
-        if (pf->_notFilter) {
-            // There is only one filter: empty ~QMessageFilter()
-            // => accountIds must be cleared
-            folderIds.clear();
-            return;
-        } else {
-            // There is only one filter: empty QMessageFilter()
-            // => accountIds list can remain intact
-            return;
+    if (folderIds.count() && !filter.isEmpty()) {
+        QMessageFolderFilterPrivate* pf = QMessageFolderFilterPrivate::implementation(filter);
+        if ((pf->_field == QMessageFolderFilterPrivate::None) &&
+            (pf->_filterList.count() == 0)) {
+            if (pf->_notFilter) {
+                // There is only one filter: empty ~QMessageFilter()
+                // => accountIds must be cleared
+                folderIds.clear();
+                return;
+            } else {
+                // There is only one filter: empty QMessageFilter()
+                // => accountIds list can remain intact
+                return;
+            }
         }
-    }
 
-    if (pf->_valid) {
-        QMessageStore* store = QMessageStore::instance();
-        for (int i=folderIds.count()-1; i >= 0; i--) {
-            QMessageFolder folder = store->folder(folderIds[i]);
-            if (!pf->filter(folder)) {
-                folderIds.removeAt(i);
+        if (pf->_valid) {
+            QMessageStore* store = QMessageStore::instance();
+            for (int i=folderIds.count()-1; i >= 0; i--) {
+                QMessageFolder folder = store->folder(folderIds[i]);
+                if (!pf->filter(folder)) {
+                    folderIds.removeAt(i);
+                }
             }
         }
     }
@@ -163,12 +173,18 @@ bool MessagingHelper::folderLessThan(const QMessageFolderId folderId1, const QMe
 
 void MessagingHelper::orderFolders(QMessageFolderIdList& folderIds,  const QMessageFolderSortOrder &sortOrder)
 {
-    messagingHelper()->m_FolderSortOrder = (QMessageFolderSortOrder*)&sortOrder;
-    qSort(folderIds.begin(), folderIds.end(), MessagingHelper::folderLessThan);
+    if (!sortOrder.isEmpty()) {
+        messagingHelper()->m_FolderSortOrder = (QMessageFolderSortOrder*)&sortOrder;
+        qSort(folderIds.begin(), folderIds.end(), MessagingHelper::folderLessThan);
+    }
 }
 
 void MessagingHelper::applyOffsetAndLimitToFolderIdList(QMessageFolderIdList& folderIds, int limit, int offset)
 {
+    if (folderIds.count() == 0) {
+        return;
+    }
+
     if (offset > 0) {
         if (offset > folderIds.count()) {
             folderIds.clear();
@@ -187,27 +203,29 @@ void MessagingHelper::applyOffsetAndLimitToFolderIdList(QMessageFolderIdList& fo
 
 void MessagingHelper::filterMessages(QMessageIdList& messageIds, const QMessageFilter& filter)
 {
-    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filter);
-    if ((pf->_field == QMessageFilterPrivate::None) &&
-        (pf->_filterList.count() == 0)) {
-        if (pf->_notFilter) {
-            // There is only one filter: empty ~QMessageFilter()
-            // => accountIds must be cleared
-            messageIds.clear();
-            return;
-        } else {
-            // There is only one filter: empty QMessageFilter()
-            // => accountIds list can remain intact
-            return;
+    if (messageIds.count() && !filter.isEmpty()) {
+        QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filter);
+        if ((pf->_field == QMessageFilterPrivate::None) &&
+            (pf->_filterList.count() == 0)) {
+            if (pf->_notFilter) {
+                // There is only one filter: empty ~QMessageFilter()
+                // => accountIds must be cleared
+                messageIds.clear();
+                return;
+            } else {
+                // There is only one filter: empty QMessageFilter()
+                // => accountIds list can remain intact
+                return;
+            }
         }
-    }
 
-    if (pf->_valid) {
-        QMessageStore* store = QMessageStore::instance();
-        for (int i=messageIds.count()-1; i >= 0; i--) {
-            QMessage message = store->message(messageIds[i]);
-            if (!pf->filter(message)) {
-                messageIds.removeAt(i);
+        if (pf->_valid) {
+            QMessageStore* store = QMessageStore::instance();
+            for (int i=messageIds.count()-1; i >= 0; i--) {
+                QMessage message = store->message(messageIds[i]);
+                if (!pf->filter(message)) {
+                    messageIds.removeAt(i);
+                }
             }
         }
     }
@@ -223,12 +241,18 @@ bool MessagingHelper::messageLessThan(const QMessageId messageId1, const QMessag
 
 void MessagingHelper::orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder)
 {
-    messagingHelper()->m_MessageSortOrder = (QMessageSortOrder*)&sortOrder;
-    qSort(messageIds.begin(), messageIds.end(), MessagingHelper::messageLessThan);
+    if (!sortOrder.isEmpty()) {
+        messagingHelper()->m_MessageSortOrder = (QMessageSortOrder*)&sortOrder;
+        qSort(messageIds.begin(), messageIds.end(), MessagingHelper::messageLessThan);
+    }
 }
 
 void MessagingHelper::applyOffsetAndLimitToMessageIdList(QMessageIdList& messageIds, int limit, int offset)
 {
+    if (messageIds.count() == 0) {
+        return;
+    }
+
     if (offset > 0) {
         if (offset > messageIds.count()) {
             messageIds.clear();

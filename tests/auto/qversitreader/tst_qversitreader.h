@@ -101,9 +101,10 @@ private slots: // Tests
     void testExtractVCard21PropertyParams();
     void testExtractVCard30PropertyParams();
     void testExtractParams();
-
     void testReadLine();
     void testReadLine_data();
+    void testByteArrayInput();
+
 private: // Data
     QVersitReader* mReader;
     QVersitReaderPrivate* mReaderPrivate;

@@ -41,13 +41,10 @@
 
 #include "cntsimdetaildefinitionfetchrequest.h"
 #include "cntsymbiansimengine.h"
-#include "cntsimstore.h"
 #include <qcontactdetaildefinitionfetchrequest.h>
-#include <QTimer>
 
 CntSimDetailDefinitionFetchRequest::CntSimDetailDefinitionFetchRequest(CntSymbianSimEngine *engine, QContactDetailDefinitionFetchRequest *req)
-    :CntAbstractSimRequest(engine),
-     m_req(req)
+    :CntAbstractSimRequest(engine, req)
 {
 
 }
@@ -57,26 +54,11 @@ CntSimDetailDefinitionFetchRequest::~CntSimDetailDefinitionFetchRequest()
     cancel();
 }
 
-bool CntSimDetailDefinitionFetchRequest::start()
+void CntSimDetailDefinitionFetchRequest::run()
 {
-    singleShotTimer(0, this, SLOT(readDetailDefinitions()));
-    QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::ActiveState);
-    return true; 
-}
-
-bool CntSimDetailDefinitionFetchRequest::cancel()
-{
-    if (m_req->isActive()) {
-        cancelTimer();
-        QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::CanceledState);
-        return true;
-    }
-    return false;
-}
-
-void CntSimDetailDefinitionFetchRequest::readDetailDefinitions()
-{
-    if (!m_req->isActive())
+    QContactDetailDefinitionFetchRequest *r = req<QContactDetailDefinitionFetchRequest>();
+    
+    if (!r->isActive())
         return;
     
     QContactManager::Error error = QContactManager::NoError;
@@ -84,9 +66,9 @@ void CntSimDetailDefinitionFetchRequest::readDetailDefinitions()
     QMap<int, QContactManager::Error> errorMap;
         
     // Get all detail definitions
-    QMap<QString, QContactDetailDefinition> allDefs = engine()->detailDefinitions(m_req->contactType(), error);
+    QMap<QString, QContactDetailDefinition> allDefs = engine()->detailDefinitions(r->contactType(), &error);
     
-    QStringList defNames = m_req->definitionNames();
+    QStringList defNames = r->definitionNames();
     
     // Check for error
     if (error != QContactManager::NoError) 
@@ -95,13 +77,12 @@ void CntSimDetailDefinitionFetchRequest::readDetailDefinitions()
             errorMap.insert(i, error);
     
         // Complete the request
-        QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::FinishedState);
-        QContactManagerEngine::updateDefinitionFetchRequest(m_req, result, error, errorMap);
+        QContactManagerEngine::updateDefinitionFetchRequest(r, result, error, errorMap, QContactAbstractRequest::FinishedState);
         return;
     }
 
     // Filter results
-    if (m_req->definitionNames().count() == 0) 
+    if (r->definitionNames().count() == 0) 
     {
         result = allDefs;
     }
@@ -122,8 +103,5 @@ void CntSimDetailDefinitionFetchRequest::readDetailDefinitions()
     }
     
     // Complete the request
-    QContactManagerEngine::updateRequestState(m_req, QContactAbstractRequest::FinishedState);
-    QContactManagerEngine::updateDefinitionFetchRequest(m_req, result, error, errorMap);
+    QContactManagerEngine::updateDefinitionFetchRequest(r, result, error, errorMap, QContactAbstractRequest::FinishedState);
 }
-
-

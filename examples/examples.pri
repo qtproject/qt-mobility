@@ -43,7 +43,7 @@ maemo5 {
 symbian {
     DEFINES+= QTM_EXAMPLES_SMALL_SCREEN
 }
-maemo* {
+maemo5 {
     LIBS += -L/opt/qt4-maemo5/lib
     QMAKE_LFLAGS += -Wl,-rpath,/opt/qt4-maemo5/lib
 }

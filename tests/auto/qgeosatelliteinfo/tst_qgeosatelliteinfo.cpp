@@ -308,6 +308,25 @@ private slots:
         attribute_data();
     }
 
+    void datastream()
+    {
+        QFETCH(QGeoSatelliteInfo, info);
+
+        QByteArray ba;
+        QDataStream out(&ba, QIODevice::WriteOnly);
+        out << info;
+
+        QDataStream in(&ba, QIODevice::ReadOnly);
+        QGeoSatelliteInfo inInfo;
+        in >> inInfo;
+        QCOMPARE(inInfo, info);
+    }
+
+    void datastream_data()
+    {
+        addTestData_update();
+    }
+
     void debug()
     {
         QFETCH(QGeoSatelliteInfo, info);

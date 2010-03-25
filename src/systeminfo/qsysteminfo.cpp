@@ -362,7 +362,6 @@ Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
-Q_GLOBAL_STATIC(QSystemScreenSaverPrivate, screenSaverPrivate)
 
  /*!
 \fn QSystemInfo::QSystemInfo(QObject *parent)
@@ -870,8 +869,13 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
  */
 
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
-    : QObject(parent), d(screenSaverPrivate())
+    : QObject(parent)
 {
+#ifdef Q_OS_LINUX
+    d = new QSystemScreenSaverPrivate(static_cast<QSystemScreenSaverLinuxCommonPrivate*>(parent));
+#else
+    d = new QSystemScreenSaverPrivate(parent);
+#endif
     screenSaverIsInhibited = screenSaverInhibited();
 }
 
@@ -880,7 +884,6 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
  */
 QSystemScreenSaver::~QSystemScreenSaver()
 {
-    qWarning() << Q_FUNC_INFO;
     delete d;
 }
 

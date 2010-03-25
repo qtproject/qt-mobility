@@ -110,7 +110,8 @@ void tst_QVersit::testImportFiles()
     QVersitContactImporter importer;
     MyQVersitResourceHandler resourceHandler;
     importer.setResourceHandler(&resourceHandler);
-    QList<QContact> contacts = importer.importContacts(documents);
+    QVERIFY(importer.importDocuments(documents));
+    QList<QContact> contacts = importer.contacts();
 
     if (expectedContacts.size() > 0) {
         QCOMPARE(contacts.size(), expectedContacts.size());

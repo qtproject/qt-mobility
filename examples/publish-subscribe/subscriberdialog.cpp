@@ -40,7 +40,11 @@
 ****************************************************************************/
 
 #include "subscriberdialog.h"
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "ui_subscriberdialog_hor.h"
+#else
 #include "ui_subscriberdialog.h"
+#endif
 
 #include <qvaluespacesubscriber.h>
 
@@ -69,6 +73,17 @@ SubscriberDialog::SubscriberDialog(QWidget *parent) :
     connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));
 #endif
 
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    tableWidget = ui->tableWidget;
+    QStringList headerLabels;
+    headerLabels << tr("Key") << tr("Value") << tr("Type");
+    tableWidget->setColumnCount(3);
+    tableWidget->setHorizontalHeaderLabels(headerLabels);
+    tableWidget->horizontalHeader()->setStretchLastSection(true);
+    tableWidget->verticalHeader()->setVisible(false);
+    tableWidget->setColumnWidth(0, 200);
+    tableWidget->setColumnWidth(1, 400);
+#else
     QDesktopWidget desktopWidget;
     if (desktopWidget.availableGeometry().width() < 400) {
         // Screen is too small to fit a table widget without scrolling, use a list widget instead.
@@ -86,7 +101,7 @@ SubscriberDialog::SubscriberDialog(QWidget *parent) :
 
         ui->verticalLayout->insertWidget(2, tableWidget);
     }
-
+#endif
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
     changeSubscriberPath();
 }

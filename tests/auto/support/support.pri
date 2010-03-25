@@ -5,6 +5,8 @@ HEADERS += \
 symbian|wince*|maemo5|win32|mac {
     symbian {
         SOURCES += $$PWD/support_symbian.cpp
+        INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
+        INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
     }
     win32 {
         SOURCES += $$PWD/support_win.cpp
@@ -17,7 +19,13 @@ symbian|wince*|maemo5|win32|mac {
         }
 
     }
-    maemo5|mac {
+    maemo5|maemo6 {
+        QT += dbus
+        CONFIG += link_pkgconfig
+        PKGCONFIG += glib-2.0 gconf-2.0
+        SOURCES += $$PWD/support_maemo5.cpp
+    }
+    mac {
          SOURCES += $$PWD/support_stub.cpp       
     }
 } else {
