@@ -759,7 +759,7 @@ void tst_QContactManager::add()
             // Special case: phone number.
             if (def.name() == QContactPhoneNumber::DefinitionName &&
                 fieldKey == QContactPhoneNumber::FieldNumber) {
-                det.setValue(fieldKey, "12345+*#pw"); // use all the allowed digits
+                det.setValue(fieldKey, "+3581234567890");
                 continue;
             }
 
