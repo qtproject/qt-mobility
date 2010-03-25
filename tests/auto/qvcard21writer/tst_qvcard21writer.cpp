@@ -52,6 +52,8 @@ const QString KATAKANA_NOKIA(QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QVersitProperty)
+
 void tst_QVCard21Writer::init()
 {
     mWriter = new QVCard21Writer;
@@ -78,8 +80,6 @@ void tst_QVCard21Writer::testEncodeVersitProperty()
     mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
 }
-
-Q_DECLARE_METATYPE(QVersitProperty)
 
 void tst_QVCard21Writer::testEncodeVersitProperty_data()
 {
