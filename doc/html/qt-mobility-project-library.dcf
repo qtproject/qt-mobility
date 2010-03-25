@@ -1,12 +1,6 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="qt-mobility-project-library.png" imagedir="../../gif" title="Qt Mobility Project Library Reference Documentation">
 <section ref="classes.html" title="Classes">
-    <section ref="qalternativeaddress-altvalue.html" title="AltValue Class Reference">
-        <keyword ref="qalternativeaddress-altvalue.html">AltValue</keyword>
-        <keyword ref="qalternativeaddress-altvalue.html#language-var">language</keyword>
-        <keyword ref="qalternativeaddress-altvalue.html#value-var">value</keyword>
-        <section ref="qalternativeaddress-altvalue-members.html" title="List of all members"/>
-    </section>
     <section ref="qabstractsecuritysession.html" title="QAbstractSecuritySession Class Reference">
         <keyword ref="qabstractsecuritysession.html">QAbstractSecuritySession</keyword>
         <keyword ref="qabstractsecuritysession.html#isAllowed">isAllowed</keyword>
@@ -63,19 +57,6 @@
         <keyword ref="qaccelerometerreading.html#setZ">setZ</keyword>
         <keyword ref="qaccelerometerreading.html#value">value</keyword>
         <section ref="qaccelerometerreading-members.html" title="List of all members"/>
-    </section>
-    <section ref="qalternativeaddress.html" title="QAlternativeAddress Class Reference">
-        <keyword ref="qalternativeaddress.html">QAlternativeAddress</keyword>
-        <keyword ref="qalternativeaddress.html#city">city</keyword>
-        <keyword ref="qalternativeaddress.html#country">country</keyword>
-        <keyword ref="qalternativeaddress.html#countryCode">countryCode</keyword>
-        <keyword ref="qalternativeaddress.html#county">county</keyword>
-        <keyword ref="qalternativeaddress.html#district">district</keyword>
-        <keyword ref="qalternativeaddress.html#postCode">postCode</keyword>
-        <keyword ref="qalternativeaddress.html#state">state</keyword>
-        <keyword ref="qalternativeaddress.html#thoroughfareName">thoroughfareName</keyword>
-        <keyword ref="qalternativeaddress.html#thoroughfareNumber">thoroughfareNumber</keyword>
-        <section ref="qalternativeaddress-members.html" title="List of all members"/>
     </section>
     <section ref="qambientlightfilter.html" title="QAmbientLightFilter Class Reference">
         <keyword ref="qambientlightfilter.html">QAmbientLightFilter</keyword>
@@ -1414,6 +1395,9 @@
         <keyword ref="qgeoaddress.html#state">state</keyword>
         <keyword ref="qgeoaddress.html#thoroughfareName">thoroughfareName</keyword>
         <keyword ref="qgeoaddress.html#thoroughfareNumber">thoroughfareNumber</keyword>
+        <keyword ref="qgeoaddress.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qgeoaddress.html#operator-eq">operator=</keyword>
+        <keyword ref="qgeoaddress.html#operator-eq-eq">operator==</keyword>
         <section ref="qgeoaddress-members.html" title="List of all members"/>
     </section>
     <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
@@ -1509,11 +1493,14 @@
     <section ref="qgeolocation.html" title="QGeoLocation Class Reference">
         <keyword ref="qgeolocation.html">QGeoLocation</keyword>
         <keyword ref="qgeolocation.html#address">address</keyword>
-        <keyword ref="qgeolocation.html#alternatives">alternatives</keyword>
         <keyword ref="qgeolocation.html#boundingBox">boundingBox</keyword>
-        <keyword ref="qgeolocation.html#language">language</keyword>
-        <keyword ref="qgeolocation.html#position">position</keyword>
-        <keyword ref="qgeolocation.html#title">title</keyword>
+        <keyword ref="qgeolocation.html#coordinate">coordinate</keyword>
+        <keyword ref="qgeolocation.html#setAddress">setAddress</keyword>
+        <keyword ref="qgeolocation.html#setBoundingBox">setBoundingBox</keyword>
+        <keyword ref="qgeolocation.html#setCoordinate">setCoordinate</keyword>
+        <keyword ref="qgeolocation.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qgeolocation.html#operator-eq">operator=</keyword>
+        <keyword ref="qgeolocation.html#operator-eq-eq">operator==</keyword>
         <section ref="qgeolocation-members.html" title="List of all members"/>
     </section>
     <section ref="qgeonetworkmanager.html" title="QGeoNetworkManager Class Reference">
@@ -1701,39 +1688,32 @@
     <section ref="qlandmark.html" title="QLandmark Class Reference">
         <keyword ref="qlandmark.html">QLandmark</keyword>
         <keyword ref="qlandmark.html#addCategory">addCategory</keyword>
+        <keyword ref="qlandmark.html#address">address</keyword>
         <keyword ref="qlandmark.html#attribute">attribute</keyword>
         <keyword ref="qlandmark.html#attributes">attributes</keyword>
         <keyword ref="qlandmark.html#categories">categories</keyword>
         <keyword ref="qlandmark.html#coordinate">coordinate</keyword>
-        <keyword ref="qlandmark.html#country">country</keyword>
         <keyword ref="qlandmark.html#description">description</keyword>
         <keyword ref="qlandmark.html#iconUrl">iconUrl</keyword>
         <keyword ref="qlandmark.html#landmarkId">landmarkId</keyword>
-        <keyword ref="qlandmark.html#locality">locality</keyword>
+        <keyword ref="qlandmark.html#location">location</keyword>
         <keyword ref="qlandmark.html#name">name</keyword>
         <keyword ref="qlandmark.html#phone">phone</keyword>
-        <keyword ref="qlandmark.html#postOfficeBox">postOfficeBox</keyword>
-        <keyword ref="qlandmark.html#postcodex">postcode</keyword>
         <keyword ref="qlandmark.html#radius">radius</keyword>
-        <keyword ref="qlandmark.html#region">region</keyword>
         <keyword ref="qlandmark.html#removeCategory">removeCategory</keyword>
+        <keyword ref="qlandmark.html#setAddress">setAddress</keyword>
         <keyword ref="qlandmark.html#setAttribute">setAttribute</keyword>
         <keyword ref="qlandmark.html#setCategories">setCategories</keyword>
         <keyword ref="qlandmark.html#setCoordinate">setCoordinate</keyword>
-        <keyword ref="qlandmark.html#setCountry">setCountry</keyword>
         <keyword ref="qlandmark.html#setDescription">setDescription</keyword>
         <keyword ref="qlandmark.html#setIconUrl">setIconUrl</keyword>
-        <keyword ref="qlandmark.html#setLocality">setLocality</keyword>
+        <keyword ref="qlandmark.html#setLocation">setLocation</keyword>
         <keyword ref="qlandmark.html#setName">setName</keyword>
         <keyword ref="qlandmark.html#setPhone">setPhone</keyword>
-        <keyword ref="qlandmark.html#setPostOfficeBox">setPostOfficeBox</keyword>
-        <keyword ref="qlandmark.html#setPostcodex">setPostcode</keyword>
         <keyword ref="qlandmark.html#setRadius">setRadius</keyword>
-        <keyword ref="qlandmark.html#setRegion">setRegion</keyword>
-        <keyword ref="qlandmark.html#setStreet">setStreet</keyword>
         <keyword ref="qlandmark.html#setUrl">setUrl</keyword>
-        <keyword ref="qlandmark.html#street">street</keyword>
         <keyword ref="qlandmark.html#url">url</keyword>
+        <keyword ref="qlandmark.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qlandmark.html#operator-eq">operator=</keyword>
         <keyword ref="qlandmark.html#operator-eq-eq">operator==</keyword>
         <section ref="qlandmark-members.html" title="List of all members"/>
@@ -1864,16 +1844,16 @@
     <section ref="qlandmarkfilter.html" title="QLandmarkFilter Class Reference">
         <keyword ref="qlandmarkfilter.html">QLandmarkFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">FilterType</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkInvalidFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkCategoryFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkIntersectionFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkUnionFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkDefaultFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkProximityFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkNearestFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkBoxFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkNameFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkCustomFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::InvalidFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::ProximityFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::UnionFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::DefaultFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::NameFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::NearestFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::IntersectionFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::CategoryFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::BoxFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::CustomFilter</keyword>
         <keyword ref="qlandmarkfilter.html#maximumMatches">maximumMatches</keyword>
         <keyword ref="qlandmarkfilter.html#setMaximumMatches">setMaximumMatches</keyword>
         <keyword ref="qlandmarkfilter.html#type">type</keyword>
@@ -2073,6 +2053,12 @@
     </section>
     <section ref="qlandmarkunionfilter.html" title="QLandmarkUnionFilter Class Reference">
         <keyword ref="qlandmarkunionfilter.html">QLandmarkUnionFilter</keyword>
+        <keyword ref="qlandmarkunionfilter.html#append">append</keyword>
+        <keyword ref="qlandmarkunionfilter.html#filters">filters</keyword>
+        <keyword ref="qlandmarkunionfilter.html#prepend">prepend</keyword>
+        <keyword ref="qlandmarkunionfilter.html#remove">remove</keyword>
+        <keyword ref="qlandmarkunionfilter.html#setFilters">setFilters</keyword>
+        <keyword ref="qlandmarkunionfilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
         <section ref="qlandmarkunionfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qmagnetometer.html" title="QMagnetometer Class Reference">
