@@ -369,7 +369,6 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
             if (!ssid.isEmpty() && accessPointConfigurations.contains(ssid)) {
                 QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = accessPointConfigurations.take(ssid);
                 if (ptr.data()) {
-                    QString iap_type = saved_iap.value("type").toString();
                     ptr->id = iap_id;
                     ptr->iap_type = iap_type;
                     ptr->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
