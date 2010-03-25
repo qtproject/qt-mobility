@@ -100,9 +100,7 @@ QMessageStore::QMessageStore(QObject *parent)
 {
     Q_ASSERT(d_ptr != 0);
     Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
-    qDebug() << "QMessageStore::QMessageStore";
  //   d_ptr->initialize(this);
-    qDebug() << "QMessageStore::QMessageStore exit";
 }
 
 QMessageStore::~QMessageStore()
@@ -126,22 +124,12 @@ QMessageManager::Error QMessageStore::error() const
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(sortOrder)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageIdList(); // stub
+  return d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
 }
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(sortOrder)
-    Q_UNUSED(body)
-    Q_UNUSED(matchFlags)
-    Q_UNUSED(limit)
-    Q_UNUSED(offset)
-    return QMessageIdList(); // stub
+  return d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,body,matchFlags);
 }
 
 QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
@@ -224,7 +212,7 @@ bool QMessageStore::updateMessage(QMessage *m)
 
 QMessage QMessageStore::message(const QMessageId& id) const
 {
-    return d_ptr->p_ptr->el->getMessage(id);
+    return d_ptr->p_ptr->el->message(id);
 }
 
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
