@@ -333,7 +333,7 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
         newMRow("Phone number = 555, starts with", manager) << manager << phonenumber << number << QVariant("555") <<  (int) QContactFilter::MatchStartsWith << "ab";
         newMRow("Phone number = 1212, ends with", manager) << manager << phonenumber << number << QVariant("1212") << (int) QContactFilter::MatchEndsWith << "a";
         newMRow("Phone number = 555-1212, match phone number", manager) << manager << phonenumber << number << QVariant("555-1212") << (int) QContactFilter::MatchPhoneNumber << "a";
-        newMRow("Phone number = 555, keypad collation", manager) << manager << phonenumber << number << QVariant("555") << (int) QContactFilter::MatchKeypadCollation << "ab";
+        newMRow("Phone number = 555, keypad collation", manager) << manager << phonenumber << number << QVariant("555") << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchStartsWith) << "ab";
         
         /* Converting other types to strings */
         QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
@@ -403,7 +403,7 @@ void tst_QContactManagerFiltering::detailPhoneNumberFiltering_data()
         // first, keypad collation testing (ITU-T / T9 testing)
         QTest::newRow("t9 aaron") << manager << nameDef << nameField << QVariant(QString("22766")) << (int)(QContactFilter::MatchKeypadCollation) << "a";
         QTest::newRow("t9 bob") << manager << nameDef << nameField << QVariant(QString("262")) << (int)(QContactFilter::MatchKeypadCollation) << "b";
-        QTest::newRow("t9 john") << manager << nameDef << nameField << QVariant(QString("5656")) << (int)(QContactFilter::MatchKeypadCollation) << "efg";
+        QTest::newRow("t9 john") << manager << nameDef << nameField << QVariant(QString("5646")) << (int)(QContactFilter::MatchKeypadCollation) << "efg";
         QTest::newRow("t9 bo") << manager << nameDef << nameField << QVariant(QString("26")) << (int)(QContactFilter::MatchKeypadCollation | QContactFilter::MatchStartsWith) << "bc"; // bob, boris
         QTest::newRow("t9 zzzz") << manager << nameDef << nameField << QVariant(QString("9999")) << (int)(QContactFilter::MatchKeypadCollation) << ""; // nobody.
 
@@ -489,8 +489,8 @@ void tst_QContactManagerFiltering::detailPhoneNumberFiltering()
     ids = cm->contactIds(df);
 
     QString output = convertIds(contacts, ids);
-    QSKIP("TODO: fix default implementation of phone number matching!", SkipSingle);
-    //QCOMPARE_UNSORTED(output, expected);
+    //QSKIP("TODO: fix default implementation of phone number matching!", SkipSingle);
+    QCOMPARE_UNSORTED(output, expected);
 }
 
 void tst_QContactManagerFiltering::detailVariantFiltering_data()
@@ -1873,9 +1873,15 @@ void tst_QContactManagerFiltering::relationshipFiltering_data()
         QTest::newRow("RF-18") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String(QContactRelationship::HasSpouse)) << static_cast<unsigned int>(0) << QString() << "ab";
 
         // Unknown relationship
-        QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
-        QTest::newRow("RF-20") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
-        QTest::newRow("RF-21") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+        if (manager->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
+            QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "a";
+            QTest::newRow("RF-20") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "b";
+            QTest::newRow("RF-21") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "ab";
+        } else {
+            QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationship::Second) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+            QTest::newRow("RF-20") << manager << static_cast<int>(QContactRelationship::First) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+            QTest::newRow("RF-21") << manager << static_cast<int>(QContactRelationship::Either) << QString(QLatin1String("UnknownRelationship")) << static_cast<unsigned int>(0) << QString() << "";
+        }
 
         // match any contact that is the related contact in a relationship with contact-A
         //QTest::newRow("RF-19") << manager << static_cast<int>(QContactRelationship::Second) << QString() << static_cast<unsigned int>(contactAId.value(manager).localId()) << contactAId.value(manager).managerUri() << "h";
@@ -1938,7 +1944,8 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     // save and check error code
     bool succeeded = false;
     if((cm->hasFeature(QContactManager::Relationships)
-        && cm->isRelationshipTypeSupported(relationshipType))
+        && cm->isRelationshipTypeSupported(relationshipType, contactA.type())
+        && cm->isRelationshipTypeSupported(relationshipType, contactB.type()))
         || cm->hasFeature(QContactManager::ArbitraryRelationshipTypes)) {
         succeeded = true;
         QVERIFY(cm->saveRelationship(&h2i));
@@ -1984,10 +1991,13 @@ void tst_QContactManagerFiltering::relationshipFiltering()
     if (!cm->hasFeature(QContactManager::Relationships)) {
         QSKIP("Manager does not support relationships; skipping relationship filtering", SkipSingle);
     } else if(relationshipType.isEmpty()
-        || cm->isRelationshipTypeSupported(relationshipType)) {
+        || (cm->isRelationshipTypeSupported(relationshipType, contactA.type())
+            && cm->isRelationshipTypeSupported(relationshipType, contactB.type()))) {
+        // check that the relationship type is supported for both contacts.
         QCOMPARE_UNSORTED(output, expected);
     } else {
-        QSKIP("Manager does not support relationship type; skipping", SkipSingle);
+        QString msg = "Manager does not support relationship type " + relationshipType + " between " + contactA.type() + " and " + contactB.type() + " type contacts.";
+        QSKIP(msg.toAscii(), SkipSingle);
     }
 }
 
