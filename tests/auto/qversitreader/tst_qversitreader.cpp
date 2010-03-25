@@ -321,6 +321,16 @@ void tst_QVersitReader::testParseNextVersitPropertyVCard21()
     QByteArray vCard("Begin:vcard\r\n");
     vCard.append("VERSION:2.1\r\n");
     vCard.append("FN:John\r\n");
+    // "NOTE:\;\,\:\\"
+    vCard.append("NOTE:\\;\\,\\:\\\\\r\n");
+    // "N:foo\;bar;foo\,bar;foo\:bar;foo\\bar;foo\\\;bar"
+    vCard.append("N:foo\\;bar;foo\\,bar;foo\\:bar;foo\\\\bar;foo\\\\\\;bar\r\n");
+    // missing structured value
+    vCard.append("ADR:\r\n");
+    // "NICKNAMES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
+    vCard.append("NICKNAMES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
+    // "CATEGORIES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
+    vCard.append("CATEGORIES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
     vCard.append("ORG;CHARSET=UTF-8:");
     vCard.append(KATAKANA_NOKIA);
     vCard.append("\r\n");
@@ -330,7 +340,7 @@ void tst_QVersitReader::testParseNextVersitPropertyVCard21()
     vCard.append("\r\n");
     // The value here is "UXQgaXMgZ3JlYXQh", which is the base64 encoding of "Qt is great!".
     vCard.append("PHOTO;ENCODING=BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
-    // Again, but without the explicity "ENCODING" parameter
+    // Again, but without the explicit "ENCODING" parameter
     vCard.append("PHOTO;BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
     vCard.append("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\nple.com\r\n");
     vCard.append("EMAIL;ENCODING=QUOTED-PRINTABLE;CHARSET=UTF-16BE:");
@@ -353,6 +363,56 @@ void tst_QVersitReader::testParseNextVersitPropertyVCard21()
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("FN"));
     QCOMPARE(property.value(),QString::fromAscii("John"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("NOTE"));
+    // Do not Unescape semicolons, commas, colons and backlashes
+    // "\;\,\:\\"
+    QCOMPARE(property.value(),QString::fromAscii("\\;\\,\\:\\\\"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("N"));
+    QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
+    QCOMPARE(property.variantValue().type(), QVariant::StringList);
+    QStringList components = property.value<QStringList>();
+    QCOMPARE(components.size(), 5);
+    QCOMPARE(components.at(0), QLatin1String("foo;bar"));
+    QCOMPARE(components.at(1), QLatin1String("foo\\,bar"));
+    QCOMPARE(components.at(2), QLatin1String("foo\\:bar"));
+    QCOMPARE(components.at(3), QLatin1String("foo\\\\bar"));
+    QCOMPARE(components.at(4), QLatin1String("foo\\\\;bar"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("ADR"));
+    QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
+    QCOMPARE(property.variantValue().type(), QVariant::StringList);
+    components = property.value<QStringList>();
+    QCOMPARE(components.size(), 1);
+    QVERIFY(components.at(0).isEmpty());
+
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("NICKNAMES"));
+    QCOMPARE(property.valueType(), QVersitProperty::ListType);
+    QCOMPARE(property.variantValue().type(), QVariant::StringList);
+    components = property.value<QStringList>();
+    QCOMPARE(components.size(), 5);
+    QCOMPARE(components.at(0), QLatin1String("foo\\;bar"));
+    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
+    QCOMPARE(components.at(2), QLatin1String("foo\\:bar"));
+    QCOMPARE(components.at(3), QLatin1String("foo\\\\bar"));
+    QCOMPARE(components.at(4), QLatin1String("foo\\\\,bar"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("CATEGORIES"));
+    QCOMPARE(property.valueType(), QVersitProperty::ListType);
+    QCOMPARE(property.variantValue().type(), QVariant::StringList);
+    components = property.value<QStringList>();
+    QCOMPARE(components.size(), 5);
+    QCOMPARE(components.at(0), QLatin1String("foo\\;bar"));
+    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
+    QCOMPARE(components.at(2), QLatin1String("foo\\:bar"));
+    QCOMPARE(components.at(3), QLatin1String("foo\\\\bar"));
+    QCOMPARE(components.at(4), QLatin1String("foo\\\\,bar"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("ORG"));
@@ -426,6 +486,16 @@ void tst_QVersitReader::testParseNextVersitPropertyVCard30()
     QByteArray vCard("Begin:vcard\r\n");
     vCard.append("VERSION:3.0\r\n");
     vCard.append("FN:John\r\n");
+    // "NOTE:\;\,\:\\"
+    vCard.append("NOTE:\\;\\,\\:\\\\\r\n");
+    // "N:foo\;bar;foo\,bar;foo\:bar;foo\\bar;foo\\\;bar"
+    vCard.append("N:foo\\;bar;foo\\,bar;foo\\:bar;foo\\\\bar;foo\\\\\\;bar\r\n");
+    // "NICKNAMES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
+    vCard.append("NICKNAMES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
+    // "CATEGORIES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
+    vCard.append("CATEGORIES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
+    // "CATEGORIES:foobar\\,foobar\\\\,foo\\\\\,bar"
+    vCard.append("CATEGORIES:foobar\\\\,foobar\\\\\\\\,foo\\\\\\\\\\,bar\r\n");
     vCard.append("ORG;CHARSET=UTF-8:");
     vCard.append(KATAKANA_NOKIA);
     vCard.append("\r\n");
@@ -456,6 +526,60 @@ void tst_QVersitReader::testParseNextVersitPropertyVCard30()
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("FN"));
     QCOMPARE(property.value(),QString::fromAscii("John"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("NOTE"));
+    QCOMPARE(property.valueType(), QVersitProperty::PlainType);
+    QCOMPARE(property.variantValue().type(), QVariant::String);
+    // Unescape semicolons, commas, colons and backlashes
+    QCOMPARE(property.value(), QString::fromAscii(";,:\\"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("N"));
+    QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
+    QCOMPARE(property.variantValue().type(), QVariant::StringList);
+    QStringList components = property.value<QStringList>();
+    QCOMPARE(components.size(), 5);
+    QCOMPARE(components.at(0), QLatin1String("foo;bar"));
+    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
+    QCOMPARE(components.at(2), QLatin1String("foo:bar"));
+    QCOMPARE(components.at(3), QLatin1String("foo\\bar"));
+    QCOMPARE(components.at(4), QLatin1String("foo\\;bar"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("NICKNAMES"));
+    QCOMPARE(property.valueType(), QVersitProperty::ListType);
+    QCOMPARE(property.variantValue().type(), QVariant::StringList);
+    components = property.value<QStringList>();
+    QCOMPARE(components.size(), 5);
+    QCOMPARE(components.at(0), QLatin1String("foo;bar"));
+    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
+    QCOMPARE(components.at(2), QLatin1String("foo:bar"));
+    QCOMPARE(components.at(3), QLatin1String("foo\\bar"));
+    QCOMPARE(components.at(4), QLatin1String("foo\\,bar"));
+
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("CATEGORIES"));
+    QCOMPARE(property.valueType(), QVersitProperty::ListType);
+    QCOMPARE(property.variantValue().type(), QVariant::StringList);
+    components = property.value<QStringList>();
+    QCOMPARE(components.size(), 5);
+    QCOMPARE(components.at(0), QLatin1String("foo;bar"));
+    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
+    QCOMPARE(components.at(2), QLatin1String("foo:bar"));
+    QCOMPARE(components.at(3), QLatin1String("foo\\bar"));
+    QCOMPARE(components.at(4), QLatin1String("foo\\,bar"));
+
+    // "CATEGORIES:foobar\\,foobar\\\\,foo\\\\\,bar"
+    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
+    QCOMPARE(property.name(),QString::fromAscii("CATEGORIES"));
+    QCOMPARE(property.valueType(), QVersitProperty::ListType);
+    QCOMPARE(property.variantValue().type(), QVariant::StringList);
+    components = property.value<QStringList>();
+    QCOMPARE(components.size(), 3);
+    QCOMPARE(components.at(0), QLatin1String("foobar\\"));
+    QCOMPARE(components.at(1), QLatin1String("foobar\\\\"));
+    QCOMPARE(components.at(2), QLatin1String("foo\\\\,bar"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
     QCOMPARE(property.name(),QString::fromAscii("ORG"));
@@ -1267,6 +1391,29 @@ void tst_QVersitReader::testByteArrayInput()
     QCOMPARE(properties.length(), 1);
     QCOMPARE(properties.first().name(), QLatin1String("FN"));
     QCOMPARE(properties.first().value(), QLatin1String("John"));
+}
+
+void tst_QVersitReader::testRemoveBackSlashEscaping()
+{
+    // Empty string
+    QString input;
+    QVersitReaderPrivate::removeBackSlashEscaping(input);
+    QCOMPARE(input,QString());
+
+    // Nothing to escape in the string
+    input = QString::fromAscii("Nothing to escape");
+    QVersitReaderPrivate::removeBackSlashEscaping(input);
+    QCOMPARE(input,QString::fromAscii("Nothing to escape"));
+
+    // Line break, semicolon, backslash and comma in the string
+    input = QString::fromAscii("These should be unescaped \\n \\N \\; \\, \\\\");
+    QVersitReaderPrivate::removeBackSlashEscaping(input);
+    QCOMPARE(input, QString::fromAscii("These should be unescaped \r\n \r\n ; , \\"));
+
+    // Don't remove escaping within quotes
+    input = QString::fromAscii("\"Quoted \\n \\N \\; \\,\"");
+    QVersitReaderPrivate::removeBackSlashEscaping(input);
+    QCOMPARE(input, QString::fromAscii("\"Quoted \\n \\N \\; \\,\""));
 }
 
 QTEST_MAIN(tst_QVersitReader)
