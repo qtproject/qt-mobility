@@ -94,7 +94,6 @@ contains(mobility_modules,versit) {
             qversitdocument \
             qversitproperty \
             qversitreader \
-            qversitutils \
             qversitwriter
 }
 

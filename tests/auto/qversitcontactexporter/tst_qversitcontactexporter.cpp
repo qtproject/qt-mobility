@@ -176,6 +176,14 @@ QTM_USE_NAMESPACE
 const QString TEST_PHOTO_FILE(QLatin1String("versitTest001.jpg"));
 const QString TEST_AUDIO_FILE(QLatin1String("versitTest001.wav"));
 
+// Checks that the property has a value of the given expectedType and the given expectedValue.
+#define CHECK_VALUE(property,expectedValueType,expectedValue) {\
+    QCOMPARE(property.valueType(), expectedValueType); \
+    QVariant value = property.variantValue(); \
+    QCOMPARE(value.type(), QVariant::StringList); \
+    QCOMPARE(value.toStringList(), expectedValue); \
+}
+
 void tst_QVersitContactExporter::init()
 {
     mExporter = new QVersitContactExporter();
@@ -277,8 +285,8 @@ void tst_QVersitContactExporter::testEncodeName()
     QContact contact;
     QContactName name;
 
-    // vCard 2.1
-    name.setFirstName(QString::fromAscii("Heido"));
+    // Special characters are NOT backslash escaped by the exporter, only by the writer.
+    name.setFirstName(QString::fromAscii("He;ido"));
     name.setLastName(QString::fromAscii("HH"));
     name.setMiddleName(QString::fromAscii("A"));
     name.setPrefix(QString::fromAscii("Mr."));
@@ -288,52 +296,23 @@ void tst_QVersitContactExporter::testEncodeName()
     QVersitDocument document = mExporter->documents().first();
 
     // Each Contact has display label detail by default. Display label is enocded
-    // if some value exisit for the Label or if value for Name exisit.
+    // if some value exists for the Label or if value for Name exists.
     QCOMPARE(document.properties().count(), 2);
 
     QVersitProperty displayProperty = document.properties().at(0);
     // Check name
     QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
     // Check value
-    QCOMPARE(displayProperty.value(), QString::fromAscii("Heido HH"));
+    QCOMPARE(displayProperty.value(), QString::fromAscii("He;ido HH"));
 
     QVersitProperty nameProperty = document.properties().at(1);
     // Check parameters, contexts not allowed for N property
     QCOMPARE(nameProperty.parameters().count(), 0);
     // Check name
     QCOMPARE(nameProperty.name(), QString::fromAscii("N"));
-    // Check value
-    QCOMPARE(nameProperty.value(), QString::fromAscii("HH;Heido;A;Mr.;"));
-
-    // vCard 3.0, special characters in the name parts are backslash escaped
-    contact.removeDetail(&name);
-    name.setFirstName(QString::fromAscii("Hom,er"));
-    name.setLastName(QString::fromAscii("Simp;son"));
-    name.setMiddleName(QString::fromAscii("J;"));
-    name.setPrefix(QString::fromAscii(";Mr."));
-    name.setSuffix(QString::fromAscii("Sir,"));
-    contact.saveDetail(&name);
-    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
-    document = mExporter->documents().first();
-    QCOMPARE(document.type(),QVersitDocument::VCard30Type);
-
-    // Each Contact has display label detail by default. Display label is enocded
-    // if some value exists for the Label or if value for Name exisit.
-    QCOMPARE(document.properties().count(), 2);
-    displayProperty = document.properties().at(0);
-    nameProperty = document.properties().at(1);
-    // Check parameters
-    QCOMPARE(displayProperty.parameters().count(), 0);
-    QCOMPARE(nameProperty.parameters().count(), 0);
-    // Check name
-    QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
-    QCOMPARE(nameProperty.name(), QString::fromAscii("N"));
-    // Check value
-
-    QCOMPARE(displayProperty.value(), QString::fromAscii("Hom\\,er Simp\\;son"));
-
-    QCOMPARE(nameProperty.value(),
-             QString::fromAscii("Simp\\;son;Hom\\,er;J\\;;\\;Mr.;Sir\\,"));
+    CHECK_VALUE(nameProperty, QVersitProperty::CompoundType,
+                QStringList() << QLatin1String("HH") << QLatin1String("He;ido")
+                << QLatin1String("A") << QLatin1String("Mr.") << QString());
 }
 
 void tst_QVersitContactExporter::testEncodePhoneNumber()
@@ -386,11 +365,12 @@ void tst_QVersitContactExporter::testEncodeStreetAddress()
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactAddress address;
 
-    // vCard 2.1
-    address.setCountry(QString::fromAscii("Finland"));
-    address.setPostcode(QString::fromAscii("00440"));
-    address.setStreet(QString::fromAscii("HKKI 1X 90"));
-    address.setLocality(QString::fromAscii("Helsinki"));
+    address.setPostOfficeBox(QLatin1String("1234"));
+    address.setCountry(QLatin1String("Finland"));
+    address.setPostcode(QLatin1String("00440"));
+    // Special characters are not escaped by the exporter, but by the writer
+    address.setStreet(QLatin1String("HKKI; 1X 90"));
+    address.setLocality(QLatin1String("Helsinki"));
     address.setContexts(QContactDetail::ContextHome);
     address.setSubTypes(QContactAddress::SubTypePostal);
     contact.saveDetail(&address);
@@ -406,28 +386,10 @@ void tst_QVersitContactExporter::testEncodeStreetAddress()
         QString::fromAscii("TYPE"),QString::fromAscii("POSTAL")));
     // Check name
     QCOMPARE(property.name(), QString::fromAscii("ADR"));
-    // Check value
-    QCOMPARE(property.value(), QString::fromAscii(";;HKKI 1X 90;Helsinki;;00440;Finland"));
-
-    // vCard 3.0, special characters in the address parts are backslash escaped
-    contact.removeDetail(&address);
-    address.setPostOfficeBox(QString::fromAscii("PO;Box"));
-    address.setStreet(QString::fromAscii("My;Street"));
-    address.setLocality(QString::fromAscii("My;Town"));
-    address.setRegion(QString::fromAscii("My;State"));
-    address.setPostcode(QString::fromAscii("12345;"));
-    address.setCountry(QString::fromAscii("My;Country"));
-    contact.saveDetail(&address);
-    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
-    document = mExporter->documents().first();
-    QCOMPARE(document.type(),QVersitDocument::VCard30Type);
-    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
-    property = document.properties().at(BASE_PROPERTY_COUNT);
-    // Check name
-    QCOMPARE(property.name(), QString::fromAscii("ADR"));
-    // Check value
-    QCOMPARE(property.value(),
-             QString::fromAscii("PO\\;Box;;My\\;Street;My\\;Town;My\\;State;12345\\;;My\\;Country"));
+    CHECK_VALUE(property, QVersitProperty::CompoundType,
+                QStringList() << QLatin1String("1234") << QString() << QLatin1String("HKKI; 1X 90")
+                << QLatin1String("Helsinki") << QString() << QLatin1String("00440")
+                << QLatin1String("Finland"));
 }
 
 void tst_QVersitContactExporter::testEncodeUrl()
@@ -457,7 +419,6 @@ void tst_QVersitContactExporter::testEncodeUid()
     QContact contact(createContactWithName(QLatin1String("asdf")));
     QContactGuid guid;
 
-    // vCard 2.1
     guid.setContexts(QContactDetail::ContextHome);
     guid.setGuid(QString::fromAscii("0101222"));
     contact.saveDetail(&guid);
@@ -472,20 +433,6 @@ void tst_QVersitContactExporter::testEncodeUid()
     QCOMPARE(property.name(), QString::fromAscii("UID"));
     // Check value
     QCOMPARE(property.value(), guid.guid());
-
-    // vCard 3.0, special characters in the value are backslash escaped
-    contact.removeDetail(&guid);
-    guid.setGuid(QString::fromAscii("1;2,3\r\n4\\5"));
-    contact.saveDetail(&guid);
-    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
-    document = mExporter->documents().first();
-    QCOMPARE(document.type(),QVersitDocument::VCard30Type);
-    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
-    property = document.properties().at(BASE_PROPERTY_COUNT);
-    // Check name
-    QCOMPARE(property.name(), QString::fromAscii("UID"));
-    // Check value
-    QCOMPARE(property.value(), QString::fromAscii("1\\;2\\,3\\n4\\\\5"));
 }
 
 void tst_QVersitContactExporter::testEncodeRev()
@@ -598,8 +545,8 @@ void tst_QVersitContactExporter::testEncodeGeoLocation()
     QVersitProperty property = document.properties().at(BASE_PROPERTY_COUNT);
     QCOMPARE(property.parameters().count(), 0);
     QCOMPARE(property.name(), QString::fromAscii("GEO"));
-    QString expectedValue = longitude + QString::fromAscii(",") + latitude;
-    QCOMPARE(property.value(), expectedValue);
+    CHECK_VALUE(property, QVersitProperty::CompoundType,
+                QStringList() << QLatin1String("99.9") << QLatin1String("98.9"));
 }
 
 void tst_QVersitContactExporter::testEncodeOrganization()
@@ -609,8 +556,6 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     QVersitDocument document;
     QVersitProperty property;
     QString title(QString::fromAscii("Developer"));
-    QString organizationName(QString::fromAscii("Nokia"));
-    QString department(QString::fromAscii("R&D"));
 
     // TITLE
     organization.setTitle(title);
@@ -631,7 +576,7 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = document.properties().at(BASE_PROPERTY_COUNT);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
-    QCOMPARE(property.value(), QString::fromAscii("Nokia;"));
+    CHECK_VALUE(property, QVersitProperty::CompoundType, QStringList(QLatin1String("Nokia")));
 
     // ORG with department/unit
     organization.setName(QString());
@@ -644,7 +589,8 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = document.properties().at(BASE_PROPERTY_COUNT);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
-    QCOMPARE(property.value(), QString::fromAscii(";R&D;Qt"));
+    CHECK_VALUE(property, QVersitProperty::CompoundType, QStringList()
+                << QString() << QLatin1String("R&D") << QLatin1String("Qt"));
 
     // ORG with name and department/unit
     organization.setName(QString::fromAscii("Nokia"));
@@ -654,7 +600,8 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+1);
     property = document.properties().at(BASE_PROPERTY_COUNT);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
-    QCOMPARE(property.value(), QString::fromAscii("Nokia;R&D;Qt"));
+    CHECK_VALUE(property, QVersitProperty::CompoundType, QStringList()
+                << QLatin1String("Nokia") << QLatin1String("R&D") << QLatin1String("Qt"));
 
     // TITLE and ORG
     organization.setTitle(QString::fromAscii("Developer"));
@@ -667,7 +614,8 @@ void tst_QVersitContactExporter::testEncodeOrganization()
     QCOMPARE(property.value(), title);
     property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QString::fromAscii("ORG"));
-    QCOMPARE(property.value(), QString::fromAscii("Nokia;R&D;Qt"));
+    CHECK_VALUE(property, QVersitProperty::CompoundType, QStringList()
+                << QLatin1String("Nokia") << QLatin1String("R&D") << QLatin1String("Qt"));
 
     // ORG LOGO Test1: LOGO as remote Resouce
     const QString url = QString::fromAscii("http://myhome.com/test.jpg");
@@ -937,7 +885,7 @@ void tst_QVersitContactExporter::testEncodeNickName()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     QVersitProperty property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QLatin1String("X-NICKNAME"));
-    QCOMPARE(property.value(), QLatin1String("Homie"));
+    CHECK_VALUE(property, QVersitProperty::ListType, QStringList(QLatin1String("Homie")));
 
     // Two nicknames given, should be collated into a single property
     contact = createContactWithName(QLatin1String("asdf"));
@@ -951,7 +899,8 @@ void tst_QVersitContactExporter::testEncodeNickName()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QString::fromAscii("X-NICKNAME"));
-    QCOMPARE(property.value(), QString::fromAscii("Homie,Jay"));
+    CHECK_VALUE(property, QVersitProperty::ListType,
+                QStringList() << QLatin1String("Homie") << QLatin1String("Jay"));
 }
 
 void tst_QVersitContactExporter::testEncodeTag()
@@ -972,7 +921,7 @@ void tst_QVersitContactExporter::testEncodeTag()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     QVersitProperty property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QLatin1String("CATEGORIES"));
-    QCOMPARE(property.value(), QLatin1String("red"));
+    CHECK_VALUE(property, QVersitProperty::ListType, QStringList(QLatin1String("red")));
 
     // Two tags given, should be collated into a single property
     contact = createContactWithName(QLatin1String("asdf"));
@@ -986,7 +935,8 @@ void tst_QVersitContactExporter::testEncodeTag()
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
     property = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(property.name(), QString::fromAscii("CATEGORIES"));
-    QCOMPARE(property.value(), QString::fromAscii("red,green"));
+    CHECK_VALUE(property, QVersitProperty::ListType,
+                QStringList() << QLatin1String("red") << QLatin1String("green"));
 }
 
 void tst_QVersitContactExporter::testEncodeAnniversary()
@@ -1138,7 +1088,7 @@ void tst_QVersitContactExporter::testEncodeFamily()
     QVersitProperty childrenProperty = document.properties().at(BASE_PROPERTY_COUNT+1);
     QCOMPARE(childrenProperty.parameters().count(), 0);
     QCOMPARE(childrenProperty.name(), QString::fromAscii("X-CHILDREN"));
-    QCOMPARE(childrenProperty.value(), QString::fromAscii("A\\,B"));
+    CHECK_VALUE(childrenProperty, QVersitProperty::ListType, children);
 }
 
 
@@ -1160,19 +1110,9 @@ void tst_QVersitContactExporter::testEncodeDisplayLabel()
     QCOMPARE(displayProperty.value(), QString::fromAscii("First Last"));
     QVersitProperty nameProperty = document.properties().at(1);
     QCOMPARE(nameProperty.name(), QString::fromAscii("N"));
-    QCOMPARE(nameProperty.value(),
-        QString::fromAscii("Last;First;Middle;;"));
-
-    // Custom label in QContactName, use vCard 3.0 to test the backslash escaping
-    contact = QContact();
-    contactName.setCustomLabel(QString::fromAscii("Custom,Label"));
-    contact.saveDetail(&contactName);
-    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
-    document = mExporter->documents().first();
-    displayProperty = document.properties().at(0);
-    QCOMPARE(displayProperty.name(), QString::fromAscii("FN"));
-    QCOMPARE(displayProperty.value(),
-        QString::fromAscii("Custom\\,Label"));
+    CHECK_VALUE(nameProperty, QVersitProperty::CompoundType, QStringList()
+                << QLatin1String("Last") << QLatin1String("First") << QLatin1String("Middle")
+                << QString() << QString());
 }
 
 void tst_QVersitContactExporter::testDefaultResourceHandler()
