@@ -467,7 +467,7 @@ bool QVersitContactImporterPrivate::createRingtone(const QVersitProperty &proper
     QByteArray data;
     if (saveDataFromProperty(property, &location, &data) && !location.isEmpty()) {
         QContactRingtone ringtone;
-        ringtone.setAudioRingtone(location);
+        ringtone.setAudioRingtoneUrl(location);
         saveDetailWithContext(contact, &ringtone, extractContexts(property));
         return true;
     }

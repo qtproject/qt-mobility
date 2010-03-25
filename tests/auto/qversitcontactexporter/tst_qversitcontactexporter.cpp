@@ -813,7 +813,7 @@ void tst_QVersitContactExporter::testEncodeRingtone()
     mResourceHandler->clear();
     mResourceHandler->mSimulatedMimeType = QLatin1String("audio/wav");
     mResourceHandler->mSimulatedData = "simulated audio data";
-    ringtone.setAudioRingtone(TEST_AUDIO_FILE);
+    ringtone.setAudioRingtoneUrl(TEST_AUDIO_FILE);
     QContact contact(createContactWithName(QLatin1String("asdf")));
     contact.saveDetail(&ringtone);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));

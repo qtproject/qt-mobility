@@ -1139,7 +1139,7 @@ void tst_QVersitContactImporter::testSound()
     QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
     QContact contact = mImporter->contacts().first();
     QContactRingtone ringtone = contact.detail<QContactRingtone>();
-    QByteArray content = mResourceHandler->mObjects.value(ringtone.audioRingtone());
+    QByteArray content = mResourceHandler->mObjects.value(ringtone.audioRingtoneUrl());
     QCOMPARE(content, val);
 }
 

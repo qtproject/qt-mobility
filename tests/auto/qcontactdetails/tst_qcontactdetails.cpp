@@ -802,29 +802,29 @@ void tst_QContactDetails::ringtone()
     QContactRingtone r1, r2;
 
     // test property set
-    r1.setAudioRingtone(QUrl("audioUrl"));
-    QCOMPARE(r1.audioRingtone(), QUrl("audioUrl"));
-    QCOMPARE(r1.value<QUrl>(QContactRingtone::FieldAudioRingtone), QUrl("audioUrl"));
+    r1.setAudioRingtoneUrl(QUrl("audioUrl"));
+    QCOMPARE(r1.audioRingtoneUrl(), QUrl("audioUrl"));
+    QCOMPARE(r1.value<QUrl>(QContactRingtone::FieldAudioRingtoneUrl), QUrl("audioUrl"));
 
     // and the other fields
-    r2.setVideoRingtone(QUrl("videoUrl"));
-    QCOMPARE(r2.videoRingtone(), QUrl("videoUrl"));
-    QCOMPARE(r2.value<QUrl>(QContactRingtone::FieldVideoRingtone), QUrl("videoUrl"));
-    r2.setVibrationRingtone(QUrl("vibrationUrl"));
-    QCOMPARE(r2.vibrationRingtone(), QUrl("vibrationUrl"));
-    QCOMPARE(r2.value<QUrl>(QContactRingtone::FieldVibrationRingtone), QUrl("vibrationUrl"));
+    r2.setVideoRingtoneUrl(QUrl("videoUrl"));
+    QCOMPARE(r2.videoRingtoneUrl(), QUrl("videoUrl"));
+    QCOMPARE(r2.value<QUrl>(QContactRingtone::FieldVideoRingtoneUrl), QUrl("videoUrl"));
+    r2.setVibrationRingtoneUrl(QUrl("vibrationUrl"));
+    QCOMPARE(r2.vibrationRingtoneUrl(), QUrl("vibrationUrl"));
+    QCOMPARE(r2.value<QUrl>(QContactRingtone::FieldVibrationRingtoneUrl), QUrl("vibrationUrl"));
 
     // test property add
     QVERIFY(c.saveDetail(&r1));
     QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 1);
-    QCOMPARE(QContactRingtone(c.details(QContactRingtone::DefinitionName).value(0)).audioRingtone(), r1.audioRingtone());
+    QCOMPARE(QContactRingtone(c.details(QContactRingtone::DefinitionName).value(0)).audioRingtoneUrl(), r1.audioRingtoneUrl());
 
     // test property update
     r1.setValue("label","label1");
-    r1.setAudioRingtone(QUrl("audioUrl2"));
+    r1.setAudioRingtoneUrl(QUrl("audioUrl2"));
     QVERIFY(c.saveDetail(&r1));
     QCOMPARE(c.details(QContactRingtone::DefinitionName).value(0).value("label"), QString("label1"));
-    QCOMPARE(c.details(QContactRingtone::DefinitionName).value(0).value<QUrl>(QContactRingtone::FieldAudioRingtone), QUrl("audioUrl2"));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).value(0).value<QUrl>(QContactRingtone::FieldAudioRingtoneUrl), QUrl("audioUrl2"));
 
     // test property remove
     QVERIFY(c.removeDetail(&r1));

@@ -439,7 +439,7 @@ bool QVersitContactExporterPrivate::encodeRingtone(QVersitProperty &property, co
 {
     QContactRingtone ringtone = static_cast<QContactRingtone>(detail);
     Q_ASSERT(property.name() == QLatin1String("SOUND"));
-    return encodeContentFromFile(ringtone.audioRingtone().toLocalFile(), property);
+    return encodeContentFromFile(ringtone.audioRingtoneUrl().toLocalFile(), property);
 }
 
 /*!

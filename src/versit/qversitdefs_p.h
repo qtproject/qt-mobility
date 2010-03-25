@@ -122,7 +122,7 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
     {"ROLE",          QContactOrganization::DefinitionName.str,
                       QContactOrganization::FieldRole.str},
     {"SOUND",         QContactRingtone::DefinitionName.str,
-                      QContactRingtone::FieldAudioRingtone.str},
+                      QContactRingtone::FieldAudioRingtoneUrl.str},
     {"TEL",           QContactPhoneNumber::DefinitionName.str,
                       QContactPhoneNumber::FieldNumber.str},
     {"TITLE",         QContactOrganization::DefinitionName.str,

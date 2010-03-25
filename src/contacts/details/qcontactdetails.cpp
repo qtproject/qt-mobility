@@ -963,28 +963,28 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldTitle, "Title");
 Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::FieldAssistantName, "AssistantName");
 
 /*!
-   \variable QContactRingtone::FieldAudioRingtone
+   \variable QContactRingtone::FieldAudioRingtoneUrl
 
    The constant key for which the uri of the audio ringtone value is
    stored in details of the QContactRingtone type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldAudioRingtone, "AudioRingtone");
+Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldAudioRingtoneUrl, "AudioRingtoneUrl");
 
 /*!
-   \variable QContactRingtone::FieldVideoRingtone
+   \variable QContactRingtone::FieldVideoRingtoneUrl
 
    The constant key for which the uri of the video ringtone value is
    stored in details of the QContactRingtone type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVideoRingtone, "VideoRingtone");
+Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVideoRingtoneUrl, "VideoRingtoneUrl");
 
 /*!
-   \variable QContactRingtone::FieldVibrationRingtone
+   \variable QContactRingtone::FieldVibrationRingtoneUrl
 
    The constant key for which the uri of the vibration ringtone value is
    stored in details of the QContactRingtone type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtone, "VibrationRingtone");
+Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "VibrationRingtoneUrl");
 
 /*!
    \variable QContactThumbnail::FieldThumbnail
@@ -1879,42 +1879,42 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-  \fn QContactRingtone::audioRingtone() const
+  \fn QContactRingtone::audioRingtoneUrl() const
 
   Returns the uri of the audio ringtone stored in the ringtone detail.
  */
 
 /*!
-  \fn QContactRingtone::setAudioRingtone(const QUrl& audioRingtone)
+  \fn QContactRingtone::setAudioRingtoneUrl(const QUrl& audioRingtoneUrl)
 
   Sets the uri of the audio ringtone stored in the ringtone detail
-  to \a audioRingtone.
+  to \a audioRingtoneUrl.
  */
 
 /*!
-  \fn QContactRingtone::videoRingtone() const
+  \fn QContactRingtone::videoRingtoneUrl() const
 
   Returns the uri of the video ringtone stored in the ringtone detail.
  */
 
 /*!
-  \fn QContactRingtone::setVideoRingtone(const QUrl& videoRingtone)
+  \fn QContactRingtone::setVideoRingtoneUrl(const QUrl& videoRingtoneUrl)
 
   Sets the uri of the video ringtone stored in the ringtone detail
-  to \a videoRingtone.
+  to \a videoRingtoneUrl.
  */
 
 /*!
-  \fn QContactRingtone::vibrationRingtone() const
+  \fn QContactRingtone::vibrationRingtoneUrl() const
 
   Returns the uri of the vibration ringtone stored in the ringtone detail.
  */
 
 /*!
-  \fn QContactRingtone::setVibrationRingtone(const QUrl& vibrationRingtone)
+  \fn QContactRingtone::setVibrationRingtoneUrl(const QUrl& vibrationRingtoneUrl)
 
   Sets the uri of the vibration ringtone stored in the ringtone detail
-  to \a vibrationRingtone.
+  to \a vibrationRingtoneUrl.
  */
 
 /*!

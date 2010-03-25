@@ -1060,9 +1060,9 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.clear();
     f.setDataType(QVariant::Url);
     f.setAllowableValues(QVariantList());
-    fields.insert(QContactRingtone::FieldAudioRingtone, f);
-    fields.insert(QContactRingtone::FieldVideoRingtone, f);
-    fields.insert(QContactRingtone::FieldVibrationRingtone, f);
+    fields.insert(QContactRingtone::FieldAudioRingtoneUrl, f);
+    fields.insert(QContactRingtone::FieldVideoRingtoneUrl, f);
+    fields.insert(QContactRingtone::FieldVibrationRingtoneUrl, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
