@@ -59,7 +59,7 @@ Q_PROPERTY(QStringList availableActions READ availableActions)
 Q_PROPERTY(QStringList details READ details)
 Q_PROPERTY(QStringList contexts READ contexts)
 public:
-    explicit QmlContact(QContact& contact, QObject *parent = 0);
+    explicit QmlContact(const QContact& contact, QObject *parent = 0);
     QmlContact();
     ~QmlContact();
 

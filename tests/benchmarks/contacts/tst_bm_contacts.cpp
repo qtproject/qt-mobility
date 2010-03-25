@@ -783,6 +783,8 @@ void tst_Contact::tst_nameFilter()
 
     m_run++;
 
+
+
 #if defined(Q_WS_MAEMO_6)
     int ret;
     QContactFetchRequest* req = new QContactFetchRequest;
