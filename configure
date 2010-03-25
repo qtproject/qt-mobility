@@ -388,6 +388,7 @@ compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 compileTest "Maemo ICD" maemo-icd
+compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
 
 # Now module selection
 # using 'expr match ....' should help a bit
@@ -400,6 +401,10 @@ compileTest "Maemo ICD" maemo-icd
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
+
+# If libicd-network-wlan-dev.h is not present, use own copy.
+# At time of writing, libicd-network-wlan-dev is not released for maemo5.
+echo "maemo5:contains(maemo-icd-network-wlan_enabled, no): INCLUDEPATH += $relpath/src/3rdparty/icd-network-wlan" >> "$CONFIG_IN"
 
 # Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
