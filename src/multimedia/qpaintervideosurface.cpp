@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qpaintervideosurface_p.h>
+#include "qpaintervideosurface_p.h"
 
 #include <qmath.h>
 

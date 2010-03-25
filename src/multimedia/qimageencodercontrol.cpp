@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qimageencodercontrol.h>
+#include "qimageencodercontrol.h"
 #include <QtCore/qstringlist.h>
 
 QTM_BEGIN_NAMESPACE

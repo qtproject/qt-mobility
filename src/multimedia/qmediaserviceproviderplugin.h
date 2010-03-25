@@ -46,7 +46,7 @@
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
 #include <qmobilityglobal.h>
-#include <qmediaserviceprovider.h>
+#include "qmediaserviceprovider.h"
 
 #ifdef Q_MOC_RUN
 # pragma Q_MOC_EXPAND_MACROS

@@ -44,8 +44,8 @@
 
 #include <QObject>
 
-#include <qmediacontent.h>
-#include <qmediaplaylist.h>
+#include "qmediacontent.h"
+#include "qmediaplaylist.h"
 
 QT_BEGIN_NAMESPACE
 class QString;

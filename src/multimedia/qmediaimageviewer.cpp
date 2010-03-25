@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include <qmediaimageviewer.h>
+#include "qmediaimageviewer.h"
 
-#include <qmediaobject_p.h>
-#include <qmediaimageviewerservice_p.h>
+#include "qmediaobject_p.h"
+#include "qmediaimageviewerservice_p.h"
 
-#include <qmediaplaylist.h>
-#include <qmediacontent.h>
-#include <qmediaresource.h>
+#include "qmediaplaylist.h"
+#include "qmediacontent.h"
+#include "qmediaresource.h"
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>
