@@ -270,6 +270,15 @@ void CntSimStorePrivate::RunL()
         case ReadState:
         {
             QList<QContact> contacts = decodeSimContactsL(m_buffer);
+
+            // set sync target
+            QList<QContact>::iterator i;
+            for (i = contacts.begin(); i != contacts.end(); ++i) {
+                QContactSyncTarget syncTarget;
+                syncTarget.setSyncTarget(KSimSyncTarget);
+                i->saveDetail(&syncTarget);
+            }
+            
             emit m_simStore.readComplete(contacts, QContactManager::NoError);
         }
         break;

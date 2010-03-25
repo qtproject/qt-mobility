@@ -6,7 +6,7 @@ include(../../common.pri)
 
 symbian {
     SUBDIRS += symbian
-    #contains(build_unit_tests, yes):SUBDIRS += symbian/tsrc
+    contains(build_unit_tests, yes):SUBDIRS += symbian/tsrc
     
     # SIM backend depends on etel MM APIs
     contains(symbiancntsim_enabled, yes) {

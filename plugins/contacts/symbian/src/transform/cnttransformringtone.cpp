@@ -50,34 +50,18 @@ QList<CContactItemField *> CntTransformRingtone::transformDetailL(const QContact
 
     QList<CContactItemField *> fieldList;
 
-    //cast to ringtone
     const QContactRingtone &ringtone(static_cast<const QContactRingtone&>(detail));
 
-	//create new field
     if (ringtone.audioRingtone().isValid()) {
-        TPtrC fieldText(reinterpret_cast<const TUint16*>(ringtone.audioRingtone().toString().utf16()));
-
-        TUid uid(KUidContactFieldRingTone);
-	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
-
-	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
-	    newField->TextStorage()->SetTextL(fieldText);
-
-	    fieldList.append(newField);
-	    CleanupStack::Pop(newField);
+        transformToTextFieldL(detail, fieldList,
+            ringtone.audioRingtone().toString(), KUidContactFieldRingTone,
+            KUidContactFieldVCardMapUnknown, false);
 	}
 
     if (ringtone.videoRingtone().isValid()) {
-        TPtrC fieldText(reinterpret_cast<const TUint16*>(ringtone.videoRingtone().toString().utf16()));
-
-        TUid uid(KUidContactFieldVideoRingTone);
-        CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
-
-        newField->SetMapping(KUidContactFieldVCardMapUnknown);
-        newField->TextStorage()->SetTextL(fieldText);
-
-        fieldList.append(newField);
-        CleanupStack::Pop(newField);
+        transformToTextFieldL(detail, fieldList,
+            ringtone.videoRingtone().toString(), KUidContactFieldVideoRingTone,
+            KUidContactFieldVCardMapUnknown, false);
     }
 
 	return fieldList;
