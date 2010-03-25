@@ -42,10 +42,10 @@
 #ifndef QMETADATACONTROL_H
 #define QMETADATACONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediaobject.h>
+#include "qmediacontrol.h"
+#include "qmediaobject.h"
 
-#include <qmediaresource.h>
+#include "qmediaresource.h"
 
 QTM_BEGIN_NAMESPACE
 

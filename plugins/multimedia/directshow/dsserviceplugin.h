@@ -42,7 +42,7 @@
 #ifndef DSSERVICEPLUGIN_H
 #define DSSERVICEPLUGIN_H
 
-#include <qmediaserviceproviderplugin.h>
+#include "../../../src/multimedia/qmediaserviceproviderplugin.h"
 
 QTM_USE_NAMESPACE
 

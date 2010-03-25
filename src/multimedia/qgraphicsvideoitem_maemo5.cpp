@@ -48,17 +48,17 @@
 #include <QtGui/qscrollbar.h>
 #include <QtGui/qx11info_x11.h>
 
-#include <qgraphicsvideoitem.h>
+#include "qgraphicsvideoitem.h"
 
-#include <qmediaobject.h>
-#include <qmediaservice.h>
-#include <qpaintervideosurface_p.h>
-#include <qvideooutputcontrol.h>
-#include <qvideorenderercontrol.h>
+#include "qmediaobject.h"
+#include "qmediaservice.h"
+#include "qpaintervideosurface_p.h"
+#include "qvideooutputcontrol.h"
+#include "qvideorenderercontrol.h"
 
 #include <QtMultimedia/qvideosurfaceformat.h>
 
-#include <qxvideosurface_maemo5_p.h>
+#include "qxvideosurface_maemo5_p.h"
 
 
 QTM_BEGIN_NAMESPACE
