@@ -101,9 +101,7 @@ QMessageStore::QMessageStore(QObject *parent)
 {
     Q_ASSERT(d_ptr != 0);
     Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
-    qDebug() << "QMessageStore::QMessageStore";
  //   d_ptr->initialize(this);
-    qDebug() << "QMessageStore::QMessageStore exit";
 }
 
 QMessageStore::~QMessageStore()
@@ -133,6 +131,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     bool isSorted = false;
     messageIds = ModestEngine::instance()->queryMessagesSync(filter, sortOrder, limit, offset,
                                                              isFiltered, isSorted);
+    messageIds += d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
     if (!isFiltered) {
         MessagingHelper::filterMessages(messageIds, filter);
     }
@@ -146,12 +145,14 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
 QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
+
     QMessageIdList messageIds;
 
     bool isFiltered = false;
     bool isSorted = false;
     messageIds = ModestEngine::instance()->queryMessagesSync(filter, body, matchFlags, sortOrder, limit, offset,
                                                              isFiltered, isSorted);
+    messageIds +=d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,body,matchFlags);
     if (!isFiltered) {
         MessagingHelper::filterMessages(messageIds, filter);
     }
@@ -349,7 +350,7 @@ QMessage QMessageStore::message(const QMessageId& id) const
     if (id.toString().startsWith("MO_")) {
         return ModestEngine::instance()->message(id);
     } else {
-        return d_ptr->p_ptr->el->getMessage(id);
+        return d_ptr->p_ptr->el->message(id);
     }
 }
 
