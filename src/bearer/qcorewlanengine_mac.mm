@@ -471,9 +471,7 @@ QString QCoreWlanEngine::getNetworkNameFromSsid(const QString &ssid)
              if(ij.key() == ssid) {
                  return i.key();
              }
-
          }
-            return map.key(ssid);
     }
     return QString();
 }
