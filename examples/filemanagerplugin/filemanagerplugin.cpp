@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include "../../src/serviceframework/qserviceinterfacedescriptor.h"
-#include "../../src/serviceframework/qabstractsecuritysession.h"
-#include "../../src/serviceframework/qservicecontext.h"
+#include <qserviceinterfacedescriptor.h>
+#include <qabstractsecuritysession.h>
+#include <qservicecontext.h>
 
 #include "filemanagerplugin.h"
 #include "filemanagerstorage.h"

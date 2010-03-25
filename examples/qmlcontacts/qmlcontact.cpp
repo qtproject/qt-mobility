@@ -88,22 +88,22 @@ QString QmlContact::name()
            result += name.value(QContactName::FieldPrefix);
         }
 
-        if (!name.value(QContactName::FieldFirstName).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldFirst).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QContactName::FieldFirstName);
+            result += name.value(QContactName::FieldFirst);
         }
 
-        if (!name.value(QContactName::FieldMiddleName).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldMiddle).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QContactName::FieldMiddleName);
+            result += name.value(QContactName::FieldMiddle);
         }
 
-        if (!name.value(QContactName::FieldLastName).trimmed().isEmpty()) {
+        if (!name.value(QContactName::FieldLast).trimmed().isEmpty()) {
             if (!result.isEmpty())
                 result += space;
-            result += name.value(QContactName::FieldLastName);
+            result += name.value(QContactName::FieldLast);
         }
 
         if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {

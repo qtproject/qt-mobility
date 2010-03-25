@@ -49,8 +49,8 @@
 #include <QtDeclarative/QDeclarativeView>
 
 //Includes for using the service framework
-#include "../../../src/serviceframework/qserviceinterfacedescriptor.h"
-#include "../../../src/serviceframework/qservicemanager.h"
+#include <qserviceinterfacedescriptor.h>
+#include <qservicemanager.h>
 //! [0]
 
 #include "sfwexample.h"

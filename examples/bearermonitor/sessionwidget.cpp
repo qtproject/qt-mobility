@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "sessionwidget.h"
-#include "../../src/bearer/qnetworkconfigmanager.h"
+#include "qnetworkconfigmanager.h"
 
 SessionWidget::SessionWidget(const QNetworkConfiguration &config, QWidget *parent)
 :   QWidget(parent)

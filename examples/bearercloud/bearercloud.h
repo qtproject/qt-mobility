@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "../../src/bearer/qnetworkconfigmanager.h"
+#include <qnetworkconfigmanager.h>
 
 #include <QGraphicsScene>
 #include <QMap>

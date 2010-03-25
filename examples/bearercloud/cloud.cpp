@@ -42,7 +42,7 @@
 #include "cloud.h"
 #include "bearercloud.h"
 
-#include "../../src/bearer/qnetworksession.h"
+#include <qnetworksession.h>
 
 #include <QGraphicsTextItem>
 #include <QGraphicsSvgItem>

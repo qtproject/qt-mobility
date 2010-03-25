@@ -40,8 +40,8 @@
 ***************************************************************************/
 
 #include <QtCore>
-#include "../../src/serviceframework/qserviceinterfacedescriptor.h"
-#include "../../src/serviceframework/qservicemanager.h"
+#include <qserviceinterfacedescriptor.h>
+#include <qservicemanager.h>
 #include <qdeclarative.h>
 
 QTM_USE_NAMESPACE
