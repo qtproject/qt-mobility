@@ -90,5 +90,7 @@ contains(mobility_modules,sensors) {
 }
 
 contains(mobility_modules,gallery) {
-    SUBDIRS += mediabrowser
+    SUBDIRS += \
+        documentmanager \
+        mediabrowser
 }
