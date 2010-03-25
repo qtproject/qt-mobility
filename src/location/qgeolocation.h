@@ -43,7 +43,7 @@
 #define QLOCATION_GEOPLACE_H
 
 #include "qmobilityglobal.h"
-#include <QSharedPointer>
+#include <QSharedDataPointer>
 
 class QString;
 class QRectF;
@@ -75,7 +75,7 @@ public:
     void setAddress(const QGeoAddress &address);
 
 private:
-    QSharedPointer<QGeoLocationPrivate> d;
+    QSharedDataPointer<QGeoLocationPrivate> d;
 };
 
 QTM_END_NAMESPACE

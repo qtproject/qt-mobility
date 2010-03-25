@@ -61,6 +61,7 @@ QTM_USE_NAMESPACE
     Creates an invalid identifier, id() and managerUri() will return null strings
 */
 QLandmarkId::QLandmarkId()
+    :d(new QLandmarkIdPrivate)
 {
 }
 

@@ -74,6 +74,7 @@ QGeoLocationPrivate::~QGeoLocationPrivate()
     Default constructor.
 */
 QGeoLocation::QGeoLocation()
+    :d(new QGeoLocationPrivate)
 {
 }
 

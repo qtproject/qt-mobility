@@ -134,16 +134,16 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     categoryId() is called.
 */
 QLandmark::QLandmark()
+    :d(new QLandmarkPrivate)
 {
-    d = new QLandmarkPrivate();
 }
 
 /*!
     Constructs a copy of \a other.
 */
 QLandmark::QLandmark(const QLandmark &other)
+    :d(other.d)
 {
-    d = new QLandmarkPrivate(*(other.d));
 }
 
 /*!
