@@ -9,7 +9,9 @@ DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 INCLUDEPATH += .
 DEPENDPATH += .
 
-PUBLIC_HEADERS += qgeocoordinate.h \
+PUBLIC_HEADERS += qgeoaddress.h \
+                  qgeolocation.h \
+                  qgeocoordinate.h \
                   qgeopositioninfo.h \
                   qgeosatelliteinfo.h \
                   qgeosatelliteinfosource.h \
@@ -129,14 +131,12 @@ maemo5 {
 }
 
 # maps header files - sort into public and private later
-HEADERS += qgeoaddress.h \
-           qgeocodingreply.h \
+HEADERS += qgeocodingreply.h \
            qgeocodingreply_p.h \
            qgeocodingrequest.h \
            qgeocodingrequest_p.h \
            qgeocodingxmlparser.h \
            qgeoengine.h \
-           qgeolocation.h \
            qgeonetworkmanager.h \
            qgeonetworkmanager_p.h \
            qgeoreply.h \
