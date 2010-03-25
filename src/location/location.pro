@@ -42,7 +42,6 @@ PUBLIC_HEADERS += qgeocoordinate.h \
                   qlandmarkcategoryfilter.h \
                   qlandmarkintersectionfilter.h \
                   qlandmarkunionfilter.h \
-                  qlandmarkunionfilter.h \
                   qlandmarkcustomfilter.h \
                   qlandmarksortorder.h \
                   qlandmarknamesort.h \
@@ -102,7 +101,7 @@ maemo6 {
                 qgeosatelliteinfosource_maemo.cpp \
                 dbuscomm_maemo.cpp \
                 dbusserver_maemo.cpp
-    HEADERS += qgeopositioninfosource_maemo_p.h \
+    PRIVATE_HEADERS += qgeopositioninfosource_maemo_p.h \
                 qgeosatelliteinfosource_maemo_p.h \
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
@@ -115,7 +114,7 @@ maemo5 {
                qgeopositioninfosource_maemo5.cpp \
                qgeosatelliteinfosource_maemo5.cpp \
                qgeoareamonitor_maemo.cpp
-    HEADERS += gconfitem.h  \
+    PRIVATE_HEADERS += gconfitem.h  \
                liblocationwrapper.h \
                qgeopositioninfosource_maemo5_p.h \
                qgeosatelliteinfosource_maemo5_p.h \
@@ -129,60 +128,63 @@ maemo5 {
 }
 
 # maps header files - sort into public and private later
-HEADERS += qgeoaddress.h \
-           qalternativeaddress.h \
-           qgeocodingreply.h \
-           qgeocodingreply_p.h \
-           qgeocodingrequest.h \
-           qgeocodingrequest_p.h \
-           qgeocodingxmlparser.h \
-           qgeoengine.h \
-           qgeolocation.h \
-           qgeonetworkmanager.h \
-           qgeonetworkmanager_p.h \
-           qgeoreply.h \
-           qmaneuver.h \
-           qmapellipse.h \
-           qmapellipse_p.h \
-           qmapline.h \
-           qmapline_p.h \
-           qmapmarker.h \
-           qmapmarker_p.h \
-           qmapobject.h \
-           qmapobject_p.h \
-           qmappixmap.h \
-           qmappixmap_p.h \
-           qmappolygon.h \
-           qmappolygon_p.h \
-           qmaprect.h \
-           qmaprect_p.h\
-           qmaproute.h \
-           qmaproute_p.h \
-           qmaptile.h \
-           qmaptilecache.h \
-           qmaptilereply.h \
-           qmaptilerequest.h \
-           qmapview.h \
-           qmapview_p.h \
-           qreversegeocodingrequest.h \
-           qroute.h \
-           qroutereply.h \
-           qroutereply_p.h \
-           qrouterequest.h \
-           qrouterequest_p.h \
-           qroutexmlparser.h \
-           qlandmarkfilter_p.h \
-           qgeoaddress_p.h
+PUBLIC_HEADERS +=   qgeoaddress.h \
+                    qalternativeaddress.h \
+                    qgeocodingreply.h \
+                    qgeocodingrequest.h \
+                    qgeoengine.h \
+                    qgeolocation.h \
+                    qgeonetworkmanager.h \
+                    qgeoreply.h \
+                    qmaneuver.h \
+                    qmapellipse.h \
+                    qmapline.h \
+                    qmapmarker.h \
+                    qmapobject.h \
+                    qmappixmap.h \
+                    qmappolygon.h \
+                    qmaprect.h \
+                    qmaproute.h \
+                    qmaptile.h \
+                    qmaptilecache.h \
+                    qmaptilereply.h \
+                    qmaptilerequest.h \
+                    qmapview.h \
+                    qreversegeocodingrequest.h \
+                    qroute.h \
+                    qroutereply.h \
+                    qrouterequest.h
+
+PRIVATE_HEADERS +=  qgeocodingreply_p.h \
+                    qgeocodingrequest_p.h \
+                    qgeocodingxmlparser_nokia_p.h \
+                    qgeolocation_p.h \
+                    qgeonetworkmanager_p.h \
+                    qmaneuver_p.h \
+                    qmapellipse_p.h \
+                    qmapline_p.h \
+                    qmapmarker_p.h \
+                    qmapobject_p.h \
+                    qmappixmap_p.h \
+                    qmappolygon_p.h \
+                    qmaprect_p.h\
+                    qmaproute_p.h \
+                    qmaptilerequest_p.h \
+                    qmaptilereply_p.h \
+                    qmapview_p.h \
+                    qreversegeocodingrequest_p.h \
+                    qroute_p.h \
+                    qroutereply_p.h \
+                    qrouterequest_p.h \
+                    qroutexmlparser_nokia_p.h \
+                    qlandmarkfilter_p.h \
+                    qgeoaddress_p.h
+
 
 # my experimental qgeoengine files
-PUBLIC_HEADERS +=   qdlgeoreply.h \
-                    qdlgeonetworkreply.h \
-                    qdlgeocodingreply.h \
-                    qdlroutereply.h \
-                    qdlmaptilereply.h
-PRIVATE_HEADERS +=  qdlnokiageocodingreply_p.h \
-                    qdlnokiaroutereply_p.h \
-                    qdlnokiamaptilereply_p.h
+PRIVATE_HEADERS +=  qgeocodingreply_nokia_p.h \
+                    qroutereply_nokia_p.h \
+                    qmaptilereply_nokia_p.h
            
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
@@ -230,7 +232,7 @@ SOURCES += qgeoaddress.cpp \
            qalternativeaddress.cpp \
            qgeocodingreply.cpp \
            qgeocodingrequest.cpp \
-           qgeocodingxmlparser.cpp \
+           qgeocodingxmlparser_nokia.cpp \
            qgeoengine.cpp \
            qgeolocation.cpp \
            qgeonetworkmanager.cpp \
@@ -253,17 +255,12 @@ SOURCES += qgeoaddress.cpp \
            qroute.cpp \
            qroutereply.cpp \
            qrouterequest.cpp \
-            qroutexmlparser.cpp
+           qroutexmlparser_nokia.cpp
 
 # my experimental qgeoengine files
-SOURCES +=  qdlgeoreply.cpp \
-            qdlgeonetworkreply.cpp \
-            qdlgeocodingreply.cpp \
-            qdlroutereply.cpp \
-            qdlmaptilereply.cpp \
-            qdlnokiageocodingreply_p.cpp \
-            qdlnokiaroutereply_p.cpp \
-            qdlnokiamaptilereply_p.cpp
+SOURCES +=  qgeocodingreply_nokia.cpp \
+            qroutereply_nokia.cpp \
+            qmaptilereply_nokia.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

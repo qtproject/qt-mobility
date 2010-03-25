@@ -52,13 +52,11 @@
 #include "qrouterequest.h"
 #include "qrouterequest_p.h"
 #include "qroutereply.h"
-#include "qroutexmlparser.h"
 #include "qgeocodingreply.h"
-#include "qgeocodingxmlparser.h"
 
-#include "qdlnokiaroutereply_p.h"
-#include "qdlnokiageocodingreply_p.h"
-#include "qdlnokiamaptilereply_p.h"
+#include "qroutereply_nokia_p.h"
+#include "qgeocodingreply_nokia_p.h"
+#include "qmaptilereply_nokia_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -194,11 +192,13 @@ void QGeoNetworkManager::setMapProxy(const QNetworkProxy& proxy)
 
 /*!
     Submits a route request \a request and returns the corresponding QRouteReply.
-    \note Due to the asynchronous nature of requests,
-          you should never directly start working with the returned
-          reply, but instead wait for the finished(QRouteReply*) signal.
+
+    \note Due to the asynchronous nature of requests, you should wait for the
+    QGeoEngine::finished(QRouteReply*) signal from this object or the
+    QRouteReply::finished() signal from the returned QRouteReply object before
+    working with the reply.
 */
-QDLRouteReply* QGeoNetworkManager::get(const QRouteRequest& request)
+QRouteReply* QGeoNetworkManager::get(const QRouteRequest& request)
 {
     Q_D(QGeoNetworkManager);
     return d->get(request);
@@ -206,11 +206,13 @@ QDLRouteReply* QGeoNetworkManager::get(const QRouteRequest& request)
 
 /*!
     Submits a geocoding request \a request and returns the corresponding QGeocodingReply.
-    \note Due to the asynchronous nature of requests,
-          you should never directly start working with the returned
-          reply, but instead wait for the finished(QGeocodingReply*) signal.
+
+     \note Due to the asynchronous nature of requests, you should wait for the
+    QGeoEngine::finished(QGeocodingReply*) signal from this object or the
+    QGeocodingReply::finished() signal from the returned QGeocodingReply object before
+    working with the reply.
 */
-QDLGeocodingReply* QGeoNetworkManager::get(const QGeocodingRequest& request)
+QGeocodingReply* QGeoNetworkManager::get(const QGeocodingRequest& request)
 {
     Q_D(QGeoNetworkManager);
     return d->get(request);
@@ -218,11 +220,13 @@ QDLGeocodingReply* QGeoNetworkManager::get(const QGeocodingRequest& request)
 
 /*!
     Submits a reverse geocoding request \a request and return the corresponding QGeocodingReply.
-    \note Due to the asynchronous nature of requests,
-          you should never directly start working with the returned
-          reply, but instead wait for the finished(QGeocodingReply*) signal.
+
+     \note Due to the asynchronous nature of requests, you should wait for the
+    QGeoEngine::finished(QGeocodingReply*) signal from this object or the
+    QGeocodingReply::finished() signal from the returned QGeocodingReply object before
+    working with the reply.
 */
-QDLGeocodingReply* QGeoNetworkManager::get(const QReverseGeocodingRequest& request)
+QGeocodingReply* QGeoNetworkManager::get(const QReverseGeocodingRequest& request)
 {
     Q_D(QGeoNetworkManager);
     return d->get(request);
@@ -231,15 +235,17 @@ QDLGeocodingReply* QGeoNetworkManager::get(const QReverseGeocodingRequest& reque
 /*!
     Submits a map tile request \a request and returns the corresponding QMapTileReply.
 
-    \note Due to the potentially asynchronous nature of requests,
-          you should never directly start working with the returned
-          reply, but instead wait for the finished(QMapTileReply*) signal.
+     \note Due to the asynchronous nature of requests, you should wait for the
+    QGeoEngine::finished(QMapTileReply*) signal from this object or the
+    QMapTileReply::finished() signal from the returned QMapTileReply object before
+    working with the reply.
+
     \note If the request can be served from the tile cache,
           this method will directly emit finished(QRouteReply*).
           If you need the returned QMapTileReply object first,
           you should connect to finished(QRouteReply*) with Qt::QueuedConnection.
 */
-QDLMapTileReply* QGeoNetworkManager::get(const QMapTileRequest& request)
+QMapTileReply* QGeoNetworkManager::get(const QMapTileRequest& request)
 {
     Q_D(QGeoNetworkManager);
     return d->get(request);
@@ -301,7 +307,7 @@ QGeoNetworkManagerPrivate::~QGeoNetworkManagerPrivate()
 {
 }
 
-QDLRouteReply* QGeoNetworkManagerPrivate::get(const QRouteRequest& request)
+QRouteReply* QGeoNetworkManagerPrivate::get(const QRouteRequest& request)
 {
     QString rawRequest = request.requestString(rtSrv);
     netManager.setProxy(rtProx);
@@ -309,21 +315,21 @@ QDLRouteReply* QGeoNetworkManagerPrivate::get(const QRouteRequest& request)
     QNetworkRequest* netRequest = new QNetworkRequest(QUrl(rawRequest));
     QNetworkReply* netReply = netManager.get(*netRequest);
 
-    QDLRouteReply* routeReply = new QDLNokiaRouteReply(netReply);
+    QRouteReply* routeReply = new QRouteReplyNokia(netReply);
 
     connect(routeReply,
             SIGNAL(finished()),
             this,
             SLOT(finishedRouteRequest()));
     connect(routeReply,
-            SIGNAL(error(QDLGeoReply::ErrorCode, QString)),
+            SIGNAL(error(QRouteReply::ErrorCode, QString)),
             this,
-            SLOT(errorRouteRequest(QDLGeoReply::ErrorCode, QString)));
+            SLOT(errorRouteRequest(QRouteReply::ErrorCode, QString)));
 
     return routeReply;
 }
 
-QDLGeocodingReply* QGeoNetworkManagerPrivate::get(const QGeocodingRequest& request)
+QGeocodingReply* QGeoNetworkManagerPrivate::get(const QGeocodingRequest& request)
 {
     QString rawRequest = request.requestString(geocdSrv);
     netManager.setProxy(geocdProx);
@@ -331,21 +337,21 @@ QDLGeocodingReply* QGeoNetworkManagerPrivate::get(const QGeocodingRequest& reque
     QNetworkRequest* netRequest = new QNetworkRequest(QUrl(rawRequest));
     QNetworkReply* reply = netManager.get(*netRequest);
 
-    QDLGeocodingReply* codingReply = new QDLNokiaGeocodingReply(reply);
+    QGeocodingReply* codingReply = new QGeocodingReplyNokia(reply);
 
     connect(codingReply,
             SIGNAL(finished()),
             this,
             SLOT(finishedGeocodingRequest()));
     connect(codingReply,
-            SIGNAL(error(QDLGeoReply::ErrorCode, QString)),
+            SIGNAL(error(QGeocodingReply::ErrorCode, QString)),
             this,
-            SLOT(errorGeocodingRequest(QDLGeoReply::ErrorCode, QString)));
+            SLOT(errorGeocodingRequest(QGeocodingReply::ErrorCode, QString)));
 
     return codingReply;
 }
 
-QDLGeocodingReply* QGeoNetworkManagerPrivate::get(const QReverseGeocodingRequest& request)
+QGeocodingReply* QGeoNetworkManagerPrivate::get(const QReverseGeocodingRequest& request)
 {
     QString rawRequest = request.requestString(geocdSrv);
     netManager.setProxy(geocdProx);
@@ -353,60 +359,52 @@ QDLGeocodingReply* QGeoNetworkManagerPrivate::get(const QReverseGeocodingRequest
     QNetworkRequest* netRequest = new QNetworkRequest(QUrl(rawRequest));
     QNetworkReply* reply = netManager.get(*netRequest);
 
-    QDLGeocodingReply* codingReply = new QDLNokiaGeocodingReply(reply);
+    QGeocodingReply* codingReply = new QGeocodingReplyNokia(reply);
 
     connect(codingReply,
             SIGNAL(finished()),
             this,
             SLOT(finishedGeocodingRequest()));
     connect(codingReply,
-            SIGNAL(error(QDLGeoReply::ErrorCode, QString)),
+            SIGNAL(error(QGeocodingReply::ErrorCode, QString)),
             this,
-            SLOT(errorGeocodingRequest(QDLGeoReply::ErrorCode, QString)));
+            SLOT(errorGeocodingRequest(QGeocodingReply::ErrorCode, QString)));
 
     return codingReply;
 }
 
-QDLMapTileReply* QGeoNetworkManagerPrivate::get(const QMapTileRequest& request)
+QMapTileReply* QGeoNetworkManagerPrivate::get(const QMapTileRequest& request)
 {
     //check cache first
-    QDLMapTileReply* tileReply = NULL;
+    QMapTileReply* tileReply = NULL;
 
     if ((tileReply = cache.get(request))) {
-        emit tileReply->finished();
+        connect(tileReply,
+                SIGNAL(finished()),
+                this,
+                SLOT(finishedMapTileRequest()));
+        connect(tileReply,
+                SIGNAL(error(QMapTileReply::ErrorCode, QString)),
+                this,
+                SLOT(errorMapTileRequest(QMapTileReply::ErrorCode, QString)));
+        tileReply->done();
     } else {
-        QString rawRequest = "http://" % mapSrv % "/maptiler/maptile/" %
-                             request.version().id % '/' %
-                             request.scheme().id % '/' %
-                             QString::number(request.zoomLevel()) % '/' %
-                             QString::number(request.col()) % '/' %
-                             QString::number(request.row()) % '/' %
-                             request.resolution().id % '/' %
-                             request.format().id;
-
-        if (!token.isEmpty()) {
-            rawRequest = rawRequest % "?token=" % token;
-
-            if (!referrer.isEmpty())
-                rawRequest = rawRequest % "&referrer=" % referrer;
-        } else if (!referrer.isEmpty())
-            rawRequest = rawRequest % "?referrer=" % referrer;
+        QString rawRequest = request.requestString(mapSrv, token, referrer);
 
         netManager.setProxy(mapProx);
         QNetworkRequest* netRequest = new QNetworkRequest(QUrl(rawRequest));
         QNetworkReply* reply = netManager.get(*netRequest);
 
-        //tileReply = new QMapTileReply(request);
-        tileReply = new QDLNokiaMapTileReply(reply);
+        tileReply = new QMapTileReplyNokia(request, reply);
 
         connect(tileReply,
                 SIGNAL(finished()),
                 this,
                 SLOT(finishedMapTileRequest()));
         connect(tileReply,
-                SIGNAL(error(QDLGeoReply::ErrorCode, QString)),
+                SIGNAL(error(QMapTileReply::ErrorCode, QString)),
                 this,
-                SLOT(errorMapTileRequest(QDLGeoReply::ErrorCode, QString)));
+                SLOT(errorMapTileRequest(QMapTileReply::ErrorCode, QString)));
     }
 
     return tileReply;
@@ -416,49 +414,52 @@ QDLMapTileReply* QGeoNetworkManagerPrivate::get(const QMapTileRequest& request)
 void QGeoNetworkManagerPrivate::finishedRouteRequest()
 {
     Q_Q(QGeoNetworkManager);
-    emit q->finished(static_cast<QDLRouteReply *>(this->sender()));
+    emit q->finished(static_cast<QRouteReply *>(this->sender()));
 }
 
 void QGeoNetworkManagerPrivate::finishedGeocodingRequest()
 {
     Q_Q(QGeoNetworkManager);
-    emit q->finished(static_cast<QDLGeocodingReply *>(this->sender()));
+    emit q->finished(static_cast<QGeocodingReply *>(this->sender()));
 }
 
 void QGeoNetworkManagerPrivate::finishedMapTileRequest()
 {
     Q_Q(QGeoNetworkManager);
-    /*
-    if (tileReply->data.length() > 0)
-        d->cache.cache(*tileReply);
-    */
-    emit q->finished(static_cast<QDLMapTileReply *>(this->sender()));
+
+    QMapTileReply *reply = static_cast<QMapTileReply *>(this->sender());
+
+    if (reply->data().length() > 0)
+        cache.cache(reply->request(), *reply);
+
+    emit q->finished(reply);
 }
 
-void QGeoNetworkManagerPrivate::errorRouteRequest(QDLGeoReply::ErrorCode errorCode, const QString &errorString)
+void QGeoNetworkManagerPrivate::errorRouteRequest(QRouteReply::ErrorCode errorCode, const QString &errorString)
 {
     Q_Q(QGeoNetworkManager);
     // TODO abort request - or has this already happened?
-    emit q->error(static_cast<QDLRouteReply *>(this->sender()), errorCode, errorString);
+    emit q->error(static_cast<QRouteReply *>(this->sender()), errorCode, errorString);
 }
 
-void QGeoNetworkManagerPrivate::errorGeocodingRequest(QDLGeoReply::ErrorCode errorCode, const QString &errorString)
+void QGeoNetworkManagerPrivate::errorGeocodingRequest(QGeocodingReply::ErrorCode errorCode, const QString &errorString)
 {
     Q_Q(QGeoNetworkManager);
     // TODO abort request - or has this already happened?
-    emit q->error(static_cast<QDLGeocodingReply *>(this->sender()), errorCode, errorString);
+    emit q->error(static_cast<QGeocodingReply *>(this->sender()), errorCode, errorString);
 }
 
-void QGeoNetworkManagerPrivate::errorMapTileRequest(QDLGeoReply::ErrorCode errorCode, const QString &errorString)
+void QGeoNetworkManagerPrivate::errorMapTileRequest(QMapTileReply::ErrorCode errorCode, const QString &errorString)
 {
     Q_Q(QGeoNetworkManager);
     // TODO abort request - or has this already happened?
     // evict from cache?
-    emit q->error(static_cast<QDLMapTileReply *>(this->sender()), errorCode, errorString);
+    emit q->error(static_cast<QMapTileReply *>(this->sender()), errorCode, errorString);
 }
 
 
 #include "moc_qgeonetworkmanager.cpp"
+#include "moc_qgeonetworkmanager_p.cpp"
 
 QTM_END_NAMESPACE
 

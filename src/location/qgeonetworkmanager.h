@@ -75,10 +75,10 @@ public:
     QNetworkProxy mapProxy() const;
     void setMapProxy(const QNetworkProxy& proxy);
 
-    virtual QDLRouteReply* get(const QRouteRequest& request);
-    virtual QDLGeocodingReply* get(const QGeocodingRequest& request);
-    virtual QDLGeocodingReply* get(const QReverseGeocodingRequest& request);
-    virtual QDLMapTileReply* get(const QMapTileRequest& request);
+    virtual QRouteReply* get(const QRouteRequest& request);
+    virtual QGeocodingReply* get(const QGeocodingRequest& request);
+    virtual QGeocodingReply* get(const QReverseGeocodingRequest& request);
+    virtual QMapTileReply* get(const QMapTileRequest& request);
 
     virtual quint16 maxZoomLevel() const;
     virtual QList<MapVersion> versions() const;

@@ -39,60 +39,32 @@
 **
 ****************************************************************************/
 
-#include "qdlgeonetworkreply.h"
+#ifndef QMAPTILEREPLY_NOKIA_P_H
+#define QMAPTILEREPLY_NOKIA_P_H
+
+#include "qmaptilereply.h"
 
 #include <QNetworkReply>
 
 QTM_BEGIN_NAMESPACE
 
-QDLGeoNetworkReply::QDLGeoNetworkReply(QNetworkReply *reply)
-    : m_reply(reply)
+class QMapTileReplyNokia : public QMapTileReply
 {
-    connect(m_reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(networkReplyFinished()));
-    connect(m_reply,
-            SIGNAL(error(QNetworkReply::NetworkError)),
-            this,
-            SLOT(networkError(QNetworkReply::NetworkError)));
-}
+    Q_OBJECT
 
-QDLGeoNetworkReply::~QDLGeoNetworkReply()
-{
-    if (m_reply) {
-        m_reply->deleteLater();
-    }
-}
+public:
+    QMapTileReplyNokia(const QMapTileRequest &request, QNetworkReply *reply);
+    ~QMapTileReplyNokia();
 
-void QDLGeoNetworkReply::networkReplyFinished()
-{
-    emit readyToParse(m_reply);
-}
-
-void QDLGeoNetworkReply::networkError(QNetworkReply::NetworkError networkError)
-{
-    // TODO map errors across
-    emit error(QDLGeoReply::UnknownError, m_reply->errorString());
-}
-
-void QDLGeoNetworkReply::cancel()
-{
-    if (m_reply) {
-        m_reply->abort();
-    }
-}
-
-#include "moc_qdlgeonetworkreply.cpp"
-
-QTM_END_NAMESPACE
-
-/*
-signals:
-    void readyToParse(QIODevice *input);
-    void error(QDLGeoReply::ErrorCode errorCode, QString errorString = QString());
+public slots:
+    virtual void parse();
+    virtual void translateError(QNetworkReply::NetworkError errorCode);
+    virtual void cancel();
 
 private:
     QNetworkReply *m_reply;
 };
-*/
+
+QTM_END_NAMESPACE
+
+#endif

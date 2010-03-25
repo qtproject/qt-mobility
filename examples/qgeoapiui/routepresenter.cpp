@@ -64,14 +64,17 @@ QTreeWidgetItem* RoutePresenter::showRoutes()
     QTreeWidgetItem* top = new QTreeWidgetItem(treeWidget);
     top->setText(0, "routes");
 
+    /*
     QTreeWidgetItem* prop = new QTreeWidgetItem(top);
     prop->setText(0, "result");
     prop->setText(1, QString().setNum((quint16) routeReply->resultCode()));
+    */
 
-    prop = new QTreeWidgetItem(top);
+    QTreeWidgetItem* prop = new QTreeWidgetItem(top);
     prop->setText(0, "description");
-    prop->setText(1, routeReply->resultDescription());
+    prop->setText(1, routeReply->description());
 
+    /*
     QString lang = routeReply->language();
 
     if (!lang.isEmpty()) {
@@ -79,10 +82,11 @@ QTreeWidgetItem* RoutePresenter::showRoutes()
         prop->setText(0, "language");
         prop->setText(1, lang);
     }
+    */
 
     prop = new QTreeWidgetItem(top);
     prop->setText(0, "count");
-    prop->setText(1, QString().setNum(routeReply->count()));
+    prop->setText(1, QString().setNum(routeReply->routes().size()));
 
     return top;
 }

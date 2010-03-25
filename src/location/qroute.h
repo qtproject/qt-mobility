@@ -50,28 +50,33 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QRoutePrivate;
 class Q_LOCATION_EXPORT QRoute
 {
-    friend class QRouteXmlParser;
-
 public:
     QRoute();
     QRoute(const QRoute& route);
     QRoute& operator=(const QRoute& route);
+    ~QRoute();
 
-    QDateTime departure() const;
-    QDateTime arrival() const;
+    QDateTime timeOfDeparture() const;
+    void setTimeOfDeparture(const QDateTime &timeOfDeparture);
+
+    QDateTime timeOfArrival() const;
+    void setTimeOfArrival(const QDateTime &timeOfArrival);
+
     quint32 distance() const;
+    void setDistance(quint32 distance);
+
     const QRectF& boundingBox() const;
+    void setBoundingBox(const QRectF &boundingBox);
+
     QList<QManeuver> maneuvers() const;
+    void setManeuvers(const QList<QManeuver> &maneuvers);
 
-protected:
-    quint32 dist;
-    QDateTime tod;
-    QDateTime toa;
-
-    QRectF box;
-    QList<QManeuver> man;
+private:
+    QRoutePrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QRoute);
 };
 
 QTM_END_NAMESPACE

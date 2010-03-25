@@ -153,7 +153,7 @@ public:
     * into the cache.
     * @param reply The reply containing the map tile.
     */
-    void cache(QMapTileReply& reply);
+    void cache(const QMapTileRequest &request, const QMapTileReply& reply);
     /*!
     * @return The current size of the cache.
     */

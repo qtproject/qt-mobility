@@ -39,32 +39,23 @@
 **
 ****************************************************************************/
 
-#ifndef QDLNOKIAROUTEREPLY_H
-#define QDLNOKIAROUTEREPLY_H
+#ifndef QMAPTILEREPLY_P_H
+#define QMAPTILEREPLY_P_H
 
-#include "qdlroutereply.h"
-#include "qdlgeonetworkreply.h"
-
-#include <QNetworkReply>
+#include "qmaptilerequest.h"
+#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
-class QDLNokiaRouteReply : public QDLRouteReply
+class QMapTileReplyPrivate
 {
-    Q_OBJECT
-
 public:
-    QDLNokiaRouteReply(QNetworkReply *reply);
-    ~QDLNokiaRouteReply();
+    QMapTileReplyPrivate();
 
-public slots:
-    virtual void parse(QIODevice *input);
-    virtual void cancel();
-
-private:
-    QDLGeoNetworkReply *m_reply;
+    QMapTileRequest request;
+    QByteArray data;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QMAPTILEREPLY_P_H

@@ -41,6 +41,7 @@
 ****************************************************************************/
 
 #include "qroute.h"
+#include "qroute_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,14 +57,16 @@ QTM_BEGIN_NAMESPACE
 /*!
     The default constructor.
 */
-QRoute::QRoute() {}
+QRoute::QRoute()
+    : d_ptr(new QRoutePrivate())
+{}
 
 
 /*!
     The copy constructor.
 */
 QRoute::QRoute(const QRoute& route)
-        : dist(route.dist), tod(route.tod), toa(route.toa), box(route.box), man(route.man)
+    : d_ptr(new QRoutePrivate(*(route.d_ptr)))
 {
 }
 
@@ -72,29 +75,52 @@ QRoute::QRoute(const QRoute& route)
 */
 QRoute& QRoute::operator=(const QRoute & route)
 {
-    dist = route.dist;
-    tod = route.tod;
-    toa = route.toa;
-    box = route.box;
-    man = route.man;
-
+    *d_ptr = *(route.d_ptr);
     return *this;
+}
+
+/*!
+    The destructor.
+*/
+QRoute::~QRoute() {
+    Q_D(QRoute);
+    delete d;
 }
 
 /*!
     Returns the departure time of this route.
 */
-QDateTime QRoute::departure() const
+QDateTime QRoute::timeOfDeparture() const
 {
-    return tod;
+    Q_D(const QRoute);
+    return d->timeOfDeparture;
+}
+
+/*!
+    Sets the time of departure for this route to \a timeOfDeparture
+*/
+void QRoute::setTimeOfDeparture(const QDateTime &timeOfDeparture)
+{
+    Q_D(QRoute);
+    d->timeOfDeparture = timeOfDeparture;
 }
 
 /*!
     Returns the arrival time of this route.
 */
-QDateTime QRoute::arrival() const
+QDateTime QRoute::timeOfArrival() const
 {
-    return toa;
+    Q_D(const QRoute);
+    return d->timeOfArrival;
+}
+
+/*!
+    Sets the time of arrival for this route to \a timeOfArrival
+*/
+void QRoute::setTimeOfArrival(const QDateTime &timeOfArrival)
+{
+    Q_D(QRoute);
+    d->timeOfArrival = timeOfArrival;
 }
 
 /*!
@@ -102,7 +128,17 @@ QDateTime QRoute::arrival() const
 */
 quint32 QRoute::distance() const
 {
-    return dist;
+    Q_D(const QRoute);
+    return d->distance;
+}
+
+/*!
+  Sets the distance covered by this route to \a distance metres.
+*/
+void QRoute::setDistance(quint32 distance)
+{
+    Q_D(QRoute);
+    d->distance = distance;
 }
 
 /*!
@@ -113,7 +149,20 @@ quint32 QRoute::distance() const
 */
 const QRectF& QRoute::boundingBox() const
 {
-    return box;
+    Q_D(const QRoute);
+    return d->boundingBox;
+}
+
+/*!
+    Sets the bounding box which completely encloses the route to \a boundingBox
+
+    The x coordinates of the corner points represent longitudes
+    and the y coordinates represent latitudes.
+*/
+void QRoute::setBoundingBox(const QRectF &boundingBox)
+{
+    Q_D(QRoute);
+    d->boundingBox = boundingBox;
 }
 
 /*!
@@ -121,7 +170,39 @@ const QRectF& QRoute::boundingBox() const
 */
 QList<QManeuver> QRoute::maneuvers() const
 {
-    return man;
+    Q_D(const QRoute);
+    return d->maneuvers;
+}
+
+/*!
+    Sets the list of maneuvers which define the route to \a maneuvers.
+*/
+void QRoute::setManeuvers(const QList<QManeuver> &maneuvers)
+{
+    Q_D(QRoute);
+    d->maneuvers = maneuvers;
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QRoutePrivate::QRoutePrivate() {}
+
+QRoutePrivate::QRoutePrivate(const QRoutePrivate &rp)
+    : timeOfArrival(rp.timeOfArrival),
+    timeOfDeparture(rp.timeOfDeparture),
+    distance(rp.distance),
+    boundingBox(rp.boundingBox),
+    maneuvers(rp.maneuvers)
+{}
+
+QRoutePrivate& QRoutePrivate::operator= (const QRoutePrivate &rp) {
+    timeOfArrival = rp.timeOfArrival;
+    timeOfDeparture = rp.timeOfDeparture;
+    distance = rp.distance;
+    boundingBox = rp.boundingBox;
+    maneuvers = rp.maneuvers;
+    return *this;
 }
 
 QTM_END_NAMESPACE

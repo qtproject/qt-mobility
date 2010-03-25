@@ -48,6 +48,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QReverseGeocodingRequestPrivate;
 class Q_LOCATION_EXPORT QReverseGeocodingRequest
 {
     friend class QGeoNetworkManager;
@@ -55,6 +56,7 @@ class Q_LOCATION_EXPORT QReverseGeocodingRequest
 public:
     QReverseGeocodingRequest();
     QReverseGeocodingRequest(const QGeoCoordinate& coordinate);
+    ~QReverseGeocodingRequest();
 
     QString version() const;
 
@@ -69,11 +71,8 @@ public:
 private:
     Q_DISABLE_COPY(QReverseGeocodingRequest)
 
-    QString trimDouble(qreal degree, int decimalDigits = 10) const;
-
-    QString vers;
-    QString languageMARC;
-    QGeoCoordinate coord;
+    QReverseGeocodingRequestPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QReverseGeocodingRequest)
 };
 
 QTM_END_NAMESPACE

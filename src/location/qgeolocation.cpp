@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qgeolocation.h"
+#include "qgeolocation_p.h"
 
 
 QTM_BEGIN_NAMESPACE
@@ -55,7 +56,33 @@ QTM_BEGIN_NAMESPACE
 /*!
     Default constructor.
 */
-QGeoLocation::QGeoLocation() {}
+QGeoLocation::QGeoLocation()
+    : d_ptr(new QGeoLocationPrivate()) {}
+
+/*!
+    Copy constructor.
+*/
+
+QGeoLocation::QGeoLocation(const QGeoLocation &gl)
+    : d_ptr(new QGeoLocationPrivate(*(gl.d_ptr))) {}
+
+/*!
+    Assignment operator.
+*/
+QGeoLocation& QGeoLocation::operator=(const QGeoLocation &gl)
+{
+    *d_ptr = *(gl.d_ptr);
+    return *this;
+}
+
+/*!
+    Destructor.
+*/
+QGeoLocation::~QGeoLocation()
+{
+    Q_D(QGeoLocation);
+    delete d;
+}
 
 /*!
     Returns the bounding box that completely encloses the location.
@@ -65,42 +92,96 @@ QGeoLocation::QGeoLocation() {}
 */
 QRectF QGeoLocation::boundingBox() const
 {
-    return box;
+    Q_D(const QGeoLocation);
+    return d->boundingBox;
 }
+
+void QGeoLocation::setBoundingBox(const QRectF &boundingBox)
+{
+    Q_D(QGeoLocation);
+    d->boundingBox = boundingBox;
+}
+
 /*!
     Returns the geocoordinate of this location.
 */
 QGeoCoordinate QGeoLocation::position() const
 {
-    return pos;
+    Q_D(const QGeoLocation);
+    return d->position;
 }
+
+void QGeoLocation::setPosition(const QGeoCoordinate &position)
+{
+    Q_D(QGeoLocation);
+    d->position = position;
+}
+
 /*!
     Returns a description of the location.
 */
 QString QGeoLocation::title() const
 {
-    return ttl;
+    Q_D(const QGeoLocation);
+    return d->title;
 }
+
+void QGeoLocation::setTitle(const QString &title)
+{
+    Q_D(QGeoLocation);
+    d->title = title;
+}
+
 /*!
     Returns the MARC language used in the description of this location.
 */
 QString QGeoLocation::language() const
 {
-    return lang;
+    Q_D(const QGeoLocation);
+    return d->language;
 }
+
+void QGeoLocation::setLanguage(const QString &language)
+{
+    Q_D(QGeoLocation);
+    d->language = language;
+}
+
 /*!
     Returns the address found.
 */
 QGeoAddress QGeoLocation::address() const
 {
-    return addr;
+    Q_D(const QGeoLocation);
+    return d->address;
 }
-/*!
-    Returns alternatives to the address found.
-*/
-QAlternativeAddress QGeoLocation::alternatives() const
+
+void QGeoLocation::setAddress(const QGeoAddress &address)
 {
-    return altern;
+    Q_D(QGeoLocation);
+    d->address = address;
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoLocationPrivate::QGeoLocationPrivate() {}
+
+QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &glp)
+    : boundingBox(glp.boundingBox),
+    position(glp.position),
+    title(glp.title),
+    language(glp.language),
+    address(glp.address) {}
+
+QGeoLocationPrivate& QGeoLocationPrivate::operator=(const QGeoLocationPrivate &glp)
+{
+    boundingBox = glp.boundingBox;
+    position = glp.position;
+    title = glp.title;
+    language = glp.language;
+    address = glp.address;
+    return *this;
 }
 
 QTM_END_NAMESPACE

@@ -48,10 +48,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* This class represents a request for a specific map tile. By definition, a map is
-* divided into 2^currZoomLevel columns and 2^currZoomLevel rows of tiles.
-*/
+class QMapTileRequestPrivate;
 class Q_LOCATION_EXPORT QMapTileRequest
 {
 public:
@@ -59,118 +56,41 @@ public:
                     const MapScheme& mapScheme,
                     const MapResolution& mapResolution,
                     const MapFormat& mapFormat);
-    /*!
-    * Copy constructor.
-    * @param request The request to be copied.
-    */
-    QMapTileRequest(const QMapTileRequest& request);
-    /*!
-    * Default constructor
-    */
-    QMapTileRequest() {}
-    /*!
-    * Assignment operator.
-    * @param request The request to assign from.
-    * @return A reference to this request.
-    */
-    QMapTileRequest& operator=(const QMapTileRequest& request); //disallow
+    QMapTileRequest();
 
-    /*!
-    * @return The col index of the requested map tile.
-    */
-    quint32 col() const {
-        return cl;
-    }
-    /*!
-    * Sets the col index of the requested map tile.
-    * Valid values are 0 ... 2^currZoomLevel - 1.
-    * @param c The col index.
-    */
-    void setCol(quint32 c) {
-        cl = c;
-    }
+    QMapTileRequest(const QMapTileRequest &mtr);
+    QMapTileRequest& operator= (const QMapTileRequest &mtr);
 
-    /*!
-    * @return The row index of the requested map tile.
-    */
-    quint32 row() const {
-        return rw;
-    }
-    /*!
-    * Sets the row index of the requested map tile.
-    * Valid values are 0 ... 2^currZoomLevel - 1.
-    * @param r The row index.
-    */
-    void setRow(quint32 r) {
-        rw = r;
-    }
+    ~QMapTileRequest();
 
-    /*!
-    * @return The version of the requested map tile.
-    */
-    MapVersion version() const {
-        return ver;
-    }
-    /*!
-    * Sets the version of the requested map tile.
-    * @param version The version.
-    */
+    quint32 col() const;
+    void setCol(quint32 c);
+
+    quint32 row() const;
+    void setRow(quint32 r);
+
+    MapVersion version() const;
     void setVersion(const MapVersion& version);
 
-    /*!
-    * @return The resolution of the requested map tile.
-    */
-    MapResolution resolution() const {
-        return res;
-    }
-    /*!
-    * Sets the resolution of the requested map tile.
-    * @param resolution The resolution.
-    */
+    MapResolution resolution() const;
     void setResolution(const MapResolution& resolution);
 
-    /*!
-    * @return The format of the requested map tile.
-    */
-    MapFormat format() const {
-        return frmt;
-    }
-    /*!
-    * Sets the format of the requested map tile.
-    * @param format The format.
-    */
+    MapFormat format() const;
     void setFormat(const MapFormat& format);
 
-    /*!
-    * @return The scheme of the requested map tile.
-    */
-    MapScheme scheme() const {
-        return schm;
-    }
-    /*!
-    * Sets the scheme of the requested map tile.
-    * @param scheme The scheme.
-    */
+    MapScheme scheme() const;
     void setScheme(const MapScheme& scheme);
 
-    /*!
-    * @return The zoom level of the requested map tile.
-    */
     quint16 zoomLevel() const;
-    /*!
-    * Sets the zoom level of the requested map tile.
-    * @param level The zoom level.
-    */
     void setZoomLevel(quint16 level);
 
+    QString requestString(const QString &host, const QString &token, const QString &referrer) const;
+
 private:
-    quint32 cl;
-    quint32 rw;
-    MapVersion ver;
-    quint16 zoom;
-    MapScheme schm;
-    MapResolution res;
-    MapFormat frmt;
+    //Q_DISABLE_COPY(QMapTileRequest);
+
+    QMapTileRequestPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QMapTileRequest);
 };
 
 QTM_END_NAMESPACE

@@ -124,9 +124,10 @@ QGeoEngine::~QGeoEngine() {}
 
     Submits the route request \a request and returns the corresponding QRouteReply.
 
-    \note Due to the potentially asynchronous nature of requests, you should
-    never directly start working with the returned reply, but instead wait for
-    the finished(QRouteReply*) signal.
+    \note Due to the asynchronous nature of requests, you should wait for the
+    QGeoEngine::finished(QRouteReply*) signal from this object or the
+    QRouteReply::finished() signal from the returned QRouteReply object before
+    working with the reply.
 */
 
 /*!
@@ -134,9 +135,10 @@ QGeoEngine::~QGeoEngine() {}
 
     Submits a geocoding request \a request and returns the corresponding QGeocodingReply.
 
-    \note Due to the potentially asynchronous nature of requests, you should
-    never directly start working with the returned reply, but instead wait for
-    the finished(QGeocodingReply*) signal.
+    \note Due to the asynchronous nature of requests, you should wait for the
+    QGeoEngine::finished(QGeocodingReply*) signal from this object or the
+    QGeocodingReply::finished() signal from the returned QGeocodingReply object before
+    working with the reply.
 */
 
 /*!
@@ -144,9 +146,10 @@ QGeoEngine::~QGeoEngine() {}
 
     Submits a reverse geocoding request \a request and returns the corresponding QGeocodingReply.
 
-    \note Due to the potentially asynchronous nature of requests, you should
-    never directly start working with the returned reply, but instead wait for
-    the finished(QGeocodingReply*) signal.
+    \note Due to the asynchronous nature of requests, you should wait for the
+    QGeoEngine::finished(QGeocodingReply*) signal from this object or the
+    QGeocodingReply::finished() signal from the returned QGeocodingReply object before
+    working with the reply.
 */
 
 /*!
@@ -154,23 +157,10 @@ QGeoEngine::~QGeoEngine() {}
 
     Submits a map tile request \a request and returns the corresponding QMapTileReply.
 
-    \note Due to the potentially asynchronous nature of requests, you should
-    never directly start working with the returned reply, but instead wait for
-    the finished(QMapTileReply*) signal.
-*/
-
-/*!
-    \fn void QGeoEngine::release(QGeoReply* reply)
-
-    When the QGeoReply \a reply is no longer needed, it should never be manually
-    deleted. Instead this method should be used to properly remove the reply
-    from corresponding internal maps.
-*/
-
-/*!
-    \fn void QGeoEngine::cancel(QGeoReply* reply)
-
-    Cancels the (pending) reply \a reply.
+    \note Due to the asynchronous nature of requests, you should wait for the
+    QGeoEngine::finished(QMapTileReply*) signal from this object or the
+    QMapTileReply::finished() signal from the returned QMapTileReply object before
+    working with the reply.
 */
 
 /*!

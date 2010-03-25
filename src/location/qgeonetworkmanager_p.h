@@ -47,21 +47,24 @@
 #include <QNetworkProxy>
 #include <QNetworkAccessManager>
 
+#include "qgeonetworkmanager.h"
 #include "qmaptilecache.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoNetworkManagerPrivate
+class QGeoNetworkManagerPrivate : public QObject
 {
-public:
-    QGeoNetworkManagerPrivate();
-    ~QGeoNetworkManagerPrivate();
-    
-    bool parseRouteReply(QNetworkReply* netReply, QRouteReply* routeReply);
-    bool parseCodingReply(QNetworkReply* netReply, QGeocodingReply* codingReply);
+    Q_OBJECT
 
-    static QString trimGeoCoordinate(qreal degree);
-    
+public:
+    QGeoNetworkManagerPrivate(QGeoNetworkManager *parent);
+    ~QGeoNetworkManagerPrivate();
+
+    virtual QRouteReply* get(const QRouteRequest& request);
+    virtual QGeocodingReply* get(const QGeocodingRequest& request);
+    virtual QGeocodingReply* get(const QReverseGeocodingRequest& request);
+    virtual QMapTileReply* get(const QMapTileRequest& request);
+
     QNetworkAccessManager netManager; //!< The internal network manager
     QString geocdSrv;
     QString rtSrv;
@@ -73,16 +76,22 @@ public:
     QString referrer;
     QMapTileCache cache; //!< The map tile cache
 
-    //! maps QNetworkReplies to their corresponding QGeoReplies
-    QHash<QNetworkReply*, QGeoReply*> replyMap;
-    //! maps a QGeoReply to its corresponding QNetworkReply
-    QHash<QGeoReply*, QNetworkReply*> revReplyMap;
-
     QHash<QString, MapVersion> mapVersions;
     QHash<QString, MapResolution> mapResolutions;
     QHash<QString, MapFormat> mapFormats;
     QHash<QString, MapScheme> mapSchemes;
 
+    QGeoNetworkManager * const q_ptr;
+    Q_DECLARE_PUBLIC(QGeoNetworkManager);
+
+private slots:
+    void finishedRouteRequest();
+    void finishedGeocodingRequest();
+    void finishedMapTileRequest();
+
+    void errorRouteRequest(QRouteReply::ErrorCode errorCode, const QString &errorString = QString());
+    void errorGeocodingRequest(QGeocodingReply::ErrorCode errorCode, const QString &errorString = QString());
+    void errorMapTileRequest(QMapTileReply::ErrorCode errorCode, const QString &errorString = QString());
 };
 
 QTM_END_NAMESPACE

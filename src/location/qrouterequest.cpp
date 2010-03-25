@@ -358,7 +358,7 @@ const QList<QGeoCoordinate>& QRouteRequest::stopOvers() const
 /*!
     Returns the request string for this request and a given \a host.
 */
-QString QRouteRequestPrivate::requestString(const QString &host) const
+QString QRouteRequest::requestString(const QString &host) const
 {
     Q_D(const QRouteRequest);
     return d->requestString(host);
@@ -428,7 +428,7 @@ QString QRouteRequestPrivate::requestString(const QString &host) const
     QString request = "http://";
     request += host;
     request += "/routing/rt/";
-    request += vers;
+    request += version;
     request += "?referer=localhost";
     request += "&slong=";
     request += trimDouble(src.longitude());
@@ -452,13 +452,13 @@ QString QRouteRequestPrivate::requestString(const QString &host) const
         request += "&lg=";
         request += languageCode;
     }
-    if (tod.isValid()) {
+    if (departureTime.isValid()) {
         request += "&tod=";
-        request += tod.toUTC().toString();
+        request += departureTime.toUTC().toString();
     }
-    if (toa.isValid()) {
+    if (arrivalTime.isValid()) {
         request += "&toa=";
-        request += toa.toUTC().toString();
+        request += arrivalTime.toUTC().toString();
     }
 
     request += "&type=";
@@ -466,17 +466,15 @@ QString QRouteRequestPrivate::requestString(const QString &host) const
     request +="&mode=";
     request += modeToString();
 
-    if (rAvoid.count() > 0) {
+    if (avoid.count() > 0) {
         request += "&avoid=";
         request += avoidToString();
     }
 
-    const QList<QGeoCoordinate>& stOvers = stopOvers();
-
-    for (int i = 0; i < stOvers.length(); i++) {
-        request += QString::number(stOvers[i].latitude(), 'f');
+    for (int i = 0; i < stopOvers.length(); i++) {
+        request += QString::number(stopOvers[i].latitude(), 'f');
         request += ",";
-        request += QString::number(stOvers[i].longitude(), 'f');
+        request += QString::number(stopOvers[i].longitude(), 'f');
         request += " ";
     }
 

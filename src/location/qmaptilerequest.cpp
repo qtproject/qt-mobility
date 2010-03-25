@@ -40,70 +40,262 @@
 ****************************************************************************/
 
 #include "qmaptilerequest.h"
-#include "qmaptilereply.h"
+#include "qmaptilerequest_p.h"
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QMapTileRequeset
+    \brief The QMapTileRequest class represents a request for a specific map tile.
+    \ingroup location
+
+    The maps that this class deals with are divided into 2^zoomLevel() columns
+    and 2^zoomLevel() rows of tiles.
+*/
+
+/*!
+    Constructor which sets some of the map data.
+*/
 QMapTileRequest::QMapTileRequest(const MapVersion& mapVersion,
                                  const MapScheme& mapScheme,
                                  const MapResolution& mapResolution,
                                  const MapFormat& mapFormat)
-        : cl(0), rw(0), ver(mapVersion), zoom(0), schm(mapScheme), res(mapResolution), frmt(mapFormat)
+        : d_ptr(new QMapTileRequestPrivate())
+{
+    setVersion(mapVersion);
+    setScheme(mapScheme);
+    setResolution(mapResolution);
+    setFormat(mapFormat);
+}
+
+/*!
+    Default constructor
+*/
+QMapTileRequest::QMapTileRequest()
+    : d_ptr(new QMapTileRequestPrivate())
 {
 }
 
-QMapTileRequest::QMapTileRequest(const QMapTileRequest& request)
-        : cl(request.cl), rw(request.rw), ver(request.ver), zoom(request.zoom),
-        schm(request.schm), res(request.res), frmt(request.frmt)
+QMapTileRequest::QMapTileRequest(const QMapTileRequest &mtr)
+    : d_ptr(new QMapTileRequestPrivate(*(mtr.d_ptr)))
 {
 }
 
-QMapTileRequest& QMapTileRequest::operator =(const QMapTileRequest& request)
+QMapTileRequest& QMapTileRequest::operator= (const QMapTileRequest &mtr)
 {
-    cl = request.cl;
-    rw = request.rw;
-    ver = request.ver;
-    zoom = request.zoom;
-    schm = request.schm;
-    frmt = request.frmt;
-    res = request.res;
+    *d_ptr = *(mtr.d_ptr);
     return *this;
 }
 
+/*!
+    Destructor
+*/
+QMapTileRequest::~QMapTileRequest()
+{
+    Q_D(QMapTileRequest);
+    delete d;
+}
+
+/*!
+    Returns the col index of the requested map tile.
+*/
+quint32 QMapTileRequest::col() const
+{
+    Q_D(const QMapTileRequest);
+    return d->cl;
+}
+
+/*!
+    Sets the col index of the requested map tile to \a c.
+
+    Valid values are 0 ... 2^zoomLevel() - 1.
+*/
+void QMapTileRequest::setCol(quint32 c)
+{
+    Q_D(QMapTileRequest);
+    d->cl = c;
+}
+
+/*!
+    Returns the row index of the requested map tile.
+*/
+quint32 QMapTileRequest::row() const
+{
+    Q_D(const QMapTileRequest);
+    return d->rw;
+}
+/*!
+Sets the row index of the requested map tile to \a r.
+
+Valid values are 0 ... 2^zoomLevel() - 1.
+*/
+void QMapTileRequest::setRow(quint32 r)
+{
+    Q_D(QMapTileRequest);
+    d->rw = r;
+}
+
+/*!
+    Returns the version of the requested map tile.
+*/
+MapVersion QMapTileRequest::version() const
+{
+    Q_D(const QMapTileRequest);
+    return d->ver;
+}
+
+/*!
+    Sets the version of the requested map tile to \a version.
+*/
 void QMapTileRequest::setVersion(const MapVersion& version)
 {
-    ver = version;
+    Q_D(QMapTileRequest);
+    d->ver = version;
 }
 
-void QMapTileRequest::setScheme(const MapScheme& scheme)
+/*!
+    Returns the resolution of the requested map tile.
+*/
+MapResolution QMapTileRequest::resolution() const
 {
-    schm = scheme;
+    Q_D(const QMapTileRequest);
+    return d->res;
 }
 
+/*!
+    Sets the resolution of the requested map tile to \a resolution.
+*/
 void QMapTileRequest::setResolution(const MapResolution& resolution)
 {
-    res = resolution;
+    Q_D(QMapTileRequest);
+    d->res = resolution;
 }
 
+/*!
+    Returns the format of the requested map tile.
+*/
+MapFormat QMapTileRequest::format() const
+{
+    Q_D(const QMapTileRequest);
+    return d->frmt;
+}
+
+/*!
+    Sets the format of the requested map tile to \a format.
+*/
 void QMapTileRequest::setFormat(const MapFormat& format)
 {
-    frmt = format;
+    Q_D(QMapTileRequest);
+    d->frmt = format;
 }
 
+/*!
+    Returns the scheme of the requested map tile.
+*/
+MapScheme QMapTileRequest::scheme() const
+{
+    Q_D(const QMapTileRequest);
+    return d->schm;
+}
+
+/*!
+    Sets the scheme of the requested map tile to \a scheme.
+*/
+void QMapTileRequest::setScheme(const MapScheme& scheme)
+{
+    Q_D(QMapTileRequest);
+    d->schm = scheme;
+}
+
+/*!
+    Returns the zoom level of the requested map tile.
+*/
 quint16 QMapTileRequest::zoomLevel() const
 {
-    return zoom;
+    Q_D(const QMapTileRequest);
+    return d->zoom;
 }
 
+/*!
+    Sets the zoom level of the requested map tile to \a level.
+*/
 void QMapTileRequest::setZoomLevel(quint16 level)
 {
-    zoom = level;
+    Q_D(QMapTileRequest);
+    d->zoom = level;
 }
 
-//---------------------------------------------------------------
-QMapTileReply::QMapTileReply(const QMapTileRequest& request)
-        : req(request)
+/*!
+  Returns the request string for this request and the given \a host, \a token and \a referrer.
+*/
+QString QMapTileRequest::requestString(const QString &host, const QString &token, const QString &referrer) const
 {
+    Q_D(const QMapTileRequest);
+    return d->requestString(host, token, referrer);
+}
+
+/******************************************************************************
+  ****************************************************************************/
+
+QMapTileRequestPrivate::QMapTileRequestPrivate()
+    : cl(0), rw(0), zoom(0)
+{}
+
+QMapTileRequestPrivate::QMapTileRequestPrivate(const QMapTileRequestPrivate &mtrp)
+    : cl(mtrp.cl),
+    rw(mtrp.rw),
+    ver(mtrp.ver),
+    zoom(mtrp.zoom),
+    schm(mtrp.schm),
+    res(mtrp.res),
+    frmt(mtrp.frmt)
+{}
+
+QMapTileRequestPrivate& QMapTileRequestPrivate::operator= (const QMapTileRequestPrivate &mtrp)
+{
+    cl = mtrp.cl;
+    rw = mtrp.rw;
+    ver = mtrp.ver;
+    zoom = mtrp.zoom;
+    schm = mtrp.schm;
+    res = mtrp.res;
+    frmt = mtrp.frmt;
+    return *this;
+}
+
+QString QMapTileRequestPrivate::requestString(const QString &host, const QString &token, const QString &referrer) const
+{
+    QString request = "http://";
+    request += host;
+    request += "/maptiler/maptile/";
+    request += ver.id;
+    request += '/';
+    request += schm.id;
+    request += '/';
+    request += QString::number(zoom);
+    request += '/';
+    request += QString::number(cl);
+    request += '/';
+    request += QString::number(rw);
+    request += '/';
+    request += res.id;
+    request += '/';
+    request += frmt.id;
+
+    if (!token.isEmpty()) {
+        request += "?token=";
+        request += token;
+
+        if (!referrer.isEmpty()) {
+            request += "&referrer=";
+            request += referrer;
+        }
+    } else if (!referrer.isEmpty()) {
+        request += "?referrer=";
+        request += referrer;
+    }
+
+    return request;
 }
 
 QTM_END_NAMESPACE

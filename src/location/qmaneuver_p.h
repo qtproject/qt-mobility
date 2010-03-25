@@ -39,41 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QDLGEOREPLY_H
-#define QDLGEOREPLY_H
+#ifndef QMANEUVER_P_H
+#define QMANEUVER_P_H
 
-#include "qmobilityglobal.h"
-#include <QObject>
-
-#include <QIODevice>
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QDLGeoReply : public QObject
+class QManeuverPrivate
 {
-    Q_OBJECT
-
 public:
-    // TODO populate this some more...
-    enum ErrorCode {
-        NoError,
-        UnknownError
-    };
+    QManeuverPrivate();
+    QManeuverPrivate(const QManeuverPrivate &mp);
+    QManeuverPrivate& operator= (const QManeuverPrivate &mp);
 
-    QDLGeoReply();
-    virtual ~QDLGeoReply();
-
-public slots:
-    virtual void cancel() = 0;
-
-protected slots:
-    virtual void parse(QIODevice *input) = 0;
-
-signals:
-    void finished();
-    void error(QDLGeoReply::ErrorCode errorCode, const QString &errorString = QString());
+    QString description;
+    QString action;
+    qint32 duration;
+    quint32 distance;
+    QString turn;
+    QString streetName;
+    QString routeName;
+    QString nextStreetName;
+    QString signPost;
+    qint64 trafficDirection;
+    qint64 icon;
+    QList<QGeoCoordinate> wayPoints;
+    QList<QGeoCoordinate> maneuverPoints;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QMANEUVER_P_H

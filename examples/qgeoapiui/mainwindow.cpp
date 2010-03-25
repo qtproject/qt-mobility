@@ -211,22 +211,22 @@ void MainWindow::routeReplyFinished(QRouteReply* reply)
 {
     RoutePresenter presenter(ui->treeWidget, reply);
     presenter.show();
-    geoNetworkManager.release(reply);
+    reply->deleteLater();
 }
 
 void MainWindow::codingReplyFinished(QGeocodingReply* reply)
 {
     PlacePresenter presenter(ui->treeWidget, reply);
     presenter.show();
-    geoNetworkManager.release(reply);
+    reply->deleteLater();
 }
 
 void MainWindow::mapTileReplyFinished(QMapTileReply* reply)
 {
     QPixmap pixmap;
-    pixmap.loadFromData(reply->rawData());
+    pixmap.loadFromData(reply->data());
     ui->mapTileLabel->setPixmap(pixmap);
-    geoNetworkManager.release(reply);
+    reply->deleteLater();
 }
 
 void MainWindow::testReplyFinishedSignal()

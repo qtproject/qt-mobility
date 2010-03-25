@@ -192,8 +192,8 @@ void QMapViewPrivate::cancelPendingTiles()
 
     while (it.hasNext()) {
         it.next();
-        geoEngine->cancel(it.value());
-        geoEngine->release(it.value());
+        it.value()->cancel();
+        it.value()->deleteLater();
     }
 
     pendingTiles.clear();

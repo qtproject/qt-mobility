@@ -39,54 +39,41 @@
 **
 ****************************************************************************/
 
-#include "qdlgeoreply.h"
+#ifndef QGEOCODINGREPLY_NOKIA_P_H
+#define QGEOCODINGREPLY_NOKIA_P_H
 
-#include <QIODevice>
+#include "qgeocodingreply.h"
+
+#include <QNetworkReply>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-  \class QDLGeoReply
-  \brief The QDLGeoReply class is experimental - shh
-  \ingroup location
+class QGeocodingReplyNokia : public QGeocodingReply
+{
+    Q_OBJECT
 
+public:
+    enum ResultCode {
+        OK,
+        Failed
+    };
 
-*/
+    QGeocodingReplyNokia(QNetworkReply *reply);
+    ~QGeocodingReplyNokia();
 
-/*!
-\enum QDLGeoReply::ErrorCode
+    QGeocodingReplyNokia::ResultCode resultCode() const;
+    void setResultCode(QGeocodingReplyNokia::ResultCode code);
 
+public slots:
+    virtual void parse();
+    virtual void translateError(QNetworkReply::NetworkError errorCode);
+    virtual void cancel();
 
-\value NoError
-        No error occurred
-*/
-
-/*!
-  Constructor.
-*/
-QDLGeoReply::QDLGeoReply() {}
-
-/*!
-  Destructor.
-*/
-QDLGeoReply::~QDLGeoReply() {}
-
-/*!
-    \fn void QDLGeoReply::parse(QIODevice *input)
-*/
-
-/*!
-    \fn void QDLGeoReply::cancel()
-*/
-
-/*!
-    \fn void QDLGeoReply::finished()
-*/
-
-/*!
-    \fn void QDLGeoReply::error(QDLGeoReply::ErrorCode errorCode, const QString &errorString)
-*/
-
-#include "moc_qdlgeoreply.cpp"
+private:
+    QNetworkReply *m_reply;
+    QGeocodingReplyNokia::ResultCode m_code;
+};
 
 QTM_END_NAMESPACE
+
+#endif

@@ -52,18 +52,18 @@ QTM_BEGIN_NAMESPACE
     This class represents a geocoding request.
 */
 
-QGeocodingRequestPrivate::QGeocodingRequestPrivate()
-{
-    vers = "1.0";
-    languageMARC = "eng";
-}
-
 /*!
     Default constructor.
 */
 QGeocodingRequest::QGeocodingRequest()
     : d_ptr(new QGeocodingRequestPrivate())
 {
+}
+
+QGeocodingRequest::~QGeocodingRequest()
+{
+    Q_D(QGeocodingRequest);
+    delete d;
 }
 
 /*!
@@ -240,7 +240,25 @@ void QGeocodingRequest::setNumber(const QString& number)
     d->num = number;
 }
 
+/*!
+  Returns the request string for this request and the given \a host.
+*/
 QString QGeocodingRequest::requestString(const QString &host) const
+{
+    Q_D(const QGeocodingRequest);
+    return d->requestString(host);
+}
+
+/******************************************************************************
+  ****************************************************************************/
+
+QGeocodingRequestPrivate::QGeocodingRequestPrivate()
+{
+    vers = "1.0";
+    languageMARC = "eng";
+}
+
+QString QGeocodingRequestPrivate::requestString(const QString &host) const
 {
     QString request = "http://";
     request += host;

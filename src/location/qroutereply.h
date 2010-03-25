@@ -39,52 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEREPLY_H
-#define QLOCATION_ROUTEREPLY_H
-
-#include <QString>
-#include <QDateTime>
-#include <QList>
+#ifndef QROUTEREPLY_H
+#define QROUTEREPLY_H
 
 #include "qroute.h"
-#include "qgeoreply.h"
+
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
 class QRouteReplyPrivate;
-class Q_LOCATION_EXPORT QRouteReply : public QGeoReply
+class Q_LOCATION_EXPORT QRouteReply : public QObject
 {
     Q_OBJECT
 
-    friend class QRouteXmlParser;
-    friend class QGeoNetworkManager;
-
 public:
-
-    enum ResultCode {
-        OK = 0,
-        Failed,
-        FailedWithAlternative
+    // TODO populate this some more...
+    enum ErrorCode {
+        NoError,
+        // flesh out the more common specific network errors
+        NetworkError,
+        // File errors
+        NoContentError,
+        ParsingError,
+        UnknownError
     };
 
-public:
-    QRouteReply();
-    ResultCode resultCode() const;
-    void setResultCode(ResultCode result);
-    QString resultDescription() const;
-    QString language() const;
-    void setResultDescription(QString description);
-    void setLanguage(QString language);
-    int count() const;
-    const QList<QRoute>& routes() const;
-    void addRoute(QRoute route);
-    
-private:
-    Q_DISABLE_COPY(QRouteReply);
+    QRouteReply(QObject *parent = 0);
+    virtual ~QRouteReply();
 
+    QString description() const;
+    void setDescription(const QString &description);
+
+    QList<QRoute> routes() const;
+    void setRoutes(const QList<QRoute> &routes);
+
+public slots:
+    virtual void cancel() = 0;
+
+signals:
+    void finished();
+    void error(QRouteReply::ErrorCode errorCode, const QString &errorString = QString());
+
+    // CHOICE: could lose the setters and make this protected
 private:
     QRouteReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QRouteReply)
+    Q_DECLARE_PRIVATE(QRouteReply);
 };
 
 QTM_END_NAMESPACE

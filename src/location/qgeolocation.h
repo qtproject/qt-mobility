@@ -50,27 +50,33 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoLocationPrivate;
 class Q_LOCATION_EXPORT QGeoLocation
 {
-    friend class QGeocodingXmlParser;
-
 public:
     QGeoLocation();
+    QGeoLocation(const QGeoLocation &gl);
+    QGeoLocation& operator=(const QGeoLocation &gl);
+    ~QGeoLocation();
 
     QRectF boundingBox() const;
+    void setBoundingBox(const QRectF &boundingBox);
+
     QGeoCoordinate position() const;
+    void setPosition(const QGeoCoordinate &position);
+
     QString title() const;
+    void setTitle(const QString &title);
+
     QString language() const;
+    void setLanguage(const QString &language);
+
     QGeoAddress address() const;
-    QAlternativeAddress alternatives() const;
+    void setAddress(const QGeoAddress &address);
 
 private:
-    QRectF          box;
-    QGeoCoordinate  pos;
-    QString         ttl;
-    QString         lang;
-    QGeoAddress     addr;
-    QAlternativeAddress altern;
+    QGeoLocationPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoLocation);
 };
 
 QTM_END_NAMESPACE

@@ -39,38 +39,42 @@
 **
 ****************************************************************************/
 
-#include "qdlroutereply.h"
+#ifndef QROUTEREPLY_NOKIA_P_H
+#define QROUTEREPLY_NOKIA_P_H
+
+#include "qroutereply.h"
+
+#include <QNetworkReply>
 
 QTM_BEGIN_NAMESPACE
 
-QDLRouteReply::QDLRouteReply()
+class QRouteReplyNokia : public QRouteReply
 {
-}
+    Q_OBJECT
 
-QDLRouteReply::~QDLRouteReply()
-{
-}
+public:
+    enum ResultCode {
+        OK,
+        Failed,
+        FailedWithAlternative
+    };
 
-QString QDLRouteReply::description() const
-{
-    return m_description;
-}
+    QRouteReplyNokia(QNetworkReply *reply);
+    ~QRouteReplyNokia();
 
-void QDLRouteReply::setDescription(const QString &description)
-{
-    m_description = description;
-}
+    QRouteReplyNokia::ResultCode resultCode() const;
+    void setResultCode(QRouteReplyNokia::ResultCode code);
 
-QList<QRoute> QDLRouteReply::routes() const
-{
-    return m_routes;
-}
+public slots:
+    virtual void parse();
+    virtual void translateError(QNetworkReply::NetworkError errorCode);
+    virtual void cancel();
 
-void QDLRouteReply::setRoutes(const QList<QRoute> &routes)
-{
-    m_routes = routes;
-}
-
-#include "moc_qdlroutereply.cpp"
+private:
+    QNetworkReply *m_reply;
+    QRouteReplyNokia::ResultCode m_code;
+};
 
 QTM_END_NAMESPACE
+
+#endif

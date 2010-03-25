@@ -43,90 +43,106 @@
 #include "qgeocodingreply_p.h"
 
 QTM_BEGIN_NAMESPACE
-
 /*!
     \class QGeocodingReply
-    \brief The QGeocodingReply class represents a response to a QReverseGeocodingRequest.
+    \brief The QGeocodingReply class represents the response from a geocoding service.
     \ingroup location
-    
-    This class represents a geododing reply in response to a
-    previous (reverse) geocoding request.
 
-    \sa QGeocodingRequest
-    \sa QReverseGeocodingRequest
+    This class represents the response from a geocoding service.
+    It also takes responsibility for any errors that happen while the request is
+    in submitted to and processed by the service.
 */
 
 /*!
-    \enum QGeocodingReply::ResultCode
-    
-    Possible result codes as reported by the geo engine.
+    \enum ErrorCode
 
-    \value OK Request succeeded.
-    \value Failed RequestFailed.
+    \value NoError
+        No error has occurred.
+    \value NetworkError
+        A networking error occurred.
+    \value NoContentError
+        The reply contained no content.
+    \value UnknownError
+        An error occurred which does not fit into any of the other categories.
 */
 
-QGeocodingReply::QGeocodingReply() 
-    : d_ptr(new QGeocodingReplyPrivate())
+/*!
+    Constructs a QGeocodingReply with parent \a parent.
+*/
+QGeocodingReply::QGeocodingReply(QObject *parent)
+    : QObject(parent),
+    d_ptr(new QGeocodingReplyPrivate())
 {
 }
 
 /*!
-    Returns the result code as reported by the geo engine.
+    Destructor.
 */
-QGeocodingReply::ResultCode QGeocodingReply::resultCode() const
-{
-    Q_D(const QGeocodingReply);
-    return d->code;
-}
-
-/*!
-    Sets the result code.
-*/
-void QGeocodingReply::setResultCode(QGeocodingReply::ResultCode result)
+QGeocodingReply::~QGeocodingReply()
 {
     Q_D(QGeocodingReply);
-    d->code = result;
+    delete d;
 }
 
 /*!
-    Returns a textual description of the result.
+    Returns the description of the geocoding or reverse geocoding reply.
 */
-QString QGeocodingReply::resultDescription() const
+QString QGeocodingReply::description() const
 {
     Q_D(const QGeocodingReply);
-    return d->descr;
+    return d->description;
 }
 
 /*!
-    Sets a textual description of the result.
+    Sets the description of the geocoding or reverse geocoding reply to \a description.
 */
-void QGeocodingReply::setResultDescription(QString resultDescription)
+void QGeocodingReply::setDescription(const QString &description)
 {
     Q_D(QGeocodingReply);
-    d->descr = resultDescription;    
+    d->description = description;
 }
+
 /*!
-    Returns the number of places found.
-*/
-quint32 QGeocodingReply::count() const
-{
-    Q_D(const QGeocodingReply);
-    return d->plcs.length();
-}
-/*!
-    Returns a list of all places found.
+    Returns a list of places corresponding to the request.
 */
 QList<QGeoLocation> QGeocodingReply::places() const
 {
     Q_D(const QGeocodingReply);
-    return d->plcs;
+    return d->places;
 }
-void QGeocodingReply::addPlace(QGeoLocation place)
+
+/*!
+    Sets the list of places in the reply to \a places.
+*/
+void QGeocodingReply::setPlaces(const QList<QGeoLocation> &places)
 {
     Q_D(QGeocodingReply);
-    d->plcs.append(place);
+    d->places = places;
 }
-    
+
+/*!
+    \fn void QGeocodingReply::cancel()
+
+    Cancels the receiving of this reply if the reply hasn't been received already.
+*/
+
+/*!
+    \fn void QGeocodingReply::finished()
+
+    Indicates that the reply has been received and processed without error, and is ready to be used.
+*/
+/*!
+    \fn void QGeocodingReply::error(QGeocodingReply::ErrorCode errorCode, const QString &errorString = QString())
+
+    Indicates that an error occurred during the receiving or processing of the reply.
+*/
+
+/*******************************************************************************
+*******************************************************************************/
+
+
+QGeocodingReplyPrivate::QGeocodingReplyPrivate() {}
+
 #include "moc_qgeocodingreply.cpp"
 
 QTM_END_NAMESPACE

@@ -82,6 +82,7 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
     Default constructor.
 */
 QGeoAddress::QGeoAddress()
+    :d(new QGeoAddressPrivate)
 {
 }
 

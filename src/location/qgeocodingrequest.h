@@ -54,6 +54,7 @@ class Q_LOCATION_EXPORT QGeocodingRequest
 
 public:
     QGeocodingRequest();
+    ~QGeocodingRequest();
 
     QString version() const;
 
@@ -86,7 +87,6 @@ public:
 private:
     Q_DISABLE_COPY(QGeocodingRequest)
 
-private:
     QGeocodingRequestPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QGeocodingRequest)
 };

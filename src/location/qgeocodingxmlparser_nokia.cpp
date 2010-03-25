@@ -1,8 +1,8 @@
 
-#include "qgeocodingxmlparser.h"
+#include "qgeocodingxmlparser_nokia_p.h"
 
 #include "qgeocoordinate.h"
-#include "qgeocodingreply.h"
+#include "qgeocodingreply_nokia_p.h"
 #include "qgeolocation.h"
 #include "qgeoaddress.h"
 
@@ -10,39 +10,42 @@
 #include <QIODevice>
 #include <QRectF>
 
-#include <QDebug>
-
 QTM_BEGIN_NAMESPACE
 
-QGeocodingXmlParser::QGeocodingXmlParser()
+QGeocodingXmlParserNokia::QGeocodingXmlParserNokia()
         : m_reader(0)
 {
 }
 
-QGeocodingXmlParser::~QGeocodingXmlParser()
+QGeocodingXmlParserNokia::~QGeocodingXmlParserNokia()
 {
     if (m_reader)
         delete m_reader;
 }
 
-bool QGeocodingXmlParser::parse(QIODevice* source, QGeocodingReply *output)
+bool QGeocodingXmlParserNokia::parse(QIODevice* source, QGeocodingReplyNokia *output)
 {
     if (m_reader)
         delete m_reader;
     m_reader = new QXmlStreamReader(source);
 
-    if (!readRootElement(output)) {
-        // set errors appropriately
-        qWarning() << m_reader->errorString();
+    if (!parseRootElement(output)) {
+        m_errorString = m_reader->errorString();
         return false;
     }
+
+    m_errorString = "";
 
     return true;
 }
 
-bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
+QString QGeocodingXmlParserNokia::errorString() const
 {
-    qWarning() << "root";
+    return m_errorString;
+}
+
+bool QGeocodingXmlParserNokia::parseRootElement(QGeocodingReplyNokia *output)
+{
     /*
     <xsd:element name="places">
         <xsd:complexType>
@@ -68,26 +71,26 @@ bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
             if (m_reader->attributes().hasAttribute("resultCode")) {
                 QStringRef result = m_reader->attributes().value("resultCode");
                 if (result == "OK") {
-                    output->setResultCode(QGeocodingReply::OK);
+                    output->setResultCode(QGeocodingReplyNokia::OK);
                 } else if (result == "FAILED") {
-                    output->setResultCode(QGeocodingReply::Failed);
+                    output->setResultCode(QGeocodingReplyNokia::Failed);
                 } else {
                     m_reader->raiseError(QString("The attribute \"resultCode\" of the element \"places\" has an unknown value (value was %1).").arg(result.toString()));
                     return false;
                 }
             }
             if (m_reader->attributes().hasAttribute("resultDescription")) {
-                output->setResultDescription(m_reader->attributes().value("resultDescription").toString());
+                output->setDescription(m_reader->attributes().value("resultDescription").toString());
             }
 
             while (m_reader->readNextStartElement()) {
                 if (m_reader->name() == "place") {
                     QGeoLocation location;
 
-                    if (!readPlace(&location))
+                    if (!parsePlace(&location))
                         return false;
 
-                    output->addPlace(location);
+                    output->places().append(location);
                 } else {
                     m_reader->raiseError(QString("The element \"places\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
                     return false;
@@ -110,9 +113,8 @@ bool QGeocodingXmlParser::readRootElement(QGeocodingReply *output)
     return true;
 }
 
-bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
+bool QGeocodingXmlParserNokia::parsePlace(QGeoLocation *location)
 {
-    qWarning() << "place";
     /*
     <xsd:complexType name="Place">
         <xsd:all>
@@ -138,16 +140,16 @@ bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
         return false;
     }
 
-    location->ttl = m_reader->attributes().value("title").toString();
+    location->setTitle(m_reader->attributes().value("title").toString());
 
     if (!m_reader->attributes().hasAttribute("language")) {
         //m_reader->raiseError("The element \"place\" did not have the required attribute \"language\".");
         //return false;
     } else {
-        location->lang = m_reader->attributes().value("language").toString();
+        location->setLanguage(m_reader->attributes().value("language").toString());
 
-        if (location->lang.length() != 3) {
-            m_reader->raiseError(QString("The attribute \"language\" of the element \"place\" was not of length 3 (length was %1).").arg(location->lang.length()));
+        if (location->language().length() != 3) {
+            m_reader->raiseError(QString("The attribute \"language\" of the element \"place\" was not of length 3 (length was %1).").arg(location->language().length()));
             return false;
         }
     }
@@ -164,7 +166,7 @@ bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
                 return false;
             }
 
-            if (!readLocation(location))
+            if (!parseLocation(location))
                 return false;
 
             parsedLocation = true;
@@ -174,8 +176,11 @@ bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
                 return false;
             }
 
-            if (!readAddress(&(location->addr)))
+            QGeoAddress address;
+            if (!parseAddress(&address))
                 return false;
+
+            location->setAddress(address);
 
             parsedAddress = true;
         } else if (name == "alternatives") {
@@ -204,9 +209,8 @@ bool QGeocodingXmlParser::readPlace(QGeoLocation *location)
     return true;
 }
 
-bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
+bool QGeocodingXmlParserNokia::parseLocation(QGeoLocation *location)
 {
-    qWarning() << "location";
     /*
     <xsd:complexType name="Location">
         <xsd:all>
@@ -236,8 +240,11 @@ bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
                 return false;
             }
 
-            if (!readCoordinate(&(location->pos), "position"))
+            QGeoCoordinate pos;
+            if (!parseCoordinate(&pos, "position"))
                 return false;
+
+            location->setPosition(pos);
 
             parsedPosition = true;
         } else if (name == "boundingBox") {
@@ -246,8 +253,12 @@ bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
                 return false;
             }
 
-            if (!readBoundingBox(&(location->box)))
+            QRectF box;
+
+            if (!parseBoundingBox(&box))
                 return false;
+
+            location->setBoundingBox(box);
 
             parsedBox = true;
         } else {
@@ -264,9 +275,8 @@ bool QGeocodingXmlParser::readLocation(QGeoLocation *location)
     return true;
 }
 
-bool QGeocodingXmlParser::readAddress(QGeoAddress *address)
+bool QGeocodingXmlParserNokia::parseAddress(QGeoAddress *address)
 {
-    qWarning() << "address";
     /*
     <xsd:complexType name="Address">
         <xsd:sequence>
@@ -381,9 +391,8 @@ bool QGeocodingXmlParser::readAddress(QGeoAddress *address)
     return false;
 }
 
-bool QGeocodingXmlParser::readBoundingBox(QRectF *rect)
+bool QGeocodingXmlParserNokia::parseBoundingBox(QRectF *rect)
 {
-    qWarning() << "boundingBox";
     /*
     <xsd:complexType name="GeoBox">
         <xsd:sequence>
@@ -403,7 +412,7 @@ bool QGeocodingXmlParser::readBoundingBox(QRectF *rect)
     QGeoCoordinate nw;
 
     if (m_reader->name() == "northWest") {
-        if (!readCoordinate(&nw, "northWest"))
+        if (!parseCoordinate(&nw, "northWest"))
             return false;
     } else {
         m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"northWest\" (found an element named \"%1\")").arg(m_reader->name().toString()));
@@ -418,7 +427,7 @@ bool QGeocodingXmlParser::readBoundingBox(QRectF *rect)
     QGeoCoordinate se;
 
     if (m_reader->name() == "southEast") {
-        if (!readCoordinate(&se, "southEast"))
+        if (!parseCoordinate(&se, "southEast"))
             return false;
     } else {
         m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"southEast\" (found an element named \"%1\")").arg(m_reader->name().toString()));
@@ -436,9 +445,8 @@ bool QGeocodingXmlParser::readBoundingBox(QRectF *rect)
     return true;
 }
 
-bool QGeocodingXmlParser::readCoordinate(QGeoCoordinate *coordinate, const QString &elementName)
+bool QGeocodingXmlParserNokia::parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName)
 {
-    qWarning() << "coord";
     /*
     <xsd:complexType name="GeoCoord">
         <xsd:sequence>

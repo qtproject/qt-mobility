@@ -1,7 +1,7 @@
 
-#include "qroutexmlparser.h"
+#include "qroutexmlparser_nokia_p.h"
 
-#include "qroutereply.h"
+#include "qroutereply_nokia_p.h"
 #include "qroute.h"
 #include "qmaneuver.h"
 
@@ -10,36 +10,41 @@
 #include <QStringList>
 #include <QString>
 
-#include <QDebug>
-
 QTM_BEGIN_NAMESPACE
 
-QRouteXmlParser::QRouteXmlParser()
+QRouteXmlParserNokia::QRouteXmlParserNokia()
         : m_reader(0)
 {
 }
 
-QRouteXmlParser::~QRouteXmlParser()
+QRouteXmlParserNokia::~QRouteXmlParserNokia()
 {
     if (m_reader)
         delete m_reader;
 }
 
-bool QRouteXmlParser::parse(QIODevice* source, QRouteReply *output)
+bool QRouteXmlParserNokia::parse(QIODevice* source, QRouteReplyNokia *output)
 {
     if (m_reader)
         delete m_reader;
     m_reader = new QXmlStreamReader(source);
 
-    if (!readRootElement(output)) {
-        qWarning() << m_reader->errorString();
+    if (!parseRootElement(output)) {
+        m_errorString = m_reader->errorString();
         return false;
     }
+
+    m_errorString = "";
 
     return true;
 }
 
-bool QRouteXmlParser::readRootElement(QRouteReply *output)
+QString QRouteXmlParserNokia::errorString() const
+{
+    return m_errorString;
+}
+
+bool QRouteXmlParserNokia::parseRootElement(QRouteReplyNokia *output)
 {
     /*
     <xsd:element name="routes">
@@ -77,11 +82,11 @@ bool QRouteXmlParser::readRootElement(QRouteReply *output)
     if (m_reader->attributes().hasAttribute("resultCode")) {
         QStringRef result = m_reader->attributes().value("resultCode");
         if (result == "OK") {
-            output->setResultCode(QRouteReply::OK);
+            output->setResultCode(QRouteReplyNokia::OK);
         } else if (result == "FAILED") {
-            output->setResultCode(QRouteReply::Failed);
+            output->setResultCode(QRouteReplyNokia::Failed);
         } else if (result == "FAILED WITH ALTERNATIVE") {
-            output->setResultCode(QRouteReply::FailedWithAlternative);
+            output->setResultCode(QRouteReplyNokia::FailedWithAlternative);
         } else {
             m_reader->raiseError(QString("The attribute \"resultCode\" of the element \"routes\" has an unknown value (value was %1).").arg(result.toString()));
             return false;
@@ -89,9 +94,10 @@ bool QRouteXmlParser::readRootElement(QRouteReply *output)
     }
 
     if (m_reader->attributes().hasAttribute("resultDescription")) {
-        output->setResultDescription(m_reader->attributes().value("resultDescription").toString());
+        output->setDescription(m_reader->attributes().value("resultDescription").toString());
     }
 
+    /*
     if (!m_reader->attributes().hasAttribute("language")) {
         //m_reader->raiseError("The element \"routes\" did not have the required attribute \"language\".");
         //return false;
@@ -99,15 +105,18 @@ bool QRouteXmlParser::readRootElement(QRouteReply *output)
         output->setLanguage(m_reader->attributes().value("language").toString());
         // TODO - check that's in xsd:language format?
     }
+    */
 
     while (m_reader->readNextStartElement()) {
         if (m_reader->name() == "route") {
             QRoute route;
 
-            if (!readRoute(&route))
+            if (!parseRoute(&route))
                 return false;
 
-            output->addRoute(route);
+            QList<QRoute> routes = output->routes();
+            routes.append(route);
+            output->setRoutes(routes);
         } else {
             m_reader->raiseError(QString("The element \"routes\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
             return false;
@@ -122,7 +131,7 @@ bool QRouteXmlParser::readRootElement(QRouteReply *output)
     return true;
 }
 
-bool QRouteXmlParser::readRoute(QRoute *route)
+bool QRouteXmlParserNokia::parseRoute(QRoute *route)
 {
     /*
     <xsd:complexType name="Route">
@@ -144,7 +153,7 @@ bool QRouteXmlParser::readRoute(QRoute *route)
     } else {
         bool ok = false;
         QString s = m_reader->attributes().value("distance").toString();
-        route->dist = s.toUInt(&ok);
+        route->setDistance(s.toUInt(&ok));
         if (!ok) {
             m_reader->raiseError(QString("The attribute \"distance\" was expected to have a value convertable to an unsigned int (value was \"%1\")").arg(s));
             return false;
@@ -153,14 +162,18 @@ bool QRouteXmlParser::readRoute(QRoute *route)
 
     if (m_reader->attributes().hasAttribute("timeOfDeparture")) {
         QString tod = m_reader->readElementText();
-        if (!readXsdDateTime(tod, &(route->tod), "timeOfDeparture"))
+        QDateTime time;
+        if (!parseXsdDateTime(tod, &time, "timeOfDeparture"))
             return false;
+        route->setTimeOfDeparture(time);
     }
 
     if (m_reader->attributes().hasAttribute("timeOfArrival")) {
         QString toa = m_reader->readElementText();
-        if (!readXsdDateTime(toa, &(route->toa), "timeOfArrival"))
+        QDateTime time;
+        if (!parseXsdDateTime(toa, &time, "timeOfArrival"))
             return false;
+        route->setTimeOfArrival(time);
     }
 
     if (!m_reader->readNextStartElement()) {
@@ -173,17 +186,23 @@ bool QRouteXmlParser::readRoute(QRoute *route)
         return false;
     }
 
-    if (!readBoundingBox(&(route->box)))
+    QRectF boundingBox;
+
+    if (!parseBoundingBox(&boundingBox))
         return false;
+
+    route->setBoundingBox(boundingBox);
 
     while (m_reader->readNextStartElement()) {
         if (m_reader->name() == "maneuver") {
             QManeuver man;
 
-            if (!readManeuver(&man))
+            if (!parseManeuver(&man))
                 return false;
 
-            route->man.append(man);
+            QList<QManeuver> maneuvers = route->maneuvers();
+            maneuvers.append(man);
+            route->setManeuvers(maneuvers);
         } else {
             m_reader->raiseError(QString("The element \"route\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
             return false;
@@ -193,7 +212,7 @@ bool QRouteXmlParser::readRoute(QRoute *route)
     return true;
 }
 
-bool QRouteXmlParser::readXsdDateTime(const QString& strDateTime, QDateTime *dateTime, const QString &attributeName)
+bool QRouteXmlParserNokia::parseXsdDateTime(const QString& strDateTime, QDateTime *dateTime, const QString &attributeName)
 {
     QTime utcDiff(0, 0, 0, 0);
     QString dt;
@@ -290,7 +309,7 @@ bool QRouteXmlParser::readXsdDateTime(const QString& strDateTime, QDateTime *dat
     return true;
 }
 
-bool QRouteXmlParser::readXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName)
+bool QRouteXmlParserNokia::parseXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName)
 {
     QString dur = strDuration;
     QString errorString = QString("The attribute \"%1\" has a bady formatted xsd:duration string (string is \"%2\")").arg(attributeName).arg(strDuration);
@@ -421,7 +440,7 @@ bool QRouteXmlParser::readXsdDuration(const QString& strDuration, qint32 *durati
     return true;
 }
 
-bool QRouteXmlParser::readManeuver(QManeuver *maneuver)
+bool QRouteXmlParserNokia::parseManeuver(QManeuver *maneuver)
 {
     /*
     <xsd:complexType name="Maneuver">
@@ -462,14 +481,14 @@ bool QRouteXmlParser::readManeuver(QManeuver *maneuver)
         m_reader->raiseError("The element \"maneuver\" did not have the required attribute \"description\".");
         return false;
     } else {
-        maneuver->descr = m_reader->attributes().value("description").toString();
+        maneuver->setDescription(m_reader->attributes().value("description").toString());
     }
 
     if (!m_reader->attributes().hasAttribute("action")) {
         m_reader->raiseError("The element \"maneuver\" did not have the required attribute \"action\".");
         return false;
     } else {
-        maneuver->act = m_reader->attributes().value("action").toString();
+        maneuver->setAction(m_reader->attributes().value("action").toString());
     }
 
     if (!m_reader->attributes().hasAttribute("distance")) {
@@ -478,7 +497,7 @@ bool QRouteXmlParser::readManeuver(QManeuver *maneuver)
     } else {
         bool ok = false;
         QString s = m_reader->attributes().value("distance").toString();
-        maneuver->dist = s.toUInt(&ok);
+        maneuver->setDistance(s.toUInt(&ok));
 
         if (!ok) {
             m_reader->raiseError(QString("The attribute \"distance\" was expected to have a value convertable to an unsigned int (value was \"%1\")").arg(s));
@@ -491,28 +510,30 @@ bool QRouteXmlParser::readManeuver(QManeuver *maneuver)
         return false;
     } else {
         QString duration = m_reader->attributes().value("duration").toString();
-        if (!duration.isEmpty() && !readXsdDuration(duration, &(maneuver->dur), "duration"))
+        qint32 seconds;
+        if (!duration.isEmpty() && !parseXsdDuration(duration, &seconds, "duration"))
             return false;
+        maneuver->setDuration(seconds);
     }
 
     if (m_reader->attributes().hasAttribute("turn")) {
-        maneuver->trn = m_reader->attributes().value("turn").toString();
+        maneuver->setTurn(m_reader->attributes().value("turn").toString());
     }
 
     if (m_reader->attributes().hasAttribute("streetName")) {
-        maneuver->stName = m_reader->attributes().value("streetName").toString();
+        maneuver->setStreetName(m_reader->attributes().value("streetName").toString());
     }
 
     if (m_reader->attributes().hasAttribute("routeName")) {
-        maneuver->rtName = m_reader->attributes().value("routeName").toString();
+        maneuver->setRouteName(m_reader->attributes().value("routeName").toString());
     }
 
     if (m_reader->attributes().hasAttribute("nextStreetName")) {
-        maneuver->nxtStreetName = m_reader->attributes().value("nextStreetName").toString();
+        maneuver->setNextStreetName(m_reader->attributes().value("nextStreetName").toString());
     }
 
     if (m_reader->attributes().hasAttribute("signPost")) {
-        maneuver->sgnPost = m_reader->attributes().value("signPost").toString();
+        maneuver->setSignPost(m_reader->attributes().value("signPost").toString());
     }
 
     /*
@@ -520,7 +541,7 @@ bool QRouteXmlParser::readManeuver(QManeuver *maneuver)
     if (m_reader->attributes().hasAttribute("trafficDirection")) {
         bool ok = false;
         QString s = m_reader->attributes().value("trafficDirection").toString();
-        maneuver->traffDir = s.toLong(&ok);
+        maneuver->setTrafficDirection(s.toLong(&ok));
 
         if (!ok) {
             m_reader->raiseError(QString("The attribute \"trafficDirection\" was expected to have a value convertable to a long integer (value was \"%1\")").arg(s));
@@ -532,7 +553,7 @@ bool QRouteXmlParser::readManeuver(QManeuver *maneuver)
     if (m_reader->attributes().hasAttribute("icon")) {
         bool ok = false;
         QString s = m_reader->attributes().value("icon").toString();
-        maneuver->icn = s.toLong(&ok);
+        maneuver->setIcon(s.toLong(&ok));
 
         if (!ok) {
             m_reader->raiseError(QString("The attribute \"icon\" was expected to have a value convertable to a long integer (value was \"%1\")").arg(s));
@@ -546,8 +567,11 @@ bool QRouteXmlParser::readManeuver(QManeuver *maneuver)
     }
 
     if (m_reader->name() == "wayPoints") {
-        if (!readGeoPoints(m_reader->readElementText(), &(maneuver->wPoints), "wayPoints"))
+        QList<QGeoCoordinate> wPoints;
+        if (!parseGeoPoints(m_reader->readElementText(), &wPoints, "wayPoints"))
             return false;
+
+        maneuver->setWaypoints(wPoints);
 
         if (!m_reader->readNextStartElement()) {
             m_reader->raiseError(QString("The element \"maneuever\" expected this child element to be named \"maneuverPoints\"").arg(m_reader->name().toString()));
@@ -556,8 +580,12 @@ bool QRouteXmlParser::readManeuver(QManeuver *maneuver)
     }
 
     if (m_reader->name() == "maneuverPoints") {
-        if (!readGeoPoints(m_reader->readElementText(), &(maneuver->mPoints), "maneuverPoints"))
+        QList<QGeoCoordinate> mPoints;
+        if (!parseGeoPoints(m_reader->readElementText(), &mPoints, "maneuverPoints"))
             return false;
+
+        maneuver->setManeuverPoints(mPoints);
+
     } else {
         m_reader->raiseError(QString("The element \"maneuever\" was expected to have a child element named \"maneuverPoints\" (found an element named \"%1\")").arg(m_reader->name().toString()));
         return false;
@@ -571,7 +599,7 @@ bool QRouteXmlParser::readManeuver(QManeuver *maneuver)
     return true;
 }
 
-bool QRouteXmlParser::readGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName)
+bool QRouteXmlParserNokia::parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName)
 {
     QStringList rawPoints = strPoints.split(' ');
 
@@ -607,7 +635,7 @@ bool QRouteXmlParser::readGeoPoints(const QString& strPoints, QList<QGeoCoordina
     return true;
 }
 
-bool QRouteXmlParser::readBoundingBox(QRectF *rect)
+bool QRouteXmlParserNokia::parseBoundingBox(QRectF *rect)
 {
     /*
     <xsd:complexType name="GeoBox">
@@ -628,7 +656,7 @@ bool QRouteXmlParser::readBoundingBox(QRectF *rect)
     QGeoCoordinate nw;
 
     if (m_reader->name() == "northWest") {
-        if (!readCoordinate(&nw, "northWest"))
+        if (!parseCoordinate(&nw, "northWest"))
             return false;
     } else {
         m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"northWest\" (found an element named \"%1\")").arg(m_reader->name().toString()));
@@ -643,7 +671,7 @@ bool QRouteXmlParser::readBoundingBox(QRectF *rect)
     QGeoCoordinate se;
 
     if (m_reader->name() == "southEast") {
-        if (!readCoordinate(&se, "southEast"))
+        if (!parseCoordinate(&se, "southEast"))
             return false;
     } else {
         m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"southEast\" (found an element named \"%1\")").arg(m_reader->name().toString()));
@@ -661,7 +689,7 @@ bool QRouteXmlParser::readBoundingBox(QRectF *rect)
     return true;
 }
 
-bool QRouteXmlParser::readCoordinate(QGeoCoordinate *coordinate, const QString &elementName)
+bool QRouteXmlParserNokia::parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName)
 {
     /*
     <xsd:complexType name="GeoCoord">

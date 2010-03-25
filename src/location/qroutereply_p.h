@@ -51,13 +51,10 @@ QTM_BEGIN_NAMESPACE
 class QRouteReplyPrivate
 {
 public:
-    QRouteReplyPrivate():rCode(QRouteReply::Failed){};
+    QRouteReplyPrivate();
     
-    QRouteReply::ResultCode rCode;
-    QString    descr;
-    QString    lang;
-
-    QList<QRoute> rt;
+    QString description;
+    QList<QRoute> routes;
 };
 
 QTM_END_NAMESPACE

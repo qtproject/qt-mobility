@@ -280,13 +280,13 @@ void QMapView::tileFetched(QMapTileReply* reply)
     quint64 tileIndex = getTileIndex(request.col(), request.row());
 
     if (!d->pendingTiles.contains(tileIndex)) {
-        d->geoEngine->release(reply);
+        delete reply;
         return; //discard
     }
 
     //Not the reply we expected?
     if (reply != d->pendingTiles[tileIndex]) {
-        d->geoEngine->release(reply);
+        delete reply;
         return; //discard
     }
 
@@ -297,15 +297,15 @@ void QMapView::tileFetched(QMapTileReply* reply)
             request.resolution().id != d->mapResolution.id ||
             request.scheme().id != d->mapSchmeme.id ||
             request.version().id != d->mapVersion.id) {
-        d->geoEngine->release(reply);
+        delete reply;
         return; //discard
     }
 
     QPixmap tile;
-    tile.loadFromData(reply->rawData(), "PNG");
+    tile.loadFromData(reply->data(), "PNG");
     d->mapTiles[tileIndex] = qMakePair(tile, true);
     this->update();
-    d->geoEngine->release(reply);
+    delete reply;
 }
 
 void QMapView::mousePressEvent(QGraphicsSceneMouseEvent* event)

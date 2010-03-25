@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #include "qroutereply.h"
 #include "qroutereply_p.h"
 
@@ -47,110 +46,102 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QRouteReply
-    \brief The QRouteReply class represents a response to a request for routing information.
+    \brief The QRouteReply class represents the response from a routing service.
     \ingroup location
 
-    This class represents a routing response.
+    This class represents the response from a routing service.
+    It also takes responsibility for any errors that happen while the request is
+    in submitted to and processed by the service.
 */
 
 /*!
-    \enum QRouteReply::ResultCode
+    \enum ErrorCode
 
-    Possible result codes as returned by the geo engine
-
-    \value OK
-        request succeeded
-    \value Failed
-        request failed
-    \value FailedWithAlternative
-        request failed, but a close alternative was found
+    \value NoError
+        No error has occurred.
+    \value NetworkError
+        A networking error occurred.
+    \value NoContentError
+        The reply contained no content.
+    \value UnknownError
+        An error occurred which does not fit into any of the other categories.
 */
 
-QRouteReply::QRouteReply()
-    : d_ptr(new QRouteReplyPrivate())
+/*!
+    Constructs a QRouteReply with parent \a parent.
+*/
+QRouteReply::QRouteReply(QObject *parent)
+    : QObject(parent),
+    d_ptr(new QRouteReplyPrivate)
 {
 }
 
 /*!
-    Returns the result code as reported by the geo engine.
+    Destructor.
 */
-QRouteReply::ResultCode QRouteReply::resultCode() const
-{
-    Q_D(const QRouteReply);
-    return d->rCode;
-}
-/*!
-    Sets the result code
-*/
-void QRouteReply::setResultCode(QRouteReply::ResultCode result)
+QRouteReply::~QRouteReply()
 {
     Q_D(QRouteReply);
-    d->rCode = result;
+    delete d;
 }
 
 /*!
-    Returns a textual description of the result.
+    Returns the description of the route or routes.
 */
-QString QRouteReply::resultDescription() const
+QString QRouteReply::description() const
 {
     Q_D(const QRouteReply);
-    return d->descr;
+    return d->description;
 }
 
 /*!
-    Sets a textual description of the result.
+    Sets the description of the route or routes to \a description.
 */
-void QRouteReply::setResultDescription(QString description)
+void QRouteReply::setDescription(const QString &description)
 {
     Q_D(QRouteReply);
-    d->descr = description;
+    d->description = description;
 }
 
 /*!
-    Returns the RFC 3066 language code of the reply.
+    Returns the list of routes which were requested.
 */
-QString QRouteReply::language() const
+QList<QRoute> QRouteReply::routes() const
 {
     Q_D(const QRouteReply);
-    return d->lang;
+    return d->routes;
 }
 
 /*!
-    Sets the RFC 3066 language code of the reply.
+    Sets the list of routes in the reply to \a routes.
 */
-void QRouteReply::setLanguage(QString language)
+void QRouteReply::setRoutes(const QList<QRoute> &routes)
 {
     Q_D(QRouteReply);
-    d->lang = language;
+    d->routes = routes;
 }
 
 /*!
-    Returns the number of routes contained in this reply.
+    \fn void QRouteReply::cancel()
+
+    Cancels the receiving of this reply if the reply hasn't been received already.
 */
-int QRouteReply::count() const
-{
-    Q_D(const QRouteReply);
-    return d->rt.size();
-}
 
 /*!
-    Returns a list containing all found routes.
+    \fn void QRouteReply::finished()
 
-    \sa QRoute
+    Indicates that the reply has been received and processed without error, and is ready to be used.
 */
-const QList<QRoute>& QRouteReply::routes() const
-{
-    Q_D(const QRouteReply);
-    return d->rt;
-}
 /*!
-    Adds a route to the list of found routes.
+    \fn void QRouteReply::error(QRouteReply::ErrorCode errorCode, const QString &errorString = QString())
+
+    Indicates that an error occurred during the receiving or processing of the reply.
 */
-void QRouteReply::addRoute(QRoute route)
-{
-    Q_D(QRouteReply);
-    d->rt.append(route);
-}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QRouteReplyPrivate::QRouteReplyPrivate() {}
 
 #include "moc_qroutereply.cpp"
 

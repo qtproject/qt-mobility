@@ -39,36 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QDLGEONETWORKREPLY_H
-#define QDLGEONETWORKREPLY_H
+#ifndef QGEOLOCATION_P_H
+#define QGEOLOCATION_P_H
 
-#include "qdlgeoreply.h"
+#include "qgeocoordinate.h"
+#include "qgeoaddress.h"
 
-#include <QNetworkReply>
+#include <QRectF>
 
 QTM_BEGIN_NAMESPACE
 
-class QDLGeoNetworkReply : public QObject
+class QGeoLocationPrivate
 {
-    Q_OBJECT
-
 public:
-    QDLGeoNetworkReply(QNetworkReply *reply);
-    ~QDLGeoNetworkReply();
+    QGeoLocationPrivate();
+    QGeoLocationPrivate(const QGeoLocationPrivate &glp);
+    QGeoLocationPrivate& operator=(const QGeoLocationPrivate &glp);
 
-public slots:
-    void networkReplyFinished();
-    void networkError(QNetworkReply::NetworkError networkError);
-    void cancel();
-
-signals:
-    void readyToParse(QIODevice *input);
-    void error(QDLGeoReply::ErrorCode errorCode, QString errorString = QString());
-
-private:
-    QNetworkReply *m_reply;
+    QRectF boundingBox;
+    QGeoCoordinate position;
+    QString title;
+    QString language;
+    QGeoAddress address;
 };
 
-QTM_END_NAMESPACE
+QTM_END_NAMESPACE;
 
-#endif
+#endif // QGEOLOCATION_P_H
+

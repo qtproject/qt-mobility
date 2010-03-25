@@ -44,6 +44,7 @@
 #include <QMap>
 
 #include "qmaptilecache.h"
+#include "qmaptilereply_nokia_p.h"
 
 #define SECONDS_PER_DAY 86400
 #define THIRTY_DAYS (30 * SECONDS_PER_DAY)
@@ -125,8 +126,8 @@ QMapTileReply* QMapTileCache::get(const QMapTileRequest& request)
     if (!tile.open(QIODevice::ReadOnly))
         return NULL;
 
-    QMapTileReply* reply = new QMapTileReply(request);
-    reply->rawData() = tile.readAll();
+    QMapTileReply* reply = new QMapTileReplyNokia(request, 0);
+    reply->setData(tile.readAll());
     tile.close();
 
     return reply;
@@ -144,11 +145,11 @@ bool QMapTileCache::hasExpired(const QDateTime& timestamp)
     return false;
 }
 
-void QMapTileCache::cache(QMapTileReply& reply)
+void QMapTileCache::cache(const QMapTileRequest &request, const QMapTileReply& reply)
 {
     quint64 oldFileSize = 0;
     //construct proper file name and subfolder
-    QString fileNm = constrFileName(reply.request());
+    QString fileNm = constrFileName(request);
     int hashKey = constrHashKey(fileNm);
     int level1 = hashKey >> 4;
     int level2 = hashKey & 15;
@@ -169,7 +170,7 @@ void QMapTileCache::cache(QMapTileReply& reply)
     if (!tile.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return;
 
-    tile.write(reply.rawData());
+    tile.write(reply.data());
     tile.close();
 
     QFileInfo info(tile);

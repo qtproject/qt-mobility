@@ -40,8 +40,114 @@
 ****************************************************************************/
 
 #include "qmaptilereply.h"
+#include "qmaptilereply_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+/*!
+    \class QMapTileReply
+    \brief The QMapTileReply class represents the response from a mapping service.
+    \ingroup location
+
+    This class represents the response from a mapping service.
+    It also takes responsibility for any errors that happen while the request is
+    in submitted to and processed by the service.
+*/
+
+/*!
+    \enum ErrorCode
+
+    \value NoError
+        No error has occurred.
+    \value NetworkError
+        A networking error occurred.
+    \value NoContentError
+        The reply contained no content.
+    \value UnknownError
+        An error occurred which does not fit into any of the other categories.
+*/
+
+/*!
+    Constructs a QMapTileReply from a QMapTileRequest \a request, and with parent \a parent.
+*/
+QMapTileReply::QMapTileReply(const QMapTileRequest &request, QObject *parent)
+    : QObject(parent), d_ptr(new QMapTileReplyPrivate())
+{
+    Q_D(QMapTileReply);
+    d->request = request;
+}
+
+/*!
+    Destructor.
+*/
+QMapTileReply::~QMapTileReply()
+{
+    Q_D(QMapTileReply);
+    delete d;
+}
+
+/*!
+    Returns the request which prompted this reply.
+*/
+QMapTileRequest QMapTileReply::request() const
+{
+    Q_D(const QMapTileReply);
+    return d->request;
+}
+
+/*!
+    Returns the requested map data.
+*/
+QByteArray QMapTileReply::data() const
+{
+    Q_D(const QMapTileReply);
+    return d->data;
+}
+
+/*!
+    Sets the requested map data to \a data.
+*/
+void QMapTileReply::setData(const QByteArray &data)
+{
+    Q_D(QMapTileReply);
+    d->data = data;
+}
+
+/*!
+    Causes this QMapTileReply to emit finished() if it has been configured properly
+    or error() if there is a problem with the configuration.
+*/
+void QMapTileReply::done()
+{
+    Q_D(QMapTileReply);
+    if (d->data.size() > 0) {
+        emit finished();
+    } else {
+        emit error(QMapTileReply::NoContentError, "The reply to the routing request was empty.");
+    }
+}
+
+/*!
+    \fn void QMapTileReply::cancel()
+
+    Cancels the receiving of this reply if the reply hasn't been received already.
+*/
+
+/*!
+    \fn void QMapTileReply::finished()
+
+    Indicates that the reply has been received and processed without error, and is ready to be used.
+*/
+/*!
+    \fn void QMapTileReply::error(QMapTileReply::ErrorCode errorCode, const QString &errorString = QString())
+
+    Indicates that an error occurred during the receiving or processing of the reply.
+*/
+
+/*******************************************************************************
+*******************************************************************************/
+
+QMapTileReplyPrivate::QMapTileReplyPrivate() {}
 
 #include "moc_qmaptilereply.cpp"
 

@@ -39,53 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPTILEREPLY_H
-#define QLOCATION_MAPTILEREPLY_H
-
-#include <QObject>
-#include <QByteArray>
-#include <QPointF>
-#include <QString>
+#ifndef QMAPTILEREPLY_H
+#define QMAPTILEREPLY_H
 
 #include "qmaptilerequest.h"
-#include "qgeoreply.h"
+
+#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-* This class contains the requested map tile.
-*/
-class QMapTileReply : public QGeoReply
+class QMapTileReplyPrivate;
+class Q_LOCATION_EXPORT QMapTileReply : public QObject
 {
     Q_OBJECT
 
-    friend class QGeoNetworkManager;
-
 public:
-    /*!
-    * Constructor.
-    * @param request The associated \ref QMapTileRequest
-    */
-    QMapTileReply(const QMapTileRequest& request);
+    // TODO populate this some more...
+    enum ErrorCode {
+        NoError,
+        // flesh out the more common specific network errors
+        NetworkError,
+        NoContentError,
+        UnknownError
+    };
 
-    /*!
-    * @return The raw byte array from which a QPixmap, etc. can then be constructed.
-    */
-    QByteArray& rawData() {
-        return data;
-    }
-    /*!
-    * @return A reference to the associated \ref QMapTileRequest.
-    */
-    const QMapTileRequest& request() const {
-        return req;
-    }
+    QMapTileReply(const QMapTileRequest &request, QObject *parent = 0);
+    virtual ~QMapTileReply();
 
+    QMapTileRequest request() const;
+
+    // TODO this should probably become a pixmap if / when we have enough
+    // metadata to convert it
+    QByteArray data() const;
+    void setData(const QByteArray &data);
+
+public slots:
+    void done();
+    virtual void cancel() = 0;
+
+signals:
+    void finished();
+    void error(QMapTileReply::ErrorCode errorCode, const QString &errorString = QString());
+
+    // CHOICE: could lose the setters and make this protected
 private:
-    Q_DISABLE_COPY(QMapTileReply)
-
-    QByteArray data;
-    QMapTileRequest req;
+    QMapTileReplyPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QMapTileReply);
 };
 
 QTM_END_NAMESPACE

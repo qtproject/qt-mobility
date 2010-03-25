@@ -39,36 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QDLGEOCODINGREPLY_H
-#define QDLGEOCODINGREPLY_H
+#ifndef QROUTE_P_H
+#define QROUTE_P_H
 
-#include "qdlgeoreply.h"
-#include "qgeolocation.h"
+#include "qmaneuver.h"
 
+#include <QDateTime>
 #include <QList>
+#include <QRectF>
 
 QTM_BEGIN_NAMESPACE
 
-class QDLGeocodingReply : public QDLGeoReply
+class QRoutePrivate
 {
-    Q_OBJECT
-
 public:
-    QDLGeocodingReply();
-    virtual ~QDLGeocodingReply();
+    QRoutePrivate();
+    QRoutePrivate(const QRoutePrivate &rp);
+    QRoutePrivate& operator= (const QRoutePrivate &rp);
 
-    QString description() const;
-    void setDescription(const QString &description);
+    quint32 distance;
+    QDateTime timeOfArrival;
+    QDateTime timeOfDeparture;
 
-    QList<QGeoLocation> places() const;
-    void setPlaces(const QList<QGeoLocation> &places);
-
-    // CHOICE: could lose the setters and make this protected
-private:
-    QString m_description;
-    QList<QGeoLocation> m_places;
+    QRectF boundingBox;
+    QList<QManeuver> maneuvers;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QROUTE_P_H
