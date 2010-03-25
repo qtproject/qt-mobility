@@ -190,5 +190,3 @@ QVariantMap QmlContact::values(QString definitionId)
 }
 
 #include "moc_qmlcontact.cpp"
-
-QML_DEFINE_TYPE(QmlContact, 1, 0, QmlContact, QmlContact)

@@ -209,9 +209,28 @@ findframeworks()
 
 findframeworks
 
+findUniversal()
+{
+    if [ -e "mac.inc" ]; then 
+        rm mac.inc
+    fi
+    echo "contains(QT_CONFIG,x86): system(echo CONFIG+=x86 >> mac.inc)" > 2.pro
+    echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
+    echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
+    echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
+    SOMETIME=`qmake 2.pro 2>&1`
+    rm 2.pro
+    if [ -e "mac.inc" ]; then 
+         echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
+    fi
+}
+
+
 if [ -n "$BUILD_SILENT" ]; then
     echo "CONFIG += silent"  > "$CONFIG_IN"
 fi
+
+findUniversal
 
 if [ -z "$RELEASEMODE" ]; then
     RELEASEMODE="debug"
@@ -348,7 +367,7 @@ compileTest()
         cd config.tests/$2
     fi
 
-    qmake "$relpath/config.tests/$2/$2.pro" >> "$CONFIG_LOG"
+    qmake "$relpath/config.tests/$2/$2.pro" 2>> "$CONFIG_LOG" >> "$CONFIG_LOG"
     printf  " ."
     "$MAKE" clean >> "$CONFIG_LOG"
     printf "."
@@ -368,6 +387,7 @@ compileTest()
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
+compileTest "Maemo ICD" maemo-icd
 
 # Now module selection
 # using 'expr match ....' should help a bit
@@ -379,6 +399,7 @@ compileTest "CoreWLAN (MacOS 10.6)" corewlan
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 
 # Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
@@ -410,7 +431,6 @@ for module in $MOBILITY_MODULES; do
             ;;
         multimedia)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/experimental
             ;;
         messaging)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
@@ -434,7 +454,9 @@ done
 
 mv "$CONFIG_IN" config.pri
 mkdir -p "$shadowpath/features"
-cp -f "$relpath/features/strict_flags.prf" "$shadowpath/features"
+if [ "$shadowpath" != "$relpath" ]; then 
+    cp -f "$relpath/features/strict_flags.prf" "$shadowpath/features"
+fi
 
 echo "Running qmake..."
 if qmake -recursive "$relpath/qtmobility.pro"; then

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "qmessageid.h"
-#include <qhash>
+#include <qhash.h>
 
 
 QTM_BEGIN_NAMESPACE

@@ -227,7 +227,7 @@ void AudioCaptureSession::record()
 
                 m_audioInput->start(qobject_cast<QIODevice*>(&file));
             } else {
-                qWarning()<<"can't open source, failed";
+                emit error(1,QString("can't open source, failed"));
                 m_state = QMediaRecorder::StoppedState;
                 emit stateChanged(m_state);
             }

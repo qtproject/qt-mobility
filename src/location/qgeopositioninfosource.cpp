@@ -46,6 +46,8 @@
 #   include "qgeopositioninfosource_wince_p.h"
 #elif defined(Q_WS_MAEMO_6)
 #   include "qgeopositioninfosource_maemo_p.h"
+#elif defined(Q_WS_MAEMO_5)
+#   include "qgeopositioninfosource_maemo5_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -136,6 +138,11 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
     interval is less than the minimumUpdateInterval(),
     the minimum interval is used instead.
 
+    Changes to the update interval will happen as soon as is practical, however the 
+    time the change takes may vary between implementations.  Whether or not the elapsed 
+    time from the previous interval is counted as part of the new interval is also 
+    implementation dependent.
+
     The default value for this property is 0.
 
     Note: Subclass implementations must call the base implementation of
@@ -193,10 +200,12 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
 #if defined(Q_OS_SYMBIAN)
     QGeoPositionInfoSource *ret = NULL;
     TRAPD(error, ret = CQGeoPositionInfoSourceS60::NewL(parent));
+    if (error != KErrNone)
+        return 0;
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoPositionInfoSourceWinCE(parent);
-#elif defined(Q_WS_MAEMO_6)
+#elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
     QGeoPositionInfoSourceMaemo *source = new QGeoPositionInfoSourceMaemo(parent);
 
     int status = source->init();
@@ -208,8 +217,8 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     return source;
 #else
     Q_UNUSED(parent);
-#endif
     return 0;
+#endif
 }
 
 /*!

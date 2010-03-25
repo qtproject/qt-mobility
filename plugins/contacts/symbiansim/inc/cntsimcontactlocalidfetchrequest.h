@@ -44,18 +44,6 @@
 
 #include "cntabstractsimrequest.h"
 
-#ifdef SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-#include <mpbutil_etel_test_server.h>
-#else
-#include <mpbutil.h>
-#endif
-#include <qcontactmanager.h>
-
-QTM_BEGIN_NAMESPACE
-class QContactLocalIdFetchRequest;
-QTM_END_NAMESPACE
-class CntSymbianSimEngine;
-
 QTM_USE_NAMESPACE
 
 class CntSimContactLocalIdFetchRequest : public CntAbstractSimRequest
@@ -64,14 +52,13 @@ Q_OBJECT
 public:
     CntSimContactLocalIdFetchRequest(CntSymbianSimEngine *engine, QContactLocalIdFetchRequest *req);
     virtual ~CntSimContactLocalIdFetchRequest();
-    bool start();
-    bool cancel();
     
-public Q_SLOTS:
-    void readComplete(QList<QContact> contacts, QContactManager::Error error);
-
-private:
-    QContactLocalIdFetchRequest *m_req;
+public Q_SLOTS:    
+    // from CntAbstractSimRequest
+    void run();
+    
+private Q_SLOTS:
+    void readComplete(QList<QContact> contacts, QContactManager::Error error); 
 };
 
 #endif // CNTSIMCONTACTLOCALIDFETCHREQUEST_H_

@@ -47,7 +47,7 @@
 </ul>
 <p>Here is an example of creating a sensor on the heap and on the stack.</p>
 <pre><span class="comment">    // On the heap (deleted when this object is deleted)</span>
-    QAccelerationSensor *sensor = new QAccelerationSensor(this);
+    QAccelerometer *sensor = new QAccelerometer(this);
 
 <span class="comment">    // On the stack (deleted when the current scope ends)</span>
     QOrientationSensor orient_sensor;</pre>
@@ -63,8 +63,7 @@
 </ul>
 <p>For example, here is an example of how you can access a property of the accelerometer. This code does not require any compile-time links to <a href="qaccelerometer.html">QAccelerometer</a> or <a href="qaccelerometerreading.html">QAccelerometerReading</a>.</p>
 <pre><span class="comment">    // start the sensor</span>
-    QSensor sensor;
-    sensor.setType(&quot;QAccelerometer&quot;);
+    QSensor sensor(&quot;QAccelerometer&quot;);
     sensor.start();
 
 <span class="comment">    // later</span>

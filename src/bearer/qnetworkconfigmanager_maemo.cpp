@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -211,6 +211,7 @@ void QNetworkConfigurationManagerPrivate::registerPlatformCapabilities()
     capFlags |= QNetworkConfigurationManager::CanStartAndStopInterfaces;
     capFlags |= QNetworkConfigurationManager::DataStatistics;
     capFlags |= QNetworkConfigurationManager::ForcedRoaming;
+    capFlags |= QNetworkConfigurationManager::NetworkSessionRequired;
 }
 
 void QNetworkConfigurationManagerPrivate::init()
@@ -394,7 +395,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
                 cpPriv->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
                 cpPriv->service_id = saved_iap.value("service_id").toString();
                 cpPriv->service_type = saved_iap.value("service_type").toString();
-                if (iap_type.startsWith("WLAN")) {
+                if (iap_type.startsWith(QLatin1String("WLAN"))) {
                     QByteArray ssid = saved_iap.value("wlan_ssid").toByteArray();
                     if (ssid.isEmpty()) {
                         qWarning() << "Cannot get ssid for" << iap_id;
@@ -448,7 +449,7 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
 		    ptr->iap_type = iap_type;
 		    update_needed = true;
 		}
-		if (iap_type.startsWith("WLAN")) {
+        if (iap_type.startsWith(QLatin1String("WLAN"))) {
 		    QByteArray ssid = changed_iap.value("wlan_ssid").toByteArray();
 		    if (ssid.isEmpty()) {
 			qWarning() << "Cannot get ssid for" << iap_id;
@@ -493,7 +494,7 @@ void QNetworkConfigurationManagerPrivate::doUpdateConfigurations(QList<Maemo::Ic
     QList<QString> all_iaps;
     Maemo::IAPConf::getAll(all_iaps);
 
-    foreach (const QString iap_id, all_iaps) {
+    foreach (const QString &iap_id, all_iaps) {
 	QByteArray ssid;
 
 	Maemo::IAPConf saved_ap(iap_id);
@@ -506,7 +507,7 @@ void QNetworkConfigurationManagerPrivate::doUpdateConfigurations(QList<Maemo::Ic
 	}
 
 	QString iap_type = saved_ap.value("type").toString();
-	if (iap_type.startsWith("WLAN")) {
+    if (iap_type.startsWith(QLatin1String("WLAN"))) {
 	    ssid = saved_ap.value("wlan_ssid").toByteArray();
 	    if (ssid.isEmpty()) {
 		qWarning() << "Cannot get ssid for" << iap_id;
@@ -590,7 +591,7 @@ void QNetworkConfigurationManagerPrivate::doUpdateConfigurations(QList<Maemo::Ic
 		qDebug("IAP: %s, ssid: %s, discovered", iapid.toAscii().data(), priv->network_id.data());
 #endif
 
-		if (!ap.scan.network_type.startsWith("WLAN"))
+        if (!ap.scan.network_type.startsWith(QLatin1String("WLAN")))
 		    continue; // not a wlan AP
 
                 /* Remove scanned AP from discovered WLAN configurations so that we can
@@ -682,7 +683,7 @@ void QNetworkConfigurationManagerPrivate::doUpdateConfigurations(QList<Maemo::Ic
 	}
 
         /* Remove non existing iaps since last update */
-        foreach (QString oldIface, knownConfigs) {
+        foreach (const QString &oldIface, knownConfigs) {
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.take(oldIface);
             if (priv.data()) {
                 priv->isValid = false;
@@ -789,7 +790,7 @@ void QNetworkConfigurationManagerPrivate::connectionStateSignalsSlot(QDBusMessag
                     if (iapid == m_onlineIapId) {
                         // It's known that there is only one global ICD connection
                         // => Because ICD state was reported to be DISCONNECTED, Device is offline
-                        m_onlineIapId = QString();
+                        m_onlineIapId.clear();
                         emit onlineStateChanged(false);
                     }
                 }
@@ -800,7 +801,7 @@ void QNetworkConfigurationManagerPrivate::connectionStateSignalsSlot(QDBusMessag
             if (iapid == m_onlineIapId) {
                 // It's known that there is only one global ICD connection
                 // => Because ICD state was reported to be DISCONNECTED, Device is offline
-                m_onlineIapId = QString();
+                m_onlineIapId.clear();
                 emit onlineStateChanged(false);
             }
         }

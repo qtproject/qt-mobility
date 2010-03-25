@@ -60,7 +60,7 @@ public:
     const char* FieldGuid;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGuid, "Guid")
-    Q_DECLARE_LATIN1_LITERAL(FieldGuid, "Guid");
+    Q_DECLARE_LATIN1_CONSTANT(FieldGuid, "Guid");
 #endif
 
     void setGuid(const QString& guid) {setValue(FieldGuid, guid);}

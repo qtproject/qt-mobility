@@ -74,7 +74,7 @@ CntSymbianSorterDbms::~CntSymbianSorterDbms()
 
 QList<QContactLocalId> CntSymbianSorterDbms::contacts(
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error)
+            QContactManager::Error* error)
 {
     // Create an empty list
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
@@ -92,7 +92,7 @@ QList<QContactLocalId> CntSymbianSorterDbms::contacts(
 QList<QContactLocalId> CntSymbianSorterDbms::sort(
             QList<QContactLocalId> contactIds,
             const QList<QContactSortOrder>& sortOrders,
-            QContactManager::Error& error)
+            QContactManager::Error* error)
 {
     // Create an empty list
     // See QT_TRYCATCH_LEAVING note at the begginning of this file
@@ -109,7 +109,7 @@ QList<QContactLocalId> CntSymbianSorterDbms::sort(
 
 bool CntSymbianSorterDbms::sortOrderSupported(const QList<QContactSortOrder>& sortOrders)
 {
-    foreach( QContactSortOrder s, sortOrders ) {
+    foreach(const QContactSortOrder& s, sortOrders ) {
         // Find uids for sortings
         QList<TUid> fieldTypeUids = m_transformContact.supportedSortingFieldTypes(s.detailDefinitionName(), s.detailFieldName());
         if( fieldTypeUids.count() == 0 )
@@ -145,7 +145,7 @@ QList<QContactLocalId> CntSymbianSorterDbms::contactsL(const QList<QContactSortO
     // Remove templates from the list
     CContactIdArray *templateIds = m_contactDatabase.GetCardTemplateIdListL();
     CleanupStack::PushL(templateIds);
-    for(TInt i(0); i < templateIds->Count(); i++) {
+    for(TInt i(0); i < templateIds->Count(); ++i) {
         TContactItemId id = (*templateIds)[i];
         TInt index = ids->Find(id);
         if(index > KErrNotFound)
@@ -161,7 +161,7 @@ QList<QContactLocalId> CntSymbianSorterDbms::contactsL(const QList<QContactSortO
 
     // Add the contact ids to the returned QList
     QList<QContactLocalId> qIds;
-    for (TInt i(0); i < ids->Count(); i++) {
+    for (TInt i(0); i < ids->Count(); ++i) {
         qIds.append((*ids)[i]);
     }
 
@@ -195,12 +195,12 @@ CContactIdArray* CntSymbianSorterDbms::sortL(const CContactIdArray* contactIds, 
     CleanupStack::PushL(sort);
 
     // Convert sort orders to TSortPref array
-    foreach (QContactSortOrder s, sortOrders)
+    foreach (const QContactSortOrder& s, sortOrders)
     {
         QList<TUid> fieldTypes = m_transformContact.supportedSortingFieldTypes(s.detailDefinitionName(), s.detailFieldName());
         if (fieldTypes.count())
         {
-            foreach(TUid fieldType, fieldTypes) {
+            foreach(const TUid& fieldType, fieldTypes) {
                 CContactDatabase::TSortPref pref;
                 // NOTE: TSortPref sets order to ascending by default
                 if( s.direction() == Qt::DescendingOrder )

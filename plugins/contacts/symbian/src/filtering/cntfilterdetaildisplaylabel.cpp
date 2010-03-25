@@ -79,7 +79,7 @@ bool CntFilterDetailDisplayLabel::filterSupported(const QContactFilter& filter)
 
 void CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter,
                               QString& sqlQuery,
-                              QContactManager::Error& error)
+                              QContactManager::Error* error)
 
 {
     //Commented currently since this will be checked in contacts call intially
@@ -87,7 +87,7 @@ void CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter
     {
         const QContactDetailFilter detailFilter(filter);
         
-        error = QContactManager::NoError;
+        *error = QContactManager::NoError;
         
         //get the contact fields that should be checked
         CntDisplayLabel displayLabel;
@@ -124,15 +124,15 @@ void CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter
             }
             
             if(!subQuery.isEmpty()){
-            sqlQuery += " AND (" + subQuery + ")";
+            sqlQuery += " AND (" + subQuery + ')';
             }
        
-            error = QContactManager::NoError;
+            *error = QContactManager::NoError;
         }
         
         //if specified more filter criterias than contact fields return error
         else if(searchStrings.count() > contactFields.count()){
-            error = QContactManager::BadArgumentError;
+            *error = QContactManager::BadArgumentError;
         }
     }
         
@@ -140,7 +140,7 @@ void CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter
 
 QString CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& filter,
                                   const QList<QContactSortOrder>& sortOrders,
-                                  QContactManager::Error& error) const
+                                  QContactManager::Error* error) const
 {
     Q_UNUSED(sortOrders);
     QString result;
@@ -149,7 +149,7 @@ QString CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& fil
     {
         const QContactDetailFilter detailFilter(filter);
         
-        error = QContactManager::NoError;
+        *error = QContactManager::NoError;
         
         //get the contact fields that should be checked
         CntDisplayLabel displayLabel;
@@ -186,15 +186,15 @@ QString CntFilterDetailDisplayLabel::createSelectQuery(const QContactFilter& fil
             }
             
             if(!subQuery.isEmpty()){
-                result += " AND (" + subQuery + ")";
+                result += " AND (" + subQuery + ')';
             }
        
-            error = QContactManager::NoError;
+            *error = QContactManager::NoError;
         }
         
         //if specified more filter criterias than contact fields return error
         else if(searchStrings.count() > contactFields.count()){
-            error = QContactManager::BadArgumentError;
+            *error = QContactManager::BadArgumentError;
         }
     }
     
@@ -246,7 +246,7 @@ void CntFilterDetailDisplayLabel::createQueryMultipleSearchValues(QString& sqlQu
  */
 QString CntFilterDetailDisplayLabel::createSubQuery(const QString &searchValue, const QString &column) const
 {
-    return ("(" + column + " LIKE \'" + searchValue + "%\' OR " + column + " LIKE \'% " + searchValue + "%\')");
+    return ('(' + column + " LIKE \'" + searchValue + "%\' OR " + column + " LIKE \'% " + searchValue + "%\')");
 }
 
 /*
@@ -262,12 +262,12 @@ QString CntFilterDetailDisplayLabel::columnName(const QPair<QLatin1String, QLati
     //Name detail
     if(detail.first == QContactName::DefinitionName)
     {
-        if(detail.second == QContactName::FieldFirst)
+        if(detail.second == QContactName::FieldFirstName)
         {
             columnName = "first_name";
         }
         
-        else if(detail.second == QContactName::FieldLast)
+        else if(detail.second == QContactName::FieldLastName)
         {
             columnName = "last_name";
         }

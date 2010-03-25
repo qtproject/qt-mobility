@@ -12,6 +12,7 @@ contains(QT_CONFIG, opengl): QT += opengl
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MEDIA_LIB
+!symbian:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PREFIX, \\\\, /)/plugins\\\"
 
 PRIVATE_HEADERS += \
     qmediacontrol_p.h \
@@ -103,42 +104,8 @@ SOURCES += qmediacontrol.cpp \
     qvideorenderercontrol.cpp \
     qmediatimerange.cpp
 
-contains(QT_CONFIG, declarative) {
-    QT += declarative
-
-    PRIVATE_HEADERS += \
-        qmetadatacontrolmetaobject_p.h \
-        qmlaudio_p.h \
-        qmlgraphicsvideo_p.h \
-        qmlmediabase_p.h \
-        qsoundeffect_p.h \
-        wavedecoder.h
-
-    SOURCES += \
-        qmetadatacontrolmetaobject.cpp \
-        qmlaudio.cpp \
-        qmlgraphicsvideo.cpp \
-        qmlmediabase.cpp \
-        qsoundeffect.cpp \
-        wavedecoder.cpp
-
-   maemo5: DEFINES += QT_MULTIMEDIA_MAEMO5
-   system(pkg-config --exists \'libpulse >= 0.9.10\') {
-       DEFINES += QT_MULTIMEDIA_PULSEAUDIO
-       PRIVATE_HEADERS += qsoundeffect_pulse_p.h
-       SOURCES += qsoundeffect_pulse_p.cpp
-       LIBS_PRIVATE += -lpulse
-   } else:x11 {
-       DEFINES += QT_MULTIMEDIA_QMEDIAPLAYER
-       PRIVATE_HEADERS += qsoundeffect_qmedia_p.h
-       SOURCES += qsoundeffect_qmedia_p.cpp
-   } else {
-       PRIVATE_HEADERS += qsoundeffect_qsound_p.h
-       SOURCES += qsoundeffect_qsound_p.cpp
-   }
-}
-
 maemo5 {
+    QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
     HEADERS += qxvideosurface_maemo5_p.h
     SOURCES += qxvideosurface_maemo5.cpp
     SOURCES += qgraphicsvideoitem_maemo5.cpp
@@ -147,7 +114,6 @@ maemo5 {
     SOURCES += qgraphicsvideoitem.cpp
 }
 
-include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
@@ -156,7 +122,6 @@ symbian {
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
     TARGET.UID3=0x2002AC77
-    MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
 }
 

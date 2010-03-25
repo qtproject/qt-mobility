@@ -139,8 +139,11 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     static QSystemNetworkInfoPrivate *instance() {return self;}
-    void networkChanged(const QString &notification, const QString interfaceName);
+    void wifiNetworkChanged(const QString &notification, const QString interfaceName);
     QString getDefaultInterface();
+    QSystemNetworkInfo::NetworkMode currentMode();
+    void ethernetChanged();
+
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -154,7 +157,6 @@ public Q_SLOTS:
    void primaryInterface();
 
 private:
-    bool isInterfaceActive(const char* netInterface);
     QTimer *rssiTimer;
     int signalStrengthCache;
     static QSystemNetworkInfoPrivate *self;
@@ -164,6 +166,14 @@ private:
 
 private Q_SLOTS:
     void rssiTimeout();
+protected:
+    void startNetworkChangeLoop();
+    bool isInterfaceActive(const char* netInterface);
+
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+    bool hasWifi;
+
 };
 
 class QSystemDisplayInfoPrivate : public QObject

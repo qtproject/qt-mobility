@@ -42,6 +42,7 @@
 #include "qcontactdetail.h"
 #include "qcontactdetail_p.h"
 #include "qcontactmanager.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -49,17 +50,17 @@ QTM_BEGIN_NAMESPACE
 QAtomicInt QContactDetailPrivate::lastDetailKey(1);
 
 /* Definitions of predefined string constants */
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldDetailUri, "DetailUri");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldLinkedDetailUris, "LinkedDetailUris");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::FieldContext, "Context");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextOther, "Other");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextHome, "Home");
-Q_DEFINE_LATIN1_LITERAL(QContactDetail::ContextWork, "Work");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::FieldDetailUri, "DetailUri");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::FieldLinkedDetailUris, "LinkedDetailUris");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::FieldContext, "Context");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextOther, "Other");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextHome, "Home");
+Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextWork, "Work");
 
 /*!
   \class QContactDetail
  
-  \brief The QContactDetail class provides access to a single, complete detail about a contact.
+  \brief The QContactDetail class represents a single, complete detail about a contact.
   \ingroup contacts-main
  
   All of the information for a contact is stored in one or more QContactDetail objects.
@@ -232,17 +233,34 @@ bool QContactDetail::operator==(const QContactDetail& other) const
     return true;
 }
 
-/*! Sets the preferred actions for this detail to be the given list of \a preferredActions */
-void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
+/*! Returns the hash value for \a key. */
+uint qHash(const QContactDetail &key)
 {
-    d->m_preferredActions = preferredActions;
+    uint hash = QT_PREPEND_NAMESPACE(qHash)(key.definitionName())
+                + QT_PREPEND_NAMESPACE(qHash)(key.accessConstraints());
+    QVariantMap::const_iterator it = key.variantValues().constBegin();
+    QVariantMap::const_iterator end = key.variantValues().constEnd();
+    while (it != end) {
+        hash += QT_PREPEND_NAMESPACE(qHash)(it.key())
+                + QT_PREPEND_NAMESPACE(qHash)(it.value().toString());
+        ++it;
+    }
+    return hash;
 }
 
-/*! Returns the list of preferred actions for this detail */
-QList<QContactActionDescriptor> QContactDetail::preferredActions() const
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QContactDetail& detail)
 {
-    return d->m_preferredActions;
+    dbg.nospace() << "QContactDetail(name=" << detail.definitionName() << ", key=" << detail.key();
+    QVariantMap fields = detail.variantValues();
+    QVariantMap::const_iterator it;
+    for (it = fields.constBegin(); it != fields.constEnd(); it++) {
+        dbg.nospace() << ", " << it.key() << '=' << it.value();
+    }
+    dbg.nospace() << ')';
+    return dbg.maybeSpace();
 }
+#endif
 
 /*! Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false. */
 bool QContactDetail::isEmpty() const

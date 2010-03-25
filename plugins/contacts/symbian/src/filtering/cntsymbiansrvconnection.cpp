@@ -93,7 +93,7 @@ CntSymbianSrvConnection::~CntSymbianSrvConnection()
  * \return the list of matched contact ids
  */
 QList<QContactLocalId> CntSymbianSrvConnection::searchContacts(const QString& sqlQuery, 
-                                                       QContactManager::Error& error)
+                                                       QContactManager::Error* error)
 {
     QList<QContactLocalId> list;
     TPtrC queryPtr(reinterpret_cast<const TUint16*>(sqlQuery.utf16()));
@@ -152,12 +152,12 @@ void CntSymbianSrvConnection::ConnectSrvL()
         //Enforce server to be at system default priority EPriorityForeground
         server.SetPriority(EPriorityForeground);
         
-        // Synchronise with the server.
+        // Synchronize with the server.
         TRequestStatus reqStatus;
         server.Rendezvous(reqStatus);
         server.Resume();
         
-        // Server will call the reciprocal static synchronisation call.
+        // Server will call the reciprocal static synchronization call.
         User::WaitForRequest(reqStatus);
         server.Close();
         User::LeaveIfError(reqStatus.Int());

@@ -65,6 +65,16 @@
 
     #include &lt;QtGui&gt;
 
+    #ifdef Q_OS_SYMBIAN
+    #include &lt;QtGui/QDialog&gt;
+    #include &lt;QtGui/QLineEdit&gt;
+    #include &lt;QtGui/QListWidget&gt;
+    #include &lt;QtNetwork/QHttp&gt;
+    #include &lt;QDomDocument&gt;
+
+    #include &quot;mediakeysobserver.h&quot;
+    #endif
+
     Player::Player(QWidget *parent)
         : QWidget(parent)
         , videoWidget(0)
@@ -73,12 +83,16 @@
     #ifdef Q_OS_SYMBIAN
         , mediaKeysObserver(0)
         , playlistDialog(0)
+        , toggleAspectRatio(0)
+        , showYoutubeDialog(0)
+        , youtubeDialog(0)
     #else
         , colorDialog(0)
     #endif
     {
         player = new QMediaPlayer(this);
-        playlist = new QMediaPlaylist(this);
+        <span class="comment">// owerd by PlaylistModel</span>
+        playlist = new QMediaPlaylist();
         playlist-&gt;setMediaObject(player);
 
         connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
@@ -88,31 +102,31 @@
         connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
                 this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
         connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
+        connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
-        videoWidget = new VideoWidget;
+        videoWidget = new VideoWidget(this);
         videoWidget-&gt;setMediaObject(player);
 
         playlistModel = new PlaylistModel(this);
         playlistModel-&gt;setPlaylist(playlist);
 
-        playlistView = new QListView;
+        playlistView = new QListView(this);
         playlistView-&gt;setModel(playlistModel);
         playlistView-&gt;setCurrentIndex(playlistModel-&gt;index(playlist-&gt;currentIndex(), 0));
 
         connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
-        slider = new QSlider(Qt::Horizontal);
+        slider = new QSlider(Qt::Horizontal, this);
         slider-&gt;setRange(0, player-&gt;duration() / 1000);
 
         connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
 
-    #ifdef Q_OS_SYMBIAN
-    #else
+    #ifndef Q_OS_SYMBIAN
         QPushButton *openButton = new QPushButton(tr(&quot;Open&quot;), this);
 
         connect(openButton, SIGNAL(clicked()), this, SLOT(open()));
-
     #endif
+
         PlayerControls *controls = new PlayerControls(this);
         controls-&gt;setState(player-&gt;state());
         controls-&gt;setVolume(player-&gt;volume());
@@ -122,18 +136,19 @@
         connect(controls, SIGNAL(pause()), player, SLOT(pause()));
         connect(controls, SIGNAL(stop()), player, SLOT(stop()));
         connect(controls, SIGNAL(next()), playlist, SLOT(next()));
-        connect(controls, SIGNAL(previous()), playlist, SLOT(previous()));
+        connect(controls, SIGNAL(previous()), this, SLOT(previousClicked()));
         connect(controls, SIGNAL(changeVolume(int)), player, SLOT(setVolume(int)));
         connect(controls, SIGNAL(changeMuting(bool)), player, SLOT(setMuted(bool)));
         connect(controls, SIGNAL(changeRate(qreal)), player, SLOT(setPlaybackRate(qreal)));
+
+        connect(controls, SIGNAL(stop()), videoWidget, SLOT(update()));
 
         connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
                 controls, SLOT(setState(QMediaPlayer::State)));
         connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
         connect(player, SIGNAL(mutedChanged(bool)), controls, SLOT(setMuted(bool)));
 
-    #ifdef Q_OS_SYMBIAN
-    #else
+    #ifndef Q_OS_SYMBIAN
         QPushButton *fullScreenButton = new QPushButton(tr(&quot;FullScreen&quot;), this);
         fullScreenButton-&gt;setCheckable(true);
 
@@ -145,7 +160,7 @@
             fullScreenButton-&gt;setEnabled(false);
         }
 
-        QPushButton *colorButton = new QPushButton(tr(&quot;Color Options...&quot;));
+        QPushButton *colorButton = new QPushButton(tr(&quot;Color Options...&quot;), this);
         if (videoWidget)
             connect(colorButton, SIGNAL(clicked()), this, SLOT(showColorDialog()));
         else
@@ -172,21 +187,29 @@
 
         mediaKeysObserver = new MediaKeysObserver(this);
 
+        coverLabel = new QLabel(this);
+        coverLabel-&gt;setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        coverLabel-&gt;setMinimumSize(1, 1);
+        coverLabel-&gt;hide();
+
         slider-&gt;setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
         slider-&gt;setMinimumSize(1, 1);
 
         connect(controls, SIGNAL(open()), this, SLOT(open()));
         connect(controls, SIGNAL(fullScreen(bool)), this, SLOT(handleFullScreen(bool)));
-        connect(videoWidget, SIGNAL(fullScreenChanged(bool)), this, SLOT(handleFullScreen(bool)));
         connect(controls, SIGNAL(openPlayList()), this, SLOT(showPlayList()));
         connect(player, SIGNAL(stateChanged(QMediaPlayer::State)), this, SLOT(handleStateChange(QMediaPlayer::State)));
         connect(mediaKeysObserver, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)), this, SLOT(handleMediaKeyEvent(MediaKeysObserver::MediaKeys)));
         connect(close, SIGNAL(triggered()), playlistDialog, SLOT(reject()));
 
         QBoxLayout *layout = new QVBoxLayout;
+        layout-&gt;setMargin(0);
         layout-&gt;addWidget(videoWidget, 7);
+        layout-&gt;addWidget(coverLabel, 7);
         layout-&gt;addWidget(slider, 1);
         layout-&gt;addWidget(controls, 2);
+
+        createMenus();
     #else
         QBoxLayout *displayLayout = new QHBoxLayout;
         if (videoWidget)
@@ -226,12 +249,6 @@
 
     Player::~Player()
     {
-    #ifdef Q_OS_SYMBIAN
-        delete playlistDialog;
-    #else
-        delete playlist;
-    #endif
-        delete player;
     }
 
     void Player::open()
@@ -248,11 +265,58 @@
 
     void Player::positionChanged(qint64 progress)
     {
-        slider-&gt;setValue(progress / 1000);
+        if (!slider-&gt;isSliderDown()) {
+            slider-&gt;setValue(progress / 1000);
+        }
     }
 
     void Player::metaDataChanged()
     {
+    #ifdef Q_OS_SYMBIAN
+        if (player-&gt;isMetaDataAvailable()) {
+            setTrackInfo(QString(&quot;(%1/%2) %3 - %4&quot;)
+                    .arg(playlist-&gt;currentIndex()+1)
+                    .arg(playlist-&gt;mediaCount())
+                    .arg(player-&gt;metaData(QtMedia::AlbumArtist).toString())
+                    .arg(player-&gt;metaData(QtMedia::Title).toString()));
+
+            if (!player-&gt;isVideoAvailable()) {
+                QUrl uri = player-&gt;metaData(QtMedia::CoverArtUrlLarge).value&lt;QUrl&gt;();
+                QPixmap pixmap = NULL;
+
+                if (uri.isEmpty()) {
+                    QVariant picture = player-&gt;extendedMetaData(&quot;attachedpicture&quot;);
+                    <span class="comment">// Load picture from metadata</span>
+                    if (!picture.isNull() &amp;&amp; picture.canConvert&lt;QByteArray&gt;())
+                        pixmap.loadFromData(picture.value&lt;QByteArray&gt;());
+
+                    <span class="comment">// Load some jpg from same dir as media</span>
+                    else {
+                        QUrl url = player-&gt;media().canonicalUrl();
+                        QString path = url.path();
+                        path = path.mid(1,path.lastIndexOf(&quot;/&quot;));
+                        QRegExp rx(&quot;*.jpg&quot;);
+                        rx.setCaseSensitivity(Qt::CaseInsensitive);
+                        rx.setPatternSyntax(QRegExp::Wildcard);
+                        QDir directory(path);
+                        QStringList allFiles = directory.entryList(QDir::Files | QDir::NoSymLinks);
+
+                        foreach (QString file, allFiles)
+                            if (rx.exactMatch(file)) {
+                                path.append(file);
+                                break;
+                            }
+                       pixmap.load(path);
+                    }
+                    <span class="comment">// Load picture from file pointed by uri</span>
+                } else
+                    pixmap.load(uri.toString());
+
+                coverLabel-&gt;setPixmap((!pixmap.isNull())?pixmap:QPixmap());
+                }
+        hideOrShowCoverArt();
+        }
+    #else
         <span class="comment">//qDebug() &lt;&lt; &quot;update metadata&quot; &lt;&lt; player-&gt;metaData(QtMedia::Title).toString();</span>
         if (player-&gt;isMetaDataAvailable()) {
             setTrackInfo(QString(&quot;%1 - %2&quot;)
@@ -267,6 +331,17 @@
                         : QPixmap());
             }
         }
+    #endif
+    }
+
+    void Player::previousClicked()
+    {
+        <span class="comment">// Go to previous track if we are within the first 5 seconds of playback</span>
+        <span class="comment">// Otherwise, seek to the beginning.</span>
+        if(player-&gt;position() &lt;= 5000)
+            playlist-&gt;previous();
+        else
+            player-&gt;setPosition(0);
     }
 
     void Player::jump(const QModelIndex &amp;index)
@@ -293,42 +368,42 @@
 
     void Player::statusChanged(QMediaPlayer::MediaStatus status)
     {
+        handleCursor(status);
+
+        <span class="comment">// handle status message</span>
         switch (status) {
         case QMediaPlayer::UnknownMediaStatus:
         case QMediaPlayer::NoMedia:
         case QMediaPlayer::LoadedMedia:
         case QMediaPlayer::BufferingMedia:
         case QMediaPlayer::BufferedMedia:
-    #ifndef QT_NO_CURSOR
-            unsetCursor();
-    #endif
             setStatusInfo(QString());
             break;
         case QMediaPlayer::LoadingMedia:
-    #ifndef QT_NO_CURSOR
-            setCursor(QCursor(Qt::BusyCursor));
-    #endif
             setStatusInfo(tr(&quot;Loading...&quot;));
             break;
         case QMediaPlayer::StalledMedia:
-    #ifndef QT_NO_CURSOR
-            setCursor(QCursor(Qt::BusyCursor));
-    #endif
+            setStatusInfo(tr(&quot;Media Stalled&quot;));
             break;
         case QMediaPlayer::EndOfMedia:
-    #ifndef QT_NO_CURSOR
-            unsetCursor();
-    #endif
-            setStatusInfo(QString());
             QApplication::alert(this);
             break;
         case QMediaPlayer::InvalidMedia:
-    #ifndef QT_NO_CURSOR
-            unsetCursor();
-    #endif
-            setStatusInfo(player-&gt;errorString());
+            displayErrorMessage();
             break;
         }
+    }
+
+    void Player::handleCursor(QMediaPlayer::MediaStatus status)
+    {
+    #ifndef QT_NO_CURSOR
+        if( status == QMediaPlayer::LoadingMedia ||
+            status == QMediaPlayer::BufferingMedia ||
+            status == QMediaPlayer::StalledMedia)
+            setCursor(QCursor(Qt::BusyCursor));
+        else
+            unsetCursor();
+    #endif
     }
 
     void Player::bufferingProgress(int progress)
@@ -339,25 +414,49 @@
     void Player::setTrackInfo(const QString &amp;info)
     {
         trackInfo = info;
-
+    #ifdef Q_OS_SYMBIAN
+        QMainWindow *main = qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent());
+        if (!statusInfo.isEmpty())
+            main-&gt;setWindowTitle(QString(&quot;%1 | %2&quot;).arg(trackInfo).arg(statusInfo));
+        else
+            main-&gt;setWindowTitle(trackInfo);
+    #else
         if (!statusInfo.isEmpty())
             setWindowTitle(QString(&quot;%1 | %2&quot;).arg(trackInfo).arg(statusInfo));
         else
             setWindowTitle(trackInfo);
-
+    #endif
     }
 
     void Player::setStatusInfo(const QString &amp;info)
     {
         statusInfo = info;
-
+    #ifdef Q_OS_SYMBIAN
+        QMainWindow *main = qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent());
+        if (!statusInfo.isEmpty())
+            main-&gt;setWindowTitle(QString(&quot;%1 | %2&quot;).arg(trackInfo).arg(statusInfo));
+        else
+            main-&gt;setWindowTitle(trackInfo);
+    #else
         if (!statusInfo.isEmpty())
             setWindowTitle(QString(&quot;%1 | %2&quot;).arg(trackInfo).arg(statusInfo));
         else
             setWindowTitle(trackInfo);
+    #endif
     }
+
+    void Player::displayErrorMessage()
+    {
     #ifdef Q_OS_SYMBIAN
+        if(player-&gt;error()!=QMediaPlayer::NoError)
+            QMessageBox::critical(NULL, tr(&quot;Error&quot;), player-&gt;errorString(), QMessageBox::Ok);
     #else
+        setStatusInfo(player-&gt;errorString());
+    #endif
+
+    }
+
+    #ifndef Q_OS_SYMBIAN
     void Player::showColorDialog()
     {
         if (!colorDialog) {
@@ -399,18 +498,54 @@
     }
     #endif
     #ifdef Q_OS_SYMBIAN
+    void Player::createMenus()
+    {
+        toggleAspectRatio = new QAction(tr(&quot;Ignore Aspect Ratio&quot;), this);
+        toggleAspectRatio-&gt;setCheckable(true);
+        qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent())-&gt;menuBar()-&gt;addAction(toggleAspectRatio);
+        connect(toggleAspectRatio, SIGNAL(toggled(bool)), this, SLOT(handleAspectRatio(bool)));
+
+        showYoutubeDialog = new QAction(tr(&quot;Youtube Search&quot;), this);
+        qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent())-&gt;menuBar()-&gt;addAction(showYoutubeDialog);
+        connect(showYoutubeDialog, SIGNAL(triggered()), this, SLOT(launchYoutubeDialog()));
+    }
+
     void Player::handleFullScreen(bool isFullscreen)
     {
+        QMainWindow* mainWindow = qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent());
         if(isFullscreen) {
-            showFullScreen();
-            if(player-&gt;state()==QMediaPlayer::PlayingState ||
-               player-&gt;state()==QMediaPlayer::PausedState)
-                videoWidget-&gt;setFullScreen(true);
-            else
+            if(player-&gt;state()==QMediaPlayer::StoppedState)
                 videoWidget-&gt;setFullScreen(false);
+            else
+                videoWidget-&gt;setFullScreen(true);
 
+            qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent())-&gt;showFullScreen();
         } else
-            showMaximized();
+            qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent())-&gt;showMaximized();
+    }
+
+    void Player::handleAspectRatio(bool aspectRatio)
+    {
+        if(aspectRatio) {
+            toggleAspectRatio-&gt;setText(tr(&quot;Keep Aspect Ratio&quot;));
+            videoWidget-&gt;setAspectRatioMode(Qt::IgnoreAspectRatio);
+
+        } else {
+            toggleAspectRatio-&gt;setText(tr(&quot;Ignore Aspect Ratio&quot;));
+            videoWidget-&gt;setAspectRatioMode(Qt::KeepAspectRatio);
+        }
+    }
+
+    void Player::hideOrShowCoverArt()
+    {
+        if(player-&gt;isVideoAvailable()) {
+            coverLabel-&gt;hide();
+            videoWidget-&gt;show();
+            videoWidget-&gt;repaint();
+        } else {
+            coverLabel-&gt;show();
+            videoWidget-&gt;hide();
+        }
     }
 
     void Player::handleStateChange(QMediaPlayer::State state)
@@ -418,7 +553,7 @@
         if (state == QMediaPlayer::PausedState)
             return;
 
-        handleFullScreen(isFullScreen());
+        handleFullScreen(qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent())-&gt;isFullScreen());
     }
 
     void Player::handleMediaKeyEvent(MediaKeysObserver::MediaKeys key)
@@ -440,6 +575,138 @@
             return;
 
         playlistDialog-&gt;exec();
+    }
+
+    void Player::launchYoutubeDialog()
+    {
+        if(!youtubeDialog)  {
+            youtubeDialog = new QDialog(this);
+
+            QLineEdit *input= new QLineEdit(youtubeDialog);
+            QPushButton *searchButton = new QPushButton(&quot;Search&quot;, youtubeDialog);
+            QListWidget *resultList = new QListWidget(youtubeDialog);
+            QAction *add = new QAction(tr(&quot;Add&quot;), youtubeDialog);
+            QAction *close = new QAction(tr(&quot;Close&quot;), youtubeDialog);
+
+            add-&gt;setSoftKeyRole(QAction::PositiveSoftKey);
+            close-&gt;setSoftKeyRole(QAction::NegativeSoftKey);
+            youtubeDialog-&gt;addAction(add);
+            youtubeDialog-&gt;addAction(close);
+
+            connect(searchButton, SIGNAL(clicked()), this, SLOT(searchYoutubeVideo()));
+            connect(add, SIGNAL(triggered()), this, SLOT(addYoutubeVideo()));
+            connect(close, SIGNAL(triggered()), youtubeDialog, SLOT(close()));
+            connect(&amp;http, SIGNAL(requestFinished(int, bool)), this, SLOT(youtubeHttpRequestFinished(int, bool)));
+            connect(&amp;http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&amp;)), this, SLOT(youtubeReadResponseHeader(const QHttpResponseHeader&amp;)));
+
+            QHBoxLayout *topLayout = new QHBoxLayout;
+            topLayout-&gt;addWidget(input);
+            topLayout-&gt;addWidget(searchButton);
+
+            QVBoxLayout *mainLayout = new QVBoxLayout;
+            mainLayout-&gt;addLayout(topLayout);
+            mainLayout-&gt;addWidget(resultList);
+            youtubeDialog-&gt;setLayout(mainLayout);
+        }
+        youtubeDialog-&gt;showMaximized();
+    }
+
+    void Player::youtubeReadResponseHeader(const QHttpResponseHeader&amp; responseHeader)
+    {
+        switch (responseHeader.statusCode())
+        {
+            case 200:   <span class="comment">// Ok</span>
+            case 301:   <span class="comment">// Moved Permanently</span>
+            case 302:   <span class="comment">// Found</span>
+            case 303:   <span class="comment">// See Other</span>
+            case 307:   <span class="comment">// Temporary Redirect</span>
+                <span class="comment">// these are not error conditions</span>
+                break;
+            default: {
+                http.abort();
+                QMessageBox::critical(NULL, tr(&quot;Error&quot;), tr(&quot;Download failed: %1.&quot;).arg(responseHeader.reasonPhrase()));
+                break;
+            }
+        }
+    }
+
+    void Player::addYoutubeVideo()
+    {
+        if(!youtubeDialog)
+            return;
+
+        QListWidget *resultList = youtubeDialog-&gt;findChild&lt;QListWidget *&gt;();
+        if(!resultList || resultList-&gt;count() == 0)
+            return;
+
+        playlist-&gt;addMedia(resultList-&gt;currentItem()-&gt;data(Qt::UserRole).toUrl());
+    }
+
+    void Player::searchYoutubeVideo()
+    {
+        if(!youtubeDialog)
+            return;
+
+        QLineEdit *input = youtubeDialog-&gt;findChild&lt;QLineEdit *&gt;();
+        QListWidget *resultList = youtubeDialog-&gt;findChild&lt;QListWidget *&gt;();
+        QString urlstring = QString(&quot;http:<span class="comment">//gdata.youtube.com/feeds/api/videos?q=%1&amp;max-results=25&amp;v=2&amp;format=6&quot;).arg(input-&gt;text().replace(' ', '+'));</span>
+        QUrl url(urlstring);
+        http.setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
+        resultList-&gt;clear();
+        httpGetId = http.get(urlstring);
+    }
+
+    void Player::youtubeHttpRequestFinished(int requestId, bool error)
+    {
+        if(!youtubeDialog || requestId != httpGetId)
+            return;
+
+        if (error) {
+            QMessageBox::critical(NULL, tr(&quot;Error&quot;), tr(&quot;Download failed: %1.&quot;).arg(http.errorString()));
+            return;
+        }
+
+        QTemporaryFile file;
+        if (!file.open()) {
+            QMessageBox::critical(NULL, tr(&quot;Error&quot;), tr(&quot;Could not open temporary file&quot;));
+            return;
+        }
+
+        QString data = http.readAll();
+        QTextStream out(&amp;file);
+        out &lt;&lt; data;
+        file.close();
+
+        QDomDocument domDocument;
+        QString errorMessage;
+        if (!domDocument.setContent(&amp;file, true, &amp;errorMessage)) {
+            QMessageBox::critical(NULL, tr(&quot;Error&quot;), errorMessage);
+            return;
+        }
+
+        QDomElement root = domDocument.documentElement();
+        if (root.tagName() != &quot;feed&quot;)
+            return;
+
+        QListWidget *resultList = youtubeDialog-&gt;findChild&lt;QListWidget *&gt;();
+        QDomElement entryElement = root.firstChildElement(&quot;entry&quot;);
+        while(!entryElement.isNull())
+        {
+            QString title = entryElement.firstChildElement(&quot;title&quot;).text();
+            QDomElement groupElement = entryElement.firstChildElement(&quot;group&quot;);
+            QDomElement incidentElement2 = groupElement.firstChildElement(&quot;content&quot;);
+            while(!incidentElement2.isNull())
+            {
+                <span class="comment">// &quot;6&quot; = MPEG-4 SP video (up to 176x144) and AAC audio.</span>
+                if (incidentElement2.attribute(&quot;format&quot;) == &quot;6&quot;) {
+                    QListWidgetItem* item = new QListWidgetItem(title, resultList);
+                    item-&gt;setData(Qt::UserRole, incidentElement2.attribute(&quot;url&quot;));
+                    break;
+                }
+                incidentElement2 = incidentElement2.nextSiblingElement(&quot;content&quot;);
+            }
+            entryElement = entryElement.nextSiblingElement(&quot;entry&quot;);
+        }
     }
     #endif</pre>
 <p /><address><hr /><div align="center">

@@ -58,6 +58,7 @@ class Q_MEDIA_EXPORT QMediaContent
 public:
     QMediaContent();
     QMediaContent(const QUrl &contentUrl);
+    QMediaContent(const QNetworkRequest &contentRequest);
     QMediaContent(const QMediaResource &contentResource);
     QMediaContent(const QMediaResourceList &resources);
     QMediaContent(const QMediaContent &other);
@@ -71,6 +72,7 @@ public:
     bool isNull() const;
 
     QUrl canonicalUrl() const;
+    QNetworkRequest canonicalRequest() const;
     QMediaResource canonicalResource() const;
 
     QMediaResourceList resources() const;

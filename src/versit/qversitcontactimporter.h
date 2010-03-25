@@ -73,11 +73,18 @@ public:
 class Q_VERSIT_EXPORT QVersitContactImporter
 {
 public:
+    enum Error {
+        NoError = 0,
+        InvalidDocumentError,
+        EmptyDocumentError
+    };
+
     QVersitContactImporter();
     ~QVersitContactImporter();
 
-    // XXX We need some way of importing/exporting groups and "self-contact" from vCard.
-    QList<QContact> importContacts(const QList<QVersitDocument>& documents);
+    bool importDocuments(const QList<QVersitDocument>& documents);
+    QList<QContact> contacts() const;
+    QMap<int, Error> errors() const;
 
     void setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
     QVersitContactImporterPropertyHandler* propertyHandler() const;

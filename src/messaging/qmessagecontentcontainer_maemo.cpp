@@ -46,7 +46,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-QMessageContentContainer QMessageContentContainerPrivate::from(long int messageId,
+QMessageContentContainer QMessageContentContainerPrivate::from(QString &messageId,
                                                                unsigned int attachmentId,
                                                                QByteArray &name,
                                                                QByteArray &mimeType,
@@ -110,7 +110,7 @@ void QMessageContentContainerPrivate::clearContents()
     _size = 0;
     _header.clear();
     _attachments.clear();
-    _containingMessageId = 0;
+    _containingMessageId = QString();
     _attachmentId = 0;
 }
 

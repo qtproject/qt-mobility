@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "S60mediarecognizer.h"
-#include <MPMediaRecognizer.h>
 #include <e32def.h>
 #include <e32cmn.h>
 #include <QtCore/qurl.h>
@@ -49,7 +48,7 @@
 
 S60MediaRecognizer::S60MediaRecognizer(QObject *parent) : QObject(parent)
 {
-	TRAP_IGNORE(m_recognizer = CMPMediaRecognizer::NewL());
+	TRAP_IGNORE(m_recognizer = MobilityMediaRecognizer::NewL());
 }
 
 S60MediaRecognizer::~S60MediaRecognizer()
@@ -58,17 +57,9 @@ S60MediaRecognizer::~S60MediaRecognizer()
 	m_recognizer = NULL;
 }
 
-bool S60MediaRecognizer::checkUrl(const QUrl &url)
-{
-	TBool isValidUrl = false;
-	TPtrC validUrlPtr (static_cast<const TUint16*>(url.toString().utf16()), url.toString().length());
-	isValidUrl = m_recognizer->ValidUrl(validUrlPtr);  
-	return isValidUrl;
-}
-
 S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl &url)
 {    
-	CMPMediaRecognizer::TMPMediaType type = CMPMediaRecognizer::EUnidentified;
+	MobilityMediaType type = MobilityMediaRecognizer::EUnidentified;
 	QString filePath = QDir::toNativeSeparators(url.toLocalFile());
 	if (filePath.isNull()) {
 		filePath = url.toString();		
@@ -79,18 +70,18 @@ S60MediaRecognizer::MediaType S60MediaRecognizer::IdentifyMediaType(const QUrl &
 	m_recognizer->FreeFilehandle();
 	
 	switch (type) {
-	   case CMPMediaRecognizer::ELocalAudioFile:
+	   case MobilityMediaRecognizer::ELocalAudioFile:
 		   return Audio;
-	   case CMPMediaRecognizer::ELocalVideoFile:
+	   case MobilityMediaRecognizer::ELocalVideoFile:
 		   return Video;
-	   case CMPMediaRecognizer::EUrl:
+	   case MobilityMediaRecognizer::EUrl:
 		   return Url;
-	   case CMPMediaRecognizer::ELocalAudioPlaylist:
+	   case MobilityMediaRecognizer::ELocalAudioPlaylist:
 	   // TODO: Must be considered when streams will be implemented
-	   case CMPMediaRecognizer::ELocalRamFile:
-	   case CMPMediaRecognizer::ELocalSdpFile:
+	   case MobilityMediaRecognizer::ELocalRamFile:
+	   case MobilityMediaRecognizer::ELocalSdpFile:
 	   // case CMPMediaRecognizer::EProgressiveDownload:
-	   case CMPMediaRecognizer::EUnidentified:
+	   case MobilityMediaRecognizer::EUnidentified:
 	   default:
 		   break;
 	}

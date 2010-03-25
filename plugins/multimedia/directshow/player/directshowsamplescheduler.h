@@ -46,13 +46,11 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qsemaphore.h>
 
-#include <QtCore/private/qwineventnotifier_p.h>
-
 #include <dshow.h>
 
 class DirectShowTimedSample;
 
-class DirectShowSampleScheduler : public QWinEventNotifier, public IMemInputPin
+class DirectShowSampleScheduler : public QObject, public IMemInputPin
 {
     Q_OBJECT
 public:
@@ -111,6 +109,7 @@ private:
     int m_state;
     REFERENCE_TIME m_startTime;
     HANDLE m_timeoutEvent;
+    HANDLE m_flushEvent;
     QSemaphore m_semaphore;
     QMutex m_mutex;
 };

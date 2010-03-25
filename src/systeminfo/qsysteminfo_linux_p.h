@@ -115,10 +115,11 @@ public:
 
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
+    QSystemNetworkInfo::NetworkMode currentMode();
 
 public Q_SLOTS:
 #if !defined(QT_NO_NETWORKMANAGER)
-        void getPrimaryMode();
+        void primaryModeChanged();
 #endif
 
 private:
@@ -138,6 +139,7 @@ private:
     QString getNmNetName(QSystemNetworkInfo::NetworkMode mode);
 
     inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
+
 #endif
     QString getSysNetName(QSystemNetworkInfo::NetworkMode mode);
 

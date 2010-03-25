@@ -575,22 +575,22 @@ void tst_QMessageStore::testMessage()
 
     QMessageAddress toAddress;
     toAddress.setType(QMessageAddress::Email);
-    toAddress.setRecipient(to);
+    toAddress.setAddressee(to);
     QVERIFY(!message.to().isEmpty());
     QCOMPARE(message.to().first(), toAddress);
-    QCOMPARE(message.to().first().recipient(), to);
+    QCOMPARE(message.to().first().addressee(), to);
 
     QMessageAddress fromAddress;
     fromAddress.setType(QMessageAddress::Email);
-    fromAddress.setRecipient(from);
+    fromAddress.setAddressee(from);
     QCOMPARE(message.from(), fromAddress);
-    QCOMPARE(message.from().recipient(), from);
+    QCOMPARE(message.from().addressee(), from);
 
     QList<QMessageAddress> ccAddresses;
     foreach (const QString &element, cc.split(",", QString::SkipEmptyParts)) {
         QMessageAddress addr;
         addr.setType(QMessageAddress::Email);
-        addr.setRecipient(element.trimmed());
+        addr.setAddressee(element.trimmed());
         ccAddresses.append(addr);
     }
    

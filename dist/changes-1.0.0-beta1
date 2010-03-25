@@ -131,8 +131,26 @@ QtContacts
 QtLocation
 ------
 
- - foo
-    * bar
+ - QGeoPositionInfoSource
+    * Renamed requestTimeout to updateTimeout().
+    * updateTimeout() is now emitted during periodic updates if
+      the update is late or an error occurs.
+ - QGeoCoordinate
+    * Renamed QGeoCoordinate:DecimalDegrees to QGeoCoordinate::Degrees.
+ - QGeoPositionInfo
+    * Renamed property() to attribute().
+    * Renamed setProperty() to setAttribute().
+    * Renamed hasProperty() to hasAttribute().
+    * Renamed removeProperty() to removeAttribute().
+    * Renamed QGeoPositionInfo::Heading to QGeoPositionInfo::Direction.
+ - QGeoSatelliteInfo
+    * Renamed property() to attribute().
+    * Renamed setProperty() to setAttribute().
+    * Renamed hasProperty() to hasAttribute().
+    * Renamed removeProperty() to removeAttribute().
+ - QNmeaPositionInfoSource
+    * Added protected virtual function parsePosInfoFromNmeaData() to 
+      enable clients to handle non-standard NMEA sentences if they need to.
 
 QtMessaging
 ------
@@ -367,7 +385,18 @@ Qt Mobility for Windows CE
 
  -
 
+<<<<<<< HEAD:dist/changes-1.0.0-beta1
 Qt Mobility for Symbian
+------
+
+=======
+Qt Mobility for Maemo5
+------
+
+ - Experimental support for QtLocation
+ - Experimental support for QtSystemInfo
+ 
+ Qt Mobility for Symbian
 ------
 
  - QContactManager backends
@@ -404,11 +433,6 @@ Qt Mobility for Symbian
         * writing metada to file not supported by S60
         * codec support depends on device model
         * AudioDeviceControl not implemented for mediaplayer, defaults to device default.
-      - Camera
-        * camera support is expiremental
-        * still capture
-        * mediacapture
-        * recording codec support is limited to video/mp4
 
 ****************************************************************************
 *                          Tools                                           *

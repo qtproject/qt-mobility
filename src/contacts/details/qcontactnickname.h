@@ -59,7 +59,7 @@ public:
     const char* FieldNickname;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactNickname, "Nickname")
-    Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
+    Q_DECLARE_LATIN1_CONSTANT(FieldNickname, "Nickname");
 #endif
 
     void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}

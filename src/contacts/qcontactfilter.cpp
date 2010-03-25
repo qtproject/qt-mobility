@@ -61,40 +61,40 @@
  */
 
 /*!
- * \enum QContactFilter::FilterType
- * Describes the type of the filter
- * \value InvalidFilter An invalid filter which matches nothing
- * \value ContactDetailFilter A filter which matches contacts containing one or more details of a particular definition with a particular value
- * \value ContactDetailRangeFilter A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range
- * \value ChangeLogFilter A filter which matches contacts whose timestamps have been updated since some particular date and time
- * \value ActionFilter A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
- * \value RelationshipFilter A filter which matches contacts which participate in a particular type of relationship, or relationship with a specified contact
- * \value IntersectionFilter A filter which matches all contacts that are matched by all filters it includes
- * \value UnionFilter A filter which matches any contact that is matched by any of the filters it includes
- * \value LocalIdFilter A filter which matches any contact whose local id is contained in a particular list of contact local ids
- * \value DefaultFilter A filter which matches everything
+  \enum QContactFilter::FilterType
+  Describes the type of the filter
+  \value InvalidFilter An invalid filter which matches nothing
+  \value ContactDetailFilter A filter which matches contacts containing one or more details of a particular definition with a particular value
+  \value ContactDetailRangeFilter A filter which matches contacts containing one or more details of a particular definition whose values are within a particular range
+  \value ChangeLogFilter A filter which matches contacts whose timestamps have been updated since some particular date and time
+  \value ActionFilter A filter which matches contacts for which a particular action is available, or which contain a detail with a particular value for which a particular action is available
+  \value RelationshipFilter A filter which matches contacts which participate in a particular type of relationship, or relationship with a specified contact
+  \value IntersectionFilter A filter which matches all contacts that are matched by all filters it includes
+  \value UnionFilter A filter which matches any contact that is matched by any of the filters it includes
+  \value LocalIdFilter A filter which matches any contact whose local id is contained in a particular list of contact local ids
+  \value DefaultFilter A filter which matches everything
  */
 
 /*!
- * \enum QContactFilter::MatchFlag
- * Describes the semantics of matching followed by the filter
- * \value MatchExactly Performs QVariant-based matching
- * \value MatchContains The search term is contained in the item
- * \value MatchStartsWith The search term matches the start of the item
- * \value MatchEndsWith The search term matches the end of the item
- * \value MatchFixedString Performs string-based matching. String-based comparisons are case-insensitive unless the \c MatchCaseSensitive flag is also specified
- * \value MatchCaseSensitive The search is case sensitive
- * \value MatchPhoneNumber The search term is considered to be in the form of a phone number, and special processing (removing dialing prefixes, non significant
- *        characters like '-'. ')' etc). may be performed when matching the item.
- * \value MatchKeypadCollation The search term is in the form of text entered by a numeric phone keypad (such as ITU-T E.161 compliant keypads).  Each digit in the
- *        search term can represent a number of alphanumeric symbols.  For example, the search string "43556" would match items "HELLO", "GEKKO", "HELL6" and "43556" among others.
- *        Accented characters and other punctuation characters may additionally be matched by the QContactManager in a way consistent with the platform.
+  \enum QContactFilter::MatchFlag
+  Describes the semantics of matching followed by the filter
+  \value MatchExactly Performs QVariant-based matching
+  \value MatchContains The search term is contained in the item
+  \value MatchStartsWith The search term matches the start of the item
+  \value MatchEndsWith The search term matches the end of the item
+  \value MatchFixedString Performs string-based matching. String-based comparisons are case-insensitive unless the \c MatchCaseSensitive flag is also specified
+  \value MatchCaseSensitive The search is case sensitive
+  \value MatchPhoneNumber The search term is considered to be in the form of a phone number, and special processing (removing dialing prefixes, non significant
+         characters like '-'. ')' etc). may be performed when matching the item.
+  \value MatchKeypadCollation The search term is in the form of text entered by a numeric phone keypad (such as ITU-T E.161 compliant keypads).  Each digit in the
+         search term can represent a number of alphanumeric symbols.  For example, the search string "43556" would match items "HELLO", "GEKKO", "HELL6" and "43556" among others.
+         Accented characters and other punctuation characters may additionally be matched by the QContactManager in a way consistent with the platform.
  */
 
 /*!
- * \fn QContactFilter::operator!=(const QContactFilter& other) const
- * Returns true if this filter is not identical to the \a other filter.
- * \sa operator==()
+  \fn QContactFilter::operator!=(const QContactFilter& other) const
+  Returns true if this filter is not identical to the \a other filter.
+  \sa operator==()
  */
 
 #if !defined(Q_CC_MWERKS)
@@ -155,14 +155,21 @@ bool QContactFilter::operator==(const QContactFilter& other) const
     return d_ptr->compare(other.d_ptr);
 }
 
-/*! Constructs a new filter from the given data pointer \a d */
+/*!
+  \internal
+  Constructs a new filter from the given data pointer \a d
+ */
 QContactFilter::QContactFilter(QContactFilterPrivate *d)
     : d_ptr(d)
 {
 
 }
 
-/*! Intersects the \a left and \a right filters */
+/*!
+ \relates QContactFilter
+ Returns a filter which is the intersection of the \a left and \a right filters
+ \sa QContactIntersectionFilter
+ */
 const QContactFilter operator&(const QContactFilter& left, const QContactFilter& right)
 {
     // XXX TODO: empty intersection/union operations are not well defined yet.
@@ -186,7 +193,11 @@ const QContactFilter operator&(const QContactFilter& left, const QContactFilter&
     return nif;
 }
 
-/*! Unions the \a left and \a right filters */
+/*!
+ \relates QContactFilter
+ Returns a filter which is the union of the \a left and \a right filters
+ \sa QContactUnionFilter
+ */
 const QContactFilter operator|(const QContactFilter& left, const QContactFilter& right)
 {
     if (left.type() == QContactFilter::UnionFilter) {

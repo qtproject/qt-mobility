@@ -40,10 +40,11 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#operator-eq-eq">operator==</a></b> ( const QContactFilter &amp; <i>other</i> ) const</td></tr>
 </table>
 <hr />
-<a name="protected-functions"></a>
-<h2>Protected Functions</h2>
+<a name="related-non-members"></a>
+<h2>Related Non-Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#QContactFilter-3">QContactFilter</a></b> ( QContactFilterPrivate * <i>d</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const Q_CONTACTS_EXPORT </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#operator-and-2">operator&amp;</a></b> ( const QContactFilter &amp; <i>left</i>, const QContactFilter &amp; <i>right</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const Q_CONTACTS_EXPORT </td><td class="memItemRight" valign="bottom"><b><a href="qcontactfilter.html#operator-7c-2">operator|</a></b> ( const QContactFilter &amp; <i>left</i>, const QContactFilter &amp; <i>right</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -109,8 +110,6 @@
 <p>Constructs an empty filter</p>
 <h3 class="fn"><a name="QContactFilter-2"></a>QContactFilter::QContactFilter ( const QContactFilter &amp; <i>other</i> )</h3>
 <p>Constructs a new copy of <i>other</i></p>
-<h3 class="fn"><a name="QContactFilter-3"></a>QContactFilter::QContactFilter ( QContactFilterPrivate * <i>d</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Constructs a new filter from the given data pointer <i>d</i></p>
 <a name="//apple_ref/cpp/instm/QContactFilter/~QContactFilter"></a>
 <h3 class="fn"><a name="dtor.QContactFilter"></a>QContactFilter::~QContactFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Cleans up the memory used by this filter</p>
@@ -127,6 +126,14 @@
 <a name="//apple_ref/cpp/instm/QContactFilter/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactFilter::operator== ( const QContactFilter &amp; <i>other</i> ) const</h3>
 <p>Returns true if the filter has the same type and criteria as <i>other</i></p>
+<hr />
+<h2>Related Non-Members</h2>
+<h3 class="fn"><a name="operator-and-2"></a>const Q_CONTACTS_EXPORT operator&amp; ( const QContactFilter &amp; <i>left</i>, const QContactFilter &amp; <i>right</i> )</h3>
+<p>Returns a filter which is the intersection of the <i>left</i> and <i>right</i> filters</p>
+<p>See also <a href="qcontactintersectionfilter.html">QContactIntersectionFilter</a>.</p>
+<h3 class="fn"><a name="operator-7c-2"></a>const Q_CONTACTS_EXPORT operator| ( const QContactFilter &amp; <i>left</i>, const QContactFilter &amp; <i>right</i> )</h3>
+<p>Returns a filter which is the union of the <i>left</i> and <i>right</i> filters</p>
+<p>See also <a href="qcontactunionfilter.html">QContactUnionFilter</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -16,12 +16,12 @@
 <p>This is the complete list of members for <a href="qtapsensor.html">QTapSensor</a>, including inherited members.</p>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
-<li><div class="fn">flags <b><a href="qsensor.html#UpdatePolicy-enum">UpdatePolicies</a></b></div></li>
-<li><div class="fn">enum <b><a href="qsensor.html#UpdatePolicy-enum">UpdatePolicy</a></b></div></li>
 <li><div class="fn"><b><a href="qtapsensor.html#QTapSensor">QTapSensor</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qtapsensor.html#dtor.QTapSensor">~QTapSensor</a></b> ()</div></li>
 <li><div class="fn"><b><a href="qsensor.html#addFilter">addFilter</a></b> ( QSensorFilter * )</div></li>
+<li><div class="fn"><b><a href="qsensor.html#availableDataRates-prop">availableDataRates</a></b> () const : qrangelist</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
+<li><div class="fn"><b><a href="qsensor.html#busyChanged">busyChanged</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#children">children</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qsensor.html#connect">connect</a></b> () : bool</div></li>
@@ -31,6 +31,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
 <li><div class="fn"><b><a href="qsensor.html#defaultSensorForType">defaultSensorForType</a></b> ( const QByteArray &amp; ) : QByteArray</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qsensor.html#description-prop">description</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#destroyed">destroyed</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#disconnect">disconnect</a></b> ( const QObject *, const char *, const QObject *, const char * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#disconnect-2">disconnect</a></b> ( const char *, const QObject *, const char * )</div></li>
@@ -39,6 +40,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dumpObjectInfo">dumpObjectInfo</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dumpObjectTree">dumpObjectTree</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dynamicPropertyNames">dynamicPropertyNames</a></b> () const</div></li>
+<li><div class="fn"><b><a href="qsensor.html#error-prop">error</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#event">event</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
@@ -47,17 +49,18 @@
 <li><div class="fn"><b><a href="qsensor.html#sensorid-prop">identifier</a></b> () const : QByteArray</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
-<li><div class="fn"><b><a href="qsensor.html#running-prop">isActive</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qsensor.html#active-prop">isActive</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qsensor.html#busy-prop">isBusy</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="qsensor.html#connected-prop">isConnected</a></b> () const : bool</div></li>
-<li><div class="fn"><b><a href="qsensor.html#isSignalEnabled">isSignalEnabled</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#metaObject">metaObject</a></b> () const</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
+<li><div class="fn"><b><a href="qsensor.html#outputRange-prop">outputRange</a></b> () const : int</div></li>
+<li><div class="fn"><b><a href="qsensor.html#outputRanges-prop">outputRanges</a></b> () const : qoutputrangelist</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#parent">parent</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qsensor.html#poll">poll</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="qtapsensor.html#reading">reading</a></b> () const : QTapReading *</div></li>
 <li><div class="fn"><b><a href="qsensor.html#readingChanged">readingChanged</a></b> ()</div></li>
@@ -65,24 +68,21 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qsensor.html#removeFilter">removeFilter</a></b> ( QSensorFilter * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#sender">sender</a></b> () const</div></li>
+<li><div class="fn"><b><a href="qsensor.html#sensorError">sensorError</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qsensor.html#sensorTypes">sensorTypes</a></b> () : QList&lt;QByteArray&gt;</div></li>
 <li><div class="fn"><b><a href="qsensor.html#sensorsForType">sensorsForType</a></b> ( const QByteArray &amp; ) : QList&lt;QByteArray&gt;</div></li>
-<li><div class="fn"><b><a href="qsensor.html#running-prop">setActive</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="qsensor.html#sensorid-prop">setIdentifier</a></b> ( const QByteArray &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qsensor.html#outputRange-prop">setOutputRange</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>
-<li><div class="fn"><b><a href="qsensor.html#setSignalEnabled">setSignalEnabled</a></b> ( bool )</div></li>
-<li><div class="fn"><b><a href="qsensor.html#type-prop">setType</a></b> ( const QByteArray &amp; )</div></li>
 <li><div class="fn"><b><a href="qsensor.html#updateInterval-prop">setUpdateInterval</a></b> ( int )</div></li>
-<li><div class="fn"><b><a href="qsensor.html#updatePolicy-prop">setUpdatePolicy</a></b> ( UpdatePolicy )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#signalsBlocked">signalsBlocked</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qsensor.html#start">start</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qsensor.html#start">start</a></b> () : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#startTimer">startTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#staticMetaObject-var">staticMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#staticQtMetaObject-var">staticQtMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="qsensor.html#stop">stop</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qsensor.html#supportedUpdatePolicies-prop">supportedUpdatePolicies</a></b> () const : UpdatePolicies</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#thread">thread</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#timerEvent">timerEvent</a></b> ( QTimerEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#tr">tr</a></b> ( const char *, const char *, int )</div></li>
@@ -90,7 +90,6 @@
 <li><div class="fn"><b><a href="qtapsensor.html#type-var">type</a></b> : const char *</div></li>
 <li><div class="fn"><b><a href="qsensor.html#type-prop">type</a></b> () const : QByteArray</div></li>
 <li><div class="fn"><b><a href="qsensor.html#updateInterval-prop">updateInterval</a></b> () const : int</div></li>
-<li><div class="fn"><b><a href="qsensor.html#updatePolicy-prop">updatePolicy</a></b> () const : UpdatePolicy</div></li>
 </ul>
 </td></tr>
 </table></p>
