@@ -175,6 +175,12 @@ bool QLandmark::operator== (const QLandmark &other) const
 }
 
 /*!
+    \fn bool QLandmark::operator!= (const QLandmark &other) const
+    Returns true if this landmark not is equal to \a other, otherwise
+    returns false.
+*/
+
+/*!
     Returns the name of the landmark.
 */
 QString QLandmark::name() const

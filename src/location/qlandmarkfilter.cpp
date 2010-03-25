@@ -90,19 +90,19 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
 /*!
     \enum QLandmarkFilter::FilterType
     Describes the type of the filter
-    \value LandmarkInvalidFilter, An invalid filter which matches nothing
-    \value LandmarkNameFilter A filter which matches landmarks based on name
-    \value LandmarkProximityFilter A filter which matches landmarks within a certain range of a given
+    \value InvalidFilter, An invalid filter which matches nothing
+    \value NameFilter A filter which matches landmarks based on name
+    \value ProximityFilter A filter which matches landmarks within a certain range of a given
            coordinate.
-    \value LandmarkNearestFilter A filter which matches a landmark closest to a given coordinate.
-    \value LandmarkCategoryFilter A filter which matches landmarks that belong to a given category
-    \value LandmarkBoxFilter A filter which matches landmarks within a given bounding box.
-    \value LandmarkIntersectionFilter A filter which performs an AND operation with its
+    \value NearestFilter A filter which matches a landmark closest to a given coordinate.
+    \value CategoryFilter A filter which matches landmarks that belong to a given category
+    \value BoxFilter A filter which matches landmarks within a given bounding box.
+    \value IntersectionFilter A filter which performs an AND operation with its
                                       constituent filters
-    \value LandmarkUnionFilter A filter which performs an OR operation with its constiuent
+    \value UnionFilter A filter which performs an OR operation with its constiuent
                                filters
-    \value LandmarkDefaultFilter A filter which matches all landmarks.
-    \value LandmarkCustomFilter A filter which matches landmarks based on a custom made algorithm.
+    \value DefaultFilter A filter which matches all landmarks.
+    \value CustomFilter A filter which matches landmarks based on a custom made algorithm.
 */
 
 /*!
@@ -113,6 +113,9 @@ QLandmarkFilter::QLandmarkFilter()
     //TODO: implement
 }
 
+/*!
+    Constructs a copy of \a other.
+*/
 QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
     :d(other.d)
 {
