@@ -55,8 +55,6 @@
 #include <w32std.h>
 #include <mmf/common/mmfcontrollerframeworkbase.h>
 
-#include <AudioOutput.h>
-#include <MAudioOutputObserver.h>
 
 S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     : S60MediaPlayerSession(service)
@@ -86,7 +84,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         m_rect));
     m_dsaActive = true;
     m_player->RegisterForVideoLoadingNotification(*this);
-#ifndef __SERIES60_31__
+#if !defined(HAS_NO_AUDIOROUTING)
     //QT_TRAP_THROWING(m_audioOutput = CAudioOutput::NewL(*m_player));
     //QT_TRAP_THROWING(m_audioOutput->RegisterObserverL(*this));
 #endif
@@ -94,7 +92,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
 {
-#ifndef __SERIES60_31__
+#if !defined(HAS_NO_AUDIOROUTING)
     if (m_audioOutput)
         m_audioOutput->UnregisterObserver(*this);
     delete m_audioOutput;
@@ -388,7 +386,7 @@ void S60VideoPlayerSession::MvloLoadingComplete()
 QString S60VideoPlayerSession::activeEndpoint() const
 {
     QString outputName;
-#ifndef __SERIES60_31__
+#if !defined(HAS_NO_AUDIOROUTING)
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
         outputName = qStringFromTAudioOutputPreference(output);
@@ -400,13 +398,14 @@ QString S60VideoPlayerSession::activeEndpoint() const
 QString S60VideoPlayerSession::defaultEndpoint() const
 {
     QString outputName;
-#ifndef __SERIES60_31__
+#if !defined(HAS_NO_AUDIOROUTING)
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->DefaultAudioOutput();
         outputName = qStringFromTAudioOutputPreference(output);
     }
-#endif
     return outputName;
+#endif
+    return QString("Default");
 }
 
 void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
@@ -423,7 +422,7 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
         output = CAudioOutput::EPrivate;
     else if (name == QString("Speaker"))
         output = CAudioOutput::EPublic;
-#ifndef __SERIES60_31__
+#if !defined(HAS_NO_AUDIOROUTING)
     if (m_audioOutput) {
         TRAPD(err, m_audioOutput->SetAudioOutputL(output));
         setError(err);
@@ -434,7 +433,7 @@ void S60VideoPlayerSession::setActiveEndpoint(const QString& name)
 void S60VideoPlayerSession::DefaultAudioOutputChanged( CAudioOutput& aAudioOutput,
                                         CAudioOutput::TAudioOutputPreference aNewDefault )
 {
-#ifndef __SERIES60_31__
+#if !defined(HAS_NO_AUDIOROUTING)
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
         if (output == CAudioOutput::ENoPreference) {

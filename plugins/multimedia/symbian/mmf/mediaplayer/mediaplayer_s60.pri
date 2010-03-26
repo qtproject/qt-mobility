@@ -6,8 +6,7 @@ LIBS += -lmediaclientvideo \
 	-lcone \
     -lmmfcontrollerframework \
     -lefsrv \
-    -lbitgdi \
-    -laudiooutputrouting
+    -lbitgdi 
 
 # If support to DRM is wanted then comment out the following line 
 #CONFIG += drm_supported
@@ -51,10 +50,24 @@ contains(S60_VERSION, 3.1) {
     "LIBRARY    MPEngine.lib" \
     "MACRO    HAS_MEDIA_PLAYER" \
     "$${LITERAL_HASH}endif"
+   
+    !exists($${EPOCROOT}epoc32\release\winscw\udeb\audiooutputrouting.lib) {
+        MMP_RULES += "$${LITERAL_HASH}ifdef WINSCW" \
+                     "MACRO HAS_NO_AUDIOROUTING" \
+                     "$${LITERAL_HASH}else" \
+                     "LIBRARY audiooutputrouting.lib" \
+                     "$${LITERAL_HASH}endif"
+        message("Note: AudioOutput Routing API not supported for 3.1 winscw target")
+    } else {
+        MMP_RULES +="LIBRARY audiooutputrouting.lib"
+    }
+
 } else {
     LIBS += -lMPEngine
     DEFINES += HAS_MEDIA_PLAYER
+    LIBS += -laudiooutputrouting
 }
+
 exists($${EPOCROOT}epoc32\include\platform\mw\mediarecognizer.h) {
     symbian:LIBS += -lplaybackhelper
     DEFINES += USE_SYMBIAN_MEDIARECOGNIZER

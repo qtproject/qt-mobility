@@ -50,19 +50,21 @@ S60AudioPlayerSession::S60AudioPlayerSession(QObject *parent)
     : S60MediaPlayerSession(parent)
     , m_player(0)
     , m_audioOutput(0)
-{    
+{
     QT_TRAP_THROWING(m_player = CAudioPlayer::NewL(*this, 0, EMdaPriorityPreferenceNone));
-    m_player->RegisterForAudioLoadingNotification(*this);
-    
     //QT_TRAP_THROWING(m_audioOutput = CAudioOutput::NewL(*m_player));
     //QT_TRAP_THROWING(m_audioOutput->RegisterObserverL(*this));
+
+    m_player->RegisterForAudioLoadingNotification(*this);
 }
 
 S60AudioPlayerSession::~S60AudioPlayerSession()
 {
+#ifndef HAS_NO_AUDIOROUTING
     if (m_audioOutput)
         m_audioOutput->UnregisterObserver(*this);
     delete m_audioOutput;
+#endif
     m_player->Close();
     delete m_player;
 }
@@ -105,15 +107,15 @@ void S60AudioPlayerSession::MaloLoadingComplete()
 
 void S60AudioPlayerSession::doPlay()
 {
-// For some reason loading progress callbalck are not called on emulator    
-#ifdef __WINSCW__  
+// For some reason loading progress callbalck are not called on emulator
+#ifdef __WINSCW__
     buffering();
-#endif    
+#endif
     m_player->Play();
-#ifdef __WINSCW__  
+#ifdef __WINSCW__
     buffered();
-#endif    
-    
+#endif
+
 }
 
 void S60AudioPlayerSession::doPauseL()
@@ -127,12 +129,12 @@ void S60AudioPlayerSession::doStop()
 }
 
 void S60AudioPlayerSession::doSetVolumeL(int volume)
-{    
+{
     m_player->SetVolume((volume / 100.0) * m_player->MaxVolume());
 }
 
 void S60AudioPlayerSession::doSetPositionL(qint64 microSeconds)
-{   
+{
     m_player->SetPosition(TTimeIntervalMicroSeconds(microSeconds));
 }
 
@@ -140,9 +142,9 @@ void S60AudioPlayerSession::updateMetaDataEntriesL()
 {
     metaDataEntries().clear();
     int numberOfMetaDataEntries = 0;
-    
+
     m_player->GetNumberOfMetaDataEntries(numberOfMetaDataEntries);
-    
+
     for (int i = 0; i < numberOfMetaDataEntries; i++) {
         CMMFMetaDataEntry *entry = NULL;
         entry = m_player->GetMetaDataEntryL(i);
@@ -156,12 +158,12 @@ int S60AudioPlayerSession::doGetBufferStatusL() const
 {
     int progress = 0;
     m_player->GetAudioLoadingProgressL(progress);
-    return progress;    
+    return progress;
 }
 
-#ifdef S60_DRM_SUPPORTED   
+#ifdef S60_DRM_SUPPORTED
 void S60AudioPlayerSession::MdapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
-#else 
+#else
 void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
 #endif
 {
@@ -170,7 +172,7 @@ void S60AudioPlayerSession::MapcInitComplete(TInt aError, const TTimeIntervalMic
     loaded();
 }
 
-#ifdef S60_DRM_SUPPORTED   
+#ifdef S60_DRM_SUPPORTED
 void S60AudioPlayerSession::MdapcPlayComplete(TInt aError)
 #else
 void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
@@ -182,22 +184,28 @@ void S60AudioPlayerSession::MapcPlayComplete(TInt aError)
 
 QString S60AudioPlayerSession::activeEndpoint() const
 {
+#ifndef HAS_NO_AUDIOROUTING
     QString outputName;
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
         outputName = qStringFromTAudioOutputPreference(output);
     }
     return outputName;
+#endif
+    return QString("Default");
 }
 
 QString S60AudioPlayerSession::defaultEndpoint() const
 {
+#ifndef HAS_NO_AUDIOROUTING
     QString outputName;
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->DefaultAudioOutput();
         outputName = qStringFromTAudioOutputPreference(output);
     }
     return outputName;
+#endif
+    return QString("Default");
 }
 
 void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
@@ -214,15 +222,19 @@ void S60AudioPlayerSession::setActiveEndpoint(const QString& name)
         output = CAudioOutput::EPrivate;
     else if (name == QString("Speaker"))
         output = CAudioOutput::EPublic;
+#ifndef HAS_NO_AUDIOROUTING
     if (m_audioOutput) {
         TRAPD(err, m_audioOutput->SetAudioOutputL(output));
         setError(err);
     }
+#endif
+
 }
 
 void S60AudioPlayerSession::DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
                                         CAudioOutput::TAudioOutputPreference aNewDefault)
 {
+#ifndef HAS_NO_AUDIOROUTING
     if (m_audioOutput) {
         CAudioOutput::TAudioOutputPreference output = m_audioOutput->AudioOutput();
         if (output == CAudioOutput::ENoPreference) {
@@ -239,6 +251,10 @@ void S60AudioPlayerSession::DefaultAudioOutputChanged(CAudioOutput& aAudioOutput
                 emit activeEndpointChanged(name);
         }
     }
+#else
+    Q_UNUSED(aAudioOutput)
+    Q_UNUSED(aNewDefault)
+#endif
 }
 
 QString S60AudioPlayerSession::qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const
