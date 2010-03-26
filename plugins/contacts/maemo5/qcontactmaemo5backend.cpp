@@ -88,14 +88,6 @@ QContactMaemo5Engine& QContactMaemo5Engine::operator=(const QContactMaemo5Engine
 }
 
 /*! \reimp */
-void QContactMaemo5Engine::deref()
-{
-    QCM5_DEBUG << __PRETTY_FUNCTION__;
-    if (!d->m_refCount.deref())
-        delete this;
-}
-
-/*! \reimp */
 QString QContactMaemo5Engine::managerName() const
 {
     return QString(QLatin1String("maemo5"));
@@ -116,6 +108,23 @@ QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, Q
     label = "No name";
   
   return label;
+}
+
+bool QContactMaemo5Engine::validateContact(const QContact& contact, QContactManager::Error* error) const
+{
+    return QContactManagerEngine::validateContact(contact, error);
+}
+
+bool QContactMaemo5Engine::validateDefinition(const QContactDetailDefinition& definition, QContactManager::Error* error) const
+{
+    QContactDetailDefinition existing = detailDefinition(definition.name(), QContactType::TypeContact, error);
+    if (existing == definition) {
+        *error = QContactManager::NoError;
+        return true;
+    }
+
+    *error = QContactManager::NotSupportedError; // XXX TODO: mutable definitions?
+    return false;
 }
 
 QContactLocalId QContactMaemo5Engine::selfContactId(QContactManager::Error* error) const
@@ -161,6 +170,39 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   return rtn;
 }
 
+bool QContactMaemo5Engine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    *error = QContactManager::NoError;
+    QContactManager::Error tempError = QContactManager::NoError;
+    QContact curr;
+    for (int i = 0; i < contacts->size(); i++) {
+        curr = contacts->at(i);
+        if (!saveContact(&curr, &tempError)) {
+            errorMap->insert(i, tempError);
+            *error = tempError;
+        } else {
+            contacts->replace(i, curr);
+        }
+    }
+
+    return (*error == QContactManager::NoError);
+}
+
+bool QContactMaemo5Engine::removeContacts(const QList<QContactLocalId>& ids, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    *error = QContactManager::NoError;
+    QContactManager::Error tempError = QContactManager::NoError;
+    QContact curr;
+    for (int i = 0; i < ids.size(); i++) {
+        if (!removeContact(ids.at(i), &tempError)) {
+            errorMap->insert(i, tempError);
+            *error = tempError;
+        }
+    }
+
+    return (*error == QContactManager::NoError);
+}
+
 bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error* error)
 {
   Q_CHECK_PTR(d->m_abook);
@@ -169,6 +211,9 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
     *error = QContactManager::BadArgumentError;
     return false;
   }
+
+  // synthesize the display label for the contact
+  *contact = setContactDisplayLabel(synthesizedDisplayLabel(*contact, error), *contact);
   
   // ensure that the contact's details conform to their definitions
   if (!validateContact(*contact, error)) {
@@ -176,7 +221,12 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
     *error = QContactManager::InvalidDetailError;
     return false;
   }
-  return d->m_abook->saveContact(contact, error);
+
+  bool retn = d->m_abook->saveContact(contact, error);
+  QContactId cId = contact->id();
+  cId.setManagerUri(managerUri());
+  contact->setId(cId);
+  return retn;
 }
 
 #if 0
@@ -274,17 +324,17 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     return defns[contactType];
 }
 
+QContactDetailDefinition QContactMaemo5Engine::detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const
+{
+    return QContactManagerEngine::detailDefinition(definitionName, contactType, error);
+}
+
 bool QContactMaemo5Engine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const {
   Q_UNUSED(contactType);
   if (feature == QContactManager::Anonymous)
     return true;
   
   return false;
-}
-
-QStringList QContactMaemo5Engine::supportedRelationshipTypes(const QString& contactType) const {
-  Q_UNUSED(contactType);
-  return QStringList();
 }
 
 bool QContactMaemo5Engine::isFilterSupported(const QContactFilter& filter) const {

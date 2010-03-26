@@ -1346,7 +1346,7 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     delete transformOrganisation;
 }
 
-void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QString detail)
+void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 /*field*/, QString /*detail*/)
 {
     QFAIL("Refactor test to match new api!");
     /*

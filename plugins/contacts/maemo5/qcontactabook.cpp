@@ -78,7 +78,8 @@ QContactABook::QContactABook(QObject* parent) :QObject(parent)
 
 QContactABook::~QContactABook()
 {
-  g_object_unref(m_abookAgregator);
+    // XXX FIXME: memory leak?
+  //g_object_unref(m_abookAgregator);
   delete cbSD;
 }
 
@@ -357,6 +358,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
 struct svSharedData{
    QContactABook* that;
    bool *result;
+   char *uid;
 };
 
 static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data)
@@ -370,7 +372,9 @@ static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data
 
 static void addContactCB(EBook* book, EBookStatus  status, const char  *uid, gpointer user_data)
 {
-  Q_UNUSED(uid);
+  svSharedData *sd = static_cast<svSharedData*>(user_data);
+  if (uid)
+    sd->uid = strdup(uid);
   
   //osso_abook_contact_set_roster(OssoABookContact *contact, OssoABookRoster *roster)
   commitContactCB(book, status, user_data);
@@ -410,6 +414,7 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   svSharedData sd;
   sd.that = this;
   sd.result = &ok;
+  sd.uid = 0;
   
   // Add/Commit the contact
   uid = CONST_CHAR(e_contact_get_const(E_CONTACT (aContact), E_CONTACT_UID)); 
@@ -420,6 +425,12 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   }
   
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
+
+  // set the id of the contact.
+  QContactId cId;
+  cId.setLocalId(m_localIds[sd.uid]);
+  contact->setId(cId);
+  free(sd.uid);
   
   return ok;
 }

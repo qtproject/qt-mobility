@@ -90,6 +90,6 @@ private:
     QContact m_contact;
 };
 
-QML_DECLARE_TYPE(QmlContact);
+QML_DECLARE_TYPE(QmlContact)
 
 #endif // QMLCONTACT_H

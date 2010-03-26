@@ -1323,8 +1323,6 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitions
  */
 QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const
 {
-    Q_UNUSED(definitionName);
-
     QMap<QString, QContactDetailDefinition> definitions = detailDefinitions(contactType, error);
     if (definitions.contains(definitionName))  {
         *error = QContactManager::NoError;
