@@ -240,13 +240,11 @@ bool QGeocodingXmlParserNokia::parseLocation(QGeoLocation *location)
                 return false;
             }
 
-            QGeoCoordinate pos;
-            if (!parseCoordinate(&pos, "position"))
+            QGeoCoordinate coord;
+            if (!parseCoordinate(&coord, "position"))
                 return false;
-            else
-                location->setCoordinate(coordinate);
 
-            location->setPosition(pos);
+            location->setCoordinate(coord);
 
             parsedPosition = true;
         } else if (name == "boundingBox") {

@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "placepresenter.h"
+#include "qgeoaddress.h"
 
 PlacePresenter::PlacePresenter(QTreeWidget *treeWidget, const QGeocodingReply* codingReply)
     : GeoPresenter(treeWidget), codingReply(codingReply)
