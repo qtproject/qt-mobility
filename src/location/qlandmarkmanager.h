@@ -44,6 +44,7 @@
 
 #include "qmobilityglobal.h"
 #include "qlandmarkid.h"
+#include "qlandmarkfilter.h"
 
 
 #include <QObject>
@@ -55,7 +56,6 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 class QLandmarkCategory;
-class QLandmarkFilter;
 class QLandmarkSortOrder;
 class QLandmarkSearchResult;
 class QLandmarkManagerPrivate;
@@ -66,10 +66,28 @@ class Q_LOCATION_EXPORT QLandmarkManager: public QObject
 {
     Q_OBJECT
 public:
-    enum Error {NoError, ReadOnly};
+    enum Error {
+        NoError =0,
+        DoesNotExistError,
+        AlreadyExistsError,
+        LockedError,
+        PermissionsError,
+        OutOfMemoryError,
+        VersionMismatchError,
+        NotSupportedError,
+        BadArgumentError,
+        UnknownError,
+        };
+
     enum Format{LandmarkExchange, GPSExchange, KeyholeMarkupLanguage, CommaSeparatedValues, Custom};
 
-    QLandmarkManager(const QString &name = QString(), QObject *parent =0);
+#ifdef Q_QDOC
+    QLandmarkManager(const QString &managerName = QString(), const QMap<QString,QString> &parameters=0, QObject *parent =0);
+    QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
+#else
+    QLandmarkManager(const QString &managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject *parent =0);
+    QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
+#endif
     virtual ~QLandmarkManager();
 
     bool saveLandmark(QLandmark *landmark);
@@ -80,11 +98,11 @@ public:
     bool saveCategory(QLandmarkCategory *category);
     bool removeCategory(const QLandmarkCategoryId &categoryId);
 
-    QLandmarkCategory category(const QLandmarkCategoryId &categoryId);
-    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds);
+    QLandmarkCategory category(const QLandmarkCategoryId &categoryId) const;
+    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds) const;
     QList<QLandmarkCategoryId> categoryIds() const;
 
-    QLandmark landmark(const QLandmarkId &landmarkId);
+    QLandmark landmark(const QLandmarkId &landmarkId) const;
     QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders) const;
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
@@ -97,11 +115,18 @@ public:
     Error error() const;
     QString errorString() const;
 
+    bool isFilterSupported(const QLandmarkFilter &filter) const;
+    bool isFilterSupported(QLandmarkFilter::FilterType filterType) const;
+
+    QString managerName() const;
+    QMap<QString,QString> managerParameters() const;
+    QString managerUri() const;
+    int managerVersion() const;
+
     static QStringList availableManagers();
-    static bool addManager(const QString &name, const QString &uri);
-    static bool removeManager(const QString &name);
-    static QString defaultManager();
-    static bool setDefaultManager(const QString &name);
+    static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
+    static QLandmarkManager* fromUri(const QString& uri, QObject* parent = 0);
+    static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
 
 Q_SIGNALS:
     void dataChanged();
