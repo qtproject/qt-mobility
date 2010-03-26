@@ -67,6 +67,9 @@ public:
     QGalleryMetaDataRangeFilter operator >=(const QVariant &value) const;
     QGalleryMetaDataRangeFilter operator >(const QVariant &value) const;
 
+    QString ascending() const;
+    QString descending() const;
+
 private:
     const char * const m_id;
     const int m_length;

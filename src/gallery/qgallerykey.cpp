@@ -154,3 +154,24 @@ QGalleryMetaDataRangeFilter QGalleryKey::operator >(const QVariant &value) const
     filter.setGreaterThan(value);
     return filter;
 }
+
+/*!
+    Returns a sort key which indicating items should be sorted a property in
+    ascending order.
+*/
+
+QString QGalleryKey::ascending() const
+{
+    return QLatin1Char('+') + toString();
+}
+
+/*!
+    Returns a sort key which indicating items should be sorted a property in
+    descending order.
+*/
+
+QString QGalleryKey::descending() const
+{
+    return QLatin1Char('-') + toString();
+}
+
