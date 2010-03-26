@@ -112,7 +112,8 @@ public:
     QString url() const;
     void setUrl(const QString &url);
 
-    QLandmarkId landmarkId();
+    QLandmarkId id() const;
+    void setId(const QLandmarkId &id);
 private:
     QSharedDataPointer<QLandmarkPrivate> d;
 };

@@ -72,7 +72,8 @@ QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
       radius(other.radius),
       attributes(other.attributes),
       phone(other.phone),
-      url(other.url)
+      url(other.url),
+      id(other.id)
 {
 }
 
@@ -89,6 +90,7 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
     url = other.url;
     categories = other.categories;
     attributes = other.attributes;
+    id = other.id;
 
     return *this;
 }
@@ -103,7 +105,8 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (phone == other.phone)
             && (url == other.url)
             && (categories == other.categories)
-            && (attributes == other.attributes));
+            && (attributes == other.attributes))
+            && (id == other.id);
 }
 
 /*!
@@ -168,6 +171,9 @@ QLandmark &QLandmark::operator= (const QLandmark & other)
 /*!
     Returns true if this landmark is equal to \a other, otherwise
     returns false.
+
+    Two landmarks are considered equal if both the landmark details
+    and identifiers are equal.
 */
 bool QLandmark::operator== (const QLandmark &other) const
 {
@@ -422,11 +428,19 @@ void QLandmark::setUrl(const QString &url)
 
 /*!
     Returns the identifier of the landmark.
-
-    Saving a new landmark using a QLandmarkManager will assign
-    the landmark a valid identifier.
 */
-QLandmarkId QLandmark::landmarkId()
+QLandmarkId QLandmark::id() const
 {
-    return QLandmarkId();
+    return d->id;
+}
+
+/*!
+    Sets the \a id of the landmark.
+
+    Note that saving a new landmark using a QLandmarkManager
+    automatically will assign the landmark a valid identifier.
+*/
+void QLandmark::setId(const QLandmarkId &id)
+{
+    d->id = id;
 }
