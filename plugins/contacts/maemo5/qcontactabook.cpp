@@ -89,6 +89,12 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  
+  if (!d->hash){
+    qWarning() << "m_localIDs has been deleted";
+    return;
+  }
+  
   OssoABookContact **p;
   QList<QContactLocalId> contactIds;
   
@@ -112,6 +118,12 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  
+  if (!d->hash){
+    qWarning() << "m_localIDs has been deleted";
+    return;
+  }
+  
   OssoABookContact **p;
   QList<QContactLocalId> contactIds;
   
