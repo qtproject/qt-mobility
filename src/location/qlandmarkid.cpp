@@ -50,15 +50,17 @@ QTM_USE_NAMESPACE
     \ingroup location
 
     \brief The QLandmarkId class provides a unique identifier for
-    a category.
+    a landmark.
 
     It consists of a manager URI which identifies the manager which contains
-    the category, and the id for that category.
+    the landmark, and a manager specific id for that landmark.
 */
 
 /*!
 
-    Creates an invalid identifier, id() and managerUri() will return null strings
+    Creates an invalid identifier.
+
+     id() and managerUri() will return null strings
 */
 QLandmarkId::QLandmarkId()
     :d(new QLandmarkIdPrivate)
@@ -82,7 +84,7 @@ QLandmarkId::~QLandmarkId()
 
 /*!
     Returns true if the identifier is valid, meaning that both
-    a manager URI and id have been set
+    a manager URI and id have been set.
 */
 bool QLandmarkId::isValid() const
 {
@@ -90,7 +92,9 @@ bool QLandmarkId::isValid() const
 }
 
 /*!
-    Returns the id of the category identifier.
+    Returns the id of the landmark identifier.
+
+    This id is specific to a particular landmark manager.
 */
 QString QLandmarkId::id() const
 {
@@ -98,7 +102,7 @@ QString QLandmarkId::id() const
 }
 
 /*!
-    Sets the \a id of the category identifier
+    Sets the \a id of the landmark identifier.
 */
 void QLandmarkId::setId(const QString &id)
 {
@@ -106,7 +110,7 @@ void QLandmarkId::setId(const QString &id)
 }
 
 /*!
-    Returns the URI of the manager which this category identifer
+    Returns the URI of the manager which this landmark identifer
     belongs to.
 */
 QString QLandmarkId::managerUri() const
@@ -115,7 +119,7 @@ QString QLandmarkId::managerUri() const
 }
 
 /*!
-    Sets the manager \a uri which this category identifier
+    Sets the manager \a uri which this landmark identifier
     belongs to.
 */
 void QLandmarkId::setManagerUri(const QString &uri)
@@ -124,8 +128,8 @@ void QLandmarkId::setManagerUri(const QString &uri)
 }
 
 /*!
-    Assigns \a other to this category identifier and returns a reference
-    to this category identifier.
+    Assigns \a other to this landmark identifier and returns a reference
+    to this landmark identifier.
 */
 QLandmarkId &QLandmarkId::operator=(const QLandmarkId &other)
 {
@@ -134,11 +138,13 @@ QLandmarkId &QLandmarkId::operator=(const QLandmarkId &other)
 }
 
 /*!
-    Returns true if this category identifer is equal to \a other, otherwise
+    Returns true if this landmark identifer is equal to \a other, otherwise
     returns false.
 
     Two QLandmarkIds are considered equal if both have the same
     manager URI and id.
+
+    \sa operator!=()
 */
 bool QLandmarkId::operator==(const QLandmarkId &other) const
 {
@@ -147,11 +153,13 @@ bool QLandmarkId::operator==(const QLandmarkId &other) const
 }
 
 /*!
-    Returns true if this category identifier is not equal to \a other,
+    Returns true if this landmark identifier is not equal to \a other,
     otherwise returns false.
 
     If either the manager URIs or ids differ, then the
     QLandmarkIds are not considered equal.
+
+    \sa operator==()
 */
 bool QLandmarkId::operator!=(const QLandmarkId &other) const
 {
