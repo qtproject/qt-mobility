@@ -49,15 +49,21 @@ QTM_BEGIN_NAMESPACE
 
 class QMessageId;
 class QMessageAccountId;
+class QMessageFolderId;
 
 namespace SymbianHelpers {
 
     bool isFreestyleMessage(const QMessageId& msgId);
     bool isFreestyleMessage(const QString& msgId);
-    bool isFreestyleMessage(const QMessageAccountId &accountId);
+    bool isFreestyleAccount(const QMessageAccountId &accountId);
+    bool isFreestyleFolder(const QMessageFolderId &folderId);
     QMessageId addFreestylePrefix(const QMessageId& msgId);
+    QMessageAccountId addFreestylePrefix(const QMessageAccountId &accountId);
+    QMessageFolderId addFreestylePrefix(const QMessageFolderId &folderId);
     QString addFreestylePrefix(const QString& msgId);
     QMessageId removeFreestylePrefix(const QMessageId& msgId);
+    QMessageAccountId removeFreestylePrefix(const QMessageAccountId &accountId);
+    QMessageFolderId removeFreestylePrefix(const QMessageFolderId &folderId);
     QString removeFreestylePrefix(const QString& msgId);
 
 };
