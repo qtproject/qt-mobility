@@ -134,10 +134,7 @@ class QContactMaemo5Engine : public QContactManagerEngine
     QList<QVariant::Type> supportedDataTypes() const;
     QStringList supportedContactTypes() const {return (QStringList() << QContactType::TypeContact);}
     
-    /* Validate */
-    bool validateContact(const QContact& contact, QContactManager::Error* error) const{ return QContactManagerEngine::validateContact(contact, error); }
-    
-    //TODO:- these are pure virtual and so MUST be implemented by the backend.  Stubs here.
+    // XXX TODO: FIXME - these are pure virtual and so MUST be implemented by the backend.  Stubs here.
     QMap<QString, QString> managerParameters() const {return QMap<QString,QString>();}
 
     bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
