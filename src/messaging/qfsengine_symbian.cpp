@@ -48,6 +48,7 @@
 #include "qmessageaccount_p.h"
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
+#include "qmessagecontentcontainer_symbian_p.h"
 
 #include <emailinterfacefactory.h>
 #include <QTextCodec>
@@ -55,6 +56,7 @@
 #include <memailmailbox.h>
 #include <memailfolder.h>
 #include <memailmessage.h>
+#include <memailaddress.h>
 
 using namespace EmailInterface;
 
@@ -67,22 +69,19 @@ Q_GLOBAL_STATIC(CFSEngine,fsEngine);
 
 CFSEngine::CFSEngine()
 {
-    CEmailInterfaceFactory* factory = CEmailInterfaceFactory::NewL(); 
-    CleanupStack::PushL(factory); 
-    MEmailInterface* ifPtr = factory->InterfaceL(KEmailClientApiInterface); 
-    m_clientApi = static_cast<MEmailClientApi*>(ifPtr); 
-    m_clientApi->GetMailboxesL(m_mailboxes);
-
-    CleanupStack::PopAndDestroy(factory); // factory
+    m_factory = CEmailInterfaceFactory::NewL(); 
+    m_ifPtr = m_factory->InterfaceL(KEmailClientApiInterface);
+    m_clientApi = static_cast<MEmailClientApi*>(m_ifPtr);
 }
 
 CFSEngine::~CFSEngine()
 {
-    m_clientApi->Release();
+    delete m_factory;
+    m_ifPtr->Release();
 }
 
 CFSEngine* CFSEngine::instance()
-{
+{   
     return fsEngine();
 }
 
@@ -141,16 +140,19 @@ QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
 void CFSEngine::updateEmailAccountsL() const
 {
     QStringList keys = m_accounts.keys();
-
-    for (TInt i = 0; i < m_mailboxes.Count(); i++) {
-        MEmailMailbox *mailbox = m_mailboxes[i];
+    RMailboxPtrArray mailboxes;
+    CleanupResetAndRelease<MEmailMailbox>::PushL(mailboxes);
+    m_clientApi->GetMailboxesL(mailboxes);
+    
+    for (TInt i = 0; i < mailboxes.Count(); i++) {
+        MEmailMailbox *mailbox = mailboxes[i];
         QString idAsString = QString::number(mailbox->MailboxId().iId);
         QString fsIdAsString = addFreestylePrefix(idAsString);
 
         if (!m_accounts.contains(fsIdAsString)) {
             
             QMessageAccount account = QMessageAccountPrivate::from(
-                QMessageAccountId(idAsString),
+                QMessageAccountId(fsIdAsString),
                 addFreestylePrefix(QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length())),
                 0, //TODO: ID for IMAP service if needed
                 0, //TODO: ID for SMTP service if needed
@@ -160,9 +162,11 @@ void CFSEngine::updateEmailAccountsL() const
         } else {
             keys.removeOne(fsIdAsString);
         }
+
     }
     
-  //  CleanupStack::PopAndDestroy(&mailboxes);  // mailboxes
+    mailboxes.Reset();
+    CleanupStack::PopAndDestroy();
     
     for (int i=0; i < keys.count(); i++) {
         m_accounts.remove(keys[i]);
@@ -269,7 +273,7 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
     QMessageAccount messageAccount = account(accountId);
     
     TMailboxId mailboxId(removeFreestylePrefix(accountId.toString()).toInt());
-    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+    MEmailMailbox* mailbox =m_clientApi->MailboxL(mailboxId);
 
     RFolderArray folders;
     
@@ -303,16 +307,99 @@ bool CFSEngine::storeEmail(QMessage &message)
 
 bool CFSEngine::sendEmail(QMessage &message)
 {
+    TRAPD(err, sendEmailL(message));
+    if (err =! KErrNone)
+        return false;
+    else
+        return true;
+}
+
+void CFSEngine::sendEmailL(QMessage &message)
+{
     TMailboxId mailboxId(removeFreestylePrefix(message.parentAccountId().toString()).toInt());
     MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
     
     MEmailMessage* fsMessage = mailbox->CreateDraftMessageL();
     CleanupReleasePushL( *fsMessage );
-    fsMessage->SetPlainTextBodyL( _L("So say we all!") );
-    //fsMessage->AddAttachmentL( _L( "BSG.png" ) ); 
+    
+    QList<QMessageAddress> toList(message.to());
+    if (toList.count() > 0) {
+        TPtrC16 receiver(KNullDesC);
+        QString qreceiver;
+        REmailAddressArray toAddress;
+        for (int i = 0; i < toList.size(); ++i) {
+            qreceiver = toList.at(i).addressee();
+            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            MEmailAddress* address = mailbox->AddressL();
+            address->SetAddressL(receiver);
+            toAddress.Append(address);
+        }
+        fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
+    }
+    
+    QList<QMessageAddress> ccList(message.cc());
+    if (ccList.count() > 0) {
+        TPtrC16 receiver(KNullDesC);
+        QString qreceiver;
+        REmailAddressArray ccAddress;
+        for (int i = 0; i < ccList.size(); ++i) {
+            qreceiver = ccList.at(i).addressee();
+            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            MEmailAddress* address = mailbox->AddressL();;
+            address->SetAddressL(receiver);
+            ccAddress.Append(address);
+        }
+        fsMessage->SetRecipientsL(MEmailAddress::ECc, ccAddress);
+    }
+        
+    QList<QMessageAddress> bccList(message.bcc());
+    if (bccList.count() > 0) {
+        TPtrC16 receiver(KNullDesC);
+        QString qreceiver;
+        REmailAddressArray bccAddress;
+        for (int i = 0; i < bccList.size(); ++i) {
+            qreceiver = bccList.at(i).addressee();
+            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            MEmailAddress* address = mailbox->AddressL();;
+            address->SetAddressL(receiver);
+            bccAddress.Append(address);
+        }
+        fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
+    }
+    if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
+        // Message contains only body (not attachments)
+        QString messageBody = message.textContent();
+        if (!messageBody.isEmpty()) {
+            // TODO:
+            }
+        } else {
+            // Message contains body and attachments
+            QMessageContentContainerIdList contentIds = message.contentIds();
+            foreach (QMessageContentContainerId id, contentIds){
+                QMessageContentContainer container = message.find(id);
+                QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
+                if (pPrivateContainer->_id == message.bodyId()) {
+                    // ContentContainer is body
+                    if (!container.textContent().isEmpty()) {
+                        // Create MIME header for body
+                        // TODO:
+                    }
+                } else {
+                    // ContentContainer is attachment
+                    QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
+                    // Replace Qt style path separator "/" with Symbian path separator "\"
+                    filePath.replace(QByteArray("/"), QByteArray("\\"));
+                    QString temp_path = QString(filePath);
+                    TPtrC16 attachmentPath(KNullDesC);
+                    attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
+                    fsMessage->AddAttachmentL(attachmentPath);
+                }        
+            }
+        }
+    fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
+    fsMessage->SaveChangesL();
     fsMessage->SendL();
     CleanupStack::PopAndDestroy(); // fsMessage
-    return false;
 }
 
 QString CFSEngine::attachmentTextContent(long int messageId, unsigned int attachmentId, const QByteArray &charset)

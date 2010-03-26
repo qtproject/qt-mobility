@@ -55,7 +55,7 @@
 #include "qmessagefilter_p.h"
 #include "qmessagefolderfilter.h"
 #include "qmessageservice.h"
-
+#include <emailinterfacefactory.h>
 #include <memailclientapi.h>
 
 using namespace EmailInterface;
@@ -112,16 +112,19 @@ public:
 
 private:
     
+    void sendEmailL(QMessage &message);
     void updateEmailAccountsL() const;
     QMessageFolderIdList folderIdsByAccountIdL(const QMessageAccountId& accountId) const;
-
+    
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
     
 private:
+
+    CEmailInterfaceFactory* m_factory;
+    MEmailInterface* m_ifPtr;
     MEmailClientApi* m_clientApi;
-    RMailboxPtrArray m_mailboxes;
     mutable QHash<QString, QMessageAccount> m_accounts;
 
 };

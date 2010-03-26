@@ -134,8 +134,8 @@ void QMessageStorePrivate::messagesCounted(int count)
 
 QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
-    //return CFSEngine::instance()->queryAccounts(filter, sortOrder, limit, offset);
-    return _mtmEngine->queryAccounts(filter, sortOrder, limit, offset);
+    return CFSEngine::instance()->queryAccounts(filter, sortOrder, limit, offset);
+    //return _mtmEngine->queryAccounts(filter, sortOrder, limit, offset);
 }
 
 int QMessageStorePrivate::countAccounts(const QMessageAccountFilter &filter) const
@@ -206,8 +206,8 @@ QMessage QMessageStorePrivate::message(const QMessageId& id) const
 
 QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
 {
-    return _mtmEngine->account(id);
-    //return CFSEngine::instance()->account(id);
+    //return _mtmEngine->account(id);
+    return CFSEngine::instance()->account(id);
 }
 
 QMessageManager::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)

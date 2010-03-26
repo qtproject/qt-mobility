@@ -54,7 +54,7 @@ MessagingEx::MessagingEx(QWidget* parent)
     connect(&m_service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     m_accountList = m_manager.queryAccounts(QMessageAccountFilter(), QMessageAccountSortOrder(), 10 , 0);
     for(int i = 0; i < m_accountList.count(); ++i){
-        QMessageAccount account = QMessageAccount(m_accountList[i]);
+        QMessageAccount account = m_accountList[i];
         accountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
         accountComboBox_2->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
         folderAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
