@@ -2033,14 +2033,16 @@
     </section>
     <section ref="qlandmarknamefilter.html" title="QLandmarkNameFilter Class Reference">
         <keyword ref="qlandmarknamefilter.html">QLandmarkNameFilter</keyword>
+        <keyword ref="qlandmarknamefilter.html#caseSensitivity">caseSensitivity</keyword>
         <keyword ref="qlandmarknamefilter.html#name">name</keyword>
+        <keyword ref="qlandmarknamefilter.html#setCaseSensitivity">setCaseSensitivity</keyword>
         <keyword ref="qlandmarknamefilter.html#setName">setName</keyword>
         <section ref="qlandmarknamefilter-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarknamesort.html" title="QLandmarkNameSort Class Reference">
         <keyword ref="qlandmarknamesort.html">QLandmarkNameSort</keyword>
-        <keyword ref="qlandmarknamesort.html#compare">compare</keyword>
-        <keyword ref="qlandmarknamesort.html#sort">sort</keyword>
+        <keyword ref="qlandmarknamesort.html#caseSensitivity">caseSensitivity</keyword>
+        <keyword ref="qlandmarknamesort.html#setCaseSensitivity">setCaseSensitivity</keyword>
         <section ref="qlandmarknamesort-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarknearestfilter.html" title="QLandmarkNearestFilter Class Reference">

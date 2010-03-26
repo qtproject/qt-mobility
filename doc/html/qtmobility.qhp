@@ -2486,12 +2486,14 @@
             <keyword name="supportedImplementationVersions" id="QLandmarkManagerEngineFactory::supportedImplementationVersions" ref="qlandmarkmanagerenginefactory.html#supportedImplementationVersions"/>
             <keyword name="~QLandmarkManagerEngineFactory" id="QLandmarkManagerEngineFactory::~QLandmarkManagerEngineFactory" ref="qlandmarkmanagerenginefactory.html#dtor.QLandmarkManagerEngineFactory"/>
             <keyword name="QLandmarkNameFilter" id="QLandmarkNameFilter" ref="qlandmarknamefilter.html"/>
+            <keyword name="caseSensitivity" id="QLandmarkNameFilter::caseSensitivity" ref="qlandmarknamefilter.html#caseSensitivity"/>
             <keyword name="name" id="QLandmarkNameFilter::name" ref="qlandmarknamefilter.html#name"/>
+            <keyword name="setCaseSensitivity" id="QLandmarkNameFilter::setCaseSensitivity" ref="qlandmarknamefilter.html#setCaseSensitivity"/>
             <keyword name="setName" id="QLandmarkNameFilter::setName" ref="qlandmarknamefilter.html#setName"/>
             <keyword name="~QLandmarkNameFilter" id="QLandmarkNameFilter::~QLandmarkNameFilter" ref="qlandmarknamefilter.html#dtor.QLandmarkNameFilter"/>
             <keyword name="QLandmarkNameSort" id="QLandmarkNameSort" ref="qlandmarknamesort.html"/>
-            <keyword name="compare" id="QLandmarkNameSort::compare" ref="qlandmarknamesort.html#compare"/>
-            <keyword name="sort" id="QLandmarkNameSort::sort" ref="qlandmarknamesort.html#sort"/>
+            <keyword name="caseSensitivity" id="QLandmarkNameSort::caseSensitivity" ref="qlandmarknamesort.html#caseSensitivity"/>
+            <keyword name="setCaseSensitivity" id="QLandmarkNameSort::setCaseSensitivity" ref="qlandmarknamesort.html#setCaseSensitivity"/>
             <keyword name="~QLandmarkNameSort" id="QLandmarkNameSort::~QLandmarkNameSort" ref="qlandmarknamesort.html#dtor.QLandmarkNameSort"/>
             <keyword name="QLandmarkNearestFilter" id="QLandmarkNearestFilter" ref="qlandmarknearestfilter.html"/>
             <keyword name="coordinate" id="QLandmarkNearestFilter::coordinate" ref="qlandmarknearestfilter.html#coordinate"/>

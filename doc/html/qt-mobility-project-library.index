@@ -1148,11 +1148,11 @@
                 <parameter left="double" right="" name="radius" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkProximityFilter" fullname="QLandmarkProximityFilter::~QLandmarkProximityFilter" href="qlandmarkproximityfilter.html#dtor.QLandmarkProximityFilter" location="qlandmarkproximityfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkProximityFilter()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QLandmarkProximityFilter::coordinate" href="qlandmarkproximityfilter.html#coordinate" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoCoordinate" signature="coordinate()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QLandmarkProximityFilter::coordinate" href="qlandmarkproximityfilter.html#coordinate" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="coordinate() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCoordinate" fullname="QLandmarkProximityFilter::setCoordinate" href="qlandmarkproximityfilter.html#setCoordinate" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCoordinate(const QGeoCoordinate &amp; coordinate)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QLandmarkProximityFilter::radius" href="qlandmarkproximityfilter.html#radius" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="double" signature="radius()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QLandmarkProximityFilter::radius" href="qlandmarkproximityfilter.html#radius" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="radius() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QLandmarkProximityFilter::setRadius" href="qlandmarkproximityfilter.html#setRadius" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRadius(double radius)">
                 <parameter left="double" right="" name="radius" default=""/>
             </function>
@@ -2896,9 +2896,13 @@
                 <parameter left="const QString &amp;" right="" name="name" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkNameFilter" fullname="QLandmarkNameFilter::~QLandmarkNameFilter" href="qlandmarknamefilter.html#dtor.QLandmarkNameFilter" location="qlandmarknamefilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkNameFilter()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QLandmarkNameFilter::name" href="qlandmarknamefilter.html#name" location="qlandmarknamefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QString" signature="name()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QLandmarkNameFilter::name" href="qlandmarknamefilter.html#name" location="qlandmarknamefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setName" fullname="QLandmarkNameFilter::setName" href="qlandmarknamefilter.html#setName" location="qlandmarknamefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setName(const QString &amp; name)">
                 <parameter left="const QString &amp;" right="" name="name" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="caseSensitivity" fullname="QLandmarkNameFilter::caseSensitivity" href="qlandmarknamefilter.html#caseSensitivity" location="qlandmarknamefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Qt::CaseSensitivity" signature="caseSensitivity() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCaseSensitivity" fullname="QLandmarkNameFilter::setCaseSensitivity" href="qlandmarknamefilter.html#setCaseSensitivity" location="qlandmarknamefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)">
+                <parameter left="Qt::CaseSensitivity" right="" name="caseSensitivity" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContact" href="qcontact.html" location="qcontact.h" bases="" module="">
@@ -5825,11 +5829,11 @@
                 <parameter left="const QGeoCoordinate &amp;" right="" name="bottomRight" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkBoxFilter" fullname="QLandmarkBoxFilter::~QLandmarkBoxFilter" href="qlandmarkboxfilter.html#dtor.QLandmarkBoxFilter" location="qlandmarkboxfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkBoxFilter()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="topLeftCoordinate" fullname="QLandmarkBoxFilter::topLeftCoordinate" href="qlandmarkboxfilter.html#topLeftCoordinate" location="qlandmarkboxfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoCoordinate" signature="topLeftCoordinate()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="topLeftCoordinate" fullname="QLandmarkBoxFilter::topLeftCoordinate" href="qlandmarkboxfilter.html#topLeftCoordinate" location="qlandmarkboxfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="topLeftCoordinate() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setTopLeftCoordinate" fullname="QLandmarkBoxFilter::setTopLeftCoordinate" href="qlandmarkboxfilter.html#setTopLeftCoordinate" location="qlandmarkboxfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTopLeftCoordinate(const QGeoCoordinate &amp; topLeft)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="topLeft" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="bottomRightCoordinate" fullname="QLandmarkBoxFilter::bottomRightCoordinate" href="qlandmarkboxfilter.html#bottomRightCoordinate" location="qlandmarkboxfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoCoordinate" signature="bottomRightCoordinate()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="bottomRightCoordinate" fullname="QLandmarkBoxFilter::bottomRightCoordinate" href="qlandmarkboxfilter.html#bottomRightCoordinate" location="qlandmarkboxfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="bottomRightCoordinate() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setBottomRightCoordinate" fullname="QLandmarkBoxFilter::setBottomRightCoordinate" href="qlandmarkboxfilter.html#setBottomRightCoordinate" location="qlandmarkboxfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setBottomRightCoordinate(const QGeoCoordinate &amp; bottomRight)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="bottomRight" default=""/>
             </function>
@@ -8405,12 +8409,9 @@
                 <parameter left="Qt::SortOrder" right="" name="direction" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkNameSort" fullname="QLandmarkNameSort::~QLandmarkNameSort" href="qlandmarknamesort.html#dtor.QLandmarkNameSort" location="qlandmarknamesort.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkNameSort()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="compare" fullname="QLandmarkNameSort::compare" href="qlandmarknamesort.html#compare" location="qlandmarknamesort.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="int" signature="compare(const QLandmark &amp; l1, const QLandmark &amp; l2) const">
-                <parameter left="const QLandmark &amp;" right="" name="l1" default=""/>
-                <parameter left="const QLandmark &amp;" right="" name="l2" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sort" fullname="QLandmarkNameSort::sort" href="qlandmarknamesort.html#sort" location="qlandmarknamesort.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkId&gt;" signature="sort(const QList&lt;QLandmarkId&gt; &amp; landmarkIds) const">
-                <parameter left="const QList&lt;QLandmarkId&gt; &amp;" right="" name="landmarkIds" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="caseSensitivity" fullname="QLandmarkNameSort::caseSensitivity" href="qlandmarknamesort.html#caseSensitivity" location="qlandmarknamesort.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Qt::CaseSensitivity" signature="caseSensitivity() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCaseSensitivity" fullname="QLandmarkNameSort::setCaseSensitivity" href="qlandmarknamesort.html#setCaseSensitivity" location="qlandmarknamesort.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)">
+                <parameter left="Qt::CaseSensitivity" right="" name="caseSensitivity" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryFilter" href="qlandmarkcategoryfilter.html" location="qlandmarkcategoryfilter.h" bases="QLandmarkFilter" module="">
