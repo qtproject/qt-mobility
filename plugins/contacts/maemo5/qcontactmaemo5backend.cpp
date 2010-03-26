@@ -361,8 +361,9 @@ bool QContactMaemo5Engine::isFilterSupported(const QContactFilter& filter) const
     case QContactFilter::IntersectionFilter:
     case QContactFilter::UnionFilter:
       return true;
+    default:
+      return false;
   }
-  return false;
 }
 
 QList<QVariant::Type> QContactMaemo5Engine::supportedDataTypes() const {
