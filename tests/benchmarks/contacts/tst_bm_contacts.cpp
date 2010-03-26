@@ -926,11 +926,11 @@ void tst_Contact::tst_removeAllContacts()
 int main(int argc, char **argv){
 
     QApplication app(argc, argv);
-#if 0
+
     tst_Contact test1;
     test1.setBackend("memory");
     QTest::qExec(&test1, argc, argv);
-#endif
+
 //    tst_Contact test2;
 //    test2.setBackend("tracker");
 //    QTest::qExec(&test2, argc, argv);
