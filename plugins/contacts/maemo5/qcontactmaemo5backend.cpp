@@ -321,14 +321,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
 
 QContactDetailDefinition QContactMaemo5Engine::detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const
 {
-    QMap<QString, QContactDetailDefinition> defMap = detailDefinitions(contactType, error);
-    if (!defMap.contains(definitionName)) {
-        *error = QContactManager::DoesNotExistError;
-        return QContactDetailDefinition();
-    }
-
-    *error = QContactManager::NoError;
-    return defMap.value(definitionName);
+    return QContactManagerEngine::detailDefinition(definitionName, contactType, error);
 }
 
 bool QContactMaemo5Engine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const {

@@ -124,7 +124,7 @@ class QContactMaemo5Engine : public QContactManagerEngine
     
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
-    QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error* error) const; // implemented in terms of the plural detailDefinitions
+    QContactDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const; // implemented in terms of the plural detailDefinitions
     //bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error);
     //bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error);
     
