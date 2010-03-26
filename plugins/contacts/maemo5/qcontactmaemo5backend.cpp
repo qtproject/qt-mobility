@@ -115,16 +115,16 @@ bool QContactMaemo5Engine::validateContact(const QContact& contact, QContactMana
     return QContactManagerEngine::validateContact(contact, error);
 }
 
-bool QContactMaemo5Engine::validateDefinition(const QContactDetailDefinition& detailDefinition, QContactManager::Error* error) const
+bool QContactMaemo5Engine::validateDefinition(const QContactDetailDefinition& definition, QContactManager::Error* error) const
 {
-    QContactDetailDefinition existing = detailDefinition(detailDefinition.name());
-    if (existing != detailDefinition) {
-        *error = QContactManager::NotSupportedError; // XXX TODO: mutable definitions?
-        return false;
+    QContactDetailDefinition existing = detailDefinition(definition.name(), QContactType::TypeContact, error);
+    if (existing == definition) {
+        *error = QContactManager::NoError;
+        return true;
     }
 
-    *error = QContactManager::NoError;
-    return true;
+    *error = QContactManager::NotSupportedError; // XXX TODO: mutable definitions?
+    return false;
 }
 
 QContactLocalId QContactMaemo5Engine::selfContactId(QContactManager::Error* error) const
