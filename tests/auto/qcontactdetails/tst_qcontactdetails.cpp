@@ -1062,7 +1062,7 @@ void tst_QContactDetails::url()
 class CustomTestDetail : public QContactDetail
 {
 public:
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(CustomTestDetail, "CustomTestDetail");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(CustomTestDetail, "CustomTestDetail")
     Q_DECLARE_LATIN1_CONSTANT(FieldTestLabel, "TestLabel");
 
     ~CustomTestDetail()

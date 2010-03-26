@@ -148,7 +148,7 @@ QList<TUid> CntTransformThumbnail::supportedSortingFieldTypes(QString /*detailFi
  * \a subType The subtype to be checked
  * \return True if this subtype is supported
  */
-bool CntTransformThumbnail::supportsSubType(const QString& subType) const
+bool CntTransformThumbnail::supportsSubType(const QString& /*subType*/) const
 {
     // XXX todo
     return false;
@@ -160,7 +160,7 @@ bool CntTransformThumbnail::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformThumbnail::getIdForField(const QString& fieldName) const
+quint32 CntTransformThumbnail::getIdForField(const QString& /*fieldName*/) const
 {
     // XXX todo
     return 0;

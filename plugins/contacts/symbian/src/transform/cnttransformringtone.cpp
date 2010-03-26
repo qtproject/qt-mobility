@@ -119,7 +119,7 @@ QList<TUid> CntTransformRingtone::supportedSortingFieldTypes(QString /*detailFie
  * \a subType The subtype to be checked
  * \return True if this subtype is supported
  */
-bool CntTransformRingtone::supportsSubType(const QString& subType) const
+bool CntTransformRingtone::supportsSubType(const QString& /*subType*/) const
 {
     // XXX todo
     return false;
@@ -131,7 +131,7 @@ bool CntTransformRingtone::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformRingtone::getIdForField(const QString& fieldName) const
+quint32 CntTransformRingtone::getIdForField(const QString& /*fieldName*/) const
 {
     // XXX todo
     return 0;

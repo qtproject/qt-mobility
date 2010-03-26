@@ -151,7 +151,7 @@ QTextCodec* LineReader::codec()
  */
 bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
 {
-    int crlfPos;
+    int crlfPos = -1;
 
     QByteArray space = VersitUtils::encode(' ', mCodec);
     QByteArray tab = VersitUtils::encode('\t', mCodec);
