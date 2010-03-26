@@ -78,7 +78,8 @@ QContactABook::QContactABook(QObject* parent) :QObject(parent)
 
 QContactABook::~QContactABook()
 {
-  g_object_unref(m_abookAgregator);
+    // XXX FIXME: memory leak?
+  //g_object_unref(m_abookAgregator);
   delete cbSD;
 }
 
