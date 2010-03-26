@@ -1,4 +1,6 @@
-import Qt 4.6
+import Qt 4.7
+import Qt.publishsubscribe 4.7
+import Qt.labs.particles 1.0
 
 Rectangle {
     color: "white"

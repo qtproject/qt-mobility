@@ -70,7 +70,7 @@ private:
 MainWidget::MainWidget()
 {
     //! [1]
-    QML_REGISTER_TYPE(Qt, 4, 6, ValueSpaceSubscriber, QValueSpaceSubscriber);
+    qmlRegisterType<QValueSpaceSubscriber>("Qt.publishsubscribe", 4, 7, "ValueSpaceSubscriber");
     //! [1]
 
     QVBoxLayout *vbox = new QVBoxLayout;
