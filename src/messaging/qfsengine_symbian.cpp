@@ -57,6 +57,7 @@
 #include <memailfolder.h>
 #include <memailmessage.h>
 #include <memailaddress.h>
+#include <memailcontent.h>
 
 using namespace EmailInterface;
 
@@ -308,7 +309,7 @@ bool CFSEngine::storeEmail(QMessage &message)
 bool CFSEngine::sendEmail(QMessage &message)
 {
     TRAPD(err, sendEmailL(message));
-    if (err =! KErrNone)
+    if (err != KErrNone)
         return false;
     else
         return true;
@@ -370,6 +371,7 @@ void CFSEngine::sendEmailL(QMessage &message)
         // Message contains only body (not attachments)
         QString messageBody = message.textContent();
         if (!messageBody.isEmpty()) {
+            // MEmailMessageContent* content = fsMessage->ContentL();
             // TODO:
             }
         } else {
