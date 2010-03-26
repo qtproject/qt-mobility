@@ -50,9 +50,11 @@ QTM_BEGIN_NAMESPACE
            for the different sort order types.
 
     The sort orders define how a list of landmarks should be ordered
-    when they are by a QLandmarkManager.
+    when they searched using a QLandmarkManager or one of the
+    landmark request classes.
+
     If none of the pre-existing sort orders
-    is sufficient then custom filter should be created by
+    is sufficient then a custom sort order should be created by
     inheriting from QLandmarkCustomSort.
 */
 

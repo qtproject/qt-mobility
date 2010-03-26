@@ -67,19 +67,18 @@ QLandmarkNameSort::~QLandmarkNameSort()
 }
 
 /*!
-  \reimp
+    Returns the case sensitivity of the sort order.
 */
-int QLandmarkNameSort::compare(const QLandmark &l1, const QLandmark &l2) const
+Qt::CaseSensitivity QLandmarkNameSort::caseSensitivity() const
 {
-    return 0; //TODO: implement
+    return Qt::CaseInsensitive;
 }
 
 /*!
-    \reimp
+    Sets the the \a caseSensitivity of the sort order.
 */
-QList<QLandmarkId> QLandmarkNameSort::sort(const QList<QLandmarkId> &landmarkIds) const
+void QLandmarkNameSort::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
 {
-    return QList<QLandmarkId>();
 }
 
 QTM_END_NAMESPACE

@@ -76,12 +76,9 @@ QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate()
 
 /*!
     \class QLandmarkProximityFilter
-    \brief The QLandmarkProximityFilter class is used to search for landmarks based on proximity
+    \brief The QLandmarkProximityFilter class is used to search for landmarks based on the radius
     around a given coordinate.
     \ingroup location
-
-    This filter will make matches for landmarks which are found within a given radius
-    around a central coordinate.
 */
 
 /*!
@@ -107,7 +104,7 @@ QLandmarkProximityFilter::~QLandmarkProximityFilter()
 /*!
     Returns the central coordinate of the filter.
 */
-QGeoCoordinate QLandmarkProximityFilter::coordinate()
+QGeoCoordinate QLandmarkProximityFilter::coordinate() const
 {
     return QGeoCoordinate();
 }
@@ -122,7 +119,7 @@ void QLandmarkProximityFilter::setCoordinate(const QGeoCoordinate &coordinate)
 /*!
     Returns the radius of the filter.
 */
-double QLandmarkProximityFilter::radius()
+double QLandmarkProximityFilter::radius() const
 {
     return 0.0;
 }

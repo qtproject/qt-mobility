@@ -103,7 +103,7 @@ QLandmarkBoxFilter::~QLandmarkBoxFilter()
     Returns the top-left corner of the bounding box this filter uses
     to select landmarks.
 */
-QGeoCoordinate QLandmarkBoxFilter::topLeftCoordinate()
+QGeoCoordinate QLandmarkBoxFilter::topLeftCoordinate() const
 {
     return QGeoCoordinate();
 }
@@ -120,7 +120,7 @@ void QLandmarkBoxFilter::setTopLeftCoordinate(const QGeoCoordinate &topLeft)
     Returns the bottom-right coordinate of the bounding box this filter uses
     to select landmarks.
 */
-QGeoCoordinate QLandmarkBoxFilter::bottomRightCoordinate()
+QGeoCoordinate QLandmarkBoxFilter::bottomRightCoordinate() const
 {
     return QGeoCoordinate();
 }

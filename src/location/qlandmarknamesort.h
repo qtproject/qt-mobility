@@ -55,8 +55,8 @@ public:
     QLandmarkNameSort(Qt::SortOrder direction);
     virtual ~QLandmarkNameSort();
 
-    virtual int compare(const QLandmark &l1, const QLandmark &l2) const;
-    virtual QList<QLandmarkId> sort(const QList<QLandmarkId> &landmarkIds) const;
+    Qt::CaseSensitivity caseSensitivity() const;
+    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
 private:
     QLandmarkNameSortPrivate *d;
 };

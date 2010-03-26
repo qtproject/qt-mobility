@@ -75,8 +75,8 @@ QLandmarkUnionFilterPrivate::~QLandmarkUnionFilterPrivate()
             of its constituent filters.
     \ingroup location
 
-    During a search the union filter performs and OR operation with all
-    its constituent filters.
+    Conceptually it performs an OR operation and may thus be used
+    to select landmarks which match any one of it's constituent filters.
 */
 
 /*!
@@ -103,7 +103,8 @@ void QLandmarkUnionFilter::setFilters(const QList<QLandmarkFilter>& filters)
 }
 
 /*!
-    Prepends the given \a filter to the list of unioned filters
+    Prepends the given \a filter to the list of unioned filters.
+
     \sa append(), filters()
 */
 void QLandmarkUnionFilter::prepend(const QLandmarkFilter& filter)
@@ -111,7 +112,8 @@ void QLandmarkUnionFilter::prepend(const QLandmarkFilter& filter)
 }
 
 /*!
-    Appends the given \a filter to the list of unioned filters
+    Appends the given \a filter to the list of unioned filters.
+
     \sa operator<<(), prepend(), filters()
 */
 void QLandmarkUnionFilter::append(const QLandmarkFilter& filter)
@@ -119,7 +121,7 @@ void QLandmarkUnionFilter::append(const QLandmarkFilter& filter)
 }
 
 /*!
-    Removes the given \a filter from the union list
+    Removes the given \a filter from the union list.
     \sa filters(), append(), prepend()
 */
 void QLandmarkUnionFilter::remove(const QLandmarkFilter& filter)
@@ -127,7 +129,8 @@ void QLandmarkUnionFilter::remove(const QLandmarkFilter& filter)
 }
 
 /*!
-    Appends the given \a filter to the list of unioned filters
+    Appends the given \a filter to the list of unioned filters.
+
     \sa append()
  */
 QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter& filter)
@@ -136,7 +139,8 @@ QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter& fi
 }
 
 /*!
-    Returns the list of filters which form the union filter
+    Returns the list of filters which form the union filter.
+
     \sa setFilters(), prepend(), append(), remove()
  */
 QList<QLandmarkFilter> QLandmarkUnionFilter::filters() const
