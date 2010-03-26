@@ -152,7 +152,7 @@ void QMapObject::compIntersectingTiles(const QRectF& box)
         it.next();
 
         if (it.isValid() && intersects(it.tileRect()))
-            d->intersectingTiles.append(d->mapView->getTileIndex(it.col(), it.row()));
+            d->intersectingTiles.append(it.index());
     }
 }
 

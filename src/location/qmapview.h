@@ -85,6 +85,7 @@ public:
         void next();
         quint32 col() const;
         quint32 row() const;
+        quint64 index() const;
         QRectF tileRect() const;
 
     private:
@@ -122,12 +123,7 @@ public:
     bool isPannable() const;
 
     QPointF geoToMap(const QGeoCoordinate& geoCoordinate) const;
-    QPointF mercatorToMap(const QPointF& mercatorCoordinate) const;
     QGeoCoordinate mapToGeo(const QPointF& mapCoordinate) const;
-    QPointF mapToMercator(const QPointF&mapCoordinate) const;
-    void mapToTile(const QPointF& mapCoordinate, quint32* col, quint32* row) const;
-    quint64 getTileIndex(quint32 col, quint32 row) const;
-    QRectF getTileRect(quint32 col, quint32 row) const;
 
     void setRouteDetailLevel(quint32 pixels);
     quint32 routeDetailLevel() const;
@@ -165,6 +161,13 @@ public:
 
 private:
     Q_DISABLE_COPY(QMapView)
+
+    QPointF mercatorToMap(const QPointF& mercatorCoordinate) const;
+    QPointF mapToMercator(const QPointF&mapCoordinate) const;
+
+    void mapToTile(const QPointF& mapCoordinate, quint32* col, quint32* row) const;
+    QRectF getTileRect(quint32 col, quint32 row) const;
+    quint64 getTileIndex(quint32 col, quint32 row) const;
 
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);

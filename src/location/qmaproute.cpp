@@ -153,7 +153,7 @@ void QMapRoute::addSegment(const QLineF& line)
         it.next();
 
         if (it.isValid()) {
-            quint64 tileIndex = d->mapView->getTileIndex(it.col(), it.row());
+            quint64 tileIndex = it.index();
 
             if (!d->segments.contains(tileIndex))
                 d->segments.insert(tileIndex, QList<QLineF>());
@@ -190,7 +190,7 @@ bool QMapRoute::intersects(const QRectF& rect) const
         if (!it.isValid())
             continue;
 
-        quint64 tileIndex = d->mapView->getTileIndex(it.col(), it.row());
+        quint64 tileIndex = it.index();
 
         if (d->segments.contains(tileIndex)) {
             QRectF tile = it.tileRect();
@@ -227,7 +227,7 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
         if (!it.isValid())
             continue;
 
-        quint64 tileIndex = d->mapView->getTileIndex(it.col(), it.row());
+        quint64 tileIndex = it.index();
 
         if (d->segments.contains(tileIndex)) {
             QListIterator<QLineF> lit(d->segments[tileIndex]);

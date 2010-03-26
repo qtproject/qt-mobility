@@ -898,6 +898,7 @@ public:
 
     quint32 cl;
     quint32 rw;
+    quint64 tileIndex;
     bool hasNext;
     QRectF viewPort;
     quint64 numColRow;
@@ -943,6 +944,7 @@ void QMapView::TileIterator::next()
     d->cl = (d->currX / d->mapRes.size.width()) % d->numColRow;
     qint64 left = (d->currX / d->mapRes.size.width()) * d->mapRes.size.width();
     d->rw = d->currY / d->mapRes.size.height();
+    d->tileIndex = ((quint64) d->rw) * d->numColRow + d->cl;
 
     if (d->currY > 0) {
         qint64 top = (d->currY / d->mapRes.size.height()) * d->mapRes.size.height();
@@ -1000,6 +1002,12 @@ quint32 QMapView::TileIterator::row() const
 {
     Q_D(const QMapView::TileIterator);
     return d->rw;
+}
+
+quint64 QMapView::TileIterator::index() const
+{
+    Q_D(const QMapView::TileIterator);
+    return d->tileIndex;
 }
 
 /*!
