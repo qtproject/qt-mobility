@@ -42,8 +42,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#exportLandmarks-2">exportLandmarks</a></b> ( const QString &amp; <i>fileName</i>, Format <i>format</i>, QList&lt;QLandmarkId&gt; <i>landmarkIds</i> = QList&lt;QLandmarkId&gt; () )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#importLandmarks">importLandmarks</a></b> ( QIODevice * <i>device</i>, Format <i>format</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#importLandmarks-2">importLandmarks</a></b> ( const QString &amp; <i>fileName</i>, Format <i>format</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#isFilterSupported">isFilterSupported</a></b> ( const QLandmarkFilter &amp; <i>filter</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#isFilterSupported-2">isFilterSupported</a></b> ( QLandmarkFilter::FilterType <i>filterType</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#isFilterSupported">isFilterSupported</a></b> ( QLandmarkFilter::FilterType <i>filterType</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmark </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmark">landmark</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarkIds">landmarkIds</a></b> ( const QLandmarkFilter &amp; <i>filter</i>, const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sortOrders</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmark&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkmanager.html#landmarks">landmarks</a></b> ( const QLandmarkFilter &amp; <i>filter</i>, const QList&lt;QLandmarkSortOrder&gt; &amp; <i>sortOrders</i> ) const</td></tr>
@@ -214,10 +213,7 @@
 <p>Convenience function that will read landmarks from <i>fileName</i> in the expected <i>format</i>. Internally a <a href="http://qt.nokia.com/doc/4.6/qfile.html">QFile</a> is opened with <a href="http://qt.nokia.com/doc/4.6/qiodevice.html#OpenModeFlag-enum">QIODevice::ReadOnly</a> permissions.</p>
 <p>Returns true if all landmarks could be imported, otherwise returns false. It may be possible that only a subset of landmarks are imported.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkManager/isFilterSupported"></a>
-<h3 class="fn"><a name="isFilterSupported"></a>bool QLandmarkManager::isFilterSupported ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> ) const</h3>
-<p>Convenience function that returns true if the given <i>filter</i> is supported natively by the manager, else false if the filter behaviour would be emulated.</p>
-<p>Note: In some cases, the behaviour of an unsupprted filter cannot be emulated. In these cases the filter will fail.</p>
-<h3 class="fn"><a name="isFilterSupported-2"></a>bool QLandmarkManager::isFilterSupported ( <a href="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::FilterType</a> <i>filterType</i> ) const</h3>
+<h3 class="fn"><a name="isFilterSupported"></a>bool QLandmarkManager::isFilterSupported ( <a href="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::FilterType</a> <i>filterType</i> ) const</h3>
 <p>Returns true if the given <i>filterType</i> is supported natively by the manager, else false if the filter behaviour would be emulated.</p>
 <p>Note: In some cases, the behaviour of an unsupprted filter cannot be emulated. In these cases the filter will fail.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkManager/landmark"></a>

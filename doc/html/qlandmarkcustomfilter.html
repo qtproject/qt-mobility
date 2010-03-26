@@ -33,13 +33,14 @@
 <h2>Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcustomfilter.html#QLandmarkCustomFilter">QLandmarkCustomFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcustomfilter.html#isMatch">isMatch</a></b> ( const QLandmarkId &amp; <i>landmarkId</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcustomfilter.html#isMatch">isMatch</a></b> ( const QLandmark &amp; <i>landmark</i> ) = 0</td></tr>
 </table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QLandmarkCustomFilter class provides the interface which all custom filters should inherit.</p>
 <p>All custom landmark filters should inherit off the QLandmarkCustomFilter and must implement the <a href="qlandmarkcustomfilter.html#isMatch">isMatch</a>() function.</p>
+<p>Custom filters inherently do not have native support and are thus may be subject to performance issues.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkCustomFilter/QLandmarkCustomFilter"></a>
@@ -49,8 +50,8 @@
 <h3 class="fn"><a name="dtor.QLandmarkCustomFilter"></a>QLandmarkCustomFilter::~QLandmarkCustomFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCustomFilter/isMatch"></a>
-<h3 class="fn"><a name="isMatch"></a>bool QLandmarkCustomFilter::isMatch ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>landmarkId</i> )&nbsp;&nbsp;<tt> [pure virtual protected]</tt></h3>
-<p>Returns true if the landmark identified by <i>landmarkId</i> should be matched by the filter. All custom landmark filters need to implement this function.</p>
+<h3 class="fn"><a name="isMatch"></a>bool QLandmarkCustomFilter::isMatch ( const <a href="qlandmark.html">QLandmark</a> &amp; <i>landmark</i> )&nbsp;&nbsp;<tt> [pure virtual protected]</tt></h3>
+<p>Returns true if the <i>landmark</i> should be matched by the filter. All custom landmark filters need to implement this function.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

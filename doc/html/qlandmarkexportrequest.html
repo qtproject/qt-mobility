@@ -54,7 +54,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QLandmarkExportRequest class allows a client to asynchronously request that a landmark manager export a set of landmarks.</p>
-<p>For a QLandmarkExportRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted if an overall operational error occurs.</p>
+<p>For a QLandmarkExportRequest, the <a href="qlandmarkabstractrequest.html#stateChanged">QLandmarkAbstractRequest::stateChanged</a>() signal will be emitted when the request is complete. The <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted if an overall operational error occurs.</p>
 <p>If no landmarks identifiers are set using <a href="qlandmarkexportrequest.html#setLandmarkIds">setLandmarkIds</a>() or an empty list is passed in, then all the landmarks will be exported. Invalid landmark identifiers that do not refer to landmarks will be ignored.</p>
 <hr />
 <h2>Member Function Documentation</h2>

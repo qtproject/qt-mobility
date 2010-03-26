@@ -2280,7 +2280,7 @@
             <keyword name="categories" id="QLandmarkCategoryFetchRequest::categories" ref="qlandmarkcategoryfetchrequest.html#categories"/>
             <keyword name="~QLandmarkCategoryFetchRequest" id="QLandmarkCategoryFetchRequest::~QLandmarkCategoryFetchRequest" ref="qlandmarkcategoryfetchrequest.html#dtor.QLandmarkCategoryFetchRequest"/>
             <keyword name="QLandmarkCategoryFilter" id="QLandmarkCategoryFilter" ref="qlandmarkcategoryfilter.html"/>
-            <keyword name="category" id="QLandmarkCategoryFilter::category" ref="qlandmarkcategoryfilter.html#category"/>
+            <keyword name="categoryId" id="QLandmarkCategoryFilter::categoryId" ref="qlandmarkcategoryfilter.html#categoryId"/>
             <keyword name="setCategoryId" id="QLandmarkCategoryFilter::setCategoryId" ref="qlandmarkcategoryfilter.html#setCategoryId"/>
             <keyword name="~QLandmarkCategoryFilter" id="QLandmarkCategoryFilter::~QLandmarkCategoryFilter" ref="qlandmarkcategoryfilter.html#dtor.QLandmarkCategoryFilter"/>
             <keyword name="QLandmarkCategoryId" id="QLandmarkCategoryId" ref="qlandmarkcategoryid.html"/>
@@ -2310,11 +2310,10 @@
             <keyword name="isMatch" id="QLandmarkCustomFilter::isMatch" ref="qlandmarkcustomfilter.html#isMatch"/>
             <keyword name="~QLandmarkCustomFilter" id="QLandmarkCustomFilter::~QLandmarkCustomFilter" ref="qlandmarkcustomfilter.html#dtor.QLandmarkCustomFilter"/>
             <keyword name="QLandmarkCustomSort" id="QLandmarkCustomSort" ref="qlandmarkcustomsort.html"/>
+            <keyword name="compare" id="QLandmarkCustomSort::compare" ref="qlandmarkcustomsort.html#compare"/>
             <keyword name="QLandmarkDistanceSort" id="QLandmarkDistanceSort" ref="qlandmarkdistancesort.html"/>
-            <keyword name="compare" id="QLandmarkDistanceSort::compare" ref="qlandmarkdistancesort.html#compare"/>
             <keyword name="coordinate" id="QLandmarkDistanceSort::coordinate" ref="qlandmarkdistancesort.html#coordinate"/>
             <keyword name="setCoordinate" id="QLandmarkDistanceSort::setCoordinate" ref="qlandmarkdistancesort.html#setCoordinate"/>
-            <keyword name="sort" id="QLandmarkDistanceSort::sort" ref="qlandmarkdistancesort.html#sort"/>
             <keyword name="~QLandmarkDistanceSort" id="QLandmarkDistanceSort::~QLandmarkDistanceSort" ref="qlandmarkdistancesort.html#dtor.QLandmarkDistanceSort"/>
             <keyword name="QLandmarkExportRequest" id="QLandmarkExportRequest" ref="qlandmarkexportrequest.html"/>
             <keyword name="device" id="QLandmarkExportRequest::device" ref="qlandmarkexportrequest.html#device"/>
@@ -2450,6 +2449,7 @@
             <keyword name="dataChanged" id="QLandmarkManagerEngine::dataChanged" ref="qlandmarkmanagerengine.html#dataChanged"/>
             <keyword name="exportLandmarks" id="QLandmarkManagerEngine::exportLandmarks" ref="qlandmarkmanagerengine.html#exportLandmarks"/>
             <keyword name="importLandmarks" id="QLandmarkManagerEngine::importLandmarks" ref="qlandmarkmanagerengine.html#importLandmarks"/>
+            <keyword name="isFilterSupported" id="QLandmarkManagerEngine::isFilterSupported" ref="qlandmarkmanagerengine.html#isFilterSupported"/>
             <keyword name="landmark" id="QLandmarkManagerEngine::landmark" ref="qlandmarkmanagerengine.html#landmark"/>
             <keyword name="landmarkIds" id="QLandmarkManagerEngine::landmarkIds" ref="qlandmarkmanagerengine.html#landmarkIds"/>
             <keyword name="landmarks" id="QLandmarkManagerEngine::landmarks" ref="qlandmarkmanagerengine.html#landmarks"/>
@@ -2515,13 +2515,12 @@
             <keyword name="~QLandmarkSaveRequest" id="QLandmarkSaveRequest::~QLandmarkSaveRequest" ref="qlandmarksaverequest.html#dtor.QLandmarkSaveRequest"/>
             <keyword name="QLandmarkSortOrder" id="QLandmarkSortOrder" ref="qlandmarksortorder.html"/>
             <keyword name="QLandmarkSortOrder::SortType" id="QLandmarkSortOrder::SortType" ref="qlandmarksortorder.html#SortType-enum"/>
-            <keyword name="QLandmarkSortOrder::LandmarkNameSort" id="QLandmarkSortOrder::LandmarkNameSort" ref="qlandmarksortorder.html#SortType-enum"/>
-            <keyword name="QLandmarkSortOrder::LandmarkDistanceSort" id="QLandmarkSortOrder::LandmarkDistanceSort" ref="qlandmarksortorder.html#SortType-enum"/>
-            <keyword name="QLandmarkSortOrder::LandmarkCustomSort" id="QLandmarkSortOrder::LandmarkCustomSort" ref="qlandmarksortorder.html#SortType-enum"/>
-            <keyword name="compare" id="QLandmarkSortOrder::compare" ref="qlandmarksortorder.html#compare"/>
+            <keyword name="QLandmarkSortOrder::InvalidSort" id="QLandmarkSortOrder::InvalidSort" ref="qlandmarksortorder.html#SortType-enum"/>
+            <keyword name="QLandmarkSortOrder::NameSort" id="QLandmarkSortOrder::NameSort" ref="qlandmarksortorder.html#SortType-enum"/>
+            <keyword name="QLandmarkSortOrder::DistanceSort" id="QLandmarkSortOrder::DistanceSort" ref="qlandmarksortorder.html#SortType-enum"/>
+            <keyword name="QLandmarkSortOrder::CustomSort" id="QLandmarkSortOrder::CustomSort" ref="qlandmarksortorder.html#SortType-enum"/>
             <keyword name="direction" id="QLandmarkSortOrder::direction" ref="qlandmarksortorder.html#direction"/>
             <keyword name="setDirection" id="QLandmarkSortOrder::setDirection" ref="qlandmarksortorder.html#setDirection"/>
-            <keyword name="sort" id="QLandmarkSortOrder::sort" ref="qlandmarksortorder.html#sort"/>
             <keyword name="type" id="QLandmarkSortOrder::type" ref="qlandmarksortorder.html#type"/>
             <keyword name="QLandmarkUnionFilter" id="QLandmarkUnionFilter" ref="qlandmarkunionfilter.html"/>
             <keyword name="append" id="QLandmarkUnionFilter::append" ref="qlandmarkunionfilter.html#append"/>

@@ -1789,7 +1789,7 @@
     </section>
     <section ref="qlandmarkcategoryfilter.html" title="QLandmarkCategoryFilter Class Reference">
         <keyword ref="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</keyword>
-        <keyword ref="qlandmarkcategoryfilter.html#category">category</keyword>
+        <keyword ref="qlandmarkcategoryfilter.html#categoryId">categoryId</keyword>
         <keyword ref="qlandmarkcategoryfilter.html#setCategoryId">setCategoryId</keyword>
         <section ref="qlandmarkcategoryfilter-members.html" title="List of all members"/>
     </section>
@@ -1831,14 +1831,13 @@
     </section>
     <section ref="qlandmarkcustomsort.html" title="QLandmarkCustomSort Class Reference">
         <keyword ref="qlandmarkcustomsort.html">QLandmarkCustomSort</keyword>
+        <keyword ref="qlandmarkcustomsort.html#compare">compare</keyword>
         <section ref="qlandmarkcustomsort-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkdistancesort.html" title="QLandmarkDistanceSort Class Reference">
         <keyword ref="qlandmarkdistancesort.html">QLandmarkDistanceSort</keyword>
-        <keyword ref="qlandmarkdistancesort.html#compare">compare</keyword>
         <keyword ref="qlandmarkdistancesort.html#coordinate">coordinate</keyword>
         <keyword ref="qlandmarkdistancesort.html#setCoordinate">setCoordinate</keyword>
-        <keyword ref="qlandmarkdistancesort.html#sort">sort</keyword>
         <section ref="qlandmarkdistancesort-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkexportrequest.html" title="QLandmarkExportRequest Class Reference">
@@ -1992,6 +1991,7 @@
         <keyword ref="qlandmarkmanagerengine.html#dataChanged">dataChanged</keyword>
         <keyword ref="qlandmarkmanagerengine.html#exportLandmarks">exportLandmarks</keyword>
         <keyword ref="qlandmarkmanagerengine.html#importLandmarks">importLandmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#isFilterSupported">isFilterSupported</keyword>
         <keyword ref="qlandmarkmanagerengine.html#landmark">landmark</keyword>
         <keyword ref="qlandmarkmanagerengine.html#landmarkIds">landmarkIds</keyword>
         <keyword ref="qlandmarkmanagerengine.html#landmarks">landmarks</keyword>
@@ -2074,13 +2074,12 @@
     <section ref="qlandmarksortorder.html" title="QLandmarkSortOrder Class Reference">
         <keyword ref="qlandmarksortorder.html">QLandmarkSortOrder</keyword>
         <keyword ref="qlandmarksortorder.html#SortType-enum">SortType</keyword>
-        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::LandmarkDistanceSort</keyword>
-        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::LandmarkNameSort</keyword>
-        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::LandmarkCustomSort</keyword>
-        <keyword ref="qlandmarksortorder.html#compare">compare</keyword>
+        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::NameSort</keyword>
+        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::CustomSort</keyword>
+        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::DistanceSort</keyword>
+        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::InvalidSort</keyword>
         <keyword ref="qlandmarksortorder.html#direction">direction</keyword>
         <keyword ref="qlandmarksortorder.html#setDirection">setDirection</keyword>
-        <keyword ref="qlandmarksortorder.html#sort">sort</keyword>
         <keyword ref="qlandmarksortorder.html#type">type</keyword>
         <section ref="qlandmarksortorder-members.html" title="List of all members"/>
     </section>

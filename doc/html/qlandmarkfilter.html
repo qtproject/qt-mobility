@@ -50,7 +50,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QLandmarkFilter class is used to select landmarks.</p>
-<p>This class is used as a parameter to search for landmarks using <a href="qlandmarkmanager.html#landmarkIds">QLandmarkManager::landmarkIds</a>() or a <a href="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</a>. It allows selection of landmarks which meet certain criteria.</p>
+<p>This class is used as a parameter to search for landmarks, it allows selection of landmarks which meet certain criteria. It is used with <a href="qlandmarkmanager.html">QLandmarkManager</a> for synchronous searches or the appropriate request classes for asynchronous searches.</p>
 <p>The QLandmarkFilter is primarily intended to serve as the base class for all filter types. However it also has the type of a QLandmark::DefaultFilter, and may thus be used as a filter to match all landmarks.</p>
 <p>If the existing collection of filter types is not sufficient then custom filter should be created by inheriting from <a href="qlandmarkcustomfilter.html">QLandmarkCustomFilter</a>.</p>
 <hr />
@@ -105,12 +105,14 @@
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkFilter::operator!= ( const QLandmarkFilter &amp; <i>other</i> ) const</h3>
 <p>Returns true if this filter is not identical to <i>other</i>.</p>
+<p>See also <a href="qlandmarkfilter.html#operator-eq-eq">operator==</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QLandmarkFilter &amp; QLandmarkFilter::operator= ( const QLandmarkFilter &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this filter and returns a reference to this filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkFilter::operator== ( const QLandmarkFilter &amp; <i>other</i> ) const</h3>
 <p>Returns true if the filter has the same type and criteria as <i>other</i>.</p>
+<p>See also <a href="qlandmarkfilter.html#operator-not-eq">operator!=</a>().</p>
 <hr />
 <h2>Related Non-Members</h2>
 <h3 class="fn"><a name="operator-and-3"></a>const QLandmarkFilter operator&amp; ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</h3>
