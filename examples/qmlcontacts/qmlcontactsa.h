@@ -105,7 +105,7 @@ private:
     QString contactListToQString(const QList<QContactLocalId>& contactIds) const;
     QStringList contactListToQString(const QList<QContact>& contact) const;
 };
-QML_DECLARE_TYPE(QMLContactManagerAsync);
+QML_DECLARE_TYPE(QMLContactManagerAsync)
 // ![0]
 
 #endif // QMLCONTACTS_H

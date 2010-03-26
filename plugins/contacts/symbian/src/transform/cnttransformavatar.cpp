@@ -126,7 +126,7 @@ QList<TUid> CntTransformAvatar::supportedSortingFieldTypes(QString /*detailField
  * \a subType The subtype to be checked
  * \return True if this subtype is supported
  */
-bool CntTransformAvatar::supportsSubType(const QString& subType) const
+bool CntTransformAvatar::supportsSubType(const QString& /*subType*/) const
 {
     // XXX todo
     return false;
@@ -138,7 +138,7 @@ bool CntTransformAvatar::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
+quint32 CntTransformAvatar::getIdForField(const QString& /*fieldName*/) const
 {
     // XXX todo
     return 0;
