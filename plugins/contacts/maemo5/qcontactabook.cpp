@@ -920,7 +920,8 @@ QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) c
 }
 
 QContactAvatar* QContactABook::getAvatarDetail(EContact *eContact) const
-{  
+{
+    Q_UNUSED(eContact);
 // XXX TODO: FIXME
 //  QContactAvatar* rtn = new QContactAvatar;
 //  QVariantMap map;
@@ -1660,6 +1661,8 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
 
 void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const
 {
+  Q_UNUSED(aContact)
+  Q_UNUSED(detail);
 // XXX TODO: FIXME
 //  if (!aContact) return;
 //
