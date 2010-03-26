@@ -137,7 +137,6 @@ PUBLIC_HEADERS +=   qgeoaddress.h \
                     qgeoengine.h \
                     qgeolocation.h \
                     qgeonetworkmanager.h \
-                    qgeoreply.h \
                     qmaneuver.h \
                     qmapellipse.h \
                     qmapline.h \
@@ -236,7 +235,6 @@ SOURCES += qgeoaddress.cpp \
            qgeoengine.cpp \
            qgeolocation.cpp \
            qgeonetworkmanager.cpp \
-           qgeoreply.cpp \
            qmaneuver.cpp \
            qmapobject.cpp \
            qmapline.cpp \
