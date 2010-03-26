@@ -221,7 +221,12 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
     *error = QContactManager::InvalidDetailError;
     return false;
   }
-  return d->m_abook->saveContact(contact, error);
+
+  bool retn = d->m_abook->saveContact(contact, error);
+  QContactId cId = contact->id();
+  cId.setManagerUri(managerUri());
+  contact->setId(cId);
+  return retn;
 }
 
 #if 0
