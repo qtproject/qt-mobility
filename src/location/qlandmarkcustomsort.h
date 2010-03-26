@@ -54,7 +54,7 @@ class Q_LOCATION_EXPORT QLandmarkCustomSort : public QLandmarkSortOrder
     virtual ~QLandmarkCustomSort();
 protected:
     QLandmarkCustomSort();
-
+    virtual int compare(const QLandmark &l1, const QLandmark &l2) const=0;
 private:
     QLandmarkCustomSortPrivate *d;
 };

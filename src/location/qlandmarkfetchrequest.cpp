@@ -78,9 +78,9 @@ QLandmarkFetchRequest::~QLandmarkFetchRequest()
     By default, the filter's type will be a LandmarkFilter::DefaultFilter
     and thus match all landmarks.
 */
-QLandmarkFilter &QLandmarkFetchRequest::filter() const
+QLandmarkFilter QLandmarkFetchRequest::filter() const
 {
-    return *(new QLandmarkFilter());
+    return QLandmarkFilter();
 }
 
 /*!
@@ -102,7 +102,7 @@ QList<QLandmarkSortOrder> QLandmarkFetchRequest::sorting() const
 /*!
     Sets the sort ordering of the request to \a sorting.  This
     function will only have an effect on the results if invoked
-    prior to calling \c start()
+    prior to calling \l QLandmarkAbstractRequest::start().
 */
 void QLandmarkFetchRequest::setSorting(QList<QLandmarkSortOrder> &sorting)
 {

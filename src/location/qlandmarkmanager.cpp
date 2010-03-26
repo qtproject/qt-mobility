@@ -369,18 +369,6 @@ QString QLandmarkManager::errorString() const
 }
 
 /*!
-    Convenience function that returns true if the given \a filter is supported
-    natively by the manager, else false if the filter behaviour would be emulated.
-
-    Note: In some cases, the behaviour of an unsupprted filter cannot be emulated.
-    In these cases the filter will fail.
-*/
-bool QLandmarkManager::isFilterSupported(const QLandmarkFilter &filter) const
-{
-    return false;
-}
-
-/*!
     Returns true if the given \a filterType is supported
     natively by the manager, else false if the filter behaviour would be emulated.
 

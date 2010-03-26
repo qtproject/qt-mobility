@@ -115,7 +115,6 @@ public:
     Error error() const;
     QString errorString() const;
 
-    bool isFilterSupported(const QLandmarkFilter &filter) const;
     bool isFilterSupported(QLandmarkFilter::FilterType filterType) const;
 
     QString managerName() const;

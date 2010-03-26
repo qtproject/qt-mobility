@@ -113,11 +113,13 @@ public:
     virtual bool exportLandmarks(QIODevice *device, QLandmarkManager::Format format, QList<QLandmarkId> landmarkIds,
                                                     QLandmarkManager::Error *error, QString *errorString);
 
+    virtual bool isFilterSupported(QLandmarkFilter::FilterType filterType) const =0;
+
     /* Asynchronous Request Support */
-    virtual void requestDestroyed(QLandmarkAbstractRequest* request);
-    virtual bool startRequest(QLandmarkAbstractRequest* request);
-    virtual bool cancelRequest(QLandmarkAbstractRequest* request);
-    virtual bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs);
+    virtual void requestDestroyed(QLandmarkAbstractRequest* request)=0;
+    virtual bool startRequest(QLandmarkAbstractRequest* request)=0;
+    virtual bool cancelRequest(QLandmarkAbstractRequest* request)=0;
+    virtual bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs)=0;
 
 Q_SIGNALS:
     void dataChanged();

@@ -48,8 +48,9 @@ QTM_BEGIN_NAMESPACE
     \brief The QLandmarkExportRequest class allows a client to asynchronously
     request that a landmark manager export a set of landmarks.
 
-    For a QLandmarkExportRequest, the resultsAvailable() signal will be emitted
-    if an overall operational error occurs.
+    For a QLandmarkExportRequest, the QLandmarkAbstractRequest::stateChanged()
+    signal will be emitted when the request is complete.  The resultsAvailable() signal
+    will be emitted if an overall operational error occurs.
 
     If no landmarks identifiers are set using setLandmarkIds() or
     an empty list is passed in, then all the landmarks will be exported.

@@ -52,6 +52,9 @@ QTM_BEGIN_NAMESPACE
 
     All custom landmark filters should inherit off the QLandmarkCustomFilter
     and must implement the isMatch() function.
+
+    Custom filters inherently do not have native support and are thus
+    may be subject to performance issues.
 */
 
 /*!
@@ -69,11 +72,11 @@ QLandmarkCustomFilter::~QLandmarkCustomFilter()
 }
 
 /*!
-    Returns true if the landmark identified by \a landmarkId
+    Returns true if the \a landmark
     should be matched by the filter.  All custom landmark filters
     need to implement this function.
 */
-bool QLandmarkCustomFilter::isMatch(const QLandmarkId &landmarkId)
+bool QLandmarkCustomFilter::isMatch(const QLandmark &landmark)
 {
     return false;
 }

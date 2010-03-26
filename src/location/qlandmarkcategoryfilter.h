@@ -57,7 +57,7 @@ public:
     QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId);
     virtual ~QLandmarkCategoryFilter();
 
-    QLandmarkCategoryId category() const;
+    QLandmarkCategoryId categoryId() const;
     void setCategoryId(const QLandmarkCategoryId &categoryId);
 
 private:

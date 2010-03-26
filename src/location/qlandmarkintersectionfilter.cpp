@@ -50,8 +50,8 @@ QTM_BEGIN_NAMESPACE
             of its constituent filters.
     \ingroup location
 
-    During a search the intersection filter performs and AND operation with all
-    its constituent filters.
+    Conceptually it performs an AND operation and thus may be used to
+    select landmarks which match all of it's constituent filters.
 */
 
 /*!

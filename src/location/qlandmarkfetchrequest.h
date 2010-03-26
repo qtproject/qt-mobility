@@ -54,7 +54,7 @@ public:
     QLandmarkFetchRequest();
     ~QLandmarkFetchRequest();
 
-    QLandmarkFilter &filter() const;
+    QLandmarkFilter filter() const;
     void setFilter(const QLandmarkFilter &filter);
 
     QList<QLandmarkSortOrder> sorting() const;
