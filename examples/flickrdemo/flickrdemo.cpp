@@ -165,7 +165,7 @@ void FlickrDemo::delayedInit()
     const bool canStartIAP = (manager.capabilities()
                               & QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager)::CanStartAndStopInterfaces);
     QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
         QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
         return;
     }
