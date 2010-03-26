@@ -16,7 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkAbstractRequest Class Reference</h1>
 <p>The QLandmarkAbstractRequest class provides a mechanism for asynchronous requests to be made. <a href="#details">More...</a></p>
 <pre>    #include &lt;QLandmarkAbstractRequest&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
-<p>Inherited by <a href="qlandmarkcategoryidfetchrequest.html">QLandmarkCategoryIdFetchRequest</a>, <a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a>, <a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a>, <a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a>, <a href="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</a>, <a href="qlandmarkimportrequest.html">QLandmarkImportRequest</a>, <a href="qlandmarkremoverequest.html">QLandmarkRemoveRequest</a>, and <a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a>.</p>
+<p>Inherited by <a href="qlandmarkcategoryfetchrequest.html">QLandmarkCategoryFetchRequest</a>, <a href="qlandmarkcategoryidfetchrequest.html">QLandmarkCategoryIdFetchRequest</a>, <a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a>, <a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a>, <a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a>, <a href="qlandmarkfetchrequest.html">QLandmarkFetchRequest</a>, <a href="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</a>, <a href="qlandmarkimportrequest.html">QLandmarkImportRequest</a>, <a href="qlandmarkremoverequest.html">QLandmarkRemoveRequest</a>, and <a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a>.</p>
 <ul>
 <li><a href="qlandmarkabstractrequest-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -24,7 +24,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#RequestType-enum">RequestType</a></b> { InvalidRequest, LandmarkIdFetchRequest, CategoryIdFetchRequest, LandmarkSaveRequest, ..., CategoryRemoveRequest }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#RequestType-enum">RequestType</a></b> { InvalidRequest, LandmarkIdFetchRequest, CategoryIdFetchRequest, LandmarkFetchRequest, ..., ExportRequest }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkabstractrequest.html#State-enum">State</a></b> { InactiveState, ActiveState, CanceledState, FinishedState }</td></tr>
 </table>
 <hr />
@@ -87,10 +87,14 @@
 <a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/InvalidRequest"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/LandmarkIdFetchRequest"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/CategoryIdFetchRequest"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/LandmarkFetchRequest"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/CategoryFetchRequest"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/LandmarkSaveRequest"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/LandmarkRemoveRequest"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/CategorySaveRequest"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/CategoryRemoveRequest"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/ImportRequest"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/ExportRequest"></a>
 <h3 class="fn"><a name="RequestType-enum"></a>enum QLandmarkAbstractRequest::RequestType</h3>
 <p>Defines the possible types of asynchronous requests.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -98,10 +102,14 @@
 <tr><td valign="top"><tt>QLandmarkAbstractRequest::InvalidRequest</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">An invalid request</td></tr>
 <tr><td valign="top"><tt>QLandmarkAbstractRequest::LandmarkIdFetchRequest</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A request to fetch a list of landmark identifiers.</td></tr>
 <tr><td valign="top"><tt>QLandmarkAbstractRequest::CategoryIdFetchRequest</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A request to fetch a list of catgory identifiers.</td></tr>
-<tr><td valign="top"><tt>QLandmarkAbstractRequest::LandmarkSaveRequest</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A request to save a list of landmarks.</td></tr>
-<tr><td valign="top"><tt>QLandmarkAbstractRequest::LandmarkRemoveRequest</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A request to remove a list of landmarks.</td></tr>
-<tr><td valign="top"><tt>QLandmarkAbstractRequest::CategorySaveRequest</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A request to save a list of categories.</td></tr>
-<tr><td valign="top"><tt>QLandmarkAbstractRequest::CategoryRemoveRequest</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">A request to remove a list of categories.</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::LandmarkFetchRequest</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A request to fetch a list of categories</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::CategoryFetchRequest</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">A request to fetch a list of categories</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::LandmarkSaveRequest</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A request to save a list of landmarks.</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::LandmarkRemoveRequest</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">A request to remove a list of landmarks.</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::CategorySaveRequest</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">A request to save a list of categories.</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::CategoryRemoveRequest</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">A request to remove a list of categories.</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::ImportRequest</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A request import landmarks.</td></tr>
+<tr><td valign="top"><tt>QLandmarkAbstractRequest::ExportRequest</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">A request export landmarks.</td></tr>
 </table></p>
 <a name="//apple_ref/cpp/tag/QLandmarkAbstractRequest/State"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkAbstractRequest/InactiveState"></a>
