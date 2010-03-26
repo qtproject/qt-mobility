@@ -360,19 +360,25 @@ void QLandmark::setRadius(double radius)
 }
 
 /*!
-    Returns the value of the attribute corresponding to \a attributeName.
+    Returns the value of the attribute corresponding to \a key.
+    If the attribute doesn't exist, returns \a defaultValue.
+
+    If no default value is specified, a default QVariant is returned.
 */
-QVariant QLandmark::attribute(const QString &attributeName) const
+QVariant QLandmark::attribute(const QString &key, const QVariant &defaultValue) const
 {
-    return d->attributes.value(attributeName);
+    if (!d->attributes.contains(key))
+        return defaultValue;
+    else
+        return d->attributes.value(key);
 }
 
 /*!
-    Sets the \a value of the attribute corresponding to \a attributeName.
+    Sets the \a value of the attribute corresponding to \a key.
 */
-void QLandmark::setAttribute(const QString &attributeName, const QVariant &value)
+void QLandmark::setAttribute(const QString &key, const QVariant &value)
 {
-    d->attributes[attributeName] = value;
+    d->attributes[key] = value;
 }
 
 /*!
