@@ -53,12 +53,14 @@ QTM_USE_NAMESPACE
     a category.
 
     It consists of a manager URI which identifies the manager which contains
-    the category, and the id for that category.
+    the category, and a manager specific id for that category.
 */
 
 /*!
 
-    Creates an invalid identifier, id() and managerUri() will return null strings
+    Creates an invalid identifier.
+
+    id() and managerUri() will return null strings.
 */
 QLandmarkCategoryId::QLandmarkCategoryId()
     :d(new QLandmarkCategoryIdPrivate)
@@ -91,6 +93,8 @@ bool QLandmarkCategoryId::isValid() const
 
 /*!
     Returns the id of the category identifier.
+
+    This id is specific to a particular landmark manager.
 */
 QString QLandmarkCategoryId::id() const
 {
@@ -98,7 +102,7 @@ QString QLandmarkCategoryId::id() const
 }
 
 /*!
-    Sets the \a id of the category identifier
+    Sets the \a id of the category identifier.
 */
 void QLandmarkCategoryId::setId(const QString &id)
 {
@@ -139,6 +143,8 @@ QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId &o
 
     Two QLandmarkCategoryIds are considered equal if both have the same
     manager URI and id.
+
+    \sa operator!=()
 */
 bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
 {
@@ -152,6 +158,8 @@ bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
 
     If either the manager URIs or ids differ, then the
     QLandmarkCategoryIds are not considered equal.
+
+    \sa operator==()
 */
 bool QLandmarkCategoryId::operator!=(const QLandmarkCategoryId &other) const
 {
