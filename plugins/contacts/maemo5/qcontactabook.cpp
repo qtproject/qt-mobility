@@ -1649,6 +1649,10 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
     }
 
     QImage image = detail.thumbnail();
+    
+    if (image.isNull())
+      return;
+    
     if (image.format() != QImage::Format_ARGB32_Premultiplied)
         image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
