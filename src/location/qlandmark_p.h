@@ -53,6 +53,7 @@
 //
 
 #include "qlandmark.h"
+#include "qlandmarkid.h"
 #include "qgeolocation.h"
 #include <QList>
 #include <QHash>
@@ -82,6 +83,7 @@ public:
     QHash<QString, QVariant> attributes;
     QString phone;
     QString url;
+    QLandmarkId id;
 };
 
 QTM_END_NAMESPACE

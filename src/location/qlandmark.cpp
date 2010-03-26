@@ -72,7 +72,8 @@ QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
       radius(other.radius),
       attributes(other.attributes),
       phone(other.phone),
-      url(other.url)
+      url(other.url),
+      id(other.id)
 {
 }
 
@@ -89,6 +90,7 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
     url = other.url;
     categories = other.categories;
     attributes = other.attributes;
+    id = other.id;
 
     return *this;
 }
@@ -103,38 +105,38 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (phone == other.phone)
             && (url == other.url)
             && (categories == other.categories)
-            && (attributes == other.attributes));
+            && (attributes == other.attributes))
+            && (id == other.id);
 }
 
 /*!
     \class QLandmark
     \ingroup location
 
-    \brief The QLandmark class represents a location or point of interest.
+    \brief The QLandmark class represents a location or point of interest
+           of some significance.
 
 
     Each landmark consists of a number of properties such as name,
-    coordinates, icon url etc.  Landmarks may also be assigned a set of
+    coordinates, descriptoin etc.  Landmarks may also be assigned a set of
     generic attributes which may be accessed and modified by using the attribute()
     and setAttribute() functions.
 
     Each QLandmark may be associated with zero or more categories.
-    A category  defines a type of landmark such as  restaurants or
-    cinemas.  To set the category that a landmark belongs to, use
+    A category  defines a type of landmark such as restaurant or
+    cinema.  To set the category that a landmark belongs to, use
     the setCategories() or addCategory() functions.  A landmark may
     be removed from a category by using the removeCategory() function.
 
     Each QLandmark is an in memory representation of a landmark;
     it does not reflect the actual landmark state in persistent
-    storage, until the appropriate synchronization method is called
-    on the QLandmarkManager(i.e. saveLandmark(), removeLandmark()).
+    storage until the appropriate synchronization method is called
+    on the QLandmarkManager(e.g. \l {QLandmarkManager::saveLandmark()} {saveLandmark()},
+    \l {QLandmarkManager::removeLandmark()} {removeLandmark()}).
 */
 
 /*!
     Constructs an empty landmark.
-
-    A new QLandmark will return an invalid QLandmarkId when
-    categoryId() is called.
 */
 QLandmark::QLandmark()
     :d(new QLandmarkPrivate)
@@ -168,6 +170,11 @@ QLandmark &QLandmark::operator= (const QLandmark & other)
 /*!
     Returns true if this landmark is equal to \a other, otherwise
     returns false.
+
+    Two landmarks are considered equal if both the landmark details
+    and identifiers are equal.
+
+    \sa operator!=()
 */
 bool QLandmark::operator== (const QLandmark &other) const
 {
@@ -176,8 +183,11 @@ bool QLandmark::operator== (const QLandmark &other) const
 
 /*!
     \fn bool QLandmark::operator!= (const QLandmark &other) const
+
     Returns true if this landmark not is equal to \a other, otherwise
     returns false.
+
+    \sa operator==()
 */
 
 /*!
@@ -198,6 +208,7 @@ void QLandmark::setName(const QString &name)
 
 /*!
     Returns the location (both coordinate and address) of the landmark.
+
     \sa address(), coordinate()
 */
 QGeoLocation QLandmark::location() const
@@ -207,6 +218,8 @@ QGeoLocation QLandmark::location() const
 
 /*!
     Sets the \a location (both coordinate and address) of the landmark.
+
+    \sa setCoordinate(), setAddress()
 */
 void QLandmark::setLocation(const QGeoLocation &location)
 {
@@ -219,7 +232,7 @@ void QLandmark::setLocation(const QGeoLocation &location)
     This is a convenience function to return the
     coordinate of the landmark's location.
 
-    \sa location(), address()
+    \sa location()
 */
 QGeoCoordinate QLandmark::coordinate() const
 {
@@ -232,7 +245,7 @@ QGeoCoordinate QLandmark::coordinate() const
     This is a convenience function to set the coordinate
     of the landmark's location.
 
-    \sa setLocation(), setAddress()
+    \sa setLocation()
 */
 void QLandmark::setCoordinate(const QGeoCoordinate& coordinate)
 {
@@ -245,7 +258,7 @@ void QLandmark::setCoordinate(const QGeoCoordinate& coordinate)
     This is a convenience function to return the
     address of the landmark's location.
 
-    \sa location(), coordinate()
+    \sa location()
 */
 QGeoAddress QLandmark::address() const
 {
@@ -258,7 +271,7 @@ QGeoAddress QLandmark::address() const
     This is a convenience function to set the address
     of the landmark's location.
 
-    \sa setLocation(), setCoordinate()
+    \sa setLocation()
 */
 void QLandmark::setAddress(const QGeoAddress &address)
 {
@@ -268,6 +281,8 @@ void QLandmark::setAddress(const QGeoAddress &address)
 /*!
     Returns a of list identifiers of categories that this landmark
     belongs to.
+
+    \sa setCategories()
 */
 QList<QLandmarkCategoryId> QLandmark::categories() const
 {
@@ -277,6 +292,8 @@ QList<QLandmarkCategoryId> QLandmark::categories() const
 /*!
     Sets the categories that this landmark belongs to via
     a list of \a categoryIds.
+
+    \sa addCategory(), removeCategory()
 
 */
 void QLandmark::setCategories(const QList<QLandmarkCategoryId> &categoryIds)
@@ -292,6 +309,8 @@ void QLandmark::setCategories(const QList<QLandmarkCategoryId> &categoryIds)
 /*!
     Adds another category that this landmark will be associated
     with via its \a categoryId.
+
+    \sa setCategories(), removeCategory()
 */
 void QLandmark::addCategory(const QLandmarkCategoryId &categoryId)
 {
@@ -301,6 +320,8 @@ void QLandmark::addCategory(const QLandmarkCategoryId &categoryId)
 
 /*!
     Removes a category from a landmark, by using its \a categoryId.
+
+    \sa addCategory(), categories()
 */
 void QLandmark::removeCategory(const QLandmarkCategoryId &categoryId)
 {
@@ -360,23 +381,30 @@ void QLandmark::setRadius(double radius)
 }
 
 /*!
-    Returns the value of the attribute corresponding to \a attributeName.
+    Returns the value of the attribute corresponding to \a key.
+    If the attribute doesn't exist, returns \a defaultValue.
+
+    If no default value is specified, a default QVariant is returned.
 */
-QVariant QLandmark::attribute(const QString &attributeName) const
+QVariant QLandmark::attribute(const QString &key, const QVariant &defaultValue) const
 {
-    return d->attributes.value(attributeName);
+    if (!d->attributes.contains(key))
+        return defaultValue;
+    else
+        return d->attributes.value(key);
 }
 
 /*!
-    Sets the \a value of the attribute corresponding to \a attributeName.
+    Sets the \a value of the attribute corresponding to \a key.
 */
-void QLandmark::setAttribute(const QString &attributeName, const QVariant &value)
+void QLandmark::setAttribute(const QString &key, const QVariant &value)
 {
-    d->attributes[attributeName] = value;
+    d->attributes[key] = value;
 }
 
 /*!
-    Returns a list of attribute names.
+    Returns a list of attribute keys.
+    \sa attribute(), setAttribute()
 */
 QStringList QLandmark::attributes() const
 {
@@ -416,11 +444,19 @@ void QLandmark::setUrl(const QString &url)
 
 /*!
     Returns the identifier of the landmark.
-
-    Saving a new landmark using a QLandmarkManager will assign
-    the landmark a valid identifier.
 */
-QLandmarkId QLandmark::landmarkId()
+QLandmarkId QLandmark::id() const
 {
-    return QLandmarkId();
+    return d->id;
+}
+
+/*!
+    Sets the \a id of the landmark.
+
+    Note that saving a new landmark using a QLandmarkManager
+    automatically will assign the landmark a valid identifier.
+*/
+void QLandmark::setId(const QLandmarkId &id)
+{
+    d->id = id;
 }

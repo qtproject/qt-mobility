@@ -46,8 +46,8 @@
 
 #include <QObject>
 #include <QSharedDataPointer>
+#include <QVariant>
 
-class QVariant;
 class QStringList;
 class QUrl;
 
@@ -102,8 +102,8 @@ public:
     double radius() const;
     void setRadius(double radius);
 
-    QVariant attribute(const QString &attributeName) const;
-    void setAttribute(const QString &attributeName, const QVariant &value);
+    QVariant attribute(const QString &key, const QVariant &defaultValue = QVariant()) const;
+    void setAttribute(const QString &key, const QVariant &value);
     QStringList attributes() const;
 
     QString phone() const;
@@ -112,7 +112,8 @@ public:
     QString url() const;
     void setUrl(const QString &url);
 
-    QLandmarkId landmarkId();
+    QLandmarkId id() const;
+    void setId(const QLandmarkId &id);
 private:
     QSharedDataPointer<QLandmarkPrivate> d;
 };
