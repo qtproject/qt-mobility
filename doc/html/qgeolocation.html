@@ -23,12 +23,17 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#QGeoLocation">QGeoLocation</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#QGeoLocation-2">QGeoLocation</a></b> ( const QGeoLocation &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#dtor.QGeoLocation">~QGeoLocation</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoAddress </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#address">address</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QAlternativeAddress </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#alternatives">alternatives</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QRectF </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#boundingBox">boundingBox</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#language">language</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#position">position</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#title">title</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#coordinate">coordinate</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#setAddress">setAddress</a></b> ( const QGeoAddress &amp; <i>address</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#setBoundingBox">setBoundingBox</a></b> ( const QRectF &amp; <i>boundingBox</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#setCoordinate">setCoordinate</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#operator-not-eq">operator!=</a></b> ( const QGeoLocation &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoLocation &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#operator-eq">operator=</a></b> ( const QGeoLocation &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeolocation.html#operator-eq-eq">operator==</a></b> ( const QGeoLocation &amp; <i>other</i> ) const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -40,25 +45,45 @@
 <a name="//apple_ref/cpp/instm/QGeoLocation/QGeoLocation"></a>
 <h3 class="fn"><a name="QGeoLocation"></a>QGeoLocation::QGeoLocation ()</h3>
 <p>Default constructor.</p>
+<h3 class="fn"><a name="QGeoLocation-2"></a>QGeoLocation::QGeoLocation ( const QGeoLocation &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoLocation/~QGeoLocation"></a>
+<h3 class="fn"><a name="dtor.QGeoLocation"></a>QGeoLocation::~QGeoLocation ()</h3>
+<p>Destroys the location</p>
 <a name="//apple_ref/cpp/instm/QGeoLocation/address"></a>
 <h3 class="fn"><a name="address"></a><a href="qgeoaddress.html">QGeoAddress</a> QGeoLocation::address () const</h3>
 <p>Returns the address found.</p>
-<a name="//apple_ref/cpp/instm/QGeoLocation/alternatives"></a>
-<h3 class="fn"><a name="alternatives"></a><a href="qalternativeaddress.html">QAlternativeAddress</a> QGeoLocation::alternatives () const</h3>
-<p>Returns alternatives to the address found.</p>
+<p>See also <a href="qgeolocation.html#setAddress">setAddress</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoLocation/boundingBox"></a>
 <h3 class="fn"><a name="boundingBox"></a><a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> QGeoLocation::boundingBox () const</h3>
 <p>Returns the bounding box that completely encloses the location.</p>
 <p>The x coordinates of the corner points represent longitudes, the y coordinates represent latitudes.</p>
-<a name="//apple_ref/cpp/instm/QGeoLocation/language"></a>
-<h3 class="fn"><a name="language"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoLocation::language () const</h3>
-<p>Returns the MARC language used in the description of this location.</p>
-<a name="//apple_ref/cpp/instm/QGeoLocation/position"></a>
-<h3 class="fn"><a name="position"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoLocation::position () const</h3>
+<p>See also <a href="qgeolocation.html#setBoundingBox">setBoundingBox</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoLocation/coordinate"></a>
+<h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoLocation::coordinate () const</h3>
 <p>Returns the geocoordinate of this location.</p>
-<a name="//apple_ref/cpp/instm/QGeoLocation/title"></a>
-<h3 class="fn"><a name="title"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoLocation::title () const</h3>
-<p>Returns a description of the location.</p>
+<p>See also <a href="qgeolocation.html#setCoordinate">setCoordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoLocation/setAddress"></a>
+<h3 class="fn"><a name="setAddress"></a>void QGeoLocation::setAddress ( const <a href="qgeoaddress.html">QGeoAddress</a> &amp; <i>address</i> )</h3>
+<p>Sets the <i>address</i> of this location.</p>
+<p>See also <a href="qgeolocation.html#address">address</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoLocation/setBoundingBox"></a>
+<h3 class="fn"><a name="setBoundingBox"></a>void QGeoLocation::setBoundingBox ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>boundingBox</i> )</h3>
+<p>Sets the <i>boundingBox</i> of the location.</p>
+<p>See also <a href="qgeolocation.html#boundingBox">boundingBox</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoLocation/setCoordinate"></a>
+<h3 class="fn"><a name="setCoordinate"></a>void QGeoLocation::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
+<p>Sets the <i>coordinate</i> of this location.</p>
+<p>See also <a href="qgeolocation.html#coordinate">coordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoLocation/operator!="></a>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QGeoLocation::operator!= ( const QGeoLocation &amp; <i>other</i> ) const</h3>
+<p>Returns true if <i>other</i> is not equal to this location, otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QGeoLocation/operator="></a>
+<h3 class="fn"><a name="operator-eq"></a>QGeoLocation &amp; QGeoLocation::operator= ( const QGeoLocation &amp; <i>other</i> )</h3>
+<p>Assigns <i>other</i> to this location and returns a reference to this location.</p>
+<a name="//apple_ref/cpp/instm/QGeoLocation/operator=="></a>
+<h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoLocation::operator== ( const QGeoLocation &amp; <i>other</i> ) const</h3>
+<p>Returns true if <i>other</i> is equal to this location, otherwise returns false.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

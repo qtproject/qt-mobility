@@ -9,7 +9,9 @@ DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 INCLUDEPATH += .
 DEPENDPATH += .
 
-PUBLIC_HEADERS += qgeocoordinate.h \
+PUBLIC_HEADERS += qgeoaddress.h \
+                  qgeolocation.h \
+                  qgeocoordinate.h \
                   qgeopositioninfo.h \
                   qgeosatelliteinfo.h \
                   qgeosatelliteinfosource.h \
@@ -52,7 +54,8 @@ PUBLIC_HEADERS += qgeocoordinate.h \
 
 PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h \
-                   qlandmark_p.h
+                   qlandmark_p.h \
+                   qgeolocation_p.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -127,7 +130,6 @@ maemo5 {
     pkgconfig.files = QtLocation.pc
 }
 
-# maps header files - sort into public and private later
 PUBLIC_HEADERS +=   qgeoaddress.h \
                     qalternativeaddress.h \
                     qgeocodingreply.h \
@@ -181,7 +183,6 @@ PRIVATE_HEADERS +=  qgeocodingreply_p.h \
                     qgeoaddress_p.h
 
 
-# my experimental qgeoengine files
 PRIVATE_HEADERS +=  qgeocodingreply_nokia_p.h \
                     qroutereply_nokia_p.h \
                     qmaptilereply_nokia_p.h
@@ -229,7 +230,6 @@ SOURCES += qlocationutils.cpp \
 
 # maps source files
 SOURCES += qgeoaddress.cpp \
-           qalternativeaddress.cpp \
            qgeocodingreply.cpp \
            qgeocodingrequest.cpp \
            qgeocodingxmlparser_nokia.cpp \
@@ -257,7 +257,6 @@ SOURCES += qgeoaddress.cpp \
            qrouterequest.cpp \
            qroutexmlparser_nokia.cpp
 
-# my experimental qgeoengine files
 SOURCES +=  qgeocodingreply_nokia.cpp \
             qroutereply_nokia.cpp \
             qmaptilereply_nokia.cpp

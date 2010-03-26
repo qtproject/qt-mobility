@@ -53,12 +53,13 @@ class QLandmarkFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkFilter
 {
 public:
-    enum FilterType{LandmarkInvalidFilter, LandmarkDefaultFilter,
-                    LandmarkNameFilter, LandmarkProximityFilter,
-                    LandmarkNearestFilter, LandmarkCategoryFilter,
-                    LandmarkBoxFilter, LandmarkIntersectionFilter,
-                    LandmarkUnionFilter, LandmarkCustomFilter =500};
+    enum FilterType{InvalidFilter, DefaultFilter,
+                    NameFilter, ProximityFilter,
+                    NearestFilter, CategoryFilter,
+                    BoxFilter, IntersectionFilter,
+                    UnionFilter, CustomFilter =500};
     QLandmarkFilter();
+    QLandmarkFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkFilter();
 
     FilterType type() const;
@@ -70,9 +71,12 @@ public:
     bool operator==(const QLandmarkFilter &other) const;
     QLandmarkFilter &operator=(const QLandmarkFilter &other);
 protected:
-    QLandmarkFilter(QLandmarkFilterPrivate *dd);
-    //QSharedDataPointer<QLandmarkFilterPrivate> d_ptr;
+    QLandmarkFilter(QLandmarkFilterPrivate &dd);
+    QSharedDataPointer<QLandmarkFilterPrivate> d;
 };
+
+const Q_LOCATION_EXPORT QLandmarkFilter operator&(const QLandmarkFilter& left, const QLandmarkFilter& right);
+const Q_LOCATION_EXPORT QLandmarkFilter operator|(const QLandmarkFilter& left, const QLandmarkFilter& right);
 
 QTM_END_NAMESPACE
 

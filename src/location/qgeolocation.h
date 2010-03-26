@@ -42,13 +42,16 @@
 #ifndef QLOCATION_GEOPLACE_H
 #define QLOCATION_GEOPLACE_H
 
-#include <QRectF>
+#include "qmobilityglobal.h"
+#include <QSharedDataPointer>
 
-#include "qgeoaddress.h"
-#include "qalternativeaddress.h"
-#include "qgeocoordinate.h"
+class QString;
+class QRectF;
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoCoordinate;
+class QGeoAddress;
 
 class QGeoLocationPrivate;
 class Q_LOCATION_EXPORT QGeoLocation
@@ -59,24 +62,20 @@ public:
     QGeoLocation& operator=(const QGeoLocation &gl);
     ~QGeoLocation();
 
+    bool operator==(const QGeoLocation &other) const;
+    bool operator!=(const QGeoLocation &other) const{return !(*this == other);}
+
     QRectF boundingBox() const;
     void setBoundingBox(const QRectF &boundingBox);
 
-    QGeoCoordinate position() const;
-    void setPosition(const QGeoCoordinate &position);
-
-    QString title() const;
-    void setTitle(const QString &title);
-
-    QString language() const;
-    void setLanguage(const QString &language);
+    QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate &coordinate);
 
     QGeoAddress address() const;
     void setAddress(const QGeoAddress &address);
 
 private:
-    QGeoLocationPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoLocation);
+    QSharedDataPointer<QGeoLocationPrivate> d;
 };
 
 QTM_END_NAMESPACE

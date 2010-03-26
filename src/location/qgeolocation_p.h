@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,31 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOLOCATION_P_H
-#define QGEOLOCATION_P_H
+#ifndef QLOCATION_GEOLOCATION_P_H
+#define QLOCATION_GEOLOCATION_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QRectF>
+#include <QSharedData>
 
 #include "qgeocoordinate.h"
 #include "qgeoaddress.h"
 
-#include <QRectF>
-
 QTM_BEGIN_NAMESPACE
 
-class QGeoLocationPrivate
+class QGeoLocationPrivate : public QSharedData
 {
 public:
     QGeoLocationPrivate();
-    QGeoLocationPrivate(const QGeoLocationPrivate &glp);
-    QGeoLocationPrivate& operator=(const QGeoLocationPrivate &glp);
+    QGeoLocationPrivate(const QGeoLocationPrivate &other);
+    ~QGeoLocationPrivate();
 
-    QRectF boundingBox;
-    QGeoCoordinate position;
-    QString title;
-    QString language;
-    QGeoAddress address;
+    QRectF box;
+    QGeoCoordinate coord;
+    QGeoAddress addr;
 };
 
-QTM_END_NAMESPACE;
+QTM_END_NAMESPACE
 
-#endif // QGEOLOCATION_P_H
+#endif
 

@@ -58,8 +58,6 @@ public:
 
     QString name();
     void setName(const QString &name);
-private:
-    QLandmarkNameFilterPrivate *d;
 };
 
 QTM_END_NAMESPACE

@@ -40,14 +40,34 @@
 ****************************************************************************/
 
 #include "qlandmarkfilter.h"
+#include "qlandmarkfilter_p.h"
 
-//TODO: move this when category filter is moved.
+#include "qlandmarkintersectionfilter.h"
+#include "qlandmarkunionfilter.h"
+
 #include "qlandmarkcategoryid.h"
 #include "qlandmarkid.h"
 #include "qgeocoordinate.h"
 
-
 QTM_BEGIN_NAMESPACE
+
+QLandmarkFilterPrivate::QLandmarkFilterPrivate()
+    : QSharedData(),
+      type(QLandmarkFilter::DefaultFilter),
+      maxMatches(-1)
+{
+}
+
+QLandmarkFilterPrivate::QLandmarkFilterPrivate(const QLandmarkFilterPrivate &other)
+    : QSharedData(other),
+      type(other.type),
+      maxMatches(other.maxMatches)
+{
+}
+
+QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
+{
+}
 
 /*!
     \class QLandmarkFilter
@@ -70,19 +90,19 @@ QTM_BEGIN_NAMESPACE
 /*!
     \enum QLandmarkFilter::FilterType
     Describes the type of the filter
-    \value LandmarkInvalidFilter, An invalid filter which matches nothing
-    \value LandmarkNameFilter A filter which matches landmarks based on name
-    \value LandmarkProximityFilter A filter which matches landmarks within a certain range of a given
+    \value InvalidFilter, An invalid filter which matches nothing
+    \value NameFilter A filter which matches landmarks based on name
+    \value ProximityFilter A filter which matches landmarks within a certain range of a given
            coordinate.
-    \value LandmarkNearestFilter A filter which matches a landmark closest to a given coordinate.
-    \value LandmarkCategoryFilter A filter which matches landmarks that belong to a given category
-    \value LandmarkBoxFilter A filter which matches landmarks within a given bounding box.
-    \value LandmarkIntersectionFilter A filter which performs an AND operation with its
+    \value NearestFilter A filter which matches a landmark closest to a given coordinate.
+    \value CategoryFilter A filter which matches landmarks that belong to a given category
+    \value BoxFilter A filter which matches landmarks within a given bounding box.
+    \value IntersectionFilter A filter which performs an AND operation with its
                                       constituent filters
-    \value LandmarkUnionFilter A filter which performs an OR operation with its constiuent
+    \value UnionFilter A filter which performs an OR operation with its constiuent
                                filters
-    \value LandmarkDefaultFilter A filter which matches all landmarks.
-    \value LandmarkCustomFilter A filter which matches landmarks based on a custom made algorithm.
+    \value DefaultFilter A filter which matches all landmarks.
+    \value CustomFilter A filter which matches landmarks based on a custom made algorithm.
 */
 
 /*!
@@ -94,9 +114,18 @@ QLandmarkFilter::QLandmarkFilter()
 }
 
 /*!
+    Constructs a copy of \a other.
+*/
+QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
+    :d(other.d)
+{
+}
+
+/*!
     \internal
 */
-QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *dd)
+QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate &dd)
+    :d(&dd)
 {
     //TODO: implement
 }
@@ -114,7 +143,7 @@ QLandmarkFilter::~QLandmarkFilter()
 */
 QLandmarkFilter::FilterType QLandmarkFilter::type() const
 {
-    return QLandmarkFilter::LandmarkInvalidFilter;
+    return QLandmarkFilter::InvalidFilter;
 }
 
 /*!
@@ -157,6 +186,35 @@ bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
 QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter &other)
 {
     return *this;
+}
+
+/*!
+ \relates QLandmarkFilter
+ Returns a filter which is the intersection of the \a left and \a right filters
+ \sa QLandmarkIntersectionFilter
+ */
+const QLandmarkFilter operator&(const QLandmarkFilter& left, const QLandmarkFilter& right)
+{
+    /* TODO implement better handling when left or right is an intersection filter */
+
+    /* usual fallback case */
+    QLandmarkIntersectionFilter nif;
+    nif << left << right;
+    return nif;
+}
+
+/*!
+ \relates QLandmarkFilter
+ Returns a filter which is the union of the \a left and \a right filters
+ \sa QLandmarkUnionFilter
+ */
+const QLandmarkFilter operator|(const QLandmarkFilter& left, const QLandmarkFilter& right)
+{
+    /* TODO implement better handling when left or right is a union filter */
+    /* usual fallback case */
+    QLandmarkUnionFilter nif;
+    nif << left << right;
+    return nif;
 }
 
 QTM_END_NAMESPACE

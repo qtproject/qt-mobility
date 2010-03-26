@@ -46,21 +46,22 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoAddressPrivate::QGeoAddressPrivate()
+    : QSharedData()
 {
 }
 
 QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
-    :QSharedData(other),
-     sCountry(other.sCountry),
-     sCountryCode(other.sCountryCode),
-     sState(other.sState),
-     sCounty(other.sCounty),
-     sCity(other.sCity),
-     sDistrict(other.sDistrict),
-     sThoroughfareName(other.sThoroughfareName),
-     sThoroughfareNumber(other.sThoroughfareNumber),
-     sPostCode(other.sPostCode),
-     sPostOfficeBox(other.sPostOfficeBox)
+    : QSharedData(other),
+      sCountry(other.sCountry),
+      sCountryCode(other.sCountryCode),
+      sState(other.sState),
+      sCounty(other.sCounty),
+      sCity(other.sCity),
+      sDistrict(other.sDistrict),
+      sThoroughfareName(other.sThoroughfareName),
+      sThoroughfareNumber(other.sThoroughfareNumber),
+      sPostCode(other.sPostCode),
+      sPostOfficeBox(other.sPostOfficeBox)
 {
 }
 

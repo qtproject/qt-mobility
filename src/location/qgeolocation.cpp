@@ -42,8 +42,24 @@
 #include "qgeolocation.h"
 #include "qgeolocation_p.h"
 
-
 QTM_BEGIN_NAMESPACE
+
+QGeoLocationPrivate::QGeoLocationPrivate()
+    :QSharedData()
+{
+}
+
+QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
+    :QSharedData(other),
+     box(other.box),
+     coord(other.coord),
+     addr(other.addr)
+{
+}
+
+QGeoLocationPrivate::~QGeoLocationPrivate()
+{
+}
 
 /*!
     \class QGeoLocation
@@ -57,32 +73,52 @@ QTM_BEGIN_NAMESPACE
     Default constructor.
 */
 QGeoLocation::QGeoLocation()
-    : d_ptr(new QGeoLocationPrivate()) {}
-
-/*!
-    Copy constructor.
-*/
-
-QGeoLocation::QGeoLocation(const QGeoLocation &gl)
-    : d_ptr(new QGeoLocationPrivate(*(gl.d_ptr))) {}
-
-/*!
-    Assignment operator.
-*/
-QGeoLocation& QGeoLocation::operator=(const QGeoLocation &gl)
+    :d(new QGeoLocationPrivate)
 {
-    *d_ptr = *(gl.d_ptr);
+}
+
+/*!
+    Constructs a copy of \a other.
+*/
+QGeoLocation::QGeoLocation(const QGeoLocation &other)
+    :d(other.d)
+{
+}
+
+/*!
+    Destroys the location
+*/
+QGeoLocation::~QGeoLocation()
+{
+}
+
+/*!
+    Assigns \a other to this location and returns a reference
+    to this location.
+*/
+QGeoLocation &QGeoLocation::operator=(const QGeoLocation &other)
+{
+    d = other.d;
     return *this;
 }
 
 /*!
-    Destructor.
+    Returns true if \a other is equal to this location,
+    otherwise returns false.
 */
-QGeoLocation::~QGeoLocation()
+bool QGeoLocation::operator==(const QGeoLocation &other) const
 {
-    Q_D(QGeoLocation);
-    delete d;
+    return (d->box == other.boundingBox())
+            && (d->coord == other.coordinate())
+            && (d->addr == other.address());
 }
+
+/*!
+    \fn bool QGeoLocation::operator!=(const QGeoLocation &other) const
+
+    Returns true if \a other is not equal to this location,
+    otherwise returns false.
+*/
 
 /*!
     Returns the bounding box that completely encloses the location.
@@ -92,59 +128,31 @@ QGeoLocation::~QGeoLocation()
 */
 QRectF QGeoLocation::boundingBox() const
 {
-    Q_D(const QGeoLocation);
-    return d->boundingBox;
+    return d->box;
 }
 
+/*!
+    Sets the \a boundingBox of the location.
+*/
 void QGeoLocation::setBoundingBox(const QRectF &boundingBox)
 {
-    Q_D(QGeoLocation);
-    d->boundingBox = boundingBox;
+    d->box = boundingBox;
 }
 
 /*!
     Returns the geocoordinate of this location.
 */
-QGeoCoordinate QGeoLocation::position() const
+QGeoCoordinate QGeoLocation::coordinate() const
 {
-    Q_D(const QGeoLocation);
-    return d->position;
-}
-
-void QGeoLocation::setPosition(const QGeoCoordinate &position)
-{
-    Q_D(QGeoLocation);
-    d->position = position;
+    return d->coord;
 }
 
 /*!
-    Returns a description of the location.
+    Sets the \a coordinate of this location.
 */
-QString QGeoLocation::title() const
+void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    Q_D(const QGeoLocation);
-    return d->title;
-}
-
-void QGeoLocation::setTitle(const QString &title)
-{
-    Q_D(QGeoLocation);
-    d->title = title;
-}
-
-/*!
-    Returns the MARC language used in the description of this location.
-*/
-QString QGeoLocation::language() const
-{
-    Q_D(const QGeoLocation);
-    return d->language;
-}
-
-void QGeoLocation::setLanguage(const QString &language)
-{
-    Q_D(QGeoLocation);
-    d->language = language;
+    d->coord = coordinate;
 }
 
 /*!
@@ -152,36 +160,15 @@ void QGeoLocation::setLanguage(const QString &language)
 */
 QGeoAddress QGeoLocation::address() const
 {
-    Q_D(const QGeoLocation);
-    return d->address;
+    return d->addr;
 }
 
+/*!
+    Sets the \a address of this location.
+*/
 void QGeoLocation::setAddress(const QGeoAddress &address)
 {
-    Q_D(QGeoLocation);
-    d->address = address;
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoLocationPrivate::QGeoLocationPrivate() {}
-
-QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &glp)
-    : boundingBox(glp.boundingBox),
-    position(glp.position),
-    title(glp.title),
-    language(glp.language),
-    address(glp.address) {}
-
-QGeoLocationPrivate& QGeoLocationPrivate::operator=(const QGeoLocationPrivate &glp)
-{
-    boundingBox = glp.boundingBox;
-    position = glp.position;
-    title = glp.title;
-    language = glp.language;
-    address = glp.address;
-    return *this;
+    d->addr = address;
 }
 
 QTM_END_NAMESPACE

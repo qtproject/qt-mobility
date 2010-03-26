@@ -72,7 +72,7 @@ QTM_BEGIN_NAMESPACE
 * An address can either be specified by a "one box location" description, or by its individual
 * country, state, city, post code, street name and street number fields.<br>
 * Depending on the address input, the corresponding QGeocodingReply can contain several QGeoLocation<i></i>s, each
-* containing a QGeoCoordinate, a QGeoAddress and possibly a QAlternativeAddress.
+* containing a QGeoCoordinate and a QGeoAddress.
 
 * \section sec_reverse_geocoding Reverse Geocoding Requests and Replies
 * A QReverseGeocodingRequests tries to map a QGeoCoordinate to an address.<br>

@@ -140,16 +140,14 @@ bool QGeocodingXmlParserNokia::parsePlace(QGeoLocation *location)
         return false;
     }
 
-    location->setTitle(m_reader->attributes().value("title").toString());
-
     if (!m_reader->attributes().hasAttribute("language")) {
         //m_reader->raiseError("The element \"place\" did not have the required attribute \"language\".");
         //return false;
     } else {
-        location->setLanguage(m_reader->attributes().value("language").toString());
+        QString lang = m_reader->attributes().value("language").toString();
 
-        if (location->language().length() != 3) {
-            m_reader->raiseError(QString("The attribute \"language\" of the element \"place\" was not of length 3 (length was %1).").arg(location->language().length()));
+        if (lang.length() != 3) {
+            m_reader->raiseError(QString("The attribute \"language\" of the element \"place\" was not of length 3 (length was %1).").arg(lang.length()));
             return false;
         }
     }
@@ -179,6 +177,8 @@ bool QGeocodingXmlParserNokia::parsePlace(QGeoLocation *location)
             QGeoAddress address;
             if (!parseAddress(&address))
                 return false;
+            else
+                location->setAddress(address);
 
             location->setAddress(address);
 
@@ -243,6 +243,8 @@ bool QGeocodingXmlParserNokia::parseLocation(QGeoLocation *location)
             QGeoCoordinate pos;
             if (!parseCoordinate(&pos, "position"))
                 return false;
+            else
+                location->setCoordinate(coordinate);
 
             location->setPosition(pos);
 
@@ -254,9 +256,9 @@ bool QGeocodingXmlParserNokia::parseLocation(QGeoLocation *location)
             }
 
             QRectF box;
-
             if (!parseBoundingBox(&box))
                 return false;
+            location->setBoundingBox(box);
 
             location->setBoundingBox(box);
 

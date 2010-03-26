@@ -41,8 +41,38 @@
 
 #include "qlandmarkproximityfilter.h"
 #include "qgeocoordinate.h"
+#include "qlandmarkfilter_p.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkProximityFilterPrivate : public QLandmarkFilterPrivate
+{
+public:
+    QLandmarkProximityFilterPrivate();
+    QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other);
+    ~QLandmarkProximityFilterPrivate();
+
+    QGeoCoordinate coordinate;
+    double radius;
+};
+
+QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate()
+    : QLandmarkFilterPrivate(),
+      coordinate(QGeoCoordinate()),
+      radius(0.0)
+{
+}
+
+QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other)
+    : QLandmarkFilterPrivate(other),
+      coordinate(other.coordinate),
+      radius(other.radius)
+{
+}
+
+QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate()
+{
+}
 
 /*!
     \class QLandmarkProximityFilter
@@ -59,7 +89,10 @@ QTM_BEGIN_NAMESPACE
     a central \a coordinate.
 */
 QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius)
+    : QLandmarkFilter(*new QLandmarkProximityFilterPrivate)
 {
+    Q_UNUSED(coordinate);
+    Q_UNUSED(radius);
     //TODO: implement
 }
 

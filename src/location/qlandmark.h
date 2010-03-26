@@ -43,7 +43,6 @@
 #define QLANDMARK_H
 
 #include "qmobilityglobal.h"
-#include "qgeocoordinate.h"
 
 #include <QObject>
 #include <QSharedDataPointer>
@@ -58,7 +57,9 @@ QTM_BEGIN_NAMESPACE
 
 class QLandmarkId;
 class QLandmarkCategoryId;
+class QGeoLocation;
 class QGeoAddress;
+class QGeoCoordinate;
 
 class QLandmarkPrivate;
 class Q_LOCATION_EXPORT QLandmark
@@ -68,16 +69,24 @@ public:
     QLandmark(const QLandmark &other);
     ~QLandmark();
 
-    QLandmark& operator= (const QLandmark &other);
-
+    QLandmark &operator= (const QLandmark &other);
     bool operator== (const QLandmark &other) const;
-    // consider inline != in terms of ==?
+    bool operator!= (const QLandmark &other) const
+    {
+        return !(*this==other);
+    }
 
     QString name() const;
     void setName(const QString &name);
 
+    QGeoLocation location() const;
+    void setLocation(const QGeoLocation &location);
+
+    QGeoAddress address() const;
+    void setAddress(const QGeoAddress &address);
+
     QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate& coordinate);
+    void setCoordinate(const QGeoCoordinate &coordinate);
 
     QList<QLandmarkCategoryId> categories() const;
     void setCategories(const QList<QLandmarkCategoryId> &categoryIds);
@@ -97,9 +106,6 @@ public:
     void setAttribute(const QString &attributeName, const QVariant &value);
     QStringList attributes() const;
 
-    QGeoAddress address() const;
-    void setAddress(const QGeoAddress &address);
-
     QString phone() const;
     void setPhone(const QString &phone);
 
@@ -108,7 +114,7 @@ public:
 
     QLandmarkId landmarkId();
 private:
-    QLandmarkPrivate *d;
+    QSharedDataPointer<QLandmarkPrivate> d;
 };
 
 QTM_END_NAMESPACE
