@@ -104,8 +104,8 @@ class QContactMaemo5Engine : public QContactManagerEngine
 
     QString managerName() const;
     QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
-    bool validateContact(const QContact&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
-    bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
+    bool validateContact(const QContact&, QContactManager::Error* error) const;
+    bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const;
 
     /* "Self" contact id (MyCard) */
     // bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error); /* Not supported */

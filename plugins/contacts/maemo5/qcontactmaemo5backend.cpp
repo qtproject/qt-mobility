@@ -110,12 +110,12 @@ QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, Q
   return label;
 }
 
-bool validateContact(const QContact& contact, QContactManager::Error* error) const
+bool QContactMaemo5Engine::validateContact(const QContact& contact, QContactManager::Error* error) const
 {
     return QContactManagerEngine::validateContact(contact, error);
 }
 
-bool validateDefinition(const QContactDetailDefinition& detailDefinition, QContactManager::Error* error) const
+bool QContactMaemo5Engine::validateDefinition(const QContactDetailDefinition& detailDefinition, QContactManager::Error* error) const
 {
     QContactDetailDefinition existing = detailDefinition(detailDefinition.name());
     if (existing != detailDefinition) {
@@ -319,7 +319,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     return defns[contactType];
 }
 
-QContactDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const
+QContactDetailDefinition QContactMaemo5Engine::detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const
 {
     QMap<QString, QContactDetailDefinition> defMap = detailDefinitions(contactType, error);
     if (!defMap.contains(definitionName)) {
