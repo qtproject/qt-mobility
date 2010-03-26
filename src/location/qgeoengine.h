@@ -47,15 +47,15 @@
 #include <QNetworkReply>
 #include <QNetworkProxy>
 
-#include "qrouterequest.h"
+#include "qgeorouterequest.h"
 #include "qgeocodingrequest.h"
 #include "qreversegeocodingrequest.h"
-#include "qmaptilerequest.h"
-#include "qmaptile.h"
+#include "qgeomaptilerequest.h"
+#include "qgeomaptile.h"
 
-#include "qroutereply.h"
+#include "qgeoroutereply.h"
 #include "qgeocodingreply.h"
-#include "qmaptilereply.h"
+#include "qgeomaptilereply.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,10 +67,10 @@ public:
     QGeoEngine();
     virtual ~QGeoEngine();
 
-    virtual QRouteReply* get(const QRouteRequest& request) = 0;
+    virtual QGeoRouteReply* get(const QGeoRouteRequest& request) = 0;
     virtual QGeocodingReply* get(const QGeocodingRequest& request) = 0;
     virtual QGeocodingReply* get(const QReverseGeocodingRequest& request) = 0;
-    virtual QMapTileReply* get(const QMapTileRequest& request) = 0;
+    virtual QGeoMapTileReply* get(const QGeoMapTileRequest& request) = 0;
     virtual quint16 maxZoomLevel() const = 0;
 
     virtual QList<MapVersion> versions() const = 0;
@@ -82,13 +82,13 @@ private:
     Q_DISABLE_COPY(QGeoEngine)
 
 signals:
-    void finished(QRouteReply* reply);
+    void finished(QGeoRouteReply* reply);
     void finished(QGeocodingReply* reply);
-    void finished(QMapTileReply* reply);
+    void finished(QGeoMapTileReply* reply);
 
-    void error(QRouteReply* reply, QRouteReply::ErrorCode errorCode, QString errorString = QString());
+    void error(QGeoRouteReply* reply, QGeoRouteReply::ErrorCode errorCode, QString errorString = QString());
     void error(QGeocodingReply* reply, QGeocodingReply::ErrorCode errorCode, QString errorString = QString());
-    void error(QMapTileReply* reply, QMapTileReply::ErrorCode errorCode, QString errorString = QString());
+    void error(QGeoMapTileReply* reply, QGeoMapTileReply::ErrorCode errorCode, QString errorString = QString());
 
 public:
     static void getMercatorTileIndex(const QGeoCoordinate& coordinate, quint16 zoomLevel, quint32* col, quint32* row);

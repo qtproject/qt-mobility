@@ -2,16 +2,16 @@
 #define QMAPTILEREQUEST_P_H
 
 #include "qmobilityglobal.h"
-#include "qmaptile.h"
+#include "qgeomaptile.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMapTileRequestPrivate
+class QGeoMapTileRequestPrivate
 {
 public:
-    QMapTileRequestPrivate();
-    QMapTileRequestPrivate(const QMapTileRequestPrivate &mtrp);
-    QMapTileRequestPrivate& operator= (const QMapTileRequestPrivate &mtrp);
+    QGeoMapTileRequestPrivate();
+    QGeoMapTileRequestPrivate(const QGeoMapTileRequestPrivate &mtrp);
+    QGeoMapTileRequestPrivate& operator= (const QGeoMapTileRequestPrivate &mtrp);
 
     QString requestString(const QString &host, const QString &token, const QString &referrer) const;
 

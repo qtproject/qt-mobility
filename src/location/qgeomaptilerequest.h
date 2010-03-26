@@ -39,22 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEREPLY_P_H
-#define QLOCATION_ROUTEREPLY_P_H
+#ifndef QLOCATION_MAPTILEREQUEST_H
+#define QLOCATION_MAPTILEREQUEST_H
 
 #include <QString>
 
-#include "qroute.h"
+#include "qgeomaptile.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteReplyPrivate
+class QGeoMapTileRequestPrivate;
+class Q_LOCATION_EXPORT QGeoMapTileRequest
 {
 public:
-    QRouteReplyPrivate();
-    
-    QString description;
-    QList<QRoute> routes;
+    QGeoMapTileRequest(const MapVersion& mapVersion,
+                    const MapScheme& mapScheme,
+                    const MapResolution& mapResolution,
+                    const MapFormat& mapFormat);
+    QGeoMapTileRequest();
+
+    QGeoMapTileRequest(const QGeoMapTileRequest &mtr);
+    QGeoMapTileRequest& operator= (const QGeoMapTileRequest &mtr);
+
+    ~QGeoMapTileRequest();
+
+    quint32 col() const;
+    void setCol(quint32 c);
+
+    quint32 row() const;
+    void setRow(quint32 r);
+
+    MapVersion version() const;
+    void setVersion(const MapVersion& version);
+
+    MapResolution resolution() const;
+    void setResolution(const MapResolution& resolution);
+
+    MapFormat format() const;
+    void setFormat(const MapFormat& format);
+
+    MapScheme scheme() const;
+    void setScheme(const MapScheme& scheme);
+
+    quint16 zoomLevel() const;
+    void setZoomLevel(quint16 level);
+
+    QString requestString(const QString &host, const QString &token, const QString &referrer) const;
+
+private:
+    //Q_DISABLE_COPY(QGeoMapTileRequest);
+
+    QGeoMapTileRequestPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMapTileRequest);
 };
 
 QTM_END_NAMESPACE

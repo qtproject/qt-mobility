@@ -1,8 +1,8 @@
 
-#include "qroutexmlparser_nokia_p.h"
+#include "qgeoroutexmlparser_nokia_p.h"
 
-#include "qroutereply_nokia_p.h"
-#include "qroute.h"
+#include "qgeoroutereply_nokia_p.h"
+#include "qgeoroute.h"
 #include "qmaneuver.h"
 
 #include <QXmlStreamReader>
@@ -12,18 +12,18 @@
 
 QTM_BEGIN_NAMESPACE
 
-QRouteXmlParserNokia::QRouteXmlParserNokia()
+QGeoRouteXmlParserNokia::QGeoRouteXmlParserNokia()
         : m_reader(0)
 {
 }
 
-QRouteXmlParserNokia::~QRouteXmlParserNokia()
+QGeoRouteXmlParserNokia::~QGeoRouteXmlParserNokia()
 {
     if (m_reader)
         delete m_reader;
 }
 
-bool QRouteXmlParserNokia::parse(QIODevice* source, QRouteReplyNokia *output)
+bool QGeoRouteXmlParserNokia::parse(QIODevice* source, QGeoRouteReplyNokia *output)
 {
     if (m_reader)
         delete m_reader;
@@ -39,12 +39,12 @@ bool QRouteXmlParserNokia::parse(QIODevice* source, QRouteReplyNokia *output)
     return true;
 }
 
-QString QRouteXmlParserNokia::errorString() const
+QString QGeoRouteXmlParserNokia::errorString() const
 {
     return m_errorString;
 }
 
-bool QRouteXmlParserNokia::parseRootElement(QRouteReplyNokia *output)
+bool QGeoRouteXmlParserNokia::parseRootElement(QGeoRouteReplyNokia *output)
 {
     /*
     <xsd:element name="routes">
@@ -82,11 +82,11 @@ bool QRouteXmlParserNokia::parseRootElement(QRouteReplyNokia *output)
     if (m_reader->attributes().hasAttribute("resultCode")) {
         QStringRef result = m_reader->attributes().value("resultCode");
         if (result == "OK") {
-            output->setResultCode(QRouteReplyNokia::OK);
+            output->setResultCode(QGeoRouteReplyNokia::OK);
         } else if (result == "FAILED") {
-            output->setResultCode(QRouteReplyNokia::Failed);
+            output->setResultCode(QGeoRouteReplyNokia::Failed);
         } else if (result == "FAILED WITH ALTERNATIVE") {
-            output->setResultCode(QRouteReplyNokia::FailedWithAlternative);
+            output->setResultCode(QGeoRouteReplyNokia::FailedWithAlternative);
         } else {
             m_reader->raiseError(QString("The attribute \"resultCode\" of the element \"routes\" has an unknown value (value was %1).").arg(result.toString()));
             return false;
@@ -109,12 +109,12 @@ bool QRouteXmlParserNokia::parseRootElement(QRouteReplyNokia *output)
 
     while (m_reader->readNextStartElement()) {
         if (m_reader->name() == "route") {
-            QRoute route;
+            QGeoRoute route;
 
             if (!parseRoute(&route))
                 return false;
 
-            QList<QRoute> routes = output->routes();
+            QList<QGeoRoute> routes = output->routes();
             routes.append(route);
             output->setRoutes(routes);
         } else {
@@ -131,7 +131,7 @@ bool QRouteXmlParserNokia::parseRootElement(QRouteReplyNokia *output)
     return true;
 }
 
-bool QRouteXmlParserNokia::parseRoute(QRoute *route)
+bool QGeoRouteXmlParserNokia::parseRoute(QGeoRoute *route)
 {
     /*
     <xsd:complexType name="Route">
@@ -212,7 +212,7 @@ bool QRouteXmlParserNokia::parseRoute(QRoute *route)
     return true;
 }
 
-bool QRouteXmlParserNokia::parseXsdDateTime(const QString& strDateTime, QDateTime *dateTime, const QString &attributeName)
+bool QGeoRouteXmlParserNokia::parseXsdDateTime(const QString& strDateTime, QDateTime *dateTime, const QString &attributeName)
 {
     QTime utcDiff(0, 0, 0, 0);
     QString dt;
@@ -309,7 +309,7 @@ bool QRouteXmlParserNokia::parseXsdDateTime(const QString& strDateTime, QDateTim
     return true;
 }
 
-bool QRouteXmlParserNokia::parseXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName)
+bool QGeoRouteXmlParserNokia::parseXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName)
 {
     QString dur = strDuration;
     QString errorString = QString("The attribute \"%1\" has a bady formatted xsd:duration string (string is \"%2\")").arg(attributeName).arg(strDuration);
@@ -440,7 +440,7 @@ bool QRouteXmlParserNokia::parseXsdDuration(const QString& strDuration, qint32 *
     return true;
 }
 
-bool QRouteXmlParserNokia::parseManeuver(QManeuver *maneuver)
+bool QGeoRouteXmlParserNokia::parseManeuver(QManeuver *maneuver)
 {
     /*
     <xsd:complexType name="Maneuver">
@@ -599,7 +599,7 @@ bool QRouteXmlParserNokia::parseManeuver(QManeuver *maneuver)
     return true;
 }
 
-bool QRouteXmlParserNokia::parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName)
+bool QGeoRouteXmlParserNokia::parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName)
 {
     QStringList rawPoints = strPoints.split(' ');
 
@@ -635,7 +635,7 @@ bool QRouteXmlParserNokia::parseGeoPoints(const QString& strPoints, QList<QGeoCo
     return true;
 }
 
-bool QRouteXmlParserNokia::parseBoundingBox(QRectF *rect)
+bool QGeoRouteXmlParserNokia::parseBoundingBox(QRectF *rect)
 {
     /*
     <xsd:complexType name="GeoBox">
@@ -689,7 +689,7 @@ bool QRouteXmlParserNokia::parseBoundingBox(QRectF *rect)
     return true;
 }
 
-bool QRouteXmlParserNokia::parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName)
+bool QGeoRouteXmlParserNokia::parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName)
 {
     /*
     <xsd:complexType name="GeoCoord">

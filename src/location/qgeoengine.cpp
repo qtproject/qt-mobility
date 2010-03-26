@@ -51,8 +51,8 @@ QTM_BEGIN_NAMESPACE
 * \section sec_brief_overview Brief Overview
 * The qlocation package provides wrapper classes for (reverse) geocoding requests/replies
 * (QGeocodingRequest, QReverseGeocodingRequest, QGeocodingReply),
-* geo routing requests/replies (QRouteRequest, QRouteReply), and map tile requests/replies
-* (QMapTileRequest, QMapTileReply). QMapView is a Qt::QGraphicsView based widget that displays
+* geo routing requests/replies (QGeoRouteRequest, QGeoRouteReply), and map tile requests/replies
+* (QGeoMapTileRequest, QGeoMapTileReply). QMapView is a Qt::QGraphicsView based widget that displays
 * a tile based map.
 *
 * \section sec_geo_engine The QGeoEngine
@@ -79,17 +79,17 @@ QTM_BEGIN_NAMESPACE
 * It too returns a QGeocodingReply.
 
 * \section sec_routing Routing Requests and Replies
-* A QRouteRequest requests a route from a source QGeoCoordinate to a destination QGeoCoordinate.<br>
-* The return QRouteReply can contain several QRoute<i></i>s, each containing numerous QManeuver<i></i>s.
+* A QGeoRouteRequest requests a route from a source QGeoCoordinate to a destination QGeoCoordinate.<br>
+* The return QGeoRouteReply can contain several QGeoRoute<i></i>s, each containing numerous QManeuver<i></i>s.
 * A QManeuver is defined by a collection of QManeuver::wayPoints() and QManeuver::maneuverPoints().
 *
 * \section sec_map_tile Map Tile Requests and Replies
-* A QMapTileRequest is specified by a column and row index and various format parameters.
-* The returned QMapTileReply contains the raw byte array of the Qt::QPixmap of the tile.
+* A QGeoMapTileRequest is specified by a column and row index and various format parameters.
+* The returned QGeoMapTileReply contains the raw byte array of the Qt::QPixmap of the tile.
 *
 * \section sec_map_view The QMapView Widget
 * The QMapView displays a tile based map. It supports panning and zooming, different map formats,
-* and provides overlay layers for QMapObject<i></i>s and QRoute<i></i>s.
+* and provides overlay layers for QMapObject<i></i>s and QGeoRoute<i></i>s.
 * A QMapView is always associated with a QGeoEngine, through which it handles all the required
 * map tile management.
 */
@@ -120,13 +120,13 @@ QGeoEngine::QGeoEngine() {}
 QGeoEngine::~QGeoEngine() {}
 
 /*!
-    \fn QRouteReply* QGeoEngine::get(const QRouteRequest& request)
+    \fn QGeoRouteReply* QGeoEngine::get(const QGeoRouteRequest& request)
 
-    Submits the route request \a request and returns the corresponding QRouteReply.
+    Submits the route request \a request and returns the corresponding QGeoRouteReply.
 
     \note Due to the asynchronous nature of requests, you should wait for the
-    QGeoEngine::finished(QRouteReply*) signal from this object or the
-    QRouteReply::finished() signal from the returned QRouteReply object before
+    QGeoEngine::finished(QGeoRouteReply*) signal from this object or the
+    QGeoRouteReply::finished() signal from the returned QGeoRouteReply object before
     working with the reply.
 */
 
@@ -153,13 +153,13 @@ QGeoEngine::~QGeoEngine() {}
 */
 
 /*!
-    \fn QMapTileReply* QGeoEngine::get(const QMapTileRequest& request)
+    \fn QGeoMapTileReply* QGeoEngine::get(const QGeoMapTileRequest& request)
 
-    Submits a map tile request \a request and returns the corresponding QMapTileReply.
+    Submits a map tile request \a request and returns the corresponding QGeoMapTileReply.
 
     \note Due to the asynchronous nature of requests, you should wait for the
-    QGeoEngine::finished(QMapTileReply*) signal from this object or the
-    QMapTileReply::finished() signal from the returned QMapTileReply object before
+    QGeoEngine::finished(QGeoMapTileReply*) signal from this object or the
+    QGeoMapTileReply::finished() signal from the returned QGeoMapTileReply object before
     working with the reply.
 */
 
@@ -194,10 +194,10 @@ QGeoEngine::~QGeoEngine() {}
 */
 
 /*!
-    \fn void QGeoEngine::finished(QRouteReply* reply)
+    \fn void QGeoEngine::finished(QGeoRouteReply* reply)
 
-    This signal is emitted when a QRouteReply is available in
-    response to a previously submitted QRouteRequest.
+    This signal is emitted when a QGeoRouteReply is available in
+    response to a previously submitted QGeoRouteRequest.
 */
 
 /*!
@@ -209,17 +209,17 @@ QGeoEngine::~QGeoEngine() {}
 */
 
 /*!
-    \fn void QGeoEngine::finished(QMapTileReply* reply)
+    \fn void QGeoEngine::finished(QGeoMapTileReply* reply)
 
-    This signal is emitted when a QMapTileReply is available in
-    response to a previously submitted QMapTileRequest.
+    This signal is emitted when a QGeoMapTileReply is available in
+    response to a previously submitted QGeoMapTileRequest.
 */
 
 /*!
-    \fn void QGeoEngine::error(QRouteReply* reply, QGeoReply::ErrorCode code)
+    \fn void QGeoEngine::error(QGeoRouteReply* reply, QGeoReply::ErrorCode code)
 
-    This signal is emitted when a QRouteReply encountered an error
-    in response to a previously submitted QRouteRequest.
+    This signal is emitted when a QGeoRouteReply encountered an error
+    in response to a previously submitted QGeoRouteRequest.
     \note For QGeoNetworkManager, the error code will be identical to QNetworkReply::NetworkError.
 */
 
@@ -232,10 +232,10 @@ QGeoEngine::~QGeoEngine() {}
 */
 
 /*!
-    \fn void QGeoEngine::error(QMapTileReply* reply, QGeoReply::ErrorCode code)
+    \fn void QGeoEngine::error(QGeoMapTileReply* reply, QGeoReply::ErrorCode code)
 
-    This signal is emitted when a QMapTileReply encountered an error
-    in response to a previously submitted QMapTileRequest.
+    This signal is emitted when a QGeoMapTileReply encountered an error
+    in response to a previously submitted QGeoMapTileRequest.
     \note For QGeoNetworkManager, the error code will be identical to QNetworkReply::NetworkError.
 */
 

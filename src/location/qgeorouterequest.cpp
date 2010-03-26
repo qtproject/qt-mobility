@@ -40,21 +40,21 @@
 **
 ****************************************************************************/
 
-#include "qrouterequest.h"
-#include "qrouterequest_p.h"
+#include "qgeorouterequest.h"
+#include "qgeorouterequest_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QRouteRequest
-    \brief The QRouteRequest class represents a request for a route between two points.
+    \class QGeoRouteRequest
+    \brief The QGeoRouteRequest class represents a request for a route between two points.
     \ingroup location
 
     This is the base class representing a route request from a given source to a given destination.
 */
 
 /*!
-    \enum QRouteRequest::RouteType
+    \enum QGeoRouteRequest::RouteType
 
     \value Fastest
         fastest route (default)
@@ -65,7 +65,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QRouteRequest::RouteMode
+    \enum QGeoRouteRequest::RouteMode
 
     \value Car
         car route (default)
@@ -76,7 +76,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QRouteRequest::RouteAvoid
+    \enum QGeoRouteRequest::RouteAvoid
 
     Values that specify which components the route will not contain.
 
@@ -97,17 +97,17 @@ QTM_BEGIN_NAMESPACE
 /*!
     The default constructor.
 */
-QRouteRequest::QRouteRequest()
-    : d_ptr(new QRouteRequestPrivate)
+QGeoRouteRequest::QGeoRouteRequest()
+    : d_ptr(new QGeoRouteRequestPrivate)
 {
 }
 
 /*!
     Destroys the route request.
 */
-QRouteRequest::~QRouteRequest()
+QGeoRouteRequest::~QGeoRouteRequest()
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     delete d;
 }
 
@@ -116,45 +116,45 @@ QRouteRequest::~QRouteRequest()
 
     Currently the only supported version is 1.0.
 */
-QString QRouteRequest::version() const
+QString QGeoRouteRequest::version() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->version;
 }
 
 /*!
     Sets the source geo coordinate for this request to \a source.
 */
-void QRouteRequest::setSource(const QGeoCoordinate& source)
+void QGeoRouteRequest::setSource(const QGeoCoordinate& source)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->src = source;
 }
 
 /*!
     Returns the source geo coordinate for this request.
 */
-QGeoCoordinate QRouteRequest::source() const
+QGeoCoordinate QGeoRouteRequest::source() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->src;
 }
 
 /*!
     Sets the destination geo coordinate for this request to \a destination.
 */
-void QRouteRequest::setDestination(const QGeoCoordinate& destination)
+void QGeoRouteRequest::setDestination(const QGeoCoordinate& destination)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->dst = destination;
 }
 
 /*!
     Returns the destination geo coordinate for this request.
 */
-QGeoCoordinate QRouteRequest::destination() const
+QGeoCoordinate QGeoRouteRequest::destination() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->dst;
 }
 
@@ -163,18 +163,18 @@ QGeoCoordinate QRouteRequest::destination() const
 
     If set to 0 all possible results will be returned.
 */
-void QRouteRequest::setTotalResults(quint32 totalResults)
+void QGeoRouteRequest::setTotalResults(quint32 totalResults)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->nTotal = totalResults;
 }
 
 /*!
     Returns the maximum number of response results.
 */
-quint32 QRouteRequest::totalResults() const
+quint32 QGeoRouteRequest::totalResults() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->nTotal;
 }
 
@@ -183,18 +183,18 @@ quint32 QRouteRequest::totalResults() const
 
     If set to 0 the result will contain no alternative routes (only one result is returned if any).
 */
-void QRouteRequest::setAlternatives(quint16 nAlternatives)
+void QGeoRouteRequest::setAlternatives(quint16 nAlternatives)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->nAlternatives = nAlternatives;
 }
 
 /*!
     Returns the maximum number of alternatives to be returned.
 */
-quint16 QRouteRequest::alternatives() const
+quint16 QGeoRouteRequest::alternatives() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->nAlternatives;
 }
 
@@ -203,54 +203,54 @@ quint16 QRouteRequest::alternatives() const
 
     The language code should look like en-US or de-DE.
 */
-void QRouteRequest::setLanguage(const QString& code)
+void QGeoRouteRequest::setLanguage(const QString& code)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->languageCode = code;
 }
 
 /*!
     Returns the RFC 3066 language code of the response.
 */
-QString QRouteRequest::language() const
+QString QGeoRouteRequest::language() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->languageCode;
 }
 
 /*!
     Sets the planned time of departure to \a tod.
 */
-void QRouteRequest::setDepartureTime(const QDateTime& departureTime)
+void QGeoRouteRequest::setDepartureTime(const QDateTime& departureTime)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->departureTime = departureTime;
 }
 
 /*!
     Returns the planned time of departure.
 */
-QDateTime QRouteRequest::departureTime() const
+QDateTime QGeoRouteRequest::departureTime() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->departureTime;
 }
 
 /*!
     Sets the planned time of arrival to \a toa.
 */
-void QRouteRequest::setArrivalTime(const QDateTime& arrivalTime)
+void QGeoRouteRequest::setArrivalTime(const QDateTime& arrivalTime)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->arrivalTime = arrivalTime;
 }
 
 /*!
     Returns the planned time of departure.
 */
-QDateTime QRouteRequest::arrivalTime() const
+QDateTime QGeoRouteRequest::arrivalTime() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->arrivalTime;
 }
 
@@ -259,18 +259,18 @@ QDateTime QRouteRequest::arrivalTime() const
 
     \sa RouteType
 */
-void QRouteRequest::setType(RouteType type)
+void QGeoRouteRequest::setType(RouteType type)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->routeType = type;
 }
 
 /*!
     Returns the route type.
 */
-QRouteRequest::RouteType QRouteRequest::type() const
+QGeoRouteRequest::RouteType QGeoRouteRequest::type() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->routeType;
 }
 
@@ -279,18 +279,18 @@ QRouteRequest::RouteType QRouteRequest::type() const
 
     \sa RouteMode
 */
-void QRouteRequest::setMode(RouteMode mode)
+void QGeoRouteRequest::setMode(RouteMode mode)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->routeMode = mode;
 }
 
 /*!
     Returns the route mode.
 */
-QRouteRequest::RouteMode QRouteRequest::mode() const
+QGeoRouteRequest::RouteMode QGeoRouteRequest::mode() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->routeMode;
 }
 
@@ -301,18 +301,18 @@ QRouteRequest::RouteMode QRouteRequest::mode() const
 
     \sa RouteAvoid
 */
-void QRouteRequest::setAvoid(QList<RouteAvoid> avoid)
+void QGeoRouteRequest::setAvoid(QList<RouteAvoid> avoid)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->avoid = avoid;
 }
 
 /*!
     Returns a list containing all routes components to be avoided.
 */
-QList<QRouteRequest::RouteAvoid> QRouteRequest::avoid() const
+QList<QGeoRouteRequest::RouteAvoid> QGeoRouteRequest::avoid() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->avoid;
 }
 
@@ -322,9 +322,9 @@ QList<QRouteRequest::RouteAvoid> QRouteRequest::avoid() const
     The server calculates a route that contains these waypoints (in the given order)
     as part of the route. These waypoints must be between the destination and the source.
 */
-void QRouteRequest::addStopOver(const QGeoCoordinate& stopOver)
+void QGeoRouteRequest::addStopOver(const QGeoCoordinate& stopOver)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     d->stopOvers += stopOver;
 }
 
@@ -333,9 +333,9 @@ void QRouteRequest::addStopOver(const QGeoCoordinate& stopOver)
 
     \sa addStopOver()
 */
-void QRouteRequest::removeStopOver(const QGeoCoordinate& stopOver)
+void QGeoRouteRequest::removeStopOver(const QGeoCoordinate& stopOver)
 {
-    Q_D(QRouteRequest);
+    Q_D(QGeoRouteRequest);
     int i = 0;
 
     while (i < d->stopOvers.length()) {
@@ -349,71 +349,71 @@ void QRouteRequest::removeStopOver(const QGeoCoordinate& stopOver)
 /*!
     Returns all added stop overs.
 */
-const QList<QGeoCoordinate>& QRouteRequest::stopOvers() const
+const QList<QGeoCoordinate>& QGeoRouteRequest::stopOvers() const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->stopOvers;
 }
 
 /*!
     Returns the request string for this request and a given \a host.
 */
-QString QRouteRequest::requestString(const QString &host) const
+QString QGeoRouteRequest::requestString(const QString &host) const
 {
-    Q_D(const QRouteRequest);
+    Q_D(const QGeoRouteRequest);
     return d->requestString(host);
 }
 /*****************************************************************************
  *****************************************************************************/
 
-QRouteRequestPrivate::QRouteRequestPrivate()
+QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
     : version("1.0"), nTotal(0),
     nAlternatives(0),
     languageCode(""),
-    routeType(QRouteRequest::Fastest),
-    routeMode(QRouteRequest::Car)
+    routeType(QGeoRouteRequest::Fastest),
+    routeMode(QGeoRouteRequest::Car)
 {}
 
-QString QRouteRequestPrivate::typeToString() const
+QString QGeoRouteRequestPrivate::typeToString() const
 {
-    if (routeType == QRouteRequest::Fastest)
+    if (routeType == QGeoRouteRequest::Fastest)
         return "fastest";
-    else if (routeType == QRouteRequest::Shortest)
+    else if (routeType == QGeoRouteRequest::Shortest)
         return "shortest";
-    else if (routeType == QRouteRequest::Economic)
+    else if (routeType == QGeoRouteRequest::Economic)
         return "economic";
 
     return "";
 }
 
-QString QRouteRequestPrivate::modeToString() const
+QString QGeoRouteRequestPrivate::modeToString() const
 {
-    if (routeMode == QRouteRequest::Car)
+    if (routeMode == QGeoRouteRequest::Car)
         return "car";
-    else if (routeMode == QRouteRequest::Pedestrian)
+    else if (routeMode == QGeoRouteRequest::Pedestrian)
         return "pedestrian";
-    else if (routeMode == QRouteRequest::PublicTransport)
+    else if (routeMode == QGeoRouteRequest::PublicTransport)
         return "public transport";
 
     return "";
 }
 
-QString QRouteRequestPrivate::avoidToString() const
+QString QGeoRouteRequestPrivate::avoidToString() const
 {
     QString s;
 
     for (int i = 0; i < avoid.count(); i++) {
-        if (avoid[i] == QRouteRequest::Highways)
+        if (avoid[i] == QGeoRouteRequest::Highways)
             s += "highways,";
-        else if (avoid[i] == QRouteRequest::Tollroads)
+        else if (avoid[i] == QGeoRouteRequest::Tollroads)
             s += "tollroads,";
-        else if (avoid[i] == QRouteRequest::Ferries)
+        else if (avoid[i] == QGeoRouteRequest::Ferries)
             s += "ferries,";
-        else if (avoid[i] == QRouteRequest::Tunnels)
+        else if (avoid[i] == QGeoRouteRequest::Tunnels)
             s += "tunnels,";
-        else if (avoid[i] == QRouteRequest::Dirtroads)
+        else if (avoid[i] == QGeoRouteRequest::Dirtroads)
             s += "dirtroads,";
-        else if (avoid[i] == QRouteRequest::RailFerries)
+        else if (avoid[i] == QGeoRouteRequest::RailFerries)
             s += "rail ferries,";
     }
 
@@ -423,7 +423,7 @@ QString QRouteRequestPrivate::avoidToString() const
     return "";
 }
 
-QString QRouteRequestPrivate::requestString(const QString &host) const
+QString QGeoRouteRequestPrivate::requestString(const QString &host) const
 {
     QString request = "http://";
     request += host;
@@ -481,7 +481,7 @@ QString QRouteRequestPrivate::requestString(const QString &host) const
     return request;
 }
 
-QString QRouteRequestPrivate::trimDouble(qreal degree, int decimalDigits) const
+QString QGeoRouteRequestPrivate::trimDouble(qreal degree, int decimalDigits) const
 {
     QString sDegree = QString::number(degree, 'g', decimalDigits);
 

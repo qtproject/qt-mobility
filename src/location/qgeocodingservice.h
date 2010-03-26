@@ -39,54 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPTILEREPLY_H
-#define QMAPTILEREPLY_H
+#ifndef QGEOCODINGSERVICE_H
+#define QGEOCODINGSERVICE_H
 
-#include "qmaptilerequest.h"
+#include "qmobilityglobal.h"
 
-#include <QByteArray>
+#include "qgeocodingreply.h"
+#include "qgeocodingrequest.h"
+#include "qreversegeocodingrequest.h"
+
+#include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
-class QMapTileReplyPrivate;
-class Q_LOCATION_EXPORT QMapTileReply : public QObject
+class Q_LOCATION_EXPORT QGeocodingService : public QObject
 {
     Q_OBJECT
-
 public:
-    // TODO populate this some more...
-    enum ErrorCode {
-        NoError,
-        // flesh out the more common specific network errors
-        NetworkError,
-        NoContentError,
-        UnknownError
-    };
+    QGeocodingService();
+    virtual ~QGeocodingService();
 
-    QMapTileReply(const QMapTileRequest &request, QObject *parent = 0);
-    virtual ~QMapTileReply();
-
-    QMapTileRequest request() const;
-
-    // TODO this should probably become a pixmap if / when we have enough
-    // metadata to convert it
-    QByteArray data() const;
-    void setData(const QByteArray &data);
-
-public slots:
-    void done();
-    virtual void cancel() = 0;
+    virtual QGeocodingReply* geocode(const QGeocodingRequest& request) = 0;
+    virtual QGeocodingReply* reverseGeocode(const QReverseGeocodingRequest& request) = 0;
 
 signals:
-    void finished();
-    void error(QMapTileReply::ErrorCode errorCode, const QString &errorString = QString());
+    void finished(QGeocodingReply* reply);
+    void error(QGeocodingReply* reply, QGeocodingReply::ErrorCode errorCode, QString errorString = QString());
 
-    // CHOICE: could lose the setters and make this protected
 private:
-    QMapTileReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QMapTileReply);
+    Q_DISABLE_COPY(QGeocodingService)
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QGEOCODINGSERVICE_H

@@ -48,7 +48,7 @@
 #include <QPixmap>
 #include <QLineF>
 
-#include "qroute.h"
+#include "qgeoroute.h"
 #include "qmapobject.h"
 
 QTM_BEGIN_NAMESPACE
@@ -59,7 +59,7 @@ class Q_LOCATION_EXPORT QMapRoute : public QMapObject
     friend class QMapView;
 
 public:
-    QMapRoute( const QRoute& route,
+    QMapRoute( const QGeoRoute& route,
               const QPen& pen = QPen(),
               const QPixmap& endpointMarker = QPixmap(),
               quint16 layerIndex = 0);
@@ -73,7 +73,7 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
     QMapRoute(QMapRoutePrivate &dd,
-              const QRoute& route,
+              const QGeoRoute& route,
               const QPen& pen = QPen(),
               const QPixmap& endpointMarker = QPixmap(),
               quint16 layerIndex = 0);

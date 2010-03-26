@@ -48,7 +48,7 @@
 #include <QNetworkAccessManager>
 
 #include "qgeonetworkmanager.h"
-#include "qmaptilecache.h"
+#include "qgeomaptilecache.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -60,10 +60,10 @@ public:
     QGeoNetworkManagerPrivate(QGeoNetworkManager *parent);
     ~QGeoNetworkManagerPrivate();
 
-    virtual QRouteReply* get(const QRouteRequest& request);
+    virtual QGeoRouteReply* get(const QGeoRouteRequest& request);
     virtual QGeocodingReply* get(const QGeocodingRequest& request);
     virtual QGeocodingReply* get(const QReverseGeocodingRequest& request);
-    virtual QMapTileReply* get(const QMapTileRequest& request);
+    virtual QGeoMapTileReply* get(const QGeoMapTileRequest& request);
 
     QNetworkAccessManager netManager; //!< The internal network manager
     QString geocdSrv;
@@ -74,7 +74,7 @@ public:
     QNetworkProxy mapProx;
     QString token;
     QString referrer;
-    QMapTileCache cache; //!< The map tile cache
+    QGeoMapTileCache cache; //!< The map tile cache
 
     QHash<QString, MapVersion> mapVersions;
     QHash<QString, MapResolution> mapResolutions;
@@ -89,9 +89,9 @@ private slots:
     void finishedGeocodingRequest();
     void finishedMapTileRequest();
 
-    void errorRouteRequest(QRouteReply::ErrorCode errorCode, const QString &errorString = QString());
+    void errorRouteRequest(QGeoRouteReply::ErrorCode errorCode, const QString &errorString = QString());
     void errorGeocodingRequest(QGeocodingReply::ErrorCode errorCode, const QString &errorString = QString());
-    void errorMapTileRequest(QMapTileReply::ErrorCode errorCode, const QString &errorString = QString());
+    void errorMapTileRequest(QGeoMapTileReply::ErrorCode errorCode, const QString &errorString = QString());
 };
 
 QTM_END_NAMESPACE

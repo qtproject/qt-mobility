@@ -51,8 +51,9 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "qmapview.h"
-#include "qroutereply.h"
-#include "qgeonetworkmanager.h"
+#include "qgeoroutereply.h"
+#include "qgeomapservice.h"
+#include "qgeoroutingservice.h"
 
 namespace Ui
 {
@@ -80,7 +81,7 @@ protected:
 private slots:
     void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
     void mapObjectSelected(QMapObject* mapObject);
-    void routeReplyFinished(QRouteReply* reply);
+    void routeReplyFinished(QGeoRouteReply* reply);
     void setRtFromTo(bool checked);
     void zoomLevelChanged(quint16 oldZoomLevel, quint16 newZoomLevel);
     void setScheme(bool checked);
@@ -97,7 +98,8 @@ private:
 
 private:
     QGraphicsView* qgv;
-    QGeoNetworkManager geoNetworkManager;
+    QGeoMapService *mapService;
+    QGeoRoutingService *routingService;
     QMapView* mapView;
     QSlider* slider;
     QMenu* popupMenu;

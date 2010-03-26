@@ -39,43 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEREQUEST_P_H
-#define QLOCATION_ROUTEREQUEST_P_H
+#ifndef QLOCATION_ROUTE_H
+#define QLOCATION_ROUTE_H
 
-#include <QString>
 #include <QDateTime>
 #include <QList>
+#include <QRectF>
 
-#include "qgeocoordinate.h"
-#include "qrouterequest.h"
+#include "qmaneuver.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteRequestPrivate
+class QGeoRoutePrivate;
+class Q_LOCATION_EXPORT QGeoRoute
 {
 public:
-    QRouteRequestPrivate();
+    QGeoRoute();
+    QGeoRoute(const QGeoRoute& route);
+    QGeoRoute& operator=(const QGeoRoute& route);
+    ~QGeoRoute();
 
-    QString requestString(const QString &host) const;
+    QDateTime timeOfDeparture() const;
+    void setTimeOfDeparture(const QDateTime &timeOfDeparture);
 
-    QString typeToString() const;
-    QString modeToString() const;
-    QString avoidToString() const;
+    QDateTime timeOfArrival() const;
+    void setTimeOfArrival(const QDateTime &timeOfArrival);
 
-    QString trimDouble(qreal degree, int decimalDigits = 10) const;
+    quint32 distance() const;
+    void setDistance(quint32 distance);
 
-    QString version;
-    QGeoCoordinate src;
-    QGeoCoordinate dst;
-    quint32 nTotal;
-    quint16 nAlternatives;
-    QString languageCode;
-    QDateTime departureTime;
-    QDateTime arrivalTime;
-    QRouteRequest::RouteType routeType;
-    QRouteRequest::RouteMode routeMode;
-    QList<QRouteRequest::RouteAvoid> avoid;
-    QList<QGeoCoordinate> stopOvers;
+    const QRectF& boundingBox() const;
+    void setBoundingBox(const QRectF &boundingBox);
+
+    QList<QManeuver> maneuvers() const;
+    void setManeuvers(const QList<QManeuver> &maneuvers);
+
+private:
+    QGeoRoutePrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoRoute);
 };
 
 QTM_END_NAMESPACE

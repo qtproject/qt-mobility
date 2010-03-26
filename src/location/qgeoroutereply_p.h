@@ -39,44 +39,22 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTE_H
-#define QLOCATION_ROUTE_H
+#ifndef QLOCATION_ROUTEREPLY_P_H
+#define QLOCATION_ROUTEREPLY_P_H
 
-#include <QDateTime>
-#include <QList>
-#include <QRectF>
+#include <QString>
 
-#include "qmaneuver.h"
+#include "qgeoroute.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QRoutePrivate;
-class Q_LOCATION_EXPORT QRoute
+class QGeoRouteReplyPrivate
 {
 public:
-    QRoute();
-    QRoute(const QRoute& route);
-    QRoute& operator=(const QRoute& route);
-    ~QRoute();
-
-    QDateTime timeOfDeparture() const;
-    void setTimeOfDeparture(const QDateTime &timeOfDeparture);
-
-    QDateTime timeOfArrival() const;
-    void setTimeOfArrival(const QDateTime &timeOfArrival);
-
-    quint32 distance() const;
-    void setDistance(quint32 distance);
-
-    const QRectF& boundingBox() const;
-    void setBoundingBox(const QRectF &boundingBox);
-
-    QList<QManeuver> maneuvers() const;
-    void setManeuvers(const QList<QManeuver> &maneuvers);
-
-private:
-    QRoutePrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QRoute);
+    QGeoRouteReplyPrivate();
+    
+    QString description;
+    QList<QGeoRoute> routes;
 };
 
 QTM_END_NAMESPACE

@@ -13,25 +13,25 @@ class QDateTime;
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteReplyNokia;
-class QRoute;
+class QGeoRouteReplyNokia;
+class QGeoRoute;
 class QGeoCoordinate;
 class QManeuver;
 
-class QRouteXmlParserNokia
+class QGeoRouteXmlParserNokia
 {
 
 public:
 
-    QRouteXmlParserNokia();
-    ~QRouteXmlParserNokia();
+    QGeoRouteXmlParserNokia();
+    ~QGeoRouteXmlParserNokia();
 
-    bool parse(QIODevice* source, QRouteReplyNokia *output);
+    bool parse(QIODevice* source, QGeoRouteReplyNokia *output);
     QString errorString() const;
 
 private:
-    bool parseRootElement(QRouteReplyNokia *output);
-    bool parseRoute(QRoute *route);
+    bool parseRootElement(QGeoRouteReplyNokia *output);
+    bool parseRoute(QGeoRoute *route);
     bool parseXsdDateTime(const QString& strDateTime, QDateTime *dateTime, const QString &attributeName);
     bool parseXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName);
     bool parseManeuver(QManeuver *maneuver);

@@ -39,42 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QROUTEREPLY_NOKIA_P_H
-#define QROUTEREPLY_NOKIA_P_H
+#ifndef QROUTE_P_H
+#define QROUTE_P_H
 
-#include "qroutereply.h"
+#include "qmaneuver.h"
 
-#include <QNetworkReply>
+#include <QDateTime>
+#include <QList>
+#include <QRectF>
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteReplyNokia : public QRouteReply
+class QGeoRoutePrivate
 {
-    Q_OBJECT
-
 public:
-    enum ResultCode {
-        OK,
-        Failed,
-        FailedWithAlternative
-    };
+    QGeoRoutePrivate();
+    QGeoRoutePrivate(const QGeoRoutePrivate &rp);
+    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &rp);
 
-    QRouteReplyNokia(QNetworkReply *reply);
-    ~QRouteReplyNokia();
+    quint32 distance;
+    QDateTime timeOfArrival;
+    QDateTime timeOfDeparture;
 
-    QRouteReplyNokia::ResultCode resultCode() const;
-    void setResultCode(QRouteReplyNokia::ResultCode code);
-
-public slots:
-    virtual void parse();
-    virtual void translateError(QNetworkReply::NetworkError errorCode);
-    virtual void cancel();
-
-private:
-    QNetworkReply *m_reply;
-    QRouteReplyNokia::ResultCode m_code;
+    QRectF boundingBox;
+    QList<QManeuver> maneuvers;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QROUTE_P_H

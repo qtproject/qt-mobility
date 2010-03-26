@@ -44,8 +44,10 @@
 
 #include <QMainWindow>
 
-#include "qgeonetworkmanager.h"
-#include "qroutereply.h"
+#include "qgeocodingservice.h"
+#include "qgeoroutingservice.h"
+#include "qgeomapservice.h"
+#include "qgeoroutereply.h"
 #include "qgeocodingreply.h"
 
 namespace Ui
@@ -80,12 +82,14 @@ private slots:
     void on_btnRequest_clicked();
     void testReplyFinishedSignal();
 
-    void routeReplyFinished(QRouteReply* reply);
+    void routeReplyFinished(QGeoRouteReply* reply);
     void codingReplyFinished(QGeocodingReply* reply);
-    void mapTileReplyFinished(QMapTileReply* reply);
+    void mapTileReplyFinished(QGeoMapTileReply* reply);
 
 private:
-    QGeoNetworkManager geoNetworkManager;
+    QGeocodingService *geocodingService;
+    QGeoRoutingService *routingService;
+    QGeoMapService *mapService;
 #ifdef Q_OS_SYMBIAN
     QNetworkSession *session;
 #endif

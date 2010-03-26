@@ -39,23 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPTILEREPLY_P_H
-#define QMAPTILEREPLY_P_H
+#ifndef QGEOROUTINGSERVICE_H
+#define QGEOROUTINGSERVICE_H
 
-#include "qmaptilerequest.h"
-#include <QByteArray>
+#include "qmobilityglobal.h"
+
+#include "qgeorouterequest.h"
+#include "qgeoroutereply.h"
+
+#include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
-class QMapTileReplyPrivate
+class Q_LOCATION_EXPORT QGeoRoutingService : public QObject
 {
+    Q_OBJECT
 public:
-    QMapTileReplyPrivate();
+    QGeoRoutingService();
+    virtual ~QGeoRoutingService();
 
-    QMapTileRequest request;
-    QByteArray data;
+    virtual QGeoRouteReply* getRoute(const QGeoRouteRequest& request) = 0;
+
+signals:
+    void finished(QGeoRouteReply* reply);
+    void error(QGeoRouteReply* reply, QGeoRouteReply::ErrorCode errorCode, QString errorString = QString());
+
+private:
+    Q_DISABLE_COPY(QGeoRoutingService)
 };
 
 QTM_END_NAMESPACE
 
-#endif // QMAPTILEREPLY_P_H
+#endif // QGEOROUTINGSERVICE_H

@@ -39,32 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPTILEREPLY_NOKIA_P_H
-#define QMAPTILEREPLY_NOKIA_P_H
+#ifndef QGEOCODINGSERVICE_NOKIA_P_H
+#define QGEOCODINGSERVICE_NOKIA_P_H
 
-#include "qmaptilereply.h"
+#include "qgeocodingservice.h"
 
-#include <QNetworkReply>
+#include <QNetworkAccessManager>
+#include <QNetworkProxy>
 
 QTM_BEGIN_NAMESPACE
 
-class QMapTileReplyNokia : public QMapTileReply
+class Q_LOCATION_EXPORT QGeocodingServiceNokia : public QGeocodingService
 {
     Q_OBJECT
-
 public:
-    QMapTileReplyNokia(const QMapTileRequest &request, QNetworkReply *reply);
-    ~QMapTileReplyNokia();
+    QGeocodingServiceNokia();
+    ~QGeocodingServiceNokia();
 
-public slots:
-    virtual void parse();
-    virtual void translateError(QNetworkReply::NetworkError errorCode);
-    virtual void cancel();
+    QString token() const;
+    void setToken(const QString &token);
+
+    QString referrer() const;
+    void setReferrer(const QString &referrer);
+
+    QString host() const;
+    void setHost(const QString &host);
+
+    QNetworkProxy proxy() const;
+    void setProxy(const QNetworkProxy &proxy);
+
+    virtual QGeocodingReply* geocode(const QGeocodingRequest& request);
+    virtual QGeocodingReply* reverseGeocode(const QReverseGeocodingRequest& request);
+
+private slots:
+    void finishedReply();
+    void errorReply(QGeocodingReply::ErrorCode errorCode, QString errorString);
 
 private:
-    QNetworkReply *m_reply;
+    QString m_token;
+    QString m_referrer;
+    QString m_host;
+    QNetworkProxy m_proxy;
+    QNetworkAccessManager m_nam;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QGEOCODINGSERVICE_NOKIA_P_H

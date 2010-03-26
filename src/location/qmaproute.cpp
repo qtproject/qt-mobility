@@ -46,7 +46,7 @@
 QTM_BEGIN_NAMESPACE
 
 QMapRoutePrivate::QMapRoutePrivate()
-    :rt(QRoute()), rPen(QPen())
+    :rt(QGeoRoute()), rPen(QPen())
 {
 }
 
@@ -56,14 +56,14 @@ QMapRoutePrivate::QMapRoutePrivate()
     \ingroup location
 
     The representation of a route that has been added to the map.
-    It keeps track of all indivdual QRouteSegments.
+    It keeps track of all indivdual QGeoRouteSegments.
 */
 
 /*!
     Constructor.
     The \a route represents the route that this map route represents.
 */
-QMapRoute::QMapRoute(const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
+QMapRoute::QMapRoute(const QGeoRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
         : QMapObject(*new QMapRoutePrivate, QMapObject::RouteObject, layerIndex)
 {
     Q_D(QMapRoute);
@@ -72,7 +72,7 @@ QMapRoute::QMapRoute(const QRoute& route, const QPen& pen, const QPixmap& /*endp
     //TODO: endpoint marker for routes
 }
 
-QMapRoute::QMapRoute(QMapRoutePrivate &dd, const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
+QMapRoute::QMapRoute(QMapRoutePrivate &dd, const QGeoRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
         : QMapObject(dd, QMapObject::RouteObject, layerIndex)
 {
     Q_D(QMapRoute);

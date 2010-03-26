@@ -51,8 +51,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "qmaptile.h"
-#include "qrouterequest.h"
+#include "qgeomaptile.h"
+#include "qgeorouterequest.h"
 #include "qmapmarker.h"
 #include "qmapellipse.h"
 #include "qmaproute.h"
@@ -61,18 +61,26 @@
 #include "qmappolygon.h"
 #include "qmapmarker.h"
 
+#include "qgeomapservice_nokia_p.h"
+#include "qgeoroutingservice_nokia_p.h"
+
 QTM_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
-        ui(new Ui::MainWindow),
-        geoNetworkManager("", "")
+        ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
+    QGeoMapServiceNokia *mService = new QGeoMapServiceNokia();
+    QGeoRoutingServiceNokia *rService = new QGeoRoutingServiceNokia();
+
     QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.41", 8080);
-    geoNetworkManager.setMapProxy(proxy);
-    geoNetworkManager.setMapServer("maptile.mapplayer.maps.svc.ovi.com");
+    mService->setProxy(proxy);
+    mService->setHost("maptile.mapplayer.maps.svc.ovi.com");
+
+    mapService = mService;
+    routingService = rService;
 
     qgv = new QGraphicsView(this);
     qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -87,8 +95,8 @@ MainWindow::MainWindow(QWidget *parent) :
     qgv->scene()->addItem(mapView);
     mapView->setGeometry(0, 0, width(), height());
 
-    QObject::connect(&geoNetworkManager, SIGNAL(finished(QRouteReply*)),
-                     this, SLOT(routeReplyFinished(QRouteReply*)));
+    QObject::connect(routingService, SIGNAL(finished(QGeoRouteReply*)),
+                     this, SLOT(routeReplyFinished(QGeoRouteReply*)));
     QObject::connect(mapView, SIGNAL(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)),
                      this, SLOT(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)));
     QObject::connect(mapView, SIGNAL(zoomLevelChanged(quint16, quint16)),
@@ -188,6 +196,8 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete mapService;
+    delete routingService;
 }
 void MainWindow::delayedInit()
 {
@@ -209,7 +219,7 @@ void MainWindow::delayedInit()
     session->waitForOpened(-1);
 #endif
 
-    mapView->init(&geoNetworkManager, QGeoCoordinate(52.35, 13));
+    mapView->init(mapService, QGeoCoordinate(52.35, 13));
 }
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
@@ -230,9 +240,9 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::routeReplyFinished(QRouteReply* reply)
+void MainWindow::routeReplyFinished(QGeoRouteReply* reply)
 {
-    QList<QRoute> routes = reply->routes();
+    QList<QGeoRoute> routes = reply->routes();
 
     if (routes.size() > 0) {
         QColor routeColor(Qt::blue);
@@ -268,7 +278,7 @@ void MainWindow::setRtFromTo(bool /*checked*/)
 
     QGeoCoordinate from = selectedMarkers.first()->point();
     QGeoCoordinate to = selectedMarkers.last()->point();
-    QRouteRequest request;
+    QGeoRouteRequest request;
     request.setSource(from);
     request.setDestination(to);
 
@@ -276,7 +286,7 @@ void MainWindow::setRtFromTo(bool /*checked*/)
         request.addStopOver(selectedMarkers[i]->point());
     }
 
-    geoNetworkManager.get(request);
+    routingService->getRoute(request);
     selectedMarkers.clear();
 }
 

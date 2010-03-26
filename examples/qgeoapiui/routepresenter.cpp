@@ -43,7 +43,7 @@
 
 #include <QStringBuilder>
 
-RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QRouteReply* routeReply)
+RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* routeReply)
         : GeoPresenter(treeWidget), routeReply(routeReply)
 {
 }
@@ -52,7 +52,7 @@ void RoutePresenter::show()
 {
     treeWidget->clear();
     QTreeWidgetItem* top = showRoutes();
-    const QList<QRoute> routes = routeReply->routes();
+    const QList<QGeoRoute> routes = routeReply->routes();
 
     for (int i = 0; i < routes.length(); i++) {
         showRoute(top, routes[i]);
@@ -91,7 +91,7 @@ QTreeWidgetItem* RoutePresenter::showRoutes()
     return top;
 }
 
-void RoutePresenter::showRoute(QTreeWidgetItem* top, const QRoute& route)
+void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
 {
     QTreeWidgetItem* routeItem = new QTreeWidgetItem(top);
     routeItem->setText(0, "route");

@@ -46,12 +46,12 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QManeuver
-    \brief The QManeuver class represents the maneuver component of a QRouteReply.
+    \brief The QManeuver class represents the maneuver component of a QGeoRouteReply.
     \ingroup location
 
     This class represents a maneuver as part of a route reply.
 
-    \sa QRouteReply
+    \sa QGeoRouteReply
 */
 
 /*!

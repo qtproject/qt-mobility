@@ -43,8 +43,8 @@
 #include <QDateTime>
 #include <QMap>
 
-#include "qmaptilecache.h"
-#include "qmaptilereply_nokia_p.h"
+#include "qgeomaptilecache.h"
+#include "qgeomaptilereply_nokia_p.h"
 
 #define SECONDS_PER_DAY 86400
 #define THIRTY_DAYS (30 * SECONDS_PER_DAY)
@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
 
 //TODO: thoroughly check whether LRU correctly works
 
-QMapTileCache::QMapTileCache()
+QGeoMapTileCache::QGeoMapTileCache()
 {
     cacheDir = QDir::home();
     expire = THIRTY_DAYS;
@@ -66,7 +66,7 @@ QMapTileCache::QMapTileCache()
     init();
 }
 
-QMapTileCache::QMapTileCache(QDir& directory)
+QGeoMapTileCache::QGeoMapTileCache(QDir& directory)
 {
     cacheDir = directory;
     expire = THIRTY_DAYS;
@@ -76,7 +76,7 @@ QMapTileCache::QMapTileCache(QDir& directory)
     init();
 }
 
-void QMapTileCache::init()
+void QGeoMapTileCache::init()
 {
     if (!cacheDir.exists(QLOCATION_CACHE_DIR)) {
         cacheDir.mkdir(QLOCATION_CACHE_DIR);
@@ -102,7 +102,7 @@ void QMapTileCache::init()
         }
 }
 
-QMapTileReply* QMapTileCache::get(const QMapTileRequest& request)
+QGeoMapTileReply* QGeoMapTileCache::get(const QGeoMapTileRequest& request)
 {
     QString fileName = constrFileName(request);
     int hashKey = constrHashKey(fileName);
@@ -126,14 +126,14 @@ QMapTileReply* QMapTileCache::get(const QMapTileRequest& request)
     if (!tile.open(QIODevice::ReadOnly))
         return NULL;
 
-    QMapTileReply* reply = new QMapTileReplyNokia(request, 0);
+    QGeoMapTileReply* reply = new QGeoMapTileReplyNokia(request, 0);
     reply->setData(tile.readAll());
     tile.close();
 
     return reply;
 }
 
-bool QMapTileCache::hasExpired(const QDateTime& timestamp)
+bool QGeoMapTileCache::hasExpired(const QDateTime& timestamp)
 {
     uint lastAccessed = timestamp.toTime_t();
     uint currTime = QDateTime::currentDateTime().toTime_t();
@@ -145,7 +145,7 @@ bool QMapTileCache::hasExpired(const QDateTime& timestamp)
     return false;
 }
 
-void QMapTileCache::cache(const QMapTileRequest &request, const QMapTileReply& reply)
+void QGeoMapTileCache::cache(const QGeoMapTileRequest &request, const QGeoMapTileReply& reply)
 {
     quint64 oldFileSize = 0;
     //construct proper file name and subfolder
@@ -181,17 +181,17 @@ void QMapTileCache::cache(const QMapTileRequest &request, const QMapTileReply& r
         cleanup();
 }
 
-void QMapTileCache::setExpireAfter(const quint32 seconds)
+void QGeoMapTileCache::setExpireAfter(const quint32 seconds)
 {
     expire = seconds;
 }
 
-void QMapTileCache::setExpireAfter(const quint16 days)
+void QGeoMapTileCache::setExpireAfter(const quint16 days)
 {
     expire = days * SECONDS_PER_DAY;
 }
 
-int QMapTileCache::constrHashKey(const QString& fileName)
+int QGeoMapTileCache::constrHashKey(const QString& fileName)
 {
     unsigned int hashKey = 0;
 
@@ -202,7 +202,7 @@ int QMapTileCache::constrHashKey(const QString& fileName)
     return hashKey % 256;
 }
 
-QString QMapTileCache::constrFileName(const QMapTileRequest& request)
+QString QGeoMapTileCache::constrFileName(const QGeoMapTileRequest& request)
 {
     return request.version().id % '_' %
            request.scheme().id % '_' %
@@ -213,7 +213,7 @@ QString QMapTileCache::constrFileName(const QMapTileRequest& request)
            request.format().id;
 }
 
-void QMapTileCache::cleanup(bool force)
+void QGeoMapTileCache::cleanup(bool force)
 {
     //Contains all (timestamp, filename) pairs
     QMap<QDateTime, QFileInfo> lru;

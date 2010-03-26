@@ -39,58 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPTILEREQUEST_H
-#define QLOCATION_MAPTILEREQUEST_H
+#ifndef QLOCATION_ROUTEREQUEST_P_H
+#define QLOCATION_ROUTEREQUEST_P_H
 
 #include <QString>
+#include <QDateTime>
+#include <QList>
 
-#include "qmaptile.h"
+#include "qgeocoordinate.h"
+#include "qgeorouterequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMapTileRequestPrivate;
-class Q_LOCATION_EXPORT QMapTileRequest
+class QGeoRouteRequestPrivate
 {
 public:
-    QMapTileRequest(const MapVersion& mapVersion,
-                    const MapScheme& mapScheme,
-                    const MapResolution& mapResolution,
-                    const MapFormat& mapFormat);
-    QMapTileRequest();
+    QGeoRouteRequestPrivate();
 
-    QMapTileRequest(const QMapTileRequest &mtr);
-    QMapTileRequest& operator= (const QMapTileRequest &mtr);
+    QString requestString(const QString &host) const;
 
-    ~QMapTileRequest();
+    QString typeToString() const;
+    QString modeToString() const;
+    QString avoidToString() const;
 
-    quint32 col() const;
-    void setCol(quint32 c);
+    QString trimDouble(qreal degree, int decimalDigits = 10) const;
 
-    quint32 row() const;
-    void setRow(quint32 r);
-
-    MapVersion version() const;
-    void setVersion(const MapVersion& version);
-
-    MapResolution resolution() const;
-    void setResolution(const MapResolution& resolution);
-
-    MapFormat format() const;
-    void setFormat(const MapFormat& format);
-
-    MapScheme scheme() const;
-    void setScheme(const MapScheme& scheme);
-
-    quint16 zoomLevel() const;
-    void setZoomLevel(quint16 level);
-
-    QString requestString(const QString &host, const QString &token, const QString &referrer) const;
-
-private:
-    //Q_DISABLE_COPY(QMapTileRequest);
-
-    QMapTileRequestPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QMapTileRequest);
+    QString version;
+    QGeoCoordinate src;
+    QGeoCoordinate dst;
+    quint32 nTotal;
+    quint16 nAlternatives;
+    QString languageCode;
+    QDateTime departureTime;
+    QDateTime arrivalTime;
+    QGeoRouteRequest::RouteType routeType;
+    QGeoRouteRequest::RouteMode routeMode;
+    QList<QGeoRouteRequest::RouteAvoid> avoid;
+    QList<QGeoCoordinate> stopOvers;
 };
 
 QTM_END_NAMESPACE

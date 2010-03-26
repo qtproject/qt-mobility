@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qroutereply.h"
-#include "qroutereply_p.h"
+#include "qgeoroutereply.h"
+#include "qgeoroutereply_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QRouteReply
-    \brief The QRouteReply class represents the response from a routing service.
+    \class QGeoRouteReply
+    \brief The QGeoRouteReply class represents the response from a routing service.
     \ingroup location
 
     This class represents the response from a routing service.
@@ -68,72 +68,72 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a QRouteReply with parent \a parent.
+    Constructs a QGeoRouteReply with parent \a parent.
 */
-QRouteReply::QRouteReply(QObject *parent)
+QGeoRouteReply::QGeoRouteReply(QObject *parent)
     : QObject(parent),
-    d_ptr(new QRouteReplyPrivate)
+    d_ptr(new QGeoRouteReplyPrivate)
 {
 }
 
 /*!
     Destructor.
 */
-QRouteReply::~QRouteReply()
+QGeoRouteReply::~QGeoRouteReply()
 {
-    Q_D(QRouteReply);
+    Q_D(QGeoRouteReply);
     delete d;
 }
 
 /*!
     Returns the description of the route or routes.
 */
-QString QRouteReply::description() const
+QString QGeoRouteReply::description() const
 {
-    Q_D(const QRouteReply);
+    Q_D(const QGeoRouteReply);
     return d->description;
 }
 
 /*!
     Sets the description of the route or routes to \a description.
 */
-void QRouteReply::setDescription(const QString &description)
+void QGeoRouteReply::setDescription(const QString &description)
 {
-    Q_D(QRouteReply);
+    Q_D(QGeoRouteReply);
     d->description = description;
 }
 
 /*!
     Returns the list of routes which were requested.
 */
-QList<QRoute> QRouteReply::routes() const
+QList<QGeoRoute> QGeoRouteReply::routes() const
 {
-    Q_D(const QRouteReply);
+    Q_D(const QGeoRouteReply);
     return d->routes;
 }
 
 /*!
     Sets the list of routes in the reply to \a routes.
 */
-void QRouteReply::setRoutes(const QList<QRoute> &routes)
+void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 {
-    Q_D(QRouteReply);
+    Q_D(QGeoRouteReply);
     d->routes = routes;
 }
 
 /*!
-    \fn void QRouteReply::cancel()
+    \fn void QGeoRouteReply::cancel()
 
     Cancels the receiving of this reply if the reply hasn't been received already.
 */
 
 /*!
-    \fn void QRouteReply::finished()
+    \fn void QGeoRouteReply::finished()
 
     Indicates that the reply has been received and processed without error, and is ready to be used.
 */
 /*!
-    \fn void QRouteReply::error(QRouteReply::ErrorCode errorCode, const QString &errorString = QString())
+    \fn void QGeoRouteReply::error(QGeoRouteReply::ErrorCode errorCode, const QString &errorString = QString())
 
     Indicates that an error occurred during the receiving or processing of the reply.
 */
@@ -141,8 +141,8 @@ void QRouteReply::setRoutes(const QList<QRoute> &routes)
 /*******************************************************************************
 *******************************************************************************/
 
-QRouteReplyPrivate::QRouteReplyPrivate() {}
+QGeoRouteReplyPrivate::QGeoRouteReplyPrivate() {}
 
-#include "moc_qroutereply.cpp"
+#include "moc_qgeoroutereply.cpp"
 
 QTM_END_NAMESPACE

@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qmaptilerequest.h"
-#include "qmaptilerequest_p.h"
+#include "qgeomaptilerequest.h"
+#include "qgeomaptilerequest_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QMapTileRequeset
-    \brief The QMapTileRequest class represents a request for a specific map tile.
+    \class QGeoMapTileRequeset
+    \brief The QGeoMapTileRequest class represents a request for a specific map tile.
     \ingroup location
 
     The maps that this class deals with are divided into 2^zoomLevel() columns
@@ -56,11 +56,11 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructor which sets some of the map data.
 */
-QMapTileRequest::QMapTileRequest(const MapVersion& mapVersion,
+QGeoMapTileRequest::QGeoMapTileRequest(const MapVersion& mapVersion,
                                  const MapScheme& mapScheme,
                                  const MapResolution& mapResolution,
                                  const MapFormat& mapFormat)
-        : d_ptr(new QMapTileRequestPrivate())
+        : d_ptr(new QGeoMapTileRequestPrivate())
 {
     setVersion(mapVersion);
     setScheme(mapScheme);
@@ -71,17 +71,17 @@ QMapTileRequest::QMapTileRequest(const MapVersion& mapVersion,
 /*!
     Default constructor
 */
-QMapTileRequest::QMapTileRequest()
-    : d_ptr(new QMapTileRequestPrivate())
+QGeoMapTileRequest::QGeoMapTileRequest()
+    : d_ptr(new QGeoMapTileRequestPrivate())
 {
 }
 
-QMapTileRequest::QMapTileRequest(const QMapTileRequest &mtr)
-    : d_ptr(new QMapTileRequestPrivate(*(mtr.d_ptr)))
+QGeoMapTileRequest::QGeoMapTileRequest(const QGeoMapTileRequest &mtr)
+    : d_ptr(new QGeoMapTileRequestPrivate(*(mtr.d_ptr)))
 {
 }
 
-QMapTileRequest& QMapTileRequest::operator= (const QMapTileRequest &mtr)
+QGeoMapTileRequest& QGeoMapTileRequest::operator= (const QGeoMapTileRequest &mtr)
 {
     *d_ptr = *(mtr.d_ptr);
     return *this;
@@ -90,18 +90,18 @@ QMapTileRequest& QMapTileRequest::operator= (const QMapTileRequest &mtr)
 /*!
     Destructor
 */
-QMapTileRequest::~QMapTileRequest()
+QGeoMapTileRequest::~QGeoMapTileRequest()
 {
-    Q_D(QMapTileRequest);
+    Q_D(QGeoMapTileRequest);
     delete d;
 }
 
 /*!
     Returns the col index of the requested map tile.
 */
-quint32 QMapTileRequest::col() const
+quint32 QGeoMapTileRequest::col() const
 {
-    Q_D(const QMapTileRequest);
+    Q_D(const QGeoMapTileRequest);
     return d->cl;
 }
 
@@ -110,18 +110,18 @@ quint32 QMapTileRequest::col() const
 
     Valid values are 0 ... 2^zoomLevel() - 1.
 */
-void QMapTileRequest::setCol(quint32 c)
+void QGeoMapTileRequest::setCol(quint32 c)
 {
-    Q_D(QMapTileRequest);
+    Q_D(QGeoMapTileRequest);
     d->cl = c;
 }
 
 /*!
     Returns the row index of the requested map tile.
 */
-quint32 QMapTileRequest::row() const
+quint32 QGeoMapTileRequest::row() const
 {
-    Q_D(const QMapTileRequest);
+    Q_D(const QGeoMapTileRequest);
     return d->rw;
 }
 /*!
@@ -129,119 +129,119 @@ Sets the row index of the requested map tile to \a r.
 
 Valid values are 0 ... 2^zoomLevel() - 1.
 */
-void QMapTileRequest::setRow(quint32 r)
+void QGeoMapTileRequest::setRow(quint32 r)
 {
-    Q_D(QMapTileRequest);
+    Q_D(QGeoMapTileRequest);
     d->rw = r;
 }
 
 /*!
     Returns the version of the requested map tile.
 */
-MapVersion QMapTileRequest::version() const
+MapVersion QGeoMapTileRequest::version() const
 {
-    Q_D(const QMapTileRequest);
+    Q_D(const QGeoMapTileRequest);
     return d->ver;
 }
 
 /*!
     Sets the version of the requested map tile to \a version.
 */
-void QMapTileRequest::setVersion(const MapVersion& version)
+void QGeoMapTileRequest::setVersion(const MapVersion& version)
 {
-    Q_D(QMapTileRequest);
+    Q_D(QGeoMapTileRequest);
     d->ver = version;
 }
 
 /*!
     Returns the resolution of the requested map tile.
 */
-MapResolution QMapTileRequest::resolution() const
+MapResolution QGeoMapTileRequest::resolution() const
 {
-    Q_D(const QMapTileRequest);
+    Q_D(const QGeoMapTileRequest);
     return d->res;
 }
 
 /*!
     Sets the resolution of the requested map tile to \a resolution.
 */
-void QMapTileRequest::setResolution(const MapResolution& resolution)
+void QGeoMapTileRequest::setResolution(const MapResolution& resolution)
 {
-    Q_D(QMapTileRequest);
+    Q_D(QGeoMapTileRequest);
     d->res = resolution;
 }
 
 /*!
     Returns the format of the requested map tile.
 */
-MapFormat QMapTileRequest::format() const
+MapFormat QGeoMapTileRequest::format() const
 {
-    Q_D(const QMapTileRequest);
+    Q_D(const QGeoMapTileRequest);
     return d->frmt;
 }
 
 /*!
     Sets the format of the requested map tile to \a format.
 */
-void QMapTileRequest::setFormat(const MapFormat& format)
+void QGeoMapTileRequest::setFormat(const MapFormat& format)
 {
-    Q_D(QMapTileRequest);
+    Q_D(QGeoMapTileRequest);
     d->frmt = format;
 }
 
 /*!
     Returns the scheme of the requested map tile.
 */
-MapScheme QMapTileRequest::scheme() const
+MapScheme QGeoMapTileRequest::scheme() const
 {
-    Q_D(const QMapTileRequest);
+    Q_D(const QGeoMapTileRequest);
     return d->schm;
 }
 
 /*!
     Sets the scheme of the requested map tile to \a scheme.
 */
-void QMapTileRequest::setScheme(const MapScheme& scheme)
+void QGeoMapTileRequest::setScheme(const MapScheme& scheme)
 {
-    Q_D(QMapTileRequest);
+    Q_D(QGeoMapTileRequest);
     d->schm = scheme;
 }
 
 /*!
     Returns the zoom level of the requested map tile.
 */
-quint16 QMapTileRequest::zoomLevel() const
+quint16 QGeoMapTileRequest::zoomLevel() const
 {
-    Q_D(const QMapTileRequest);
+    Q_D(const QGeoMapTileRequest);
     return d->zoom;
 }
 
 /*!
     Sets the zoom level of the requested map tile to \a level.
 */
-void QMapTileRequest::setZoomLevel(quint16 level)
+void QGeoMapTileRequest::setZoomLevel(quint16 level)
 {
-    Q_D(QMapTileRequest);
+    Q_D(QGeoMapTileRequest);
     d->zoom = level;
 }
 
 /*!
   Returns the request string for this request and the given \a host, \a token and \a referrer.
 */
-QString QMapTileRequest::requestString(const QString &host, const QString &token, const QString &referrer) const
+QString QGeoMapTileRequest::requestString(const QString &host, const QString &token, const QString &referrer) const
 {
-    Q_D(const QMapTileRequest);
+    Q_D(const QGeoMapTileRequest);
     return d->requestString(host, token, referrer);
 }
 
 /******************************************************************************
   ****************************************************************************/
 
-QMapTileRequestPrivate::QMapTileRequestPrivate()
+QGeoMapTileRequestPrivate::QGeoMapTileRequestPrivate()
     : cl(0), rw(0), zoom(0)
 {}
 
-QMapTileRequestPrivate::QMapTileRequestPrivate(const QMapTileRequestPrivate &mtrp)
+QGeoMapTileRequestPrivate::QGeoMapTileRequestPrivate(const QGeoMapTileRequestPrivate &mtrp)
     : cl(mtrp.cl),
     rw(mtrp.rw),
     ver(mtrp.ver),
@@ -251,7 +251,7 @@ QMapTileRequestPrivate::QMapTileRequestPrivate(const QMapTileRequestPrivate &mtr
     frmt(mtrp.frmt)
 {}
 
-QMapTileRequestPrivate& QMapTileRequestPrivate::operator= (const QMapTileRequestPrivate &mtrp)
+QGeoMapTileRequestPrivate& QGeoMapTileRequestPrivate::operator= (const QGeoMapTileRequestPrivate &mtrp)
 {
     cl = mtrp.cl;
     rw = mtrp.rw;
@@ -263,7 +263,7 @@ QMapTileRequestPrivate& QMapTileRequestPrivate::operator= (const QMapTileRequest
     return *this;
 }
 
-QString QMapTileRequestPrivate::requestString(const QString &host, const QString &token, const QString &referrer) const
+QString QGeoMapTileRequestPrivate::requestString(const QString &host, const QString &token, const QString &referrer) const
 {
     QString request = "http://";
     request += host;

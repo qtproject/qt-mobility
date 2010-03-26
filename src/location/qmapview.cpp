@@ -50,7 +50,7 @@
 
 #include "qmapview.h"
 #include "qmapview_p.h"
-#include "qmaptile.h"
+#include "qgeomaptile.h"
 #include "qmaproute.h"
 #include "qmapobject.h"
 #include "qmapobject_p.h"
@@ -61,6 +61,7 @@
 #include "qmapellipse.h"
 #include "qmapmarker.h"
 #include "qmapmarker_p.h"
+#include "qgeomapservice.h"
 
 #define RELEASE_INTERVAL 10000
 #define DEFAULT_ZOOM_LEVEL 4
@@ -109,29 +110,29 @@ QMapView::~QMapView()
 }
 
 /*!
-    Initializes a the map view with a given \a geoEngine and centers
+    Initializes a the map view with a given \a mapService and centers
     the map at \a center.
 */
-void QMapView::init(QGeoEngine* geoEngine, const QGeoCoordinate& center)
+void QMapView::init(QGeoMapService* mapService, const QGeoCoordinate& center)
 {
     Q_D(QMapView);
 
-    if (!geoEngine)
+    if (!mapService)
         return;
 
     //Is this map engine replacing an old one?
-    if (d->geoEngine) {
-        QObject::disconnect(geoEngine, SIGNAL(finished(QMapTileReply*)),
-                            this, SLOT(tileFetched(QMapTileReply*)));
+    if (d->mapService) {
+        QObject::disconnect(mapService, SIGNAL(finished(QGeoMapTileReply*)),
+                            this, SLOT(tileFetched(QGeoMapTileReply*)));
     }
 
     QObject::disconnect(&d->releaseTimer, SIGNAL(timeout()),
                         this, SLOT(releaseRemoteTiles()));
 
-    d->geoEngine = geoEngine;
+    d->mapService = mapService;
 
-    QObject::connect(d->geoEngine, SIGNAL(finished(QMapTileReply*)),
-                     this, SLOT(tileFetched(QMapTileReply*)), Qt::QueuedConnection);
+    QObject::connect(d->mapService, SIGNAL(finished(QGeoMapTileReply*)),
+                     this, SLOT(tileFetched(QGeoMapTileReply*)), Qt::QueuedConnection);
     QObject::connect(&d->releaseTimer, SIGNAL(timeout()),
                      this, SLOT(releaseRemoteTiles()));
 
@@ -266,17 +267,17 @@ void QMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 
 /*!
     This slot is called when a requested map tile has become available.
-    Internally, this slot is connected to QGeoEngine::finished(QMapTileReply*).
+    Internally, this slot is connected to QGeoEngine::finished(QGeoMapTileReply*).
 */
-void QMapView::tileFetched(QMapTileReply* reply)
+void QMapView::tileFetched(QGeoMapTileReply* reply)
 {
     Q_D(QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return; //This really should not be happening
 
     //Are we actually waiting for this tile?
-    const QMapTileRequest& request = reply->request();
+    const QGeoMapTileRequest& request = reply->request();
     quint64 tileIndex = getTileIndex(request.col(), request.row());
 
     if (!d->pendingTiles.contains(tileIndex)) {
@@ -365,8 +366,8 @@ void QMapView::wheelEvent(QGraphicsSceneWheelEvent* event)
 quint16 QMapView::maxZoomLevel() const
 {
     Q_D(const QMapView);
-    if (d->geoEngine)
-        return d->geoEngine->maxZoomLevel();
+    if (d->mapService)
+        return d->mapService->maxZoomLevel();
     return 0;
 }
 /*!
@@ -385,13 +386,13 @@ void QMapView::setZoomLevel(int zoomLevel)
 {
     Q_D(QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return;
 
     quint16 oldZoomLevel = d->currZoomLevel;
 
-    if (zoomLevel > d->geoEngine->maxZoomLevel())
-        d->currZoomLevel = d->geoEngine->maxZoomLevel();
+    if (zoomLevel > d->mapService->maxZoomLevel())
+        d->currZoomLevel = d->mapService->maxZoomLevel();
     else if (zoomLevel < 0)
         d->currZoomLevel = 0;
     else
@@ -499,7 +500,7 @@ void QMapView::moveViewPort(int deltaX, int deltaY)
 {
     Q_D(QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return;
 
     qreal pixelPerXAxis = d->numColRow * d->mapResolution.size.width();
@@ -586,7 +587,7 @@ QPointF QMapView::mercatorToMap(const QPointF& mercatorCoordinate) const
 {
     Q_D(const QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return QPointF();
 
     return QPointF(static_cast<qint64>(mercatorCoordinate.x() * ((qreal) d->numColRow) * ((qreal) d->mapResolution.size.width())),
@@ -600,7 +601,7 @@ QPointF QMapView::mapToMercator(const QPointF& mapCoordinate) const
 {
     Q_D(const QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return QPointF();
 
     return QPointF(mapCoordinate.x() / (((qreal) d->numColRow) * ((qreal) d->mapResolution.size.width())),

@@ -51,9 +51,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteRequestPrivate;
+class QGeoRouteRequestPrivate;
 
-class Q_LOCATION_EXPORT QRouteRequest
+class Q_LOCATION_EXPORT QGeoRouteRequest
 {
     friend class QGeoNetworkManager;
 
@@ -81,8 +81,8 @@ public:
     };
 
 public:
-    QRouteRequest();
-    ~QRouteRequest();
+    QGeoRouteRequest();
+    ~QGeoRouteRequest();
 
     QString version() const;
 
@@ -123,10 +123,10 @@ public:
     QString requestString(const QString &host) const;
 
 private:
-    QRouteRequestPrivate *d_ptr;
+    QGeoRouteRequestPrivate *d_ptr;
 
-    Q_DECLARE_PRIVATE(QRouteRequest)
-    Q_DISABLE_COPY(QRouteRequest)
+    Q_DECLARE_PRIVATE(QGeoRouteRequest)
+    Q_DISABLE_COPY(QGeoRouteRequest)
 };
 
 QTM_END_NAMESPACE

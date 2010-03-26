@@ -39,54 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QROUTEREPLY_H
-#define QROUTEREPLY_H
+#ifndef QGEOROUTINGSERVICE_NOKIA_P_H
+#define QGEOROUTINGSERVICE_NOKIA_P_H
 
-#include "qroute.h"
+#include "qgeoroutingservice.h"
 
-#include <QList>
+#include <QNetworkAccessManager>
+#include <QNetworkProxy>
 
 QTM_BEGIN_NAMESPACE
 
-class QRouteReplyPrivate;
-class Q_LOCATION_EXPORT QRouteReply : public QObject
+class Q_LOCATION_EXPORT QGeoRoutingServiceNokia : public QGeoRoutingService
 {
     Q_OBJECT
-
 public:
-    // TODO populate this some more...
-    enum ErrorCode {
-        NoError,
-        // flesh out the more common specific network errors
-        NetworkError,
-        // File errors
-        NoContentError,
-        ParsingError,
-        UnknownError
-    };
+    QGeoRoutingServiceNokia();
+    ~QGeoRoutingServiceNokia();
 
-    QRouteReply(QObject *parent = 0);
-    virtual ~QRouteReply();
+    QString token() const;
+    void setToken(const QString &token);
 
-    QString description() const;
-    void setDescription(const QString &description);
+    QString referrer() const;
+    void setReferrer(const QString &referrer);
 
-    QList<QRoute> routes() const;
-    void setRoutes(const QList<QRoute> &routes);
+    QString host() const;
+    void setHost(const QString &host);
 
-public slots:
-    virtual void cancel() = 0;
+    QNetworkProxy proxy() const;
+    void setProxy(const QNetworkProxy &proxy);
 
-signals:
-    void finished();
-    void error(QRouteReply::ErrorCode errorCode, const QString &errorString = QString());
+    virtual QGeoRouteReply* getRoute(const QGeoRouteRequest& request);
 
-    // CHOICE: could lose the setters and make this protected
+private slots:
+    void finishedReply();
+    void errorReply(QGeoRouteReply::ErrorCode errorCode, QString errorString);
+
 private:
-    QRouteReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QRouteReply);
+    QString m_token;
+    QString m_referrer;
+    QString m_host;
+    QNetworkProxy m_proxy;
+    QNetworkAccessManager m_nam;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QGEOROUTINGSERVICE_NOKIA_P_H

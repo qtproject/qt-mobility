@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qroutereply_nokia_p.h"
+#include "qgeoroutereply_nokia_p.h"
 
-#include "qroutereply.h"
-#include "qroutexmlparser_nokia_p.h"
+#include "qgeoroutereply.h"
+#include "qgeoroutexmlparser_nokia_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QRouteReplyNokia::QRouteReplyNokia(QNetworkReply *reply)
+QGeoRouteReplyNokia::QGeoRouteReplyNokia(QNetworkReply *reply)
     : m_reply(reply)
 {
     connect(m_reply,
@@ -74,19 +74,19 @@ QRouteReplyNokia::QRouteReplyNokia(QNetworkReply *reply)
             */
 }
 
-QRouteReplyNokia::~QRouteReplyNokia()
+QGeoRouteReplyNokia::~QGeoRouteReplyNokia()
 {
     if (m_reply)
         m_reply->abort();
     delete m_reply;
 }
 
-QRouteReplyNokia::ResultCode QRouteReplyNokia::resultCode() const
+QGeoRouteReplyNokia::ResultCode QGeoRouteReplyNokia::resultCode() const
 {
     return m_code;
 }
 
-void QRouteReplyNokia::setResultCode(QRouteReplyNokia::ResultCode code)
+void QGeoRouteReplyNokia::setResultCode(QGeoRouteReplyNokia::ResultCode code)
 {
     m_code = code;
 }
@@ -95,42 +95,42 @@ void QRouteReplyNokia::setResultCode(QRouteReplyNokia::ResultCode code)
   emits finished if all went well
   otherwise emits error
 */
-void QRouteReplyNokia::parse()
+void QGeoRouteReplyNokia::parse()
 {
     if (m_reply->size() == 0) {
-        emit error(QRouteReply::NoContentError, "The reply to the routing request was empty.");
+        emit error(QGeoRouteReply::NoContentError, "The reply to the routing request was empty.");
         return;
     }
 
-    QRouteXmlParserNokia parser;
+    QGeoRouteXmlParserNokia parser;
     bool success = parser.parse(m_reply, this);
 
     if (!success) {
         // emit error based on parser error string
-        emit error(QRouteReply::ParsingError, QString("Parsing error: %1").arg(parser.errorString()));
+        emit error(QGeoRouteReply::ParsingError, QString("Parsing error: %1").arg(parser.errorString()));
         return;
     }
 
-    if (m_code != QRouteReplyNokia::OK) {
+    if (m_code != QGeoRouteReplyNokia::OK) {
         // emit error based on content of xml
-        emit error(QRouteReply::UnknownError, "The reply contained a status code that indicates that the request was not successful.");
+        emit error(QGeoRouteReply::UnknownError, "The reply contained a status code that indicates that the request was not successful.");
         return;
     }
 
     emit finished();
 }
 
-void QRouteReplyNokia::translateError(QNetworkReply::NetworkError errorCode)
+void QGeoRouteReplyNokia::translateError(QNetworkReply::NetworkError errorCode)
 {
     // TODO map errors across from errorCode
-    emit error(QRouteReply::NetworkError, QString("Network error: %1").arg(m_reply->errorString()));
+    emit error(QGeoRouteReply::NetworkError, QString("Network error: %1").arg(m_reply->errorString()));
 }
 
-void QRouteReplyNokia::cancel()
+void QGeoRouteReplyNokia::cancel()
 {
     m_reply->abort();
 }
 
-#include "moc_qroutereply_nokia_p.cpp"
+#include "moc_qgeoroutereply_nokia_p.cpp"
 
 QTM_END_NAMESPACE

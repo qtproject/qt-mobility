@@ -39,12 +39,12 @@
 **
 ****************************************************************************/
 
-#include "qmaptilereply_nokia_p.h"
+#include "qgeomaptilereply_nokia_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QMapTileReplyNokia::QMapTileReplyNokia(const QMapTileRequest &request, QNetworkReply *reply)
-    : QMapTileReply(request),
+QGeoMapTileReplyNokia::QGeoMapTileReplyNokia(const QGeoMapTileRequest &request, QNetworkReply *reply)
+    : QGeoMapTileReply(request),
     m_reply(reply)
 {
     if (reply) {
@@ -73,7 +73,7 @@ QMapTileReplyNokia::QMapTileReplyNokia(const QMapTileRequest &request, QNetworkR
             */
 }
 
-QMapTileReplyNokia::~QMapTileReplyNokia()
+QGeoMapTileReplyNokia::~QGeoMapTileReplyNokia()
 {
     if (m_reply)
         m_reply->abort();
@@ -84,24 +84,24 @@ QMapTileReplyNokia::~QMapTileReplyNokia()
   emits finished if all went well
   otherwise emits error
 */
-void QMapTileReplyNokia::parse()
+void QGeoMapTileReplyNokia::parse()
 {
     setData(m_reply->readAll());
     done();
 }
 
-void QMapTileReplyNokia::translateError(QNetworkReply::NetworkError errorCode)
+void QGeoMapTileReplyNokia::translateError(QNetworkReply::NetworkError errorCode)
 {
     // TODO map errors across from errorCode
-    emit error(QMapTileReply::NetworkError, QString("Network error: %1").arg(m_reply->errorString()));
+    emit error(QGeoMapTileReply::NetworkError, QString("Network error: %1").arg(m_reply->errorString()));
 }
 
-void QMapTileReplyNokia::cancel()
+void QGeoMapTileReplyNokia::cancel()
 {
     if (m_reply)
         m_reply->abort();
 }
 
-#include "moc_qmaptilereply_nokia_p.cpp"
+#include "moc_qgeomaptilereply_nokia_p.cpp"
 
 QTM_END_NAMESPACE
