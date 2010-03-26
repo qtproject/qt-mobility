@@ -39,70 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKABSTRACTREQUEST_H
-#define QLANDMARKABSTRACTREQUEST_H
+#ifndef QLANDMARKFETCHREQUEST_H
+#define QLANDMARKFETCHREQUEST_H
 
-#include "qlandmarkmanager.h"
-#include <QObject>
+#include "qlandmarkabstractrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkAbstractRequestPrivate;
-class QLandmarkAbstractRequest : public QObject
+class QLandmarkFetchRequestPrivate;
+class QLandmarkFetchRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    enum State{
-        InactiveState = 0,
-        ActiveState,
-        CanceledState,
-        FinishedState
-    };
+    QLandmarkFetchRequest();
+    ~QLandmarkFetchRequest();
 
-    enum RequestType {
-        InvalidRequest = 0,
-        LandmarkIdFetchRequest,
-        CategoryIdFetchRequest,
-        LandmarkFetchRequest,
-        CategoryFetchRequest,
-        LandmarkSaveRequest,
-        LandmarkRemoveRequest,
-        CategorySaveRequest,
-        CategoryRemoveRequest,
-        ImportRequest,
-        ExportRequest
-    };
+    QLandmarkFilter &filter() const;
+    void setFilter(const QLandmarkFilter &filter);
 
-    QLandmarkAbstractRequest();
-    virtual ~QLandmarkAbstractRequest();
+    QList<QLandmarkSortOrder> sorting() const;
+    void setSorting(QList<QLandmarkSortOrder> &sorting);
 
-    RequestType type() const;
-
-    State state();
-    bool isInactive()const;
-    bool isActive() const;
-    bool isFinished() const;
-    bool isCanceled() const;
-
-    QLandmarkManager::Error error() const;
-    QString errorString() const;
-
-    QLandmarkManager * manager() const;
-    void setManager(QLandmarkManager *manager);
-
-public slots:
-    bool start();
-    bool cancel();
-    bool waitForFinished(int msecs = 0);
-
-signals:
-    void resultsAvailable();
-    void stateChanged(QLandmarkAbstractRequest::State newState);
-protected:
-    QLandmarkAbstractRequest(QLandmarkAbstractRequestPrivate *otherd);
-    QLandmarkAbstractRequestPrivate *d;
+    QList<QLandmark> landmarks() const;
 private:
-    Q_DISABLE_COPY(QLandmarkAbstractRequest)
+    Q_DISABLE_COPY(QLandmarkFetchRequest)
+    Q_DECLARE_PRIVATE_D(d, QLandmarkFetchRequest)
 };
 
 QTM_END_NAMESPACE

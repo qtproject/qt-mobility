@@ -39,72 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKABSTRACTREQUEST_H
-#define QLANDMARKABSTRACTREQUEST_H
-
-#include "qlandmarkmanager.h"
-#include <QObject>
+#include "qlandmarkcategoryfetchrequest.h"
+#include "qlandmarkcategory.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkAbstractRequestPrivate;
-class QLandmarkAbstractRequest : public QObject
+/*!
+    \class QLandmarkCategoryFetchRequest
+    \brief The QLandmarkCategoryFetchRequest class allows a client to asynchronously
+    request a list of categories from a landmark manager.
+
+    For a QLandmarkCategoryFetchRequest, the resultsAvailable() signal will be emitted
+    as resultant categories are found (these are retrievable via the callings categories()),
+     as well as if an overall operation error occurred(which may be retrieved by calling
+     QLandmarkAbstractRequest::error()).
+
+    \ingroup location
+*/
+
+/*!
+    Creates a new category fetch request object.
+*/
+QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest()
 {
-    Q_OBJECT
-public:
-    enum State{
-        InactiveState = 0,
-        ActiveState,
-        CanceledState,
-        FinishedState
-    };
+}
 
-    enum RequestType {
-        InvalidRequest = 0,
-        LandmarkIdFetchRequest,
-        CategoryIdFetchRequest,
-        LandmarkFetchRequest,
-        CategoryFetchRequest,
-        LandmarkSaveRequest,
-        LandmarkRemoveRequest,
-        CategorySaveRequest,
-        CategoryRemoveRequest,
-        ImportRequest,
-        ExportRequest
-    };
+/*!
+    Destroys the request object.
+*/
+QLandmarkCategoryFetchRequest::~QLandmarkCategoryFetchRequest()
+{
+}
 
-    QLandmarkAbstractRequest();
-    virtual ~QLandmarkAbstractRequest();
+/*!
+    Returns the list of categories that have been found during the
+    request.
+*/
+QList<QLandmarkCategory> QLandmarkCategoryFetchRequest::categories() const
+{
+    return QList<QLandmarkCategory>();
+}
 
-    RequestType type() const;
-
-    State state();
-    bool isInactive()const;
-    bool isActive() const;
-    bool isFinished() const;
-    bool isCanceled() const;
-
-    QLandmarkManager::Error error() const;
-    QString errorString() const;
-
-    QLandmarkManager * manager() const;
-    void setManager(QLandmarkManager *manager);
-
-public slots:
-    bool start();
-    bool cancel();
-    bool waitForFinished(int msecs = 0);
-
-signals:
-    void resultsAvailable();
-    void stateChanged(QLandmarkAbstractRequest::State newState);
-protected:
-    QLandmarkAbstractRequest(QLandmarkAbstractRequestPrivate *otherd);
-    QLandmarkAbstractRequestPrivate *d;
-private:
-    Q_DISABLE_COPY(QLandmarkAbstractRequest)
-};
+#include "moc_qlandmarkcategoryfetchrequest.cpp"
 
 QTM_END_NAMESPACE
-
-#endif

@@ -39,70 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKABSTRACTREQUEST_H
-#define QLANDMARKABSTRACTREQUEST_H
+#ifndef QLANDMARKCATEGORYFETCHREQUEST_H
+#define QLANDMARKCATEGORYFETCHREQUEST_H
 
-#include "qlandmarkmanager.h"
-#include <QObject>
+#include "qlandmarkabstractrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkAbstractRequestPrivate;
-class QLandmarkAbstractRequest : public QObject
+class QLandmarkCategoryFetchRequestPrivate;
+class QLandmarkCategoryFetchRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    enum State{
-        InactiveState = 0,
-        ActiveState,
-        CanceledState,
-        FinishedState
-    };
+    QLandmarkCategoryFetchRequest();
+    ~QLandmarkCategoryFetchRequest();
 
-    enum RequestType {
-        InvalidRequest = 0,
-        LandmarkIdFetchRequest,
-        CategoryIdFetchRequest,
-        LandmarkFetchRequest,
-        CategoryFetchRequest,
-        LandmarkSaveRequest,
-        LandmarkRemoveRequest,
-        CategorySaveRequest,
-        CategoryRemoveRequest,
-        ImportRequest,
-        ExportRequest
-    };
-
-    QLandmarkAbstractRequest();
-    virtual ~QLandmarkAbstractRequest();
-
-    RequestType type() const;
-
-    State state();
-    bool isInactive()const;
-    bool isActive() const;
-    bool isFinished() const;
-    bool isCanceled() const;
-
-    QLandmarkManager::Error error() const;
-    QString errorString() const;
-
-    QLandmarkManager * manager() const;
-    void setManager(QLandmarkManager *manager);
-
-public slots:
-    bool start();
-    bool cancel();
-    bool waitForFinished(int msecs = 0);
-
-signals:
-    void resultsAvailable();
-    void stateChanged(QLandmarkAbstractRequest::State newState);
-protected:
-    QLandmarkAbstractRequest(QLandmarkAbstractRequestPrivate *otherd);
-    QLandmarkAbstractRequestPrivate *d;
+    QList<QLandmarkCategory> categories() const;
 private:
-    Q_DISABLE_COPY(QLandmarkAbstractRequest)
+    Q_DISABLE_COPY(QLandmarkCategoryFetchRequest)
+    Q_DECLARE_PRIVATE_D(d, QLandmarkCategoryFetchRequest)
 };
 
 QTM_END_NAMESPACE
