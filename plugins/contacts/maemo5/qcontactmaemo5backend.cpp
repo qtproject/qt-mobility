@@ -328,7 +328,7 @@ QContactDetailDefinition QContactMaemo5Engine::detailDefinition(const QString& d
     }
 
     *error = QContactManager::NoError;
-    return defMap.value(contactType);
+    return defMap.value(definitionName);
 }
 
 bool QContactMaemo5Engine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const {
