@@ -44,8 +44,8 @@
 #include <QLocalSocket>
 #include <QTimer>
 #include "../../qbearertestcommon.h"
-#include <qnetworkconfigmanager.h>
-#include <qnetworksession.h>
+#include "../../../../src/bearer/qnetworkconfigmanager.h"
+#include "../../../../src/bearer/qnetworksession.h"
 
 #if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include <stdio.h>

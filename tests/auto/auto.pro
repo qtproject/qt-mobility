@@ -10,11 +10,8 @@ contains(mobility_modules,serviceframework) {
            qservicemanager \
            qabstractsecuritysession \
            qservicecontext \
-           icheck
-
-# servicedatabase is not compiled into the serviceframework library on symbian,
-# special handling is needed
-    !symbian:SUBDIRS+=servicedatabase
+           icheck \
+           servicedatabase
 }
 
 contains(mobility_modules,bearer) {

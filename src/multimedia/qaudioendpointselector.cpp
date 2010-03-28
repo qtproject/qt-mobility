@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qaudioendpointselector.h>
+#include "qaudioendpointselector.h"
 
 QTM_BEGIN_NAMESPACE
 

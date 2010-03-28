@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qmediarecordercontrol.h>
+#include "qmediarecordercontrol.h"
 
 QTM_BEGIN_NAMESPACE
 

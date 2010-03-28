@@ -48,15 +48,12 @@
 QTM_USE_NAMESPACE
 
 QML_DECLARE_TYPE(QOrientationSensor)
-QML_DEFINE_TYPE(Qt, 4, 6, OrientationSensor, QOrientationSensor)
 
 QML_DECLARE_TYPE(QSensorReading)
-QML_DEFINE_NOCREATE_TYPE(QSensorReading)
 
 QML_DECLARE_TYPE(QOrientationReading)
 //### while we don't want to explicitly create this type in QML, we need to define it so
 //    we can specify enum values like OrientationReading.LeftUp
-QML_DEFINE_TYPE(Qt, 4, 6, OrientationReading, QOrientationReading)
 
 class MainWidget : public QWidget
 {
@@ -66,7 +63,7 @@ public:
     MainWidget();
 
 private:
-    QmlView *view;
+    QDeclarativeView *view;
 };
 
 MainWidget::MainWidget()
@@ -75,15 +72,19 @@ MainWidget::MainWidget()
     vbox->setMargin(0);
     setLayout(vbox);
 
-    view = new QmlView(this);
+    view = new QDeclarativeView(this);
     vbox->addWidget(view);
 
-    view->setUrl(QUrl("qrc:/orientation.qml"));
-    view->execute();
+    view->setSource(QUrl("qrc:/orientation.qml"));
+    view->show();
 }
 
 int main(int argc, char *argv[])
 {
+    QML_REGISTER_NOCREATE_TYPE(QSensorReading);
+    QML_REGISTER_TYPE(QT_PREPEND_NAMESPACE(Qt), 4, 6, OrientationReading, QOrientationReading);
+    QML_REGISTER_TYPE(QT_PREPEND_NAMESPACE(Qt), 4, 6, OrientationSensor, QOrientationSensor);
+
     QApplication app(argc, argv);
 
     MainWidget mainWidget;
