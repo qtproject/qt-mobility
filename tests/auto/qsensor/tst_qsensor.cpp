@@ -86,7 +86,7 @@ private slots:
     void testTypeRegistered()
     {
         QList<QByteArray> expected;
-        expected << TestSensor::type;
+        expected << "QAccelerometer" << TestSensor::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
         QCOMPARE(actual, expected);
     }

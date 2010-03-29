@@ -56,7 +56,9 @@ testsensorimpl::testsensorimpl(QSensor *sensor)
     if (doThis == "rates(0)") {
         setDataRates(0);
     } else if (doThis == "rates") {
-        setDataRates(new QAccelerometer(this));
+        QAccelerometer *acc = new QAccelerometer(this);
+        acc->connectToBackend();
+        setDataRates(acc);
         if (sensor->availableDataRates().count()) {
             sensor->setDataRate(sensor->availableDataRates().first().first);
         } else {
