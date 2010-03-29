@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qvideowindowcontrol.h>
+#include "qvideowindowcontrol.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
     QVideoWindowControl *windowControl = mediaService->control<QVideoWindowControl *>();
     windowControl->setWinId(widget->winId());
     windowControl->setDisplayRect(widget->rect());
-    windowControl->setAspectRatioMode(QVideoWidget::KeepAspectRatio);
+    windowControl->setAspectRatioMode(Qt::KeepAspectRatio);
     \endcode
 
     QVideoWindowControl is one of number of possible video output controls,
@@ -174,7 +174,7 @@ QVideoWindowControl::~QVideoWindowControl()
 */
 
 /*!
-    \fn QVideoWindowControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
+    \fn QVideoWindowControl::setAspectRatioMode(Qt::AspectRatioMode mode)
 
     Sets the aspect ratio \a mode which determines how video is scaled to the fit the display region
     with respect to its aspect ratio.

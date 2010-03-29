@@ -65,8 +65,7 @@ void reading_perf::reading_speed_direct()
 
 void reading_perf::reading_speed_propname()
 {
-    QSensor sensor;
-    sensor.setType("QAccelerometer");
+    QSensor sensor("QAccelerometer");
     QVERIFY(sensor.connect());
     QSensorReading *reading = sensor.reading();
     qreal x;
@@ -75,8 +74,7 @@ void reading_perf::reading_speed_propname()
 
 void reading_perf::reading_speed_propindex()
 {
-    QSensor sensor;
-    sensor.setType("QAccelerometer");
+    QSensor sensor("QAccelerometer");
     QVERIFY(sensor.connect());
     QSensorReading *reading = sensor.reading();
     qreal x;

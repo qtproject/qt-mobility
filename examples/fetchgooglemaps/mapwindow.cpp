@@ -54,21 +54,31 @@
 
 #include "mapwindow.h"
 
+QTM_USE_NAMESPACE
+
 // Use the special 'localhost' key for the Google Maps key
 const QString GMAPS_STATICMAP_URL_TEMPLATE =  "http://maps.google.com/staticmap?center=%1,%2&zoom=14&size=%3x%4&map type=mobile&markers=%1,%2&key=ABQIAAAAnfs7bKE82qgb3Zc2YyS-oBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSySz_REpPq-4WZA27OwgbtyR3VcA&sensor=false";
 
 
 MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
         : QMainWindow(parent, flags),
-        webView(new QWebView),
-        posLabel(new QLabel),
-        headingAndSpeedLabel(new QLabel),
-        dateTimeLabel(new QLabel),
         loading(false),
         usingLogFile(false),
         location(0),
         waitingForFix(false)
 {
+    webView = new QWebView(this);
+    webView->setMaximumSize(640, 480);
+
+    posLabel = new QLabel(this);
+    posLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+    headingAndSpeedLabel = new QLabel(this);
+    headingAndSpeedLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+    dateTimeLabel = new QLabel(this);
+    dateTimeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
     location = QGeoPositionInfoSource::createDefaultSource(this);
     if (!location) {
         QNmeaPositionInfoSource *nmeaSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
@@ -90,10 +100,30 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
 
     QWidget *mainWidget = new QWidget;
     QVBoxLayout *layout = new QVBoxLayout(mainWidget);
-    layout->addWidget(webView);
-    layout->addWidget(posLabel);
-    layout->addWidget(headingAndSpeedLabel);
-    layout->addWidget(dateTimeLabel);
+    layout->addWidget(webView, 1);
+    
+    QVBoxLayout *labelLayout = new QVBoxLayout();
+    labelLayout->addWidget(posLabel);
+    labelLayout->addWidget(headingAndSpeedLabel);
+    labelLayout->addWidget(dateTimeLabel);
+
+    layout->addLayout(labelLayout, 0);
+    layout->setSizeConstraint(QLayout::SetMaximumSize);
+
+    int maxHeight = webView->maximumSize().height();
+    maxHeight += posLabel->size().height();
+    maxHeight += headingAndSpeedLabel->size().height();
+    maxHeight += dateTimeLabel->size().height();
+
+    setMaximumHeight(maxHeight);
+
+    int maxWidth = webView->maximumWidth();
+    maxWidth = qMin(maxWidth, posLabel->maximumWidth());
+    maxWidth = qMin(maxWidth, headingAndSpeedLabel->maximumWidth());
+    maxWidth = qMin(maxWidth, dateTimeLabel->maximumWidth());
+    
+    setMaximumWidth(maxWidth);
+
     setCentralWidget(mainWidget);
 
 #if !defined(Q_OS_SYMBIAN)
@@ -128,14 +158,14 @@ void MapWindow::delayedInit()
     const bool canStartIAP = (manager.capabilities()
                               & QNetworkConfigurationManager::CanStartAndStopInterfaces);
     // Is there default access point, use it
-    QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
         QMessageBox::information(this, tr("Flickr Demo"), tr(
                                      "Available Access Points not found."));
         return;
     }
 
-    session = new QNetworkSession(cfg, this);
+    session = new QTM_PREPEND_NAMESPACE(QNetworkSession)(cfg, this);
     session->open();
     session->waitForOpened(-1);
 #endif
@@ -200,6 +230,10 @@ void MapWindow::positionUpdated(const QGeoPositionInfo &info)
         // Google Maps does not provide maps larger than 640x480
         int width = qMin(webView->width(), 640);
         int height = qMin(webView->height(), 480);
+
+        if ((width == 0) || (height == 0))
+            return;
+
         QString url = GMAPS_STATICMAP_URL_TEMPLATE
                       .arg(QString::number(info.coordinate().latitude()))
                       .arg(QString::number(info.coordinate().longitude()))

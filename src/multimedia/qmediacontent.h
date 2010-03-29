@@ -45,7 +45,7 @@
 #include <QtCore/qmetatype.h>
 #include <QtCore/qshareddata.h>
 
-#include <qmediaresource.h>
+#include "qmediaresource.h"
 
 #include <qmobilityglobal.h>
 
@@ -72,6 +72,7 @@ public:
     bool isNull() const;
 
     QUrl canonicalUrl() const;
+    QNetworkRequest canonicalRequest() const;
     QMediaResource canonicalResource() const;
 
     QMediaResourceList resources() const;

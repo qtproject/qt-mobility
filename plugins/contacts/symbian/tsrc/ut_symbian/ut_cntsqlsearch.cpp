@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+
 #include <QtTest/QtTest>
 #include <QStringList>
 
@@ -68,14 +69,14 @@ void UT_CntSqlSearch::cleanup()
 }
 void UT_CntSqlSearch::testPredictiveSearch()
 {
-    QString pattern = QString("202");
+    QString pattern = QString("209");
     QString result;
-    QString reference("SELECT contact_id FROM view2 WHERE (first_name_as_number LIKE % 202%) OR (last_name_as_number LIKE % 202%) OR (((first_name_as_number LIKE % 2%) OR (last_name_as_number LIKE % 2%)) AND ((first_name_as_number LIKE % 2%) OR (last_name_as_number LIKE % 2%))) ORDER BY first_name_as_number ASC;");
-    result = mCntSqlSearch->CreatePredictiveSearch(pattern);
-    QVERIFY( !result.compare( reference) );
+    QString reference("SELECT contact_id FROM view2 WHERE (first_name_as_number LIKE % 209%) OR (last_name_as_number LIKE % 209%) OR (last_name_as_number LIKE % 2%) OR ((first_name_as_number LIKE % 2%) AND (first_name_as_number LIKE %_ 2%)) OR ((last_name_as_number LIKE % 9%) AND (last_name_as_number LIKE %_ 9%)) ORDER BY first_name_as_number ASC");
+   /* result = mCntSqlSearch->CreatePredictiveSearch(pattern);
+    QVERIFY( !result.compare( reference) );*/
 
     pattern = QString("3");
-    reference = QString("SELECT * FROM view3 WHERE (first_name_as_number LIKE % 3%) OR (last_name_as_number LIKE % 3%) ORDER BY first_name_as_number ASC;");
+    reference = QString("SELECT contact_id FROM view3 ORDER BY first_name_as_number ASC;");
     result = mCntSqlSearch->CreatePredictiveSearch(pattern);
     QVERIFY( !result.compare( reference) );
 
@@ -90,7 +91,7 @@ void UT_CntSqlSearch::testPredictiveSearch()
     QVERIFY( !result.compare( reference) );
 
     pattern = QString("1");
-    reference = QString("SELECT * FROM view1 WHERE (first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%) ORDER BY first_name_as_number ASC;");
+    reference = QString("SELECT contact_id FROM view1 ORDER BY first_name_as_number ASC;");
     result = mCntSqlSearch->CreatePredictiveSearch(pattern);
     QVERIFY( !result.compare( reference) ); pattern = QString("1");
 }
@@ -149,7 +150,7 @@ void UT_CntSqlSearch::testSelectTableView()
 }
 
 void UT_CntSqlSearch::testIsSubStringSearch()
-{   
+{
     QString pattern("102");
     QCOMPARE(mCntSqlSearch->IsSubStringSearch(pattern), true);
     pattern = QString("12");
@@ -173,37 +174,37 @@ void UT_CntSqlSearch::testIsSubStringSearch()
 void UT_CntSqlSearch::testGetNumber()
 {   
     QStringList numbers;
-    
+
     QString pattern("102");
     numbers = mCntSqlSearch->GetNumber(pattern);
     QCOMPARE(numbers.at(0), QString("1"));
     QCOMPARE(numbers.at(1), QString("2"));
-    
+
     pattern = QString("12");
     numbers = mCntSqlSearch->GetNumber(pattern);
     QCOMPARE(numbers.at(0), QString("12"));
-    
+
     pattern = QString("01");
     numbers = mCntSqlSearch->GetNumber(pattern);
     QCOMPARE(numbers.at(0), QString("1"));
-    
+
     pattern = QString("012");
     numbers = mCntSqlSearch->GetNumber(pattern);
     QCOMPARE(numbers.at(0), QString("12"));
-    
+
     pattern = QString("00012");
     numbers = mCntSqlSearch->GetNumber(pattern);
     QCOMPARE(numbers.at(0), QString("12"));
-    
+
     pattern = QString("00012000");
     numbers = mCntSqlSearch->GetNumber(pattern);
     QCOMPARE(numbers.at(0), QString("12"));
-    
+
     pattern = QString("000100002");
     numbers = mCntSqlSearch->GetNumber(pattern);
     QCOMPARE(numbers.at(0), QString("1"));
     QCOMPARE(numbers.at(1), QString("2"));
-    
+
     pattern = QString("000100002000");
     numbers = mCntSqlSearch->GetNumber(pattern);
     QCOMPARE(numbers.at(0), QString("1"));
@@ -214,17 +215,17 @@ void UT_CntSqlSearch::testCreateSubStringSearch()
 {
     QString pattern = QString("102");
     QString result;
-    QString reference("(first_name_as_number LIKE % 102%) OR (last_name_as_number LIKE % 102%) OR (((first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%)) AND ((first_name_as_number LIKE % 2%) OR (last_name_as_number LIKE % 2%)))");
+    QString reference("(first_name_as_number LIKE % 102%) OR (last_name_as_number LIKE % 102%) OR ((first_name_as_number LIKE % 1%) AND (first_name_as_number LIKE %_ 1%)) OR ((last_name_as_number LIKE % 1%) AND (last_name_as_number LIKE %_ 1%)) OR ((first_name_as_number LIKE % 2%) AND (first_name_as_number LIKE %_ 2%)) OR ((last_name_as_number LIKE % 2%) AND (last_name_as_number LIKE %_ 2%))");
     result = mCntSqlSearch->CreateSubStringSearch(pattern);
     QVERIFY( !result.compare( reference) );
 
     pattern = QString("00102");
-    reference = QString("(first_name_as_number LIKE % 00102%) OR (last_name_as_number LIKE % 00102%) OR (((first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%)) AND ((first_name_as_number LIKE % 2%) OR (last_name_as_number LIKE % 2%)))");
+    reference = QString("(first_name_as_number LIKE % 00102%) OR (last_name_as_number LIKE % 00102%) OR ((first_name_as_number LIKE % 1%) AND (first_name_as_number LIKE %_ 1%)) OR ((last_name_as_number LIKE % 1%) AND (last_name_as_number LIKE %_ 1%)) OR ((first_name_as_number LIKE % 2%) AND (first_name_as_number LIKE %_ 2%)) OR ((last_name_as_number LIKE % 2%) AND (last_name_as_number LIKE %_ 2%))");
     result = mCntSqlSearch->CreateSubStringSearch(pattern);
     QVERIFY( !result.compare( reference) );
 
     pattern = QString("0010200");
-    reference = QString("(first_name_as_number LIKE % 0010200%) OR (last_name_as_number LIKE % 0010200%) OR (((first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%)) AND ((first_name_as_number LIKE % 2%) OR (last_name_as_number LIKE % 2%)))");
+    reference = QString("(first_name_as_number LIKE % 0010200%) OR (last_name_as_number LIKE % 0010200%) OR ((first_name_as_number LIKE % 1%) AND (first_name_as_number LIKE %_ 1%)) OR ((last_name_as_number LIKE % 1%) AND (last_name_as_number LIKE %_ 1%)) OR ((first_name_as_number LIKE % 2%) AND (first_name_as_number LIKE %_ 2%)) OR ((last_name_as_number LIKE % 2%) AND (last_name_as_number LIKE %_ 2%))");
     result = mCntSqlSearch->CreateSubStringSearch(pattern);
     QVERIFY( !result.compare( reference) );
 
@@ -246,11 +247,11 @@ void UT_CntSqlSearch::testCreateStringSearch()
     QString result;
     result = mCntSqlSearch->CreateStringSearch(numbers);
     QVERIFY( result == "(first_name_as_number LIKE % 102%) OR (last_name_as_number LIKE % 102%)" );
-    
+
     numbers = QString("00012");
     result = mCntSqlSearch->CreateStringSearch(numbers);
     QVERIFY( result == "(first_name_as_number LIKE % 00012%) OR (last_name_as_number LIKE % 00012%)" );
-    
+
     numbers = QString("000120012");
     result = mCntSqlSearch->CreateStringSearch(numbers);
     QVERIFY( result == "(first_name_as_number LIKE % 000120012%) OR (last_name_as_number LIKE % 000120012%)" );
@@ -262,7 +263,6 @@ void UT_CntSqlSearch::testCreateStringSearch()
     numbers = QString("00012001200");
     result = mCntSqlSearch->CreateStringSearch(numbers);
     QVERIFY( result == "(first_name_as_number LIKE % 00012001200%) OR (last_name_as_number LIKE % 00012001200%)" );
-    
 }
 
 void UT_CntSqlSearch::testCreateSpaceStringSearch()
@@ -271,28 +271,27 @@ void UT_CntSqlSearch::testCreateSpaceStringSearch()
     numbers << "1";
     QString result;
     result = mCntSqlSearch->CreateSpaceStringSearch(numbers);
-    QVERIFY( result == " OR ((first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%))" );
-    
+    QVERIFY( result == " OR ((first_name_as_number LIKE % 1%) AND (first_name_as_number LIKE %_ 1%)) OR ((last_name_as_number LIKE % 1%) AND (last_name_as_number LIKE %_ 1%))" );
+
     numbers.clear();
     numbers << "1" << "2";
-    QString reference(" OR (((first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%)) AND ((first_name_as_number LIKE % 2%) OR (last_name_as_number LIKE % 2%)))");
+    QString reference(" OR ((first_name_as_number LIKE % 1%) AND (first_name_as_number LIKE %_ 1%)) OR ((last_name_as_number LIKE % 1%) AND (last_name_as_number LIKE %_ 1%)) OR ((first_name_as_number LIKE % 2%) AND (first_name_as_number LIKE %_ 2%)) OR ((last_name_as_number LIKE % 2%) AND (last_name_as_number LIKE %_ 2%))");
     result = mCntSqlSearch->CreateSpaceStringSearch(numbers);
     QVERIFY( !result.compare( reference) );
 
     numbers.clear();
-    numbers << "1" << "21"; 
-    reference = QString(" OR (((first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%)) AND ((first_name_as_number LIKE % 21%) OR (last_name_as_number LIKE % 21%)))");
+    numbers << "1" << "21";
+    reference = QString(" OR ((first_name_as_number LIKE % 1%) AND (first_name_as_number LIKE %_ 1%)) OR ((last_name_as_number LIKE % 1%) AND (last_name_as_number LIKE %_ 1%)) OR ((first_name_as_number LIKE % 21%) AND (first_name_as_number LIKE %_ 21%)) OR ((last_name_as_number LIKE % 21%) AND (last_name_as_number LIKE %_ 21%))");
     result = mCntSqlSearch->CreateSpaceStringSearch(numbers);
     QVERIFY( !result.compare( reference));
-       
 }
 
 void UT_CntSqlSearch::testCreateSpaceString()
 {
-    QString number("1");
+    QString pattern("1");
     QString result;
-    result = mCntSqlSearch->CreateSpaceString(number);
-    QVERIFY( result == QString("((first_name_as_number LIKE % 1%) OR (last_name_as_number LIKE % 1%))") );
-
+    QString reference("((first_name_as_number LIKE % 1%) AND (first_name_as_number LIKE %_ 1%)) OR ((last_name_as_number LIKE % 1%) AND (last_name_as_number LIKE %_ 1%))");
+    result = mCntSqlSearch->CreateSpaceString(pattern);
+    QVERIFY(!result.compare(reference));
 }
 

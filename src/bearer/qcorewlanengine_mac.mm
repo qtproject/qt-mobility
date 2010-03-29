@@ -282,53 +282,109 @@ void QCoreWlanEngine::connectToId(const QString &id)
             NSError *err = nil;
             NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:0];
 
-            NSString *wantedSsid = 0;
-            bool okToProceed = true;
+            QString wantedSsid = 0;
+            bool using8021X = false;
 
             if(getNetworkNameFromSsid(id) != id) {
                 NSArray *array = [CW8021XProfile allUser8021XProfiles];
                 for (NSUInteger i=0; i<[array count]; ++i) {
+
                     if(id == nsstringToQString([[array objectAtIndex:i] userDefinedName])
                         || id == nsstringToQString([[array objectAtIndex:i] ssid]) ) {
                         QString thisName = getSsidFromNetworkName(id);
                         if(thisName.isEmpty()) {
-                            wantedSsid = qstringToNSString(id);
+                            wantedSsid = id;
                         } else {
-                            wantedSsid = qstringToNSString(thisName);
+                            wantedSsid = thisName;
                         }
-                        okToProceed = false;
                         [params setValue: [array objectAtIndex:i] forKey:kCWAssocKey8021XProfile];
+                        using8021X = true;
                         break;
                     }
                 }
             }
 
-            if(okToProceed) {
-                NSUInteger index = 0;
-
-                CWConfiguration *userConfig = [ wifiInterface configuration];
-                NSSet *remNets = [userConfig rememberedNetworks];
-                NSEnumerator *enumerator = [remNets objectEnumerator];
-                CWWirelessProfile *wProfile;
-
-                while ((wProfile = [enumerator nextObject])) {
-                    if(id == nsstringToQString([wProfile ssid])) {
-
-                        wantedSsid = [wProfile ssid];
-                        [params setValue: [wProfile passphrase] forKey: kCWAssocKeyPassphrase];
+            if(!using8021X) {
+                QString wantedNetwork;
+                QMapIterator<QString, QMap<QString,QString> > i(userProfiles);
+                while (i.hasNext()) {
+                    i.next();
+                    wantedNetwork = i.key();
+                    if(id == wantedNetwork) {
+                        wantedSsid = getSsidFromNetworkName(wantedNetwork);
                         break;
                     }
-                    index++;
                 }
             }
 
-            NSDictionary *parametersDict = nil;
-            NSArray *apArray = [NSMutableArray arrayWithArray:[wifiInterface scanForNetworksWithParameters:parametersDict error:&err]];
+            NSDictionary *parametersDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                       [NSNumber numberWithBool:YES], kCWScanKeyMerge,
+                                       [NSNumber numberWithInteger:100], kCWScanKeyRestTime,
+                                       qstringToNSString(wantedSsid), kCWScanKeySSID,
+                                       nil];
 
+
+            NSArray *scanArray = [NSMutableArray arrayWithArray:[wifiInterface scanForNetworksWithParameters:parametersDict error:&err]];
             if(!err) {
-                for(uint row=0; row < [apArray count]; row++ ) {
-                    CWNetwork *apNetwork = [apArray objectAtIndex:row];
-                    if([[apNetwork ssid] compare:wantedSsid] == NSOrderedSame) {
+                for(uint row=0; row < [scanArray count]; row++ ) {
+                    CWNetwork *apNetwork = [scanArray objectAtIndex:row];
+                    if(wantedSsid == nsstringToQString([apNetwork ssid])) {
+
+                        if(!using8021X) {
+                            SecKeychainAttribute attributes[3];
+
+                            NSString *account = [apNetwork ssid];
+                            NSString *keyKind = @"AirPort network password";
+                            NSString *keyName = account;
+
+                            attributes[0].tag = kSecAccountItemAttr;
+                            attributes[0].data = (void *)[account UTF8String];
+                            attributes[0].length = [account length];
+
+                            attributes[1].tag = kSecDescriptionItemAttr;
+                            attributes[1].data = (void *)[keyKind UTF8String];
+                            attributes[1].length = [keyKind length];
+
+                            attributes[2].tag = kSecLabelItemAttr;
+                            attributes[2].data = (void *)[keyName UTF8String];
+                            attributes[2].length = [keyName length];
+
+                            SecKeychainAttributeList attributeList = {3,attributes};
+
+                            SecKeychainSearchRef searchRef;
+                            OSErr result = SecKeychainSearchCreateFromAttributes(NULL, kSecGenericPasswordItemClass, &attributeList, &searchRef);
+
+                            NSString *password = @"";
+                            SecKeychainItemRef searchItem;
+
+                            if (SecKeychainSearchCopyNext(searchRef, &searchItem) == noErr) {
+                                UInt32 realPasswordLength;
+                                SecKeychainAttribute attributesW[8];
+                                attributesW[0].tag = kSecAccountItemAttr;
+                                SecKeychainAttributeList listW = {1,attributesW};
+                                char *realPassword;
+                                OSStatus status = SecKeychainItemCopyContent(searchItem, NULL, &listW, &realPasswordLength,(void **)&realPassword);
+
+                                if (status == noErr) {
+                                    if (realPassword != NULL) {
+
+                                        QByteArray pBuf;
+                                        pBuf.resize(realPasswordLength);
+                                        pBuf.prepend(realPassword);
+                                        pBuf.insert(realPasswordLength,'\0');
+
+                                        password = [NSString stringWithUTF8String:pBuf];
+                                    }
+                                }
+
+                                CFRelease(searchItem);
+                                SecKeychainItemFreeContent(&listW, realPassword);
+                            } else {
+                                qDebug() << "SecKeychainSearchCopyNext error";
+                            }
+                            [params setValue: password forKey: kCWAssocKeyPassphrase];
+                        } // end using8021X
+
                         bool result = [wifiInterface associateToNetwork: apNetwork parameters:[NSDictionary dictionaryWithDictionary:params] error:&err];
 
                         if(!result) {
@@ -415,9 +471,7 @@ QString QCoreWlanEngine::getNetworkNameFromSsid(const QString &ssid)
              if(ij.key() == ssid) {
                  return i.key();
              }
-
          }
-            return map.key(ssid);
     }
     return QString();
 }
@@ -663,39 +717,24 @@ void QCoreWlanEngine::getUserConfigurations()
     for(uint row=0; row < [wifiInterfaces count]; row++ ) {
 
         CWInterface *wifiInterface = [CWInterface interfaceWithName: [wifiInterfaces objectAtIndex:row]];
-
+        NSString *nsInterfaceName = [wifiInterface name];
 // add user configured system networks
-        NSString *filePath = @"/Library/Preferences/SystemConfiguration/com.apple.airport.preferences.plist";
-        NSDictionary* plistDict = [[NSMutableDictionary alloc] initWithContentsOfFile:filePath];
-        NSString *input = @"KnownNetworks";
-        NSString *ssidStr = @"SSID_STR";
+        SCDynamicStoreRef dynRef = SCDynamicStoreCreate(kCFAllocatorSystemDefault, (CFStringRef)@"Qt corewlan", nil, nil);
+        NSDictionary *airportPlist = (NSDictionary *)SCDynamicStoreCopyValue(dynRef, (CFStringRef)[NSString stringWithFormat:@"Setup:/Network/Interface/%@/AirPort", nsInterfaceName]);
+        CFRelease(dynRef);
 
-        for (id key in plistDict) {
-            if ([input isEqualToString:key]) {
+        NSDictionary *prefNetDict = [airportPlist objectForKey:@"PreferredNetworks"];
 
-                NSDictionary *knownNetworksDict = [plistDict objectForKey:key];
-                for (id networkKey in knownNetworksDict) {
-
-                    NSDictionary *itemDict = [knownNetworksDict objectForKey:networkKey];
-                    NSInteger dictSize = [itemDict count];
-                    id objects[dictSize];
-                    id keys[dictSize];
-
-                    [itemDict getObjects:objects andKeys:keys];
-
-                    for(int i = 0; i < dictSize; i++) {
-                        if([ssidStr isEqualToString:keys[i]]) {
-                            QString thisSsid = nsstringToQString(objects[i]);
-                            if(!userProfiles.contains(thisSsid)) {
-                                QMap <QString,QString> map;
-                                map.insert(thisSsid, nsstringToQString([wifiInterface name]));
-                                userProfiles.insert(thisSsid, map);
-                            }
-                        }
-                    }
-                }
+        NSArray *thisSsidarray = [prefNetDict valueForKey:@"SSID_STR"];
+        for(NSString *ssidkey in thisSsidarray) {
+            QString thisSsid = nsstringToQString(ssidkey);
+            if(!userProfiles.contains(thisSsid)) {
+                QMap <QString,QString> map;
+                map.insert(thisSsid, nsstringToQString(nsInterfaceName));
+                userProfiles.insert(thisSsid, map);
             }
         }
+        CFRelease(airportPlist);
 
         // 802.1X user profiles
         QString userProfilePath = QDir::homePath() + "/Library/Preferences/com.apple.eap.profiles.plist";
@@ -725,7 +764,7 @@ void QCoreWlanEngine::getUserConfigurations()
                         if(!userProfiles.contains(networkName)
                             && !ssid.isEmpty()) {
                             QMap<QString,QString> map;
-                            map.insert(ssid, nsstringToQString([wifiInterface name]));
+                            map.insert(ssid, nsstringToQString(nsInterfaceName));
                             userProfiles.insert(networkName, map);
                         }
                     }
@@ -741,4 +780,3 @@ void QCoreWlanEngine::getUserConfigurations()
 #include "moc_qcorewlanengine_mac_p.cpp"
 
 QTM_END_NAMESPACE
-

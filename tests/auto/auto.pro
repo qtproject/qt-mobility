@@ -13,11 +13,7 @@ contains(mobility_modules,serviceframework) {
            qmetaobjectbuilder \
            icheck \
            qservicemanager_ipc
-
-# servicedatabase is not compiled into the serviceframework library on symbian,
-# special handling is needed
-    !symbian:SUBDIRS+=servicedatabase
-    
+           servicedatabase
 }
 
 contains(mobility_modules,bearer) {
@@ -104,7 +100,6 @@ contains(mobility_modules,versit) {
 contains(mobility_modules,multimedia) {
     SUBDIRS += \             #Multimedia
         qaudiocapturesource \
-        qcamera \
         qgraphicsvideoitem \
         qmediaimageviewer \
         qmediaobject \
@@ -126,7 +121,6 @@ contains(mobility_modules,multimedia) {
         #symbian spesific autotests
         SUBDIRS += symbian 
         SUBDIRS -= \
-                qcamera_s60 \
                 qmediaplayer_s60 \
                 qradiotuner_s60 \
                 qmediaobject_s60 \

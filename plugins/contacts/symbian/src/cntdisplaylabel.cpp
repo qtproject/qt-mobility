@@ -74,8 +74,8 @@ void CntDisplayLabel::setDisplayLabelDetails()
     //Contact
     //Preferred details
     QList<QPair<QLatin1String, QLatin1String> > contactPrefferedDisplayLabelDetails;
-    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldFirst)));
-    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldLast)));
+    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldFirstName)));
+    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldLastName)));
     m_contactDisplayLabelDetails.append(contactPrefferedDisplayLabelDetails);
 
     //if preferred details doesn't exist use these
@@ -95,10 +95,10 @@ void CntDisplayLabel::setDisplayLabelDetails()
  * \a error On return, contains the possible error.
  * \return synthesised display label 
  */
-QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
     QString displayLabel;
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     
     //contact
     if(contact.type() == QContactType::TypeContact) {
@@ -112,7 +112,7 @@ QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QConta
     
     //invalid type
     else {
-        error = QContactManager::InvalidContactTypeError;
+        *error = QContactManager::InvalidContactTypeError;
     }
     
     return displayLabel;

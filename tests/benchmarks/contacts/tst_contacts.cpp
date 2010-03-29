@@ -253,7 +253,7 @@ void tst_Contact::clearContacts()
 {
   if(m_backend == BackendQContacts) {
     QMap<int, QContactManager::Error> errorMap;
-    m_qm->removeContacts(&id_list, &errorMap);
+    m_qm->removeContacts(id_list, &errorMap);
     id_list.clear();
   }
   else if(m_backend == BackendContactsModel){
@@ -867,7 +867,7 @@ void tst_Contact::tst_removeOneContact()
     
     one += id_list.takeFirst();
     QBENCHMARK {
-        m_qm->removeContacts(&one, &errorMap);
+        m_qm->removeContacts(one, &errorMap);
     }
 
   }

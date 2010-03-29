@@ -175,7 +175,7 @@ QList<QNetworkConfigurationPrivate *> QGenericEngine::getConfigurations(bool *ok
         if (interface.flags() & QNetworkInterface::IsLoopBack)
             continue;
 
-        // ignore WLAN interface handled in seperate engine
+        // ignore WLAN interface handled in separate engine
         if (qGetInterfaceType(interface.name()) == "WLAN")
             continue;
 
@@ -198,7 +198,7 @@ QList<QNetworkConfigurationPrivate *> QGenericEngine::getConfigurations(bool *ok
         else
             cpPriv->bearer = qGetInterfaceType(interface.name());
 
-        if (interface.flags() & QNetworkInterface::IsUp)
+        if((interface.flags() & QNetworkInterface::IsUp) && !interface.addressEntries().isEmpty())
             cpPriv->state |= QNetworkConfiguration::Active;
 
         configurationInterface[identifier] = interface.name();

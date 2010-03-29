@@ -42,7 +42,7 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-#include <qmediacontent.h>
+#include "qmediacontent.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -201,6 +201,15 @@ bool QMediaContent::isNull() const
 QUrl QMediaContent::canonicalUrl() const
 {
     return canonicalResource().url();
+}
+
+/*!
+    Returns a QNetworkRequest that represents that canonical resource for this media content.
+*/
+
+QNetworkRequest QMediaContent::canonicalRequest() const
+{
+    return canonicalResource().request();
 }
 
 /*!

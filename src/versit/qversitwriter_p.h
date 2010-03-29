@@ -64,6 +64,10 @@
 #include <QMutex>
 #include <QWaitCondition>
 
+QT_BEGIN_NAMESPACE
+class QBuffer;
+QT_END_NAMESPACE
+
 QTM_BEGIN_NAMESPACE
 
 class QVersitDocumentWriter;
@@ -78,6 +82,7 @@ signals:
 public:
     QVersitWriterPrivate();
     virtual ~QVersitWriterPrivate();
+    void init(QVersitWriter* writer);
     void write();
 
     // mutexed getters and setters.
@@ -93,6 +98,7 @@ public:
     static QVersitDocumentWriter* writerForType(QVersitDocument::VersitType type);
 
     QIODevice* mIoDevice;
+    QScopedPointer<QBuffer> mOutputBytes; // Holds the data set by setData()
     QList<QVersitDocument> mInput;
     QVersitWriter::State mState;
     QVersitWriter::Error mError;

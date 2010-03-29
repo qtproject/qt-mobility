@@ -10,5 +10,5 @@ SUBDIRS += performance \
 #           tst_details
 
 !contains(DEFINES, SYMBIAN_BACKEND_USE_SQLITE) {
-   SUBDIRS += ut_cntfilteringdbms
+   SUBDIRS += tst_cntfilteringdbms
 }

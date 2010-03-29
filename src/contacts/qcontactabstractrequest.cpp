@@ -105,7 +105,10 @@ QTM_BEGIN_NAMESPACE
   Constructs a new, invalid asynchronous request
  */
 
-/*! Constructs a new request from the given request data \a otherd */
+/*!
+  \internal
+  Constructs a new request from the given request data \a otherd
+*/
 QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate* otherd)
     : d_ptr(otherd)
 {
@@ -168,15 +171,6 @@ bool QContactAbstractRequest::isCanceled() const
 QContactManager::Error QContactAbstractRequest::error() const
 {
     return d_ptr->m_error;
-}
-
-/*!
-  \internal
-  Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list.
- */
-QList<QContactManager::Error> QContactAbstractRequest::errors() const
-{
-    return QList<QContactManager::Error>();
 }
 
 /*!

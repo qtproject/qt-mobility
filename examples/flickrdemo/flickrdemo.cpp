@@ -161,11 +161,11 @@ void FlickrDemo::delayedInit()
                                  tr("No GPS support detected, using GPS data from a sample log file instead."));
     }
 
-    QNetworkConfigurationManager manager;
+    QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager) manager;
     const bool canStartIAP = (manager.capabilities()
-                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
-    QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+                              & QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager)::CanStartAndStopInterfaces);
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
         QMessageBox::information(this, tr("Flickr Demo"), tr("Available Access Points not found."));
         return;
     }
@@ -582,27 +582,13 @@ PictureDialog::PictureDialog(const QString& filePath, const QString& pictureName
 
     verticalLayout->addWidget(imageLabel);
 
-    keepButton = new QPushButton(tr("Keep"));
-    keepButton->setDefault(true);
-    discardButton = new QPushButton(tr("Discard"));
-
     buttonBox = new QDialogButtonBox();
-    buttonBox->addButton(keepButton, QDialogButtonBox::AcceptRole);
-    buttonBox->addButton(discardButton, QDialogButtonBox::DestructiveRole);
-    connect(buttonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(clicked(QAbstractButton *)));
+    buttonBox->setStandardButtons(QDialogButtonBox::Close);
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(accept()));
 
     verticalLayout->addWidget(buttonBox);
 
     setLayout(verticalLayout);
 
     setWindowTitle(tr("Flickr Demo"));
-}
-
-void PictureDialog::clicked(QAbstractButton* button)
-{
-    if (button == keepButton) {
-        accept();
-    } else if (button == discardButton) {
-        reject();
-    }
 }

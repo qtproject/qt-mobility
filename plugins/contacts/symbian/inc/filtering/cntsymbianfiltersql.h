@@ -64,7 +64,7 @@ public:
             const QContactFilter& filter,
             const QList<QContactSortOrder>& sortOrders,
             bool &filterSupportedflag,
-            QContactManager::Error& error) ;
+            QContactManager::Error* error) ;
     
     void initializeFilters();
   
@@ -72,7 +72,7 @@ public:
 protected:
     void createSelectQuery(const QContactFilter& /*detailFilter*/,
                                   QString& /*sqlQuery*/,
-                                  QContactManager::Error& /*error*/){};
+                                  QContactManager::Error* /*error*/){};
 private:
     CContactDatabase& m_contactDatabase;
     CntDbInfo* m_dbInfo;

@@ -42,7 +42,7 @@
 #ifndef VMR9VIDEOWINDOWCONTROL_H
 #define VMR9VIDEOWINDOWCONTROL_H
 
-#include <qvideowindowcontrol.h>
+#include "../../src/multimedia/qvideowindowcontrol.h"
 
 #include <dshow.h>
 #include <d3d9.h>
@@ -72,8 +72,8 @@ public:
 
     QSize nativeSize() const;
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     int brightness() const;
     void setBrightness(int brightness);
@@ -95,6 +95,8 @@ private:
     IBaseFilter *m_filter;
     WId m_windowId;
     DWORD m_dirtyValues;
+    Qt::AspectRatioMode m_aspectRatioMode;
+    QRect m_displayRect;
     int m_brightness;
     int m_contrast;
     int m_hue;

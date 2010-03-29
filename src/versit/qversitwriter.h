@@ -74,22 +74,26 @@ public:
     };
 
     QVersitWriter();
+    QVersitWriter(QIODevice* outputDevice);
+    QVersitWriter(QByteArray* outputBytes);
     ~QVersitWriter();
 
     // output device
-    void setDevice(QIODevice* device);
+    void setDevice(QIODevice* outputDevice);
     QIODevice* device() const;
 
     void setDefaultCodec(QTextCodec* codec);
     QTextCodec* defaultCodec() const;
 
-    // writing:
-    bool startWriting(const QList<QVersitDocument>& input);
-    void cancel();
-    bool waitForFinished(int msec = -1);
-
     State state() const;
     Error error() const;
+
+    // writing:
+public Q_SLOTS:
+    bool startWriting(const QList<QVersitDocument>& input);
+    void cancel();
+public:
+    Q_INVOKABLE bool waitForFinished(int msec = -1);
 
 Q_SIGNALS:
     void stateChanged(QVersitWriter::State state);

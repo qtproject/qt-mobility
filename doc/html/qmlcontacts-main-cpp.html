@@ -56,13 +56,13 @@
 
     #include &lt;QApplication&gt;
     #include &lt;QtGui&gt;
-    #include &lt;QmlEngine&gt;
-    #include &lt;QmlComponent&gt;
+    #include &lt;QDeclarativeEngine&gt;
+    #include &lt;QDeclarativeComponent&gt;
     #include &lt;QDebug&gt;
-    #include &lt;QmlGraphicsItem&gt;
-    #include &lt;QmlView&gt;
+    #include &lt;QDeclarativeView&gt;
     #include &lt;QContactManager&gt;
     #include &quot;qmlcontactsa.h&quot;
+    #include &quot;qmlcontact.h&quot;
     QT_USE_NAMESPACE
     QTM_USE_NAMESPACE
 
@@ -70,40 +70,23 @@
     {
         QApplication app(argc, argv);
 
-        QmlEngine engine;
-        QmlComponent component(&amp;engine, &quot;:example.qml&quot;);
-<span class="comment">    //    QMLContactManager *qcm = qobject_cast&lt;QMLContactManager *&gt;(component.create());</span>
-<span class="comment">    //    if (qcm) {</span>
-<span class="comment">    //        qWarning() &lt;&lt; &quot;Available back ends: &quot; &lt;&lt; qcm-&gt;availableManagers();</span>
-<span class="comment">    //        qWarning() &lt;&lt; &quot;Current Backend: &quot; &lt;&lt; qcm-&gt;manager();</span>
-<span class="comment">    //        //qWarning() &lt;&lt; &quot;They wear a&quot; &lt;&lt; person-&gt;shoeSize() &lt;&lt; &quot;sized shoe&quot;;</span>
-<span class="comment">    //    } else {</span>
-<span class="comment">    //</span>
-<span class="comment">    //        qWarning() &lt;&lt; &quot;An error occured&quot;;</span>
-<span class="comment">    //        qWarning() &lt;&lt; component.errorsString();</span>
-<span class="comment">    //        exit(-1);</span>
-<span class="comment">    //    }</span>
-<span class="comment">    //    QmlGraphicsItem *qcm = qobject_cast&lt;QmlGraphicsItem *&gt;(component.create());</span>
-<span class="comment">    //    if(</span>!qcm){
-<span class="comment">    //                qWarning() &lt;&lt; &quot;An error occured&quot;;</span>
-<span class="comment">    //                qWarning() &lt;&lt; component.errorsString();</span>
-<span class="comment">    //                exit(-1);</span>
-<span class="comment">    //</span>
-<span class="comment">    //    }</span>
-<span class="comment">    //    qcm-&gt;show();</span>
+        QDeclarativeEngine engine;
+        QDeclarativeComponent component(&amp;engine, &quot;:example.qml&quot;);
 
-        QWidget *b = new QWidget;
+        qmlRegisterType&lt;QmlContact&gt;(&quot;QmlContact&quot;, 1, 0, &quot;QmlContact&quot;);
+        qmlRegisterType&lt;QMLContactManagerAsync&gt;(&quot;QMLContactManagerAsync&quot;, 1, 0, &quot;QMLContactManagerAsync&quot;);
+
+        QWidget *b = new QWidget();
         QVBoxLayout *vbox = new QVBoxLayout;
         vbox-&gt;setMargin(0);
-        b-&gt;setLayout(vbox);
 
-        QmlView *view = new QmlView(b);
+        QDeclarativeView *view = new QDeclarativeView(b);
         view-&gt;setFocusPolicy(Qt::StrongFocus);
-        view-&gt;setContentResizable(true);
-        view-&gt;setUrl(QUrl(&quot;qrc:/example.qml&quot;));
-        view-&gt;execute();
+        view-&gt;setResizeMode(QDeclarativeView::SizeViewToRootObject);
+        view-&gt;setSource(QUrl(&quot;qrc:/example.qml&quot;));
         vbox-&gt;addWidget(view);
-        b-&gt;resize(800,480);
+        b-&gt;setLayout(vbox);
+<span class="comment">    //    b-&gt;resize(800,480);</span>
         b-&gt;show();
 
         return app.exec();

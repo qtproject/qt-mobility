@@ -65,7 +65,7 @@ public:
     PublisherDialog(QWidget *parent = 0);
     ~PublisherDialog();
 
-#ifdef QTM_SMALL_SCREEN
+#ifdef QTM_EXAMPLES_SMALL_SCREEN
 signals:
     void switchRequested();
 #endif

@@ -69,10 +69,9 @@
 
 <span class="comment">    // </span>![0]
     QMLContactManagerAsync::QMLContactManagerAsync(QObject *parent)
-    : QObject(parent)
+        : QObject(parent)
     {
         qc = new QContactManager();
-
     }
 
     QMLContactManagerAsync::~QMLContactManagerAsync()
@@ -99,20 +98,17 @@
            reader.setDevice(&amp;file);
            if (reader.startReading() &amp;&amp; reader.waitForFinished()) {
                QVersitContactImporter importer;
-               QList&lt;QContact&gt; contacts = importer.importContacts(reader.results());
-               QMap&lt;int, QContactManager::Error&gt; errors;
-               manager-&gt;saveContacts(&amp;contacts, &amp;errors);
+               importer.importDocuments(reader.results());
+               QList&lt;QContact&gt; contacts = importer.contacts();
+               manager-&gt;saveContacts(&amp;contacts, 0);
            }
         }
-
     }
 
     void QMLContactManagerAsync::setManager(QString manager)
     {
         delete qc;
         qc = new QContactManager(manager);
-        if(!qc)
-            qc = new QContactManager();
         connect(qc, SIGNAL(contactsAdded(QList&lt;QContactLocalId&gt;)), this, SIGNAL(contactsAdded(QList&lt;QContactLocalId&gt;)));
         connect(qc, SIGNAL(contactsChanged(QList&lt;QContactLocalId&gt;)), this, SIGNAL(contactsChanged(QList&lt;QContactLocalId&gt;)));
         connect(qc, SIGNAL(contactsRemoved(QList&lt;QContactLocalId&gt;)), this, SIGNAL(contactsRemoved(QList&lt;QContactLocalId&gt;)));
@@ -129,11 +125,10 @@
     QString QMLContactManagerAsync::contactListToQString(const QList&lt;QContactLocalId&gt;&amp; contactIds) const
     {
         QString list;
-        int i;
 
-        for (i = 0; i &lt; contactIds.count(); i++) {
-                list += QString::number(contactIds.at(i)) +  &quot; &quot;;
-            }
+        for (int i = 0; i &lt; contactIds.count(); i++) {
+            list += QString::number(contactIds.at(i)) +  &quot; &quot;;
+        }
 
         return list;
     }
@@ -141,9 +136,8 @@
     QStringList QMLContactManagerAsync::contactListToQString(const QList&lt;QContact&gt;&amp; contact) const
     {
         QStringList list;
-        int i;
 
-        for (i = 0; i &lt; contact.count(); i++) {
+        for (int i = 0; i &lt; contact.count(); i++) {
             list += qc-&gt;synthesizedDisplayLabel(contact.at(i));
          }
 
@@ -152,11 +146,7 @@
 
     int QMLContactManagerAsync::numContacts()
     {
-        QList&lt;QContactLocalId&gt; qlid;
-
-        qlid = qc-&gt;contactIds();
-
-        return qlid.count();
+        return qc-&gt;contactIds().count();
     }
 
     void QMLContactManagerAsync::contacts()
@@ -195,7 +185,6 @@
             request-&gt;deleteLater();
             emit contactsLoadedDone();
         }
-
     }
 
     QString QMLContactManagerAsync::idToName(QString name)
@@ -206,9 +195,7 @@
 
 <span class="comment">    // </span>![0]
 
-    #include &quot;moc_qmlcontactsa.cpp&quot;
-
-    QML_DEFINE_TYPE(QMLContactManagerAsync, 1, 0, QMLContactManagerAsync, QMLContactManagerAsync);</pre>
+    #include &quot;moc_qmlcontactsa.cpp&quot;</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

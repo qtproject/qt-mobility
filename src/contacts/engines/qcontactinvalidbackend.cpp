@@ -59,23 +59,9 @@ QContactInvalidEngine::QContactInvalidEngine()
 }
 
 /*! \reimp */
-void QContactInvalidEngine::deref()
-{
-    delete this;
-}
-
-/*! \reimp */
 QString QContactInvalidEngine::managerName() const
 {
     return QString(QLatin1String("invalid"));
-}
-
-/*! \reimp */
-QString QContactInvalidEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
-{
-    Q_UNUSED(contact);
-    error = QContactManager::NotSupportedError;
-    return QString();
 }
 
 QTM_END_NAMESPACE

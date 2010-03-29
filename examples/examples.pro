@@ -65,10 +65,8 @@ contains(mobility_modules,multimedia) {
     SUBDIRS += \
         radio \
         player \
-        cameracapture \
         slideshow \
         audiorecorder
-
 }
 
 

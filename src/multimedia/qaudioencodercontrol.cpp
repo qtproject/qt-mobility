@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qaudioencodercontrol.h>
+#include "qaudioencodercontrol.h"
 #include <QtCore/qstringlist.h>
 
 QTM_BEGIN_NAMESPACE

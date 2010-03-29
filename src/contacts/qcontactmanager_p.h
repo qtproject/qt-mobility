@@ -81,9 +81,7 @@ public:
 
     ~QContactManagerData()
     {
-        if (m_engine)
-            m_engine->deref();
-        // We rely on the owning manager to delete m_info
+        delete m_engine;
     }
 
     void createEngine(const QString& managerName, const QMap<QString, QString>& parameters);

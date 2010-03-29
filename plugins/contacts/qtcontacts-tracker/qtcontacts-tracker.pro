@@ -15,6 +15,8 @@ MOBILITY = contacts
 include(version.pri)
 include(../../../common.pri)
 
+DEFINES += VERSION_INFO=\\\"$${VERSION_INT}\\\"
+
 INCLUDEPATH += $$SOURCE_DIR/src/contacts
 INCLUDEPATH += $$SOURCE_DIR/src/contacts/details
 INCLUDEPATH += $$SOURCE_DIR/src/contacts/filters
@@ -24,21 +26,22 @@ INCLUDEPATH += .
 
 HEADERS += qcontacttrackerbackend_p.h \
            qtrackercontactasyncrequest.h \
-           trackerchangelistener.h \
+           qtrackercontactfetchrequest.h \
            qtrackercontactslive.h \
            qtrackercontactsaverequest.h \
            qtrackerrelationshipfetchrequest.h \
            qtrackerrelationshipsaverequest.h \
-           qtrackercontactidfetchrequest.h
+           qtrackercontactidfetchrequest.h \
+           trackerchangelistener.h
 
 SOURCES += qcontacttrackerbackend.cpp \
-           qtrackercontactasyncrequest.cpp \
-           trackerchangelistener.cpp \
+           qtrackercontactfetchrequest.cpp \
            qtrackercontactslive.cpp \
            qtrackercontactsaverequest.cpp \
            qtrackerrelationshipfetchrequest.cpp \
            qtrackerrelationshipsaverequest.cpp \
-           qtrackercontactidfetchrequest.cpp
+           qtrackercontactidfetchrequest.cpp \
+           trackerchangelistener.cpp
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
 INSTALLS+=target

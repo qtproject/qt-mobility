@@ -103,19 +103,19 @@ void CntSimStoreEventListener::RunL()
     }
     if (m_event & RMobilePhoneStore::KStoreEmpty ) { 
         //qDebug() << "SIM store event: empty" << m_index;
-        changeSet.removedContacts() << m_index;
+        changeSet.insertRemovedContact(m_index);
     }
     if (m_event & RMobilePhoneStore::KStoreEntryAdded) {
         //qDebug() << "SIM store event: added" << m_index;
-        changeSet.addedContacts() << m_index;
+        changeSet.insertAddedContact(m_index);
     }
     if (m_event & RMobilePhoneStore::KStoreEntryDeleted) {
         //qDebug() << "SIM store event: deleted" << m_index;
-        changeSet.removedContacts() << m_index;
+        changeSet.insertRemovedContact(m_index);
     }
     if (m_event & RMobilePhoneStore::KStoreEntryChanged) {
         //qDebug() << "SIM store event: changed" << m_index;
-        changeSet.changedContacts() << m_index;
+        changeSet.insertChangedContact(m_index);
     }
     if (m_event & RMobilePhoneStore::KStoreDoRefresh) {
         //qDebug() << "SIM store event: do refresh";

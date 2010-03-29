@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <qmediapluginloader_p.h>
+#include "qmediapluginloader_p.h"
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qpluginloader.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qdebug.h>
 
-#include <qmediaserviceproviderplugin.h>
+#include "qmediaserviceproviderplugin.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -98,6 +98,10 @@ void QMediaPluginLoader::load()
         }
     } else {
         QStringList     paths = QCoreApplication::libraryPaths();
+
+#ifdef QTM_PLUGIN_PATH
+        paths << QTM_PLUGIN_PATH;
+#endif
 
         foreach (QString const &path, paths) {
             QString     pluginPathName(path + m_location);

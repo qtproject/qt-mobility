@@ -55,7 +55,11 @@
     ****************************************************************************/</span>
 
     #include &quot;subscriberdialog.h&quot;
+    #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    #include &quot;ui_subscriberdialog_hor.h&quot;
+    #else
     #include &quot;ui_subscriberdialog.h&quot;
+    #endif
 
     #include &lt;qvaluespacesubscriber.h&gt;
 
@@ -84,6 +88,17 @@
         connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));
     #endif
 
+    #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        tableWidget = ui-&gt;tableWidget;
+        QStringList headerLabels;
+        headerLabels &lt;&lt; tr(&quot;Key&quot;) &lt;&lt; tr(&quot;Value&quot;) &lt;&lt; tr(&quot;Type&quot;);
+        tableWidget-&gt;setColumnCount(3);
+        tableWidget-&gt;setHorizontalHeaderLabels(headerLabels);
+        tableWidget-&gt;horizontalHeader()-&gt;setStretchLastSection(true);
+        tableWidget-&gt;verticalHeader()-&gt;setVisible(false);
+        tableWidget-&gt;setColumnWidth(0, 200);
+        tableWidget-&gt;setColumnWidth(1, 400);
+    #else
         QDesktopWidget desktopWidget;
         if (desktopWidget.availableGeometry().width() &lt; 400) {
             <span class="comment">// Screen is too small to fit a table widget without scrolling, use a list widget instead.</span>
@@ -101,7 +116,7 @@
 
             ui-&gt;verticalLayout-&gt;insertWidget(2, tableWidget);
         }
-
+    #endif
         connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
         changeSubscriberPath();
     }

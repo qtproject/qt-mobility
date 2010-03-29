@@ -40,11 +40,15 @@
 ****************************************************************************/
 
 #include "publisherdialog.h"
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "ui_publisherdialog_hor.h"
+#else
 #include "ui_publisherdialog.h"
+#endif
 
 #include <qvaluespacepublisher.h>
 
-#ifdef QTM_SMALL_SCREEN
+#ifdef QTM_EXAMPLES_SMALL_SCREEN
 #include <QPushButton>
 #endif
 
@@ -55,7 +59,7 @@ PublisherDialog::PublisherDialog(QWidget *parent)
 {
     ui->setupUi(this);
 
-#ifdef QTM_SMALL_SCREEN
+#ifdef QTM_EXAMPLES_SMALL_SCREEN
     QPushButton *switchButton =
         ui->buttonBox->addButton(tr("Switch"), QDialogButtonBox::ActionRole);
     connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));

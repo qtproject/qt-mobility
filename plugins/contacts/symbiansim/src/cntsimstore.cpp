@@ -43,16 +43,18 @@
 #include "cntsimstoreprivate.h"
 #include "cntsymbiansimtransformerror.h"
 
-CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error &error)
-    :QObject((QObject *)engine)
+CntSimStore::CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error* error)
+    :QObject((QObject *)engine),
+     d_ptr(0)
 {
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     
     // We need to register these meta types for signals because connect() with 
     // Qt::QueuedConnection it is required.
     qRegisterMetaType<QContact>("QContact");
     qRegisterMetaType<QList<QContact> >("QList<QContact>");
     qRegisterMetaType<QContactManager::Error>("QContactManager::Error");
+    qRegisterMetaType<QList<int> >("QList<int>");
     
     TRAPD(err, d_ptr = CntSimStorePrivate::NewL(*engine, *this, storeName));
     CntSymbianSimTransformError::transformError(err, error);
@@ -73,19 +75,24 @@ TSimStoreInfo CntSimStore::storeInfo()
     return d_ptr->storeInfo();
 }
 
-bool CntSimStore::read(int index, int numSlots, QContactManager::Error &error)
+bool CntSimStore::read(int index, int numSlots, QContactManager::Error* error)
 {
     return d_ptr->read(index, numSlots, error);
 }
 
-bool CntSimStore::write(const QContact &contact, QContactManager::Error &error)
+bool CntSimStore::write(const QContact &contact, QContactManager::Error* error)
 {
     return d_ptr->write(contact, error);
 }
 
-bool CntSimStore::remove(int index, QContactManager::Error &error)
+bool CntSimStore::remove(int index, QContactManager::Error* error)
 {
     return d_ptr->remove(index, error);
+}
+
+bool CntSimStore::getReservedSlots(QContactManager::Error* error)
+{
+    return d_ptr->getReservedSlots(error);
 }
 
 void CntSimStore::cancel()

@@ -83,10 +83,10 @@ int main(int argc, char *argv[])
     
     testRunner.printResults();
 
-    if (promptOnExit) {
+    /*if (promptOnExit) {
         printf("Press any key...\n");
         getchar(); 
-    }
+    }*/
     return 0;   
 }
 
