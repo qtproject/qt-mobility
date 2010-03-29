@@ -296,7 +296,7 @@ determining the feature support:
 
 \section2 Bearer Cloud Example
 The \l {bearercloud}{Bearer Cloud} example graphically represents the available access points to
-various networks and their stylized distance from the user.
+various networks and their respective configuration state.
 
 \section2 Bearer Monitor Example
 The \l{bearermonitor}{Bearer Monitor} displays various networks or services by status and configuration.
