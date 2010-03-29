@@ -1320,7 +1320,7 @@ void tst_messaging::tst_fetchAll()
 
                  CImEmailMessage *pMsg = CImEmailMessage::NewLC(*pEntry);                 
 
-                 CMsvStore *store;                 
+                 CMsvStore *store = 0x0;
                  TRAPD(err, store = pEntry->ReadStoreL());
                  if(err){
 //                   TPtrC sub;
@@ -1641,7 +1641,7 @@ void tst_messaging::tst_fetchFilter()
         const CMsvFindResultSelection &res = finder->GetFindResult();
         
         for(int i = 0; i < res.Count(); i++){          
-          CMsvEntry *pEntry;
+          CMsvEntry *pEntry = 0x0;
           TRAPD(err, pEntry = m_native->iSession->GetEntryL(res.At(i).iId));
           if(err){
             qDebug() << "Failed to fetch: " << i << " - " << res.At(i).iId;
@@ -1674,7 +1674,7 @@ void tst_messaging::tst_fetchFilter()
         const CMsvFindResultSelection &res = finder->GetFindResult();
         
         for(int i = 0; i < res.Count(); i++){          
-          CMsvEntry *pEntry;
+          CMsvEntry *pEntry = 0x0;
           TRAPD(err, pEntry = m_native->iSession->GetEntryL(res.At(i).iId));
           if(err){
             qDebug() << "Failed to fetch: " << i << " - " << res.At(i).iId;
@@ -1944,7 +1944,7 @@ void tst_messaging::tst_removeAllMessage()
     }
     
     QBENCHMARK {      
-      CMsvEntry *pEntry;
+      CMsvEntry *pEntry = 0x0;
       TRAPD(err, pEntry = CMsvEntry::NewL(*m_native->iSession, KMsvRootIndexEntryId, TMsvSelectionOrdering()));
       if(err){
         qDebug() << "Failed to init CMsvEntryL " << err;
