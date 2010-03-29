@@ -81,7 +81,7 @@ QMap <QString, QString> networkInterfaces;
 {
     [super init];
     center = [NSNotificationCenter defaultCenter];
-    currentInterface = [CWInterface interface];
+    currentInterface = [CWInterface interfaceWithName:nil];
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWLinkDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWPowerDidChangeNotification object:nil];
 
@@ -489,9 +489,11 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
 
     if([currentInterface power]) {
         NSError *err = nil;
-        NSDictionary *parametersDict = nil;
+        NSDictionary *parametersDict =  [NSDictionary dictionaryWithObjectsAndKeys:
+                                   [NSNumber numberWithBool:YES], kCWScanKeyMerge,
+                                   [NSNumber numberWithInt:kCWScanTypeFast], kCWScanKeyScanType, // get the networks in the scan cache
+                                   [NSNumber numberWithInteger:100], kCWScanKeyRestTime, nil];
         NSArray* apArray = [currentInterface scanForNetworksWithParameters:parametersDict error:&err];
-
         CWNetwork *apNetwork;
         if(!err) {
             for(uint row=0; row < [apArray count]; row++ ) {
@@ -720,7 +722,7 @@ void QCoreWlanEngine::getUserConfigurations()
         NSString *nsInterfaceName = [wifiInterface name];
 // add user configured system networks
         SCDynamicStoreRef dynRef = SCDynamicStoreCreate(kCFAllocatorSystemDefault, (CFStringRef)@"Qt corewlan", nil, nil);
-        NSDictionary *airportPlist = (NSDictionary *)SCDynamicStoreCopyValue(dynRef, (CFStringRef)[NSString stringWithFormat:@"Setup:/Network/Interface/%@/AirPort", nsInterfaceName]);
+        NSDictionary *airportPlist = (NSDictionary *)SCDynamicStoreCopyValue(dynRef, (CFStringRef)[[NSString stringWithFormat:@"Setup:/Network/Interface/%@/AirPort", nsInterfaceName] autorelease]);
         CFRelease(dynRef);
 
         NSDictionary *prefNetDict = [airportPlist objectForKey:@"PreferredNetworks"];
@@ -738,7 +740,7 @@ void QCoreWlanEngine::getUserConfigurations()
 
         // 802.1X user profiles
         QString userProfilePath = QDir::homePath() + "/Library/Preferences/com.apple.eap.profiles.plist";
-        NSDictionary* eapDict = [[NSMutableDictionary alloc] initWithContentsOfFile:qstringToNSString(userProfilePath)];
+        NSDictionary* eapDict = [[NSDictionary alloc] initWithContentsOfFile:qstringToNSString(userProfilePath)];
         NSString *profileStr= @"Profiles";
         NSString *nameStr = @"UserDefinedName";
         NSString *networkSsidStr = @"Wireless Network";
@@ -769,8 +771,10 @@ void QCoreWlanEngine::getUserConfigurations()
                         }
                     }
                 }
+                [itemDict release];
             }
         }
+        [eapDict release];
     }
     [autoreleasepool release];
 #endif
