@@ -761,7 +761,6 @@ void tst_messaging::initTestCase()
     
     for(int i = 0; i < 30; i++)
       createMessage();
-    qDebug() << "Number of messages with QMF: " << m_native->countMessages();
 }
 
 void tst_messaging::cleanupTestCase()
