@@ -16,7 +16,8 @@ symbian {
     DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 
-CONFIG+=strict_flags
+CONFIG += strict_flags
+CONFIG(debug,debug|release):DEFINES += ENABLE_RUNTIME_SENSORLOG
 
 INCLUDEPATH += .
 DEPENDPATH += .
@@ -28,6 +29,7 @@ PUBLIC_HEADERS += \
 
 PRIVATE_HEADERS += \
            qsensorpluginloader_p.h\
+           sensorlog_p.h\
 
 SOURCES += qsensorbackend.cpp\
            qsensormanager.cpp\
