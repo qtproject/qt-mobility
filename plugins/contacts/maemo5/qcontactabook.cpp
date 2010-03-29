@@ -78,8 +78,17 @@ QContactABook::QContactABook(QObject* parent) :QObject(parent)
 
 QContactABook::~QContactABook()
 {
-    // XXX FIXME: memory leak?
+  OssoABookAggregator *roster = reinterpret_cast<OssoABookAggregator*>(m_abookAgregator);
+  if (g_signal_handler_is_connected(roster, m_contactAddedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactAddedHandlerId);
+  if (g_signal_handler_is_connected(roster, m_contactChangedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactChangedHandlerId);
+  if (g_signal_handler_is_connected(roster, m_contactRemovedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactRemovedHandlerId);
+
+  // XXX FIXME: memory leak?
   //g_object_unref(m_abookAgregator);
+
   delete cbSD;
 }
 
@@ -184,11 +193,11 @@ void QContactABook::initAddressBook(){
   cbSD->that = this;
   
   //TODO Set up signals for added/changed eContact
-  g_signal_connect(roster, "contacts-added",
+  m_contactAddedHandlerId = g_signal_connect(roster, "contacts-added",
                    G_CALLBACK (contactsAddedCB), cbSD);
-  g_signal_connect(roster, "contacts-changed",
+  m_contactChangedHandlerId = g_signal_connect(roster, "contacts-changed",
                    G_CALLBACK (contactsChangedCB), cbSD);
-  g_signal_connect(roster, "contacts-removed",
+  m_contactRemovedHandlerId = g_signal_connect(roster, "contacts-removed",
                    G_CALLBACK (contactsRemovedCB), cbSD);
   
 #if 0
