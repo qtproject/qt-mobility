@@ -320,7 +320,8 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   EBookQuery* query = convert(filter);
   
   GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-  e_book_query_unref(query);
+  if (query)
+      e_book_query_unref(query);
   
   while (l){
     EContact *contact = E_CONTACT(l->data);
@@ -765,7 +766,8 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId) c
 
     query = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, m_localIds[contactId]);
     contacts = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-    e_book_query_unref(query);
+    if (query)
+        e_book_query_unref(query);
 
     if (g_list_length(contacts) == 1) {
       rtn = A_CONTACT(contacts->data);
