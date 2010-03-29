@@ -39,68 +39,38 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
+#include "S60audiocontainercontrol.h"
+#include "s60audiocapturesession.h"
 #include <QtCore/qdebug.h>
-#include <QtGui/QIcon>
-#include <QtCore/QDir>
-#include <QtCore/QDebug>
 
-#include "qgstreamerserviceplugin.h"
-
-#ifdef QMEDIA_GSTREAMER_PLAYER
-#include "qgstreamerplayerservice.h"
-#endif
-#if defined(QMEDIA_GSTREAMER_CAPTURE) && defined(Q_WS_MAEMO_5)
-#include "qgstreamercaptureservice_maemo.h"
-#elif defined(QMEDIA_GSTREAMER_CAPTURE)
-#include "qgstreamercaptureservice.h"
-#endif
-
-#include <qmediaserviceprovider.h>
-
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/mman.h>
-#include <linux/videodev2.h>
-
-
-QStringList QGstreamerServicePlugin::keys() const
+S60AudioContainerControl::S60AudioContainerControl(QObject *parent)
+    : QMediaContainerControl(parent)
 {
-    return QStringList()
-#ifdef QMEDIA_GSTREAMER_PLAYER
-            << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
-#endif
-#ifdef QMEDIA_GSTREAMER_CAPTURE
-            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE)
-#endif
-            ;
 }
 
-QMediaService* QGstreamerServicePlugin::create(const QString &key)
+S60AudioContainerControl::S60AudioContainerControl(QObject *session, QObject *parent)
+   : QMediaContainerControl(parent)
 {
-#ifdef QMEDIA_GSTREAMER_PLAYER
-    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
-        return new QGstreamerPlayerService;
-#endif
-#ifdef QMEDIA_GSTREAMER_CAPTURE
-    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
-        return new QGstreamerCaptureService(key);
-#endif
-
-    //qDebug() << "unsupported key:" << key;
-    return 0;
+    m_session = qobject_cast<S60AudioCaptureSession*>(session);   
 }
 
-void QGstreamerServicePlugin::release(QMediaService *service)
+QStringList S60AudioContainerControl::supportedContainers() const
 {
-    delete service;
+    return m_session->supportedAudioContainers();
 }
 
-Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
+QString S60AudioContainerControl::containerMimeType() const
+{    
+    return m_session->audioContainer();    
+}
+
+void S60AudioContainerControl::setContainerMimeType(const QString &containerMimeType)
+{
+    m_session->setAudioContainer(containerMimeType);
+}
+
+QString S60AudioContainerControl::containerDescription(const QString &containerMimeType) const
+{
+    return m_session->audioContainerDescription(containerMimeType);
+}
+

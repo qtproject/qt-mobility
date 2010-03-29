@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
 
 #include <qpaintervideosurface_p.h>
+#include <QtTest/QtTest>
 
 #include <QtGui/qapplication.h>
 #include <QtMultimedia/qvideosurfaceformat.h>

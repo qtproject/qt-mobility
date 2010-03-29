@@ -39,68 +39,31 @@
 **
 ****************************************************************************/
 
-#include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
-#include <QtGui/QIcon>
-#include <QtCore/QDir>
-#include <QtCore/QDebug>
+#include <QString>
+#include "qxarecordmediaserviceproviderplugin.h"
+#include "qxarecordmediaservice.h"
+#include "qxacommon.h"
 
-#include "qgstreamerserviceplugin.h"
-
-#ifdef QMEDIA_GSTREAMER_PLAYER
-#include "qgstreamerplayerservice.h"
-#endif
-#if defined(QMEDIA_GSTREAMER_CAPTURE) && defined(Q_WS_MAEMO_5)
-#include "qgstreamercaptureservice_maemo.h"
-#elif defined(QMEDIA_GSTREAMER_CAPTURE)
-#include "qgstreamercaptureservice.h"
-#endif
-
-#include <qmediaserviceprovider.h>
-
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/mman.h>
-#include <linux/videodev2.h>
-
-
-QStringList QGstreamerServicePlugin::keys() const
+QStringList QXARecordMediaServiceProviderPlugin::keys() const
 {
     return QStringList()
-#ifdef QMEDIA_GSTREAMER_PLAYER
-            << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
-#endif
-#ifdef QMEDIA_GSTREAMER_CAPTURE
-            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE)
-#endif
-            ;
+            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
 }
 
-QMediaService* QGstreamerServicePlugin::create(const QString &key)
+QMediaService* QXARecordMediaServiceProviderPlugin::create(QString const& key)
 {
-#ifdef QMEDIA_GSTREAMER_PLAYER
-    if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
-        return new QGstreamerPlayerService;
-#endif
-#ifdef QMEDIA_GSTREAMER_CAPTURE
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
-        return new QGstreamerCaptureService(key);
-#endif
-
-    //qDebug() << "unsupported key:" << key;
+        return new QXARecodMediaService;
+    else
+        QT_TRACE2("unsupported key:", key);
     return 0;
 }
 
-void QGstreamerServicePlugin::release(QMediaService *service)
+void QXARecordMediaServiceProviderPlugin::release(QMediaService *service)
 {
+    QT_TRACE_FUNCTION_ENTRY;
     delete service;
+    QT_TRACE_FUNCTION_EXIT;
 }
 
-Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
+Q_EXPORT_PLUGIN2(xarecordservice, QXARecordMediaServiceProviderPlugin);

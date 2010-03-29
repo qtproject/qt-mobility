@@ -41,66 +41,55 @@
 
 #include <QtCore/qstring.h>
 #include <QtCore/qdebug.h>
-#include <QtGui/QIcon>
-#include <QtCore/QDir>
-#include <QtCore/QDebug>
 
-#include "qgstreamerserviceplugin.h"
-
-#ifdef QMEDIA_GSTREAMER_PLAYER
-#include "qgstreamerplayerservice.h"
+#include "s60mediaserviceplugin.h"
+#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
+#include "s60radiotunerservice.h"
 #endif
-#if defined(QMEDIA_GSTREAMER_CAPTURE) && defined(Q_WS_MAEMO_5)
-#include "qgstreamercaptureservice_maemo.h"
-#elif defined(QMEDIA_GSTREAMER_CAPTURE)
-#include "qgstreamercaptureservice.h"
+#ifdef HAS_MEDIA_PLAYER
+#include "s60mediaplayerservice.h"
 #endif
+#ifdef AUDIOSOURCEUSED
+#include "s60audiocaptureservice.h"
+#endif /* AUDIOSOURCEUSED */
 
-#include <qmediaserviceprovider.h>
-
-#include <linux/types.h>
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <sys/poll.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/mman.h>
-#include <linux/videodev2.h>
-
-
-QStringList QGstreamerServicePlugin::keys() const
+QStringList S60MediaServicePlugin::keys() const
 {
-    return QStringList()
-#ifdef QMEDIA_GSTREAMER_PLAYER
-            << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER)
+    QStringList list;
+#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED)
+    list << QLatin1String(Q_MEDIASERVICE_RADIO);
 #endif
-#ifdef QMEDIA_GSTREAMER_CAPTURE
-            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE)
+
+#ifdef HAS_MEDIA_PLAYER  
+    list << QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER);
 #endif
-            ;
+#ifdef AUDIOSOURCEUSED
+    list << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
+#endif /* AUDIOSOURCEUSED */
+    return list;
 }
 
-QMediaService* QGstreamerServicePlugin::create(const QString &key)
+QMediaService* S60MediaServicePlugin::create(QString const& key)
 {
-#ifdef QMEDIA_GSTREAMER_PLAYER
+#ifdef HAS_MEDIA_PLAYER
     if (key == QLatin1String(Q_MEDIASERVICE_MEDIAPLAYER))
-        return new QGstreamerPlayerService;
+        return new S60MediaPlayerService;
 #endif
-#ifdef QMEDIA_GSTREAMER_CAPTURE
+#ifdef AUDIOSOURCEUSED
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
-        return new QGstreamerCaptureService(key);
+        return new S60AudioCaptureService;
+#endif /* AUDIOSOURCEUSED */
+#if defined(TUNERLIBUSED) || defined(RADIOUTILITYLIBUSED) 
+    if (key == QLatin1String(Q_MEDIASERVICE_RADIO)) 
+        return new S60RadioTunerService;
 #endif
-
-    //qDebug() << "unsupported key:" << key;
+    
     return 0;
 }
 
-void QGstreamerServicePlugin::release(QMediaService *service)
+void S60MediaServicePlugin::release(QMediaService *service)
 {
     delete service;
 }
 
-Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
+Q_EXPORT_PLUGIN2(QtMobilityMmfEngine, S60MediaServicePlugin);
