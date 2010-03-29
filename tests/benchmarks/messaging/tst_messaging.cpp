@@ -64,6 +64,7 @@
 #include <msvapi.h>
 #include <IAPPrefs.h>
 #include <SMTCMTM.H>
+#include <SMUTHDR.H>
 #endif
 
 #include <qdebug.h>
