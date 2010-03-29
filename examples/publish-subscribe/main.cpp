@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     if (createDefault || createPublisher) {
         publisher = new PublisherDialog;
         QObject::connect(publisher, SIGNAL(rejected()), &app, SLOT(quit()));
-#ifndef QTM_SMALL_SCREEN
+#ifndef QTM_EXAMPLES_SMALL_SCREEN
         publisher->show();
 #endif
     }
@@ -79,14 +79,14 @@ int main(int argc, char *argv[])
     if (createDefault || createSubscriber) {
         subscriber = new SubscriberDialog;
         QObject::connect(subscriber, SIGNAL(rejected()), &app, SLOT(quit()));
-#ifndef QTM_SMALL_SCREEN
+#ifndef QTM_EXAMPLES_SMALL_SCREEN
         subscriber->show();
 #else
         subscriber->showMaximized();
 #endif
     }
 
-#ifdef QTM_SMALL_SCREEN
+#ifdef QTM_EXAMPLES_SMALL_SCREEN
     QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(showMaximized()));
     QObject::connect(publisher, SIGNAL(switchRequested()), subscriber, SLOT(repaint()));
     QObject::connect(publisher, SIGNAL(switchRequested()), publisher, SLOT(hide()));
