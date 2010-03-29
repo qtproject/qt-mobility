@@ -218,7 +218,7 @@ void QContactABook::initLocalIdHash()
      QCM5_DEBUG << "eContactID " << eContactUID << "has been stored in m_localIDs with key" << m_localIds[eContactUID];
      
      // Useful for debugging.
-     e_vcard_dump_structure((EVCard*)contact);
+     if (QCM5_DEBUG_ENABLED) e_vcard_dump_structure((EVCard*)contact);
    }
    
    g_list_free(contactList);

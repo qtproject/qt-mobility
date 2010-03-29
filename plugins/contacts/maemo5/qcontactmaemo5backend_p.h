@@ -122,7 +122,7 @@ class QContactMaemo5Engine : public QContactManagerEngine
     
     /* Definitions - Accessors and Mutators */
     QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
-    QContactDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const { return QContactManagerEngine::detailDefinition(definitionName, contactType, error); }
+    QContactDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const; // implemented in terms of the plural detailDefinitions
 
     /* Version Reporting */
     int implementationVersion() const { return MAEMO5_ENGINE_VERSION; };
@@ -139,12 +139,8 @@ class QContactMaemo5Engine : public QContactManagerEngine
     
     //TODO:- these are pure virtual and so MUST be implemented by the backend.  Stubs here.
     QMap<QString, QString> managerParameters() const {return QMap<QString,QString>();}
-    
-    bool saveContacts(QList<QContact>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
-    bool removeContacts(const QList<QContactLocalId>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+
     bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
- 
-    bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
     bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
     bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
 

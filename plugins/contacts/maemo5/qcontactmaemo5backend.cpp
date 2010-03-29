@@ -212,6 +212,9 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
     return false;
   }
 
+  // synthesize the display label for the contact
+  *contact = setContactDisplayLabel(synthesizedDisplayLabel(*contact, error), *contact);
+
   // ensure that the contact's details conform to their definitions
   if (!validateContact(*contact, error)) {
     QCM5_DEBUG << "Validate Contact failed";
@@ -223,10 +226,6 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
   cId.setManagerUri(managerUri());
   contact->setId(cId);
   return retn;
-=======
-  
-  return d->m_abook->saveContact(contact, error);
->>>>>>> 82dcbe1... Remove unneded QContactName definitions
 }
 
 #if 0
