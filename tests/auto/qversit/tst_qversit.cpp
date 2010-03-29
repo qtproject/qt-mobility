@@ -46,6 +46,7 @@
 #include "qversitcontactimporter.h"
 #include "qcontact.h"
 #include "qcontactmanager.h"
+#include "qcontactmanagerengine.h"
 
 #include <QtTest/QtTest>
 #include <QDebug>
@@ -169,10 +170,11 @@ void tst_QVersit::testImportFiles_data()
         org.setDepartment(QStringList(QLatin1String("Department Name")));
         org.setTitle(QLatin1String("Job title"));
         contact.saveDetail(&org);
-        list.append(contact);
         QContactNote note;
         note.setNote(QLatin1String("This is a note field.  Pretty boring."));
         contact.saveDetail(&note);
+        contact = QContactManagerEngine::setContactDisplayLabel(QLatin1String("Firstname Lastname"), contact);
+        list.append(contact);
         QContactUrl homeUrl;
         homeUrl.setUrl(QLatin1String("http://mywebpage.com"));
         homeUrl.setContexts(QContactDetail::ContextHome);
@@ -203,6 +205,7 @@ void tst_QVersit::testImportFiles_data()
         org.setName(QLatin1String("Nokia"));
         org.setDepartment(QStringList(QLatin1String("Qt DF")));
         contact.saveDetail(&org);
+        contact = QContactManagerEngine::setContactDisplayLabel(QLatin1String("first last"), contact);
         list.append(contact);
         QTEST_NEW_ROW("Entourage12/basic.vcf", "", list);
     }

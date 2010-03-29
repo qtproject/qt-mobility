@@ -196,7 +196,7 @@ void QVersitContactImporterPrivate::importProperty(
         success = createTags(property, contact);
     } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
         // This actually sets the QContactName's customLabel field (not QContactDisplayLabel)
-        success = createLabel(property, contact);
+        success = createCustomLabel(property, contact);
     } else {
         // Look up mDetailMappings for a simple mapping from property to detail.
         success = createNameValueDetail(property, contact);
@@ -569,7 +569,7 @@ bool QVersitContactImporterPrivate::createNameValueDetail(
 /*!
  * Creates a simple name-value contact detail.
  */
-bool QVersitContactImporterPrivate::createLabel(
+bool QVersitContactImporterPrivate::createCustomLabel(
     const QVersitProperty& property, QContact* contact) const
 {
     QContactName name;
@@ -691,4 +691,67 @@ void QVersitContactImporterPrivate::saveDetailWithContext(
     if (!contexts.isEmpty())
         detail->setContexts(contexts);
     contact->saveDetail(detail);
+}
+
+/*! Synthesize the display label from the name of the contact, or, failing that, the nickname of
+the contact, or failing that, the organisation of the contact.
+Returns the synthesized display label.
+ */
+QString QVersitContactImporterPrivate::synthesizedDisplayLabel(const QContact& contact)
+{
+    /* XXX This is copied and modified from QContactManagerEngine.  This should be made a public
+       static function in QCME and called here */
+    QList<QContactName> allNames = contact.details<QContactName>();
+
+    const QLatin1String space(" ");
+
+    // synthesize the display label from the name.
+    foreach (const QContactName& name, allNames) {
+        if (!name.customLabel().isEmpty()) {
+            // default behaviour is to allow the user to define a custom display label.
+            return name.customLabel();
+        }
+
+        QString result;
+        if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
+           result += name.value(QContactName::FieldPrefix);
+        }
+        if (!name.value(QContactName::FieldFirstName).trimmed().isEmpty()) {
+            if (!result.isEmpty())
+                result += space;
+            result += name.value(QContactName::FieldFirstName);
+        }
+        if (!name.value(QContactName::FieldMiddleName).trimmed().isEmpty()) {
+            if (!result.isEmpty())
+                result += space;
+            result += name.value(QContactName::FieldMiddleName);
+        }
+        if (!name.value(QContactName::FieldLastName).trimmed().isEmpty()) {
+            if (!result.isEmpty())
+                result += space;
+            result += name.value(QContactName::FieldLastName);
+        }
+        if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {
+            if (!result.isEmpty())
+                result += space;
+            result += name.value(QContactName::FieldSuffix);
+        }
+        if (!result.isEmpty())
+            return result;
+    }
+
+    QList<QContactNickname> allNicknames = contact.details<QContactNickname>();
+    foreach (const QContactNickname& nickname, allNicknames) {
+        if (!nickname.nickname().isEmpty())
+            return nickname.nickname();
+    }
+
+    /* Well, we had no non empty names. if we have orgs, fall back to those */
+    QList<QContactOrganization> allOrgs = contact.details<QContactOrganization>();
+    foreach (const QContactOrganization& org, allOrgs) {
+        if (!org.name().isEmpty())
+            return org.name();
+    }
+
+    return QString();
 }
