@@ -189,7 +189,12 @@ void tst_Contact::initTestCase()
       m_qm = 0x0;
     }
 #else
-    QFAIL("Platform not supported");
+    if(manager != "memory"){
+      QFAIL("Platform no supported");      
+    }
+    else {
+      m_qm = new QContactManager(manager);      
+    }
 #endif
 
 
@@ -369,7 +374,8 @@ void tst_Contact::tst_fetchOneContact()
     }
     delete req;
 
-#elif defined(Q_OS_SYMBIAN)    
+//#elif defined(Q_OS_SYMBIAN)
+#else
     QList<QContactLocalId> qcl = m_qm->contactIds();    
     if(qcl.count() < 1)
         QFAIL("No contacts to pull from tracker");
@@ -456,7 +462,8 @@ void tst_Contact::tst_fetchTenContact()
 
     delete req;
 
-#elif defined(Q_OS_SYMBIAN)
+//#elif defined(Q_OS_SYMBIAN)
+#else
     QList<QContactLocalId> qcl = m_qm->contactIds();
     if(qcl.count() < 10){
         QFAIL("No enough contacts to get 10");
@@ -884,8 +891,15 @@ void tst_Contact::tst_removeOneContact()
     
     TInt32 id = id_list.takeFirst();
     
+    TInt err = 0;
+    
     QBENCHMARK {
-      db->DeleteContactL(id);
+      TRAP(err, db->DeleteContactL(id));    
+    }
+    
+    if(err){
+      qDebug() << "DeleteContactL: failed with: " << err;
+      QFAIL("Failed to delete a contact");
     }
     
     CleanupStack::PopAndDestroy(1); //idArray, contactsDb
