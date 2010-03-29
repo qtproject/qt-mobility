@@ -2635,6 +2635,12 @@ QPair<QString, QString> tst_QContactManagerFiltering::definitionAndField(QContac
             continue;
         }
 
+        // if read only, we cannot use this definition.
+        // special case these, since read-only is reported via details, not definitions...
+        if (def.name() == QString(QLatin1String(QContactName::DefinitionName)) || def.name() == QString(QLatin1String(QContactPresence::DefinitionName))) {
+            continue;
+        }
+
         // grab the fields and search for a field of the required type
         // we only consider the definition if it only has a SINGLE FIELD, and
         // if that field is of the required type.  This avoids nasty presence test
@@ -2838,9 +2844,12 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     name.setFirstName("Aaron");
     name.setLastName("Aaronson");
-    name.setMiddleName("Arne");
-    name.setPrefix("Sir");
-    name.setSuffix("Dr.");
+    if (cm->detailDefinition(QContactName::DefinitionName).fields().contains(QContactName::FieldMiddleName))
+        name.setMiddleName("Arne");
+    if (cm->detailDefinition(QContactName::DefinitionName).fields().contains(QContactName::FieldPrefix))
+        name.setPrefix("Sir");
+    if (cm->detailDefinition(QContactName::DefinitionName).fields().contains(QContactName::FieldSuffix))
+        name.setSuffix("Dr.");
     QContactNickname nick;
     nick.setNickname("Sir Aaron");
     QContactEmailAddress emailAddr;
