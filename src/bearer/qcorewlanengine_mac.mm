@@ -319,10 +319,10 @@ void QCoreWlanEngine::connectToId(const QString &id)
 
             NSDictionary *parametersDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                        [NSNumber numberWithBool:YES], kCWScanKeyMerge,
+                                       [NSNumber numberWithInt:kCWScanTypeFast], kCWScanKeyScanType,
                                        [NSNumber numberWithInteger:100], kCWScanKeyRestTime,
                                        qstringToNSString(wantedSsid), kCWScanKeySSID,
                                        nil];
-
 
             NSArray *scanArray = [NSMutableArray arrayWithArray:[wifiInterface scanForNetworksWithParameters:parametersDict error:&err]];
             if(!err) {
@@ -491,7 +491,6 @@ QList<QNetworkConfigurationPrivate *> QCoreWlanEngine::scanForSsids(const QStrin
         NSError *err = nil;
         NSDictionary *parametersDict =  [NSDictionary dictionaryWithObjectsAndKeys:
                                    [NSNumber numberWithBool:YES], kCWScanKeyMerge,
-                                   [NSNumber numberWithInt:kCWScanTypeFast], kCWScanKeyScanType, // get the networks in the scan cache
                                    [NSNumber numberWithInteger:100], kCWScanKeyRestTime, nil];
         NSArray* apArray = [currentInterface scanForNetworksWithParameters:parametersDict error:&err];
         CWNetwork *apNetwork;
