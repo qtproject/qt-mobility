@@ -138,3 +138,8 @@ contains(mobility_modules,messaging) {
         qmessageservice
     }
 }
+
+# Sensors
+contains(mobility_modules,sensors) {
+    SUBDIRS += qsensor
+}
