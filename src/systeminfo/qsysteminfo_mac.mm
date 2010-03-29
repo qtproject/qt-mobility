@@ -187,7 +187,7 @@ bool hasIOServiceMatching(const QString &classstr)
 {
    [super init];
     center = [NSNotificationCenter defaultCenter];
-    currentInterface = [CWInterface interface];
+    currentInterface = [CWInterface interfaceWithName:nil];
 
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWModeDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWSSIDDidChangeNotification object:nil];
@@ -203,7 +203,6 @@ bool hasIOServiceMatching(const QString &classstr)
 -(void)dealloc
 {
    [center release];
-   [currentInterface release];
    [super dealloc];
 }
 
@@ -561,6 +560,7 @@ void QLangLoopThread::run()
 #endif
 }
 
+QtMNSListener *listener;
 
 QRunLoopThread::QRunLoopThread(QObject *parent)
     :QThread(parent)
@@ -569,6 +569,7 @@ QRunLoopThread::QRunLoopThread(QObject *parent)
 
 QRunLoopThread::~QRunLoopThread()
 {
+    [listener dealloc];
 }
 
 void QRunLoopThread::quit()
@@ -579,6 +580,7 @@ void QRunLoopThread::quit()
     mutex.unlock();
     CFRelease(storeSession);
 }
+
 
 void QRunLoopThread::run()
 {
@@ -592,7 +594,6 @@ void QRunLoopThread::run()
     keepRunning = true;
     mutex.unlock();
 
-    QtMNSListener *listener;
     listener = [[QtMNSListener alloc] init];
 
     NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
@@ -1032,15 +1033,16 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
+    QString cmcc;
 #if defined(MAC_SDK_10_6)
     if(hasWifi) {
-        CWInterface *primary = [CWInterface interface ];
+        CWInterface *primary = [CWInterface interfaceWithName:nil];
         if([primary power]) {
-            return  nsstringToQString( [primary countryCode]);
+            cmcc = nsstringToQString([primary countryCode]);
         }
     }
 #endif
-    return "";
+    return cmcc;
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
@@ -1321,8 +1323,9 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
                 if (volumeParmeters.vMServerAdr == 0) { //local drive
                     io_service_t ioService;
                     ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
-                                                            IOBSDNameMatching(kIOMasterPortDefault, 0,
-                                                                              (char *)volumeParmeters.vMDeviceID));
+                                                            IOBSDNameMatching(kIOMasterPortDefault,
+                                                            0,
+                                                            (char *)volumeParmeters.vMDeviceID));
 
                     if (IOObjectConformsTo(ioService, kIOMediaClass)) {
                         CFTypeRef wholeMedia;
@@ -1333,12 +1336,16 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
                                                                      0);
 
                         if((volumeParmeters.vMExtendedAttributes & (1L << bIsRemovable))) {
+                            IOObjectRelease(ioService);
                             CFRelease(wholeMedia);
                             return QSystemStorageInfo::RemovableDrive;
                         } else {
+                            IOObjectRelease(ioService);
+                            CFRelease(wholeMedia);
                             return QSystemStorageInfo::InternalDrive;
                         }
                     }
+                    IOObjectRelease(ioService);
                 } else {
                     return QSystemStorageInfo::RemoteDrive;
                 }
