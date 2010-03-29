@@ -19,7 +19,7 @@ MOBILITY = messaging
 
 symbian {
     TARGET.CAPABILITY = All -TCB
-    LIBS += -lmsgs -lmsgs_autoshutdown -limcm -lsmcm -lgsmu -letext -lbafl
+    LIBS += -lmsgs -limcm -lsmcm -lgsmu -letext -lbafl
     INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
     INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
     INCLUDEPATH += $$(EPOCROOT)epoc32/include/applications
