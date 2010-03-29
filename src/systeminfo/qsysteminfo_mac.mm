@@ -560,7 +560,9 @@ void QLangLoopThread::run()
 #endif
 }
 
+#ifdef MAC_SDK_10_6
 QtMNSListener *listener;
+#endif
 
 QRunLoopThread::QRunLoopThread(QObject *parent)
     :QThread(parent)
