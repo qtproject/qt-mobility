@@ -40,13 +40,22 @@
 ****************************************************************************/
 
 #include <QDebug>
+#include <QDir>
+#include <QDirIterator>
+#include <QtDBus>
 
 #include <qmessage.h>
+#include <qmessagemanager.h>
+#include <qmessage_p.h>
 
 #include <glib.h>
 #include <gconf/gconf-client.h>
 
 #include "support.h"
+
+// Service names for qtm-modest-plugin
+#define MODESTENGINE_QTM_PLUGIN_PATH "/com/nokia/Qtm/Modest/Plugin"
+#define MODESTENGINE_QTM_PLUGIN_NAME "com.nokia.Qtm.Modest.Plugin"
 
 // Constants
 const char TST_ACCOUNTS_PATH[]         = "/apps/modest/accounts/";
@@ -57,12 +66,12 @@ const char TST_TRANSPORT_ACCOUNT_KEY[] = "transport_account";
 // Maybe it would be better to just nuke everything?
 #define NAME_COUNT 6
 const char *TST_ACCOUNT_NAMES[NAME_COUNT] = {
-    "testAccount",
-    "Test Account #1",
-    "Test Account #2",
-    "Alter Ego",
-    "Personal",
-    "Work"
+    "testAccountID",
+    "Test Account #1ID",
+    "Test Account #2ID",
+    "Alter EgoID",
+    "PersonalID",
+    "WorkID"
 };
 
 // Prints and clears an error
@@ -80,6 +89,139 @@ getAccountKey (const Support::Parameters &params, const bool &escape);
 // Gets a valid account path for GConf from parameters
 static QString
 getAccountPath (const Support::Parameters &params, const bool &escape);
+
+QTM_BEGIN_NAMESPACE
+class MapiSession
+{
+public:
+    static QMessageId addMessage(const Support::Parameters &params);
+};
+
+// The class 'MapiSession' is a friend of QMessageContentContainer - hijack it here
+// => This is needed to make it possible to set parentFolderId
+QMessageId MapiSession::addMessage(const Support::Parameters &params)
+{
+    QString parentAccountName(params["parentAccountName"]);
+    QString parentFolderPath(params["parentFolderPath"]);
+    QString to(params["to"]);
+    QString cc(params["cc"]);
+    QString from(params["from"]);
+    QString date(params["date"]);
+    QString receivedDate(params["receivedDate"]);
+    QString subject(params["subject"]);
+    QString text(params["text"]);
+    QString mimeType(params["mimeType"]);
+    QString attachments(params["attachments"]);
+    QString priority(params["priority"]);
+    QString size(params["size"]);
+    QString type(params["type"]);
+    QString read(params["status-read"]);
+    QString hasAttachments(params["status-hasAttachments"]);
+
+    QMessageManager manager;
+
+    if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
+        !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
+        // Find the named account
+        QMessageAccountIdList accountIds(manager.queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
+        if (accountIds.count() == 1) {
+            // Find the specified folder
+            QMessageFolderFilter filter(QMessageFolderFilter::byName(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
+            QMessageFolderIdList folderIds(manager.queryFolders(filter));
+            if (folderIds.count() == 1) {
+                QMessage message;
+
+                message.setParentAccountId(accountIds.first());
+                message.d_ptr->_parentFolderId = folderIds.first();
+
+                QList<QMessageAddress> toList;
+                foreach (const QString &addr, to.split(",")) {
+                    toList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
+                }
+                message.setTo(toList);
+
+                QList<QMessageAddress> ccList;
+                foreach (const QString &addr, cc.split(",")) {
+                                        if (!addr.isEmpty()) {
+                    ccList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
+                                        }
+                }
+                message.setCc(ccList);
+
+                message.setFrom(QMessageAddress(QMessageAddress::Email, from));
+                message.setSubject(subject);
+
+                QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
+                dt.setTimeSpec(Qt::UTC);
+                message.setDate(dt);
+
+                if (type.isEmpty()) {
+                    message.setType(QMessage::Email);
+                } else {
+                    if (type.toLower() == "mms") {
+                        message.setType(QMessage::Mms);
+                    } else if (type.toLower() == "sms") {
+                        message.setType(QMessage::Sms);
+                    } else if (type.toLower() == "instantmessage") {
+                        message.setType(QMessage::InstantMessage);
+                    } else {
+                        message.setType(QMessage::Email);
+                    }
+                }
+
+                if (!receivedDate.isEmpty()) {
+                    QDateTime dt(QDateTime::fromString(receivedDate, Qt::ISODate));
+                    dt.setTimeSpec(Qt::UTC);
+                    message.setReceivedDate(dt);
+                }
+
+                if (!priority.isEmpty()) {
+                    if (priority.toLower() == "high") {
+                        message.setPriority(QMessage::HighPriority);
+                    } else if (priority.toLower() == "low") {
+                        message.setPriority(QMessage::LowPriority);
+                    }
+                }
+
+                /*if (!size.isEmpty()) {
+                    message.d_ptr->_size = size.toUInt();
+                }*/
+
+                if (!text.isEmpty()) {
+                    message.setBody(text, mimeType.toAscii());
+                }
+
+                if (!attachments.isEmpty()) {
+                    message.appendAttachments(attachments.split("\n"));
+                }
+
+                QMessage::StatusFlags flags(0);
+                if (read.toLower() == "true") {
+                    flags |= QMessage::Read;
+                }
+                if (hasAttachments.toLower() == "true") {
+                    flags |= QMessage::HasAttachments;
+                }
+                message.setStatus(flags);
+
+                if (!manager.addMessage(&message)) {
+                    qWarning() << "Unable to addMessage:" << to << from << date << subject;
+                } else {
+                    return message.id();
+                }
+            } else {
+                qWarning() << "Unable to locate parent folder:" << parentFolderPath;
+            }
+        } else {
+            qWarning() << "Unable to locate parent account:" << parentAccountName;
+        }
+    } else {
+        qWarning() << "Necessary information missing";
+    }
+
+    return QMessageId();
+}
+QTM_END_NAMESPACE
 
 static void
 printError (
@@ -271,12 +413,52 @@ getAccountPath (const Support::Parameters &params, const bool &escape)
 
 namespace Support {
 
+void deltree(QString directory)
+{
+    if (QDir(directory).exists()) {
+        QDirIterator directoryIterator(directory, (QDir::AllEntries | QDir::NoDotAndDotDot));
+        while (directoryIterator.hasNext()) {
+            QString path = directoryIterator.next();
+            QFileInfo fileInfo = directoryIterator.fileInfo();
+            if (fileInfo.isFile()) {
+                QFile::remove(path);
+            } else if (fileInfo.isDir()) {
+                deltree(path);
+            }
+        }
+        QDir dir;
+        dir.rmdir(directory);
+    }
+}
+
 // Clears test data, that we know about
 void clearMessageStore()
 {
-    // TODO:
-    // - Clear messages
-    // - Clear folders
+    QString localRootFolder = QDir::home().absolutePath()+QString("/.modest/local_folders");
+    QStringList CREATED_FOLDERS = QStringList() << QString("Root")
+                                                << QString("Unbox")
+                                                << QString("Archived")
+                                                << QString("Backup");
+
+    QMessageFolderId folderId;
+
+    QDBusInterface pluginDBusInterface(MODESTENGINE_QTM_PLUGIN_NAME,
+                                       MODESTENGINE_QTM_PLUGIN_PATH,
+                                       MODESTENGINE_QTM_PLUGIN_NAME,
+                                       QDBusConnection::sessionBus());
+
+    for (int i=0; i < CREATED_FOLDERS.count(); i++) {
+        QDBusPendingCall pendingCall = pluginDBusInterface.asyncCall("RemoveFolder",
+                                                                      "local_folders",
+                                                                       CREATED_FOLDERS[i]);
+        QDBusPendingCallWatcher pendingCallWatcher(pendingCall);
+        pendingCallWatcher.waitForFinished();
+
+        QDBusMessage msg = pendingCallWatcher.reply();
+        if (msg.type() != QDBusMessage::ReplyMessage) {
+            break;
+        }
+    }
 
     clearTestAccounts ();
 }
@@ -811,21 +993,41 @@ QMessageAccountId addAccount (const Parameters &params)
     qDebug() << "Added account path " << accountPath << " with name "
              << accountName;
 
-    return QMessageAccountId (accountPath);
+    return QMessageAccountId ("MO_"+escapedAccountKey);
 }
 
 // Add a folder, unless it already exists
 QMessageFolderId addFolder(const Parameters &params)
 {
-    qDebug() << params;
-    return QMessageFolderId();
+    QString accountName(params["parentAccountName"]);
+    QString folderPath(params["path"]);
+    QString folderName(params["name"]);
+
+    QMessageFolderId folderId;
+
+    QDBusInterface pluginDBusInterface(MODESTENGINE_QTM_PLUGIN_NAME,
+                                       MODESTENGINE_QTM_PLUGIN_PATH,
+                                       MODESTENGINE_QTM_PLUGIN_NAME,
+                                       QDBusConnection::sessionBus());
+
+    QDBusPendingCall pendingCall = pluginDBusInterface.asyncCall("AddFolder",
+                                                                 "local_folders",
+                                                                  folderName);
+    QDBusPendingCallWatcher pendingCallWatcher(pendingCall);
+    pendingCallWatcher.waitForFinished();
+
+    QDBusMessage msg = pendingCallWatcher.reply();
+    if (msg.type() == QDBusMessage::ReplyMessage) {
+        folderId = QMessageFolderId("MO_"+accountName+"ID"+"&maildir&"+folderName);
+    }
+
+    return folderId;
 }
 
 // Add a message
 QMessageId addMessage(const Parameters &params)
 {
-    qDebug() << params;
-    return QMessageId();
+    return MapiSession::addMessage(params);
 }
 
 }; // Namespace Support
