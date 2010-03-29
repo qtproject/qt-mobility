@@ -39,64 +39,29 @@
 **
 ****************************************************************************/
 
-#include "qs60sensorapicommon.h"
-#include <QtCore/private/qcore_symbian_p.h>
+#ifndef SENSORSWINDOW_H
+#define SENSORSWINDOW_H
 
-QS60SensorApiCommon::QS60SensorApiCommon(QSensor *sensor)
-    : QSensorBackend(sensor)
-    , m_nativeSensor(NULL)
+#include <QtGui>
+#include "ui_sensorswindow.h"
+
+class SensorsWindow : public QMainWindow,
+    private Ui::SensorsWindowClass
 {
-    //Empty implementation
-}
+    Q_OBJECT
 
-QS60SensorApiCommon::~QS60SensorApiCommon()
-{
-    stop();
-    delete m_nativeSensor;
-    m_nativeSensor = NULL;
-}
+public:
+    SensorsWindow(QWidget *parent = 0);
 
-void QS60SensorApiCommon::start()
-{
-    if(!m_nativeSensor)
-        return;
-    
-    m_nativeSensor->AddDataListener(this);    
-}
+private Q_SLOTS:
+    void changeForm(int formIndex);
 
-void QS60SensorApiCommon::stop()
-{
-    if(!m_nativeSensor)
-        return;
-    
-    m_nativeSensor->RemoveDataListener();
-}
+private:
+    QWidget *createForm(int formIndex);
 
-void QS60SensorApiCommon::HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent)
-{
-    Q_UNUSED(aEvent);
-    if (aSensor.iSensorId != nativeSensorId()) 
-        return;    
-}
+private:
+    QWidget *m_currentCentralWidget;
+    QStringList m_formNames;
+};
 
-void QS60SensorApiCommon::findAndCreateNativeSensorL()
-{
-    if(m_nativeSensor)
-        return;
-    
-    RArray<TRRSensorInfo> sensorList;
-    CRRSensorApi::FindSensorsL(sensorList);
-    CleanupClosePushL(sensorList);
-
-    TInt index = 0;
-    do {
-        //qDebug() <<qt_TDesC2QString(sensorList[index].iSensorName)<<sensorList[index].iSensorId<<sensorList[index].iSensorCategory;
-        if (sensorList[index].iSensorId == nativeSensorId())
-            m_nativeSensor = CRRSensorApi::NewL(sensorList[index]);
-    } while(!m_nativeSensor && ++index < sensorList.Count());
-        
-    if (!m_nativeSensor)
-        User::Leave(KErrNotFound);
-    
-    CleanupStack::PopAndDestroy(&sensorList);
-}
+#endif // SENSORSWINDOW_H

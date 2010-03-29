@@ -41,7 +41,6 @@
 
 #include "qsensorpluginloader_p.h"
 #include <QtCore/qcoreapplication.h>
-#include <QtCore/qpluginloader.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qdebug.h>
 
@@ -56,6 +55,15 @@ QSensorPluginLoader::QSensorPluginLoader(const char *iid, const QString &locatio
     load();
 }
 
+QSensorPluginLoader::~QSensorPluginLoader()
+{
+    Q_FOREACH (QPluginLoader *loader, m_loaders) {
+        bool ok = loader->unload();
+        if (!ok) qWarning() << "Cannot unload" << loader->fileName();
+        delete loader;
+    }
+}
+
 void QSensorPluginLoader::load()
 {
     if (!m_plugins.isEmpty())
@@ -64,28 +72,33 @@ void QSensorPluginLoader::load()
     QStringList     paths = QCoreApplication::libraryPaths();
 
     Q_FOREACH (QString const &path, paths) {
-        QString     pluginPathName(path + m_location);
-        QDir        pluginDir(pluginPathName);
+        QString pluginPathName(path + m_location);
+        QDir pluginDir(pluginPathName);
 
         if (!pluginDir.exists())
             continue;
 
         Q_FOREACH (QString pluginLib, pluginDir.entryList(QDir::Files)) {
-            QPluginLoader   loader(pluginPathName + pluginLib);
+            QPluginLoader *loader = new QPluginLoader(pluginPathName + pluginLib);
 
-            QObject *o = loader.instance();
+            QObject *o = loader->instance();
             if (o != 0 && o->qt_metacast(m_iid) != 0) {
                 QSensorPluginInterface *p = qobject_cast<QSensorPluginInterface*>(o);
                 if (p != 0) {
                     m_plugins << p;
+                    m_loaders << loader;
+                } else {
+                    loader->unload();
+                    delete loader;
                 }
 
                 continue;
             } else {
-                qWarning() << "QSensorPluginLoader: Failed to load plugin: " << pluginLib << loader.errorString();
+                qWarning() << "QSensorPluginLoader: Failed to load plugin: " << pluginLib << loader->errorString();
             }
             delete o;
-            loader.unload();
+            loader->unload();
+            delete loader;
         }
     }
 }
