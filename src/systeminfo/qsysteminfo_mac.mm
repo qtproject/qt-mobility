@@ -571,7 +571,9 @@ QRunLoopThread::QRunLoopThread(QObject *parent)
 
 QRunLoopThread::~QRunLoopThread()
 {
+#ifdef MAC_SDK_10_6
     [listener dealloc];
+#endif
 }
 
 void QRunLoopThread::quit()
