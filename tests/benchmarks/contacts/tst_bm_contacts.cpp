@@ -893,12 +893,11 @@ void tst_Contact::tst_removeOneContact()
     
     TInt err = 0;
     
-    QBENCHMARK {
+    QBENCHMARK_ONCE {
       TRAP(err, db->DeleteContactL(id));    
     }
     
-    if(err){
-      qDebug() << "DeleteContactL: failed with: " << err;
+    if(err){      
       QFAIL("Failed to delete a contact");
     }
     
