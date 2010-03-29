@@ -67,7 +67,14 @@ INSTALLS += feature
 TEMPLATE = subdirs
 CONFIG+=ordered
 
-SUBDIRS += src tools plugins
+SUBDIRS += src
+
+contains(build_tools, yes) {
+    SUBDIRS += tools
+}
+
+SUBDIRS += plugins
+
 #built documentation snippets, if enabled
 contains(build_docs, yes) {
     SUBDIRS += doc
