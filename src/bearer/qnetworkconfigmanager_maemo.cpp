@@ -302,9 +302,9 @@ void QNetworkConfigurationManagerPrivate::deleteConfiguration(QString& iap_id)
 
 
 uint32_t QNetworkConfigurationManagerPrivate::getNetworkAttrs(bool is_iap_id,
-                                const QString& iap_id,
-							    QString& iap_type,
-							    QString security_method)
+                                                              const QString& iap_id,
+                                                              const QString& iap_type,
+                                                              QString security_method)
 {
     guint network_attr = 0;
     dbus_uint32_t cap = 0;
@@ -369,7 +369,6 @@ void QNetworkConfigurationManagerPrivate::addConfiguration(QString& iap_id)
             if (!ssid.isEmpty() && accessPointConfigurations.contains(ssid)) {
                 QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> ptr = accessPointConfigurations.take(ssid);
                 if (ptr.data()) {
-                    QString iap_type = saved_iap.value("type").toString();
                     ptr->id = iap_id;
                     ptr->iap_type = iap_type;
                     ptr->network_attrs = getNetworkAttrs(true, iap_id, iap_type, QString());
