@@ -146,13 +146,13 @@ void tst_QVersit::testImportFiles_data()
     QTest::addColumn<QByteArray>("charset");
     QTest::addColumn<QList<QContact> >("expectedContacts");
 
-    QTEST_NEW_ROW("AAB4/MultipleAll.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/MultipleAscii.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/SingleCompany.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/SingleExtensive.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/SingleNonAscii.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/SingleNonAsciiWithPhoto.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB5/SingleNonAscii.vcf", "UTF-8", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-MultipleAll.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-MultipleAscii.vcf", "", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-SingleCompany.vcf", "", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-SingleExtensive.vcf", "", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-SingleNonAscii.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-SingleNonAsciiWithPhoto.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("AAB5-SingleNonAscii.vcf", "UTF-8", QList<QContact>());
 
     {
         QList<QContact> list;
@@ -183,12 +183,12 @@ void tst_QVersit::testImportFiles_data()
         workUrl.setUrl(QLatin1String("http://workwebpage"));
         workUrl.setContexts(QContactDetail::ContextWork);
         contact.saveDetail(&workUrl);
-        QTEST_NEW_ROW("Entourage11/basic.vcf", "UTF-16BE", list);
+        QTEST_NEW_ROW("Entourage11-basic.vcf", "UTF-16BE", list);
     }
 
-    QTEST_NEW_ROW("Entourage11/image.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("Entourage11-image.vcf", "UTF-16BE", QList<QContact>());
 
-    QTEST_NEW_ROW("Entourage11/nonascii.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("Entourage11-nonascii.vcf", "UTF-16BE", QList<QContact>());
 
     {
         QList<QContact> list;
@@ -207,11 +207,11 @@ void tst_QVersit::testImportFiles_data()
         contact.saveDetail(&org);
         contact = QContactManagerEngine::setContactDisplayLabel(QLatin1String("first last"), contact);
         list.append(contact);
-        QTEST_NEW_ROW("Entourage12/basic.vcf", "", list);
+        QTEST_NEW_ROW("Entourage12-basic.vcf", "", list);
     }
 
-    QTEST_NEW_ROW("Entourage12/kevin.vcf", "UTF-8", QList<QContact>());
-    QTEST_NEW_ROW("Entourage12/nonascii.vcf", "UTF-8", QList<QContact>());
+    QTEST_NEW_ROW("Entourage12-kevin.vcf", "UTF-8", QList<QContact>());
+    QTEST_NEW_ROW("Entourage12-nonascii.vcf", "UTF-8", QList<QContact>());
     QTEST_NEW_ROW("gmail.vcf", "UTF-8", QList<QContact>());
 }
 
