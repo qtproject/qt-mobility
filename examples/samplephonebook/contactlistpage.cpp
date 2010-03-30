@@ -49,8 +49,8 @@
 
 #include <QtGui>
 
-ContactListPage::ContactListPage(QWidget *parent)
-        : QWidget(parent)
+ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
+        : QWidget(parent), m_mainWindow(mainWindow)
 {
     m_manager = 0;
     m_currentFilter = QContactFilter();
@@ -72,7 +72,7 @@ ContactListPage::ContactListPage(QWidget *parent)
             params.insert("store", "ADN");
             managerUri = QContactManager::buildUri(managerName, params);
             m_availableManagers.insert(availableManagers.last(), managerUri);
-            
+
             availableManagers.append("symbiansim:fdn");
             params.clear();
             params.insert("store", "FDN");
@@ -94,45 +94,62 @@ ContactListPage::ContactListPage(QWidget *parent)
     m_filterActiveLabel = new QLabel("Inactive");
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
-    m_contactsList = new QListWidget(this);
-
-    QPushButton* m_addContactBtn = new QPushButton("Add", this);
-    connect(m_addContactBtn, SIGNAL(clicked()), this, SLOT(addContactClicked()));
-    QPushButton* m_editBtn = new QPushButton("Edit", this);
-    connect(m_editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
-    QPushButton* m_deleteBtn = new QPushButton("Delete", this);
-    connect(m_deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-    QPushButton* m_filterBtn = new QPushButton("Filter", this);
-    connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
-    QPushButton* m_importBtn = new QPushButton("Import");
-    connect(m_importBtn, SIGNAL(clicked()), this, SLOT(importClicked()));
-    QPushButton* m_exportBtn = new QPushButton("Export");
-    connect(m_exportBtn, SIGNAL(clicked()), this, SLOT(exportClicked()));
 
 
+    QVBoxLayout *bookLayout = new QVBoxLayout;
     QFormLayout *backendLayout = new QFormLayout;
     backendLayout->addRow("Store:", m_backendsCombo);
     backendLayout->addRow("Filter:", m_filterActiveLabel);
-
-    QHBoxLayout *btnLayout1 = new QHBoxLayout;
-    btnLayout1->addWidget(m_addContactBtn);
-    btnLayout1->addWidget(m_editBtn);
-    btnLayout1->addWidget(m_deleteBtn);
-    btnLayout1->addWidget(m_filterBtn);
-
-    QHBoxLayout *btnLayout2 = new QHBoxLayout;
-    btnLayout2->addWidget(m_importBtn);
-    btnLayout2->addWidget(m_exportBtn);
-
-    QVBoxLayout *bookLayout = new QVBoxLayout;
     bookLayout->addLayout(backendLayout);
+
+    m_contactsList = new QListWidget(this);
     bookLayout->addWidget(m_contactsList);
+
+    // Action buttons at the bottom
+    QHBoxLayout *btnLayout1 = new QHBoxLayout;
+
+    QPushButton* addBtn = new QPushButton("Add", this);
+    connect(addBtn, SIGNAL(clicked()), this, SLOT(addClicked()));
+    btnLayout1->addWidget(addBtn);
+
+    QPushButton* editBtn = new QPushButton("Edit", this);
+    connect(editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
+    btnLayout1->addWidget(editBtn);
+
+    QPushButton* deleteBtn = new QPushButton("Delete", this);
+    connect(deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+    btnLayout1->addWidget(deleteBtn);
+
     bookLayout->addLayout(btnLayout1);
-#ifdef BUILD_VERSIT
-    bookLayout->addLayout(btnLayout2);
-#endif
 
     setLayout(bookLayout);
+
+    // Add items to the menu
+    if (m_mainWindow) {
+        QAction* addAction = new QAction("Add Contact", this);
+        connect(addAction, SIGNAL(triggered()), this, SLOT(addClicked()));
+        QAction* editAction = new QAction("Edit Contact", this);
+        connect(editAction, SIGNAL(triggered()), this, SLOT(editClicked()));
+        QAction* deleteAction = new QAction("Delete Contact", this);
+        connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteClicked()));
+        QAction* filterAction = new QAction("Apply Filter", this);
+        connect(filterAction, SIGNAL(triggered()), this, SLOT(filterClicked()));
+
+        m_mainWindow->menuBar()->addAction(addAction);
+        m_mainWindow->menuBar()->addAction(editAction);
+        m_mainWindow->menuBar()->addAction(deleteAction);
+        m_mainWindow->menuBar()->addAction(filterAction);
+
+#ifdef BUILD_VERSIT
+        QAction* importAction = new QAction("Import contacts", this);
+        connect(importAction, SIGNAL(triggered()), this, SLOT(importClicked()));
+        QAction* exportAction = new QAction("Export contacts", this);
+        connect(exportAction, SIGNAL(triggered()), this, SLOT(exportClicked()));
+
+        m_mainWindow->menuBar()->addAction(importAction);
+        m_mainWindow->menuBar()->addAction(exportAction);
+#endif
+    }
 
     // force update to backend.
     QTimer::singleShot(0, this, SLOT(backendSelected()));
@@ -199,7 +216,7 @@ void ContactListPage::rebuildList(const QContactFilter& filter)
     }
 }
 
-void ContactListPage::addContactClicked()
+void ContactListPage::addClicked()
 {
     if (m_manager)
         emit showEditorPage(QContactLocalId(0));
@@ -229,7 +246,7 @@ void ContactListPage::deleteClicked()
         qWarning() << "Nothing to delete.";
         return;
     }
-        
+
     QContactLocalId contactId = QContactLocalId(m_contactsList->currentItem()->data(Qt::UserRole).toUInt());
     bool success = m_manager->removeContact(contactId);
     if (success) {
