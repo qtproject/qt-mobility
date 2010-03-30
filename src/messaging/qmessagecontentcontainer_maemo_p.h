@@ -73,7 +73,7 @@ public:
     QMultiMap<QByteArray, QString>  _header;
     
     QString _containingMessageId;
-    unsigned int _attachmentId;
+    QString _attachmentId;
     
     QMessageContentContainerPrivate(QMessageContentContainer *contentContainer)
             :
@@ -124,7 +124,7 @@ public:
     
     static QByteArray attachmentFilename(const QMessageContentContainer& container);
     
-    static QMessageContentContainer from(QString &messageId, unsigned int attachmentId, QByteArray &name,
+    static QMessageContentContainer from(QString &messageId, QString &attachmentId, QByteArray &name,
                                          QByteArray &mimeType, QByteArray &mimeSubType, int size);
     
     static QMessageContentContainerPrivate* implementation(const QMessageContentContainer &container);

@@ -67,7 +67,7 @@ QTM_BEGIN_NAMESPACE
 typedef QMap< QString, QString > ModestStringMap;
 typedef QList< ModestStringMap > ModestStringMapList;
 
-static const int maxCacheSize = 100;
+static const int maxCacheSize = 1000;
 
 class QMessageService;
 class QMessageServicePrivate;
@@ -145,6 +145,7 @@ struct MessagingModestMimePart
     QString mimeType;
     bool isAttachment;
     QString fileName;
+    QString contentId;
 };
 
 struct MessagingModestMessage
@@ -167,13 +168,6 @@ struct MessagingModestMessage
     MessagingModestMessagePriority priority;
     QList<MessagingModestMimePart> mimeParts;
 };
-
-struct EmailMessageNotification
-{
-    QString messageId;
-    int event;
-};
-
 
 struct INotifyEvent
 {
@@ -283,6 +277,7 @@ public:
                                                                      const QMessageFilter& filter,
                                                                      QMessageManager::NotificationFilterId id = 0);
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
+    QByteArray getMimePart (const QMessageId &id, const QString &attachmentId);
 
 private:
     QFileInfoList localFolders() const;
@@ -354,8 +349,6 @@ private:
     uint getModestPriority(QMessage &message);
     ModestStringMap getModestHeaders(QMessage &message);
 
-    int findNotificationFromLatestNotifications(const QMessageId& messageId) const;
-
 private slots:
     void searchMessagesHeadersReceivedSlot(QDBusMessage msg);
     void searchMessagesHeadersFetchedSlot(QDBusMessage msg);
@@ -388,7 +381,7 @@ private: //Data
 
     QMap<QString, QDateTime> accountsLatestTimestamp;
 
-    mutable QList<EmailMessageNotification> m_latestNotifications;
+    mutable QStringList m_latestRemoveNotifications;
 
     mutable QMap<QString, QMessage> m_messageCache;
 
