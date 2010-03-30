@@ -57,6 +57,25 @@
 #include "cntfilterchangelog.h"
 #include "cntfilterrelationship.h"
 
+//#define WRITE_LOGS
+
+#if defined(WRITE_LOGS)
+#include <e32debug.h> // RDebug
+
+#define LOG(a)              WriteTestLog(a, "")
+#define LOG2(a, b)          WriteTestLog(a, b)
+#define TEST_BEGIN_LOG(a)   LOG(a##" begins")
+#define TEST_PASSED_LOG(a)  LOG(a##" passed")
+void WriteTestLog(const QString a, const QString b);
+void WriteTestPart(const TDesC& s);
+
+#else
+#define LOG(a)
+#define LOG2(a, b)
+#define TEST_BEGIN_LOG(a)
+#define TEST_PASSED_LOG(a)
+#endif
+
 
 void TestFiltering::initTestCase()
 {
@@ -218,6 +237,10 @@ void TestFiltering::createContacts()
     createContact_3();
     createContact_4();
     createContact_5();
+    createContact_6();
+    createContact_7();
+    createContact_8();
+    createContact_9();
     // Empty contact
     //QContact empty;
     //mCntMng->saveContact(&empty);
@@ -225,8 +248,8 @@ void TestFiltering::createContacts()
     QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
     cnt_ids = mCntMng->contactIds();
     int j = cnt_ids.count();
-    // 5 contacts created in code, so check if all 5 were created
-    QVERIFY(5 == j);
+    // 7contacts created in code, so check if all 5 were created
+    QVERIFY(9 == j);
     
 }
 
@@ -381,6 +404,111 @@ void TestFiltering::createContact_5()
 
 }
 
+void TestFiltering::createContact_6()
+{
+    //Currenlty we can only fetch firstname,lastname,companyname and sip/email/phone from the databse
+    // so create contact with only these details
+    // Susan Daniel  +044035022423 dan.susa@nokia.com
+    QContact phonecontact;
+    
+    // Contact details
+    QContactName contactName;
+    contactName.setFirstName("6079949400404");
+    contactName.setLastName("Douglas");
+    phonecontact.saveDetail(&contactName);
+    
+    QContactPhoneNumber number2;
+    number2.setContexts("Home");
+    number2.setSubTypes("Mobile");
+    number2.setNumber("+12126093344");
+    phonecontact.saveDetail(&number2);
+
+    QContactEmailAddress email;
+    email.setEmailAddress("michael.douglas@mga.com");
+    phonecontact.saveDetail(&email);
+    
+    QVERIFY(mCntMng->saveContact(&phonecontact));
+}
+
+void TestFiltering::createContact_7()
+{
+    //Currenlty we can only fetch firstname,lastname,companyname and sip/email/phone from the databse
+    // so create contact with only these details
+    // Susan Daniel  +12126093344 kirk.douglas@mga.com
+    QContact phonecontact;
+    
+    // Contact details
+    QContactName contactName;
+    contactName.setFirstName("Frady");
+    contactName.setLastName("Mercury");
+    phonecontact.saveDetail(&contactName);
+    
+    QContactPhoneNumber number2;
+    number2.setContexts("Home");
+    number2.setSubTypes("Mobile");
+    number2.setNumber("+12126093344");
+    phonecontact.saveDetail(&number2);
+
+    QContactEmailAddress email;
+    email.setEmailAddress("kirk.douglas@mga.com");
+    phonecontact.saveDetail(&email);
+    
+    QVERIFY(mCntMng->saveContact(&phonecontact));
+}
+
+void TestFiltering::createContact_8()
+{
+    //Currenlty we can only fetch firstname,lastname,companyname and sip/email/phone from the databse
+    // so create contact with only these details
+    // Susan Daniel  +35891 aulis.kekkonen@ak.org
+    QContact phonecontact;
+    
+    // Contact details
+    QContactName contactName;
+    contactName.setFirstName("Aulis");
+    contactName.setLastName("Kekkonen");
+    phonecontact.saveDetail(&contactName);
+    
+    QContactPhoneNumber number2;
+    number2.setContexts("Home");
+    number2.setSubTypes("Mobile");
+    number2.setNumber("+35891");
+    phonecontact.saveDetail(&number2);
+
+    QContactEmailAddress email;
+    email.setEmailAddress("aulis.kekkonen@ak.org");
+    phonecontact.saveDetail(&email);
+    
+    QVERIFY(mCntMng->saveContact(&phonecontact));
+}
+
+void TestFiltering::createContact_9()
+{
+    TEST_BEGIN_LOG("createContact_9");
+    //Currenlty we can only fetch firstname,lastname,companyname and sip/email/phone from the databse
+    // so create contact with only these details
+    // +plus 000000007  +044035022423 jack.kekkonen@ukk.com
+    QContact phonecontact;
+    
+    // Contact details
+    QContactName contactName;
+    contactName.setFirstName("+plus");
+    contactName.setLastName("000000007");
+    QVERIFY(phonecontact.saveDetail(&contactName));
+    
+    QContactPhoneNumber number2;
+    number2.setContexts("Home");
+    number2.setSubTypes("Mobile");
+    number2.setNumber("+12126093344");
+    phonecontact.saveDetail(&number2);
+
+    QContactEmailAddress email;
+    email.setEmailAddress("jack.kekkonen@ukk.com");
+    phonecontact.saveDetail(&email);
+    
+    QVERIFY(mCntMng->saveContact(&phonecontact));
+    TEST_PASSED_LOG("createContact_9");
+}
 QContactFilter::MatchFlags TestFiltering::getMatchFlag(QString& inputflag)
     {
 
@@ -877,34 +1005,241 @@ void TestFiltering::testDefaultFilter()
     QVERIFY(error == QContactManager::NoError);
 }
 
-void TestFiltering::testZeroSearch()
+void TestFiltering::testDefaultFilterWithPredictiveSearch()
 {
+    TEST_BEGIN_LOG("testDefaultFilterWithPredictiveSearch");
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
+    QList<QString> testString;
+    testString << "Micheal" << "6079949400404";
+    QString pattern = "6";
+    bool isPredSearch = false;
+    
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mCntMng->contactIds( df );
+
+    for( int i=0;i<cnt_ids.count();i++ ) {
+            QContactLocalId cid = cnt_ids.at( i );    
+            QContact contact = mCntMng->contact( cid );
+            QContactName contactName = contact.detail( QContactName::DefinitionName );
+            testString.removeAll( contactName.value( QContactName::FieldFirst ) );
+            testString.removeAll( contactName.value( QContactName::FieldLast ) );
+            }
+    QVERIFY( testString.count() == 0 );
+    TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch");
+   
+}
+
+void TestFiltering::testDefaultFilterWithPredictiveSearch2()
+{
+    TEST_BEGIN_LOG("testDefaultFilterWithPredictiveSearch2");
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QList<QString> testString;
 
     bool isPredSearch = false;
-    QString pattern = "60";
+    testString << "Frady" << "6079949400404";  
+    QString pattern = "603";
        
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds(df, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = mCntMng->contactIds( df );
 
     for( int i=0;i<cnt_ids.count();i++ ) {
-            QString firstName("Micheal");
-            QString lastName("Jack");
+                QContactLocalId cid = cnt_ids.at( i );    
+                QContact contact = mCntMng->contact( cid );
+                QContactName contactName = contact.detail( QContactName::DefinitionName );
+                testString.removeAll( contactName.value( QContactName::FieldFirst ) );
+                testString.removeAll( contactName.value( QContactName::FieldLast ) );
+                } 
+   QVERIFY( testString.count() == 0 );
+   TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch2");
+}
+
+void TestFiltering::testDefaultFilterWithPredictiveSearch3()
+{
+    TEST_BEGIN_LOG("testDefaultFilterWithPredictiveSearch3");
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QList<QString> testString;
+
+    bool isPredSearch = false;
+    testString << "Fedrernn"; 
+    QString pattern = "3307";
+       
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mCntMng->contactIds( df );
+
+    for( int i=0;i<cnt_ids.count();i++ ) {
+                QContactLocalId cid = cnt_ids.at( i );    
+                QContact contact = mCntMng->contact( cid );
+                QContactName contactName = contact.detail( QContactName::DefinitionName );
+                testString.removeAll( contactName.value( QContactName::FieldFirst ) );
+                testString.removeAll( contactName.value( QContactName::FieldLast ) );
+                } 
+    QVERIFY( testString.count() == 0 );
+    TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch3");
+}
+
+void TestFiltering::testDefaultFilterWithPredictiveSearch4()
+{
+    TEST_BEGIN_LOG("testDefaultFilterWithPredictiveSearch4");
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QList<QString> testString;
+
+    bool isPredSearch = false;
+    testString << "Johnn" ; 
+    QString pattern = "505";
+       
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mCntMng->contactIds( df );
+
+    for( int i=0;i<cnt_ids.count();i++ ) {
+                    QContactLocalId cid = cnt_ids.at( i );    
+                    QContact contact = mCntMng->contact( cid );
+                    QContactName contactName = contact.detail( QContactName::DefinitionName );
+                    testString.removeAll( contactName.value( QContactName::FieldFirst ) );
+                    testString.removeAll( contactName.value( QContactName::FieldLast ) );
+                    } 
+    QVERIFY( testString.count() == 0 );
+    TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch4");
+}
+
+void TestFiltering::testDefaultFilterWithPredictiveSearch5()
+{
+    TEST_BEGIN_LOG("testDefaultFilterWithPredictiveSearch5");
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QList<QString> testString;
+
+    bool isPredSearch = false;
+    QString pattern = "78";
+    testString << "Stefann" << "Susan"; 
+    
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mCntMng->contactIds( df );
+
+    for( int i=0;i<cnt_ids.count();i++ ) {
+                    QContactLocalId cid = cnt_ids.at( i );    
+                    QContact contact = mCntMng->contact( cid );
+                    QContactName contactName = contact.detail( QContactName::DefinitionName );
+                    testString.removeAll( contactName.value( QContactName::FieldFirst ) );
+                    testString.removeAll( contactName.value( QContactName::FieldLast ) );
+                    } 
+    QVERIFY( testString.count() == 0 );
+    TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch5");
+}
+
+void TestFiltering::testDefaultFilterWithPredictiveSearch6()
+{
+    TEST_BEGIN_LOG("testDefaultFilterWithPredictiveSearch6");
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QList<QString> testString;
+
+    bool isPredSearch = false;
+    QString pattern = "502";
+    testString << "Kekkonen" << "Bondnn"; 
+    
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mCntMng->contactIds( df );
+
+    for( int i=0;i<cnt_ids.count();i++ ) {
             QContactLocalId cid = cnt_ids.at( i );    
             QContact contact = mCntMng->contact( cid );
             QContactName contactName = contact.detail( QContactName::DefinitionName );
-            QVERIFY( firstName == contactName.value( QContactName::FieldFirstName ) );
-            QVERIFY( lastName == contactName.value( QContactName::FieldLastName ) );
-            } 
+            testString.removeAll( contactName.value( QContactName::FieldFirst ) );
+            testString.removeAll( contactName.value( QContactName::FieldLast ) );
+            }
+    QVERIFY( testString.count() == 0 );
+    TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch6");
 }
 
+void TestFiltering::testDefaultFilterWithPredictiveSearch7()
+{
+    TEST_BEGIN_LOG("testDefaultFilterWithPredictiveSearch7");
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QList<QString> testString;
 
+    bool isPredSearch = false;
+    QString pattern = "000";
+    testString << "000000007"; 
+    
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mCntMng->contactIds( df );
+    
+    QString count;
+    QString contact_id;
+    count.setNum(cnt_ids.count());
+    
+    LOG2(pattern, count);
+
+    for( int i=0;i<cnt_ids.count();i++ ) {
+            QContactLocalId cid = cnt_ids.at( i );
+            contact_id.setNum(cid);
+            LOG2(pattern,contact_id);
+            QContact contact = mCntMng->contact( cid );
+            QContactName contactName = contact.detail( QContactName::DefinitionName );
+            testString.removeAll( contactName.value( QContactName::FieldFirst ) );
+            testString.removeAll( contactName.value( QContactName::FieldLast ) );
+            }
+    QVERIFY( testString.count() == 0 );
+    TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch7");
+}
+
+void TestFiltering::testDefaultFilterWithPredictiveSearch8()
+{
+    TEST_BEGIN_LOG("testDefaultFilterWithPredictiveSearch8");
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QList<QString> testString;
+
+    bool isPredSearch = false;
+    QString pattern = "99999099999";
+    
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mCntMng->contactIds( df );
+
+    QVERIFY( cnt_ids.count() == 0 );
+    TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch8");
+}
+
+void TestFiltering::testDefaultFilterWithPredictiveSearch9()
+{
+    TEST_BEGIN_LOG("testDefaultFilterWithPredictiveSearch9");
+    QList<QContactLocalId> cnt_ids;
+    QContactDetailFilter df;
+    QList<QString> testString;
+
+    bool isPredSearch = false;
+    QString pattern = "12+22";
+    
+    
+    df.setDetailDefinitionName(QContactName::DefinitionName);
+    df.setMatchFlags( QContactFilter::MatchKeypadCollation );
+    df.setValue( pattern );
+    cnt_ids = mCntMng->contactIds( df );
+
+    QVERIFY( testString.count() == 0 );
+    TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch9");
+}
 void TestFiltering::testFilterSupported()
     {
     QContactDetailFilter f1;
@@ -1031,3 +1366,37 @@ void TestFiltering::testCreateSelectQuery()
     return 0;   
 }
 */
+
+#if defined(WRITE_LOGS)
+void WriteTestLog(const QString a, const QString b)
+    {
+    TPtrC16 ptr(reinterpret_cast<const TUint16*>(a.utf16()));
+    WriteTestPart(ptr);
+    
+    if (b.size() > 0)
+        {
+        TPtrC16 ptr2(reinterpret_cast<const TUint16*>(b.utf16()));
+        WriteTestPart(ptr2);
+        }
+    }
+
+void WriteTestPart(const TDesC& s)
+    {
+    // RDebug::Print() only writes first 256 chars
+    const TInt KMaxLength = 255;
+        
+    TInt pos(0);
+    TInt len = s.Length();  
+    while (pos < len)
+        {
+        TInt partLength = KMaxLength;
+        if (pos + partLength > len)
+            {
+            partLength = len - pos;
+            }
+        TPtrC16 part = s.Mid(pos, partLength);
+        RDebug::Print(part);
+        pos += KMaxLength;
+        }
+    }
+#endif // #if defined(WRITE_LOGS)

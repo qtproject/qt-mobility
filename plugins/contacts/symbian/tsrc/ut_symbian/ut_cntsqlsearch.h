@@ -71,17 +71,18 @@ private slots: //test methods
 
     void testPredictiveSearch();
     void testSelectTableView();
-    void testIsSubStringSearch();
-    void testGetNumber();
-    void testCreateSubStringSearch();
-    void testCreateStringSearch();
-    void testCreateSpaceStringSearch();
-    void testCreateSpaceString();
+	void testCreateQuery();
+	void testExactMatchSearch();
+	void testIntersectionSearch();
+	void testExactMatch();
+	void testCreateJoinTableSearch();
+    void testUpperLimit();
+    void testLowerLimit();
+    void testGetTokens();
     
 private:
  
     CntSqlSearch* mCntSqlSearch;  
 };
 
-
-#endif //UT_SQLSEARCH_
+#endif // UT_CNTSQLSEARCH_H
