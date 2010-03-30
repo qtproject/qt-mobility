@@ -12,6 +12,8 @@ DEFINES += QT_BUILD_INTERNAL
 
 INCLUDEPATH += ../../src/serviceframework
 
+HEADERS += ../../src/serviceframework/servicedatabase_p.h
+
 SOURCES += servicedbgen.cpp \
           ../../src/serviceframework/servicemetadata.cpp \
           ../../src/serviceframework/qserviceinterfacedescriptor.cpp \
