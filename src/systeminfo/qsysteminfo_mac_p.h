@@ -110,6 +110,9 @@ private:
     static QSystemInfoPrivate *self;
 
 private Q_SLOTS:
+ protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 };
 

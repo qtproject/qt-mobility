@@ -150,7 +150,7 @@ symbian: {
                  }
             
                 !isEmpty(SDK6) {
-                        LIBS += -framework CoreWLAN
+                        LIBS += -framework CoreWLAN -framework Security
                         DEFINES += MAC_SDK_10_6
                 }
            }
