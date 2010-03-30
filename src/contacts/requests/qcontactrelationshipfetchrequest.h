@@ -69,7 +69,6 @@ public:
     void setRelationshipType(const QString& relationshipType);
     QString relationshipType() const;
 
-    // replaces the above functions.
     void setSecond(const QContactId& secondId);
     QContactId second() const;
 

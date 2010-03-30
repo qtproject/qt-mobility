@@ -57,6 +57,7 @@ QContactAction::~QContactAction()
   \brief The QContactAction class provides an interface for performing an
   action on a QContact or QContactDetail.
   \ingroup contacts-main
+  \ingroup contacts-actions
 
   An action is anything that can be performed on a contact, or a detail of a contact.  An example
   of an action might be "Send Email" or "Dial" or "Plot Navigation Route".  One action may be
