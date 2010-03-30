@@ -402,12 +402,21 @@ void AddressFinder::setupUi()
 #endif
 
     QGridLayout *filterLayout = new QGridLayout(inputGroup);
+#ifdef Q_WS_MAEMO_5
+    // Maemo 5 style doesn't take group box titles into account.
+    int spacingHack = QFontMetrics(QFont()).height();
+    filterLayout->setContentsMargins(0, spacingHack, 0, 0);
+#endif
 
     QLabel *includeLabel = new QLabel(tr("Contacted this"));
     filterLayout->addWidget(includeLabel, 0, 0);
     filterLayout->setAlignment(includeLabel, Qt::AlignRight);
 
     excludeCheckBox = new QCheckBox(tr("But not last"));
+#ifdef Q_WS_MAEMO_5
+    // Maemo 5 style cuts off check box text.
+    excludeCheckBox->setText(excludeCheckBox->text() + "  ");
+#endif
     excludeCheckBox->setCheckState(Qt::Checked);
     connect(excludeCheckBox, SIGNAL(stateChanged(int)), this, SLOT(excludePeriodEnabled(int)));
     filterLayout->addWidget(excludeCheckBox, 1, 0);
@@ -449,6 +458,9 @@ void AddressFinder::setupUi()
     QGroupBox *addressGroup = new QGroupBox(tr("Contacts"));
     addressGroup->setAlignment(Qt::AlignLeft);
     addressGroup->setLayout(new QVBoxLayout);
+#ifdef Q_WS_MAEMO_5
+    addressGroup->layout()->setContentsMargins(0, spacingHack, 0, 0);
+#endif
     addressGroup->layout()->addWidget(contactList);
     resultsLayout->addWidget(addressGroup);
 
@@ -456,6 +468,9 @@ void AddressFinder::setupUi()
     messageGroup->setAlignment(Qt::AlignLeft);
 
     QVBoxLayout *groupLayout = new QVBoxLayout;
+#ifdef Q_WS_MAEMO_5
+    groupLayout->setContentsMargins(0, spacingHack, 0, 0);
+#endif
 
     messageCombo = new QComboBox;
     connect(messageCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(messageIndexChanged(int)));
