@@ -77,9 +77,12 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
                 writemessage \
                 serviceactions
 
-                contains(mobility_modules,contacts) {
-                    SUBDIRS += keepintouch
-                }
+            contains(mobility_modules,contacts) {
+                SUBDIRS += keepintouch
+            }
+
+            # MessagingEx lives in tests for some reason
+            maemo5:SUBDIRS += ../tests/messagingex
          }
     }
 }
