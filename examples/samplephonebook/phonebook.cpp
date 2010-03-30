@@ -57,7 +57,7 @@ PhoneBook::PhoneBook(QWidget *parent)
     m_filterPage = new FilterPage(centralWidget);
     connect(m_filterPage, SIGNAL(showListPage(QContactFilter)), this, SLOT(activateList(QContactFilter)));
 
-    m_listPage = new ContactListPage(centralWidget);
+    m_listPage = new ContactListPage(this, centralWidget);
     connect(m_listPage, SIGNAL(showEditorPage(QContactLocalId)), this, SLOT(activateEditor(QContactLocalId)));
     connect(m_listPage, SIGNAL(showFilterPage(QContactFilter)), this, SLOT(activateFind()));
     connect(m_listPage, SIGNAL(managerChanged(QContactManager*)), this, SLOT(managerChanged(QContactManager*)));
