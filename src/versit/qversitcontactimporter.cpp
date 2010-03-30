@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qcontactmanagerengine.h"
 #include "qversitcontactimporter.h"
 #include "qversitcontactimporter_p.h"
 #include "qversitdocument.h"
@@ -169,6 +170,10 @@ bool QVersitContactImporter::importDocuments(const QList<QVersitDocument>& docum
         QContact contact;
         QVersitContactImporter::Error error;
         if (d->importContact(document, contactIndex, &contact, &error)) {
+            /* XXX Ideally, this display label code would be done by d->importContact(), but
+               QCME::setContactDisplayLabel() returns a new contact. (MOBILITY-137) */
+            contact = QContactManagerEngine::setContactDisplayLabel(
+                    QVersitContactImporterPrivate::synthesizedDisplayLabel(contact), contact);
             d->mContacts.append(contact);
             contactIndex++;
         } else {

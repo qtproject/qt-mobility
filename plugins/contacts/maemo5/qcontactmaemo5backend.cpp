@@ -214,11 +214,10 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
 
   // synthesize the display label for the contact
   *contact = setContactDisplayLabel(synthesizedDisplayLabel(*contact, error), *contact);
-  
+
   // ensure that the contact's details conform to their definitions
   if (!validateContact(*contact, error)) {
     QCM5_DEBUG << "Validate Contact failed";
-    *error = QContactManager::InvalidDetailError;
     return false;
   }
 
@@ -255,7 +254,9 @@ bool QContactMaemo5Engine::removeContact(const QContactLocalId& contactId, QCont
 
 QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(const QString& contactType, QContactManager::Error* error) const
 {
+
     QMap<QString, QMap<QString, QContactDetailDefinition> > defns = QContactManagerEngine::schemaDefinitions();
+    
     QMap<QString, QContactDetailFieldDefinition> fields;
     
     QContactDetailFieldDefinition gsfd; //Generic string field definition
@@ -272,8 +273,10 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     defns[contactType].remove(QContactAnniversary::DefinitionName);
     
     // QContactAvatar
+    // TODO setUnique(true);
     // QContactBirthday
     // QContactDisplayLabel
+    
     // QContactEmailAddress
     fields = defns[contactType][QContactEmailAddress::DefinitionName].fields();
     fields.insert(QContactDetail::FieldDetailUri, gsfd);
@@ -286,6 +289,12 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     
     // QContactGuid
     // QContactName
+    fields = defns[contactType][QContactName::DefinitionName].fields();
+    fields.remove(QContactName::FieldCustomLabel);
+    fields.remove(QContactName::FieldPrefix);
+    fields.remove(QContactName::FieldSuffix);
+    defns[contactType][QContactName::DefinitionName].setFields(fields);
+    
     // QContactNickname
     // QContactNote
     // QContactOnlineAccount
@@ -320,6 +329,10 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactUrl::FieldSubType);
     defns[contactType][QContactUrl::DefinitionName].setFields(fields);
   
+    //Still unmanaged: GlobalPresence, Presence, Ringtone, Tag
+    
+    QCM5_DEBUG << "Contact type" << contactType << "Keys" <<  defns.keys();
+    
     *error = QContactManager::NoError;
     return defns[contactType];
 }
@@ -347,8 +360,9 @@ bool QContactMaemo5Engine::isFilterSupported(const QContactFilter& filter) const
     case QContactFilter::IntersectionFilter:
     case QContactFilter::UnionFilter:
       return true;
+    default:
+      return false;
   }
-  return false;
 }
 
 QList<QVariant::Type> QContactMaemo5Engine::supportedDataTypes() const {

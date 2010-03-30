@@ -948,7 +948,7 @@ void tst_QVersitContactImporter::testNote()
     QCOMPARE(note.note(),val);
 }
 
-void tst_QVersitContactImporter::testLabel()
+void tst_QVersitContactImporter::testCustomLabel()
 {
     QVersitDocument document(QVersitDocument::VCard30Type);
     QVersitProperty nameProperty;
@@ -961,6 +961,62 @@ void tst_QVersitContactImporter::testLabel()
     QContactName name =
             (QContactName)contact.detail(QContactName::DefinitionName);
     QCOMPARE(name.customLabel(),val);
+}
+
+void tst_QVersitContactImporter::testDisplayLabel()
+{
+    QVersitDocument document(QVersitDocument::VCard30Type);
+    QVersitProperty orgProperty;
+    // ORG: should be used as last resort
+    orgProperty.setName(QLatin1String("ORG"));
+    orgProperty.setValue(QStringList(QLatin1String("org")));
+    orgProperty.setValueType(QVersitProperty::CompoundType);
+    document.addProperty(orgProperty);
+
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    QContact contact = mImporter->contacts().first();
+    QString displayLabel = contact.displayLabel();
+    QCOMPARE(displayLabel, QLatin1String("org"));
+
+    // NICKNAME: should be used if FN and N don't exist
+    QVersitProperty nickProperty;
+    nickProperty.setName(QLatin1String("NICKNAME"));
+    nickProperty.setValue(QStringList(QLatin1String("nick")));
+    nickProperty.setValueType(QVersitProperty::ListType);
+    document.addProperty(nickProperty);
+
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    displayLabel = contact.displayLabel();
+    QCOMPARE(displayLabel, QLatin1String("nick"));
+
+    // N: should be used in FN doesn't exist
+    QVersitProperty nameProperty;
+    nameProperty.setName(QLatin1String("N"));
+    nameProperty.setValue(QStringList()
+                          << QLatin1String("last")
+                          << QLatin1String("first")
+                          << QLatin1String("middle")
+                          << QLatin1String("prefix")
+                          << QLatin1String("suffix"));
+    nameProperty.setValueType(QVersitProperty::CompoundType);
+    document.addProperty(nameProperty);
+
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    displayLabel = contact.displayLabel();
+    QCOMPARE(displayLabel, QLatin1String("prefix first middle last suffix"));
+
+    // FN: should be used if it exists
+    QVersitProperty fnProperty;
+    fnProperty.setName(QLatin1String("FN"));
+    fnProperty.setValue(QLatin1String("fn"));
+    document.addProperty(fnProperty);
+
+    QVERIFY(mImporter->importDocuments(QList<QVersitDocument>() << document));
+    contact = mImporter->contacts().first();
+    displayLabel = contact.displayLabel();
+    QCOMPARE(displayLabel, QLatin1String("fn"));
 }
 
 void tst_QVersitContactImporter::testOnlineAccount()
