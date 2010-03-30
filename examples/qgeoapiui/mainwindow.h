@@ -43,6 +43,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMenu>
 
 #include "qgeonetworkmanager.h"
 #include "qroutereply.h"
@@ -83,13 +84,21 @@ private slots:
     void routeReplyFinished(QRouteReply* reply);
     void codingReplyFinished(QGeocodingReply* reply);
     void mapTileReplyFinished(QMapTileReply* reply);
+    void delayedInit();
+#ifdef Q_OS_SYMBIAN
+    void customContextMenuRequest(const QPoint&);
+    void showRouteRequestControls(bool visible=true);
+    void showGeocodingControls(bool visible=true);
+    void showReverseGeocodingControls(bool visible=true);
+    void showMapTileControls(bool visible=true);
+#endif
 
 private:
     QGeoNetworkManager geoNetworkManager;
 #ifdef Q_OS_SYMBIAN
     QNetworkSession *session;
+    QMenu* popupMenu;
 #endif
-
 };
 
 #endif // MAINWINDOW_H

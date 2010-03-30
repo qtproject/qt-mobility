@@ -46,6 +46,7 @@
 #include "placepresenter.h"
 #include "qmaptile.h"
 
+#include <QTimer>
 #ifdef Q_OS_SYMBIAN
 #include <QMessageBox>
 #include <qnetworksession.h>
@@ -58,24 +59,6 @@ MainWindow::MainWindow(QWidget *parent) :
         geoNetworkManager("", "")
 {
     ui->setupUi(this);
-    
-#ifdef Q_OS_SYMBIAN
-    // Set Internet Access Point
-    QNetworkConfigurationManager manager;
-    const bool canStartIAP = (manager.capabilities()
-                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
-    // Is there default access point, use it
-    QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-        QMessageBox::information(this, tr("QGeoApiUI Example"), tr(
-                                     "Available Access Points not found."));
-        return;
-    }
-  
-    session = new QNetworkSession(cfg, this);
-    session->open();
-    session->waitForOpened(-1);
-#endif
 
     QObject::connect(&geoNetworkManager, SIGNAL(finished(QRouteReply*)),
                      this, SLOT(routeReplyFinished(QRouteReply*)));
@@ -88,6 +71,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->mapTileLabel->setVisible(false);
 
+#ifdef Q_OS_SYMBIAN
+    showRouteRequestControls(true);
+#endif
+
+    QStringList labels;
+    labels << "Elements" << "Value";
+    ui->treeWidget->setHeaderLabels(labels);
+
+    QTimer::singleShot(0, this, SLOT(delayedInit()));
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::delayedInit()
+{
     ui->srcLat->setText("50");
     ui->srcLong->setText("10");
     ui->dstLat->setText("48");
@@ -102,15 +103,113 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tileLat->setText("40.7");
     ui->tileZoomLevel->setText("8");
 
-    QStringList labels;
-    labels << "Elements" << "Value";
-    ui->treeWidget->setHeaderLabels(labels);
+#ifdef Q_OS_SYMBIAN
+    // Set Internet Access Point
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("QGeoApiUI Example"), tr(
+                                     "Available Access Points not found."));
+        return;
+    }
+
+    session = new QNetworkSession(cfg, this);
+    session->open();
+    session->waitForOpened(-1);
+
+    popupMenu = new QMenu(this);
+    QAction* menuItem;
+    menuItem = new QAction(tr("Request Route"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(showRouteRequestControls()));
+
+    menuItem = new QAction(tr("Geocoding"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(showGeocodingControls()));
+
+    menuItem = new QAction(tr("Reverse Geocoding"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(showReverseGeocodingControls()));
+
+    menuItem = new QAction(tr("Map Tile"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(showMapTileControls()));
+
+    menuItem = new QAction(tr("Exit"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(close()));
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(customContextMenuRequest(const QPoint&)));
+#endif
+
 }
 
-MainWindow::~MainWindow()
+#ifdef Q_OS_SYMBIAN
+void MainWindow::customContextMenuRequest(const QPoint& point)
 {
-    delete ui;
+    popupMenu->popup(mapToGlobal(point));
 }
+
+void MainWindow::showRouteRequestControls(bool visible)
+{
+    if(visible) {
+        showGeocodingControls(false);
+        showReverseGeocodingControls(false);
+        showMapTileControls(false);
+    }
+
+    for(int i=0;i<ui->routeLayout->count();++i)
+        ui->routeLayout->itemAt(i)->widget()->setVisible(visible);
+}
+void MainWindow::showGeocodingControls(bool visible)
+{
+    if(visible) {
+        showRouteRequestControls(false);
+        showReverseGeocodingControls(false);
+        showMapTileControls(false);
+    }
+
+    for(int i=0;i<ui->geocoding_1_Layout->count();++i)
+        ui->geocoding_1_Layout->itemAt(i)->widget()->setVisible(visible);
+
+    for(int i=0;i<ui->geocodind_2_Layout->count();++i)
+        ui->geocodind_2_Layout->itemAt(i)->widget()->setVisible(visible);
+}
+
+void MainWindow::showReverseGeocodingControls(bool visible)
+{
+    if(visible) {
+        showGeocodingControls(false);
+        showRouteRequestControls(false);
+        showMapTileControls(false);
+    }
+
+    for(int i=0;i<ui->revGeocodingLayout->count();++i)
+        ui->revGeocodingLayout->itemAt(i)->widget()->setVisible(visible);
+}
+
+void MainWindow::showMapTileControls(bool visible)
+{
+    if(visible) {
+        showGeocodingControls(false);
+        showReverseGeocodingControls(false);
+        showRouteRequestControls(false);
+    }
+
+    for(int i=0;i<ui->mapTileLayout->count();++i)
+        ui->mapTileLayout->itemAt(i)->widget()->setVisible(visible);
+}
+#endif
 
 void MainWindow::changeEvent(QEvent *e)
 {
@@ -157,8 +256,9 @@ void MainWindow::on_btnCoding_clicked()
     QGeocodingRequest request;
     QString s = ui->obloc->toPlainText();
 
-    if (!s.isEmpty())
+    if (!s.isEmpty()) {
         request.setOneBoxLocation(s);
+    }
     else {
         request.setCountry(ui->country->toPlainText());
         request.setState(ui->state->toPlainText());
