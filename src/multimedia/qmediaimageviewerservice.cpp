@@ -39,17 +39,17 @@
 **
 ****************************************************************************/
 
-#include <qmediaimageviewerservice_p.h>
+#include "qmediaimageviewerservice_p.h"
 
-#include <qmediacontrol_p.h>
-#include <qmediaservice_p.h>
+#include "qmediacontrol_p.h"
+#include "qmediaservice_p.h"
 
-#include <qmediacontent.h>
-#include <qmediaresource.h>
-#include <qvideooutputcontrol.h>
-#include <qmediaobject_p.h>
-#include <qvideorenderercontrol.h>
-#include <qvideowidgetcontrol.h>
+#include "qmediacontent.h"
+#include "qmediaresource.h"
+#include "qvideooutputcontrol.h"
+#include "qmediaobject_p.h"
+#include "qvideorenderercontrol.h"
+#include "qvideowidgetcontrol.h"
 
 #include <QtCore/qdebug.h>
 

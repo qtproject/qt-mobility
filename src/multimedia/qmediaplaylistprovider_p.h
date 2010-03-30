@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <qmediaplaylist.h>
+#include "qmediaplaylist.h"
 
 QTM_BEGIN_NAMESPACE
 

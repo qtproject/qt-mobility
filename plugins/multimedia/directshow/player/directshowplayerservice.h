@@ -42,10 +42,10 @@
 #ifndef DIRECTSHOWPLAYERSERVICE_H
 #define DIRECTSHOWPLAYERSERVICE_H
 
-#include <qmediaplayer.h>
-#include <qmediaresource.h>
-#include <qmediaservice.h>
-#include <qmediatimerange.h>
+#include "../../src/multimedia/qmediaplayer.h"
+#include "../../src/multimedia/qmediaresource.h"
+#include "../../src/multimedia/qmediaservice.h"
+#include "../../src/multimedia/qmediatimerange.h"
 
 #include "directshoweventloop.h"
 #include "directshowglobal.h"

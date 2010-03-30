@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#include <qmediaplaylistcontrol.h>
-#include <qmediacontrol_p.h>
+#include "qmediaplaylistcontrol.h"
+#include "qmediacontrol_p.h"
 
 QTM_BEGIN_NAMESPACE
 
