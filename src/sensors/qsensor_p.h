@@ -66,7 +66,7 @@ public:
         : identifier()
         , type()
         , outputRange(-1)
-        , updateInterval(0)
+        , dataRate(0)
         , backend(0)
         , active(false)
         , busy(false)
@@ -88,7 +88,7 @@ public:
 
     // policy
     qrangelist availableDataRates;
-    int updateInterval;
+    int dataRate;
 
     QSensorBackend *backend;
     QFilterList filters;

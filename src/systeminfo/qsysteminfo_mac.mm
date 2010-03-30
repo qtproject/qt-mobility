@@ -187,7 +187,7 @@ bool hasIOServiceMatching(const QString &classstr)
 {
    [super init];
     center = [NSNotificationCenter defaultCenter];
-    currentInterface = [CWInterface interface];
+    currentInterface = [CWInterface interfaceWithName:nil];
 
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWModeDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(notificationHandler:) name:kCWSSIDDidChangeNotification object:nil];
@@ -203,7 +203,6 @@ bool hasIOServiceMatching(const QString &classstr)
 -(void)dealloc
 {
    [center release];
-   [currentInterface release];
    [super dealloc];
 }
 
@@ -312,16 +311,16 @@ QSystemInfoPrivate *QSystemInfoPrivate::self = 0;
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
  : QObject(parent)
 {
-    langloopThread = new QLangLoopThread(this);
-    langloopThread->start();
     if(!self)
         self = this;
 }
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
-    langloopThread->quit();
-    langloopThread->wait();
+    if(langloopThread->isRunning()) {
+        langloopThread->quit();
+        langloopThread->wait();
+    }
 }
 
 QString QSystemInfoPrivate::currentLanguage() const
@@ -356,6 +355,23 @@ void QSystemInfoPrivate::languageChanged(const QString &lang)
     Q_EMIT currentLanguageChanged(lang);
 }
 
+void QSystemInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        langloopThread = new QLangLoopThread(this);
+        langloopThread->start();
+    }
+}
+
+void QSystemInfoPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
+        if(langloopThread->isRunning()) {
+            langloopThread->quit();
+            langloopThread->wait();
+        }
+    }
+}
 
 QString QSystemInfoPrivate::version(QSystemInfo::Version type,  const QString &parameter)
 {
@@ -544,6 +560,9 @@ void QLangLoopThread::run()
 #endif
 }
 
+#ifdef MAC_SDK_10_6
+QtMNSListener *listener;
+#endif
 
 QRunLoopThread::QRunLoopThread(QObject *parent)
     :QThread(parent)
@@ -552,6 +571,9 @@ QRunLoopThread::QRunLoopThread(QObject *parent)
 
 QRunLoopThread::~QRunLoopThread()
 {
+#ifdef MAC_SDK_10_6
+    [listener dealloc];
+#endif
 }
 
 void QRunLoopThread::quit()
@@ -562,6 +584,7 @@ void QRunLoopThread::quit()
     mutex.unlock();
     CFRelease(storeSession);
 }
+
 
 void QRunLoopThread::run()
 {
@@ -575,7 +598,6 @@ void QRunLoopThread::run()
     keepRunning = true;
     mutex.unlock();
 
-    QtMNSListener *listener;
     listener = [[QtMNSListener alloc] init];
 
     NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
@@ -692,7 +714,7 @@ if([[CWInterface supportedInterfaces] count] > 0 ) {
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 #ifdef MAC_SDK_10_6
-    if(hasWifi) {
+    if(hasWifi && runloopThread->isRunning()) {
         runloopThread->quit();
         runloopThread->wait();
         [delegate release];
@@ -709,7 +731,7 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
         connect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
-        rssiTimer->start(1000);
+        rssiTimer->start(5000);
     }
     if (QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))
         || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
@@ -727,6 +749,16 @@ void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
     if (QLatin1String(signal) == SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))) {
         rssiTimer->stop();
         disconnect(rssiTimer, SIGNAL(timeout()), this, SLOT(rssiTimeout()));
+    }
+    if (QLatin1String(signal) == SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))
+        || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
+#ifdef MAC_SDK_10_6
+        if(hasWifi && runloopThread->isRunning()) {
+            runloopThread->quit();
+            runloopThread->wait();
+            [delegate release];
+        }
+#endif
     }
 }
 
@@ -849,7 +881,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 
                 if([wifiInterface power]) {
                     if(!rssiTimer->isActive())
-                        rssiTimer->start(1000);
+                        rssiTimer->start(5000);
                 }  else {
                     if(rssiTimer->isActive())
                         rssiTimer->stop();
@@ -920,7 +952,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
 
                 if([wifiInterface power]) {
                     if(!rssiTimer->isActive())
-                        rssiTimer->start(1000);
+                        rssiTimer->start(5000);
                 }  else {
                     if(rssiTimer->isActive())
                         rssiTimer->stop();
@@ -1005,15 +1037,16 @@ int QSystemNetworkInfoPrivate::locationAreaCode()
 
 QString QSystemNetworkInfoPrivate::currentMobileCountryCode()
 {
+    QString cmcc;
 #if defined(MAC_SDK_10_6)
     if(hasWifi) {
-        CWInterface *primary = [CWInterface interface ];
+        CWInterface *primary = [CWInterface interfaceWithName:nil];
         if([primary power]) {
-            return  nsstringToQString( [primary countryCode]);
+            cmcc = nsstringToQString([primary countryCode]);
         }
     }
 #endif
-    return "";
+    return cmcc;
 }
 
 QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
@@ -1146,7 +1179,7 @@ void QSystemNetworkInfoPrivate::wifiNetworkChanged(const QString &notification, 
         CWInterface *wifiInterface = [CWInterface interfaceWithName:  qstringToNSString(interfaceName)];
         if([wifiInterface power]) {
             if(!rssiTimer->isActive()) {
-                rssiTimer->start(1000);
+                rssiTimer->start(5000);
 
             }
         }  else {
@@ -1294,8 +1327,9 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
                 if (volumeParmeters.vMServerAdr == 0) { //local drive
                     io_service_t ioService;
                     ioService = IOServiceGetMatchingService(kIOMasterPortDefault,
-                                                            IOBSDNameMatching(kIOMasterPortDefault, 0,
-                                                                              (char *)volumeParmeters.vMDeviceID));
+                                                            IOBSDNameMatching(kIOMasterPortDefault,
+                                                            0,
+                                                            (char *)volumeParmeters.vMDeviceID));
 
                     if (IOObjectConformsTo(ioService, kIOMediaClass)) {
                         CFTypeRef wholeMedia;
@@ -1306,12 +1340,16 @@ QSystemStorageInfo::DriveType QSystemStorageInfoPrivate::typeForDrive(const QStr
                                                                      0);
 
                         if((volumeParmeters.vMExtendedAttributes & (1L << bIsRemovable))) {
+                            IOObjectRelease(ioService);
                             CFRelease(wholeMedia);
                             return QSystemStorageInfo::RemovableDrive;
                         } else {
+                            IOObjectRelease(ioService);
+                            CFRelease(wholeMedia);
                             return QSystemStorageInfo::InternalDrive;
                         }
                     }
+                    IOObjectRelease(ioService);
                 } else {
                     return QSystemStorageInfo::RemoteDrive;
                 }
@@ -1439,12 +1477,12 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-        return "Sim Not Available";
+    return "";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-        return "Sim Not Available";
+    return "";
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()

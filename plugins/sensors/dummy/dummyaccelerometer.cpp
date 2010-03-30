@@ -49,6 +49,8 @@ dummyaccelerometer::dummyaccelerometer(QSensor *sensor)
     : dummycommon(sensor)
 {
     setReading<QAccelerometerReading>(&m_reading);
+    addDataRate(100, 100); // 100Hz
+    sensor->setDataRate(100); // default is 100Hz
 }
 
 void dummyaccelerometer::poll()

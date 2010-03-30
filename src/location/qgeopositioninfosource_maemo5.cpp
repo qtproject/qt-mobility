@@ -51,7 +51,6 @@ QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent)
 {
     // default values
     availableMethods = SatellitePositioningMethods;
-    lowSignalLevelCount = 0;
     
     timerInterval = DEFAULT_UPDATE_INTERVAL;
     updateTimer = new QTimer(this);
@@ -62,6 +61,9 @@ QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent)
     requestTimer->setSingleShot(true);
     connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimeoutElapsed()));
 
+    errorOccurred = false;
+    errorSent = false;
+
     positionInfoState = QGeoPositionInfoSourceMaemo::Undefined;
 }
 
@@ -69,6 +71,7 @@ int QGeoPositionInfoSourceMaemo::init()
 {
     if (LiblocationWrapper::instance()->inited()) {
         positionInfoState = QGeoPositionInfoSourceMaemo::Stopped;
+        connect(LiblocationWrapper::instance(), SIGNAL(error()), this, SLOT(error()));
         return INIT_OK;
     } else {
         return INIT_FAILED;
@@ -93,7 +96,7 @@ void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
         if (positionInfoState & QGeoPositionInfoSourceMaemo::Stopped)
             updateTimerInterval = true;
     
-    positionInfoState &= ~(QGeoPositionInfoSourceMaemo::TogglePowersave |
+    positionInfoState &= ~(QGeoPositionInfoSourceMaemo::GpsOn |
                            QGeoPositionInfoSourceMaemo::PowersaveActive);
 
     if (!msec) {
@@ -106,9 +109,9 @@ void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
 
     if (timerInterval >= POWERSAVE_THRESHOLD) {
         positionInfoState |= (QGeoPositionInfoSourceMaemo::PowersaveActive |
-                              QGeoPositionInfoSourceMaemo::TogglePowersave);
+                              QGeoPositionInfoSourceMaemo::GpsOn);
     } else {
-        positionInfoState &= ~(QGeoPositionInfoSourceMaemo::TogglePowersave |
+        positionInfoState &= ~(QGeoPositionInfoSourceMaemo::GpsOn |
                                QGeoPositionInfoSourceMaemo::PowersaveActive);
     }
     
@@ -134,18 +137,36 @@ void QGeoPositionInfoSourceMaemo::startUpdates()
     if (!(positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive)) {
         startLocationDaemon();
         positionInfoState &= ~(QGeoPositionInfoSourceMaemo::RequestSingleShot |
-                               QGeoPositionInfoSourceMaemo::TogglePowersave);
+                               QGeoPositionInfoSourceMaemo::GpsOn);
+    } else if ((positionInfoState & QGeoPositionInfoSourceMaemo::Stopped) &&
+               (!(positionInfoState & QGeoPositionInfoSourceMaemo::GpsOn))) {
+        return;
     }
+    
     activateTimer();
 }
 
 void QGeoPositionInfoSourceMaemo::stopUpdates()
 {
-    if (!(positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot)) {
+    if ((!(positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive)) ||
+        positionInfoState & QGeoPositionInfoSourceMaemo::RequestAndStop) {
         updateTimer->stop();
         requestTimer->stop();
-        positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
-        stopLocationDaemon();
+
+        positionInfoState &= ~(QGeoPositionInfoSourceMaemo::RequestActive |
+                               QGeoPositionInfoSourceMaemo::RequestAndStop);
+
+        if (!(positionInfoState & QGeoPositionInfoSourceMaemo::Stopped))
+            LiblocationWrapper::instance()->stop();
+
+        errorOccurred = false;
+        errorSent = false;
+        
+        positionInfoState &= ~(QGeoPositionInfoSourceMaemo::Started |
+                               QGeoPositionInfoSourceMaemo::PowersaveActive);
+        positionInfoState |= QGeoPositionInfoSourceMaemo::Stopped;
+    } else {
+        positionInfoState |= QGeoPositionInfoSourceMaemo::RequestAndStop;
     }
 }
 
@@ -186,34 +207,41 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
 
 void QGeoPositionInfoSourceMaemo::newPositionUpdate()
 {
-
-    if (LiblocationWrapper::instance()->fixIsValid()) {                
-        emit positionUpdated(LiblocationWrapper::instance()->position());
-        
-        if (positionInfoState & QGeoPositionInfoSourceMaemo::SignalLevelLow) {
-            positionInfoState &= ~QGeoPositionInfoSourceMaemo::SignalLevelLow;
-            lowSignalLevelCount = 0;
-        }
+    if (LiblocationWrapper::instance()->fixIsValid()) {             
+        errorOccurred = false;
+        errorSent = false;
         
         if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive) {
             positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestActive;
-
             requestTimer->stop();
 
             if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot) {
                 positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestSingleShot;
-
-                if (!(positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive))
+                if (!(positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive)) {
+                    stopUpdates();
+                    emit positionUpdated(LiblocationWrapper::instance()->position());
                     return;
+                }
+            }
+            
+            if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestAndStop) {
+                stopUpdates();            
             }
         }
+        
+        if ((positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive) && 
+           (!(positionInfoState & QGeoPositionInfoSourceMaemo::GpsOn))) {
+            return;
+        } 
+        emit positionUpdated(LiblocationWrapper::instance()->position());            
     } else {
-        if (lowSignalLevelCount++ > 2) {        
-            if (!(positionInfoState & QGeoPositionInfoSourceMaemo::SignalLevelLow)) {
-                emit updateTimeout();
-                positionInfoState |= QGeoPositionInfoSourceMaemo::SignalLevelLow;
-                lowSignalLevelCount = 0;
-            }
+        // if an error occurs when we are updating periodically and we haven't 
+        // sent an error since the last fix...
+        if (!(positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive) && 
+            errorOccurred && !errorSent) {
+            errorSent = true;
+            // we need to emit the updateTimeout signal
+            emit updateTimeout();
         }
     }
     activateTimer();
@@ -228,25 +256,44 @@ void QGeoPositionInfoSourceMaemo::requestTimeoutElapsed()
 
     if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot) {
         positionInfoState &= ~QGeoPositionInfoSourceMaemo::RequestSingleShot;
-        stopLocationDaemon();
+        stopUpdates();
         if (!(positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive))
             return;
     }
+    
+    // Do not trigger timer, if stop has  been called after request.
+    if(positionInfoState & QGeoPositionInfoSourceMaemo::RequestAndStop)
+        stopUpdates();
+    
     activateTimer();
 }
 
-void QGeoPositionInfoSourceMaemo::activateTimer() {
+void QGeoPositionInfoSourceMaemo::error()
+{
+    errorOccurred = true;
+}
+
+void QGeoPositionInfoSourceMaemo::activateTimer() {    
+    if ((positionInfoState & QGeoPositionInfoSourceMaemo::Stopped) &&
+        (!(positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive)))
+        return;
+    
+    // If powersave is active, ensure that correct state is restored in 
+    // possible start->stop->start sequence.
+    if(timerInterval > POWERSAVE_THRESHOLD)
+        positionInfoState &= QGeoPositionInfoSourceMaemo::PowersaveActive;
+    
     if (positionInfoState & QGeoPositionInfoSourceMaemo::RequestActive) {
         updateTimer->start(MINIMUM_UPDATE_INTERVAL);
     } else {
         if (positionInfoState & QGeoPositionInfoSourceMaemo::PowersaveActive) {
-            if (!(positionInfoState & QGeoPositionInfoSourceMaemo::TogglePowersave)) {
+            if (!(positionInfoState & QGeoPositionInfoSourceMaemo::GpsOn)) {
                 startLocationDaemon();
-                positionInfoState |= QGeoPositionInfoSourceMaemo::TogglePowersave;
+                positionInfoState |= QGeoPositionInfoSourceMaemo::GpsOn;
                 updateTimer->start(POWERSAVE_POWERON_PERIOD);
-            } else if (positionInfoState & QGeoPositionInfoSourceMaemo::TogglePowersave) {
+            } else if (positionInfoState & QGeoPositionInfoSourceMaemo::GpsOn) {
                 stopUpdates();
-                positionInfoState &= ~QGeoPositionInfoSourceMaemo::TogglePowersave;
+                positionInfoState &= ~QGeoPositionInfoSourceMaemo::GpsOn;
                 updateTimer->start(timerInterval - POWERSAVE_POWERON_PERIOD);
             }
         } else {
@@ -260,13 +307,6 @@ void QGeoPositionInfoSourceMaemo::startLocationDaemon() {
         LiblocationWrapper::instance()->start();
     positionInfoState |= QGeoPositionInfoSourceMaemo::Started;
     positionInfoState &= ~QGeoPositionInfoSourceMaemo::Stopped;
-}
-
-void QGeoPositionInfoSourceMaemo::stopLocationDaemon() {
-    if (!(positionInfoState & QGeoPositionInfoSourceMaemo::Stopped))
-        LiblocationWrapper::instance()->stop();
-    positionInfoState &= ~QGeoPositionInfoSourceMaemo::Started;
-    positionInfoState |= QGeoPositionInfoSourceMaemo::Stopped;
 }
 
 #include "moc_qgeopositioninfosource_maemo5_p.cpp"

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qmediaencodersettings.h>
+#include "qmediaencodersettings.h"
 
 QTM_BEGIN_NAMESPACE
 
