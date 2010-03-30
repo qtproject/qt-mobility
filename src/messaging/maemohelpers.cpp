@@ -67,7 +67,7 @@ MessagingHelper::~MessagingHelper()
 
 void MessagingHelper::filterAccounts(QMessageAccountIdList& accountIds, const QMessageAccountFilter& filter)
 {
-    if (accountIds.count() & !filter.isEmpty()) {
+    if (accountIds.count() && !filter.isEmpty()) {
         QMessageAccountFilterPrivate* pf = QMessageAccountFilterPrivate::implementation(filter);
         if ((pf->_field == QMessageAccountFilterPrivate::None) &&
             (pf->_filterList.count() == 0)) {
@@ -135,7 +135,7 @@ void MessagingHelper::applyOffsetAndLimitToAccountIdList(QMessageAccountIdList& 
 
 void MessagingHelper::filterFolders(QMessageFolderIdList& folderIds, const QMessageFolderFilter& filter)
 {
-    if (folderIds.count() & !filter.isEmpty()) {
+    if (folderIds.count() && !filter.isEmpty()) {
         QMessageFolderFilterPrivate* pf = QMessageFolderFilterPrivate::implementation(filter);
         if ((pf->_field == QMessageFolderFilterPrivate::None) &&
             (pf->_filterList.count() == 0)) {
@@ -203,7 +203,7 @@ void MessagingHelper::applyOffsetAndLimitToFolderIdList(QMessageFolderIdList& fo
 
 void MessagingHelper::filterMessages(QMessageIdList& messageIds, const QMessageFilter& filter)
 {
-    if (messageIds.count() & !filter.isEmpty()) {
+    if (messageIds.count() && !filter.isEmpty()) {
         QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filter);
         if ((pf->_field == QMessageFilterPrivate::None) &&
             (pf->_filterList.count() == 0)) {

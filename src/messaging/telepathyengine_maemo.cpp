@@ -57,9 +57,7 @@ Q_GLOBAL_STATIC(TelepathyEngine,telepathyEngine);
 
 TelepathyEngine::TelepathyEngine()
 {
-    qDebug() << "TelepathyEngine::TelepathyEngine()";
     tpSession=new TpSession("ring",TRUE); // Create as sync, telephony "ring" as default
-    qDebug() << "TelepathyEngine::TelepathyEngine() exit";
 
 }
 
@@ -76,9 +74,9 @@ TelepathyEngine* TelepathyEngine::instance()
 bool TelepathyEngine::sendMessage(QMessage &message)
 {
     QMessage::Type type=message.type();
-    QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? "gabble" : "";
-    QMessageAddressList toList=message.to();
     QMessageAccountId account=message.parentAccountId();
+    QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? account.toString() : "";
+    QMessageAddressList toList=message.to();
     if(!cm.isEmpty()) {
         foreach(QMessageAddress to,toList) {
              tpSession->sendMessageToAddress(cm,to.addressee(),message.textContent());
@@ -110,7 +108,7 @@ void TelepathyEngine::updateImAccounts() const
 //    iDefaultImAccountId = QMessageAccountId();
     iAccounts.clear();
     foreach (TpSessionAccount *tpacc, tpSession->accounts) {
-        qDebug() << "TelepathyEngine::updateImAccounts" << tpacc->acc->cmName() << " " << tpacc->acc->protocol() << " " << tpacc->acc->displayName();
+      //  qDebug() << "TelepathyEngine::updateImAccounts" << tpacc->acc->cmName() << " " << tpacc->acc->protocol() << " " << tpacc->acc->displayName();
         bool account_ok = tpacc->acc->isEnabled() && tpacc->acc->isValidAccount();
         QString cm=tpacc->acc->cmName();
         if (account_ok) {
