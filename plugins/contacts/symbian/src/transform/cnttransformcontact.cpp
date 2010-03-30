@@ -275,6 +275,8 @@ void CntTransformContact::transformContactL(
 	    }
 	}
 
+	resetTransformObjects();
+	
 	contactItem.UpdateFieldSet(fieldSet);
 	CleanupStack::Pop(fieldSet);
 }
@@ -479,5 +481,14 @@ void CntTransformContact::transformPreferredDetail(const CContactItemField& fiel
     }
     if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForMessage))) {
         contact.setPreferredDetail("message", detail);
+    }
+}
+
+void CntTransformContact::resetTransformObjects() const
+{
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+    while (i != m_transformContactData.constEnd()) {
+        i.value()->reset();
+        ++i;
     }
 }

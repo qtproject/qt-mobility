@@ -44,6 +44,11 @@
 #include "cntmodelextuids.h"
 #include "qcontactpresence.h"
 
+CntTransformOnlineAccount::CntTransformOnlineAccount() :
+m_detailCounter(0)
+{
+}
+
 QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QContactDetail &detail)
 {
     if(detail.definitionName() != QContactOnlineAccount::DefinitionName)
@@ -108,6 +113,7 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	    //contexts
 	    setContextsL(onlineAccount, *newField);
 
+	    newField->SetUserFlags(m_detailCounter);
 	    fieldList.append(newField);
 	    CleanupStack::Pop(newField);
 	    
@@ -117,6 +123,7 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	             CContactItemField* serviceProviderField = CContactItemField::NewLC(KStorageTypeText);
 	             serviceProviderField->TextStorage()->SetTextL(ServiceProviderText);
 	             serviceProviderField->AddFieldTypeL(KUidContactFieldServiceProvider);
+	             serviceProviderField->SetUserFlags(m_detailCounter);
 	             fieldList.append(serviceProviderField);
 	             CleanupStack::Pop(serviceProviderField);
 	         }
@@ -145,14 +152,28 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 //	         }
 	}
 
+	if(fieldList.count() > 0) {
+        m_detailCounter++;
+	}
+	    
 	return fieldList;
 }
 
 QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-    Q_UNUSED(contact);
+    QList<QContactDetail> onlineAccounts = contact.details(QContactOnlineAccount::DefinitionName);
+    //check what online account detail the provided field belongs to. if there is no such detail yet,
+    //let's create it.
+    if (onlineAccounts.count() <= field.UserFlags()) {
+        for (int i = onlineAccounts.count(); i <= field.UserFlags(); i++) {
+            QContactOnlineAccount *account = new QContactOnlineAccount();
+            QContact& currentContact = const_cast<QContact&>(contact);
+            currentContact.saveDetail(account);
+        }
+        onlineAccounts = contact.details(QContactOnlineAccount::DefinitionName);
+    }
+    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount(onlineAccounts.at(field.UserFlags()));
 
-    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount();
 	CContactTextField* storage = field.TextStorage();
 	QString onlineAccountString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 
@@ -299,6 +320,13 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
     }
 }
 
+/*!
+ * Reset internal variables.
+ */
+void CntTransformOnlineAccount::reset()
+{
+    m_detailCounter = 0;
+}
 
 /*!
  * Encode the presence information.

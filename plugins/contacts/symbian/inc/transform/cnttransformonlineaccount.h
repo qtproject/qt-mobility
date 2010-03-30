@@ -60,7 +60,9 @@ class CntTransformOnlineAccount : public CntTransformContactData
             EPresenceExtendedAway,
             EPresenceUnknown
             };
-
+public:
+    CntTransformOnlineAccount();
+    
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
@@ -70,10 +72,14 @@ protected:
     bool supportsSubType(const QString& subType) const;
     quint32 getIdForField(const QString& fieldName) const;
     void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;
+    void reset();
 
 private:
     quint32 encodePresence(QString aPresence);
     QString decodePresence(quint32 aPresence);
+    
+private:
+    quint32 m_detailCounter;
 };
 
 #endif // TRANSFORMONLINEACCOUNT_H
