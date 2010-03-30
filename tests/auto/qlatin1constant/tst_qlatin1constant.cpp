@@ -283,16 +283,16 @@ void tst_QLatin1Constant::overloads()
 void tst_QLatin1Constant::ordering()
 {
     QVERIFY(z < a);
-    QVERIFY(not (a < z));
+    QVERIFY(!(a < z));
     QVERIFY(a < b);
-    QVERIFY(not (b < a));
+    QVERIFY(!(b < a));
     QVERIFY(a < bb);
-    QVERIFY(not (bb < a));
+    QVERIFY(!(bb < a));
     QVERIFY(b < bb);
-    QVERIFY(not (bb < b));
+    QVERIFY(!(bb < b));
 
-    QVERIFY(not (a < a));
-    QVERIFY(not (z < z));
+    QVERIFY(!(a < a));
+    QVERIFY(!(z < z));
 }
 
 QTEST_MAIN(tst_QLatin1Constant)
