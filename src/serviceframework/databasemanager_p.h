@@ -57,6 +57,11 @@
 #include "servicedatabase_p.h"
 #include <QObject>
 
+#ifdef QT_SFW_SERVICEDATABASE_GENERATE
+#undef Q_AUTOTEST_EXPORT
+#define Q_AUTOTEST_EXPORT
+#endif
+
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 

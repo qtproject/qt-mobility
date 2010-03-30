@@ -1707,7 +1707,7 @@ bool ServiceDatabase::serviceInitialized(const QString &serviceName, const QStri
         securityTokens << query.value(EBindIndex).toString();
     }
 
-    if (securityTokens.first() != securityToken) {
+    if (!securityTokens.isEmpty() && (securityTokens.first() != securityToken)) {
         QString errorText("Access denied: \"%1\"");
              m_lastError.setError(DBError::NoWritePermissions, errorText.arg(serviceName));
              rollbackTransaction(&query);
@@ -1717,7 +1717,6 @@ bool ServiceDatabase::serviceInitialized(const QString &serviceName, const QStri
                          << "\nReason:" << qPrintable(m_lastError.text());
      #endif
     }
-
 #endif
 
     statement = "DELETE FROM ServiceProperty WHERE ServiceID = ? AND Key = ?";
