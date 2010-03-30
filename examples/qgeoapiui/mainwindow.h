@@ -38,16 +38,19 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QMenu>
 
 #include "qgeonetworkmanager.h"
 #include "qroutereply.h"
 #include "qgeocodingreply.h"
+
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
+#define QGEOAPIUI_USEPOPUPMENU
+#include <QMenu>
+#endif
 
 namespace Ui
 {
@@ -85,7 +88,7 @@ private slots:
     void codingReplyFinished(QGeocodingReply* reply);
     void mapTileReplyFinished(QMapTileReply* reply);
     void delayedInit();
-#ifdef Q_OS_SYMBIAN
+#ifdef QGEOAPIUI_USEPOPUPMENU
     void customContextMenuRequest(const QPoint&);
     void showRouteRequestControls(bool visible=true);
     void showGeocodingControls(bool visible=true);
@@ -97,6 +100,8 @@ private:
     QGeoNetworkManager geoNetworkManager;
 #ifdef Q_OS_SYMBIAN
     QNetworkSession *session;
+#endif
+#ifdef QGEOAPIUI_USEPOPUPMENU
     QMenu* popupMenu;
 #endif
 };

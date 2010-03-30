@@ -6,29 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>414</height>
+    <width>437</width>
+    <height>341</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
-    <property name="sizeConstraint">
-     <enum>QLayout::SetNoConstraint</enum>
-    </property>
     <item>
      <layout class="QVBoxLayout" name="qgeoapiLayout">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetDefaultConstraint</enum>
-      </property>
       <item>
        <layout class="QHBoxLayout" name="routeLayout">
         <item>
@@ -47,15 +35,21 @@
         <item>
          <widget class="QTextEdit" name="srcLong">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>55</width>
-            <height>25</height>
+            <width>75</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -69,15 +63,21 @@
         <item>
          <widget class="QTextEdit" name="srcLat">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>55</width>
-            <height>25</height>
+            <width>75</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -104,15 +104,21 @@
         <item>
          <widget class="QTextEdit" name="dstLong">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>55</width>
-            <height>25</height>
+            <width>75</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -126,15 +132,21 @@
         <item>
          <widget class="QTextEdit" name="dstLat">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>55</width>
-            <height>25</height>
+            <width>75</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -168,21 +180,21 @@
         <item>
          <widget class="QTextEdit" name="obloc">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize">
            <size>
-            <width>0</width>
-            <height>0</height>
+            <width>150</width>
+            <height>25</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
             <width>150</width>
-            <height>25</height>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -209,15 +221,21 @@
         <item>
          <widget class="QTextEdit" name="country">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="maximumSize">
+          <property name="minimumSize">
            <size>
             <width>50</width>
             <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -244,15 +262,21 @@
         <item>
          <widget class="QTextEdit" name="state">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="maximumSize">
+          <property name="minimumSize">
            <size>
             <width>50</width>
             <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -279,15 +303,21 @@
         <item>
          <widget class="QTextEdit" name="city">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="maximumSize">
+          <property name="minimumSize">
            <size>
             <width>50</width>
             <height>25</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -318,15 +348,21 @@
         <item>
          <widget class="QTextEdit" name="zip">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>75</width>
-            <height>25</height>
+            <width>100</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -353,15 +389,21 @@
         <item>
          <widget class="QTextEdit" name="street">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>75</width>
-            <height>25</height>
+            <width>100</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -388,15 +430,21 @@
         <item>
          <widget class="QTextEdit" name="streetNumber">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>75</width>
-            <height>25</height>
+            <width>100</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -440,15 +488,21 @@
         <item>
          <widget class="QTextEdit" name="locLong">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>100</width>
-            <height>25</height>
+            <width>150</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -462,15 +516,21 @@
         <item>
          <widget class="QTextEdit" name="locLat">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>100</width>
-            <height>25</height>
+            <width>150</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -514,15 +574,21 @@
         <item>
          <widget class="QTextEdit" name="tileLong">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>75</width>
-            <height>25</height>
+            <width>100</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -536,15 +602,21 @@
         <item>
          <widget class="QTextEdit" name="tileLat">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>75</width>
-            <height>25</height>
+            <width>100</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">
@@ -558,15 +630,21 @@
         <item>
          <widget class="QTextEdit" name="tileZoomLevel">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>75</width>
-            <height>25</height>
+            <width>100</width>
+            <height>60</height>
            </size>
           </property>
           <property name="verticalScrollBarPolicy">

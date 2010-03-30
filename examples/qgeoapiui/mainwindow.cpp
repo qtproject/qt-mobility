@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->mapTileLabel->setVisible(false);
 
-#ifdef Q_OS_SYMBIAN
+#ifdef QGEOAPIUI_USEPOPUPMENU
     showRouteRequestControls(true);
 #endif
 
@@ -119,7 +119,9 @@ void MainWindow::delayedInit()
     session = new QNetworkSession(cfg, this);
     session->open();
     session->waitForOpened(-1);
+#endif
 
+#ifdef QGEOAPIUI_USEPOPUPMENU
     popupMenu = new QMenu(this);
     QAction* menuItem;
     menuItem = new QAction(tr("Request Route"), this);
@@ -153,63 +155,6 @@ void MainWindow::delayedInit()
 #endif
 
 }
-
-#ifdef Q_OS_SYMBIAN
-void MainWindow::customContextMenuRequest(const QPoint& point)
-{
-    popupMenu->popup(mapToGlobal(point));
-}
-
-void MainWindow::showRouteRequestControls(bool visible)
-{
-    if(visible) {
-        showGeocodingControls(false);
-        showReverseGeocodingControls(false);
-        showMapTileControls(false);
-    }
-
-    for(int i=0;i<ui->routeLayout->count();++i)
-        ui->routeLayout->itemAt(i)->widget()->setVisible(visible);
-}
-void MainWindow::showGeocodingControls(bool visible)
-{
-    if(visible) {
-        showRouteRequestControls(false);
-        showReverseGeocodingControls(false);
-        showMapTileControls(false);
-    }
-
-    for(int i=0;i<ui->geocoding_1_Layout->count();++i)
-        ui->geocoding_1_Layout->itemAt(i)->widget()->setVisible(visible);
-
-    for(int i=0;i<ui->geocodind_2_Layout->count();++i)
-        ui->geocodind_2_Layout->itemAt(i)->widget()->setVisible(visible);
-}
-
-void MainWindow::showReverseGeocodingControls(bool visible)
-{
-    if(visible) {
-        showGeocodingControls(false);
-        showRouteRequestControls(false);
-        showMapTileControls(false);
-    }
-
-    for(int i=0;i<ui->revGeocodingLayout->count();++i)
-        ui->revGeocodingLayout->itemAt(i)->widget()->setVisible(visible);
-}
-
-void MainWindow::showMapTileControls(bool visible)
-{
-    if(visible) {
-        showGeocodingControls(false);
-        showReverseGeocodingControls(false);
-        showRouteRequestControls(false);
-    }
-
-    for(int i=0;i<ui->mapTileLayout->count();++i)
-        ui->mapTileLayout->itemAt(i)->widget()->setVisible(visible);
-}
-#endif
 
 void MainWindow::changeEvent(QEvent *e)
 {
@@ -334,3 +279,60 @@ void MainWindow::testReplyFinishedSignal()
     int x = 1;
     x++;
 }
+
+#ifdef QGEOAPIUI_USEPOPUPMENU
+void MainWindow::customContextMenuRequest(const QPoint& point)
+{
+    popupMenu->popup(mapToGlobal(point));
+}
+
+void MainWindow::showRouteRequestControls(bool visible)
+{
+    if(visible) {
+        showGeocodingControls(false);
+        showReverseGeocodingControls(false);
+        showMapTileControls(false);
+    }
+
+    for(int i=0;i<ui->routeLayout->count();++i)
+        ui->routeLayout->itemAt(i)->widget()->setVisible(visible);
+}
+void MainWindow::showGeocodingControls(bool visible)
+{
+    if(visible) {
+        showRouteRequestControls(false);
+        showReverseGeocodingControls(false);
+        showMapTileControls(false);
+    }
+
+    for(int i=0;i<ui->geocoding_1_Layout->count();++i)
+        ui->geocoding_1_Layout->itemAt(i)->widget()->setVisible(visible);
+
+    for(int i=0;i<ui->geocodind_2_Layout->count();++i)
+        ui->geocodind_2_Layout->itemAt(i)->widget()->setVisible(visible);
+}
+
+void MainWindow::showReverseGeocodingControls(bool visible)
+{
+    if(visible) {
+        showGeocodingControls(false);
+        showRouteRequestControls(false);
+        showMapTileControls(false);
+    }
+
+    for(int i=0;i<ui->revGeocodingLayout->count();++i)
+        ui->revGeocodingLayout->itemAt(i)->widget()->setVisible(visible);
+}
+
+void MainWindow::showMapTileControls(bool visible)
+{
+    if(visible) {
+        showGeocodingControls(false);
+        showReverseGeocodingControls(false);
+        showRouteRequestControls(false);
+    }
+
+    for(int i=0;i<ui->mapTileLayout->count();++i)
+        ui->mapTileLayout->itemAt(i)->widget()->setVisible(visible);
+}
+#endif

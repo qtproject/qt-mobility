@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Tue 30. Mar 11:11:08 2010
+** Created: Tue 30. Mar 15:18:35 2010
 **      by: Qt User Interface Compiler version 4.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -75,41 +75,38 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(454, 414);
-        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(MainWindow->sizePolicy().hasHeightForWidth());
-        MainWindow->setSizePolicy(sizePolicy);
+        MainWindow->resize(437, 341);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        verticalLayout->setSizeConstraint(QLayout::SetNoConstraint);
         qgeoapiLayout = new QVBoxLayout();
         qgeoapiLayout->setSpacing(6);
         qgeoapiLayout->setObjectName(QString::fromUtf8("qgeoapiLayout"));
-        qgeoapiLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         routeLayout = new QHBoxLayout();
         routeLayout->setSpacing(6);
         routeLayout->setObjectName(QString::fromUtf8("routeLayout"));
         label = new QLabel(centralWidget);
         label->setObjectName(QString::fromUtf8("label"));
-        QSizePolicy sizePolicy1(QSizePolicy::Minimum, QSizePolicy::Fixed);
-        sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
-        sizePolicy1.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
-        label->setSizePolicy(sizePolicy1);
+        QSizePolicy sizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(label->sizePolicy().hasHeightForWidth());
+        label->setSizePolicy(sizePolicy);
 
         routeLayout->addWidget(label);
 
         srcLong = new QTextEdit(centralWidget);
         srcLong->setObjectName(QString::fromUtf8("srcLong"));
+        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
         sizePolicy1.setHeightForWidth(srcLong->sizePolicy().hasHeightForWidth());
         srcLong->setSizePolicy(sizePolicy1);
-        srcLong->setMaximumSize(QSize(55, 25));
+        srcLong->setMinimumSize(QSize(50, 25));
+        srcLong->setMaximumSize(QSize(75, 60));
         srcLong->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         srcLong->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -119,7 +116,8 @@ public:
         srcLat->setObjectName(QString::fromUtf8("srcLat"));
         sizePolicy1.setHeightForWidth(srcLat->sizePolicy().hasHeightForWidth());
         srcLat->setSizePolicy(sizePolicy1);
-        srcLat->setMaximumSize(QSize(55, 25));
+        srcLat->setMinimumSize(QSize(50, 25));
+        srcLat->setMaximumSize(QSize(75, 60));
         srcLat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         srcLat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -127,8 +125,8 @@ public:
 
         label_2 = new QLabel(centralWidget);
         label_2->setObjectName(QString::fromUtf8("label_2"));
-        sizePolicy1.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
-        label_2->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(label_2->sizePolicy().hasHeightForWidth());
+        label_2->setSizePolicy(sizePolicy);
 
         routeLayout->addWidget(label_2);
 
@@ -136,7 +134,8 @@ public:
         dstLong->setObjectName(QString::fromUtf8("dstLong"));
         sizePolicy1.setHeightForWidth(dstLong->sizePolicy().hasHeightForWidth());
         dstLong->setSizePolicy(sizePolicy1);
-        dstLong->setMaximumSize(QSize(55, 25));
+        dstLong->setMinimumSize(QSize(50, 25));
+        dstLong->setMaximumSize(QSize(75, 60));
         dstLong->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         dstLong->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -146,7 +145,8 @@ public:
         dstLat->setObjectName(QString::fromUtf8("dstLat"));
         sizePolicy1.setHeightForWidth(dstLat->sizePolicy().hasHeightForWidth());
         dstLat->setSizePolicy(sizePolicy1);
-        dstLat->setMaximumSize(QSize(55, 25));
+        dstLat->setMinimumSize(QSize(50, 25));
+        dstLat->setMaximumSize(QSize(75, 60));
         dstLat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         dstLat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -154,8 +154,8 @@ public:
 
         btnRequest = new QPushButton(centralWidget);
         btnRequest->setObjectName(QString::fromUtf8("btnRequest"));
-        sizePolicy1.setHeightForWidth(btnRequest->sizePolicy().hasHeightForWidth());
-        btnRequest->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(btnRequest->sizePolicy().hasHeightForWidth());
+        btnRequest->setSizePolicy(sizePolicy);
 
         routeLayout->addWidget(btnRequest);
 
@@ -170,8 +170,8 @@ public:
         obloc->setObjectName(QString::fromUtf8("obloc"));
         sizePolicy1.setHeightForWidth(obloc->sizePolicy().hasHeightForWidth());
         obloc->setSizePolicy(sizePolicy1);
-        obloc->setMinimumSize(QSize(0, 0));
-        obloc->setMaximumSize(QSize(150, 25));
+        obloc->setMinimumSize(QSize(150, 25));
+        obloc->setMaximumSize(QSize(150, 60));
         obloc->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         obloc->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -179,8 +179,8 @@ public:
 
         label_4 = new QLabel(centralWidget);
         label_4->setObjectName(QString::fromUtf8("label_4"));
-        sizePolicy1.setHeightForWidth(label_4->sizePolicy().hasHeightForWidth());
-        label_4->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(label_4->sizePolicy().hasHeightForWidth());
+        label_4->setSizePolicy(sizePolicy);
 
         geocoding_1_Layout->addWidget(label_4);
 
@@ -188,7 +188,8 @@ public:
         country->setObjectName(QString::fromUtf8("country"));
         sizePolicy1.setHeightForWidth(country->sizePolicy().hasHeightForWidth());
         country->setSizePolicy(sizePolicy1);
-        country->setMaximumSize(QSize(50, 25));
+        country->setMinimumSize(QSize(50, 25));
+        country->setMaximumSize(QSize(100, 60));
         country->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         country->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -196,8 +197,8 @@ public:
 
         label_5 = new QLabel(centralWidget);
         label_5->setObjectName(QString::fromUtf8("label_5"));
-        sizePolicy1.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
-        label_5->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(label_5->sizePolicy().hasHeightForWidth());
+        label_5->setSizePolicy(sizePolicy);
 
         geocoding_1_Layout->addWidget(label_5);
 
@@ -205,7 +206,8 @@ public:
         state->setObjectName(QString::fromUtf8("state"));
         sizePolicy1.setHeightForWidth(state->sizePolicy().hasHeightForWidth());
         state->setSizePolicy(sizePolicy1);
-        state->setMaximumSize(QSize(50, 25));
+        state->setMinimumSize(QSize(50, 25));
+        state->setMaximumSize(QSize(100, 60));
         state->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         state->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -213,8 +215,8 @@ public:
 
         label_6 = new QLabel(centralWidget);
         label_6->setObjectName(QString::fromUtf8("label_6"));
-        sizePolicy1.setHeightForWidth(label_6->sizePolicy().hasHeightForWidth());
-        label_6->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(label_6->sizePolicy().hasHeightForWidth());
+        label_6->setSizePolicy(sizePolicy);
 
         geocoding_1_Layout->addWidget(label_6);
 
@@ -222,7 +224,8 @@ public:
         city->setObjectName(QString::fromUtf8("city"));
         sizePolicy1.setHeightForWidth(city->sizePolicy().hasHeightForWidth());
         city->setSizePolicy(sizePolicy1);
-        city->setMaximumSize(QSize(50, 25));
+        city->setMinimumSize(QSize(50, 25));
+        city->setMaximumSize(QSize(100, 60));
         city->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         city->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -236,8 +239,8 @@ public:
         geocodind_2_Layout->setObjectName(QString::fromUtf8("geocodind_2_Layout"));
         label_7 = new QLabel(centralWidget);
         label_7->setObjectName(QString::fromUtf8("label_7"));
-        sizePolicy1.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
-        label_7->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
+        label_7->setSizePolicy(sizePolicy);
 
         geocodind_2_Layout->addWidget(label_7);
 
@@ -245,7 +248,8 @@ public:
         zip->setObjectName(QString::fromUtf8("zip"));
         sizePolicy1.setHeightForWidth(zip->sizePolicy().hasHeightForWidth());
         zip->setSizePolicy(sizePolicy1);
-        zip->setMaximumSize(QSize(75, 25));
+        zip->setMinimumSize(QSize(50, 25));
+        zip->setMaximumSize(QSize(100, 60));
         zip->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         zip->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -253,8 +257,8 @@ public:
 
         label_8 = new QLabel(centralWidget);
         label_8->setObjectName(QString::fromUtf8("label_8"));
-        sizePolicy1.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
-        label_8->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(label_8->sizePolicy().hasHeightForWidth());
+        label_8->setSizePolicy(sizePolicy);
 
         geocodind_2_Layout->addWidget(label_8);
 
@@ -262,7 +266,8 @@ public:
         street->setObjectName(QString::fromUtf8("street"));
         sizePolicy1.setHeightForWidth(street->sizePolicy().hasHeightForWidth());
         street->setSizePolicy(sizePolicy1);
-        street->setMaximumSize(QSize(75, 25));
+        street->setMinimumSize(QSize(50, 25));
+        street->setMaximumSize(QSize(100, 60));
         street->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         street->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -270,8 +275,8 @@ public:
 
         label_9 = new QLabel(centralWidget);
         label_9->setObjectName(QString::fromUtf8("label_9"));
-        sizePolicy1.setHeightForWidth(label_9->sizePolicy().hasHeightForWidth());
-        label_9->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(label_9->sizePolicy().hasHeightForWidth());
+        label_9->setSizePolicy(sizePolicy);
 
         geocodind_2_Layout->addWidget(label_9);
 
@@ -279,7 +284,8 @@ public:
         streetNumber->setObjectName(QString::fromUtf8("streetNumber"));
         sizePolicy1.setHeightForWidth(streetNumber->sizePolicy().hasHeightForWidth());
         streetNumber->setSizePolicy(sizePolicy1);
-        streetNumber->setMaximumSize(QSize(75, 25));
+        streetNumber->setMinimumSize(QSize(50, 25));
+        streetNumber->setMaximumSize(QSize(100, 60));
         streetNumber->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         streetNumber->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -287,8 +293,8 @@ public:
 
         btnCoding = new QPushButton(centralWidget);
         btnCoding->setObjectName(QString::fromUtf8("btnCoding"));
-        sizePolicy1.setHeightForWidth(btnCoding->sizePolicy().hasHeightForWidth());
-        btnCoding->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(btnCoding->sizePolicy().hasHeightForWidth());
+        btnCoding->setSizePolicy(sizePolicy);
 
         geocodind_2_Layout->addWidget(btnCoding);
 
@@ -300,8 +306,8 @@ public:
         revGeocodingLayout->setObjectName(QString::fromUtf8("revGeocodingLayout"));
         label_3 = new QLabel(centralWidget);
         label_3->setObjectName(QString::fromUtf8("label_3"));
-        sizePolicy1.setHeightForWidth(label_3->sizePolicy().hasHeightForWidth());
-        label_3->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(label_3->sizePolicy().hasHeightForWidth());
+        label_3->setSizePolicy(sizePolicy);
 
         revGeocodingLayout->addWidget(label_3);
 
@@ -309,7 +315,8 @@ public:
         locLong->setObjectName(QString::fromUtf8("locLong"));
         sizePolicy1.setHeightForWidth(locLong->sizePolicy().hasHeightForWidth());
         locLong->setSizePolicy(sizePolicy1);
-        locLong->setMaximumSize(QSize(100, 25));
+        locLong->setMinimumSize(QSize(50, 25));
+        locLong->setMaximumSize(QSize(150, 60));
         locLong->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         locLong->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -319,7 +326,8 @@ public:
         locLat->setObjectName(QString::fromUtf8("locLat"));
         sizePolicy1.setHeightForWidth(locLat->sizePolicy().hasHeightForWidth());
         locLat->setSizePolicy(sizePolicy1);
-        locLat->setMaximumSize(QSize(100, 25));
+        locLat->setMinimumSize(QSize(50, 25));
+        locLat->setMaximumSize(QSize(150, 60));
         locLat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         locLat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -327,8 +335,8 @@ public:
 
         btnReverseCoding = new QPushButton(centralWidget);
         btnReverseCoding->setObjectName(QString::fromUtf8("btnReverseCoding"));
-        sizePolicy1.setHeightForWidth(btnReverseCoding->sizePolicy().hasHeightForWidth());
-        btnReverseCoding->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(btnReverseCoding->sizePolicy().hasHeightForWidth());
+        btnReverseCoding->setSizePolicy(sizePolicy);
 
         revGeocodingLayout->addWidget(btnReverseCoding);
 
@@ -340,8 +348,8 @@ public:
         mapTileLayout->setObjectName(QString::fromUtf8("mapTileLayout"));
         label_10 = new QLabel(centralWidget);
         label_10->setObjectName(QString::fromUtf8("label_10"));
-        sizePolicy1.setHeightForWidth(label_10->sizePolicy().hasHeightForWidth());
-        label_10->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(label_10->sizePolicy().hasHeightForWidth());
+        label_10->setSizePolicy(sizePolicy);
 
         mapTileLayout->addWidget(label_10);
 
@@ -349,7 +357,8 @@ public:
         tileLong->setObjectName(QString::fromUtf8("tileLong"));
         sizePolicy1.setHeightForWidth(tileLong->sizePolicy().hasHeightForWidth());
         tileLong->setSizePolicy(sizePolicy1);
-        tileLong->setMaximumSize(QSize(75, 25));
+        tileLong->setMinimumSize(QSize(50, 25));
+        tileLong->setMaximumSize(QSize(100, 60));
         tileLong->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         tileLong->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -359,7 +368,8 @@ public:
         tileLat->setObjectName(QString::fromUtf8("tileLat"));
         sizePolicy1.setHeightForWidth(tileLat->sizePolicy().hasHeightForWidth());
         tileLat->setSizePolicy(sizePolicy1);
-        tileLat->setMaximumSize(QSize(75, 25));
+        tileLat->setMinimumSize(QSize(50, 25));
+        tileLat->setMaximumSize(QSize(100, 60));
         tileLat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         tileLat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -369,7 +379,8 @@ public:
         tileZoomLevel->setObjectName(QString::fromUtf8("tileZoomLevel"));
         sizePolicy1.setHeightForWidth(tileZoomLevel->sizePolicy().hasHeightForWidth());
         tileZoomLevel->setSizePolicy(sizePolicy1);
-        tileZoomLevel->setMaximumSize(QSize(75, 25));
+        tileZoomLevel->setMinimumSize(QSize(50, 25));
+        tileZoomLevel->setMaximumSize(QSize(100, 60));
         tileZoomLevel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         tileZoomLevel->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -377,8 +388,8 @@ public:
 
         btnRequestTile = new QPushButton(centralWidget);
         btnRequestTile->setObjectName(QString::fromUtf8("btnRequestTile"));
-        sizePolicy1.setHeightForWidth(btnRequestTile->sizePolicy().hasHeightForWidth());
-        btnRequestTile->setSizePolicy(sizePolicy1);
+        sizePolicy.setHeightForWidth(btnRequestTile->sizePolicy().hasHeightForWidth());
+        btnRequestTile->setSizePolicy(sizePolicy);
 
         mapTileLayout->addWidget(btnRequestTile);
 
@@ -408,8 +419,11 @@ public:
 
         mapTileLabel = new QLabel(centralWidget);
         mapTileLabel->setObjectName(QString::fromUtf8("mapTileLabel"));
-        sizePolicy.setHeightForWidth(mapTileLabel->sizePolicy().hasHeightForWidth());
-        mapTileLabel->setSizePolicy(sizePolicy);
+        QSizePolicy sizePolicy3(QSizePolicy::Minimum, QSizePolicy::Preferred);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(mapTileLabel->sizePolicy().hasHeightForWidth());
+        mapTileLabel->setSizePolicy(sizePolicy3);
 
         resultsLayout->addWidget(mapTileLabel);
 
