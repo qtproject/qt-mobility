@@ -57,7 +57,7 @@ ContactListPage::ContactListPage(QWidget *parent)
 
     m_backendsCombo = new QComboBox(this);
     QStringList availableManagers = QContactManager::availableManagers();
-    
+    availableManagers.removeAll("invalid");
     foreach(QString managerName, availableManagers) {
 
         QMap<QString, QString> params;
@@ -89,7 +89,7 @@ ContactListPage::ContactListPage(QWidget *parent)
             m_availableManagers.insert(managerName, managerUri);
         }
     }
-    m_backendsCombo->addItems(m_availableManagers.keys());
+    m_backendsCombo->addItems(availableManagers);
     connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
     m_filterActiveLabel = new QLabel("Inactive");
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
