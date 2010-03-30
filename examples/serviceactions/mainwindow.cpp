@@ -186,8 +186,17 @@ void AccountsWidget::hideEvent(QHideEvent* e)
 void AccountsWidget::load()
 {
     static bool runonce = false;
+    //#define NOTHREAD
+#ifdef NOTHREAD
+    QMessageManager manager;
     if(!runonce)
-        m_loader.start();
+     setIds(manager.queryAccounts());
+    //        m_loader.start();
+
+#else 
+    if(!runonce) 
+         m_loader.start();
+#endif
     runonce = true;
 }
 
@@ -1250,7 +1259,9 @@ QMainWindow(parent,f),
 m_tabWidget(0)
 {
 
+  qDebug() << "MainWindow::MainWindow";
     m_service = new QMessageService(this);
+  qDebug() << "new QMessageService(this) doone";
 
     connect(m_service,SIGNAL(stateChanged(QMessageService::State)),
             this,SLOT(serviceStateChanged(QMessageService::State)));
@@ -1264,6 +1275,8 @@ m_tabWidget(0)
                                                   << new ShowWidget(m_service,this)
                                                   << new RetrieveWidget(this)
                                                   << new StoreSignalsWidget(this)) {
+  qDebug() << "widgets created";
+
         m_widgetStack->addWidget(exampleWidget);
 #ifdef _WIN32_WCE
         exampleWidget->installEventFilter(this);
@@ -1311,6 +1324,7 @@ m_tabWidget(0)
 
     setWindowTitle(WindowTitle);
     resize(WindowGeometry);
+  qDebug() << "MainWindow::MainWindow done";
 }
 
 #ifdef _WIN32_WCE
@@ -1325,6 +1339,7 @@ bool MainWindow::eventFilter(QObject* source, QEvent* e)
 
 void MainWindow::serviceStateChanged(QMessageService::State newState)
 {
+  qDebug() << "MainWindow::serviceStateChanged";
     if ((newState == QMessageService::FinishedState) && (m_service->error() != QMessageManager::NoError))
         QMessageBox::critical(this,"Error","One or more service actions failed");
 }

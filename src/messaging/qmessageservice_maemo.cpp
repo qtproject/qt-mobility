@@ -44,6 +44,7 @@
 #include "maemohelpers_p.h"
 #include "modestengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
+#include "eventloggerengine_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,6 +72,7 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
                                            uint limit, uint offset,
                                            EnginesToCall enginesToCall)
 {
+  //  qDebug() << "QMessageServicePrivate::queryMessages";
     if (_active) {
         return false;
     }
@@ -82,16 +84,30 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     _active = true;
     _error = QMessageManager::NoError;
 
+    if (enginesToCall & EnginesToCallTelepathy) {
+      _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+    }
+
     _pendingRequestCount = 0;
     if (enginesToCall & EnginesToCallModest) {
         if (ModestEngine::instance()->queryMessages(messageService, filter, sortOrder, limit, offset)) {
             _pendingRequestCount++;
         }
+    } 
+
+    if (enginesToCall & EnginesToCallTelepathy && _pendingRequestCount==0 ) {
+      if (!_sorted) {
+	MessagingHelper::orderMessages(_ids, sortOrder);
+      }
+      MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, limit, offset);
+      
+      emit q_ptr->messagesFound(_ids);
+      
+      setFinished(true);
+      
+      _ids.clear();
     }
 
-    //TODO: SMS search support
-    //if (enginesToCall & EnginesToCallTelepathy) {
-    //}
 
     if (_pendingRequestCount > 0) {
         _filter = filter;
@@ -128,6 +144,13 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     _error = QMessageManager::NoError;
 
     _pendingRequestCount = 0;
+
+    
+    if (enginesToCall & EnginesToCallTelepathy) {
+     _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
+
+   }
+
     if (enginesToCall & EnginesToCallModest) {
         if (ModestEngine::instance()->queryMessages(messageService, filter, body, matchFlags,
                                                     sortOrder, limit, offset)) {
@@ -135,9 +158,18 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         }
     }
 
-    //TODO: SMS search support
-    //if (enginesToCall & EnginesToCallTelepathy) {
-    //}
+    if (enginesToCall & EnginesToCallTelepathy && _pendingRequestCount==0 ) {
+      if (!_sorted) {
+	MessagingHelper::orderMessages(_ids, sortOrder);
+      }
+      MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, limit, offset);
+      
+      emit q_ptr->messagesFound(_ids);
+      
+      setFinished(true);
+      
+      _ids.clear();
+    }
 
     if (_pendingRequestCount > 0) {
         _filter = filter;
@@ -215,6 +247,7 @@ void QMessageServicePrivate::stateChanged(QMessageService::State state)
 
 void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)
 {
+  //  qDebug() << "QMessageServicePrivate::messagesFound";
     _pendingRequestCount--;
 
     if (!isFiltered) {
@@ -274,6 +307,8 @@ QMessageService::QMessageService(QObject *parent)
  : QObject(parent),
    d_ptr(new QMessageServicePrivate(this))
 {
+    EventLoggerEngine::instance();
+    TelepathyEngine::instance();
 }
 
 QMessageService::~QMessageService()
@@ -297,6 +332,7 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
 
 bool QMessageService::send(QMessage &message)
 {
+  //  qDebug() << "QMessageService::send";
     if (d_ptr->_active) {
         return false;
     }

@@ -73,7 +73,7 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
 { 
     q_ptr = store;
     p_ptr = new QMessageStorePrivatePlatform(this, store);
-    p_ptr->el=new EventLoggerEngine();
+    p_ptr->el= EventLoggerEngine::instance();
 }
 
 void QMessageStorePrivate::messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
@@ -102,6 +102,9 @@ QMessageStore::QMessageStore(QObject *parent)
     Q_ASSERT(d_ptr != 0);
     Q_ASSERT(d_ptr->q_ptr == 0); // QMessageStore should be singleton
  //   d_ptr->initialize(this);
+    // be sure that singletons are initialized
+    EventLoggerEngine::instance();
+    TelepathyEngine::instance();
 }
 
 QMessageStore::~QMessageStore()
@@ -129,9 +132,13 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 
     bool isFiltered = false;
     bool isSorted = false;
+    
     messageIds = ModestEngine::instance()->queryMessagesSync(filter, sortOrder, limit, offset,
                                                              isFiltered, isSorted);
-    messageIds += d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+    
+    //    messageIds += d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+    messageIds += EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+
     if (!isFiltered) {
         MessagingHelper::filterMessages(messageIds, filter);
     }
@@ -152,7 +159,9 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     bool isSorted = false;
     messageIds = ModestEngine::instance()->queryMessagesSync(filter, body, matchFlags, sortOrder, limit, offset,
                                                              isFiltered, isSorted);
-    messageIds +=d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,body,matchFlags);
+    //    messageIds +=d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,body,matchFlags);
+    messageIds +=EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags);
+
     if (!isFiltered) {
         MessagingHelper::filterMessages(messageIds, filter);
     }
