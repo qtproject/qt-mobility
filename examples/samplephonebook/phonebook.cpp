@@ -81,24 +81,28 @@ PhoneBook::~PhoneBook()
 
 void PhoneBook::activateEditor(QContactLocalId contactId)
 {
+    menuBar()->setVisible(false);
     m_editorPage->setCurrentContact(m_manager, contactId);
     m_stackedWidget->setCurrentIndex(1); // list = 0, editor = 1, find = 2.
 }
 
 void PhoneBook::activateList(const QContactFilter& filter)
-{  
+{
+    menuBar()->setVisible(true);
     m_currentFilter = filter;
     activateList(); // call base now.
 }
 
 void PhoneBook::activateList()
 {
+    menuBar()->setVisible(true);
     m_listPage->rebuildList(m_currentFilter);
     m_stackedWidget->setCurrentIndex(0); // list = 0, editor = 1, find = 2.
 }
 
 void PhoneBook::activateFind()
 {
+    menuBar()->setVisible(false);
     m_stackedWidget->setCurrentIndex(2); // list = 0, editor = 1, find = 2.
 }
 
