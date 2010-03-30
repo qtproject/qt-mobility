@@ -15,6 +15,7 @@ mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 
 contains(MOBILITY, bearer) {
+    DEFINES += QT_MOBILITY_BEARER
     qtAddLibrary(QtBearer)
 }
 

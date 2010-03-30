@@ -81,9 +81,8 @@ MainWidget::MainWidget()
 
 int main(int argc, char *argv[])
 {
-    QML_REGISTER_NOCREATE_TYPE(QSensorReading);
-    QML_REGISTER_TYPE(QT_PREPEND_NAMESPACE(Qt), 4, 6, OrientationReading, QOrientationReading);
-    QML_REGISTER_TYPE(QT_PREPEND_NAMESPACE(Qt), 4, 6, OrientationSensor, QOrientationSensor);
+    qmlRegisterType<QOrientationReading>("Qt", 4, 6, "OrientationReading");
+    qmlRegisterType<QOrientationSensor>("Qt", 4, 6, "OrientationSensor");
 
     QApplication app(argc, argv);
 
