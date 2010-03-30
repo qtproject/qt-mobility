@@ -234,8 +234,8 @@ void QMessageServicePrivate::setFinished(bool successful)
         }
 
         _state = QMessageService::FinishedState;
-        emit q_ptr->stateChanged(_state);
         _active = false;
+        emit q_ptr->stateChanged(_state);
     }
 }
 
