@@ -56,8 +56,8 @@ class Q_CONTACTS_EXPORT QContactSyncTarget : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldSyncTarget;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldSyncTarget;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactSyncTarget, "SyncTarget")
     Q_DECLARE_LATIN1_CONSTANT(FieldSyncTarget, "SyncTarget");
