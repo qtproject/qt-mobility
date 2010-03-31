@@ -158,6 +158,13 @@ public:
     }
 
     /*! \reimp */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QContact();
+    }
+
+    /*! \reimp */
     virtual bool validateContact(const QContact&, QContactManager::Error* error) const
     {
         *error =  QContactManager::NotSupportedError;

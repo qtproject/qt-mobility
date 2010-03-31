@@ -146,7 +146,7 @@ public:
     virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
     /*! \reimp */
-    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error)
+    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error) const
     {
         return QContactManagerEngine::compatibleContact(original, error);
     }
