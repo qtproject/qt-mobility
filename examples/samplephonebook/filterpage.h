@@ -70,31 +70,29 @@ signals:
     void showListPage(const QContactFilter& filter);
 
 public slots:
+    void clearFilter();
 
 private slots:
-    void addClicked();
-    void clearClicked();
     void filterClicked();
+    void cancelClicked();
 
 private:
-    QLineEdit *m_valueCriteriaEdit;
-    QComboBox *m_fieldCriteriaCombo;
-    QComboBox *m_criteriaTypeCombo;
-    QComboBox *m_joinMethodCombo;
-
-    QLabel *m_cumulativeExpressionLabel;
+    QString m_name;
+    QString m_phone;
+    QString m_email;
+    QLineEdit *m_nameEdit;
+    QLineEdit *m_phoneEdit;
+    QLineEdit *m_emailEdit;
 
 #ifdef Q_OS_SYMBIAN
-    QAction *m_addBtn;
     QAction *m_filterBtn;
+    QAction *m_cancelBtn;
 #else
-    QPushButton *m_addBtn;
     QPushButton *m_filterBtn;
+    QPushButton *m_cancelBtn;
 #endif
     QPushButton *m_clearBtn;
-
-    QString m_cumulativeExpression;
-    QContactFilter m_cumulativeFilter;
+    QContactIntersectionFilter m_currentFilter;
 };
 
 #endif // FILTERPAGE_H

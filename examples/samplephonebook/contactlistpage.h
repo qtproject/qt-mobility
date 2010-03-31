@@ -73,12 +73,14 @@ signals:
     void showEditorPage(QContactLocalId contactId);
     void showFilterPage(const QContactFilter& filter);
     void managerChanged(QContactManager *manager);
+    void clearFilter();
 
 private slots:
     void backendSelected();
     void addClicked();
     void editClicked();
     void filterClicked();
+    void clearFilterClicked();
     void deleteClicked();
     void importClicked();
     void exportClicked();

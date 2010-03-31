@@ -61,6 +61,7 @@ PhoneBook::PhoneBook(QWidget *parent)
     connect(m_listPage, SIGNAL(showEditorPage(QContactLocalId)), this, SLOT(activateEditor(QContactLocalId)));
     connect(m_listPage, SIGNAL(showFilterPage(QContactFilter)), this, SLOT(activateFind()));
     connect(m_listPage, SIGNAL(managerChanged(QContactManager*)), this, SLOT(managerChanged(QContactManager*)));
+    connect(m_listPage, SIGNAL(clearFilter()), m_filterPage, SLOT(clearFilter()));
 
     m_stackedWidget = new QStackedWidget(centralWidget);
     m_stackedWidget->addWidget(m_listPage);
@@ -88,14 +89,18 @@ void PhoneBook::activateEditor(QContactLocalId contactId)
 
 void PhoneBook::activateList(const QContactFilter& filter)
 {
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     menuBar()->setVisible(true);
+#endif
     m_currentFilter = filter;
     activateList(); // call base now.
 }
 
 void PhoneBook::activateList()
 {
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
     menuBar()->setVisible(true);
+#endif
     m_listPage->rebuildList(m_currentFilter);
     m_stackedWidget->setCurrentIndex(0); // list = 0, editor = 1, find = 2.
 }

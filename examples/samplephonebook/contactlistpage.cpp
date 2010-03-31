@@ -91,7 +91,7 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
     }
     m_backendsCombo->addItems(availableManagers);
     connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
-    m_filterActiveLabel = new QLabel("Inactive");
+    m_filterActiveLabel = new QLabel(tr("Inactive"));
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
 
@@ -126,34 +126,38 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
 
     // Add items to the menu
     if (m_mainWindow) {
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         QMenuBar *optionsMenu = m_mainWindow->menuBar();
 #else
         QMenu *optionsMenu = new QMenu(tr("&Contacts"), this);
         m_mainWindow->menuBar()->addMenu(optionsMenu);
 #endif
-        QAction* addAction = new QAction(tr("&Add Contact"), this);
+        QAction* addAction = new QAction(tr("&Add Contact..."), this);
         connect(addAction, SIGNAL(triggered()), this, SLOT(addClicked()));
-        QAction* editAction = new QAction(tr("&Edit Contact"), this);
+        optionsMenu->addAction(addAction);
+        QAction* editAction = new QAction(tr("&Edit Contact..."), this);
         connect(editAction, SIGNAL(triggered()), this, SLOT(editClicked()));
+        optionsMenu->addAction(editAction);
         QAction* deleteAction = new QAction(tr("&Delete Contact"), this);
         connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteClicked()));
-        QAction* filterAction = new QAction(tr("Apply &Filter"), this);
-        connect(filterAction, SIGNAL(triggered()), this, SLOT(filterClicked()));
-
-        optionsMenu->addAction(addAction);
-        optionsMenu->addAction(editAction);
         optionsMenu->addAction(deleteAction);
+        optionsMenu->addSeparator();
+        QAction* filterAction = new QAction(tr("Apply &Filter..."), this);
+        connect(filterAction, SIGNAL(triggered()), this, SLOT(filterClicked()));
         optionsMenu->addAction(filterAction);
+        QAction* clearFilterAction = new QAction(tr("&Clear Filter"), this);
+        connect(clearFilterAction, SIGNAL(triggered()), this, SLOT(clearFilterClicked()));
+        optionsMenu->addAction(clearFilterAction);
+        optionsMenu->addSeparator();
 
 #ifdef BUILD_VERSIT
         QAction* importAction = new QAction(tr("&Import contacts..."), this);
         connect(importAction, SIGNAL(triggered()), this, SLOT(importClicked()));
+        optionsMenu->addAction(importAction);
         QAction* exportAction = new QAction(tr("Ex&port contacts..."), this);
         connect(exportAction, SIGNAL(triggered()), this, SLOT(exportClicked()));
-
-        optionsMenu->addAction(importAction);
         optionsMenu->addAction(exportAction);
+        optionsMenu->addSeparator();
 #endif
         QAction* exitAction = new QAction(tr("E&xit"), this);
         connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
@@ -244,6 +248,15 @@ void ContactListPage::filterClicked()
         emit showFilterPage(m_currentFilter);
 }
 
+void ContactListPage::clearFilterClicked()
+{
+    if (m_manager)
+        rebuildList(QContactFilter());
+
+    emit clearFilter();
+
+}
+
 void ContactListPage::deleteClicked()
 {
     if (!m_manager) {
@@ -260,7 +273,6 @@ void ContactListPage::deleteClicked()
     bool success = m_manager->removeContact(contactId);
     if (success) {
         delete m_contactsList->takeItem(m_contactsList->currentRow());
-        QMessageBox::information(this, "Success!", "Contact deleted successfully!");
     }
     else
         QMessageBox::information(this, "Failed!", "Failed to delete contact!");
