@@ -91,7 +91,7 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
     }
     m_backendsCombo->addItems(availableManagers);
     connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
-    m_filterActiveLabel = new QLabel(tr("Inactive"));
+    m_filterActiveLabel = new QLabel(tr("Filter active"));
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
 
@@ -99,7 +99,7 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
     QVBoxLayout *bookLayout = new QVBoxLayout;
     QFormLayout *backendLayout = new QFormLayout;
     backendLayout->addRow(tr("Store:"), m_backendsCombo);
-    backendLayout->addRow(tr("Filter:"), m_filterActiveLabel);
+    backendLayout->addRow(m_filterActiveLabel);
     bookLayout->addLayout(backendLayout);
 
     m_contactsList = new QListWidget(this);
@@ -208,11 +208,7 @@ void ContactListPage::backendSelected()
 
 void ContactListPage::rebuildList(const QContactFilter& filter)
 {
-    // first, check to see whether the filter does anything
-    if (filter == QContactFilter())
-        m_filterActiveLabel->setText(tr("Inactive"));
-    else
-        m_filterActiveLabel->setText(tr("Active"));
+    m_filterActiveLabel->setVisible(filter != QContactFilter());
 
     QContact currContact;
     m_currentFilter = filter;
