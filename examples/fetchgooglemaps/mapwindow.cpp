@@ -222,7 +222,7 @@ void MapWindow::positionUpdated(const QGeoPositionInfo &info)
     headingAndSpeedLabel->setText(tr("Bearing %1, travelling at %2 km/h").arg(heading).arg(speed));
 
     dateTimeLabel->setText(tr("(Last update: %1)").
-                           arg(info.dateTime().toLocalTime().time().toString()));
+                           arg(info.timestamp().toLocalTime().time().toString()));
 
     if (!loading) {
         // Google Maps does not provide maps larger than 640x480

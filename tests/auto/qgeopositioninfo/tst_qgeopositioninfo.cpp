@@ -138,7 +138,7 @@ private slots:
         QGeoPositionInfo info;
         QVERIFY(!info.isValid());
         QVERIFY(!info.coordinate().isValid());
-        QVERIFY(info.dateTime().isNull());
+        QVERIFY(info.timestamp().isNull());
     }
 
     void constructor_coord_dateTime()
@@ -149,7 +149,7 @@ private slots:
 
         QGeoPositionInfo info(coord, dateTime);
         QCOMPARE(info.coordinate(), coord);
-        QCOMPARE(info.dateTime(), dateTime);
+        QCOMPARE(info.timestamp(), dateTime);
         QCOMPARE(info.isValid(), valid);
     }
 
@@ -227,8 +227,8 @@ private slots:
         QFETCH(QDateTime, dateTime);
 
         QGeoPositionInfo info;
-        info.setDateTime(dateTime);
-        QCOMPARE(info.dateTime(), dateTime);
+        info.setTimestamp(dateTime);
+        QCOMPARE(info.timestamp(), dateTime);
     }
 
     void setDateTime_data()
@@ -241,7 +241,7 @@ private slots:
     void dateTime()
     {
         QGeoPositionInfo info;
-        QVERIFY(info.dateTime().isNull());
+        QVERIFY(info.timestamp().isNull());
     }
 
     void setCoordinate()
