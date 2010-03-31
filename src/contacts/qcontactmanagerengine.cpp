@@ -1443,8 +1443,6 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 }
 
 /*!
-  \fn bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-
   Adds the list of contacts given by \a contacts list to the database.
   Returns true if the contacts were saved successfully, otherwise false.
 
@@ -1463,10 +1461,15 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 
   \sa QContactManager::saveContact()
  */
+bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(contacts);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
 
 /*!
-  \fn bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
@@ -1492,6 +1495,13 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 
   \sa QContactManager::removeContact()
  */
+bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(contactIds);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
 
 /*!
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
