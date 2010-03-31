@@ -1642,7 +1642,7 @@ bool ServiceDatabase::unregisterService(const QString &serviceName, const QStrin
 }
 
 /*
-    Registers the service initialization into teh database.
+    Registers the service initialization into the database.
 */
 bool ServiceDatabase::serviceInitialized(const QString &serviceName, const QString &securityToken)
 {
