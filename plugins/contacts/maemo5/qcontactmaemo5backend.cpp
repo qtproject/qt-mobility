@@ -225,24 +225,6 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
   return retn;
 }
 
-#if 0
-QList<QContactManager::Error> QContactMaemo5Engine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error* error)
-{
-  bool ok = true;
-  
-  if (contactIds->isEmpty())
-    return false;
-  
-  QContactLocalId id;
-  foreach(id, contactIds){
-      if (!removeContact(id, error))
-	ok = false;
-  }
-  
-  return ok;
-}
-#endif
-
 bool QContactMaemo5Engine::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {
   Q_CHECK_PTR(d->m_abook);
