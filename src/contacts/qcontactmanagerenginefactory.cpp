@@ -69,7 +69,7 @@ QContactManagerEngineFactory::~QContactManagerEngineFactory()
 }
 
 /*!
-  \fn QContactManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error &error)
+  \fn QContactManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 
   This function is called by the QContactManager implementation to
   create an instance of the engine provided by this factory.

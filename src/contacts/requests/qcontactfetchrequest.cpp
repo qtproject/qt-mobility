@@ -111,8 +111,8 @@ QList<QContactSortOrder> QContactFetchRequest::sorting() const
 }
 
 /*!
-  Returns the fetch hint which may be used by the backend to optimize contact retrieval
-  to \a fetchHint.  A client should not make changes to a contact which has been retrieved
+  Returns the fetch hint which may be used by the backend to optimize contact retrieval.
+  A client should not make changes to a contact which has been retrieved
   using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
   replace the previously saved contact in the backend).

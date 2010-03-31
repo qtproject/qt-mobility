@@ -712,7 +712,6 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
   \value DetailOrdering When a contact is retrieved, the manager will return the details in the same order in which they were saved
   \value Relationships The manager supports at least some types of relationships between contacts
   \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
-  \value RelationshipOrdering The manager supports relationships (re)ordering
   \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
   \value SelfContact The manager supports the concept of saving a contact which represents the current user
   \value ChangeLogs The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps
