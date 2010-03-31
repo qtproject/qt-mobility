@@ -168,7 +168,7 @@ public:
 
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req) {QContactManagerEngine::requestDestroyed(req);}
-    bool waitForRequestFinished(QContactAbstractRequest* req, int msecs) {QContactManagerEngine::waitForRequestFinished(req, msecs);}
+    bool waitForRequestFinished(QContactAbstractRequest* req, int msecs) {return QContactManagerEngine::waitForRequestFinished(req, msecs);}
 
     /* Capabilities reporting */
     bool hasFeature(QContactManager::ManagerFeature feat, const QString& contactType) const
