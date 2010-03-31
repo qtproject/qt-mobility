@@ -74,6 +74,18 @@ static unsigned int RecentMessagesCount = 50;
 class AccountsWidget : public QWidget
 {
     Q_OBJECT
+
+private:
+    class Loader : public QThread
+    {
+    public:
+        Loader(AccountsWidget* parent);
+        void run();
+
+    private:
+        AccountsWidget* m_parent;
+    };
+
 public:
     AccountsWidget(QWidget* parent = 0);
     QMessageAccountId currentAccount() const;
@@ -102,24 +114,42 @@ private:
     QComboBox* m_accountsCombo;
     QLabel* m_busyLabel;
 
+    Loader m_loader;
     mutable QMutex m_loadMutex;
     QMessageAccountIdList m_ids;
 };
+
+AccountsWidget::Loader::Loader(AccountsWidget* parent)
+:
+QThread(parent),
+m_parent(parent)
+{
+}
+
+void AccountsWidget::Loader::run()
+{
+    QMessageManager manager;
+    m_parent->setIds(manager.queryAccounts());
+}
 
 AccountsWidget::AccountsWidget(QWidget* parent)
 :
 QWidget(parent),
 m_stackedLayout(0),
 m_accountsCombo(0),
-m_busyLabel(0)
+m_busyLabel(0),
+m_loader(this)
 {
     setupUi();
+
+    connect(&m_loader,SIGNAL(started()),this,SLOT(loadStarted()));
+    connect(&m_loader,SIGNAL(finished()),this,SLOT(loadFinished()));
 }
 
 QMessageAccountId AccountsWidget::currentAccount() const
 {
     QMessageAccountId result;
-    if(m_accountsCombo->count())
+    if(m_loader.isFinished() && m_accountsCombo->count())
     {
         int index = m_accountsCombo->currentIndex();
         return ids().at(index);
@@ -130,7 +160,7 @@ QMessageAccountId AccountsWidget::currentAccount() const
 
 QString AccountsWidget::currentAccountName() const
 {
-    if(m_accountsCombo->count())
+    if(m_loader.isFinished() && m_accountsCombo->count())
         return m_accountsCombo->itemData(m_accountsCombo->currentIndex()).toString();
     return QString();
 }
@@ -148,6 +178,8 @@ void AccountsWidget::showEvent(QShowEvent* e)
 
 void AccountsWidget::hideEvent(QHideEvent* e)
 {
+    if(m_loader.isRunning())
+        m_loader.exit();
     QWidget::hideEvent(e);
 }
 
@@ -155,12 +187,7 @@ void AccountsWidget::load()
 {
     static bool runonce = false;
     if(!runonce)
-    {
-        loadStarted();
-        QMessageManager manager;
-        setIds(manager.queryAccounts());
-        loadFinished();
-    }
+        m_loader.start();
     runonce = true;
 }
 
