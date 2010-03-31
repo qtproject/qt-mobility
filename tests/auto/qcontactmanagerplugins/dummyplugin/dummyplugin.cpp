@@ -150,6 +150,12 @@ public:
     }
 
     /* Validation for saving */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QContact();
+    }
+
     virtual bool validateContact(const QContact&, QContactManager::Error* error) const
     {
         *error = QContactManager::NotSupportedError;

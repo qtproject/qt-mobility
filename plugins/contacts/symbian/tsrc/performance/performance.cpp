@@ -52,7 +52,7 @@ void SymbianPluginPerfomance::initTestCase()
 
     // Remove all contacts from the database
     QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
-    mCntMng->removeContacts(&cnt_ids);
+    mCntMng->removeContacts(cnt_ids, 0);
 }
 
 void SymbianPluginPerfomance::cleanupTestCase()
@@ -80,7 +80,7 @@ void SymbianPluginPerfomance::createSimpleContacts()
 
     // Save the contacts
     mTime.start();
-    mCntMng->saveContacts(&contactsList);
+    mCntMng->saveContacts(&contactsList, 0);
     int elapsed = mTime.elapsed();
     qDebug() << "Created " << contactsList.count() << " simple contacts in"
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
@@ -91,7 +91,7 @@ void SymbianPluginPerfomance::removeSimpleContacts()
     // Remove N contacts
     QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
     mTime.restart();
-    mCntMng->removeContacts(&cnt_ids);
+    mCntMng->removeContacts(cnt_ids, 0);
     int elapsed = mTime.elapsed();
     qDebug() << "Removed " << cnt_ids.count() << " simple contacts in"
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
@@ -166,7 +166,8 @@ void SymbianPluginPerfomance::createComplexContacts()
     }
     // Save the contacts
     mTime.restart();
-    QList<QContactManager::Error> errors = mCntMng->saveContacts(&contactsList);
+    QMap<int, QContactManager::Error> errors;
+    mCntMng->saveContacts(&contactsList, &errors);
     foreach(QContactManager::Error error, errors) {
         QCOMPARE(error, QContactManager::NoError);
     }
@@ -182,13 +183,13 @@ void SymbianPluginPerfomance::sortContacts()
     QContactSortOrder sortOrder1;
 
     // first name sort order
-    sortOrder.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldFirst);
+    sortOrder.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldFirstName);
     sortOrder.setBlankPolicy(QContactSortOrder::BlanksLast);
     sortOrder.setDirection(Qt::AscendingOrder);
     sortOrder.setCaseSensitivity(Qt::CaseInsensitive);
 
     // last name sort order
-    sortOrder1.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldLast);
+    sortOrder1.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldLastName);
     sortOrder1.setBlankPolicy(QContactSortOrder::BlanksLast);
     sortOrder1.setDirection(Qt::AscendingOrder);
     sortOrder1.setCaseSensitivity(Qt::CaseInsensitive);
@@ -280,9 +281,9 @@ void SymbianPluginPerfomance::filterUnions()
     filt.setValue("alice");
     filt.setMatchFlags(QContactFilter::MatchContains);
 
-    filt.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirst);
+    filt.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
     unionFilter.append(filt);
-    filt.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLast);
+    filt.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLastName);
     unionFilter.append(filt);
 
     measureContactsFetch(
@@ -373,7 +374,7 @@ void SymbianPluginPerfomance::removeComplexContacts()
     // Remove N contacts
     QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
     mTime.restart();
-    mCntMng->removeContacts(&cnt_ids);
+    mCntMng->removeContacts(cnt_ids, 0);
     int elapsed = mTime.elapsed();
     qDebug() << "Removed " << cnt_ids.count() << " complex contacts in"
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
@@ -442,13 +443,13 @@ void SymbianPluginPerfomance::createComplexContactsWithOnlineAccount()
         QString uri = first + "@yahoo.com";
         aliceOnlineAccount.setAccountUri(uri);
         aliceOnlineAccount.setServiceProvider("yahoo");
-        aliceOnlineAccount.setNickname("something");
         aliceOnlineAccount.setSubTypes(QContactOnlineAccount::SubTypeSip);
         alice.saveDetail(&aliceOnlineAccount);
         contactsList.append(alice);
     }
     mTime.restart();
-    QList<QContactManager::Error> errors = mCntMng->saveContacts(&contactsList);
+    QMap<int, QContactManager::Error> errors;
+    mCntMng->saveContacts(&contactsList, &errors);
     foreach(QContactManager::Error error, errors) {
         QCOMPARE(error, QContactManager::NoError);
     }
@@ -461,11 +462,11 @@ void SymbianPluginPerfomance::sortContactsWithOnlineAccount()
     QList<QContactLocalId> cnt_ids;
     QContactSortOrder sortOrder;
     QContactSortOrder sortOrder1;
-    sortOrder.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldFirst);
+    sortOrder.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldFirstName);
     sortOrder.setBlankPolicy(QContactSortOrder::BlanksLast);
     sortOrder.setDirection(Qt::AscendingOrder);
     sortOrder.setCaseSensitivity(Qt::CaseInsensitive);
-    sortOrder1.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldLast);
+    sortOrder1.setDetailDefinitionName(QContactName::DefinitionName,  QContactName::FieldLastName);
     sortOrder1.setBlankPolicy(QContactSortOrder::BlanksLast);
     sortOrder1.setDirection(Qt::AscendingOrder);
     sortOrder1.setCaseSensitivity(Qt::CaseInsensitive);
@@ -489,7 +490,7 @@ void SymbianPluginPerfomance::removeComplextContactsWithOnlineAccount()
 {
     QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
     mTime.restart();
-    mCntMng->removeContacts(&cnt_ids);
+    mCntMng->removeContacts(cnt_ids, 0);
     int elapsed = mTime.elapsed();
     qDebug() << "Removed " << cnt_ids.count() << " complext contacts with online account in"
         << elapsed / 1000 << "s" << elapsed % 1000 << "ms";

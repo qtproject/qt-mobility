@@ -74,12 +74,12 @@ public:
 
     // Predefined attribute names and values
 #ifdef Q_QDOC
-    const char* FieldContext;
-    const char* ContextHome;
-    const char* ContextWork;
-    const char* ContextOther;
-    const char* FieldDetailUri;
-    const char* FieldLinkedDetailUris;
+    static const QLatin1Constant FieldContext;
+    static const QLatin1Constant ContextHome;
+    static const QLatin1Constant ContextWork;
+    static const QLatin1Constant ContextOther;
+    static const QLatin1Constant FieldDetailUri;
+    static const QLatin1Constant FieldLinkedDetailUris;
 #else
     Q_DECLARE_LATIN1_CONSTANT(FieldContext, "Context");
     Q_DECLARE_LATIN1_CONSTANT(ContextHome, "Home");

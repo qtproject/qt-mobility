@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
-
+#include <QDateTime>
 #include "qtcontacts.h"
 
 //TESTED_CLASS=
@@ -87,6 +87,7 @@ private slots:
     void testOrganisation();
     void testPhoneNumber();
     void testUrl();    
+    void testPresence();
 
 private slots:
 
@@ -400,5 +401,20 @@ void tst_details::testUrl()
     saveAndVerifyContact( c );
 }
 
+void tst_details::testPresence()
+{
+    QContact c;
+    
+    QContactPresence presence;
+    presence.setNickname("Tom");
+    presence.setTimestamp(QDateTime::currentTime());
+    presence.setPresenceState(QContactPresence::PresenceAvailable);
+    presence.setPresenceStateText("Available");
+    presence.setPresenceStateImageUrl("http://example.com/example.jpg");
+    presence.setCustomMessage("MSN");
+    c.saveDetail(&presence);
+   
+    saveAndVerifyContact( c );
+}
 QTEST_MAIN(tst_details)
 #include "tst_details.moc"

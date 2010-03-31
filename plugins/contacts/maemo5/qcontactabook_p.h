@@ -140,6 +140,9 @@ private:
   void setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const;
   
   /* Internal Vars */
+  gulong m_contactAddedHandlerId;
+  gulong m_contactChangedHandlerId;
+  gulong m_contactRemovedHandlerId;
   OssoABookAggregator *m_abookAgregator;
   mutable QContactIDsHash m_localIds; //Converts QLocalId <=> eContactId
   QMutex m_saveContactMutex;

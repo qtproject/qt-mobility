@@ -56,9 +56,9 @@ class Q_CONTACTS_EXPORT QContactAvatar : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldImageUrl;
-    const char* FieldVideoUrl;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldImageUrl;
+    static const QLatin1Constant FieldVideoUrl;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
     Q_DECLARE_LATIN1_CONSTANT(FieldImageUrl, "ImageUrl");

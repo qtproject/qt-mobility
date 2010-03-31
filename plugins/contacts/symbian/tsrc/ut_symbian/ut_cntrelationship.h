@@ -67,7 +67,7 @@ private slots:
 	void invalidFirstAndSecondContactGroupRelationship();
 
 private:
-    bool TestCntRelationship::validateRelationshipFilter(const QContactRelationshipFilter::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts);
+    bool validateRelationshipFilter(const QContactRelationship::Role role, const QContactId contactId, const QList<QContactLocalId> expectedContacts);
 
 private:
      CntSymbianEngine *m_manager;
