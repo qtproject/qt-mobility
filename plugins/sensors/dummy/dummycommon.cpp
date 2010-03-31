@@ -60,7 +60,7 @@ void dummycommon::start()
     if (m_timerid)
         return;
 
-    int interval = sensor()->updateInterval();
+    int interval = 1000 / sensor()->dataRate();
     if (interval < 0)
         interval = 1000;
 
