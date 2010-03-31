@@ -5,7 +5,6 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_SENSORS_LIB QT_MAKEDLL
 symbian {
-    TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002BFC0
 
@@ -13,7 +12,7 @@ symbian {
     # Main library
     SENSORS_DEPLOYMENT.sources = QtSensors.dll
     SENSORS_DEPLOYMENT.path = \sys\bin
-    DEPLOYMENT += CONTACTS_DEPLOYMENT
+    DEPLOYMENT += SENSORS_DEPLOYMENT
 }
 
 CONFIG+=strict_flags
