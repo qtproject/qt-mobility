@@ -249,8 +249,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         theContact->saveDetail(&ts);
 
         // synthesize the display label for the contact.
-        QContact saveContact = setContactDisplayLabel(synthesizedDisplayLabel(*theContact, error), *theContact);
-        *theContact = saveContact;
+        setContactDisplayLabel(theContact, synthesizedDisplayLabel(*theContact, error));
 
         // Looks ok, so continue
         d->m_contacts.replace(index, *theContact);
@@ -277,8 +276,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         theContact->setId(newId);
 
         // synthesize the display label for the contact.
-        QContact saveContact = setContactDisplayLabel(synthesizedDisplayLabel(*theContact, error), *theContact);
-        *theContact = saveContact;
+        setContactDisplayLabel(theContact, synthesizedDisplayLabel(*theContact, error));
 
         // finally, add the contact to our internal lists and return
         d->m_contacts.append(*theContact);                   // add contact to list

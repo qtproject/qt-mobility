@@ -45,6 +45,7 @@
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
 
+#include <qcontactmanagerengine.h>
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactname.h>
@@ -151,6 +152,7 @@ bool QVersitContactImporterPrivate::importContact(
     }
 
     contact->setType(QContactType::TypeContact);
+    QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(contact));
     return true;
 }
 

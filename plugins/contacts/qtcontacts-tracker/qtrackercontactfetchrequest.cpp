@@ -703,7 +703,7 @@ void QTrackerContactFetchRequest::contactsReady()
         QContactDisplayLabel dl = cont.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            result[i] = QContactManagerEngine::setContactDisplayLabel(engine->synthesizedDisplayLabel(cont, &synthError), cont);
+            QContactManagerEngine::setContactDisplayLabel(&cont, engine->synthesizedDisplayLabel(cont, &synthError));
         }
     }
     emitFinished();
