@@ -144,7 +144,7 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
         connect(filterAction, SIGNAL(triggered()), this, SLOT(filterClicked()));
         optionsMenu->addAction(filterAction);
         QAction* clearFilterAction = new QAction(tr("&Clear Filter"), this);
-        connect(clearFilterAction, SIGNAL(triggered()), this, SLOT(clearFilterClicked()));
+        connect(clearFilterAction, SIGNAL(triggered()), this, SIGNAL(clearFilter()));
         optionsMenu->addAction(clearFilterAction);
         optionsMenu->addSeparator();
 
@@ -206,10 +206,11 @@ void ContactListPage::backendSelected()
 
 void ContactListPage::rebuildList(const QContactFilter& filter)
 {
-    m_filterActiveLabel->setVisible(filter != QContactFilter());
+    m_currentFilter = QContactManagerEngine::canonicalizedFilter(filter);
+
+    m_filterActiveLabel->setVisible(m_currentFilter != QContactFilter());
 
     QContact currContact;
-    m_currentFilter = filter;
     m_contactsList->clear();
     m_idToListIndex.clear();
     QList<QContactLocalId> contactIds = m_manager->contactIds(m_currentFilter);
@@ -240,15 +241,6 @@ void ContactListPage::filterClicked()
 {
     if (m_manager)
         emit showFilterPage(m_currentFilter);
-}
-
-void ContactListPage::clearFilterClicked()
-{
-    if (m_manager)
-        rebuildList(QContactFilter());
-
-    emit clearFilter();
-
 }
 
 void ContactListPage::deleteClicked()

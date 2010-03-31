@@ -122,6 +122,8 @@ void FilterPage::clearFilter()
     m_phoneEdit->clear();
     m_emailEdit->clear();
     m_addressEdit->clear();
+    m_currentFilter = QContactIntersectionFilter();
+    emit showListPage(m_currentFilter);
 }
 
 void FilterPage::filterClicked()
@@ -136,6 +138,7 @@ void FilterPage::filterClicked()
         // Search all fields of the name by building a union filter
         QContactUnionFilter nameFilter;
         QStringList nameFields;
+        nameFields << QContactName::FieldCustomLabel;
         nameFields << QContactName::FieldFirstName;
         nameFields << QContactName::FieldLastName;
         nameFields << QContactName::FieldMiddleName;

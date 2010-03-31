@@ -80,7 +80,6 @@ private slots:
     void addClicked();
     void editClicked();
     void filterClicked();
-    void clearFilterClicked();
     void deleteClicked();
     void importClicked();
     void exportClicked();
