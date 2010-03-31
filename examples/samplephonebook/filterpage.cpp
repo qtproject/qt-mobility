@@ -49,15 +49,30 @@ FilterPage::FilterPage(QWidget* parent)
     m_nameEdit = new QLineEdit(this);
     m_phoneEdit = new QLineEdit(this);
     m_emailEdit = new QLineEdit(this);
-
+    m_addressEdit = new QLineEdit(this);
+    QLabel *nameLabel = new QLabel(tr("Name"), this);
+    QLabel *phoneLabel = new QLabel(tr("Phone"), this);
+    QLabel *emailLabel = new QLabel(tr("Email"), this);
+    QLabel *addressLabel = new QLabel(tr("Address"), this);
 
     QFormLayout *formLayout = new QFormLayout;
-    formLayout->addRow(new QLabel(tr("Name:"), this));
-    formLayout->addRow(m_nameEdit);
-    formLayout->addRow(new QLabel(tr("Phone:"), this));
-    formLayout->addRow(m_phoneEdit);
-    formLayout->addRow(new QLabel(tr("Email:"), this));
-    formLayout->addRow(m_emailEdit);
+    if (QApplication::desktop()->availableGeometry().width() < 360) {
+        // Narrow screen: put label on separate line to textbox
+        formLayout->addRow(nameLabel);
+        formLayout->addRow(m_nameEdit);
+        formLayout->addRow(phoneLabel);
+        formLayout->addRow(m_phoneEdit);
+        formLayout->addRow(emailLabel);
+        formLayout->addRow(m_emailEdit);
+        formLayout->addRow(addressLabel);
+        formLayout->addRow(m_addressEdit);
+    } else {
+        // Wide screen: put label on same line as textbox
+        formLayout->addRow(nameLabel, m_nameEdit);
+        formLayout->addRow(phoneLabel, m_phoneEdit);
+        formLayout->addRow(emailLabel, m_emailEdit);
+        formLayout->addRow(addressLabel, m_addressEdit);
+    }
 
     QVBoxLayout *pageLayout = new QVBoxLayout;
 
@@ -102,9 +117,11 @@ void FilterPage::clearFilter()
     m_name.clear();
     m_phone.clear();
     m_email.clear();
+    m_address.clear();
     m_nameEdit->clear();
     m_phoneEdit->clear();
     m_emailEdit->clear();
+    m_addressEdit->clear();
 }
 
 void FilterPage::filterClicked()
@@ -112,13 +129,25 @@ void FilterPage::filterClicked()
     m_name = m_nameEdit->text();
     m_phone = m_phoneEdit->text();
     m_email = m_emailEdit->text();
+    m_address = m_addressEdit->text();
+    // The intersection filter ensures that non-empty field value must be found in the contact.
     m_currentFilter = QContactIntersectionFilter();
     if (!m_nameEdit->text().isEmpty()) {
-        QContactDetailFilter nameFilter;
-        nameFilter.setDetailDefinitionName(QContactDisplayLabel::DefinitionName,
-                                           QContactDisplayLabel::FieldLabel);
-        nameFilter.setValue(m_nameEdit->text());
-        nameFilter.setMatchFlags(QContactFilter::MatchContains);
+        // Search all fields of the name by building a union filter
+        QContactUnionFilter nameFilter;
+        QStringList nameFields;
+        nameFields << QContactName::FieldFirstName;
+        nameFields << QContactName::FieldLastName;
+        nameFields << QContactName::FieldMiddleName;
+        nameFields << QContactName::FieldPrefix;
+        nameFields << QContactName::FieldSuffix;
+        foreach (const QString& fieldName, nameFields) {
+            QContactDetailFilter subFilter;
+            subFilter.setDetailDefinitionName(QContactName::DefinitionName, fieldName);
+            subFilter.setValue(m_nameEdit->text());
+            subFilter.setMatchFlags(QContactFilter::MatchContains);
+            nameFilter.append(subFilter);
+        }
         m_currentFilter.append(nameFilter);
     }
     if (!m_phoneEdit->text().isEmpty()) {
@@ -137,6 +166,25 @@ void FilterPage::filterClicked()
         emailFilter.setMatchFlags(QContactFilter::MatchContains);
         m_currentFilter.append(emailFilter);
     }
+    if (!m_addressEdit->text().isEmpty()) {
+        // Search all fields of the address by building a union filter
+        QContactUnionFilter addressFilter;
+        QStringList addressFields;
+        addressFields << QContactAddress::FieldCountry;
+        addressFields << QContactAddress::FieldLocality;
+        addressFields << QContactAddress::FieldPostcode;
+        addressFields << QContactAddress::FieldPostOfficeBox;
+        addressFields << QContactAddress::FieldRegion;
+        addressFields << QContactAddress::FieldStreet;
+        foreach (const QString& fieldName, addressFields) {
+            QContactDetailFilter subFilter;
+            subFilter.setDetailDefinitionName(QContactAddress::DefinitionName, fieldName);
+            subFilter.setValue(m_addressEdit->text());
+            subFilter.setMatchFlags(QContactFilter::MatchContains);
+            addressFilter.append(subFilter);
+        }
+        m_currentFilter.append(addressFilter);
+    }
     emit showListPage(m_currentFilter);
 }
 
@@ -145,5 +193,6 @@ void FilterPage::cancelClicked()
     m_nameEdit->setText(m_name);
     m_phoneEdit->setText(m_phone);
     m_emailEdit->setText(m_email);
+    m_addressEdit->setText(m_address);
     emit showListPage(m_currentFilter);
 }

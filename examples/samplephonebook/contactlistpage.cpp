@@ -94,8 +94,6 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
     m_filterActiveLabel = new QLabel(tr("Filter active"));
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
-
-
     QVBoxLayout *bookLayout = new QVBoxLayout;
     QFormLayout *backendLayout = new QFormLayout;
     backendLayout->addRow(tr("Store:"), m_backendsCombo);
