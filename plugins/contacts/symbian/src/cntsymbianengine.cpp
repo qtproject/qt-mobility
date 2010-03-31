@@ -637,7 +637,7 @@ void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
     QContactManager::Error error(QContactManager::NoError);
     QString label = synthesizedDisplayLabel(contact, &error);
     if(error == QContactManager::NoError) {
-        contact = setContactDisplayLabel(label, contact);
+        setContactDisplayLabel(&contact, label);
     }
 }
 
