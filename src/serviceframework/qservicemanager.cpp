@@ -61,11 +61,8 @@ QTM_BEGIN_NAMESPACE
 
 static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 {
-    qDebug() << "Here we are\n";
     if (QFile::exists(libNameOrPath))
         return libNameOrPath;
-
-    qDebug() << "Here we are not\n";
 
     // try to find plug-in via QLibrary
     const QStringList paths = QCoreApplication::libraryPaths();
