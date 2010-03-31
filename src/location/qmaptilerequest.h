@@ -69,6 +69,10 @@ public:
     */
     QMapTileRequest();
     /*!
+    * Destructor
+    */
+    ~QMapTileRequest();
+    /*!
     * Assignment operator.
     * @param request The request to assign from.
     * @return A reference to this request.

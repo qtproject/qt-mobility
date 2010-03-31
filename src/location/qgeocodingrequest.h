@@ -54,6 +54,7 @@ class Q_LOCATION_EXPORT QGeocodingRequest
 
 public:
     QGeocodingRequest();
+    ~QGeocodingRequest();
 
     QString version() const;
 

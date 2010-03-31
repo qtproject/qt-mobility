@@ -65,6 +65,14 @@ QGeocodingRequest::QGeocodingRequest()
     : d_ptr(new QGeocodingRequestPrivate())
 {
 }
+/*!
+    Destructor.
+*/
+QGeocodingRequest::~QGeocodingRequest()
+{
+    Q_D(QGeocodingRequest);
+    delete d;
+}
 
 /*!
     Returns the service version.

@@ -70,7 +70,11 @@ QRouteReply::QRouteReply()
     : d_ptr(new QRouteReplyPrivate())
 {
 }
-
+QRouteReply::~QRouteReply()
+{
+    Q_D(QRouteReply);
+    delete d;
+}
 /*!
     Returns the result code as reported by the geo engine.
 */

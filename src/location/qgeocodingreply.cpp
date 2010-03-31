@@ -70,6 +70,12 @@ QGeocodingReply::QGeocodingReply()
 {
 }
 
+QGeocodingReply::~QGeocodingReply() 
+{
+    Q_D(QGeocodingReply);
+    delete d;
+}
+
 /*!
     Returns the result code as reported by the geo engine.
 */

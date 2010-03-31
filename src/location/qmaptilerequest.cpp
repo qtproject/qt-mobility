@@ -63,6 +63,12 @@ QMapTileRequest::QMapTileRequest(const QMapTileRequest& request)
 {
 }
 
+QMapTileRequest::~QMapTileRequest()
+{
+    Q_D(QMapTileRequest);
+    delete d;
+}
+
 QMapTileRequest& QMapTileRequest::operator =(const QMapTileRequest& request)
 {
     Q_D(QMapTileRequest);
