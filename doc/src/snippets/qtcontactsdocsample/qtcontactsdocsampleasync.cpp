@@ -310,4 +310,6 @@ void AsyncRequestExample::performRequests()
         m_definitionSaveRequest.start();
     }
 //! [Modifying the schema supported by a manager]
+
+    QCoreApplication::exit(0);
 }
