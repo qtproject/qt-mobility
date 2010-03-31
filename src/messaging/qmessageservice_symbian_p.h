@@ -84,6 +84,7 @@ private:
     bool _active;
     
     friend class CMTMEngine;
+    friend class CFSEngine;
 };
 
 

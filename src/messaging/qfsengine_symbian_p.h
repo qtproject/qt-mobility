@@ -57,12 +57,33 @@
 #include "qmessageservice.h"
 #include <emailinterfacefactory.h>
 #include <memailclientapi.h>
+#include <memailmessagesearch.h>
+#include <emailinterfacefactory.h>
+
 
 using namespace EmailInterface;
 
 QTM_BEGIN_NAMESPACE
+class CFSMessagesFindOperation;
 class QMessageId;
 class QMessageAccount;
+
+struct FSMessageQueryInfo
+{
+    int operationId;
+    bool isQuery;
+    QString body;
+    QMessageDataComparator::MatchFlags matchFlags;
+    QMessageFilter filter;
+    QMessageSortOrder sortOrder;
+    int offset;
+    int limit;
+    QMessageServicePrivate* privateService;
+    CFSMessagesFindOperation* findOperation;
+    int currentFilterListIndex;
+    QMessageIdList ids;
+    int count;
+};
 
 class CFSEngine
 {
@@ -114,8 +135,15 @@ private:
     
     void sendEmailL(QMessage &message);
     void updateEmailAccountsL() const;
-    QMessageFolderIdList folderIdsByAccountIdL(const QMessageAccountId& accountId) const;
     
+    QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
+    QMessageFolderIdList folderIdsByAccountIdL(const QMessageAccountId& accountId) const;
+    QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;
+    QMessageFolderIdList allFolders() const;
+    QMessageFolder folderL(const QMessageFolderId &id) const;
+
+    QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
+
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
@@ -126,8 +154,63 @@ private:
     MEmailInterface* m_ifPtr;
     MEmailClientApi* m_clientApi;
     mutable QHash<QString, QMessageAccount> m_accounts;
+    mutable int m_operationIds;
+    mutable QList<FSMessageQueryInfo> m_messageQueries;
+
+    friend class QMessageService;
+    friend class CFSMessagesFindOperation;
+};
+
+class CFSMessagesFindOperation : public MEmailSearchObserver
+{
+public:
+    CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId); 
+    ~CFSMessagesFindOperation();
+
+    void filterAndOrderMessages(const QMessageFilter& filter,
+                                const QMessageSortOrder& sortOrder,
+                                const QString body = QString(),
+                                QMessageDataComparator::MatchFlags matchFlags = 0);
+    void filterAndOrderMessages(const QMessageFilterPrivate::SortedMessageFilterList& filters,
+                                const QMessageSortOrder& sortOrder,
+                                const QString body = QString(),
+                                QMessageDataComparator::MatchFlags matchFlags = 0);
+    
+private:
+    // from memailmessagesearch
+    virtual void HandleResultL(MEmailMessage* aMessage);
+    virtual void SearchCompletedL();
+    
+    void SearchMessagesInMailboxL();
+
+    void filterAndOrderMessagesL(const QMessageFilterPrivate::SortedMessageFilterList& filters,
+                                const QMessageSortOrder& sortOrder,
+                                const QString body = QString(),
+                                QMessageDataComparator::MatchFlags matchFlags = 0);
+    
+private: // Data
+    CFSEngine& m_owner;
+    
+    int iNumberOfHandledFilters;
+    int m_operationId;
+    //TMsvSelectionOrdering iOrdering;
+    bool iResultCorrectlyOrdered;
+    QMessageIdList iIdList;
+    QMessageFilterPrivate::SortedMessageFilterList iFilterList;
+
+    MEmailClientApi* m_clientApi;
+    RMailboxPtrArray m_mailboxes;
+    MEmailMessageSearchAsync* m_search;
+    
+    CEmailInterfaceFactory* m_factory; 
+    MEmailInterface* m_interfacePtr; 
+    MEmailMailbox* m_mailbox;
+    
+    int m_iteration;
+
 
 };
+
 
 QTM_END_NAMESPACE
 #endif // QFSENGINE_SYMBIAN_H

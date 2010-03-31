@@ -42,11 +42,17 @@
 #include "qmtmengine_symbian_p.h"
 #ifdef FREESTYLEMAILUSED
 #include "qfsengine_symbian_p.h"
+#include "symbianhelpers_p.h"
 #endif
 
 #include <QString>
 
 QTM_BEGIN_NAMESPACE
+
+#ifdef FREESTYLEMAILUSED
+using namespace SymbianHelpers;
+#endif
+
 
 Q_GLOBAL_STATIC(QMessageStorePrivate,messageStorePrivate);
 
@@ -134,27 +140,51 @@ void QMessageStorePrivate::messagesCounted(int count)
 
 QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return CFSEngine::instance()->queryAccounts(filter, sortOrder, limit, offset);
-    //return _mtmEngine->queryAccounts(filter, sortOrder, limit, offset);
+    QMessageAccountIdList idList;
+    
+#ifdef FREESTYLEMAILUSED
+    idList << CFSEngine::instance()->queryAccounts(filter, sortOrder, limit, offset);
+#endif
+    idList << _mtmEngine->queryAccounts(filter, sortOrder, limit, offset);
+    return idList;
 }
 
 int QMessageStorePrivate::countAccounts(const QMessageAccountFilter &filter) const
 {
-    return _mtmEngine->countAccounts(filter);
+    int count = 0;
+#ifdef FREESTYLEMAILUSED
+    count += CFSEngine::instance()->countAccounts(filter);
+#endif
+    count += _mtmEngine->countAccounts(filter);
+    return count;
 }
 
 QMessageFolderIdList QMessageStorePrivate::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return _mtmEngine->queryFolders(filter, sortOrder, limit, offset);
+    QMessageFolderIdList idList;
+#ifdef FREESTYLEMAILUSED
+    idList << CFSEngine::instance()->queryFolders(filter, sortOrder, limit, offset);
+#endif
+    idList << _mtmEngine->queryFolders(filter, sortOrder, limit, offset);
+    return idList;
 }
 
 int QMessageStorePrivate::countFolders(const QMessageFolderFilter& filter) const
 {
-    return _mtmEngine->countFolders(filter);
+    int count = 0;
+#ifdef FREESTYLEMAILUSED
+    count += CFSEngine::instance()->countFolders(filter);
+#endif
+    count += _mtmEngine->countFolders(filter);
+    return count;
 }
 
 QMessageFolder QMessageStorePrivate::folder(const QMessageFolderId& id) const
 {
+#ifdef FREESTYLEMAILUSED
+    if (isFreestyleFolder(id))
+        return CFSEngine::instance()->folder(id);
+#endif
     return _mtmEngine->folder(id);
 }
 
@@ -206,8 +236,11 @@ QMessage QMessageStorePrivate::message(const QMessageId& id) const
 
 QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
 {
-    //return _mtmEngine->account(id);
-    return CFSEngine::instance()->account(id);
+#ifdef FREESTYLEMAILUSED
+    if (isFreestyleAccount(id))
+        return CFSEngine::instance()->account(id);
+#endif
+    return _mtmEngine->account(id);
 }
 
 QMessageManager::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)
