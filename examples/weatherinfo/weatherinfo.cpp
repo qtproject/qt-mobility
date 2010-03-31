@@ -261,7 +261,6 @@ private slots:
         QUrl url = networkReply->url();
         if (!networkReply->error()) {
             QString data = QString::fromUtf8(networkReply->readAll());
-            qDebug() << data;
             if (data.contains("<LocalityName>", Qt::CaseInsensitive)) {
                 requestWeatherOfTown(data);
             } else {
