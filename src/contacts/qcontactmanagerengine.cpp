@@ -593,7 +593,7 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
 
         case QContactFilter::UnionFilter:
         {
-            QContactIntersectionFilter f(filter);
+            QContactUnionFilter f(filter);
             QList<QContactFilter> filters = f.filters();
             QList<QContactFilter>::iterator it = filters.begin();
 
