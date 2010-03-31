@@ -158,7 +158,7 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints constraints);
-    static QContact setContactDisplayLabel(const QString& displayLabel, const QContact& contact);
+    static void setContactDisplayLabel(QContact* contact, const QString& displayLabel);
     static void setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships);
 
     /* Helper functions */

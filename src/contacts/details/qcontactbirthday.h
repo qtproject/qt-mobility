@@ -55,8 +55,8 @@ class Q_CONTACTS_EXPORT QContactBirthday : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldBirthday;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldBirthday;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactBirthday, "Birthday")
     Q_DECLARE_LATIN1_CONSTANT(FieldBirthday, "Birthday");

@@ -435,7 +435,7 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                             m_engine.setReadOnlyAccessConstraint(&name);                        
                         currentContact.saveDetail(&name);
                         QContactManager::Error error(QContactManager::NoError);
-                        currentContact = m_engine.setContactDisplayLabel(m_engine.synthesizedDisplayLabel(currentContact, &error), currentContact);
+                        m_engine.setContactDisplayLabel(&currentContact, m_engine.synthesizedDisplayLabel(currentContact, &error));
                     }
                 }
                 break;

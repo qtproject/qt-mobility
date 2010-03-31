@@ -161,12 +161,9 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   Q_CHECK_PTR(d->m_abook);
   
   QContact *contact = d->m_abook->getQContact(contactId, error);
-  
-  QString displayLabel = synthesizedDisplayLabel(*contact, error);
-  
-  QContact rtn = setContactDisplayLabel(displayLabel, *contact);
+  QContact rtn(*contact);
   delete contact;
-  
+  setContactDisplayLabel(&rtn, synthesizedDisplayLabel(rtn, error));
   return rtn;
 }
 
@@ -213,7 +210,7 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
   }
 
   // synthesize the display label for the contact
-  *contact = setContactDisplayLabel(synthesizedDisplayLabel(*contact, error), *contact);
+  setContactDisplayLabel(contact, synthesizedDisplayLabel(*contact, error));
 
   // ensure that the contact's details conform to their definitions
   if (!validateContact(*contact, error)) {

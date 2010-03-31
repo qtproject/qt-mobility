@@ -173,7 +173,7 @@ void tst_QVersit::testImportFiles_data()
         QContactNote note;
         note.setNote(QLatin1String("This is a note field.  Pretty boring."));
         contact.saveDetail(&note);
-        contact = QContactManagerEngine::setContactDisplayLabel(QLatin1String("Firstname Lastname"), contact);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("Firstname Lastname"));
         list.append(contact);
         QContactUrl homeUrl;
         homeUrl.setUrl(QLatin1String("http://mywebpage.com"));
@@ -205,7 +205,7 @@ void tst_QVersit::testImportFiles_data()
         org.setName(QLatin1String("Nokia"));
         org.setDepartment(QStringList(QLatin1String("Qt DF")));
         contact.saveDetail(&org);
-        contact = QContactManagerEngine::setContactDisplayLabel(QLatin1String("first last"), contact);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("first last"));
         list.append(contact);
         QTEST_NEW_ROW("Entourage12-basic.vcf", "", list);
     }
