@@ -163,6 +163,7 @@ HEADERS += qgeocodingreply.h \
            qmaptilecache.h \
            qmaptilereply.h \
            qmaptilerequest.h \
+           qmaptilerequest_p.h \
            qmapview.h \
            qmapview_p.h \
            qreversegeocodingrequest.h \
