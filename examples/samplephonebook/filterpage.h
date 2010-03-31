@@ -91,7 +91,6 @@ private:
     QPushButton *m_filterBtn;
     QPushButton *m_cancelBtn;
 #endif
-    QPushButton *m_clearBtn;
     QContactIntersectionFilter m_currentFilter;
 };
 

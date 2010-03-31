@@ -50,6 +50,24 @@ FilterPage::FilterPage(QWidget* parent)
     m_phoneEdit = new QLineEdit(this);
     m_emailEdit = new QLineEdit(this);
 
+
+    QFormLayout *formLayout = new QFormLayout;
+    formLayout->addRow(new QLabel(tr("Name:"), this));
+    formLayout->addRow(m_nameEdit);
+    formLayout->addRow(new QLabel(tr("Phone:"), this));
+    formLayout->addRow(m_phoneEdit);
+    formLayout->addRow(new QLabel(tr("Email:"), this));
+    formLayout->addRow(m_emailEdit);
+
+    QVBoxLayout *pageLayout = new QVBoxLayout;
+
+    QScrollArea *formScrollArea = new QScrollArea(this);
+    formScrollArea->setWidgetResizable(true);
+    QWidget *formContainer = new QWidget(formScrollArea);
+    formContainer->setLayout(formLayout);
+    formScrollArea->setWidget(formContainer);
+    pageLayout->addWidget(formScrollArea);
+
 #ifdef Q_OS_SYMBIAN
     m_filterBtn = new QAction(tr("Filter"), this);
     m_filterBtn->setSoftKeyRole(QAction::PositiveSoftKey);
@@ -65,29 +83,7 @@ FilterPage::FilterPage(QWidget* parent)
     connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
     m_cancelBtn = new QPushButton(tr("&Cancel"), this);
     connect(m_cancelBtn, SIGNAL(clicked()), this, SLOT(cancelClicked()));
-#endif
 
-    QFormLayout *formLayout = new QFormLayout;
-    formLayout->addRow(new QLabel(tr("Name:"), this));
-    formLayout->addRow(m_nameEdit);
-    formLayout->addRow(new QLabel(tr("Phone:"), this));
-    formLayout->addRow(m_phoneEdit);
-    formLayout->addRow(new QLabel(tr("Email:"), this));
-    formLayout->addRow(m_emailEdit);
-#ifdef Q_OS_SYMBIAN
-    formLayout->addRow(m_clearBtn);
-#endif
-
-    QVBoxLayout *pageLayout = new QVBoxLayout;
-
-    QScrollArea *formScrollArea = new QScrollArea(this);
-    formScrollArea->setWidgetResizable(true);
-    QWidget *formContainer = new QWidget(formScrollArea);
-    formContainer->setLayout(formLayout);
-    formScrollArea->setWidget(formContainer);
-    pageLayout->addWidget(formScrollArea);
-
-#ifndef Q_OS_SYMBIAN
     QHBoxLayout *btnLayout = new QHBoxLayout;
     btnLayout->addWidget(m_filterBtn);
     btnLayout->addWidget(m_cancelBtn);
