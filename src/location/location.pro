@@ -167,6 +167,7 @@ HEADERS += qgeocodingreply.h \
            qmapview.h \
            qmapview_p.h \
            qreversegeocodingrequest.h \
+           qreversegeocodingrequest_p.h \
            qroute.h \
            qroutereply.h \
            qroutereply_p.h \

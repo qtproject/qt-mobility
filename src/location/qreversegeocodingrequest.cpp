@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qreversegeocodingrequest.h"
+#include "qreversegeocodingrequest_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,21 +54,22 @@ QTM_BEGIN_NAMESPACE
     Default constructor.
 */
 QReverseGeocodingRequest::QReverseGeocodingRequest()
+        : d_ptr(new QReverseGeocodingRequestPrivate())
 {
-    languageMARC = "eng";
-    vers = "1.0";
 }
 
 /*!
     Constructs a request for the geocoordinate \a coordinate.
 */
 QReverseGeocodingRequest::QReverseGeocodingRequest(const QGeoCoordinate& coordinate)
-        : coord(coordinate)
+        : d_ptr(new QReverseGeocodingRequestPrivate(coordinate))
 {
-    languageMARC = "eng";
-    vers = "1.0";
 }
-
+QReverseGeocodingRequest::~QReverseGeocodingRequest()
+{
+    Q_D(QReverseGeocodingRequest);
+    delete d;
+}
 /*!
     Returns the service version.
     
@@ -75,7 +77,8 @@ QReverseGeocodingRequest::QReverseGeocodingRequest(const QGeoCoordinate& coordin
 */
 QString QReverseGeocodingRequest::version() const
 {
-    return vers;
+    Q_D(const QReverseGeocodingRequest);
+    return d->vers;
 }
 
 /*!
@@ -85,7 +88,8 @@ QString QReverseGeocodingRequest::version() const
 */
 void QReverseGeocodingRequest::setLanguage(const QString& language)
 {
-    languageMARC = language;
+    Q_D(QReverseGeocodingRequest);
+    d->languageMARC = language;
 }
 
 /*!
@@ -93,7 +97,8 @@ void QReverseGeocodingRequest::setLanguage(const QString& language)
 */
 QString QReverseGeocodingRequest::language() const
 {
-    return languageMARC;
+    Q_D(const QReverseGeocodingRequest);
+    return d->languageMARC;
 }
 
 /*!
@@ -101,7 +106,8 @@ QString QReverseGeocodingRequest::language() const
 */
 void QReverseGeocodingRequest::setCoordinate(const QGeoCoordinate& coordinate)
 {
-    coord = coordinate;
+    Q_D(QReverseGeocodingRequest);
+    d->coord = coordinate;
 }
 
 /*!
@@ -109,8 +115,23 @@ void QReverseGeocodingRequest::setCoordinate(const QGeoCoordinate& coordinate)
 */
 QGeoCoordinate QReverseGeocodingRequest::coordinate() const
 {
-    return coord;
+    Q_D(const QReverseGeocodingRequest);
+    return d->coord;
 }
+
+QReverseGeocodingRequestPrivate::QReverseGeocodingRequestPrivate()
+{
+    languageMARC = "eng";
+    vers = "1.0";
+}
+
+QReverseGeocodingRequestPrivate::QReverseGeocodingRequestPrivate(const QGeoCoordinate& coordinate)
+        : coord(coordinate)
+{
+    languageMARC = "eng";
+    vers = "1.0";
+}
+
 
 QTM_END_NAMESPACE
 

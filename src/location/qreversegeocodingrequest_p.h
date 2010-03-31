@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_REVERSEGEOCODINGREQUEST_H
-#define QLOCATION_REVERSEGEOCODINGREQUEST_H
+#ifndef QLOCATION_REVERSEGEOCODINGREQUEST_PRIVATE_H
+#define QLOCATION_REVERSEGEOCODINGREQUEST_PRIVATE_H
 
 #include <QString>
 
@@ -48,29 +48,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QReverseGeocodingRequestPrivate;
-class Q_LOCATION_EXPORT QReverseGeocodingRequest
+class QReverseGeocodingRequestPrivate
 {
-    friend class QGeoNetworkManager;
-
 public:
-    QReverseGeocodingRequest();
-    QReverseGeocodingRequest(const QGeoCoordinate& coordinate);
-    ~QReverseGeocodingRequest();
+    QReverseGeocodingRequestPrivate();
+    QReverseGeocodingRequestPrivate(const QGeoCoordinate& coordinate);
 
-    QString version() const;
-
-    QString language() const;
-    void setLanguage(const QString& language);
-
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate& coordinate);
-
-private:
-    Q_DISABLE_COPY(QReverseGeocodingRequest)
-
-    QReverseGeocodingRequestPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QReverseGeocodingRequest)
+    QString        vers;
+    QString        languageMARC;
+    QGeoCoordinate coord;
 };
 
 QTM_END_NAMESPACE

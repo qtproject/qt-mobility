@@ -296,11 +296,11 @@ QGeocodingReply* QGeoNetworkManager::get(const QReverseGeocodingRequest& request
     Q_D(QGeoNetworkManager);
     QString rawRequest = "http://" % d->geocdSrv % "/geocoder/rgc/" % request.version() %
                          "?referer=localhost" %
-                         "&long=" % d->trimGeoCoordinate(request.coord.longitude()) %
-                         "&lat=" % d->trimGeoCoordinate(request.coord.latitude());
+                         "&long=" % d->trimGeoCoordinate(request.coordinate().longitude()) %
+                         "&lat=" % d->trimGeoCoordinate(request.coordinate().latitude());
 
-    if (request.languageMARC != "")
-        rawRequest += "&lg=" % request.languageMARC;
+    if (request.language() != "")
+        rawRequest += "&lg=" % request.language();
 
     d->netManager.setProxy(d->geocdProx);
     QNetworkRequest* netRequest = new QNetworkRequest(QUrl(rawRequest));
