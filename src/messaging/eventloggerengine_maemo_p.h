@@ -36,6 +36,7 @@ class EventLoggerEngine
 public:
 
     explicit EventLoggerEngine(QObject *parent = 0);
+    static EventLoggerEngine* instance();
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,const QMessageFilter &filter);
     QMessage message(const QMessageId& id);

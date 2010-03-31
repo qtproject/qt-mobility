@@ -42,6 +42,9 @@
 #include <QTest>
 #include <QSharedPointer>
 #include <QDebug>
+#include <QTimer>
+#include <QEventLoop>
+#include <QFile>
 
 #include "qtmessaging.h"
 #include "../support/support.h"
@@ -239,7 +242,7 @@ void tst_QMessageStore::testFolder_data()
 
 	// Note: on Win CE, we can't use 'Inbox' 'Drafts' etc., becuase they're added automatically by the system
     QTest::newRow("Inbox") << "Unbox" << "Unbox" << "" << "Unbox";
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Symbian does not currently support paths
     QTest::newRow("Drafts") << "Crafts" << "" << "" << "Crafts";
     QTest::newRow("Archived") << "Unbox/Archived" << "Archived" << "Unbox" << "Archived";
@@ -274,7 +277,7 @@ void tst_QMessageStore::testFolder()
     p.insert("parentAccountName", testAccountName);
     p.insert("parentFolderPath", parentFolderPath);
 
-#if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     int originalCount = manager->countFolders(QMessageFolderFilter::byParentAccountId(testAccountId));
 #else
     int originalCount = manager->countFolders();
@@ -283,7 +286,7 @@ void tst_QMessageStore::testFolder()
     QMessageFolderId folderId(Support::addFolder(p));
     QVERIFY(folderId.isValid());
     QVERIFY(folderId != QMessageFolderId());
-#if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     QCOMPARE(manager->countFolders(QMessageFolderFilter::byParentAccountId(testAccountId)), originalCount + 1);
 #else
     QCOMPARE(manager->countFolders(), originalCount + 1);
@@ -472,20 +475,20 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testAccountId.isValid());
 
     QMessageFolderId testFolderId;
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QMessageFolderFilter filter(QMessageFolderFilter::byName("Inbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
 #else
-    // Created Messages can not be stored into "Inbox" folder in Symbian
+    // Created Messages can not be stored into "Inbox" folder in Symbian & Meamo
     QMessageFolderFilter filter(QMessageFolderFilter::byName("Unbox") & QMessageFolderFilter::byParentAccountId(testAccountId));
 #endif
     QMessageFolderIdList folderIds(manager->queryFolders(filter));
     if (folderIds.isEmpty()) {
         Support::Parameters p;
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         p.insert("path", "Inbox");
         p.insert("name", "Inbox");
 #else
-        // Created Messages can not be stored into "Inbox" folder in Symbian
+        // Created Messages can not be stored into "Inbox" folder in Symbian & Maemo
         p.insert("path", "Unbox");
         p.insert("name", "Unbox");
 #endif
@@ -497,6 +500,19 @@ void tst_QMessageStore::testMessage()
     QVERIFY(testFolderId.isValid());
 
     QMessageFolder testFolder(testFolderId);
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    // Wait 1/100 second to make sure that there is
+    // enough time to start monitoring new folder
+    {
+        QEventLoop eventLoop;
+        QTimer::singleShot(100, &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+    }
+    // Note: QTest::qSleep(100); can not be used
+    //       because QTest::qSleep(100); blocks
+    //       signaling from other threads
+#endif
 
     SignalCatcher catcher;
     connect(manager, SIGNAL(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)), &catcher, SLOT(messageAdded(QMessageId, QMessageManager::NotificationFilterIdSet)));
@@ -556,6 +572,16 @@ void tst_QMessageStore::testMessage()
     QVERIFY(messageId != QMessageId());
     QCOMPARE(manager->countMessages(), originalCount + 1);
 
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    // Wait 1 second to make sure that there is
+    // enough time to get add signal
+    {
+        QEventLoop eventLoop;
+        QTimer::singleShot(1000, &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+    }
+#endif
+
 #if defined(Q_OS_WIN)
 	// Give MAPI enough time to emit the message added notification
 	QTest::qSleep(1000);
@@ -580,12 +606,14 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.to().first(), toAddress);
     QCOMPARE(message.to().first().addressee(), to);
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+    // From address is currently taken automatically from account in Maemo implementation
     QMessageAddress fromAddress;
     fromAddress.setType(QMessageAddress::Email);
     fromAddress.setAddressee(from);
     QCOMPARE(message.from(), fromAddress);
     QCOMPARE(message.from().addressee(), from);
-
+#endif
     QList<QMessageAddress> ccAddresses;
     foreach (const QString &element, cc.split(",", QString::SkipEmptyParts)) {
         QMessageAddress addr;
@@ -593,10 +621,13 @@ void tst_QMessageStore::testMessage()
         addr.setAddressee(element.trimmed());
         ccAddresses.append(addr);
     }
-   
-    QCOMPARE(message.cc(), ccAddresses);    
 
+    QCOMPARE(message.cc(), ccAddresses);
+
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+    // Dates can not be stored with addMessage in Maemo implementation
     QCOMPARE(message.date(), QDateTime::fromString(date, Qt::ISODate));
+#endif
     QCOMPARE(message.subject(), subject);
 
     QCOMPARE(message.contentType().toLower(), messageType.toLower());
@@ -610,11 +641,14 @@ void tst_QMessageStore::testMessage()
 
     QCOMPARE(message.parentAccountId(), testAccountId);
     QCOMPARE(message.parentFolderId(), testFolderId);
-#ifndef Q_OS_SYMBIAN // Created Messages are not stored in Standard Folders in Symbian    
+#ifndef Q_OS_SYMBIAN // Created Messages are not stored in Standard Folders in Symbian & Maemo
     QCOMPARE(message.standardFolder(), QMessage::DraftsFolder);
 #endif    
   
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+    // Message size calculation is not yet good enough in Maemo implementation
     QAPPROXIMATECOMPARE(message.size(), messageSize, (messageSize / 2));
+#endif
 
     QMessageContentContainerId bodyId(message.bodyId());
     QCOMPARE(bodyId.isValid(), true);
@@ -649,6 +683,17 @@ void tst_QMessageStore::testMessage()
         // We cannot create nested multipart messages
         QVERIFY(attachment.contentIds().isEmpty());
 
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        // Check attachment content
+        QByteArray attachmentContent = attachment.content();
+        QString fileName = QString(TESTDATA_DIR) + QString("/testdata/") + attachments[index];
+        QFile attachmentFile(fileName);
+        if (attachmentFile.open(QIODevice::ReadOnly)) {
+            QByteArray originalAttachmentContent = attachmentFile.readAll();
+            QCOMPARE(attachmentContent, originalAttachmentContent);
+        }
+#endif
+
         QCOMPARE(attachment.contentType().toLower(), attachmentType[index].toLower());
         QCOMPARE(attachment.contentSubType().toLower(), attachmentSubType[index].toLower());
         QCOMPARE(attachment.suggestedFileName(), attachments[index]);
@@ -671,6 +716,8 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(body.textContent(), replacementText);
     QAPPROXIMATECOMPARE(body.size(), 72, 36);
     
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+    // Update does not yet work in Maemo
     QDateTime dt(QDateTime::fromString("1980-12-31T23:59:59Z", Qt::ISODate));
     dt.setTimeSpec(Qt::UTC);
     message.setDate(dt);    
@@ -738,6 +785,7 @@ void tst_QMessageStore::testMessage()
     // Verify that the attachments can be removed
     updated.clearAttachments();
     QVERIFY(updated.attachmentIds().isEmpty());
+#endif
 
     // Test message removal
     if (removeMessage == "byId") {
@@ -754,11 +802,16 @@ void tst_QMessageStore::testMessage()
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN)
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    QCOMPARE(removeCatcher.removed.first().second.count(), 2);
+    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
+#else
     QCOMPARE(removeCatcher.removed.first().second.count(), 1);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter3->id);
+#endif
 #endif    
 }
 
