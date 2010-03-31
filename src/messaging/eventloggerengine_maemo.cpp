@@ -4,6 +4,16 @@
 
 QTM_BEGIN_NAMESPACE
 
+
+Q_GLOBAL_STATIC(EventLoggerEngine,eventLoggerEngine);
+
+
+EventLoggerEngine* EventLoggerEngine::instance()
+{
+    return eventLoggerEngine();
+}
+
+
 EventLoggerEngine::EventLoggerEngine(QObject *parent)
 {
   Q_UNUSED(parent);
@@ -79,10 +89,10 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
     message.setPriority(QMessage::NormalPriority);
     message.setDate(QDateTime::fromTime_t(ev.fld_start_time));
     message.setReceivedDate(QDateTime::fromTime_t(ev.fld_start_time));
-    if (!strcmp(ev.fld_event_type,"RTCOM_EL_EVENTTYPE_SMS_INBOUND") || !strcmp(ev.fld_event_type,"RTCOM_EL_EVENTTYPE_CHAT_INBOUND") )
-        QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
-    if (!strcmp(ev.fld_event_type,"RTCOM_EL_EVENTTYPE_SMS_OUTBOUND") ||!strcmp(ev.fld_event_type,"RTCOM_EL_EVENTTYPE_CHAT_OUTBOUND") )
-        QMessagePrivate::setStandardFolder(message,QMessage::OutboxFolder);
+    if (ev.fld_outgoing) QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
+    else
+      QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
+    //    qDebug() << "event_type:"  << ev.fld_event_type << ev.fld_event_type_id << "Outgoing:" << ev.fld_outgoing << " Folder:" << message.standardFolder();
     message.setFrom(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_remote_uid)));
     QMessagePrivate::setSenderName(message, QString(ev.fld_remote_uid));
     QMessageAddressList messageAddresslist;
@@ -143,10 +153,9 @@ additional_text=%s icon_name=%s pango_markup=%s\n",
          message.setPriority(QMessage::NormalPriority);
          message.setDate(QDateTime::fromTime_t(ev.fld_start_time));
          message.setReceivedDate(QDateTime::fromTime_t(ev.fld_start_time));
-         if (!strcmp(ev.fld_event_type,"RTCOM_EL_EVENTTYPE_SMS_INBOUND") || !strcmp(ev.fld_event_type,"RTCOM_EL_EVENTTYPE_CHAT_INBOUND") )
-             QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
-         if (!strcmp(ev.fld_event_type,"RTCOM_EL_EVENTTYPE_SMS_OUTBOUND") ||!strcmp(ev.fld_event_type,"RTCOM_EL_EVENTTYPE_CHAT_OUTBOUND") )
-             QMessagePrivate::setStandardFolder(message,QMessage::OutboxFolder);
+	 if (ev.fld_outgoing) QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
+	 else
+	   QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
          message.setFrom(QMessageAddress(QMessageAddress::Phone, QString(ev.fld_remote_uid)));
          QMessagePrivate::setSenderName(message, QString(ev.fld_remote_uid));
          QMessageAddressList messageAddresslist;
@@ -182,7 +191,7 @@ void EventLoggerEngine::notification(int eventId, QString service,QMessageStoreP
 
 
     QMessageManager::NotificationFilterIdSet matchingFilters;
-    qDebug() << "EventLoggerEngine::notification id=" << eventId;
+    // qDebug() << "EventLoggerEngine::notification id=" << eventId;
 
     // Copy the filter map to protect against modification during traversal
     QMap<int, QMessageFilter> filters(_filters);
@@ -291,12 +300,17 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
          message=eventToMessage(ev);
          // debugMessage(message);
          if (pf->filter(message)) {
-	   // qDebug() <<"Filter :filtering match" << message.id().toString();
+	   //   qDebug() <<"Filter :filtering match" << message.id().toString();
 	   //matchingFilters.insert(it.key());
 	   idList.append(message.id());
 	 };
        }
        while( rtcom_el_iter_next(iter));
+#if 0
+    foreach(const QMessageId& id, idList) {
+         	  qDebug() << "id=" << id.toString();
+        }
+#endif
     return idList;
 }
 
