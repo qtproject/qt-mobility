@@ -123,7 +123,7 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
     QList<QContactDetail> ret;
     QList<QContactDetail> details = contact.details();
     for (int j=0; j < details.count(); j++) {
-        if (supportsDetail(details.at(j)))
+        if (isDetailSupported(details.at(j), contact))
             ret.append(details.at(j));
     }
     return ret;
