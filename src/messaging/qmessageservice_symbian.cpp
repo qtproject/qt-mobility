@@ -110,17 +110,25 @@ bool QMessageServicePrivate::compose(const QMessage &message)
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    //return CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+#ifdef FREESTYLEMAILUSED
     return CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+#endif
+    return CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
 }
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
+#ifdef FREESTYLEMAILUSED
+    return CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
+#endif
     return CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
 }
 
 bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
 {
+#ifdef FREESTYLEMAILUSED
+    return CFSEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
+#endif
     return CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
 }
 
