@@ -236,7 +236,11 @@ void AddressFinder::searchMessages()
     QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
     // Create the filter needed to locate messages to search for addresses to include
-    inclusionFilter = (sentFilter & includeFilter & ~excludeFilter);
+    if (useExclusionPeriod) {
+        inclusionFilter = (sentFilter & includeFilter & ~excludeFilter);
+    } else {
+        inclusionFilter = (sentFilter & includeFilter);
+    }
 
     if (useExclusionPeriod) {
         // Create the filter needed to locate messages whose address we will exclude
