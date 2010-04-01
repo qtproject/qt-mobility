@@ -25,16 +25,11 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknamesort.html#QLandmarkNameSort">QLandmarkNameSort</a></b> ( Qt::SortOrder <i>direction</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknamesort.html#dtor.QLandmarkNameSort">~QLandmarkNameSort</a></b> ()</td></tr>
-</table>
-<hr />
-<a name="reimplemented-public-functions"></a>
-<h2>Reimplemented Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknamesort.html#compare">compare</a></b> ( const QLandmark &amp; <i>l1</i>, const QLandmark &amp; <i>l2</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknamesort.html#sort">sort</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>landmarkIds</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Qt::CaseSensitivity </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknamesort.html#caseSensitivity">caseSensitivity</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknamesort.html#setCaseSensitivity">setCaseSensitivity</a></b> ( Qt::CaseSensitivity <i>caseSensitivity</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>5 public functions inherited from <a href="qlandmarksortorder.html#public-functions">QLandmarkSortOrder</a></li>
+<li><div bar="2" class="fn"></div>3 public functions inherited from <a href="qlandmarksortorder.html#public-functions">QLandmarkSortOrder</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -48,12 +43,14 @@
 <a name="//apple_ref/cpp/instm/QLandmarkNameSort/~QLandmarkNameSort"></a>
 <h3 class="fn"><a name="dtor.QLandmarkNameSort"></a>QLandmarkNameSort::~QLandmarkNameSort ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the sort order.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkNameSort/compare"></a>
-<h3 class="fn"><a name="compare"></a>int QLandmarkNameSort::compare ( const <a href="qlandmark.html">QLandmark</a> &amp; <i>l1</i>, const <a href="qlandmark.html">QLandmark</a> &amp; <i>l2</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Reimplemented from <a href="qlandmarksortorder.html#compare">QLandmarkSortOrder::compare</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkNameSort/sort"></a>
-<h3 class="fn"><a name="sort"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkNameSort::sort ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>landmarkIds</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Reimplemented from <a href="qlandmarksortorder.html#sort">QLandmarkSortOrder::sort</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkNameSort/caseSensitivity"></a>
+<h3 class="fn"><a name="caseSensitivity"></a><a href="http://qt.nokia.com/doc/4.6/qt.html#CaseSensitivity-enum">Qt::CaseSensitivity</a> QLandmarkNameSort::caseSensitivity () const</h3>
+<p>Returns the case sensitivity of the sort order.</p>
+<p>See also <a href="qlandmarknamesort.html#setCaseSensitivity">setCaseSensitivity</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkNameSort/setCaseSensitivity"></a>
+<h3 class="fn"><a name="setCaseSensitivity"></a>void QLandmarkNameSort::setCaseSensitivity ( <a href="http://qt.nokia.com/doc/4.6/qt.html#CaseSensitivity-enum">Qt::CaseSensitivity</a> <i>caseSensitivity</i> )</h3>
+<p>Sets the the <i>caseSensitivity</i> of the sort order.</p>
+<p>See also <a href="qlandmarknamesort.html#caseSensitivity">caseSensitivity</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

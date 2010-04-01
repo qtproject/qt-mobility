@@ -63,10 +63,14 @@ public:
         InvalidRequest = 0,
         LandmarkIdFetchRequest,
         CategoryIdFetchRequest,
+        LandmarkFetchRequest,
+        CategoryFetchRequest,
         LandmarkSaveRequest,
         LandmarkRemoveRequest,
         CategorySaveRequest,
-        CategoryRemoveRequest
+        CategoryRemoveRequest,
+        ImportRequest,
+        ExportRequest
     };
 
     QLandmarkAbstractRequest();

@@ -75,7 +75,7 @@ QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest()
 
 /*!
     Returns the list of categories which will be saved if called prior to
-    callling \c start, otherwise returns the list of categories as they
+    callling \l QLandmarkAbstractRequest::start(), otherwise returns the list of categories as they
     were saved into the landmark manager.
 */
 QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const

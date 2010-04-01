@@ -26,11 +26,13 @@ PUBLIC_HEADERS += qgeoaddress.h \
                   qlandmarkfilter.h \
                   qlandmarkabstractrequest.h \
                   qlandmarkidfetchrequest.h \
+                  qlandmarkfetchrequest.h \
                   qlandmarksaverequest.h \
                   qlandmarkremoverequest.h \
                   qlandmarkimportrequest.h \
                   qlandmarkexportrequest.h \
                   qlandmarkcategoryidfetchrequest.h \
+                  qlandmarkcategoryfetchrequest.h \
                   qlandmarkcategorysaverequest.h \
                   qlandmarkcategoryremoverequest.h \
                   qlandmarkboxfilter.h \
@@ -161,9 +163,11 @@ HEADERS += qgeocodingreply.h \
            qmaptilecache.h \
            qmaptilereply.h \
            qmaptilerequest.h \
+           qmaptilerequest_p.h \
            qmapview.h \
            qmapview_p.h \
            qreversegeocodingrequest.h \
+           qreversegeocodingrequest_p.h \
            qroute.h \
            qroutereply.h \
            qroutereply_p.h \
@@ -189,11 +193,13 @@ SOURCES += qlocationutils.cpp \
            qlandmarkfilter.cpp \
            qlandmarkabstractrequest.cpp \
            qlandmarkidfetchrequest.cpp \
+           qlandmarkfetchrequest.cpp \
            qlandmarksaverequest.cpp \
            qlandmarkremoverequest.cpp \
            qlandmarkimportrequest.cpp \
            qlandmarkexportrequest.cpp \
            qlandmarkcategoryidfetchrequest.cpp \
+           qlandmarkcategoryfetchrequest.cpp \
            qlandmarkcategorysaverequest.cpp \
            qlandmarkcategoryremoverequest.cpp \
            qlandmarkboxfilter.cpp \

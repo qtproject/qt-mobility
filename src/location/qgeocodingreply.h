@@ -66,6 +66,7 @@ public:
     };
 
 public:
+    ~QGeocodingReply();
     ResultCode resultCode() const;
     void setResultCode(ResultCode result);
     QString resultDescription() const;

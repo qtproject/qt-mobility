@@ -85,20 +85,4 @@ void QLandmarkDistanceSort::setCoordinate(const QGeoCoordinate &coordinate)
 {
 }
 
-/*!
-    \reimp
-*/
-int QLandmarkDistanceSort::compare(const QLandmark &l1, const QLandmark &l2) const
-{
-    return 0;  //TODO: implement
-}
-
-/*!
-    \reimp
-*/
-QList<QLandmarkId> QLandmarkDistanceSort::sort(const QList<QLandmarkId> &landmarkIds) const
-{
-    return QList<QLandmarkId>();
-}
-
 QTM_END_NAMESPACE

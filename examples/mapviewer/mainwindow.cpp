@@ -100,11 +100,7 @@ MainWindow::MainWindow(QWidget *parent) :
     slider->setMinimum(0);
     slider->setMaximum(18);
     slider->setSliderPosition(4);
-#ifdef Q_OS_SYMBIAN
-    slider->setGeometry(10, 10, 80, 170);
-#else
-    slider->setGeometry(10, 10, 30, 100);
-#endif
+    slider->setGeometry(10, 10, 30, 180);
     slider->setVisible(true);
     QObject::connect(slider, SIGNAL(sliderMoved(int)),
                      mapView, SLOT(setZoomLevel(int)));
@@ -149,7 +145,7 @@ MainWindow::MainWindow(QWidget *parent) :
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolygon(bool)));
-    
+
     menuItem = new QAction(tr(""), this);
     menuItem->setSeparator(true);
     popupMenu->addAction(menuItem);
@@ -283,7 +279,8 @@ void MainWindow::setRtFromTo(bool /*checked*/)
 
 void MainWindow::zoomLevelChanged(quint16 /*oldZoomLevel*/, quint16 newZoomLevel)
 {
-    slider->setSliderPosition(newZoomLevel);
+    if (slider->sliderPosition() != newZoomLevel)
+        slider->setSliderPosition(newZoomLevel);
 }
 
 void MainWindow::setScheme(bool /*checked*/)

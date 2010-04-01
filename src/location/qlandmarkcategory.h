@@ -43,7 +43,9 @@
 #define QLANDMARKCATEGORY_H
 
 #include "qmobilityglobal.h"
-class QVariant;
+#include <QVariant>
+
+
 class QStringList;
 class QUrl;
 
@@ -62,8 +64,9 @@ public:
 
     QLandmarkCategory& operator= (const QLandmarkCategory &other);
 
-    bool operator== (const QLandmarkCategory &other) const;
-    // consider inline != in terms of ==?
+    bool operator==(const QLandmarkCategory &other) const;
+    bool operator!=(const QLandmarkCategory &other) const;
+
 
     QString name() const;
     void setName(const QString &name);
@@ -76,10 +79,11 @@ public:
 
     bool isReadOnly() const;
 
-    QLandmarkCategoryId categoryId() const;
+    QLandmarkCategoryId id() const;
+    void setId(const QLandmarkCategoryId &id);
 
-    QVariant attribute(const QString &attributeName) const;
-    void setAttribute(const QString &attributeName, const QVariant &value);
+    QVariant attribute(const QString &key, const QVariant &defaulValue = QVariant()) const;
+    void setAttribute(const QString &key, const QVariant &value);
     QStringList attributes() const;
 
 private:

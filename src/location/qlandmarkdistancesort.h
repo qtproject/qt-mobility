@@ -59,8 +59,7 @@ public:
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
-    virtual int compare(const QLandmark &l1, const QLandmark &l2) const;
-    virtual QList<QLandmarkId> sort(const QList<QLandmarkId> &landmarkIds) const;
+
 private:
     QLandmarkDistanceSortPrivate *d;
 };

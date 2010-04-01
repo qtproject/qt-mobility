@@ -56,10 +56,10 @@ public:
     QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius);
     virtual ~QLandmarkProximityFilter();
 
-    QGeoCoordinate coordinate();
+    QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
 
-    double radius();
+    double radius() const;
     void setRadius(double radius);
 };
 

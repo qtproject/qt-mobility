@@ -61,7 +61,15 @@ QTM_USE_NAMESPACE
     \enum QLandmarkManager::Error
     Defines the possible errors for the landmark manager.
     \value NoError No error occurred.
-    \value ReadOnly An attempt was made to modify/remove a read-only category.
+    \value DoesNotExistError The most recent operation failed because the requested landmark or category does not exist.
+    \value AlreadyExistsError The most recent operation failed because the specified landmark or category already exists.
+    \value LockedError The most recent operation failed because the datastore specified is currently locked.
+    \value PermissionsError The most recent operation failed because the caller does not have permission to perform the operation.
+    \value OutOfMemoryError The most recent operation failed due to running out of memory.
+    \value VersionMismatchError The most recent operation failed because the backend of the manager is not of the required version.
+    \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store.
+    \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid.
+    \value UnknownError The most recent operation failed for an unknown reason.
 */
 
 /*!
@@ -75,11 +83,29 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \internal
+    Constructs a QLandmarkManager whose implementation is identified by \a managerName with the given
+    \a parameters.
+
+    The \a parent QObject will be used as the parent of this QLandmarkManager.
+
+    If an empty \a managerName is specified, the default implementation for the platform will be used.
 */
-QLandmarkManager::QLandmarkManager(const QString &name, QObject *parent)
+QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QString,QString> &parameters, QObject *parent)
 {
     //TODO: implement
+}
+
+/*!
+  Constructs a QLandmarkManager whose backend has the name \a managerName and version \a implementationVersion, where the manager
+  is constructed with the provided \a parameters.
+
+  The \a parent QObject will be used as the parent of this QLandmarkManager.
+
+  If an empty \a managerName is specified, the default implementation for the platform will be instantiated.
+  If the specified implementation version is not available, the manager with the name \a managerName with the default implementation version is instantiated.
+ */
+QLandmarkManager::QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent)
+{
 }
 
 /*!
@@ -210,7 +236,7 @@ bool QLandmarkManager::removeCategory(const QLandmarkCategoryId &categoryId)
 /*!
     Returns the cateory in the database identified by \a categoryId.
 */
-QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &categoryId)
+QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &categoryId) const
 {
     return QLandmarkCategory();
 }
@@ -220,7 +246,7 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
 
     If any of the \a categoryIds are not found by the manager, they are simply ignored.
  */
-QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds)
+QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCategoryId> &categoryIds) const
 {
     return QList<QLandmarkCategory>();
 }
@@ -236,7 +262,7 @@ QList<QLandmarkCategoryId> QLandmarkManager::categoryIds() const
 /*!
     Returns the landmark in the database identified by \a landmarkId
 */
-QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId)
+QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
 {
     return QLandmark();
 }
@@ -343,6 +369,50 @@ QString QLandmarkManager::errorString() const
 }
 
 /*!
+    Returns true if the given \a filterType is supported
+    natively by the manager, else false if the filter behaviour would be emulated.
+
+    Note: In some cases, the behaviour of an unsupprted filter cannot be emulated.
+    In these cases the filter will fail.
+*/
+bool QLandmarkManager::isFilterSupported(QLandmarkFilter::FilterType filterType) const
+{
+    return false;
+}
+
+/*!
+    Returns the manager name for this QLandmarkManager
+*/
+QString QLandmarkManager::managerName() const
+{
+    return QString();
+}
+
+/*!
+    Return the parameters relevant to the creation of this QLandmarkManager
+*/
+QMap<QString, QString> QLandmarkManager::managerParameters() const
+{
+    return QMap<QString, QString>();
+}
+
+/*!
+  Return the uri describing this QLandmarkManager, consisting of the manager name and any parameters.
+ */
+QString QLandmarkManager::managerUri() const
+{
+    return QString();
+}
+
+/*!
+  Returns the engine backend implementation version number.
+*/
+int QLandmarkManager::managerVersion() const
+{
+    return 0;
+}
+
+/*!
     Returns a list of available manager names that can
     be used when constructing a QLandmarkManager
 */
@@ -351,50 +421,31 @@ QStringList QLandmarkManager::availableManagers()
     return QStringList(); //TODO: implement
 }
 
-/*!
-    Registers a manager \a name so that QLandmarkManager instances
-    based on it can be created.
-
-    If the \a uri refers to a local database that does not
-    exist, a database is created.
-
-    Returns true if the manager was successfully added, otherwise
-    returns false.
-*/
-bool QLandmarkManager::addManager(const QString &name, const QString &uri)
+/*! Returns a URI that completely describes a manager implementation, datastore,
+    and the parameters with which to instantiate the manager,
+    from the given \a managerName, \a params and an optional \a implementationVersion */
+QString QLandmarkManager::buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion)
 {
-    return false; //TODO: impelment
+    return QString();
 }
 
 /*!
-    Unregisters a manager \a name.  If the manager's URI points
-    to a local database then the database is deleted.
-
-    Returns true if the manager was removed, otherwise
-    returns false.
-*/
-bool QLandmarkManager::removeManager(const QString &name)
+  Constructs a QLandmarkManager whose implementation, store and parameters are specified in the given \a storeUri,
+  and whose parent object is \a parent.
+ */
+QLandmarkManager* QLandmarkManager::fromUri(const QString& storeUri, QObject* parent)
 {
-    return false;
+    return NULL;
 }
 
 /*!
-    Returns the default landmark manager's name
-*/
-QString QLandmarkManager::defaultManager()
+  Splits the given \a uri into the manager, store, and parameters that it describes, and places the information
+  into the memory addressed by \a pManagerId and \a pParams respectively.  Returns true if \a uri could be split successfully,
+  otherwise returns false
+ */
+bool QLandmarkManager::parseUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
 {
-    return QString(); //TODO: implement
-}
-
-/*!
-    Sets the default manager to be the one identified
-    by \a name.
-
-    Returns true if a default was set, otherwise returnse false.
-*/
-bool QLandmarkManager::setDefaultManager(const QString &name)
-{
-    return false; //TODO: impelement
+    return true;
 }
 
 /*!

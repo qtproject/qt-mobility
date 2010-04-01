@@ -60,10 +60,14 @@ QTM_USE_NAMESPACE
             identifiers.
     \value  CategoryIdFetchRequest A request to fetch a list of catgory
             identifiers.
+    \value  LandmarkFetchRequest A request to fetch a list of landmarks
+    \value  CategoryFetchRequest A request to fetch a list of categories
     \value  LandmarkSaveRequest A request to save a list of landmarks.
     \value  LandmarkRemoveRequest A request to remove a list of landmarks.
     \value  CategorySaveRequest A request to save a list of categories.
     \value  CategoryRemoveRequest A request to remove a list of categories.
+    \value  ImportRequest A request import landmarks.
+    \value  ExportRequest A request export landmarks.
 */
 
 /*!

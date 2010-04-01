@@ -93,7 +93,7 @@ QList<int> QLandmarkManagerEngineFactory::supportedImplementationVersions() cons
 
     If a supplied parameter results in an unfulfillable request, or some other error
     occurs, this function may return a null pointer, and the client developer will get an
-    invalid QLandmarkManager in return.  Any error is stored in \a error and \a errorString.
+    invalid QLandmarkManager in return.  Errors are stored in \a error and \a errorString.
  */
 
  QTM_END_NAMESPACE

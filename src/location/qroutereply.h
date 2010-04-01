@@ -78,6 +78,7 @@ public:
     int count() const;
     const QList<QRoute>& routes() const;
     void addRoute(QRoute route);
+    ~QRouteReply();
     
 private:
     Q_DISABLE_COPY(QRouteReply);

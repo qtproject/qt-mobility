@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a landmark save request
+    Constructs a landmark remove request
 */
 QLandmarkRemoveRequest::QLandmarkRemoveRequest()
 {

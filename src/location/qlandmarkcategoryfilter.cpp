@@ -71,7 +71,7 @@ QLandmarkCategoryFilter::~QLandmarkCategoryFilter()
 /*!
     Returns the category identifier that this filter matches by.
 */
-QLandmarkCategoryId QLandmarkCategoryFilter::category() const
+QLandmarkCategoryId QLandmarkCategoryFilter::categoryId() const
 {
     return QLandmarkCategoryId();
 }

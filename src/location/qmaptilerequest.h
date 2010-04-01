@@ -47,7 +47,7 @@
 #include "qmaptile.h"
 
 QTM_BEGIN_NAMESPACE
-
+class QMapTileRequestPrivate;
 /*!
 * This class represents a request for a specific map tile. By definition, a map is
 * divided into 2^currZoomLevel columns and 2^currZoomLevel rows of tiles.
@@ -67,7 +67,11 @@ public:
     /*!
     * Default constructor
     */
-    QMapTileRequest() {}
+    QMapTileRequest();
+    /*!
+    * Destructor
+    */
+    ~QMapTileRequest();
     /*!
     * Assignment operator.
     * @param request The request to assign from.
@@ -78,39 +82,31 @@ public:
     /*!
     * @return The col index of the requested map tile.
     */
-    quint32 col() const {
-        return cl;
-    }
+    quint32 col() const;
     /*!
     * Sets the col index of the requested map tile.
     * Valid values are 0 ... 2^currZoomLevel - 1.
     * @param c The col index.
     */
-    void setCol(quint32 c) {
-        cl = c;
-    }
-
+    void setCol(quint32 c);
+    
     /*!
     * @return The row index of the requested map tile.
     */
-    quint32 row() const {
-        return rw;
-    }
+    quint32 row() const;
+    
     /*!
     * Sets the row index of the requested map tile.
     * Valid values are 0 ... 2^currZoomLevel - 1.
     * @param r The row index.
     */
-    void setRow(quint32 r) {
-        rw = r;
-    }
-
+    void setRow(quint32 r);
+    
     /*!
     * @return The version of the requested map tile.
     */
-    MapVersion version() const {
-        return ver;
-    }
+    MapVersion version() const;
+    
     /*!
     * Sets the version of the requested map tile.
     * @param version The version.
@@ -120,9 +116,8 @@ public:
     /*!
     * @return The resolution of the requested map tile.
     */
-    MapResolution resolution() const {
-        return res;
-    }
+    MapResolution resolution() const;
+    
     /*!
     * Sets the resolution of the requested map tile.
     * @param resolution The resolution.
@@ -132,9 +127,8 @@ public:
     /*!
     * @return The format of the requested map tile.
     */
-    MapFormat format() const {
-        return frmt;
-    }
+    MapFormat format() const;
+    
     /*!
     * Sets the format of the requested map tile.
     * @param format The format.
@@ -144,9 +138,8 @@ public:
     /*!
     * @return The scheme of the requested map tile.
     */
-    MapScheme scheme() const {
-        return schm;
-    }
+    MapScheme scheme() const;
+    
     /*!
     * Sets the scheme of the requested map tile.
     * @param scheme The scheme.
@@ -164,13 +157,8 @@ public:
     void setZoomLevel(quint16 level);
 
 private:
-    quint32 cl;
-    quint32 rw;
-    MapVersion ver;
-    quint16 zoom;
-    MapScheme schm;
-    MapResolution res;
-    MapFormat frmt;
+    QMapTileRequestPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QMapTileRequest)
 };
 
 QTM_END_NAMESPACE

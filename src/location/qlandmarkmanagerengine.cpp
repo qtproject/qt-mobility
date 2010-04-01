@@ -377,6 +377,13 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, QLandmarkManager
 }
 
 /*!
+    \fn bool QLandmarkManagerEngine::isFilterSupported(QLandmarkFilter::FilterType filterType) const
+
+    Returns a whether the supplied \a filterType can be implemented
+    natively by this engine. If not, the functionality will be emulated.
+*/
+
+/*!
     Notifies the manager engine that the givan \a request has been destroyed.
 */
 void QLandmarkManagerEngine::requestDestroyed(QLandmarkAbstractRequest* request)

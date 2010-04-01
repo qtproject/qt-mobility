@@ -18,15 +18,17 @@
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">enum <b><a href="qlandmarkmanager.html#Error-enum">Error</a></b></div></li>
 <li><div class="fn">enum <b><a href="qlandmarkmanager.html#Format-enum">Format</a></b></div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#QLandmarkManager">QLandmarkManager</a></b> ( const QString &amp;, const QMap&lt;QString, QString&gt; &amp;, QObject * )</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#QLandmarkManager-2">QLandmarkManager</a></b> ( const QString &amp;, int, const QMap&lt;QString, QString&gt; &amp;, QObject * )</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#dtor.QLandmarkManager">~QLandmarkManager</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qlandmarkmanager.html#addManager">addManager</a></b> ( const QString &amp;, const QString &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#availableManagers">availableManagers</a></b> () : QStringList</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
-<li><div class="fn"><b><a href="qlandmarkmanager.html#categories">categories</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; ) : QList&lt;QLandmarkCategory&gt;</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#buildUri">buildUri</a></b> ( const QString &amp;, const QMap&lt;QString, QString&gt; &amp;, int ) : QString</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#categories">categories</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; ) const : QList&lt;QLandmarkCategory&gt;</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#categoriesAdded">categoriesAdded</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; )</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#categoriesChanged">categoriesChanged</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; )</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; )</div></li>
-<li><div class="fn"><b><a href="qlandmarkmanager.html#category">category</a></b> ( const QLandmarkCategoryId &amp; ) : QLandmarkCategory</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#category">category</a></b> ( const QLandmarkCategoryId &amp; ) const : QLandmarkCategory</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#categoryIds">categoryIds</a></b> () const : QList&lt;QLandmarkCategoryId&gt;</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#children">children</a></b> () const</div></li>
@@ -36,7 +38,6 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#dataChanged">dataChanged</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qlandmarkmanager.html#defaultManager">defaultManager</a></b> () : QString</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#destroyed">destroyed</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#disconnect">disconnect</a></b> ( const QObject *, const char *, const QObject *, const char * )</div></li>
@@ -55,36 +56,41 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#fromUri">fromUri</a></b> ( const QString &amp;, QObject * ) : QLandmarkManager *</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#importLandmarks">importLandmarks</a></b> ( QIODevice *, Format ) : bool</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#importLandmarks-2">importLandmarks</a></b> ( const QString &amp;, Format ) : bool</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#isFilterSupported">isFilterSupported</a></b> ( QLandmarkFilter::FilterType ) const : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
-<li><div class="fn"><b><a href="qlandmarkmanager.html#landmark">landmark</a></b> ( const QLandmarkId &amp; ) : QLandmark</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#landmark">landmark</a></b> ( const QLandmarkId &amp; ) const : QLandmark</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#landmarkIds">landmarkIds</a></b> ( const QLandmarkFilter &amp;, const QList&lt;QLandmarkSortOrder&gt; &amp; ) const : QList&lt;QLandmarkId&gt;</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#landmarks">landmarks</a></b> ( const QLandmarkFilter &amp;, const QList&lt;QLandmarkSortOrder&gt; &amp; ) const : QList&lt;QLandmark&gt;</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#landmarks-2">landmarks</a></b> ( const QList&lt;QLandmarkId&gt; &amp; ) const : QList&lt;QLandmark&gt;</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#landmarksAdded">landmarksAdded</a></b> ( const QList&lt;QLandmarkId&gt; &amp; )</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#landmarksChanged">landmarksChanged</a></b> ( const QList&lt;QLandmarkId&gt; &amp; )</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#landmarksRemoved">landmarksRemoved</a></b> ( const QList&lt;QLandmarkId&gt; &amp; )</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#managerName">managerName</a></b> () const : QString</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#managerParameters">managerParameters</a></b> () const : QMap&lt;QString, QString&gt;</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#managerUri">managerUri</a></b> () const : QString</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#managerVersion">managerVersion</a></b> () const : int</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#metaObject">metaObject</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">objectName</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#parent">parent</a></b> () const</div></li>
+<li><div class="fn"><b><a href="qlandmarkmanager.html#parseUri">parseUri</a></b> ( const QString &amp;, QString *, QMap&lt;QString, QString&gt; * ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#removeCategory">removeCategory</a></b> ( const QLandmarkCategoryId &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#removeLandmark">removeLandmark</a></b> ( const QLandmarkId &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#removeLandmarks">removeLandmarks</a></b> ( const QList&lt;QLandmarkId&gt; &amp;, QMap&lt;int, QLandmarkManager::Error&gt; * ) : bool</div></li>
-<li><div class="fn"><b><a href="qlandmarkmanager.html#removeManager">removeManager</a></b> ( const QString &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#saveCategory">saveCategory</a></b> ( QLandmarkCategory * ) : bool</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#saveLandmark">saveLandmark</a></b> ( QLandmark * ) : bool</div></li>
 <li><div class="fn"><b><a href="qlandmarkmanager.html#saveLandmarks">saveLandmarks</a></b> ( QList&lt;QLandmark&gt; *, QMap&lt;int, QLandmarkManager::Error&gt; * ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#sender">sender</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qlandmarkmanager.html#setDefaultManager">setDefaultManager</a></b> ( const QString &amp; ) : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>

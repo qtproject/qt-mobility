@@ -68,7 +68,7 @@ QLandmarkNameFilter::~QLandmarkNameFilter()
 /*!
     Returns the name that the filter will use to determine matches.
 */
-QString QLandmarkNameFilter::name()
+QString QLandmarkNameFilter::name() const
 {
     return QString();
 }
@@ -77,6 +77,21 @@ QString QLandmarkNameFilter::name()
     Sets the \a name that the filter will use to determine matches.
 */
 void QLandmarkNameFilter::setName(const QString &name)
+{
+}
+
+/*!
+    Returns the case sensitivity of the filter.
+*/
+Qt::CaseSensitivity QLandmarkNameFilter::caseSensitivity() const
+{
+    return Qt::CaseInsensitive;
+}
+
+/*!
+    Sets the the \a caseSensitivity of the filter.
+*/
+void QLandmarkNameFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
 {
 }
 

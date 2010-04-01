@@ -98,15 +98,15 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     A QLandmarkCategory instance is an in memory representation and may
     not reflect the state of the category found in persistent storage,
     until the appropriate synchronization method is called on the
-    QLandmarkManager(i.e.QLandmarkManager::saveCategory(),
-    QLandmarkManager::removeCategory()).
+    QLandmarkManager(e.g.\l {QLandmarkManager::saveCategory()} {saveCategory()},
+    \l {QLandmarkManager::removeCategory()} {removeCategory()}).
 */
 
 /*!
     Constructs an empty category.
 
     A new category will return an invalid QLandmarkCategoryId when
-    categoryId() is called.
+    id() is called.
 */
 QLandmarkCategory::QLandmarkCategory()
 {
@@ -140,6 +140,8 @@ QLandmarkCategory& QLandmarkCategory::operator= (const QLandmarkCategory & other
 /*!
     Returns true if this category is equal to \a other, otherwise
     returns false.
+
+    \sa operator!=()
 */
 bool QLandmarkCategory::operator== (const QLandmarkCategory &other) const
 {
@@ -147,7 +149,18 @@ bool QLandmarkCategory::operator== (const QLandmarkCategory &other) const
 }
 
 /*!
-    Returns the name of the category
+    Returns true if this category is not equal to \a other, otherwise
+    returns false.
+
+    \sa operator==()
+*/
+bool QLandmarkCategory::operator!= (const QLandmarkCategory &other) const
+{
+    return !(*this==other);
+}
+
+/*!
+    Returns the name of the category.
 */
 QString QLandmarkCategory::name() const
 {
@@ -155,14 +168,14 @@ QString QLandmarkCategory::name() const
 }
 
 /*!
-    Sets the \a name of the category
+    Sets the \a name of the category.
 */
 void QLandmarkCategory::setName(const QString &name){
     d->name = name;
 }
 
 /*!
-    Returns the url of the category's icon
+    Returns the url of the category's icon.
 */
 QUrl QLandmarkCategory::iconUrl() const
 {
@@ -203,33 +216,45 @@ bool QLandmarkCategory::isReadOnly() const
 
 /*!
     Returns the identifier of the category.
-
-    Saving a new category using a QLandmarkManager will assign
-    the category a valid identifier.
 */
-QLandmarkCategoryId QLandmarkCategory::categoryId() const
+QLandmarkCategoryId QLandmarkCategory::id() const
 {
     return QLandmarkCategoryId();
 }
 
 /*!
-    Returns the value of the attribute corresponding to \a attributeName.
+    Sets the \a id of the category.
+
+    Note that saving a new category using a QLandmarkManager
+    will automatically assign the category a valid identifier.
 */
-QVariant QLandmarkCategory::attribute(const QString &attributeName) const
+void QLandmarkCategory::setId(const QLandmarkCategoryId &id)
+{
+}
+
+/*!
+    Returns the value of the attribute corresponding to \a key.
+    If the attribute does not exist, returns \a defaultValue.
+
+    If no default value is specified, a default QVariant is returned.
+*/
+QVariant QLandmarkCategory::attribute(const QString &key, const QVariant &defaultValue) const
 {
     return QVariant();
 }
 
 /*!
-    Sets the \a value of the attribute corresponding to \a attributeName.
+    Sets the \a value of the attribute corresponding to \a key.
 */
-void QLandmarkCategory::setAttribute(const QString &attributeName, const QVariant &value)
+void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 {
 
 }
 
 /*!
-    Returns a list of attribute names.
+    Returns a list of attribute keys.
+
+    \sa attribute(), setAttribute()
 */
 QStringList QLandmarkCategory::attributes() const
 {

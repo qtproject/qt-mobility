@@ -49,7 +49,10 @@ QTM_BEGIN_NAMESPACE
     custom sort orders should inherit.
 
     All custom sort orders should inherit this class and implement the
-    compare() and sort() functions.
+    compare() function.
+
+    Custom landmark sort orders inherently have no native support
+    and thus may be subject to performance issues.
 */
 
 /*!
@@ -65,5 +68,11 @@ QLandmarkCustomSort::QLandmarkCustomSort()
 QLandmarkCustomSort::~QLandmarkCustomSort()
 {
 }
+
+/*!
+    \fn int QLandmarkCustomSort::compare(const QLandmark &l1, const QLandmark &l2) const
+    Compares \a l1 and \a l2 and returns an integer less than, equal to, or greater than
+    zero if \a l1 is less than, equal to, or greater than \a l2.
+*/
 
 QTM_END_NAMESPACE

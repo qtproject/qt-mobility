@@ -56,10 +56,10 @@ public:
     QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
     virtual ~QLandmarkBoxFilter();
 
-    QGeoCoordinate topLeftCoordinate();
+    QGeoCoordinate topLeftCoordinate() const;
     void setTopLeftCoordinate(const QGeoCoordinate &topLeft);
 
-    QGeoCoordinate bottomRightCoordinate();
+    QGeoCoordinate bottomRightCoordinate() const;
     void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
 };
 

@@ -40,11 +40,138 @@
 ****************************************************************************/
 
 #include "qmaptilerequest.h"
+#include "qmaptilerequest_p.h"
 #include "qmaptilereply.h"
 
 QTM_BEGIN_NAMESPACE
 
+QMapTileRequest::QMapTileRequest()
+        : d_ptr(new QMapTileRequestPrivate())
+{
+}
+
 QMapTileRequest::QMapTileRequest(const MapVersion& mapVersion,
+                                 const MapScheme& mapScheme,
+                                 const MapResolution& mapResolution,
+                                 const MapFormat& mapFormat)
+        : d_ptr(new QMapTileRequestPrivate(mapVersion,mapScheme,mapResolution,mapFormat))
+{
+}
+
+QMapTileRequest::QMapTileRequest(const QMapTileRequest& request)
+        : d_ptr(new QMapTileRequestPrivate(request.d_ptr))
+{
+}
+
+QMapTileRequest::~QMapTileRequest()
+{
+    Q_D(QMapTileRequest);
+    delete d;
+}
+
+QMapTileRequest& QMapTileRequest::operator =(const QMapTileRequest& request)
+{
+    Q_D(QMapTileRequest);
+    d->cl = request.col();
+    d->rw = request.row();
+    d->ver = request.version();
+    d->zoom = request.zoomLevel();
+    d->schm = request.scheme();
+    d->frmt = request.format();
+    d->res = request.resolution();
+    return *this;
+}
+
+void QMapTileRequest::setVersion(const MapVersion& version)
+{
+    Q_D(QMapTileRequest);
+    d->ver = version;
+}
+
+MapScheme QMapTileRequest::scheme() const
+{
+    Q_D(const QMapTileRequest);
+    return d->schm;
+}
+
+void QMapTileRequest::setScheme(const MapScheme& scheme)
+{
+    Q_D(QMapTileRequest);
+    d->schm = scheme;
+}
+
+MapResolution QMapTileRequest::resolution() const
+{
+    Q_D(const QMapTileRequest);
+    return d->res;
+}
+
+void QMapTileRequest::setResolution(const MapResolution& resolution)
+{
+    Q_D(QMapTileRequest);
+    d->res = resolution;
+}
+
+MapFormat QMapTileRequest::format() const
+{
+    Q_D(const QMapTileRequest);
+    return d->frmt;
+}
+
+void QMapTileRequest::setFormat(const MapFormat& format)
+{
+    Q_D(QMapTileRequest);
+    d->frmt = format;
+}
+
+quint16 QMapTileRequest::zoomLevel() const
+{
+    Q_D(const QMapTileRequest);
+    return d->zoom;
+}
+
+void QMapTileRequest::setZoomLevel(quint16 level)
+{
+    Q_D(QMapTileRequest);
+    d->zoom = level;
+}
+
+quint32 QMapTileRequest::col() const 
+{
+    Q_D(const QMapTileRequest);
+    return d->cl;
+}
+
+void QMapTileRequest::setCol(quint32 c)
+{
+    Q_D(QMapTileRequest);
+    d->cl = c;
+}
+
+quint32 QMapTileRequest::row() const
+{
+    Q_D(const QMapTileRequest);
+    return d->rw;
+}
+
+void QMapTileRequest::setRow(quint32 r)
+{
+    Q_D(QMapTileRequest);
+    d->rw = r;
+}
+
+MapVersion QMapTileRequest::version() const
+{
+    Q_D(const QMapTileRequest);
+    return d->ver;
+}
+
+QMapTileRequestPrivate::QMapTileRequestPrivate()
+        : cl(0), rw(0), ver(), zoom(0), schm(), res(), frmt()
+{
+}
+
+QMapTileRequestPrivate::QMapTileRequestPrivate(const MapVersion& mapVersion,
                                  const MapScheme& mapScheme,
                                  const MapResolution& mapResolution,
                                  const MapFormat& mapFormat)
@@ -52,52 +179,10 @@ QMapTileRequest::QMapTileRequest(const MapVersion& mapVersion,
 {
 }
 
-QMapTileRequest::QMapTileRequest(const QMapTileRequest& request)
-        : cl(request.cl), rw(request.rw), ver(request.ver), zoom(request.zoom),
-        schm(request.schm), res(request.res), frmt(request.frmt)
+QMapTileRequestPrivate::QMapTileRequestPrivate(const QMapTileRequestPrivate* request)
+        : cl(request->cl), rw(request->rw), ver(request->ver), zoom(request->zoom),
+        schm(request->schm), res(request->res), frmt(request->frmt)
 {
-}
-
-QMapTileRequest& QMapTileRequest::operator =(const QMapTileRequest& request)
-{
-    cl = request.cl;
-    rw = request.rw;
-    ver = request.ver;
-    zoom = request.zoom;
-    schm = request.schm;
-    frmt = request.frmt;
-    res = request.res;
-    return *this;
-}
-
-void QMapTileRequest::setVersion(const MapVersion& version)
-{
-    ver = version;
-}
-
-void QMapTileRequest::setScheme(const MapScheme& scheme)
-{
-    schm = scheme;
-}
-
-void QMapTileRequest::setResolution(const MapResolution& resolution)
-{
-    res = resolution;
-}
-
-void QMapTileRequest::setFormat(const MapFormat& format)
-{
-    frmt = format;
-}
-
-quint16 QMapTileRequest::zoomLevel() const
-{
-    return zoom;
-}
-
-void QMapTileRequest::setZoomLevel(quint16 level)
-{
-    zoom = level;
 }
 
 //---------------------------------------------------------------

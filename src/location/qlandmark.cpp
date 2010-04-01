@@ -136,7 +136,10 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 */
 
 /*!
-    Constructs an empty landmark.
+    Constructs an new landmark.
+
+    A new landmark will return an invalid QLandmarkId when
+    id() is called.
 */
 QLandmark::QLandmark()
     :d(new QLandmarkPrivate)
@@ -382,7 +385,7 @@ void QLandmark::setRadius(double radius)
 
 /*!
     Returns the value of the attribute corresponding to \a key.
-    If the attribute doesn't exist, returns \a defaultValue.
+    If the attribute doest exist, returns \a defaultValue.
 
     If no default value is specified, a default QVariant is returned.
 */
@@ -404,6 +407,7 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
 
 /*!
     Returns a list of attribute keys.
+
     \sa attribute(), setAttribute()
 */
 QStringList QLandmark::attributes() const
@@ -454,7 +458,7 @@ QLandmarkId QLandmark::id() const
     Sets the \a id of the landmark.
 
     Note that saving a new landmark using a QLandmarkManager
-    automatically will assign the landmark a valid identifier.
+    will automatically assign the landmark a valid identifier.
 */
 void QLandmark::setId(const QLandmarkId &id)
 {

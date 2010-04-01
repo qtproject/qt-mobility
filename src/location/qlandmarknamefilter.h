@@ -43,6 +43,8 @@
 #define QLANDMARKNAMEFILTER_H
 
 #include "qlandmarkfilter.h"
+#include <Qt>
+
 class QString;
 
 QT_BEGIN_HEADER
@@ -56,8 +58,11 @@ public:
     QLandmarkNameFilter(const QString &name);
     virtual ~QLandmarkNameFilter();
 
-    QString name();
+    QString name() const;
     void setName(const QString &name);
+
+    Qt::CaseSensitivity caseSensitivity() const;
+    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
 };
 
 QTM_END_NAMESPACE

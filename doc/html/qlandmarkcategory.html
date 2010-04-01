@@ -25,17 +25,19 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#QLandmarkCategory">QLandmarkCategory</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#QLandmarkCategory-2">QLandmarkCategory</a></b> ( const QLandmarkCategory &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#dtor.QLandmarkCategory">~QLandmarkCategory</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#attribute">attribute</a></b> ( const QString &amp; <i>attributeName</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#attribute">attribute</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>defaultValue</i> = QVariant() ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#attributes">attributes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QLandmarkCategoryId </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#categoryId">categoryId</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#description">description</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#iconUrl">iconUrl</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QLandmarkCategoryId </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#id">id</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#isReadOnly">isReadOnly</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#name">name</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#setAttribute">setAttribute</a></b> ( const QString &amp; <i>attributeName</i>, const QVariant &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#setAttribute">setAttribute</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#setDescription">setDescription</a></b> ( const QString &amp; <i>description</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#setIconUrl">setIconUrl</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#setId">setId</a></b> ( const QLandmarkCategoryId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#setName">setName</a></b> ( const QString &amp; <i>name</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#operator-not-eq">operator!=</a></b> ( const QLandmarkCategory &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkCategory &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#operator-eq">operator=</a></b> ( const QLandmarkCategory &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#operator-eq-eq">operator==</a></b> ( const QLandmarkCategory &amp; <i>other</i> ) const</td></tr>
 </table>
@@ -45,47 +47,49 @@
 <p>The QLandmarkCategory class designates a grouping of landmarks of similar type.</p>
 <p>Landmarks of similar type may be grouped together into categories, e.g&#x2e; restaurants, accommodation etc. A QLandmarkCategory object represents one of these and allows access to category properties such as description and icon url.</p>
 <p>More than one category can be assigned to a landmark. Assignment of a category to a landmark is achieved by using the <a href="qlandmark.html">QLandmark</a> class in conjunction with the <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> class.</p>
-<p>A QLandmarkCategory instance is an in memory representation and may not reflect the state of the category found in persistent storage, until the appropriate synchronization method is called on the <a href="qlandmarkmanager.html">QLandmarkManager</a>(i.e&#x2e;<a href="qlandmarkmanager.html#saveCategory">QLandmarkManager::saveCategory</a>(), <a href="qlandmarkmanager.html#removeCategory">QLandmarkManager::removeCategory</a>()).</p>
+<p>A QLandmarkCategory instance is an in memory representation and may not reflect the state of the category found in persistent storage, until the appropriate synchronization method is called on the <a href="qlandmarkmanager.html">QLandmarkManager</a>(e.g&#x2e;<a href="qlandmarkmanager.html#saveCategory">saveCategory()</a>, <a href="qlandmarkmanager.html#removeCategory">removeCategory()</a>).</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/QLandmarkCategory"></a>
 <h3 class="fn"><a name="QLandmarkCategory"></a>QLandmarkCategory::QLandmarkCategory ()</h3>
 <p>Constructs an empty category.</p>
-<p>A new category will return an invalid <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> when <a href="qlandmarkcategory.html#categoryId">categoryId</a>() is called.</p>
+<p>A new category will return an invalid <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> when <a href="qlandmarkcategory.html#id">id</a>() is called.</p>
 <h3 class="fn"><a name="QLandmarkCategory-2"></a>QLandmarkCategory::QLandmarkCategory ( const QLandmarkCategory &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/~QLandmarkCategory"></a>
 <h3 class="fn"><a name="dtor.QLandmarkCategory"></a>QLandmarkCategory::~QLandmarkCategory ()</h3>
 <p>Destroys the category.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/attribute"></a>
-<h3 class="fn"><a name="attribute"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QLandmarkCategory::attribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>attributeName</i> ) const</h3>
-<p>Returns the value of the attribute corresponding to <i>attributeName</i>.</p>
+<h3 class="fn"><a name="attribute"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QLandmarkCategory::attribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>defaultValue</i> = QVariant() ) const</h3>
+<p>Returns the value of the attribute corresponding to <i>key</i>. If the attribute does not exist, returns <i>defaultValue</i>.</p>
+<p>If no default value is specified, a default <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> is returned.</p>
 <p>See also <a href="qlandmarkcategory.html#setAttribute">setAttribute</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/attributes"></a>
 <h3 class="fn"><a name="attributes"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QLandmarkCategory::attributes () const</h3>
-<p>Returns a list of attribute names.</p>
-<a name="//apple_ref/cpp/instm/QLandmarkCategory/categoryId"></a>
-<h3 class="fn"><a name="categoryId"></a><a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> QLandmarkCategory::categoryId () const</h3>
-<p>Returns the identifier of the category.</p>
-<p>Saving a new category using a <a href="qlandmarkmanager.html">QLandmarkManager</a> will assign the category a valid identifier.</p>
+<p>Returns a list of attribute keys.</p>
+<p>See also <a href="qlandmarkcategory.html#attribute">attribute</a>() and <a href="qlandmarkcategory.html#setAttribute">setAttribute</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/description"></a>
 <h3 class="fn"><a name="description"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkCategory::description () const</h3>
 <p>Returns the description of the category.</p>
 <p>See also <a href="qlandmarkcategory.html#setDescription">setDescription</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/iconUrl"></a>
 <h3 class="fn"><a name="iconUrl"></a><a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> QLandmarkCategory::iconUrl () const</h3>
-<p>Returns the url of the category's icon</p>
+<p>Returns the url of the category's icon.</p>
 <p>See also <a href="qlandmarkcategory.html#setIconUrl">setIconUrl</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategory/id"></a>
+<h3 class="fn"><a name="id"></a><a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> QLandmarkCategory::id () const</h3>
+<p>Returns the identifier of the category.</p>
+<p>See also <a href="qlandmarkcategory.html#setId">setId</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/isReadOnly"></a>
 <h3 class="fn"><a name="isReadOnly"></a>bool QLandmarkCategory::isReadOnly () const</h3>
 <p>Returns whether the category is read-only.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/name"></a>
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkCategory::name () const</h3>
-<p>Returns the name of the category</p>
+<p>Returns the name of the category.</p>
 <p>See also <a href="qlandmarkcategory.html#setName">setName</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/setAttribute"></a>
-<h3 class="fn"><a name="setAttribute"></a>void QLandmarkCategory::setAttribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>attributeName</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
-<p>Sets the <i>value</i> of the attribute corresponding to <i>attributeName</i>.</p>
+<h3 class="fn"><a name="setAttribute"></a>void QLandmarkCategory::setAttribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<p>Sets the <i>value</i> of the attribute corresponding to <i>key</i>.</p>
 <p>See also <a href="qlandmarkcategory.html#attribute">attribute</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/setDescription"></a>
 <h3 class="fn"><a name="setDescription"></a>void QLandmarkCategory::setDescription ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>description</i> )</h3>
@@ -95,16 +99,26 @@
 <h3 class="fn"><a name="setIconUrl"></a>void QLandmarkCategory::setIconUrl ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>url</i> )</h3>
 <p>Sets the <i>url</i> of the category's icon</p>
 <p>See also <a href="qlandmarkcategory.html#iconUrl">iconUrl</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategory/setId"></a>
+<h3 class="fn"><a name="setId"></a>void QLandmarkCategory::setId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>id</i> )</h3>
+<p>Sets the <i>id</i> of the category.</p>
+<p>Note that saving a new category using a <a href="qlandmarkmanager.html">QLandmarkManager</a> will automatically assign the category a valid identifier.</p>
+<p>See also <a href="qlandmarkcategory.html#id">id</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/setName"></a>
 <h3 class="fn"><a name="setName"></a>void QLandmarkCategory::setName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )</h3>
-<p>Sets the <i>name</i> of the category</p>
+<p>Sets the <i>name</i> of the category.</p>
 <p>See also <a href="qlandmarkcategory.html#name">name</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategory/operator!="></a>
+<h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkCategory::operator!= ( const QLandmarkCategory &amp; <i>other</i> ) const</h3>
+<p>Returns true if this category is not equal to <i>other</i>, otherwise returns false.</p>
+<p>See also <a href="qlandmarkcategory.html#operator-eq-eq">operator==</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QLandmarkCategory &amp; QLandmarkCategory::operator= ( const QLandmarkCategory &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this category and returns a reference to this category.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkCategory::operator== ( const QLandmarkCategory &amp; <i>other</i> ) const</h3>
 <p>Returns true if this category is equal to <i>other</i>, otherwise returns false.</p>
+<p>See also <a href="qlandmarkcategory.html#operator-not-eq">operator!=</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

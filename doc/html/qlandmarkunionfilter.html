@@ -39,7 +39,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QLandmarkUnionFilter class provides a filter which unions the results of its constituent filters.</p>
-<p>During a search the union filter performs and OR operation with all its constituent filters.</p>
+<p>Conceptually it performs an OR operation and may thus be used to select landmarks which match any one of it's constituent filters.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/QLandmarkUnionFilter"></a>
@@ -50,19 +50,19 @@
 <p>Destroys the filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/append"></a>
 <h3 class="fn"><a name="append"></a>void QLandmarkUnionFilter::append ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
-<p>Appends the given <i>filter</i> to the list of unioned filters</p>
+<p>Appends the given <i>filter</i> to the list of unioned filters.</p>
 <p>See also <a href="qlandmarkunionfilter.html#operator-lt-lt">operator&lt;&lt;</a>(), <a href="qlandmarkunionfilter.html#prepend">prepend</a>(), and <a href="qlandmarkunionfilter.html#filters">filters</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/filters"></a>
 <h3 class="fn"><a name="filters"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkfilter.html">QLandmarkFilter</a>&gt; QLandmarkUnionFilter::filters () const</h3>
-<p>Returns the list of filters which form the union filter</p>
+<p>Returns the list of filters which form the union filter.</p>
 <p>See also <a href="qlandmarkunionfilter.html#setFilters">setFilters</a>(), <a href="qlandmarkunionfilter.html#prepend">prepend</a>(), <a href="qlandmarkunionfilter.html#append">append</a>(), and <a href="qlandmarkunionfilter.html#remove">remove</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/prepend"></a>
 <h3 class="fn"><a name="prepend"></a>void QLandmarkUnionFilter::prepend ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
-<p>Prepends the given <i>filter</i> to the list of unioned filters</p>
+<p>Prepends the given <i>filter</i> to the list of unioned filters.</p>
 <p>See also <a href="qlandmarkunionfilter.html#append">append</a>() and <a href="qlandmarkunionfilter.html#filters">filters</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/remove"></a>
 <h3 class="fn"><a name="remove"></a>void QLandmarkUnionFilter::remove ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
-<p>Removes the given <i>filter</i> from the union list</p>
+<p>Removes the given <i>filter</i> from the union list.</p>
 <p>See also <a href="qlandmarkunionfilter.html#filters">filters</a>(), <a href="qlandmarkunionfilter.html#append">append</a>(), and <a href="qlandmarkunionfilter.html#prepend">prepend</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/setFilters"></a>
 <h3 class="fn"><a name="setFilters"></a>void QLandmarkUnionFilter::setFilters ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkfilter.html">QLandmarkFilter</a>&gt; &amp; <i>filters</i> )</h3>
@@ -70,7 +70,7 @@
 <p>See also <a href="qlandmarkunionfilter.html#filters">filters</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/operator&lt;&lt;"></a>
 <h3 class="fn"><a name="operator-lt-lt"></a>QLandmarkUnionFilter &amp; QLandmarkUnionFilter::operator&lt;&lt; ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
-<p>Appends the given <i>filter</i> to the list of unioned filters</p>
+<p>Appends the given <i>filter</i> to the list of unioned filters.</p>
 <p>See also <a href="qlandmarkunionfilter.html#append">append</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

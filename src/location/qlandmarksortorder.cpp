@@ -46,27 +46,32 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkSortOrder
-    \brief The QLandmarkSortOrder class defines how a list of landmarks
-    should be ordered according to some criteria.
-    \ingroup location
+    \brief The QLandmarkSortOrder class serves as a base class
+           for the different sort order types.
 
-    A QLandmarkSortOrder serves as a base class for various
-    sort orders.  If none of the pre-existing sort orders
-    is sufficient then custom filter should be created by
+    The sort orders define how a list of landmarks should be ordered
+    when they searched using a QLandmarkManager or one of the
+    landmark request classes.
+
+    If none of the pre-existing sort orders
+    is sufficient then a custom sort order should be created by
     inheriting from QLandmarkCustomSort.
 */
 
 /*!
     \enum QLandmarkSortOrder::SortType
     Defines the type of sort order.
-    \value LandmarkNameSort   Sorts landmarks by name.
-    \value LandmarkDistanceSort   Sorts landmarks by distance from a particular
+    \value InvalidSort An invalid sort order.
+    \value NameSort   Sorts landmarks by name.
+    \value DistanceSort   Sorts landmarks by distance from a particular
            coordinate.
-    \value LandmarkCustomSort Is a custom sort order.
+    \value CustomSort Is a custom sort order.
 */
 
 /*!
     Constructs a landmark sort order.
+
+    The type of the sort order is InvalidSort.
 */
 QLandmarkSortOrder::QLandmarkSortOrder()
 {
@@ -77,7 +82,7 @@ QLandmarkSortOrder::QLandmarkSortOrder()
 */
 QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 {
-    return QLandmarkSortOrder::LandmarkCustomSort;
+    return QLandmarkSortOrder::InvalidSort;
 }
 
 /*!
@@ -93,23 +98,6 @@ Qt::SortOrder QLandmarkSortOrder::direction() const
 */
 void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
 {
-}
-
-/*!
-    Compares \a l1 and \a l2 and returns an integer less than, equal to, or greater than
-    zero if \a l1 is less than, equal to, or greater than \a l2.
-*/
-int QLandmarkSortOrder::compare(const QLandmark &l1, const QLandmark &l2) const
-{
-    return 0;
-}
-
-/*!
-    Returns a sorted list of \a landmarkIds.
-*/
-QList<QLandmarkId> QLandmarkSortOrder::sort(const QList<QLandmarkId> &landmarkIds) const
-{
-    return QList<QLandmarkId>();
 }
 
 QTM_END_NAMESPACE

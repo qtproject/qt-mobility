@@ -38,12 +38,13 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QLandmarkCategoryId class provides a unique identifier for a category.</p>
-<p>It consists of a manager URI which identifies the manager which contains the category, and the id for that category.</p>
+<p>It consists of a manager URI which identifies the manager which contains the category, and a manager specific id for that category.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryId/QLandmarkCategoryId"></a>
 <h3 class="fn"><a name="QLandmarkCategoryId"></a>QLandmarkCategoryId::QLandmarkCategoryId ()</h3>
-<p>Creates an invalid identifier, <a href="qlandmarkcategoryid.html#id">id</a>() and <a href="qlandmarkcategoryid.html#managerUri">managerUri</a>() will return null strings</p>
+<p>Creates an invalid identifier.</p>
+<p><a href="qlandmarkcategoryid.html#id">id</a>() and <a href="qlandmarkcategoryid.html#managerUri">managerUri</a>() will return null strings.</p>
 <h3 class="fn"><a name="QLandmarkCategoryId-2"></a>QLandmarkCategoryId::QLandmarkCategoryId ( const QLandmarkCategoryId &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryId/~QLandmarkCategoryId"></a>
@@ -52,6 +53,7 @@
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryId/id"></a>
 <h3 class="fn"><a name="id"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkCategoryId::id () const</h3>
 <p>Returns the id of the category identifier.</p>
+<p>This id is specific to a particular landmark manager.</p>
 <p>See also <a href="qlandmarkcategoryid.html#setId">setId</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryId/isValid"></a>
 <h3 class="fn"><a name="isValid"></a>bool QLandmarkCategoryId::isValid () const</h3>
@@ -62,7 +64,7 @@
 <p>See also <a href="qlandmarkcategoryid.html#setManagerUri">setManagerUri</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryId/setId"></a>
 <h3 class="fn"><a name="setId"></a>void QLandmarkCategoryId::setId ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>id</i> )</h3>
-<p>Sets the <i>id</i> of the category identifier</p>
+<p>Sets the <i>id</i> of the category identifier.</p>
 <p>See also <a href="qlandmarkcategoryid.html#id">id</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryId/setManagerUri"></a>
 <h3 class="fn"><a name="setManagerUri"></a>void QLandmarkCategoryId::setManagerUri ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>uri</i> )</h3>
@@ -72,6 +74,7 @@
 <h3 class="fn"><a name="operator-not-eq"></a>bool QLandmarkCategoryId::operator!= ( const QLandmarkCategoryId &amp; <i>other</i> ) const</h3>
 <p>Returns true if this category identifier is not equal to <i>other</i>, otherwise returns false.</p>
 <p>If either the manager URIs or ids differ, then the QLandmarkCategoryIds are not considered equal.</p>
+<p>See also <a href="qlandmarkcategoryid.html#operator-eq-eq">operator==</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryId/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QLandmarkCategoryId &amp; QLandmarkCategoryId::operator= ( const QLandmarkCategoryId &amp; <i>other</i> )</h3>
 <p>Assigns <i>other</i> to this category identifier and returns a reference to this category identifier.</p>
@@ -79,6 +82,7 @@
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkCategoryId::operator== ( const QLandmarkCategoryId &amp; <i>other</i> ) const</h3>
 <p>Returns true if this category identifer is equal to <i>other</i>, otherwise returns false.</p>
 <p>Two QLandmarkCategoryIds are considered equal if both have the same manager URI and id.</p>
+<p>See also <a href="qlandmarkcategoryid.html#operator-not-eq">operator!=</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
