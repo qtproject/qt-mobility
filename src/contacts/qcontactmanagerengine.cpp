@@ -571,11 +571,11 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
             // XXX in theory we can remove duplicates in a set filter
             while (it != filters.end()) {
                 QContactFilter canon = canonicalizedFilter(*it);
-                if (canon.type() == QContactFilter::DefaultFilter)
-                    return QContactFilter();
-                if (canon.type() == QContactFilter::InvalidFilter)
+                if (canon.type() == QContactFilter::DefaultFilter) {
                     it = filters.erase(it);
-                else {
+                } else if (canon.type() == QContactFilter::InvalidFilter) {
+                    return QContactInvalidFilter();
+                } else {
                     *it = canon;
                     ++it;
                 }
@@ -600,11 +600,11 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
             // XXX in theory we can remove duplicates in a set filter
             while (it != filters.end()) {
                 QContactFilter canon = canonicalizedFilter(*it);
-                if (canon.type() == QContactFilter::InvalidFilter)
-                    return QContactInvalidFilter();
-                if (canon.type() == QContactFilter::DefaultFilter)
+                if (canon.type() == QContactFilter::InvalidFilter) {
                     it = filters.erase(it);
-                else {
+                } else if (canon.type() == QContactFilter::DefaultFilter) {
+                    return QContactFilter();
+                } else {
                     *it = canon;
                     ++it;
                 }
@@ -632,6 +632,9 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
         {
             QContactDetailRangeFilter f(filter);
             if (f.detailDefinitionName().isEmpty())
+                return QContactInvalidFilter();
+            if (f.minValue() == f.maxValue()
+                && f.rangeFlags() == (QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper))
                 return QContactInvalidFilter();
             if ((f.minValue().isNull() && f.maxValue().isNull()) || (f.minValue() == f.maxValue())) {
                 QContactDetailFilter df;

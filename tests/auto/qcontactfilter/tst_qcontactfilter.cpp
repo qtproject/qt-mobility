@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include <QtTest/QtTest>
+#include <QMetaType>
 
 #include "qtcontacts.h"
 #include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
@@ -47,6 +48,9 @@
 //TESTED_FILES=
 
 QTM_USE_NAMESPACE
+
+Q_DECLARE_METATYPE(QContactFilter)
+
 class tst_QContactFilter : public QObject
 {
 Q_OBJECT
@@ -72,6 +76,8 @@ private slots:
     void relationshipFilter();
     void boringFilters();
     void idListFilter();
+    void canonicalizedFilter();
+    void canonicalizedFilter_data();
 
     void traits();
 
@@ -915,6 +921,224 @@ void tst_QContactFilter::idListFilter()
     QVERIFY(idf == idf3); // again, should be a blank id list filter.
     idf = idf3;
     idf.setIds(ids); // force a detach
+}
+
+void tst_QContactFilter::canonicalizedFilter()
+{
+    QFETCH(QContactFilter, in);
+    QFETCH(QContactFilter, expected);
+
+    QContactFilter out = QContactManagerEngine::canonicalizedFilter(in);
+    QCOMPARE(out, expected);
+}
+
+void tst_QContactFilter::canonicalizedFilter_data()
+{
+    QTest::addColumn<QContactFilter>("in");
+    QTest::addColumn<QContactFilter>("expected");
+
+    QContactFilter detailFilter1 = QContactName::match("1");
+    QContactFilter detailFilter2 = QContactName::match("2");
+    QContactInvalidFilter invalidFilter;
+    QContactFilter defaultFilter;
+
+    {
+        QTest::newRow("Normal detail filter")
+                << static_cast<QContactFilter>(detailFilter1)
+                << static_cast<QContactFilter>(detailFilter1);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        qcif << detailFilter1;
+        qcif << detailFilter2;
+        QTest::newRow("Normal intersection filter")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(qcif);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        qcuf << detailFilter1;
+        qcuf << detailFilter2;
+        QTest::newRow("Normal intersection filter")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(qcuf);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        QTest::newRow("Empty intersection")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(defaultFilter);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        QTest::newRow("Empty union")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        qcif << detailFilter1;
+        QTest::newRow("Single entry intersection filter")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(detailFilter1);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        qcuf << detailFilter1;
+        QTest::newRow("Single entry union filter")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(detailFilter1);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        qcif << invalidFilter;
+        qcif << detailFilter1;
+        qcif << detailFilter2;
+        QTest::newRow("Intersection with invalid")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactIntersectionFilter qcif;
+        qcif << defaultFilter;
+        qcif << detailFilter1;
+        qcif << detailFilter2;
+        QContactIntersectionFilter expected;
+        expected << detailFilter1;
+        expected << detailFilter2;
+        QTest::newRow("Intersection with default")
+                << static_cast<QContactFilter>(qcif)
+                << static_cast<QContactFilter>(expected);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        qcuf << invalidFilter;
+        qcuf << detailFilter1;
+        qcuf << detailFilter2;
+        QContactUnionFilter expected;
+        expected << detailFilter1;
+        expected << detailFilter2;
+        QTest::newRow("Union with invalid")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(expected);
+    }
+
+    {
+        QContactUnionFilter qcuf;
+        qcuf << defaultFilter;
+        qcuf << detailFilter1;
+        qcuf << detailFilter2;
+        QTest::newRow("Union with default")
+                << static_cast<QContactFilter>(qcuf)
+                << static_cast<QContactFilter>(defaultFilter);
+    }
+
+    {
+        QContactLocalIdFilter qclif;
+        QTest::newRow("Empty local id filter")
+                << static_cast<QContactFilter>(qclif)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactLocalIdFilter qclif;
+        qclif.setIds(QList<QContactLocalId>() << 1 << 2);
+        QTest::newRow("Normal local id filter")
+                << static_cast<QContactFilter>(qclif)
+                << static_cast<QContactFilter>(qclif);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        QContactDetailFilter expected;
+        expected.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        QTest::newRow("Null valued range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(expected);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QLatin1String("a"), QLatin1String("a"));
+        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        QContactDetailFilter expected;
+        expected.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        expected.setValue(QLatin1String("a"));
+        expected.setMatchFlags(QContactFilter::MatchStartsWith);
+        QTest::newRow("Equal valued range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(expected);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QLatin1String("a"), QLatin1String("a"),
+               QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper);
+        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        QTest::newRow("Equal valued range filter with excluded bounds")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QLatin1String("a"), QLatin1String("b"));
+        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        QTest::newRow("Normal range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(qcdrf);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QVariant(QVariant::String), QVariant(QVariant::String)); // null bounds
+        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        QContactDetailFilter qcdf;
+        qcdf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdf.setMatchFlags(QContactFilter::MatchStartsWith);
+        qcdf.setValue(QVariant(QVariant::String));
+        QTest::newRow("Null valued range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(qcdf);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        qcdrf.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldCustomLabel);
+        qcdrf.setRange(QVariant(QVariant::String), QLatin1String("a")); // min is null
+        qcdrf.setMatchFlags(QContactFilter::MatchStartsWith);
+        QTest::newRow("One sided range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(qcdrf);
+    }
+
+    {
+        QContactDetailRangeFilter qcdrf;
+        QTest::newRow("Empty range filter")
+                << static_cast<QContactFilter>(qcdrf)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
+
+    {
+        QContactDetailFilter qcdf;
+        QTest::newRow("Empty detail filter")
+                << static_cast<QContactFilter>(qcdf)
+                << static_cast<QContactFilter>(invalidFilter);
+    }
 }
 
 void tst_QContactFilter::traits()
