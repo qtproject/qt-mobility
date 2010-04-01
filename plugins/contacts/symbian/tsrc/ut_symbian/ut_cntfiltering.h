@@ -75,6 +75,10 @@ private:
     void createContact_3();
     void createContact_4();
     void createContact_5();
+    void createContact_6();
+    void createContact_7();
+    void createContact_8();
+    void createContact_9();
 private slots:  // Test cases
     void testInvalidFilter();
     void testContactDetailFilter();
@@ -86,7 +90,15 @@ private slots:  // Test cases
     void testUnionFilter();
     void testLocalIdFilter();
     void testDefaultFilter();
-    void testZeroSearch();
+   	void testDefaultFilterWithPredictiveSearch();
+    void testDefaultFilterWithPredictiveSearch2();
+    void testDefaultFilterWithPredictiveSearch3();
+    void testDefaultFilterWithPredictiveSearch4();
+    void testDefaultFilterWithPredictiveSearch5();
+    void testDefaultFilterWithPredictiveSearch6();
+    void testDefaultFilterWithPredictiveSearch7();
+    void testDefaultFilterWithPredictiveSearch8();
+    void testDefaultFilterWithPredictiveSearch9();
     void testFilterSupported();
     void testCreateSelectQuery();
 private:

@@ -42,7 +42,6 @@
 #include <centralrepository.h>
 
 #include "cntfilterdetail.h"
-#include "cnttransformcontact.h"
 #include "cntfilterdetaildisplaylabel.h" //todo rename class to follow naming pattern CntFilterDetailDisplayLabel
 #include "cntsqlsearch.h"
 
@@ -76,7 +75,6 @@ QList<QContactLocalId> CntFilterDetail::contacts(
         bool &filterSupportedflag,
         QContactManager::Error* error)
 {
-    Q_UNUSED(sortOrders);
     Q_UNUSED(filterSupportedflag);
     //Check if any invalid filter is passed 
     if(!filterSupported(filter) )
@@ -176,7 +174,7 @@ void CntFilterDetail::createSelectQuery(const QContactFilter& filter,
            QString sqlWhereClause;
            getTableNameWhereClause(detailFilter,tableName,sqlWhereClause,error);
            //Create the sql query
-           sqlQuery += "SELECT DISTINCT contact_id FROM  " + tableName + " WHERE " + sqlWhereClause;
+           sqlQuery += "SELECT DISTINCT contact_id FROM " + tableName + " WHERE " + sqlWhereClause;
        }
 }
 
@@ -249,15 +247,12 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
                                                QContactManager::Error* error) const
 {
     //Get the table name and the column name
-    bool isSubType;
     QString columnName;
+    bool isSubType;
 
-    //Get the field id for the detail field name
-    CntTransformContact transformContact;
-    quint32 fieldId  = transformContact.GetIdForDetailL(detailfilter, isSubType);
-    m_dbInfo.getDbTableAndColumnName(fieldId,tableName,columnName);
-    
-    //return if tableName is empty
+    m_dbInfo.getDbTableAndColumnName(detailfilter.detailDefinitionName(), detailfilter.detailFieldName(), tableName, columnName, isSubType);
+
+    // return if tableName is empty
     if(tableName.isEmpty())
         {
         *error = QContactManager::NotSupportedError;
@@ -270,7 +265,7 @@ void CntFilterDetail::getTableNameWhereClause( const QContactDetailFilter& detai
         *error = QContactManager::NotSupportedError;
         return;
         }
-    else if(isSubType) 
+    else if (isSubType) 
         {
         sqlWhereClause += columnName;
         sqlWhereClause += " NOT NULL ";
