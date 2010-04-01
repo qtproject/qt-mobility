@@ -179,6 +179,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const QtMobility::MessagingMo
     argument << mimePart.mimeType;
     argument << mimePart.isAttachment;
     argument << mimePart.fileName;
+    argument << mimePart.contentId;
     argument.endStructure();
     return argument;
 }
@@ -189,6 +190,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, QtMobility::Messa
     argument >> mimePart.mimeType;
     argument >> mimePart.isAttachment;
     argument >> mimePart.fileName;
+    argument >> mimePart.contentId;
     argument.endStructure();
     return argument;
 }
@@ -1096,24 +1098,105 @@ QMessage ModestEngine::messageFromModestMessage(const MessagingModestMessage& mo
     for (int i=0; i < modestMessage.mimeParts.count(); i++) {
         if (!modestMessage.mimeParts[i].isAttachment) {
             // Body
-            QString text; // TODO: Body content handling
-            // TODO: Body charset handling
-            message.setBody(text, modestMessage.mimeParts[i].mimeType.toAscii());
+            QByteArray fullMimeType = modestMessage.mimeParts[i].mimeType.toUtf8();
+            QString contentId = modestMessage.mimeParts[i].contentId;
+            QByteArray fileName = modestMessage.mimeParts[i].fileName.toAscii();
+
+            QByteArray mainType("text");
+            QByteArray subType("plain");
+            QByteArray charset;
+
+            int index = fullMimeType.indexOf("/");
+            if (index != -1) {
+                mainType = fullMimeType.left(index).trimmed();
+
+                subType = fullMimeType.mid(index + 1).trimmed();
+                index = subType.indexOf(";");
+                if (index != -1) {
+                    QString remainder = subType.mid(index + 1);
+                    subType = subType.left(index).trimmed();
+
+                    QRegExp charsetPattern("charset=(\\S+)");
+                    index = charsetPattern.indexIn(remainder);
+                    if (index != -1) {
+                        charset = charsetPattern.cap(1).toLatin1();
+                    }
+                }
+            }
+
+            if (charset.isEmpty()) {
+                charset = "UTF-8";
+            }
+
+            QMessageContentContainerId existingBodyId(message.bodyId());
+            if (existingBodyId.isValid()) {
+                if (existingBodyId == container->bodyContentId()) {
+                    // The body content is in the message itself
+                    container->_containingMessageId = messageId.toString();
+                    container->_attachmentId = contentId;
+                    container->_name = fileName;
+                    container->_type = mainType;
+                    container->_subType = subType;
+                    container->_charset = charset;
+                    container->_size = 0;
+                    container->_available = true;
+                } else {
+                    // The body content is in the first attachment
+                    QMessageContentContainerPrivate *attachmentContainer(QMessageContentContainerPrivate::implementation(*container->attachment(existingBodyId)));
+                    attachmentContainer->_containingMessageId = messageId.toString();
+                    attachmentContainer->_attachmentId = contentId;
+                    attachmentContainer->_name = fileName;
+                    attachmentContainer->_type = mainType;
+                    attachmentContainer->_subType = subType;
+                    attachmentContainer->_charset = charset;
+                    attachmentContainer->_size = 0;
+                    attachmentContainer->_available = true;
+                }
+            } else {
+                if (container->_attachments.isEmpty()) {
+                    // Put the content directly into the message
+                    container->_containingMessageId = messageId.toString();
+                    container->_attachmentId = contentId;
+                    container->_name = fileName;
+                    container->_type = mainType;
+                    container->_subType = subType;
+                    container->_charset = charset;
+                    container->_size = 0;
+                    container->_available = true;
+                    privateMessage->_bodyId = container->bodyContentId();
+                } else {
+                    // Add the body as the first attachment
+                    QMessageContentContainer newBody;
+                    QMessageContentContainerPrivate *attachmentContainer = QMessageContentContainerPrivate::implementation(newBody);
+                    attachmentContainer->_containingMessageId = messageId.toString();
+                    attachmentContainer->_attachmentId = contentId;
+                    attachmentContainer->_name = fileName;
+                    attachmentContainer->_type = mainType;
+                    attachmentContainer->_subType = subType;
+                    attachmentContainer->_charset = charset;
+                    attachmentContainer->_size = 0;
+                    attachmentContainer->_available = true;
+                    privateMessage->_bodyId = container->prependContent(newBody);
+                }
+            }
         } else {
             // Attachment
             QString fullMimeType = modestMessage.mimeParts[i].mimeType;
+            QString contentId = modestMessage.mimeParts[i].contentId;
             int slashIndex = fullMimeType.indexOf('/');
             QByteArray mimeType = fullMimeType.left(slashIndex).toAscii();
             QByteArray mimeSubType = fullMimeType.mid(slashIndex+1).toAscii();
             // TODO: Attachment size
             QByteArray fileName = modestMessage.mimeParts[i].fileName.toAscii();
-            QString messageId = modestMessage.id;
-            QMessageContentContainer attachment = QMessageContentContainerPrivate::from(messageId,
-                                                                                        i,
-                                                                                        fileName,
-                                                                                        mimeType,
-                                                                                        mimeSubType,
-                                                                                        0);
+            fileName = fileName.mid(fileName.lastIndexOf('/')+1);
+            QString msgId = messageId.toString();
+            QMessageContentContainer attachment =
+                    QMessageContentContainerPrivate::from(msgId,
+                                                          contentId,
+                                                          fileName,
+                                                          mimeType,
+                                                          mimeSubType,
+                                                          0);
             appendAttachmentToMessage(message, attachment);
         }
     }
@@ -1124,49 +1207,40 @@ QMessage ModestEngine::messageFromModestMessage(const MessagingModestMessage& mo
         QMessagePrivate::setSenderName(message, modestMessage.from);
     }
 
-    QList<QMessageAddress> addressList;
-    QString addresses;
-    int addressEnds;
-
     // To
     if (modestMessage.to.size() > 0) {
-        addresses = modestMessage.to;
-        addressEnds = addresses.indexOf(';');
-        while (addressEnds > 0) {
-            addressList.append(QMessageAddress(QMessageAddress::Email, addresses.left(addressEnds)));
-            addresses.remove(0,addressEnds+1);
-            addressEnds = addresses.indexOf(';');
+        QMessageAddressList toAddresses;
+        foreach (const QString &element, modestMessage.to.split(",", QString::SkipEmptyParts)) {
+            QMessageAddress addr;
+            addr.setType(QMessageAddress::Email);
+            addr.setAddressee(element.trimmed());
+            toAddresses.append(addr);
         }
-        addressList.append(QMessageAddress(QMessageAddress::Email, addresses));
-        message.setTo(addressList);
+        message.setTo(toAddresses);
     }
 
     // Cc
     if (modestMessage.cc.size() > 0) {
-        addressList.clear();
-        addresses = modestMessage.cc;
-        addressEnds = addresses.indexOf(';');
-        while (addressEnds > 0) {
-            addressList.append(QMessageAddress(QMessageAddress::Email, addresses.left(addressEnds)));
-            addresses.remove(0,addressEnds+1);
-            addressEnds = addresses.indexOf(';');
+        QMessageAddressList ccAddresses;
+        foreach (const QString &element, modestMessage.cc.split(",", QString::SkipEmptyParts)) {
+            QMessageAddress addr;
+            addr.setType(QMessageAddress::Email);
+            addr.setAddressee(element.trimmed());
+            ccAddresses.append(addr);
         }
-        addressList.append(QMessageAddress(QMessageAddress::Email, addresses));
-        message.setCc(addressList);
+        message.setCc(ccAddresses);
     }
 
     // Bcc
     if (modestMessage.bcc.size() > 0) {
-        addressList.clear();
-        addresses = modestMessage.bcc;
-        addressEnds = addresses.indexOf(';');
-        while (addressEnds > 0) {
-            addressList.append(QMessageAddress(QMessageAddress::Email, addresses.left(addressEnds)));
-            addresses.remove(0,addressEnds+1);
-            addressEnds = addresses.indexOf(';');
+        QMessageAddressList bccAddresses;
+        foreach (const QString &element, modestMessage.bcc.split(",", QString::SkipEmptyParts)) {
+            QMessageAddress addr;
+            addr.setType(QMessageAddress::Email);
+            addr.setAddressee(element.trimmed());
+            bccAddresses.append(addr);
         }
-        addressList.append(QMessageAddress(QMessageAddress::Email, addresses));
-        message.setBcc(addressList);
+        message.setBcc(bccAddresses);
     }
 
     // Subject
@@ -2087,44 +2161,80 @@ void ModestEngine::unregisterNotificationFilter(QMessageManager::NotificationFil
     m_filters.remove(notificationFilterId);
 }
 
-int ModestEngine::findNotificationFromLatestNotifications(const QMessageId& messageId) const
+QByteArray ModestEngine::getMimePart (const QMessageId &id, const QString &attachmentId)
 {
-    for (int i=0; i < m_latestNotifications.count(); i++) {
-        if (m_latestNotifications[i].messageId == messageId.toString()) {
-            return i;
-        }
+    QByteArray result;
+
+    QString modestAccountId = modestAccountIdFromMessageId(id);
+    QString modestFolderId  = modestFolderIdFromMessageId(id);
+    QString modestMessageId = modestMessageIdFromMessageId(id);
+
+    QString filePath, mimeType;
+    int mimeSize = -1;
+    bool expunge = false, isAttachment = false;
+
+    QDBusPendingReply<QString, QString, int, bool, bool> reply =
+            m_QtmPluginDBusInterface->asyncCall(
+                    "GetMimePart",
+                    QVariant::fromValue(modestAccountId),
+                    QVariant::fromValue(modestFolderId),
+                    QVariant::fromValue(modestMessageId),
+                    QVariant::fromValue(attachmentId));
+
+    reply.waitForFinished();
+
+    if (reply.isError()) {
+        qWarning () << reply.error();
+        return result;
     }
 
-    return -1;
+    filePath = reply.argumentAt<0>();
+    mimeType = reply.argumentAt<1>();
+    mimeSize = reply.argumentAt<2>();
+    isAttachment = reply.argumentAt<3>();
+    expunge = reply.argumentAt<4>();
+
+    if (filePath.isEmpty()) {
+        qWarning() << "Received empty file path!";
+        return result;
+    }
+
+    QFile file(filePath);
+
+    if (file.open(QIODevice::ReadWrite) == false) {
+        qWarning() << "Failed to open file" << filePath << ": "
+                << file.error();
+        return result;
+    }
+
+    result = file.readAll();
+
+    if (expunge) {
+        file.remove();
+    } else {
+        file.close();
+    }
+
+    return result;
 }
 
 void ModestEngine::notification(const QMessageId& messageId, NotificationType notificationType) const
 {
+    QMessageId realMessageId = messageId;
 
-    int index = findNotificationFromLatestNotifications(messageId);
-    if (index == -1) {
-        if (m_latestNotifications.count() > 10) {
-            // Remove oldest notification from the beginning of the list
-            m_latestNotifications.removeFirst();
-        }
-        // Append new notification
-        EmailMessageNotification newNotification;
-        newNotification.messageId = messageId.toString();
-        newNotification.event = notificationType;
-        m_latestNotifications.append(newNotification);
-    } else {
-        if (m_latestNotifications[index].event == notificationType) {
-            // This makes sure that same notifications will not be sent many times in a row
-            return;
+    if (notificationType == ModestEngine::Removed) {
+        // Make sure that there will not be many Removed notifications
+        // in a row for a same message
+        QString modestMessageId = modestMessageIdFromMessageId(messageId);
+        if (!m_latestRemoveNotifications.contains(modestMessageId)) {
+            if (m_latestRemoveNotifications.count() > 10) {
+                // Remove oldest notification from the beginning of the list
+                m_latestRemoveNotifications.removeFirst();
+            }
+            // Append new notification
+            m_latestRemoveNotifications.append(modestMessageId);
         } else {
-            // Remove the old notification for handled message
-            m_latestNotifications.removeAt(index);
-
-            // Append new notification for handled message
-            EmailMessageNotification newNotification;
-            newNotification.messageId = messageId.toString();
-            newNotification.event = notificationType;
-            m_latestNotifications.append(newNotification);
+            return;
         }
     }
 
@@ -2159,6 +2269,7 @@ void ModestEngine::notification(const QMessageId& messageId, NotificationType no
             }
 
             message = messageFromModestMessage(modestMessage);
+            realMessageId =message.id();
             messageRetrieved = true;
         }
 
@@ -2178,11 +2289,11 @@ void ModestEngine::notification(const QMessageId& messageId, NotificationType no
 
     if (matchingFilters.count() > 0) {
         if (notificationType == ModestEngine::Added) {
-            m_messageStore->messageNotification(QMessageStorePrivate::Added, messageId, matchingFilters);
+            m_messageStore->messageNotification(QMessageStorePrivate::Added, realMessageId, matchingFilters);
         } else if (notificationType == ModestEngine::Updated) {
-            m_messageStore->messageNotification(QMessageStorePrivate::Updated, messageId, matchingFilters);
+            m_messageStore->messageNotification(QMessageStorePrivate::Updated, realMessageId, matchingFilters);
         } else if (notificationType == ModestEngine::Removed) {
-            m_messageStore->messageNotification(QMessageStorePrivate::Removed, messageId, matchingFilters);
+            m_messageStore->messageNotification(QMessageStorePrivate::Removed, realMessageId, matchingFilters);
         }
     }
 }
