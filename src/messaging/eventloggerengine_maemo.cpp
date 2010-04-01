@@ -81,7 +81,7 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
         message.setType(QMessage::NoType);  // Other type, as exampele voice Call
     };
 
-    message.setParentAccountId(QMessageAccountId(QString("/y/Account/%1").arg(ev.fld_local_uid)));
+    message.setParentAccountId(QMessageAccountId(QString("y/Account/%1").arg(ev.fld_local_uid)));
 
     if (!ev.fld_is_read) {
         message.setStatus(QMessage::Read);
