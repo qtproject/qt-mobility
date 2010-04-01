@@ -234,15 +234,31 @@ void QContactManagerData::loadStaticFactories()
     }
 }
 
-static bool pathExists(const QDir& dir)
+class DirChecker
+{
+public:
+    DirChecker();
+    ~DirChecker();
+    bool checkDir(const QDir& dir);
+
+private:
+#if defined(Q_OS_SYMBIAN)
+    RFs rfs;
+#endif
+};
+
+#if defined(Q_OS_SYMBIAN)
+DirChecker::DirChecker()
+{
+    qt_symbian_throwIfError(rfs.Connect());
+}
+
+bool DirChecker::checkDir(const QDir& dir)
 {
     bool pathFound = false;
-#if defined(Q_OS_SYMBIAN)
     // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
     // Also, trying to cd() to a nonexistent directory causes *platsec* error. This does not cause functional harm, but should
     // nevertheless be changed to use native Symbian methods to avoid unnecessary platsec warnings (as per qpluginloader.cpp).
-    RFs rfs;
-    qt_symbian_throwIfError(rfs.Connect());
     // Use native Symbian code to check for directory existence, because checking
     // for files from under non-existent protected dir like E:/private/<uid> using
     // QDir::exists causes platform security violations on most apps.
@@ -254,12 +270,27 @@ static bool pathExists(const QDir& dir)
         // yes, the directory exists.
         pathFound = true;
     }
-    rfs.Close();
-#else
-    pathFound = dir.exists() || QFile::exists(dir.absolutePath());
-#endif
     return pathFound;
 }
+
+DirChecker::~DirChecker()
+{
+    rfs.Close();
+}
+#else
+DirChecker::DirChecker()
+{
+}
+
+DirChecker::~DirChecker()
+{
+}
+
+bool DirChecker::checkDir(const QDir &dir)
+{
+    return dir.exists();
+}
+#endif
 
 /* Plugin loader */
 void QContactManagerData::loadFactories()
@@ -287,13 +318,15 @@ void QContactManagerData::loadFactories()
             qDebug() << "Plugin paths:" << paths;
 #endif
 
+        DirChecker dirChecker;
+
         /* Enumerate our plugin paths */
         for (int i=0; i < paths.count(); i++) {
             if (processed.contains(paths.at(i)))
                 continue;
             processed.insert(paths.at(i));
             QDir pluginsDir(paths.at(i));
-            if (!pathExists(pluginsDir))
+            if (!dirChecker.checkDir(pluginsDir))
                 continue;
 
 #if defined(Q_OS_WIN)
@@ -307,17 +340,20 @@ void QContactManagerData::loadFactories()
             }
 #endif
 
-            if (pathExists(QDir(pluginsDir.path() + "/plugins/contacts"))) {
-                pluginsDir.cd("plugins/contacts");
+            QString subdir(QLatin1String("plugins/contacts"));
+            if (pluginsDir.path().endsWith(QLatin1String("/plugins"))
+                || pluginsDir.path().endsWith(QLatin1String("/plugins/")))
+                subdir = QLatin1String("contacts");
+
+            if (dirChecker.checkDir(QDir(pluginsDir.path() + QLatin1Char('/') + subdir))) {
+                pluginsDir.cd(subdir);
                 const QStringList& files = pluginsDir.entryList(QDir::Files);
 #if !defined QT_NO_DEBUG
                 if (showDebug)
                     qDebug() << "Looking for contacts plugins in" << pluginsDir.path() << files;
 #endif
                 for (int j=0; j < files.count(); j++) {
-                    QString pluginFile = pluginsDir.absoluteFilePath(files.at(j));
-                    if (pathExists(pluginFile))
-                        plugins << pluginFile;
+                    plugins <<  pluginsDir.absoluteFilePath(files.at(j));
                 }
             }
         }
