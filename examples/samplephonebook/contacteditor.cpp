@@ -57,17 +57,33 @@ ContactEditor::ContactEditor(QWidget *parent)
     m_avatarBtn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(m_avatarBtn, SIGNAL(clicked()), this, SLOT(avatarClicked()));
 
+
     QFormLayout *detailsLayout = new QFormLayout;
-    detailsLayout->addRow(new QLabel(tr("Name"), this));
-    detailsLayout->addRow(m_nameEdit);
-    detailsLayout->addRow(new QLabel(tr("Phone"), this));
-    detailsLayout->addRow(m_phoneEdit);
-    detailsLayout->addRow(new QLabel(tr("Email"), this));
-    detailsLayout->addRow(m_emailEdit);
-    detailsLayout->addRow(new QLabel(tr("Address"), this));
-    detailsLayout->addRow(m_addrEdit);
-    detailsLayout->addRow(new QLabel(tr("Avatar"), this));
-    detailsLayout->addRow(m_avatarBtn);
+    QLabel *nameLabel = new QLabel(tr("Name"), this);
+    QLabel *phoneLabel = new QLabel(tr("Phone"), this);
+    QLabel *emailLabel = new QLabel(tr("Email"), this);
+    QLabel *addressLabel = new QLabel(tr("Address"), this);
+    QLabel *avatarLabel = new QLabel(tr("Avatar"), this);
+    if (QApplication::desktop()->availableGeometry().width() < 360) {
+        // Narrow screen: put label on separate line to textbox
+        detailsLayout->addRow(nameLabel);
+        detailsLayout->addRow(m_nameEdit);
+        detailsLayout->addRow(phoneLabel);
+        detailsLayout->addRow(m_phoneEdit);
+        detailsLayout->addRow(emailLabel);
+        detailsLayout->addRow(m_emailEdit);
+        detailsLayout->addRow(addressLabel);
+        detailsLayout->addRow(m_addrEdit);
+        detailsLayout->addRow(avatarLabel);
+        detailsLayout->addRow(m_avatarBtn);
+    } else {
+        // Wide screen: put label on same line as textbox
+        detailsLayout->addRow(nameLabel, m_nameEdit);
+        detailsLayout->addRow(phoneLabel, m_phoneEdit);
+        detailsLayout->addRow(emailLabel, m_emailEdit);
+        detailsLayout->addRow(addressLabel, m_addrEdit);
+        detailsLayout->addRow(avatarLabel, m_avatarBtn);
+    }
     detailsLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
     detailsLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 

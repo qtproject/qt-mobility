@@ -571,11 +571,11 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
             // XXX in theory we can remove duplicates in a set filter
             while (it != filters.end()) {
                 QContactFilter canon = canonicalizedFilter(*it);
-                if (canon.type() == QContactFilter::DefaultFilter)
-                    return QContactFilter();
-                if (canon.type() == QContactFilter::InvalidFilter)
+                if (canon.type() == QContactFilter::DefaultFilter) {
                     it = filters.erase(it);
-                else {
+                } else if (canon.type() == QContactFilter::InvalidFilter) {
+                    return QContactInvalidFilter();
+                } else {
                     *it = canon;
                     ++it;
                 }
@@ -593,18 +593,18 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
 
         case QContactFilter::UnionFilter:
         {
-            QContactIntersectionFilter f(filter);
+            QContactUnionFilter f(filter);
             QList<QContactFilter> filters = f.filters();
             QList<QContactFilter>::iterator it = filters.begin();
 
             // XXX in theory we can remove duplicates in a set filter
             while (it != filters.end()) {
                 QContactFilter canon = canonicalizedFilter(*it);
-                if (canon.type() == QContactFilter::InvalidFilter)
-                    return QContactInvalidFilter();
-                if (canon.type() == QContactFilter::DefaultFilter)
+                if (canon.type() == QContactFilter::InvalidFilter) {
                     it = filters.erase(it);
-                else {
+                } else if (canon.type() == QContactFilter::DefaultFilter) {
+                    return QContactFilter();
+                } else {
                     *it = canon;
                     ++it;
                 }
@@ -632,6 +632,9 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
         {
             QContactDetailRangeFilter f(filter);
             if (f.detailDefinitionName().isEmpty())
+                return QContactInvalidFilter();
+            if (f.minValue() == f.maxValue()
+                && f.rangeFlags() == (QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper))
                 return QContactInvalidFilter();
             if ((f.minValue().isNull() && f.maxValue().isNull()) || (f.minValue() == f.maxValue())) {
                 QContactDetailFilter df;
@@ -1443,8 +1446,6 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 }
 
 /*!
-  \fn bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-
   Adds the list of contacts given by \a contacts list to the database.
   Returns true if the contacts were saved successfully, otherwise false.
 
@@ -1463,10 +1464,15 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 
   \sa QContactManager::saveContact()
  */
+bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(contacts);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
 
 /*!
-  \fn bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
@@ -1492,6 +1498,13 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 
   \sa QContactManager::removeContact()
  */
+bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(contactIds);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
 
 /*!
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.

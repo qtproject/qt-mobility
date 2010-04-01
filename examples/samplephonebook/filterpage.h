@@ -80,9 +80,11 @@ private:
     QString m_name;
     QString m_phone;
     QString m_email;
+    QString m_address;
     QLineEdit *m_nameEdit;
     QLineEdit *m_phoneEdit;
     QLineEdit *m_emailEdit;
+    QLineEdit *m_addressEdit;
 
 #ifdef Q_OS_SYMBIAN
     QAction *m_filterBtn;
@@ -91,7 +93,6 @@ private:
     QPushButton *m_filterBtn;
     QPushButton *m_cancelBtn;
 #endif
-    QPushButton *m_clearBtn;
     QContactIntersectionFilter m_currentFilter;
 };
 

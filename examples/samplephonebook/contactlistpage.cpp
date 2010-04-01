@@ -91,15 +91,13 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
     }
     m_backendsCombo->addItems(availableManagers);
     connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
-    m_filterActiveLabel = new QLabel(tr("Inactive"));
+    m_filterActiveLabel = new QLabel(tr("Filter active"));
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-
-
 
     QVBoxLayout *bookLayout = new QVBoxLayout;
     QFormLayout *backendLayout = new QFormLayout;
     backendLayout->addRow(tr("Store:"), m_backendsCombo);
-    backendLayout->addRow(tr("Filter:"), m_filterActiveLabel);
+    backendLayout->addRow(m_filterActiveLabel);
     bookLayout->addLayout(backendLayout);
 
     m_contactsList = new QListWidget(this);
@@ -146,7 +144,7 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
         connect(filterAction, SIGNAL(triggered()), this, SLOT(filterClicked()));
         optionsMenu->addAction(filterAction);
         QAction* clearFilterAction = new QAction(tr("&Clear Filter"), this);
-        connect(clearFilterAction, SIGNAL(triggered()), this, SLOT(clearFilterClicked()));
+        connect(clearFilterAction, SIGNAL(triggered()), this, SIGNAL(clearFilter()));
         optionsMenu->addAction(clearFilterAction);
         optionsMenu->addSeparator();
 
@@ -208,14 +206,11 @@ void ContactListPage::backendSelected()
 
 void ContactListPage::rebuildList(const QContactFilter& filter)
 {
-    // first, check to see whether the filter does anything
-    if (filter == QContactFilter())
-        m_filterActiveLabel->setText(tr("Inactive"));
-    else
-        m_filterActiveLabel->setText(tr("Active"));
+    m_currentFilter = QContactManagerEngine::canonicalizedFilter(filter);
+
+    m_filterActiveLabel->setVisible(m_currentFilter != QContactFilter());
 
     QContact currContact;
-    m_currentFilter = filter;
     m_contactsList->clear();
     m_idToListIndex.clear();
     QList<QContactLocalId> contactIds = m_manager->contactIds(m_currentFilter);
@@ -246,15 +241,6 @@ void ContactListPage::filterClicked()
 {
     if (m_manager)
         emit showFilterPage(m_currentFilter);
-}
-
-void ContactListPage::clearFilterClicked()
-{
-    if (m_manager)
-        rebuildList(QContactFilter());
-
-    emit clearFilter();
-
 }
 
 void ContactListPage::deleteClicked()
