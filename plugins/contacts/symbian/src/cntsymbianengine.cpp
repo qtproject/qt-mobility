@@ -95,18 +95,6 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
     }
 }
 
-CntSymbianEngine::CntSymbianEngine(const CntSymbianEngine& other)
-    : QContactManagerEngine(),
-      m_dataBase(other.m_dataBase),
-      m_managerUri(other.m_managerUri),
-      m_transformContact(other.m_transformContact),
-      m_contactFilter(other.m_contactFilter),
-      m_contactSorter(other.m_contactSorter),
-      m_relationship(other.m_relationship),
-      m_displayLabel(other.m_displayLabel)
-{
-}
-
 CntSymbianEngine::~CntSymbianEngine()
 {
     delete m_contactFilter; // needs to be deleted before database
