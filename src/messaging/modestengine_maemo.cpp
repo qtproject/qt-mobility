@@ -52,6 +52,7 @@
 #include <QUrl>
 #include <QtDBus>
 #include <QFileSystemWatcher>
+#include <QTimer>
 
 #include <dbus/dbus.h>
 #include <QDebug>
@@ -1510,8 +1511,9 @@ bool ModestEngine::countMessages(QMessageService& messageService, const QMessage
     queryInfo.currentFilterListIndex = 0;
     queryInfo.handledFiltersCount = 0;
     queryInfo.isQuery = false;
+    queryInfo.returnWithSingleShot = false;
 
-    if (!queryAndFilterMessages(m_pendingMessageQueries[m_pendingMessageQueries.count()-1])) {
+    if (!startQueryingAndFilteringMessages(m_pendingMessageQueries[m_pendingMessageQueries.count()-1])) {
         QMessageServicePrivate::implementation(messageService)->setFinished(false);
         m_pendingMessageQueries.removeAt(m_pendingMessageQueries.count()-1);
         return false;
@@ -1538,8 +1540,9 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
     queryInfo.currentFilterListIndex = 0;
     queryInfo.handledFiltersCount = 0;
     queryInfo.isQuery = true;
+    queryInfo.returnWithSingleShot = false;
 
-    if (!queryAndFilterMessages(m_pendingMessageQueries[m_pendingMessageQueries.count()-1])) {
+    if (!startQueryingAndFilteringMessages(m_pendingMessageQueries[m_pendingMessageQueries.count()-1])) {
         QMessageServicePrivate::implementation(messageService)->setFinished(false);
         m_pendingMessageQueries.removeAt(m_pendingMessageQueries.count()-1);
         return false;
@@ -1548,28 +1551,64 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
     return true;
 }
 
+bool ModestEngine::startQueryingAndFilteringMessages(MessageQueryInfo &msgQueryInfo) const
+{
+    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(msgQueryInfo.filter);
+    if (pf->_filterList.count() == 0) {
+        if ((pf->_field == QMessageFilterPrivate::None) &&
+            (pf->_filterList.count() == 0) &&
+            (pf->_notFilter)) {
+            // There is only one filter: empty ~QMessageFilter()
+            // => return empty QMessageIdList
+            msgQueryInfo.ids.clear();
+            msgQueryInfo.returnWithSingleShot = true;
+            QTimer::singleShot(0, (ModestEngine*)this, SLOT(returnQueryResultsSlot()));
+            return true;
+        } else {
+            // One single filter to be handled
+            QMessageFilter newFilter;
+            QMessageFilterPrivate* pfNew = QMessageFilterPrivate::implementation(newFilter);
+            pfNew->_filterList.append(QMessageFilterPrivate::SortedMessageFilterList());
+            pfNew->_filterList[0] << msgQueryInfo.filter;
+            msgQueryInfo.filter = newFilter;
+        }
+    }
+
+    return queryAndFilterMessages(msgQueryInfo);
+}
+
+void ModestEngine::returnQueryResultsSlot()
+{
+    for (int i=m_pendingMessageQueries.count()-1; i >= 0; i--) {
+        if (m_pendingMessageQueries[i].returnWithSingleShot) {
+            if (m_pendingMessageQueries[i].isQuery) {
+                m_pendingMessageQueries[i].privateService->messagesFound(m_pendingMessageQueries[i].ids, true, true);
+            } else {
+                m_pendingMessageQueries[i].privateService->messagesCounted(m_pendingMessageQueries[i].ids.count());
+            }
+            m_pendingMessageQueries.removeAt(i);
+        }
+    }
+}
+
 bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
 {
     QStringList accountIds;
     QStringList folderUris;
-    QDateTime startDate;
-    QDateTime endDate;
+    QDateTime startTimeStamp;
+    QDateTime endTimeStamp;
+    QDateTime startReceptionTimeStamp;
+    QDateTime endReceptionTimeStamp;
 
-    QMessageFilterPrivate::SortedMessageFilterList filters;
     QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(msgQueryInfo.filter);
-    if (pf->_filterList.count() == 0) {
-        // One single filter to be handled
-        filters.append(msgQueryInfo.filter);
-    } else {
-        // Multiple filters to be handled
-        // Filters have been sorted into matrix of filters:
-        // - there is AND operation between every filter in one row
-        // - there is OR operation between every row
-        // => Every row can be handled individually
-        // => Final result set can be created by combining result sets
-        //    from individual row based queries
-        filters = pf->_filterList[msgQueryInfo.currentFilterListIndex];
-    }
+
+    // Filters have been sorted into matrix of filters:
+    // - there is AND operation between every filter in one row
+    // - there is OR operation between every row
+    // => Every row can be handled individually
+    // => Final result set can be created by combining result sets
+    //    from individual row based queries
+    QMessageFilterPrivate::SortedMessageFilterList filters = pf->_filterList[msgQueryInfo.currentFilterListIndex];
 
     msgQueryInfo.realAccountId = QString();
 
@@ -1580,8 +1619,8 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
         (pf->_filterList.count() == 0)) {
         if (pf->_notFilter) {
             // There is only one filter: empty ~QMessageFilter()
-            // => return empty QMessageIdList
-            msgQueryInfo.privateService->messagesFound(msgQueryInfo.ids, true, true);
+            // => this query results empty QMessageIdList
+            // => Skip to next query round
             int index = -1;
             for (int i=0; i < m_pendingMessageQueries.count(); i++) {
                 if (m_pendingMessageQueries[i].queryId == msgQueryInfo.queryId) {
@@ -1589,7 +1628,9 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
                     break;
                 }
             }
-            m_pendingMessageQueries.removeAt(index);
+            if (index >= 0) {
+                handleQueryFinished(index);
+            }
             return true;
         } else {
             // There is only one filter: empty QMessageFilter()
@@ -1659,6 +1700,19 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
         case QMessageFilterPrivate::Type:
             break;
         case QMessageFilterPrivate::StandardFolder:
+            if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
+                QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Equal) {
+                    QMessage::StandardFolder standardFolder = static_cast<QMessage::StandardFolder>(pf->_value.toInt());
+                    if (standardFolder == QMessage::SentFolder) {
+                        folderUris.append("sent");
+                        if (accountIds.count() == 0) {
+                            accountIds.append("local_folders");
+                        }
+                    }
+                    handled = true;
+                }
+            }
             break;
         case QMessageFilterPrivate::ParentAccountIdFilter:
             break;
@@ -1669,23 +1723,24 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
             if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (cmp == QMessageDataComparator::Equal) {
-                    endDate = pf->_value.toDateTime();
-                    startDate = pf->_value.toDateTime();
+                    endTimeStamp = pf->_value.toDateTime();
+                    startTimeStamp = pf->_value.toDateTime();
                     handled = true;
                 }
             }
             if (pf->_comparatorType == QMessageFilterPrivate::Relation) {
                 QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(pf->_comparatorValue));
                 if (cmp == QMessageDataComparator::LessThan) {
-                    endDate = pf->_value.toDateTime();
+                    endTimeStamp = pf->_value.toDateTime();
+                    handled = true;
                 } else if (cmp == QMessageDataComparator::LessThanEqual) {
-                    endDate = pf->_value.toDateTime();
+                    endTimeStamp = pf->_value.toDateTime();
                     handled = true;
                 } else if (cmp == QMessageDataComparator::GreaterThan) {
-                    startDate = pf->_value.toDateTime();
+                    startTimeStamp = pf->_value.toDateTime();
                     handled = true;
                 } if (cmp == QMessageDataComparator::GreaterThanEqual) {
-                    startDate = pf->_value.toDateTime();
+                    startTimeStamp = pf->_value.toDateTime();
                     handled = true;
                 }
             }
@@ -1696,23 +1751,24 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
             if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (cmp == QMessageDataComparator::Equal) {
-                    endDate = pf->_value.toDateTime();
-                    startDate = pf->_value.toDateTime();
+                    endReceptionTimeStamp = pf->_value.toDateTime();
+                    startReceptionTimeStamp = pf->_value.toDateTime();
                     handled = true;
                 }
             }
             if (pf->_comparatorType == QMessageFilterPrivate::Relation) {
                 QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(pf->_comparatorValue));
                 if (cmp == QMessageDataComparator::LessThan) {
-                    endDate = pf->_value.toDateTime();
+                    endReceptionTimeStamp = pf->_value.toDateTime();
+                    handled = true;
                 } else if (cmp == QMessageDataComparator::LessThanEqual) {
-                    endDate = pf->_value.toDateTime();
+                    endReceptionTimeStamp = pf->_value.toDateTime();
                     handled = true;
                 } else if (cmp == QMessageDataComparator::GreaterThan) {
-                    startDate = pf->_value.toDateTime();
+                    startReceptionTimeStamp = pf->_value.toDateTime();
                     handled = true;
                 } if (cmp == QMessageDataComparator::GreaterThanEqual) {
-                    startDate = pf->_value.toDateTime();
+                    startReceptionTimeStamp = pf->_value.toDateTime();
                     handled = true;
                 }
             }
@@ -1736,22 +1792,48 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
         handledFiltersCount++;
     }
 
-    msgQueryInfo.handledFiltersCount = handledFiltersCount;
+    msgQueryInfo.handledFiltersCount = 0; // Do filtering also for filters which has been handled above
 
-    return searchMessages(msgQueryInfo, accountIds, folderUris, startDate, endDate);
+    return searchMessages(msgQueryInfo, accountIds, folderUris, msgQueryInfo.body, startTimeStamp,
+                          endTimeStamp, startReceptionTimeStamp, endReceptionTimeStamp);
 }
 
 bool ModestEngine::searchMessages(MessageQueryInfo &msgQueryInfo, const QStringList& accountIds,
-                                  const QStringList& folderUris, const QDateTime& startDate,
-                                  const QDateTime& endDate) const
+                                  const QStringList& folderUris, const QString& body,
+                                  const QDateTime& startTimeStamp, const QDateTime& endTimeStamp,
+                                  const QDateTime& startReceptionTimeStamp, const QDateTime& endReceptionTimeStamp) const
 {
+    Q_UNUSED(body) //TODO: Body search
+
     qulonglong sDate = 0;
-    if (startDate.isValid()) {
-        sDate = startDate.toTime_t();
+    if (startTimeStamp.isValid() && startReceptionTimeStamp.isValid()) {
+        if (startTimeStamp < startReceptionTimeStamp) {
+            sDate = startTimeStamp.toTime_t();
+        } else {
+            sDate = startReceptionTimeStamp.toTime_t();
+        }
+    } else {
+        if (startTimeStamp.isValid()) {
+            sDate = startTimeStamp.toTime_t();
+        } else if (startReceptionTimeStamp.isValid()) {
+            sDate = startReceptionTimeStamp.toTime_t();
+        }
     }
+
+
     qulonglong eDate = 0;
-    if (endDate.isValid()) {
-        eDate = endDate.toTime_t();
+    if (endTimeStamp.isValid() && endReceptionTimeStamp.isValid()) {
+        if (endTimeStamp > endReceptionTimeStamp) {
+            eDate = endTimeStamp.toTime_t();
+        } else {
+            eDate = endReceptionTimeStamp.toTime_t();
+        }
+    } else {
+        if (endTimeStamp.isValid()) {
+            eDate = endTimeStamp.toTime_t();
+        } else if (endReceptionTimeStamp.isValid()) {
+            eDate = endReceptionTimeStamp.toTime_t();
+        }
     }
 
     if (m_pendingMessageQueries.count() == 1) {
@@ -1958,6 +2040,11 @@ void ModestEngine::searchMessagesHeadersFetchedSlot(QDBusMessage msg)
         return;
     }
 
+    handleQueryFinished(index);
+}
+
+void ModestEngine::handleQueryFinished(int index) const
+{
     MessageQueryInfo &queryInfo = m_pendingMessageQueries[index];
 
     queryInfo.currentFilterListIndex++;
@@ -2499,8 +2586,8 @@ QString ModestEngine::modestMessageIdFromMessageId(const QMessageId& messageId) 
 
 QMessageAccountId ModestEngine::accountIdFromModestAccountId(const QString& accountId) const
 {
-    // Just add "MO_" prefix to the beginning of id string
-    return QMessageAccountId("MO_"+accountId);
+    // Just add "MO_" prefix to the beginning of id string & escape created Id
+    return QMessageAccountId(escapeString("MO_"+accountId));
 }
 
 QMessageFolderId ModestEngine::folderIdFromModestFolderId(const QMessageAccountId& accountId,
