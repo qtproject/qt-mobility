@@ -453,7 +453,7 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
         QContactAction *currImpl = QContactManagerData::action(descriptors.at(i));
         for (int i = 0; i < d->m_details.size(); i++) {
             QContactDetail detail = d->m_details.at(i);
-            if (currImpl->supportsDetail(detail)) {
+            if (currImpl->isDetailSupported(detail, *this)) {
                 retn.append(detail);
                 break;
             }

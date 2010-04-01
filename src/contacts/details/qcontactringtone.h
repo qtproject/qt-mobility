@@ -55,10 +55,10 @@ class Q_CONTACTS_EXPORT QContactRingtone : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldAudioRingtoneUrl;
-    const char* FieldVideoRingtoneUrl;
-    const char* FieldVibrationRingtoneUrl;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldAudioRingtoneUrl;
+    static const QLatin1Constant FieldVideoRingtoneUrl;
+    static const QLatin1Constant FieldVibrationRingtoneUrl;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactRingtone, "Ringtone")
     Q_DECLARE_LATIN1_CONSTANT(FieldAudioRingtoneUrl, "AudioRingtoneUrl");

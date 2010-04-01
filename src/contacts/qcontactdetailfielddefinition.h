@@ -66,15 +66,6 @@ public:
     QVariantList allowableValues() const;
     void setAllowableValues(const QVariantList values);
 
-    /* Access constraint stuff to be removed wk 3 */
-    enum AccessConstraint {
-        NoConstraint = 0,
-        ReadOnly
-    };
-
-    QContactDetailFieldDefinition::AccessConstraint Q_DECL_DEPRECATED accessConstraint() const;
-    void Q_DECL_DEPRECATED setAccessConstraint(QContactDetailFieldDefinition::AccessConstraint constraint);
-
     bool operator==(const QContactDetailFieldDefinition& other) const;
     bool operator!=(const QContactDetailFieldDefinition& other) const;
 

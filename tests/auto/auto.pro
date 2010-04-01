@@ -80,7 +80,8 @@ contains(mobility_modules,contacts) {
             qcontactmanager \
             qcontactmanagerplugins \
             qcontactmanagerfiltering \
-            qcontactrelationship
+            qcontactrelationship \
+            qlatin1constant
 }
 
 contains(mobility_modules,versit) {

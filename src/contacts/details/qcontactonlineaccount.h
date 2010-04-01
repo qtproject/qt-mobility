@@ -56,27 +56,27 @@ class Q_CONTACTS_EXPORT QContactOnlineAccount : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldAccountUri;
-    const char* FieldServiceProvider;
-    const char* FieldCapabilities;
-    const char* FieldSubTypes;
-    const char* SubTypeSip;
-    const char* SubTypeSipVoip;
-    const char* SubTypeImpp;
-    const char* SubTypeVideoShare;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldAccountUri;
+    static const QLatin1Constant FieldServiceProvider;
+    static const QLatin1Constant FieldCapabilities;
+    static const QLatin1Constant FieldSubTypes;
+    static const QLatin1Constant SubTypeSip;
+    static const QLatin1Constant SubTypeSipVoip;
+    static const QLatin1Constant SubTypeImpp;
+    static const QLatin1Constant SubTypeVideoShare;
 
     // deprecated keys:
-    const char* FieldNickname;
-    const char* FieldStatusMessage;
-    const char* FieldPresence;
-    const char* PresenceAvailable;
-    const char* PresenceHidden;
-    const char* PresenceBusy;
-    const char* PresenceAway;
-    const char* PresenceExtendedAway;
-    const char* PresenceUnknown;
-    const char* PresenceOffline;
+    static const QLatin1Constant FieldNickname;
+    static const QLatin1Constant FieldStatusMessage;
+    static const QLatin1Constant FieldPresence;
+    static const QLatin1Constant PresenceAvailable;
+    static const QLatin1Constant PresenceHidden;
+    static const QLatin1Constant PresenceBusy;
+    static const QLatin1Constant PresenceAway;
+    static const QLatin1Constant PresenceExtendedAway;
+    static const QLatin1Constant PresenceUnknown;
+    static const QLatin1Constant PresenceOffline;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
     Q_DECLARE_LATIN1_CONSTANT(FieldAccountUri, "AccountUri");

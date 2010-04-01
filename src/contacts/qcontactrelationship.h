@@ -59,13 +59,13 @@ class Q_CONTACTS_EXPORT QContactRelationship
 {
 public:
 #ifdef Q_QDOC
-    const char* HasMember;
-    const char* Aggregates;
-    const char* Is;
-    const char* IsSameAs;
-    const char* HasAssistant;
-    const char* HasManager;
-    const char* HasSpouse;
+    static const QLatin1Constant HasMember;
+    static const QLatin1Constant Aggregates;
+    static const QLatin1Constant Is;
+    static const QLatin1Constant IsSameAs;
+    static const QLatin1Constant HasAssistant;
+    static const QLatin1Constant HasManager;
+    static const QLatin1Constant HasSpouse;
 #else
     Q_DECLARE_LATIN1_CONSTANT(HasMember, "HasMember");
     Q_DECLARE_LATIN1_CONSTANT(Aggregates, "Aggregates");

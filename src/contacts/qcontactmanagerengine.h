@@ -92,7 +92,7 @@ public:
     virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) = 0;
 
     /* Return a pruned or modified contact which is valid and can be saved in the backend */
-    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error);
+    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error) const = 0;
 
     /* Synthesize the display label of a contact */
     virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const = 0;
@@ -169,7 +169,7 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QContactDetail* detail, QContactDetail::AccessConstraints constraints);
-    static QContact setContactDisplayLabel(const QString& displayLabel, const QContact& contact);
+    static void setContactDisplayLabel(QContact* contact, const QString& displayLabel);
     static void setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships);
 
     /* Helper functions */

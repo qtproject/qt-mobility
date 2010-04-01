@@ -56,19 +56,19 @@ class Q_CONTACTS_EXPORT QContactAvatar : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldImageUrl;
-    const char* FieldVideoUrl;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldImageUrl;
+    static const QLatin1Constant FieldVideoUrl;
 
     // deprecated keys:
-    const char* FieldAvatar;
-    const char* FieldAvatarPixmap;
-    const char* FieldSubType;
-    const char* SubTypeImage;
-    const char* SubTypeVideo;
-    const char* SubTypeAudioRingtone;
-    const char* SubTypeVideoRingtone;
-    const char* SubTypeTexturedMesh;
+    static const QLatin1Constant FieldAvatar;
+    static const QLatin1Constant FieldAvatarPixmap;
+    static const QLatin1Constant FieldSubType;
+    static const QLatin1Constant SubTypeImage;
+    static const QLatin1Constant SubTypeVideo;
+    static const QLatin1Constant SubTypeAudioRingtone;
+    static const QLatin1Constant SubTypeVideoRingtone;
+    static const QLatin1Constant SubTypeTexturedMesh;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
     Q_DECLARE_LATIN1_CONSTANT(FieldImageUrl, "ImageUrl");
