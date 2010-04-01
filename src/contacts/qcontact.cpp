@@ -231,7 +231,8 @@ void QContact::setId(const QContactId& id)
     d->m_id = id;
 }
 
-/*! Returns the first detail stored in the contact which is of the given \a definitionName */
+/*! Returns the first detail stored in the contact which is of the given \a definitionName
+*/
 QContactDetail QContact::detail(const QString& definitionName) const
 {
     // build the sub-list of matching details.
@@ -245,7 +246,14 @@ QContactDetail QContact::detail(const QString& definitionName) const
     return QContactDetail();
 }
 
-/*! Returns a list of details of the given \a definitionName */
+/*! Returns a list of details of the given \a definitionName
+    The definitionName string can be determined by the DefinitionName attribute
+    of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
+    requesting a list of all the definition names using
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
+    asynchronous \l
+    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.
+*/
 QList<QContactDetail> QContact::details(const QString& definitionName) const
 {
     // build the sub-list of matching details.
@@ -266,7 +274,14 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     return sublist;
 }
 
-/*! Returns a list of details of the given \a definitionName, \a fieldName and field \a value*/
+/*! Returns a list of details of the given \a definitionName, \a fieldName and field \a value
+    The definitionName string can be determined by the DefinitionName attribute
+    of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
+    requesting a list of all the definition names using
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
+    asynchronous \l
+    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.
+*/
 QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
 {
     // build the sub-list of matching details.
