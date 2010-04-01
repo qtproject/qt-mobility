@@ -98,8 +98,8 @@ of the following functions:
 \list
   \o contactIds(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
   \o contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
-  \o contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QStringList& definitionRestrictions = QStringList()) const
-  \o contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QStringList& definitionRestrictions = QStringList()) const
+  \o contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const
+  \o contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const
   \o saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap)
   \o removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
 \endlist

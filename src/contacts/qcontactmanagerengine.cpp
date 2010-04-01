@@ -65,6 +65,7 @@ QTM_BEGIN_NAMESPACE
   \preliminary
   \brief The QContactManagerEngine class provides the interface for all
   implementations of the contact manager backend functionality.
+  \ingroup contacts-backends
 
   Instances of this class are usually provided by a
   \l QContactManagerEngineFactory, which is loaded from a plugin.
@@ -83,19 +84,6 @@ QTM_BEGIN_NAMESPACE
   \fn QContactManagerEngine::QContactManagerEngine()
 
   A default, empty constructor.
- */
-
-/*!
-  \fn QContactManagerEngine::deref()
-
-  Notifies the engine that it is no longer required.  If this
-  engine can not be shared between managers, it is safe for the
-  engine to delete itself in this function.
-
-  If the engine implementation can be shared, this function can use a
-  reference count and track lifetime that way.  The factory that
-  returns an instance of this engine should increment the reference
-  count in this case.
  */
 
 /*!
@@ -261,7 +249,7 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
   Returns the contact in the database identified by \a contactId.
 
   If the contact does not exist, an empty, default constructed QContact will be returned,
-  and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
+  and the \a error will be set to  \c QContactManager::DoesNotExistError.
 
   Any operation error which occurs will be saved in \a error.
 
@@ -350,14 +338,14 @@ bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relat
 
 /*!
   Saves the given \a relationship in the database.  If the relationship already exists in the database, this function will
-  return \c false and the error will be set to \c QContactManager::AlreadyExistsError.
-  If the relationship is saved successfully, this function will return \c true and error will be set
+  return \c false and the \a error will be set to \c QContactManager::AlreadyExistsError.
+  If the relationship is saved successfully, this function will return \c true and \a error will be set
   to \c QContactManager::NoError.  Note that relationships cannot be updated directly using this function; in order
   to update a relationship, you must remove the old relationship, make the required modifications, and then save it.
 
   The given relationship is invalid if it is circular (the first contact is the second contact), or
   if it references a non-existent local contact (either the first or second contact).  If the given \a relationship is invalid,
-  the function will return \c false and the error will be set to \c QContactManager::InvalidRelationshipError.
+  the function will return \c false and the \a error will be set to \c QContactManager::InvalidRelationshipError.
 
   The default implementation of this function converts the argument into a call to saveRelationships.
  */
@@ -384,8 +372,8 @@ bool QContactManagerEngine::saveRelationship(QContactRelationship *relationship,
 
 /*!
   Removes the given \a relationship from the manager.  If the relationship exists in the manager, the relationship
-  will be removed, the error will be set to \c QContactManager::NoError and this function will return true.  If no such
-  relationship exists in the manager, the error will be set to \c QContactManager::DoesNotExistError and this function
+  will be removed, the \a error will be set to \c QContactManager::NoError and this function will return true.  If no such
+  relationship exists in the manager, the \a error will be set to \c QContactManager::DoesNotExistError and this function
   will return false.
 
   The default implementation of this function converts the argument into a call to removeRelationships
@@ -521,7 +509,7 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 
   Some of the following transformations may be applied:
   \list
-   \o any QContactActionFilters are transformed into the corresponding
+   \o Any QContactActionFilters are transformed into the corresponding
      QContactFilters returned by matching actions
    \o Any QContactInvalidFilters contained in a union filter will be removed
    \o Any default QContactFilters contained in an intersection filter will be removed
@@ -535,7 +523,7 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
    \o An intersection or union filter with a single entry will be replaced by that entry
    \o A QContactDetailFilter or QContactDetailRangeFilter with no definition name will be replaced with a QContactInvalidFilter
    \o A QContactDetailRangeFilter with no range specified will be converted to a QContactDetailFilter
-   \endlist
+  \endlist
 */
 QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &filter)
 {
@@ -605,7 +593,7 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
 
         case QContactFilter::UnionFilter:
         {
-            QContactIntersectionFilter f(filter);
+            QContactUnionFilter f(filter);
             QList<QContactFilter> filters = f.filters();
             QList<QContactFilter>::iterator it = filters.begin();
 
@@ -1395,7 +1383,14 @@ void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, Q
 /*!
   Adds the given \a contact to the database if \a contact has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero.
+  this manager and a local id of zero, otherwise updates the contact in
+  the database which has the same id to be the given \a contact.
+  If the id is non-zero but does not identify any contact stored in the
+  manager, the function will return false and \a error will be set to
+  \c QContactManager::DoesNotExistError.
+
+  Returns true if the save operation completed successfully, otherwise
+  returns false.  Any error which occurs will be saved in \a error.
 
   The default implementation will convert this into a call to saveContacts.
 
@@ -1428,6 +1423,8 @@ bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Erro
   Returns true if the contact was removed successfully, otherwise
   returns false.
 
+  Any error which occurs will be saved in \a error.
+
   The default implementation will convert this into a call to removeContacts.
  */
 bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
@@ -1446,8 +1443,6 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 }
 
 /*!
-  \fn bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-
   Adds the list of contacts given by \a contacts list to the database.
   Returns true if the contacts were saved successfully, otherwise false.
 
@@ -1466,10 +1461,15 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 
   \sa QContactManager::saveContact()
  */
+bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(contacts);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
 
 /*!
-  \fn bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
@@ -1495,17 +1495,21 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 
   \sa QContactManager::removeContact()
  */
+bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(contactIds);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
 
 /*!
-  \preliminary
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
   The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships
   in the contact are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.  Any error which occurs will be saved to \a error.
-
-  This function is preliminary and the behaviour is subject to change!
  */
-QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error* error)
+QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error* error) const
 {
     QContact conforming;
     QContactManager::Error tempError;

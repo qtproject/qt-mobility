@@ -277,7 +277,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldTimestamp, "Timestamp");
 Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldNickname, "Nickname");
 
 /*!
-   \variable QContactPresence::FieldPresence
+   \variable QContactPresence::FieldPresenceState
 
    The constant key for which the presence state value is stored in details
    of the QContactPresence typel.
@@ -407,7 +407,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldTimestamp, "Timestamp");
 Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldNickname, "Nickname");
 
 /*!
-   \variable QContactGlobalPresence::FieldPresence
+   \variable QContactGlobalPresence::FieldPresenceState
 
    The constant key for which the presence state value is stored in details
    of the QContactGlobalPresence typel.
@@ -1552,7 +1552,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-  \fn QContactAvatar::imageUrl(const QUrl& imageUrl)
+  \fn QContactAvatar::imageUrl() const
   Returns the url of an avatar image associated with the contact
  */
 
@@ -1562,13 +1562,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
  */
 
 /*!
-  \fn QContactAvatar::videoUrl(const QUrl& videoUrl)
+  \fn QContactAvatar::videoUrl() const
   Returns the url of an avatar video associated with the contact
  */
 
 /*!
   \fn QContactAvatar::setVideoUrl(const QUrl& videoUrl)
-  Sets the url of an avatar video associated with the contact to \a imageUrl
+  Sets the url of an avatar video associated with the contact to \a videoUrl
  */
 
 /*!
@@ -2024,6 +2024,16 @@ void QContactAvatar::setSubType(const QString& subtype)
  */
 
 /*!
+  \fn QContactThumbnail::thumbnail() const
+  Returns the thumbnail image of the contact
+ */
+
+/*!
+  \fn QContactThumbnail::setThumbnail(const QImage& thumbnail)
+  Sets the thumbnail image of the contact to be \a thumbnail
+ */
+
+/*!
    \fn QContactTimestamp::created() const
    Returns the creation timestamp saved in this detail.
  */
@@ -2375,6 +2385,20 @@ QString QContactOnlineAccount::statusMessage() const
  */
 
 /*!
+  \enum QContactPresence::PresenceState
+
+  This enum defines the possible presence states supported by the default schema.
+
+  \value PresenceUnknown Signifies that the presence state of the contact is not currently known
+  \value PresenceAvailable Signifies that the contact is available
+  \value PresenceHidden Signifies that the contact is hidden
+  \value PresenceBusy Signifies that the contact is busy
+  \value PresenceAway Signifies that the contact is away
+  \value PresenceExtendedAway Signifies that the contact is away for an extended period of time
+  \value PresenceOffline Signifies that the contact is offline
+ */
+
+/*!
    \fn QContactPresence::setPresenceState(QContactPresence::PresenceState presenceState)
 
    Sets the presence state of the online account according to the presence
@@ -2391,9 +2415,10 @@ QString QContactOnlineAccount::statusMessage() const
 /*!
    \fn QContactPresence::setPresenceStateText(const QString& presenceStateText)
 
-   Sets the text corresponding to the presence state.  This function is generally
-   called by presence providers to allow custom naming of states, or to allow
-   finer grained state reporting than is provided by the presence state API.
+   Sets the text corresponding to the presence state to \a presenceStateText.
+   This function is generally called by presence providers to allow custom
+   naming of states, or to allow finer grained state reporting than is
+   provided by the presence state API.
  */
 
 /*!
@@ -2406,7 +2431,7 @@ QString QContactOnlineAccount::statusMessage() const
   \fn QContactPresence::setCustomMessage(const QString& customMessage)
 
    Sets the custom status message from the contact for the online account
-   about which this detail stores presence information, to \a statusMessage.
+   about which this detail stores presence information, to \a customMessage.
  */
 
 /*!
@@ -2477,9 +2502,10 @@ QString QContactOnlineAccount::statusMessage() const
 /*!
    \fn QContactGlobalPresence::setPresenceStateText(const QString& presenceStateText)
 
-   Sets the text corresponding to the presence state.  This function is generally
-   called by presence providers to allow custom naming of states, or to allow
-   finer grained state reporting than is provided by the presence state API.
+   Sets the text corresponding to the presence state to \a presenceStateText.
+   This function is generally called by presence providers to allow custom
+   naming of states, or to allow finer grained state reporting than is
+   provided by the presence state API.
  */
 
 /*!
@@ -2492,7 +2518,7 @@ QString QContactOnlineAccount::statusMessage() const
   \fn QContactGlobalPresence::setCustomMessage(const QString& customMessage)
 
    Sets the custom status message from the contact for the aggregate presence
-   detail, to \a statusMessage.
+   detail, to \a customMessage.
  */
 
 /*!

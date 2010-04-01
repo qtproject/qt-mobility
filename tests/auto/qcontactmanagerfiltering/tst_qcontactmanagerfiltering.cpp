@@ -3178,7 +3178,29 @@ void tst_QContactManagerFiltering::dumpContacts()
 }
 
 /* Static actions for testing matching */
-class QIntegerAction : public QContactAction
+
+class DummyAction : public QContactAction
+{
+public:
+    QVariantMap metaData() const {return QVariantMap();}
+
+    bool invokeAction(const QContact&, const QContactDetail&, const QVariantMap&)
+    {
+        // Well, do something
+        emit stateChanged(QContactAction::FinishedState);
+        return true;
+    }
+
+    QVariantMap results() const
+    {
+        return QVariantMap();
+    }
+
+    State state() const {return QContactAction::FinishedState;}
+
+};
+
+class QIntegerAction : public DummyAction
 {
     Q_OBJECT
 
@@ -3187,8 +3209,6 @@ public:
     ~QIntegerAction() {}
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "IntegerCo", 5); }
-    QVariantMap metadata() const {return QVariantMap();}
-    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -3198,28 +3218,19 @@ public:
         df.setValue(value);
         return df;
     }
-    bool supportsDetail(const QContactDetail& detail) const
+    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
     {
         return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Integer").first
                 && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Integer").second).isNull();
     }
-
-    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    QList<QContactDetail> supportedDetails(const QContact& contact) const
     {
-        Q_UNUSED(contact);
-        Q_UNUSED(detail);
-        // Well, do something
-        emit progress(QContactAction::FinishedState, QVariantMap());
-    }
-
-    QVariantMap result() const
-    {
-        return QVariantMap();
+        return contact.details(defAndFieldNamesForTypeForActions.value("Integer").first);
     }
 };
 
 /* Static actions for testing matching */
-class QPhoneNumberAction : public QContactAction
+class QPhoneNumberAction : public DummyAction
 {
     Q_OBJECT
 
@@ -3228,8 +3239,6 @@ public:
     ~QPhoneNumberAction() {}
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4); }
-    QVariantMap metadata() const {return QVariantMap();}
-    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -3238,28 +3247,19 @@ public:
         df.setValue(value);
         return df;
     }
-    bool supportsDetail(const QContactDetail& detail) const
+    bool isDetailSupported(const QContactDetail& detail, const QContact&) const
     {
         return detail.definitionName() == QContactPhoneNumber::DefinitionName
                 && !detail.variantValue(QContactPhoneNumber::FieldNumber).isNull();
     }
-
-    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    QList<QContactDetail> supportedDetails(const QContact& contact) const
     {
-        Q_UNUSED(contact);
-        Q_UNUSED(detail);
-        // Well, do something
-        emit progress(QContactAction::FinishedState, QVariantMap());
-    }
-
-    QVariantMap result() const
-    {
-        return QVariantMap();
+        return contact.details(QContactPhoneNumber::DefinitionName);
     }
 };
 
 /* Static actions for testing matching */
-class QDateAction : public QContactAction
+class QDateAction : public DummyAction
 {
     Q_OBJECT
 
@@ -3268,8 +3268,6 @@ public:
     ~QDateAction() {}
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Date", "DateCo", 9); }
-    QVariantMap metadata() const {return QVariantMap();}
-    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -3279,27 +3277,19 @@ public:
         df.setValue(value);
         return df;
     }
-    bool supportsDetail(const QContactDetail& detail) const
+
+    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
     {
         return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Date").first
                 && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Date").second).isNull();
     }
-
-    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    QList<QContactDetail> supportedDetails(const QContact& contact) const
     {
-        Q_UNUSED(contact);
-        Q_UNUSED(detail);
-        // Well, do something
-        emit progress(QContactAction::FinishedState, QVariantMap());
-    }
-
-    QVariantMap result() const
-    {
-        return QVariantMap();
+        return contact.details(defAndFieldNamesForTypeForActions.value("Date").first);
     }
 };
 
-class QNumberAction : public QContactAction
+class QNumberAction : public DummyAction
 {
     Q_OBJECT
 
@@ -3308,8 +3298,6 @@ public:
     ~QNumberAction() {}
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "NumberCo", 42); }
-    QVariantMap metadata() const {return QVariantMap();}
-    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -3326,7 +3314,8 @@ public:
         /* We like either doubles or integers */
         return df | df2;
     }
-    bool supportsDetail(const QContactDetail& detail) const
+
+    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
     {
         if (detail.definitionName() == defAndFieldNamesForTypeForActions.value("Double").first
                 && !detail.variantValue(defAndFieldNamesForTypeForActions.value("Double").second).isNull()) {
@@ -3340,22 +3329,15 @@ public:
 
         return false;
     }
-
-    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    QList<QContactDetail> supportedDetails(const QContact& contact) const
     {
-        Q_UNUSED(contact);
-        Q_UNUSED(detail);
-        // Well, do something
-        emit progress(QContactAction::FinishedState, QVariantMap());
-    }
-
-    QVariantMap result() const
-    {
-        return QVariantMap();
+        QList<QContactDetail> retn = contact.details(defAndFieldNamesForTypeForActions.value("Integer").first);
+        retn.append(contact.details(defAndFieldNamesForTypeForActions.value("Double").first));
+        return retn;
     }
 };
 
-class QBooleanAction : public QContactAction
+class QBooleanAction : public DummyAction
 {
     Q_OBJECT
 
@@ -3364,8 +3346,6 @@ public:
     ~QBooleanAction() {}
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Boolean", "BooleanCo", 3); }
-    QVariantMap metadata() const {return QVariantMap();}
-    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -3380,27 +3360,18 @@ public:
             return QContactInvalidFilter();
         }
     }
-    bool supportsDetail(const QContactDetail& detail) const
+    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
     {
         return detail.definitionName() == defAndFieldNamesForTypeForActions.value("Bool").first
                 && (detail.value<bool>(defAndFieldNamesForTypeForActions.value("Bool").second) == true);
     }
-
-    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail())
+    QList<QContactDetail> supportedDetails(const QContact& contact) const
     {
-        Q_UNUSED(contact);
-        Q_UNUSED(detail);
-        // Well, do something
-        emit progress(QContactAction::FinishedState, QVariantMap());
-    }
-
-    QVariantMap result() const
-    {
-        return QVariantMap();
+        return contact.details(defAndFieldNamesForTypeForActions.value("Bool").first);
     }
 };
 
-class RecursiveAction : public QContactAction
+class RecursiveAction : public DummyAction
 {
     Q_OBJECT
 
@@ -3409,8 +3380,6 @@ public:
     ~RecursiveAction() {}
 
     QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Recursive", "RecursiveCo", 3); }
-    QVariantMap metadata() const {return QVariantMap();}
-    QVariantMap metaData() const {return QVariantMap();}
 
     QContactFilter contactFilter(const QVariant& value) const
     {
@@ -3421,18 +3390,13 @@ public:
         af.setValue(value);
         return af;
     }
-    bool supportsDetail(const QContactDetail&) const
+    bool isDetailSupported(const QContactDetail&, const QContact&) const
     {
         return false;
     }
-    void invokeAction(const QContact&, const QContactDetail&)
+    QList<QContactDetail> supportedDetails(const QContact&) const
     {
-        emit progress(QContactAction::FinishedState, QVariantMap());
-    }
-
-    QVariantMap result() const
-    {
-        return QVariantMap();
+        return QList<QContactDetail>();
     }
 };
 

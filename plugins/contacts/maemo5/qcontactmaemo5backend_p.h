@@ -137,6 +137,8 @@ class QContactMaemo5Engine : public QContactManagerEngine
     // XXX TODO: FIXME - these are pure virtual and so MUST be implemented by the backend.  Stubs here.
     QMap<QString, QString> managerParameters() const {return QMap<QString,QString>();}
 
+    QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error =  QContactManager::NotSupportedError;return QContact();}
+
     bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
     bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
     bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}

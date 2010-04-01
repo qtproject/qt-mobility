@@ -88,17 +88,6 @@ public:
     void insertField(const QString& key, const QContactDetailFieldDefinition& field);
     void removeField(const QString& key);
 
-    /* Access constraints which may apply to details of a definition - to be removed week 3 */
-    enum AccessConstraint {
-        NoConstraint = 0,
-        ReadOnly,
-        CreateOnly
-    };
-
-    /* Accessor and mutator for access constraints on details of this definition */
-    QContactDetailDefinition::AccessConstraint Q_DECL_DEPRECATED accessConstraint() const;
-    void Q_DECL_DEPRECATED setAccessConstraint(const QContactDetailDefinition::AccessConstraint& constraint);
-
 private:
     QSharedDataPointer<QContactDetailDefinitionData> d;
 };

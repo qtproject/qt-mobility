@@ -49,22 +49,9 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactDetailFieldDefinition class provides a field in a QContactDetail.
  
   Encapsulates information about a particular datum which may be part of a
-  QContactDetail, including the type, allowable values and access constraints.
+  QContactDetail, including the type and allowable values.
  */
 
-/*!
- * \enum QContactDetailFieldDefinition::AccessConstraint
- *
- * \deprecated
- *
- * This enum defines the access constraints which may be set on fields of a detail definition in the store for which the definition is valid.
- * The constraint which applies to the definition takes precedence over a constraint which applies to a field of that definition.
- * For example, if a field has the \c QContactDetailFieldDefinition::NoConstraint constraint, but the detail definition from which the field came has
- * either the \c QContactDetailDefinition::ReadOnly or \c QContactDetailDefinition::CreateOnly constraint, then the field will be a read-only field.
- *
- * \value NoConstraint Fields with this access constraint set have no special access semantics associated with them.  Users can read, write, and otherwise modify such fields in any manner.
- * \value ReadOnly Fields with this access constraint set are dynamically modified by the backend.  Users cannot write values to fields of details of definitions with this access constraint set.
- */
 
 /*!
  * Constructs a new field with no constraints and an invalid data type.
@@ -130,28 +117,6 @@ void QContactDetailFieldDefinition::setAllowableValues(const QVariantList values
     d->m_allowableValues = values;
 }
 
-/*!
- * Returns the access constraints which apply to this field
- *
- * \deprecated
- * Obsolete - use \l QContactDetail::accessConstraints() instead.
- */
-QContactDetailFieldDefinition::AccessConstraint QContactDetailFieldDefinition::accessConstraint() const
-{
-    return QContactDetailFieldDefinition::NoConstraint;
-}
-
-/*!
- * Sets the access constraints which apply to this field to \a constraint
- *
- * \deprecated
- *
- * This is no longer used.
- */
-void QContactDetailFieldDefinition::setAccessConstraint(QContactDetailFieldDefinition::AccessConstraint constraint)
-{
-    Q_UNUSED(constraint);
-}
 
 /*!
  * Returns true if the allowable values and data type of the \a other field are equal to those of this field

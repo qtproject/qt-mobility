@@ -152,7 +152,7 @@ bool QVersitContactImporterPrivate::importContact(
     }
 
     contact->setType(QContactType::TypeContact);
-    QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(contact));
+    QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(*contact));
     return true;
 }
 

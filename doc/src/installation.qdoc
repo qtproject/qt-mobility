@@ -75,7 +75,8 @@ these domains have dependencies and these are outlined below:
     \o N  
 \row
     \o Contacts
-    \o The Maemo 6 backend depends on \l {http://maemo.gitorious.org/maemo-af/libqttracker}{libqttracker}.
+    \o The Maemo 5 backend depends on \l {http://maemo.org/packages/view/libosso-abook/}{libosso-abook}.
+       The Maemo 6 backend depends on \l {http://maemo.gitorious.org/maemo-af/libqttracker}{libqttracker}.
        Other components offered by the Maemo 6 platform may be required in order to support the full functionality of the Maemo 6 backend.
     \o Y
     \o N

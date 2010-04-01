@@ -130,33 +130,8 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
     *error = QContactManager::NoError;
     QList<QContactLocalId> result;
     
-    
-    if (filter.type() == QContactFilter::RelationshipFilter)
-    {
-        QContactRelationshipFilter rf = static_cast<QContactRelationshipFilter>(filter);
-        // XXX enum changed classes - engine API will reflect this eventually
-        QList<QContactRelationship> relationshipsList = relationships(
-            rf.relationshipType(), rf.relatedContactId(), rf.relatedContactRole(), error);
-        if(*error == QContactManager::NoError) {
-            foreach(const QContactRelationship& r, relationshipsList) {
-                if(rf.relatedContactRole() == QContactRelationship::First) {
-                    result += r.second().localId();
-                } else if (rf.relatedContactRole() == QContactRelationship::Second) {
-                    result += r.first().localId();
-                } else if (rf.relatedContactRole() == QContactRelationship::Either) {
-                    result += r.first().localId();
-                    result += r.second().localId();
-                }
-            }
-            
-            //slow sorting until it's supported in SQL requests
-            result = slowSort(result, sortOrders, error);
-        }
-    }
-    else
-    {
-        bool filterSupported(true);
-        result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);
+    bool filterSupported(true);
+    result = m_contactFilter->contacts(filter, sortOrders, filterSupported, error);
             
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
     
@@ -183,7 +158,7 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
             }
         }
 #endif
-    }
+
     return result;
 }
 

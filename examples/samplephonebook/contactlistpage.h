@@ -54,6 +54,7 @@ class QPushButton;
 class QComboBox;
 class QLabel;
 class QLineEdit;
+class QMainWindow;
 QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -63,7 +64,7 @@ class ContactListPage : public QWidget
     Q_OBJECT
 
 public:
-    ContactListPage(QWidget *parent = 0);
+    ContactListPage(QMainWindow *mainWindow = 0, QWidget *parent = 0);
     ~ContactListPage();
 
     void rebuildList(const QContactFilter& filter);
@@ -72,10 +73,11 @@ signals:
     void showEditorPage(QContactLocalId contactId);
     void showFilterPage(const QContactFilter& filter);
     void managerChanged(QContactManager *manager);
+    void clearFilter();
 
 private slots:
     void backendSelected();
-    void addContactClicked();
+    void addClicked();
     void editClicked();
     void filterClicked();
     void deleteClicked();
@@ -89,6 +91,8 @@ private:
 
     QListWidget *m_contactsList;
 
+    // The main window that the page can add actions to
+    QMainWindow *m_mainWindow;
 
     // data
     QContactManager *m_manager;

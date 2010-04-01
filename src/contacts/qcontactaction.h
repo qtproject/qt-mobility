@@ -76,26 +76,29 @@ public:
     virtual QVariantMap metaData() const = 0;                               // label, icon etc - under discussion! - replaces the above
 
     virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
-    virtual bool supportsDetail(const QContactDetail& detail) const = 0;    // whether this implementation supports the given detail
-    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const;
+    virtual bool isDetailSupported(const QContactDetail &detail, const QContact &contact = QContact()) const = 0;
+    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const = 0;
 
     /* Initiate the asynchronous action on the given contact (and optionally detail) */
-    virtual void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail()) = 0;
+    virtual bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) = 0;
 
     /* The possible states of an action */
     enum State {
         InactiveState = 0,      // operation not yet started
-        AutonomousState,        // operation started, no further information available - name under discussion.
         ActiveState,            // operation started, not yet finished
         FinishedState,          // operation successfully completed
+        FinishedDetachedState,  // operation started, no further information available - name under discussion.
         FinishedWithErrorState  // operation finished, but error occurred
     };
 
-    /* Returns the most recently received result, or an invalid QVariantMap if no results received */
-    virtual QVariantMap result() const = 0;
+    virtual State state() const = 0;
+
+    /* Returns the most recently received result, or an empty QVariantMap if no results received */
+    virtual QVariantMap results() const = 0;
 
 Q_SIGNALS:
-    void progress(QContactAction::State state, const QVariantMap& result);
+    void stateChanged(QContactAction::State);
+    void resultsAvailable();
 };
 
 QTM_END_NAMESPACE
