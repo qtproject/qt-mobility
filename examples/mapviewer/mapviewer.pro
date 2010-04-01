@@ -1,26 +1,22 @@
-
-QT += xml network
-
+QT += xml \
+    network
 TARGET = MapViewer
-TEMPLATE = app thread
-
-
+TEMPLATE = app \
+    thread
 INCLUDEPATH += ../../src/global \
-                ../../src/location
-
+    ../../src/location
 SOURCES += main.cpp \
-        mainwindow.cpp
-        
-HEADERS  += mainwindow.h
-
-FORMS    += mainwindow.ui
-
+    mainwindow.cpp
+HEADERS += mainwindow.h
+FORMS += mainwindow.ui
 include(../examples.pri)
-
 CONFIG += mobility
 MOBILITY = location
-
-symbian: {
+symbian: { 
     MOBILITY += bearer
-    TARGET.CAPABILITY = Location NetworkServices ReadUserData WriteUserData
+    TARGET.CAPABILITY = Location \
+        NetworkServices \
+        ReadUserData \
+        WriteUserData
 }
+RESOURCES += images.qrc

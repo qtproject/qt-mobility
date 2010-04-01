@@ -114,6 +114,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(addMarker(bool)));
     
+    menuItem = new QAction(tr("Add icon marker here"), this);
+    popupMenu->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(addIconMarker(bool)));
+    
     menuItem = new QAction(tr(""), this);
     menuItem->setSeparator(true);
     popupMenu->addAction(menuItem);
@@ -177,6 +182,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(customContextMenuRequest(const QPoint&)));
+    
+    setWindowTitle(tr("Map Viewer Demo"));
     
     QTimer::singleShot(0, this, SLOT(delayedInit()));
 }
@@ -296,6 +303,15 @@ void MainWindow::setScheme(bool /*checked*/)
 void MainWindow::addMarker(bool /*checked*/)
 {
     QMapMarker* marker = new QMapMarker(lastClicked, QString::number(selectedMarkers.count() + 1));
+    mapView->addMapObject(marker);
+    selectedMarkers.append(marker);
+}
+
+void MainWindow::addIconMarker(bool /*checked*/)
+{
+    QMapMarker* marker = new QMapMarker(lastClicked, QString::number(selectedMarkers.count() + 1),
+                                            QFont("Arial", 6, QFont::Bold), QColor(Qt::black),
+                                            QPixmap(":/marker/house.png"));    
     mapView->addMapObject(marker);
     selectedMarkers.append(marker);
 }

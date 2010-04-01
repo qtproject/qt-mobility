@@ -85,6 +85,7 @@ private slots:
     void zoomLevelChanged(quint16 oldZoomLevel, quint16 newZoomLevel);
     void setScheme(bool checked);
     void addMarker(bool checked);
+    void addIconMarker(bool checked);
     void drawLine(bool checked);
     void drawRect(bool checked);
     void drawEllipse(bool checked);
