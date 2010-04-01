@@ -36,9 +36,11 @@ class EventLoggerEngine
 public:
 
     explicit EventLoggerEngine(QObject *parent = 0);
+    static EventLoggerEngine* instance();
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,const QMessageFilter &filter);
-    QMessage getMessage(const QMessageId& id);
+    QMessage message(const QMessageId& id);
+    QMessage eventToMessage(RTComElEvent & ev);
     void notification(int eventId, QString servive,QMessageStorePrivate::NotificationType notificationType);
     static void new_event_cb(RTComEl *el,int event_id,
                              const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
@@ -46,6 +48,9 @@ public:
     void newEvent(int event_id,
                   const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
                   const char *group_uid,const char *service);
+    QMessageIdList filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
+				      QString body, QMessageDataComparator::MatchFlags matchFlags);
+
 signals:
 
 public slots:
