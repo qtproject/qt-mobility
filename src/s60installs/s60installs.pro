@@ -148,27 +148,12 @@ symbian: {
                     "   \"$$EPOCROOT31\epoc32/release/armv5/urel/sensor_s60sensorapi.dll\" - \"!:\\sys\\bin\\sensor_s60sensorapi.dll\"" \
                     "   \"$$EPOCROOT31\epoc32/release/armv5/urel/sensors_generic.dll\" - \"!:\\sys\\bin\\sensors_generic.dll\"" \
                     "ENDIF"
-            } else {
-                sensors = \
-                    "IF package(0x1028315F)" \
-                    "   \"$$EPOCROOT50\epoc32/release/armv5/urel/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
-                    "ELSEIF package(0x102752AE)" \
-                    "   \"$$EPOCROOT32\epoc32/release/armv5/urel/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
-                    "ELSE" \
-                    "   \"$$EPOCROOT50\epoc32/release/armv5/urel/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
-                    "ENDIF"
             }
         } else {
             sensors = \
-                "IF package(0x1028315F)" \
-                "   \"$$EPOCROOT50\epoc32/release/armv5/urel/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
-                "ELSEIF package(0x102752AE)" \
-                "   \"$$EPOCROOT32\epoc32/release/armv5/urel/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
-                "ELSEIF package(0x102032BE)" \
+                "IF package(0x102032BE)" \
                 "   \"$$EPOCROOT31\epoc32/release/armv5/urel/sensor_s60sensorapi.dll\" - \"!:\\sys\\bin\\sensor_s60sensorapi.dll\"" \
                 "   \"$$EPOCROOT31\epoc32/release/armv5/urel/sensors_generic.dll\" - \"!:\\sys\\bin\\sensors_generic.dll\"" \
-                "ELSE" \
-                "   \"$$EPOCROOT50\epoc32/release/armv5/urel/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
                 "ENDIF"
         }
 
@@ -181,27 +166,12 @@ symbian: {
                     "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/sensor_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensor_s60sensorapi.qtplugin\"" \
                     "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/sensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_generic.qtplugin\"" \
                     "ENDIF"
-            } else {
-                pluginstubs += \
-                    "IF package(0x1028315F)" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
-                    "ELSEIF package(0x102752AE)" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
-                    "ELSE" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
-                    "ENDIF"
             }
         } else {
             pluginstubs += \
-                "IF package(0x1028315F)" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
-                "ELSEIF package(0x102752AE)" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
-                "ELSEIF package(0x102032BE)" \
+                "IF package(0x102032BE)" \
                 "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/sensor_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensor_s60sensorapi.qtplugin\"" \
                 "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/sensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_generic.qtplugin\"" \
-                "ELSE" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\"" \
                 "ENDIF"
         }
     }
