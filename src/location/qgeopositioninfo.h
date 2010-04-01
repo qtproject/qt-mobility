@@ -82,8 +82,8 @@ public:
 
     bool isValid() const;
 
-    void setDateTime(const QDateTime &dateTime);
-    QDateTime dateTime() const;
+    void setTimestamp(const QDateTime &timestamp);
+    QDateTime timestamp() const;
 
     void setCoordinate(const QGeoCoordinate &coordinate);
     QGeoCoordinate coordinate() const;
