@@ -89,6 +89,10 @@ QMapMarker::QMapMarker(const QGeoCoordinate& point,
         d->box.setHeight(MARKER_HEIGHT);
         d->box.setWidth(MARKER_WIDTH);
     }
+    else {
+        d->box.setHeight(d->icn.height());
+        d->box.setWidth(d->icn.width());
+    }
 }
 
 /*
@@ -111,6 +115,10 @@ QMapMarker::QMapMarker(QMapMarkerPrivate &dd, const QGeoCoordinate& point,
     if (d->icn.isNull()) {
         d->box.setHeight(MARKER_HEIGHT);
         d->box.setWidth(MARKER_WIDTH);
+    }
+    else {
+        d->box.setHeight(d->icn.height());
+        d->box.setWidth(d->icn.width());
     }
 }
 
@@ -168,6 +176,13 @@ void QMapMarker::compMapCoords()
         d->intersectingTiles.clear();
         compIntersectingTiles(d->box);
     }
+    else {
+        d->mapPt = d->mapView->geoToMap(d->pt);
+        d->box.moveLeft(d->mapPt.x() - (d->icn.width() / 2));
+        d->box.moveTop(d->mapPt.y() - (d->icn.height() - 1));
+        d->intersectingTiles.clear();
+        compIntersectingTiles(d->box);    
+    }
 }
 
 void QMapMarker::constructMarker(QPainter* painter, const QPointF& point)
@@ -196,6 +211,22 @@ void QMapMarker::constructMarker(QPainter* painter, const QPointF& point)
     }
 }
 
+void QMapMarker::constructIconMarker(QPainter* painter, const QPointF& point)
+{
+    Q_D(QMapMarker);
+
+    painter->drawPixmap(point, d->icn);
+    if (!d->txt.isNull()) {
+        painter->setFont(d->txtFont);
+        QPen pen(Qt::black);
+        pen.setWidth(2);
+        painter->setPen(pen);
+        pen.setColor(d->fColor);
+        painter->setPen(pen);        
+        painter->drawText(QRectF(point, point+QPoint(d->icn.width(),d->icn.height())), Qt::AlignCenter | Qt::TextWordWrap, d->txt);
+    }
+}
+
 void QMapMarker::paint(QPainter* painter, const QRectF& viewPort)
 {
     Q_D(QMapMarker);
@@ -203,23 +234,35 @@ void QMapMarker::paint(QPainter* painter, const QRectF& viewPort)
     if (!d->mapView)
         return;
 
+    QPen oldPen = painter->pen();
+    QBrush oldBrush = painter->brush();
     if (d->icn.isNull()) {
         quint64 mapWidth = d->mapView->mapWidth();
-        QPen oldPen = painter->pen();
-        QBrush oldBrush = painter->brush();
         constructMarker(painter, d->mapPt - viewPort.topLeft());
 
         //Is view port wrapping around date line?
-        if (viewPort.right() >= mapWidth)
-            constructMarker(painter, d->mapPt - viewPort.topLeft() + QPointF(mapWidth, 0));
+        qreal right = viewPort.right();
+        for(int i=1;right>=mapWidth;++i,right -= mapWidth)
+            constructMarker(painter, d->mapPt - viewPort.topLeft() + (QPointF(mapWidth, 0)*i));
         //Is marker spanning date line?
         if (d->box.right() >= mapWidth)
             constructMarker(painter, d->mapPt - viewPort.topLeft() - QPointF(mapWidth, 0));
-
-        painter->setPen(oldPen);
-        painter->setBrush(oldBrush);
     }
-    //TODO: map marker with provided icon
+    else {
+        quint64 mapWidth = d->mapView->mapWidth();
+        QPointF point(d->mapPt - viewPort.topLeft() - QPointF(d->icn.width()/2,d->icn.height())); 
+        constructIconMarker(painter, point);
+
+        //Is view port wrapping around date line?
+        qreal right = viewPort.right();
+        for(int i=1;right>=mapWidth;++i,right -= mapWidth)
+            constructIconMarker(painter, point + (QPointF(mapWidth, 0)*i));
+        //Is marker spanning date line?
+        if (d->box.right() >= mapWidth)
+            constructIconMarker(painter, point - QPointF(mapWidth, 0));
+    }
+    painter->setPen(oldPen);
+    painter->setBrush(oldBrush);
 }
 
 bool QMapMarker::intersects(const QRectF& tileRect) const
