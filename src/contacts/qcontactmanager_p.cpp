@@ -256,7 +256,7 @@ static bool pathExists(const QDir& dir)
     }
     rfs.Close();
 #else
-    pathFound = dir.exists();
+    pathFound = dir.exists() || QFile::exists(dir.absolutePath());
 #endif
     return pathFound;
 }
@@ -307,7 +307,8 @@ void QContactManagerData::loadFactories()
             }
 #endif
 
-            if (pathExists(QDir(pluginsDir.path() + "/plugins/contacts")) || pathExists(QDir(pluginsDir.path() + "/contacts")) || pathExists(QDir(pluginsDir.path() + "/../plugins/contacts"))) {
+            if (pathExists(QDir(pluginsDir.path() + "/plugins/contacts"))) {
+                pluginsDir.cd("plugins/contacts");
                 const QStringList& files = pluginsDir.entryList(QDir::Files);
 #if !defined QT_NO_DEBUG
                 if (showDebug)
