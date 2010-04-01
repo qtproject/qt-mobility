@@ -147,9 +147,8 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
 
     
     if (enginesToCall & EnginesToCallTelepathy) {
-     _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
-
-   }
+        _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
+    }
 
     if (enginesToCall & EnginesToCallModest) {
         if (ModestEngine::instance()->queryMessages(messageService, filter, body, matchFlags,
@@ -247,7 +246,6 @@ void QMessageServicePrivate::stateChanged(QMessageService::State state)
 
 void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)
 {
-  //  qDebug() << "QMessageServicePrivate::messagesFound";
     _pendingRequestCount--;
 
     if (!isFiltered) {
