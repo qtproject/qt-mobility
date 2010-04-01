@@ -2915,7 +2915,7 @@ ModestStringMap ModestEngine::getModestSenderInfo(QMessage &message)
         return ModestStringMap();
     }
 
-    senderInfo["account-name"] = modestAccountIdFromAccountId(accountId);
+    senderInfo["account-name"] = unescapeString(modestAccountIdFromAccountId(accountId));
 
     QMessageAccount messageAccount = account(accountId);
     QMessageAccountPrivate* privAccount = QMessageAccountPrivate::implementation(messageAccount);
