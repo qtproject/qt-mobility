@@ -58,6 +58,7 @@
 #include <emailinterfacefactory.h>
 #include <memailclientapi.h>
 #include <memailmessagesearch.h>
+#include <memailmessage.h>
 #include <emailinterfacefactory.h>
 
 
@@ -113,7 +114,6 @@ public:
     bool showMessage(const QMessageId &id);
     bool composeMessage(const QMessage &message);   
     QMessage message(const QMessageId& id) const;
-    bool storeEmail(QMessage &message);
     bool sendEmail(QMessage &message);
    
     bool retrieve(const QMessageId &messageId, const QMessageContentContainerId& id);
@@ -133,9 +133,8 @@ public:
 
 private:
     
-    void sendEmailL(QMessage &message);
     void updateEmailAccountsL() const;
-    
+    MEmailMessage* createFSMessageL(const QMessage &message);
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
     QMessageFolderIdList folderIdsByAccountIdL(const QMessageAccountId& accountId) const;
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;

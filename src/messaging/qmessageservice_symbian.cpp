@@ -105,7 +105,14 @@ bool QMessageServicePrivate::show(const QMessageId& id)
 
 bool QMessageServicePrivate::compose(const QMessage &message)
 {
-	return CMTMEngine::instance()->composeMessage(message);
+    if (SymbianHelpers::isFreestyleAccount(message.parentAccountId())) {
+    #ifdef FREESTYLEMAILUSED
+            return CFSEngine::instance()->composeMessage(message);
+    #else
+            return false;
+    #endif
+        } else
+            return CMTMEngine::instance()->composeMessage(message);
 }
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const

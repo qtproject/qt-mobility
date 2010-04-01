@@ -183,16 +183,213 @@ void CFSEngine::updateEmailAccountsL() const
     
 }
 
+MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
+{
+    TMailboxId mailboxId(removeFreestylePrefix(message.parentAccountId().toString()).toInt());
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+
+    MEmailMessage* fsMessage = mailbox->CreateDraftMessageL();
+    
+    switch (message.priority()) {
+        case QMessage::HighPriority:
+            fsMessage->SetFlag(EmailInterface::EFlag_Important);
+            fsMessage->ResetFlag(EmailInterface::EFlag_Low);
+            break;
+        case QMessage::NormalPriority:
+            fsMessage->ResetFlag(EmailInterface::EFlag_Important);
+            fsMessage->ResetFlag(EmailInterface::EFlag_Low);
+            break;
+        case QMessage::LowPriority:
+            fsMessage->SetFlag(EmailInterface::EFlag_Low);
+            fsMessage->ResetFlag(EmailInterface::EFlag_Important);
+            break;            
+        }
+        if (message.status() & QMessage::Read) {
+            fsMessage->SetFlag(EmailInterface::EFlag_Read);
+        } else {
+            fsMessage->ResetFlag(EmailInterface::EFlag_Read);
+        }
+
+    QList<QMessageAddress> toList(message.to());
+    if (toList.count() > 0) {
+        TPtrC16 receiver(KNullDesC);
+        QString qreceiver;
+        REmailAddressArray toAddress;
+        for (int i = 0; i < toList.size(); ++i) {
+            qreceiver = toList.at(i).addressee();
+            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            MEmailAddress* address = mailbox->AddressL();
+            address->SetAddressL(receiver);
+            toAddress.Append(address);
+        }
+        fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
+    }
+    
+    QList<QMessageAddress> ccList(message.cc());
+    if (ccList.count() > 0) {
+        TPtrC16 receiver(KNullDesC);
+        QString qreceiver;
+        REmailAddressArray ccAddress;
+        for (int i = 0; i < ccList.size(); ++i) {
+            qreceiver = ccList.at(i).addressee();
+            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            MEmailAddress* address = mailbox->AddressL();;
+            address->SetAddressL(receiver);
+            ccAddress.Append(address);
+        }
+        fsMessage->SetRecipientsL(MEmailAddress::ECc, ccAddress);
+    }
+        
+    QList<QMessageAddress> bccList(message.bcc());
+    if (bccList.count() > 0) {
+        TPtrC16 receiver(KNullDesC);
+        QString qreceiver;
+        REmailAddressArray bccAddress;
+        for (int i = 0; i < bccList.size(); ++i) {
+            qreceiver = bccList.at(i).addressee();
+            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            MEmailAddress* address = mailbox->AddressL();;
+            address->SetAddressL(receiver);
+            bccAddress.Append(address);
+        }
+        fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
+    }
+    if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
+        // Message contains only body (not attachments)
+        QString messageBody = message.textContent();
+        if (!messageBody.isEmpty()) {
+            MEmailMessageContent* content = fsMessage->ContentL();
+            MEmailTextContent* textContent = content->AsTextContentOrNull();
+            textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
+            // TODO:
+            }
+    } else {
+        // Message contains body and attachments
+        QMessageContentContainerIdList contentIds = message.contentIds();
+        foreach (QMessageContentContainerId id, contentIds){
+            QMessageContentContainer container = message.find(id);
+            QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
+            if (pPrivateContainer->_id == message.bodyId()) {
+                // ContentContainer is body
+                if (!container.textContent().isEmpty()) {
+                    MEmailMessageContent* content = fsMessage->ContentL();
+                    MEmailTextContent* textContent = content->AsTextContentOrNull();
+                    QByteArray type = container.contentType();
+                    QByteArray subType = container.contentSubType();
+                    if (type == "text" && subType == "plain") {
+                        textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                    }
+                    else if (type == "text" && subType == "html") {
+                        textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                    }
+                }
+            } else {
+                // ContentContainer is attachment
+                QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
+                // Replace Qt style path separator "/" with Symbian path separator "\"
+                filePath.replace(QByteArray("/"), QByteArray("\\"));
+                QString temp_path = QString(filePath);
+                TPtrC16 attachmentPath(KNullDesC);
+                attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
+                fsMessage->AddAttachmentL(attachmentPath);
+            }        
+        }
+    }
+    fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
+    fsMessage->SaveChangesL();
+    return fsMessage;
+}
+
 bool CFSEngine::addMessage(QMessage* message)
 {
-    bool retVal = false;   
-    return retVal;
+    MEmailMessage* fsMessage;
+    TRAPD(err, fsMessage = createFSMessageL(*message));
+    if (err != KErrNone)
+        return false;
+    else
+        return true;
 }
 
 bool CFSEngine::updateMessage(QMessage* message)
 {
-    bool retVal = false;   
-    return retVal;
+    TMailboxId mailboxId(removeFreestylePrefix(message->parentAccountId().toString()).toInt());
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+  
+    TMessageId messageId(message->id().toString().toInt(),
+                            message->parentFolderId().toString().toInt(), 
+                            mailboxId);
+    MEmailMessage* fsMessage = mailbox->MessageL(messageId);
+    
+    switch (message->priority()) {
+        case QMessage::HighPriority:
+            fsMessage->SetFlag(EmailInterface::EFlag_Important);
+            fsMessage->ResetFlag(EmailInterface::EFlag_Low);
+            break;
+        case QMessage::NormalPriority:
+            fsMessage->ResetFlag(EmailInterface::EFlag_Important);
+            fsMessage->ResetFlag(EmailInterface::EFlag_Low);
+            break;
+        case QMessage::LowPriority:
+            fsMessage->SetFlag(EmailInterface::EFlag_Low);
+            fsMessage->ResetFlag(EmailInterface::EFlag_Important);
+            break;            
+        }
+        if (message->status() & QMessage::Read) {
+            fsMessage->SetFlag(EmailInterface::EFlag_Read);
+        } else {
+            fsMessage->ResetFlag(EmailInterface::EFlag_Read);
+        }
+        
+    QList<QMessageAddress> toList(message->to());
+    if (toList.count() > 0) {
+        TPtrC16 receiver(KNullDesC);
+        QString qreceiver;
+        REmailAddressArray toAddress;
+        for (int i = 0; i < toList.size(); ++i) {
+            qreceiver = toList.at(i).addressee();
+            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            MEmailAddress* address = mailbox->AddressL();
+            address->SetAddressL(receiver);
+            toAddress.Append(address);
+        }
+        fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
+    }
+    
+    QList<QMessageAddress> ccList(message->cc());
+    if (ccList.count() > 0) {
+        TPtrC16 receiver(KNullDesC);
+        QString qreceiver;
+        REmailAddressArray ccAddress;
+        for (int i = 0; i < ccList.size(); ++i) {
+            qreceiver = ccList.at(i).addressee();
+            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            MEmailAddress* address = mailbox->AddressL();;
+            address->SetAddressL(receiver);
+            ccAddress.Append(address);
+        }
+        fsMessage->SetRecipientsL(MEmailAddress::ECc, ccAddress);
+    }
+        
+    QList<QMessageAddress> bccList(message->bcc());
+    if (bccList.count() > 0) {
+        TPtrC16 receiver(KNullDesC);
+        QString qreceiver;
+        REmailAddressArray bccAddress;
+        for (int i = 0; i < bccList.size(); ++i) {
+            qreceiver = bccList.at(i).addressee();
+            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
+            MEmailAddress* address = mailbox->AddressL();;
+            address->SetAddressL(receiver);
+            bccAddress.Append(address);
+        }
+        fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
+    }
+    
+    // body and attachments
+    
+    fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message->subject().utf16())));
+    fsMessage->SaveChangesL();
+    return true;
 }
 
 bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
@@ -206,10 +403,19 @@ bool CFSEngine::showMessage(const QMessageId &id)
     return false;
 }
 
-
 bool CFSEngine::composeMessage(const QMessage &message)
 {
-    bool retVal = true;
+    bool retVal = false;
+    MEmailMessage* fsMessage;
+    TRAPD(err, 
+        fsMessage = createFSMessageL(message);
+        fsMessage->ShowMessageViewerL();
+    );
+    if (err != KErrNone)
+        retVal = false;
+    else
+        retVal = true;   
+    CleanupStack::PopAndDestroy(); // fsMessage
     return retVal;
 }
 
@@ -553,114 +759,23 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
     return folderIds;
 }
 
-
 QMessage CFSEngine::message(const QMessageId& id) const
 {
     QMessage message;
     return message;
 }
 
-bool CFSEngine::storeEmail(QMessage &message)
-{
-    return false;
-}
-
 bool CFSEngine::sendEmail(QMessage &message)
 {
-    TRAPD(err, sendEmailL(message));
+    MEmailMessage* fsMessage;
+    TRAPD(err,
+        fsMessage = createFSMessageL(message);
+        fsMessage->SendL();
+    );
     if (err != KErrNone)
         return false;
     else
         return true;
-}
-
-void CFSEngine::sendEmailL(QMessage &message)
-{
-    TMailboxId mailboxId(removeFreestylePrefix(message.parentAccountId().toString()).toInt());
-    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-    
-    MEmailMessage* fsMessage = mailbox->CreateDraftMessageL();
-    CleanupReleasePushL( *fsMessage );
-    
-    QList<QMessageAddress> toList(message.to());
-    if (toList.count() > 0) {
-        TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
-        REmailAddressArray toAddress;
-        for (int i = 0; i < toList.size(); ++i) {
-            qreceiver = toList.at(i).addressee();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();
-            address->SetAddressL(receiver);
-            toAddress.Append(address);
-        }
-        fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
-    }
-    
-    QList<QMessageAddress> ccList(message.cc());
-    if (ccList.count() > 0) {
-        TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
-        REmailAddressArray ccAddress;
-        for (int i = 0; i < ccList.size(); ++i) {
-            qreceiver = ccList.at(i).addressee();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();;
-            address->SetAddressL(receiver);
-            ccAddress.Append(address);
-        }
-        fsMessage->SetRecipientsL(MEmailAddress::ECc, ccAddress);
-    }
-        
-    QList<QMessageAddress> bccList(message.bcc());
-    if (bccList.count() > 0) {
-        TPtrC16 receiver(KNullDesC);
-        QString qreceiver;
-        REmailAddressArray bccAddress;
-        for (int i = 0; i < bccList.size(); ++i) {
-            qreceiver = bccList.at(i).addressee();
-            receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();;
-            address->SetAddressL(receiver);
-            bccAddress.Append(address);
-        }
-        fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
-    }
-    if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
-        // Message contains only body (not attachments)
-        QString messageBody = message.textContent();
-        if (!messageBody.isEmpty()) {
-            // MEmailMessageContent* content = fsMessage->ContentL();
-            // TODO:
-            }
-        } else {
-            // Message contains body and attachments
-            QMessageContentContainerIdList contentIds = message.contentIds();
-            foreach (QMessageContentContainerId id, contentIds){
-                QMessageContentContainer container = message.find(id);
-                QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
-                if (pPrivateContainer->_id == message.bodyId()) {
-                    // ContentContainer is body
-                    if (!container.textContent().isEmpty()) {
-                        // Create MIME header for body
-                        // TODO:
-                    }
-                } else {
-                    // ContentContainer is attachment
-                    QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
-                    // Replace Qt style path separator "/" with Symbian path separator "\"
-                    filePath.replace(QByteArray("/"), QByteArray("\\"));
-                    QString temp_path = QString(filePath);
-                    TPtrC16 attachmentPath(KNullDesC);
-                    attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
-                    fsMessage->AddAttachmentL(attachmentPath);
-                }        
-            }
-        }
-    fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
-    fsMessage->SaveChangesL();
-    fsMessage->SendL();
-    CleanupStack::PopAndDestroy(); // fsMessage
 }
 
 QString CFSEngine::attachmentTextContent(long int messageId, unsigned int attachmentId, const QByteArray &charset)

@@ -236,6 +236,18 @@ void MessagingEx::composeEmail()
 {
     QMessage message;
     message.setType(QMessage::Email);
+    int index = accountComboBox->currentIndex();
+    m_account = QMessageAccount(m_accountList[index]).id();
+    QMessage::TypeFlags types = m_account.messageTypes();
+    
+    if (!emailAddressEdit->text().isEmpty()){
+        message.setTo(QMessageAddress(QMessageAddress::Email, emailAddressEdit->text()));
+    }
+    
+    message.setParentAccountId(m_account.id());
+    message.setSubject(subjectEdit->text());
+    message.setBody(QString(emailMessageEdit->toPlainText()));
+    message.appendAttachments(m_attachments);
     m_service.compose(message);
 }
 
