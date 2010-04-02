@@ -88,8 +88,8 @@ QContactABook::~QContactABook()
 
   // XXX FIXME: memory leak?
   //g_object_unref(m_abookAgregator);
-
   delete cbSD;
+  cbSD = 0;
 }
 
 static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts, gpointer data)
@@ -98,9 +98,8 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
-  
-  if (!d->hash){
-    qWarning() << "m_localIDs has been deleted";
+  if (!d){
+    qWarning() << "d has been deleted";
     return;
   }
   
@@ -127,9 +126,8 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
-  
-  if (!d->hash){
-    qWarning() << "m_localIDs has been deleted";
+  if (!d){
+    qWarning() << "d has been deleted";
     return;
   }
   
@@ -155,6 +153,11 @@ static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointe
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  if (!d){
+    qWarning() << "d has been deleted";
+    return;
+  }
+  
   const char **p;
   QList<QContactLocalId> contactIds;
   
