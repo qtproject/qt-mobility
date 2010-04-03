@@ -55,8 +55,10 @@
 
 QTM_USE_NAMESPACE
 
-//Contains Data shared with contact changes/added/removed callbacks
+/* Data shared with contact changes/added/removed callbacks */
 struct cbSharedData;
+/* Data shared with job callbacks */
+struct jobSharedData;
 
 class QContactABook : public QObject
 {
@@ -75,17 +77,19 @@ public:
   QContactLocalId selfContactId(QContactManager::Error* errors) const;
 
 Q_SIGNALS:
-  void savingJobDone();
   void contactsAdded(const QList<QContactLocalId>& contactIds);
   void contactsChanged(const QList<QContactLocalId>& contactIds);
   void contactsRemoved(const QList<QContactLocalId>& contactIds);
+  void jobSavingCompleted();
+  void jobRemovingCompleted();
   
 public:
-  // Members used by callbacks
+  /* Members used by callbacks */
   void _contactsAdded(const QList<QContactLocalId>& contactIds ){ emit contactsAdded(contactIds); };
   void _contactsRemoved(const QList<QContactLocalId>& contactIds ){ emit contactsRemoved(contactIds); };
   void _contactsChanged(const QList<QContactLocalId>& contactIds ){ emit contactsChanged(contactIds); };
-  void _savingJobFinished(){ emit savingJobDone(); };
+  void _jobSavingCompleted(){ emit jobSavingCompleted(); };
+  void _jobRemovingCompleted(){ emit jobRemovingCompleted(); };
   
 private:
   void initAddressBook();
@@ -143,10 +147,16 @@ private:
   gulong m_contactAddedHandlerId;
   gulong m_contactChangedHandlerId;
   gulong m_contactRemovedHandlerId;
+  
   OssoABookAggregator *m_abookAgregator;
   mutable QContactIDsHash m_localIds; //Converts QLocalId <=> eContactId
+  
   QMutex m_saveContactMutex;
-  cbSharedData *cbSD;
+  QMutex m_delContactMutex;
+  
+  cbSharedData *m_cbSD;
+  jobSharedData *m_deleteJobSD;
+  jobSharedData *m_saveJobSD;
 };
 
 #endif
