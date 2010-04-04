@@ -394,6 +394,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
     qWarning() << "aCtontact is not a valid ABook contact"; 
     return false;
   }
+  
   // ASync => Sync
   QEventLoop loop;                           
   connect(this, SIGNAL(jobRemovingCompleted()), &loop, SLOT(quit()));
@@ -435,8 +436,6 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
                               delContactCB, m_deleteJobSD);
   
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
-  
-  qDebug() << "CHECK POINT";
   
   return ok;
 }
