@@ -40,6 +40,7 @@ public:
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,const QMessageFilter &filter);
     QMessage message(const QMessageId& id);
+    bool deleteMessage(const QMessageId& id);
     QMessage eventToMessage(RTComElEvent & ev);
     void notification(int eventId, QString servive,QMessageStorePrivate::NotificationType notificationType);
     static void new_event_cb(RTComEl *el,int event_id,

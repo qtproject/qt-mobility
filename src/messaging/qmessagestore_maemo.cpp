@@ -244,8 +244,7 @@ bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::Removal
     if (id.toString().startsWith("MO_")) {
         return ModestEngine::instance()->removeMessage(id, option);
     }
-
-    return false;
+    return EventLoggerEngine::instance()->deleteMessage(id);
 }
 
 bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
@@ -256,10 +255,11 @@ bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager
         if (ids[i].toString().startsWith("MO_")) {
             if (!ModestEngine::instance()->removeMessage(ids[i], option)) {
                 return false;
-            }
-        }
+            } 
+	} else 
+	  if(!EventLoggerEngine::instance()->deleteMessage(ids[i]))
+	    return false;
     }
-
     return true;
 }
 
