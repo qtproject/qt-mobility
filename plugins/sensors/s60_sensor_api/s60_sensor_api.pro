@@ -16,14 +16,10 @@ QT=core
 CONFIG+=mobility
 MOBILITY+=sensors
 
-pluginDep.sources = $${TARGET}.dll
-pluginDep.path = $${QT_PLUGINS_BASE_DIR}/sensors
-DEPLOYMENT += pluginDep
-
-#Sensor API spesific deployment
-QtSensorsDeployment.sources = QtSensors.dll
-QtSensorsDeployment.path = /sys/bin
-DEPLOYMENT += QtSensorsDeployment
+#S60 v3.1 sensor back end deployment
+s60sensorapi.sources = $${TARGET}.dll
+s60sensorapi.path = $${QT_PLUGINS_BASE_DIR}/sensors
+DEPLOYMENT += s60sensorapi
 
 target.path += $$[QT_INSTALL_PLUGINS]/sensors
 INSTALLS += target
