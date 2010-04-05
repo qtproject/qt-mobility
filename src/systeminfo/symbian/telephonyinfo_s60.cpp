@@ -237,9 +237,13 @@ CCellNetworkInfo::CCellNetworkInfo(CTelephony &telephony) : CTelephonyInfo(telep
     TBuf<CTelephony::KNetworkCountryCodeSize> countryCode = m_networkInfoV1.iCountryCode;
     m_countryCode = QString::fromUtf16(countryCode.Ptr(), countryCode.Length());
     m_previousCountryCode = m_countryCode;
-
-    TBuf<CTelephony::KNetworkLongNameSize> networkName = m_networkInfoV1.iLongName;
-    m_networkName = QString::fromUtf16(networkName.Ptr(), networkName.Length());
+    TBuf<CTelephony::KNetworkLongNameSize> longName = m_networkInfoV1.iLongName;
+    if (longName.Length() > 0) {
+        m_networkName = QString::fromUtf16(longName.Ptr(), longName.Length());
+    } else {
+        TBuf<CTelephony::KNetworkDisplayTagSize> displayTag = m_networkInfoV1.iDisplayTag;
+        m_networkName = QString::fromUtf16(displayTag.Ptr(), displayTag.Length());
+    }
     m_previousNetworkName = m_networkName;
 
     m_networkMode = m_networkInfoV1.iMode;
@@ -264,9 +268,13 @@ void CCellNetworkInfo::RunL()
         TBuf<CTelephony::KNetworkCountryCodeSize> countryCode = m_networkInfoV1.iCountryCode;
             m_countryCode = QString::fromUtf16(countryCode.Ptr(), countryCode.Length());
 
-        TBuf<CTelephony::KNetworkLongNameSize> networkName = m_networkInfoV1.iLongName;
-            m_networkName = QString::fromUtf16(networkName.Ptr(),
-            networkName.Length());
+        TBuf<CTelephony::KNetworkLongNameSize> longName = m_networkInfoV1.iLongName;
+        if (longName.Length() > 0) {
+            m_networkName = QString::fromUtf16(longName.Ptr(), longName.Length());
+        } else {
+            TBuf<CTelephony::KNetworkDisplayTagSize> displayTag = m_networkInfoV1.iDisplayTag;
+            m_networkName = QString::fromUtf16(displayTag.Ptr(), displayTag.Length());
+        }
 
         m_networkMode = m_networkInfoV1.iMode;
 
