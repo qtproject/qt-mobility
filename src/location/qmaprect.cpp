@@ -165,11 +165,13 @@ void QMapRect::paint(QPainter* painter, const QRectF& viewPort)
     qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
 
     //Is view port wrapping around date line?
-    if (viewPort.right() >= mapWidth) {
+    qreal right = viewPort.right();
+    for(int i=1;right>=mapWidth;++i,right -= mapWidth) {
+        qint64 width = mapWidth*i;
         d->rect.translate(-viewPort.left(), -viewPort.top());
-        d->rect.translate(mapWidth, 0);
+        d->rect.translate(width, 0);
         painter->drawRect(d->rect);
-        d->rect.translate(-mapWidth, 0);
+        d->rect.translate(-width, 0);
         d->rect.translate(viewPort.left(), viewPort.top());
     }
     //Is rect crossing date line?

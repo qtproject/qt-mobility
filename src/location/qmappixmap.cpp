@@ -114,22 +114,27 @@ void QMapPixmap::paint(QPainter* painter, const QRectF& viewPort)
         return;
 
     d->pixRect.translate(-viewPort.left(), -viewPort.top());
+    painter->drawPixmap(d->pixRect.topLeft(), d->pic);
     painter->drawRect(d->pixRect);
     d->pixRect.translate(viewPort.left(), viewPort.top());
     qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
 
     //Is view port wrapping around date line?
-    if (viewPort.right() >= mapWidth) {
+    qreal right = viewPort.right();
+    for(int i=1;right>=mapWidth;++i,right -= mapWidth) {
+        qint64 width = mapWidth*i;
         d->pixRect.translate(-viewPort.left(), -viewPort.top());
-        d->pixRect.translate(mapWidth, 0);
+        d->pixRect.translate(width, 0);
+        painter->drawPixmap(d->pixRect.topLeft(), d->pic);
         painter->drawRect(d->pixRect);
-        d->pixRect.translate(-mapWidth, 0);
+        d->pixRect.translate(-width, 0);
         d->pixRect.translate(viewPort.left(), viewPort.top());
     }
     //Is rect crossing date line?
     if (d->pixRect.right() >= mapWidth) {
         d->pixRect.translate(-viewPort.left(), -viewPort.top());
         d->pixRect.translate(-mapWidth, 0);
+        painter->drawPixmap(d->pixRect.topLeft(), d->pic);
         painter->drawRect(d->pixRect);
         d->pixRect.translate(mapWidth, 0);
         d->pixRect.translate(viewPort.left(), viewPort.top());

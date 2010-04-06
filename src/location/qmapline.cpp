@@ -151,14 +151,15 @@ void QMapLine::paint(QPainter* painter, const QRectF& viewPort)
     d->line.translate(viewPort.left(), viewPort.top());
 
     //Is view port wrapping around date line?
-    if (viewPort.right() >= mapWidth) {
+    qreal right = viewPort.right();
+    for(int i=1;right>=mapWidth;++i,right -= mapWidth) {
+        qint64 width = mapWidth*i;
         d->line.translate(-viewPort.left(), -viewPort.top());
-        d->line.translate(mapWidth, 0);
+        d->line.translate(width, 0);
         painter->drawLine(d->line);
-        d->line.translate(-mapWidth, 0);
+        d->line.translate(-width, 0);
         d->line.translate(viewPort.left(), viewPort.top());
     }
-
     //Is line crossing date line?
     if (d->line.x2() >= mapWidth) {
         d->line.translate(-viewPort.left(), -viewPort.top());
