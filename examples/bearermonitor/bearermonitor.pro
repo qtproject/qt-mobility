@@ -4,10 +4,15 @@ HEADERS = sessionwidget.h \
 SOURCES = main.cpp \
           bearermonitor.cpp \
           sessionwidget.cpp
-          
-FORMS = bearermonitor_240_320.ui \
-        bearermonitor_640_480.ui \
-        sessionwidget.ui
+
+maemo5|maemo6 {
+  FORMS = bearermonitor_maemo.ui \
+          sessionwidget_maemo.ui
+} else {
+  FORMS = bearermonitor_240_320.ui \
+          bearermonitor_640_480.ui \
+          sessionwidget.ui
+}
 
 TARGET = bearermonitor
 
