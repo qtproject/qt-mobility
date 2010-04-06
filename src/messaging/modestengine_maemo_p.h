@@ -386,7 +386,7 @@ private: //Data
 
     QMap<QString, QDateTime> accountsLatestTimestamp;
 
-    mutable QStringList m_latestRemoveNotifications;
+    mutable QStringList m_latestAddOrRemoveNotifications;
 
     mutable QMap<QString, QMessage> m_messageCache;
 
