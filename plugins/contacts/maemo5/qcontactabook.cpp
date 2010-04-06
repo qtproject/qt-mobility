@@ -444,6 +444,8 @@ static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data
 {
   Q_UNUSED(book)
   jobSharedData *sd = static_cast<jobSharedData*>(user_data);
+  if (!sd)
+    return;
   
   *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;  
   sd->that->_jobSavingCompleted();
@@ -452,10 +454,14 @@ static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data
 static void addContactCB(EBook* book, EBookStatus  status, const char  *uid, gpointer user_data)
 {
   jobSharedData *sd = static_cast<jobSharedData*>(user_data);
+  if (!sd)
+    return;
+  
   if (uid)
     sd->uid = strdup(uid);
-  
-  //osso_abook_contact_set_roster(OssoABookContact *contact, OssoABookRoster *roster)
+
+  //### FIXME IS THIS LINE REALLY NEEDED: osso_abook_contact_set_roster(OssoABookContact *contact, OssoABookRoster *roster)
+  *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;
   commitContactCB(book, status, user_data);
 }
 
@@ -696,6 +702,7 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
     } break;
     default:
       QCM5_DEBUG << "Filter not supported";
+      query = convert(QContactInvalidFilter());
   }
  
   //Debugging
