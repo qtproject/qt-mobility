@@ -114,8 +114,7 @@ symbian: {
                 "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/mobapicontactspluginsymbiansim.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbiansim.dll\"" \
                 "ELSE" \
                 "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/mobapicontactspluginsymbiansim.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbiansim.dll\"" \
-                "ENDIF" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbiansim/qmakepluginstubs/mobapicontactspluginsymbiansim.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbiansim.qtplugin\""
+                "ENDIF"
 
             qtmobilitydeployment.pkg_postrules += symbiancntsim
         }

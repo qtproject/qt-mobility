@@ -79,6 +79,8 @@ contains(mobility_modules,contacts) {
             qcontactmanagerfiltering \
             qcontactrelationship \
             qlatin1constant
+    # This needs glibc:
+    linux*: SUBDIRS += qcontactmemusage
 }
 
 contains(mobility_modules,versit) {

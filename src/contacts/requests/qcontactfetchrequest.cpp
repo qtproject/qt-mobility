@@ -63,11 +63,6 @@ QContactFetchRequest::QContactFetchRequest()
 {
 }
 
-/*! Cleans up the memory in use by this contact fetch request */
-QContactFetchRequest::~QContactFetchRequest()
-{
-}
-
 /*! Sets the contact filter used to determine which contacts will be retrieved to \a filter */
 void QContactFetchRequest::setFilter(const QContactFilter& filter)
 {
