@@ -100,7 +100,7 @@ QMessageFolderId QMessage::parentFolderId() const
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {
-    return QMessage::InboxFolder; // stub
+    return QMessage::DraftsFolder; // stub
 }
 
 QMessageAddress QMessage::from() const

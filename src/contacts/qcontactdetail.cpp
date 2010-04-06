@@ -254,7 +254,7 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
     dbg.nospace() << "QContactDetail(name=" << detail.definitionName() << ", key=" << detail.key();
     QVariantMap fields = detail.variantValues();
     QVariantMap::const_iterator it;
-    for (it = fields.constBegin(); it != fields.constEnd(); it++) {
+    for (it = fields.constBegin(); it != fields.constEnd(); ++it) {
         dbg.nospace() << ", " << it.key() << '=' << it.value();
     }
     dbg.nospace() << ')';

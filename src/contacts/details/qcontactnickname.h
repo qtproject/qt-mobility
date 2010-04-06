@@ -55,8 +55,8 @@ class Q_CONTACTS_EXPORT QContactNickname : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldNickname;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldNickname;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactNickname, "Nickname")
     Q_DECLARE_LATIN1_CONSTANT(FieldNickname, "Nickname");

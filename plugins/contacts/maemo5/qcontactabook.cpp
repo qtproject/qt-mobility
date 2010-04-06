@@ -78,7 +78,17 @@ QContactABook::QContactABook(QObject* parent) :QObject(parent)
 
 QContactABook::~QContactABook()
 {
-  g_object_unref(m_abookAgregator);
+  OssoABookAggregator *roster = reinterpret_cast<OssoABookAggregator*>(m_abookAgregator);
+  if (g_signal_handler_is_connected(roster, m_contactAddedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactAddedHandlerId);
+  if (g_signal_handler_is_connected(roster, m_contactChangedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactChangedHandlerId);
+  if (g_signal_handler_is_connected(roster, m_contactRemovedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactRemovedHandlerId);
+
+  // XXX FIXME: memory leak?
+  //g_object_unref(m_abookAgregator);
+
   delete cbSD;
 }
 
@@ -88,6 +98,12 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  
+  if (!d->hash){
+    qWarning() << "m_localIDs has been deleted";
+    return;
+  }
+  
   OssoABookContact **p;
   QList<QContactLocalId> contactIds;
   
@@ -111,6 +127,12 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  
+  if (!d->hash){
+    qWarning() << "m_localIDs has been deleted";
+    return;
+  }
+  
   OssoABookContact **p;
   QList<QContactLocalId> contactIds;
   
@@ -171,11 +193,11 @@ void QContactABook::initAddressBook(){
   cbSD->that = this;
   
   //TODO Set up signals for added/changed eContact
-  g_signal_connect(roster, "contacts-added",
+  m_contactAddedHandlerId = g_signal_connect(roster, "contacts-added",
                    G_CALLBACK (contactsAddedCB), cbSD);
-  g_signal_connect(roster, "contacts-changed",
+  m_contactChangedHandlerId = g_signal_connect(roster, "contacts-changed",
                    G_CALLBACK (contactsChangedCB), cbSD);
-  g_signal_connect(roster, "contacts-removed",
+  m_contactRemovedHandlerId = g_signal_connect(roster, "contacts-removed",
                    G_CALLBACK (contactsRemovedCB), cbSD);
   
 #if 0
@@ -217,7 +239,7 @@ void QContactABook::initLocalIdHash()
      QCM5_DEBUG << "eContactID " << eContactUID << "has been stored in m_localIDs with key" << m_localIds[eContactUID];
      
      // Useful for debugging.
-     e_vcard_dump_structure((EVCard*)contact);
+     if (QCM5_DEBUG_ENABLED) e_vcard_dump_structure((EVCard*)contact);
    }
    
    g_list_free(contactList);
@@ -298,7 +320,8 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   EBookQuery* query = convert(filter);
   
   GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-  e_book_query_unref(query);
+  if (query)
+      e_book_query_unref(query);
   
   while (l){
     EContact *contact = E_CONTACT(l->data);
@@ -357,6 +380,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
 struct svSharedData{
    QContactABook* that;
    bool *result;
+   char *uid;
 };
 
 static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data)
@@ -370,7 +394,9 @@ static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data
 
 static void addContactCB(EBook* book, EBookStatus  status, const char  *uid, gpointer user_data)
 {
-  Q_UNUSED(uid);
+  svSharedData *sd = static_cast<svSharedData*>(user_data);
+  if (uid)
+    sd->uid = strdup(uid);
   
   //osso_abook_contact_set_roster(OssoABookContact *contact, OssoABookRoster *roster)
   commitContactCB(book, status, user_data);
@@ -410,6 +436,7 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   svSharedData sd;
   sd.that = this;
   sd.result = &ok;
+  sd.uid = 0;
   
   // Add/Commit the contact
   uid = CONST_CHAR(e_contact_get_const(E_CONTACT (aContact), E_CONTACT_UID)); 
@@ -420,6 +447,12 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   }
   
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
+
+  // set the id of the contact.
+  QContactId cId;
+  cId.setLocalId(m_localIds[sd.uid]);
+  contact->setId(cId);
+  free(sd.uid);
   
   return ok;
 }
@@ -733,7 +766,8 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId) c
 
     query = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, m_localIds[contactId]);
     contacts = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-    e_book_query_unref(query);
+    if (query)
+        e_book_query_unref(query);
 
     if (g_list_length(contacts) == 1) {
       rtn = A_CONTACT(contacts->data);
@@ -909,7 +943,8 @@ QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) c
 }
 
 QContactAvatar* QContactABook::getAvatarDetail(EContact *eContact) const
-{  
+{
+    Q_UNUSED(eContact);
 // XXX TODO: FIXME
 //  QContactAvatar* rtn = new QContactAvatar;
 //  QVariantMap map;
@@ -1637,6 +1672,10 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
     }
 
     QImage image = detail.thumbnail();
+    
+    if (image.isNull())
+      return;
+    
     if (image.format() != QImage::Format_ARGB32_Premultiplied)
         image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
@@ -1649,6 +1688,8 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
 
 void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const
 {
+  Q_UNUSED(aContact)
+  Q_UNUSED(detail);
 // XXX TODO: FIXME
 //  if (!aContact) return;
 //

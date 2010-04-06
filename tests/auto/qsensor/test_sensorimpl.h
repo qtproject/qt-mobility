@@ -39,64 +39,26 @@
 **
 ****************************************************************************/
 
-#include "qs60sensorapicommon.h"
-#include <QtCore/private/qcore_symbian_p.h>
+#ifndef TEST_SENSORIMPL_H
+#define TEST_SENSORIMPL_H
 
-QS60SensorApiCommon::QS60SensorApiCommon(QSensor *sensor)
-    : QSensorBackend(sensor)
-    , m_nativeSensor(NULL)
+#include <qsensorbackend.h>
+#include "test_sensor.h"
+
+QTM_USE_NAMESPACE
+
+class testsensorimpl : public QSensorBackend
 {
-    //Empty implementation
-}
+public:
+    static const char *id;
 
-QS60SensorApiCommon::~QS60SensorApiCommon()
-{
-    stop();
-    delete m_nativeSensor;
-    m_nativeSensor = NULL;
-}
+    testsensorimpl(QSensor *sensor);
 
-void QS60SensorApiCommon::start()
-{
-    if(!m_nativeSensor)
-        return;
-    
-    m_nativeSensor->AddDataListener(this);    
-}
+    void start();
+    void stop();
 
-void QS60SensorApiCommon::stop()
-{
-    if(!m_nativeSensor)
-        return;
-    
-    m_nativeSensor->RemoveDataListener();
-}
+private:
+    TestSensorReading m_reading;
+};
 
-void QS60SensorApiCommon::HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent)
-{
-    Q_UNUSED(aEvent);
-    if (aSensor.iSensorId != nativeSensorId()) 
-        return;    
-}
-
-void QS60SensorApiCommon::findAndCreateNativeSensorL()
-{
-    if(m_nativeSensor)
-        return;
-    
-    RArray<TRRSensorInfo> sensorList;
-    CRRSensorApi::FindSensorsL(sensorList);
-    CleanupClosePushL(sensorList);
-
-    TInt index = 0;
-    do {
-        //qDebug() <<qt_TDesC2QString(sensorList[index].iSensorName)<<sensorList[index].iSensorId<<sensorList[index].iSensorCategory;
-        if (sensorList[index].iSensorId == nativeSensorId())
-            m_nativeSensor = CRRSensorApi::NewL(sensorList[index]);
-    } while(!m_nativeSensor && ++index < sensorList.Count());
-        
-    if (!m_nativeSensor)
-        User::Leave(KErrNotFound);
-    
-    CleanupStack::PopAndDestroy(&sensorList);
-}
+#endif

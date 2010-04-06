@@ -73,6 +73,19 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+  \enum QContactFetchHint::OptimizationHint
+
+  This enum defines flags which may be set to inform the backend that the client does
+  not require certain information.  The backend may safely ignore the hint, but then
+  must return the full set of information relating to the optimization hint.
+
+  \value AllRequired Tells the backend that all information is required
+  \value NoRelationships Tells the backend that the client does not require retrieved contacts to include a cache of relationships
+  \value NoActionPreferences Tells the backend that the client does not require retrieved contacts to include a cache of action preferences
+  \value NoBinaryBlobs Tells the backend that the client does not require retrieved contacts to include binary blobs such as thumbnail images
+ */
+
+/*!
   Constructs a new contact fetch hint which requests that the backend fetch all information
  */
 QContactFetchHint::QContactFetchHint()

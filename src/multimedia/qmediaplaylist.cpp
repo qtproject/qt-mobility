@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include <qmediaplaylist.h>
-#include <qmediaplaylist_p.h>
-#include <qmediaplaylistprovider.h>
-#include <qlocalmediaplaylistprovider.h>
-#include <qmediaplaylistioplugin.h>
-#include <qmediaservice.h>
-#include <qmediaplaylistcontrol.h>
-#include <qmediaplayercontrol.h>
+#include "qmediaplaylist.h"
+#include "qmediaplaylist_p.h"
+#include "qmediaplaylistprovider.h"
+#include "qlocalmediaplaylistprovider.h"
+#include "qmediaplaylistioplugin.h"
+#include "qmediaservice.h"
+#include "qmediaplaylistcontrol.h"
+#include "qmediaplayercontrol.h"
 
 #include <QtCore/qlist.h>
 #include <QtCore/qfile.h>
@@ -54,7 +54,7 @@
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qcoreapplication.h>
 
-#include <qmediapluginloader_p.h>
+#include "qmediapluginloader_p.h"
 
 QTM_BEGIN_NAMESPACE
 

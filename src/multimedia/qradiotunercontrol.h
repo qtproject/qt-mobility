@@ -42,8 +42,8 @@
 #ifndef QRADIOTUNERCONTROL_H
 #define QRADIOTUNERCONTROL_H
 
-#include <qmediacontrol.h>
-#include <qradiotuner.h>
+#include "qmediacontrol.h"
+#include "qradiotuner.h"
 
 QTM_BEGIN_NAMESPACE
 

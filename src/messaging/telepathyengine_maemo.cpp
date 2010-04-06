@@ -57,10 +57,7 @@ Q_GLOBAL_STATIC(TelepathyEngine,telepathyEngine);
 
 TelepathyEngine::TelepathyEngine()
 {
-    qDebug() << "TelepathyEngine::TelepathyEngine()";
-    tpSession=new TpSession("ring",TRUE); // Create as sync, telephony "ring" as default
-    qDebug() << "TelepathyEngine::TelepathyEngine() exit";
-
+  tpSession=TpSession::instance(TRUE); // Create as sync, telephony "ring" as default
 }
 
 TelepathyEngine::~TelepathyEngine()
@@ -76,9 +73,9 @@ TelepathyEngine* TelepathyEngine::instance()
 bool TelepathyEngine::sendMessage(QMessage &message)
 {
     QMessage::Type type=message.type();
-    QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? "gabble" : "";
-    QMessageAddressList toList=message.to();
     QMessageAccountId account=message.parentAccountId();
+    QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? account.toString() : "";
+    QMessageAddressList toList=message.to();
     if(!cm.isEmpty()) {
         foreach(QMessageAddress to,toList) {
              tpSession->sendMessageToAddress(cm,to.addressee(),message.textContent());
@@ -90,27 +87,14 @@ bool TelepathyEngine::sendMessage(QMessage &message)
 
 
 
-bool TelepathyEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
-{
-    return true;
-}
-
-bool TelepathyEngine::queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
-{
-    return true;
-}
-
-bool TelepathyEngine::countMessages(QMessageService& messageService, const QMessageFilter &filter)
-{
-    return true;
-};
 
 void TelepathyEngine::updateImAccounts() const
 {
 //    iDefaultImAccountId = QMessageAccountId();
+//  qDebug() << "TelepathyEngine::updateImAccounts";
     iAccounts.clear();
     foreach (TpSessionAccount *tpacc, tpSession->accounts) {
-        qDebug() << "TelepathyEngine::updateImAccounts" << tpacc->acc->cmName() << " " << tpacc->acc->protocol() << " " << tpacc->acc->displayName();
+      //     qDebug() << "TelepathyEngine::updateImAccounts" << tpacc->acc->cmName() << " " << tpacc->acc->protocol() << " " << tpacc->acc->displayName();
         bool account_ok = tpacc->acc->isEnabled() && tpacc->acc->isValidAccount();
         QString cm=tpacc->acc->cmName();
         if (account_ok) {
@@ -144,6 +128,7 @@ void TelepathyEngine::updateImAccounts() const
 QMessageAccountIdList TelepathyEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder,
                                                   uint limit, uint offset, bool &isFiltered, bool &isSorted) const
 {
+  //  qDebug() << "TelepathyEngine::queryAccounts";
     QMessageAccountIdList accountIds;
 
     updateImAccounts();
@@ -173,6 +158,7 @@ QMessageAccount TelepathyEngine::account(const QMessageAccountId &id) const
 
 QMessageAccountId TelepathyEngine ::defaultAccount(QMessage::Type type) const
 {
+  //  qDebug() << "TelepathyEngine::defaultAccount";
     updateImAccounts();
     return defaultSmsAccountId;
 }

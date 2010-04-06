@@ -44,8 +44,8 @@
 
 #include <QtCore/qobject.h>
 
-#include <qmediacontent.h>
-#include <qmediaobject.h>
+#include "qmediacontent.h"
+#include "qmediaobject.h"
 
 
 QTM_BEGIN_NAMESPACE

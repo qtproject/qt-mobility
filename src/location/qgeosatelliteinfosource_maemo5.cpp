@@ -78,16 +78,16 @@ void QGeoSatelliteInfoSourceMaemo::setUpdateInterval(int msec)
         if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped)
             updateTimerInterval = true;
     
-    satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::TogglePowersave |
+    satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::GpsOn |
                             QGeoSatelliteInfoSourceMaemo::PowersaveActive);
     
     timerInterval = (msec < MINIMUM_UPDATE_INTERVAL) ? MINIMUM_UPDATE_INTERVAL : msec;
 
     if (timerInterval >= POWERSAVE_THRESHOLD) {
         satelliteInfoState |= (QGeoSatelliteInfoSourceMaemo::PowersaveActive |
-                               QGeoSatelliteInfoSourceMaemo::TogglePowersave);
+                               QGeoSatelliteInfoSourceMaemo::GpsOn);
     } else {
-        satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::TogglePowersave |
+        satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::GpsOn |
                                 QGeoSatelliteInfoSourceMaemo::PowersaveActive);
     }  
 
@@ -101,18 +101,32 @@ void QGeoSatelliteInfoSourceMaemo::startUpdates()
     if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive)) {
         startLocationDaemon();
         satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::RequestSingleShot |
-                                QGeoSatelliteInfoSourceMaemo::TogglePowersave);
+                                QGeoSatelliteInfoSourceMaemo::GpsOn);
+    } else if ((satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped) &&
+               (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::GpsOn))) {
+        // Do not restart if we are in powersave mode and GPS is off.
+        return;
     }
     activateTimer();
 }
 
 void QGeoSatelliteInfoSourceMaemo::stopUpdates()
 {
-    if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot)) {    
+    if ((!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestActive)) ||
+        satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestAndStop) {    
         updateTimer->stop();
         requestTimer->stop();    
-        satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestActive;
-        stopLocationDaemon();
+        satelliteInfoState &= ~(QGeoSatelliteInfoSourceMaemo::RequestActive |
+                                QGeoSatelliteInfoSourceMaemo::RequestAndStop);                                
+
+        if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped))
+            LiblocationWrapper::instance()->stop();
+
+        satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::Started;
+        satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Stopped;
+    }  else {
+        // Stop sent while request is active.
+        satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::RequestAndStop;
     }
 }
 
@@ -158,12 +172,6 @@ void QGeoSatelliteInfoSourceMaemo::satelliteStatus()
     QList<QGeoSatelliteInfo> satellitesInUse = 
             LiblocationWrapper::instance()->satellitesInUse();
 
-    if (satellitesInView.length()) {
-        // If there are satellites in view, also in use can be emitted.
-        emit satellitesInViewUpdated(satellitesInView);
-        emit satellitesInUseUpdated(satellitesInUse);
-     }
-
     if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestActive) {
         satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestActive;
     
@@ -172,10 +180,31 @@ void QGeoSatelliteInfoSourceMaemo::satelliteStatus()
         if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot) {
             satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestSingleShot;
 
-            if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive))            
+            if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive)) {
+                stopUpdates();
+                if (satellitesInView.length()) {
+                    // If there are satellites in view, also in use can be emitted.
+                    emit satellitesInViewUpdated(satellitesInView);
+                    emit satellitesInUseUpdated(satellitesInUse);
+                 }                
                 return;
+            }
         }
+
+        if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestAndStop)
+            stopUpdates();        
     }
+
+    // Ensure that no fix is emitted in transition from power off to power on.
+    if((satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive) && 
+       (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::GpsOn)))
+        return;
+        
+    if (satellitesInView.length()) {
+        emit satellitesInViewUpdated(satellitesInView);
+        emit satellitesInUseUpdated(satellitesInUse);
+    }
+    
     activateTimer();
 }
 
@@ -188,7 +217,7 @@ void QGeoSatelliteInfoSourceMaemo::requestTimeoutElapsed()
 
     if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestSingleShot) {
         satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestSingleShot;
-        stopLocationDaemon();
+        stopUpdates();
         if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive))
             return;
     }
@@ -196,17 +225,21 @@ void QGeoSatelliteInfoSourceMaemo::requestTimeoutElapsed()
 }
 
 void QGeoSatelliteInfoSourceMaemo::activateTimer() {
+    if ((satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped) &&
+        (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive)))
+        return;
+    
     if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestActive) {
         updateTimer->start(MINIMUM_UPDATE_INTERVAL);
     } else {
         if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::PowersaveActive) {
-            if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::TogglePowersave)) {
+            if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::GpsOn)) {
                 startLocationDaemon();
-                satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::TogglePowersave;
+                satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::GpsOn;
                 updateTimer->start(POWERSAVE_POWERON_PERIOD);
-            } else if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::TogglePowersave) {
+            } else if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::GpsOn) {
                 stopUpdates();
-                satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::TogglePowersave;
+                satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::GpsOn;
                 updateTimer->start(timerInterval - POWERSAVE_POWERON_PERIOD);
             }
         } else {
@@ -221,14 +254,6 @@ void QGeoSatelliteInfoSourceMaemo::startLocationDaemon() {
     satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Started;
     satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::Stopped;
 }
-
-void QGeoSatelliteInfoSourceMaemo::stopLocationDaemon() {
-    if (!(satelliteInfoState & QGeoSatelliteInfoSourceMaemo::Stopped))
-        LiblocationWrapper::instance()->stop();
-    satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::Started;
-    satelliteInfoState |= QGeoSatelliteInfoSourceMaemo::Stopped;
-}
-
 
 #include "moc_qgeosatelliteinfosource_maemo5_p.cpp"
 QTM_END_NAMESPACE

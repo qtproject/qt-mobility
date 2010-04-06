@@ -1,6 +1,6 @@
 include(../staticconfig.pri)
         
-!contains(build_examples, yes):error(Please use the -examples configure switch to enable building of examples)
+#!contains(build_examples, yes):error(Please use the -examples configure switch to enable building of examples)
 
 win32:contains(CONFIG_WIN32,build_all):Win32DebugAndRelease=yes
 mac | contains(Win32DebugAndRelease,yes) {
@@ -42,8 +42,4 @@ maemo5 {
 }
 symbian {
     DEFINES+= QTM_EXAMPLES_SMALL_SCREEN
-}
-maemo* {
-    LIBS += -L/opt/qt4-maemo5/lib
-    QMAKE_LFLAGS += -Wl,-rpath,/opt/qt4-maemo5/lib
 }

@@ -39,37 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QS60SENSORAPICOMMON_H
-#define QS60SENSORAPICOMMON_H
+#ifndef TEST_SENSOR_P_H
+#define TEST_SENSOR_P_H
 
-// mobility
-#include <qsensorbackend.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-// symbian
-#include <rrsensorapi.h>
+#include "qsensor_p.h"
 
-QTM_USE_NAMESPACE
-
-class QS60SensorApiCommon : public QSensorBackend,  public MRRSensorDataListener
+class TestSensorReadingPrivate : public QSensorReadingPrivate
 {
 public:
-    QS60SensorApiCommon(QSensor *sensor);
-    virtual ~QS60SensorApiCommon();
+    TestSensorReadingPrivate()
+        : test(false)
+    {
+    }
 
-    // from QSensorBackend
-    virtual void start();
-    virtual void stop();
-
-    // from MRRSensorDataListener
-    virtual void HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent);
-
-    
-protected:
-    void findAndCreateNativeSensorL();
-    virtual int nativeSensorId()= 0;
-
-private:
-    CRRSensorApi* m_nativeSensor;
+    bool test;
 };
 
-#endif //QS60SENSORAPICOMMON_H
+#endif

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qmediaplaylistioplugin.h>
+#include "qmediaplaylistioplugin.h"
 
 QTM_BEGIN_NAMESPACE
 

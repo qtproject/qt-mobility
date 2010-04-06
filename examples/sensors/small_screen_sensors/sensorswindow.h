@@ -39,23 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef tst_VERSITUTILS_H
-#define tst_VERSITUTILS_H
+#ifndef SENSORSWINDOW_H
+#define SENSORSWINDOW_H
 
-#include <QObject>
-#include <qmobilityglobal.h>
+#include <QtGui>
+#include "ui_sensorswindow.h"
 
-QT_BEGIN_NAMESPACE
-class QTextCodec;
-QT_END_NAMESPACE
-
-class tst_VersitUtils : public QObject
+class SensorsWindow : public QMainWindow,
+    private Ui::SensorsWindowClass
 {
-     Q_OBJECT
+    Q_OBJECT
 
-private slots:
-    void testBackSlashEscape();
-    void testRemoveBackSlashEscaping();
+public:
+    SensorsWindow(QWidget *parent = 0);
+
+private Q_SLOTS:
+    void changeForm(int formIndex);
+
+private:
+    QWidget *createForm(int formIndex);
+
+private:
+    QWidget *m_currentCentralWidget;
+    QStringList m_formNames;
 };
 
-#endif // tst_VERSITUTILS_H
+#endif // SENSORSWINDOW_H

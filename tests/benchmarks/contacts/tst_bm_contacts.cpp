@@ -165,7 +165,17 @@ void tst_Contact::initTestCase()
         manager = "memory";
     m_qm = new QContactManager(manager);
 #elif defined(Q_WS_MAEMO_5)
-    QFAIL("Maemo 5 does not support QContacts");
+    if(manager.isEmpty()){
+        //Looking for a manager
+        QStringList list = QContactManager::availableManagers();
+        if (list.contains("maemo5")){
+            manager = "maemo5";
+        } else {
+            QFAIL("Unable to find Maemo 5 plugin. Please check install");
+        }
+    }
+    m_qm = new QContactManager(manager);
+    
 #elif defined(Q_OS_SYMBIAN)
     if(m_backend != BackendContactsModel) {
       QStringList list = QContactManager::availableManagers();
@@ -471,7 +481,7 @@ void tst_Contact::tst_fetchTenContact()
     QList<QContact> qlc;
     
     QBENCHMARK {
-      qlc = m_qm->contacts(idFil, QList<QContactSortOrder>(), QStringList());
+      qlc = m_qm->contacts(idFil, QList<QContactSortOrder>(), QContactFetchHint());
     }
     
     if(qlc.count() != 10){
@@ -637,7 +647,9 @@ void tst_Contact::tst_saveContact()
     name = lastNames.takeFirst();
     lastNames.push_back(name);
     cname.setLastName(name);
+#ifndef Q_WS_MAEMO_5
     cname.setPrefix("Mr");
+#endif
     c->saveDetail(&cname);
 
     int ret = 0; 
@@ -681,13 +693,13 @@ void tst_Contact::tst_saveContact()
     lastName->TextStorage()->SetTextL(Lastname);
     newCard->AddFieldL(*lastName);
     CleanupStack::Pop(lastName);
-    
+#ifndef Q_WS_MAEMO_5
     CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
     _LIT(KPrefix, "Mr");
     prefix->TextStorage()->SetTextL(KPrefix);
     newCard->AddFieldL(*prefix);
     CleanupStack::Pop(prefix);
-    
+#endif
     QBENCHMARK {
       // Add newCard to the database
       const TContactItemId contactId = db->AddNewContactL(*newCard);
@@ -707,7 +719,7 @@ void tst_Contact::createContact()
 {
   if(m_backend == BackendQContacts) {    
     QContact *c = new QContact;
-    c->setType("Contact");
+    c->setType(QContactType::TypeContact);
     QContactName cname;
     QString name;
     name = firstNames.takeFirst();
@@ -716,7 +728,9 @@ void tst_Contact::createContact()
     name = lastNames.takeFirst();
     lastNames.push_back(name);
     cname.setLastName(name);
+#ifndef Q_WS_MAEMO_5
     cname.setPrefix("Mr");
+#endif
     c->saveDetail(&cname);
 
     if(!m_qm->saveContact(c)){
@@ -755,13 +769,13 @@ void tst_Contact::createContact()
     lastName->TextStorage()->SetTextL(Lastname);
     newCard->AddFieldL(*lastName);
     CleanupStack::Pop(lastName);
-    
+#ifndef Q_WS_MAEMO_5
     CContactItemField* prefix = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldPrefixName);
     _LIT(KPrefix, "Mr");
     prefix->TextStorage()->SetTextL(KPrefix);
     newCard->AddFieldL(*prefix);
     CleanupStack::Pop(prefix);
-    
+#endif
     // Add newCard to the database
     const TContactItemId contactId = db->AddNewContactL(*newCard);
     db->CloseContactL(contactId);    
@@ -782,6 +796,8 @@ void tst_Contact::tst_nameFilter()
     QContact c;    
 
     m_run++;
+
+
 
 #if defined(Q_WS_MAEMO_6)
     int ret;
@@ -815,7 +831,7 @@ void tst_Contact::tst_nameFilter()
     QList<QContact> qlc;
     
     QBENCHMARK {
-      qlc = m_qm->contacts(fil, QList<QContactSortOrder>(), QStringList());
+      qlc = m_qm->contacts(fil, QList<QContactSortOrder>(), QContactFetchHint());
     }
     
 //    while(!qlc.isEmpty()){
@@ -918,6 +934,11 @@ int main(int argc, char **argv){
 //    tst_Contact test2;
 //    test2.setBackend("tracker");
 //    QTest::qExec(&test2, argc, argv);
+#if defined(Q_WS_MAEMO_5)
+    tst_Contact test2;
+    test2.setBackend("maemo5");
+    QTest::qExec(&test2, argc, argv);
+#endif
 #if defined(Q_OS_SYMBIAN)   
     tst_Contact test2;
     test2.setBackend("symbian");
@@ -927,7 +948,8 @@ int main(int argc, char **argv){
     test3.setBackend("SymbianContactsModel");
     QTest::qExec(&test3, argc, argv);
 #endif
+
 }
 
-#include "tst_contacts.moc"
+#include "tst_bm_contacts.moc"
 
