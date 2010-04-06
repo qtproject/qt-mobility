@@ -81,7 +81,7 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
         message.setType(QMessage::NoType);  // Other type, as exampele voice Call
     };
 
-    message.setParentAccountId(QMessageAccountId(QString("/y/Account/%1").arg(ev.fld_local_uid)));
+    message.setParentAccountId(QMessageAccountId(QString("y/Account/%1").arg(ev.fld_local_uid)));
 
     if (!ev.fld_is_read) {
         message.setStatus(QMessage::Read);
@@ -106,6 +106,14 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
     return message;
 
 }
+
+
+bool EventLoggerEngine::deleteMessage(const QMessageId& id)
+{
+  int status=rtcom_el_delete_event(el,id.toString().toInt(),NULL);
+  return status==0;
+}
+
 QMessage EventLoggerEngine::message(const QMessageId& id)
 {
 
@@ -121,7 +129,7 @@ QMessage EventLoggerEngine::message(const QMessageId& id)
     g_object_unref(q);
     if(iter && rtcom_el_iter_first(iter))
     {
-     gboolean res=rtcom_el_iter_get(iter,&ev);
+     gboolean res=rtcom_el_iter_get_full(iter,&ev);
      if(res) {
 #if 0
          printf("got event id=%d service_id=%d event_typ_id=%d\n\
@@ -251,6 +259,9 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
                                                     QString body,
                                                     QMessageDataComparator::MatchFlags matchFlags)
 {
+  Q_UNUSED(body);
+  Q_UNUSED(matchFlags);
+  Q_UNUSED(sortOrder);
     QMessageId fId;  // Filtering id
     //    QMessageType fType;
     QDate fDate;
@@ -296,14 +307,16 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
     if(iter && rtcom_el_iter_first(iter))
        do {
          bzero(&ev,sizeof(ev));
-         gboolean res=rtcom_el_iter_get(iter,&ev);
-         message=eventToMessage(ev);
-         // debugMessage(message);
-         if (pf->filter(message)) {
-	   //   qDebug() <<"Filter :filtering match" << message.id().toString();
-	   //matchingFilters.insert(it.key());
-	   idList.append(message.id());
-	 };
+         if(rtcom_el_iter_get_full(iter,&ev))
+	   {
+	     message=eventToMessage(ev);
+	     // debugMessage(message);
+	     if (pf->filter(message)) {
+	       //   qDebug() <<"Filter :filtering match" << message.id().toString();
+	       //matchingFilters.insert(it.key());
+	       idList.append(message.id());
+	     };
+	   };
        }
        while( rtcom_el_iter_next(iter));
 #if 0

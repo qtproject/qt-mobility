@@ -382,6 +382,7 @@ void RecentMessagesWidget::messagesFound(const QMessageIdList& ids)
 
 void RecentMessagesWidget::stateChanged(QMessageService::State newState)
 {
+  qDebug() << "stateChanged state=" << m_state << " newState=" << newState << "error=" << m_service->error();
     if (newState == QMessageService::FinishedState) {
         if ((m_state != LoadFailed) && (m_service->error() == QMessageManager::NoError)) {
             m_state = LoadFinished;
@@ -500,13 +501,13 @@ void RecentMessagesWidget::updateState()
 void RecentMessagesWidget::load()
 {
     m_ids.clear();
+    m_state = Loading;
+    bool b;
 
-    if(!m_service->queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent))
-        m_state = LoadFailed;
-    else
-        m_state = Loading;
-}
+    b=m_service->queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
+    qDebug() << "RecentMessagesWidget::load" << b << m_state;
 //! [load-message]
+};
 
 //! [process-results2]
 void RecentMessagesWidget::processResults()
@@ -890,6 +891,7 @@ void MessageViewWidget::hideEvent(QHideEvent* e)
 
 void MessageViewWidget::stateChanged(QMessageService::State newState)
 {
+  qDebug() << "stateChanged state=" << m_state << " newState=" << newState << "error=" << m_service->error();
     if (m_state == LoadFailed)
         return;
 
@@ -1259,9 +1261,7 @@ QMainWindow(parent,f),
 m_tabWidget(0)
 {
 
-  qDebug() << "MainWindow::MainWindow";
     m_service = new QMessageService(this);
-  qDebug() << "new QMessageService(this) doone";
 
     connect(m_service,SIGNAL(stateChanged(QMessageService::State)),
             this,SLOT(serviceStateChanged(QMessageService::State)));
@@ -1275,7 +1275,6 @@ m_tabWidget(0)
                                                   << new ShowWidget(m_service,this)
                                                   << new RetrieveWidget(this)
                                                   << new StoreSignalsWidget(this)) {
-  qDebug() << "widgets created";
 
         m_widgetStack->addWidget(exampleWidget);
 #ifdef _WIN32_WCE
@@ -1324,7 +1323,7 @@ m_tabWidget(0)
 
     setWindowTitle(WindowTitle);
     resize(WindowGeometry);
-  qDebug() << "MainWindow::MainWindow done";
+
 }
 
 #ifdef _WIN32_WCE
