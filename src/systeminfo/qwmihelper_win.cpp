@@ -47,8 +47,6 @@
 #include <Wbemidl.h>
 #include <Oleauto.h>
 #include <QStringList>
-#include <QtCore/qmutex.h>
-#include <QtCore/private/qmutexpool_p.h>
 #include <QUuid>
 
 QTM_BEGIN_NAMESPACE
