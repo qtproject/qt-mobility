@@ -39,16 +39,16 @@
 **
 ****************************************************************************/
 
-#include <qvideowidget_p.h>
+#include "qvideowidget_p.h"
 
-#include <qmediaobject.h>
-#include <qmediaservice.h>
-#include <qvideooutputcontrol.h>
-#include <qvideowindowcontrol.h>
-#include <qvideowidgetcontrol.h>
+#include "qmediaobject.h"
+#include "qmediaservice.h"
+#include "qvideooutputcontrol.h"
+#include "qvideowindowcontrol.h"
+#include "qvideowidgetcontrol.h"
 
-#include <qpaintervideosurface_p.h>
-#include <qvideorenderercontrol.h>
+#include "qpaintervideosurface_p.h"
+#include "qvideorenderercontrol.h"
 #include <QtMultimedia/qvideosurfaceformat.h>
 #include <qpainter.h>
 

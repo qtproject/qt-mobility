@@ -46,16 +46,16 @@
 #include <QtCore/qpointer.h>
 
 
-#include <qmediaplayer.h>
+#include "qmediaplayer.h"
 
-#include <qmediaobject_p.h>
-#include <qmediaservice.h>
-#include <qmediaplayercontrol.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaplaylist.h>
-#include <qmediaplaylistcontrol.h>
-#include <qvideowidget.h>
-#include <qgraphicsvideoitem.h>
+#include "qmediaobject_p.h"
+#include "qmediaservice.h"
+#include "qmediaplayercontrol.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaplaylist.h"
+#include "qmediaplaylistcontrol.h"
+#include "qvideowidget.h"
+#include "qgraphicsvideoitem.h"
 
 QTM_BEGIN_NAMESPACE
 

@@ -78,10 +78,11 @@ private:
     QTimer *updateTimer;
     QTimer *requestTimer;
     int timerInterval;
+    bool errorOccurred;
+    bool errorSent;
+
     void activateTimer();
     void startLocationDaemon();
-    void stopLocationDaemon();
-    int lowSignalLevelCount;
     
     enum PositionInfoState {
         Undefined = 0,
@@ -90,8 +91,8 @@ private:
         RequestActive = 4,
         RequestSingleShot = 8,
         PowersaveActive = 16,
-        TogglePowersave = 32,
-        SignalLevelLow = 64,        
+        GpsOn = 32,
+        RequestAndStop = 64
     };
     int positionInfoState;
     
@@ -106,6 +107,7 @@ public slots:
 
 private slots:
     void requestTimeoutElapsed();
+    void error();
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSourceMaemo)

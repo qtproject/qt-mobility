@@ -46,14 +46,32 @@ QTM_BEGIN_NAMESPACE
 class QMessageServicePrivate
 {
 public:
+    enum EnginesToCall
+    {
+        EnginesToCallModest    = 0x1,
+        EnginesToCallTelepathy = 0x2,
+        // Extensible
+        EnginesToCallAll = 0xFFFFFFFF,
+    };
+
     QMessageServicePrivate(QMessageService* parent);
     ~QMessageServicePrivate();
 
     static QMessageServicePrivate* implementation(const QMessageService &service);
 
+    bool queryMessages(QMessageService &messageService, const QMessageFilter &filter,
+                       const QMessageSortOrder &sortOrder, uint limit, uint offset,
+                       EnginesToCall enginesToCall = EnginesToCallAll);
+    bool queryMessages(QMessageService &messageService, const QMessageFilter &filter,
+                       const QString &body, QMessageDataComparator::MatchFlags matchFlags,
+                       const QMessageSortOrder &sortOrder, uint limit, uint offset,
+                       EnginesToCall enginesToCall = EnginesToCallAll);
+    bool countMessages(QMessageService &messageService, const QMessageFilter &filter,
+                       EnginesToCall enginesToCall = EnginesToCallAll);
+
     void setFinished(bool successful);
     void stateChanged(QMessageService::State state);
-    void messagesFound(const QMessageIdList &ids);
+    void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);
     void messagesCounted(int count);
     void progressChanged(uint value, uint total);
 
@@ -63,6 +81,17 @@ public:
     QMessageManager::Error _error;
     bool _active;
     int _actionId;
+    int _pendingRequestCount;
+
+    QMessageIdList _ids;
+    int _count;
+    bool _sorted;
+    bool _filtered;
+
+    QMessageFilter _filter;
+    QMessageSortOrder _sortOrder;
+    int _limit;
+    int _offset;
 };
 
 QTM_END_NAMESPACE
