@@ -42,6 +42,7 @@
 #include "qcontactmaemo5backend_p.h"
 
 #include <QSharedData>
+#include <QTimer>
 
 #include "qcontactmaemo5debug_p.h"
 
@@ -367,8 +368,11 @@ void QContactMaemo5Engine::requestDestroyed(QContactAbstractRequest* req){
 }
 
 bool QContactMaemo5Engine::startRequest(QContactAbstractRequest* req){
-  Q_UNUSED(req)
-  return false;
+  if (!m_asynchronousOperations.contains(req))
+    m_asynchronousOperations.enqueue(req);
+  updateRequestState(req, QContactAbstractRequest::ActiveState);
+  QTimer::singleShot(0, this, SLOT(performAsynchronousOperation()));
+  return true;
 }
 
 bool QContactMaemo5Engine::cancelRequest(QContactAbstractRequest* req){
@@ -386,5 +390,9 @@ bool QContactMaemo5Engine::waitForRequestFinished(QContactAbstractRequest* req, 
   Q_UNUSED(req)
   Q_UNUSED(msecs)
   return false;
+}
+
+void QContactMaemo5Engine::performAsynchronousOperation(){
+  
 }
 

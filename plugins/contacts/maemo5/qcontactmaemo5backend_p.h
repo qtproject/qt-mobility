@@ -156,6 +156,9 @@ class QContactMaemo5Engine : public QContactManagerEngine
     bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
     
+  private slots:
+    void performAsynchronousOperation();
+    
   private:  
     QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
     QSharedDataPointer<QContactMaemo5EngineData> d;
