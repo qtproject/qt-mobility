@@ -42,7 +42,8 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <QtGui/qwidget.h>
+#include <QtCore/QUrl>
+#include <QtGui/QWidget>
 
 class QAbstractButton;
 class QButtonGroup;
@@ -103,6 +104,7 @@ private:
     QProgressDialog *actionProgress;
     QSplitter *splitter;
 
+    QUrl documentsUrl;
     QStringList sourceFolderId;
     QStringList destinationFolderId;
 };

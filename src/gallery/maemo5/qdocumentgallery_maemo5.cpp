@@ -65,7 +65,9 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 
     QString query = schema.buildQuery(&error, request->filter());
 
-    if (error == 0) {
+    if (error != 0) {
+        qWarning("Invalid Query %d, %s", error, qPrintable(query));
+    } else {
         QGalleryAbstractResponse *response = 0;
         if (schema.isFileType()) {
             response = new QGalleryTrackerFileListResponse(

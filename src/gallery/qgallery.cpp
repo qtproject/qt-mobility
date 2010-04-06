@@ -114,7 +114,7 @@ const QGalleryType QDocumentGallery::AlbumArtist("AlbumArtist");
 const QGalleryType QDocumentGallery::Album("Album");
 
 
-// File
+// Item
 const QGalleryKey QDocumentGallery::author("author");
 const QGalleryKey QDocumentGallery::copyright("copyright");
 const QGalleryKey QDocumentGallery::description("description");
@@ -123,6 +123,9 @@ const QGalleryKey QDocumentGallery::rating("rating");
 const QGalleryKey QDocumentGallery::title("title");
 const QGalleryKey QDocumentGallery::url("url");
 const QGalleryKey QDocumentGallery::thumbnail("thumbnail");
+
+// File
+const QGalleryKey QDocumentGallery::fileName("fileName");
 
 // Media
 

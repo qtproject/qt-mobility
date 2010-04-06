@@ -144,7 +144,7 @@ void GalleryModel::setList(QGalleryItemList *list)
         foreach (int key, mediaList->keys()) {
             QString field = mediaList->toString(key);
 
-            if (field == QDocumentGallery::title)
+            if (field == QDocumentGallery::fileName)
                 titleKey = key;
         }
 

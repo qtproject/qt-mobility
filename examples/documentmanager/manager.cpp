@@ -60,13 +60,16 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
     , destinationProgress(0)
     , actionProgress(0)
     , splitter(0)
+    , documentsUrl(QUrl::fromLocalFile(
+            QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)))
 {
     gallery = new QDocumentGallery(this);
 
     sourceItemRequest = new QGalleryItemRequest(this);
     sourceItemRequest->setGallery(gallery);
-    sourceItemRequest->setFields(QStringList() << QDocumentGallery::title);
-    sourceItemRequest->setItemType(QDocumentGallery::Location);
+    sourceItemRequest->setFields(QStringList() << QDocumentGallery::fileName);
+    sourceItemRequest->setItemType(QDocumentGallery::File);
+    sourceItemRequest->setContainerUrl(documentsUrl);
     connect(sourceItemRequest, SIGNAL(itemsChanged()), this, SLOT(sourceListChanged()));
     connect(sourceItemRequest, SIGNAL(finished(int)), this, SLOT(sourceRequestFinished(int)));
 
@@ -94,8 +97,9 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
 
     destinationItemRequest = new QGalleryItemRequest(this);
     destinationItemRequest->setGallery(gallery);
-    destinationItemRequest->setFields(QStringList() << QDocumentGallery::title);
-    destinationItemRequest->setItemType(QDocumentGallery::Location);
+    destinationItemRequest->setFields(QStringList() << QDocumentGallery::fileName);
+    destinationItemRequest->setItemType(QDocumentGallery::Folder);
+    destinationItemRequest->setContainerUrl(documentsUrl);
     connect(destinationItemRequest, SIGNAL(itemsChanged()), this, SLOT(destinationListChanged()));
     connect(destinationItemRequest, SIGNAL(finished(int)),
             this, SLOT(destinationRequestFinished(int)));
@@ -128,17 +132,14 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
     splitter->addWidget(destinationWidget);
 
     QPushButton *copyButton = new QPushButton(tr("Copy"));
-    copyButton->setEnabled(false);
     connect(copyButton, SIGNAL(clicked()), this, SLOT(copy()));
     connect(this, SIGNAL(enableButtons(bool)), copyButton, SLOT(setEnabled(bool)));
 
     QPushButton *moveButton = new QPushButton(tr("Move"));
-    moveButton->setEnabled(false);
     connect(moveButton, SIGNAL(clicked()), this, SLOT(move()));
     connect(this, SIGNAL(enableButtons(bool)), moveButton, SLOT(setEnabled(bool)));
 
     QPushButton *removeButton = new QPushButton(tr("Delete"));
-    removeButton->setEnabled(false);
     connect(removeButton, SIGNAL(clicked()), this, SLOT(remove()));
     connect(this, SIGNAL(enableButtons(bool)), removeButton, SLOT(setEnabled(bool)));
 
@@ -290,13 +291,10 @@ void Manager::sourceItemActivated(const QModelIndex &index)
     QString type = index.data(GalleryModel::Type).toString();
 
     if (type == QDocumentGallery::Folder) {
-        emit enableButtons(actionRequest == 0 && !destinationFolderId.isEmpty());
-
         QString itemId = index.data(GalleryModel::ItemId).toString();
 
         sourceFolderId.append(itemId);
 
-        sourceItemRequest->setItemType(QDocumentGallery::File);
         sourceItemRequest->setContainerId(itemId);
         sourceItemRequest->execute();
 
@@ -305,10 +303,7 @@ void Manager::sourceItemActivated(const QModelIndex &index)
         sourceFolderId.removeLast();
 
         if (sourceFolderId.isEmpty()) {
-            emit enableButtons(false);
-
-            sourceItemRequest->setItemType(QDocumentGallery::Location);
-            sourceItemRequest->setFilter(QGalleryFilter());
+            sourceItemRequest->setContainerUrl(documentsUrl);
             sourceItemRequest->execute();
 
             sourceModel->setListMode(GalleryModel::LocationList);
@@ -325,13 +320,10 @@ void Manager::destinationItemActivated(const QModelIndex &index)
     QString type = index.data(GalleryModel::Type).toString();
 
     if (type == QDocumentGallery::Folder) {
-        emit enableButtons(actionRequest == 0 && !sourceFolderId.isEmpty());
-
         QString itemId = index.data(GalleryModel::ItemId).toString();
 
         destinationFolderId.append(itemId);
 
-        destinationItemRequest->setItemType(QDocumentGallery::Folder);
         destinationItemRequest->setContainerId(itemId);
         destinationItemRequest->execute();
 
@@ -339,11 +331,8 @@ void Manager::destinationItemActivated(const QModelIndex &index)
     } else if (type == QLatin1String("Up")) {
         destinationFolderId.removeLast();
 
-        if (!destinationFolderId.isEmpty()) {
-            emit enableButtons(false);
-
-            destinationItemRequest->setItemType(QDocumentGallery::Location);
-            destinationItemRequest->setFilter(QGalleryFilter());
+        if (destinationFolderId.isEmpty()) {
+            destinationItemRequest->setContainerUrl(documentsUrl);
             destinationItemRequest->execute();
 
             destinationModel->setListMode(GalleryModel::LocationList);

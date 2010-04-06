@@ -482,10 +482,12 @@ static bool qt_writeCondition(
     const QUrl url = filter.containerUrl();
 
     if (!url.isValid()) {
+        qDebug("Invalid URL");
         *error = 1;
 
         return false;
     } else if (url.scheme() != QLatin1String("file")) {
+        qDebug("non file scheme %s", qPrintable(url.scheme()));
         *error = 1;
 
         return false;
@@ -746,6 +748,7 @@ static bool qt_buildGenreQuery(
 
 // These are repeated in a few lists.
 #define QT_GALLERY_FILE_PROPERTYS \
+    QT_GALLERY_PROPERTY("fileName", "File:Name"), \
     QT_GALLERY_PROPERTY("", "File:Contents"), \
     QT_GALLERY_PROPERTY("", "File:Link"), \
     QT_GALLERY_PROPERTY("mimeType", "File:Mime"), \

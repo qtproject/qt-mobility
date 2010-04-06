@@ -100,6 +100,9 @@ public:
     static const QGalleryKey url;
     static const QGalleryKey thumbnail;
 
+    // File
+    static const QGalleryKey fileName;
+
     // Media
     static const QGalleryKey duration;
     static const QGalleryKey producer;
