@@ -135,7 +135,7 @@ public:
     }
     template<int N> bool hasValue(const QLatin1Constant<N>& key) const
     {
-        return hasValue(key.latin());
+        return hasValue(key.latin1());
     }
     template<int N> QVariant variantValue(const QLatin1Constant<N>& key) const
     {
