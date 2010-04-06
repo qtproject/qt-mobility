@@ -361,3 +361,30 @@ QList<QVariant::Type> QContactMaemo5Engine::supportedDataTypes() const {
 
   return st;   
 }
+
+void QContactMaemo5Engine::requestDestroyed(QContactAbstractRequest* req){
+  Q_UNUSED(req)
+}
+
+bool QContactMaemo5Engine::startRequest(QContactAbstractRequest* req){
+  Q_UNUSED(req)
+  return false;
+}
+
+bool QContactMaemo5Engine::cancelRequest(QContactAbstractRequest* req){
+  Q_UNUSED(req) 
+  return false;
+}
+
+bool QContactMaemo5Engine::waitForRequestProgress(QContactAbstractRequest* req, int msecs){
+  Q_UNUSED(req)
+  Q_UNUSED(msecs)
+  return false; 
+}
+
+bool QContactMaemo5Engine::waitForRequestFinished(QContactAbstractRequest* req, int msecs){
+  Q_UNUSED(req)
+  Q_UNUSED(msecs)
+  return false;
+}
+
