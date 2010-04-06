@@ -42,7 +42,7 @@
 
 # return status of 1 if absolute path as first argument
 # also prints the return status
-function isAbsPath() {
+isAbsPath() {
     slash=$(echo $1 | cut -c 1)
     if [ "$slash" != "/" ]; then
         echo 0
@@ -57,8 +57,7 @@ function isAbsPath() {
 # This is required because when building in scratchbox for
 # maemo we do not want to follow symbolic links that are 
 # introduced by scratchbox
-function absPath() {
-    
+absPath() {
     if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
         if [ `isAbsPath $1` = '1' ]; then
             echo $1;
