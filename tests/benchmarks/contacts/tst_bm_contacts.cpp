@@ -741,7 +741,7 @@ void tst_Contact::createContact()
     c->saveDetail(&cname);
 
     if(!m_qm->saveContact(c)){
-      qDebug() << "Failed to create contact durring setup";
+      qDebug() << "Failed to create contact during setup";
       return;
     }
     id_list.append(c->localId());

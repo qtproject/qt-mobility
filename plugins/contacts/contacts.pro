@@ -11,7 +11,7 @@ symbian {
     # SIM backend depends on etel MM APIs
     contains(symbiancntsim_enabled, yes) {
         SUBDIRS += symbiansim
-        #contains(build_unit_tests, yes):SUBDIRS += symbiansim/tsrc
+        contains(build_unit_tests, yes):SUBDIRS += symbiansim/tsrc
         message("Symbian SIM backend enabled")
     } else {
         message("Symbian SIM backend disabled")
