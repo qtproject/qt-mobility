@@ -1143,11 +1143,11 @@ void tst_QContactFilter::canonicalizedFilter_data()
 
 void tst_QContactFilter::traits()
 {
-    // QCOMPARE(sizeof(QContactFilter), sizeof(void *));
+    QCOMPARE(sizeof(QContactFilter), sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QContactFilter)> ti;
     QVERIFY(ti.isComplex);
     QVERIFY(!ti.isStatic);
-    QVERIFY(ti.isLarge); // virtual table + d pointer
+    QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
     QVERIFY(!ti.isDummy);
 }

@@ -58,7 +58,7 @@ class Q_CONTACTS_EXPORT QContactDetail
 public:
     QContactDetail();
     QContactDetail(const QString& definitionName);
-    virtual ~QContactDetail();
+    ~QContactDetail();
 
     QContactDetail(const QContactDetail& other);
     QContactDetail& operator=(const QContactDetail& other);
