@@ -163,7 +163,13 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   QContact *contact = d->m_abook->getQContact(contactId, error);
   QContact rtn(*contact);
   delete contact;
-  setContactDisplayLabel(&rtn, synthesizedDisplayLabel(rtn, error));
+  if (error == QContactManager::NoError) {
+    setContactDisplayLabel(&rtn, synthesizedDisplayLabel(rtn, error));
+    QContactId cid;
+    cid.setLocalId(contactId);
+    cid.setManagerUri(managerUri());
+    rtn.setId(cid);
+  }
   return rtn;
 }
 
