@@ -240,7 +240,7 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
 void CntSymbianDatabase::updateGroupMembershipsL()
 {
     CContactIdArray *groupIds = m_contactDatabase->GetGroupIdListL();
-    for (TInt i(0); i < groupIds->Count(); i++) {
+    for (TInt i(0); i < groupIds->Count(); ++i) {
         QContactLocalId id = (*groupIds)[i];
         QSet<QContactLocalId> dummySet;
         updateGroupMembershipsL(id, dummySet, dummySet);

@@ -43,7 +43,7 @@
 #define QMEDIATIMERANGE_H
 
 #include <qmobilityglobal.h>
-#include <qtmedianamespace.h>
+#include "qtmedianamespace.h"
 #include <QtCore/qshareddata.h>
 
 QTM_BEGIN_NAMESPACE

@@ -58,7 +58,6 @@ class Q_CONTACTS_EXPORT QContactDetailDefinitionFetchRequest : public QContactAb
 
 public:
     QContactDetailDefinitionFetchRequest();
-    ~QContactDetailDefinitionFetchRequest();
 
     /* Selection */
     void setDefinitionNames(const QStringList& names);

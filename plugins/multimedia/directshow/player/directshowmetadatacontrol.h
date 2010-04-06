@@ -42,7 +42,7 @@
 #ifndef DIRECTSHOWMETADATACONTROL_H
 #define DIRECTSHOWMETADATACONTROL_H
 
-#include <qmetadatacontrol.h>
+#include "../../src/multimedia/qmetadatacontrol.h"
 
 #include "directshowglobal.h"
 

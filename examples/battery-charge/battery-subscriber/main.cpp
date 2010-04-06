@@ -49,6 +49,7 @@
 #include <QUrl>
 #include <QDeclarativeView>
 #include <qdeclarative.h>
+#include <QtDeclarative>
 
 QTM_USE_NAMESPACE
 
@@ -69,10 +70,6 @@ private:
 
 MainWidget::MainWidget()
 {
-    //! [1]
-    QML_REGISTER_TYPE(Qt, 4, 6, ValueSpaceSubscriber, QValueSpaceSubscriber);
-    //! [1]
-
     QVBoxLayout *vbox = new QVBoxLayout;
     vbox->setMargin(0);
     setLayout(vbox);
@@ -93,6 +90,10 @@ MainWidget::MainWidget()
 
 int main(int argc, char *argv[])
 {
+    //! [1]
+    qmlRegisterType<QValueSpaceSubscriber>("Qt", 4, 6, "ValueSpaceSubscriber");
+    //! [1]
+
     QApplication app(argc, argv);
 
     MainWidget mainWidget;

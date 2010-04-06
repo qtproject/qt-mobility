@@ -216,8 +216,9 @@ private slots:
     void testQuickDestruction_data() { addManagers(); }
 
     void threadDelivery();
-    void progressReceived(QContactFetchRequest* request, bool appendOnly);
     void threadDelivery_data() { addManagers(); }
+protected slots:
+    void resultsAvailableReceived();
 
 private:
     bool compareContactLists(QList<QContact> lista, QList<QContact> listb);
@@ -227,7 +228,7 @@ private:
     QContactManager* prepareModel(const QString& uri);
 
     Qt::HANDLE m_mainThreadId;
-    Qt::HANDLE m_progressSlotThreadId;
+    Qt::HANDLE m_resultsAvailableSlotThreadId;
     QContactManagerDataHolder managerDataHolder;
 };
 
@@ -2197,18 +2198,19 @@ void tst_QContactAsync::threadDelivery()
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(prepareModel(uri));
     m_mainThreadId = cm->thread()->currentThreadId();
-    m_progressSlotThreadId = m_mainThreadId;
+    m_resultsAvailableSlotThreadId = m_mainThreadId;
 
     // now perform a fetch request and check that the progress is delivered to the correct thread.
     QContactFetchRequest *req = new QContactFetchRequest;
     req->setManager(cm.data());
-    connect(req, SIGNAL(progress(QContactFetchRequest*,bool)), this, SLOT(progressReceived(QContactFetchRequest*, bool)));
+    connect(req, SIGNAL(resultsAvailable()), this, SLOT(resultsAvailableReceived()));
     req->start();
 
     int totalWaitTime = 0;
+    QTest::qWait(1); // force it to process events at least once.
     while (req->state() != QContactAbstractRequest::FinishedState) {
         // ensure that the progress signal was delivered to the main thread.
-        QCOMPARE(m_mainThreadId, m_progressSlotThreadId);
+        QCOMPARE(m_mainThreadId, m_resultsAvailableSlotThreadId);
 
         QTest::qWait(5); // spin until done
         totalWaitTime += 5;
@@ -2221,14 +2223,17 @@ void tst_QContactAsync::threadDelivery()
     }
 
     // ensure that the progress signal was delivered to the main thread.
-    QCOMPARE(m_mainThreadId, m_progressSlotThreadId);
+    QCOMPARE(m_mainThreadId, m_resultsAvailableSlotThreadId);
     delete req;
 }
 
-void tst_QContactAsync::progressReceived(QContactFetchRequest* request, bool appendOnly)
+void tst_QContactAsync::resultsAvailableReceived()
 {
-    Q_UNUSED(appendOnly);
-    m_progressSlotThreadId = request->thread()->currentThreadId();
+    QContactFetchRequest *req = qobject_cast<QContactFetchRequest *>(QObject::sender());
+    if (req)
+        m_resultsAvailableSlotThreadId = req->thread()->currentThreadId();
+    else
+        qDebug() << "resultsAvailableReceived() : request deleted; unable to set thread id!";
 }
 
 void tst_QContactAsync::addManagers()

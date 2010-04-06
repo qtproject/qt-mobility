@@ -69,8 +69,14 @@ struct cbSharedData{
   QContactABook *that;
 };
 
+struct jobSharedData{
+   QContactABook* that;
+   bool *result;
+   char *uid;
+};
+
 /* QContactABook */
-QContactABook::QContactABook(QObject* parent) :QObject(parent)
+QContactABook::QContactABook(QObject* parent) :QObject(parent), m_cbSD(0), m_deleteJobSD(0), m_saveJobSD(0)
 {
   //Initialize QContactDetail context list
   initAddressBook();
@@ -78,8 +84,22 @@ QContactABook::QContactABook(QObject* parent) :QObject(parent)
 
 QContactABook::~QContactABook()
 {
-  g_object_unref(m_abookAgregator);
-  delete cbSD;
+  OssoABookAggregator *roster = reinterpret_cast<OssoABookAggregator*>(m_abookAgregator);
+  if (g_signal_handler_is_connected(roster, m_contactAddedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactAddedHandlerId);
+  if (g_signal_handler_is_connected(roster, m_contactChangedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactChangedHandlerId);
+  if (g_signal_handler_is_connected(roster, m_contactRemovedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactRemovedHandlerId);
+
+  // XXX FIXME: memory leak?
+  //g_object_unref(m_abookAgregator);
+  delete m_cbSD;
+  m_cbSD = 0;
+  delete m_deleteJobSD;
+  m_deleteJobSD = 0;
+  delete m_saveJobSD;
+  m_saveJobSD = 0;
 }
 
 static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts, gpointer data)
@@ -88,6 +108,11 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  if (!d){
+    qWarning() << "d has been deleted";
+    return;
+  }
+  
   OssoABookContact **p;
   QList<QContactLocalId> contactIds;
   
@@ -111,6 +136,11 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  if (!d){
+    qWarning() << "d has been deleted";
+    return;
+  }
+  
   OssoABookContact **p;
   QList<QContactLocalId> contactIds;
   
@@ -133,11 +163,17 @@ static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointe
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  if (!d){
+    qWarning() << "d has been deleted";
+    return;
+  }
+  
   const char **p;
   QList<QContactLocalId> contactIds;
   
   for (p = ids; *p; ++p) {
     QContactLocalId id = d->hash->take(*p);
+    QCM5_DEBUG << "Contact" << id << "has been removed";
     if (id)
       contactIds << id;
   }
@@ -146,17 +182,14 @@ static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointe
 }
 
 void QContactABook::initAddressBook(){
-  // Open AddressBook
+  /* Open AddressBook */
   GError *gError = NULL;
   OssoABookRoster* roster = NULL;
   
   roster = osso_abook_aggregator_get_default(&gError);
   FATAL_IF_ERROR(gError)
   
-  // Wait until is ready
-  osso_abook_waitable_run((OssoABookWaitable *) roster,
-			   g_main_context_default(),
-			   &gError);
+  osso_abook_waitable_run((OssoABookWaitable *) roster, g_main_context_default(), &gError);
   FATAL_IF_ERROR(gError)
   
   if (!osso_abook_waitable_is_ready ((OssoABookWaitable *) roster, &gError))
@@ -164,22 +197,24 @@ void QContactABook::initAddressBook(){
   
   m_abookAgregator = reinterpret_cast<OssoABookAggregator*>(roster);
   
+  /* Initialize local Id Hash */
   initLocalIdHash();
   
-  cbSD = new cbSharedData;
-  cbSD->hash = &m_localIds;
-  cbSD->that = this;
-  
-  //TODO Set up signals for added/changed eContact
-  g_signal_connect(roster, "contacts-added",
-                   G_CALLBACK (contactsAddedCB), cbSD);
-  g_signal_connect(roster, "contacts-changed",
-                   G_CALLBACK (contactsChangedCB), cbSD);
-  g_signal_connect(roster, "contacts-removed",
-                   G_CALLBACK (contactsRemovedCB), cbSD);
+  /* Initialize callbacks shared data */
+  m_cbSD = new cbSharedData;
+  m_cbSD->hash = &m_localIds;
+  m_cbSD->that = this;
+   
+  /* Setup signals */
+  m_contactAddedHandlerId = g_signal_connect(roster, "contacts-added",
+                   G_CALLBACK (contactsAddedCB), m_cbSD);
+  m_contactChangedHandlerId = g_signal_connect(roster, "contacts-changed",
+                   G_CALLBACK (contactsChangedCB), m_cbSD);
+  m_contactRemovedHandlerId = g_signal_connect(roster, "contacts-removed",
+                   G_CALLBACK (contactsRemovedCB), m_cbSD);
   
 #if 0
-  //TEST List of supported fields
+  //TEST List supported fields
   EBook *book = NULL;
   GList *l;
   book = osso_abook_roster_get_book(roster);
@@ -217,7 +252,7 @@ void QContactABook::initLocalIdHash()
      QCM5_DEBUG << "eContactID " << eContactUID << "has been stored in m_localIDs with key" << m_localIds[eContactUID];
      
      // Useful for debugging.
-     e_vcard_dump_structure((EVCard*)contact);
+     if (QCM5_DEBUG_ENABLED) e_vcard_dump_structure((EVCard*)contact);
    }
    
    g_list_free(contactList);
@@ -298,7 +333,8 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   EBookQuery* query = convert(filter);
   
   GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-  e_book_query_unref(query);
+  if (query)
+      e_book_query_unref(query);
   
   while (l){
     EContact *contact = E_CONTACT(l->data);
@@ -329,48 +365,95 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   return rtn;
 }
 
+static void delContactCB(EBook *book, EBookStatus status, gpointer closure)
+{
+  Q_UNUSED(book);
+  QCM5_DEBUG << "Contact Removed";
+  
+  jobSharedData *sd = static_cast<jobSharedData*>(closure);
+  if (!sd)
+    return;
+  
+  *sd->result = (status != E_BOOK_ERROR_OK &&
+                 status != E_BOOK_ERROR_CONTACT_NOT_FOUND) ? false : true;  
+  sd->that->_jobRemovingCompleted();
+}
+
+//### FIXME error is not managed
 bool QContactABook::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {
   Q_UNUSED(error);
-  
+  QMutexLocker locker(&m_delContactMutex);
+
   bool ok = false;
-  OssoABookRoster* roster = A_ROSTER(m_abookAgregator);
+  
+  OssoABookRoster *roster = A_ROSTER(m_abookAgregator);
   EBook *book = osso_abook_roster_get_book(roster);
-  OssoABookContact* aContact = getAContact(contactId);
+  OssoABookContact *aContact = getAContact(contactId);
+  if (!OSSO_ABOOK_IS_CONTACT(aContact)){
+    qWarning() << "aCtontact is not a valid ABook contact"; 
+    return false;
+  }
   
-  // Delete the contact itself with all its roster contacts and photo.
-  //NOTE This perform an async operation. If aContact exists, ok var will most probably be true.
-  ok = osso_abook_contact_delete(aContact, book, NULL);
+  // ASync => Sync
+  QEventLoop loop;                           
+  connect(this, SIGNAL(jobRemovingCompleted()), &loop, SLOT(quit()));
   
-#if 0
-  // This code works syncronously but doesn't remove any photo nor roster contacts
-  const char *id = m_localIds[contactId];
-  QCM5_DEBUG << "Deleting contact id:" << id;
-  GError *gError = NULL;
-  ok = e_book_remove_contact(book, id, &gError);
-  WARNING_IF_ERROR(gError);
-#endif  
+  // Prepare shared data
+  if (m_deleteJobSD){
+    delete m_deleteJobSD;
+    m_deleteJobSD = 0;
+  }
+  m_deleteJobSD = new jobSharedData;
+  m_deleteJobSD->that = this;
+  m_deleteJobSD->result = &ok;
+  
+  //Remove photos
+  EContactPhoto *photo = NULL;
+  GFile *file = NULL;
+  photo = (EContactPhoto*) e_contact_get(E_CONTACT (aContact), E_CONTACT_PHOTO);
+  if (photo) {
+    if (photo->type == E_CONTACT_PHOTO_TYPE_URI && photo->data.uri) {
+      file = g_file_new_for_uri(photo->data.uri);
+      g_file_delete(file, NULL, NULL);
+      g_object_unref (file);
+    }
+    e_contact_photo_free (photo);
+  }
+  
+  //Remove all roster contacts from their roster
+  GList* rosterContacts = NULL;
+  rosterContacts = osso_abook_contact_get_roster_contacts(aContact);
+  const char *masterUid = CONST_CHAR(e_contact_get_const(E_CONTACT(aContact), E_CONTACT_UID));
+  while(rosterContacts){
+    OssoABookContact *rosterContact = A_CONTACT(rosterContacts->data);
+    osso_abook_contact_reject_for_uid(rosterContact, masterUid, NULL);
+    rosterContacts = rosterContacts->next;
+  }  
+  
+  // Remove contact
+  e_book_async_remove_contact(book, E_CONTACT(aContact),
+                              delContactCB, m_deleteJobSD);
+  
+  loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
   
   return ok;
 }
 
-struct svSharedData{
-   QContactABook* that;
-   bool *result;
-};
-
 static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data)
 {
   Q_UNUSED(book)
-  svSharedData *sd = static_cast<svSharedData*>(user_data);
+  jobSharedData *sd = static_cast<jobSharedData*>(user_data);
   
   *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;  
-  sd->that->_savingJobFinished();
+  sd->that->_jobSavingCompleted();
 }
 
 static void addContactCB(EBook* book, EBookStatus  status, const char  *uid, gpointer user_data)
 {
-  Q_UNUSED(uid);
+  jobSharedData *sd = static_cast<jobSharedData*>(user_data);
+  if (uid)
+    sd->uid = strdup(uid);
   
   //osso_abook_contact_set_roster(OssoABookContact *contact, OssoABookRoster *roster)
   commitContactCB(book, status, user_data);
@@ -404,22 +487,32 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
 
   // ASync => Sync
   QEventLoop loop;
-  connect(this, SIGNAL(savingJobDone()), &loop, SLOT(quit()));
+  connect(this, SIGNAL(jobSavingCompleted()), &loop, SLOT(quit()));
 
   // Prepare shared data
-  svSharedData sd;
-  sd.that = this;
-  sd.result = &ok;
+  if (m_saveJobSD){
+    delete m_saveJobSD;
+    m_saveJobSD = 0;
+  }
+  m_saveJobSD = new jobSharedData;
+  m_saveJobSD->that = this;
+  m_saveJobSD->result = &ok;
   
   // Add/Commit the contact
   uid = CONST_CHAR(e_contact_get_const(E_CONTACT (aContact), E_CONTACT_UID)); 
   if (uid) {
-    osso_abook_contact_async_commit(aContact, book, commitContactCB, &sd);
+    osso_abook_contact_async_commit(aContact, book, commitContactCB, m_saveJobSD);
   } else {
-    osso_abook_contact_async_add(aContact, book, addContactCB, &sd);
+    osso_abook_contact_async_add(aContact, book, addContactCB, m_saveJobSD);
   }
   
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
+
+  // set the id of the contact.
+  QContactId cId;
+  cId.setLocalId(m_localIds[m_saveJobSD->uid]);
+  contact->setId(cId);
+  //free(m_saveJobSD->uid);
   
   return ok;
 }
@@ -733,7 +826,8 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId) c
 
     query = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, m_localIds[contactId]);
     contacts = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-    e_book_query_unref(query);
+    if (query)
+        e_book_query_unref(query);
 
     if (g_list_length(contacts) == 1) {
       rtn = A_CONTACT(contacts->data);
@@ -909,7 +1003,8 @@ QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) c
 }
 
 QContactAvatar* QContactABook::getAvatarDetail(EContact *eContact) const
-{  
+{
+    Q_UNUSED(eContact);
 // XXX TODO: FIXME
 //  QContactAvatar* rtn = new QContactAvatar;
 //  QVariantMap map;
@@ -1637,6 +1732,10 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
     }
 
     QImage image = detail.thumbnail();
+    
+    if (image.isNull())
+      return;
+    
     if (image.format() != QImage::Format_ARGB32_Premultiplied)
         image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
@@ -1649,6 +1748,8 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
 
 void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const
 {
+  Q_UNUSED(aContact)
+  Q_UNUSED(detail);
 // XXX TODO: FIXME
 //  if (!aContact) return;
 //

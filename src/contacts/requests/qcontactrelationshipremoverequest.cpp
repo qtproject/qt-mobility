@@ -64,11 +64,6 @@ QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest()
 {
 }
 
-/*! Cleans up the memory in use by this relationship remove request */
-QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
-{
-}
-
 /*! Sets the list of relationships which will be removed to \a relationships */
 void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRelationship>& relationships)
 {

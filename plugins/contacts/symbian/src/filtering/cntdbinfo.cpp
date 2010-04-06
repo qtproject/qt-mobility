@@ -128,7 +128,7 @@ QString CntDbInfo::getSortQuery( const QList<QContactSortOrder> &sortOrders,
     if(*error == QContactManager::NoError)
         {
         QList<QString> list;
-        foreach( QContactSortOrder s, sortOrders ) 
+        foreach(const QContactSortOrder& s, sortOrders )
             {
             // Find uids for sortings
             // Get the field id for the detail field name

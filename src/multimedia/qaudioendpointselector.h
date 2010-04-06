@@ -43,7 +43,7 @@
 #define QAUDIOENDPOINTSELECTOR_H
 
 #include <QtMultimedia/qaudio.h>
-#include <qmediacontrol.h>
+#include "qmediacontrol.h"
 
 QTM_BEGIN_NAMESPACE
 

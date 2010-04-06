@@ -60,7 +60,6 @@ class Q_CONTACTS_EXPORT QContactRelationshipFetchRequest : public QContactAbstra
 
 public:
     QContactRelationshipFetchRequest();
-    ~QContactRelationshipFetchRequest();
 
     /* Selection */
     void setFirst(const QContactId& firstId);
@@ -69,7 +68,6 @@ public:
     void setRelationshipType(const QString& relationshipType);
     QString relationshipType() const;
 
-    // replaces the above functions.
     void setSecond(const QContactId& secondId);
     QContactId second() const;
 
