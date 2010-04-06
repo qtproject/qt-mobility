@@ -75,34 +75,14 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
                     request->fields(),
                     request->sortFields(),
                     request->minimumPagedItems());
-
-
         } else if (schema.isAggregateType()) {
-            if (request->itemType() == QLatin1String("Artist")) {
-                response = new QGalleryTrackerArtistListResponse(
-                        QDBusConnection::sessionBus(),
-                        schema,
-                        query,
-                        request->fields(),
-                        request->sortFields(),
-                        request->minimumPagedItems());
-            } else if (request->itemType() == QLatin1String("Album")) {
-                response = new QGalleryTrackerAlbumListResponse(
-                        QDBusConnection::sessionBus(),
-                        schema,
-                        query,
-                        request->fields(),
-                        request->sortFields(),
-                        request->minimumPagedItems());
-            } else if (request->itemType() == QLatin1String("Genre")) {
-                response = new QGalleryTrackerGenreListResponse(
-                        QDBusConnection::sessionBus(),
-                        schema,
-                        query,
-                        request->fields(),
-                        request->sortFields(),
-                        request->minimumPagedItems());
-            }
+            response = new QGalleryTrackerAggregateListResponse(
+                    QDBusConnection::sessionBus(),
+                    schema,
+                    query,
+                    request->fields(),
+                    request->sortFields(),
+                    request->minimumPagedItems());
         }
 
         if (response) {

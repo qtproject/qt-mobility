@@ -65,6 +65,8 @@ public:
         Concatenation
     };
 
+    typedef QString (*IdFunc)(const QStringList &row);
+
     QGalleryTrackerSchema();
     ~QGalleryTrackerSchema();
 
@@ -78,6 +80,8 @@ public:
 
     QString service() const;
     QString field(const QString &propertyName) const;
+
+    IdFunc idFunc() const;
 
     QStringList identityFields() const;
     QStringList identityPropertyNames() const;

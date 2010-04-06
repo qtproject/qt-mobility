@@ -51,7 +51,7 @@ QGalleryTrackerAggregateListResponse::QGalleryTrackerAggregateListResponse(
         const QStringList &sortProperties,
         int minimumPagedItems,
         QObject *parent)
-    : QGalleryTrackerListResponse(minimumPagedItems, parent)
+    : QGalleryTrackerListResponse(schema, minimumPagedItems, parent)
     , m_dbusInterface(
             QLatin1String("org.freedesktop.Tracker"),
             QLatin1String("/org/freedesktop/Tracker/Metadata"),
@@ -157,39 +157,4 @@ QDBusPendingCall QGalleryTrackerAggregateListResponse::queryRows(int offset, int
             false, // Search by service
             offset,
             limit);
-}
-
-QString QGalleryTrackerArtistListResponse::id(int index) const
-{
-    QString artistName = row(index).value(0);
-
-    return !artistName.isEmpty()
-            ? QLatin1String("artist::") + artistName
-            : QString();
-}
-
-QString QGalleryTrackerAlbumListResponse::id(int index) const
-{
-    QStringList row = QGalleryTrackerListResponse::row(index);
-
-    QString albumTitle = row.value(0);
-    QString artistName = row.value(1);
-
-    if (!albumTitle.isEmpty()) {
-        return QLatin1String("album::")
-                + artistName.replace(QLatin1String("/"), QLatin1String("//"))
-                + QLatin1Char('/')
-                + albumTitle;
-    } else {
-        return QString();
-    }
-}
-
-QString QGalleryTrackerGenreListResponse::id(int index) const
-{
-    QString genre = row(index).value(0);
-
-    return !genre.isEmpty()
-            ? QLatin1String("genre::") + genre
-            : QString();
 }

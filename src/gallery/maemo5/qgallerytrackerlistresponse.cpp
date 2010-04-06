@@ -43,8 +43,10 @@
 
 #include <QtDBus/qdbuspendingreply.h>
 
-QGalleryTrackerListResponse::QGalleryTrackerListResponse(int minimumPagedItems, QObject *parent)
+QGalleryTrackerListResponse::QGalleryTrackerListResponse(
+        const QGalleryTrackerSchema &schema, int minimumPagedItems, QObject *parent)
     : QGalleryAbstractResponse(parent)
+    , idFunc(schema.idFunc())
     , m_minimumPagedItems(minimumPagedItems)
     , m_count(0)
     , m_insertIndex(0)
@@ -83,14 +85,14 @@ QStringList QGalleryTrackerListResponse::row(int index) const
     return m_rows.value(index - m_rowOffset);
 }
 
+QString QGalleryTrackerListResponse::id(int index) const
+{
+    return idFunc(m_rows.value(index - m_rowOffset));
+}
+
 QUrl QGalleryTrackerListResponse::url(int) const
 {
     return QUrl();
-}
-
-QList<QGalleryResource> QGalleryTrackerListResponse::resources(int) const
-{
-    return QList<QGalleryResource>();
 }
 
 QVariant QGalleryTrackerListResponse::metaData(int index, int key) const

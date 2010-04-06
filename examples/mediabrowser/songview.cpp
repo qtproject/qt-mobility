@@ -76,6 +76,7 @@ SongView::SongView(QWidget *parent)
     view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     view->setModel(model);
     connect(view->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(sliderMoved(int)));
+    connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -92,5 +93,9 @@ SongView::~SongView()
 void SongView::mediaChanged()
 {
     model->setList(media());
+}
+
+void SongView::activated(const QModelIndex &index)
+{
 }
 

@@ -51,7 +51,7 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
         const QStringList &sortProperties,
         int minimumPagedItems,
         QObject *parent)
-    : QGalleryTrackerListResponse(minimumPagedItems, parent)
+    : QGalleryTrackerListResponse(schema, minimumPagedItems, parent)
     , m_dbusInterface(
             QLatin1String("org.freedesktop.Tracker"),
             QLatin1String("/org/freedesktop/Tracker/Search"),
@@ -101,25 +101,23 @@ QString QGalleryTrackerFileListResponse::toString(int key) const
     return m_propertyNames.value(key - 2);
 }
 
-QString QGalleryTrackerFileListResponse::id(int index) const
-{
-    return QGalleryTrackerListResponse::row(index).value(0);
-}
-
 QUrl QGalleryTrackerFileListResponse::url(int index) const
 {
+    QUrl url;
+
     QStringList row = QGalleryTrackerListResponse::row(index);
 
-    return !row.isEmpty() ?  QUrl(row.at(0)) : QUrl();
+    if (!row.isEmpty()) {
+        url.setScheme(QLatin1String("file"));
+        url.setPath(row.at(0));
+    }
+
+    return url;
 }
 
 QString QGalleryTrackerFileListResponse::type(int index) const
 {
-    QStringList row = QGalleryTrackerListResponse::row(index);
-
-    return !row.isEmpty()
-            ? QGalleryTrackerSchema::typeFromService(row.value(1))
-            : QString();
+    return QGalleryTrackerSchema::typeFromService(row(index).value(1));
 }
 
 QList<QGalleryResource> QGalleryTrackerFileListResponse::resources(int index) const

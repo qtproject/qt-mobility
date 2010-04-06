@@ -74,6 +74,8 @@ AlbumView::AlbumView(QWidget *parent)
     view->setModel(model);
     view->setItemDelegate(new AlbumDelegate(this));
     connect(view->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(sliderMoved(int)));
+    connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
+
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);

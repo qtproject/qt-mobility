@@ -46,6 +46,8 @@
 
 class GalleryModel;
 
+class QModelIndex;
+
 class SongView : public GalleryView
 {
     Q_OBJECT
@@ -55,6 +57,9 @@ public:
 
 protected slots:
     void mediaChanged();
+
+private slots:
+    void activated(const QModelIndex &index);
 
 private:
     GalleryModel *model;

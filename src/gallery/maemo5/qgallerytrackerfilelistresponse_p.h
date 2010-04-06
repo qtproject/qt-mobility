@@ -46,8 +46,6 @@
 
 #include <QtDBus/qdbusinterface.h>
 
-class QGalleryTrackerSchema;
-
 class QGalleryTrackerFileListResponse : public QGalleryTrackerListResponse
 {
     Q_OBJECT
@@ -64,7 +62,6 @@ public:
 
     QString toString(int key) const;
 
-    QString id(int index) const;
     QUrl url(int index) const;
     QString type(int index) const;
     QList<QGalleryResource> resources(int index) const;

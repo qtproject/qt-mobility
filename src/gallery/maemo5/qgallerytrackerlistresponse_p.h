@@ -44,13 +44,17 @@
 
 #include "qgalleryrequest.h"
 
+#include "qgallerytrackerschema_p.h"
+
 #include <QtDBus/qdbuspendingcall.h>
 
 class QGalleryTrackerListResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:
-    QGalleryTrackerListResponse(int minimumPagedItems, QObject *parent = 0);
+    QGalleryTrackerListResponse(
+            const QGalleryTrackerSchema &schema, int minimumPagedItems, QObject *parent = 0);
+
     ~QGalleryTrackerListResponse();
 
     int minimumPagedItems() const;
@@ -62,10 +66,10 @@ public:
 
     QStringList row(int index) const;
 
-    virtual QString id(int index) const = 0;
-    QUrl url(int index) const;
+    QString id(int index) const;
+    virtual QUrl url(int index) const = 0;
     virtual QString type(int index) const = 0;
-    QList<QGalleryResource> resources(int index) const;
+    virtual QList<QGalleryResource> resources(int index) const = 0;
 
     QVariant metaData(int index, int key) const;
     void setMetaData(int index, int key, const QVariant &value);
@@ -93,6 +97,7 @@ private:
         PageAlignment = 127 // Actually alignment -1, where alignment is a power of 2.
     };
 
+    const QGalleryTrackerSchema::IdFunc idFunc;
     const int m_minimumPagedItems;
     int m_count;
     int m_insertIndex;

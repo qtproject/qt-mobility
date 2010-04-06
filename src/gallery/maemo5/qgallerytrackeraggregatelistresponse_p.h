@@ -46,7 +46,6 @@
 
 #include <QtDBus/qdbusinterface.h>
 
-class QGalleryTrackerSchema;
 
 class QGalleryTrackerAggregateListResponse : public QGalleryTrackerListResponse
 {
@@ -85,66 +84,6 @@ private:
     QStringList m_aggregateFields;
     QStringList m_propertyNames;
     QList<int> m_resourceKeys;
-};
-
-class QGalleryTrackerArtistListResponse : public QGalleryTrackerAggregateListResponse
-{
-    Q_OBJECT
-public:
-    QGalleryTrackerArtistListResponse(
-            const QDBusConnection &connection,
-            const QGalleryTrackerSchema &schema,
-            const QString &query,
-            const QStringList &properties,
-            const QStringList &sortProperties,
-            int minimumPagedItems,
-            QObject *parent = 0)
-        : QGalleryTrackerAggregateListResponse(
-                connection, schema, query, properties, sortProperties, minimumPagedItems, parent)
-    {
-    }
-
-    QString id(int index) const;
-};
-
-class QGalleryTrackerAlbumListResponse : public QGalleryTrackerAggregateListResponse
-{
-    Q_OBJECT
-public:
-    QGalleryTrackerAlbumListResponse(
-            const QDBusConnection &connection,
-            const QGalleryTrackerSchema &schema,
-            const QString &query,
-            const QStringList &properties,
-            const QStringList &sortProperties,
-            int minimumPagedItems,
-            QObject *parent = 0)
-        : QGalleryTrackerAggregateListResponse(
-                connection, schema, query, properties, sortProperties, minimumPagedItems, parent)
-    {
-    }
-
-    QString id(int index) const;
-};
-
-class QGalleryTrackerGenreListResponse : public QGalleryTrackerAggregateListResponse
-{
-    Q_OBJECT
-public:
-    QGalleryTrackerGenreListResponse(
-            const QDBusConnection &connection,
-            const QGalleryTrackerSchema &schema,
-            const QString &query,
-            const QStringList &properties,
-            const QStringList &sortProperties,
-            int minimumPagedItems,
-            QObject *parent = 0)
-        : QGalleryTrackerAggregateListResponse(
-                connection, schema, query, properties, sortProperties, minimumPagedItems, parent)
-    {
-    }
-
-    QString id(int index) const;
 };
 
 #endif
