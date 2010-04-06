@@ -170,11 +170,11 @@ void QMapMarker::compMapCoords()
     }
 }
 
-void QMapMarker::constructMarker(QPainter* painter, const QPointF& point)
+void QMapMarker::constructMarker(QPainter* painter)
 {
     Q_D(QMapMarker);
-    QPointF p1 = point;
-    QPointF p2(p1.x(), p1.y() - MARKER_PIN_LEN);
+    QPointF p1(0,0);
+    QPointF p2(0, 0 - MARKER_PIN_LEN);
     QPen pen(Qt::black);
     pen.setWidth(2);
     painter->setPen(pen);
@@ -205,19 +205,11 @@ void QMapMarker::paint(QPainter* painter, const QRectF& viewPort)
 
     if (d->icn.isNull()) {
         quint64 mapWidth = d->mapView->mapWidth();
-        QPen oldPen = painter->pen();
-        QBrush oldBrush = painter->brush();
-        constructMarker(painter, d->mapPt - viewPort.topLeft());
-
-        //Is view port wrapping around date line?
-        if (viewPort.right() >= mapWidth)
-            constructMarker(painter, d->mapPt - viewPort.topLeft() + QPointF(mapWidth, 0));
-        //Is marker spanning date line?
-        if (d->box.right() >= mapWidth)
-            constructMarker(painter, d->mapPt - viewPort.topLeft() - QPointF(mapWidth, 0));
-
-        painter->setPen(oldPen);
-        painter->setBrush(oldBrush);
+        painter->save();
+        painter->translate(-viewPort.left(), -viewPort.top());
+        painter->translate(d->mapPt.x(), d->mapPt.y());
+        constructMarker(painter);
+        painter->restore();
     }
     //TODO: map marker with provided icon
 }

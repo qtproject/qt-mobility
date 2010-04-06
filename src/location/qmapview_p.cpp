@@ -233,8 +233,24 @@ void QMapViewPrivate::paintLayers(QPainter* painter)
         mit.next();
         QSetIterator<QMapObject*> sit(mit.value());
 
-        while (sit.hasNext())
-            sit.next()->paint(painter, viewPort);
+        while (sit.hasNext()) {
+            QMapObject *obj = sit.next();
+            obj->paint(painter, viewPort);
+
+            qint64 mapWidth = q->mapWidth();
+            if (viewPort.right() >= mapWidth) {
+                painter->save();
+                painter->translate(mapWidth, 0);
+                obj->paint(painter, viewPort);
+                painter->restore();
+
+                painter->save();
+                painter->translate(-mapWidth, 0);
+                obj->paint(painter,viewPort);
+                painter->restore();
+
+            }
+        }
     }
 }
 

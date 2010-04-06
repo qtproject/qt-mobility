@@ -50,6 +50,7 @@ class QMapLinePrivate;
 class Q_LOCATION_EXPORT QMapLine : public QMapObject
 {
     friend class QMapView;
+    friend class QMapRoute;
 
 public:
     QMapLine(const QGeoCoordinate& point1, const QGeoCoordinate& point2,
@@ -69,6 +70,8 @@ protected:
 
 private:
     Q_DECLARE_PRIVATE(QMapLine)
+
+    static QLineF connectShortest(const QMapView &mapView, const QGeoCoordinate& point1, const QGeoCoordinate& point2);
 };
 
 QTM_END_NAMESPACE

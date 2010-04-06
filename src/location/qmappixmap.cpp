@@ -113,27 +113,12 @@ void QMapPixmap::paint(QPainter* painter, const QRectF& viewPort)
     if (!d->mapView)
         return;
 
-    d->pixRect.translate(-viewPort.left(), -viewPort.top());
-    painter->drawRect(d->pixRect);
-    d->pixRect.translate(viewPort.left(), viewPort.top());
-    qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
+    painter->save();
 
-    //Is view port wrapping around date line?
-    if (viewPort.right() >= mapWidth) {
-        d->pixRect.translate(-viewPort.left(), -viewPort.top());
-        d->pixRect.translate(mapWidth, 0);
-        painter->drawRect(d->pixRect);
-        d->pixRect.translate(-mapWidth, 0);
-        d->pixRect.translate(viewPort.left(), viewPort.top());
-    }
-    //Is rect crossing date line?
-    if (d->pixRect.right() >= mapWidth) {
-        d->pixRect.translate(-viewPort.left(), -viewPort.top());
-        d->pixRect.translate(-mapWidth, 0);
-        painter->drawRect(d->pixRect);
-        d->pixRect.translate(mapWidth, 0);
-        d->pixRect.translate(viewPort.left(), viewPort.top());
-    }
+    painter->translate(-viewPort.left(), -viewPort.top());
+    painter->drawRect(d->pixRect);
+
+    painter->restore();
 }
 
 bool QMapPixmap::intersects(const QRectF& rect) const

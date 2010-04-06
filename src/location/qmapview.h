@@ -105,8 +105,6 @@ public:
 
     QGeoCoordinate center() const;
     QPointF mapCenter() const;
-    void centerOn(const QPointF& pos);
-    void centerOn(qreal x, qreal y);
     void centerOn(const QGeoCoordinate& geoPos);
     void moveViewPort(int deltaX, int deltaY);
 
@@ -140,8 +138,6 @@ public:
     QMapObject* getTopmostMapObject(const QGeoCoordinate& geoCoordinate);
     QMapObject* getTopmostMapObject(const QPointF& mapCoordinate);
 
-    QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
-
     MapVersion version() const;
     /*!
     * Sets the map version.
@@ -172,6 +168,8 @@ protected:
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     virtual void wheelEvent(QGraphicsSceneWheelEvent* event);
     virtual void resizeEvent(QGraphicsSceneResizeEvent* event);
+
+    void centerOn(const QPointF& pos);
 
 public slots:
     void releaseRemoteTiles();
