@@ -64,11 +64,6 @@ QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest()
 {
 }
 
-/*! Cleans up the memory in use by this relationship remove request */
-QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
-{
-}
-
 /*!
   \deprecated
    Sets the first contact criterion of the remove request to \a firstId.

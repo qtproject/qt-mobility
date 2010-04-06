@@ -55,7 +55,7 @@ class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
 
 public:
     QContactAbstractRequest() {}
-    virtual ~QContactAbstractRequest();
+    ~QContactAbstractRequest();
 
     QList<QContactManager::Error> Q_DECL_DEPRECATED errors() const; // deprecated, removed in week 3.  see leaf classes for detailed error reporting.
     enum State {

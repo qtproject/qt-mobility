@@ -66,12 +66,6 @@ QContactRelationshipFetchRequest::QContactRelationshipFetchRequest()
 {
 }
 
-/*! Cleans up the memory in use by this relationship fetch request
- */
-QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
-{
-}
-
 /*! Sets the source contact criterion of the fetch request to \a firstId.
     If \a firstId is the default-constructed id, or the first contact id is not set,
     the request will fetch relationships involving any first contact.

@@ -63,7 +63,7 @@ class Q_CONTACTS_EXPORT QContactFilter
 {
 public:
     QContactFilter();
-    virtual ~QContactFilter();
+    ~QContactFilter();
     QContactFilter(const QContactFilter& other);
     QContactFilter& operator=(const QContactFilter& other);
 

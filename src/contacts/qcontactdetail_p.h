@@ -57,10 +57,101 @@
 #include "qcontactdetail.h"
 
 #include <QSharedData>
-#include <QMap>
 #include <QString>
+#include <QHash>
 
 QTM_BEGIN_NAMESPACE
+
+/*
+  Yet another string class
+
+  Mostly a wrapper around char *, where we do pointer equality checks before
+  a strcmp, given our common use case of equivalent pointers.
+
+  Also handles when things get passed in as a QString, by converting to Latin1
+  and caching the result, and caching conversions to QString (hit by definitionName a lot)
+*/
+class QContactStringHolder
+{
+public:
+    QContactStringHolder()
+        : m_str(0)
+    {
+    }
+
+    ~QContactStringHolder()
+    {
+    }
+
+    QContactStringHolder(const QContactStringHolder& other)
+        : m_str(other.m_str)
+    {
+    }
+
+    QContactStringHolder& operator=(const QContactStringHolder& other)
+    {
+        m_str = other.m_str; // checking for ==this is not worth the effort
+        return *this;
+    }
+
+    QContactStringHolder(const char *str)
+        : m_str(str)
+    {
+    }
+
+    QContactStringHolder& operator=(const char *str)
+    {
+        m_str = str;
+        return *this;
+    }
+
+    explicit QContactStringHolder(const QString& str)
+    {
+        *this = str;
+    }
+
+    QContactStringHolder& operator=(const QString& str)
+    {
+        m_str = s_allocated.value(str, 0);
+        if (!m_str) {
+            m_str = qstrdup(str.toLatin1().constData());
+            s_allocated.insert(str, const_cast<char*>(m_str)); // it's my pointer
+        }
+        return *this;
+    }
+
+    bool operator==(const char* other) const
+    {
+        return other == m_str || (qstrcmp(other, m_str) == 0);
+    }
+
+    bool operator==(const QString& other) const
+    {
+        return (s_allocated.value(other, 0) == m_str) || (other == QLatin1String(m_str));
+    }
+
+    bool operator==(const QContactStringHolder& other) const
+    {
+        return (other.m_str == m_str) || (qstrcmp(other.m_str, m_str) == 0);
+    }
+
+    operator QString() const
+    {
+        QString s = s_qstrings.value(m_str);
+        if (!s.isEmpty())
+            return s;
+        s = QString::fromLatin1(m_str);
+        s_qstrings.insert(m_str, s);
+        return s;
+    }
+
+public:
+    // The only data we have
+    const char* m_str;
+
+    static QHash<QString, char*> s_allocated;
+    static QHash<const char *, QString> s_qstrings;
+};
 
 class QContactDetailPrivate : public QSharedData
 {
@@ -77,27 +168,36 @@ public:
         m_id(other.m_id),
         m_definitionName(other.m_definitionName),
         m_values(other.m_values),
-        m_preferredActions(other.m_preferredActions),
-        m_access(other.m_access)
+        m_access(other.m_access),
+        m_preferredActions(other.m_preferredActions)
     {
     }
 
-    ~QContactDetailPrivate() {}
+    ~QContactDetailPrivate()
+    {
+    }
 
     int m_id; // internal, unique id.
-    QString m_definitionName;
-    QVariantMap m_values; // the value(s) stored in this field.
+    QContactStringHolder m_definitionName;
+    QHash<QContactStringHolder, QVariant> m_values;
+    QContactDetail::AccessConstraints m_access;
     QList<QContactActionDescriptor> m_preferredActions;
 
     static QAtomicInt lastDetailKey;
-    QContactDetail::AccessConstraints m_access;
 
     static void setAccessConstraints(QContactDetail *d, QContactDetail::AccessConstraints constraint)
     {
         d->d->m_access = constraint;
     }
+
+    static const QContactDetailPrivate* detailPrivate(const QContactDetail& detail)
+    {
+        return detail.d.constData();
+    }
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactStringHolder), Q_MOVABLE_TYPE);
 
 #endif

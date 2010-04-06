@@ -57,6 +57,41 @@ Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextOther, "Other");
 Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextHome, "Home");
 Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextWork, "Work");
 
+static uint qHash(const QContactStringHolder& holder)
+{
+    if (!holder.m_str)
+        return 0;
+    uint h = 0;
+    uint g;
+    const register uchar*p = (const uchar*)holder.m_str;
+
+    while (*p) {
+        h = (h << 4) + *p++;
+        if ((g = (h & 0xf0000000)) != 0)
+            h ^= g >> 23;
+        h &= ~g;
+    }
+    return h;
+}
+
+/* Storage */
+QHash<QString, char*> QContactStringHolder::s_allocated;
+QHash<const char *, QString> QContactStringHolder::s_qstrings;
+
+/* Dtor function */
+static int qClearAllocatedStringHash()
+{
+    QHash<QString, char*>::const_iterator it = QContactStringHolder::s_allocated.constBegin();
+    while (it != QContactStringHolder::s_allocated.constEnd()) {
+        delete[] it.value();
+        it++;
+    }
+    QContactStringHolder::s_allocated.clear();
+    QContactStringHolder::s_qstrings.clear();
+    return 1;
+}
+Q_DESTRUCTOR_FUNCTION(qClearAllocatedStringHash);
+
 /*!
   \class QContactDetail
  
@@ -159,8 +194,18 @@ QContactDetail::QContactDetail()
 {
 }
 
-/*! Constructs a new, empty detail of the definition identified by \a thisDefinitionId */
+/*!
+    Constructs a new, empty detail of the definition identified by \a thisDefinitionId.
+    The definitionId must be restricted to the Latin 1 character set.
+ */
 QContactDetail::QContactDetail(const QString& thisDefinitionId)
+    : d(new QContactDetailPrivate)
+{
+    d->m_definitionName = thisDefinitionId;
+}
+
+/*! Constructs a new, empty detail of the definition identified by \a thisDefinitionId */
+QContactDetail::QContactDetail(const char* thisDefinitionId)
     : d(new QContactDetailPrivate)
 {
     d->m_definitionName = thisDefinitionId;
@@ -172,10 +217,29 @@ QContactDetail::QContactDetail(const QContactDetail& other)
 {
 }
 
-/*! Constructs a detail that is a copy of \a other if \a other is of the expected definition identified by \a expectedDefinitionId, else constructs a new, empty detail of the definition identified by the \a expectedDefinitionId */
+/*!
+    Constructs a detail that is a copy of \a other if \a other is of the expected definition
+    identified by \a expectedDefinitionId, else constructs a new, empty detail of the
+    definition identified by the \a expectedDefinitionId
+*/
+QContactDetail::QContactDetail(const QContactDetail& other, const char* expectedDefinitionId)
+{
+    if (other.d->m_definitionName == expectedDefinitionId) {
+        d = other.d;
+    } else {
+        d = new QContactDetailPrivate;
+        d->m_definitionName = expectedDefinitionId;
+    }
+}
+
+/*!
+    Constructs a detail that is a copy of \a other if \a other is of the expected definition
+    identified by \a expectedDefinitionId, else constructs a new, empty detail of the
+    definition identified by the \a expectedDefinitionId
+*/
 QContactDetail::QContactDetail(const QContactDetail& other, const QString& expectedDefinitionId)
 {
-    if (other.definitionName() == expectedDefinitionId) {
+    if (other.d->m_definitionName == expectedDefinitionId) {
         d = other.d;
     } else {
         d = new QContactDetailPrivate;
@@ -191,11 +255,33 @@ QContactDetail& QContactDetail::operator=(const QContactDetail& other)
     return *this;
 }
 
-/*! Assigns this detail to \a other if the definition of \a other is that identified by the given \a expectedDefinitionId, else assigns this detail to be a new, empty detail of the definition identified by the given \a expectedDefinitionId */
+/*!
+    Assigns this detail to \a other if the definition of \a other is that identified
+    by the given \a expectedDefinitionId, else assigns this detail to be a new, empty
+    detail of the definition identified by the given \a expectedDefinitionId
+*/
+QContactDetail& QContactDetail::assign(const QContactDetail& other, const char* expectedDefinitionId)
+{
+    if (this != &other) {
+        if (other.d->m_definitionName == expectedDefinitionId) {
+            d = other.d;
+        } else {
+            d = new QContactDetailPrivate;
+            d->m_definitionName = expectedDefinitionId;
+        }
+    }
+    return *this;
+}
+
+/*!
+    Assigns this detail to \a other if the definition of \a other is that identified
+    by the given \a expectedDefinitionId, else assigns this detail to be a new, empty
+    detail of the definition identified by the given \a expectedDefinitionId
+*/
 QContactDetail& QContactDetail::assign(const QContactDetail& other, const QString& expectedDefinitionId)
 {
     if (this != &other) {
-        if (other.definitionName() == expectedDefinitionId) {
+        if (other.d->m_definitionName == expectedDefinitionId) {
             d = other.d;
         } else {
             d = new QContactDetailPrivate;
@@ -221,7 +307,7 @@ QString QContactDetail::definitionName() const
     be compared according to their values. */
 bool QContactDetail::operator==(const QContactDetail& other) const
 {
-    if (d.constData()->m_definitionName != other.d.constData()->m_definitionName)
+    if (! (d.constData()->m_definitionName == other.d.constData()->m_definitionName))
         return false;
 
     if (d.constData()->m_access != other.d.constData()->m_access)
@@ -236,11 +322,11 @@ bool QContactDetail::operator==(const QContactDetail& other) const
 /*! Returns the hash value for \a key. */
 uint qHash(const QContactDetail &key)
 {
-    uint hash = QT_PREPEND_NAMESPACE(qHash)(key.definitionName())
-                + QT_PREPEND_NAMESPACE(qHash)(key.accessConstraints());
-    QVariantMap::const_iterator it = key.variantValues().constBegin();
-    QVariantMap::const_iterator end = key.variantValues().constEnd();
-    while (it != end) {
+    const QContactDetailPrivate* dptr= QContactDetailPrivate::detailPrivate(key);
+    uint hash = QT_PREPEND_NAMESPACE(qHash)(dptr->m_definitionName)
+                + QT_PREPEND_NAMESPACE(qHash)(dptr->m_access);
+    QHash<QContactStringHolder, QVariant>::const_iterator it = dptr->m_values.constBegin();
+    while(it != dptr->m_values.constEnd()) {
         hash += QT_PREPEND_NAMESPACE(qHash)(it.key())
                 + QT_PREPEND_NAMESPACE(qHash)(it.value().toString());
         ++it;
@@ -311,9 +397,16 @@ void QContactDetail::resetKey()
   no value for the given \a key exists */
 QString QContactDetail::value(const QString& key) const
 {
-    if (d.constData()->m_values.contains(key))
-        return d.constData()->m_values.value(key).toString();
-    return QString();
+    return d.constData()->m_values.value(key.toLatin1().constData()).toString();
+}
+
+
+/*! \overload
+  Returns the value stored in this detail for the given \a key as a QString, or an empty QString if
+  no value for the given \a key exists */
+QString QContactDetail::value(const char* key) const
+{
+    return d.constData()->m_values.value(key).toString();
 }
 
 // A bug in qdoc means this comment needs to appear below the comment for the other value().
@@ -325,9 +418,13 @@ QString QContactDetail::value(const QString& key) const
 /*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists */
 QVariant QContactDetail::variantValue(const QString& key) const
 {
-    if (d.constData()->m_values.contains(key))
-        return d.constData()->m_values.value(key);
-    return QVariant(); // returns an invalid qvariant
+    return d.constData()->m_values.value(key.toLatin1().constData());
+}
+
+/*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists */
+QVariant QContactDetail::variantValue(const char* key) const
+{
+    return d.constData()->m_values.value(key);
 }
 
 /*!
@@ -335,9 +432,15 @@ QVariant QContactDetail::variantValue(const QString& key) const
  */
 bool QContactDetail::hasValue(const QString& key) const
 {
-    if (d.constData()->m_values.contains(key))
-        return true;
-    return false;
+    return d.constData()->m_values.contains(key.toLatin1().constData());
+}
+
+/*!
+  Returns true if this detail has a field with the given \a key, or false otherwise.
+ */
+bool QContactDetail::hasValue(const char * key) const
+{
+    return d.constData()->m_values.contains(key);
 }
 
 /*! Inserts \a value into the detail for the given \a key if \a value is valid.  If \a value is invalid,
@@ -349,12 +452,32 @@ bool QContactDetail::setValue(const QString& key, const QVariant& value)
     if (!value.isValid())
         return removeValue(key);
 
+    d->m_values.insert(QContactStringHolder(key), value);
+    return true;
+}
+
+/*! Inserts \a value into the detail for the given \a key if \a value is valid.  If \a value is invalid,
+    removes the field with the given \a key from the detail.  Returns true if the given \a value was set
+    for the \a key (if the \a value was valid), or if the given \a key was removed from detail (if the
+    \a value was invalid), and returns false if the key was unable to be removed (and the \a value was invalid) */
+bool QContactDetail::setValue(const char* key, const QVariant& value)
+{
+    if (!value.isValid())
+        return removeValue(key);
+
     d->m_values.insert(key, value);
     return true;
 }
 
 /*! Removes the value stored in this detail for the given \a key.  Returns true if a value was stored for the given \a key and the operation succeeded, and false otherwise */
 bool QContactDetail::removeValue(const QString& key)
+{
+    if(d->m_values.remove(key.toLatin1().constData()))
+        return true;
+    return false;
+}
+/*! Removes the value stored in this detail for the given \a key.  Returns true if a value was stored for the given \a key and the operation succeeded, and false otherwise */
+bool QContactDetail::removeValue(const char * key)
 {
     if(d->m_values.remove(key))
         return true;
@@ -366,7 +489,14 @@ bool QContactDetail::removeValue(const QString& key)
  */
 QVariantMap QContactDetail::variantValues() const
 {
-    return d.constData()->m_values;
+    QVariantMap ret;
+    QHash<QContactStringHolder, QVariant>::const_iterator it = d.constData()->m_values.constBegin();
+    while(it != d.constData()->m_values.constEnd()) {
+        ret.insert(it.key(), it.value());
+        ++it;
+    }
+
+    return ret;
 }
 
 /*!

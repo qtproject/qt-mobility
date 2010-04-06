@@ -62,11 +62,6 @@ QContactRemoveRequest::QContactRemoveRequest()
 {
 }
 
-/*! Cleans up the memory in use by the contact remove request */
-QContactRemoveRequest::~QContactRemoveRequest()
-{
-}
-
 /*!
   \deprecated
   Sets the filter which will be used to select the contacts to remove to \a filter.
