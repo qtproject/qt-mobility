@@ -48,9 +48,10 @@
 #include "qtcontacts.h"
 #include "qcontactmaemo5debug_p.h"
 
+#undef signals
+#include <libosso-abook/osso-abook.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "osso-abook-workaround.h"
 #include "qcontactidshash.h"
 
 QTM_USE_NAMESPACE
