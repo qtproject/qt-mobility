@@ -115,6 +115,7 @@ void TestSymbianEngine::ctors()
     } else {
         QSKIP("Error creating CntSymbianEngine in ctor", SkipSingle);
     }
+    /*
     // copy ctor
     CntSymbianEngine* ce1 = new CntSymbianEngine(*ce);
     QVERIFY(ce->managerName() == ce1->managerName());
@@ -123,6 +124,7 @@ void TestSymbianEngine::ctors()
     QVERIFY(ce->m_dataBase == ce1->m_dataBase);
     QVERIFY(ce->m_relationship == ce1->m_relationship);
     QVERIFY(ce->m_transformContact == ce1->m_transformContact);
+    */
 
     delete ce;
     /*
