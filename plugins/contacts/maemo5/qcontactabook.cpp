@@ -73,6 +73,7 @@ struct jobSharedData{
    QContactABook* that;
    bool *result;
    char *uid;
+   QContactManager::Error *error;
 };
 
 /* QContactABook */
@@ -365,6 +366,46 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   return rtn;
 }
 
+static QContactManager::Error getErrorFromStatus(const EBookStatus status){
+  switch (status) {
+    case E_BOOK_ERROR_OK:
+      return QContactManager::NoError;
+    case E_BOOK_ERROR_INVALID_ARG:
+      return QContactManager::BadArgumentError;
+    case E_BOOK_ERROR_BUSY:
+      return QContactManager::LockedError;        
+    case E_BOOK_ERROR_PERMISSION_DENIED:
+    case E_BOOK_ERROR_AUTHENTICATION_FAILED:
+    case E_BOOK_ERROR_AUTHENTICATION_REQUIRED:
+    //case E_BOOK_ERROR_UNSUPPORTED_AUTHENTICATION_METHOD: //Missing in current Maemo5 Ebook lib version
+      return QContactManager::PermissionsError;
+    case E_BOOK_ERROR_CONTACT_NOT_FOUND:
+      return QContactManager::DoesNotExistError;
+    case E_BOOK_ERROR_CONTACT_ID_ALREADY_EXISTS:
+      return QContactManager::AlreadyExistsError;
+    case E_BOOK_ERROR_NO_SPACE:
+      return QContactManager::OutOfMemoryError;
+#if 0
+    case E_BOOK_ERROR_REPOSITORY_OFFLINE:
+    case E_BOOK_ERROR_NO_SUCH_BOOK:
+    case E_BOOK_ERROR_NO_SELF_CONTACT:
+    case E_BOOK_ERROR_SOURCE_NOT_LOADED:
+    case E_BOOK_ERROR_SOURCE_ALREADY_LOADED:
+    case E_BOOK_ERROR_PROTOCOL_NOT_SUPPORTED:
+    case E_BOOK_ERROR_CANCELLED:
+    case E_BOOK_ERROR_COULD_NOT_CANCEL:
+    case E_BOOK_ERROR_TLS_NOT_AVAILABLE:
+    case E_BOOK_ERROR_CORBA_EXCEPTION:
+    case E_BOOK_ERROR_NO_SUCH_SOURCE:
+    case E_BOOK_ERROR_OFFLINE_UNAVAILABLE:
+    case E_BOOK_ERROR_OTHER_ERROR:
+    case E_BOOK_ERROR_INVALID_SERVER_VERSION:
+#endif
+    default:
+      return QContactManager::UnspecifiedError;
+  }
+}
+
 static void delContactCB(EBook *book, EBookStatus status, gpointer closure)
 {
   Q_UNUSED(book);
@@ -375,11 +416,12 @@ static void delContactCB(EBook *book, EBookStatus status, gpointer closure)
     return;
   
   *sd->result = (status != E_BOOK_ERROR_OK &&
-                 status != E_BOOK_ERROR_CONTACT_NOT_FOUND) ? false : true;  
+                 status != E_BOOK_ERROR_CONTACT_NOT_FOUND) ? false : true;
+  *sd->error = getErrorFromStatus(status);
+  
   sd->that->_jobRemovingCompleted();
 }
 
-//### FIXME error is not managed
 bool QContactABook::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {
   Q_UNUSED(error);
@@ -407,6 +449,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   m_deleteJobSD = new jobSharedData;
   m_deleteJobSD->that = this;
   m_deleteJobSD->result = &ok;
+  m_deleteJobSD->error = error;
   
   //Remove photos
   EContactPhoto *photo = NULL;
@@ -447,7 +490,8 @@ static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data
   if (!sd)
     return;
   
-  *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;  
+  *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;
+  *sd->error = getErrorFromStatus(status);
   sd->that->_jobSavingCompleted();
 }
 
@@ -503,6 +547,7 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   m_saveJobSD = new jobSharedData;
   m_saveJobSD->that = this;
   m_saveJobSD->result = &ok;
+  m_saveJobSD->error = error;
   
   // Add/Commit the contact
   uid = CONST_CHAR(e_contact_get_const(E_CONTACT (aContact), E_CONTACT_UID)); 
@@ -785,7 +830,7 @@ QContact* QContactABook::convert(EContact *eContact) const
 
     ok = contact->saveDetail(detail);
     if (!ok){
-      qWarning() << "Detail can't be saved into QContact";
+      qWarning() << "Detail can't be saved to QContact";
       delete detail;
       continue;
     }
@@ -870,7 +915,7 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
   //Ordered list of Fields
   QStringList addressFields;
   addressFields << QContactAddress::FieldPostOfficeBox
-                << "Estension" //FIXME I'm not sure we have to use a new field 
+                << "Estension" //XXX FIXME I'm not sure we have to use a new field 
                 << QContactAddress::FieldStreet
                 << QContactAddress::FieldLocality
                 << QContactAddress::FieldRegion 
@@ -940,7 +985,6 @@ QContactName* QContactABook::getNameDetail(EContact *eContact) const
     map[QContactName::FieldCustomLabel] = eContactName->additional;
     map[QContactName::FieldFirstName] = eContactName->given;
     map[QContactName::FieldLastName] = eContactName->family;
-    //map[QContactName::FieldMiddleName] = eContactName->
     map[QContactName::FieldPrefix] = eContactName->prefixes;
     map[QContactName::FieldSuffix] = eContactName->suffixes;
     e_contact_name_free (eContactName);
