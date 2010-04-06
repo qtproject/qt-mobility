@@ -72,17 +72,20 @@ TelepathyEngine* TelepathyEngine::instance()
 
 bool TelepathyEngine::sendMessage(QMessage &message)
 {
-    QMessage::Type type=message.type();
-    QMessageAccountId account=message.parentAccountId();
-    QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? account.toString() : "";
-    QMessageAddressList toList=message.to();
-    if(!cm.isEmpty()) {
-        foreach(QMessageAddress to,toList) {
-             tpSession->sendMessageToAddress(cm,to.addressee(),message.textContent());
-        };
-    }
-    else
-        qDebug() << "TelepathyEngine::sendMessage unsupported message type" << type;
+  bool retVal=false;
+  QMessage::Type type=message.type();
+  QMessageAccountId account=message.parentAccountId();
+  QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? account.toString() : "";
+  QMessageAddressList toList=message.to();
+  if(!cm.isEmpty()) {
+    foreach(QMessageAddress to,toList) {
+      tpSession->sendMessageToAddress(cm,to.addressee(),message.textContent());
+      retVal=true;
+    };
+  }
+  else
+    qDebug() << "TelepathyEngine::sendMessage unsupported message type" << type;
+  return retVal;
 }
 
 
