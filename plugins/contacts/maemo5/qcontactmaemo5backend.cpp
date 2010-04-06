@@ -364,7 +364,7 @@ QList<QVariant::Type> QContactMaemo5Engine::supportedDataTypes() const {
 }
 
 void QContactMaemo5Engine::requestDestroyed(QContactAbstractRequest* req){
-  Q_UNUSED(req)
+  m_asynchronousOperations.removeOne(req);
 }
 
 bool QContactMaemo5Engine::startRequest(QContactAbstractRequest* req){
@@ -376,20 +376,29 @@ bool QContactMaemo5Engine::startRequest(QContactAbstractRequest* req){
 }
 
 bool QContactMaemo5Engine::cancelRequest(QContactAbstractRequest* req){
-  Q_UNUSED(req) 
-  return false;
+  updateRequestState(req, QContactAbstractRequest::CanceledState);
+  return true;
 }
 
 bool QContactMaemo5Engine::waitForRequestProgress(QContactAbstractRequest* req, int msecs){
-  Q_UNUSED(req)
-  Q_UNUSED(msecs)
-  return false; 
+  Q_UNUSED(msecs);
+  
+  if (!m_asynchronousOperations.removeOne(req))
+        return false; // didn't exist.
+
+  // replace at head of queue
+  m_asynchronousOperations.insert(0, req);
+
+  // and perform the operation.
+  performAsynchronousOperation();
+
+  return true;
 }
 
 bool QContactMaemo5Engine::waitForRequestFinished(QContactAbstractRequest* req, int msecs){
-  Q_UNUSED(req)
-  Q_UNUSED(msecs)
-  return false;
+  // in our implementation, we always complete any operation we start.
+  // so, waitForRequestFinished is equivalent to waitForRequestProgress.
+  return waitForRequestProgress(req, msecs);
 }
 
 void QContactMaemo5Engine::performAsynchronousOperation(){
