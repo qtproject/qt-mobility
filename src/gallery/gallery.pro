@@ -30,13 +30,11 @@ SOURCES = \
         qgalleryrequest.cpp \
         qgallerytype.cpp
 
-HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
+HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-win32 {
-    include (ws/ws.pri)
-} else {
-    DEFINES += QT_DOCUMENT_GALLERY_NULL
-}
+win32: include (ws/ws.pri)
+else:unix: include (maemo5/maemo5.pri)
+else: DEFINES += QT_DOCUMENT_GALLERY_NULL
 
 symbian {
     load(data_caging_paths)
