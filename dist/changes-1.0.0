@@ -103,6 +103,20 @@ QtSystemInfo
  - foo
     * bar
 
+QtSensors
+------
+
+ - QSensorReading::value() is no longer virtual.
+ - Many sensor classes have been changed. Please see the documentation on each sensor class in use.
+ - Change qtimestamp type declaration to avoid an interaction between the compiler and Qt's meta system.
+ - Added QSensorBackend::sensor().
+ - Replaced updatePolicy and updateInterval with dataRate.
+ - Removed polling.
+ - Added meta-data properties for sensors.
+ - Added error reporting functions.
+ - Removed setType().
+ - Renamed QSensor::connect() to QSensor::connectToBackend().
+
 Qt Mobility Plugins
 ------
 
