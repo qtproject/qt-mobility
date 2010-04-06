@@ -143,7 +143,7 @@ public:
     }
     template<typename T, int N> T value(const QLatin1Constant<N>& key) const
     {
-        return variantValue(key.latin1()).value<T>();
+        return value<T>(key.latin1());
     }
 
     void setContexts(const QStringList& contexts)
