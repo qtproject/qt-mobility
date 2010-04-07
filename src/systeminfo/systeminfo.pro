@@ -112,10 +112,12 @@ unix: {
         DEPENDPATH += symbian
         
         SOURCES += qsysteminfo_s60.cpp \
-            telephonyinfo_s60.cpp
+            telephonyinfo_s60.cpp \
+            chargingstatus_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
-            telephonyinfo_s60.h
+            telephonyinfo_s60.h \
+            chargingstatus_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \

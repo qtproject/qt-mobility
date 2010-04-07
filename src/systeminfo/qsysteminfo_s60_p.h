@@ -62,6 +62,7 @@
 
 #include <f32file.h>
 #include "telephonyinfo_s60.h"
+#include "chargingstatus_s60.h"
 
 QT_BEGIN_HEADER
 
@@ -129,7 +130,6 @@ Q_SIGNALS:
 
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged(){};
-    void powerStateChanged(){};
 
     void countryCodeChanged();
     void networkCodeChanged();
@@ -189,7 +189,8 @@ QTM_BEGIN_NAMESPACE
 class QSystemDeviceInfoPrivate : public QObject,
     public MTelephonyInfoObserver,
     public MProEngProfileActivationObserver,
-    public MCenRepNotifyHandlerCallback
+    public MCenRepNotifyHandlerCallback,
+    public MChargingStatusObserver
 {
     Q_OBJECT
 
@@ -237,7 +238,6 @@ private:
 
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged();
-    void powerStateChanged();
     
     void countryCodeChanged(){};
     void networkCodeChanged(){};
@@ -247,6 +247,9 @@ protected:  //from MTelephonyInfoObserver
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
 
+protected:  //from MChargingStatusObserver
+    void chargingStatusChanged();
+    
 private:    //data
     MProEngEngine *m_profileEngine;
     MProEngNotifyHandler* m_proEngNotifyHandler;
@@ -303,6 +306,14 @@ public:
         return m_subscriberInfo;
     }
 
+    CChargingStatus *chargingStatus()
+    {
+        if (!m_chargingStatus) {
+            m_chargingStatus = new CChargingStatus;
+        }
+        return m_chargingStatus;
+    }
+
     CBatteryInfo *batteryInfo()
     {
         if (!m_batteryInfo) {
@@ -336,8 +347,8 @@ public:
     }
 
 private:
-    DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_batteryInfo(NULL),
-        m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
+    DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
+        m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
         m_cellSignalStrengthInfo(NULL)
     {
         m_telephony = CTelephony::NewL();
@@ -349,6 +360,7 @@ private:
         delete m_cellNetworkRegistrationInfo;
         delete m_cellNetworkInfo;
         delete m_batteryInfo;
+        delete m_chargingStatus;
         delete m_subscriberInfo;
         delete m_phoneInfo;
         delete m_telephony;
@@ -359,6 +371,7 @@ private:
     CTelephony *m_telephony;
     CPhoneInfo *m_phoneInfo;
     CSubscriberInfo *m_subscriberInfo;
+    CChargingStatus *m_chargingStatus;
     CBatteryInfo *m_batteryInfo;
     CCellNetworkInfo *m_cellNetworkInfo;
     CCellNetworkRegistrationInfo *m_cellNetworkRegistrationInfo;
