@@ -1586,8 +1586,28 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
     queryInfo.returnWithSingleShot = false;
 
     if (!startQueryingAndFilteringMessages(m_pendingMessageQueries[m_pendingMessageQueries.count()-1])) {
-        QMessageServicePrivate::implementation(messageService)->setFinished(false);
         m_pendingMessageQueries.removeAt(m_pendingMessageQueries.count()-1);
+        if (m_pendingMessageQueries.count() == 0) {
+            // This was last query in pending queries queue
+            // => Disconnect from "GetHeaders" request related DBus signals
+            // Note: Disconnecting signals is done to optimize signal handling
+            //       <=> Disconnecting prevents unnecessary handling of signals
+            //           which have been sent from other applications using
+            //           Qt Mobility Messaging API
+            m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
+                                                              MODESTENGINE_QTM_PLUGIN_PATH,
+                                                              MODESTENGINE_QTM_PLUGIN_NAME,
+                                                              "HeadersReceived",
+                                                              (ModestEngine*)this,
+                                                              SLOT(searchMessagesHeadersReceivedSlot(QDBusMessage)));
+
+            m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
+                                                              MODESTENGINE_QTM_PLUGIN_PATH,
+                                                              MODESTENGINE_QTM_PLUGIN_NAME,
+                                                              "HeadersFetched",
+                                                              (ModestEngine*)this,
+                                                              SLOT(searchMessagesHeadersFetchedSlot(QDBusMessage)));
+        }
         return false;
     }
 
@@ -1907,40 +1927,6 @@ bool ModestEngine::searchMessages(MessageQueryInfo &msgQueryInfo, const QStringL
         m_messageCache.clear();
         msgQueryInfo.queryId = reply.arguments().takeFirst().toInt();
     } else {
-        // Request failed
-        int index = -1;
-        for (int i=0; i < m_pendingMessageQueries.count(); i++) {
-            if (m_pendingMessageQueries[i].queryId == msgQueryInfo.queryId) {
-                index = i;
-                break;
-            }
-        }
-        if (index > -1) {
-            m_pendingMessageQueries.removeAt(index);
-        }
-        msgQueryInfo.privateService->setFinished(false);
-
-        if (m_pendingMessageQueries.count() == 0) {
-            // This was last query in pending queries queue
-            // => Disconnect from "GetHeaders" request related DBus signals
-            // Note: Disconnecting signals is done to optimize signal handling
-            //       <=> Disconnecting prevents unnecessary handling of signals
-            //           which have been sent from other applications using
-            //           Qt Mobility Messaging API
-            m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
-                                                              MODESTENGINE_QTM_PLUGIN_PATH,
-                                                              MODESTENGINE_QTM_PLUGIN_NAME,
-                                                              "HeadersReceived",
-                                                              (ModestEngine*)this,
-                                                              SLOT(searchMessagesHeadersReceivedSlot(QDBusMessage)));
-
-            m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
-                                                              MODESTENGINE_QTM_PLUGIN_PATH,
-                                                              MODESTENGINE_QTM_PLUGIN_NAME,
-                                                              "HeadersFetched",
-                                                              (ModestEngine*)this,
-                                                              SLOT(searchMessagesHeadersFetchedSlot(QDBusMessage)));
-        }
         return false;
     }
 
