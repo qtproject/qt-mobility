@@ -57,7 +57,6 @@ class Q_CONTACTS_EXPORT QContactRemoveRequest : public QContactAbstractRequest
 
 public:
     QContactRemoveRequest();
-    ~QContactRemoveRequest();
 
     /* Selection */
     void setContactIds(const QList<QContactLocalId>& contactIds);

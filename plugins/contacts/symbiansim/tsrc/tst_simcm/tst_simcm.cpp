@@ -233,7 +233,6 @@ void tst_SimCM::hasFeature_data()
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::MutableDefinitions << false;
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::Relationships << false;
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::ArbitraryRelationshipTypes << false;
-    QTest::newRow("ADN store (default)") << es << (int) QContactManager::RelationshipOrdering << false;
     // TODO: self contact may be supported on ADN? (so called "own number store")
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::SelfContact << false;
     QTest::newRow("ADN store (default)") << es << (int) QContactManager::Anonymous << false;
@@ -244,7 +243,6 @@ void tst_SimCM::hasFeature_data()
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::MutableDefinitions << false;
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::Relationships << false;
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::ArbitraryRelationshipTypes << false;
-    QTest::newRow("ADN store") << "ADN" << (int) QContactManager::RelationshipOrdering << false;
     // TODO: self contact may be supported on ADN? (so called "own number store")
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::SelfContact << false;
     QTest::newRow("ADN store") << "ADN" << (int) QContactManager::Anonymous << false;
@@ -255,7 +253,6 @@ void tst_SimCM::hasFeature_data()
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::MutableDefinitions << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::Relationships << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::ArbitraryRelationshipTypes << false;
-    QTest::newRow("SDN store") << "SDN" << (int) QContactManager::RelationshipOrdering << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::SelfContact << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::Anonymous << false;
     QTest::newRow("SDN store") << "SDN" << (int) QContactManager::ChangeLogs << false;
@@ -265,7 +262,6 @@ void tst_SimCM::hasFeature_data()
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::MutableDefinitions << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::Relationships << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::ArbitraryRelationshipTypes << false;
-    QTest::newRow("FDN store") << "FDN" << (int) QContactManager::RelationshipOrdering << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::SelfContact << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::Anonymous << false;
     QTest::newRow("FDN store") << "FDN" << (int) QContactManager::ChangeLogs << false;
@@ -552,7 +548,18 @@ void tst_SimCM::addContact_data()
         << (QStringList()
             << "Name:CustomLabel:James");
 
-    // TODO: Test saving FDN contacts?
+    // Note: Executing FDN test cases has a pre-condition that the user must
+    // have been entered the PIN2 code successfully. On pre-10.1 platforms this
+    // can be done by opening S60 platform Phonebook and making some
+    // modifications that require PIN2 code; for example activate and
+    // de-activate FDN feature.
+    QTest::newRow("FDN custom label and phone number")
+        << "FDN"
+        << 1
+        << "James"
+        << (QStringList()
+            << "Name:CustomLabel:James"
+            << "PhoneNumber:PhoneNumber:+44752222222");
 }
 
 /*
@@ -689,7 +696,7 @@ void tst_SimCM::fetchContacts()
     }
 
     // 2. Fetch contacts
-    QList<QContact> contacts= m_cm->contacts(QList<QContactSortOrder>(), QStringList());
+    QList<QContact> contacts= m_cm->contacts();
     QCOMPARE(m_cm->error(), QContactManager::NoError);
     QList<QContactLocalId> contactIds = m_cm->contactIds();
     QCOMPARE(m_cm->error(), QContactManager::NoError);
@@ -1025,8 +1032,8 @@ void tst_SimCM::sdnContacts()
     // Verify that contact details have read only flag
     QList<QContact> contacts = cm->contacts();
     QVERIFY(contacts.count());
-    foreach(QContact c, contacts) {
-        foreach(QContactDetail d, c.details()) {
+    foreach(const QContact& c, contacts) {
+        foreach(const QContactDetail& d, c.details()) {
             QVERIFY(d.accessConstraints().testFlag(QContactDetail::ReadOnly));
         }
     }

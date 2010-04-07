@@ -66,6 +66,7 @@ public:
 
     void encodeVersitProperty(const QVersitProperty& property);
     void encodeParameters(const QMultiHash<QString,QString>& parameters);
+    static void backSlashEscape(QString& text);
     QHash<QString,QString> mPropertyNameMappings;
 };
 

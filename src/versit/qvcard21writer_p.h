@@ -65,6 +65,7 @@ public:
     ~QVCard21Writer();
 
     void encodeVersitProperty(const QVersitProperty& property);
+    bool encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value);
     void encodeParameters(const QMultiHash<QString,QString>& parameters);
     bool quotedPrintableEncode(QString& text) const;
     bool shouldBeQuotedPrintableEncoded(QChar chr) const;

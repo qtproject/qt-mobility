@@ -59,7 +59,7 @@ Q_PROPERTY(QStringList availableActions READ availableActions)
 Q_PROPERTY(QStringList details READ details)
 Q_PROPERTY(QStringList contexts READ contexts)
 public:
-    QmlContact(QContact& contact, QObject *parent = 0);
+    explicit QmlContact(const QContact& contact, QObject *parent = 0);
     QmlContact();
     ~QmlContact();
 
@@ -90,6 +90,6 @@ private:
     QContact m_contact;
 };
 
-QML_DECLARE_TYPE(QmlContact);
+QML_DECLARE_TYPE(QmlContact)
 
 #endif // QMLCONTACT_H

@@ -104,6 +104,7 @@ private slots: // Tests
     void testReadLine();
     void testReadLine_data();
     void testByteArrayInput();
+    void testRemoveBackSlashEscaping();
 
 private: // Data
     QVersitReader* mReader;

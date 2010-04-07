@@ -120,7 +120,7 @@ void CntSimContactRemoveRequest::removeNext()
     
 #ifdef SYMBIANSIM_BACKEND_CHECK_BEFORE_REMOVE
     if (m_reservedSlots.contains(contactId))
-        simStore()->remove(contactId, error);
+        simStore()->remove(contactId, &error);
     else
         error = QContactManager::DoesNotExistError;
 #else
