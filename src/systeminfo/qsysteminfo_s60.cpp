@@ -577,6 +577,7 @@ int QSystemDisplayInfoPrivate::displayBrightness(int /*screen*/)
 int QSystemDisplayInfoPrivate::colorDepth(int screen)
 {
     int depth = 0;
+    TDisplayMode mode;
     TRAP_IGNORE(
         RWsSession ws;
         User::LeaveIfError(ws.Connect());
@@ -584,7 +585,9 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
         CWsScreenDevice *wsScreenDevice = new (ELeave)CWsScreenDevice(ws);
         CleanupStack::PushL(wsScreenDevice);
         User::LeaveIfError(wsScreenDevice->Construct(screen));
-        TDisplayMode mode = wsScreenDevice->DisplayMode();
+        mode = wsScreenDevice->DisplayMode();
+        CleanupStack::PopAndDestroy(2, &ws);
+    )
         switch (mode) {
             case EGray2: depth = 1; break;
             case EGray4: depth = 2; break;
@@ -595,7 +598,9 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
             case EColor4K: depth = 12; break;
             case EColor64K: depth = 16; break;
             case EColor16M:
-            case 13: //value of EColor16MAP (which is missing from gdi.h in S60 v.3.1)
+#ifndef SYMBIAN_3_1
+            case EColor16MAP: //value of EColor16MAP (which is missing from gdi.h in S60 v.3.1)
+#endif
             case EColor16MA: depth = 24; break;
             case EColor16MU: depth = 32; break;
             case ENone:
@@ -603,9 +608,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
             case EColorLast:
             default: depth = 0;
                 break;
-        }
-        CleanupStack::PopAndDestroy(2, &ws);
-    )
+        };
 
     return depth;
 }
