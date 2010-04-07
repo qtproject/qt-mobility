@@ -94,6 +94,7 @@ public:
 
     /* XXX TODO - implement these correctly */
     int managerVersion() const { return 1;}
+    QContact compatibleContact(const QContact& contact, QContactManager::Error* error) const {return QContactManagerEngine::compatibleContact(contact, error);}
 
     /* Functions that are optional in the base API */
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error* error);
