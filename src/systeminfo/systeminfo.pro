@@ -108,6 +108,9 @@ unix: {
     }
 
     symbian:{
+        contains(S60_VERSION, 3.1){
+            DEFINES += SYMBIAN_3_1
+        }        
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
         DEPENDPATH += symbian
         
