@@ -1603,8 +1603,24 @@ QList<QContactLocalId> QContactWinCEEngine::contactIds(const QContactFilter& fil
             qDebug() << "Can't filter contacts with query string:" << query << ", HRESULT=" << HRESULT_CODE(hr);
         }
     }
+
     //Fail back to generic filtering
-    return QContactManagerEngine::contactIds(filter, sortOrders, error);
+    QList<QContactLocalId> ids = contactIds(QContactFilter(), QList<QContactSortOrder>(), error);
+    QList<QContact> sorted;
+    foreach(const QContactLocalId& id, ids) {
+        QContact c = contact(id, QContactFetchHint(), error);
+        if (*error != QContactManager::NoError)
+            break;
+        if (QContactManagerEngine::testFilter(filter, c))
+            QContactManagerEngine::addSorted(&sorted, c, sortOrders);
+    }
+
+    /* Extract the ids */
+    ids.clear();
+    foreach(const QContact& c, sorted)
+        ids.append(c.localId());
+
+    return ids;
 }
 
 
