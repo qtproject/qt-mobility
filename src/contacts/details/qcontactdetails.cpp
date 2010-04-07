@@ -2122,7 +2122,8 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 QContactFilter QContactDisplayLabel::match(const QString &label)
 {
     QContactDetailFilter f;
-    f.setDetailDefinitionName(QContactDisplayLabel::DefinitionName);
+    f.setDetailDefinitionName(QContactDisplayLabel::DefinitionName,
+                              QContactDisplayLabel::FieldLabel);
     f.setValue(label);
 
     return f;
@@ -2175,15 +2176,26 @@ QContactFilter QContactName::match(const QString &firstName, const QString &last
 
 /*!
     Returns a filter suitable for finding
-    contacts with a name field (e.g. first, last) that
+    contacts with any name field (e.g. first, last) that
     matches the supplied \a name.
 */
 QContactFilter QContactName::match(const QString &name)
 {
-    QContactDetailFilter l;
-    l.setDetailDefinitionName(QContactName::DefinitionName);
-    l.setValue(name);
-    return l;
+    QContactUnionFilter nameFilter;
+    QStringList nameFields;
+    nameFields << QContactName::FieldCustomLabel
+            << QContactName::FieldFirstName
+            << QContactName::FieldLastName
+            << QContactName::FieldMiddleName
+            << QContactName::FieldPrefix
+            << QContactName::FieldSuffix;
+    foreach (const QString& fieldName, nameFields) {
+        QContactDetailFilter subFilter;
+        subFilter.setDetailDefinitionName(QContactName::DefinitionName, fieldName);
+        subFilter.setValue(name);
+        nameFilter.append(subFilter);
+    }
+    return nameFilter;
 }
 
 /*!
