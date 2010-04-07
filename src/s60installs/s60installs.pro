@@ -31,38 +31,38 @@ symbian: {
     isEmpty(epoc31) {
         EPOCROOT31 = $${EPOCROOT}
     } else {
-    EPOCROOT31 = $$(EPOCROOT31)
+        EPOCROOT31 = $$(EPOCROOT31)
     }
     isEmpty(epoc32) {
         EPOCROOT32 = $${EPOCROOT}
     }else {
-    EPOCROOT32 = $$(EPOCROOT32)
+        EPOCROOT32 = $$(EPOCROOT32)
     }
     isEmpty(epoc50) {
         EPOCROOT50 = $${EPOCROOT}
     } else {
-    EPOCROOT50 = $$(EPOCROOT50)
+        EPOCROOT50 = $$(EPOCROOT50)
     }
 
     contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
 
     contains(mobility_modules, serviceframework): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
-        $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/SFWDatabaseManagerServer.exe
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/SFWDatabaseManagerServer.exe
 
     contains(mobility_modules, location): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
 
     contains(mobility_modules, systeminfo): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/QtSystemInfo.dll
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtSystemInfo.dll
 
     contains(mobility_modules, publishsubscribe): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/QtPublishSubscribe.dll \
-        $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/PSPathMapperServer.exe
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtPublishSubscribe.dll \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/PSPathMapperServer.exe
 
     contains(mobility_modules, versit): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll
 
 
     contains(mobility_modules, bearer) {
@@ -83,7 +83,7 @@ symbian: {
     contains(mobility_modules, contacts) {
 
         qtmobilitydeployment.sources += \
-            $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/QtContacts.dll
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtContacts.dll
 
         contacts = \
             "IF package(0x1028315F)" \
@@ -124,50 +124,65 @@ symbian: {
     contains(mobility_modules, multimedia) {
 
         qtmobilitydeployment.sources += \
-            $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/QtMedia.dll \
-            $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/m3u.dll
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMedia.dll \
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/m3u.dll
 
         multimedia = \
             "IF package(0x1028315F)" \
-            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
             "ELSEIF package(0x102752AE)" \
-            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
             "ELSEIF package(0x102032BE)" \
-            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
             "ELSE" \
-            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
             "ENDIF"
 
         qtmobilitydeployment.pkg_postrules += multimedia
 
         pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/qmakepluginstubs/QtMobilityMultimediaEngine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\QtMobilityMultimediaEngine.qtplugin\"" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/QtMobilityMmfEngine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\QtMobilityMmfEngine.qtplugin\"" \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\m3u.qtplugin\""
     }
 
     contains(mobility_modules, sensors) {
 
-        qtmobilitydeployment.sources += $$(EPOCROOT50)epoc32/release/armv5/urel/QtSensors.dll
+        qtmobilitydeployment.sources += $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtSensors.dll
 
-        equals($$(EPOCROOT50), $$(EPOCROOT32)):equals($$(EPOCROOT32), $$(EPOCROOT31)) {
+        equals($${EPOCROOT50}, $${EPOCROOT32}):equals($${EPOCROOT32}, $${EPOCROOT31}) {
             contains(S60_VERSION, 3.1) {
                 sensors = \
                     "IF package(0x102032BE)" \
-                    "   \"$$EPOCROOT31\epoc32/release/armv5/urel/sensor_s60sensorapi.dll\" - \"!:\\sys\\bin\\sensor_s60sensorapi.dll\"" \
-                    "   \"$$EPOCROOT31\epoc32/release/armv5/urel/sensors_generic.dll\" - \"!:\\sys\\bin\\sensors_generic.dll\"" \
+                    "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/sensor_s60sensorapi.dll\" - \"!:\\sys\\bin\\sensor_s60sensorapi.dll\"" \
+                    "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_generic.dll\" - \"!:\\sys\\bin\\sensors_generic.dll\"" \
+                    "ENDIF"
+           } else {
+                sensors = \
+                    "IF package(0x1028315F)" \
+                    "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                    "ELSEIF package(0x102752AE)" \
+                    "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                    "ELSE" \
+                    "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
                     "ENDIF"
             }
         } else {
             sensors = \
-                "IF package(0x102032BE)" \
-                "   \"$$EPOCROOT31\epoc32/release/armv5/urel/sensor_s60sensorapi.dll\" - \"!:\\sys\\bin\\sensor_s60sensorapi.dll\"" \
-                "   \"$$EPOCROOT31\epoc32/release/armv5/urel/sensors_generic.dll\" - \"!:\\sys\\bin\\sensors_generic.dll\"" \
+                "IF package(0x1028315F)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                "ELSEIF package(0x102752AE)" \
+                "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                "ELSEIF package(0x102032BE)" \
+                "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/sensor_s60sensorapi.dll\" - \"!:\\sys\\bin\\sensor_s60sensorapi.dll\"" \
+                "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_generic.dll\" - \"!:\\sys\\bin\\sensors_generic.dll\"" \
+                "ELSE" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
                 "ENDIF"
         }
 
         qtmobilitydeployment.pkg_postrules += sensors
 
-        equals($$(EPOCROOT50), $$(EPOCROOT32)):equals($$(EPOCROOT32), $$(EPOCROOT31)) {
+        equals($${EPOCROOT50}, $${EPOCROOT32}):equals($${EPOCROOT32}, $${EPOCROOT31}) {
             contains(S60_VERSION, 3.1) {
                 pluginstubs += \
                     "IF package(0x102032BE)" \

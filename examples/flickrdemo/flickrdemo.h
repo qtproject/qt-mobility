@@ -47,6 +47,7 @@
 #include <QNetworkReply>
 #include <QSize>
 
+QT_BEGIN_NAMESPACE
 class QAction;
 class QDialogButtonBox;
 class QLabel;
@@ -55,6 +56,7 @@ class QNetworkRequest;
 class QProgressDialog;
 class QPushButton;
 class QWidget;
+QT_END_NAMESPACE
 
 //// QtMobility API headers
 #include <qmobilityglobal.h>
