@@ -493,7 +493,7 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
             break;
         }
     } 
-    emit m_messageQueries[index].privateService->messagesFound(ids);
+    m_messageQueries[index].privateService->messagesFound(ids, true, resultSetOrdered);
 }
 
 QMessageFolderIdList CFSEngine::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
@@ -842,7 +842,7 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                                                     QString body,
                                                     QMessageDataComparator::MatchFlags matchFlags)
 {
-    TRAPD(err, filterAndOrderMessages(filters, sortOrder, body, matchFlags));
+    TRAPD(err, filterAndOrderMessagesL(filters, sortOrder, body, matchFlags));
     Q_UNUSED(err);
 }
 

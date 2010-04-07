@@ -51,6 +51,7 @@
 #include "qmtmengine_symbian_p.h"
 #include "qmessage_symbian_p.h"
 #include "symbianhelpers_p.h"
+#include "maemohelpers_p.h" // contains non-meamo specific helpers for messaging
 #ifdef FREESTYLEMAILUSED
 #include "qfsengine_symbian_p.h"
 #endif
@@ -60,7 +61,8 @@ QTM_BEGIN_NAMESPACE
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
  : q_ptr(parent),
    _state(QMessageService::InactiveState),
-   _active(false)
+   _active(false),
+   _pendingRequestCount(0)
 {
 }
       
@@ -117,26 +119,65 @@ bool QMessageServicePrivate::compose(const QMessage &message)
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
+    if (_pendingRequestCount > 0) {
+        return false;
+    }
+    _pendingRequestCount = 0;
+    _active = true;
+    _filter = filter;
+    _sortOrder = sortOrder;
+    _limit = limit;
+    _offset = offset;
+
+    _pendingRequestCount++;
+    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+
 #ifdef FREESTYLEMAILUSED
-    return CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+    _pendingRequestCount++;
+    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
 #endif
-    return CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+
+    return _active;
 }
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
+    if (_pendingRequestCount > 0) {
+        return false;
+    }
+    _pendingRequestCount = 0;
+    _active = true;
+    _filter = filter;
+    _sortOrder = sortOrder;
+    _limit = limit;
+    _offset = offset;
+
+    _pendingRequestCount++;
+    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
+
 #ifdef FREESTYLEMAILUSED
-    return CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
+    _pendingRequestCount++;
+    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
 #endif
-    return CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
+    return _active;
 }
 
 bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
 {
+    if (_pendingRequestCount > 0) {
+        return false;
+    }
+    _pendingRequestCount = 0;
+    _active = true;
+
+    _pendingRequestCount++;
+    CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
+
 #ifdef FREESTYLEMAILUSED
-    return CFSEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
+    _pendingRequestCount++;
+    CFSEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
 #endif
-    return CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
+    return _active;
 }
 
 bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessageContentContainerId &id)
@@ -173,6 +214,44 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 #endif
     } else
         return CMTMEngine::instance()->retrieveHeader(id);
+}
+
+void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)
+{
+  //  qDebug() << "QMessageServicePrivate::messagesFound";
+    _pendingRequestCount--;
+
+    if (!isFiltered) {
+        _filtered = false;
+    }
+
+    if (!isSorted) {
+        _sorted = false;
+    } else {
+        if ((ids.count() > 0) && (_ids.count() > 0)) {
+            _sorted = false;
+        }
+    }
+
+    _ids.append(ids);
+
+    if (_pendingRequestCount == 0) {
+        if (!_filtered) {
+            MessagingHelper::filterMessages(_ids, _filter);
+        }
+        if (!_sorted) {
+            MessagingHelper::orderMessages(_ids, _sortOrder);
+        }
+        MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, _limit, _offset);
+
+        emit q_ptr->messagesFound(_ids);
+
+        setFinished(true);
+
+        _ids.clear();
+        _filter = QMessageFilter();
+        _sortOrder = QMessageSortOrder();
+    }
 }
 
 bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)

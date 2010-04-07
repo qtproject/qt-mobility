@@ -69,6 +69,8 @@ public:
     bool countMessages(const QMessageFilter &filter);
 	
     void setFinished(bool successful);
+    
+    void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);
 
 signals:
 	void stateChanged(QMessageService::State);
@@ -81,7 +83,17 @@ private:
     QMessageService::State _state;
     QMessageManager::Error _error;
     int _actionId;
-    bool _active;
+    mutable bool _active;
+    mutable int _pendingRequestCount;
+    QMessageIdList _ids;
+    bool _sorted;
+    bool _filtered;
+
+    mutable QMessageFilter _filter;
+    mutable QMessageSortOrder _sortOrder;
+    mutable int _limit;
+    mutable int _offset;
+
     
     friend class CMTMEngine;
     friend class CFSEngine;

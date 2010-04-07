@@ -1718,7 +1718,9 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                     applyOffsetAndLimitToMsgIds(iMessageQueries[index].ids,
                                                 iMessageQueries[index].offset,
                                                 iMessageQueries[index].limit);
-                    emit iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids);
+                    iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids, true, true);
+
+                    //emit iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids);
                 } else {
                     emit iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
                 }
@@ -1745,7 +1747,8 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                 }
                 // Handle offest & limit
                 applyOffsetAndLimitToMsgIds(ids, iMessageQueries[index].offset, iMessageQueries[index].limit);
-                emit iMessageQueries[index].privateService->messagesFound(ids);
+                //emit iMessageQueries[index].privateService->messagesFound(ids);
+                iMessageQueries[index].privateService->messagesFound(ids, true, true);
             } else {
                 emit iMessageQueries[index].privateService->messagesCounted(ids.count());
             }
