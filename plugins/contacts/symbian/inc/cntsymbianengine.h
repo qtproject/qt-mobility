@@ -87,7 +87,6 @@ class CntSymbianEngine : public QContactManagerEngine
 
 public:
     CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
-    CntSymbianEngine(const CntSymbianEngine& other);
     ~CntSymbianEngine();
     
     /* URI reporting */
