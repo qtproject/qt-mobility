@@ -12,7 +12,7 @@ contains(mobility_modules,serviceframework) {
            qservicecontext \
            qmetaobjectbuilder \
            icheck \
-           qservicemanager_ipc
+           qservicemanager_ipc \
            servicedatabase
 }
 
