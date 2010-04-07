@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- sensors.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Sensors API (technology preview)</title>
+  <title>Qt Mobility Project 1.1: Sensors API (technology preview)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -51,7 +51,6 @@
 
 <span class="comment">    // On the stack (deleted when the current scope ends)</span>
     QOrientationSensor orient_sensor;</pre>
-<p>The API supports sensors that poll for their data and sensors that push data to the app as it arrives. Each sensor will support certain update policies that determine how your application can receive the data from the sensor.</p>
 <a name="accessing-sensor-data-in-a-generic-fashion"></a>
 <h3>Accessing sensor data in a generic fashion</h3>
 <p>The preferred way to deal with sensor data is via the <a href="#reading-classes">Reading Classes</a>. However, sometimes this may not be possible. For example, you may be deploying an application to a device that has a new sensor type but no C++ header describing the reading class is available.</p>
@@ -73,9 +72,9 @@
 <p>You can discover all of this information at runtime too. The sensor_explorer example shows you information about available sensors.</p>
 <a name="front-end-back-end"></a>
 <h3>Front end, back end</h3>
-<p>The Sensors API has a front end, for application developers to use and a backend, where device implementors write code to access their hardware. As an application developer you do not need to access the backend though it may be useful to understand how it works.</p>
+<p>The Sensors API has a front end, for application developers to use and a back end, where device implementors write code to access their hardware. As an application developer you do not need to access the back end though it may be useful to understand how it works.</p>
 <p>Commands from the application are delivered through <a href="qsensor.html">QSensor</a> and then down to the device plugin. Data comes back through the <a href="qsensorreading.html">QSensorReading</a> class.</p>
-<p align="center"><img src="images/sensors-overview.png" /></p><p>More information about the backend can be found in <a href="sensors-backend.html">Sensors Backend</a>.</p>
+<p align="center"><img src="images/sensors-overview.png" /></p><p>More information about the back end can be found in <a href="sensors-backend.html">Sensors Backend</a>.</p>
 <a name="main-classes"></a>
 <h3>Main Classes</h3>
 <p>The primary classes that make up the Sensors API.</p>
@@ -127,6 +126,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

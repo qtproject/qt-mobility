@@ -588,7 +588,7 @@ QMetaMethodBuilder QMetaObjectBuilder::addConstructor(const QMetaMethod& prototy
     specified \a name and \a type.  Returns an object that can be used
     to adjust the other attributes of the property.  The \a type will
     be normalized before it is added to the class. \a notifierId will
-    be registered as the property's \e notify signal.
+    be registered as the property's notify signal.
 
     \sa property(), propertyCount(), removeProperty(), indexOfProperty()
 */
@@ -638,8 +638,7 @@ QMetaPropertyBuilder QMetaObjectBuilder::addProperty(const QMetaProperty& protot
     \a name.  Returns an object that can be used to adjust
     the other attributes of the enumerator.
 
-    \sa enumerator(), enumeratorCount(), removeEnumerator(),
-    \sa indexOfEnumerator()
+    \sa enumerator(), enumeratorCount(), removeEnumerator(), indexOfEnumerator()
 */
 QMetaEnumBuilder QMetaObjectBuilder::addEnumerator(const QByteArray& name)
 {
@@ -654,8 +653,7 @@ QMetaEnumBuilder QMetaObjectBuilder::addEnumerator(const QByteArray& name)
     QMetaObject.  Returns an object that can be used to adjust the
     attributes of the enumerator.
 
-    \sa enumerator(), enumeratorCount(), removeEnumerator(),
-    \sa indexOfEnumerator()
+    \sa enumerator(), enumeratorCount(), removeEnumerator(), indexOfEnumerator()
 */
 QMetaEnumBuilder QMetaObjectBuilder::addEnumerator(const QMetaEnum& prototype)
 {

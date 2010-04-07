@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: sessionwidget.h Example File (bearermonitor/sessionwidget.h)</title>
+  <title>Qt Mobility Project 1.1: sessionwidget.h Example File (bearermonitor/sessionwidget.h)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -57,8 +57,11 @@
     #ifndef SESSIONWIDGET_H
     #define SESSIONWIDGET_H
 
+    #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    #include &quot;ui_sessionwidget_maemo.h&quot;
+    #else
     #include &quot;ui_sessionwidget.h&quot;
-
+    #endif
     #include &lt;qnetworksession.h&gt;
 
     QTM_USE_NAMESPACE
@@ -81,7 +84,9 @@
         void closeSession();
         void stopSession();
         void updateSession();
-
+    #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        void deleteSession();
+    #endif
     private:
         QNetworkSession *session;
     };
@@ -91,6 +96,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

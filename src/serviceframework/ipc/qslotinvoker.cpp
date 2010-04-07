@@ -47,6 +47,7 @@
 /*!
     \class QSlotInvoker
     \inpublicgroup QtBaseModule
+    \internal
 
     \brief The QSlotInvoker class provides an interface for invoking slots with explicit arguments
 

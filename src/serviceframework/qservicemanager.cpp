@@ -98,7 +98,9 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
 */
 static bool qservicemanager_isIpcBasedService(const QString& location)
 {
-    // Shall be generalized later on (TODO)
+    // Shall be generalized later on
+    // TODO: we don't actually have to specify the specific ipc mechanism
+    // a simple flag would do.
     if (location.startsWith("localsocket:") ||
         location.startsWith("symbianclientserver:"))
         return true;
@@ -491,6 +493,16 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
     are enforced during service loading.
+*/
+
+/*!
+    \typedef QServiceTypeRegister::CreateServiceFunc
+    \internal
+*/
+
+/*!
+    \typedef QServiceTypeRegister::TypeIdentFunc
+    \internal
 */
 
 /*!

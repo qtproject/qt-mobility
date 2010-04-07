@@ -10,9 +10,6 @@
         <toc>
             <section ref="index.html" title="Qt Mobility Project Reference Documentation">
                 <section ref="" title="Classes">
-                    <section ref="linereader.html" title="LineReader Class Reference">
-                        <section ref="linereader-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qabstractsecuritysession.html" title="QAbstractSecuritySession Class Reference">
                         <section ref="qabstractsecuritysession-members.html" title="List of all members"/>
                     </section>
@@ -487,6 +484,9 @@
                     <section ref="qservicecontext.html" title="QServiceContext Class Reference">
                         <section ref="qservicecontext-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qservicecontrol.html" title="QServiceControl Class Reference">
+                        <section ref="qservicecontrol-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qservicefilter.html" title="QServiceFilter Class Reference">
                         <section ref="qservicefilter-members.html" title="List of all members"/>
                     </section>
@@ -498,6 +498,9 @@
                     </section>
                     <section ref="qserviceplugininterface.html" title="QServicePluginInterface Class Reference">
                         <section ref="qserviceplugininterface-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qservicetyperegister.html" title="QServiceTypeRegister Class Reference">
+                        <section ref="qservicetyperegister-members.html" title="List of all members"/>
                     </section>
                     <section ref="qsystemdeviceinfo.html" title="QSystemDeviceInfo Class Reference">
                         <section ref="qsystemdeviceinfo-members.html" title="List of all members"/>
@@ -627,6 +630,7 @@
                     <section ref="bearer-management.html" title="Bearer Management"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
+                    <section ref="contactsusagehtml.html" title="Contacts API Usage"/>
                     <section ref="contactsasync.html" title="Contacts Asynchronous API"/>
                     <section ref="contactssync.html" title="Contacts Synchronous API"/>
                     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin"/>
@@ -680,6 +684,7 @@
             <keyword name="Bluetooth Transfer Plugin Example" id="Bluetooth Transfer Plugin Example" ref="bluetoothtransferplugin.html"/>
             <keyword name="Class and Function Documentation" id="Class and Function Documentation" ref="classlists.html"/>
             <keyword name="Contacts" id="Contacts" ref="contacts.html"/>
+            <keyword name="Contacts API Usage" id="Contacts API Usage" ref="contactsusagehtml.html"/>
             <keyword name="Contacts Asynchronous API" id="Contacts Asynchronous API" ref="contactsasync.html"/>
             <keyword name="Contacts Synchronous API" id="Contacts Synchronous API" ref="contactssync.html"/>
             <keyword name="Creating a sensor plugin" id="Creating a sensor plugin" ref="creating-a-sensor-plugin.html"/>
@@ -698,11 +703,6 @@
             <keyword name="Licenses for Fonts Used in Qt for Embedded Linux" id="Licenses for Fonts Used in Qt for Embedded Linux" ref="licenses-fonts.html"/>
             <keyword name="Licensing Information" id="Licensing Information" ref="licensing.html"/>
             <keyword name="LightMap Example" id="LightMap Example" ref="lightmaps.html"/>
-            <keyword name="LineReader" id="LineReader" ref="linereader.html"/>
-            <keyword name="atEnd" id="LineReader::atEnd" ref="linereader.html#atEnd"/>
-            <keyword name="codec" id="LineReader::codec" ref="linereader.html#codec"/>
-            <keyword name="odometer" id="LineReader::odometer" ref="linereader.html#odometer"/>
-            <keyword name="readLine" id="LineReader::readLine" ref="linereader.html#readLine"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location API" id="Location API" ref="location.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
@@ -894,9 +894,9 @@
             <keyword name="QContactAction" id="QContactAction" ref="qcontactaction.html"/>
             <keyword name="QContactAction::State" id="QContactAction::State" ref="qcontactaction.html#State-enum"/>
             <keyword name="QContactAction::InactiveState" id="QContactAction::InactiveState" ref="qcontactaction.html#State-enum"/>
-            <keyword name="QContactAction::AutonomousState" id="QContactAction::AutonomousState" ref="qcontactaction.html#State-enum"/>
             <keyword name="QContactAction::ActiveState" id="QContactAction::ActiveState" ref="qcontactaction.html#State-enum"/>
             <keyword name="QContactAction::FinishedState" id="QContactAction::FinishedState" ref="qcontactaction.html#State-enum"/>
+            <keyword name="QContactAction::FinishedDetachedState" id="QContactAction::FinishedDetachedState" ref="qcontactaction.html#State-enum"/>
             <keyword name="QContactAction::FinishedWithErrorState" id="QContactAction::FinishedWithErrorState" ref="qcontactaction.html#State-enum"/>
             <keyword name="action" id="QContactAction::action" ref="qcontactaction.html#action"/>
             <keyword name="actionDescriptor" id="QContactAction::actionDescriptor" ref="qcontactaction.html#actionDescriptor"/>
@@ -904,11 +904,13 @@
             <keyword name="availableActions" id="QContactAction::availableActions" ref="qcontactaction.html#availableActions"/>
             <keyword name="contactFilter" id="QContactAction::contactFilter" ref="qcontactaction.html#contactFilter"/>
             <keyword name="invokeAction" id="QContactAction::invokeAction" ref="qcontactaction.html#invokeAction"/>
+            <keyword name="isDetailSupported" id="QContactAction::isDetailSupported" ref="qcontactaction.html#isDetailSupported"/>
             <keyword name="metaData" id="QContactAction::metaData" ref="qcontactaction.html#metaData"/>
-            <keyword name="progress" id="QContactAction::progress" ref="qcontactaction.html#progress"/>
-            <keyword name="result" id="QContactAction::result" ref="qcontactaction.html#result"/>
+            <keyword name="results" id="QContactAction::results" ref="qcontactaction.html#results"/>
+            <keyword name="resultsAvailable" id="QContactAction::resultsAvailable" ref="qcontactaction.html#resultsAvailable"/>
+            <keyword name="state" id="QContactAction::state" ref="qcontactaction.html#state"/>
+            <keyword name="stateChanged" id="QContactAction::stateChanged" ref="qcontactaction.html#stateChanged"/>
             <keyword name="supportedDetails" id="QContactAction::supportedDetails" ref="qcontactaction.html#supportedDetails"/>
-            <keyword name="supportsDetail" id="QContactAction::supportsDetail" ref="qcontactaction.html#supportsDetail"/>
             <keyword name="~QContactAction" id="QContactAction::~QContactAction" ref="qcontactaction.html#dtor.QContactAction"/>
             <keyword name="QContactActionDescriptor" id="QContactActionDescriptor" ref="qcontactactiondescriptor.html"/>
             <keyword name="actionName" id="QContactActionDescriptor::actionName" ref="qcontactactiondescriptor.html#actionName"/>
@@ -1036,10 +1038,6 @@
             <keyword name="variantValues" id="QContactDetail::variantValues" ref="qcontactdetail.html#variantValues"/>
             <keyword name="~QContactDetail" id="QContactDetail::~QContactDetail" ref="qcontactdetail.html#dtor.QContactDetail"/>
             <keyword name="QContactDetailDefinition" id="QContactDetailDefinition" ref="qcontactdetaildefinition.html"/>
-            <keyword name="QContactDetailDefinition::AccessConstraint" id="QContactDetailDefinition::AccessConstraint" ref="qcontactdetaildefinition.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailDefinition::NoConstraint" id="QContactDetailDefinition::NoConstraint" ref="qcontactdetaildefinition.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailDefinition::ReadOnly" id="QContactDetailDefinition::ReadOnly" ref="qcontactdetaildefinition.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailDefinition::CreateOnly" id="QContactDetailDefinition::CreateOnly" ref="qcontactdetaildefinition.html#AccessConstraint-enum"/>
             <keyword name="fields" id="QContactDetailDefinition::fields" ref="qcontactdetaildefinition.html#fields"/>
             <keyword name="insertField" id="QContactDetailDefinition::insertField" ref="qcontactdetaildefinition.html#insertField"/>
             <keyword name="isEmpty" id="QContactDetailDefinition::isEmpty" ref="qcontactdetaildefinition.html#isEmpty"/>
@@ -1060,24 +1058,18 @@
             <keyword name="errorMap" id="QContactDetailDefinitionFetchRequest::errorMap" ref="qcontactdetaildefinitionfetchrequest.html#errorMap"/>
             <keyword name="setContactType" id="QContactDetailDefinitionFetchRequest::setContactType" ref="qcontactdetaildefinitionfetchrequest.html#setContactType"/>
             <keyword name="setDefinitionNames" id="QContactDetailDefinitionFetchRequest::setDefinitionNames" ref="qcontactdetaildefinitionfetchrequest.html#setDefinitionNames"/>
-            <keyword name="~QContactDetailDefinitionFetchRequest" id="QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest" ref="qcontactdetaildefinitionfetchrequest.html#dtor.QContactDetailDefinitionFetchRequest"/>
             <keyword name="QContactDetailDefinitionRemoveRequest" id="QContactDetailDefinitionRemoveRequest" ref="qcontactdetaildefinitionremoverequest.html"/>
             <keyword name="contactType" id="QContactDetailDefinitionRemoveRequest::contactType" ref="qcontactdetaildefinitionremoverequest.html#contactType"/>
             <keyword name="definitionNames" id="QContactDetailDefinitionRemoveRequest::definitionNames" ref="qcontactdetaildefinitionremoverequest.html#definitionNames"/>
             <keyword name="errorMap" id="QContactDetailDefinitionRemoveRequest::errorMap" ref="qcontactdetaildefinitionremoverequest.html#errorMap"/>
             <keyword name="setDefinitionNames" id="QContactDetailDefinitionRemoveRequest::setDefinitionNames" ref="qcontactdetaildefinitionremoverequest.html#setDefinitionNames"/>
-            <keyword name="~QContactDetailDefinitionRemoveRequest" id="QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest" ref="qcontactdetaildefinitionremoverequest.html#dtor.QContactDetailDefinitionRemoveRequest"/>
             <keyword name="QContactDetailDefinitionSaveRequest" id="QContactDetailDefinitionSaveRequest" ref="qcontactdetaildefinitionsaverequest.html"/>
             <keyword name="contactType" id="QContactDetailDefinitionSaveRequest::contactType" ref="qcontactdetaildefinitionsaverequest.html#contactType"/>
             <keyword name="definitions" id="QContactDetailDefinitionSaveRequest::definitions" ref="qcontactdetaildefinitionsaverequest.html#definitions"/>
             <keyword name="errorMap" id="QContactDetailDefinitionSaveRequest::errorMap" ref="qcontactdetaildefinitionsaverequest.html#errorMap"/>
             <keyword name="setContactType" id="QContactDetailDefinitionSaveRequest::setContactType" ref="qcontactdetaildefinitionsaverequest.html#setContactType"/>
             <keyword name="setDefinitions" id="QContactDetailDefinitionSaveRequest::setDefinitions" ref="qcontactdetaildefinitionsaverequest.html#setDefinitions"/>
-            <keyword name="~QContactDetailDefinitionSaveRequest" id="QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest" ref="qcontactdetaildefinitionsaverequest.html#dtor.QContactDetailDefinitionSaveRequest"/>
             <keyword name="QContactDetailFieldDefinition" id="QContactDetailFieldDefinition" ref="qcontactdetailfielddefinition.html"/>
-            <keyword name="QContactDetailFieldDefinition::AccessConstraint" id="QContactDetailFieldDefinition::AccessConstraint" ref="qcontactdetailfielddefinition.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailFieldDefinition::NoConstraint" id="QContactDetailFieldDefinition::NoConstraint" ref="qcontactdetailfielddefinition.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailFieldDefinition::ReadOnly" id="QContactDetailFieldDefinition::ReadOnly" ref="qcontactdetailfielddefinition.html#AccessConstraint-enum"/>
             <keyword name="allowableValues" id="QContactDetailFieldDefinition::allowableValues" ref="qcontactdetailfielddefinition.html#allowableValues"/>
             <keyword name="dataType" id="QContactDetailFieldDefinition::dataType" ref="qcontactdetailfielddefinition.html#dataType"/>
             <keyword name="operator!=" id="QContactDetailFieldDefinition::operator!=" ref="qcontactdetailfielddefinition.html#operator-not-eq"/>
@@ -1145,7 +1137,6 @@
             <keyword name="setFilter" id="QContactFetchRequest::setFilter" ref="qcontactfetchrequest.html#setFilter"/>
             <keyword name="setSorting" id="QContactFetchRequest::setSorting" ref="qcontactfetchrequest.html#setSorting"/>
             <keyword name="sorting" id="QContactFetchRequest::sorting" ref="qcontactfetchrequest.html#sorting"/>
-            <keyword name="~QContactFetchRequest" id="QContactFetchRequest::~QContactFetchRequest" ref="qcontactfetchrequest.html#dtor.QContactFetchRequest"/>
             <keyword name="QContactFilter" id="QContactFilter" ref="qcontactfilter.html"/>
             <keyword name="QContactFilter::FilterType" id="QContactFilter::FilterType" ref="qcontactfilter.html#FilterType-enum"/>
             <keyword name="QContactFilter::InvalidFilter" id="QContactFilter::InvalidFilter" ref="qcontactfilter.html#FilterType-enum"/>
@@ -1229,36 +1220,7 @@
             <keyword name="remove" id="QContactIntersectionFilter::remove" ref="qcontactintersectionfilter.html#remove"/>
             <keyword name="setFilters" id="QContactIntersectionFilter::setFilters" ref="qcontactintersectionfilter.html#setFilters"/>
             <keyword name="QContactInvalidEngine" id="QContactInvalidEngine" ref="qcontactinvalidengine.html"/>
-            <keyword name="cancelRequest" id="QContactInvalidEngine::cancelRequest" ref="qcontactinvalidengine.html#cancelRequest"/>
-            <keyword name="conformingContact" id="QContactInvalidEngine::conformingContact" ref="qcontactinvalidengine.html#conformingContact"/>
-            <keyword name="contact" id="QContactInvalidEngine::contact" ref="qcontactinvalidengine.html#contact"/>
-            <keyword name="contactIds" id="QContactInvalidEngine::contactIds" ref="qcontactinvalidengine.html#contactIds"/>
-            <keyword name="contacts" id="QContactInvalidEngine::contacts" ref="qcontactinvalidengine.html#contacts"/>
-            <keyword name="detailDefinition" id="QContactInvalidEngine::detailDefinition" ref="qcontactinvalidengine.html#detailDefinition"/>
-            <keyword name="detailDefinitions" id="QContactInvalidEngine::detailDefinitions" ref="qcontactinvalidengine.html#detailDefinitions"/>
-            <keyword name="hasFeature" id="QContactInvalidEngine::hasFeature" ref="qcontactinvalidengine.html#hasFeature"/>
-            <keyword name="isFilterSupported" id="QContactInvalidEngine::isFilterSupported" ref="qcontactinvalidengine.html#isFilterSupported"/>
-            <keyword name="isRelationshipTypeSupported" id="QContactInvalidEngine::isRelationshipTypeSupported" ref="qcontactinvalidengine.html#isRelationshipTypeSupported"/>
             <keyword name="managerName" id="QContactInvalidEngine::managerName" ref="qcontactinvalidengine.html#managerName"/>
-            <keyword name="managerParameters" id="QContactInvalidEngine::managerParameters" ref="qcontactinvalidengine.html#managerParameters"/>
-            <keyword name="managerVersion" id="QContactInvalidEngine::managerVersion" ref="qcontactinvalidengine.html#managerVersion"/>
-            <keyword name="relationships" id="QContactInvalidEngine::relationships" ref="qcontactinvalidengine.html#relationships"/>
-            <keyword name="removeContacts" id="QContactInvalidEngine::removeContacts" ref="qcontactinvalidengine.html#removeContacts"/>
-            <keyword name="removeDetailDefinition" id="QContactInvalidEngine::removeDetailDefinition" ref="qcontactinvalidengine.html#removeDetailDefinition"/>
-            <keyword name="removeRelationships" id="QContactInvalidEngine::removeRelationships" ref="qcontactinvalidengine.html#removeRelationships"/>
-            <keyword name="requestDestroyed" id="QContactInvalidEngine::requestDestroyed" ref="qcontactinvalidengine.html#requestDestroyed"/>
-            <keyword name="saveContacts" id="QContactInvalidEngine::saveContacts" ref="qcontactinvalidengine.html#saveContacts"/>
-            <keyword name="saveDetailDefinition" id="QContactInvalidEngine::saveDetailDefinition" ref="qcontactinvalidengine.html#saveDetailDefinition"/>
-            <keyword name="saveRelationships" id="QContactInvalidEngine::saveRelationships" ref="qcontactinvalidengine.html#saveRelationships"/>
-            <keyword name="selfContactId" id="QContactInvalidEngine::selfContactId" ref="qcontactinvalidengine.html#selfContactId"/>
-            <keyword name="setSelfContactId" id="QContactInvalidEngine::setSelfContactId" ref="qcontactinvalidengine.html#setSelfContactId"/>
-            <keyword name="startRequest" id="QContactInvalidEngine::startRequest" ref="qcontactinvalidengine.html#startRequest"/>
-            <keyword name="supportedContactTypes" id="QContactInvalidEngine::supportedContactTypes" ref="qcontactinvalidengine.html#supportedContactTypes"/>
-            <keyword name="supportedDataTypes" id="QContactInvalidEngine::supportedDataTypes" ref="qcontactinvalidengine.html#supportedDataTypes"/>
-            <keyword name="synthesizedDisplayLabel" id="QContactInvalidEngine::synthesizedDisplayLabel" ref="qcontactinvalidengine.html#synthesizedDisplayLabel"/>
-            <keyword name="validateContact" id="QContactInvalidEngine::validateContact" ref="qcontactinvalidengine.html#validateContact"/>
-            <keyword name="validateDefinition" id="QContactInvalidEngine::validateDefinition" ref="qcontactinvalidengine.html#validateDefinition"/>
-            <keyword name="waitForRequestFinished" id="QContactInvalidEngine::waitForRequestFinished" ref="qcontactinvalidengine.html#waitForRequestFinished"/>
             <keyword name="QContactInvalidFilter" id="QContactInvalidFilter" ref="qcontactinvalidfilter.html"/>
             <keyword name="QContactLocalId" id="QContactLocalId" ref="qcontactid.html#QContactLocalId-typedef"/>
             <keyword name="QContactLocalIdFetchRequest" id="QContactLocalIdFetchRequest" ref="qcontactlocalidfetchrequest.html"/>
@@ -1267,7 +1229,6 @@
             <keyword name="setFilter" id="QContactLocalIdFetchRequest::setFilter" ref="qcontactlocalidfetchrequest.html#setFilter"/>
             <keyword name="setSorting" id="QContactLocalIdFetchRequest::setSorting" ref="qcontactlocalidfetchrequest.html#setSorting"/>
             <keyword name="sorting" id="QContactLocalIdFetchRequest::sorting" ref="qcontactlocalidfetchrequest.html#sorting"/>
-            <keyword name="~QContactLocalIdFetchRequest" id="QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest" ref="qcontactlocalidfetchrequest.html#dtor.QContactLocalIdFetchRequest"/>
             <keyword name="QContactLocalIdFilter" id="QContactLocalIdFilter" ref="qcontactlocalidfilter.html"/>
             <keyword name="ids" id="QContactLocalIdFilter::ids" ref="qcontactlocalidfilter.html#ids"/>
             <keyword name="setIds" id="QContactLocalIdFilter::setIds" ref="qcontactlocalidfilter.html#setIds"/>
@@ -1412,35 +1373,24 @@
             <keyword name="~QContactManagerEngineFactory" id="QContactManagerEngineFactory::~QContactManagerEngineFactory" ref="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory"/>
             <keyword name="QContactMemoryEngine" id="QContactMemoryEngine" ref="qcontactmemoryengine.html"/>
             <keyword name="cancelRequest" id="QContactMemoryEngine::cancelRequest" ref="qcontactmemoryengine.html#cancelRequest"/>
-            <keyword name="compatibleContact" id="QContactMemoryEngine::compatibleContact" ref="qcontactmemoryengine.html#compatibleContact"/>
             <keyword name="contact" id="QContactMemoryEngine::contact" ref="qcontactmemoryengine.html#contact"/>
-            <keyword name="contactIds" id="QContactMemoryEngine::contactIds" ref="qcontactmemoryengine.html#contactIds"/>
             <keyword name="contacts" id="QContactMemoryEngine::contacts" ref="qcontactmemoryengine.html#contacts"/>
             <keyword name="createMemoryEngine" id="QContactMemoryEngine::createMemoryEngine" ref="qcontactmemoryengine.html#createMemoryEngine"/>
-            <keyword name="detailDefinition" id="QContactMemoryEngine::detailDefinition" ref="qcontactmemoryengine.html#detailDefinition"/>
-            <keyword name="detailDefinitions" id="QContactMemoryEngine::detailDefinitions" ref="qcontactmemoryengine.html#detailDefinitions"/>
             <keyword name="hasFeature" id="QContactMemoryEngine::hasFeature" ref="qcontactmemoryengine.html#hasFeature"/>
             <keyword name="isFilterSupported" id="QContactMemoryEngine::isFilterSupported" ref="qcontactmemoryengine.html#isFilterSupported"/>
             <keyword name="isRelationshipTypeSupported" id="QContactMemoryEngine::isRelationshipTypeSupported" ref="qcontactmemoryengine.html#isRelationshipTypeSupported"/>
             <keyword name="managerName" id="QContactMemoryEngine::managerName" ref="qcontactmemoryengine.html#managerName"/>
             <keyword name="managerParameters" id="QContactMemoryEngine::managerParameters" ref="qcontactmemoryengine.html#managerParameters"/>
-            <keyword name="managerVersion" id="QContactMemoryEngine::managerVersion" ref="qcontactmemoryengine.html#managerVersion"/>
             <keyword name="relationships" id="QContactMemoryEngine::relationships" ref="qcontactmemoryengine.html#relationships"/>
             <keyword name="removeContacts" id="QContactMemoryEngine::removeContacts" ref="qcontactmemoryengine.html#removeContacts"/>
             <keyword name="removeDetailDefinition" id="QContactMemoryEngine::removeDetailDefinition" ref="qcontactmemoryengine.html#removeDetailDefinition"/>
             <keyword name="removeRelationships" id="QContactMemoryEngine::removeRelationships" ref="qcontactmemoryengine.html#removeRelationships"/>
             <keyword name="requestDestroyed" id="QContactMemoryEngine::requestDestroyed" ref="qcontactmemoryengine.html#requestDestroyed"/>
             <keyword name="saveContacts" id="QContactMemoryEngine::saveContacts" ref="qcontactmemoryengine.html#saveContacts"/>
-            <keyword name="saveDetailDefinition" id="QContactMemoryEngine::saveDetailDefinition" ref="qcontactmemoryengine.html#saveDetailDefinition"/>
             <keyword name="saveRelationships" id="QContactMemoryEngine::saveRelationships" ref="qcontactmemoryengine.html#saveRelationships"/>
             <keyword name="selfContactId" id="QContactMemoryEngine::selfContactId" ref="qcontactmemoryengine.html#selfContactId"/>
-            <keyword name="setSelfContactId" id="QContactMemoryEngine::setSelfContactId" ref="qcontactmemoryengine.html#setSelfContactId"/>
             <keyword name="startRequest" id="QContactMemoryEngine::startRequest" ref="qcontactmemoryengine.html#startRequest"/>
-            <keyword name="supportedContactTypes" id="QContactMemoryEngine::supportedContactTypes" ref="qcontactmemoryengine.html#supportedContactTypes"/>
             <keyword name="supportedDataTypes" id="QContactMemoryEngine::supportedDataTypes" ref="qcontactmemoryengine.html#supportedDataTypes"/>
-            <keyword name="synthesizedDisplayLabel" id="QContactMemoryEngine::synthesizedDisplayLabel" ref="qcontactmemoryengine.html#synthesizedDisplayLabel"/>
-            <keyword name="validateContact" id="QContactMemoryEngine::validateContact" ref="qcontactmemoryengine.html#validateContact"/>
-            <keyword name="validateDefinition" id="QContactMemoryEngine::validateDefinition" ref="qcontactmemoryengine.html#validateDefinition"/>
             <keyword name="waitForRequestFinished" id="QContactMemoryEngine::waitForRequestFinished" ref="qcontactmemoryengine.html#waitForRequestFinished"/>
             <keyword name="~QContactMemoryEngine" id="QContactMemoryEngine::~QContactMemoryEngine" ref="qcontactmemoryengine.html#dtor.QContactMemoryEngine"/>
             <keyword name="QContactName" id="QContactName" ref="qcontactname.html"/>
@@ -1537,7 +1487,6 @@
             <keyword name="setFirst" id="QContactRelationshipFetchRequest::setFirst" ref="qcontactrelationshipfetchrequest.html#setFirst"/>
             <keyword name="setRelationshipType" id="QContactRelationshipFetchRequest::setRelationshipType" ref="qcontactrelationshipfetchrequest.html#setRelationshipType"/>
             <keyword name="setSecond" id="QContactRelationshipFetchRequest::setSecond" ref="qcontactrelationshipfetchrequest.html#setSecond"/>
-            <keyword name="~QContactRelationshipFetchRequest" id="QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest" ref="qcontactrelationshipfetchrequest.html#dtor.QContactRelationshipFetchRequest"/>
             <keyword name="QContactRelationshipFilter" id="QContactRelationshipFilter" ref="qcontactrelationshipfilter.html"/>
             <keyword name="relatedContactId" id="QContactRelationshipFilter::relatedContactId" ref="qcontactrelationshipfilter.html#relatedContactId"/>
             <keyword name="relatedContactRole" id="QContactRelationshipFilter::relatedContactRole" ref="qcontactrelationshipfilter.html#relatedContactRole"/>
@@ -1549,29 +1498,25 @@
             <keyword name="errorMap" id="QContactRelationshipRemoveRequest::errorMap" ref="qcontactrelationshipremoverequest.html#errorMap"/>
             <keyword name="relationships" id="QContactRelationshipRemoveRequest::relationships" ref="qcontactrelationshipremoverequest.html#relationships"/>
             <keyword name="setRelationships" id="QContactRelationshipRemoveRequest::setRelationships" ref="qcontactrelationshipremoverequest.html#setRelationships"/>
-            <keyword name="~QContactRelationshipRemoveRequest" id="QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest" ref="qcontactrelationshipremoverequest.html#dtor.QContactRelationshipRemoveRequest"/>
             <keyword name="QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html"/>
             <keyword name="errorMap" id="QContactRelationshipSaveRequest::errorMap" ref="qcontactrelationshipsaverequest.html#errorMap"/>
             <keyword name="relationships" id="QContactRelationshipSaveRequest::relationships" ref="qcontactrelationshipsaverequest.html#relationships"/>
             <keyword name="setRelationships" id="QContactRelationshipSaveRequest::setRelationships" ref="qcontactrelationshipsaverequest.html#setRelationships"/>
-            <keyword name="~QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html#dtor.QContactRelationshipSaveRequest"/>
             <keyword name="QContactRemoveRequest" id="QContactRemoveRequest" ref="qcontactremoverequest.html"/>
             <keyword name="contactIds" id="QContactRemoveRequest::contactIds" ref="qcontactremoverequest.html#contactIds"/>
             <keyword name="errorMap" id="QContactRemoveRequest::errorMap" ref="qcontactremoverequest.html#errorMap"/>
             <keyword name="setContactIds" id="QContactRemoveRequest::setContactIds" ref="qcontactremoverequest.html#setContactIds"/>
-            <keyword name="~QContactRemoveRequest" id="QContactRemoveRequest::~QContactRemoveRequest" ref="qcontactremoverequest.html#dtor.QContactRemoveRequest"/>
             <keyword name="QContactRingtone" id="QContactRingtone" ref="qcontactringtone.html"/>
-            <keyword name="audioRingtone" id="QContactRingtone::audioRingtone" ref="qcontactringtone.html#audioRingtone"/>
-            <keyword name="setAudioRingtone" id="QContactRingtone::setAudioRingtone" ref="qcontactringtone.html#setAudioRingtone"/>
-            <keyword name="setVibrationRingtone" id="QContactRingtone::setVibrationRingtone" ref="qcontactringtone.html#setVibrationRingtone"/>
-            <keyword name="setVideoRingtone" id="QContactRingtone::setVideoRingtone" ref="qcontactringtone.html#setVideoRingtone"/>
-            <keyword name="vibrationRingtone" id="QContactRingtone::vibrationRingtone" ref="qcontactringtone.html#vibrationRingtone"/>
-            <keyword name="videoRingtone" id="QContactRingtone::videoRingtone" ref="qcontactringtone.html#videoRingtone"/>
+            <keyword name="audioRingtoneUrl" id="QContactRingtone::audioRingtoneUrl" ref="qcontactringtone.html#audioRingtoneUrl"/>
+            <keyword name="setAudioRingtoneUrl" id="QContactRingtone::setAudioRingtoneUrl" ref="qcontactringtone.html#setAudioRingtoneUrl"/>
+            <keyword name="setVibrationRingtoneUrl" id="QContactRingtone::setVibrationRingtoneUrl" ref="qcontactringtone.html#setVibrationRingtoneUrl"/>
+            <keyword name="setVideoRingtoneUrl" id="QContactRingtone::setVideoRingtoneUrl" ref="qcontactringtone.html#setVideoRingtoneUrl"/>
+            <keyword name="vibrationRingtoneUrl" id="QContactRingtone::vibrationRingtoneUrl" ref="qcontactringtone.html#vibrationRingtoneUrl"/>
+            <keyword name="videoRingtoneUrl" id="QContactRingtone::videoRingtoneUrl" ref="qcontactringtone.html#videoRingtoneUrl"/>
             <keyword name="QContactSaveRequest" id="QContactSaveRequest" ref="qcontactsaverequest.html"/>
             <keyword name="contacts" id="QContactSaveRequest::contacts" ref="qcontactsaverequest.html#contacts"/>
             <keyword name="errorMap" id="QContactSaveRequest::errorMap" ref="qcontactsaverequest.html#errorMap"/>
             <keyword name="setContacts" id="QContactSaveRequest::setContacts" ref="qcontactsaverequest.html#setContacts"/>
-            <keyword name="~QContactSaveRequest" id="QContactSaveRequest::~QContactSaveRequest" ref="qcontactsaverequest.html#dtor.QContactSaveRequest"/>
             <keyword name="QContactSortOrder" id="QContactSortOrder" ref="qcontactsortorder.html"/>
             <keyword name="QContactSortOrder::BlankPolicy" id="QContactSortOrder::BlankPolicy" ref="qcontactsortorder.html#BlankPolicy-enum"/>
             <keyword name="QContactSortOrder::BlanksFirst" id="QContactSortOrder::BlanksFirst" ref="qcontactsortorder.html#BlankPolicy-enum"/>
@@ -1666,7 +1611,6 @@
             <keyword name="QGeoPositionInfo::VerticalAccuracy" id="QGeoPositionInfo::VerticalAccuracy" ref="qgeopositioninfo.html#Attribute-enum"/>
             <keyword name="attribute" id="QGeoPositionInfo::attribute" ref="qgeopositioninfo.html#attribute"/>
             <keyword name="coordinate" id="QGeoPositionInfo::coordinate" ref="qgeopositioninfo.html#coordinate"/>
-            <keyword name="dateTime" id="QGeoPositionInfo::dateTime" ref="qgeopositioninfo.html#dateTime"/>
             <keyword name="hasAttribute" id="QGeoPositionInfo::hasAttribute" ref="qgeopositioninfo.html#hasAttribute"/>
             <keyword name="isValid" id="QGeoPositionInfo::isValid" ref="qgeopositioninfo.html#isValid"/>
             <keyword name="operator!=" id="QGeoPositionInfo::operator!=" ref="qgeopositioninfo.html#operator-not-eq"/>
@@ -1675,7 +1619,8 @@
             <keyword name="removeAttribute" id="QGeoPositionInfo::removeAttribute" ref="qgeopositioninfo.html#removeAttribute"/>
             <keyword name="setAttribute" id="QGeoPositionInfo::setAttribute" ref="qgeopositioninfo.html#setAttribute"/>
             <keyword name="setCoordinate" id="QGeoPositionInfo::setCoordinate" ref="qgeopositioninfo.html#setCoordinate"/>
-            <keyword name="setDateTime" id="QGeoPositionInfo::setDateTime" ref="qgeopositioninfo.html#setDateTime"/>
+            <keyword name="setTimestamp" id="QGeoPositionInfo::setTimestamp" ref="qgeopositioninfo.html#setTimestamp"/>
+            <keyword name="timestamp" id="QGeoPositionInfo::timestamp" ref="qgeopositioninfo.html#timestamp"/>
             <keyword name="~QGeoPositionInfo" id="QGeoPositionInfo::~QGeoPositionInfo" ref="qgeopositioninfo.html#dtor.QGeoPositionInfo"/>
             <keyword name="QGeoPositionInfoSource" id="QGeoPositionInfoSource" ref="qgeopositioninfosource.html"/>
             <keyword name="QGeoPositionInfoSource::PositioningMethod" id="QGeoPositionInfoSource::PositioningMethod" ref="qgeopositioninfosource.html#PositioningMethod-enum"/>
@@ -2780,15 +2725,16 @@
             <keyword name="availableDataRates" id="QSensor::availableDataRates" ref="qsensor.html#availableDataRates-prop"/>
             <keyword name="busy" id="QSensor::busy" ref="qsensor.html#busy-prop"/>
             <keyword name="busyChanged" id="QSensor::busyChanged" ref="qsensor.html#busyChanged"/>
-            <keyword name="connect" id="QSensor::connect" ref="qsensor.html#connect"/>
-            <keyword name="connected" id="QSensor::connected" ref="qsensor.html#connected-prop"/>
+            <keyword name="connectToBackend" id="QSensor::connectToBackend" ref="qsensor.html#connectToBackend"/>
+            <keyword name="connectedToBackend" id="QSensor::connectedToBackend" ref="qsensor.html#connectedToBackend-prop"/>
+            <keyword name="dataRate" id="QSensor::dataRate" ref="qsensor.html#dataRate-prop"/>
             <keyword name="defaultSensorForType" id="QSensor::defaultSensorForType" ref="qsensor.html#defaultSensorForType"/>
             <keyword name="description" id="QSensor::description" ref="qsensor.html#description-prop"/>
             <keyword name="error" id="QSensor::error" ref="qsensor.html#error-prop"/>
             <keyword name="identifier" id="QSensor::identifier" ref="qsensor.html#sensorid-prop"/>
             <keyword name="isActive" id="QSensor::isActive" ref="qsensor.html#active-prop"/>
             <keyword name="isBusy" id="QSensor::isBusy" ref="qsensor.html#busy-prop"/>
-            <keyword name="isConnected" id="QSensor::isConnected" ref="qsensor.html#connected-prop"/>
+            <keyword name="isConnectedToBackend" id="QSensor::isConnectedToBackend" ref="qsensor.html#connectedToBackend-prop"/>
             <keyword name="outputRange" id="QSensor::outputRange" ref="qsensor.html#outputRange-prop"/>
             <keyword name="outputRanges" id="QSensor::outputRanges" ref="qsensor.html#outputRanges-prop"/>
             <keyword name="reading" id="QSensor::reading" ref="qsensor.html#reading-prop"/>
@@ -2798,13 +2744,12 @@
             <keyword name="sensorTypes" id="QSensor::sensorTypes" ref="qsensor.html#sensorTypes"/>
             <keyword name="sensorid" id="QSensor::sensorid" ref="qsensor.html#sensorid-prop"/>
             <keyword name="sensorsForType" id="QSensor::sensorsForType" ref="qsensor.html#sensorsForType"/>
+            <keyword name="setDataRate" id="QSensor::setDataRate" ref="qsensor.html#dataRate-prop"/>
             <keyword name="setIdentifier" id="QSensor::setIdentifier" ref="qsensor.html#sensorid-prop"/>
             <keyword name="setOutputRange" id="QSensor::setOutputRange" ref="qsensor.html#outputRange-prop"/>
-            <keyword name="setUpdateInterval" id="QSensor::setUpdateInterval" ref="qsensor.html#updateInterval-prop"/>
             <keyword name="start" id="QSensor::start" ref="qsensor.html#start"/>
             <keyword name="stop" id="QSensor::stop" ref="qsensor.html#stop"/>
             <keyword name="type" id="QSensor::type" ref="qsensor.html#type-prop"/>
-            <keyword name="updateInterval" id="QSensor::updateInterval" ref="qsensor.html#updateInterval-prop"/>
             <keyword name="~QSensor" id="QSensor::~QSensor" ref="qsensor.html#dtor.QSensor"/>
             <keyword name="QSensorBackend" id="QSensorBackend" ref="qsensorbackend.html"/>
             <keyword name="addDataRate" id="QSensorBackend::addDataRate" ref="qsensorbackend.html#addDataRate"/>
@@ -2850,6 +2795,9 @@
             <keyword name="setClientId" id="QServiceContext::setClientId" ref="qservicecontext.html#clientId-prop"/>
             <keyword name="setClientName" id="QServiceContext::setClientName" ref="qservicecontext.html#clientName-prop"/>
             <keyword name="~QServiceContext" id="QServiceContext::~QServiceContext" ref="qservicecontext.html#dtor.QServiceContext"/>
+            <keyword name="QServiceControl" id="QServiceControl" ref="qservicecontrol.html"/>
+            <keyword name="publishServices" id="QServiceControl::publishServices" ref="qservicecontrol.html#publishServices"/>
+            <keyword name="~QServiceControl" id="QServiceControl::~QServiceControl" ref="qservicecontrol.html#dtor.QServiceControl"/>
             <keyword name="QServiceFilter" id="QServiceFilter" ref="qservicefilter.html"/>
             <keyword name="QServiceFilter::CapabilityMatchRule" id="QServiceFilter::CapabilityMatchRule" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
             <keyword name="QServiceFilter::MatchMinimum" id="QServiceFilter::MatchMinimum" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
@@ -2922,6 +2870,13 @@
             <keyword name="createInstance" id="QServicePluginInterface::createInstance" ref="qserviceplugininterface.html#createInstance"/>
             <keyword name="installService" id="QServicePluginInterface::installService" ref="qserviceplugininterface.html#installService"/>
             <keyword name="uninstallService" id="QServicePluginInterface::uninstallService" ref="qserviceplugininterface.html#uninstallService"/>
+            <keyword name="QServiceTypeIdent" id="QServiceTypeIdent" ref="qservicetyperegister.html#QServiceTypeIdent-typedef"/>
+            <keyword name="QServiceTypeRegister" id="QServiceTypeRegister" ref="qservicetyperegister.html"/>
+            <keyword name="QServiceTypeRegister::InstanceType" id="QServiceTypeRegister::InstanceType" ref="qservicetyperegister.html#InstanceType-enum"/>
+            <keyword name="QServiceTypeRegister::SharedInstance" id="QServiceTypeRegister::SharedInstance" ref="qservicetyperegister.html#InstanceType-enum"/>
+            <keyword name="QServiceTypeRegister::UniqueInstance" id="QServiceTypeRegister::UniqueInstance" ref="qservicetyperegister.html#InstanceType-enum"/>
+            <keyword name="registerType" id="QServiceTypeRegister::registerType" ref="qservicetyperegister.html#registerType"/>
+            <keyword name="types" id="QServiceTypeRegister::types" ref="qservicetyperegister.html#types"/>
             <keyword name="QSystemDeviceInfo" id="QSystemDeviceInfo" ref="qsystemdeviceinfo.html"/>
             <keyword name="QSystemDeviceInfo::BatteryStatus" id="QSystemDeviceInfo::BatteryStatus" ref="qsystemdeviceinfo.html#BatteryStatus-enum"/>
             <keyword name="QSystemDeviceInfo::NoBatteryLevel" id="QSystemDeviceInfo::NoBatteryLevel" ref="qsystemdeviceinfo.html#BatteryStatus-enum"/>
@@ -3391,6 +3346,7 @@
             <keyword name="QVideoWindowControl_iid" id="QVideoWindowControl_iid" ref="qvideowindowcontrol.html#QVideoWindowControl_iid"/>
             <keyword name="Q_DECLARE_CUSTOM_CONTACT_DETAIL" id="Q_DECLARE_CUSTOM_CONTACT_DETAIL" ref="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
+            <keyword name="Q_SERVICE" id="Q_SERVICE" ref="qservicetyperegister.html#Q_SERVICE"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
@@ -3573,8 +3529,8 @@
             <file>fetchgooglemaps-mapwindow-h.html</file>
             <file>qradiotuner.html</file>
             <file>3rdparty.html</file>
-            <file>qmagnetometer-members.html</file>
             <file>creating-a-sensor-plugin.html</file>
+            <file>qmagnetometer-members.html</file>
             <file>qcontactphonenumber.html</file>
             <file>qmediaplayer-members.html</file>
             <file>samplephonebook-phonebook-h.html</file>
@@ -3642,6 +3598,7 @@
             <file>keepintouch-addressfinder-cpp.html</file>
             <file>future.html</file>
             <file>qcontactorganization-members.html</file>
+            <file>qservicetyperegister-members.html</file>
             <file>qaudioencodersettings.html</file>
             <file>qcontactactionfilter.html</file>
             <file>qcontactgeolocation-members.html</file>
@@ -3745,6 +3702,7 @@
             <file>qvideowidget-members.html</file>
             <file>qimageencodercontrol-members.html</file>
             <file>qcompassreading-members.html</file>
+            <file>qservicecontrol-members.html</file>
             <file>servicebrowser-servicebrowser-cpp.html</file>
             <file>qcontacturl.html</file>
             <file>qproximityreading.html</file>
@@ -3891,6 +3849,7 @@
             <file>qcontactfetchrequest.html</file>
             <file>qradiotuner-members.html</file>
             <file>qversitreader-members.html</file>
+            <file>qservicecontrol.html</file>
             <file>fetchgooglemaps-fetchgooglemaps-pro.html</file>
             <file>qcontactintersectionfilter.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-cpp.html</file>
@@ -3909,7 +3868,6 @@
             <file>publish-subscribe-publish-subscribe-pro.html</file>
             <file>qmediaservice-members.html</file>
             <file>examples.html</file>
-            <file>linereader.html</file>
             <file>qcontacttag.html</file>
             <file>qcontactaction-members.html</file>
             <file>qcontactglobalpresence-members.html</file>
@@ -4029,6 +3987,7 @@
             <file>qmetadatacontrol-members.html</file>
             <file>qrotationfilter.html</file>
             <file>radio-radio-cpp.html</file>
+            <file>qservicetyperegister.html</file>
             <file>qsensorbackendfactory.html</file>
             <file>qnetworkconfiguration-members.html</file>
             <file>qcontactgender-members.html</file>
@@ -4107,7 +4066,6 @@
             <file>qrotationfilter-members.html</file>
             <file>location.html</file>
             <file>classlists.html</file>
-            <file>linereader-members.html</file>
             <file>slideshow-slideshow-pro.html</file>
             <file>qcontactgender.html</file>
             <file>qmessagecontentcontainerid-members.html</file>
@@ -4129,6 +4087,7 @@
             <file>service-frameworks.html</file>
             <file>qcompassfilter.html</file>
             <file>qvaluespacepublisher.html</file>
+            <file>contactsusagehtml.html</file>
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>

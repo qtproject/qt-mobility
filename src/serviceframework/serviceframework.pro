@@ -18,7 +18,9 @@ PUBLIC_HEADERS += \
             qservicecontext.h \
             qabstractsecuritysession.h \
             qserviceinterfacedescriptor.h \
-            qservicefilter.h
+            qservicefilter.h \
+            qservicecontrol.h \
+            qservicetyperegister.h
 
 PRIVATE_HEADERS += servicemetadata_p.h \
             qserviceinterfacedescriptor_p.h \
@@ -31,7 +33,9 @@ SOURCES +=  servicemetadata.cpp \
             qabstractsecuritysession.cpp \
             qserviceinterfacedescriptor.cpp \
             qservicefilter.cpp \
-            dberror.cpp
+            dberror.cpp \
+            qservicecontrol.cpp \
+            qservicetyperegister.cpp
 
 symbian {
     INCLUDEPATH +=  ./symbian

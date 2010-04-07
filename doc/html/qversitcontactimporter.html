@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qversitcontactimporter.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QVersitContactImporter Class Reference</title>
+  <title>Qt Mobility Project 1.1: QVersitContactImporter Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -176,11 +176,11 @@
 <p>See also <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/errors"></a>
 <h3 class="fn"><a name="errors"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qversitcontactimporter.html#Error-enum">Error</a>&gt; QVersitContactImporter::errors () const</h3>
-<p>Returns the map of errors encountered in the most recent call to <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>(). The key is the index into the input list of documents and the value is the error that occured on that document.</p>
+<p>Returns the map of errors encountered in the most recent call to <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>(). The key is the index into the input list of documents and the value is the error that occurred on that document.</p>
 <p>See also <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/importDocuments"></a>
 <h3 class="fn"><a name="importDocuments"></a>bool QVersitContactImporter::importDocuments ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>documents</i> )</h3>
-<p>Converts <i>documents</i> into a corresponding list of QContacts. After calling this, the converted contacts can be retrieved by calling <a href="qversitcontactimporter.html#contacts">contacts</a>(). Returns true on success. If any of the documents cannot be imported as contacts (eg. they aren't vCards), false is returned and <a href="qversitcontactimporter.html#errors">errors</a>() will return a list describing the errors that occured. The successfully imported documents will still be available via <a href="qversitcontactimporter.html#contacts">contacts</a>().</p>
+<p>Converts <i>documents</i> into a corresponding list of QContacts. After calling this, the converted contacts can be retrieved by calling <a href="qversitcontactimporter.html#contacts">contacts</a>(). Returns true on success. If any of the documents cannot be imported as contacts (eg. they aren't vCards), false is returned and <a href="qversitcontactimporter.html#errors">errors</a>() will return a list describing the errors that occurred. The successfully imported documents will still be available via <a href="qversitcontactimporter.html#contacts">contacts</a>().</p>
 <p>See also <a href="qversitcontactimporter.html#contacts">contacts</a>() and <a href="qversitcontactimporter.html#errors">errors</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/propertyHandler"></a>
 <h3 class="fn"><a name="propertyHandler"></a><a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a> * QVersitContactImporter::propertyHandler () const</h3>
@@ -204,6 +204,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

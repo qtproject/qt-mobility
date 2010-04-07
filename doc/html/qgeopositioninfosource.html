@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qgeopositioninfosource.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QGeoPositionInfoSource Class Reference</title>
+  <title>Qt Mobility Project 1.1: QGeoPositionInfoSource Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -99,7 +99,8 @@
 <p>If regular position updates are required, <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() can be used to specify how often these updates should be emitted. If no interval is specified, updates are simply provided whenever they are available. For example:</p>
 <pre><span class="comment">    // Emit updates every 10 seconds if available</span>
     QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
-    source-&gt;setUpdateInterval(10000);</pre>
+    if (source)
+        source-&gt;setUpdateInterval(10000);</pre>
 <p>To remove an update interval that was previously set, call <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() with a value of 0.</p>
 <p>Note that the position source may have a minimum value requirement for update intervals, as returned by <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</a>().</p>
 <p><b>Warning:</b> On Windows CE it is not possible to detect if a device is GPS enabled. The default position source on a Windows CE device without GPS support will never provide any position data.</p>
@@ -184,7 +185,7 @@
 <h3 class="fn"><a name="startUpdates"></a>void QGeoPositionInfoSource::startUpdates ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Starts emitting updates at regular intervals as specified by <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>().</p>
 <p>If <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() has not been called, the source will emit updates as soon as they become available.</p>
-<p>An updateTimout() signal will be emitted if this <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> subclass determines that it will not be able to provide regular updates. This could happen if a satelllite fix is lost or if a hardware error is detected. Position updates will recommence if the data becomes available later on. The updateTimout() signal will not be emitted again until after the periodic updates resume.</p>
+<p>An updateTimout() signal will be emitted if this <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> subclass determines that it will not be able to provide regular updates. This could happen if a satellite fix is lost or if a hardware error is detected. Position updates will recommence if the data becomes available later on. The updateTimout() signal will not be emitted again until after the periodic updates resume.</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/stopUpdates"></a>
 <h3 class="fn"><a name="stopUpdates"></a>void QGeoPositionInfoSource::stopUpdates ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Stops emitting updates at regular intervals.</p>
@@ -200,6 +201,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

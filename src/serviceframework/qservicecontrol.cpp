@@ -39,33 +39,57 @@
 **
 ****************************************************************************/
 
-#include "qservicetyperegister.h"
-#include "instancemanager_p.h"
-
-#include <QMutexLocker>
-#include <QMetaObject>
-#include <QMetaClassInfo>
-#include <QDebug>
+#include "qservicecontrol.h"
+#ifdef Q_OS_SYMBIAN
+#include "qservicecontrol_s60_p.h"
+#else
+#include "qservicecontrol_p.h"
+#endif
 
 QTM_BEGIN_NAMESPACE
 
-bool QServiceTypeRegister::registerType( const QMetaObject* meta,
-        CreateServiceFunc func, TypeIdentFunc tfunc,  QServiceTypeRegister::InstanceType t)
+
+/*!
+    \class QServiceControl
+    \ingroup servicefw
+    \brief The QServiceControl class manages instances of remote service objects.
+
+    This class instanciates IPC based service objects which have been registered
+    via QServiceTypeRegister. It owns each created service object instance and
+    ensures that the platform specific IPC mechanism publishes the required service
+    object to other processes in the system.
+ 
+    \sa QServiceTypeRegister   
+*/
+
+/*!
+    Creates a service control instance with the given \a parent.
+*/
+QServiceControl::QServiceControl(QObject* parent)
+    : QObject(parent)
 {
-    Q_ASSERT(InstanceManager::instance());
-    return InstanceManager::instance()->addType(meta, func, tfunc, t);
+    d = new QServiceControlPrivate(this);
 }
 
-const QMetaObject* QServiceTypeRegister::metaObject(const QServiceTypeIdent& ident) const
+/*!
+    Destroys the service control instance
+*/
+QServiceControl::~QServiceControl()
 {
-    Q_ASSERT(InstanceManager::instance());
-    return InstanceManager::instance()->metaObject(ident);
 }
 
-QList<QServiceTypeIdent> QServiceTypeRegister::types() const
+/*!
+    Publishes every service that has been registered using
+    \l QServiceTypeRegister::registerType(). \a ident is the service specific
+    IPC address under which the service can be reached. This address must match
+    the address provide in the services xml descriptor (see <filepath> tag).
+*/
+void QServiceControl::publishServices( const QString& ident)
 {
-    Q_ASSERT(InstanceManager::instance());
-    return InstanceManager::instance()->allIdents();
+    d->publishServices(ident);
 }
+
+
+#include "moc_qservicecontrol.cpp"
 
 QTM_END_NAMESPACE

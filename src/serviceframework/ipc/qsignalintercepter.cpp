@@ -47,6 +47,7 @@
 /*!
     \class QSignalIntercepter
     \inpublicgroup QtBaseModule
+    \internal
 
     \brief The QSignalIntercepter class provides an interface for intercepting signals as meta-calls
 
