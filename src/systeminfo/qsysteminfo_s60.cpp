@@ -584,29 +584,9 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
         CWsScreenDevice *wsScreenDevice = new (ELeave)CWsScreenDevice(ws);
         CleanupStack::PushL(wsScreenDevice);
         User::LeaveIfError(wsScreenDevice->Construct(screen));
-        TDisplayMode mode = wsScreenDevice->DisplayMode();
-        switch (mode) {
-            case EGray2: depth = 1; break;
-            case EGray4: depth = 2; break;
-            case EGray16:
-            case EColor16: depth = 4; break;
-            case EGray256:
-            case EColor256: depth = 8; break;
-            case EColor4K: depth = 12; break;
-            case EColor64K: depth = 16; break;
-            case EColor16M:
-            case 13: //value of EColor16MAP (which is missing from gdi.h in S60 v.3.1)
-            case EColor16MA: depth = 24; break;
-            case EColor16MU: depth = 32; break;
-            case ENone:
-            case ERgb:
-            case EColorLast:
-            default: depth = 0;
-                break;
-        }
+        depth = TDisplayModeUtils::NumDisplayModeBitsPerPixel(wsScreenDevice->DisplayMode());
         CleanupStack::PopAndDestroy(2, &ws);
     )
-
     return depth;
 }
 

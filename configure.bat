@@ -360,7 +360,10 @@ setlocal
         cd config.tests\make
     )
 
-    for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
+    for /f "tokens=2,3" %%a in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do (
+        if "%%a" == "MESSAGE:" (
+            set BUILDSYSTEM=%%b)
+    )
 
     if %BUILDSYSTEM% == symbian-abld (
         call make -h >> %PROJECT_LOG% 2>&1

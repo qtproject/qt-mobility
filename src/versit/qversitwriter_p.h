@@ -64,7 +64,9 @@
 #include <QMutex>
 #include <QWaitCondition>
 
+QT_BEGIN_NAMESPACE
 class QBuffer;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

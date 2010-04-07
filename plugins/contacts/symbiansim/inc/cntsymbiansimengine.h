@@ -115,6 +115,7 @@ public:
     int managerVersion() const { return 1;}
 
     /* Defaulted functions - XXX check*/
+    QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error =  QContactManager::NotSupportedError;return QContact();}
     bool validateContact(const QContact& contact, QContactManager::Error* error) const {return QContactManagerEngine::validateContact(contact, error);}
     bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error* error) const {return QContactManagerEngine::validateDefinition(def, error);}
     QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error) const  {return QContactManagerEngine::detailDefinition(definitionId, contactType, error);}

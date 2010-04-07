@@ -41,10 +41,10 @@
 
 #include <QtCore/qmetaobject.h>
 
-#include <qmediaobject_p.h>
+#include "qmediaobject_p.h"
 
-#include <qmediaservice.h>
-#include <qmetadatacontrol.h>
+#include "qmediaservice.h"
+#include "qmetadatacontrol.h"
 
 
 QTM_BEGIN_NAMESPACE

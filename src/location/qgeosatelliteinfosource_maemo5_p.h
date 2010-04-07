@@ -74,7 +74,6 @@ private:
     int timerInterval;
     void activateTimer();
     void startLocationDaemon();
-    void stopLocationDaemon();
 
     enum SatelliteInfoState {
         Undefined = 0,
@@ -83,7 +82,8 @@ private:
         RequestActive = 4,
         RequestSingleShot = 8,
         PowersaveActive = 16,
-        TogglePowersave = 32        
+        GpsOn = 32,
+        RequestAndStop = 64
     };
     int satelliteInfoState;
 

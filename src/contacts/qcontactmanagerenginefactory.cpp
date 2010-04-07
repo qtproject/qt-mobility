@@ -49,6 +49,7 @@ QTM_BEGIN_NAMESPACE
   \preliminary
   \brief The QContactManagerEngineFactory class provides the interface for
  plugins that implement QContactManagerEngine functionality.
+  \ingroup contacts-backends
  
   This class provides a simple interface for the creation of
   manager engine instances.  Each factory has a specific id
@@ -68,7 +69,7 @@ QContactManagerEngineFactory::~QContactManagerEngineFactory()
 }
 
 /*!
-  \fn QContactManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error &error)
+  \fn QContactManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 
   This function is called by the QContactManager implementation to
   create an instance of the engine provided by this factory.

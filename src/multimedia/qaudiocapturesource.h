@@ -48,12 +48,12 @@
 
 #include <QtMultimedia/qaudioformat.h>
 
-#include <qmediarecorder.h>
-#include <qmediacontrol.h>
-#include <qmediaobject.h>
-#include <qmediaservice.h>
+#include "qmediarecorder.h"
+#include "qmediacontrol.h"
+#include "qmediaobject.h"
+#include "qmediaservice.h"
 
-#include <qmediaserviceprovider.h>
+#include "qmediaserviceprovider.h"
 
 QTM_BEGIN_NAMESPACE
 
