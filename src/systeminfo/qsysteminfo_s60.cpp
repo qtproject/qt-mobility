@@ -584,7 +584,7 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
         CWsScreenDevice *wsScreenDevice = new (ELeave)CWsScreenDevice(ws);
         CleanupStack::PushL(wsScreenDevice);
         User::LeaveIfError(wsScreenDevice->Construct(screen));
-        depth = depth =  TDisplayModeUtils::NumDisplayModeBitsPerPixel(wsScreenDevice->DisplayMode());
+        depth = TDisplayModeUtils::NumDisplayModeBitsPerPixel(wsScreenDevice->DisplayMode());
         CleanupStack::PopAndDestroy(2, &ws);
     )
     return depth;
