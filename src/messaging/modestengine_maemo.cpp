@@ -315,6 +315,10 @@ MessagingModestMessage ModestEngine::messageFromModest(const QString& accountId,
 {
     MessagingModestMessage modestMessage;
 
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return modestMessage;
+    }
+
     QDBusPendingCall pendingCall = m_QtmPluginDBusInterface->asyncCall("GetMessage",
                                                                        accountId,
                                                                        folderId,
@@ -482,6 +486,10 @@ QMessageAccountIdList ModestEngine::queryAccounts(const QMessageAccountFilter &f
     Q_UNUSED(offset)
 
     QMessageAccountIdList accountIds;
+
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return accountIds;
+    }
 
     updateEmailAccounts();
     foreach (QMessageAccount value, iAccounts) {
@@ -736,6 +744,10 @@ QMessageFolderIdList ModestEngine::queryFolders(const QMessageFolderFilter &filt
 
     QMessageFolderIdList folderIds;
 
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return folderIds;
+    }
+
     updateEmailAccounts();
 
     //QDBusMessage msg = m_ModestDBusInterface->call(MODEST_DBUS_METHOD_GET_FOLDERS);
@@ -848,7 +860,7 @@ void ModestEngine::fileChangedSlot(int watchDescriptor, QString filePath, uint e
 
     int filenameBegin = filePath.lastIndexOf('/')+1;
     QString fileName = filePath.mid(filenameBegin,filePath.lastIndexOf('.')-filenameBegin);
-    if (fileName != "summary") {
+    if (!fileName.endsWith("summary")) {
         if (events & (IN_MOVED_TO | IN_CREATE)) {
             if (events != (IN_MOVED_TO | IN_MOVED_FROM)) {
                 notification(messageIdFromModestMessageFilePath(filePath), ModestEngine::Added);
@@ -861,6 +873,10 @@ void ModestEngine::fileChangedSlot(int watchDescriptor, QString filePath, uint e
 
 bool ModestEngine::sendEmail(QMessage &message)
 {
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return false;
+    }
+
     ModestStringMap senderInfo;
     ModestStringMap recipients;
     ModestStringMap messageData;
@@ -1131,7 +1147,7 @@ QMessage ModestEngine::messageFromModestMessage(const MessagingModestMessage& mo
 
             QMessageContentContainerId existingBodyId(message.bodyId());
             if (existingBodyId.isValid()) {
-                if (existingBodyId == container->bodyContentId()) {
+                if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
                     // The body content is in the message itself
                     container->_containingMessageId = messageId.toString();
                     container->_attachmentId = contentId;
@@ -1164,7 +1180,7 @@ QMessage ModestEngine::messageFromModestMessage(const MessagingModestMessage& mo
                     container->_charset = charset;
                     container->_size = 0;
                     container->_available = true;
-                    privateMessage->_bodyId = container->bodyContentId();
+                    privateMessage->_bodyId = QMessageContentContainerPrivate::bodyContentId();
                 } else {
                     // Add the body as the first attachment
                     QMessageContentContainer newBody;
@@ -1304,6 +1320,10 @@ void ModestEngine::appendAttachmentToMessage(QMessage& message, QMessageContentC
 
 bool ModestEngine::addMessage(QMessage &message)
 {
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return false;
+    }
+
     QString modestFolder;
     ModestStringMap senderInfo;
     ModestStringMap recipients;
@@ -1420,6 +1440,10 @@ QMessageIdList ModestEngine::queryMessagesSync(const QMessageFilter &filter, con
 {
     QMessageIdList ids;
 
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return ids;
+    }
+
     QMessageServicePrivate* privateService = QMessageServicePrivate::implementation(m_service);
     if (privateService->queryMessages(m_service, filter, sortOrder, limit, offset,
                                       QMessageServicePrivate::EnginesToCallModest)) {
@@ -1444,6 +1468,10 @@ QMessageIdList ModestEngine::queryMessagesSync(const QMessageFilter &filter, con
 {
     QMessageIdList ids;
 
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return ids;
+    }
+
     QMessageServicePrivate* privateService = QMessageServicePrivate::implementation(m_service);
     if (privateService->queryMessages(m_service, filter, body, matchFlags,
                                       sortOrder, limit, offset,
@@ -1465,6 +1493,10 @@ QMessageIdList ModestEngine::queryMessagesSync(const QMessageFilter &filter, con
 int ModestEngine::countMessagesSync(const QMessageFilter &filter) const
 {
     int count;
+
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return 0;
+    }
 
     QMessageServicePrivate* privateService = QMessageServicePrivate::implementation(m_service);
     if (privateService->countMessages(m_service, filter, QMessageServicePrivate::EnginesToCallModest)) {
@@ -1500,6 +1532,10 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
 
 bool ModestEngine::countMessages(QMessageService& messageService, const QMessageFilter &filter)
 {
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return false;
+    }
+
     m_pendingMessageQueries.append(MessageQueryInfo());
 
     MessageQueryInfo &queryInfo = m_pendingMessageQueries[m_pendingMessageQueries.count()-1];
@@ -1526,6 +1562,10 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
                                  QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
                                  uint limit, uint offset) const
 {
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return false;
+    }
+
     m_pendingMessageQueries.append(MessageQueryInfo());
 
     MessageQueryInfo &queryInfo = m_pendingMessageQueries[m_pendingMessageQueries.count()-1];
@@ -2308,19 +2348,29 @@ QByteArray ModestEngine::getMimePart (const QMessageId &id, const QString &attac
 void ModestEngine::notification(const QMessageId& messageId, NotificationType notificationType) const
 {
     QMessageId realMessageId = messageId;
+    QString modestAccountId = modestAccountIdFromMessageId(messageId);
+    QString modestFolderId = modestFolderIdFromMessageId(messageId);
+    QString modestMessageId = modestMessageIdFromMessageId(messageId);
 
-    if (notificationType == ModestEngine::Removed) {
-        // Make sure that there will not be many Removed notifications
+    if ((notificationType == ModestEngine::Added) || (notificationType == ModestEngine::Removed)) {
+        // Make sure that there will not be many Added or Removed notifications
         // in a row for a same message
-        QString modestMessageId = modestMessageIdFromMessageId(messageId);
-        if (!m_latestRemoveNotifications.contains(modestMessageId)) {
-            if (m_latestRemoveNotifications.count() > 10) {
+        QString searchId;
+        if (notificationType == ModestEngine::Added) {
+            searchId = "A"+modestAccountId+modestFolderId+modestMessageId;
+        } else {
+            searchId = "D"+modestAccountId+modestFolderId+modestMessageId;
+        }
+        if (!m_latestAddOrRemoveNotifications.contains(searchId)) {
+            if (m_latestAddOrRemoveNotifications.count() > 10) {
                 // Remove oldest notification from the beginning of the list
-                m_latestRemoveNotifications.removeFirst();
+                m_latestAddOrRemoveNotifications.removeFirst();
             }
             // Append new notification
-            m_latestRemoveNotifications.append(modestMessageId);
+            m_latestAddOrRemoveNotifications.append(searchId);
         } else {
+            // Add or Remove notification for the message was already handled!
+            // => Skip unwanted notification
             return;
         }
     }
@@ -2336,10 +2386,6 @@ void ModestEngine::notification(const QMessageId& messageId, NotificationType no
         const QMessageFilter &filter(it.value());
 
         if (!messageRetrieved) {
-            QString modestAccountId = modestAccountIdFromMessageId(messageId);
-            QString modestFolderId = modestFolderIdFromMessageId(messageId);
-            QString modestMessageId = modestMessageIdFromMessageId(messageId);
-
             MessagingModestMessage modestMessage = messageFromModest(modestAccountId,
                                                                      modestFolderId,
                                                                      modestMessageId);

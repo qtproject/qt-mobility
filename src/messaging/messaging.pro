@@ -85,6 +85,7 @@ symbian|win32|maemo6|maemo5|mac {
         PUBLIC_HEADERS -= qmessagecontentcontainer_p.h
         PRIVATE_HEADERS -= qmessagecontentcontainer_p.h
         HEADERS += qmessagecontentcontainer_maemo_p.h \
+            qmessageservice_maemo_p.h \
             modestengine_maemo_p.h \
             telepathyengine_maemo_p.h \
             maemohelpers_p.h\
