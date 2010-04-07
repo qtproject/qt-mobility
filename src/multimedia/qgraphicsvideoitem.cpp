@@ -55,7 +55,7 @@
 #include <QtOpenGL/qgl.h>
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGraphicsVideoItemPrivate
 {
@@ -420,4 +420,4 @@ void QGraphicsVideoItem::timerEvent(QTimerEvent *event)
 }
 
 #include "moc_qgraphicsvideoitem.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

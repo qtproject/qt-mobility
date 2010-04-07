@@ -61,7 +61,7 @@
 #include <qxvideosurface_maemo5_p.h>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 //update overlay geometry slightly later,
 //to ensure color key is alredy replaced with static frame
@@ -664,4 +664,4 @@ void QGraphicsVideoItem::timerEvent(QTimerEvent *event)
 }
 
 #include "moc_qgraphicsvideoitem.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

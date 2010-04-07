@@ -52,7 +52,7 @@ class AudioContainerControl;
 class AudioMediaRecorderControl;
 class AudioEndpointSelector;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureService : public QMediaService
 {

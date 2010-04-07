@@ -47,7 +47,7 @@
 
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaControl
@@ -134,5 +134,5 @@ QMediaControl::QMediaControl(QMediaControlPrivate &dd, QObject *parent)
 }
 
 #include "moc_qmediacontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

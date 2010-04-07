@@ -41,7 +41,7 @@
 
 #include <qmediaplaylistioplugin.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistReader
@@ -184,5 +184,5 @@ QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin()
 */
 
 #include "moc_qmediaplaylistioplugin.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -66,7 +66,7 @@
 # pragma Q_MOC_EXPAND_MACROS
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistControl;
 class QMediaPlaylistProvider;
@@ -163,6 +163,6 @@ private:
 };
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIAPLAYLIST_P_H

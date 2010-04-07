@@ -48,7 +48,7 @@
 #include <qmediaobject.h>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistProvider;
 
@@ -133,10 +133,10 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_loadFailed(QMediaPlaylist::Error, const QString &))
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlaylist::PlaybackMode))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlaylist::Error))
+Q_DECLARE_METATYPE(QMediaPlaylist::PlaybackMode)
+Q_DECLARE_METATYPE(QMediaPlaylist::Error)
 
 
 #endif  // QMEDIAPLAYLIST_H

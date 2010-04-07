@@ -45,7 +45,7 @@
 #include <QVideoWidgetControl>
 #include <qmediaplayer.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QBlackWidget : public QWidget
 {

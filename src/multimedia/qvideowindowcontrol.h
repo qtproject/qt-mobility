@@ -47,7 +47,7 @@
 
 #include <QtGui/qwidget.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QVideoWindowControl : public QMediaControl
 {
@@ -99,6 +99,6 @@ protected:
 #define QVideoWindowControl_iid "com.nokia.Qt.QVideoWindowControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QVideoWindowControl, QVideoWindowControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -45,7 +45,7 @@
 #include <QMetaDataControl>
 #include "ms60mediaplayerresolver.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60MediaPlayerSession;
 

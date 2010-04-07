@@ -44,7 +44,7 @@
 
 #include <qmediaplaylistprovider.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLocalMediaPlaylistProviderPrivate;
 class Q_MEDIA_EXPORT QLocalMediaPlaylistProvider : public QMediaPlaylistProvider
@@ -74,6 +74,6 @@ private:
     Q_DECLARE_PRIVATE(QLocalMediaPlaylistProvider)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QLOCALMEDIAPAYLISTSOURCE_H

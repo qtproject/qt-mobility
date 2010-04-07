@@ -47,7 +47,7 @@
 #include <QPair>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QRadioTuner
@@ -580,5 +580,5 @@ QString QRadioTuner::errorString() const
  */
 
 #include "moc_qradiotuner.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

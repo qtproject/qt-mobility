@@ -61,14 +61,12 @@ class QAbstractItemView;
 class QLabel;
 class QModelIndex;
 class QSlider;
-QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
 class QMediaPlayer;
 class QVideoWidget;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class PlaylistModel;
 

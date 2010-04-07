@@ -48,7 +48,7 @@
 #include <d3d9.h>
 #include <vmr9.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class Vmr9VideoWindowControl : public QVideoWindowControl
 {

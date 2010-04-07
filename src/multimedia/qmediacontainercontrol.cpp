@@ -42,7 +42,7 @@
 
 #include <qmediacontainercontrol.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaContainerControl
@@ -116,5 +116,5 @@ QMediaContainerControl::~QMediaContainerControl()
 */
 
 #include "moc_qmediacontainercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -44,12 +44,12 @@
 
 #include <qmediaserviceproviderplugin.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DSServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
+    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
 public:
     QStringList keys() const;
     QMediaService* create(QString const& key);

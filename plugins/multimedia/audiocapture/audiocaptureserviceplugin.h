@@ -45,7 +45,7 @@
 
 #include <qmediaserviceproviderplugin.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureServicePlugin : public QMediaServiceProviderPlugin
 {

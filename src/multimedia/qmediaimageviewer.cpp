@@ -52,7 +52,7 @@
 #include <QtCore/qtextstream.h>
 #include <QtCore/qdatetime.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaImageViewerPrivate : public QMediaObjectPrivate
 {
@@ -494,5 +494,5 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
 }
 
 #include "moc_qmediaimageviewer.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -43,7 +43,7 @@
 #include <qaudiocapturesource.h>
 #include <qaudioendpointselector.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QAudioCaptureSource
@@ -273,5 +273,5 @@ void QAudioCaptureSource::statusChanged()
 }
 
 #include "moc_qaudiocapturesource.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

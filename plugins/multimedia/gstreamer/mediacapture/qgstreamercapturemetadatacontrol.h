@@ -44,7 +44,7 @@
 
 #include <qmetadatacontrol.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerCaptureMetaDataControl : public QMetaDataControl
 {

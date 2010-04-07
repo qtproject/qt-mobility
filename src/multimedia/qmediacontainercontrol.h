@@ -45,7 +45,7 @@
 
 #include <qmediacontrol.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QMediaContainerControl : public QMediaControl
 {
@@ -67,6 +67,6 @@ protected:
 #define QMediaContainerControl_iid "com.nokia.Qt.QMediaContainerControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaContainerControl, QMediaContainerControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIACONTAINERCONTROL_H

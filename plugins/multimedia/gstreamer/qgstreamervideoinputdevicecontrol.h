@@ -45,7 +45,7 @@
 #include <qvideodevicecontrol.h>
 #include <QtCore/qstringlist.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerVideoInputDeviceControl : public QVideoDeviceControl
 {

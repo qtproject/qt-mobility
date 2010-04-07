@@ -41,7 +41,7 @@
 
 #include <qmediarecordercontrol.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -166,5 +166,5 @@ QMediaRecorderControl::~QMediaRecorderControl()
 */
 
 #include "moc_qmediarecordercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

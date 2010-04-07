@@ -49,7 +49,7 @@
 
 class AudioCaptureSession;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioMediaRecorderControl : public QMediaRecorderControl
 {

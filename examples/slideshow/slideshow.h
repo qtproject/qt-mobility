@@ -48,13 +48,12 @@
 QT_BEGIN_NAMESPACE
 class QAbstractButton;
 class QLabel;
+class QStackedLayout;
+
+class QMediaPlaylist;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-class QMediaPlaylist;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class SlideShow : public QWidget
 {
