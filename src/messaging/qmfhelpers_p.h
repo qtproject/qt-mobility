@@ -67,6 +67,9 @@ class QMessageFilter;
 
 namespace QmfHelpers {
 
+    Q_AUTOTEST_EXPORT QString stripIdentifierPrefix(const QString &s);
+    Q_AUTOTEST_EXPORT QString prefixIdentifier(const QString &s);
+
     Q_AUTOTEST_EXPORT QMessageId convert(const QMailMessageId &id);
     Q_AUTOTEST_EXPORT QMailMessageId convert(const QMessageId &id);
 

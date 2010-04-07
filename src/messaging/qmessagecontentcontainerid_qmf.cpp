@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
-
+#include "qmfhelpers_p.h"
 #include <qmailmessage.h>
 
 QTM_BEGIN_NAMESPACE
@@ -115,7 +115,7 @@ QMessageContentContainerId::QMessageContentContainerId(const QMessageContentCont
 QMessageContentContainerId::QMessageContentContainerId(const QString& id)
     : d_ptr(new QMessageContentContainerIdPrivate)
 {
-    QString input(id);
+    QString input(QmfHelpers::stripIdentifierPrefix(id));
 
     if (input.startsWith("body:")) {
         d_ptr->_body = true;
@@ -161,7 +161,7 @@ QString QMessageContentContainerId::toString() const
         location.prepend("body:");
     }
 
-    return location;
+    return QmfHelpers::prefixIdentifier(location);
 }
 
 bool QMessageContentContainerId::isValid() const
