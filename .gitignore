@@ -30,6 +30,7 @@ bin/examples/*
 bin/sysinfo*
 bin/qcrmlgen*
 bin/icheck*
+bin/servicedbgen*
 install/*
 lib/*
 *.app
