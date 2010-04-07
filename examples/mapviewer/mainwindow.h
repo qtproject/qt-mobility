@@ -77,6 +77,9 @@ protected:
     void changeEvent(QEvent *e);
     virtual void resizeEvent(QResizeEvent* event);
 
+private:
+    void createMenus();
+    
 private slots:
     void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
     void mapObjectSelected(QMapObject* mapObject);
@@ -90,6 +93,7 @@ private slots:
     void drawRect(bool checked);
     void drawEllipse(bool checked);
     void drawPolygon(bool checked);
+    void drawPixmap(bool checked);
     void customContextMenuRequest(const QPoint&);
     void delayedInit();
 
