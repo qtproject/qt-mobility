@@ -49,58 +49,118 @@
 
 #include <QtGui>
 
-ContactListPage::ContactListPage(QWidget *parent)
-        : QWidget(parent)
+ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
+        : QWidget(parent), m_mainWindow(mainWindow)
 {
     m_manager = 0;
     m_currentFilter = QContactFilter();
 
     m_backendsCombo = new QComboBox(this);
     QStringList availableManagers = QContactManager::availableManagers();
+    availableManagers.removeAll("invalid");
+    foreach(QString managerName, availableManagers) {
+
+        QMap<QString, QString> params;
+        QString managerUri = QContactManager::buildUri(managerName, params);
+
+        // Add some parameters to SIM backend so that we can use
+        // all the stores.
+        if (managerName == "symbiansim") {
+            availableManagers.removeAll("symbiansim");
+
+            availableManagers.append("symbiansim:adn");
+            params.insert("store", "ADN");
+            managerUri = QContactManager::buildUri(managerName, params);
+            m_availableManagers.insert(availableManagers.last(), managerUri);
+
+            availableManagers.append("symbiansim:fdn");
+            params.clear();
+            params.insert("store", "FDN");
+            managerUri = QContactManager::buildUri(managerName, params);
+            m_availableManagers.insert(availableManagers.last(), managerUri);
+
+            availableManagers.append("symbiansim:sdn");
+            params.clear();
+            params.insert("store", "SDN");
+            managerUri = QContactManager::buildUri(managerName, params);
+            m_availableManagers.insert(availableManagers.last(), managerUri);
+        }
+        else {
+            m_availableManagers.insert(managerName, managerUri);
+        }
+    }
     m_backendsCombo->addItems(availableManagers);
     connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
-    m_filterActiveLabel = new QLabel("Inactive");
+    m_filterActiveLabel = new QLabel(tr("Filter active"));
     m_filterActiveLabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
-    m_contactsList = new QListWidget(this);
-
-    QPushButton* m_addContactBtn = new QPushButton("Add", this);
-    connect(m_addContactBtn, SIGNAL(clicked()), this, SLOT(addContactClicked()));
-    QPushButton* m_editBtn = new QPushButton("Edit", this);
-    connect(m_editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
-    QPushButton* m_deleteBtn = new QPushButton("Delete", this);
-    connect(m_deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-    QPushButton* m_filterBtn = new QPushButton("Filter", this);
-    connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
-    QPushButton* m_importBtn = new QPushButton("Import");
-    connect(m_importBtn, SIGNAL(clicked()), this, SLOT(importClicked()));
-    QPushButton* m_exportBtn = new QPushButton("Export");
-    connect(m_exportBtn, SIGNAL(clicked()), this, SLOT(exportClicked()));
-
-
-    QFormLayout *backendLayout = new QFormLayout;
-    backendLayout->addRow("Store:", m_backendsCombo);
-    backendLayout->addRow("Filter:", m_filterActiveLabel);
-
-    QHBoxLayout *btnLayout1 = new QHBoxLayout;
-    btnLayout1->addWidget(m_addContactBtn);
-    btnLayout1->addWidget(m_editBtn);
-    btnLayout1->addWidget(m_deleteBtn);
-    btnLayout1->addWidget(m_filterBtn);
-
-    QHBoxLayout *btnLayout2 = new QHBoxLayout;
-    btnLayout2->addWidget(m_importBtn);
-    btnLayout2->addWidget(m_exportBtn);
-
     QVBoxLayout *bookLayout = new QVBoxLayout;
+    QFormLayout *backendLayout = new QFormLayout;
+    backendLayout->addRow(tr("Store:"), m_backendsCombo);
+    backendLayout->addRow(m_filterActiveLabel);
     bookLayout->addLayout(backendLayout);
+
+    m_contactsList = new QListWidget(this);
     bookLayout->addWidget(m_contactsList);
+
+    // Action buttons at the bottom
+    QHBoxLayout *btnLayout1 = new QHBoxLayout;
+
+    QPushButton* addBtn = new QPushButton(tr("&Add"), this);
+    connect(addBtn, SIGNAL(clicked()), this, SLOT(addClicked()));
+    btnLayout1->addWidget(addBtn);
+
+    QPushButton* editBtn = new QPushButton(tr("&Edit"), this);
+    connect(editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
+    btnLayout1->addWidget(editBtn);
+
+    QPushButton* deleteBtn = new QPushButton(tr("&Delete"), this);
+    connect(deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+    btnLayout1->addWidget(deleteBtn);
+
     bookLayout->addLayout(btnLayout1);
-#ifdef BUILD_VERSIT
-    bookLayout->addLayout(btnLayout2);
-#endif
 
     setLayout(bookLayout);
+
+    // Add items to the menu
+    if (m_mainWindow) {
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        QMenuBar *optionsMenu = m_mainWindow->menuBar();
+#else
+        QMenu *optionsMenu = new QMenu(tr("&Contacts"), this);
+        m_mainWindow->menuBar()->addMenu(optionsMenu);
+#endif
+        QAction* addAction = new QAction(tr("&Add Contact..."), this);
+        connect(addAction, SIGNAL(triggered()), this, SLOT(addClicked()));
+        optionsMenu->addAction(addAction);
+        QAction* editAction = new QAction(tr("&Edit Contact..."), this);
+        connect(editAction, SIGNAL(triggered()), this, SLOT(editClicked()));
+        optionsMenu->addAction(editAction);
+        QAction* deleteAction = new QAction(tr("&Delete Contact"), this);
+        connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteClicked()));
+        optionsMenu->addAction(deleteAction);
+        optionsMenu->addSeparator();
+        QAction* filterAction = new QAction(tr("Apply &Filter..."), this);
+        connect(filterAction, SIGNAL(triggered()), this, SLOT(filterClicked()));
+        optionsMenu->addAction(filterAction);
+        QAction* clearFilterAction = new QAction(tr("&Clear Filter"), this);
+        connect(clearFilterAction, SIGNAL(triggered()), this, SIGNAL(clearFilter()));
+        optionsMenu->addAction(clearFilterAction);
+        optionsMenu->addSeparator();
+
+#ifdef BUILD_VERSIT
+        QAction* importAction = new QAction(tr("&Import contacts..."), this);
+        connect(importAction, SIGNAL(triggered()), this, SLOT(importClicked()));
+        optionsMenu->addAction(importAction);
+        QAction* exportAction = new QAction(tr("Ex&port contacts..."), this);
+        connect(exportAction, SIGNAL(triggered()), this, SLOT(exportClicked()));
+        optionsMenu->addAction(exportAction);
+        optionsMenu->addSeparator();
+#endif
+        QAction* exitAction = new QAction(tr("E&xit"), this);
+        connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+        optionsMenu->addAction(exitAction);
+    }
 
     // force update to backend.
     QTimer::singleShot(0, this, SLOT(backendSelected()));
@@ -117,18 +177,24 @@ ContactListPage::~ContactListPage()
 
 void ContactListPage::backendSelected()
 {
-    QString backend = m_backendsCombo->currentText();
+    QString managerUri = m_availableManagers.value(m_backendsCombo->currentText());
 
     // first, check to see if they reselected the same backend.
-    if (m_manager && m_manager->managerName() == backend)
+    if (m_manager && m_manager->managerUri() == managerUri)
         return;
 
     // the change is real.  update.
-    if (m_initialisedManagers.contains(backend)) {
-        m_manager = m_initialisedManagers.value(backend);
+    if (m_initialisedManagers.contains(managerUri)) {
+        m_manager = m_initialisedManagers.value(managerUri);
     } else {
-        m_manager = new QContactManager(backend);
-        m_initialisedManagers.insert(backend, m_manager);
+        m_manager = QContactManager::fromUri(managerUri);
+        if (m_manager->error()) {
+            QMessageBox::information(this, tr("Failed!"), QString("Failed to open store!\n(error code %1)").arg(m_manager->error()));
+            delete m_manager;
+            m_manager = 0;
+            return;
+        }
+        m_initialisedManagers.insert(managerUri, m_manager);
     }
 
     // signal that the manager has changed.
@@ -140,14 +206,11 @@ void ContactListPage::backendSelected()
 
 void ContactListPage::rebuildList(const QContactFilter& filter)
 {
-    // first, check to see whether the filter does anything
-    if (filter == QContactFilter())
-        m_filterActiveLabel->setText("Inactive");
-    else
-        m_filterActiveLabel->setText("Active");
+    m_currentFilter = QContactManagerEngine::canonicalizedFilter(filter);
+
+    m_filterActiveLabel->setVisible(m_currentFilter != QContactFilter());
 
     QContact currContact;
-    m_currentFilter = filter;
     m_contactsList->clear();
     m_idToListIndex.clear();
     QList<QContactLocalId> contactIds = m_manager->contactIds(m_currentFilter);
@@ -161,9 +224,10 @@ void ContactListPage::rebuildList(const QContactFilter& filter)
     }
 }
 
-void ContactListPage::addContactClicked()
+void ContactListPage::addClicked()
 {
-    emit showEditorPage(QContactLocalId(0));
+    if (m_manager)
+        emit showEditorPage(QContactLocalId(0));
 }
 
 void ContactListPage::editClicked()
@@ -175,7 +239,8 @@ void ContactListPage::editClicked()
 
 void ContactListPage::filterClicked()
 {
-    emit showFilterPage(m_currentFilter);
+    if (m_manager)
+        emit showFilterPage(m_currentFilter);
 }
 
 void ContactListPage::deleteClicked()
@@ -189,12 +254,11 @@ void ContactListPage::deleteClicked()
         qWarning() << "Nothing to delete.";
         return;
     }
-        
+
     QContactLocalId contactId = QContactLocalId(m_contactsList->currentItem()->data(Qt::UserRole).toUInt());
     bool success = m_manager->removeContact(contactId);
     if (success) {
         delete m_contactsList->takeItem(m_contactsList->currentRow());
-        QMessageBox::information(this, "Success!", "Contact deleted successfully!");
     }
     else
         QMessageBox::information(this, "Failed!", "Failed to delete contact!");

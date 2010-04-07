@@ -70,6 +70,8 @@
 #include <QByteArray>
 #include <QMutex>
 #include <QWaitCondition>
+#include <QPair>
+#include <QHash>
 
 QT_BEGIN_NAMESPACE
 class QBuffer;
@@ -173,7 +175,7 @@ public: // New functions
         QVersitDocument& document,
         const QVersitProperty& property) const;
 
-    void unencode(
+    bool unencode(
         QVariant& value,
         VersitCursor& cursor,
         QVersitProperty& property,
@@ -187,6 +189,7 @@ public: // New functions
         QTextCodec** codec) const;
 
     void decodeQuotedPrintable(QString& text) const;
+
 
     /* These functions operate on a cursor describing a single line */
     QPair<QStringList,QString> extractPropertyGroupsAndName(VersitCursor& line, QTextCodec* codec)
@@ -205,8 +208,19 @@ public: // New functions
     QString paramName(const QByteArray& parameter, QTextCodec* codec) const;
     QString paramValue(const QByteArray& parameter, QTextCodec* codec) const;
     static bool containsAt(const QByteArray& text, const QByteArray& ba, int index);
+    bool splitStructuredValue(QVersitDocument::VersitType type,
+                              QVersitProperty& property,
+                              bool hasEscapedBackslashes) const;
+    static QStringList splitValue(const QString& string,
+                                  const QChar& sep,
+                                  QString::SplitBehavior behaviour,
+                                  bool hasEscapedBackslashes);
+    static void removeBackSlashEscaping(QString& text);
 
 public: // Data
+    /* key is the document type and property name, value is the type of property it is.
+       If there is no entry, assume it is a PlainType */
+    QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType> mValueTypeMap;
     QPointer<QIODevice> mIoDevice;
     QScopedPointer<QBuffer> mInputBytes; // Holds the data set by setData()
     QList<QVersitDocument> mVersitDocuments;

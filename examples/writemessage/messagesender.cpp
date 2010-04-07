@@ -145,6 +145,11 @@ MessageSender::MessageSender(QWidget *parent, Qt::WindowFlags flags)
 
     QGroupBox *attachmentsGroup = new QGroupBox(tr("Attachments"));
     attachmentsGroup->setLayout(attachmentsLayout);
+#ifdef Q_WS_MAEMO_5
+    // Maemo 5 style doesn't take group box titles into account.
+    int spacingHack = QFontMetrics(QFont()).height();
+    attachmentsLayout->setContentsMargins(0, spacingHack, 0, 0);
+#endif
 
     textEdit = new QTextEdit;
 

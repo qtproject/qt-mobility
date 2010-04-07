@@ -608,6 +608,11 @@ void V4LRadioControl::search()
 
     if(!scanning) return;
 
+    if (signal > 25) {
+        cancelSearch();
+        return;
+    }
+
     if(forward) {
         setFrequency(currentFreq+step);
     } else {

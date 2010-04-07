@@ -50,6 +50,10 @@
 
 QTM_USE_NAMESPACE
 
+static void loadDefault();
+static void queryManagerCapabilities();
+static void contactDetailManipulation();
+static void contactManipulation();
 static void addContact(QContactManager*);
 static void callContact(QContactManager*);
 static void matchCall(QContactManager*, const QString&);
@@ -88,7 +92,190 @@ int main(int argc, char *argv[])
     app.exec();
     delete cm;
 
+    // more doc snippet examples
+    loadDefault();
+    queryManagerCapabilities();
+    contactDetailManipulation();
+    contactManipulation();
+
+    // async doc snippet examples
+    AsyncRequestExample example;
+    QTimer::singleShot(10, &example, SLOT(performRequests()));
+    app.exec();
+
     return 0;
+}
+
+void loadDefault()
+{
+//! [Loading the default manager for the platform]
+    QContactManager stackDefaultContactManager;
+//! [Loading the default manager for the platform]
+
+//! [Loading the default manager for the platform on heap]
+    QContactManager *heapDefaultContactManager = new QContactManager;
+    // ... perform contact manipulation
+    delete heapDefaultContactManager;
+//! [Loading the default manager for the platform on heap]
+}
+
+void queryManagerCapabilities()
+{
+//! [Querying a manager for capabilities]
+    QContactManager cm;
+    qDebug() << "The default manager for the platform is:" << cm.managerName();
+    qDebug() << "It" << (cm.isRelationshipTypeSupported(QContactRelationship::HasAssistant) ? "supports" : "does not support") << "assistant relationships.";
+    qDebug() << "It" << (cm.supportedContactTypes().contains(QContactType::TypeGroup) ? "supports" : "does not support") << "groups.";
+    qDebug() << "It" << (cm.hasFeature(QContactManager::MutableDefinitions) ? "supports" : "does not support") << "mutable detail definitions.";
+//! [Querying a manager for capabilities]
+}
+
+void contactDetailManipulation()
+{
+//! [Adding a detail to a contact]
+    QContact exampleContact;
+
+    QContactName nameDetail;
+    nameDetail.setFirstName("Adam");
+    nameDetail.setLastName("Unlikely");
+
+    QContactPhoneNumber phoneNumberDetail;
+    phoneNumberDetail.setNumber("+123 4567");
+
+    exampleContact.saveDetail(&nameDetail);
+    exampleContact.saveDetail(&phoneNumberDetail);
+//! [Adding a detail to a contact]
+
+//! [Updating a detail in a contact]
+    phoneNumberDetail.setNumber("+123 9876");
+    exampleContact.saveDetail(&phoneNumberDetail); // overwrites old value on save
+//! [Updating a detail in a contact]
+
+//! [Removing a detail from a contact]
+    exampleContact.removeDetail(&phoneNumberDetail);
+//! [Removing a detail from a contact]
+}
+
+void contactManipulation()
+{
+    QContactManager m_manager("memory");
+//! [Synchronously creating a new contact in a manager]
+    QContact exampleContact;
+
+    QContactName nameDetail;
+    nameDetail.setFirstName("Adam");
+    nameDetail.setLastName("Unlikely");
+
+    QContactPhoneNumber phoneNumberDetail;
+    phoneNumberDetail.setNumber("+123 4567");
+
+    exampleContact.saveDetail(&nameDetail);
+    exampleContact.saveDetail(&phoneNumberDetail);
+
+    // save the newly created contact in the manager
+    if (!m_manager.saveContact(&exampleContact))
+        qDebug() << "Error" << m_manager.error() << "occurred whilst saving contact!";
+//! [Synchronously creating a new contact in a manager]
+
+//! [Synchronously filtering contacts from a manager]
+    QList<QContact> results = m_manager.contacts(QContactPhoneNumber::match("+123 4567"));
+//! [Synchronously filtering contacts from a manager]
+
+//! [Synchronously retrieving an existing contact from a manager]
+    QContact existing = m_manager.contact(exampleContact.localId());
+//! [Synchronously retrieving an existing contact from a manager]
+
+//! [Synchronously updating an existing contact in a manager]
+    phoneNumberDetail.setNumber("+123 9876");
+    exampleContact.saveDetail(&phoneNumberDetail);
+    m_manager.saveContact(&exampleContact);
+//! [Synchronously updating an existing contact in a manager]
+
+//! [Synchronously removing a contact from a manager]
+    m_manager.removeContact(exampleContact.localId());
+//! [Synchronously removing a contact from a manager]
+
+//! [Synchronously creating a new relationship between two contacts]
+    // first, create the group and the group member
+    QContact exampleGroup;
+    exampleGroup.setType(QContactType::TypeGroup);
+    QContactNickname groupName;
+    groupName.setNickname("Example Group");
+    exampleGroup.saveDetail(&groupName);
+
+    QContact exampleGroupMember;
+    QContactName groupMemberName;
+    groupMemberName.setFirstName("Member");
+    exampleGroupMember.saveDetail(&groupMemberName);
+
+    // second, save those contacts in the manager
+    QMap<int, QContactManager::Error> errorMap;
+    QList<QContact> saveList;
+    saveList << exampleGroup << exampleGroupMember;
+    m_manager.saveContacts(&saveList, &errorMap);
+
+    // third, create the relationship between those contacts
+    QContactRelationship groupRelationship;
+    groupRelationship.setFirst(exampleGroup.id());
+    groupRelationship.setRelationshipType(QContactRelationship::HasMember);
+    groupRelationship.setSecond(exampleGroupMember.id());
+
+    // finally, save the relationship in the manager
+    m_manager.saveRelationship(&groupRelationship);
+//! [Synchronously creating a new relationship between two contacts]
+
+//! [Synchronously retrieving relationships between contacts]
+    QList<QContactRelationship> groupRelationships = m_manager.relationships(QContactRelationship::HasMember, exampleGroup.id(), QContactRelationship::First);
+    QList<QContactRelationship> result;
+    for (int i = 0; i < groupRelationships.size(); i++) {
+        if (groupRelationships.at(i).second() == exampleGroupMember.id()) {
+            result.append(groupRelationships.at(i));
+        }
+    }
+//! [Synchronously retrieving relationships between contacts]
+
+//! [Retrieving relationships from cache]
+    exampleGroup = m_manager.contact(exampleGroup.localId()); // refresh the group contact
+    groupRelationships = exampleGroup.relationships(QContactRelationship::HasMember);
+    for (int i = 0; i < groupRelationships.size(); i++) {
+        if (groupRelationships.at(i).second() == exampleGroupMember.id()) {
+            result.append(groupRelationships.at(i));
+        }
+    }
+//! [Retrieving relationships from cache]
+
+//! [Synchronously providing a fetch hint]
+    QContactFetchHint hasMemberRelationshipsOnly;
+    hasMemberRelationshipsOnly.setRelationshipTypesHint(QStringList(QContactRelationship::HasMember));
+
+    // retrieve all contacts, with no specified sort order, requesting that
+    // HasMember relationships be included in the cache of result contacts
+    QList<QContact> allContacts = m_manager.contacts(QContactFilter(), QList<QContactSortOrder>(), hasMemberRelationshipsOnly);
+//! [Synchronously providing a fetch hint]
+
+//! [Synchronously removing a relationship]
+    m_manager.removeRelationship(groupRelationship);
+//! [Synchronously removing a relationship]
+
+//! [Synchronously querying the schema supported by a manager]
+    QMap<QString, QContactDetailDefinition> definitions = m_manager.detailDefinitions();
+    qDebug() << "This manager"
+             << (definitions.value(QContactName::DefinitionName).fields().contains(QContactName::FieldCustomLabel) ? "supports" : "does not support")
+             << "the custom label field of QContactName";
+//! [Synchronously querying the schema supported by a manager]
+
+//! [Synchronously modifying the schema supported by a manager]
+    // modify the name definition, adding a patronym field
+    QContactDetailDefinition nameDefinition = definitions.value(QContactName::DefinitionName);
+    QContactDetailFieldDefinition fieldPatronym;
+    fieldPatronym.setDataType(QVariant::String);
+    nameDefinition.insertField("Patronym", fieldPatronym);
+
+    // save the updated definition in the manager if supported...
+    if (m_manager.hasFeature(QContactManager::MutableDefinitions)) {
+        m_manager.saveDetailDefinition(nameDefinition, QContactType::TypeContact);
+    }
+//! [Synchronously modifying the schema supported by a manager]
 }
 
 //! [Creating a new contact]
@@ -362,45 +549,18 @@ void RequestExample::stateChanged(QContactAbstractRequest::State state)
 }
 //! [Asynchronous contact request]
 
-//! [Loading a specific manager backend]
 void loadManager()
 {
-    QContactManager* cm = new QContactManager("KABC");
-    QList<QContactLocalId> contactIds = cm->contactIds();
-    if (!contactIds.isEmpty()) {
-        QContact a = cm->contact(contactIds.first());
-        qDebug() << "This manager contains" << a.displayLabel();
-    } else {
-        qDebug() << "This manager contains no contacts";
-    }
-
-    delete cm;
-}
 //! [Loading a specific manager backend]
+    QContactManager contactManager("KABC");
+//! [Loading a specific manager backend]
+}
 
-//! [Loading a specific manager backend with parameters]
 void loadManagerWithParameters()
 {
+//! [Loading a specific manager backend with parameters]
     QMap<QString, QString> parameters;
     parameters.insert("Settings", "~/.qcontactmanager-kabc-settings.ini");
-    QContactManager* cm = new QContactManager("KABC", parameters);
-    QMap<QString, QContactDetailDefinition> definitions = cm->detailDefinitions();
-
-    qDebug() << "This backend currently supports the following detail definitions:";
-    QList<QContactDetailDefinition> allDefinitions = definitions.values();
-    foreach (const QContactDetailDefinition& defn, allDefinitions) {
-        QMap<QString, QContactDetailFieldDefinition> fields = defn.fields();
-        foreach (const QString& fieldKey, fields.keys()) {
-            QList<QVariant> allowableValues = fields.value(fieldKey).allowableValues();
-            qDebug() << "\t" << fieldKey << "(" << fields.value(fieldKey).dataType() << "):";
-            if (allowableValues.isEmpty()) {
-                qDebug() << "\t\tAny Value Permitted";
-            } else {
-                qDebug() << allowableValues;
-            }
-        }
-    }
-
-    delete cm;
-}
+    QContactManager contactManager("KABC", parameters);
 //! [Loading a specific manager backend with parameters]
+}

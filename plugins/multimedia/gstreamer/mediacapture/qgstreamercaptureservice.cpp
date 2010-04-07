@@ -82,6 +82,9 @@ public:
 
     GstElement *buildElement()
     {
+#ifdef Q_WS_MAEMO_5
+        return m_element = m_videoRenderer->videoSink();
+#endif
         if (m_bin == NULL) {
             GstBin * bin = GST_BIN(gst_bin_new(NULL));
 

@@ -70,21 +70,37 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
     QString renderedValue;
     bool useUtf8 = false;
 
-    if (variant.type() == QVariant::String) {
-        QString valueString = variant.toString();
-
-        // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
-        if (!parameters.contains(QLatin1String("ENCODING"))) {
-            if (quotedPrintableEncode(valueString))
-                parameters.insert(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"));
+    /* Structured values need to have their components backslash-escaped (in vCard 2.1, semicolons
+       must be escaped for compound values and commas must be escaped for list values). */
+    if (variant.type() == QVariant::StringList) {
+        QStringList values = property.variantValue().toStringList();
+        QString separator;
+        if (property.valueType() == QVersitProperty::CompoundType) {
+            separator = QLatin1String(";");
+        } else {
+            if (property.valueType() != QVersitProperty::ListType) {
+                qWarning("Variant value is a QStringList but the property's value type is neither "
+                         "CompoundType or ListType");
+            }
+            // Assume it's a ListType
+            separator = QLatin1String(",");
         }
-
-        // Add the CHARSET parameter, if necessary and encode in UTF-8 later
-        if (!mCodec->canEncode(valueString)) {
-            parameters.insert(QLatin1String("CHARSET"), QLatin1String("UTF-8"));
-            useUtf8 = true;
+        QString replacement = QLatin1Char('\\') + separator;
+        QRegExp separatorRegex = QRegExp(separator);
+        bool first = true;
+        foreach (QString value, values) {
+            if (!(value.isEmpty() && property.valueType() == QVersitProperty::ListType)) {
+                useUtf8 |= encodeVersitValue(parameters, value);
+                if (!first) {
+                    renderedValue += separator;
+                }
+                renderedValue += value.replace(separatorRegex, replacement);
+                first = false;
+            }
         }
-        renderedValue = valueString;
+    } else if (variant.type() == QVariant::String) {
+        renderedValue = variant.toString();
+        useUtf8 = encodeVersitValue(parameters, renderedValue);
     } else if (variant.type() == QVariant::ByteArray) {
         parameters.insert(QLatin1String("ENCODING"), QLatin1String("BASE64"));
         renderedValue = QLatin1String(variant.toByteArray().toBase64().data());
@@ -99,7 +115,7 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         writeCrlf();
         QVersitDocument embeddedDocument = variant.value<QVersitDocument>();
         encodeVersitDocument(embeddedDocument);
-    } else if (variant.type() == QVariant::String) {
+    } else if (variant.type() == QVariant::String || variant.type() == QVariant::StringList) {
         writeString(renderedValue, useUtf8);
     } else if (variant.type() == QVariant::ByteArray) {
         // One extra folding before the value and
@@ -110,6 +126,22 @@ void QVCard21Writer::encodeVersitProperty(const QVersitProperty& property)
         writeCrlf();
     }
     writeCrlf();
+}
+
+/*! Performs Quoted-Printable encoding and charset encoding on \a value as per vCard 2.1 spec.
+    Returns true if the value will need to be encoded with UTF-8, false if mCodec is sufficient. */
+bool QVCard21Writer::encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value)
+{
+    // Quoted-Printable encode the value and add Quoted-Printable parameter, if necessary
+    if (quotedPrintableEncode(value))
+        parameters.insert(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"));
+
+    // Add the CHARSET parameter, if necessary and encode in UTF-8 later
+    if (!mCodec->canEncode(value)) {
+        parameters.insert(QLatin1String("CHARSET"), QLatin1String("UTF-8"));
+        return true;
+    }
+    return false;
 }
 
 /*!

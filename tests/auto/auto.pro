@@ -77,7 +77,10 @@ contains(mobility_modules,contacts) {
             qcontactmanager \
             qcontactmanagerplugins \
             qcontactmanagerfiltering \
-            qcontactrelationship
+            qcontactrelationship \
+            qlatin1constant
+    # This needs glibc:
+    linux*: SUBDIRS += qcontactmemusage
 }
 
 contains(mobility_modules,versit) {
@@ -91,7 +94,6 @@ contains(mobility_modules,versit) {
             qversitdocument \
             qversitproperty \
             qversitreader \
-            qversitutils \
             qversitwriter
 }
 

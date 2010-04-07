@@ -70,7 +70,6 @@ void tst_QVersitWriter::init()
     mOutputDevice = new QBuffer;
     mWriter = new QVersitWriter;
     mSignalCatcher = new SignalCatcher;
-    qRegisterMetaType<QVersitWriter::State>("QVersitWriter::State");
     connect(mWriter, SIGNAL(stateChanged(QVersitWriter::State)),
             mSignalCatcher, SLOT(stateChanged(QVersitWriter::State)));
 }

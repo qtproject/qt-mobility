@@ -63,11 +63,6 @@ QContactLocalIdFetchRequest::QContactLocalIdFetchRequest()
 {
 }
 
-/*! Cleans up the memory in use by this contact id fetch request */
-QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest()
-{
-}
-
 /*! Sets the filter which will be used to select the contacts whose ids will be returned to \a filter */
 void QContactLocalIdFetchRequest::setFilter(const QContactFilter& filter)
 {
