@@ -11,7 +11,8 @@ maemo5 {
 symbian {
     exists($${EPOCROOT}epoc32/release/armv5/lib/SensrvClient.lib) {
         message("Sensor framework found")
-        device_plugin=1                                                    
+        device_plugin=1  
+        SUBDIRS += symbian
     } else {
         exists($${EPOCROOT}epoc32/release/armv5/lib/RRSensorApi.lib) {
             message("Sensor API found")
