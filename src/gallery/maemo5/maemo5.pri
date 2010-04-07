@@ -5,6 +5,7 @@ QT += dbus
 
 HEADERS += \
         $$PWD\qgallerytrackeraggregatelistresponse_p.h \
+        $$PWD\qgallerytrackercountresponse_p.h \
         $$PWD\qgallerytrackerfilelistresponse_p.h \
         $$PWD\qgallerytrackerlistresponse_p.h \
         $$PWD\qgallerytrackerschema_p.h
@@ -12,6 +13,7 @@ HEADERS += \
 SOURCES += \
         $$PWD\qdocumentgallery_maemo5.cpp \
         $$PWD\qgallerytrackeraggregatelistresponse.cpp \
+        $$PWD\qgallerytrackercountresponse.cpp \
         $$PWD\qgallerytrackerfilelistresponse.cpp \
         $$PWD\qgallerytrackerlistresponse.cpp \
         $$PWD\qgallerytrackerschema.cpp

@@ -482,12 +482,10 @@ static bool qt_writeCondition(
     const QUrl url = filter.containerUrl();
 
     if (!url.isValid()) {
-        qDebug("Invalid URL");
         *error = 1;
 
         return false;
     } else if (url.scheme() != QLatin1String("file")) {
-        qDebug("non file scheme %s", qPrintable(url.scheme()));
         *error = 1;
 
         return false;

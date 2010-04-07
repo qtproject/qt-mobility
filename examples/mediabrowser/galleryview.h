@@ -46,6 +46,7 @@
 
 class QAbstractGallery;
 class QGalleryFilter;
+class QGalleryCountRequest;
 class QGalleryItemList;
 class QGalleryItemRequest;
 
@@ -59,8 +60,13 @@ public:
     QAbstractGallery *gallery() const;
     void setGallery(QAbstractGallery *gallery);
 
+    int count() const;
+
 public slots:
     void showMatches(const QGalleryFilter &filter);
+
+Q_SIGNALS:
+    void countChanged(int count);
 
 protected:
     void setType(const QString &type);
@@ -74,8 +80,12 @@ protected slots:
 
     void sliderMoved(int value);
 
+private slots:
+    void requestCountChanged();
+
 private:
     QGalleryItemRequest *request;
+    QGalleryCountRequest *countRequest;
 };
 
 #endif

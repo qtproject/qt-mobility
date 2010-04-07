@@ -43,6 +43,7 @@
 #include "qabstractgallery_p.h"
 
 #include "qgallerytrackeraggregatelistresponse_p.h"
+#include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackerfilelistresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 
@@ -53,6 +54,7 @@ class QDocumentGalleryPrivate : public QAbstractGalleryPrivate
 public:
 
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
+    QGalleryAbstractResponse *createCountResponse(QGalleryCountRequest *request);
 };
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
@@ -60,7 +62,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     int error = 0;
 
     QGalleryTrackerSchema schema;
-
     schema.setItemType(request->itemType());
 
     QString query = schema.buildQuery(&error, request->filter());
@@ -97,6 +98,25 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     return 0;
 }
 
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
+        QGalleryCountRequest *request)
+{
+    int error = 0;
+
+    QGalleryTrackerSchema schema;
+    schema.setItemType(request->itemType());
+
+    QString query = schema.buildQuery(&error, request->filter());
+
+    if (error != 0) {
+        qWarning("Invalid Query %d, %s", error, qPrintable(query));
+    } else if (schema.isFileType() || schema.isAggregateType()) {
+        return new QGalleryTrackerCountResponse(QDBusConnection::sessionBus(), schema, query);
+    }
+
+    return 0;
+}
+
 QDocumentGallery::QDocumentGallery(QObject *parent)
     : QAbstractGallery(*new QDocumentGalleryPrivate, parent)
 {
@@ -111,6 +131,7 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
 {
     switch (type) {
     case QGalleryAbstractRequest::Item:
+    case QGalleryAbstractRequest::Count:
         return true;
     default:
         return false;
@@ -129,6 +150,8 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
     switch (request->type()) {
     case QGalleryAbstractRequest::Item:
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
+    case QGalleryAbstractRequest::Count:
+        return d->createCountResponse(static_cast<QGalleryCountRequest *>(request));
     default:
         return 0;
     }

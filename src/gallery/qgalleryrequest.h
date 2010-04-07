@@ -293,6 +293,9 @@ Q_SIGNALS:
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
+
+private:
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged())
 };
 
 class QGalleryInsertRequestPrivate;

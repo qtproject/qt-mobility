@@ -39,72 +39,70 @@
 **
 ****************************************************************************/
 
-#include "galleryview.h"
+#ifndef QGALLERYTRACKERCOUNTRESPONSE_P_H
+#define QGALLERYTRACKERCOUNTRESPONSE_P_H
 
-#include <qgalleryrequest.h>
+#include "qgalleryrequest.h"
 
-GalleryView::GalleryView(QWidget *parent)
-    : QWidget(parent)
-    , request(new QGalleryItemRequest(this))
-    , countRequest(new QGalleryCountRequest(this))
+#include <QtDBus/qdbusinterface.h>
+#include <QtDBus/qdbuspendingcall.h>
+
+class QGalleryTrackerSchema;
+
+class QGalleryTrackerCountResponse : public QGalleryAbstractResponse
 {
-    connect(request, SIGNAL(itemsChanged()), this, SLOT(mediaChanged()));
-    connect(countRequest, SIGNAL(countChanged()), this, SLOT(requestCountChanged()));
-}
+    Q_OBJECT
+public:
+    QGalleryTrackerCountResponse(
+            const QDBusConnection &connection,
+            const QGalleryTrackerSchema &schema,
+            const QString &query,
+            QObject *parent = 0);
+    ~QGalleryTrackerCountResponse();
 
-GalleryView::~GalleryView()
-{
-}
+    int minimumPagedItems() const;
 
-QAbstractGallery *GalleryView::gallery() const
-{
-    return request->gallery();
-}
+    QList<int> keys() const;
+    QString toString(int key) const;
 
-void GalleryView::setGallery(QAbstractGallery *gallery)
-{
-    request->setGallery(gallery);
-    countRequest->setGallery(gallery);
-}
+    int count() const;
 
-void GalleryView::showMatches(const QGalleryFilter &filter)
-{
-    request->setFilter(filter);
-    request->execute();
+    QString id(int index) const;
+    QUrl url(int index) const;
+    QString type(int index) const;
+    QList<QGalleryResource> resources(int index) const;
 
-    countRequest->setFilter(filter);
-    countRequest->execute();
-}
+    QVariant metaData(int index, int key) const;
+    void setMetaData(int index, int key, const QVariant &value);
 
-void GalleryView::setType(const QString &type)
-{
-    request->setItemType(type);
+    MetaDataFlags metaDataFlags(int index, int key) const;
 
-    countRequest->setItemType(type);
-}
+    void cancel();
 
-void GalleryView::setFields(const QStringList &fields)
-{
-    request->setFields(fields);
-}
+    bool waitForFinished(int msecs);
 
-void GalleryView::setSortFields(const QStringList &fields)
-{
-    request->setSortFields(fields);
-}
+private Q_SLOTS:
+    void callFinished(QDBusPendingCallWatcher *watcher);
 
-QGalleryItemList *GalleryView::media() const
-{
-    return request->items();
-}
+private:
+    void queryCount();
 
-void GalleryView::sliderMoved(int value)
-{
-    if (QGalleryItemList *list = request->items())
-        list->setCursorPosition(value - list->minimumPagedItems() / 3);
-}
+    enum
+    {
+        MaximumFetchSize = 512
+    };
 
-void GalleryView::requestCountChanged()
-{
-    emit countChanged(countRequest->count());
-}
+    int m_count;
+    int m_workingCount;
+    int m_currentOffset;
+    QDBusPendingCallWatcher *m_call;
+    QDBusInterface m_dbusInterface;
+    QString m_query;
+    QString m_service;
+    QString m_countField;
+    QStringList m_identityFields;
+
+};
+
+
+#endif

@@ -184,7 +184,7 @@ void QGalleryTrackerListResponse::setCursorPosition(int position)
 void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
 {
     if (watcher != m_call) {
-        // This probably shouldn't ever happen.
+        // This shouldn't ever happen.
         Q_ASSERT(false);
 
         return;
