@@ -56,8 +56,9 @@ QtContacts
 QtLocation
 ------
 
- - foo
-    * bar
+ - API change
+    * QGeoPositionInfo::dateTime()/setDateTime() changed into
+      QGeoPositionInfo::timestamp()/setTimestamp() respectively.
 
 QtMessaging
 ------
