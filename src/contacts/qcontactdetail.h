@@ -146,7 +146,8 @@ public:
     }
     template<typename T, int N> T value(const QLatin1Constant<N>& key) const
     {
-        return variantValue(key.latin1()).value<T>();
+        //the template keyword must be there, otherwise an Error #254:"type name is not allowed" will happen for RCVT compiler.
+        return variantValue(key.latin1()).template value<T>();
     }
 
     void setContexts(const QStringList& contexts)
