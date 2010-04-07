@@ -582,11 +582,12 @@ QMessageFolder CFSEngine::folderL(const QMessageFolderId &id) const
         }
     }
 
-    TFolderId folderId(id.toString().toInt(), mailbox->MailboxId());
+    TFolderId folderId(removeFreestylePrefix(id.toString()).toInt(), mailbox->MailboxId());
     MEmailFolder* emailFolder = mailbox->FolderL(folderId);
+    CleanupReleasePushL(*emailFolder);
     QString name = QString::fromUtf16(emailFolder->Name().Ptr(), emailFolder->Name().Length());
     folder = QMessageFolderPrivate::from(id, accountId, parentId, name, name);
-    delete emailFolder;
+    CleanupStack::PopAndDestroy();
     
     return folder;
 }
@@ -732,8 +733,6 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
     QMessageFolderIdList folderIds;
     QMessageAccount messageAccount = account(accountId);
     
-    qDebug() << accountId.toString();
-    
     TMailboxId mailboxId(removeFreestylePrefix(accountId.toString()).toInt());
     MEmailMailbox* mailbox = NULL;
     mailbox = m_clientApi->MailboxL(mailboxId);
@@ -748,8 +747,9 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
 
     for(TInt i=0; i < folders.Count(); i++) {
         MEmailFolder *mailFolder = folders[i];
+        
         QString fsIdAsString = addFreestylePrefix(QString::number(mailFolder->FolderId().iId));
-        folderIds << QMessageFolderId(fsIdAsString);
+        folderIds.append(QMessageFolderId(fsIdAsString));
 
         //TODO: Support for subfolders?
     }
