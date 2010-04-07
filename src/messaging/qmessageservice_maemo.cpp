@@ -248,6 +248,8 @@ void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFil
         }
         MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, _limit, _offset);
 
+        ModestEngine::instance()->clearHeaderCache();
+
         emit q_ptr->messagesFound(_ids);
 
         setFinished(true);
@@ -265,6 +267,8 @@ void QMessageServicePrivate::messagesCounted(int count)
     _count += count;
 
     if (_pendingRequestCount == 0) {
+        ModestEngine::instance()->clearHeaderCache();
+
         emit q_ptr->messagesCounted(_count);
 
         setFinished(true);
