@@ -52,13 +52,13 @@
 
 #include "s60mediaplayeraudioendpointselector.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60VideoPlayerSession;
 class S60AudioPlayerSession;

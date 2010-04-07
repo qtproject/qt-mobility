@@ -45,7 +45,7 @@
 #include <qmediarecorder.h>
 #include <qmediarecordercontrol.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 /*
  * This class implements QMediaRecorderControl interface.

@@ -56,7 +56,7 @@
 
 #include <QtMultimedia/qaudioformat.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaRecorder
@@ -563,5 +563,5 @@ void QMediaRecorder::stop()
 
 
 #include "moc_qmediarecorder.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

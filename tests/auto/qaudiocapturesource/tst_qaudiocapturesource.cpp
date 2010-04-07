@@ -49,7 +49,7 @@
 #include <qmediarecordercontrol.h>
 #include <qaudioendpointselector.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class MockAudioEncoderControl : public QAudioEncoderControl
 {
     Q_OBJECT

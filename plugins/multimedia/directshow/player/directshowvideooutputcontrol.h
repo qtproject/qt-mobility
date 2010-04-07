@@ -44,7 +44,7 @@
 
 #include "../../src/multimedia/qvideooutputcontrol.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DirectShowVideoOutputControl : public QVideoOutputControl
 {

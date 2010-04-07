@@ -45,7 +45,7 @@
 #include <QtMultimedia/qaudio.h>
 #include "qmediacontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QAudioEndpointSelector : public QMediaControl
 {
@@ -73,6 +73,6 @@ protected:
 #define QAudioEndpointSelector_iid "com.nokia.Qt.QAudioEndpointSelector/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioEndpointSelector, QAudioEndpointSelector_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QAUDIOENDPOINTSELECTOR_H

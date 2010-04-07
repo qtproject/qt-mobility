@@ -43,7 +43,7 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qvariant.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoEncoderControl
@@ -172,5 +172,5 @@ QVideoEncoderControl::~QVideoEncoderControl()
 */
 
 #include "moc_qvideoencodercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

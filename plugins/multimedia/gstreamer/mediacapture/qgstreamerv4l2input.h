@@ -49,7 +49,6 @@
 #include <QtCore/qsize.h>
 #include "qgstreamercapturesession.h"
 
-QTM_USE_NAMESPACE
 QT_USE_NAMESPACE
 
 class QGstreamerV4L2Input : public QObject, public QGstreamerVideoInput

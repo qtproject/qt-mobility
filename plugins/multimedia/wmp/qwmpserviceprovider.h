@@ -45,7 +45,7 @@
 #include <qmediaserviceprovider.h>
 #include <qmediaserviceproviderplugin.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QWmpServiceProviderPlugin : public QMediaServiceProviderPlugin
 {
     Q_OBJECT
