@@ -517,8 +517,8 @@ void RecentMessagesWidget::processResults()
         QMessageId id = m_ids.takeFirst();
         QMessage message(id);
 
-        QListWidgetItem* newItem = new QListWidgetItem(message.subject());
-        newItem->setData(MessageIdRole,id.toString());
+        QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(":")+message.subject());
+	newItem->setData(MessageIdRole,id.toString());
         QFont itemFont = newItem->font();
         bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
         itemFont.setItalic(isPartialMessage);
