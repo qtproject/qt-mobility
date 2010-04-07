@@ -283,6 +283,11 @@ void ContactListPage::importClicked()
             if (importer.importDocuments(reader.results())) {
                 QList<QContact> contacts = importer.contacts();
                 QMap<int, QContactManager::Error> errorMap;
+                QList<QContact>::iterator it = contacts.begin();
+                while (it != contacts.end()) {
+                    *it = m_manager->compatibleContact(*it);
+                    it++;
+                }
                 m_manager->saveContacts(&contacts, &errorMap);
                 rebuildList(m_currentFilter);
             }
