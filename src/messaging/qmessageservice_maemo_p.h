@@ -41,10 +41,14 @@
 
 #include "qmessageservice.h"
 
+#include <QObject>
+
 QTM_BEGIN_NAMESPACE
 
-class QMessageServicePrivate
+class QMessageServicePrivate : public QObject
 {
+    Q_OBJECT
+
 public:
     enum EnginesToCall
     {
@@ -74,6 +78,10 @@ public:
     void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);
     void messagesCounted(int count);
     void progressChanged(uint value, uint total);
+
+public slots:
+    void messagesFoundSlot();
+    void messagesCountedSlot();
 
 public:
     QMessageService* q_ptr;
