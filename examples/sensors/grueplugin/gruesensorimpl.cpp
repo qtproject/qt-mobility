@@ -49,7 +49,7 @@ gruesensorimpl::gruesensorimpl(QSensor *sensor)
 {
     lightSensor = new QAmbientLightSensor(this);
     lightSensor->addFilter(this);
-    lightSensor->connect();
+    lightSensor->connectToBackend();
 
     setReading<GrueSensorReading>(&m_reading);
     setDataRates(lightSensor);
@@ -59,7 +59,7 @@ gruesensorimpl::gruesensorimpl(QSensor *sensor)
 
 void gruesensorimpl::start()
 {
-    lightSensor->setUpdateInterval(sensor()->updateInterval());
+    lightSensor->setDataRate(sensor()->dataRate());
     lightSensor->start();
 }
 

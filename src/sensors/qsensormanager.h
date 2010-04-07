@@ -75,7 +75,7 @@ protected:
 };
 
 #define REGISTER_STATIC_PLUGIN(pluginname)\
-    static QSensorPlugin *create_static_plugin_ ## pluginname()\
+    static QSensorPluginInterface *create_static_plugin_ ## pluginname()\
     {\
         return new pluginname;\
     }\
