@@ -134,7 +134,8 @@ unix: {
             -lws32 \
             -lcentralrepository \
             -lprofileengine \
-            -lbluetooth
+            -lbluetooth \
+            -lgdi
 
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI
