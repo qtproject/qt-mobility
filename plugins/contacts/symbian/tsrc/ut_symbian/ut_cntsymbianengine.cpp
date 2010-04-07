@@ -614,8 +614,8 @@ void TestSymbianEngine::removeContacts()
 
     // Remove non existent contacts
     QMap<int, QContactManager::Error> errorMap;
-    QVERIFY(m_engine->removeContacts(contacts, &errorMap, &err));
-    QVERIFY(err == QContactManager::NoError);
+    QVERIFY(!m_engine->removeContacts(contacts, &errorMap, &err));
+    QVERIFY(err == QContactManager::BadArgumentError);
     QVERIFY(errorMap.count() == 0);
 
     // Remove existing contacts
@@ -892,7 +892,7 @@ void TestSymbianEngine::batchRelationships()
 
     // Add relationships
     QMap<int, QContactManager::Error> errorMap;
-    QVERIFY(m_engine->saveRelationships(&list, &errorMap, &error));
+    QVERIFY(!m_engine->saveRelationships(&list, &errorMap, &error));
     foreach(QContactManager::Error err, errorMap) {
         if (err == QContactManager::NoError ||
                 err == QContactManager::NotSupportedError)
