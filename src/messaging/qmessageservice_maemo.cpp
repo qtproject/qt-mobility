@@ -103,8 +103,7 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         _limit = limit;
         _offset = offset;
 
-        _state = QMessageService::ActiveState;
-        emit messageService.stateChanged(_state);
+        stateChanged(QMessageService::ActiveState);
     } else {
         setFinished(false);
     }
@@ -152,8 +151,7 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         _limit = limit;
         _offset = offset;
 
-        _state = QMessageService::ActiveState;
-        emit stateChanged(_state);
+        stateChanged(QMessageService::ActiveState);
     } else {
         setFinished(false);
     }
@@ -187,8 +185,7 @@ bool QMessageServicePrivate::countMessages(QMessageService &messageService,
     }
 
     if (_pendingRequestCount > 0) {
-        _state = QMessageService::ActiveState;
-        emit stateChanged(_state);
+        stateChanged(QMessageService::ActiveState);
     } else {
         setFinished(false);
     }
@@ -209,9 +206,8 @@ void QMessageServicePrivate::setFinished(bool successful)
             _error = QMessageManager::RequestIncomplete;
         }
 
-        _state = QMessageService::FinishedState;
         _active = false;
-        emit q_ptr->stateChanged(_state);
+        stateChanged(QMessageService::FinishedState);
     }
 }
 
