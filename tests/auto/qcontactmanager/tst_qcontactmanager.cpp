@@ -298,21 +298,24 @@ bool tst_QContactManager::isSuperset(const QContact& ca, const QContact& cb)
     bDetails = b.details();
     foreach (QContactDetail d, aDetails) {
         foreach (QContactDetail d2, bDetails) {
-            if (d.key() == d2.key()) {
+            if (d.definitionName() == d2.definitionName()) {
+                bool canRemove = true;
                 QMap<QString, QVariant> d2map = d2.variantValues();
                 foreach (QString key, d2map.keys()) {
                     if (d.value(key) != d2.value(key)) {
                         // d can have _more_ keys than d2,
                         // but not _less_; and it cannot
                         // change the value.
-                        return false;
+                        canRemove = false;
                     }
                 }
 
-                // if we get to here, we can remove the details.
-                a.removeDetail(&d);
-                b.removeDetail(&d2);
-                break;
+                if (canRemove) {
+                    // if we get to here, we can remove the details.
+                    a.removeDetail(&d);
+                    b.removeDetail(&d2);
+                    break;
+                }
             }
         }
     }
