@@ -52,16 +52,16 @@
 QTM_BEGIN_NAMESPACE
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate()
-    : QSharedData(),
-      type(QLandmarkFilter::DefaultFilter),
-      maxMatches(-1)
+        : QSharedData(),
+        type(QLandmarkFilter::DefaultFilter),
+        maxMatches(-1)
 {
 }
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate(const QLandmarkFilterPrivate &other)
-    : QSharedData(other),
-      type(other.type),
-      maxMatches(other.maxMatches)
+        : QSharedData(other),
+        type(other.type),
+        maxMatches(other.maxMatches)
 {
 }
 
@@ -117,7 +117,7 @@ QLandmarkFilter::QLandmarkFilter()
     Constructs a copy of \a other.
 */
 QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
-    :d(other.d)
+        : d(other.d)
 {
 }
 
@@ -125,7 +125,7 @@ QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
     \internal
 */
 QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate &dd)
-    :d(&dd)
+        : d(&dd)
 {
     //TODO: implement
 }
@@ -186,7 +186,7 @@ bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
 /*!
     Assigns \a other to this filter and returns a reference to this filter.
 */
-QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter &other)
+QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter & other)
 {
     return *this;
 }

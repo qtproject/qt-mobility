@@ -66,6 +66,8 @@ public:
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate& coordinate);
 
+    QString requestString(const QString &host) const;
+
 private:
     Q_DISABLE_COPY(QReverseGeocodingRequest)
 

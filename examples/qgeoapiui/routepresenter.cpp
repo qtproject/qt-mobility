@@ -43,7 +43,7 @@
 
 #include <QStringBuilder>
 
-RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QRouteReply* routeReply)
+RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* routeReply)
         : GeoPresenter(treeWidget), routeReply(routeReply)
 {
 }
@@ -52,7 +52,7 @@ void RoutePresenter::show()
 {
     treeWidget->clear();
     QTreeWidgetItem* top = showRoutes();
-    const QList<QRoute> routes = routeReply->routes();
+    const QList<QGeoRoute> routes = routeReply->routes();
 
     for (int i = 0; i < routes.length(); i++) {
         showRoute(top, routes[i]);
@@ -64,14 +64,17 @@ QTreeWidgetItem* RoutePresenter::showRoutes()
     QTreeWidgetItem* top = new QTreeWidgetItem(treeWidget);
     top->setText(0, "routes");
 
+    /*
     QTreeWidgetItem* prop = new QTreeWidgetItem(top);
     prop->setText(0, "result");
     prop->setText(1, QString().setNum((quint16) routeReply->resultCode()));
+    */
 
-    prop = new QTreeWidgetItem(top);
+    QTreeWidgetItem* prop = new QTreeWidgetItem(top);
     prop->setText(0, "description");
-    prop->setText(1, routeReply->resultDescription());
+    prop->setText(1, routeReply->description());
 
+    /*
     QString lang = routeReply->language();
 
     if (!lang.isEmpty()) {
@@ -79,15 +82,16 @@ QTreeWidgetItem* RoutePresenter::showRoutes()
         prop->setText(0, "language");
         prop->setText(1, lang);
     }
+    */
 
     prop = new QTreeWidgetItem(top);
     prop->setText(0, "count");
-    prop->setText(1, QString().setNum(routeReply->count()));
+    prop->setText(1, QString().setNum(routeReply->routes().size()));
 
     return top;
 }
 
-void RoutePresenter::showRoute(QTreeWidgetItem* top, const QRoute& route)
+void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
 {
     QTreeWidgetItem* routeItem = new QTreeWidgetItem(top);
     routeItem->setText(0, "route");

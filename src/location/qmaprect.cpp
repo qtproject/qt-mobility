@@ -46,9 +46,9 @@
 QTM_BEGIN_NAMESPACE
 
 QMapRectPrivate::QMapRectPrivate()
-    :geoTopLeft(QGeoCoordinate()),
-     geoBottomRight(QGeoCoordinate()),
-     p(QPen()), b(QBrush()), rect(QRect())
+        : geoTopLeft(QGeoCoordinate()),
+        geoBottomRight(QGeoCoordinate()),
+        p(QPen()), b(QBrush()), rect(QRect())
 {
 }
 
@@ -92,7 +92,8 @@ QMapRect::QMapRect(QMapRectPrivate &dd, const QGeoCoordinate& topLeft, const QGe
 /*!
      Returns the top left geo coordinate of the rectangle.
 */
-QGeoCoordinate QMapRect::topLeft() const {
+QGeoCoordinate QMapRect::topLeft() const
+{
     Q_D(const QMapRect);
     return d->geoTopLeft;
 }
@@ -100,7 +101,8 @@ QGeoCoordinate QMapRect::topLeft() const {
 /*!
     Returns the bottom right geo coordinate of the left rectangle.
 */
-QGeoCoordinate QMapRect::bottomRight() const {
+QGeoCoordinate QMapRect::bottomRight() const
+{
     Q_D(const QMapRect);
     return d->geoBottomRight;
 }
@@ -108,7 +110,8 @@ QGeoCoordinate QMapRect::bottomRight() const {
 /*!
     Returns the pen used for drawing the rectangle outline.
 */
-QPen QMapRect::pen() const {
+QPen QMapRect::pen() const
+{
     Q_D(const QMapRect);
     return d->p;
 }
@@ -116,7 +119,8 @@ QPen QMapRect::pen() const {
 /*!
     Returns the brush used for filling the rectangle.
 */
-QBrush QMapRect::brush() const {
+QBrush QMapRect::brush() const
+{
     Q_D(const QMapRect);
     return d->b;
 }

@@ -63,7 +63,7 @@ QTM_USE_NAMESPACE
      id() and managerUri() will return null strings
 */
 QLandmarkId::QLandmarkId()
-    :d(new QLandmarkIdPrivate)
+        : d(new QLandmarkIdPrivate)
 {
 }
 
@@ -71,7 +71,7 @@ QLandmarkId::QLandmarkId()
     Constructs a copy of \a other.
 */
 QLandmarkId::QLandmarkId(const QLandmarkId &other)
-    :d(other.d)
+        : d(other.d)
 {
 }
 
@@ -131,7 +131,7 @@ void QLandmarkId::setManagerUri(const QString &uri)
     Assigns \a other to this landmark identifier and returns a reference
     to this landmark identifier.
 */
-QLandmarkId &QLandmarkId::operator=(const QLandmarkId &other)
+QLandmarkId &QLandmarkId::operator=(const QLandmarkId & other)
 {
     d = other.d;
     return *this;

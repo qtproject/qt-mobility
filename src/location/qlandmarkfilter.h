@@ -53,11 +53,12 @@ class QLandmarkFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkFilter
 {
 public:
-    enum FilterType{InvalidFilter, DefaultFilter,
-                    NameFilter, ProximityFilter,
-                    NearestFilter, CategoryFilter,
-                    BoxFilter, IntersectionFilter,
-                    UnionFilter, CustomFilter =500};
+    enum FilterType {InvalidFilter, DefaultFilter,
+                     NameFilter, ProximityFilter,
+                     NearestFilter, CategoryFilter,
+                     BoxFilter, IntersectionFilter,
+                     UnionFilter, CustomFilter = 500
+                    };
     QLandmarkFilter();
     QLandmarkFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkFilter();

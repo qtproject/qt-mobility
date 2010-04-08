@@ -42,17 +42,21 @@
 #ifndef QLOCATION_GEOCODINGREPLY_P_H
 #define QLOCATION_GEOCODINGREPLY_P_H
 
+#include "qmobilityglobal.h"
+
+#include "qgeolocation.h"
+
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeocodingReplyPrivate
 {
 public:
-    QGeocodingReplyPrivate(){};
+    QGeocodingReplyPrivate();
 
-    QGeocodingReply::ResultCode code;
-    QString descr;
-    QList<QGeoLocation> plcs;
+    QString description;
+    QList<QGeoLocation> places;
 };
 
 QTM_END_NAMESPACE

@@ -51,12 +51,13 @@
 
 #include "gconfitem.h"
 
-extern "C" {
-   #include <glib.h>
-   #include <location/location-gpsd-control.h>
-   #include <location/location-gps-device.h>
-   #include <location/location-misc.h>
-   #include <location/location-distance-utils.h>
+extern "C"
+{
+#include <glib.h>
+#include <location/location-gpsd-control.h>
+#include <location/location-gps-device.h>
+#include <location/location-misc.h>
+#include <location/location-distance-utils.h>
 }
 
 QTM_BEGIN_NAMESPACE
@@ -88,7 +89,7 @@ private:
     int errorHandlerId;
     int posChangedId;
     int origUpdateInterval;
-    
+
     QGeoPositionInfo lastUpdate;
     QGeoPositionInfo lastSatUpdate;
     bool validLastUpdate;

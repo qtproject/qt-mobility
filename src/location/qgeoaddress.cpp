@@ -46,22 +46,22 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoAddressPrivate::QGeoAddressPrivate()
-    : QSharedData()
+        : QSharedData()
 {
 }
 
 QGeoAddressPrivate::QGeoAddressPrivate(const QGeoAddressPrivate &other)
-    : QSharedData(other),
-      sCountry(other.sCountry),
-      sCountryCode(other.sCountryCode),
-      sState(other.sState),
-      sCounty(other.sCounty),
-      sCity(other.sCity),
-      sDistrict(other.sDistrict),
-      sThoroughfareName(other.sThoroughfareName),
-      sThoroughfareNumber(other.sThoroughfareNumber),
-      sPostCode(other.sPostCode),
-      sPostOfficeBox(other.sPostOfficeBox)
+        : QSharedData(other),
+        sCountry(other.sCountry),
+        sCountryCode(other.sCountryCode),
+        sState(other.sState),
+        sCounty(other.sCounty),
+        sCity(other.sCity),
+        sDistrict(other.sDistrict),
+        sThoroughfareName(other.sThoroughfareName),
+        sThoroughfareNumber(other.sThoroughfareNumber),
+        sPostCode(other.sPostCode),
+        sPostOfficeBox(other.sPostOfficeBox)
 {
 }
 
@@ -83,7 +83,7 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
     Default constructor.
 */
 QGeoAddress::QGeoAddress()
-    :d(new QGeoAddressPrivate)
+        : d(new QGeoAddressPrivate)
 {
 }
 
@@ -91,7 +91,7 @@ QGeoAddress::QGeoAddress()
     Constructs a copy of \a other.
 */
 QGeoAddress::QGeoAddress(const QGeoAddress &other)
-    :d(other.d)
+        : d(other.d)
 {
 }
 
@@ -106,7 +106,7 @@ QGeoAddress::~QGeoAddress()
     Assigns the given \a address to this address and
     returns a reference to this address.
 */
-QGeoAddress &QGeoAddress::operator=(const QGeoAddress &address)
+QGeoAddress &QGeoAddress::operator=(const QGeoAddress & address)
 {
     d = address.d;
     return *this;

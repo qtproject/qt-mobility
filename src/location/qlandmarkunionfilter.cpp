@@ -55,13 +55,13 @@ public:
 };
 
 QLandmarkUnionFilterPrivate::QLandmarkUnionFilterPrivate()
-    : QLandmarkFilterPrivate()
+        : QLandmarkFilterPrivate()
 {
 }
 
 QLandmarkUnionFilterPrivate::QLandmarkUnionFilterPrivate(const QLandmarkUnionFilterPrivate &other)
-    : QLandmarkFilterPrivate(other),
-      filters(other.filters)
+        : QLandmarkFilterPrivate(other),
+        filters(other.filters)
 {
 }
 
@@ -83,7 +83,7 @@ QLandmarkUnionFilterPrivate::~QLandmarkUnionFilterPrivate()
     Constructs a new union filter.
 */
 QLandmarkUnionFilter::QLandmarkUnionFilter()
-    : QLandmarkFilter(*new QLandmarkUnionFilterPrivate)
+        : QLandmarkFilter(*new QLandmarkUnionFilterPrivate)
 {
 }
 

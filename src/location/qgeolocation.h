@@ -58,12 +58,14 @@ class Q_LOCATION_EXPORT QGeoLocation
 {
 public:
     QGeoLocation();
-    QGeoLocation(const QGeoLocation &other);
+    QGeoLocation(const QGeoLocation &gl);
+    QGeoLocation& operator=(const QGeoLocation &gl);
     ~QGeoLocation();
 
-    QGeoLocation &operator=(const QGeoLocation &other);
     bool operator==(const QGeoLocation &other) const;
-    bool operator!=(const QGeoLocation &other) const{return !(*this == other);}
+    bool operator!=(const QGeoLocation &other) const {
+        return !(*this == other);
+    }
 
     QRectF boundingBox() const;
     void setBoundingBox(const QRectF &boundingBox);

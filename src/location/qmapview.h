@@ -53,8 +53,8 @@
 #include <QColor>
 
 #include "qgeocoordinate.h"
-#include "qgeoengine.h"
-#include "qroute.h"
+#include "qgeoroute.h"
+#include "qgeomaptile.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,6 +67,8 @@ class QMapEllipse;
 class QMapObject;
 class QMapMarker;
 class QMapViewPrivate;
+class QGeoMapService;
+class QGeoMapTileReply;
 
 class Q_LOCATION_EXPORT QMapView : public QGraphicsWidget
 {
@@ -85,6 +87,7 @@ public:
         void next();
         quint32 col() const;
         quint32 row() const;
+        quint64 index() const;
         QRectF tileRect() const;
 
     private:
@@ -99,7 +102,7 @@ public:
     QMapView(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
     virtual ~QMapView();
 
-    void init(QGeoEngine* geoEngine, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
+    void init(QGeoMapService* mapService, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
 
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
@@ -122,12 +125,7 @@ public:
     bool isPannable() const;
 
     QPointF geoToMap(const QGeoCoordinate& geoCoordinate) const;
-    QPointF mercatorToMap(const QPointF& mercatorCoordinate) const;
     QGeoCoordinate mapToGeo(const QPointF& mapCoordinate) const;
-    QPointF mapToMercator(const QPointF&mapCoordinate) const;
-    void mapToTile(const QPointF& mapCoordinate, quint32* col, quint32* row) const;
-    quint64 getTileIndex(quint32 col, quint32 row) const;
-    QRectF getTileRect(quint32 col, quint32 row) const;
 
     void setRouteDetailLevel(quint32 pixels);
     quint32 routeDetailLevel() const;
@@ -164,6 +162,13 @@ public:
 private:
     Q_DISABLE_COPY(QMapView)
 
+    QPointF mercatorToMap(const QPointF& mercatorCoordinate) const;
+    QPointF mapToMercator(const QPointF&mapCoordinate) const;
+
+    void mapToTile(const QPointF& mapCoordinate, quint32* col, quint32* row) const;
+    QRectF getTileRect(quint32 col, quint32 row) const;
+    quint64 getTileIndex(quint32 col, quint32 row) const;
+
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
@@ -173,7 +178,7 @@ protected:
 
 public slots:
     void releaseRemoteTiles();
-    void tileFetched(QMapTileReply* reply);
+    void tileFetched(QGeoMapTileReply* reply);
     void setZoomLevel(int zoomLevel);
 
 signals:

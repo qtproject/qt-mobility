@@ -62,19 +62,16 @@ class QLandmarkIdPrivate : public QSharedData
 {
 public:
     QLandmarkIdPrivate()
-        : QSharedData()
-    {
+            : QSharedData() {
     }
 
     QLandmarkIdPrivate(const QLandmarkIdPrivate &other)
-        : QSharedData(other),
-        m_id(other.m_id),
-        m_databaseName(other.m_databaseName)
-    {
+            : QSharedData(other),
+            m_id(other.m_id),
+            m_databaseName(other.m_databaseName) {
     }
 
-    ~QLandmarkIdPrivate()
-    {
+    ~QLandmarkIdPrivate() {
     }
 
     QString m_id;

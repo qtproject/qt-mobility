@@ -57,14 +57,14 @@ public:
 };
 
 QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate()
-    : QLandmarkFilterPrivate()
+        : QLandmarkFilterPrivate()
 {
 }
 
 QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QLandmarkBoxFilterPrivate &other)
-    : QLandmarkFilterPrivate(other),
-      topLeftCoord(other.topLeftCoord),
-      bottomRightCoord(other.bottomRightCoord)
+        : QLandmarkFilterPrivate(other),
+        topLeftCoord(other.topLeftCoord),
+        bottomRightCoord(other.bottomRightCoord)
 {
 }
 
@@ -84,7 +84,7 @@ QLandmarkBoxFilterPrivate::~QLandmarkBoxFilterPrivate()
 */
 QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &topLeft,
                                        const QGeoCoordinate &bottomRight)
-    : QLandmarkFilter(*new QLandmarkBoxFilterPrivate)
+        : QLandmarkFilter(*new QLandmarkBoxFilterPrivate)
 {
     Q_UNUSED(topLeft);
     Q_UNUSED(bottomRight);

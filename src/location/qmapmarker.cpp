@@ -50,10 +50,10 @@
 QTM_BEGIN_NAMESPACE
 
 QMapMarkerPrivate::QMapMarkerPrivate()
-    : pt(QGeoCoordinate()),
-      box(QRectF()), icn(QPixmap()),
-      txt(QString()), txtRect(QRectF()),
-      txtFont(QFont()), fColor(QColor())
+        : pt(QGeoCoordinate()),
+        box(QRectF()), icn(QPixmap()),
+        txt(QString()), txtRect(QRectF()),
+        txtFont(QFont()), fColor(QColor())
 {
 }
 
@@ -88,8 +88,7 @@ QMapMarker::QMapMarker(const QGeoCoordinate& point,
     if (d->icn.isNull()) {
         d->box.setHeight(MARKER_HEIGHT);
         d->box.setWidth(MARKER_WIDTH);
-    }
-    else {
+    } else {
         d->box.setHeight(d->icn.height());
         d->box.setWidth(d->icn.width());
     }
@@ -115,8 +114,7 @@ QMapMarker::QMapMarker(QMapMarkerPrivate &dd, const QGeoCoordinate& point,
     if (d->icn.isNull()) {
         d->box.setHeight(MARKER_HEIGHT);
         d->box.setWidth(MARKER_WIDTH);
-    }
-    else {
+    } else {
         d->box.setHeight(d->icn.height());
         d->box.setWidth(d->icn.width());
     }
@@ -175,13 +173,12 @@ void QMapMarker::compMapCoords()
         d->box.moveTop(d->mapPt.y() - (MARKER_HEIGHT - 1));
         d->intersectingTiles.clear();
         compIntersectingTiles(d->box);
-    }
-    else {
+    } else {
         d->mapPt = d->mapView->geoToMap(d->pt);
         d->box.moveLeft(d->mapPt.x() - (d->icn.width() / 2));
         d->box.moveTop(d->mapPt.y() - (d->icn.height() - 1));
         d->intersectingTiles.clear();
-        compIntersectingTiles(d->box);    
+        compIntersectingTiles(d->box);
     }
 }
 
@@ -236,7 +233,6 @@ void QMapMarker::paint(QPainter* painter, const QRectF& viewPort)
 
     painter->save();
     if (d->icn.isNull()) {
-        quint64 mapWidth = d->mapView->mapWidth();
         painter->translate(-viewPort.left(), -viewPort.top());
         painter->translate(d->mapPt.x(), d->mapPt.y());
         constructMarker(painter);

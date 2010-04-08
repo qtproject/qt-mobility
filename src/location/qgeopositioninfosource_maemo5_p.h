@@ -83,10 +83,10 @@ private:
         RequestSingleShot = 8
     };
     int positionInfoState;
-    
+
 signals:
     void positionUpdated(const QGeoPositionInfo &update);
-    
+
 public slots:
     void startUpdates();
     void stopUpdates();

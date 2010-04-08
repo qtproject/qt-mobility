@@ -90,7 +90,7 @@ QTM_USE_NAMESPACE
 
     If an empty \a managerName is specified, the default implementation for the platform will be used.
 */
-QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QString,QString> &parameters, QObject *parent)
+QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters, QObject *parent)
 {
     //TODO: implement
 }
@@ -159,7 +159,7 @@ bool QLandmarkManager::saveLandmark(QLandmark *landmark)
     (and become an invalid identifier).
 */
 bool QLandmarkManager::saveLandmarks(QList<QLandmark> *landmarks,
-                                     QMap<int, QLandmarkManager::Error> *errorMap )
+                                     QMap<int, QLandmarkManager::Error> *errorMap)
 {
     return false;
 }
@@ -190,7 +190,7 @@ bool QLandmarkManager::removeLandmark(const QLandmarkId &landmarkId)
     \sa QLandmarkManager::removeLandmark()
 */
 bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
-                                QMap<int, QLandmarkManager::Error> *errorMap)
+                                       QMap<int, QLandmarkManager::Error> *errorMap)
 {
     return false;
 }
@@ -270,7 +270,7 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
 */
-QList<QLandmark> QLandmarkManager::landmarks( const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders) const
 {
     return QList<QLandmark>();
 }
@@ -288,8 +288,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     Returns a list of landmark identifiers of landmarks that match the given \a filter, sorted
     according to the given \a sortOrders.
 */
-QList<QLandmarkId> QLandmarkManager::landmarkIds( const QLandmarkFilter &filter,
-                            const QList<QLandmarkSortOrder> &sortOrders) const
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
+        const QList<QLandmarkSortOrder> &sortOrders) const
 {
     return QList<QLandmarkId>(); //TODO: implement
 }

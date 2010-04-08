@@ -47,7 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 QMapRoutePrivate::QMapRoutePrivate()
-    :rt(QRoute()), rPen(QPen())
+        : rt(QGeoRoute()), rPen(QPen())
 {
 }
 
@@ -57,14 +57,14 @@ QMapRoutePrivate::QMapRoutePrivate()
     \ingroup location
 
     The representation of a route that has been added to the map.
-    It keeps track of all indivdual QRouteSegments.
+    It keeps track of all indivdual QGeoRouteSegments.
 */
 
 /*!
     Constructor.
     The \a route represents the route that this map route represents.
 */
-QMapRoute::QMapRoute(const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
+QMapRoute::QMapRoute(const QGeoRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
         : QMapObject(*new QMapRoutePrivate, QMapObject::RouteObject, layerIndex)
 {
     Q_D(QMapRoute);
@@ -73,7 +73,7 @@ QMapRoute::QMapRoute(const QRoute& route, const QPen& pen, const QPixmap& /*endp
     //TODO: endpoint marker for routes
 }
 
-QMapRoute::QMapRoute(QMapRoutePrivate &dd, const QRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
+QMapRoute::QMapRoute(QMapRoutePrivate &dd, const QGeoRoute& route, const QPen& pen, const QPixmap& /*endpointMarker*/, quint16 layerIndex)
         : QMapObject(dd, QMapObject::RouteObject, layerIndex)
 {
     Q_D(QMapRoute);
@@ -87,7 +87,8 @@ QMapRoute::QMapRoute(QMapRoutePrivate &dd, const QRoute& route, const QPen& pen,
 
     Retunrs the pen used for drawing this route.
 */
-QPen QMapRoute::pen() const {
+QPen QMapRoute::pen() const
+{
     Q_D(const QMapRoute);
     return d->rPen;
 }
@@ -154,7 +155,7 @@ void QMapRoute::addSegment(const QLineF& line)
         it.next();
 
         if (it.isValid()) {
-            quint64 tileIndex = d->mapView->getTileIndex(it.col(), it.row());
+            quint64 tileIndex = it.index();
 
             if (!d->segments.contains(tileIndex))
                 d->segments.insert(tileIndex, QList<QLineF>());
@@ -191,7 +192,7 @@ bool QMapRoute::intersects(const QRectF& rect) const
         if (!it.isValid())
             continue;
 
-        quint64 tileIndex = d->mapView->getTileIndex(it.col(), it.row());
+        quint64 tileIndex = it.index();
 
         if (d->segments.contains(tileIndex)) {
             QRectF tile = it.tileRect();
@@ -230,7 +231,7 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
         if (!it.isValid())
             continue;
 
-        quint64 tileIndex = d->mapView->getTileIndex(it.col(), it.row());
+        quint64 tileIndex = it.index();
 
         if (d->segments.contains(tileIndex)) {
             QListIterator<QLineF> lit(d->segments[tileIndex]);

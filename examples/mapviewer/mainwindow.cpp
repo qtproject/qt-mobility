@@ -51,28 +51,38 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "qmaptile.h"
-#include "qrouterequest.h"
+#include "qgeomaptile.h"
+#include "qgeorouterequest.h"
 #include "qmapmarker.h"
 #include "qmapellipse.h"
 #include "qmaproute.h"
 #include "qmaprect.h"
 #include "qmapline.h"
 #include "qmappolygon.h"
+#include "qmappixmap.h"
 #include "qmapmarker.h"
+
+#include "qgeomapservice_nokia_p.h"
+#include "qgeoroutingservice_nokia_p.h"
 
 QTM_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::MainWindow),
-        geoNetworkManager("", "")
+        popupMenu(NULL)
 {
     ui->setupUi(this);
 
+    QGeoMapServiceNokia *mService = new QGeoMapServiceNokia();
+    QGeoRoutingServiceNokia *rService = new QGeoRoutingServiceNokia();
+
     QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.41", 8080);
-    geoNetworkManager.setMapProxy(proxy);
-    geoNetworkManager.setMapServer("maptile.mapplayer.maps.svc.ovi.com");
+    mService->setProxy(proxy);
+    mService->setHost("maptile.mapplayer.maps.svc.ovi.com");
+
+    mapService = mService;
+    routingService = rService;
 
     qgv = new QGraphicsView(this);
     qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -87,8 +97,8 @@ MainWindow::MainWindow(QWidget *parent) :
     qgv->scene()->addItem(mapView);
     mapView->setGeometry(0, 0, width(), height());
 
-    QObject::connect(&geoNetworkManager, SIGNAL(finished(QRouteReply*)),
-                     this, SLOT(routeReplyFinished(QRouteReply*)));
+    QObject::connect(routingService, SIGNAL(finished(QGeoRouteReply*)),
+                     this, SLOT(routeReplyFinished(QGeoRouteReply*)));
     QObject::connect(mapView, SIGNAL(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)),
                      this, SLOT(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)));
     QObject::connect(mapView, SIGNAL(zoomLevelChanged(quint16, quint16)),
@@ -107,18 +117,59 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //QGraphicsProxyWidget* proxy = qgv->scene()->addWidget(slider);
 
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+                     this, SLOT(customContextMenuRequest(const QPoint&)));
+
+    setWindowTitle(tr("Map Viewer Demo"));
+
+    QTimer::singleShot(0, this, SLOT(delayedInit()));
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+    delete mapService;
+    delete routingService;
+}
+
+void MainWindow::delayedInit()
+{
+#ifdef Q_OS_SYMBIAN
+    // Set Internet Access Point
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("MapViewer Example"), tr(
+                                     "Available Access Points not found."));
+        return;
+    }
+
+    session = new QNetworkSession(cfg, this);
+    session->open();
+    session->waitForOpened(-1);
+#endif
+
+    mapView->init(mapService, QGeoCoordinate(52.35, 13));
+}
+
+void MainWindow::createMenus()
+{
     popupMenu = new QMenu(this);
-    QAction* menuItem;    
+    QAction* menuItem;
     menuItem = new QAction(tr("Add marker here"), this);
     popupMenu->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(addMarker(bool)));
-    
+
     menuItem = new QAction(tr("Add icon marker here"), this);
     popupMenu->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(addIconMarker(bool)));
-    
+
     menuItem = new QAction(tr(""), this);
     menuItem->setSeparator(true);
     popupMenu->addAction(menuItem);
@@ -127,10 +178,10 @@ MainWindow::MainWindow(QWidget *parent) :
     popupMenu->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(setRtFromTo(bool)));
-    
+
     QMenu* subMenuItem = new QMenu(tr("Draw"), this);
     popupMenu->addMenu(subMenuItem);
-    
+
     menuItem = new QAction(tr("Line"), this);
     subMenuItem->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
@@ -151,6 +202,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(drawPolygon(bool)));
 
+    menuItem = new QAction(tr("Pixmap"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawPixmap(bool)));
+
     menuItem = new QAction(tr(""), this);
     menuItem->setSeparator(true);
     popupMenu->addAction(menuItem);
@@ -159,61 +215,27 @@ MainWindow::MainWindow(QWidget *parent) :
     popupMenu->addAction(mnDay);
     QObject::connect(mnDay, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
-    
+
     mnSat = new QAction(tr("Satellite"), this);
     popupMenu->addAction(mnSat);
     QObject::connect(mnSat, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
-    
+
     mnTer = new QAction(tr("Terrain"), this);
     popupMenu->addAction(mnTer);
     QObject::connect(mnTer, SIGNAL(triggered(bool)),
                      this, SLOT(setScheme(bool)));
-    
+
     menuItem = new QAction(tr(""), this);
     menuItem->setSeparator(true);
     popupMenu->addAction(menuItem);
-    
+
     menuItem = new QAction(tr("Exit"), this);
     popupMenu->addAction(menuItem);
     QObject::connect(menuItem, SIGNAL(triggered(bool)),
                      this, SLOT(close()));
-
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
-            this, SLOT(customContextMenuRequest(const QPoint&)));
-    
-    setWindowTitle(tr("Map Viewer Demo"));
-    
-    QTimer::singleShot(0, this, SLOT(delayedInit()));
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
-void MainWindow::delayedInit()
-{
-#ifdef Q_OS_SYMBIAN
-    // Set Internet Access Point
-    QNetworkConfigurationManager manager;
-    const bool canStartIAP = (manager.capabilities()
-                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
-    // Is there default access point, use it
-    QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
-        QMessageBox::information(this, tr("MapViewer Example"), tr(
-                                     "Available Access Points not found."));
-        return;
-    }
-  
-    session = new QNetworkSession(cfg, this);
-    session->open();
-    session->waitForOpened(-1);
-#endif
-
-    mapView->init(&geoNetworkManager, QGeoCoordinate(52.35, 13));
-}
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
     qgv->resize(event->size());
@@ -233,9 +255,9 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::routeReplyFinished(QRouteReply* reply)
+void MainWindow::routeReplyFinished(QGeoRouteReply* reply)
 {
-    QList<QRoute> routes = reply->routes();
+    QList<QGeoRoute> routes = reply->routes();
 
     if (routes.size() > 0) {
         QColor routeColor(Qt::blue);
@@ -254,8 +276,11 @@ void MainWindow::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* /
 
 void MainWindow::customContextMenuRequest(const QPoint& point)
 {
-    if(focusWidget()==qgv)
+    if (focusWidget() == qgv) {
+        if (!popupMenu)
+            createMenus();
         popupMenu->popup(mapToGlobal(point));
+    }
 }
 
 void MainWindow::mapObjectSelected(QMapObject* /*mapObject*/)
@@ -271,15 +296,14 @@ void MainWindow::setRtFromTo(bool /*checked*/)
 
     QGeoCoordinate from = selectedMarkers.first()->point();
     QGeoCoordinate to = selectedMarkers.last()->point();
-    QRouteRequest request;
+    QGeoRouteRequest request;
     request.setSource(from);
     request.setDestination(to);
 
-    for (int i = 1; i < selectedMarkers.count() - 1; i++) {
+    for (int i = 1; i < selectedMarkers.count() - 1; i++)
         request.addStopOver(selectedMarkers[i]->point());
-    }
 
-    geoNetworkManager.get(request);
+    routingService->getRoute(request);
     selectedMarkers.clear();
 }
 
@@ -310,8 +334,8 @@ void MainWindow::addMarker(bool /*checked*/)
 void MainWindow::addIconMarker(bool /*checked*/)
 {
     QMapMarker* marker = new QMapMarker(lastClicked, QString::number(selectedMarkers.count() + 1),
-                                            QFont("Arial", 6, QFont::Bold), QColor(Qt::black),
-                                            QPixmap(":/marker/house.png"));    
+                                        QFont("Arial", 8, QFont::Bold), QColor(Qt::black),
+                                        QPixmap(":/marker/images/house.png"));
     mapView->addMapObject(marker);
     selectedMarkers.append(marker);
 }
@@ -364,9 +388,8 @@ void MainWindow::drawPolygon(bool /*checked*/)
 {
     QList<QGeoCoordinate> coords;
 
-    for (int i = 0; i < selectedMarkers.count(); i++) {
+    for (int i = 0; i < selectedMarkers.count(); i++)
         coords.append(selectedMarkers[i]->point());
-    }
 
     QPen pen(Qt::white);
     pen.setWidth(2);
@@ -376,3 +399,11 @@ void MainWindow::drawPolygon(bool /*checked*/)
     selectedMarkers.clear();
 }
 
+void MainWindow::drawPixmap(bool /*checked*/)
+{
+    if (selectedMarkers.count())
+        mapView->addMapObject(new QMapPixmap(selectedMarkers[0]->point(),
+                                             QPixmap(":/logo/images/qt.png"), 1));
+
+    selectedMarkers.clear();
+}

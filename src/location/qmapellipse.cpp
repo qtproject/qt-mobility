@@ -46,9 +46,9 @@
 QTM_BEGIN_NAMESPACE
 
 QMapEllipsePrivate::QMapEllipsePrivate()
-    :geoTopLeft(QGeoCoordinate()),
-     geoBottomRight(QGeoCoordinate()),
-     p(QPen()), b(QBrush())
+        : geoTopLeft(QGeoCoordinate()),
+        geoBottomRight(QGeoCoordinate()),
+        p(QPen()), b(QBrush())
 {
 }
 
@@ -66,8 +66,8 @@ QMapEllipsePrivate::QMapEllipsePrivate()
     \a layerIndex.
 */
 QMapEllipse::QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-            const QPen& pen, const QBrush& brush, quint16 layerIndex)
-    :QMapObject(*new QMapEllipsePrivate, QMapObject::EllipseObject, layerIndex)
+                         const QPen& pen, const QBrush& brush, quint16 layerIndex)
+        : QMapObject(*new QMapEllipsePrivate, QMapObject::EllipseObject, layerIndex)
 {
     Q_D(QMapEllipse);
     d->geoTopLeft = topLeft;
@@ -80,8 +80,8 @@ QMapEllipse::QMapEllipse(const QGeoCoordinate& topLeft, const QGeoCoordinate& bo
     \internal
 */
 QMapEllipse::QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, const QGeoCoordinate& bottomRight,
-            const QPen& pen, const QBrush& brush, quint16 layerIndex)
-    :QMapObject(dd, QMapObject::EllipseObject, layerIndex)
+                         const QPen& pen, const QBrush& brush, quint16 layerIndex)
+        : QMapObject(dd, QMapObject::EllipseObject, layerIndex)
 {
     Q_D(QMapEllipse);
     d->geoTopLeft = topLeft;
@@ -93,7 +93,8 @@ QMapEllipse::QMapEllipse(QMapEllipsePrivate &dd, const QGeoCoordinate& topLeft, 
 /*!
     Returns the top left geo coordinate of the bounding box of the ellipse.
 */
-QGeoCoordinate QMapEllipse::topLeft() const {
+QGeoCoordinate QMapEllipse::topLeft() const
+{
     Q_D(const QMapEllipse);
     return d->geoTopLeft;
 }
@@ -101,7 +102,8 @@ QGeoCoordinate QMapEllipse::topLeft() const {
 /*!
     Returns the bottom right geo coordinate of the bounding box of the ellipse.
 */
-QGeoCoordinate QMapEllipse::bottomRight() const {
+QGeoCoordinate QMapEllipse::bottomRight() const
+{
     Q_D(const QMapEllipse);
     return d->geoBottomRight;
 }
@@ -109,14 +111,16 @@ QGeoCoordinate QMapEllipse::bottomRight() const {
 /*!
     Returns the pen used for drawing the ellipse.
 */
-QPen QMapEllipse::pen() const {
+QPen QMapEllipse::pen() const
+{
     Q_D(const QMapEllipse);
     return d->p;
 }
 /*!
 *   Returns the brush used for drawing the ellipse.
 */
-QBrush QMapEllipse::brush() const {
+QBrush QMapEllipse::brush() const
+{
     Q_D(const QMapEllipse);
     return d->b;
 }
@@ -132,13 +136,13 @@ void QMapEllipse::compMapCoords()
 
     if (p2.y() < p1.y()) {
         qreal y = p2.y();
-        p2.setY( p1.y() );
+        p2.setY(p1.y());
         p1.setY(y);
     }
 
     //Lines will always connect points from west to east.
     //If we cross the date line, we need to split.
-    if ( d->geoTopLeft.longitude() > d->geoBottomRight.longitude() )
+    if (d->geoTopLeft.longitude() > d->geoBottomRight.longitude())
         p2.rx() += d->mapView->mapWidth();
 
     QRectF rect(p1, p2);

@@ -52,7 +52,7 @@ class QLandmarkAbstractRequest : public QObject
 {
     Q_OBJECT
 public:
-    enum State{
+    enum State {
         InactiveState = 0,
         ActiveState,
         CanceledState,

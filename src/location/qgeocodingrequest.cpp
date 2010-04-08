@@ -52,17 +52,11 @@ QTM_BEGIN_NAMESPACE
     This class represents a geocoding request.
 */
 
-QGeocodingRequestPrivate::QGeocodingRequestPrivate()
-{
-    vers = "1.0";
-    languageMARC = "eng";
-}
-
 /*!
     Default constructor.
 */
 QGeocodingRequest::QGeocodingRequest()
-    : d_ptr(new QGeocodingRequestPrivate())
+        : d_ptr(new QGeocodingRequestPrivate())
 {
 }
 /*!
@@ -96,7 +90,7 @@ QString QGeocodingRequest::language() const
 
 /*!
     Sets the language code to \a language.
-    
+
     This function assumes that \a language is a MARC language code.
 */
 void QGeocodingRequest::setLanguage(const QString& language)
@@ -118,10 +112,10 @@ QString QGeocodingRequest::oneBoxLocation() const
 }
 
 /*!
-    Sets the OneBox location description to \a obloc, 
+    Sets the OneBox location description to \a obloc,
 
     This function assumes that \a obloc is a OneBox location description.
-    
+
     This contains all the location information like country, state, city,
     street in one string without any specific order,
     that will be processed by the OneBox-Search to extract
@@ -148,8 +142,8 @@ QString QGeocodingRequest::country() const
 }
 
 /*!
-    Sets the name of the country to \a country. 
-    
+    Sets the name of the country to \a country.
+
     It is required that either this function or setOneBoxLocation() are used.
 */
 void QGeocodingRequest::setCountry(const QString& country)
@@ -248,6 +242,68 @@ void QGeocodingRequest::setNumber(const QString& number)
     d->num = number;
 }
 
+/*!
+  Returns the request string for this request and the given \a host.
+*/
+QString QGeocodingRequest::requestString(const QString &host) const
+{
+    Q_D(const QGeocodingRequest);
+    return d->requestString(host);
+}
+
+/******************************************************************************
+  ****************************************************************************/
+
+QGeocodingRequestPrivate::QGeocodingRequestPrivate()
+{
+    vers = "1.0";
+    languageMARC = "eng";
+}
+
+QString QGeocodingRequestPrivate::requestString(const QString &host) const
+{
+    QString request = "http://";
+    request += host;
+    request += "/geocoder/gc/";
+    request += vers;
+    request += "?referer=localhost";
+
+    if (languageMARC != "") {
+        request += "&lg=";
+        request += languageMARC;
+    }
+
+    if (obloc.isEmpty()) {
+        request += "&country=";
+        request += cntry;
+
+        if (!st.isEmpty()) {
+            request += "&state=";
+            request += st;
+        }
+        if (!cty.isEmpty()) {
+            request += "&city=";
+            request += cty;
+        }
+        if (!pCode.isEmpty()) {
+            request += "&zip=";
+            request += pCode;
+        }
+        if (!strt.isEmpty()) {
+            request += "&street=";
+            request += strt;
+        }
+        if (!num.isEmpty()) {
+            request += "&number=";
+            request += num;
+        }
+    } else {
+        request += "&obloc=";
+        request += obloc;
+    }
+
+    return request;
+}
 
 QTM_END_NAMESPACE
 

@@ -96,6 +96,6 @@ QList<int> QLandmarkManagerEngineFactory::supportedImplementationVersions() cons
     invalid QLandmarkManager in return.  Errors are stored in \a error and \a errorString.
  */
 
- QTM_END_NAMESPACE
+QTM_END_NAMESPACE
 
 

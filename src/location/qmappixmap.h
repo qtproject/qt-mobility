@@ -47,7 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QMapPixmapPrivate;
-class QMapPixmap : public QMapObject
+class Q_LOCATION_EXPORT QMapPixmap : public QMapObject
 {
     friend class QMapView;
 
@@ -63,7 +63,7 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
     QMapPixmap(QMapPixmapPrivate &dd, const QGeoCoordinate& topLeft, const QPixmap& pixmap,
-            quint16 layerIndex = 0);
+               quint16 layerIndex = 0);
 
 private:
     Q_DECLARE_PRIVATE(QMapPixmap)

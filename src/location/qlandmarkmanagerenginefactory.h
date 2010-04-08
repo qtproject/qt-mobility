@@ -54,10 +54,10 @@ class Q_LOCATION_EXPORT QLandmarkManagerEngineFactory
 public:
     virtual QList<int> supportedImplementationVersions() const;
     virtual ~QLandmarkManagerEngineFactory();
-    virtual QLandmarkManagerEngine *engine(const QMap<QString,QString> &parameters,
+    virtual QLandmarkManagerEngine *engine(const QMap<QString, QString> &parameters,
                                            QLandmarkManager::Error *error,
                                            QString *errorString) = 0;
-    virtual QString managerName() const =0;
+    virtual QString managerName() const = 0;
 };
 
 QTM_END_NAMESPACE
