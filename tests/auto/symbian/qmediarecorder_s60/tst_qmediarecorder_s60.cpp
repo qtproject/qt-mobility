@@ -155,9 +155,11 @@ void tst_QMediaRecorder::testMediaFormatsControl()
 /*
 void tst_QMediaRecorder::testDefaultAudioEncodingSettings()
 {
-  QAudioEncoderSettings audioSettings = capture->audioSettings();
-    QCOMPARE(audioSettings.codec(), QString("audio/pcm"));
-    QCOMPARE(audioSettings.bitRate(), 128*1024);
+    QAudioEncoderSettings audioSettings = audiocapture->audioSettings();
+    QCOMPARE(audioSettings.codec(), QString("AMR"));
+    QString format = audiocapture->containerMimeType();
+    QCOMPARE(format, QString("audio/amr"));
+/*    QCOMPARE(audioSettings.bitRate(), 128*1024);
     QCOMPARE(audioSettings.sampleRate(), -1);
     QCOMPARE(audioSettings.quality(), QtMedia::NormalQuality);
     QCOMPARE(audioSettings.channelCount(), -1);

@@ -438,7 +438,11 @@ void clearMessageStore()
     QStringList CREATED_FOLDERS = QStringList() << QString("Root")
                                                 << QString("Unbox")
                                                 << QString("Archived")
-                                                << QString("Backup");
+                                                << QString("Backup")
+                                                << QString("My messages")
+                                                << QString("Innbox")
+                                                << QString("X-Announce")
+                                                << QString("X-Archived");
 
     QMessageFolderId folderId;
 
@@ -1016,9 +1020,16 @@ QMessageFolderId addFolder(const Parameters &params)
     QDBusPendingCallWatcher pendingCallWatcher(pendingCall);
     pendingCallWatcher.waitForFinished();
 
+    // Escape account name (to be used in FolderId)
+    QString escapedAccountName;
+    gchar *escaped;
+    escaped = gconf_escape_key (accountName.toLocal8Bit().data(), -1);
+    escapedAccountName = escaped;
+    g_free (escaped);
+
     QDBusMessage msg = pendingCallWatcher.reply();
     if (msg.type() == QDBusMessage::ReplyMessage) {
-        folderId = QMessageFolderId("MO_"+accountName+"ID"+"&maildir&"+folderName);
+        folderId = QMessageFolderId("MO_"+escapedAccountName+"ID"+"&maildir&"+folderName);
     }
 
     return folderId;

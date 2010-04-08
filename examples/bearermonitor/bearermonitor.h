@@ -46,6 +46,8 @@
 #include <qnetworksession.h>
 #if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE)	
 #include "ui_bearermonitor_240_320.h"
+#elif defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "ui_bearermonitor_maemo.h"
 #else
 #include "ui_bearermonitor_640_480.h"
 #endif
@@ -80,8 +82,9 @@ private slots:
 
     void createSessionFor(QTreeWidgetItem *item);
     void createNewSession();
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     void deleteSession();
-
+#endif
     void performScan();
 
 private:

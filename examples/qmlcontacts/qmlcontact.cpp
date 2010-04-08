@@ -47,7 +47,7 @@
 QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
-QmlContact::QmlContact(QContact& contact, QObject *parent)
+QmlContact::QmlContact(const QContact& contact, QObject *parent)
     : QObject(parent), m_contact(contact)
 {   
 }
@@ -75,50 +75,7 @@ void QmlContact::setContact(QContact& contact)
 
 QString QmlContact::name()
 {
-    QList<QContactDetail> allNames = m_contact.details(QContactName::DefinitionName);
-
-    const QLatin1String space(" ");
-
-    // synthesise the display label from the name.
-    for (int i=0; i < allNames.size(); i++) {
-        const QContactName& name = allNames.at(i);
-
-        QString result;
-        if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
-           result += name.value(QContactName::FieldPrefix);
-        }
-
-        if (!name.value(QContactName::FieldFirstName).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldFirstName);
-        }
-
-        if (!name.value(QContactName::FieldMiddleName).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldMiddleName);
-        }
-
-        if (!name.value(QContactName::FieldLastName).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldLastName);
-        }
-
-        if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QContactName::FieldSuffix);
-        }
-
-        if (!result.isEmpty()) {
-            return result;
-        }
-    }
-
-
-    return QString("noName");
+    return m_contact.displayLabel();
 }
 
 void QmlContact::setName(QString name)

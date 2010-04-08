@@ -49,7 +49,9 @@
 #include <QtGui/qvector4d.h>
 
 class LightPrivate;
+QT_BEGIN_NAMESPACE
 class QMatrix4x4;
+QT_END_NAMESPACE
 
 class Light : public QObject
 {

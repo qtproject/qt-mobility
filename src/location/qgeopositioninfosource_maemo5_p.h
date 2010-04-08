@@ -89,10 +89,7 @@ private:
         Started = 1,
         Stopped = 2,
         RequestActive = 4,
-        RequestSingleShot = 8,
-        PowersaveActive = 16,
-        GpsOn = 32,
-        RequestAndStop = 64
+        PowersaveActive = 8
     };
     int positionInfoState;
     
