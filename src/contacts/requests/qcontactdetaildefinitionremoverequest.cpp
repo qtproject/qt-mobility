@@ -63,11 +63,6 @@ QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest()
 {
 }
 
-/*! Cleans up the memory in use by this detail definition remove request */
-QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
-{
-}
-
 /*!
   Sets the type of contact for which detail definitions should be removed to \a contactType, and the names of the detail definitions to remove from the manager to \a names.
   Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such

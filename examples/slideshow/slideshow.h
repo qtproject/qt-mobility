@@ -48,6 +48,7 @@
 QT_BEGIN_NAMESPACE
 class QAbstractButton;
 class QLabel;
+class QStackedLayout;
 QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
@@ -62,21 +63,31 @@ class SlideShow : public QWidget
 public:
     SlideShow(QWidget *parent = 0);
 
+signals:
+    void enableButtons(bool enable);
+
 private slots:
     void openPlaylist();
     void openDirectory();
-    void openLocation();
 
     void play();
 
     void stateChanged(QMediaImageViewer::State state);
+    void statusChanged(QMediaImageViewer::MediaStatus status);
+
+    void playlistLoaded();
+    void playlistLoadFailed();
+
+    void elapsedTimeChanged(int time);
 
 private:
     QMediaImageViewer *imageViewer;
     QMediaPlaylist *playlist;
-    QLabel *imageLabel;
+    QLabel *statusLabel;
+    QLabel *countdownLabel;
     QAbstractButton *playButton;
     QAbstractButton *stopButton;
+    QStackedLayout *viewerLayout;
 };
 
 #endif

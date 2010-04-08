@@ -19,5 +19,5 @@ QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 CONFIG += mobility console
 MOBILITY = contacts
 
-SOURCES += qtcontactsdocsample.cpp
+SOURCES += qtcontactsdocsample.cpp qtcontactsdocsampleasync.cpp
 HEADERS += requestexample.h

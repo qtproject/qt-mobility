@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#include <qmediarecorder.h>
+#include "qmediarecorder.h"
 
-#include <qmediarecordercontrol.h>
-#include <qmediaobject_p.h>
-#include <qmediaservice.h>
-#include <qmediaserviceprovider.h>
-#include <qaudioencodercontrol.h>
-#include <qvideoencodercontrol.h>
-#include <qmediacontainercontrol.h>
+#include "qmediarecordercontrol.h"
+#include "qmediaobject_p.h"
+#include "qmediaservice.h"
+#include "qmediaserviceprovider.h"
+#include "qaudioencodercontrol.h"
+#include "qvideoencodercontrol.h"
+#include "qmediacontainercontrol.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>

@@ -500,10 +500,23 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
 
+  If the given list of contact ids \a contactIds is empty, the function will return false
+  and calling error() will return \c QContactManager::BadArgumentError.  If the list is non-empty
+  and contains ids which do not identify a valid contact in the manager, the function will
+  remove any contacts which are identified by ids in the \a contactIds list, insert
+  \c QContactManager::DoesNotExist entries into the \a errorMap for the indices of invalid ids
+  in the \a contactIds list, return false, and set the overall operation error to
+  \c QContactManager::DoesNotExistError.
+
   \sa QContactManager::removeContact()
  */
 bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
+    if (contactIds.isEmpty()) {
+        d->m_error = QContactManager::BadArgumentError;
+        return false;
+    }
+
     if (errorMap)
         errorMap->clear();
     return d->m_engine->removeContacts(contactIds, errorMap, &d->m_error);
@@ -699,7 +712,6 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
   \value DetailOrdering When a contact is retrieved, the manager will return the details in the same order in which they were saved
   \value Relationships The manager supports at least some types of relationships between contacts
   \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts
-  \value RelationshipOrdering The manager supports relationships (re)ordering
   \value MutableDefinitions The manager supports saving, updating or removing detail definitions.  Some built-in definitions may still be immutable
   \value SelfContact The manager supports the concept of saving a contact which represents the current user
   \value ChangeLogs The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps

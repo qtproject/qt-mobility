@@ -56,8 +56,8 @@ class Q_CONTACTS_EXPORT QContactGuid : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldGuid;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldGuid;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGuid, "Guid")
     Q_DECLARE_LATIN1_CONSTANT(FieldGuid, "Guid");

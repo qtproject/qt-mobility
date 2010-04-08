@@ -195,7 +195,7 @@ QGeoPositionInfo CQGeoPositionInfoSourceS60::lastKnownPosition(bool aFromSatelli
                                    datetime.MicroSecond() / 1000));
 
                 //store the time stamp
-                posUpdate.setDateTime(dt);
+                posUpdate.setTimestamp(dt);
 
                 //store the horizontal accuracy
                 posUpdate.setAttribute(QGeoPositionInfo::HorizontalAccuracy, pos.HorizontalAccuracy());
@@ -607,7 +607,7 @@ void CQGeoPositionInfoSourceS60::TPositionInfo2QGeoPositionInfo(
                        datetime.MicroSecond() / 1000));
 
     //store the time stamp
-    aPosInfo2.setDateTime(dt);
+    aPosInfo2.setTimestamp(dt);
 
     //store the horizontal accuracy
     aPosInfo2.setAttribute(QGeoPositionInfo::HorizontalAccuracy, pos.HorizontalAccuracy());

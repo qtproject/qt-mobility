@@ -78,6 +78,8 @@ public:
                        QContact* contact, QVersitContactImporter::Error* error);
     QList<QVersitProperty> unconvertedVersitProperties();
 
+    static QString synthesizedDisplayLabel(const QContact& contact);
+
 private:
     void importProperty(const QVersitDocument& document, const QVersitProperty& property,
                         int contactIndex, QContact* contact) const;
@@ -98,7 +100,7 @@ private:
     bool createGeoLocation(const QVersitProperty& property, QContact* contact) const;
     bool createFamily(const QVersitProperty& property, QContact* contact) const;
     bool createNameValueDetail(const QVersitProperty& property, QContact* contact) const;
-    bool createLabel(const QVersitProperty& property, QContact* contact) const;
+    bool createCustomLabel(const QVersitProperty& property, QContact* contact) const;
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QString>& list) const;

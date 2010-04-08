@@ -54,6 +54,8 @@
 
 #include "mapwindow.h"
 
+QTM_USE_NAMESPACE
+
 // Use the special 'localhost' key for the Google Maps key
 const QString GMAPS_STATICMAP_URL_TEMPLATE =  "http://maps.google.com/staticmap?center=%1,%2&zoom=14&size=%3x%4&map type=mobile&markers=%1,%2&key=ABQIAAAAnfs7bKE82qgb3Zc2YyS-oBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSySz_REpPq-4WZA27OwgbtyR3VcA&sensor=false";
 
@@ -156,14 +158,14 @@ void MapWindow::delayedInit()
     const bool canStartIAP = (manager.capabilities()
                               & QNetworkConfigurationManager::CanStartAndStopInterfaces);
     // Is there default access point, use it
-    QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
         QMessageBox::information(this, tr("Flickr Demo"), tr(
                                      "Available Access Points not found."));
         return;
     }
 
-    session = new QNetworkSession(cfg, this);
+    session = new QTM_PREPEND_NAMESPACE(QNetworkSession)(cfg, this);
     session->open();
     session->waitForOpened(-1);
 #endif
@@ -222,7 +224,7 @@ void MapWindow::positionUpdated(const QGeoPositionInfo &info)
     headingAndSpeedLabel->setText(tr("Bearing %1, travelling at %2 km/h").arg(heading).arg(speed));
 
     dateTimeLabel->setText(tr("(Last update: %1)").
-                           arg(info.dateTime().toLocalTime().time().toString()));
+                           arg(info.timestamp().toLocalTime().time().toString()));
 
     if (!loading) {
         // Google Maps does not provide maps larger than 640x480

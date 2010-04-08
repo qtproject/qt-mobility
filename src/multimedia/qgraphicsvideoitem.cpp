@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <qgraphicsvideoitem.h>
+#include "qgraphicsvideoitem.h"
 
-#include <qmediaobject.h>
-#include <qmediaservice.h>
-#include <qpaintervideosurface_p.h>
-#include <qvideooutputcontrol.h>
-#include <qvideorenderercontrol.h>
+#include "qmediaobject.h"
+#include "qmediaservice.h"
+#include "qpaintervideosurface_p.h"
+#include "qvideooutputcontrol.h"
+#include "qvideorenderercontrol.h"
 
 #include <QtCore/qcoreevent.h>
 

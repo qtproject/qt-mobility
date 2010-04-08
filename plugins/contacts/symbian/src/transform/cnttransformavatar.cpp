@@ -52,7 +52,8 @@ QList<CContactItemField *> CntTransformAvatar::transformDetailL(const QContactDe
     const QContactAvatar &avatar(static_cast<const QContactAvatar&>(detail));
 
     //create new field
-    TPtrC fieldText(reinterpret_cast<const TUint16*>(avatar.imageUrl().toString().utf16()));
+    QString urlString = avatar.imageUrl().toString();
+    TPtrC fieldText(reinterpret_cast<const TUint16*>(urlString.utf16()));
 
     //copy filename and replace slash with a backslash
     TFileName filename;
@@ -125,7 +126,7 @@ QList<TUid> CntTransformAvatar::supportedSortingFieldTypes(QString /*detailField
  * \a subType The subtype to be checked
  * \return True if this subtype is supported
  */
-bool CntTransformAvatar::supportsSubType(const QString& subType) const
+bool CntTransformAvatar::supportsSubType(const QString& /*subType*/) const
 {
     // XXX todo
     return false;
@@ -137,7 +138,7 @@ bool CntTransformAvatar::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
+quint32 CntTransformAvatar::getIdForField(const QString& /*fieldName*/) const
 {
     // XXX todo
     return 0;
@@ -161,6 +162,8 @@ void CntTransformAvatar::detailDefinitions(QMap<QString, QContactDetailDefinitio
 
         // We only support imageUrl
         fields.remove(QContactAvatar::FieldVideoUrl);
+        // Context not supported in symbian back-end, remove
+        fields.remove(QContactAvatar::FieldContext);
 
         d.setFields(fields);
         d.setUnique(true);

@@ -42,7 +42,7 @@
 #ifndef DIRECTSHOWAUDIOENDPOINTCONTROL_H
 #define DIRECTSHOWAUDIOENDPOINTCONTROL_H
 
-#include <qaudioendpointselector.h>
+#include "../../src/multimedia/qaudioendpointselector.h"
 
 #include <dshow.h>
 

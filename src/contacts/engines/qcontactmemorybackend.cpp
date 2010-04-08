@@ -108,10 +108,8 @@ QContactMemoryEngine* QContactMemoryEngine::createMemoryEngine(const QMap<QStrin
 }
 
 /*!
- * Constructs a new in-memory backend.
- *
- * Loads the in-memory data associated with the memory store identified by the "id" parameter
- * from the given \a parameters if it exists, or a new, anonymous store if it does not.
+ * Constructs a new in-memory backend which shares the given \a data with
+ * other shared memory engines.
  */
 QContactMemoryEngine::QContactMemoryEngine(QContactMemoryEngineData* data)
     : d(data)
@@ -119,7 +117,7 @@ QContactMemoryEngine::QContactMemoryEngine(QContactMemoryEngineData* data)
     d->m_sharedEngines.append(this);
 }
 
-/*! \reimp */
+/*! Frees any memory used by this engine */
 QContactMemoryEngine::~QContactMemoryEngine()
 {
     d->m_sharedEngines.removeAll(this);
@@ -185,6 +183,7 @@ QContact QContactMemoryEngine::contact(const QContactLocalId& contactId, const Q
     return QContact();
 }
 
+/*! \reimp */
 QList<QContactLocalId> QContactMemoryEngine::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
     /* Special case the fast case */
@@ -202,6 +201,7 @@ QList<QContactLocalId> QContactMemoryEngine::contactIds(const QContactFilter& fi
     }
 }
 
+/*! \reimp */
 QList<QContact> QContactMemoryEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
 {
     Q_UNUSED(fetchHint); // no optimisations are possible in the memory backend; ignore the fetch hint.
@@ -224,7 +224,8 @@ QList<QContact> QContactMemoryEngine::contacts(const QContactFilter& filter, con
     return sorted;
 }
 
-
+/*! Saves the given contact \a theContact, storing any error to \a error and
+    filling the \a changeSet with ids of changed contacts as required */
 bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // ensure that the contact's details conform to their definitions
@@ -249,8 +250,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         theContact->saveDetail(&ts);
 
         // synthesize the display label for the contact.
-        QContact saveContact = setContactDisplayLabel(synthesizedDisplayLabel(*theContact, error), *theContact);
-        *theContact = saveContact;
+        setContactDisplayLabel(theContact, synthesizedDisplayLabel(*theContact, error));
 
         // Looks ok, so continue
         d->m_contacts.replace(index, *theContact);
@@ -277,8 +277,7 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
         theContact->setId(newId);
 
         // synthesize the display label for the contact.
-        QContact saveContact = setContactDisplayLabel(synthesizedDisplayLabel(*theContact, error), *theContact);
-        *theContact = saveContact;
+        setContactDisplayLabel(theContact, synthesizedDisplayLabel(*theContact, error));
 
         // finally, add the contact to our internal lists and return
         d->m_contacts.append(*theContact);                   // add contact to list
@@ -322,6 +321,8 @@ bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
     return (*error == QContactManager::NoError);
 }
 
+/*! Removes the contact identified by the given \a contactId, storing any error to \a error and
+    filling the \a changeSet with ids of changed contacts and relationships as required */
 bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     int index = d->m_contactIds.indexOf(contactId);
@@ -363,6 +364,11 @@ bool QContactMemoryEngine::removeContact(const QContactLocalId& contactId, QCont
 /*! \reimp */
 bool QContactMemoryEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
+    if (contactIds.count() == 0) {
+        *error = QContactManager::BadArgumentError;
+        return false;
+    }
+    
     QContactChangeSet changeSet;
     QContactLocalId current;
     QContactManager::Error operationError = QContactManager::NoError;
@@ -414,6 +420,8 @@ QList<QContactRelationship> QContactMemoryEngine::relationships(const QString& r
     return retn;
 }
 
+/*! Saves the given relationship \a relationship, storing any error to \a error and
+    filling the \a changeSet with ids of changed contacts and relationships as required */
 bool QContactMemoryEngine::saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // Attempt to validate the relationship.
@@ -502,6 +510,8 @@ bool QContactMemoryEngine::saveRelationships(QList<QContactRelationship>* relati
     return (*error == QContactManager::NoError);
 }
 
+/*! Removes the given relationship \a relationship, storing any error to \a error and
+    filling the \a changeSet with ids of changed contacts and relationships as required */
 bool QContactMemoryEngine::removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // attempt to remove it from our list of relationships.
@@ -565,6 +575,8 @@ QMap<QString, QContactDetailDefinition> QContactMemoryEngine::detailDefinitions(
     return d->m_definitions.value(contactType);
 }
 
+/*! Saves the given detail definition \a def, storing any error to \a error and
+    filling the \a changeSet with ids of changed contacts as required */
 bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet. TODO.
@@ -592,6 +604,8 @@ bool QContactMemoryEngine::saveDetailDefinition(const QContactDetailDefinition& 
     return retn;
 }
 
+/*! Removes the detail definition identified by \a definitionId, storing any error to \a error and
+    filling the \a changeSet with ids of changed contacts as required */
 bool QContactMemoryEngine::removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error)
 {
     // we should check for changes to the database in this function, and add ids of changed data to changeSet...

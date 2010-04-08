@@ -83,7 +83,7 @@ bool DummyNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char* data,
     Q_UNUSED(size);
 
     posInfo->setCoordinate(QGeoCoordinate(callCount * 1.0, callCount * 1.0, callCount * 1.0));
-    posInfo->setDateTime(QDateTime::currentDateTime().toUTC());
+    posInfo->setTimestamp(QDateTime::currentDateTime().toUTC());
     *hasFix = true;
     ++callCount;
 

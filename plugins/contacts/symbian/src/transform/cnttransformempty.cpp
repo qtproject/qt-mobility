@@ -120,4 +120,10 @@ void CntTransformEmpty::detailDefinitions(QMap<QString, QContactDetailDefinition
     if(definitions.contains(QContactTag::DefinitionName)) {
         definitions.remove(QContactTag::DefinitionName);
     }
+    if(definitions.contains(QContactGlobalPresence::DefinitionName)) {
+        definitions.remove(QContactGlobalPresence::DefinitionName);
+    }
+    if(definitions.contains(QContactPresence::DefinitionName)) {
+        definitions.remove(QContactPresence::DefinitionName);
+    }
 }
