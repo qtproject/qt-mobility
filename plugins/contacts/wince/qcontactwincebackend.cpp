@@ -87,14 +87,14 @@ QContactWinCEEngine::QContactWinCEEngine(ContactWinceFactory* factory, const QSt
                 if(SUCCEEDED(d->m_app->GetDefaultFolder(olFolderContacts, &d->m_folder))) {
                     if(SUCCEEDED(d->m_folder->get_Items(&d->m_collection))) {
                         // Register/retrieve our custom ids
-                        LPCWSTR customIds[4] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META", L"QTCONTACTS_AVATAR_META",  L"QTCONTACTS_AVATAR_TYPE_META" };
+                        LPCWSTR customIds[4] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META", L"QTCONTACTS_AVATAR_IMAGE_META",  L"QTCONTACTS_AVATAR_VIDEO_META" };
                         CEPROPID outIds[4];
 
                         if (SUCCEEDED(d->m_app->GetIDsFromNames(4, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
                             d->m_phonemeta = outIds[0];
                             d->m_emailmeta = outIds[1];
-                            d->m_avatarmeta = outIds[2];
-                            d->m_avatartypemeta = outIds[3];
+                            d->m_avatarImageMeta = outIds[2];
+                            d->m_avatarVideoMeta = outIds[3];
                         }
 
                         // get an IPOLItems2 pointer for the collection, too
@@ -335,12 +335,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
     // No contexts for these details
     fields =  defns[contactType][QContactAvatar::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactAvatar::DefinitionName].setFields(fields);
 
     // Simple phone number types (non multiple)
@@ -433,14 +427,14 @@ QString QContactWinCEEngine::synthesizedDisplayLabel(const QContact& contact, QC
 
 
 
-PROPID QContactWinCEEngine::metaAvatar() const
+PROPID QContactWinCEEngine::metaAvatarImage() const
 {
-    return d->m_avatarmeta;
+    return d->m_avatarImageMeta;
 }
 
-PROPID QContactWinCEEngine::metaAvatarType() const
+PROPID QContactWinCEEngine::metaAvatarVideo() const
 {
-    return d->m_avatartypemeta;
+    return d->m_avatarVideoMeta;
 }
 
 PROPID QContactWinCEEngine::metaEmail() const
