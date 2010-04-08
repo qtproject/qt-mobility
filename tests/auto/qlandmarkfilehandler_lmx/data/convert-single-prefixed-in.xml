@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lm:lmx xmlns:lm="http://www.nokia.com/schemas/location/landmarks/1/0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.nokia.com/schemas/location/landmarks/1/0/ lmx.xsd">
+    <lm:landmark>
+        <lm:name>w0</lm:name>
+        <lm:description>Test data</lm:description>
+        <lm:coordinates>
+            <lm:latitude>1</lm:latitude>
+            <lm:longitude>2</lm:longitude>
+            <lm:altitude>3</lm:altitude>
+        </lm:coordinates>
+        <lm:coverageRadius>4</lm:coverageRadius>
+        <lm:addressInfo>
+            <lm:country>Australia</lm:country>
+            <lm:state>Queensland</lm:state>
+            <lm:city>Brisbane</lm:city>
+            <lm:postalCode>4000</lm:postalCode>
+            <lm:street>1 Main St</lm:street>
+            <lm:phoneNumber>123456789</lm:phoneNumber>
+        </lm:addressInfo>
+        <lm:mediaLink>
+            <lm:url>http://example.com/testUrl</lm:url>
+        </lm:mediaLink>
+        <lm:category>
+            <lm:id>10</lm:id>
+            <lm:name>cat0</lm:name>
+        </lm:category>
+        <lm:category>
+            <lm:id>11</lm:id>
+            <lm:name>cat1</lm:name>
+        </lm:category>
+        <lm:category>
+            <lm:id>12</lm:id>
+            <lm:name>cat2</lm:name>
+        </lm:category>
+    </lm:landmark>
+</lm:lmx>

@@ -57,6 +57,8 @@ PUBLIC_HEADERS += qgeoaddress.h \
 PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h \
                    qlandmark_p.h \
+                   qlandmarkfilehandler_gpx_p.h \
+                   qlandmarkfilehandler_lmx_p.h \
                    qlandmarkfilter_p.h \
                    qgeolocation_p.h
 
@@ -206,6 +208,8 @@ SOURCES += qlocationutils.cpp \
            qlandmarkid.cpp \
            qlandmark.cpp \
            qlandmarkmanager.cpp \
+           qlandmarkfilehandler_gpx.cpp \
+           qlandmarkfilehandler_lmx.cpp \
            qlandmarkfilter.cpp \
            qlandmarkabstractrequest.cpp \
            qlandmarkidfetchrequest.cpp \

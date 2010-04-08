@@ -36,6 +36,9 @@ contains(mobility_modules,location) {
     wince* {
         SUBDIRS += qgeoinfosources_wince
     }
+
+    SUBDIRS +=  qlandmarkfilehandler_gpx \
+                qlandmarkfilehandler_lmx
 }
 
 contains(mobility_modules,landmarks) {
