@@ -1143,7 +1143,7 @@ void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QCont
         // Use existing detail if available and would not cause an overwrite of
         // a field value
         QContactDetail contactDetail = QContactDetail(detailParts[0]);
-        if (contact.details().contains(detailParts[0])
+        if (contact.details().contains(QContactDetail(detailParts[0]))
             && contact.detail(detailParts[0]).variantValues().key(detailParts[1]).isNull()) {
             contactDetail = contact.detail(detailParts[0]);
         }
