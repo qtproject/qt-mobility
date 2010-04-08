@@ -7,9 +7,7 @@ contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
             bluetoothtransferplugin \
             notesmanagerplugin \
-            servicebrowser \
-            sfwipcservice \
-            sfwipcclient
+            servicebrowser
 
     !symbian:SUBDIRS+= servicenotesmanager/sfw-notes
     
