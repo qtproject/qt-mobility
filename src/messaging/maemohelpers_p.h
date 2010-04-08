@@ -79,6 +79,9 @@ public:
     static void orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder);
     static void applyOffsetAndLimitToMessageIdList(QMessageIdList& messageIds, int limit, int offset);
 
+    static void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter);
+    static void handleNestedFiltersFromMessageFilter(QMessageFilter &filter);
+
 private:
    static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
    static bool folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2);

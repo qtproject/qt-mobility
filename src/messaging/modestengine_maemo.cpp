@@ -1735,7 +1735,9 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
                 if (cmp == QMessageDataComparator::Equal) {
                     if (pf->_value.toString().length() > 0) {
                         accountIds.append(modestAccountIdFromAccountId(pf->_value.toString()));
-                        msgQueryInfo.realAccountId = pf->_value.toString();
+                        // Local folders are not account specific
+                        // => Make sure that account specific messages are searched from local_folders account
+                        accountIds.append("local_folders");
                         handled = true;
                     }
                 }
