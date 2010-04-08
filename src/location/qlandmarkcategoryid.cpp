@@ -63,7 +63,7 @@ QTM_USE_NAMESPACE
     id() and managerUri() will return null strings.
 */
 QLandmarkCategoryId::QLandmarkCategoryId()
-    :d(new QLandmarkCategoryIdPrivate)
+        : d(new QLandmarkCategoryIdPrivate)
 {
 }
 
@@ -71,7 +71,7 @@ QLandmarkCategoryId::QLandmarkCategoryId()
     Constructs a copy of \a other.
 */
 QLandmarkCategoryId::QLandmarkCategoryId(const QLandmarkCategoryId &other)
-    :d(other.d)
+        : d(other.d)
 {
 }
 
@@ -131,7 +131,7 @@ void QLandmarkCategoryId::setManagerUri(const QString &uri)
     Assigns \a other to this category identifier and returns a reference
     to this category identifier.
 */
-QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId &other)
+QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId & other)
 {
     d = other.d;
     return *this;

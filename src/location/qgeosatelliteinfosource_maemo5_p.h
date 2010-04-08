@@ -53,7 +53,7 @@ class LiblocationWrapper;
 class QGeoSatelliteInfoSourceMaemo : public QGeoSatelliteInfoSource
 {
     Q_OBJECT
-    
+
 public:
     explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
 
@@ -80,7 +80,7 @@ public slots:
     void stopUpdates();
     void requestUpdate(int timeout = 5000);
     void satelliteStatus();
-    
+
 signals:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);

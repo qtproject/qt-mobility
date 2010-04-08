@@ -53,8 +53,8 @@
 #include <QColor>
 
 #include "qgeocoordinate.h"
-#include "qgeoengine.h"
-#include "qroute.h"
+#include "qgeoroute.h"
+#include "qgeomaptile.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,6 +67,8 @@ class QMapEllipse;
 class QMapObject;
 class QMapMarker;
 class QMapViewPrivate;
+class QGeoMapService;
+class QGeoMapTileReply;
 
 class Q_LOCATION_EXPORT QMapView : public QGraphicsWidget
 {
@@ -100,7 +102,7 @@ public:
     QMapView(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
     virtual ~QMapView();
 
-    void init(QGeoEngine* geoEngine, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
+    void init(QGeoMapService* mapService, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
 
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
@@ -178,7 +180,7 @@ protected:
 
 public slots:
     void releaseRemoteTiles();
-    void tileFetched(QMapTileReply* reply);
+    void tileFetched(QGeoMapTileReply* reply);
     void setZoomLevel(int zoomLevel);
 
 signals:

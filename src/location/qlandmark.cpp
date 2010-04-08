@@ -58,22 +58,22 @@ QTM_USE_NAMESPACE
 // ----- QLandmarkPrivate -----
 
 QLandmarkPrivate::QLandmarkPrivate()
-    : QSharedData()
+        : QSharedData()
 {
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
-    : QSharedData(other),
-      name(other.name),
-      categories(other.categories),
-      location(other.location),
-      description(other.description),
-      iconUrl(other.iconUrl),
-      radius(other.radius),
-      attributes(other.attributes),
-      phone(other.phone),
-      url(other.url),
-      id(other.id)
+        : QSharedData(other),
+        name(other.name),
+        categories(other.categories),
+        location(other.location),
+        description(other.description),
+        iconUrl(other.iconUrl),
+        radius(other.radius),
+        attributes(other.attributes),
+        phone(other.phone),
+        url(other.url),
+        id(other.id)
 {
 }
 
@@ -106,7 +106,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (url == other.url)
             && (categories == other.categories)
             && (attributes == other.attributes))
-            && (id == other.id);
+           && (id == other.id);
 }
 
 /*!
@@ -142,7 +142,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     id() is called.
 */
 QLandmark::QLandmark()
-    :d(new QLandmarkPrivate)
+        : d(new QLandmarkPrivate)
 {
 }
 
@@ -150,7 +150,7 @@ QLandmark::QLandmark()
     Constructs a copy of \a other.
 */
 QLandmark::QLandmark(const QLandmark &other)
-    :d(other.d)
+        : d(other.d)
 {
 }
 

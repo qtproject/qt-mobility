@@ -57,6 +57,7 @@ PUBLIC_HEADERS += qgeoaddress.h \
 PRIVATE_HEADERS += qlocationutils_p.h \
                    qnmeapositioninfosource_p.h \
                    qlandmark_p.h \
+                   qlandmarkfilter_p.h \
                    qgeolocation_p.h
 
 symbian {
@@ -106,7 +107,7 @@ maemo6 {
                 qgeosatelliteinfosource_maemo.cpp \
                 dbuscomm_maemo.cpp \
                 dbusserver_maemo.cpp
-    HEADERS += qgeopositioninfosource_maemo_p.h \
+    PRIVATE_HEADERS += qgeopositioninfosource_maemo_p.h \
                 qgeosatelliteinfosource_maemo_p.h \
                 dbuscomm_maemo_p.h \
                 dbusserver_maemo_p.h
@@ -119,7 +120,7 @@ maemo5 {
                qgeopositioninfosource_maemo5.cpp \
                qgeosatelliteinfosource_maemo5.cpp \
                qgeoareamonitor_maemo.cpp
-    HEADERS += gconfitem.h  \
+    PRIVATE_HEADERS += gconfitem.h  \
                liblocationwrapper.h \
                qgeopositioninfosource_maemo5_p.h \
                qgeosatelliteinfosource_maemo5_p.h \
@@ -132,50 +133,65 @@ maemo5 {
     pkgconfig.files = QtLocation.pc
 }
 
-# maps header files - sort into public and private later
-HEADERS += qgeocodingreply.h \
-           qgeocodingreply_p.h \
-           qgeocodingrequest.h \
-           qgeocodingrequest_p.h \
-           qgeocodingxmlparser.h \
-           qgeoengine.h \
-           qgeonetworkmanager.h \
-           qgeonetworkmanager_p.h \
-           qgeoreply.h \
-           qmaneuver.h \
-           qmapellipse.h \
-           qmapellipse_p.h \
-           qmapline.h \
-           qmapline_p.h \
-           qmapmarker.h \
-           qmapmarker_p.h \
-           qmapobject.h \
-           qmapobject_p.h \
-           qmappixmap.h \
-           qmappixmap_p.h \
-           qmappolygon.h \
-           qmappolygon_p.h \
-           qmaprect.h \
-           qmaprect_p.h\
-           qmaproute.h \
-           qmaproute_p.h \
-           qmaptile.h \
-           qmaptilecache.h \
-           qmaptilereply.h \
-           qmaptilerequest.h \
-           qmaptilerequest_p.h \
-           qmapview.h \
-           qmapview_p.h \
-           qreversegeocodingrequest.h \
-           qreversegeocodingrequest_p.h \
-           qroute.h \
-           qroutereply.h \
-           qroutereply_p.h \
-           qrouterequest.h \
-           qrouterequest_p.h \
-           qroutexmlparser.h \
-           qlandmarkfilter_p.h \
-           qgeoaddress_p.h
+# map/routing/navigation header files
+PUBLIC_HEADERS +=   qgeoaddress.h \
+                    qgeocodingreply.h \
+                    qgeocodingrequest.h \
+                    qgeocodingservice.h \
+                    qgeolocation.h \
+                    qgeomapservice.h \
+                    qgeomaptile.h \
+                    qgeomaptilecache.h \
+                    qgeomaptilereply.h \
+                    qgeomaptilerequest.h \
+                    qgeoroute.h \
+                    qgeoroutereply.h \
+                    qgeorouterequest.h \
+                    qgeoroutingservice.h \
+                    qmaneuver.h \
+                    qmapellipse.h \
+                    qmapline.h \
+                    qmapmarker.h \
+                    qmapobject.h \
+                    qmappixmap.h \
+                    qmappolygon.h \
+                    qmaprect.h \
+                    qmaproute.h \
+                    qmapview.h \
+                    qreversegeocodingrequest.h 
+
+PRIVATE_HEADERS +=  qgeoaddress_p.h \
+                    qgeocodingreply_p.h \
+                    qgeocodingrequest_p.h \
+                    qgeolocation_p.h \
+                    qgeomaptilereply_p.h \
+                    qgeomaptilerequest_p.h \
+                    qgeoroute_p.h \
+                    qgeoroutereply_p.h \
+                    qgeorouterequest_p.h \
+                    qlandmarkfilter_p.h \
+                    qmaneuver_p.h \
+                    qmapellipse_p.h \
+                    qmapline_p.h \
+                    qmapmarker_p.h \
+                    qmapobject_p.h \
+                    qmappixmap_p.h \
+                    qmappolygon_p.h \
+                    qmaprect_p.h\
+                    qmaproute_p.h \
+                    qmapview_p.h \
+                    qreversegeocodingrequest_p.h
+
+# nokia map/routing/navigation service specific header files
+PRIVATE_HEADERS +=  qgeocodingreply_nokia_p.h \
+                    qgeocodingservice_nokia_p.h \
+                    qgeocodingxmlparser_nokia_p.h \
+                    qgeomapservice_nokia_p.h \
+                    qgeomaptilereply_nokia_p.h \
+                    qgeoroutereply_nokia_p.h \
+                    qgeoroutexmlparser_nokia_p.h \
+                    qgeoroutingservice_nokia_p.h
+           
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
@@ -219,34 +235,42 @@ SOURCES += qlocationutils.cpp \
            qlandmarkmanagerengine.cpp \
            qlandmarkmanagerenginefactory.cpp
 
-# maps source files
+# map/routing/navigation source files
 SOURCES += qgeoaddress.cpp \
            qgeocodingreply.cpp \
            qgeocodingrequest.cpp \
-           qgeocodingxmlparser.cpp \
-           qgeoengine.cpp \
+           qgeocodingservice.cpp \
            qgeolocation.cpp \
-           qgeonetworkmanager.cpp \
-           qgeoreply.cpp \
+           qgeomapservice.cpp \
+           qgeomaptilecache.cpp \
+           qgeomaptilereply.cpp \
+           qgeomaptilerequest.cpp \
+           qgeoroute.cpp \
+           qgeoroutereply.cpp \
+           qgeorouterequest.cpp \
+           qgeoroutingservice.cpp \
            qmaneuver.cpp \
-           qmapobject.cpp \
+           qmapellipse.cpp \
            qmapline.cpp \
            qmapmarker.cpp \
-           qmaproute.cpp \
-           qmaprect.cpp \
-           qmappolygon.cpp \
+           qmapobject.cpp \
            qmappixmap.cpp \
-           qmapellipse.cpp \
-           qmaptilerequest.cpp \
-           qmaptilecache.cpp \
-           qmaptilereply.cpp \
+           qmappolygon.cpp \
+           qmaprect.cpp \
+           qmaproute.cpp \
            qmapview.cpp \
            qmapview_p.cpp \
-           qreversegeocodingrequest.cpp \
-           qroute.cpp \
-           qroutereply.cpp \
-           qrouterequest.cpp \
-            qroutexmlparser.cpp
+           qreversegeocodingrequest.cpp
+
+# nokia map/routing/navigation service specific source files
+SOURCES +=  qgeocodingreply_nokia.cpp \
+            qgeocodingservice_nokia.cpp \
+            qgeocodingxmlparser_nokia.cpp \
+            qgeomapservice_nokia.cpp \
+            qgeomaptilereply_nokia.cpp \
+            qgeoroutereply_nokia.cpp \
+            qgeoroutexmlparser_nokia.cpp \
+            qgeoroutingservice_nokia.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

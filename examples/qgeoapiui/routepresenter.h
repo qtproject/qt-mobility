@@ -45,7 +45,7 @@
 #include <QTreeWidget>
 
 #include "geopresenter.h"
-#include "qroutereply.h"
+#include "qgeoroutereply.h"
 #include "qgeocoordinate.h"
 
 QTM_USE_NAMESPACE
@@ -53,17 +53,17 @@ QTM_USE_NAMESPACE
 class RoutePresenter : GeoPresenter
 {
 public:
-    RoutePresenter(QTreeWidget* treeWidget, const QRouteReply* routeReply);
+    RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* routeReply);
     virtual void show();
 
 private:
     QTreeWidgetItem* showRoutes();
-    void showRoute(QTreeWidgetItem* top, const QRoute& route);
+    void showRoute(QTreeWidgetItem* top, const QGeoRoute& route);
     void showManeuver(QTreeWidgetItem* routeItem, const QManeuver& maneuver);
     void showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points);
 
 private:
-    const QRouteReply* routeReply;
+    const QGeoRouteReply* routeReply;
 };
 
 #endif

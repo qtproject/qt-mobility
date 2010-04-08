@@ -46,8 +46,8 @@
 QTM_BEGIN_NAMESPACE
 
 QMapPolygonPrivate::QMapPolygonPrivate()
-    :poly(QList<QGeoCoordinate>()),p(QPen()), br(QBrush()),
-     path(QPainterPath())
+        : poly(QList<QGeoCoordinate>()), p(QPen()), br(QBrush()),
+        path(QPainterPath())
 {
 }
 /*!
@@ -90,7 +90,8 @@ QMapPolygon::QMapPolygon(QMapPolygonPrivate &dd, const QList<QGeoCoordinate>& po
 
     Returns the polygon as a list of geo coordinates.
 */
-QList<QGeoCoordinate> QMapPolygon::polygon() const {
+QList<QGeoCoordinate> QMapPolygon::polygon() const
+{
     Q_D(const QMapPolygon);
     return d->poly;
 }
@@ -100,7 +101,8 @@ QList<QGeoCoordinate> QMapPolygon::polygon() const {
 
     Returns the pen used for drawing the polygon outline.
 */
-QPen QMapPolygon::pen() const {
+QPen QMapPolygon::pen() const
+{
     Q_D(const QMapPolygon);
     return d->p;
 }
@@ -110,7 +112,8 @@ QPen QMapPolygon::pen() const {
 
     The brush used for filling in the polygon.
 */
-QBrush QMapPolygon::brush() const {
+QBrush QMapPolygon::brush() const
+{
     Q_D(const QMapPolygon);
     return d->br;
 }
@@ -156,8 +159,8 @@ void QMapPolygon::paint(QPainter* painter, const QRectF& viewPort)
 
     //Is view port wrapping around date line?
     qreal right = viewPort.right();
-    for(int i=1;right>=mapWidth;++i,right -= mapWidth) {
-        qint64 width = mapWidth*i;
+    for (int i = 1;right >= mapWidth;++i, right -= mapWidth) {
+        qint64 width = mapWidth * i;
         d->path.translate(width, 0);
         painter->drawPath(d->path);
         d->path.translate(-width, 0);

@@ -47,10 +47,12 @@
 #include <QSet>
 #include <QHash>
 
-#include "qmaptile.h"
+#include "qgeomaptile.h"
 #include "qmapview.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoMapService;
 
 class QMapViewPrivate
 {
@@ -71,7 +73,7 @@ public:
 
     QRectF viewPort; //!< The logical view port.
     quint32 numColRow; //!< The number of tiles along both the x- and y-axis
-    QGeoEngine* geoEngine; //!< the underlying geo engine
+    QGeoMapService* mapService; //!< the underlying map service
     quint32 horizontalPadding; //!< horizontal preload padding
     quint32 verticalPadding; //!< vertical preload padding
     quint32 routeDetails; //!< Minimum manhattan distance betwee two consecutive visible route way points.
@@ -98,9 +100,9 @@ public:
 
     /*!
     * Stores for each requested map tile (as given by its
-    * one-dimensional tile index) the corresonding QMapTileReply.
+    * one-dimensional tile index) the corresonding QGeoMapTileReply.
     */
-    QHash<quint64, QMapTileReply*> pendingTiles; //!< Pending requested map tiles
+    QHash<quint64, QGeoMapTileReply*> pendingTiles; //!< Pending requested map tiles
 
     QHash<quint64, QPair<QPixmap, bool> > mapTiles;
 

@@ -45,8 +45,8 @@
 QTM_BEGIN_NAMESPACE
 
 QMapLinePrivate::QMapLinePrivate()
-    :pt1(QGeoCoordinate()), pt2(QGeoCoordinate()),
-    p(QPen()), line(QLineF())
+        : pt1(QGeoCoordinate()), pt2(QGeoCoordinate()),
+        p(QPen()), line(QLineF())
 {
 }
 
@@ -88,7 +88,8 @@ QMapLine::QMapLine(QMapLinePrivate &dd, const QGeoCoordinate& point1,
 
     Returns the pen used for drawing this line.
 */
-QPen QMapLine::pen() const {
+QPen QMapLine::pen() const
+{
     Q_D(const QMapLine);
     return d->p;
 }
@@ -98,7 +99,8 @@ QPen QMapLine::pen() const {
 
    Returns the first end point (as a geo coordinate) of the line.
 */
-QGeoCoordinate QMapLine::point1() const {
+QGeoCoordinate QMapLine::point1() const
+{
     Q_D(const QMapLine);
     return d->pt1;
 }
@@ -108,7 +110,8 @@ QGeoCoordinate QMapLine::point1() const {
 
    Returns the second end point (as a geo coordinate) of the line.
 */
-QGeoCoordinate QMapLine::point2() const {
+QGeoCoordinate QMapLine::point2() const
+{
     Q_D(const QMapLine);
     return d->pt2;
 }
@@ -152,8 +155,8 @@ void QMapLine::paint(QPainter* painter, const QRectF& viewPort)
 
     //Is view port wrapping around date line?
     qreal right = viewPort.right();
-    for(int i=1;right>=mapWidth;++i,right -= mapWidth) {
-        qint64 width = mapWidth*i;
+    for (int i = 1;right >= mapWidth;++i, right -= mapWidth) {
+        qint64 width = mapWidth * i;
         d->line.translate(-viewPort.left(), -viewPort.top());
         d->line.translate(width, 0);
         painter->drawLine(d->line);

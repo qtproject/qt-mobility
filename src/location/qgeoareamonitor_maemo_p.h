@@ -45,8 +45,9 @@
 #include "qgeoareamonitor.h"
 #include "qgeopositioninfosource.h"
 
-extern "C" {
-    #include <location/location-distance-utils.h>
+extern "C"
+{
+#include <location/location-distance-utils.h>
 }
 
 QTM_BEGIN_NAMESPACE

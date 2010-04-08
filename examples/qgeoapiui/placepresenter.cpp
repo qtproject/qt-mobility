@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "placepresenter.h"
+#include "qgeoaddress.h"
 
 PlacePresenter::PlacePresenter(QTreeWidget *treeWidget, const QGeocodingReply* codingReply)
         : GeoPresenter(treeWidget), codingReply(codingReply)
@@ -62,17 +63,19 @@ QTreeWidgetItem* PlacePresenter::showPlaces()
     QTreeWidgetItem* top = new QTreeWidgetItem(treeWidget);
     top->setText(0, "places");
 
+    /*
     QTreeWidgetItem* prop = new QTreeWidgetItem(top);
     prop->setText(0, "result");
     prop->setText(1, QString().setNum((quint16) codingReply->resultCode()));
+    */
 
-    prop = new QTreeWidgetItem(top);
+    QTreeWidgetItem* prop = new QTreeWidgetItem(top);
     prop->setText(0, "description");
-    prop->setText(1, codingReply->resultDescription());
+    prop->setText(1, codingReply->description());
 
     prop = new QTreeWidgetItem(top);
     prop->setText(0, "count");
-    prop->setText(1, QString().setNum(codingReply->count()));
+    prop->setText(1, QString().setNum(codingReply->places().size()));
 
     return top;
 }

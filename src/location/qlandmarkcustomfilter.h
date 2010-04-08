@@ -57,7 +57,7 @@ public:
 
 protected:
     QLandmarkCustomFilter();
-    virtual bool isMatch(const QLandmark &landmark)=0;
+    virtual bool isMatch(const QLandmark &landmark) = 0;
 private:
     QLandmarkCustomFilterPrivate *d;
 };

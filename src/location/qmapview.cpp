@@ -50,7 +50,7 @@
 
 #include "qmapview.h"
 #include "qmapview_p.h"
-#include "qmaptile.h"
+#include "qgeomaptile.h"
 #include "qmaproute.h"
 #include "qmapobject.h"
 #include "qmapobject_p.h"
@@ -61,6 +61,7 @@
 #include "qmapellipse.h"
 #include "qmapmarker.h"
 #include "qmapmarker_p.h"
+#include "qgeomapservice.h"
 
 #define RELEASE_INTERVAL 10000
 #define DEFAULT_ZOOM_LEVEL 4
@@ -109,29 +110,29 @@ QMapView::~QMapView()
 }
 
 /*!
-    Initializes a the map view with a given \a geoEngine and centers
+    Initializes a the map view with a given \a mapService and centers
     the map at \a center.
 */
-void QMapView::init(QGeoEngine* geoEngine, const QGeoCoordinate& center)
+void QMapView::init(QGeoMapService* mapService, const QGeoCoordinate& center)
 {
     Q_D(QMapView);
 
-    if (!geoEngine)
+    if (!mapService)
         return;
 
     //Is this map engine replacing an old one?
-    if (d->geoEngine) {
-        QObject::disconnect(geoEngine, SIGNAL(finished(QMapTileReply*)),
-                            this, SLOT(tileFetched(QMapTileReply*)));
+    if (d->mapService) {
+        QObject::disconnect(mapService, SIGNAL(finished(QGeoMapTileReply*)),
+                            this, SLOT(tileFetched(QGeoMapTileReply*)));
     }
 
     QObject::disconnect(&d->releaseTimer, SIGNAL(timeout()),
                         this, SLOT(releaseRemoteTiles()));
 
-    d->geoEngine = geoEngine;
+    d->mapService = mapService;
 
-    QObject::connect(d->geoEngine, SIGNAL(finished(QMapTileReply*)),
-                     this, SLOT(tileFetched(QMapTileReply*)), Qt::QueuedConnection);
+    QObject::connect(d->mapService, SIGNAL(finished(QGeoMapTileReply*)),
+                     this, SLOT(tileFetched(QGeoMapTileReply*)), Qt::QueuedConnection);
     QObject::connect(&d->releaseTimer, SIGNAL(timeout()),
                      this, SLOT(releaseRemoteTiles()));
 
@@ -147,7 +148,7 @@ void QMapView::init(QGeoEngine* geoEngine, const QGeoCoordinate& center)
 /*!
     \fn QMapView::mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent)
 
-    This signal is emitted when the map receieves a \a mouseEvent (clicked) at 
+    This signal is emitted when the map receieves a \a mouseEvent (clicked) at
     \a geoCoord.
 */
 
@@ -266,27 +267,27 @@ void QMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 
 /*!
     This slot is called when a requested map tile has become available.
-    Internally, this slot is connected to QGeoEngine::finished(QMapTileReply*).
+    Internally, this slot is connected to QGeoEngine::finished(QGeoMapTileReply*).
 */
-void QMapView::tileFetched(QMapTileReply* reply)
+void QMapView::tileFetched(QGeoMapTileReply* reply)
 {
     Q_D(QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return; //This really should not be happening
 
     //Are we actually waiting for this tile?
-    const QMapTileRequest& request = reply->request();
+    const QGeoMapTileRequest& request = reply->request();
     quint64 tileIndex = getTileIndex(request.col(), request.row());
 
     if (!d->pendingTiles.contains(tileIndex)) {
-        d->geoEngine->release(reply);
+        delete reply;
         return; //discard
     }
 
     //Not the reply we expected?
     if (reply != d->pendingTiles[tileIndex]) {
-        d->geoEngine->release(reply);
+        delete reply;
         return; //discard
     }
 
@@ -297,15 +298,15 @@ void QMapView::tileFetched(QMapTileReply* reply)
             request.resolution().id != d->mapResolution.id ||
             request.scheme().id != d->mapSchmeme.id ||
             request.version().id != d->mapVersion.id) {
-        d->geoEngine->release(reply);
+        delete reply;
         return; //discard
     }
 
     QPixmap tile;
-    tile.loadFromData(reply->rawData(), "PNG");
+    tile.loadFromData(reply->data(), "PNG");
     d->mapTiles[tileIndex] = qMakePair(tile, true);
     this->update();
-    d->geoEngine->release(reply);
+    delete reply;
 }
 
 void QMapView::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -365,8 +366,8 @@ void QMapView::wheelEvent(QGraphicsSceneWheelEvent* event)
 quint16 QMapView::maxZoomLevel() const
 {
     Q_D(const QMapView);
-    if (d->geoEngine)
-        return d->geoEngine->maxZoomLevel();
+    if (d->mapService)
+        return d->mapService->maxZoomLevel();
     return 0;
 }
 /*!
@@ -385,13 +386,13 @@ void QMapView::setZoomLevel(int zoomLevel)
 {
     Q_D(QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return;
 
     quint16 oldZoomLevel = d->currZoomLevel;
 
-    if (zoomLevel > d->geoEngine->maxZoomLevel())
-        d->currZoomLevel = d->geoEngine->maxZoomLevel();
+    if (zoomLevel > d->mapService->maxZoomLevel())
+        d->currZoomLevel = d->mapService->maxZoomLevel();
     else if (zoomLevel < 0)
         d->currZoomLevel = 0;
     else
@@ -499,7 +500,7 @@ void QMapView::moveViewPort(int deltaX, int deltaY)
 {
     Q_D(QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return;
 
     qreal pixelPerXAxis = d->numColRow * d->mapResolution.size.width();
@@ -586,7 +587,7 @@ QPointF QMapView::mercatorToMap(const QPointF& mercatorCoordinate) const
 {
     Q_D(const QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return QPointF();
 
     return QPointF(static_cast<qint64>(mercatorCoordinate.x() * ((qreal) d->numColRow) * ((qreal) d->mapResolution.size.width())),
@@ -600,7 +601,7 @@ QPointF QMapView::mapToMercator(const QPointF& mapCoordinate) const
 {
     Q_D(const QMapView);
 
-    if (!d->geoEngine)
+    if (!d->mapService)
         return QPointF();
 
     return QPointF(mapCoordinate.x() / (((qreal) d->numColRow) * ((qreal) d->mapResolution.size.width())),
@@ -669,8 +670,7 @@ void QMapView::removeMapObject(QMapObject* mapObject)
     QHash<quint64, QList<QMapObject*> > tileToObjectsMap; //!< Map tile to map object hash map.
     d->mapObjects.remove(mapObject);
 
-    for (int i = 0; i < mapObject->d_ptr->intersectingTiles.count(); i++)
-    {
+    for (int i = 0; i < mapObject->d_ptr->intersectingTiles.count(); i++) {
         if (tileToObjectsMap.contains(mapObject->d_ptr->intersectingTiles[i]))
             tileToObjectsMap[mapObject->d_ptr->intersectingTiles[i]].removeAll(mapObject);
         if (d->tileToObjects.contains(mapObject->d_ptr->intersectingTiles[i]))
@@ -732,12 +732,10 @@ QMapObject* QMapView::getTopmostMapObject(const QPointF& mapCoordinate)
 
     QList<QMapObject*>& objects = d->tileToObjects[tileIndex];
 
-    for (int i = 0; i < objects.count(); i++)
-    {
+    for (int i = 0; i < objects.count(); i++) {
         QMapObject* obj = objects[i];
 
-        if (obj->intersects(rect))
-        {
+        if (obj->intersects(rect)) {
             if (!selected || selected->zValue() < obj->zValue())
                 selected = obj;
         }
@@ -886,14 +884,13 @@ class QMapView::TileIteratorPrivate
 {
 public:
     TileIteratorPrivate(const QMapViewPrivate* mapViewPrivate, const QRectF& viewPort)
-        : hasNext(true), viewPort(viewPort),
-        numColRow(mapViewPrivate->numColRow),
-        mapRes(mapViewPrivate->mapResolution),
-        currX(static_cast<qint64>(viewPort.left())),
-        currY(static_cast<qint64>(viewPort.top())),
-        rect(QPointF(), mapViewPrivate->mapResolution.size),
-        valid(false)
-    {
+            : hasNext(true), viewPort(viewPort),
+            numColRow(mapViewPrivate->numColRow),
+            mapRes(mapViewPrivate->mapResolution),
+            currX(static_cast<qint64>(viewPort.left())),
+            currY(static_cast<qint64>(viewPort.top())),
+            rect(QPointF(), mapViewPrivate->mapResolution.size),
+            valid(false) {
     }
 
     quint32 cl;
@@ -923,7 +920,7 @@ public:
     Constructs a TileIterator with its associated \a mapView and \a viewPort.
 */
 QMapView::TileIterator::TileIterator(const QMapView& mapView, const QRectF& viewPort)
-    : d_ptr(new QMapView::TileIteratorPrivate(mapView.d_ptr, viewPort))
+        : d_ptr(new QMapView::TileIteratorPrivate(mapView.d_ptr, viewPort))
 {}
 
 /*!

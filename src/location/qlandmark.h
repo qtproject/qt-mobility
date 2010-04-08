@@ -71,9 +71,8 @@ public:
 
     QLandmark &operator= (const QLandmark &other);
     bool operator== (const QLandmark &other) const;
-    bool operator!= (const QLandmark &other) const
-    {
-        return !(*this==other);
+    bool operator!= (const QLandmark &other) const {
+        return !(*this == other);
     }
 
     QString name() const;

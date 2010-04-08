@@ -51,7 +51,7 @@ class QMapRoutePrivate : public QMapObjectPrivate
 public:
     QMapRoutePrivate();
 
-    QRoute rt;
+    QGeoRoute rt;
     QMap<quint64, QList<QLineF> > segments; //!< All individual route segments.
     QPen rPen; //!< The pen used for drawing this route.
 };

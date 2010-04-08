@@ -44,17 +44,18 @@
 #include "qmapview_p.h"
 #include "qmapobject.h"
 #include "qmapobject_p.h"
+#include "qgeomapservice.h"
 
 QTM_BEGIN_NAMESPACE
 
 QMapViewPrivate::QMapViewPrivate(QtMobility::QMapView *q)
-    : q_ptr(q), numColRow(1), geoEngine(0), currZoomLevel(0),
-    horizontalPadding(0), verticalPadding(0), routeDetails(0),
-    panActive(false), pannable(true), releaseTimer(q),
-    mapVersion(MapVersion(MapVersion::Newest)),
-    mapSchmeme(MapScheme(MapScheme::Normal_Day)),
-    mapResolution(MapResolution(MapResolution::Res_256_256)),
-    mapFormat(MapFormat(MapFormat::Png))
+        : q_ptr(q), numColRow(1), mapService(0), currZoomLevel(0),
+        horizontalPadding(0), verticalPadding(0), routeDetails(0),
+        panActive(false), pannable(true), releaseTimer(q),
+        mapVersion(MapVersion(MapVersion::Newest)),
+        mapSchmeme(MapScheme(MapScheme::Normal_Day)),
+        mapResolution(MapResolution(MapResolution::Res_256_256)),
+        mapFormat(MapFormat(MapFormat::Png))
 {
 }
 
@@ -160,7 +161,7 @@ QHash<quint64, QPair<QPixmap, bool> > QMapViewPrivate::preZoomOut(qreal scale)
 */
 void QMapViewPrivate::requestTile(quint32 col, quint32 row)
 {
-    if (!geoEngine)
+    if (!mapService)
         return;
 
     Q_Q(QMapView);
@@ -170,7 +171,7 @@ void QMapViewPrivate::requestTile(quint32 col, quint32 row)
         return;
     }
 
-    QMapTileRequest request;
+    QGeoMapTileRequest request;
     request.setVersion(mapVersion);
     request.setScheme(mapSchmeme);
     request.setResolution(mapResolution);
@@ -179,7 +180,7 @@ void QMapViewPrivate::requestTile(quint32 col, quint32 row)
     request.setRow(row);
     request.setZoomLevel(currZoomLevel);
 
-    QMapTileReply* reply = geoEngine->get(request);
+    QGeoMapTileReply* reply = mapService->getMapTile(request);
     pendingTiles[tileIndex] = reply;
 }
 
@@ -188,12 +189,12 @@ void QMapViewPrivate::requestTile(quint32 col, quint32 row)
 */
 void QMapViewPrivate::cancelPendingTiles()
 {
-    QHashIterator<quint64, QMapTileReply*> it(pendingTiles);
+    QHashIterator<quint64, QGeoMapTileReply*> it(pendingTiles);
 
     while (it.hasNext()) {
         it.next();
-        geoEngine->cancel(it.value());
-        geoEngine->release(it.value());
+        it.value()->cancel();
+        it.value()->deleteLater();
     }
 
     pendingTiles.clear();

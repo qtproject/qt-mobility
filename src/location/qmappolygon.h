@@ -65,7 +65,7 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
     QMapPolygon(QMapPolygonPrivate &dd, const QList<QGeoCoordinate>& polygon,
                 const QPen& pen = QPen(), const QBrush& brush = QBrush(),
-                quint16 layerIndex=0);
+                quint16 layerIndex = 0);
 private:
     Q_DECLARE_PRIVATE(QMapPolygon)
 };

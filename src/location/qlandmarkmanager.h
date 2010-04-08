@@ -67,7 +67,7 @@ class Q_LOCATION_EXPORT QLandmarkManager: public QObject
     Q_OBJECT
 public:
     enum Error {
-        NoError =0,
+        NoError = 0,
         DoesNotExistError,
         AlreadyExistsError,
         LockedError,
@@ -77,15 +77,15 @@ public:
         NotSupportedError,
         BadArgumentError,
         UnknownError,
-        };
+    };
 
-    enum Format{LandmarkExchange, GPSExchange, KeyholeMarkupLanguage, CommaSeparatedValues, Custom};
+    enum Format {LandmarkExchange, GPSExchange, KeyholeMarkupLanguage, CommaSeparatedValues, Custom};
 
 #ifdef Q_QDOC
-    QLandmarkManager(const QString &managerName = QString(), const QMap<QString,QString> &parameters=0, QObject *parent =0);
+    QLandmarkManager(const QString &managerName = QString(), const QMap<QString, QString> &parameters = 0, QObject *parent = 0);
     QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
-    QLandmarkManager(const QString &managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject *parent =0);
+    QLandmarkManager(const QString &managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject *parent = 0);
     QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
     virtual ~QLandmarkManager();
@@ -118,7 +118,7 @@ public:
     bool isFilterSupported(QLandmarkFilter::FilterType filterType) const;
 
     QString managerName() const;
-    QMap<QString,QString> managerParameters() const;
+    QMap<QString, QString> managerParameters() const;
     QString managerUri() const;
     int managerVersion() const;
 

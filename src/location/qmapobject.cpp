@@ -44,8 +44,8 @@
 QTM_BEGIN_NAMESPACE
 
 QMapObjectPrivate::QMapObjectPrivate()
-    :intersectingTiles(QList<quint64>()), mapView(NULL),
-    objType(QMapObject::NullObject), z(0)
+        : intersectingTiles(QList<quint64>()), mapView(NULL),
+        objType(QMapObject::NullObject), z(0)
 {
 }
 
@@ -75,7 +75,7 @@ QMapObjectPrivate::QMapObjectPrivate()
     Constructs the map object with the given \a type and layer \a z.
 */
 QMapObject::QMapObject(QMapObject::MapObjectType type, quint16 z)
-    :d_ptr(new QMapObjectPrivate)
+        : d_ptr(new QMapObjectPrivate)
 {
     Q_D(QMapObject);
     d->objType = type;
@@ -86,11 +86,11 @@ QMapObject::QMapObject(QMapObject::MapObjectType type, quint16 z)
     \internal
 */
 QMapObject::QMapObject(QMapObjectPrivate &dd, MapObjectType type, quint16 z)
-    :d_ptr(&dd)
+        : d_ptr(&dd)
 {
     Q_D(QMapObject);
     d->objType = type;
-    d->z =z;
+    d->z = z;
 }
 
 /*!
@@ -107,12 +107,14 @@ QMapObject::~QMapObject()
     Objects with higher z indices are stacked on top of objects
     with lower z indices.
 */
-quint16 QMapObject::zValue() const {
+quint16 QMapObject::zValue() const
+{
     Q_D(const QMapObject);
     return d->z;
 }
 
-QMapObject::MapObjectType QMapObject::type() const {
+QMapObject::MapObjectType QMapObject::type() const
+{
     Q_D(const QMapObject);
     return d->objType;
 }

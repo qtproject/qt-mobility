@@ -46,8 +46,8 @@ using namespace std;
 
 QTM_BEGIN_NAMESPACE
 
-QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent) 
-    : QGeoPositionInfoSource(parent)
+QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent)
+        : QGeoPositionInfoSource(parent)
 {
     // default values
     availableMethods = SatellitePositioningMethods;
@@ -89,7 +89,7 @@ void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
         msec = MINIMUM_UPDATE_INTERVAL;
         timerInterval = msec;
         QGeoPositionInfoSource::setUpdateInterval(0);
-    } else {    
+    } else {
         msec = (msec < MINIMUM_UPDATE_INTERVAL) ? MINIMUM_UPDATE_INTERVAL : msec;
         timerInterval = msec;
         QGeoPositionInfoSource::setUpdateInterval(timerInterval);
@@ -138,7 +138,7 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
         timeoutRequest = MINIMUM_UPDATE_INTERVAL;
     } else if (timeout < MINIMUM_UPDATE_INTERVAL) {
         if (positionInfoState & (QGeoPositionInfoSourceMaemo::RequestActive |
-                                QGeoPositionInfoSourceMaemo::RequestSingleShot))
+                                 QGeoPositionInfoSourceMaemo::RequestSingleShot))
             return;
         else
             positionInfoState &= ~(QGeoPositionInfoSourceMaemo::RequestActive |
@@ -150,7 +150,7 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
     }
 
     if (updateTimer->isActive())
-         updateTimer->stop();
+        updateTimer->stop();
 
     if (requestTimer->isActive())
         requestTimer->stop();
@@ -162,7 +162,7 @@ void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
     positionInfoState |= QGeoPositionInfoSourceMaemo::RequestActive;
 
     if (positionInfoState & QGeoPositionInfoSourceMaemo::Stopped)
-       positionInfoState |= QGeoPositionInfoSourceMaemo::RequestSingleShot;
+        positionInfoState |= QGeoPositionInfoSourceMaemo::RequestSingleShot;
 }
 
 void QGeoPositionInfoSourceMaemo::newPositionUpdate()
@@ -189,12 +189,12 @@ void QGeoPositionInfoSourceMaemo::requestTimeoutElapsed()
     emit updateTimeout();
     if (updateTimer->isActive())
         updateTimer->stop();
-    
+
     if (!(positionInfoState & QGeoPositionInfoSourceMaemo::RequestSingleShot))
         updateTimer->start(timerInterval);
-        
+
     positionInfoState &= ~(QGeoPositionInfoSourceMaemo::RequestActive |
-                            QGeoPositionInfoSourceMaemo::RequestSingleShot);
+                           QGeoPositionInfoSourceMaemo::RequestSingleShot);
 }
 
 

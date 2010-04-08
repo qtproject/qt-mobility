@@ -63,7 +63,7 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
     QMapPixmap(QMapPixmapPrivate &dd, const QGeoCoordinate& topLeft, const QPixmap& pixmap,
-            quint16 layerIndex = 0);
+               quint16 layerIndex = 0);
 
 private:
     Q_DECLARE_PRIVATE(QMapPixmap)

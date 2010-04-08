@@ -52,7 +52,9 @@ class QReverseGeocodingRequestPrivate
 {
 public:
     QReverseGeocodingRequestPrivate();
-    QReverseGeocodingRequestPrivate(const QGeoCoordinate& coordinate);
+
+    QString requestString(const QString &host) const;
+    QString trimDouble(qreal degree, int decimalDigits = 10) const;
 
     QString        vers;
     QString        languageMARC;

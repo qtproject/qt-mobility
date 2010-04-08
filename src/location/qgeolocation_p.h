@@ -68,11 +68,12 @@ public:
     QGeoLocationPrivate(const QGeoLocationPrivate &other);
     ~QGeoLocationPrivate();
 
-    QRectF          box;
-    QGeoCoordinate  coord;
-    QGeoAddress     addr;
+    QRectF box;
+    QGeoCoordinate coord;
+    QGeoAddress addr;
 };
 
 QTM_END_NAMESPACE
 
 #endif
+

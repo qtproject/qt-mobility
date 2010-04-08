@@ -62,17 +62,23 @@ QReverseGeocodingRequest::QReverseGeocodingRequest()
     Constructs a request for the geocoordinate \a coordinate.
 */
 QReverseGeocodingRequest::QReverseGeocodingRequest(const QGeoCoordinate& coordinate)
-        : d_ptr(new QReverseGeocodingRequestPrivate(coordinate))
+        : d_ptr(new QReverseGeocodingRequestPrivate())
 {
+    setCoordinate(coordinate);
 }
+
+/*!
+  Destructor.
+*/
 QReverseGeocodingRequest::~QReverseGeocodingRequest()
 {
     Q_D(QReverseGeocodingRequest);
     delete d;
 }
+
 /*!
     Returns the service version.
-    
+
     Currently the only supported version is 1.0.
 */
 QString QReverseGeocodingRequest::version() const
@@ -119,17 +125,54 @@ QGeoCoordinate QReverseGeocodingRequest::coordinate() const
     return d->coord;
 }
 
+/*!
+  Returns the request string based on this request and \a host.
+*/
+QString QReverseGeocodingRequest::requestString(const QString &host) const
+{
+    Q_D(const QReverseGeocodingRequest);
+    return d->requestString(host);
+}
+
+/******************************************************************************
+  ****************************************************************************/
+
 QReverseGeocodingRequestPrivate::QReverseGeocodingRequestPrivate()
 {
     languageMARC = "eng";
     vers = "1.0";
 }
 
-QReverseGeocodingRequestPrivate::QReverseGeocodingRequestPrivate(const QGeoCoordinate& coordinate)
-        : coord(coordinate)
+QString QReverseGeocodingRequestPrivate::requestString(const QString &host) const
 {
-    languageMARC = "eng";
-    vers = "1.0";
+    QString request = "http://";
+    request += host;
+    request += "/geocoder/rgc/";
+    request += vers;
+    request += "?referer=localhost";
+    request += "&long=";
+    request += trimDouble(coord.longitude());
+    request += "&lat=";
+    request += trimDouble(coord.latitude());
+
+    if (languageMARC != "") {
+        request += "&lg=";
+        request += languageMARC;
+    }
+
+    return request;
+}
+
+QString QReverseGeocodingRequestPrivate::trimDouble(qreal degree, int decimalDigits) const
+{
+    QString sDegree = QString::number(degree, 'g', decimalDigits);
+
+    int index = sDegree.indexOf('.');
+
+    if (index == -1)
+        return sDegree;
+    else
+        return QString::number(degree, 'g', decimalDigits + index);
 }
 
 

@@ -73,8 +73,8 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
 bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &other) const
 {
     return ((name == other.name)
-                    && (iconUrl == other.iconUrl)
-                    && (description == other.description));
+            && (iconUrl == other.iconUrl)
+            && (description == other.description));
 }
 
 /*!
@@ -156,7 +156,7 @@ bool QLandmarkCategory::operator== (const QLandmarkCategory &other) const
 */
 bool QLandmarkCategory::operator!= (const QLandmarkCategory &other) const
 {
-    return !(*this==other);
+    return !(*this == other);
 }
 
 /*!
@@ -170,7 +170,8 @@ QString QLandmarkCategory::name() const
 /*!
     Sets the \a name of the category.
 */
-void QLandmarkCategory::setName(const QString &name){
+void QLandmarkCategory::setName(const QString &name)
+{
     d->name = name;
 }
 

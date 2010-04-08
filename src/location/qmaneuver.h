@@ -49,45 +49,57 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QManeuverPrivate;
 class Q_LOCATION_EXPORT QManeuver
 {
-    friend class QRouteXmlParser;
-
 public:
     QManeuver();
     QManeuver(const QManeuver& maneuver);
     QManeuver& operator=(const QManeuver& maneuver);
+    ~QManeuver();
 
     QString description() const;
+    void setDescription(const QString &description);
+
     QString action() const;
+    void setAction(const QString &action);
+
     quint32 distance() const;
+    void setDistance(quint32 distance);
+
     qint32 duration() const;
+    void setDuration(qint32 duration);
+
     QString turn() const;
+    void setTurn(const QString &turn);
+
     QString streetName() const;
+    void setStreetName(const QString &streetName);
+
     QString routeName() const;
+    void setRouteName(const QString &routeName);
+
     QString nextStreetName() const;
+    void setNextStreetName(const QString &nextStreetName);
+
     QString signPost() const;
-    qint64  trafficDirection() const;
-    qint64  icon() const;
+    void setSignPost(const QString &signPost);
+
+    qint64 trafficDirection() const;
+    void setTrafficDirection(qint64 trafficDirection);
+
+    qint64 icon() const;
+    void setIcon(qint64 icon);
 
     const QList<QGeoCoordinate> wayPoints() const;
+    void setWaypoints(const QList<QGeoCoordinate> &wayPoints);
+
     const QList<QGeoCoordinate> maneuverPoints() const;
+    void setManeuverPoints(const QList<QGeoCoordinate> &maneuverPoints);
 
 private:
-    QString descr; //!< description
-    QString act; //!< action
-    qint32  dur; //!< duration
-    quint32 dist; //!< distance
-    QString trn; //!< turn
-    QString stName; //!< street name
-    QString rtName; //!< route name
-    QString nxtStreetName; //!< next street name
-    QString sgnPost; //!< sign post
-    qint64  traffDir; //!< traffic directions
-    qint64  icn; //!< icon
-
-    QList<QGeoCoordinate> wPoints; //!< way points
-    QList<QGeoCoordinate> mPoints; //!< maneuver points
+    QManeuverPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QManeuver);
 };
 
 QTM_END_NAMESPACE

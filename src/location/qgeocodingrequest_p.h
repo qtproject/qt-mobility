@@ -42,6 +42,7 @@
 #ifndef QLOCATION_GEOCODINGREQUEST_P_H
 #define QLOCATION_GEOCODINGREQUEST_P_H
 
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -49,6 +50,8 @@ class QGeocodingRequestPrivate
 {
 public:
     QGeocodingRequestPrivate();
+
+    QString requestString(const QString &host) const;
 
     QString vers;
     QString languageMARC;

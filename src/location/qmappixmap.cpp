@@ -47,7 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 QMapPixmapPrivate::QMapPixmapPrivate()
-    :pic(QPixmap()), geoTopLeft(QGeoCoordinate())
+        : pic(QPixmap()), geoTopLeft(QGeoCoordinate())
 {
 }
 
@@ -62,7 +62,7 @@ QMapPixmapPrivate::QMapPixmapPrivate()
     corner.  The pixmap is displayed in the layer specified by \a layerIndex.
 */
 QMapPixmap::QMapPixmap(const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex)
-    :QMapObject(*new QMapPixmapPrivate, QMapObject::PixmapObject, layerIndex)
+        : QMapObject(*new QMapPixmapPrivate, QMapObject::PixmapObject, layerIndex)
 {
     Q_D(QMapPixmap);
     d->geoTopLeft = topLeft;
@@ -70,7 +70,7 @@ QMapPixmap::QMapPixmap(const QGeoCoordinate& topLeft, const QPixmap& pixmap, qui
 }
 
 QMapPixmap::QMapPixmap(QMapPixmapPrivate &dd, const QGeoCoordinate& topLeft, const QPixmap& pixmap, quint16 layerIndex)
-    :QMapObject(dd, QMapObject::PixmapObject, layerIndex)
+        : QMapObject(dd, QMapObject::PixmapObject, layerIndex)
 {
     Q_D(QMapPixmap);
     d->geoTopLeft = topLeft;
@@ -80,7 +80,8 @@ QMapPixmap::QMapPixmap(QMapPixmapPrivate &dd, const QGeoCoordinate& topLeft, con
 /*!
     Returns the pixmap.
 */
-QPixmap QMapPixmap::pixmap() const {
+QPixmap QMapPixmap::pixmap() const
+{
     Q_D(const QMapPixmap);
     return d->pic;
 }
@@ -88,7 +89,8 @@ QPixmap QMapPixmap::pixmap() const {
 /*!
     Returns the top left corner (as a geo coordinate) of this pixmap.
 */
-QGeoCoordinate QMapPixmap::topLeft() const {
+QGeoCoordinate QMapPixmap::topLeft() const
+{
     Q_D(const QMapPixmap);
     return d->geoTopLeft;
 }
@@ -121,8 +123,8 @@ void QMapPixmap::paint(QPainter* painter, const QRectF& viewPort)
 
     //Is view port wrapping around date line?
     qreal right = viewPort.right();
-    for(int i=1;right>=mapWidth;++i,right -= mapWidth) {
-        qint64 width = mapWidth*i;
+    for (int i = 1;right >= mapWidth;++i, right -= mapWidth) {
+        qint64 width = mapWidth * i;
         d->pixRect.translate(-viewPort.left(), -viewPort.top());
         d->pixRect.translate(width, 0);
         painter->drawPixmap(d->pixRect.topLeft(), d->pic);

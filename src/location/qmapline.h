@@ -65,7 +65,7 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
     QMapLine(QMapLinePrivate &dd, const QGeoCoordinate& point1,
-            const QGeoCoordinate& point2, const QPen& pen = QPen(), quint16 layerIndex = 0);
+             const QGeoCoordinate& point2, const QPen& pen = QPen(), quint16 layerIndex = 0);
 
 private:
     Q_DECLARE_PRIVATE(QMapLine)

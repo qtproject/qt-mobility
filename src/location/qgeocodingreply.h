@@ -39,52 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_GEOCODINGREPLY_H
-#define QLOCATION_GEOCODINGREPLY_H
-
-#include <QString>
-#include <QObject>
+#ifndef QGEOCODINGREPLY_H
+#define QGEOCODINGREPLY_H
 
 #include "qgeolocation.h"
-#include "qgeoaddress.h"
-#include "qgeoreply.h"
+
+#include <QObject>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeocodingReplyPrivate;
-class Q_LOCATION_EXPORT QGeocodingReply : public QGeoReply
+
+class Q_LOCATION_EXPORT QGeocodingReply : public QObject
 {
     Q_OBJECT
 
-    friend class QGeoNetworkManager;
-    friend class QGeocodingXmlParser;
-
 public:
-    enum ResultCode {
-        OK = 0,
-        Failed
+    // TODO populate this some more...
+    enum ErrorCode {
+        NoError,
+        // flesh out the more common specific network errors
+        NetworkError,
+        // File errors
+        NoContentError,
+        ParsingError,
+        UnknownError
     };
 
-public:
-    ~QGeocodingReply();
-    ResultCode resultCode() const;
-    void setResultCode(ResultCode result);
-    QString resultDescription() const;
-    void setResultDescription(QString resultDescription);
-    quint32 count() const;
+    QGeocodingReply(QObject *parent = 0);
+    virtual ~QGeocodingReply();
+
+    QString description() const;
+    void setDescription(const QString &description);
+
     QList<QGeoLocation> places() const;
-    void addPlace(QGeoLocation place);
+    void setPlaces(const QList<QGeoLocation> &places);
 
-private:
-    Q_DISABLE_COPY(QGeocodingReply)
+public slots:
+    virtual void cancel() = 0;
 
-    QGeocodingReply();
+signals:
+    void finished();
+    void error(QGeocodingReply::ErrorCode errorCode, const QString &errorString = QString());
 
+    // CHOICE: could lose the setters and make this protected
 private:
     QGeocodingReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeocodingReply)
+    Q_DECLARE_PRIVATE(QGeocodingReply);
 };
-
 
 QTM_END_NAMESPACE
 

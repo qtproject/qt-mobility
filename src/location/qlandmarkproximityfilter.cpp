@@ -57,16 +57,16 @@ public:
 };
 
 QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate()
-    : QLandmarkFilterPrivate(),
-      coordinate(QGeoCoordinate()),
-      radius(0.0)
+        : QLandmarkFilterPrivate(),
+        coordinate(QGeoCoordinate()),
+        radius(0.0)
 {
 }
 
 QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other)
-    : QLandmarkFilterPrivate(other),
-      coordinate(other.coordinate),
-      radius(other.radius)
+        : QLandmarkFilterPrivate(other),
+        coordinate(other.coordinate),
+        radius(other.radius)
 {
 }
 
@@ -86,7 +86,7 @@ QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate()
     a central \a coordinate.
 */
 QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius)
-    : QLandmarkFilter(*new QLandmarkProximityFilterPrivate)
+        : QLandmarkFilter(*new QLandmarkProximityFilterPrivate)
 {
     Q_UNUSED(coordinate);
     Q_UNUSED(radius);

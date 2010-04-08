@@ -45,15 +45,15 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoLocationPrivate::QGeoLocationPrivate()
-    :QSharedData()
+        : QSharedData()
 {
 }
 
 QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
-    :QSharedData(other),
-     box(other.box),
-     coord(other.coord),
-     addr(other.addr)
+        : QSharedData(other),
+        box(other.box),
+        coord(other.coord),
+        addr(other.addr)
 {
 }
 
@@ -73,7 +73,7 @@ QGeoLocationPrivate::~QGeoLocationPrivate()
     Default constructor.
 */
 QGeoLocation::QGeoLocation()
-    :d(new QGeoLocationPrivate)
+        : d(new QGeoLocationPrivate)
 {
 }
 
@@ -81,7 +81,7 @@ QGeoLocation::QGeoLocation()
     Constructs a copy of \a other.
 */
 QGeoLocation::QGeoLocation(const QGeoLocation &other)
-    :d(other.d)
+        : d(other.d)
 {
 }
 
@@ -96,7 +96,7 @@ QGeoLocation::~QGeoLocation()
     Assigns \a other to this location and returns a reference
     to this location.
 */
-QGeoLocation &QGeoLocation::operator=(const QGeoLocation &other)
+QGeoLocation &QGeoLocation::operator=(const QGeoLocation & other)
 {
     d = other.d;
     return *this;
@@ -109,8 +109,8 @@ QGeoLocation &QGeoLocation::operator=(const QGeoLocation &other)
 bool QGeoLocation::operator==(const QGeoLocation &other) const
 {
     return (d->box == other.boundingBox())
-            && (d->coord == other.coordinate())
-            && (d->addr == other.address());
+           && (d->coord == other.coordinate())
+           && (d->addr == other.address());
 }
 
 /*!
