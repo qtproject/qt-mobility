@@ -457,6 +457,14 @@ void QMapView::centerOn(const QPointF& pos)
 }
 
 /*
+    Centers the view port on the given map \a x and \a y coordinate (in pixels).
+*/
+void QMapView::centerOn(qreal x, qreal y)
+{
+    centerOn(QPointF(x, y));
+}
+
+/*
     Centers the view port on the given \a geoPos.
 */
 void QMapView::centerOn(const QGeoCoordinate& geoPos)

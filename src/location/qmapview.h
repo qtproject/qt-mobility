@@ -105,6 +105,8 @@ public:
 
     QGeoCoordinate center() const;
     QPointF mapCenter() const;
+    void centerOn(const QPointF& pos);
+    void centerOn(qreal x, qreal y);
     void centerOn(const QGeoCoordinate& geoPos);
     void moveViewPort(int deltaX, int deltaY);
 
@@ -168,8 +170,6 @@ protected:
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     virtual void wheelEvent(QGraphicsSceneWheelEvent* event);
     virtual void resizeEvent(QGraphicsSceneResizeEvent* event);
-
-    void centerOn(const QPointF& pos);
 
 public slots:
     void releaseRemoteTiles();
