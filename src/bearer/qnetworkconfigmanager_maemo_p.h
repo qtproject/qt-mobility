@@ -57,6 +57,7 @@
 #include <QStringList>
 #include <QDBusInterface>
 #include <maemo_icd.h>
+#include <glib-object.h>
 
 #include "qnetworkconfigmanager.h"
 #include "qnetworkconfiguration_maemo_p.h"
@@ -73,7 +74,8 @@ public:
     QNetworkConfigurationManagerPrivate()
     :   QObject(0), capFlags(0), firstUpdate(true), onlineConfigurations(0), m_scanGoingOn(false)
     {
-        registerPlatformCapabilities();
+        registerPlatformCapabilities();        
+        g_type_init();
         updateConfigurations();
         init();
     }
