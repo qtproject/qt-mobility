@@ -102,6 +102,10 @@ void tst_QContact::details()
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
     QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName.latin1()).count() == 0);
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName.latin1()).isEmpty());
+    QVERIFY(c.details(QLatin1String(QContactPhoneNumber::DefinitionName)).count() == 0);
+    QVERIFY(c.detail(QLatin1String(QContactPhoneNumber::DefinitionName)).isEmpty());
 
     // Test retrieving the first detail (the display label)
     QList<QContactDetail> details = c.details(QString());
@@ -125,9 +129,23 @@ void tst_QContact::details()
     QVERIFY(c.isEmpty() == false);
 
     QVERIFY(c.details().count() == 3);
+
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 1);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
+
+    QVERIFY(c.details(QLatin1String(QContactPhoneNumber::DefinitionName)).count() == 1);
+    QVERIFY(c.details(QLatin1String(QContactPhoneNumber::DefinitionName), QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
+    QVERIFY(c.details(QLatin1String(QContactPhoneNumber::DefinitionName), QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
+
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName.latin1()).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName.latin1(), QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName.latin1(), QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
+
+    QVERIFY(c.details<QContactPhoneNumber>(QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
+    QVERIFY(c.details<QContactPhoneNumber>(QContactPhoneNumber::FieldNumber.latin1(), QString("12345678")).count() == 1);
+    QVERIFY(c.details<QContactPhoneNumber>(QLatin1String(QContactPhoneNumber::FieldNumber), QString("12345678")).count() == 1);
+
     QVERIFY(c.details<QContactPhoneNumber>().count() == 1);
     QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
