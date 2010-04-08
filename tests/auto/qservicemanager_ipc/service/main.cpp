@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 #include <QTimer>
 #include <qremoteserviceclassregister.h>
-#include <qservicecontrol.h>
+#include <qremoteservicecontrol.h>
 #include "qservicemanager.h"
 #include <QDebug>
 
@@ -325,7 +325,7 @@ int main(int argc, char** argv)
 
 
     //this only works
-    QServiceControl* control = new QServiceControl();
+    QRemoteServiceControl* control = new QRemoteServiceControl();
     control->publishServices("qt_sfw_example_ipc_unittest");
 #ifdef Q_OS_SYMBIAN
     qDebug("OTR Calling RProcess::rendezvous TODO if needed and correct place");

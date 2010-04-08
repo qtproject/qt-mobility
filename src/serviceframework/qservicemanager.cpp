@@ -44,10 +44,10 @@
 #include "qabstractsecuritysession.h"
 #ifdef Q_OS_SYMBIAN
     #include "databasemanager_s60_p.h"
-    #include "qservicecontrol_s60_p.h"
+    #include "qremoteservicecontrol_s60_p.h"
 #else
     #include "databasemanager_p.h"
-    #include "qservicecontrol_p.h"
+    #include "qremoteservicecontrol_p.h"
 #endif
 
 #include <QObject>
@@ -412,7 +412,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
                 .arg(descriptor.minorVersion()).toLatin1();
         const QRemoteServiceIdentifier ident(descriptor.interfaceName().toLatin1(), version);
-        QObject* service = QServiceControlPrivate::proxyForService(ident, location);
+        QObject* service = QRemoteServiceControlPrivate::proxyForService(ident, location);
         if (!service)
             d->setError(InvalidServiceLocation);
 

@@ -39,36 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QSERVICECONTROL_P_H
-#define QSERVICECONTROL_P_H
+#ifndef QREMOTESERVICECONTROL_H
+#define QREMOTESERVICECONTROL_H
 
-#include "qservicecontrol.h"
-#include "instancemanager_p.h"
-#include "qserviceinterfacedescriptor.h"
-#include <QLocalServer>
+#include "qmobilityglobal.h"
+#include <QObject>
+#include <QQueue>
+
 
 QTM_BEGIN_NAMESPACE
 
-class ObjectEndPoint;
-class QServiceControlPrivate: public QObject
+
+class QRemoteServiceControlPrivate;
+class Q_SERVICEFW_EXPORT QRemoteServiceControl : public QObject
 {
     Q_OBJECT
 public:
-    QServiceControlPrivate(QObject* parent);
+    QRemoteServiceControl(QObject* parent = 0);
+    ~QRemoteServiceControl();
+
     void publishServices(const QString& ident );
 
-public slots:
-    void processIncoming(); 
 private:
-    bool createServiceEndPoint(const QString& ident);
-
-    QLocalServer* localServer;
-    QList<ObjectEndPoint*> pendingConnections;
-
-public:
-    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
+    QRemoteServiceControlPrivate* d;
 };
 
 QTM_END_NAMESPACE
-
-#endif
+#endif //QREMOTESERVICECONTROL_H

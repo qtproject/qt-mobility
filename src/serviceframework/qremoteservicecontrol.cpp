@@ -39,30 +39,57 @@
 **
 ****************************************************************************/
 
-#ifndef QSERVICECONTROL_H
-#define QSERVICECONTROL_H
-
-#include "qmobilityglobal.h"
-#include <QObject>
-#include <QQueue>
-
+#include "qremoteservicecontrol.h"
+#ifdef Q_OS_SYMBIAN
+#include "qremoteservicecontrol_s60_p.h"
+#else
+#include "qremoteservicecontrol_p.h"
+#endif
 
 QTM_BEGIN_NAMESPACE
 
 
-class QServiceControlPrivate;
-class Q_SERVICEFW_EXPORT QServiceControl : public QObject
+/*!
+    \class QRemoteServiceControl
+    \ingroup servicefw
+    \brief The QRemoteServiceControl class manages instances of remote service objects.
+
+    This class instanciates IPC based service objects which have been registered
+    via QRemoteServiceClassRegister. It owns each created service object instance and
+    ensures that the platform specific IPC mechanism publishes the required service
+    object to other processes in the system.
+ 
+    \sa QRemoteServiceClassRegister   
+*/
+
+/*!
+    Creates a service control instance with the given \a parent.
+*/
+QRemoteServiceControl::QRemoteServiceControl(QObject* parent)
+    : QObject(parent)
 {
-    Q_OBJECT
-public:
-    QServiceControl(QObject* parent = 0);
-    ~QServiceControl();
+    d = new QRemoteServiceControlPrivate(this);
+}
 
-    void publishServices(const QString& ident );
+/*!
+    Destroys the service control instance
+*/
+QRemoteServiceControl::~QRemoteServiceControl()
+{
+}
 
-private:
-    QServiceControlPrivate* d;
-};
+/*!
+    Publishes every service that has been registered using
+    \l QRemoteServiceClassRegister::registerType(). \a ident is the service specific
+    IPC address under which the service can be reached. This address must match
+    the address provide in the services xml descriptor (see <filepath> tag).
+*/
+void QRemoteServiceControl::publishServices( const QString& ident)
+{
+    d->publishServices(ident);
+}
+
+
+#include "moc_qremoteservicecontrol.cpp"
 
 QTM_END_NAMESPACE
-#endif //QSERVICECONTROL_H

@@ -1,12 +1,12 @@
 INCLUDEPATH += ipc
 
 symbian {
-    PRIVATE_HEADERS += ipc/qservicecontrol_s60_p.h
-    SOURCES += ipc/qservicecontrol_s60.cpp
+    PRIVATE_HEADERS += ipc/qremoteservicecontrol_s60_p.h
+    SOURCES += ipc/qremoteservicecontrol_s60.cpp
 
 } else {
-    PRIVATE_HEADERS += ipc/qservicecontrol_p.h
-    SOURCES += ipc/qservicecontrol_p.cpp
+    PRIVATE_HEADERS += ipc/qremoteservicecontrol_p.h
+    SOURCES += ipc/qremoteservicecontrol_p.cpp
 }
 
 PRIVATE_HEADERS += \

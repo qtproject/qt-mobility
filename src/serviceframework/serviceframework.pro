@@ -19,7 +19,7 @@ PUBLIC_HEADERS += \
             qabstractsecuritysession.h \
             qserviceinterfacedescriptor.h \
             qservicefilter.h \
-            qservicecontrol.h \
+            qremoteservicecontrol.h \
             qremoteserviceclassregister.h
 
 PRIVATE_HEADERS += servicemetadata_p.h \
@@ -34,7 +34,7 @@ SOURCES +=  servicemetadata.cpp \
             qserviceinterfacedescriptor.cpp \
             qservicefilter.cpp \
             dberror.cpp \
-            qservicecontrol.cpp \
+            qremoteservicecontrol.cpp \
             qremoteserviceclassregister.cpp
 
 symbian {

@@ -39,12 +39,12 @@
 **
 ****************************************************************************/
 
-#ifndef QSERVICECONTROL_S60_P_H
-#define QSERVICECONTROL_S60_P_H
+#ifndef QREMOTESERVICECONTROL_S60_P_H
+#define QREMOTESERVICECONTROL_S60_P_H
 
 #define QT_SFW_SYMBIAN_IPC_DEBUG
 
-#include "qservicecontrol.h"
+#include "qremoteservicecontrol.h"
 #include "qremoteserviceclassregister.h"
 #include "qservicepackage_p.h"
 #include <e32base.h>
@@ -122,7 +122,7 @@ const TUint KDefaultHeapSize = 0x10000;
 class CServiceProviderServer : public CServer2
     {
     public:
-        CServiceProviderServer(QServiceControlPrivate* aOwner);
+        CServiceProviderServer(QRemoteServiceControlPrivate* aOwner);
         CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
 
     public:
@@ -133,7 +133,7 @@ class CServiceProviderServer : public CServer2
     private:
 
         int iSessionCount;
-        QServiceControlPrivate* iOwner;
+        QRemoteServiceControlPrivate* iOwner;
     };
 
 class CServiceProviderServerSession : public CSession2
@@ -163,12 +163,12 @@ class CServiceProviderServerSession : public CSession2
     };
 
 
-class QServiceControlPrivate: public QObject
+class QRemoteServiceControlPrivate: public QObject
 {
     Q_OBJECT
 
 public:
-    QServiceControlPrivate(QObject* parent);
+    QRemoteServiceControlPrivate(QObject* parent);
     void publishServices(const QString& ident );
     static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
     void processIncoming(CServiceProviderServerSession* session);
@@ -196,4 +196,4 @@ private:
 
 QTM_END_NAMESPACE
 
-#endif // QSERVICECONTROL_S60_P_H
+#endif // QREMOTESERVICECONTROL_S60_P_H

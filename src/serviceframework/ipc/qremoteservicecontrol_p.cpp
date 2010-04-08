@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qservicecontrol_p.h"
+#include "qremoteservicecontrol_p.h"
 #include "ipcendpoint_p.h"
 #include "objectendpoint_p.h"
 
@@ -102,17 +102,17 @@ private:
     QLocalSocket* socket;
 };
 
-QServiceControlPrivate::QServiceControlPrivate(QObject* parent)
+QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject* parent)
     : QObject(parent)
 {
 }
 
-void QServiceControlPrivate::publishServices( const QString& ident)
+void QRemoteServiceControlPrivate::publishServices( const QString& ident)
 {
     createServiceEndPoint(ident) ;
 }
 
-void QServiceControlPrivate::processIncoming()
+void QRemoteServiceControlPrivate::processIncoming()
 {
     qDebug() << "Processing incoming connect";
     if (localServer->hasPendingConnections()) {
@@ -126,7 +126,7 @@ void QServiceControlPrivate::processIncoming()
 /*!
     Creates endpoint on service side.
 */
-bool QServiceControlPrivate::createServiceEndPoint(const QString& ident)
+bool QRemoteServiceControlPrivate::createServiceEndPoint(const QString& ident)
 {
     //other IPC mechanisms such as dbus may have to publish the
     //meta object definition for all registered service types
@@ -147,7 +147,7 @@ bool QServiceControlPrivate::createServiceEndPoint(const QString& ident)
 /*!
     Creates endpoint on client side.
 */
-QObject* QServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
+QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
     //location format:  protocol:address
@@ -164,6 +164,6 @@ QObject* QServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier&
     return proxy;
 }
 
-#include "moc_qservicecontrol_p.cpp"
-#include "qservicecontrol_p.moc"
+#include "moc_qremoteservicecontrol_p.cpp"
+#include "qremoteservicecontrol_p.moc"
 QTM_END_NAMESPACE

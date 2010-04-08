@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qservicecontrol_s60_p.h"
+#include "qremoteservicecontrol_s60_p.h"
 #include "ipcendpoint_p.h"
 #include "objectendpoint_p.h"
 #include <QTimer>
@@ -142,15 +142,15 @@ private:
     CServiceProviderServerSession *session;
 };
 
-QServiceControlPrivate::QServiceControlPrivate(QObject *parent)
+QRemoteServiceControlPrivate::QRemoteServiceControlPrivate(QObject *parent)
     : QObject(parent)
 {
 }
 
-void QServiceControlPrivate::publishServices(const QString &ident)
+void QRemoteServiceControlPrivate::publishServices(const QString &ident)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "QServiceControlPrivate::publishServices() for ident: " << ident;
+    qDebug() << "QRemoteServiceControlPrivate::publishServices() for ident: " << ident;
 #endif
     qDebug("OTR TODO change publishServices to to return value ");
     // Create service side of the Symbian Client-Server architecture.
@@ -160,11 +160,11 @@ void QServiceControlPrivate::publishServices(const QString &ident)
     if (err != KErrNone) {
         qDebug() << "RTR server->Start() failed, TODO return false.";
     } else {
-        qDebug("GTR QServiceControlPrivate::server providing service started successfully");
+        qDebug("GTR QRemoteServiceControlPrivate::server providing service started successfully");
     }
 }
 
-void QServiceControlPrivate::processIncoming(CServiceProviderServerSession* newSession)
+void QRemoteServiceControlPrivate::processIncoming(CServiceProviderServerSession* newSession)
 {
     qDebug("GTR Processing incoming session creation.");
     // Create service provider-side endpoints.
@@ -172,10 +172,10 @@ void QServiceControlPrivate::processIncoming(CServiceProviderServerSession* newS
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
 }
 
-QObject* QServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier &typeId, const QString &location)
+QObject* QRemoteServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier &typeId, const QString &location)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
-    qDebug() << "QServiceControlPrivate::proxyForService for location: " << location;
+    qDebug() << "QRemoteServiceControlPrivate::proxyForService for location: " << location;
 #endif
     // Create client-side session for the IPC and connect it to the service
     // provide. If service provider is not up, it will be started.
@@ -185,7 +185,7 @@ QObject* QServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier 
     int err = session->Connect();
     int i = 0;
     while (err != KErrNone) {
-        qDebug() << "QServiceControlPrivate::proxyForService Connecting in loop: " << i;
+        qDebug() << "QRemoteServiceControlPrivate::proxyForService Connecting in loop: " << i;
         if (i > 10) {
             qWarning() << "QtSFW failed to connect to service provider.";
             return NULL;
@@ -331,7 +331,7 @@ void RServiceSession::CancelListenForPackages()
     SendReceive(EPackageRequestCancel, TIpcArgs(NULL));
 }
 
-CServiceProviderServer::CServiceProviderServer(QServiceControlPrivate* aOwner)
+CServiceProviderServer::CServiceProviderServer(QRemoteServiceControlPrivate* aOwner)
     : CServer2(EPriorityNormal), iSessionCount(0), iOwner(aOwner)
 {
     qDebug("CServiceProviderServer constructor");
@@ -557,6 +557,6 @@ void ServiceMessageListener::RunL()
     }
 }
 
-#include "moc_qservicecontrol_s60_p.cpp"
-#include "qservicecontrol_s60.moc"
+#include "moc_qremoteservicecontrol_s60_p.cpp"
+#include "qremoteservicecontrol_s60.moc"
 QTM_END_NAMESPACE
