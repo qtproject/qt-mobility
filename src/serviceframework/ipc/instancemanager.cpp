@@ -57,10 +57,10 @@ InstanceManager::InstanceManager()
 
 InstanceManager::~InstanceManager()
 {
-    QList<QServiceTypeIdent> allIdents = metaMap.keys();
+    QList<QRemoteServiceIdentifier> allIdents = metaMap.keys();
     while (!allIdents.isEmpty()) {
         ServiceIdentDescriptor descr = metaMap.take(allIdents.takeFirst());
-        if (descr.instanceType == QServiceTypeRegister::SharedInstance) {
+        if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
             if (descr.sharedInstance)
                descr.sharedInstance->deleteLater();
             descr.sharedInstance = 0;
@@ -75,11 +75,11 @@ InstanceManager::~InstanceManager()
 }
 
 bool InstanceManager::addType(const QMetaObject* meta, 
-        QServiceTypeRegister::CreateServiceFunc func, 
-        QServiceTypeRegister::TypeIdentFunc typeFunc,
-        QServiceTypeRegister::InstanceType type)
+        QRemoteServiceClassRegister::CreateServiceFunc func, 
+        QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
+        QRemoteServiceClassRegister::InstanceType type)
 {
-    QServiceTypeIdent ident = (*typeFunc)();
+    QRemoteServiceIdentifier ident = (*typeFunc)();
 
     QMutexLocker ml(&lock);
 
@@ -97,7 +97,7 @@ bool InstanceManager::addType(const QMetaObject* meta,
     return false;
 }
 
-const QMetaObject* InstanceManager::metaObject(const QServiceTypeIdent& ident) const
+const QMetaObject* InstanceManager::metaObject(const QRemoteServiceIdentifier& ident) const
 {
     QMutexLocker ml(&lock);
     if (metaMap.contains(ident)) {
@@ -107,7 +107,7 @@ const QMetaObject* InstanceManager::metaObject(const QServiceTypeIdent& ident) c
     }
 }
 
-QList<QServiceTypeIdent> InstanceManager::allIdents() const
+QList<QRemoteServiceIdentifier> InstanceManager::allIdents() const
 {
     QMutexLocker ml(&lock);
     return metaMap.keys();
@@ -118,7 +118,7 @@ QList<QServiceTypeIdent> InstanceManager::allIdents() const
     if \a ident cannot be mapped to a known meta object. \a instanceId will
     contain the id for the new service instance.
 */
-QObject* InstanceManager::createObjectInstance(const QServiceTypeIdent& ident, QUuid& instanceId)
+QObject* InstanceManager::createObjectInstance(const QRemoteServiceIdentifier& ident, QUuid& instanceId)
 {
     instanceId = QUuid();
     QMutexLocker ml(&lock);
@@ -128,7 +128,7 @@ QObject* InstanceManager::createObjectInstance(const QServiceTypeIdent& ident, Q
     QObject* service = 0;
     ServiceIdentDescriptor& descr = metaMap[ident];
 
-    if (descr.instanceType == QServiceTypeRegister::SharedInstance) {
+    if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
         if (descr.sharedInstance) {
             service = descr.sharedInstance;
             instanceId = descr.sharedId;
@@ -156,14 +156,14 @@ QObject* InstanceManager::createObjectInstance(const QServiceTypeIdent& ident, Q
 /*!
     The associated service object will be deleted in the process.
 */
-void InstanceManager::removeObjectInstance(const QServiceTypeIdent& ident, const QUuid& instanceId)
+void InstanceManager::removeObjectInstance(const QRemoteServiceIdentifier& ident, const QUuid& instanceId)
 {
     QMutexLocker ml(&lock);
     if (!metaMap.contains(ident))
         return;
     
     ServiceIdentDescriptor& descr = metaMap[ident];
-    if (descr.instanceType == QServiceTypeRegister::SharedInstance) {
+    if (descr.instanceType == QRemoteServiceClassRegister::SharedInstance) {
         if (descr.sharedRefCount < 1)
             return;
 

@@ -172,7 +172,7 @@ void QServiceControlPrivate::processIncoming(CServiceProviderServerSession* newS
     ObjectEndPoint* endPoint = new ObjectEndPoint(ObjectEndPoint::Service, ipcEndPoint, this);
 }
 
-QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent &typeId, const QString &location)
+QObject* QServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier &typeId, const QString &location)
 {
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
     qDebug() << "QServiceControlPrivate::proxyForService for location: " << location;

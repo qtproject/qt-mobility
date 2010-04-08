@@ -55,11 +55,11 @@ QTM_BEGIN_NAMESPACE
     \brief The QServiceControl class manages instances of remote service objects.
 
     This class instanciates IPC based service objects which have been registered
-    via QServiceTypeRegister. It owns each created service object instance and
+    via QRemoteServiceClassRegister. It owns each created service object instance and
     ensures that the platform specific IPC mechanism publishes the required service
     object to other processes in the system.
  
-    \sa QServiceTypeRegister   
+    \sa QRemoteServiceClassRegister   
 */
 
 /*!
@@ -80,7 +80,7 @@ QServiceControl::~QServiceControl()
 
 /*!
     Publishes every service that has been registered using
-    \l QServiceTypeRegister::registerType(). \a ident is the service specific
+    \l QRemoteServiceClassRegister::registerType(). \a ident is the service specific
     IPC address under which the service can be reached. This address must match
     the address provide in the services xml descriptor (see <filepath> tag).
 */

@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef QSERVICE_TYPE_REGISTER_PRIV
-#define QSERVICE_TYPE_REGISTER_PRIV
+#ifndef QSERVICE_INSTANCE_MANAGER
+#define QSERVICE_INSTANCE_MANAGER
 
 #include <qmobilityglobal.h>
-#include "qservicetyperegister.h"
+#include "qremoteserviceclassregister.h"
 #include <QHash>
 #include <QMutexLocker>
 #include <QMetaObject>
@@ -60,11 +60,11 @@ struct ServiceIdentDescriptor
     }
 
     const QMetaObject* meta;
-    QServiceTypeRegister::InstanceType instanceType;
+    QRemoteServiceClassRegister::InstanceType instanceType;
     QHash<QUuid, QObject*> individualInstances;
     QObject* sharedInstance;
     QUuid sharedId;
-    QServiceTypeRegister::CreateServiceFunc create;
+    QRemoteServiceClassRegister::CreateServiceFunc create;
     int sharedRefCount;
 };
 
@@ -75,20 +75,20 @@ public:
     ~InstanceManager();
 
     bool addType(const QMetaObject* meta, 
-            QServiceTypeRegister::CreateServiceFunc func,
-            QServiceTypeRegister::TypeIdentFunc typeFunc,
-            QServiceTypeRegister::InstanceType type);
-    const QMetaObject* metaObject(const QServiceTypeIdent& ident) const;
-    QList<QServiceTypeIdent> allIdents() const;
+            QRemoteServiceClassRegister::CreateServiceFunc func,
+            QRemoteServiceClassRegister::TypeIdentFunc typeFunc,
+            QRemoteServiceClassRegister::InstanceType type);
+    const QMetaObject* metaObject(const QRemoteServiceIdentifier& ident) const;
+    QList<QRemoteServiceIdentifier> allIdents() const;
 
-    QObject* createObjectInstance(const QServiceTypeIdent& ident, QUuid& instanceId);
-    void removeObjectInstance(const QServiceTypeIdent& ident, const QUuid& instanceId);
+    QObject* createObjectInstance(const QRemoteServiceIdentifier& ident, QUuid& instanceId);
+    void removeObjectInstance(const QRemoteServiceIdentifier& ident, const QUuid& instanceId);
 
     static InstanceManager* instance();
 
 private:
     mutable QMutex lock;
-    QHash<QServiceTypeIdent, ServiceIdentDescriptor> metaMap;
+    QHash<QRemoteServiceIdentifier, ServiceIdentDescriptor> metaMap;
 };
 
 
@@ -96,4 +96,4 @@ private:
 QTM_END_NAMESPACE
 
 
-#endif //QSERVICE_TYPE_REGISTER_PRIV
+#endif //QSERVICE_INSTANCE_MANAGER

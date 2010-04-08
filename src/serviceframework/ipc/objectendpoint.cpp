@@ -151,7 +151,7 @@ public:
     ObjectEndPoint* parent;
 
     //used on service side
-    QServiceTypeIdent typeIdent;
+    QRemoteServiceIdentifier typeIdent;
     QUuid serviceInstanceId;
 };
 
@@ -201,7 +201,7 @@ void ObjectEndPoint::disconnected()
     code and this object must clean itself up upon destruction of
     proxy.
 */
-QObject* ObjectEndPoint::constructProxy(const QServiceTypeIdent& ident)
+QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
 {
     
     //ask for serialized meta object

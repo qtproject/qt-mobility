@@ -147,7 +147,7 @@ bool QServiceControlPrivate::createServiceEndPoint(const QString& ident)
 /*!
     Creates endpoint on client side.
 */
-QObject* QServiceControlPrivate::proxyForService(const QServiceTypeIdent& typeIdent, const QString& location)
+QObject* QServiceControlPrivate::proxyForService(const QRemoteServiceIdentifier& typeIdent, const QString& location)
 {
     QLocalSocket* socket = new QLocalSocket();
     //location format:  protocol:address

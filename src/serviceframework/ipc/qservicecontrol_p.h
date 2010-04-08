@@ -66,7 +66,7 @@ private:
     QList<ObjectEndPoint*> pendingConnections;
 
 public:
-    static QObject* proxyForService(const QServiceTypeIdent& typeId, const QString& location);
+    static QObject* proxyForService(const QRemoteServiceIdentifier& typeId, const QString& location);
 };
 
 QTM_END_NAMESPACE

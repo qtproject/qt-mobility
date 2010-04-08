@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qservicetyperegister.h"
+#include "qremoteserviceclassregister.h"
 #include "instancemanager_p.h"
 
 #include <QMutexLocker>
@@ -50,22 +50,32 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \typedef QServiceTypeIdent
-    \relates QServiceTypeRegister
+    \typedef QRemoteServiceIdentifier
+    \relates QRemoteServiceClassRegister
 
     Qt-style synonym for QPair<QByteArray, QByteArray>.
 */
 
 /*!
-    \class QServiceTypeRegister
+    \typedef QRemoteServiceClassRegister::CreateServiceFunc
+    \internal
+*/
+
+/*!
+    \typedef QRemoteServiceClassRegister::TypeIdentFunc
+    \internal
+*/
+
+/*!
+    \class QRemoteServiceClassRegister
     \ingroup servicefw
-    \brief The QServiceTypeRegister class manages the various remote service classes
+    \brief The QRemoteServiceClassRegister class manages the various remote service classes
     which can be instanciated.
 
 */
 
 /*!
-    \enum QServiceTypeRegister::InstanceType
+    \enum QRemoteServiceClassRegister::InstanceType
 
     Defines the possible service instanciation methodologies.
 
@@ -74,13 +84,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn bool QServiceTypeRegister::registerType(QServiceTypeRegister::InstanceType type)
+    \fn bool QRemoteServiceClassRegister::registerType(QRemoteServiceClassRegister::InstanceType type)
 
     This template function registers the provided template class as remote service and returns true if the registration
     was successfull. The \a type specifies the method used for service class instanciation. 
 
     \code
-        QServiceTypeRegister::registerType<ServiceClass>();
+        QRemoteServiceClassRegister::registerType<ServiceClass>();
     \endcode
 
     Every service class must be marked via the \l Q_SERVICE() macro.
@@ -88,7 +98,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \macro Q_SERVICE(T, interface, version)
-    \relates QServiceTypeRegister
+    \relates QRemoteServiceClassRegister
 
     This macro marks a class as remote service and should be placed next to the Q_OBJECT
     macro. \a T represents the name of the class implementing the service, \a interface
@@ -113,8 +123,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     \internal
 */
-bool QServiceTypeRegister::registerType( const QMetaObject* meta,
-        CreateServiceFunc func, TypeIdentFunc tfunc,  QServiceTypeRegister::InstanceType t)
+bool QRemoteServiceClassRegister::registerType( const QMetaObject* meta,
+        CreateServiceFunc func, TypeIdentFunc tfunc,  QRemoteServiceClassRegister::InstanceType t)
 {
     Q_ASSERT(InstanceManager::instance());
     return InstanceManager::instance()->addType(meta, func, tfunc, t);
@@ -123,7 +133,7 @@ bool QServiceTypeRegister::registerType( const QMetaObject* meta,
 /*!
     \internal
 */
-const QMetaObject* QServiceTypeRegister::metaObject(const QServiceTypeIdent& ident) const
+const QMetaObject* QRemoteServiceClassRegister::metaObject(const QRemoteServiceIdentifier& ident) const
 {
     Q_ASSERT(InstanceManager::instance());
     return InstanceManager::instance()->metaObject(ident);
@@ -132,7 +142,7 @@ const QMetaObject* QServiceTypeRegister::metaObject(const QServiceTypeIdent& ide
 /*!
     Returns the list of all registered service types.
 */
-QList<QServiceTypeIdent> QServiceTypeRegister::types() const
+QList<QRemoteServiceIdentifier> QRemoteServiceClassRegister::types() const
 {
     Q_ASSERT(InstanceManager::instance());
     return InstanceManager::instance()->allIdents();

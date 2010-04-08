@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 #include <QTimer>
-#include <qservicetyperegister.h>
+#include <qremoteserviceclassregister.h>
 #include <qservicecontrol.h>
 #include "qservicemanager.h"
 #include <QDebug>
@@ -320,8 +320,8 @@ int main(int argc, char** argv)
 
     registerExampleService();
 
-    QServiceTypeRegister::registerType<SharedTestService>(QServiceTypeRegister::SharedInstance);
-    QServiceTypeRegister::registerType<UniqueTestService>(QServiceTypeRegister::UniqueInstance);
+    QRemoteServiceClassRegister::registerType<SharedTestService>(QRemoteServiceClassRegister::SharedInstance);
+    QRemoteServiceClassRegister::registerType<UniqueTestService>(QRemoteServiceClassRegister::UniqueInstance);
 
 
     //this only works

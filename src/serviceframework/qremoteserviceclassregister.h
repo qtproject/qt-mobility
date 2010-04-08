@@ -48,27 +48,26 @@
 
 QTM_BEGIN_NAMESPACE
 
-typedef QPair<QByteArray, QByteArray> QServiceTypeIdent;
+typedef QPair<QByteArray, QByteArray> QRemoteServiceIdentifier;
 
-class QServiceTypeRegisterPrivate;
-class Q_SERVICEFW_EXPORT QServiceTypeRegister 
+class Q_SERVICEFW_EXPORT QRemoteServiceClassRegister 
 {
 public:
     typedef QObject *(*CreateServiceFunc)();
-    typedef QServiceTypeIdent (*TypeIdentFunc)();
+    typedef QRemoteServiceIdentifier (*TypeIdentFunc)();
 
     enum InstanceType {
         SharedInstance = 0,  //every new request for service gets same service instance
         UniqueInstance       //every new request for service gets new service instance
     };
 
-    QList<QServiceTypeIdent> types() const;
-    const QMetaObject* metaObject(const QServiceTypeIdent& ident) const;
+    QList<QRemoteServiceIdentifier> types() const;
+    const QMetaObject* metaObject(const QRemoteServiceIdentifier& ident) const;
 
     static bool registerType(const QMetaObject* meta, CreateServiceFunc, TypeIdentFunc, InstanceType instance = UniqueInstance);
-    template <class T> static bool registerType( QServiceTypeRegister::InstanceType instanceType = UniqueInstance) 
+    template <class T> static bool registerType( QRemoteServiceClassRegister::InstanceType instanceType = UniqueInstance) 
     {
-        return QServiceTypeRegister::registerType(
+        return QRemoteServiceClassRegister::registerType(
                 &T::staticMetaObject, &T::qt_sfw_create_instance, &T::qt_sfw_type_ident, instanceType);
     }
 };
@@ -79,9 +78,9 @@ public:\
     { \
         return new T;\
     } \
-    static QServiceTypeIdent qt_sfw_type_ident() \
+    static QRemoteServiceIdentifier qt_sfw_type_ident() \
     { \
-        return QServiceTypeIdent(interface, version); \
+        return QRemoteServiceIdentifier(interface, version); \
     } \
 private:
 

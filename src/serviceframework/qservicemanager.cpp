@@ -411,7 +411,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     if (qservicemanager_isIpcBasedService(location)) {
         const QByteArray version = QString("%1.%2").arg(descriptor.majorVersion())
                 .arg(descriptor.minorVersion()).toLatin1();
-        const QServiceTypeIdent ident(descriptor.interfaceName().toLatin1(), version);
+        const QRemoteServiceIdentifier ident(descriptor.interfaceName().toLatin1(), version);
         QObject* service = QServiceControlPrivate::proxyForService(ident, location);
         if (!service)
             d->setError(InvalidServiceLocation);
@@ -493,16 +493,6 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     the service manager will not perform any checks. Therefore it is assumed that
     the service manager client is trusted as it controls whether service capabilities
     are enforced during service loading.
-*/
-
-/*!
-    \typedef QServiceTypeRegister::CreateServiceFunc
-    \internal
-*/
-
-/*!
-    \typedef QServiceTypeRegister::TypeIdentFunc
-    \internal
 */
 
 /*!

@@ -44,7 +44,7 @@
 
 #include "qmobilityglobal.h"
 #include "ipcendpoint_p.h"
-#include "qservicetyperegister.h"
+#include "qremoteserviceclassregister.h"
 #include <QPointer>
 #include <QHash>
 
@@ -62,7 +62,7 @@ public:
 
     ObjectEndPoint(Type type, QServiceIpcEndPoint* comm, QObject* parent = 0);
     ~ObjectEndPoint();
-    QObject* constructProxy(const QServiceTypeIdent& ident);
+    QObject* constructProxy(const QRemoteServiceIdentifier& ident);
 
     void objectRequest(const QServicePackage& p);
     void methodCall(const QServicePackage& p);

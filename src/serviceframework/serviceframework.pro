@@ -20,7 +20,7 @@ PUBLIC_HEADERS += \
             qserviceinterfacedescriptor.h \
             qservicefilter.h \
             qservicecontrol.h \
-            qservicetyperegister.h
+            qremoteserviceclassregister.h
 
 PRIVATE_HEADERS += servicemetadata_p.h \
             qserviceinterfacedescriptor_p.h \
@@ -35,7 +35,7 @@ SOURCES +=  servicemetadata.cpp \
             qservicefilter.cpp \
             dberror.cpp \
             qservicecontrol.cpp \
-            qservicetyperegister.cpp
+            qremoteserviceclassregister.cpp
 
 symbian {
     INCLUDEPATH +=  ./symbian
