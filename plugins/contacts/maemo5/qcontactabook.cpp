@@ -546,10 +546,12 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   m_saveJobSD->that = this;
   m_saveJobSD->result = &ok;
   m_saveJobSD->error = error;
+  m_saveJobSD->uid = 0;
   
   // Add/Commit the contact
   uid = CONST_CHAR(e_contact_get_const(E_CONTACT (aContact), E_CONTACT_UID)); 
   if (uid) {
+    m_saveJobSD->uid = strdup(uid);
     osso_abook_contact_async_commit(aContact, book, commitContactCB, m_saveJobSD);
   } else {
     osso_abook_contact_async_add(aContact, book, addContactCB, m_saveJobSD);
@@ -561,7 +563,8 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   QContactId cId;
   cId.setLocalId(m_localIds[m_saveJobSD->uid]);
   contact->setId(cId);
-  //free(m_saveJobSD->uid);
+  if (m_saveJobSD->uid)
+      free(m_saveJobSD->uid);
   
   return ok;
 }
