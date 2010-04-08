@@ -130,17 +130,19 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 {
     QMessageIdList messageIds;
 
+    QMessageFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
+
     bool isFiltered = false;
     bool isSorted = false;
     
-    messageIds = ModestEngine::instance()->queryMessagesSync(filter, sortOrder, limit, offset,
+    messageIds = ModestEngine::instance()->queryMessagesSync(handledFilter, sortOrder, limit, offset,
                                                              isFiltered, isSorted);
     
-    //    messageIds += d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
-    messageIds += EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+    messageIds += EventLoggerEngine::instance()->filterAndOrderMessages(handledFilter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
 
     if (!isFiltered) {
-        MessagingHelper::filterMessages(messageIds, filter);
+        MessagingHelper::filterMessages(messageIds, handledFilter);
     }
     if (!isSorted) {
         MessagingHelper::orderMessages(messageIds, sortOrder);
@@ -156,15 +158,18 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 {
     QMessageIdList messageIds;
 
+    QMessageFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
+
     bool isFiltered = false;
     bool isSorted = false;
-    messageIds = ModestEngine::instance()->queryMessagesSync(filter, body, matchFlags, sortOrder, limit, offset,
-                                                             isFiltered, isSorted);
-    //    messageIds +=d_ptr->p_ptr->el->filterAndOrderMessages(filter,sortOrder,body,matchFlags);
-    messageIds +=EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags);
+    messageIds = ModestEngine::instance()->queryMessagesSync(handledFilter, body, matchFlags, sortOrder,
+                                                             limit, offset, isFiltered, isSorted);
+
+    messageIds +=EventLoggerEngine::instance()->filterAndOrderMessages(handledFilter,sortOrder,body,matchFlags);
 
     if (!isFiltered) {
-        MessagingHelper::filterMessages(messageIds, filter);
+        MessagingHelper::filterMessages(messageIds, handledFilter);
     }
     if (!isSorted) {
         MessagingHelper::orderMessages(messageIds, sortOrder);
@@ -180,9 +185,12 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
 {
     QMessageFolderIdList folderIds;
 
+    QMessageFolderFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromFolderFilter(handledFilter);
+
     bool isFiltered = false;
     bool isSorted = false;
-    folderIds = ModestEngine::instance()->queryFolders(filter, sortOrder, limit, offset, isFiltered, isSorted);
+    folderIds = ModestEngine::instance()->queryFolders(handledFilter, sortOrder, limit, offset, isFiltered, isSorted);
     if (!isFiltered) {
         MessagingHelper::filterFolders(folderIds, filter);
     }
@@ -220,7 +228,10 @@ int QMessageStore::countMessages(const QMessageFilter& filter) const
 {
     int count = 0;
 
-    count += ModestEngine::instance()->countMessagesSync(filter);
+    QMessageFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
+
+    count += ModestEngine::instance()->countMessagesSync(handledFilter);
 
     ModestEngine::instance()->clearHeaderCache();
 
