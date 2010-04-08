@@ -209,7 +209,11 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
         } else {
             fsMessage->ResetFlag(EmailInterface::EFlag_Read);
         }
-
+    
+    MEmailAddress* sender = mailbox->AddressL();
+    sender->SetRole(MEmailAddress::ESender);
+    fsMessage->SetReplyToAddressL(*sender);
+        
     QList<QMessageAddress> toList(message.to());
     if (toList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
@@ -220,6 +224,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             MEmailAddress* address = mailbox->AddressL();
             address->SetAddressL(receiver);
+            address->SetRole(MEmailAddress::ETo);
             toAddress.Append(address);
         }
         fsMessage->SetRecipientsL(MEmailAddress::ETo, toAddress);
@@ -340,6 +345,10 @@ bool CFSEngine::updateMessage(QMessage* message)
             fsMessage->ResetFlag(EmailInterface::EFlag_Read);
         }
         
+    MEmailAddress* sender = mailbox->AddressL();
+    sender->SetRole(MEmailAddress::ESender);
+    fsMessage->SetReplyToAddressL(*sender);
+        
     QList<QMessageAddress> toList(message->to());
     if (toList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
@@ -400,6 +409,7 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
 
 bool CFSEngine::showMessage(const QMessageId &id)
 {
+    // we need to search from every mailbox, because we have only messageid to use..
     return false;
 }
 
@@ -409,28 +419,31 @@ bool CFSEngine::composeMessage(const QMessage &message)
     MEmailMessage* fsMessage;
     TRAPD(err, 
         fsMessage = createFSMessageL(message);
+        fsMessage->SaveChangesL();
         fsMessage->ShowMessageViewerL();
     );
     if (err != KErrNone)
         retVal = false;
     else
         retVal = true;   
-    CleanupStack::PopAndDestroy(); // fsMessage
     return retVal;
 }
 
 bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
 {
+    // not supported in Email Client Api
     return false;
 }
 
 bool CFSEngine::retrieveBody(const QMessageId& id)
 {
+    // not supported in Email Client Api
      return false;
 }
 
 bool CFSEngine::retrieveHeader(const QMessageId& id)
 {
+    // not supported in Email Client Api
     return false;
 }
 
@@ -770,7 +783,11 @@ bool CFSEngine::sendEmail(QMessage &message)
     MEmailMessage* fsMessage;
     TRAPD(err,
         fsMessage = createFSMessageL(message);
+        fsMessage->SaveChangesL();
         fsMessage->SendL();
+        TMailboxId mailboxId(removeFreestylePrefix(message.parentAccountId().toString()).toInt());
+        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);       
+        mailbox->SynchroniseL(*this);       
     );
     if (err != KErrNone)
         return false;
@@ -817,6 +834,11 @@ QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMes
 void CFSEngine::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
 {
 
+}
+
+void CFSEngine::MailboxSynchronisedL(TInt aResult)
+{
+   
 }
 
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)

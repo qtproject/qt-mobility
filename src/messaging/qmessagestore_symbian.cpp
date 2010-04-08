@@ -191,16 +191,28 @@ QMessageFolder QMessageStorePrivate::folder(const QMessageFolderId& id) const
 
 bool QMessageStorePrivate::addMessage(QMessage *m)
 {
+#ifdef FREESTYLEMAILUSED
+    if (isFreestyleMessage(m->id()))
+        return CFSEngine::instance()->addMessage(m);
+#endif
     return _mtmEngine->addMessage(m);
 }
 
 bool QMessageStorePrivate::updateMessage(QMessage *m)
 {
+#ifdef FREESTYLEMAILUSED
+    if (isFreestyleMessage(m->id()))
+        return CFSEngine::instance()->updateMessage(m);
+#endif
     return _mtmEngine->updateMessage(m);
 }
 
 bool QMessageStorePrivate::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
 {
+#ifdef FREESTYLEMAILUSED
+    if (isFreestyleMessage(id))
+        return CFSEngine::instance()->removeMessage(id, option);
+#endif
     return _mtmEngine->removeMessage(id, option);
 }
 

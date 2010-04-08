@@ -108,11 +108,11 @@ bool QMessageServicePrivate::show(const QMessageId& id)
 bool QMessageServicePrivate::compose(const QMessage &message)
 {
     if (SymbianHelpers::isFreestyleAccount(message.parentAccountId())) {
-    #ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED
             return CFSEngine::instance()->composeMessage(message);
-    #else
+#else
             return false;
-    #endif
+#endif
         } else
             return CMTMEngine::instance()->composeMessage(message);
 }

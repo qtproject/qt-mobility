@@ -60,6 +60,7 @@
 #include <memailmessagesearch.h>
 #include <memailmessage.h>
 #include <emailinterfacefactory.h>
+#include <mmailboxsyncobserver.h>
 
 
 using namespace EmailInterface;
@@ -86,7 +87,7 @@ struct FSMessageQueryInfo
     int count;
 };
 
-class CFSEngine
+class CFSEngine : public MMailboxSyncObserver
 {
 public: 
     
@@ -131,6 +132,9 @@ public:
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                      bool resultSetOrdered);
 
+public: // from MMailboxSyncObserver
+    void MailboxSynchronisedL(TInt aResult);
+    
 private:
     
     void updateEmailAccountsL() const;
