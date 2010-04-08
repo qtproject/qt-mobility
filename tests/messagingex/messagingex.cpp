@@ -246,11 +246,8 @@ void MessagingEx::composeEmail()
     
     message.setParentAccountId(m_account.id());
     message.setSubject(subjectEdit->text());
-    
-    QString htmlBody("<html><head><title></title></head><body><h2 align=center>%1</h2><hr>%2</body></html>");
-    message.setBody(htmlBody.arg(message.subject()).arg(emailMessageEdit->toPlainText()),"text/html");
-    
-   // message.setBody(QString(emailMessageEdit->toPlainText()));
+   
+    message.setBody(QString(emailMessageEdit->toPlainText()));
     message.appendAttachments(m_attachments);
     m_service.compose(message);
 }
