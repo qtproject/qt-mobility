@@ -134,9 +134,6 @@ symbian|win32|maemo6|maemo5|mac {
             documentation
         LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4 -lhildonmime
     }
-    maemo5 { 
-        LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4
-    }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
         HEADERS -= qmessagestore_p.h \
