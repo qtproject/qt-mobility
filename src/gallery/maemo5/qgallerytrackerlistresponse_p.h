@@ -59,9 +59,6 @@ public:
 
     int minimumPagedItems() const;
 
-    QList<int> keys() const;
-    void setKeys(const QList<int> &keys);
-
     int count() const;
 
     QStringList row(int index) const;
@@ -104,7 +101,6 @@ private:
     int m_rowOffset;
     bool m_cursorOutdated;
     QDBusPendingCallWatcher *m_call;
-    QList<int> m_keys;
     QVector<QStringList> m_rows;
 
 };

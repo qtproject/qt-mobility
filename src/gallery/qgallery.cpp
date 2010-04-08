@@ -115,45 +115,45 @@ const QGalleryType QDocumentGallery::Album("Album");
 
 
 // Item
-const QGalleryKey QDocumentGallery::author("author");
-const QGalleryKey QDocumentGallery::copyright("copyright");
-const QGalleryKey QDocumentGallery::description("description");
-const QGalleryKey QDocumentGallery::mimeType("mimeType");
-const QGalleryKey QDocumentGallery::rating("rating");
-const QGalleryKey QDocumentGallery::title("title");
-const QGalleryKey QDocumentGallery::url("url");
-const QGalleryKey QDocumentGallery::thumbnail("thumbnail");
+const QGalleryProperty QDocumentGallery::author("author");
+const QGalleryProperty QDocumentGallery::copyright("copyright");
+const QGalleryProperty QDocumentGallery::description("description");
+const QGalleryProperty QDocumentGallery::mimeType("mimeType");
+const QGalleryProperty QDocumentGallery::rating("rating");
+const QGalleryProperty QDocumentGallery::title("title");
+const QGalleryProperty QDocumentGallery::url("url");
+const QGalleryProperty QDocumentGallery::thumbnail("thumbnail");
 
 // File
-const QGalleryKey QDocumentGallery::fileName("fileName");
+const QGalleryProperty QDocumentGallery::fileName("fileName");
 
 // Media
 
-const QGalleryKey QDocumentGallery::duration("duration");
-const QGalleryKey QDocumentGallery::producer("producer");
-const QGalleryKey QDocumentGallery::writer("writer");
+const QGalleryProperty QDocumentGallery::duration("duration");
+const QGalleryProperty QDocumentGallery::producer("producer");
+const QGalleryProperty QDocumentGallery::writer("writer");
 
 // Audio/Music
-const QGalleryKey QDocumentGallery::artist("artist");
-const QGalleryKey QDocumentGallery::albumArtist("albumArtist");
-const QGalleryKey QDocumentGallery::albumTitle("albumTitle");
-const QGalleryKey QDocumentGallery::composer("composer");
-const QGalleryKey QDocumentGallery::discNumber("discNumber");
-const QGalleryKey QDocumentGallery::genre("genre");
-const QGalleryKey QDocumentGallery::trackCount("trackCount");
-const QGalleryKey QDocumentGallery::trackNumber("trackNumber");
+const QGalleryProperty QDocumentGallery::artist("artist");
+const QGalleryProperty QDocumentGallery::albumArtist("albumArtist");
+const QGalleryProperty QDocumentGallery::albumTitle("albumTitle");
+const QGalleryProperty QDocumentGallery::composer("composer");
+const QGalleryProperty QDocumentGallery::discNumber("discNumber");
+const QGalleryProperty QDocumentGallery::genre("genre");
+const QGalleryProperty QDocumentGallery::trackCount("trackCount");
+const QGalleryProperty QDocumentGallery::trackNumber("trackNumber");
 
 // Image, Video common.
-const QGalleryKey QDocumentGallery::width("width");
-const QGalleryKey QDocumentGallery::height("height");
+const QGalleryProperty QDocumentGallery::width("width");
+const QGalleryProperty QDocumentGallery::height("height");
 
 // Image/Photo
-const QGalleryKey QDocumentGallery::dateTaken("author");
-const QGalleryKey QDocumentGallery::cameraManufacturer("cameraManufacturer");
-const QGalleryKey QDocumentGallery::cameraModel("cameraModel");
+const QGalleryProperty QDocumentGallery::dateTaken("author");
+const QGalleryProperty QDocumentGallery::cameraManufacturer("cameraManufacturer");
+const QGalleryProperty QDocumentGallery::cameraModel("cameraModel");
 
 // Video
-const QGalleryKey QDocumentGallery::director("director");
+const QGalleryProperty QDocumentGallery::director("director");
 
 
 #ifdef QT_DOCUMENT_GALLERY_NULL

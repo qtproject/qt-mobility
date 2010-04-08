@@ -210,15 +210,15 @@ QGalleryItemList::~QGalleryItemList()
 }
 
 /*!
-    \fn QGalleryItemList::keys() const
+    \fn QGalleryItemList::propertyNames() const
 
-    Returns a list of meta-data keys a document list has values for.
+    Returns a list of property names an item list has meta-data values for.
 */
 
 /*!
-    \fn QGalleryItemList::toString(int key) const
+    \fn QGalleryItemList::propertyKey(const QString &propertyName) const
 
-    Returns the string representation of a meta-data \a key.
+    Returns a integer key for a meta-data \a propertyName.
 */
 
 /*!
@@ -289,6 +289,22 @@ int QGalleryItemList::minimumPagedItems() const
 
     Sets the meta-data \a key \a value of the document at \a index.
 */
+
+/*!
+    Returns the value of a meta-data \a property for the item at \a index in a list.
+*/
+QVariant QGalleryItemList::metaData(int index, const QString &property) const
+{
+    return metaData(index, propertyKey(property));
+}
+
+/*!
+    Sets the \a value of a meta-data \a property for the item at \a index in a list.
+*/
+void QGalleryItemList::setMetaData(int index, const QString &property, const QVariant &value)
+{
+    setMetaData(index, propertyKey(property), value);
+}
 
 /*!
     \fn QGalleryItemList::metaDataFlags(int index, int key) const

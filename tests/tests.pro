@@ -11,8 +11,6 @@ contains(mobility_modules,bearer) {
     symbian:SUBDIRS += bearerex
 }
 
-contains(mobility_modules,gallery): SUBDIRS += documentlist
-
 symbian {
     contains(mobility_modules,messaging): SUBDIRS += messagingex
     contains(mobility_modules,multimedia): SUBDIRS += playerex_s60

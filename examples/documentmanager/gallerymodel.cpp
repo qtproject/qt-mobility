@@ -141,12 +141,7 @@ void GalleryModel::setList(QGalleryItemList *list)
     mediaList = list;
 
     if (mediaList) {
-        foreach (int key, mediaList->keys()) {
-            QString field = mediaList->toString(key);
-
-            if (field == QDocumentGallery::fileName)
-                titleKey = key;
-        }
+        titleKey = mediaList->propertyKey(QDocumentGallery::fileName);
 
         connect(mediaList, SIGNAL(inserted(int,int)), this, SLOT(inserted(int,int)));
         connect(mediaList, SIGNAL(removed(int,int)), this, SLOT(removed(int,int)));

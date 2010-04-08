@@ -60,7 +60,8 @@ public:
             QObject *parent = 0);
     ~QGalleryTrackerFileListResponse();
 
-    QString toString(int key) const;
+    QStringList propertyNames() const;
+    int propertyKey(const QString &name) const;
 
     QUrl url(int index) const;
     QString type(int index) const;

@@ -67,7 +67,7 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
 
     sourceItemRequest = new QGalleryItemRequest(this);
     sourceItemRequest->setGallery(gallery);
-    sourceItemRequest->setFields(QStringList() << QDocumentGallery::fileName);
+    sourceItemRequest->setPropertyNames(QStringList() << QDocumentGallery::fileName);
     sourceItemRequest->setItemType(QDocumentGallery::File);
     sourceItemRequest->setContainerUrl(documentsUrl);
     connect(sourceItemRequest, SIGNAL(itemsChanged()), this, SLOT(sourceListChanged()));
@@ -97,7 +97,7 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
 
     destinationItemRequest = new QGalleryItemRequest(this);
     destinationItemRequest->setGallery(gallery);
-    destinationItemRequest->setFields(QStringList() << QDocumentGallery::fileName);
+    destinationItemRequest->setPropertyNames(QStringList() << QDocumentGallery::fileName);
     destinationItemRequest->setItemType(QDocumentGallery::Folder);
     destinationItemRequest->setContainerUrl(documentsUrl);
     connect(destinationItemRequest, SIGNAL(itemsChanged()), this, SLOT(destinationListChanged()));

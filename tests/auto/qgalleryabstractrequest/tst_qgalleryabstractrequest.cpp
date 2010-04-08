@@ -76,8 +76,8 @@ public:
             finish(result, idle);
     }
 
-    QList<int> keys() const { return QList<int>(); }
-    QString toString(int) const { return QString(); }
+    QStringList propertyNames() const { return QStringList(); }
+    int propertyKey(const QString &) const { return -1; }
 
     int count() const { return 0; }
 

@@ -60,8 +60,6 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
     , m_service(schema.service())
     , m_query(query)
 {
-    QList<int> keys;
-
     for (QStringList::const_iterator property = properties.begin(), end = properties.end();
             property != end;
             ++property) {
@@ -70,10 +68,8 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
         if (!field.isEmpty() && !m_fields.contains(field)) {
             m_fields.append(field);
             m_propertyNames.append(*property);
-            keys.append(keys.count() + 2);
         }
     }
-    setKeys(keys);
 
     m_sortDescending = !sortProperties.isEmpty()
             && sortProperties.first().startsWith(QLatin1Char('-'));
@@ -95,9 +91,14 @@ QGalleryTrackerFileListResponse::~QGalleryTrackerFileListResponse()
 {
 }
 
-QString QGalleryTrackerFileListResponse::toString(int key) const
+QStringList QGalleryTrackerFileListResponse::propertyNames() const
 {
-    return m_propertyNames.value(key - 2);
+    return m_propertyNames;
+}
+
+int QGalleryTrackerFileListResponse::propertyKey(const QString &name) const
+{
+    return m_propertyNames.indexOf(name) + 2;
 }
 
 QUrl QGalleryTrackerFileListResponse::url(int index) const

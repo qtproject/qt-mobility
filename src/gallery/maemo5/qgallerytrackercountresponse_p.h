@@ -60,10 +60,8 @@ public:
             QObject *parent = 0);
     ~QGalleryTrackerCountResponse();
 
-    int minimumPagedItems() const;
-
-    QList<int> keys() const;
-    QString toString(int key) const;
+    QStringList propertyNames() const;
+    int propertyKey(const QString &name) const;
 
     int count() const;
 

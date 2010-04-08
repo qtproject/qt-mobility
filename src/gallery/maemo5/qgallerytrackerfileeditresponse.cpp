@@ -104,7 +104,6 @@ QGalleryTrackerFileEditResponse::QGalleryTrackerFileEditResponse(
         if (!field.isEmpty() && !fields.contains(field)) {
             fields.append(field);
             m_propertyNames.append(*property);
-            m_keys.append(m_keys.count() + 2);
         }
     }
 
@@ -132,14 +131,14 @@ int QGalleryTrackerFileEditResponse::minimumPagedItems() const
     return 1;
 }
 
-QList<int> QGalleryTrackerFileEditResponse::keys() const
+QStringList QGalleryTrackerFileEditResponse::propertyNames() const
 {
-    return m_keys;
+    return m_propertyNames;
 }
 
-QString QGalleryTrackerFileEditResponse::toString(int key) const
+int QGalleryTrackerFileEditResponse::propertyKey(const QString &name) const
 {
-    return m_propertyNames.value(key);
+    return m_propertyNames.indexOf(name);
 }
 
 int QGalleryTrackerFileEditResponse::count() const

@@ -39,35 +39,35 @@
 **
 ****************************************************************************/
 
-#include "qgallerykey.h"
+#include "qgalleryproperty.h"
 
 
 /*!
-    \class QGalleryKey
+    \class QGalleryProperty
 
-    \brief The QGalleryKey class provides an identifier for a gallery
-    property key.
+    \brief The QGalleryProperty class provides an identifier for a gallery
+    property.
 */
 
 /*!
-    \fn QGalleryKey::QGalleryKey(const char (&id)[N])
+    \fn QGalleryProperty::QGalleryProperty(const char (&name)[N])
 
-    Constructs a property key from a string literal \a id.
+    Constructs a property from a string literal \a name.
 */
 
 /*!
-    Returns the id string of a propery key.
+    Returns the name of a propery.
 */
 
-QString QGalleryKey::toString() const
+QString QGalleryProperty::name() const
 {
-    return QString::fromLatin1(m_id, m_length);
+    return QString::fromLatin1(m_name, m_length);
 }
 
 /*!
     \fn QGalleryType::operator QString() const
 
-    Returns the id string of a property key.
+    Returns the name of a property.
 */
 
 /*!
@@ -75,9 +75,9 @@ QString QGalleryKey::toString() const
     The match \a flags identify the criteria for a match.
 */
 
-QGalleryMetaDataFilter QGalleryKey::matches(const QVariant &value, Qt::MatchFlags flags)
+QGalleryMetaDataFilter QGalleryProperty::matches(const QVariant &value, Qt::MatchFlags flags)
 {
-    return QGalleryMetaDataFilter(toString(), value, flags);
+    return QGalleryMetaDataFilter(name(), value, flags);
 }
 
 /*!
@@ -85,11 +85,11 @@ QGalleryMetaDataFilter QGalleryKey::matches(const QVariant &value, Qt::MatchFlag
     a \a minimum and \a maximum value.
 */
 
-QGalleryMetaDataRangeFilter QGalleryKey::isInRange(
+QGalleryMetaDataRangeFilter QGalleryProperty::isInRange(
         const QVariant &minimum, const QVariant &maximum) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(toString());
+    filter.setFieldName(name());
     filter.setInclusiveRange(minimum, maximum);
     return filter;
 }
@@ -99,10 +99,10 @@ QGalleryMetaDataRangeFilter QGalleryKey::isInRange(
     \a value.
 */
 
-QGalleryMetaDataRangeFilter QGalleryKey::operator <(const QVariant &value) const
+QGalleryMetaDataRangeFilter QGalleryProperty::operator <(const QVariant &value) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(toString());
+    filter.setFieldName(name());
     filter.setLessThan(value);
     return filter;
 }
@@ -112,10 +112,10 @@ QGalleryMetaDataRangeFilter QGalleryKey::operator <(const QVariant &value) const
     a \a value.
 */
 
-QGalleryMetaDataRangeFilter QGalleryKey::operator <=(const QVariant &value) const
+QGalleryMetaDataRangeFilter QGalleryProperty::operator <=(const QVariant &value) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(toString());
+    filter.setFieldName(name());
     filter.setLessThanEquals(value);
     return filter;
 }
@@ -124,9 +124,9 @@ QGalleryMetaDataRangeFilter QGalleryKey::operator <=(const QVariant &value) cons
     Returns a gallery filter which tests if a property is equal to a \a value.
 */
 
-QGalleryMetaDataFilter QGalleryKey::operator ==(const QVariant &value) const
+QGalleryMetaDataFilter QGalleryProperty::operator ==(const QVariant &value) const
 {
-    return QGalleryMetaDataFilter(toString(), value);
+    return QGalleryMetaDataFilter(name(), value);
 }
 
 /*!
@@ -134,10 +134,10 @@ QGalleryMetaDataFilter QGalleryKey::operator ==(const QVariant &value) const
     to a \a value.
 */
 
-QGalleryMetaDataRangeFilter QGalleryKey::operator >=(const QVariant &value) const
+QGalleryMetaDataRangeFilter QGalleryProperty::operator >=(const QVariant &value) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(toString());
+    filter.setFieldName(name());
     filter.setGreaterThanEquals(value);
     return filter;
 }
@@ -147,10 +147,10 @@ QGalleryMetaDataRangeFilter QGalleryKey::operator >=(const QVariant &value) cons
     \a value.
 */
 
-QGalleryMetaDataRangeFilter QGalleryKey::operator >(const QVariant &value) const
+QGalleryMetaDataRangeFilter QGalleryProperty::operator >(const QVariant &value) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(toString());
+    filter.setFieldName(name());
     filter.setGreaterThan(value);
     return filter;
 }
@@ -160,9 +160,9 @@ QGalleryMetaDataRangeFilter QGalleryKey::operator >(const QVariant &value) const
     ascending order.
 */
 
-QString QGalleryKey::ascending() const
+QString QGalleryProperty::ascending() const
 {
-    return QLatin1Char('+') + toString();
+    return QLatin1Char('+') + name();
 }
 
 /*!
@@ -170,8 +170,8 @@ QString QGalleryKey::ascending() const
     descending order.
 */
 
-QString QGalleryKey::descending() const
+QString QGalleryProperty::descending() const
 {
-    return QLatin1Char('-') + toString();
+    return QLatin1Char('-') + name();
 }
 

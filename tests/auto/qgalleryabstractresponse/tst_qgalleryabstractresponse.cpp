@@ -56,8 +56,8 @@ private Q_SLOTS:
 class QtGalleryTestResponse : public QGalleryAbstractResponse
 {
 public:
-    virtual QList<int> keys() const { return QList<int>(); }
-    virtual QString toString(int) const { return QString(); }
+    QStringList propertyNames() const { return QStringList(); }
+    int propertyKey(const QString &) const { return -1; }
 
     int count() const { return 0; }
 

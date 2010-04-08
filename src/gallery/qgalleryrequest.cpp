@@ -673,8 +673,8 @@ public:
     int initialCursorPosition;
     int minimumPagedItems;
     bool live;
-    QStringList fields;
-    QStringList sortFields;
+    QStringList propertyNames;
+    QStringList sortPropertyNames;
     QString itemType;
     QGalleryFilter filter;
 };
@@ -728,39 +728,40 @@ QGalleryItemRequest::~QGalleryItemRequest()
 }
 
 /*!
-    \property QGalleryItemRequest::fields
+    \property QGalleryItemRequest::propertyNames
 
-    \brief A list of meta-data fields a request should return values for.
+    \brief A list of names of meta-data properties a request should return values for.
 */
 
-QStringList QGalleryItemRequest::fields() const
+QStringList QGalleryItemRequest::propertyNames() const
 {
-    return d_func()->fields;
+    return d_func()->propertyNames;
 }
 
-void QGalleryItemRequest::setFields(const QStringList &fields)
+void QGalleryItemRequest::setPropertyNames(const QStringList &propertyNames)
 {
-    d_func()->fields = fields;
+    d_func()->propertyNames = propertyNames;
 }
 
 /*!
-    \property QGalleryItemRequest::sortFields
+    \property QGalleryItemRequest::sortPropertyNames
 
-    \brief A list of meta-data fields a request should sort its results on.
+    \brief A list of names of meta-data properties a request should sort its
+    results on.
 
-    Prefixing a field name with the '+' character indicates it should be sorted
+    Prefixing a property name with the '+' character indicates it should be sorted
     in ascending order, and a '-' character prefix indicates a descending order.
     If there is no prefix ascending order is assumed.
 */
 
-QStringList QGalleryItemRequest::sortFields() const
+QStringList QGalleryItemRequest::sortPropertyNames() const
 {
-    return d_func()->sortFields;
+    return d_func()->sortPropertyNames;
 }
 
-void QGalleryItemRequest::setSortFields(const QStringList &fields)
+void QGalleryItemRequest::setSortPropertyNames(const QStringList &propertyNames)
 {
-    d_func()->sortFields = fields;
+    d_func()->sortPropertyNames = propertyNames;
 }
 
 /*!
@@ -1349,8 +1350,8 @@ public:
     {
     }
 
-    QStringList fields;
-    QStringList sortFields;
+    QStringList propertyNames;
+    QStringList sortPropertyNames;
     QList<QUrl> itemUrls;
 };
 
@@ -1396,39 +1397,41 @@ QGalleryInsertRequest::~QGalleryInsertRequest()
 }
 
 /*!
-    \property QGalleryInsertRequest::fields
+    \property QGalleryInsertRequest::propertyNames
 
-    \brief A list of meta-data fields the \l insertedItems list should contain values for.
+    \brief A list of name of meta-data properties the \l insertedItems list
+    should contain values for.
 */
 
-QStringList QGalleryInsertRequest::fields() const
+QStringList QGalleryInsertRequest::propertyNames() const
 {
-    return d_func()->fields;
+    return d_func()->propertyNames;
 }
 
-void QGalleryInsertRequest::setFields(const QStringList &fields)
+void QGalleryInsertRequest::setPropertyNames(const QStringList &propertyNames)
 {
-    d_func()->fields = fields;
+    d_func()->propertyNames = propertyNames;
 }
 
 /*!
-    \property QGalleryInsertRequest::sortFields
+    \property QGalleryInsertRequest::sortPropertyNames
 
-    \brief A list of meta-data fields a request should sort its results on.
+    \brief A list of names of meta-data properties a request should sort its
+    results on.
 
-    Prefixing a field name with the '+' character indicates it should be sorted
-    in ascending order, and a '-' character prefix indicates a descending order.
-    If there is no prefix ascending order is assumed.
+    Prefixing a property name with the '+' character indicates it should be
+    sorted in ascending order, and a '-' character prefix indicates a
+    descending order. If there is no prefix ascending order is assumed.
 */
 
-QStringList QGalleryInsertRequest::sortFields() const
+QStringList QGalleryInsertRequest::sortPropertyNames() const
 {
-    return d_func()->sortFields;
+    return d_func()->sortPropertyNames;
 }
 
-void QGalleryInsertRequest::setSortFields(const QStringList &fields)
+void QGalleryInsertRequest::setSortPropertyNames(const QStringList &propertyNames)
 {
-    d_func()->sortFields = fields;
+    d_func()->sortPropertyNames = propertyNames;
 }
 
 /*!
@@ -1523,7 +1526,7 @@ public:
     {
     }
 
-    QStringList fields;
+    QStringList propertyNames;
     QStringList itemIds;
 };
 
@@ -1569,20 +1572,20 @@ QGalleryRemoveRequest::~QGalleryRemoveRequest()
 }
 
 /*!
-    \property QGalleryRemoveRequest::fields
+    \property QGalleryRemoveRequest::propertyNames
 
-    \brief A list of meta-data fields the \l currentItem list should contain
-    values for.
+    \brief A list of name of meta-data properties the \l currentItem list
+    should contain values for.
 */
 
-QStringList QGalleryRemoveRequest::fields() const
+QStringList QGalleryRemoveRequest::propertyNames() const
 {
-    return d_func()->fields;
+    return d_func()->propertyNames;
 }
 
-void QGalleryRemoveRequest::setFields(const QStringList &fields)
+void QGalleryRemoveRequest::setPropertyNames(const QStringList &propertyNames)
 {
-    d_func()->fields = fields;
+    d_func()->propertyNames = propertyNames;
 }
 
 /*!
@@ -1683,7 +1686,7 @@ public:
     {
     }
 
-    QStringList fields;
+    QStringList propertyNames;
     QStringList itemIds;
     QString destinationId;
 };
@@ -1729,20 +1732,20 @@ QGalleryCopyRequest::~QGalleryCopyRequest()
 }
 
 /*!
-    \property QGalleryCopyRequest::fields
+    \property QGalleryCopyRequest::propertyNames
 
-    \brief A list of meta-data fields the \l currentItem list should contain
-    values for.
+    \brief A list of names of meta-data properties the \l currentItem list
+    should contain values for.
 */
 
-QStringList QGalleryCopyRequest::fields() const
+QStringList QGalleryCopyRequest::propertyNames() const
 {
-    return d_func()->fields;
+    return d_func()->propertyNames;
 }
 
-void QGalleryCopyRequest::setFields(const QStringList &fields)
+void QGalleryCopyRequest::setPropertyNames(const QStringList &propertyNames)
 {
-    d_func()->fields = fields;
+    d_func()->propertyNames = propertyNames;
 }
 
 /*!
@@ -1853,7 +1856,7 @@ public:
     {
     }
 
-    QStringList fields;
+    QStringList propertyNames;
     QStringList itemIds;
     QString destinationId;
 };
@@ -1898,20 +1901,20 @@ QGalleryMoveRequest::~QGalleryMoveRequest()
 }
 
 /*!
-    \property QGalleryMoveRequest::fields
+    \property QGalleryMoveRequest::propertyNames
 
-    \brief A list of meta-data fields the \l currentItem list should contain
-    values for.
+    \brief A list of names of meta-data properties the \l currentItem list
+    should contain values for.
 */
 
-QStringList QGalleryMoveRequest::fields() const
+QStringList QGalleryMoveRequest::propertyNames() const
 {
-    return d_func()->fields;
+    return d_func()->propertyNames;
 }
 
-void QGalleryMoveRequest::setFields(const QStringList &fields)
+void QGalleryMoveRequest::setPropertyNames(const QStringList &propertyNames)
 {
-    d_func()->fields = fields;
+    d_func()->propertyNames = propertyNames;
 }
 
 /*!

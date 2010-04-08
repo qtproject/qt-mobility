@@ -65,8 +65,8 @@ public:
 
     int minimumPagedItems() const;
 
-    QList<int> keys() const;
-    QString toString(int key) const;
+    QStringList propertyNames() const;
+    int propertyKey(const QString &name) const;
 
     int count() const;
 
@@ -103,7 +103,6 @@ private:
     QDBusPendingCallWatcher *m_call;
     QThread *m_thread;
     QDBusInterface m_dbusInterface;
-    QList<int> m_keys;
     QStringList m_propertyNames;
     QVector<QStringList> m_rows;
 

@@ -39,22 +39,22 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYKEY_H
-#define QGALLERYKEY_H
+#ifndef QGALLERYPROPERTY_H
+#define QGALLERYPROPERTY_H
 
 #include <qgalleryfilter.h>
 
 #include <QtCore/qstring.h>
 
-class Q_GALLERY_EXPORT QGalleryKey
+class Q_GALLERY_EXPORT QGalleryProperty
 {
 public:
     template <int N>
-    explicit QGalleryKey(const char (&id)[N]) : m_id(id), m_length(N - 1) {}
+    explicit QGalleryProperty(const char (&name)[N]) : m_name(name), m_length(N - 1) {}
 
-    QString toString() const;
+    QString name() const;
 
-    inline operator QString() const { return toString(); }
+    inline operator QString() const { return name(); }
 
     QGalleryMetaDataFilter matches(const QVariant &value, Qt::MatchFlags flags = 0);
     QGalleryMetaDataRangeFilter isInRange(const QVariant &minimum, const QVariant &maximum) const;
@@ -71,7 +71,7 @@ public:
     QString descending() const;
 
 private:
-    const char * const m_id;
+    const char * const m_name;
     const int m_length;
 };
 

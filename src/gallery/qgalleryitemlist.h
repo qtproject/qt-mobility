@@ -95,8 +95,8 @@ public:
     QGalleryItemList(QObject *parent = 0);
     ~QGalleryItemList();
 
-    virtual QList<int> keys() const = 0;
-    virtual QString toString(int key) const = 0;
+    virtual QStringList propertyNames() const = 0;
+    virtual int propertyKey(const QString &property) const = 0;
 
     int cursorPosition() const;
     virtual int minimumPagedItems() const;
@@ -110,6 +110,9 @@ public:
 
     virtual QVariant metaData(int index, int key) const = 0;
     virtual void setMetaData(int index, int key, const QVariant &value) = 0;
+
+    virtual QVariant metaData(int index, const QString &property) const;
+    virtual void setMetaData(int index, const QString &property, const QVariant &value);
 
     virtual MetaDataFlags metaDataFlags(int index, int key) const = 0;
 

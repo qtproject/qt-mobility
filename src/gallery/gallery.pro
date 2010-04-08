@@ -17,7 +17,7 @@ PUBLIC_HEADERS = \
         qgallery.h \
         qgalleryfilter.h \
         qgalleryitemlist.h \
-        qgallerykey.h \
+        qgalleryproperty.h \
         qgalleryrequest.h \
         qgallerytype.h
 
@@ -26,7 +26,7 @@ SOURCES = \
         qgalleryerrorresponse.cpp \
         qgalleryfilter.cpp \
         qgalleryitemlist.cpp \
-        qgallerykey.cpp \
+        qgalleryproperty.cpp \
         qgalleryrequest.cpp \
         qgallerytype.cpp
 

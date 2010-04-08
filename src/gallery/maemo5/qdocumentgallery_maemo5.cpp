@@ -81,16 +81,16 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
                     QDBusConnection::sessionBus(),
                     schema,
                     query,
-                    request->fields(),
-                    request->sortFields(),
+                    request->propertyNames(),
+                    request->sortPropertyNames(),
                     request->minimumPagedItems());
         } else if (schema.isAggregateType()) {
             response = new QGalleryTrackerAggregateListResponse(
                     QDBusConnection::sessionBus(),
                     schema,
                     query,
-                    request->fields(),
-                    request->sortFields(),
+                    request->propertyNames(),
+                    request->sortPropertyNames(),
                     request->minimumPagedItems());
         }
 
@@ -145,7 +145,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCopyResponse(QGalleryCo
             return new QGalleryTrackerFileCopyResponse(
                     QDBusConnection::sessionBus(),
                     schema,
-                    request->fields(),
+                    request->propertyNames(),
                     fileNames,
                     destinationPath);
         }
@@ -176,7 +176,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createMoveResponse(QGalleryMo
             return new QGalleryTrackerFileMoveResponse(
                     QDBusConnection::sessionBus(),
                     schema,
-                    request->fields(),
+                    request->propertyNames(),
                     fileNames,
                     destinationPath);
         }
@@ -202,7 +202,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
         return new QGalleryTrackerFileRemoveResponse(
                 QDBusConnection::sessionBus(),
                 schema,
-                request->fields(),
+                request->propertyNames(),
                 fileNames);
     }
 

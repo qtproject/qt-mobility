@@ -178,8 +178,8 @@ class Q_GALLERY_EXPORT QGalleryItemRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryItemRequest)
-    Q_PROPERTY(QStringList fields READ fields WRITE setFields)
-    Q_PROPERTY(QStringList sortFields READ sortFields WRITE setSortFields)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
+    Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(int initialCursorPosition READ initialCursorPosition WRITE setInitialCursorPosition)
     Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
@@ -197,11 +197,11 @@ public:
     explicit QGalleryItemRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryItemRequest();
 
-    QStringList fields() const;
-    void setFields(const QStringList &fields);
+    QStringList propertyNames() const;
+    void setPropertyNames(const QStringList &names);
 
-    QStringList sortFields() const;
-    void setSortFields(const QStringList &fields);
+    QStringList sortPropertyNames() const;
+    void setSortPropertyNames(const QStringList &names);
 
     bool isLive() const;
     void setLive(bool live);
@@ -304,8 +304,8 @@ class Q_GALLERY_EXPORT QGalleryInsertRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryInsertRequest)
-    Q_PROPERTY(QStringList fields READ fields WRITE setFields)
-    Q_PROPERTY(QStringList sortFields READ sortFields WRITE setSortFields)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
+    Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
     Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl NOTIFY itemUrlsChanged)
     Q_PROPERTY(QList<QUrl> itemUrls READ itemUrls WRITE setItemUrls NOTIFY itemUrlsChanged)
     Q_PROPERTY(QGalleryItemList *insertedItems READ insertedItems NOTIFY insertedItemsChanged)
@@ -314,11 +314,11 @@ public:
     explicit QGalleryInsertRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryInsertRequest();
 
-    QStringList fields() const;
-    void setFields(const QStringList &fields);
+    QStringList propertyNames() const;
+    void setPropertyNames(const QStringList &names);
 
-    QStringList sortFields() const;
-    void setSortFields(const QStringList &fields);
+    QStringList sortPropertyNames() const;
+    void setSortPropertyNames(const QStringList &names);
 
     QUrl itemUrl() const;
     void setItemUrl(const QUrl &url);
@@ -342,6 +342,7 @@ class Q_GALLERY_EXPORT QGalleryRemoveRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryRemoveRequest)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
     Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
     Q_PROPERTY(QGalleryItemList *currentItem READ currentItem NOTIFY currentItemChanged)
@@ -350,8 +351,8 @@ public:
     explicit QGalleryRemoveRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryRemoveRequest();
 
-    QStringList fields() const;
-    void setFields(const QStringList &fields);
+    QStringList propertyNames() const;
+    void setPropertyNames(const QStringList &names);
 
     QString itemId() const;
     void setItemId(const QString &id);
@@ -375,7 +376,7 @@ class Q_GALLERY_EXPORT QGalleryCopyRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryCopyRequest)
-    Q_PROPERTY(QStringList fields READ fields WRITE setFields)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
     Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
     Q_PROPERTY(QString destinationId READ destinationId WRITE setDestinationId)
@@ -385,8 +386,8 @@ public:
     explicit QGalleryCopyRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryCopyRequest();
 
-    QStringList fields() const;
-    void setFields(const QStringList &fields);
+    QStringList propertyNames() const;
+    void setPropertyNames(const QStringList &names);
 
     QString itemId() const;
     void setItemId(const QString &id);
@@ -413,7 +414,7 @@ class Q_GALLERY_EXPORT QGalleryMoveRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryMoveRequest)
-    Q_PROPERTY(QStringList fields READ fields WRITE setFields)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
     Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
     Q_PROPERTY(QString destinationId READ destinationId WRITE setDestinationId)
@@ -423,8 +424,8 @@ public:
     QGalleryMoveRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryMoveRequest();
 
-    QStringList fields() const;
-    void setFields(const QStringList &fields);
+    QStringList propertyNames() const;
+    void setPropertyNames(const QStringList &names);
 
     QString itemId() const;
     void setItemId(const QString &id);

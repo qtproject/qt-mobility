@@ -65,16 +65,6 @@ int QGalleryTrackerListResponse::minimumPagedItems() const
     return m_minimumPagedItems;
 }
 
-QList<int> QGalleryTrackerListResponse::keys() const
-{
-    return m_keys;
-}
-
-void QGalleryTrackerListResponse::setKeys(const QList<int> &keys)
-{
-    m_keys = keys;
-}
-
 int QGalleryTrackerListResponse::count() const
 {
     return m_count;

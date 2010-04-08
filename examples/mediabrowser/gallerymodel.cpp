@@ -141,18 +141,11 @@ void GalleryModel::setList(QGalleryItemList *list)
     mediaList = list;
 
     if (mediaList) {
-        foreach (int key, mediaList->keys()) {
-            QString field = mediaList->toString(key);
+        for (int i = 0; i < displayFields.count(); ++i)
+            displayKeys[i] = mediaList->propertyKey(displayFields.at(i));
 
-            for (int i = displayFields.indexOf(field);
-                    i >= 0;
-                    i = displayFields.indexOf(field, i + 1)) {
-                displayKeys[i] = key;
-            }
-
-            for (int i = userFields.indexOf(field); i >= 0; i = userFields.indexOf(field, i + 1))
-                userKeys[i] = key;
-        }
+        for (int i = 0; i < userFields.count(); ++i)
+            userKeys[i] = mediaList->propertyKey(userFields.at(i));
 
         connect(mediaList, SIGNAL(inserted(int,int)), this, SLOT(inserted(int,int)));
         connect(mediaList, SIGNAL(removed(int,int)), this, SLOT(removed(int,int)));
@@ -173,13 +166,7 @@ void GalleryModel::setDisplayFieldForColumn(int column, const QString &field)
     displayFields[column] = field;
 
     if (mediaList) {
-        displayKeys[column] = -1;
-
-        foreach (int key, mediaList->keys()) {
-            if (mediaList->toString(key) == field)
-                displayKeys[column] = key;
-                break;
-        }
+        displayKeys[column] = mediaList->propertyKey(field);
 
         emit dataChanged(createIndex(0, column), createIndex(mediaList->count() - 1, column));
     }
@@ -196,12 +183,8 @@ void GalleryModel::setUserRoleFields(const QVector<QString> &fields)
     userKeys.fill(-1, userFields.count());
 
     if (mediaList) {
-        foreach (int key, mediaList->keys()) {
-            QString field = mediaList->toString(key);
-
-            for (int i = userFields.indexOf(field); i >= 0; i = userFields.indexOf(field, i + 1))
-                userKeys[i] = key;
-        }
+        for (int i = 0; i < userFields.count(); ++i)
+            userKeys[i] = mediaList->propertyKey(userFields.at(i));
 
         emit dataChanged(
                 createIndex(0, 0),

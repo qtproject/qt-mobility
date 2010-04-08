@@ -85,12 +85,12 @@ void GalleryView::setType(const QString &type)
 
 void GalleryView::setFields(const QStringList &fields)
 {
-    request->setFields(fields);
+    request->setPropertyNames(fields);
 }
 
 void GalleryView::setSortFields(const QStringList &fields)
 {
-    request->setSortFields(fields);
+    request->setSortPropertyNames(fields);
 }
 
 QGalleryItemList *GalleryView::media() const

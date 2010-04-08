@@ -42,7 +42,7 @@
 #ifndef QGALLERY_H
 #define QGALLERY_H
 
-#include <qgallerykey.h>
+#include <qgalleryproperty.h>
 #include <qgalleryrequest.h>
 #include <qgallerytype.h>
 
@@ -91,45 +91,45 @@ public:
     static const QGalleryType Album;
 
     // Item
-    static const QGalleryKey author;
-    static const QGalleryKey copyright;
-    static const QGalleryKey description;
-    static const QGalleryKey mimeType;
-    static const QGalleryKey rating;
-    static const QGalleryKey title;
-    static const QGalleryKey url;
-    static const QGalleryKey thumbnail;
+    static const QGalleryProperty author;
+    static const QGalleryProperty copyright;
+    static const QGalleryProperty description;
+    static const QGalleryProperty mimeType;
+    static const QGalleryProperty rating;
+    static const QGalleryProperty title;
+    static const QGalleryProperty url;
+    static const QGalleryProperty thumbnail;
 
     // File
-    static const QGalleryKey fileName;
+    static const QGalleryProperty fileName;
 
     // Media
-    static const QGalleryKey duration;
-    static const QGalleryKey producer;
-    static const QGalleryKey writer;
+    static const QGalleryProperty duration;
+    static const QGalleryProperty producer;
+    static const QGalleryProperty writer;
 
     // Audio/Music
-    static const QGalleryKey artist;
-    static const QGalleryKey albumArtist;
-    static const QGalleryKey albumId;
-    static const QGalleryKey albumTitle;
-    static const QGalleryKey composer;
-    static const QGalleryKey discNumber;
-    static const QGalleryKey genre;
-    static const QGalleryKey trackCount;
-    static const QGalleryKey trackNumber;
+    static const QGalleryProperty artist;
+    static const QGalleryProperty albumArtist;
+    static const QGalleryProperty albumId;
+    static const QGalleryProperty albumTitle;
+    static const QGalleryProperty composer;
+    static const QGalleryProperty discNumber;
+    static const QGalleryProperty genre;
+    static const QGalleryProperty trackCount;
+    static const QGalleryProperty trackNumber;
 
     // Image, Video common.
-    static const QGalleryKey width;
-    static const QGalleryKey height;
+    static const QGalleryProperty width;
+    static const QGalleryProperty height;
 
     // Image/Photo
-    static const QGalleryKey dateTaken;
-    static const QGalleryKey cameraManufacturer;
-    static const QGalleryKey cameraModel;
+    static const QGalleryProperty dateTaken;
+    static const QGalleryProperty cameraManufacturer;
+    static const QGalleryProperty cameraModel;
 
     // Video
-    static const QGalleryKey director;
+    static const QGalleryProperty director;
 
     QDocumentGallery(QObject *parent = 0);
     ~QDocumentGallery();

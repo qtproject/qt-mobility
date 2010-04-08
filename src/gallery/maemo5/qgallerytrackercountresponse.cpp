@@ -77,19 +77,15 @@ QGalleryTrackerCountResponse::~QGalleryTrackerCountResponse()
 {
 }
 
-int QGalleryTrackerCountResponse::minimumPagedItems() const
+
+QStringList QGalleryTrackerCountResponse::propertyNames() const
 {
-    return 0;
+    return QStringList();
 }
 
-QList<int> QGalleryTrackerCountResponse::keys() const
+int QGalleryTrackerCountResponse::propertyKey(const QString &) const
 {
-    return QList<int>();
-}
-
-QString QGalleryTrackerCountResponse::toString(int) const
-{
-    return QString();
+    return -1;
 }
 
 int QGalleryTrackerCountResponse::count() const

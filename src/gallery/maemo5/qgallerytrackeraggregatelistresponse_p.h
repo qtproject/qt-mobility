@@ -61,7 +61,8 @@ public:
             QObject *parent = 0);
     ~QGalleryTrackerAggregateListResponse();
 
-    QString toString(int key) const;
+    QStringList propertyNames() const;
+    int propertyKey(const QString &name) const;
 
     QUrl url(int index) const;
     QString type(int index) const;
@@ -83,7 +84,6 @@ private:
     QStringList m_aggregates;
     QStringList m_aggregateFields;
     QStringList m_propertyNames;
-    QList<int> m_resourceKeys;
 };
 
 #endif

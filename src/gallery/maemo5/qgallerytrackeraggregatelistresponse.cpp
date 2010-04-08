@@ -66,10 +66,6 @@ QGalleryTrackerAggregateListResponse::QGalleryTrackerAggregateListResponse(
     m_propertyNames  = schema.identityPropertyNames();
     m_identityFields = schema.identityFields();
 
-    for (int i = 0; i < m_identityFields.count(); ++i)
-        keys.append(i);
-
-
     for (QStringList::const_iterator property = properties.begin(), end = properties.end();
             property != end;
             ++property) {
@@ -91,7 +87,6 @@ QGalleryTrackerAggregateListResponse::QGalleryTrackerAggregateListResponse(
 
             m_aggregateFields.append(field.first);
             m_propertyNames.append(*property);
-            keys.append(keys.count());
         }
     }
 
@@ -116,20 +111,25 @@ QGalleryTrackerAggregateListResponse::QGalleryTrackerAggregateListResponse(
 
             m_aggregateFields.append(field.first);
             m_propertyNames.append(*property);
-            keys.append(keys.count());
         }
     }
-    setKeys(keys);
 }
 
 QGalleryTrackerAggregateListResponse::~QGalleryTrackerAggregateListResponse()
 {
 }
 
-QString QGalleryTrackerAggregateListResponse::toString(int key) const
+
+QStringList QGalleryTrackerAggregateListResponse::propertyNames() const
 {
-    return m_propertyNames.value(key);
+    return m_propertyNames;
 }
+
+int QGalleryTrackerAggregateListResponse::propertyKey(const QString &name) const
+{
+    return m_propertyNames.indexOf(name);
+}
+
 
 QUrl QGalleryTrackerAggregateListResponse::url(int) const
 {
