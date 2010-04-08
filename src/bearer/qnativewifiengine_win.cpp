@@ -43,7 +43,6 @@
 #include "qnetworkconfiguration_p.h"
 
 #include <QtCore/qmutex.h>
-#include <QtCore/private/qmutexpool_p.h>
 #include <QtCore/qlibrary.h>
 #include <QtCore/qstringlist.h>
 
@@ -330,6 +329,8 @@ static WlanScanProto local_WlanScan = 0;
 static WlanFreeMemoryProto local_WlanFreeMemory = 0;
 static WlanCloseHandleProto local_WlanCloseHandle = 0;
 
+Q_GLOBAL_STATIC_WITH_ARGS(QMutex, dynamicLoadMutex, (QMutex::Recursive));
+
 static void resolveLibrary()
 {
     static volatile bool triedResolve = false;
@@ -337,6 +338,7 @@ static void resolveLibrary()
     if (!triedResolve) {
 #ifndef QT_NO_THREAD
         QMutexLocker locker(QMutexPool::globalInstanceGet(&local_WlanOpenHandle));
+        QMutexLocker locker(dynamicLoadMutex());
 #endif
 
         if (!triedResolve) {
