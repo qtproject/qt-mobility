@@ -236,7 +236,6 @@ void QMapMarker::paint(QPainter* painter, const QRectF& viewPort)
         painter->translate(-viewPort.left(), -viewPort.top());
         painter->translate(d->mapPt.x(), d->mapPt.y());
         constructMarker(painter);
-
     }
     else {
 

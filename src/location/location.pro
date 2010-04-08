@@ -134,11 +134,9 @@ maemo5 {
 }
 
 # map/routing/navigation header files
-PUBLIC_HEADERS +=   qgeoaddress.h \
-                    qgeocodingreply.h \
+PUBLIC_HEADERS +=   qgeocodingreply.h \
                     qgeocodingrequest.h \
                     qgeocodingservice.h \
-                    qgeolocation.h \
                     qgeomapservice.h \
                     qgeomaptile.h \
                     qgeomaptilecache.h \
