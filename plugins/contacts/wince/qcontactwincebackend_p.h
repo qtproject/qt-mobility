@@ -167,8 +167,8 @@ public:
         m_phonemeta(PIMPR_INVALID_ID),
         m_emailmeta(PIMPR_INVALID_ID),
         m_factory(0),
-        m_avatarmeta(PIMPR_INVALID_ID),
-        m_avatartypemeta(PIMPR_INVALID_ID)
+        m_avatarImageMeta(PIMPR_INVALID_ID),
+        m_avatarVideoMeta(PIMPR_INVALID_ID)
     {
     }
 
@@ -187,8 +187,8 @@ public:
     // The ID of our sekrit extra phone number and email metadata id
     PROPID m_phonemeta;
     PROPID m_emailmeta;
-    PROPID m_avatarmeta;
-    PROPID m_avatartypemeta;
+    PROPID m_avatarImageMeta;
+    PROPID m_avatarVideoMeta;
 
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QContactLocalId> m_ids;
@@ -288,8 +288,8 @@ public:
     }
 
     /*helper functions*/
-    PROPID metaAvatar() const;
-    PROPID metaAvatarType() const;
+    PROPID metaAvatarImage() const;
+    PROPID metaAvatarVideo() const;
     PROPID metaEmail() const;
     PROPID metaPhone() const;
 
