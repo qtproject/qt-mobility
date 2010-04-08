@@ -32,8 +32,7 @@ SOURCES = \
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-win32: include (ws/ws.pri)
-else:unix: include (maemo5/maemo5.pri)
+unix: include (maemo5/maemo5.pri)
 else: DEFINES += QT_DOCUMENT_GALLERY_NULL
 
 symbian {
