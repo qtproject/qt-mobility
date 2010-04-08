@@ -1874,16 +1874,16 @@ void QContactABook::setNameDetail(const OssoABookContact* aContact, const QConta
   // Save First and Last name in the N vcard attribute
   {  
     QStringList supportedDetailValues;
-    supportedDetailValues << QContactName::FieldFirstName << QContactName::FieldLastName;
+    supportedDetailValues << QContactName::FieldLastName << QContactName::FieldFirstName;
   
     foreach(QString key, supportedDetailValues){
       attrValues << detail.value(key);
     }
   
     //REMOVE ME - We don't want to support custom label
-    if (attrValues[0].isEmpty()){
+    if (attrValues[1].isEmpty()){
       qWarning() << "QContactName::FieldFirstName is empty";
-      attrValues[0] = detail.customLabel();
+      attrValues[1] = detail.customLabel();
     }
   
     addAttributeToAContact(aContact, EVC_N, attrValues);
