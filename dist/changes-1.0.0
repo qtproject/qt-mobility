@@ -65,6 +65,8 @@ QtMessaging
 
  - Maemo 5 (Fremantle) backend implemented
     * SMS and Email message types supported.
+    * modest process must be restarted before Fremantle backend is fully
+      operational. This can be achieved by restarting the device.
  - API changes
     * QMessageAddress::recipient()/setRecipient renamed to 
       QMessageAddress::addressee()/setAddressee respectively.
