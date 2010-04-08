@@ -71,10 +71,21 @@
 
     The first step is to make QValueSpaceSubscriber available from within QML so that our QML code
     can access the keys published by the battery-publisher.  This is achieved by using the
-    QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros.  The following code makes
-    QValueSpaceSubscriber available from within QML as ValueSpaceSubscriber.
+    QML_DECLARE_TYPE() macro and calling the QML register type method.  The following code makes
+    QValueSpaceSubscriber identifiable in QML as a valid QObject type.
 
     \snippet battery-charge/battery-subscriber/main.cpp 0
+
+    Additionally, in order to utilize QValueSpaceSubscriber as a QML element we need to supply
+    the following inline call qmlRegisterType which specifies the imported name as well as the
+    QML element name 'ValueSpaceSubscriber' to be used.
+
+    \snippet battery-charge/battery-subscriber/main.cpp 1
+
+    Lastly, to display the QML for our application we need a QDeclarativeView which can be used
+    to specify the QML file and show the user interface.
+
+    \snippet battery-charge/battery-subscriber/main.cpp 2
 
     \section3 QML
 

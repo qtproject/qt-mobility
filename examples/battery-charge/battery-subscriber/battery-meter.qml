@@ -1,6 +1,6 @@
 import Qt 4.7
-import Qt.publishsubscribe 4.7
 import Qt.labs.particles 1.0
+import QtMobility.publishsubscribe 1.0
 
 Rectangle {
     color: "white"
