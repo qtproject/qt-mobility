@@ -354,10 +354,9 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
 QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
   QContact *rtn;
-  OssoABookContact* aContact = getAContact(contactId);
+  OssoABookContact* aContact = getAContact(contactId, error);
   if (!aContact) {
     qWarning() << "Unable to get a valid AContact";
-    *error = QContactManager::DoesNotExistError;
     return new QContact;
   }
   
@@ -431,7 +430,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   
   OssoABookRoster *roster = A_ROSTER(m_abookAgregator);
   EBook *book = osso_abook_roster_get_book(roster);
-  OssoABookContact *aContact = getAContact(contactId);
+  OssoABookContact *aContact = getAContact(contactId, error);
   if (!OSSO_ABOOK_IS_CONTACT(aContact)){
     qWarning() << "aCtontact is not a valid ABook contact"; 
     return false;
@@ -528,10 +527,9 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
     book = osso_abook_roster_get_book(roster);
   }
   
-  // Conver QContact to AContact
-  aContact = convert(contact);
+  // Convert QContact to AContact
+  aContact = convert(contact, error);
   if (!aContact){
-    *error = QContactManager::UnspecifiedError;
     return false;
   }  
 
@@ -864,7 +862,7 @@ bool QContactABook::setDetailValues(const QVariantMap& data, QContactDetail* det
   return true;
 }
 
-OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId) const
+OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
   OssoABookContact* rtn = NULL;
 
@@ -882,9 +880,13 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId) c
         e_book_query_unref(query);
 
     if (g_list_length(contacts) == 1) {
+      *error = QContactManager::NoError;
       rtn = A_CONTACT(contacts->data);
+    } else if (g_list_length(contacts) == 0) {
+      *error = QContactManager::DoesNotExistError;
     } else {
-      qWarning("List is empty or several contacts have the same UID or contactId belongs to a roster contact.");
+      qWarning("Several contacts have the same UID or contactId belongs to a roster contact.");
+      *error = QContactManager::UnspecifiedError;
     }
     if (contacts)
       g_list_free(contacts);
@@ -1619,17 +1621,17 @@ static void addAttributeToAContact(const OssoABookContact* contact,
   }
 }
 
-OssoABookContact* QContactABook::convert(const QContact *contact) const
+OssoABookContact* QContactABook::convert(const QContact *contact, QContactManager::Error* error) const
 {
   Q_CHECK_PTR(contact);
-  
+
   OssoABookContact* rtn;
   
   // Get aContact if it exists or create a new one if it doesn't
   QContactLocalId id = contact->localId();
   QCM5_DEBUG << "Converting QContact id:" << id << " to aContact";
-  if (id){
-    rtn = getAContact(id);
+  if (id) {
+    rtn = getAContact(id, error);
   } else {
     rtn = osso_abook_contact_new();
   }
