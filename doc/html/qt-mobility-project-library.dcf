@@ -2485,6 +2485,22 @@
         <keyword ref="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</keyword>
         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
     </section>
+    <section ref="qremoteserviceclassregister.html" title="QRemoteServiceClassRegister Class Reference">
+        <keyword ref="qremoteserviceclassregister.html">QRemoteServiceClassRegister</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">InstanceType</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::SharedInstance</keyword>
+        <keyword ref="qremoteserviceclassregister.html#InstanceType-enum">QRemoteServiceClassRegister::UniqueInstance</keyword>
+        <keyword ref="qremoteserviceclassregister.html#registerType">registerType</keyword>
+        <keyword ref="qremoteserviceclassregister.html#types">types</keyword>
+        <keyword ref="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef">QRemoteServiceIdentifier</keyword>
+        <keyword ref="qremoteserviceclassregister.html#Q_SERVICE">Q_SERVICE</keyword>
+        <section ref="qremoteserviceclassregister-members.html" title="List of all members"/>
+    </section>
+    <section ref="qremoteservicecontrol.html" title="QRemoteServiceControl Class Reference">
+        <keyword ref="qremoteservicecontrol.html">QRemoteServiceControl</keyword>
+        <keyword ref="qremoteservicecontrol.html#publishServices">publishServices</keyword>
+        <section ref="qremoteservicecontrol-members.html" title="List of all members"/>
+    </section>
     <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
         <keyword ref="qrotationfilter.html">QRotationFilter</keyword>
         <keyword ref="qrotationfilter.html#filter">filter</keyword>
@@ -2609,11 +2625,6 @@
         <keyword ref="qservicecontext.html#notify">notify</keyword>
         <section ref="qservicecontext-members.html" title="List of all members"/>
     </section>
-    <section ref="qservicecontrol.html" title="QServiceControl Class Reference">
-        <keyword ref="qservicecontrol.html">QServiceControl</keyword>
-        <keyword ref="qservicecontrol.html#publishServices">publishServices</keyword>
-        <section ref="qservicecontrol-members.html" title="List of all members"/>
-    </section>
     <section ref="qservicefilter.html" title="QServiceFilter Class Reference">
         <keyword ref="qservicefilter.html">QServiceFilter</keyword>
         <keyword ref="qservicefilter.html#CapabilityMatchRule-enum">CapabilityMatchRule</keyword>
@@ -2694,17 +2705,6 @@
         <keyword ref="qserviceplugininterface.html#installService">installService</keyword>
         <keyword ref="qserviceplugininterface.html#uninstallService">uninstallService</keyword>
         <section ref="qserviceplugininterface-members.html" title="List of all members"/>
-    </section>
-    <section ref="qservicetyperegister.html" title="QServiceTypeRegister Class Reference">
-        <keyword ref="qservicetyperegister.html">QServiceTypeRegister</keyword>
-        <keyword ref="qservicetyperegister.html#InstanceType-enum">InstanceType</keyword>
-        <keyword ref="qservicetyperegister.html#InstanceType-enum">QServiceTypeRegister::SharedInstance</keyword>
-        <keyword ref="qservicetyperegister.html#InstanceType-enum">QServiceTypeRegister::UniqueInstance</keyword>
-        <keyword ref="qservicetyperegister.html#registerType">registerType</keyword>
-        <keyword ref="qservicetyperegister.html#types">types</keyword>
-        <keyword ref="qservicetyperegister.html#QServiceTypeIdent-typedef">QServiceTypeIdent</keyword>
-        <keyword ref="qservicetyperegister.html#Q_SERVICE">Q_SERVICE</keyword>
-        <section ref="qservicetyperegister-members.html" title="List of all members"/>
     </section>
     <section ref="qsystemdeviceinfo.html" title="QSystemDeviceInfo Class Reference">
         <keyword ref="qsystemdeviceinfo.html">QSystemDeviceInfo</keyword>

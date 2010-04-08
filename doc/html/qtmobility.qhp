@@ -451,6 +451,12 @@
                     <section ref="qradiotunercontrol.html" title="QRadioTunerControl Class Reference">
                         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qremoteserviceclassregister.html" title="QRemoteServiceClassRegister Class Reference">
+                        <section ref="qremoteserviceclassregister-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qremoteservicecontrol.html" title="QRemoteServiceControl Class Reference">
+                        <section ref="qremoteservicecontrol-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
                         <section ref="qrotationfilter-members.html" title="List of all members"/>
                     </section>
@@ -484,9 +490,6 @@
                     <section ref="qservicecontext.html" title="QServiceContext Class Reference">
                         <section ref="qservicecontext-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qservicecontrol.html" title="QServiceControl Class Reference">
-                        <section ref="qservicecontrol-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qservicefilter.html" title="QServiceFilter Class Reference">
                         <section ref="qservicefilter-members.html" title="List of all members"/>
                     </section>
@@ -498,9 +501,6 @@
                     </section>
                     <section ref="qserviceplugininterface.html" title="QServicePluginInterface Class Reference">
                         <section ref="qserviceplugininterface-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qservicetyperegister.html" title="QServiceTypeRegister Class Reference">
-                        <section ref="qservicetyperegister-members.html" title="List of all members"/>
                     </section>
                     <section ref="qsystemdeviceinfo.html" title="QSystemDeviceInfo Class Reference">
                         <section ref="qsystemdeviceinfo-members.html" title="List of all members"/>
@@ -2706,6 +2706,16 @@
             <keyword name="volumeChanged" id="QRadioTunerControl::volumeChanged" ref="qradiotunercontrol.html#volumeChanged"/>
             <keyword name="~QRadioTunerControl" id="QRadioTunerControl::~QRadioTunerControl" ref="qradiotunercontrol.html#dtor.QRadioTunerControl"/>
             <keyword name="QRadioTunerControl_iid" id="QRadioTunerControl_iid" ref="qradiotunercontrol.html#QRadioTunerControl_iid"/>
+            <keyword name="QRemoteServiceClassRegister" id="QRemoteServiceClassRegister" ref="qremoteserviceclassregister.html"/>
+            <keyword name="QRemoteServiceClassRegister::InstanceType" id="QRemoteServiceClassRegister::InstanceType" ref="qremoteserviceclassregister.html#InstanceType-enum"/>
+            <keyword name="QRemoteServiceClassRegister::SharedInstance" id="QRemoteServiceClassRegister::SharedInstance" ref="qremoteserviceclassregister.html#InstanceType-enum"/>
+            <keyword name="QRemoteServiceClassRegister::UniqueInstance" id="QRemoteServiceClassRegister::UniqueInstance" ref="qremoteserviceclassregister.html#InstanceType-enum"/>
+            <keyword name="registerType" id="QRemoteServiceClassRegister::registerType" ref="qremoteserviceclassregister.html#registerType"/>
+            <keyword name="types" id="QRemoteServiceClassRegister::types" ref="qremoteserviceclassregister.html#types"/>
+            <keyword name="QRemoteServiceControl" id="QRemoteServiceControl" ref="qremoteservicecontrol.html"/>
+            <keyword name="publishServices" id="QRemoteServiceControl::publishServices" ref="qremoteservicecontrol.html#publishServices"/>
+            <keyword name="~QRemoteServiceControl" id="QRemoteServiceControl::~QRemoteServiceControl" ref="qremoteservicecontrol.html#dtor.QRemoteServiceControl"/>
+            <keyword name="QRemoteServiceIdentifier" id="QRemoteServiceIdentifier" ref="qremoteserviceclassregister.html#QRemoteServiceIdentifier-typedef"/>
             <keyword name="QRotationFilter" id="QRotationFilter" ref="qrotationfilter.html"/>
             <keyword name="filter" id="QRotationFilter::filter" ref="qrotationfilter.html#filter"/>
             <keyword name="QRotationReading" id="QRotationReading" ref="qrotationreading.html"/>
@@ -2795,9 +2805,6 @@
             <keyword name="setClientId" id="QServiceContext::setClientId" ref="qservicecontext.html#clientId-prop"/>
             <keyword name="setClientName" id="QServiceContext::setClientName" ref="qservicecontext.html#clientName-prop"/>
             <keyword name="~QServiceContext" id="QServiceContext::~QServiceContext" ref="qservicecontext.html#dtor.QServiceContext"/>
-            <keyword name="QServiceControl" id="QServiceControl" ref="qservicecontrol.html"/>
-            <keyword name="publishServices" id="QServiceControl::publishServices" ref="qservicecontrol.html#publishServices"/>
-            <keyword name="~QServiceControl" id="QServiceControl::~QServiceControl" ref="qservicecontrol.html#dtor.QServiceControl"/>
             <keyword name="QServiceFilter" id="QServiceFilter" ref="qservicefilter.html"/>
             <keyword name="QServiceFilter::CapabilityMatchRule" id="QServiceFilter::CapabilityMatchRule" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
             <keyword name="QServiceFilter::MatchMinimum" id="QServiceFilter::MatchMinimum" ref="qservicefilter.html#CapabilityMatchRule-enum"/>
@@ -2870,13 +2877,6 @@
             <keyword name="createInstance" id="QServicePluginInterface::createInstance" ref="qserviceplugininterface.html#createInstance"/>
             <keyword name="installService" id="QServicePluginInterface::installService" ref="qserviceplugininterface.html#installService"/>
             <keyword name="uninstallService" id="QServicePluginInterface::uninstallService" ref="qserviceplugininterface.html#uninstallService"/>
-            <keyword name="QServiceTypeIdent" id="QServiceTypeIdent" ref="qservicetyperegister.html#QServiceTypeIdent-typedef"/>
-            <keyword name="QServiceTypeRegister" id="QServiceTypeRegister" ref="qservicetyperegister.html"/>
-            <keyword name="QServiceTypeRegister::InstanceType" id="QServiceTypeRegister::InstanceType" ref="qservicetyperegister.html#InstanceType-enum"/>
-            <keyword name="QServiceTypeRegister::SharedInstance" id="QServiceTypeRegister::SharedInstance" ref="qservicetyperegister.html#InstanceType-enum"/>
-            <keyword name="QServiceTypeRegister::UniqueInstance" id="QServiceTypeRegister::UniqueInstance" ref="qservicetyperegister.html#InstanceType-enum"/>
-            <keyword name="registerType" id="QServiceTypeRegister::registerType" ref="qservicetyperegister.html#registerType"/>
-            <keyword name="types" id="QServiceTypeRegister::types" ref="qservicetyperegister.html#types"/>
             <keyword name="QSystemDeviceInfo" id="QSystemDeviceInfo" ref="qsystemdeviceinfo.html"/>
             <keyword name="QSystemDeviceInfo::BatteryStatus" id="QSystemDeviceInfo::BatteryStatus" ref="qsystemdeviceinfo.html#BatteryStatus-enum"/>
             <keyword name="QSystemDeviceInfo::NoBatteryLevel" id="QSystemDeviceInfo::NoBatteryLevel" ref="qsystemdeviceinfo.html#BatteryStatus-enum"/>
@@ -3346,7 +3346,7 @@
             <keyword name="QVideoWindowControl_iid" id="QVideoWindowControl_iid" ref="qvideowindowcontrol.html#QVideoWindowControl_iid"/>
             <keyword name="Q_DECLARE_CUSTOM_CONTACT_DETAIL" id="Q_DECLARE_CUSTOM_CONTACT_DETAIL" ref="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
-            <keyword name="Q_SERVICE" id="Q_SERVICE" ref="qservicetyperegister.html#Q_SERVICE"/>
+            <keyword name="Q_SERVICE" id="Q_SERVICE" ref="qremoteserviceclassregister.html#Q_SERVICE"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
@@ -3512,6 +3512,7 @@
             <file>serviceactions-mainwindow-cpp.html</file>
             <file>weatherinfo.html</file>
             <file>qproximitysensor-members.html</file>
+            <file>qremoteservicecontrol.html</file>
             <file>lightmaps.html</file>
             <file>flickrdemo-flickr-icon-svg.html</file>
             <file>qsystemnetworkinfo-members.html</file>
@@ -3598,7 +3599,6 @@
             <file>keepintouch-addressfinder-cpp.html</file>
             <file>future.html</file>
             <file>qcontactorganization-members.html</file>
-            <file>qservicetyperegister-members.html</file>
             <file>qaudioencodersettings.html</file>
             <file>qcontactactionfilter.html</file>
             <file>qcontactgeolocation-members.html</file>
@@ -3702,7 +3702,6 @@
             <file>qvideowidget-members.html</file>
             <file>qimageencodercontrol-members.html</file>
             <file>qcompassreading-members.html</file>
-            <file>qservicecontrol-members.html</file>
             <file>servicebrowser-servicebrowser-cpp.html</file>
             <file>qcontacturl.html</file>
             <file>qproximityreading.html</file>
@@ -3799,6 +3798,7 @@
             <file>weatherinfo-weatherinfo-pro.html</file>
             <file>systeminfo.html</file>
             <file>quickstart-main-cpp.html</file>
+            <file>qremoteservicecontrol-members.html</file>
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
@@ -3849,7 +3849,6 @@
             <file>qcontactfetchrequest.html</file>
             <file>qradiotuner-members.html</file>
             <file>qversitreader-members.html</file>
-            <file>qservicecontrol.html</file>
             <file>fetchgooglemaps-fetchgooglemaps-pro.html</file>
             <file>qcontactintersectionfilter.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-cpp.html</file>
@@ -3903,6 +3902,7 @@
             <file>qcontactrelationship.html</file>
             <file>qcontactsortorder.html</file>
             <file>serviceactions-attachmentlistwidget-h.html</file>
+            <file>qremoteserviceclassregister-members.html</file>
             <file>publish-subscribe-subscriberdialog-h.html</file>
             <file>qcontactchangelogfilter.html</file>
             <file>bearermonitor-bearermonitor-h.html</file>
@@ -3987,7 +3987,6 @@
             <file>qmetadatacontrol-members.html</file>
             <file>qrotationfilter.html</file>
             <file>radio-radio-cpp.html</file>
-            <file>qservicetyperegister.html</file>
             <file>qsensorbackendfactory.html</file>
             <file>qnetworkconfiguration-members.html</file>
             <file>qcontactgender-members.html</file>
@@ -4040,6 +4039,7 @@
             <file>qmlcontacts-qmlcontacts-pro.html</file>
             <file>qrotationsensor-members.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
+            <file>qremoteserviceclassregister.html</file>
             <file>qmediaplaylist-members.html</file>
             <file>qcontactfetchhint-members.html</file>
             <file>multimedia.html</file>
