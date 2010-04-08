@@ -869,6 +869,7 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId, Q
   QCM5_DEBUG << "Getting aContact with id " << m_localIds[contactId] << "local contactId is" << contactId;
 
   if(QString(m_localIds[contactId]).compare("osso-abook-self") == 0) {
+    *error = QContactManager::NoError;
     rtn = A_CONTACT(osso_abook_self_contact_get_default());
   } else {
     EBookQuery* query;
