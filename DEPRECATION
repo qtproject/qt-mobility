@@ -1,4 +1,4 @@
-Deprecation guide (23 March 2010)
+Deprecation guide (8th April 2010)
 =================
 Known source breaks:
     There are a number of source breaks that nearly all just affect engine writers - marked with [!] in this document.  Largely
@@ -33,6 +33,11 @@ General changes:
     Q_DECLARE_LATIN1_LITERAL -> Q_DECLARE_LATIN1_CONSTANT and Latin1Literal -> QLatin1Constant - Don't use the old ones.
     QContactRelationshipFilter::Role moved to QContactRelationship::Role (affects all places that deal with relationships)
     QContactLocalId - definition moved to qcontactid.h from qtcontactsglobal.h (old header includes new one right now)
+    dtors for a number of classes have been removed, since they were empty and will always be empty.
+    QContactDetails now use Latin1 strings as the keys for values (and for their definition name).  QString keys will still work.
+
+    Several classes have been adjusted so that they are now "small" (sizeof(class) <= sizeof(void*)) - this means
+    that lists/hashes/maps of them will be more efficient, but code needs recompilation.
 
 QContact:
     Deprecated members:
@@ -49,6 +54,7 @@ QContactManager:
         All fetch functions taking a list of detail definitions to retrieve have been changed to use QContactFetchHint instead
         Some functions now take a const List<T>& rather than a List<T>*
         Functions returning a QList<QContactManager::Error> are replaced with parameters pointing to an error map to fill in
+        Constructors are now explicit.
     Deprecated members:
         2 x contacts(.. QStringList definitionRestrictions ..)  [use contacts functions that takes QContactFetchHint instead]
         contact(.. QStringList definitionRestrictions ..)       [use contact function that takes QContactFetchHint instead]
@@ -92,6 +98,11 @@ QContactFetchRequest:
         setFetchHint()
 
 QContactDetail:
+    The ctors have been marked explicit, to avoid accidentally invoking a conversion from const char* or QString.
+    The keys for all values (and definition name) are now stored as latin1 strings (const char*), resulting in
+    significant memory and runtime savings.  QStrings used as keys will still work, but be converted to latin1
+    first.
+
     Deprecated members:
         preferredActions                  [No replacement]
         setPreferredActions                 [No replacement]
