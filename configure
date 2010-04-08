@@ -58,7 +58,7 @@ isAbsPath() {
 # maemo we do not want to follow symbolic links that are 
 # introduced by scratchbox
 absPath() {
-   
+    
     if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
         if [ `isAbsPath $1` = '1' ]; then
             echo $1;

@@ -699,10 +699,12 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
     m_bluetoothRepository(NULL), m_bluetoothNotifyHandler(NULL)
 {
     DeviceInfo::instance()->batteryInfo()->addObserver(this);
+    DeviceInfo::instance()->chargingStatus()->addObserver(this);
 }
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
+    DeviceInfo::instance()->chargingStatus()->removeObserver(this);
     DeviceInfo::instance()->batteryInfo()->removeObserver(this);
 
     if (m_proEngNotifyHandler) {
@@ -833,26 +835,19 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
-    CTelephony::TBatteryStatus powerState = DeviceInfo::instance()->batteryInfo()->powerState();
-
-    switch (powerState) {
-        case CTelephony::EPoweredByBattery:
-            return QSystemDeviceInfo::BatteryPower;
-
-        case CTelephony::EBatteryConnectedButExternallyPowered:
-        {
-            if (DeviceInfo::instance()->batteryInfo()->batteryLevel() < 100) { //TODO: Use real indicator, EPSHWRMChargingStatus::EChargingStatusNotCharging?
-                return QSystemDeviceInfo::WallPowerChargingBattery;
-            }
-            return QSystemDeviceInfo::WallPower;
-        }
-        case CTelephony::ENoBatteryConnected:
-            return QSystemDeviceInfo::WallPower;
-
-        case CTelephony::EPowerFault:
-        case CTelephony::EPowerStatusUnknown:
-        default:
-            return QSystemDeviceInfo::UnknownPower;
+    switch (DeviceInfo::instance()->chargingStatus()->chargingStatus()) {
+    case EChargingStatusNotConnected:
+    case EChargingStatusNotCharging:
+    case EChargingStatusError:
+        return QSystemDeviceInfo::BatteryPower;
+    case EChargingStatusCharging:
+    case EChargingStatusChargingContinued:
+    case EChargingStatusAlmostComplete:
+        return QSystemDeviceInfo::WallPowerChargingBattery;
+    case EChargingStatusChargingComplete:
+        return QSystemDeviceInfo::WallPower;
+    default:
+        return QSystemDeviceInfo::UnknownPower;
     }
 }
 
@@ -946,7 +941,7 @@ void QSystemDeviceInfoPrivate::batteryLevelChanged()
     }
 }
 
-void QSystemDeviceInfoPrivate::powerStateChanged()
+void QSystemDeviceInfoPrivate::chargingStatusChanged()
 {
     emit powerStateChanged(currentPowerState());
 }
