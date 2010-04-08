@@ -200,6 +200,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
   
     Returns a filter matching messages whose identifier is a member of \a ids, according to \a cmp.
 
+    On the Maemo 5 (Fremantle) platform this function is not yet supported.
+    
     \sa QMessage::id()
 */
 
@@ -208,6 +210,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
   
     Returns a filter matching messages whose identifier is a member of the set yielded by \a filter, according to \a cmp.
 
+    On the Maemo 5 (Fremantle) platform this function is not yet supported.
+    
     \sa QMessage::id()
 */
 
@@ -306,6 +310,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
   
     Returns a filter matching messages whose status matches \a value, according to \a cmp.
 
+    On the Maemo 5 (Fremantle) platform this function is not yet supported.
+    
     \sa QMessage::status()
 */
 
@@ -314,6 +320,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
   
     Returns a filter matching messages whose status is a bitwise match to \a mask, according to \a cmp.
 
+    On the Maemo 5 (Fremantle) platform this function is not yet supported.
+    
     \sa QMessage::status()
 */
 
@@ -321,6 +329,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     \fn QMessageFilter::byPriority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching messages whose priority matches \a value, according to \a cmp.
+    
+    On the Maemo 5 (Fremantle) platform this function is not yet supported.
 
     \sa QMessage::priority()
 */
@@ -355,6 +365,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose parent account's identifier is a member of the set 
     yielded by \a filter, according to \a cmp.
 
+    On the Maemo 5 (Fremantle) platform this function is not yet supported.
+    
     \sa QMessage::parentAccountId()
 */
 
@@ -380,6 +392,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose parent folder's identifier is a member of the set 
     yielded by \a filter, according to \a cmp.
 
+    On the Maemo 5 (Fremantle) platform this function is not yet supported.
+    
     \sa QMessage::parentFolderId()
 */
 
@@ -397,6 +411,8 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     Returns a filter matching messages whose ancestor folders' identifiers contain a member of the 
     set yielded by \a filter, according to \a cmp.
         
+    On the Maemo 5 (Fremantle) platform this function is not yet supported.
+    
     \sa QMessage::parentFolderId()
 */
 

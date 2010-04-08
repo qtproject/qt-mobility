@@ -129,6 +129,9 @@ QTM_BEGIN_NAMESPACE
     signal with a total of 0 indicates that the number of progress steps is
     unknown.
     
+    The performance of querying messages is currently significantly less than 
+    optimal for some querying criteria on some platforms.
+    
     Returns true if the operation can be initiated; otherwise returns false.
 
     Note: This function should not initiate network activity, instead only message data
@@ -156,6 +159,9 @@ QTM_BEGIN_NAMESPACE
     signal with a total of 0 indicates that the number of progress steps is
     unknown.
 
+    The performance of querying messages is currently significantly less than 
+    optimal for some querying criteria on some platforms.
+    
     Returns true if the operation can be initiated; otherwise returns false.
     
     Note: This function should not initiate network activity, instead only message data
@@ -174,6 +180,9 @@ QTM_BEGIN_NAMESPACE
     signal  being emitted multiple times. An emission of the progressChanged()
     signal with a total of 0 indicates that the number of progress steps is
     unknown.
+    
+    The performance of counting messages is currently significantly less than optimal 
+    for some filters on some platforms.
     
     Returns true if the operation can be initiated; otherwise returns false.
     
@@ -195,6 +204,9 @@ QTM_BEGIN_NAMESPACE
     If transmission is successful, the message will be moved to the standard Sent
     folder for the account.
   
+    The performance of counting messages is currently significantly less than optimal 
+    for some filters on some platforms.
+    
     Returns true if the operation can be initiated; otherwise returns false.
     
     \sa QMessage, QMessageAccountId
@@ -262,6 +274,8 @@ QTM_BEGIN_NAMESPACE
     The default application for handling the type of message that \a id identifies should be used.
 
     Returns true if the operation can be initiated; otherwise returns false.
+    
+    On the Maemo 5 (Fremantle) platform this function is not yet supported for SMS type messages.
     
     On the QMF platform implementation of this function is left as a task for system 
     integrators.
