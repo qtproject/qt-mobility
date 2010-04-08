@@ -1193,6 +1193,14 @@ void tst_QContactFilter::testFilter_data()
                 << contact
                 << QContactName::match(QLatin1String("first"), QLatin1String("last"))
                 << true;
+        QTest::newRow("QContactName::match substring")
+                << contact
+                << QContactName::match(QLatin1String("irs"))
+                << true;
+        QTest::newRow("QContactName::match first last substring")
+                << contact
+                << QContactName::match(QLatin1String("irs"), QLatin1String("as"))
+                << true;
         QTest::newRow("QContactName::match negative")
                 << contact
                 << QContactName::match("foo")
@@ -1205,6 +1213,10 @@ void tst_QContactFilter::testFilter_data()
         QTest::newRow("QContactDisplayLabel::match positive")
                 << contact
                 << QContactDisplayLabel::match("foo")
+                << true;
+        QTest::newRow("QContactDisplayLabel::match positive substring")
+                << contact
+                << QContactDisplayLabel::match("o")
                 << true;
         QTest::newRow("QContactDisplayLabel::match negative")
                 << contact
@@ -1236,7 +1248,11 @@ void tst_QContactFilter::testFilter_data()
                 << contact
                 << QContactEmailAddress::match("foo")
                 << true;
-        QTest::newRow("QContactEmailAddress::match positive")
+        QTest::newRow("QContactEmailAddress::match positive substring")
+                << contact
+                << QContactEmailAddress::match("o")
+                << true;
+        QTest::newRow("QContactEmailAddress::match negative")
                 << contact
                 << QContactEmailAddress::match("bar")
                 << false;
