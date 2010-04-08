@@ -61,12 +61,12 @@ namespace QmfHelpers {
 
 QString stripIdentifierPrefix(const QString &s)
 {
-    return s.mid(1);
+    return s.mid(4);
 }
     
 QString prefixIdentifier(const QString &s)
 {
-    return "A" + s;
+    return "QMF_" + s;
 }
     
 QMessageId convert(const QMailMessageId &id)
