@@ -47,6 +47,7 @@
 #include <qmediaplayer.h>
 #include <qmediaplaylist.h>
 #include <qvideowidget.h>
+#include <qaudioendpointselector.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <QtGui/QDialog>
@@ -109,6 +110,12 @@ private slots:
     void youtubeReadResponseHeader(const QHttpResponseHeader& responseHeader);
     void searchYoutubeVideo();
     void addYoutubeVideo();
+    void handleAudioOutputDefault();
+    void handleAudioOutputAll();
+    void handleAudioOutputNone();
+    void handleAudioOutputEarphone();
+    void handleAudioOutputSpeaker();
+    void handleAudioOutputChangedSignal(const QString&);
 #else
     void showColorDialog();
 #endif
@@ -131,6 +138,7 @@ private:
     QAbstractItemView *playlistView;
     QString trackInfo;
     QString statusInfo;
+    QAudioEndpointSelector *audioEndpointSelector;
 #ifdef Q_OS_SYMBIAN
     MediaKeysObserver *mediaKeysObserver;
     QDialog *playlistDialog;
@@ -139,6 +147,12 @@ private:
     QDialog *youtubeDialog;
     QHttp http;
     int httpGetId;
+    QMenu *audioOutputMenu;
+    QAction *setAudioOutputDefault;
+    QAction *setAudioOutputAll;
+    QAction *setAudioOutputNone;
+    QAction *setAudioOutputEarphone;
+    QAction *setAudioOutputSpeaker;
 #else
     QDialog *colorDialog;
 #endif

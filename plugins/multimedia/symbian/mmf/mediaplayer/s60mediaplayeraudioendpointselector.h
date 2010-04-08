@@ -72,7 +72,6 @@ private:
     S60MediaPlayerControl* m_control;
     QString m_audioInput;
     QList<QString> *m_audioEndpointNames;
-    QList<QString> *m_audioEndpointDescriptions;
 };
 
 #endif // S60MEDIAPLAYERAUDIOENDPOINTSELECTOR_H

@@ -69,6 +69,7 @@ public:
         , m_muted(false)
         , m_playbackRate(0)
         , m_mediaStatus(QMediaPlayer::UnknownMediaStatus)
+        , m_audioEndpoint(QString("Default"))
     {
     }
     
@@ -76,17 +77,20 @@ public:
     void setMuted(bool muted) { m_muted = muted; }
     void setPlaybackRate(int rate) { m_playbackRate = rate; }
     void setMediaStatus(QMediaPlayer::MediaStatus status) {m_mediaStatus=status;}
+    void setAudioEndpoint(const QString& audioEndpoint) { m_audioEndpoint = audioEndpoint; }
     
     int volume() const { return m_volume; }
     bool isMuted() const { return m_muted; }
     qreal playbackRate() const { return m_playbackRate; }
     QMediaPlayer::MediaStatus mediaStatus() const {return m_mediaStatus;}
+    QString audioEndpoint() const { return m_audioEndpoint; }
     
 private:
     int m_volume;
     bool m_muted;
     qreal m_playbackRate;
     QMediaPlayer::MediaStatus m_mediaStatus;
+    QString m_audioEndpoint;
 };
 
 class S60MediaPlayerControl : public QMediaPlayerControl
@@ -121,6 +125,7 @@ public:
     virtual void pause();
     virtual void stop();  
     S60MediaPlayerSession* session();
+    void setAudioEndpoint(const QString& name);
 
     // Own methods
     void setVideoOutput(QObject *output);

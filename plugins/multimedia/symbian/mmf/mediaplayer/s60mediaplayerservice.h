@@ -99,7 +99,7 @@ private:
     mutable S60VideoWidgetControl *m_videoWidget;
     mutable S60VideoOverlay *m_videoWindow;
     mutable S60VideoRenderer *m_videoRenderer;
-    mutable S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
+    S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
 };
 
 #endif
