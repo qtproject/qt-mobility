@@ -44,7 +44,6 @@
 #include "s60mediaplayerservice.h"
 #include "s60videooverlay.h"
 
-#include <QtCore/private/qcore_symbian_p.h> // For qt_TRect2QRect 
 #include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 #include <QtCore/qtimer.h>
@@ -246,9 +245,9 @@ QPair<qreal, qreal> S60VideoPlayerSession::scaleFactor()
 {
     QSize scaled = m_originalSize;
     if (m_aspectRatioMode == Qt::IgnoreAspectRatio)
-        scaled.scale(qt_TRect2QRect(m_rect).size(), Qt::IgnoreAspectRatio);    
+        scaled.scale(TRect2QRect(m_rect).size(), Qt::IgnoreAspectRatio);    
     else if(m_aspectRatioMode == Qt::KeepAspectRatio)
-        scaled.scale(qt_TRect2QRect(m_rect).size(), Qt::KeepAspectRatio);    
+        scaled.scale(TRect2QRect(m_rect).size(), Qt::KeepAspectRatio);    
     
     qreal width = qreal(scaled.width()) / qreal(m_originalSize.width()) * qreal(100);
     qreal height = qreal(scaled.height()) / qreal(m_originalSize.height()) * qreal(100);
