@@ -108,7 +108,7 @@
 /*!
     \fn QMessageAccount::messageTypes() const
     
-    Returns the types of messages this account deals with.
+    Returns the types of messages this account handles.
 */
 
 /*!
