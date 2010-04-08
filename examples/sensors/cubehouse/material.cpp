@@ -41,8 +41,6 @@
 
 #include "material.h"
 
-QT_BEGIN_NAMESPACE
-
 /*!
     \class Material
     \brief The Material class describes material properties for OpenGL drawing.
