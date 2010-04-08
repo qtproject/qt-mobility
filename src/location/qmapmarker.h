@@ -72,6 +72,7 @@ protected:
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
     void constructMarker(QPainter* painter, const QPointF& point);
+    void constructIconMarker(QPainter* painter, const QPointF& point);
 
     QMapMarker(QMapMarkerPrivate &dd, const QGeoCoordinate& point,
                const QString& text, const QFont& font, const QColor& fontColor,

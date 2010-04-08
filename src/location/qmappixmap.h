@@ -47,7 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QMapPixmapPrivate;
-class QMapPixmap : public QMapObject
+class Q_LOCATION_EXPORT QMapPixmap : public QMapObject
 {
     friend class QMapView;
 

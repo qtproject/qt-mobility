@@ -165,11 +165,13 @@ void QMapEllipse::paint(QPainter* painter, const QRectF& viewPort)
     d->path.translate(viewPort.left(), viewPort.top());
 
     //Is view port wrapping around date line?
-    if (viewPort.right() >= mapWidth) {
+    qreal right = viewPort.right();
+    for(int i=1;right>=mapWidth;++i,right -= mapWidth) {
+        qint64 width = mapWidth*i;
         d->path.translate(-viewPort.left(), -viewPort.top());
-        d->path.translate(mapWidth, 0);
+        d->path.translate(width, 0);
         painter->drawPath(d->path);
-        d->path.translate(-mapWidth, 0);
+        d->path.translate(-width, 0);
         d->path.translate(viewPort.left(), viewPort.top());
     }
 
