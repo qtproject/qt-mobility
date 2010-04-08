@@ -14,9 +14,8 @@ EventLoggerEngine* EventLoggerEngine::instance()
 }
 
 
-EventLoggerEngine::EventLoggerEngine(QObject *parent)
+EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent)
 {
-  Q_UNUSED(parent);
   //    qDebug() << "EventLoggerEngine::EventLoggerEngine";
     DBusError err=DBUS_ERROR_INIT;
     g_type_init();
@@ -25,6 +24,9 @@ EventLoggerEngine::EventLoggerEngine(QObject *parent)
     el=rtcom_el_new ();
     if(!RTCOM_IS_EL(el)) qDebug() << "EventLoggerEngine::EventLoggerEngine():Could't create RTComEl\n";
 
+    queryThread=0;
+    //    queryThread.run();
+    //    connect(queryThread, SIGNAL(messagesFound(const QMessageIdList &)),this, SLOT(messagesFound_(const QMessageIdList &)));
 
 
     g_signal_connect(G_OBJECT(el), "new-event", G_CALLBACK(new_event_cb),(void*)this);
@@ -34,6 +36,7 @@ void EventLoggerEngine::new_event_cb(RTComEl *el,int event_id,
                                     const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
                                     const char *group_uid,const char *service,EventLoggerEngine *p)
 {
+  Q_UNUSED(el);
   p->newEvent(event_id, local_uid,remote_uid ,remote_ebook_uid,group_uid,service);
 };
 
@@ -81,7 +84,7 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
         message.setType(QMessage::NoType);  // Other type, as exampele voice Call
     };
 
-    message.setParentAccountId(QMessageAccountId(QString("/y/Account/%1").arg(ev.fld_local_uid)));
+    message.setParentAccountId(QMessageAccountId(QString("y/Account/%1").arg(ev.fld_local_uid)));
 
     if (!ev.fld_is_read) {
         message.setStatus(QMessage::Read);
@@ -106,6 +109,14 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
     return message;
 
 }
+
+
+bool EventLoggerEngine::deleteMessage(const QMessageId& id)
+{
+  int status=rtcom_el_delete_event(el,id.toString().toInt(),NULL);
+  return status==0;
+}
+
 QMessage EventLoggerEngine::message(const QMessageId& id)
 {
 
@@ -121,7 +132,7 @@ QMessage EventLoggerEngine::message(const QMessageId& id)
     g_object_unref(q);
     if(iter && rtcom_el_iter_first(iter))
     {
-     gboolean res=rtcom_el_iter_get(iter,&ev);
+     gboolean res=rtcom_el_iter_get_full(iter,&ev);
      if(res) {
 #if 0
          printf("got event id=%d service_id=%d event_typ_id=%d\n\
@@ -246,11 +257,64 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
 }
 #endif
 
+bool EventLoggerEngine::filterMessages(const QMessageFilter &filter,
+                                                    const QMessageSortOrder& sortOrder,
+                                                    QString body,
+                                                    QMessageDataComparator::MatchFlags matchFlags)
+{
+
+  //  qDebug() << "EventLoggerEngine::filterMessages";
+  if (active) {
+    qWarning() << "EventLoggerEngine::filterMessages::Service is currently busy";
+    return false;
+  }
+
+
+  active = true;
+  state = QMessageService::ActiveState;
+  emit stateChanged(state);
+
+  if(!queryThread) {
+    queryThread=new QueryThread();
+    connect(queryThread, SIGNAL(completed()), this, SLOT(reportMatchingIds()), Qt::QueuedConnection);
+  };
+  queryThread->setArgs(this, filter, body, matchFlags, sortOrder, 0,0);
+  queryThread->start();
+
+    //  return queryThread.queryMessages(filter,sortOrder,body,matchFlags);
+    return true;
+}
+
+void EventLoggerEngine::messagesFound_(const QMessageIdList &ids)
+{
+  //  qDebug() << "EventLoggerEngine::messagesFound";
+  emit messagesFound(ids,true,false); // filtered but not sorted
+}
+
+
+void EventLoggerEngine::reportMatchingIds()
+{
+  //  qDebug() << "EventLoggerEngine::messagesFound" << m_ids.count();
+  emit messagesFound(m_ids,true,false);
+  completed();
+}
+
+void EventLoggerEngine::completed()
+{
+    active = false;
+    state = QMessageService::FinishedState;
+    emit stateChanged(state);
+}
+
+
 QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &filter,
                                                     const QMessageSortOrder& sortOrder,
                                                     QString body,
                                                     QMessageDataComparator::MatchFlags matchFlags)
 {
+  Q_UNUSED(body);
+  Q_UNUSED(matchFlags);
+  Q_UNUSED(sortOrder);
     QMessageId fId;  // Filtering id
     //    QMessageType fType;
     QDate fDate;
@@ -296,14 +360,16 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
     if(iter && rtcom_el_iter_first(iter))
        do {
          bzero(&ev,sizeof(ev));
-         gboolean res=rtcom_el_iter_get(iter,&ev);
-         message=eventToMessage(ev);
-         // debugMessage(message);
-         if (pf->filter(message)) {
-	   //   qDebug() <<"Filter :filtering match" << message.id().toString();
-	   //matchingFilters.insert(it.key());
-	   idList.append(message.id());
-	 };
+         if(rtcom_el_iter_get_full(iter,&ev))
+	   {
+	     message=eventToMessage(ev);
+	     // debugMessage(message);
+	     if (pf->filter(message)) {
+	       //   qDebug() <<"Filter :filtering match" << message.id().toString();
+	       //matchingFilters.insert(it.key());
+	       idList.append(message.id());
+	     };
+	   };
        }
        while( rtcom_el_iter_next(iter));
 #if 0
@@ -313,5 +379,33 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
 #endif
     return idList;
 }
+
+
+QueryThread::QueryThread(): QThread()
+{
+}
+
+void QueryThread::setArgs(EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+{
+  _parent=parent;
+  _filter=filter;
+  _body=body;
+  _matchFlags=matchFlags;
+  _sortOrder=sortOrder;
+  _limit=limit;
+  _offset=offset;
+}
+
+void QueryThread::run()
+{
+  //  qDebug() << "QueryThread::run()";
+  _parent->m_ids=EventLoggerEngine::instance()->filterAndOrderMessages(_filter,_sortOrder,_body,_matchFlags);
+  //  qDebug() << "QueryThread::run() done" << _parent->m_ids.count();
+  emit completed();
+}
+
+
+
+#include "moc_eventloggerengine_maemo_p.cpp"
 
 QTM_END_NAMESPACE

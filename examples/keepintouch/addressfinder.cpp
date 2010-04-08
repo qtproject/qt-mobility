@@ -217,35 +217,35 @@ void AddressFinder::searchMessages()
 //! [create-simple-filters]
     // We will include addresses contacted following the minimum date
     QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
+    // Windows mobile only sets a receptionTimeStamp for sent messsages
+    includeFilter |= QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual);
 
     QMessageFilter excludeFilter;
     if (useExclusionPeriod) {
         // We will exclude addresses contacted following the maximum date
         excludeFilter = QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
+        excludeFilter |= QMessageFilter::byReceptionTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
     }
 //! [create-simple-filters]
-
-    // Not sure why reception timestamp is relevant to sent messages...
-    includeFilter |= QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual);
-    excludeFilter |= QMessageFilter::byReceptionTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
-
-    QMessageFilter exclusionFilter;
 
 //! [create-composite-filters]
     // We only want to match messages that we sent
     QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
     // Create the filter needed to locate messages to search for addresses to include
-    inclusionFilter = (sentFilter & includeFilter & ~excludeFilter);
-
     if (useExclusionPeriod) {
-        // Create the filter needed to locate messages whose address we will exclude
-        exclusionFilter = (sentFilter & excludeFilter);
+        inclusionFilter = (sentFilter & includeFilter & ~excludeFilter);
+    } else {
+        inclusionFilter = (sentFilter & includeFilter);
     }
 //! [create-composite-filters]
 
 //! [begin-search]
     if (useExclusionPeriod) {
+        // Create the filter needed to locate messages whose address we will exclude
+        QMessageFilter exclusionFilter;
+        exclusionFilter = (sentFilter & excludeFilter);
+        
         // Start the search for messages containing addresses to exclude
         service.queryMessages(exclusionFilter);
     } else {

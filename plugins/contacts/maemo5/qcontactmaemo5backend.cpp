@@ -163,7 +163,13 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   QContact *contact = d->m_abook->getQContact(contactId, error);
   QContact rtn(*contact);
   delete contact;
-  setContactDisplayLabel(&rtn, synthesizedDisplayLabel(rtn, error));
+  if (*error == QContactManager::NoError) {
+    setContactDisplayLabel(&rtn, synthesizedDisplayLabel(rtn, error));
+    QContactId cid;
+    cid.setLocalId(contactId);
+    cid.setManagerUri(managerUri());
+    rtn.setId(cid);
+  }
   return rtn;
 }
 
@@ -224,24 +230,6 @@ bool QContactMaemo5Engine::saveContact(QContact* contact, QContactManager::Error
   contact->setId(cId);
   return retn;
 }
-
-#if 0
-QList<QContactManager::Error> QContactMaemo5Engine::removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error* error)
-{
-  bool ok = true;
-  
-  if (contactIds->isEmpty())
-    return false;
-  
-  QContactLocalId id;
-  foreach(id, contactIds){
-      if (!removeContact(id, error))
-	ok = false;
-  }
-  
-  return ok;
-}
-#endif
 
 bool QContactMaemo5Engine::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {

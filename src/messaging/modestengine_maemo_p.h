@@ -89,6 +89,7 @@ struct MessageQueryInfo
     QMessageIdList ids;
     QString realAccountId;
     bool isQuery;
+    bool returnWithSingleShot;
 };
 
 struct ModestUnreadMessageDBusStruct
@@ -133,11 +134,11 @@ typedef enum {
 } MessagingModestMessageFlags;
 
 typedef enum {
-    MessagingModestMessagePriorityDefined   = 0,
-    MessagingModestMessageHighPriority      = 1<<9|1<<10,
-    MessagingModestMessageNormalPriority    = 0<<9|0<<10,
-    MessagingModestMessageLowPriority       = 0<<9|1<<10,
-    MessagingModestMessageSuspendedPriority = 1<<9|0<<10
+    MessagingModestMessagePriorityNotDefined = 0,
+    MessagingModestMessageHighPriority       = 1<<9|1<<10,
+    MessagingModestMessageNormalPriority     = 0<<9|0<<10,
+    MessagingModestMessageLowPriority        = 0<<9|1<<10,
+    MessagingModestMessageSuspendedPriority  = 1<<9|0<<10
 } MessagingModestMessagePriority;
 
 struct MessagingModestMimePart
@@ -279,6 +280,8 @@ public:
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
     QByteArray getMimePart (const QMessageId &id, const QString &attachmentId);
 
+    void clearHeaderCache();
+
 private:
     QFileInfoList localFolders() const;
     void appendLocalSubFolders(QFileInfoList& fileInfoList, int startIndex) const;
@@ -295,12 +298,15 @@ private:
 
     bool filterMessage(const QMessage& message, QMessageFilterPrivate::SortedMessageFilterList filterList, int start) const;
     bool queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const;
+    bool startQueryingAndFilteringMessages(MessageQueryInfo &msgQueryInfo) const;
     bool searchMessages(MessageQueryInfo &msgQueryInfo, const QStringList& accountIds,
-                        const QStringList& folderUris, const QDateTime& startDate,
-                        const QDateTime& endDate) const;
+                        const QStringList& folderUris, const QString& body,
+                        const QDateTime& startTimeStamp, const QDateTime& endTimeStamp,
+                        const QDateTime& startReceptionTimeStamp, const QDateTime& endReceptionTimeStamp) const;
     void searchNewMessages(const QString& searchString, const QString& folderToSearch,
                            const QDateTime& startDate, const QDateTime& endDate,
                            int searchflags, uint minimumMessageSize) const;
+    void handleQueryFinished(int queryIndex) const;
 
     void watchAllKnownEmailFolders();
     void notification(const QMessageId& messageId, NotificationType notificationType) const;
@@ -360,6 +366,7 @@ private slots:
     void sendEmailCallEnded(QDBusPendingCallWatcher *watcher);
     void addMessageCallEnded(QDBusPendingCallWatcher *watcher);
     void stateChanged(QMessageService::State newState);
+    void returnQueryResultsSlot();
 
 private: //Data
     GConfClient *m_gconfclient;
@@ -381,7 +388,7 @@ private: //Data
 
     QMap<QString, QDateTime> accountsLatestTimestamp;
 
-    mutable QStringList m_latestRemoveNotifications;
+    mutable QStringList m_latestAddOrRemoveNotifications;
 
     mutable QMap<QString, QMessage> m_messageCache;
 

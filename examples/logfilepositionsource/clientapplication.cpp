@@ -59,5 +59,5 @@ ClientApplication::ClientApplication(QWidget *parent)
 
 void ClientApplication::positionUpdated(const QGeoPositionInfo &info)
 {
-    textEdit->append(QString("Position updated: Date/time = %1, Coordinate = %2").arg(info.dateTime().toString()).arg(info.coordinate().toString()));
+    textEdit->append(QString("Position updated: Date/time = %1, Coordinate = %2").arg(info.timestamp().toString()).arg(info.coordinate().toString()));
 }

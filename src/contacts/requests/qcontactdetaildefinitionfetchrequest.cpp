@@ -63,11 +63,6 @@ QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest()
 {
 }
 
-/*! Cleans up the memory in use by this detail definition fetch request */
-QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
-{
-}
-
 /*! Sets the names of the detail definitions to retrieve to \a names */
 void QContactDetailDefinitionFetchRequest::setDefinitionNames(const QStringList& names)
 {

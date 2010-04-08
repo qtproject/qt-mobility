@@ -56,12 +56,19 @@ QtContacts
 QtLocation
 ------
 
- - foo
-    * bar
+ - API change
+    * QGeoPositionInfo::dateTime()/setDateTime() changed into
+      QGeoPositionInfo::timestamp()/setTimestamp() respectively.
 
 QtMessaging
 ------
 
+ - Maemo 5 (Fremantle) backend implemented
+    * SMS and Email message types supported.
+ - API changes
+    * QMessageAddress::recipient()/setRecipient renamed to 
+      QMessageAddress::addressee()/setAddressee respectively.
+    * QMessage::XMPP renamed to QMessage::InstantMessage.
  - Symbian specific fixes
     * Notifications which are related to internal folders (0x100001
       and 0x100002) are ignored.
@@ -78,6 +85,10 @@ QtMessaging
       registerNotificationFilter(
           QMessageFilter::byStandardFolder(QMessage::InboxFolder) &
           QMessageFilter::byType(QMessage::Mms))
+ - Regression in keepintouch example fixed, incorrect results were returned 
+   when 'but not last' checkbox was unchecked.
+ - Format of identifiers changed
+   * For forwards compatibility.
 
 QtMedia
 ------
