@@ -39,64 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYTRACKERSCHEMA_P_H
-#define QGALLERYTRACKERSCHEMA_P_H
+#include "qgallerytrackerfilecopyresponse_p.h"
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <QtCore/qfile.h>
 
-#include "qgalleryfilter.h"
-
-class QGalleryTrackerSchema
+QGalleryTrackerFileCopyResponse::QGalleryTrackerFileCopyResponse(
+        const QDBusConnection &connection,
+        const QGalleryTrackerSchema &schema,
+        const QStringList &properties,
+        const QStringList &fileNames,
+        const QString &destinationPath,
+        QObject *parent)
+    : QGalleryTrackerFileEditResponse(connection, schema, properties, fileNames, parent)
+    , m_destinationPath(destinationPath)
 {
-public:
-    enum AggregateType
-    {
-        Count,
-        Sum,
-        Concatenation
-    };
+    if (!m_destinationPath.endsWith(QLatin1Char('/')))
+        m_destinationPath.append(QLatin1Char('/'));
+}
 
-    typedef QString (*IdFunc)(const QStringList &row);
+QGalleryTrackerFileCopyResponse::~QGalleryTrackerFileCopyResponse()
+{
 
-    QGalleryTrackerSchema();
-    ~QGalleryTrackerSchema();
+}
 
-    bool isFileType() const { return m_fileTypeIndex >= 0; }
-    bool isAggregateType() const { return m_aggregateTypeIndex >= 0; }
+bool QGalleryTrackerFileCopyResponse::editFile(
+        int *error, const QString &path, const QString &fileName)
+{
+    if (!QFile::copy(path  + QLatin1Char('/') + fileName, m_destinationPath + fileName)) {
+        *error = 1;
 
-    QString itemType() const { return m_itemType; }
-    void setItemType(const QString &type);
-
-    QString buildQuery(int *error, const QGalleryFilter &filter) const;
-
-    QString uriFromItemId(int *error, const QString &itemId) const;
-    QStringList urisFromItemIds(int *error, const QStringList &itemIds) const;
-
-    QString service() const;
-    QString field(const QString &propertyName) const;
-
-    IdFunc idFunc() const;
-
-    QStringList identityFields() const;
-    QStringList identityPropertyNames() const;
-
-    QPair<QString, AggregateType> aggregateField(const QString &propertyName) const;
-
-    static QString typeFromService(const QString &service);
-
-private:
-    int m_fileTypeIndex;
-    int m_aggregateTypeIndex;
-    QString m_itemType;
-};
-
-#endif
+        return false;
+    } else {
+        return true;
+    }
+}

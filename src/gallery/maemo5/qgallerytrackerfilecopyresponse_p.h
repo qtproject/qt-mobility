@@ -39,64 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYTRACKERSCHEMA_P_H
-#define QGALLERYTRACKERSCHEMA_P_H
+#ifndef QGALLERYTRACKERFILECOPYRESPONSE_P_H
+#define QGALLERYTRACKERFILECOPYRESPONSE_P_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API. It exists purely as an
-// implementation detail. This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qgallerytrackerfileeditresponse_p.h"
 
-#include "qgalleryfilter.h"
-
-class QGalleryTrackerSchema
+class QGalleryTrackerFileCopyResponse : public QGalleryTrackerFileEditResponse
 {
+    Q_OBJECT
 public:
-    enum AggregateType
-    {
-        Count,
-        Sum,
-        Concatenation
-    };
+    QGalleryTrackerFileCopyResponse(
+            const QDBusConnection &connection,
+            const QGalleryTrackerSchema &schema,
+            const QStringList &properties,
+            const QStringList &fileNames,
+            const QString &destinationPath,
+            QObject *parent = 0);
+    ~QGalleryTrackerFileCopyResponse();
 
-    typedef QString (*IdFunc)(const QStringList &row);
-
-    QGalleryTrackerSchema();
-    ~QGalleryTrackerSchema();
-
-    bool isFileType() const { return m_fileTypeIndex >= 0; }
-    bool isAggregateType() const { return m_aggregateTypeIndex >= 0; }
-
-    QString itemType() const { return m_itemType; }
-    void setItemType(const QString &type);
-
-    QString buildQuery(int *error, const QGalleryFilter &filter) const;
-
-    QString uriFromItemId(int *error, const QString &itemId) const;
-    QStringList urisFromItemIds(int *error, const QStringList &itemIds) const;
-
-    QString service() const;
-    QString field(const QString &propertyName) const;
-
-    IdFunc idFunc() const;
-
-    QStringList identityFields() const;
-    QStringList identityPropertyNames() const;
-
-    QPair<QString, AggregateType> aggregateField(const QString &propertyName) const;
-
-    static QString typeFromService(const QString &service);
+protected:
+    bool editFile(int *error, const QString &path, const QString &fileName);
 
 private:
-    int m_fileTypeIndex;
-    int m_aggregateTypeIndex;
-    QString m_itemType;
+    QString m_destinationPath;
 };
 
 #endif

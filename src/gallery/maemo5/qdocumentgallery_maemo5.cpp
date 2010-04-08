@@ -44,7 +44,10 @@
 
 #include "qgallerytrackeraggregatelistresponse_p.h"
 #include "qgallerytrackercountresponse_p.h"
+#include "qgallerytrackerfilecopyresponse_p.h"
 #include "qgallerytrackerfilelistresponse_p.h"
+#include "qgallerytrackerfilemoveresponse_p.h"
+#include "qgallerytrackerfileremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 
 #include <QtDBus/qdbusmetatype.h>
@@ -55,6 +58,9 @@ public:
 
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
     QGalleryAbstractResponse *createCountResponse(QGalleryCountRequest *request);
+    QGalleryAbstractResponse *createCopyResponse(QGalleryCopyRequest *request);
+    QGalleryAbstractResponse *createMoveResponse(QGalleryMoveRequest *request);
+    QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
 };
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
@@ -117,6 +123,92 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
     return 0;
 }
 
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createCopyResponse(QGalleryCopyRequest *request)
+{
+    int error = 0;
+
+    QGalleryTrackerSchema schema;
+    schema.setItemType(QDocumentGallery::File);
+
+    QStringList fileNames = schema.urisFromItemIds(&error, request->itemIds());
+
+    if (fileNames.isEmpty()) {
+        if (error == 0)
+            error = 1;
+    } else {
+        QString destinationPath = schema.uriFromItemId(&error, request->destinationId());
+
+        if (destinationPath.isEmpty()) {
+            if (error == 0)
+                error = 1;
+        } else {
+            return new QGalleryTrackerFileCopyResponse(
+                    QDBusConnection::sessionBus(),
+                    schema,
+                    request->fields(),
+                    fileNames,
+                    destinationPath);
+        }
+    }
+
+    return 0;
+}
+
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createMoveResponse(QGalleryMoveRequest *request)
+{
+    int error = 0;
+
+    QGalleryTrackerSchema schema;
+    schema.setItemType(QDocumentGallery::File);
+
+    QStringList fileNames = schema.urisFromItemIds(&error, request->itemIds());
+
+    if (fileNames.isEmpty()) {
+        if (error == 0)
+            error = 1;
+    } else {
+        QString destinationPath = schema.uriFromItemId(&error, request->destinationId());
+
+        if (destinationPath.isEmpty()) {
+            if (error == 0)
+                error = 1;
+        } else {
+            return new QGalleryTrackerFileMoveResponse(
+                    QDBusConnection::sessionBus(),
+                    schema,
+                    request->fields(),
+                    fileNames,
+                    destinationPath);
+        }
+    }
+
+    return 0;
+}
+
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
+        QGalleryRemoveRequest *request)
+{
+    int error = 0;
+
+    QGalleryTrackerSchema schema;
+    schema.setItemType(QDocumentGallery::File);
+
+    QStringList fileNames = schema.urisFromItemIds(&error, request->itemIds());
+
+    if (fileNames.isEmpty()) {
+        if (error == 0)
+            error = 1;
+    } else {
+        return new QGalleryTrackerFileRemoveResponse(
+                QDBusConnection::sessionBus(),
+                schema,
+                request->fields(),
+                fileNames);
+    }
+
+    return 0;
+}
+
 QDocumentGallery::QDocumentGallery(QObject *parent)
     : QAbstractGallery(*new QDocumentGalleryPrivate, parent)
 {
@@ -132,6 +224,9 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
     switch (type) {
     case QGalleryAbstractRequest::Item:
     case QGalleryAbstractRequest::Count:
+    case QGalleryAbstractRequest::Copy:
+    case QGalleryAbstractRequest::Move:
+    case QGalleryAbstractRequest::Remove:
         return true;
     default:
         return false;
@@ -152,6 +247,12 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
     case QGalleryAbstractRequest::Count:
         return d->createCountResponse(static_cast<QGalleryCountRequest *>(request));
+    case QGalleryAbstractRequest::Copy:
+        return d->createCopyResponse(static_cast<QGalleryCopyRequest *>(request));
+    case QGalleryAbstractRequest::Move:
+        return d->createMoveResponse(static_cast<QGalleryMoveRequest *>(request));
+    case QGalleryAbstractRequest::Remove:
+        return d->createRemoveResponse(static_cast<QGalleryRemoveRequest *>(request));
     default:
         return 0;
     }

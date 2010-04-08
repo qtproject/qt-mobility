@@ -165,7 +165,7 @@ void QGalleryTrackerListResponse::setCursorPosition(int position)
                 qWarning("DBUS error %s", qPrintable(call.error().message()));
             }
 
-            m_call = new QDBusPendingCallWatcher(call);
+            m_call = new QDBusPendingCallWatcher(call, this);
 
             if (m_call->isFinished()) {
                 callFinished(m_call);

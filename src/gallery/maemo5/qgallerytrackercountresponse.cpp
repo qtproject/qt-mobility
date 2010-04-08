@@ -202,10 +202,10 @@ void QGalleryTrackerCountResponse::queryCount()
 {
     if (m_countField.isEmpty()) {
         m_call = new QDBusPendingCallWatcher(m_dbusInterface.asyncCall(
-                QLatin1String("GetCount"), m_service, QLatin1String("*"), m_query));
+                QLatin1String("GetCount"), m_service, QLatin1String("*"), m_query), this);
     } else if (m_identityFields.isEmpty()) {
         m_call = new QDBusPendingCallWatcher(m_dbusInterface.asyncCall(
-                QLatin1String("GetCount"), m_service, m_countField, m_query));
+                QLatin1String("GetCount"), m_service, m_countField, m_query), this);
     } else {
         m_call = new QDBusPendingCallWatcher(m_dbusInterface.asyncCall(
                 QLatin1String("GetUniqueValuesWithCount"),
@@ -215,7 +215,7 @@ void QGalleryTrackerCountResponse::queryCount()
                 m_countField,
                 false,
                 m_currentOffset,
-                MaximumFetchSize));
+                MaximumFetchSize), this);
     }
 
     if (m_call->isFinished()) {

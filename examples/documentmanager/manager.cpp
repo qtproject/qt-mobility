@@ -273,7 +273,7 @@ void Manager::sourceRequestFinished(int)
 
 void Manager::destinationRequestFinished(int)
 {
-
+    emit enableButtons(!actionRequest && !destinationFolderId.isEmpty());
 }
 
 void Manager::actionRequestFinished(int)
@@ -283,7 +283,7 @@ void Manager::actionRequestFinished(int)
     actionRequest->deleteLater();
     actionRequest = 0;
 
-    emit enableButtons(!(sourceFolderId.isEmpty() || destinationFolderId.isEmpty()));
+    emit enableButtons(!destinationFolderId.isEmpty());
 }
 
 void Manager::sourceItemActivated(const QModelIndex &index)

@@ -1097,6 +1097,41 @@ QString QGalleryTrackerSchema::buildQuery(int *error, const QGalleryFilter &filt
     return query;
 }
 
+QString QGalleryTrackerSchema::uriFromItemId(int *error, const QString &itemId) const
+{
+    if (m_fileTypeIndex >= 0) {
+        if (itemId.startsWith(QLatin1String("file::")))
+            return itemId.mid(6);
+        else
+            *error = 1;
+    } else {
+        *error = 1;
+    }
+    return QString();
+}
+
+QStringList QGalleryTrackerSchema::urisFromItemIds(int *error, const QStringList &itemIds) const
+{
+    QStringList uris;
+
+    if (m_fileTypeIndex >= 0) {
+        const QString prefix(QLatin1String("file::"));
+
+        for (QStringList::const_iterator itemId = itemIds.begin(), end = itemIds.end();
+                itemId != end;
+                ++itemId) {
+            if (itemId->startsWith(prefix))
+                uris.append(itemId->mid(6));
+            else
+                *error = 1;
+        }
+    } else {
+        *error = 1;
+    }
+
+    return uris;
+}
+
 QString QGalleryTrackerSchema::service() const
 {
     if (m_fileTypeIndex >= 0)

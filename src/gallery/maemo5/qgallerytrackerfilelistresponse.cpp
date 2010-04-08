@@ -89,7 +89,6 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
         if (!field.isEmpty())
             m_sortFields.append(field);
     }
-
 }
 
 QGalleryTrackerFileListResponse::~QGalleryTrackerFileListResponse()
