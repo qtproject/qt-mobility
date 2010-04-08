@@ -128,6 +128,11 @@ bool QContactMaemo5Engine::validateDefinition(const QContactDetailDefinition& de
     return false;
 }
 
+QContact QContactMaemo5Engine::compatibleContact(const QContact& contact, QContactManager::Error* error) const
+{
+    return QContactManagerEngine::compatibleContact(contact, error);
+}
+
 QContactLocalId QContactMaemo5Engine::selfContactId(QContactManager::Error* error) const
 {
   Q_CHECK_PTR(d->m_abook);

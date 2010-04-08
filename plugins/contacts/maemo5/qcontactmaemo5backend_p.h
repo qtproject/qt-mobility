@@ -105,6 +105,7 @@ class QContactMaemo5Engine : public QContactManagerEngine
     QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
     bool validateContact(const QContact&, QContactManager::Error* error) const;
     bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const;
+    QContact compatibleContact(const QContact& contact, QContactManager::Error* error) const;
 
     /* "Self" contact id (MyCard) */
     QContactLocalId selfContactId(QContactManager::Error* errors) const;
@@ -136,8 +137,6 @@ class QContactMaemo5Engine : public QContactManagerEngine
     
     // XXX TODO: FIXME - these are pure virtual and so MUST be implemented by the backend.  Stubs here.
     QMap<QString, QString> managerParameters() const {return QMap<QString,QString>();}
-
-    QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QContact();}
 
     bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
     bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
