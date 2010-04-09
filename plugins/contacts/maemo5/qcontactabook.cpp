@@ -262,8 +262,27 @@ void QContactABook::initLocalIdHash()
 QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
   QList<QContactLocalId> rtn;
-  
-  /* Sorting */
+
+  // do this naively for now...
+  QContactManager::Error tempError;
+  QList<QContactLocalId> allIds = m_localIds.keys();
+  QList<QContact> sortedAndFiltered;
+  QContact *curr = 0;
+  foreach (const QContactLocalId& currId, allIds) {
+    curr = getQContact(currId, &tempError);
+    if (QContactManagerEngine::testFilter(filter, *curr)) {
+      QContactManagerEngine::addSorted(&sortedAndFiltered, *curr, sortOrders);
+    }
+  }
+
+  foreach (const QContact& contact, sortedAndFiltered) {
+    rtn.append(contact.localId());
+  }
+  *error = tempError;
+  return rtn;
+
+  /*
+  // Sorting
   //NOTE Native sorting is possible thanks to g_list_sort.
   //     It's limited just to one filter.
   //     Multi filters support need non native sorting.
@@ -297,11 +316,11 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     return QContactManagerEngine::sortContacts(contacts, sortOrders);
   }
   
-  /* Matching action filter */
-  //NOTE The code was not really tested */
+  //Matching action filter
+  //NOTE The code was not really tested
   if(filter.type() == QContactFilter::ActionFilter){
     QContactActionFilter af(filter);
-    /* This looks a bit strange for me */
+    // This looks a bit strange for me
     QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
 
     GList *masterContacts = osso_abook_aggregator_list_master_contacts(m_abookAgregator);
@@ -321,7 +340,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
         EContact *contact = E_CONTACT(masterContact);
         const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
         QByteArray localId(data);
-        m_localIds << localId;
+        m_localI/* ds << localId;
         rtn.append(m_localIds[localId]);
         QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
       }
@@ -349,6 +368,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   
   *error = QContactManager::NoError;
   return rtn;
+  */
 }
 
 QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const
@@ -432,7 +452,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   EBook *book = osso_abook_roster_get_book(roster);
   OssoABookContact *aContact = getAContact(contactId, error);
   if (!OSSO_ABOOK_IS_CONTACT(aContact)){
-    qWarning() << "aCtontact is not a valid ABook contact"; 
+    qWarning() << "Specified contact is not a valid ABook contact";
     return false;
   }
   
@@ -478,6 +498,9 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
                               delContactCB, m_deleteJobSD);
   
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
+
+  // update our list of ids...
+  m_localIds.remove(masterUid);
   
   return ok;
 }
@@ -558,6 +581,9 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   }
   
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
+
+  // save the newly saved contact's id in the hash.
+  m_localIds << m_saveJobSD->uid;
 
   // set the id of the contact.
   QContactId cId;
