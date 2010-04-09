@@ -1737,7 +1737,6 @@ void tst_QContactManager::compatibleContact()
     QFETCH(QContact, input);
     QFETCH(QContact, expected);
     QFETCH(QContactManager::Error, error);
-    qDebug() << cm.compatibleContact(input) << expected;
     QCOMPARE(cm.compatibleContact(input), expected);
     QCOMPARE(cm.error(), error);
 }
