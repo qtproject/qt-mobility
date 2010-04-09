@@ -112,6 +112,7 @@ public:
     bool importLandmarks(const QString &fileName, Format format);
     bool exportLandmarks(QIODevice *device, Format format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
     bool exportLandmarks(const QString &, Format format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+
     Error error() const;
     QString errorString() const;
 
@@ -138,7 +139,8 @@ Q_SIGNALS:
     void categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds);
 
 private:
-    QLandmarkManagerPrivate *d;
+    QLandmarkManagerPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QLandmarkManager);
 };
 
 /*

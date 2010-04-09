@@ -102,7 +102,7 @@ public:
     virtual bool saveLandmarks(QList<QLandmark> * landmark, QMap<int, QLandmarkManager::Error> *errorMap,
                                QLandmarkManager::Error *error, QString *errorString);
     virtual bool removeLandmark(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString);
-    virtual bool removeLandmarks(QList<QLandmarkId> &landmarkId, QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
+    virtual bool removeLandmarks(const QList<QLandmarkId> &landmarkId, QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
                                  QString *errorString);
 
     virtual bool saveCategory(QLandmarkCategory* category, QLandmarkManager::Error *error, QString *errorString);

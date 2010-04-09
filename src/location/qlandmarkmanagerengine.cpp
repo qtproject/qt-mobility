@@ -284,7 +284,7 @@ bool QLandmarkManagerEngine::removeLandmark(const QLandmarkId &landmarkId, QLand
 
     \sa QLandmarkManagerEngine::removeLandmark()
 */
-bool QLandmarkManagerEngine::removeLandmarks(QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap,
+bool QLandmarkManagerEngine::removeLandmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap,
         QLandmarkManager::Error *error, QString *errorString)
 {
     return false;

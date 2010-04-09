@@ -149,26 +149,14 @@ void QMapPolygon::paint(QPainter* painter, const QRectF& viewPort)
     if (!d->mapView)
         return;
 
-    QPen oldPen = painter->pen();
-    QBrush oldBrush = painter->brush();
+    painter->save();
+
     painter->setPen(d->p);
     painter->setBrush(d->br);
-    d->path.translate(-viewPort.topLeft());
+    painter->translate(-viewPort.left(), -viewPort.top());
     painter->drawPath(d->path);
-    qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
 
-    //Is view port wrapping around date line?
-    qreal right = viewPort.right();
-    for (int i = 1;right >= mapWidth;++i, right -= mapWidth) {
-        qint64 width = mapWidth * i;
-        d->path.translate(width, 0);
-        painter->drawPath(d->path);
-        d->path.translate(-width, 0);
-    }
-
-    d->path.translate(viewPort.topLeft());
-    painter->setPen(oldPen);
-    painter->setBrush(oldBrush);
+    painter->restore();
 }
 
 bool QMapPolygon::intersects(const QRectF& rect) const

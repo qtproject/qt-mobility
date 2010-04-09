@@ -182,11 +182,11 @@ void QMapMarker::compMapCoords()
     }
 }
 
-void QMapMarker::constructMarker(QPainter* painter, const QPointF& point)
+void QMapMarker::constructMarker(QPainter* painter)
 {
     Q_D(QMapMarker);
-    QPointF p1 = point;
-    QPointF p2(p1.x(), p1.y() - MARKER_PIN_LEN);
+    QPointF p1(0,0);
+    QPointF p2(0, 0 - MARKER_PIN_LEN);
     QPen pen(Qt::black);
     pen.setWidth(2);
     painter->setPen(pen);
@@ -208,11 +208,11 @@ void QMapMarker::constructMarker(QPainter* painter, const QPointF& point)
     }
 }
 
-void QMapMarker::constructIconMarker(QPainter* painter, const QPointF& point)
+void QMapMarker::constructIconMarker(QPainter* painter)
 {
     Q_D(QMapMarker);
 
-    painter->drawPixmap(point, d->icn);
+    painter->drawPixmap(-d->icn.width()/2, 0 -d->icn.width()/2, d->icn);
     if (!d->txt.isNull()) {
         painter->setFont(d->txtFont);
         QPen pen(Qt::black);
@@ -220,7 +220,7 @@ void QMapMarker::constructIconMarker(QPainter* painter, const QPointF& point)
         painter->setPen(pen);
         pen.setColor(d->fColor);
         painter->setPen(pen);
-        painter->drawText(QRectF(point, point + QPoint(d->icn.width(), d->icn.height())), Qt::AlignCenter | Qt::TextWordWrap, d->txt);
+        painter->drawText(QRectF(QPoint(0,0), QPoint(d->icn.width(),d->icn.height())), Qt::AlignCenter | Qt::TextWordWrap, d->txt);
     }
 }
 
@@ -231,34 +231,20 @@ void QMapMarker::paint(QPainter* painter, const QRectF& viewPort)
     if (!d->mapView)
         return;
 
-    QPen oldPen = painter->pen();
-    QBrush oldBrush = painter->brush();
+    painter->save();
     if (d->icn.isNull()) {
-        quint64 mapWidth = d->mapView->mapWidth();
-        constructMarker(painter, d->mapPt - viewPort.topLeft());
-
-        //Is view port wrapping around date line?
-        qreal right = viewPort.right();
-        for (int i = 1;right >= mapWidth;++i, right -= mapWidth)
-            constructMarker(painter, d->mapPt - viewPort.topLeft() + (QPointF(mapWidth, 0) * i));
-        //Is marker spanning date line?
-        if (d->box.right() >= mapWidth)
-            constructMarker(painter, d->mapPt - viewPort.topLeft() - QPointF(mapWidth, 0));
-    } else {
-        quint64 mapWidth = d->mapView->mapWidth();
-        QPointF point(d->mapPt - viewPort.topLeft() - QPointF(d->icn.width() / 2, d->icn.height()));
-        constructIconMarker(painter, point);
-
-        //Is view port wrapping around date line?
-        qreal right = viewPort.right();
-        for (int i = 1;right >= mapWidth;++i, right -= mapWidth)
-            constructIconMarker(painter, point + (QPointF(mapWidth, 0) * i));
-        //Is marker spanning date line?
-        if (d->box.right() >= mapWidth)
-            constructIconMarker(painter, point - QPointF(mapWidth, 0));
+        painter->translate(-viewPort.left(), -viewPort.top());
+        painter->translate(d->mapPt.x(), d->mapPt.y());
+        constructMarker(painter);
     }
-    painter->setPen(oldPen);
-    painter->setBrush(oldBrush);
+    else {
+
+        painter->translate(-viewPort.left(), -viewPort.top());
+        painter->translate(d->mapPt.x(), d->mapPt.y());
+        constructIconMarker(painter);
+    }
+
+    painter->restore();
 }
 
 bool QMapMarker::intersects(const QRectF& tileRect) const

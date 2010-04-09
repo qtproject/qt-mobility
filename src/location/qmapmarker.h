@@ -71,8 +71,8 @@ protected:
     virtual void compMapCoords();
     virtual void paint(QPainter* painter, const QRectF& viewPort);
 
-    void constructMarker(QPainter* painter, const QPointF& point);
-    void constructIconMarker(QPainter* painter, const QPointF& point);
+    void constructMarker(QPainter* painter);
+    void constructIconMarker(QPainter* painter);
 
     QMapMarker(QMapMarkerPrivate &dd, const QGeoCoordinate& point,
                const QString& text, const QFont& font, const QColor& fontColor,

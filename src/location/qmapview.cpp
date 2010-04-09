@@ -749,31 +749,6 @@ void QMapView::setScheme(const MapScheme& mapScheme)
     update();
 }
 
-QLineF QMapView::connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const
-{
-    //order from west to east
-    QGeoCoordinate pt1;
-    QGeoCoordinate pt2;
-
-    if (point1.longitude() < point2.longitude()) {
-        pt1 = point1;
-        pt2 = point2;
-    } else {
-        pt1 = point2;
-        pt2 = point1;
-    }
-
-    QPointF mpt1 = geoToMap(pt1);
-    QPointF mpt2 = geoToMap(pt2);
-
-    if (pt2.longitude() - pt1.longitude() > 180.0) {
-        mpt1.rx() += mapWidth();
-        return QLineF(mpt2, mpt1);
-    }
-
-    return QLineF(mpt1, mpt2);
-}
-
 /*!
     Sets whether the map is pannable.
 */

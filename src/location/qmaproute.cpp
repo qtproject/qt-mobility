@@ -41,6 +41,7 @@
 
 #include "qmaproute.h"
 #include "qmaproute_p.h"
+#include "qmapline.h"
 #include <QPainter>
 
 QTM_BEGIN_NAMESPACE
@@ -116,7 +117,7 @@ void QMapRoute::compMapCoords()
             }
 
             here = wayPoints[n];
-            QLineF line = d->mapView->connectShortest(here, last);
+            QLineF line = QMapLine::connectShortest(*(d->mapView), here, last);
 
             //Moved the (line.p1() - line.p2()).manhattanLength()
             //call out of the if(..). If used inside if-statement
@@ -133,7 +134,7 @@ void QMapRoute::compMapCoords()
 
     //make sure last waypoint is always shown
     if (here.isValid()) {
-        QLineF line = d->mapView->connectShortest(here, last);
+        QLineF line = QMapLine::connectShortest(*(d->mapView), here, last);
         addSegment(line);
     }
 
@@ -216,8 +217,10 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
     if (!d->mapView)
         return;
 
-    QPen oldPen = painter->pen();
+    painter->save();
     painter->setPen(d->rPen);
+    painter->translate(-viewPort.left(), -viewPort.right());
+
     QMapView::TileIterator it(*d->mapView, viewPort);
     int count = 0;
     QPainterPath path;
@@ -234,7 +237,7 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
             QListIterator<QLineF> lit(d->segments[tileIndex]);
 
             while (lit.hasNext()) {
-                QLineF line = lit.next().translated(-viewPort.topLeft());
+                QLineF line = lit.next();
                 //painter->drawLine(line);
                 path.moveTo(line.p1());
                 path.lineTo(line.p2());
@@ -242,31 +245,9 @@ void QMapRoute::paint(QPainter* painter, const QRectF& viewPort)
             }
         }
     }
-
     painter->drawPath(path);
-    qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
 
-    //Is view port wrapping around date line?
-    //Moved the viewPort.right() function call out of the if(..)
-    //If used inside if-statement this will cause internal compiler error
-    //with symbian compilers.
-    qreal r = viewPort.right();
-    if (r >= mapWidth) {
-        path.translate(mapWidth, 0);
-        painter->drawPath(path);
-        path.translate(-mapWidth, 0);
-    }
-    //Is path spanning date line?
-    //Moved the path.boundingRect().right() function call out of the if(..)
-    //If used inside if-statement this will cause internal compiler error
-    //with symbian compilers.
-    r = path.boundingRect().right();
-    if (r >= mapWidth) {
-        path.translate(-mapWidth, 0);
-        painter->drawPath(path);
-    }
-
-    painter->setPen(oldPen);
+    painter->restore();
 }
 
 QTM_END_NAMESPACE

@@ -138,8 +138,6 @@ public:
     QMapObject* getTopmostMapObject(const QGeoCoordinate& geoCoordinate);
     QMapObject* getTopmostMapObject(const QPointF& mapCoordinate);
 
-    QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
-
     MapVersion version() const;
     /*!
     * Sets the map version.

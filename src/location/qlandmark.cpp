@@ -159,6 +159,7 @@ QLandmark::QLandmark(const QLandmark &other)
 */
 QLandmark::~QLandmark()
 {
+    delete d;
 }
 
 /*!
@@ -391,10 +392,7 @@ void QLandmark::setRadius(double radius)
 */
 QVariant QLandmark::attribute(const QString &key, const QVariant &defaultValue) const
 {
-    if (!d->attributes.contains(key))
-        return defaultValue;
-    else
-        return d->attributes.value(key);
+    return d->attributes.value(key, defaultValue);
 }
 
 /*!
