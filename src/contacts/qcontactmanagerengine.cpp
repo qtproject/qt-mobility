@@ -1526,7 +1526,7 @@ QContact QContactManagerEngine::compatibleContact(const QContact& original, QCon
         QVariantMap values = detail.variantValues();
         QContactDetailDefinition def = detailDefinition(detail.definitionName(), original.type(), &tempError);
         // check that the definition is supported
-        if (*error != QContactManager::NoError) {
+        if (tempError != QContactManager::NoError) {
             continue; // this definition is not supported.
         }
 

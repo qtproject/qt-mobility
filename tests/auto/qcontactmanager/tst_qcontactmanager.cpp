@@ -108,6 +108,8 @@ class UnsupportedMetatype {
     int foo;
 };
 Q_DECLARE_METATYPE(UnsupportedMetatype)
+Q_DECLARE_METATYPE(QContact)
+Q_DECLARE_METATYPE(QContactManager::Error)
 
 class tst_QContactManager : public QObject
 {
@@ -143,6 +145,7 @@ private slots:
     /* Special test with special data */
     void uriParsing();
     void nameSynthesis();
+    void compatibleContact();
 
     /* Tests that are run on all managers */
     void metadata();
@@ -168,9 +171,11 @@ private slots:
     void memoryManager();
     void changeSet();
 
-    /* data providers (mostly all engines) */
-    void uriParsing_data(); // Special data
-    void nameSynthesis_data(); // Special data
+    /* Special test with special data */
+    void uriParsing_data();
+    void nameSynthesis_data();
+    void compatibleContact_data();
+    /* Tests that are run on all managers */
     void metadata_data() {addManagers();}
     void nullIdOperations_data() {addManagers();}
     void add_data() {addManagers();}
@@ -1622,6 +1627,119 @@ void tst_QContactManager::nameSynthesis()
 
     // Finally!
     QCOMPARE(cm.synthesizedDisplayLabel(c), expected);
+}
+
+void tst_QContactManager::compatibleContact_data()
+{
+    QTest::addColumn<QContact>("input");
+    QTest::addColumn<QContact>("expected");
+    QTest::addColumn<QContactManager::Error>("error");
+
+    QContact baseContact;
+    QContactName name;
+    name.setFirstName(QLatin1String("First"));
+    baseContact.saveDetail(&name);
+
+    {
+        QTest::newRow("already compatible") << baseContact << baseContact << QContactManager::NoError;
+    }
+
+    {
+        QContact contact(baseContact);
+        QContactDetail detail("UnknownDetail");
+        detail.setValue("Key", QLatin1String("Value"));
+        contact.saveDetail(&detail);
+        QTest::newRow("unknown detail") << contact << baseContact << QContactManager::NoError;
+    }
+
+    {
+        QContact contact(baseContact);
+        QContactType type1;
+        type1.setType(QContactType::TypeContact);
+        contact.saveDetail(&type1);
+        QContactType type2;
+        type2.setType(QContactType::TypeGroup);
+        contact.saveDetail(&type2);
+        QContact expected(baseContact);
+        expected.saveDetail(&type2);
+        QTest::newRow("duplicate unique field") << contact << expected << QContactManager::NoError;
+    }
+
+    {
+        QContact contact(baseContact);
+        QContactPhoneNumber phoneNumber;
+        phoneNumber.setValue("UnknownKey", "Value");
+        contact.saveDetail(&phoneNumber);
+        QTest::newRow("unknown field") << contact << baseContact << QContactManager::NoError;
+    }
+
+    {
+        QContact contact(baseContact);
+        QContactDisplayLabel displayLabel;
+        displayLabel.setValue(QContactDisplayLabel::FieldLabel, QStringList("Value"));
+        contact.saveDetail(&displayLabel);
+        QTest::newRow("wrong type") << contact << baseContact << QContactManager::NoError;
+    }
+
+    {
+        QContact contact(baseContact);
+        QContactPhoneNumber phoneNumber1;
+        phoneNumber1.setNumber(QLatin1String("1234"));
+        phoneNumber1.setSubTypes(QStringList()
+                                << QContactPhoneNumber::SubTypeMobile
+                                << QContactPhoneNumber::SubTypeVoice
+                                << QLatin1String("InvalidSubtype"));
+        contact.saveDetail(&phoneNumber1);
+        QContact expected(baseContact);
+        QContactPhoneNumber phoneNumber2;
+        phoneNumber2.setNumber(QLatin1String("1234"));
+        phoneNumber2.setSubTypes(QStringList()
+                                << QContactPhoneNumber::SubTypeMobile
+                                << QContactPhoneNumber::SubTypeVoice);
+        expected.saveDetail(&phoneNumber2);
+        QTest::newRow("bad value (list)") << contact << expected << QContactManager::NoError;
+    }
+
+    {
+        QContact contact(baseContact);
+        QContactPhoneNumber phoneNumber1;
+        phoneNumber1.setNumber(QLatin1String("1234"));
+        phoneNumber1.setSubTypes(QStringList(QLatin1String("InvalidSubtype")));
+        contact.saveDetail(&phoneNumber1);
+        QContact expected(baseContact);
+        QContactPhoneNumber phoneNumber2;
+        phoneNumber2.setNumber(QLatin1String("1234"));
+        expected.saveDetail(&phoneNumber2);
+        QTest::newRow("all bad value (list)") << contact << expected << QContactManager::NoError;
+    }
+
+    {
+        QContact contact(baseContact);
+        QContactGender gender;
+        gender.setGender(QLatin1String("UnknownGender"));
+        contact.saveDetail(&gender);
+        QTest::newRow("bad value (string)") << contact << baseContact << QContactManager::NoError;
+    }
+
+    {
+        QContact contact;
+        QContactGender gender;
+        gender.setGender(QLatin1String("UnknownGender"));
+        contact.saveDetail(&gender);
+        QTest::newRow("bad value (string)") << contact << QContact() << QContactManager::DoesNotExistError;
+    }
+}
+
+void tst_QContactManager::compatibleContact()
+{
+    QContactManager cm("memory");
+
+    QFETCH(QContact, input);
+    QFETCH(QContact, expected);
+    QFETCH(QContactManager::Error, error);
+    qDebug() << cm.compatibleContact(input) << expected;
+    QCOMPARE(cm.compatibleContact(input), expected);
+    QCOMPARE(cm.error(), error);
 }
 
 void tst_QContactManager::contactValidation()
