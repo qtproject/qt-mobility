@@ -302,8 +302,10 @@ void QMapView::tileFetched(QGeoMapTileReply* reply)
 
     QPixmap tile;
     tile.loadFromData(reply->data(), "PNG");
-    d->mapTiles[tileIndex] = qMakePair(tile, true);
-    this->update();
+    if(!tile.isNull() && !tile.size().isEmpty()) {
+        d->mapTiles[tileIndex] = qMakePair(tile, true);
+        this->update();
+    }
     delete reply;
 }
 
