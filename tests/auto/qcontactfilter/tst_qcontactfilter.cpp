@@ -49,6 +49,7 @@
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QContact)
 Q_DECLARE_METATYPE(QContactFilter)
 
 class tst_QContactFilter : public QObject
@@ -78,6 +79,8 @@ private slots:
     void idListFilter();
     void canonicalizedFilter();
     void canonicalizedFilter_data();
+    void testFilter();
+    void testFilter_data();
 
     void traits();
 
@@ -1138,6 +1141,121 @@ void tst_QContactFilter::canonicalizedFilter_data()
         QTest::newRow("Empty detail filter")
                 << static_cast<QContactFilter>(qcdf)
                 << static_cast<QContactFilter>(invalidFilter);
+    }
+}
+
+void tst_QContactFilter::testFilter()
+{
+    QFETCH(QContact, contact);
+    QFETCH(QContactFilter, filter);
+    QFETCH(bool, expected);
+
+    QCOMPARE(QContactManagerEngine::testFilter(filter, contact), expected);
+}
+
+void tst_QContactFilter::testFilter_data()
+{
+    QTest::addColumn<QContact>("contact");
+    QTest::addColumn<QContactFilter>("filter");
+    QTest::addColumn<bool>("expected");
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setFirstName(QLatin1String("first"));
+        name.setMiddleName(QLatin1String("middle"));
+        name.setLastName(QLatin1String("last"));
+        name.setPrefix(QLatin1String("prefix"));
+        name.setSuffix(QLatin1String("suffix"));
+        contact.saveDetail(&name);
+
+        QTest::newRow("QContactName::match firstname")
+                << contact
+                << QContactName::match("first")
+                << true;
+        QTest::newRow("QContactName::match lastname")
+                << contact
+                << QContactName::match("last")
+                << true;
+        QTest::newRow("QContactName::match middlename")
+                << contact
+                << QContactName::match("middle")
+                << true;
+        QTest::newRow("QContactName::match prefix")
+                << contact
+                << QContactName::match("prefix")
+                << true;
+        QTest::newRow("QContactName::match suffix")
+                << contact
+                << QContactName::match("suffix")
+                << true;
+        QTest::newRow("QContactName::match first last")
+                << contact
+                << QContactName::match(QLatin1String("first"), QLatin1String("last"))
+                << true;
+        QTest::newRow("QContactName::match substring")
+                << contact
+                << QContactName::match(QLatin1String("irs"))
+                << true;
+        QTest::newRow("QContactName::match first last substring")
+                << contact
+                << QContactName::match(QLatin1String("irs"), QLatin1String("as"))
+                << true;
+        QTest::newRow("QContactName::match negative")
+                << contact
+                << QContactName::match("foo")
+                << false;
+    }
+
+    {
+        QContact contact;
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("foo"));
+        QTest::newRow("QContactDisplayLabel::match positive")
+                << contact
+                << QContactDisplayLabel::match("foo")
+                << true;
+        QTest::newRow("QContactDisplayLabel::match positive substring")
+                << contact
+                << QContactDisplayLabel::match("o")
+                << true;
+        QTest::newRow("QContactDisplayLabel::match negative")
+                << contact
+                << QContactDisplayLabel::match("bar")
+                << false;
+    }
+
+    {
+        QContact contact;
+        QContactPhoneNumber phone;
+        phone.setNumber("1234");
+        contact.saveDetail(&phone);
+        QTest::newRow("QContactPhoneNumber::match positive")
+                << contact
+                << QContactPhoneNumber::match("1234")
+                << true;
+        QTest::newRow("QContactPhoneNumber::match negative")
+                << contact
+                << QContactPhoneNumber::match("5678")
+                << false;
+    }
+
+    {
+        QContact contact;
+        QContactEmailAddress email;
+        email.setEmailAddress("foo");
+        contact.saveDetail(&email);
+        QTest::newRow("QContactEmailAddress::match positive")
+                << contact
+                << QContactEmailAddress::match("foo")
+                << true;
+        QTest::newRow("QContactEmailAddress::match positive substring")
+                << contact
+                << QContactEmailAddress::match("o")
+                << true;
+        QTest::newRow("QContactEmailAddress::match negative")
+                << contact
+                << QContactEmailAddress::match("bar")
+                << false;
     }
 }
 

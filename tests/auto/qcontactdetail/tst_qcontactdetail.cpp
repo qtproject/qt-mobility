@@ -71,6 +71,8 @@ private slots:
     void values();
     void hash();
     void traits();
+    void keys();
+    void detailUris();
 };
 
 tst_QContactDetail::tst_QContactDetail()
@@ -90,11 +92,22 @@ void tst_QContactDetail::cleanup()
 }
 
 /* Test class that doesn't do the right thing */
-class MaliciousDetail : public QContactDetail
+class NonMacroCustomDetail : public QContactDetail
 {
 public:
-    MaliciousDetail() : QContactDetail("malicious") {}
+    NonMacroCustomDetail() : QContactDetail("malicious") {}
     void doAssign(const QContactDetail& other) {assign(other, "malicious");}
+    NonMacroCustomDetail(const QContactDetail& other)
+        : QContactDetail(other, "malicious") {}
+};
+
+class NonMacroCustomDetail2 : public QContactDetail
+{
+public:
+    NonMacroCustomDetail2() : QContactDetail(QString("malicious")) {}
+    void doAssign(const QContactDetail& other) {assign(other, QString("malicious"));}
+    NonMacroCustomDetail2(const QContactDetail& other)
+        : QContactDetail(other, QString("malicious")) {}
 };
 
 void tst_QContactDetail::classHierarchy()
@@ -230,13 +243,55 @@ void tst_QContactDetail::classHierarchy()
     QVERIFY(ref == p1);
 
     /* Random other test */
-    MaliciousDetail md;
+    NonMacroCustomDetail md;
+    QVERIFY(md.definitionName() == "malicious");
     QVERIFY(md.setValue("key", "value"));
     QVERIFY(!md.isEmpty());
-    md.doAssign(md);
+    md.doAssign(md); // self assignment
     QVERIFY(!md.isEmpty());
     QVERIFY(md.value("key") == "value");
 
+    QContactDetail mdv;
+    mdv = md;
+    QVERIFY(mdv.definitionName() == "malicious");
+    QVERIFY(mdv.value("key") == "value");
+
+    md = mdv;
+    QVERIFY(md.definitionName() == "malicious");
+    QVERIFY(md.value("key") == "value");
+
+    NonMacroCustomDetail2 md2;
+    QVERIFY(md2.setValue("key", "value"));
+    QVERIFY(md2.definitionName() == "malicious");
+    QVERIFY(md2.value("key") == "value");
+    md2.doAssign(md);
+    QVERIFY(md2 == md);
+    md2 = md;
+    QVERIFY(md.definitionName() == "malicious");
+    QVERIFY(md.value("key") == "value");
+
+    // Self assignment
+    md2.doAssign(md2);
+    QVERIFY(md2.definitionName() == "malicious");
+    QVERIFY(md2.value("key") == "value");
+
+    md.doAssign(md2);
+    QVERIFY(md == md2);
+
+    // Assigning something else
+    QContactPhoneNumber pn;
+    pn.setNumber("12345");
+    md2.doAssign(pn);
+    QVERIFY(md2.isEmpty());
+    QVERIFY(md2.definitionName() == "malicious");
+
+    NonMacroCustomDetail mdb(pn);
+    QVERIFY(mdb.isEmpty());
+    QVERIFY(mdb.definitionName() == "malicious");
+
+    NonMacroCustomDetail2 md2b(pn);
+    QVERIFY(md2b.isEmpty());
+    QVERIFY(md2b.definitionName() == "malicious");
 }
 
 void tst_QContactDetail::assignment()
@@ -256,6 +311,9 @@ void tst_QContactDetail::assignment()
     QVERIFY(e1 != p1); // assignment across types shouldn't work
     QVERIFY(e1.emailAddress() == QString()); // should reset the detail
     QCOMPARE(e1, QContactEmailAddress());
+
+    QContactManagerEngine::setDetailAccessConstraints(&p2, QContactDetail::Irremovable);
+    QVERIFY(p1 != p2);
 }
 
 void tst_QContactDetail::templates()
@@ -328,9 +386,14 @@ void tst_QContactDetail::values()
 
     p.setValue("stringdate", d.toString(Qt::ISODate));
     p.setValue("stringdatetime", dt.toString(Qt::ISODate));
-    p.setValue("stringint", "123");
 
-    /* Presence test */
+    // Test the setter that takes a QString
+    p.setValue(QLatin1String("stringint"), "123");
+
+    // and the setter that takes a QL1C
+    p.setValue(QContactPhoneNumber::FieldNumber, "1234");
+
+    /* Presence test (const char * version) */
     QVERIFY(p.hasValue("string"));
     QVERIFY(p.hasValue("date"));
     QVERIFY(p.hasValue("datetime"));
@@ -338,9 +401,25 @@ void tst_QContactDetail::values()
     QVERIFY(p.hasValue("stringdate"));
     QVERIFY(p.hasValue("stringdatetime"));
     QVERIFY(p.hasValue("stringint"));
+    QVERIFY(p.hasValue(QContactPhoneNumber::FieldNumber.latin1()));
     QVERIFY(!p.hasValue("non existent field"));
 
-    /* String accessors */
+    /* QLatin1Constant version */
+    QVERIFY(p.hasValue(QContactPhoneNumber::FieldNumber));
+    QVERIFY(!p.hasValue(QContactAddress::FieldCountry));
+
+    /* Again with QString version */
+    QVERIFY(p.hasValue(QLatin1String("string")));
+    QVERIFY(p.hasValue(QLatin1String("date")));
+    QVERIFY(p.hasValue(QLatin1String("datetime")));
+    QVERIFY(p.hasValue(QLatin1String("int")));
+    QVERIFY(p.hasValue(QLatin1String("stringdate")));
+    QVERIFY(p.hasValue(QLatin1String("stringdatetime")));
+    QVERIFY(p.hasValue(QLatin1String("stringint")));
+    QVERIFY(p.hasValue(QString(QLatin1String(QContactPhoneNumber::FieldNumber))));
+    QVERIFY(!p.hasValue(QLatin1String("non existent field")));
+
+    /* string accessors with const char* key */
     QCOMPARE(p.value("string"), QString("This is a string"));
     QCOMPARE(p.value("date"), d.toString(Qt::ISODate));
     QCOMPARE(p.value("datetime"), dt.toString(Qt::ISODate));
@@ -348,8 +427,22 @@ void tst_QContactDetail::values()
     QCOMPARE(p.value("stringdate"), d.toString(Qt::ISODate));
     QCOMPARE(p.value("stringdatetime"), dt.toString(Qt::ISODate));
     QCOMPARE(p.value("stringint"), QString("123"));
+    QCOMPARE(p.value(QContactPhoneNumber::FieldNumber.latin1()), QString("1234"));
 
-    /* Variant accessor */
+    /* string accessor with QL1C key */
+    QCOMPARE(p.value(QContactPhoneNumber::FieldNumber), QString("1234"));
+
+    /* string accessors with QString key */
+    QCOMPARE(p.value(QLatin1String("string")), QString("This is a string"));
+    QCOMPARE(p.value(QLatin1String("date")), d.toString(Qt::ISODate));
+    QCOMPARE(p.value(QLatin1String("datetime")), dt.toString(Qt::ISODate));
+    QCOMPARE(p.value(QLatin1String("int")), QString("6"));
+    QCOMPARE(p.value(QLatin1String("stringdate")), d.toString(Qt::ISODate));
+    QCOMPARE(p.value(QLatin1String("stringdatetime")), dt.toString(Qt::ISODate));
+    QCOMPARE(p.value(QLatin1String("stringint")), QString("123"));
+    QCOMPARE(p.value(QString(QLatin1String(QContactPhoneNumber::FieldNumber))), QString("1234"));
+
+    /* Variant accessor with const char * key */
     QCOMPARE(p.variantValue("string"), QVariant(QString("This is a string")));
     QCOMPARE(p.variantValue("date"), QVariant(d));
     QCOMPARE(p.variantValue("datetime"), QVariant(dt));
@@ -357,8 +450,22 @@ void tst_QContactDetail::values()
     QCOMPARE(p.variantValue("stringdate"), QVariant(d.toString(Qt::ISODate)));
     QCOMPARE(p.variantValue("stringdatetime"), QVariant(dt.toString(Qt::ISODate)));
     QCOMPARE(p.variantValue("stringint"), QVariant(QString("123")));
+    QCOMPARE(p.variantValue(QContactPhoneNumber::FieldNumber.latin1()), QVariant(QString("1234")));
 
-    /* Typed accessors, string first */
+    /* Variant accessor with QL1C key */
+    QCOMPARE(p.variantValue(QContactPhoneNumber::FieldNumber), QVariant(QString("1234")));
+
+    /* Variant accessor with QString key */
+    QCOMPARE(p.variantValue(QLatin1String("string")), QVariant(QString("This is a string")));
+    QCOMPARE(p.variantValue(QLatin1String("date")), QVariant(d));
+    QCOMPARE(p.variantValue(QLatin1String("datetime")), QVariant(dt));
+    QCOMPARE(p.variantValue(QLatin1String("int")), QVariant((int)6));
+    QCOMPARE(p.variantValue(QLatin1String("stringdate")), QVariant(d.toString(Qt::ISODate)));
+    QCOMPARE(p.variantValue(QLatin1String("stringdatetime")), QVariant(dt.toString(Qt::ISODate)));
+    QCOMPARE(p.variantValue(QLatin1String("stringint")), QVariant(QString("123")));
+    QCOMPARE(p.variantValue(QLatin1String(QContactPhoneNumber::FieldNumber)), QVariant(QString("1234")));
+
+    /* Typed accessors, string first, const char* key */
     QCOMPARE(p.value<QString>("string"), QString("This is a string"));
     QCOMPARE(p.value<QString>("date"), d.toString(Qt::ISODate));
     QCOMPARE(p.value<QString>("datetime"), dt.toString(Qt::ISODate));
@@ -366,11 +473,28 @@ void tst_QContactDetail::values()
     QCOMPARE(p.value<QString>("stringdate"), d.toString(Qt::ISODate));
     QCOMPARE(p.value<QString>("stringdatetime"), dt.toString(Qt::ISODate));
     QCOMPARE(p.value<QString>("stringint"), QString("123"));
+    QCOMPARE(p.value<QString>(QContactPhoneNumber::FieldNumber.latin1()), QString("1234"));
 
     /* Now individual original types */
     QCOMPARE(p.value<QDate>("date"), d);
     QCOMPARE(p.value<QDateTime>("datetime"), dt);
     QCOMPARE(p.value<int>("int"), 6);
+
+    /* now latin constant keys */
+    QCOMPARE(p.value<QString>(QContactPhoneNumber::FieldNumber), QString("1234"));
+
+    /* Typed accessors, string first, QString key */
+    QCOMPARE(p.value<QString>(QLatin1String("string")), QString("This is a string"));
+    QCOMPARE(p.value<QString>(QLatin1String("date")), d.toString(Qt::ISODate));
+    QCOMPARE(p.value<QString>(QLatin1String("datetime")), dt.toString(Qt::ISODate));
+    QCOMPARE(p.value<QString>(QLatin1String("int")), QString("6"));
+    QCOMPARE(p.value<QString>(QLatin1String("stringdate")), d.toString(Qt::ISODate));
+    QCOMPARE(p.value<QString>(QLatin1String("stringdatetime")), dt.toString(Qt::ISODate));
+    QCOMPARE(p.value<QString>(QLatin1String("stringint")), QString("123"));
+    QCOMPARE(p.value<QString>(QLatin1String(QContactPhoneNumber::FieldNumber)), QString("1234"));
+    QCOMPARE(p.value<QDate>(QLatin1String("date")), d);
+    QCOMPARE(p.value<QDateTime>(QLatin1String("datetime")), dt);
+    QCOMPARE(p.value<int>(QLatin1String("int")), 6);
 
     /* Now cross types that should fail */
     QDate id;
@@ -541,6 +665,16 @@ void tst_QContactDetail::values()
 
     /* Check removing a missing value */
     QVERIFY(!p.removeValue("does not exist"));
+    QVERIFY(!p.removeValue(QLatin1String("does not exist")));
+    QVERIFY(!p.removeValue(QContactAddress::FieldCountry));
+
+    p.setValue("stringint", "555");
+    p.setValue(QContactPhoneNumber::FieldNumber, "1234");
+
+    /* Check removing a real value */
+    QVERIFY(p.removeValue("string"));
+    QVERIFY(p.removeValue(QLatin1String("stringint")));
+    QVERIFY(p.removeValue(QContactPhoneNumber::FieldNumber));
 }
 
 void tst_QContactDetail::hash()
@@ -569,6 +703,42 @@ void tst_QContactDetail::traits()
     QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
     QVERIFY(!ti.isDummy);
+}
+
+void tst_QContactDetail::keys()
+{
+    QContactDetail d;
+    QContactDetail d2;
+    QVERIFY(d.key() != d2.key());
+
+    d = d2;
+    QVERIFY(d.key() == d2.key());
+    d.resetKey();
+    QVERIFY(d.key() != d2.key());
+}
+
+void tst_QContactDetail::detailUris()
+{
+    QContactDetail d;
+    QVERIFY(d.detailUri().isEmpty());
+
+    d.setDetailUri("I'm a detail uri");
+    QVERIFY(d.detailUri() == "I'm a detail uri");
+
+    d.setDetailUri(QString());
+    QVERIFY(d.detailUri().isEmpty());
+
+    QVERIFY(d.linkedDetailUris().isEmpty());
+
+    d.setLinkedDetailUris("5555");
+    QVERIFY(d.linkedDetailUris().count() == 1);
+    QVERIFY(d.linkedDetailUris().count("5555") == 1);
+
+    QStringList sl;
+    sl << "6666" << "7777";
+    d.setLinkedDetailUris(sl);
+    QVERIFY(d.linkedDetailUris().count() == 2);
+    QVERIFY(d.linkedDetailUris() == sl);
 }
 
 QTEST_MAIN(tst_QContactDetail)

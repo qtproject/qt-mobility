@@ -96,7 +96,7 @@ public:
     /* XXX TODO - implement these correctly */
     QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}
     int managerVersion() const { return 1;}
-    QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error =  QContactManager::NotSupportedError;return QContact();}
+    QContact compatibleContact(const QContact& contact, QContactManager::Error* error) const {return QContactManagerEngine::compatibleContact(contact, error);}
     bool validateContact(const QContact& contact, QContactManager::Error* error) const {return QContactManagerEngine::validateContact(contact, error);}
     bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error* error) const {return QContactManagerEngine::validateDefinition(def, error);}
     QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error) const  {return QContactManagerEngine::detailDefinition(definitionId, contactType, error);}

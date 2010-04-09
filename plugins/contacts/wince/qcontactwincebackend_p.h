@@ -167,8 +167,8 @@ public:
         m_phonemeta(PIMPR_INVALID_ID),
         m_emailmeta(PIMPR_INVALID_ID),
         m_factory(0),
-        m_avatarmeta(PIMPR_INVALID_ID),
-        m_avatartypemeta(PIMPR_INVALID_ID)
+        m_avatarImageMeta(PIMPR_INVALID_ID),
+        m_avatarVideoMeta(PIMPR_INVALID_ID)
     {
     }
 
@@ -187,8 +187,8 @@ public:
     // The ID of our sekrit extra phone number and email metadata id
     PROPID m_phonemeta;
     PROPID m_emailmeta;
-    PROPID m_avatarmeta;
-    PROPID m_avatartypemeta;
+    PROPID m_avatarImageMeta;
+    PROPID m_avatarVideoMeta;
 
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QContactLocalId> m_ids;
@@ -227,7 +227,7 @@ public:
     virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
     /* Return a pruned or modified contact which is valid and can be saved in the backend */
-    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error)
+    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error) const
     {
         return QContactManagerEngine::compatibleContact(original, error);
     }
@@ -246,7 +246,7 @@ public:
     virtual bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
     /* Validation for saving */
-    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error =  QContactManager::NotSupportedError;return QContact();}
+
     virtual bool validateContact(const QContact& contact, QContactManager::Error* error) const
     {
         return QContactManagerEngine::validateContact(contact, error);
@@ -288,8 +288,8 @@ public:
     }
 
     /*helper functions*/
-    PROPID metaAvatar() const;
-    PROPID metaAvatarType() const;
+    PROPID metaAvatarImage() const;
+    PROPID metaAvatarVideo() const;
     PROPID metaEmail() const;
     PROPID metaPhone() const;
 

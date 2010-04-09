@@ -2116,23 +2116,24 @@ Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::SubTypeMemorial, "Memorial");
 /* Convenience filters */
 
 /*!
-    Returns a filter suitable for finding
-    contacts with a display label matching the specified \a label.
+    Returns a filter suitable for finding contacts with a display label containing the specified
+    \a label.
 */
 QContactFilter QContactDisplayLabel::match(const QString &label)
 {
     QContactDetailFilter f;
-    f.setDetailDefinitionName(QContactDisplayLabel::DefinitionName);
+    f.setDetailDefinitionName(QContactDisplayLabel::DefinitionName,
+                              QContactDisplayLabel::FieldLabel);
     f.setValue(label);
+    f.setMatchFlags(QContactFilter::MatchContains);
 
     return f;
 }
 
 /*!
-    Returns a filter suitable for finding
-    contacts with a name matching the specified \a firstName and
-    \a lastName.  If either parameter is empty, any value will match
-    that component.
+    Returns a filter suitable for finding contacts with a name with a first name containing the
+    specified \a firstName and a last name containing the specified \a lastName.  If either
+    parameter is empty, any value will match that component.
 */
 QContactFilter QContactName::match(const QString &firstName, const QString &lastName)
 {
@@ -2147,6 +2148,7 @@ QContactFilter QContactName::match(const QString &firstName, const QString &last
             QContactDetailFilter f;
             f.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLastName);
             f.setValue(lastName);
+            f.setMatchFlags(QContactFilter::MatchContains);
             return f;
         }
     } else {
@@ -2155,6 +2157,7 @@ QContactFilter QContactName::match(const QString &firstName, const QString &last
             QContactDetailFilter f;
             f.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
             f.setValue(firstName);
+            f.setMatchFlags(QContactFilter::MatchContains);
             return f;
         } else {
             // Match a contact with the specified first and last names
@@ -2164,9 +2167,11 @@ QContactFilter QContactName::match(const QString &firstName, const QString &last
             QContactDetailFilter f;
             f.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
             f.setValue(firstName);
+            f.setMatchFlags(QContactFilter::MatchContains);
             QContactDetailFilter l;
             l.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldLastName);
             l.setValue(lastName);
+            l.setMatchFlags(QContactFilter::MatchContains);
 
             return f & l;
         }
@@ -2174,33 +2179,45 @@ QContactFilter QContactName::match(const QString &firstName, const QString &last
 }
 
 /*!
-    Returns a filter suitable for finding
-    contacts with a name field (e.g. first, last) that
-    matches the supplied \a name.
+    Returns a filter suitable for finding contacts with any name field (e.g. first, last) that
+    contains the supplied \a name.
 */
 QContactFilter QContactName::match(const QString &name)
 {
-    QContactDetailFilter l;
-    l.setDetailDefinitionName(QContactName::DefinitionName);
-    l.setValue(name);
-    return l;
+    QContactUnionFilter nameFilter;
+    QStringList nameFields;
+    nameFields << QContactName::FieldCustomLabel
+            << QContactName::FieldFirstName
+            << QContactName::FieldLastName
+            << QContactName::FieldMiddleName
+            << QContactName::FieldPrefix
+            << QContactName::FieldSuffix;
+    foreach (const QString& fieldName, nameFields) {
+        QContactDetailFilter subFilter;
+        subFilter.setDetailDefinitionName(QContactName::DefinitionName, fieldName);
+        subFilter.setValue(name);
+        subFilter.setMatchFlags(QContactFilter::MatchContains);
+        nameFilter.append(subFilter);
+    }
+    return nameFilter;
 }
 
 /*!
-    Returns a filter suitable for finding
-    contacts with an email address matching the specified \a emailAddress.
+    Returns a filter suitable for finding contacts with an email address containing the specified
+    \a emailAddress.
 */
 QContactFilter QContactEmailAddress::match(const QString &emailAddress)
 {
     QContactDetailFilter l;
     l.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
     l.setValue(emailAddress);
+    l.setMatchFlags(QContactFilter::MatchContains);
     return l;
 }
 
 /*!
-    Returns a filter suitable for finding
-    contacts with a phone number matching the specified \a number.
+    Returns a filter suitable for finding contacts with a phone number containing the specified
+    \a number.
 */
 QContactFilter QContactPhoneNumber::match(const QString &number)
 {

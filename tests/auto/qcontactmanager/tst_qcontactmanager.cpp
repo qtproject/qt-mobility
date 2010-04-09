@@ -293,6 +293,33 @@ bool tst_QContactManager::isSuperset(const QContact& ca, const QContact& cb)
         }
     }
 
+    // Second remove any superset matches (eg, backend adds a field)
+    aDetails = a.details();
+    bDetails = b.details();
+    foreach (QContactDetail d, aDetails) {
+        foreach (QContactDetail d2, bDetails) {
+            if (d.definitionName() == d2.definitionName()) {
+                bool canRemove = true;
+                QMap<QString, QVariant> d2map = d2.variantValues();
+                foreach (QString key, d2map.keys()) {
+                    if (d.value(key) != d2.value(key)) {
+                        // d can have _more_ keys than d2,
+                        // but not _less_; and it cannot
+                        // change the value.
+                        canRemove = false;
+                    }
+                }
+
+                if (canRemove) {
+                    // if we get to here, we can remove the details.
+                    a.removeDetail(&d);
+                    b.removeDetail(&d2);
+                    break;
+                }
+            }
+        }
+    }
+
     // check for contact type updates
     if (!a.type().isEmpty())
         if (!b.type().isEmpty())
@@ -815,7 +842,7 @@ void tst_QContactManager::add()
 
     QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
     QContact retrievedMegacontact = cm->contact(megacontact.id().localId());
-    if (retrievedMegacontact != megacontact) {
+    if (!isSuperset(retrievedMegacontact, megacontact)) {
         dumpContactDifferences(megacontact, retrievedMegacontact);
         QEXPECT_FAIL("mgr='wince'", "Address Display Label mismatch", Continue);
         QCOMPARE(megacontact, retrievedMegacontact);
@@ -845,7 +872,7 @@ void tst_QContactManager::add()
         
         // verify save
         QContact retrievedContactable = cm->contact(veryContactable.id().localId());
-        if (retrievedContactable != veryContactable) {
+        if (!isSuperset(retrievedContactable, veryContactable)) {
             dumpContactDifferences(veryContactable, retrievedContactable);
             QEXPECT_FAIL("mgr='wince'", "Number of phones supported mismatch", Continue);
             QCOMPARE(veryContactable, retrievedContactable);
