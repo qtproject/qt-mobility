@@ -70,6 +70,7 @@ public:
 
     void paintLayers(QPainter* painter);
     void addMapObjectToTiles(QMapObject* mapObject);
+    void requestMissingMapTiles();
 
     QRectF viewPort; //!< The logical view port.
     quint32 numColRow; //!< The number of tiles along both the x- and y-axis

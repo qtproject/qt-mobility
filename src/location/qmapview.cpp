@@ -179,7 +179,6 @@ void QMapView::setHorizontalPadding(quint32 range)
 {
     Q_D(QMapView);
     d->horizontalPadding = range;
-    //TODO: horizontal padding
 }
 /*!
     Returns the horizontal range beyond the immediate limits of
@@ -199,7 +198,6 @@ void QMapView::setVerticalPadding(quint32 range)
 {
     Q_D(QMapView);
     d->verticalPadding = range;
-    //TODO: vertical padding
 }
 /*!
 * @return The vertical range beyond the immediate limits of
@@ -234,7 +232,7 @@ quint64 QMapView::mapHeight() const
 void QMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* /*widget*/)
 {
     Q_D(QMapView);
-    painter->setClipRect(0, 0, boundingRect().width() + 1, boundingRect(). height() + 1);
+    painter->setClipRect(0, 0, boundingRect().width() + 1, boundingRect().height() + 1);
     QRectF rect = option->exposedRect;
     rect.translate(d->viewPort.left(), d->viewPort.top());
     TileIterator it(*this, rect);
@@ -315,9 +313,8 @@ void QMapView::mousePressEvent(QGraphicsSceneMouseEvent* event)
     QPointF mapCoord = event->pos() + d->viewPort.topLeft();
     QGeoCoordinate geoCoord = mapToGeo(mapCoord);
 
-    if (event->button() == Qt::LeftButton && d->pannable) {
+    if (event->button() == Qt::LeftButton && d->pannable)
         d->panActive = true;
-    }
 
     emit mapClicked(geoCoord, event);
 }
@@ -326,9 +323,8 @@ void QMapView::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     Q_D(QMapView);
 
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton)
         d->panActive = false;
-    }
 
     if (event->button() == Qt::LeftButton) {
         QPointF mapCoord = event->pos() + d->viewPort.topLeft();
@@ -453,6 +449,7 @@ void QMapView::centerOn(const QPointF& pos)
     if (d->viewPort.left() < 0)
         d->viewPort.moveLeft(0);
 
+    d->requestMissingMapTiles();
     update();
     emit centerChanged();
 }
@@ -512,10 +509,10 @@ void QMapView::moveViewPort(int deltaX, int deltaY)
     }
 
     //have we gone past the right edge?
-    if (d->viewPort.left() >= pixelPerXAxis) {
+    if (d->viewPort.left() >= pixelPerXAxis)
         d->viewPort.moveLeft(((quint64) d->viewPort.left()) % ((quint64) pixelPerXAxis));
-    }
 
+    d->requestMissingMapTiles();
     update();
     emit centerChanged();
 }
@@ -537,6 +534,10 @@ void QMapView::releaseRemoteTiles()
         return;
 
     QMutableHashIterator<quint64, QPair<QPixmap, bool> > it(d->mapTiles);
+    QRectF paddedViewPort = QRectF(d->viewPort.x()-d->horizontalPadding,
+                                    d->viewPort.y()-d->verticalPadding,
+                                    d->viewPort.width()+(2*d->horizontalPadding),
+                                    d->viewPort.height()+(2*d->verticalPadding));
 
     while (it.hasNext()) {
         it.next();
@@ -544,22 +545,8 @@ void QMapView::releaseRemoteTiles()
         quint32 row = tileIndex / d->numColRow;
         quint32 col = tileIndex % d->numColRow;
         QRectF tileRect = getTileRect(col, row);
-        quint64 pixelPerXAxis = static_cast<quint64>(d->numColRow) * d->mapResolution.size.width();
-        quint64 rightShift = static_cast<quint64>(d->viewPort.left()) / pixelPerXAxis;
-        tileRect.translate(rightShift * pixelPerXAxis, 0);
-        bool remove = true;
-
-        while (tileRect.left() <= d->viewPort.right()) {
-            if (tileRect.intersects(d->viewPort)) {
-                remove = false;
-                break;
-            }
-
-            tileRect.translate(pixelPerXAxis, 0);
-        }
-
-        if (remove)
-            it.remove();
+        if (tileRect.intersects(paddedViewPort)) continue;
+        it.remove();
     }
 }
 
