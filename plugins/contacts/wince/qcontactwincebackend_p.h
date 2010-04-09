@@ -228,8 +228,6 @@ public:
 
     /* Definitions - Accessors and Mutators */
     virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
-    virtual bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error);
-    virtual bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error);
 
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QContactAbstractRequest* req);
