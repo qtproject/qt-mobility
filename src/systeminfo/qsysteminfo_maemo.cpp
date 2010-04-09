@@ -40,7 +40,6 @@
 ****************************************************************************/
 #include <qsysteminfo.h>
 #include <qsysteminfo_maemo_p.h>
-
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -208,6 +207,8 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
+    if(wlanSignalStrengthTimer->isActive())
+        wlanSignalStrengthTimer->stop();
 }
 
 
@@ -450,7 +451,11 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     currentMNC = "";
     cellSignalStrength = 0;
     currentOperatorName = "";
-    int radioAccessTechnology = 0;
+    radioAccessTechnology = 0;
+    iWlanStrengthCheckEnabled = 0;
+    wlanSignalStrengthTimer = new QTimer(this);
+
+    connect(wlanSignalStrengthTimer, SIGNAL(timeout()), this, SLOT(wlanSignalStrengthCheck()));
 
     QString devFile = "/sys/class/net/usb0/operstate";
     QFileInfo fi(devFile);
@@ -559,7 +564,6 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                               this, SLOT(usbCableAction())) ) {
         qWarning() << "unable to connect to usbCableAction (disconnect)";
     }
-
 #endif
 }
 
@@ -640,10 +644,6 @@ void QSystemNetworkInfoPrivate::icdStatusChanged(QString, QString var2, QString,
     if (var2 == "WLAN_INFRA") {
         emit networkStatusChanged(QSystemNetworkInfo::WlanMode,
                                   networkStatus(QSystemNetworkInfo::WlanMode));
-        if (currentWlanSignalStrength != networkSignalStrength(QSystemNetworkInfo::WlanMode)) {
-            currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
-            emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
-        }
     }
 }
 
@@ -680,6 +680,29 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
         return QSystemNetworkInfo::WcdmaMode;
 
     return QSystemNetworkInfo::UnknownMode;
+}
+
+void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
+{
+    if (currentWlanSignalStrength != networkSignalStrength(QSystemNetworkInfo::WlanMode)) {
+        currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
+        emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
+    }
+}
+
+void QSystemNetworkInfoPrivate::setWlanSignalStrengthCheckEnabled(bool enabled)
+{
+    if (enabled) {
+        iWlanStrengthCheckEnabled++;
+        if (!wlanSignalStrengthTimer->isActive())
+            wlanSignalStrengthTimer->start(5000); //5 seconds interval
+    } else {
+        iWlanStrengthCheckEnabled--;
+        if (iWlanStrengthCheckEnabled <= 0) {
+            if(wlanSignalStrengthTimer->isActive())
+                wlanSignalStrengthTimer->stop();
+        }
+    }
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)

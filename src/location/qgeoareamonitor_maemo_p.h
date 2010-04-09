@@ -46,6 +46,10 @@
 #include "qgeopositioninfosource.h"
 
 extern "C" {
+    // The following include is needed since liblocation v. 0.102 has a bug in 
+    // location-distance-utils.h
+    #include <glib-object.h>
+    
     #include <location/location-distance-utils.h>
 }
 

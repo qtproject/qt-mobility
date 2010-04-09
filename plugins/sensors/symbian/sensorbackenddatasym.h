@@ -57,6 +57,7 @@ public:
     TInt iTimerId;
     TBool iPropertyListening;
     TBool iDataListening;
+    TBool iTimerRequired;
     };
 
 #endif //SENSORBACKENDDATASYM_H

@@ -159,8 +159,8 @@ private slots:
         const bool canStartIAP = (manager.capabilities()
                                   & QNetworkConfigurationManager::CanStartAndStopInterfaces);
         // Is there default access point, use it
-        QNetworkConfiguration cfg = manager.defaultConfiguration();
-        if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
+        if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
             QMessageBox::information(this, tr("Weather Info"), tr(
                                          "Available Access Points not found."));
             return;
@@ -261,7 +261,6 @@ private slots:
         QUrl url = networkReply->url();
         if (!networkReply->error()) {
             QString data = QString::fromUtf8(networkReply->readAll());
-            qDebug() << data;
             if (data.contains("<LocalityName>", Qt::CaseInsensitive)) {
                 requestWeatherOfTown(data);
             } else {

@@ -52,7 +52,8 @@ n900proximitysensor::n900proximitysensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
 {
     setReading<QProximityReading>(&m_reading);
-    addOutputRange(0, 0.01, 0.01);
+    addDataRate(100, 100); // 100Hz
+    sensor->setDataRate(100); // default is 10Hz
 }
 
 void n900proximitysensor::start()

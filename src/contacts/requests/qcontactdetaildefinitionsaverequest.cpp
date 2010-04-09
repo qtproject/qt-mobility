@@ -64,11 +64,6 @@ QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest()
 {
 }
 
-/*! Cleans up the memory in use by this detail definition save request */
-QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest()
-{
-}
-
 /*! Sets the definitions to save to be \a definitions */
 void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDetailDefinition>& definitions)
 {

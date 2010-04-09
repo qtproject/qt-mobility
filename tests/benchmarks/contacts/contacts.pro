@@ -2,11 +2,10 @@ TEMPLATE = app
 TARGET = tst_bm_contacts
 CONFIG += testcase
 
-SOURCES += tst_contacts.cpp
+SOURCES += tst_bm_contacts.cpp
 
 QT += core \
       network
-
 
 INCLUDEPATH += ../../../src/contacts\
                 ../../../src/contacts/details \
@@ -15,7 +14,6 @@ INCLUDEPATH += ../../../src/contacts\
 include(../../../common.pri)
 
 CONFIG += mobility
-
 MOBILITY = contacts
 
 symbian {

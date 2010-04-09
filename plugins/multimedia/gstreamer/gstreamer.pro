@@ -26,6 +26,10 @@ PKGCONFIG += \
     gstreamer-audio-0.10 \
     gstreamer-video-0.10
 
+maemo* {
+  PKGCONFIG +=gstreamer-plugins-bad-0.10
+}
+
 # Input
 HEADERS += \
     qgstreamermessage.h \
@@ -71,7 +75,12 @@ contains(QT_CONFIG, multimedia) {
 }
 
 include(mediaplayer/mediaplayer.pri)
-include(mediacapture/mediacapture.pri)
+!maemo* {
+    include(mediacapture/mediacapture.pri)
+} else {
+    include(mediacapture/maemo/mediacapture_maemo.pri)
+    DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API 
+}
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
 INSTALLS+=target

@@ -113,7 +113,7 @@ QString QMLContactManagerAsync::contactListToQString(const QList<QContactLocalId
     QString list;
 
     for (int i = 0; i < contactIds.count(); i++) {
-        list += QString::number(contactIds.at(i)) +  " ";
+        list += QString::number(contactIds.at(i)) +  ' ';
     }
 
     return list;
@@ -159,8 +159,7 @@ void QMLContactManagerAsync::contactProgress(QContactAbstractRequest::State newS
     }
 
     if(request->contacts().count() > 0) {
-        QContact c;
-        foreach(c, request->contacts()) {
+        foreach(const QContact& c, request->contacts()) {
             QmlContact qmlc(c);
             emit contactsLoaded(&qmlc);
         }

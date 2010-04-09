@@ -42,11 +42,11 @@ win32 {
 
 unix: {
     QT += gui
-    maemo*|linux-*: {
+    maemo5|maemo6|linux-*: {
         SOURCES += qsysteminfo_linux_common.cpp
         HEADERS += qsysteminfo_linux_common_p.h
     }
-    !maemo*:linux-*: {
+    !maemo5:!maemo6:linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
         contains(QT_CONFIG,dbus): {
@@ -63,7 +63,7 @@ unix: {
            DEFINES += QT_NO_NETWORKMANAGER
         }
     }
-    maemo*: {
+    maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp

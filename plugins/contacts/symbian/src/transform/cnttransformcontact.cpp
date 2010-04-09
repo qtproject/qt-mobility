@@ -342,6 +342,11 @@ void CntTransformContact::detailDefinitions(
         i.value()->detailDefinitions(defaultSchema, contactType);
         i++;
     }
+    
+#ifndef SYMBIAN_CNTMODEL_V2
+    // Cannot support timestamp
+    defaultSchema.remove(QContactTimestamp::DefinitionName);
+#endif
 }
 
 QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactDetail &detail) const
@@ -395,12 +400,8 @@ QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem 
 
 QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
 {
-    QContactTimestamp *timestampDetail = 0;
-
-    // NOTE: In S60 3.1 we cannot use ContactGuid::GetCreationDate() because
-    // it is not exported.
-    // TODO: Make sure SYMBIAN_CNTMODEL_V2 is the right flag for this.
 #ifdef SYMBIAN_CNTMODEL_V2
+    QContactTimestamp *timestampDetail = 0;
     HBufC* guidBuf = contactItem.UidStringL(contactDatabase.MachineId()).AllocLC();
     TPtr ptr = guidBuf->Des();
     if (ContactGuid::GetCreationDate(ptr, contactDatabase.MachineId()))
@@ -432,8 +433,15 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContact
         }
     }
     CleanupStack::PopAndDestroy(guidBuf);
-#endif
     return timestampDetail;
+#else
+    // NOTE: In S60 3.1 we cannot use ContactGuid::GetCreationDate() because
+    // it is not exported.
+    // TODO: Make sure SYMBIAN_CNTMODEL_V2 is the right flag for this.
+    Q_UNUSED(contactItem);
+    Q_UNUSED(contactDatabase)
+    return 0;
+#endif
 }
 
 void CntTransformContact::transformPreferredDetailL(const QContact& contact,

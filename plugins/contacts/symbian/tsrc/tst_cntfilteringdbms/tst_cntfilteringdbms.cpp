@@ -102,7 +102,7 @@ void tst_cntfilteringdbms::initTestCase()
 {
     // Remove all contacts
     QList<QContactLocalId> contacts = m_contactManager->contactIds();
-    m_contactManager->removeContacts(&contacts, 0);
+    m_contactManager->removeContacts(contacts, 0);
 }
 
 void tst_cntfilteringdbms::cleanupTestCase()
@@ -183,18 +183,18 @@ void tst_cntfilteringdbms::addFilterData()
     addNewRow(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber, QContactFilter::MatchKeypadCollation, CntAbstractContactFilter::NotSupported, "123", QContactIds() << abc << bcd << cde << Abc);
     
     addNewRow(QContactName::DefinitionName, QString(), QContactFilter::MatchExactly, CntAbstractContactFilter::NotSupported, "foobar", allContacts);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchExactly, CntAbstractContactFilter::SupportedPreFilterOnly, "Abc", QContactIds() << abc << Abc);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchExactly | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "Abc", QContactIds() << Abc);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchContains, CntAbstractContactFilter::Supported, "Ab", QContactIds() << abc << Abc);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchContains | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "Ab", QContactIds() << Abc);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchStartsWith, CntAbstractContactFilter::SupportedPreFilterOnly, "Ab", QContactIds() << abc << Abc);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchStartsWith | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "Ab", QContactIds() << Abc);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchEndsWith, CntAbstractContactFilter::SupportedPreFilterOnly, "Cde", QContactIds() << cde << Cde);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchEndsWith | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "Cde", QContactIds() << Cde);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchFixedString, CntAbstractContactFilter::SupportedPreFilterOnly, "abc", QContactIds() << abc << Abc);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchFixedString | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "abc", QContactIds() << abc);
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchPhoneNumber, CntAbstractContactFilter::NotSupported, "abc", QContactIds() << abc << Abc); // not sure if this valid
-    addNewRow(QContactName::DefinitionName, QContactName::FieldFirst, QContactFilter::MatchKeypadCollation, CntAbstractContactFilter::NotSupported, "abc", QContactIds() << abc << Abc);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchExactly, CntAbstractContactFilter::SupportedPreFilterOnly, "Abc", QContactIds() << abc << Abc);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchExactly | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "Abc", QContactIds() << Abc);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchContains, CntAbstractContactFilter::Supported, "Ab", QContactIds() << abc << Abc);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchContains | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "Ab", QContactIds() << Abc);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchStartsWith, CntAbstractContactFilter::SupportedPreFilterOnly, "Ab", QContactIds() << abc << Abc);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchStartsWith | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "Ab", QContactIds() << Abc);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchEndsWith, CntAbstractContactFilter::SupportedPreFilterOnly, "Cde", QContactIds() << cde << Cde);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchEndsWith | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "Cde", QContactIds() << Cde);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchFixedString, CntAbstractContactFilter::SupportedPreFilterOnly, "abc", QContactIds() << abc << Abc);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchFixedString | QContactFilter::MatchCaseSensitive, CntAbstractContactFilter::SupportedPreFilterOnly, "abc", QContactIds() << abc);
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchPhoneNumber, CntAbstractContactFilter::NotSupported, "abc", QContactIds() << abc << Abc); // not sure if this valid
+    addNewRow(QContactName::DefinitionName, QContactName::FieldFirstName, QContactFilter::MatchKeypadCollation, CntAbstractContactFilter::NotSupported, "abc", QContactIds() << abc << Abc);
     
     addNewRow(QContactDisplayLabel::DefinitionName, QString(), QContactFilter::MatchExactly, CntAbstractContactFilter::NotSupported, "foobar", allContacts);
     addNewRow(QContactDisplayLabel::DefinitionName, QContactDisplayLabel::FieldLabel, QContactFilter::MatchExactly, CntAbstractContactFilter::NotSupported, "abc def", QContactIds() << abc << Abc);

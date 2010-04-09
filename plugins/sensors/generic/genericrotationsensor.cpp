@@ -52,7 +52,7 @@ genericrotationsensor::genericrotationsensor(QSensor *sensor)
 {
     accelerometer = new QAccelerometer(this);
     accelerometer->addFilter(this);
-    accelerometer->connect();
+    accelerometer->connectToBackend();
 
     setReading<QRotationReading>(&m_reading);
     setDataRates(accelerometer);
@@ -62,7 +62,7 @@ genericrotationsensor::genericrotationsensor(QSensor *sensor)
 
 void genericrotationsensor::start()
 {
-    accelerometer->setUpdateInterval(sensor()->updateInterval());
+    accelerometer->setDataRate(sensor()->dataRate());
     accelerometer->start();
     if (!accelerometer->isActive())
         sensorStopped();

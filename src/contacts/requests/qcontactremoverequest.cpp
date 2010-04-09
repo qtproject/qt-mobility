@@ -62,11 +62,6 @@ QContactRemoveRequest::QContactRemoveRequest()
 {
 }
 
-/*! Cleans up the memory in use by the contact remove request */
-QContactRemoveRequest::~QContactRemoveRequest()
-{
-}
-
 /*! Sets the list of ids of contacts which will be removed to \a contactIds */
 void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactIds)
 {

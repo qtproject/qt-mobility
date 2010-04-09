@@ -63,7 +63,7 @@ class Q_CONTACTS_EXPORT QContactFilter
 {
 public:
     QContactFilter();
-    virtual ~QContactFilter();
+    ~QContactFilter();
     QContactFilter(const QContactFilter& other);
     QContactFilter& operator=(const QContactFilter& other);
 
@@ -91,7 +91,7 @@ public:
         MatchFixedString = Qt::MatchFixedString, // 8
         MatchCaseSensitive = Qt::MatchCaseSensitive, // 16
         MatchPhoneNumber = 1024,
-        MatchKeypadCollation = 1025
+        MatchKeypadCollation = 2048
     };
     Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
 

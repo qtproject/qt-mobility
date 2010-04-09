@@ -103,13 +103,13 @@ void LogFilePositionSource::readNextPosition()
         double longitude;
         bool hasLatitude = false;
         bool hasLongitude = false;
-        QDateTime dateTime = QDateTime::fromString(QString(data.value(0)), Qt::ISODate);
+        QDateTime timestamp = QDateTime::fromString(QString(data.value(0)), Qt::ISODate);
         latitude = data.value(1).toDouble(&hasLatitude);
         longitude = data.value(2).toDouble(&hasLongitude);
 
-        if (hasLatitude && hasLongitude && dateTime.isValid()) {
+        if (hasLatitude && hasLongitude && timestamp.isValid()) {
             QGeoCoordinate coordinate(latitude, longitude);
-            QGeoPositionInfo info(coordinate, dateTime);
+            QGeoPositionInfo info(coordinate, timestamp);
             if (info.isValid()) {
                 lastPosition = info;
                 emit positionUpdated(info);

@@ -234,10 +234,13 @@ void QContact::setId(const QContactId& id)
 /*! Returns the first detail stored in the contact which is of the given \a definitionName */
 QContactDetail QContact::detail(const QString& definitionName) const
 {
+    if (definitionName.isEmpty())
+        return d->m_details.first();
+
     // build the sub-list of matching details.
     for (int i = 0; i < d->m_details.size(); i++) {
         const QContactDetail& existing = d->m_details.at(i);
-        if (definitionName.isEmpty() || definitionName == existing.definitionName()) {
+        if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName) {
             return existing;
         }
     }
@@ -257,7 +260,7 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     } else {
         for (int i = 0; i < d->m_details.size(); i++) {
             const QContactDetail& existing = d->m_details.at(i);
-            if (definitionName == existing.definitionName()) {
+            if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName) {
                 sublist.append(existing);
             }
         }
@@ -278,7 +281,68 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
     } else {
         for (int i = 0; i < d->m_details.size(); i++) {
             const QContactDetail& existing = d->m_details.at(i);
-            if (definitionName == existing.definitionName() && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
+            if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName
+                && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
+                sublist.append(existing);
+            }
+        }
+    }
+
+    return sublist;
+}
+
+/*! Returns the first detail stored in the contact which is of the given \a definitionName */
+QContactDetail QContact::detail(const char* definitionName) const
+{
+    if (definitionName == 0)
+        return d->m_details.first();
+
+    // build the sub-list of matching details.
+    for (int i = 0; i < d->m_details.size(); i++) {
+        const QContactDetail& existing = d->m_details.at(i);
+        if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName) {
+            return existing;
+        }
+    }
+
+    return QContactDetail();
+}
+
+/*! Returns a list of details of the given \a definitionName */
+QList<QContactDetail> QContact::details(const char* definitionName) const
+{
+    // build the sub-list of matching details.
+    QList<QContactDetail> sublist;
+
+    // special case
+    if (definitionName == 0) {
+        sublist = d->m_details;
+    } else {
+        for (int i = 0; i < d->m_details.size(); i++) {
+            const QContactDetail& existing = d->m_details.at(i);
+            if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName) {
+                sublist.append(existing);
+            }
+        }
+    }
+
+    return sublist;
+}
+
+/*! Returns a list of details of the given \a definitionName, \a fieldName and field \a value*/
+QList<QContactDetail> QContact::details(const char* definitionName, const char* fieldName, const QString& value) const
+{
+    // build the sub-list of matching details.
+    QList<QContactDetail> sublist;
+
+    // special case
+    if (fieldName == 0) {
+        sublist = details(definitionName);
+    } else {
+        for (int i = 0; i < d->m_details.size(); i++) {
+            const QContactDetail& existing = d->m_details.at(i);
+            if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName
+                && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
                 sublist.append(existing);
             }
         }
@@ -318,14 +382,14 @@ bool QContact::saveDetail(QContactDetail* detail)
         return false;
 
     /* Also handle contact type specially - only one of them. */
-    if (detail->definitionName() == QContactType::DefinitionName) {
+    if (QContactDetailPrivate::detailPrivate(*detail)->m_definitionName == QContactType::DefinitionName.latin1()) {
         detail->d->m_access = QContactDetail::Irremovable;
         d->m_details[1] = *detail;
         return true;
     }
 
     /* And display label.. */
-    if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
+    if (QContactDetailPrivate::detailPrivate(*detail)->m_definitionName == QContactDisplayLabel::DefinitionName.latin1()) {
         detail->d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
         return false;
     }
@@ -453,7 +517,7 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
         QContactAction *currImpl = QContactManagerData::action(descriptors.at(i));
         for (int i = 0; i < d->m_details.size(); i++) {
             QContactDetail detail = d->m_details.at(i);
-            if (currImpl->supportsDetail(detail)) {
+            if (currImpl->isDetailSupported(detail, *this)) {
                 retn.append(detail);
                 break;
             }

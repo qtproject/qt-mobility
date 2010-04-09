@@ -60,14 +60,15 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
 
     QSensor sensor("GrueSensor");
-    if (!sensor.connect()) {
-        qWarning("Grue sensor is not available!");
-        return 1;
-    }
 
     Filter filter;
     sensor.addFilter(&filter);
     sensor.start();
+
+    if (!sensor.isActive()) {
+        qWarning("Grue sensor didn't start!");
+        return 1;
+    }
 
     return app.exec();
 }
