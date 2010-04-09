@@ -33,10 +33,11 @@ symbian {
           QTC_INPUT = .
           qtc.input = QTC_INPUT
           qtc.CONFIG = no_link explicit_dependencies
-          #qtc.variable_out = PRE_TARGETDEPS
-          qtc.variable = SOURCES
+          qtc.variable_out = PRE_TARGETDEPS
           qtc.commands = $$QTSERVICEDBGEN $$QTSERVICE_INITIALIZE $$QTC_COMMAND $$QTSERVICE.DESCRIPTOR
+          #qtc.clean = |$$QTSERVICEDBGEN remove $$QTSERVICE.DESCRIPTOR
           QMAKE_EXTRA_COMPILERS += qtc
        }
+       
     }
 }
