@@ -203,10 +203,11 @@ QTM_BEGIN_NAMESPACE
     transmission, or moved to that folder if it is already stored in another folder.
     If transmission is successful, the message will be moved to the standard Sent
     folder for the account.
-  
-    The performance of counting messages is currently significantly less than optimal 
-    for some filters on some platforms.
     
+    Currently on the Maemo 5 (Fremantle) and Windows Mobile platforms the service 
+    action object enters the FinishedState when the message is queued for sending 
+    rather than actually sent.
+  
     Returns true if the operation can be initiated; otherwise returns false.
     
     \sa QMessage, QMessageAccountId
