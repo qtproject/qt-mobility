@@ -282,6 +282,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     // QContactName
     fields = defns[contactType][QContactName::DefinitionName].fields();
     fields.remove(QContactName::FieldCustomLabel);
+    fields.remove(QContactName::FieldMiddleName);
     fields.remove(QContactName::FieldPrefix);
     fields.remove(QContactName::FieldSuffix);
     defns[contactType][QContactName::DefinitionName].setFields(fields);
