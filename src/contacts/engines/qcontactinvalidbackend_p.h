@@ -69,51 +69,7 @@ public:
     QString managerName() const;
 
     /*! \reimp */
-    QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}
-    /*! \reimp */
     int managerVersion() const {return 0;}
-
-    /*! \reimp */
-    QList<QContactLocalId> contactIds(const QContactFilter&, const QList<QContactSortOrder>&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QList<QContactLocalId>();
-    }
-
-    /*! \reimp */
-    QList<QContact> contacts(const QContactFilter&, const QList<QContactSortOrder>&, const QContactFetchHint&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QList<QContact>();
-    }
-
-    /*! \reimp */
-    QContact contact(const QContactLocalId&, const QContactFetchHint&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QContact();
-    }
-
-    /*! \reimp */
-    bool saveContacts(QList<QContact>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
-    {
-        *error =  QContactManager::NotSupportedError;
-        return false;
-    }
-
-    /*! \reimp */
-    bool removeContacts(const QList<QContactLocalId>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
-    {
-        *error =  QContactManager::NotSupportedError;
-        return false;
-    }
-
-    /*! \reimp */
-    QContact conformingContact(const QContact&, QContactManager::Error* error)
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QContact();
-    }
 
     /*! \reimp */
     virtual QString synthesizedDisplayLabel(const QContact&, QContactManager::Error* error) const
@@ -123,125 +79,10 @@ public:
     }
 
     /*! \reimp */
-    virtual bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error)
-    {
-        *error =  QContactManager::NotSupportedError;
-        return false;
-    }
-
-    /*! \reimp */
-    virtual QContactLocalId selfContactId(QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return 0;
-    }
-
-    /*! \reimp */
-    virtual QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QList<QContactRelationship>();
-    }
-
-    /*! \reimp */
-    virtual bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
-    {
-        *error =  QContactManager::NotSupportedError;
-        return false;
-    }
-
-    /*! \reimp */
-    virtual bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
-    {
-        *error =  QContactManager::NotSupportedError;
-        return false;
-    }
-
-    /*! \reimp */
     virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
     {
         *error =  QContactManager::NotSupportedError;
         return QContact();
-    }
-
-    /*! \reimp */
-    virtual bool validateContact(const QContact&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return false;
-    }
-
-    /*! \reimp */
-    virtual bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return false;
-    }
-
-    /*! \reimp */
-    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QMap<QString, QContactDetailDefinition>();
-    }
-
-    /*! \reimp */
-    virtual QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error* error) const
-    {
-        *error =  QContactManager::NotSupportedError;
-        return QContactDetailDefinition();
-    }
-
-    /*! \reimp */
-    virtual bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error)
-    {
-        *error =  QContactManager::NotSupportedError;
-        return false;
-    }
-
-    /*! \reimp */
-    virtual bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error* error)
-    {
-        *error =  QContactManager::NotSupportedError;
-        return false;
-    }
-
-    /*! \reimp */
-    virtual void requestDestroyed(QContactAbstractRequest*) {}
-    /*! \reimp */
-    virtual bool startRequest(QContactAbstractRequest*) {return false;}
-    /*! \reimp */
-    virtual bool cancelRequest(QContactAbstractRequest*) {return false;}
-    /*! \reimp */
-    virtual bool waitForRequestFinished(QContactAbstractRequest*, int) {return false;}
-
-    /*! \reimp */
-    virtual bool hasFeature(QContactManager::ManagerFeature, const QString&) const
-    {
-        return false;
-    }
-
-    /*! \reimp */
-    virtual bool isRelationshipTypeSupported(const QString&, const QString&) const
-    {
-        return false;
-    }
-
-    /*! \reimp */
-    virtual bool isFilterSupported(const QContactFilter&) const
-    {
-        return false;
-    }
-
-    /*! \reimp */
-    virtual QList<QVariant::Type> supportedDataTypes() const
-    {
-        return QList<QVariant::Type>();
-    }
-    /*! \reimp */
-    virtual QStringList supportedContactTypes() const
-    {
-        return QStringList();
     }
 };
 
