@@ -112,6 +112,7 @@ public:
     bool importLandmarks(const QString &fileName, Format format);
     bool exportLandmarks(QIODevice *device, Format format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
     bool exportLandmarks(const QString &, Format format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+
     Error error() const;
     QString errorString() const;
 

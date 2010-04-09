@@ -57,6 +57,7 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivat
     name = other.name;
     iconUrl = other.iconUrl;
     description = other.description;
+    readOnly = false;
 }
 
 QLandmarkCategoryPrivate::~QLandmarkCategoryPrivate() {}
@@ -212,7 +213,7 @@ void QLandmarkCategory::setDescription(const QString &description)
 */
 bool QLandmarkCategory::isReadOnly() const
 {
-    return true;
+    return d->readOnly;
 }
 
 /*!
@@ -220,7 +221,7 @@ bool QLandmarkCategory::isReadOnly() const
 */
 QLandmarkCategoryId QLandmarkCategory::id() const
 {
-    return QLandmarkCategoryId();
+    return d->id;
 }
 
 /*!
@@ -231,6 +232,7 @@ QLandmarkCategoryId QLandmarkCategory::id() const
 */
 void QLandmarkCategory::setId(const QLandmarkCategoryId &id)
 {
+    d->id = id;
 }
 
 /*!
@@ -241,7 +243,7 @@ void QLandmarkCategory::setId(const QLandmarkCategoryId &id)
 */
 QVariant QLandmarkCategory::attribute(const QString &key, const QVariant &defaultValue) const
 {
-    return QVariant();
+    return d->attributes.value(key, defaultValue);
 }
 
 /*!
@@ -249,7 +251,7 @@ QVariant QLandmarkCategory::attribute(const QString &key, const QVariant &defaul
 */
 void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 {
-
+    d->attributes[key] = value;
 }
 
 /*!
@@ -259,5 +261,5 @@ void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 */
 QStringList QLandmarkCategory::attributes() const
 {
-    return QStringList();
+    return d->attributes.keys();
 }
