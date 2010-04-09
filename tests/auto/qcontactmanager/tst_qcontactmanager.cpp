@@ -170,6 +170,7 @@ private slots:
     void invalidManager();
     void memoryManager();
     void changeSet();
+    void fetchHint();
 
     /* Special test with special data */
     void uriParsing_data();
@@ -2358,18 +2359,30 @@ void tst_QContactManager::changeSet()
     QVERIFY(changeSet.addedContacts().contains(id));
 
     changeSet.insertChangedContact(id);
-    changeSet.insertChangedContact(id);
+    changeSet.insertChangedContacts(QList<QContactLocalId>() << id);
     QVERIFY(changeSet.changedContacts().size() == 1); // set, should only be added once.
     QVERIFY(!changeSet.addedContacts().isEmpty());
     QVERIFY(!changeSet.changedContacts().isEmpty());
     QVERIFY(changeSet.removedContacts().isEmpty());
     QVERIFY(changeSet.changedContacts().contains(id));
+    changeSet.clearChangedContacts();
+    QVERIFY(changeSet.changedContacts().isEmpty());
+
+    changeSet.insertRemovedContacts(QList<QContactLocalId>() << id);
+    QVERIFY(changeSet.removedContacts().contains(id));
+    changeSet.clearRemovedContacts();
+    QVERIFY(changeSet.removedContacts().isEmpty());
 
     QVERIFY(changeSet.dataChanged() == false);
     QContactChangeSet changeSet2;
     changeSet2 = changeSet;
     QVERIFY(changeSet.addedContacts() == changeSet2.addedContacts());
     changeSet.emitSignals(0);
+
+    changeSet2.clearAddedContacts();
+    QVERIFY(changeSet2.addedContacts().isEmpty());
+    changeSet2.insertAddedContacts(changeSet.addedContacts().toList());
+    QVERIFY(changeSet.addedContacts() == changeSet2.addedContacts());
 
     changeSet2.clearAll();
     QVERIFY(changeSet.addedContacts() != changeSet2.addedContacts());
@@ -2385,6 +2398,14 @@ void tst_QContactManager::changeSet()
     changeSet.emitSignals(0);
 
     changeSet.addedRelationshipsContacts().insert(id);
+    changeSet.insertAddedRelationshipsContacts(QList<QContactLocalId>() << id);
+    QVERIFY(changeSet.addedRelationshipsContacts().contains(id));
+    changeSet.clearAddedRelationshipsContacts();
+    QVERIFY(changeSet.addedRelationshipsContacts().isEmpty());
+    changeSet.insertRemovedRelationshipsContacts(QList<QContactLocalId>() << id);
+    QVERIFY(changeSet.removedRelationshipsContacts().contains(id));
+    changeSet.clearRemovedRelationshipsContacts();
+    QVERIFY(changeSet.removedRelationshipsContacts().isEmpty());
     changeSet.emitSignals(0);
     changeSet.removedRelationshipsContacts().insert(id);
     changeSet.emitSignals(0);
@@ -2399,6 +2420,16 @@ void tst_QContactManager::changeSet()
     QVERIFY(changeSet2.oldAndNewSelfContactId() != changeSet.oldAndNewSelfContactId());
     changeSet.setDataChanged(true);
     changeSet.emitSignals(0);
+}
+
+void tst_QContactManager::fetchHint()
+{
+    QContactFetchHint hint;
+    hint.setOptimizationHints(QContactFetchHint::NoBinaryBlobs);
+    QCOMPARE(hint.optimizationHints(), QContactFetchHint::NoBinaryBlobs);
+    QStringList rels(QLatin1String(QContactRelationship::HasMember));
+    hint.setRelationshipTypesHint(rels);
+    QCOMPARE(hint.relationshipTypesHint(), rels);
 }
 
 void tst_QContactManager::selfContactId()
