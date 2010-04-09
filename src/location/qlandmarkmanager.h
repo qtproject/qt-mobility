@@ -139,7 +139,8 @@ Q_SIGNALS:
     void categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds);
 
 private:
-    QLandmarkManagerPrivate *d;
+    QLandmarkManagerPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QLandmarkManager);
 };
 
 /*

@@ -100,6 +100,7 @@ PRIVATE_HEADERS += \
                     qlandmarkfilter_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkid_p.h \
+                    qlandmarkmanager_p.h \
                     qlocationutils_p.h \
                     qmaneuver_p.h \
                     qmapellipse_p.h \
