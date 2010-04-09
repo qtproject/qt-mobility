@@ -39,58 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef SFWNOTES_H
-#define SFWNOTES_H
+#include "sfwnotes.h"
 
-#include <QWidget>
-#include <QObject>
-#include <QDateTime>
-#include <qmobilityglobal.h>
-
-//#ifdef Q_OS_SYMBIAN
-//#include "ui_sfwnotes.h"
-//#else
-#include "ui_sfwnotes.h"
-//#endif
-
-QTM_BEGIN_NAMESPACE
-class QServiceManager;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
-
-class ToDoTool : public QWidget, public Ui_ToDoTool
+ToDoTool::ToDoTool()
 {
-    Q_OBJECT
-public:
-    ToDoTool(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~ToDoTool();
+    serviceManager = new QServiceManager();
+    
+    registerExampleServices();
+}
 
-private slots:
-    void on_nextButton_clicked();
-    void on_prevButton_clicked();
-    void on_addButton_clicked();
-    void on_deleteButton_clicked();
-    void on_searchButton_clicked();
-    void soundAlarm(const QDateTime &alarm);
+ToDoTool::~ToDoTool()
+{
+    unregisterExampleServices();
+}
 
-private:
-    void init();
-    void refreshList();
-    void refreshNotes();
-    void registerExampleServices();
-    void unregisterExampleServices();
+void ToDoTool::registerExampleServices()
+{
+    QStringList exampleXmlFiles;
+    exampleXmlFiles << "notesmanagerservice.xml";
+    foreach (const QString &fileName, exampleXmlFiles) {
+        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        serviceManager->addService(path);
+    }
+}
 
-    QServiceManager *serviceManager;
-    QObject *notesManager;
-
-    QList<QObject*> ret;
-
-    QString searchWord;
-    int currentNote;
-    int totalNotes;
-
-};
-
-#endif
+void ToDoTool::unregisterExampleServices()
+{
+    serviceManager->removeService("NotesManagerService");
+}
 

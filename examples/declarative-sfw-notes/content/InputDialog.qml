@@ -1,7 +1,9 @@
-import Qt 4.6
+import Qt 4.7
 
 Rectangle {
     property string text: ""
+    property string defaultText: ""
+    property bool cancelable: true
     property int size: 0
     signal confirmed(string input);
     
@@ -30,8 +32,9 @@ Rectangle {
         anchors.top: dialogText.bottom; anchors.topMargin: 7
     }
 
-    TextInput {
+    TextEdit {
         id: inputText
+        text: page.defaultText
         width: inputArea.width - 10
         anchors.verticalCenter: inputArea.verticalCenter
         anchors.horizontalCenter: inputArea.horizontalCenter
@@ -41,7 +44,6 @@ Rectangle {
         id: okButton
         text: "Ok"
         width: 75; height: 25
-        anchors.right: page.horizontalCenter; anchors.rightMargin: 5
         anchors.top: inputArea.bottom; anchors.topMargin: 10
 
         onClicked: {
@@ -66,5 +68,16 @@ Rectangle {
     {
         page.opacity = 0;
         inputText.text = "";
+    }
+
+    Component.onCompleted: {
+        if (cancelable == false) {
+            noButton.opacity = 0;
+            okButton.anchors.horizontalCenter = page.horizontalCenter;
+        } else {
+            okButton.anchors.right = page.horizontalCenter;
+            okButton.anchors.rightMargin = 5;
+        }
+        
     }
 }

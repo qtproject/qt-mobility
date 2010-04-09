@@ -1,8 +1,8 @@
-import Qt 4.6
+import Qt 4.7
 
 Rectangle {
     property string text: ""
-    property bool alert: false
+    property bool cancelable: true
     signal confirmed();
 
     id: page
@@ -16,7 +16,7 @@ Rectangle {
     Text {
         id: dialogText
         text: page.text
-        wrap: true
+        wrapMode: Text.WordWrap
         x: 15; y: 15
         color: activePalette.buttonText
         anchors.horizontalCenter: page.horizontalCenter
@@ -47,12 +47,10 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        if (alert == true)
-        {
+        if (cancelable == false) {
             noButton.opacity = 0;
             okButton.anchors.horizontalCenter = page.horizontalCenter;
-        }
-        else {
+        } else {
             okButton.anchors.right = page.horizontalCenter; 
             okButton.anchors.rightMargin = 5;
         }

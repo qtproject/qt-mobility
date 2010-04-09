@@ -1,14 +1,15 @@
 TEMPLATE = app
 TARGET = declarative-sfw-notes
-INCLUDEPATH += ../../../src/serviceframework
+INCLUDEPATH += ../../src/serviceframework
 
-include(../../examples.pri)
+include(../examples.pri)
 
 QT += declarative
 
-HEADERS += note.h \
-           sfwnotes.h
+HEADERS += sfwnotes.h \
+           qdeclarativeservice.h
 SOURCES += sfwnotes.cpp \
+           qdeclarativeservice.cpp \
            main.cpp
 
 CONFIG += mobility

@@ -1,5 +1,7 @@
-import Qt 4.6
-import QtSFW 1.0
+import Qt 4.7
+// ![4]
+import QtMobility.serviceframework 1.0
+// ![4]
 
 //Layout of the ServiceList control
 //---------------------------------
@@ -19,8 +21,8 @@ import QtSFW 1.0
 //---------------------------------
     
 Rectangle {
-    property variant dialService: 0
-    signal serviceSelected
+    property var dialService: 0
+    signal signalSelected
     
     Text {
         id: title
@@ -65,7 +67,7 @@ Rectangle {
 
                 //! [2]
                 MouseArea {
-                    id: listItemMouseArea
+                    id: listItemMouseRegion
                     anchors.fill: parent
                     onClicked: {
                         if(listFrame.nohighlightlistitem){
@@ -74,7 +76,7 @@ Rectangle {
                         }
                         serviceListView.currentIndex = index;
                         dialService = model.modelData;
-                        serviceSelected()
+                        signalSelected()
                     }
                 }
 
@@ -84,7 +86,7 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.topMargin: 5
                     anchors.leftMargin: 3
-                    text: " <b>Service:</b> " + serviceName + "  (" + version + ")"
+                    text: " <b>Service:</b> " + serviceName + "  (" + versionNumber + ")"
                 }
                 
                 Text { 
@@ -125,16 +127,20 @@ Rectangle {
             anchors.topMargin: 5
             anchors.leftMargin: 5
             anchors.rightMargin: 5
-            model: services.registeredservices
-         //! [0]
+            model: dialerServiceList.services
             opacity: 1
             delegate: delegate
             currentIndex: -1
             clip: true
         }
+        //! [0]
     }
 
-    Services {
-        id: services
+    //! [5]
+    ServiceList {
+        id: dialerServiceList
+        interfaceName: "com.nokia.qt.examples.Dialer"
+        minVersion: "1.0"
     }
+    //! [5]
 }
