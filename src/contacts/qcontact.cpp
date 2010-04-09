@@ -231,7 +231,31 @@ void QContact::setId(const QContactId& id)
     d->m_id = id;
 }
 
-/*! Returns the first detail stored in the contact which is of the given \a definitionName */
+/*!
+    \fn QContactDetail QContact::detail(const QLatin1Constant& definitionName) const
+    Returns the first detail stored in the contact which is of the given \a definitionName
+*/
+
+/*!
+    \fn QList<QContactDetail> QContact::details(const QLatin1Constant& definitionName) const
+    Returns a list of details of the given \a definitionName
+*/
+
+/*!
+    \fn QList<QContactDetail> QContact::details(const QLatin1Constant& definitionName, const QLatin1Constant& fieldName, const QString& value)
+    Returns a list of details of the given \a definitionName, \a fieldName and field \a value
+*/
+
+/*!
+    \fn QList<T> QContact::details(const char* fieldName, const QString& value) const
+    \internal
+
+    Returns a list of details of the template type which match the \a fieldName and \a value criteria
+*/
+
+/*!
+    Returns the first detail stored in the contact which is of the given \a definitionName
+*/
 QContactDetail QContact::detail(const QString& definitionName) const
 {
     if (definitionName.isEmpty())
@@ -291,7 +315,10 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
     return sublist;
 }
 
-/*! Returns the first detail stored in the contact which is of the given \a definitionName */
+/*!
+    \internal
+    Returns the first detail stored in the contact which is of the given \a definitionName
+*/
 QContactDetail QContact::detail(const char* definitionName) const
 {
     if (definitionName == 0)
@@ -308,7 +335,10 @@ QContactDetail QContact::detail(const char* definitionName) const
     return QContactDetail();
 }
 
-/*! Returns a list of details of the given \a definitionName */
+/*!
+    \internal
+    Returns a list of details of the given \a definitionName
+*/
 QList<QContactDetail> QContact::details(const char* definitionName) const
 {
     // build the sub-list of matching details.
@@ -329,7 +359,10 @@ QList<QContactDetail> QContact::details(const char* definitionName) const
     return sublist;
 }
 
-/*! Returns a list of details of the given \a definitionName, \a fieldName and field \a value*/
+/*!
+    \internal
+    Returns a list of details of the given \a definitionName, \a fieldName and field \a value
+*/
 QList<QContactDetail> QContact::details(const char* definitionName, const char* fieldName, const QString& value) const
 {
     // build the sub-list of matching details.
