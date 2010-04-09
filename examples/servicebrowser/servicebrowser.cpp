@@ -51,6 +51,12 @@ Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
+#if defined(Q_OS_MAC)
+    QDir dir(QCoreApplication::applicationDirPath());
+    dir.cdUp();
+    dir.cd("PlugIns");
+    QCoreApplication::addLibraryPath(dir.absolutePath());
+#endif
     serviceManager = new QServiceManager(this);
 
     registerExampleServices();

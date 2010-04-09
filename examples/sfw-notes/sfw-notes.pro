@@ -38,3 +38,8 @@ symbian {
     #TARGET.CAPABILITY = ALL -TCB
     #FORMS += sfwnotes.ui #change to sfwnotes_small.ui
 }
+mac {
+    addFiles.sources += ../notesmanagerplugin/notesmanagerservice.xml
+    addFiles.path = sfw-notes.app/Contents/MacOS/xmldata
+    DEPLOYMENT += addFiles
+}
