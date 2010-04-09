@@ -54,88 +54,84 @@ EXPORTS
 	?createDefaultSource@QGeoSatelliteInfoSource@QtMobility@@SAPAV12@PAVQObject@@@Z @ 53 NONAME ; class QtMobility::QGeoSatelliteInfoSource * QtMobility::QGeoSatelliteInfoSource::createDefaultSource(class QObject *)
 	?device@QNmeaPositionInfoSource@QtMobility@@QBEPAVQIODevice@@XZ @ 54 NONAME ; class QIODevice * QtMobility::QNmeaPositionInfoSource::device(void) const
 	?distanceTo@QGeoCoordinate@QtMobility@@QBEMABV12@@Z @ 55 NONAME ; float QtMobility::QGeoCoordinate::distanceTo(class QtMobility::QGeoCoordinate const &) const
-	?getNmeaLatLong@QLocationUtils@QtMobility@@SA_NABVQByteArray@@D0DPAN1@Z @ 56 NONAME ; bool QtMobility::QLocationUtils::getNmeaLatLong(class QByteArray const &, char, class QByteArray const &, char, double *, double *)
-	?getNmeaTime@QLocationUtils@QtMobility@@SA_NABVQByteArray@@PAVQTime@@@Z @ 57 NONAME ; bool QtMobility::QLocationUtils::getNmeaTime(class QByteArray const &, class QTime *)
-	?getPosInfoFromNmea@QLocationUtils@QtMobility@@SA_NPBDHPAVQGeoPositionInfo@2@PA_N@Z @ 58 NONAME ; bool QtMobility::QLocationUtils::getPosInfoFromNmea(char const *, int, class QtMobility::QGeoPositionInfo *, bool *)
-	?getStaticMetaObject@QGeoAreaMonitor@QtMobility@@SAABUQMetaObject@@XZ @ 59 NONAME ; struct QMetaObject const & QtMobility::QGeoAreaMonitor::getStaticMetaObject(void)
-	?getStaticMetaObject@QGeoPositionInfoSource@QtMobility@@SAABUQMetaObject@@XZ @ 60 NONAME ; struct QMetaObject const & QtMobility::QGeoPositionInfoSource::getStaticMetaObject(void)
-	?getStaticMetaObject@QGeoSatelliteInfoSource@QtMobility@@SAABUQMetaObject@@XZ @ 61 NONAME ; struct QMetaObject const & QtMobility::QGeoSatelliteInfoSource::getStaticMetaObject(void)
-	?getStaticMetaObject@QNmeaPositionInfoSource@QtMobility@@SAABUQMetaObject@@XZ @ 62 NONAME ; struct QMetaObject const & QtMobility::QNmeaPositionInfoSource::getStaticMetaObject(void)
-	?hasAttribute@QGeoPositionInfo@QtMobility@@QBE_NW4Attribute@12@@Z @ 63 NONAME ; bool QtMobility::QGeoPositionInfo::hasAttribute(enum QtMobility::QGeoPositionInfo::Attribute) const
-	?hasAttribute@QGeoSatelliteInfo@QtMobility@@QBE_NW4Attribute@12@@Z @ 64 NONAME ; bool QtMobility::QGeoSatelliteInfo::hasAttribute(enum QtMobility::QGeoSatelliteInfo::Attribute) const
-	?hasValidNmeaChecksum@QLocationUtils@QtMobility@@SA_NPBDH@Z @ 65 NONAME ; bool QtMobility::QLocationUtils::hasValidNmeaChecksum(char const *, int)
-	?isValid@QGeoCoordinate@QtMobility@@QBE_NXZ @ 66 NONAME ; bool QtMobility::QGeoCoordinate::isValid(void) const
-	?isValid@QGeoPositionInfo@QtMobility@@QBE_NXZ @ 67 NONAME ; bool QtMobility::QGeoPositionInfo::isValid(void) const
-	?lastKnownPosition@QNmeaPositionInfoSource@QtMobility@@UBE?AVQGeoPositionInfo@2@_N@Z @ 68 NONAME ; class QtMobility::QGeoPositionInfo QtMobility::QNmeaPositionInfoSource::lastKnownPosition(bool) const
-	?latitude@QGeoCoordinate@QtMobility@@QBENXZ @ 69 NONAME ; double QtMobility::QGeoCoordinate::latitude(void) const
-	?longitude@QGeoCoordinate@QtMobility@@QBENXZ @ 70 NONAME ; double QtMobility::QGeoCoordinate::longitude(void) const
-	?metaObject@QGeoAreaMonitor@QtMobility@@UBEPBUQMetaObject@@XZ @ 71 NONAME ; struct QMetaObject const * QtMobility::QGeoAreaMonitor::metaObject(void) const
-	?metaObject@QGeoPositionInfoSource@QtMobility@@UBEPBUQMetaObject@@XZ @ 72 NONAME ; struct QMetaObject const * QtMobility::QGeoPositionInfoSource::metaObject(void) const
-	?metaObject@QGeoSatelliteInfoSource@QtMobility@@UBEPBUQMetaObject@@XZ @ 73 NONAME ; struct QMetaObject const * QtMobility::QGeoSatelliteInfoSource::metaObject(void) const
-	?metaObject@QNmeaPositionInfoSource@QtMobility@@UBEPBUQMetaObject@@XZ @ 74 NONAME ; struct QMetaObject const * QtMobility::QNmeaPositionInfoSource::metaObject(void) const
-	?minimumUpdateInterval@QNmeaPositionInfoSource@QtMobility@@UBEHXZ @ 75 NONAME ; int QtMobility::QNmeaPositionInfoSource::minimumUpdateInterval(void) const
-	?parsePosInfoFromNmeaData@QNmeaPositionInfoSource@QtMobility@@MAE_NPBDHPAVQGeoPositionInfo@2@PA_N@Z @ 76 NONAME ; bool QtMobility::QNmeaPositionInfoSource::parsePosInfoFromNmeaData(char const *, int, class QtMobility::QGeoPositionInfo *, bool *)
-	?positionUpdated@QGeoPositionInfoSource@QtMobility@@IAEXABVQGeoPositionInfo@2@@Z @ 77 NONAME ; void QtMobility::QGeoPositionInfoSource::positionUpdated(class QtMobility::QGeoPositionInfo const &)
-	?preferredPositioningMethods@QGeoPositionInfoSource@QtMobility@@QBE?AV?$QFlags@W4PositioningMethod@QGeoPositionInfoSource@QtMobility@@@@XZ @ 78 NONAME ; class QFlags<enum QtMobility::QGeoPositionInfoSource::PositioningMethod> QtMobility::QGeoPositionInfoSource::preferredPositioningMethods(void) const
-	?prnNumber@QGeoSatelliteInfo@QtMobility@@QBEHXZ @ 79 NONAME ; int QtMobility::QGeoSatelliteInfo::prnNumber(void) const
-	?qt_metacall@QGeoAreaMonitor@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 80 NONAME ; int QtMobility::QGeoAreaMonitor::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoPositionInfoSource@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 81 NONAME ; int QtMobility::QGeoPositionInfoSource::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QGeoSatelliteInfoSource@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 82 NONAME ; int QtMobility::QGeoSatelliteInfoSource::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacall@QNmeaPositionInfoSource@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 83 NONAME ; int QtMobility::QNmeaPositionInfoSource::qt_metacall(enum QMetaObject::Call, int, void * *)
-	?qt_metacast@QGeoAreaMonitor@QtMobility@@UAEPAXPBD@Z @ 84 NONAME ; void * QtMobility::QGeoAreaMonitor::qt_metacast(char const *)
-	?qt_metacast@QGeoPositionInfoSource@QtMobility@@UAEPAXPBD@Z @ 85 NONAME ; void * QtMobility::QGeoPositionInfoSource::qt_metacast(char const *)
-	?qt_metacast@QGeoSatelliteInfoSource@QtMobility@@UAEPAXPBD@Z @ 86 NONAME ; void * QtMobility::QGeoSatelliteInfoSource::qt_metacast(char const *)
-	?qt_metacast@QNmeaPositionInfoSource@QtMobility@@UAEPAXPBD@Z @ 87 NONAME ; void * QtMobility::QNmeaPositionInfoSource::qt_metacast(char const *)
-	?radius@QGeoAreaMonitor@QtMobility@@QBEMXZ @ 88 NONAME ; float QtMobility::QGeoAreaMonitor::radius(void) const
-	?removeAttribute@QGeoPositionInfo@QtMobility@@QAEXW4Attribute@12@@Z @ 89 NONAME ; void QtMobility::QGeoPositionInfo::removeAttribute(enum QtMobility::QGeoPositionInfo::Attribute)
-	?removeAttribute@QGeoSatelliteInfo@QtMobility@@QAEXW4Attribute@12@@Z @ 90 NONAME ; void QtMobility::QGeoSatelliteInfo::removeAttribute(enum QtMobility::QGeoSatelliteInfo::Attribute)
-	?requestTimeout@QGeoSatelliteInfoSource@QtMobility@@IAEXXZ @ 91 NONAME ; void QtMobility::QGeoSatelliteInfoSource::requestTimeout(void)
-	?requestUpdate@QNmeaPositionInfoSource@QtMobility@@UAEXH@Z @ 92 NONAME ; void QtMobility::QNmeaPositionInfoSource::requestUpdate(int)
-	?satellitesInUseUpdated@QGeoSatelliteInfoSource@QtMobility@@IAEXABV?$QList@VQGeoSatelliteInfo@QtMobility@@@@@Z @ 93 NONAME ; void QtMobility::QGeoSatelliteInfoSource::satellitesInUseUpdated(class QList<class QtMobility::QGeoSatelliteInfo> const &)
-	?satellitesInViewUpdated@QGeoSatelliteInfoSource@QtMobility@@IAEXABV?$QList@VQGeoSatelliteInfo@QtMobility@@@@@Z @ 94 NONAME ; void QtMobility::QGeoSatelliteInfoSource::satellitesInViewUpdated(class QList<class QtMobility::QGeoSatelliteInfo> const &)
-	?setAltitude@QGeoCoordinate@QtMobility@@QAEXN@Z @ 95 NONAME ; void QtMobility::QGeoCoordinate::setAltitude(double)
-	?setAttribute@QGeoPositionInfo@QtMobility@@QAEXW4Attribute@12@M@Z @ 96 NONAME ; void QtMobility::QGeoPositionInfo::setAttribute(enum QtMobility::QGeoPositionInfo::Attribute, float)
-	?setAttribute@QGeoSatelliteInfo@QtMobility@@QAEXW4Attribute@12@M@Z @ 97 NONAME ; void QtMobility::QGeoSatelliteInfo::setAttribute(enum QtMobility::QGeoSatelliteInfo::Attribute, float)
-	?setCenter@QGeoAreaMonitor@QtMobility@@UAEXABVQGeoCoordinate@2@@Z @ 98 NONAME ; void QtMobility::QGeoAreaMonitor::setCenter(class QtMobility::QGeoCoordinate const &)
-	?setCoordinate@QGeoPositionInfo@QtMobility@@QAEXABVQGeoCoordinate@2@@Z @ 99 NONAME ; void QtMobility::QGeoPositionInfo::setCoordinate(class QtMobility::QGeoCoordinate const &)
-	?setDevice@QNmeaPositionInfoSource@QtMobility@@QAEXPAVQIODevice@@@Z @ 100 NONAME ; void QtMobility::QNmeaPositionInfoSource::setDevice(class QIODevice *)
-	?setLatitude@QGeoCoordinate@QtMobility@@QAEXN@Z @ 101 NONAME ; void QtMobility::QGeoCoordinate::setLatitude(double)
-	?setLongitude@QGeoCoordinate@QtMobility@@QAEXN@Z @ 102 NONAME ; void QtMobility::QGeoCoordinate::setLongitude(double)
-	?setPreferredPositioningMethods@QGeoPositionInfoSource@QtMobility@@UAEXV?$QFlags@W4PositioningMethod@QGeoPositionInfoSource@QtMobility@@@@@Z @ 103 NONAME ; void QtMobility::QGeoPositionInfoSource::setPreferredPositioningMethods(class QFlags<enum QtMobility::QGeoPositionInfoSource::PositioningMethod>)
-	?setPrnNumber@QGeoSatelliteInfo@QtMobility@@QAEXH@Z @ 104 NONAME ; void QtMobility::QGeoSatelliteInfo::setPrnNumber(int)
-	?setRadius@QGeoAreaMonitor@QtMobility@@UAEXM@Z @ 105 NONAME ; void QtMobility::QGeoAreaMonitor::setRadius(float)
-	?setSignalStrength@QGeoSatelliteInfo@QtMobility@@QAEXH@Z @ 106 NONAME ; void QtMobility::QGeoSatelliteInfo::setSignalStrength(int)
-	?setTimestamp@QGeoPositionInfo@QtMobility@@QAEXABVQDateTime@@@Z @ 107 NONAME ; void QtMobility::QGeoPositionInfo::setTimestamp(class QDateTime const &)
-	?setUpdateInterval@QGeoPositionInfoSource@QtMobility@@UAEXH@Z @ 108 NONAME ; void QtMobility::QGeoPositionInfoSource::setUpdateInterval(int)
-	?setUpdateInterval@QNmeaPositionInfoSource@QtMobility@@UAEXH@Z @ 109 NONAME ; void QtMobility::QNmeaPositionInfoSource::setUpdateInterval(int)
-	?signalStrength@QGeoSatelliteInfo@QtMobility@@QBEHXZ @ 110 NONAME ; int QtMobility::QGeoSatelliteInfo::signalStrength(void) const
-	?startUpdates@QNmeaPositionInfoSource@QtMobility@@UAEXXZ @ 111 NONAME ; void QtMobility::QNmeaPositionInfoSource::startUpdates(void)
-	?stopUpdates@QNmeaPositionInfoSource@QtMobility@@UAEXXZ @ 112 NONAME ; void QtMobility::QNmeaPositionInfoSource::stopUpdates(void)
-	?supportedPositioningMethods@QNmeaPositionInfoSource@QtMobility@@UBE?AV?$QFlags@W4PositioningMethod@QGeoPositionInfoSource@QtMobility@@@@XZ @ 113 NONAME ; class QFlags<enum QtMobility::QGeoPositionInfoSource::PositioningMethod> QtMobility::QNmeaPositionInfoSource::supportedPositioningMethods(void) const
-	?timestamp@QGeoPositionInfo@QtMobility@@QBE?AVQDateTime@@XZ @ 114 NONAME ; class QDateTime QtMobility::QGeoPositionInfo::timestamp(void) const
-	?toString@QGeoCoordinate@QtMobility@@QBE?AVQString@@W4CoordinateFormat@12@@Z @ 115 NONAME ; class QString QtMobility::QGeoCoordinate::toString(enum QtMobility::QGeoCoordinate::CoordinateFormat) const
-	?tr@QGeoAreaMonitor@QtMobility@@SA?AVQString@@PBD0@Z @ 116 NONAME ; class QString QtMobility::QGeoAreaMonitor::tr(char const *, char const *)
-	?tr@QGeoAreaMonitor@QtMobility@@SA?AVQString@@PBD0H@Z @ 117 NONAME ; class QString QtMobility::QGeoAreaMonitor::tr(char const *, char const *, int)
-	?tr@QGeoPositionInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 118 NONAME ; class QString QtMobility::QGeoPositionInfoSource::tr(char const *, char const *)
-	?tr@QGeoPositionInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 119 NONAME ; class QString QtMobility::QGeoPositionInfoSource::tr(char const *, char const *, int)
-	?tr@QGeoSatelliteInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 120 NONAME ; class QString QtMobility::QGeoSatelliteInfoSource::tr(char const *, char const *)
-	?tr@QGeoSatelliteInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 121 NONAME ; class QString QtMobility::QGeoSatelliteInfoSource::tr(char const *, char const *, int)
-	?tr@QNmeaPositionInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 122 NONAME ; class QString QtMobility::QNmeaPositionInfoSource::tr(char const *, char const *)
-	?tr@QNmeaPositionInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 123 NONAME ; class QString QtMobility::QNmeaPositionInfoSource::tr(char const *, char const *, int)
-	?trUtf8@QGeoAreaMonitor@QtMobility@@SA?AVQString@@PBD0@Z @ 124 NONAME ; class QString QtMobility::QGeoAreaMonitor::trUtf8(char const *, char const *)
-	?trUtf8@QGeoAreaMonitor@QtMobility@@SA?AVQString@@PBD0H@Z @ 125 NONAME ; class QString QtMobility::QGeoAreaMonitor::trUtf8(char const *, char const *, int)
-	?trUtf8@QGeoPositionInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 126 NONAME ; class QString QtMobility::QGeoPositionInfoSource::trUtf8(char const *, char const *)
-	?trUtf8@QGeoPositionInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 127 NONAME ; class QString QtMobility::QGeoPositionInfoSource::trUtf8(char const *, char const *, int)
-	?trUtf8@QGeoSatelliteInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 128 NONAME ; class QString QtMobility::QGeoSatelliteInfoSource::trUtf8(char const *, char const *)
-	?trUtf8@QGeoSatelliteInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 129 NONAME ; class QString QtMobility::QGeoSatelliteInfoSource::trUtf8(char const *, char const *, int)
-	?trUtf8@QNmeaPositionInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 130 NONAME ; class QString QtMobility::QNmeaPositionInfoSource::trUtf8(char const *, char const *)
-	?trUtf8@QNmeaPositionInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 131 NONAME ; class QString QtMobility::QNmeaPositionInfoSource::trUtf8(char const *, char const *, int)
-	?type@QGeoCoordinate@QtMobility@@QBE?AW4CoordinateType@12@XZ @ 132 NONAME ; enum QtMobility::QGeoCoordinate::CoordinateType QtMobility::QGeoCoordinate::type(void) const
-	?updateInterval@QGeoPositionInfoSource@QtMobility@@QBEHXZ @ 133 NONAME ; int QtMobility::QGeoPositionInfoSource::updateInterval(void) const
-	?updateMode@QNmeaPositionInfoSource@QtMobility@@QBE?AW4UpdateMode@12@XZ @ 134 NONAME ; enum QtMobility::QNmeaPositionInfoSource::UpdateMode QtMobility::QNmeaPositionInfoSource::updateMode(void) const
-	?updateTimeout@QGeoPositionInfoSource@QtMobility@@IAEXXZ @ 135 NONAME ; void QtMobility::QGeoPositionInfoSource::updateTimeout(void)
-	?staticMetaObject@QGeoAreaMonitor@QtMobility@@2UQMetaObject@@B @ 136 NONAME ; struct QMetaObject const QtMobility::QGeoAreaMonitor::staticMetaObject
-	?staticMetaObject@QGeoPositionInfoSource@QtMobility@@2UQMetaObject@@B @ 137 NONAME ; struct QMetaObject const QtMobility::QGeoPositionInfoSource::staticMetaObject
-	?staticMetaObject@QNmeaPositionInfoSource@QtMobility@@2UQMetaObject@@B @ 138 NONAME ; struct QMetaObject const QtMobility::QNmeaPositionInfoSource::staticMetaObject
-	?staticMetaObject@QGeoSatelliteInfoSource@QtMobility@@2UQMetaObject@@B @ 139 NONAME ; struct QMetaObject const QtMobility::QGeoSatelliteInfoSource::staticMetaObject
+	?getStaticMetaObject@QGeoAreaMonitor@QtMobility@@SAABUQMetaObject@@XZ @ 56 NONAME ; struct QMetaObject const & QtMobility::QGeoAreaMonitor::getStaticMetaObject(void)
+	?getStaticMetaObject@QGeoPositionInfoSource@QtMobility@@SAABUQMetaObject@@XZ @ 57 NONAME ; struct QMetaObject const & QtMobility::QGeoPositionInfoSource::getStaticMetaObject(void)
+	?getStaticMetaObject@QGeoSatelliteInfoSource@QtMobility@@SAABUQMetaObject@@XZ @ 58 NONAME ; struct QMetaObject const & QtMobility::QGeoSatelliteInfoSource::getStaticMetaObject(void)
+	?getStaticMetaObject@QNmeaPositionInfoSource@QtMobility@@SAABUQMetaObject@@XZ @ 59 NONAME ; struct QMetaObject const & QtMobility::QNmeaPositionInfoSource::getStaticMetaObject(void)
+	?hasAttribute@QGeoPositionInfo@QtMobility@@QBE_NW4Attribute@12@@Z @ 60 NONAME ; bool QtMobility::QGeoPositionInfo::hasAttribute(enum QtMobility::QGeoPositionInfo::Attribute) const
+	?hasAttribute@QGeoSatelliteInfo@QtMobility@@QBE_NW4Attribute@12@@Z @ 61 NONAME ; bool QtMobility::QGeoSatelliteInfo::hasAttribute(enum QtMobility::QGeoSatelliteInfo::Attribute) const
+	?isValid@QGeoCoordinate@QtMobility@@QBE_NXZ @ 62 NONAME ; bool QtMobility::QGeoCoordinate::isValid(void) const
+	?isValid@QGeoPositionInfo@QtMobility@@QBE_NXZ @ 63 NONAME ; bool QtMobility::QGeoPositionInfo::isValid(void) const
+	?lastKnownPosition@QNmeaPositionInfoSource@QtMobility@@UBE?AVQGeoPositionInfo@2@_N@Z @ 64 NONAME ; class QtMobility::QGeoPositionInfo QtMobility::QNmeaPositionInfoSource::lastKnownPosition(bool) const
+	?latitude@QGeoCoordinate@QtMobility@@QBENXZ @ 65 NONAME ; double QtMobility::QGeoCoordinate::latitude(void) const
+	?longitude@QGeoCoordinate@QtMobility@@QBENXZ @ 66 NONAME ; double QtMobility::QGeoCoordinate::longitude(void) const
+	?metaObject@QGeoAreaMonitor@QtMobility@@UBEPBUQMetaObject@@XZ @ 67 NONAME ; struct QMetaObject const * QtMobility::QGeoAreaMonitor::metaObject(void) const
+	?metaObject@QGeoPositionInfoSource@QtMobility@@UBEPBUQMetaObject@@XZ @ 68 NONAME ; struct QMetaObject const * QtMobility::QGeoPositionInfoSource::metaObject(void) const
+	?metaObject@QGeoSatelliteInfoSource@QtMobility@@UBEPBUQMetaObject@@XZ @ 69 NONAME ; struct QMetaObject const * QtMobility::QGeoSatelliteInfoSource::metaObject(void) const
+	?metaObject@QNmeaPositionInfoSource@QtMobility@@UBEPBUQMetaObject@@XZ @ 70 NONAME ; struct QMetaObject const * QtMobility::QNmeaPositionInfoSource::metaObject(void) const
+	?minimumUpdateInterval@QNmeaPositionInfoSource@QtMobility@@UBEHXZ @ 71 NONAME ; int QtMobility::QNmeaPositionInfoSource::minimumUpdateInterval(void) const
+	?parsePosInfoFromNmeaData@QNmeaPositionInfoSource@QtMobility@@MAE_NPBDHPAVQGeoPositionInfo@2@PA_N@Z @ 72 NONAME ; bool QtMobility::QNmeaPositionInfoSource::parsePosInfoFromNmeaData(char const *, int, class QtMobility::QGeoPositionInfo *, bool *)
+	?positionUpdated@QGeoPositionInfoSource@QtMobility@@IAEXABVQGeoPositionInfo@2@@Z @ 73 NONAME ; void QtMobility::QGeoPositionInfoSource::positionUpdated(class QtMobility::QGeoPositionInfo const &)
+	?preferredPositioningMethods@QGeoPositionInfoSource@QtMobility@@QBE?AV?$QFlags@W4PositioningMethod@QGeoPositionInfoSource@QtMobility@@@@XZ @ 74 NONAME ; class QFlags<enum QtMobility::QGeoPositionInfoSource::PositioningMethod> QtMobility::QGeoPositionInfoSource::preferredPositioningMethods(void) const
+	?prnNumber@QGeoSatelliteInfo@QtMobility@@QBEHXZ @ 75 NONAME ; int QtMobility::QGeoSatelliteInfo::prnNumber(void) const
+	?qt_metacall@QGeoAreaMonitor@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 76 NONAME ; int QtMobility::QGeoAreaMonitor::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoPositionInfoSource@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 77 NONAME ; int QtMobility::QGeoPositionInfoSource::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QGeoSatelliteInfoSource@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 78 NONAME ; int QtMobility::QGeoSatelliteInfoSource::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacall@QNmeaPositionInfoSource@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 79 NONAME ; int QtMobility::QNmeaPositionInfoSource::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?qt_metacast@QGeoAreaMonitor@QtMobility@@UAEPAXPBD@Z @ 80 NONAME ; void * QtMobility::QGeoAreaMonitor::qt_metacast(char const *)
+	?qt_metacast@QGeoPositionInfoSource@QtMobility@@UAEPAXPBD@Z @ 81 NONAME ; void * QtMobility::QGeoPositionInfoSource::qt_metacast(char const *)
+	?qt_metacast@QGeoSatelliteInfoSource@QtMobility@@UAEPAXPBD@Z @ 82 NONAME ; void * QtMobility::QGeoSatelliteInfoSource::qt_metacast(char const *)
+	?qt_metacast@QNmeaPositionInfoSource@QtMobility@@UAEPAXPBD@Z @ 83 NONAME ; void * QtMobility::QNmeaPositionInfoSource::qt_metacast(char const *)
+	?radius@QGeoAreaMonitor@QtMobility@@QBEMXZ @ 84 NONAME ; float QtMobility::QGeoAreaMonitor::radius(void) const
+	?removeAttribute@QGeoPositionInfo@QtMobility@@QAEXW4Attribute@12@@Z @ 85 NONAME ; void QtMobility::QGeoPositionInfo::removeAttribute(enum QtMobility::QGeoPositionInfo::Attribute)
+	?removeAttribute@QGeoSatelliteInfo@QtMobility@@QAEXW4Attribute@12@@Z @ 86 NONAME ; void QtMobility::QGeoSatelliteInfo::removeAttribute(enum QtMobility::QGeoSatelliteInfo::Attribute)
+	?requestTimeout@QGeoSatelliteInfoSource@QtMobility@@IAEXXZ @ 87 NONAME ; void QtMobility::QGeoSatelliteInfoSource::requestTimeout(void)
+	?requestUpdate@QNmeaPositionInfoSource@QtMobility@@UAEXH@Z @ 88 NONAME ; void QtMobility::QNmeaPositionInfoSource::requestUpdate(int)
+	?satellitesInUseUpdated@QGeoSatelliteInfoSource@QtMobility@@IAEXABV?$QList@VQGeoSatelliteInfo@QtMobility@@@@@Z @ 89 NONAME ; void QtMobility::QGeoSatelliteInfoSource::satellitesInUseUpdated(class QList<class QtMobility::QGeoSatelliteInfo> const &)
+	?satellitesInViewUpdated@QGeoSatelliteInfoSource@QtMobility@@IAEXABV?$QList@VQGeoSatelliteInfo@QtMobility@@@@@Z @ 90 NONAME ; void QtMobility::QGeoSatelliteInfoSource::satellitesInViewUpdated(class QList<class QtMobility::QGeoSatelliteInfo> const &)
+	?setAltitude@QGeoCoordinate@QtMobility@@QAEXN@Z @ 91 NONAME ; void QtMobility::QGeoCoordinate::setAltitude(double)
+	?setAttribute@QGeoPositionInfo@QtMobility@@QAEXW4Attribute@12@M@Z @ 92 NONAME ; void QtMobility::QGeoPositionInfo::setAttribute(enum QtMobility::QGeoPositionInfo::Attribute, float)
+	?setAttribute@QGeoSatelliteInfo@QtMobility@@QAEXW4Attribute@12@M@Z @ 93 NONAME ; void QtMobility::QGeoSatelliteInfo::setAttribute(enum QtMobility::QGeoSatelliteInfo::Attribute, float)
+	?setCenter@QGeoAreaMonitor@QtMobility@@UAEXABVQGeoCoordinate@2@@Z @ 94 NONAME ; void QtMobility::QGeoAreaMonitor::setCenter(class QtMobility::QGeoCoordinate const &)
+	?setCoordinate@QGeoPositionInfo@QtMobility@@QAEXABVQGeoCoordinate@2@@Z @ 95 NONAME ; void QtMobility::QGeoPositionInfo::setCoordinate(class QtMobility::QGeoCoordinate const &)
+	?setDevice@QNmeaPositionInfoSource@QtMobility@@QAEXPAVQIODevice@@@Z @ 96 NONAME ; void QtMobility::QNmeaPositionInfoSource::setDevice(class QIODevice *)
+	?setLatitude@QGeoCoordinate@QtMobility@@QAEXN@Z @ 97 NONAME ; void QtMobility::QGeoCoordinate::setLatitude(double)
+	?setLongitude@QGeoCoordinate@QtMobility@@QAEXN@Z @ 98 NONAME ; void QtMobility::QGeoCoordinate::setLongitude(double)
+	?setPreferredPositioningMethods@QGeoPositionInfoSource@QtMobility@@UAEXV?$QFlags@W4PositioningMethod@QGeoPositionInfoSource@QtMobility@@@@@Z @ 99 NONAME ; void QtMobility::QGeoPositionInfoSource::setPreferredPositioningMethods(class QFlags<enum QtMobility::QGeoPositionInfoSource::PositioningMethod>)
+	?setPrnNumber@QGeoSatelliteInfo@QtMobility@@QAEXH@Z @ 100 NONAME ; void QtMobility::QGeoSatelliteInfo::setPrnNumber(int)
+	?setRadius@QGeoAreaMonitor@QtMobility@@UAEXM@Z @ 101 NONAME ; void QtMobility::QGeoAreaMonitor::setRadius(float)
+	?setSignalStrength@QGeoSatelliteInfo@QtMobility@@QAEXH@Z @ 102 NONAME ; void QtMobility::QGeoSatelliteInfo::setSignalStrength(int)
+	?setTimestamp@QGeoPositionInfo@QtMobility@@QAEXABVQDateTime@@@Z @ 103 NONAME ; void QtMobility::QGeoPositionInfo::setTimestamp(class QDateTime const &)
+	?setUpdateInterval@QGeoPositionInfoSource@QtMobility@@UAEXH@Z @ 104 NONAME ; void QtMobility::QGeoPositionInfoSource::setUpdateInterval(int)
+	?setUpdateInterval@QNmeaPositionInfoSource@QtMobility@@UAEXH@Z @ 105 NONAME ; void QtMobility::QNmeaPositionInfoSource::setUpdateInterval(int)
+	?signalStrength@QGeoSatelliteInfo@QtMobility@@QBEHXZ @ 106 NONAME ; int QtMobility::QGeoSatelliteInfo::signalStrength(void) const
+	?startUpdates@QNmeaPositionInfoSource@QtMobility@@UAEXXZ @ 107 NONAME ; void QtMobility::QNmeaPositionInfoSource::startUpdates(void)
+	?stopUpdates@QNmeaPositionInfoSource@QtMobility@@UAEXXZ @ 108 NONAME ; void QtMobility::QNmeaPositionInfoSource::stopUpdates(void)
+	?supportedPositioningMethods@QNmeaPositionInfoSource@QtMobility@@UBE?AV?$QFlags@W4PositioningMethod@QGeoPositionInfoSource@QtMobility@@@@XZ @ 109 NONAME ; class QFlags<enum QtMobility::QGeoPositionInfoSource::PositioningMethod> QtMobility::QNmeaPositionInfoSource::supportedPositioningMethods(void) const
+	?timestamp@QGeoPositionInfo@QtMobility@@QBE?AVQDateTime@@XZ @ 110 NONAME ; class QDateTime QtMobility::QGeoPositionInfo::timestamp(void) const
+	?toString@QGeoCoordinate@QtMobility@@QBE?AVQString@@W4CoordinateFormat@12@@Z @ 111 NONAME ; class QString QtMobility::QGeoCoordinate::toString(enum QtMobility::QGeoCoordinate::CoordinateFormat) const
+	?tr@QGeoAreaMonitor@QtMobility@@SA?AVQString@@PBD0@Z @ 112 NONAME ; class QString QtMobility::QGeoAreaMonitor::tr(char const *, char const *)
+	?tr@QGeoAreaMonitor@QtMobility@@SA?AVQString@@PBD0H@Z @ 113 NONAME ; class QString QtMobility::QGeoAreaMonitor::tr(char const *, char const *, int)
+	?tr@QGeoPositionInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 114 NONAME ; class QString QtMobility::QGeoPositionInfoSource::tr(char const *, char const *)
+	?tr@QGeoPositionInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 115 NONAME ; class QString QtMobility::QGeoPositionInfoSource::tr(char const *, char const *, int)
+	?tr@QGeoSatelliteInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 116 NONAME ; class QString QtMobility::QGeoSatelliteInfoSource::tr(char const *, char const *)
+	?tr@QGeoSatelliteInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 117 NONAME ; class QString QtMobility::QGeoSatelliteInfoSource::tr(char const *, char const *, int)
+	?tr@QNmeaPositionInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 118 NONAME ; class QString QtMobility::QNmeaPositionInfoSource::tr(char const *, char const *)
+	?tr@QNmeaPositionInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 119 NONAME ; class QString QtMobility::QNmeaPositionInfoSource::tr(char const *, char const *, int)
+	?trUtf8@QGeoAreaMonitor@QtMobility@@SA?AVQString@@PBD0@Z @ 120 NONAME ; class QString QtMobility::QGeoAreaMonitor::trUtf8(char const *, char const *)
+	?trUtf8@QGeoAreaMonitor@QtMobility@@SA?AVQString@@PBD0H@Z @ 121 NONAME ; class QString QtMobility::QGeoAreaMonitor::trUtf8(char const *, char const *, int)
+	?trUtf8@QGeoPositionInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 122 NONAME ; class QString QtMobility::QGeoPositionInfoSource::trUtf8(char const *, char const *)
+	?trUtf8@QGeoPositionInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 123 NONAME ; class QString QtMobility::QGeoPositionInfoSource::trUtf8(char const *, char const *, int)
+	?trUtf8@QGeoSatelliteInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 124 NONAME ; class QString QtMobility::QGeoSatelliteInfoSource::trUtf8(char const *, char const *)
+	?trUtf8@QGeoSatelliteInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 125 NONAME ; class QString QtMobility::QGeoSatelliteInfoSource::trUtf8(char const *, char const *, int)
+	?trUtf8@QNmeaPositionInfoSource@QtMobility@@SA?AVQString@@PBD0@Z @ 126 NONAME ; class QString QtMobility::QNmeaPositionInfoSource::trUtf8(char const *, char const *)
+	?trUtf8@QNmeaPositionInfoSource@QtMobility@@SA?AVQString@@PBD0H@Z @ 127 NONAME ; class QString QtMobility::QNmeaPositionInfoSource::trUtf8(char const *, char const *, int)
+	?type@QGeoCoordinate@QtMobility@@QBE?AW4CoordinateType@12@XZ @ 128 NONAME ; enum QtMobility::QGeoCoordinate::CoordinateType QtMobility::QGeoCoordinate::type(void) const
+	?updateInterval@QGeoPositionInfoSource@QtMobility@@QBEHXZ @ 129 NONAME ; int QtMobility::QGeoPositionInfoSource::updateInterval(void) const
+	?updateMode@QNmeaPositionInfoSource@QtMobility@@QBE?AW4UpdateMode@12@XZ @ 130 NONAME ; enum QtMobility::QNmeaPositionInfoSource::UpdateMode QtMobility::QNmeaPositionInfoSource::updateMode(void) const
+	?updateTimeout@QGeoPositionInfoSource@QtMobility@@IAEXXZ @ 131 NONAME ; void QtMobility::QGeoPositionInfoSource::updateTimeout(void)
+	?staticMetaObject@QGeoAreaMonitor@QtMobility@@2UQMetaObject@@B @ 132 NONAME ; struct QMetaObject const QtMobility::QGeoAreaMonitor::staticMetaObject
+	?staticMetaObject@QGeoPositionInfoSource@QtMobility@@2UQMetaObject@@B @ 133 NONAME ; struct QMetaObject const QtMobility::QGeoPositionInfoSource::staticMetaObject
+	?staticMetaObject@QNmeaPositionInfoSource@QtMobility@@2UQMetaObject@@B @ 134 NONAME ; struct QMetaObject const QtMobility::QNmeaPositionInfoSource::staticMetaObject
+	?staticMetaObject@QGeoSatelliteInfoSource@QtMobility@@2UQMetaObject@@B @ 135 NONAME ; struct QMetaObject const QtMobility::QGeoSatelliteInfoSource::staticMetaObject
 
