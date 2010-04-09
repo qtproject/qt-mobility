@@ -57,8 +57,16 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.
   \ingroup contacts-main
  
-  This class provides adding, updating and removal of contacts.
-  It also provides definitions for details and fields that can be found in contacts.
+  This class provides an abstraction of a datastore or aggregation of datastores which contains contact information.
+  It provides methods to retrieve and manipulate contact information, contact relationship information, and
+  supported schema definitions.  It also provides metadata and error information reporting.
+
+  The functions provided by QContactManager are purely synchronous; to access the same functionality in an
+  asynchronous manner, clients should use the use-case-specific classes derived from QContactAbstractRequest.
+
+  Some functionality provided by QContactManager directly is not accessible using the asynchronous API; see
+  the \l{Contacts Synchronous API}{synchronous} and \l{Contacts Asynchronous API}{asynchronous} API
+  information from the \l{Contacts}{contacts module} API documentation.
  */
 
 /*!
@@ -731,7 +739,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
 /*!
   \enum QContactManager::ManagerFeature
   This enum describes the possible features that a particular manager may support
-  \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
+  \value Groups The manager supports saving contacts of the \c QContactType::TypeGroup type
   \value ActionPreferences The manager supports saving preferred details per action per contact
   \value DetailOrdering When a contact is retrieved, the manager will return the details in the same order in which they were saved
   \value Relationships The manager supports at least some types of relationships between contacts

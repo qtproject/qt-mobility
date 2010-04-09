@@ -1033,7 +1033,12 @@ Q_DEFINE_LATIN1_CONSTANT(QContactType::TypeContact, "Contact");
    \variable QContactType::TypeGroup
 
    The constant attribute value which describes the contact as being a
-   group.
+   group.  Contacts of this type are able to be the first contact in
+   relationships of the \c QContactRelationship::HasMember type.
+
+   To enumerate the ids of members of a group, the client should
+   retrieve the relationships which involve the group from the manager
+   in which the group is saved.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactType::TypeGroup, "Group");
 
