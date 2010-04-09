@@ -479,7 +479,7 @@ bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManag
     QMessageService::exportUpdates() should be subsequently called.
     
     On the Maemo 5 (Fremantle) platform for SMS type messages this function is not yet 
-    supported, and for email type messages setting priority and status is not yet supported.
+    supported.
     
     Using this function to explicitly set a size or date is not currently supported on some platforms.
     
