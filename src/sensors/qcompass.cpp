@@ -85,6 +85,8 @@ qreal QCompassReading::azimuth() const
 
 /*!
     Sets the \a azimuth of the device.
+    
+    \sa {QCompassReading Units}
 */
 void QCompassReading::setAzimuth(qreal azimuth)
 {
