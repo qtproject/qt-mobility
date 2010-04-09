@@ -1,9 +1,11 @@
-import Qt 4.6
+import Qt 4.7
+import QtMobility.serviceframework 1.0
+import "content"
 
 //Layout of the mainPage
 //----------------------------------------------  ____ mainPage
 //| ------------------- ---------------------- | /
-//| | serviceList     | | dialScreen         | |/
+//| | dialerList     | | dialScreen         | |/
 //| |                 | |                    | |
 //| |                 | |                    | |
 //| |                 | |                    | |
@@ -21,13 +23,15 @@ import Qt 4.6
 //----------------------------------------------
 
 Rectangle {
+    property var dialerObject: defaultService.serviceObject
+    
     id: mainPage
     width: 500
     height: 250
     color: "white"
 
-    ServiceList {
-        id: serviceList
+    DialerList {
+        id: dialerList
         height: childrenRect.height + 10
         width: childrenRect.width
         anchors.top: parent.top
@@ -52,16 +56,16 @@ Rectangle {
                     color: "steelblue"
                 }
             }
-        onServiceSelected: { ServiceSelected(); }
+        onSignalSelected: { serviceSelected(); }
     }
 
-    Script {
-        function ServiceSelected()
-        {
-            serviceDetails.text = "Selected dial service:" + "\n   " + 
-                                   serviceList.dialService.serviceName + 
-                                   "\n   (" + serviceList.dialService.version + ")";
-        }
+    function serviceSelected()
+    {
+        dialerObject = dialerList.dialService.serviceObject
+
+        serviceDetails.text = "Selected dial service:" + "\n   " + 
+                               dialerList.dialService.serviceName + 
+                               "\n   (" + dialerList.dialService.versionNumber + ")";
     }
     
     Text {
@@ -71,7 +75,7 @@ Rectangle {
         anchors.leftMargin: 5
         anchors.rightMargin: 5;
         anchors.left: parent.left
-        anchors.top: serviceList.bottom
+        anchors.top: dialerList.bottom
     }
     
     Text {
@@ -104,8 +108,8 @@ Rectangle {
         anchors.top: parent.top
         onDial: {
             if (activeCall == false) {
-                if (serviceList.dialService != 0) {
-                    var o = serviceList.dialService.serviceObject();
+                if (dialerList.dialService != 0) {
+                    var o = dialerObject;
                     status.text = "Dialing " + numberToDial +"...";
                     dialScreen.currentDialer = o;
                     o.dialNumber(numberToDial);
@@ -126,8 +130,9 @@ Rectangle {
 
     //! [1]
     Connections {
-        target: dialScreen
-        onStateChanged: { 
+        target: dialerObject
+        
+        onStateChanged: {
             if (dialScreen.currentDialer.state == 1) {
                 status.text += "\nRinging";
             } 
@@ -145,4 +150,9 @@ Rectangle {
         }
     }
     //! [1]
+
+    Service {
+        id: defaultService
+        interfaceName: "com.nokia.qt.examples.Dialer"
+    }
 }

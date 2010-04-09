@@ -46,8 +46,6 @@
 
 #include "sfwnotes.h"
 
-Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
-
 ToDoTool::ToDoTool(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
@@ -80,23 +78,37 @@ void ToDoTool::soundAlarm(const QDateTime& alarm)
 
 void ToDoTool::init()
 {
-    QServiceManager mgr;
-    QServiceFilter filter;
-    filter.setServiceName("NotesManagerService");
-    QList<QServiceInterfaceDescriptor> list = serviceManager->findInterfaces(filter);
+    bool ok;
+    QString interfaceName = QInputDialog::getText(this, tr("ToDoTool"), tr("Specify Notes Manager interface:"),
+                                                  QLineEdit::Normal, "com.nokia.qt.examples.NotesManager", &ok);
+    if (ok) {
+        QServiceInterfaceDescriptor desc = serviceManager->interfaceDefault(interfaceName);
+        
+        if (desc.isValid()) {
+            QServiceManager mgr;
+            notesManager = mgr.loadInterface(desc);
 
-    notesManager = mgr.loadInterface(list[0]);
+            if (notesManager)
+                notesManager->setParent(this);
 
-    if (notesManager)
-        notesManager->setParent(this);
+            currentNote = 1;
+            searchWord = "";    
+            refreshList();
 
-    {
-        currentNote = 1;
-        searchWord = "";    
-        refreshList();
+            addButton->setEnabled(true);
+            deleteButton->setEnabled(true);
+            searchButton->setEnabled(true);
+            nextButton->setEnabled(true);
+            prevButton->setEnabled(true);
 
-        QObject::connect(notesManager, SIGNAL(soundAlarm(QDateTime)), 
-                         this, SLOT(soundAlarm(QDateTime)));
+            QObject::connect(notesManager, SIGNAL(soundAlarm(QDateTime)), 
+                            this, SLOT(soundAlarm(QDateTime)));
+        } else {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle(tr("ToDoTool"));
+            msgBox.setText("No valid default interface for:\n\n\"" + interfaceName + "\"");
+            msgBox.exec();
+        }
     }
 }
 

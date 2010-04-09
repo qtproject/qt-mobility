@@ -37,30 +37,29 @@
 **
 ** $QT_END_LICENSE$
 **
-****************************************************************************/
+***************************************************************************/
 
-#include <QApplication>
-#include <QUrl>
+#ifndef SFWNOTES_H
+#define SFWNOTES_H
+
 #include <QtCore>
-#include <QtDeclarative/QDeclarativeView>
 #include <qserviceinterfacedescriptor.h>
 #include <qservicemanager.h>
-#include <qdeclarative.h>
 
-#include "sfwnotes.h"
-#include "note.h"
+QTM_USE_NAMESPACE
 
-int main(int argc, char* argv[])
-{
-    qmlRegisterType<ServiceWrapper>("QtSFW", 1, 0, "Service");
-    //QML_REGISTER_TYPE(QtSFW,1,0,Service, ServiceWrapper);
-    //QML_REGISTER_NOCREATE_TYPE(Note);
+class ToDoTool : public QObject {
+    Q_OBJECT
 
-    QApplication app(argc, argv);
+public:
+    ToDoTool();
+    ~ToDoTool();
+    
+private:
+    void registerExampleServices();
+    void unregisterExampleServices();
+    
+    QServiceManager* serviceManager;
+};
 
-    QDeclarativeView canvas;
-    canvas.setSource(QUrl("qrc:/declarative-sfw-notes.qml"));
-    canvas.show();
-
-    return app.exec();
-}
+#endif

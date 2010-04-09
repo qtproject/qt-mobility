@@ -39,59 +39,84 @@
 **
 ***************************************************************************/
 
-#ifndef SFWNOTES_H
-#define SFWNOTES_H
+#ifndef QDECLARATIVESERVICE_H
+#define QDECLARATIVESERVICE_H
 
 #include <QtCore>
 #include <qserviceinterfacedescriptor.h>
 #include <qservicemanager.h>
 #include <qdeclarative.h>
+#include <qdeclarativelist.h>
 
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
-class ServiceWrapper : public QObject {
+class QServiceWrapper : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName);
-    Q_PROPERTY(QString serviceName READ serviceName WRITE setServiceName);
-    Q_PROPERTY(QString version READ version WRITE setVersion);
+    Q_PROPERTY(QString serviceName READ serviceName);
+    Q_PROPERTY(QString versionNumber READ versionNumber);
+    Q_PROPERTY(bool valid READ isValid NOTIFY validChanged);
+    Q_PROPERTY(QObject* serviceObject READ serviceObject NOTIFY serviceObjectChanged);
 
 public:
-    ServiceWrapper();
-    ~ServiceWrapper();
+    QServiceWrapper();
+    ~QServiceWrapper();
 
-    QString interfaceName() const;
+    void setInterfaceDesc(const QServiceInterfaceDescriptor& desc);
+    QServiceInterfaceDescriptor interfaceDesc() const;
+
     void setInterfaceName(const QString& interface);
-    
+    QString interfaceName() const;
     QString serviceName() const;
-    void setServiceName(const QString& service);
+    QString versionNumber() const;
 
-    QString version() const;
-    void setVersion(const QString& version);
+    bool isValid() const;
+    QObject* serviceObject();
 
-    Q_INVOKABLE QObject* serviceObject();
+Q_SIGNALS:
+    void validChanged();
+    void serviceObjectChanged();
 
 private:
-    void registerExampleServices();
-    void unregisterExampleServices();
-    void findServiceInterface();
-
-    bool existsInterface();
-    bool existsService();
-    bool existsVersion();
-
-    QString m_interface;
-    QString m_service;
-    QString m_version;
+    QServiceManager* serviceManager;
 
     QServiceInterfaceDescriptor m_descriptor;
     QObject* serviceInstance;
-    
-    QServiceManager* serviceManager;
 };
 
-QML_DECLARE_TYPE(ServiceWrapper)
+QML_DECLARE_TYPE(QServiceWrapper);
+
+class QServiceListWrapper : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName);
+    Q_PROPERTY(QString minVersion READ minVersion WRITE setMinVersion);
+    Q_PROPERTY(QDeclarativeListProperty<QServiceWrapper> services READ services NOTIFY servicesChanged);
+
+public:
+    QServiceListWrapper();
+    ~QServiceListWrapper();
+
+    QDeclarativeListProperty<QServiceWrapper> services();
+    
+    void setInterfaceName(const QString& interface);
+    QString interfaceName() const;
+
+    void setMinVersion(const QString& interface);
+    QString minVersion() const;
+    
+private:
+    QServiceManager* serviceManager;
+    QList<QServiceWrapper *> m_services;
+    QString m_interface;
+    QString m_version;
+
+Q_SIGNALS:
+    void servicesChanged(const QDeclarativeListProperty<QServiceWrapper>&);
+};
+
+QML_DECLARE_TYPE(QServiceListWrapper)
 
 #endif
 

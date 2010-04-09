@@ -1,4 +1,4 @@
-/***************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
@@ -39,36 +39,54 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QUrl>
-#include <QtCore>
+#ifndef SFWNOTES_H
+#define SFWNOTES_H
 
-//! [0]
-//Includes for using the declarative viewer
-#include <QDeclarativeView>
+#include <QWidget>
+#include <QObject>
+#include <QDateTime>
+#include <qmobilityglobal.h>
 
-//Includes for using the service framework wrapper
-#include "qdeclarativeservice.h"
-//! [0]
+#include "ui_sfwnotes.h"
 
-#include "sfwexample.h"
+QTM_BEGIN_NAMESPACE
+class QServiceManager;
+QTM_END_NAMESPACE
 
-int main(int argc, char* argv[])
+QTM_USE_NAMESPACE
+
+class ToDoTool : public QWidget, public Ui_ToDoTool
 {
-    //! [1]
-    qmlRegisterType<QServiceWrapper>("QtMobility.serviceframework", 1, 0, "Service");
-    qmlRegisterType<QServiceListWrapper>("QtMobility.serviceframework", 1, 0, "ServiceList");
-    //! [1]
+    Q_OBJECT
+public:
+    ToDoTool(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ~ToDoTool();
 
-    QApplication app(argc, argv);
+private slots:
+    void on_nextButton_clicked();
+    void on_prevButton_clicked();
+    void on_addButton_clicked();
+    void on_deleteButton_clicked();
+    void on_searchButton_clicked();
+    void soundAlarm(const QDateTime &alarm);
 
-    DialerServices *ds = new DialerServices();
+private:
+    void init();
+    void refreshList();
+    void refreshNotes();
+    void registerExampleServices();
+    void unregisterExampleServices();
 
-    //! [2]
-    QDeclarativeView canvas;
-    canvas.setSource(QUrl("qrc:/sfwexample.qml"));
-    canvas.show();
-    //! [2]
+    QServiceManager *serviceManager;
+    QObject *notesManager;
 
-    return app.exec();
-}
+    QList<QObject*> ret;
+
+    QString searchWord;
+    int currentNote;
+    int totalNotes;
+
+};
+
+#endif
+

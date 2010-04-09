@@ -1,4 +1,4 @@
-/***************************************************************************
+/****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
@@ -43,32 +43,23 @@
 #include <QUrl>
 #include <QtCore>
 
-//! [0]
-//Includes for using the declarative viewer
 #include <QDeclarativeView>
+#include <qdeclarative.h>
 
-//Includes for using the service framework wrapper
+#include "sfwnotes.h"
 #include "qdeclarativeservice.h"
-//! [0]
-
-#include "sfwexample.h"
 
 int main(int argc, char* argv[])
 {
-    //! [1]
     qmlRegisterType<QServiceWrapper>("QtMobility.serviceframework", 1, 0, "Service");
-    qmlRegisterType<QServiceListWrapper>("QtMobility.serviceframework", 1, 0, "ServiceList");
-    //! [1]
 
     QApplication app(argc, argv);
 
-    DialerServices *ds = new DialerServices();
+    ToDoTool *td = new ToDoTool();
 
-    //! [2]
     QDeclarativeView canvas;
-    canvas.setSource(QUrl("qrc:/sfwexample.qml"));
+    canvas.setSource(QUrl("qrc:/declarative-sfw-notes.qml"));
     canvas.show();
-    //! [2]
 
     return app.exec();
 }

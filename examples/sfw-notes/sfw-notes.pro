@@ -1,8 +1,8 @@
 TEMPLATE = app
 TARGET = sfw-notes
-INCLUDEPATH += ../../../src/serviceframework
+INCLUDEPATH += ../../src/serviceframework
 
-include(../../examples.pri)
+include(../examples.pri)
 
 QT += gui
 
@@ -35,6 +35,6 @@ symbian {
     #addFiles.path = xmldata
     #DEPLOYMENT += addFiles
 
-    #TARGET.CAPABILITY = ReadUserData WriteUserData
+    #TARGET.CAPABILITY = ALL -TCB
     #FORMS += sfwnotes.ui #change to sfwnotes_small.ui
 }

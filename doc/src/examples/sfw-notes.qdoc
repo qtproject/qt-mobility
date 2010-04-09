@@ -7,6 +7,8 @@
 ** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
 ** You may use this file in accordance with the terms and conditions
 ** contained in the Technology Preview License Agreement accompanying
 ** this package.
@@ -37,59 +39,17 @@
 **
 ****************************************************************************/
 
-#ifndef NOTE_H
-#define NOTE_H
+/*!
+    \example sfw-notes
 
-#include <QObject>
-#include <QDateTime>
-#include <QtDeclarative/qdeclarative.h>
+    \title Service Framework Notes Manager
 
-class Note : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(int index READ index WRITE setIndex)
-    Q_PROPERTY(QString message READ message WRITE setMessage)
-    Q_PROPERTY(QDateTime alarm READ alarm WRITE setAlarm)
+    This example demonstrates how to use the Service Framework to obtain a single
+    default service at a specified interface address provided by the Notes
+    Manager service \l{notesmanagerplugin}{plugin}, which can be used to implement 
+    a notes managing application.
 
-public:
-    Note(QObject *parent =0) : QObject(parent) {}
-    ~Note() {}
-
-public slots:
-    int index() const { return m_index; }
-    void setIndex(int index) { m_index = index; }
-
-    QString message() const { return m_message; }
-    void setMessage(const QString &message) { m_message = message; }
-
-    QDateTime alarm() const { return m_alarm; }
-    void setAlarm(const QDateTime &alarm) { m_alarm = alarm; }
-
-private:
-    int m_index;
-    QString m_message;
-    QDateTime m_alarm;
-};
-
-//QML_DECLARE_TYPE(Note)
-
-class NoteSet : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(QList<Note*>* noteset READ noteset WRITE setnoteset)
-
-public:
-    NoteSet(QObject *parent =0) : QObject(parent) {};
-    ~NoteSet() {};
-
-    QList<Note*> *noteset() { return &m_noteset; }
-    void setnoteset(QList<Note*>* set) { m_noteset = *set; }
-
-private:
-    QList<Note*> m_noteset;
-};
-
-//QML_DECLARE_TYPE(NoteSet)
-
-#endif
-
+    There is also a declarative example which implements identical functionality
+    using QML as the main user-interface context. This example is called the
+    \l{declarative-sfw-notes}{Declarative Notes Manager}
+*/
