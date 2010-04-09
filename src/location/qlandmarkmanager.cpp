@@ -664,7 +664,7 @@ QLandmarkManager* QLandmarkManager::fromUri(const QString& storeUri, QObject* pa
     int version = -1;
     if (!url.path().isEmpty()) {
         version = url.path().toInt(&versionOk);
-        if (!ok)
+        if (!versionOk)
             return NULL;
     }
 
@@ -677,7 +677,7 @@ QLandmarkManager* QLandmarkManager::fromUri(const QString& storeUri, QObject* pa
     }
 
     if (versionOk) {
-        return new QLandmarkManager(managerName, paramaters, parent);
+        return new QLandmarkManager(managerName, parameters, parent);
     } else {
         return new QLandmarkManager(managerName, version, parameters, parent);
     }
