@@ -50,14 +50,14 @@ QTM_BEGIN_NAMESPACE
 
 class QMessageIdPrivate;
 
-class Q_MESSAGING_EXPORT QMessageId 
+class Q_MESSAGING_EXPORT QMessageId
 {
     friend class QMessageIdPrivate;
 
 public:
     QMessageId();
     QMessageId(const QMessageId &other);
-    QMessageId(const QString &id);
+    QMessageId(const QString& id);
     ~QMessageId();
 
     QMessageId& operator=(const QMessageId &other);
