@@ -57,7 +57,7 @@ maemo6als::maemo6als(QSensor *sensor)
             qWarning() << "Unable to initialize ambient light sensor.";
 
         // metadata
-        addOutputRange(0,5,1);
+        addOutputRange(0, 5, 1);
         setDescription(QLatin1String("Ambient light intensity given as 5 pre-defined levels"));
 
         m_initDone = true;

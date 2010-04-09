@@ -53,7 +53,8 @@ QTM_USE_NAMESPACE
 
 class maemo6rotationsensor : public maemo6sensorbase
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     static const char *id;
 

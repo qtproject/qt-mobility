@@ -53,7 +53,8 @@ QTM_USE_NAMESPACE
 
 class maemo6tapsensor : public maemo6sensorbase
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     static const char *id;
 
@@ -62,6 +63,7 @@ public:
 private:
     QTapReading m_reading;
     static bool m_initDone;
+    QSensor *m_sensor;
 
 private slots:
     void slotDataAvailable(const Tap&);

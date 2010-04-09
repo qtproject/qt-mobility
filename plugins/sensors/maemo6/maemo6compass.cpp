@@ -41,8 +41,6 @@
 
 #include "maemo6compass.h"
 
-#include "sensord/compasssensor_i.h"
-
 const char *maemo6compass::id("maemo6.compass");
 bool maemo6compass::m_initDone = false;
 
@@ -79,7 +77,7 @@ void maemo6compass::slotLevelChanged(const int& level)
     qreal calibrationLevel = l;
     m_reading.setCalibrationLevel(calibrationLevel);
     //m_reading.setTimestamp(level.timestamp());
-    m_reading.setTimestamp(clock()); //TODO: use correct timestamp
+    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
     newReadingAvailable();
 }
 

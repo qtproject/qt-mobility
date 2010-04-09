@@ -67,12 +67,12 @@ void maemo6sensorbase::start()
     if (m_sensorRunning)
         return;
     if (m_sensorInterface) {
-        int updateInterval = sensor()->updateInterval();
-        qDebug() << "Update interval set for sensor " << updateInterval;
+        int dataRate = sensor()->dataRate();
+        qDebug() << "Sensor data rate " << dataRate;
 
-        if (updateInterval > 0) {
-            qDebug() << "Setting update interval " << updateInterval << " for " << m_sensorInterface->id();
-            m_sensorInterface->setInterval(updateInterval);
+        if (dataRate > 0) {
+            qDebug() << "Setting data rate " << dataRate << " for " << m_sensorInterface->id();
+            m_sensorInterface->setInterval(dataRate);
         }
         m_sensorInterface->start();
     }

@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "maemo6proximitysensor.h"
-#include <QDebug>
 
 const char *maemo6proximitysensor::id("maemo6.proximity");
 bool maemo6proximitysensor::m_initDone = false;
@@ -59,7 +58,7 @@ maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
             qWarning() << "Unable to initialize proximity sensor.";
 
         // close definition in meters - may be used as metadata even the sensor gives true/false values 
-        addOutputRange(0, 1, 0.1);
+        addOutputRange(0, 1, 1);
         setDescription(QLatin1String("Measures if a living object is in proximity or not"));
 
         m_initDone = true;
@@ -69,16 +68,13 @@ maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
 void maemo6proximitysensor::slotDataAvailable(const int& data)
 {
     bool close;
-    if (0 == data) {
+    if (data)
         close = true;
-    } else {
+    else
         close = false;
-    }
 
-    if (close != m_reading.close()) {
-        m_reading.setClose(close);
-        //m_reading.setTimestamp(data.timestamp());
-        m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
-        newReadingAvailable();
-    }
+    m_reading.setClose(close);
+    //m_reading.setTimestamp(data.timestamp());
+    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    newReadingAvailable();
 }

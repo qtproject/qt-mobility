@@ -41,8 +41,6 @@
 
 #include "maemo6accelerometer.h"
 
-#include "sensord/accelerometersensor_i.h"
-
 const char *maemo6accelerometer::id("maemo6.accelerometer");
 bool maemo6accelerometer::m_initDone = false;
 
@@ -63,7 +61,7 @@ maemo6accelerometer::maemo6accelerometer(QSensor *sensor)
 
         // adding metadata
         addDataRate(100, 100); // 100Hz
-        addDataRate(400, 400); // 400Hz
+        //addDataRate(400, 400); // 400Hz
 
         // accuracy - or resolution???
         // 2^8 = 256    256/2 - 1 = 127

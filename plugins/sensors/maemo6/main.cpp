@@ -45,6 +45,7 @@
 #include "maemo6magnetometer.h"
 #include "maemo6orientationsensor.h"
 #include "maemo6proximitysensor.h"
+#include "maemo6rotationsensor.h"
 #include "maemo6tapsensor.h"
 #include <qsensorplugin.h>
 #include <qsensorbackend.h>
@@ -64,6 +65,7 @@ public:
         QSensorManager::registerBackend(QMagnetometer::type, maemo6magnetometer::id, this);
         QSensorManager::registerBackend(QOrientationSensor::type, maemo6orientationsensor::id, this);
         QSensorManager::registerBackend(QProximitySensor::type, maemo6proximitysensor::id, this);
+        QSensorManager::registerBackend(QRotationSensor::type, maemo6rotationsensor::id, this);
         QSensorManager::registerBackend(QTapSensor::type, maemo6tapsensor::id, this);
         qDebug() << "loaded the Maemo 6 plugin";
     }
@@ -82,6 +84,8 @@ public:
             return new maemo6orientationsensor(sensor);
         else if (sensor->identifier() == maemo6proximitysensor::id)
             return new maemo6proximitysensor(sensor);
+        else if (sensor->identifier() == maemo6rotationsensor::id)
+            return new maemo6rotationsensor(sensor);
         else if (sensor->identifier() == maemo6tapsensor::id)
             return new maemo6tapsensor(sensor);
 
@@ -92,4 +96,3 @@ public:
 Q_EXPORT_PLUGIN2(libsensors_maemo6, maemo6SensorPlugin)
 
 #include "main.moc"
-

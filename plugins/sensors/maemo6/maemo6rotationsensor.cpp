@@ -41,8 +41,6 @@
 
 #include "maemo6rotationsensor.h"
 
-#include "sensord/rotationsensor_i.h"
-
 const char *maemo6rotationsensor::id("maemo6.rotationsensor");
 bool maemo6rotationsensor::m_initDone = false;
 
@@ -65,6 +63,7 @@ maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
 
         m_initDone = true;
     }
+    sensor->setProperty("hasZ", true);
 }
 
 void maemo6rotationsensor::slotDataAvailable(const XYZ& data)

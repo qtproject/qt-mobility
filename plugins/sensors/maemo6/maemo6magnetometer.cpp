@@ -45,12 +45,9 @@ const char *maemo6magnetometer::id("maemo6.magnetometer");
 bool maemo6magnetometer::m_initDone = false;
 
 maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
-    : maemo6sensorbase(sensor), m_returnGeoValues(false)
+    : maemo6sensorbase(sensor), m_sensor(sensor)
 {
     setReading<QMagnetometerReading>(&m_reading);
-
-    QVariant v = sensor->property("returnGeoValues");
-    m_returnGeoValues = (v.isValid() && v.toBool());
 
     if (!m_initDone) {
         qDBusRegisterMetaType<MagneticField>();
@@ -70,7 +67,8 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
 
 void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
 {
-    if (m_returnGeoValues) {
+    QVariant v = m_sensor->property("returnGeoValues");
+    if (v.isValid() && v.toBool()) {
         m_reading.setX(data.x());
         m_reading.setY(data.y());
         m_reading.setZ(data.z());

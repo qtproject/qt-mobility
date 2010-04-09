@@ -41,7 +41,6 @@
 
 #include "maemo6orientationsensor.h"
 
-#include "sensord/orientationsensor_i.h"
 #include "sensord/filters/posedata.h"
 
 const char *maemo6orientationsensor::id("maemo6.orientationsensor");
@@ -61,6 +60,7 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
             qWarning() << "Unable to initialize orientation sensor.";
 
         // metadata
+        addOutputRange(0, 6, 1);
         setDescription(QLatin1String("Orientation of the device screen"));
 
         m_initDone = true;
@@ -69,27 +69,18 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
 
 void maemo6orientationsensor::slotOrientationChanged(const int& data)
 {
-    QOrientationReading::Orientation o = m_reading.orientation();
-
-    // data is actually an Orientation enum from sensord/filters/posedata.h
-
-    if (data == PoseData::LeftUp)
-        o = QOrientationReading::LeftUp;
-    else if (data == PoseData::RightUp)
-        o = QOrientationReading::RightUp;
-    else if (data == PoseData::BottomUp)
-        o = QOrientationReading::TopDown;
-    else if (data == PoseData::BottomDown)
-        o = QOrientationReading::TopUp;
-    else if (data == PoseData::FaceDown)
-        o = QOrientationReading::FaceDown;
-    else if (data == PoseData::FaceUp)
-        o = QOrientationReading::FaceUp;
-
-    if (o != m_reading.orientation()) {
-        m_reading.setOrientation(o);
-        //m_reading.setTimestamp(data.timestamp());
-        m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
-        newReadingAvailable();
+    QOrientationReading::Orientation o;
+    switch (data) {
+        case PoseData::BottomDown: o = QOrientationReading::TopUp;     break;
+        case PoseData::BottomUp:   o = QOrientationReading::TopDown;   break;
+        case PoseData::LeftUp:     o = QOrientationReading::LeftUp;    break;
+        case PoseData::RightUp:    o = QOrientationReading::RightUp;   break;
+        case PoseData::FaceUp:     o = QOrientationReading::FaceUp;    break;
+        case PoseData::FaceDown:   o = QOrientationReading::FaceDown;  break;
+        default:                   o = QOrientationReading::Undefined;
     }
+    m_reading.setOrientation(o);
+    //m_reading.setTimestamp(data.timestamp());
+    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    newReadingAvailable();
 }

@@ -41,14 +41,13 @@
 
 #include "maemo6tapsensor.h"
 
-#include "sensord/tapsensor_i.h"
 #include "sensord/filters/tapdata.h"
 
 const char *maemo6tapsensor::id("maemo6.tapsensor");
 bool maemo6tapsensor::m_initDone = false;
 
 maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
-    : maemo6sensorbase(sensor)
+    : maemo6sensorbase(sensor), m_sensor(sensor)
 {
     setReading<QTapReading>(&m_reading);
 
@@ -62,51 +61,45 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
             qWarning() << "Unable to initialize tap sensor.";
 
         // metadata
-        addOutputRange(1, 2, 1);    //TODO: valid values?
+        addOutputRange(0, 9, 1);
         setDescription(QLatin1String("Measures single and double taps and gives tap direction"));
 
         m_initDone = true;
     }
-
 }
 
 void maemo6tapsensor::slotDataAvailable(const Tap& data)
 {
     // Set tap type (single/double)
-    bool doubleTap = false;
-    TapData::Type type = data.type();
-    if (TapData::DoubleTap == type) {
-        doubleTap = true;
-    } else if (TapData::SingleTap == type) {
-        doubleTap = false;
+    bool doubleTap;
+    switch (data.type()) {
+        case TapData::DoubleTap: doubleTap = true; break;
+        case TapData::SingleTap: doubleTap = false; break;
+        default:                 doubleTap = false;
     }
-    m_reading.setDoubleTap(doubleTap);
+    QVariant v = m_sensor->property("returnDoubleTapEvents");
+    if (v.isValid() && v.toBool() == false)
+        m_reading.setDoubleTap(false);
+    else
+        m_reading.setDoubleTap(doubleTap);
 
     // Set tap direction
-    QTapReading::TapDirection tapDirection = QTapReading::Undefined;
-    TapData::Direction direction = data.direction();
-    if (TapData::X == direction) {
-        tapDirection = QTapReading::X;
-    } else if (TapData::Y == direction) {
-        tapDirection = QTapReading::Y;
-    } else if (TapData::Z == direction) {
-        tapDirection = QTapReading::Z;
-    } else if (TapData::LeftRight == direction) {
-        tapDirection = QTapReading::X_Pos;
-    } else if (TapData::RightLeft == direction) {
-        tapDirection = QTapReading::X_Neg;
-    } else if (TapData::TopBottom == direction) {
-        tapDirection = QTapReading::Z_Neg;
-    } else if (TapData::BottomTop == direction) {
-        tapDirection = QTapReading::Z_Pos;
-    } else if (TapData::FaceBack == direction) {
-        tapDirection = QTapReading::Y_Pos;
-    } else if (TapData::BackFace == direction) {
-        tapDirection = QTapReading::Y_Neg;
+    QTapReading::TapDirection o;
+    switch (data.direction()) {
+        case TapData::X:         o = QTapReading::X;         break;
+        case TapData::Y:         o = QTapReading::Y;         break;
+        case TapData::Z:         o = QTapReading::Z;         break;
+        case TapData::LeftRight: o = QTapReading::X_Pos;     break;
+        case TapData::RightLeft: o = QTapReading::X_Neg;     break;
+        case TapData::TopBottom: o = QTapReading::Z_Neg;     break;
+        case TapData::BottomTop: o = QTapReading::Z_Pos;     break;
+        case TapData::FaceBack:  o = QTapReading::Y_Pos;     break;
+        case TapData::BackFace:  o = QTapReading::Y_Neg;     break;
+        default:                 o = QTapReading::Undefined;
     }
+    m_reading.setTapDirection(o);
+
     //m_reading.setTimestamp(data.timestamp());
     m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
-    m_reading.setTapDirection(tapDirection);
-
     newReadingAvailable();
 }

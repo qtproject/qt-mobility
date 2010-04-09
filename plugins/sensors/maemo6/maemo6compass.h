@@ -52,7 +52,8 @@ QTM_USE_NAMESPACE
 
 class maemo6compass : public maemo6sensorbase
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     static const char *id;
     maemo6compass(QSensor *sensor);
