@@ -63,11 +63,6 @@ QContactRelationshipSaveRequest::QContactRelationshipSaveRequest()
 {
 }
 
-/*! Cleans up the memory in use by this relationship save request */
-QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest()
-{
-}
-
 /*! Sets the relationships to save to be \a contactRelationships */
 void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelationship>& contactRelationships)
 {

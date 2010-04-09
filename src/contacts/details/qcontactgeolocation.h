@@ -57,16 +57,16 @@ class Q_CONTACTS_EXPORT QContactGeoLocation : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldLabel;
-    const char* FieldLatitude;
-    const char* FieldLongitude;
-    const char* FieldAccuracy;
-    const char* FieldAltitude;
-    const char* FieldAltitudeAccuracy;
-    const char* FieldHeading;
-    const char* FieldSpeed;
-    const char* FieldTimestamp;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldLabel;
+    static const QLatin1Constant FieldLatitude;
+    static const QLatin1Constant FieldLongitude;
+    static const QLatin1Constant FieldAccuracy;
+    static const QLatin1Constant FieldAltitude;
+    static const QLatin1Constant FieldAltitudeAccuracy;
+    static const QLatin1Constant FieldHeading;
+    static const QLatin1Constant FieldSpeed;
+    static const QLatin1Constant FieldTimestamp;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeoLocation, "GeoLocation")
     Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");

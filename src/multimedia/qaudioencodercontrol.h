@@ -42,8 +42,8 @@
 #ifndef QAUDIOENCODERCONTROL_H
 #define QAUDIOENCODERCONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediarecorder.h>
+#include "qmediacontrol.h"
+#include "qmediarecorder.h"
 #include <QtCore/qlist.h>
 #include <QtCore/qpair.h>
 

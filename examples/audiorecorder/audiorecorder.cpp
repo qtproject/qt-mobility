@@ -187,11 +187,15 @@ void AudioRecorder::stateChanged(QMediaRecorder::State state)
         return;
 
     switch(state) {
-        case QMediaRecorder::RecordingState:
+        case QMediaRecorder::RecordingState: {
             statusLabel->setText(tr("Recording"));
+            button->setText(tr("Stop"));
             break;
-        default:
+        }
+        default: {
             statusLabel->setText(tr("Stopped"));
+            button->setText(tr("Record"));
+        }
     }
 }
 
@@ -234,13 +238,10 @@ void AudioRecorder::toggleRecord()
     if(!active) {
         recTime->setText("0");
         currentTime = 0;
-        capture->record();
-
-        button->setText(tr("Stop"));
+        capture->record();        
         active = true;
     } else {
-        capture->stop();
-        button->setText(tr("Record"));
+        capture->stop();        
         active = false;
     }
 }

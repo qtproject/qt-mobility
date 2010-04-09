@@ -104,6 +104,20 @@ QtSystemInfo
  - foo
     * bar
 
+QtSensors
+------
+
+ - QSensorReading::value() is no longer virtual.
+ - Many sensor classes have been changed. Please see the documentation on each sensor class in use.
+ - Change qtimestamp type declaration to avoid an interaction between the compiler and Qt's meta system.
+ - Added QSensorBackend::sensor().
+ - Replaced updatePolicy and updateInterval with dataRate.
+ - Removed polling.
+ - Added meta-data properties for sensors.
+ - Added error reporting functions.
+ - Removed setType().
+ - Renamed QSensor::connect() to QSensor::connectToBackend().
+
 Qt Mobility Plugins
 ------
 
@@ -147,6 +161,31 @@ Qt Mobility for Windows CE
 
  -
 
+Qt Mobility for Symbian
+------
+
+ -  Contacts
+    * Bug fix: Display label of a contact now does not include organization if first name or last name are available
+    * Bug fix: Several fixes to contact filtering
+    * Bug fix: Backends were instantiated twice. This caused for example a problem with SamplePhonebook startup; the application sometimes refused to re-start after it had been closed.
+    * Bug fix: Adding contacts to a group or removing contacts from a group caused contactsChanged signal to be emitted instead of relationshipsAdded/Removed in other contact manager instances.
+    * Bug fix: Adding a group caused also a contactsChanged signal to be emitted in the contact manager instance that created the group
+    * Bug fix: QContactThumbnail was not shown in the name list view of S60 Phonebook on some S60 platforms.
+    * Bug fix: Signal emissions when self contact is changed
+    * Bug fix: Groups did not have timestamp and guid details.
+    * Bug fix: S60 3.1 does not support timestamps for contacts but it was still part of the detail definition schema.
+    * SIM backend now supports also SDN (Service Dialling Numbers) and FDN (Fixed Dialling Numbers)
+    * Also SIM backend now emits signals
+    * SIM backend now implements also the asynchronous QContactManager API
+    * SIM contact phone numbers now don't have any sub type (previously they were using "mobile" sub type)
+    * SIM contacts now use custom label as the name field instead of first name
+    * SamplePhonebook can now be used to access and save also SIM contacts
+    * Bugfix: Saving SIM contacts now preserves the original contact detail instances instead of replacing them with new instances (with different ids).
+    * A work-around for issues with several consecutive SIM contacts operations
+    * A work-around for issue on S60 3.1 products that made the device reboot when trying to delete non-existing contacts
+    * Bug fix: Batch saving of SIM contacts did not update contact details
+    * The schema definition of SIM backend now does not include e-mail and nick name details in case they are not supported by the SIM card
+    * Trying to save too long details to a SIM card now gives an appropriate error
 
 ****************************************************************************
 *                          Tools                                           *

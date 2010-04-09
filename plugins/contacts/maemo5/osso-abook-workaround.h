@@ -124,6 +124,15 @@ extern "C" {
                  OssoABookCaps))
 
         OssoABookCapsFlags  osso_abook_caps_get_capabilities    (OssoABookCaps *caps);
+        void                osso_abook_contact_reject_for_uid   (OssoABookContact *contact,
+                                                                 const char *master_uid,
+                                                                 GtkWindow *parent);
+        GType  osso_abook_contact_get_type(void) G_GNUC_CONST;
+        #define OSSO_ABOOK_TYPE_CONTACT \
+                (osso_abook_contact_get_type ())
+        #define OSSO_ABOOK_IS_CONTACT(obj) \
+                (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
+                 OSSO_ABOOK_TYPE_CONTACT))
 }
 
 #endif

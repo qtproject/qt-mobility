@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <qmediaobject_p.h>
+#include "qmediaobject_p.h"
 #include <qaudiocapturesource.h>
-#include <qaudioendpointselector.h>
+#include "qaudioendpointselector.h"
 
 QTM_BEGIN_NAMESPACE
 

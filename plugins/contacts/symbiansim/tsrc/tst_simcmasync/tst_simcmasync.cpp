@@ -385,7 +385,7 @@ void tst_SimCMAsync::saveContactReq()
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.detail<QContactName>().customLabel() == c1.detail<QContactName>().customLabel());
     QVERIFY(m_cm->contactIds().count() == 2);
-    c = m_cm->contact(c1.localId(), QStringList());
+    c = m_cm->contact(c1.localId());
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 0);
     QVERIFY(c.detail<QContactName>().customLabel() == c1.detail<QContactName>().customLabel());
 }

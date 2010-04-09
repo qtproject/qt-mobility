@@ -97,7 +97,7 @@ QMessage::StandardFolder QMessagePrivate::standardFolder(QMessageFolderId folder
         }
     }
 
-    return QMessage::InboxFolder;
+    return QMessage::DraftsFolder;
 }
 
 QMessage QMessagePrivate::convert(const QMailMessage &message)

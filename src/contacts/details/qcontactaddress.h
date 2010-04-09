@@ -56,18 +56,18 @@ class Q_CONTACTS_EXPORT QContactAddress : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldStreet;
-    const char* FieldLocality;
-    const char* FieldRegion;
-    const char* FieldPostcode;
-    const char* FieldCountry;
-    const char* FieldSubTypes;
-    const char* FieldPostOfficeBox;
-    const char* SubTypeParcel;
-    const char* SubTypePostal;
-    const char* SubTypeDomestic;
-    const char* SubTypeInternational;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldStreet;
+    static const QLatin1Constant FieldLocality;
+    static const QLatin1Constant FieldRegion;
+    static const QLatin1Constant FieldPostcode;
+    static const QLatin1Constant FieldCountry;
+    static const QLatin1Constant FieldSubTypes;
+    static const QLatin1Constant FieldPostOfficeBox;
+    static const QLatin1Constant SubTypeParcel;
+    static const QLatin1Constant SubTypePostal;
+    static const QLatin1Constant SubTypeDomestic;
+    static const QLatin1Constant SubTypeInternational;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "Address")
     Q_DECLARE_LATIN1_CONSTANT(FieldStreet, "Street");
