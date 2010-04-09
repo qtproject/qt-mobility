@@ -337,7 +337,6 @@ static void resolveLibrary()
 
     if (!triedResolve) {
 #ifndef QT_NO_THREAD
-        QMutexLocker locker(QMutexPool::globalInstanceGet(&local_WlanOpenHandle));
         QMutexLocker locker(dynamicLoadMutex());
 #endif
 
