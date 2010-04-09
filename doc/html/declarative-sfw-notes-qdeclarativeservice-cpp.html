@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Qt Mobility Project 1.1: qdeclarativeservice.cpp Example File (declarative-sfw-notes/qdeclarativeservice.cpp)</title>
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">qdeclarativeservice.cpp Example File<br /><span class="small-subtitle">declarative-sfw-notes/qdeclarativeservice.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:LGPL$
+    ** No Commercial Usage
+    ** This file contains pre-release code and may not be distributed.
+    ** You may use this file in accordance with the terms and conditions
+    ** contained in the Technology Preview License Agreement accompanying
+    ** this package.
+    **
+    ** GNU Lesser General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU Lesser
+    ** General Public License version 2.1 as published by the Free Software
+    ** Foundation and appearing in the file LICENSE.LGPL included in the
+    ** packaging of this file.  Please review the following information to
+    ** ensure the GNU Lesser General Public License version 2.1 requirements
+    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    **
+    ** In addition, as a special exception, Nokia gives you certain additional
+    ** rights.  These rights are described in the Nokia Qt LGPL Exception
+    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+    **
+    ** If you have questions regarding the use of this file, please contact
+    ** Nokia at qt-info@nokia.com.
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;qdeclarativeservice.h&quot;
+
+    QServiceWrapper::QServiceWrapper()
+    : serviceInstance(0)
+    {
+        serviceManager = new QServiceManager();
+    }
+
+    QServiceWrapper::~QServiceWrapper()
+    {
+        delete serviceInstance;
+    }
+
+    bool QServiceWrapper::isValid() const
+    {
+        return m_descriptor.isValid();
+    }
+
+    void QServiceWrapper::setInterfaceDesc(const QServiceInterfaceDescriptor &amp;desc)
+    {
+        if (desc == m_descriptor)
+            return;
+
+        m_descriptor = desc;
+
+        if (serviceInstance)
+            delete serviceInstance;
+
+        serviceInstance = 0;
+    }
+
+    QServiceInterfaceDescriptor QServiceWrapper::interfaceDesc() const
+    {
+        return m_descriptor;
+    }
+
+    void QServiceWrapper::setInterfaceName(const QString &amp;interface)
+    {
+        m_descriptor = serviceManager-&gt;interfaceDefault(interface);
+
+        if (!isValid())
+            qWarning() &lt;&lt; &quot;WARNING: No default service found for interface name: &quot; &lt;&lt; interface;
+    }
+
+    QString QServiceWrapper::interfaceName() const
+    {
+        if (isValid())
+            return m_descriptor.interfaceName();
+        else
+            return &quot;No Interface&quot;;
+    }
+
+    QString QServiceWrapper::serviceName() const
+    {
+        if (isValid())
+            return m_descriptor.serviceName();
+        else
+            return &quot;No Service&quot;;
+    }
+
+    QString QServiceWrapper::versionNumber() const
+    {
+        if (isValid())
+            return (QString::number(m_descriptor.majorVersion())+&quot;.&quot;+QString::number(m_descriptor.minorVersion()));
+        else
+            return &quot;0.0&quot;;
+    }
+
+    QObject* QServiceWrapper::serviceObject()
+    {
+        if (serviceInstance) {
+            return serviceInstance;
+        }
+
+        if (isValid()) {
+            QServiceManager manager;
+            serviceInstance = manager.loadInterface(m_descriptor);
+            return serviceInstance;
+        } else {
+            return 0;
+        }
+    }
+
+    QServiceListWrapper::QServiceListWrapper()
+    {
+        serviceManager = new QServiceManager();
+    }
+
+    QServiceListWrapper::~QServiceListWrapper()
+    {
+    }
+
+    void QServiceListWrapper::setInterfaceName(const QString &amp;interface)
+    {
+        m_interface = interface;
+
+        QServiceWrapper *service;
+        QServiceFilter filter(m_interface, m_version);
+        QList&lt;QServiceInterfaceDescriptor&gt; list = serviceManager-&gt;findInterfaces(filter);
+        for (int i = 0; i &lt; list.size(); i++) {
+            service = new QServiceWrapper();
+            service-&gt;setInterfaceDesc(list.at(i));
+            m_services.append(service);
+        }
+    }
+
+    QString QServiceListWrapper::interfaceName() const
+    {
+        return m_interface;
+    }
+
+    void QServiceListWrapper::setMinVersion(const QString &amp;version)
+    {
+        m_version = version;
+    }
+
+    QString QServiceListWrapper::minVersion() const
+    {
+        return m_version;
+    }
+
+    QDeclarativeListProperty&lt;QServiceWrapper&gt; QServiceListWrapper::services()
+    {
+        return QDeclarativeListProperty&lt;QServiceWrapper&gt;(this, m_services);
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>
