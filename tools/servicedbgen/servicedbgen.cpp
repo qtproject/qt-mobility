@@ -7,23 +7,38 @@
 
 QTM_USE_NAMESPACE
 
-#define WINSCW_DES_DEPLOY       "/epoc32/winscw/c/private/2002AC7F/Nokia/des"
-#define ARMV5_DES_DEPLOY        "/epoc32/data/z/private/2002AC7F/Nokia/des"
-#define WINSCW_DBPATH           "/epoc32/winscw/c/data/temp/QtServiceFW"
-#define ARMV5_DBPATH            "/epoc32/data/c/private/2002AC7F/Nokia"
+#define WINSCW_DES_DEPLOY       "epoc32/winscw/c/private/2002AC7F/Nokia/des"
+#define WINSCW_DBPATH           "epoc32/winscw/c/data/temp/QtServiceFW"
+#define HW_DES_DEPLOY           "epoc32/data/z/private/2002AC7F/Nokia/des"
+#define HW_DBPATH               "epoc32/data/z/private/2002AC7F/Nokia"
 
 #define SEC_TOKEN               0x101FB657
-#define TOOL_VERSION            "0.3"
+#define TOOL_VERSION            "0.4"
 
-#define TRPRINT(txt)  *stdoutStream << txt
-#define TRPRINTL(lst) {foreach(const QString& _txt, lst) TRPRINT(_txt << '\n');}
+#define MESSAGE(msg) \
+{ \
+   *stdoutStream << msg; \
+   stdoutStream->flush(); \
+}
 
 QString dbName()
 {
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
     return QString("QtServiceFramework_") + qtVersion + "_system";
-}
+};
+
+class GeneratorPaths
+{
+public:
+    GeneratorPaths(){};
+    GeneratorPaths(const QString &dbPath, const QString &desPath) : databasePath(dbPath), descriptorsPath(desPath){};
+    ~GeneratorPaths(){};
+    GeneratorPaths(const GeneratorPaths &copy){databasePath = copy.databasePath; descriptorsPath = copy.descriptorsPath;};
+public:
+    QString databasePath;
+    QString descriptorsPath;
+};
 
 class CommandProcessor : public QObject
 {
@@ -33,27 +48,27 @@ public:
     CommandProcessor(QObject *parent = 0);
     ~CommandProcessor();
 
+    bool initialize();
     void execute(const QStringList &options, const QString &cmd, const QStringList &args);
     void showUsage();
 
 public slots:
-    void add(const QStringList &desList, const QString &onTarget);
-    void remove(const QStringList &desList, const QString &onTarget);
+    void add(const QStringList &desList, ServiceDatabase *db);
+    void remove(const QStringList &desList, ServiceDatabase *db);
 
 private:
-    bool setOptions(const QStringList &options);
-    ServiceDatabase *initTargetDatabase(const QString &aTarget, bool deleteDbAllowed);
+    bool setOptions(const QStringList &options, QMap<QString, GeneratorPaths> &targets);
+    ServiceDatabase *initTargetDatabase(const QString &dbPath, bool deleteDbAllowed);
     QString getServiceFromXML(const QString &xmlFile);
     QStringList getServiceDescriptors(const QString &path);
-    QStringList targetServiceDescriptors(const QString &specTarget, const QStringList &args);
+    QStringList targetServiceDescriptors(const QString &desPath, const QStringList &args);
 
     bool batchMode;
     bool requireInitialization;
     bool deleteDatabase;
-    QString platform;
     QTextStream *stdoutStream;
-    QMap<QString, QString> dbMap;
-    QMap<QString, QString> deployMap;
+    QMap<QString, QString> targetMap; // (target, platform)
+    QMap<QString, GeneratorPaths> pathMap; // (platform, (databasePath, descriptorsPath))
 };
 
 CommandProcessor::CommandProcessor(QObject *parent)
@@ -61,14 +76,8 @@ CommandProcessor::CommandProcessor(QObject *parent)
       batchMode(false),
       requireInitialization(false),
       deleteDatabase(false),
-      platform("all"),
       stdoutStream(new QTextStream(stdout))
 {
-    dbMap["winscw"] = WINSCW_DBPATH;
-    deployMap["winscw"] = WINSCW_DES_DEPLOY;
-
-    dbMap["armv5"] = ARMV5_DBPATH;
-    deployMap["armv5"] = ARMV5_DES_DEPLOY;
 }
 
 CommandProcessor::~CommandProcessor()
@@ -76,49 +85,68 @@ CommandProcessor::~CommandProcessor()
     delete stdoutStream;
 }
 
+bool CommandProcessor::initialize()
+{
+    QString epocRoot(getenv("EPOCROOT"));
+    if (epocRoot.isEmpty()) {
+        *stdoutStream << "ERROR: EPOCROOT not set\n";
+        return false;
+    }
+    targetMap["winscw"] = "emulator";
+    targetMap["armv5"] = "hw";
+    targetMap["armv6"] = "hw";
+    targetMap["gcce"] = "hw";
+
+    if (epocRoot.right(1) != QDir::separator())
+        epocRoot += QDir::separator();
+
+    pathMap["emulator"] = GeneratorPaths(QDir::toNativeSeparators(epocRoot + WINSCW_DBPATH),
+                                         QDir::toNativeSeparators(epocRoot + WINSCW_DES_DEPLOY));
+    pathMap["hw"] = GeneratorPaths(QDir::toNativeSeparators(epocRoot + HW_DBPATH),
+                                   QDir::toNativeSeparators(epocRoot + HW_DES_DEPLOY));
+    return true;
+}
+
 void CommandProcessor::execute(const QStringList &options, const QString &cmd, const QStringList &args)
 {
     if (cmd.isEmpty()) {
-        *stdoutStream << "Error: no command given\n\n";
+        MESSAGE("Error: no command given\n\n");
         showUsage();
         return;
     }
 
-    if (!setOptions(options)) {
+    // setup options and collect target(s)
+    QMap<QString, GeneratorPaths> targets;
+    if (!setOptions(options, targets)) {
         showUsage();
         return;
     }
 
-    int methodIndex = metaObject()->indexOfMethod(cmd.toAscii() + "(QStringList,QString)");
+    int methodIndex = metaObject()->indexOfMethod(cmd.toAscii() + "(QStringList,ServiceDatabase*)");
     if (methodIndex < 0) {
-        *stdoutStream << "Bad command: " << cmd << "\n\n";
+        MESSAGE("Bad command: " << cmd << "\n\n");
         showUsage();
         return;
     }
 
-    if (platform == "all") {
-        // perform on all targets
-        QMapIterator<QString, QString> i(dbMap);
-        while (i.hasNext()) {
-            i.next();
-            const QString &tgt = i.key();
-            if (batchMode) {
-                // register services from the given (or default target) path
-                metaObject()->method(methodIndex).invoke(this, Q_ARG(QStringList, targetServiceDescriptors(tgt, args)), Q_ARG(QString, tgt));
-            }
-            else {
-                // register individual services
-                metaObject()->method(methodIndex).invoke(this, Q_ARG(QStringList, args), Q_ARG(QString, tgt));
-            }
+    QMapIterator<QString, GeneratorPaths> i(targets);
+    while (i.hasNext()) {
+        i.next();
+        const QString &target = i.key();
+        const GeneratorPaths &paths = i.value();
+        ServiceDatabase *db = initTargetDatabase(paths.databasePath, true);
+        if (!db) {
+            MESSAGE("ERROR: database for " << target << " cannot be opened/created.\n");
+            continue;
         }
-    }
-    else {
-        // perform on a single target
-        if (batchMode) {
-            metaObject()->method(methodIndex).invoke(this, Q_ARG(QStringList, targetServiceDescriptors(platform, args)), Q_ARG(QString, platform));
-        }
-        else
-            metaObject()->method(methodIndex).invoke(this, Q_ARG(QStringList, args), Q_ARG(QString, platform));
+        MESSAGE("Database: " << db->databasePath() << '\n');
+        QStringList desList = (batchMode) ? targetServiceDescriptors(paths.descriptorsPath, args) : args;
+        // register services
+        metaObject()->method(methodIndex).invoke(this, Q_ARG(QStringList, desList), Q_ARG(ServiceDatabase*, db));
+        // remove database so other targets can be handled
+        db->close();
+        QSqlDatabase::removeDatabase(db->m_connectionName);
+        delete db;
     }
 }
 
@@ -127,22 +155,24 @@ void CommandProcessor::showUsage()
     *stdoutStream << "Service framework database management tool, version " << QString(TOOL_VERSION) << "\n"
             "Usage: servicedbgen [options] <command> [command parameters]\n\n"
             "Commands:\n"
-            "\tadd        Register or update a service\n"
-            "\tremove     Unregister a service\n"
+            "\tadd     Register or update a service\n"
+            "\tremove  Unregister a service\n"
             "\nOptions:\n"
-            "\t-t<target> Specify the target platform to be used (e.g. winscw, armv5, all).\n"
-            "\t-b         Batch mode (take service descriptors from a path). If specified, the \n"
-            "\t           command parameters are specifying the path to teh folder where the.\n"
-            "\t           service descriptors reside. In case command parameters are not given,\n"
-            "\t           the target specific default path will be taken (see paths below).\n"
-            "\t-c         Delete the service database, has effect only in batch mode. \n"
-            "\t-i         The services require initialization upon first load.\n"
+            "\t-t<tgt> Specifies the target platform to be used (e.g. armv5, all).\n"
+            "\t-b      Batch mode (take service descriptors from a path). If specified, \n"
+            "\t        the command parameters are specifying the path to the folder\n"
+            "\t        where the service descriptors reside. In case command parameters\n"
+            "\t        are not given, the target specific default path will be taken\n"
+            "\t        (see paths below).\n"
+            "\t-c      Delete the service database, has effect only in batch mode. \n"
+            "\t-i      The services require initialization upon first load.\n"
             "\n"
             "Supported targets and their database paths:";
-    QMapIterator<QString, QString> i(dbMap);
+    QMapIterator<QString, QString> i(targetMap);
     while (i.hasNext()) {
         i.next();
-        *stdoutStream << "\nTarget: " << i.key() << "\n\tpath: " << i.value() << "\n\tdeployment: " << deployMap[i.key()] << '\n';
+        GeneratorPaths out(pathMap[i.value()]);
+        *stdoutStream << "\nTarget: " << i.key() << "\n\tpath: " << out.databasePath << "\n\tdeployment: " << out.descriptorsPath << '\n';
     }
     *stdoutStream << "\nExamples:\n"
         " - registering service1 and service2 for winscw target:\n"
@@ -157,9 +187,10 @@ void CommandProcessor::showUsage()
         "\tservicedbgen -tall -b add ./mypath/services\n\n"
         " - removing services for all targets from default descriptor path:\n"
         "\tservicedbgen -tall -b remove\n\n";
+    stdoutStream->flush();
 }
 
-bool CommandProcessor::setOptions(const QStringList &options)
+bool CommandProcessor::setOptions(const QStringList &options, QMap<QString, GeneratorPaths> &targets)
 {
     QStringList opts = options;
     QMutableListIterator<QString> i(opts);
@@ -179,32 +210,38 @@ bool CommandProcessor::setOptions(const QStringList &options)
             i.remove();
         }
         else if (option.startsWith("-t")) {
-            platform = option.right(option.size() - 2).toLower();
-            *stdoutStream << "Target: " << platform << '\n';
+            QString target = option.right(option.size() - 2).toLower();
+            if (target == "all") {
+                // copy all target paths
+                targets.clear();
+                targets = pathMap;
+            }
+            else if (targetMap[target].isEmpty()) {
+                MESSAGE("ERROR: unknown target " << target << '\n');
+                return false;
+            }
+            else if (!targets.contains(targetMap[target])){
+                targets[targetMap[target]] = pathMap[targetMap[target]];
+            }
             i.remove();
         }
     }
     if (!opts.isEmpty()) {
-        *stdoutStream << "Bad options: " << opts.join(" ") << "\n\n";
+        MESSAGE("Bad options: " << opts.join(" ") << "\n\n");
         return false;
     }
-
-    // check the target string and initialize
-    if ((platform != "all") && dbMap[platform].isEmpty()) {
-        *stdoutStream << "ERROR: unknown target" << platform << '\n';
-        return false;
-    }
+    if (targets.isEmpty())
+        targets = pathMap;
 
     return true;
 }
 
-ServiceDatabase *CommandProcessor::initTargetDatabase(const QString &aTarget, bool deleteDbAllowed)
+ServiceDatabase *CommandProcessor::initTargetDatabase(const QString &databasePath, bool deleteDbAllowed)
 {
-    QString tgtPath = dbMap[aTarget];
-    if (!tgtPath.isEmpty()) {
+    if (!databasePath.isEmpty()) {
 
         ServiceDatabase *db = new ServiceDatabase;
-        db->setDatabasePath(tgtPath + QDir::separator() + dbName() + QLatin1String(".db"));
+        db->setDatabasePath(databasePath + QDir::separator() + dbName() + QLatin1String(".db"));
 
         if (batchMode && deleteDatabase && deleteDbAllowed) {
             // delete file
@@ -249,21 +286,20 @@ QStringList CommandProcessor::getServiceDescriptors(const QString &path)
     return ret;
 }
 
-QStringList CommandProcessor::targetServiceDescriptors(const QString &specTarget, const QStringList &args)
+QStringList CommandProcessor::targetServiceDescriptors(const QString &desPath, const QStringList &args)
 {
     if (batchMode) {
         // arguments are paths or empty!
         if (args.isEmpty()) {
             // default path for target
-            QDir::root().mkpath(deployMap[specTarget]);
-            return getServiceDescriptors(deployMap[specTarget]);
+            QDir::root().mkpath(desPath);
+            return getServiceDescriptors(desPath);
         }
         else {
             // get files from arguments
             QStringList files;
-            foreach (const QString &folder, args) {
+            foreach (const QString &folder, args)
                 files << getServiceDescriptors(folder);
-            }
             return files;
         }
     }
@@ -272,27 +308,22 @@ QStringList CommandProcessor::targetServiceDescriptors(const QString &specTarget
     return args;
 }
 
-void CommandProcessor::add(const QStringList &desList, const QString &onTarget)
+void CommandProcessor::add(const QStringList &desList, ServiceDatabase *db)
 {
     if (desList.isEmpty()) {
-        *stdoutStream << "ERROR: No descriptor files/path specified, or the path does not contain service descriptors!\n";
-        *stdoutStream << "Usage:\n\tadd <service-xml-file(s)>[|path-to-service-xmls]\n";
+        MESSAGE("ERROR: No descriptor files/path specified, or the path does not contain service descriptors!\n");
+        MESSAGE("Usage:\n\tadd <service-xml-file(s)>[|path-to-service-xmls]\n");
         showUsage();
         return;
     }
 
-    ServiceDatabase *db = initTargetDatabase(onTarget, true);
-    if (!db) {
-        *stdoutStream << "ERROR: database cannot be opened/created.\n";
-        return;
-    }
     QString securityToken = QString::number(SEC_TOKEN);
 
     foreach (const QString &serviceXml, desList) {
         QFile f(serviceXml);
         ServiceMetaData parser(&f);
         if (!parser.extractMetadata()) {
-            *stdoutStream << "Parsing error: " << serviceXml;
+            MESSAGE("Parsing error: " << serviceXml << '\n');
             continue;
         }
 
@@ -303,41 +334,34 @@ void CommandProcessor::add(const QStringList &desList, const QString &onTarget)
                 // remove the previous installation of the service from the database
                 db->serviceInitialized(results.name, securityToken);
             }
-            *stdoutStream << "Service " << results.name << " registered to " << onTarget << '\n';
+            MESSAGE("Service " << results.name << " registered\n");
         }
         else
-            *stdoutStream << "ERROR: Service " << results.name << " registration to " << onTarget << " failed\n";
+            MESSAGE("ERROR: Service " << results.name << " registration to " << db->databasePath() << " failed\n");
     }
-    // remove database so other targets can be handled
-    QSqlDatabase::removeDatabase(db->m_connectionName);
-    delete db;
 }
 
-void CommandProcessor::remove(const QStringList &desList, const QString &onTarget)
+void CommandProcessor::remove(const QStringList &desList, ServiceDatabase *db)
 {
     if (desList.isEmpty()) {
-        *stdoutStream << "ERROR: No descriptor files/path specified, or the path does not contain service descriptors!\n";
-        *stdoutStream << "Usage:\n\tremove <service-xml-file(s)|path-to-service-xmls>\n";
+        MESSAGE("ERROR: No descriptor files/path specified, or the path does not contain service descriptors!\n");
+        MESSAGE("Usage:\n\tremove <service-xml-file(s)|path-to-service-xmls>\n");
         return;
     }
 
-    ServiceDatabase *db = initTargetDatabase(onTarget, false);
-    if (!db) {
-        *stdoutStream << "ERROR: database cannot be opened.\n";
-        return;
-    }
     QString securityToken = QString::number(SEC_TOKEN);
 
     foreach (const QString &serviceXml, desList) {
         const QString &service = getServiceFromXML(serviceXml);
+        if (service.isEmpty()) {
+            MESSAGE("ERROR: empty service descriptor or wrong parameter given.\n");
+            continue;
+        }
         if (db->unregisterService(service, securityToken))
-            *stdoutStream << "Service " << service << " unregistered from " << onTarget << '\n';
+            MESSAGE("Service " << service << " unregistered\n")
         else
-            *stdoutStream << "ERROR: Service " << service << " unregistration from " << onTarget << " failed\n";
+            MESSAGE("ERROR: Service " << service << " unregistration from " << db->databasePath() << " failed\n");
     }
-    // remove database so other targets can be handled
-    QSqlDatabase::removeDatabase(db->m_connectionName);
-    delete db;
 }
 
 
@@ -346,6 +370,9 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     QStringList args = QCoreApplication::arguments();
     CommandProcessor processor;
+
+    if (!processor.initialize())
+        return 1;
 
     if (args.count() == 1 || args.value(1) == "--help" || args.value(1) == "-h") {
         processor.showUsage();
