@@ -16,3 +16,5 @@ SUBDIRS += reading_perf
 
 SUBDIRS += small_screen_sensors
 
+contains(QT_CONFIG,opengl):SUBDIRS += cubehouse
+

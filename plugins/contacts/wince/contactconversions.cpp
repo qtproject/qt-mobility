@@ -1018,7 +1018,7 @@ QContact QContactWinCEEngine::convertToQContact(IItem *contact) const
     // Synthesize the display label.
     QContactManager::Error error;
     QString synth = synthesizedDisplayLabel(ret, &error);
-    ret = setContactDisplayLabel(synth, ret);
+    setContactDisplayLabel(&ret, synth);
 
     return ret;
 }

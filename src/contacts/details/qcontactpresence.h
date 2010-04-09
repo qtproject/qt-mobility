@@ -57,13 +57,13 @@ class Q_CONTACTS_EXPORT QContactPresence : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldTimestamp;
-    const char* FieldNickname;
-    const char* FieldPresenceState;
-    const char* FieldPresenceStateText;
-    const char* FieldPresenceStateImageUrl;
-    const char* FieldCustomMessage;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldTimestamp;
+    static const QLatin1Constant FieldNickname;
+    static const QLatin1Constant FieldPresenceState;
+    static const QLatin1Constant FieldPresenceStateText;
+    static const QLatin1Constant FieldPresenceStateImageUrl;
+    static const QLatin1Constant FieldCustomMessage;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPresence, "Presence")
     Q_DECLARE_LATIN1_CONSTANT(FieldTimestamp, "Timestamp");

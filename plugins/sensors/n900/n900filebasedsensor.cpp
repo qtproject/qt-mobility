@@ -56,7 +56,12 @@ void n900filebasedsensor::start()
     if (m_timerid)
         return;
 
-    int interval = sensor()->updateInterval();
+    if (sensor()->dataRate() == 0) {
+        sensorStopped();
+        return;
+    }
+
+    int interval = 1000 / sensor()->dataRate();
     if (interval < 0)
         interval = 1000;
 

@@ -54,12 +54,12 @@
 //
 
 #include <qmobilityglobal.h>
-#include <qmediaservice.h>
-#include <qmediaimageviewer.h>
-#include <qvideooutputcontrol.h>
-#include <qvideorenderercontrol.h>
-#include <qvideowidget.h>
-#include <qvideowidgetcontrol.h>
+#include "qmediaservice.h"
+#include "qmediaimageviewer.h"
+#include "qvideooutputcontrol.h"
+#include "qvideorenderercontrol.h"
+#include "qvideowidget.h"
+#include "qvideowidgetcontrol.h"
 
 #include <QtGui/qimage.h>
 

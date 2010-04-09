@@ -104,8 +104,10 @@ void QGstreamerAudioInputEndpointSelector::update()
 {
     m_names.clear();
     m_descriptions.clear();
+#ifndef Q_WS_MAEMO_5
     updateAlsaDevices();
     updateOssDevices();
+#endif
     updatePulseDevices();
     if (m_names.size() > 0)
         m_audioInput = m_names.at(0);

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include <qvideowidgetcontrol.h>
-#include <qmediacontrol_p.h>
+#include "qvideowidgetcontrol.h"
+#include "qmediacontrol_p.h"
 
 QTM_BEGIN_NAMESPACE
 

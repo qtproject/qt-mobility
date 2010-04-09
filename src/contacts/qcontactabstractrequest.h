@@ -55,7 +55,7 @@ class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
 
 public:
     QContactAbstractRequest() {}
-    virtual ~QContactAbstractRequest();
+    ~QContactAbstractRequest();
 
     enum State {
         InactiveState = 0,   // operation not yet started

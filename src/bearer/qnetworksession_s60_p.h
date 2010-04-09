@@ -68,8 +68,6 @@
     #include <extendedconnpref.h>
 #endif
 
-typedef int(*TOpenCSetdefaultifFunction)(const struct ifreq*);
-
 QTM_BEGIN_NAMESPACE
 
 class ConnectionProgressNotifier;
@@ -163,9 +161,6 @@ private: // data
 
     QNetworkSession* q;
     QDateTime startTime;
-
-    RLibrary iOpenCLibrary;
-    TOpenCSetdefaultifFunction iDynamicSetdefaultif;
 
     mutable RSocketServ iSocketServ;
     mutable RConnection iConnection;

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include <qmediacontrol_p.h>
-#include <qmetadatacontrol.h>
+#include "qmediacontrol_p.h"
+#include "qmetadatacontrol.h"
 
 QTM_BEGIN_NAMESPACE
 

@@ -67,6 +67,9 @@ MessagingEx::MessagingEx(QWidget* parent)
         priorityAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
     }
     connect(accountComboBox_2,SIGNAL(currentIndexChanged(int)),this,SLOT(sortParentAccountId()));
+
+    timestampdateTimeEdit->setDateTime(QDateTime::currentDateTime());
+    receptiondateTimeEdit->setDateTime(QDateTime::currentDateTime());
 }
 
 void MessagingEx::createMenus()

@@ -72,6 +72,7 @@ QVersitWriterPrivate::~QVersitWriterPrivate()
 /*! Links the signals from this to the signals of \a writer. */
 void QVersitWriterPrivate::init(QVersitWriter* writer)
 {
+    qRegisterMetaType<QVersitWriter::State>("QVersitWriter::State");
     connect(this, SIGNAL(stateChanged(QVersitWriter::State)),
             writer, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
 }

@@ -65,6 +65,7 @@ QTM_BEGIN_NAMESPACE
   \preliminary
   \brief The QContactManagerEngine class provides the interface for all
   implementations of the contact manager backend functionality.
+  \ingroup contacts-backends
 
   Instances of this class are usually provided by a
   \l QContactManagerEngineFactory, which is loaded from a plugin.
@@ -83,19 +84,6 @@ QTM_BEGIN_NAMESPACE
   \fn QContactManagerEngine::QContactManagerEngine()
 
   A default, empty constructor.
- */
-
-/*!
-  \fn QContactManagerEngine::deref()
-
-  Notifies the engine that it is no longer required.  If this
-  engine can not be shared between managers, it is safe for the
-  engine to delete itself in this function.
-
-  If the engine implementation can be shared, this function can use a
-  reference count and track lifetime that way.  The factory that
-  returns an instance of this engine should increment the reference
-  count in this case.
  */
 
 /*!
@@ -261,7 +249,7 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
   Returns the contact in the database identified by \a contactId.
 
   If the contact does not exist, an empty, default constructed QContact will be returned,
-  and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
+  and the \a error will be set to  \c QContactManager::DoesNotExistError.
 
   Any operation error which occurs will be saved in \a error.
 
@@ -350,14 +338,14 @@ bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relat
 
 /*!
   Saves the given \a relationship in the database.  If the relationship already exists in the database, this function will
-  return \c false and the error will be set to \c QContactManager::AlreadyExistsError.
-  If the relationship is saved successfully, this function will return \c true and error will be set
+  return \c false and the \a error will be set to \c QContactManager::AlreadyExistsError.
+  If the relationship is saved successfully, this function will return \c true and \a error will be set
   to \c QContactManager::NoError.  Note that relationships cannot be updated directly using this function; in order
   to update a relationship, you must remove the old relationship, make the required modifications, and then save it.
 
   The given relationship is invalid if it is circular (the first contact is the second contact), or
   if it references a non-existent local contact (either the first or second contact).  If the given \a relationship is invalid,
-  the function will return \c false and the error will be set to \c QContactManager::InvalidRelationshipError.
+  the function will return \c false and the \a error will be set to \c QContactManager::InvalidRelationshipError.
 
   The default implementation of this function converts the argument into a call to saveRelationships.
  */
@@ -384,8 +372,8 @@ bool QContactManagerEngine::saveRelationship(QContactRelationship *relationship,
 
 /*!
   Removes the given \a relationship from the manager.  If the relationship exists in the manager, the relationship
-  will be removed, the error will be set to \c QContactManager::NoError and this function will return true.  If no such
-  relationship exists in the manager, the error will be set to \c QContactManager::DoesNotExistError and this function
+  will be removed, the \a error will be set to \c QContactManager::NoError and this function will return true.  If no such
+  relationship exists in the manager, the \a error will be set to \c QContactManager::DoesNotExistError and this function
   will return false.
 
   The default implementation of this function converts the argument into a call to removeRelationships
@@ -493,17 +481,16 @@ QString QContactManagerEngine::synthesizedDisplayLabel(const QContact& contact, 
 }
 
 /*!
-  Returns a copy of the given contact \a contact with its display label set to \a displayLabel.
+  Sets the contact display label of \a contact to the supplied \a displayLabel.
+
   This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
  */
-QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLabel, const QContact& contact)
+void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QString& displayLabel)
 {
-    QContact retn = contact;
     QContactDisplayLabel dl;
     dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
     setDetailAccessConstraints(&dl, QContactDetail::Irremovable);
-    retn.d->m_details.replace(0, dl);
-    return retn;
+    contact->d->m_details.replace(0, dl);
 }
 
 /*!
@@ -521,20 +508,22 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
   Given an input \a filter, returns the canonical version of the filter.
 
   Some of the following transformations may be applied:
-   \li any QContactActionFilters are transformed into the corresponding
+  \list
+   \o Any QContactActionFilters are transformed into the corresponding
      QContactFilters returned by matching actions
-   \li Any QContactInvalidFilters contained in a union filter will be removed
-   \li Any default QContactFilters contained in an intersection filter will be removed
-   \li Any QContactIntersectionFilters with a QContactInvalidFilter contained will be
+   \o Any QContactInvalidFilters contained in a union filter will be removed
+   \o Any default QContactFilters contained in an intersection filter will be removed
+   \o Any QContactIntersectionFilters with a QContactInvalidFilter contained will be
      replaced with a QContactInvalidFilter
-   \li Any QContactUnionFilters with a default QContactFilter contained will be replaced
+   \o Any QContactUnionFilters with a default QContactFilter contained will be replaced
      with a default QContactFilter
-   \li An empty QContactIntersectionFilter will be replaced with a QContactDefaultFilter
-   \li An empty QContactUnionFilter will be replaced with a QContactInvalidFilter
-   \li An empty QContactLocalIdFilter will be replaced with a QContactInvalidFilter
-   \li An intersection or union filter with a single entry will be replaced by that entry
-   \li A QContactDetailFilter or QContactDetailRangeFilter with no definition name will be replaced with a QContactInvalidFilter
-   \li A QContactDetailRangeFilter with no range specified will be converted to a QContactDetailFilter
+   \o An empty QContactIntersectionFilter will be replaced with a QContactDefaultFilter
+   \o An empty QContactUnionFilter will be replaced with a QContactInvalidFilter
+   \o An empty QContactLocalIdFilter will be replaced with a QContactInvalidFilter
+   \o An intersection or union filter with a single entry will be replaced by that entry
+   \o A QContactDetailFilter or QContactDetailRangeFilter with no definition name will be replaced with a QContactInvalidFilter
+   \o A QContactDetailRangeFilter with no range specified will be converted to a QContactDetailFilter
+  \endlist
 */
 QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &filter)
 {
@@ -582,11 +571,11 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
             // XXX in theory we can remove duplicates in a set filter
             while (it != filters.end()) {
                 QContactFilter canon = canonicalizedFilter(*it);
-                if (canon.type() == QContactFilter::DefaultFilter)
-                    return QContactFilter();
-                if (canon.type() == QContactFilter::InvalidFilter)
+                if (canon.type() == QContactFilter::DefaultFilter) {
                     it = filters.erase(it);
-                else {
+                } else if (canon.type() == QContactFilter::InvalidFilter) {
+                    return QContactInvalidFilter();
+                } else {
                     *it = canon;
                     ++it;
                 }
@@ -604,18 +593,18 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
 
         case QContactFilter::UnionFilter:
         {
-            QContactIntersectionFilter f(filter);
+            QContactUnionFilter f(filter);
             QList<QContactFilter> filters = f.filters();
             QList<QContactFilter>::iterator it = filters.begin();
 
             // XXX in theory we can remove duplicates in a set filter
             while (it != filters.end()) {
                 QContactFilter canon = canonicalizedFilter(*it);
-                if (canon.type() == QContactFilter::InvalidFilter)
-                    return QContactInvalidFilter();
-                if (canon.type() == QContactFilter::DefaultFilter)
+                if (canon.type() == QContactFilter::InvalidFilter) {
                     it = filters.erase(it);
-                else {
+                } else if (canon.type() == QContactFilter::DefaultFilter) {
+                    return QContactFilter();
+                } else {
                     *it = canon;
                     ++it;
                 }
@@ -643,6 +632,9 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
         {
             QContactDetailRangeFilter f(filter);
             if (f.detailDefinitionName().isEmpty())
+                return QContactInvalidFilter();
+            if (f.minValue() == f.maxValue()
+                && f.rangeFlags() == (QContactDetailRangeFilter::ExcludeLower | QContactDetailRangeFilter::ExcludeUpper))
                 return QContactInvalidFilter();
             if ((f.minValue().isNull() && f.maxValue().isNull()) || (f.minValue() == f.maxValue())) {
                 QContactDetailFilter df;
@@ -1060,9 +1052,9 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.clear();
     f.setDataType(QVariant::Url);
     f.setAllowableValues(QVariantList());
-    fields.insert(QContactRingtone::FieldAudioRingtone, f);
-    fields.insert(QContactRingtone::FieldVideoRingtone, f);
-    fields.insert(QContactRingtone::FieldVibrationRingtone, f);
+    fields.insert(QContactRingtone::FieldAudioRingtoneUrl, f);
+    fields.insert(QContactRingtone::FieldVideoRingtoneUrl, f);
+    fields.insert(QContactRingtone::FieldVibrationRingtoneUrl, f);
     f.setDataType(QVariant::StringList);
     f.setAllowableValues(contexts);
     fields.insert(QContactDetail::FieldContext, f);
@@ -1323,8 +1315,6 @@ QMap<QString, QContactDetailDefinition> QContactManagerEngine::detailDefinitions
  */
 QContactDetailDefinition QContactManagerEngine::detailDefinition(const QString& definitionName, const QString& contactType, QContactManager::Error* error) const
 {
-    Q_UNUSED(definitionName);
-
     QMap<QString, QContactDetailDefinition> definitions = detailDefinitions(contactType, error);
     if (definitions.contains(definitionName))  {
         *error = QContactManager::NoError;
@@ -1396,7 +1386,14 @@ void QContactManagerEngine::setDetailAccessConstraints(QContactDetail *detail, Q
 /*!
   Adds the given \a contact to the database if \a contact has a
   default-constructed id, or an id with the manager URI set to the URI of
-  this manager and a local id of zero.
+  this manager and a local id of zero, otherwise updates the contact in
+  the database which has the same id to be the given \a contact.
+  If the id is non-zero but does not identify any contact stored in the
+  manager, the function will return false and \a error will be set to
+  \c QContactManager::DoesNotExistError.
+
+  Returns true if the save operation completed successfully, otherwise
+  returns false.  Any error which occurs will be saved in \a error.
 
   The default implementation will convert this into a call to saveContacts.
 
@@ -1429,6 +1426,8 @@ bool QContactManagerEngine::saveContact(QContact* contact, QContactManager::Erro
   Returns true if the contact was removed successfully, otherwise
   returns false.
 
+  Any error which occurs will be saved in \a error.
+
   The default implementation will convert this into a call to removeContacts.
  */
 bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
@@ -1447,8 +1446,6 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 }
 
 /*!
-  \fn bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-
   Adds the list of contacts given by \a contacts list to the database.
   Returns true if the contacts were saved successfully, otherwise false.
 
@@ -1467,10 +1464,15 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
 
   \sa QContactManager::saveContact()
  */
+bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(contacts);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
 
 /*!
-  \fn bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-
   Remove every contact whose id is contained in the list of contacts ids
   \a contactIds.  Returns true if all contacts were removed successfully,
   otherwise false.
@@ -1485,22 +1487,32 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
 
+  If the list contains ids which do not identify a valid contact in the manager, the function will
+  remove any contacts which are identified by ids in the \a contactIds list, insert
+  \c QContactManager::DoesNotExist entries into the \a errorMap for the indices of invalid ids
+  in the \a contactIds list, return false, and set the overall operation error to
+  \c QContactManager::DoesNotExistError.
+
   Any errors encountered during this operation should be stored to
   \a error.
 
   \sa QContactManager::removeContact()
  */
+bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    Q_UNUSED(contactIds);
+    Q_UNUSED(errorMap);
+    *error = QContactManager::NotSupportedError;
+    return false;
+}
 
 /*!
-  \preliminary
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
   The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships
   in the contact are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.  Any error which occurs will be saved to \a error.
-
-  This function is preliminary and the behaviour is subject to change!
  */
-QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error* error)
+QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error* error) const
 {
     QContact conforming;
     QContactManager::Error tempError;
@@ -1700,7 +1712,92 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 Qt::CaseSensitivity cs = (cdf.matchFlags() & QContactFilter::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
                 /* See what flags are requested, since we're looking at a value */
-                if (cdf.matchFlags() & (QContactFilter::MatchEndsWith | QContactFilter::MatchStartsWith | QContactFilter::MatchContains | QContactFilter::MatchFixedString)) {
+                if (cdf.matchFlags() & QContactFilter::MatchPhoneNumber) {
+                    /* Doing phone number filtering.  We hand roll an implementation here, backends will obviously want to override this. */
+                    QString input = cdf.value().toString();
+
+                    /* preprocess the input - ignore any non-digits (doesn't perform ITU-T collation */
+                    QString preprocessedInput;
+                    for (int i = 0; i < input.size(); i++) {
+                        QChar current = input.at(i).toLower();
+                        if (current.isDigit()) preprocessedInput.append(current);
+                        // note: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
+                    }
+
+                    /* Look at every detail in the set of details and compare */
+                    for (int j = 0; j < details.count(); j++) {
+                        const QContactDetail& detail = details.at(j);
+                        const QString& valueString = detail.value(cdf.detailFieldName());
+                        QString preprocessedValueString;
+                        for (int i = 0; i < valueString.size(); i++) {
+                            QChar current = valueString.at(i).toLower();
+                            if (current.isDigit()) preprocessedValueString.append(current);
+                            // note: we ignore characters like '+', 'p', 'w', '*' and '#' which may be important.
+                        }
+
+                        // if the matchflags input don't require a particular criteria to pass, we assume that it has passed.
+                        // the "default" match strategy is an "endsWith" strategy.
+                        bool me = (cdf.matchFlags() & 7) == QContactFilter::MatchExactly;
+                        bool mc = (cdf.matchFlags() & 7) == QContactFilter::MatchContains;
+                        bool msw = (cdf.matchFlags() & 7) == QContactFilter::MatchStartsWith;
+                        bool mew = (cdf.matchFlags() & 7) == QContactFilter::MatchEndsWith;
+
+                        bool mer = (me ? preprocessedValueString == preprocessedInput : true);
+                        bool mcr = (mc ? preprocessedValueString.contains(preprocessedInput) : true);
+                        bool mswr = (msw ? preprocessedValueString.startsWith(preprocessedInput) : true);
+                        bool mewr = (mew ? preprocessedValueString.endsWith(preprocessedInput) : true);
+                        if (mewr && mswr && mcr && mer) {
+                            return true; // this detail meets all of the criteria which were required, and hence must match.
+                        }
+                    }
+                } else if (cdf.matchFlags() & QContactFilter::MatchKeypadCollation) {
+                    // XXX TODO: not sure about the filtering semantics for MatchKeypadCollation.
+                    QString input = cdf.value().toString();
+
+                    /* Look at every detail in the set of details and compare */
+                    for (int j = 0; j < details.count(); j++) {
+                        const QContactDetail& detail = details.at(j);
+                        const QString& valueString = detail.value(cdf.detailFieldName()).toLower();
+
+                        // preprocess the valueString
+                        QString preprocessedValue;
+                        for (int i = 0; i < valueString.size(); i++) {
+                            // we use ITU-T keypad collation by default.
+                            QChar currentValueChar = valueString.at(i);
+                            if (currentValueChar == QLatin1Char('a') || currentValueChar == QLatin1Char('b') || currentValueChar == QLatin1Char('c'))
+                                preprocessedValue.append(QLatin1Char('2'));
+                            else if (currentValueChar == QLatin1Char('d') || currentValueChar == QLatin1Char('e') || currentValueChar == QLatin1Char('f'))
+                                preprocessedValue.append(QLatin1Char('3'));
+                            else if (currentValueChar == QLatin1Char('g') || currentValueChar == QLatin1Char('h') || currentValueChar == QLatin1Char('i'))
+                                preprocessedValue.append(QLatin1Char('4'));
+                            else if (currentValueChar == QLatin1Char('j') || currentValueChar == QLatin1Char('k') || currentValueChar == QLatin1Char('l'))
+                                preprocessedValue.append(QLatin1Char('5'));
+                            else if (currentValueChar == QLatin1Char('m') || currentValueChar == QLatin1Char('n') || currentValueChar == QLatin1Char('o'))
+                                preprocessedValue.append(QLatin1Char('6'));
+                            else if (currentValueChar == QLatin1Char('p') || currentValueChar == QLatin1Char('q') || currentValueChar == QLatin1Char('r') || currentValueChar == QLatin1Char('s'))
+                                preprocessedValue.append(QLatin1Char('7'));
+                            else if (currentValueChar == QLatin1Char('t') || currentValueChar == QLatin1Char('u') || currentValueChar == QLatin1Char('v'))
+                                preprocessedValue.append(QLatin1Char('8'));
+                            else if (currentValueChar == QLatin1Char('w') || currentValueChar == QLatin1Char('x') || currentValueChar == QLatin1Char('y') || currentValueChar == QLatin1Char('z'))
+                                preprocessedValue.append(QLatin1Char('9'));
+                            else
+                                preprocessedValue.append(currentValueChar);
+                        }
+
+                        bool me = (cdf.matchFlags() & 7) == QContactFilter::MatchExactly;
+                        bool mc = (cdf.matchFlags() & 7) == QContactFilter::MatchContains;
+                        bool msw = (cdf.matchFlags() & 7) == QContactFilter::MatchStartsWith;
+                        bool mew = (cdf.matchFlags() & 7) == QContactFilter::MatchEndsWith;
+
+                        bool mer = (me ? preprocessedValue == input : true);
+                        bool mcr = (mc ? preprocessedValue.contains(input) : true);
+                        bool mswr = (msw ? preprocessedValue.startsWith(input) : true);
+                        bool mewr = (mew ? preprocessedValue.endsWith(input) : true);
+                        if (mewr && mswr && mcr && mer) {
+                            return true; // this detail meets all of the criteria which were required, and hence must match.
+                        }
+                    }
+                } else if (cdf.matchFlags() & (QContactFilter::MatchEndsWith | QContactFilter::MatchStartsWith | QContactFilter::MatchContains | QContactFilter::MatchFixedString)) {
                     /* We're strictly doing string comparisons here */
                     bool matchStarts = (cdf.matchFlags() & 7) == QContactFilter::MatchStartsWith;
                     bool matchEnds = (cdf.matchFlags() & 7) == QContactFilter::MatchEndsWith;
@@ -2063,11 +2160,11 @@ QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>
             QContactManagerEngine::addSorted(&sortedContacts, c, sortOrders);
         }
 
-        foreach(const QContact c, sortedContacts) {
+        foreach(const QContact& c, sortedContacts) {
             sortedIds.append(c.localId());
         }
     } else {
-        foreach(const QContact c, cs) {
+        foreach(const QContact& c, cs) {
             sortedIds.append(c.localId());
         }
     }

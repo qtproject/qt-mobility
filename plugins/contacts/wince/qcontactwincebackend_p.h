@@ -246,6 +246,7 @@ public:
     virtual bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
     /* Validation for saving */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error =  QContactManager::NotSupportedError;return QContact();}
     virtual bool validateContact(const QContact& contact, QContactManager::Error* error) const
     {
         return QContactManagerEngine::validateContact(contact, error);

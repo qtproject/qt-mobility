@@ -48,7 +48,7 @@
 
 #include <qmobilityglobal.h>
 
-#include <qmediacontent.h>
+#include "qmediacontent.h"
 
 QT_BEGIN_NAMESPACE
 class QString;
