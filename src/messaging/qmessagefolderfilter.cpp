@@ -198,8 +198,6 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
   
     Returns a filter matching folders whose identifier is a member of the set yielded by \a filter, according to \a cmp.
 
-    On the Maemo 5 (Fremantle) platform this function is not yet supported.
-    
     \sa QMessageFolder::id()
 */
 
@@ -248,8 +246,6 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
   
     Returns a filter matching folders whose parent account identifier is a member of the set yielded by \a filter, according to \a cmp.
 
-    On the Maemo 5 (Fremantle) platform this function is not yet supported.
-    
     \sa QMessageAccount::id()
 */
 
@@ -266,8 +262,6 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
   
     Returns a filter matching folders whose parent folder identifier is a member of the set yielded by \a filter, according to \a cmp.
 
-    On the Maemo 5 (Fremantle) platform this function is not yet supported.
-    
     \sa QMessageFolder::id()
 */
 
@@ -284,8 +278,6 @@ bool QMessageFolderFilter::operator!=(const QMessageFolderFilter& other) const
   
     Returns a filter matching folders whose ancestor folders' identifiers contain a member of the set yielded by \a filter, according to \a cmp.
 
-    On the Maemo 5 (Fremantle) platform this function is not yet supported.
-    
     \sa QMessageFolder::id()
 */
 
