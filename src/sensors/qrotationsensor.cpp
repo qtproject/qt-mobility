@@ -56,29 +56,37 @@ IMPLEMENT_READING(QRotationReading)
 
     \section2 QRotationReading Units
 
-    The rotation reading contains 3 angles, measured in degrees that define the orientation
-    of the device in three-dimensional space. The three angles are applied to the device in the
-    following order.
+    The rotation reading contains 3 angles, measured in degrees that define
+    the orientation of the device in three-dimensional space. The rotations
+    should not be confused with relative rotations such as yaw and pitch.
+    These rotations are of the devices axes relative to the external
+    reference points that define the reference co-ordinate axes: X, Y and Z
+    in the diagram.
+    
+    The three angles are applied to the device in the following order.
 
     \list
-    \o Right-handed rotation z (-180, 180]. Starting from the x axis and incrementing towards the
-       y axis.
-    \o Right-handed rotation x (-90, 90]. Starting from the new (once-rotated) y axis and
-       incrementing towards the z axis.
-    \o Right-handed rotation y (-180, 180]. Starting from the new (twice-rotated) z axis and
-       incrementing towards the x axis.
+    \o Right-handed rotation z (-180, 180]. Starting from the x-axis and
+     incrementing in the direction of the y-axis.
+    \o Right-handed rotation x (-90, 90]. Starting from the new
+     (once-rotated) y-axis and incrementing towards the z-axis.
+    \o Right-handed rotation y (-180, 180]. Starting from the new
+     (twice-rotated) z-axis and incrementing towards the x-axis.
     \endlist
 
     \image Rotation_angles.png Visual representation of the rotation angles.
 
-    The 0 point for the z angle is defined as a fixed, external entity and is device-specific. While magnetic
-    north is typically used as this reference point it may not be. Do not attempt to compare values
-    for the z angle between devices or even on the same device if it has moved a significant distance.
-    If the device cannot detect a fixed, external entity the z angle will always be 0 and the
-    QRotationSensor::hasZ property will be set to false.
+    The 0 point for the z angle is defined as a fixed, external entity and
+    is device-specific. While magnetic North is typically used as this
+    reference point it may not be. Do not attempt to compare values
+    for the z angle between devices or even on the same device if it has
+    moved a significant distance.
+    
+    If the device cannot detect a fixed, external entity the z angle will
+    always be 0 and the QRotationSensor::hasZ property will be set to false.
 
-    The 0 point for the x and y angles are defined as when the x and y axes of the device are oriented
-    towards the horizon.
+    The 0 point for the x and y angles are defined as when the x and y axes
+    of the device are oriented towards the horizon.
 */
 
 /*!
