@@ -42,6 +42,8 @@
 #include "qlandmarkmanager.h"
 #include "qlandmarkmanager_p.h"
 
+#include "qlandmarkmanagerenginefactory_sqlite_p.h"
+
 #include <QStringList>
 #include <QString>
 #include <QIODevice>
@@ -97,7 +99,24 @@ QTM_USE_NAMESPACE
 QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters, QObject *parent)
         : d_ptr(new QLandmarkManagerPrivate())
 {
-    //TODO: implement
+    Q_D(QLandmarkManager);
+
+    if (!availableManagers().contains(managerName)) {
+        d->errorCode = NotSupportedError;
+        d->errorString = QString("The landmark engine %1 is not supported.").arg(managerName);
+        d->engine = 0;
+        return;
+    }
+
+    if (managerName == "com.nokia.qt.landmarks.engines.sqlite") {
+        d->engine = QLandmarkManagerEngineFactorySqlite::engine(parameters,
+                                                                &(d->errorCode),
+                                                                &(d->errorString));
+    } else {
+        // set some kind of error? or use the else instead of the contains check?
+        // should there be a static list of factories for this and for availableManagers()?
+    }
+
 }
 
 /*!
@@ -112,7 +131,24 @@ QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QStrin
 QLandmarkManager::QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent)
         : d_ptr(new QLandmarkManagerPrivate())
 {
-    //TODO: implement
+    Q_D(QLandmarkManager);
+
+    if (!availableManagers().contains(managerName)) {
+        d->errorCode = NotSupportedError;
+        d->errorString = QString("The landmark engine %1 is not supported.").arg(managerName);
+        d->engine = 0;
+        return;
+    }
+
+    if (managerName == "com.nokia.qt.landmarks.engines.sqlite") {
+        d->engine = QLandmarkManagerEngineFactorySqlite::engine(parameters,
+                                                                &(d->errorCode),
+                                                                &(d->errorString));
+        // TODO check version versus supported versions - seems kind of pointless unless the above takes a version argument
+    } else {
+        // set some kind of error? or use the else instead of the contains check?
+        // should there be a static list of factories for this and for availableManagers()?
+    }
 }
 
 /*!
@@ -624,8 +660,9 @@ int QLandmarkManager::managerVersion() const
 */
 QStringList QLandmarkManager::availableManagers()
 {
-    // call managername on each of a list of factories?
-    return QStringList(); //TODO: implement
+    QStringList names;
+    names << "com.nokia.qt.landmarks.engines.sqlite";
+    return names;
 }
 
 /*! Returns a URI that completely describes a manager implementation, datastore,

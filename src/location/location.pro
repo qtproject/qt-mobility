@@ -101,6 +101,8 @@ PRIVATE_HEADERS += \
                     qlandmarkfilter_p.h \
                     qlandmarkid_p.h \
                     qlandmarkmanager_p.h \
+                    qlandmarkmanager_sqlite_p.h \
+                    qlandmarkmanagerengine_sqlite_p.h \
                     qlocationutils_p.h \
                     qmaneuver_p.h \
                     qmapellipse_p.h \
@@ -239,7 +241,9 @@ SOURCES += \
             qlandmarkintersectionfilter.cpp \
             qlandmarkmanager.cpp \
             qlandmarkmanagerengine.cpp \
+            qlandmarkmanagerengine_sqlite.cpp \
             qlandmarkmanagerenginefactory.cpp \
+            qlandmarkmanagerenginefactory_sqlite.cpp \
             qlandmarknamefilter.cpp \
             qlandmarknamesort.cpp \
             qlandmarknearestfilter.cpp \
