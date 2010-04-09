@@ -60,6 +60,7 @@ public:
 
 public Q_SLOTS:
     void showArtists(const QGalleryFilter &filter = QGalleryFilter());
+    void showAlbumArtists(const QGalleryFilter &filter = QGalleryFilter());
     void showAlbums(const QGalleryFilter &filter = QGalleryFilter());
     void showSongs(const QGalleryFilter &filter = QGalleryFilter());
 
@@ -67,6 +68,7 @@ private:
     QDocumentGallery *gallery;
     QStackedWidget *stack;
     GalleryView *artistView;
+    GalleryView *albumArtistView;
     GalleryView *albumView;
     GalleryView *songView;
 };

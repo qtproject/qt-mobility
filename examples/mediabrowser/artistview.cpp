@@ -48,10 +48,10 @@
 
 #include <qgallery.h>
 
-ArtistView::ArtistView(QWidget *parent)
+ArtistView::ArtistView(const QString &type, QWidget *parent)
     : GalleryView(parent)
 {
-    setType(QDocumentGallery::Artist);
+    setType(type);
     setFields(QStringList()
             << QDocumentGallery::title
             << QDocumentGallery::trackCount
@@ -94,6 +94,6 @@ void ArtistView::mediaChanged()
 
 void ArtistView::activated(const QModelIndex &index)
 {
-    emit showSongs(QGalleryContainerFilter(media()->id(index.row())));
+    emit showAlbums(QGalleryContainerFilter(media()->id(index.row())));
 }
 

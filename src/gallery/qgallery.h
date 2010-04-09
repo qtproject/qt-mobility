@@ -81,54 +81,93 @@ public:
     static const QGalleryType File;
     static const QGalleryType Folder;
     static const QGalleryType Document;
-    static const QGalleryType Media;
+    static const QGalleryType Text;
     static const QGalleryType Audio;
     static const QGalleryType Image;
     static const QGalleryType Video;
-    static const QGalleryType Location;
+    static const QGalleryType Playlist;
     static const QGalleryType Artist;
     static const QGalleryType AlbumArtist;
     static const QGalleryType Album;
+    static const QGalleryType AudioGenre;
+    static const QGalleryType PhotoAlbum;
 
-    // Item
+    // Common
     static const QGalleryProperty author;
     static const QGalleryProperty copyright;
     static const QGalleryProperty description;
-    static const QGalleryProperty mimeType;
+    static const QGalleryProperty comments;
     static const QGalleryProperty rating;
     static const QGalleryProperty title;
-    static const QGalleryProperty url;
+    static const QGalleryProperty subject;
+    static const QGalleryProperty keywords;
+    static const QGalleryProperty language;
     static const QGalleryProperty thumbnail;
 
     // File
+    static const QGalleryProperty path;
+    static const QGalleryProperty filePath;
     static const QGalleryProperty fileName;
+    static const QGalleryProperty fileExtension;
+    static const QGalleryProperty fileSize;
+    static const QGalleryProperty mimeType;
+    static const QGalleryProperty lastModified;
+    static const QGalleryProperty lastAccessed;
+
+    // Document
+    static const QGalleryProperty pageCount;
+    static const QGalleryProperty wordCount;
+    static const QGalleryProperty created;
 
     // Media
     static const QGalleryProperty duration;
     static const QGalleryProperty producer;
-    static const QGalleryProperty writer;
+    static const QGalleryProperty lastPlayed;
+    static const QGalleryProperty playCount;
+    static const QGalleryProperty performer;
 
-    // Audio/Music
+    // Audio
+    static const QGalleryProperty audioCodec;
+    static const QGalleryProperty audioBitRate;
+    static const QGalleryProperty sampleRate;
+    static const QGalleryProperty channelCount;
+
+    // Music
     static const QGalleryProperty artist;
     static const QGalleryProperty albumArtist;
-    static const QGalleryProperty albumId;
     static const QGalleryProperty albumTitle;
     static const QGalleryProperty composer;
-    static const QGalleryProperty discNumber;
     static const QGalleryProperty genre;
+    static const QGalleryProperty lyrics;
     static const QGalleryProperty trackCount;
     static const QGalleryProperty trackNumber;
+    static const QGalleryProperty discNumber;
 
     // Image, Video common.
     static const QGalleryProperty width;
     static const QGalleryProperty height;
 
-    // Image/Photo
+    // Image
+    static const QGalleryProperty orientation;
+
+    // Photo
+    static const QGalleryProperty photoAlbum;
     static const QGalleryProperty dateTaken;
     static const QGalleryProperty cameraManufacturer;
     static const QGalleryProperty cameraModel;
+    static const QGalleryProperty exposureProgram;
+    static const QGalleryProperty exposureTime;
+    static const QGalleryProperty fNumber;
+    static const QGalleryProperty flashEnabled;
+    static const QGalleryProperty focalLength;
+    static const QGalleryProperty meteringMode;
+    static const QGalleryProperty whiteBalance;
 
     // Video
+    static const QGalleryProperty frameRate;
+    static const QGalleryProperty videoCodec;
+    static const QGalleryProperty videoBitRate;
+    static const QGalleryProperty resumePosition;
     static const QGalleryProperty director;
 
     QDocumentGallery(QObject *parent = 0);
