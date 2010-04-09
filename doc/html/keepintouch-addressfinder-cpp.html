@@ -225,31 +225,31 @@
 
         <span class="comment">// We will include addresses contacted following the minimum date</span>
         QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
+        <span class="comment">// Windows mobile only sets a receptionTimeStamp for sent messsages</span>
+        includeFilter |= QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual);
 
         QMessageFilter excludeFilter;
         if (useExclusionPeriod) {
             <span class="comment">// We will exclude addresses contacted following the maximum date</span>
             excludeFilter = QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
+            excludeFilter |= QMessageFilter::byReceptionTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
         }
-
-        <span class="comment">// Not sure why reception timestamp is relevant to sent messages...</span>
-        includeFilter |= QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual);
-        excludeFilter |= QMessageFilter::byReceptionTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
-
-        QMessageFilter exclusionFilter;
 
         <span class="comment">// We only want to match messages that we sent</span>
         QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
         <span class="comment">// Create the filter needed to locate messages to search for addresses to include</span>
-        inclusionFilter = (sentFilter &amp; includeFilter &amp; ~excludeFilter);
-
         if (useExclusionPeriod) {
-            <span class="comment">// Create the filter needed to locate messages whose address we will exclude</span>
-            exclusionFilter = (sentFilter &amp; excludeFilter);
+            inclusionFilter = (sentFilter &amp; includeFilter &amp; ~excludeFilter);
+        } else {
+            inclusionFilter = (sentFilter &amp; includeFilter);
         }
 
         if (useExclusionPeriod) {
+            <span class="comment">// Create the filter needed to locate messages whose address we will exclude</span>
+            QMessageFilter exclusionFilter;
+            exclusionFilter = (sentFilter &amp; excludeFilter);
+
             <span class="comment">// Start the search for messages containing addresses to exclude</span>
             service.queryMessages(exclusionFilter);
         } else {
@@ -399,12 +399,21 @@
     #endif
 
         QGridLayout *filterLayout = new QGridLayout(inputGroup);
+    #ifdef Q_WS_MAEMO_5
+        <span class="comment">// Maemo 5 style doesn't take group box titles into account.</span>
+        int spacingHack = QFontMetrics(QFont()).height();
+        filterLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
+    #endif
 
         QLabel *includeLabel = new QLabel(tr(&quot;Contacted this&quot;));
         filterLayout-&gt;addWidget(includeLabel, 0, 0);
         filterLayout-&gt;setAlignment(includeLabel, Qt::AlignRight);
 
         excludeCheckBox = new QCheckBox(tr(&quot;But not last&quot;));
+    #ifdef Q_WS_MAEMO_5
+        <span class="comment">// Maemo 5 style cuts off check box text.</span>
+        excludeCheckBox-&gt;setText(excludeCheckBox-&gt;text() + &quot;  &quot;);
+    #endif
         excludeCheckBox-&gt;setCheckState(Qt::Checked);
         connect(excludeCheckBox, SIGNAL(stateChanged(int)), this, SLOT(excludePeriodEnabled(int)));
         filterLayout-&gt;addWidget(excludeCheckBox, 1, 0);
@@ -446,6 +455,9 @@
         QGroupBox *addressGroup = new QGroupBox(tr(&quot;Contacts&quot;));
         addressGroup-&gt;setAlignment(Qt::AlignLeft);
         addressGroup-&gt;setLayout(new QVBoxLayout);
+    #ifdef Q_WS_MAEMO_5
+        addressGroup-&gt;layout()-&gt;setContentsMargins(0, spacingHack, 0, 0);
+    #endif
         addressGroup-&gt;layout()-&gt;addWidget(contactList);
         resultsLayout-&gt;addWidget(addressGroup);
 
@@ -453,6 +465,9 @@
         messageGroup-&gt;setAlignment(Qt::AlignLeft);
 
         QVBoxLayout *groupLayout = new QVBoxLayout;
+    #ifdef Q_WS_MAEMO_5
+        groupLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
+    #endif
 
         messageCombo = new QComboBox;
         connect(messageCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(messageIndexChanged(int)));

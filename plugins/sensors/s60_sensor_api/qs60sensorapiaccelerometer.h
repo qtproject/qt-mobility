@@ -42,26 +42,36 @@
 #ifndef QS60SENSORAPIACCELEROMETER_H
 #define QS60SENSORAPIACCELEROMETER_H
 
-#include "qs60sensorapicommon.h"
+// Qt
+#include <qsensorbackend.h>
 #include <qaccelerometer.h>
+
+// symbian
+#include <rrsensorapi.h>
 
 QTM_USE_NAMESPACE
 
-class QS60SensorApiAccelerometer : public QS60SensorApiCommon
+class QS60SensorApiAccelerometer : public QSensorBackend,  public MRRSensorDataListener
 {
 public:
     static const char *id;
     
     QS60SensorApiAccelerometer(QSensor *sensor);
+    virtual ~QS60SensorApiAccelerometer();
+    
+    // from QSensorBackend
+    virtual void start();
+    virtual void stop();
+    void poll();
 
     // from MRRSensorDataListener
     void HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent);
     
-protected:
-    // from QS60SensorApiCommon
-    int nativeSensorId();
+private:
+    void findAndCreateNativeSensorL();
     
 private:
+    CRRSensorApi* m_nativeSensor;    
     QAccelerometerReading m_reading;
     qreal m_sampleFactor;
 };

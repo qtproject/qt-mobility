@@ -217,35 +217,35 @@ void AddressFinder::searchMessages()
 //! [create-simple-filters]
     // We will include addresses contacted following the minimum date
     QMessageFilter includeFilter(QMessageFilter::byTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual));
+    // Windows mobile only sets a receptionTimeStamp for sent messsages
+    includeFilter |= QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual);
 
     QMessageFilter excludeFilter;
     if (useExclusionPeriod) {
         // We will exclude addresses contacted following the maximum date
         excludeFilter = QMessageFilter::byTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
+        excludeFilter |= QMessageFilter::byReceptionTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
     }
 //! [create-simple-filters]
-
-    // Not sure why reception timestamp is relevant to sent messages...
-    includeFilter |= QMessageFilter::byReceptionTimeStamp(minimumDate, QMessageDataComparator::GreaterThanEqual);
-    excludeFilter |= QMessageFilter::byReceptionTimeStamp(maximumDate, QMessageDataComparator::GreaterThanEqual);
-
-    QMessageFilter exclusionFilter;
 
 //! [create-composite-filters]
     // We only want to match messages that we sent
     QMessageFilter sentFilter(QMessageFilter::byStandardFolder(QMessage::SentFolder));
 
     // Create the filter needed to locate messages to search for addresses to include
-    inclusionFilter = (sentFilter & includeFilter & ~excludeFilter);
-
     if (useExclusionPeriod) {
-        // Create the filter needed to locate messages whose address we will exclude
-        exclusionFilter = (sentFilter & excludeFilter);
+        inclusionFilter = (sentFilter & includeFilter & ~excludeFilter);
+    } else {
+        inclusionFilter = (sentFilter & includeFilter);
     }
 //! [create-composite-filters]
 
 //! [begin-search]
     if (useExclusionPeriod) {
+        // Create the filter needed to locate messages whose address we will exclude
+        QMessageFilter exclusionFilter;
+        exclusionFilter = (sentFilter & excludeFilter);
+        
         // Start the search for messages containing addresses to exclude
         service.queryMessages(exclusionFilter);
     } else {
@@ -402,12 +402,21 @@ void AddressFinder::setupUi()
 #endif
 
     QGridLayout *filterLayout = new QGridLayout(inputGroup);
+#ifdef Q_WS_MAEMO_5
+    // Maemo 5 style doesn't take group box titles into account.
+    int spacingHack = QFontMetrics(QFont()).height();
+    filterLayout->setContentsMargins(0, spacingHack, 0, 0);
+#endif
 
     QLabel *includeLabel = new QLabel(tr("Contacted this"));
     filterLayout->addWidget(includeLabel, 0, 0);
     filterLayout->setAlignment(includeLabel, Qt::AlignRight);
 
     excludeCheckBox = new QCheckBox(tr("But not last"));
+#ifdef Q_WS_MAEMO_5
+    // Maemo 5 style cuts off check box text.
+    excludeCheckBox->setText(excludeCheckBox->text() + "  ");
+#endif
     excludeCheckBox->setCheckState(Qt::Checked);
     connect(excludeCheckBox, SIGNAL(stateChanged(int)), this, SLOT(excludePeriodEnabled(int)));
     filterLayout->addWidget(excludeCheckBox, 1, 0);
@@ -449,6 +458,9 @@ void AddressFinder::setupUi()
     QGroupBox *addressGroup = new QGroupBox(tr("Contacts"));
     addressGroup->setAlignment(Qt::AlignLeft);
     addressGroup->setLayout(new QVBoxLayout);
+#ifdef Q_WS_MAEMO_5
+    addressGroup->layout()->setContentsMargins(0, spacingHack, 0, 0);
+#endif
     addressGroup->layout()->addWidget(contactList);
     resultsLayout->addWidget(addressGroup);
 
@@ -456,6 +468,9 @@ void AddressFinder::setupUi()
     messageGroup->setAlignment(Qt::AlignLeft);
 
     QVBoxLayout *groupLayout = new QVBoxLayout;
+#ifdef Q_WS_MAEMO_5
+    groupLayout->setContentsMargins(0, spacingHack, 0, 0);
+#endif
 
     messageCombo = new QComboBox;
     connect(messageCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(messageIndexChanged(int)));

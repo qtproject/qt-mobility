@@ -87,6 +87,7 @@ determine the QtMobility library the current project should link to (in this exa
 
 Each QtMobility API has its corresponding value which has to be added to \c MOBILITY. The subsequent table lists the APIs and the 
 corresponding values that can be assigned to \c MOBILITY.
+
 \table
 \header
     \o Domain
@@ -120,6 +121,41 @@ corresponding values that can be assigned to \c MOBILITY.
     \o versit
 \endtable
 
+When developing on Symbian we will also need to add the required capabilites to the project file in order to satisfy the Symbian security model:
+
+\snippet quickstart/quickstart.pro 1
+
+\table 
+\header
+    \o Domain
+    \o Symbian Capabilities
+\row
+    \o \l {Bearer Management}
+    \o ReadUserData NetworkServices (NetworkControl for QNetworkSession::stop())
+\row
+    \o \l {Contacts}
+    \o ReadUserData WriteUserData SwEvent ReadDeviceData WriteDeviceData
+\row
+    \o \l {Location}
+    \o Location
+\row
+    \o \l {Multimedia}
+    \o UserEnvironment ReadUserData WriteUserData ReadDeviceData WriteDeviceData
+\row
+    \o \l {Messaging}
+    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment ReadDeviceData WriteDeviceData
+\row
+    \o \l {Publish And Subscribe}
+    \o ReadDeviceData WriteDeviceData
+\row
+    \o \l {Qt Service Framework} {Service Framework}
+    \o No capabilities requried by itself, the plugins may have capability requirements.
+\row
+    \o \l {System Information}
+    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData
+\row
+\endtable
+
 And we're done.  If you are using the command line simply
 enter:
 \code
@@ -129,12 +165,12 @@ enter:
 
 to generate the executable which can then be run.
 
-If you are developing for symbian, to make a debug build for the emulator run:
+If you are developing for Symbian, to make a debug build for the emulator run:
 \code
     qmake
     make debug-winscw
 \endcode
-This assumes that qmake is in your %PATH% and Qt has been build for the emulator already.
+This assumes that qmake is in your %PATH% and Qt has been built for the emulator already.
 
 
 To make a release build and SIS package for a device run:
@@ -145,7 +181,7 @@ To make a release build and SIS package for a device run:
 \endcode
 
 For further details on how to build applications for
-symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html} 
+Symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html} 
 {The Symbian Platform - Introduction to Qt}, \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
 {Qt Quick Start} and the \c {symbian\install.txt}
 */

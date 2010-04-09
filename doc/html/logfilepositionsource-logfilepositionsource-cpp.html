@@ -118,13 +118,13 @@
             double longitude;
             bool hasLatitude = false;
             bool hasLongitude = false;
-            QDateTime dateTime = QDateTime::fromString(QString(data.value(0)), Qt::ISODate);
+            QDateTime timestamp = QDateTime::fromString(QString(data.value(0)), Qt::ISODate);
             latitude = data.value(1).toDouble(&amp;hasLatitude);
             longitude = data.value(2).toDouble(&amp;hasLongitude);
 
-            if (hasLatitude &amp;&amp; hasLongitude &amp;&amp; dateTime.isValid()) {
+            if (hasLatitude &amp;&amp; hasLongitude &amp;&amp; timestamp.isValid()) {
                 QGeoCoordinate coordinate(latitude, longitude);
-                QGeoPositionInfo info(coordinate, dateTime);
+                QGeoPositionInfo info(coordinate, timestamp);
                 if (info.isValid()) {
                     lastPosition = info;
                     emit positionUpdated(info);

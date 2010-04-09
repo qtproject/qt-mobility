@@ -56,14 +56,14 @@ class Q_CONTACTS_EXPORT QContactOrganization : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldName;
-    const char* FieldLogoUrl;
-    const char* FieldDepartment;
-    const char* FieldLocation;
-    const char* FieldRole;
-    const char* FieldTitle;
-    const char* FieldAssistantName;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldName;
+    static const QLatin1Constant FieldLogoUrl;
+    static const QLatin1Constant FieldDepartment;
+    static const QLatin1Constant FieldLocation;
+    static const QLatin1Constant FieldRole;
+    static const QLatin1Constant FieldTitle;
+    static const QLatin1Constant FieldAssistantName;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOrganization, "Organization")
     Q_DECLARE_LATIN1_CONSTANT(FieldName, "Name");

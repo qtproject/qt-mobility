@@ -57,7 +57,7 @@ private slots:
 void reading_perf::reading_speed_direct()
 {
     QAccelerometer sensor;
-    QVERIFY(sensor.connect());
+    QVERIFY(sensor.connectToBackend());
     QAccelerometerReading *reading = sensor.reading();
     qreal x;
     QBENCHMARK { x = reading->x(); }
@@ -66,7 +66,7 @@ void reading_perf::reading_speed_direct()
 void reading_perf::reading_speed_propname()
 {
     QSensor sensor("QAccelerometer");
-    QVERIFY(sensor.connect());
+    QVERIFY(sensor.connectToBackend());
     QSensorReading *reading = sensor.reading();
     qreal x;
     QBENCHMARK { x = reading->property("x").value<qreal>(); }
@@ -75,7 +75,7 @@ void reading_perf::reading_speed_propname()
 void reading_perf::reading_speed_propindex()
 {
     QSensor sensor("QAccelerometer");
-    QVERIFY(sensor.connect());
+    QVERIFY(sensor.connectToBackend());
     QSensorReading *reading = sensor.reading();
     qreal x;
     QBENCHMARK { x = reading->value(0).value<qreal>(); }

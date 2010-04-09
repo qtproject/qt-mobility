@@ -113,7 +113,10 @@ private:
     int locationState;
 
 private slots:
-    void setLocation(const QGeoPositionInfo &update, bool location3D);
+    void setLocation(const QGeoPositionInfo &update, bool locationValid);
+
+signals:
+    void error();
 };
 
 QTM_END_NAMESPACE

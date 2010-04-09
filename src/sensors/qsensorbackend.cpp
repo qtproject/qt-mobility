@@ -235,8 +235,16 @@ void QSensorBackend::setDataRates(const QSensor *otherSensor)
         qWarning() << "ERROR: Cannot call QSensorBackend::setDataRates with 0";
         return;
     }
+    if (otherSensor->identifier().count() == 0) {
+        qWarning() << "ERROR: Cannot call QSensorBackend::setDataRates with an invalid sensor";
+        return;
+    }
     QSensorPrivate *d = m_sensor->d_func();
     d->availableDataRates = otherSensor->availableDataRates();
+    d->dataRate = otherSensor->dataRate();
+    if (d->availableDataRates.count() == 0) {
+        qWarning() << otherSensor->identifier() << "backend does not support any data rates.";
+    }
 }
 
 /*!

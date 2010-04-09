@@ -562,12 +562,11 @@ void tst_QContactDetail::hash()
 
 void tst_QContactDetail::traits()
 {
-    // QContactDetail has a vtable and a dpointer, so we can't really make claims about the size
-    // QCOMPARE(sizeof(QContactDetail), sizeof(void *));
+    QCOMPARE(sizeof(QContactDetail), sizeof(void *));
     QTypeInfo<QTM_PREPEND_NAMESPACE(QContactDetail)> ti;
     QVERIFY(ti.isComplex);
     QVERIFY(!ti.isStatic);
-    QVERIFY(ti.isLarge); // virtual table + d pointer
+    QVERIFY(!ti.isLarge);
     QVERIFY(!ti.isPointer);
     QVERIFY(!ti.isDummy);
 }

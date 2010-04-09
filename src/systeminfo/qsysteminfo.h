@@ -175,6 +175,11 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
+protected:
+    virtual void connectNotify(const char *signal);
+    virtual void disconnectNotify(const char *signal);
+
 private:
        QSystemNetworkInfoPrivate *d;
 };

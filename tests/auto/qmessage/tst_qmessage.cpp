@@ -109,6 +109,7 @@ private slots:
     void testMessageAddress_data();
     void testMessageAddress();
     void testHeaderFields();
+    void testStandardFolder();
 
 private:
     QMessageAccountId testAccountId;
@@ -456,3 +457,8 @@ void tst_QMessage::testHeaderFields()
     QCOMPARE(msg.headerFieldValue("X-None").isEmpty(), true);
 }
 
+void tst_QMessage::testStandardFolder()
+{
+    QMessage msg;
+    QCOMPARE(msg.standardFolder(), QMessage::DraftsFolder);
+}

@@ -74,7 +74,7 @@
 
     void ClientApplication::positionUpdated(const QGeoPositionInfo &amp;info)
     {
-        textEdit-&gt;append(QString(&quot;Position updated: Date/time = %1, Coordinate = %2&quot;).arg(info.dateTime().toString()).arg(info.coordinate().toString()));
+        textEdit-&gt;append(QString(&quot;Position updated: Date/time = %1, Coordinate = %2&quot;).arg(info.timestamp().toString()).arg(info.coordinate().toString()));
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

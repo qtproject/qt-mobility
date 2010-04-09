@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
     the same interface for communicating status, and progress information.
 
     All service request operations communicate changes in their operational state 
-    by emitting the activityChanged() signal.
+    by emitting the stateChanged() signal.
 
     Service request operations report progress information by emitting the 
     progressChanged() signal.

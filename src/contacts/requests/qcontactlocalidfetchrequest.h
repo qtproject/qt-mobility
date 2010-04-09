@@ -59,7 +59,6 @@ class Q_CONTACTS_EXPORT QContactLocalIdFetchRequest : public QContactAbstractReq
 
 public:
     QContactLocalIdFetchRequest();
-    ~QContactLocalIdFetchRequest();
 
     /* Selection, restriction and sorting */
     void setFilter(const QContactFilter& filter);

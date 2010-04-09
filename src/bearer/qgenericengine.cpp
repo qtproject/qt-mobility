@@ -198,7 +198,7 @@ QList<QNetworkConfigurationPrivate *> QGenericEngine::getConfigurations(bool *ok
         else
             cpPriv->bearer = qGetInterfaceType(interface.name());
 
-        if (interface.flags() & QNetworkInterface::IsUp)
+        if((interface.flags() & QNetworkInterface::IsUp) && !interface.addressEntries().isEmpty())
             cpPriv->state |= QNetworkConfiguration::Active;
 
         configurationInterface[identifier] = interface.name();

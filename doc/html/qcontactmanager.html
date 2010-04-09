@@ -155,7 +155,6 @@
 <a name="//apple_ref/cpp/econst/QContactManager/DetailOrdering"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/Relationships"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/ArbitraryRelationshipTypes"></a>
-<a name="//apple_ref/cpp/econst/QContactManager/RelationshipOrdering"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/MutableDefinitions"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/SelfContact"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/ChangeLogs"></a>
@@ -169,7 +168,6 @@
 <tr><td valign="top"><tt>QContactManager::DetailOrdering</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">When a contact is retrieved, the manager will return the details in the same order in which they were saved</td></tr>
 <tr><td valign="top"><tt>QContactManager::Relationships</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The manager supports at least some types of relationships between contacts</td></tr>
 <tr><td valign="top"><tt>QContactManager::ArbitraryRelationshipTypes</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The manager supports relationships of arbitrary types between contacts</td></tr>
-<tr><td valign="top"><tt>QContactManager::RelationshipOrdering</tt></td><td align="center" valign="top">?</td><td valign="top">The manager supports relationships (re)ordering</td></tr>
 <tr><td valign="top"><tt>QContactManager::MutableDefinitions</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The manager supports saving, updating or removing detail definitions. Some built-in definitions may still be immutable</td></tr>
 <tr><td valign="top"><tt>QContactManager::SelfContact</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The manager supports the concept of saving a contact which represents the current user</td></tr>
 <tr><td valign="top"><tt>QContactManager::ChangeLogs</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps</td></tr>
@@ -292,6 +290,7 @@
 <p>Remove every contact whose id is contained in the list of contacts ids <i>contactIds</i>. Returns true if all contacts were removed successfully, otherwise false.</p>
 <p>Any contact that was removed successfully will have the relationships in which it was involved removed also.</p>
 <p>The manager might populate <i>errorMap</i> (the map of indices of the <i>contactIds</i> list to the error which occurred when saving the contact at that index) for every index for which the contact could not be removed, if it is able. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were removed successfully.</p>
+<p>If the given list of contact ids <i>contactIds</i> is empty, the function will return false and calling <a href="qcontactmanager.html#error">error</a>() will return <tt>QContactManager::BadArgumentError</tt>. If the list is non-empty and contains ids which do not identify a valid contact in the manager, the function will remove any contacts which are identified by ids in the <i>contactIds</i> list, insert <tt>QContactManager::DoesNotExist</tt> entries into the <i>errorMap</i> for the indices of invalid ids in the <i>contactIds</i> list, return false, and set the overall operation error to <tt>QContactManager::DoesNotExistError</tt>.</p>
 <p>See also <a href="qcontactmanager.html#removeContact">QContactManager::removeContact</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactManager/removeDetailDefinition"></a>
 <h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactManager::removeDetailDefinition ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>contactType</i> = QContactType::TypeContact )</h3>

@@ -202,11 +202,15 @@
             return;
 
         switch(state) {
-            case QMediaRecorder::RecordingState:
+            case QMediaRecorder::RecordingState: {
                 statusLabel-&gt;setText(tr(&quot;Recording&quot;));
+                button-&gt;setText(tr(&quot;Stop&quot;));
                 break;
-            default:
+            }
+            default: {
                 statusLabel-&gt;setText(tr(&quot;Stopped&quot;));
+                button-&gt;setText(tr(&quot;Record&quot;));
+            }
         }
     }
 
@@ -250,12 +254,9 @@
             recTime-&gt;setText(&quot;0&quot;);
             currentTime = 0;
             capture-&gt;record();
-
-            button-&gt;setText(tr(&quot;Stop&quot;));
             active = true;
         } else {
             capture-&gt;stop();
-            button-&gt;setText(tr(&quot;Record&quot;));
             active = false;
         }
     }

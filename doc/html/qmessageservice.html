@@ -82,7 +82,7 @@
 <h2>Detailed Description</h2>
 <p>The QMessageService class provides the interface for requesting messaging service operations.</p>
 <p>QMessageService provides the mechanisms for messaging clients to request services, and to receive information in response. All requestable service operations present the same interface for communicating status, and progress information.</p>
-<p>All service request operations communicate changes in their operational state by emitting the activityChanged() signal.</p>
+<p>All service request operations communicate changes in their operational state by emitting the <a href="qmessageservice.html#stateChanged">stateChanged</a>() signal.</p>
 <p>Service request operations report progress information by emitting the <a href="qmessageservice.html#progressChanged">progressChanged</a>() signal.</p>
 <p>If a requested operation fails after being initiated then the <a href="qmessageservice.html#error">error</a>() function will return a value indicating the failure mode encountered.</p>
 <p>A client may attempt to cancel a requested operation after it has been initiated. The <a href="qmessageservice.html#cancel">cancel</a>() slot is provided for this purpose. Cancelation is not guaranteed to succeed, and is not possible on all platforms.</p>

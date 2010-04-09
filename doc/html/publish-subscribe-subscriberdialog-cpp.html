@@ -67,7 +67,7 @@
     #include &lt;QListWidget&gt;
     #include &lt;QDesktopWidget&gt;
 
-    #ifdef QTM_SMALL_SCREEN
+    #ifdef QTM_EXAMPLES_SMALL_SCREEN
     #include &lt;QPushButton&gt;
     #include &lt;QSizePolicy&gt;
     #endif
@@ -82,7 +82,7 @@
     {
         ui-&gt;setupUi(this);
 
-    #ifdef QTM_SMALL_SCREEN
+    #ifdef QTM_EXAMPLES_SMALL_SCREEN
         QPushButton *switchButton =
             ui-&gt;buttonBox-&gt;addButton(tr(&quot;Switch&quot;), QDialogButtonBox::ActionRole);
         connect(switchButton, SIGNAL(clicked()), this, SIGNAL(switchRequested()));

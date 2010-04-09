@@ -42,11 +42,11 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qmap.h>
 
-#include <qmediaservice.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaserviceproviderplugin.h>
-#include <qmediapluginloader_p.h>
-#include <qmediaplayer.h>
+#include "qmediaservice.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaserviceproviderplugin.h"
+#include "qmediapluginloader_p.h"
+#include "qmediaplayer.h"
 
 QTM_BEGIN_NAMESPACE
 

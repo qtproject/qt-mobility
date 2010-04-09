@@ -3032,7 +3032,7 @@ QMessage::StandardFolder MapiStore::standardFolder(const MapiEntryId &entryId) c
         }
     }
 
-    return QMessage::InboxFolder;
+    return QMessage::DraftsFolder;
 }
 
 bool MapiStore::setAdviseSink(ULONG mask, IMAPIAdviseSink *sink)

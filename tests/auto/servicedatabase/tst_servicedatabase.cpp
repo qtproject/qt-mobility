@@ -58,6 +58,7 @@ class ServiceDatabaseUnitTest: public QObject
     Q_OBJECT
 
 private slots:
+    void initTestCase();
     void testRegistration();
     void getInterfaces();
     void searchByInterfaceName();
@@ -70,6 +71,7 @@ private slots:
     void interfaceDefault();
     void setInterfaceDefault();
     void unregister();
+    void securityTokens();
     void cleanupTestCase();
 
 private:
@@ -96,10 +98,24 @@ private:
     bool existsInInterfacePropertyTable(const QString &interfaceID);
     bool existsInServicePropertyTable(const QString &serviceID);
     bool existsInDefaultsTable(const QString &interfaceID);
+    bool registerService(const ServiceMetaDataResults &service, const QString &securityToken = QString());
+    bool unregisterService(const QString &serviceName, const QString &securityToken = QString());
 
     ServiceMetaData* parser;
     ServiceDatabase database;
 };
+
+void ServiceDatabaseUnitTest::initTestCase()
+{
+#if defined(Q_OS_SYMBIAN)
+    database.m_databasePath = QDir::toNativeSeparators(QDir::currentPath().append("/services.db"));
+#endif
+    database.close();
+    QFile::remove(database.databasePath());
+}
+
+static const QString securityTokenOwner("SecurityTokenOwner");
+static const QString securityTokenStranger("SecurityTokenStranger");
 
 void ServiceDatabaseUnitTest::testRegistration()
 {
@@ -107,63 +123,64 @@ void ServiceDatabaseUnitTest::testRegistration()
 
     ServiceMetaData parser(testdir.absoluteFilePath("ServiceAcme.xml"));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(!database.registerService(parser.parseResults()));
+    QVERIFY(!registerService(parser.parseResults()));
+
     QCOMPARE(database.lastError().code(), DBError::DatabaseNotOpen);
 #if defined(Q_OS_SYMBIAN)
     database.m_databasePath = QDir::toNativeSeparators(QDir::currentPath().append("/services.db"));
 #endif
     QVERIFY(database.open());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceOmni.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceLuthorCorp.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceWayneEnt.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServicePrimatech.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceCyberdyne.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceSkynet.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceAutobot.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
 
     //try to register an already registered service
-    QVERIFY(!database.registerService(parser.parseResults()));
+    QVERIFY(!registerService(parser.parseResults()));
     QCOMPARE(database.lastError().code(), DBError::LocationAlreadyRegistered);
 
     //try to register a service with a dll that provides interface implementations
     //that are already provided by a currently registered service
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServicePrimatech2error.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(!database.registerService(parser.parseResults()));
+    QVERIFY(!registerService(parser.parseResults()));
     QCOMPARE(database.lastError().code(), DBError::IfaceImplAlreadyRegistered);
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceYamagatoError.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(!database.registerService(parser.parseResults()));
+    QVERIFY(!registerService(parser.parseResults()));
     QCOMPARE(database.lastError().code(), DBError::LocationAlreadyRegistered);
 
     //make sure errors above are corectly rolled back by
     //registering a valid service
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceDecepticon.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
 
     QStringList xmlFiles;
     xmlFiles << "ServiceDharma_Swan.xml"
@@ -173,7 +190,7 @@ void ServiceDatabaseUnitTest::testRegistration()
     foreach(const QString &file, xmlFiles) {
         parser.setDevice(new QFile(testdir.absoluteFilePath(file)));
         QVERIFY(parser.extractMetadata());
-        QVERIFY(database.registerService(parser.parseResults()));
+        QVERIFY(registerService(parser.parseResults()));
     }
 
     QVERIFY(database.close());
@@ -1207,13 +1224,13 @@ void ServiceDatabaseUnitTest::setInterfaceDefault()
 
 void ServiceDatabaseUnitTest::unregister()
 {
-    QVERIFY(!database.unregisterService("acme"));
+    QVERIFY(!unregisterService("acme"));
     QCOMPARE(database.lastError().code(), DBError::DatabaseNotOpen);
 
     QVERIFY(database.open());
 
     //try unregister a non-existing service
-    QVERIFY(!database.unregisterService("StarkInd"));
+    QVERIFY(!unregisterService("StarkInd"));
     QCOMPARE(database.lastError().code(), DBError::NotFound);
     QServiceFilter filter;
 
@@ -1260,7 +1277,7 @@ void ServiceDatabaseUnitTest::unregister()
     foreach(const QString &interfaceID, interfaceIDs)
         QVERIFY(existsInInterfacePropertyTable(interfaceID));
 
-    QVERIFY(database.unregisterService("oMni")); //ensure case insensitive behaviour
+    QVERIFY(unregisterService("oMni")); //ensure case insensitive behaviour
 
     //  == check that deleted service and associated interfaces cannot be found ==
     //try a search for descriptors by service name
@@ -1318,7 +1335,7 @@ void ServiceDatabaseUnitTest::unregister()
 
     interface = database.interfaceDefault("com.cyberdyne.terminator");
     QVERIFY(interface.isValid());
-    QVERIFY(database.unregisterService("cyberDYNE"));
+    QVERIFY(unregisterService("cyberDYNE"));
     interface = database.interfaceDefault("com.cyberdyne.terminatOR");
     QVERIFY(interface.isValid());
     QVERIFY(compareDescriptor(interface, "com.cyberdyne.terminator",
@@ -1336,7 +1353,7 @@ void ServiceDatabaseUnitTest::unregister()
     foreach(const QString &serviceID, serviceIDs)
         QVERIFY(existsInServicePropertyTable(serviceID));
 
-    QVERIFY(database.unregisterService("DHARMAInitiative"));
+    QVERIFY(unregisterService("DHARMAInitiative"));
     interface = database.interfaceDefault("com.dharma.electro.discharge");
     QVERIFY(!interface.isValid());
     QCOMPARE(database.lastError().code(), DBError::NotFound);
@@ -1357,7 +1374,7 @@ void ServiceDatabaseUnitTest::unregister()
     QDir testdir = QDir(TESTDATA_DIR "/testdata" );
     ServiceMetaData parser(testdir.absoluteFilePath("ServiceDharma_Flame.xml"));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
     interface = database.interfaceDefault("com.dharma.electro.discharge");
     QVERIFY(interface.isValid());
     filter.setServiceName("DharmaInitiative");
@@ -1367,7 +1384,7 @@ void ServiceDatabaseUnitTest::unregister()
 
     parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceDharma_Swan.xml")));
     QVERIFY(parser.extractMetadata());
-    QVERIFY(database.registerService(parser.parseResults()));
+    QVERIFY(registerService(parser.parseResults()));
     filter.setServiceName("DharmaInitiative");
     filter.setInterface("");
     interfaces = database.getInterfaces(filter);
@@ -1461,6 +1478,92 @@ bool ServiceDatabaseUnitTest::existsInDefaultsTable(const QString &interfaceID)
         return false;
 }
 
+// Two small helper functions to assist with passing the security token to the servicedatabase.
+// Do not use this function if you intentionally want to provide emtpy securityToken,
+// but rather call database directly.
+bool ServiceDatabaseUnitTest::registerService(const ServiceMetaDataResults &service, const QString &securityToken)
+{
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    if (securityToken.isEmpty()) {
+        return database.registerService(service, securityTokenOwner);
+    } else {
+        return database.registerService(service, securityToken);
+    }
+#else
+    Q_UNUSED(securityToken);
+    return database.registerService(service);
+#endif
+}
+
+bool ServiceDatabaseUnitTest::unregisterService(const QString &serviceName, const QString &securityToken)
+{
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    if (securityToken.isEmpty()) {
+        return database.unregisterService(serviceName, securityTokenOwner);
+    } else {
+        return database.unregisterService(serviceName, securityToken);
+    }
+#else
+    Q_UNUSED(securityToken);
+    return database.unregisterService(serviceName);
+#endif
+}
+
+void ServiceDatabaseUnitTest::securityTokens() {
+#ifndef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    QSKIP("Security tokens are not enabled (currently only enabled on Symbian).", SkipAll);
+#endif
+    // Clear databases just in case
+    database.close();
+    QFile::remove(database.databasePath());
+    QDir testdir = QDir(TESTDATA_DIR "/testdata" );
+    QVERIFY(database.open());
+    database.m_databasePath = QDir::toNativeSeparators(QDir::currentPath().append("/services.db"));
+
+    // Declare and setup testdata
+    ServiceMetaData parser(testdir.absoluteFilePath("ServiceAcme.xml"));
+    QVERIFY(parser.extractMetadata());
+
+    // Actual teststeps
+    qDebug("---------- 1. Add and remove with same security token. (OK)");
+    QVERIFY(registerService(parser.parseResults(), securityTokenOwner));
+    QVERIFY(unregisterService("acme", securityTokenOwner));
+
+    qDebug("---------- 2. Add and remove with empty security token. (NOK)");
+    QVERIFY(!database.registerService(parser.parseResults()));
+    QCOMPARE(database.lastError().code(), DBError::NoWritePermissions);
+    QVERIFY(!database.unregisterService("acme"));
+    QCOMPARE(database.lastError().code(), DBError::NoWritePermissions);
+
+    qDebug("---------- 3. Add, then remove with different security token. (NOK)");
+    QVERIFY(registerService(parser.parseResults(), securityTokenOwner));
+    QVERIFY(!unregisterService("acme", securityTokenStranger));
+    QCOMPARE(database.lastError().code(), DBError::NoWritePermissions);
+    QVERIFY(unregisterService("acme", securityTokenOwner));
+
+    qDebug("---------- 4. Add namesake but but differently located service with same security token. (OK)");
+    QStringList xmlFilesNamesakeServices;
+    xmlFilesNamesakeServices << "ServiceDharma_Swan.xml" << "ServiceDharma_Pearl.xml";
+    foreach(const QString &file, xmlFilesNamesakeServices) {
+        parser.setDevice(new QFile(testdir.absoluteFilePath(file)));
+        QVERIFY(parser.extractMetadata());
+        QVERIFY(registerService(parser.parseResults(), securityTokenOwner));
+    }
+    QVERIFY(!database.getServiceNames(QString()).isEmpty());
+    QVERIFY(unregisterService("DharmaInitiative", securityTokenOwner));
+    QVERIFY(database.getServiceNames(QString()).isEmpty());
+
+    qDebug("---------- 5. Add namesake but differently located services with different security token. (NOK)");
+    parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceDharma_Swan.xml")));
+    QVERIFY(parser.extractMetadata());
+    QVERIFY(registerService(parser.parseResults(), securityTokenOwner));
+    parser.setDevice(new QFile(testdir.absoluteFilePath("ServiceDharma_Pearl.xml")));
+    QVERIFY(parser.extractMetadata());
+    QVERIFY(!registerService(parser.parseResults(), securityTokenStranger));
+    QCOMPARE(database.lastError().code(), DBError::NoWritePermissions);
+    QVERIFY(unregisterService("DharmaInitiative", securityTokenOwner));
+}
+
 void ServiceDatabaseUnitTest::cleanupTestCase()
 {
     database.close();
@@ -1469,4 +1572,3 @@ void ServiceDatabaseUnitTest::cleanupTestCase()
 QTEST_MAIN(ServiceDatabaseUnitTest)
 
 #include "tst_servicedatabase.moc"
-

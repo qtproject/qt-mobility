@@ -66,25 +66,40 @@
         : QWidget(parent)
         , imageViewer(0)
         , playlist(0)
-        , imageLabel(0)
+        , statusLabel(0)
+        , countdownLabel(0)
         , playButton(0)
         , stopButton(0)
+        , viewerLayout(0)
     {
         imageViewer = new QMediaImageViewer(this);
 
         connect(imageViewer, SIGNAL(stateChanged(QMediaImageViewer::State)),
                 this, SLOT(stateChanged(QMediaImageViewer::State)));
+        connect(imageViewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+                this, SLOT(statusChanged(QMediaImageViewer::MediaStatus)));
+        connect(imageViewer, SIGNAL(elapsedTimeChanged(int)), this, SLOT(elapsedTimeChanged(int)));
 
         playlist = new QMediaPlaylist;
         playlist-&gt;setMediaObject(imageViewer);
 
+        connect(playlist, SIGNAL(loaded()), this, SLOT(playlistLoaded()));
+        connect(playlist, SIGNAL(loadFailed()), this, SLOT(playlistLoadFailed()));
+
         QVideoWidget *videoWidget = new QVideoWidget;
         videoWidget-&gt;setMediaObject(imageViewer);
+
+        statusLabel = new QLabel(tr(&quot;%1 Images&quot;).arg(0));
+        statusLabel-&gt;setAlignment(Qt::AlignCenter);
+
+        viewerLayout = new QStackedLayout;
+        viewerLayout-&gt;setStackingMode(QStackedLayout::StackAll);
+        viewerLayout-&gt;addWidget(videoWidget);
+        viewerLayout-&gt;addWidget(statusLabel);
 
         QMenu *openMenu = new QMenu(this);
         openMenu-&gt;addAction(tr(&quot;Directory...&quot;), this, SLOT(openDirectory()));
         openMenu-&gt;addAction(tr(&quot;Playlist...&quot;), this, SLOT(openPlaylist()));
-        openMenu-&gt;addAction(tr(&quot;Location...&quot;), this, SLOT(openLocation()));
 
         QToolButton *openButton = new QToolButton;
         openButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_DialogOpenButton));
@@ -93,8 +108,10 @@
 
         playButton = new QToolButton;
         playButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaPlay));
+        playButton-&gt;setEnabled(false);
 
         connect(playButton, SIGNAL(clicked()), this, SLOT(play()));
+        connect(this, SIGNAL(enableButtons(bool)), playButton, SLOT(setEnabled(bool)));
 
         stopButton = new QToolButton;
         stopButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaStop));
@@ -104,13 +121,19 @@
 
         QAbstractButton *nextButton = new QToolButton;
         nextButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaSkipForward));
+        nextButton-&gt;setEnabled(false);
 
         connect(nextButton, SIGNAL(clicked()), playlist, SLOT(next()));
+        connect(this, SIGNAL(enableButtons(bool)), nextButton, SLOT(setEnabled(bool)));
 
         QAbstractButton *previousButton = new QToolButton;
         previousButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaSkipBackward));
+        previousButton-&gt;setEnabled(false);
 
         connect(previousButton, SIGNAL(clicked()), playlist, SLOT(previous()));
+        connect(this, SIGNAL(enableButtons(bool)), previousButton, SLOT(setEnabled(bool)));
+
+        countdownLabel = new QLabel;
 
         QBoxLayout *controlLayout = new QHBoxLayout;
         controlLayout-&gt;setMargin(0);
@@ -121,9 +144,10 @@
         controlLayout-&gt;addWidget(playButton);
         controlLayout-&gt;addWidget(nextButton);
         controlLayout-&gt;addStretch(1);
+        controlLayout-&gt;addWidget(countdownLabel);
 
         QBoxLayout *layout = new QVBoxLayout;
-        layout-&gt;addWidget(videoWidget, Qt::AlignCenter);
+        layout-&gt;addLayout(viewerLayout);
         layout-&gt;addLayout(controlLayout);
 
         setLayout(layout);
@@ -135,11 +159,8 @@
         QString path = QFileDialog::getOpenFileName(this);
 
         if (!path.isEmpty()) {
-    #ifndef Q_OS_WIN
-            playlist-&gt;load(QUrl(QLatin1String(&quot;file://&quot;) + path));
-    #else
-            playlist-&gt;load(QUrl(QLatin1String(&quot;file:/<span class="comment">//&quot;) + path));</span>
-    #endif
+            playlist-&gt;clear();
+            playlist-&gt;load(QUrl::fromLocalFile(path));
         }
     }
 
@@ -152,40 +173,12 @@
 
             QDir dir(path);
 
-            foreach (const QString &amp;fileName, dir.entryList(QDir::Files)) {
-                QString absolutePath = dir.absoluteFilePath(fileName);
-    #ifndef Q_OS_WIN
-                playlist-&gt;addMedia(QUrl(QLatin1String(&quot;file://&quot;) + absolutePath));
-    #else
-                playlist-&gt;addMedia(QUrl(QLatin1String(&quot;file:/<span class="comment">//&quot;) + absolutePath));</span>
-    #endif
-            }
-        }
-    }
+            foreach (const QString &amp;fileName, dir.entryList(QDir::Files))
+                playlist-&gt;addMedia(QUrl::fromLocalFile(dir.absoluteFilePath(fileName)));
 
-    void SlideShow::openLocation()
-    {
-        QLineEdit *urlEdit = new QLineEdit;
+            statusChanged(imageViewer-&gt;mediaStatus());
 
-        QDialogButtonBox *buttons = new QDialogButtonBox(
-                QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-
-        QFormLayout *layout = new QFormLayout;
-        layout-&gt;addRow(tr(&quot;Location&quot;), urlEdit);
-        layout-&gt;addWidget(buttons);
-
-        QDialog dialog(this);
-        dialog.setLayout(layout);
-
-        connect(urlEdit, SIGNAL(returnPressed()), &amp;dialog, SLOT(accept()));
-        connect(buttons, SIGNAL(accepted()), &amp;dialog, SLOT(accept()));
-        connect(buttons, SIGNAL(rejected()), &amp;dialog, SLOT(reject()));
-
-        if (dialog.exec() == QDialog::Accepted) {
-            QUrl url(urlEdit-&gt;text());
-
-            if (url.isValid())
-                playlist-&gt;load(url);
+            emit enableButtons(playlist-&gt;mediaCount() &gt; 0);
         }
     }
 
@@ -218,6 +211,60 @@
             playButton-&gt;setIcon(style()-&gt;standardIcon(QStyle::SP_MediaPlay));
             break;
         }
+    }
+
+    void SlideShow::statusChanged(QMediaImageViewer::MediaStatus status)
+    {
+        switch (status) {
+        case QMediaImageViewer::NoMedia:
+            statusLabel-&gt;setText(tr(&quot;%1 Images&quot;).arg(playlist-&gt;mediaCount()));
+            viewerLayout-&gt;setCurrentIndex(1);
+            break;
+        case QMediaImageViewer::LoadingMedia:
+            statusLabel-&gt;setText(tr(&quot;Image %1 of %2\nLoading...&quot;)
+                    .arg(playlist-&gt;currentIndex())
+                    .arg(playlist-&gt;mediaCount()));
+            viewerLayout-&gt;setCurrentIndex(1);
+            break;
+        case QMediaImageViewer::LoadedMedia:
+            statusLabel-&gt;setText(tr(&quot;Image %1 of %2&quot;)
+                    .arg(playlist-&gt;currentIndex())
+                    .arg(playlist-&gt;mediaCount()));
+            viewerLayout-&gt;setCurrentIndex(0);
+            break;
+        case QMediaImageViewer::InvalidMedia:
+            statusLabel-&gt;setText(tr(&quot;Image %1 of %2\nInvalid&quot;)
+                    .arg(playlist-&gt;currentIndex())
+                    .arg(playlist-&gt;mediaCount()));
+            viewerLayout-&gt;setCurrentIndex(1);
+            break;
+        default:
+            break;
+        }
+    }
+
+    void SlideShow::playlistLoaded()
+    {
+        statusChanged(imageViewer-&gt;mediaStatus());
+
+        emit enableButtons(playlist-&gt;mediaCount() &gt; 0);
+    }
+
+    void SlideShow::playlistLoadFailed()
+    {
+        statusLabel-&gt;setText(playlist-&gt;errorString());
+        viewerLayout-&gt;setCurrentIndex(1);
+
+        emit enableButtons(false);
+    }
+
+    void SlideShow::elapsedTimeChanged(int time)
+    {
+        const int remaining = (imageViewer-&gt;timeout() - time) / 1000;
+
+        countdownLabel-&gt;setText(tr(&quot;%1:%2&quot;)
+                .arg(remaining / 60, 2, 10, QLatin1Char('0'))
+                .arg(remaining % 60, 2, 10, QLatin1Char('0')));
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

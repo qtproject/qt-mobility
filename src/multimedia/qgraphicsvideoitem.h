@@ -44,7 +44,7 @@
 
 #include <QtGui/qgraphicsitem.h>
 
-#include <qvideowidget.h>
+#include "qvideowidget.h"
 
 QT_BEGIN_NAMESPACE
 class QVideoSurfaceFormat;

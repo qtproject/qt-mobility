@@ -26,10 +26,10 @@
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn"><b><a href="qgallerycopyrequest.html#currentItem-prop">currentItem</a></b> : QGalleryItemList * const</div></li>
 <li><div class="fn"><b><a href="qgallerycopyrequest.html#destinationId-prop">destinationId</a></b> : QString</div></li>
-<li><div class="fn"><b><a href="qgallerycopyrequest.html#fields-prop">fields</a></b> : QStringList</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qgallerycopyrequest.html#itemId-prop">itemId</a></b> : QString</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qgallerycopyrequest.html#itemIds-prop">itemIds</a></b> : QStringList</div></li>
+<li><div class="fn"><b><a href="qgallerycopyrequest.html#propertyNames-prop">propertyNames</a></b> : QStringList</div></li>
 </ul>
 </td></tr>
 </table></p>
@@ -46,13 +46,13 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#dtor.QGalleryCopyRequest">~QGalleryCopyRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryItemList * </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#currentItem-prop">currentItem</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#destinationId-prop">destinationId</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#fields-prop">fields</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#itemId-prop">itemId</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#itemIds-prop">itemIds</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#propertyNames-prop">propertyNames</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#destinationId-prop">setDestinationId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#fields-prop">setFields</a></b> ( const QStringList &amp; <i>fields</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#itemId-prop">setItemId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#itemIds-prop">setItemIds</a></b> ( const QStringList &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#propertyNames-prop">setPropertyNames</a></b> ( const QStringList &amp; <i>names</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qgalleryabstractrequest.html#public-functions">QGalleryAbstractRequest</a></li>
@@ -116,15 +116,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>destinationId</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setDestinationId</b> ( const QString &amp; <i>id</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QGalleryCopyRequest/fields"></a>
-<a name="//apple_ref/cpp/instm/QGalleryCopyRequest/setFields"></a>
-<h3 class="fn"><a name="fields-prop"></a>fields : <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
-<p>This property holds a list of meta-data fields the currentItem list should contain values for.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>fields</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setFields</b> ( const QStringList &amp; <i>fields</i> )</td></tr>
-</table>
 <a name="//apple_ref/cpp/instm/QGalleryCopyRequest/itemId"></a>
 <a name="//apple_ref/cpp/instm/QGalleryCopyRequest/setItemId"></a>
 <a name="//apple_ref/cpp/instm/QGalleryCopyRequest/itemIdsChanged"></a>
@@ -154,6 +145,15 @@
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycopyrequest.html#itemIdsChanged">itemIdsChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryCopyRequest/propertyNames"></a>
+<a name="//apple_ref/cpp/instm/QGalleryCopyRequest/setPropertyNames"></a>
+<h3 class="fn"><a name="propertyNames-prop"></a>propertyNames : <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
+<p>This property holds a list of names of meta-data properties the currentItem list should contain values for.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>propertyNames</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPropertyNames</b> ( const QStringList &amp; <i>names</i> )</td></tr>
 </table>
 <hr />
 <h2>Member Function Documentation</h2>

@@ -103,7 +103,6 @@ protected:
         const QStringList& contexts,
         const QStringList& subTypes=QStringList());
     bool encodeContentFromFile(const QString& resourcePath, QVersitProperty& property);
-    QString versitEscaped(const QString& value);
 
 public: // Data
     QList<QVersitDocument> mDocuments;

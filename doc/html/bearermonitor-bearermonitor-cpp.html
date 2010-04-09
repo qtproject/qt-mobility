@@ -58,7 +58,7 @@
     #include &quot;sessionwidget.h&quot;
 
     #include &lt;QDebug&gt;
-
+    #include &lt;QMessageBox&gt;
     #ifdef Q_OS_WIN
     #include &lt;winsock2.h&gt;
     #undef interface
@@ -72,15 +72,20 @@
     :   QWidget(parent)
     {
         setupUi(this);
+    #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+        newSessionButton-&gt;hide();
+        deleteSessionButton-&gt;hide();
+    #else
         delete tabWidget-&gt;currentWidget();
         sessionGroup-&gt;hide();
-    #if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE)
+    #endif
+    #if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         setWindowState(Qt::WindowMaximized);
     #endif
         updateConfigurations();
-
+    #if !defined(Q_WS_MAEMO_5) &amp;&amp; !defined(Q_WS_MAEMO_6)
         onlineStateChanged(!manager.allConfigurations(QNetworkConfiguration::Active).isEmpty());
-
+    #endif
         QNetworkConfiguration defaultConfiguration = manager.defaultConfiguration();
         for (int i = 0; i &lt; treeWidget-&gt;topLevelItemCount(); ++i) {
             QTreeWidgetItem *item = treeWidget-&gt;topLevelItem(i);
@@ -116,9 +121,10 @@
 
         connect(newSessionButton, SIGNAL(clicked()),
                 this, SLOT(createNewSession()));
+    #if !defined(Q_WS_MAEMO_5) &amp;&amp; !defined(Q_WS_MAEMO_6)
         connect(deleteSessionButton, SIGNAL(clicked()),
                 this, SLOT(deleteSession()));
-
+    #endif
         connect(scanButton, SIGNAL(clicked()),
                 this, SLOT(performScan()));
     }
@@ -249,9 +255,15 @@
     void BearerMonitor::onlineStateChanged(bool isOnline)
     {
         if (isOnline)
+    #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+            QMessageBox::information(this, &quot;Connection state changed&quot;, &quot;Online&quot;, QMessageBox::Close);
+        else
+            QMessageBox::information(this, &quot;Connection state changed&quot;, &quot;Offline&quot;, QMessageBox::Close);
+    #else
             onlineState-&gt;setText(tr(&quot;Online&quot;));
         else
             onlineState-&gt;setText(tr(&quot;Offline&quot;));
+    #endif
     }
 
     #ifdef Q_OS_WIN
@@ -377,7 +389,9 @@
 
         tabWidget-&gt;addTab(session, conf.name());
 
+    #if !defined(Q_WS_MAEMO_5) &amp;&amp; !defined(Q_WS_MAEMO_6)
         sessionGroup-&gt;show();
+    #endif
 
         sessionWidgets.append(session);
     }
@@ -389,6 +403,7 @@
         createSessionFor(item);
     }
 
+    #if !defined(Q_WS_MAEMO_5) &amp;&amp; !defined(Q_WS_MAEMO_6)
     void BearerMonitor::deleteSession()
     {
         SessionWidget *session = qobject_cast&lt;SessionWidget *&gt;(tabWidget-&gt;currentWidget());
@@ -401,6 +416,7 @@
                 sessionGroup-&gt;hide();
         }
     }
+    #endif
 
     void BearerMonitor::performScan()
     {

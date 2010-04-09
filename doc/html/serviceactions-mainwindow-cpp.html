@@ -201,8 +201,17 @@
     void AccountsWidget::load()
     {
         static bool runonce = false;
+        <span class="comment">//#define NOTHREAD</span>
+    #ifdef NOTHREAD
+        QMessageManager manager;
         if(!runonce)
-            m_loader.start();
+         setIds(manager.queryAccounts());
+        <span class="comment">//        m_loader.start();</span>
+
+    #else
+        if(!runonce)
+             m_loader.start();
+    #endif
         runonce = true;
     }
 
@@ -386,6 +395,7 @@
 
     void RecentMessagesWidget::stateChanged(QMessageService::State newState)
     {
+      qDebug() &lt;&lt; &quot;stateChanged state=&quot; &lt;&lt; m_state &lt;&lt; &quot; newState=&quot; &lt;&lt; newState &lt;&lt; &quot;error=&quot; &lt;&lt; m_service-&gt;error();
         if (newState == QMessageService::FinishedState) {
             if ((m_state != LoadFailed) &amp;&amp; (m_service-&gt;error() == QMessageManager::NoError)) {
                 m_state = LoadFinished;
@@ -502,12 +512,12 @@
     void RecentMessagesWidget::load()
     {
         m_ids.clear();
+        m_state = Loading;
+        bool b;
 
-        if(!m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent))
-            m_state = LoadFailed;
-        else
-            m_state = Loading;
-    }
+        b=m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
+        qDebug() &lt;&lt; &quot;RecentMessagesWidget::load&quot; &lt;&lt; b &lt;&lt; m_state;
+    };
 
     void RecentMessagesWidget::processResults()
     {
@@ -516,7 +526,7 @@
             QMessageId id = m_ids.takeFirst();
             QMessage message(id);
 
-            QListWidgetItem* newItem = new QListWidgetItem(message.subject());
+            QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(&quot;:&quot;)+message.subject());
             newItem-&gt;setData(MessageIdRole,id.toString());
             QFont itemFont = newItem-&gt;font();
             bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
@@ -881,6 +891,7 @@
 
     void MessageViewWidget::stateChanged(QMessageService::State newState)
     {
+      qDebug() &lt;&lt; &quot;stateChanged state=&quot; &lt;&lt; m_state &lt;&lt; &quot; newState=&quot; &lt;&lt; newState &lt;&lt; &quot;error=&quot; &lt;&lt; m_service-&gt;error();
         if (m_state == LoadFailed)
             return;
 
@@ -1258,6 +1269,7 @@
                                                       &lt;&lt; new ShowWidget(m_service,this)
                                                       &lt;&lt; new RetrieveWidget(this)
                                                       &lt;&lt; new StoreSignalsWidget(this)) {
+
             m_widgetStack-&gt;addWidget(exampleWidget);
     #ifdef _WIN32_WCE
             exampleWidget-&gt;installEventFilter(this);
@@ -1305,6 +1317,7 @@
 
         setWindowTitle(WindowTitle);
         resize(WindowGeometry);
+
     }
 
     #ifdef _WIN32_WCE
@@ -1319,6 +1332,7 @@
 
     void MainWindow::serviceStateChanged(QMessageService::State newState)
     {
+      qDebug() &lt;&lt; &quot;MainWindow::serviceStateChanged&quot;;
         if ((newState == QMessageService::FinishedState) &amp;&amp; (m_service-&gt;error() != QMessageManager::NoError))
             QMessageBox::critical(this,&quot;Error&quot;,&quot;One or more service actions failed&quot;);
     }

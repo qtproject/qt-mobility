@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <qmediapluginloader_p.h>
+#include "qmediapluginloader_p.h"
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qpluginloader.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qdebug.h>
 
-#include <qmediaserviceproviderplugin.h>
+#include "qmediaserviceproviderplugin.h"
 
 QTM_BEGIN_NAMESPACE
 

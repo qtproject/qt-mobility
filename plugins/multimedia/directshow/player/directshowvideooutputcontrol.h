@@ -42,7 +42,7 @@
 #ifndef DIRECTSHOWVIDEOUTPUTCONTROL_H
 #define DIRECTSHOWVIDEOOUPUTCONTROL_H
 
-#include <qvideooutputcontrol.h>
+#include "../../src/multimedia/qvideooutputcontrol.h"
 
 QTM_USE_NAMESPACE
 
