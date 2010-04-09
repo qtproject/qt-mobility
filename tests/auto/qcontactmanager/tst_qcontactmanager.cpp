@@ -2427,7 +2427,8 @@ void tst_QContactManager::fetchHint()
     QContactFetchHint hint;
     hint.setOptimizationHints(QContactFetchHint::NoBinaryBlobs);
     QCOMPARE(hint.optimizationHints(), QContactFetchHint::NoBinaryBlobs);
-    QStringList rels(QLatin1String(QContactRelationship::HasMember));
+    QStringList rels;
+    rels << QString(QLatin1String(QContactRelationship::HasMember));
     hint.setRelationshipTypesHint(rels);
     QCOMPARE(hint.relationshipTypesHint(), rels);
 }
