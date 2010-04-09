@@ -124,7 +124,8 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
 
     // Add items to the menu
     if (m_mainWindow) {
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_OS_WINCE)
+        // These platforms need their menu items added directly to the menu bar.
         QMenuBar *optionsMenu = m_mainWindow->menuBar();
 #else
         QMenu *optionsMenu = new QMenu(tr("&Contacts"), this);
