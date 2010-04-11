@@ -70,19 +70,11 @@ QTM_USE_NAMESPACE
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::MainWindow),
-        popupMenu(NULL)
+        popupMenu(NULL),
+        mapService(NULL),
+        routingService(NULL)
 {
     ui->setupUi(this);
-
-    QGeoMapServiceNokia *mService = new QGeoMapServiceNokia();
-    QGeoRoutingServiceNokia *rService = new QGeoRoutingServiceNokia();
-
-    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.41", 8080);
-    mService->setProxy(proxy);
-    mService->setHost("maptile.mapplayer.maps.svc.ovi.com");
-
-    mapService = mService;
-    routingService = rService;
 
     qgv = new QGraphicsView(this);
     qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -97,8 +89,6 @@ MainWindow::MainWindow(QWidget *parent) :
     qgv->scene()->addItem(mapView);
     mapView->setGeometry(0, 0, width(), height());
 
-    QObject::connect(routingService, SIGNAL(finished(QGeoRouteReply*)),
-                     this, SLOT(routeReplyFinished(QGeoRouteReply*)));
     QObject::connect(mapView, SIGNAL(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)),
                      this, SLOT(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)));
     QObject::connect(mapView, SIGNAL(zoomLevelChanged(quint16, quint16)),
@@ -114,8 +104,6 @@ MainWindow::MainWindow(QWidget *parent) :
     slider->setVisible(true);
     QObject::connect(slider, SIGNAL(sliderMoved(int)),
                      mapView, SLOT(setZoomLevel(int)));
-
-    //QGraphicsProxyWidget* proxy = qgv->scene()->addWidget(slider);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -152,7 +140,22 @@ void MainWindow::delayedInit()
     session->open();
     session->waitForOpened(-1);
 #endif
+    
+    QGeoMapServiceNokia *mService = new QGeoMapServiceNokia();
+    QGeoRoutingServiceNokia *rService = new QGeoRoutingServiceNokia();
 
+    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.41", 8080);
+    mService->setProxy(proxy);
+    mService->setHost("maptile.mapplayer.maps.svc.ovi.com");
+
+    mapService = mService;
+    routingService = rService;
+    
+    QObject::connect(routingService, SIGNAL(finished(QGeoRouteReply*)),
+                     this, SLOT(routeReplyFinished(QGeoRouteReply*)));
+
+    mapView->setHorizontalPadding(100);
+    mapView->setVerticalPadding(100);
     mapView->init(mapService, QGeoCoordinate(52.35, 13));
 }
 

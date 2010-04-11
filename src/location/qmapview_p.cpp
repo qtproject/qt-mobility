@@ -276,4 +276,29 @@ void QMapViewPrivate::addMapObjectToTiles(QMapObject* mapObject)
     }
 }
 
+void QMapViewPrivate::requestMissingMapTiles()
+{
+    Q_Q(QMapView);
+    QRectF paddedViewPort = QRectF(viewPort.x()-horizontalPadding,
+                                   viewPort.y()-verticalPadding,
+                                   viewPort.width()+(2*horizontalPadding),
+                                   viewPort.height()+(2*verticalPadding));
+
+    QMapView::TileIterator it(*q, paddedViewPort);
+    
+    while (it.hasNext()) {
+        it.next();
+        if (!it.isValid())
+            continue;
+        quint64 index = q->getTileIndex(it.col(), it.row());
+
+        if (mapTiles.contains(index)) {
+            QPair<QPixmap, bool>& tileData = mapTiles[index];
+            if (!tileData.second)
+                requestTile(it.col(), it.row());
+        } else
+            requestTile(it.col(), it.row());
+    }
+}
+
 QTM_END_NAMESPACE

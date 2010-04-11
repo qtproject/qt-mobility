@@ -51,7 +51,8 @@ QGeoMapServiceNokia::QGeoMapServiceNokia()
         : m_token(""),
         m_referrer(""),
         m_host("172.24.32.155"),
-        m_proxy(QNetworkProxy(QNetworkProxy::NoProxy))
+        m_proxy(QNetworkProxy(QNetworkProxy::NoProxy)),
+        m_maxZoomLevel(18)
 {
 }
 

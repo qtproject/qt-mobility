@@ -159,7 +159,6 @@ QLandmark::QLandmark(const QLandmark &other)
 */
 QLandmark::~QLandmark()
 {
-    delete d;
 }
 
 /*!
