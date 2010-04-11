@@ -148,6 +148,7 @@ protected:
     void setupNetworkInfo();
 
 private Q_SLOTS:
+    void bluetoothNetworkStatusCheck();
     void cellNetworkSignalStrengthChanged(uchar,uchar);
     void icdStatusChanged(QString,QString,QString,QString);
     void networkModeChanged(int);
@@ -169,6 +170,7 @@ private:
     };
 
     int cellSignalStrength;
+    QSystemNetworkInfo::NetworkStatus currentBluetoothNetworkStatus;
     int currentCellId;
     int currentCellNetworkStatus;
     int currentEthernetSignalStrength;
