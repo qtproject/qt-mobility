@@ -465,12 +465,6 @@ bool QContactWinCEEngine::isFilterSupported(const QContactFilter& filter) const
 }
 
 /*! \reimp */
-QMap<QString, QString> QContactWinCEEngine::managerParameters() const
-{
-    return QMap<QString, QString>();
-}
-
-/*! \reimp */
 int QContactWinCEEngine::managerVersion() const
 {
     return QTCONTACTS_VERSION;
@@ -487,22 +481,6 @@ QList<QContact> QContactWinCEEngine::contacts(const QContactFilter& filter, cons
         }
     }
     return cs;
-}
-
-/*! \reimp */
-bool QContactWinCEEngine::saveRelationship(QContactRelationship* relationship, QContactManager::Error* error)
-{
-    Q_UNUSED(relationship);
-    *error = QContactManager::NotSupportedError;
-    return false;
-}
-
-/*! \reimp */
-bool QContactWinCEEngine::removeRelationship(const QContactRelationship& relationship, QContactManager::Error* error)
-{
-    Q_UNUSED(relationship);
-    *error = QContactManager::NotSupportedError;
-    return false;
 }
 
 /*! \reimp */
@@ -536,67 +514,6 @@ bool QContactWinCEEngine::removeContacts(const QList<QContactLocalId>& contactId
         }
     }
     return ret;
-}
-
-/*! \reimp */
-bool QContactWinCEEngine::setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error)
-{
-    Q_UNUSED(contactId);
-    *error = QContactManager::NotSupportedError;
-    return false;
-}
-
-/*! \reimp */
-QContactLocalId QContactWinCEEngine::selfContactId(QContactManager::Error* error) const
-{
-    *error = QContactManager::NotSupportedError;
-    return QContactLocalId();
-}
-
-/*! \reimp */
-QList<QContactRelationship> QContactWinCEEngine::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const
-{
-    Q_UNUSED(relationshipType);
-    Q_UNUSED(participantId);
-    Q_UNUSED(role);
-    *error = QContactManager::NotSupportedError;
-    return QList<QContactRelationship>();
-}
-
-/*! \reimp */
-bool QContactWinCEEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-{
-    Q_UNUSED(relationships);
-    Q_UNUSED(errorMap);
-    *error = QContactManager::NotSupportedError;
-    return false;
-}
-
-/*! \reimp */
-bool QContactWinCEEngine::removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
-{
-    Q_UNUSED(relationships);
-    Q_UNUSED(errorMap);
-    *error = QContactManager::NotSupportedError;
-    return false;
-}
-
-/*! \reimp */
-bool QContactWinCEEngine::saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error)
-{
-    Q_UNUSED(def);
-    Q_UNUSED(contactType);
-    *error = QContactManager::NotSupportedError;
-    return false;
-}
-
-/*! \reimp */
-bool QContactWinCEEngine::removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error)
-{
-    Q_UNUSED(definitionId);
-    Q_UNUSED(contactType);
-    *error = QContactManager::NotSupportedError;
-    return false;
 }
 
 /*!

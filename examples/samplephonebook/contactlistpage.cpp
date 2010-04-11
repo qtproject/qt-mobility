@@ -124,22 +124,13 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
 
     // Add items to the menu
     if (m_mainWindow) {
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_OS_WINCE)
+        // These platforms need their menu items added directly to the menu bar.
         QMenuBar *optionsMenu = m_mainWindow->menuBar();
 #else
         QMenu *optionsMenu = new QMenu(tr("&Contacts"), this);
         m_mainWindow->menuBar()->addMenu(optionsMenu);
 #endif
-        QAction* addAction = new QAction(tr("&Add Contact..."), this);
-        connect(addAction, SIGNAL(triggered()), this, SLOT(addClicked()));
-        optionsMenu->addAction(addAction);
-        QAction* editAction = new QAction(tr("&Edit Contact..."), this);
-        connect(editAction, SIGNAL(triggered()), this, SLOT(editClicked()));
-        optionsMenu->addAction(editAction);
-        QAction* deleteAction = new QAction(tr("&Delete Contact"), this);
-        connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteClicked()));
-        optionsMenu->addAction(deleteAction);
-        optionsMenu->addSeparator();
         QAction* filterAction = new QAction(tr("Apply &Filter..."), this);
         connect(filterAction, SIGNAL(triggered()), this, SLOT(filterClicked()));
         optionsMenu->addAction(filterAction);
@@ -157,9 +148,12 @@ ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
         optionsMenu->addAction(exportAction);
         optionsMenu->addSeparator();
 #endif
+#if !(defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+        // Maemo applications don't have an Exit button in the menu.
         QAction* exitAction = new QAction(tr("E&xit"), this);
         connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
         optionsMenu->addAction(exitAction);
+#endif
     }
 
     // force update to backend.
