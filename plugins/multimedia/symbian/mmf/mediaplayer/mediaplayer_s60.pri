@@ -46,20 +46,22 @@ SOURCES += \
     $$PWD/s60mediaplayeraudioendpointselector.cpp
 
 contains(S60_VERSION, 3.1) {
+
+    #3.1 doesn't provide audio routing in videoplayer
+    DEFINES += HAS_NO_AUDIOROUTING_IN_VIDEOPLAYER
+
     MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
     "LIBRARY    MPEngine.lib" \
     "MACRO    HAS_MEDIA_PLAYER" \
     "$${LITERAL_HASH}endif"
-   
+
     !exists($${EPOCROOT}epoc32\release\winscw\udeb\audiooutputrouting.lib) {
         MMP_RULES += "$${LITERAL_HASH}ifdef WINSCW" \
                      "MACRO HAS_NO_AUDIOROUTING" \
                      "$${LITERAL_HASH}else" \
                      "LIBRARY audiooutputrouting.lib" \
                      "$${LITERAL_HASH}endif"
-        message("Note: AudioOutput Routing API not supported for 3.1 winscw target")
-    } else {
-        MMP_RULES +="LIBRARY audiooutputrouting.lib"
+        message("Note: AudioOutput Routing API not supported for 3.1 winscw target and in videoplayer")
     }
 
 } else {

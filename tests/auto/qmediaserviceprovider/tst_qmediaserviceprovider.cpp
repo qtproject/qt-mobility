@@ -51,7 +51,7 @@
 #include <qmediaplayer.h>
 #include <qaudiocapturesource.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class MockMediaService : public QMediaService
 {
     Q_OBJECT
@@ -68,8 +68,8 @@ class MockServicePlugin1 : public QMediaServiceProviderPlugin,
                            public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedFormatsInterface)
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
+    Q_INTERFACES(QMediaServiceSupportedFormatsInterface)
+    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
 public:
     QStringList keys() const
     {
@@ -127,8 +127,8 @@ class MockServicePlugin2 : public QMediaServiceProviderPlugin,
                             public QMediaServiceFeaturesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedFormatsInterface)
-    Q_INTERFACES(QtMobility::QMediaServiceFeaturesInterface)
+    Q_INTERFACES(QMediaServiceSupportedFormatsInterface)
+    Q_INTERFACES(QMediaServiceFeaturesInterface)
 public:
     QStringList keys() const
     {
@@ -177,7 +177,7 @@ class MockServicePlugin3 : public QMediaServiceProviderPlugin,
                             public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
+    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
 public:
     QStringList keys() const
     {
@@ -222,8 +222,8 @@ class MockServicePlugin4 : public QMediaServiceProviderPlugin,
                             public QMediaServiceFeaturesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedFormatsInterface)
-    Q_INTERFACES(QtMobility::QMediaServiceFeaturesInterface)
+    Q_INTERFACES(QMediaServiceSupportedFormatsInterface)
+    Q_INTERFACES(QMediaServiceFeaturesInterface)
 public:
     QStringList keys() const
     {

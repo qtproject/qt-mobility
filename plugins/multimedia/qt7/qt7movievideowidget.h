@@ -56,7 +56,7 @@
 
 class GLVideoWidget;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QCvDisplayLink;
 class QT7PlayerSession;
@@ -121,6 +121,6 @@ private:
     int m_saturation;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -50,9 +50,9 @@
 #include <QRect>
 #include "s60mediaplayerservice.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QMediaTimeRange;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 class QTimer;
 
@@ -89,6 +89,7 @@ public:
     virtual void setVideoRenderer(QObject *renderer);
     void setMediaStatus(QMediaPlayer::MediaStatus);
     void setState(QMediaPlayer::State state);
+    void setAudioEndpoint(const QString& audioEndpoint);
     
 protected:    
     virtual void doLoadL(const TDesC &path) = 0;
@@ -102,6 +103,7 @@ protected:
     virtual void updateMetaDataEntriesL() = 0;
     virtual int doGetBufferStatusL() const = 0;
     virtual qint64 doGetDurationL() const = 0;
+    virtual void doSetAudioEndpoint(const QString& audioEndpoint) = 0;
 
 public:
     // From S60MediaPlayerAudioEndpointSelector
@@ -109,8 +111,6 @@ public:
     virtual QString defaultEndpoint() const = 0;
 public Q_SLOTS:
     virtual void setActiveEndpoint(const QString& name) = 0;
-Q_SIGNALS:
-    virtual void activeEndpointChanged(const QString &name) = 0;
 
 protected:
     void setError(int error,  const QString &errorString = QString(), bool forceReset = false);
@@ -146,6 +146,7 @@ signals:
     void availablePlaybackRangesChanged(const QMediaTimeRange&);
     void metaDataChanged();
     void error(int error, const QString &errorString);
+    void activeEndpointChanged(const QString &name);
     
 private:
     qreal m_playbackRate;

@@ -43,7 +43,7 @@
 #include "qradiotunercontrol.h"
 #include "qmediacontrol_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -323,5 +323,5 @@ QRadioTunerControl::~QRadioTunerControl()
 */
 
 #include "moc_qradiotunercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
