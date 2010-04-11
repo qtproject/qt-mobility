@@ -134,11 +134,11 @@ typedef enum {
 } MessagingModestMessageFlags;
 
 typedef enum {
-    MessagingModestMessagePriorityDefined   = 0,
-    MessagingModestMessageHighPriority      = 1<<9|1<<10,
-    MessagingModestMessageNormalPriority    = 0<<9|0<<10,
-    MessagingModestMessageLowPriority       = 0<<9|1<<10,
-    MessagingModestMessageSuspendedPriority = 1<<9|0<<10
+    MessagingModestMessagePriorityNotDefined = 0,
+    MessagingModestMessageHighPriority       = 1<<9|1<<10,
+    MessagingModestMessageNormalPriority     = 0<<9|0<<10,
+    MessagingModestMessageLowPriority        = 0<<9|1<<10,
+    MessagingModestMessageSuspendedPriority  = 1<<9|0<<10
 } MessagingModestMessagePriority;
 
 struct MessagingModestMimePart
@@ -280,6 +280,8 @@ public:
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
     QByteArray getMimePart (const QMessageId &id, const QString &attachmentId);
 
+    void clearHeaderCache();
+
 private:
     QFileInfoList localFolders() const;
     void appendLocalSubFolders(QFileInfoList& fileInfoList, int startIndex) const;
@@ -386,7 +388,7 @@ private: //Data
 
     QMap<QString, QDateTime> accountsLatestTimestamp;
 
-    mutable QStringList m_latestRemoveNotifications;
+    mutable QStringList m_latestAddOrRemoveNotifications;
 
     mutable QMap<QString, QMessage> m_messageCache;
 

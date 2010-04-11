@@ -315,6 +315,10 @@ MessagingModestMessage ModestEngine::messageFromModest(const QString& accountId,
 {
     MessagingModestMessage modestMessage;
 
+    if (!m_QtmPluginDBusInterface->isValid() || iAccounts.isEmpty()) {
+        return modestMessage;
+    }
+
     QDBusPendingCall pendingCall = m_QtmPluginDBusInterface->asyncCall("GetMessage",
                                                                        accountId,
                                                                        folderId,
@@ -350,7 +354,7 @@ MessagingModestMessage ModestEngine::messageFromModest(const QString& accountId,
         modestMessage.dateSent = 0;
         modestMessage.size = 0;
         modestMessage.flags = MessagingModestMessageNotDefined;
-        modestMessage.priority = MessagingModestMessagePriorityDefined;
+        modestMessage.priority = MessagingModestMessagePriorityNotDefined;
     }
 
     return modestMessage;
@@ -482,6 +486,10 @@ QMessageAccountIdList ModestEngine::queryAccounts(const QMessageAccountFilter &f
     Q_UNUSED(offset)
 
     QMessageAccountIdList accountIds;
+
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return accountIds;
+    }
 
     updateEmailAccounts();
     foreach (QMessageAccount value, iAccounts) {
@@ -736,9 +744,16 @@ QMessageFolderIdList ModestEngine::queryFolders(const QMessageFolderFilter &filt
 
     QMessageFolderIdList folderIds;
 
+    if (!m_QtmPluginDBusInterface->isValid()) {
+        return folderIds;
+    }
+
     updateEmailAccounts();
 
-    //QDBusMessage msg = m_ModestDBusInterface->call(MODEST_DBUS_METHOD_GET_FOLDERS);
+    if (iAccounts.isEmpty()) {
+        return folderIds;
+    }
+
     QFileInfoList localFolders = this->localFolders();
     QString localRootFolder = this->localRootFolder();
 
@@ -848,7 +863,7 @@ void ModestEngine::fileChangedSlot(int watchDescriptor, QString filePath, uint e
 
     int filenameBegin = filePath.lastIndexOf('/')+1;
     QString fileName = filePath.mid(filenameBegin,filePath.lastIndexOf('.')-filenameBegin);
-    if (fileName != "summary") {
+    if (!fileName.endsWith("summary")) {
         if (events & (IN_MOVED_TO | IN_CREATE)) {
             if (events != (IN_MOVED_TO | IN_MOVED_FROM)) {
                 notification(messageIdFromModestMessageFilePath(filePath), ModestEngine::Added);
@@ -861,6 +876,10 @@ void ModestEngine::fileChangedSlot(int watchDescriptor, QString filePath, uint e
 
 bool ModestEngine::sendEmail(QMessage &message)
 {
+    if (!m_QtmPluginDBusInterface->isValid() || iAccounts.isEmpty()) {
+        return false;
+    }
+
     ModestStringMap senderInfo;
     ModestStringMap recipients;
     ModestStringMap messageData;
@@ -1131,7 +1150,7 @@ QMessage ModestEngine::messageFromModestMessage(const MessagingModestMessage& mo
 
             QMessageContentContainerId existingBodyId(message.bodyId());
             if (existingBodyId.isValid()) {
-                if (existingBodyId == container->bodyContentId()) {
+                if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
                     // The body content is in the message itself
                     container->_containingMessageId = messageId.toString();
                     container->_attachmentId = contentId;
@@ -1164,7 +1183,7 @@ QMessage ModestEngine::messageFromModestMessage(const MessagingModestMessage& mo
                     container->_charset = charset;
                     container->_size = 0;
                     container->_available = true;
-                    privateMessage->_bodyId = container->bodyContentId();
+                    privateMessage->_bodyId = QMessageContentContainerPrivate::bodyContentId();
                 } else {
                     // Add the body as the first attachment
                     QMessageContentContainer newBody;
@@ -1304,6 +1323,10 @@ void ModestEngine::appendAttachmentToMessage(QMessage& message, QMessageContentC
 
 bool ModestEngine::addMessage(QMessage &message)
 {
+    if (!m_QtmPluginDBusInterface->isValid() || iAccounts.isEmpty()) {
+        return false;
+    }
+
     QString modestFolder;
     ModestStringMap senderInfo;
     ModestStringMap recipients;
@@ -1420,6 +1443,10 @@ QMessageIdList ModestEngine::queryMessagesSync(const QMessageFilter &filter, con
 {
     QMessageIdList ids;
 
+    if (!m_QtmPluginDBusInterface->isValid() || iAccounts.isEmpty()) {
+        return ids;
+    }
+
     QMessageServicePrivate* privateService = QMessageServicePrivate::implementation(m_service);
     if (privateService->queryMessages(m_service, filter, sortOrder, limit, offset,
                                       QMessageServicePrivate::EnginesToCallModest)) {
@@ -1444,6 +1471,10 @@ QMessageIdList ModestEngine::queryMessagesSync(const QMessageFilter &filter, con
 {
     QMessageIdList ids;
 
+    if (!m_QtmPluginDBusInterface->isValid() || iAccounts.isEmpty()) {
+        return ids;
+    }
+
     QMessageServicePrivate* privateService = QMessageServicePrivate::implementation(m_service);
     if (privateService->queryMessages(m_service, filter, body, matchFlags,
                                       sortOrder, limit, offset,
@@ -1465,6 +1496,10 @@ QMessageIdList ModestEngine::queryMessagesSync(const QMessageFilter &filter, con
 int ModestEngine::countMessagesSync(const QMessageFilter &filter) const
 {
     int count;
+
+    if (!m_QtmPluginDBusInterface->isValid() || iAccounts.isEmpty()) {
+        return 0;
+    }
 
     QMessageServicePrivate* privateService = QMessageServicePrivate::implementation(m_service);
     if (privateService->countMessages(m_service, filter, QMessageServicePrivate::EnginesToCallModest)) {
@@ -1500,6 +1535,10 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
 
 bool ModestEngine::countMessages(QMessageService& messageService, const QMessageFilter &filter)
 {
+    if (!m_QtmPluginDBusInterface->isValid() || iAccounts.isEmpty()) {
+        return false;
+    }
+
     m_pendingMessageQueries.append(MessageQueryInfo());
 
     MessageQueryInfo &queryInfo = m_pendingMessageQueries[m_pendingMessageQueries.count()-1];
@@ -1526,6 +1565,10 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
                                  QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
                                  uint limit, uint offset) const
 {
+    if (!m_QtmPluginDBusInterface->isValid() || iAccounts.isEmpty()) {
+        return false;
+    }
+
     m_pendingMessageQueries.append(MessageQueryInfo());
 
     MessageQueryInfo &queryInfo = m_pendingMessageQueries[m_pendingMessageQueries.count()-1];
@@ -1543,8 +1586,28 @@ bool ModestEngine::queryMessages(QMessageService& messageService, const QMessage
     queryInfo.returnWithSingleShot = false;
 
     if (!startQueryingAndFilteringMessages(m_pendingMessageQueries[m_pendingMessageQueries.count()-1])) {
-        QMessageServicePrivate::implementation(messageService)->setFinished(false);
         m_pendingMessageQueries.removeAt(m_pendingMessageQueries.count()-1);
+        if (m_pendingMessageQueries.count() == 0) {
+            // This was last query in pending queries queue
+            // => Disconnect from "GetHeaders" request related DBus signals
+            // Note: Disconnecting signals is done to optimize signal handling
+            //       <=> Disconnecting prevents unnecessary handling of signals
+            //           which have been sent from other applications using
+            //           Qt Mobility Messaging API
+            m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
+                                                              MODESTENGINE_QTM_PLUGIN_PATH,
+                                                              MODESTENGINE_QTM_PLUGIN_NAME,
+                                                              "HeadersReceived",
+                                                              (ModestEngine*)this,
+                                                              SLOT(searchMessagesHeadersReceivedSlot(QDBusMessage)));
+
+            m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
+                                                              MODESTENGINE_QTM_PLUGIN_PATH,
+                                                              MODESTENGINE_QTM_PLUGIN_NAME,
+                                                              "HeadersFetched",
+                                                              (ModestEngine*)this,
+                                                              SLOT(searchMessagesHeadersFetchedSlot(QDBusMessage)));
+        }
         return false;
     }
 
@@ -1864,40 +1927,6 @@ bool ModestEngine::searchMessages(MessageQueryInfo &msgQueryInfo, const QStringL
         m_messageCache.clear();
         msgQueryInfo.queryId = reply.arguments().takeFirst().toInt();
     } else {
-        // Request failed
-        int index = -1;
-        for (int i=0; i < m_pendingMessageQueries.count(); i++) {
-            if (m_pendingMessageQueries[i].queryId == msgQueryInfo.queryId) {
-                index = i;
-                break;
-            }
-        }
-        if (index > -1) {
-            m_pendingMessageQueries.removeAt(index);
-        }
-        msgQueryInfo.privateService->setFinished(false);
-
-        if (m_pendingMessageQueries.count() == 0) {
-            // This was last query in pending queries queue
-            // => Disconnect from "GetHeaders" request related DBus signals
-            // Note: Disconnecting signals is done to optimize signal handling
-            //       <=> Disconnecting prevents unnecessary handling of signals
-            //           which have been sent from other applications using
-            //           Qt Mobility Messaging API
-            m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
-                                                              MODESTENGINE_QTM_PLUGIN_PATH,
-                                                              MODESTENGINE_QTM_PLUGIN_NAME,
-                                                              "HeadersReceived",
-                                                              (ModestEngine*)this,
-                                                              SLOT(searchMessagesHeadersReceivedSlot(QDBusMessage)));
-
-            m_QtmPluginDBusInterface->connection().disconnect(MODESTENGINE_QTM_PLUGIN_NAME,
-                                                              MODESTENGINE_QTM_PLUGIN_PATH,
-                                                              MODESTENGINE_QTM_PLUGIN_NAME,
-                                                              "HeadersFetched",
-                                                              (ModestEngine*)this,
-                                                              SLOT(searchMessagesHeadersFetchedSlot(QDBusMessage)));
-        }
         return false;
     }
 
@@ -1966,7 +1995,8 @@ void ModestEngine::searchMessagesHeadersReceivedSlot(QDBusMessage msg)
         modestMessage.dateSent = 0;
         modestMessage.size = 0;
         modestMessage.flags = MessagingModestMessageNotDefined;
-        modestMessage.priority = MessagingModestMessagePriorityDefined;
+        modestMessage.priority = MessagingModestMessagePriorityNotDefined;
+
         QMapIterator<QString, QVariant> j(messages[i]);
         while (j.hasNext()) {
             j.next();
@@ -2271,7 +2301,6 @@ QByteArray ModestEngine::getMimePart (const QMessageId &id, const QString &attac
     reply.waitForFinished();
 
     if (reply.isError()) {
-        qWarning () << reply.error();
         return result;
     }
 
@@ -2288,9 +2317,14 @@ QByteArray ModestEngine::getMimePart (const QMessageId &id, const QString &attac
 
     QFile file(filePath);
 
-    if (file.open(QIODevice::ReadWrite) == false) {
+    QIODevice::OpenMode openMode = QIODevice::ReadOnly;
+    if (expunge) {
+        openMode = QIODevice::ReadWrite;
+    }
+    
+    if (file.open(openMode) == false) {
         qWarning() << "Failed to open file" << filePath << ": "
-                << file.error();
+                << file.errorString();
         return result;
     }
 
@@ -2308,21 +2342,34 @@ QByteArray ModestEngine::getMimePart (const QMessageId &id, const QString &attac
 void ModestEngine::notification(const QMessageId& messageId, NotificationType notificationType) const
 {
     QMessageId realMessageId = messageId;
+    QString modestAccountId = modestAccountIdFromMessageId(messageId);
+    QString modestFolderId = modestFolderIdFromMessageId(messageId);
+    QString modestMessageId = modestMessageIdFromMessageId(messageId);
 
-    if (notificationType == ModestEngine::Removed) {
-        // Make sure that there will not be many Removed notifications
-        // in a row for a same message
-        QString modestMessageId = modestMessageIdFromMessageId(messageId);
-        if (!m_latestRemoveNotifications.contains(modestMessageId)) {
-            if (m_latestRemoveNotifications.count() > 10) {
-                // Remove oldest notification from the beginning of the list
-                m_latestRemoveNotifications.removeFirst();
+    // Make sure that there will not be many Added or Removed notifications
+    // in a row for the same message
+    // Make also sure that there will not be updated notification for a
+    // message that has already been notified to be removed.
+    QString searchId;
+    if (notificationType == ModestEngine::Added) {
+        searchId = "A"+modestAccountId+modestFolderId+modestMessageId;
+    } else {
+        searchId = "D"+modestAccountId+modestFolderId+modestMessageId;
+    }
+    if (!m_latestAddOrRemoveNotifications.contains(searchId)) {
+        if ((notificationType == ModestEngine::Added) || (notificationType == ModestEngine::Removed)) {
+            // Only Added & Removed notification will be checked
+            if (m_latestAddOrRemoveNotifications.count() > 10) {
+                // Remove the oldest notification from the beginning of the list
+                m_latestAddOrRemoveNotifications.removeFirst();
             }
             // Append new notification
-            m_latestRemoveNotifications.append(modestMessageId);
-        } else {
-            return;
+            m_latestAddOrRemoveNotifications.append(searchId);
         }
+    } else {
+        // Add or Remove notification for the message was already handled!
+        // => Skip unwanted notification
+        return;
     }
 
     QMessageManager::NotificationFilterIdSet matchingFilters;
@@ -2336,10 +2383,6 @@ void ModestEngine::notification(const QMessageId& messageId, NotificationType no
         const QMessageFilter &filter(it.value());
 
         if (!messageRetrieved) {
-            QString modestAccountId = modestAccountIdFromMessageId(messageId);
-            QString modestFolderId = modestFolderIdFromMessageId(messageId);
-            QString modestMessageId = modestMessageIdFromMessageId(messageId);
-
             MessagingModestMessage modestMessage = messageFromModest(modestAccountId,
                                                                      modestFolderId,
                                                                      modestMessageId);
@@ -3125,6 +3168,11 @@ ModestStringMap ModestEngine::getModestHeaders(QMessage &message)
 {
     Q_UNUSED(message);
     return ModestStringMap(); // stub
+}
+
+void ModestEngine::clearHeaderCache()
+{
+    m_messageCache.clear();
 }
 
 #include "moc_modestengine_maemo_p.cpp"
