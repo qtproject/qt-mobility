@@ -9,22 +9,4 @@
         <description>Notes Management Interface</description>
         <capabilities></capabilities>
     </interface>
-    <interface>
-        <name>com.nokia.qt.examples.NotesManager</name>
-        <version>1.1</version>
-        <description>Notes Management Interface</description>
-        <capabilities></capabilities>
-    </interface>
-    <interface>
-        <name>com.nokia.qt.examples.NotesManager</name>
-        <version>1.2</version>
-        <description>Notes Management Interface</description>
-        <capabilities></capabilities>
-    </interface>
-    <interface>
-        <name>com.nokia.qt.examples.sfw.NotesManager</name>
-        <version>2.0</version>
-        <description>Notes Management Interface</description>
-        <capabilities></capabilities>
-    </interface>
 </service>

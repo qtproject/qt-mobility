@@ -41,122 +41,33 @@
 
 #include "sfwexample.h"
 
-ServiceWrapper::ServiceWrapper() 
-: serviceInstance(0)
-{
-}
-
-ServiceWrapper::~ServiceWrapper()
-{
-    delete serviceInstance;
-}
-
-bool ServiceWrapper::isValid() const
-{
-    return m_descriptor.isValid();
-}
-
-QString ServiceWrapper::interfaceName() const
-{
-    if (isValid())
-        return m_descriptor.interfaceName();
-    else
-        return "No Interface";
-}
-
-QString ServiceWrapper::serviceName() const
-{
-    if (isValid()) {
-        return m_descriptor.serviceName();
-    } else
-        return "No Service";
-}
-
-QString ServiceWrapper::version() const
-{
-    if (isValid())
-        return QString(QString::number(m_descriptor.majorVersion())+"."+QString::number(m_descriptor.minorVersion()));
-    else
-        return QString("0.0");
-}
-
-void ServiceWrapper::setNativeDescriptor(const QServiceInterfaceDescriptor &d)
-{
-    if (d == m_descriptor)
-        return;
-
-    m_descriptor = d;
-    
-    if (serviceInstance)
-        delete serviceInstance;
-
-    serviceInstance = 0;
-}
-
-void ServiceWrapper::setDescriptor(QVariant &newDescriptor)
-{
-    QServiceInterfaceDescriptor d = newDescriptor.value<QServiceInterfaceDescriptor>();
-    setNativeDescriptor(d);
-}
-
-
-QObject* ServiceWrapper::serviceObject()
-{
-    qDebug() << "called serviceObject";
-    if (serviceInstance) {
-        return serviceInstance;
-    }
-
-    if (isValid()) {
-        QServiceManager manager;
-        serviceInstance = manager.loadInterface(m_descriptor);
-        return serviceInstance;
-    } else {
-        return 0;
-    }
-}
-
-ServiceRegister::ServiceRegister()
+DialerServices::DialerServices()
 {
     serviceManager = new QServiceManager();
-    unregisterExampleServices();
+
     registerExampleServices();
-
-    //! [1]
-    ServiceWrapper *service;
-    QServiceFilter filter("com.nokia.qt.examples.Dialer");
-    QList<QServiceInterfaceDescriptor> allImpl = serviceManager->findInterfaces(filter);
-    for (int i = 0; i < allImpl.count(); i++) {
-        qDebug() << "Found service:" << allImpl.at(i).serviceName() << "(" << allImpl.at(i).interfaceName() << ")";
-        service = new ServiceWrapper();
-        service->setNativeDescriptor(allImpl.at(i));
-        m_services.append(service);
-    }
-    //! [1]
 }
 
-ServiceRegister::~ServiceRegister() 
+DialerServices::~DialerServices()
 {
     unregisterExampleServices();
 }
 
-void ServiceRegister::registerExampleServices()
+void DialerServices::registerExampleServices()
 {
-    //! [0]
+    // ![0]
     QStringList exampleXmlFiles;
-    exampleXmlFiles << "voipdialerservice.xml" << "landlinedialerservice.xml";
+    exampleXmlFiles << "landlinedialerservice.xml" << "voipdialerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
         QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
         serviceManager->addService(path);
     }
-    //! [0]
+    // ![0]
 }
 
-void ServiceRegister::unregisterExampleServices()
+void DialerServices::unregisterExampleServices()
 {
-    serviceManager->removeService("VoipDialer");
     serviceManager->removeService("LandlineDialer");
+    serviceManager->removeService("VoipDialer");
 }
-
-
 
