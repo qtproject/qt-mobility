@@ -48,6 +48,8 @@
 #include "qgeomapservice.h"
 #include "qgeoroutereply.h"
 #include "qgeocodingreply.h"
+#include "qgeocodingservice_nokia_p.h"
+
 
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
 #define QGEOAPIUI_USEPOPUPMENU
@@ -100,7 +102,7 @@ private slots:
 #endif
 
 private:
-    QGeocodingService *geocodingService;
+    QGeocodingServiceNokia *geocodingService;
     QGeoRoutingService *routingService;
     QGeoMapService *mapService;
 #ifdef Q_OS_SYMBIAN
