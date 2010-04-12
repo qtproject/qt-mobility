@@ -195,11 +195,11 @@
                                      tr(&quot;No GPS support detected, using GPS data from a sample log file instead.&quot;));
         }
 
-        QNetworkConfigurationManager manager;
+        QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager) manager;
         const bool canStartIAP = (manager.capabilities()
-                                  &amp; QNetworkConfigurationManager::CanStartAndStopInterfaces);
-        QNetworkConfiguration cfg = manager.defaultConfiguration();
-        if (!cfg.isValid() || (!canStartIAP &amp;&amp; cfg.state() != QNetworkConfiguration::Active)) {
+                                  &amp; QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager)::CanStartAndStopInterfaces);
+        QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
+        if (!cfg.isValid() || (!canStartIAP &amp;&amp; cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
             QMessageBox::information(this, tr(&quot;Flickr Demo&quot;), tr(&quot;Available Access Points not found.&quot;));
             return;
         }

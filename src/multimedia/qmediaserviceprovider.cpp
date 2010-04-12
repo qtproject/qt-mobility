@@ -48,7 +48,7 @@
 #include "qmediapluginloader_p.h"
 #include "qmediaplayer.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaServiceProviderHintPrivate : public QSharedData
 {
@@ -724,5 +724,5 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 
 #include "moc_qmediaserviceprovider.cpp"
 #include "moc_qmediaserviceproviderplugin.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

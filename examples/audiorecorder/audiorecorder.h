@@ -50,13 +50,11 @@
 QT_BEGIN_NAMESPACE
 class QComboBox;
 class QLabel;
+
+class QAudioCaptureSource;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-class QAudioCaptureSource;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioRecorder : public QMainWindow
 {

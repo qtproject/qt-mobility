@@ -16,7 +16,7 @@
 </h1>
 <ul><li><a href="#introduction">Introduction</a></li>
 <li><a href="#using-the-api">Using The API</a></li>
-<ul><li><a href="#information-and-reporting">Information And Reporting</a></li>
+<ul><li><a href="#error-reporting">Error Reporting</a></li>
 <li><a href="#contact-manipulation">Contact Manipulation</a></li>
 <li><a href="#relationship-manipulation">Relationship Manipulation</a></li>
 <li><a href="#schema-manipulation">Schema Manipulation</a></li>
@@ -37,35 +37,16 @@
 <h2>Using The API</h2>
 <p>The synchronous API offered by the Contacts module is available through the <a href="qcontactmanager.html">QContactManager</a> class. It consists of four major sections:</p>
 <ul>
-<li>Information And Reporting</li>
+<li>Error Reporting</li>
 <li>Schema Manipulation</li>
 <li>Contact Manipulation</li>
 <li>Relationship Manipulation</li>
 </ul>
-<a name="information-and-reporting"></a>
-<h3>Information And Reporting</h3>
-<p>The API offered by the <a href="qcontactmanager.html">QContactManager</a> exposes functionality which is implemented by plugins. These plugins may be platform specific, and may be provided by Nokia or by third party developers. Each plugin will have different capabilities and implement the functionality exposed by the Contacts API to a different degree.</p>
-<p>The <a href="qcontactmanager.html">QContactManager</a> class provides a static function <a href="qcontactmanager.html#availableManagers">QContactManager::availableManagers</a>() which allows clients of the API to determine (at run time) which plugins (managers) are available for use.</p>
-<p>Clients of the API also need to be able to determine (at run time) what the capabilities of a given plugin (contact manager) are. The <a href="qcontactmanager.html">QContactManager</a> class provides API to query the capabilities of a given manager with the following functions:</p>
-<ul>
-<li>hasFeature(<a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ManagerFeature</a> feature, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; contactType = <a href="qcontacttype.html#TypeContact-var">QContactType::TypeContact</a>) const</li>
-<li>isFilterSupported(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter) const</li>
-<li>supportedRelationshipTypes(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; contactType = <a href="qcontacttype.html#TypeContact-var">QContactType::TypeContact</a>) const</li>
-<li>supportedDataTypes() const</li>
-<li>supportedContactTypes() const</li>
-</ul>
-<p>A given manager is identified by its URI. The URI consists of the manager's name, any relevant parameters which were used during instantiation of the manager, and the version of the manager. While the name of the manager identifies the plugin which provides the functionality, you cannot guarantee that the data available through one manager will be available through another with the same name (for example, if one parameter tells the plugin to store and retrieve contact information from a particular online service or local file).</p>
-<p>The synchronous API offered to allow run-time querying of a manager's metadata includes:</p>
-<ul>
-<li>managerName() const</li>
-<li>managerParameters() const</li>
-<li>managerUri() const</li>
-<li>managerVersion() const;</li>
-<li>(static) parseUri(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; uri, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>* managerName, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt;* params)</li>
-<li>(static) buildUri(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; managerName, const <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt;&amp; params, int implementationVersion = -1)</li>
-</ul>
-<p>The functionality that the above functions provide is only available through the synchronous API.</p>
-<p>Finally, when a synchronous operation fails, clients need to be able to retrieve error information associated with that synchronous operation. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function provides this information to clients.</p>
+<a name="error-reporting"></a>
+<h3>Error Reporting</h3>
+<p>When a synchronous operation fails, clients need to be able to retrieve error information associated with that synchronous operation. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function provides this information to clients.</p>
+<p>For some synchronous operations (for example, batch save or remove operations) it is possible that multiple errors may occur during the operation. In those cases, the synchronous function will take a pointer to a map of input index to error, which will be filled by the function as required, and the <a href="qcontactmanager.html#error">QContactManager::error</a>() function will report the overall operation error.</p>
+<p>Error reporting is handled slightly differently in the asynchronous API, in that each instance of an asynchronous request is able to report any overall operation error as well as the finer-grained map of errors, for the operation which it requested.</p>
 <a name="contact-manipulation"></a>
 <h3>Contact Manipulation</h3>
 <p>The most common type of operation that clients will perform involves retrieval or modification of contacts. The <a href="qcontactmanager.html">QContactManager</a> class offers synchronous API to retrieve, create, update and delete contacts. The create and update operations are provided through the same interface. Both singular and batch operations are offered by the API.</p>
@@ -78,17 +59,17 @@
 <p>The contact id retrieval functionality is also provided via asynchronous API through the <a href="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</a> class.</p>
 <p>The synchronous, singular contact manipulation functions offered by the <a href="qcontactmanager.html">QContactManager</a> class are:</p>
 <ul>
-<li>contact(const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&amp; contactId, const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a>&amp; definitionRestrictions = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QStringList</a>()) const</li>
+<li>contact(const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&amp; contactId, const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
 <li>saveContact(<a href="qcontact.html">QContact</a>* contact)</li>
 <li>removeContact(const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&amp; contactId)</li>
 </ul>
-<p>The (optional) definitionRestrictions argument to the contact accessor function allows clients to tell the plugin which types of details they wish to retrieve. This argument is a hint only, and may be ignored safely by the plugin, or used by the plugin to optimize the performance of the retrieve operation.</p>
-<p>The save operation entails a validation step, where the contact's details are checked against the supported schema. If the contact is valid, it will be saved. Note that if the contact already exists in the database (determined by the id of the contact) it will be replaced with the contact contained in the argument. This means that clients should not save any contact which was retrieved with a non-empty definitionRestrictions set defined, or data loss may occur.</p>
+<p>The (optional) fetch argument to the contact accessor function allows clients to tell the plugin which types of information they wish to retrieve. This argument is a hint only, and may be ignored safely by the plugin, or used by the plugin to optimize the performance of the retrieve operation.</p>
+<p>The save operation entails a validation step, where the contact's details are checked against the supported schema. If the contact is valid, it will be saved. Note that if the contact already exists in the database (determined by the id of the contact) it will be replaced with the contact contained in the argument. This means that clients should not save any contact which was retrieved with a non-empty fetchHint defined, or data loss may occur.</p>
 <p>Any error which occurs during such singular contact manipulation functions may be accessed by calling <a href="qcontactmanager.html#error">QContactManager::error</a>() directly after the original synchronous call.</p>
 <p>The synchronous, batch contact manipulation functions offered by the <a href="qcontactmanager.html">QContactManager</a> class are:</p>
 <ul>
-<li>contacts(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a>&amp; definitionRestrictions = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QStringList</a>()) const</li>
-<li>contacts(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a>&amp; definitionRestrictions = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QStringList</a>()) const</li>
+<li>contacts(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
+<li>contacts(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
 <li>saveContacts(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt;* contacts, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt;* errorMap)</li>
 <li>removeContacts(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt;* contactIds, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt;* errorMap)</li>
 </ul>

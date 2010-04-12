@@ -56,7 +56,7 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class CVGLTextureVideoBuffer : public QAbstractVideoBuffer
 {

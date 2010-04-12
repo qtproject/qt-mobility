@@ -47,7 +47,7 @@
 
 #include <qmediaserviceprovider.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QStringList QT7ServicePlugin::keys() const
 {
@@ -71,4 +71,4 @@ void QT7ServicePlugin::release(QMediaService *service)
 
 Q_EXPORT_PLUGIN2(qt7_serviceplugin, QT7ServicePlugin);
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

@@ -44,7 +44,7 @@
 
 #include <QtCore/qurl.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistProvider
@@ -301,5 +301,5 @@ void QMediaPlaylistProvider::shuffle()
 */
 
 #include "moc_qmediaplaylistprovider.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

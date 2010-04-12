@@ -52,7 +52,7 @@ class QPushButton;
 class QSlider;
 QT_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class Radio : public QMainWindow
 {

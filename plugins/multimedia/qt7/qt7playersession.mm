@@ -55,7 +55,7 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 @interface QTMovieObserver : NSObject
 {

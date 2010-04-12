@@ -49,7 +49,7 @@
 #include <qradiotunercontrol.h>
 #include <qradiotuner.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class MockControl : public QRadioTunerControl
 {
     Q_OBJECT
@@ -311,9 +311,6 @@ void tst_QRadioTuner::cleanupTestCase()
     QCOMPARE(radio->state(), QRadioTuner::StoppedState);
     QCOMPARE(stateSpy.count(), 1);
 
-#ifdef QTM_NAMESPACE
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(stateSpy.first()[0].value<QRadioTuner::State>(), QRadioTuner::StoppedState);
 
     delete radio;
