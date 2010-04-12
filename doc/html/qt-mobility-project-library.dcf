@@ -1204,6 +1204,84 @@
         <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
     </section>
+    <section ref="qdocumentgallery.html" title="QDocumentGallery Class Reference">
+        <keyword ref="qdocumentgallery.html">QDocumentGallery</keyword>
+        <keyword ref="qdocumentgallery.html#itemTypes-prop">itemTypes</keyword>
+        <keyword ref="qdocumentgallery.html#createResponse">createResponse</keyword>
+        <keyword ref="qdocumentgallery.html#isRequestSupported">isRequestSupported</keyword>
+        <keyword ref="qdocumentgallery.html#Album-var">Album</keyword>
+        <keyword ref="qdocumentgallery.html#AlbumArtist-var">AlbumArtist</keyword>
+        <keyword ref="qdocumentgallery.html#Artist-var">Artist</keyword>
+        <keyword ref="qdocumentgallery.html#Audio-var">Audio</keyword>
+        <keyword ref="qdocumentgallery.html#AudioGenre-var">AudioGenre</keyword>
+        <keyword ref="qdocumentgallery.html#Document-var">Document</keyword>
+        <keyword ref="qdocumentgallery.html#File-var">File</keyword>
+        <keyword ref="qdocumentgallery.html#Folder-var">Folder</keyword>
+        <keyword ref="qdocumentgallery.html#Image-var">Image</keyword>
+        <keyword ref="qdocumentgallery.html#PhotoAlbum-var">PhotoAlbum</keyword>
+        <keyword ref="qdocumentgallery.html#Playlist-var">Playlist</keyword>
+        <keyword ref="qdocumentgallery.html#Text-var">Text</keyword>
+        <keyword ref="qdocumentgallery.html#Video-var">Video</keyword>
+        <keyword ref="qdocumentgallery.html#albumArtist-varx">albumArtist</keyword>
+        <keyword ref="qdocumentgallery.html#albumTitle-var">albumTitle</keyword>
+        <keyword ref="qdocumentgallery.html#artist-varx">artist</keyword>
+        <keyword ref="qdocumentgallery.html#audioBitRate-var">audioBitRate</keyword>
+        <keyword ref="qdocumentgallery.html#audioCodec-var">audioCodec</keyword>
+        <keyword ref="qdocumentgallery.html#author-var">author</keyword>
+        <keyword ref="qdocumentgallery.html#cameraManufacturer-var">cameraManufacturer</keyword>
+        <keyword ref="qdocumentgallery.html#cameraModel-var">cameraModel</keyword>
+        <keyword ref="qdocumentgallery.html#channelCount-var">channelCount</keyword>
+        <keyword ref="qdocumentgallery.html#comments-var">comments</keyword>
+        <keyword ref="qdocumentgallery.html#composer-var">composer</keyword>
+        <keyword ref="qdocumentgallery.html#copyright-var">copyright</keyword>
+        <keyword ref="qdocumentgallery.html#created-var">created</keyword>
+        <keyword ref="qdocumentgallery.html#dateTaken-var">dateTaken</keyword>
+        <keyword ref="qdocumentgallery.html#description-var">description</keyword>
+        <keyword ref="qdocumentgallery.html#director-var">director</keyword>
+        <keyword ref="qdocumentgallery.html#discNumber-var">discNumber</keyword>
+        <keyword ref="qdocumentgallery.html#duration-var">duration</keyword>
+        <keyword ref="qdocumentgallery.html#exposureProgram-var">exposureProgram</keyword>
+        <keyword ref="qdocumentgallery.html#exposureTime-var">exposureTime</keyword>
+        <keyword ref="qdocumentgallery.html#fNumber-var">fNumber</keyword>
+        <keyword ref="qdocumentgallery.html#fileExtension-var">fileExtension</keyword>
+        <keyword ref="qdocumentgallery.html#fileName-var">fileName</keyword>
+        <keyword ref="qdocumentgallery.html#filePath-var">filePath</keyword>
+        <keyword ref="qdocumentgallery.html#fileSize-var">fileSize</keyword>
+        <keyword ref="qdocumentgallery.html#flashEnabled-var">flashEnabled</keyword>
+        <keyword ref="qdocumentgallery.html#focalLength-var">focalLength</keyword>
+        <keyword ref="qdocumentgallery.html#frameRate-var">frameRate</keyword>
+        <keyword ref="qdocumentgallery.html#genre-var">genre</keyword>
+        <keyword ref="qdocumentgallery.html#height-var">height</keyword>
+        <keyword ref="qdocumentgallery.html#keywords-var">keywords</keyword>
+        <keyword ref="qdocumentgallery.html#language-var">language</keyword>
+        <keyword ref="qdocumentgallery.html#lastAccessed-var">lastAccessed</keyword>
+        <keyword ref="qdocumentgallery.html#lastModified-var">lastModified</keyword>
+        <keyword ref="qdocumentgallery.html#lastPlayed-var">lastPlayed</keyword>
+        <keyword ref="qdocumentgallery.html#lyrics-var">lyrics</keyword>
+        <keyword ref="qdocumentgallery.html#meteringMode-var">meteringMode</keyword>
+        <keyword ref="qdocumentgallery.html#mimeType-var">mimeType</keyword>
+        <keyword ref="qdocumentgallery.html#orientation-var">orientation</keyword>
+        <keyword ref="qdocumentgallery.html#pageCount-var">pageCount</keyword>
+        <keyword ref="qdocumentgallery.html#path-var">path</keyword>
+        <keyword ref="qdocumentgallery.html#performer-var">performer</keyword>
+        <keyword ref="qdocumentgallery.html#photoAlbum-varx">photoAlbum</keyword>
+        <keyword ref="qdocumentgallery.html#playCount-var">playCount</keyword>
+        <keyword ref="qdocumentgallery.html#producer-var">producer</keyword>
+        <keyword ref="qdocumentgallery.html#rating-var">rating</keyword>
+        <keyword ref="qdocumentgallery.html#resumePosition-var">resumePosition</keyword>
+        <keyword ref="qdocumentgallery.html#sampleRate-var">sampleRate</keyword>
+        <keyword ref="qdocumentgallery.html#subject-var">subject</keyword>
+        <keyword ref="qdocumentgallery.html#thumbnail-var">thumbnail</keyword>
+        <keyword ref="qdocumentgallery.html#title-var">title</keyword>
+        <keyword ref="qdocumentgallery.html#trackCount-var">trackCount</keyword>
+        <keyword ref="qdocumentgallery.html#trackNumber-var">trackNumber</keyword>
+        <keyword ref="qdocumentgallery.html#videoBitRate-var">videoBitRate</keyword>
+        <keyword ref="qdocumentgallery.html#videoCodec-var">videoCodec</keyword>
+        <keyword ref="qdocumentgallery.html#whiteBalance-var">whiteBalance</keyword>
+        <keyword ref="qdocumentgallery.html#width-var">width</keyword>
+        <keyword ref="qdocumentgallery.html#wordCount-var">wordCount</keyword>
+        <section ref="qdocumentgallery-members.html" title="List of all members"/>
+    </section>
     <section ref="qgalleryabstractrequest.html" title="QGalleryAbstractRequest Class Reference">
         <keyword ref="qgalleryabstractrequest.html">QGalleryAbstractRequest</keyword>
         <keyword ref="qgalleryabstractrequest.html#Result-enum">Result</keyword>
@@ -1224,6 +1302,7 @@
         <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Copy</keyword>
         <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Remove</keyword>
         <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Insert</keyword>
+        <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Count</keyword>
         <keyword ref="qgalleryabstractrequest.html#currentProgress-prop">currentProgress</keyword>
         <keyword ref="qgalleryabstractrequest.html#gallery-prop">gallery</keyword>
         <keyword ref="qgalleryabstractrequest.html#gallery-prop">setGallery</keyword>
@@ -1507,6 +1586,7 @@
         <keyword ref="qgalleryproperty.html#descending">descending</keyword>
         <keyword ref="qgalleryproperty.html#isInRange">isInRange</keyword>
         <keyword ref="qgalleryproperty.html#matches">matches</keyword>
+        <keyword ref="qgalleryproperty.html#name">name</keyword>
         <keyword ref="qgalleryproperty.html#operator-QString">operator QString</keyword>
         <keyword ref="qgalleryproperty.html#operator-lt">operator&lt;</keyword>
         <keyword ref="qgalleryproperty.html#operator-lt-eq">operator&lt;=</keyword>
@@ -1541,6 +1621,7 @@
     </section>
     <section ref="qgallerytype.html" title="QGalleryType Class Reference">
         <keyword ref="qgallerytype.html">QGalleryType</keyword>
+        <keyword ref="qgallerytype.html#name">name</keyword>
         <keyword ref="qgallerytype.html#operator-QString">operator QString</keyword>
         <section ref="qgallerytype-members.html" title="List of all members"/>
     </section>

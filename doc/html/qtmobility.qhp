@@ -247,6 +247,9 @@
                     <section ref="qcontacturl.html" title="QContactUrl Class Reference">
                         <section ref="qcontacturl-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qdocumentgallery.html" title="QDocumentGallery Class Reference">
+                        <section ref="qdocumentgallery-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qgalleryabstractrequest.html" title="QGalleryAbstractRequest Class Reference">
                         <section ref="qgalleryabstractrequest-members.html" title="List of all members"/>
                     </section>
@@ -1637,6 +1640,11 @@
             <keyword name="setUrl" id="QContactUrl::setUrl" ref="qcontacturl.html#setUrl"/>
             <keyword name="subType" id="QContactUrl::subType" ref="qcontacturl.html#subType"/>
             <keyword name="url" id="QContactUrl::url" ref="qcontacturl.html#url"/>
+            <keyword name="QDocumentGallery" id="QDocumentGallery" ref="qdocumentgallery.html"/>
+            <keyword name="createResponse" id="QDocumentGallery::createResponse" ref="qdocumentgallery.html#createResponse"/>
+            <keyword name="isRequestSupported" id="QDocumentGallery::isRequestSupported" ref="qdocumentgallery.html#isRequestSupported"/>
+            <keyword name="itemTypes" id="QDocumentGallery::itemTypes" ref="qdocumentgallery.html#itemTypes-prop"/>
+            <keyword name="~QDocumentGallery" id="QDocumentGallery::~QDocumentGallery" ref="qdocumentgallery.html#dtor.QDocumentGallery"/>
             <keyword name="QGalleryAbstractRequest" id="QGalleryAbstractRequest" ref="qgalleryabstractrequest.html"/>
             <keyword name="QGalleryAbstractRequest::Result" id="QGalleryAbstractRequest::Result" ref="qgalleryabstractrequest.html#Result-enum"/>
             <keyword name="QGalleryAbstractRequest::NoResult" id="QGalleryAbstractRequest::NoResult" ref="qgalleryabstractrequest.html#Result-enum"/>
@@ -1909,6 +1917,7 @@
             <keyword name="descending" id="QGalleryProperty::descending" ref="qgalleryproperty.html#descending"/>
             <keyword name="isInRange" id="QGalleryProperty::isInRange" ref="qgalleryproperty.html#isInRange"/>
             <keyword name="matches" id="QGalleryProperty::matches" ref="qgalleryproperty.html#matches"/>
+            <keyword name="name" id="QGalleryProperty::name" ref="qgalleryproperty.html#name"/>
             <keyword name="operator QString" id="QGalleryProperty::operator QString" ref="qgalleryproperty.html#operator-QString"/>
             <keyword name="operator&lt;" id="QGalleryProperty::operator&lt;" ref="qgalleryproperty.html#operator-lt"/>
             <keyword name="operator&lt;=" id="QGalleryProperty::operator&lt;=" ref="qgalleryproperty.html#operator-lt-eq"/>
@@ -1936,6 +1945,7 @@
             <keyword name="url" id="QGalleryResource::url" ref="qgalleryresource.html#url"/>
             <keyword name="~QGalleryResource" id="QGalleryResource::~QGalleryResource" ref="qgalleryresource.html#dtor.QGalleryResource"/>
             <keyword name="QGalleryType" id="QGalleryType" ref="qgallerytype.html"/>
+            <keyword name="name" id="QGalleryType::name" ref="qgallerytype.html#name"/>
             <keyword name="operator QString" id="QGalleryType::operator QString" ref="qgallerytype.html#operator-QString"/>
             <keyword name="QGalleryUnionFilter" id="QGalleryUnionFilter" ref="qgalleryunionfilter.html"/>
             <keyword name="append" id="QGalleryUnionFilter::append" ref="qgalleryunionfilter.html#append"/>
@@ -4080,6 +4090,7 @@
             <file>qgraphicsvideoitem.html</file>
             <file>preview.html</file>
             <file>samplephonebook-contactlistpage-cpp.html</file>
+            <file>qdocumentgallery.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qcontactpresence.html</file>
             <file>images/axes.png</file>
@@ -4269,6 +4280,7 @@
             <file>qcontacttag.html</file>
             <file>qcontactaction-members.html</file>
             <file>qcontactglobalpresence-members.html</file>
+            <file>qdocumentgallery-members.html</file>
             <file>battery-charge-battery-publisher-batterypublisher-h.html</file>
             <file>qcontacttype.html</file>
             <file>qgallerymetadatafilter.html</file>

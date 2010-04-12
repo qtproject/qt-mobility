@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgalleryrequest.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGalleryItemRequest Class Reference</title>
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGalleryItemRequest"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryItemRequest Class Reference</h1>
+<p>The QGalleryItemRequest class provides a request for a set of items from a gallery. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGalleryItemRequest&gt;</pre><p>Inherits <a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a>.</p>
+<ul>
+<li><a href="qgalleryitemrequest-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td width="45%" valign="top"><ul>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#containerId-prop">containerId</a></b> : QString</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#containerUrl-prop">containerUrl</a></b> : QUrl</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#filter-prop">filter</a></b> : QGalleryFilter</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#initialCursorPosition-prop">initialCursorPosition</a></b> : int</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#itemId-prop">itemId</a></b> : QString</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#itemIds-prop">itemIds</a></b> : QStringList</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#itemType-prop">itemType</a></b> : QString</div></li>
+</ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#itemUrl-prop">itemUrl</a></b> : QUrl</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#itemUrls-prop">itemUrls</a></b> : QList&lt;QUrl&gt;</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#items-prop">items</a></b> : QGalleryItemList * const</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#live-prop">live</a></b> : bool</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#minimumPagedItems-prop">minimumPagedItems</a></b> : int</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#propertyNames-prop">propertyNames</a></b> : QStringList</div></li>
+<li><div class="fn"><b><a href="qgalleryitemrequest.html#sortPropertyNames-prop">sortPropertyNames</a></b> : QStringList</div></li>
+</ul>
+</td></tr>
+</table></p>
+<ul>
+<li><div bar="2" class="fn"></div>6 properties inherited from <a href="qgalleryabstractrequest.html#properties">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#QGalleryItemRequest">QGalleryItemRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#QGalleryItemRequest-2">QGalleryItemRequest</a></b> ( QAbstractGallery * <i>gallery</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#dtor.QGalleryItemRequest">~QGalleryItemRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#containerId-prop">containerId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#containerUrl-prop">containerUrl</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#filter-prop">filter</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#initialCursorPosition-prop">initialCursorPosition</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#live-prop">isLive</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemId-prop">itemId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemIds-prop">itemIds</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemType-prop">itemType</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemUrl-prop">itemUrl</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUrl&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemUrls-prop">itemUrls</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryItemList * </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#items-prop">items</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#minimumPagedItems-prop">minimumPagedItems</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#propertyNames-prop">propertyNames</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#containerId-prop">setContainerId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#containerUrl-prop">setContainerUrl</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#filter-prop">setFilter</a></b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#initialCursorPosition-prop">setInitialCursorPosition</a></b> ( int <i>index</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemId-prop">setItemId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemIds-prop">setItemIds</a></b> ( const QStringList &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemType-prop">setItemType</a></b> ( const QString &amp; <i>type</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemUrl-prop">setItemUrl</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemUrls-prop">setItemUrls</a></b> ( const QList&lt;QUrl&gt; &amp; <i>urls</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#live-prop">setLive</a></b> ( bool <i>live</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#minimumPagedItems-prop">setMinimumPagedItems</a></b> ( int <i>size</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#propertyNames-prop">setPropertyNames</a></b> ( const QStringList &amp; <i>names</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#sortPropertyNames-prop">setSortPropertyNames</a></b> ( const QStringList &amp; <i>names</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#sortPropertyNames-prop">sortPropertyNames</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qgalleryabstractrequest.html#public-functions">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#containerIdChanged">containerIdChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#containerUrlChanged">containerUrlChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#filterChanged">filterChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemIdsChanged">itemIdsChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemUrlsChanged">itemUrlsChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemsChanged">itemsChanged</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>8 signals inherited from <a href="qgalleryabstractrequest.html#signals">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
+<a name="reimplemented-protected-functions"></a>
+<h2>Reimplemented Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#setResponse">setResponse</a></b> ( QGalleryAbstractResponse * <i>response</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 protected function inherited from <a href="qgalleryabstractrequest.html#protected-functions">QGalleryAbstractRequest</a></li>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>3 public slots inherited from <a href="qgalleryabstractrequest.html#public-slots">QGalleryAbstractRequest</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>1 protected function inherited from <a href="qgalleryabstractrequest.html#protected-functions">QGalleryAbstractRequest</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGalleryItemRequest class provides a request for a set of items from a gallery.</p>
+<hr />
+<h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/containerId"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setContainerId"></a>
+<h3 class="fn"><a name="containerId-prop"></a>containerId : <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
+<p>This property holds the ID of container item a item request should return the contents of.</p>
+<p>This is equivalent to setting a <a href="qgalleryitemrequest.html#filter-prop">filter</a> of type <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a>.</p>
+<p>If the current <a href="qgalleryitemrequest.html#filter-prop">filter</a> is not of type <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a> this will be null.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>containerId</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setContainerId</b> ( const QString &amp; <i>id</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/containerUrl"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setContainerUrl"></a>
+<h3 class="fn"><a name="containerUrl-prop"></a>containerUrl : <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a></h3>
+<p>This property holds the URL of container item a item request should return the contents of.</p>
+<p>This is equivalent to setting a <a href="qgalleryitemrequest.html#filter-prop">filter</a> of type <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a>.</p>
+<p>If the current <a href="qgalleryitemrequest.html#filter-prop">filter</a> is not of type <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a> this will be null.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b>containerUrl</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setContainerUrl</b> ( const QUrl &amp; <i>url</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/filter"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setFilter"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/filterChanged"></a>
+<h3 class="fn"><a name="filter-prop"></a>filter : <a href="qgalleryfilter.html">QGalleryFilter</a></h3>
+<p>This property holds a filter identifying the items a request should return.</p>
+<p>If no filter is set the results of the request will be determined soley by the <a href="qgalleryitemrequest.html#itemType-prop">itemType</a> property.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryFilter </td><td class="memItemRight" valign="bottom"><b>filter</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setFilter</b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#filterChanged">filterChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/initialCursorPosition"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setInitialCursorPosition"></a>
+<h3 class="fn"><a name="initialCursorPosition-prop"></a>initialCursorPosition : int</h3>
+<p>This property holds the index of the first item a request should return.</p>
+<p>By default this is 0.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>initialCursorPosition</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setInitialCursorPosition</b> ( int <i>index</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemId"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setItemId"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemIdsChanged"></a>
+<h3 class="fn"><a name="itemId-prop"></a>itemId : <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
+<p>This property holds the ID of a item a item request should return.</p>
+<p>This is equivalent to setting a <a href="qgalleryitemrequest.html#filter-prop">filter</a> of type <a href="qgalleryitemfilter.html">QGalleryItemFilter</a>.</p>
+<p>If the current <a href="qgalleryitemrequest.html#filter-prop">filter</a> is not of type <a href="qgalleryitemfilter.html">QGalleryItemFilter</a> or multiple items are specified in <a href="qgalleryitemrequest.html#itemIds-prop">itemIds</a> this will be null.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>itemId</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setItemId</b> ( const QString &amp; <i>id</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemIdsChanged">itemIdsChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemIds"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setItemIds"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemIdsChanged"></a>
+<h3 class="fn"><a name="itemIds-prop"></a>itemIds : <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
+<p>This property holds a list of IDs for items a item request should return.</p>
+<p>This is equivalent to setting a <a href="qgalleryitemrequest.html#filter-prop">filter</a> of type <a href="qgalleryitemfilter.html">QGalleryItemFilter</a>.</p>
+<p>If the current <a href="qgalleryitemrequest.html#filter-prop">filter</a> is not of type <a href="qgalleryitemfilter.html">QGalleryItemFilter</a> this will be null.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>itemIds</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setItemIds</b> ( const QStringList &amp; <i>id</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemIdsChanged">itemIdsChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemType"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setItemType"></a>
+<h3 class="fn"><a name="itemType-prop"></a>itemType : <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
+<p>This property holds the type of items a request should return.</p>
+<p>If this is not set items of all types will be returned. If no filter is set all items of this type will be returned.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>itemType</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setItemType</b> ( const QString &amp; <i>type</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemUrl"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setItemUrl"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemUrlsChanged"></a>
+<h3 class="fn"><a name="itemUrl-prop"></a>itemUrl : <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a></h3>
+<p>This property holds the URL of an item a item request should return.</p>
+<p>This is equivalent to setting a <a href="qgalleryitemrequest.html#filter-prop">filter</a> of type <a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a>.</p>
+<p>If the current <a href="qgalleryitemrequest.html#filter-prop">filter</a> is not of type <a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a> or multiple items are specified in <a href="qgalleryitemrequest.html#itemUrls-prop">itemUrls</a> this will be null.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b>itemUrl</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setItemUrl</b> ( const QUrl &amp; <i>url</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemUrlsChanged">itemUrlsChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemUrls"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setItemUrls"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemUrlsChanged"></a>
+<h3 class="fn"><a name="itemUrls-prop"></a>itemUrls : <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a>&gt;</h3>
+<p>This property holds a list of URLs for items a item request should return.</p>
+<p>This is equivalent to setting a <a href="qgalleryitemrequest.html#filter-prop">filter</a> of type <a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a>.</p>
+<p>If the current <a href="qgalleryitemrequest.html#filter-prop">filter</a> is not of type <a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a> this will be null.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUrl&gt; </td><td class="memItemRight" valign="bottom"><b>itemUrls</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setItemUrls</b> ( const QList&lt;QUrl&gt; &amp; <i>urls</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemUrlsChanged">itemUrlsChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/items"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemsChanged"></a>
+<h3 class="fn"><a name="items-prop"></a>items : <a href="qgalleryitemlist.html">QGalleryItemList</a> * const</h3>
+<p>This property holds the items returned by a request.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryItemList * </td><td class="memItemRight" valign="bottom"><b>items</b> () const</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemrequest.html#itemsChanged">itemsChanged</a></b> ()</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/isLive"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setLive"></a>
+<h3 class="fn"><a name="live-prop"></a>live : bool</h3>
+<p>This property holds whether a the results of a request should be updated after a request has finished.</p>
+<p>If this is true the request will go into the Idle state when the request has finished rather than returning to Inactive.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isLive</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setLive</b> ( bool <i>live</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/minimumPagedItems"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setMinimumPagedItems"></a>
+<h3 class="fn"><a name="minimumPagedItems-prop"></a>minimumPagedItems : int</h3>
+<p>This property holds the minimum number of consecutive items the list returned by a request should cache.</p>
+<p>By default this is 200.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>minimumPagedItems</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMinimumPagedItems</b> ( int <i>size</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/propertyNames"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setPropertyNames"></a>
+<h3 class="fn"><a name="propertyNames-prop"></a>propertyNames : <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
+<p>This property holds a list of names of meta-data properties a request should return values for.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>propertyNames</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPropertyNames</b> ( const QStringList &amp; <i>names</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/sortPropertyNames"></a>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setSortPropertyNames"></a>
+<h3 class="fn"><a name="sortPropertyNames-prop"></a>sortPropertyNames : <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
+<p>This property holds a list of names of meta-data properties a request should sort its results on.</p>
+<p>Prefixing a property name with the '+' character indicates it should be sorted in ascending order, and a '-' character prefix indicates a descending order. If there is no prefix ascending order is assumed.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>sortPropertyNames</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setSortPropertyNames</b> ( const QStringList &amp; <i>names</i> )</td></tr>
+</table>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/QGalleryItemRequest"></a>
+<h3 class="fn"><a name="QGalleryItemRequest"></a>QGalleryItemRequest::QGalleryItemRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new gallery item request.</p>
+<p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<h3 class="fn"><a name="QGalleryItemRequest-2"></a>QGalleryItemRequest::QGalleryItemRequest ( <a href="qabstractgallery.html">QAbstractGallery</a> * <i>gallery</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Contructs a new item request for the given <i>gallery</i>.</p>
+<p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/~QGalleryItemRequest"></a>
+<h3 class="fn"><a name="dtor.QGalleryItemRequest"></a>QGalleryItemRequest::~QGalleryItemRequest ()</h3>
+<p>Destroys a gallery item request.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/containerIdChanged"></a>
+<h3 class="fn"><a name="containerIdChanged"></a>void QGalleryItemRequest::containerIdChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <a href="qgalleryitemrequest.html#containerId-prop">containerId</a> property has changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/containerUrlChanged"></a>
+<h3 class="fn"><a name="containerUrlChanged"></a>void QGalleryItemRequest::containerUrlChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <a href="qgalleryitemrequest.html#containerUrl-prop">containerUrl</a> property has changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/filterChanged"></a>
+<h3 class="fn"><a name="filterChanged"></a>void QGalleryItemRequest::filterChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals the <a href="qgalleryitemrequest.html#filter-prop">filter</a> property has changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemIdsChanged"></a>
+<h3 class="fn"><a name="itemIdsChanged"></a>void QGalleryItemRequest::itemIdsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <a href="qgalleryitemrequest.html#itemId-prop">itemId</a> and <a href="qgalleryitemrequest.html#itemIds-prop">itemIds</a> properties have changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemUrlsChanged"></a>
+<h3 class="fn"><a name="itemUrlsChanged"></a>void QGalleryItemRequest::itemUrlsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <a href="qgalleryitemrequest.html#itemUrl-prop">itemUrl</a> and <a href="qgalleryitemrequest.html#itemUrls-prop">itemUrls</a> properties have changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/itemsChanged"></a>
+<h3 class="fn"><a name="itemsChanged"></a>void QGalleryItemRequest::itemsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the <a href="qgalleryitemrequest.html#items-prop">items</a> property has changed.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemRequest/setResponse"></a>
+<h3 class="fn"><a name="setResponse"></a>void QGalleryItemRequest::setResponse ( <a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a> * <i>response</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="qgalleryabstractrequest.html#setResponse">QGalleryAbstractRequest::setResponse</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

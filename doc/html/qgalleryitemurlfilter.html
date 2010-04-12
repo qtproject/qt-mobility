@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgalleryfilter.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGalleryItemUrlFilter Class Reference</title>
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGalleryItemUrlFilter"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGalleryItemUrlFilter Class Reference</h1>
+<p>The QGalleryItemUrlFilter class provides a gallery filter which matches items with specific URLs. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGalleryItemUrlFilter&gt;</pre><ul>
+<li><a href="qgalleryitemurlfilter-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#QGalleryItemUrlFilter">QGalleryItemUrlFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#QGalleryItemUrlFilter-2">QGalleryItemUrlFilter</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#QGalleryItemUrlFilter-3">QGalleryItemUrlFilter</a></b> ( const QList&lt;QUrl&gt; &amp; <i>urls</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#QGalleryItemUrlFilter-4">QGalleryItemUrlFilter</a></b> ( const QGalleryItemUrlFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#dtor.QGalleryItemUrlFilter">~QGalleryItemUrlFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#itemUrl">itemUrl</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QUrl&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#itemUrls">itemUrls</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#setItemUrl">setItemUrl</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#setItemUrls">setItemUrls</a></b> ( const QList&lt;QUrl&gt; &amp; <i>urls</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGalleryItemUrlFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryitemurlfilter.html#operator-eq">operator=</a></b> ( const QGalleryItemUrlFilter &amp; <i>filter</i> )</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGalleryItemUrlFilter class provides a gallery filter which matches items with specific URLs.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGalleryItemUrlFilter/QGalleryItemUrlFilter"></a>
+<h3 class="fn"><a name="QGalleryItemUrlFilter"></a>QGalleryItemUrlFilter::QGalleryItemUrlFilter ()</h3>
+<p>Constructs an empty item URL filter.</p>
+<h3 class="fn"><a name="QGalleryItemUrlFilter-2"></a>QGalleryItemUrlFilter::QGalleryItemUrlFilter ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>url</i> )</h3>
+<p>Constructs a item URL filter which matches a single <i>url</i>.</p>
+<h3 class="fn"><a name="QGalleryItemUrlFilter-3"></a>QGalleryItemUrlFilter::QGalleryItemUrlFilter ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a>&gt; &amp; <i>urls</i> )</h3>
+<p>Constructs a item URL filter which matches a list of <i>urls</i>.</p>
+<h3 class="fn"><a name="QGalleryItemUrlFilter-4"></a>QGalleryItemUrlFilter::QGalleryItemUrlFilter ( const QGalleryItemUrlFilter &amp; <i>filter</i> )</h3>
+<p>Constructs a copy of a item URL <i>filter</i>.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemUrlFilter/~QGalleryItemUrlFilter"></a>
+<h3 class="fn"><a name="dtor.QGalleryItemUrlFilter"></a>QGalleryItemUrlFilter::~QGalleryItemUrlFilter ()</h3>
+<p>Destroys a item URL filter.</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemUrlFilter/itemUrl"></a>
+<h3 class="fn"><a name="itemUrl"></a><a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> QGalleryItemUrlFilter::itemUrl () const</h3>
+<p>Returns the URL of single item matched by a item filter.</p>
+<p>If <a href="qgalleryitemurlfilter.html#itemUrls">itemUrls</a>() contains multiple URLs this will be null.</p>
+<p>See also <a href="qgalleryitemurlfilter.html#setItemUrl">setItemUrl</a>().</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemUrlFilter/itemUrls"></a>
+<h3 class="fn"><a name="itemUrls"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a>&gt; QGalleryItemUrlFilter::itemUrls () const</h3>
+<p>Returns the list of URLs matched by a item filter.</p>
+<p>See also <a href="qgalleryitemurlfilter.html#setItemUrls">setItemUrls</a>().</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemUrlFilter/setItemUrl"></a>
+<h3 class="fn"><a name="setItemUrl"></a>void QGalleryItemUrlFilter::setItemUrl ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>url</i> )</h3>
+<p>Sets the <i>url</i> of a single item matched by a item filter.</p>
+<p>Setting this will overwrite the value of <a href="qgalleryitemurlfilter.html#itemUrls">itemUrls</a>().</p>
+<p>See also <a href="qgalleryitemurlfilter.html#itemUrl">itemUrl</a>().</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemUrlFilter/setItemUrls"></a>
+<h3 class="fn"><a name="setItemUrls"></a>void QGalleryItemUrlFilter::setItemUrls ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a>&gt; &amp; <i>urls</i> )</h3>
+<p>Sets the list of item <i>urls</i> matched by a item filter.</p>
+<p>Setting this will overwrite the value of <a href="qgalleryitemurlfilter.html#itemUrl">itemUrl</a>().</p>
+<p>See also <a href="qgalleryitemurlfilter.html#itemUrls">itemUrls</a>().</p>
+<a name="//apple_ref/cpp/instm/QGalleryItemUrlFilter/operator="></a>
+<h3 class="fn"><a name="operator-eq"></a>QGalleryItemUrlFilter &amp; QGalleryItemUrlFilter::operator= ( const QGalleryItemUrlFilter &amp; <i>filter</i> )</h3>
+<p>Assigns the value of <i>filter</i> to another item URL filter.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>
