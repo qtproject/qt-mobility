@@ -52,18 +52,119 @@
 
     \annotatedlist gallery-requests
 
-    \section1 Possible additions to Document Gallery API.
+    \section1 Open Issues.
+
+    \section2 Requests versus filters.
+
+    Some of the filters could reasonably be implemented as requests instead.
+
+    Specfically QGalleryItemFilter, QGalleryItemUrlFilter, QGalleryContainerFilter,
+    QGalleryContainerFilter, and QGalleryItemRequest classes could be replaced
+    by more specific request classes.  For example:
+
+    \code
+    // Replaces QGalleryItemFilter + QGalleryItemRequest.
+    // Returns a single item.
+    class QGalleryItemRequest : public QGalleryAbstractRequest
+    {
+        QStringList propertyNames() const;
+        void setPropertyNames(const QStringList &names);
+
+        QString itemId() const;
+        void setItemId(const QString &id);
+
+        QGalleryItemList *item() const;
+    };
+
+    // Replaces QGalleryItemUrlFilter + QGalleryItemRequest;
+    // Returns the item(s?) matching a specific URL.
+    class QGalleryUrlRequest : public QGalleryAbstractRequest
+    {
+        QStringList propertyNames() const;
+        void setPropertyNames(const QStringList &names);
+
+        QUrl itemUrl() const;
+        void setItemUrl(const QUrl &url);
+
+        // Should an entry be added to the gallery if one doesn't already
+        // exist?
+        bool create() const;
+        void setCreate(bool create);
+
+        QGalleryItemList *item() const;
+    };
+
+    // Replaces QGalleryContainerFilter + QGalleryItemRequest;
+    // Returns the immediate children of a container object.
+    class QGalleryContainerRequest : public QGalleryAbstractRequest
+    {
+        QStringList propertyNames() const;
+        void setPropertyNames(const QStringList &names);
+
+        QStringList sortPropertyNames() const;
+        void setSortPropertyNames(const QStringList &names);
+
+        // Only include children of a specific type.
+        QString itemType() const;
+        void setItemType(const QString &type);
+
+        QString containerId() const;
+        void setContainerId(const QString &id);
+
+        QGalleryItemList *items() const;
+    };
+
+    // Replaces query type filter + QGalleryItemRequest
+    // Returns all items matching a meta-data query.
+    class QGalleryFilterRequest : public QGalleryAbstractRequest
+    {
+        QStringList propertyNames() const;
+        void setPropertyNames(const QStringList &names);
+
+        QStringList sortPropertyNames() const;
+        void setSortPropertyNames(const QStringList &names);
+
+        // Only include matches of a specific type.
+        QString itemType() const;
+        void setItemType(const QString &type);
+
+        // Only query (recursive) within a specific container.
+        // May be null.
+        QString containerId() const;
+        void setContainerId(const QString &id);
+
+        // May be null.
+        QGalleryFilter filter() const;
+        void setFilter(const QGalleryFilter &filter);
+
+        QGalleryItemList *items() const;
+    };
+    \endcode
+
+    The advantages to this are it is easier to identify if a request is
+    supported than if a filter is supported.  There are fewer properties
+    per request and none obsolete or conflict with another.
+
+    The disadvantages are?
+
+    \section1 Possible future extensions to Document Gallery API.
 
     \section2 Galleries
+
+    These may use different property definitions and support additional
+    context specific requests.
 
     \section3 QUPnPGallery
 
     A gallery which connects to a UPnP media server.
 
+    This may use the UPnP property definitions directly instead of trying to
+    map to some neutral property set.
+
     \section3 QMediaGallery
 
-    Identical to QDocumentGallery in every way, except it only contains media
-    documents.
+    Similar to QDocumentGallery, but limited to media types and properties, and
+    possibly including remote sources.
 
     \section3 QUsbGallery
 
@@ -96,41 +197,6 @@
 
     \section2 Requests
 
-    \section3 QGalleryCountRequest
-
-    This is equivalent to a QGalleryDocumentRequest with the maximumCount
-    property set to 0, which would return the total number of documents but no
-    actual documents.
-
-    This request makes sense if the the performance of the
-    QGalleryDocumentRequest will be improved by removing the totalDocumentCount
-    return value.  Inversely if the cost of requesting a sub-set of documents
-    and the total count separately is greater than a combined request then
-    removing totalDocumentCount() from QGalleryDocumentRequest wouldn't be
-    desirable.
-
-    \code
-    class QGalleryCountRequest : public QGalleryAbstractRequest
-    {
-    public:
-        // Constructors, etc.
-
-        QString contentType() const;
-        void setContentType(const QString &type);
-
-        QGalleryFilter filter() const;
-        void setFilter(const QGalleryFilter &filter);
-
-        // setFilter overloads.
-
-        // Results
-        int totalDocumentCount() const;
-
-    Q_SIGNALS:
-        void totalDocumentChanged();
-    };
-    \endcode
-
     \section3 QGalleryImportRequest
 
     Imports a document from a remote source into a gallery.  Unnecessary for
@@ -152,7 +218,7 @@
         void setContainerId(const QString &id);
 
     // Results
-        QGalleryItemList *documents() const;
+        QGalleryItemList *item() const;
 
     Q_SIGNALS:
         void documentsChanged();
@@ -203,7 +269,7 @@
         void setContainerId(const QString &id);
 
         // Results
-        QGalleryItemList *documents() const;
+        QGalleryItemList *item() const;
 
     Q_SIGNALS:
         void documentsChanged();

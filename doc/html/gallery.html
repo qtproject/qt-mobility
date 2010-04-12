@@ -49,16 +49,102 @@
 <tr valign="top" class="even"><th><a href="qgallerymoverequest.html">QGalleryMoveRequest</a></th><td>Request which moves items within a gallery</td></tr>
 <tr valign="top" class="odd"><th><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></th><td>Request which removes items from a gallery</td></tr>
 </table></p>
-<a name="possible-additions-to-document-gallery-api"></a>
-<h3>Possible additions to Document Gallery API.</h3>
+<a name="open-issues"></a>
+<h3>Open Issues.</h3>
+<a name="requests-versus-filters"></a>
+<h4>Requests versus filters.</h4>
+<p>Some of the filters could reasonably be implemented as requests instead.</p>
+<p>Specfically <a href="qgalleryitemfilter.html">QGalleryItemFilter</a>, <a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a>, <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a>, <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a>, and <a href="qgalleryitemrequest.html">QGalleryItemRequest</a> classes could be replaced by more specific request classes. For example:</p>
+<pre>    // Replaces QGalleryItemFilter + QGalleryItemRequest.
+<span class="comment">    // Returns a single item.</span>
+    class QGalleryItemRequest : public QGalleryAbstractRequest
+    {
+        QStringList propertyNames() const;
+        void setPropertyNames(const QStringList &amp;names);
+
+        QString itemId() const;
+        void setItemId(const QString &amp;id);
+
+        QGalleryItemList *item() const;
+    };
+
+<span class="comment">    // Replaces QGalleryItemUrlFilter + QGalleryItemRequest;</span>
+<span class="comment">    // Returns the item(s?) matching a specific URL.</span>
+    class QGalleryUrlRequest : public QGalleryAbstractRequest
+    {
+        QStringList propertyNames() const;
+        void setPropertyNames(const QStringList &amp;names);
+
+        QUrl itemUrl() const;
+        void setItemUrl(const QUrl &amp;url);
+
+        <span class="comment">// Should an entry be added to the gallery if one doesn't already</span>
+        <span class="comment">// exist?</span>
+        bool create() const;
+        void setCreate(bool create);
+
+        QGalleryItemList *item() const;
+    };
+
+<span class="comment">    // Replaces QGalleryContainerFilter + QGalleryItemRequest;</span>
+<span class="comment">    // Returns the immediate children of a container object.</span>
+    class QGalleryContainerRequest : public QGalleryAbstractRequest
+    {
+        QStringList propertyNames() const;
+        void setPropertyNames(const QStringList &amp;names);
+
+        QStringList sortPropertyNames() const;
+        void setSortPropertyNames(const QStringList &amp;names);
+
+        <span class="comment">// Only include children of a specific type.</span>
+        QString itemType() const;
+        void setItemType(const QString &amp;type);
+
+        QString containerId() const;
+        void setContainerId(const QString &amp;id);
+
+        QGalleryItemList *items() const;
+    };
+
+<span class="comment">    // Replaces query type filter + QGalleryItemRequest</span>
+<span class="comment">    // Returns all items matching a meta-data query.</span>
+    class QGalleryFilterRequest : public QGalleryAbstractRequest
+    {
+        QStringList propertyNames() const;
+        void setPropertyNames(const QStringList &amp;names);
+
+        QStringList sortPropertyNames() const;
+        void setSortPropertyNames(const QStringList &amp;names);
+
+        <span class="comment">// Only include matches of a specific type.</span>
+        QString itemType() const;
+        void setItemType(const QString &amp;type);
+
+        <span class="comment">// Only query (recursive) within a specific container.</span>
+        <span class="comment">// May be null.</span>
+        QString containerId() const;
+        void setContainerId(const QString &amp;id);
+
+        <span class="comment">// May be null.</span>
+        QGalleryFilter filter() const;
+        void setFilter(const QGalleryFilter &amp;filter);
+
+        QGalleryItemList *items() const;
+    };</pre>
+<p>The advantages to this are it is easier to identify if a request is supported than if a filter is supported. There are fewer properties per request and none obsolete or conflict with another.</p>
+<p>The disadvantages are?</p>
+<a name="possible-future-extensions-to-document-gallery-api"></a>
+<h3>Possible future extensions to Document Gallery API.</h3>
 <a name="galleries"></a>
 <h4>Galleries</h4>
+<p>These may use different property definitions and support additional context specific requests.</p>
 <a name="qupnpgallery"></a>
 <h5>QUPnPGallery</h5>
 <p>A gallery which connects to a UPnP media server.</p>
+<p>This may use the UPnP property definitions directly instead of trying to map to some neutral property set.</p>
 <a name="qmediagallery"></a>
 <h5>QMediaGallery</h5>
-<p>Identical to <a href="qdocumentgallery.html">QDocumentGallery</a> in every way, except it only contains media documents.</p>
+<p>Similar to <a href="qdocumentgallery.html">QDocumentGallery</a>, but limited to media types and properties, and possibly including remote sources.</p>
 <a name="qusbgallery"></a>
 <h5>QUsbGallery</h5>
 <p>Gallery of documents on USB connected storage.</p>
@@ -82,29 +168,6 @@
     };</pre>
 <a name="requests"></a>
 <h4>Requests</h4>
-<a name="qgallerycountrequest"></a>
-<h5>QGalleryCountRequest</h5>
-<p>This is equivalent to a QGalleryDocumentRequest with the maximumCount property set to 0, which would return the total number of documents but no actual documents.</p>
-<p>This request makes sense if the the performance of the QGalleryDocumentRequest will be improved by removing the totalDocumentCount return value. Inversely if the cost of requesting a sub-set of documents and the total count separately is greater than a combined request then removing totalDocumentCount() from QGalleryDocumentRequest wouldn't be desirable.</p>
-<pre>    class QGalleryCountRequest : public QGalleryAbstractRequest
-    {
-    public:
-        <span class="comment">// Constructors, etc.</span>
-
-        QString contentType() const;
-        void setContentType(const QString &amp;type);
-
-        QGalleryFilter filter() const;
-        void setFilter(const QGalleryFilter &amp;filter);
-
-        <span class="comment">// setFilter overloads.</span>
-
-        <span class="comment">// Results</span>
-        int totalDocumentCount() const;
-
-    Q_SIGNALS:
-        void totalDocumentChanged();
-    };</pre>
 <a name="qgalleryimportrequest"></a>
 <h5>QGalleryImportRequest</h5>
 <p>Imports a document from a remote source into a gallery. Unnecessary for a gallery on the local file-system, but this could enable a remote gallery to download a document directly.</p>
@@ -122,7 +185,7 @@
         void setContainerId(const QString &amp;id);
 
 <span class="comment">    // Results</span>
-        QGalleryItemList *documents() const;
+        QGalleryItemList *item() const;
 
     Q_SIGNALS:
         void documentsChanged();
@@ -162,7 +225,7 @@
         void setContainerId(const QString &amp;id);
 
         <span class="comment">// Results</span>
-        QGalleryItemList *documents() const;
+        QGalleryItemList *item() const;
 
     Q_SIGNALS:
         void documentsChanged();

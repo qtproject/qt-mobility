@@ -8508,7 +8508,9 @@
             <contents name="document-lists" title="Document Lists." level="2"/>
             <contents name="filters" title="Filters" level="2"/>
             <contents name="requests" title="Requests" level="2"/>
-            <contents name="possible-additions-to-document-gallery-api" title="Possible additions to Document Gallery API." level="1"/>
+            <contents name="open-issues" title="Open Issues." level="1"/>
+            <contents name="requests-versus-filters" title="Requests versus filters." level="2"/>
+            <contents name="possible-future-extensions-to-document-gallery-api" title="Possible future extensions to Document Gallery API." level="1"/>
             <contents name="galleries" title="Galleries" level="2"/>
             <contents name="qupnpgallery" title="QUPnPGallery" level="3"/>
             <contents name="qmediagallery" title="QMediaGallery" level="3"/>
@@ -8516,7 +8518,6 @@
             <contents name="filters" title="Filters" level="2"/>
             <contents name="qgallerysearchfilter" title="QGallerySearchFilter" level="3"/>
             <contents name="requests" title="Requests" level="2"/>
-            <contents name="qgallerycountrequest" title="QGalleryCountRequest" level="3"/>
             <contents name="qgalleryimportrequest" title="QGalleryImportRequest" level="3"/>
             <contents name="qgalleryexportrequest" title="QGalleryExportRequest" level="3"/>
             <contents name="qgallerynewdocumentrequest" title="QGalleryNewDocumentRequest" level="3"/>
