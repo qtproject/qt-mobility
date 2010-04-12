@@ -138,12 +138,15 @@ contains(mobility_modules,messaging) {
     }
 }
 
+# Sensors
+contains(mobility_modules,sensors) {
+    SUBDIRS += qsensor
+}
+
 #Document Gallery
 contains(mobility_modules,gallery) {
     SUBDIRS += \
         qgalleryabstractrequest \
         qgalleryabstractresponse
-# Sensors
-contains(mobility_modules,sensors) {
-    SUBDIRS += qsensor
 }
+
