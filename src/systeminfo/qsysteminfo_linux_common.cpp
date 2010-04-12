@@ -1038,15 +1038,15 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
         //no hal need to manually read sys file for block device
         QString dmFile;
 
-        if(driveVolume.contains("mapper")) {
+        if(mountEntriesMap.value(driveVolume).contains("mapper")) {
             struct stat stat_buf;
-            stat( driveVolume.toLatin1(), &stat_buf);
+            stat( mountEntriesMap.value(driveVolume).toLatin1(), &stat_buf);
 
             dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
 
         } else {
 
-            dmFile = driveVolume.section("/",2,3);
+            dmFile = mountEntriesMap.value(driveVolume).section("/",2,3);
             if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
                 return QSystemStorageInfo::RemovableDrive;
             }
