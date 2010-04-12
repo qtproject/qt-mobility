@@ -509,7 +509,7 @@ void QContactDetail::resetKey()
   no value for the given \a key exists */
 QString QContactDetail::value(const QString& key) const
 {
-    return d.constData()->m_values.value(key.toLatin1().constData()).toString();
+    return d.constData()->m_values.value(QContactStringHolder(key)).toString();
 }
 
 /*!
@@ -532,7 +532,7 @@ QString QContactDetail::value(const char* key) const
 /*! Returns the value stored in this detail for the given \a key as a QVariant, or an invalid QVariant if no value for the given \a key exists */
 QVariant QContactDetail::variantValue(const QString& key) const
 {
-    return d.constData()->m_values.value(key.toLatin1().constData());
+    return d.constData()->m_values.value(QContactStringHolder(key));
 }
 
 /*!
@@ -549,7 +549,7 @@ QVariant QContactDetail::variantValue(const char* key) const
  */
 bool QContactDetail::hasValue(const QString& key) const
 {
-    return d.constData()->m_values.contains(key.toLatin1().constData());
+    return d.constData()->m_values.contains(QContactStringHolder(key));
 }
 
 /*!
