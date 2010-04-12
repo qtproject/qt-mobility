@@ -168,7 +168,27 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     \value Cancelled The request was cancelled before it could finish.
     \value NoGallery The request cannot be executed because no \l gallery is
     set.
-    \value NotSupported  The request isn't supported by the \l gallery.
+    \value NotSupported The request isn't supported by the \l gallery.
+    \value ConnectionError The request could not be executed due to a problem
+    connecting to the gallery.
+    \value InvalidItemError The request could not be executed due to an invalid
+    item ID.
+    \value ItemTypeError The request could not be executed due to an invalid
+    item type.
+    \value InvalidPropertyError The request could not be executed because a
+    filter referenced an invalid property.
+    \value PropertyTypeError The request could not be executed because a filter
+    compared a property to an invalid variant type.
+    \value UnsupportedFilterTypeError The request could not be executed because
+    a filter is not supported by the gallery.
+    \value UnsupportedFilterOptionError The request could not be executed
+    because an option on a filter is not supported by the gallery.
+    \value PermissionsError The request could not be executed because the
+    user has insufficient permissions.
+    \value InvalidDestinationError  The request could not be executed because
+    the given destination ID is invalid.
+    \value InvalidUrlError The request could not be executed due to an invalid
+    URL.
     \value RequestError A minimum value for request specific error results.
 */
 

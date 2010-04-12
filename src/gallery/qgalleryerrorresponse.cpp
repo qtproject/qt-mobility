@@ -51,14 +51,14 @@ QGalleryErrorResponse::~QGalleryErrorResponse()
 {
 }
 
-QList<int> QGalleryErrorResponse::keys() const
+QStringList QGalleryErrorResponse::propertyNames() const
 {
-    return QList<int>();
+    return QStringList();
 }
 
-QString QGalleryErrorResponse::toString(int) const
+int QGalleryErrorResponse::propertyKey(const QString &) const
 {
-    return QString();
+    return -1;
 }
 
 int QGalleryErrorResponse::count() const

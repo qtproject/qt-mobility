@@ -41,6 +41,8 @@
 
 #include "qgallerytrackerschema_p.h"
 
+#include "qgalleryrequest.h"
+
 #include <QtCore/qmetatype.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qurl.h>
@@ -138,7 +140,7 @@ static bool qt_writePropertyName(
         }
     }
 
-    *error = 1;
+    *error = QGalleryAbstractRequest::InvalidPropertyError;
 
     return false;
 }
@@ -173,7 +175,7 @@ bool qt_writeValue(int *error, QXmlStreamWriter *xml, const QVariant &value)
 
         return true;
     } else {
-        *error = 1;
+        *error = QGalleryAbstractRequest::PropertyTypeError;
 
         return false;
     }
@@ -243,7 +245,7 @@ bool qt_writeValue<QVariant>(int *error, QXmlStreamWriter *xml, const QVariant &
 
             return true;
         } else {
-            *error = 1;
+            *error = QGalleryAbstractRequest::PropertyTypeError;
 
             return false;
         }
@@ -307,7 +309,7 @@ static bool qt_writeCondition(
             }
         }
 
-        *error = 1; // Invalid Id;
+        *error = QGalleryAbstractRequest::InvalidItemError;
 
         return false;
     } else if (id.startsWith(QLatin1String("musicGenre::"))) {
@@ -319,7 +321,7 @@ static bool qt_writeCondition(
 
         return true;
     } else {
-        *error = 1; // Invalid Id.
+        *error = QGalleryAbstractRequest::InvalidItemError;
 
         return false;
     }
@@ -332,11 +334,11 @@ static bool qt_writeCondition(
     const QUrl url = filter.containerUrl();
 
     if (!url.isValid()) {
-        *error = 1;
+        *error = QGalleryAbstractRequest::InvalidUrlError;
 
         return false;
     } else if (url.scheme() != QLatin1String("file")) {
-        *error = 1;
+        *error = QGalleryAbstractRequest::InvalidUrlError;  // UnsupportedProtocol?
 
         return false;
     } else {
@@ -422,7 +424,7 @@ static bool qt_writeCondition(
         xml->writeStartElement(QLatin1String("rdfq:regex"));
         break;
     default:
-        *error = 1;
+        *error = QGalleryAbstractRequest::UnsupportedFilterOptionError;
 
         return false;
     }
@@ -515,7 +517,7 @@ static bool qt_writeCondition(
         return qt_writeCondition(
                 error, xml, filter.toMetaDataRangeFilter(), propertyMap);
     default:
-        *error = 1;
+        *error = QGalleryAbstractRequest::UnsupportedFilterTypeError;
 
         return false;
     }
@@ -575,7 +577,7 @@ static bool qt_writeFileCondition(
     const QStringList itemIds = filter.itemIds();
 
     if (itemIds.isEmpty()) {
-        *error = 1;
+        *error = QGalleryItemRequest::InvalidItemError;
 
         return false;
     } else if (itemIds.count() > 1) {
@@ -587,7 +589,7 @@ static bool qt_writeFileCondition(
             const int index = id->lastIndexOf(QLatin1Char('/'));
 
             if (index < 0) {
-                *error = 1;
+                *error = QGalleryItemRequest::InvalidItemError;
 
                 return false;
             } else {
@@ -598,7 +600,7 @@ static bool qt_writeFileCondition(
                 return true;
             }
         } else {
-            *error = 1;
+            *error = QGalleryItemRequest::InvalidItemError;
 
             return false;
         }
@@ -617,11 +619,11 @@ static bool qt_writeFileCondition(
 
     for (QList<QUrl>::const_iterator url = urls.begin(), end = urls.end(); url != end; ++url) {
         if (!url->isValid()) {
-            *error = 1;
+            *error = QGalleryItemRequest::InvalidUrlError;
 
             return false;
         } else if (url->scheme() != QLatin1String("file")) {
-            *error = 1;
+            *error = QGalleryItemRequest::InvalidItemError;
 
             return false;
         } else {
@@ -629,7 +631,7 @@ static bool qt_writeFileCondition(
             const int index = path.lastIndexOf(QLatin1Char('/'));
 
             if (index < 0) {
-                *error = 1;
+                *error = QGalleryItemRequest::InvalidUrlError;
 
                 return false;
             } else {
@@ -816,7 +818,7 @@ static bool qt_writeArtistCondition(
     const QStringList itemIds = filter.itemIds();
 
     if (itemIds.isEmpty()) {
-        *error = 1;
+        *error = QGalleryAbstractRequest::InvalidItemError;
 
         return false;
     }
@@ -829,7 +831,7 @@ static bool qt_writeArtistCondition(
         } else if (itemId->startsWith(QLatin1String("albumArtist::"))) {
             qt_writeEqualsCondition(xml, QLatin1String("Audio:AlbumArtist"), itemId->mid(13));
         } else {
-            *error = 1;
+            *error = QGalleryAbstractRequest::InvalidItemError;
 
             return false;
         }
@@ -848,7 +850,7 @@ static bool qt_buildArtistQuery(
     case QGalleryFilter::Item:
         return qt_writeArtistCondition(error, xml, filter.toItemFilter());
     case QGalleryFilter::ItemUrl:
-        *error = 1;
+        *error = QGalleryAbstractRequest::InvalidItemError;
 
         return false;
     default:
@@ -945,7 +947,7 @@ static bool qt_writeAlbumCondition(
     const QStringList itemIds = filter.itemIds();
 
     if (itemIds.isEmpty()) {
-        *error = 1;
+        *error = QGalleryAbstractRequest::InvalidItemError;
 
         return false;
     }
@@ -970,12 +972,12 @@ static bool qt_writeAlbumCondition(
                     xml->writeEndElement();
                 }
 
-                *error = 1; // Invalid Id;
+                *error = QGalleryAbstractRequest::InvalidItemError;
 
                 return false;
             }
         } else {
-            *error = 1;
+            *error = QGalleryAbstractRequest::InvalidItemError;
 
             return false;
         }
@@ -993,7 +995,7 @@ static bool qt_buildAlbumQuery(
     case QGalleryFilter::Item:
         return qt_writeAlbumCondition(error, xml, filter.toItemFilter());
     case QGalleryFilter::ItemUrl:
-        *error = 1;
+        *error = QGalleryAbstractRequest::InvalidItemError;
 
         return false;
     default:
@@ -1067,7 +1069,7 @@ static bool qt_buildAudioGenreQuery(
     case QGalleryFilter::Item:
         return qt_writeAudioGenreCondition(error, xml, filter.toItemFilter());
     case QGalleryFilter::ItemUrl:
-        *error = 1;
+        *error = QGalleryAbstractRequest::InvalidItemError;
 
         return false;
     default:
@@ -1110,7 +1112,7 @@ static bool qt_writePhotoAlbumCondition(
     const QStringList itemIds = filter.itemIds();
 
     if (itemIds.isEmpty()) {
-        *error = 1;
+        *error = QGalleryAbstractRequest::InvalidItemError;
 
         return false;
     }
@@ -1121,7 +1123,7 @@ static bool qt_writePhotoAlbumCondition(
         if (itemId->startsWith(QLatin1String("photoAlbum::"))) {
             qt_writeEqualsCondition(xml, QLatin1String("Image:Album"), itemId->mid(12));
         } else {
-            *error = 1;
+            *error = QGalleryAbstractRequest::InvalidItemError;
 
             return false;
         }
@@ -1140,7 +1142,7 @@ static bool qt_buildPhotoAlbumQuery(
     case QGalleryFilter::Item:
         return qt_writePhotoAlbumCondition(error, xml, filter.toItemFilter());
     case QGalleryFilter::ItemUrl:
-        *error = 1;
+        *error = QGalleryAbstractRequest::InvalidItemError;
 
         return false;
     default:
@@ -1240,7 +1242,7 @@ QString QGalleryTrackerSchema::buildQuery(int *error, const QGalleryFilter &filt
 
             xml.writeEndElement();
         } else {
-            *error = 1;
+            *error = QGalleryAbstractRequest::ItemTypeError;
         }
     }
 
@@ -1253,9 +1255,9 @@ QString QGalleryTrackerSchema::uriFromItemId(int *error, const QString &itemId) 
         if (itemId.startsWith(QLatin1String("file::")))
             return itemId.mid(6);
         else
-            *error = 1;
+            *error = QGalleryAbstractRequest::InvalidItemError;
     } else {
-        *error = 1;
+        *error = QGalleryAbstractRequest::ItemTypeError;
     }
     return QString();
 }
@@ -1273,10 +1275,10 @@ QStringList QGalleryTrackerSchema::urisFromItemIds(int *error, const QStringList
             if (itemId->startsWith(prefix))
                 uris.append(itemId->mid(6));
             else
-                *error = 1;
+                *error = QGalleryAbstractRequest::InvalidItemError;
         }
     } else {
-        *error = 1;
+        *error = QGalleryAbstractRequest::ItemTypeError;
     }
 
     return uris;

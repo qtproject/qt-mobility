@@ -42,6 +42,7 @@
 #include "qgallery.h"
 #include "qabstractgallery_p.h"
 
+#include "qgalleryerrorresponse_p.h"
 #include "qgallerytrackeraggregatelistresponse_p.h"
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackerfilecopyresponse_p.h"
@@ -65,15 +66,15 @@ public:
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
 {
-    int error = 0;
+    int result = QGalleryAbstractRequest::Succeeded;
 
     QGalleryTrackerSchema schema;
     schema.setItemType(request->itemType());
 
-    QString query = schema.buildQuery(&error, request->filter());
+    QString query = schema.buildQuery(&result, request->filter());
 
-    if (error != 0) {
-        qWarning("Invalid Query %d, %s", error, qPrintable(query));
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
         QGalleryAbstractResponse *response = 0;
         if (schema.isFileType()) {
@@ -84,6 +85,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
                     request->propertyNames(),
                     request->sortPropertyNames(),
                     request->minimumPagedItems());
+            response->setCursorPosition(request->initialCursorPosition());
         } else if (schema.isAggregateType()) {
             response = new QGalleryTrackerAggregateListResponse(
                     QDBusConnection::sessionBus(),
@@ -92,55 +94,51 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
                     request->propertyNames(),
                     request->sortPropertyNames(),
                     request->minimumPagedItems());
-        }
-
-        if (response) {
             response->setCursorPosition(request->initialCursorPosition());
-
-            return response;
+        } else {
+            result = QGalleryAbstractRequest::ItemTypeError;
         }
     }
 
-    return 0;
+    return new QGalleryErrorResponse(result);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
         QGalleryCountRequest *request)
 {
-    int error = 0;
+    int result = QGalleryAbstractRequest::Succeeded;
 
     QGalleryTrackerSchema schema;
     schema.setItemType(request->itemType());
 
-    QString query = schema.buildQuery(&error, request->filter());
+    QString query = schema.buildQuery(&result, request->filter());
 
-    if (error != 0) {
-        qWarning("Invalid Query %d, %s", error, qPrintable(query));
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else if (schema.isFileType() || schema.isAggregateType()) {
         return new QGalleryTrackerCountResponse(QDBusConnection::sessionBus(), schema, query);
     }
 
-    return 0;
+    return new QGalleryErrorResponse(result);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createCopyResponse(QGalleryCopyRequest *request)
 {
-    int error = 0;
+    int result = QGalleryAbstractRequest::Succeeded;
 
     QGalleryTrackerSchema schema;
     schema.setItemType(QDocumentGallery::File);
 
-    QStringList fileNames = schema.urisFromItemIds(&error, request->itemIds());
+    QStringList fileNames = schema.urisFromItemIds(&result, request->itemIds());
 
     if (fileNames.isEmpty()) {
-        if (error == 0)
-            error = 1;
+        if (result == QGalleryAbstractRequest::Succeeded)
+            result = QGalleryAbstractRequest::InvalidItemError;
     } else {
-        QString destinationPath = schema.uriFromItemId(&error, request->destinationId());
+        QString destinationPath = schema.uriFromItemId(&result, request->destinationId());
 
         if (destinationPath.isEmpty()) {
-            if (error == 0)
-                error = 1;
+            result = QGalleryAbstractRequest::InvalidDestinationError;
         } else {
             return new QGalleryTrackerFileCopyResponse(
                     QDBusConnection::sessionBus(),
@@ -151,27 +149,26 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCopyResponse(QGalleryCo
         }
     }
 
-    return 0;
+    return new QGalleryErrorResponse(result);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createMoveResponse(QGalleryMoveRequest *request)
 {
-    int error = 0;
+    int result = QGalleryAbstractRequest::Succeeded;
 
     QGalleryTrackerSchema schema;
     schema.setItemType(QDocumentGallery::File);
 
-    QStringList fileNames = schema.urisFromItemIds(&error, request->itemIds());
+    QStringList fileNames = schema.urisFromItemIds(&result, request->itemIds());
 
     if (fileNames.isEmpty()) {
-        if (error == 0)
-            error = 1;
+        if (result == QGalleryAbstractRequest::Succeeded)
+            result = QGalleryAbstractRequest::InvalidItemError;
     } else {
-        QString destinationPath = schema.uriFromItemId(&error, request->destinationId());
+        QString destinationPath = schema.uriFromItemId(&result, request->destinationId());
 
         if (destinationPath.isEmpty()) {
-            if (error == 0)
-                error = 1;
+            result = QGalleryAbstractRequest::InvalidDestinationError;
         } else {
             return new QGalleryTrackerFileMoveResponse(
                     QDBusConnection::sessionBus(),
@@ -182,22 +179,22 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createMoveResponse(QGalleryMo
         }
     }
 
-    return 0;
+    return new QGalleryErrorResponse(result);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
         QGalleryRemoveRequest *request)
 {
-    int error = 0;
+    int result = QGalleryAbstractRequest::Succeeded;
 
     QGalleryTrackerSchema schema;
     schema.setItemType(QDocumentGallery::File);
 
-    QStringList fileNames = schema.urisFromItemIds(&error, request->itemIds());
+    QStringList fileNames = schema.urisFromItemIds(&result, request->itemIds());
 
     if (fileNames.isEmpty()) {
-        if (error == 0)
-            error = 1;
+        if (result == QGalleryAbstractRequest::Succeeded)
+            result = QGalleryAbstractRequest::InvalidItemError;
     } else {
         return new QGalleryTrackerFileRemoveResponse(
                 QDBusConnection::sessionBus(),
@@ -206,7 +203,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
                 fileNames);
     }
 
-    return 0;
+    return new QGalleryErrorResponse(result);
 }
 
 QDocumentGallery::QDocumentGallery(QObject *parent)

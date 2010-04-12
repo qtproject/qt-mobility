@@ -61,8 +61,10 @@ QGalleryTrackerFileRemoveResponse::~QGalleryTrackerFileRemoveResponse()
 bool QGalleryTrackerFileRemoveResponse::editFile(
         int *error, const QString &path, const QString &fileName)
 {
-    if (!QFile::remove(path  + QLatin1Char('/') + fileName)) {
-        *error = 1;
+    QFile file(path + QLatin1Char('/') + fileName);
+
+    if (!file.remove() && file.exists()) {
+        *error = QGalleryAbstractRequest::PermissionsError;
 
         return false;
     } else {

@@ -85,7 +85,15 @@ public:
         NoGallery,
         NotSupported,
         ConnectionError,
-        InvalidFilter,
+        InvalidItemError,
+        ItemTypeError,
+        InvalidPropertyError,
+        PropertyTypeError,
+        UnsupportedFilterTypeError,
+        UnsupportedFilterOptionError,
+        PermissionsError,
+        InvalidDestinationError,
+        InvalidUrlError,
         RequestError = 100
     };
 
@@ -262,7 +270,6 @@ class Q_GALLERY_EXPORT QGalleryCountRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QString containerId READ containerId WRITE setContainerId)
     Q_PROPERTY(QUrl containerUrl READ containerUrl WRITE setContainerUrl)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
-    Q_ENUMS(Error)
 public:
     explicit QGalleryCountRequest(QObject *parent = 0);
     explicit QGalleryCountRequest(QAbstractGallery *gallery, QObject *parent = 0);

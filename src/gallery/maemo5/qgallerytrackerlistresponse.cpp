@@ -153,6 +153,8 @@ void QGalleryTrackerListResponse::setCursorPosition(int position)
 
             if (call.isError()) {
                 qWarning("DBUS error %s", qPrintable(call.error().message()));
+
+                finish(QGalleryAbstractRequest::ConnectionError);
             }
 
             m_call = new QDBusPendingCallWatcher(call, this);
@@ -187,6 +189,8 @@ void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
 
     if (reply.isError()) {
         qWarning("DBUS error %s", qPrintable(reply.error().message()));
+
+        finish(QGalleryAbstractRequest::ConnectionError);
     }
 
     QVector<QStringList> rows = reply.value();

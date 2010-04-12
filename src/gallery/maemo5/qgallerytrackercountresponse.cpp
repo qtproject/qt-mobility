@@ -160,7 +160,9 @@ void QGalleryTrackerCountResponse::callFinished(QDBusPendingCallWatcher *watcher
     int oldCount = m_count;
 
     if (watcher->isError()) {
+        finish(QGalleryAbstractRequest::ConnectionError);
 
+        return;
     } else if (m_identityFields.isEmpty()) {
         QDBusPendingReply<int> reply(*watcher);
 
@@ -192,6 +194,9 @@ void QGalleryTrackerCountResponse::callFinished(QDBusPendingCallWatcher *watcher
         emit inserted(oldCount, m_count - oldCount);
     else if (m_count < oldCount)
         emit removed(m_count, oldCount - m_count);
+
+    if (!m_call)
+        finish(QGalleryAbstractRequest::Succeeded);
 }
 
 void QGalleryTrackerCountResponse::queryCount()

@@ -65,8 +65,21 @@ QGalleryTrackerFileCopyResponse::~QGalleryTrackerFileCopyResponse()
 bool QGalleryTrackerFileCopyResponse::editFile(
         int *error, const QString &path, const QString &fileName)
 {
-    if (!QFile::copy(path  + QLatin1Char('/') + fileName, m_destinationPath + fileName)) {
-        *error = 1;
+    const QString destinationFilePath = m_destinationPath + fileName;
+
+    QFile file(path  + QLatin1Char('/') + fileName);
+
+    if (!file.copy(destinationFilePath)) {
+        if (!file.exists()) {
+            *error = QGalleryAbstractRequest::InvalidItemError;
+        } else if (QFile::exists(destinationFilePath)) {
+            // Not quite the right error, but should recover from this somehow anyway.
+            *error = QGalleryAbstractRequest::InvalidDestinationError;
+        } else if (!QFile::exists(m_destinationPath)) {
+            *error = QGalleryAbstractRequest::InvalidDestinationError;
+        } else {
+            *error = QGalleryAbstractRequest::PermissionsError;
+        }
 
         return false;
     } else {

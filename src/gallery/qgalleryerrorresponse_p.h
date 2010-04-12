@@ -62,8 +62,8 @@ public:
     QGalleryErrorResponse(int result, QObject *parent = 0);
     ~QGalleryErrorResponse();
 
-    QList<int> keys() const;
-    QString toString(int key) const;
+    QStringList propertyNames() const;
+    int propertyKey(const QString &name) const;
 
     int count() const;
 
