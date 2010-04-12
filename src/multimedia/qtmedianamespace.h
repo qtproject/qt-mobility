@@ -142,7 +142,12 @@ namespace QtMedia
         Contrast,
         Saturation,
         Sharpness,
-        DeviceSettingDescription
+        DeviceSettingDescription,
+
+        PosterImage,
+        CoverArtImage,
+        ThumbnailImage
+
     };
 
     enum SupportEstimate
