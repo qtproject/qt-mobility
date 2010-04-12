@@ -129,11 +129,11 @@ private:
     QContact createContact(QContactDetailDefinition nameDef, QString firstName, QString lastName, QString phoneNumber);
     void saveContactName(QContact *contact, QContactDetailDefinition nameDef, QContactName *contactName, const QString &name) const;
 
-    QContactManagerDataHolder managerDataHolder;
+    QScopedPointer<QContactManagerDataHolder> managerDataHolder;
 
 public slots:
-    void init();
-    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
 private slots:
 
     void doDump();
@@ -201,8 +201,10 @@ tst_QContactManager::~tst_QContactManager()
 {
 }
 
-void tst_QContactManager::init()
+void tst_QContactManager::initTestCase()
 {
+    managerDataHolder.reset(new QContactManagerDataHolder());
+
     /* Make sure these other test plugins are NOT loaded by default */
     // These are now removed from the list of managers in addManagers()
     //QVERIFY(!QContactManager::availableManagers().contains("testdummy"));
@@ -210,8 +212,9 @@ void tst_QContactManager::init()
     //QVERIFY(!QContactManager::availableManagers().contains("maliciousplugin"));
 }
 
-void tst_QContactManager::cleanup()
+void tst_QContactManager::cleanupTestCase()
 {
+    managerDataHolder.reset(0);
 }
 
 void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QContact& cb)

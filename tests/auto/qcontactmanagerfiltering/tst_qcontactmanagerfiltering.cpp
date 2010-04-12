@@ -104,11 +104,15 @@ private:
     QMultiMap<QContactManager*, QContactLocalId> contactsAddedToManagers;
     QMultiMap<QContactManager*, QString> detailDefinitionsAddedToManagers;
     QList<QContactManager*> managers;
-    QContactManagerDataHolder managerDataHolder;
+    QScopedPointer<QContactManagerDataHolder> managerDataHolder;
 
     QTestData& newMRow(const char *tag, QContactManager *cm);
 
 private slots:
+
+    void initTestCase();
+    void cleanupTestCase();
+
     void rangeFiltering(); // XXX should take all managers
     void rangeFiltering_data();
 
@@ -155,6 +159,16 @@ private slots:
 
 tst_QContactManagerFiltering::tst_QContactManagerFiltering()
 {
+}
+
+tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
+{
+}
+
+void tst_QContactManagerFiltering::initTestCase()
+{
+    managerDataHolder.reset(new QContactManagerDataHolder());
+
     // firstly, build a list of the managers we wish to test.
     QStringList managerNames = QContactManager::availableManagers();
 
@@ -199,14 +213,12 @@ tst_QContactManagerFiltering::tst_QContactManagerFiltering()
     qDebug() << "Finished preparing each manager for test!";
 }
 
-tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
+void tst_QContactManagerFiltering::cleanupTestCase()
 {
     // first, remove any contacts that we've added to any managers.
     foreach (QContactManager* manager, managers) {
         QList<QContactLocalId> contactIds = contactsAddedToManagers.values(manager);
-        foreach (const QContactLocalId& cid, contactIds) {
-            manager->removeContact(cid);
-        }
+        manager->removeContacts(contactIds, 0);
     }
     contactsAddedToManagers.clear();
 
@@ -223,6 +235,9 @@ tst_QContactManagerFiltering::~tst_QContactManagerFiltering()
     qDeleteAll(managers);
     managers.clear();
     defAndFieldNamesForTypePerManager.clear();
+
+    // And restore old contacts
+    managerDataHolder.reset(0);
 }
 
 QString tst_QContactManagerFiltering::convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids)
