@@ -159,14 +159,14 @@ symbian: {
                 "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_generic.dll\" - \"!:\\sys\\bin\\sensors_generic.dll\"" \
                 "ENDIF"
         } else:equals(sensors_symbian_enabled,yes) {
-#            sensors += \
-#                "IF package(0x1028315F)" \
-#                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
-#                "ELSEIF package(0x102752AE)" \
-#                "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
-#                "ELSE" \
-#                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
-#                "ENDIF"
+            sensors += \
+                "IF package(0x1028315F)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                "ELSEIF package(0x102752AE)" \
+                "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                "ELSE" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                "ENDIF"
         }
 
         !isEmpty(sensors):qtmobilitydeployment.pkg_postrules += sensors
@@ -176,8 +176,8 @@ symbian: {
                 "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/sensor_s60sensorapi.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\sensor_s60sensorapi.qtplugin\""\
                 "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/sensors_generic.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\sensors_generic.qtplugin\""
         } else:equals(sensors_symbian_enabled,yes) {
-#            pluginstubs += \
-#                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\""
+            pluginstubs += \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/symbian/qmakepluginstubs/sensors_sym.qtplugin\"  - \"!:\\resource\\qt\\plugins\\sensors\\sensors_sym.qtplugin\""
         }
 
     }
