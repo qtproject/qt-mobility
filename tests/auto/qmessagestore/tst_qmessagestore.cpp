@@ -647,7 +647,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(message.parentAccountId(), testAccountId);
     QCOMPARE(message.parentFolderId(), testFolderId);
 #ifndef Q_OS_SYMBIAN // Created Messages are not stored in Standard Folders in Symbian & Maemo
-    QCOMPARE(message.standardFolder(), QMessage::DraftsFolder);
+    QCOMPARE(message.standardFolder(), QMessage::InboxFolder);
 #endif    
   
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
