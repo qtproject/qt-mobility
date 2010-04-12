@@ -59,34 +59,44 @@ quint64 messageStatusMask(const QString &field)
 
 namespace QmfHelpers {
 
+QString stripIdentifierPrefix(const QString &s)
+{
+    return s.mid(1);
+}
+    
+QString prefixIdentifier(const QString &s)
+{
+    return "A" + s;
+}
+    
 QMessageId convert(const QMailMessageId &id)
 {
-    return QMessageId(QString::number(id.toULongLong()));
+    return QMessageId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailMessageId convert(const QMessageId &id)
 {
-    return QMailMessageId(id.toString().toULongLong());
+    return QMailMessageId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 QMessageAccountId convert(const QMailAccountId &id)
 {
-    return QMessageAccountId(QString::number(id.toULongLong()));
+    return QMessageAccountId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailAccountId convert(const QMessageAccountId &id)
 {
-    return QMailAccountId(id.toString().toULongLong());
+    return QMailAccountId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 QMessageFolderId convert(const QMailFolderId &id)
 {
-    return QMessageFolderId(QString::number(id.toULongLong()));
+    return QMessageFolderId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailFolderId convert(const QMessageFolderId &id)
 {
-    return QMailFolderId(id.toString().toULongLong());
+    return QMailFolderId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 /* in qmessagecontentcontainerid_qmf.cpp

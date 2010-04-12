@@ -147,6 +147,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     }
     MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);
 
+    ModestEngine::instance()->clearHeaderCache();
+
     return messageIds;
 }
 
@@ -168,6 +170,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
         MessagingHelper::orderMessages(messageIds, sortOrder);
     }
     MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);
+
+    ModestEngine::instance()->clearHeaderCache();
 
     return messageIds;
 }
@@ -217,6 +221,8 @@ int QMessageStore::countMessages(const QMessageFilter& filter) const
     int count = 0;
 
     count += ModestEngine::instance()->countMessagesSync(filter);
+
+    ModestEngine::instance()->clearHeaderCache();
 
     return count;
 }
