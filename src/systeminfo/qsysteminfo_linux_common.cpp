@@ -987,7 +987,7 @@ qint64 QSystemStorageInfoLinuxCommonPrivate::availableDiskSpace(const QString &d
     }
     mountEntries();
     struct statfs fs;
-    if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
+    if(statfs(driveVolume.toLatin1(), &fs ) == 0 ) {
                 long blockSize = fs.f_bsize;
                 long availBlocks = fs.f_bavail;
                 return (double)availBlocks * blockSize;
@@ -1002,7 +1002,7 @@ qint64 QSystemStorageInfoLinuxCommonPrivate::totalDiskSpace(const QString &drive
     }
     mountEntries();
     struct statfs fs;
-    if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
+    if(statfs(driveVolume.toLatin1(), &fs ) == 0 ) {
         const long blockSize = fs.f_bsize;
         const long totalBlocks = fs.f_blocks;
         return (double)totalBlocks * blockSize;
@@ -1114,8 +1114,8 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
         } else {
             ok = true;
         }
-        if(ok && !mountEntriesMap.keys().contains(me->mnt_dir)) {
-            mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
+        if(ok && !mountEntriesMap.keys().contains(me->mnt_fsname)) {
+            mountEntriesMap[me->mnt_dir] = me->mnt_fsname;
         }
 
         me = getmntent(mntfp);
