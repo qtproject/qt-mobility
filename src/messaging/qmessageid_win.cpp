@@ -180,7 +180,7 @@ QMessageId::QMessageId(const QMessageId& other)
 QMessageId::QMessageId(const QString& id)
     : d_ptr(new QMessageIdPrivate(this))
 {
-    QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
+	QDataStream idStream(QByteArray::fromBase64(WinHelpers::stripIdPrefix(id).toLatin1()));
 
 #ifdef _WIN32_WCE
     idStream >> d_ptr->_entryId;
@@ -290,7 +290,7 @@ QString QMessageId::toString() const
     encodedIdStream << d_ptr->_folderRecordKey;
     encodedIdStream << d_ptr->_storeRecordKey;
 
-    return encodedId.toBase64();
+	return WinHelpers::addIdPrefix(encodedId.toBase64());
 }
 
 bool QMessageId::isValid() const
