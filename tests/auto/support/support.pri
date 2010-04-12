@@ -19,7 +19,6 @@ symbian|wince*|maemo*|win32|mac {
         else {
             LIBS += mapi32.lib Advapi32.lib
         }
-
     }
     maemo5 {
         QT += dbus

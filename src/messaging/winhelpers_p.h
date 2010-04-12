@@ -53,6 +53,16 @@
 #include <QQueue>
 #include <QEvent>
 
+QTM_BEGIN_NAMESPACE
+
+namespace WinHelpers {
+	QString addIdPrefix(const QString& id);
+	QString stripIdPrefix(const QString& id);
+	static const char* idPrefix = "WIN_";
+};
+
+QTM_END_NAMESPACE
+
 #ifndef _WIN32_WCE
 
 #define USES_IID_IMAPIForm
@@ -128,6 +138,7 @@ typedef QSharedPointer<MapiStore> MapiStorePtr;
 typedef QSharedPointer<MapiSession> MapiSessionPtr;
 
 namespace WinHelpers {
+
 
 enum SavePropertyOption { DontSavePropertyChanges = 0, SavePropertyChanges };
 
