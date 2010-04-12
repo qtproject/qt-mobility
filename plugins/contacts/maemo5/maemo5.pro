@@ -6,6 +6,7 @@ PLUGIN_TYPE=contacts
 include(../../../common.pri)
 
 HEADERS += \
+        qcontactidshash.h \
         qcontactabook_p.h \
         qcontactmaemo5backend_p.h \
         qcontactmaemo5debug_p.h 

@@ -47,7 +47,7 @@
 #include "qmetadatacontrol.h"
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 void QMediaObjectPrivate::_q_notify()
 {
@@ -413,5 +413,5 @@ void QMediaObject::setupMetaData()
 
 
 #include "moc_qmediaobject.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

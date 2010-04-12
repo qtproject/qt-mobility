@@ -56,7 +56,7 @@
 
 class DirectShowPlayerService;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DirectShowMetaDataControl : public QMetaDataControl
 {

@@ -44,7 +44,7 @@
 
 #include <qaudioendpointselector.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 /*
  * This class implements QAudioEncoderControl interface.

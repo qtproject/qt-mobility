@@ -179,6 +179,9 @@ QMessageManager::Error QMessageManager::error() const
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     
+    The performance of querying messages is currently significantly less than 
+    optimal for some querying criteria on some platforms.
+    
     \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -197,6 +200,9 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     If \a limit is not zero, then \a limit places an upper bound on the number of 
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
+    
+    The performance of querying messages is currently significantly less than 
+    optimal for some querying criteria on some platforms.
     
     \sa error(), countMessages()
 */
@@ -227,6 +233,9 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     \a offset specifies how many ids to skip at the beginning of the list returned.
     \a matchFlags specifies the matching method to use.
     
+    The performance of querying messages is currently significantly less than 
+    optimal for some querying criteria on some platforms.
+    
     \sa error(), countMessages()
 */
 QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -247,6 +256,9 @@ QMessageIdList QMessageManager::queryMessages(const QMessageFilter &filter, cons
     ids in the list returned.
     \a offset specifies how many ids to skip at the beginning of the list returned.
     \a matchFlags specifies the matching method to use.
+    
+    The performance of querying messages is currently significantly less than 
+    optimal for some querying criteria on some platforms.
     
     \sa error(), countMessages()
 */
@@ -360,6 +372,9 @@ QMessageAccountIdList QMessageManager::queryAccounts(const QMessageAccountFilter
     in QMessageFilter \a filter. If \a filter is empty the count of all 
     available messages is returned.
     
+    The performance of counting messages is currently significantly less than optimal 
+    for some filters on some platforms.
+    
     \sa error(), queryMessages()
 */
 int QMessageManager::countMessages(const QMessageFilter& filter) const
@@ -462,7 +477,12 @@ bool QMessageManager::removeMessages(const QMessageFilter& filter, QMessageManag
     
     To ensure the change is propagated to any affected external server
     QMessageService::exportUpdates() should be subsequently called.
-
+    
+    On the Maemo 5 (Fremantle) platform for SMS type messages this function is not yet 
+    supported.
+    
+    Using this function to explicitly set a size or date is not currently supported on some platforms.
+    
     \sa message(), updateMessage(), removeMessage(), QMessageService::exportUpdates()
 */
 bool QMessageManager::addMessage(QMessage *m)
@@ -482,6 +502,10 @@ bool QMessageManager::addMessage(QMessage *m)
 
     To ensure the change is propagated to any affected external server 
     QMessageService::exportUpdates() should be subsequently called.
+
+    Using this function to explicitly set a size or date is not currently supported on some platforms.
+    
+    On the Maemo 5 (Fremantle) platform this function is not yet supported.
     
     \sa addMessage(), removeMessage(), QMessageService::exportUpdates()
 */
@@ -556,6 +580,9 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
     Signal that is emitted when the message identified by \a id is added to the message store.
     \a matchingFilterIds contains a set of values identifiying registered notification filters 
     that matched the message.
+    
+    Currently on the Maemo 5 (Fremantle) platform this signal is not reported for messages in the 
+    inbox when the inbox is open in modest.
 
     \sa messageRemoved(), messageUpdated(), registerNotificationFilter()
 */

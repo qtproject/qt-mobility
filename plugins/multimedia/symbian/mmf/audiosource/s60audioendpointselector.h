@@ -46,7 +46,7 @@
 
 #include <QAudioEndpointSelector>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60AudioCaptureSession;
 

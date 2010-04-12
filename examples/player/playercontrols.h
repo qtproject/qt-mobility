@@ -52,7 +52,7 @@ class QAbstractSlider;
 class QComboBox;
 QT_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class PlayerControls : public QWidget
 {

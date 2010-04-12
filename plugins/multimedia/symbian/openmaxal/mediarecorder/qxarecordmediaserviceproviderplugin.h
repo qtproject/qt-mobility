@@ -45,7 +45,7 @@
 #include <qmediaservice.h>
 #include <qmediaserviceproviderplugin.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 /*
  * This class implements QMediaServiceProviderPlugin interface.

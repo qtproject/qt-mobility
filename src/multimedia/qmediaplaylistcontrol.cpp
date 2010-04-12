@@ -43,7 +43,7 @@
 #include "qmediaplaylistcontrol.h"
 #include "qmediacontrol_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistControl
@@ -198,5 +198,5 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 */
 
 #include "moc_qmediaplaylistcontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

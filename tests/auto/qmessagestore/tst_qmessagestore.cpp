@@ -49,7 +49,12 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
+#if (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+# if defined(TESTDATA_DIR)
+#  undef TESTDATA_DIR
+# endif
+# define TESTDATA_DIR "/var/tmp"
+#elif (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
 # if defined(TESTDATA_DIR)
 #  undef TESTDATA_DIR
 # endif
@@ -793,6 +798,15 @@ void tst_QMessageStore::testMessage()
     } else { // byFilter
         manager->removeMessages(QMessageFilter::byId(message.id()));
     }
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    // Wait 1 second to make sure that there is
+    // enough time to get removed signal
+    {
+        QEventLoop eventLoop;
+        QTimer::singleShot(1000, &eventLoop, SLOT(quit()));
+        eventLoop.exec();
+    }
+#endif
     QCOMPARE(manager->error(), QMessageManager::NoError);
     QCOMPARE(manager->countMessages(), originalCount);
 

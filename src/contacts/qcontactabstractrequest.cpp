@@ -56,7 +56,19 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-main
 
   It allows a client to asynchronously request some functionality of a
-  particular QContactManager.
+  particular QContactManager.  Instances of the class will emit signals
+  when the state of the request changes, or when more results become
+  available.
+
+  Clients should not attempt to create instances of this class directly,
+  but should instead use the use-case-specific classes derived from this
+  class.
+
+  After creating any sort of request, the client retains ownership and
+  must delete the request to avoid leaking memory.  The client may either
+  do this directly (if not within a slot connected to a signal emitted
+  by the request) or by using the deleteLater() slot to schedule the
+  request for deletion when control returns to the event loop.
  */
 
 /*!

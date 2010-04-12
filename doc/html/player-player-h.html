@@ -62,6 +62,7 @@
     #include &lt;qmediaplayer.h&gt;
     #include &lt;qmediaplaylist.h&gt;
     #include &lt;qvideowidget.h&gt;
+    #include &lt;qaudioendpointselector.h&gt;
 
     #ifdef Q_OS_SYMBIAN
     #include &lt;QtGui/QDialog&gt;
@@ -76,12 +77,10 @@
     class QModelIndex;
     class QSlider;
 
-    QTM_BEGIN_NAMESPACE
     class QMediaPlayer;
     class QVideoWidget;
-    QTM_END_NAMESPACE
 
-    QTM_USE_NAMESPACE
+    QT_USE_NAMESPACE
 
     class PlaylistModel;
 
@@ -124,6 +123,12 @@
         void youtubeReadResponseHeader(const QHttpResponseHeader&amp; responseHeader);
         void searchYoutubeVideo();
         void addYoutubeVideo();
+        void handleAudioOutputDefault();
+        void handleAudioOutputAll();
+        void handleAudioOutputNone();
+        void handleAudioOutputEarphone();
+        void handleAudioOutputSpeaker();
+        void handleAudioOutputChangedSignal(const QString&amp;);
     #else
         void showColorDialog();
     #endif
@@ -146,6 +151,7 @@
         QAbstractItemView *playlistView;
         QString trackInfo;
         QString statusInfo;
+        QAudioEndpointSelector *audioEndpointSelector;
     #ifdef Q_OS_SYMBIAN
         MediaKeysObserver *mediaKeysObserver;
         QDialog *playlistDialog;
@@ -154,6 +160,12 @@
         QDialog *youtubeDialog;
         QHttp http;
         int httpGetId;
+        QMenu *audioOutputMenu;
+        QAction *setAudioOutputDefault;
+        QAction *setAudioOutputAll;
+        QAction *setAudioOutputNone;
+        QAction *setAudioOutputEarphone;
+        QAction *setAudioOutputSpeaker;
     #else
         QDialog *colorDialog;
     #endif

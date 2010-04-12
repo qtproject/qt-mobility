@@ -62,6 +62,7 @@
 
     #include &lt;qmediaservice.h&gt;
     #include &lt;qmediaplaylist.h&gt;
+    #include &lt;qaudioendpointselector.h&gt;
 
     #include &lt;QtGui&gt;
 
@@ -86,6 +87,7 @@
         , toggleAspectRatio(0)
         , showYoutubeDialog(0)
         , youtubeDialog(0)
+        , audioEndpointSelector(0)
     #else
         , colorDialog(0)
     #endif
@@ -120,6 +122,9 @@
         slider-&gt;setRange(0, player-&gt;duration() / 1000);
 
         connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
+
+        audioEndpointSelector = qobject_cast&lt;QAudioEndpointSelector*&gt;(player-&gt;service()-&gt;control(QAudioEndpointSelector_iid));
+        connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&amp;)), this, SLOT(handleAudioOutputChangedSignal(const QString&amp;)));
 
     #ifndef Q_OS_SYMBIAN
         QPushButton *openButton = new QPushButton(tr(&quot;Open&quot;), this);
@@ -508,6 +513,30 @@
         showYoutubeDialog = new QAction(tr(&quot;Youtube Search&quot;), this);
         qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent())-&gt;menuBar()-&gt;addAction(showYoutubeDialog);
         connect(showYoutubeDialog, SIGNAL(triggered()), this, SLOT(launchYoutubeDialog()));
+
+        setAudioOutputDefault = new QAction(tr(&quot;Default output&quot;), this);
+        connect(setAudioOutputDefault, SIGNAL(triggered()), this, SLOT(handleAudioOutputDefault()));
+
+        setAudioOutputAll = new QAction(tr(&quot;All outputs&quot;), this);
+        connect(setAudioOutputAll, SIGNAL(triggered()), this, SLOT(handleAudioOutputAll()));
+
+        setAudioOutputNone = new QAction(tr(&quot;No output&quot;), this);
+        connect(setAudioOutputNone, SIGNAL(triggered()), this, SLOT(handleAudioOutputNone()));
+
+        setAudioOutputEarphone = new QAction(tr(&quot;Earphone output&quot;), this);
+        connect(setAudioOutputEarphone, SIGNAL(triggered()), this, SLOT(handleAudioOutputEarphone()));
+
+        setAudioOutputSpeaker = new QAction(tr(&quot;Speaker output&quot;), this);
+        connect(setAudioOutputSpeaker, SIGNAL(triggered()), this, SLOT(handleAudioOutputSpeaker()));
+
+        audioOutputMenu = new QMenu(tr(&quot;Set Audio Output&quot;), this);
+        audioOutputMenu-&gt;addAction(setAudioOutputDefault);
+        audioOutputMenu-&gt;addAction(setAudioOutputAll);
+        audioOutputMenu-&gt;addAction(setAudioOutputNone);
+        audioOutputMenu-&gt;addAction(setAudioOutputEarphone);
+        audioOutputMenu-&gt;addAction(setAudioOutputSpeaker);
+
+        qobject_cast&lt;QMainWindow *&gt;(this-&gt;parent())-&gt;menuBar()-&gt;addMenu(audioOutputMenu);
     }
 
     void Player::handleFullScreen(bool isFullscreen)
@@ -534,6 +563,38 @@
             toggleAspectRatio-&gt;setText(tr(&quot;Ignore Aspect Ratio&quot;));
             videoWidget-&gt;setAspectRatioMode(Qt::KeepAspectRatio);
         }
+    }
+
+    void Player::handleAudioOutputDefault()
+    {
+        audioEndpointSelector-&gt;setActiveEndpoint(&quot;Default&quot;);
+    }
+
+    void Player::handleAudioOutputAll()
+    {
+        audioEndpointSelector-&gt;setActiveEndpoint(&quot;All&quot;);
+    }
+
+    void Player::handleAudioOutputNone()
+    {
+        audioEndpointSelector-&gt;setActiveEndpoint(&quot;None&quot;);
+    }
+
+    void Player::handleAudioOutputEarphone()
+    {
+        audioEndpointSelector-&gt;setActiveEndpoint(&quot;Earphone&quot;);
+    }
+
+    void Player::handleAudioOutputSpeaker()
+    {
+        audioEndpointSelector-&gt;setActiveEndpoint(&quot;Speaker&quot;);
+    }
+
+    void Player::handleAudioOutputChangedSignal(const QString&amp;)
+    {
+        QMessageBox msgBox;
+        msgBox.setText(&quot;Output changed: &quot; + audioEndpointSelector-&gt;activeEndpoint());
+        msgBox.exec();
     }
 
     void Player::hideOrShowCoverArt()

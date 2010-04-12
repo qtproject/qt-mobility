@@ -42,7 +42,7 @@
 #include "qmediacontrol_p.h"
 #include "qmetadatacontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -179,5 +179,5 @@ QMetaDataControl::~QMetaDataControl()
 */
 
 #include "moc_qmetadatacontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

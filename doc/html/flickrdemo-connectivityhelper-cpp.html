@@ -60,7 +60,7 @@
     #include &lt;QWidget&gt;
     #include &lt;QTimer&gt;
 
-    ConnectivityHelper::ConnectivityHelper(QNetworkSession *session, QWidget *parent) : QObject(parent),
+    ConnectivityHelper::ConnectivityHelper(QtMobility::QNetworkSession *session, QWidget *parent) : QObject(parent),
             m_session(session)
     {
         connect(m_session,
@@ -69,7 +69,7 @@
                 SLOT(error(QNetworkSession::SessionError)));
     }
 
-    void ConnectivityHelper::error(QNetworkSession::SessionError error)
+    void ConnectivityHelper::error(QtMobility::QNetworkSession::SessionError error)
     {
         if (error == QNetworkSession::UnknownSessionError) {
             if (m_session-&gt;state() == QNetworkSession::Connecting) {
