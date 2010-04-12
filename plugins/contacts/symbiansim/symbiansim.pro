@@ -6,7 +6,7 @@
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(mobapicontactspluginsymbiansim)
+TARGET = $$qtLibraryTarget(qtcontacts_symbiansim)
 
 include(../../../common.pri)
 include(symbiansim_defines.pri)
