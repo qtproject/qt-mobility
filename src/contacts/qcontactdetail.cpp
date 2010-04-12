@@ -597,7 +597,7 @@ bool QContactDetail::setValue(const char* key, const QVariant& value)
 */
 bool QContactDetail::removeValue(const QString& key)
 {
-    if(d->m_values.remove(key.toLatin1().constData()))
+    if(d->m_values.remove(QContactStringHolder(key)))
         return true;
     return false;
 }
