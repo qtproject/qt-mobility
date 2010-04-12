@@ -39,75 +39,28 @@
 **
 ***************************************************************************/
 
+#ifndef SFWEXAMPLE_H
+#define SFWEXAMPLE_H
+
 #include <QtCore>
 #include <qserviceinterfacedescriptor.h>
 #include <qservicemanager.h>
-#include <qdeclarative.h>
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
-
-//! [0]
-class ServiceWrapper : public QObject {
+class DialerServices : public QObject {
     Q_OBJECT
-    Q_PROPERTY(bool isValid READ isValid);
-    Q_PROPERTY(QString serviceName READ serviceName CONSTANT);
-    Q_PROPERTY(QString interfaceName READ interfaceName CONSTANT);
-    Q_PROPERTY(QString version READ version NOTIFY versionChanged);
-//! [0]
 
 public:
-    ServiceWrapper();
-    
-    ~ServiceWrapper() ;
-
-    bool isValid() const;
-
-    QString serviceName() const;
-
-    QString interfaceName() const;
-
-    void setNativeDescriptor(const QServiceInterfaceDescriptor& desc);
-
-    void setDescriptor(QVariant& newDescriptor);
-
-    QString version() const;
-
-    Q_INVOKABLE QObject* serviceObject();
+    DialerServices();
+    ~DialerServices();
 
 private:
-    QServiceInterfaceDescriptor m_descriptor;
-    QObject* serviceInstance;
-};
-
-QML_DECLARE_TYPE(ServiceWrapper)
-
-//! [1]
-class ServiceRegister : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QList<ServiceWrapper*>* registeredservices READ registeredservices NOTIFY modelChanged CONSTANT);
-//! [1]
-
-public:
-    ServiceRegister();
-    ~ServiceRegister();
-    
-    QList<ServiceWrapper*> *registeredservices() {return &m_services; }
-
     void registerExampleServices();
-
     void unregisterExampleServices();
 
-    void serviceStateChange(int state);
-
-private:
     QServiceManager* serviceManager;
-    QList<ServiceWrapper *> m_services;
-
-signals:
-    void modelChanged();
 };
 
-QML_DECLARE_TYPE(ServiceRegister)
+#endif
 

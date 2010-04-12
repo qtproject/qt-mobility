@@ -47,10 +47,10 @@
 #include "qgstreamervideooutputcontrol.h"
 
 #include <gst/gst.h>
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QAudioEndpointSelector;
 class QVideoDeviceControl;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 class QGstreamerCaptureSession;
 class QGstreamerCameraControl;

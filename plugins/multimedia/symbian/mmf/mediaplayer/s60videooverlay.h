@@ -45,7 +45,7 @@
 #include <QtCore/qobject.h>
 #include <QVideoWindowControl>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QAbstractVideoSurface;
 class S60VideoSurface;

@@ -52,7 +52,7 @@
 
 #include <alsa/asoundlib.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class V4LRadioService;
 

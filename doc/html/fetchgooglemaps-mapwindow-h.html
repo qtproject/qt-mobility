@@ -96,7 +96,7 @@
         QLabel *dateTimeLabel;
         bool loading;
     #ifndef Q_WS_MAEMO_5
-        QNetworkSession *session;
+        QTM_PREPEND_NAMESPACE(QNetworkSession) *session;
     #endif
         bool usingLogFile;
         QGeoPositionInfoSource *location;

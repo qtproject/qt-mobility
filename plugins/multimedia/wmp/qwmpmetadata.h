@@ -47,13 +47,13 @@
 
 #include <wmp.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QMediaContent;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 class QWmpEvents;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QWmpMetaData : public QMetaDataControl
 {
