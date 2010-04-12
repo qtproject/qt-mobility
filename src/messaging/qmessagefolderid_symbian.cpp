@@ -41,8 +41,11 @@
 #include "qmessagefolderid.h"
 #include "qmessagefolderid_p.h"
 #include <qhash.h>
+#include <symbianhelpers_p.h>
 
 QTM_BEGIN_NAMESPACE
+
+using namespace SymbianHelpers;
 
 QMessageFolderId::QMessageFolderId()
  : d_ptr(0)
@@ -58,7 +61,7 @@ QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
 QMessageFolderId::QMessageFolderId(const QString& id)
  : d_ptr(new QMessageFolderIdPrivate(this))
 {
-   d_ptr->_id = id;
+   d_ptr->_id = stripIdPrefix(id);
 }
 
 QMessageFolderId::~QMessageFolderId()
@@ -115,7 +118,7 @@ QString QMessageFolderId::toString() const
         return QString();
     }
     
-    return d_ptr->_id;
+    return addIdPrefix(d_ptr->_id);
 }
 
 bool QMessageFolderId::isValid() const
@@ -125,7 +128,7 @@ bool QMessageFolderId::isValid() const
 
 uint qHash(const QMessageFolderId &id)
 {
-    return qHash(id.toString());
+    return qHash(stripIdPrefix(id.toString()));
 }
 
 QTM_END_NAMESPACE

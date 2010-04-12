@@ -45,6 +45,7 @@
 #include <qmessageid.h>
 #include <qmessagemanager.h>
 #include <qmessage_symbian_p.h>
+#include <symbianhelpers_p.h>
 
 #include <QDebug>
 
@@ -94,6 +95,9 @@ void CSymbianMessagingSession::HandleSessionEventL(TMsvSessionEvent /*aEvent*/, 
 }
 
 QTM_BEGIN_NAMESPACE
+
+using namespace SymbianHelpers;
+
 class MapiSession
 {
 public:
@@ -338,7 +342,7 @@ QMessageAccountId createPopAndSmtpAccountL(const TDesC& accountName, const TDesC
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
 
-    return QMessageAccountId(QString::number(popAccount.iPopService));
+    return QMessageAccountId(addIdPrefix(QString::number(popAccount.iPopService)));
 }
 
 QMessageAccountId createPopAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
@@ -461,7 +465,7 @@ QMessageAccountId createImapAndSmtpAccountL(const TDesC& accountName, const TDes
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
 
-    return QMessageAccountId(QString::number(imapAccount.iImapService));
+    return QMessageAccountId(addIdPrefix(QString::number(imapAccount.iImapService)));
 }
 
 QMessageAccountId createImapAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
@@ -516,7 +520,7 @@ QMessageFolderId addFolderL(const TDesC& symbianAccountName, const TDesC& symbia
     serviceEntryIdString = nullString.left(8-serviceEntryIdString.length()) + serviceEntryIdString;
     QString folderIdString = QString::number(folderId);
     folderIdString = nullString.left(8-folderIdString.length()) + folderIdString;
-    return serviceEntryIdString+folderIdString;
+    return addIdPrefix(serviceEntryIdString+folderIdString);
 }
 
 QMessageFolderId addFolder(const Parameters &params)

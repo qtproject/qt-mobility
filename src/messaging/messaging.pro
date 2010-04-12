@@ -132,7 +132,7 @@ symbian|win32|maemo6|maemo5|mac {
         pkgconfig.files = QtMessaging.pc
         INSTALLS += pkgconfig \
             documentation
-        LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4 -lhildonmime
+        LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
@@ -143,7 +143,8 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagestore_symbian_p.h \
             qmessageservice_symbian_p.h \
             qmessagecontentcontainer_symbian_p.h \
-            qmessage_symbian_p.h
+            qmessage_symbian_p.h \
+            symbianhelpers_p.h
         SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
@@ -160,7 +161,8 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagefilter_symbian.cpp \
             qmessagesortorder_symbian.cpp \
             qmessagestore_symbian.cpp \
-            qmessageservice_symbian.cpp
+            qmessageservice_symbian.cpp \
+            symbianhelpers.cpp
         LIBS += -lsendas2 \
             -lmsgs \
             -letext \

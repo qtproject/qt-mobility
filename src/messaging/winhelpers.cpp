@@ -91,6 +91,24 @@
 #include <QTimer>
 #include <QMutexLocker>
 
+QTM_BEGIN_NAMESPACE
+
+namespace WinHelpers {
+	QString addIdPrefix(const QString& id)
+	{
+		Q_ASSERT(!id.startsWith(QString(idPrefix)));
+		return QString(idPrefix) + id;
+	}
+
+	QString stripIdPrefix(const QString& id)
+	{
+		Q_ASSERT(id.startsWith(QString(id)));
+		return id.right(id.length() - QString(idPrefix).length());
+	}
+}
+
+QTM_END_NAMESPACE
+
 
 #include <shlwapi.h>
 #include <shlguid.h>
@@ -120,6 +138,8 @@ QTM_BEGIN_NAMESPACE
 
 namespace WinHelpers
 {
+	
+
     bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
     {
         SPropValue prop = { 0 };

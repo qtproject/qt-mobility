@@ -57,8 +57,6 @@
 #include "qmessageservice.h"
 
 
-
-
 class CRichText;
 class CCharFormatLayer;
 class CParaFormatLayer;
@@ -73,6 +71,7 @@ class CMsvFindOperation;
 
 
 QTM_BEGIN_NAMESPACE
+
 class CMessagesFindOperation;
 class QMessageId;
 class QMessageAccount;
@@ -163,6 +162,7 @@ public:
                                      bool resultSetOrdered);
 
     inline RFs& FsSession() const { return((RFs&)iFsSession); }
+
 private:
     void updateEmailAccountsL() const;
     bool switchToMTMRootEntry(MTMType aMTMType);
