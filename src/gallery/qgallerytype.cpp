@@ -49,22 +49,22 @@
 */
 
 /*!
-    \fn QGalleryType::QGalleryType(const char (&id)[N])
+    \fn QGalleryType::QGalleryType(const char *name)
 
-    Construct a gallery item type from a string literal \a id.
+    Construct a gallery item type from a string literal \a name.
 */
 
 /*!
-    Returns the string id of an item type.
+    Returns the name of an item type.
 */
 
-QString QGalleryType::toString() const
+QString QGalleryType::name() const
 {
-    return QString::fromLatin1(m_id, m_length);
+    return QString::fromLatin1(m_name, m_length);
 }
 
 /*!
     \fn QGalleryType::operator QString() const
 
-    Returns the string id of an item type.
+    Returns the string name of an item type.
 */

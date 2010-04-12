@@ -49,8 +49,12 @@
 class Q_GALLERY_EXPORT QGalleryProperty
 {
 public:
+#ifndef Q_QDOC
     template <int N>
     explicit QGalleryProperty(const char (&name)[N]) : m_name(name), m_length(N - 1) {}
+#else
+    explicit QGalleryProperty(const char *name);
+#endif
 
     QString name() const;
 

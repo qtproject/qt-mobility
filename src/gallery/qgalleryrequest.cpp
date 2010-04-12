@@ -178,6 +178,7 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     Identifies the type of a request.
 
     \value Item The request is a QGalleryItemRequest.
+    \value Count The request is a QGalleryCountRequest.
     \value Insert The request is a QGalleryInsertRequest.
     \value Remove The request is a QGalleryRemoveRequest.
     \value Copy The request is a QGalleryCopyRequest.
@@ -630,6 +631,13 @@ void QGalleryAbstractResponse::cancel()
 }
 
 /*!
+    \fn QGalleryAbstractResponse::progressChanged(int current, int maximum)
+
+    Signals that the \a current or \a maximum progress of a request has
+    changed.
+*/
+
+/*!
     Finalizes a gallery response, and sets the \a result.
 
     If \a idle is true the items returned by a response will be monitored
@@ -650,12 +658,9 @@ void QGalleryAbstractResponse::finish(int result, bool idle)
 }
 
 /*!
-    \fn QGalleryAbstractResponse::finished(int result, bool idle)
+    \fn QGalleryAbstractResponse::finished()
 
-    Signals that a response has finished with the given \a result.
-
-    If \a idle is true the items returned by a response will be monitored
-    for changes and updated as appropriate.
+    Signals that a response has finished.
 */
 
 class QGalleryItemRequestPrivate : public QGalleryAbstractRequestPrivate
@@ -687,14 +692,6 @@ public:
 
     \brief The QGalleryItemRequest class provides a request for a set of
     items from a gallery.
-*/
-
-/*!
-    \enum QGalleryItemRequest::Error
-
-    Enumerates item request specific error results.
-
-    \value InvalidFilter
 */
 
 /*!
@@ -1313,6 +1310,12 @@ void QGalleryCountRequest::setContainerUrl(const QUrl &url)
     Signals that the \l containerUrl property has changed.
 */
 
+/*!
+    \property QGalleryCountRequest::count
+
+    \brief The number of gallery items matching a requests filtering criteria.
+*/
+
 int QGalleryCountRequest::count() const
 {
     return d_func()->count;
@@ -1320,6 +1323,12 @@ int QGalleryCountRequest::count() const
 
 /*!
     \fn QGalleryCountRequest::countChanged()
+
+    Signals that the \l count property has changed.
+*/
+
+/*!
+    \reimp
 */
 
 void QGalleryCountRequest::setResponse(QGalleryAbstractResponse *response)
@@ -1617,12 +1626,6 @@ void QGalleryRemoveRequest::setItemId(const QString &id)
 
     emit itemIdsChanged();
 }
-
-/*!
-    \fn QGalleryRemoveRequest::itemIdChanged()
-
-    Signals the \l itemId property has changed.
-*/
 
 /*!
     \property QGalleryRemoveRequest::itemIds

@@ -49,15 +49,19 @@
 class Q_GALLERY_EXPORT QGalleryType
 {
 public:
+#ifndef Q_QDOC
     template <int N>
-    explicit QGalleryType(const char (&id)[N]) : m_id(id), m_length(N - 1) {}
+    explicit QGalleryType(const char (&name)[N]) : m_name(name), m_length(N - 1) {}
+#else
+    explicit QGalleryType(const char *name);
+#endif
 
-    QString toString() const;
+    QString name() const;
 
-    inline operator QString() const { return toString(); }
+    inline operator QString() const { return name(); }
 
 private:
-    const char * const m_id;
+    const char * const m_name;
     const int m_length;
 };
 

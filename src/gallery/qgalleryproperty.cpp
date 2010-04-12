@@ -50,7 +50,7 @@
 */
 
 /*!
-    \fn QGalleryProperty::QGalleryProperty(const char (&name)[N])
+    \fn QGalleryProperty::QGalleryProperty(const char *name)
 
     Constructs a property from a string literal \a name.
 */
@@ -65,7 +65,7 @@ QString QGalleryProperty::name() const
 }
 
 /*!
-    \fn QGalleryType::operator QString() const
+    \fn QGalleryProperty::operator QString() const
 
     Returns the name of a property.
 */
