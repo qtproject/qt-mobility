@@ -1020,7 +1020,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
         if(!list.isEmpty()) {
             foreach(const QString vol, list) {
                 QHalDeviceInterface ifaceDevice(vol);
-                if(driveVolume == ifaceDevice.getPropertyString("block.device")) {
+                if(mountEntriesMap.value(driveVolume) == ifaceDevice.getPropertyString("block.device")) {
                     QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
 
                     if(ifaceDeviceParent.getPropertyBool("storage.removable")
