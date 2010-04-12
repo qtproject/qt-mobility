@@ -1,0 +1,76 @@
+libqtlocation (0.3-9) unstable; urgency=low
+
+  * Added satellite info.
+  * Added missing headers for dev package.
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Wed, 17 Mar 2010 15:36:23 +0200
+
+libqtlocation (0.3-8) unstable; urgency=low
+
+  * Added more time for app to start up 
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Fri, 19 Feb 2010 16:10:59 +0200
+
+libqtlocation (0.3-7) unstable; urgency=low
+
+  * trolltech changes implemented 
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Thu, 18 Feb 2010 14:38:44 +0200
+
+libqtlocation (0.3-6) unstable; urgency=low
+
+  * Qt test cases modified 
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Mon, 25 Jan 2010 13:40:07 +0200
+
+libqtlocation (0.3-5) unstable; urgency=low
+
+  * Rebuilt with qt 4.6.1~git20091228.2-0maemo1 
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Fri,  8 Jan 2010 16:41:40 +0200
+
+libqtlocation (0.3-4) unstable; urgency=low
+
+  * test app defaults changed
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Fri, 11 Dec 2009 17:17:00 +0200
+
+libqtlocation (0.3-3) unstable; urgency=low
+
+  * minor modifications to be in sync with positioningd
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Wed, 09 Dec 2009 16:17:00 +0200
+
+libqtlocation (0.3-2) unstable; urgency=low
+
+  * New version supporting positioningd
+  * fake NPE separated
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Wed, 25 Nov 2009 11:54:00 +0200
+
+libqtlocation (0.3-1) unstable; urgency=low
+
+  * Fixed wrong path mentioned in the .pc file
+  * Added copyright file
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Tue, 03 aug 2009 11:15:00 +0200
+
+libqtlocation (0.3-0) unstable; urgency=low
+
+  * library name changed to libQtLocation
+  * qlocationglobal.h header included in dev package
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Tue, 24 Jun 2009 11:31:00 +0200
+
+libqtlocation (0.2) unstable; urgency=low
+
+  - Many  classes renamed
+  - New test cases added for continuous integration
+
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Tue, 16 Jun 2009 10:07:00 +0200
+
+libqtlocation (0.1) unstable; urgency=low
+
+  - Initial delivery of libqtlocation package
+ 
+ -- Balaji Ramamurthy  <ext-balaji.ramamurthy@nokia.com>  Tue, 12 Jun 2009 11:10:00 +0200

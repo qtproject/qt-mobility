@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<testdefinition version="0.1">
+	
+  <suite name="libqtlocation-tests" domain="Location"> 
+	 
+	
+     <set name="positioning-infosource-tests" feature="Positioning info source">   
+    
+      <case name="tst_qgeopositioninfosource" type="unknown" level="Component" description="Unit test case for QgeoPositionInfoSource" timeout="25">
+	<step expected_result="0">/usr/lib/libqtlocation-tests/tst_qgeopositioninfosource 2 1000 </step>
+      </case>
+
+      <environments> <scratchbox>false</scratchbox> <hardware>true</hardware> </environments>
+     </set>
+     
+
+     <set name="location-dataclass-tests" feature="Location data classes" description="Location data class test cases">
+	     
+      <case name="tst_qgeocoordinate" type="unknown" level="Component"  description="Unit test case for class QGeoCoordinate" timeout="15">
+	<step expected_result="0">/usr/lib/libqtlocation-tests/tst_qgeocoordinate </step>
+      </case>
+
+      <case name="tst_qgeopositioninfo" type="unknown" level="Component" description="Unit test case for class QGeoPositionInfo" timeout="15">
+	<step expected_result="0">/usr/lib/libqtlocation-tests/tst_qgeopositioninfo </step>
+      </case>
+
+      <case name="tst_qsatelliteinfo" type="unknown" level="Component" description="Unit test case for class QSatelliteInfo" timeout="15">
+	<step expected_result="0">/usr/lib/libqtlocation-tests/tst_qsatelliteinfo </step>
+      </case>
+
+      <environments> <scratchbox>false</scratchbox> <hardware>true</hardware> </environments>
+     </set>
+     
+  </suite>
+ </testdefinition>

@@ -1,0 +1,43 @@
+Source: libqtlocation
+Priority: extra
+Maintainer: Balaji Ramamurthy <ext-balaji.ramamurthy@nokia.com>
+Build-Depends: debhelper (>= 5), libqt4-dev (>= 4.5)
+Standards-Version: 3.8.0
+Section: libs
+
+Package: libqtlocation
+Section: libs
+Architecture: any
+Depends: libqt4 (>= 4.5), ${shlibs:Depends}
+Description: location library package
+ Contains the runtime files needed for applications that use location services
+
+Package: libqtlocation-dev
+Section: libdevel
+Architecture: all
+Depends: libqtlocation (>= ${source:Version})
+Description: libqtlocation development files
+ Development files for location Framework
+
+Package: libqtlocation-dbg
+Section: devel
+Architecture: any
+Depends: libqtlocation (= ${binary:Version})
+Description: libQtLocation debug package
+ libQtLocation debug symbols.
+
+Package: libqtlocation-tests
+Section: misc
+Depends: python2.5-dbus, python-gobject, testrunner, ${shlibs:Depends}
+XB-Maemo-CI-Packages: libqtlocation
+XB-Maemo-CI-Stage: fast, staging, acceptance
+Architecture: any
+Description: libQtLocation unit tests
+ This package contains tests which can be used in CI environment
+
+Package: locationdemo
+Section: misc
+Depends: libqtlocation (= ${binary:Version}), ${shlibs:Depends}
+Architecture: any
+Description: Demo application for libQtLocation 
+ This package contains demo application for libQtLocation
