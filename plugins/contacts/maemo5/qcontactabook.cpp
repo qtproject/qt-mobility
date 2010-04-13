@@ -273,6 +273,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     if (QContactManagerEngine::testFilter(filter, *curr)) {
       QContactManagerEngine::addSorted(&sortedAndFiltered, *curr, sortOrders);
     }
+    delete curr;
   }
 
   foreach (const QContact& contact, sortedAndFiltered) {
