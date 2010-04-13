@@ -65,7 +65,7 @@ AudioRecorder::AudioRecorder()
 
     // set a default file
 #ifdef Q_OS_SYMBIAN
-    capture->setOutputLocation(QUrl("c:\\data\\test.wav"));
+    capture->setOutputLocation(recordPathAudio(QUrl()));    
 #else
     capture->setOutputLocation(QUrl("test.raw"));
 #endif
@@ -92,8 +92,20 @@ AudioRecorder::AudioRecorder()
     codecLabel->setText(tr("Audio Codec"));
     codecsBox = new QComboBox(this);
     codecsBox->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
-    codecsBox->setMinimumSize(200,10);
-
+    codecsBox->setMinimumSize(200,10);    
+    
+    QLabel* sampleRateLabel = new QLabel;
+    sampleRateLabel->setText(tr("Sample Rate"));
+    sampleRateBox = new QComboBox(this);
+    sampleRateBox->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+    sampleRateBox->setMinimumSize(200,10);
+    
+    QLabel* channelLabel = new QLabel;
+    channelLabel->setText(tr("Channel count"));
+    channelBox = new QComboBox(this);
+    channelBox->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+    channelBox->setMinimumSize(200,10);
+    
     QLabel* qualityLabel = new QLabel;
     qualityLabel->setText(tr("Audio Quality"));
     qualityBox = new QComboBox(this);
@@ -112,6 +124,19 @@ AudioRecorder::AudioRecorder()
     for(int i = 0; i < containers.count(); i++)
         containersBox->addItem(containers.at(i));
 
+    QList<int> samplerates = capture->supportedAudioSampleRates();    
+    for(int i = 0; i < samplerates.count(); i++) {        
+        QString rateString = QString("%1").arg(samplerates.at(i));
+        sampleRateBox->addItem(rateString, QVariant(samplerates.at(i))); 
+    }
+    
+    QList<int> channels;
+    channels <<1<<2;     
+    for(int i = 0; i < channels.count(); i++) {        
+        QString channelString = QString("%1").arg(channels.at(i));
+        channelBox->addItem(channelString, QVariant(channels.at(i))); 
+    }
+      
     qualityBox->addItem(tr("Low"));
     qualityBox->addItem(tr("Medium"));
     qualityBox->addItem(tr("High"));
@@ -130,41 +155,75 @@ AudioRecorder::AudioRecorder()
 
     layout->addWidget(codecLabel,2,0,Qt::AlignHCenter);
     connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
-    layout->addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);
-
-    layout->addWidget(qualityLabel,3,0,Qt::AlignHCenter);
+    layout->addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);    
+    
+    layout->addWidget(sampleRateLabel,3,0,Qt::AlignHCenter);
+    connect(sampleRateBox,SIGNAL(activated(int)),SLOT(sampleRateChanged(int)));
+    layout->addWidget(sampleRateBox,3,1,1,3,Qt::AlignLeft);
+    
+    layout->addWidget(channelLabel,4,0,Qt::AlignHCenter);
+    connect(channelBox,SIGNAL(activated(int)),SLOT(channelCountChanged(int)));
+    layout->addWidget(channelBox,4,1,1,3,Qt::AlignLeft);
+    
+    layout->addWidget(qualityLabel,5,0,Qt::AlignHCenter);
     connect(qualityBox,SIGNAL(activated(int)),SLOT(qualityChanged(int)));
-    layout->addWidget(qualityBox,3,1,1,3,Qt::AlignLeft);
+    layout->addWidget(qualityBox,5,1,1,3,Qt::AlignLeft);
 
     fileButton = new QPushButton(this);
-    fileButton->setText(tr("Output File"));
+    fileButton->setText(tr("Output File"));    
     connect(fileButton,SIGNAL(clicked()),SLOT(selectOutputFile()));
-    layout->addWidget(fileButton,4,0,Qt::AlignHCenter);
+    layout->addWidget(fileButton,6,0,Qt::AlignHCenter);
+    
+    pauseButton = new QPushButton(this);    
+    pauseButton->setText(tr("Pause"));
+    connect(pauseButton,SIGNAL(clicked()),SLOT(togglePause()));
+    layout->addWidget(pauseButton,6,1,Qt::AlignHCenter);
 
     button = new QPushButton(this);
     button->setText(tr("Record"));
     connect(button,SIGNAL(clicked()),SLOT(toggleRecord()));
-    layout->addWidget(button,4,1,Qt::AlignHCenter);
-
-    QLabel* durationLabel = new QLabel;
-    durationLabel->setText(tr("Duration"));
-    layout->addWidget(durationLabel,4,2,Qt::AlignRight);
-
-    recTime = new QLabel;
-    layout->addWidget(recTime,4,3,Qt::AlignLeft);
+    layout->addWidget(button,6,2,Qt::AlignHCenter);
 
     statusLabel = new QLabel;
     statusLabel->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
-    statusLabel->setMinimumSize(270,10);
+    statusLabel->setMinimumSize(130,10);
     statusLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     statusLabel->setLineWidth(1);
-    layout->addWidget(statusLabel,5,0,1,4,Qt::AlignHCenter);
+    layout->addWidget(statusLabel,7,0,Qt::AlignHCenter);
+    
+    QLabel* durationLabel = new QLabel;
+    durationLabel->setText(tr("Duration"));
+    layout->addWidget(durationLabel,7,1,Qt::AlignRight);
 
+    recTime = new QLabel;
+    layout->addWidget(recTime,7,2,Qt::AlignLeft);
+    
     window->setLayout(layout);
     setCentralWidget(window);
     window->show();
 
     active = false;
+    paused = false;
+}
+
+QUrl AudioRecorder::recordPathAudio(QUrl filePath)
+{   
+    if (!filePath.isEmpty())
+        return filePath;  
+    
+    QDir outputDir(QDir::rootPath());
+    
+    int lastImage = 0;  
+    int fileCount = 0;
+    foreach(QString fileName, outputDir.entryList(QStringList() << "testclip_*")) {        
+        int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
+        lastImage = qMax(lastImage, imgNumber);
+        if (outputDir.exists(fileName))             
+            fileCount+=1;        
+    }    
+    lastImage+=fileCount;    
+    QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString("/testclip_%1").arg(lastImage+1,4,10,QLatin1Char('0'))));
+    return location;
 }
 
 AudioRecorder::~AudioRecorder()
@@ -192,6 +251,11 @@ void AudioRecorder::stateChanged(QMediaRecorder::State state)
             button->setText(tr("Stop"));
             break;
         }
+        case QMediaRecorder::PausedState: {
+            statusLabel->setText(tr("Paused"));
+            button->setText(tr("Record"));
+            break;
+        }
         default: {
             statusLabel->setText(tr("Stopped"));
             button->setText(tr("Record"));
@@ -217,18 +281,34 @@ void AudioRecorder::codecChanged(int idx)
     capture->setEncodingSettings(settings);
 }
 
-void AudioRecorder::qualityChanged(int idx)
-{
+void AudioRecorder::sampleRateChanged(int idx)
+{    
     QAudioEncoderSettings settings = capture->audioSettings();
+    settings.setSampleRate((sampleRateBox->itemData(idx).toInt()));
+    capture->setEncodingSettings(settings);
+}
+
+void AudioRecorder::channelCountChanged(int idx)
+{    
+    QAudioEncoderSettings settings = capture->audioSettings();
+    settings.setChannelCount((channelBox->itemData(idx).toInt()));
+    capture->setEncodingSettings(settings);
+}
+
+void AudioRecorder::qualityChanged(int idx)
+{ 
+    QAudioEncoderSettings settings = capture->audioSettings();
+    
+    qDebug()<<"AudioRecorder::qualityChanged"<<settings.quality();
     switch(idx) {
-        case 0:
-            settings.setQuality(QtMedia::LowQuality);
-            break;
-        case 1:
-            settings.setQuality(QtMedia::NormalQuality);
-            break;
-        default:
-            settings.setQuality(QtMedia::HighQuality);
+    case 0:
+        settings.setQuality(QtMedia::LowQuality);
+        break;
+    case 1:
+        settings.setQuality(QtMedia::NormalQuality);
+        break;
+    default:
+        settings.setQuality(QtMedia::HighQuality);
     }
     capture->setEncodingSettings(settings);
 }
@@ -236,13 +316,28 @@ void AudioRecorder::qualityChanged(int idx)
 void AudioRecorder::toggleRecord()
 {
     if(!active) {
-        recTime->setText("0");
-        currentTime = 0;
+        if(!paused) {
+            recTime->setText("0");
+            currentTime = 0;
+        }
+#ifdef Q_OS_SYMBIAN    
+    capture->setOutputLocation(recordPathAudio(destination));
+#endif
         capture->record();        
         active = true;
+        paused = false;
     } else {
         capture->stop();        
         active = false;
+    }
+}
+
+void AudioRecorder::togglePause()
+{
+    if(active && !paused) {       
+        capture->pause();        
+        active = false;
+        paused = true;
     }
 }
 
@@ -257,7 +352,12 @@ void AudioRecorder::selectOutputFile()
         fileNames = dialog.selectedFiles();
 
     if(fileNames.size() > 0)
+#ifdef Q_OS_SYMBIAN
+        destination = QUrl(fileNames.first());
+#else    
         capture->setOutputLocation(QUrl(fileNames.first()));
+        
+#endif    
 }
 
 void AudioRecorder::errorChanged(QMediaRecorder::Error err)
