@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: qmlcontact.cpp Example File (qmlcontacts/qmlcontact.cpp)</title>
+  <title>Qt Mobility Project 1.1: qmlcontact.cpp Example File (qmlcontacts/qmlcontact.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -62,7 +62,7 @@
     QT_USE_NAMESPACE
     QTM_USE_NAMESPACE
 
-    QmlContact::QmlContact(QContact&amp; contact, QObject *parent)
+    QmlContact::QmlContact(const QContact&amp; contact, QObject *parent)
         : QObject(parent), m_contact(contact)
     {
     }
@@ -90,49 +90,7 @@
 
     QString QmlContact::name()
     {
-        QList&lt;QContactDetail&gt; allNames = m_contact.details(QContactName::DefinitionName);
-
-        const QLatin1String space(&quot; &quot;);
-
-        <span class="comment">// synthesise the display label from the name.</span>
-        for (int i=0; i &lt; allNames.size(); i++) {
-            const QContactName&amp; name = allNames.at(i);
-
-            QString result;
-            if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
-               result += name.value(QContactName::FieldPrefix);
-            }
-
-            if (!name.value(QContactName::FieldFirst).trimmed().isEmpty()) {
-                if (!result.isEmpty())
-                    result += space;
-                result += name.value(QContactName::FieldFirst);
-            }
-
-            if (!name.value(QContactName::FieldMiddle).trimmed().isEmpty()) {
-                if (!result.isEmpty())
-                    result += space;
-                result += name.value(QContactName::FieldMiddle);
-            }
-
-            if (!name.value(QContactName::FieldLast).trimmed().isEmpty()) {
-                if (!result.isEmpty())
-                    result += space;
-                result += name.value(QContactName::FieldLast);
-            }
-
-            if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {
-                if (!result.isEmpty())
-                    result += space;
-                result += name.value(QContactName::FieldSuffix);
-            }
-
-            if (!result.isEmpty()) {
-                return result;
-            }
-        }
-
-        return QString(&quot;noName&quot;);
+        return m_contact.displayLabel();
     }
 
     void QmlContact::setName(QString name)
@@ -207,6 +165,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

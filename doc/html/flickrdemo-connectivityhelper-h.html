@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: connectivityhelper.h Example File (flickrdemo/connectivityhelper.h)</title>
+  <title>Qt Mobility Project 1.1: connectivityhelper.h Example File (flickrdemo/connectivityhelper.h)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -65,6 +65,9 @@
 
     class QWidget;
 
+    QTM_BEGIN_NAMESPACE
+    class QNetworkSession;
+    QTM_END_NAMESPACE
 <span class="comment">    // Use the QtMobility namespace</span>
     QTM_USE_NAMESPACE
 
@@ -73,16 +76,16 @@
         Q_OBJECT
 
     public:
-        ConnectivityHelper(QNetworkSession *session, QWidget *parent = 0);
+        ConnectivityHelper(QtMobility::QNetworkSession *session, QWidget *parent = 0);
 
     signals:
         void networkingCancelled();
 
     private slots:
-        void error(QNetworkSession::SessionError error);
+        void error(QtMobility::QNetworkSession::SessionError error);
 
     private:
-        QNetworkSession *m_session;
+        QtMobility::QNetworkSession *m_session;
     };
 
     #endif <span class="comment">// #ifndef CONNECTIVITYHELPER_H</span></pre>
@@ -90,6 +93,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

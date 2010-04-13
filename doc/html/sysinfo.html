@@ -2,9 +2,9 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- undocumented.qdoc -->
+<!-- sysinfo.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: System Information Example</title>
+  <title>Qt Mobility Project 1.1: System Information Example</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -22,10 +22,53 @@
 <li><a href="sysinfo-examples-qrc.html">sysinfo/examples.qrc</a></li>
 <li><a href="sysinfo-sysinfo-pro.html">sysinfo/sysinfo.pro</a></li>
 </ul>
+<p align="center"><img src="images/sysinfo.png" /></p><p>The System Information example uses a tabbed dialog, with each tab representing a particular type of data: versions, network and so on.</p>
+<p>To access the information, the example creates objects belonging to the System Information classes</p>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a></th><td>Access to device information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a></th><td>Access to display information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsysteminfo.html">QSystemInfo</a></th><td>Access to various general information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a></th><td>Access to network information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsystemscreensaver.html">QSystemScreenSaver</a></th><td>Access to screen saver and blanking</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></th><td>Access to memory and disk information from the system</td></tr>
+</table></p>
+<p>Here are some examples that show how the example application reads the device information.</p>
+<p>The current language</p>
+<pre>        systemInfo = new QSystemInfo(this);
+        curLanguageLineEdit-&gt;setText( systemInfo-&gt;currentLanguage());</pre>
+<p>Device information, starting with the battery level</p>
+<pre>        di = new QSystemDeviceInfo(this);
+        ...
+        batteryLevelBar-&gt;setValue(di-&gt;batteryLevel());</pre>
+<p>The manufacturer id and the product name</p>
+<pre>        manufacturerLabel-&gt;setText(di-&gt;manufacturer());
+        ...
+        productLabel-&gt;setText(di-&gt;productName());</pre>
+<p>And there are signals that can be used to update progress bars and other indicators. An example is when the battery level changes, the batteryLevelChanged() signal is emitted</p>
+<pre>        connect(di,SIGNAL(batteryLevelChanged(int)),
+                this,SLOT(updateBatteryStatus(int)));</pre>
+<p>Other information is stored as bitwise flags. The following code shows the input methods being determined using flags.</p>
+<pre>        QSystemDeviceInfo::InputMethodFlags methods = di-&gt;inputMethodType();
+        QStringList inputs;
+        if((methods &amp; QSystemDeviceInfo::Keys)){
+            inputs &lt;&lt; &quot;Keys&quot;;
+        }
+        if((methods &amp; QSystemDeviceInfo::Keypad)) {
+            inputs &lt;&lt; &quot;Keypad&quot;;
+        }</pre>
+<p>Various capabilities of the device can be found by testing for features. In the example a Feature combo box, on the General tab, has a hard coded list of features. When a listed featue is selected the getFeature() function is called with the index which is handled by applying a test to the corresponding feaure.</p>
+<pre>        QSystemInfo::Feature feature;
+        switch(index) {
+        ...
+        case 1:
+            feature = QSystemInfo::BluetoothFeature;
+        ...
+        QSystemInfo si;
+        featuresLineEdit-&gt;setText((si.hasFeatureSupported(feature) ? &quot;true&quot;:&quot;false&quot; ));</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

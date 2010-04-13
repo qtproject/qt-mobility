@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: mapwindow.cpp Example File (fetchgooglemaps/mapwindow.cpp)</title>
+  <title>Qt Mobility Project 1.1: mapwindow.cpp Example File (fetchgooglemaps/mapwindow.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -68,6 +68,8 @@
     #include &quot;satellitedialog.h&quot;
 
     #include &quot;mapwindow.h&quot;
+
+    QTM_USE_NAMESPACE
 
 <span class="comment">    // Use the special 'localhost' key for the Google Maps key</span>
     const QString GMAPS_STATICMAP_URL_TEMPLATE =  &quot;http:<span class="comment">//maps.google.com/staticmap?center=%1,%2&amp;zoom=14&amp;size=%3x%4&amp;map type=mobile&amp;markers=%1,%2&amp;key=ABQIAAAAnfs7bKE82qgb3Zc2YyS-oBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSySz_REpPq-4WZA27OwgbtyR3VcA&amp;sensor=false&quot;;</span>
@@ -170,14 +172,14 @@
         const bool canStartIAP = (manager.capabilities()
                                   &amp; QNetworkConfigurationManager::CanStartAndStopInterfaces);
         <span class="comment">// Is there default access point, use it</span>
-        QNetworkConfiguration cfg = manager.defaultConfiguration();
-        if (!cfg.isValid() || (!canStartIAP &amp;&amp; cfg.state() != QNetworkConfiguration::Active)) {
+        QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
+        if (!cfg.isValid() || (!canStartIAP &amp;&amp; cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
             QMessageBox::information(this, tr(&quot;Flickr Demo&quot;), tr(
                                          &quot;Available Access Points not found.&quot;));
             return;
         }
 
-        session = new QNetworkSession(cfg, this);
+        session = new QTM_PREPEND_NAMESPACE(QNetworkSession)(cfg, this);
         session-&gt;open();
         session-&gt;waitForOpened(-1);
     #endif
@@ -236,7 +238,7 @@
         headingAndSpeedLabel-&gt;setText(tr(&quot;Bearing %1, travelling at %2 km/h&quot;).arg(heading).arg(speed));
 
         dateTimeLabel-&gt;setText(tr(&quot;(Last update: %1)&quot;).
-                               arg(info.dateTime().toLocalTime().time().toString()));
+                               arg(info.timestamp().toLocalTime().time().toString()));
 
         if (!loading) {
             <span class="comment">// Google Maps does not provide maps larger than 640x480</span>
@@ -270,6 +272,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

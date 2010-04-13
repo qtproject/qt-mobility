@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: contactlistpage.h Example File (samplephonebook/contactlistpage.h)</title>
+  <title>Qt Mobility Project 1.1: contactlistpage.h Example File (samplephonebook/contactlistpage.h)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -68,6 +68,7 @@
     class QComboBox;
     class QLabel;
     class QLineEdit;
+    class QMainWindow;
 
     QTM_USE_NAMESPACE
 
@@ -76,7 +77,7 @@
         Q_OBJECT
 
     public:
-        ContactListPage(QWidget *parent = 0);
+        ContactListPage(QMainWindow *mainWindow = 0, QWidget *parent = 0);
         ~ContactListPage();
 
         void rebuildList(const QContactFilter&amp; filter);
@@ -85,10 +86,11 @@
         void showEditorPage(QContactLocalId contactId);
         void showFilterPage(const QContactFilter&amp; filter);
         void managerChanged(QContactManager *manager);
+        void clearFilter();
 
     private slots:
         void backendSelected();
-        void addContactClicked();
+        void addClicked();
         void editClicked();
         void filterClicked();
         void deleteClicked();
@@ -102,12 +104,16 @@
 
         QListWidget *m_contactsList;
 
+        <span class="comment">// The main window that the page can add actions to</span>
+        QMainWindow *m_mainWindow;
+
         <span class="comment">// data</span>
         QContactManager *m_manager;
         QMap&lt;QContactLocalId, int&gt; m_idToListIndex;
         QMap&lt;QString, QContactManager*&gt; m_initialisedManagers;
 
         QContactFilter m_currentFilter;
+        QMap&lt;QString, QString&gt; m_availableManagers;
     };
 
     #endif <span class="comment">// CONTACTLISTPAGE_H</span></pre>
@@ -115,6 +121,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

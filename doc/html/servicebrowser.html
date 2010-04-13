@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- servicebrowser.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Service Browser Example</title>
+  <title>Qt Mobility Project 1.1: Service Browser Example</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -63,6 +63,12 @@
 <pre>    ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
         : QWidget(parent, flags)
     {
+    #if defined(Q_OS_MAC)
+        QDir dir(QCoreApplication::applicationDirPath());
+        dir.cdUp();
+        dir.cd(&quot;PlugIns&quot;);
+        QCoreApplication::addLibraryPath(dir.absolutePath());
+    #endif
         serviceManager = new QServiceManager(this);
 
         registerExampleServices();
@@ -174,7 +180,7 @@
         QString directory;
     };</pre>
 <p>So if, in the ServiceBrowser application, we select the com.nokia.qt.examples.FileStorage implementation provided by FileManagerService, the browser would display all the dynamically invokable attributes of the FileManagerStorage class:</p>
-<p align="center"><img src="images/servicebrowser-attributes.png" /></p><p>As you can see, the FileManagerStorage::workingDirectory property, the FileManagerStorage::copyFile() slot and the FileManagerStorage::workingDirectoryChanged() signal are all listed. (The destroyed(), deleteLater() and _q_reregisterTimers() attributes are inherited from the <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> parent.)</p>
+<p align="center"><img src="images/servicebrowser-attributes.png" /></p><p>As you can see, the <a href="filemanagerstorage.html#workingDirectory-prop">FileManagerStorage::workingDirectory</a> property, the <a href="filemanagerstorage.html#copyFile">FileManagerStorage::copyFile</a>() slot and the <a href="filemanagerstorage.html#workingDirectoryChanged">FileManagerStorage::workingDirectoryChanged</a>() signal are all listed. (The destroyed(), deleteLater() and _q_reregisterTimers() attributes are inherited from the <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> parent.)</p>
 <p>To invoke the <tt>copyFile()</tt> slot, for example:</p>
 <pre>    QObject *interfaceImpl = QServiceManager::loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;, 0, 0);
     QMetaObject::invokeMethod(interfaceImpl, &quot;copyFile&quot;,
@@ -185,6 +191,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

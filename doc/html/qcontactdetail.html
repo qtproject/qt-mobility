@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactdetail.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QContactDetail Class Reference</title>
+  <title>Qt Mobility Project 1.1: QContactDetail Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -31,18 +31,23 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail">QContactDetail</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-2">QContactDetail</a></b> ( const QString &amp; <i>thisDefinitionId</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-3">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#dtor.QContactDetail">~QContactDetail</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-2">QContactDetail</a></b> ( const char * <i>thisDefinitionId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-3">QContactDetail</a></b> ( const QString &amp; <i>thisDefinitionId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-4">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#dtor.QContactDetail">~QContactDetail</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">AccessConstraints </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#accessConstraints">accessConstraints</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#contexts">contexts</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#definitionName">definitionName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#detailUri">detailUri</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#hasValue">hasValue</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#hasValue-2">hasValue</a></b> ( const char * <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#hasValue-3">hasValue</a></b> ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#key">key</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#linkedDetailUris">linkedDetailUris</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#removeValue">removeValue</a></b> ( const QString &amp; <i>key</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#removeValue-2">removeValue</a></b> ( const char * <i>key</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#removeValue-3">removeValue</a></b> ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#resetKey">resetKey</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setContexts">setContexts</a></b> ( const QStringList &amp; <i>contexts</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setContexts-2">setContexts</a></b> ( const QString &amp; <i>context</i> )</td></tr>
@@ -50,9 +55,17 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setLinkedDetailUris">setLinkedDetailUris</a></b> ( const QStringList &amp; <i>linkedDetailUris</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setLinkedDetailUris-2">setLinkedDetailUris</a></b> ( const QString &amp; <i>linkedDetailUri</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setValue">setValue</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setValue-2">setValue</a></b> ( const char * <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#setValue-3">setValue</a></b> ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-2">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-2">value</a></b> ( const char * <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-3">value</a></b> ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-4">value</a></b> ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-5">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#value-6">value</a></b> ( const char * <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#variantValue">variantValue</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#variantValue-2">variantValue</a></b> ( const char * <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#variantValue-3">variantValue</a></b> ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariantMap </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#variantValues">variantValues</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#operator-not-eq">operator!=</a></b> ( const QContactDetail &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactDetail &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#operator-eq">operator=</a></b> ( const QContactDetail &amp; <i>other</i> )</td></tr>
@@ -62,8 +75,10 @@
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-4">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-5">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#QContactDetail-6">QContactDetail</a></b> ( const QContactDetail &amp; <i>other</i>, const char * <i>expectedDefinitionId</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactDetail &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#assign">assign</a></b> ( const QContactDetail &amp; <i>other</i>, const QString &amp; <i>expectedDefinitionId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactDetail &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetail.html#assign-2">assign</a></b> ( const QContactDetail &amp; <i>other</i>, const char * <i>expectedDefinitionId</i> )</td></tr>
 </table>
 <hr />
 <a name="macros"></a>
@@ -128,14 +143,18 @@
 <a name="//apple_ref/cpp/instm/QContactDetail/QContactDetail"></a>
 <h3 class="fn"><a name="QContactDetail"></a>QContactDetail::QContactDetail ()</h3>
 <p>Constructs a new, empty detail</p>
-<h3 class="fn"><a name="QContactDetail-2"></a>QContactDetail::QContactDetail ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>thisDefinitionId</i> )</h3>
+<h3 class="fn"><a name="QContactDetail-2"></a>QContactDetail::QContactDetail ( const char * <i>thisDefinitionId</i> )</h3>
 <p>Constructs a new, empty detail of the definition identified by <i>thisDefinitionId</i></p>
-<h3 class="fn"><a name="QContactDetail-3"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i> )</h3>
+<h3 class="fn"><a name="QContactDetail-3"></a>QContactDetail::QContactDetail ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>thisDefinitionId</i> )</h3>
+<p>Constructs a new, empty detail of the definition identified by <i>thisDefinitionId</i>. The definitionId must be restricted to the Latin 1 character set.</p>
+<h3 class="fn"><a name="QContactDetail-4"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i> )</h3>
 <p>Constructs a detail that is a copy of <i>other</i></p>
-<h3 class="fn"><a name="QContactDetail-4"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="QContactDetail-5"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Constructs a detail that is a copy of <i>other</i> if <i>other</i> is of the expected definition identified by <i>expectedDefinitionId</i>, else constructs a new, empty detail of the definition identified by the <i>expectedDefinitionId</i></p>
+<h3 class="fn"><a name="QContactDetail-6"></a>QContactDetail::QContactDetail ( const QContactDetail &amp; <i>other</i>, const char * <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Constructs a detail that is a copy of <i>other</i> if <i>other</i> is of the expected definition identified by <i>expectedDefinitionId</i>, else constructs a new, empty detail of the definition identified by the <i>expectedDefinitionId</i></p>
 <a name="//apple_ref/cpp/instm/QContactDetail/~QContactDetail"></a>
-<h3 class="fn"><a name="dtor.QContactDetail"></a>QContactDetail::~QContactDetail ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QContactDetail"></a>QContactDetail::~QContactDetail ()</h3>
 <p>Frees the memory used by this detail</p>
 <a name="//apple_ref/cpp/instm/QContactDetail/accessConstraints"></a>
 <h3 class="fn"><a name="accessConstraints"></a><a href="qcontactdetail.html#AccessConstraint-enum">AccessConstraints</a> QContactDetail::accessConstraints () const</h3>
@@ -144,6 +163,8 @@
 <p>See also <a href="qcontactdetail.html#AccessConstraint-enum">QContactDetail::AccessConstraints</a>.</p>
 <a name="//apple_ref/cpp/instm/QContactDetail/assign"></a>
 <h3 class="fn"><a name="assign"></a>QContactDetail &amp; QContactDetail::assign ( const QContactDetail &amp; <i>other</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Assigns this detail to <i>other</i> if the definition of <i>other</i> is that identified by the given <i>expectedDefinitionId</i>, else assigns this detail to be a new, empty detail of the definition identified by the given <i>expectedDefinitionId</i></p>
+<h3 class="fn"><a name="assign-2"></a>QContactDetail &amp; QContactDetail::assign ( const QContactDetail &amp; <i>other</i>, const char * <i>expectedDefinitionId</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Assigns this detail to <i>other</i> if the definition of <i>other</i> is that identified by the given <i>expectedDefinitionId</i>, else assigns this detail to be a new, empty detail of the definition identified by the given <i>expectedDefinitionId</i></p>
 <a name="//apple_ref/cpp/instm/QContactDetail/contexts"></a>
 <h3 class="fn"><a name="contexts"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QContactDetail::contexts () const</h3>
@@ -163,6 +184,9 @@
 <a name="//apple_ref/cpp/instm/QContactDetail/hasValue"></a>
 <h3 class="fn"><a name="hasValue"></a>bool QContactDetail::hasValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>Returns true if this detail has a field with the given <i>key</i>, or false otherwise.</p>
+<h3 class="fn"><a name="hasValue-2"></a>bool QContactDetail::hasValue ( const char * <i>key</i> ) const</h3>
+<p>Returns true if this detail has a field with the given <i>key</i>, or false otherwise.</p>
+<h3 class="fn"><a name="hasValue-3"></a>bool QContactDetail::hasValue ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> ) const</h3>
 <a name="//apple_ref/cpp/instm/QContactDetail/isEmpty"></a>
 <h3 class="fn"><a name="isEmpty"></a>bool QContactDetail::isEmpty () const</h3>
 <p>Returns true if no values are contained in this detail. Note that context is stored as a value; hence, if a context is set, this function will return false.</p>
@@ -178,6 +202,9 @@
 <a name="//apple_ref/cpp/instm/QContactDetail/removeValue"></a>
 <h3 class="fn"><a name="removeValue"></a>bool QContactDetail::removeValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> )</h3>
 <p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise</p>
+<h3 class="fn"><a name="removeValue-2"></a>bool QContactDetail::removeValue ( const char * <i>key</i> )</h3>
+<p>Removes the value stored in this detail for the given <i>key</i>. Returns true if a value was stored for the given <i>key</i> and the operation succeeded, and false otherwise</p>
+<h3 class="fn"><a name="removeValue-3"></a>bool QContactDetail::removeValue ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> )</h3>
 <a name="//apple_ref/cpp/instm/QContactDetail/resetKey"></a>
 <h3 class="fn"><a name="resetKey"></a>void QContactDetail::resetKey ()</h3>
 <p>Causes the implicitly-shared detail to be detached from any other copies, and generates a new key for it. This ensures that calling <a href="qcontact.html#saveDetail">QContact::saveDetail</a>() will result in a new detail being saved, rather than another detail being updated.</p>
@@ -213,16 +240,28 @@
 <h3 class="fn"><a name="setValue"></a>bool QContactDetail::setValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Inserts <i>value</i> into the detail for the given <i>key</i> if <i>value</i> is valid. If <i>value</i> is invalid, removes the field with the given <i>key</i> from the detail. Returns true if the given <i>value</i> was set for the <i>key</i> (if the <i>value</i> was valid), or if the given <i>key</i> was removed from detail (if the <i>value</i> was invalid), and returns false if the key was unable to be removed (and the <i>value</i> was invalid)</p>
 <p>See also <a href="qcontactdetail.html#value">value</a>().</p>
+<h3 class="fn"><a name="setValue-2"></a>bool QContactDetail::setValue ( const char * <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<p>Inserts <i>value</i> into the detail for the given <i>key</i> if <i>value</i> is valid. If <i>value</i> is invalid, removes the field with the given <i>key</i> from the detail. Returns true if the given <i>value</i> was set for the <i>key</i> (if the <i>value</i> was valid), or if the given <i>key</i> was removed from detail (if the <i>value</i> was invalid), and returns false if the key was unable to be removed (and the <i>value</i> was invalid)</p>
+<h3 class="fn"><a name="setValue-3"></a>bool QContactDetail::setValue ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <a name="//apple_ref/cpp/instm/QContactDetail/value"></a>
 <h3 class="fn"><a name="value"></a>T QContactDetail::value ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the value of the template type associated with the given <i>key</i></p>
 <p>See also <a href="qcontactdetail.html#setValue">setValue</a>().</p>
-<h3 class="fn"><a name="value-2"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetail::value ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="value-2"></a>T QContactDetail::value ( const char * <i>key</i> ) const</h3>
+<h3 class="fn"><a name="value-3"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetail::value ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="value-4"></a>T QContactDetail::value ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> ) const</h3>
+<h3 class="fn"><a name="value-5"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetail::value ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<p>This is an overloaded function.</p>
+<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or an empty <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> if no value for the given <i>key</i> exists</p>
+<h3 class="fn"><a name="value-6"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetail::value ( const char * <i>key</i> ) const</h3>
 <p>This is an overloaded function.</p>
 <p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or an empty <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> if no value for the given <i>key</i> exists</p>
 <a name="//apple_ref/cpp/instm/QContactDetail/variantValue"></a>
 <h3 class="fn"><a name="variantValue"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetail::variantValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>, or an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> if no value for the given <i>key</i> exists</p>
+<h3 class="fn"><a name="variantValue-2"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetail::variantValue ( const char * <i>key</i> ) const</h3>
+<p>Returns the value stored in this detail for the given <i>key</i> as a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>, or an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> if no value for the given <i>key</i> exists</p>
+<h3 class="fn"><a name="variantValue-3"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetail::variantValue ( const QLatin1Constant&lt;N&gt; &amp; <i>key</i> ) const</h3>
 <a name="//apple_ref/cpp/instm/QContactDetail/variantValues"></a>
 <h3 class="fn"><a name="variantValues"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html#QVariantMap-typedef">QVariantMap</a> QContactDetail::variantValues () const</h3>
 <p>Returns the values stored in this detail as a map from value key to value</p>
@@ -246,21 +285,21 @@
     {
     public:
     #ifdef Q_QDOC
-        const char* DefinitionName;
-        const char* FieldNumber;
-        const char* FieldSubTypes;
-        const char* SubTypeLandline;
-        const char* SubTypeMobile;
-        const char* SubTypeFax;
-        const char* SubTypePager;
-        const char* SubTypeVoice;
-        const char* SubTypeModem;
-        const char* SubTypeVideo;
-        const char* SubTypeCar;
-        const char* SubTypeBulletinBoardSystem;
-        const char* SubTypeMessagingCapable;
-        const char* SubTypeAssistant;
-        const char* SubTypeDtmfMenu;
+        static const QLatin1Constant DefinitionName;
+        static const QLatin1Constant FieldNumber;
+        static const QLatin1Constant FieldSubTypes;
+        static const QLatin1Constant SubTypeLandline;
+        static const QLatin1Constant SubTypeMobile;
+        static const QLatin1Constant SubTypeFax;
+        static const QLatin1Constant SubTypePager;
+        static const QLatin1Constant SubTypeVoice;
+        static const QLatin1Constant SubTypeModem;
+        static const QLatin1Constant SubTypeVideo;
+        static const QLatin1Constant SubTypeCar;
+        static const QLatin1Constant SubTypeBulletinBoardSystem;
+        static const QLatin1Constant SubTypeMessagingCapable;
+        static const QLatin1Constant SubTypeAssistant;
+        static const QLatin1Constant SubTypeDtmfMenu;
     #else
         Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
         Q_DECLARE_LATIN1_CONSTANT(FieldNumber, &quot;PhoneNumber&quot;);
@@ -293,6 +332,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

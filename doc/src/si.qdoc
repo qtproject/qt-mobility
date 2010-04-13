@@ -132,14 +132,10 @@ If the NetworkManager backend is required run qmake as follows:
 
 The backend selection is expected to disappear once the API is integrated into Qt. 
 
-\section1 Reference documentation
+\section1 Examples
 
-\section2 Examples
+\section2 System Information Example
 
-\list
-    \o \l{File Manager Plugin Example}
-    \o \l{Bluetooth Transfer Plugin Example}
-    \o \l{Service Browser Example}
-\endlist
+The \l{sysinfo}{System Information} example demonstrates how an application can very easily access the system information of the device.
 
 */

@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: phonebook.cpp Example File (samplephonebook/phonebook.cpp)</title>
+  <title>Qt Mobility Project 1.1: phonebook.cpp Example File (samplephonebook/phonebook.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -72,10 +72,11 @@
         m_filterPage = new FilterPage(centralWidget);
         connect(m_filterPage, SIGNAL(showListPage(QContactFilter)), this, SLOT(activateList(QContactFilter)));
 
-        m_listPage = new ContactListPage(centralWidget);
+        m_listPage = new ContactListPage(this, centralWidget);
         connect(m_listPage, SIGNAL(showEditorPage(QContactLocalId)), this, SLOT(activateEditor(QContactLocalId)));
         connect(m_listPage, SIGNAL(showFilterPage(QContactFilter)), this, SLOT(activateFind()));
         connect(m_listPage, SIGNAL(managerChanged(QContactManager*)), this, SLOT(managerChanged(QContactManager*)));
+        connect(m_listPage, SIGNAL(clearFilter()), m_filterPage, SLOT(clearFilter()));
 
         m_stackedWidget = new QStackedWidget(centralWidget);
         m_stackedWidget-&gt;addWidget(m_listPage);
@@ -96,24 +97,32 @@
 
     void PhoneBook::activateEditor(QContactLocalId contactId)
     {
+        menuBar()-&gt;setVisible(false);
         m_editorPage-&gt;setCurrentContact(m_manager, contactId);
         m_stackedWidget-&gt;setCurrentIndex(1); <span class="comment">// list = 0, editor = 1, find = 2.</span>
     }
 
     void PhoneBook::activateList(const QContactFilter&amp; filter)
     {
+    #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+        menuBar()-&gt;setVisible(true);
+    #endif
         m_currentFilter = filter;
         activateList(); <span class="comment">// call base now.</span>
     }
 
     void PhoneBook::activateList()
     {
+    #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+        menuBar()-&gt;setVisible(true);
+    #endif
         m_listPage-&gt;rebuildList(m_currentFilter);
         m_stackedWidget-&gt;setCurrentIndex(0); <span class="comment">// list = 0, editor = 1, find = 2.</span>
     }
 
     void PhoneBook::activateFind()
     {
+        menuBar()-&gt;setVisible(false);
         m_stackedWidget-&gt;setCurrentIndex(2); <span class="comment">// list = 0, editor = 1, find = 2.</span>
     }
 
@@ -126,6 +135,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>
