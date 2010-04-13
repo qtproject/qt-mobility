@@ -4,7 +4,7 @@
 #
 ######################################################################
 
-TEMPLATE = app
+TEMPLATE = lib
 TARGET = qtversitdocsample
 include(../../../../common.pri)
 INCLUDEPATH += ../../../../src/global \
@@ -14,7 +14,7 @@ INCLUDEPATH += ../../../../src/global \
                ../../../../src/contacts/details \
                ../../../../src/versit
 
-DESTDIR = $$QT_MOBILITY_BUILD_TREE/bin/examples
+DESTDIR = $$QT_MOBILITY_BUILD_TREE/lib
 QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 
 CONFIG += mobility console
