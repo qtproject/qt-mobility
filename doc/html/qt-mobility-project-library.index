@@ -289,76 +289,6 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QRouteRequest" href="qrouterequest.html" location="qrouterequest.h" bases="" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="RouteType" fullname="QRouteRequest::RouteType" href="qrouterequest.html#RouteType-enum" location="qrouterequest.h">
-                <value name="Fastest" value="0"/>
-                <value name="Shortest" value="1"/>
-                <value name="Economic" value="2"/>
-            </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="RouteMode" fullname="QRouteRequest::RouteMode" href="qrouterequest.html#RouteMode-enum" location="qrouterequest.h">
-                <value name="Car" value="0"/>
-                <value name="Pedestrian" value="1"/>
-                <value name="PublicTransport" value="2"/>
-            </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="RouteAvoid" fullname="QRouteRequest::RouteAvoid" href="qrouterequest.html#RouteAvoid-enum" location="qrouterequest.h">
-                <value name="Highways" value="0"/>
-                <value name="Tollroads" value="1"/>
-                <value name="Ferries" value="2"/>
-                <value name="Tunnels" value="3"/>
-                <value name="Dirtroads" value="4"/>
-                <value name="RailFerries" value="5"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QRouteRequest" fullname="QRouteRequest::QRouteRequest" href="qrouterequest.html#QRouteRequest" location="qrouterequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QRouteRequest()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QRouteRequest" fullname="QRouteRequest::~QRouteRequest" href="qrouterequest.html#dtor.QRouteRequest" location="qrouterequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QRouteRequest()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="version" fullname="QRouteRequest::version" href="qrouterequest.html#version" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="version() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSource" fullname="QRouteRequest::setSource" href="qrouterequest.html#setSource" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSource(const QGeoCoordinate &amp; source)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="source" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="source" fullname="QRouteRequest::source" href="qrouterequest.html#source" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="source() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDestination" fullname="QRouteRequest::setDestination" href="qrouterequest.html#setDestination" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDestination(const QGeoCoordinate &amp; destination)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="destination" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="destination" fullname="QRouteRequest::destination" href="qrouterequest.html#destination" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="destination() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setTotalResults" fullname="QRouteRequest::setTotalResults" href="qrouterequest.html#setTotalResults" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTotalResults(quint32 totalResults)">
-                <parameter left="quint32" right="" name="totalResults" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="totalResults" fullname="QRouteRequest::totalResults" href="qrouterequest.html#totalResults" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="totalResults() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setAlternatives" fullname="QRouteRequest::setAlternatives" href="qrouterequest.html#setAlternatives" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAlternatives(quint16 nAlternatives)">
-                <parameter left="quint16" right="" name="nAlternatives" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="alternatives" fullname="QRouteRequest::alternatives" href="qrouterequest.html#alternatives" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="alternatives() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setLanguage" fullname="QRouteRequest::setLanguage" href="qrouterequest.html#setLanguage" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLanguage(const QString &amp; code)">
-                <parameter left="const QString &amp;" right="" name="code" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="language" fullname="QRouteRequest::language" href="qrouterequest.html#language" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="language() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDepartureTime" fullname="QRouteRequest::setDepartureTime" href="qrouterequest.html#setDepartureTime" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDepartureTime(const QDateTime &amp; departureTime)">
-                <parameter left="const QDateTime &amp;" right="" name="departureTime" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="departureTime" fullname="QRouteRequest::departureTime" href="qrouterequest.html#departureTime" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="departureTime() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setArrivalTime" fullname="QRouteRequest::setArrivalTime" href="qrouterequest.html#setArrivalTime" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setArrivalTime(const QDateTime &amp; arrivalTime)">
-                <parameter left="const QDateTime &amp;" right="" name="arrivalTime" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="arrivalTime" fullname="QRouteRequest::arrivalTime" href="qrouterequest.html#arrivalTime" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="arrivalTime() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QRouteRequest::setType" href="qrouterequest.html#setType" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setType(RouteType type)">
-                <parameter left="RouteType" right="" name="type" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QRouteRequest::type" href="qrouterequest.html#type" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="RouteType" signature="type() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMode" fullname="QRouteRequest::setMode" href="qrouterequest.html#setMode" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMode(RouteMode mode)">
-                <parameter left="RouteMode" right="" name="mode" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mode" fullname="QRouteRequest::mode" href="qrouterequest.html#mode" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="RouteMode" signature="mode() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setAvoid" fullname="QRouteRequest::setAvoid" href="qrouterequest.html#setAvoid" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAvoid(QList&lt;RouteAvoid&gt; avoid)">
-                <parameter left="QList&lt;RouteAvoid&gt;" right="" name="avoid" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="avoid" fullname="QRouteRequest::avoid" href="qrouterequest.html#avoid" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;RouteAvoid&gt;" signature="avoid() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="addStopOver" fullname="QRouteRequest::addStopOver" href="qrouterequest.html#addStopOver" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addStopOver(const QGeoCoordinate &amp; stopOver)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="stopOver" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeStopOver" fullname="QRouteRequest::removeStopOver" href="qrouterequest.html#removeStopOver" location="qrouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeStopOver(const QGeoCoordinate &amp; stopOver)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="stopOver" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="stopOvers" fullname="QRouteRequest::stopOvers" href="qrouterequest.html#stopOvers" location="qrouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="const QList&lt;QGeoCoordinate&gt; &amp;" signature="stopOvers() const"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QMapMarker" href="qmapmarker.html" location="qmapmarker.h" bases="QMapObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMapMarker" fullname="QMapMarker::QMapMarker" href="qmapmarker.html#QMapMarker" location="qmapmarker.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMapMarker(const QGeoCoordinate &amp; point, const QString &amp; text, const QFont &amp; font, const QColor &amp; fontColor, const QPixmap &amp; icon, const QRectF &amp; textRect, quint16 layerIndex)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="point" default=""/>
@@ -382,9 +312,11 @@
                 <parameter left="QPainter *" right="" name="painter" default=""/>
                 <parameter left="const QRectF &amp;" right="" name="viewPort" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="constructMarker" fullname="QMapMarker::constructMarker" href="qmapmarker.html#constructMarker" location="qmapmarker.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="constructMarker(QPainter * painter, const QPointF &amp; point)">
+            <function access="protected" threadsafety="unspecified" status="commendable" name="constructMarker" fullname="QMapMarker::constructMarker" href="qmapmarker.html#constructMarker" location="qmapmarker.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="constructMarker(QPainter * painter)">
                 <parameter left="QPainter *" right="" name="painter" default=""/>
-                <parameter left="const QPointF &amp;" right="" name="point" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="constructIconMarker" fullname="QMapMarker::constructIconMarker" href="qmapmarker.html#constructIconMarker" location="qmapmarker.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="constructIconMarker(QPainter * painter)">
+                <parameter left="QPainter *" right="" name="painter" default=""/>
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QMapMarker" fullname="QMapMarker::QMapMarker" href="qmapmarker.html#QMapMarker-2" location="qmapmarker.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMapMarker(QMapMarkerPrivate &amp; dd, const QGeoCoordinate &amp; point, const QString &amp; text, const QFont &amp; font, const QColor &amp; fontColor, const QPixmap &amp; icon, const QRectF &amp; textRect, quint16 layerIndex)">
                 <parameter left="QMapMarkerPrivate &amp;" right="" name="dd" default=""/>
@@ -581,6 +513,79 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="byAncestorFolderIds" fullname="QMessageFilter::byAncestorFolderIds" href="qmessagefilter.html#byAncestorFolderIds-2" location="qmessagefilter_stub.cpp" virtual="non" meta="plain" const="false" static="true" overload="true" overload-number="2" type="QMessageFilter" signature="byAncestorFolderIds(const QMessageFolderFilter &amp; filter, QMessageDataComparator::InclusionComparator cmp)">
                 <parameter left="const QMessageFolderFilter &amp;" right="" name="filter" default=""/>
                 <parameter left="QMessageDataComparator::InclusionComparator" right="" name="cmp" default="QMessageDataComparator::Includes"/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoRouteRequest" href="qgeorouterequest.html" location="qgeorouterequest.h" bases="" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="RouteType" fullname="QGeoRouteRequest::RouteType" href="qgeorouterequest.html#RouteType-enum" location="qgeorouterequest.h">
+                <value name="Fastest" value="0"/>
+                <value name="Shortest" value="1"/>
+                <value name="Economic" value="2"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="RouteMode" fullname="QGeoRouteRequest::RouteMode" href="qgeorouterequest.html#RouteMode-enum" location="qgeorouterequest.h">
+                <value name="Car" value="0"/>
+                <value name="Pedestrian" value="1"/>
+                <value name="PublicTransport" value="2"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="RouteAvoid" fullname="QGeoRouteRequest::RouteAvoid" href="qgeorouterequest.html#RouteAvoid-enum" location="qgeorouterequest.h">
+                <value name="Highways" value="0"/>
+                <value name="Tollroads" value="1"/>
+                <value name="Ferries" value="2"/>
+                <value name="Tunnels" value="3"/>
+                <value name="Dirtroads" value="4"/>
+                <value name="RailFerries" value="5"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoRouteRequest" fullname="QGeoRouteRequest::QGeoRouteRequest" href="qgeorouterequest.html#QGeoRouteRequest" location="qgeorouterequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoRouteRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoRouteRequest" fullname="QGeoRouteRequest::~QGeoRouteRequest" href="qgeorouterequest.html#dtor.QGeoRouteRequest" location="qgeorouterequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoRouteRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="version" fullname="QGeoRouteRequest::version" href="qgeorouterequest.html#version" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="version() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSource" fullname="QGeoRouteRequest::setSource" href="qgeorouterequest.html#setSource" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSource(const QGeoCoordinate &amp; source)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="source" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="source" fullname="QGeoRouteRequest::source" href="qgeorouterequest.html#source" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="source() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDestination" fullname="QGeoRouteRequest::setDestination" href="qgeorouterequest.html#setDestination" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDestination(const QGeoCoordinate &amp; destination)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="destination" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="destination" fullname="QGeoRouteRequest::destination" href="qgeorouterequest.html#destination" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="destination() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTotalResults" fullname="QGeoRouteRequest::setTotalResults" href="qgeorouterequest.html#setTotalResults" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTotalResults(quint32 totalResults)">
+                <parameter left="quint32" right="" name="totalResults" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="totalResults" fullname="QGeoRouteRequest::totalResults" href="qgeorouterequest.html#totalResults" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="totalResults() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAlternatives" fullname="QGeoRouteRequest::setAlternatives" href="qgeorouterequest.html#setAlternatives" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAlternatives(quint16 nAlternatives)">
+                <parameter left="quint16" right="" name="nAlternatives" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="alternatives" fullname="QGeoRouteRequest::alternatives" href="qgeorouterequest.html#alternatives" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="alternatives() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setLanguage" fullname="QGeoRouteRequest::setLanguage" href="qgeorouterequest.html#setLanguage" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLanguage(const QString &amp; code)">
+                <parameter left="const QString &amp;" right="" name="code" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="language" fullname="QGeoRouteRequest::language" href="qgeorouterequest.html#language" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="language() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDepartureTime" fullname="QGeoRouteRequest::setDepartureTime" href="qgeorouterequest.html#setDepartureTime" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDepartureTime(const QDateTime &amp; departureTime)">
+                <parameter left="const QDateTime &amp;" right="" name="departureTime" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="departureTime" fullname="QGeoRouteRequest::departureTime" href="qgeorouterequest.html#departureTime" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="departureTime() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setArrivalTime" fullname="QGeoRouteRequest::setArrivalTime" href="qgeorouterequest.html#setArrivalTime" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setArrivalTime(const QDateTime &amp; arrivalTime)">
+                <parameter left="const QDateTime &amp;" right="" name="arrivalTime" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="arrivalTime" fullname="QGeoRouteRequest::arrivalTime" href="qgeorouterequest.html#arrivalTime" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="arrivalTime() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setType" fullname="QGeoRouteRequest::setType" href="qgeorouterequest.html#setType" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setType(RouteType type)">
+                <parameter left="RouteType" right="" name="type" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QGeoRouteRequest::type" href="qgeorouterequest.html#type" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="RouteType" signature="type() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMode" fullname="QGeoRouteRequest::setMode" href="qgeorouterequest.html#setMode" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMode(RouteMode mode)">
+                <parameter left="RouteMode" right="" name="mode" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mode" fullname="QGeoRouteRequest::mode" href="qgeorouterequest.html#mode" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="RouteMode" signature="mode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAvoid" fullname="QGeoRouteRequest::setAvoid" href="qgeorouterequest.html#setAvoid" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAvoid(QList&lt;RouteAvoid&gt; avoid)">
+                <parameter left="QList&lt;RouteAvoid&gt;" right="" name="avoid" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="avoid" fullname="QGeoRouteRequest::avoid" href="qgeorouterequest.html#avoid" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;RouteAvoid&gt;" signature="avoid() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addStopOver" fullname="QGeoRouteRequest::addStopOver" href="qgeorouterequest.html#addStopOver" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addStopOver(const QGeoCoordinate &amp; stopOver)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="stopOver" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeStopOver" fullname="QGeoRouteRequest::removeStopOver" href="qgeorouterequest.html#removeStopOver" location="qgeorouterequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeStopOver(const QGeoCoordinate &amp; stopOver)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="stopOver" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="stopOvers" fullname="QGeoRouteRequest::stopOvers" href="qgeorouterequest.html#stopOvers" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="const QList&lt;QGeoCoordinate&gt; &amp;" signature="stopOvers() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="requestString" fullname="QGeoRouteRequest::requestString" href="qgeorouterequest.html#requestString" location="qgeorouterequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="requestString(const QString &amp; host) const">
+                <parameter left="const QString &amp;" right="" name="host" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactLocalIdFilter" href="qcontactlocalidfilter.html" location="qcontactlocalidfilter.h" bases="QContactFilter" module="">
@@ -837,6 +842,21 @@
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QImageProcessingControl" fullname="QImageProcessingControl::QImageProcessingControl" href="qimageprocessingcontrol.html#QImageProcessingControl" location="qimageprocessingcontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QImageProcessingControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoRoutingService" href="qgeoroutingservice.html" location="qgeoroutingservice.h" bases="QObject" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoRoutingService" fullname="QGeoRoutingService::QGeoRoutingService" href="qgeoroutingservice.html#QGeoRoutingService" location="qgeoroutingservice.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoRoutingService()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoRoutingService" fullname="QGeoRoutingService::~QGeoRoutingService" href="qgeoroutingservice.html#dtor.QGeoRoutingService" location="qgeoroutingservice.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoRoutingService()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getRoute" fullname="QGeoRoutingService::getRoute" href="qgeoroutingservice.html#getRoute" location="qgeoroutingservice.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QGeoRouteReply *" signature="getRoute(const QGeoRouteRequest &amp; request)">
+                <parameter left="const QGeoRouteRequest &amp;" right="" name="request" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoRoutingService::finished" href="qgeoroutingservice.html#finished" location="qgeoroutingservice.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished(QGeoRouteReply * reply)">
+                <parameter left="QGeoRouteReply *" right="" name="reply" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoRoutingService::error" href="qgeoroutingservice.html#error" location="qgeoroutingservice.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeoRouteReply * reply, QGeoRouteReply::ErrorCode errorCode, QString errorString)">
+                <parameter left="QGeoRouteReply *" right="" name="reply" default=""/>
+                <parameter left="QGeoRouteReply::ErrorCode" right="" name="errorCode" default=""/>
+                <parameter left="QString" right="" name="errorString" default="QString()"/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactFamily" href="qcontactfamily.html" location="qcontactfamily.h" bases="QContactDetail" module="">
@@ -1108,44 +1128,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QMessageFolder::name" href="qmessagefolder.html#name" location="qmessagefolder_symbian.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QMessageFolder::path" href="qmessagefolder.html#path" location="qmessagefolder_symbian.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="path() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoReply" href="qgeoreply.html" location="qgeoreply.h" bases="QObject" module="">
-            <typedef access="public" threadsafety="unspecified" status="commendable" name="ErrorCode" fullname="QGeoReply::ErrorCode" href="qgeoreply.html#ErrorCode-typedef" location="qgeoreply.h"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoReply" fullname="QGeoReply::QGeoReply" href="qgeoreply.html#QGeoReply" location="qgeoreply.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoReply()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isFinished" fullname="QGeoReply::isFinished" href="qgeoreply.html#isFinished" location="qgeoreply.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isFinished() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoReply::finished" href="qgeoreply.html#finished" location="qgeoreply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoReply::error" href="qgeoreply.html#error" location="qgeoreply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(ErrorCode code)">
-                <parameter left="ErrorCode" right="" name="code" default=""/>
-            </function>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="fin" fullname="QGeoReply::fin" href="qgeoreply.html#fin-var" location="qgeoreply.h" type="bool" static="false"/>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QRouteReply" href="qroutereply.html" location="qroutereply.h" bases="QGeoReply" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="ResultCode" fullname="QRouteReply::ResultCode" href="qroutereply.html#ResultCode-enum" location="qroutereply.h">
-                <value name="OK" value="0"/>
-                <value name="Failed" value="1"/>
-                <value name="FailedWithAlternative" value="2"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="resultCode" fullname="QRouteReply::resultCode" href="qroutereply.html#resultCode" location="qroutereply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="ResultCode" signature="resultCode() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setResultCode" fullname="QRouteReply::setResultCode" href="qroutereply.html#setResultCode" location="qroutereply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setResultCode(ResultCode result)">
-                <parameter left="ResultCode" right="" name="result" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="resultDescription" fullname="QRouteReply::resultDescription" href="qroutereply.html#resultDescription" location="qroutereply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="resultDescription() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="language" fullname="QRouteReply::language" href="qroutereply.html#language" location="qroutereply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="language() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setResultDescription" fullname="QRouteReply::setResultDescription" href="qroutereply.html#setResultDescription" location="qroutereply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setResultDescription(QString description)">
-                <parameter left="QString" right="" name="description" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setLanguage" fullname="QRouteReply::setLanguage" href="qroutereply.html#setLanguage" location="qroutereply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLanguage(QString language)">
-                <parameter left="QString" right="" name="language" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="count" fullname="QRouteReply::count" href="qroutereply.html#count" location="qroutereply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="count() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="routes" fullname="QRouteReply::routes" href="qroutereply.html#routes" location="qroutereply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="const QList&lt;QRoute&gt; &amp;" signature="routes() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="addRoute" fullname="QRouteReply::addRoute" href="qroutereply.html#addRoute" location="qroutereply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addRoute(QRoute route)">
-                <parameter left="QRoute" right="" name="route" default=""/>
-            </function>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkProximityFilter" href="qlandmarkproximityfilter.html" location="qlandmarkproximityfilter.h" bases="QLandmarkFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkProximityFilter" fullname="QLandmarkProximityFilter::QLandmarkProximityFilter" href="qlandmarkproximityfilter.html#QLandmarkProximityFilter" location="qlandmarkproximityfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkProximityFilter(const QGeoCoordinate &amp; coordinate, double radius)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-                <parameter left="double" right="" name="radius" default=""/>
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default="QGeoCoordinate()"/>
+                <parameter left="double" right="" name="radius" default="-1"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkProximityFilter" fullname="QLandmarkProximityFilter::~QLandmarkProximityFilter" href="qlandmarkproximityfilter.html#dtor.QLandmarkProximityFilter" location="qlandmarkproximityfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkProximityFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QLandmarkProximityFilter::coordinate" href="qlandmarkproximityfilter.html#coordinate" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="coordinate() const"/>
@@ -1585,10 +1571,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QGeoLocation" fullname="QGeoLocation::QGeoLocation" href="qgeolocation.html#QGeoLocation-2" location="qgeolocation.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QGeoLocation(const QGeoLocation &amp; other)">
                 <parameter left="const QGeoLocation &amp;" right="" name="other" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoLocation" fullname="QGeoLocation::~QGeoLocation" href="qgeolocation.html#dtor.QGeoLocation" location="qgeolocation.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoLocation()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QGeoLocation::operator=" href="qgeolocation.html#operator=" location="qgeolocation.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoLocation &amp;" signature="operator=(const QGeoLocation &amp; other)">
                 <parameter left="const QGeoLocation &amp;" right="" name="other" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoLocation" fullname="QGeoLocation::~QGeoLocation" href="qgeolocation.html#dtor.QGeoLocation" location="qgeolocation.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoLocation()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QGeoLocation::operator==" href="qgeolocation.html#operator==" location="qgeolocation.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QGeoLocation &amp; other) const">
                 <parameter left="const QGeoLocation &amp;" right="" name="other" default=""/>
             </function>
@@ -1972,6 +1958,33 @@
                 <parameter left="QSensor *" right="" name="sensor" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoRouteReply" href="qgeoroutereply.html" location="qgeoroutereply.h" bases="QObject" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="ErrorCode" fullname="QGeoRouteReply::ErrorCode" href="qgeoroutereply.html#ErrorCode-enum" location="qgeoroutereply.h">
+                <value name="NoError" value="0"/>
+                <value name="NetworkError" value="1"/>
+                <value name="NoContentError" value="2"/>
+                <value name="ParsingError" value="3"/>
+                <value name="UnknownError" value="4"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoRouteReply" fullname="QGeoRouteReply::QGeoRouteReply" href="qgeoroutereply.html#QGeoRouteReply" location="qgeoroutereply.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoRouteReply(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoRouteReply" fullname="QGeoRouteReply::~QGeoRouteReply" href="qgeoroutereply.html#dtor.QGeoRouteReply" location="qgeoroutereply.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoRouteReply()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="description" fullname="QGeoRouteReply::description" href="qgeoroutereply.html#description" location="qgeoroutereply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="description() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDescription" fullname="QGeoRouteReply::setDescription" href="qgeoroutereply.html#setDescription" location="qgeoroutereply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDescription(const QString &amp; description)">
+                <parameter left="const QString &amp;" right="" name="description" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="routes" fullname="QGeoRouteReply::routes" href="qgeoroutereply.html#routes" location="qgeoroutereply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QGeoRoute&gt;" signature="routes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRoutes" fullname="QGeoRouteReply::setRoutes" href="qgeoroutereply.html#setRoutes" location="qgeoroutereply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRoutes(const QList&lt;QGeoRoute&gt; &amp; routes)">
+                <parameter left="const QList&lt;QGeoRoute&gt; &amp;" right="" name="routes" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="cancel" fullname="QGeoRouteReply::cancel" href="qgeoroutereply.html#cancel" location="qgeoroutereply.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="cancel()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoRouteReply::finished" href="qgeoroutereply.html#finished" location="qgeoroutereply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoRouteReply::error" href="qgeoroutereply.html#error" location="qgeoroutereply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeoRouteReply::ErrorCode errorCode, const QString &amp; errorString)">
+                <parameter left="QGeoRouteReply::ErrorCode" right="" name="errorCode" default=""/>
+                <parameter left="const QString &amp;" right="" name="errorString" default="QString()"/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVideoEncoderControl" href="qvideoencodercontrol.html" location="qvideoencodercontrol.h" bases="QMediaControl" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVideoEncoderControl" fullname="QVideoEncoderControl::~QVideoEncoderControl" href="qvideoencodercontrol.html#dtor.QVideoEncoderControl" location="qvideoencodercontrol.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVideoEncoderControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedResolutions" fullname="QVideoEncoderControl::supportedResolutions" href="qvideoencodercontrol.html#supportedResolutions" location="qvideoencodercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QSize&gt;" signature="supportedResolutions(const QVideoEncoderSettings &amp; settings, bool * continuous) const">
@@ -2302,6 +2315,7 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeocodingRequest" href="qgeocodingrequest.html" location="qgeocodingrequest.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QGeocodingRequest" fullname="QGeocodingRequest::QGeocodingRequest" href="qgeocodingrequest.html#QGeocodingRequest" location="qgeocodingrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeocodingRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeocodingRequest" fullname="QGeocodingRequest::~QGeocodingRequest" href="qgeocodingrequest.html#dtor.QGeocodingRequest" location="qgeocodingrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeocodingRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="version" fullname="QGeocodingRequest::version" href="qgeocodingrequest.html#version" location="qgeocodingrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="version() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="language" fullname="QGeocodingRequest::language" href="qgeocodingrequest.html#language" location="qgeocodingrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="language() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLanguage" fullname="QGeocodingRequest::setLanguage" href="qgeocodingrequest.html#setLanguage" location="qgeocodingrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLanguage(const QString &amp; language)">
@@ -2334,6 +2348,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="number" fullname="QGeocodingRequest::number" href="qgeocodingrequest.html#number" location="qgeocodingrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="number() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setNumber" fullname="QGeocodingRequest::setNumber" href="qgeocodingrequest.html#setNumber" location="qgeocodingrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setNumber(const QString &amp; number)">
                 <parameter left="const QString &amp;" right="" name="number" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="requestString" fullname="QGeocodingRequest::requestString" href="qgeocodingrequest.html#requestString" location="qgeocodingrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="requestString(const QString &amp; host) const">
+                <parameter left="const QString &amp;" right="" name="host" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitWriter" href="qversitwriter.html" location="qversitwriter.h" bases="QObject" module="">
@@ -2418,6 +2435,24 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QContactChangeSet::clear" href="qcontactchangeset.html#clear" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="emitSignals" fullname="QContactChangeSet::emitSignals" href="qcontactchangeset.html#emitSignals" location="qcontactchangeset.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="emitSignals(QContactManagerEngine * engine)">
                 <parameter left="QContactManagerEngine *" right="" name="engine" default=""/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeocodingService" href="qgeocodingservice.html" location="qgeocodingservice.h" bases="QObject" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeocodingService" fullname="QGeocodingService::QGeocodingService" href="qgeocodingservice.html#QGeocodingService" location="qgeocodingservice.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeocodingService()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeocodingService" fullname="QGeocodingService::~QGeocodingService" href="qgeocodingservice.html#dtor.QGeocodingService" location="qgeocodingservice.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeocodingService()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="geocode" fullname="QGeocodingService::geocode" href="qgeocodingservice.html#geocode" location="qgeocodingservice.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QGeocodingReply *" signature="geocode(const QGeocodingRequest &amp; request)">
+                <parameter left="const QGeocodingRequest &amp;" right="" name="request" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="reverseGeocode" fullname="QGeocodingService::reverseGeocode" href="qgeocodingservice.html#reverseGeocode" location="qgeocodingservice.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QGeocodingReply *" signature="reverseGeocode(const QReverseGeocodingRequest &amp; request)">
+                <parameter left="const QReverseGeocodingRequest &amp;" right="" name="request" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeocodingService::finished" href="qgeocodingservice.html#finished" location="qgeocodingservice.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished(QGeocodingReply * reply)">
+                <parameter left="QGeocodingReply *" right="" name="reply" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeocodingService::error" href="qgeocodingservice.html#error" location="qgeocodingservice.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeocodingReply * reply, QGeocodingReply::ErrorCode errorCode, QString errorString)">
+                <parameter left="QGeocodingReply *" right="" name="reply" default=""/>
+                <parameter left="QGeocodingReply::ErrorCode" right="" name="errorCode" default=""/>
+                <parameter left="QString" right="" name="errorString" default="QString()"/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageAddress" href="qmessageaddress.html" location="qmessageaddress.h" bases="" module="">
@@ -2561,6 +2596,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QReverseGeocodingRequest" fullname="QReverseGeocodingRequest::QReverseGeocodingRequest" href="qreversegeocodingrequest.html#QReverseGeocodingRequest-2" location="qreversegeocodingrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QReverseGeocodingRequest(const QGeoCoordinate &amp; coordinate)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QReverseGeocodingRequest" fullname="QReverseGeocodingRequest::~QReverseGeocodingRequest" href="qreversegeocodingrequest.html#dtor.QReverseGeocodingRequest" location="qreversegeocodingrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QReverseGeocodingRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="version" fullname="QReverseGeocodingRequest::version" href="qreversegeocodingrequest.html#version" location="qreversegeocodingrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="version() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="language" fullname="QReverseGeocodingRequest::language" href="qreversegeocodingrequest.html#language" location="qreversegeocodingrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="language() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLanguage" fullname="QReverseGeocodingRequest::setLanguage" href="qreversegeocodingrequest.html#setLanguage" location="qreversegeocodingrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLanguage(const QString &amp; language)">
@@ -2569,6 +2605,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QReverseGeocodingRequest::coordinate" href="qreversegeocodingrequest.html#coordinate" location="qreversegeocodingrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="coordinate() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCoordinate" fullname="QReverseGeocodingRequest::setCoordinate" href="qreversegeocodingrequest.html#setCoordinate" location="qreversegeocodingrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCoordinate(const QGeoCoordinate &amp; coordinate)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="requestString" fullname="QReverseGeocodingRequest::requestString" href="qreversegeocodingrequest.html#requestString" location="qreversegeocodingrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="requestString(const QString &amp; host) const">
+                <parameter left="const QString &amp;" right="" name="host" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRemoveRequest" href="qcontactremoverequest.html" location="qcontactremoverequest.h" bases="QContactAbstractRequest" module="">
@@ -2748,8 +2787,8 @@
                 <parameter left="QLandmarkManager::Error *" right="" name="error" default=""/>
                 <parameter left="QString *" right="" name="errorString" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeLandmarks" fullname="QLandmarkManagerEngine::removeLandmarks" href="qlandmarkmanagerengine.html#removeLandmarks" location="qlandmarkmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeLandmarks(QList&lt;QLandmarkId&gt; &amp; landmarkIds, QMap&lt;int, QLandmarkManager::Error&gt; * errorMap, QLandmarkManager::Error * error, QString * errorString)">
-                <parameter left="QList&lt;QLandmarkId&gt; &amp;" right="" name="landmarkIds" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeLandmarks" fullname="QLandmarkManagerEngine::removeLandmarks" href="qlandmarkmanagerengine.html#removeLandmarks" location="qlandmarkmanagerengine.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeLandmarks(const QList&lt;QLandmarkId&gt; &amp; landmarkIds, QMap&lt;int, QLandmarkManager::Error&gt; * errorMap, QLandmarkManager::Error * error, QString * errorString)">
+                <parameter left="const QList&lt;QLandmarkId&gt; &amp;" right="" name="landmarkIds" default=""/>
                 <parameter left="QMap&lt;int, QLandmarkManager::Error&gt; *" right="" name="errorMap" default=""/>
                 <parameter left="QLandmarkManager::Error *" right="" name="error" default=""/>
                 <parameter left="QString *" right="" name="errorString" default=""/>
@@ -2892,8 +2931,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNameFilter" href="qlandmarknamefilter.html" location="qlandmarknamefilter.h" bases="QLandmarkFilter" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNameFilter" fullname="QLandmarkNameFilter::QLandmarkNameFilter" href="qlandmarknamefilter.html#QLandmarkNameFilter" location="qlandmarknamefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkNameFilter(const QString &amp; name)">
-                <parameter left="const QString &amp;" right="" name="name" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNameFilter" fullname="QLandmarkNameFilter::QLandmarkNameFilter" href="qlandmarknamefilter.html#QLandmarkNameFilter" location="qlandmarknamefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkNameFilter(const QString &amp; name, Qt::CaseSensitivity sensitivity)">
+                <parameter left="const QString &amp;" right="" name="name" default="QString()"/>
+                <parameter left="Qt::CaseSensitivity" right="" name="sensitivity" default="Qt::CaseInsensitive"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkNameFilter" fullname="QLandmarkNameFilter::~QLandmarkNameFilter" href="qlandmarknamefilter.html#dtor.QLandmarkNameFilter" location="qlandmarknamefilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkNameFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QLandmarkNameFilter::name" href="qlandmarknamefilter.html#name" location="qlandmarknamefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
@@ -3825,60 +3865,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator QList&lt;QContactSortOrder&gt;" fullname="QContactSortOrder::operator QList&lt;QContactSortOrder&gt;" href="qcontactsortorder.html#operator QList&lt;QContactSortOrder&gt;" location="qcontactsortorder.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="" signature="operator QList&lt;QContactSortOrder&gt;() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoEngine" href="qgeoengine.html" location="qgeoengine.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoEngine" fullname="QGeoEngine::QGeoEngine" href="qgeoengine.html#QGeoEngine" location="qgeoengine.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoEngine()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoEngine" fullname="QGeoEngine::~QGeoEngine" href="qgeoengine.html#dtor.QGeoEngine" location="qgeoengine.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoEngine()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="get" fullname="QGeoEngine::get" href="qgeoengine.html#get" location="qgeoengine.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QRouteReply *" signature="get(const QRouteRequest &amp; request)">
-                <parameter left="const QRouteRequest &amp;" right="" name="request" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="get" fullname="QGeoEngine::get" href="qgeoengine.html#get-2" location="qgeoengine.h" virtual="pure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QGeocodingReply *" signature="get(const QGeocodingRequest &amp; request)">
-                <parameter left="const QGeocodingRequest &amp;" right="" name="request" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="get" fullname="QGeoEngine::get" href="qgeoengine.html#get-3" location="qgeoengine.h" virtual="pure" meta="plain" const="false" static="false" overload="true" overload-number="3" type="QGeocodingReply *" signature="get(const QReverseGeocodingRequest &amp; request)">
-                <parameter left="const QReverseGeocodingRequest &amp;" right="" name="request" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="get" fullname="QGeoEngine::get" href="qgeoengine.html#get-4" location="qgeoengine.h" virtual="pure" meta="plain" const="false" static="false" overload="true" overload-number="4" type="QMapTileReply *" signature="get(const QMapTileRequest &amp; request)">
-                <parameter left="const QMapTileRequest &amp;" right="" name="request" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="release" fullname="QGeoEngine::release" href="qgeoengine.html#release" location="qgeoengine.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="release(QGeoReply * reply)">
-                <parameter left="QGeoReply *" right="" name="reply" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="cancel" fullname="QGeoEngine::cancel" href="qgeoengine.html#cancel" location="qgeoengine.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="cancel(QGeoReply * reply)">
-                <parameter left="QGeoReply *" right="" name="reply" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="maxZoomLevel" fullname="QGeoEngine::maxZoomLevel" href="qgeoengine.html#maxZoomLevel" location="qgeoengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="quint16" signature="maxZoomLevel() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="versions" fullname="QGeoEngine::versions" href="qgeoengine.html#versions" location="qgeoengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapVersion&gt;" signature="versions() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="resolutions" fullname="QGeoEngine::resolutions" href="qgeoengine.html#resolutions" location="qgeoengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapResolution&gt;" signature="resolutions() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="formats" fullname="QGeoEngine::formats" href="qgeoengine.html#formats" location="qgeoengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapFormat&gt;" signature="formats() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="schemes" fullname="QGeoEngine::schemes" href="qgeoengine.html#schemes" location="qgeoengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapScheme&gt;" signature="schemes() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoEngine::finished" href="qgeoengine.html#finished" location="qgeoengine.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished(QRouteReply * reply)">
-                <parameter left="QRouteReply *" right="" name="reply" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoEngine::finished" href="qgeoengine.html#finished-2" location="qgeoengine.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="finished(QGeocodingReply * reply)">
-                <parameter left="QGeocodingReply *" right="" name="reply" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoEngine::finished" href="qgeoengine.html#finished-3" location="qgeoengine.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="3" type="void" signature="finished(QMapTileReply * reply)">
-                <parameter left="QMapTileReply *" right="" name="reply" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoEngine::error" href="qgeoengine.html#error" location="qgeoengine.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QRouteReply * reply, QGeoReply::ErrorCode code)">
-                <parameter left="QRouteReply *" right="" name="reply" default=""/>
-                <parameter left="QGeoReply::ErrorCode" right="" name="code" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoEngine::error" href="qgeoengine.html#error-2" location="qgeoengine.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="2" type="void" signature="error(QGeocodingReply * reply, QGeoReply::ErrorCode code)">
-                <parameter left="QGeocodingReply *" right="" name="reply" default=""/>
-                <parameter left="QGeoReply::ErrorCode" right="" name="code" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoEngine::error" href="qgeoengine.html#error-3" location="qgeoengine.h" virtual="non" meta="signal" const="false" static="false" overload="true" overload-number="3" type="void" signature="error(QMapTileReply * reply, QGeoReply::ErrorCode code)">
-                <parameter left="QMapTileReply *" right="" name="reply" default=""/>
-                <parameter left="QGeoReply::ErrorCode" right="" name="code" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="getMercatorTileIndex" fullname="QGeoEngine::getMercatorTileIndex" href="qgeoengine.html#getMercatorTileIndex" location="qgeoengine.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="void" signature="getMercatorTileIndex(const QGeoCoordinate &amp; coordinate, quint16 zoomLevel, quint32 * col, quint32 * row)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-                <parameter left="quint16" right="" name="zoomLevel" default=""/>
-                <parameter left="quint32 *" right="" name="col" default=""/>
-                <parameter left="quint32 *" right="" name="row" default=""/>
-            </function>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipFilter" href="qcontactrelationshipfilter.html" location="qcontactrelationshipfilter.h" bases="QContactFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipFilter" fullname="QContactRelationshipFilter::QContactRelationshipFilter" href="qcontactrelationshipfilter.html#QContactRelationshipFilter" location="qcontactrelationshipfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipFilter" fullname="QContactRelationshipFilter::QContactRelationshipFilter" href="qcontactrelationshipfilter.html#QContactRelationshipFilter-2" location="qcontactrelationshipfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactRelationshipFilter(const QContactFilter &amp; other)">
@@ -4087,60 +4073,6 @@
                 <parameter left="const QString &amp;" right="" name="text" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoNetworkManager" href="qgeonetworkmanager.html" location="qgeonetworkmanager.h" bases="QGeoEngine" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoNetworkManager" fullname="QGeoNetworkManager::QGeoNetworkManager" href="qgeonetworkmanager.html#QGeoNetworkManager" location="qgeonetworkmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoNetworkManager(QString token, QString referrer)">
-                <parameter left="QString" right="" name="token" default=""/>
-                <parameter left="QString" right="" name="referrer" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoNetworkManager" fullname="QGeoNetworkManager::~QGeoNetworkManager" href="qgeonetworkmanager.html#dtor.QGeoNetworkManager" location="qgeonetworkmanager.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoNetworkManager()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setGeocodingServer" fullname="QGeoNetworkManager::setGeocodingServer" href="qgeonetworkmanager.html#setGeocodingServer" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setGeocodingServer(const QString &amp; server)">
-                <parameter left="const QString &amp;" right="" name="server" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geocodingServer" fullname="QGeoNetworkManager::geocodingServer" href="qgeonetworkmanager.html#geocodingServer" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="geocodingServer() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geocodingProxy" fullname="QGeoNetworkManager::geocodingProxy" href="qgeonetworkmanager.html#geocodingProxy" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkProxy" signature="geocodingProxy() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setGeocodingProxy" fullname="QGeoNetworkManager::setGeocodingProxy" href="qgeonetworkmanager.html#setGeocodingProxy" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setGeocodingProxy(const QNetworkProxy &amp; proxy)">
-                <parameter left="const QNetworkProxy &amp;" right="" name="proxy" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setRouteServer" fullname="QGeoNetworkManager::setRouteServer" href="qgeonetworkmanager.html#setRouteServer" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRouteServer(const QString &amp; server)">
-                <parameter left="const QString &amp;" right="" name="server" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="routeServer" fullname="QGeoNetworkManager::routeServer" href="qgeonetworkmanager.html#routeServer" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="routeServer() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="routeProxy" fullname="QGeoNetworkManager::routeProxy" href="qgeonetworkmanager.html#routeProxy" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkProxy" signature="routeProxy() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setRouteProxy" fullname="QGeoNetworkManager::setRouteProxy" href="qgeonetworkmanager.html#setRouteProxy" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRouteProxy(const QNetworkProxy &amp; proxy)">
-                <parameter left="const QNetworkProxy &amp;" right="" name="proxy" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMapServer" fullname="QGeoNetworkManager::setMapServer" href="qgeonetworkmanager.html#setMapServer" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMapServer(const QString &amp; server)">
-                <parameter left="const QString &amp;" right="" name="server" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mapServer" fullname="QGeoNetworkManager::mapServer" href="qgeonetworkmanager.html#mapServer" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="mapServer() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mapProxy" fullname="QGeoNetworkManager::mapProxy" href="qgeonetworkmanager.html#mapProxy" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QNetworkProxy" signature="mapProxy() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMapProxy" fullname="QGeoNetworkManager::setMapProxy" href="qgeonetworkmanager.html#setMapProxy" location="qgeonetworkmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMapProxy(const QNetworkProxy &amp; proxy)">
-                <parameter left="const QNetworkProxy &amp;" right="" name="proxy" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="get" fullname="QGeoNetworkManager::get" href="qgeonetworkmanager.html#get" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QRouteReply *" signature="get(const QRouteRequest &amp; request)">
-                <parameter left="const QRouteRequest &amp;" right="" name="request" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="get" fullname="QGeoNetworkManager::get" href="qgeonetworkmanager.html#get-2" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QGeocodingReply *" signature="get(const QGeocodingRequest &amp; request)">
-                <parameter left="const QGeocodingRequest &amp;" right="" name="request" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="get" fullname="QGeoNetworkManager::get" href="qgeonetworkmanager.html#get-3" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="false" static="false" overload="true" overload-number="3" type="QGeocodingReply *" signature="get(const QReverseGeocodingRequest &amp; request)">
-                <parameter left="const QReverseGeocodingRequest &amp;" right="" name="request" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="get" fullname="QGeoNetworkManager::get" href="qgeonetworkmanager.html#get-4" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="false" static="false" overload="true" overload-number="4" type="QMapTileReply *" signature="get(const QMapTileRequest &amp; request)">
-                <parameter left="const QMapTileRequest &amp;" right="" name="request" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="release" fullname="QGeoNetworkManager::release" href="qgeonetworkmanager.html#release" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="release(QGeoReply * reply)">
-                <parameter left="QGeoReply *" right="" name="reply" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="cancel" fullname="QGeoNetworkManager::cancel" href="qgeonetworkmanager.html#cancel" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="cancel(QGeoReply * reply)">
-                <parameter left="QGeoReply *" right="" name="reply" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="maxZoomLevel" fullname="QGeoNetworkManager::maxZoomLevel" href="qgeonetworkmanager.html#maxZoomLevel" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="quint16" signature="maxZoomLevel() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="versions" fullname="QGeoNetworkManager::versions" href="qgeonetworkmanager.html#versions" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapVersion&gt;" signature="versions() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="resolutions" fullname="QGeoNetworkManager::resolutions" href="qgeonetworkmanager.html#resolutions" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapResolution&gt;" signature="resolutions() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="formats" fullname="QGeoNetworkManager::formats" href="qgeonetworkmanager.html#formats" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapFormat&gt;" signature="formats() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="schemes" fullname="QGeoNetworkManager::schemes" href="qgeonetworkmanager.html#schemes" location="qgeonetworkmanager.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapScheme&gt;" signature="schemes() const"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkUnionFilter" href="qlandmarkunionfilter.html" location="qlandmarkunionfilter.h" bases="QLandmarkFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkUnionFilter" fullname="QLandmarkUnionFilter::QLandmarkUnionFilter" href="qlandmarkunionfilter.html#QLandmarkUnionFilter" location="qlandmarkunionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkUnionFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkUnionFilter" fullname="QLandmarkUnionFilter::~QLandmarkUnionFilter" href="qlandmarkunionfilter.html#dtor.QLandmarkUnionFilter" location="qlandmarkunionfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkUnionFilter()"/>
@@ -4258,8 +4190,8 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QMapRoute" href="qmaproute.html" location="qmaproute.h" bases="QMapObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QMapRoute" fullname="QMapRoute::QMapRoute" href="qmaproute.html#QMapRoute" location="qmaproute.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMapRoute(const QRoute &amp; route, const QPen &amp; pen, const QPixmap &amp; endpointMarker, quint16 layerIndex)">
-                <parameter left="const QRoute &amp;" right="" name="route" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QMapRoute" fullname="QMapRoute::QMapRoute" href="qmaproute.html#QMapRoute" location="qmaproute.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMapRoute(const QGeoRoute &amp; route, const QPen &amp; pen, const QPixmap &amp; endpointMarker, quint16 layerIndex)">
+                <parameter left="const QGeoRoute &amp;" right="" name="route" default=""/>
                 <parameter left="const QPen &amp;" right="" name="pen" default="QPen()"/>
                 <parameter left="const QPixmap &amp;" right="" name="endpointMarker" default="QPixmap()"/>
                 <parameter left="quint16" right="" name="layerIndex" default="0"/>
@@ -4276,9 +4208,9 @@
                 <parameter left="QPainter *" right="" name="painter" default=""/>
                 <parameter left="const QRectF &amp;" right="" name="viewPort" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QMapRoute" fullname="QMapRoute::QMapRoute" href="qmaproute.html#QMapRoute-2" location="qmaproute.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMapRoute(QMapRoutePrivate &amp; dd, const QRoute &amp; route, const QPen &amp; pen, const QPixmap &amp; endpointMarker, quint16 layerIndex)">
+            <function access="protected" threadsafety="unspecified" status="commendable" name="QMapRoute" fullname="QMapRoute::QMapRoute" href="qmaproute.html#QMapRoute-2" location="qmaproute.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMapRoute(QMapRoutePrivate &amp; dd, const QGeoRoute &amp; route, const QPen &amp; pen, const QPixmap &amp; endpointMarker, quint16 layerIndex)">
                 <parameter left="QMapRoutePrivate &amp;" right="" name="dd" default=""/>
-                <parameter left="const QRoute &amp;" right="" name="route" default=""/>
+                <parameter left="const QGeoRoute &amp;" right="" name="route" default=""/>
                 <parameter left="const QPen &amp;" right="" name="pen" default="QPen()"/>
                 <parameter left="const QPixmap &amp;" right="" name="endpointMarker" default="QPixmap()"/>
                 <parameter left="quint16" right="" name="layerIndex" default="0"/>
@@ -4950,6 +4882,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setCategories" fullname="QLandmarkCategorySaveRequest::setCategories" href="qlandmarkcategorysaverequest.html#setCategories" location="qlandmarkcategorysaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCategories(const QList&lt;QLandmarkCategory&gt; &amp; categories)">
                 <parameter left="const QList&lt;QLandmarkCategory&gt; &amp;" right="" name="categories" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="appendCategory" fullname="QLandmarkCategorySaveRequest::appendCategory" href="qlandmarkcategorysaverequest.html#appendCategory" location="qlandmarkcategorysaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="appendCategory(const QLandmarkCategory &amp; category)">
+                <parameter left="const QLandmarkCategory &amp;" right="" name="category" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clearCategories" fullname="QLandmarkCategorySaveRequest::clearCategories" href="qlandmarkcategorysaverequest.html#clearCategories" location="qlandmarkcategorysaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearCategories()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QLandmarkCategorySaveRequest::errorMap" href="qlandmarkcategorysaverequest.html#errorMap" location="qlandmarkcategorysaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QLandmarkManager::Error&gt;" signature="errorMap() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactNickname" href="qcontactnickname.html" location="qcontactnickname.h" bases="QContactDetail" module="">
@@ -5109,6 +5045,31 @@
                 <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="filters" fullname="QContactIntersectionFilter::filters" href="qcontactintersectionfilter.html#filters" location="qcontactintersectionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactFilter&gt;" signature="filters() const"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoMapTileReply" href="qgeomaptilereply.html" location="qgeomaptilereply.h" bases="QObject" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="ErrorCode" fullname="QGeoMapTileReply::ErrorCode" href="qgeomaptilereply.html#ErrorCode-enum" location="qgeomaptilereply.h">
+                <value name="NoError" value="0"/>
+                <value name="NetworkError" value="1"/>
+                <value name="NoContentError" value="2"/>
+                <value name="UnknownError" value="3"/>
+            </enum>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoMapTileReply" fullname="QGeoMapTileReply::QGeoMapTileReply" href="qgeomaptilereply.html#QGeoMapTileReply" location="qgeomaptilereply.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoMapTileReply(const QGeoMapTileRequest &amp; request, QObject * parent)">
+                <parameter left="const QGeoMapTileRequest &amp;" right="" name="request" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoMapTileReply" fullname="QGeoMapTileReply::~QGeoMapTileReply" href="qgeomaptilereply.html#dtor.QGeoMapTileReply" location="qgeomaptilereply.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoMapTileReply()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="request" fullname="QGeoMapTileReply::request" href="qgeomaptilereply.html#request" location="qgeomaptilereply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoMapTileRequest" signature="request() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="data" fullname="QGeoMapTileReply::data" href="qgeomaptilereply.html#data" location="qgeomaptilereply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QByteArray" signature="data() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setData" fullname="QGeoMapTileReply::setData" href="qgeomaptilereply.html#setData" location="qgeomaptilereply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setData(const QByteArray &amp; data)">
+                <parameter left="const QByteArray &amp;" right="" name="data" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="done" fullname="QGeoMapTileReply::done" href="qgeomaptilereply.html#done" location="qgeomaptilereply.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="done()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="cancel" fullname="QGeoMapTileReply::cancel" href="qgeomaptilereply.html#cancel" location="qgeomaptilereply.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="cancel()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoMapTileReply::finished" href="qgeomaptilereply.html#finished" location="qgeomaptilereply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoMapTileReply::error" href="qgeomaptilereply.html#error" location="qgeomaptilereply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeoMapTileReply::ErrorCode errorCode, const QString &amp; errorString)">
+                <parameter left="QGeoMapTileReply::ErrorCode" right="" name="errorCode" default=""/>
+                <parameter left="const QString &amp;" right="" name="errorString" default="QString()"/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QCamera" href="qcamera.html" location="qcamera.h" bases="QMediaObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="captureMode" fullname="QCamera::captureMode" href="qcamera.html#captureMode-prop" location="qcamera.h" type="CaptureMode">
@@ -5406,28 +5367,73 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QManeuver::operator=" href="qmaneuver.html#operator=" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QManeuver &amp;" signature="operator=(const QManeuver &amp; maneuver)">
                 <parameter left="const QManeuver &amp;" right="" name="maneuver" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QManeuver" fullname="QManeuver::~QManeuver" href="qmaneuver.html#dtor.QManeuver" location="qmaneuver.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QManeuver()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="description" fullname="QManeuver::description" href="qmaneuver.html#description" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="description() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDescription" fullname="QManeuver::setDescription" href="qmaneuver.html#setDescription" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDescription(const QString &amp; description)">
+                <parameter left="const QString &amp;" right="" name="description" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="action" fullname="QManeuver::action" href="qmaneuver.html#action" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="action() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAction" fullname="QManeuver::setAction" href="qmaneuver.html#setAction" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAction(const QString &amp; action)">
+                <parameter left="const QString &amp;" right="" name="action" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="distance" fullname="QManeuver::distance" href="qmaneuver.html#distance" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="distance() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDistance" fullname="QManeuver::setDistance" href="qmaneuver.html#setDistance" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDistance(quint32 distance)">
+                <parameter left="quint32" right="" name="distance" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="duration" fullname="QManeuver::duration" href="qmaneuver.html#duration" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint32" signature="duration() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDuration" fullname="QManeuver::setDuration" href="qmaneuver.html#setDuration" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDuration(qint32 duration)">
+                <parameter left="qint32" right="" name="duration" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="turn" fullname="QManeuver::turn" href="qmaneuver.html#turn" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="turn() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTurn" fullname="QManeuver::setTurn" href="qmaneuver.html#setTurn" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTurn(const QString &amp; turn)">
+                <parameter left="const QString &amp;" right="" name="turn" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="streetName" fullname="QManeuver::streetName" href="qmaneuver.html#streetName" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="streetName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setStreetName" fullname="QManeuver::setStreetName" href="qmaneuver.html#setStreetName" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setStreetName(const QString &amp; streetName)">
+                <parameter left="const QString &amp;" right="" name="streetName" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="routeName" fullname="QManeuver::routeName" href="qmaneuver.html#routeName" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="routeName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRouteName" fullname="QManeuver::setRouteName" href="qmaneuver.html#setRouteName" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRouteName(const QString &amp; routeName)">
+                <parameter left="const QString &amp;" right="" name="routeName" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="nextStreetName" fullname="QManeuver::nextStreetName" href="qmaneuver.html#nextStreetName" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="nextStreetName() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setNextStreetName" fullname="QManeuver::setNextStreetName" href="qmaneuver.html#setNextStreetName" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setNextStreetName(const QString &amp; nextStreetName)">
+                <parameter left="const QString &amp;" right="" name="nextStreetName" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="signPost" fullname="QManeuver::signPost" href="qmaneuver.html#signPost" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="signPost() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSignPost" fullname="QManeuver::setSignPost" href="qmaneuver.html#setSignPost" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSignPost(const QString &amp; signPost)">
+                <parameter left="const QString &amp;" right="" name="signPost" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="trafficDirection" fullname="QManeuver::trafficDirection" href="qmaneuver.html#trafficDirection" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint64" signature="trafficDirection() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTrafficDirection" fullname="QManeuver::setTrafficDirection" href="qmaneuver.html#setTrafficDirection" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTrafficDirection(qint64 trafficDirection)">
+                <parameter left="qint64" right="" name="trafficDirection" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="icon" fullname="QManeuver::icon" href="qmaneuver.html#icon" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="qint64" signature="icon() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setIcon" fullname="QManeuver::setIcon" href="qmaneuver.html#setIcon" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setIcon(qint64 icon)">
+                <parameter left="qint64" right="" name="icon" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="wayPoints" fullname="QManeuver::wayPoints" href="qmaneuver.html#wayPoints" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="const QList&lt;QGeoCoordinate&gt;" signature="wayPoints() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setWaypoints" fullname="QManeuver::setWaypoints" href="qmaneuver.html#setWaypoints" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setWaypoints(const QList&lt;QGeoCoordinate&gt; &amp; wayPoints)">
+                <parameter left="const QList&lt;QGeoCoordinate&gt; &amp;" right="" name="wayPoints" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="maneuverPoints" fullname="QManeuver::maneuverPoints" href="qmaneuver.html#maneuverPoints" location="qmaneuver.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="const QList&lt;QGeoCoordinate&gt;" signature="maneuverPoints() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setManeuverPoints" fullname="QManeuver::setManeuverPoints" href="qmaneuver.html#setManeuverPoints" location="qmaneuver.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setManeuverPoints(const QList&lt;QGeoCoordinate&gt; &amp; maneuverPoints)">
+                <parameter left="const QList&lt;QGeoCoordinate&gt; &amp;" right="" name="maneuverPoints" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNearestFilter" href="qlandmarknearestfilter.html" location="qlandmarknearestfilter.h" bases="QLandmarkFilter" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNearestFilter" fullname="QLandmarkNearestFilter::QLandmarkNearestFilter" href="qlandmarknearestfilter.html#QLandmarkNearestFilter" location="qlandmarknearestfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkNearestFilter(const QGeoCoordinate &amp; coordinate)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNearestFilter" fullname="QLandmarkNearestFilter::QLandmarkNearestFilter" href="qlandmarknearestfilter.html#QLandmarkNearestFilter" location="qlandmarknearestfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkNearestFilter(const QGeoCoordinate &amp; coordinate, double radius)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default="QGeoCoordinate()"/>
+                <parameter left="double" right="" name="radius" default="-1"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkNearestFilter" fullname="QLandmarkNearestFilter::~QLandmarkNearestFilter" href="qlandmarknearestfilter.html#dtor.QLandmarkNearestFilter" location="qlandmarknearestfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkNearestFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QLandmarkNearestFilter::coordinate" href="qlandmarknearestfilter.html#coordinate" location="qlandmarknearestfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="coordinate() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCoordinate" fullname="QLandmarkNearestFilter::setCoordinate" href="qlandmarknearestfilter.html#setCoordinate" location="qlandmarknearestfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCoordinate(const QGeoCoordinate &amp; coordinate)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QLandmarkNearestFilter::radius" href="qlandmarknearestfilter.html#radius" location="qlandmarknearestfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="radius() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QLandmarkNearestFilter::setRadius" href="qlandmarknearestfilter.html#setRadius" location="qlandmarknearestfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRadius(double radius)">
+                <parameter left="double" right="" name="radius" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactId" href="qcontactid.html" location="qcontactid.h" bases="" module="">
@@ -5825,8 +5831,8 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkBoxFilter" href="qlandmarkboxfilter.html" location="qlandmarkboxfilter.h" bases="QLandmarkFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkBoxFilter" fullname="QLandmarkBoxFilter::QLandmarkBoxFilter" href="qlandmarkboxfilter.html#QLandmarkBoxFilter" location="qlandmarkboxfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkBoxFilter(const QGeoCoordinate &amp; topLeft, const QGeoCoordinate &amp; bottomRight)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="topLeft" default=""/>
-                <parameter left="const QGeoCoordinate &amp;" right="" name="bottomRight" default=""/>
+                <parameter left="const QGeoCoordinate &amp;" right="" name="topLeft" default="QGeoCoordinate()"/>
+                <parameter left="const QGeoCoordinate &amp;" right="" name="bottomRight" default="QGeoCoordinate()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkBoxFilter" fullname="QLandmarkBoxFilter::~QLandmarkBoxFilter" href="qlandmarkboxfilter.html#dtor.QLandmarkBoxFilter" location="qlandmarkboxfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkBoxFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="topLeftCoordinate" fullname="QLandmarkBoxFilter::topLeftCoordinate" href="qlandmarkboxfilter.html#topLeftCoordinate" location="qlandmarkboxfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="topLeftCoordinate() const"/>
@@ -5895,25 +5901,6 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QRoute" href="qroute.html" location="qroute.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QRoute" fullname="QRoute::QRoute" href="qroute.html#QRoute" location="qroute.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QRoute()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QRoute" fullname="QRoute::QRoute" href="qroute.html#QRoute-2" location="qroute.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QRoute(const QRoute &amp; route)">
-                <parameter left="const QRoute &amp;" right="" name="route" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QRoute::operator=" href="qroute.html#operator=" location="qroute.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QRoute &amp;" signature="operator=(const QRoute &amp; route)">
-                <parameter left="const QRoute &amp;" right="" name="route" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="departure" fullname="QRoute::departure" href="qroute.html#departure" location="qroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="departure() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="arrival" fullname="QRoute::arrival" href="qroute.html#arrival" location="qroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="arrival() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="distance" fullname="QRoute::distance" href="qroute.html#distance" location="qroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="distance() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="boundingBox" fullname="QRoute::boundingBox" href="qroute.html#boundingBox" location="qroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="const QRectF &amp;" signature="boundingBox() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="maneuvers" fullname="QRoute::maneuvers" href="qroute.html#maneuvers" location="qroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QManeuver&gt;" signature="maneuvers() const"/>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="dist" fullname="QRoute::dist" href="qroute.html#dist-var" location="qroute.h" type="quint32" static="false"/>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="tod" fullname="QRoute::tod" href="qroute.html#tod-var" location="qroute.h" type="QDateTime" static="false"/>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="toa" fullname="QRoute::toa" href="qroute.html#toa-var" location="qroute.h" type="QDateTime" static="false"/>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="box" fullname="QRoute::box" href="qroute.html#box-var" location="qroute.h" type="QRectF" static="false"/>
-            <variable access="protected" threadsafety="unspecified" status="commendable" name="man" fullname="QRoute::man" href="qroute.html#man-var" location="qroute.h" type="QList&lt;QManeuver&gt;" static="false"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionFetchRequest" href="qcontactdetaildefinitionfetchrequest.html" location="qcontactdetaildefinitionfetchrequest.h" bases="QContactAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionFetchRequest" fullname="QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest" href="qcontactdetaildefinitionfetchrequest.html#QContactDetailDefinitionFetchRequest" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionFetchRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactDetailDefinitionFetchRequest" fullname="QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest" href="qcontactdetaildefinitionfetchrequest.html#dtor.QContactDetailDefinitionFetchRequest" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactDetailDefinitionFetchRequest()"/>
@@ -5944,6 +5931,7 @@
                 <function access="public" threadsafety="unspecified" status="commendable" name="next" fullname="QMapView::TileIterator::next" href="qmapview-tileiterator.html#next" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="next()"/>
                 <function access="public" threadsafety="unspecified" status="commendable" name="col" fullname="QMapView::TileIterator::col" href="qmapview-tileiterator.html#col" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="col() const"/>
                 <function access="public" threadsafety="unspecified" status="commendable" name="row" fullname="QMapView::TileIterator::row" href="qmapview-tileiterator.html#row" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="row() const"/>
+                <function access="public" threadsafety="unspecified" status="commendable" name="index" fullname="QMapView::TileIterator::index" href="qmapview-tileiterator.html#index" location="qmapview.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="index() const"/>
                 <function access="public" threadsafety="unspecified" status="commendable" name="tileRect" fullname="QMapView::TileIterator::tileRect" href="qmapview-tileiterator.html#tileRect" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QRectF" signature="tileRect() const"/>
             </class>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMapView" fullname="QMapView::QMapView" href="qmapview.html#QMapView" location="qmapview.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMapView(QGraphicsItem * parent, Qt::WindowFlags wFlags)">
@@ -5951,8 +5939,8 @@
                 <parameter left="Qt::WindowFlags" right="" name="wFlags" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMapView" fullname="QMapView::~QMapView" href="qmapview.html#dtor.QMapView" location="qmapview.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMapView()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="init" fullname="QMapView::init" href="qmapview.html#init" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="init(QGeoEngine * geoEngine, const QGeoCoordinate &amp; center)">
-                <parameter left="QGeoEngine *" right="" name="geoEngine" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="init" fullname="QMapView::init" href="qmapview.html#init" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="init(QGeoMapService * mapService, const QGeoCoordinate &amp; center)">
+                <parameter left="QGeoMapService *" right="" name="mapService" default=""/>
                 <parameter left="const QGeoCoordinate &amp;" right="" name="center" default="QGeoCoordinate( 0, 0 )"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="paint" fullname="QMapView::paint" href="qmapview.html#paint" location="qmapview.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)">
@@ -5960,8 +5948,6 @@
                 <parameter left="const QStyleOptionGraphicsItem *" right="" name="option" default=""/>
                 <parameter left="QWidget *" right="" name="widget" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QMapView::center" href="qmapview.html#center" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="center() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mapCenter" fullname="QMapView::mapCenter" href="qmapview.html#mapCenter" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="mapCenter() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="centerOn" fullname="QMapView::centerOn" href="qmapview.html#centerOn" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="centerOn(const QPointF &amp; pos)">
                 <parameter left="const QPointF &amp;" right="" name="pos" default=""/>
             </function>
@@ -5969,15 +5955,31 @@
                 <parameter left="qreal" right="" name="x" default=""/>
                 <parameter left="qreal" right="" name="y" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="centerOn" fullname="QMapView::centerOn" href="qmapview.html#centerOn-3" location="qmapview.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="void" signature="centerOn(const QGeoCoordinate &amp; geoPos)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="geoPos" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getViewportCenter" fullname="QMapView::getViewportCenter" href="qmapview.html#getViewportCenter" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="getViewportCenter() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getCenter" fullname="QMapView::getCenter" href="qmapview.html#getCenter" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="getCenter() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCenter" fullname="QMapView::setCenter" href="qmapview.html#setCenter" location="qmapview.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCenter(const QGeoCoordinate &amp; coord)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coord" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="moveViewPort" fullname="QMapView::moveViewPort" href="qmapview.html#moveViewPort" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="moveViewPort(int deltaX, int deltaY)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="maxZoomLevel" fullname="QMapView::maxZoomLevel" href="qmapview.html#maxZoomLevel" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="maxZoomLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getZoomLevel" fullname="QMapView::getZoomLevel" href="qmapview.html#getZoomLevel" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="getZoomLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="pan" fullname="QMapView::pan" href="qmapview.html#pan" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="pan(int deltaX, int deltaY)">
                 <parameter left="int" right="" name="deltaX" default=""/>
                 <parameter left="int" right="" name="deltaY" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="pan" fullname="QMapView::pan" href="qmapview.html#pan-2" location="qmapview.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="pan(int dragX, int dragY, int dropX, int dropY)">
+                <parameter left="int" right="" name="dragX" default=""/>
+                <parameter left="int" right="" name="dragY" default=""/>
+                <parameter left="int" right="" name="dropX" default=""/>
+                <parameter left="int" right="" name="dropY" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="mapWidth" fullname="QMapView::mapWidth" href="qmapview.html#mapWidth" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="mapWidth() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="mapHeight" fullname="QMapView::mapHeight" href="qmapview.html#mapHeight" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="mapHeight() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="translateToViewport" fullname="QMapView::translateToViewport" href="qmapview.html#translateToViewport" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="translateToViewport(const QGeoCoordinate &amp; coord) const">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coord" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="translateFromViewport" fullname="QMapView::translateFromViewport" href="qmapview.html#translateFromViewport" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="translateFromViewport(const QPointF &amp; point) const">
+                <parameter left="const QPointF &amp;" right="" name="point" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setHorizontalPadding" fullname="QMapView::setHorizontalPadding" href="qmapview.html#setHorizontalPadding" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setHorizontalPadding(quint32 range)">
                 <parameter left="quint32" right="" name="range" default=""/>
             </function>
@@ -5990,37 +5992,10 @@
                 <parameter left="bool" right="" name="isPannable" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isPannable" fullname="QMapView::isPannable" href="qmapview.html#isPannable" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isPannable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="geoToMap" fullname="QMapView::geoToMap" href="qmapview.html#geoToMap" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="geoToMap(const QGeoCoordinate &amp; geoCoordinate) const">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="geoCoordinate" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mercatorToMap" fullname="QMapView::mercatorToMap" href="qmapview.html#mercatorToMap" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="mercatorToMap(const QPointF &amp; mercatorCoordinate) const">
-                <parameter left="const QPointF &amp;" right="" name="mercatorCoordinate" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mapToGeo" fullname="QMapView::mapToGeo" href="qmapview.html#mapToGeo" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="mapToGeo(const QPointF &amp; mapCoordinate) const">
-                <parameter left="const QPointF &amp;" right="" name="mapCoordinate" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mapToMercator" fullname="QMapView::mapToMercator" href="qmapview.html#mapToMercator" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="mapToMercator(const QPointF &amp; mapCoordinate) const">
-                <parameter left="const QPointF &amp;" right="" name="mapCoordinate" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mapToTile" fullname="QMapView::mapToTile" href="qmapview.html#mapToTile" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="void" signature="mapToTile(const QPointF &amp; mapCoordinate, quint32 * col, quint32 * row) const">
-                <parameter left="const QPointF &amp;" right="" name="mapCoordinate" default=""/>
-                <parameter left="quint32 *" right="" name="col" default=""/>
-                <parameter left="quint32 *" right="" name="row" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="getTileIndex" fullname="QMapView::getTileIndex" href="qmapview.html#getTileIndex" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint64" signature="getTileIndex(quint32 col, quint32 row) const">
-                <parameter left="quint32" right="" name="col" default=""/>
-                <parameter left="quint32" right="" name="row" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="getTileRect" fullname="QMapView::getTileRect" href="qmapview.html#getTileRect" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QRectF" signature="getTileRect(quint32 col, quint32 row) const">
-                <parameter left="quint32" right="" name="col" default=""/>
-                <parameter left="quint32" right="" name="row" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setRouteDetailLevel" fullname="QMapView::setRouteDetailLevel" href="qmapview.html#setRouteDetailLevel" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRouteDetailLevel(quint32 pixels)">
                 <parameter left="quint32" right="" name="pixels" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="routeDetailLevel" fullname="QMapView::routeDetailLevel" href="qmapview.html#routeDetailLevel" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="routeDetailLevel() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="maxZoomLevel" fullname="QMapView::maxZoomLevel" href="qmapview.html#maxZoomLevel" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="maxZoomLevel() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="zoomLevel" fullname="QMapView::zoomLevel" href="qmapview.html#zoomLevel" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint16" signature="zoomLevel() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="addMapObject" fullname="QMapView::addMapObject" href="qmapview.html#addMapObject" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addMapObject(QMapObject * mapObject)">
                 <parameter left="QMapObject *" right="" name="mapObject" default=""/>
             </function>
@@ -6032,10 +6007,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="getTopmostMapObject" fullname="QMapView::getTopmostMapObject" href="qmapview.html#getTopmostMapObject-2" location="qmapview.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QMapObject *" signature="getTopmostMapObject(const QPointF &amp; mapCoordinate)">
                 <parameter left="const QPointF &amp;" right="" name="mapCoordinate" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="connectShortest" fullname="QMapView::connectShortest" href="qmapview.html#connectShortest" location="qmapview.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLineF" signature="connectShortest(const QGeoCoordinate &amp; point1, const QGeoCoordinate &amp; point2) const">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="point1" default=""/>
-                <parameter left="const QGeoCoordinate &amp;" right="" name="point2" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="version" fullname="QMapView::version" href="qmapview.html#version" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="MapVersion" signature="version() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="resolution" fullname="QMapView::resolution" href="qmapview.html#resolution" location="qmapview.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="MapResolution" signature="resolution() const"/>
@@ -6060,11 +6031,11 @@
                 <parameter left="QGraphicsSceneResizeEvent *" right="" name="event" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="releaseRemoteTiles" fullname="QMapView::releaseRemoteTiles" href="qmapview.html#releaseRemoteTiles" location="qmapview.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="releaseRemoteTiles()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="tileFetched" fullname="QMapView::tileFetched" href="qmapview.html#tileFetched" location="qmapview.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="tileFetched(QMapTileReply * reply)">
-                <parameter left="QMapTileReply *" right="" name="reply" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="tileFetched" fullname="QMapView::tileFetched" href="qmapview.html#tileFetched" location="qmapview.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="tileFetched(QGeoMapTileReply * reply)">
+                <parameter left="QGeoMapTileReply *" right="" name="reply" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setZoomLevel" fullname="QMapView::setZoomLevel" href="qmapview.html#setZoomLevel" location="qmapview.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="setZoomLevel(int zoomLevel)">
-                <parameter left="int" right="" name="zoomLevel" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setZoomLevel" fullname="QMapView::setZoomLevel" href="qmapview.html#setZoomLevel" location="qmapview.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="setZoomLevel(int level)">
+                <parameter left="int" right="" name="level" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="mapClicked" fullname="QMapView::mapClicked" href="qmapview.html#mapClicked" location="qmapview.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent * mouseEvent)">
                 <parameter left="QGeoCoordinate" right="" name="geoCoord" default=""/>
@@ -6299,6 +6270,36 @@
             <function access="public" threadsafety="unspecified" status="deprecated" name="progress" fullname="QContactLocalIdFetchRequest::progress" href="qcontactlocalidfetchrequest.html#progress" location="qcontactlocalidfetchrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="progress(QContactLocalIdFetchRequest * self, bool appendOnly)">
                 <parameter left="QContactLocalIdFetchRequest *" right="" name="self" default=""/>
                 <parameter left="bool" right="" name="appendOnly" default=""/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoRoute" href="qgeoroute.html" location="qgeoroute.h" bases="" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoRoute" fullname="QGeoRoute::QGeoRoute" href="qgeoroute.html#QGeoRoute" location="qgeoroute.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoRoute()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoRoute" fullname="QGeoRoute::QGeoRoute" href="qgeoroute.html#QGeoRoute-2" location="qgeoroute.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QGeoRoute(const QGeoRoute &amp; route)">
+                <parameter left="const QGeoRoute &amp;" right="" name="route" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QGeoRoute::operator=" href="qgeoroute.html#operator=" location="qgeoroute.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGeoRoute &amp;" signature="operator=(const QGeoRoute &amp; route)">
+                <parameter left="const QGeoRoute &amp;" right="" name="route" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoRoute" fullname="QGeoRoute::~QGeoRoute" href="qgeoroute.html#dtor.QGeoRoute" location="qgeoroute.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoRoute()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="timeOfDeparture" fullname="QGeoRoute::timeOfDeparture" href="qgeoroute.html#timeOfDeparture" location="qgeoroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="timeOfDeparture() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTimeOfDeparture" fullname="QGeoRoute::setTimeOfDeparture" href="qgeoroute.html#setTimeOfDeparture" location="qgeoroute.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTimeOfDeparture(const QDateTime &amp; timeOfDeparture)">
+                <parameter left="const QDateTime &amp;" right="" name="timeOfDeparture" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="timeOfArrival" fullname="QGeoRoute::timeOfArrival" href="qgeoroute.html#timeOfArrival" location="qgeoroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDateTime" signature="timeOfArrival() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setTimeOfArrival" fullname="QGeoRoute::setTimeOfArrival" href="qgeoroute.html#setTimeOfArrival" location="qgeoroute.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setTimeOfArrival(const QDateTime &amp; timeOfArrival)">
+                <parameter left="const QDateTime &amp;" right="" name="timeOfArrival" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="distance" fullname="QGeoRoute::distance" href="qgeoroute.html#distance" location="qgeoroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="distance() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDistance" fullname="QGeoRoute::setDistance" href="qgeoroute.html#setDistance" location="qgeoroute.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDistance(quint32 distance)">
+                <parameter left="quint32" right="" name="distance" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="boundingBox" fullname="QGeoRoute::boundingBox" href="qgeoroute.html#boundingBox" location="qgeoroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="const QRectF &amp;" signature="boundingBox() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setBoundingBox" fullname="QGeoRoute::setBoundingBox" href="qgeoroute.html#setBoundingBox" location="qgeoroute.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setBoundingBox(const QRectF &amp; boundingBox)">
+                <parameter left="const QRectF &amp;" right="" name="boundingBox" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="maneuvers" fullname="QGeoRoute::maneuvers" href="qgeoroute.html#maneuvers" location="qgeoroute.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QManeuver&gt;" signature="maneuvers() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setManeuvers" fullname="QGeoRoute::setManeuvers" href="qgeoroute.html#setManeuvers" location="qgeoroute.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setManeuvers(const QList&lt;QManeuver&gt; &amp; maneuvers)">
+                <parameter left="const QList&lt;QManeuver&gt; &amp;" right="" name="maneuvers" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryRemoveRequest" href="qlandmarkcategoryremoverequest.html" location="qlandmarkcategoryremoverequest.h" bases="QLandmarkAbstractRequest" module="">
@@ -6888,7 +6889,7 @@
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkSortOrder" href="qlandmarksortorder.html" location="qlandmarksortorder.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkSortOrder" fullname="QLandmarkSortOrder::QLandmarkSortOrder" href="qlandmarksortorder.html#QLandmarkSortOrder" location="qlandmarksortorder.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkSortOrder()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="SortType" fullname="QLandmarkSortOrder::SortType" href="qlandmarksortorder.html#SortType-enum" location="qlandmarksortorder.h">
-                <value name="InvalidSort" value="0"/>
+                <value name="DefaultSort" value="0"/>
                 <value name="NameSort" value="1"/>
                 <value name="DistanceSort" value="2"/>
                 <value name="CustomSort" value="500"/>
@@ -7899,23 +7900,34 @@
                 <parameter left="QContactDetailDefinitionSaveRequest *" right="" name="self" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGeocodingReply" href="qgeocodingreply.html" location="qgeocodingreply.h" bases="QGeoReply" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="ResultCode" fullname="QGeocodingReply::ResultCode" href="qgeocodingreply.html#ResultCode-enum" location="qgeocodingreply.h">
-                <value name="OK" value="0"/>
-                <value name="Failed" value="1"/>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeocodingReply" href="qgeocodingreply.html" location="qgeocodingreply.h" bases="QObject" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="ErrorCode" fullname="QGeocodingReply::ErrorCode" href="qgeocodingreply.html#ErrorCode-enum" location="qgeocodingreply.h">
+                <value name="NoError" value="0"/>
+                <value name="NetworkError" value="1"/>
+                <value name="NoContentError" value="2"/>
+                <value name="ParsingError" value="3"/>
+                <value name="UnknownError" value="4"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="resultCode" fullname="QGeocodingReply::resultCode" href="qgeocodingreply.html#resultCode" location="qgeocodingreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="ResultCode" signature="resultCode() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setResultCode" fullname="QGeocodingReply::setResultCode" href="qgeocodingreply.html#setResultCode" location="qgeocodingreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setResultCode(ResultCode result)">
-                <parameter left="ResultCode" right="" name="result" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeocodingReply" fullname="QGeocodingReply::QGeocodingReply" href="qgeocodingreply.html#QGeocodingReply" location="qgeocodingreply.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeocodingReply(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="resultDescription" fullname="QGeocodingReply::resultDescription" href="qgeocodingreply.html#resultDescription" location="qgeocodingreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="resultDescription() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setResultDescription" fullname="QGeocodingReply::setResultDescription" href="qgeocodingreply.html#setResultDescription" location="qgeocodingreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setResultDescription(QString resultDescription)">
-                <parameter left="QString" right="" name="resultDescription" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeocodingReply" fullname="QGeocodingReply::~QGeocodingReply" href="qgeocodingreply.html#dtor.QGeocodingReply" location="qgeocodingreply.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeocodingReply()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="description" fullname="QGeocodingReply::description" href="qgeocodingreply.html#description" location="qgeocodingreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="description() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDescription" fullname="QGeocodingReply::setDescription" href="qgeocodingreply.html#setDescription" location="qgeocodingreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDescription(const QString &amp; description)">
+                <parameter left="const QString &amp;" right="" name="description" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="count" fullname="QGeocodingReply::count" href="qgeocodingreply.html#count" location="qgeocodingreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="quint32" signature="count() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="places" fullname="QGeocodingReply::places" href="qgeocodingreply.html#places" location="qgeocodingreply.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QGeoLocation&gt;" signature="places() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="addPlace" fullname="QGeocodingReply::addPlace" href="qgeocodingreply.html#addPlace" location="qgeocodingreply.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addPlace(QGeoLocation place)">
-                <parameter left="QGeoLocation" right="" name="place" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addPlace" fullname="QGeocodingReply::addPlace" href="qgeocodingreply.html#addPlace" location="qgeocodingreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addPlace(const QGeoLocation &amp; place)">
+                <parameter left="const QGeoLocation &amp;" right="" name="place" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPlaces" fullname="QGeocodingReply::setPlaces" href="qgeocodingreply.html#setPlaces" location="qgeocodingreply.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPlaces(const QList&lt;QGeoLocation&gt; &amp; places)">
+                <parameter left="const QList&lt;QGeoLocation&gt; &amp;" right="" name="places" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="cancel" fullname="QGeocodingReply::cancel" href="qgeocodingreply.html#cancel" location="qgeocodingreply.h" virtual="pure" meta="slot" const="false" static="false" overload="false" type="void" signature="cancel()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeocodingReply::finished" href="qgeocodingreply.html#finished" location="qgeocodingreply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeocodingReply::error" href="qgeocodingreply.html#error" location="qgeocodingreply.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeocodingReply::ErrorCode errorCode, const QString &amp; errorString)">
+                <parameter left="QGeocodingReply::ErrorCode" right="" name="errorCode" default=""/>
+                <parameter left="const QString &amp;" right="" name="errorString" default="QString()"/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaService" href="qmediaservice.html" location="qmediaservice.h" bases="QObject" module="">
@@ -8011,11 +8023,14 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setSorting" fullname="QLandmarkFetchRequest::setSorting" href="qlandmarkfetchrequest.html#setSorting" location="qlandmarkfetchrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSorting(QList&lt;QLandmarkSortOrder&gt; &amp; sorting)">
                 <parameter left="QList&lt;QLandmarkSortOrder&gt; &amp;" right="" name="sorting" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSorting" fullname="QLandmarkFetchRequest::setSorting" href="qlandmarkfetchrequest.html#setSorting-2" location="qlandmarkfetchrequest.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setSorting(const QLandmarkSortOrder &amp; sortOrder)">
+                <parameter left="const QLandmarkSortOrder &amp;" right="" name="sortOrder" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="landmarks" fullname="QLandmarkFetchRequest::landmarks" href="qlandmarkfetchrequest.html#landmarks" location="qlandmarkfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmark&gt;" signature="landmarks() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCustomFilter" href="qlandmarkcustomfilter.html" location="qlandmarkcustomfilter.h" bases="QLandmarkFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCustomFilter" fullname="QLandmarkCustomFilter::QLandmarkCustomFilter" href="qlandmarkcustomfilter.html#QLandmarkCustomFilter" location="qlandmarkcustomfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCustomFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkCustomFilter" fullname="QLandmarkCustomFilter::~QLandmarkCustomFilter" href="qlandmarkcustomfilter.html#dtor.QLandmarkCustomFilter" location="qlandmarkcustomfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkCustomFilter()"/>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QLandmarkCustomFilter" fullname="QLandmarkCustomFilter::QLandmarkCustomFilter" href="qlandmarkcustomfilter.html#QLandmarkCustomFilter" location="qlandmarkcustomfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCustomFilter()"/>
             <function access="protected" threadsafety="unspecified" status="commendable" name="isMatch" fullname="QLandmarkCustomFilter::isMatch" href="qlandmarkcustomfilter.html#isMatch" location="qlandmarkcustomfilter.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="isMatch(const QLandmark &amp; landmark)">
                 <parameter left="const QLandmark &amp;" right="" name="landmark" default=""/>
             </function>
@@ -8040,12 +8055,15 @@
                 <value name="CommaSeparatedValues" value="3"/>
                 <value name="Custom" value="4"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkManager" fullname="QLandmarkManager::QLandmarkManager" href="qlandmarkmanager.html#QLandmarkManager" location="qlandmarkmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkManager(const QString &amp; managerName, const QMap&lt;QString, QString&gt; &amp; parameters, QObject * parent)">
-                <parameter left="const QString &amp;" right="" name="managerName" default="QString()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkManager" fullname="QLandmarkManager::QLandmarkManager" href="qlandmarkmanager.html#QLandmarkManager" location="qlandmarkmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkManager(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkManager" fullname="QLandmarkManager::QLandmarkManager" href="qlandmarkmanager.html#QLandmarkManager-2" location="qlandmarkmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QLandmarkManager(const QString &amp; managerName, const QMap&lt;QString, QString&gt; &amp; parameters, QObject * parent)">
+                <parameter left="const QString &amp;" right="" name="managerName" default=""/>
                 <parameter left="const QMap&lt;QString, QString&gt; &amp;" right="" name="parameters" default="0"/>
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkManager" fullname="QLandmarkManager::QLandmarkManager" href="qlandmarkmanager.html#QLandmarkManager-2" location="qlandmarkmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QLandmarkManager(const QString &amp; managerName, int implementationVersion, const QMap&lt;QString, QString&gt; &amp; parameters, QObject * parent)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkManager" fullname="QLandmarkManager::QLandmarkManager" href="qlandmarkmanager.html#QLandmarkManager-3" location="qlandmarkmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="3" type="" signature="QLandmarkManager(const QString &amp; managerName, int implementationVersion, const QMap&lt;QString, QString&gt; &amp; parameters, QObject * parent)">
                 <parameter left="const QString &amp;" right="" name="managerName" default=""/>
                 <parameter left="int" right="" name="implementationVersion" default=""/>
                 <parameter left="const QMap&lt;QString, QString&gt; &amp;" right="" name="parameters" default="0"/>
@@ -8076,7 +8094,7 @@
                 <parameter left="const QLandmarkCategoryId &amp;" right="" name="categoryId" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="categories" fullname="QLandmarkManager::categories" href="qlandmarkmanager.html#categories" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkCategory&gt;" signature="categories(const QList&lt;QLandmarkCategoryId&gt; &amp; categoryIds) const">
-                <parameter left="const QList&lt;QLandmarkCategoryId&gt; &amp;" right="" name="categoryIds" default=""/>
+                <parameter left="const QList&lt;QLandmarkCategoryId&gt; &amp;" right="" name="categoryIds" default="QList&lt;QLandmarkCategoryId&gt; ()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="categoryIds" fullname="QLandmarkManager::categoryIds" href="qlandmarkmanager.html#categoryIds" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkCategoryId&gt;" signature="categoryIds() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="landmark" fullname="QLandmarkManager::landmark" href="qlandmarkmanager.html#landmark" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLandmark" signature="landmark(const QLandmarkId &amp; landmarkId) const">
@@ -8086,12 +8104,20 @@
                 <parameter left="const QLandmarkFilter &amp;" right="" name="filter" default=""/>
                 <parameter left="const QList&lt;QLandmarkSortOrder&gt; &amp;" right="" name="sortOrders" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="landmarks" fullname="QLandmarkManager::landmarks" href="qlandmarkmanager.html#landmarks-2" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QList&lt;QLandmark&gt;" signature="landmarks(const QList&lt;QLandmarkId&gt; &amp; landmarkIds) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="landmarks" fullname="QLandmarkManager::landmarks" href="qlandmarkmanager.html#landmarks-2" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QList&lt;QLandmark&gt;" signature="landmarks(const QLandmarkFilter &amp; filter, const QLandmarkSortOrder &amp; sortOrder) const">
+                <parameter left="const QLandmarkFilter &amp;" right="" name="filter" default=""/>
+                <parameter left="const QLandmarkSortOrder &amp;" right="" name="sortOrder" default="QLandmarkSortOrder()"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="landmarks" fullname="QLandmarkManager::landmarks" href="qlandmarkmanager.html#landmarks-3" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QList&lt;QLandmark&gt;" signature="landmarks(const QList&lt;QLandmarkId&gt; &amp; landmarkIds) const">
                 <parameter left="const QList&lt;QLandmarkId&gt; &amp;" right="" name="landmarkIds" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="landmarkIds" fullname="QLandmarkManager::landmarkIds" href="qlandmarkmanager.html#landmarkIds" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkId&gt;" signature="landmarkIds(const QLandmarkFilter &amp; filter, const QList&lt;QLandmarkSortOrder&gt; &amp; sortOrders) const">
                 <parameter left="const QLandmarkFilter &amp;" right="" name="filter" default=""/>
                 <parameter left="const QList&lt;QLandmarkSortOrder&gt; &amp;" right="" name="sortOrders" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="landmarkIds" fullname="QLandmarkManager::landmarkIds" href="qlandmarkmanager.html#landmarkIds-2" location="qlandmarkmanager.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QList&lt;QLandmarkId&gt;" signature="landmarkIds(const QLandmarkFilter &amp; filter, const QLandmarkSortOrder &amp; sortOrder) const">
+                <parameter left="const QLandmarkFilter &amp;" right="" name="filter" default=""/>
+                <parameter left="const QLandmarkSortOrder &amp;" right="" name="sortOrder" default="QLandmarkSortOrder()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="importLandmarks" fullname="QLandmarkManager::importLandmarks" href="qlandmarkmanager.html#importLandmarks" location="qlandmarkmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="importLandmarks(QIODevice * device, Format format)">
                 <parameter left="QIODevice *" right="" name="device" default=""/>
@@ -8416,7 +8442,7 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryFilter" href="qlandmarkcategoryfilter.html" location="qlandmarkcategoryfilter.h" bases="QLandmarkFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryFilter" fullname="QLandmarkCategoryFilter::QLandmarkCategoryFilter" href="qlandmarkcategoryfilter.html#QLandmarkCategoryFilter" location="qlandmarkcategoryfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCategoryFilter(const QLandmarkCategoryId &amp; categoryId)">
-                <parameter left="const QLandmarkCategoryId &amp;" right="" name="categoryId" default=""/>
+                <parameter left="const QLandmarkCategoryId &amp;" right="" name="categoryId" default="QLandmarkCategoryId()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkCategoryFilter" fullname="QLandmarkCategoryFilter::~QLandmarkCategoryFilter" href="qlandmarkcategoryfilter.html#dtor.QLandmarkCategoryFilter" location="qlandmarkcategoryfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkCategoryFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="categoryId" fullname="QLandmarkCategoryFilter::categoryId" href="qlandmarkcategoryfilter.html#categoryId" location="qlandmarkcategoryfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLandmarkCategoryId" signature="categoryId() const"/>
@@ -8443,6 +8469,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setLandmarks" fullname="QLandmarkSaveRequest::setLandmarks" href="qlandmarksaverequest.html#setLandmarks" location="qlandmarksaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLandmarks(const QList&lt;QLandmark&gt; &amp; landmarks)">
                 <parameter left="const QList&lt;QLandmark&gt; &amp;" right="" name="landmarks" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="appendLandmark" fullname="QLandmarkSaveRequest::appendLandmark" href="qlandmarksaverequest.html#appendLandmark" location="qlandmarksaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="appendLandmark(const QLandmark &amp; landmark)">
+                <parameter left="const QLandmark &amp;" right="" name="landmark" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clearLandmarks" fullname="QLandmarkSaveRequest::clearLandmarks" href="qlandmarksaverequest.html#clearLandmarks" location="qlandmarksaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearLandmarks()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QLandmarkSaveRequest::errorMap" href="qlandmarksaverequest.html#errorMap" location="qlandmarksaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QLandmarkManager::Error&gt;" signature="errorMap() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoPositionInfoSource" href="qgeopositioninfosource.html" location="qgeopositioninfosource.h" bases="QObject" module="">
@@ -8499,6 +8529,26 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isSupported" fullname="QMessageAccountSortOrder::isSupported" href="qmessageaccountsortorder.html#isSupported" location="qmessageaccountsortorder_win.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isSupported() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="byName" fullname="QMessageAccountSortOrder::byName" href="qmessageaccountsortorder.html#byName" location="qmessageaccountsortorder_win.cpp" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageAccountSortOrder" signature="byName(Qt::SortOrder order)">
                 <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
+            </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGeoMapService" href="qgeomapservice.html" location="qgeomapservice.h" bases="QObject" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoMapService" fullname="QGeoMapService::QGeoMapService" href="qgeomapservice.html#QGeoMapService" location="qgeomapservice.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoMapService()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoMapService" fullname="QGeoMapService::~QGeoMapService" href="qgeomapservice.html#dtor.QGeoMapService" location="qgeomapservice.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoMapService()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="getMapTile" fullname="QGeoMapService::getMapTile" href="qgeomapservice.html#getMapTile" location="qgeomapservice.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QGeoMapTileReply *" signature="getMapTile(const QGeoMapTileRequest &amp; request)">
+                <parameter left="const QGeoMapTileRequest &amp;" right="" name="request" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="maxZoomLevel" fullname="QGeoMapService::maxZoomLevel" href="qgeomapservice.html#maxZoomLevel" location="qgeomapservice.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="quint16" signature="maxZoomLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="versions" fullname="QGeoMapService::versions" href="qgeomapservice.html#versions" location="qgeomapservice.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapVersion&gt;" signature="versions() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="resolutions" fullname="QGeoMapService::resolutions" href="qgeomapservice.html#resolutions" location="qgeomapservice.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapResolution&gt;" signature="resolutions() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="formats" fullname="QGeoMapService::formats" href="qgeomapservice.html#formats" location="qgeomapservice.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapFormat&gt;" signature="formats() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="schemes" fullname="QGeoMapService::schemes" href="qgeomapservice.html#schemes" location="qgeomapservice.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapScheme&gt;" signature="schemes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="finished" fullname="QGeoMapService::finished" href="qgeomapservice.html#finished" location="qgeomapservice.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="finished(QGeoMapTileReply * reply)">
+                <parameter left="QGeoMapTileReply *" right="" name="reply" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="error" fullname="QGeoMapService::error" href="qgeomapservice.html#error" location="qgeomapservice.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="error(QGeoMapTileReply * reply, QGeoMapTileReply::ErrorCode errorCode, QString errorString)">
+                <parameter left="QGeoMapTileReply *" right="" name="reply" default=""/>
+                <parameter left="QGeoMapTileReply::ErrorCode" right="" name="errorCode" default=""/>
+                <parameter left="QString" right="" name="errorString" default="QString()"/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactPhoneNumber" href="qcontactphonenumber.html" location="qcontactphonenumber.h" bases="QContactDetail" module="">
@@ -9024,7 +9074,24 @@
             <contents name="flickr-demo" title="Flickr Demo" level="2"/>
             <contents name="weather-info-demo" title="Weather Info Demo" level="2"/>
             <contents name="light-maps-demo" title="Light Maps Demo" level="2"/>
+            <contents name="landmarks" title="Landmarks" level="1"/>
+            <contents name="creation-of-categories-and-landmarks" title="Creation of categories and landmarks" level="2"/>
+            <contents name="synchronous" title="Synchronous" level="3"/>
+            <contents name="asynchronous" title="Asynchronous" level="3"/>
+            <contents name="retrieval-of-categories-and-landmarks" title="Retrieval of categories and landmarks" level="2"/>
+            <contents name="synchronous" title="Synchronous" level="3"/>
+            <contents name="asynchronous" title="Asynchronous" level="3"/>
+            <contents name="updating-of-categories-and-landmarks" title="Updating of categories and landmarks" level="2"/>
+            <contents name="deletion" title="Deletion" level="2"/>
             <contents name="classes" title="Classes" level="1"/>
+            <contents name="location-classes" title="Location classes" level="2"/>
+            <contents name="landmark-classes" title="Landmark classes" level="2"/>
+            <contents name="main-landmark-classes" title="Main Landmark Classes" level="3"/>
+            <contents name="landmark-selection-classes" title="Landmark Selection classes" level="3"/>
+            <contents name="filters" title="Filters" level="4"/>
+            <contents name="sortorders" title="SortOrders" level="4"/>
+            <contents name="asynchronous-requests" title="Asynchronous Requests" level="3"/>
+            <contents name="implementing-backends" title="Implementing backends" level="3"/>
         </page>
         <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API (technology preview)" fulltitle="Versit API (technology preview)" subtitle="" location="versit.qdoc">
             <contents name="overview" title="Overview" level="1"/>

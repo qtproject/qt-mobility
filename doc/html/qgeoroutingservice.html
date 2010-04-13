@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeoroutingservice.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGeoRoutingService Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoRoutingService"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRoutingService Class Reference</h1>
+<p>The QGeoRoutingService class handles all communications to and from a geographic routing service. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoRoutingService&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="qgeoroutingservice-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#QGeoRoutingService">QGeoRoutingService</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#dtor.QGeoRoutingService">~QGeoRoutingService</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoRouteReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#getRoute">getRoute</a></b> ( const QGeoRouteRequest &amp; <i>request</i> ) = 0</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#error">error</a></b> ( QGeoRouteReply * <i>reply</i>, QGeoRouteReply::ErrorCode <i>errorCode</i>, QString <i>errorString</i> = QString() )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#finished">finished</a></b> ( QGeoRouteReply * <i>reply</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoRoutingService class handles all communications to and from a geographic routing service.</p>
+<p>This is the abstract base class for all classes that handle routing requests/replies to and from a service which provides routing information.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoRoutingService/QGeoRoutingService"></a>
+<h3 class="fn"><a name="QGeoRoutingService"></a>QGeoRoutingService::QGeoRoutingService ()</h3>
+<p>Default constructor.</p>
+<a name="//apple_ref/cpp/instm/QGeoRoutingService/~QGeoRoutingService"></a>
+<h3 class="fn"><a name="dtor.QGeoRoutingService"></a>QGeoRoutingService::~QGeoRoutingService ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Virtual destructor.</p>
+<a name="//apple_ref/cpp/instm/QGeoRoutingService/error"></a>
+<h3 class="fn"><a name="error"></a>void QGeoRoutingService::error ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i>, <a href="qgeoroutereply.html#ErrorCode-enum">QGeoRouteReply::ErrorCode</a> <i>errorCode</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> <i>errorString</i> = QString() )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QGeoRoutingService/finished"></a>
+<h3 class="fn"><a name="finished"></a>void QGeoRoutingService::finished ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when a <a href="qgeoroutereply.html">QGeoRouteReply</a> is available in response to a previously submitted <a href="qgeorouterequest.html">QGeoRouteRequest</a>.</p>
+<a name="//apple_ref/cpp/instm/QGeoRoutingService/getRoute"></a>
+<h3 class="fn"><a name="getRoute"></a><a href="qgeoroutereply.html">QGeoRouteReply</a> * QGeoRoutingService::getRoute ( const <a href="qgeorouterequest.html">QGeoRouteRequest</a> &amp; <i>request</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Submits the route request <i>request</i> and returns the corresponding <a href="qgeoroutereply.html">QGeoRouteReply</a>.</p>
+<p><b>Note:</b> Due to the asynchronous nature of requests, you should wait for the QGeoRoutingService::finished(<a href="qgeoroutereply.html">QGeoRouteReply</a>*) signal from this object or the <a href="qgeoroutereply.html#finished">QGeoRouteReply::finished</a>() signal from the returned <a href="qgeoroutereply.html">QGeoRouteReply</a> object before working with the reply.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

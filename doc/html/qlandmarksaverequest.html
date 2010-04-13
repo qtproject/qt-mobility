@@ -25,6 +25,8 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksaverequest.html#QLandmarkSaveRequest">QLandmarkSaveRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksaverequest.html#dtor.QLandmarkSaveRequest">~QLandmarkSaveRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksaverequest.html#appendLandmark">appendLandmark</a></b> ( const QLandmark &amp; <i>landmark</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksaverequest.html#clearLandmarks">clearLandmarks</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QLandmarkManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksaverequest.html#errorMap">errorMap</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmark&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksaverequest.html#landmarks">landmarks</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksaverequest.html#setLandmarks">setLandmarks</a></b> ( const QList&lt;QLandmark&gt; &amp; <i>landmarks</i> )</td></tr>
@@ -58,6 +60,14 @@
 <a name="//apple_ref/cpp/instm/QLandmarkSaveRequest/~QLandmarkSaveRequest"></a>
 <h3 class="fn"><a name="dtor.QLandmarkSaveRequest"></a>QLandmarkSaveRequest::~QLandmarkSaveRequest ()</h3>
 <p>Destroys the request object.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkSaveRequest/appendLandmark"></a>
+<h3 class="fn"><a name="appendLandmark"></a>void QLandmarkSaveRequest::appendLandmark ( const <a href="qlandmark.html">QLandmark</a> &amp; <i>landmark</i> )</h3>
+<p>Convenience function to append <i>landmark</i> to the list of landmarks to be saved.</p>
+<p>See also <a href="qlandmarksaverequest.html#setLandmarks">setLandmarks</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkSaveRequest/clearLandmarks"></a>
+<h3 class="fn"><a name="clearLandmarks"></a>void QLandmarkSaveRequest::clearLandmarks ()</h3>
+<p>Convenience function to clear the landmarks to be saved.</p>
+<p>See also <a href="qlandmarksaverequest.html#setLandmarks">setLandmarks</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkSaveRequest/errorMap"></a>
 <h3 class="fn"><a name="errorMap"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; QLandmarkSaveRequest::errorMap () const</h3>
 <p>Returns the mapping of input landmark list indices to errors which occurred.</p>
