@@ -49,7 +49,7 @@
 
 QTM_USE_NAMESPACE
 
-class MyFilter : public TestSensorFilter
+        class MyFilter : public TestSensorFilter
 {
     bool filter(TestSensorReading *reading)
     {
@@ -88,7 +88,10 @@ private slots:
         QList<QByteArray> expected;
         expected << "QAccelerometer" << TestSensor::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
-        QCOMPARE(actual, expected);
+
+        for (int i = 0; i < expected.size(); ++i) {
+            QVERIFY2(actual.contains(expected.at(i)),expected.at(i)+" not present");
+        }
     }
 
     void testSensorRegistered()
