@@ -214,11 +214,6 @@ void S60AudioEncoderControl::setChannelCount(int channels)
     m_session->setFormat(fmt);
 }
 
-QList<int> S60AudioEncoderControl::supportedChannelCounts() const
-{
-    return QList<int>() << 1 << 2;
-}
-
 int S60AudioEncoderControl::sampleSize() const
 {
     return m_session->format().sampleSize();
@@ -229,11 +224,6 @@ void S60AudioEncoderControl::setSampleSize(int sampleSize)
     QAudioFormat fmt = m_session->format();
     fmt.setSampleSize(sampleSize);
     m_session->setFormat(fmt);
-}
-
-QList<int> S60AudioEncoderControl::supportedSampleSizes() const
-{    
-    return QList<int>() << 8 << 16; 
 }
 
 QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const

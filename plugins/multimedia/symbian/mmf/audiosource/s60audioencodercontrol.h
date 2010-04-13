@@ -79,11 +79,9 @@ private:
     int sampleRate() const;
     void setSampleRate(int sampleRate);
     int channelCount() const;
-    void setChannelCount(int channels);
-    QList<int> supportedChannelCounts() const;
+    void setChannelCount(int channels);    
     int sampleSize() const;
-    void setSampleSize(int sampleSize);
-    QList<int> supportedSampleSizes() const;
+    void setSampleSize(int sampleSize);    
 private:
     S60AudioCaptureSession* m_session;
     QtMedia::EncodingQuality m_quality;
