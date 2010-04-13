@@ -187,7 +187,8 @@ bool QContactMaemo5Engine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
     for (int i = 0; i < contacts->size(); i++) {
         curr = contacts->at(i);
         if (!saveContact(&curr, &tempError)) {
-            errorMap->insert(i, tempError);
+            if (errorMap)
+                errorMap->insert(i, tempError);
             *error = tempError;
         } else {
             contacts->replace(i, curr);
@@ -204,7 +205,8 @@ bool QContactMaemo5Engine::removeContacts(const QList<QContactLocalId>& ids, QMa
     QContact curr;
     for (int i = 0; i < ids.size(); i++) {
         if (!removeContact(ids.at(i), &tempError)) {
-            errorMap->insert(i, tempError);
+            if (errorMap)
+                errorMap->insert(i, tempError);
             *error = tempError;
         }
     }
