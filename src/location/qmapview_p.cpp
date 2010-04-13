@@ -209,7 +209,7 @@ void QMapViewPrivate::paintLayers(QPainter* painter)
     QRectF paddedRect(viewPort);
     qint64 mapWidth = q->mapWidth();
     int objectPadding = viewPort.width()<mapWidth?viewPort.width():mapWidth;
-    paddedRect.setWidth(r.width()+objectPadding);
+    paddedRect.setWidth(paddedRect.width()+objectPadding);
     QMapView::TileIterator it(*q, paddedRect);
     QMap<quint16, QSet<QMapObject*> > stackedObj;
 
@@ -253,8 +253,9 @@ void QMapViewPrivate::paintLayers(QPainter* painter)
 
 /*!
     Adds an entry to tileToObjects for each tile that
-    intersects or completely covers he given \a mapObject.
+    intersects or completely covers the given \a mapObject.
 */
+
 void QMapViewPrivate::addMapObjectToTiles(QMapObject* mapObject)
 {
     for (int i = 0; i < mapObject->d_ptr->intersectingTiles.count(); i++) {
