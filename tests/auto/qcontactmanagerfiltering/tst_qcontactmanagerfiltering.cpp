@@ -325,30 +325,39 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
         newMRow("Name == aaron, fixed, case sensitive", manager) << manager << name << firstname << QVariant("aaron") << (int)(Qt::MatchFixedString | Qt::MatchCaseSensitive) << es;
 
         // middle name
-        newMRow("MName == Arne", manager) << manager << name << middlename << QVariant("Arne") << (int)(Qt::MatchContains) << "a";
-		
-		// prefix
-        newMRow("Prefix == Sir", manager) << manager << name << prefixname << QVariant("Sir") << (int)(Qt::MatchContains) << "a";
-		
-		// prefix
-        newMRow("Suffix == Dr.", manager) << manager << name << suffixname << QVariant("Dr.") << (int)(Qt::MatchContains) << "a";
-		
-		// nickname
-        newMRow("Nickname detail exists", manager) << manager << nickname << es << QVariant() << 0 << "ab";
-        newMRow("Nickname == Aaron, contains", manager) << manager << nickname << nicknameField << QVariant("Aaron") << (int)(Qt::MatchContains) << "a";
+        if (manager->detailDefinitions().value(QContactName::DefinitionName).fields().contains(QContactName::FieldMiddleName))
+            newMRow("MName == Arne", manager) << manager << name << middlename << QVariant("Arne") << (int)(Qt::MatchContains) << "a";
+
+        // prefix
+        if (manager->detailDefinitions().value(QContactName::DefinitionName).fields().contains(QContactName::FieldPrefix))
+            newMRow("Prefix == Sir", manager) << manager << name << prefixname << QVariant("Sir") << (int)(Qt::MatchContains) << "a";
+
+        // suffix
+        if (manager->detailDefinitions().value(QContactName::DefinitionName).fields().contains(QContactName::FieldSuffix))
+            newMRow("Suffix == Dr.", manager) << manager << name << suffixname << QVariant("Dr.") << (int)(Qt::MatchContains) << "a";
+
+        // nickname
+        if (manager->detailDefinitions().contains(QContactNickname::DefinitionName)) {
+            newMRow("Nickname detail exists", manager) << manager << nickname << es << QVariant() << 0 << "ab";
+            newMRow("Nickname == Aaron, contains", manager) << manager << nickname << nicknameField << QVariant("Aaron") << (int)(Qt::MatchContains) << "a";
+        }
 
         // email
-        newMRow("Email == Aaron@Aaronson.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronson.com") << 0 << "a";
-        newMRow("Email == Aaron@Aaronsen.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronsen.com") << 0 << es;
+        if (manager->detailDefinitions().contains(QContactEmailAddress::DefinitionName)) {
+            newMRow("Email == Aaron@Aaronson.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronson.com") << 0 << "a";
+            newMRow("Email == Aaron@Aaronsen.com", manager) << manager << emailaddr << emailfield << QVariant("Aaron@Aaronsen.com") << 0 << es;
+        }
         
         // phone number
-        newMRow("Phone number detail exists", manager) << manager << phonenumber << es << QVariant("") << 0 << "ab";
-        newMRow("Phone number = 555-1212", manager) << manager << phonenumber << number << QVariant("555-1212") << (int) QContactFilter::MatchExactly << "a";
-        newMRow("Phone number = 34, contains", manager) << manager << phonenumber << number << QVariant("34") << (int) QContactFilter::MatchContains << "b";
-        newMRow("Phone number = 555, starts with", manager) << manager << phonenumber << number << QVariant("555") <<  (int) QContactFilter::MatchStartsWith << "ab";
-        newMRow("Phone number = 1212, ends with", manager) << manager << phonenumber << number << QVariant("1212") << (int) QContactFilter::MatchEndsWith << "a";
-        newMRow("Phone number = 555-1212, match phone number", manager) << manager << phonenumber << number << QVariant("555-1212") << (int) QContactFilter::MatchPhoneNumber << "a";
-        newMRow("Phone number = 555, keypad collation", manager) << manager << phonenumber << number << QVariant("555") << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchStartsWith) << "ab";
+        if (manager->detailDefinitions().contains(QContactPhoneNumber::DefinitionName)) {
+            newMRow("Phone number detail exists", manager) << manager << phonenumber << es << QVariant("") << 0 << "ab";
+            newMRow("Phone number = 5551212", manager) << manager << phonenumber << number << QVariant("5551212") << (int) QContactFilter::MatchExactly << "a";
+            newMRow("Phone number = 34, contains", manager) << manager << phonenumber << number << QVariant("34") << (int) QContactFilter::MatchContains << "b";
+            newMRow("Phone number = 555, starts with", manager) << manager << phonenumber << number << QVariant("555") <<  (int) QContactFilter::MatchStartsWith << "ab";
+            newMRow("Phone number = 1212, ends with", manager) << manager << phonenumber << number << QVariant("1212") << (int) QContactFilter::MatchEndsWith << "a";
+            newMRow("Phone number = 555-1212, match phone number", manager) << manager << phonenumber << number << QVariant("555-1212") << (int) QContactFilter::MatchPhoneNumber << "a"; // hyphens will be ignored by the match algorithm
+            newMRow("Phone number = 555, keypad collation", manager) << manager << phonenumber << number << QVariant("555") << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchStartsWith) << "ab";
+        }
         
         /* Converting other types to strings */
         QPair<QString, QString> defAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
@@ -422,6 +431,9 @@ void tst_QContactManagerFiltering::detailPhoneNumberFiltering_data()
         QTest::newRow("t9 bo") << manager << nameDef << nameField << QVariant(QString("26")) << (int)(QContactFilter::MatchKeypadCollation | QContactFilter::MatchStartsWith) << "bc"; // bob, boris
         QTest::newRow("t9 zzzz") << manager << nameDef << nameField << QVariant(QString("9999")) << (int)(QContactFilter::MatchKeypadCollation) << ""; // nobody.
 
+        if (!manager->detailDefinitions().contains(QContactPhoneNumber::DefinitionName))
+            continue; // don't test phone numbers with this manager: not supported.
+
         // now do phone number matching - first, aaron's phone number
         QTest::newRow("a phone hyphen") << manager << phoneDef << phoneField << QVariant(QString("555-1212")) << (int)(QContactFilter::MatchPhoneNumber) << "a";
         QTest::newRow("a phone plus") << manager << phoneDef << phoneField << QVariant(QString("+5551212")) << (int)(QContactFilter::MatchPhoneNumber) << "a";
@@ -435,7 +447,7 @@ void tst_QContactManagerFiltering::detailPhoneNumberFiltering_data()
         QTest::newRow("a phone plus brackets hyphen") << manager << phoneDef << phoneField << QVariant(QString("+5(55)1-212")) << (int)(QContactFilter::MatchPhoneNumber) << "a";
         QTest::newRow("a phone plus brackets hyphen spaces") << manager << phoneDef << phoneField << QVariant(QString("+5 (55) 1-212")) << (int)(QContactFilter::MatchPhoneNumber) << "a";
 
-        // XXX TODO: should we test for character to number conversions (eg, dial 1800-PESTCONTROL) etc
+        // XXX TODO: should we test for character to number conversions (eg, dial 1800-PESTCONTROL) etc ?
         //QTest::newRow("a phone characters") << manager << phoneDef << phoneField << QVariant(QString("jjj1a1a")) << (int)(QContactFilter::MatchPhoneNumber) << "a"; // 5551212
         //QTest::newRow("a phone characters") << manager << phoneDef << phoneField << QVariant(QString("jkl1b1a")) << (int)(QContactFilter::MatchPhoneNumber) << "a"; // 5551212
 
@@ -838,8 +850,8 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
         newMRow("no min, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "a";
         newMRow("no min, cs, badcase, no results", manager) << manager << namedef << firstname << QVariant() << QVariant("AARDVARK") << false << 0 << true << csflag << es;
 
-        /* 'a' has phone number ("555-1212") */
-        QTest::newRow("range1") << manager << phonedef << phonenum << QVariant("555-1200") << QVariant("555-1220") << false << 0 << false << 0 << "a";
+        /* 'a' has phone number ("5551212") */
+        QTest::newRow("range1") << manager << phonedef << phonenum << QVariant("5551200") << QVariant("5551220") << false << 0 << false << 0 << "a";
 
         /* A(Aaron Aaronson), B(Bob Aaronsen), C(Boris Aaronsun), D(Dennis FitzMacyntire) */
         // string range matching - no matchflags set.
@@ -2869,7 +2881,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     nick.setNickname("Sir Aaron");
     QContactEmailAddress emailAddr;
     emailAddr.setEmailAddress("Aaron@Aaronson.com");
-    number.setNumber("555-1212");
+    number.setNumber("5551212");
     string.setValue(definitionDetails.value("String").second, "Aaron Aaronson");
     integer.setValue(definitionDetails.value("Integer").second, 10);
     datetime.setValue(definitionDetails.value("DateTime").second, QDateTime(QDate(2009, 06, 29), QTime(16, 52, 23, 0)));
@@ -2901,7 +2913,7 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     name.setFirstName("Bob");
     name.setLastName("Aaronsen");
     nick.setNickname("Sir Bob");
-    number.setNumber("555-3456");
+    number.setNumber("5553456");
     string.setValue(definitionDetails.value("String").second, "Bob Aaronsen");
     integer.setValue(definitionDetails.value("Integer").second, 20);
     dubble.setValue(definitionDetails.value("Double").second, 4.0);
