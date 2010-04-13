@@ -327,8 +327,8 @@ void tst_QVersitReader::testParseNextVersitPropertyVCard21()
     vCard.append("N:foo\\;bar;foo\\,bar;foo\\:bar;foo\\\\bar;foo\\\\\\;bar\r\n");
     // missing structured value
     vCard.append("ADR:\r\n");
-    // "NICKNAMES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
-    vCard.append("NICKNAMES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
+    // "NICKNAME:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
+    vCard.append("NICKNAME:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
     // "CATEGORIES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
     vCard.append("CATEGORIES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
     vCard.append("ORG;CHARSET=UTF-8:");
@@ -391,7 +391,7 @@ void tst_QVersitReader::testParseNextVersitPropertyVCard21()
     QVERIFY(components.at(0).isEmpty());
 
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("NICKNAMES"));
+    QCOMPARE(property.name(),QString::fromAscii("NICKNAME"));
     QCOMPARE(property.valueType(), QVersitProperty::ListType);
     QCOMPARE(property.variantValue().type(), QVariant::StringList);
     components = property.value<QStringList>();
@@ -490,8 +490,8 @@ void tst_QVersitReader::testParseNextVersitPropertyVCard30()
     vCard.append("NOTE:\\;\\,\\:\\\\\r\n");
     // "N:foo\;bar;foo\,bar;foo\:bar;foo\\bar;foo\\\;bar"
     vCard.append("N:foo\\;bar;foo\\,bar;foo\\:bar;foo\\\\bar;foo\\\\\\;bar\r\n");
-    // "NICKNAMES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
-    vCard.append("NICKNAMES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
+    // "NICKNAME:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
+    vCard.append("NICKNAME:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
     // "CATEGORIES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
     vCard.append("CATEGORIES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
     // "CATEGORIES:foobar\\,foobar\\\\,foo\\\\\,bar"
@@ -547,7 +547,7 @@ void tst_QVersitReader::testParseNextVersitPropertyVCard30()
     QCOMPARE(components.at(4), QLatin1String("foo\\;bar"));
 
     property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("NICKNAMES"));
+    QCOMPARE(property.name(),QString::fromAscii("NICKNAME"));
     QCOMPARE(property.valueType(), QVersitProperty::ListType);
     QCOMPARE(property.variantValue().type(), QVariant::StringList);
     components = property.value<QStringList>();
