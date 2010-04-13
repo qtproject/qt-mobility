@@ -112,6 +112,15 @@ QList<QGeoLocation> QGeocodingReply::places() const
 }
 
 /*!
+    Adds \a place to the list of places in this reply.
+*/
+void QGeocodingReply::addPlace(const QGeoLocation &place)
+{
+    Q_D(QGeocodingReply);
+    d->places.append(place);
+}
+
+/*!
     Sets the list of places in the reply to \a places.
 */
 void QGeocodingReply::setPlaces(const QList<QGeoLocation> &places)

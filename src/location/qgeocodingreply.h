@@ -74,6 +74,7 @@ public:
     void setDescription(const QString &description);
 
     QList<QGeoLocation> places() const;
+    void addPlace(const QGeoLocation &place);
     void setPlaces(const QList<QGeoLocation> &places);
 
 public slots:

@@ -46,7 +46,6 @@
 #include "placepresenter.h"
 #include "qgeomaptile.h"
 
-#include "qgeocodingservice_nokia_p.h"
 #include "qgeoroutingservice_nokia_p.h"
 #include "qgeomapservice_nokia_p.h"
 
@@ -64,10 +63,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     geocodingService = new QGeocodingServiceNokia();
+    geocodingService->setProxy( QNetworkProxy(QNetworkProxy::HttpProxy, "172.16.42.137", 8080) );
+    geocodingService->setHost("loc.desktop.maps.svc.ovi.com");
     routingService = new QGeoRoutingServiceNokia();
     QGeoMapServiceNokia *mService = new QGeoMapServiceNokia();
 
-    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.41", 8080);
+    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.40", 8080);
     mService->setProxy(proxy);
     mService->setHost("origin.maptile.svc.tst.s2g.gate5.de");
 

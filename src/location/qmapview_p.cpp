@@ -49,16 +49,15 @@
 QTM_BEGIN_NAMESPACE
 
 QMapViewPrivate::QMapViewPrivate(QtMobility::QMapView *q)
-        : q_ptr(q), numColRow(1), mapService(0), currZoomLevel(0),
-        horizontalPadding(0), verticalPadding(0), routeDetails(0),
-        panActive(false), pannable(true), releaseTimer(q),
-        mapVersion(MapVersion(MapVersion::Newest)),
+        : q_ptr(q), numColRow(1), mapService(0), horizontalPadding(0), 
+        verticalPadding(0), routeDetails(0), releaseTimer(q), 
+        currZoomLevel(0), mapVersion(MapVersion(MapVersion::Newest)),
         mapSchmeme(MapScheme(MapScheme::Normal_Day)),
         mapResolution(MapResolution(MapResolution::Res_256_256)),
-        mapFormat(MapFormat(MapFormat::Png))
+        mapFormat(MapFormat(MapFormat::Png)),
+        panActive(false), pannable(true)
 {
 }
-
 /*!
     When the zoom level is increased, this method is invoked to scale and add the
     map tiles in the view port of the old map scene to cover (as much as possible)
@@ -206,7 +205,12 @@ void QMapViewPrivate::cancelPendingTiles()
 void QMapViewPrivate::paintLayers(QPainter* painter)
 {
     Q_Q(QMapView);
-    QMapView::TileIterator it(*q, viewPort);
+
+    QRectF paddedRect(viewPort);
+    qint64 mapWidth = q->mapWidth();
+    int objectPadding = viewPort.width()<mapWidth?viewPort.width():mapWidth;
+    paddedRect.setWidth(r.width()+objectPadding);
+    QMapView::TileIterator it(*q, paddedRect);
     QMap<quint16, QSet<QMapObject*> > stackedObj;
 
     while (it.hasNext()) {
@@ -220,44 +224,29 @@ void QMapViewPrivate::paintLayers(QPainter* painter)
                 QMapObject* obj = mapObjects[i];
 
                 if (!stackedObj.contains(obj->zValue()))
-                    stackedObj[obj->zValue()] = QSet<QMapObject*>();
+                stackedObj[obj->zValue()] = QSet<QMapObject*>();
 
                 if (!stackedObj[obj->zValue()].contains(obj))
-                    stackedObj[obj->zValue()].insert(obj);
+                stackedObj[obj->zValue()].insert(obj);
             }
         }
     }
 
     QMapIterator<quint16, QSet<QMapObject*> > mit(stackedObj);
-
     while (mit.hasNext()) {
         mit.next();
         QSetIterator<QMapObject*> sit(mit.value());
-
         while (sit.hasNext()) {
             QMapObject *obj = sit.next();
-            obj->paint(painter, viewPort);
-
-            qint64 mapWidth = q->mapWidth();
             //Is view port wrapping around date line?
-            qreal right = viewPort.right();
-            for(int i=1; right >= mapWidth;++i, right -= mapWidth) {
+            int i=viewPort.x()<=objectPadding?-1:0;
+            do {
                 painter->save();
-                painter->translate(mapWidth *i, 0);
+                painter->translate(mapWidth*i, 0);
                 obj->paint(painter, viewPort);
                 painter->restore();
-
-                //TODO: this logic is incorrect
-                // we need to handle the case where an object crosses the dateline
-                // and our viewport does not but we should still see the wrapped around
-                // object
-                if (i == 1) {
-                    painter->save();
-                    painter->translate(-mapWidth, 0);
-                    obj->paint(painter,viewPort);
-                    painter->restore();
-                }
-            }
+                ++i;
+            }while( viewPort.right()+objectPadding > i*mapWidth );
         }
     }
 }
