@@ -44,6 +44,7 @@
 #include <qaudiocapturesource.h>
 #include <qmediarecorder.h>
 #include <qmediaservice.h>
+#include <qaudioencodercontrol.h>
 
 #include <QtMultimedia/qaudioformat.h>
 
@@ -155,7 +156,7 @@ AudioRecorder::AudioRecorder()
 
     layout->addWidget(codecLabel,2,0,Qt::AlignHCenter);
     connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
-    layout->addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);    
+    layout->addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);   
     
     layout->addWidget(sampleRateLabel,3,0,Qt::AlignHCenter);
     connect(sampleRateBox,SIGNAL(activated(int)),SLOT(sampleRateChanged(int)));
@@ -276,6 +277,9 @@ void AudioRecorder::containerChanged(int idx)
 
 void AudioRecorder::codecChanged(int idx)
 {
+    updateSamplerates(idx);
+    updateChannelCount(idx);
+    updateQuality(idx);
     QAudioEncoderSettings settings = capture->audioSettings();
     settings.setCodec(codecsBox->itemText(idx));
     capture->setEncodingSettings(settings);
@@ -297,9 +301,8 @@ void AudioRecorder::channelCountChanged(int idx)
 
 void AudioRecorder::qualityChanged(int idx)
 { 
-    QAudioEncoderSettings settings = capture->audioSettings();
+    QAudioEncoderSettings settings = capture->audioSettings();    
     
-    qDebug()<<"AudioRecorder::qualityChanged"<<settings.quality();
     switch(idx) {
     case 0:
         settings.setQuality(QtMedia::LowQuality);
@@ -367,4 +370,46 @@ void AudioRecorder::errorChanged(QMediaRecorder::Error err)
     statusLabel->setText(capture->errorString());
 }
 
+void AudioRecorder::updateSamplerates(int idx)
+{
+    QAudioEncoderSettings settings;
+    settings.setCodec(codecsBox->itemText(idx));
+    
+    QList<int> supportedSampleRates = capture->supportedAudioSampleRates(settings);
+    sampleRateBox->clear();    
+    for(int i = 0; i < supportedSampleRates.count(); i++) {        
+        QString rateString = QString("%1").arg(supportedSampleRates.at(i));
+        sampleRateBox->addItem(rateString, QVariant(supportedSampleRates.at(i))); 
+    }    
+}
 
+void AudioRecorder::updateChannelCount(int idx)
+{    
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
+    channelBox->clear();
+    QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
+    QList<int> channels;
+    if (list.contains("channels"))
+        channels <<1<<2;
+    else
+        channels <<1;
+    for(int i = 0; i < channels.count(); i++) {        
+        QString channelString = QString("%1").arg(channels.at(i));
+        channelBox->addItem(channelString, QVariant(channels.at(i))); 
+    }        
+}
+
+void AudioRecorder::updateQuality(int idx)
+{    
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
+    qualityBox->clear();
+    QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
+    QList<int> channels;
+    if (list.contains("quality")) {
+        qualityBox->addItem(tr("Low"));
+        qualityBox->addItem(tr("Medium"));
+        qualityBox->addItem(tr("High"));
+    }else {
+        qualityBox->addItem(tr("Low"));
+    }           
+}
