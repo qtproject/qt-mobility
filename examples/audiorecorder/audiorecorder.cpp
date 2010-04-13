@@ -156,7 +156,7 @@ AudioRecorder::AudioRecorder()
 
     layout->addWidget(codecLabel,2,0,Qt::AlignHCenter);
     connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
-    layout->addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);    
+    layout->addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);   
     
     layout->addWidget(sampleRateLabel,3,0,Qt::AlignHCenter);
     connect(sampleRateBox,SIGNAL(activated(int)),SLOT(sampleRateChanged(int)));
@@ -301,9 +301,8 @@ void AudioRecorder::channelCountChanged(int idx)
 
 void AudioRecorder::qualityChanged(int idx)
 { 
-    QAudioEncoderSettings settings = capture->audioSettings();
+    QAudioEncoderSettings settings = capture->audioSettings();    
     
-    qDebug()<<"AudioRecorder::qualityChanged"<<settings.quality();
     switch(idx) {
     case 0:
         settings.setQuality(QtMedia::LowQuality);
@@ -385,17 +384,8 @@ void AudioRecorder::updateSamplerates(int idx)
 }
 
 void AudioRecorder::updateChannelCount(int idx)
-{   
-    QMediaControl *control = audiosource->service()->requestControl(QAudioEncoderControl_iid);
-    if (!control)
-        return;
-
-    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(control);
-    if (!audioEncoder) {
-        audiosource->service()->releaseControl(control);
-        return;
-    }
-    
+{    
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
     channelBox->clear();
     QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
     QList<int> channels;
@@ -411,16 +401,7 @@ void AudioRecorder::updateChannelCount(int idx)
 
 void AudioRecorder::updateQuality(int idx)
 {    
-    QMediaControl *control = audiosource->service()->requestControl(QAudioEncoderControl_iid);
-    if (!control)
-        return;
-
-    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(control);
-    if (!audioEncoder) {
-        audiosource->service()->releaseControl(control);
-        return;
-    }
-
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
     qualityBox->clear();
     QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
     QList<int> channels;
