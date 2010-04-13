@@ -1653,7 +1653,15 @@
             <keyword name="QGalleryAbstractRequest::NoGallery" id="QGalleryAbstractRequest::NoGallery" ref="qgalleryabstractrequest.html#Result-enum"/>
             <keyword name="QGalleryAbstractRequest::NotSupported" id="QGalleryAbstractRequest::NotSupported" ref="qgalleryabstractrequest.html#Result-enum"/>
             <keyword name="QGalleryAbstractRequest::ConnectionError" id="QGalleryAbstractRequest::ConnectionError" ref="qgalleryabstractrequest.html#Result-enum"/>
-            <keyword name="QGalleryAbstractRequest::InvalidFilter" id="QGalleryAbstractRequest::InvalidFilter" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::InvalidItemError" id="QGalleryAbstractRequest::InvalidItemError" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::ItemTypeError" id="QGalleryAbstractRequest::ItemTypeError" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::InvalidPropertyError" id="QGalleryAbstractRequest::InvalidPropertyError" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::PropertyTypeError" id="QGalleryAbstractRequest::PropertyTypeError" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::UnsupportedFilterTypeError" id="QGalleryAbstractRequest::UnsupportedFilterTypeError" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::UnsupportedFilterOptionError" id="QGalleryAbstractRequest::UnsupportedFilterOptionError" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::PermissionsError" id="QGalleryAbstractRequest::PermissionsError" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::InvalidDestinationError" id="QGalleryAbstractRequest::InvalidDestinationError" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::InvalidUrlError" id="QGalleryAbstractRequest::InvalidUrlError" ref="qgalleryabstractrequest.html#Result-enum"/>
             <keyword name="QGalleryAbstractRequest::RequestError" id="QGalleryAbstractRequest::RequestError" ref="qgalleryabstractrequest.html#Result-enum"/>
             <keyword name="QGalleryAbstractRequest::State" id="QGalleryAbstractRequest::State" ref="qgalleryabstractrequest.html#State-enum"/>
             <keyword name="QGalleryAbstractRequest::Inactive" id="QGalleryAbstractRequest::Inactive" ref="qgalleryabstractrequest.html#State-enum"/>

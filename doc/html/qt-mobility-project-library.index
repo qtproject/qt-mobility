@@ -2881,7 +2881,15 @@
                 <value name="NoGallery" value="3"/>
                 <value name="NotSupported" value="4"/>
                 <value name="ConnectionError" value="5"/>
-                <value name="InvalidFilter" value="6"/>
+                <value name="InvalidItemError" value="6"/>
+                <value name="ItemTypeError" value="7"/>
+                <value name="InvalidPropertyError" value="8"/>
+                <value name="PropertyTypeError" value="9"/>
+                <value name="UnsupportedFilterTypeError" value="10"/>
+                <value name="UnsupportedFilterOptionError" value="11"/>
+                <value name="PermissionsError" value="12"/>
+                <value name="InvalidDestinationError" value="13"/>
+                <value name="InvalidUrlError" value="14"/>
                 <value name="RequestError" value="100"/>
             </enum>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QGalleryAbstractRequest::Type" href="qgalleryabstractrequest.html#Type-enum" location="qgalleryrequest.h">

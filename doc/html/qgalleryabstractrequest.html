@@ -24,7 +24,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#Result-enum">Result</a></b> { NoResult, Succeeded, Cancelled, NoGallery, NotSupported, RequestError }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#Result-enum">Result</a></b> { NoResult, Succeeded, Cancelled, NoGallery, ..., RequestError }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#State-enum">State</a></b> { Inactive, Active, Cancelling, Idle }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractrequest.html#Type-enum">Type</a></b> { Item, Count, Insert, Remove, Copy, Move }</td></tr>
 </table>
@@ -120,6 +120,16 @@
 <a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/Cancelled"></a>
 <a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/NoGallery"></a>
 <a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/NotSupported"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/ConnectionError"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/InvalidItemError"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/ItemTypeError"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/InvalidPropertyError"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/PropertyTypeError"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/UnsupportedFilterTypeError"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/UnsupportedFilterOptionError"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/PermissionsError"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/InvalidDestinationError"></a>
+<a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/InvalidUrlError"></a>
 <a name="//apple_ref/cpp/econst/QGalleryAbstractRequest/RequestError"></a>
 <h3 class="fn"><a name="Result-enum"></a>enum QGalleryAbstractRequest::Result</h3>
 <p>Identifies the result of a gallery request.</p>
@@ -130,6 +140,16 @@
 <tr><td valign="top"><tt>QGalleryAbstractRequest::Cancelled</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The request was cancelled before it could finish.</td></tr>
 <tr><td valign="top"><tt>QGalleryAbstractRequest::NoGallery</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The request cannot be executed because no <a href="qgalleryabstractrequest.html#gallery-prop">gallery</a> is set.</td></tr>
 <tr><td valign="top"><tt>QGalleryAbstractRequest::NotSupported</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The request isn't supported by the <a href="qgalleryabstractrequest.html#gallery-prop">gallery</a>.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::ConnectionError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The request could not be executed due to a problem connecting to the gallery.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::InvalidItemError</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The request could not be executed due to an invalid item ID.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::ItemTypeError</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The request could not be executed due to an invalid item type.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::InvalidPropertyError</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The request could not be executed because a filter referenced an invalid property.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::PropertyTypeError</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">The request could not be executed because a filter compared a property to an invalid variant type.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::UnsupportedFilterTypeError</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">The request could not be executed because a filter is not supported by the gallery.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::UnsupportedFilterOptionError</tt></td><td align="center" valign="top"><tt>11</tt></td><td valign="top">The request could not be executed because an option on a filter is not supported by the gallery.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::PermissionsError</tt></td><td align="center" valign="top"><tt>12</tt></td><td valign="top">The request could not be executed because the user has insufficient permissions.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::InvalidDestinationError</tt></td><td align="center" valign="top"><tt>13</tt></td><td valign="top">The request could not be executed because the given destination ID is invalid.</td></tr>
+<tr><td valign="top"><tt>QGalleryAbstractRequest::InvalidUrlError</tt></td><td align="center" valign="top"><tt>14</tt></td><td valign="top">The request could not be executed due to an invalid URL.</td></tr>
 <tr><td valign="top"><tt>QGalleryAbstractRequest::RequestError</tt></td><td align="center" valign="top"><tt>100</tt></td><td valign="top">A minimum value for request specific error results.</td></tr>
 </table></p>
 <a name="//apple_ref/cpp/tag/QGalleryAbstractRequest/State"></a>
