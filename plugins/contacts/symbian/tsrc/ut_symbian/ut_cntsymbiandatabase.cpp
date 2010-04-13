@@ -127,9 +127,10 @@ void TestCntSymbianDatabase::databaseEvents()
 #if 0
     TRAPD(err, db->m_contactDatabase->sendEventsL());
     QVERIFY(err == KErrNone);
+    delete db;
 #else
+    delete db;
     QFAIL("Mock database not currently compiled in, test meaningless?");
 #endif
-    delete db;
 }
 
