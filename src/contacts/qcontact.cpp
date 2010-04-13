@@ -546,18 +546,15 @@ QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) con
     // ascertain which details are supported by any implementation of the given action
     QList<QContactDetail> retn;
     QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors(actionName);
-    for (int i = 0; i < descriptors.size(); i++) {
-        QContactAction *currImpl = QContactManagerData::action(descriptors.at(i));
-        for (int i = 0; i < d->m_details.size(); i++) {
-            QContactDetail detail = d->m_details.at(i);
-            if (currImpl->isDetailSupported(detail, *this)) {
+    foreach (const QContactDetail& detail, d->m_details) {
+        foreach (const QContactActionDescriptor& descriptor, descriptors) {
+            QContactAction *action = QContactManagerData::action(descriptor);
+            if (action->isDetailSupported(detail, *this)) {
                 retn.append(detail);
                 break;
             }
+            delete action;
         }
-
-        // clean up
-        delete currImpl;
     }
 
     return retn;
