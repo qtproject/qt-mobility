@@ -52,8 +52,10 @@ QTM_BEGIN_NAMESPACE
 /*!
     Creates a filter that selects landmarks by \a name.
 */
-QLandmarkNameFilter::QLandmarkNameFilter(const QString &name)
+QLandmarkNameFilter::QLandmarkNameFilter(const QString &name, Qt::CaseSensitivity sensitivity)
 {
+    Q_UNUSED(name);
+    Q_UNUSED(sensitivity);
     //TODO: implement
 }
 

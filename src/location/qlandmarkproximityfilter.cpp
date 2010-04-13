@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qlandmarkproximityfilter.h"
-#include "qgeocoordinate.h"
 #include "qlandmarkfilter_p.h"
 
 QTM_BEGIN_NAMESPACE

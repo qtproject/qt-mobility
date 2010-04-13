@@ -53,10 +53,10 @@ class QLandmarkCustomFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkCustomFilter : public QLandmarkFilter
 {
 public:
+    QLandmarkCustomFilter();
     virtual ~QLandmarkCustomFilter();
 
 protected:
-    QLandmarkCustomFilter();
     virtual bool isMatch(const QLandmark &landmark) = 0;
 private:
     QLandmarkCustomFilterPrivate *d;

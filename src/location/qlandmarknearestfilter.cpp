@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
     Creates a filter that will match the landmark nearest to a given central
     \a coordinate.
 */
-QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate)
+QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate, double radius)
 {
     //TODO: implement
 }
@@ -81,6 +81,26 @@ QGeoCoordinate QLandmarkNearestFilter::coordinate() const
 */
 void QLandmarkNearestFilter::setCoordinate(const QGeoCoordinate &coordinate)
 {
+}
+
+/*!
+    Returns the maximum radius which this filter which seach for landmarks.
+
+    A radius of a negative number indicades a radius of infinite distance.
+*/
+double QLandmarkNearestFilter::radius() const
+{
+    return 0;
+}
+
+/*!
+    Sets the maximum \a radius from which this filter will search for landmarks.
+
+    Setting \a radius to a negative number means a radius of infinite distance.
+*/
+void QLandmarkNearestFilter::setRadius(double radius)
+{
+    Q_UNUSED(radius);
 }
 
 QTM_END_NAMESPACE
