@@ -124,7 +124,7 @@ void QMapRoute::compMapCoords()
             //this will cause internal compiler error with symbian compilers.
             qreal r = (line.p1() - line.p2()).manhattanLength();
             if (r >= minDist ||
-                    d->mapView->zoomLevel() == d->mapView->maxZoomLevel()) {
+                    d->mapView->getZoomLevel() == d->mapView->maxZoomLevel()) {
                 addSegment(line);
                 last = here;
                 here = QGeoCoordinate();

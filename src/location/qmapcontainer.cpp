@@ -39,63 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPOBJECT_H
-#define QLOCATION_MAPOBJECT_H
-
-#include <QGraphicsItem>
-#include <QRectF>
-#include <QLineF>
-#include <QList>
-#include <QObject>
-
-#include "qmapview.h"
+#include "qmapcontainer.h"
+#include "qmapobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMapObjectPrivate;
-class Q_LOCATION_EXPORT QMapObject
+QMapContainer::QMapContainer()
 {
-    friend class QMapView;
-    friend class QMapViewPrivate;
-    friend class QMapContainer;
+}
 
-public:
-    enum MapObjectType {
-        MarkerObject,
-        LineObject,
-        RectObject,
-        RouteObject,
-        EllipseObject,
-        PolygonObject,
-        PixmapObject,
-        NullObject
-    };
+QMapContainer::~QMapContainer()
+{
+}
 
-public:
-    QMapObject(MapObjectType type, quint16 z = 0);
-    virtual ~QMapObject();
+bool QMapContainer::removeMapObject(QMapObject* mapObject)
+{
+    return mapObjects.remove(mapObject);
+}
 
-    quint16 zValue() const;
-    MapObjectType type() const;
 
-    static QRectF boundingRect(const QLineF& line);
-    static bool intersect(const QRectF& rect, const QLineF& line);
+void QMapContainer::addMapObject(QMapObject* mapObject)
+{
+    mapObjects.insert(mapObject);
+    mapObject->compMapCoords();
+}
 
-protected:
-    virtual bool intersects(const QRectF& rect) const = 0;
-    virtual void compMapCoords() = 0;
-    virtual void compIntersectingTiles(const QRectF& box);
-    virtual void paint(QPainter* painter, const QRectF& viewPort) = 0;
+void QMapContainer::reconstructObjects(QHash<quint64, QList<QMapObject*> > &tileToObjects)
+{
+    QSetIterator<QMapObject*> it(mapObjects);
 
-    void setParentView(QMapView *mapView);
+    while (it.hasNext()) {
+        QMapObject* obj = it.next();
+        obj->compMapCoords();
+        //addMapObjectToTiles
+        for (int i = 0; i < obj->d_ptr->intersectingTiles.count(); i++) {
+            if (!tileToObjects.contains(obj->d_ptr->intersectingTiles[i]))
+                tileToObjects[obj->d_ptr->intersectingTiles[i]] = QList<QMapObject*>();
 
-    QMapObject(QMapObjectPrivate &dd, MapObjectType type, quint16 z = 0);
-    QMapObjectPrivate *d_ptr;
+            tileToObjects[obj->d_ptr->intersectingTiles[i]].append(obj);
+        }
 
-private:
-    Q_DECLARE_PRIVATE(QMapObject)
-};
+    }
+}
 
 QTM_END_NAMESPACE
-
-#endif

@@ -131,8 +131,8 @@ void QMapEllipse::compMapCoords()
     if (!d->mapView)
         return;
 
-    QPointF p1 = d->mapView->geoToMap(d->geoTopLeft);
-    QPointF p2 = d->mapView->geoToMap(d->geoBottomRight);
+    QPointF p1 = d->mapView->translateToViewport(d->geoTopLeft);
+    QPointF p2 = d->mapView->translateToViewport(d->geoBottomRight);
 
     if (p2.y() < p1.y()) {
         qreal y = p2.y();

@@ -44,11 +44,10 @@
 
 #include <QRectF>
 #include <QTimer>
-#include <QSet>
-#include <QHash>
 
 #include "qgeomaptile.h"
 #include "qmapview.h"
+#include "qmapcontainer.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -91,7 +90,7 @@ public:
     MapResolution mapResolution; //!< The current map resolution
     MapFormat mapFormat; //!< The current map format
 
-    QSet<QMapObject*> mapObjects; //!< Keeps track of all map objects.
+    QMapContainer mapObjects; //!< Keeps track of all map objects.
     /*!
     * Stores for each map tile (as specified by its one-dimensional index)
     * a list of all map objects that intersect or are completely covered by
@@ -106,7 +105,8 @@ public:
     QHash<quint64, QGeoMapTileReply*> pendingTiles; //!< Pending requested map tiles
 
     QHash<quint64, QPair<QPixmap, bool> > mapTiles;
-
+    quint16 heading;
+    quint16 tilt;
     bool panActive;
     bool pannable;
 };

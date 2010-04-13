@@ -39,63 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPOBJECT_H
-#define QLOCATION_MAPOBJECT_H
+#ifndef QMAPCONTAINER_H_
+#define QMAPCONTAINER_H_
 
-#include <QGraphicsItem>
-#include <QRectF>
-#include <QLineF>
-#include <QList>
-#include <QObject>
+#include <QSet>
+#include <QHash>
 
-#include "qmapview.h"
+#include "qmapobject.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMapObjectPrivate;
-class Q_LOCATION_EXPORT QMapObject
+class QMapContainer
 {
-    friend class QMapView;
-    friend class QMapViewPrivate;
-    friend class QMapContainer;
-
 public:
-    enum MapObjectType {
-        MarkerObject,
-        LineObject,
-        RectObject,
-        RouteObject,
-        EllipseObject,
-        PolygonObject,
-        PixmapObject,
-        NullObject
-    };
-
-public:
-    QMapObject(MapObjectType type, quint16 z = 0);
-    virtual ~QMapObject();
-
-    quint16 zValue() const;
-    MapObjectType type() const;
-
-    static QRectF boundingRect(const QLineF& line);
-    static bool intersect(const QRectF& rect, const QLineF& line);
-
-protected:
-    virtual bool intersects(const QRectF& rect) const = 0;
-    virtual void compMapCoords() = 0;
-    virtual void compIntersectingTiles(const QRectF& box);
-    virtual void paint(QPainter* painter, const QRectF& viewPort) = 0;
-
-    void setParentView(QMapView *mapView);
-
-    QMapObject(QMapObjectPrivate &dd, MapObjectType type, quint16 z = 0);
-    QMapObjectPrivate *d_ptr;
-
+    QMapContainer();
+    virtual ~QMapContainer();
+    bool removeMapObject(QMapObject* mapObject);
+    void addMapObject(QMapObject* mapObject);
+    void reconstructObjects(QHash<quint64, QList<QMapObject*> > &tileToObjects);
 private:
-    Q_DECLARE_PRIVATE(QMapObject)
+    QSet<QMapObject*> mapObjects;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif /* QMAPCONTAINER_H_ */

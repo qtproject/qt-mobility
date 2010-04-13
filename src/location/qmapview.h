@@ -103,18 +103,56 @@ public:
     virtual ~QMapView();
 
     void init(QGeoMapService* mapService, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
-
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
-    QGeoCoordinate center() const;
-    QPointF mapCenter() const;
     void centerOn(const QPointF& pos);
     void centerOn(qreal x, qreal y);
-    void centerOn(const QGeoCoordinate& geoPos);
-    void moveViewPort(int deltaX, int deltaY);
+    QPointF getViewportCenter() const;
+    QGeoCoordinate getCenter() const;
+    void setCenter(const QGeoCoordinate& coord);
 
+    /*!
+    * Returns the current heading.
+    */
+    quint16 getHeading() const;
+    /*!
+    * Sets heading.
+    * @param heading The new heading.
+    */
+    void setHeading(quint16 heading);
+    /*!
+    * Returns the current tilt.
+    */
+    quint16 getTilt() const;
+    /*!
+    * Sets tilt.
+    * @param tilt The new tilt.
+    */
+    void setTilt(quint16 tilt);
+    /*!
+    * Returns the map view bounds.
+    */
+    QRectF getViewBounds() const;
+    
+    quint16 maxZoomLevel() const;
+    quint16 getZoomLevel() const;
+    
+    void pan(int deltaX, int deltaY);
+    void pan(int dragX, int dragY, int dropX, int dropY);
+    
     quint64 mapWidth() const;
     quint64 mapHeight() const;
+
+    //setBaseMapType()
+    
+    /*!
+    * Sets hotspot.
+    * @param hotspot The new hotspot.
+    */
+    void setHotSpot(QPointF& hotspot);
+
+    QPointF translateToViewport(const QGeoCoordinate& coord) const;
+    QGeoCoordinate translateFromViewport(const QPointF& point) const;
 
     void setHorizontalPadding(quint32 range);
     quint32 horizontalPadding() const;
@@ -124,14 +162,8 @@ public:
     void setPannable(bool isPannable);
     bool isPannable() const;
 
-    QPointF geoToMap(const QGeoCoordinate& geoCoordinate) const;
-    QGeoCoordinate mapToGeo(const QPointF& mapCoordinate) const;
-
     void setRouteDetailLevel(quint32 pixels);
     quint32 routeDetailLevel() const;
-
-    quint16 maxZoomLevel() const;
-    quint16 zoomLevel() const;
 
     void addMapObject(QMapObject* mapObject);
     void removeMapObject(QMapObject* mapObject);
@@ -179,7 +211,7 @@ protected:
 public slots:
     void releaseRemoteTiles();
     void tileFetched(QGeoMapTileReply* reply);
-    void setZoomLevel(int zoomLevel);
+    void setZoomLevel(int level);
 
 signals:
     void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);

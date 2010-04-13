@@ -54,7 +54,8 @@ QMapViewPrivate::QMapViewPrivate(QtMobility::QMapView *q)
         currZoomLevel(0), mapVersion(MapVersion(MapVersion::Newest)),
         mapSchmeme(MapScheme(MapScheme::Normal_Day)),
         mapResolution(MapResolution(MapResolution::Res_256_256)),
-        mapFormat(MapFormat(MapFormat::Png)),
+        mapFormat(MapFormat(MapFormat::Png)),mapObjects(),
+        heading(0),tilt(0),
         panActive(false), pannable(true)
 {
 }
