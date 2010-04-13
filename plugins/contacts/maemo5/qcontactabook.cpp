@@ -340,7 +340,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
         EContact *contact = E_CONTACT(masterContact);
         const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
         QByteArray localId(data);
-        m_localI/* ds << localId;
+        m_localIds << localId;
         rtn.append(m_localIds[localId]);
         QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
       }
@@ -382,6 +382,9 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   
   //Convert aContact => qContact
   rtn = convert(E_CONTACT(aContact));
+  QContactId cId;
+  cId.setLocalId(contactId);
+  rtn->setId(cId);
   return rtn;
 }
 
