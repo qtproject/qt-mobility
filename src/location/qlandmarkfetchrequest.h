@@ -47,7 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkFetchRequestPrivate;
-class QLandmarkFetchRequest : public QLandmarkAbstractRequest
+class Q_LOCATION_EXPORT QLandmarkFetchRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
