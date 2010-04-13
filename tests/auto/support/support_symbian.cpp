@@ -45,7 +45,7 @@
 #include <qmessageid.h>
 #include <qmessagemanager.h>
 #include <qmessage_symbian_p.h>
-#include <symbianhelpers_p.h>
+#include <messagingutil_p.h>
 
 #include <QDebug>
 
@@ -96,7 +96,7 @@ void CSymbianMessagingSession::HandleSessionEventL(TMsvSessionEvent /*aEvent*/, 
 
 QTM_BEGIN_NAMESPACE
 
-using namespace SymbianHelpers;
+using namespace MessagingUtil;
 
 class MapiSession
 {

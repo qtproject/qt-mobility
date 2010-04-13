@@ -90,12 +90,12 @@
 #include <imcvtext.h> // KImcvMultipart declaration
 
 #include <QTextCodec>
-#include <symbianhelpers_p.h>
+#include <messagingutil_p.h>
 
 
 QTM_BEGIN_NAMESPACE
 
-using namespace SymbianHelpers;
+using namespace MessagingUtil;
 
 const TInt KWaitAfterReceivedMessage = 100000; // = 0.1 seconds
 #define KDocumentsEntryIdValue    0x1008

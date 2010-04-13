@@ -38,19 +38,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGESYMBIANHELPERS_H
-#define QMESSAGESYMBIANHELPERS_H
+#ifndef QMESSAGINGUTIL_P_H
+#define QMESSAGINGUTIL_P_H
 
 #include <qmessageglobal.h>
 #include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-namespace SymbianHelpers {
-
+namespace MessagingUtil {
     QString addIdPrefix(const QString& id);
     QString stripIdPrefix(const QString& id);
-    static const char* idPrefix = "MTM_";
+    QString idPrefix();
 };
 
 QTM_END_NAMESPACE

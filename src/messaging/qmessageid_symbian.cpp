@@ -40,12 +40,11 @@
 ****************************************************************************/
 #include "qmessageid.h"
 #include <qhash.h>
-#include <symbianhelpers_p.h>
-
+#include <messagingutil_p.h>
 
 QTM_BEGIN_NAMESPACE
 
-using namespace SymbianHelpers;
+using namespace MessagingUtil;
 
 class QMessageIdPrivate
 {
