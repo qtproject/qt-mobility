@@ -788,16 +788,13 @@ QList<QContactActionDescriptor> QContact::availableActions(const QString& vendor
     QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
     for (int i = 0; i < descriptors.size(); i++) {
         QContactActionDescriptor currDescriptor = descriptors.at(i);
-        QContactAction *currImpl = QContactManagerData::action(currDescriptor);
-        if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
-            if ((vendorName.isEmpty() || currDescriptor.vendorName() == vendorName) &&
-                    (implementationVersion == -1 || currDescriptor.implementationVersion() == implementationVersion)) {
+        if ((vendorName.isEmpty() || currDescriptor.vendorName() == vendorName) &&
+            (implementationVersion == -1 || currDescriptor.implementationVersion() == implementationVersion)) {
+            QScopedPointer<QContactAction> currImpl(QContactManagerData::action(currDescriptor));
+            if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
                 retn.insert(currDescriptor);
             }
         }
-
-        // clean up the implementation to avoid leak.
-        delete currImpl;
     }
 
     return retn.toList();
