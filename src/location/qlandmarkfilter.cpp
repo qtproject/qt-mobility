@@ -71,7 +71,8 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
 
 /*!
     \class QLandmarkFilter
-    \brief The QLandmarkFilter class is used to select landmarks.
+    \brief The QLandmarkFilter class serves as the base class for all filter classes.
+    Also serves as the default filter which retrieves all landmarks.
     \ingroup landmarks-filter
 
     This class is used as a parameter to search for landmarks, it allows selection of
