@@ -44,12 +44,18 @@ Optimizations
 QtBearer
 ------
 
+ - Fixed MOBILITY-748: Private Qt header usage has been removed
+ - Fixed MOBILITY-600: Memory leak on Mac fixed
+ - Multiple optimizations on Mac OS
+ - Maemo 5 and Maemo 6 use exact same code base
+ - ConnectInBackground support for Symbian added
  - Maemo 5 (Fremantle) specific fixes
     * Fixed QTMOBILITY-70: bearermonitor application has serious layout issues
       preventing any use of the app
     * Fixed MOBILITY-723: BearerEx test application isn't usable in N900
     * Fixed MOBILITY-600: QNetworkSession is not asynchronous on Maemo and
       leads to crashes
+ - Static analysis errors fixed
     
 
 QtContacts
@@ -129,13 +135,10 @@ QtServiceFramework
  - foo
     * bar
 
-Multimedia
-------
-
-
 QtSystemInfo
 ------
 
+ - Fixed MOBILITY-748: Private Qt header usage has been removed
  - currentMode() added in network info
  - Maemo 5 (Fremantle) backend finalized
     * Network info completed
