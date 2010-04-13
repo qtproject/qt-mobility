@@ -82,11 +82,23 @@ namespace
         const int count;
     };
 
+    struct QGalleryTypePrefix : public QLatin1String
+    {
+        template <int N> QGalleryTypePrefix(const char (&prefix)[N])
+            : QLatin1String(prefix), length(N - 1){}
+
+        const int length;
+
+        QStringRef strip(const QString &id) const { return QStringRef(&id, 0, length); }
+    };
+
     struct QGalleryTypeMapItem
     { 
         QLatin1String galleryKey;
         QLatin1String trackerKey;
+        QGalleryTypePrefix prefix;
         QGalleryPropertyMap propertyMap;
+        QGalleryTrackerSchema::IdFunc idFunc;
     };
 
     struct QGalleryTypeMap
@@ -96,20 +108,20 @@ namespace
 
         const QGalleryTypeMapItem *items;
         const int count;
+
+        int indexOfType(const QString &type) const;
+        int indexOfItemId(const QString &itemId) const;
     };
 
     struct QGalleryAggregateTypeMapItem
     {
         QLatin1String galleryKey;
         QLatin1String trackerKey;
+        QGalleryTypePrefix prefix;
         QGalleryPropertyMap identity;
         QGalleryPropertyMap propertyMap;
         QGalleryAggregatePropertyMap aggregatePropertyMap;
-        bool (*build)(
-                int *error,
-                QXmlStreamWriter *xml,
-                const QGalleryFilter &filter,
-                const QGalleryPropertyMap &propertyMap);
+        void (*writeIdCondition)(int *error, QXmlStreamWriter *xml, const QStringRef &itemId);
         QGalleryTrackerSchema::IdFunc idFunc;
     };
 
@@ -120,7 +132,73 @@ namespace
 
         const QGalleryAggregateTypeMapItem *items;
         const int count;
+
+        int indexOfType(const QString &type) const;
+        int indexOfItemId(const QString &itemId) const;
     };
+
+    int QGalleryTypeMap::indexOfType(const QString &type) const
+    {
+        for (int i = 0; i < count; ++i) {
+            if (items[i].galleryKey == type)
+                return i;
+        }
+        return -1;
+    }
+
+    int QGalleryTypeMap::indexOfItemId(const QString &itemId) const
+    {
+        for (int i = 0; i < count; ++i) {
+            if (itemId.startsWith(items[i].prefix))
+                return i;
+        }
+        return -1;
+    }
+
+    int QGalleryAggregateTypeMap::indexOfType(const QString &type) const
+    {
+        for (int i = 0; i < count; ++i) {
+            if (items[i].galleryKey == type)
+                return i;
+        }
+        return -1;
+    }
+
+    int QGalleryAggregateTypeMap::indexOfItemId(const QString &itemId) const
+    {
+        for (int i = 0; i < count; ++i) {
+            if (itemId.startsWith(items[i].prefix))
+                return i;
+        }
+        return -1;
+    }
+}
+
+#define QT_GALLERY_PROPERTY(GalleryKey, TrackerKey) \
+{ QLatin1String(GalleryKey), QLatin1String(TrackerKey) }
+
+#define QT_GALLERY_AGGREGATE_PROPERTY(GalleryKey, TrackerKey, AggregateType) \
+{ QLatin1String(GalleryKey), QLatin1String(TrackerKey), QGalleryTrackerSchema::AggregateType }
+
+#define QT_GALLERY_FILE_TYPE(Type, Service, Prefix, PropertyMap) \
+{ \
+    QLatin1String(#Type), \
+    QLatin1String(#Service), \
+    QGalleryTypePrefix(#Prefix"::"), \
+    QGalleryPropertyMap(PropertyMap), \
+    qt_gallery##Type##Id \
+}
+
+#define QT_GALLERY_AGGREGATE_TYPE(Type, Service, Prefix) \
+{ \
+    QLatin1String(#Type), \
+    QLatin1String(#Service), \
+    QGalleryTypePrefix(#Prefix"::"), \
+    QGalleryPropertyMap(qt_gallery##Type##Identity), \
+    QGalleryPropertyMap(qt_gallery##Type##PropertyMap),\
+    QGalleryAggregatePropertyMap(qt_gallery##Type##AggregateMap), \
+    qt_write##Type##IdCondition, \
+    qt_gallery##Type##Id \
 }
 
 static bool qt_writePropertyName(
@@ -143,26 +221,6 @@ static bool qt_writePropertyName(
     *error = QGalleryAbstractRequest::InvalidPropertyError;
 
     return false;
-}
-
-#define QT_GALLERY_PROPERTY(GalleryKey, TrackerKey) \
-{ QLatin1String(GalleryKey), QLatin1String(TrackerKey) }
-
-#define QT_GALLERY_AGGREGATE_PROPERTY(GalleryKey, TrackerKey, AggregateType) \
-{ QLatin1String(GalleryKey), QLatin1String(TrackerKey), QGalleryTrackerSchema::AggregateType }
-
-#define QT_GALLERY_FILE_TYPE(GalleryKey, TrackerKey, PropertyMap) \
-{ QLatin1String(GalleryKey), QLatin1String(TrackerKey), QGalleryPropertyMap(PropertyMap) }
-
-#define QT_GALLERY_AGGREGATE_TYPE(Type, Service) \
-{ \
-    QLatin1String(#Type), \
-    QLatin1String(#Service), \
-    QGalleryPropertyMap(qt_gallery##Type##Identity), \
-    QGalleryPropertyMap(qt_gallery##Type##PropertyMap),\
-    QGalleryAggregatePropertyMap(qt_gallery##Type##AggregateMap), \
-    qt_build##Type##Query, \
-    qt_gallery##Type##Id \
 }
 
 template <typename T>
@@ -271,82 +329,6 @@ static bool qt_writeCondition(
         QXmlStreamWriter *xml,
         const QGalleryFilter &filter,
         const QGalleryPropertyMap &propertyMap);
-
-static bool qt_writeCondition(
-        int *error, QXmlStreamWriter *xml, const QGalleryContainerFilter &filter)
-{
-    const QString id = filter.containerId();
-
-    if (id.startsWith(QLatin1String("file::"))) {
-        qt_writeEqualsCondition(xml, QLatin1String("File:Path"), id.mid(6));
-
-        return true;
-    } else if (id.startsWith(QLatin1String("artist::"))) {
-        qt_writeEqualsCondition(xml, QLatin1String("Audio:Artist"), id.mid(8));
-
-        return true;
-    } else if (id.startsWith(QLatin1String("albumArtist::"))) {
-        qt_writeEqualsCondition(xml, QLatin1String("Audio:AlbumArtist"), id.mid(13));
-
-        return true;
-    } else if (id.startsWith(QLatin1String("album::"))) {
-        const QLatin1Char separator('/');
-
-        for (int index = id.indexOf(separator, 7);
-                index > 0;
-                index = id.indexOf(separator, index + 2)) {
-            if (id.at(index + 1) != QLatin1Char('/')) {
-                const QString artistName = id.mid(7, index - 7).replace(
-                        QLatin1String("//"), QLatin1String("/"));
-                const QString albumTitle = id.mid(index + 1);
-
-                xml->writeStartElement(QLatin1String("rdfq:and"));
-                qt_writeEqualsCondition(xml, QLatin1String("Audio:AlbumArtist"), artistName);
-                qt_writeEqualsCondition(xml, QLatin1String("Audio:Album"), albumTitle);
-                xml->writeEndElement();
-
-                return true;
-            }
-        }
-
-        *error = QGalleryAbstractRequest::InvalidItemError;
-
-        return false;
-    } else if (id.startsWith(QLatin1String("musicGenre::"))) {
-        qt_writeEqualsCondition(xml, QLatin1String("Audio:Genre"), id.mid(7));
-
-        return true;
-    } else if (id.startsWith(QLatin1String("photoAlbum::"))) {
-        qt_writeEqualsCondition(xml, QLatin1String("Image:Album"), id.mid(12));
-
-        return true;
-    } else {
-        *error = QGalleryAbstractRequest::InvalidItemError;
-
-        return false;
-    }
-
-}
-
-static bool qt_writeCondition(
-        int *error, QXmlStreamWriter *xml, const QGalleryContainerUrlFilter &filter)
-{
-    const QUrl url = filter.containerUrl();
-
-    if (!url.isValid()) {
-        *error = QGalleryAbstractRequest::InvalidUrlError;
-
-        return false;
-    } else if (url.scheme() != QLatin1String("file")) {
-        *error = QGalleryAbstractRequest::InvalidUrlError;  // UnsupportedProtocol?
-
-        return false;
-    } else {
-        qt_writeEqualsCondition(xml, QLatin1String("File:Path"), url.path());
-
-        return true;
-    }
-}
 
 static bool qt_writeCondition(
         int *error,
@@ -502,10 +484,6 @@ static bool qt_writeCondition(
     switch (filter.type()) {
     case QGalleryFilter::Invalid:
         return true;
-    case QGalleryFilter::Container:
-        return qt_writeCondition(error, xml, filter.toContainerFilter());
-    case QGalleryFilter::ContainerUrl:
-        return qt_writeCondition(error, xml, filter.toContainerUrlFilter());
     case QGalleryFilter::Intersection:
         return qt_writeCondition(
                 error, xml, filter.toIntersectionFilter(), propertyMap);
@@ -565,100 +543,58 @@ static const QGalleryPropertyMapItem qt_galleryFilePropertyMap[] =
     QT_GALLERY_PROPERTY("keywords"   , "User:Keywords")
 };
 
-static QString qt_galleryFileId(const QStringList &row)
+static QString qt_galleryFileId(const QStringList &row);
+
+static void qt_writeFileIdCondition(int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
-    return !row.isEmpty() ? QLatin1String("file::") + row.at(0) : QString();
-}
-
-
-static bool qt_writeFileCondition(
-        int *error, QXmlStreamWriter *xml, const QGalleryItemFilter &filter)
-{
-    const QStringList itemIds = filter.itemIds();
-
-    if (itemIds.isEmpty()) {
-        *error = QGalleryItemRequest::InvalidItemError;
-
-        return false;
-    } else if (itemIds.count() > 1) {
-        xml->writeStartElement(QLatin1String("rdfq:or"));
-    }
-
-    for (QStringList::const_iterator id = itemIds.begin(), end = itemIds.end(); id != end; ++id) {
-        if (id->startsWith(QLatin1String("file::"))) {
-            const int index = id->lastIndexOf(QLatin1Char('/'));
-
-            if (index < 0) {
-                *error = QGalleryItemRequest::InvalidItemError;
-
-                return false;
-            } else {
-                xml->writeStartElement(QLatin1String("rdfq:and"));
-                qt_writeEqualsCondition(xml, QLatin1String("File:Path"), id->mid(6, index + 1));
-                qt_writeEqualsCondition(xml, QLatin1String("File:Name"), id->mid(index + 1));
-                xml->writeEndElement();
-                return true;
-            }
-        } else {
-            *error = QGalleryItemRequest::InvalidItemError;
-
-            return false;
-        }
-    }
-
-    if (itemIds.count() > 1)
+    const int separatorIndex = itemId.string()->lastIndexOf(QLatin1Char('/'));
+    
+    if (separatorIndex > 0) {
+        const QString path = itemId.string()->mid(
+                itemId.position(), separatorIndex - itemId.position());
+        QString fileName = itemId.string()->mid(separatorIndex + 1);
+        
+        xml->writeStartElement(QLatin1String("rdfq:and"));
+        qt_writeEqualsCondition(xml, QLatin1String("File:Path"), path);
+        qt_writeEqualsCondition(xml, QLatin1String("File:Name"), fileName);
         xml->writeEndElement();
-
-    return true;
+    } else {
+        *error = QGalleryAbstractRequest::InvalidItemError;
+    }
 }
 
-static bool qt_writeFileCondition(
-        int *error, QXmlStreamWriter *xml, const QGalleryItemUrlFilter &filter)
+static void qt_writeFileContainerCondition(
+        int *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
-    const QList<QUrl> urls = filter.itemUrls();
-
-    for (QList<QUrl>::const_iterator url = urls.begin(), end = urls.end(); url != end; ++url) {
-        if (!url->isValid()) {
-            *error = QGalleryItemRequest::InvalidUrlError;
-
-            return false;
-        } else if (url->scheme() != QLatin1String("file")) {
-            *error = QGalleryItemRequest::InvalidItemError;
-
-            return false;
-        } else {
-            const QString path = url->path();
-            const int index = path.lastIndexOf(QLatin1Char('/'));
-
-            if (index < 0) {
-                *error = QGalleryItemRequest::InvalidUrlError;
-
-                return false;
-            } else {
-                xml->writeStartElement(QLatin1String("rdfq:and"));
-                qt_writeEqualsCondition(xml, QLatin1String("File:Path"), path.mid(0, index + 1));
-                qt_writeEqualsCondition(xml, QLatin1String("File:Name"), path.mid(index + 1));
-                xml->writeEndElement();
-            }
-        }
-    }
-    return true;
+    qt_writeEqualsCondition(xml, QLatin1String("File:Path"), itemId.toString());
 }
 
-static bool qt_buildFileQuery(
-        int *error,
-        QXmlStreamWriter *xml,
-        const QGalleryFilter &filter,
-        const QGalleryPropertyMap &propertyMap)
+static void qt_writeFileScopeCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
-    switch (filter.type()) {
-    case QGalleryFilter::Item:
-        return qt_writeFileCondition(error, xml, filter.toItemFilter());
-    case QGalleryFilter::ItemUrl:
-        return qt_writeFileCondition(error, xml, filter.toItemUrlFilter());
-    default:
-        return qt_writeCondition(error, xml, filter, propertyMap);
-    }
+    xml->writeStartElement(QLatin1String("rdfq:or"));
+
+    qt_writeEqualsCondition(xml, QLatin1String("File:Path"), itemId.toString());
+
+    xml->writeStartElement(QLatin1String("rdfq:startsWith"));
+    xml->writeEmptyElement(QLatin1String("rdfq:Property"));
+    xml->writeAttribute(QLatin1String("name"), QLatin1String("File:Path"));
+
+    xml->writeStartElement(QLatin1String("rdf:String"));
+    xml->writeCharacters(itemId.toString());
+    xml->writeEndElement();
+
+    xml->writeEndElement();
+
+    xml->writeEndElement();
+}
+
+/////////
+// Folder
+/////////
+
+static QString qt_galleryFolderId(const QStringList &row)
+{
+    return QLatin1String("folder::") + row.value(0);
 }
 
 ////////
@@ -693,6 +629,11 @@ static const QGalleryPropertyMapItem qt_galleryAudioPropertyMap[] =
     QT_GALLERY_PROPERTY("lyrics"      , "Audio:Lyrics")
 };
 
+static QString qt_galleryAudioId(const QStringList &row)
+{
+    return QLatin1String("audio::") + row.value(0);
+}
+
 ///////////
 // Playlist
 ///////////
@@ -706,6 +647,10 @@ static const QGalleryPropertyMapItem qt_galleryPlaylistPropertyMap[] =
 //    QT_GALLERY_PROPERTY(""        , "Playlist:ValidDuration")
 };
 
+static QString qt_galleryPlaylistId(const QStringList &row)
+{
+    return QLatin1String("playlist::") + row.value(0);
+}
 
 ////////
 // Image
@@ -743,6 +688,11 @@ static const QGalleryPropertyMapItem qt_galleryImagePropertyMap[] =
 //    QT_GALLERY_PROPERTY(""                , "Image:HasKeywords")
 };
 
+static QString qt_galleryImageId(const QStringList &row)
+{
+    return QLatin1String("image::") + row.value(0);
+}
+
 ////////
 // Video
 ////////
@@ -765,6 +715,11 @@ static const QGalleryPropertyMapItem qt_galleryVideoPropertyMap[] =
 //    QT_GALLERY_PROPERTY(""            , "Video:Source")
 };
 
+static QString qt_galleryVideoId(const QStringList &row)
+{
+    return QLatin1String("video::") + row.value(0);
+}
+
 ///////////
 // Document
 ///////////
@@ -783,6 +738,51 @@ static const QGalleryPropertyMapItem qt_galleryDocumentPropertyMap[] =
 //    QT_GALLERY_PROPERTY(""       , "Doc:URL")
 };
 
+static QString qt_galleryDocumentId(const QStringList &row)
+{
+    return QLatin1String("document::") + row.value(0);
+}
+
+///////
+// Text
+///////
+
+static QString qt_galleryTextId(const QStringList &row)
+{
+    return QLatin1String("text::") + row.value(0);
+}
+
+/////////////
+// File Types
+/////////////
+
+static const QGalleryTypeMapItem qt_galleryTypeMap[] =
+{
+    QT_GALLERY_FILE_TYPE(File       , Files        , file    , qt_galleryFilePropertyMap),
+    QT_GALLERY_FILE_TYPE(Folder     , Folders      , folder  , qt_galleryFilePropertyMap),
+    QT_GALLERY_FILE_TYPE(Document   , Documents    , document, qt_galleryDocumentPropertyMap),
+    QT_GALLERY_FILE_TYPE(Audio      , Music        , audio   , qt_galleryAudioPropertyMap),
+    QT_GALLERY_FILE_TYPE(Image      , Images       , image   , qt_galleryImagePropertyMap),
+    QT_GALLERY_FILE_TYPE(Video      , Videos       , video   , qt_galleryVideoPropertyMap),
+    QT_GALLERY_FILE_TYPE(Playlist   , Playlists    , playlist, qt_galleryPlaylistPropertyMap),
+    QT_GALLERY_FILE_TYPE(Text       , Text         , text    , qt_galleryFilePropertyMap),
+    QT_GALLERY_FILE_TYPE(File       , Development  , file    , qt_galleryFilePropertyMap),
+    QT_GALLERY_FILE_TYPE(File       , Other        , file    , qt_galleryFilePropertyMap),
+};
+
+static QString qt_galleryFileId(const QStringList &row)
+{
+    QGalleryTypeMap typeMap(qt_galleryTypeMap);
+
+    QString service = row.value(1);
+
+    for (int i = 0; i < typeMap.count; ++i) {
+        if (typeMap.items[i].trackerKey == service) {
+            return typeMap.items->prefix + row.value(0);
+        }
+    }
+    return QLatin1String("file::") + row.value(0);
+}
 
 /////////
 // Artist
@@ -807,55 +807,12 @@ static const QGalleryAggregatePropertyMapItem qt_galleryArtistAggregateMap[] =
 
 static QString qt_galleryArtistId(const QStringList &rows)
 {
-    return !rows.isEmpty()
-            ? QLatin1String("artist::") + rows.at(0)
-            : QString();
+    return QLatin1String("artist::") + rows.value(0);
 }
 
-static bool qt_writeArtistCondition(
-        int *error, QXmlStreamWriter *xml, const QGalleryItemFilter &filter)
+static void qt_writeArtistIdCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
-    const QStringList itemIds = filter.itemIds();
-
-    if (itemIds.isEmpty()) {
-        *error = QGalleryAbstractRequest::InvalidItemError;
-
-        return false;
-    }
-
-    for (QStringList::const_iterator itemId = itemIds.begin(), end = itemIds.end();
-            itemId != end;
-            ++itemId) {
-        if (itemId->startsWith(QLatin1String("artist::"))) {
-            qt_writeEqualsCondition(xml, QLatin1String("Audio:Artist"), itemId->mid(8));
-        } else if (itemId->startsWith(QLatin1String("albumArtist::"))) {
-            qt_writeEqualsCondition(xml, QLatin1String("Audio:AlbumArtist"), itemId->mid(13));
-        } else {
-            *error = QGalleryAbstractRequest::InvalidItemError;
-
-            return false;
-        }
-    }
-
-    return true;
-}
-
-static bool qt_buildArtistQuery(
-        int *error,
-        QXmlStreamWriter *xml,
-        const QGalleryFilter &filter,
-        const QGalleryPropertyMap &propertyMap)
-{
-    switch (filter.type()) {
-    case QGalleryFilter::Item:
-        return qt_writeArtistCondition(error, xml, filter.toItemFilter());
-    case QGalleryFilter::ItemUrl:
-        *error = QGalleryAbstractRequest::InvalidItemError;
-
-        return false;
-    default:
-        return qt_writeCondition(error, xml, filter, propertyMap);
-    }
+    qt_writeEqualsCondition(xml, QLatin1String("Audio:Artist"), itemId.toString());
 }
 
 ///////////////
@@ -881,27 +838,12 @@ static const QGalleryAggregatePropertyMapItem qt_galleryAlbumArtistAggregateMap[
 
 static QString qt_galleryAlbumArtistId(const QStringList &rows)
 {
-    return !rows.isEmpty()
-            ? QLatin1String("albumArtist::") + rows.at(0)
-            : QString();
+    return QLatin1String("albumArtist::") + rows.value(0);
 }
 
-static bool qt_buildAlbumArtistQuery(
-        int *error,
-        QXmlStreamWriter *xml,
-        const QGalleryFilter &filter,
-        const QGalleryPropertyMap &propertyMap)
+static void qt_writeAlbumArtistIdCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
-    switch (filter.type()) {
-    case QGalleryFilter::Item:
-        return qt_writeArtistCondition(error, xml, filter.toItemFilter());
-    case QGalleryFilter::ItemUrl:
-        *error = 1;
-
-        return false;
-    default:
-        return qt_writeCondition(error, xml, filter, propertyMap);
-    }
+    qt_writeEqualsCondition(xml, QLatin1String("Audio:AlbumArtist"), itemId.toString());
 }
 
 ////////
@@ -926,81 +868,41 @@ static const QGalleryAggregatePropertyMapItem qt_galleryAlbumAggregateMap[] =
     QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , Count),
 };
 
-static QString  qt_galleryAlbumId(const QStringList &row)
+static QString qt_galleryAlbumId(const QStringList &row)
 {
     QString albumTitle = row.value(0);
     QString artistName = row.value(1);
 
-    if (!albumTitle.isEmpty()) {
-        return QLatin1String("album::")
-                + artistName.replace(QLatin1String("/"), QLatin1String("//"))
-                + QLatin1Char('/')
-                + albumTitle;
-    } else {
-        return QString();
-    }
+    return QLatin1String("album::")
+            + artistName.replace(QLatin1String("/"), QLatin1String("//"))
+            + QLatin1Char('/')
+            + albumTitle;
 }
 
-static bool qt_writeAlbumCondition(
-        int *error, QXmlStreamWriter *xml, const QGalleryItemFilter &filter)
+static void qt_writeAlbumIdCondition(
+        int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
-    const QStringList itemIds = filter.itemIds();
+    const QLatin1Char separator('/');
 
-    if (itemIds.isEmpty()) {
-        *error = QGalleryAbstractRequest::InvalidItemError;
+    for (int index = itemId.string()->indexOf(separator, itemId.position());
+            index > 0;
+            index = itemId.string()->indexOf(separator, index + 2)) {
+        if (itemId.string()->at(index + 1) != separator) {
+            QString artistName = itemId.string()->mid(itemId.position(), index - itemId.position());
+            artistName = artistName.replace(QLatin1String("//"), QLatin1String("/"));
 
-        return false;
-    }
+            const QString albumTitle = itemId.string()->mid(index + 1);
 
-    for (QStringList::const_iterator itemId = itemIds.begin(), end = itemIds.end();
-            itemId != end;
-            ++itemId) {
-        if (itemId->startsWith(QLatin1String("album::"))) {
-            const QLatin1Char separator('/');
+            xml->writeStartElement(QLatin1String("rdfq:and"));
+            qt_writeEqualsCondition(xml, QLatin1String("Audio:AlbumArtist"), artistName);
+            qt_writeEqualsCondition(xml, QLatin1String("Audio:Album"), albumTitle);
+            xml->writeEndElement();
 
-            for (int index = itemId->indexOf(separator, 7);
-                    index > 0;
-                    index = itemId->indexOf(separator, index + 2)) {
-                if (itemId->at(index + 1) != separator) {
-                    const QString artistName = itemId->mid(7, index - 7).replace(
-                            QLatin1String("//"), QLatin1String("/"));
-                    const QString albumTitle = itemId->mid(index + 1);
-
-                    xml->writeStartElement(QLatin1String("rdfq:and"));
-                    qt_writeEqualsCondition(xml, QLatin1String("Audio:AlbumArtist"), artistName);
-                    qt_writeEqualsCondition(xml, QLatin1String("Audio:Album"), albumTitle);
-                    xml->writeEndElement();
-                }
-
-                *error = QGalleryAbstractRequest::InvalidItemError;
-
-                return false;
-            }
-        } else {
-            *error = QGalleryAbstractRequest::InvalidItemError;
-
-            return false;
+            return;
         }
     }
-    return true;
-}
 
-static bool qt_buildAlbumQuery(
-        int *error,
-        QXmlStreamWriter *xml,
-        const QGalleryFilter &filter,
-        const QGalleryPropertyMap &propertyMap)
-{
-    switch (filter.type()) {
-    case QGalleryFilter::Item:
-        return qt_writeAlbumCondition(error, xml, filter.toItemFilter());
-    case QGalleryFilter::ItemUrl:
-        *error = QGalleryAbstractRequest::InvalidItemError;
-
-        return false;
-    default:
-        return qt_writeCondition(error, xml, filter, propertyMap);
-    }
+    *error = QGalleryAbstractRequest::InvalidItemError;
 }
 
 //////////////
@@ -1026,55 +928,12 @@ static const QGalleryAggregatePropertyMapItem qt_galleryAudioGenreAggregateMap[]
 
 static QString qt_galleryAudioGenreId(const QStringList &row)
 {
-    QString genre = row.value(0);
-
-    return !genre.isEmpty()
-            ? QLatin1String("audioGenre::") + genre
-            : QString();
+    return QLatin1String("audioGenre::") + row.value(0);
 }
 
-static bool qt_writeAudioGenreCondition(
-        int *error, QXmlStreamWriter *xml, const QGalleryItemFilter &filter)
+static void qt_writeAudioGenreIdCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
-    const QStringList itemIds = filter.itemIds();
-
-    if (itemIds.isEmpty()) {
-        *error = 1;
-
-        return false;
-    }
-
-    for (QStringList::const_iterator itemId = itemIds.begin(), end = itemIds.end();
-            itemId != end;
-            ++itemId) {
-        if (itemId->startsWith(QLatin1String("audioGenre::"))) {
-            qt_writeEqualsCondition(xml, QLatin1String("Audio:Genre"), itemId->mid(7));
-        } else {
-            *error = 1;
-
-            return false;
-        }
-    }
-
-    return true;
-}
-
-static bool qt_buildAudioGenreQuery(
-        int *error,
-        QXmlStreamWriter *xml,
-        const QGalleryFilter &filter,
-        const QGalleryPropertyMap &propertyMap)
-{
-    switch (filter.type()) {
-    case QGalleryFilter::Item:
-        return qt_writeAudioGenreCondition(error, xml, filter.toItemFilter());
-    case QGalleryFilter::ItemUrl:
-        *error = QGalleryAbstractRequest::InvalidItemError;
-
-        return false;
-    default:
-        return qt_writeCondition(error, xml, filter, propertyMap);
-    }
+    qt_writeEqualsCondition(xml, QLatin1String("Audio:Genre"), itemId.toString());
 }
 
 //////////////
@@ -1098,83 +957,25 @@ static const QGalleryAggregatePropertyMapItem qt_galleryPhotoAlbumAggregateMap[]
 
 static QString qt_galleryPhotoAlbumId(const QStringList &row)
 {
-    QString album = row.value(0);
-
-    return !album.isEmpty()
-            ? QLatin1String("photoAlbum::") + album
-            : QString();
+    return  QLatin1String("photoAlbum::") + row.value(0);
 }
 
-
-static bool qt_writePhotoAlbumCondition(
-        int *error, QXmlStreamWriter *xml, const QGalleryItemFilter &filter)
+static void qt_writePhotoAlbumIdCondition(int *, QXmlStreamWriter *xml, const QStringRef &itemId)
 {
-    const QStringList itemIds = filter.itemIds();
-
-    if (itemIds.isEmpty()) {
-        *error = QGalleryAbstractRequest::InvalidItemError;
-
-        return false;
-    }
-
-    for (QStringList::const_iterator itemId = itemIds.begin(), end = itemIds.end();
-            itemId != end;
-            ++itemId) {
-        if (itemId->startsWith(QLatin1String("photoAlbum::"))) {
-            qt_writeEqualsCondition(xml, QLatin1String("Image:Album"), itemId->mid(12));
-        } else {
-            *error = QGalleryAbstractRequest::InvalidItemError;
-
-            return false;
-        }
-    }
-
-    return true;
+    qt_writeEqualsCondition(xml, QLatin1String("Image:Album"), itemId.toString());
 }
 
-static bool qt_buildPhotoAlbumQuery(
-        int *error,
-        QXmlStreamWriter *xml,
-        const QGalleryFilter &filter,
-        const QGalleryPropertyMap &propertyMap)
-{
-    switch (filter.type()) {
-    case QGalleryFilter::Item:
-        return qt_writePhotoAlbumCondition(error, xml, filter.toItemFilter());
-    case QGalleryFilter::ItemUrl:
-        *error = QGalleryAbstractRequest::InvalidItemError;
-
-        return false;
-    default:
-        return qt_writeCondition(error, xml, filter, propertyMap);
-    }
-}
-
-////////
-// Types
-////////
-
-static const QGalleryTypeMapItem qt_galleryTypeMap[] =
-{
-    QT_GALLERY_FILE_TYPE("File"       , "Files"        , qt_galleryFilePropertyMap),
-    QT_GALLERY_FILE_TYPE("Folder"     , "Folders"      , qt_galleryFilePropertyMap),
-    QT_GALLERY_FILE_TYPE("Document"   , "Documents"    , qt_galleryDocumentPropertyMap),
-    QT_GALLERY_FILE_TYPE("Audio"      , "Music"        , qt_galleryAudioPropertyMap),
-    QT_GALLERY_FILE_TYPE("Image"      , "Images"       , qt_galleryImagePropertyMap),
-    QT_GALLERY_FILE_TYPE("Video"      , "Videos"       , qt_galleryVideoPropertyMap),
-    QT_GALLERY_FILE_TYPE("Playlist"   , "Playlists"    , qt_galleryPlaylistPropertyMap),
-    QT_GALLERY_FILE_TYPE("Text"       , "Text"         , qt_galleryFilePropertyMap),
-    QT_GALLERY_FILE_TYPE("File"       , "Development"  , qt_galleryFilePropertyMap),
-    QT_GALLERY_FILE_TYPE("File"       , "Other"        , qt_galleryFilePropertyMap),
-};
+//////////////////
+// Aggregate Types
+//////////////////
 
 static const QGalleryAggregateTypeMapItem qt_galleryAggregateTypeMap[] =
 {
-    QT_GALLERY_AGGREGATE_TYPE(Artist     , Music),
-    QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, Music),
-    QT_GALLERY_AGGREGATE_TYPE(Album      , Music),
-    QT_GALLERY_AGGREGATE_TYPE(AudioGenre , Music),
-    QT_GALLERY_AGGREGATE_TYPE(PhotoAlbum , Images)
+    QT_GALLERY_AGGREGATE_TYPE(Artist     , Music , artist),
+    QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, Music , albumArtist),
+    QT_GALLERY_AGGREGATE_TYPE(Album      , Music , album),
+    QT_GALLERY_AGGREGATE_TYPE(AudioGenre , Music , audioGenre),
+    QT_GALLERY_AGGREGATE_TYPE(PhotoAlbum , Images, photoAlbum)
 
 };
 
@@ -1191,94 +992,180 @@ QGalleryTrackerSchema::~QGalleryTrackerSchema()
 void QGalleryTrackerSchema::setItemType(const QString &type)
 {
     m_itemType = type;
-    m_fileTypeIndex = -1;
-    m_aggregateTypeIndex = -1;
+    m_fileTypeIndex = QGalleryTypeMap(qt_galleryTypeMap).indexOfType(type);
+    m_aggregateTypeIndex = m_fileTypeIndex == -1
+            ? QGalleryAggregateTypeMap(qt_galleryAggregateTypeMap).indexOfType(type)
+            : -1;
+}
 
-    {
-        QGalleryTypeMap typeMap(qt_galleryTypeMap);
+void QGalleryTrackerSchema::resolveItemType(const QString &itemId)
+{
+    QGalleryTypeMap typeMap(qt_galleryTypeMap);
+    m_fileTypeIndex = typeMap.indexOfItemId(itemId);
 
-        for (int i = 0; i < typeMap.count; ++i) {
-            if (typeMap.items[i].galleryKey == m_itemType) {
-                m_fileTypeIndex = i;
-                return;
-            }
-        }
-    } {
-        QGalleryAggregateTypeMap typeMap(qt_galleryAggregateTypeMap);
+    if (m_fileTypeIndex != -1) {
+        m_itemType = typeMap.items[m_fileTypeIndex].galleryKey;
+        m_aggregateTypeIndex = -1;
+    } else {
+        QGalleryAggregateTypeMap aggregateMap(qt_galleryAggregateTypeMap);
+        m_aggregateTypeIndex = aggregateMap.indexOfItemId((itemId));
 
-        for (int i = 0; i < typeMap.count; ++i) {
-            if (typeMap.items[i].galleryKey == m_itemType) {
-                m_aggregateTypeIndex = i;
-                return;
-            }
+        if (m_aggregateTypeIndex != -1) {
+            m_itemType = aggregateMap.items[m_aggregateTypeIndex].galleryKey;
+        } else {
+            m_itemType = QString();
         }
     }
 }
 
-QString QGalleryTrackerSchema::buildQuery(int *error, const QGalleryFilter &filter) const
+QString QGalleryTrackerSchema::buildIdQuery(int *error, const QString &itemId)
 {
     QString query;
 
-    if (filter.type() != QGalleryFilter::Invalid) {
-        if (m_fileTypeIndex >= 0) {
-            QXmlStreamWriter xml(&query);
+    if (m_fileTypeIndex >= 0) {
+        QXmlStreamWriter xml(&query);
+        xml.writeStartElement(QLatin1String("rdfq:Condition"));
 
+        qt_writeFileIdCondition(
+                error ,&xml, qt_galleryTypeMap[m_fileTypeIndex].prefix.strip(itemId));
+
+        xml.writeEndElement();
+    } else if (m_aggregateTypeIndex >= 0) {
+        QXmlStreamWriter xml(&query);
+        xml.writeStartElement(QLatin1String("rdfq:Condition"));
+
+        qt_galleryAggregateTypeMap[m_aggregateTypeIndex].writeIdCondition(
+                error, &xml, qt_galleryAggregateTypeMap[m_aggregateTypeIndex].prefix.strip(itemId));
+
+        xml.writeEndElement();
+    } else {
+        *error = QGalleryItemRequest::InvalidItemError;
+    }
+
+    return query;
+}
+
+QString QGalleryTrackerSchema::buildContainerQuery(int *error, const QString &containerId)
+{
+    QString query;
+
+    QGalleryTypeMap typeMap(qt_galleryTypeMap);
+    int index = typeMap.indexOfItemId(containerId);
+
+    if (index != -1) {
+        QXmlStreamWriter xml(&query);
+        xml.writeStartElement(QLatin1String("rdfq:Condition"));
+
+        qt_writeFileContainerCondition(error, &xml, typeMap.items[index].prefix.strip(containerId));
+
+        xml.writeEndElement();
+    } else {
+        QGalleryAggregateTypeMap aggregateMap(qt_galleryAggregateTypeMap);
+        index = aggregateMap.indexOfItemId(containerId);
+
+        if (index != -1) {
+            QXmlStreamWriter xml(&query);
             xml.writeStartElement(QLatin1String("rdfq:Condition"));
 
-            qt_buildFileQuery(error, &xml, filter, qt_galleryTypeMap[m_fileTypeIndex].propertyMap);
-
-            xml.writeEndElement();
-        } else if (m_aggregateTypeIndex >= 0) {
-
-            QXmlStreamWriter xml(&query);
-
-            xml.writeStartElement(QLatin1String("rdfq:Condition"));
-
-            qt_galleryAggregateTypeMap[m_aggregateTypeIndex].build(
-                    error,
-                    &xml,
-                    filter,
-                    qt_galleryAggregateTypeMap[m_aggregateTypeIndex].propertyMap);
+            aggregateMap.items[index].writeIdCondition(
+                    error, &xml, aggregateMap.items[index].prefix.strip(containerId));
 
             xml.writeEndElement();
         } else {
-            *error = QGalleryAbstractRequest::ItemTypeError;
+            *error = QGalleryAbstractRequest::InvalidItemError;
         }
     }
 
     return query;
 }
 
+QString QGalleryTrackerSchema::buildFilterQuery(
+        int *error, const QString &containerId, const QGalleryFilter &filter) const
+{    
+    QString query;
+
+    if (containerId.isEmpty() && filter.type() == QGalleryFilter::Invalid)
+        return query;
+
+    QXmlStreamWriter xml(&query);
+    xml.writeStartElement(QLatin1String("rdfq:Condition"));
+
+    if (!containerId.isEmpty()) {
+        xml.writeStartElement(QLatin1String("rdfq:and"));
+
+        QGalleryTypeMap typeMap(qt_galleryTypeMap);
+        int index = typeMap.indexOfItemId(containerId);
+
+        if (index != -1) {
+            qt_writeFileScopeCondition(error, &xml, typeMap.items[index].prefix.strip(containerId));
+        } else {
+            QGalleryAggregateTypeMap aggregateMap(qt_galleryAggregateTypeMap);
+            index = aggregateMap.indexOfItemId((containerId));
+
+            if (index != -1) {
+                aggregateMap.items[index].writeIdCondition(
+                        error, &xml, aggregateMap.items[index].prefix.strip(containerId));
+            } else {
+                *error = QGalleryAbstractRequest::InvalidItemError;
+            }
+        }
+    }
+
+    if (filter.type() != QGalleryFilter::Invalid) {
+        if (m_fileTypeIndex >= 0) {
+            qt_writeCondition(
+                    error,
+                    &xml,
+                    filter,
+                    qt_galleryTypeMap[m_fileTypeIndex].propertyMap);
+        } else if (m_aggregateTypeIndex >= 0) {
+            qt_writeCondition(
+                    error,
+                    &xml,
+                    filter,
+                    qt_galleryAggregateTypeMap[m_aggregateTypeIndex].propertyMap);
+        } else {
+            *error = QGalleryItemRequest::ItemTypeError;
+        }
+    }
+
+    if (!containerId.isEmpty())
+        xml.writeEndElement();
+
+    xml.writeEndElement();
+
+    return query;
+}
+
 QString QGalleryTrackerSchema::uriFromItemId(int *error, const QString &itemId) const
 {
-    if (m_fileTypeIndex >= 0) {
-        if (itemId.startsWith(QLatin1String("file::")))
-            return itemId.mid(6);
-        else
-            *error = QGalleryAbstractRequest::InvalidItemError;
+    QGalleryTypeMap typeMap(qt_galleryTypeMap);
+    int index = typeMap.indexOfItemId(itemId);
+
+    if (index != -1) {
+        return typeMap.items[index].prefix.strip(itemId).toString();
     } else {
-        *error = QGalleryAbstractRequest::ItemTypeError;
+        *error = QGalleryAbstractRequest::InvalidItemError;
+
+        return QString();
     }
-    return QString();
 }
 
 QStringList QGalleryTrackerSchema::urisFromItemIds(int *error, const QStringList &itemIds) const
 {
     QStringList uris;
 
-    if (m_fileTypeIndex >= 0) {
-        const QString prefix(QLatin1String("file::"));
+    QGalleryTypeMap typeMap(qt_galleryTypeMap);
 
-        for (QStringList::const_iterator itemId = itemIds.begin(), end = itemIds.end();
-                itemId != end;
-                ++itemId) {
-            if (itemId->startsWith(prefix))
-                uris.append(itemId->mid(6));
-            else
-                *error = QGalleryAbstractRequest::InvalidItemError;
-        }
-    } else {
-        *error = QGalleryAbstractRequest::ItemTypeError;
+    for (QStringList::const_iterator itemId = itemIds.begin(), end = itemIds.end();
+            itemId != end;
+            ++itemId) {
+        int index = typeMap.indexOfItemId(*itemId);
+
+        if (index != -1)
+            uris.append(typeMap.items[index].prefix.strip(*itemId).toString());
+        else
+            *error = QGalleryAbstractRequest::InvalidItemError;
     }
 
     return uris;

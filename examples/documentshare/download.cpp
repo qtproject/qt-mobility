@@ -52,7 +52,7 @@ Download::Download(QNetworkReply *networkReply, ShareWidget *parent)
     : QObject(parent)
     , networkReply(networkReply)
     , shareWidget(parent)
-    , insertRequest(0)
+    , urlRequest(0)
 {
     connect(networkReply, SIGNAL(metaDataChanged()), this, SLOT(networkMetaDataChanged()));
     connect(networkReply, SIGNAL(readyRead()), this, SLOT(networkReadyRead()));
@@ -109,11 +109,12 @@ void Download::networkMetaDataChanged()
             if (file.open(QIODevice::WriteOnly)) {
                 networkReadyRead();
 
-                insertRequest = new QGalleryInsertRequest(shareWidget->gallery(), this);
-                insertRequest->setItemUrl(QUrl::fromLocalFile(fileName));
-                connect(insertRequest, SIGNAL(succeeded()), this, SLOT(insertSucceeded()));
+                urlRequest = new QGalleryUrlRequest(shareWidget->gallery(), this);
+                urlRequest->setItemUrl(QUrl::fromLocalFile(fileName));
+                urlRequest->setCreate(true);
+                connect(urlRequest, SIGNAL(succeeded()), this, SLOT(insertSucceeded()));
 
-                insertRequest->execute();
+                urlRequest->execute();
             } else {
                 networkReply->abort();
             }

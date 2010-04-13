@@ -59,10 +59,10 @@ public:
     ~Browser();
 
 public Q_SLOTS:
-    void showArtists(const QGalleryFilter &filter = QGalleryFilter());
-    void showAlbumArtists(const QGalleryFilter &filter = QGalleryFilter());
-    void showAlbums(const QGalleryFilter &filter = QGalleryFilter());
-    void showSongs(const QGalleryFilter &filter = QGalleryFilter());
+    void showArtists(const QString &containerId = QString());
+    void showAlbumArtists(const QString &containerId = QString());
+    void showAlbums(const QString &containerId = QString());
+    void showSongs(const QString &containerId = QString());
 
 private:
     QDocumentGallery *gallery;

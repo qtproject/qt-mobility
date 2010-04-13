@@ -100,8 +100,10 @@ public:
     enum Type
     {
         Item,
+        Url,
+        Container,
+        Filter,
         Count,
-        Insert,
         Remove,
         Copy,
         Move
@@ -187,23 +189,87 @@ class Q_GALLERY_EXPORT QGalleryItemRequest : public QGalleryAbstractRequest
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryItemRequest)
     Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
+    Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged)
+    Q_PROPERTY(QGalleryItemList* item READ item NOTIFY itemChanged)
+public:
+    explicit QGalleryItemRequest(QObject *parent = 0);
+    explicit QGalleryItemRequest(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryItemRequest();
+
+    QStringList propertyNames() const;
+    void setPropertyNames(const QStringList &names);
+
+    bool isLive() const;
+    void setLive(bool live);
+
+    QString itemId() const;
+    void setItemId(const QString &id);
+
+    QGalleryItemList *item() const;
+
+Q_SIGNALS:
+    void itemChanged();
+
+protected:
+    void setResponse(QGalleryAbstractResponse *response);
+};
+
+class QGalleryUrlRequestPrivate;
+
+class Q_GALLERY_EXPORT QGalleryUrlRequest : public QGalleryAbstractRequest
+{
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QGalleryUrlRequest)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
+    Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl)
+    Q_PROPERTY(bool create READ create WRITE setCreate)
+    Q_PROPERTY(QGalleryItemList* item READ item NOTIFY itemChanged)
+public:
+    QGalleryUrlRequest(QObject *parent = 0);
+    QGalleryUrlRequest(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryUrlRequest();
+
+    QStringList propertyNames() const;
+    void setPropertyNames(const QStringList &names);
+
+    bool isLive() const;
+    void setLive(bool live);
+
+    QUrl itemUrl() const;
+    void setItemUrl(const QUrl &url);
+
+    bool create() const;
+    void setCreate(bool create);
+
+    QGalleryItemList *item() const;
+
+Q_SIGNALS:
+    void itemChanged();
+
+protected:
+    void setResponse(QGalleryAbstractResponse *response);
+};
+
+class QGalleryContainerRequestPrivate;
+
+class Q_GALLERY_EXPORT QGalleryContainerRequest : public QGalleryAbstractRequest
+{
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QGalleryContainerRequest)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(int initialCursorPosition READ initialCursorPosition WRITE setInitialCursorPosition)
     Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
-    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged)
-    Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
-    Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl NOTIFY itemUrlsChanged)
-    Q_PROPERTY(QList<QUrl> itemUrls READ itemUrls WRITE setItemUrls NOTIFY itemUrlsChanged)
     Q_PROPERTY(QString containerId READ containerId WRITE setContainerId)
-    Q_PROPERTY(QUrl containerUrl READ containerUrl WRITE setContainerUrl)
     Q_PROPERTY(QGalleryItemList* items READ items NOTIFY itemsChanged)
 public:
-    explicit QGalleryItemRequest(QObject *parent = 0);
-    explicit QGalleryItemRequest(QAbstractGallery *gallery, QObject *parent = 0);
-    ~QGalleryItemRequest();
+    QGalleryContainerRequest(QObject *parent = 0);
+    QGalleryContainerRequest(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryContainerRequest();
 
     QStringList propertyNames() const;
     void setPropertyNames(const QStringList &names);
@@ -223,35 +289,65 @@ public:
     QString itemType() const;
     void setItemType(const QString &type);
 
-    QGalleryFilter filter() const;
-    void setFilter(const QGalleryFilter &filter);
-
-    QString itemId() const;
-    void setItemId(const QString &id);
-
-    QStringList itemIds() const;
-    void setItemIds(const QStringList &id);
-
-    QUrl itemUrl() const;
-    void setItemUrl(const QUrl &url);
-
-    QList<QUrl> itemUrls() const;
-    void setItemUrls(const QList<QUrl> &urls);
-
     QString containerId() const;
     void setContainerId(const QString &id);
-
-    QUrl containerUrl() const;
-    void setContainerUrl(const QUrl &url);
 
     QGalleryItemList *items() const;
 
 Q_SIGNALS:
-    void filterChanged();
-    void itemIdsChanged();
-    void itemUrlsChanged();
-    void containerIdChanged();
-    void containerUrlChanged();
+    void itemsChanged();
+
+protected:
+    void setResponse(QGalleryAbstractResponse *response);
+};
+
+class QGalleryFilterRequestPrivate;
+
+class Q_GALLERY_EXPORT QGalleryFilterRequest : public QGalleryAbstractRequest
+{
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QGalleryFilterRequest)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
+    Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
+    Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(int initialCursorPosition READ initialCursorPosition WRITE setInitialCursorPosition)
+    Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
+    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
+    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QString containerId READ containerId WRITE setContainerId)
+    Q_PROPERTY(QGalleryItemList* items READ items NOTIFY itemsChanged)
+public:
+    explicit QGalleryFilterRequest(QObject *parent = 0);
+    explicit QGalleryFilterRequest(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryFilterRequest();
+
+    QStringList propertyNames() const;
+    void setPropertyNames(const QStringList &names);
+
+    QStringList sortPropertyNames() const;
+    void setSortPropertyNames(const QStringList &names);
+
+    bool isLive() const;
+    void setLive(bool live);
+
+    int initialCursorPosition() const;
+    void setInitialCursorPosition(int index);
+
+    int minimumPagedItems() const;
+    void setMinimumPagedItems(int size);
+
+    QString itemType() const;
+    void setItemType(const QString &type);
+
+    QString containerId() const;
+    void setContainerId(const QString &id);
+
+    QGalleryFilter filter() const;
+    void setFilter(const QGalleryFilter &filter);
+
+    QGalleryItemList *items() const;
+
+Q_SIGNALS:
     void itemsChanged();
 
 protected:
@@ -268,7 +364,6 @@ class Q_GALLERY_EXPORT QGalleryCountRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
     Q_PROPERTY(QString containerId READ containerId WRITE setContainerId)
-    Q_PROPERTY(QUrl containerUrl READ containerUrl WRITE setContainerUrl)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
     explicit QGalleryCountRequest(QObject *parent = 0);
@@ -287,15 +382,9 @@ public:
     QString containerId() const;
     void setContainerId(const QString &id);
 
-    QUrl containerUrl() const;
-    void setContainerUrl(const QUrl &url);
-
     int count() const;
 
 Q_SIGNALS:
-    void filterChanged();
-    void containerIdChanged();
-    void containerUrlChanged();
     void countChanged();
 
 protected:
@@ -303,44 +392,6 @@ protected:
 
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged())
-};
-
-class QGalleryInsertRequestPrivate;
-
-class Q_GALLERY_EXPORT QGalleryInsertRequest : public QGalleryAbstractRequest
-{
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QGalleryInsertRequest)
-    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
-    Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl NOTIFY itemUrlsChanged)
-    Q_PROPERTY(QList<QUrl> itemUrls READ itemUrls WRITE setItemUrls NOTIFY itemUrlsChanged)
-    Q_PROPERTY(QGalleryItemList *insertedItems READ insertedItems NOTIFY insertedItemsChanged)
-public:
-    explicit QGalleryInsertRequest(QObject *parent = 0);
-    explicit QGalleryInsertRequest(QAbstractGallery *gallery, QObject *parent = 0);
-    ~QGalleryInsertRequest();
-
-    QStringList propertyNames() const;
-    void setPropertyNames(const QStringList &names);
-
-    QStringList sortPropertyNames() const;
-    void setSortPropertyNames(const QStringList &names);
-
-    QUrl itemUrl() const;
-    void setItemUrl(const QUrl &url);
-
-    QList<QUrl> itemUrls() const;
-    void setItemUrls(const QList<QUrl> &urls);
-
-    QGalleryItemList *insertedItems() const;
-
-Q_SIGNALS:
-    void itemUrlsChanged();
-    void insertedItemsChanged();
-
-protected:
-    void setResponse(QGalleryAbstractResponse *response);
 };
 
 class QGalleryRemoveRequestPrivate;

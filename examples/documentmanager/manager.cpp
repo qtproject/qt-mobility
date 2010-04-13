@@ -50,6 +50,7 @@
 Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
     , gallery(0)
+    , documentsRequest(0)
     , sourceItemRequest(0)
     , destinationItemRequest(0)
     , sourceModel(0)
@@ -60,16 +61,18 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
     , destinationProgress(0)
     , actionProgress(0)
     , splitter(0)
-    , documentsUrl(QUrl::fromLocalFile(
-            QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)))
 {
     gallery = new QDocumentGallery(this);
 
-    sourceItemRequest = new QGalleryItemRequest(this);
+    documentsRequest = new QGalleryUrlRequest(this);
+    documentsRequest->setItemUrl(QUrl::fromLocalFile(
+            QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)));
+    connect(documentsRequest, SIGNAL(itemChanged()), this, SLOT(documentsListChanged()));
+
+    sourceItemRequest = new QGalleryContainerRequest(this);
     sourceItemRequest->setGallery(gallery);
     sourceItemRequest->setPropertyNames(QStringList() << QDocumentGallery::fileName);
     sourceItemRequest->setItemType(QDocumentGallery::File);
-    sourceItemRequest->setContainerUrl(documentsUrl);
     connect(sourceItemRequest, SIGNAL(itemsChanged()), this, SLOT(sourceListChanged()));
     connect(sourceItemRequest, SIGNAL(finished(int)), this, SLOT(sourceRequestFinished(int)));
 
@@ -95,11 +98,10 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
     QWidget *sourceWidget = new QWidget;
     sourceWidget->setLayout(sourceLayout);
 
-    destinationItemRequest = new QGalleryItemRequest(this);
+    destinationItemRequest = new QGalleryContainerRequest(this);
     destinationItemRequest->setGallery(gallery);
     destinationItemRequest->setPropertyNames(QStringList() << QDocumentGallery::fileName);
     destinationItemRequest->setItemType(QDocumentGallery::Folder);
-    destinationItemRequest->setContainerUrl(documentsUrl);
     connect(destinationItemRequest, SIGNAL(itemsChanged()), this, SLOT(destinationListChanged()));
     connect(destinationItemRequest, SIGNAL(finished(int)),
             this, SLOT(destinationRequestFinished(int)));
@@ -160,8 +162,7 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
     actionProgress = new QProgressDialog(this);
     actionProgress->setModal(true);
 
-    sourceItemRequest->execute();
-    destinationItemRequest->execute();
+    documentsRequest->execute();
 }
 
 Manager::~Manager()
@@ -237,6 +238,58 @@ void Manager::executeActionRequest(QGalleryAbstractRequest *request)
     actionRequest->execute();
 }
 
+void Manager::documentsListChanged()
+{
+    documentsId = QString();
+
+    if (QGalleryItemList *item = documentsRequest->item()) {
+        connect(item, SIGNAL(inserted(int,int)), this, SLOT(documentsInserted(int,int)));
+        connect(item, SIGNAL(removed(int,int)), this, SLOT(documentsRemoved(int,int)));
+
+        if (item->count() > 0) {
+            documentsId = item->id(0);
+
+            sourceItemRequest->setContainerId(documentsId);
+            sourceItemRequest->execute();
+
+            destinationItemRequest->setContainerId(documentsId);
+            destinationItemRequest->execute();
+        }
+    } else {
+        documentsId = QString();
+
+        sourceFolderId.clear();
+        destinationFolderId.clear();
+
+        sourceItemRequest->clear();
+        destinationItemRequest->clear();
+    }
+}
+
+void Manager::documentsInserted(int, int count)
+{
+    if (count > 0) {
+        documentsId = documentsRequest->item()->id(0);
+
+        sourceItemRequest->setContainerId(documentsId);
+        sourceItemRequest->execute();
+
+        destinationItemRequest->setContainerId(documentsId);
+        destinationItemRequest->execute();
+    }
+}
+
+void Manager::documentsRemoved(int, int)
+{
+    documentsId = QString();
+
+    sourceFolderId.clear();
+    destinationFolderId.clear();
+
+    sourceItemRequest->clear();
+    destinationItemRequest->clear();
+}
+
 void Manager::sourceListChanged()
 {
     sourceModel->setList(sourceItemRequest->items());
@@ -303,7 +356,7 @@ void Manager::sourceItemActivated(const QModelIndex &index)
         sourceFolderId.removeLast();
 
         if (sourceFolderId.isEmpty()) {
-            sourceItemRequest->setContainerUrl(documentsUrl);
+            sourceItemRequest->setContainerId(documentsId);
             sourceItemRequest->execute();
 
             sourceModel->setListMode(GalleryModel::LocationList);
@@ -332,7 +385,7 @@ void Manager::destinationItemActivated(const QModelIndex &index)
         destinationFolderId.removeLast();
 
         if (destinationFolderId.isEmpty()) {
-            destinationItemRequest->setContainerUrl(documentsUrl);
+            destinationItemRequest->setContainerId(documentsId);
             destinationItemRequest->execute();
 
             destinationModel->setListMode(GalleryModel::LocationList);

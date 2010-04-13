@@ -198,8 +198,10 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     Identifies the type of a request.
 
     \value Item The request is a QGalleryItemRequest.
+    \value Url The request is a QGalleryUrlRequest.
+    \value Container The request is a QGalleryContainerRequest.
+    \value Filter The request is a QGalleryFilterRequest.
     \value Count The request is a QGalleryCountRequest.
-    \value Insert The request is a QGalleryInsertRequest.
     \value Remove The request is a QGalleryRemoveRequest.
     \value Copy The request is a QGalleryCopyRequest.
     \value Move The request is a QGalleryMoveRequest.
@@ -689,19 +691,13 @@ class QGalleryItemRequestPrivate : public QGalleryAbstractRequestPrivate
 public:
     QGalleryItemRequestPrivate(QAbstractGallery *gallery)
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Item)
-        , initialCursorPosition(0)
-        , minimumPagedItems(200)
         , live(false)
     {
     }
 
-    int initialCursorPosition;
-    int minimumPagedItems;
     bool live;
     QStringList propertyNames;
-    QStringList sortPropertyNames;
-    QString itemType;
-    QGalleryFilter filter;
+    QString itemId;
 };
 
 /*!
@@ -710,8 +706,8 @@ public:
     \ingroup gallery
     \ingroup gallery-requests
 
-    \brief The QGalleryItemRequest class provides a request for a set of
-    items from a gallery.
+    \brief The QGalleryItemRequest class provides a request for an item from a
+    gallery.
 */
 
 /*!
@@ -761,27 +757,6 @@ void QGalleryItemRequest::setPropertyNames(const QStringList &propertyNames)
 }
 
 /*!
-    \property QGalleryItemRequest::sortPropertyNames
-
-    \brief A list of names of meta-data properties a request should sort its
-    results on.
-
-    Prefixing a property name with the '+' character indicates it should be sorted
-    in ascending order, and a '-' character prefix indicates a descending order.
-    If there is no prefix ascending order is assumed.
-*/
-
-QStringList QGalleryItemRequest::sortPropertyNames() const
-{
-    return d_func()->sortPropertyNames;
-}
-
-void QGalleryItemRequest::setSortPropertyNames(const QStringList &propertyNames)
-{
-    d_func()->sortPropertyNames = propertyNames;
-}
-
-/*!
     \property QGalleryItemRequest::live
 
     \brief Whether a the results of a request should be updated after a request
@@ -802,299 +777,36 @@ void QGalleryItemRequest::setLive(bool live)
 }
 
 /*!
-    \property QGalleryItemRequest::initialCursorPosition
-
-    \brief The index of the first item a request should return.
-
-    By default this is 0.
-*/
-
-int QGalleryItemRequest::initialCursorPosition() const
-{
-    return d_func()->initialCursorPosition;
-}
-
-void QGalleryItemRequest::setInitialCursorPosition(int position)
-{
-    d_func()->initialCursorPosition = position;
-}
-
-/*!
-    \property QGalleryItemRequest::minimumPagedItems
-
-    \brief The minimum number of consecutive items the list returned by a
-    request should cache.
-
-    By default this is 200.
-*/
-
-int QGalleryItemRequest::minimumPagedItems() const
-{
-    return d_func()->minimumPagedItems;
-}
-
-void QGalleryItemRequest::setMinimumPagedItems(int size)
-{
-    d_func()->minimumPagedItems = size;
-}
-
-/*!
-    \property QGalleryItemRequest::itemType
-
-    \brief The type of items a request should return.
-
-    If this is not set items of all types will be returned.  If no filter is
-    set all items of this type will be returned.
-*/
-
-QString QGalleryItemRequest::itemType() const
-{
-    return d_func()->itemType;
-}
-
-void QGalleryItemRequest::setItemType(const QString &type)
-{
-    d_func()->itemType = type;
-}
-
-/*!
-    \property QGalleryItemRequest::filter
-
-    \brief A filter identifying the items a request should return.
-
-    If no filter is set the results of the request will be determined soley
-    by the \l itemType property.
-*/
-
-QGalleryFilter QGalleryItemRequest::filter() const
-{
-    return d_func()->filter;
-}
-
-void QGalleryItemRequest::setFilter(const QGalleryFilter &filter)
-{
-    Q_D(QGalleryItemRequest);
-
-    QGalleryFilter::Type oldType = d->filter.type();
-
-    d->filter = filter;
-
-    emit filterChanged();
-
-    switch (oldType) {
-    case QGalleryFilter::Item:
-        emit itemIdsChanged();
-        break;
-    case QGalleryFilter::ItemUrl:
-        emit itemUrlsChanged();
-        break;
-    case QGalleryFilter::Container:
-        emit containerIdChanged();
-        break;
-    case QGalleryFilter::ContainerUrl:
-        emit containerUrlChanged();
-        break;
-    default:
-        break;
-    }
-
-    QGalleryFilter::Type newType = d->filter.type();
-
-    if (oldType != newType) {
-        switch (newType) {
-        case QGalleryFilter::Item:
-            emit itemIdsChanged();
-            break;
-        case QGalleryFilter::ItemUrl:
-            emit itemUrlsChanged();
-            break;
-        case QGalleryFilter::Container:
-            emit containerIdChanged();
-            break;
-        case QGalleryFilter::ContainerUrl:
-            emit containerUrlChanged();
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-/*!
-    \fn QGalleryItemRequest::filterChanged()
-
-    Signals the \l filter property has changed.
-*/
-
-/*!
     \property QGalleryItemRequest::itemId
 
     \brief The ID of a item a item request should return.
-
-    This is equivalent to setting a \l filter of type QGalleryItemFilter.
-
-    If the current \l filter is not of type QGalleryItemFilter or multiple
-    items are specified in \l itemIds this will be null.
 */
 
 QString QGalleryItemRequest::itemId() const
 {
-    return d_func()->filter.toItemFilter().itemId();
+    return d_func()->itemId;
 }
 
 void QGalleryItemRequest::setItemId(const QString &id)
 {
-    setFilter(QGalleryItemFilter(id));
+    d_func()->itemId = id;
 }
 
 /*!
-    \property QGalleryItemRequest::itemIds
+    \property QGalleryItemRequest::item
 
-    \brief A list of IDs for items a item request should return.
-
-    This is equivalent to setting a \l filter of type QGalleryItemFilter.
-
-    If the current \l filter is not of type QGalleryItemFilter this will be
-    null.
+    \brief The item returned by a request.
 */
 
-QStringList QGalleryItemRequest::itemIds() const
-{
-    return d_func()->filter.toItemFilter().itemIds();
-}
-
-void QGalleryItemRequest::setItemIds(const QStringList &ids)
-{
-    setFilter(QGalleryItemFilter(ids));
-}
-
-/*!
-    \fn QGalleryItemRequest::itemIdsChanged()
-
-    Signals that the itemId and \l itemIds properties have changed.
-*/
-
-/*!
-    \property QGalleryItemRequest::itemUrl
-
-    \brief The URL of an item a item request should return.
-
-    This is equivalent to setting a \l filter of type QGalleryItemUrlFilter.
-
-    If the current \l filter is not of type QGalleryItemUrlFilter or
-    multiple items are specified in \l itemUrls this will be null.
-*/
-
-QUrl QGalleryItemRequest::itemUrl() const
-{
-    return d_func()->filter.toItemUrlFilter().itemUrl();
-}
-
-void QGalleryItemRequest::setItemUrl(const QUrl &url)
-{
-    setFilter(QGalleryItemUrlFilter(url));
-}
-
-/*!
-    \property QGalleryItemRequest::itemUrls
-
-    \brief A list of URLs for items a item request should return.
-
-    This is equivalent to setting a \l filter of type QGalleryItemUrlFilter.
-
-    If the current \l filter is not of type QGalleryItemUrlFilter this will
-    be null.
-*/
-
-QList<QUrl> QGalleryItemRequest::itemUrls() const
-{
-    return d_func()->filter.toItemUrlFilter().itemUrls();
-}
-
-void QGalleryItemRequest::setItemUrls(const QList<QUrl> &urls)
-{
-    setFilter(QGalleryItemUrlFilter(urls));
-}
-
-/*!
-    \fn QGalleryItemRequest::itemUrlsChanged()
-
-    Signals that the \l itemUrl and \l itemUrls properties have
-    changed.
-*/
-
-/*!
-    \property QGalleryItemRequest::containerId
-
-    \brief The ID of container item a item request should return the
-    contents of.
-
-    This is equivalent to setting a \l filter of type QGalleryContainerFilter.
-
-    If the current \l filter is not of type QGalleryContainerFilter this will be
-    null.
-*/
-
-QString QGalleryItemRequest::containerId() const
-{
-    return d_func()->filter.toContainerFilter().containerId();
-}
-
-void QGalleryItemRequest::setContainerId(const QString &id)
-{
-    setFilter(QGalleryContainerFilter(id));
-}
-
-/*!
-    \fn QGalleryItemRequest::containerIdChanged()
-
-    Signals that the \l containerId property has changed.
-*/
-
-/*!
-    \property QGalleryItemRequest::containerUrl
-
-    \brief The URL of container item a item request should return the
-    contents of.
-
-    This is equivalent to setting a \l filter of type
-    QGalleryContainerUrlFilter.
-
-    If the current \l filter is not of type QGalleryContainerUrlFilter this
-    will be null.
-*/
-
-QUrl QGalleryItemRequest::containerUrl() const
-{
-    return d_func()->filter.toContainerUrlFilter().containerUrl();
-}
-
-void QGalleryItemRequest::setContainerUrl(const QUrl &url)
-{
-    setFilter(QGalleryContainerUrlFilter(url));
-}
-
-/*!
-    \fn QGalleryItemRequest::containerUrlChanged()
-
-    Signals that the \l containerUrl property has changed.
-*/
-
-/*!
-    \property QGalleryItemRequest::items
-
-    \brief The items returned by a request.
-*/
-
-QGalleryItemList *QGalleryItemRequest::items() const
+QGalleryItemList *QGalleryItemRequest::item() const
 {
     return d_func()->response;
 }
 
 /*!
-    \fn QGalleryItemRequest::itemsChanged()
+    \fn QGalleryItemRequest::itemChanged()
 
-    Signals that the \l items property has changed.
+    Signals that the \l item property has changed.
 */
 
 /*!
@@ -1105,8 +817,607 @@ void QGalleryItemRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
 
+    emit itemChanged();
+}
+
+
+class QGalleryUrlRequestPrivate : public QGalleryAbstractRequestPrivate
+{
+public:
+    QGalleryUrlRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Url)
+        , live(false)
+    {
+    }
+
+    bool live;
+    bool create;
+    QStringList propertyNames;
+    QUrl itemUrl;
+};
+
+/*!
+    \class QGalleryUrlRequest
+
+    \brief The QGalleryItemRequest class provides a request for an item
+    identified by a URL from a gallery.
+*/
+
+/*!
+    Constructs a new gallery url request.
+
+    The \a parent is passed to QObject.
+*/
+
+QGalleryUrlRequest::QGalleryUrlRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryUrlRequestPrivate(0), parent)
+{
+}
+
+/*!
+    Contructs a new url request for the given \a gallery.
+
+    The \a parent is passed to QObject.
+*/
+
+QGalleryUrlRequest::QGalleryUrlRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryUrlRequestPrivate(gallery), parent)
+{
+}
+
+/*!
+    Destroys a gallery url request.
+*/
+
+QGalleryUrlRequest::~QGalleryUrlRequest()
+{
+}
+
+/*!
+    \property QGalleryUrlRequest::propertyNames
+
+    \brief A list of names of meta-data properties a request should return values for.
+*/
+
+QStringList QGalleryUrlRequest::propertyNames() const
+{
+    return d_func()->propertyNames;
+}
+
+void QGalleryUrlRequest::setPropertyNames(const QStringList &names)
+{
+    d_func()->propertyNames = names;
+}
+
+/*!
+    \property QGalleryUrlRequest::live
+
+    \brief Whether a the results of a request should be updated after a request
+    has finished.
+
+    If this is true the request will go into the Idle state when the request has
+    finished rather than returning to Inactive.
+*/
+
+bool QGalleryUrlRequest::isLive() const
+{
+    return d_func()->live;
+}
+
+void QGalleryUrlRequest::setLive(bool live)
+{
+    d_func()->live = live;
+}
+
+/*!
+    \property QGalleryUrlRequest::itemUrl
+
+    \brief The url of the item a request should return.
+*/
+
+QUrl QGalleryUrlRequest::itemUrl() const
+{
+    return d_func()->itemUrl;
+}
+
+void QGalleryUrlRequest::setItemUrl(const QUrl &url)
+{
+    d_func()->itemUrl = url;
+}
+
+/*!
+    \property QGalleryUrlRequest::create
+
+    \biref Whether a gallery should create a new entry for the requested item
+    if one does not already exist.
+*/
+
+bool QGalleryUrlRequest::create() const
+{
+    return d_func()->create;
+}
+
+void QGalleryUrlRequest::setCreate(bool create)
+{
+    d_func()->create = create;
+}
+
+/*!
+    \property QGalleryUrlRequest::item
+
+    \brief A list containing the item returned by the request.
+*/
+
+QGalleryItemList *QGalleryUrlRequest::item() const
+{
+    return d_func()->response;
+}
+
+/*!
+    \fn void QGalleryUrlRequest::itemChanged()
+
+    Signals that the \l item property has changed.
+*/
+
+void QGalleryUrlRequest::setResponse(QGalleryAbstractResponse *response)
+{
+    Q_UNUSED(response);
+
+    emit itemChanged();
+}
+
+class QGalleryContainerRequestPrivate : public QGalleryAbstractRequestPrivate
+{
+    Q_DECLARE_PUBLIC(QGalleryItemRequest)
+public:
+    QGalleryContainerRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Container)
+        , initialCursorPosition(0)
+        , minimumPagedItems(200)
+        , live(false)
+    {
+    }
+
+    int initialCursorPosition;
+    int minimumPagedItems;
+    bool live;
+    QStringList propertyNames;
+    QStringList sortPropertyNames;
+    QString itemType;
+    QString containerId;
+};
+
+/*!
+    \class QGalleryContainerRequest
+
+    \ingroup gallery
+    \ingroup gallery-requests
+
+    \brief The QGalleryContainerRequest class provides a request for the
+    immediate children of an item in a gallery.
+*/
+
+/*!
+    Constructs a new gallery container request.
+
+    The \a parent is passed to QObject.
+*/
+
+
+QGalleryContainerRequest::QGalleryContainerRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryContainerRequestPrivate(0), parent)
+{
+}
+/*!
+    Contructs a new container request for the given \a gallery.
+
+    The \a parent is passed to QObject.
+*/
+
+
+QGalleryContainerRequest::QGalleryContainerRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryContainerRequestPrivate(gallery), parent)
+{
+}
+/*!
+    Destroys a gallery container request.
+*/
+
+
+QGalleryContainerRequest::~QGalleryContainerRequest()
+{
+}
+/*!
+    \property QGalleryContainerRequest::propertyNames
+
+    \brief A list of names of meta-data properties a request should return values for.
+*/
+
+
+QStringList QGalleryContainerRequest::propertyNames() const
+{
+    return d_func()->propertyNames;
+}
+
+void QGalleryContainerRequest::setPropertyNames(const QStringList &names)
+{
+    d_func()->propertyNames = names;
+}
+
+/*!
+    \property QGalleryContainerRequest::sortPropertyNames
+
+    \brief A list of names of meta-data properties a request should sort its
+    results on.
+
+    Prefixing a property name with the '+' character indicates it should be sorted
+    in ascending order, and a '-' character prefix indicates a descending order.
+    If there is no prefix ascending order is assumed.
+*/
+
+QStringList QGalleryContainerRequest::sortPropertyNames() const
+{
+    return d_func()->sortPropertyNames;
+}
+
+void QGalleryContainerRequest::setSortPropertyNames(const QStringList &names)
+{
+    d_func()->sortPropertyNames = names;
+}
+/*!
+    \property QGalleryContainerRequest::live
+
+    \brief Whether a the results of a request should be updated after a request
+    has finished.
+
+    If this is true the request will go into the Idle state when the request has
+    finished rather than returning to Inactive.
+*/
+
+
+bool QGalleryContainerRequest::isLive() const
+{
+    return d_func()->live;
+}
+
+void QGalleryContainerRequest::setLive(bool live)
+{
+    d_func()->live = live;
+}
+/*!
+    \property QGalleryContainerRequest::initialCursorPosition
+
+    \brief The index of the first item a request should return.
+
+    By default this is 0.
+*/
+
+int QGalleryContainerRequest::initialCursorPosition() const
+{
+    return d_func()->initialCursorPosition;
+}
+
+void QGalleryContainerRequest::setInitialCursorPosition(int index)
+{
+    d_func()->initialCursorPosition = index;
+}
+/*!
+    \property QGalleryContainerRequest::minimumPagedItems
+
+    \brief The minimum number of consecutive items the list returned by a
+    request should cache.
+
+    By default this is 200.
+*/
+
+
+int QGalleryContainerRequest::minimumPagedItems() const
+{
+    return d_func()->minimumPagedItems;
+}
+
+void QGalleryContainerRequest::setMinimumPagedItems(int size)
+{
+    d_func()->minimumPagedItems = size;
+}
+/*!
+    \property QGalleryContainerRequest::itemType
+
+    \brief The type of items a request should return.
+
+    If this is not set items of all types will be returned.  If no filter is
+    set all items of this type will be returned.
+*/
+
+
+QString QGalleryContainerRequest::itemType() const
+{
+    return d_func()->itemType;
+}
+
+void QGalleryContainerRequest::setItemType(const QString &type)
+{
+    d_func()->itemType = type;
+}
+/*!
+    \property QGalleryContainerRequest::containerId
+
+    \brief The ID of container item a item request should return the
+    immediate children of.
+*/
+
+
+QString QGalleryContainerRequest::containerId() const
+{
+    return d_func()->containerId;
+}
+
+void QGalleryContainerRequest::setContainerId(const QString &id)
+{
+    d_func()->containerId = id;
+}
+
+/*!
+    \property QGalleryContainerRequest::items
+
+    \brief The items returned by a request.
+*/
+
+QGalleryItemList *QGalleryContainerRequest::items() const
+{
+    return d_func()->response;
+}
+
+/*!
+    \fn QGalleryContainerRequest::itemsChanged()
+*/
+
+/*!
+    \reimp
+*/
+void QGalleryContainerRequest::setResponse(QGalleryAbstractResponse *response)
+{
+    Q_UNUSED(response);
+
     emit itemsChanged();
 }
+
+class QGalleryFilterRequestPrivate : public QGalleryAbstractRequestPrivate
+{
+public:
+    QGalleryFilterRequestPrivate(QAbstractGallery *gallery)
+        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Filter)
+        , initialCursorPosition(0)
+        , minimumPagedItems(200)
+        , live(false)
+    {
+    }
+
+    int initialCursorPosition;
+    int minimumPagedItems;
+    bool live;
+    QStringList propertyNames;
+    QStringList sortPropertyNames;
+    QString itemType;
+    QString containerId;
+    QGalleryFilter filter;
+};
+
+/*!
+    \class QGalleryFilterRequest
+
+    \ingroup gallery
+    \ingroup gallery-requests
+
+    \brief The QGalleryItemRequest class provides a request for a set of
+    items from a gallery.
+
+*/
+/*!
+    Constructs a new gallery filter request.
+
+    The \a parent is passed to QObject.
+*/
+
+
+QGalleryFilterRequest::QGalleryFilterRequest(QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryFilterRequestPrivate(0), parent)
+{
+}
+/*!
+    Contructs a new filter request for the given \a gallery.
+
+    The \a parent is passed to QObject.
+*/
+
+QGalleryFilterRequest::QGalleryFilterRequest(QAbstractGallery *gallery, QObject *parent)
+    : QGalleryAbstractRequest(*new QGalleryFilterRequestPrivate(gallery), parent)
+{
+}
+
+/*!
+    Destroys a gallery filter request.
+*/
+
+QGalleryFilterRequest::~QGalleryFilterRequest()
+{
+}
+/*!
+    \property QGalleryFilterRequest::propertyNames
+
+    \brief A list of names of meta-data properties a request should return values for.
+*/
+
+
+QStringList QGalleryFilterRequest::propertyNames() const
+{
+    return d_func()->propertyNames;
+}
+
+void QGalleryFilterRequest::setPropertyNames(const QStringList &names)
+{
+    d_func()->propertyNames = names;
+}
+
+/*!
+    \property QGalleryFilterRequest::sortPropertyNames
+
+    \brief A list of names of meta-data properties a request should sort its
+    results on.
+
+    Prefixing a property name with the '+' character indicates it should be sorted
+    in ascending order, and a '-' character prefix indicates a descending order.
+    If there is no prefix ascending order is assumed.
+*/
+
+QStringList QGalleryFilterRequest::sortPropertyNames() const
+{
+    return d_func()->sortPropertyNames;
+}
+
+void QGalleryFilterRequest::setSortPropertyNames(const QStringList &names)
+{
+    d_func()->sortPropertyNames = names;
+}
+
+/*!
+    \property QGalleryFilterRequest::live
+
+    \brief Whether a the results of a request should be updated after a request
+    has finished.
+
+    If this is true the request will go into the Idle state when the request has
+    finished rather than returning to Inactive.
+*/
+
+
+bool QGalleryFilterRequest::isLive() const
+{
+    return d_func()->live;
+}
+
+void QGalleryFilterRequest::setLive(bool live)
+{
+    d_func()->live = live;
+}
+/*!
+    \property QGalleryFilterRequest::initialCursorPosition
+
+    \brief The index of the first item a request should return.
+
+    By default this is 0.
+*/
+
+
+int QGalleryFilterRequest::initialCursorPosition() const
+{
+    return d_func()->initialCursorPosition;
+}
+
+void QGalleryFilterRequest::setInitialCursorPosition(int index)
+{
+    d_func()->initialCursorPosition = index;
+}
+/*!
+    \property QGalleryFilterRequest::minimumPagedItems
+
+    \brief The minimum number of consecutive items the list returned by a
+    request should cache.
+
+    By default this is 200.
+*/
+
+
+int QGalleryFilterRequest::minimumPagedItems() const
+{
+    return d_func()->minimumPagedItems;
+}
+
+void QGalleryFilterRequest::setMinimumPagedItems(int size)
+{
+    d_func()->minimumPagedItems = size;
+}
+/*!
+    \property QGalleryFilterRequest::itemType
+
+    \brief The type of items a request should return.
+*/
+
+
+QString QGalleryFilterRequest::itemType() const
+{
+    return d_func()->itemType;
+}
+
+void QGalleryFilterRequest::setItemType(const QString &type)
+{
+    d_func()->itemType = type;
+}
+
+/*!
+    \property QGalleryFilterRequest::containerId
+
+    \brief The ID of a container item a request should return the descendents
+    of.
+
+*/
+
+QString QGalleryFilterRequest::containerId() const
+{
+    return d_func()->containerId;
+}
+
+void QGalleryFilterRequest::setContainerId(const QString &id)
+{
+    d_func()->containerId = id;
+}
+/*!
+    \property QGalleryFilterRequest::filter
+
+    \brief A filter identifying the items a request should return.
+
+    If no filter is set the results of the request will be determined soley
+    by the \l itemType property.
+*/
+
+QGalleryFilter QGalleryFilterRequest::filter() const
+{
+    return d_func()->filter;
+}
+
+void QGalleryFilterRequest::setFilter(const QGalleryFilter &filter)
+{
+    d_func()->filter = filter;
+}
+/*!
+    \property QGalleryFilterRequest::items
+
+    \brief The items returned by a request.
+*/
+
+
+QGalleryItemList *QGalleryFilterRequest::items() const
+{
+    return d_func()->response;
+}
+
+/*!
+    \fn QGalleryFilterRequest::itemsChanged()
+
+    Signals that the items property has changed.
+*/
+
+/*!
+    \reimp
+*/
+
+void QGalleryFilterRequest::setResponse(QGalleryAbstractResponse *response)
+{
+    Q_UNUSED(response);
+
+    emit itemsChanged();
+}
+
 
 class QGalleryCountRequestPrivate : public QGalleryAbstractRequestPrivate
 {
@@ -1124,6 +1435,7 @@ public:
     int count;
     bool live;
     QString itemType;
+    QString containerId;
     QGalleryFilter filter;
 };
 
@@ -1197,10 +1509,7 @@ void QGalleryCountRequest::setLive(bool live)
 /*!
     \property QGalleryCountRequest::itemType
 
-    \brief The type of items a request should count.
-
-    If this is not set items of all types will be returned.  If no filter is
-    set the number items of this type will be returned.
+    \brief The type of item a request should count.
 */
 
 QString QGalleryCountRequest::itemType() const
@@ -1213,14 +1522,29 @@ void QGalleryCountRequest::setItemType(const QString &type)
     d_func()->itemType = type;
 }
 
+/*!
+    \property QGalleryCountRequest::containerId
+
+    \brief The ID of a container item a request should count the descendents
+    of.
+
+*/
+
+QString QGalleryCountRequest::containerId() const
+{
+    return d_func()->containerId;
+}
+
+void QGalleryCountRequest::setContainerId(const QString &id)
+{
+    d_func()->containerId = id;
+}
 
 /*!
     \property QGalleryCountRequest::filter
 
-    \brief A filter identifying the items a request should count.
+    \brief A filter used to restrict the items counted by a request.
 
-    If no filter is set the results of the request will be determined soley
-    by the \l itemType property.
 */
 
 QGalleryFilter QGalleryCountRequest::filter() const
@@ -1230,105 +1554,8 @@ QGalleryFilter QGalleryCountRequest::filter() const
 
 void QGalleryCountRequest::setFilter(const QGalleryFilter &filter)
 {
-    Q_D(QGalleryCountRequest);
-
-    QGalleryFilter::Type oldType = d->filter.type();
-
-    d->filter = filter;
-
-    emit filterChanged();
-
-    switch (oldType) {
-    case QGalleryFilter::Container:
-        emit containerIdChanged();
-        break;
-    case QGalleryFilter::ContainerUrl:
-        emit containerUrlChanged();
-        break;
-    default:
-        break;
-    }
-
-    QGalleryFilter::Type newType = d->filter.type();
-
-    if (oldType != newType) {
-        switch (newType) {
-        case QGalleryFilter::Container:
-            emit containerIdChanged();
-            break;
-        case QGalleryFilter::ContainerUrl:
-            emit containerUrlChanged();
-            break;
-        default:
-            break;
-        }
-    }
+    d_func()->filter = filter;
 }
-
-/*!
-    \fn QGalleryCountRequest::filterChanged()
-
-    Signals the \l filter property has changed.
-*/
-
-/*!
-    \property QGalleryCountRequest::containerId
-
-    \brief The ID of container item a count request should return the
-    contents of.
-
-    This is equivalent to setting a \l filter of type QGalleryContainerFilter.
-
-    If the current \l filter is not of type QGalleryContainerFilter this will be
-    null.
-
-*/
-
-QString QGalleryCountRequest::containerId() const
-{
-    return d_func()->filter.toContainerFilter().containerId();
-}
-
-void QGalleryCountRequest::setContainerId(const QString &id)
-{
-    setFilter(QGalleryContainerFilter(id));
-}
-
-/*!
-    \fn QGalleryCountRequest::containerIdChanged()
-
-    Signals that the \l containerId property has changed.
-*/
-
-/*!
-    \property QGalleryCountRequest::containerUrl
-
-    \brief The URL of container item a count request should return the
-    contents of.
-
-    This is equivalent to setting a \l filter of type
-    QGalleryContainerUrlFilter.
-
-    If the current \l filter is not of type QGalleryContainerUrlFilter this
-    will be null.
-
-*/
-
-QUrl QGalleryCountRequest::containerUrl() const
-{
-    return d_func()->filter.toContainerUrlFilter().containerUrl();
-}
-
-void QGalleryCountRequest::setContainerUrl(const QUrl &url)
-{
-    setFilter(QGalleryContainerUrlFilter(url));
-}
-
-/*!
-    \fn QGalleryCountRequest::containerUrlChanged()
-
-    Signals that the \l containerUrl property has changed.
-*/
 
 /*!
     \property QGalleryCountRequest::count
@@ -1369,182 +1596,6 @@ void QGalleryCountRequest::setResponse(QGalleryAbstractResponse *response)
 
         emit countChanged();
     }
-}
-
-class QGalleryInsertRequestPrivate : public QGalleryAbstractRequestPrivate
-{
-public:
-    QGalleryInsertRequestPrivate(QAbstractGallery *gallery)
-        : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Insert)
-    {
-    }
-
-    QStringList propertyNames;
-    QStringList sortPropertyNames;
-    QList<QUrl> itemUrls;
-};
-
-/*!
-    \class QGalleryInsertRequest
-
-    \ingroup gallery
-    \ingroup gallery-requests
-
-    \brief The QGalleryInsertRequest class provides a request which inserts
-    existing items into a gallery.
-*/
-
-/*!
-    Constructs a new gallery insert request.
-
-    The \a parent is passed to QObject.
-*/
-
-QGalleryInsertRequest::QGalleryInsertRequest(QObject *parent)
-    : QGalleryAbstractRequest(*new QGalleryInsertRequestPrivate(0), parent)
-{
-}
-
-/*!
-    Contructs a new insert request for the given \a gallery.
-
-    The \a parent is passed to QObject.
-*/
-
-QGalleryInsertRequest::QGalleryInsertRequest(QAbstractGallery *gallery, QObject *parent)
-    : QGalleryAbstractRequest(*new QGalleryInsertRequestPrivate(gallery), parent)
-{
-}
-
-/*!
-    Destroys a gallery insert request.
-*/
-
-QGalleryInsertRequest::~QGalleryInsertRequest()
-{
-
-}
-
-/*!
-    \property QGalleryInsertRequest::propertyNames
-
-    \brief A list of name of meta-data properties the \l insertedItems list
-    should contain values for.
-*/
-
-QStringList QGalleryInsertRequest::propertyNames() const
-{
-    return d_func()->propertyNames;
-}
-
-void QGalleryInsertRequest::setPropertyNames(const QStringList &propertyNames)
-{
-    d_func()->propertyNames = propertyNames;
-}
-
-/*!
-    \property QGalleryInsertRequest::sortPropertyNames
-
-    \brief A list of names of meta-data properties a request should sort its
-    results on.
-
-    Prefixing a property name with the '+' character indicates it should be
-    sorted in ascending order, and a '-' character prefix indicates a
-    descending order. If there is no prefix ascending order is assumed.
-*/
-
-QStringList QGalleryInsertRequest::sortPropertyNames() const
-{
-    return d_func()->sortPropertyNames;
-}
-
-void QGalleryInsertRequest::setSortPropertyNames(const QStringList &propertyNames)
-{
-    d_func()->sortPropertyNames = propertyNames;
-}
-
-/*!
-    \property QGalleryInsertRequest::itemUrl
-
-    \brief The URL of an item to insert into a gallery.
-
-    This is equivalent to \a itemUrls with a single value. If multiple
-    \a itemUrls are set this will be null.
-*/
-
-QUrl QGalleryInsertRequest::itemUrl() const
-{
-    Q_D(const QGalleryInsertRequest);
-
-    return d->itemUrls.count() == 1
-            ? d->itemUrls.first()
-            : QUrl();
-}
-
-void QGalleryInsertRequest::setItemUrl(const QUrl &url)
-{
-    Q_D(QGalleryInsertRequest);
-
-    d->itemUrls.clear();
-
-    if (!url.isEmpty())
-        d->itemUrls.append(url);
-
-    emit itemUrlsChanged();
-}
-
-/*!
-    \property QGalleryInsertRequest::itemUrls
-
-    \brief A list of URLs to insert into a gallery.
-
-    If the list only contains one URL this is equivalent to \l itemUrl.
-*/
-
-QList<QUrl> QGalleryInsertRequest::itemUrls() const
-{
-    return d_func()->itemUrls;
-}
-
-void QGalleryInsertRequest::setItemUrls(const QList<QUrl> &urls)
-{
-    d_func()->itemUrls = urls;
-
-    emit itemUrlsChanged();
-}
-
-/*!
-    \fn QGalleryInsertRequest::itemUrlsChanged()
-
-    Signals the \l itemUrl and \l itemUrls properties have changed.
-*/
-
-/*!
-    \property QGalleryInsertRequest::insertedItems
-
-    \brief A list of items inserted into a gallery.
-*/
-
-QGalleryItemList *QGalleryInsertRequest::insertedItems() const
-{
-    return d_func()->response;
-}
-
-/*!
-    \fn QGalleryInsertRequest::insertedItemsChanged()
-
-    Signals the \l insertedItems property has changed.
-*/
-
-/*!
-    \reimp
-*/
-
-void QGalleryInsertRequest::setResponse(QGalleryAbstractResponse *response)
-{
-    Q_UNUSED(response);
-
-    emit insertedItemsChanged();
 }
 
 class QGalleryRemoveRequestPrivate : public QGalleryAbstractRequestPrivate

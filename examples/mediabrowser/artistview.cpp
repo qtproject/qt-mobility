@@ -94,6 +94,6 @@ void ArtistView::mediaChanged()
 
 void ArtistView::activated(const QModelIndex &index)
 {
-    emit showAlbums(QGalleryContainerFilter(media()->id(index.row())));
+    emit showAlbums(media()->id(index.row()));
 }
 

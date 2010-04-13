@@ -62,19 +62,17 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
 
     artistView = new ArtistView(QDocumentGallery::Artist);
     artistView->setGallery(gallery);
-    connect(artistView, SIGNAL(showAlbums(QGalleryFilter)), this, SLOT(showAlbums(QGalleryFilter)));
-    connect(artistView, SIGNAL(showSongs(QGalleryFilter)), this, SLOT(showSongs(QGalleryFilter)));
+    connect(artistView, SIGNAL(showAlbums(QString)), this, SLOT(showAlbums(QString)));
+    connect(artistView, SIGNAL(showSongs(QString)), this, SLOT(showSongs(QString)));
 
     albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist);
     albumArtistView->setGallery(gallery);
-    connect(albumArtistView, SIGNAL(showAlbums(QGalleryFilter)),
-            this, SLOT(showAlbums(QGalleryFilter)));
-    connect(albumArtistView, SIGNAL(showSongs(QGalleryFilter)),
-            this, SLOT(showSongs(QGalleryFilter)));
+    connect(albumArtistView, SIGNAL(showAlbums(QString)), this, SLOT(showAlbums(QString)));
+    connect(albumArtistView, SIGNAL(showSongs(QString)), this, SLOT(showSongs(QString)));
 
     albumView = new AlbumView;
     albumView->setGallery(gallery);
-    connect(albumView, SIGNAL(showSongs(QGalleryFilter)), this, SLOT(showSongs(QGalleryFilter)));
+    connect(albumView, SIGNAL(showSongs(QString)), this, SLOT(showSongs(QString)));
 
     songView = new SongView;
     songView->setGallery(gallery);
@@ -116,30 +114,30 @@ Browser::~Browser()
 {
 }
 
-void Browser::showArtists(const QGalleryFilter &filter)
+void Browser::showArtists(const QString &containerId)
 {
-    artistView->showMatches(filter);
+    artistView->showChildren(containerId);
 
     stack->setCurrentWidget(artistView);
 }
 
-void Browser::showAlbumArtists(const QGalleryFilter &filter)
+void Browser::showAlbumArtists(const QString &containerId)
 {
-    albumArtistView->showMatches(filter);
+    albumArtistView->showChildren(containerId);
 
     stack->setCurrentWidget(albumArtistView);
 }
 
-void Browser::showAlbums(const QGalleryFilter &filter)
+void Browser::showAlbums(const QString &containerId)
 {
-    albumView->showMatches(filter);
+    albumView->showChildren(containerId);
 
     stack->setCurrentWidget(albumView);
 }
 
-void Browser::showSongs(const QGalleryFilter &filter)
+void Browser::showSongs(const QString &containerId)
 {
-    songView->showMatches(filter);
+    songView->showChildren(containerId);
 
     stack->setCurrentWidget(songView);
 }

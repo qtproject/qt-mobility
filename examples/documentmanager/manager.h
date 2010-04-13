@@ -49,7 +49,8 @@ class QAbstractButton;
 class QButtonGroup;
 class QDocumentGallery;
 class QGalleryAbstractRequest;
-class QGalleryItemRequest;
+class QGalleryContainerRequest;
+class QGalleryUrlRequest;
 class QListView;
 class QModelIndex;
 class QProgressBar;
@@ -70,6 +71,11 @@ private slots:
     void move();
     void remove();
 
+    void documentsListChanged();
+    void documentsInserted(int index, int count);
+    void documentsRemoved(int index, int count);
+
+
     void sourceListChanged();
     void destinationListChanged();
 
@@ -84,6 +90,7 @@ private slots:
     void sourceItemActivated(const QModelIndex &index);
     void destinationItemActivated(const QModelIndex &index);
 
+
 signals:
     void enableButtons(bool enable);
 
@@ -92,8 +99,9 @@ private:
     void executeActionRequest(QGalleryAbstractRequest *request);
 
     QDocumentGallery *gallery;
-    QGalleryItemRequest *sourceItemRequest;
-    QGalleryItemRequest *destinationItemRequest;
+    QGalleryUrlRequest *documentsRequest;
+    QGalleryContainerRequest *sourceItemRequest;
+    QGalleryContainerRequest *destinationItemRequest;
     QGalleryAbstractRequest *actionRequest;
     GalleryModel *sourceModel;
     GalleryModel *destinationModel;
@@ -104,7 +112,7 @@ private:
     QProgressDialog *actionProgress;
     QSplitter *splitter;
 
-    QUrl documentsUrl;
+    QString documentsId;
     QStringList sourceFolderId;
     QStringList destinationFolderId;
 };

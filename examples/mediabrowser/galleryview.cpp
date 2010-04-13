@@ -45,7 +45,7 @@
 
 GalleryView::GalleryView(QWidget *parent)
     : QWidget(parent)
-    , request(new QGalleryItemRequest(this))
+    , request(new QGalleryFilterRequest(this))
     , countRequest(new QGalleryCountRequest(this))
 {
     connect(request, SIGNAL(itemsChanged()), this, SLOT(mediaChanged()));
@@ -67,12 +67,12 @@ void GalleryView::setGallery(QAbstractGallery *gallery)
     countRequest->setGallery(gallery);
 }
 
-void GalleryView::showMatches(const QGalleryFilter &filter)
+void GalleryView::showChildren(const QString &containerId)
 {
-    request->setFilter(filter);
+    request->setContainerId(containerId);
     request->execute();
 
-    countRequest->setFilter(filter);
+    countRequest->setContainerId(containerId);
     countRequest->execute();
 }
 

@@ -56,8 +56,8 @@ public:
     ~ArtistView();
 
 signals:
-    void showAlbums(const QGalleryFilter &filter);
-    void showSongs(const QGalleryFilter &filter);
+    void showAlbums(const QString &containerId);
+    void showSongs(const QString &containerId);
 
 protected slots:
     void mediaChanged();

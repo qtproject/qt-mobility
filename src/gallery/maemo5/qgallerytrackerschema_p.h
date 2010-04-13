@@ -76,7 +76,12 @@ public:
     QString itemType() const { return m_itemType; }
     void setItemType(const QString &type);
 
-    QString buildQuery(int *error, const QGalleryFilter &filter) const;
+    void resolveItemType(const QString &itemId);
+
+    QString buildIdQuery(int *error, const QString &itemId);
+    QString buildContainerQuery(int *error, const QString &containerId);
+    QString buildFilterQuery(
+            int *error, const QString &containerId, const QGalleryFilter &filter) const;
 
     QString uriFromItemId(int *error, const QString &itemId) const;
     QStringList urisFromItemIds(int *error, const QStringList &itemIds) const;

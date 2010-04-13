@@ -45,10 +45,9 @@
 #include <QtGui/QWidget>
 
 class QAbstractGallery;
-class QGalleryFilter;
 class QGalleryCountRequest;
 class QGalleryItemList;
-class QGalleryItemRequest;
+class QGalleryFilterRequest;
 
 class GalleryView : public QWidget
 {
@@ -63,7 +62,7 @@ public:
     int count() const;
 
 public slots:
-    void showMatches(const QGalleryFilter &filter);
+    void showChildren(const QString &containerId);
 
 Q_SIGNALS:
     void countChanged(int count);
@@ -84,7 +83,7 @@ private slots:
     void requestCountChanged();
 
 private:
-    QGalleryItemRequest *request;
+    QGalleryFilterRequest *request;
     QGalleryCountRequest *countRequest;
 };
 

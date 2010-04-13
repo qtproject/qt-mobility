@@ -66,10 +66,6 @@ public:
     enum Type
     {
         Invalid,
-        Item,
-        ItemUrl,
-        Container,
-        ContainerUrl,
         Intersection,
         Union,
         MetaData,
@@ -92,10 +88,6 @@ public:
 
     QGalleryFilter();
     QGalleryFilter(const QGalleryFilter &filter);
-    QGalleryFilter(const QGalleryItemFilter &filter);
-    QGalleryFilter(const QGalleryItemUrlFilter &filter);
-    QGalleryFilter(const QGalleryContainerFilter &filter);
-    QGalleryFilter(const QGalleryContainerUrlFilter &filter);
     QGalleryFilter(const QGalleryIntersectionFilter &filter);
     QGalleryFilter(const QGalleryUnionFilter &filter);
     QGalleryFilter(const QGalleryMetaDataFilter &filter);
@@ -106,10 +98,6 @@ public:
 
     Type type() const;
 
-    QGalleryItemFilter toItemFilter() const;
-    QGalleryItemUrlFilter toItemUrlFilter() const;
-    QGalleryContainerFilter toContainerFilter() const;
-    QGalleryContainerUrlFilter toContainerUrlFilter() const;
     QGalleryIntersectionFilter toIntersectionFilter() const;
     QGalleryUnionFilter toUnionFilter() const;
     QGalleryMetaDataFilter toMetaDataFilter() const;
@@ -124,106 +112,6 @@ private:
 
 bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
-
-class QGalleryItemFilterPrivate;
-
-class Q_GALLERY_EXPORT QGalleryItemFilter
-{
-public:
-    QGalleryItemFilter();
-    explicit QGalleryItemFilter(const QString &id);
-    explicit QGalleryItemFilter(const QStringList &ids);
-    QGalleryItemFilter(const QGalleryItemFilter &filter);
-    ~QGalleryItemFilter();
-
-    QGalleryItemFilter &operator =(const QGalleryItemFilter &filter);
-
-    QString itemId() const;
-    void setItemId(const QString &id);
-
-    QStringList itemIds() const;
-    void setItemIds(const QStringList &ids);
-
-private:
-    explicit QGalleryItemFilter(QGalleryFilterPrivate *d);
-
-    QSharedDataPointer<QGalleryItemFilterPrivate> d;
-
-    friend class QGalleryFilter;
-};
-
-class QGalleryItemUrlFilterPrivate;
-
-class Q_GALLERY_EXPORT QGalleryItemUrlFilter
-{
-public:
-    QGalleryItemUrlFilter();
-    explicit QGalleryItemUrlFilter(const QUrl &url);
-    explicit QGalleryItemUrlFilter(const QList<QUrl> &urls);
-    QGalleryItemUrlFilter(const QGalleryItemUrlFilter &filter);
-    ~QGalleryItemUrlFilter();
-
-    QGalleryItemUrlFilter &operator =(const QGalleryItemUrlFilter &filter);
-
-    QUrl itemUrl() const;
-    void setItemUrl(const QUrl &url);
-
-    QList<QUrl> itemUrls() const;
-    void setItemUrls(const QList<QUrl> &urls);
-
-private:
-    explicit QGalleryItemUrlFilter(QGalleryFilterPrivate *d);
-
-    QSharedDataPointer<QGalleryItemUrlFilterPrivate> d;
-
-    friend class QGalleryFilter;
-};
-
-class QGalleryContainerFilterPrivate;
-
-class Q_GALLERY_EXPORT QGalleryContainerFilter
-{
-public:
-    QGalleryContainerFilter();
-    explicit QGalleryContainerFilter(const QString &id);
-    QGalleryContainerFilter(const QGalleryContainerFilter &filter);
-    ~QGalleryContainerFilter();
-
-    QGalleryContainerFilter &operator =(const QGalleryContainerFilter &filter);
-
-    QString containerId() const;
-    void setContainerId(const QString &id);
-
-private:
-    explicit QGalleryContainerFilter(QGalleryFilterPrivate *d);
-
-    QSharedDataPointer<QGalleryContainerFilterPrivate> d;
-
-    friend class QGalleryFilter;
-};
-
-class QGalleryContainerUrlFilterPrivate;
-
-class Q_GALLERY_EXPORT QGalleryContainerUrlFilter
-{
-public:
-    QGalleryContainerUrlFilter();
-    explicit QGalleryContainerUrlFilter(const QUrl &url);
-    QGalleryContainerUrlFilter(const QGalleryContainerUrlFilter &filter);
-    ~QGalleryContainerUrlFilter();
-
-    QGalleryContainerUrlFilter &operator =(const QGalleryContainerUrlFilter &filter);
-
-    QUrl containerUrl() const;
-    void setContainerUrl(const QUrl &url);
-
-private:
-    explicit QGalleryContainerUrlFilter(QGalleryFilterPrivate *d);
-
-    QSharedDataPointer<QGalleryContainerUrlFilterPrivate> d;
-
-    friend class QGalleryFilter;
-};
 
 class QGalleryIntersectionFilterPrivate;
 

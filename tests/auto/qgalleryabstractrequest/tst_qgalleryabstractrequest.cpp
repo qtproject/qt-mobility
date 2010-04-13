@@ -184,7 +184,6 @@ void tst_QGalleryAbstractRequest::isSupported()
             << QGalleryAbstractRequest::Move);
 
     QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Item).isSupported(), false);
-    QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Insert).isSupported(), false);
     QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Move).isSupported(), true);
     QCOMPARE(QtGalleryTestRequest(&gallery, QGalleryAbstractRequest::Copy).isSupported(), true);
 }

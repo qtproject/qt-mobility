@@ -44,7 +44,7 @@
 
 #include <QtCore/QFile>
 
-class QGalleryInsertRequest;
+class QGalleryUrlRequest;
 class QNetworkReply;
 
 class ShareWidget;
@@ -68,7 +68,7 @@ private slots:
 private:
     QNetworkReply *networkReply;
     ShareWidget *shareWidget;
-    QGalleryInsertRequest *insertRequest;
+    QGalleryUrlRequest *urlRequest;
     QFile file;
 };
 

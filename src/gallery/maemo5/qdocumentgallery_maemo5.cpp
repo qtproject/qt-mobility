@@ -56,8 +56,10 @@
 class QDocumentGalleryPrivate : public QAbstractGalleryPrivate
 {
 public:
-
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
+    QGalleryAbstractResponse *createUrlResponse(QGalleryUrlRequest *request);
+    QGalleryAbstractResponse *createContainerResponse(QGalleryContainerRequest *request);
+    QGalleryAbstractResponse *createFilterResponse(QGalleryFilterRequest *request);
     QGalleryAbstractResponse *createCountResponse(QGalleryCountRequest *request);
     QGalleryAbstractResponse *createCopyResponse(QGalleryCopyRequest *request);
     QGalleryAbstractResponse *createMoveResponse(QGalleryMoveRequest *request);
@@ -69,9 +71,56 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     int result = QGalleryAbstractRequest::Succeeded;
 
     QGalleryTrackerSchema schema;
+    schema.resolveItemType(request->itemId());
+
+    QString query = schema.buildIdQuery(&result, request->itemId());
+
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        qWarning("Invalid Query %d, %s", result, qPrintable(query));
+    } else {
+        QGalleryAbstractResponse *response = 0;
+        if (schema.isFileType()) {
+            response = new QGalleryTrackerFileListResponse(
+                    QDBusConnection::sessionBus(),
+                    schema,
+                    query,
+                    request->propertyNames(),
+                    QStringList(),
+                    1);
+            response->setCursorPosition(0);
+        } else if (schema.isAggregateType()) {
+            response = new QGalleryTrackerAggregateListResponse(
+                    QDBusConnection::sessionBus(),
+                    schema,
+                    query,
+                    request->propertyNames(),
+                    QStringList(),
+                    1);
+            response->setCursorPosition(0);
+        } else {
+            result = QGalleryAbstractRequest::InvalidItemError;
+        }
+    }
+
+    return new QGalleryErrorResponse(result);
+}
+
+
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
+        QGalleryUrlRequest *request)
+{
+    return 0;
+}
+
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
+        QGalleryContainerRequest *request)
+{
+    int result = QGalleryAbstractRequest::Succeeded;
+
+    QGalleryTrackerSchema schema;
     schema.setItemType(request->itemType());
 
-    QString query = schema.buildQuery(&result, request->filter());
+    QString query = schema.buildContainerQuery(&result, request->containerId());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
@@ -103,6 +152,51 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     return new QGalleryErrorResponse(result);
 }
 
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
+        QGalleryFilterRequest *request)
+{
+    int result = QGalleryAbstractRequest::Succeeded;
+
+    QGalleryTrackerSchema schema;
+    schema.setItemType(request->itemType());
+
+    QString query = schema.buildFilterQuery(&result, request->containerId(), request->filter());
+
+    qDebug("filter response %s: %s", qPrintable(schema.service()), qPrintable(query));
+
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        qWarning("Invalid Query %d, %s", result, qPrintable(query));
+    } else {
+        if (schema.isFileType()) {
+            QGalleryAbstractResponse *response = new QGalleryTrackerFileListResponse(
+                    QDBusConnection::sessionBus(),
+                    schema,
+                    query,
+                    request->propertyNames(),
+                    request->sortPropertyNames(),
+                    request->minimumPagedItems());
+            response->setCursorPosition(request->initialCursorPosition());
+
+            return response;
+        } else if (schema.isAggregateType()) {
+            QGalleryAbstractResponse *response = new QGalleryTrackerAggregateListResponse(
+                    QDBusConnection::sessionBus(),
+                    schema,
+                    query,
+                    request->propertyNames(),
+                    request->sortPropertyNames(),
+                    request->minimumPagedItems());
+            response->setCursorPosition(request->initialCursorPosition());
+
+            return response;
+        } else {
+            result = QGalleryAbstractRequest::ItemTypeError;
+        }
+    }
+
+    return new QGalleryErrorResponse(result);
+}
+
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
         QGalleryCountRequest *request)
 {
@@ -111,7 +205,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
     QGalleryTrackerSchema schema;
     schema.setItemType(request->itemType());
 
-    QString query = schema.buildQuery(&result, request->filter());
+    QString query = schema.buildFilterQuery(&result, request->containerId(), request->filter());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
@@ -220,6 +314,8 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
 {
     switch (type) {
     case QGalleryAbstractRequest::Item:
+    case QGalleryAbstractRequest::Container:
+    case QGalleryAbstractRequest::Filter:
     case QGalleryAbstractRequest::Count:
     case QGalleryAbstractRequest::Copy:
     case QGalleryAbstractRequest::Move:
@@ -242,6 +338,12 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
     switch (request->type()) {
     case QGalleryAbstractRequest::Item:
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
+    case QGalleryAbstractRequest::Url:
+        return d->createUrlResponse(static_cast<QGalleryUrlRequest *>(request));
+    case QGalleryAbstractRequest::Container:
+        return d->createContainerResponse(static_cast<QGalleryContainerRequest *>(request));
+    case QGalleryAbstractRequest::Filter:
+        return d->createFilterResponse(static_cast<QGalleryFilterRequest *>(request));
     case QGalleryAbstractRequest::Count:
         return d->createCountResponse(static_cast<QGalleryCountRequest *>(request));
     case QGalleryAbstractRequest::Copy:
