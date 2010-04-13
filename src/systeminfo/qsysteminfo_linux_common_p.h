@@ -186,10 +186,26 @@ public:
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
+Q_SIGNALS:
+    void storageAdded();
+    void storageRemoved();
 
 private:
      QMap<QString, QString> mountEntriesMap;
      void mountEntries();
+     QFileSystemWatcher *mtabWatcherA;
+     QFileSystemWatcher *mtabWatcherB;
+
+#if !defined(QT_NO_DBUS)
+    QHalInterface *halIface;
+    QHalDeviceInterface *halIfaceDevice;
+#endif
+private Q_SLOTS:
+    void deviceChanged(const QString &path);
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 };
 

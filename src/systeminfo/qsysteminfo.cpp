@@ -68,7 +68,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QDebug>
-
+#include <QFileSystemWatcher>
 
 #include <locale.h>
 
@@ -676,8 +676,12 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
  */
 
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), d(storageInfoPrivate())
 {
+    connect(d,SIGNAL(storageAdded()),
+            this,SIGNAL(storageAdded()));
+    connect(d,SIGNAL(storageRemoved()),
+            this,SIGNAL(storageRemoved()));
 }
 
 /*!

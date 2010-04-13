@@ -48,7 +48,7 @@
 #include <QString>
 #include <QStringList>
 #include <QNetworkInterface>
-
+#include <QFileSystemWatcher>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -225,6 +225,12 @@ public:
 
     Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
+Q_SIGNALS:
+    void storageAdded();
+    void storageRemoved();
+
+private:
+       QSystemStorageInfoPrivate *d;
 };
 
 class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject

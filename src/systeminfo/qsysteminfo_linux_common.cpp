@@ -974,11 +974,73 @@ QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObje
     : QObject(parent)
 {
     halIsAvailable = halAvailable();
+
+#if !defined(QT_NO_DBUS)
+    halIface = new QHalInterface();
+#endif
 }
 
 QSystemStorageInfoLinuxCommonPrivate::~QSystemStorageInfoLinuxCommonPrivate()
 {
 }
+
+void QSystemStorageInfoLinuxCommonPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
+        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+        connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
+                this,SLOT(deviceChanged(const QString &)));
+    }
+
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
+        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+        connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
+                this,SLOT(deviceChanged(const QString &)));
+    }
+}
+
+void QSystemStorageInfoLinuxCommonPrivate::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
+        delete mtabWatcherA;
+        mtabWatcherA = 0;
+
+    }
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
+        delete mtabWatcherB;
+        mtabWatcherB = 0;
+    }
+}
+
+void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
+{
+    Q_UNUSED(path);
+    QMap<QString, QString> mountEntriesMap2 = mountEntriesMap;
+    mountEntries();
+
+    if(mountEntriesMap.count() > mountEntriesMap2.count()) {
+        emit storageAdded();
+        delete mtabWatcherA;
+        mtabWatcherA = 0;
+        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+        connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
+                this,SLOT(deviceChanged(const QString &)));
+
+    } else if(mountEntriesMap.count() < mountEntriesMap2.count()) {
+        emit storageRemoved();
+        delete mtabWatcherB;
+        mtabWatcherB = 0;
+        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+        connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
+                this,SLOT(deviceChanged(const QString &)));
+
+    }
+}
+
 
 qint64 QSystemStorageInfoLinuxCommonPrivate::availableDiskSpace(const QString &driveVolume)
 {

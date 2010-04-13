@@ -45,7 +45,7 @@
 
 Dialog::Dialog() :
     QWidget(),
-    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL)
+    saver(NULL), systemInfo(NULL), di(NULL), ni(NULL),sti(NULL)
 {
     setupUi(this);
     setupGeneral();
@@ -235,15 +235,24 @@ void Dialog::setupDisplay()
 
 void Dialog::setupStorage()
 {
-    QSystemStorageInfo mi;
-    storageTreeWidget->clear();
+    if(!sti) {
+    sti = new QSystemStorageInfo(this);
     storageTreeWidget->header()->setResizeMode(QHeaderView::ResizeToContents);
+    connect(sti,SIGNAL(storageAdded()),this,SLOT(storageChanged()));
+    connect(sti,SIGNAL(storageRemoved()),this,SLOT(storageChanged()));
+    }
+    updateStorage();
+}
 
-    QStringList vols = mi.logicalDrives();
+void Dialog::updateStorage()
+{
+    storageTreeWidget->clear();
+
+    QStringList vols = sti->logicalDrives();
     foreach(QString volName, vols) {
         QString type;
         QSystemStorageInfo::DriveType volType;
-        volType = mi.typeForDrive(volName);
+        volType = sti->typeForDrive(volName);
         if(volType == QSystemStorageInfo::InternalDrive) {
             type =  "Internal";
         }
@@ -260,12 +269,13 @@ void Dialog::setupStorage()
         QStringList items;
         items << volName;
         items << type;
-        items << QString::number(mi.totalDiskSpace(volName));
-        items << QString::number(mi.availableDiskSpace(volName));
+        items << QString::number(sti->totalDiskSpace(volName));
+        items << QString::number(sti->availableDiskSpace(volName));
         QTreeWidgetItem *item = new QTreeWidgetItem(items);
         storageTreeWidget->addTopLevelItem(item);
     }
 }
+
 
 void Dialog::setupNetwork()
 {
@@ -739,6 +749,12 @@ void Dialog::updateSimStatus()
         };
         simStatusLabel->setText(simstring);
     }
+}
+
+
+void Dialog::storageChanged()
+{
+    setupStorage();
 }
 
 
