@@ -83,13 +83,13 @@ the receiver. Another popular method is Cell ID positioning, which uses
 the cell ID of the cell site that is currently serving the receiving
 device to calculate its approximate location. These and other positioning
 methods can all be used with the Location API; the only requirement for a
-location data source within the API is that it provides a 
+location data source within the API is that it provides a
 latitude-longitude coordinate with a date/time value, with the option of
 providing the other attributes listed above.
 
 
 Location data sources are created by subclassing QGeoPositionInfoSource and
-providing QGeoPositionInfo objects through the 
+providing QGeoPositionInfo objects through the
 QGeoPositionInfoSource::positionUpdated() signal. Clients that require
 location data can connect to the
 \l{QGeoPositionInfoSource::positionUpdated()}{positionUpdated()} signal and
@@ -263,9 +263,77 @@ weather for the current location.
 The \l{lightmaps}{Light Maps demo} uses Location display a street map for
 the current location.
 
+\section1 Landmarks
+
+The Landmarks portion of the API facilitates the creating, retrieving,
+updating and deleting landmarks using arbitrary data sources.  The API provides
+both synchronous and asynchronous means of managing landmarks.
+
+\section2 Creation of categories and landmarks
+
+\section3 Synchronous
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Adding a category and landmark synchronously
+
+\section3 Asynchronous
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Adding a category and landmark asynchronously
+
+\section2 Retrieval of categories and landmarks
+
+\section3 Synchronous
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp fetch categories and landmarks synchronously
+
+\section3 Asynchronous
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp fetch categories and landmarks asynchronously
+
+\section2 Updating of categories and landmarks
+TODO:
+
+\section2 Deletion
+TODO:
+
 \section1 Classes
 
+\section2 Location classes
+
 \annotatedlist location
+
+\section2 Landmark classes
+
+\section3 Main Landmark Classes
+
+\annotatedlist landmarks-main
+
+\section3 Landmark Selection classes
+
+Landmark selection is facilitated by filter and sort order classes.  The filter classes
+define what criteria that landmarks must match and the sort order classes specify how
+the returned landmarks are sorted.  The filter and sort order classes are used with either
+the QLandmarkManager class (for synchronous landmark selection) or the request classes
+for (asynchronous landmark selection)
+
+\section4 Filters
+
+\annotatedlist landmarks-filter
+
+\section4 SortOrders
+
+\annotatedlist landmarks-sort
+
+\section3 Asynchronous Requests
+Asynchronous operations are facilitates by the request classes listed below:
+
+\annotatedlist landmarks-request
+
+\section3 Implementing backends
+A manager backend may be implemented by subclassing QLandmarkManagerEngine, and providing
+a QLandmarkManagerEngineFactory which can instantiate it when required.
+
+\annotatedlist landmarks-backend
+
 
 */
 

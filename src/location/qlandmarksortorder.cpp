@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkSortOrder
     \brief The QLandmarkSortOrder class serves as a base class
            for the different sort order types.
+    \ingroup landmarks-sort
 
     The sort orders define how a list of landmarks should be ordered
     when they searched using a QLandmarkManager or one of the

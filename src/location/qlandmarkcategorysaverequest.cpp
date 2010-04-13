@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
     retrieved by calling error()), or when individual items have been
     saved (which may be retrieved by calling categories()).
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!
@@ -87,6 +87,20 @@ QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
     Sets the list of \a categories to be saved.
 */
 void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> &categories)
+{
+}
+
+/*!
+    Appends \a category to the list of categories to be saved.
+*/
+void QLandmarkCategorySaveRequest::appendCategory(const QLandmarkCategory& category)
+{
+}
+
+/*!
+    Clears the list of categories to be saved.
+*/
+void QLandmarkCategorySaveRequest::clearCategories()
 {
 }
 

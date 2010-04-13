@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     of added landmarks may be retrieved by the ids() function.  The resultsAvailable()
     signal may also be emitted if an overall operational error occurs.
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!

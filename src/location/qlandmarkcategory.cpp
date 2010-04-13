@@ -84,7 +84,7 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     \brief The QLandmarkCategory class designates a grouping of
     landmarks of similar type.
 
-    \ingroup location
+    \ingroup landmarks-main
 
     Landmarks of similar type may be grouped together into categories,
     e.g. restaurants, accommodation etc.  A QLandmarkCategory object

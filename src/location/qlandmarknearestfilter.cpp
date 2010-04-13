@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkNearestFilter
     \brief The QLandmarkNearestFilter class is used to search for the landmark nearest
     to a given coordinate.
-    \ingroup location
+    \ingroup landmarks-filter
 */
 
 /*!

@@ -56,6 +56,8 @@ public:
 
     QList<QLandmark> landmarks() const;
     void setLandmarks(const QList<QLandmark> &landmarks);
+    void appendLandmark(const QLandmark &landmark);
+    void clearLandmarks();
 
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:

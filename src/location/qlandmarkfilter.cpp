@@ -72,7 +72,7 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
 /*!
     \class QLandmarkFilter
     \brief The QLandmarkFilter class is used to select landmarks.
-    \ingroup location
+    \ingroup landmarks-filter
 
     This class is used as a parameter to search for landmarks, it allows selection of
     landmarks which meet certain criteria.  It is used with QLandmarkManager

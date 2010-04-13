@@ -59,6 +59,7 @@ public:
 
     QList<QLandmarkSortOrder> sorting() const;
     void setSorting(QList<QLandmarkSortOrder> &sorting);
+    void setSorting(const QLandmarkSortOrder &sortOrder);
 
     QList<QLandmark> landmarks() const;
 private:

@@ -39,35 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKCATEGORYSAVEREQUEST_H
-#define QLANDMARKCATEGORYSAVEREQUEST_H
+#ifndef REQUESTEXAMPLE_H
+#define REQUESTEXAMPLE_H
 
-#include "qlandmarkabstractrequest.h"
+#include <QObject>
+#include <QLandmarkFetchRequest>
+#include <QLandmarkCategorySaveRequest>
+#include <QLandmarkSaveRequest>
+#include <QLandmarkCategoryFetchRequest>
+#include <QLandmarkManager>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QLandmarkCategory;
-
-class QLandmarkCategorySaveRequestPrivate;
-class Q_LOCATION_EXPORT QLandmarkCategorySaveRequest : public QLandmarkAbstractRequest
+class RequestExample : public QObject
 {
     Q_OBJECT
 public:
-    QLandmarkCategorySaveRequest();
-    ~QLandmarkCategorySaveRequest();
+    RequestExample():QObject(),
+                    lmManager(new QLandmarkManager(this)),
+                    catSaveRequest(new QLandmarkCategorySaveRequest),
+                    lmSaveRequest(new QLandmarkSaveRequest),
+                    catFetchRequest(new QLandmarkCategoryFetchRequest),
+                    lmFetchRequest(new QLandmarkFetchRequest){}
+    ~RequestExample(){}
 
-    QList<QLandmarkCategory> categories() const;
-    void setCategories(const QList<QLandmarkCategory> &categories);
-    void appendCategory(const QLandmarkCategory &category);
-    void clearCategories();
+private slots:
+    void categorySaveRequest();
+    void categorySaveRequestHandler(QLandmarkAbstractRequest::State);
+    void landmarkSaveRequest();
+    void landmarkSaveRequestHandler(QLandmarkAbstractRequest::State);
+    void categoryFetchRequest();
+    void categoryFetchHandlerRequest(QLandmarkAbstractRequest::State);
+    void landmarkFetchRequest();
+    void landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State);
 
-    QMap<int, QLandmarkManager::Error> errorMap() const;
+    void printCategories();
+    void printLandmarks();
+
 private:
-    Q_DISABLE_COPY(QLandmarkCategorySaveRequest)
-    Q_DECLARE_PRIVATE_D(d, QLandmarkCategorySaveRequest)
+    QLandmarkManager *lmManager;
+    QLandmarkFetchRequest *m_fetchRequest;
+    QLandmarkCategorySaveRequest *catSaveRequest;
+    QLandmarkSaveRequest *lmSaveRequest;
+    QLandmarkCategoryFetchRequest *catFetchRequest;
+    QLandmarkFetchRequest *lmFetchRequest;
+
+    QLandmarkCategoryId categoryId;
+    int previousLastIndex;
 };
 
-QTM_END_NAMESPACE
-
 #endif
-

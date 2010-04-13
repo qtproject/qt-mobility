@@ -49,14 +49,13 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkSaveRequest
     \brief The QLandmarkSaveRequest class allows a client to asynchronously
     request that certain landmarks be saved by a landmark manager.
+    \ingroup landmarks-request
 
     For a QLandmarkSaveRequest, the resultsAvailable() signal will be emitted
     when either an individual items error out (individaul errors may be retrieved
     by calling errorMap()), an  overall operation error occurs(which may be
     retrieved by calling error()), or when individual items have been
     saved (which may be retrieved by calling landmarks()).
-
-    \ingroup location
 */
 
 /*!
@@ -87,6 +86,22 @@ QList<QLandmark> QLandmarkSaveRequest::landmarks() const
     Sets the list of \a landmarks to be saved.
 */
 void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
+{
+}
+
+/*!
+    Convenience function to append \a landmark to the list of landmarks to be saved.
+    \sa setLandmarks()
+*/
+void QLandmarkSaveRequest::appendLandmark(const QLandmark &landmark)
+{
+}
+
+/*!
+    Convenience function to clear the landmarks to be saved.
+    \sa setLandmarks()
+*/
+void QLandmarkSaveRequest::clearLandmarks()
 {
 }
 

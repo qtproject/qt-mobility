@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
     by calling errorMap()), or when an overall operation error occurs(which may be
     retrieved by calling error()).
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!

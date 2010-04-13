@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
     landmarks (which may be retrieved by calling landmarks()), are updated, as well as if
     the overall operation error (which may be retrieved by calling error()) is updated.
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!
@@ -105,6 +105,15 @@ QList<QLandmarkSortOrder> QLandmarkFetchRequest::sorting() const
     prior to calling \l QLandmarkAbstractRequest::start().
 */
 void QLandmarkFetchRequest::setSorting(QList<QLandmarkSortOrder> &sorting)
+{
+}
+
+/*!
+    Sets the sort ordering of the request to \a sortOrder.  This function
+    will only have an effect on results if invoked prior to calling
+    \l QLandmarkAbstractRequest::start()
+*/
+void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sortOrder)
 {
 }
 
