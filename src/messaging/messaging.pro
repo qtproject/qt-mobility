@@ -42,7 +42,8 @@ PRIVATE_HEADERS += addresshelper_p.h \
     qmessagefilter_p.h \
     qmessagesortorder_p.h \
     qmessagestore.h \
-    qmessagestore_p.h
+    qmessagestore_p.h \
+    messagingutil_p.h
 SOURCES += qmessageid.cpp \
     qmessagecontentcontainerid.cpp \
     qmessagefolderid.cpp \
@@ -61,7 +62,8 @@ SOURCES += qmessageid.cpp \
     qmessagemanager.cpp \
     qmessagesortorder.cpp \
     qmessagestore.cpp \
-    qmessageservice.cpp
+    qmessageservice.cpp \
+    messagingutil.cpp
 symbian|win32|maemo6|maemo5|mac { 
     mac|maemo6: SOURCES += qmessageid_stub.cpp \
         qmessagecontentcontainerid_stub.cpp \
@@ -143,8 +145,7 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagestore_symbian_p.h \
             qmessageservice_symbian_p.h \
             qmessagecontentcontainer_symbian_p.h \
-            qmessage_symbian_p.h \
-            symbianhelpers_p.h
+            qmessage_symbian_p.h
         SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
@@ -161,8 +162,7 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagefilter_symbian.cpp \
             qmessagesortorder_symbian.cpp \
             qmessagestore_symbian.cpp \
-            qmessageservice_symbian.cpp \
-            symbianhelpers.cpp
+            qmessageservice_symbian.cpp
         LIBS += -lsendas2 \
             -lmsgs \
             -letext \

@@ -43,11 +43,11 @@
 #include <QTextCodec>
 #include "qmessagecontentcontainer_symbian_p.h"
 #include <qmtmengine_symbian_p.h>
-#include <symbianhelpers_p.h>
+#include <messagingutil_p.h>
 
 QTM_BEGIN_NAMESPACE
 
-using namespace SymbianHelpers;
+using namespace MessagingUtil;
 
 QMessageContentContainer QMessageContentContainerPrivate::from(long int messageId,
                                                                unsigned int attachmentId,
