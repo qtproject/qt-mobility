@@ -61,7 +61,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \enum QLandmarkSortOrder::SortType
     Defines the type of sort order.
-    \value InvalidSort An invalid sort order.
+    \value DefaultSort The default sort order that does nothing
     \value NameSort   Sorts landmarks by name.
     \value DistanceSort   Sorts landmarks by distance from a particular
            coordinate.
@@ -82,7 +82,7 @@ QLandmarkSortOrder::QLandmarkSortOrder()
 */
 QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 {
-    return QLandmarkSortOrder::InvalidSort;
+    return QLandmarkSortOrder::DefaultSort;
 }
 
 /*!
