@@ -96,6 +96,9 @@ public:
     remove(hashKey);
     return hashKey;
   };
+
+  /* Keys */
+  const QList<QContactLocalId> keys() {return m_localIds.keys();}
   
 private:
   QHash<QContactLocalId, QByteArray> m_localIds; //[int/QContactLocalId Maemo5LocalId, QByteArray eContactID]

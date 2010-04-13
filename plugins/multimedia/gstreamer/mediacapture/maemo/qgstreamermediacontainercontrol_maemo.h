@@ -49,7 +49,7 @@
 
 #include <gst/gst.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerMediaContainerControl : public QMediaContainerControl
 {

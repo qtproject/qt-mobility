@@ -160,6 +160,11 @@
 
         QGroupBox *attachmentsGroup = new QGroupBox(tr(&quot;Attachments&quot;));
         attachmentsGroup-&gt;setLayout(attachmentsLayout);
+    #ifdef Q_WS_MAEMO_5
+        <span class="comment">// Maemo 5 style doesn't take group box titles into account.</span>
+        int spacingHack = QFontMetrics(QFont()).height();
+        attachmentsLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
+    #endif
 
         textEdit = new QTextEdit;
 

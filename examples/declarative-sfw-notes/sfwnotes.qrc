@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>declarative-sfw-notes.qml</file>
+        <file>content/Button.qml</file>
+        <file>content/Dialog.qml</file> 
+        <file>content/InputDialog.qml</file>
+        <file>content/icons/addIcon.png</file>
+        <file>content/icons/deleteIcon.png</file>
+        <file>content/icons/searchIcon.png</file>
+        <file>content/icons/nextIcon.png</file>
+        <file>content/icons/prevIcon.png</file>
+    </qresource>
+</RCC>

@@ -49,7 +49,7 @@
 #include <QtCore/qvariant.h>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaControlPrivate;
 class Q_MEDIA_EXPORT QMediaControl : public QObject
@@ -74,6 +74,6 @@ template <typename T> const char *qmediacontrol_iid() { return 0; }
 #define Q_MEDIA_DECLARE_CONTROL(Class, IId) \
     template <> inline const char *qmediacontrol_iid<Class *>() { return IId; }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QABSTRACTMEDIACONTROL_H

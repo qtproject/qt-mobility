@@ -53,7 +53,7 @@
 class S60RadioTunerService;
 class CFMRadioEngineCallObserver;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60RadioTunerControl 
     : public QRadioTunerControl

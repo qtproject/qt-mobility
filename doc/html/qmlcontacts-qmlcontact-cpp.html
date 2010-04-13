@@ -62,7 +62,7 @@
     QT_USE_NAMESPACE
     QTM_USE_NAMESPACE
 
-    QmlContact::QmlContact(QContact&amp; contact, QObject *parent)
+    QmlContact::QmlContact(const QContact&amp; contact, QObject *parent)
         : QObject(parent), m_contact(contact)
     {
     }
@@ -90,49 +90,7 @@
 
     QString QmlContact::name()
     {
-        QList&lt;QContactDetail&gt; allNames = m_contact.details(QContactName::DefinitionName);
-
-        const QLatin1String space(&quot; &quot;);
-
-        <span class="comment">// synthesise the display label from the name.</span>
-        for (int i=0; i &lt; allNames.size(); i++) {
-            const QContactName&amp; name = allNames.at(i);
-
-            QString result;
-            if (!name.value(QContactName::FieldPrefix).trimmed().isEmpty()) {
-               result += name.value(QContactName::FieldPrefix);
-            }
-
-            if (!name.value(QContactName::FieldFirst).trimmed().isEmpty()) {
-                if (!result.isEmpty())
-                    result += space;
-                result += name.value(QContactName::FieldFirst);
-            }
-
-            if (!name.value(QContactName::FieldMiddle).trimmed().isEmpty()) {
-                if (!result.isEmpty())
-                    result += space;
-                result += name.value(QContactName::FieldMiddle);
-            }
-
-            if (!name.value(QContactName::FieldLast).trimmed().isEmpty()) {
-                if (!result.isEmpty())
-                    result += space;
-                result += name.value(QContactName::FieldLast);
-            }
-
-            if (!name.value(QContactName::FieldSuffix).trimmed().isEmpty()) {
-                if (!result.isEmpty())
-                    result += space;
-                result += name.value(QContactName::FieldSuffix);
-            }
-
-            if (!result.isEmpty()) {
-                return result;
-            }
-        }
-
-        return QString(&quot;noName&quot;);
+        return m_contact.displayLabel();
     }
 
     void QmlContact::setName(QString name)

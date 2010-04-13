@@ -1,4 +1,4 @@
-/****************************************************************************
+/***************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
@@ -42,34 +42,33 @@
 #include <QApplication>
 #include <QUrl>
 #include <QtCore>
-#include <QDebug>
 
 //! [0]
-//Includes for using the QML objects
-#include <QtDeclarative/QDeclarativeView>
+//Includes for using the declarative viewer
+#include <QDeclarativeView>
 
-//Includes for using the service framework
-#include <qserviceinterfacedescriptor.h>
-#include <qservicemanager.h>
+//Includes for using the service framework wrapper
+#include "qdeclarativeservice.h"
 //! [0]
 
 #include "sfwexample.h"
 
 int main(int argc, char* argv[])
 {
-    qmlRegisterType<ServiceWrapper>("QtSFW", 1, 0, "Service");
-    qmlRegisterType<ServiceRegister>("QtSFW", 1, 0, "Services");
-        
+    //! [1]
+    qmlRegisterType<QServiceWrapper>("QtMobility.serviceframework", 1, 0, "Service");
+    qmlRegisterType<QServiceListWrapper>("QtMobility.serviceframework", 1, 0, "ServiceList");
+    //! [1]
+
     QApplication app(argc, argv);
 
-    //! [1]
+    DialerServices *ds = new DialerServices();
+
+    //! [2]
     QDeclarativeView canvas;
     canvas.setSource(QUrl("qrc:/sfwexample.qml"));
-
-    //![3]
     canvas.show();
-    //![3]
-    //! [1]
+    //! [2]
 
     return app.exec();
 }

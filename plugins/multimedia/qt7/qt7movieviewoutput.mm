@@ -49,7 +49,7 @@
 #include <QtCore/qdebug.h>
 
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 #define VIDEO_TRANSPARENT(m) -(void)m:(NSEvent *)e{[[self superview] m:e];}
 

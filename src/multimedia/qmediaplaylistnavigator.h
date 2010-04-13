@@ -46,7 +46,7 @@
 #include "qmediaplaylist.h"
 #include <QtCore/qobject.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistNavigatorPrivate;
 class Q_MEDIA_EXPORT QMediaPlaylistNavigator : public QObject
@@ -102,6 +102,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_mediaChanged(int start, int end))
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTNAVIGATOR_H

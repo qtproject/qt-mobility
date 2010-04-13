@@ -262,3 +262,8 @@ const S60MediaSettings& S60MediaPlayerControl::mediaControlSettings() const
 {
     return m_mediaSettings;
 }
+
+void S60MediaPlayerControl::setAudioEndpoint(const QString& name)
+{
+    m_mediaSettings.setAudioEndpoint(name);
+}

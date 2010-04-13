@@ -9,10 +9,10 @@ contains(mobility_modules,serviceframework) {
                notesmanagerplugin \
                servicebrowser
 
-    !symbian:SUBDIRS+= servicenotesmanager/sfw-notes
+    !symbian:SUBDIRS+= sfw-notes
     
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += servicenotesmanager/declarative-sfw-notes \
+        SUBDIRS += declarative-sfw-notes \
                    declarative-sfw-dialer
     }
 }

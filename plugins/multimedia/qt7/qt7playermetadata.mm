@@ -51,7 +51,7 @@
     #undef check // avoid name clash;
 #endif
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QT7PlayerMetaDataControl::QT7PlayerMetaDataControl(QT7PlayerSession *session, QObject *parent)
     :QMetaDataControl(parent), m_session(session)

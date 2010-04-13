@@ -41,7 +41,7 @@
 
 #include "qmediaencodersettings.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QAudioEncoderSettingsPrivate  : public QSharedData
 {
@@ -778,5 +778,5 @@ void QImageEncoderSettings::setQuality(QtMedia::EncodingQuality quality)
     d->isNull = false;
     d->quality = quality;
 }
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -66,7 +66,7 @@
     }                                           \
     QVERIFY(a)
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class tst_QMediaRecorder: public QObject
 {
     Q_OBJECT
@@ -93,8 +93,8 @@ private:
 
 void tst_QMediaRecorder::initTestCase()
 {
-    qRegisterMetaType<QtMobility::QMediaRecorder::State>("QMediaRecorder::State");
-    qRegisterMetaType<QtMobility::QMediaRecorder::Error>("QMediaRecorder::Error");
+    qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
+    qRegisterMetaType<QMediaRecorder::Error>("QMediaRecorder::Error");
 
     captureSource = new QAudioCaptureSource;
     audiocapture = new QMediaRecorder(captureSource);

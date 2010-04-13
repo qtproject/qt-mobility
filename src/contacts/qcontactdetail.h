@@ -57,8 +57,8 @@ class Q_CONTACTS_EXPORT QContactDetail
 {
 public:
     QContactDetail();
-    QContactDetail(const char* definitionName); // possibly internal
-    QContactDetail(const QString& definitionName);
+    explicit QContactDetail(const char* definitionName); // possibly internal
+    explicit QContactDetail(const QString& definitionName);
     ~QContactDetail();
 
     QContactDetail(const QContactDetail& other);

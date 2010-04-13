@@ -56,7 +56,7 @@ class QGstreamerMessage;
 
 class QGstreamerVideoRendererInterface;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerPlayerSession : public QObject, public QGstreamerSyncEventFilter
 {
