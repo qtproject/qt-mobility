@@ -2539,7 +2539,7 @@ void tst_QContactManagerFiltering::allFiltering()
     QVERIFY(ids.count() == contacts.size());
     QString output = convertIds(contacts, ids);
     QString expected = convertIds(contacts, contacts); // :)
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 
     // Try unions/intersections of defaults
     ids = cm->contactIds(f | f);
