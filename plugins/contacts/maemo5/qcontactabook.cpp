@@ -264,12 +264,15 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   QList<QContactLocalId> rtn;
 
   // do this naively for now...
-  QContactManager::Error tempError;
+  *error = QContactManager::NoError;
+  QContactManager::Error tempError = QContactManager::NoError;
   QList<QContactLocalId> allIds = m_localIds.keys();
   QList<QContact> sortedAndFiltered;
   QContact *curr = 0;
   foreach (const QContactLocalId& currId, allIds) {
     curr = getQContact(currId, &tempError);
+    if (tempError != QContactManager::NoError)
+      *error = tempError;
     if (QContactManagerEngine::testFilter(filter, *curr)) {
       QContactManagerEngine::addSorted(&sortedAndFiltered, *curr, sortOrders);
     }
@@ -279,7 +282,6 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   foreach (const QContact& contact, sortedAndFiltered) {
     rtn.append(contact.localId());
   }
-  *error = tempError;
   return rtn;
 
   /*
