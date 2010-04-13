@@ -460,7 +460,6 @@ void tst_QContact::actions()
     QVERIFY(dets.isEmpty());
     // contact with email
     dets = c2.detailsWithAction("SendEmail");
-    qDebug() << dets;
     QVERIFY(dets.contains(e));
     dets = c2.detailsWithAction("NonexistentAction");
     QVERIFY(dets.isEmpty());
