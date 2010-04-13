@@ -1026,7 +1026,7 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
         emit storageAdded();
         delete mtabWatcherA;
         mtabWatcherA = 0;
-        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+        mtabWatcherA = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
         connect(mtabWatcherA,SIGNAL(fileChanged(const QString &)),
                 this,SLOT(deviceChanged(const QString &)));
 
@@ -1034,7 +1034,7 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
         emit storageRemoved();
         delete mtabWatcherB;
         mtabWatcherB = 0;
-        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/etc/mtab",this);
+        mtabWatcherB = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
         connect(mtabWatcherB,SIGNAL(fileChanged(const QString &)),
                 this,SLOT(deviceChanged(const QString &)));
 
