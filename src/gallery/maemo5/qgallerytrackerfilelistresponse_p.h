@@ -64,6 +64,8 @@ public:
 
     QStringList propertyNames() const;
     int propertyKey(const QString &name) const;
+    QGalleryProperty::Attributes propertyAttributes(int key) const;
+
 
     QUrl url(int index) const;
     QString type(int index) const;

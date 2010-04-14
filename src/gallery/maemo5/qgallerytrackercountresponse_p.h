@@ -64,6 +64,7 @@ public:
 
     QStringList propertyNames() const;
     int propertyKey(const QString &name) const;
+    QGalleryProperty::Attributes propertyAttributes(int key) const;
 
     int count() const;
 
@@ -74,8 +75,6 @@ public:
 
     QVariant metaData(int index, int key) const;
     void setMetaData(int index, int key, const QVariant &value);
-
-    MetaDataFlags metaDataFlags(int index, int key) const;
 
     void cancel();
 

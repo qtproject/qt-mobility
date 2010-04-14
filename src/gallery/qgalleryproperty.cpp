@@ -51,13 +51,23 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QGalleryPropery::Attributes
+
+    This enumeration describes the attributes of a property.
+
+    \value CanRead The value of this property can be read.
+    \value CanWrite The value of this property can be written.
+    \value CanSort The value of this property can be used to sort items.
+*/
+
+/*!
     \fn QGalleryProperty::QGalleryProperty(const char *name)
 
     Constructs a property from a string literal \a name.
 */
 
 /*!
-    Returns the name of a propery.
+    Returns the name of a property.
 */
 
 QString QGalleryProperty::name() const

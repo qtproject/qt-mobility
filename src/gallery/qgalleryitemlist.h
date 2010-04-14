@@ -49,6 +49,8 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
+#include <qgalleryproperty.h>
+
 QTM_BEGIN_NAMESPACE
 
 class Q_GALLERY_EXPORT QGalleryResource
@@ -84,21 +86,12 @@ class Q_GALLERY_EXPORT QGalleryItemList : public QObject
     Q_PROPERTY(int minimumPagedItems READ minimumPagedItems)
     Q_DECLARE_PRIVATE(QGalleryItemList)
 public:
-    enum MetaDataFlag
-    {
-        ReadMetaReadable   = 0x01,
-        MetaDataWritable   = 0x02,
-        MetaDataWriting    = 0x04,
-        MetaDataWriteError = 0x08
-    };
-
-    Q_DECLARE_FLAGS(MetaDataFlags, MetaDataFlag);
-
     QGalleryItemList(QObject *parent = 0);
     ~QGalleryItemList();
 
     virtual QStringList propertyNames() const = 0;
     virtual int propertyKey(const QString &property) const = 0;
+    virtual QGalleryProperty::Attributes propertyAttributes(int key) const = 0;
 
     int cursorPosition() const;
     virtual int minimumPagedItems() const;
@@ -115,8 +108,6 @@ public:
 
     virtual QVariant metaData(int index, const QString &property) const;
     virtual void setMetaData(int index, const QString &property, const QVariant &value);
-
-    virtual MetaDataFlags metaDataFlags(int index, int key) const = 0;
 
 public Q_SLOTS:
     virtual void setCursorPosition(int position);

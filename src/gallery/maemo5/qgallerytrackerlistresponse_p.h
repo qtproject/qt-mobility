@@ -73,8 +73,6 @@ public:
     QVariant metaData(int index, int key) const;
     void setMetaData(int index, int key, const QVariant &value);
 
-    MetaDataFlags metaDataFlags(int index, int key) const;
-
     void cancel();
 
     bool waitForFinished(int msecs);

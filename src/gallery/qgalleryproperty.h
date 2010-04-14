@@ -51,6 +51,15 @@ QTM_BEGIN_NAMESPACE
 class Q_GALLERY_EXPORT QGalleryProperty
 {
 public:
+    enum Attribute
+    {
+        CanRead  = 0x01,
+        CanWrite = 0x02,
+        CanSort = 0x04
+    };
+
+    Q_DECLARE_FLAGS(Attributes, Attribute)
+
 #ifndef Q_QDOC
     template <int N>
     explicit QGalleryProperty(const char (&name)[N]) : m_name(name), m_length(N - 1) {}
@@ -82,5 +91,7 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryProperty::Attributes));
 
 #endif

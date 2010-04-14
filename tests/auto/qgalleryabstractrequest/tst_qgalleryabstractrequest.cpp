@@ -82,6 +82,8 @@ public:
 
     QStringList propertyNames() const { return QStringList(); }
     int propertyKey(const QString &) const { return -1; }
+    QGalleryProperty::Attributes propertyAttributes(int) const {
+        return QGalleryProperty::Attributes(); }
 
     int count() const { return 0; }
 
@@ -93,8 +95,6 @@ public:
 
     QVariant metaData(int, int) const { return QVariant(); }
     void setMetaData(int, int, const QVariant &) {}
-
-    MetaDataFlags metaDataFlags(int, int) const { return MetaDataFlags(); }
 
     bool waitForFinished(int)
     {

@@ -62,6 +62,10 @@ int QGalleryErrorResponse::propertyKey(const QString &) const
 {
     return -1;
 }
+QGalleryProperty::Attributes QGalleryErrorResponse::propertyAttributes(int key) const
+{
+    return QGalleryProperty::Attributes();
+}
 
 int QGalleryErrorResponse::count() const
 {
@@ -100,11 +104,6 @@ QVariant QGalleryErrorResponse::metaData(int, int) const
 
 void QGalleryErrorResponse::setMetaData(int, int, const QVariant &)
 {
-}
-
-QGalleryItemList::MetaDataFlags QGalleryErrorResponse::metaDataFlags(int, int) const
-{
-    return 0;
 }
 
 bool QGalleryErrorResponse::waitForFinished(int)

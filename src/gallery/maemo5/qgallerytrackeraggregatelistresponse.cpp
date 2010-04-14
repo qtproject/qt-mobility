@@ -133,6 +133,11 @@ int QGalleryTrackerAggregateListResponse::propertyKey(const QString &name) const
 }
 
 
+QGalleryProperty::Attributes QGalleryTrackerAggregateListResponse::propertyAttributes(int) const
+{
+    return QGalleryProperty::CanRead;
+}
+
 QUrl QGalleryTrackerAggregateListResponse::url(int) const
 {
     return QUrl();

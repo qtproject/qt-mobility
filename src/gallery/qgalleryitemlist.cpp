@@ -168,17 +168,6 @@ QVariant QGalleryResource::attribute(int key) const
 */
 
 /*!
-    \enum QGalleryItemList::MetaDataFlag
-
-    Provides information about the state of a meta-data value.
-
-    \value ReadMetaReadable
-    \value MetaDataWritable
-    \value MetaDataWriting
-    \value MetaDataWriteError
-*/
-
-/*!
     Constructs a new gallery document list.
 
     The \a parent is passed to QObject.
@@ -307,12 +296,6 @@ void QGalleryItemList::setMetaData(int index, const QString &property, const QVa
 {
     setMetaData(index, propertyKey(property), value);
 }
-
-/*!
-    \fn QGalleryItemList::metaDataFlags(int index, int key) const
-
-    Returns the state fo the meta-data \a key value at \a index.
-*/
 
 /*!
     \fn QGalleryItemList::inserted(int index, int count)

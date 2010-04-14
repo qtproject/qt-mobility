@@ -99,14 +99,6 @@ void QGalleryTrackerListResponse::setMetaData(int index, int key, const QVariant
     Q_UNUSED(value);
 }
 
-QGalleryItemList::MetaDataFlags QGalleryTrackerListResponse::metaDataFlags(int index, int key) const
-{
-    Q_UNUSED(index);
-    Q_UNUSED(key);
-
-    return 0;
-}
-
 void QGalleryTrackerListResponse::cancel()
 {
     // Should suppress any further cursor based requests here, but otherwise once a DBus call is

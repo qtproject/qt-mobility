@@ -90,6 +90,11 @@ int QGalleryTrackerCountResponse::propertyKey(const QString &) const
     return -1;
 }
 
+QGalleryProperty::Attributes QGalleryTrackerCountResponse::propertyAttributes(int) const
+{
+    return QGalleryProperty::Attributes();
+}
+
 int QGalleryTrackerCountResponse::count() const
 {
     return m_count;
@@ -122,11 +127,6 @@ QVariant QGalleryTrackerCountResponse::metaData(int, int) const
 
 void QGalleryTrackerCountResponse::setMetaData(int, int, const QVariant &)
 {
-}
-
-QGalleryItemList::MetaDataFlags QGalleryTrackerCountResponse::metaDataFlags(int, int) const
-{
-    return 0;
 }
 
 void QGalleryTrackerCountResponse::cancel()

@@ -103,6 +103,11 @@ int QGalleryTrackerFileListResponse::propertyKey(const QString &name) const
     return m_propertyNames.indexOf(name) + 2;
 }
 
+QGalleryProperty::Attributes QGalleryTrackerFileListResponse::propertyAttributes(int) const
+{
+    return QGalleryProperty::CanRead | QGalleryProperty::CanSort;
+}
+
 QUrl QGalleryTrackerFileListResponse::url(int index) const
 {
     QUrl url;

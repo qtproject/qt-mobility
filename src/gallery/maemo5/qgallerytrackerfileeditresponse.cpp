@@ -143,6 +143,11 @@ int QGalleryTrackerFileEditResponse::propertyKey(const QString &name) const
     return m_propertyNames.indexOf(name);
 }
 
+QGalleryProperty::Attributes QGalleryTrackerFileEditResponse::propertyAttributes(int) const
+{
+    return QGalleryProperty::CanRead;
+}
+
 int QGalleryTrackerFileEditResponse::count() const
 {
     return m_currentIndex != -1 ? 1 : 0;
@@ -188,11 +193,6 @@ QVariant QGalleryTrackerFileEditResponse::metaData(int index, int key) const
 
 void QGalleryTrackerFileEditResponse::setMetaData(int, int, const QVariant &)
 {
-}
-
-QGalleryItemList::MetaDataFlags QGalleryTrackerFileEditResponse::metaDataFlags(int, int) const
-{
-    return 0;
 }
 
 void QGalleryTrackerFileEditResponse::cancel()
