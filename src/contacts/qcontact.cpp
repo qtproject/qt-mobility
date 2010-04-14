@@ -368,7 +368,13 @@ QContactDetail QContact::detail(const QString& definitionName) const
     return QContactDetail();
 }
 
-/*! Returns a list of details with the given \a definitionName */
+/*! Returns a list of details with the given \a definitionName
+    The definitionName string can be determined by the DefinitionName attribute
+    of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
+    requesting a list of all the definition names using
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
+    asynchronous \l
+    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
 QList<QContactDetail> QContact::details(const QString& definitionName) const
 {
     // build the sub-list of matching details.
@@ -391,7 +397,12 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
 
 /*!
     Returns a list of details of the given \a definitionName, with fields named \a fieldName and with value \a value.
-*/
+    The definitionName string can be determined by the DefinitionName attribute
+    of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
+    requesting a list of all the definition names using
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
+    asynchronous \l
+    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
 QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
 {
     // build the sub-list of matching details.
