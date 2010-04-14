@@ -1817,7 +1817,7 @@ QMessageFolderIdList CMTMEngine::filterMessageFoldersL(const QMessageFolderFilte
             {
             if (pf->_comparatorType == QMessageFolderFilterPrivate::Equality) {
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
-                if (pf->_value.toString().length() > 0) {
+                if (pf->_value.toString().length() > idPrefix().length()) {
                     bool folderOk = false;
                     long int folderId = folderIdFromQMessageFolderId(QMessageFolderId(pf->_value.toString()));
                     CMsvEntry* pEntry = retrieveCMsvEntryAndPushToCleanupStack(folderId);
@@ -1931,12 +1931,12 @@ QMessageFolderIdList CMTMEngine::filterMessageFoldersL(const QMessageFolderFilte
             if (pf->_comparatorType == QMessageFolderFilterPrivate::Equality) {
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (cmp == QMessageDataComparator::Equal) {
-                    if (pf->_value.toString().length() > 0) {
+                    if (pf->_value.toString().length() > idPrefix().length()) {
                         ids = folderIdsByAccountId(QMessageAccountId(pf->_value.toString()));
                     }
                 } else { // NotEqual
                     ids = allFolders();
-                    if (pf->_value.toString().length() > 0) {
+                    if (pf->_value.toString().length() > idPrefix().length()) {
                         QMessageFolderIdList ids2 = folderIdsByAccountId(QMessageAccountId(pf->_value.toString()));
                         for (int i = 0; i < ids2.count(); i++) {
                             ids.removeOne(ids2[i]);
@@ -4798,7 +4798,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
         iNumberOfHandledFilters++;
         if (pf->_comparatorType == QMessageFilterPrivate::Equality) { // QMessageId
             QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
-            if (!pf->_value.isNull() && pf->_value.toString().length() > 0) {
+            if (!pf->_value.isNull() && pf->_value.toString().length() > idPrefix().length()) {
                 if (cmp == QMessageDataComparator::Equal) {
                     long int messageId = stripIdPrefix(pf->_value.toString()).toLong();
                     CMsvEntry* pEntry = iOwner.retrieveCMsvEntryAndPushToCleanupStack(messageId);

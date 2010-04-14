@@ -116,7 +116,7 @@ bool QMessageId::operator<(const QMessageId& other) const
 
 QString QMessageId::toString() const
 {
-    return d_ptr ? addIdPrefix(d_ptr->_id) : QString();
+    return d_ptr ? addIdPrefix(d_ptr->_id) : addIdPrefix(QString());
 }
 
 bool QMessageId::isValid() const
