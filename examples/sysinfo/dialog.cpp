@@ -143,8 +143,10 @@ void Dialog::tabChanged(int index)
 void Dialog::setupGeneral()
 {
     delete systemInfo;
+//! [lang]
     systemInfo = new QSystemInfo(this);
     curLanguageLineEdit->setText( systemInfo->currentLanguage());
+//! [lang]
     languagesComboBox->clear();
     languagesComboBox->insertItems(0,systemInfo->availableLanguages());
     countryCodeLabel->setText(systemInfo->currentCountryCode());
@@ -153,11 +155,17 @@ void Dialog::setupGeneral()
 void Dialog::setupDevice()
 {
     delete di;
+//! [createdi]
     di = new QSystemDeviceInfo(this);
+//! [createdi]
+//! [batteryLevel]
     batteryLevelBar->setValue(di->batteryLevel());
+//! [batteryLevel]
 
+//! [sig batteryLevelChanged]
     connect(di,SIGNAL(batteryLevelChanged(int)),
             this,SLOT(updateBatteryStatus(int)));
+//! [sig batteryLevelChanged]
 
     connect(di,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
             this,SLOT(displayBatteryStatus(QSystemDeviceInfo::BatteryStatus)));
@@ -167,9 +175,13 @@ void Dialog::setupDevice()
 
     ImeiLabel->setText(di->imei());
     imsiLabel->setText(di->imsi());
+//! [manuf-id]
     manufacturerLabel->setText(di->manufacturer());
+//! [manuf-id]
     modelLabel->setText(di->model());
+//! [productName]
     productLabel->setText(di->productName());
+//! [productName]
 
     deviceLockPushButton->setChecked(di->isDeviceLocked());
 
@@ -189,6 +201,7 @@ void Dialog::setupDevice()
         radioButton->setChecked(true);
     }
 
+//! [inputMethod flags]
     QSystemDeviceInfo::InputMethodFlags methods = di->inputMethodType();
     QStringList inputs;
     if((methods & QSystemDeviceInfo::Keys)){
@@ -197,6 +210,7 @@ void Dialog::setupDevice()
     if((methods & QSystemDeviceInfo::Keypad)) {
         inputs << "Keypad";
     }
+//! [inputMethod flags]
     if((methods & QSystemDeviceInfo::Keyboard)) {
         inputs << "Keyboard";
     }
@@ -270,13 +284,17 @@ void Dialog::setupStorage()
 void Dialog::setupNetwork()
 {
     delete ni;
+//! [networkInfo]
     ni = new QSystemNetworkInfo(this);
+//! [networkInfo]
 
     connect(netStatusComboBox,SIGNAL(activated(int)),
             this, SLOT(netStatusComboActivated(int)));
 
+//! [sig strength]
     connect(ni,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int)),
             this,SLOT(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+//! [sig strength]
 
     connect(ni,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
             this,SLOT(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
@@ -325,13 +343,19 @@ void Dialog::getVersion(int index)
         versionLineEdit->setText("");
         break;
     case 1:
+//! [OS ver]
         version = QSystemInfo::Os;
+//! [OS ver]
         break;
     case 2:
+//! [Qt ver]
         version = QSystemInfo::QtCore;
+//! [Qt ver]
         break;
     case 3:
+//! [Firm ver]
         version = QSystemInfo::Firmware;
+//! [Firm ver]
         break;
     };
 
@@ -341,13 +365,17 @@ void Dialog::getVersion(int index)
 
 void Dialog::getFeature(int index)
 {
+//! [feature]
     QSystemInfo::Feature feature;
     switch(index) {
+//! [feature]
     case 0:
         return;
         break;
+//! [feature-bluetooth]
     case 1:
         feature = QSystemInfo::BluetoothFeature;
+//! [feature-bluetooth]
         break;
     case 2:
         feature = QSystemInfo::CameraFeature;
@@ -386,8 +414,10 @@ void Dialog::getFeature(int index)
         feature = QSystemInfo::HapticsFeature;
         break;
     };
+//! [feature test]
     QSystemInfo si;
     featuresLineEdit->setText((si.hasFeatureSupported(feature) ? "true":"false" ));
+//! [feature test]
 }
 
 void Dialog::setupSaver()

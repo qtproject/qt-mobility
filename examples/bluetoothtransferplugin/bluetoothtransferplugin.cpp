@@ -51,7 +51,9 @@ QObject* BluetoothTransferPlugin::createInstance(const QServiceInterfaceDescript
     Q_UNUSED(descriptor);
     Q_UNUSED(context);
     Q_UNUSED(session);
+    //! [createinstance]
     return new BluetoothTransfer(this);
+    //! [createinstance]
 }
 
 Q_EXPORT_PLUGIN2(serviceframework_bluetoothtransferplugin, BluetoothTransferPlugin)

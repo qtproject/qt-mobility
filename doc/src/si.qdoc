@@ -64,6 +64,13 @@
 The System Information API provides a set of APIs to discover system
 related information and capabilities.
 
+\section1 Namespace
+
+The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility API's into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
+
 \section1 Overview
 The System Information API returns the system information related to a
 number of categories.
@@ -125,14 +132,10 @@ If the NetworkManager backend is required run qmake as follows:
 
 The backend selection is expected to disappear once the API is integrated into Qt. 
 
-\section1 Reference documentation
+\section1 Examples
 
-\section2 Examples
+\section2 System Information Example
 
-\list
-    \o \l{File Manager Plugin Example}
-    \o \l{Bluetooth Transfer Plugin Example}
-    \o \l{Service Browser Example}
-\endlist
+The \l{sysinfo}{System Information} example demonstrates how an application can very easily access the system information of the device.
 
 */
