@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup gallery
 
     \brief The QGalleryResource class provides a resource identifier for a
-    gallery document.
+    gallery gallery item.
 */
 
 /*!
@@ -164,11 +164,21 @@ QVariant QGalleryResource::attribute(int key) const
     \ingroup gallery
 
     \brief The QGalleryItemList class provides an abstract interface for a
-    list of documents from a gallery.
+    list of gallery items from a gallery.
 */
 
 /*!
-    Constructs a new gallery document list.
+    \enum QGalleryItemList::ItemStatusFlag
+
+    This enumeration describes the current status of a gallery item.
+
+    \value OutOfRange The item is outside the range of currently paged items.
+    \value Reading New item data is currently being fetched.
+    \value Writing Changes to item data are currently being written.
+*/
+
+/*!
+    Constructs a new gallery gallery item list.
 
     The \a parent is passed to QObject.
 */
@@ -192,7 +202,7 @@ QGalleryItemList::QGalleryItemList(QGalleryItemListPrivate &dd, QObject *parent)
 }
 
 /*!
-    Destroys a gallery document list.
+    Destroys a gallery gallery item list.
 */
 
 QGalleryItemList::~QGalleryItemList()
@@ -242,43 +252,49 @@ int QGalleryItemList::minimumPagedItems() const
 /*!
     \fn QGalleryItemList::count() const
 
-    Returns the number of documents in a document list.
+    Returns the number of gallery items in a gallery item list.
 */
 
 /*!
     \fn QGalleryItemList::id(int index) const
 
-    Returns the id of the document at \a index.
+    Returns the id of the gallery item at \a index.
 */
 
 /*!
     \fn QGalleryItemList::url(int index) const
 
-    Returns the URL of the document at \a index.
+    Returns the URL of the gallery item at \a index.
 */
 
 /*!
     \fn QGalleryItemList::type(int index) const
 
-    Returns the type of the document at \a index.
+    Returns the type of the gallery item at \a index.
 */
 
 /*!
     \fn QGalleryItemList::resources(int index) const
 
-    Returns a list of resources for the document at \a index.
+    Returns a list of resources for the gallery item at \a index.
+*/
+
+/*!
+    \fn QGalleryItemList::status(int index) const
+
+    Returns the status of the gallery item at \a index.
 */
 
 /*!
     \fn QGalleryItemList::metaData(int index, int key) const
 
-    Returns the meta-data \a key value of the document at \a index.
+    Returns the meta-data \a key value of the gallery item at \a index.
 */
 
 /*!
     \fn QGalleryItemList::setMetaData(int index, int key, const QVariant &value)
 
-    Sets the meta-data \a key \a value of the document at \a index.
+    Sets the meta-data \a key \a value of the gallery item at \a index.
 */
 
 /*!
@@ -300,28 +316,28 @@ void QGalleryItemList::setMetaData(int index, const QString &property, const QVa
 /*!
     \fn QGalleryItemList::inserted(int index, int count)
 
-    Signals that \a count documents have been inserted into a document list
+    Signals that \a count gallery items have been inserted into a gallery item list
     starting at \a index.
 */
 
 /*!
     \fn QGalleryItemList::removed(int index, int count)
 
-    Signals that \a count documents have been removed from a document list
+    Signals that \a count gallery items have been removed from a gallery item list
     starting at \a index.
 */
 
 /*!
     \fn QGalleryItemList::moved(int from, int to, int count)
 
-    Signals that \a count documents have been moved \a from one starting index
+    Signals that \a count gallery items have been moved \a from one starting index
     \a to another.
 */
 
 /*!
     \fn QGalleryItemList::metaDataChanged(int index, int count, const QList<int> &keys)
 
-    Signals that the meta-data identified by \a keys of \a count documents
+    Signals that the meta-data identified by \a keys of \a count gallery items
     starting at \a index has changed.
 */
 

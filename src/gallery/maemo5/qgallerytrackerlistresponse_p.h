@@ -69,6 +69,7 @@ public:
     virtual QUrl url(int index) const = 0;
     virtual QString type(int index) const = 0;
     virtual QList<QGalleryResource> resources(int index) const = 0;
+    ItemStatus status(int index) const;
 
     QVariant metaData(int index, int key) const;
     void setMetaData(int index, int key, const QVariant &value);
@@ -98,6 +99,7 @@ private:
     const int m_minimumPagedItems;
     int m_count;
     int m_insertIndex;
+    int m_insertCount;
     int m_rowOffset;
     bool m_cursorOutdated;
     QDBusPendingCallWatcher *m_call;

@@ -52,6 +52,7 @@ QGalleryTrackerListResponse::QGalleryTrackerListResponse(
     , m_minimumPagedItems(minimumPagedItems)
     , m_count(0)
     , m_insertIndex(0)
+    , m_insertCount(0)
     , m_rowOffset(-1)
     , m_cursorOutdated(false)
     , m_call(0)
@@ -85,6 +86,19 @@ QString QGalleryTrackerListResponse::id(int index) const
 QUrl QGalleryTrackerListResponse::url(int) const
 {
     return QUrl();
+}
+
+QGalleryItemList::ItemStatus QGalleryTrackerListResponse::status(int index) const
+{
+    QGalleryItemList::ItemStatus status;
+
+    if (index < m_rowOffset || index >= m_rowOffset)
+        status |= OutOfRange;
+
+    if (m_call && index > m_insertIndex && index < qMin(m_insertIndex + m_insertCount, m_count))
+        status |= Reading;
+
+    return status;
 }
 
 QVariant QGalleryTrackerListResponse::metaData(int index, int key) const
@@ -128,11 +142,10 @@ void QGalleryTrackerListResponse::setCursorPosition(int position)
                 0, position + m_minimumPagedItems + PageAlignment);
 
         if (alignedIndex < m_rowOffset) {           
-            const int count = qMin(alignedCount, m_rowOffset) - alignedIndex;
-
+            m_insertCount = qMin(alignedCount, m_rowOffset) - alignedIndex;
             m_insertIndex = alignedIndex;
 
-            QDBusPendingCall call = queryRows(alignedIndex, count);
+            QDBusPendingCall call = queryRows(alignedIndex, m_insertCount);
 
             m_call = new QDBusPendingCallWatcher(call);
 
@@ -140,10 +153,9 @@ void QGalleryTrackerListResponse::setCursorPosition(int position)
                     this, SLOT(callFinished(QDBusPendingCallWatcher*)));
         } else if (alignedCount > m_rowOffset + m_rows.count()) {
             m_insertIndex = qMax(alignedIndex, m_rowOffset + m_rows.count());
+            m_insertCount = alignedCount - m_insertIndex;
 
-            const int count = alignedCount - m_insertIndex;
-
-            QDBusPendingCall call = queryRows(m_insertIndex, count);
+            QDBusPendingCall call = queryRows(m_insertIndex, m_insertCount);
 
             if (call.isError()) {
                 qWarning("DBUS error %s", qPrintable(call.error().message()));
@@ -247,7 +259,6 @@ void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
             appendedItemsUpdate(m_insertIndex, rows.count());
         }
     }
-
 
     if (m_cursorOutdated)
         setCursorPosition(cursorPosition());

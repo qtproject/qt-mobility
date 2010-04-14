@@ -86,6 +86,15 @@ class Q_GALLERY_EXPORT QGalleryItemList : public QObject
     Q_PROPERTY(int minimumPagedItems READ minimumPagedItems)
     Q_DECLARE_PRIVATE(QGalleryItemList)
 public:
+    enum ItemStatusFlag
+    {
+        OutOfRange = 0x01,
+        Reading = 0x02,
+        Writing = 0x04
+    };
+
+    Q_DECLARE_FLAGS(ItemStatus, ItemStatusFlag);
+
     QGalleryItemList(QObject *parent = 0);
     ~QGalleryItemList();
 
@@ -102,6 +111,7 @@ public:
     virtual QUrl url(int index) const = 0;
     virtual QString type(int index) const = 0;
     virtual QList<QGalleryResource> resources(int index) const = 0;
+    virtual ItemStatus status(int index) const = 0;
 
     virtual QVariant metaData(int index, int key) const = 0;
     virtual void setMetaData(int index, int key, const QVariant &value) = 0;
@@ -126,5 +136,7 @@ protected:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryItemList::ItemStatus))
 
 #endif

@@ -75,6 +75,7 @@ public:
     QString type(int index) const;
     QString parentId(int index) const;
     QList<QGalleryResource> resources(int index) const;
+    ItemStatus status(int index) const;
 
     QVariant metaData(int index, int key) const;
     void setMetaData(int index, int key, const QVariant &value);

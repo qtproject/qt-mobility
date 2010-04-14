@@ -97,6 +97,10 @@ QList<QGalleryResource> QGalleryErrorResponse::resources(int) const
     return QList<QGalleryResource>();
 }
 
+QGalleryItemList::ItemStatus QGalleryErrorResponse::status(int index) const
+{
+    return ItemStatus();
+}
 QVariant QGalleryErrorResponse::metaData(int, int) const
 {
     return QVariant();

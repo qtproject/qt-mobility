@@ -72,6 +72,7 @@ public:
     QUrl url(int index) const;
     QString type(int index) const;
     QList<QGalleryResource> resources(int index) const;
+    ItemStatus status(int index) const;
 
     QVariant metaData(int index, int key) const;
     void setMetaData(int index, int key, const QVariant &value);
