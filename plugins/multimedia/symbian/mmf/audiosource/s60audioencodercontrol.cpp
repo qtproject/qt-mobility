@@ -172,7 +172,6 @@ void S60AudioEncoderControl::setEncodingOption(
     if (codec == "PCM") {        
         if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
             setBitRate(value.toInt());
-<<<<<<< HEAD
         } else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
             setQuality((QtMultimedia::EncodingQuality)value.toInt());
         } else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0) {
@@ -181,14 +180,6 @@ void S60AudioEncoderControl::setEncodingOption(
             setSampleRate(value.toInt());       
         }        
     }
-=======
-
-    } else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
-        setQuality((QtMultimedia::EncodingQuality)value.toInt());
-
-    } else
-        qWarning() << "option: " << name << " is an unknown option!";
->>>>>>> d39d4cd... Renamed QtMedia namespace to QtMultimedia
 }
 
 int S60AudioEncoderControl::sampleRate() const
