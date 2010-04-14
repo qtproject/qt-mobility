@@ -558,4 +558,4 @@ QString ContactWinceFactory::managerName() const
      QMutexLocker locker(&m_mutex);
      m_engine = 0;
  }
-Q_EXPORT_PLUGIN2(contacts_wince, ContactWinceFactory);
+Q_EXPORT_PLUGIN2(qtcontacts_wince, ContactWinceFactory);
