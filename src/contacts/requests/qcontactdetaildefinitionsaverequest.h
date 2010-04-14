@@ -57,7 +57,7 @@ class Q_CONTACTS_EXPORT QContactDetailDefinitionSaveRequest : public QContactAbs
     Q_OBJECT
 
 public:
-    QContactDetailDefinitionSaveRequest();
+    QContactDetailDefinitionSaveRequest(QObject* parent = 0);
 
     /* Selection */
     void setDefinitions(const QList<QContactDetailDefinition>& definitions);

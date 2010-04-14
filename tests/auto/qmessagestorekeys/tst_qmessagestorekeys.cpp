@@ -2514,9 +2514,9 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
     QTest::newRow("standardFolder equality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal)
+        << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal)
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << messageIds
         << ( QMessageIdList() )
@@ -2540,7 +2540,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 
     QTest::newRow("standardFolder inequality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::NotEqual) 
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << ( QMessageIdList() )
         << messageIds

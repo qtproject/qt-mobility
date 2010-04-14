@@ -57,9 +57,9 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new contact save request */
-QContactSaveRequest::QContactSaveRequest()
-    : QContactAbstractRequest(new QContactSaveRequestPrivate)
+/*! Constructs a new contact save request whose parent is the specified \a parent */
+QContactSaveRequest::QContactSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactSaveRequestPrivate, parent)
 {
 }
 

@@ -119,6 +119,14 @@ QtMedia
  - Tweaked few examples to have more features
  - Maemo 5 (Fremantle) backend implemented
  - AudioCapture
+ - API changes
+    * Added CoverArtImage, PosterImage, and ThumbnailImage meta-data keys to
+      address embedded images.
+    * Changed QVideoWidget to use the Qt::AspectRatioMode enumeration instead
+      of defining its own enumeration of the same name.
+ - Behavioural changes
+   * Changed to QVideoWidget to consistently not fill the background with black
+     by default.
 
 QtPublishSubscribe
 ------

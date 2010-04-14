@@ -203,16 +203,14 @@ void ContactListPage::rebuildList(const QContactFilter& filter)
 
     m_filterActiveLabel->setVisible(m_currentFilter != QContactFilter());
 
-    QContact currContact;
     m_contactsList->clear();
     m_idToListIndex.clear();
-    QList<QContactLocalId> contactIds = m_manager->contactIds(m_currentFilter);
-    foreach (const QContactLocalId& id, contactIds) {
+    m_contacts = m_manager->contacts(m_currentFilter);
+    foreach (QContact contact, m_contacts) {
         QListWidgetItem *currItem = new QListWidgetItem;
-        currContact = m_manager->contact(id);
-        currItem->setData(Qt::DisplayRole, currContact.displayLabel());
-        currItem->setData(Qt::UserRole, currContact.localId()); // also store the id of the contact.
-        m_idToListIndex.insert(currContact.localId(), m_contactsList->count());
+        currItem->setData(Qt::DisplayRole, contact.displayLabel());
+        currItem->setData(Qt::UserRole, contact.localId()); // also store the id of the contact.
+        m_idToListIndex.insert(contact.localId(), m_contactsList->count());
         m_contactsList->addItem(currItem);
     }
 }
@@ -293,10 +291,9 @@ void ContactListPage::exportClicked()
 {
 #ifdef BUILD_VERSIT
     if (!m_manager) {
-        qWarning() << "No manager selected; cannot import";
+        qWarning() << "No manager selected; cannot export";
         return;
     }
-    QList<QContact> contacts = m_manager->contacts(QList<QContactSortOrder>(), QContactFetchHint());
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save vCard"),
                                                     "./contacts.vcf",
                                                     tr("vCards (*.vcf)"));
@@ -304,7 +301,7 @@ void ContactListPage::exportClicked()
     file.open(QIODevice::WriteOnly);
     if (file.isWritable()) {
         QVersitContactExporter exporter;
-        if(exporter.exportContacts(contacts, QVersitDocument::VCard30Type)) {
+        if(exporter.exportContacts(m_contacts, QVersitDocument::VCard30Type)) {
             QList<QVersitDocument> documents = exporter.documents();
             QVersitWriter writer;
             writer.setDevice(&file);

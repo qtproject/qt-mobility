@@ -56,9 +56,9 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new contact remove request */
-QContactRemoveRequest::QContactRemoveRequest()
-    : QContactAbstractRequest(new QContactRemoveRequestPrivate)
+/*! Constructs a new contact remove request whose parent is the specified \a parent */
+QContactRemoveRequest::QContactRemoveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRemoveRequestPrivate, parent)
 {
 }
 

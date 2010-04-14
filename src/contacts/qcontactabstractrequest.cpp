@@ -113,16 +113,17 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-  \fn QContactAbstractRequest::QContactAbstractRequest()
-  Constructs a new, invalid asynchronous request
+  \fn QContactAbstractRequest::QContactAbstractRequest(QObject* parent)
+  Constructs a new, invalid asynchronous request with the specified \a parent
  */
 
 /*!
   \internal
-  Constructs a new request from the given request data \a otherd
+  Constructs a new request from the given request data \a otherd with
+  the given parent \a parent
 */
-QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate* otherd)
-    : d_ptr(otherd)
+QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate* otherd, QObject* parent)
+    : QObject(parent), d_ptr(otherd)
 {
 }
 

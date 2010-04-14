@@ -197,7 +197,7 @@ public:
 
 };
 
-class  Q_DECL_EXPORT MaliciousEngineFactory : public QObject, public QContactManagerEngineFactory
+class MaliciousEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)

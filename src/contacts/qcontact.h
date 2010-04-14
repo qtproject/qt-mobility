@@ -108,6 +108,11 @@ public:
     QList<QContactDetail> details(const char* definitionId, const char* fieldName, const QString& value) const;
 
     /* Templated retrieval for definition names */
+#ifdef Q_QDOC
+    QContactDetail detail(const QLatin1Constant& definitionName) const;
+    QList<QContactDetail> details(const QLatin1Constant& definitionName) const;
+    QList<QContactDetail> details(const QLatin1Constant& definitionName, const QLatin1Constant& fieldName, const QString& value);
+#else
     template <int N> QContactDetail detail(const QLatin1Constant<N>& definitionName) const
     {
         return detail(definitionName.latin1());
@@ -120,6 +125,7 @@ public:
     {
         return details(definitionName.latin1(), fieldName.latin1(), value);
     }
+#endif
 
     /* Templated (type-specific) detail retrieval */
     template<typename T> QList<T> details() const

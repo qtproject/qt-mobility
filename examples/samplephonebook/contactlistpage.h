@@ -97,7 +97,7 @@ private:
     QContactManager *m_manager;
     QMap<QContactLocalId, int> m_idToListIndex;
     QMap<QString, QContactManager*> m_initialisedManagers;
-
+    QList<QContact> m_contacts;
     QContactFilter m_currentFilter;
     QMap<QString, QString> m_availableManagers;
 };

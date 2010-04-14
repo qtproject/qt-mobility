@@ -39,47 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTRELATIONSHIPFETCHREQUEST_H
-#define QCONTACTRELATIONSHIPFETCHREQUEST_H
-
-#include "qtcontactsglobal.h"
-#include "qcontactabstractrequest.h"
-#include "qcontactrelationship.h"
-#include "qcontactrelationshipfilter.h"
-
-#include <QList>
-#include <QPair>
-#include <QString>
-
-QTM_BEGIN_NAMESPACE
-
-class QContactRelationshipFetchRequestPrivate;
-class Q_CONTACTS_EXPORT QContactRelationshipFetchRequest : public QContactAbstractRequest
+int main(int, char**)
 {
-    Q_OBJECT
+    return 0;
+}
 
-public:
-    QContactRelationshipFetchRequest(QObject* parent = 0);
-
-    /* Selection */
-    void setFirst(const QContactId& firstId);
-    QContactId first() const;
-
-    void setRelationshipType(const QString& relationshipType);
-    QString relationshipType() const;
-
-    void setSecond(const QContactId& secondId);
-    QContactId second() const;
-
-    /* Results */
-    QList<QContactRelationship> relationships() const;
-
-private:
-    Q_DISABLE_COPY(QContactRelationshipFetchRequest)
-    friend class QContactManagerEngine;
-    Q_DECLARE_PRIVATE_D(d_ptr, QContactRelationshipFetchRequest)
-};
-
-QTM_END_NAMESPACE
-
-#endif
