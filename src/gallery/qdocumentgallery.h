@@ -42,33 +42,9 @@
 #ifndef QGALLERY_H
 #define QGALLERY_H
 
+#include <qabstractgallery.h>
 #include <qgalleryproperty.h>
-#include <qgalleryrequest.h>
 #include <qgallerytype.h>
-
-class QGalleryAbstractResponse;
-class QGalleryAbstractRequest;
-
-class QAbstractGalleryPrivate;
-
-class Q_GALLERY_EXPORT QAbstractGallery : public QObject
-{
-    Q_OBJECT
-public:
-    QAbstractGallery(QObject *parent = 0);
-    ~QAbstractGallery();
-
-    virtual bool isRequestSupported(QGalleryAbstractRequest::Type type) const = 0;
-
-protected:
-    virtual QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request) = 0;
-
-    QAbstractGallery(QAbstractGalleryPrivate &dd, QObject *parent);
-
-    QAbstractGalleryPrivate *d_ptr;
-
-    friend class QGalleryAbstractRequest;
-};
 
 class QDocumentGalleryPrivate;
 

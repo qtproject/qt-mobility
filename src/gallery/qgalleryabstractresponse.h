@@ -39,56 +39,39 @@
 **
 ****************************************************************************/
 
-#include "sharewidget.h"
+#ifndef QGALLERYABSTRACTRESPONSE_H
+#define QGALLERYABSTRACTRESPONSE_H
 
-#include "download.h"
+#include "qgalleryabstractrequest.h"
+#include "qgalleryitemlist.h"
 
-#include <qdocumentgallery.h>
+#include <QtCore/qstringlist.h>
 
-#include <QtGui>
-#include <QtWebKit>
+class QGalleryAbstractResponsePrivate;
 
-ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
-    , webView(0)
-    , documentGallery(0)
+class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QGalleryItemList
 {
-    webView = new QWebView;
-    webView->setUrl(QUrl(QLatin1String("http://share.ovi.com")));
-    webView->page()->setForwardUnsupportedContent(true);
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QGalleryAbstractResponse)
+public:
+    QGalleryAbstractResponse(QObject *parent = 0);
+    ~QGalleryAbstractResponse();
 
-    connect(webView->page(), SIGNAL(unsupportedContent(QNetworkReply*)),
-            this, SLOT(unsupportedContent(QNetworkReply*)));
-    connect(webView->page(), SIGNAL(downloadRequested(QNetworkRequest)),
-            this, SLOT(downloadRequested(QNetworkRequest)));
+    int result() const;
+    bool isIdle() const;
 
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->addWidget(webView);
+    virtual void cancel();
 
-    setLayout(layout);
+    virtual bool waitForFinished(int msecs) = 0;
 
-    documentGallery = new QDocumentGallery(this);
-}
+Q_SIGNALS:
+    void finished();
+    void progressChanged(int current, int maximum);
 
-QAbstractGallery *ShareWidget::gallery() const
-{
-    return documentGallery;
-}
+protected:
+    QGalleryAbstractResponse(QGalleryAbstractResponsePrivate &dd, QObject *parent);
 
-void ShareWidget::unsupportedContent(QNetworkReply *reply)
-{
-    Download *download = new Download(reply, this);
+    void finish(int result, bool idle = false);
+};
 
-    connect(download, SIGNAL(finished(Download*)), this, SLOT(downloadFinished(Download*)));
-}
-
-void ShareWidget::downloadRequested(const QNetworkRequest &request)
-{
-    unsupportedContent(webView->page()->networkAccessManager()->get(request));
-}
-
-void ShareWidget::downloadFinished(Download *download)
-{
-    download->deleteLater();
-}
+#endif

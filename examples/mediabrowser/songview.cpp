@@ -45,7 +45,7 @@
 
 #include <QtGui>
 
-#include <qgallery.h>
+#include <qdocumentgallery.h>
 
 SongView::SongView(QWidget *parent)
     : GalleryView(parent)

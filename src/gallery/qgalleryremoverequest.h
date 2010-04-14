@@ -39,56 +39,45 @@
 **
 ****************************************************************************/
 
-#include "sharewidget.h"
+#ifndef QGALLERYREMOVEREQUEST_H
+#define QGALLERYREMOVEREQUEST_H
 
-#include "download.h"
+#include "qgalleryabstractrequest.h"
 
-#include <qdocumentgallery.h>
+class QGalleryItemList;
 
-#include <QtGui>
-#include <QtWebKit>
+class QGalleryRemoveRequestPrivate;
 
-ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
-    , webView(0)
-    , documentGallery(0)
+class Q_GALLERY_EXPORT QGalleryRemoveRequest : public QGalleryAbstractRequest
 {
-    webView = new QWebView;
-    webView->setUrl(QUrl(QLatin1String("http://share.ovi.com")));
-    webView->page()->setForwardUnsupportedContent(true);
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QGalleryRemoveRequest)
+    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
+    Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
+    Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
+    Q_PROPERTY(QGalleryItemList *currentItem READ currentItem NOTIFY currentItemChanged)
+public:
+    explicit QGalleryRemoveRequest(QObject *parent = 0);
+    explicit QGalleryRemoveRequest(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryRemoveRequest();
 
-    connect(webView->page(), SIGNAL(unsupportedContent(QNetworkReply*)),
-            this, SLOT(unsupportedContent(QNetworkReply*)));
-    connect(webView->page(), SIGNAL(downloadRequested(QNetworkRequest)),
-            this, SLOT(downloadRequested(QNetworkRequest)));
+    QStringList propertyNames() const;
+    void setPropertyNames(const QStringList &names);
 
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->addWidget(webView);
+    QString itemId() const;
+    void setItemId(const QString &id);
 
-    setLayout(layout);
+    QStringList itemIds() const;
+    void setItemIds(const QStringList &id);
 
-    documentGallery = new QDocumentGallery(this);
-}
+    QGalleryItemList *currentItem() const;
 
-QAbstractGallery *ShareWidget::gallery() const
-{
-    return documentGallery;
-}
+Q_SIGNALS:
+    void itemIdsChanged();
+    void currentItemChanged();
 
-void ShareWidget::unsupportedContent(QNetworkReply *reply)
-{
-    Download *download = new Download(reply, this);
+protected:
+    void setResponse(QGalleryAbstractResponse *response);
+};
 
-    connect(download, SIGNAL(finished(Download*)), this, SLOT(downloadFinished(Download*)));
-}
-
-void ShareWidget::downloadRequested(const QNetworkRequest &request)
-{
-    unsupportedContent(webView->page()->networkAccessManager()->get(request));
-}
-
-void ShareWidget::downloadFinished(Download *download)
-{
-    download->deleteLater();
-}
+#endif

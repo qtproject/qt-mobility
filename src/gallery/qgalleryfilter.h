@@ -49,10 +49,6 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qvector.h>
 
-class QGalleryContainerFilter;
-class QGalleryContainerUrlFilter;
-class QGalleryItemFilter;
-class QGalleryItemUrlFilter;
 class QGalleryIntersectionFilter;
 class QGalleryMetaDataFilter;
 class QGalleryMetaDataRangeFilter;

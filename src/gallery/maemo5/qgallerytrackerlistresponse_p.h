@@ -42,7 +42,7 @@
 #ifndef QGALLERYTRACKERLISTRESPONSE_P_H
 #define QGALLERYTRACKERLISTRESPONSE_P_H
 
-#include "qgalleryrequest.h"
+#include "qgalleryabstractresponse.h"
 
 #include "qgallerytrackerschema_p.h"
 

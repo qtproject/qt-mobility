@@ -39,56 +39,34 @@
 **
 ****************************************************************************/
 
-#include "sharewidget.h"
+#ifndef QGALLERYABSTRACTRESPONSE_P_H
+#define QGALLERYABSTRACTRESPONSE_P_H
 
-#include "download.h"
+#include "qgalleryitemlist_p.h"
 
-#include <qdocumentgallery.h>
+#include "qgalleryabstractresponse.h"
 
-#include <QtGui>
-#include <QtWebKit>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
-    , webView(0)
-    , documentGallery(0)
+class QGalleryAbstractResponsePrivate : public QGalleryItemListPrivate
 {
-    webView = new QWebView;
-    webView->setUrl(QUrl(QLatin1String("http://share.ovi.com")));
-    webView->page()->setForwardUnsupportedContent(true);
+public:
+    QGalleryAbstractResponsePrivate()
+        : result(QGalleryAbstractRequest::NoResult)
+        , idle(false)
+    {
+    }
+    int result;
+    bool idle;
+};
 
-    connect(webView->page(), SIGNAL(unsupportedContent(QNetworkReply*)),
-            this, SLOT(unsupportedContent(QNetworkReply*)));
-    connect(webView->page(), SIGNAL(downloadRequested(QNetworkRequest)),
-            this, SLOT(downloadRequested(QNetworkRequest)));
-
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->addWidget(webView);
-
-    setLayout(layout);
-
-    documentGallery = new QDocumentGallery(this);
-}
-
-QAbstractGallery *ShareWidget::gallery() const
-{
-    return documentGallery;
-}
-
-void ShareWidget::unsupportedContent(QNetworkReply *reply)
-{
-    Download *download = new Download(reply, this);
-
-    connect(download, SIGNAL(finished(Download*)), this, SLOT(downloadFinished(Download*)));
-}
-
-void ShareWidget::downloadRequested(const QNetworkRequest &request)
-{
-    unsupportedContent(webView->page()->networkAccessManager()->get(request));
-}
-
-void ShareWidget::downloadFinished(Download *download)
-{
-    download->deleteLater();
-}
+#endif

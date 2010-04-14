@@ -41,7 +41,7 @@
 
 #include "gallerymodel.h"
 
-#include "qgallery.h"
+#include "qdocumentgallery.h"
 #include "qgalleryitemlist.h"
 
 GalleryModel::GalleryModel(QObject *parent)

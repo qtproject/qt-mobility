@@ -10,25 +10,47 @@ DEFINES += QT_BUILD_GALLERY_LIB
 
 PRIVATE_HEADERS = \
         qabstractgallery_p.h \
+        qgalleryabstractrequest_p.h \
+        qgalleryabstractresponse_p.h \
         qgalleryerrorresponse_p.h \
         qgalleryitemlist_p.h
 
 PUBLIC_HEADERS = \
-        qgallery.h \
+        qabstractgallery.h \
+        qdocumentgallery.h \
+        qgalleryabstractrequest.h \
+        qgalleryabstractresponse.h \
+        qgallerycontainerrequest.h \
+        qgallerycopyrequest.h \
+        qgallerycountrequest.h \
         qgalleryfilter.h \
+        qgalleryfilterrequest.h \
         qgalleryitemlist.h \
+        qgalleryitemrequest.h \
+        qgallerymoverequest.h \
         qgalleryproperty.h \
-        qgalleryrequest.h \
-        qgallerytype.h
+        qgalleryremoverequest.h \
+        qgallerytype.h \
+        qgalleryurlrequest.h
 
 SOURCES = \
-        qgallery.cpp \
+        qabstractgallery.cpp \
+        qdocumentgallery.cpp \
+        qgalleryabstractrequest.cpp \
+        qgalleryabstractresponse.cpp \
+        qgallerycontainerrequest.cpp \
+        qgallerycopyrequest.cpp \
+        qgallerycountrequest.cpp \
         qgalleryerrorresponse.cpp \
         qgalleryfilter.cpp \
+        qgalleryfilterrequest.cpp \
         qgalleryitemlist.cpp \
+        qgalleryitemrequest.cpp \
+        qgallerymoverequest.cpp \
         qgalleryproperty.cpp \
-        qgalleryrequest.cpp \
-        qgallerytype.cpp
+        qgalleryremoverequest.cpp \
+        qgallerytype.cpp \
+        qgalleryurlrequest.cpp
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 

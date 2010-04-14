@@ -41,8 +41,10 @@
 
 #include <QtTest/QtTest>
 
-#include <qgalleryrequest.h>
-#include <qgallery.h>
+#include <qgalleryabstractrequest.h>
+
+#include <qabstractgallery.h>
+#include <qgalleryabstractresponse.h>
 
 class tst_QGalleryAbstractRequest : public QObject
 {

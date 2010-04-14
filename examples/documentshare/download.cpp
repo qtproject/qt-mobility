@@ -43,7 +43,7 @@
 
 #include "sharewidget.h"
 
-#include <qgalleryrequest.h>
+#include <qgalleryurlrequest.h>
 
 #include <QtGui>
 #include <QtNetwork>

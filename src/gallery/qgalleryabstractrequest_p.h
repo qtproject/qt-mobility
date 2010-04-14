@@ -39,56 +39,56 @@
 **
 ****************************************************************************/
 
-#include "sharewidget.h"
+#ifndef QGALLERYABSTRACTREQUEST_P_H
+#define QGALLERYABSTRACTREQUEST_P_H
 
-#include "download.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <qdocumentgallery.h>
+#include "qgalleryabstractrequest.h"
 
-#include <QtGui>
-#include <QtWebKit>
+#include "qgalleryabstractresponse.h"
 
-ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
-    , webView(0)
-    , documentGallery(0)
+class QGalleryAbstractRequestPrivate
 {
-    webView = new QWebView;
-    webView->setUrl(QUrl(QLatin1String("http://share.ovi.com")));
-    webView->page()->setForwardUnsupportedContent(true);
+    Q_DECLARE_PUBLIC(QGalleryAbstractRequest)
+public:
+    QGalleryAbstractRequestPrivate(QAbstractGallery *gallery, QGalleryAbstractRequest::Type type)
+        : gallery(gallery)
+        , response(0)
+        , type(type)
+        , state(QGalleryAbstractRequest::Inactive)
+        , result(QGalleryAbstractRequest::NoResult)
+        , currentProgress(0)
+        , maximumProgress(0)
+    {
+    }
 
-    connect(webView->page(), SIGNAL(unsupportedContent(QNetworkReply*)),
-            this, SLOT(unsupportedContent(QNetworkReply*)));
-    connect(webView->page(), SIGNAL(downloadRequested(QNetworkRequest)),
-            this, SLOT(downloadRequested(QNetworkRequest)));
+    virtual ~QGalleryAbstractRequestPrivate()
+    {
+        delete response;
+    }
 
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->addWidget(webView);
+    void _q_finished();
+    void _q_galleryDestroyed();
+    void _q_progressChanged(int current, int maximum);
 
-    setLayout(layout);
+    QGalleryAbstractRequest *q_ptr;
+    QAbstractGallery *gallery;
+    QGalleryAbstractResponse *response;
+    QGalleryAbstractRequest::Type type;
+    QGalleryAbstractRequest::State state;
+    int result;
+    int currentProgress;
+    int maximumProgress;
+};
 
-    documentGallery = new QDocumentGallery(this);
-}
-
-QAbstractGallery *ShareWidget::gallery() const
-{
-    return documentGallery;
-}
-
-void ShareWidget::unsupportedContent(QNetworkReply *reply)
-{
-    Download *download = new Download(reply, this);
-
-    connect(download, SIGNAL(finished(Download*)), this, SLOT(downloadFinished(Download*)));
-}
-
-void ShareWidget::downloadRequested(const QNetworkRequest &request)
-{
-    unsupportedContent(webView->page()->networkAccessManager()->get(request));
-}
-
-void ShareWidget::downloadFinished(Download *download)
-{
-    download->deleteLater();
-}
+#endif

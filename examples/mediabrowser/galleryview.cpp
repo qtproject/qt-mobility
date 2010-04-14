@@ -41,7 +41,9 @@
 
 #include "galleryview.h"
 
-#include <qgalleryrequest.h>
+#include <qgallerycountrequest.h>
+#include <qgalleryfilterrequest.h>
+#include <qgalleryitemlist.h>
 
 GalleryView::GalleryView(QWidget *parent)
     : QWidget(parent)

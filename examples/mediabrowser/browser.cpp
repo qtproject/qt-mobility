@@ -45,7 +45,7 @@
 #include "artistview.h"
 #include "songview.h"
 
-#include "qgallery.h"
+#include "qdocumentgallery.h"
 
 #include <QtGui>
 

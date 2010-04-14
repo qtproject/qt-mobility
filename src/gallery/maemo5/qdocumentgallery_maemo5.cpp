@@ -39,8 +39,18 @@
 **
 ****************************************************************************/
 
-#include "qgallery.h"
+#include "qdocumentgallery.h"
+
 #include "qabstractgallery_p.h"
+
+#include "qgallerycontainerrequest.h"
+#include "qgallerycopyrequest.h"
+#include "qgallerycountrequest.h"
+#include "qgalleryfilterrequest.h"
+#include "qgalleryitemrequest.h"
+#include "qgallerymoverequest.h"
+#include "qgalleryremoverequest.h"
+#include "qgalleryurlrequest.h"
 
 #include "qgalleryerrorresponse_p.h"
 #include "qgallerytrackeraggregatelistresponse_p.h"

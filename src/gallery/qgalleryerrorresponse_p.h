@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgalleryrequest.h"
+#include "qgalleryabstractresponse.h"
 
 class QGalleryErrorResponse : public QGalleryAbstractResponse
 {

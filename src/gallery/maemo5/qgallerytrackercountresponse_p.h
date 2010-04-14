@@ -42,7 +42,7 @@
 #ifndef QGALLERYTRACKERCOUNTRESPONSE_P_H
 #define QGALLERYTRACKERCOUNTRESPONSE_P_H
 
-#include "qgalleryrequest.h"
+#include "qgalleryabstractresponse.h"
 
 #include <QtDBus/qdbusinterface.h>
 #include <QtDBus/qdbuspendingcall.h>

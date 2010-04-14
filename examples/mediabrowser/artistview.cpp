@@ -46,7 +46,8 @@
 
 #include <QtGui>
 
-#include <qgallery.h>
+#include <qdocumentgallery.h>
+#include <qgalleryitemlist.h>
 
 ArtistView::ArtistView(const QString &type, QWidget *parent)
     : GalleryView(parent)

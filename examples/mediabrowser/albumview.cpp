@@ -46,7 +46,8 @@
 
 #include <QtGui>
 
-#include <qgallery.h>
+#include <qdocumentgallery.h>
+#include <qgalleryitemlist.h>
 
 AlbumView::AlbumView(QWidget *parent)
     : GalleryView(parent)

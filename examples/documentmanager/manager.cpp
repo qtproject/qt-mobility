@@ -43,7 +43,13 @@
 
 #include "gallerymodel.h"
 
-#include <qgallery.h>
+#include <qdocumentgallery.h>
+#include <qgallerycontainerrequest.h>
+#include <qgallerycopyrequest.h>
+#include <qgalleryitemlist.h>
+#include <qgallerymoverequest.h>
+#include <qgalleryremoverequest.h>
+#include <qgalleryurlrequest.h>
 
 #include <QtGui>
 

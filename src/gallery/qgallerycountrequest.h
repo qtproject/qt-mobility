@@ -39,56 +39,53 @@
 **
 ****************************************************************************/
 
-#include "sharewidget.h"
+#ifndef QGALLERYCOUNTREQUEST_H
+#define QGALLERYCOUNTREQUEST_H
 
-#include "download.h"
+#include "qgalleryabstractrequest.h"
 
-#include <qdocumentgallery.h>
+#include "qgalleryfilter.h"
 
-#include <QtGui>
-#include <QtWebKit>
+class QGalleryFilter;
 
-ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
-    , webView(0)
-    , documentGallery(0)
+class QGalleryCountRequestPrivate;
+
+class Q_GALLERY_EXPORT QGalleryCountRequest : public QGalleryAbstractRequest
 {
-    webView = new QWebView;
-    webView->setUrl(QUrl(QLatin1String("http://share.ovi.com")));
-    webView->page()->setForwardUnsupportedContent(true);
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(QGalleryCountRequest)
+    Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
+    Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QString containerId READ containerId WRITE setContainerId)
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
+public:
+    explicit QGalleryCountRequest(QObject *parent = 0);
+    explicit QGalleryCountRequest(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryCountRequest();
 
-    connect(webView->page(), SIGNAL(unsupportedContent(QNetworkReply*)),
-            this, SLOT(unsupportedContent(QNetworkReply*)));
-    connect(webView->page(), SIGNAL(downloadRequested(QNetworkRequest)),
-            this, SLOT(downloadRequested(QNetworkRequest)));
+    bool isLive() const;
+    void setLive(bool live);
 
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->addWidget(webView);
+    QString itemType() const;
+    void setItemType(const QString &type);
 
-    setLayout(layout);
+    QGalleryFilter filter() const;
+    void setFilter(const QGalleryFilter &filter);
 
-    documentGallery = new QDocumentGallery(this);
-}
+    QString containerId() const;
+    void setContainerId(const QString &id);
 
-QAbstractGallery *ShareWidget::gallery() const
-{
-    return documentGallery;
-}
+    int count() const;
 
-void ShareWidget::unsupportedContent(QNetworkReply *reply)
-{
-    Download *download = new Download(reply, this);
+Q_SIGNALS:
+    void countChanged();
 
-    connect(download, SIGNAL(finished(Download*)), this, SLOT(downloadFinished(Download*)));
-}
+protected:
+    void setResponse(QGalleryAbstractResponse *response);
 
-void ShareWidget::downloadRequested(const QNetworkRequest &request)
-{
-    unsupportedContent(webView->page()->networkAccessManager()->get(request));
-}
+private:
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged())
+};
 
-void ShareWidget::downloadFinished(Download *download)
-{
-    download->deleteLater();
-}
+#endif

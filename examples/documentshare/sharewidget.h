@@ -45,13 +45,14 @@
 #include <QtCore/qfile.h>
 #include <QtGui/qwidget.h>
 
-#include "qgallery.h"
-
+class QAbstractGallery;
+class QDocumentGallery;
 class QNetworkReply;
 class QNetworkRequest;
 class QWebView;
 
 class Download;
+
 
 class ShareWidget : public QWidget
 {

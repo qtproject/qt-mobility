@@ -39,56 +39,30 @@
 **
 ****************************************************************************/
 
-#include "sharewidget.h"
+#ifndef QABSTRACTGALLERY_H
+#define QABSTRACTGALLERY_H
 
-#include "download.h"
+#include <qgalleryabstractrequest.h>
 
-#include <qdocumentgallery.h>
+class QAbstractGalleryPrivate;
 
-#include <QtGui>
-#include <QtWebKit>
-
-ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
-    , webView(0)
-    , documentGallery(0)
+class Q_GALLERY_EXPORT QAbstractGallery : public QObject
 {
-    webView = new QWebView;
-    webView->setUrl(QUrl(QLatin1String("http://share.ovi.com")));
-    webView->page()->setForwardUnsupportedContent(true);
+    Q_OBJECT
+public:
+    QAbstractGallery(QObject *parent = 0);
+    ~QAbstractGallery();
 
-    connect(webView->page(), SIGNAL(unsupportedContent(QNetworkReply*)),
-            this, SLOT(unsupportedContent(QNetworkReply*)));
-    connect(webView->page(), SIGNAL(downloadRequested(QNetworkRequest)),
-            this, SLOT(downloadRequested(QNetworkRequest)));
+    virtual bool isRequestSupported(QGalleryAbstractRequest::Type type) const = 0;
 
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->addWidget(webView);
+protected:
+    virtual QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request) = 0;
 
-    setLayout(layout);
+    QAbstractGallery(QAbstractGalleryPrivate &dd, QObject *parent);
 
-    documentGallery = new QDocumentGallery(this);
-}
+    QAbstractGalleryPrivate *d_ptr;
 
-QAbstractGallery *ShareWidget::gallery() const
-{
-    return documentGallery;
-}
+    friend class QGalleryAbstractRequest;
+};
 
-void ShareWidget::unsupportedContent(QNetworkReply *reply)
-{
-    Download *download = new Download(reply, this);
-
-    connect(download, SIGNAL(finished(Download*)), this, SLOT(downloadFinished(Download*)));
-}
-
-void ShareWidget::downloadRequested(const QNetworkRequest &request)
-{
-    unsupportedContent(webView->page()->networkAccessManager()->get(request));
-}
-
-void ShareWidget::downloadFinished(Download *download)
-{
-    download->deleteLater();
-}
+#endif

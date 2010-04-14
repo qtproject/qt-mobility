@@ -39,67 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qgallery.h"
+#include "qdocumentgallery.h"
 #include "qabstractgallery_p.h"
 
 #include <QtCore/qstringlist.h>
-
-/*!
-    \class QAbstractGallery
-
-    \ingroup gallery
-    \ingroup gallery-galleries
-
-    \brief The QAbstractGallery class provides a base class for gallery
-    implementations.
-*/
-
-/*!
-    Constructs a new gallery.
-
-    The \a parent is passed to QObject.
-*/
-
-QAbstractGallery::QAbstractGallery(QObject *parent )
-    : QObject(parent)
-    , d_ptr(0)
-{
-
-}
-
-/*!
-    \internal
-*/
-
-QAbstractGallery::QAbstractGallery(QAbstractGalleryPrivate &dd, QObject *parent)
-    : QObject(parent)
-    , d_ptr(&dd)
-{
-    d_ptr->q_ptr = this;
-}
-
-/*!
-    Destroys a gallery.
-*/
-
-QAbstractGallery::~QAbstractGallery()
-{
-    delete d_ptr;
-}
-
-/*!
-    \fn QAbstractGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
-
-    Identifies if a gallery supports a request \a type.
-
-    Returns true if the request is supported, and false otherwise.
-*/
-
-/*!
-    \fn QAbstractGallery::createResponse(QGalleryAbstractRequest *request)
-
-    Creates a response to a gallery \a request.
-*/
 
 /*!
     \class QDocumentGallery

@@ -39,56 +39,62 @@
 **
 ****************************************************************************/
 
-#include "sharewidget.h"
+#include "qabstractgallery.h"
+#include "qabstractgallery_p.h"
 
-#include "download.h"
+/*!
+    \class QAbstractGallery
 
-#include <qdocumentgallery.h>
+    \ingroup gallery
+    \ingroup gallery-galleries
 
-#include <QtGui>
-#include <QtWebKit>
+    \brief The QAbstractGallery class provides a base class for gallery
+    implementations.
+*/
 
-ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
-    : QWidget(parent, flags)
-    , webView(0)
-    , documentGallery(0)
+/*!
+    Constructs a new gallery.
+
+    The \a parent is passed to QObject.
+*/
+
+QAbstractGallery::QAbstractGallery(QObject *parent )
+    : QObject(parent)
+    , d_ptr(0)
 {
-    webView = new QWebView;
-    webView->setUrl(QUrl(QLatin1String("http://share.ovi.com")));
-    webView->page()->setForwardUnsupportedContent(true);
 
-    connect(webView->page(), SIGNAL(unsupportedContent(QNetworkReply*)),
-            this, SLOT(unsupportedContent(QNetworkReply*)));
-    connect(webView->page(), SIGNAL(downloadRequested(QNetworkRequest)),
-            this, SLOT(downloadRequested(QNetworkRequest)));
-
-    QBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->addWidget(webView);
-
-    setLayout(layout);
-
-    documentGallery = new QDocumentGallery(this);
 }
 
-QAbstractGallery *ShareWidget::gallery() const
+/*!
+    \internal
+*/
+
+QAbstractGallery::QAbstractGallery(QAbstractGalleryPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
 {
-    return documentGallery;
+    d_ptr->q_ptr = this;
 }
 
-void ShareWidget::unsupportedContent(QNetworkReply *reply)
-{
-    Download *download = new Download(reply, this);
+/*!
+    Destroys a gallery.
+*/
 
-    connect(download, SIGNAL(finished(Download*)), this, SLOT(downloadFinished(Download*)));
+QAbstractGallery::~QAbstractGallery()
+{
+    delete d_ptr;
 }
 
-void ShareWidget::downloadRequested(const QNetworkRequest &request)
-{
-    unsupportedContent(webView->page()->networkAccessManager()->get(request));
-}
+/*!
+    \fn QAbstractGallery::isRequestSupported(QGalleryAbstractRequest::Type type) const
 
-void ShareWidget::downloadFinished(Download *download)
-{
-    download->deleteLater();
-}
+    Identifies if a gallery supports a request \a type.
+
+    Returns true if the request is supported, and false otherwise.
+*/
+
+/*!
+    \fn QAbstractGallery::createResponse(QGalleryAbstractRequest *request)
+
+    Creates a response to a gallery \a request.
+*/

@@ -41,7 +41,7 @@
 
 #include "qgallerytrackerschema_p.h"
 
-#include "qgalleryrequest.h"
+#include "qgalleryabstractrequest.h"
 
 #include <QtCore/qmetatype.h>
 #include <QtCore/qstringlist.h>
@@ -1039,7 +1039,7 @@ QString QGalleryTrackerSchema::buildIdQuery(int *error, const QString &itemId)
 
         xml.writeEndElement();
     } else {
-        *error = QGalleryItemRequest::InvalidItemError;
+        *error = QGalleryAbstractRequest::InvalidItemError;
     }
 
     return query;
@@ -1125,7 +1125,7 @@ QString QGalleryTrackerSchema::buildFilterQuery(
                     filter,
                     qt_galleryAggregateTypeMap[m_aggregateTypeIndex].propertyMap);
         } else {
-            *error = QGalleryItemRequest::ItemTypeError;
+            *error = QGalleryAbstractRequest::ItemTypeError;
         }
     }
 
