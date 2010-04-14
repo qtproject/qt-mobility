@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QGalleryPropery::Attributes
+    \enum QGalleryProperty::Attribute
 
     This enumeration describes the attributes of a property.
 

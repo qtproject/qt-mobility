@@ -223,6 +223,12 @@ QGalleryItemList::~QGalleryItemList()
 */
 
 /*!
+    \fn QGalleryItemList::propertyAttributes(int key) const
+
+    Returns the attributes of the property identified by \a key.
+*/
+
+/*!
     \property QGalleryItemList::cursorPosition
 
     \brief The current position of the cache cursor.

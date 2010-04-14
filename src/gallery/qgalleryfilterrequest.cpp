@@ -72,7 +72,7 @@ public:
     \ingroup gallery
     \ingroup gallery-requests
 
-    \brief The QGalleryItemRequest class provides a request for a set of
+    \brief The QGalleryFilterRequest class provides a request for a set of
     items from a gallery.
 
 */

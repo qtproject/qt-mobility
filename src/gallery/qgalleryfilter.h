@@ -57,6 +57,7 @@ class QGalleryMetaDataRangeFilter;
 class QGalleryUnionFilter;
 QTM_END_NAMESPACE
 
+#ifndef Q_QDOC
 bool operator ==(
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
@@ -64,6 +65,10 @@ bool operator ==(
 bool operator !=(
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
+#else
+bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+bool operator !=(const QGalleryFilter &filter2, const QGalleryFilter &filter2);
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -271,6 +276,7 @@ private:
 
 QTM_END_NAMESPACE
 
+#ifndef Q_QDOC
 template <typename T>
 QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) operator &&(
         const QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) &filter1, const T &filter2)
@@ -288,6 +294,11 @@ QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) operator ||(
     filter.append(filter2);
     return filter;
 }
+#else
+QGalleryUnionFilter operator &&(const QGalleryUnionFilter &filter1, const T &filter2);
+QGalleryIntersectionFilter operator ||(const QGalleryIntersectionFilter &filter1, const T &filter2);
+#endif
+
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryFilter::RangeFlags))
 

@@ -63,7 +63,7 @@ public:
 /*!
     \class QGalleryUrlRequest
 
-    \brief The QGalleryItemRequest class provides a request for an item
+    \brief The QGalleryUrlRequest class provides a request for an item
     identified by a URL from a gallery.
 */
 
@@ -152,7 +152,7 @@ void QGalleryUrlRequest::setItemUrl(const QUrl &url)
 /*!
     \property QGalleryUrlRequest::create
 
-    \biref Whether a gallery should create a new entry for the requested item
+    \brief Whether a gallery should create a new entry for the requested item
     if one does not already exist.
 */
 
