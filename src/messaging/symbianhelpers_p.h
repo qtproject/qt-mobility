@@ -66,7 +66,13 @@ namespace SymbianHelpers {
     QMessageFolderId removeFreestylePrefix(const QMessageFolderId &folderId);
     QString removeFreestylePrefix(const QString& msgId);
 
+    QString addIdPrefix(const QString& id);
+    QString stripIdPrefix(const QString& id);
+
+    static const char* mtmPrefix = "MTM_";
+    static const char* freestylePrefix = "FS_";
 };
 
 QTM_END_NAMESPACE
+
 #endif

@@ -40,9 +40,12 @@
 ****************************************************************************/
 #include "qmessageid.h"
 #include <qhash.h>
+#include <symbianhelpers_p.h>
 
 
 QTM_BEGIN_NAMESPACE
+
+using namespace SymbianHelpers;
 
 class QMessageIdPrivate
 {
@@ -64,7 +67,7 @@ QMessageId::QMessageId(const QMessageId& other)
 QMessageId::QMessageId(const QString& id)
 {
     d_ptr = new QMessageIdPrivate;
-    d_ptr->_id = id;
+    d_ptr->_id = stripIdPrefix(id);
 }
 
 QMessageId::~QMessageId()
@@ -81,9 +84,9 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
 
     if (!d_ptr)
         d_ptr = new QMessageIdPrivate;
-    
+
     d_ptr->_id = other.d_ptr->_id;
-        
+
     return *this;
 }
 
@@ -114,7 +117,7 @@ bool QMessageId::operator<(const QMessageId& other) const
 
 QString QMessageId::toString() const
 {
-    return d_ptr ? d_ptr->_id : QString();
+    return d_ptr ? addIdPrefix(d_ptr->_id) : QString();
 }
 
 bool QMessageId::isValid() const
@@ -124,7 +127,7 @@ bool QMessageId::isValid() const
 
 uint qHash(const QMessageId &id)
 {
-    return qHash(id.toString());
+    return qHash(stripIdPrefix(id.toString()));
 }
 
 

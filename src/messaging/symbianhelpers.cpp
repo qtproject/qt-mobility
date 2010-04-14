@@ -49,64 +49,67 @@ QTM_BEGIN_NAMESPACE
 
 namespace SymbianHelpers {
 
-const QString FreestylePrefix = QString("FS_");
-
-bool isFreestyleMessage(const QMessageId &msgId) {
-    return msgId.toString().indexOf(FreestylePrefix)==0?true:false;
-}
-
-bool isFreestyleAccount(const QMessageAccountId &accountId) {
-    return accountId.toString().indexOf(FreestylePrefix)==0?true:false;
-}
-
-bool isFreestyleFolder(const QMessageFolderId &folderId) {
-    return folderId.toString().indexOf(FreestylePrefix)==0?true:false;
-}
-
-bool isFreestyleMessage(const QString &msgId) {
-    return msgId.indexOf(FreestylePrefix)==0?true:false;
-}
-
-QMessageId addFreestylePrefix(const QMessageId &msgId) {
-    return QMessageId(FreestylePrefix+msgId.toString());
-}
-
-QMessageId removeFreestylePrefix(const QMessageId &msgId) {
-    if (isFreestyleMessage(msgId))
-        return QMessageId(msgId.toString().remove(0, FreestylePrefix.length()));
-    return QMessageId();
-}
-
-QString addFreestylePrefix(const QString &msgId) {
-    return QString(FreestylePrefix+msgId);
-}
-
-QString removeFreestylePrefix(const QString &msgId) {
-    if (isFreestyleMessage(msgId))
-        return QString(QString(msgId).remove(0, FreestylePrefix.length()));
-    return QString();
-}
-
-QMessageAccountId addFreestylePrefix(const QMessageAccountId &accountId) {
-    return QMessageAccountId(FreestylePrefix+accountId.toString());
-}
-
-QMessageAccountId removeFreestylePrefix(const QMessageAccountId &accountId) {
-    if (isFreestyleAccount(accountId))
-        return QMessageAccountId(accountId.toString().remove(0, FreestylePrefix.length()));
-    return QMessageAccountId();
-}
-
-QMessageFolderId addFreestylePrefix(const QMessageFolderId &folderId) {
-    return QMessageFolderId(FreestylePrefix+folderId.toString());
-}
-
-QMessageFolderId removeFreestylePrefix(const QMessageFolderId &folderId) {
-    if (isFreestyleFolder(folderId))
-        return QMessageFolderId(folderId.toString().remove(0, FreestylePrefix.length()));
-    return QMessageFolderId();
-}
-
+    bool isFreestyleMessage(const QMessageId &msgId) {
+        return msgId.toString().indexOf(freestylePrefix)==0?true:false;
+    }
+    
+    bool isFreestyleAccount(const QMessageAccountId &accountId) {
+        return accountId.toString().indexOf(freestylePrefix)==0?true:false;
+    }
+    
+    bool isFreestyleFolder(const QMessageFolderId &folderId) {
+        return folderId.toString().indexOf(freestylePrefix)==0?true:false;
+    }
+    
+    bool isFreestyleMessage(const QString &msgId) {
+        return msgId.indexOf(freestylePrefix)==0?true:false;
+    }
+    
+    QMessageId addFreestylePrefix(const QMessageId &msgId) {
+        return QMessageId(QString(freestylePrefix)+msgId.toString());
+    }
+    
+    QMessageId removeFreestylePrefix(const QMessageId &msgId) {
+        if (isFreestyleMessage(msgId))
+            return QMessageId(msgId.toString().remove(0, QString(freestylePrefix).length()));
+        return QMessageId();
+    }
+    
+    QString addFreestylePrefix(const QString &msgId) {
+        return QString(freestylePrefix+msgId);
+    }
+    
+    QString removeFreestylePrefix(const QString &msgId) {
+        if (isFreestyleMessage(msgId))
+            return QString(QString(msgId).remove(0, QString(freestylePrefix).length()));
+        return QString();
+    }
+    
+    QMessageAccountId addFreestylePrefix(const QMessageAccountId &accountId) {
+        return QMessageAccountId(QString(freestylePrefix)+accountId.toString());
+    }
+    
+    QMessageAccountId removeFreestylePrefix(const QMessageAccountId &accountId) {
+        if (isFreestyleAccount(accountId))
+            return QMessageAccountId(accountId.toString().remove(0, QString(freestylePrefix).length()));
+        return QMessageAccountId();
+    }
+    
+    QMessageFolderId addFreestylePrefix(const QMessageFolderId &folderId) {
+        return QMessageFolderId(QString(freestylePrefix)+folderId.toString());
+    }
+    
+    QString addIdPrefix(const QString& id)
+    {
+        Q_ASSERT(!id.startsWith(mtmPrefix));
+        return QString(mtmPrefix) + id;
+    }
+    
+    QString stripIdPrefix(const QString& id)
+    {
+        Q_ASSERT(id.startsWith(mtmPrefix));
+        return id.right(id.length() - QString(mtmPrefix).length());
+    }
 
 }
 QTM_END_NAMESPACE

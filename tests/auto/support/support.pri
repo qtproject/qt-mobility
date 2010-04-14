@@ -4,7 +4,9 @@ HEADERS += \
 
 symbian|wince*|maemo*|win32|mac {
     symbian {
+
         SOURCES += $$PWD/support_symbian.cpp
+        SOURCES += $$PWD/../../../src/messaging/symbianhelpers.cpp
         INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
         INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
     }
@@ -17,7 +19,6 @@ symbian|wince*|maemo*|win32|mac {
         else {
             LIBS += mapi32.lib Advapi32.lib
         }
-
     }
     maemo5 {
         QT += dbus
