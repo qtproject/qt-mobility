@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "messagingutil_p.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -47,21 +48,25 @@ namespace MessagingUtil {
 
     QString addIdPrefix(const QString& id)
     {
-        Q_ASSERT(!id.startsWith(idPrefix()));
-        return QString(idPrefix()) + id;
+        if(id.startsWith(idPrefix()))
+			qWarning() << "ID already prefixed";
+
+        return idPrefix() + id;
     }
 
     QString stripIdPrefix(const QString& id)
     {
-        Q_ASSERT(id.startsWith(idPrefix()));
-        return id.right(id.length() - QString(idPrefix()).length());
+		if(!id.startsWith(idPrefix()))
+			qWarning() << "ID not prefixed";
+
+		return id.right(id.length() - idPrefix().length());
     }
 
     QString idPrefix()
     {
 #ifdef Q_OS_SYMBIAN
         static QString prefix("MTM_");
-#elif defined(Q_OS_WINDOWS)
+#elif defined(Q_OS_WIN)
         static QString prefix("WIN_");
 #else
         static QString prefix("QMF_");

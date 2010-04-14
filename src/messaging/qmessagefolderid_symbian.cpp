@@ -115,7 +115,7 @@ bool QMessageFolderId::operator<(const QMessageFolderId& other) const
 QString QMessageFolderId::toString() const
 {
     if (!isValid()) {
-        return QString();
+        return addIdPrefix(QString());
     }
     
     return addIdPrefix(d_ptr->_id);
