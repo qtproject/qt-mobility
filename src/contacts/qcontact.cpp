@@ -500,10 +500,13 @@ QList<QContactDetail> QContact::details(const char* definitionName, const char* 
  * and set in the detail, and the detail is added to the contact.
  *
  * If the detail's access constraint includes \c QContactDetail::ReadOnly,
- * this function will return false.  Details with this set are typically provided
+ * this function will return true and save the detail in the contact,
+ * however attempting to save the contact in a manager may fail (if that manager
+ * decides that the read only detail should not be updated).
+ * Details with the \c QContactDetail::ReadOnly constraint set are typically provided
  * in a contact by the manager, and are usually information that is either
- * synthesized, or unable to be changed by the user (e.g. presence information
- * for other contactS).
+ * synthesized, or not intended to be changed by the user (e.g. presence information
+ * for other contacts).
  *
  * If \a detail is a QContactType, the existing contact type will
  * be overwritten with \a detail.  There is never more than one contact type
@@ -521,9 +524,6 @@ QList<QContactDetail> QContact::details(const char* definitionName, const char* 
 bool QContact::saveDetail(QContactDetail* detail)
 {
     if (!detail)
-        return false;
-
-    if (detail->accessConstraints() & QContactDetail::ReadOnly)
         return false;
 
     /* Also handle contact type specially - only one of them. */
