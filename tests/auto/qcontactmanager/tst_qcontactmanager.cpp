@@ -784,6 +784,18 @@ void tst_QContactManager::add()
         //    continue;
         //}
 
+        if (cm->managerName() == "maemo5") {
+            // The maemo5 backend only supports reading of Guid and QCOA
+            if (def.name() == QContactGuid::DefinitionName)
+                continue;
+            if (def.name() == QContactOnlineAccount::DefinitionName)
+                continue;
+        }
+
+        // This is probably read-only
+        if (def.name() == QContactTimestamp::DefinitionName)
+            continue;
+
         // otherwise, create a new detail of the given type and save it to the contact
         QContactDetail det(def.name());
         QMap<QString, QContactDetailFieldDefinition> fieldmap = def.fields();
@@ -792,6 +804,10 @@ void tst_QContactManager::add()
             // get the field, and check to see that it's not constrained.
             QContactDetailFieldDefinition currentField = fieldmap.value(fieldKey);
             
+            // Don't test detail uris as these are manager specific
+            if (fieldKey == QContactDetail::FieldDetailUri)
+                continue;
+
             // Special case: phone number.
             if (def.name() == QContactPhoneNumber::DefinitionName &&
                 fieldKey == QContactPhoneNumber::FieldNumber) {
@@ -846,7 +862,8 @@ void tst_QContactManager::add()
                 // if we get here, we don't know what sort of value can be saved...
             }
         }
-        megacontact.saveDetail(&det);
+        if (!det.isEmpty())
+            megacontact.saveDetail(&det);
     }
 
     QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
