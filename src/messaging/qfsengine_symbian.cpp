@@ -53,6 +53,9 @@
 #include "qmessagefolder_p.h"
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
+#include "qmessageaccountsortorder_p.h"
+#include "qmessagefoldersortorder_p.h"
+#include "qmessagesortorder_p.h"
 
 #include <emailinterfacefactory.h>
 #include <QTextCodec>
@@ -84,8 +87,8 @@ CFSEngine::CFSEngine()
 
 CFSEngine::~CFSEngine()
 {
+    m_clientApi->Release();
     delete m_factory;
-    m_ifPtr->Release();
 }
 
 CFSEngine* CFSEngine::instance()
@@ -842,13 +845,19 @@ void CFSEngine::MailboxSynchronisedL(TInt aResult)
 }
 
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
-    : m_owner(aOwner), m_operationId(aOperationId),
-        iResultCorrectlyOrdered(false)
+    : m_owner(aOwner), 
+      m_operationId(aOperationId),
+      iResultCorrectlyOrdered(false)
 {
 }
 
 CFSMessagesFindOperation::~CFSMessagesFindOperation()
 {
+    m_search->Release();
+    m_mailboxes.Close();
+    m_clientApi->Release();
+    delete m_factory;
+
 }
 
 void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
@@ -874,53 +883,178 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                                                     QMessageDataComparator::MatchFlags matchFlags)
 {
 
+    iNumberOfHandledFilters = 0;
+    
     m_factory = CEmailInterfaceFactory::NewL(); 
     m_interfacePtr = m_factory->InterfaceL(KEmailClientApiInterface); 
     m_clientApi = static_cast<MEmailClientApi*>(m_interfacePtr); 
     m_clientApi->GetMailboxesL(m_mailboxes);
+    
+    TEmailSortCriteria sortCriteria = TEmailSortCriteria();
 
-    SearchMessagesInMailboxL();
+    if (filters.count() == 0) {
+        iIdList = QMessageIdList();
+        //SearchMessagesInMailboxL();
+        return;
+    }
+
+    
+    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filters[iNumberOfHandledFilters]);
+
+    // Set sortOrder
+    if (!sortOrder.isEmpty() ) {
+        QMessageSortOrderPrivate* privateMessageOrdering = QMessageSortOrderPrivate::implementation(sortOrder);
+        QPair<QMessageSortOrderPrivate::Field, Qt::SortOrder> fieldOrder = privateMessageOrdering->_fieldOrderList.at(0);
+        switch (fieldOrder.first) {
+            case QMessageSortOrderPrivate::Type:
+                break;
+            case QMessageSortOrderPrivate::Sender:
+                sortCriteria.iField = TEmailSortCriteria::EBySender;
+                break;
+            case QMessageSortOrderPrivate::Recipients:
+                sortCriteria.iField = TEmailSortCriteria::EByRecipient;
+                break;
+            case QMessageSortOrderPrivate::Subject:
+                sortCriteria.iField = TEmailSortCriteria::EBySubject;
+                break;
+            case QMessageSortOrderPrivate::TimeStamp:
+                sortCriteria.iField = TEmailSortCriteria::EByDate;
+                break;
+            case QMessageSortOrderPrivate::ReceptionTimeStamp:
+                sortCriteria.iField = TEmailSortCriteria::EBySender;
+                break;
+            case QMessageSortOrderPrivate::Read:
+                sortCriteria.iField = TEmailSortCriteria::EByUnread;
+                break;
+            case QMessageSortOrderPrivate::HasAttachments:
+                sortCriteria.iField = TEmailSortCriteria::EByAttachment;
+                break;
+            case QMessageSortOrderPrivate::Incoming:
+                //TODO:
+                break;
+            case QMessageSortOrderPrivate::Removed:
+                //TODO:
+                break;
+            case QMessageSortOrderPrivate::Priority:
+                sortCriteria.iField = TEmailSortCriteria::EByPriority;
+                break;
+            case QMessageSortOrderPrivate::Size:
+                sortCriteria.iField = TEmailSortCriteria::EBySize;
+                break;
+        }
+        sortCriteria.iAscending = fieldOrder.second == Qt::AscendingOrder?true:false;
+    }
+
+    
+    switch (pf->_field) {
+    
+        case QMessageFilterPrivate::None:
+            qDebug() << "QMessageFilterPrivate::None";
+            break;
+        case QMessageFilterPrivate::ParentAccountIdFilter:
+            qDebug() << "QMessageFilterPrivate::ParentAccountIdFilter";
+            break;
+        case QMessageFilterPrivate::ParentFolderIdFilter: 
+            qDebug() << "QMessageFilterPrivate::ParentFolderIdFilter";
+            break;
+        case QMessageFilterPrivate::ParentFolderId: {
+            qDebug() << "QMessageFilterPrivate::ParentFolderId";
+            QMessageFolder messageFolder = m_owner.folder(QMessageFolderId(pf->_value.toString()));
+            getFolderSpecificMessagesL(messageFolder, sortCriteria);
+            break;
+        }
+        case QMessageFilterPrivate::Id:
+            qDebug() << "QMessageFilterPrivate::Id";
+            break;
+        case QMessageFilterPrivate::ParentAccountId: {
+            qDebug() << "QMessageFilterPrivate::ParentAccountId";
+            QMessageAccount messageAccount = m_owner.account(pf->_value.toString());
+            getAccountSpecificMessagesL(messageAccount, sortCriteria);
+            break;
+        }
+            
+        case QMessageFilterPrivate::AncestorFolderIds:
+            qDebug() << "QMessageFilterPrivate::AncestorFolderIds";
+            break;
+        case QMessageFilterPrivate::Type:
+            qDebug() << "QMessageFilterPrivate::Type";
+            break;
+        case QMessageFilterPrivate::StandardFolder:
+            qDebug() << "QMessageFilterPrivate::StandardFolder";
+            break;
+        case QMessageFilterPrivate::TimeStamp:
+            qDebug() << "QMessageFilterPrivate::TimeStamp";
+            break;
+        case QMessageFilterPrivate::ReceptionTimeStamp:
+            qDebug() << "QMessageFilterPrivate::ReceptionTimeStamp";
+            break;
+        case QMessageFilterPrivate::Subject:
+            qDebug() << "QMessageFilterPrivate::Subject";
+            break;
+        case QMessageFilterPrivate::Status:
+            qDebug() << "QMessageFilterPrivate::Status";
+            break;
+        case QMessageFilterPrivate::Priority:
+            qDebug() << "QMessageFilterPrivate::Priority";
+            break;
+        case QMessageFilterPrivate::Size:
+            qDebug() << "QMessageFilterPrivate::Size";
+            break;
+        default:
+            qDebug() << "default";
+            break;
+    
+    }    
+    //SearchMessagesInMailboxL();
 }
 
-void CFSMessagesFindOperation::SearchMessagesInMailboxL()
+void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria)
 {
-    // TODO: currently lists all messages in mailbox. Implement filtering
-    m_iteration = 0;
-    for(m_iteration = 0; m_iteration < m_mailboxes.Count(); m_iteration++) {
-        m_mailbox = m_mailboxes[m_iteration];
+    TMailboxId mailboxId(removeFreestylePrefix(messageAccount.id().toString()).toInt());
+    m_mailbox->Release();
+    if (m_search)
+        m_search->Release();
+    m_mailbox = m_clientApi->MailboxL(mailboxId);
+    m_search = m_mailbox->MessageSearchL();
+    m_search->AddSearchKeyL(_L("*"));
+    m_search->SetSortCriteriaL( sortCriteria );
+    m_search->StartSearchL( *this ); // this implements MEmailSearchObserver
+}
+
+
+void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria& sortCriteria)
+{
+    RSortCriteriaArray sortCriteriaArray;
+    CleanupClosePushL(sortCriteriaArray);
+    TFolderId folderId(removeFreestylePrefix(messageFolder.id().toString()).toInt(), 
+        removeFreestylePrefix(messageFolder.parentAccountId().toString()).toInt());
+    m_mailbox = m_clientApi->MailboxL(removeFreestylePrefix(messageFolder.parentAccountId().toString()).toInt());
+    MEmailFolder *mailFolder = m_mailbox->FolderL(folderId);
         
-        RFolderArray folders;
-        RSortCriteriaArray sortCriteria;
-        m_mailbox->GetFoldersL(folders);
-        CleanupClosePushL(folders);
-        
-        sortCriteria.Append(TEmailSortCriteria());
+    sortCriteriaArray.Append(sortCriteria);
     
-        for(TInt i=0; i < folders.Count(); i++) {
-            MEmailFolder *mailFolder = folders[i];
-            EmailInterface::MMessageIterator* msgIterator = mailFolder->MessagesL(sortCriteria);
-            
-            MEmailMessage* msg = msgIterator->NextL();
-            while (msg != NULL) {
-                iIdList.append(QMessageId(QString::number(msg->MessageId().iId)));
-                msg = msgIterator->NextL();
-            }
-            
-            
-        }
-        CleanupStack::PopAndDestroy(&folders);
+    EmailInterface::MMessageIterator* msgIterator = mailFolder->MessagesL(sortCriteriaArray);
+        
+    MEmailMessage* msg = msgIterator->NextL();
+    iIdList.clear();
+    while (msg != NULL) {
+        iIdList.append(QMessageId(QString::number(msg->MessageId().iId)));
+        msg = msgIterator->NextL();
     }
+
+    CleanupStack::PopAndDestroy(&sortCriteriaArray);
     m_owner.filterAndOrderMessagesReady(true, m_operationId, iIdList, 1, true);
-    
 }
 
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)
 {
-    qDebug() << aMessage->MessageId().iId;
+    iIdList.append(QMessageId(QString::number(aMessage->MessageId().iId)));
 }
 
 void CFSMessagesFindOperation::SearchCompletedL()
 {
-    qDebug() << "CFSMessagesFindOperation::SearchCompletedL()";
+    qDebug() << "CFSMessagesFindOperation::SearchCompletedL() - found messages: " + QString::number(iIdList.count());
+    //m_search->Release();
+    m_owner.filterAndOrderMessagesReady(true, m_operationId, iIdList, 1, true);
 }
 QTM_END_NAMESPACE

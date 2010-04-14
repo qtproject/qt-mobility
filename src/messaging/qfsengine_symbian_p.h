@@ -61,7 +61,7 @@
 #include <memailmessage.h>
 #include <emailinterfacefactory.h>
 #include <mmailboxsyncobserver.h>
-
+#include <emailsorting.h>
 
 using namespace EmailInterface;
 
@@ -183,13 +183,14 @@ private:
     // from memailmessagesearch
     virtual void HandleResultL(MEmailMessage* aMessage);
     virtual void SearchCompletedL();
-    
-    void SearchMessagesInMailboxL();
 
     void filterAndOrderMessagesL(const QMessageFilterPrivate::SortedMessageFilterList& filters,
                                 const QMessageSortOrder& sortOrder,
                                 const QString body = QString(),
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
+    
+    void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria);
+    void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria& sortCriteria);
     
 private: // Data
     CFSEngine& m_owner;
@@ -208,10 +209,6 @@ private: // Data
     CEmailInterfaceFactory* m_factory; 
     MEmailInterface* m_interfacePtr; 
     MEmailMailbox* m_mailbox;
-    
-    int m_iteration;
-
-
 };
 
 
