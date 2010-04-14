@@ -21,3 +21,7 @@ CONFIG += mobility console
 MOBILITY = contacts versit
 
 SOURCES += qtversitdocsample.cpp
+
+symbian {
+    TARGET.EPOCALLOWDLLDATA = 1
+}
