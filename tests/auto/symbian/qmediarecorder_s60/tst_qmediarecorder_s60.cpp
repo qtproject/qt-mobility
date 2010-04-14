@@ -161,10 +161,10 @@ void tst_QMediaRecorder::testDefaultAudioEncodingSettings()
     QCOMPARE(format, QString("audio/amr"));
 /*    QCOMPARE(audioSettings.bitRate(), 128*1024);
     QCOMPARE(audioSettings.sampleRate(), -1);
-    QCOMPARE(audioSettings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(audioSettings.quality(), QtMultimedia::NormalQuality);
     QCOMPARE(audioSettings.channelCount(), -1);
 
-    QCOMPARE(audioSettings.encodingMode(), QtMedia::ConstantQualityEncoding);
+    QCOMPARE(audioSettings.encodingMode(), QtMultimedia::ConstantQualityEncoding);
 
 }*/
 
