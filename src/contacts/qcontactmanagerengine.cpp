@@ -2109,6 +2109,8 @@ int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, 
         const QVariant& bVal = b.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
 
         // early exit error checking
+        if (aVal.isNull() && bVal.isNull())
+            continue; // use next sort criteria.
         if (aVal.isNull())
             return (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst ? -1 : 1);
         if (bVal.isNull())

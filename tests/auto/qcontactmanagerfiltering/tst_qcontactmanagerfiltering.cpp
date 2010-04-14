@@ -2190,10 +2190,11 @@ void tst_QContactManagerFiltering::multiSorting_data()
                            << true << namedef << lastname << (int)(Qt::AscendingOrder)
                            << "bacdefg" << false;
 
-        QTest::newRow("7") << manager
-                           << false << namedef << firstname << (int)(Qt::AscendingOrder)
-                           << false << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "abcdefg" << false; // XXX Isn't this totally unstable?
+        // This test is completely unstable; no sort criteria means dependent upon internal sort order of manager.
+        //QTest::newRow("7") << manager
+        //                   << false << namedef << firstname << (int)(Qt::AscendingOrder)
+        //                   << false << namedef << lastname << (int)(Qt::AscendingOrder)
+        //                   << "abcdefg" << false; // XXX Isn't this totally unstable?
 
         if (!stringDefAndFieldNames.first.isEmpty() && !stringDefAndFieldNames.second.isEmpty()) {
             QTest::newRow("8") << manager
@@ -3023,6 +3024,9 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     n = QContactName();
     n.setFirstName("John");
     n.setLastName("Smithy");
+    string.setValue(definitionDetails.value("String").second, "zzz");
+    if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
+        g.saveDetail(&string);
     g.saveDetail(&n);
     successfulSave = cm->saveContact(&e);
     Q_ASSERT(successfulSave);
