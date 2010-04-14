@@ -59,10 +59,10 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new relationship fetch request
+/*! Constructs a new relationship fetch request whose parent is the specified \a parent
  */
-QContactRelationshipFetchRequest::QContactRelationshipFetchRequest()
-    : QContactAbstractRequest(new QContactRelationshipFetchRequestPrivate)
+QContactRelationshipFetchRequest::QContactRelationshipFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRelationshipFetchRequestPrivate, parent)
 {
 }
 

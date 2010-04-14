@@ -57,9 +57,9 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new detail definition remove request */
-QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionRemoveRequestPrivate)
+/*! Constructs a new detail definition remove request whose parent is the specified \a parent */
+QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionRemoveRequestPrivate, parent)
 {
 }
 
