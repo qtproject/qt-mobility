@@ -153,30 +153,30 @@ symbian: {
             contains(S60_VERSION, 3.1) {
                 sensors = \
                     "IF package(0x102032BE)" \
-                    "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/sensor_s60sensorapi.dll\" - \"!:\\sys\\bin\\sensor_s60sensorapi.dll\"" \
-                    "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_generic.dll\" - \"!:\\sys\\bin\\sensors_generic.dll\"" \
+                    "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_s60sensorapi.dll\" - \"!:\\sys\\bin\\qtsensors_s60sensorapi.dll\"" \
+                    "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_generic.dll\" - \"!:\\sys\\bin\\qtsensors_generic.dll\"" \
                     "ENDIF"
            } else {
                 sensors = \
                     "IF package(0x1028315F)" \
-                    "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                    "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
                     "ELSEIF package(0x102752AE)" \
-                    "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                    "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
                     "ELSE" \
-                    "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                    "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
                     "ENDIF"
             }
         } else {
             sensors = \
                 "IF package(0x1028315F)" \
-                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
                 "ELSEIF package(0x102752AE)" \
-                "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
                 "ELSEIF package(0x102032BE)" \
-                "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/sensor_s60sensorapi.dll\" - \"!:\\sys\\bin\\sensor_s60sensorapi.dll\"" \
-                "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_generic.dll\" - \"!:\\sys\\bin\\sensors_generic.dll\"" \
+                "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_s60sensorapi.dll\" - \"!:\\sys\\bin\\qtsensors_s60sensorapi.dll\"" \
+                "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_generic.dll\" - \"!:\\sys\\bin\\qtsensors_generic.dll\"" \
                 "ELSE" \
-                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/sensors_sym.dll\" - \"!:\\sys\\bin\\sensors_sym.dll\"" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtsensors_sym.dll\" - \"!:\\sys\\bin\\qtsensors_sym.dll\"" \
                 "ENDIF"
         }
 
@@ -186,15 +186,15 @@ symbian: {
             contains(S60_VERSION, 3.1) {
                 pluginstubs += \
                     "IF package(0x102032BE)" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/sensor_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensor_s60sensorapi.qtplugin\"" \
-                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/sensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_generic.qtplugin\"" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/qtsensors_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_s60sensorapi.qtplugin\"" \
+                    "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/qtsensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_generic.qtplugin\"" \
                     "ENDIF"
             }
         } else {
             pluginstubs += \
                 "IF package(0x102032BE)" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/sensor_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensor_s60sensorapi.qtplugin\"" \
-                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/sensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\sensors_generic.qtplugin\"" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/s60_sensor_api/qmakepluginstubs/qtsensors_s60sensorapi.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_s60sensorapi.qtplugin\"" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/sensors/generic/qmakepluginstubs/qtsensors_generic.qtplugin\" - \"!:\\resource\\qt\\plugins\\sensors\\qtsensors_generic.qtplugin\"" \
                 "ENDIF"
         }
     }
