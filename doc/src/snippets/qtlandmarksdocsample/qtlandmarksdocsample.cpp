@@ -41,20 +41,20 @@
 
 #include "requestexample.h"
 
-#include <QLandmark>
-#include <QLandmarkManager>
-#include <QGeoAddress>
-#include <QLandmarkNameFilter>
-#include <QLandmarkNameSort>
-#include <QLandmarkProximityFilter>
-#include <QLandmarkDistanceSort>
-#include <QLandmarkCategoryId>
-#include <QGeoCoordinate>
-#include <QLandmarkCategory>
-#include <QLandmarkBoxFilter>
-#include <QLandmarkFetchRequest>
-#include <QLandmarkCategorySaveRequest>
-#include <QLandmarkCategoryFilter>
+#include <qlandmark.h>
+#include <qlandmarkmanager.h>
+#include <qgeoaddress.h>
+#include <qlandmarknamefilter.h>
+#include <qlandmarknamesort.h>
+#include <qlandmarkproximityfilter.h>
+#include <qlandmarkdistancesort.h>
+#include <qlandmarkcategoryid.h>
+#include <qgeocoordinate.h>
+#include <qlandmarkcategory.h>
+#include <qlandmarkboxfilter.h>
+#include <qlandmarkfetchrequest.h>
+#include <qlandmarkcategorysaverequest.h>
+#include <qlandmarkcategoryfilter.h>
 
 #include <QCoreApplication>
 #include <QTimer>
