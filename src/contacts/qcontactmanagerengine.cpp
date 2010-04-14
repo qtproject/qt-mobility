@@ -2108,12 +2108,23 @@ int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, 
         const QVariant& aVal = a.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
         const QVariant& bVal = b.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
 
+        bool aIsNull = false;
+        bool bIsNull = false;
+
+        // treat empty strings as null qvariants.
+        if ((aVal.type() == QVariant::String && aVal.toString().isEmpty()) || aVal.isNull()) {
+            aIsNull = true;
+        }
+        if ((bVal.type() == QVariant::String && bVal.toString().isEmpty()) || bVal.isNull()) {
+            bIsNull = true;
+        }
+
         // early exit error checking
-        if (aVal.isNull() && bVal.isNull())
+        if (aIsNull && bIsNull)
             continue; // use next sort criteria.
-        if (aVal.isNull())
+        if (aIsNull)
             return (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst ? -1 : 1);
-        if (bVal.isNull())
+        if (bIsNull)
             return (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst ? 1 : -1);
 
         // real comparison
