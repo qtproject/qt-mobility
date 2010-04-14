@@ -46,17 +46,21 @@
 #include "filemanagerstorage.h"
 #include "filemanagertransfer.h"
 
+//! [createinstance-sig]
 QObject* FileManagerPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
+//! [createinstance-sig]
 {
     Q_UNUSED(context);
     Q_UNUSED(session);
 
+//! [createinstance]
     if (descriptor.interfaceName() == "com.nokia.qt.examples.FileStorage")
         return new FileManagerStorage(this);
     else if (descriptor.interfaceName() == "com.nokia.qt.examples.FileTransfer")
         return new FileManagerTransfer(this);
     else
         return 0;
+//! [createinstance]
 }
 
 Q_EXPORT_PLUGIN2(serviceframework_filemanagerplugin, FileManagerPlugin)

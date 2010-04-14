@@ -47,7 +47,9 @@ BluetoothTransfer::BluetoothTransfer(QObject *parent)
 {
 }
 
+//! [sendFile]
 void BluetoothTransfer::sendFile(const QString &path)
 {
     qDebug() << "BluetoothTransfer::sendFile()" << path;
 }
+//! [sendFile]
