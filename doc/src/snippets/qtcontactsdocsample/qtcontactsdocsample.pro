@@ -21,3 +21,7 @@ MOBILITY = contacts
 
 SOURCES += qtcontactsdocsample.cpp qtcontactsdocsampleasync.cpp
 HEADERS += requestexample.h
+
+symbian {
+    TARGET.EPOCALLOWDLLDATA = 1
+}

@@ -65,6 +65,7 @@ static void editView(QContactManager*);
 static void loadManager();
 static void loadManagerWithParameters();
 
+#if 0
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
@@ -105,6 +106,7 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+#endif
 
 void loadDefault()
 {

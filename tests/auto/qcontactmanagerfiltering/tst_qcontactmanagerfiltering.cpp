@@ -2037,6 +2037,7 @@ void tst_QContactManagerFiltering::sorting_data()
     QTest::addColumn<bool>("setbp");
     QTest::addColumn<int>("blankpolicyi");
     QTest::addColumn<QString>("expected");
+    QTest::addColumn<QString>("unstable");
 
     QString firstname = QContactName::FieldFirstName;
     QString lastname = QContactName::FieldLastName;
@@ -2050,19 +2051,19 @@ void tst_QContactManagerFiltering::sorting_data()
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         QPair<QString, QString> stringDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("String");
 
-        newMRow("first ascending", manager) << manager << namedef << firstname << (int)(Qt::AscendingOrder) << false << 0 << "abcdefg";
-        newMRow("first descending", manager) << manager << namedef << firstname << (int)(Qt::DescendingOrder) << false << 0 << "efgdcba";
-        newMRow("last ascending", manager) << manager << namedef << lastname << (int)(Qt::AscendingOrder) << false << 0 << "bacdefg";
-        newMRow("last descending", manager) << manager << namedef << lastname << (int)(Qt::DescendingOrder) << false << 0 << "gfedcab";
+        newMRow("first ascending", manager) << manager << namedef << firstname << (int)(Qt::AscendingOrder) << false << 0 << "abcdefg" << "efg";  // efg have the same first name
+        newMRow("first descending", manager) << manager << namedef << firstname << (int)(Qt::DescendingOrder) << false << 0 << "efgdcba" << "efg";// efg have the same first name
+        newMRow("last ascending", manager) << manager << namedef << lastname << (int)(Qt::AscendingOrder) << false << 0 << "bacdefg" << "";       // all have a well defined, sortable last name
+        newMRow("last descending", manager) << manager << namedef << lastname << (int)(Qt::DescendingOrder) << false << 0 << "gfedcab" << "";     // all have a well defined, sortable last name
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
-            newMRow("integer ascending, blanks last", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "cabgfed";
-            newMRow("integer descending, blanks last", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "bacgfed";
-            newMRow("integer ascending, blanks first", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgcab";
-            newMRow("integer descending, blanks first", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgbac";
+            newMRow("integer ascending, blanks last", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "cabgfed" << "gfed"; // gfed have no integer
+            newMRow("integer descending, blanks last", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "bacgfed" << "gfed"; // gfed have no integer
+            newMRow("integer ascending, blanks first", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgcab" << "gfed"; // gfed have no integer
+            newMRow("integer descending, blanks first", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << (int)(Qt::DescendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "defgbac" << "gfed"; // gfed have no integer
         }
         if (!stringDefAndFieldNames.first.isEmpty() && !stringDefAndFieldNames.second.isEmpty()) {
-            QTest::newRow("string ascending (null value), blanks first") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "fgeabcd";
-            QTest::newRow("string ascending (null value), blanks last") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "eabcdgf";
+            QTest::newRow("string ascending (null value), blanks first") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksFirst) << "feabcdg" << "fe"; // f and e have blank string
+            QTest::newRow("string ascending (null value), blanks last") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder) << true << (int)(QContactSortOrder::BlanksLast) << "abcdgef" << "ef";   // f and e have blank string
         }
     }
 }
@@ -2076,6 +2077,7 @@ void tst_QContactManagerFiltering::sorting()
     QFETCH(bool, setbp);
     QFETCH(int, blankpolicyi);
     QFETCH(QString, expected);
+    QFETCH(QString, unstable);
 
     Qt::SortOrder direction = (Qt::SortOrder)directioni;
     QContactSortOrder::BlankPolicy blankpolicy = (QContactSortOrder::BlankPolicy)blankpolicyi;
@@ -2094,17 +2096,38 @@ void tst_QContactManagerFiltering::sorting()
     QString output = convertIds(contacts, ids);
 
     // It's possible to get some contacts back in an arbitrary order (since we single sort)
-    // so we need to handle the case where e, f & g come back in any order [with first name]
+    if (unstable.length() > 1) {
+        // ensure that the maximum distance between unstable elements in the output is the size of the unstable string.
+        int firstIndex = -1;
+        int lastIndex = -1;
 
-    // so we just make sure that e,f,g appear once in the output, and remove f,g from both strings
-    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirstName) {
-        QVERIFY(output.count('e') == 1);
-        QVERIFY(output.count('f') == 1);
-        QVERIFY(output.count('g') == 1);
-        output.remove('f');
-        output.remove('g');
-        expected.remove('f');
-        expected.remove('g');
+        for (int i = 0; i < output.size(); i++) {
+            if (unstable.contains(output.at(i))) {
+                firstIndex = i;
+                break;
+            }
+        }
+
+        for (int i = output.size() - 1; i >= 0; i--) {
+            if (unstable.contains(output.at(i))) {
+                lastIndex = i;
+                break;
+            }
+        }
+
+        if (firstIndex == -1 || lastIndex == -1) {
+            bool containsAllUnstableElements = false;
+            QVERIFY(containsAllUnstableElements);
+        }
+
+        bool unstableElementsAreGrouped = ((lastIndex - firstIndex) == (unstable.length() - 1));
+        QVERIFY(unstableElementsAreGrouped);
+
+        // now remove all unstable elements from the output except one.
+        for (int i = 1; i < unstable.length(); i++) {
+            output.remove(unstable.at(i));
+            expected.remove(unstable.at(i));
+        }
     }
 
     QCOMPARE(output, expected);
@@ -2117,12 +2140,39 @@ void tst_QContactManagerFiltering::sorting()
 
     output = convertIds(contacts, ids);
 
-    if (defname == QContactName::DefinitionName && fieldname == QContactName::FieldFirstName) {
-        QVERIFY(output.count('e') == 1);
-        QVERIFY(output.count('f') == 1);
-        QVERIFY(output.count('g') == 1);
-        output.remove('f');
-        output.remove('g');
+    // It's possible to get some contacts back in an arbitrary order (since we single sort)
+    if (unstable.length() > 1) {
+        // ensure that the maximum distance between unstable elements in the output is the size of the unstable string.
+        int firstIndex = -1;
+        int lastIndex = -1;
+
+        for (int i = 0; i < output.size(); i++) {
+            if (unstable.contains(output.at(i))) {
+                firstIndex = i;
+                break;
+            }
+        }
+
+        for (int i = output.size() - 1; i >= 0; i--) {
+            if (unstable.contains(output.at(i))) {
+                lastIndex = i;
+                break;
+            }
+        }
+
+        if (firstIndex == -1 || lastIndex == -1) {
+            bool containsAllUnstableElements = false;
+            QVERIFY(containsAllUnstableElements);
+        }
+
+        bool unstableElementsAreGrouped = ((lastIndex - firstIndex) == (unstable.length() - 1));
+        QVERIFY(unstableElementsAreGrouped);
+
+        // now remove all unstable elements from the output except one.
+        for (int i = 1; i < unstable.length(); i++) {
+            output.remove(unstable.at(i));
+            expected.remove(unstable.at(i));
+        }
     }
 
     QCOMPARE(output, expected);
@@ -2190,21 +2240,22 @@ void tst_QContactManagerFiltering::multiSorting_data()
                            << true << namedef << lastname << (int)(Qt::AscendingOrder)
                            << "bacdefg" << false;
 
-        QTest::newRow("7") << manager
-                           << false << namedef << firstname << (int)(Qt::AscendingOrder)
-                           << false << namedef << lastname << (int)(Qt::AscendingOrder)
-                           << "abcdefg" << false; // XXX Isn't this totally unstable?
+        // This test is completely unstable; no sort criteria means dependent upon internal sort order of manager.
+        //QTest::newRow("7") << manager
+        //                   << false << namedef << firstname << (int)(Qt::AscendingOrder)
+        //                   << false << namedef << lastname << (int)(Qt::AscendingOrder)
+        //                   << "abcdefg" << false; // XXX Isn't this totally unstable?
 
         if (!stringDefAndFieldNames.first.isEmpty() && !stringDefAndFieldNames.second.isEmpty()) {
             QTest::newRow("8") << manager
                                << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
                                << false << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::DescendingOrder)
-                               << "eabcdgf" << false;
+                               << "abcdgef" << false; // default policy = blanks last, and ef have no value (e is empty, f is null)
 
             QTest::newRow("8b") << manager
                                << true << stringDefAndFieldNames.first << stringDefAndFieldNames.second << (int)(Qt::AscendingOrder)
                                << false << es << es << (int)(Qt::DescendingOrder)
-                               << "eabcdgf" << false;
+                               << "abcdgef" << false; // default policy = blanks last, and ef have no value (e is empty, f is null)
         }
 
         QTest::newRow("9") << manager
@@ -2539,7 +2590,7 @@ void tst_QContactManagerFiltering::allFiltering()
     QVERIFY(ids.count() == contacts.size());
     QString output = convertIds(contacts, ids);
     QString expected = convertIds(contacts, contacts); // :)
-    QCOMPARE(output, expected);
+    QCOMPARE_UNSORTED(output, expected);
 
     // Try unions/intersections of defaults
     ids = cm->contactIds(f | f);
@@ -3023,6 +3074,9 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     n = QContactName();
     n.setFirstName("John");
     n.setLastName("Smithy");
+    string.setValue(definitionDetails.value("String").second, "zzz");
+    if (!definitionDetails.value("String").first.isEmpty() && !definitionDetails.value("String").second.isEmpty())
+        g.saveDetail(&string);
     g.saveDetail(&n);
     successfulSave = cm->saveContact(&e);
     Q_ASSERT(successfulSave);
