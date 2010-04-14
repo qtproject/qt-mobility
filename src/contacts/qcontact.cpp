@@ -528,7 +528,7 @@ bool QContact::saveDetail(QContactDetail* detail)
 
     /* Also handle contact type specially - only one of them. */
     if (QContactDetailPrivate::detailPrivate(*detail)->m_definitionName == QContactType::DefinitionName.latin1()) {
-        detail->d->m_access = QContactDetail::Irremovable;
+        detail->d->m_access |= QContactDetail::Irremovable;
         d->m_details[1] = *detail;
         return true;
     }

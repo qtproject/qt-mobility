@@ -489,7 +489,7 @@ void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QStr
 {
     QContactDisplayLabel dl;
     dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
-    setDetailAccessConstraints(&dl, QContactDetail::Irremovable);
+    setDetailAccessConstraints(&dl, QContactDetail::Irremovable | QContactDetail::ReadOnly);
     contact->d->m_details.replace(0, dl);
 }
 
