@@ -34,14 +34,17 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaTimeInterval class represents a time interval with integer precision.</p>
 <p>An interval is specified by an inclusive <a href="qmediatimeinterval.html#start">start</a>() and <a href="qmediatimeinterval.html#end">end</a>() time. These must be set in the constructor, as this is an immutable class. The specific units of time represented by the class have not been defined - it is suitable for any times which can be represented by a signed 64 bit integer.</p>
 <p>The <a href="qmediatimeinterval.html#isNormal">isNormal</a>() method determines if a time interval is normal (a normal time interval has <a href="qmediatimeinterval.html#start">start</a>() &lt;= <a href="qmediatimeinterval.html#end">end</a>()). An abnormal interval can be converted in to a normal interval by calling the <a href="qmediatimeinterval.html#normalized">normalized</a>() method.</p>
 <p>The <a href="qmediatimeinterval.html#contains">contains</a>() method determines if a specified time lies within the time interval.</p>
 <p>The <a href="qmediatimeinterval.html#translated">translated</a>() method returns a time interval which has been translated forwards or backwards through time by a specified offset.</p>
+</div>
 <p>See also <a href="qmediatimerange.html">QMediaTimeRange</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaTimeInterval/QMediaTimeInterval"></a>
 <h3 class="fn"><a name="QMediaTimeInterval"></a>QMediaTimeInterval::QMediaTimeInterval ()</h3>
@@ -72,6 +75,7 @@
 <a name="//apple_ref/cpp/instm/QMediaTimeInterval/translated"></a>
 <h3 class="fn"><a name="translated"></a>QMediaTimeInterval QMediaTimeInterval::translated ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> <i>offset</i> ) const</h3>
 <p>Returns a copy of this time interval, translated by a value of <i>offset</i>. An interval can be moved forward through time with a positive offset, or backward through time with a negative offset.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

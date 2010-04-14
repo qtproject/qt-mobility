@@ -38,6 +38,7 @@
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitDefaultResourceHandler class provides a default implementation of a Versit resource handler.</p>
 <p>An example resource handler implementation:</p>
@@ -57,8 +58,10 @@
            return QVersitDefaultResourceHandler::loadResource(location, contents, mimeType);
        }
     };</pre>
+</div>
 <p>See also <a href="qversitcontactimporter.html">QVersitContactImporter</a>, <a href="qversitcontactexporter.html">QVersitContactExporter</a>, and <a href="qversitresourcehandler.html">QVersitResourceHandler</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitDefaultResourceHandler/QVersitDefaultResourceHandler"></a>
 <h3 class="fn"><a name="QVersitDefaultResourceHandler"></a>QVersitDefaultResourceHandler::QVersitDefaultResourceHandler ()</h3>
@@ -74,6 +77,7 @@
 <h3 class="fn"><a name="saveResource"></a>bool QVersitDefaultResourceHandler::saveResource ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>contents</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>location</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qversitresourcehandler.html#saveResource">QVersitResourceHandler::saveResource</a>().</p>
 <p>Default resource saver. Does nothing and returns false, ignoring <i>contents</i>, <i>property</i> and <i>location</i>. By default, resources aren't persisted because we don't know when it is safe to remove them.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

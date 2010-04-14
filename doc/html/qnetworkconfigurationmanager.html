@@ -60,21 +60,24 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QNetworkConfigurationManager class manages the network configurations provided by the system.</p>
 <p>QNetworkConfigurationManager provides access to the network configurations known to the system and enables applications to detect the system capabilities (with regards to network sessions) at runtime.</p>
 <p>A <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> abstracts a set of configuration options describing how a network interface has to be configured to connect to a particular target network. QNetworkConfigurationManager maintains and updates the global list of QNetworkConfigurations. Applications can access and filter this list via <a href="qnetworkconfigurationmanager.html#allConfigurations">allConfigurations</a>(). If a new configuration is added or an existing one is removed or changed the <a href="qnetworkconfigurationmanager.html#configurationAdded">configurationAdded</a>(), <a href="qnetworkconfigurationmanager.html#configurationRemoved">configurationRemoved</a>() and <a href="qnetworkconfigurationmanager.html#configurationChanged">configurationChanged</a>() signals are emitted respectively.</p>
 <p>The <a href="qnetworkconfigurationmanager.html#defaultConfiguration">defaultConfiguration</a>() can be used when intending to immediately create a new network session without caring about the particular configuration. It returns a <a href="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Discovered</a> configuration. If there are not any discovered ones an invalid configuration is returned.</p>
 <p>Some configuration updates may require some time to perform updates. A WLAN scan is such an example. Unless the platform performs internal updates it may be required to manually trigger configuration updates via <a href="qnetworkconfigurationmanager.html#updateConfigurations">QNetworkConfigurationManager::updateConfigurations</a>(). The completion of the update process is indicted by emitting the <a href="qnetworkconfigurationmanager.html#updateCompleted">updateCompleted</a>() signal. The update process ensures that every existing <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> instance is updated. There is no need to ask for a renewed configuration list via <a href="qnetworkconfigurationmanager.html#allConfigurations">allConfigurations</a>().</p>
+</div>
 <p>See also <a href="qnetworkconfiguration.html">QNetworkConfiguration</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QNetworkConfigurationManager/Capability"></a>
 <a name="//apple_ref/cpp/econst/QNetworkConfigurationManager/CanStartAndStopInterfaces"></a>
@@ -98,7 +101,9 @@
 <tr><td valign="top"><tt>QNetworkConfigurationManager::NetworkSessionRequired</tt></td><td align="center" valign="top"><tt>0x00000040</tt></td><td valign="top">If this flag is set the platform requires that a network session is created before network operations can be performed.</td></tr>
 </table></p>
 <p>The Capabilities type is a typedef for <a href="qflags.html">QFlags</a>&lt;Capability&gt;. It stores an OR combination of Capability values.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QNetworkConfigurationManager/QNetworkConfigurationManager"></a>
 <h3 class="fn"><a name="QNetworkConfigurationManager"></a>QNetworkConfigurationManager::QNetworkConfigurationManager ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -158,6 +163,7 @@
 <p>This call is asynchronous. On completion of this update the <a href="qnetworkconfigurationmanager.html#updateCompleted">updateCompleted</a>() signal is emitted. If new configurations are discovered or old ones were removed or changed the update process may trigger the emission of one or multiple <a href="qnetworkconfigurationmanager.html#configurationAdded">configurationAdded</a>(), <a href="qnetworkconfigurationmanager.html#configurationRemoved">configurationRemoved</a>() and <a href="qnetworkconfigurationmanager.html#configurationChanged">configurationChanged</a>() signals.</p>
 <p>If a configuration state changes as a result of this update all existing <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> instances are updated automatically.</p>
 <p>See also <a href="qnetworkconfigurationmanager.html#allConfigurations">allConfigurations</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

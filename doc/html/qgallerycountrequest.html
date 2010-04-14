@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qgalleryrequest.cpp -->
+<!-- qgallerycountrequest.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QGalleryCountRequest Class Reference</title>
 <meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -25,10 +25,9 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn"><b><a href="qgallerycountrequest.html#containerId-prop">containerId</a></b> : QString</div></li>
-<li><div class="fn"><b><a href="qgallerycountrequest.html#containerUrl-prop">containerUrl</a></b> : QUrl</div></li>
 <li><div class="fn"><b><a href="qgallerycountrequest.html#count-prop">count</a></b> : const int</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qgallerycountrequest.html#filter-prop">filter</a></b> : QGalleryFilter</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qgallerycountrequest.html#itemType-prop">itemType</a></b> : QString</div></li>
 <li><div class="fn"><b><a href="qgallerycountrequest.html#live-prop">live</a></b> : bool</div></li>
 </ul>
@@ -46,13 +45,11 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#QGalleryCountRequest-2">QGalleryCountRequest</a></b> ( QAbstractGallery * <i>gallery</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#dtor.QGalleryCountRequest">~QGalleryCountRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#containerId-prop">containerId</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#containerUrl-prop">containerUrl</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#count-prop">count</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryFilter </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#filter-prop">filter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#live-prop">isLive</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#itemType-prop">itemType</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#containerId-prop">setContainerId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#containerUrl-prop">setContainerUrl</a></b> ( const QUrl &amp; <i>url</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#filter-prop">setFilter</a></b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#itemType-prop">setItemType</a></b> ( const QString &amp; <i>type</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#live-prop">setLive</a></b> ( bool <i>live</i> )</td></tr>
@@ -65,10 +62,7 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#containerIdChanged">containerIdChanged</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#containerUrlChanged">containerUrlChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#countChanged">countChanged</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#filterChanged">filterChanged</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>8 signals inherited from <a href="qgalleryabstractrequest.html#signals">QGalleryAbstractRequest</a></li>
@@ -88,7 +82,7 @@
 <ul>
 <li><div class="fn"></div>3 public slots inherited from <a href="qgalleryabstractrequest.html#public-slots">QGalleryAbstractRequest</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>1 protected function inherited from <a href="qgalleryabstractrequest.html#protected-functions">QGalleryAbstractRequest</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -96,31 +90,21 @@
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryCountRequest class provides a request for the number of items in a gallery matching some criteria.</p>
+</div>
 <hr />
+<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/containerId"></a>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/setContainerId"></a>
 <h3 class="fn"><a name="containerId-prop"></a>containerId : <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
-<p>This property holds the ID of container item a count request should return the contents of.</p>
-<p>This is equivalent to setting a <a href="qgallerycountrequest.html#filter-prop">filter</a> of type <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a>.</p>
-<p>If the current <a href="qgallerycountrequest.html#filter-prop">filter</a> is not of type <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a> this will be null.</p>
+<p>This property holds the ID of a container item a request should count the descendents of.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>containerId</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setContainerId</b> ( const QString &amp; <i>id</i> )</td></tr>
-</table>
-<a name="//apple_ref/cpp/instm/QGalleryCountRequest/containerUrl"></a>
-<a name="//apple_ref/cpp/instm/QGalleryCountRequest/setContainerUrl"></a>
-<h3 class="fn"><a name="containerUrl-prop"></a>containerUrl : <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a></h3>
-<p>This property holds the URL of container item a count request should return the contents of.</p>
-<p>This is equivalent to setting a <a href="qgallerycountrequest.html#filter-prop">filter</a> of type <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a>.</p>
-<p>If the current <a href="qgallerycountrequest.html#filter-prop">filter</a> is not of type <a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a> this will be null.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b>containerUrl</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setContainerUrl</b> ( const QUrl &amp; <i>url</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/count"></a>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/countChanged"></a>
@@ -136,24 +120,17 @@
 </table>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/filter"></a>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/setFilter"></a>
-<a name="//apple_ref/cpp/instm/QGalleryCountRequest/filterChanged"></a>
 <h3 class="fn"><a name="filter-prop"></a>filter : <a href="qgalleryfilter.html">QGalleryFilter</a></h3>
-<p>This property holds a filter identifying the items a request should count.</p>
-<p>If no filter is set the results of the request will be determined soley by the <a href="qgallerycountrequest.html#itemType-prop">itemType</a> property.</p>
+<p>This property holds a filter used to restrict the items counted by a request.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QGalleryFilter </td><td class="memItemRight" valign="bottom"><b>filter</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setFilter</b> ( const QGalleryFilter &amp; <i>filter</i> )</td></tr>
 </table>
-<p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgallerycountrequest.html#filterChanged">filterChanged</a></b> ()</td></tr>
-</table>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/itemType"></a>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/setItemType"></a>
 <h3 class="fn"><a name="itemType-prop"></a>itemType : <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
-<p>This property holds the type of items a request should count.</p>
-<p>If this is not set items of all types will be returned. If no filter is set the number items of this type will be returned.</p>
+<p>This property holds the type of item a request should count.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>itemType</b> () const</td></tr>
@@ -169,7 +146,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isLive</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setLive</b> ( bool <i>live</i> )</td></tr>
 </table>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/QGalleryCountRequest"></a>
 <h3 class="fn"><a name="QGalleryCountRequest"></a>QGalleryCountRequest::QGalleryCountRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -181,21 +160,13 @@
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/~QGalleryCountRequest"></a>
 <h3 class="fn"><a name="dtor.QGalleryCountRequest"></a>QGalleryCountRequest::~QGalleryCountRequest ()</h3>
 <p>Destroys a count request.</p>
-<a name="//apple_ref/cpp/instm/QGalleryCountRequest/containerIdChanged"></a>
-<h3 class="fn"><a name="containerIdChanged"></a>void QGalleryCountRequest::containerIdChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that the <a href="qgallerycountrequest.html#containerId-prop">containerId</a> property has changed.</p>
-<a name="//apple_ref/cpp/instm/QGalleryCountRequest/containerUrlChanged"></a>
-<h3 class="fn"><a name="containerUrlChanged"></a>void QGalleryCountRequest::containerUrlChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that the <a href="qgallerycountrequest.html#containerUrl-prop">containerUrl</a> property has changed.</p>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/countChanged"></a>
 <h3 class="fn"><a name="countChanged"></a>void QGalleryCountRequest::countChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <a href="qgallerycountrequest.html#count-prop">count</a> property has changed.</p>
-<a name="//apple_ref/cpp/instm/QGalleryCountRequest/filterChanged"></a>
-<h3 class="fn"><a name="filterChanged"></a>void QGalleryCountRequest::filterChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals the <a href="qgallerycountrequest.html#filter-prop">filter</a> property has changed.</p>
 <a name="//apple_ref/cpp/instm/QGalleryCountRequest/setResponse"></a>
 <h3 class="fn"><a name="setResponse"></a>void QGalleryCountRequest::setResponse ( <a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a> * <i>response</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="qgalleryabstractrequest.html#setResponse">QGalleryAbstractRequest::setResponse</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

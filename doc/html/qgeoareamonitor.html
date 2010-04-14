@@ -65,12 +65,13 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoAreaMonitor class enables the detection of proximity changes for a specified set of coordinates.</p>
 <p>A QGeoAreaMonitor emits signals when the current position is in range, or has moved out of range, of a specified circular area. The area is specified by a coordinate (the center point) and a radius (in meters).</p>
@@ -99,7 +100,9 @@
         {
             qDebug() &lt;&lt; &quot;No longer within 100 meters, current position is&quot; &lt;&lt; update.coordinate();
         }</pre>
+</div>
 <hr />
+<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoAreaMonitor/center"></a>
 <a name="//apple_ref/cpp/instm/QGeoAreaMonitor/setCenter"></a>
@@ -126,7 +129,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>radius</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setRadius</b> ( qreal <i>radius</i> )</td></tr>
 </table>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoAreaMonitor/QGeoAreaMonitor"></a>
 <h3 class="fn"><a name="QGeoAreaMonitor"></a>QGeoAreaMonitor::QGeoAreaMonitor ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> )</h3>
@@ -146,6 +151,7 @@
 <h3 class="fn"><a name="createDefaultMonitor"></a>QGeoAreaMonitor * QGeoAreaMonitor::createDefaultMonitor ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Creates and returns a monitor with the given <i>parent</i> that monitors areas using resources on the underlying system.</p>
 <p>Returns 0 if the system has no support for position monitoring.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

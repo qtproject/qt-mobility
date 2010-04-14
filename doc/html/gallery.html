@@ -16,220 +16,46 @@
 </h1>
 <a name="overview"></a>
 <h3>Overview</h3>
-<a name="galleries"></a>
-<h4>Galleries</h4>
+<p>The Document Gallery provides a meta-data focused API for managing collections of documents and media.</p>
+<p>The primary interface to items in a gallery is the <a href="qgalleryitemlist.html">QGalleryItemList</a> class which provides accessors for reading and writing the meta-data of a set of items.</p>
+<p>A <a href="qgalleryitemlist.html">QGalleryItemList</a> cannot be created directly, instead an instance must be requested from a gallery using one of the gallery request classes.</p>
+<a name="requests"></a>
+<h4>Requests</h4>
+<p>The gallery request classes inherit from <a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a> and are used to fetch items from a gallery, or to initiate service provided by a gallery.</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qabstractgallery.html">QAbstractGallery</a></th><td>Base class for gallery implementations</td></tr>
-<tr valign="top" class="even"><th><a href="qdocumentgallery.html">QDocumentGallery</a></th><td>Gallery of documents</td></tr>
+<tr valign="top" class="odd"><th><a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a></th><td>Base class for gallery requests</td></tr>
+<tr valign="top" class="even"><th><a href="qgallerycontainerrequest.html">QGalleryContainerRequest</a></th><td>Request for the immediate children of an item in a gallery</td></tr>
+<tr valign="top" class="odd"><th><a href="qgallerycopyrequest.html">QGalleryCopyRequest</a></th><td>Request which copies items within a gallery</td></tr>
+<tr valign="top" class="even"><th><a href="qgallerycountrequest.html">QGalleryCountRequest</a></th><td>Request for the number of items in a gallery matching some criteria</td></tr>
+<tr valign="top" class="odd"><th><a href="qgalleryfilterrequest.html">QGalleryFilterRequest</a></th><td>Request for a set of items from a gallery</td></tr>
+<tr valign="top" class="even"><th><a href="qgalleryitemrequest.html">QGalleryItemRequest</a></th><td>Request for an item from a gallery</td></tr>
+<tr valign="top" class="odd"><th><a href="qgallerymoverequest.html">QGalleryMoveRequest</a></th><td>Request which moves items within a gallery</td></tr>
+<tr valign="top" class="even"><th><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></th><td>Request which removes items from a gallery</td></tr>
 </table></p>
-<a name="document-lists"></a>
-<h4>Document Lists.</h4>
-<p><a href="qgalleryitemlist.html">QGalleryItemList</a></p>
 <a name="filters"></a>
 <h4>Filters</h4>
+<p>The filter classes provide a way to describe meta-data criteria items must satisfy to be included in the results of some requests.</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a></th><td>Filter which matches content belonging to a container item</td></tr>
-<tr valign="top" class="even"><th><a href="qgallerycontainerurlfilter.html">QGalleryContainerUrlFilter</a></th><td>Filter which matches content belonging to a container item identified by a URL</td></tr>
 <tr valign="top" class="odd"><th><a href="qgalleryfilter.html">QGalleryFilter</a></th><td>Filtering criteria for gallery requests</td></tr>
 <tr valign="top" class="even"><th><a href="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</a></th><td>Filter which matches the intersection of two or more meta-data filters</td></tr>
-<tr valign="top" class="odd"><th><a href="qgalleryitemfilter.html">QGalleryItemFilter</a></th><td>Gallery filter which matches items with specific IDs</td></tr>
-<tr valign="top" class="even"><th><a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a></th><td>Gallery filter which matches items with specific URLs</td></tr>
 <tr valign="top" class="odd"><th><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a></th><td>Filter which matches items with meta-data fields containing a specific value</td></tr>
 <tr valign="top" class="even"><th><a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a></th><td>Filter which matches items with meta-data fields with values within a specified range</td></tr>
 <tr valign="top" class="odd"><th><a href="qgalleryunionfilter.html">QGalleryUnionFilter</a></th><td>Filter which matches the union of two or more meta-data filters</td></tr>
 </table></p>
-<a name="requests"></a>
-<h4>Requests</h4>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a></th><td>Base class for gallery requests</td></tr>
-<tr valign="top" class="even"><th><a href="qgallerycopyrequest.html">QGalleryCopyRequest</a></th><td>Request which copies items within a gallery</td></tr>
-<tr valign="top" class="odd"><th><a href="qgallerycountrequest.html">QGalleryCountRequest</a></th><td>Request for the number of items in a gallery matching some criteria</td></tr>
-<tr valign="top" class="even"><th><a href="qgalleryinsertrequest.html">QGalleryInsertRequest</a></th><td>Request which inserts existing items into a gallery</td></tr>
-<tr valign="top" class="odd"><th><a href="qgalleryitemrequest.html">QGalleryItemRequest</a></th><td>Request for a set of items from a gallery</td></tr>
-<tr valign="top" class="even"><th><a href="qgallerymoverequest.html">QGalleryMoveRequest</a></th><td>Request which moves items within a gallery</td></tr>
-<tr valign="top" class="odd"><th><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></th><td>Request which removes items from a gallery</td></tr>
-</table></p>
-<a name="open-issues"></a>
-<h3>Open Issues.</h3>
-<a name="requests-versus-filters"></a>
-<h4>Requests versus filters.</h4>
-<p>Some of the filters could reasonably be implemented as requests instead.</p>
-<p>Specfically <a href="qgalleryitemfilter.html">QGalleryItemFilter</a>, <a href="qgalleryitemurlfilter.html">QGalleryItemUrlFilter</a>, <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a>, <a href="qgallerycontainerfilter.html">QGalleryContainerFilter</a>, and <a href="qgalleryitemrequest.html">QGalleryItemRequest</a> classes could be replaced by more specific request classes. For example:</p>
-<pre>    // Replaces QGalleryItemFilter + QGalleryItemRequest.
-<span class="comment">    // Returns a single item.</span>
-    class QGalleryItemRequest : public QGalleryAbstractRequest
-    {
-        QStringList propertyNames() const;
-        void setPropertyNames(const QStringList &amp;names);
-
-        QString itemId() const;
-        void setItemId(const QString &amp;id);
-
-        QGalleryItemList *item() const;
-    };
-
-<span class="comment">    // Replaces QGalleryItemUrlFilter + QGalleryItemRequest;</span>
-<span class="comment">    // Returns the item(s?) matching a specific URL.</span>
-    class QGalleryUrlRequest : public QGalleryAbstractRequest
-    {
-        QStringList propertyNames() const;
-        void setPropertyNames(const QStringList &amp;names);
-
-        QUrl itemUrl() const;
-        void setItemUrl(const QUrl &amp;url);
-
-        <span class="comment">// Should an entry be added to the gallery if one doesn't already</span>
-        <span class="comment">// exist?</span>
-        bool create() const;
-        void setCreate(bool create);
-
-        QGalleryItemList *item() const;
-    };
-
-<span class="comment">    // Replaces QGalleryContainerFilter + QGalleryItemRequest;</span>
-<span class="comment">    // Returns the immediate children of a container object.</span>
-    class QGalleryContainerRequest : public QGalleryAbstractRequest
-    {
-        QStringList propertyNames() const;
-        void setPropertyNames(const QStringList &amp;names);
-
-        QStringList sortPropertyNames() const;
-        void setSortPropertyNames(const QStringList &amp;names);
-
-        <span class="comment">// Only include children of a specific type.</span>
-        QString itemType() const;
-        void setItemType(const QString &amp;type);
-
-        QString containerId() const;
-        void setContainerId(const QString &amp;id);
-
-        QGalleryItemList *items() const;
-    };
-
-<span class="comment">    // Replaces query type filter + QGalleryItemRequest</span>
-<span class="comment">    // Returns all items matching a meta-data query.</span>
-    class QGalleryFilterRequest : public QGalleryAbstractRequest
-    {
-        QStringList propertyNames() const;
-        void setPropertyNames(const QStringList &amp;names);
-
-        QStringList sortPropertyNames() const;
-        void setSortPropertyNames(const QStringList &amp;names);
-
-        <span class="comment">// Only include matches of a specific type.</span>
-        QString itemType() const;
-        void setItemType(const QString &amp;type);
-
-        <span class="comment">// Only query (recursive) within a specific container.</span>
-        <span class="comment">// May be null.</span>
-        QString containerId() const;
-        void setContainerId(const QString &amp;id);
-
-        <span class="comment">// May be null.</span>
-        QGalleryFilter filter() const;
-        void setFilter(const QGalleryFilter &amp;filter);
-
-        QGalleryItemList *items() const;
-    };</pre>
-<p>The advantages to this are it is easier to identify if a request is supported than if a filter is supported. There are fewer properties per request and none obsolete or conflict with another.</p>
-<p>The disadvantages are?</p>
-<a name="possible-future-extensions-to-document-gallery-api"></a>
-<h3>Possible future extensions to Document Gallery API.</h3>
 <a name="galleries"></a>
 <h4>Galleries</h4>
-<p>These may use different property definitions and support additional context specific requests.</p>
-<a name="qupnpgallery"></a>
-<h5>QUPnPGallery</h5>
-<p>A gallery which connects to a UPnP media server.</p>
-<p>This may use the UPnP property definitions directly instead of trying to map to some neutral property set.</p>
-<a name="qmediagallery"></a>
-<h5>QMediaGallery</h5>
-<p>Similar to <a href="qdocumentgallery.html">QDocumentGallery</a>, but limited to media types and properties, and possibly including remote sources.</p>
-<a name="qusbgallery"></a>
-<h5>QUsbGallery</h5>
-<p>Gallery of documents on USB connected storage.</p>
-<p>This is an alternative to including documents on connected storage devices in the regular document gallery.</p>
-<p>This probably also be called something else, and not apply to USB only.</p>
-<a name="filters"></a>
-<h4>Filters</h4>
-<a name="qgallerysearchfilter"></a>
-<h5>QGallerySearchFilter</h5>
-<p>A filter for performing full text searches.</p>
-<pre>    class QGallerySearchFilter : public QGalleryFilter
-    {
-    public:
-        <span class="comment">// Constructors, etc.</span>
-
-        QString searchTerm() const;
-        void setSearchTerm(const QString &amp;term);
-
-        QStringList searchTerms() const;
-        void setSearchTerms(const QStringList &amp;terms);
-    };</pre>
-<a name="requests"></a>
-<h4>Requests</h4>
-<a name="qgalleryimportrequest"></a>
-<h5>QGalleryImportRequest</h5>
-<p>Imports a document from a remote source into a gallery. Unnecessary for a gallery on the local file-system, but this could enable a remote gallery to download a document directly.</p>
-<pre>    class QGalleryImportRequest : public QGalleryAbstractRequest
-    {
-    public:
-        <span class="comment">// Constructors, etc.</span>
-
-        <span class="comment">// The url to import from.</span>
-        QUrl sourceUrl() const;
-        void setSourceUrl(const QUrl &amp;url);
-
-        <span class="comment">// The id of a container document to import the document into.</span>
-        void containerId() const;
-        void setContainerId(const QString &amp;id);
-
-<span class="comment">    // Results</span>
-        QGalleryItemList *item() const;
-
-    Q_SIGNALS:
-        void documentsChanged();
-    };</pre>
-<a name="qgalleryexportrequest"></a>
-<h5>QGalleryExportRequest</h5>
-<p>The same as an import request except the gallery would upload a document it hosts.</p>
-<pre>    class QGalleryExportRequest : public QGalleryAbstractRequest
-    {
-    public:
-        <span class="comment">// Constructors, etc.</span>
-
-        <span class="comment">// The url to export to.</span>
-        QUrl destinationUrl() const;
-        void setDestinationUrl(const QUrl &amp;url);
-
-        <span class="comment">// The id of the document to export.</span>
-        QString documentId() const;
-        void setDocumentId(const QString &amp;id);
-    };</pre>
-<a name="qgallerynewdocumentrequest"></a>
-<h5>QGalleryNewDocumentRequest</h5>
-<p>Creates a new document in a gallery.</p>
-<p>This could be used by a remote gallery to provide a URL for an application to upload a new document to.</p>
-<pre>    class QGalleryNewDocumentRequest : public QGalleryAbstractRequest
-    {
-    public:
-        <span class="comment">// Constructors, etc.</span>
-
-        QString fileName() const;
-        void setFileName(const QString &amp;fileName);
-
-        QString mimeType() const;
-        void setMimeType(const QString &amp;mimeType);
-
-        QString containerId() const;
-        void setContainerId(const QString &amp;id);
-
-        <span class="comment">// Results</span>
-        QGalleryItemList *item() const;
-
-    Q_SIGNALS:
-        void documentsChanged();
-    };</pre>
+<p>The gallery classes provide instances of different gallery types. Currently the only gallery type is the Document Gallery.</p>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qabstractgallery.html">QAbstractGallery</a></th><td>Base class for gallery implementations</td></tr>
+<tr valign="top" class="even"><th><a href="qdocumentgallery.html">QDocumentGallery</a></th><td>Gallery of documents</td></tr>
+</table></p>
+<a name="examples"></a>
+<h3>Examples</h3>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="documentmanager.html">Document Manager</a></th><td></td></tr>
+<tr valign="top" class="even"><th><a href="documentshare.html">Document Sharing</a></th><td></td></tr>
+<tr valign="top" class="odd"><th><a href="mediabrowser.html">Media Browser</a></th><td></td></tr>
+</table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

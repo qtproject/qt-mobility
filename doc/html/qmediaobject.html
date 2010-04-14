@@ -81,18 +81,21 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaObject class provides a common base for multimedia objects.</p>
 <p>QMediaObject derived classes provide access to the functionality of a <a href="qmediaservice.html">QMediaService</a>. Each media object hosts a <a href="qmediaservice.html">QMediaService</a> and uses the <a href="qmediacontrol.html">QMediaControl</a> interfaces implemented by the service to implement its API. Most media objects when constructed will request a new <a href="qmediaservice.html">QMediaService</a> instance from a <a href="qmediaserviceprovider.html">QMediaServiceProvider</a>, but some like <a href="qmediarecorder.html">QMediaRecorder</a> will share a service with another object.</p>
 <p>QMediaObject itself provides an API for accessing a media service's <a href="qmediaobject.html#metaData">meta-data</a> and a means of connecting other media objects, and peripheral classes like <a href="qvideowidget.html">QVideoWidget</a> and <a href="qmediaplaylist.html">QMediaPlaylist</a>.</p>
+</div>
 <p>See also <a href="qmediaservice.html">QMediaService</a> and <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <hr />
+<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaObject/isMetaDataAvailable"></a>
 <a name="//apple_ref/cpp/instm/QMediaObject/metaDataAvailableChanged"></a>
@@ -136,7 +139,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#notifyIntervalChanged">notifyIntervalChanged</a></b> ( int <i>milliseconds</i> )</td></tr>
 </table>
 <p>See also <a href="qmediaobject.html#addPropertyWatch">addPropertyWatch</a>() and <a href="qmediaobject.html#removePropertyWatch">removePropertyWatch</a>().</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaObject/QMediaObject"></a>
 <h3 class="fn"><a name="QMediaObject"></a>QMediaObject::QMediaObject ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i>, <a href="qmediaservice.html">QMediaService</a> * <i>service</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -202,6 +207,7 @@
 <h3 class="fn"><a name="setMetaData"></a>void QMediaObject::setMetaData ( <a href="qtmedia.html#MetaData-enum">QtMedia::MetaData</a> <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets a <i>value</i> for a meta-data <i>key</i>.</p>
 <p>See also <a href="qmediaobject.html#metaData">metaData</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -19,6 +19,13 @@
 <li><a href="qgalleryproperty-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryproperty.html#Attribute-enum">Attribute</a></b> { CanRead, CanWrite, CanSort }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryproperty.html#Attribute-enum">Attributes</a></b></td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -37,9 +44,30 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryProperty class provides an identifier for a gallery property.</p>
+</div>
 <hr />
+<div class="types"/>
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QGalleryProperty/Attribute"></a>
+<a name="//apple_ref/cpp/econst/QGalleryProperty/CanRead"></a>
+<a name="//apple_ref/cpp/econst/QGalleryProperty/CanWrite"></a>
+<a name="//apple_ref/cpp/econst/QGalleryProperty/CanSort"></a>
+<a name="//apple_ref/cpp/tdef/QGalleryProperty/Attributes"></a>
+<h3 class="flags"><a name="Attribute-enum"></a>enum QGalleryProperty::Attribute<br />flags QGalleryProperty::Attributes</h3>
+<p>This enumeration describes the attributes of a property.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QGalleryProperty::CanRead</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">The value of this property can be read.</td></tr>
+<tr><td valign="top"><tt>QGalleryProperty::CanWrite</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">The value of this property can be written.</td></tr>
+<tr><td valign="top"><tt>QGalleryProperty::CanSort</tt></td><td align="center" valign="top"><tt>0x04</tt></td><td valign="top">The value of this property can be used to sort items.</td></tr>
+</table></p>
+<p>The Attributes type is a typedef for <a href="qflags.html">QFlags</a>&lt;Attribute&gt;. It stores an OR combination of Attribute values.</p>
+</div>
+<hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGalleryProperty/QGalleryProperty"></a>
 <h3 class="fn"><a name="QGalleryProperty"></a>QGalleryProperty::QGalleryProperty ( const char * <i>name</i> )</h3>
@@ -58,7 +86,7 @@
 <p>Returns a gallery filter which tests if a property matches a <i>value</i>. The match <i>flags</i> identify the criteria for a match.</p>
 <a name="//apple_ref/cpp/instm/QGalleryProperty/name"></a>
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGalleryProperty::name () const</h3>
-<p>Returns the name of a propery.</p>
+<p>Returns the name of a property.</p>
 <a name="//apple_ref/cpp/instm/QGalleryProperty/operator QString"></a>
 <h3 class="fn"><a name="operator-QString"></a>QGalleryProperty::operator QString () const</h3>
 <p>Returns the name of a property.</p>
@@ -77,6 +105,7 @@
 <a name="//apple_ref/cpp/instm/QGalleryProperty/operator&gt;="></a>
 <h3 class="fn"><a name="operator-gt-eq"></a><a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> QGalleryProperty::operator&gt;= ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> ) const</h3>
 <p>Returns a gallery filter which tests if a property is greater than or equal to a <i>value</i>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

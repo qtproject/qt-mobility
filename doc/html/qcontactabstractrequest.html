@@ -70,17 +70,20 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactAbstractRequest class provides a mechanism for asynchronous requests to be made of a manager if it supports them.</p>
 <p>It allows a client to asynchronously request some functionality of a particular <a href="qcontactmanager.html">QContactManager</a>.</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactAbstractRequest/RequestType"></a>
 <a name="//apple_ref/cpp/econst/QContactAbstractRequest/InvalidRequest"></a>
@@ -124,7 +127,9 @@
 <tr><td valign="top"><tt>QContactAbstractRequest::CanceledState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Operation is finished due to cancellation</td></tr>
 <tr><td valign="top"><tt>QContactAbstractRequest::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Operation successfully completed</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/QContactAbstractRequest"></a>
 <h3 class="fn"><a name="QContactAbstractRequest"></a>QContactAbstractRequest::QContactAbstractRequest ()</h3>
@@ -181,6 +186,7 @@
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QContactAbstractRequest::waitForFinished ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Blocks until the request has been completed by the manager engine, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false. Some backends are unable to support this operation safely, and will return false immediately.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

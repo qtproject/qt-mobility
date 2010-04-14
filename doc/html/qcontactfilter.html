@@ -48,10 +48,13 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactFilter class is used to select contacts made available through a <a href="qcontactmanager.html">QContactManager</a>.</p>
 <p>This class is used as a parameter to various functions offered by <a href="qcontactmanager.html">QContactManager</a>, to allow selection of contacts which have certain details or properties.</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactFilter/FilterType"></a>
 <a name="//apple_ref/cpp/econst/QContactFilter/InvalidFilter"></a>
@@ -103,7 +106,9 @@
 <tr><td valign="top"><tt>QContactFilter::MatchKeypadCollation</tt></td><td align="center" valign="top"><tt>2048</tt></td><td valign="top">The search term is in the form of text entered by a numeric phone keypad (such as ITU-T E.161 compliant keypads). Each digit in the search term can represent a number of alphanumeric symbols. For example, the search string &quot;43556&quot; would match items &quot;HELLO&quot;, &quot;GEKKO&quot;, &quot;HELL6&quot; and &quot;43556&quot; among others. Accented characters and other punctuation characters may additionally be matched by the <a href="qcontactmanager.html">QContactManager</a> in a way consistent with the platform.</td></tr>
 </table></p>
 <p>The MatchFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;MatchFlag&gt;. It stores an OR combination of MatchFlag values.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactFilter/QContactFilter"></a>
 <h3 class="fn"><a name="QContactFilter"></a>QContactFilter::QContactFilter ()</h3>
@@ -126,7 +131,9 @@
 <a name="//apple_ref/cpp/instm/QContactFilter/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactFilter::operator== ( const QContactFilter &amp; <i>other</i> ) const</h3>
 <p>Returns true if the filter has the same type and criteria as <i>other</i></p>
+</div>
 <hr />
+<div class="relnonmem"/>
 <h2>Related Non-Members</h2>
 <h3 class="fn"><a name="operator-and-2"></a>const Q_CONTACTS_EXPORT operator&amp; ( const QContactFilter &amp; <i>left</i>, const QContactFilter &amp; <i>right</i> )</h3>
 <p>Returns a filter which is the intersection of the <i>left</i> and <i>right</i> filters</p>
@@ -134,6 +141,7 @@
 <h3 class="fn"><a name="operator-7c-2"></a>const Q_CONTACTS_EXPORT operator| ( const QContactFilter &amp; <i>left</i>, const QContactFilter &amp; <i>right</i> )</h3>
 <p>Returns a filter which is the union of the <i>left</i> and <i>right</i> filters</p>
 <p>See also <a href="qcontactunionfilter.html">QContactUnionFilter</a>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

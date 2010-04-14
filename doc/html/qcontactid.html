@@ -42,12 +42,15 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactId class provides information that uniquely identifies a contact in a particular manager.</p>
 <p>It consists of a manager URI which identifies the manager which contains the contact, and the local id of the contact in that manager.</p>
 <p>A &quot;null&quot; QContactId has an empty manager URI, and an invalid <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> (0).</p>
+</div>
 <p>See also <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactId/QContactId"></a>
 <h3 class="fn"><a name="QContactId"></a>QContactId::QContactId ()</h3>
@@ -87,7 +90,9 @@
 <a name="//apple_ref/cpp/instm/QContactId/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactId::operator== ( const QContactId &amp; <i>other</i> ) const</h3>
 <p>Returns true if the contact id has the same manager URI and local id as <i>other</i></p>
+</div>
 <hr />
+<div class="relnonmem"/>
 <h2>Related Non-Members</h2>
 <a name="//apple_ref/cpp/tdef//QContactLocalId"></a>
 <h3 class="fn"><a name="QContactLocalId-typedef"></a>typedef QContactLocalId</h3>
@@ -95,6 +100,7 @@
 <p>Most operations within a <a href="qcontactmanager.html">QContactManager</a> accept a QContactLocalId. Some operations (involving links to contacts outside a particular manager) also accept a manager URI - this combination is stored in a <a href="qcontactid.html">QContactId</a>.</p>
 <p>An invalid QContactLocalId is represented by a zero (0) value.</p>
 <p>See also <a href="qcontactid.html">QContactId</a>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

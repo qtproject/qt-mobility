@@ -30,10 +30,13 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitResourceHandler class is an interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing.</p>
+</div>
 <p>See also <a href="qversitcontactimporter.html">QVersitContactImporter</a>, <a href="qversitcontactexporter.html">QVersitContactExporter</a>, and <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitResourceHandler/~QVersitResourceHandler"></a>
 <h3 class="fn"><a name="dtor.QVersitResourceHandler"></a>QVersitResourceHandler::~QVersitResourceHandler ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -45,6 +48,7 @@
 <h3 class="fn"><a name="saveResource"></a>bool QVersitResourceHandler::saveResource ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>contents</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> * <i>location</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Saves the binary data <i>contents</i> to a file on a persistent storage medium.</p>
 <p><i>property</i> holds the <a href="qversitproperty.html">QVersitProperty</a> which is the context in which the binary is coming from. The <a href="qversitresourcehandler.html">QVersitResourceHandler</a> can use this, for example, to determine file extension it should choose. *<i>location</i> is filled with the contents of the file. Returns true on success, false on failure.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -88,6 +88,7 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactDetail class represents a single, complete detail about a contact.</p>
 <p>All of the information for a contact is stored in one or more QContactDetail objects.</p>
@@ -121,8 +122,10 @@
 <span class="comment">    // otherAddress.error() == QContactDetail::IncompatibleAssignmentError</span>
 <span class="comment">    // otherAddress.value(QContactPhoneNumber::FieldNumber) is empty</span>
 <span class="comment">    // otherAddress.definitionName() == QContactAddress::staticType()</span></pre>
+</div>
 <p>See also <a href="qcontact.html">QContact</a>, <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>, <a href="qcontactdetailfilter.html">QContactDetailFilter</a>, <a href="qcontactdetailrangefilter.html">QContactDetailRangeFilter</a>, and <a href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL">Q_DECLARE_CUSTOM_CONTACT_DETAIL</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactDetail/AccessConstraint"></a>
 <a name="//apple_ref/cpp/econst/QContactDetail/NoConstraint"></a>
@@ -138,7 +141,9 @@
 <tr><td valign="top"><tt>QContactDetail::Irremovable</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">Users cannot remove this detail from a contact.</td></tr>
 </table></p>
 <p>The AccessConstraints type is a typedef for <a href="qflags.html">QFlags</a>&lt;AccessConstraint&gt;. It stores an OR combination of AccessConstraint values.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactDetail/QContactDetail"></a>
 <h3 class="fn"><a name="QContactDetail"></a>QContactDetail::QContactDetail ()</h3>
@@ -274,7 +279,9 @@
 <a name="//apple_ref/cpp/instm/QContactDetail/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetail::operator== ( const QContactDetail &amp; <i>other</i> ) const</h3>
 <p>Compares this detail to <i>other</i>. Returns true if the definition and values of <i>other</i> are equal to those of this detail. The keys of each detail are not considered during the comparison, in order to allow details from different contacts to be compared according to their values.</p>
+</div>
 <hr />
+<div class="macros"/>
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//Q_DECLARE_CUSTOM_CONTACT_DETAIL"></a>
 <h3 class="fn"><a name="Q_DECLARE_CUSTOM_CONTACT_DETAIL"></a>Q_DECLARE_CUSTOM_CONTACT_DETAIL</h3>
@@ -328,6 +335,7 @@
         <span class="comment">// Convenience filter</span>
         static QContactFilter match(const QString&amp; number);
     };</pre>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

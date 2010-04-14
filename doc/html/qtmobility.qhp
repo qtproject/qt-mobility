@@ -256,11 +256,8 @@
                     <section ref="qgalleryabstractresponse.html" title="QGalleryAbstractResponse Class Reference">
                         <section ref="qgalleryabstractresponse-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qgallerycontainerfilter.html" title="QGalleryContainerFilter Class Reference">
-                        <section ref="qgallerycontainerfilter-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qgallerycontainerurlfilter.html" title="QGalleryContainerUrlFilter Class Reference">
-                        <section ref="qgallerycontainerurlfilter-members.html" title="List of all members"/>
+                    <section ref="qgallerycontainerrequest.html" title="QGalleryContainerRequest Class Reference">
+                        <section ref="qgallerycontainerrequest-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgallerycopyrequest.html" title="QGalleryCopyRequest Class Reference">
                         <section ref="qgallerycopyrequest-members.html" title="List of all members"/>
@@ -271,23 +268,17 @@
                     <section ref="qgalleryfilter.html" title="QGalleryFilter Class Reference">
                         <section ref="qgalleryfilter-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qgalleryinsertrequest.html" title="QGalleryInsertRequest Class Reference">
-                        <section ref="qgalleryinsertrequest-members.html" title="List of all members"/>
+                    <section ref="qgalleryfilterrequest.html" title="QGalleryFilterRequest Class Reference">
+                        <section ref="qgalleryfilterrequest-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgalleryintersectionfilter.html" title="QGalleryIntersectionFilter Class Reference">
                         <section ref="qgalleryintersectionfilter-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qgalleryitemfilter.html" title="QGalleryItemFilter Class Reference">
-                        <section ref="qgalleryitemfilter-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgalleryitemlist.html" title="QGalleryItemList Class Reference">
                         <section ref="qgalleryitemlist-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgalleryitemrequest.html" title="QGalleryItemRequest Class Reference">
                         <section ref="qgalleryitemrequest-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qgalleryitemurlfilter.html" title="QGalleryItemUrlFilter Class Reference">
-                        <section ref="qgalleryitemurlfilter-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgallerymetadatafilter.html" title="QGalleryMetaDataFilter Class Reference">
                         <section ref="qgallerymetadatafilter-members.html" title="List of all members"/>
@@ -312,6 +303,9 @@
                     </section>
                     <section ref="qgalleryunionfilter.html" title="QGalleryUnionFilter Class Reference">
                         <section ref="qgalleryunionfilter-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qgalleryurlrequest.html" title="QGalleryUrlRequest Class Reference">
+                        <section ref="qgalleryurlrequest-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
                         <section ref="qgeoareamonitor-members.html" title="List of all members"/>
@@ -662,12 +656,15 @@
                     <section ref="bearermonitor.html" title="Bearer Monitor Example"/>
                     <section ref="bluetoothtransferplugin.html" title="Bluetooth Transfer Plugin Example"/>
                     <section ref="declarative.html" title="Declarative Example"/>
+                    <section ref="documentmanager.html" title="Document Manager"/>
+                    <section ref="documentshare.html" title="Document Sharing"/>
                     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example"/>
                     <section ref="filemanagerplugin.html" title="File Manager Plugin Example"/>
                     <section ref="flickrdemo.html" title="Flickr Demo Example"/>
                     <section ref="keepintouch.html" title="Keep in Touch Example"/>
                     <section ref="lightmaps.html" title="LightMap Example"/>
                     <section ref="logfilepositionsource.html" title="Log File Position Source Example"/>
+                    <section ref="mediabrowser.html" title="Media Browser"/>
                     <section ref="player.html" title="Media Player Example"/>
                     <section ref="player.html" title="Player Example"/>
                     <section ref="publish-subscribe.html" title="Publish and Subscribe Example"/>
@@ -699,6 +696,7 @@
                     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin"/>
                     <section ref="gallery-galleries.html" title="Document Galleries."/>
                     <section ref="gallery.html" title="Document Gallery"/>
+                    <section ref="gallery-examples.html" title="Document Gallery Examples"/>
                     <section ref="gallery-filters.html" title="Document Gallery Filters"/>
                     <section ref="gallery-requests.html" title="Document Gallery Requests"/>
                     <section ref="future.html" title="Future Additional APIs"/>
@@ -759,8 +757,11 @@
             <keyword name="Declarative Example" id="Declarative Example" ref="declarative.html"/>
             <keyword name="Document Galleries." id="Document Galleries." ref="gallery-galleries.html"/>
             <keyword name="Document Gallery" id="Document Gallery" ref="gallery.html"/>
+            <keyword name="Document Gallery Examples" id="Document Gallery Examples" ref="gallery-examples.html"/>
             <keyword name="Document Gallery Filters" id="Document Gallery Filters" ref="gallery-filters.html"/>
             <keyword name="Document Gallery Requests" id="Document Gallery Requests" ref="gallery-requests.html"/>
+            <keyword name="Document Manager" id="Document Manager" ref="documentmanager.html"/>
+            <keyword name="Document Sharing" id="Document Sharing" ref="documentshare.html"/>
             <keyword name="Fetch Google Maps Example" id="Fetch Google Maps Example" ref="fetchgooglemaps.html"/>
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
             <keyword name="Flickr Demo Example" id="Flickr Demo Example" ref="flickrdemo.html"/>
@@ -777,6 +778,7 @@
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location API" id="Location API" ref="location.html"/>
             <keyword name="Log File Position Source Example" id="Log File Position Source Example" ref="logfilepositionsource.html"/>
+            <keyword name="Media Browser" id="Media Browser" ref="mediabrowser.html"/>
             <keyword name="Media Player Example" id="Media Player Example" ref="player.html"/>
             <keyword name="Messaging" id="Messaging" ref="messaging.html"/>
             <keyword name="Mobility Multimedia" id="Mobility Multimedia" ref="multimedia.html"/>
@@ -1670,8 +1672,10 @@
             <keyword name="QGalleryAbstractRequest::Idle" id="QGalleryAbstractRequest::Idle" ref="qgalleryabstractrequest.html#State-enum"/>
             <keyword name="QGalleryAbstractRequest::Type" id="QGalleryAbstractRequest::Type" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Item" id="QGalleryAbstractRequest::Item" ref="qgalleryabstractrequest.html#Type-enum"/>
+            <keyword name="QGalleryAbstractRequest::Url" id="QGalleryAbstractRequest::Url" ref="qgalleryabstractrequest.html#Type-enum"/>
+            <keyword name="QGalleryAbstractRequest::Container" id="QGalleryAbstractRequest::Container" ref="qgalleryabstractrequest.html#Type-enum"/>
+            <keyword name="QGalleryAbstractRequest::Filter" id="QGalleryAbstractRequest::Filter" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Count" id="QGalleryAbstractRequest::Count" ref="qgalleryabstractrequest.html#Type-enum"/>
-            <keyword name="QGalleryAbstractRequest::Insert" id="QGalleryAbstractRequest::Insert" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Remove" id="QGalleryAbstractRequest::Remove" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Copy" id="QGalleryAbstractRequest::Copy" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Move" id="QGalleryAbstractRequest::Move" ref="qgalleryabstractrequest.html#Type-enum"/>
@@ -1707,16 +1711,26 @@
             <keyword name="result" id="QGalleryAbstractResponse::result" ref="qgalleryabstractresponse.html#result"/>
             <keyword name="waitForFinished" id="QGalleryAbstractResponse::waitForFinished" ref="qgalleryabstractresponse.html#waitForFinished"/>
             <keyword name="~QGalleryAbstractResponse" id="QGalleryAbstractResponse::~QGalleryAbstractResponse" ref="qgalleryabstractresponse.html#dtor.QGalleryAbstractResponse"/>
-            <keyword name="QGalleryContainerFilter" id="QGalleryContainerFilter" ref="qgallerycontainerfilter.html"/>
-            <keyword name="containerId" id="QGalleryContainerFilter::containerId" ref="qgallerycontainerfilter.html#containerId"/>
-            <keyword name="operator=" id="QGalleryContainerFilter::operator=" ref="qgallerycontainerfilter.html#operator-eq"/>
-            <keyword name="setContainerId" id="QGalleryContainerFilter::setContainerId" ref="qgallerycontainerfilter.html#setContainerId"/>
-            <keyword name="~QGalleryContainerFilter" id="QGalleryContainerFilter::~QGalleryContainerFilter" ref="qgallerycontainerfilter.html#dtor.QGalleryContainerFilter"/>
-            <keyword name="QGalleryContainerUrlFilter" id="QGalleryContainerUrlFilter" ref="qgallerycontainerurlfilter.html"/>
-            <keyword name="containerUrl" id="QGalleryContainerUrlFilter::containerUrl" ref="qgallerycontainerurlfilter.html#containerUrl"/>
-            <keyword name="operator=" id="QGalleryContainerUrlFilter::operator=" ref="qgallerycontainerurlfilter.html#operator-eq"/>
-            <keyword name="setContainerUrl" id="QGalleryContainerUrlFilter::setContainerUrl" ref="qgallerycontainerurlfilter.html#setContainerUrl"/>
-            <keyword name="~QGalleryContainerUrlFilter" id="QGalleryContainerUrlFilter::~QGalleryContainerUrlFilter" ref="qgallerycontainerurlfilter.html#dtor.QGalleryContainerUrlFilter"/>
+            <keyword name="QGalleryContainerRequest" id="QGalleryContainerRequest" ref="qgallerycontainerrequest.html"/>
+            <keyword name="containerId" id="QGalleryContainerRequest::containerId" ref="qgallerycontainerrequest.html#containerId-prop"/>
+            <keyword name="initialCursorPosition" id="QGalleryContainerRequest::initialCursorPosition" ref="qgallerycontainerrequest.html#initialCursorPosition-prop"/>
+            <keyword name="isLive" id="QGalleryContainerRequest::isLive" ref="qgallerycontainerrequest.html#live-prop"/>
+            <keyword name="itemType" id="QGalleryContainerRequest::itemType" ref="qgallerycontainerrequest.html#itemType-prop"/>
+            <keyword name="items" id="QGalleryContainerRequest::items" ref="qgallerycontainerrequest.html#items-prop"/>
+            <keyword name="itemsChanged" id="QGalleryContainerRequest::itemsChanged" ref="qgallerycontainerrequest.html#itemsChanged"/>
+            <keyword name="live" id="QGalleryContainerRequest::live" ref="qgallerycontainerrequest.html#live-prop"/>
+            <keyword name="minimumPagedItems" id="QGalleryContainerRequest::minimumPagedItems" ref="qgallerycontainerrequest.html#minimumPagedItems-prop"/>
+            <keyword name="propertyNames" id="QGalleryContainerRequest::propertyNames" ref="qgallerycontainerrequest.html#propertyNames-prop"/>
+            <keyword name="setContainerId" id="QGalleryContainerRequest::setContainerId" ref="qgallerycontainerrequest.html#containerId-prop"/>
+            <keyword name="setInitialCursorPosition" id="QGalleryContainerRequest::setInitialCursorPosition" ref="qgallerycontainerrequest.html#initialCursorPosition-prop"/>
+            <keyword name="setItemType" id="QGalleryContainerRequest::setItemType" ref="qgallerycontainerrequest.html#itemType-prop"/>
+            <keyword name="setLive" id="QGalleryContainerRequest::setLive" ref="qgallerycontainerrequest.html#live-prop"/>
+            <keyword name="setMinimumPagedItems" id="QGalleryContainerRequest::setMinimumPagedItems" ref="qgallerycontainerrequest.html#minimumPagedItems-prop"/>
+            <keyword name="setPropertyNames" id="QGalleryContainerRequest::setPropertyNames" ref="qgallerycontainerrequest.html#propertyNames-prop"/>
+            <keyword name="setResponse" id="QGalleryContainerRequest::setResponse" ref="qgallerycontainerrequest.html#setResponse"/>
+            <keyword name="setSortPropertyNames" id="QGalleryContainerRequest::setSortPropertyNames" ref="qgallerycontainerrequest.html#sortPropertyNames-prop"/>
+            <keyword name="sortPropertyNames" id="QGalleryContainerRequest::sortPropertyNames" ref="qgallerycontainerrequest.html#sortPropertyNames-prop"/>
+            <keyword name="~QGalleryContainerRequest" id="QGalleryContainerRequest::~QGalleryContainerRequest" ref="qgallerycontainerrequest.html#dtor.QGalleryContainerRequest"/>
             <keyword name="QGalleryCopyRequest" id="QGalleryCopyRequest" ref="qgallerycopyrequest.html"/>
             <keyword name="currentItem" id="QGalleryCopyRequest::currentItem" ref="qgallerycopyrequest.html#currentItem-prop"/>
             <keyword name="currentItemChanged" id="QGalleryCopyRequest::currentItemChanged" ref="qgallerycopyrequest.html#currentItemChanged"/>
@@ -1733,18 +1747,13 @@
             <keyword name="~QGalleryCopyRequest" id="QGalleryCopyRequest::~QGalleryCopyRequest" ref="qgallerycopyrequest.html#dtor.QGalleryCopyRequest"/>
             <keyword name="QGalleryCountRequest" id="QGalleryCountRequest" ref="qgallerycountrequest.html"/>
             <keyword name="containerId" id="QGalleryCountRequest::containerId" ref="qgallerycountrequest.html#containerId-prop"/>
-            <keyword name="containerIdChanged" id="QGalleryCountRequest::containerIdChanged" ref="qgallerycountrequest.html#containerIdChanged"/>
-            <keyword name="containerUrl" id="QGalleryCountRequest::containerUrl" ref="qgallerycountrequest.html#containerUrl-prop"/>
-            <keyword name="containerUrlChanged" id="QGalleryCountRequest::containerUrlChanged" ref="qgallerycountrequest.html#containerUrlChanged"/>
             <keyword name="count" id="QGalleryCountRequest::count" ref="qgallerycountrequest.html#count-prop"/>
             <keyword name="countChanged" id="QGalleryCountRequest::countChanged" ref="qgallerycountrequest.html#countChanged"/>
             <keyword name="filter" id="QGalleryCountRequest::filter" ref="qgallerycountrequest.html#filter-prop"/>
-            <keyword name="filterChanged" id="QGalleryCountRequest::filterChanged" ref="qgallerycountrequest.html#filterChanged"/>
             <keyword name="isLive" id="QGalleryCountRequest::isLive" ref="qgallerycountrequest.html#live-prop"/>
             <keyword name="itemType" id="QGalleryCountRequest::itemType" ref="qgallerycountrequest.html#itemType-prop"/>
             <keyword name="live" id="QGalleryCountRequest::live" ref="qgallerycountrequest.html#live-prop"/>
             <keyword name="setContainerId" id="QGalleryCountRequest::setContainerId" ref="qgallerycountrequest.html#containerId-prop"/>
-            <keyword name="setContainerUrl" id="QGalleryCountRequest::setContainerUrl" ref="qgallerycountrequest.html#containerUrl-prop"/>
             <keyword name="setFilter" id="QGalleryCountRequest::setFilter" ref="qgallerycountrequest.html#filter-prop"/>
             <keyword name="setItemType" id="QGalleryCountRequest::setItemType" ref="qgallerycountrequest.html#itemType-prop"/>
             <keyword name="setLive" id="QGalleryCountRequest::setLive" ref="qgallerycountrequest.html#live-prop"/>
@@ -1763,39 +1772,39 @@
             <keyword name="QGalleryFilter::RangeFlags" id="QGalleryFilter::RangeFlags" ref="qgalleryfilter.html#RangeFlag-enum"/>
             <keyword name="QGalleryFilter::Type" id="QGalleryFilter::Type" ref="qgalleryfilter.html#Type-enum"/>
             <keyword name="QGalleryFilter::Invalid" id="QGalleryFilter::Invalid" ref="qgalleryfilter.html#Type-enum"/>
-            <keyword name="QGalleryFilter::Item" id="QGalleryFilter::Item" ref="qgalleryfilter.html#Type-enum"/>
-            <keyword name="QGalleryFilter::ItemUrl" id="QGalleryFilter::ItemUrl" ref="qgalleryfilter.html#Type-enum"/>
-            <keyword name="QGalleryFilter::Container" id="QGalleryFilter::Container" ref="qgalleryfilter.html#Type-enum"/>
-            <keyword name="QGalleryFilter::ContainerUrl" id="QGalleryFilter::ContainerUrl" ref="qgalleryfilter.html#Type-enum"/>
             <keyword name="QGalleryFilter::Intersection" id="QGalleryFilter::Intersection" ref="qgalleryfilter.html#Type-enum"/>
             <keyword name="QGalleryFilter::Union" id="QGalleryFilter::Union" ref="qgalleryfilter.html#Type-enum"/>
             <keyword name="QGalleryFilter::MetaData" id="QGalleryFilter::MetaData" ref="qgalleryfilter.html#Type-enum"/>
             <keyword name="QGalleryFilter::MetaDataRange" id="QGalleryFilter::MetaDataRange" ref="qgalleryfilter.html#Type-enum"/>
             <keyword name="operator=" id="QGalleryFilter::operator=" ref="qgalleryfilter.html#operator-eq"/>
-            <keyword name="toContainerFilter" id="QGalleryFilter::toContainerFilter" ref="qgalleryfilter.html#toContainerFilter"/>
-            <keyword name="toContainerUrlFilter" id="QGalleryFilter::toContainerUrlFilter" ref="qgalleryfilter.html#toContainerUrlFilter"/>
             <keyword name="toIntersectionFilter" id="QGalleryFilter::toIntersectionFilter" ref="qgalleryfilter.html#toIntersectionFilter"/>
-            <keyword name="toItemFilter" id="QGalleryFilter::toItemFilter" ref="qgalleryfilter.html#toItemFilter"/>
-            <keyword name="toItemUrlFilter" id="QGalleryFilter::toItemUrlFilter" ref="qgalleryfilter.html#toItemUrlFilter"/>
             <keyword name="toMetaDataFilter" id="QGalleryFilter::toMetaDataFilter" ref="qgalleryfilter.html#toMetaDataFilter"/>
             <keyword name="toMetaDataRangeFilter" id="QGalleryFilter::toMetaDataRangeFilter" ref="qgalleryfilter.html#toMetaDataRangeFilter"/>
             <keyword name="toUnionFilter" id="QGalleryFilter::toUnionFilter" ref="qgalleryfilter.html#toUnionFilter"/>
             <keyword name="type" id="QGalleryFilter::type" ref="qgalleryfilter.html#type"/>
             <keyword name="~QGalleryFilter" id="QGalleryFilter::~QGalleryFilter" ref="qgalleryfilter.html#dtor.QGalleryFilter"/>
-            <keyword name="QGalleryInsertRequest" id="QGalleryInsertRequest" ref="qgalleryinsertrequest.html"/>
-            <keyword name="insertedItems" id="QGalleryInsertRequest::insertedItems" ref="qgalleryinsertrequest.html#insertedItems-prop"/>
-            <keyword name="insertedItemsChanged" id="QGalleryInsertRequest::insertedItemsChanged" ref="qgalleryinsertrequest.html#insertedItemsChanged"/>
-            <keyword name="itemUrl" id="QGalleryInsertRequest::itemUrl" ref="qgalleryinsertrequest.html#itemUrl-prop"/>
-            <keyword name="itemUrls" id="QGalleryInsertRequest::itemUrls" ref="qgalleryinsertrequest.html#itemUrls-prop"/>
-            <keyword name="itemUrlsChanged" id="QGalleryInsertRequest::itemUrlsChanged" ref="qgalleryinsertrequest.html#itemUrlsChanged"/>
-            <keyword name="propertyNames" id="QGalleryInsertRequest::propertyNames" ref="qgalleryinsertrequest.html#propertyNames-prop"/>
-            <keyword name="setItemUrl" id="QGalleryInsertRequest::setItemUrl" ref="qgalleryinsertrequest.html#itemUrl-prop"/>
-            <keyword name="setItemUrls" id="QGalleryInsertRequest::setItemUrls" ref="qgalleryinsertrequest.html#itemUrls-prop"/>
-            <keyword name="setPropertyNames" id="QGalleryInsertRequest::setPropertyNames" ref="qgalleryinsertrequest.html#propertyNames-prop"/>
-            <keyword name="setResponse" id="QGalleryInsertRequest::setResponse" ref="qgalleryinsertrequest.html#setResponse"/>
-            <keyword name="setSortPropertyNames" id="QGalleryInsertRequest::setSortPropertyNames" ref="qgalleryinsertrequest.html#sortPropertyNames-prop"/>
-            <keyword name="sortPropertyNames" id="QGalleryInsertRequest::sortPropertyNames" ref="qgalleryinsertrequest.html#sortPropertyNames-prop"/>
-            <keyword name="~QGalleryInsertRequest" id="QGalleryInsertRequest::~QGalleryInsertRequest" ref="qgalleryinsertrequest.html#dtor.QGalleryInsertRequest"/>
+            <keyword name="QGalleryFilterRequest" id="QGalleryFilterRequest" ref="qgalleryfilterrequest.html"/>
+            <keyword name="containerId" id="QGalleryFilterRequest::containerId" ref="qgalleryfilterrequest.html#containerId-prop"/>
+            <keyword name="filter" id="QGalleryFilterRequest::filter" ref="qgalleryfilterrequest.html#filter-prop"/>
+            <keyword name="initialCursorPosition" id="QGalleryFilterRequest::initialCursorPosition" ref="qgalleryfilterrequest.html#initialCursorPosition-prop"/>
+            <keyword name="isLive" id="QGalleryFilterRequest::isLive" ref="qgalleryfilterrequest.html#live-prop"/>
+            <keyword name="itemType" id="QGalleryFilterRequest::itemType" ref="qgalleryfilterrequest.html#itemType-prop"/>
+            <keyword name="items" id="QGalleryFilterRequest::items" ref="qgalleryfilterrequest.html#items-prop"/>
+            <keyword name="itemsChanged" id="QGalleryFilterRequest::itemsChanged" ref="qgalleryfilterrequest.html#itemsChanged"/>
+            <keyword name="live" id="QGalleryFilterRequest::live" ref="qgalleryfilterrequest.html#live-prop"/>
+            <keyword name="minimumPagedItems" id="QGalleryFilterRequest::minimumPagedItems" ref="qgalleryfilterrequest.html#minimumPagedItems-prop"/>
+            <keyword name="propertyNames" id="QGalleryFilterRequest::propertyNames" ref="qgalleryfilterrequest.html#propertyNames-prop"/>
+            <keyword name="setContainerId" id="QGalleryFilterRequest::setContainerId" ref="qgalleryfilterrequest.html#containerId-prop"/>
+            <keyword name="setFilter" id="QGalleryFilterRequest::setFilter" ref="qgalleryfilterrequest.html#filter-prop"/>
+            <keyword name="setInitialCursorPosition" id="QGalleryFilterRequest::setInitialCursorPosition" ref="qgalleryfilterrequest.html#initialCursorPosition-prop"/>
+            <keyword name="setItemType" id="QGalleryFilterRequest::setItemType" ref="qgalleryfilterrequest.html#itemType-prop"/>
+            <keyword name="setLive" id="QGalleryFilterRequest::setLive" ref="qgalleryfilterrequest.html#live-prop"/>
+            <keyword name="setMinimumPagedItems" id="QGalleryFilterRequest::setMinimumPagedItems" ref="qgalleryfilterrequest.html#minimumPagedItems-prop"/>
+            <keyword name="setPropertyNames" id="QGalleryFilterRequest::setPropertyNames" ref="qgalleryfilterrequest.html#propertyNames-prop"/>
+            <keyword name="setResponse" id="QGalleryFilterRequest::setResponse" ref="qgalleryfilterrequest.html#setResponse"/>
+            <keyword name="setSortPropertyNames" id="QGalleryFilterRequest::setSortPropertyNames" ref="qgalleryfilterrequest.html#sortPropertyNames-prop"/>
+            <keyword name="sortPropertyNames" id="QGalleryFilterRequest::sortPropertyNames" ref="qgalleryfilterrequest.html#sortPropertyNames-prop"/>
+            <keyword name="~QGalleryFilterRequest" id="QGalleryFilterRequest::~QGalleryFilterRequest" ref="qgalleryfilterrequest.html#dtor.QGalleryFilterRequest"/>
             <keyword name="QGalleryIntersectionFilter" id="QGalleryIntersectionFilter" ref="qgalleryintersectionfilter.html"/>
             <keyword name="append" id="QGalleryIntersectionFilter::append" ref="qgalleryintersectionfilter.html#append"/>
             <keyword name="clear" id="QGalleryIntersectionFilter::clear" ref="qgalleryintersectionfilter.html#clear"/>
@@ -1807,82 +1816,43 @@
             <keyword name="removeAt" id="QGalleryIntersectionFilter::removeAt" ref="qgalleryintersectionfilter.html#removeAt"/>
             <keyword name="replace" id="QGalleryIntersectionFilter::replace" ref="qgalleryintersectionfilter.html#replace"/>
             <keyword name="~QGalleryIntersectionFilter" id="QGalleryIntersectionFilter::~QGalleryIntersectionFilter" ref="qgalleryintersectionfilter.html#dtor.QGalleryIntersectionFilter"/>
-            <keyword name="QGalleryItemFilter" id="QGalleryItemFilter" ref="qgalleryitemfilter.html"/>
-            <keyword name="itemId" id="QGalleryItemFilter::itemId" ref="qgalleryitemfilter.html#itemId"/>
-            <keyword name="itemIds" id="QGalleryItemFilter::itemIds" ref="qgalleryitemfilter.html#itemIds"/>
-            <keyword name="operator=" id="QGalleryItemFilter::operator=" ref="qgalleryitemfilter.html#operator-eq"/>
-            <keyword name="setItemId" id="QGalleryItemFilter::setItemId" ref="qgalleryitemfilter.html#setItemId"/>
-            <keyword name="setItemIds" id="QGalleryItemFilter::setItemIds" ref="qgalleryitemfilter.html#setItemIds"/>
-            <keyword name="~QGalleryItemFilter" id="QGalleryItemFilter::~QGalleryItemFilter" ref="qgalleryitemfilter.html#dtor.QGalleryItemFilter"/>
             <keyword name="QGalleryItemList" id="QGalleryItemList" ref="qgalleryitemlist.html"/>
-            <keyword name="QGalleryItemList::MetaDataFlag" id="QGalleryItemList::MetaDataFlag" ref="qgalleryitemlist.html#MetaDataFlag-enum"/>
-            <keyword name="QGalleryItemList::ReadMetaReadable" id="QGalleryItemList::ReadMetaReadable" ref="qgalleryitemlist.html#MetaDataFlag-enum"/>
-            <keyword name="QGalleryItemList::MetaDataWritable" id="QGalleryItemList::MetaDataWritable" ref="qgalleryitemlist.html#MetaDataFlag-enum"/>
-            <keyword name="QGalleryItemList::MetaDataWriting" id="QGalleryItemList::MetaDataWriting" ref="qgalleryitemlist.html#MetaDataFlag-enum"/>
-            <keyword name="QGalleryItemList::MetaDataWriteError" id="QGalleryItemList::MetaDataWriteError" ref="qgalleryitemlist.html#MetaDataFlag-enum"/>
-            <keyword name="QGalleryItemList::MetaDataFlags" id="QGalleryItemList::MetaDataFlags" ref="qgalleryitemlist.html#MetaDataFlag-enum"/>
+            <keyword name="QGalleryItemList::ItemStatus" id="QGalleryItemList::ItemStatus" ref="qgalleryitemlist.html#ItemStatusFlag-enum"/>
+            <keyword name="QGalleryItemList::ItemStatusFlag" id="QGalleryItemList::ItemStatusFlag" ref="qgalleryitemlist.html#ItemStatusFlag-enum"/>
+            <keyword name="QGalleryItemList::OutOfRange" id="QGalleryItemList::OutOfRange" ref="qgalleryitemlist.html#ItemStatusFlag-enum"/>
+            <keyword name="QGalleryItemList::Reading" id="QGalleryItemList::Reading" ref="qgalleryitemlist.html#ItemStatusFlag-enum"/>
+            <keyword name="QGalleryItemList::Writing" id="QGalleryItemList::Writing" ref="qgalleryitemlist.html#ItemStatusFlag-enum"/>
             <keyword name="count" id="QGalleryItemList::count" ref="qgalleryitemlist.html#count"/>
             <keyword name="cursorPosition" id="QGalleryItemList::cursorPosition" ref="qgalleryitemlist.html#cursorPosition-prop"/>
             <keyword name="id" id="QGalleryItemList::id" ref="qgalleryitemlist.html#id"/>
             <keyword name="inserted" id="QGalleryItemList::inserted" ref="qgalleryitemlist.html#inserted"/>
             <keyword name="metaData" id="QGalleryItemList::metaData" ref="qgalleryitemlist.html#metaData"/>
             <keyword name="metaDataChanged" id="QGalleryItemList::metaDataChanged" ref="qgalleryitemlist.html#metaDataChanged"/>
-            <keyword name="metaDataFlags" id="QGalleryItemList::metaDataFlags" ref="qgalleryitemlist.html#metaDataFlags"/>
             <keyword name="minimumPagedItems" id="QGalleryItemList::minimumPagedItems" ref="qgalleryitemlist.html#minimumPagedItems-prop"/>
             <keyword name="moved" id="QGalleryItemList::moved" ref="qgalleryitemlist.html#moved"/>
+            <keyword name="propertyAttributes" id="QGalleryItemList::propertyAttributes" ref="qgalleryitemlist.html#propertyAttributes"/>
             <keyword name="propertyKey" id="QGalleryItemList::propertyKey" ref="qgalleryitemlist.html#propertyKey"/>
             <keyword name="propertyNames" id="QGalleryItemList::propertyNames" ref="qgalleryitemlist.html#propertyNames"/>
             <keyword name="removed" id="QGalleryItemList::removed" ref="qgalleryitemlist.html#removed"/>
             <keyword name="resources" id="QGalleryItemList::resources" ref="qgalleryitemlist.html#resources"/>
             <keyword name="setCursorPosition" id="QGalleryItemList::setCursorPosition" ref="qgalleryitemlist.html#cursorPosition-prop"/>
             <keyword name="setMetaData" id="QGalleryItemList::setMetaData" ref="qgalleryitemlist.html#setMetaData"/>
+            <keyword name="status" id="QGalleryItemList::status" ref="qgalleryitemlist.html#status"/>
             <keyword name="type" id="QGalleryItemList::type" ref="qgalleryitemlist.html#type"/>
             <keyword name="url" id="QGalleryItemList::url" ref="qgalleryitemlist.html#url"/>
             <keyword name="~QGalleryItemList" id="QGalleryItemList::~QGalleryItemList" ref="qgalleryitemlist.html#dtor.QGalleryItemList"/>
             <keyword name="QGalleryItemRequest" id="QGalleryItemRequest" ref="qgalleryitemrequest.html"/>
-            <keyword name="containerId" id="QGalleryItemRequest::containerId" ref="qgalleryitemrequest.html#containerId-prop"/>
-            <keyword name="containerIdChanged" id="QGalleryItemRequest::containerIdChanged" ref="qgalleryitemrequest.html#containerIdChanged"/>
-            <keyword name="containerUrl" id="QGalleryItemRequest::containerUrl" ref="qgalleryitemrequest.html#containerUrl-prop"/>
-            <keyword name="containerUrlChanged" id="QGalleryItemRequest::containerUrlChanged" ref="qgalleryitemrequest.html#containerUrlChanged"/>
-            <keyword name="filter" id="QGalleryItemRequest::filter" ref="qgalleryitemrequest.html#filter-prop"/>
-            <keyword name="filterChanged" id="QGalleryItemRequest::filterChanged" ref="qgalleryitemrequest.html#filterChanged"/>
-            <keyword name="initialCursorPosition" id="QGalleryItemRequest::initialCursorPosition" ref="qgalleryitemrequest.html#initialCursorPosition-prop"/>
             <keyword name="isLive" id="QGalleryItemRequest::isLive" ref="qgalleryitemrequest.html#live-prop"/>
+            <keyword name="item" id="QGalleryItemRequest::item" ref="qgalleryitemrequest.html#item-prop"/>
+            <keyword name="itemChanged" id="QGalleryItemRequest::itemChanged" ref="qgalleryitemrequest.html#itemChanged"/>
             <keyword name="itemId" id="QGalleryItemRequest::itemId" ref="qgalleryitemrequest.html#itemId-prop"/>
-            <keyword name="itemIds" id="QGalleryItemRequest::itemIds" ref="qgalleryitemrequest.html#itemIds-prop"/>
-            <keyword name="itemIdsChanged" id="QGalleryItemRequest::itemIdsChanged" ref="qgalleryitemrequest.html#itemIdsChanged"/>
-            <keyword name="itemType" id="QGalleryItemRequest::itemType" ref="qgalleryitemrequest.html#itemType-prop"/>
-            <keyword name="itemUrl" id="QGalleryItemRequest::itemUrl" ref="qgalleryitemrequest.html#itemUrl-prop"/>
-            <keyword name="itemUrls" id="QGalleryItemRequest::itemUrls" ref="qgalleryitemrequest.html#itemUrls-prop"/>
-            <keyword name="itemUrlsChanged" id="QGalleryItemRequest::itemUrlsChanged" ref="qgalleryitemrequest.html#itemUrlsChanged"/>
-            <keyword name="items" id="QGalleryItemRequest::items" ref="qgalleryitemrequest.html#items-prop"/>
-            <keyword name="itemsChanged" id="QGalleryItemRequest::itemsChanged" ref="qgalleryitemrequest.html#itemsChanged"/>
             <keyword name="live" id="QGalleryItemRequest::live" ref="qgalleryitemrequest.html#live-prop"/>
-            <keyword name="minimumPagedItems" id="QGalleryItemRequest::minimumPagedItems" ref="qgalleryitemrequest.html#minimumPagedItems-prop"/>
             <keyword name="propertyNames" id="QGalleryItemRequest::propertyNames" ref="qgalleryitemrequest.html#propertyNames-prop"/>
-            <keyword name="setContainerId" id="QGalleryItemRequest::setContainerId" ref="qgalleryitemrequest.html#containerId-prop"/>
-            <keyword name="setContainerUrl" id="QGalleryItemRequest::setContainerUrl" ref="qgalleryitemrequest.html#containerUrl-prop"/>
-            <keyword name="setFilter" id="QGalleryItemRequest::setFilter" ref="qgalleryitemrequest.html#filter-prop"/>
-            <keyword name="setInitialCursorPosition" id="QGalleryItemRequest::setInitialCursorPosition" ref="qgalleryitemrequest.html#initialCursorPosition-prop"/>
             <keyword name="setItemId" id="QGalleryItemRequest::setItemId" ref="qgalleryitemrequest.html#itemId-prop"/>
-            <keyword name="setItemIds" id="QGalleryItemRequest::setItemIds" ref="qgalleryitemrequest.html#itemIds-prop"/>
-            <keyword name="setItemType" id="QGalleryItemRequest::setItemType" ref="qgalleryitemrequest.html#itemType-prop"/>
-            <keyword name="setItemUrl" id="QGalleryItemRequest::setItemUrl" ref="qgalleryitemrequest.html#itemUrl-prop"/>
-            <keyword name="setItemUrls" id="QGalleryItemRequest::setItemUrls" ref="qgalleryitemrequest.html#itemUrls-prop"/>
             <keyword name="setLive" id="QGalleryItemRequest::setLive" ref="qgalleryitemrequest.html#live-prop"/>
-            <keyword name="setMinimumPagedItems" id="QGalleryItemRequest::setMinimumPagedItems" ref="qgalleryitemrequest.html#minimumPagedItems-prop"/>
             <keyword name="setPropertyNames" id="QGalleryItemRequest::setPropertyNames" ref="qgalleryitemrequest.html#propertyNames-prop"/>
             <keyword name="setResponse" id="QGalleryItemRequest::setResponse" ref="qgalleryitemrequest.html#setResponse"/>
-            <keyword name="setSortPropertyNames" id="QGalleryItemRequest::setSortPropertyNames" ref="qgalleryitemrequest.html#sortPropertyNames-prop"/>
-            <keyword name="sortPropertyNames" id="QGalleryItemRequest::sortPropertyNames" ref="qgalleryitemrequest.html#sortPropertyNames-prop"/>
             <keyword name="~QGalleryItemRequest" id="QGalleryItemRequest::~QGalleryItemRequest" ref="qgalleryitemrequest.html#dtor.QGalleryItemRequest"/>
-            <keyword name="QGalleryItemUrlFilter" id="QGalleryItemUrlFilter" ref="qgalleryitemurlfilter.html"/>
-            <keyword name="itemUrl" id="QGalleryItemUrlFilter::itemUrl" ref="qgalleryitemurlfilter.html#itemUrl"/>
-            <keyword name="itemUrls" id="QGalleryItemUrlFilter::itemUrls" ref="qgalleryitemurlfilter.html#itemUrls"/>
-            <keyword name="operator=" id="QGalleryItemUrlFilter::operator=" ref="qgalleryitemurlfilter.html#operator-eq"/>
-            <keyword name="setItemUrl" id="QGalleryItemUrlFilter::setItemUrl" ref="qgalleryitemurlfilter.html#setItemUrl"/>
-            <keyword name="setItemUrls" id="QGalleryItemUrlFilter::setItemUrls" ref="qgalleryitemurlfilter.html#setItemUrls"/>
-            <keyword name="~QGalleryItemUrlFilter" id="QGalleryItemUrlFilter::~QGalleryItemUrlFilter" ref="qgalleryitemurlfilter.html#dtor.QGalleryItemUrlFilter"/>
             <keyword name="QGalleryMetaDataFilter" id="QGalleryMetaDataFilter" ref="qgallerymetadatafilter.html"/>
             <keyword name="fieldName" id="QGalleryMetaDataFilter::fieldName" ref="qgallerymetadatafilter.html#fieldName"/>
             <keyword name="matchFlags" id="QGalleryMetaDataFilter::matchFlags" ref="qgallerymetadatafilter.html#matchFlags"/>
@@ -1921,6 +1891,11 @@
             <keyword name="setResponse" id="QGalleryMoveRequest::setResponse" ref="qgallerymoverequest.html#setResponse"/>
             <keyword name="~QGalleryMoveRequest" id="QGalleryMoveRequest::~QGalleryMoveRequest" ref="qgallerymoverequest.html#dtor.QGalleryMoveRequest"/>
             <keyword name="QGalleryProperty" id="QGalleryProperty" ref="qgalleryproperty.html"/>
+            <keyword name="QGalleryProperty::Attribute" id="QGalleryProperty::Attribute" ref="qgalleryproperty.html#Attribute-enum"/>
+            <keyword name="QGalleryProperty::CanRead" id="QGalleryProperty::CanRead" ref="qgalleryproperty.html#Attribute-enum"/>
+            <keyword name="QGalleryProperty::CanWrite" id="QGalleryProperty::CanWrite" ref="qgalleryproperty.html#Attribute-enum"/>
+            <keyword name="QGalleryProperty::CanSort" id="QGalleryProperty::CanSort" ref="qgalleryproperty.html#Attribute-enum"/>
+            <keyword name="QGalleryProperty::Attributes" id="QGalleryProperty::Attributes" ref="qgalleryproperty.html#Attribute-enum"/>
             <keyword name="ascending" id="QGalleryProperty::ascending" ref="qgalleryproperty.html#ascending"/>
             <keyword name="descending" id="QGalleryProperty::descending" ref="qgalleryproperty.html#descending"/>
             <keyword name="isInRange" id="QGalleryProperty::isInRange" ref="qgalleryproperty.html#isInRange"/>
@@ -1966,6 +1941,20 @@
             <keyword name="removeAt" id="QGalleryUnionFilter::removeAt" ref="qgalleryunionfilter.html#removeAt"/>
             <keyword name="replace" id="QGalleryUnionFilter::replace" ref="qgalleryunionfilter.html#replace"/>
             <keyword name="~QGalleryUnionFilter" id="QGalleryUnionFilter::~QGalleryUnionFilter" ref="qgalleryunionfilter.html#dtor.QGalleryUnionFilter"/>
+            <keyword name="QGalleryUrlRequest" id="QGalleryUrlRequest" ref="qgalleryurlrequest.html"/>
+            <keyword name="create" id="QGalleryUrlRequest::create" ref="qgalleryurlrequest.html#create-prop"/>
+            <keyword name="isLive" id="QGalleryUrlRequest::isLive" ref="qgalleryurlrequest.html#live-prop"/>
+            <keyword name="item" id="QGalleryUrlRequest::item" ref="qgalleryurlrequest.html#item-prop"/>
+            <keyword name="itemChanged" id="QGalleryUrlRequest::itemChanged" ref="qgalleryurlrequest.html#itemChanged"/>
+            <keyword name="itemUrl" id="QGalleryUrlRequest::itemUrl" ref="qgalleryurlrequest.html#itemUrl-prop"/>
+            <keyword name="live" id="QGalleryUrlRequest::live" ref="qgalleryurlrequest.html#live-prop"/>
+            <keyword name="propertyNames" id="QGalleryUrlRequest::propertyNames" ref="qgalleryurlrequest.html#propertyNames-prop"/>
+            <keyword name="setCreate" id="QGalleryUrlRequest::setCreate" ref="qgalleryurlrequest.html#create-prop"/>
+            <keyword name="setItemUrl" id="QGalleryUrlRequest::setItemUrl" ref="qgalleryurlrequest.html#itemUrl-prop"/>
+            <keyword name="setLive" id="QGalleryUrlRequest::setLive" ref="qgalleryurlrequest.html#live-prop"/>
+            <keyword name="setPropertyNames" id="QGalleryUrlRequest::setPropertyNames" ref="qgalleryurlrequest.html#propertyNames-prop"/>
+            <keyword name="setResponse" id="QGalleryUrlRequest::setResponse" ref="qgalleryurlrequest.html#setResponse"/>
+            <keyword name="~QGalleryUrlRequest" id="QGalleryUrlRequest::~QGalleryUrlRequest" ref="qgalleryurlrequest.html#dtor.QGalleryUrlRequest"/>
             <keyword name="QGeoAreaMonitor" id="QGeoAreaMonitor" ref="qgeoareamonitor.html"/>
             <keyword name="areaEntered" id="QGeoAreaMonitor::areaEntered" ref="qgeoareamonitor.html#areaEntered"/>
             <keyword name="areaExited" id="QGeoAreaMonitor::areaExited" ref="qgeoareamonitor.html#areaExited"/>
@@ -3875,7 +3864,6 @@
             <file>qaccelerometerreading.html</file>
             <file>qmessageaddress-members.html</file>
             <file>logfilepositionsource-clientapplication-cpp.html</file>
-            <file>qgalleryitemurlfilter.html</file>
             <file>qgallerycountrequest.html</file>
             <file>qradiotunercontrol.html</file>
             <file>qproximityfilter-members.html</file>
@@ -3888,6 +3876,7 @@
             <file>qmessagefolder-members.html</file>
             <file>qmessageaccountfilter-members.html</file>
             <file>contactsschema.html</file>
+            <file>qgallerycontainerrequest.html</file>
             <file>qgeocoordinate-members.html</file>
             <file>qsensorplugininterface.html</file>
             <file>qvideodevicecontrol.html</file>
@@ -3906,6 +3895,8 @@
             <file>qcontactabstractrequest-members.html</file>
             <file>battery-charge-battery-publisher-battery-publisher-pro.html</file>
             <file>serviceactions-mainwindow-cpp.html</file>
+            <file>documentshare.html</file>
+            <file>documentmanager-manager-h.html</file>
             <file>weatherinfo.html</file>
             <file>qproximitysensor-members.html</file>
             <file>lightmaps.html</file>
@@ -3931,6 +3922,7 @@
             <file>qcontactphonenumber.html</file>
             <file>qmediaplayer-members.html</file>
             <file>samplephonebook-phonebook-h.html</file>
+            <file>documentshare-sharewidget-h.html</file>
             <file>qmediaservicefeaturesinterface.html</file>
             <file>qmediaserviceproviderhint-members.html</file>
             <file>slideshow-slideshow-cpp.html</file>
@@ -4018,12 +4010,13 @@
             <file>qmediaplayercontrol-members.html</file>
             <file>qorientationreading.html</file>
             <file>qmessage-members.html</file>
+            <file>qgalleryfilterrequest.html</file>
             <file>qcontactemailaddress-members.html</file>
             <file>weatherinfo-icons-weather-showers-svg.html</file>
             <file>qcontactactionfactory-members.html</file>
             <file>qmediarecordercontrol-members.html</file>
-            <file>qgallerycontainerurlfilter.html</file>
             <file>qcontactorganization.html</file>
+            <file>documentmanager-gallerymodel-cpp.html</file>
             <file>qvideoencodercontrol.html</file>
             <file>flickrdemo-flickrdemo-cpp.html</file>
             <file>qcompass.html</file>
@@ -4051,6 +4044,7 @@
             <file>qgalleryabstractrequest-members.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
             <file>qmlcontacts-qmlcontacts-cpp.html</file>
+            <file>documentmanager-main-cpp.html</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>filemanagerplugin-filemanagertransfer-h.html</file>
             <file>images/slideshow-img1.png</file>
@@ -4064,21 +4058,22 @@
             <file>bearercloud-bearercloud-pro.html</file>
             <file>qgalleryabstractrequest.html</file>
             <file>serviceactions.html</file>
-            <file>qgalleryitemurlfilter-members.html</file>
             <file>querymessages.html</file>
             <file>service-framework-on-symbian.html</file>
             <file>qcontactchangelogfilter-members.html</file>
             <file>qmediacontent.html</file>
             <file>qmediacontrol-members.html</file>
             <file>qmediaservicesupporteddevicesinterface.html</file>
-            <file>qcontactmanagerenginefactory-members.html</file>
             <file>qcontactgeolocation.html</file>
             <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>annotated.html</file>
+            <file>qcontactmanagerenginefactory-members.html</file>
+            <file>documentmanager-manager-cpp.html</file>
             <file>qnetworksession-members.html</file>
             <file>qtapsensor-members.html</file>
             <file>qcontactrelationshipsaverequest.html</file>
             <file>qversitresourcehandler-members.html</file>
+            <file>mediabrowser-main-cpp.html</file>
             <file>qvideowindowcontrol.html</file>
             <file>images/sensors-overview.png</file>
             <file>qsensorreading.html</file>
@@ -4097,12 +4092,13 @@
             <file>qmetadatacontrol.html</file>
             <file>qgraphicsvideoitem.html</file>
             <file>preview.html</file>
+            <file>mediabrowser-artistdelegate-h.html</file>
             <file>samplephonebook-contactlistpage-cpp.html</file>
             <file>qdocumentgallery.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qcontactpresence.html</file>
+            <file>documentshare-download-h.html</file>
             <file>images/axes.png</file>
-            <file>qgalleryinsertrequest-members.html</file>
             <file>qvideowidget-members.html</file>
             <file>qcompassreading-members.html</file>
             <file>qimageencodercontrol-members.html</file>
@@ -4121,7 +4117,6 @@
             <file>qgalleryproperty-members.html</file>
             <file>qabstractsecuritysession.html</file>
             <file>qcontactaddress.html</file>
-            <file>qgalleryitemfilter-members.html</file>
             <file>player-main-cpp.html</file>
             <file>qgalleryresource-members.html</file>
             <file>qmediaplaylistioplugin.html</file>
@@ -4152,7 +4147,7 @@
             <file>bearercloud-main-cpp.html</file>
             <file>qcontactintersectionfilter-members.html</file>
             <file>qsystemdeviceinfo.html</file>
-            <file>qgalleryitemfilter.html</file>
+            <file>mediabrowser-browser-h.html</file>
             <file>qcontactdetail-members.html</file>
             <file>samplephonebook-filterpage-cpp.html</file>
             <file>qcontactfamily-members.html</file>
@@ -4162,19 +4157,23 @@
             <file>qmediaplaylistioplugin-members.html</file>
             <file>bearermonitor.html</file>
             <file>qcontact-members.html</file>
+            <file>qgalleryurlrequest.html</file>
             <file>keepintouch.html</file>
             <file>qgallerytype-members.html</file>
             <file>qgeocoordinate.html</file>
             <file>qcontactnote-members.html</file>
             <file>qcontactactionfactory.html</file>
             <file>qcontactdetaildefinition-members.html</file>
-            <file>qcontactlocalidfetchrequest-members.html</file>
+            <file>documentmanager-documentmanager-pro.html</file>
             <file>qmessageid.html</file>
+            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qsensorreading-members.html</file>
             <file>samplephonebook-filterpage-h.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
             <file>qimageencodersettings-members.html</file>
             <file>qsensorbackend.html</file>
+            <file>documentshare-sharewidget-cpp.html</file>
+            <file>documentmanager-gallerymodel-h.html</file>
             <file>qmlcontacts.html</file>
             <file>qcontactbirthday.html</file>
             <file>qmessageaccountsortorder.html</file>
@@ -4185,6 +4184,7 @@
             <file>qsensorplugininterface-members.html</file>
             <file>qcontactchangeset.html</file>
             <file>images/keepintouch-example.png</file>
+            <file>mediabrowser-albumdelegate-cpp.html</file>
             <file>qcontactdetailfilter-members.html</file>
             <file>qmediaplaylistwriter-members.html</file>
             <file>weatherinfo-weatherinfo-cpp.html</file>
@@ -4205,16 +4205,18 @@
             <file>fetchgooglemaps-mapwindow-cpp.html</file>
             <file>qmessagefolderfilter.html</file>
             <file>images/bearercloud-example.png</file>
-            <file>qcontactname-members.html</file>
             <file>qaudioendpointselector-members.html</file>
+            <file>qcontactname-members.html</file>
             <file>weatherinfo-weatherinfo-pro.html</file>
             <file>systeminfo.html</file>
             <file>quickstart-main-cpp.html</file>
+            <file>mediabrowser-galleryview-h.html</file>
             <file>qcontactrelationshipfetchrequest.html</file>
             <file>qmediaobject.html</file>
             <file>qgallerytype.html</file>
             <file>filemanagerplugin-filemanagertransfer-cpp.html</file>
             <file>player-mediakeysobserver-h.html</file>
+            <file>documentshare-documentshare-pro.html</file>
             <file>qgeoareamonitor-members.html</file>
             <file>qmediatimerange-members.html</file>
             <file>contactsasync.html</file>
@@ -4228,7 +4230,6 @@
             <file>qserviceinterfacedescriptor.html</file>
             <file>index.html</file>
             <file>bearercloud.html</file>
-            <file>qgalleryinsertrequest.html</file>
             <file>publish-subscribe-main-cpp.html</file>
             <file>bearercloud-bearercloud-h.html</file>
             <file>qabstractsecuritysession-members.html</file>
@@ -4242,6 +4243,7 @@
             <file>qcontactdetailfielddefinition-members.html</file>
             <file>servicefw.html</file>
             <file>qmediaplayercontrol.html</file>
+            <file>gallery-examples.html</file>
             <file>qcontactdetaildefinitionsaverequest-members.html</file>
             <file>qcontactfilter.html</file>
             <file>qgalleryremoverequest.html</file>
@@ -4259,9 +4261,11 @@
             <file>qorientationreading-members.html</file>
             <file>qgalleryitemrequest-members.html</file>
             <file>qimageencodersettings.html</file>
+            <file>mediabrowser-albumview-cpp.html</file>
             <file>qmediastreamscontrol-members.html</file>
             <file>qmessagefolder.html</file>
             <file>qgeosatelliteinfo.html</file>
+            <file>mediabrowser-artistview-cpp.html</file>
             <file>qcontactfetchrequest.html</file>
             <file>qradiotuner-members.html</file>
             <file>qversitreader-members.html</file>
@@ -4281,6 +4285,7 @@
             <file>servicebrowser-main-cpp.html</file>
             <file>images/lightmaps-oslo.png</file>
             <file>images/weatherinfo-bris.png</file>
+            <file>documentshare-main-cpp.html</file>
             <file>publish-subscribe-publish-subscribe-pro.html</file>
             <file>qmediaservice-members.html</file>
             <file>qabstractgallery.html</file>
@@ -4288,6 +4293,7 @@
             <file>qcontacttag.html</file>
             <file>qcontactaction-members.html</file>
             <file>qcontactglobalpresence-members.html</file>
+            <file>mediabrowser-galleryview-cpp.html</file>
             <file>qdocumentgallery-members.html</file>
             <file>battery-charge-battery-publisher-batterypublisher-h.html</file>
             <file>qcontacttype.html</file>
@@ -4300,17 +4306,21 @@
             <file>qmagnetometerreading-members.html</file>
             <file>functions.html</file>
             <file>mobility.html</file>
+            <file>mediabrowser.html</file>
             <file>qcontactdetaildefinitionremoverequest.html</file>
             <file>qmediarecorder.html</file>
+            <file>qgalleryfilterrequest-members.html</file>
             <file>bearercloud-bearercloud-cpp.html</file>
             <file>sysinfo-dialog-cpp.html</file>
             <file>qcontactunionfilter.html</file>
             <file>images/publish-subscribe-subscriber.png</file>
             <file>qversitcontactimporterpropertyhandler-members.html</file>
             <file>qvideowidgetcontrol-members.html</file>
-            <file>qcontactmanagerengine-members.html</file>
             <file>bearermonitor-bearermonitor-pro.html</file>
+            <file>qcontactmanagerengine-members.html</file>
+            <file>mediabrowser-artistview-h.html</file>
             <file>qvideorenderercontrol.html</file>
+            <file>qgalleryurlrequest-members.html</file>
             <file>images/DialerServiceUML.png</file>
             <file>qgallerymetadatarangefilter.html</file>
             <file>bearer.html</file>
@@ -4330,6 +4340,7 @@
             <file>bearermonitor-bearermonitor-h.html</file>
             <file>qvideooutputcontrol-members.html</file>
             <file>qservicefilter.html</file>
+            <file>mediabrowser-songview-cpp.html</file>
             <file>versit.html</file>
             <file>qvaluespace.html</file>
             <file>bearermonitor-sessionwidget-cpp.html</file>
@@ -4349,9 +4360,10 @@
             <file>qcontactinvalidengine.html</file>
             <file>qmediaplayer.html</file>
             <file>qgallerymetadatarangefilter-members.html</file>
+            <file>mediabrowser-albumdelegate-h.html</file>
             <file>qambientlightfilter-members.html</file>
-            <file>qcontactphonenumber-members.html</file>
             <file>qgeoareamonitor.html</file>
+            <file>qcontactphonenumber-members.html</file>
             <file>qmediatimeinterval.html</file>
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
@@ -4359,7 +4371,6 @@
             <file>qaccelerometerfilter-members.html</file>
             <file>slideshow-main-cpp.html</file>
             <file>qmediaplaylistprovider.html</file>
-            <file>qgallerycontainerfilter-members.html</file>
             <file>qorientationsensor.html</file>
             <file>qcompass-members.html</file>
             <file>qmlcontacts-contents-default-svg.html</file>
@@ -4373,12 +4384,13 @@
             <file>qcontactemailaddress.html</file>
             <file>qsystemdeviceinfo-members.html</file>
             <file>weatherinfo-weatherinfo-qrc.html</file>
-            <file>qcontactdetaildefinitionremoverequest-members.html</file>
             <file>lightmaps-lightmaps-cpp.html</file>
+            <file>qcontactdetaildefinitionremoverequest-members.html</file>
             <file>qgalleryintersectionfilter-members.html</file>
             <file>qserviceplugininterface.html</file>
             <file>qambientlightsensor-members.html</file>
             <file>weatherinfo-icons-weather-few-clouds-svg.html</file>
+            <file>documentmanager.html</file>
             <file>qvideowidget.html</file>
             <file>publish-subscribe-publisherdialog-h.html</file>
             <file>bearercloud-cloud-cpp.html</file>
@@ -4387,7 +4399,6 @@
             <file>qcontactrelationshipremoverequest.html</file>
             <file>qaudioencodersettings-members.html</file>
             <file>qserviceinterfacedescriptor-members.html</file>
-            <file>qgallerycontainerfilter.html</file>
             <file>qmediatimerange.html</file>
             <file>servicebrowser.html</file>
             <file>samplephonebook-samplephonebook-pro.html</file>
@@ -4402,6 +4413,7 @@
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
             <file>quickstart.html</file>
+            <file>mediabrowser-artistdelegate-cpp.html</file>
             <file>samplephonebook-phonebook-cpp.html</file>
             <file>qgraphicsvideoitem-members.html</file>
             <file>player-player-h.html</file>
@@ -4418,9 +4430,9 @@
             <file>radio-radio-cpp.html</file>
             <file>qsensorbackendfactory.html</file>
             <file>qnetworkconfiguration-members.html</file>
-            <file>qcontactgender-members.html</file>
             <file>flickrdemo.html</file>
             <file>qaccelerometer.html</file>
+            <file>qcontactgender-members.html</file>
             <file>player-playlistmodel-cpp.html</file>
             <file>qsensor-members.html</file>
             <file>qmediaservicesupporteddevicesinterface-members.html</file>
@@ -4432,6 +4444,7 @@
             <file>qgalleryresource.html</file>
             <file>qcontactid-members.html</file>
             <file>qvaluespacesubscriber.html</file>
+            <file>mediabrowser-songview-h.html</file>
             <file>qcontactlocalidfetchrequest.html</file>
             <file>qrotationsensor.html</file>
             <file>qcontactinvalidengine-members.html</file>
@@ -4440,11 +4453,13 @@
             <file>images/Rotation_angles.png</file>
             <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
+            <file>mediabrowser-gallerymodel-h.html</file>
             <file>qmessagecontentcontainer-members.html</file>
             <file>qversitwriter-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransfer-h.html</file>
             <file>qmessagecontentcontainerid.html</file>
             <file>filemanagerplugin-filemanagerplugin-cpp.html</file>
+            <file>mediabrowser-browser-cpp.html</file>
             <file>qmessagefilter.html</file>
             <file>qgalleryfilter.html</file>
             <file>gallery.html</file>
@@ -4456,8 +4471,8 @@
             <file>editions.html</file>
             <file>samplephonebook-contactlistpage-h.html</file>
             <file>qaudioencodercontrol-members.html</file>
+            <file>documentshare-download-cpp.html</file>
             <file>qmediaplaylistwriter.html</file>
-            <file>qgallerycontainerurlfilter-members.html</file>
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
             <file>gallery-galleries.html</file>
@@ -4474,6 +4489,7 @@
             <file>qmlcontacts-qmlcontacts-pro.html</file>
             <file>qrotationsensor-members.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
+            <file>mediabrowser-gallerymodel-cpp.html</file>
             <file>qmediaplaylist-members.html</file>
             <file>qcontactfetchhint-members.html</file>
             <file>multimedia.html</file>
@@ -4512,14 +4528,17 @@
             <file>images/battery-subscriber.png</file>
             <file>qmessageservice.html</file>
             <file>qcontactfetchrequest-members.html</file>
+            <file>mediabrowser-albumview-h.html</file>
             <file>qnmeapositioninfosource-members.html</file>
             <file>qcontactglobalpresence.html</file>
+            <file>qgallerycontainerrequest-members.html</file>
             <file>qmediaimageviewer.html</file>
             <file>qrotationreading-members.html</file>
             <file>qaudiocapturesource-members.html</file>
             <file>qgallerycopyrequest.html</file>
             <file>contactssync.html</file>
             <file>qcontactlocalidfilter.html</file>
+            <file>mediabrowser-mediabrowser-pro.html</file>
             <file>qmediaplaylist.html</file>
             <file>service-frameworks.html</file>
             <file>qcompassfilter.html</file>

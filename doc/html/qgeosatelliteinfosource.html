@@ -62,18 +62,21 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoSatelliteInfoSource class is an abstract base class for the distribution of satellite information updates.</p>
 <p>The static function <a href="qgeosatelliteinfosource.html#createDefaultSource">QGeoSatelliteInfoSource::createDefaultSource</a>() creates a default satellite data source that is appropriate for the platform, if one is available. Otherwise, QGeoSatelliteInfoSource can be subclassed to create an appropriate custom source of satellite data.</p>
 <p>Call <a href="qgeosatelliteinfosource.html#startUpdates">startUpdates</a>() and <a href="qgeosatelliteinfosource.html#stopUpdates">stopUpdates</a>() to start and stop regular updates, or <a href="qgeosatelliteinfosource.html#requestUpdate">requestUpdate</a>() to request a single update. When an update is available, <a href="qgeosatelliteinfosource.html#satellitesInViewUpdated">satellitesInViewUpdated</a>() and/or <a href="qgeosatelliteinfosource.html#satellitesInUseUpdated">satellitesInUseUpdated</a>() will be emitted.</p>
 <p><b>Warning:</b> On Windows CE it is not possible to detect if a device is GPS enabled. The default satellite source on a Windows CE device without GPS support will never provide any satellite data.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoSatelliteInfoSource/QGeoSatelliteInfoSource"></a>
 <h3 class="fn"><a name="QGeoSatelliteInfoSource"></a>QGeoSatelliteInfoSource::QGeoSatelliteInfoSource ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> )</h3>
@@ -106,6 +109,7 @@
 <a name="//apple_ref/cpp/instm/QGeoSatelliteInfoSource/stopUpdates"></a>
 <h3 class="fn"><a name="stopUpdates"></a>void QGeoSatelliteInfoSource::stopUpdates ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Stops emitting updates at regular intervals.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

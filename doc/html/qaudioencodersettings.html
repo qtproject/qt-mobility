@@ -45,6 +45,7 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAudioEncoderSettings class provides a set of audio encoder settings.</p>
 <p>A audio encoder settings object is used to specify the audio encoder settings used by <a href="qmediarecorder.html">QMediaRecorder</a>. Audio encoder settings are selected by constructing a QAudioEncoderSettings object, setting the desired properties and then passing it to a <a href="qmediarecorder.html">QMediaRecorder</a> instance using the <a href="qmediarecorder.html#setEncodingSettings">QMediaRecorder::setEncodingSettings</a>() function.</p>
@@ -53,8 +54,10 @@
     audioSettings.setChannelCount(2);
 
     recorder-&gt;setEncodingSettings(audioSettings);</pre>
+</div>
 <p>See also <a href="qmediarecorder.html">QMediaRecorder</a> and <a href="qaudioencodercontrol.html">QAudioEncoderControl</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QAudioEncoderSettings/QAudioEncoderSettings"></a>
 <h3 class="fn"><a name="QAudioEncoderSettings"></a>QAudioEncoderSettings::QAudioEncoderSettings ()</h3>
@@ -133,6 +136,7 @@
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QAudioEncoderSettings::operator== ( const QAudioEncoderSettings &amp; <i>other</i> ) const</h3>
 <p>Determines if <i>other</i> is of equal value to an audio encoder settings object.</p>
 <p>Returns true if the settings objects are of equal value, and true if they are not of equal value.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

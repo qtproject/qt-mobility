@@ -81,13 +81,14 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QNetworkSession class provides control over the system's access points and enables session management for cases when multiple clients access the same access point.</p>
 <p>A QNetworkSession enables control over the system's network interfaces. The session's configuration parameter are determined via the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object to which it is bound. Depending on the type of the session (single access point or service network) a session may be linked to one or more network interfaces. By means of <a href="qnetworksession.html#open">opening</a> and <a href="qnetworksession.html#close">closing</a> of network sessions a developer can start and stop the systems network interfaces. If the configuration represents multiple access points (see <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a>) more advanced features such as roaming may be supported.</p>
@@ -98,8 +99,10 @@
 <p align="center"><img src="images/roaming-states.png" /></p><p>Some platforms may distinguish forced roaming and application level roaming (ALR). ALR implies that the application controls (via <a href="qnetworksession.html#migrate">migrate</a>(), <a href="qnetworksession.html#ignore">ignore</a>(), <a href="qnetworksession.html#accept">accept</a>() and <a href="qnetworksession.html#reject">reject</a>()) whether a network session can roam from one access point to the next. Such control is useful if the application maintains stateful socket connections and wants to control the transition from one interface to the next. Forced roaming implies that the system automatically roams to the next network without consulting the application. This has the advantage that the application can make use of roaming features without actually being aware of it. It is expected that the application detects that the underlying socket is broken and automatically reconnects via the new network link.</p>
 <p>If the platform supports both modes of roaming, an application indicates its preference by connecting to the <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>() signal. Connecting to this signal means that the application wants to take control over the roaming behavior and therefore implies application level roaming. If the client does not connect to the <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>(), forced roaming is used. If forced roaming is not supported the network session will not roam by default.</p>
 <p>Some applications may want to suppress any form of roaming altogether. Possible use cases may be high priority downloads or remote services which cannot handle a roaming enabled client. Clients can suppress roaming by connecting to the <a href="qnetworksession.html#preferredConfigurationChanged">preferredConfigurationChanged</a>() signal and answer each signal emission with <a href="qnetworksession.html#ignore">ignore</a>().</p>
+</div>
 <p>See also <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> and <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QNetworkSession/SessionError"></a>
 <a name="//apple_ref/cpp/econst/QNetworkSession/UnknownSessionError"></a>
@@ -137,7 +140,9 @@
 <tr><td valign="top"><tt>QNetworkSession::Disconnected</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The network session is not connected. The associated <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> has the state <a href="qnetworkconfiguration.html#StateFlag-enum">QNetworkConfiguration::Discovered</a>.</td></tr>
 <tr><td valign="top"><tt>QNetworkSession::Roaming</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The network session is roaming from one access point to another access point.</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QNetworkSession/QNetworkSession"></a>
 <h3 class="fn"><a name="QNetworkSession"></a>QNetworkSession::QNetworkSession ( const <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> &amp; <i>connectionConfig</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -291,6 +296,7 @@
         qDebug(&quot;Open!&quot;);</pre>
 <p>If <i>msecs</i> is -1, this function will not time out.</p>
 <p>See also <a href="qnetworksession.html#open">open</a>() and <a href="qnetworksession.html#error">error</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

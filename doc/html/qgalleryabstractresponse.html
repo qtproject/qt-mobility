@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qgalleryrequest.cpp -->
+<!-- qgalleryabstractresponse.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QGalleryAbstractResponse Class Reference</title>
 <meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -31,7 +31,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qgalleryabstractresponse.html#waitForFinished">waitForFinished</a></b> ( int <i>msecs</i> ) = 0</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>14 public functions inherited from <a href="qgalleryitemlist.html#public-functions">QGalleryItemList</a></li>
+<li><div bar="2" class="fn"></div>15 public functions inherited from <a href="qgalleryitemlist.html#public-functions">QGalleryItemList</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
@@ -60,15 +60,18 @@
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="qgalleryitemlist.html#public-slots">QGalleryItemList</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGalleryAbstractResponse class provides a base class for responses to gallery requests.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGalleryAbstractResponse/QGalleryAbstractResponse"></a>
 <h3 class="fn"><a name="QGalleryAbstractResponse"></a>QGalleryAbstractResponse::QGalleryAbstractResponse ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -102,6 +105,7 @@
 <h3 class="fn"><a name="waitForFinished"></a>bool QGalleryAbstractResponse::waitForFinished ( int <i>msecs</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Waits for <i>msecs</i> for the a response to finish.</p>
 <p>Returns true if the response has finished on return, and returns false if the wait time expires or the request is inactive or idle.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

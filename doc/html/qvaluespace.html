@@ -35,9 +35,12 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QValueSpace namespace contains miscellaneous identifiers used throughtout the Publish and Subscribe API.</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QValueSpace/LayerOption"></a>
 <a name="//apple_ref/cpp/econst/QValueSpace/UnspecifiedLayer"></a>
@@ -57,7 +60,9 @@
 <tr><td valign="top"><tt>QValueSpace::ReadOnlyLayer</tt></td><td align="center" valign="top"><tt>0x0008</tt></td><td valign="top">Indicates that the layer cannot update its contents. When used as a filter only layers that are read-only will be used. <br/> Applications can not publish values to layers with this option. <br/> This option and the WritableLayer option are mutually exclusive.</td></tr>
 </table></p>
 <p>The LayerOptions type is a typedef for <a href="qflags.html">QFlags</a>&lt;LayerOption&gt;. It stores an OR combination of LayerOption values.</p>
+</div>
 <hr />
+<div class="macros"/>
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//QVALUESPACE_CONTEXTKIT_LAYER"></a>
 <h3 class="fn"><a name="QVALUESPACE_CONTEXTKIT_LAYER"></a>QVALUESPACE_CONTEXTKIT_LAYER</h3>
@@ -84,6 +89,7 @@
 <p>The UUID of the Volatile Registry layer as a <a href="http://qt.nokia.com/doc/4.6/quuid.html">QUuid</a>. The actual UUID value is {8ceb5811-4968-470f-8fc2-264767e0bbd9}.</p>
 <p>This value can be passed to the constructor of <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> or <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> to force the constructed object to only access the Volatile Registry layer.</p>
 <p>You can test if the Volatile Registry layer is available by checking if the list returned by QValueSpace::availableLayers() contains this value. The Volatile Registry layer is only available on Windows platforms.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
