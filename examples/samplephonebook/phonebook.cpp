@@ -89,7 +89,7 @@ void PhoneBook::activateEditor(QContactLocalId contactId)
 
 void PhoneBook::activateList(const QContactFilter& filter)
 {
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
     menuBar()->setVisible(true);
 #endif
     m_currentFilter = filter;
@@ -98,7 +98,7 @@ void PhoneBook::activateList(const QContactFilter& filter)
 
 void PhoneBook::activateList()
 {
-#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+#if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
     menuBar()->setVisible(true);
 #endif
     m_listPage->rebuildList(m_currentFilter);

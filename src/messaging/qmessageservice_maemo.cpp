@@ -84,6 +84,9 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         return false;
     }
 
+    _filter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(_filter);
+
     _ids.clear();
     _sorted = true;
     _filtered = true;
@@ -98,25 +101,25 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
       _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
 #else
-	EventLoggerEngine::instance()->filterMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
 #endif
         _pendingRequestCount++;
     }
 
     if (enginesToCall & EnginesToCallModest) {
-        if (ModestEngine::instance()->queryMessages(messageService, filter, sortOrder, limit, offset)) {
+        if (ModestEngine::instance()->queryMessages(messageService, _filter, sortOrder, limit, offset)) {
             _pendingRequestCount++;
         }
     } 
 
     if (_pendingRequestCount > 0) {
-        _filter = filter;
         _sortOrder = sortOrder;
         _limit = limit;
         _offset = offset;
 
         stateChanged(QMessageService::ActiveState);
     } else {
+        _filter = QMessageFilter();
         setFinished(false);
     }
 
@@ -135,6 +138,9 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         return false;
     }
 
+    _filter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(_filter);
+
     _ids.clear();
     _sorted = true;
     _filtered = true;
@@ -149,26 +155,26 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
 #else
-	EventLoggerEngine::instance()->filterMessages(filter,sortOrder,body,matchFlags); 
+        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,body,matchFlags);
 #endif
         _pendingRequestCount++;
     }
 
     if (enginesToCall & EnginesToCallModest) {
-        if (ModestEngine::instance()->queryMessages(messageService, filter, body, matchFlags,
+        if (ModestEngine::instance()->queryMessages(messageService, _filter, body, matchFlags,
                                                     sortOrder, limit, offset)) {
             _pendingRequestCount++;
         }
     }
 
     if (_pendingRequestCount > 0) {
-        _filter = filter;
         _sortOrder = sortOrder;
         _limit = limit;
         _offset = offset;
 
         stateChanged(QMessageService::ActiveState);
     } else {
+        _filter = QMessageFilter();
         setFinished(false);
     }
 
@@ -183,6 +189,9 @@ bool QMessageServicePrivate::countMessages(QMessageService &messageService,
         return false;
     }
 
+    QMessageFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
+
     _count = 0;
 
     _active = true;
@@ -195,7 +204,7 @@ bool QMessageServicePrivate::countMessages(QMessageService &messageService,
     //}
 
     if (enginesToCall & EnginesToCallModest) {
-        if (ModestEngine::instance()->countMessages(messageService, filter)) {
+        if (ModestEngine::instance()->countMessages(messageService, handledFilter)) {
             _pendingRequestCount++;
         }
     }
@@ -230,7 +239,6 @@ void QMessageServicePrivate::setFinished(bool successful)
 void QMessageServicePrivate::stateChanged(QMessageService::State state)
 {
     _state = state;
-    qDebug() <<" StateChanged" << state;
     emit q_ptr->stateChanged(_state);
 }
 

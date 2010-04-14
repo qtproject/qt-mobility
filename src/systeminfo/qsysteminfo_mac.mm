@@ -73,6 +73,8 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreFoundation/CFLocale.h>
 #include <ScreenSaver/ScreenSaverDefaults.h>
+#include <DiskArbitration/DiskArbitration.h>
+
 #include <dns_sd.h>
 
 #include <QTKit/QTKit.h>
@@ -691,6 +693,45 @@ void QRunLoopThread::startNetworkChangeLoop()
 }
 
 
+QDASessionThread::QDASessionThread(QObject *parent)
+    :QThread(parent), session(NULL)
+{
+    if(session == NULL)
+        session = DASessionCreate(kCFAllocatorDefault);
+}
+
+QDASessionThread::~QDASessionThread()
+{
+}
+
+void QDASessionThread::quit()
+{
+    mutex.lock();
+    DASessionUnscheduleFromRunLoop(session, CFRunLoopGetCurrent(),kCFRunLoopDefaultMode);
+    keepRunning = false;
+    mutex.unlock();
+}
+
+void QDASessionThread::run()
+{
+#ifdef MAC_SDK_10_6
+    mutex.lock();
+    keepRunning = true;
+    mutex.unlock();
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    DASessionScheduleWithRunLoop(session,CFRunLoopGetCurrent(),kCFRunLoopDefaultMode);
+
+    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    while (keepRunning &&
+        [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
+        loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    }
+    [pool release];
+#endif
+}
+
+
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent), signalStrengthCache(0)
 {
@@ -1242,14 +1283,41 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     return (int)bitsPerPixel;
 }
 
+DAApprovalSessionRef session = NULL;
+
+void mountCallback(DADiskRef disk, void *context)
+{
+    static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(true);
+}
+
+void unmountCallback(DADiskRef disk, void *context)
+{
+    static_cast<QSystemStorageInfoPrivate*>(context)->storageChanged(false);
+}
+
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
-        : QObject(parent)
+        : QObject(parent), daSessionThread(0)
 {
 }
 
 
 QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
+    if(daSessionThread) {
+        if(daSessionThread->isRunning()) {
+            daSessionThread->quit();
+            daSessionThread->wait();
+        }
+    }
+}
+
+void QSystemStorageInfoPrivate::storageChanged( bool added)
+{
+    if(added) {
+        Q_EMIT storageAdded();
+    } else {
+        Q_EMIT storageRemoved();
+    }
 }
 
 bool QSystemStorageInfoPrivate::updateVolumesMap()
@@ -1375,6 +1443,52 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
         }
     }
     return drivesList;
+}
+
+bool QSystemStorageInfoPrivate::sessionThread()
+{
+    if(!daSessionThread)
+        daSessionThread = new QDASessionThread(this);
+
+    if(!daSessionThread->isRunning())
+        daSessionThread->start();
+
+    return true;
+}
+
+
+void QSystemStorageInfoPrivate::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
+        sessionThread();
+        DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
+        connect(daSessionThread,SIGNAL(storageAdded()),this,SIGNAL(storageAdded()));
+    }
+
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
+        sessionThread();
+        DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchMediaWhole,unmountCallback,this);
+        connect(daSessionThread,SIGNAL(storageRemoved()),this,SIGNAL(storageRemoved()));
+    }
+}
+
+
+void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
+{
+
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
+        DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
+        disconnect(daSessionThread,SIGNAL(storageAdded()),this,SIGNAL(storageAdded()));
+    }
+
+    if (QLatin1String(signal) ==
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
+        DAUnregisterApprovalCallback(daSessionThread->session,(void*)unmountCallback,NULL);
+        disconnect(daSessionThread,SIGNAL(storageRemoved()),this,SIGNAL(storageRemoved()));
+    }
 }
 
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::self = 0;

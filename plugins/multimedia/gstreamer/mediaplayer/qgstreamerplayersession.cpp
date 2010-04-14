@@ -49,7 +49,7 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #define USE_PLAYBIN2
 #endif
 

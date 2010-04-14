@@ -53,7 +53,7 @@
 #include <sys/ioctl.h>
 #include <linux/videodev2.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class V4LRadioService;
 

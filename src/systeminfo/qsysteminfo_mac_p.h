@@ -68,6 +68,7 @@
 
 #include <SystemConfiguration/SystemConfiguration.h>
 //#include <CoreFoundation/CoreFoundation.h>
+#include <DiskArbitration/DiskArbitration.h>
 
 QT_BEGIN_HEADER
 
@@ -192,6 +193,7 @@ public:
     int colorDepth(int screen);
 };
 
+class QDASessionThread;
 class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -206,11 +208,23 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
+public slots:
+    void storageChanged( bool added);
+Q_SIGNALS:
+    void storageAdded();
+    void storageRemoved();
+
 private:
     QHash<QString, QString> mountEntriesHash;
     bool updateVolumesMap();
     void mountEntries();
+    bool sessionThread();
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+    QDASessionThread *daSessionThread;
 };
 
 class QSystemDeviceInfoPrivate : public QObject
@@ -310,6 +324,29 @@ public:
     ~QLangLoopThread();
     bool keepRunning;
     void quit();
+
+protected:
+    void run();
+
+private:
+    QMutex mutex;
+
+private Q_SLOTS:
+};
+
+class QDASessionThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QDASessionThread(QObject *parent = 0);
+    ~QDASessionThread();
+    bool keepRunning;
+    void quit();
+    DASessionRef session;
+Q_SIGNALS:
+    void storageAdded();
+    void storageRemoved();
 
 protected:
     void run();

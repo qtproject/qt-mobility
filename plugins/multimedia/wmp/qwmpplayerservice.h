@@ -47,11 +47,11 @@
 
 #include <qmediaservice.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 class QEvrVideoOverlay;
 class QWmpMetaData;
@@ -60,7 +60,7 @@ class QWmpPlaylist;
 class QWmpPlaylistControl;
 class QWmpVideoOverlay;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QWmpPlayerService
     : public QMediaService
     , public IOleClientSite

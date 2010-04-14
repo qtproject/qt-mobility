@@ -85,7 +85,8 @@ unix: {
         HEADERS += qsysteminfo_mac_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
          -framework IOKit -framework ApplicationServices -framework Foundation \
-         -framework CoreServices -framework ScreenSaver -framework QTKit
+         -framework CoreServices -framework ScreenSaver -framework QTKit \
+         -framework DiskArbitration
 
             contains(corewlan_enabled, yes) {
                      isEmpty(QMAKE_MAC_SDK) {

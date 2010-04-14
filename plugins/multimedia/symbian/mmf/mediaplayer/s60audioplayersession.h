@@ -102,6 +102,7 @@ protected:
     void updateMetaDataEntriesL();
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
+    void doSetAudioEndpoint(const QString& audioEndpoint);
     
 private:
 #ifdef S60_DRM_SUPPORTED    
@@ -118,6 +119,7 @@ private:
 private:
     CAudioPlayer *m_player;
     CAudioOutput *m_audioOutput;
+    QString m_audioEndpoint;
 };
 
 #endif

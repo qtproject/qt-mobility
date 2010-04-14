@@ -53,7 +53,7 @@
 
 #include <QtMultimedia/qaudioformat.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class MockMediaContainerControl : public QMediaContainerControl
 {
     Q_OBJECT
@@ -435,8 +435,8 @@ private:
 
 void tst_QMediaRecorder::initTestCase()
 {
-    qRegisterMetaType<QtMobility::QMediaRecorder::State>("QMediaRecorder::State");
-    qRegisterMetaType<QtMobility::QMediaRecorder::Error>("QMediaRecorder::Error");
+    qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
+    qRegisterMetaType<QMediaRecorder::Error>("QMediaRecorder::Error");
 
     mock = new MockProvider(this);
     service = new MockService(this, mock);
@@ -565,10 +565,6 @@ void tst_QMediaRecorder::testError()
     QCOMPARE(capture->errorString(), errorString);
     QCOMPARE(spy.count(), 1);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(spy.last()[0].value<QMediaRecorder::Error>(), QMediaRecorder::FormatError);
 }
 
@@ -589,10 +585,6 @@ void tst_QMediaRecorder::testRecord()
     QCOMPARE(capture->errorString(), QString());
     QTestEventLoop::instance().enterLoop(1);
     QCOMPARE(stateSignal.count(), 1);
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(stateSignal.last()[0].value<QMediaRecorder::State>(), QMediaRecorder::RecordingState);
     QVERIFY(progressSignal.count() > 0);
     capture->pause();

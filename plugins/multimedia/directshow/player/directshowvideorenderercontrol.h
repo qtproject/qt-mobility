@@ -49,7 +49,7 @@
 class DirectShowEventLoop;
 class VideoSurfaceFilter;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DirectShowVideoRendererControl : public QVideoRendererControl
 {
