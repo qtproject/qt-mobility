@@ -3,6 +3,8 @@
 # #####################################################################
 TEMPLATE = lib
 
+QT -= gui
+
 # Target gets fixed up in common.pri
 TARGET = QtFeedback
 DEFINES += QT_BUILD_FEEDBACK_LIB \
@@ -12,15 +14,16 @@ include(../../common.pri)
 INCLUDEPATH += .
 
 # Input
-PUBLIC_HEADERS += qfeedbackeffect.h qfeedbackeffect_p.h
+PUBLIC_HEADERS += qfeedbackdevice.h qfeedbackeffect.h
+PRIVATE_HEADERS += qfeedbackeffect_p.h
 
 # Private Headers
 PRIVATE_HEADERS += 
-SOURCES += qfeedbackeffect.cpp
+SOURCES += qfeedbackdevice.cpp qfeedbackeffect.cpp
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 symbian { 
-    SOURCES += qfeedbackeffect_symbian.cpp
+    SOURCES += qfeedbackdevice_symbian.cpp qfeedbackeffect_symbian.cpp
     LIBS += -ltouchfeedback -lhwrmvibraclient
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \

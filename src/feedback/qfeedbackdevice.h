@@ -38,50 +38,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QFEEDBACKDEVICE_H
+#define QFEEDBACKDEVICE_H
 
-#ifndef QFEEDBACKEFFECT_P_H
-#define QFEEDBACKEFFECT_P_H
-
-#include "qfeedbackeffect.h"
-#include "qfeedbackdevice.h"
-#include <private/qabstractanimation_p.h>
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists for the convenience
-// of QAbstractItemModel*.  This header file may change from version
-// to version without notice, or even be removed.
-//
-// We mean it.
-//
-//
+#include <qmobilityglobal.h>
+#include <QtCore/QList>
 
 QTM_BEGIN_NAMESPACE
 
+class QFeedbackEffect;
 
-struct QFeedbackEffectBasePrivate : public QAbstractAnimationPrivate
+class Q_FEEDBACK_EXPORT QFeedbackDevice
 {
-    QFeedbackEffectBasePrivate() : duration(250),
-                    intensity(1), attackTime(0), attackIntensity(0), priority(0), fadeTime(0),
-                    device(QFeedbackDevice::defaultDevice())
-    {
+public:
+    enum Type {
+        //should we have different type for actuators: vibra, motor...
+        Vibra,
+        Touch
+    };
 
-    }
+    enum Capability {
+        Envelope
+      //TBD
+    };
 
-    int duration;
-    qreal intensity;
-    int attackTime;
-    qreal attackIntensity;
-    int fadeTime;
-    int priority;
-    QFeedbackDevice device;
+    enum State {
+        Busy,
+        Ready,
+        Unknown
+    };
+
+    int id() const;
+    QString name() const;
+    State state() const;
+    QFeedbackEffect *currentPlayingEffect() const; //should that be a list?
+    int simultaneousEffect() const;
+
+    static QFeedbackDevice defaultDevice(Type t = Vibra);
+
+    static QList<QFeedbackDevice> devices();
+private:
+    friend class QFeedbackEffect;
+    int m_id;
 };
 
 
-
 QTM_END_NAMESPACE
-
 
 #endif

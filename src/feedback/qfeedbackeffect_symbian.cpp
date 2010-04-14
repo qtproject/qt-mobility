@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include <QtCore/QDebug>
-#include <QtGui/QWidget>
 
 #include "qfeedbackeffect.h"
 #include "qfeedbackeffect_p.h"
@@ -122,12 +121,6 @@ static TTouchLogicalFeedback convertToSymbian(InstantEffect effect)
     }
     return instantFeedbackSymbian;
 }
-
-static CCoeControl *convertToSymbian(const QT_PREPEND_NAMESPACE(QWidget) *w)
-{
-    return w ? w->winId() : 0;
-}
-
 
 #ifdef ADVANCED_TACTILE_SUPPORT
 typedef QTouchFeedback MTouchFeedback;
@@ -345,73 +338,7 @@ QFeedbackDevice QFeedbackEffect::device() const
     return d_func()->device;
 }
 
-int QFeedbackDevice::id() const
-{
-    return m_id;
-}
-
-QString QFeedbackDevice::name() const
-{
-    switch(m_id)
-    {
-    case Vibra:
-        return QLatin1String("Vibra");
-    case Touch:
-        return QLatin1String("Touch");
-    }
-    return QString();
-}
-QFeedbackDevice::State QFeedbackDevice::state() const
-{
-    QFeedbackDevice::State ret = Unknown;
-    switch(m_id)
-    {
-    case Vibra:
-        {
-            //TODO we should not allocate the vibra here
-            CHWRMVibra *vibra = CHWRMVibra::NewL();
-            switch (vibra->VibraStatus())
-            {
-            case CHWRMVibra::EVibraStatusStopped:
-                ret = Ready;
-                break;
-            case CHWRMVibra::EVibraStatusOn:
-                ret = Busy;
-                break;
-            default:
-                break;
-            }
-            delete vibra;
-        }
-        break;
-    case Touch:
-        //there is no way of getting the state of the device!
-        break;
-    default:
-        break;
-    }
-    return ret;
-}
-
-QFeedbackEffect *QFeedbackDevice::currentPlayingEffect() const
-{
-    //TODO
-    return 0;
-}
-
-int QFeedbackDevice::simultaneousEffect() const
-{
-    // I guess usually 1
-    return 1;
-}
-
-QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)
-{
-    QFeedbackDevice ret;
-    ret.m_id =  t;
-    return ret;
-}
-
+//TODO: move this to the correct file (it is here to call QTouchFeedback::Instance())
 QList<QFeedbackDevice> QFeedbackDevice::devices()
 {
     QList<QFeedbackDevice> ret;
@@ -425,6 +352,7 @@ QList<QFeedbackDevice> QFeedbackDevice::devices()
     return ret;
 
 }
+
 
 QTM_END_NAMESPACE
 

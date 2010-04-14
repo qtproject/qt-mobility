@@ -45,8 +45,13 @@
 #include <qmobilityglobal.h>
 #include <QtCore/QAbstractAnimation>
 
+//#include "qfeedbackdevice.h"
+
 QTM_BEGIN_NAMESPACE
 
+class QFeedbackDevice;
+class QFeedbackEffectPrivate;
+        //TODO: what to do with those enums?
 //continous
 enum ContinuousEffect {
     ContinuousNone, ContinuousSmooth, ContinuousSlider, ContinuousPopup,
@@ -68,45 +73,6 @@ enum InstantEffect {
   InstantNoOverride, InstantUser = 65535, InstantMaxUser = 262140
 };
 
-QT_FORWARD_DECLARE_CLASS(QWidget)
-class QFeedbackEffectPrivate;
-class QVibraEffectPrivate;
-class QTouchEffectPrivate;
-class QFeedbackEffect;
-
-class Q_FEEDBACK_EXPORT QFeedbackDevice
-{
-public:
-    enum Type {
-        //should we have different type for actuators: vibra, motor...
-        Vibra,
-        Touch
-    };
-
-    enum Capability {
-        Envelope
-      //TBD
-    };
-
-    enum State {
-        Busy,
-        Ready,
-        Unknown
-    };
-
-    int id() const;
-    QString name() const;
-    State state() const;
-    QFeedbackEffect *currentPlayingEffect() const; //should that be a list?
-    int simultaneousEffect() const;
-
-    static QFeedbackDevice defaultDevice(Type t = Vibra);
-
-    static QList<QFeedbackDevice> devices();
-private:
-    friend class QFeedbackEffect;
-    int m_id;
-};
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
 {
@@ -121,6 +87,12 @@ public:
 
     enum Duration {
         INFINITE = -1
+    };
+
+    enum ErrorType {
+        //to be completed
+        DeviceBusy
+
     };
 
     QFeedbackEffect(QObject *parent = 0);
@@ -156,7 +128,7 @@ public:
     //Is it enough to be able to repeat an animation with the animation framework?
 
 signals:
-    void deviceBusyOnStartup(); //the feedback could not be played (name should be better)
+    void error(ErrorType); //the feedback could not be played (name should be better)
 
 protected:
     //virtual methods from QAbstractAnimation

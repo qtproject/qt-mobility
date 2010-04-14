@@ -39,49 +39,13 @@
 **
 ****************************************************************************/
 
-#ifndef QFEEDBACKEFFECT_P_H
-#define QFEEDBACKEFFECT_P_H
-
-#include "qfeedbackeffect.h"
 #include "qfeedbackdevice.h"
-#include <private/qabstractanimation_p.h>
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists for the convenience
-// of QAbstractItemModel*.  This header file may change from version
-// to version without notice, or even be removed.
-//
-// We mean it.
-//
-//
 
 QTM_BEGIN_NAMESPACE
 
-
-struct QFeedbackEffectBasePrivate : public QAbstractAnimationPrivate
+int QFeedbackDevice::id() const
 {
-    QFeedbackEffectBasePrivate() : duration(250),
-                    intensity(1), attackTime(0), attackIntensity(0), priority(0), fadeTime(0),
-                    device(QFeedbackDevice::defaultDevice())
-    {
-
-    }
-
-    int duration;
-    qreal intensity;
-    int attackTime;
-    qreal attackIntensity;
-    int fadeTime;
-    int priority;
-    QFeedbackDevice device;
-};
-
-
+    return m_id;
+}
 
 QTM_END_NAMESPACE
-
-
-#endif

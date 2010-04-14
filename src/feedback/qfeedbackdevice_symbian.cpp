@@ -39,49 +39,76 @@
 **
 ****************************************************************************/
 
-#ifndef QFEEDBACKEFFECT_P_H
-#define QFEEDBACKEFFECT_P_H
-
-#include "qfeedbackeffect.h"
 #include "qfeedbackdevice.h"
-#include <private/qabstractanimation_p.h>
+#include "qfeedbackeffect_p.h"
+#include <QtCore/QString>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists for the convenience
-// of QAbstractItemModel*.  This header file may change from version
-// to version without notice, or even be removed.
-//
-// We mean it.
-//
-//
+#include <hwrmvibra.h>
 
 QTM_BEGIN_NAMESPACE
 
-
-struct QFeedbackEffectBasePrivate : public QAbstractAnimationPrivate
+QString QFeedbackDevice::name() const
 {
-    QFeedbackEffectBasePrivate() : duration(250),
-                    intensity(1), attackTime(0), attackIntensity(0), priority(0), fadeTime(0),
-                    device(QFeedbackDevice::defaultDevice())
+    switch(m_id)
     {
-
+    case Vibra:
+        return QLatin1String("Vibra");
+    case Touch:
+        return QLatin1String("Touch");
     }
+    return QString();
+}
 
-    int duration;
-    qreal intensity;
-    int attackTime;
-    qreal attackIntensity;
-    int fadeTime;
-    int priority;
-    QFeedbackDevice device;
-};
+QFeedbackDevice::State QFeedbackDevice::state() const
+{
+    QFeedbackDevice::State ret = Unknown;
+    switch(m_id)
+    {
+    case Vibra:
+        {
+            //TODO we should not allocate the vibra here
+            CHWRMVibra *vibra = CHWRMVibra::NewL();
+            switch (vibra->VibraStatus())
+            {
+            case CHWRMVibra::EVibraStatusStopped:
+                ret = Ready;
+                break;
+            case CHWRMVibra::EVibraStatusOn:
+                ret = Busy;
+                break;
+            default:
+                break;
+            }
+            delete vibra;
+        }
+        break;
+    case Touch:
+        //there is no way of getting the state of the device!
+        break;
+    default:
+        break;
+    }
+    return ret;
+}
 
+QFeedbackEffect *QFeedbackDevice::currentPlayingEffect() const
+{
+    //TODO
+    return 0;
+}
+
+int QFeedbackDevice::simultaneousEffect() const
+{
+    // I guess usually 1
+    return 1;
+}
+
+QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)
+{
+    QFeedbackDevice ret;
+    ret.m_id =  t;
+    return ret;
+}
 
 
 QTM_END_NAMESPACE
-
-
-#endif

@@ -39,83 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qfeedbackcontroller.h"
+#include "qfeedbackeffect.h"
 
 #include <QtCore/QDebug>
 
 QTM_BEGIN_NAMESPACE
 
 
-QFeedbackController::QFeedbackController(QObject *parent) :
-    QObject(parent), d(0)
-{
-}
-
-QFeedbackController::~QFeedbackController()
-{
-}
-
-void QFeedbackController::playFeedback(const QInstantEffect &feedback)
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(feedback);
-}
-
-void QFeedbackController::playFeedback(const QTacticonEffect &feedback)
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(feedback);
-}
-
-int QFeedbackController::startContinuousFeedback(const QContinuousEffect &feedback)
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(feedback);
-    return -1;
-}
-
-void QFeedbackController::updateContinuousFeedback(int identifier, const QContinuousEffect &feedback)
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(identifier);
-    Q_UNUSED(feedback);
-}
-
-void QFeedbackController::cancelContinuousFeedback(int identifier)
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(identifier);
-}
-
-void QFeedbackController::cancelContinuousFeedbacks()
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-}
-
-int QFeedbackController::insertHitArea(const QHitAreaEffect &feedback)
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(feedback);
-    return -1;
-}
-
-void QFeedbackController::updateHitArea(int identifier, const QHitAreaEffect &feedback)
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(identifier);
-    Q_UNUSED(feedback);
-}
-
-void QFeedbackController::removeHitArea(int identifier)
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(identifier);
-}
-
-void QFeedbackController::removeHitAreas()
-{
-    qWarning() << Q_FUNC_INFO << "not implemented";
-}
+        //TODO
 
 QTM_END_NAMESPACE
 
