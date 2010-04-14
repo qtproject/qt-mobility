@@ -641,58 +641,58 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
 }
 
 /*!
-    \internal
-    Retrieve the first detail for which any action with the given \a actionName is available.
+    Retrieve the first detail in this contact supported by the given \a action.
 
-    \sa detailsWithAction(), QContactAction
+    If there is a preferred detail set for this action name, and that detail is
+    supported by the given \a action, that preferred detail will be returned.
+
+    Otherwise, the first detail in the list returned by detailsWithAction() will
+    be returned.
+
+    \sa detailsWithAction()
 */
-QContactDetail QContact::detailWithAction(const QString& actionName) const
+QContactDetail QContact::detailWithAction(QContactAction* action) const
 {
-    if (actionName.isEmpty())
-        return QContactDetail();
-
-    QList<QContactDetail> dets = detailsWithAction(actionName);
-    if (dets.isEmpty())
-        return QContactDetail();
-
-    QContactDetail retn = dets.first();
-    return retn;
+    if (action) {
+        QContactDetail pref = preferredDetail(action->actionDescriptor().actionName());
+        if (!pref.isEmpty() && action->isDetailSupported(pref, *this))
+            return pref;
+        foreach (const QContactDetail& detail, d->m_details) {
+            if (action->isDetailSupported(detail, *this)) {
+                return detail;
+            }
+        }
+    }
+    return QContactDetail();
 }
 
 /*!
-    \internal
-    Retrieve any details for which any action with the given \a actionName is available.
+    Retrieve any details supported by the given \a action.
 
-    This function will find any actions matching the given \a actionName, and then
-    check which of the details in this contact are supported by any of those actions.
+    If the action does not exist, an empty list will be returned.  Otherwise,
+    the details in this contact will be tested by the action and a list of the
+    details supported will be returned.
+
+    If a preferred detail for this action name has been set, and it is supported
+    by the given \a action, that detail will be the first detail returned in the list.
 
     See this example for usage:
     \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Details with action
 */
-QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) const
+QList<QContactDetail> QContact::detailsWithAction(QContactAction* action) const
 {
-    if (actionName.isEmpty())
-        return QList<QContactDetail>();
-
-    // ascertain which details are supported by any implementation of the given action
     QList<QContactDetail> retn;
-    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors(actionName);
-    QList<QContactAction*> actions;
-    foreach (const QContactActionDescriptor& descriptor, descriptors) {
-        actions.append(QContactManagerData::action(descriptor));
-    }
 
-    foreach (const QContactDetail& detail, d->m_details) {
-        foreach(QContactAction *action, actions) {
+    if (action) {
+        QContactDetail preferred = preferredDetail(action->actionDescriptor().actionName());
+        foreach (const QContactDetail& detail, d->m_details) {
             if (action->isDetailSupported(detail, *this)) {
-                retn.append(detail);
-                break;
+                if (detail == preferred)
+                    retn.prepend(detail);
+                else
+                    retn.append(detail);
             }
         }
-    }
-
-    foreach(QContactAction *action, actions) {
-        delete action;
     }
     return retn;
 }
