@@ -183,6 +183,10 @@ QGalleryItemList *QGalleryUrlRequest::item() const
     Signals that the \l item property has changed.
 */
 
+/*!
+    \reimp
+*/
+
 void QGalleryUrlRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);

@@ -1,3 +1,43 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
 
 /*!
     \group gallery
@@ -28,157 +68,54 @@
 */
 
 /*!
+    \group gallery-examples
+    \title Document Gallery Examples
+*/
+
+/*!
     \page gallery.html
 
     \title Document Gallery
 
-    \brief Provides an API for finding and managing documents.
+    \brief Provides an API for navigating and managing collections of documents
+    and media.
 
     \section1 Overview
 
-    \section2 Galleries
+    The Document Gallery provides a meta-data focused API for managing
+    collections of documents and media.
 
-    \annotatedlist gallery-galleries
+    The primary interface to items in a gallery is the QGalleryItemList class
+    which provides accessors for reading and writing the meta-data of a set
+    of items.
 
-    \section2 Document Lists.
-
-    \l QGalleryItemList
-
-    \section2 Filters
-
-    \annotatedlist gallery-filters
+    A QGalleryItemList cannot be created directly, instead an instance must be
+    requested from a gallery using one of the gallery request classes.
 
     \section2 Requests
+
+    The gallery request classes inherit from QGalleryAbstractRequest and are
+    used to fetch items from a gallery, or to initiate service provided by a
+    gallery.
 
     \annotatedlist gallery-requests
 
-    \section1 Possible future extensions to Document Gallery API.
+    \section2 Filters
+
+    The filter classes provide a way to describe meta-data criteria items must
+    satisfy to be included in the results of some requests.
+
+    \annotatedlist gallery-filters
 
     \section2 Galleries
 
-    These may use different property definitions and support additional
-    context specific requests.
+    The gallery classes provide instances of different gallery types.  Currently
+    the only gallery type is the Document Gallery.
 
-    \section3 QUPnPGallery
+    \annotatedlist gallery-galleries
 
-    A gallery which connects to a UPnP media server.
+    \section1 Examples
 
-    This may use the UPnP property definitions directly instead of trying to
-    map to some neutral property set.
-
-    \section3 QMediaGallery
-
-    Similar to QDocumentGallery, but limited to media types and properties, and
-    possibly including remote sources.
-
-    \section3 QUsbGallery
-
-    Gallery of documents on USB connected storage.
-
-    This is an alternative to including documents on connected storage devices
-    in the regular document gallery.
-
-    This probably also be called something else, and not apply to USB only.
-
-    \section2 Filters
-
-    \section3 QGallerySearchFilter
-
-    A filter for performing full text searches.
-
-    \code
-    class QGallerySearchFilter : public QGalleryFilter
-    {
-    public:
-        // Constructors, etc.
-
-        QString searchTerm() const;
-        void setSearchTerm(const QString &term);
-
-        QStringList searchTerms() const;
-        void setSearchTerms(const QStringList &terms);
-    };
-    \endcode
-
-    \section2 Requests
-
-    \section3 QGalleryImportRequest
-
-    Imports a document from a remote source into a gallery.  Unnecessary for
-    a gallery on the local file-system, but this could enable a remote gallery
-    to download a document directly.
-
-    \code
-    class QGalleryImportRequest : public QGalleryAbstractRequest
-    {
-    public:
-        // Constructors, etc.
-
-        // The url to import from.
-        QUrl sourceUrl() const;
-        void setSourceUrl(const QUrl &url);
-
-        // The id of a container document to import the document into.
-        void containerId() const;
-        void setContainerId(const QString &id);
-
-    // Results
-        QGalleryItemList *item() const;
-
-    Q_SIGNALS:
-        void documentsChanged();
-    };
-    \endcode
-
-    \section3 QGalleryExportRequest
-
-    The same as an import request except the gallery would upload a document
-    it hosts.
-
-    \code
-    class QGalleryExportRequest : public QGalleryAbstractRequest
-    {
-    public:
-        // Constructors, etc.
-
-        // The url to export to.
-        QUrl destinationUrl() const;
-        void setDestinationUrl(const QUrl &url);
-
-        // The id of the document to export.
-        QString documentId() const;
-        void setDocumentId(const QString &id);
-    };
-    \endcode
-
-    \section3 QGalleryNewDocumentRequest
-
-    Creates a new document in a gallery.
-
-    This could be used by a remote gallery to provide a URL for an application
-    to upload a new document to.
-
-    \code
-    class QGalleryNewDocumentRequest : public QGalleryAbstractRequest
-    {
-    public:
-        // Constructors, etc.
-
-        QString fileName() const;
-        void setFileName(const QString &fileName);
-
-        QString mimeType() const;
-        void setMimeType(const QString &mimeType);
-
-        QString containerId() const;
-        void setContainerId(const QString &id);
-
-        // Results
-        QGalleryItemList *item() const;
-
-    Q_SIGNALS:
-        void documentsChanged();
-    };
-    \endcode
+    \annotatedlist gallery-examples
 */
 
