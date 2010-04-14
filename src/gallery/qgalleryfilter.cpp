@@ -408,27 +408,39 @@ QGalleryMetaDataRangeFilter QGalleryFilter::toMetaDataRangeFilter() const
             : QGalleryMetaDataRangeFilter();
 }
 
+QTM_END_NAMESPACE
+
 /*!
+    \fn operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
+
     Compares \a filter1 to filter2.
 
     Returns true if the filters are identical, and false otherwise.
 */
 
-bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
+bool operator ==(
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2)
 {
     return filter1.d == filter2.d || filter1.d->isEqual(*filter2.d);
 }
 
 /*!
+    \fn operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
+
     Compares \a filter1 to filter2.
 
     Returns true if the filters are not identical, and false otherwise.
 */
 
-bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
+bool operator !=(
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2)
 {
     return filter1.d != filter2.d && !filter1.d->isEqual(*filter2.d);
 }
+
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGalleryIntersectionFilter

@@ -50,11 +50,22 @@
 #include <QtCore/qvector.h>
 
 QTM_BEGIN_NAMESPACE
-
+class QGalleryFilter;
 class QGalleryIntersectionFilter;
 class QGalleryMetaDataFilter;
 class QGalleryMetaDataRangeFilter;
 class QGalleryUnionFilter;
+QTM_END_NAMESPACE
+
+bool operator ==(
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
+
+bool operator !=(
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
+
+QTM_BEGIN_NAMESPACE
 
 class QGalleryFilterPrivate;
 
@@ -104,12 +115,9 @@ public:
 private:
     QSharedDataPointer<QGalleryFilterPrivate> d;
 
-    friend bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
-    friend bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+    friend bool ::operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+    friend bool ::operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 };
-
-bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
-bool operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
 
 class QGalleryIntersectionFilterPrivate;
 
@@ -155,14 +163,6 @@ private:
     friend class QGalleryFilter;
 };
 
-template <typename T>
-QGalleryIntersectionFilter operator ||(const QGalleryIntersectionFilter &filter1, const T &filter2)
-{
-    QGalleryIntersectionFilter filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
-
 class QGalleryUnionFilterPrivate;
 
 class Q_GALLERY_EXPORT QGalleryUnionFilter
@@ -202,14 +202,6 @@ private:
 
     friend class QGalleryFilter;
 };
-
-template <typename T>
-QGalleryUnionFilter operator &&(const QGalleryUnionFilter &filter1, const T &filter2)
-{
-    QGalleryUnionFilter filter = filter1;
-    filter.append(filter2);
-    return filter;
-}
 
 class QGalleryMetaDataFilterPrivate;
 
@@ -278,6 +270,24 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+template <typename T>
+QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) operator &&(
+        const QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) &filter1, const T &filter2)
+{
+    QTM_PREPEND_NAMESPACE(QGalleryUnionFilter) filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
+
+template <typename T>
+QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) operator ||(
+        const QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) &filter1, const T &filter2)
+{
+    QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) filter = filter1;
+    filter.append(filter2);
+    return filter;
+}
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryFilter::RangeFlags))
 
