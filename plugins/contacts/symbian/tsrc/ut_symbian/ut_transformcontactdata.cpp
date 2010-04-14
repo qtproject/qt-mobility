@@ -1311,9 +1311,50 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     delete transformOrganisation;
 }
 
-void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 /*field*/, QString /*detail*/)
+void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QString detail)
 {
-    QFAIL("Refactor test to match new api!");
+    CntTransformContactData* transformAvatar = new CntTransformAvatar();
+    QVERIFY(transformAvatar != 0);
+    QVERIFY(transformAvatar->supportsField(KUidContactFieldCodImage.iUid));
+    QVERIFY(!(transformAvatar->supportsField(0))); //Test for Wrong value
+    QVERIFY(transformAvatar->supportsDetail(QContactAvatar::DefinitionName));
+    QVERIFY(!(transformAvatar->supportsDetail("WrongValue")));
+
+    validateGetIdForField(*transformAvatar, QContactAvatar::FieldImageUrl,0);
+    validateGetIdForField(*transformAvatar, "WrongValue", 0);
+    QVERIFY(!(transformAvatar->supportsSubType("WrongValue")));
+
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    validateSupportedSortingFieldTypes(*transformAvatar,"WrongValue",uidsToVerify);
+
+    validateContextsL(transformAvatar);
+
+    QContactAvatar avatar;
+    avatar.setImageUrl(detail);
+    QList<CContactItemField *> fields = transformAvatar->transformDetailL(avatar);
+    if(detail.isEmpty()) {
+        QVERIFY(fields.count() == 0);
+    } else {
+        QVERIFY(fields.count() == 1);
+        QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldCodImage));
+        QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    }
+
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldCodImage);
+    newField->TextStorage()->SetTextL(field);
+    QContact contact;
+    QContactDetail* contactDetail = transformAvatar->transformItemField(*newField, contact);
+    const QContactAvatar* avatarInfo1(static_cast<const QContactAvatar*>(contactDetail));
+    QCOMPARE(avatarInfo1->imageUrl().toString(), detail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+
+    delete transformAvatar;
+    
     /*
     CntTransformContactData* transformAvatar = new CntTransformAvatar();
     QVERIFY(transformAvatar != 0);

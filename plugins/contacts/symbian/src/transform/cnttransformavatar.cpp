@@ -99,8 +99,9 @@ QContactDetail *CntTransformAvatar::transformItemField(const CContactItemField& 
 bool CntTransformAvatar::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
-    if (fieldType == KUidContactFieldCodImage.iUid)
+    if (fieldType == KUidContactFieldCodImage.iUid) {
         ret = true;
+    }
     return ret;
 }
 
@@ -128,7 +129,6 @@ QList<TUid> CntTransformAvatar::supportedSortingFieldTypes(QString /*detailField
  */
 bool CntTransformAvatar::supportsSubType(const QString& /*subType*/) const
 {
-    // XXX todo
     return false;
 }
 
@@ -138,10 +138,12 @@ bool CntTransformAvatar::supportsSubType(const QString& /*subType*/) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformAvatar::getIdForField(const QString& /*fieldName*/) const
+quint32 CntTransformAvatar::getIdForField(const QString& fieldName) const
 {
-    // XXX todo
-    return 0;
+    if (QContactAvatar::FieldImageUrl  == fieldName)
+        return 0;
+    else
+        return 0;
 }
 
 /*!

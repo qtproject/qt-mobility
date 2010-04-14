@@ -122,4 +122,5 @@ SYMBIAN_LIBS += \
         -lfbscli \
         -limageconversion \
         -lbitmaptransforms \ 
-        -lbafl   
+        -lbafl \
+        -lplatformenv
