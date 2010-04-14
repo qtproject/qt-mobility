@@ -168,6 +168,9 @@ void tst_QLatin1Constant::equals()
     QVERIFY(z == z2);
     QVERIFY(z2 == z);
 
+    QVERIFY(z != z3);
+    QVERIFY(z3 != z);
+
     // Now make sure that the length is taken into account
     QVERIFY(b != bb2);
     QVERIFY(bb2 != b);
