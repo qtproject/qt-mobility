@@ -556,12 +556,46 @@ QContact QContactManager::compatibleContact(const QContact& original)
 }
 
 /*!
-  Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner
+  Returns a display label for a \a contact which is synthesized from its details in a manager specific
+  manner.
+
+  If you want to update the display label stored in the contact, use the synthesizeContactDisplayLabel()
+  function instead.
+
+  \sa synthesizeContactDisplayLabel()
  */
-QString QContactManager::synthesizedDisplayLabel(const QContact& contact) const
+QString QContactManager::synthesizedContactDisplayLabel(const QContact& contact) const
 {
     d->m_error = QContactManager::NoError;
     return d->m_engine->synthesizedDisplayLabel(contact, &d->m_error);
+}
+
+/*!
+ * Updates the display label of the supplied \a contact, according to the formatting rules
+ * of this manager.
+ *
+ * Different managers can format the display label of a contact in different ways -
+ * some managers may only consider first or last name, or might put them in different
+ * orders.  Others might consider an organization, a nickname, or a freeform label.
+ *
+ * This function will update the QContactDisplayLabel of this contact, and the string
+ * returned by QContact::displayLabel().
+ *
+ * If \a contact is null, nothing will happen.
+ *
+ * See the following example for more information:
+ * \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating the display label of a contact
+ *
+ * \sa synthesizedContactDisplayLabel(), QContact::displayLabel()
+ */
+void QContactManager::synthesizeContactDisplayLabel(QContact *contact) const
+{
+    if (contact) {
+        d->m_error = QContactManager::NoError;
+        QContactManagerEngine::setContactDisplayLabel(contact, d->m_engine->synthesizedDisplayLabel(*contact, &d->m_error));
+    } else {
+        d->m_error = QContactManager::BadArgumentError;
+    }
 }
 
 /*!

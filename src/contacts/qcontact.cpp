@@ -275,15 +275,20 @@ void QContact::setType(const QContactType& type)
 }
 
 /*!
- * Returns the read-only display label of this contact.
+ * Returns the display label of this contact.
+ *
  * A contact which has been retrieved from a manager will have a display label set when
- * the contact is retrieved.  If you subsequently modify the contact in a way that changes
- * the display label, you will need to call \c QContactManager::synthesizedDisplayLabel() to
- * determine what the new value would be.  Alternatively, when you save the contact, the
- * manager will update the display label at that point.
+ * the contact is retrieved.
+ *
+ * The display label is usually read-only, since some managers do not support arbitrary
+ * labels (see also \l QContactName::setCustomLabel()).  If you modify the contact in a way
+ * that would affect the display label, you can call QContactManager::synthesizeContactDisplayLabel() to get an
+ * up-to-date display label.
  *
  * See the following example for more information:
  * \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating the display label of a contact
+ *
+ * \sa QContactManager::synthesizeContactDisplayLabel()
  */
 QString QContact::displayLabel() const
 {
@@ -510,16 +515,17 @@ QList<QContactDetail> QContact::details(const char* definitionName, const char* 
  *
  * If \a detail is a QContactType, the existing contact type will
  * be overwritten with \a detail.  There is never more than one contact type
- * in a contact.  The supplied \a detail will have its accessConstraint set to
- * QContactDetail::Irremovable.
+ * in a contact.
  *
- * If \a detail is a QContactDisplayLabel, the supplied \a detail will have its
- * accessConstraint set to QContactDetail::Irremovable | QContactDetail::ReadOnly,
- * and the function will return false.
+ * If \a detail is a QContactDisplayLabel, the contact will not be updated,
+ * and the function will return false.  Since the display label formatting is specific
+ * to each manager, use the QContactManager::synthesizeContactDisplayLabel() function
+ * instead.
  *
  * Returns true if the detail was saved successfully, otherwise returns false.
  *
  * Note that the caller retains ownership of the detail.
+ * \sa QContactManager::synthesizeContactDisplayLabel()
  */
 bool QContact::saveDetail(QContactDetail* detail)
 {
@@ -535,7 +541,6 @@ bool QContact::saveDetail(QContactDetail* detail)
 
     /* And display label.. */
     if (QContactDetailPrivate::detailPrivate(*detail)->m_definitionName == QContactDisplayLabel::DefinitionName.latin1()) {
-        detail->d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
         return false;
     }
 

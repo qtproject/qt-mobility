@@ -631,11 +631,20 @@ void tst_QContact::displayName()
     QVERIFY(d.saveDetail(&name));
 
     /*
-     * The display label is not updated until you save the contact!
+     * The display label is not updated until you save the contact or call synthCDL
      */
-    QString synth = cm.synthesizedDisplayLabel(d);
     QVERIFY(d.displayLabel().isEmpty());
-    //QVERIFY(synth == name.customLabel()); // XXX Perhaps not guaranteed, depends on backend synth rules.
+
+    cm.synthesizeContactDisplayLabel(&d);
+    QVERIFY(d.displayLabel() == "Wesley");
+
+    name.setCustomLabel("Bosley");
+    d.saveDetail(&name);
+
+    QVERIFY(d.displayLabel() == "Wesley");
+
+    cm.synthesizeContactDisplayLabel(&d);
+    QVERIFY(d.displayLabel() == "Bosley");
 
     /* Remove the detail via removeDetail */
     QContactDisplayLabel old;
@@ -643,9 +652,6 @@ void tst_QContact::displayName()
     QVERIFY(!d.removeDetail(&old)); // should fail.
     QVERIFY(d.isEmpty() == false);
     QVERIFY(d.details().count() == 3); // it should not be removed!
-
-    /* Make sure we go back to the old synth version */
-    QVERIFY(d.displayLabel().isEmpty());
 }
 
 void tst_QContact::type()

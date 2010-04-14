@@ -525,12 +525,8 @@ void displayLabel()
     name.setLastName("Arkansas");
     c.saveDetail(&name);
 
-    /* At this point the display label is not updated, so print what the new one would be if we save it */
-    qDebug() << "New label would be:" << manager->synthesizedDisplayLabel(c);
-
-    /* Now save it */
-    manager->saveContact(&c);
-
+    /* Update the display label */
+    manager->synthesizeContactDisplayLabel(&c);
     qDebug() << "Now the label is:" << c.displayLabel();
 //! [Updating the display label of a contact]
 }
