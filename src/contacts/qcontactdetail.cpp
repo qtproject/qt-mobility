@@ -57,23 +57,6 @@ Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextOther, "Other");
 Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextHome, "Home");
 Q_DEFINE_LATIN1_CONSTANT(QContactDetail::ContextWork, "Work");
 
-static uint qHash(const QContactStringHolder& holder)
-{
-    if (!holder.m_str)
-        return 0;
-    uint h = 0;
-    uint g;
-    const register uchar*p = (const uchar*)holder.m_str;
-
-    while (*p) {
-        h = (h << 4) + *p++;
-        if ((g = (h & 0xf0000000)) != 0)
-            h ^= g >> 23;
-        h &= ~g;
-    }
-    return h;
-}
-
 /* Storage */
 QHash<QString, char*> QContactStringHolder::s_allocated;
 QHash<const char *, QString> QContactStringHolder::s_qstrings;
@@ -429,7 +412,7 @@ QContactDetail::~QContactDetail()
  */
 QString QContactDetail::definitionName() const
 {
-    return d.constData()->m_definitionName;
+    return d.constData()->m_definitionName.toQString();
 }
 
 /*!
@@ -451,15 +434,32 @@ bool QContactDetail::operator==(const QContactDetail& other) const
     return true;
 }
 
+uint qHash(const QContactStringHolder& key)
+{
+    if (!key.m_str)
+        return 0;
+    uint h = 0;
+    uint g;
+    const register uchar*p = (const uchar*)key.m_str;
+
+    while (*p) {
+        h = (h << 4) + *p++;
+        if ((g = (h & 0xf0000000)) != 0)
+            h ^= g >> 23;
+        h &= ~g;
+    }
+    return h;
+}
+
 /*! Returns the hash value for \a key. */
 uint qHash(const QContactDetail &key)
 {
     const QContactDetailPrivate* dptr= QContactDetailPrivate::detailPrivate(key);
-    uint hash = QT_PREPEND_NAMESPACE(qHash)(dptr->m_definitionName)
+    uint hash = qHash(dptr->m_definitionName)
                 + QT_PREPEND_NAMESPACE(qHash)(dptr->m_access);
     QHash<QContactStringHolder, QVariant>::const_iterator it = dptr->m_values.constBegin();
     while(it != dptr->m_values.constEnd()) {
-        hash += QT_PREPEND_NAMESPACE(qHash)(it.key())
+        hash += qHash(it.key())
                 + QT_PREPEND_NAMESPACE(qHash)(it.value().toString());
         ++it;
     }
@@ -622,7 +622,7 @@ QVariantMap QContactDetail::variantValues() const
     QVariantMap ret;
     QHash<QContactStringHolder, QVariant>::const_iterator it = d.constData()->m_values.constBegin();
     while(it != d.constData()->m_values.constEnd()) {
-        ret.insert(it.key(), it.value());
+        ret.insert(it.key().toQString(), it.value());
         ++it;
     }
 
