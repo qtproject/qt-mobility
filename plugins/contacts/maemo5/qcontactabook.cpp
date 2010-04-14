@@ -264,21 +264,24 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   QList<QContactLocalId> rtn;
 
   // do this naively for now...
-  QContactManager::Error tempError;
+  *error = QContactManager::NoError;
+  QContactManager::Error tempError = QContactManager::NoError;
   QList<QContactLocalId> allIds = m_localIds.keys();
   QList<QContact> sortedAndFiltered;
   QContact *curr = 0;
   foreach (const QContactLocalId& currId, allIds) {
     curr = getQContact(currId, &tempError);
+    if (tempError != QContactManager::NoError)
+      *error = tempError;
     if (QContactManagerEngine::testFilter(filter, *curr)) {
       QContactManagerEngine::addSorted(&sortedAndFiltered, *curr, sortOrders);
     }
+    delete curr;
   }
 
   foreach (const QContact& contact, sortedAndFiltered) {
     rtn.append(contact.localId());
   }
-  *error = tempError;
   return rtn;
 
   /*
@@ -340,7 +343,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
         EContact *contact = E_CONTACT(masterContact);
         const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
         QByteArray localId(data);
-        m_localI/* ds << localId;
+        m_localIds << localId;
         rtn.append(m_localIds[localId]);
         QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
       }
@@ -382,6 +385,9 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   
   //Convert aContact => qContact
   rtn = convert(E_CONTACT(aContact));
+  QContactId cId;
+  cId.setLocalId(contactId);
+  rtn->setId(cId);
   return rtn;
 }
 

@@ -407,8 +407,9 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                             QString number = lastNumber.number();
                             number.insert(0, "+");
                             lastNumber.setNumber(number);
-                            if (m_readOnlyAccess)
-                                m_engine.setReadOnlyAccessConstraint(&lastNumber);
+                            //if (m_readOnlyAccess)
+                                // Commented out for now, setting read only flag will make saveDetail fail
+                                //m_engine.setReadOnlyAccessConstraint(&name);
                             currentContact.saveDetail(&lastNumber);
                         }
                     }
@@ -431,8 +432,9 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                         QContactName name;
                         QString nameString = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                         name.setCustomLabel(nameString);
-                        if (m_readOnlyAccess)
-                            m_engine.setReadOnlyAccessConstraint(&name);                        
+                        //if (m_readOnlyAccess)
+                            // Commented out for now, setting read only flag will make saveDetail fail
+                            //m_engine.setReadOnlyAccessConstraint(&name);
                         currentContact.saveDetail(&name);
                         QContactManager::Error error(QContactManager::NoError);
                         m_engine.setContactDisplayLabel(&currentContact, m_engine.synthesizedDisplayLabel(currentContact, &error));
@@ -446,8 +448,9 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QContactNickname nickName;
                     QString name = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     nickName.setNickname(name);
-                    if (m_readOnlyAccess)
-                        m_engine.setReadOnlyAccessConstraint(&nickName);                    
+                    //if (m_readOnlyAccess)
+                        // Commented out for now, setting read only flag will make saveDetail fail
+                        //m_engine.setReadOnlyAccessConstraint(&name);
                     currentContact.saveDetail(&nickName);
                 }
                 break;
@@ -458,8 +461,9 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QContactPhoneNumber phoneNumber;
                     QString number = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     phoneNumber.setNumber(number);
-                    if (m_readOnlyAccess)
-                        m_engine.setReadOnlyAccessConstraint(&phoneNumber);                    
+                    //if (m_readOnlyAccess)
+                        // Commented out for now, setting read only flag will make saveDetail fail
+                        //m_engine.setReadOnlyAccessConstraint(&name);
                     currentContact.saveDetail(&phoneNumber);
                 }
                 break;
@@ -476,8 +480,9 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QContactEmailAddress email;
                     QString emailAddress = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     email.setEmailAddress(emailAddress);
-                    if (m_readOnlyAccess)
-                        m_engine.setReadOnlyAccessConstraint(&email);                    
+                    //if (m_readOnlyAccess)
+                        // Commented out for now, setting read only flag will make saveDetail fail
+                        //m_engine.setReadOnlyAccessConstraint(&name);
                     currentContact.saveDetail(&email);
                 }
                 break;
