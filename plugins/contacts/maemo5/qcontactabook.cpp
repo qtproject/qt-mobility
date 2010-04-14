@@ -953,7 +953,7 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
   //Ordered list of Fields
   QStringList addressFields;
   addressFields << QContactAddress::FieldPostOfficeBox
-                << "Estension" //XXX FIXME I'm not sure we have to use a new field 
+                << AddressFieldExtension //XXX FIXME I'm not sure we have to use a new field
                 << QContactAddress::FieldStreet
                 << QContactAddress::FieldLocality
                 << QContactAddress::FieldRegion 
@@ -1322,7 +1322,7 @@ QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) c
 {
   QContactOrganization* rtn = new QContactOrganization;
   QVariantMap map;
-  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_TITLE));
+  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_ORG));
   map[QContactOrganization::FieldTitle] = title;
   FREE(title);
   setDetailValues(map, rtn);
@@ -1751,7 +1751,7 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
     QString key = i.key();
       
     if (key == QContactAddress::FieldPostOfficeBox) index = 0;
-    else if (key == "Estension") index = 1;
+    else if (key == AddressFieldExtension) index = 1;
     else if (key == QContactAddress::FieldStreet) index = 2;
     else if (key == QContactAddress::FieldLocality) index = 3;
     else if (key == QContactAddress::FieldRegion) index = 4;
@@ -1987,6 +1987,8 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
       QString value = i.value().toString();
       if (value == QContactPhoneNumber::SubTypeMobile)
         value = "CELL";
+      else if (value == QContactPhoneNumber::SubTypeVoice)
+        value = "VOICE";
       paramValues << value.toUpper();
     } else
       attrValues << i.value().toString();
@@ -1996,7 +1998,7 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
   if (paramValues.isEmpty())
     paramValues << "VOICE";
   
-  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
+  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, false, detail.detailUri().toInt());
 }
 
 void QContactABook::setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const

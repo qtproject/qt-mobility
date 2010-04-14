@@ -222,7 +222,7 @@ public:
 
 };
 
-class Q_DECL_EXPORT DummyEngineFactory : public QObject, public QContactManagerEngineFactory
+class DummyEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)

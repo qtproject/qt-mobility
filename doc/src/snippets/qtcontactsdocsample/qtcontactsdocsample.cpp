@@ -65,11 +65,8 @@ static void editView(QContactManager*);
 static void loadManager();
 static void loadManagerWithParameters();
 
-#if 0
-int main(int argc, char *argv[])
+int stopCompilerWarnings()
 {
-    QCoreApplication app(argc, argv);
-
     // manager configuration examples
     loadManager();
     loadManagerWithParameters();
@@ -90,7 +87,6 @@ int main(int argc, char *argv[])
     RequestExample re;
     re.setManager(cm);
     QTimer::singleShot(10, &re, SLOT(performRequest()));
-    app.exec();
     delete cm;
 
     // more doc snippet examples
@@ -102,11 +98,10 @@ int main(int argc, char *argv[])
     // async doc snippet examples
     AsyncRequestExample example;
     QTimer::singleShot(10, &example, SLOT(performRequests()));
-    app.exec();
 
     return 0;
 }
-#endif
+
 
 void loadDefault()
 {
@@ -516,7 +511,7 @@ void editView(QContactManager* cm)
 
 void displayLabel()
 {
-    QContactManager *manager;
+    QContactManager *manager = new QContactManager();
     QContactLocalId myId;
 //! [Updating the display label of a contact]
     /* Retrieve a contact */

@@ -59,6 +59,8 @@
 
 QTM_USE_NAMESPACE
 
+Q_DEFINE_LATIN1_CONSTANT(AddressFieldExtension, "X-Maemo5-Extension");
+
 class Q_DECL_EXPORT ContactMaemo5Factory : public QObject, public QContactManagerEngineFactory
 {
   Q_OBJECT

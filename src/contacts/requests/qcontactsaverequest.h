@@ -56,7 +56,7 @@ class Q_CONTACTS_EXPORT QContactSaveRequest : public QContactAbstractRequest
     Q_OBJECT
 
 public:
-    QContactSaveRequest();
+    QContactSaveRequest(QObject* parent = 0);
 
     /* Selection */
     void setContacts(const QList<QContact>& contacts);
