@@ -174,8 +174,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
 
     QString query = schema.buildFilterQuery(&result, request->containerId(), request->filter());
 
-    qDebug("filter response %s: %s", qPrintable(schema.service()), qPrintable(query));
-
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
