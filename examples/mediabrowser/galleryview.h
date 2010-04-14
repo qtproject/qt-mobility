@@ -42,12 +42,18 @@
 #ifndef GALLERYVIEW_H
 #define GALLERYVIEW_H
 
+#include <qmobilityglobal.h>
+
 #include <QtGui/QWidget>
 
+QTM_BEGIN_NAMESPACE
 class QAbstractGallery;
 class QGalleryCountRequest;
 class QGalleryItemList;
 class QGalleryFilterRequest;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class GalleryView : public QWidget
 {

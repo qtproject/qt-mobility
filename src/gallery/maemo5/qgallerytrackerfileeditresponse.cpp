@@ -51,6 +51,8 @@
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryTrackerFileEditResponseThread : public QThread
 {
 public:
@@ -305,3 +307,7 @@ void QGalleryTrackerFileEditResponse::run()
             return;
     }
 }
+
+#include "moc_qgallerytrackerfileeditresponse_p.cpp"
+
+QTM_END_NAMESPACE

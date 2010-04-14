@@ -41,6 +41,8 @@
 
 #include "qgalleryabstractresponse_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QGalleryAbstractResponse
 
@@ -164,3 +166,8 @@ void QGalleryAbstractResponse::finish(int result, bool idle)
 
     Signals that a response has finished.
 */
+
+#include "moc_qgalleryabstractresponse.cpp"
+
+QTM_END_NAMESPACE
+

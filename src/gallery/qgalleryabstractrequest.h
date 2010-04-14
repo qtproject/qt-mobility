@@ -47,6 +47,8 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qstringlist.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QAbstractGallery;
 class QGalleryAbstractResponse;
 
@@ -151,5 +153,7 @@ private:
     Q_PRIVATE_SLOT(d_ptr, void _q_galleryDestroyed())
     Q_PRIVATE_SLOT(d_ptr, void _q_progressChanged(int, int))
 };
+
+QTM_END_NAMESPACE
 
 #endif

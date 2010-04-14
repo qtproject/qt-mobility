@@ -42,12 +42,21 @@
 #ifndef DOWNLOAD_H
 #define DOWNLOAD_H
 
+#include <qmobilityglobal.h>
+
 #include <QtCore/QFile>
 
-class QGalleryUrlRequest;
+QT_BEGIN_NAMESPACE
 class QNetworkReply;
+QT_END_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+class QGalleryUrlRequest;
+QTM_END_NAMESPACE
 
 class ShareWidget;
+
+QTM_USE_NAMESPACE
 
 class Download : public QObject
 {

@@ -42,22 +42,32 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
+#include <qmobilityglobal.h>
+
 #include <QtCore/QUrl>
 #include <QtGui/QWidget>
 
+QT_BEGIN_NAMESPACE
 class QAbstractButton;
 class QButtonGroup;
-class QDocumentGallery;
-class QGalleryAbstractRequest;
-class QGalleryContainerRequest;
-class QGalleryUrlRequest;
 class QListView;
 class QModelIndex;
 class QProgressBar;
 class QProgressDialog;
 class QSplitter;
+QT_END_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+class QDocumentGallery;
+class QGalleryAbstractRequest;
+class QGalleryContainerRequest;
+class QGalleryUrlRequest;
+QTM_END_NAMESPACE
+
 
 class GalleryModel;
+
+QTM_USE_NAMESPACE
 
 class Manager : public QWidget
 {

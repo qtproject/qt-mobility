@@ -43,6 +43,8 @@
 
 #include "qgallerytrackerschema_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
         const QDBusConnection &connection,
         const QGalleryTrackerSchema &schema,
@@ -160,3 +162,7 @@ QDBusPendingCall QGalleryTrackerFileListResponse::queryRows(int offset, int limi
 
     return m_dbusInterface.asyncCallWithArgumentList (QLatin1String("Query"), arguments);
 }
+
+#include "moc_qgallerytrackerfilelistresponse_p.cpp"
+
+QTM_END_NAMESPACE

@@ -53,6 +53,8 @@
 // We mean it.
 //
 
+QTM_BEGIN_NAMESPACE
+
 class QAbstractGallery;
 
 class QAbstractGalleryPrivate
@@ -69,5 +71,7 @@ public:
 
     QAbstractGallery *q_ptr;
 };
+
+QTM_END_NAMESPACE
 
 #endif

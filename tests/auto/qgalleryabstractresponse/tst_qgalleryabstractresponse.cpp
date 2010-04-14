@@ -43,6 +43,8 @@
 
 #include <qgalleryabstractresponse.h>
 
+QTM_USE_NAMESPACE
+
 class tst_QGalleryAbstractResponse : public QObject
 {
     Q_OBJECT

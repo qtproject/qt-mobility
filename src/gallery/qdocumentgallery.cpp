@@ -44,6 +44,8 @@
 
 #include <QtCore/qstringlist.h>
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QDocumentGallery
 
@@ -700,4 +702,9 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
     return 0;
 }
 
+#include "moc_qdocumentgallery.cpp"
+
 #endif
+
+QTM_END_NAMESPACE
+

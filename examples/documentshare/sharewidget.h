@@ -42,17 +42,25 @@
 #ifndef SHAREWIDGET_H
 #define SHAREWIDGET_H
 
+#include <qmobilityglobal.h>
+
 #include <QtCore/qfile.h>
 #include <QtGui/qwidget.h>
 
-class QAbstractGallery;
-class QDocumentGallery;
+QT_BEGIN_NAMESPACE
 class QNetworkReply;
 class QNetworkRequest;
 class QWebView;
+QT_END_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+class QAbstractGallery;
+class QDocumentGallery;
+QTM_END_NAMESPACE
 
 class Download;
 
+QTM_USE_NAMESPACE;
 
 class ShareWidget : public QWidget
 {

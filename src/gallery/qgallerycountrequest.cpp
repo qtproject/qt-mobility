@@ -43,6 +43,8 @@
 
 #include "qgalleryabstractrequest_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryCountRequestPrivate : public QGalleryAbstractRequestPrivate
 {
     Q_DECLARE_PUBLIC(QGalleryCountRequest)
@@ -223,3 +225,5 @@ void QGalleryCountRequest::setResponse(QGalleryAbstractResponse *response)
 }
 
 #include "moc_qgallerycountrequest.cpp"
+
+QTM_END_NAMESPACE

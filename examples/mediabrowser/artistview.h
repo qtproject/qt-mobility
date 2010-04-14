@@ -44,7 +44,9 @@
 
 #include "galleryview.h"
 
+QT_BEGIN_NAMESPACE
 class QModelIndex;
+QT_END_NAMESPACE
 
 class GalleryModel;
 

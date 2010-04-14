@@ -48,6 +48,8 @@
 
 #include <QtDBus/qdbuspendingcall.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryTrackerListResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
@@ -104,6 +106,8 @@ private:
     QVector<QStringList> m_rows;
 
 };
+
+QTM_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
 

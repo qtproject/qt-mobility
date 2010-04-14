@@ -47,6 +47,8 @@
 #include <QtDBus/qdbusinterface.h>
 #include <QtDBus/qdbuspendingcall.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryTrackerSchema;
 
 class QGalleryTrackerCountResponse : public QGalleryAbstractResponse
@@ -102,5 +104,6 @@ private:
 
 };
 
+QTM_END_NAMESPACE
 
 #endif

@@ -43,6 +43,8 @@
 
 #include <QtCore/qfile.h>
 
+QTM_BEGIN_NAMESPACE
+
 QGalleryTrackerFileRemoveResponse::QGalleryTrackerFileRemoveResponse(
         const QDBusConnection &connection,
         const QGalleryTrackerSchema &schema,
@@ -71,3 +73,7 @@ bool QGalleryTrackerFileRemoveResponse::editFile(
         return true;
     }
 }
+
+#include "moc_qgallerytrackerfileremoveresponse_p.cpp"
+
+QTM_END_NAMESPACE

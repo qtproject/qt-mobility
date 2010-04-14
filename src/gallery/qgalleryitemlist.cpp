@@ -41,6 +41,8 @@
 
 #include "qgalleryitemlist_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QGalleryResource
 
@@ -339,3 +341,7 @@ void QGalleryItemList::setMetaData(int index, const QString &property, const QVa
     Signals that the meta-data identified by \a keys of \a count documents
     starting at \a index has changed.
 */
+
+#include "moc_qgalleryitemlist.cpp"
+
+QTM_END_NAMESPACE

@@ -47,6 +47,8 @@
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
+QTM_BEGIN_NAMESPACE
+
 QGalleryTrackerCountResponse::QGalleryTrackerCountResponse(
         const QDBusConnection &connection,
         const QGalleryTrackerSchema &schema,
@@ -226,3 +228,7 @@ void QGalleryTrackerCountResponse::queryCount()
                 this, SLOT(callFinished(QDBusPendingCallWatcher*)));
     }
 }
+
+#include "moc_qgallerytrackercountresponse_p.cpp"
+
+QTM_END_NAMESPACE

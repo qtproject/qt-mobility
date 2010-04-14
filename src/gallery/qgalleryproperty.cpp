@@ -41,6 +41,7 @@
 
 #include "qgalleryproperty.h"
 
+QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGalleryProperty
@@ -175,3 +176,4 @@ QString QGalleryProperty::descending() const
     return QLatin1Char('-') + name();
 }
 
+QTM_END_NAMESPACE

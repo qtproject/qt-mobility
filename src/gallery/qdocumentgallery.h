@@ -46,6 +46,8 @@
 #include <qgalleryproperty.h>
 #include <qgallerytype.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QDocumentGalleryPrivate;
 
 class Q_GALLERY_EXPORT QDocumentGallery : public QAbstractGallery
@@ -156,5 +158,7 @@ public:
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request);
 };
+
+QTM_END_NAMESPACE
 
 #endif

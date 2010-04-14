@@ -49,6 +49,8 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_GALLERY_EXPORT QGalleryResource
 {
 public:
@@ -131,5 +133,7 @@ protected:
 
     QGalleryItemListPrivate *d_ptr;
 };
+
+QTM_END_NAMESPACE
 
 #endif

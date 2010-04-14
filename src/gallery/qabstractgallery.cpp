@@ -42,6 +42,8 @@
 #include "qabstractgallery.h"
 #include "qabstractgallery_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QAbstractGallery
 
@@ -98,3 +100,7 @@ QAbstractGallery::~QAbstractGallery()
 
     Creates a response to a gallery \a request.
 */
+
+#include "moc_qabstractgallery.cpp"
+
+QTM_END_NAMESPACE

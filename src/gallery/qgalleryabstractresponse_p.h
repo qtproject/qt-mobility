@@ -42,10 +42,6 @@
 #ifndef QGALLERYABSTRACTRESPONSE_P_H
 #define QGALLERYABSTRACTRESPONSE_P_H
 
-#include "qgalleryitemlist_p.h"
-
-#include "qgalleryabstractresponse.h"
-
 //
 //  W A R N I N G
 //  -------------
@@ -56,6 +52,12 @@
 //
 // We mean it.
 //
+
+#include "qgalleryitemlist_p.h"
+
+#include "qgalleryabstractresponse.h"
+
+QTM_BEGIN_NAMESPACE
 
 class QGalleryAbstractResponsePrivate : public QGalleryItemListPrivate
 {
@@ -68,5 +70,7 @@ public:
     int result;
     bool idle;
 };
+
+QTM_END_NAMESPACE
 
 #endif

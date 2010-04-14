@@ -43,6 +43,8 @@
 
 #include "qgalleryabstractrequest_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryRemoveRequestPrivate : public QGalleryAbstractRequestPrivate
 {
 public:
@@ -196,3 +198,7 @@ void QGalleryRemoveRequest::setResponse(QGalleryAbstractResponse *response)
 
     emit currentItemChanged();
 }
+
+#include "moc_qgalleryremoverequest.cpp"
+
+QTM_END_NAMESPACE

@@ -63,6 +63,8 @@
 
 #include <QtDBus/qdbusmetatype.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QDocumentGalleryPrivate : public QAbstractGalleryPrivate
 {
 public:
@@ -366,3 +368,8 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
         return 0;
     }
 }
+
+#include "moc_qdocumentgallery.cpp"
+
+QTM_END_NAMESPACE
+

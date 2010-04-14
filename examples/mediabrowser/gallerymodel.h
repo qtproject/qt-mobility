@@ -42,10 +42,16 @@
 #ifndef GALLERYMODEL_H
 #define GALLERYMODEL_H
 
+#include <qmobilityglobal.h>
+
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QVector>
 
+QTM_BEGIN_NAMESPACE
 class QGalleryItemList;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class GalleryModel : public QAbstractItemModel
 {

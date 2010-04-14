@@ -44,6 +44,8 @@
 
 #include "qgallerytrackerfileeditresponse_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryTrackerFileRemoveResponse : public QGalleryTrackerFileEditResponse
 {
     Q_OBJECT
@@ -59,5 +61,7 @@ public:
 protected:
     bool editFile(int *error, const QString &path, const QString &fileName);
 };
+
+QTM_END_NAMESPACE
 
 #endif

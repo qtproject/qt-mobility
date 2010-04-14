@@ -44,6 +44,8 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qurl.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryFilterPrivate : public QSharedData
 {
 public:
@@ -66,10 +68,16 @@ public:
     const QGalleryFilter::Type type;
 };
 
-template <> QGalleryFilterPrivate *QSharedDataPointer<QGalleryFilterPrivate>::clone()
+QTM_END_NAMESPACE
+
+template <>
+QTM_PREPEND_NAMESPACE(QGalleryFilterPrivate) *
+        QSharedDataPointer<QTM_PREPEND_NAMESPACE(QGalleryFilterPrivate)>::clone()
 {
     return d->clone();
 }
+
+QTM_BEGIN_NAMESPACE
 
 class QGalleryInvalidFilterPrivate : public QGalleryFilterPrivate
 {
@@ -1163,3 +1171,5 @@ void QGalleryMetaDataRangeFilter::setGreaterThanEquals(const QVariant &value)
 {
     d->setRange(value, QVariant(), QGalleryFilter::GreaterThanEqualsMinimum);
 }
+
+QTM_END_NAMESPACE

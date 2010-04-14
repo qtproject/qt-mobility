@@ -44,6 +44,8 @@
 
 #include "qgalleryabstractrequest.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryItemList;
 
 class QGalleryContainerRequestPrivate;
@@ -94,5 +96,7 @@ Q_SIGNALS:
 protected:
     void setResponse(QGalleryAbstractResponse *response);
 };
+
+QTM_END_NAMESPACE
 
 #endif

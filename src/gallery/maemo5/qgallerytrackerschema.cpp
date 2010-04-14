@@ -48,6 +48,8 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qxmlstream.h>
 
+QTM_BEGIN_NAMESPACE
+
 namespace
 {
     struct QGalleryPropertyMapItem
@@ -1267,3 +1269,5 @@ QString QGalleryTrackerSchema::typeFromService(const QString &service)
     }
     return QString();
 }
+
+QTM_END_NAMESPACE

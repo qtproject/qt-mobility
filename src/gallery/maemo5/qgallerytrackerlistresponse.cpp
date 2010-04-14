@@ -43,6 +43,8 @@
 
 #include <QtDBus/qdbuspendingreply.h>
 
+QTM_BEGIN_NAMESPACE
+
 QGalleryTrackerListResponse::QGalleryTrackerListResponse(
         const QGalleryTrackerSchema &schema, int minimumPagedItems, QObject *parent)
     : QGalleryAbstractResponse(parent)
@@ -279,3 +281,7 @@ void QGalleryTrackerListResponse::appendedItemsUpdate(int index, int count)
         metaDataChanged(index, count);
     }
 }
+
+#include "moc_qgallerytrackerlistresponse_p.cpp"
+
+QTM_END_NAMESPACE

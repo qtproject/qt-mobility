@@ -44,6 +44,8 @@
 
 #include <qgalleryabstractrequest.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QAbstractGalleryPrivate;
 
 class Q_GALLERY_EXPORT QAbstractGallery : public QObject
@@ -64,5 +66,7 @@ protected:
 
     friend class QGalleryAbstractRequest;
 };
+
+QTM_END_NAMESPACE
 
 #endif

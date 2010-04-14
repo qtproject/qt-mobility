@@ -43,6 +43,8 @@
 
 #include "qgalleryabstractrequest_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryFilterRequestPrivate : public QGalleryAbstractRequestPrivate
 {
 public:
@@ -278,3 +280,7 @@ void QGalleryFilterRequest::setResponse(QGalleryAbstractResponse *response)
 
     emit itemsChanged();
 }
+
+#include "moc_qgalleryfilterrequest.cpp"
+
+QTM_END_NAMESPACE

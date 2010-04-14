@@ -55,6 +55,8 @@
 
 #include "qgalleryitemlist.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryItemListPrivate
 {
 public:
@@ -70,5 +72,7 @@ public:
     int cursorPosition;
     int cacheSize;
 };
+
+QTM_END_NAMESPACE
 
 #endif

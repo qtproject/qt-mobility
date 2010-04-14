@@ -44,6 +44,8 @@
 
 #include "qgallerytrackerfileeditresponse_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryTrackerFileMoveResponse : public QGalleryTrackerFileEditResponse
 {
     Q_OBJECT
@@ -63,5 +65,7 @@ protected:
 private:
     QString m_destinationPath;
 };
+
+QTM_END_NAMESPACE
 
 #endif

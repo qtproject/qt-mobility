@@ -46,7 +46,9 @@
 
 class GalleryModel;
 
+QT_BEGIN_NAMESPACE
 class QModelIndex;
+QT_END_NAMESPACE
 
 class SongView : public GalleryView
 {

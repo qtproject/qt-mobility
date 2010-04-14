@@ -55,6 +55,8 @@
 
 #include "qgalleryabstractresponse.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryErrorResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
@@ -80,5 +82,7 @@ public:
 
     bool waitForFinished(int msecs);
 };
+
+QTM_END_NAMESPACE
 
 #endif

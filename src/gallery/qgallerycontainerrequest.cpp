@@ -43,6 +43,8 @@
 
 #include "qgalleryabstractrequest_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryContainerRequestPrivate : public QGalleryAbstractRequestPrivate
 {
 public:
@@ -257,3 +259,7 @@ void QGalleryContainerRequest::setResponse(QGalleryAbstractResponse *response)
 
     emit itemsChanged();
 }
+
+#include "moc_qgallerycontainerrequest.cpp"
+
+QTM_END_NAMESPACE

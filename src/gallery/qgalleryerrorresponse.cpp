@@ -41,6 +41,8 @@
 
 #include "qgalleryerrorresponse_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QGalleryErrorResponse::QGalleryErrorResponse(int result, QObject *parent)
     : QGalleryAbstractResponse(parent)
 {
@@ -109,3 +111,8 @@ bool QGalleryErrorResponse::waitForFinished(int)
 {
     return true;
 }
+
+#include "moc_qgalleryerrorresponse_p.cpp"
+
+QTM_END_NAMESPACE
+

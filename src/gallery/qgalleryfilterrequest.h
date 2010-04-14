@@ -46,6 +46,8 @@
 
 #include "qgalleryfilter.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryItemList;
 
 class QGalleryFilterRequestPrivate;
@@ -100,5 +102,7 @@ Q_SIGNALS:
 protected:
     void setResponse(QGalleryAbstractResponse *response);
 };
+
+QTM_END_NAMESPACE
 
 #endif

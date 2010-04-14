@@ -49,6 +49,8 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qvector.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryIntersectionFilter;
 class QGalleryMetaDataFilter;
 class QGalleryMetaDataRangeFilter;
@@ -275,6 +277,8 @@ private:
     friend class QGalleryFilter;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGalleryFilter::RangeFlags)
+QTM_END_NAMESPACE
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryFilter::RangeFlags))
 
 #endif

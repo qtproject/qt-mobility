@@ -55,6 +55,8 @@
 
 #include "qgalleryfilter.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryTrackerSchema
 {
 public:
@@ -103,5 +105,7 @@ private:
     int m_aggregateTypeIndex;
     QString m_itemType;
 };
+
+QTM_END_NAMESPACE
 
 #endif

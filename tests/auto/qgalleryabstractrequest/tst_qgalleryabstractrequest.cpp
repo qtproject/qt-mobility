@@ -46,6 +46,8 @@
 #include <qabstractgallery.h>
 #include <qgalleryabstractresponse.h>
 
+QTM_USE_NAMESPACE
+
 class tst_QGalleryAbstractRequest : public QObject
 {
     Q_OBJECT

@@ -46,6 +46,8 @@
 
 #include <QtCore/qstring.h>
 
+QTM_BEGIN_NAMESPACE
+
 class Q_GALLERY_EXPORT QGalleryType
 {
 public:
@@ -64,5 +66,7 @@ private:
     const char * const m_name;
     const int m_length;
 };
+
+QTM_END_NAMESPACE
 
 #endif

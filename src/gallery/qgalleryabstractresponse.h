@@ -47,6 +47,8 @@
 
 #include <QtCore/qstringlist.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryAbstractResponsePrivate;
 
 class Q_GALLERY_EXPORT QGalleryAbstractResponse : public QGalleryItemList
@@ -73,5 +75,7 @@ protected:
 
     void finish(int result, bool idle = false);
 };
+
+QTM_END_NAMESPACE
 
 #endif

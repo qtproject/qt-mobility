@@ -46,6 +46,8 @@
 
 #include <QtCore/qurl.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryItemList;
 
 class QGalleryUrlRequestPrivate;
@@ -84,5 +86,7 @@ Q_SIGNALS:
 protected:
     void setResponse(QGalleryAbstractResponse *response);
 };
+
+QTM_END_NAMESPACE
 
 #endif

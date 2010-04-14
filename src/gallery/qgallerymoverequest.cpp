@@ -43,6 +43,7 @@
 
 #include "qgalleryabstractrequest_p.h"
 
+QTM_BEGIN_NAMESPACE
 
 class QGalleryMoveRequestPrivate : public QGalleryAbstractRequestPrivate
 {
@@ -212,3 +213,7 @@ void QGalleryMoveRequest::setResponse(QGalleryAbstractResponse *response)
 
     emit currentItemChanged();
 }
+
+#include "moc_qgallerymoverequest.cpp"
+
+QTM_END_NAMESPACE

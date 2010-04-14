@@ -46,6 +46,7 @@
 
 #include <QtDBus/qdbusinterface.h>
 
+QTM_BEGIN_NAMESPACE
 
 class QGalleryTrackerAggregateListResponse : public QGalleryTrackerListResponse
 {
@@ -85,5 +86,7 @@ private:
     QStringList m_aggregateFields;
     QStringList m_propertyNames;
 };
+
+QTM_END_NAMESPACE
 
 #endif

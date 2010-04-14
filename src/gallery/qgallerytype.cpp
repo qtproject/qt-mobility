@@ -41,6 +41,8 @@
 
 #include "qgallerytype.h"
 
+QTM_BEGIN_NAMESPACE
+
 /*!
     \class QGalleryType
 
@@ -68,3 +70,6 @@ QString QGalleryType::name() const
 
     Returns the string name of an item type.
 */
+
+QTM_END_NAMESPACE
+

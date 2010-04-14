@@ -46,10 +46,17 @@
 
 #include <qgalleryfilter.h>
 
-class QDocumentGallery;
+QT_BEGIN_NAMESPACE
 class QStackedWidget;
+QT_END_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+class QDocumentGallery;
+QTM_END_NAMESPACE
 
 class GalleryView;
+
+QTM_USE_NAMESPACE
 
 class Browser : public QWidget
 {

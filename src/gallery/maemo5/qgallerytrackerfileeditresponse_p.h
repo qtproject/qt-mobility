@@ -51,6 +51,8 @@
 class QDBusPendingCallWatcher;
 class QThread;
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryTrackerFileEditResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
@@ -108,5 +110,7 @@ private:
 
     friend class QGalleryTrackerFileEditResponseThread;
 };
+
+QTM_END_NAMESPACE
 
 #endif

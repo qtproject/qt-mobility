@@ -46,6 +46,8 @@
 
 #include <QtDBus/qdbusinterface.h>
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryTrackerFileListResponse : public QGalleryTrackerListResponse
 {
     Q_OBJECT
@@ -84,5 +86,6 @@ private:
     QList<int> m_resourceKeys;
 };
 
+QTM_END_NAMESPACE
 
 #endif

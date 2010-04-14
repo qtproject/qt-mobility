@@ -43,6 +43,8 @@
 
 #include <QtCore/qfile.h>
 
+QTM_BEGIN_NAMESPACE
+
 QGalleryTrackerFileMoveResponse::QGalleryTrackerFileMoveResponse(
         const QDBusConnection &connection,
         const QGalleryTrackerSchema &schema,
@@ -86,3 +88,7 @@ bool QGalleryTrackerFileMoveResponse::editFile(
         return true;
     }
 }
+
+#include "moc_qgallerytrackerfilemoveresponse_p.cpp"
+
+QTM_END_NAMESPACE

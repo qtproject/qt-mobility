@@ -46,6 +46,8 @@
 
 #include "qgalleryfilter.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryFilter;
 
 class QGalleryCountRequestPrivate;
@@ -87,5 +89,7 @@ protected:
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged())
 };
+
+QTM_END_NAMESPACE
 
 #endif

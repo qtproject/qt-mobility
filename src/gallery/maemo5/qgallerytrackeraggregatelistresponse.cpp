@@ -43,6 +43,8 @@
 
 #include "qgallerytrackerschema_p.h"
 
+QTM_BEGIN_NAMESPACE
+
 QGalleryTrackerAggregateListResponse::QGalleryTrackerAggregateListResponse(
         const QDBusConnection &connection,
         const QGalleryTrackerSchema &schema,
@@ -158,3 +160,7 @@ QDBusPendingCall QGalleryTrackerAggregateListResponse::queryRows(int offset, int
             offset,
             limit);
 }
+
+#include "moc_qgallerytrackeraggregatelistresponse_p.cpp"
+
+QTM_END_NAMESPACE

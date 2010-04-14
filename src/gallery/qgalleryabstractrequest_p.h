@@ -57,6 +57,8 @@
 
 #include "qgalleryabstractresponse.h"
 
+QTM_BEGIN_NAMESPACE
+
 class QGalleryAbstractRequestPrivate
 {
     Q_DECLARE_PUBLIC(QGalleryAbstractRequest)
@@ -90,5 +92,7 @@ public:
     int currentProgress;
     int maximumProgress;
 };
+
+QTM_END_NAMESPACE
 
 #endif
