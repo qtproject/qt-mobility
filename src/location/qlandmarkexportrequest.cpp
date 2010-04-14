@@ -60,9 +60,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a landmark export request.
+    Constructs a landmark export request with the given \a parent.
 */
-QLandmarkExportRequest::QLandmarkExportRequest()
+QLandmarkExportRequest::QLandmarkExportRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 

@@ -73,7 +73,7 @@ public:
         ExportRequest
     };
 
-    QLandmarkAbstractRequest();
+    QLandmarkAbstractRequest(QObject *parent = 0);
     virtual ~QLandmarkAbstractRequest();
 
     RequestType type() const;

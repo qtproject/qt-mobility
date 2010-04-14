@@ -51,7 +51,7 @@ class Q_LOCATION_EXPORT QLandmarkSaveRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    QLandmarkSaveRequest();
+    QLandmarkSaveRequest(QObject *parent);
     ~QLandmarkSaveRequest();
 
     QList<QLandmark> landmarks() const;

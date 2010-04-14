@@ -58,9 +58,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Creates a new category fetch request object.
+    Creates a new category fetch request object with the given \a parent.
 */
-QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest()
+QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest(QObject *parent)
+    :QLandmarkAbstractRequest(parent)
 {
 }
 

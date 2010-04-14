@@ -51,7 +51,7 @@ class Q_LOCATION_EXPORT QLandmarkCategoryRemoveRequest : public QLandmarkAbstrac
 {
     Q_OBJECT
 public:
-    QLandmarkCategoryRemoveRequest();
+    QLandmarkCategoryRemoveRequest(QObject *parent = 0);
     ~QLandmarkCategoryRemoveRequest();
 
     QList<QLandmarkCategoryId> categoryIds() const;

@@ -51,7 +51,7 @@ class Q_LOCATION_EXPORT QLandmarkExportRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    QLandmarkExportRequest();
+    QLandmarkExportRequest(QObject *parent = 0);
     ~QLandmarkExportRequest();
 
     QIODevice *device() const;

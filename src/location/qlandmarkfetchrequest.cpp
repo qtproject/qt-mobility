@@ -59,9 +59,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Creates a new landmark fetch request object.
+    Creates a new landmark fetch request object with the given \a parent.
 */
-QLandmarkFetchRequest::QLandmarkFetchRequest()
+QLandmarkFetchRequest::QLandmarkFetchRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 

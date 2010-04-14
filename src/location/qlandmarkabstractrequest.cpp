@@ -81,9 +81,10 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    Constructs a new, invalid asynchronous request.
+    Constructs a new, invalid asynchronous request with the given \a parent.
 */
-QLandmarkAbstractRequest::QLandmarkAbstractRequest()
+QLandmarkAbstractRequest::QLandmarkAbstractRequest(QObject *parent)
+    : QObject(parent)
 {
 }
 

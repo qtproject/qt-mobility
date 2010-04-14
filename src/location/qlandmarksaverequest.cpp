@@ -59,9 +59,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a landmark save request
+    Constructs a landmark save request with the given \a parent.
 */
-QLandmarkSaveRequest::QLandmarkSaveRequest()
+QLandmarkSaveRequest::QLandmarkSaveRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 

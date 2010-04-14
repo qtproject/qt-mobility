@@ -58,9 +58,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a landmark remove request
+    Constructs a landmark remove request with the given \a parent.
 */
-QLandmarkRemoveRequest::QLandmarkRemoveRequest()
+QLandmarkRemoveRequest::QLandmarkRemoveRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 

@@ -53,7 +53,7 @@ class Q_LOCATION_EXPORT QLandmarkCategorySaveRequest : public QLandmarkAbstractR
 {
     Q_OBJECT
 public:
-    QLandmarkCategorySaveRequest();
+    QLandmarkCategorySaveRequest(QObject *parent = 0);
     ~QLandmarkCategorySaveRequest();
 
     QList<QLandmarkCategory> categories() const;

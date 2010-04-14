@@ -51,7 +51,7 @@ class Q_LOCATION_EXPORT QLandmarkFetchRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    QLandmarkFetchRequest();
+    QLandmarkFetchRequest(QObject *parent = 0);
     ~QLandmarkFetchRequest();
 
     QLandmarkFilter filter() const;

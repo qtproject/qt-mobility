@@ -51,7 +51,7 @@ class Q_LOCATION_EXPORT QLandmarkCategoryIdFetchRequest : public QLandmarkAbstra
 {
     Q_OBJECT
 public:
-    QLandmarkCategoryIdFetchRequest();
+    QLandmarkCategoryIdFetchRequest(QObject *parent = 0);
     ~QLandmarkCategoryIdFetchRequest();
 
     QList<QLandmarkCategoryId> ids() const;

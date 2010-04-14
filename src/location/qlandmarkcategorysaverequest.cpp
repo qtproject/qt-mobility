@@ -60,9 +60,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a category save request.
+    Constructs a category save request with the given \a parent.
 */
-QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest()
+QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 

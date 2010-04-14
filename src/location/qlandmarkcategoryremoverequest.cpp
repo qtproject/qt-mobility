@@ -59,9 +59,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a category remove request.
+    Constructs a category remove request with the given \a parent.
 */
-QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest()
+QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 
