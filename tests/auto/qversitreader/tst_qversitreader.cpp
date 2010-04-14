@@ -238,6 +238,8 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     QCOMPARE(mReader->error(), QVersitReader::ParseError);
     QCOMPARE(mReader->results().count(),4);
 
+    qApp->processEvents(); // clean up before we start sniffing signals
+
     // Asynchronous reading
     mInputDevice->close();
     mInputDevice->setData(twoDocuments);
