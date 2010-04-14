@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(gstengine)
+TARGET = $$qtLibraryTarget(qtmedia_gstengine)
 PLUGIN_TYPE=mediaservice
 
 include(../../../common.pri)

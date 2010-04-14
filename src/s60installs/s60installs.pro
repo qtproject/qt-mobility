@@ -125,24 +125,24 @@ symbian: {
 
         qtmobilitydeployment.sources += \
             $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMedia.dll \
-            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/m3u.dll
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_m3u.dll
 
         multimedia = \
             "IF package(0x1028315F)" \
-            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmedia_mmfengine.dll\"" \
             "ELSEIF package(0x102752AE)" \
-            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmedia_mmfengine.dll\"" \
             "ELSEIF package(0x102032BE)" \
-            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmedia_mmfengine.dll\"" \
             "ELSE" \
-            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmedia_mmfengine.dll\"" \
             "ENDIF"
 
         qtmobilitydeployment.pkg_postrules += multimedia
 
         pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/QtMobilityMmfEngine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\QtMobilityMmfEngine.qtplugin\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\m3u.qtplugin\""
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmedia_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmedia_mmfengine.qtplugin\"" \
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmedia_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmedia_m3u.qtplugin\""
     }
 
     contains(mobility_modules, sensors) {
