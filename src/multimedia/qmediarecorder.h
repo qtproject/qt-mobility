@@ -88,7 +88,7 @@ public:
     ~QMediaRecorder();
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMultimedia::AvailabilityError availabilityError() const;
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &location);
