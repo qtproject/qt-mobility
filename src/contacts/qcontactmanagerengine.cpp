@@ -482,8 +482,6 @@ QString QContactManagerEngine::synthesizedDisplayLabel(const QContact& contact, 
 
 /*!
   Sets the contact display label of \a contact to the supplied \a displayLabel.
-
-  This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
  */
 void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QString& displayLabel)
 {
@@ -491,6 +489,18 @@ void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QStr
     dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
     setDetailAccessConstraints(&dl, QContactDetail::Irremovable);
     contact->d->m_details.replace(0, dl);
+}
+
+/*!
+  Returns a copy of \a contact with the contact display label set to the supplied \a displayLabel.
+
+  This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
+*/
+QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLabel, const QContact& contact)
+{
+    QContact newContact = contact;
+    setContactDisplayLabel(&newContact, displayLabel);
+    return newContact;
 }
 
 /*!
