@@ -289,7 +289,7 @@ void MessagingEx::on_sendSmsButton_clicked()
     
     if (!QString(phoneNumberEdit->text()).isEmpty())
     {
-        if (m_service.send(message))
+        if (!m_service.send(message))
         {
             QMessageBox msgBox;
             msgBox.setStandardButtons(QMessageBox::Close);
@@ -321,7 +321,7 @@ void MessagingEx::on_sendMmsButton_clicked()
     
     if (!QString(mmsPhoneNumberEdit->text()).isEmpty())
     {
-        if (m_service.send(message))
+        if (!m_service.send(message))
         {
             QMessageBox msgBox;
             msgBox.setStandardButtons(QMessageBox::Close);
@@ -693,7 +693,7 @@ void MessagingEx::sortParentAccountId()
         QMessageFolder folder;
         folder = m_manager.folder(ids[i]);
         QString name = folder.name();
-        folderComboBox->addItem(name, folder.id().toString());
+        folderComboBox->addItem(name, folder.id().toString());    
     }
 }
 

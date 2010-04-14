@@ -1463,7 +1463,6 @@ void tst_QMessageStoreKeys::testFolderOrdering()
     }
 }
 
-
 void tst_QMessageStoreKeys::testMessageFilter_data()
 {
     QTest::addColumn<QMessageFilter>("filter");
@@ -1488,6 +1487,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] )
         << ( QMessageIdList() << messageIds[0] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
+
     QTest::newRow("id equality invalid")
         << QMessageFilter::byId(QMessageId(), QMessageDataComparator::Equal) 
         << QMessageIdList()
@@ -1578,6 +1578,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
+
     QTest::newRow("type equality 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::Equal) 
 #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
@@ -2875,7 +2876,7 @@ void tst_QMessageStoreKeys::testMessageFilter()
     if (filter.isSupported()) {
         QVERIFY(filter == filter);
         QCOMPARE(filter != QMessageFilter(), !filter.isEmpty());
-
+        
         // Order is irrelevant for filtering
         if (body.isEmpty()) {
             QCOMPARE(manager->queryMessages(filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), ids.toSet());
@@ -2888,6 +2889,7 @@ void tst_QMessageStoreKeys::testMessageFilter()
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
+
 void tst_QMessageStoreKeys::testMessageOrdering_data()
 {
     QTest::addColumn<MessageSortList>("sorts");
