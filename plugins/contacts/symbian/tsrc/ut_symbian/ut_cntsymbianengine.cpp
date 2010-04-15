@@ -108,7 +108,6 @@ void TestSymbianEngine::ctors()
     if (error == QContactManager::NoError) {
         QVERIFY(ce->managerName() == CNT_SYMBIAN_MANAGER_NAME);
         QVERIFY(ce->m_contactFilter != 0);
-        QVERIFY(ce->m_contactSorter != 0);
         QVERIFY(ce->m_dataBase != 0);
         QVERIFY(ce->m_relationship != 0);
         QVERIFY(ce->m_transformContact != 0);
