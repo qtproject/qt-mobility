@@ -491,10 +491,14 @@ void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QStr
     contact->d->m_details.replace(0, dl);
 }
 
-/*!
+/*!  
+  \deprecated
+
   Returns a copy of \a contact with the contact display label set to the supplied \a displayLabel.
 
   This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
+
+  This function has been deprecated - use the function with the same name that accepts different parameters.
 */
 QContact QContactManagerEngine::setContactDisplayLabel(const QString& displayLabel, const QContact& contact)
 {
