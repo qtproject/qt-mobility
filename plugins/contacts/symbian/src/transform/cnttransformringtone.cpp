@@ -71,7 +71,6 @@ QContactDetail *CntTransformRingtone::transformItemField(const CContactItemField
 {
     QContactRingtone *ringtone = new QContactRingtone(contact.detail<QContactRingtone>());
 
-    // XXX ringtone can have multiple values from different fields glommed together
 	CContactTextField* storage = field.TextStorage();
     QString ringtoneString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 
@@ -81,8 +80,6 @@ QContactDetail *CntTransformRingtone::transformItemField(const CContactItemField
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
         ringtone->setVideoRingtoneUrl(ringtoneString);
     }
-
-    // XXX need to remove old one somehow
 
     return ringtone;
 }
@@ -121,7 +118,6 @@ QList<TUid> CntTransformRingtone::supportedSortingFieldTypes(QString /*detailFie
  */
 bool CntTransformRingtone::supportsSubType(const QString& /*subType*/) const
 {
-    // XXX todo
     return false;
 }
 
@@ -131,10 +127,14 @@ bool CntTransformRingtone::supportsSubType(const QString& /*subType*/) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformRingtone::getIdForField(const QString& /*fieldName*/) const
+quint32 CntTransformRingtone::getIdForField(const QString& fieldName) const
 {
-    // XXX todo
-    return 0;
+    if (QContactRingtone::FieldAudioRingtoneUrl == fieldName)
+        return 0;
+    else if (QContactRingtone::FieldVideoRingtoneUrl == fieldName)
+        return 0;
+    else
+        return 0;
 }
 
 /*!

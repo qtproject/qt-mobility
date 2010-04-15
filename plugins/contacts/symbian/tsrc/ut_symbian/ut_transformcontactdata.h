@@ -65,6 +65,7 @@ private slots:
 #endif
 	void executeCntTransformOrganisation();
 	void executeCntTransformAvatar();
+	void executeCntTransformRingtone();
 	void executeCntTransformSyncTarget();
 	void executeCntTransformGender();
 	void executeCntTransformAnniversary();
@@ -102,6 +103,8 @@ private:
                                        TPtrC16 jobtitleField, QString jobtitleDetail,
                                        TPtrC16 assistantField, QString assistantDetail);
     void validateCntTransformAvatarL(TPtrC16 field, QString detail);
+    void validateCntTransformRingtoneL(TPtrC16 audioRingtoneField, QString audioRingtoneDetail,
+                                       TPtrC16 videoRingtoneField, QString videoRingtoneDetail);
     void validateCntTransformSyncTargetL(TPtrC16 field, QString detail);
     void validateCntTransformGenderL(TPtrC16 field, QString detail);
     void validateCntTransformAnniversaryL(TPtrC16 field, QDate dateDetail, QString eventDetail);
