@@ -164,7 +164,6 @@ void QLandmarkFilter::setMaximumMatches(int maxMatches)
     //TODO: implement
 }
 
-
 /*!
     Returns true if this filter is not identical to \a other.
 

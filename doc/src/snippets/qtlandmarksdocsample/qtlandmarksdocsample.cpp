@@ -65,8 +65,8 @@
 QTM_USE_NAMESPACE
 QLandmarkCategoryId categoryId;
 
-//! [Adding a category and landmark asynchronously]
-//Save a category asynchronously
+
+//! [Add category asynchronously req]
 void RequestExample::categorySaveRequest()
 {
     QLandmarkCategory cafes;
@@ -86,7 +86,9 @@ void RequestExample::categorySaveRequest()
     else
         qDebug() << "Saveing category; awaiting results...";
 }
+//! [Add category asynchronously req]
 
+//! [Add category asynchronously handler]
 void RequestExample::categorySaveRequestHandler(QLandmarkAbstractRequest::State state)
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
@@ -99,8 +101,9 @@ void RequestExample::categorySaveRequestHandler(QLandmarkAbstractRequest::State 
         }
     }
 }
+//! [Add category asynchronously handler]
 
-//Save a landmark asynchronously
+//! [Add landmark asynchronously]
 void RequestExample::landmarkSaveRequest()
 {
     //Creating and saving a landmark
@@ -110,10 +113,7 @@ void RequestExample::landmarkSaveRequest()
 
     QGeoAddress address;
     address.setThoroughfareNumber("2880");
-    address.setThoroughfareName("112th Street");
-    address.setCity("New York City");
-    address.setState("New York");
-    address.setCountry("United States");
+    // ...
     address.setCountryCode("US");
     monks.setAddress(address);
 
@@ -131,7 +131,9 @@ void RequestExample::landmarkSaveRequest()
     else
         qDebug() << "Saving landmark; awaiting results...";
 }
+//! [Add landmark asynchronously]
 
+//! [Add landmark asynchronously handler]
 void RequestExample::landmarkSaveRequestHandler(QLandmarkAbstractRequest::State state)
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
@@ -144,17 +146,16 @@ void RequestExample::landmarkSaveRequestHandler(QLandmarkAbstractRequest::State 
         }
     }
 }
-//! [Adding a category and landmark asynchronously]
+//! [Add landmark asynchronously handler]
 
-//! [fetch categories and landmarks asynchronously]
 //Fetch categories asynchronously
 void RequestExample::categoryFetchRequest()
 {
+    //! [Retrieve categories asynchronously]
     //catFetchRequest was created with catFetchRequest = new QLandmarkCategoryFetchRequest()
     //in the ctor
     catFetchRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
 
-    connect(catFetchRequest, SIGNAL(resultsAvailable()), this, SLOT(printCategories()));
     connect(catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
             this, SLOT(categoryFetchHandlerRequest(QLandmarkAbstractRequest::State)));
 
@@ -164,32 +165,31 @@ void RequestExample::categoryFetchRequest()
     } else {
         qDebug() << "Requested categories, awaiting results...";
     }
+    //! [Retrieve categories asynchronously]
 }
 
-void RequestExample::printCategories()
-{
-    QList<QLandmarkCategory> categories = catFetchRequest->categories();
-    for( ;previousLastIndex < categories.size(); ++previousLastIndex) {
-        qDebug() << "Found category: " << categories.at(previousLastIndex).name();
-    }
-}
-
+//! [Retrieve categories asynchronously handler]
 void RequestExample::categoryFetchHandlerRequest(QLandmarkAbstractRequest::State state)
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         previousLastIndex = 0;
         if (catFetchRequest->error() == QLandmarkManager::NoError) {
+            QList<QLandmarkCategory> categories = catFetchRequest->categories();
             qDebug() << "Category fetch succesfully completed";
+            for(int i=0; i < categories.count(); ++i) {
+                qDebug() << categories[i].name();
+            }
         }
         else {
             qDebug() << "Category fetch was unsuccessful";
         }
     }
 }
+//! [Retrieve categories asynchronously handler]
 
-//Fetch landmarks asynchronously
 void RequestExample::landmarkFetchRequest()
 {
+    //! [Retrieve landmarks asynchronously]
     QLandmarkCategoryFilter filter;
     //categoryId is a previously retrieved QLandmarkCategoryId
     filter.setCategoryId(categoryId);
@@ -200,7 +200,6 @@ void RequestExample::landmarkFetchRequest()
     lmFetchRequest->setFilter(filter);
     lmFetchRequest->setSorting(QLandmarkNameSort(Qt::AscendingOrder));
 
-    connect(lmFetchRequest, SIGNAL(resultsAvailable()), this, SLOT(printLandmarks()));
     connect(lmFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
             this, SLOT(landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State)));
 
@@ -210,42 +209,39 @@ void RequestExample::landmarkFetchRequest()
     } else {
         qDebug() << "Requested landmarks, awaiting results...";
     }
+    //! [Retrieve landmarks asynchronously]
 }
 
-void RequestExample::printLandmarks()
-{
-    QList<QLandmark> results = lmFetchRequest->landmarks();
-    for( ;previousLastIndex < results.size(); ++previousLastIndex) {
-        qDebug() << "Found landmark: " << results.at(previousLastIndex).name();
-    }
-}
-
+//! [Retrieve landmarks asynchronously handler]
 void RequestExample::landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State state)
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         previousLastIndex = 0;
         if (lmFetchRequest->error() == QLandmarkManager::NoError) {
             qDebug() << "Landmark fetch succesfully completed";
+            QList<QLandmark> landmarks = lmFetchRequest->landmarks();
+            for(int i=0; i < landmarks.count(); ++i) {
+                qDebug() << landmarks[i].name();
+            }
         }
         else {
             qDebug() << "Landmark fetch was unsuccessful";
         }
     }
 }
-//! [fetch categories and landmarks asynchronously]
+//! [Retrieve landmarks asynchronously handler]
 
- //! [Adding a category and landmark synchronously]
 void addLandmarkAndCategory(QLandmarkManager *lm)
 {
-    //Creating and saving a category
+//! [Add category synchronously]
     QLandmarkCategory cafes;
     cafes.setName("Cafes");
     cafes.setDescription("Small diners");
     cafes.setIconUrl(QUrl("cafe.png"));
-    lm->saveCategory(&cafes);
+    lm->saveCategory(&cafes);  //lm is a QLandmarkManager *
+//! [Add category synchronously]
 
-
-    //Creating and saving a landmark
+//! [Add landmark synchronously]
     QLandmark monks;
     monks.setName("Monk's cafe");
     monks.setCoordinate(QGeoCoordinate(40.81, 73.97));
@@ -262,30 +258,30 @@ void addLandmarkAndCategory(QLandmarkManager *lm)
     monks.setDescription("Jerry's favourite diner");
     monks.addCategory(cafes.id());
 
-    lm->saveLandmark(&monks);
+    lm->saveLandmark(&monks); //lm  is a QLandmarkManager*
+    //! [Add landmark synchronously]
 }
-//! [Adding a category and landmark synchronously]
 
-//! [fetch categories and landmarks synchronously]
-//Fetch categories synchronously
 void categoryFetch(QLandmarkManager *lm)
 {
-    //retrieval of categories by id.
+    //! [Retrieve categories synchronously by id]
     QList<QLandmarkCategoryId> categoryIds = lm->categoryIds();
     foreach(QLandmarkCategoryId id, categoryIds) {
         qDebug() << "Found category: " << lm->category(id).name();
     }
+    //! [Retrieve categories synchronously by id]
 
-    //retrieval of categories directly.
+    //! [Retrieve categories synchronously]
     QList<QLandmarkCategory> categories = lm->categories();
     foreach(QLandmarkCategory category, categories) {
         qDebug() << "Found category: " << category.name();
     }
+    //! [Retrieve categories synchronously]
 }
 
-//Fetch landmarks synchronously
 void landmarkFetch(QLandmarkManager *lm)
 {
+    //! [Retrieve landmarks synchronously by id]
     QLandmarkCategoryFilter filter;
     //categoryId is a previously retrieved QLandmarkCategoryId
     filter.setCategoryId(categoryId);
@@ -296,15 +292,16 @@ void landmarkFetch(QLandmarkManager *lm)
     foreach(QLandmarkId id, landmarkIds) {
         qDebug() << "Found landmark:" << lm->landmark(id).name();
     }
+    //! [Retrieve landmarks synchronously by id]
 
-    //retrieval of landmark objects directly
+    //! [Retrieve landmarks synchronously]
     QList<QLandmark> landmarks;
     landmarks = lm->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder));
     foreach(QLandmark landmark, landmarks) {
         qDebug() << "Found landmark:" << landmark.name();
     }
+    //! [Retrieve landmarks synchronously]
 }
-//! [fetch categories and landmarks synchronously]
 
 void filterByName(QLandmarkManager *lm)
 {
@@ -334,7 +331,6 @@ void filterByProximity(QLandmarkManager *lm)
             qDebug() << "Match found, name: " << matchingLandmark.name();
         }
     }
-
 }
 
 void listAllCategories(QLandmarkManager *lm)
@@ -348,7 +344,6 @@ void listAllCategories(QLandmarkManager *lm)
     foreach(QLandmarkCategory category, categories) {
         qDebug() << category.name();
     }
-
 }
 
 int main(int argc, char *argv[])

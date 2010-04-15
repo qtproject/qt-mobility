@@ -43,11 +43,11 @@
 #define REQUESTEXAMPLE_H
 
 #include <QObject>
-#include <QLandmarkFetchRequest>
-#include <QLandmarkCategorySaveRequest>
-#include <QLandmarkSaveRequest>
-#include <QLandmarkCategoryFetchRequest>
-#include <QLandmarkManager>
+#include <qlandmarkfetchrequest.h>
+#include <qlandmarkcategorysaverequest.h>
+#include <qlandmarksaverequest.h>
+#include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkmanager.h>
 
 QTM_USE_NAMESPACE
 
@@ -57,10 +57,10 @@ class RequestExample : public QObject
 public:
     RequestExample():QObject(),
                     lmManager(new QLandmarkManager(this)),
-                    catSaveRequest(new QLandmarkCategorySaveRequest),
-                    lmSaveRequest(new QLandmarkSaveRequest),
-                    catFetchRequest(new QLandmarkCategoryFetchRequest),
-                    lmFetchRequest(new QLandmarkFetchRequest){}
+                    catSaveRequest(new QLandmarkCategorySaveRequest()),
+                    lmSaveRequest(new QLandmarkSaveRequest()),
+                    catFetchRequest(new QLandmarkCategoryFetchRequest()),
+                    lmFetchRequest(new QLandmarkFetchRequest()){}
     ~RequestExample(){}
 
 private slots:
@@ -72,9 +72,6 @@ private slots:
     void categoryFetchHandlerRequest(QLandmarkAbstractRequest::State);
     void landmarkFetchRequest();
     void landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State);
-
-    void printCategories();
-    void printLandmarks();
 
 private:
     QLandmarkManager *lmManager;
