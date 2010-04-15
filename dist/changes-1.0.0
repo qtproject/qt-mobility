@@ -44,8 +44,19 @@ Optimizations
 QtBearer
 ------
 
- - foo
-    * bar
+ - Fixed MOBILITY-748: Private Qt header usage has been removed
+ - Fixed MOBILITY-600: Memory leak on Mac fixed
+ - Multiple optimizations on Mac OS
+ - Maemo 5 and Maemo 6 use exact same code base
+ - ConnectInBackground support for Symbian added
+ - Maemo 5 (Fremantle) specific fixes
+    * Fixed QTMOBILITY-70: bearermonitor application has serious layout issues
+      preventing any use of the app
+    * Fixed MOBILITY-723: BearerEx test application isn't usable in N900
+    * Fixed MOBILITY-600: QNetworkSession is not asynchronous on Maemo and
+      leads to crashes
+ - Static analysis errors fixed
+    
 
 QtContacts
 ------
@@ -59,6 +70,8 @@ QtLocation
  - API change
     * QGeoPositionInfo::dateTime()/setDateTime() changed into
       QGeoPositionInfo::timestamp()/setTimestamp() respectively.
+ - Maemo 5 (Fremantle) backend implemented
+
 
 QtMessaging
 ------
@@ -94,15 +107,35 @@ QtMessaging
 
 QtMedia
 ------
-
- - foo
-    * bar
+ - Symbian backend improvements
+    * AudioCapture
+      - Bug fixes and codec support improvements
+    * Mediaplayer
+      - Audio routing implemented (destinations speaker, headphones, default)
+    * Camera
+      - Camera bug fixes and feature improvements
+      - Note: Camera eventually separated from QtMedia API (has its own plugin)
+ - Symbian^3 backend for audio recording (uses OpenMaxAL)
+ - Tweaked few examples to have more features
+ - Maemo 5 (Fremantle) backend implemented
+ - AudioCapture
+ - API changes
+    * Added CoverArtImage, PosterImage, and ThumbnailImage meta-data keys to
+      address embedded images.
+    * Changed QVideoWidget to use the Qt::AspectRatioMode enumeration instead
+      of defining its own enumeration of the same name.
+ - Behavioural changes
+   * Changed to QVideoWidget to consistently not fill the background with black
+     by default.
 
 QtPublishSubscribe
 ------
 
- - foo
-    * bar
+ - Maemo 5 (Fremantle) GConf backend finalized
+    * Support for monitoring changes in GConf
+    * Serialize unsupported QVariant data types in string with BASE64 encoding
+    * Autotests
+    * Example application modified to be usable in N900
 
 QtServiceFramework
 ------
@@ -113,8 +146,12 @@ QtServiceFramework
 QtSystemInfo
 ------
 
- - foo
-    * bar
+ - Fixed MOBILITY-748: Private Qt header usage has been removed
+ - currentMode() added in network info
+ - Maemo 5 (Fremantle) backend finalized
+    * Network info completed
+    * Screensaver inhibit implemented
+    * Example application modified to better fit in N900's horizontal screen
 
 QtSensors
 ------

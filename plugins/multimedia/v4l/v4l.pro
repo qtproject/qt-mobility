@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(v4lengine)
+TARGET = $$qtLibraryTarget(qtmedia_v4lengine)
 
 PLUGIN_TYPE = mediaservice
 

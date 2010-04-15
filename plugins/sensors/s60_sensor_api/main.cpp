@@ -67,6 +67,6 @@ public:
     }
 };
 
-Q_EXPORT_PLUGIN2(libsensors_s60SensorApi, s60SensorApiSensorPlugin)
+Q_EXPORT_PLUGIN2(qtsensors_s60sensorapi, s60SensorApiSensorPlugin)
 
 #include "main.moc"

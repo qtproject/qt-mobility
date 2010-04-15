@@ -14,6 +14,7 @@ INCLUDEPATH += ../
 CONFIG += mobility
 MOBILITY = contacts
 SOURCES  += tst_qcontactmanager.cpp
+HEADERS += ../qcontactmanagerdataholder.h
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
