@@ -48,9 +48,7 @@
 
 The Landmarks portion of the Location API facilitates the creation,
 retrieval, updating and deletion of landmarks from arbitrary data stores.
-
-A landmark is a location of some significance, also known as a point of interest.
-Landmarks may be organised into various categories such as restaurants or hotels.
+The following page demonstrates how to perform these operations.
 
 \tableofcontents
 
@@ -199,41 +197,4 @@ We may reuse the QLandmarkRemoveRequest by setting another category id and runni
 {start()} again.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark asynchronously handler
-
-\section1 Landmark classes
-
-\section2 Main Landmark Classes
-
-\annotatedlist landmarks-main
-
-\section2 Landmark Selection classes
-
-Landmark selection is facilitated by filter and sort order classes.  The filter classes
-define what criteria that landmarks must match and the sort order classes specify how
-the returned landmarks are sorted.  The filter and sort order classes are used with either
-the QLandmarkManager class (for synchronous landmark selection) or the request classes
-for (asynchronous landmark selection)
-
-\section3 Filters
-
-\annotatedlist landmarks-filter
-
-\section3 SortOrders
-
-\annotatedlist landmarks-sort
-
-\section2 Asynchronous Requests
-Asynchronous operations are facilitates by the request classes listed below:
-
-\annotatedlist landmarks-request
-
-\section2 Implementing backends
-A manager backend may be implemented by subclassing QLandmarkManagerEngine, and providing
-a QLandmarkManagerEngineFactory which can instantiate it when required.
-
-\annotatedlist landmarks-backend
-
-*/
-
-
 
