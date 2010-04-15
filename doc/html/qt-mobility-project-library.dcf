@@ -4341,6 +4341,9 @@
     <section ref="installation.html" title="Installation Guide">
         <keyword ref="installation.html">Installation Guide</keyword>
     </section>
+    <section ref="landmarks.html" title="Landmarks">
+        <keyword ref="landmarks.html">Landmarks</keyword>
+    </section>
     <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux">
         <keyword ref="licenses-fonts.html">Licenses for Fonts Used in Qt for Embedded Linux</keyword>
     </section>

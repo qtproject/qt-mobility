@@ -613,7 +613,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkRemoveRequest" href="qlandmarkremoverequest.html" location="qlandmarkremoverequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkRemoveRequest" fullname="QLandmarkRemoveRequest::QLandmarkRemoveRequest" href="qlandmarkremoverequest.html#QLandmarkRemoveRequest" location="qlandmarkremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkRemoveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkRemoveRequest" fullname="QLandmarkRemoveRequest::QLandmarkRemoveRequest" href="qlandmarkremoverequest.html#QLandmarkRemoveRequest" location="qlandmarkremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkRemoveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkRemoveRequest" fullname="QLandmarkRemoveRequest::~QLandmarkRemoveRequest" href="qlandmarkremoverequest.html#dtor.QLandmarkRemoveRequest" location="qlandmarkremoverequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkRemoveRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="landmarkIds" fullname="QLandmarkRemoveRequest::landmarkIds" href="qlandmarkremoverequest.html#landmarkIds" location="qlandmarkremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkId&gt;" signature="landmarkIds() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLandmarkIds" fullname="QLandmarkRemoveRequest::setLandmarkIds" href="qlandmarkremoverequest.html#setLandmarkIds" location="qlandmarkremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLandmarkIds(const QList&lt;QLandmarkId&gt; &amp; landmarkIds)">
@@ -1595,7 +1597,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkIdFetchRequest" href="qlandmarkidfetchrequest.html" location="qlandmarkidfetchrequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkIdFetchRequest" fullname="QLandmarkIdFetchRequest::QLandmarkIdFetchRequest" href="qlandmarkidfetchrequest.html#QLandmarkIdFetchRequest" location="qlandmarkidfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkIdFetchRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkIdFetchRequest" fullname="QLandmarkIdFetchRequest::QLandmarkIdFetchRequest" href="qlandmarkidfetchrequest.html#QLandmarkIdFetchRequest" location="qlandmarkidfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkIdFetchRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkIdFetchRequest" fullname="QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest" href="qlandmarkidfetchrequest.html#dtor.QLandmarkIdFetchRequest" location="qlandmarkidfetchrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkIdFetchRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QLandmarkIdFetchRequest::filter" href="qlandmarkidfetchrequest.html#filter" location="qlandmarkidfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLandmarkFilter" signature="filter() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setFilter" fullname="QLandmarkIdFetchRequest::setFilter" href="qlandmarkidfetchrequest.html#setFilter" location="qlandmarkidfetchrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFilter(const QLandmarkFilter &amp; filter)">
@@ -4116,7 +4120,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="date" fullname="QContactBirthday::date" href="qcontactbirthday.html#date" location="qcontactbirthday.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QDate" signature="date() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryFetchRequest" href="qlandmarkcategoryfetchrequest.html" location="qlandmarkcategoryfetchrequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryFetchRequest" fullname="QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest" href="qlandmarkcategoryfetchrequest.html#QLandmarkCategoryFetchRequest" location="qlandmarkcategoryfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCategoryFetchRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryFetchRequest" fullname="QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest" href="qlandmarkcategoryfetchrequest.html#QLandmarkCategoryFetchRequest" location="qlandmarkcategoryfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCategoryFetchRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkCategoryFetchRequest" fullname="QLandmarkCategoryFetchRequest::~QLandmarkCategoryFetchRequest" href="qlandmarkcategoryfetchrequest.html#dtor.QLandmarkCategoryFetchRequest" location="qlandmarkcategoryfetchrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkCategoryFetchRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="categories" fullname="QLandmarkCategoryFetchRequest::categories" href="qlandmarkcategoryfetchrequest.html#categories" location="qlandmarkcategoryfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkCategory&gt;" signature="categories() const"/>
         </class>
@@ -4474,7 +4480,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkImportRequest" href="qlandmarkimportrequest.html" location="qlandmarkimportrequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkImportRequest" fullname="QLandmarkImportRequest::QLandmarkImportRequest" href="qlandmarkimportrequest.html#QLandmarkImportRequest" location="qlandmarkimportrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkImportRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkImportRequest" fullname="QLandmarkImportRequest::QLandmarkImportRequest" href="qlandmarkimportrequest.html#QLandmarkImportRequest" location="qlandmarkimportrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkImportRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkImportRequest" fullname="QLandmarkImportRequest::~QLandmarkImportRequest" href="qlandmarkimportrequest.html#dtor.QLandmarkImportRequest" location="qlandmarkimportrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkImportRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="device" fullname="QLandmarkImportRequest::device" href="qlandmarkimportrequest.html#device" location="qlandmarkimportrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QIODevice *" signature="device() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDevice" fullname="QLandmarkImportRequest::setDevice" href="qlandmarkimportrequest.html#setDevice" location="qlandmarkimportrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDevice(QIODevice * device)">
@@ -4876,7 +4884,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategorySaveRequest" href="qlandmarkcategorysaverequest.html" location="qlandmarkcategorysaverequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategorySaveRequest" fullname="QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest" href="qlandmarkcategorysaverequest.html#QLandmarkCategorySaveRequest" location="qlandmarkcategorysaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCategorySaveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategorySaveRequest" fullname="QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest" href="qlandmarkcategorysaverequest.html#QLandmarkCategorySaveRequest" location="qlandmarkcategorysaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCategorySaveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkCategorySaveRequest" fullname="QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest" href="qlandmarkcategorysaverequest.html#dtor.QLandmarkCategorySaveRequest" location="qlandmarkcategorysaverequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkCategorySaveRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="categories" fullname="QLandmarkCategorySaveRequest::categories" href="qlandmarkcategorysaverequest.html#categories" location="qlandmarkcategorysaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkCategory&gt;" signature="categories() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCategories" fullname="QLandmarkCategorySaveRequest::setCategories" href="qlandmarkcategorysaverequest.html#setCategories" location="qlandmarkcategorysaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCategories(const QList&lt;QLandmarkCategory&gt; &amp; categories)">
@@ -5477,7 +5487,9 @@
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderIdList" href="#QMessageFolderIdList-typedef" location="qmessagefolderid.h"/>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryIdFetchRequest" href="qlandmarkcategoryidfetchrequest.html" location="qlandmarkcategoryidfetchrequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryIdFetchRequest" fullname="QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest" href="qlandmarkcategoryidfetchrequest.html#QLandmarkCategoryIdFetchRequest" location="qlandmarkcategoryidfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCategoryIdFetchRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryIdFetchRequest" fullname="QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest" href="qlandmarkcategoryidfetchrequest.html#QLandmarkCategoryIdFetchRequest" location="qlandmarkcategoryidfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCategoryIdFetchRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkCategoryIdFetchRequest" fullname="QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest" href="qlandmarkcategoryidfetchrequest.html#dtor.QLandmarkCategoryIdFetchRequest" location="qlandmarkcategoryidfetchrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkCategoryIdFetchRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="ids" fullname="QLandmarkCategoryIdFetchRequest::ids" href="qlandmarkcategoryidfetchrequest.html#ids" location="qlandmarkcategoryidfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkCategoryId&gt;" signature="ids() const"/>
         </class>
@@ -5501,7 +5513,9 @@
                 <value name="ImportRequest" value="9"/>
                 <value name="ExportRequest" value="10"/>
             </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkAbstractRequest" fullname="QLandmarkAbstractRequest::QLandmarkAbstractRequest" href="qlandmarkabstractrequest.html#QLandmarkAbstractRequest" location="qlandmarkabstractrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkAbstractRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkAbstractRequest" fullname="QLandmarkAbstractRequest::QLandmarkAbstractRequest" href="qlandmarkabstractrequest.html#QLandmarkAbstractRequest" location="qlandmarkabstractrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkAbstractRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkAbstractRequest" fullname="QLandmarkAbstractRequest::~QLandmarkAbstractRequest" href="qlandmarkabstractrequest.html#dtor.QLandmarkAbstractRequest" location="qlandmarkabstractrequest.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkAbstractRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QLandmarkAbstractRequest::type" href="qlandmarkabstractrequest.html#type" location="qlandmarkabstractrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="RequestType" signature="type() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QLandmarkAbstractRequest::state" href="qlandmarkabstractrequest.html#state" location="qlandmarkabstractrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="State" signature="state()"/>
@@ -6303,7 +6317,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryRemoveRequest" href="qlandmarkcategoryremoverequest.html" location="qlandmarkcategoryremoverequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryRemoveRequest" fullname="QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest" href="qlandmarkcategoryremoverequest.html#QLandmarkCategoryRemoveRequest" location="qlandmarkcategoryremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCategoryRemoveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCategoryRemoveRequest" fullname="QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest" href="qlandmarkcategoryremoverequest.html#QLandmarkCategoryRemoveRequest" location="qlandmarkcategoryremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCategoryRemoveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkCategoryRemoveRequest" fullname="QLandmarkCategoryRemoveRequest::~QLandmarkCategoryRemoveRequest" href="qlandmarkcategoryremoverequest.html#dtor.QLandmarkCategoryRemoveRequest" location="qlandmarkcategoryremoverequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkCategoryRemoveRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="categoryIds" fullname="QLandmarkCategoryRemoveRequest::categoryIds" href="qlandmarkcategoryremoverequest.html#categoryIds" location="qlandmarkcategoryremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmarkCategoryId&gt;" signature="categoryIds() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCategoryIds" fullname="QLandmarkCategoryRemoveRequest::setCategoryIds" href="qlandmarkcategoryremoverequest.html#setCategoryIds" location="qlandmarkcategoryremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCategoryIds(const QList&lt;QLandmarkCategoryId&gt; &amp; categoryIds)">
@@ -8013,7 +8029,9 @@
             <parameter left="const QContactFilter &amp;" right="" name="right" default=""/>
         </function>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkFetchRequest" href="qlandmarkfetchrequest.html" location="qlandmarkfetchrequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkFetchRequest" fullname="QLandmarkFetchRequest::QLandmarkFetchRequest" href="qlandmarkfetchrequest.html#QLandmarkFetchRequest" location="qlandmarkfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkFetchRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkFetchRequest" fullname="QLandmarkFetchRequest::QLandmarkFetchRequest" href="qlandmarkfetchrequest.html#QLandmarkFetchRequest" location="qlandmarkfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkFetchRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkFetchRequest" fullname="QLandmarkFetchRequest::~QLandmarkFetchRequest" href="qlandmarkfetchrequest.html#dtor.QLandmarkFetchRequest" location="qlandmarkfetchrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkFetchRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QLandmarkFetchRequest::filter" href="qlandmarkfetchrequest.html#filter" location="qlandmarkfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QLandmarkFilter" signature="filter() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setFilter" fullname="QLandmarkFetchRequest::setFilter" href="qlandmarkfetchrequest.html#setFilter" location="qlandmarkfetchrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFilter(const QLandmarkFilter &amp; filter)">
@@ -8463,7 +8481,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkSaveRequest" href="qlandmarksaverequest.html" location="qlandmarksaverequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkSaveRequest" fullname="QLandmarkSaveRequest::QLandmarkSaveRequest" href="qlandmarksaverequest.html#QLandmarkSaveRequest" location="qlandmarksaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkSaveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkSaveRequest" fullname="QLandmarkSaveRequest::QLandmarkSaveRequest" href="qlandmarksaverequest.html#QLandmarkSaveRequest" location="qlandmarksaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkSaveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkSaveRequest" fullname="QLandmarkSaveRequest::~QLandmarkSaveRequest" href="qlandmarksaverequest.html#dtor.QLandmarkSaveRequest" location="qlandmarksaverequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkSaveRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="landmarks" fullname="QLandmarkSaveRequest::landmarks" href="qlandmarksaverequest.html#landmarks" location="qlandmarksaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmark&gt;" signature="landmarks() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setLandmarks" fullname="QLandmarkSaveRequest::setLandmarks" href="qlandmarksaverequest.html#setLandmarks" location="qlandmarksaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLandmarks(const QList&lt;QLandmark&gt; &amp; landmarks)">
@@ -8645,7 +8665,9 @@
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QMediaObject::d_ptr" href="qmediaobject.html#d_ptr-var" location="qmediaobject.h" type="QMediaObjectPrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkExportRequest" href="qlandmarkexportrequest.html" location="qlandmarkexportrequest.h" bases="QLandmarkAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkExportRequest" fullname="QLandmarkExportRequest::QLandmarkExportRequest" href="qlandmarkexportrequest.html#QLandmarkExportRequest" location="qlandmarkexportrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkExportRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkExportRequest" fullname="QLandmarkExportRequest::QLandmarkExportRequest" href="qlandmarkexportrequest.html#QLandmarkExportRequest" location="qlandmarkexportrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkExportRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkExportRequest" fullname="QLandmarkExportRequest::~QLandmarkExportRequest" href="qlandmarkexportrequest.html#dtor.QLandmarkExportRequest" location="qlandmarkexportrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkExportRequest()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="device" fullname="QLandmarkExportRequest::device" href="qlandmarkexportrequest.html#device" location="qlandmarkexportrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QIODevice *" signature="device() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDevice" fullname="QLandmarkExportRequest::setDevice" href="qlandmarkexportrequest.html#setDevice" location="qlandmarkexportrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDevice(QIODevice * device)">
@@ -9075,23 +9097,8 @@
             <contents name="weather-info-demo" title="Weather Info Demo" level="2"/>
             <contents name="light-maps-demo" title="Light Maps Demo" level="2"/>
             <contents name="landmarks" title="Landmarks" level="1"/>
-            <contents name="creation-of-categories-and-landmarks" title="Creation of categories and landmarks" level="2"/>
-            <contents name="synchronous" title="Synchronous" level="3"/>
-            <contents name="asynchronous" title="Asynchronous" level="3"/>
-            <contents name="retrieval-of-categories-and-landmarks" title="Retrieval of categories and landmarks" level="2"/>
-            <contents name="synchronous" title="Synchronous" level="3"/>
-            <contents name="asynchronous" title="Asynchronous" level="3"/>
-            <contents name="updating-of-categories-and-landmarks" title="Updating of categories and landmarks" level="2"/>
-            <contents name="deletion" title="Deletion" level="2"/>
             <contents name="classes" title="Classes" level="1"/>
             <contents name="location-classes" title="Location classes" level="2"/>
-            <contents name="landmark-classes" title="Landmark classes" level="2"/>
-            <contents name="main-landmark-classes" title="Main Landmark Classes" level="3"/>
-            <contents name="landmark-selection-classes" title="Landmark Selection classes" level="3"/>
-            <contents name="filters" title="Filters" level="4"/>
-            <contents name="sortorders" title="SortOrders" level="4"/>
-            <contents name="asynchronous-requests" title="Asynchronous Requests" level="3"/>
-            <contents name="implementing-backends" title="Implementing backends" level="3"/>
         </page>
         <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API (technology preview)" fulltitle="Versit API (technology preview)" subtitle="" location="versit.qdoc">
             <contents name="overview" title="Overview" level="1"/>
@@ -9216,6 +9223,30 @@
         <page access="public" status="commendable" name="lightmaps" href="lightmaps.html" subtype="example" title="LightMap Example" fulltitle="LightMap Example" subtitle="" location="lightmaps.qdoc">
             <page access="public" status="commendable" name="lightmaps/lightmaps.cpp" href="lightmaps-lightmaps-cpp.html" subtype="file" title="" fulltitle="lightmaps.cpp Example File" subtitle="lightmaps/lightmaps.cpp" location=""/>
             <page access="public" status="commendable" name="lightmaps/lightmaps.pro" href="lightmaps-lightmaps-pro.html" subtype="file" title="" fulltitle="lightmaps.pro Example File" subtitle="lightmaps/lightmaps.pro" location=""/>
+        </page>
+        <page access="public" status="commendable" name="landmarks.html" href="landmarks.html" subtype="page" title="Landmarks" fulltitle="Landmarks" subtitle="" location="qlandmarks.qdoc">
+            <contents name="creating-categories-and-landmarks" title="Creating categories and landmarks" level="1"/>
+            <contents name="synchronous" title="Synchronous" level="2"/>
+            <contents name="creating-a-category" title="Creating a category." level="3"/>
+            <contents name="creating-landmark" title="Creating landmark" level="3"/>
+            <contents name="asynchronous" title="Asynchronous" level="2"/>
+            <contents name="creating-a-category" title="Creating a category." level="3"/>
+            <contents name="creating-a-landmark" title="Creating a landmark." level="3"/>
+            <contents name="retrieving-categories-and-landmarks" title="Retrieving categories and landmarks" level="1"/>
+            <contents name="synchronous" title="Synchronous" level="2"/>
+            <contents name="retrieving-a-category" title="Retrieving a category." level="3"/>
+            <contents name="retrieving-landmarks" title="Retrieving landmarks" level="3"/>
+            <contents name="asynchronous" title="Asynchronous" level="2"/>
+            <contents name="retrieving-categories" title="Retrieving categories" level="3"/>
+            <contents name="retrieving-landmarks" title="Retrieving landmarks" level="3"/>
+            <contents name="deleting-landmarks" title="Deleting landmarks" level="1"/>
+            <contents name="landmark-classes" title="Landmark classes" level="1"/>
+            <contents name="main-landmark-classes" title="Main Landmark Classes" level="2"/>
+            <contents name="landmark-selection-classes" title="Landmark Selection classes" level="2"/>
+            <contents name="filters" title="Filters" level="3"/>
+            <contents name="sortorders" title="SortOrders" level="3"/>
+            <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
+            <contents name="implementing-backends" title="Implementing backends" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlayerControl_iid" href="qmediaplayercontrol.html#QMediaPlayerControl_iid" location="qmediaplayercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlayerControl" type="" signature="QMediaPlayerControl_iid()"/>
         <page access="public" status="commendable" name="contactsschema.html" href="contactsschema.html" subtype="page" title="Qt Contacts Schema" fulltitle="Qt Contacts Schema" subtitle="" location="contactsschema.qdoc">
