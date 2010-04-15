@@ -939,7 +939,7 @@ void TestCntTransformContactData::validateCntTransformUrlL(TPtrC16 field, QStrin
     QVERIFY(!(transformUrl->supportsDetail("WrongValue")));
     validateGetIdForField(*transformUrl, QContactUrl::FieldUrl,0);
     validateGetIdForField(*transformUrl, QContactUrl::SubTypeHomePage,0);
-    validateGetIdForField(*transformUrl, QContactUrl::SubTypeFavourite,0);
+    validateGetIdForField(*transformUrl, QContactUrl::SubTypeFavorite,0);
     validateGetIdForField(*transformUrl, "WrongValue", 0);
     QVERIFY(transformUrl->supportsSubType(QContactUrl::FieldSubType));
     QVERIFY( !(transformUrl->supportsSubType("WrongValue")));

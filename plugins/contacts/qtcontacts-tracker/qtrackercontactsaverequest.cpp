@@ -451,7 +451,7 @@ void QTrackerContactSaveRequest::saveUrls(RDFServicePtr service, RDFVariable &rd
     foreach(const QContactDetail& det, details)
     {
         QUrl newUrl(det.value(QContactUrl::FieldUrl));//::tracker()->createLiveNode().uri();
-        if(det.value(QContactUrl::FieldSubType) == QContactUrl::SubTypeFavourite)
+        if(det.value(QContactUrl::FieldSubType) == QContactUrl::SubTypeFavorite)
         {
             up.addInsertion(varForInsert, nco::url::iri(), newUrl);
         }

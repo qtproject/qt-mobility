@@ -414,7 +414,7 @@ QMap<QString, QContactDetailDefinition> QContactTrackerEngine::detailDefinitions
             f.setDataType(QVariant::String);
             QVariantList subTypes;
             // removing social networking url
-            subTypes << QString(QLatin1String(QContactUrl::SubTypeFavourite));
+            subTypes << QString(QLatin1String(QContactUrl::SubTypeFavorite));
             subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
             f.setAllowableValues(subTypes);
             fields.insert(QContactUrl::FieldSubType, f);
