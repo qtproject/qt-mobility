@@ -9091,18 +9091,22 @@
         </page>
         <page access="public" status="commendable" name="location" href="location.html" subtype="group" title="Location API" fulltitle="Location API" subtitle="" location="location.qdoc"/>
         <page access="public" status="commendable" name="location-overview.html" href="location-overview.html" subtype="page" title="Location" fulltitle="Location" subtitle="" location="location.qdoc">
-            <contents name="overview" title="Overview" level="1"/>
-            <contents name="requesting-location-data-from-data-sources" title="Requesting location data from data sources" level="2"/>
-            <contents name="controlling-aspects-of-data-sources" title="Controlling aspects of data sources" level="2"/>
-            <contents name="reading-nmea-data" title="Reading NMEA data" level="2"/>
-            <contents name="example-creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="1"/>
-            <contents name="examples" title="Examples" level="1"/>
-            <contents name="flickr-demo" title="Flickr Demo" level="2"/>
-            <contents name="weather-info-demo" title="Weather Info Demo" level="2"/>
-            <contents name="light-maps-demo" title="Light Maps Demo" level="2"/>
-            <contents name="landmarks" title="Landmarks" level="1"/>
-            <contents name="classes" title="Classes" level="1"/>
+            <contents name="location-positioning" title="Location Positioning" level="1"/>
+            <contents name="example-creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="2"/>
+            <contents name="examples" title="Examples" level="2"/>
+            <contents name="flickr-demo" title="Flickr Demo" level="3"/>
+            <contents name="weather-info-demo" title="Weather Info Demo" level="3"/>
+            <contents name="light-maps-demo" title="Light Maps Demo" level="3"/>
             <contents name="location-classes" title="Location classes" level="2"/>
+            <contents name="landmarks" title="Landmarks" level="1"/>
+            <contents name="landmark-examples" title="Landmark Examples" level="2"/>
+            <contents name="landmark-classes" title="Landmark classes" level="2"/>
+            <contents name="main-landmark-classes" title="Main Landmark Classes" level="3"/>
+            <contents name="landmark-selection-classes" title="Landmark Selection classes" level="3"/>
+            <contents name="filters" title="Filters" level="4"/>
+            <contents name="sortorders" title="SortOrders" level="4"/>
+            <contents name="asynchronous-requests" title="Asynchronous Requests" level="3"/>
+            <contents name="implementing-backends" title="Implementing backends" level="3"/>
         </page>
         <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API (technology preview)" fulltitle="Versit API (technology preview)" subtitle="" location="versit.qdoc">
             <contents name="overview" title="Overview" level="1"/>
@@ -9250,13 +9254,6 @@
             <contents name="asynchronous" title="Asynchronous" level="2"/>
             <contents name="deleting-a-category" title="Deleting a category" level="3"/>
             <contents name="deleting-a-landmark" title="Deleting a landmark" level="3"/>
-            <contents name="landmark-classes" title="Landmark classes" level="1"/>
-            <contents name="main-landmark-classes" title="Main Landmark Classes" level="2"/>
-            <contents name="landmark-selection-classes" title="Landmark Selection classes" level="2"/>
-            <contents name="filters" title="Filters" level="3"/>
-            <contents name="sortorders" title="SortOrders" level="3"/>
-            <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
-            <contents name="implementing-backends" title="Implementing backends" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlayerControl_iid" href="qmediaplayercontrol.html#QMediaPlayerControl_iid" location="qmediaplayercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlayerControl" type="" signature="QMediaPlayerControl_iid()"/>
         <page access="public" status="commendable" name="contactsschema.html" href="contactsschema.html" subtype="page" title="Qt Contacts Schema" fulltitle="Qt Contacts Schema" subtitle="" location="contactsschema.qdoc">

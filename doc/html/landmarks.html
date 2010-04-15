@@ -14,8 +14,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Landmarks<br /><span class="subtitle"></span>
 </h1>
-<p>The Landmarks portion of the Location API facilitates the creation, retrieval, updating and deletion of landmarks from arbitrary data stores.</p>
-<p>A landmark is a location of some significance, also known as a point of interest. Landmarks may be organised into various categories such as restaurants or hotels.</p>
+<p>The Landmarks portion of the Location API facilitates the creation, retrieval, updating and deletion of landmarks from arbitrary data stores. The following page demonstrates how to perform these operations.</p>
 <ul><li><a href="#creating-categories-and-landmarks">Creating categories and landmarks</a></li>
 <ul><li><a href="#synchronous">Synchronous</a></li>
 <ul><li><a href="#creating-a-category">Creating a category</a></li>
@@ -45,15 +44,6 @@
 <ul><li><a href="#deleting-a-category">Deleting a category</a></li>
 <li><a href="#deleting-a-landmark">Deleting a landmark</a></li>
 </ul>
-</ul>
-<li><a href="#landmark-classes">Landmark classes</a></li>
-<ul><li><a href="#main-landmark-classes">Main Landmark Classes</a></li>
-<li><a href="#landmark-selection-classes">Landmark Selection classes</a></li>
-<ul><li><a href="#filters">Filters</a></li>
-<li><a href="#sortorders">SortOrders</a></li>
-</ul>
-<li><a href="#asynchronous-requests">Asynchronous Requests</a></li>
-<li><a href="#implementing-backends">Implementing backends</a></li>
 </ul>
 </ul>
 <a name="creating-categories-and-landmarks"></a>
@@ -358,63 +348,6 @@
             }
         }
     }</pre>
-<a name="landmark-classes"></a>
-<h2>Landmark classes</h2>
-<a name="main-landmark-classes"></a>
-<h3>Main Landmark Classes</h3>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qlandmark.html">QLandmark</a></th><td>Represents a location or point of interest of some significance</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkcategory.html">QLandmarkCategory</a></th><td>Designates a grouping of landmarks of similar type</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a></th><td>Unique identifier for a category</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkid.html">QLandmarkId</a></th><td>Unique identifier for a landmark</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkmanager.html">QLandmarkManager</a></th><td>Interface for storage and retrieval of landmarks from a landmark store</td></tr>
-</table></p>
-<a name="landmark-selection-classes"></a>
-<h3>Landmark Selection classes</h3>
-<p>Landmark selection is facilitated by filter and sort order classes. The filter classes define what criteria that landmarks must match and the sort order classes specify how the returned landmarks are sorted. The filter and sort order classes are used with either the <a href="qlandmarkmanager.html">QLandmarkManager</a> class (for synchronous landmark selection) or the request classes for (asynchronous landmark selection)</p>
-<a name="filters"></a>
-<h4>Filters</h4>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</a></th><td>Used to search for landmarks that belong to a certain category</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkcustomfilter.html">QLandmarkCustomFilter</a></th><td>The interface which all custom filters should inherit</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkfilter.html">QLandmarkFilter</a></th><td>Serves as the base class for all filter classes. Also serves as the default filter which retrieves all landmarks</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</a></th><td>Filter which intersects the results of its constituent filters</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarknamefilter.html">QLandmarkNameFilter</a></th><td>Used to search for landmarks by name</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarknearestfilter.html">QLandmarkNearestFilter</a></th><td>Used to search for the landmark nearest to a given coordinate</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a></th><td>Used to search for landmarks based on the radius around a given coordinate</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a></th><td>Filter which unions the results of its constituent filters</td></tr>
-</table></p>
-<a name="sortorders"></a>
-<h4>SortOrders</h4>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qlandmarkcustomsort.html">QLandmarkCustomSort</a></th><td>The interface which all custom sort orders should inherit</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkdistancesort.html">QLandmarkDistanceSort</a></th><td>Used to sort landmarks by distance from a given coordinate</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarknamesort.html">QLandmarkNameSort</a></th><td>Used to sort landmarks by name</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarksortorder.html">QLandmarkSortOrder</a></th><td>Serves as a base class for the different sort order types</td></tr>
-</table></p>
-<a name="asynchronous-requests"></a>
-<h3>Asynchronous Requests</h3>
-<p>Asynchronous operations are facilitates by the request classes listed below:</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qlandmarkabstractrequest.html">QLandmarkAbstractRequest</a></th><td>The interface from which all asynchronous request classes inherit</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkcategoryfetchrequest.html">QLandmarkCategoryFetchRequest</a></th><td>Allows a client to asynchronously request a list of categories from a landmark manager</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkcategoryidfetchrequest.html">QLandmarkCategoryIdFetchRequest</a></th><td>Allows a client to asynchronously request a list of category identifiers from a landmark manager</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a></th><td>Allows a client to asynchronously request that certain categories be removed from a landmark manager</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a></th><td>Allows a client to asynchronously request that certain categories be saved by a landmark manager</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkexportrequest.html">QLandmarkExportRequest</a></th><td>Allows a client to asynchronously request that a landmark manager export a set of landmarks</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkfetchrequest.html">QLandmarkFetchRequest</a></th><td>Allows a client to asynchronously request a list of landmarks from a landmark manager</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</a></th><td>Allows a client to asynchronously request a list of landmark identifiers from a landmark manager</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkimportrequest.html">QLandmarkImportRequest</a></th><td>Allows a client to asynchronously request that a landmark manager import a set of landmarks</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkremoverequest.html">QLandmarkRemoveRequest</a></th><td>Allows a client to asynchronously request that certain landmarks be removed from a landmark manager</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a></th><td>Allows a client to asynchronously request that certain landmarks be saved by a landmark manager</td></tr>
-</table></p>
-<a name="implementing-backends"></a>
-<h3>Implementing backends</h3>
-<p>A manager backend may be implemented by subclassing <a href="qlandmarkmanagerengine.html">QLandmarkManagerEngine</a>, and providing a <a href="qlandmarkmanagerenginefactory.html">QLandmarkManagerEngineFactory</a> which can instantiate it when required.</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qlandmarkmanagerengine.html">QLandmarkManagerEngine</a></th><td>The interface for all implementations of the landmark manager backend functionality</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkmanagerenginefactory.html">QLandmarkManagerEngineFactory</a></th><td>The interface for plugins that implement QLandmarkManagerEngine functionality</td></tr>
-</table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
