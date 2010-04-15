@@ -45,6 +45,7 @@
 
 #include "qmediacontrol.h"
 #include "qtmedianamespace.h"
+#include "qmobilityglobal.h"
 
 QT_BEGIN_NAMESPACE
 
