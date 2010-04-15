@@ -65,7 +65,7 @@
 QTM_USE_NAMESPACE
 QLandmarkCategoryId categoryId;
 QLandmark landmark;
-QLandmarkCategory landmarkCategory;
+QLandmarkCategory category;
 
 //! [Add category asynchronously req]
 void RequestExample::categorySaveRequest()
@@ -156,7 +156,7 @@ void RequestExample::categoryFetchRequest()
     catFetchRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
 
     connect(catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
-            this, SLOT(categoryFetchHandlerRequest(QLandmarkAbstractRequest::State)));
+            this, SLOT(categoryFetchRequestHandler(QLandmarkAbstractRequest::State)));
 
     if(!catFetchRequest->start()) {
         qDebug() << "Unable to request categories, error code:" << catFetchRequest->error();
@@ -168,7 +168,7 @@ void RequestExample::categoryFetchRequest()
 }
 
 //! [Retrieve categories asynchronously handler]
-void RequestExample::categoryFetchHandlerRequest(QLandmarkAbstractRequest::State state)
+void RequestExample::categoryFetchRequestHandler(QLandmarkAbstractRequest::State state)
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         previousLastIndex = 0;
@@ -200,7 +200,7 @@ void RequestExample::landmarkFetchRequest()
     lmFetchRequest->setSorting(QLandmarkNameSort(Qt::AscendingOrder));
 
     connect(lmFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
-            this, SLOT(landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State)));
+            this, SLOT(landmarkFetchRequestHandler(QLandmarkAbstractRequest::State)));
 
     if(!lmFetchRequest->start()) {
         qDebug() << "Unable to request landmarks, error code:" << lmFetchRequest->error();
@@ -212,7 +212,7 @@ void RequestExample::landmarkFetchRequest()
 }
 
 //! [Retrieve landmarks asynchronously handler]
-void RequestExample::landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State state)
+void RequestExample::landmarkFetchRequestHandler(QLandmarkAbstractRequest::State state)
 {
     if (state == QLandmarkAbstractRequest::FinishedState) {
         previousLastIndex = 0;
@@ -229,6 +229,71 @@ void RequestExample::landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State
     }
 }
 //! [Retrieve landmarks asynchronously handler]
+
+//! [Remove category asynchronously]
+void RequestExample::categoryRemoveRequest()
+{
+    //catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest()
+    //in the ctor
+    catRemoveRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
+    catRemoveRequest->setCategoryId(category.id()); //category is a previously retrieved QLandmarkCategory
+
+    connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
+        this, SLOT(categoryRemoveRequestHandler(QLandmarkAbstractRequest::State)));
+
+    if(!catRemoveRequest->start()) {
+        qDebug() << "Unable to request category removal, error code:" << catRemoveRequest->error();
+        QCoreApplication::exit(0);
+    } else {
+        qDebug() << "Requested category removal, awaiting results...";
+    }
+}
+//! [Remove category asynchronously]
+
+//! [Remove category asynchronously handler]
+void RequestExample::categoryRemoveRequestHandler(QLandmarkAbstractRequest::State state)
+{
+    if (state == QLandmarkAbstractRequest::FinishedState) {
+        if (catRemoveRequest->error() == QLandmarkManager::NoError) {
+            qDebug() << "Category remove succesfully completed";
+        }
+        else {
+            qDebug() << "Category remove was unsuccessful";
+        }
+    }
+}
+//! [Remove category asynchronously handler]
+
+//! [Remove landmark asynchronously]
+void RequestExample::landmarkRemoveRequest()
+{
+    //lmRemoveRequest was created with lmRemoveRequest = new QLandmarkSaveRequest()
+    //in the ctor
+    lmRemoveRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
+    lmRemoveRequest->setLandmarkId(landmark.id());  //landmark is a previously retrieved QLandmark
+
+    connect(lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
+            SLOT(landmarkRemoveRequestHandler(QLandmarkAbstractRequest::State)));
+    if (!lmRemoveRequest->start())
+        qDebug() << "Unable to remove landmark, error code: " << lmSaveRequest->error();
+    else
+        qDebug() << "Removing landmark; awaiting results...";
+}
+//! [Remove landmark asynchronously]
+
+//! [Remove landmark asynchronously handler]
+void RequestExample::landmarkRemoveRequestHandler(QLandmarkAbstractRequest::State state)
+{
+    if (state == QLandmarkAbstractRequest::FinishedState) {
+        if (lmRemoveRequest->error() == QLandmarkManager::NoError) {
+            qDebug() << "Landmark removal succesfully completed";
+        }
+        else {
+            qDebug() << "Landmark removal was unsuccessful";
+        }
+    }
+}
+//! [Remove landmark asynchronously handler]
 
 void addLandmarkAndCategory(QLandmarkManager *lm)
 {
@@ -347,11 +412,15 @@ void listAllCategories(QLandmarkManager *lm)
 
 void deleteLandmarkAndCategory(QLandmarkManager *lm)
 {
-    //landmarkCategory is a previously retrieved QLandmarkCategory
-    lm->removeCategory(landmarkCategory.id());
+    //! [Remove category synchronously]
+    //category is a previously retrieved QLandmarkCategory object
+    lm->removeCategory(category.id());
+    //! [Remove category synchronously]
 
+    //! [Remove landmark synchronously]
     //landmark is a previously retrieved QLandmark object
     lm->removeLandmark(landmark.id());
+    //! [Remove landmark synchronously]
 }
 
 int main(int argc, char *argv[])
@@ -371,6 +440,8 @@ int main(int argc, char *argv[])
     QTimer::singleShot(10, &re, SLOT(landmarkSaveRequest()));
     QTimer::singleShot(10, &re, SLOT(categoryFetchRequest()));
     QTimer::singleShot(10, &re, SLOT(landmarkFetchRequest()));
+    QTimer::singleShot(10, &re, SLOT(categoryRemoveRequest()));
+    QTimer::singleShot(10, &re, SLOT(landmarkRemoveRequest()));
 
     app.exec();
 

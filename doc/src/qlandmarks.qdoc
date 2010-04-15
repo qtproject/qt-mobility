@@ -56,7 +56,7 @@ Landmarks may be organised into various categories such as restaurants or hotels
 
 \section1 Creating categories and landmarks
 \section2 Synchronous
-\section3 Creating a category.
+\section3 Creating a category
 The following example demonstrates how to synchronously add a category.
 We create a QLandmarkCategory instance, set the desired properties and then use a
 QLandmarkManager instance to save it.  When the category is saved, it is assigned
@@ -72,7 +72,7 @@ passed as a pointer.
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add landmark synchronously
 
 \section2 Asynchronous
-\section3 Creating a category.
+\section3 Creating a category
 We create a QLandmarkCategory instance and set the desired properties.  Next we
 have an instance of a QLandmarkCategorySaveRequest and set its QLandmarkManager and
 the append the category we want to save.  We then connect the \l {QLandmarkAbstractRequest::stateChanged()}
@@ -81,14 +81,14 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add category asynchronously req
 
-For brevity the slot does not process all the different request states.  In our example
+For brevity, the slot does not process all the different request states.  In our example
 we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
 We may reuse the QLandmarkCategorySaveRequest by setting another category and running \l {QLandmarkAbstractRequest::start()}
 {start()} again.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add category asynchronously handler
 
-\section3 Creating a landmark.
+\section3 Creating a landmark
 We create a QLandmark instance and set the desired properties.  Next we
 have an instance of a QLandmarkSaveRequest and set its QLandmarkManager and
 the append the category we want to save.  We then connect the \l {QLandmarkAbstractRequest::stateChanged()}
@@ -97,7 +97,7 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add landmark asynchronously
 
-For brevity the slot does not process all the different request states.  In our example
+For brevity, the slot does not process all the different request states.  In our example
 we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
 We may reuse the QLandmarkSaveRequest by setting another landmark and running \l {QLandmarkAbstractRequest::start()}
 {start()} again.
@@ -106,7 +106,7 @@ We may reuse the QLandmarkSaveRequest by setting another landmark and running \l
 
 \section1 Retrieving categories and landmarks
 \section2 Synchronous
-\section3 Retrieving a category.
+\section3 Retrieving categories
 When retrieiving categories we may do so by the category ids.  When the category data is needed
 we may use the id to retrieve a category object:
 
@@ -152,7 +152,53 @@ the QLandmarkAbstractRequest::Finished state and if there are no errors, print o
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Retrieve landmarks asynchronously handler
 
-\section1 Deleting landmarks
+\section1 Deleting categories and landmarks
+
+\section2 Synchronous
+
+\section3 Deleting a category
+
+To remove a category we simply pass the category id to a QLandmarkManager.
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove category synchronously
+
+\section3 Deleting a landmark
+
+To remove a landmark we simply passs the landmark id to a QLandmarkManager.
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark synchronously
+
+\section2 Asynchronous
+
+\section3 Deleting a category
+To remove a category we use a QLandmarkCategoryRemoveRequest and set its manager and
+the id of the category we want to remove. We then connect the \l {QLandmarkAbstractRequest::stateChanged()}
+{stateChanged()} signal up to a slot which watches the state of the request.  To begin the request
+we invoke \l {QLandmarkAbstractRequest::start()} {start()}
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove category asynchronously
+
+For brevity, the slot does not process all the different request states.  In our example
+we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
+We may reuse the QLandmarkCategoryRemoveRequest by setting another category id and running \l {QLandmarkAbstractRequest::start()}
+{start()} again.
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove category asynchronously
+
+\section3 Deleting a landmark
+To remove a landmark we use a QLandmarkRemoveRequest and set its manager and
+the id of the landmark we want to remove. We then connect the \l {QLandmarkAbstractRequest::stateChanged()}
+{stateChanged()} signal up to a slot which watches the state of the request.  To begin the request
+we invoke \l {QLandmarkAbstractRequest::start()} {start()}
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark asynchronously
+
+For brevity, the slot does not process all the different request states.  In our example
+we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
+We may reuse the QLandmarkRemoveRequest by setting another category id and running \l {QLandmarkAbstractRequest::start()}
+{start()} again.
+
+\snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark asynchronously handler
 
 \section1 Landmark classes
 

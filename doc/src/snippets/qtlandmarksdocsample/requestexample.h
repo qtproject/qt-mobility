@@ -47,6 +47,8 @@
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkcategoryfetchrequest.h>
+#include <qlandmarkcategoryremoverequest.h>
+#include <qlandmarkremoverequest.h>
 #include <qlandmarkmanager.h>
 
 QTM_USE_NAMESPACE
@@ -57,10 +59,13 @@ class RequestExample : public QObject
 public:
     RequestExample():QObject(),
                     lmManager(new QLandmarkManager(this)),
-                    catSaveRequest(new QLandmarkCategorySaveRequest()),
-                    lmSaveRequest(new QLandmarkSaveRequest()),
-                    catFetchRequest(new QLandmarkCategoryFetchRequest()),
-                    lmFetchRequest(new QLandmarkFetchRequest()){}
+                    catSaveRequest(new QLandmarkCategorySaveRequest(this)),
+                    lmSaveRequest(new QLandmarkSaveRequest(this)),
+                    catFetchRequest(new QLandmarkCategoryFetchRequest(this)),
+                    lmFetchRequest(new QLandmarkFetchRequest(this)),
+                    catRemoveRequest(new QLandmarkCategoryRemoveRequest(this)),
+                    lmRemoveRequest(new QLandmarkRemoveRequest(this))
+                    {}
     ~RequestExample(){}
 
 private slots:
@@ -69,9 +74,13 @@ private slots:
     void landmarkSaveRequest();
     void landmarkSaveRequestHandler(QLandmarkAbstractRequest::State);
     void categoryFetchRequest();
-    void categoryFetchHandlerRequest(QLandmarkAbstractRequest::State);
+    void categoryFetchRequestHandler(QLandmarkAbstractRequest::State);
     void landmarkFetchRequest();
-    void landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State);
+    void landmarkFetchRequestHandler(QLandmarkAbstractRequest::State);
+    void categoryRemoveRequest();
+    void categoryRemoveRequestHandler(QLandmarkAbstractRequest::State);
+    void landmarkRemoveRequest();
+    void landmarkRemoveRequestHandler(QLandmarkAbstractRequest::State);
 
 private:
     QLandmarkManager *lmManager;
@@ -80,6 +89,8 @@ private:
     QLandmarkSaveRequest *lmSaveRequest;
     QLandmarkCategoryFetchRequest *catFetchRequest;
     QLandmarkFetchRequest *lmFetchRequest;
+    QLandmarkCategoryRemoveRequest *catRemoveRequest;
+    QLandmarkRemoveRequest *lmRemoveRequest;
 
     QLandmarkCategoryId categoryId;
     int previousLastIndex;
