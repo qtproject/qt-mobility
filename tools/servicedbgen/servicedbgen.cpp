@@ -7,10 +7,10 @@
 
 QTM_USE_NAMESPACE
 
-#define WINSCW_DES_DEPLOY       "epoc32/winscw/c/private/2002AC7F/Nokia/des"
+#define WINSCW_DES_DEPLOY       "epoc32/winscw/c/private/2002AC7F/des"
 #define WINSCW_DBPATH           "epoc32/winscw/c/data/temp/QtServiceFW"
-#define HW_DES_DEPLOY           "epoc32/data/z/private/2002AC7F/Nokia/des"
-#define HW_DBPATH               "epoc32/data/z/private/2002AC7F/Nokia"
+#define HW_DES_DEPLOY           "epoc32/data/z/private/2002AC7F/des"
+#define HW_DBPATH               "epoc32/data/z/private/2002AC7F"
 
 #define SEC_TOKEN               0x101FB657
 #define TOOL_VERSION            "0.4"
