@@ -16,7 +16,7 @@ symbian {
        #deploy descriptor file to service framework server's private folder
        #so batch mode tool execution can include the service
        QtService.sources = $$QTSERVICE.DESCRIPTOR
-       QtService.path = /private/2002AC7F/Nokia/des
+       QtService.path = /private/2002AC7F/des
        DEPLOYMENT += QtService
 
        symbian-sbsv2{
