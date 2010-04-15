@@ -67,7 +67,7 @@ bool S60MediaMetaDataProvider::isWritable() const
     return false;
 }
 
-QVariant S60MediaMetaDataProvider::metaData(QtMedia::MetaData key) const
+QVariant S60MediaMetaDataProvider::metaData(QtMultimedia::MetaData key) const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
     if (m_session && m_session->isMetadataAvailable())
@@ -75,21 +75,21 @@ QVariant S60MediaMetaDataProvider::metaData(QtMedia::MetaData key) const
     return QVariant();
 }
 
-void S60MediaMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const &value)
+void S60MediaMetaDataProvider::setMetaData(QtMultimedia::MetaData key, QVariant const &value)
 {
     Q_UNUSED(key);
     Q_UNUSED(value);
 }
-QList<QtMedia::MetaData> S60MediaMetaDataProvider::availableMetaData() const
+QList<QtMultimedia::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
-    QList<QtMedia::MetaData> metaDataTags;
+    QList<QtMultimedia::MetaData> metaDataTags;
     if (m_session && m_session->isMetadataAvailable()) {
-        for (int i = QtMedia::Title; i <= QtMedia::DeviceSettingDescription; i++) {
-            QString metaData = metaDataKeyAsString((QtMedia::MetaData)i);
+        for (int i = QtMultimedia::Title; i <= QtMultimedia::DeviceSettingDescription; i++) {
+            QString metaData = metaDataKeyAsString((QtMultimedia::MetaData)i);
             if (!metaData.isEmpty()) {
                 if (!m_session->metaData(metaData).toString().isEmpty()) {
-                    metaDataTags.append((QtMedia::MetaData)i);               
+                    metaDataTags.append((QtMultimedia::MetaData)i);               
                 }
             }
         }
@@ -119,59 +119,59 @@ QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const
     return QStringList();
 }
 
-QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMedia::MetaData key) const
+QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMultimedia::MetaData key) const
 {
     switch(key) {
-        case QtMedia::Title: return "title";
-        case QtMedia::AlbumArtist: return "artist";
-        case QtMedia::Comment: return "comment";
-        case QtMedia::Genre: return "genre";
-        case QtMedia::Year: return "year";
-        case QtMedia::Copyright: return "copyright";
-        case QtMedia::AlbumTitle: return "album";
-        case QtMedia::Composer: return "composer";
-        case QtMedia::TrackNumber: return "albumtrack";
-        case QtMedia::AudioBitRate: return "audiobitrate";
-        case QtMedia::VideoBitRate: return "videobitrate";
-        case QtMedia::Duration: return "duration";
-        case QtMedia::MediaType: return "contenttype";
-        case QtMedia::SubTitle: // TODO: Find the matching metadata keys
-        case QtMedia::Description:
-        case QtMedia::Category:
-        case QtMedia::Date:
-        case QtMedia::UserRating:
-        case QtMedia::Keywords:
-        case QtMedia::Language:
-        case QtMedia::Publisher:
-        case QtMedia::ParentalRating:
-        case QtMedia::RatingOrganisation:
-        case QtMedia::Size:
-        case QtMedia::AudioCodec:
-        case QtMedia::AverageLevel:
-        case QtMedia::ChannelCount:
-        case QtMedia::PeakValue:
-        case QtMedia::SampleRate:
-        case QtMedia::Author:
-        case QtMedia::ContributingArtist:
-        case QtMedia::Conductor:
-        case QtMedia::Lyrics:
-        case QtMedia::Mood:
-        case QtMedia::TrackCount:
-        case QtMedia::CoverArtUrlSmall:
-        case QtMedia::CoverArtUrlLarge:
-        case QtMedia::Resolution:
-        case QtMedia::PixelAspectRatio:
-        case QtMedia::VideoFrameRate:
-        case QtMedia::VideoCodec:
-        case QtMedia::PosterUrl:
-        case QtMedia::ChapterNumber:
-        case QtMedia::Director:
-        case QtMedia::LeadPerformer:
-        case QtMedia::Writer:
-        case QtMedia::CameraManufacturer:
-        case QtMedia::CameraModel:
-        case QtMedia::Event:
-        case QtMedia::Subject:
+        case QtMultimedia::Title: return "title";
+        case QtMultimedia::AlbumArtist: return "artist";
+        case QtMultimedia::Comment: return "comment";
+        case QtMultimedia::Genre: return "genre";
+        case QtMultimedia::Year: return "year";
+        case QtMultimedia::Copyright: return "copyright";
+        case QtMultimedia::AlbumTitle: return "album";
+        case QtMultimedia::Composer: return "composer";
+        case QtMultimedia::TrackNumber: return "albumtrack";
+        case QtMultimedia::AudioBitRate: return "audiobitrate";
+        case QtMultimedia::VideoBitRate: return "videobitrate";
+        case QtMultimedia::Duration: return "duration";
+        case QtMultimedia::MediaType: return "contenttype";
+        case QtMultimedia::SubTitle: // TODO: Find the matching metadata keys
+        case QtMultimedia::Description:
+        case QtMultimedia::Category:
+        case QtMultimedia::Date:
+        case QtMultimedia::UserRating:
+        case QtMultimedia::Keywords:
+        case QtMultimedia::Language:
+        case QtMultimedia::Publisher:
+        case QtMultimedia::ParentalRating:
+        case QtMultimedia::RatingOrganisation:
+        case QtMultimedia::Size:
+        case QtMultimedia::AudioCodec:
+        case QtMultimedia::AverageLevel:
+        case QtMultimedia::ChannelCount:
+        case QtMultimedia::PeakValue:
+        case QtMultimedia::SampleRate:
+        case QtMultimedia::Author:
+        case QtMultimedia::ContributingArtist:
+        case QtMultimedia::Conductor:
+        case QtMultimedia::Lyrics:
+        case QtMultimedia::Mood:
+        case QtMultimedia::TrackCount:
+        case QtMultimedia::CoverArtUrlSmall:
+        case QtMultimedia::CoverArtUrlLarge:
+        case QtMultimedia::Resolution:
+        case QtMultimedia::PixelAspectRatio:
+        case QtMultimedia::VideoFrameRate:
+        case QtMultimedia::VideoCodec:
+        case QtMultimedia::PosterUrl:
+        case QtMultimedia::ChapterNumber:
+        case QtMultimedia::Director:
+        case QtMultimedia::LeadPerformer:
+        case QtMultimedia::Writer:
+        case QtMultimedia::CameraManufacturer:
+        case QtMultimedia::CameraModel:
+        case QtMultimedia::Event:
+        case QtMultimedia::Subject:
         default:
             break;
     }
