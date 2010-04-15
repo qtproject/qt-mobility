@@ -94,7 +94,7 @@
         <span class="comment">//catSaveRequest was created with catSaveRequest = new QLandmarkCategorySaveRequest()</span>
         <span class="comment">//in the ctor</span>
         catSaveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
-        catSaveRequest-&gt;appendCategory(cafes);
+        catSaveRequest-&gt;setCategory(cafes);
 
         connect(catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
                 SLOT(categorySaveRequestHandler(QLandmarkAbstractRequest::State)));
@@ -103,13 +103,12 @@
         else
             qDebug() &lt;&lt; &quot;Saveing category; awaiting results...&quot;;
     }</pre>
-<p>For brevity the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a> by clearing its categories and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
+<p>For brevity the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a> by setting another category and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
 <pre>    void RequestExample::categorySaveRequestHandler(QLandmarkAbstractRequest::State state)
     {
         if (state == QLandmarkAbstractRequest::FinishedState) {
             if (catSaveRequest-&gt;error() == QLandmarkManager::NoError) {
                 qDebug() &lt;&lt; &quot;Category save succesfully completed&quot;;
-                catSaveRequest-&gt;clearCategories();
             }
             else {
                 qDebug() &lt;&lt; &quot;Category save was unsuccessful&quot;;
@@ -135,7 +134,7 @@
         <span class="comment">//lmSaveRequest was created with lmSaveRequest = new QLandmarkSaveRequest()</span>
         <span class="comment">//in the ctor</span>
         lmSaveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
-        lmSaveRequest-&gt;appendLandmark(monks);
+        lmSaveRequest-&gt;setLandmark(monks);
 
         monks.setDescription(&quot;Jerry's favourite diner&quot;);
 
@@ -146,13 +145,12 @@
         else
             qDebug() &lt;&lt; &quot;Saving landmark; awaiting results...&quot;;
     }</pre>
-<p>For brevity the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a> by clearing its categories and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
+<p>For brevity the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a> by setting another landmark and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
 <pre>    void RequestExample::landmarkSaveRequestHandler(QLandmarkAbstractRequest::State state)
     {
         if (state == QLandmarkAbstractRequest::FinishedState) {
             if (lmSaveRequest-&gt;error() == QLandmarkManager::NoError) {
                 qDebug() &lt;&lt; &quot;Landmark save succesfully completed&quot;;
-                lmSaveRequest-&gt;clearLandmarks();
             }
             else {
                 qDebug() &lt;&lt; &quot;Landmark save was unsuccessful&quot;;

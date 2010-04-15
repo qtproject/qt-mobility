@@ -2379,11 +2379,10 @@
             <keyword name="setCategoryIds" id="QLandmarkCategoryRemoveRequest::setCategoryIds" ref="qlandmarkcategoryremoverequest.html#setCategoryIds"/>
             <keyword name="~QLandmarkCategoryRemoveRequest" id="QLandmarkCategoryRemoveRequest::~QLandmarkCategoryRemoveRequest" ref="qlandmarkcategoryremoverequest.html#dtor.QLandmarkCategoryRemoveRequest"/>
             <keyword name="QLandmarkCategorySaveRequest" id="QLandmarkCategorySaveRequest" ref="qlandmarkcategorysaverequest.html"/>
-            <keyword name="appendCategory" id="QLandmarkCategorySaveRequest::appendCategory" ref="qlandmarkcategorysaverequest.html#appendCategory"/>
             <keyword name="categories" id="QLandmarkCategorySaveRequest::categories" ref="qlandmarkcategorysaverequest.html#categories"/>
-            <keyword name="clearCategories" id="QLandmarkCategorySaveRequest::clearCategories" ref="qlandmarkcategorysaverequest.html#clearCategories"/>
             <keyword name="errorMap" id="QLandmarkCategorySaveRequest::errorMap" ref="qlandmarkcategorysaverequest.html#errorMap"/>
             <keyword name="setCategories" id="QLandmarkCategorySaveRequest::setCategories" ref="qlandmarkcategorysaverequest.html#setCategories"/>
+            <keyword name="setCategory" id="QLandmarkCategorySaveRequest::setCategory" ref="qlandmarkcategorysaverequest.html#setCategory"/>
             <keyword name="~QLandmarkCategorySaveRequest" id="QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest" ref="qlandmarkcategorysaverequest.html#dtor.QLandmarkCategorySaveRequest"/>
             <keyword name="QLandmarkCustomFilter" id="QLandmarkCustomFilter" ref="qlandmarkcustomfilter.html"/>
             <keyword name="isMatch" id="QLandmarkCustomFilter::isMatch" ref="qlandmarkcustomfilter.html#isMatch"/>
@@ -2592,10 +2591,9 @@
             <keyword name="setLandmarkIds" id="QLandmarkRemoveRequest::setLandmarkIds" ref="qlandmarkremoverequest.html#setLandmarkIds"/>
             <keyword name="~QLandmarkRemoveRequest" id="QLandmarkRemoveRequest::~QLandmarkRemoveRequest" ref="qlandmarkremoverequest.html#dtor.QLandmarkRemoveRequest"/>
             <keyword name="QLandmarkSaveRequest" id="QLandmarkSaveRequest" ref="qlandmarksaverequest.html"/>
-            <keyword name="appendLandmark" id="QLandmarkSaveRequest::appendLandmark" ref="qlandmarksaverequest.html#appendLandmark"/>
-            <keyword name="clearLandmarks" id="QLandmarkSaveRequest::clearLandmarks" ref="qlandmarksaverequest.html#clearLandmarks"/>
             <keyword name="errorMap" id="QLandmarkSaveRequest::errorMap" ref="qlandmarksaverequest.html#errorMap"/>
             <keyword name="landmarks" id="QLandmarkSaveRequest::landmarks" ref="qlandmarksaverequest.html#landmarks"/>
+            <keyword name="setLandmark" id="QLandmarkSaveRequest::setLandmark" ref="qlandmarksaverequest.html#setLandmark"/>
             <keyword name="setLandmarks" id="QLandmarkSaveRequest::setLandmarks" ref="qlandmarksaverequest.html#setLandmarks"/>
             <keyword name="~QLandmarkSaveRequest" id="QLandmarkSaveRequest::~QLandmarkSaveRequest" ref="qlandmarksaverequest.html#dtor.QLandmarkSaveRequest"/>
             <keyword name="QLandmarkSortOrder" id="QLandmarkSortOrder" ref="qlandmarksortorder.html"/>

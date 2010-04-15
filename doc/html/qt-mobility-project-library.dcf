@@ -1881,11 +1881,10 @@
     </section>
     <section ref="qlandmarkcategorysaverequest.html" title="QLandmarkCategorySaveRequest Class Reference">
         <keyword ref="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</keyword>
-        <keyword ref="qlandmarkcategorysaverequest.html#appendCategory">appendCategory</keyword>
         <keyword ref="qlandmarkcategorysaverequest.html#categories">categories</keyword>
-        <keyword ref="qlandmarkcategorysaverequest.html#clearCategories">clearCategories</keyword>
         <keyword ref="qlandmarkcategorysaverequest.html#errorMap">errorMap</keyword>
         <keyword ref="qlandmarkcategorysaverequest.html#setCategories">setCategories</keyword>
+        <keyword ref="qlandmarkcategorysaverequest.html#setCategory">setCategory</keyword>
         <section ref="qlandmarkcategorysaverequest-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkcustomfilter.html" title="QLandmarkCustomFilter Class Reference">
@@ -2134,10 +2133,9 @@
     </section>
     <section ref="qlandmarksaverequest.html" title="QLandmarkSaveRequest Class Reference">
         <keyword ref="qlandmarksaverequest.html">QLandmarkSaveRequest</keyword>
-        <keyword ref="qlandmarksaverequest.html#appendLandmark">appendLandmark</keyword>
-        <keyword ref="qlandmarksaverequest.html#clearLandmarks">clearLandmarks</keyword>
         <keyword ref="qlandmarksaverequest.html#errorMap">errorMap</keyword>
         <keyword ref="qlandmarksaverequest.html#landmarks">landmarks</keyword>
+        <keyword ref="qlandmarksaverequest.html#setLandmark">setLandmark</keyword>
         <keyword ref="qlandmarksaverequest.html#setLandmarks">setLandmarks</keyword>
         <section ref="qlandmarksaverequest-members.html" title="List of all members"/>
     </section>
