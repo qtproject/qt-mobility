@@ -72,6 +72,7 @@ PUBLIC_HEADERS += \
                     qmaproute.h \
                     qmapview.h \
                     qmapcontainer.h \
+                    qgeoboundingbox.h \
                     qnmeapositioninfosource.h \
                     qreversegeocodingrequest.h
 
@@ -262,6 +263,7 @@ SOURCES += \
             qmapview.cpp \
             qmapview_p.cpp \
             qmapcontainer.cpp \
+            qgeoboundingbox.cpp \
             qnmeapositioninfosource.cpp \
             qreversegeocodingrequest.cpp
 
