@@ -82,9 +82,22 @@ QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 
 /*!
     Sets the list of \a landmarkIds of landmarks which will be removed.
+
+    \sa setLandmarkId()
 */
 void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {
+    Q_UNUSED(landmarkIds);
+}
+
+/*!
+    Convenience function to set the \a landmarkId of a single landmark to be removed.
+
+    \sa setLandmarkIds()
+*/
+void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
+{
+    Q_UNUSED(landmarkId);
 }
 
 /*!

@@ -83,9 +83,22 @@ QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 
 /*!
     Sets the list of \a categoryIds of categories which will be removed.
+
+    \sa setCategoryId()
 */
 void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
+    Q_UNUSED(categoryIds);
+}
+
+/*!
+    Convenience function to set the \a categoryId of a sisngle category to be removed.
+
+    \sa setCategoryIds()
+*/
+void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
+{
+    Q_UNUSED(categoryId);
 }
 
 /*!

@@ -56,6 +56,7 @@ public:
 
     QList<QLandmarkCategoryId> categoryIds() const;
     void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds);
+    void setCategoryId(const QLandmarkCategoryId &categoryId);
 
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:
