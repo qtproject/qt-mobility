@@ -70,8 +70,8 @@ QtLocation
  - API change
     * QGeoPositionInfo::dateTime()/setDateTime() changed into
       QGeoPositionInfo::timestamp()/setTimestamp() respectively.
+    * Added serialization functions for QGeoSatelliteInfo
  - Maemo 5 (Fremantle) backend implemented
-
 
 QtMessaging
 ------
