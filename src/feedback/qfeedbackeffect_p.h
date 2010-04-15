@@ -75,6 +75,7 @@ struct QFeedbackEffectBasePrivate : public QAbstractAnimationPrivate
     int attackTime;
     qreal attackIntensity;
     int fadeTime;
+    qreal fadeIntensity;
     int priority;
     QFeedbackDevice device;
 };

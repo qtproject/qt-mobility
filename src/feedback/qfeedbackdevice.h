@@ -69,9 +69,9 @@ public:
     };
 
     int id() const;
+    bool isValid() const;
     QString name() const;
     State state() const;
-    QFeedbackEffect *currentPlayingEffect() const; //should that be a list?
     int simultaneousEffect() const;
 
     static QFeedbackDevice defaultDevice(Type t = Vibra);

@@ -39,7 +39,8 @@
 **
 ****************************************************************************/
 
-#include <QtCore/QDebug>
+#include <QtGui/QApplication>
+#include <QtGui/QWidget>
 
 #include "qfeedbackeffect.h"
 #include "qfeedbackeffect_p.h"
@@ -153,7 +154,6 @@ public:
         Q_UNUSED(intensity);
         Q_UNUSED(duration);
         //if there is no advanced feedback, we just do the normal one and return -1
-        //TODO: it is slow to call the Instance() method
         MTouchFeedback::Instance()->InstantFeedback(ETouchFeedbackSensitive);
     }
 };
@@ -194,12 +194,6 @@ QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(*new QFee
 {
 }
 
-void QFeedbackEffect::updateCurrentTime(int currentTime)
-{
-    Q_UNUSED(currentTime);
-    //no random access for feedback
-}
-
 void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
 {
     Q_UNUSED(oldState);
@@ -224,14 +218,14 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
         switch(newState)
         {
         case Stopped:
-            d->feedback()->StopFeedback(0); //TODO: we need a real widget here apparently
+            d->feedback()->StopFeedback(QApplication::activeWindow()); //TODO: is activeWindow good enough?
             break;
         case Paused:
             //not supported, we call stop
             stop();
             break;
         case Running:
-            d->feedback()->StartFeedback(0, //we apparently need a widget
+            d->feedback()->StartFeedback(QApplication::activeWindow(), //we apparently need a widget
                                          0, //what effect
                                          0, qRound(d->intensity * 100), d->duration);
             break;
@@ -318,6 +312,16 @@ int QFeedbackEffect::fadeTime() const
     return d_func()->fadeTime;
 }
 
+void QFeedbackEffect::setFadeIntensity(qreal intensity)
+{
+    Q_UNUSED(intensity);
+}
+
+qreal QFeedbackEffect::fadeIntensity() const
+{
+    return d_func()->fadeIntensity;
+}
+
 void QFeedbackEffect::setPriority(int priority)
 {
     Q_UNUSED(priority);
@@ -337,22 +341,6 @@ QFeedbackDevice QFeedbackEffect::device() const
 {
     return d_func()->device;
 }
-
-//TODO: move this to the correct file (it is here to call QTouchFeedback::Instance())
-QList<QFeedbackDevice> QFeedbackDevice::devices()
-{
-    QList<QFeedbackDevice> ret;
-    QFeedbackDevice fb;
-    fb.m_id = Vibra;
-    ret << fb;
-    if (QTouchFeedback::Instance()->TouchFeedbackSupported()) {
-        fb.m_id = Touch;
-        ret << fb;
-    }
-    return ret;
-
-}
-
 
 QTM_END_NAMESPACE
 

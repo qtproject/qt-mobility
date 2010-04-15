@@ -40,17 +40,36 @@
 ****************************************************************************/
 
 #include "qfeedbackdevice.h"
+#include <QtCore/QString>
 
 QTM_BEGIN_NAMESPACE
 
-int QFeedbackDevice::id() const
+QString QFeedbackDevice::name() const
 {
-    return m_id;
+    return QString();
 }
 
-bool QFeedbackDevice::isValid() const
+QFeedbackDevice::State QFeedbackDevice::state() const
 {
-    return m_id >= 0;
+    return Unknown;
+}
+
+int QFeedbackDevice::simultaneousEffect() const
+{
+    return 0;
+}
+
+QFeedbackDevice QFeedbackDevice::defaultDevice(Type /*t*/)
+{
+    QFeedbackDevice ret;
+    ret.m_id =  -1;
+    return ret;
+}
+
+QList<QFeedbackDevice> QFeedbackDevice::devices()
+{
+    QList<QFeedbackDevice> ret;
+    return ret;
 }
 
 

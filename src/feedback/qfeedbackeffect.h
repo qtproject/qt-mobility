@@ -114,6 +114,9 @@ public:
     void setFadeTime(int msecs);
     int fadeTime() const;
 
+    void setFadeIntensity(qreal intensity);
+    qreal fadeIntensity() const;
+
     void setPriority(int); //TBD
     int priority() const;
 

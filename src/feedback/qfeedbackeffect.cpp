@@ -48,4 +48,10 @@ QFeedbackEffect::~QFeedbackEffect()
 {
 }
 
+void QFeedbackEffect::updateCurrentTime(int currentTime)
+{
+    Q_UNUSED(currentTime);
+    //no random access for feedback
+}
+
 QTM_END_NAMESPACE

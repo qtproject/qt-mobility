@@ -43,78 +43,77 @@
 #include "qfeedbackeffect_p.h"
 #include <QtCore/QString>
 
-#include <hwrmvibra.h>
-#include <touchfeedback.h>
+#include <ImmVibe.h>
+
 
 QTM_BEGIN_NAMESPACE
 
+static inline void ensureLibraryInitialized()
+{
+    if (VIBE_FAILED(ImmVibeInitialize(VIBE_CURRENT_VERSION_NUMBER))) {
+        //that should be done once
+        //error management
+        qWarning("the Immersion library could not be initialized");
+    }
+
+}
+
 QString QFeedbackDevice::name() const
 {
-    switch(m_id)
-    {
-    case Vibra:
-        return QLatin1String("Vibra");
-    case Touch:
-        return QLatin1String("Touch");
-    }
-    return QString();
+    char szDeviceName[VIBE_MAX_DEVICE_NAME_LENGTH] = { 0 };
+    if (!ImmVibeGetDeviceCapabilityString(m_id,VIBE_DEVCAPTYPE_DEVICE_NAME,
+                        VIBE_MAX_CAPABILITY_STRING_LENGTH, szDeviceName))
+        return QString();
+
+    return QString::fromLocal8Bit(szDeviceName);
 }
 
 QFeedbackDevice::State QFeedbackDevice::state() const
 {
     QFeedbackDevice::State ret = Unknown;
-    switch(m_id)
-    {
-    case Vibra:
-        {
-            //TODO we should not allocate the vibra here
-            CHWRMVibra *vibra = CHWRMVibra::NewL();
-            switch (vibra->VibraStatus())
-            {
-            case CHWRMVibra::EVibraStatusStopped:
-                ret = Ready;
-                break;
-            case CHWRMVibra::EVibraStatusOn:
-                ret = Busy;
-                break;
-            default:
-                break;
-            }
-            delete vibra;
-        }
-        break;
-    case Touch:
-        //there is no way of getting the state of the device!
-        break;
-    default:
-        break;
+    VibeInt32 s = 0;
+    if (m_id >= 0 && ImmVibeGetDeviceState(m_id, &s)) {
+        if (s == VIBE_DEVICESTATE_ATTACHED)
+            ret = QFeedbackDevice::Ready;
+        else if (s == VIBE_DEVICESTATE_BUSY)
+            ret = QFeedbackDevice:: Busy;
     }
+
     return ret;
+
 }
 
 int QFeedbackDevice::simultaneousEffect() const
 {
-    // I guess usually 1
-    return 1;
+    VibeInt32 ret = 0;
+    ImmVibeGetDeviceCapabilityInt32(m_id, VIBE_DEVCAPTYPE_NUM_EFFECT_SLOTS, &ret);
+    return ret;
 }
 
-QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)
+QFeedbackDevice QFeedbackDevice::defaultDevice(Type /*t*/)
 {
+    ensureLibraryInitialized();
+
+    //TODO: we don't take the type into consideration here
     QFeedbackDevice ret;
-    ret.m_id =  t;
+    const int nbDev = ImmVibeGetDeviceCount();
+    //the device 0 is the default one (-1 would indicate an error)
+    ret.m_id = nbDev > 0 ? 0 : -1;
     return ret;
 }
 
 QList<QFeedbackDevice> QFeedbackDevice::devices()
 {
     QList<QFeedbackDevice> ret;
-    QFeedbackDevice fb;
-    fb.m_id = Vibra;
-    ret << fb;
-    if (MTouchFeedback::Instance()->TouchFeedbackSupported()) {
-        fb.m_id = Touch;
-        ret << fb;
+    ensureLibraryInitialized();
+
+    const int nbDev = ImmVibeGetDeviceCount();
+    for (int i = 0; i < nbDev; ++i) {
+        QFeedbackDevice dev;
+        dev.m_id = 0;
+        ret << dev;
     }
+
     return ret;
 }
 

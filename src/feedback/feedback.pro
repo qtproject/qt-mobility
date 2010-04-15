@@ -3,8 +3,6 @@
 # #####################################################################
 TEMPLATE = lib
 
-QT -= gui
-
 # Target gets fixed up in common.pri
 TARGET = QtFeedback
 DEFINES += QT_BUILD_FEEDBACK_LIB \
@@ -17,14 +15,25 @@ INCLUDEPATH += .
 PUBLIC_HEADERS += qfeedbackdevice.h qfeedbackeffect.h
 PRIVATE_HEADERS += qfeedbackeffect_p.h
 
+for(p, INCLUDEPATH):exists("$$p/ImmVibe.h"):CONFIG+=immersion
+
 # Private Headers
-PRIVATE_HEADERS += 
 SOURCES += qfeedbackdevice.cpp qfeedbackeffect.cpp
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
-symbian { 
+
+contains(CONFIG, immersion) {
+    SOURCES += qfeedbackeffect_immersion.cpp qfeedbackdevice_immersion.cpp
+    LIBS += -lImmVibe
+} else:symbian {
     SOURCES += qfeedbackdevice_symbian.cpp qfeedbackeffect_symbian.cpp
     LIBS += -ltouchfeedback -lhwrmvibraclient
+} else {
+    SOURCES += qfeedbackdevice_stub.cpp qfeedbackeffect_stub.cpp
+}
+
+
+symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \
         -TCB
@@ -42,5 +51,6 @@ symbian {
     
     # export headers into EPOCROOT
     for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-} else:SOURCES += qfeedbackeffect_stub.cpp
+}
 include(../../features/deploy.pri)
+
