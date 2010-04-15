@@ -88,8 +88,8 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
         m_contactFilter    = new CntSymbianFilter(*this, *m_dataBase->contactDatabase(), *m_transformContact);
 #else
         m_contactFilter    = new CntSymbianFilter(*m_dataBase->contactDatabase());
-#endif
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
+#endif
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
         m_displayLabel     = new CntDisplayLabel();
     }
@@ -112,7 +112,9 @@ CntSymbianEngine::~CntSymbianEngine()
     delete m_contactFilter; // needs to be deleted before database
     delete m_dataBase;
     delete m_transformContact;
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
     delete m_contactSorter;
+#endif    
     delete m_relationship;
     delete m_displayLabel;
 }
@@ -186,45 +188,6 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
     }
     return result;
 }
-
-#if 0
-// These functions are not used anymore - there is always a filter (which may be the default filter)
-QList<QContactLocalId> CntSymbianEngine::contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
-{
-    // Check if sorting is supported by backend
-    if(m_contactSorter->sortOrderSupported(sortOrders))
-        return m_contactSorter->contacts(sortOrders,error);
-
-    // Backend does not support this sorting.
-    // Fall back to slow QContact-level sorting method.
-
-    // Get unsorted contact ids
-    QList<QContactSortOrder> noSortOrders;
-    QList<QContactLocalId> unsortedIds = m_contactSorter->contacts(noSortOrders, error);
-    if (*error != QContactManager::NoError)
-        return QList<QContactLocalId>();
-
-    // Sort contacts
-    return slowSort(unsortedIds, sortOrders, error);
-}
-
-QList<QContact> CntSymbianEngine::contacts(const QList<QContactSortOrder>& sortOrders, const QStringList& definitionRestrictions, QContactManager::Error* error) const
-{
-    *error = QContactManager::NoError;
-    QList<QContact> contacts;
-    QList<QContactLocalId> contactIds = this->contactIds(sortOrders, error);
-    if (*error == QContactManager::NoError ) {
-        foreach (QContactLocalId id, contactIds) {
-            QContact contact = this->contact(id, definitionRestrictions, error);
-            if (*error != QContactManager::NoError) {
-                return QList<QContact>(); // return empty list if error occurred
-            }
-            contacts.append(contact);
-        }
-    }
-    return contacts;
-}
-#endif
 
 QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fh, QContactManager::Error* error) const
 {

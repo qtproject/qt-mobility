@@ -167,7 +167,9 @@ private:
     QString m_managerUri;
     CntTransformContact *m_transformContact;
     CntAbstractContactFilter *m_contactFilter;
+#ifndef SYMBIAN_BACKEND_USE_SQLITE    
     CntAbstractContactSorter *m_contactSorter;
+#endif    
     CntRelationship *m_relationship;
     CntDisplayLabel *m_displayLabel;
 
