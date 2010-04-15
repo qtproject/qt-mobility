@@ -58,6 +58,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+using namespace SymbianHelpers;
+
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
  : q_ptr(parent),
    _state(QMessageService::InactiveState),
@@ -82,39 +84,53 @@ bool QMessageServicePrivate::sendMMS(QMessage &message)
 
 bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
-    if (SymbianHelpers::isFreestyleAccount(message.parentAccountId())) {
+    switch (idType(message.parentAccountId())) {
+        case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-        return CFSEngine::instance()->sendEmail(message);
+            return CFSEngine::instance()->sendEmail(message);
 #else
-        return false;
+            return false;
 #endif
-    } else
-        return CMTMEngine::instance()->sendEmail(message);
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->sendEmail(message);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::show(const QMessageId& id)
 {
-    QMessageId fsId = id;
-    if (SymbianHelpers::isFreestyleMessage(fsId)) {
+    switch (idType(id)) {
+        case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-        return CFSEngine::instance()->showMessage(id);
+            return CFSEngine::instance()->showMessage(id);
 #else
-        return false;
+            return false;
 #endif
-    } else
-        return CMTMEngine::instance()->showMessage(id);
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->showMessage(id);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::compose(const QMessage &message)
 {
-    if (SymbianHelpers::isFreestyleAccount(message.parentAccountId())) {
+    switch (idType(message.parentAccountId())) {
+        case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
             return CFSEngine::instance()->composeMessage(message);
 #else
             return false;
 #endif
-        } else
+            break;
+        case EngineTypeMTM:
+        default:
             return CMTMEngine::instance()->composeMessage(message);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
@@ -182,38 +198,53 @@ bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
 
 bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessageContentContainerId &id)
 {
-    if (SymbianHelpers::isFreestyleMessage(messageId)) {
+    switch (idType(messageId)) {
+        case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-        return CFSEngine::instance()->retrieve(messageId, id);
+            return CFSEngine::instance()->retrieve(messageId, id);
 #else
-        return false;
+            return false;
 #endif
-    } else
-        return CMTMEngine::instance()->retrieve(messageId, id);
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->retrieve(messageId, id);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 {
-    if (SymbianHelpers::isFreestyleMessage(id)) {
+    switch (idType(id)) {
+        case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-        return CFSEngine::instance()->retrieveBody(id);
+            return CFSEngine::instance()->retrieveBody(id);
 #else
-        return false;
+            return false;
 #endif
-    } else
-        return CMTMEngine::instance()->retrieveBody(id);
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->retrieveBody(id);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 {
-    if (SymbianHelpers::isFreestyleMessage(id)) {
+    switch (idType(id)) {
+        case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-        return CFSEngine::instance()->retrieveHeader(id);
+            return CFSEngine::instance()->retrieveHeader(id);
 #else
-        return false;
+            return false;
 #endif
-    } else
-        return CMTMEngine::instance()->retrieveHeader(id);
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->retrieveHeader(id);
+            break;
+    }
 }
 
 void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)

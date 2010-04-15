@@ -53,25 +53,29 @@ class QMessageFolderId;
 
 namespace SymbianHelpers {
 
-    bool isFreestyleMessage(const QMessageId& msgId);
-    bool isFreestyleMessage(const QString& msgId);
-    bool isFreestyleAccount(const QMessageAccountId &accountId);
-    bool isFreestyleFolder(const QMessageFolderId &folderId);
-    QMessageId addFreestylePrefix(const QMessageId& msgId);
-    QMessageAccountId addFreestylePrefix(const QMessageAccountId &accountId);
-    QMessageFolderId addFreestylePrefix(const QMessageFolderId &folderId);
-    QString addFreestylePrefix(const QString& msgId);
-    QMessageId removeFreestylePrefix(const QMessageId& msgId);
-    QMessageAccountId removeFreestylePrefix(const QMessageAccountId &accountId);
-    QMessageFolderId removeFreestylePrefix(const QMessageFolderId &folderId);
-    QString removeFreestylePrefix(const QString& msgId);
+    enum EngineType {
+        EngineTypeMTM = 0,
+        EngineTypeFreestyle
+    };
 
-    QString addIdPrefix(const QString& id);
+    EngineType idType(const QString& id);
+    EngineType idType(const QMessageId& id);
+    EngineType idType(const QMessageAccountId& id);
+    EngineType idType(const QMessageFolderId& id);
+
+    QString addIdPrefix(const QString& id, const EngineType& type = EngineTypeMTM);
+    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type = EngineTypeMTM);
+    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type = EngineTypeMTM);
+    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type = EngineTypeMTM);
+
     QString stripIdPrefix(const QString& id);
+    QMessageId stripIdPrefix(const QMessageId& id);
+    QMessageAccountId stripIdPrefix(const QMessageAccountId& id);
+    QMessageFolderId stripIdPrefix(const QMessageFolderId& id);
 
     static const char* mtmPrefix = "MTM_";
     static const char* freestylePrefix = "FS_";
-};
+}
 
 QTM_END_NAMESPACE
 

@@ -159,13 +159,13 @@ void CFSEngine::updateEmailAccountsL() const
     for (TInt i = 0; i < mailboxes.Count(); i++) {
         MEmailMailbox *mailbox = mailboxes[i];
         QString idAsString = QString::number(mailbox->MailboxId().iId);
-        QString fsIdAsString = addFreestylePrefix(idAsString);
+        QString fsIdAsString = addIdPrefix(idAsString, EngineTypeFreestyle);
         
         if (!m_accounts.contains(fsIdAsString)) {
             
             QMessageAccount account = QMessageAccountPrivate::from(
                 QMessageAccountId(fsIdAsString),
-                addFreestylePrefix(QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length())),
+                addIdPrefix(QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length()), EngineTypeFreestyle),
                 0, //TODO: ID for IMAP service if needed
                 0, //TODO: ID for SMTP service if needed
                 QMessage::Email);
@@ -189,7 +189,7 @@ void CFSEngine::updateEmailAccountsL() const
 
 MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
 {
-    TMailboxId mailboxId(removeFreestylePrefix(message.parentAccountId().toString()).toInt());
+    TMailboxId mailboxId(stripIdPrefix(message.parentAccountId().toString()).toInt());
     MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
 
     MEmailMessage* fsMessage = mailbox->CreateDraftMessageL();
@@ -329,7 +329,7 @@ bool CFSEngine::addMessage(QMessage* message)
 
 bool CFSEngine::updateMessage(QMessage* message)
 {
-    TMailboxId mailboxId(removeFreestylePrefix(message->parentAccountId().toString()).toInt());
+    TMailboxId mailboxId(stripIdPrefix(message->parentAccountId().toString()).toInt());
     MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
   
     TMessageId messageId(message->id().toString().toInt(),
@@ -641,13 +641,13 @@ QMessageFolder CFSEngine::folderL(const QMessageFolderId &id) const
         accountId = value.id();
         QMessageFolderIdList ids = folderIdsByAccountIdL(accountId);
         if (ids.contains(id)) {
-            TMailboxId mailboxId(removeFreestylePrefix(accountId.toString()).toInt());
+            TMailboxId mailboxId(stripIdPrefix(accountId.toString()).toInt());
             mailbox = m_clientApi->MailboxL(mailboxId);
             break;
         }
     }
 
-    TFolderId folderId(removeFreestylePrefix(id.toString()).toInt(), mailbox->MailboxId());
+    TFolderId folderId(stripIdPrefix(id.toString()).toInt(), mailbox->MailboxId());
     MEmailFolder* emailFolder = mailbox->FolderL(folderId);
     CleanupReleasePushL(*emailFolder);
     QString name = QString::fromUtf16(emailFolder->Name().Ptr(), emailFolder->Name().Length());
@@ -798,7 +798,7 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
     QMessageFolderIdList folderIds;
     QMessageAccount messageAccount = account(accountId);
     
-    TMailboxId mailboxId(removeFreestylePrefix(accountId.toString()).toInt());
+    TMailboxId mailboxId(stripIdPrefix(accountId.toString()).toInt());
     MEmailMailbox* mailbox = NULL;
     mailbox = m_clientApi->MailboxL(mailboxId);
 
@@ -813,7 +813,7 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
     for(TInt i=0; i < folders.Count(); i++) {
         MEmailFolder *mailFolder = folders[i];
         
-        QString fsIdAsString = addFreestylePrefix(QString::number(mailFolder->FolderId().iId));
+        QString fsIdAsString = addIdPrefix(QString::number(mailFolder->FolderId().iId), EngineTypeFreestyle);
         folderIds.append(QMessageFolderId(fsIdAsString));
 
         //TODO: Support for subfolders?
@@ -837,7 +837,7 @@ bool CFSEngine::sendEmail(QMessage &message)
         fsMessage = createFSMessageL(message);
         fsMessage->SaveChangesL();
         fsMessage->SendL();
-        m_mailboxId = removeFreestylePrefix(message.parentAccountId().toString()).toInt();
+        m_mailboxId = stripIdPrefix(message.parentAccountId().toString()).toInt();
         MEmailMailbox* mailbox = m_clientApi->MailboxL(m_mailboxId);       
         mailbox->SynchroniseL(*this);  
     );
@@ -1204,7 +1204,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
 
 void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria)
 {
-    TMailboxId mailboxId(removeFreestylePrefix(messageAccount.id().toString()).toInt());
+    TMailboxId mailboxId(stripIdPrefix(messageAccount.id().toString()).toInt());
     m_mailbox->Release();
     if (m_search)
         m_search->Release();
@@ -1220,9 +1220,9 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
 {
     RSortCriteriaArray sortCriteriaArray;
     CleanupClosePushL(sortCriteriaArray);
-    TFolderId folderId(removeFreestylePrefix(messageFolder.id().toString()).toInt(), 
-        removeFreestylePrefix(messageFolder.parentAccountId().toString()).toInt());
-    m_mailbox = m_clientApi->MailboxL(removeFreestylePrefix(messageFolder.parentAccountId().toString()).toInt());
+    TFolderId folderId(stripIdPrefix(messageFolder.id().toString()).toInt(), 
+        stripIdPrefix(messageFolder.parentAccountId().toString()).toInt());
+    m_mailbox = m_clientApi->MailboxL(stripIdPrefix(messageFolder.parentAccountId().toString()).toInt());
     MEmailFolder *mailFolder = m_mailbox->FolderL(folderId);
         
     sortCriteriaArray.Append(sortCriteria);
@@ -1232,7 +1232,7 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
     MEmailMessage* msg = msgIterator->NextL();
     iIdList.clear();
     while (msg != NULL) {
-        iIdList.append(QMessageId(QString::number(msg->MessageId().iId)));
+        iIdList.append(QMessageId(addIdPrefix(QString::number(msg->MessageId().iId), EngineTypeFreestyle)));
         msg = msgIterator->NextL();
     }
 
@@ -1247,7 +1247,7 @@ void CFSMessagesFindOperation::CheckAndNotifyNewMailsL(TMailboxId aMailboxId)
 
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)
 {
-    iIdList.append(QMessageId(QString::number(aMessage->MessageId().iId)));
+    iIdList.append(QMessageId(addIdPrefix(QString::number(aMessage->MessageId().iId), EngineTypeFreestyle)));
     
     if (!aMessage->Flags() & EFlag_Read) { // new message
         bool result = m_owner.CreateQMessageL(aMessage);

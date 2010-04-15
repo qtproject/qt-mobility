@@ -49,9 +49,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-#ifdef FREESTYLEMAILUSED
 using namespace SymbianHelpers;
-#endif
 
 
 Q_GLOBAL_STATIC(QMessageStorePrivate,messageStorePrivate);
@@ -181,39 +179,71 @@ int QMessageStorePrivate::countFolders(const QMessageFolderFilter& filter) const
 
 QMessageFolder QMessageStorePrivate::folder(const QMessageFolderId& id) const
 {
+    switch (idType(id)) {
+        case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-    if (isFreestyleFolder(id))
-        return CFSEngine::instance()->folder(id);
+            return CFSEngine::instance()->folder(id);
+#else
+            return QMessageFolder();
 #endif
-    return _mtmEngine->folder(id);
+            break;
+        case EngineTypeMTM:
+        default:
+            return _mtmEngine->folder(id);
+            break;
+    }
 }
 
 
 bool QMessageStorePrivate::addMessage(QMessage *m)
 {
+    switch (idType(m->id())) {
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-    if (isFreestyleMessage(m->id()))
         return CFSEngine::instance()->addMessage(m);
+#else
+            return false;
 #endif
-    return _mtmEngine->addMessage(m);
+        break;
+    case EngineTypeMTM:
+    default:
+        return _mtmEngine->addMessage(m);
+        break;
+    }
 }
 
 bool QMessageStorePrivate::updateMessage(QMessage *m)
 {
+    switch (idType(m->id())) {
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-    if (isFreestyleMessage(m->id()))
         return CFSEngine::instance()->updateMessage(m);
+#else
+        return false;
 #endif
-    return _mtmEngine->updateMessage(m);
+        break;
+    case EngineTypeMTM:
+    default:
+        return _mtmEngine->updateMessage(m);
+        break;
+    }
 }
 
 bool QMessageStorePrivate::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
 {
+    switch (idType(id)) {
+    case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-    if (isFreestyleMessage(id))
         return CFSEngine::instance()->removeMessage(id, option);
+#else
+        return false;
 #endif
-    return _mtmEngine->removeMessage(id, option);
+        break;
+    case EngineTypeMTM:
+    default:
+        return _mtmEngine->removeMessage(id, option);
+        break;
+    }
 }
 
 bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessageManager::RemovalOption option)
@@ -248,11 +278,19 @@ QMessage QMessageStorePrivate::message(const QMessageId& id) const
 
 QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
 {
+    switch (idType(id)) {
+        case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-    if (isFreestyleAccount(id))
-        return CFSEngine::instance()->account(id);
+            return CFSEngine::instance()->account(id);
+#else
+        return QMessageAccount();
 #endif
-    return _mtmEngine->account(id);
+            break;
+        case EngineTypeMTM:
+        default:
+            return _mtmEngine->account(id);
+            break;
+        }
 }
 
 QMessageManager::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)
