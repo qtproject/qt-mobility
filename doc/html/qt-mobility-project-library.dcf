@@ -1876,6 +1876,7 @@
         <keyword ref="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</keyword>
         <keyword ref="qlandmarkcategoryremoverequest.html#categoryIds">categoryIds</keyword>
         <keyword ref="qlandmarkcategoryremoverequest.html#errorMap">errorMap</keyword>
+        <keyword ref="qlandmarkcategoryremoverequest.html#setCategoryId">setCategoryId</keyword>
         <keyword ref="qlandmarkcategoryremoverequest.html#setCategoryIds">setCategoryIds</keyword>
         <section ref="qlandmarkcategoryremoverequest-members.html" title="List of all members"/>
     </section>
@@ -2128,6 +2129,7 @@
         <keyword ref="qlandmarkremoverequest.html">QLandmarkRemoveRequest</keyword>
         <keyword ref="qlandmarkremoverequest.html#errorMap">errorMap</keyword>
         <keyword ref="qlandmarkremoverequest.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkremoverequest.html#setLandmarkId">setLandmarkId</keyword>
         <keyword ref="qlandmarkremoverequest.html#setLandmarkIds">setLandmarkIds</keyword>
         <section ref="qlandmarkremoverequest-members.html" title="List of all members"/>
     </section>

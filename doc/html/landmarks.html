@@ -18,17 +18,17 @@
 <p>A landmark is a location of some significance, also known as a point of interest. Landmarks may be organised into various categories such as restaurants or hotels.</p>
 <ul><li><a href="#creating-categories-and-landmarks">Creating categories and landmarks</a></li>
 <ul><li><a href="#synchronous">Synchronous</a></li>
-<ul><li><a href="#creating-a-category">Creating a category.</a></li>
+<ul><li><a href="#creating-a-category">Creating a category</a></li>
 <li><a href="#creating-landmark">Creating landmark</a></li>
 </ul>
 <li><a href="#asynchronous">Asynchronous</a></li>
-<ul><li><a href="#creating-a-category">Creating a category.</a></li>
-<li><a href="#creating-a-landmark">Creating a landmark.</a></li>
+<ul><li><a href="#creating-a-category">Creating a category</a></li>
+<li><a href="#creating-a-landmark">Creating a landmark</a></li>
 </ul>
 </ul>
 <li><a href="#retrieving-categories-and-landmarks">Retrieving categories and landmarks</a></li>
 <ul><li><a href="#synchronous">Synchronous</a></li>
-<ul><li><a href="#retrieving-a-category">Retrieving a category.</a></li>
+<ul><li><a href="#retrieving-categories">Retrieving categories</a></li>
 <li><a href="#retrieving-landmarks">Retrieving landmarks</a></li>
 </ul>
 <li><a href="#asynchronous">Asynchronous</a></li>
@@ -36,7 +36,16 @@
 <li><a href="#retrieving-landmarks">Retrieving landmarks</a></li>
 </ul>
 </ul>
-<li><a href="#deleting-landmarks">Deleting landmarks</a></li>
+<li><a href="#deleting-categories-and-landmarks">Deleting categories and landmarks</a></li>
+<ul><li><a href="#synchronous">Synchronous</a></li>
+<ul><li><a href="#deleting-a-category">Deleting a category</a></li>
+<li><a href="#deleting-a-landmark">Deleting a landmark</a></li>
+</ul>
+<li><a href="#asynchronous">Asynchronous</a></li>
+<ul><li><a href="#deleting-a-category">Deleting a category</a></li>
+<li><a href="#deleting-a-landmark">Deleting a landmark</a></li>
+</ul>
+</ul>
 <li><a href="#landmark-classes">Landmark classes</a></li>
 <ul><li><a href="#main-landmark-classes">Main Landmark Classes</a></li>
 <li><a href="#landmark-selection-classes">Landmark Selection classes</a></li>
@@ -52,7 +61,7 @@
 <a name="synchronous"></a>
 <h3>Synchronous</h3>
 <a name="creating-a-category"></a>
-<h4>Creating a category.</h4>
+<h4>Creating a category</h4>
 <p>The following example demonstrates how to synchronously add a category. We create a <a href="qlandmarkcategory.html">QLandmarkCategory</a> instance, set the desired properties and then use a <a href="qlandmarkmanager.html">QLandmarkManager</a> instance to save it. When the category is saved, it is assigned a <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> which is why it passed as a pointer.</p>
 <pre>        QLandmarkCategory cafes;
         cafes.setName(&quot;Cafes&quot;);
@@ -82,7 +91,7 @@
 <a name="asynchronous"></a>
 <h3>Asynchronous</h3>
 <a name="creating-a-category"></a>
-<h4>Creating a category.</h4>
+<h4>Creating a category</h4>
 <p>We create a <a href="qlandmarkcategory.html">QLandmarkCategory</a> instance and set the desired properties. Next we have an instance of a <a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a> and set its <a href="qlandmarkmanager.html">QLandmarkManager</a> and the append the category we want to save. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a>.</p>
 <pre>    void RequestExample::categorySaveRequest()
     {
@@ -103,7 +112,7 @@
         else
             qDebug() &lt;&lt; &quot;Saveing category; awaiting results...&quot;;
     }</pre>
-<p>For brevity the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a> by setting another category and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
+<p>For brevity, the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</a> by setting another category and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
 <pre>    void RequestExample::categorySaveRequestHandler(QLandmarkAbstractRequest::State state)
     {
         if (state == QLandmarkAbstractRequest::FinishedState) {
@@ -116,7 +125,7 @@
         }
     }</pre>
 <a name="creating-a-landmark"></a>
-<h4>Creating a landmark.</h4>
+<h4>Creating a landmark</h4>
 <p>We create a <a href="qlandmark.html">QLandmark</a> instance and set the desired properties. Next we have an instance of a <a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a> and set its <a href="qlandmarkmanager.html">QLandmarkManager</a> and the append the category we want to save. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a>.</p>
 <pre>    void RequestExample::landmarkSaveRequest()
     {
@@ -145,7 +154,7 @@
         else
             qDebug() &lt;&lt; &quot;Saving landmark; awaiting results...&quot;;
     }</pre>
-<p>For brevity the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a> by setting another landmark and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
+<p>For brevity, the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarksaverequest.html">QLandmarkSaveRequest</a> by setting another landmark and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
 <pre>    void RequestExample::landmarkSaveRequestHandler(QLandmarkAbstractRequest::State state)
     {
         if (state == QLandmarkAbstractRequest::FinishedState) {
@@ -161,8 +170,8 @@
 <h2>Retrieving categories and landmarks</h2>
 <a name="synchronous"></a>
 <h3>Synchronous</h3>
-<a name="retrieving-a-category"></a>
-<h4>Retrieving a category.</h4>
+<a name="retrieving-categories"></a>
+<h4>Retrieving categories</h4>
 <p>When retrieiving categories we may do so by the category ids. When the category data is needed we may use the id to retrieve a category object:</p>
 <pre>        QList&lt;QLandmarkCategoryId&gt; categoryIds = lm-&gt;categoryIds();
         foreach(QLandmarkCategoryId id, categoryIds) {
@@ -202,7 +211,7 @@
         catFetchRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
 
         connect(catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
-                this, SLOT(categoryFetchHandlerRequest(QLandmarkAbstractRequest::State)));
+                this, SLOT(categoryFetchRequestHandler(QLandmarkAbstractRequest::State)));
 
         if(!catFetchRequest-&gt;start()) {
             qDebug() &lt;&lt; &quot;Unable to request categories, error code:&quot; &lt;&lt; catFetchRequest-&gt;error();
@@ -211,7 +220,7 @@
             qDebug() &lt;&lt; &quot;Requested categories, awaiting results...&quot;;
         }</pre>
 <p>For brevity, the slot does not process all the different request states. In our example, we watch for the QLandmarkAbstractRequest::Finished state and if there are no errors, print out the categories.</p>
-<pre>    void RequestExample::categoryFetchHandlerRequest(QLandmarkAbstractRequest::State state)
+<pre>    void RequestExample::categoryFetchRequestHandler(QLandmarkAbstractRequest::State state)
     {
         if (state == QLandmarkAbstractRequest::FinishedState) {
             previousLastIndex = 0;
@@ -241,7 +250,7 @@
         lmFetchRequest-&gt;setSorting(QLandmarkNameSort(Qt::AscendingOrder));
 
         connect(lmFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
-                this, SLOT(landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State)));
+                this, SLOT(landmarkFetchRequestHandler(QLandmarkAbstractRequest::State)));
 
         if(!lmFetchRequest-&gt;start()) {
             qDebug() &lt;&lt; &quot;Unable to request landmarks, error code:&quot; &lt;&lt; lmFetchRequest-&gt;error();
@@ -250,7 +259,7 @@
             qDebug() &lt;&lt; &quot;Requested landmarks, awaiting results...&quot;;
         }</pre>
 <p>For brevity, the slot does not process all the different request states. In our example, we watch for the QLandmarkAbstractRequest::Finished state and if there are no errors, print out the landmarks.</p>
-<pre>    void RequestExample::landmarkFetchHandlerRequest(QLandmarkAbstractRequest::State state)
+<pre>    void RequestExample::landmarkFetchRequestHandler(QLandmarkAbstractRequest::State state)
     {
         if (state == QLandmarkAbstractRequest::FinishedState) {
             previousLastIndex = 0;
@@ -266,8 +275,89 @@
             }
         }
     }</pre>
-<a name="deleting-landmarks"></a>
-<h2>Deleting landmarks</h2>
+<a name="deleting-categories-and-landmarks"></a>
+<h2>Deleting categories and landmarks</h2>
+<a name="synchronous"></a>
+<h3>Synchronous</h3>
+<a name="deleting-a-category"></a>
+<h4>Deleting a category</h4>
+<p>To remove a category we simply pass the category id to a <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
+<pre>        <span class="comment">//category is a previously retrieved QLandmarkCategory object</span>
+        lm-&gt;removeCategory(category.id());</pre>
+<a name="deleting-a-landmark"></a>
+<h4>Deleting a landmark</h4>
+<p>To remove a landmark we simply passs the landmark id to a <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
+<pre>        <span class="comment">//landmark is a previously retrieved QLandmark object</span>
+        lm-&gt;removeLandmark(landmark.id());</pre>
+<a name="asynchronous"></a>
+<h3>Asynchronous</h3>
+<a name="deleting-a-category"></a>
+<h4>Deleting a category</h4>
+<p>To remove a category we use a <a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a> and set its manager and the id of the category we want to remove. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a></p>
+<pre>    void RequestExample::categoryRemoveRequest()
+    {
+        <span class="comment">//catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest()</span>
+        <span class="comment">//in the ctor</span>
+        catRemoveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
+        catRemoveRequest-&gt;setCategoryId(category.id()); <span class="comment">//category is a previously retrieved QLandmarkCategory</span>
+
+        connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
+            this, SLOT(categoryRemoveRequestHandler(QLandmarkAbstractRequest::State)));
+
+        if(!catRemoveRequest-&gt;start()) {
+            qDebug() &lt;&lt; &quot;Unable to request category removal, error code:&quot; &lt;&lt; catRemoveRequest-&gt;error();
+            QCoreApplication::exit(0);
+        } else {
+            qDebug() &lt;&lt; &quot;Requested category removal, awaiting results...&quot;;
+        }
+    }</pre>
+<p>For brevity, the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a> by setting another category id and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
+<pre>    void RequestExample::categoryRemoveRequest()
+    {
+        <span class="comment">//catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest()</span>
+        <span class="comment">//in the ctor</span>
+        catRemoveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
+        catRemoveRequest-&gt;setCategoryId(category.id()); <span class="comment">//category is a previously retrieved QLandmarkCategory</span>
+
+        connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
+            this, SLOT(categoryRemoveRequestHandler(QLandmarkAbstractRequest::State)));
+
+        if(!catRemoveRequest-&gt;start()) {
+            qDebug() &lt;&lt; &quot;Unable to request category removal, error code:&quot; &lt;&lt; catRemoveRequest-&gt;error();
+            QCoreApplication::exit(0);
+        } else {
+            qDebug() &lt;&lt; &quot;Requested category removal, awaiting results...&quot;;
+        }
+    }</pre>
+<a name="deleting-a-landmark"></a>
+<h4>Deleting a landmark</h4>
+<p>To remove a landmark we use a <a href="qlandmarkremoverequest.html">QLandmarkRemoveRequest</a> and set its manager and the id of the landmark we want to remove. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a></p>
+<pre>    void RequestExample::landmarkRemoveRequest()
+    {
+        <span class="comment">//lmRemoveRequest was created with lmRemoveRequest = new QLandmarkSaveRequest()</span>
+        <span class="comment">//in the ctor</span>
+        lmRemoveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
+        lmRemoveRequest-&gt;setLandmarkId(landmark.id());  <span class="comment">//landmark is a previously retrieved QLandmark</span>
+
+        connect(lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
+                SLOT(landmarkRemoveRequestHandler(QLandmarkAbstractRequest::State)));
+        if (!lmRemoveRequest-&gt;start())
+            qDebug() &lt;&lt; &quot;Unable to remove landmark, error code: &quot; &lt;&lt; lmSaveRequest-&gt;error();
+        else
+            qDebug() &lt;&lt; &quot;Removing landmark; awaiting results...&quot;;
+    }</pre>
+<p>For brevity, the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarkremoverequest.html">QLandmarkRemoveRequest</a> by setting another category id and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
+<pre>    void RequestExample::landmarkRemoveRequestHandler(QLandmarkAbstractRequest::State state)
+    {
+        if (state == QLandmarkAbstractRequest::FinishedState) {
+            if (lmRemoveRequest-&gt;error() == QLandmarkManager::NoError) {
+                qDebug() &lt;&lt; &quot;Landmark removal succesfully completed&quot;;
+            }
+            else {
+                qDebug() &lt;&lt; &quot;Landmark removal was unsuccessful&quot;;
+            }
+        }
+    }</pre>
 <a name="landmark-classes"></a>
 <h2>Landmark classes</h2>
 <a name="main-landmark-classes"></a>

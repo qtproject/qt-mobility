@@ -2376,6 +2376,7 @@
             <keyword name="QLandmarkCategoryRemoveRequest" id="QLandmarkCategoryRemoveRequest" ref="qlandmarkcategoryremoverequest.html"/>
             <keyword name="categoryIds" id="QLandmarkCategoryRemoveRequest::categoryIds" ref="qlandmarkcategoryremoverequest.html#categoryIds"/>
             <keyword name="errorMap" id="QLandmarkCategoryRemoveRequest::errorMap" ref="qlandmarkcategoryremoverequest.html#errorMap"/>
+            <keyword name="setCategoryId" id="QLandmarkCategoryRemoveRequest::setCategoryId" ref="qlandmarkcategoryremoverequest.html#setCategoryId"/>
             <keyword name="setCategoryIds" id="QLandmarkCategoryRemoveRequest::setCategoryIds" ref="qlandmarkcategoryremoverequest.html#setCategoryIds"/>
             <keyword name="~QLandmarkCategoryRemoveRequest" id="QLandmarkCategoryRemoveRequest::~QLandmarkCategoryRemoveRequest" ref="qlandmarkcategoryremoverequest.html#dtor.QLandmarkCategoryRemoveRequest"/>
             <keyword name="QLandmarkCategorySaveRequest" id="QLandmarkCategorySaveRequest" ref="qlandmarkcategorysaverequest.html"/>
@@ -2588,6 +2589,7 @@
             <keyword name="QLandmarkRemoveRequest" id="QLandmarkRemoveRequest" ref="qlandmarkremoverequest.html"/>
             <keyword name="errorMap" id="QLandmarkRemoveRequest::errorMap" ref="qlandmarkremoverequest.html#errorMap"/>
             <keyword name="landmarkIds" id="QLandmarkRemoveRequest::landmarkIds" ref="qlandmarkremoverequest.html#landmarkIds"/>
+            <keyword name="setLandmarkId" id="QLandmarkRemoveRequest::setLandmarkId" ref="qlandmarkremoverequest.html#setLandmarkId"/>
             <keyword name="setLandmarkIds" id="QLandmarkRemoveRequest::setLandmarkIds" ref="qlandmarkremoverequest.html#setLandmarkIds"/>
             <keyword name="~QLandmarkRemoveRequest" id="QLandmarkRemoveRequest::~QLandmarkRemoveRequest" ref="qlandmarkremoverequest.html#dtor.QLandmarkRemoveRequest"/>
             <keyword name="QLandmarkSaveRequest" id="QLandmarkSaveRequest" ref="qlandmarksaverequest.html"/>

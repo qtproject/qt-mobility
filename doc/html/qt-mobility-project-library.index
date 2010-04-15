@@ -621,6 +621,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setLandmarkIds" fullname="QLandmarkRemoveRequest::setLandmarkIds" href="qlandmarkremoverequest.html#setLandmarkIds" location="qlandmarkremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLandmarkIds(const QList&lt;QLandmarkId&gt; &amp; landmarkIds)">
                 <parameter left="const QList&lt;QLandmarkId&gt; &amp;" right="" name="landmarkIds" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setLandmarkId" fullname="QLandmarkRemoveRequest::setLandmarkId" href="qlandmarkremoverequest.html#setLandmarkId" location="qlandmarkremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLandmarkId(const QLandmarkId &amp; landmarkId)">
+                <parameter left="const QLandmarkId &amp;" right="" name="landmarkId" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QLandmarkRemoveRequest::errorMap" href="qlandmarkremoverequest.html#errorMap" location="qlandmarkremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QLandmarkManager::Error&gt;" signature="errorMap() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaPlayer" href="qmediaplayer.html" location="qmediaplayer.h" bases="QMediaObject" module="">
@@ -6324,6 +6327,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setCategoryIds" fullname="QLandmarkCategoryRemoveRequest::setCategoryIds" href="qlandmarkcategoryremoverequest.html#setCategoryIds" location="qlandmarkcategoryremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCategoryIds(const QList&lt;QLandmarkCategoryId&gt; &amp; categoryIds)">
                 <parameter left="const QList&lt;QLandmarkCategoryId&gt; &amp;" right="" name="categoryIds" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCategoryId" fullname="QLandmarkCategoryRemoveRequest::setCategoryId" href="qlandmarkcategoryremoverequest.html#setCategoryId" location="qlandmarkcategoryremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCategoryId(const QLandmarkCategoryId &amp; categoryId)">
+                <parameter left="const QLandmarkCategoryId &amp;" right="" name="categoryId" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QLandmarkCategoryRemoveRequest::errorMap" href="qlandmarkcategoryremoverequest.html#errorMap" location="qlandmarkcategoryremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QLandmarkManager::Error&gt;" signature="errorMap() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageContentContainerId" href="qmessagecontentcontainerid.html" location="qmessagecontentcontainerid.h" bases="" module="">
@@ -9225,19 +9231,25 @@
         <page access="public" status="commendable" name="landmarks.html" href="landmarks.html" subtype="page" title="Landmarks" fulltitle="Landmarks" subtitle="" location="qlandmarks.qdoc">
             <contents name="creating-categories-and-landmarks" title="Creating categories and landmarks" level="1"/>
             <contents name="synchronous" title="Synchronous" level="2"/>
-            <contents name="creating-a-category" title="Creating a category." level="3"/>
+            <contents name="creating-a-category" title="Creating a category" level="3"/>
             <contents name="creating-landmark" title="Creating landmark" level="3"/>
             <contents name="asynchronous" title="Asynchronous" level="2"/>
-            <contents name="creating-a-category" title="Creating a category." level="3"/>
-            <contents name="creating-a-landmark" title="Creating a landmark." level="3"/>
+            <contents name="creating-a-category" title="Creating a category" level="3"/>
+            <contents name="creating-a-landmark" title="Creating a landmark" level="3"/>
             <contents name="retrieving-categories-and-landmarks" title="Retrieving categories and landmarks" level="1"/>
             <contents name="synchronous" title="Synchronous" level="2"/>
-            <contents name="retrieving-a-category" title="Retrieving a category." level="3"/>
+            <contents name="retrieving-categories" title="Retrieving categories" level="3"/>
             <contents name="retrieving-landmarks" title="Retrieving landmarks" level="3"/>
             <contents name="asynchronous" title="Asynchronous" level="2"/>
             <contents name="retrieving-categories" title="Retrieving categories" level="3"/>
             <contents name="retrieving-landmarks" title="Retrieving landmarks" level="3"/>
-            <contents name="deleting-landmarks" title="Deleting landmarks" level="1"/>
+            <contents name="deleting-categories-and-landmarks" title="Deleting categories and landmarks" level="1"/>
+            <contents name="synchronous" title="Synchronous" level="2"/>
+            <contents name="deleting-a-category" title="Deleting a category" level="3"/>
+            <contents name="deleting-a-landmark" title="Deleting a landmark" level="3"/>
+            <contents name="asynchronous" title="Asynchronous" level="2"/>
+            <contents name="deleting-a-category" title="Deleting a category" level="3"/>
+            <contents name="deleting-a-landmark" title="Deleting a landmark" level="3"/>
             <contents name="landmark-classes" title="Landmark classes" level="1"/>
             <contents name="main-landmark-classes" title="Main Landmark Classes" level="2"/>
             <contents name="landmark-selection-classes" title="Landmark Selection classes" level="2"/>

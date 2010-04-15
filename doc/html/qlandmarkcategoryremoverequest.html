@@ -27,6 +27,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#dtor.QLandmarkCategoryRemoveRequest">~QLandmarkCategoryRemoveRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkCategoryId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#categoryIds">categoryIds</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QLandmarkManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#errorMap">errorMap</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#setCategoryId">setCategoryId</a></b> ( const QLandmarkCategoryId &amp; <i>categoryId</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryremoverequest.html#setCategoryIds">setCategoryIds</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> )</td></tr>
 </table>
 <ul>
@@ -65,10 +66,14 @@
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryRemoveRequest/errorMap"></a>
 <h3 class="fn"><a name="errorMap"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::Error</a>&gt; QLandmarkCategoryRemoveRequest::errorMap () const</h3>
 <p>Returns the mapping of input category id list indices to the errors which occurred.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategoryRemoveRequest/setCategoryId"></a>
+<h3 class="fn"><a name="setCategoryId"></a>void QLandmarkCategoryRemoveRequest::setCategoryId ( const <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> &amp; <i>categoryId</i> )</h3>
+<p>Convenience function to set the <i>categoryId</i> of a sisngle category to be removed.</p>
+<p>See also <a href="qlandmarkcategoryremoverequest.html#setCategoryIds">setCategoryIds</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryRemoveRequest/setCategoryIds"></a>
 <h3 class="fn"><a name="setCategoryIds"></a>void QLandmarkCategoryRemoveRequest::setCategoryIds ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )</h3>
 <p>Sets the list of <i>categoryIds</i> of categories which will be removed.</p>
-<p>See also <a href="qlandmarkcategoryremoverequest.html#categoryIds">categoryIds</a>().</p>
+<p>See also <a href="qlandmarkcategoryremoverequest.html#categoryIds">categoryIds</a>() and <a href="qlandmarkcategoryremoverequest.html#setCategoryId">setCategoryId</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
