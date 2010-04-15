@@ -59,14 +59,14 @@ public:
     static const QLatin1Constant FieldUrl;
     static const QLatin1Constant FieldSubType;
     static const QLatin1Constant SubTypeHomePage;
-    static const QLatin1Constant SubTypeFavourite;
+    static const QLatin1Constant SubTypeFavorite;
     static const QLatin1Constant SubTypeSocialNetworking;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
     Q_DECLARE_LATIN1_CONSTANT(FieldUrl, "Url");
     Q_DECLARE_LATIN1_CONSTANT(FieldSubType, "SubType");
     Q_DECLARE_LATIN1_CONSTANT(SubTypeHomePage, "HomePage");
-    Q_DECLARE_LATIN1_CONSTANT(SubTypeFavourite, "Favourite");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeFavorite, "Favorite");
 #endif
 
     void setUrl(const QString& url) {setValue(FieldUrl, url);}

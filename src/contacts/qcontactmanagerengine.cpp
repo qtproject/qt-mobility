@@ -935,7 +935,7 @@ QMap<QString, QMap<QString, QContactDetailDefinition> > QContactManagerEngine::s
     fields.insert(QContactUrl::FieldUrl, f);
     f.setDataType(QVariant::String); // only allowed to be a single subtype
     subTypes.clear();
-    subTypes << QString(QLatin1String(QContactUrl::SubTypeFavourite));
+    subTypes << QString(QLatin1String(QContactUrl::SubTypeFavorite));
     subTypes << QString(QLatin1String(QContactUrl::SubTypeHomePage));
     f.setAllowableValues(subTypes);
     fields.insert(QContactUrl::FieldSubType, f);
