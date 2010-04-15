@@ -63,6 +63,20 @@ QContactSaveRequest::QContactSaveRequest(QObject* parent)
 {
 }
 
+/*!
+  Sets the contact to be saved to \a contact.
+  Equivalent to calling:
+  \code
+      setContacts(QList<QContact>() << contact);
+  \endcode
+ */
+void QContactSaveRequest::setContact(const QContact& contact)
+{
+    Q_D(QContactSaveRequest);
+    d->m_contacts.clear();
+    d->m_contacts.append(contact);
+}
+
 /*! Sets the list of contacts to be saved to \a contacts */
 void QContactSaveRequest::setContacts(const QList<QContact>& contacts)
 {

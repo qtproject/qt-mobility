@@ -59,6 +59,7 @@ public:
     QContactSaveRequest(QObject* parent = 0);
 
     /* Selection */
+    void setContact(const QContact& contact);
     void setContacts(const QList<QContact>& contacts);
 
     /* Results */

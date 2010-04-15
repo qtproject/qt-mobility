@@ -62,6 +62,20 @@ QContactRemoveRequest::QContactRemoveRequest(QObject* parent)
 {
 }
 
+/*!
+  Sets the id of the contact which will be removed to \a contactId.
+  Equivalent to calling:
+  \code
+      setContactIds(QList<QContactLocalId>() << contactIds);
+  \endcode
+ */
+void QContactRemoveRequest::setContactId(const QContactLocalId& contactId)
+{
+    Q_D(QContactRemoveRequest);
+    d->m_contactIds.clear();
+    d->m_contactIds.append(contactId);
+}
+
 /*! Sets the list of ids of contacts which will be removed to \a contactIds */
 void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactIds)
 {
