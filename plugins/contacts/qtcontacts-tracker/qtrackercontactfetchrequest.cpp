@@ -804,7 +804,7 @@ void QTrackerContactFetchRequest::readFromQueryRowToContact(QContact &contact, i
             // website url is at the same time url, so we handle duplication here
             // if only url then set it as favourite
             url.setUrl(query->index(i, column++).data().toString());
-            url.setSubType(QContactUrl::SubTypeFavorite);
+            url.setSubType(QContactUrl::SubTypeFavourite);
         }
 
         if (!url.url().isEmpty() && !detailExisting(QContactUrl::DefinitionName, contact, url)) {
@@ -817,7 +817,7 @@ void QTrackerContactFetchRequest::readFromQueryRowToContact(QContact &contact, i
         workurl.setUrl(query->index(i, column++).data().toString());
         if (workurl.url().isEmpty()) {
             workurl.setUrl(query->index(i, column++).data().toString());
-            workurl.setSubType(QContactUrl::SubTypeFavorite);
+            workurl.setSubType(QContactUrl::SubTypeFavourite);
         }
         if (!workurl.url().isEmpty() && !detailExisting(QContactUrl::DefinitionName, contact, workurl)) {
             contact.saveDetail(&workurl);

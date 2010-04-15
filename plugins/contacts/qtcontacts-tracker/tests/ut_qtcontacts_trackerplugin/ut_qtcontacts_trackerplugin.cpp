@@ -662,7 +662,7 @@ void ut_qtcontacts_trackerplugin::testUrl()
     QContactUrl url3;
     url3.setUrl("http://home.favourite");
     url3.setContexts(QContactDetail::ContextHome);
-    url3.setSubType(QContactUrl::SubTypeFavorite);
+    url3.setSubType(QContactUrl::SubTypeFavourite);
 
     name2.setLastName("TestUrl3");
     contactWithUrl3.saveDetail(&name2);
@@ -683,7 +683,7 @@ void ut_qtcontacts_trackerplugin::testUrl()
 
     QVERIFY(contact(id1).detail<QContactUrl>().subType() == QContactUrl::SubTypeHomePage );
     QVERIFY(contact(id2).detail<QContactUrl>().subType() == QContactUrl::SubTypeHomePage );
-    QVERIFY(contact(id3).detail<QContactUrl>().subType() == QContactUrl::SubTypeFavorite );
+    QVERIFY(contact(id3).detail<QContactUrl>().subType() == QContactUrl::SubTypeFavourite );
 
 }
 

@@ -601,13 +601,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactUrl::FieldSubType, "SubType");
 Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeHomePage, "HomePage");
 
 /*!
-   \variable QContactUrl::SubTypeFavorite
+   \variable QContactUrl::SubTypeFavourite
 
     The predefined string constant for a sub type value,
-    indicating this url is one of the contact's favorite URLs (or bookmarks).
+    indicating this url is one of the contact's favourite URLs (or bookmarks).
     \sa subType(), setSubType()
  */
-Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeFavorite, "Favorite");
+Q_DEFINE_LATIN1_CONSTANT(QContactUrl::SubTypeFavourite, "Favourite");
 
 /*!
    \fn QContactUrl::url() const
