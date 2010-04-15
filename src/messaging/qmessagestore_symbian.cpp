@@ -42,8 +42,8 @@
 #include "qmtmengine_symbian_p.h"
 #ifdef FREESTYLEMAILUSED
 #include "qfsengine_symbian_p.h"
-#include "symbianhelpers_p.h"
 #endif
+#include "symbianhelpers_p.h"
 
 #include <QString>
 
