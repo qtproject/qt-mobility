@@ -128,7 +128,9 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
     if (id)
       contactIds << id;
   }
-  d->that->_contactsAdded(contactIds);
+
+  if (!contactIds.isEmpty())
+    d->that->_contactsAdded(contactIds);
 }
 
 static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contacts, gpointer data)
@@ -155,7 +157,9 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
     if (id)
       contactIds << id;
   }
-  d->that->_contactsChanged(contactIds);
+
+  if (!contactIds.isEmpty())
+    d->that->_contactsChanged(contactIds);
 }
 
 static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointer data)
@@ -173,13 +177,15 @@ static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointe
   QList<QContactLocalId> contactIds;
   
   for (p = ids; *p; ++p) {
-    QContactLocalId id = d->hash->take(*p);
-    QCM5_DEBUG << "Contact" << id << "has been removed";
-    if (id)
-      contactIds << id;
+      QContactLocalId id = d->hash->take(*p);
+      if (id) {
+        QCM5_DEBUG << "Contact" << id << "has been removed";
+        contactIds << id;
+      }
   }
   
-  d->that->_contactsRemoved(contactIds);
+  if (!contactIds.isEmpty())
+    d->that->_contactsRemoved(contactIds);
 }
 
 void QContactABook::initAddressBook(){
@@ -507,6 +513,10 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
 
   // update our list of ids...
   m_localIds.remove(masterUid);
+  
+  QContactLocalId id = m_localIds[masterUid];
+  if (id)
+    _contactsRemoved(QList<QContactLocalId>() << id);
   
   return ok;
 }
