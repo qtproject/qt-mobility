@@ -58,8 +58,7 @@ public:
 
     QList<QLandmarkCategory> categories() const;
     void setCategories(const QList<QLandmarkCategory> &categories);
-    void appendCategory(const QLandmarkCategory &category);
-    void clearCategories();
+    void setCategory(const QLandmarkCategory &category);
 
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:

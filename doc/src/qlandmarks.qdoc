@@ -83,7 +83,7 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}.
 
 For brevity the slot does not process all the different request states.  In our example
 we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
-We may reuse the QLandmarkCategorySaveRequest by clearing its categories and running \l {QLandmarkAbstractRequest::start()}
+We may reuse the QLandmarkCategorySaveRequest by setting another category and running \l {QLandmarkAbstractRequest::start()}
 {start()} again.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add category asynchronously handler
@@ -99,7 +99,7 @@ we invoke \l {QLandmarkAbstractRequest::start()} {start()}.
 
 For brevity the slot does not process all the different request states.  In our example
 we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not.
-We may reuse the QLandmarkSaveRequest by clearing its categories and running \l {QLandmarkAbstractRequest::start()}
+We may reuse the QLandmarkSaveRequest by setting another landmark and running \l {QLandmarkAbstractRequest::start()}
 {start()} again.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Add landmark asynchronously handler

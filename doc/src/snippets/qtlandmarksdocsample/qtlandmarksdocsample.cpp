@@ -64,7 +64,8 @@
 
 QTM_USE_NAMESPACE
 QLandmarkCategoryId categoryId;
-
+QLandmark landmark;
+QLandmarkCategory landmarkCategory;
 
 //! [Add category asynchronously req]
 void RequestExample::categorySaveRequest()
@@ -77,7 +78,7 @@ void RequestExample::categorySaveRequest()
     //catSaveRequest was created with catSaveRequest = new QLandmarkCategorySaveRequest()
     //in the ctor
     catSaveRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
-    catSaveRequest->appendCategory(cafes);
+    catSaveRequest->setCategory(cafes);
 
     connect(catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
             SLOT(categorySaveRequestHandler(QLandmarkAbstractRequest::State)));
@@ -94,7 +95,6 @@ void RequestExample::categorySaveRequestHandler(QLandmarkAbstractRequest::State 
     if (state == QLandmarkAbstractRequest::FinishedState) {
         if (catSaveRequest->error() == QLandmarkManager::NoError) {
             qDebug() << "Category save succesfully completed";
-            catSaveRequest->clearCategories();
         }
         else {
             qDebug() << "Category save was unsuccessful";
@@ -120,7 +120,7 @@ void RequestExample::landmarkSaveRequest()
     //lmSaveRequest was created with lmSaveRequest = new QLandmarkSaveRequest()
     //in the ctor
     lmSaveRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
-    lmSaveRequest->appendLandmark(monks);
+    lmSaveRequest->setLandmark(monks);
 
     monks.setDescription("Jerry's favourite diner");
 
@@ -139,7 +139,6 @@ void RequestExample::landmarkSaveRequestHandler(QLandmarkAbstractRequest::State 
     if (state == QLandmarkAbstractRequest::FinishedState) {
         if (lmSaveRequest->error() == QLandmarkManager::NoError) {
             qDebug() << "Landmark save succesfully completed";
-            lmSaveRequest->clearLandmarks();
         }
         else {
             qDebug() << "Landmark save was unsuccessful";
@@ -344,6 +343,15 @@ void listAllCategories(QLandmarkManager *lm)
     foreach(QLandmarkCategory category, categories) {
         qDebug() << category.name();
     }
+}
+
+void deleteLandmarkAndCategory(QLandmarkManager *lm)
+{
+    //landmarkCategory is a previously retrieved QLandmarkCategory
+    lm->removeCategory(landmarkCategory.id());
+
+    //landmark is a previously retrieved QLandmark object
+    lm->removeLandmark(landmark.id());
 }
 
 int main(int argc, char *argv[])

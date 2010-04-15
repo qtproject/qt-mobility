@@ -86,22 +86,18 @@ QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 
 /*!
     Sets the list of \a categories to be saved.
+    \sa setCategory()
 */
 void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> &categories)
 {
 }
 
 /*!
-    Appends \a category to the list of categories to be saved.
-*/
-void QLandmarkCategorySaveRequest::appendCategory(const QLandmarkCategory& category)
-{
-}
+    Convenience function to set a single \a category to be saved.
 
-/*!
-    Clears the list of categories to be saved.
+    \sa setCategories()
 */
-void QLandmarkCategorySaveRequest::clearCategories()
+void QLandmarkCategorySaveRequest::setCategory(const QLandmarkCategory& category)
 {
 }
 

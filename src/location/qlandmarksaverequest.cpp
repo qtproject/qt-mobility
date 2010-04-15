@@ -85,24 +85,19 @@ QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 
 /*!
     Sets the list of \a landmarks to be saved.
+
+    \sa setLandmark()
 */
 void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 {
 }
 
 /*!
-    Convenience function to append \a landmark to the list of landmarks to be saved.
-    \sa setLandmarks()
-*/
-void QLandmarkSaveRequest::appendLandmark(const QLandmark &landmark)
-{
-}
+    Convenience function to set a single \a landmark to be saved.
 
-/*!
-    Convenience function to clear the landmarks to be saved.
     \sa setLandmarks()
 */
-void QLandmarkSaveRequest::clearLandmarks()
+void QLandmarkSaveRequest::setLandmark(const QLandmark &landmark)
 {
 }
 
