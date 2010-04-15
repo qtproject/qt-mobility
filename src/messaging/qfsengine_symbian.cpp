@@ -54,6 +54,7 @@
 #include "qmessagefolderfilter.h"
 #include "qmessagefolderfilter_p.h"
 #include "qmessageaccountsortorder_p.h"
+#include "qmessagestore_symbian_p.h"
 #include "qmessagefoldersortorder_p.h"
 #include "qmessagesortorder_p.h"
 
@@ -266,21 +267,29 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
         // Message contains only body (not attachments)
         QString messageBody = message.textContent();
         if (!messageBody.isEmpty()) {
+            QByteArray type = message.contentType();
+            QByteArray subType = message.contentSubType();
             MEmailMessageContent* content = fsMessage->ContentL();
             MEmailTextContent* textContent = content->AsTextContentOrNull();
-            textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
-            // TODO:
+            if (textContent) {
+                if (type == "text" && subType == "plain") {
+                    textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
+                } 
+               else if (type == "text" && subType == "html") {
+                    textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
+                }
             }
+        }
     } else {
         // Message contains body and attachments
         QMessageContentContainerIdList contentIds = message.contentIds();
         foreach (QMessageContentContainerId id, contentIds){
             QMessageContentContainer container = message.find(id);
+            MEmailMessageContent* content = fsMessage->ContentL(); 
             QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
             if (pPrivateContainer->_id == message.bodyId()) {
                 // ContentContainer is body
-                if (!container.textContent().isEmpty()) {
-                    MEmailMessageContent* content = fsMessage->ContentL();
+                if (!container.textContent().isEmpty()) {               
                     MEmailTextContent* textContent = content->AsTextContentOrNull();
                     QByteArray type = container.contentType();
                     QByteArray subType = container.contentSubType();
@@ -289,7 +298,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
                     }
                     else if (type == "text" && subType == "html") {
                         textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-                    }
+                    }                    
                 }
             } else {
                 // ContentContainer is attachment
@@ -299,7 +308,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
                 QString temp_path = QString(filePath);
                 TPtrC16 attachmentPath(KNullDesC);
                 attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
-                fsMessage->AddAttachmentL(attachmentPath);
+                MEmailAttachment* att = fsMessage->AddAttachmentL(attachmentPath);
             }        
         }
     }
@@ -397,7 +406,47 @@ bool CFSEngine::updateMessage(QMessage* message)
         fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
     }
     
-    // body and attachments
+    if (message->bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
+        // Message contains only body (not attachments)
+        QString messageBody = message->textContent();
+        if (!messageBody.isEmpty()) {
+            MEmailMessageContent* content = fsMessage->ContentL();
+            MEmailTextContent* textContent = content->AsTextContentOrNull();
+            textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(message->textContent().utf16())));
+            // TODO:
+            }
+    } else {
+        // Message contains body and attachments
+        QMessageContentContainerIdList contentIds = message->contentIds();
+        foreach (QMessageContentContainerId id, contentIds){
+            QMessageContentContainer container = message->find(id);
+            QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
+            if (pPrivateContainer->_id == message->bodyId()) {
+                // ContentContainer is body
+                if (!container.textContent().isEmpty()) {
+                    MEmailMessageContent* content = fsMessage->ContentL();
+                    MEmailTextContent* textContent = content->AsTextContentOrNull();
+                    QByteArray type = container.contentType();
+                    QByteArray subType = container.contentSubType();
+                    if (type == "text" && subType == "plain") {
+                        textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                    }
+                    else if (type == "text" && subType == "html") {
+                        textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                    }
+                }
+            } else {
+                // ContentContainer is attachment
+                QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
+                // Replace Qt style path separator "/" with Symbian path separator "\"
+                filePath.replace(QByteArray("/"), QByteArray("\\"));
+                QString temp_path = QString(filePath);
+                TPtrC16 attachmentPath(KNullDesC);
+                attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
+                fsMessage->AddAttachmentL(attachmentPath);
+            }        
+        }
+    }
     
     fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message->subject().utf16())));
     fsMessage->SaveChangesL();
@@ -788,9 +837,9 @@ bool CFSEngine::sendEmail(QMessage &message)
         fsMessage = createFSMessageL(message);
         fsMessage->SaveChangesL();
         fsMessage->SendL();
-        TMailboxId mailboxId(removeFreestylePrefix(message.parentAccountId().toString()).toInt());
-        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);       
-        mailbox->SynchroniseL(*this);       
+        m_mailboxId = removeFreestylePrefix(message.parentAccountId().toString()).toInt();
+        MEmailMailbox* mailbox = m_clientApi->MailboxL(m_mailboxId);       
+        mailbox->SynchroniseL(*this);  
     );
     if (err != KErrNone)
         return false;
@@ -841,7 +890,152 @@ void CFSEngine::unregisterNotificationFilter(QMessageManager::NotificationFilter
 
 void CFSEngine::MailboxSynchronisedL(TInt aResult)
 {
+   // check new mails
+    if (aResult == KErrNone) {
+        CFSMessagesFindOperation* findOp = new CFSMessagesFindOperation((CFSEngine&)*this, 0);
+        findOp->CheckAndNotifyNewMailsL(m_mailboxId); 
+    }
+}
+
+bool CFSEngine::CreateQMessageL(MEmailMessage* aMessage)
+{
+    QMessage message;
+    int size = 0;
+    message.setType(QMessage::Email);
+
+    message.setDate(symbianTTimetoQDateTime(aMessage->Date()));
+    message.setReceivedDate(symbianTTimetoQDateTime(aMessage->Date()));
+    
+    const TFolderId& folderId = aMessage->ParentFolderId();
+   // QMessageAccount messageAccount = messageAccount(folderId.iMailboxId);
+   // message.setParentAccountId(messageAccount.id());
+
+    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+  //  privateMessage->_parentFolderId = ;
+    if (aMessage->Flags() & EFlag_Read) {
+        privateMessage->_status = privateMessage->_status | QMessage::Read; 
+    }
+
+    if (aMessage->Flags() & EFlag_Important) {
+        message.setPriority(QMessage::HighPriority); 
+    } else if (aMessage->Flags() & EFlag_Low) {
+        message.setPriority(QMessage::LowPriority);
+    } else {
+        message.setPriority(QMessage::NormalPriority);
+    }
+    
+    QMessagePrivate::setStandardFolder(message, QMessage::InboxFolder);
+    
+    // bodytext and attachment(s)
+    MEmailMessageContent* content = aMessage->ContentL();
+    AddContentToMessage(content, &message);
+
+    //from
+    TPtrC from = aMessage->SenderAddressL()->Address();
+    if (from.Length() > 0) {
+        message.setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
+        QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
+    }
+    
+    //to
+    REmailAddressArray toRecipients;
+    aMessage->GetRecipientsL(MEmailAddress::ETo, toRecipients);
+    QList<QMessageAddress> toList;
+    for(TInt i = 0; 1 < toRecipients.Count(); i++) {
+        TPtrC to = toRecipients[i]->Address();
+        toList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(to.Ptr(), to.Length())));
+    }
+    message.setTo(toList);
    
+    //cc
+    REmailAddressArray ccRecipients;
+    aMessage->GetRecipientsL(MEmailAddress::ECc, ccRecipients);
+    QList<QMessageAddress> ccList;
+    for(TInt i = 0; 1 < ccRecipients.Count(); i++) {
+        TPtrC cc = ccRecipients[i]->Address();
+        ccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(cc.Ptr(), cc.Length())));
+    }
+    message.setCc(ccList); 
+
+    //bcc
+    REmailAddressArray bccRecipients;
+    aMessage->GetRecipientsL(MEmailAddress::EBcc, bccRecipients);
+    QList<QMessageAddress> bccList;
+    for(TInt i = 0; 1 < bccRecipients.Count(); i++) {
+        TPtrC bcc = bccRecipients[i]->Address();
+        bccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(bcc.Ptr(), bcc.Length())));
+    }
+    message.setBcc(bccList);
+    
+    // Read message subject   
+    TPtrC subject = aMessage->Subject();
+    if (subject.Length() > 0) {
+        message.setSubject(QString::fromUtf16(subject.Ptr(), subject.Length()));
+    }
+
+    // TODO: size
+    privateMessage->_size = size;
+
+    return true;    
+}
+
+void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aMessage)
+{
+    MEmailMultipart* mPart = aContent->AsMultipartOrNull();
+    if (mPart) {
+        TInt partCount = mPart->PartCountL();
+        for (TInt i = 0; i < partCount; i++) {
+            AddContentToMessage(mPart->PartByIndexL(i), aMessage);                            
+        }
+        mPart->Release();
+        return;
+    }
+    
+    MEmailTextContent* textContent = aContent->AsTextContentOrNull();
+    if (textContent) { 
+        QByteArray mimeType;
+        TInt availableSize = textContent->AvailableSize();
+        CFetchOperationWait* op = CFetchOperationWait::NewLC();
+        if (!availableSize) {
+            textContent->FetchL(*op);     
+            op->Wait();
+        }
+        availableSize = textContent->AvailableSize();            
+        TInt totalSize = textContent->TotalSize();
+        TPtrC body = textContent->ContentL();
+        QString text = QString::fromUtf16(body.Ptr(), body.Length());
+        aMessage->setBody(text, mimeType);
+        textContent->Release();
+        return;
+    }
+    
+    MEmailAttachment* attachment = aContent->AsAttachmentOrNull();
+    if (attachment) {
+        // TODO: add attachment(s) to message
+        attachment->Release();
+        return;
+    }
+}
+
+QDateTime CFSEngine::symbianTTimetoQDateTime(const TTime& time) const
+{
+    TDateTime dateTime = time.DateTime();
+    QDate qdate = QDate(dateTime.Year(), static_cast<int>(dateTime.Month())+1, dateTime.Day()+1);
+    QTime qtime = QTime(dateTime.Hour(), dateTime.Minute(), dateTime.Second(), dateTime.MicroSecond()/1000 );
+    return QDateTime(qdate, qtime, Qt::UTC);
+}
+
+TTime CFSEngine::qDateTimeToSymbianTTime(const QDateTime& date) const
+{
+    TDateTime dateTime;
+    dateTime.SetYear(date.date().year());
+    dateTime.SetMonth(static_cast<TMonth>(date.date().month()-1));
+    dateTime.SetDay(date.date().day()-1);
+    dateTime.SetHour(date.time().hour());
+    dateTime.SetMinute(date.time().minute());
+    dateTime.SetSecond(date.time().second());
+    dateTime.SetMicroSecond(date.time().msec()*1000);
+    return TTime(dateTime);
 }
 
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
@@ -1046,9 +1240,21 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
     m_owner.filterAndOrderMessagesReady(true, m_operationId, iIdList, 1, true);
 }
 
+void CFSMessagesFindOperation::CheckAndNotifyNewMailsL(TMailboxId aMailboxId)
+{
+
+}
+
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)
 {
     iIdList.append(QMessageId(QString::number(aMessage->MessageId().iId)));
+    
+    if (!aMessage->Flags() & EFlag_Read) { // new message
+        bool result = m_owner.CreateQMessageL(aMessage);
+        if (result) {
+            // TODO: notification about new message
+        }
+    }
 }
 
 void CFSMessagesFindOperation::SearchCompletedL()
@@ -1057,4 +1263,41 @@ void CFSMessagesFindOperation::SearchCompletedL()
     //m_search->Release();
     m_owner.filterAndOrderMessagesReady(true, m_operationId, iIdList, 1, true);
 }
+
+CFetchOperationWait* CFetchOperationWait::NewLC()
+{
+    CFetchOperationWait* self = new (ELeave) CFetchOperationWait();
+    CleanupStack::PushL( self );
+    self->ConstructL();
+    return self; 
+}
+
+void CFetchOperationWait::ConstructL()
+{
+    iWait = new (ELeave) CActiveSchedulerWait();
+}
+
+CFetchOperationWait::CFetchOperationWait()
+{
+    
+}
+
+CFetchOperationWait::~CFetchOperationWait()
+{
+    delete iWait;
+}
+
+void CFetchOperationWait::Wait()
+{
+    iWait->Start();
+}
+    
+void CFetchOperationWait::DataFetchedL(const TInt aResult)
+{
+    if(iWait->IsStarted())
+        iWait->AsyncStop();  
+}
+
+
+    
 QTM_END_NAMESPACE

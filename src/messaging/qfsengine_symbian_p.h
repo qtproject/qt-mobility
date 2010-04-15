@@ -62,6 +62,8 @@
 #include <emailinterfacefactory.h>
 #include <mmailboxsyncobserver.h>
 #include <emailsorting.h>
+#include <memailmessagesearch.h>
+
 
 using namespace EmailInterface;
 
@@ -146,7 +148,10 @@ private:
     QMessageFolder folderL(const QMessageFolderId &id) const;
 
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
-
+    bool CreateQMessageL(MEmailMessage* aMessage);
+    void AddContentToMessage(MEmailMessageContent* aContent, QMessage* aMessage);
+    QDateTime symbianTTimetoQDateTime(const TTime& time) const;
+    TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
@@ -159,9 +164,29 @@ private:
     mutable QHash<QString, QMessageAccount> m_accounts;
     mutable int m_operationIds;
     mutable QList<FSMessageQueryInfo> m_messageQueries;
+    TMailboxId m_mailboxId;
 
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
+
+};
+    
+class CFetchOperationWait : public CBase, public MEmailFetchObserver
+    {
+public:
+    static CFetchOperationWait* NewLC();
+    virtual ~CFetchOperationWait();        
+    void Wait();
+    
+public: // From MEmailFetchObserver
+    virtual void DataFetchedL(const TInt aResult);
+    
+private:
+    void ConstructL();
+    CFetchOperationWait();
+    
+private:               
+    CActiveSchedulerWait* iWait;
 };
 
 class CFSMessagesFindOperation : public MEmailSearchObserver
@@ -178,6 +203,8 @@ public:
                                 const QMessageSortOrder& sortOrder,
                                 const QString body = QString(),
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
+    
+    void CheckAndNotifyNewMailsL(TMailboxId aMailboxId);
     
 private:
     // from memailmessagesearch
