@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = PSPathMapperServer
+TARGET = qpspathmapperserver
 QT = core
 TARGET.UID3 = 0x2002AC88
 

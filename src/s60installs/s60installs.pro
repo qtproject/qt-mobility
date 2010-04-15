@@ -49,7 +49,7 @@ symbian: {
 
     contains(mobility_modules, serviceframework): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
-        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/SFWDatabaseManagerServer.exe
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qsfwdatabasemanagerserver.exe
 
     contains(mobility_modules, location): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
@@ -59,7 +59,7 @@ symbian: {
 
     contains(mobility_modules, publishsubscribe): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtPublishSubscribe.dll \
-        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/PSPathMapperServer.exe
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qpspathmapperserver.exe
 
     contains(mobility_modules, versit): qtmobilitydeployment.sources += \
         $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll

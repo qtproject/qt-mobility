@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = SFWDatabaseManagerServer
+TARGET = qsfwdatabasemanagerserver
 QT = core sql
 TARGET.UID3 = 0x2002AC7F
 

@@ -1,5 +1,5 @@
 TEMPLATE = lib
-TARGET = SFWDatabaseManagerServer
+TARGET = qsfwdatabasemanagerserver
 QT = core sql
 
 TARGET.UID3 = 0x2002BFBE

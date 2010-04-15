@@ -127,12 +127,12 @@ void QSfwTestUtil::removeDirectory(const QString &path)
 #include <f32file.h>
 void QSfwTestUtil::removeDatabases()
 {
-    TFindServer findServer(_L("!SFWDatabaseManagerServer"));
+    TFindServer findServer(_L("!qsfwdatabasemanagerserver"));
     TFullName name;
     if (findServer.Next(name) == KErrNone)
     {
         RProcess dbServer;
-        if (dbServer.Open(_L("SFWDatabaseManagerServer")) == KErrNone)
+        if (dbServer.Open(_L("qsfwdatabasemanagerserver")) == KErrNone)
         {
             dbServer.Kill(KErrNone);
             dbServer.Close();    
