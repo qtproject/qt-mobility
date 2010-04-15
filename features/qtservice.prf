@@ -22,6 +22,7 @@ symbian {
        symbian-sbsv2{
            sfwextension = \
               "START EXTENSION qt/qtextensions_pre_targetdep.export" \
+              "OPTION PREDEP_TARGET anything" \
               "OPTION COMMAND $$QTSERVICEDBGEN $$QTSERVICE_INITIALIZE $$QTC_COMMAND $$QTSERVICE.DESCRIPTOR" \
               "END"
            BLD_INF_RULES.prj_extensions += sfwextension
