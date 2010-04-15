@@ -40,4 +40,6 @@ SOURCES +=  servicemetadata.cpp \
             databasemanagersession.cpp \
             databasemanagersignalhandler.cpp
 
+# These capabilities cannot be reduced as long as QtServiceFramework.dll links against
+# this .dll
 TARGET.CAPABILITY = ALL -TCB

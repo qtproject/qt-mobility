@@ -38,6 +38,6 @@ SOURCES +=  servicemetadata.cpp \
             databasemanagerserver.cpp \
             databasemanagersession.cpp \
             databasemanagersignalhandler.cpp
-            
-TARGET.CAPABILITY = ALL -TCB
 
+#ProtServ is needed so that the server can be in protected namespace (start with '!' -mark).
+TARGET.CAPABILITY = ProtServ
