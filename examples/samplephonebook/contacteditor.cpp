@@ -157,7 +157,7 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
     // name
     //QContactName nm = curr.detail(QContactName::DefinitionName);
     if (m_contactId != QContactLocalId(0))
-        m_nameEdit->setText(manager->synthesizedDisplayLabel(curr));
+        m_nameEdit->setText(manager->synthesizedContactDisplayLabel(curr));
 
     // phonenumber
     QContactPhoneNumber phn = curr.detail(QContactPhoneNumber::DefinitionName);
@@ -254,7 +254,7 @@ void ContactEditor::saveClicked()
             return;
         }
 
-        if (m_nameEdit->text() != m_manager->synthesizedDisplayLabel(curr)) {
+        if (m_nameEdit->text() != m_manager->synthesizedContactDisplayLabel(curr)) {
             // if the name has changed (ie, is different to the synthed label) then save it as a custom label.
             QString saveNameField = nameField();
             if (!saveNameField.isEmpty()) {

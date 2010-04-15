@@ -271,12 +271,16 @@ void CntSimStorePrivate::RunL()
         {
             QList<QContact> contacts = decodeSimContactsL(m_buffer);
 
-            // set sync target
+            // set sync target and set type as read only
             QList<QContact>::iterator i;
             for (i = contacts.begin(); i != contacts.end(); ++i) {
                 QContactSyncTarget syncTarget;
                 syncTarget.setSyncTarget(KSimSyncTarget);
+                m_engine.setReadOnlyAccessConstraint(&syncTarget);
                 i->saveDetail(&syncTarget);
+                QContactType contactType = i->detail(QContactType::DefinitionName);
+                m_engine.setReadOnlyAccessConstraint(&contactType);
+                i->saveDetail(&contactType);
             }
             
             emit m_simStore.readComplete(contacts, QContactManager::NoError);
@@ -295,8 +299,14 @@ void CntSimStorePrivate::RunL()
             if(m_convertedContact.detail(QContactSyncTarget::DefinitionName).isEmpty()) {
                 QContactSyncTarget syncTarget = m_convertedContact.detail(QContactSyncTarget::DefinitionName);
                 syncTarget.setSyncTarget(KSimSyncTarget);
+                m_engine.setReadOnlyAccessConstraint(&syncTarget);
                 m_convertedContact.saveDetail(&syncTarget);
             }
+
+            // set type as read only
+            QContactType contactType = m_convertedContact.detail(QContactType::DefinitionName);
+            m_engine.setReadOnlyAccessConstraint(&contactType);
+            m_convertedContact.saveDetail(&contactType);
 
             emit m_simStore.writeComplete(m_convertedContact, QContactManager::NoError);
         }
@@ -499,9 +509,6 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
         // save contact to the array of contact to be returned if the whole entry was extracted
         if ((tagValue == RMobilePhoneBookStore::ETagPBNewEntry && currentContact.localId() > 0) ||
             (pbBuffer->RemainingReadLength() == 0 && currentContact.localId() > 0)) {
-            //QContactSyncTarget syncTarget;
-            //syncTarget.setSyncTarget(KSimSyncTarget);
-            //currentContact.saveDetail(&syncTarget);
             fetchedContacts.append(currentContact);
             //clear current contact
             currentContact.clearDetails();

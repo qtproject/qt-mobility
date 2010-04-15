@@ -60,6 +60,7 @@ public:
     QContactRelationshipSaveRequest(QObject* parent = 0);
 
     /* Selection */
+    void setRelationship(const QContactRelationship& contactRelationship);
     void setRelationships(const QList<QContactRelationship>& contactRelationships);
 
     /* Results */

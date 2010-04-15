@@ -347,7 +347,7 @@ bool tst_QContactManager::isSuperset(const QContact& ca, const QContact& cb)
 void tst_QContactManager::dumpContact(const QContact& contact)
 {
     QContactManager m;
-    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizedDisplayLabel(contact) << ")";
+    qDebug() << "Contact: " << contact.id().localId() << "(" << m.synthesizedContactDisplayLabel(contact) << ")";
     QList<QContactDetail> details = contact.details();
     foreach(QContactDetail d, details) {
         qDebug() << "  " << d.definitionName() << ":";
@@ -1199,7 +1199,7 @@ void tst_QContactManager::invalidManager()
     nf.setLastName("Lastname");
     foo.saveDetail(&nf);
 
-    QVERIFY(manager.synthesizedDisplayLabel(foo).isEmpty());
+    QVERIFY(manager.synthesizedContactDisplayLabel(foo).isEmpty());
     QVERIFY(manager.error() == QContactManager::NotSupportedError);
 
     QVERIFY(manager.saveContact(&foo) == false);
@@ -1647,7 +1647,7 @@ void tst_QContactManager::nameSynthesis()
         c.saveDetail(&org2);
 
     // Finally!
-    QCOMPARE(cm.synthesizedDisplayLabel(c), expected);
+    QCOMPARE(cm.synthesizedContactDisplayLabel(c), expected);
 }
 
 void tst_QContactManager::compatibleContact_data()
@@ -2291,10 +2291,17 @@ void tst_QContactManager::displayName()
 
     QVERIFY(d.displayLabel().isEmpty());
 
-    QString synth = cm->synthesizedDisplayLabel(d);
+    QString synth = cm->synthesizedContactDisplayLabel(d);
+
+    // Make sure this doesn't crash
+    cm->synthesizeContactDisplayLabel(0);
+
+    // Make sure this gives the same results
+    cm->synthesizeContactDisplayLabel(&d);
+    QCOMPARE(d.displayLabel(), synth);
 
     /*
-     * The display label is not updated until you save the contact.
+     * The display label is not updated until you save the contact or call synthCDL
      */
     QVERIFY(cm->saveContact(&d));
     d = cm->contact(d.id().localId());

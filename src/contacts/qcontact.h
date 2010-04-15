@@ -64,6 +64,7 @@ QTM_BEGIN_NAMESPACE
 class QContactManager;
 class QContactData;
 class QContactName;
+class QContactAction;
 
 class Q_CONTACTS_EXPORT QContact
 {
@@ -98,8 +99,8 @@ public:
     /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
-    QContactDetail detailWithAction(const QString& actionName) const;
-    QList<QContactDetail> detailsWithAction(const QString& actionName) const;
+    QContactDetail detailWithAction(QContactAction* action) const;
+    QList<QContactDetail> detailsWithAction(QContactAction* action) const;
 
     QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 

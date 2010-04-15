@@ -63,6 +63,20 @@ QContactRelationshipSaveRequest::QContactRelationshipSaveRequest(QObject* parent
 {
 }
 
+/*!
+  Sets the relationship to save to be \a contactRelationship.
+  Equivalent to calling:
+  \code
+      setRelationships(QList<QContactRelationship>() << contactRelationships);
+  \endcode
+ */
+void QContactRelationshipSaveRequest::setRelationship(const QContactRelationship& contactRelationship)
+{
+    Q_D(QContactRelationshipSaveRequest);
+    d->m_relationships.clear();
+    d->m_relationships.append(contactRelationship);
+}
+
 /*! Sets the relationships to save to be \a contactRelationships */
 void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelationship>& contactRelationships)
 {

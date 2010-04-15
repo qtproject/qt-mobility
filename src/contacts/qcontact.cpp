@@ -275,15 +275,20 @@ void QContact::setType(const QContactType& type)
 }
 
 /*!
- * Returns the read-only display label of this contact.
+ * Returns the display label of this contact.
+ *
  * A contact which has been retrieved from a manager will have a display label set when
- * the contact is retrieved.  If you subsequently modify the contact in a way that changes
- * the display label, you will need to call \c QContactManager::synthesizedDisplayLabel() to
- * determine what the new value would be.  Alternatively, when you save the contact, the
- * manager will update the display label at that point.
+ * the contact is retrieved.
+ *
+ * The display label is usually read-only, since some managers do not support arbitrary
+ * labels (see also \l QContactName::setCustomLabel()).  If you modify the contact in a way
+ * that would affect the display label, you can call QContactManager::synthesizeContactDisplayLabel() to get an
+ * up-to-date display label.
  *
  * See the following example for more information:
  * \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating the display label of a contact
+ *
+ * \sa QContactManager::synthesizeContactDisplayLabel()
  */
 QString QContact::displayLabel() const
 {
@@ -510,16 +515,17 @@ QList<QContactDetail> QContact::details(const char* definitionName, const char* 
  *
  * If \a detail is a QContactType, the existing contact type will
  * be overwritten with \a detail.  There is never more than one contact type
- * in a contact.  The supplied \a detail will have its accessConstraint set to
- * QContactDetail::Irremovable.
+ * in a contact.
  *
- * If \a detail is a QContactDisplayLabel, the supplied \a detail will have its
- * accessConstraint set to QContactDetail::Irremovable | QContactDetail::ReadOnly,
- * and the function will return false.
+ * If \a detail is a QContactDisplayLabel, the contact will not be updated,
+ * and the function will return false.  Since the display label formatting is specific
+ * to each manager, use the QContactManager::synthesizeContactDisplayLabel() function
+ * instead.
  *
  * Returns true if the detail was saved successfully, otherwise returns false.
  *
  * Note that the caller retains ownership of the detail.
+ * \sa QContactManager::synthesizeContactDisplayLabel()
  */
 bool QContact::saveDetail(QContactDetail* detail)
 {
@@ -528,14 +534,13 @@ bool QContact::saveDetail(QContactDetail* detail)
 
     /* Also handle contact type specially - only one of them. */
     if (QContactDetailPrivate::detailPrivate(*detail)->m_definitionName == QContactType::DefinitionName.latin1()) {
-        detail->d->m_access = QContactDetail::Irremovable;
+        detail->d->m_access |= QContactDetail::Irremovable;
         d->m_details[1] = *detail;
         return true;
     }
 
     /* And display label.. */
     if (QContactDetailPrivate::detailPrivate(*detail)->m_definitionName == QContactDisplayLabel::DefinitionName.latin1()) {
-        detail->d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
         return false;
     }
 
@@ -641,58 +646,58 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
 }
 
 /*!
-    \internal
-    Retrieve the first detail for which any action with the given \a actionName is available.
+    Retrieve the first detail in this contact supported by the given \a action.
 
-    \sa detailsWithAction(), QContactAction
+    If there is a preferred detail set for this action name, and that detail is
+    supported by the given \a action, that preferred detail will be returned.
+
+    Otherwise, the first detail in the list returned by detailsWithAction() will
+    be returned.
+
+    \sa detailsWithAction()
 */
-QContactDetail QContact::detailWithAction(const QString& actionName) const
+QContactDetail QContact::detailWithAction(QContactAction* action) const
 {
-    if (actionName.isEmpty())
-        return QContactDetail();
-
-    QList<QContactDetail> dets = detailsWithAction(actionName);
-    if (dets.isEmpty())
-        return QContactDetail();
-
-    QContactDetail retn = dets.first();
-    return retn;
+    if (action) {
+        QContactDetail pref = preferredDetail(action->actionDescriptor().actionName());
+        if (!pref.isEmpty() && action->isDetailSupported(pref, *this))
+            return pref;
+        foreach (const QContactDetail& detail, d->m_details) {
+            if (action->isDetailSupported(detail, *this)) {
+                return detail;
+            }
+        }
+    }
+    return QContactDetail();
 }
 
 /*!
-    \internal
-    Retrieve any details for which any action with the given \a actionName is available.
+    Retrieve any details supported by the given \a action.
 
-    This function will find any actions matching the given \a actionName, and then
-    check which of the details in this contact are supported by any of those actions.
+    If the action does not exist, an empty list will be returned.  Otherwise,
+    the details in this contact will be tested by the action and a list of the
+    details supported will be returned.
+
+    If a preferred detail for this action name has been set, and it is supported
+    by the given \a action, that detail will be the first detail returned in the list.
 
     See this example for usage:
     \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Details with action
 */
-QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) const
+QList<QContactDetail> QContact::detailsWithAction(QContactAction* action) const
 {
-    if (actionName.isEmpty())
-        return QList<QContactDetail>();
-
-    // ascertain which details are supported by any implementation of the given action
     QList<QContactDetail> retn;
-    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors(actionName);
-    QList<QContactAction*> actions;
-    foreach (const QContactActionDescriptor& descriptor, descriptors) {
-        actions.append(QContactManagerData::action(descriptor));
-    }
 
-    foreach (const QContactDetail& detail, d->m_details) {
-        foreach(QContactAction *action, actions) {
+    if (action) {
+        QContactDetail preferred = preferredDetail(action->actionDescriptor().actionName());
+        foreach (const QContactDetail& detail, d->m_details) {
             if (action->isDetailSupported(detail, *this)) {
-                retn.append(detail);
-                break;
+                if (detail == preferred)
+                    retn.prepend(detail);
+                else
+                    retn.append(detail);
             }
         }
-    }
-
-    foreach(QContactAction *action, actions) {
-        delete action;
     }
     return retn;
 }

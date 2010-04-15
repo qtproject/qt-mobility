@@ -315,11 +315,12 @@ void callContact(QContactManager* cm)
     QContact a = cm->contact(contactIds.first());
 
     /* Get this contact's first phone number */
-    QContactAction* action = 0;
     QContact contact;
 
     //! [Details with action]
-    QList<QContactDetail> details = contact.detailsWithAction("Call");
+    // Get the first "Call" action
+    QContactAction* action = QContactAction::action(QContactAction::actionDescriptors("Call").value(0));
+    QList<QContactDetail> details = contact.detailsWithAction(action);
 
     if (details.count() == 0) {
         // Can't call this contact
@@ -524,12 +525,8 @@ void displayLabel()
     name.setLastName("Arkansas");
     c.saveDetail(&name);
 
-    /* At this point the display label is not updated, so print what the new one would be if we save it */
-    qDebug() << "New label would be:" << manager->synthesizedDisplayLabel(c);
-
-    /* Now save it */
-    manager->saveContact(&c);
-
+    /* Update the display label */
+    manager->synthesizeContactDisplayLabel(&c);
     qDebug() << "Now the label is:" << c.displayLabel();
 //! [Updating the display label of a contact]
 }
