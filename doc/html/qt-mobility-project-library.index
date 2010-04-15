@@ -6903,6 +6903,8 @@
             <page access="public" status="commendable" name="sysinfo/sysinfo.pro" href="sysinfo-sysinfo-pro.html" subtype="file" title="" fulltitle="sysinfo.pro Example File" subtitle="sysinfo/sysinfo.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="filemanagerplugin" href="filemanagerplugin.html" subtype="example" title="File Manager Plugin Example" fulltitle="File Manager Plugin Example" subtitle="" location="filemanagerplugin.qdoc">
+            <contents name="registering-the-service" title="Registering the Service" level="1"/>
+            <contents name="writing-the-plug-in" title="Writing the Plug-In" level="1"/>
             <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.cpp" href="filemanagerplugin-filemanagerplugin-cpp.html" subtype="file" title="" fulltitle="filemanagerplugin.cpp Example File" subtitle="filemanagerplugin/filemanagerplugin.cpp" location=""/>
             <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.h" href="filemanagerplugin-filemanagerplugin-h.html" subtype="file" title="" fulltitle="filemanagerplugin.h Example File" subtitle="filemanagerplugin/filemanagerplugin.h" location=""/>
             <page access="public" status="commendable" name="filemanagerplugin/filemanagerstorage.cpp" href="filemanagerplugin-filemanagerstorage-cpp.html" subtype="file" title="" fulltitle="filemanagerstorage.cpp Example File" subtitle="filemanagerplugin/filemanagerstorage.cpp" location=""/>
@@ -6998,6 +7000,8 @@
             <contents name="examples" title="Examples" level="2"/>
         </page>
         <page access="public" status="commendable" name="bluetoothtransferplugin" href="bluetoothtransferplugin.html" subtype="example" title="Bluetooth Transfer Plugin Example" fulltitle="Bluetooth Transfer Plugin Example" subtitle="" location="bluetoothtransferplugin.qdoc">
+            <contents name="registering-the-service" title="Registering the Service" level="1"/>
+            <contents name="writing-the-plugin" title="Writing the Plugin" level="1"/>
             <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransfer.cpp" href="bluetoothtransferplugin-bluetoothtransfer-cpp.html" subtype="file" title="" fulltitle="bluetoothtransfer.cpp Example File" subtitle="bluetoothtransferplugin/bluetoothtransfer.cpp" location=""/>
             <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransfer.h" href="bluetoothtransferplugin-bluetoothtransfer-h.html" subtype="file" title="" fulltitle="bluetoothtransfer.h Example File" subtitle="bluetoothtransferplugin/bluetoothtransfer.h" location=""/>
             <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransferplugin.cpp" href="bluetoothtransferplugin-bluetoothtransferplugin-cpp.html" subtype="file" title="" fulltitle="bluetoothtransferplugin.cpp Example File" subtitle="bluetoothtransferplugin/bluetoothtransferplugin.cpp" location=""/>
@@ -7006,6 +7010,7 @@
         </page>
         <page access="public" status="commendable" name="multimedia" href="multimedia.html" subtype="group" title="Mobility Multimedia" fulltitle="Mobility Multimedia" subtitle="" location="multimedia.qdoc"/>
         <page access="public" status="commendable" name="multimedia.html" href="multimedia.html" subtype="page" title="Multimedia" fulltitle="Multimedia" subtitle="" location="multimedia.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="audio" title="Audio" level="2"/>
             <contents name="video" title="Video" level="2"/>
@@ -7044,6 +7049,7 @@
         </page>
         <page access="public" status="commendable" name="location" href="location.html" subtype="group" title="Location API" fulltitle="Location API" subtitle="" location="location.qdoc"/>
         <page access="public" status="commendable" name="location-overview.html" href="location-overview.html" subtype="page" title="Location" fulltitle="Location" subtitle="" location="location.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="requesting-location-data-from-data-sources" title="Requesting location data from data sources" level="2"/>
             <contents name="controlling-aspects-of-data-sources" title="Controlling aspects of data sources" level="2"/>
@@ -7056,6 +7062,7 @@
             <contents name="classes" title="Classes" level="1"/>
         </page>
         <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API (technology preview)" fulltitle="Versit API (technology preview)" subtitle="" location="versit.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="usage" title="Usage" level="1"/>
             <contents name="classes" title="Classes" level="1"/>
@@ -7084,6 +7091,7 @@
         </page>
         <page access="public" status="commendable" name="bearer" href="bearer.html" subtype="group" title="Qt Bearer Management API" fulltitle="Qt Bearer Management API" subtitle="" location="bearermanagement.qdoc"/>
         <page access="public" status="commendable" name="bearer-management.html" href="bearer-management.html" subtype="page" title="Bearer Management" fulltitle="Bearer Management" subtitle="" location="bearermanagement.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="the-api-in-detail" title="The API in Detail" level="2"/>
             <contents name="service-networks" title="Service networks" level="3"/>
@@ -7214,6 +7222,7 @@
             <page access="public" status="commendable" name="notesmanagerplugin/notesmanagerplugin.pro" href="notesmanagerplugin-notesmanagerplugin-pro.html" subtype="file" title="" fulltitle="notesmanagerplugin.pro Example File" subtitle="notesmanagerplugin/notesmanagerplugin.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="publ-subs.html" href="publ-subs.html" subtype="page" title="Publish and Subscribe" fulltitle="Publish and Subscribe" subtitle="" location="publ-subs.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="detailed-layer-descriptions" title="Detailed Layer Descriptions" level="1"/>
             <contents name="shared-memory-layer" title="Shared Memory Layer" level="2"/>
@@ -7228,9 +7237,17 @@
             <contents name="battery-charging-accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
             <contents name="namespaces-and-classes" title="Namespaces and Classes" level="1"/>
         </page>
+        <page access="public" status="commendable" name="sysinfo" href="sysinfo.html" subtype="example" title="System Information Example" fulltitle="System Information Example" subtitle="" location="sysinfo.qdoc">
+            <page access="public" status="commendable" name="sysinfo/dialog.cpp" href="sysinfo-dialog-cpp.html" subtype="file" title="" fulltitle="dialog.cpp Example File" subtitle="sysinfo/dialog.cpp" location=""/>
+            <page access="public" status="commendable" name="sysinfo/dialog.h" href="sysinfo-dialog-h.html" subtype="file" title="" fulltitle="dialog.h Example File" subtitle="sysinfo/dialog.h" location=""/>
+            <page access="public" status="commendable" name="sysinfo/main.cpp" href="sysinfo-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="sysinfo/main.cpp" location=""/>
+            <page access="public" status="commendable" name="sysinfo/examples.qrc" href="sysinfo-examples-qrc.html" subtype="file" title="" fulltitle="examples.qrc Example File" subtitle="sysinfo/examples.qrc" location=""/>
+            <page access="public" status="commendable" name="sysinfo/sysinfo.pro" href="sysinfo-sysinfo-pro.html" subtype="file" title="" fulltitle="sysinfo.pro Example File" subtitle="sysinfo/sysinfo.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="systeminfo" href="systeminfo.html" subtype="group" title="System Information Classes" fulltitle="System Information Classes" subtitle="" location="si.qdoc"/>
         <page access="public" status="commendable" name="systeminfo.html" href="systeminfo.html" subtype="page" title="System Information" fulltitle="System Information" subtitle="" location="si.qdoc">
             <contents name="system-information" title="System Information" level="1"/>
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="information-categories" title="Information Categories" level="2"/>
             <contents name="version" title="Version" level="3"/>
@@ -7241,8 +7258,8 @@
             <contents name="device-information" title="Device Information" level="3"/>
             <contents name="screensaver" title="Screensaver" level="3"/>
             <contents name="building-and-compiling" title="Building and compiling" level="1"/>
-            <contents name="reference-documentation" title="Reference documentation" level="1"/>
-            <contents name="examples" title="Examples" level="2"/>
+            <contents name="examples" title="Examples" level="1"/>
+            <contents name="system-information-example" title="System Information Example" level="2"/>
         </page>
         <page access="public" status="commendable" name="licensing" href="licensing.html" subtype="group" title="Licensing Information" fulltitle="Licensing Information" subtitle="" location="licenses.qdoc"/>
         <page access="public" status="commendable" name="licenses.html" href="licenses.html" subtype="page" title="Other Licenses Used in Qt" fulltitle="Other Licenses Used in Qt" subtitle="" location="licenses.qdoc"/>
@@ -7286,6 +7303,7 @@
             <page access="public" status="commendable" name="samplephonebook/samplephonebook.pro" href="samplephonebook-samplephonebook-pro.html" subtype="file" title="" fulltitle="samplephonebook.pro Example File" subtitle="samplephonebook/samplephonebook.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="messaging.html" href="messaging.html" subtype="page" title="Messaging" fulltitle="Messaging" subtitle="" location="messaging.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
@@ -7297,6 +7315,9 @@
             <contents name="messaging-services" title="Messaging Services" level="1"/>
             <contents name="concurrent-access-to-messaging-data" title="Concurrent Access to Messaging Data" level="1"/>
             <contents name="abstraction-of-messaging-data-storage-mechanism" title="Abstraction of Messaging Data Storage Mechanism" level="1"/>
+            <contents name="examples" title="Examples" level="1"/>
+            <contents name="keep-in-touch" title="Keep In Touch" level="2"/>
+            <contents name="service-actions" title="Service Actions" level="2"/>
         </page>
         <page access="public" status="commendable" name="publish-subscribe" href="publish-subscribe.html" subtype="example" title="Publish and Subscribe Example" fulltitle="Publish and Subscribe Example" subtitle="" location="publish-subscribe.qdoc">
             <contents name="publisher" title="Publisher" level="2"/>
@@ -7349,6 +7370,7 @@
         </page>
         <page access="public" status="commendable" name="servicefw" href="servicefw.html" subtype="group" title="Service Frameworks Classes" fulltitle="Service Frameworks Classes" subtitle="" location="sf.qdoc"/>
         <page access="public" status="commendable" name="service-frameworks.html" href="service-frameworks.html" subtype="page" title="Qt Service Framework" fulltitle="Qt Service Framework" subtitle="" location="sf.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="using-the-framework" title="Using the Framework" level="1"/>
@@ -7501,6 +7523,7 @@
             <parameter left="" right="" name="pluginname" default=""/>
         </function>
         <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API (technology preview)" fulltitle="Sensors API (technology preview)" subtitle="" location="sensors.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="sensor-types" title="Sensor Types" level="1"/>
             <contents name="common-conventions" title="Common Conventions" level="1"/>
             <contents name="using-a-sensor" title="Using a Sensor" level="1"/>

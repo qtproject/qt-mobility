@@ -42,7 +42,6 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -55,9 +54,6 @@ Q_OBJECT
 public:
     tst_QContactDetails();
     virtual ~tst_QContactDetails();
-
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();
@@ -546,6 +542,27 @@ void tst_QContactDetails::name()
     QCOMPARE(n1.middleName(), QString("William Preston"));
     QCOMPARE(n1.lastName(), QString("Gumboots"));
     QCOMPARE(n1.suffix(), QString("Esquire"));
+
+    // Values based (ql1c)
+    QCOMPARE(n1.value(QContactName::FieldPrefix), QString("Dr"));
+    QCOMPARE(n1.value(QContactName::FieldFirstName), QString("Freddy"));
+    QCOMPARE(n1.value(QContactName::FieldMiddleName), QString("William Preston"));
+    QCOMPARE(n1.value(QContactName::FieldLastName), QString("Gumboots"));
+    QCOMPARE(n1.value(QContactName::FieldSuffix), QString("Esquire"));
+
+    // Values based (const char *)
+    QCOMPARE(n1.value(QContactName::FieldPrefix.latin1()), QString("Dr"));
+    QCOMPARE(n1.value(QContactName::FieldFirstName.latin1()), QString("Freddy"));
+    QCOMPARE(n1.value(QContactName::FieldMiddleName.latin1()), QString("William Preston"));
+    QCOMPARE(n1.value(QContactName::FieldLastName.latin1()), QString("Gumboots"));
+    QCOMPARE(n1.value(QContactName::FieldSuffix.latin1()), QString("Esquire"));
+
+    // Values based (QLatin1String)
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldPrefix)), QString("Dr"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldFirstName)), QString("Freddy"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldMiddleName)), QString("William Preston"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldLastName)), QString("Gumboots"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldSuffix)), QString("Esquire"));
 
     // test property add
     QVERIFY(c.saveDetail(&n1));

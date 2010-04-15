@@ -1033,7 +1033,17 @@ void tst_SimCM::sdnContacts()
     QList<QContact> contacts = cm->contacts();
     QVERIFY(contacts.count());
     foreach(const QContact& c, contacts) {
+        // Assume a valid SDN contact always has a display label and a phone number
+        QVERIFY(!c.displayLabel().isEmpty());
+        QVERIFY(!c.displayLabel().contains("unnamed", Qt::CaseInsensitive));
+        QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
         foreach(const QContactDetail& d, c.details()) {
+            qDebug() << "Detail: " << d.definitionName();
+            foreach (QVariant varianttt, d.variantValues()) {
+                qDebug() << "Variant value: " << varianttt.toString();
+            }
+
+            // Verify that read only details have the read only constraint set
             QVERIFY(d.accessConstraints().testFlag(QContactDetail::ReadOnly));
         }
     }

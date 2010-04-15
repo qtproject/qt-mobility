@@ -57,7 +57,7 @@ class Q_CONTACTS_EXPORT QContactRelationshipSaveRequest : public QContactAbstrac
     Q_OBJECT
 
 public:
-    QContactRelationshipSaveRequest();
+    QContactRelationshipSaveRequest(QObject* parent = 0);
 
     /* Selection */
     void setRelationships(const QList<QContactRelationship>& contactRelationships);

@@ -43,7 +43,6 @@
 
 #include "qtcontacts.h"
 #include "qcontactid.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 #include <QSet>
 
 
@@ -51,12 +50,6 @@
 //TESTED_FILES=
 
 QTM_USE_NAMESPACE
-class HackEngine : public QContactManagerEngine
-{
-    public:
-        static void setRels(QContact* contact, const QList<QContactRelationship>& rels) {QContactManagerEngine::setContactRelationships(contact, rels);}
-};
-
 class tst_QContact: public QObject
 {
 Q_OBJECT
@@ -64,8 +57,6 @@ Q_OBJECT
 public:
     tst_QContact();
     virtual ~tst_QContact();
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 private slots:
     void details();
@@ -727,7 +718,7 @@ void tst_QContact::hash()
     contact5.saveDetail(&detail1);
     contact5.setPreferredDetail("action", detail1);
     QContactRelationship rel;
-    HackEngine::setRels(&contact5, QList<QContactRelationship>() << rel);
+    QContactManagerEngine::setContactRelationships(&contact5, QList<QContactRelationship>() << rel);
     QVERIFY(qHash(contact1) == qHash(contact2));
     QVERIFY(qHash(contact1) != qHash(contact3));
     QVERIFY(qHash(contact1) != qHash(contact4));

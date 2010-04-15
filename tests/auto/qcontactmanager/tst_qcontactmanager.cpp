@@ -129,11 +129,11 @@ private:
     QContact createContact(QContactDetailDefinition nameDef, QString firstName, QString lastName, QString phoneNumber);
     void saveContactName(QContact *contact, QContactDetailDefinition nameDef, QContactName *contactName, const QString &name) const;
 
-    QContactManagerDataHolder managerDataHolder;
+    QScopedPointer<QContactManagerDataHolder> managerDataHolder;
 
 public slots:
-    void init();
-    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
 private slots:
 
     void doDump();
@@ -201,8 +201,10 @@ tst_QContactManager::~tst_QContactManager()
 {
 }
 
-void tst_QContactManager::init()
+void tst_QContactManager::initTestCase()
 {
+    managerDataHolder.reset(new QContactManagerDataHolder());
+
     /* Make sure these other test plugins are NOT loaded by default */
     // These are now removed from the list of managers in addManagers()
     //QVERIFY(!QContactManager::availableManagers().contains("testdummy"));
@@ -210,8 +212,9 @@ void tst_QContactManager::init()
     //QVERIFY(!QContactManager::availableManagers().contains("maliciousplugin"));
 }
 
-void tst_QContactManager::cleanup()
+void tst_QContactManager::cleanupTestCase()
 {
+    managerDataHolder.reset(0);
 }
 
 void tst_QContactManager::dumpContactDifferences(const QContact& ca, const QContact& cb)
@@ -781,6 +784,18 @@ void tst_QContactManager::add()
         //    continue;
         //}
 
+        if (cm->managerName() == "maemo5") {
+            // The maemo5 backend only supports reading of Guid and QCOA
+            if (def.name() == QContactGuid::DefinitionName)
+                continue;
+            if (def.name() == QContactOnlineAccount::DefinitionName)
+                continue;
+        }
+
+        // This is probably read-only
+        if (def.name() == QContactTimestamp::DefinitionName)
+            continue;
+
         // otherwise, create a new detail of the given type and save it to the contact
         QContactDetail det(def.name());
         QMap<QString, QContactDetailFieldDefinition> fieldmap = def.fields();
@@ -789,6 +804,10 @@ void tst_QContactManager::add()
             // get the field, and check to see that it's not constrained.
             QContactDetailFieldDefinition currentField = fieldmap.value(fieldKey);
             
+            // Don't test detail uris as these are manager specific
+            if (fieldKey == QContactDetail::FieldDetailUri)
+                continue;
+
             // Special case: phone number.
             if (def.name() == QContactPhoneNumber::DefinitionName &&
                 fieldKey == QContactPhoneNumber::FieldNumber) {
@@ -843,7 +862,8 @@ void tst_QContactManager::add()
                 // if we get here, we don't know what sort of value can be saved...
             }
         }
-        megacontact.saveDetail(&det);
+        if (!det.isEmpty())
+            megacontact.saveDetail(&det);
     }
 
     QVERIFY(cm->saveContact(&megacontact)); // must be able to save since built from definitions.
@@ -2442,6 +2462,7 @@ void tst_QContactManager::selfContactId()
     QContactLocalId selfContact = cm->selfContactId();
     if (!cm->hasFeature(QContactManager::SelfContact)) {
         // ensure that the error codes / return values are meaningful failures.
+        QEXPECT_FAIL("mgr='maemo5'", "maemo5 supports getting the self contact but not setting it.", Continue);
         QVERIFY(cm->error() == QContactManager::DoesNotExistError);
         QVERIFY(!cm->setSelfContactId(QContactLocalId(123)));
         QVERIFY(cm->error() == QContactManager::NotSupportedError);

@@ -155,9 +155,9 @@ public:
     StreamType streamType(int index) { return _streams.at(index).type; }
     void setStreamType(int index, StreamType type) { _streams[index].type = type; }
 
-    QVariant metaData(int index, QtMedia::MetaData key) {
+    QVariant metaData(int index, QtMultimedia::MetaData key) {
         return _streams.at(index).metaData.value(key); }
-    void setMetaData(int index, QtMedia::MetaData key, const QVariant &value) {
+    void setMetaData(int index, QtMultimedia::MetaData key, const QVariant &value) {
         _streams[index].metaData.insert(key, value); }
 
     bool isActive(int index) { return _streams.at(index).active; }
@@ -168,7 +168,7 @@ private:
     {
         Stream() : type(UnknownStream), active(false) {}
         StreamType type;
-        QMap<QtMedia::MetaData, QVariant> metaData;
+        QMap<QtMultimedia::MetaData, QVariant> metaData;
         bool active;
     };
 

@@ -70,9 +70,9 @@ public:
     {
         return true;
     }
-    QtMedia::AvailabilityError availabilityError() const
+    QtMultimedia::AvailabilityError availabilityError() const
     {
-        return QtMedia::NoError;
+        return QtMultimedia::NoError;
     }
 
     QRadioTuner::Band band() const

@@ -1,7 +1,7 @@
 TEMPLATE = lib
 QT += multimedia
 CONFIG += plugin
-TARGET = QtMobilityMmfEngine
+TARGET = qtmedia_mmfengine
 PLUGIN_SUBDIR = mediaservice
 include (../../../../common.pri)
 qtAddLibrary(QtMedia)

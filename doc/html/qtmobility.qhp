@@ -3983,6 +3983,7 @@
             <file>sysinfo-main-cpp.html</file>
             <file>installation.html</file>
             <file>qcontacttag-members.html</file>
+            <file>images/sysinfo.png</file>
             <file>licensing.html</file>
             <file>qimageencodercontrol.html</file>
             <file>qsystemscreensaver-members.html</file>
@@ -4148,6 +4149,7 @@
             <file>images/battery-publisher.png</file>
             <file>images/keepintouch-example.png</file>
             <file>classic.css</file>
+            <file>images/sysinfo.png</file>
             <file>images/spb-screen.png</file>
             <file>images/roaming-states.png</file>
             <file>images/DialerServiceGUI.png</file>
