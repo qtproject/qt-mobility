@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QContactAnniversary
-   \brief The QContactAnniversary class contains the anniversary of a contact.
+   \brief The QContactAnniversary class contains an anniversary of a contact.
    \ingroup contacts-details
  */
 
@@ -70,7 +70,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QContactBirthday
-   \brief The QContactBirthday class contains the birthday of a contact.
+   \brief The QContactBirthday class contains a birthday of a contact.
    \ingroup contacts-details
  */
 
@@ -84,14 +84,14 @@ QTM_BEGIN_NAMESPACE
 /*!
    \class QContactEmailAddress
 
-   \brief The QContactEmailAddress class contains the email address of
+   \brief The QContactEmailAddress class contains an email address of
    a contact.
    \ingroup contacts-details
  */
 
 /*!
    \class QContactFamily
-   \brief The QContactFamily class contains the names of the
+   \brief The QContactFamily class contains names of
    family members of a contact.
    \ingroup contacts-details
  */
@@ -104,7 +104,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QContactGeoLocation
-   \brief The QContactGeoLocation class contains the global location
+   \brief The QContactGeoLocation class contains a global location
    coordinate associated with a contact.
    \ingroup contacts-details
 */
@@ -118,14 +118,14 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QContactGuid
-   \brief The QContactGuid class contains the globally unique
-   Id of a contact.
+   \brief The QContactGuid class contains a globally unique
+   Id of a contact, for use in synchronization with other datastores.
    \ingroup contacts-details
  */
 
 /*!
    \class QContactName
-   \brief The QContactName class contains the name of a contact.
+   \brief The QContactName class contains a name of a contact.
    \ingroup contacts-details
  */
 
@@ -144,7 +144,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QContactOnlineAccount
-   \brief The QContactOnlineAccount class provides the online account,
+   \brief The QContactOnlineAccount class provides an online account,
    which the contact uses to communicate with friends and family.
    \ingroup contacts-details
  */
@@ -220,43 +220,43 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \variable QContactName::DefinitionName
-   The constant string which identifies the definition of details which are names.
+   The string constant which identifies the definition of details which are names.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactName::DefinitionName, "Name");
 
 /*!
    \variable QContactNickname::DefinitionName
-   The constant string which identifies the definition of details which are nicknames.
+   The string constant which identifies the definition of details which are nicknames.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactNickname::DefinitionName, "Nickname");
 
 /*!
    \variable QContactNote::DefinitionName
-   The constant string which identifies the definition of details which are notes.
+   The string constant which identifies the definition of details which are notes.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactNote::DefinitionName, "Note");
 
 /*!
    \variable QContactAvatar::DefinitionName
-   The constant string which identifies the definition of details which are avatars.
+   The string constant which identifies the definition of details which are avatars.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAvatar::DefinitionName, "Avatar");
 
 /*!
    \variable QContactAddress::DefinitionName
-   The constant string which identifies the definition of details which are street addresses.
+   The string constant which identifies the definition of details which are street addresses.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAddress::DefinitionName, "Address");
 
 /*!
    \variable QContactPhoneNumber::DefinitionName
-   The constant string which identifies the definition of details which are phone numbers.
+   The string constant which identifies the definition of details which are phone numbers.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactPhoneNumber::DefinitionName, "PhoneNumber");
 
 /*!
    \variable QContactPresence::DefinitionName
-   The constant string which identifies the definition of details which contain presence information.
+   The string constant which identifies the definition of details which contain presence information.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactPresence::DefinitionName, "Presence");
 
@@ -310,68 +310,68 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
 
 /*!
    \variable QContactRingtone::DefinitionName
-   The constant string which identifies the definition of details which are ringtones.
+   The string constant which identifies the definition of details which are ringtones.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::DefinitionName, "Ringtone");
 
 /*!
    \variable QContactSyncTarget::DefinitionName
-   The constant string which identifies the definition of details which are synchronization target stores.
+   The string constant which identifies the definition of details which are synchronization target stores.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactSyncTarget::DefinitionName, "SyncTarget");
 
 /*!
    \variable QContactTimestamp::DefinitionName
-   The constant string which identifies the definition of details which are contact synchronization timestamps.
+   The string constant which identifies the definition of details which are contact synchronization timestamps.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactTimestamp::DefinitionName, "Timestamp");
 
 /*!
    \variable QContactType::DefinitionName
-   The constant string which identifies the definition of details which identify the type of the contact.
+   The string constant which identifies the definition of details which identify the type of the contact.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactType::DefinitionName, "Type");
 
 /*!
    \variable QContactGuid::DefinitionName
-   The constant string which identifies the definition of details which are globally unique identifiers.
+   The string constant which identifies the definition of details which are globally unique identifiers.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactGuid::DefinitionName, "Guid");
 
 /*!
    \variable QContactEmailAddress::DefinitionName
-   The constant string which identifies the definition of details which are email addresses.
+   The string constant which identifies the definition of details which are email addresses.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactEmailAddress::DefinitionName, "EmailAddress");
 
 /*!
    \variable QContactFamily::DefinitionName
-   The constant string which identifies the definition of details which contain the names of the contact's family.
+   The string constant which identifies the definition of details which contain the names of the contact's family.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactFamily::DefinitionName, "Family");
 
 /*!
    \variable QContactUrl::DefinitionName
-   The constant string which identifies the definition of details which are universal resource location paths.
+   The string constant which identifies the definition of details which are universal resource location paths.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactUrl::DefinitionName, "Url");
 
 /*!
    \variable QContactBirthday::DefinitionName
-   The constant string which identifies the definition of details which are the dates of birthdays.
+   The string constant which identifies the definition of details which are the dates of birthdays.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactBirthday::DefinitionName, "Birthday");
 
 /*!
    \variable QContactAnniversary::DefinitionName
-   The constant string which identifies the definition of details which are anniversary dates.
+   The string constant which identifies the definition of details which are anniversary dates.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactAnniversary::DefinitionName, "Anniversary");
 
 /*!
    \variable QContactGender::DefinitionName
 
-   The constant string which identifies the definition of details
+   The string constant which identifies the definition of details
    which identify the gender of a contact in a given context.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactGender::DefinitionName, "Gender");
@@ -379,14 +379,14 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGender::DefinitionName, "Gender");
 /*!
    \variable QContactGeoLocation::DefinitionName
 
-   The constant string which identifies the definition of details
+   The string constant which identifies the definition of details
    which describe a location associated with a contact.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactGeoLocation::DefinitionName, "GeoLocation");
 
 /*!
    \variable QContactGlobalPresence::DefinitionName
-   The constant string which identifies the definition of details which contain presence information.
+   The string constant which identifies the definition of details which contain presence information.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::DefinitionName, "GlobalPresence");
 
@@ -441,7 +441,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactGlobalPresence::FieldCustomMessage, "CustomMess
 /*!
    \variable QContactOnlineAccount::DefinitionName
 
-   The constant string which identifies the definition of details
+   The string constant which identifies the definition of details
    which identify the organization to which a contact belongs in a
    given context.
  */
@@ -449,13 +449,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::DefinitionName, "OnlineAccount")
 
 /*!
    \variable QContactTag::DefinitionName
-   The constant string which identifies the definition of details which are tags.
+   The string constant which identifies the definition of details which are tags.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactTag::DefinitionName, "Tag");
 
 /*!
    \variable QContactThumbnail::DefinitionName
-   The constant string which identifies the definition of details which are thumbnails.
+   The string constant which identifies the definition of details which are thumbnails.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactThumbnail::DefinitionName, "Thumbnail");
 
@@ -526,7 +526,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeVideoShare, "VideoShare")
 /*!
    \variable QContactOrganization::DefinitionName
 
-   The constant string which identifies the definition of details
+   The string constant which identifies the definition of details
    which identify the organization to which a contact belongs in a
    given context.
  */
@@ -535,7 +535,7 @@ Q_DEFINE_LATIN1_CONSTANT(QContactOrganization::DefinitionName, "Organization");
 /*!
    \variable QContactDisplayLabel::DefinitionName
 
-   The constant string which identifies the definition of details
+   The string constant which identifies the definition of details
    which contain a display label of a contact.
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactDisplayLabel::DefinitionName, "DisplayLabel");
