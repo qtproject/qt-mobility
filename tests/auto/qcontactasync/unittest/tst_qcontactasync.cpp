@@ -177,8 +177,8 @@ public:
     virtual ~tst_QContactAsync();
 
 public slots:
-    void init();
-    void cleanup();
+    void initTestCase();
+    void cleanupTestCase();
 
 private:
     void addManagers(); // add standard managers to the data
@@ -229,7 +229,7 @@ private:
 
     Qt::HANDLE m_mainThreadId;
     Qt::HANDLE m_resultsAvailableSlotThreadId;
-    QContactManagerDataHolder managerDataHolder;
+    QScopedPointer<QContactManagerDataHolder> managerDataHolder;
 };
 
 tst_QContactAsync::tst_QContactAsync()
@@ -239,21 +239,20 @@ tst_QContactAsync::tst_QContactAsync()
     QApplication::addLibraryPath(path);
 
     qRegisterMetaType<QContactAbstractRequest::State>("QContactAbstractRequest::State");
-
 }
 
 tst_QContactAsync::~tst_QContactAsync()
 {
-    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
-    QApplication::removeLibraryPath(path);
 }
 
-void tst_QContactAsync::init()
+void tst_QContactAsync::initTestCase()
 {
+    managerDataHolder.reset(new QContactManagerDataHolder());
 }
 
-void tst_QContactAsync::cleanup()
+void tst_QContactAsync::cleanupTestCase()
 {
+    managerDataHolder.reset(0);
 }
 
 bool tst_QContactAsync::compareContactLists(QList<QContact> lista, QList<QContact> listb)
@@ -556,7 +555,7 @@ void tst_QContactAsync::contactFetch()
             cfr.setFetchHint(QContactFetchHint());
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -588,7 +587,7 @@ void tst_QContactAsync::contactFetch()
             bailoutCount -= 1;
             spy.clear();
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+                //qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -708,7 +707,7 @@ void tst_QContactAsync::contactIdFetch()
             bailoutCount -= 1;
             spy.clear();
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -739,7 +738,7 @@ void tst_QContactAsync::contactIdFetch()
             cfr.setSorting(sorting);
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -840,7 +839,7 @@ void tst_QContactAsync::contactRemove()
             }
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -872,7 +871,7 @@ void tst_QContactAsync::contactRemove()
             cm->saveContact(&temp);
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -996,7 +995,7 @@ void tst_QContactAsync::contactSave()
             csr.setContacts(saveList);
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1039,7 +1038,7 @@ void tst_QContactAsync::contactSave()
             csr.setContacts(saveList);
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1137,7 +1136,7 @@ void tst_QContactAsync::definitionFetch()
             dfr.setDefinitionNames(QStringList());
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1165,7 +1164,7 @@ void tst_QContactAsync::definitionFetch()
             dfr.setDefinitionNames(QStringList());
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1299,7 +1298,7 @@ void tst_QContactAsync::definitionRemove()
             QCOMPARE(cm->detailDefinitions().keys().size(), originalCount - 3); // finished
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1330,7 +1329,7 @@ void tst_QContactAsync::definitionRemove()
             drr.setDefinitionNames(QContactType::TypeContact, removeIds);
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1455,7 +1454,7 @@ void tst_QContactAsync::definitionSave()
             cm->removeDetailDefinition(testDef.name());
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1492,7 +1491,7 @@ void tst_QContactAsync::definitionSave()
             cm->removeDetailDefinition(testDef.name());
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1678,7 +1677,7 @@ void tst_QContactAsync::relationshipFetch()
             rfr.setRelationshipType(QString());
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1706,7 +1705,7 @@ void tst_QContactAsync::relationshipFetch()
             rfr.setRelationshipType(QString());
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1831,7 +1830,7 @@ void tst_QContactAsync::relationshipRemove()
             rrr.setRelationships(relationships);
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1861,7 +1860,7 @@ void tst_QContactAsync::relationshipRemove()
             rrr.setRelationships(relationships);
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -1991,7 +1990,7 @@ void tst_QContactAsync::relationshipSave()
             cm->removeRelationship(testRel); // probably shouldn't have been saved anyway (circular)
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }
@@ -2028,7 +2027,7 @@ void tst_QContactAsync::relationshipSave()
             cm->removeRelationship(testRel); // probably shouldn't have been saved anyway (circular)
             bailoutCount -= 1;
             if (!bailoutCount) {
-                qWarning("Unable to test cancelling due to thread scheduling!");
+//                qWarning("Unable to test cancelling due to thread scheduling!");
                 bailoutCount = MAX_OPTIMISTIC_SCHEDULING_LIMIT;
                 break;
             }

@@ -65,10 +65,8 @@ static void editView(QContactManager*);
 static void loadManager();
 static void loadManagerWithParameters();
 
-int main(int argc, char *argv[])
+int stopCompilerWarnings()
 {
-    QCoreApplication app(argc, argv);
-
     // manager configuration examples
     loadManager();
     loadManagerWithParameters();
@@ -89,7 +87,6 @@ int main(int argc, char *argv[])
     RequestExample re;
     re.setManager(cm);
     QTimer::singleShot(10, &re, SLOT(performRequest()));
-    app.exec();
     delete cm;
 
     // more doc snippet examples
@@ -101,10 +98,10 @@ int main(int argc, char *argv[])
     // async doc snippet examples
     AsyncRequestExample example;
     QTimer::singleShot(10, &example, SLOT(performRequests()));
-    app.exec();
 
     return 0;
 }
+
 
 void loadDefault()
 {
@@ -312,24 +309,29 @@ void addContact(QContactManager* cm)
 }
 //! [Creating a new contact]
 
-//! [Calling an existing contact]
 void callContact(QContactManager* cm)
 {
     QList<QContactLocalId> contactIds = cm->contactIds();
     QContact a = cm->contact(contactIds.first());
 
     /* Get this contact's first phone number */
-    QContactPhoneNumber phn = a.detail<QContactPhoneNumber>();
-    if (!phn.isEmpty()) {
-        // First, we need some way of retrieving the QObject which provides the action.
-        // This may be through the (previously announced) Qt Service Framework:
-        //QServiceManager* manager = new QServiceManager();
-        //QObject* dialer = manager->loadInterface("com.nokia.qt.mobility.contacts.Dialer");
-        //QContactAction* dialerImpl = static_cast<QContactAction*>dialer;
-        //dialerImpl->invokeAction(a, phn);
+    QContactAction* action = 0;
+    QContact contact;
+
+    //! [Details with action]
+    QList<QContactDetail> details = contact.detailsWithAction("Call");
+
+    if (details.count() == 0) {
+        // Can't call this contact
+    } else if (details.count() == 1) {
+        // Just call this specific detail
+        action->invokeAction(contact, details.first());
+    } else {
+        // Offer the user the choice of details to call
+        // ...
     }
+    //! [Details with action]
 }
-//! [Calling an existing contact]
 
 //! [Filtering by definition and value]
 void matchCall(QContactManager* cm, const QString& incomingCallNbr)
@@ -507,6 +509,31 @@ void editView(QContactManager* cm)
 }
 //! [Modifying an existing contact]
 
+void displayLabel()
+{
+    QContactManager *manager = new QContactManager();
+    QContactLocalId myId;
+//! [Updating the display label of a contact]
+    /* Retrieve a contact */
+    QContact c = manager->contact(myId);
+    qDebug() << "Current display label" << c.displayLabel();
+
+    /* Update some fields that might influence the display label */
+    QContactName name = c.detail<QContactName>();
+    name.setFirstName("Abigail");
+    name.setLastName("Arkansas");
+    c.saveDetail(&name);
+
+    /* At this point the display label is not updated, so print what the new one would be if we save it */
+    qDebug() << "New label would be:" << manager->synthesizedDisplayLabel(c);
+
+    /* Now save it */
+    manager->saveContact(&c);
+
+    qDebug() << "Now the label is:" << c.displayLabel();
+//! [Updating the display label of a contact]
+}
+
 //! [Asynchronous contact request]
 void RequestExample::performRequest()
 {
@@ -548,6 +575,46 @@ void RequestExample::stateChanged(QContactAbstractRequest::State state)
     }
 }
 //! [Asynchronous contact request]
+
+
+void shortsnippets()
+{
+    QContact contact;
+    QContact groupContact;
+    {
+        //! [0]
+        QContactDetail detail = contact.detail(QContactName::DefinitionName);
+        //! [0]
+        //! [1]
+        QContactName name = contact.detail<QContactName>();
+        //! [1]
+        //! [2]
+        QList<QContactDetail> details = contact.details(QContactPhoneNumber::DefinitionName);
+        //! [2]
+        //! [3]
+        QList<QContactPhoneNumber> phoneNumbers = contact.details<QContactPhoneNumber>();
+        //! [3]
+        //! [4]
+        QList<QContactPhoneNumber> homePhones = contact.details<QContactPhoneNumber>("Context", "Home");
+        //! [4]
+        //! [5]
+        QList<QContactRelationship> spouseRelationships = contact.relationships(QContactRelationship::HasSpouse);
+        // For each relationship in spouseRelationships, contact.id() will either be first() or second()
+        //! [5]
+        //! [6]
+        // Who are the members of a group contact?
+        QList<QContactId> groupMembers = groupContact.relatedContacts(QContactRelationship::HasMember, QContactRelationship::Second);
+        // What groups is this contact in?
+        QList<QContactId> contactGroups = contact.relatedContacts(QContactRelationship::HasMember, QContactRelationship::First);
+        // An alternative to QContact::relationships()
+        QList<QContactId> spouses = contact.relatedContacts(QContactRelationship::HasSpouse, QContactRelationship::Either);
+        if (spouses.count() > 1) {
+            // Custom relationship type
+            QList<QContactId> therapists = contact.relatedContacts("HasTherapist", QContactRelationship::Second);
+        }
+        //! [6]
+    }
+}
 
 void loadManager()
 {

@@ -55,7 +55,7 @@ class Q_CONTACTS_EXPORT QContactRelationshipRemoveRequest : public QContactAbstr
     Q_OBJECT
 
 public:
-    QContactRelationshipRemoveRequest();
+    QContactRelationshipRemoveRequest(QObject* parent = 0);
 
     /* Selection */
     void setRelationships(const QList<QContactRelationship>& relationships);

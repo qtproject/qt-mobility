@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qt7engine)
+TARGET = $$qtLibraryTarget(qtmedia_qt7engine)
 QT += opengl multimedia
 
 PLUGIN_TYPE = mediaservice

@@ -43,7 +43,6 @@
 #define QMESSAGINGGLOBAL_H
 
 #include <qmobilityglobal.h>
-#include <QString>
 
 // A variant of Q_GLOBAL_STATIC for use in class scope
 #define Q_SCOPED_STATIC_DECLARE(TYPE, NAME)                      \

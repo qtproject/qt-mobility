@@ -58,9 +58,9 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new detail definition save request */
-QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate)
+/*! Constructs a new detail definition save request whose parent is the specified \a parent */
+QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate, parent)
 {
 }
 

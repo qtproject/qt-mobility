@@ -596,18 +596,14 @@ void TestFiltering::testRelationshipFilter()
     mCntMng->saveRelationship(&relationship);
     
     
-    QList<QContactLocalId> cnt_ids;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
-    
     QContactRelationshipFilter groupFilter;                   
     groupFilter.setRelationshipType(QContactRelationship::HasMember);
     groupFilter.setRelatedContactId(groupContact.id());                
     groupFilter.setRelatedContactRole(QContactRelationship::First);
 
-    
-    cnt_ids = mCntMng->contactIds(groupFilter, sortOrder);
-    error = mCntMng->error();
+    QList<QContactSortOrder> sortOrder = QList<QContactSortOrder>();
+    QList<QContactLocalId> cnt_ids = mCntMng->contactIds(groupFilter, sortOrder);
+    QContactManager::Error error = mCntMng->error();
     
     // check counts 
     int seachedcontactcount = cnt_ids.count();
@@ -881,17 +877,15 @@ void TestFiltering::testZeroSearch()
 {
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
-    QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
 
-    bool isPredSearch = false;
     QString pattern = "60";
        
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
     cnt_ids = mCntMng->contactIds(df, sortOrder);
-    error = mCntMng->error();
+    QContactManager::Error error = mCntMng->error();
 
     for( int i=0;i<cnt_ids.count();i++ ) {
             QString firstName("Micheal");

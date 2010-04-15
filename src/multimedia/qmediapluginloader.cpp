@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <src/global/qbuildcfg.h>
 #include "qmediapluginloader_p.h"
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qpluginloader.h>
@@ -98,6 +99,12 @@ void QMediaPluginLoader::load()
         }
     } else {
         QStringList     paths = QCoreApplication::libraryPaths();
+        QString val = qt_mobility_configure_prefix_path_str;
+        if(val.length() > 0){
+            val += "/plugins";
+            paths << val;
+        }
+
 
 #ifdef QTM_PLUGIN_PATH
         paths << QTM_PLUGIN_PATH;

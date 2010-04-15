@@ -432,7 +432,7 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                         QString nameString = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                         name.setCustomLabel(nameString);
                         if (m_readOnlyAccess)
-                            m_engine.setReadOnlyAccessConstraint(&name);                        
+                            m_engine.setReadOnlyAccessConstraint(&name);
                         currentContact.saveDetail(&name);
                         QContactManager::Error error(QContactManager::NoError);
                         m_engine.setContactDisplayLabel(&currentContact, m_engine.synthesizedDisplayLabel(currentContact, &error));
@@ -447,7 +447,7 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QString name = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     nickName.setNickname(name);
                     if (m_readOnlyAccess)
-                        m_engine.setReadOnlyAccessConstraint(&nickName);                    
+                        m_engine.setReadOnlyAccessConstraint(&nickName);
                     currentContact.saveDetail(&nickName);
                 }
                 break;
@@ -459,7 +459,7 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QString number = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     phoneNumber.setNumber(number);
                     if (m_readOnlyAccess)
-                        m_engine.setReadOnlyAccessConstraint(&phoneNumber);                    
+                        m_engine.setReadOnlyAccessConstraint(&phoneNumber);
                     currentContact.saveDetail(&phoneNumber);
                 }
                 break;
@@ -477,7 +477,7 @@ QList<QContact> CntSimStorePrivate::decodeSimContactsL(TDes8& rawData) const
                     QString emailAddress = QString::fromUtf16(bufPtr.Ptr(), bufPtr.Length());
                     email.setEmailAddress(emailAddress);
                     if (m_readOnlyAccess)
-                        m_engine.setReadOnlyAccessConstraint(&email);                    
+                        m_engine.setReadOnlyAccessConstraint(&email);
                     currentContact.saveDetail(&email);
                 }
                 break;

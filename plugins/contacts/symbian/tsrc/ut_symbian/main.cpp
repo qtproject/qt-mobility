@@ -51,11 +51,11 @@
 
 int main(int argc, char *argv[]) 
 {
-    bool promptOnExit(true);
+    /*bool promptOnExit(true);
     for (int i=0; i<argc; i++) {
         if (QString(argv[i]) == "-noprompt")
             promptOnExit = false;
-    }
+    }*/
     printf("Running tests...\n");
             
     QApplication app(argc, argv);
