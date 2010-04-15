@@ -43,13 +43,13 @@
 #define REQUESTEXAMPLE_H
 
 #include <QObject>
-#include <qlandmarkfetchrequest.h>
-#include <qlandmarkcategorysaverequest.h>
-#include <qlandmarksaverequest.h>
-#include <qlandmarkcategoryfetchrequest.h>
-#include <qlandmarkcategoryremoverequest.h>
-#include <qlandmarkremoverequest.h>
-#include <qlandmarkmanager.h>
+#include "qlandmarkfetchrequest.h"
+#include "qlandmarkcategorysaverequest.h"
+#include "qlandmarksaverequest.h"
+#include "qlandmarkcategoryfetchrequest.h"
+#include "qlandmarkcategoryremoverequest.h"
+#include "qlandmarkremoverequest.h"
+#include "qlandmarkmanager.h"
 
 QTM_USE_NAMESPACE
 
