@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,7 +52,7 @@ SessionWidget::SessionWidget(const QNetworkConfiguration &config, QWidget *paren
     connect(session, SIGNAL(stateChanged(QNetworkSession::State)),
             this, SLOT(updateSession()));
     connect(session, SIGNAL(error(QNetworkSession::SessionError)),
-            this, SLOT(updateSession()));
+            this, SLOT(updateSessionError(QNetworkSession::SessionError)));
 
     updateSession();
 
@@ -89,7 +89,6 @@ void SessionWidget::deleteSession()
 void SessionWidget::updateSession()
 {
     updateSessionState(session->state());
-    updateSessionError(session->error());
 
     if (session->configuration().type() == QNetworkConfiguration::InternetAccessPoint)
         bearer->setText(session->configuration().bearerName());
@@ -105,12 +104,14 @@ void SessionWidget::updateSession()
 
 void SessionWidget::openSession()
 {
+    clearError();
     session->open();
     updateSession();
 }
 
 void SessionWidget::openSyncSession()
 {
+    clearError();
     session->open();
     session->waitForOpened();
     updateSession();
@@ -118,12 +119,14 @@ void SessionWidget::openSyncSession()
 
 void SessionWidget::closeSession()
 {
+    clearError();
     session->close();
     updateSession();
 }
 
 void SessionWidget::stopSession()
 {
+    clearError();
     session->stop();
     updateSession();
 }
@@ -172,3 +175,8 @@ void SessionWidget::updateSessionError(QNetworkSession::SessionError error)
     errorString->setText(session->errorString());
 }
 
+void SessionWidget::clearError()
+{
+    lastError->clear();
+    errorString->clear();
+}

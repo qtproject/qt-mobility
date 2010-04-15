@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,7 +61,7 @@ public:
 
 private:
     void updateSessionState(QNetworkSession::State state);
-    void updateSessionError(QNetworkSession::SessionError error);
+    void clearError();
 
 private Q_SLOTS:
     void openSession();
@@ -69,9 +69,12 @@ private Q_SLOTS:
     void closeSession();
     void stopSession();
     void updateSession();
+    void updateSessionError(QNetworkSession::SessionError error);
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     void deleteSession();
 #endif
+
+
 private:
     QNetworkSession *session;
 };
