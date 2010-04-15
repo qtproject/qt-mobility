@@ -42,27 +42,84 @@
 #include "qfeedbackdevice.h"
 #include "qfeedbackeffect_p.h"
 #include <QtCore/QString>
+#include <QtCore/QMutex>
 
 #include <ImmVibe.h>
 
 
 QTM_BEGIN_NAMESPACE
 
-static inline void ensureLibraryInitialized()
+static int g_defaultDevices[2] = {-1, -1};
+
+class DeviceHandler
 {
-    if (VIBE_FAILED(ImmVibeInitialize(VIBE_CURRENT_VERSION_NUMBER))) {
-        //that should be done once
-        //error management
-        qWarning("the Immersion library could not be initialized");
+public:
+    DeviceHandler()
+    {
+        if (VIBE_FAILED(ImmVibeInitialize(VIBE_CURRENT_VERSION_NUMBER))) {
+            //that should be done once
+            //error management
+            qWarning("the Immersion library could not be initialized");
+        }
+
+        //looking for the default devices
+        const int nbDev = ImmVibeGetDeviceCount();
+        for (int i = 0; i < nbDev; ++i) {
+            VibeInt32 type = 0;
+            ImmVibeGetDeviceCapabilityInt32(i, VIBE_DEVCAPTYPE_ACTUATOR_TYPE, &type);
+            if (type == VIBE_DEVACTUATORTYPE_PIEZO_WAVE || type == VIBE_DEVACTUATORTYPE_PIEZO) {
+                if (g_defaultDevices[QFeedbackDevice::Touch] == -1)
+                    g_defaultDevices[QFeedbackDevice::Touch] = i;
+            } else if (g_defaultDevices[QFeedbackDevice::Vibra] == -1) {
+                g_defaultDevices[QFeedbackDevice::Vibra] = i;
+            }
+        }
     }
 
+    ~DeviceHandler()
+    {
+        //cleanup the devices when terminating
+        for (int i = 0 ; i < handles.size(); ++i)
+            ImmVibeCloseDevice(handles.at(i));
+
+        ImmVibeTerminate();
+    }
+
+    VibeInt32 handleForDevice(const QFeedbackDevice &device)
+    {
+        //we avoid locking too much (it will only lock if the device is not yet open
+        if (handles.size() <= device.id()) {
+            QMutexLocker locker(&mutex);
+            while (handles.size() <= device.id())
+                handles.append(-1); //-1 means no handle
+        }
+
+        if (handles.at(device.id()) == -1) {
+            QMutexLocker locker(&mutex);
+            if (handles.at(device.id()) == -1)
+                ImmVibeOpenDevice(device.id(), &handles[device.id()] );
+        }
+        return handles.at(device.id());
+    }
+
+private:
+    QVector<VibeInt32> handles;
+    QMutex mutex;
+};
+
+Q_GLOBAL_STATIC(DeviceHandler, qDeviceHandler);
+
+
+VibeInt32 qHandleForDevice(const QFeedbackDevice &device)
+{
+    return qDeviceHandler()->handleForDevice(device);
 }
 
 QString QFeedbackDevice::name() const
 {
     char szDeviceName[VIBE_MAX_DEVICE_NAME_LENGTH] = { 0 };
-    if (!ImmVibeGetDeviceCapabilityString(m_id,VIBE_DEVCAPTYPE_DEVICE_NAME,
-                        VIBE_MAX_CAPABILITY_STRING_LENGTH, szDeviceName))
+    if (VIBE_FAILED(ImmVibeGetDeviceCapabilityString(m_id,VIBE_DEVCAPTYPE_DEVICE_NAME,
+                        VIBE_MAX_CAPABILITY_STRING_LENGTH, szDeviceName)))
         return QString();
 
     return QString::fromLocal8Bit(szDeviceName);
@@ -72,7 +129,7 @@ QFeedbackDevice::State QFeedbackDevice::state() const
 {
     QFeedbackDevice::State ret = Unknown;
     VibeInt32 s = 0;
-    if (m_id >= 0 && ImmVibeGetDeviceState(m_id, &s)) {
+    if (m_id >= 0 && VIBE_SUCCEEDED(ImmVibeGetDeviceState(m_id, &s))) {
         if (s == VIBE_DEVICESTATE_ATTACHED)
             ret = QFeedbackDevice::Ready;
         else if (s == VIBE_DEVICESTATE_BUSY)
@@ -90,32 +147,28 @@ int QFeedbackDevice::simultaneousEffect() const
     return ret;
 }
 
-QFeedbackDevice QFeedbackDevice::defaultDevice(Type /*t*/)
+QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)
 {
-    ensureLibraryInitialized();
+    qDeviceHandler(); //ensures initialization
 
-    //TODO: we don't take the type into consideration here
     QFeedbackDevice ret;
-    const int nbDev = ImmVibeGetDeviceCount();
-    //the device 0 is the default one (-1 would indicate an error)
-    ret.m_id = nbDev > 0 ? 0 : -1;
+    ret.m_id = g_defaultDevices[t];
     return ret;
 }
 
 QList<QFeedbackDevice> QFeedbackDevice::devices()
 {
-    QList<QFeedbackDevice> ret;
-    ensureLibraryInitialized();
+    qDeviceHandler();  //ensures initialization
 
+    QList<QFeedbackDevice> ret;
     const int nbDev = ImmVibeGetDeviceCount();
     for (int i = 0; i < nbDev; ++i) {
         QFeedbackDevice dev;
-        dev.m_id = 0;
+        dev.m_id = i;
         ret << dev;
     }
 
     return ret;
 }
-
 
 QTM_END_NAMESPACE

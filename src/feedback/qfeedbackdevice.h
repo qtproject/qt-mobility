@@ -68,6 +68,8 @@ public:
         Unknown
     };
 
+    QFeedbackDevice();
+
     int id() const;
     bool isValid() const;
     QString name() const;
@@ -75,8 +77,8 @@ public:
     int simultaneousEffect() const;
 
     static QFeedbackDevice defaultDevice(Type t = Vibra);
-
     static QList<QFeedbackDevice> devices();
+
 private:
     friend class QFeedbackEffect;
     int m_id;

@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 struct QFeedbackEffectBasePrivate : public QAbstractAnimationPrivate
 {
     QFeedbackEffectBasePrivate() : duration(250),
-                    intensity(1), attackTime(0), attackIntensity(0), priority(0), fadeTime(0),
+                    intensity(1), attackTime(0), attackIntensity(0), fadeTime(0),
                     device(QFeedbackDevice::defaultDevice())
     {
 
@@ -76,7 +76,6 @@ struct QFeedbackEffectBasePrivate : public QAbstractAnimationPrivate
     qreal attackIntensity;
     int fadeTime;
     qreal fadeIntensity;
-    int priority;
     QFeedbackDevice device;
 };
 

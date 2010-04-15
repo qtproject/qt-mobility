@@ -43,6 +43,10 @@
 
 QTM_BEGIN_NAMESPACE
 
+QFeedbackDevice::QFeedbackDevice() : m_id(-1)
+{
+}
+
 int QFeedbackDevice::id() const
 {
     return m_id;

@@ -50,6 +50,13 @@
 
 QTM_BEGIN_NAMESPACE
 
+static CCoeControl *defaultWidget()
+{
+    QWidget *w = QApplication::activeWindow();
+    return w ? w->winId() : 0;
+
+}
+
 #ifdef ADVANCED_TACTILE_SUPPORT
 static TTouchContinuousFeedback convertToSymbian(ContinuousEffect effect)
 {
@@ -135,18 +142,18 @@ public:
         return static_cast<QTouchFeedback*>(MTouchFeedback::Instance());
     }
 
-    static void StopFeedback(void *dummy)
+    void StopFeedback(const CCoeControl* dummy)
     {
         Q_UNUSED(dummy);
     }
 
-    static void ModifyFeedback(void *dummy, int intensity)
+    void ModifyFeedback(const CCoeControl* dummy, int intensity)
     {
         Q_UNUSED(dummy);
         Q_UNUSED(intensity);
     }
 
-    static void StartFeedback(void *dummy, int effect, void *event, int intensity, int duration)
+    void StartFeedback(const CCoeControl* dummy, int effect, void *event, int intensity, int duration)
     {
         Q_UNUSED(dummy);
         Q_UNUSED(effect);
@@ -218,14 +225,14 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
         switch(newState)
         {
         case Stopped:
-            d->feedback()->StopFeedback(QApplication::activeWindow()); //TODO: is activeWindow good enough?
+            d->feedback()->StopFeedback(defaultWidget()); //TODO: is activeWindow good enough?
             break;
         case Paused:
             //not supported, we call stop
             stop();
             break;
         case Running:
-            d->feedback()->StartFeedback(QApplication::activeWindow(), //we apparently need a widget
+            d->feedback()->StartFeedback(defaultWidget(), //we apparently need a widget
                                          0, //what effect
                                          0, qRound(d->intensity * 100), d->duration);
             break;
@@ -267,7 +274,7 @@ void QFeedbackEffect::setIntensity(qreal intensity)
         d->vibra()->StartVibraL(d->duration - d->currentTime, qRound(100 * intensity));
         break;
     case QFeedbackDevice::Touch:
-        d->feedback()->ModifyFeedback(0, qRound(100 * intensity));
+        d->feedback()->ModifyFeedback(defaultWidget(), qRound(100 * intensity));
         break;
     default:
         break;
@@ -320,16 +327,6 @@ void QFeedbackEffect::setFadeIntensity(qreal intensity)
 qreal QFeedbackEffect::fadeIntensity() const
 {
     return d_func()->fadeIntensity;
-}
-
-void QFeedbackEffect::setPriority(int priority)
-{
-    Q_UNUSED(priority);
-}
-
-int QFeedbackEffect::priority() const
-{
-    return d_func()->priority;
 }
 
 void QFeedbackEffect::setDevice(const QFeedbackDevice &device)

@@ -48,21 +48,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-
-static VibeInt32 handle(const QFeedbackDevice &device)
-{
-    //TODO: make that thread-safe and close the devices afterwards
-    static QVector<VibeInt32> handles; //handles to devices
-
-    while (handles.size() <= device.id())
-        handles.append(-1); //-1 means no handle
-
-    if (handles.at(device.id()) == -1)
-        ImmVibeOpenDevice(device.id(), &handles[device.id()] );
-
-
-    return handles.at(device.id());
-}
+extern VibeInt32 qHandleForDevice(const QFeedbackDevice &device);
 
 class QFeedbackEffectPrivate : public QFeedbackEffectBasePrivate
 {
@@ -73,11 +59,11 @@ public:
 
     void checkUpdateEffect()
     {
-        if (state != QFeedbackEffect::Running)
+        if (hEffect == -1)
             return;
 
         Q_Q(QFeedbackEffect);
-        ImmVibeModifyPlayingPeriodicEffect(handle(device),
+        ImmVibeModifyPlayingPeriodicEffect(qHandleForDevice(device),
                                            hEffect,
                                            q->totalDuration(),
                                            intensity / qreal(VIBE_MAX_MAGNITUDE),
@@ -105,23 +91,20 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
     switch (newState)
     {
     case Stopped:
-        ImmVibeStopPlayingEffect(handle(d->device), d->hEffect);
+        ImmVibeStopPlayingEffect(qHandleForDevice(d->device), d->hEffect);
+        d->hEffect = -1;
         break;
     case Paused:
-        ImmVibePausePlayingEffect(handle(d->device), d->hEffect);
+        ImmVibePausePlayingEffect(qHandleForDevice(d->device), d->hEffect);
         break;
     case Running:
-        ImmVibePlayPeriodicEffect(
-            handle(d->device),
-            totalDuration(),
-            intensity() / qreal(VIBE_MAX_MAGNITUDE),
-            duration(),
-            VIBE_STYLE_STRONG,
-            attackTime(),
-            attackIntensity(),
-            fadeTime(),
-            fadeIntensity(),
-            &d->hEffect);
+        if (oldState == Paused)
+            ImmVibeResumePausedEffect(qHandleForDevice(d->device), d->hEffect);
+        else
+            ImmVibePlayPeriodicEffect(qHandleForDevice(d->device), totalDuration(),
+                intensity() / qreal(VIBE_MAX_MAGNITUDE), duration(),
+                VIBE_STYLE_STRONG, attackTime(), attackIntensity(),
+                fadeTime(), fadeIntensity(), &d->hEffect);
         break;
     }
 
@@ -216,16 +199,6 @@ void QFeedbackEffect::setFadeIntensity(qreal intensity)
 qreal QFeedbackEffect::fadeIntensity() const
 {
     return d_func()->fadeIntensity;
-}
-
-void QFeedbackEffect::setPriority(int priority)
-{
-    d_func()->priority = priority;
-}
-
-int QFeedbackEffect::priority() const
-{
-    return d_func()->priority;
 }
 
 void QFeedbackEffect::setDevice(const QFeedbackDevice &device)

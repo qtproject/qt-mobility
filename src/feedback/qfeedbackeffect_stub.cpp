@@ -112,16 +112,6 @@ int QFeedbackEffect::fadeTime() const
     return d_func()->fadeTime;
 }
 
-void QFeedbackEffect::setPriority(int priority)
-{
-    Q_UNUSED(priority);
-}
-
-int QFeedbackEffect::priority() const
-{
-    return d_func()->priority;
-}
-
 void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
 {
     d_func()->device = device;

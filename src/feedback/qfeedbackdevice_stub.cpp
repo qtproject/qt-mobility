@@ -61,9 +61,7 @@ int QFeedbackDevice::simultaneousEffect() const
 
 QFeedbackDevice QFeedbackDevice::defaultDevice(Type /*t*/)
 {
-    QFeedbackDevice ret;
-    ret.m_id =  -1;
-    return ret;
+    return QFeedbackDevice();
 }
 
 QList<QFeedbackDevice> QFeedbackDevice::devices()
