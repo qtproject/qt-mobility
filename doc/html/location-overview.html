@@ -1,55 +1,34 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- location.qdoc -->
+<head>
   <title>Qt Mobility Project 1.0: Location</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <!--[if IE]>
-	<meta name="MSSmartTagsPreventParsing" content="true">
-	<meta http-equiv="imagetoolbar" content="no">
-	<![endif]-->
-  <!--[if lt IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
-	<![endif]-->
-  <!--[if IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
-	<![endif]-->
-  <!--[if IE 8]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
-	<![endif]-->
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
-<body class="">
+<body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><div class="toc">
-<ul class="level1">
-<li><a href="#namespace">Namespace</a></li>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Location<br /><span class="subtitle"></span>
+</h1>
+<p>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</p>
+<ul><li><a href="#namespace">Namespace</a></li>
 <li><a href="#overview">Overview</a></li>
-<ul class="level2">
-<li><a href="#requesting-location-data-from-data-sources">Requesting location data from data sources</a></li>
+<ul><li><a href="#requesting-location-data-from-data-sources">Requesting location data from data sources</a></li>
 <li><a href="#controlling-aspects-of-data-sources">Controlling aspects of data sources</a></li>
 <li><a href="#reading-nmea-data">Reading NMEA data</a></li>
 </ul>
-<li><a href="#example- creating-a-custom-location-data-source">Example: Creating a custom location data source</a></li>
+<li><a href="#example-creating-a-custom-location-data-source">Example: Creating a custom location data source</a></li>
 <li><a href="#examples">Examples</a></li>
-<ul class="level2">
-<li><a href="#flickr-demo">Flickr Demo</a></li>
+<ul><li><a href="#flickr-demo">Flickr Demo</a></li>
 <li><a href="#weather-info-demo">Weather Info Demo</a></li>
 <li><a href="#light-maps-demo">Light Maps Demo</a></li>
 </ul>
 <li><a href="#classes">Classes</a></li>
 </ul>
-</div>
-<h1 class="title">Location<br /><span class="subtitle"></span>
-</h1>
-<div class="descr"/>
-<p>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</p>
 <a name="namespace"></a>
 <h3>Namespace</h3>
 <p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
@@ -99,7 +78,7 @@
 <a name="reading-nmea-data"></a>
 <h4>Reading NMEA data</h4>
 <p><a href="http://en.wikipedia.org/wiki/NMEA_0183">NMEA</a> is a common text-based protocol for specifying navigational data. For convenience, the <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a> is provided to enable client applications to read and distribute NMEA data in either real-time mode (for example, when streaming from a GPS device) or simulation mode (for example, when reading from a NMEA log file). In simulation mode, the source will emit updates according to the time stamp of each NMEA sentence to produce a &quot;replay&quot; of the recorded data.</p>
-<a name="example- creating-a-custom-location-data-source"></a>
+<a name="example-creating-a-custom-location-data-source"></a>
 <h3>Example: Creating a custom location data source</h3>
 <p>Generally, the capabilities provided by the default position source as returned by <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>(), along with the <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a> class, are sufficient for retrieving location data. However, in some cases developers may wish to write their own custom location data sources.</p>
 <p>The <tt>LogFilePositionSource</tt> class in <tt>examples/logfilepositionsource</tt> shows how to subclass <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> to create a custom location data source.</p>
@@ -217,7 +196,7 @@
 <p>The <a href="lightmaps.html">Light Maps demo</a> uses Location display a street map for the current location.</p>
 <a name="classes"></a>
 <h3>Classes</h3>
-<p><table class="annotated">
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qgeoareamonitor.html">QGeoAreaMonitor</a></th><td>Enables the detection of proximity changes for a specified set of coordinates</td></tr>
 <tr valign="top" class="even"><th><a href="qgeocoordinate.html">QGeoCoordinate</a></th><td>Defines a geographical position on the surface of the Earth</td></tr>
 <tr valign="top" class="odd"><th><a href="qgeopositioninfo.html">QGeoPositionInfo</a></th><td>Contains information gathered on a global position, direction and velocity at a particular point in time</td></tr>
@@ -226,7 +205,6 @@
 <tr valign="top" class="even"><th><a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a></th><td>Abstract base class for the distribution of satellite information updates</td></tr>
 <tr valign="top" class="odd"><th><a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a></th><td>Positional information using a NMEA data source</td></tr>
 </table></p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -1,28 +1,13 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qmagnetometer.cpp -->
+<head>
   <title>Qt Mobility Project 1.0: QMagnetometer Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <!--[if IE]>
-	<meta name="MSSmartTagsPreventParsing" content="true">
-	<meta http-equiv="imagetoolbar" content="no">
-	<![endif]-->
-  <!--[if lt IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
-	<![endif]-->
-  <!--[if IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
-	<![endif]-->
-  <!--[if IE 8]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
-	<![endif]-->
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
-<body class="">
+<body>
 <a name="//apple_ref/cpp/cl//QMagnetometer"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -48,7 +33,7 @@
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometer.html#QMagnetometer">QMagnetometer</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometer.html#dtor.QMagnetometer">~QMagnetometer</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMagnetometerReading * </td><td class="memItemRight" valign="bottom"><b><a href="qmagnetometer.html#reading">reading</a></b> () const</td></tr>
@@ -63,7 +48,7 @@
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>3 signals inherited from <a href="qsensor.html#signals">QSensor</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>3 static public members inherited from <a href="qsensor.html#static-public-members">QSensor</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -71,24 +56,19 @@
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMagnetometer class is a convenience wrapper around <a href="qsensor.html">QSensor</a>.</p>
 <p>The only behavioural difference is that this class sets the type properly.</p>
 <p>This class also features a <a href="qmagnetometer.html#reading">reading</a>() function that returns a <a href="qmagnetometerreading.html">QMagnetometerReading</a> instead of a <a href="qsensorreading.html">QSensorReading</a>.</p>
 <p>For details about how the sensor works, see <a href="qmagnetometerreading.html">QMagnetometerReading</a>.</p>
-</div>
 <p>See also <a href="qmagnetometerreading.html">QMagnetometerReading</a>.</p>
 <hr />
-<div class="prop"/>
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="returnGeoValues-prop"></a>returnGeoValues : const bool</h3>
 <p>This property holds a value indicating if geomagnetic values should be returned.</p>
 <p>Set to true to return geomagnetic flux density. Set to false (the default) to return raw magnetic flux density.</p>
 <p>Note that you must access this property via <a href="http://qt.nokia.com/doc/4.6/qobject.html#property">QObject::property</a>() and <a href="http://qt.nokia.com/doc/4.6/qobject.html#setProperty">QObject::setProperty</a>(). The property must be set before calling <a href="qsensor.html#start">start</a>().</p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMagnetometer/QMagnetometer"></a>
 <h3 class="fn"><a name="QMagnetometer"></a>QMagnetometer::QMagnetometer ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -100,7 +80,6 @@
 <h3 class="fn"><a name="reading"></a><a href="qmagnetometerreading.html">QMagnetometerReading</a> * QMagnetometer::reading () const</h3>
 <p>Returns the reading class for this sensor.</p>
 <p>See also <a href="qsensor.html#reading-prop">QSensor::reading</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

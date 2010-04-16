@@ -3361,9 +3361,6 @@
     <section ref="future.html" title="Future Additional APIs">
         <keyword ref="future.html">Future Additional APIs</keyword>
     </section>
-    <section ref="gpl.html" title="GNU General Public License (GPL)">
-        <keyword ref="gpl.html">GNU General Public License (GPL)</keyword>
-    </section>
     <section ref="lgpl.html" title="GNU Lesser General Public License (LGPL)">
         <keyword ref="lgpl.html">GNU Lesser General Public License (LGPL)</keyword>
     </section>
@@ -3372,12 +3369,6 @@
     </section>
     <section ref="installation.html" title="Installation Guide">
         <keyword ref="installation.html">Installation Guide</keyword>
-    </section>
-    <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux">
-        <keyword ref="licenses-fonts.html">Licenses for Fonts Used in Qt for Embedded Linux</keyword>
-    </section>
-    <section ref="licensing.html" title="Licensing Information">
-        <keyword ref="licensing.html">Licensing Information</keyword>
     </section>
     <section ref="location-overview.html" title="Location">
         <keyword ref="location-overview.html">Location</keyword>
@@ -3396,9 +3387,6 @@
     </section>
     <section ref="opensourceedition.html" title="Open Source Versions of Qt">
         <keyword ref="opensourceedition.html">Open Source Versions of Qt</keyword>
-    </section>
-    <section ref="licenses.html" title="Other Licenses Used in Qt">
-        <keyword ref="licenses.html">Other Licenses Used in Qt</keyword>
     </section>
     <section ref="publ-subs.html" title="Publish and Subscribe">
         <keyword ref="publ-subs.html">Publish and Subscribe</keyword>
