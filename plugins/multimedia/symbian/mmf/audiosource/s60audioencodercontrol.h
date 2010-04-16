@@ -65,8 +65,8 @@ public:
     int bitRate() const;
     void setBitRate(int);
 
-    QtMultimedia::EncodingQuality quality() const;
-    void setQuality(QtMultimedia::EncodingQuality);
+    QtMediaServices::EncodingQuality quality() const;
+    void setQuality(QtMediaServices::EncodingQuality);
 
     QStringList supportedEncodingOptions(const QString &codec) const;
     QVariant encodingOption(const QString &codec, const QString &name) const;

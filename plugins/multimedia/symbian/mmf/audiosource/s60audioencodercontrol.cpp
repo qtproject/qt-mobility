@@ -96,33 +96,33 @@ void S60AudioEncoderControl::setBitRate(int value)
     Q_UNUSED(value)
 }
 
-QtMultimedia::EncodingQuality S60AudioEncoderControl::quality() const
+QtMediaServices::EncodingQuality S60AudioEncoderControl::quality() const
 {
-    return QtMultimedia::NormalQuality;
+    return QtMediaServices::NormalQuality;
 }
 
-void S60AudioEncoderControl::setQuality(QtMultimedia::EncodingQuality value)
+void S60AudioEncoderControl::setQuality(QtMediaServices::EncodingQuality value)
 {
     QAudioFormat fmt = m_session->format();
 
     switch (value) {
-        case QtMultimedia::VeryLowQuality:
-        case QtMultimedia::LowQuality:
+        case QtMediaServices::VeryLowQuality:
+        case QtMediaServices::LowQuality:
             // low, 8000Hz mono U8
             fmt.setSampleType(QAudioFormat::UnSignedInt);
             fmt.setSampleSize(8);
             fmt.setFrequency(8000);
             fmt.setChannels(1);
             break;
-        case QtMultimedia::NormalQuality:
+        case QtMediaServices::NormalQuality:
             // medium, 22050Hz mono S16
             fmt.setSampleType(QAudioFormat::SignedInt);
             fmt.setSampleSize(16);
             fmt.setFrequency(22050);
             fmt.setChannels(1);
             break;
-        case QtMultimedia::HighQuality:
-        case QtMultimedia::VeryHighQuality:    
+        case QtMediaServices::HighQuality:
+        case QtMediaServices::VeryHighQuality:    
             // high, 44100Hz mono S16
             fmt.setSampleType(QAudioFormat::SignedInt);
             fmt.setSampleSize(16);
@@ -170,7 +170,7 @@ void S60AudioEncoderControl::setEncodingOption(
             setBitRate(value.toInt());
 
     } else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
-        setQuality((QtMultimedia::EncodingQuality)value.toInt());
+        setQuality((QtMediaServices::EncodingQuality)value.toInt());
 
     } else
         qWarning() << "option: " << name << " is an unknown option!";

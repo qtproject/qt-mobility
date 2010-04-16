@@ -40,15 +40,15 @@
 ****************************************************************************/
 
 /*!
-    \namespace QtMedia
+    \namespace QtMediaServices
     \ingroup multimedia
 
-    \brief The QtMedia namespace contains miscellaneous identifiers used throughout the Qt Media
-    library.
+    \brief The QtMediaServices namespace contains miscellaneous identifiers used throughout the Qt Media
+    services library.
 */
 
 /*!
-    \enum QtMedia::MetaData
+    \enum QtMediaServices::MetaData
 
     This enum provides identifiers for meta-data attributes.
 
@@ -169,7 +169,7 @@
 */
 
 /*!
-    \enum QtMedia::SupportEstimate
+    \enum QtMediaServices::SupportEstimate
 
     Enumerates the levels of support a media service provider may have for a feature.
 
@@ -180,7 +180,7 @@
 */
 
 /*!
-    \enum QtMedia::EncodingQuality
+    \enum QtMediaServices::EncodingQuality
 
     Enumerates quality encoding levels.
 
@@ -192,7 +192,7 @@
 */
 
 /*!
-    \enum QtMedia::EncodingMode
+    \enum QtMediaServices::EncodingMode
 
     Enumerates encoding modes.
 
@@ -203,7 +203,7 @@
 */
 
 /*!
-    \enum QtMedia::AvailabilityError
+    \enum QtMediaServices::AvailabilityError
 
     Enumerates Service status errors.
 
