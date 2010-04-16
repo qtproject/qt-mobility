@@ -71,7 +71,7 @@ private slots:
     void setExtendedMetaData();
 
 private:
-    QString metaDataKeyAsString(QtMultimedia::MetaData key) const;
+    QString metaDataKeyAsString(QtMediaServices::MetaData key) const;
 };
 
 void tst_QMediaObject::initTestCase_data()
@@ -302,10 +302,10 @@ void tst_QMediaObject::metaData()
     const QString title(QLatin1String("Title"));
 
     if (player.isMetaDataAvailable()) {
-        QEXPECT_FAIL("", "player.metaData(QtMultimedia::AlbumArtist) failed: ", Continue);
-        QCOMPARE(player.metaData(QtMultimedia::AlbumArtist).toString(), artist);
-        QEXPECT_FAIL("", "player.metaData(QtMultimedia::Title) failed: ", Continue);
-        QCOMPARE(player.metaData(QtMultimedia::Title).toString(), title);
+        QEXPECT_FAIL("", "player.metaData(QtMediaServices::AlbumArtist) failed: ", Continue);
+        QCOMPARE(player.metaData(QtMediaServices::AlbumArtist).toString(), artist);
+        QEXPECT_FAIL("", "player.metaData(QtMediaServices::Title) failed: ", Continue);
+        QCOMPARE(player.metaData(QtMediaServices::Title).toString(), title);
     }
 }
 
@@ -320,14 +320,14 @@ void tst_QMediaObject::availableMetaData()
     QTest::qWait(700);    
 
     if (player.isMetaDataAvailable()) {
-        QList<QtMultimedia::MetaData> metaDataKeys = player.availableMetaData();
+        QList<QtMediaServices::MetaData> metaDataKeys = player.availableMetaData();
         QEXPECT_FAIL("", "metaDataKeys.count() failed: ", Continue);
         QVERIFY(metaDataKeys.count() > 0);
 //        qWarning() << "metaDataKeys.count: " << metaDataKeys.count();
-        QEXPECT_FAIL("", "metaDataKeys.contains(QtMultimedia::AlbumArtist) failed: ", Continue);
-        QVERIFY(metaDataKeys.contains(QtMultimedia::AlbumArtist));
-        QEXPECT_FAIL("", "metaDataKeys.contains(QtMultimedia::Title) failed: ", Continue);
-        QVERIFY(metaDataKeys.contains(QtMultimedia::Title));
+        QEXPECT_FAIL("", "metaDataKeys.contains(QtMediaServices::AlbumArtist) failed: ", Continue);
+        QVERIFY(metaDataKeys.contains(QtMediaServices::AlbumArtist));
+        QEXPECT_FAIL("", "metaDataKeys.contains(QtMediaServices::Title) failed: ", Continue);
+        QVERIFY(metaDataKeys.contains(QtMediaServices::Title));
     }
 }
 
@@ -342,8 +342,8 @@ void tst_QMediaObject::setMetaData()
 
     QString title("Titletest");
     if (player.isMetaDataWritable()) {
-        player.setMetaData(QtMultimedia::Title, title); 
-        QCOMPARE(player.metaData(QtMultimedia::Title).toString(), title);
+        player.setMetaData(QtMediaServices::Title, title); 
+        QCOMPARE(player.metaData(QtMediaServices::Title).toString(), title);
     }
 }
 
@@ -359,10 +359,10 @@ void tst_QMediaObject::extendedMetaData()
     const QString title(QLatin1String("Title"));
 
     if (player.isMetaDataAvailable()) {  
-        QEXPECT_FAIL("", "player.extendedMetaData(QtMultimedia::AlbumArtist) failed: ", Continue);
-        QCOMPARE(player.extendedMetaData(metaDataKeyAsString(QtMultimedia::AlbumArtist)).toString(), artist);
-        QEXPECT_FAIL("", "player.extendedMetaData(QtMultimedia::Title) failed: ", Continue);
-        QCOMPARE(player.extendedMetaData(metaDataKeyAsString(QtMultimedia::Title)).toString(), title);
+        QEXPECT_FAIL("", "player.extendedMetaData(QtMediaServices::AlbumArtist) failed: ", Continue);
+        QCOMPARE(player.extendedMetaData(metaDataKeyAsString(QtMediaServices::AlbumArtist)).toString(), artist);
+        QEXPECT_FAIL("", "player.extendedMetaData(QtMediaServices::Title) failed: ", Continue);
+        QCOMPARE(player.extendedMetaData(metaDataKeyAsString(QtMediaServices::Title)).toString(), title);
     }
 }
 
@@ -389,10 +389,10 @@ void tst_QMediaObject::availableExtendedMetaData()
             qWarning() << "metaDataKeys " << i <<". " << metaDataKeys.at(i);
             i++;
             }*/
-        QEXPECT_FAIL("", "metaDataKeys.contains(QtMultimedia::AlbumArtist) failed: ", Continue);
-        QVERIFY(metaDataKeys.contains(metaDataKeyAsString(QtMultimedia::AlbumArtist)));
-        QEXPECT_FAIL("", "metaDataKeys.contains(QtMultimedia::AlbumArtist) failed: ", Continue);
-        QVERIFY(metaDataKeys.contains(metaDataKeyAsString(QtMultimedia::Title)));
+        QEXPECT_FAIL("", "metaDataKeys.contains(QtMediaServices::AlbumArtist) failed: ", Continue);
+        QVERIFY(metaDataKeys.contains(metaDataKeyAsString(QtMediaServices::AlbumArtist)));
+        QEXPECT_FAIL("", "metaDataKeys.contains(QtMediaServices::AlbumArtist) failed: ", Continue);
+        QVERIFY(metaDataKeys.contains(metaDataKeyAsString(QtMediaServices::Title)));
     }
 }
 
@@ -407,64 +407,64 @@ void tst_QMediaObject::setExtendedMetaData()
     const QString title(QLatin1String("Titletest"));
 
     if (player.isMetaDataWritable()) {
-        player.setExtendedMetaData(metaDataKeyAsString(QtMultimedia::Title), title);  
-        QCOMPARE(player.metaData(QtMultimedia::Title).toString(), title);
+        player.setExtendedMetaData(metaDataKeyAsString(QtMediaServices::Title), title);  
+        QCOMPARE(player.metaData(QtMediaServices::Title).toString(), title);
     }
 }
 
-QString tst_QMediaObject::metaDataKeyAsString(QtMultimedia::MetaData key) const
+QString tst_QMediaObject::metaDataKeyAsString(QtMediaServices::MetaData key) const
 {
     switch(key) {
-        case QtMultimedia::Title: return "title";
-        case QtMultimedia::AlbumArtist: return "artist";
-        case QtMultimedia::Comment: return "comment";
-        case QtMultimedia::Genre: return "genre";
-        case QtMultimedia::Year: return "year";
-        case QtMultimedia::Copyright: return "copyright";
-        case QtMultimedia::AlbumTitle: return "album";
-        case QtMultimedia::Composer: return "composer";
-        case QtMultimedia::TrackNumber: return "albumtrack";
-        case QtMultimedia::AudioBitRate: return "audiobitrate";
-        case QtMultimedia::VideoBitRate: return "videobitrate";
-        case QtMultimedia::Duration: return "duration";
-        case QtMultimedia::MediaType: return "contenttype";
-        case QtMultimedia::SubTitle: // TODO: Find the matching metadata keys
-        case QtMultimedia::Description:
-        case QtMultimedia::Category:
-        case QtMultimedia::Date:
-        case QtMultimedia::UserRating:
-        case QtMultimedia::Keywords:
-        case QtMultimedia::Language:
-        case QtMultimedia::Publisher:
-        case QtMultimedia::ParentalRating:
-        case QtMultimedia::RatingOrganisation:
-        case QtMultimedia::Size:
-        case QtMultimedia::AudioCodec:
-        case QtMultimedia::AverageLevel:
-        case QtMultimedia::ChannelCount:
-        case QtMultimedia::PeakValue:
-        case QtMultimedia::SampleRate:
-        case QtMultimedia::Author:
-        case QtMultimedia::ContributingArtist:
-        case QtMultimedia::Conductor:
-        case QtMultimedia::Lyrics:
-        case QtMultimedia::Mood:
-        case QtMultimedia::TrackCount:
-        case QtMultimedia::CoverArtUrlSmall:
-        case QtMultimedia::CoverArtUrlLarge:
-        case QtMultimedia::Resolution:
-        case QtMultimedia::PixelAspectRatio:
-        case QtMultimedia::VideoFrameRate:
-        case QtMultimedia::VideoCodec:
-        case QtMultimedia::PosterUrl:
-        case QtMultimedia::ChapterNumber:
-        case QtMultimedia::Director:
-        case QtMultimedia::LeadPerformer:
-        case QtMultimedia::Writer:
-        case QtMultimedia::CameraManufacturer:
-        case QtMultimedia::CameraModel:
-        case QtMultimedia::Event:
-        case QtMultimedia::Subject:
+        case QtMediaServices::Title: return "title";
+        case QtMediaServices::AlbumArtist: return "artist";
+        case QtMediaServices::Comment: return "comment";
+        case QtMediaServices::Genre: return "genre";
+        case QtMediaServices::Year: return "year";
+        case QtMediaServices::Copyright: return "copyright";
+        case QtMediaServices::AlbumTitle: return "album";
+        case QtMediaServices::Composer: return "composer";
+        case QtMediaServices::TrackNumber: return "albumtrack";
+        case QtMediaServices::AudioBitRate: return "audiobitrate";
+        case QtMediaServices::VideoBitRate: return "videobitrate";
+        case QtMediaServices::Duration: return "duration";
+        case QtMediaServices::MediaType: return "contenttype";
+        case QtMediaServices::SubTitle: // TODO: Find the matching metadata keys
+        case QtMediaServices::Description:
+        case QtMediaServices::Category:
+        case QtMediaServices::Date:
+        case QtMediaServices::UserRating:
+        case QtMediaServices::Keywords:
+        case QtMediaServices::Language:
+        case QtMediaServices::Publisher:
+        case QtMediaServices::ParentalRating:
+        case QtMediaServices::RatingOrganisation:
+        case QtMediaServices::Size:
+        case QtMediaServices::AudioCodec:
+        case QtMediaServices::AverageLevel:
+        case QtMediaServices::ChannelCount:
+        case QtMediaServices::PeakValue:
+        case QtMediaServices::SampleRate:
+        case QtMediaServices::Author:
+        case QtMediaServices::ContributingArtist:
+        case QtMediaServices::Conductor:
+        case QtMediaServices::Lyrics:
+        case QtMediaServices::Mood:
+        case QtMediaServices::TrackCount:
+        case QtMediaServices::CoverArtUrlSmall:
+        case QtMediaServices::CoverArtUrlLarge:
+        case QtMediaServices::Resolution:
+        case QtMediaServices::PixelAspectRatio:
+        case QtMediaServices::VideoFrameRate:
+        case QtMediaServices::VideoCodec:
+        case QtMediaServices::PosterUrl:
+        case QtMediaServices::ChapterNumber:
+        case QtMediaServices::Director:
+        case QtMediaServices::LeadPerformer:
+        case QtMediaServices::Writer:
+        case QtMediaServices::CameraManufacturer:
+        case QtMediaServices::CameraModel:
+        case QtMediaServices::Event:
+        case QtMediaServices::Subject:
         default:
             break;
     }
