@@ -8,6 +8,7 @@ maemo5 {
 
 symbian {
     equals(sensors_symbian_enabled,yes) {
+        SUBDIRS += symbian
     } else:equals(sensors_s60_31_enabled,yes) {
         SUBDIRS += s60_sensor_api
     } else {
