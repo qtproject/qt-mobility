@@ -1,13 +1,28 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qnmeapositioninfosource.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qnmeapositioninfosource.cpp -->
   <title>Qt Mobility Project 1.0: QNmeaPositionInfoSource Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]>
+	<meta name="MSSmartTagsPreventParsing" content="true">
+	<meta http-equiv="imagetoolbar" content="no">
+	<![endif]-->
+  <!--[if lt IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+	<![endif]-->
+  <!--[if IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+	<![endif]-->
+  <!--[if IE 8]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+	<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="">
 <a name="//apple_ref/cpp/cl//QNmeaPositionInfoSource"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -22,13 +37,13 @@
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a></b> { RealTimeMode, SimulationMode }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#QNmeaPositionInfoSource">QNmeaPositionInfoSource</a></b> ( UpdateMode <i>updateMode</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#dtor.QNmeaPositionInfoSource">~QNmeaPositionInfoSource</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#device">device</a></b> () const</td></tr>
@@ -38,7 +53,7 @@
 <hr />
 <a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">virtual QGeoPositionInfo </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#lastKnownPosition">lastKnownPosition</a></b> ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#minimumUpdateInterval">minimumUpdateInterval</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#setUpdateInterval">setUpdateInterval</a></b> ( int <i>msec</i> )</td></tr>
@@ -51,7 +66,7 @@
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#requestUpdate">requestUpdate</a></b> ( int <i>msec</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#startUpdates">startUpdates</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#stopUpdates">stopUpdates</a></b> ()</td></tr>
@@ -63,7 +78,7 @@
 <hr />
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qnmeapositioninfosource.html#parsePosInfoFromNmeaData">parsePosInfoFromNmeaData</a></b> ( const char * <i>data</i>, int <i>size</i>, QGeoPositionInfo * <i>posInfo</i>, bool * <i>hasFix</i> )</td></tr>
 </table>
 <ul>
@@ -75,13 +90,14 @@
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>2 signals inherited from <a href="qgeopositioninfosource.html#signals">QGeoPositionInfoSource</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>1 static public member inherited from <a href="qgeopositioninfosource.html#static-public-members">QGeoPositionInfoSource</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QNmeaPositionInfoSource class provides positional information using a NMEA data source.</p>
 <p>NMEA is a commonly used protocol for the specification of one's global position at a certain point in time. The QNmeaPositionInfoSource class reads NMEA data and uses it to provide positional data in the form of <a href="qgeopositioninfo.html">QGeoPositionInfo</a> objects.</p>
@@ -89,19 +105,22 @@
 <p>The source of NMEA data is set with <a href="qnmeapositioninfosource.html#setDevice">setDevice</a>().</p>
 <p>Use <a href="qnmeapositioninfosource.html#startUpdates">startUpdates</a>() to start receiving regular position updates and <a href="qnmeapositioninfosource.html#stopUpdates">stopUpdates</a>() to stop these updates. If you only require updates occasionally, you can call <a href="qnmeapositioninfosource.html#requestUpdate">requestUpdate</a>() to request a single update.</p>
 <p>In both cases the position information is received via the <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a>() signal and the last known position can be accessed with <a href="qnmeapositioninfosource.html#lastKnownPosition">lastKnownPosition</a>().</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QNmeaPositionInfoSource/UpdateMode"></a>
 <a name="//apple_ref/cpp/econst/QNmeaPositionInfoSource/RealTimeMode"></a>
 <a name="//apple_ref/cpp/econst/QNmeaPositionInfoSource/SimulationMode"></a>
 <h3 class="fn"><a name="UpdateMode-enum"></a>enum QNmeaPositionInfoSource::UpdateMode</h3>
 <p>Defines the available update modes.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<p><table class="valuelist"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td valign="top"><tt>QNmeaPositionInfoSource::RealTimeMode</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Positional data is read and distributed from the data source as it becomes available. Use this mode if you are using a live source of positional data (for example, a GPS hardware device).</td></tr>
 <tr><td valign="top"><tt>QNmeaPositionInfoSource::SimulationMode</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The data and time information in the NMEA source data is used to provide positional updates at the rate at which the data was originally recorded. Use this mode if the data source contains previously recorded NMEA data and you want to replay the data for simulation purposes.</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QNmeaPositionInfoSource/QNmeaPositionInfoSource"></a>
 <h3 class="fn"><a name="QNmeaPositionInfoSource"></a>QNmeaPositionInfoSource::QNmeaPositionInfoSource ( <a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a> <i>updateMode</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -149,6 +168,7 @@
 <a name="//apple_ref/cpp/instm/QNmeaPositionInfoSource/updateMode"></a>
 <h3 class="fn"><a name="updateMode"></a><a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a> QNmeaPositionInfoSource::updateMode () const</h3>
 <p>Returns the update mode.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -271,6 +271,9 @@
                     <section ref="qimageencodersettings.html" title="QImageEncoderSettings Class Reference">
                         <section ref="qimageencodersettings-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qlatin1constant.html" title="QLatin1Constant Class Reference">
+                        <section ref="qlatin1constant-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qmagnetometer.html" title="QMagnetometer Class Reference">
                         <section ref="qmagnetometer-members.html" title="List of all members"/>
                     </section>
@@ -835,9 +838,7 @@
             <keyword name="availableActions" id="QContact::availableActions" ref="qcontact.html#availableActions"/>
             <keyword name="clearDetails" id="QContact::clearDetails" ref="qcontact.html#clearDetails"/>
             <keyword name="detail" id="QContact::detail" ref="qcontact.html#detail"/>
-            <keyword name="detailWithAction" id="QContact::detailWithAction" ref="qcontact.html#detailWithAction"/>
             <keyword name="details" id="QContact::details" ref="qcontact.html#details"/>
-            <keyword name="detailsWithAction" id="QContact::detailsWithAction" ref="qcontact.html#detailsWithAction"/>
             <keyword name="displayLabel" id="QContact::displayLabel" ref="qcontact.html#displayLabel"/>
             <keyword name="id" id="QContact::id" ref="qcontact.html#id"/>
             <keyword name="isEmpty" id="QContact::isEmpty" ref="qcontact.html#isEmpty"/>
@@ -1015,7 +1016,6 @@
             <keyword name="QContactDetail::Irremovable" id="QContactDetail::Irremovable" ref="qcontactdetail.html#AccessConstraint-enum"/>
             <keyword name="QContactDetail::AccessConstraints" id="QContactDetail::AccessConstraints" ref="qcontactdetail.html#AccessConstraint-enum"/>
             <keyword name="accessConstraints" id="QContactDetail::accessConstraints" ref="qcontactdetail.html#accessConstraints"/>
-            <keyword name="assign" id="QContactDetail::assign" ref="qcontactdetail.html#assign"/>
             <keyword name="contexts" id="QContactDetail::contexts" ref="qcontactdetail.html#contexts"/>
             <keyword name="definitionName" id="QContactDetail::definitionName" ref="qcontactdetail.html#definitionName"/>
             <keyword name="detailUri" id="QContactDetail::detailUri" ref="qcontactdetail.html#detailUri"/>
@@ -1700,6 +1700,10 @@
             <keyword name="setQuality" id="QImageEncoderSettings::setQuality" ref="qimageencodersettings.html#setQuality"/>
             <keyword name="setResolution" id="QImageEncoderSettings::setResolution" ref="qimageencodersettings.html#setResolution"/>
             <keyword name="~QImageEncoderSettings" id="QImageEncoderSettings::~QImageEncoderSettings" ref="qimageencodersettings.html#dtor.QImageEncoderSettings"/>
+            <keyword name="QLatin1Constant" id="QLatin1Constant" ref="qlatin1constant.html"/>
+            <keyword name="latin1" id="QLatin1Constant::latin1" ref="qlatin1constant.html#latin1"/>
+            <keyword name="operator!=" id="QLatin1Constant::operator!=" ref="qlatin1constant.html#operator-not-eq"/>
+            <keyword name="operator==" id="QLatin1Constant::operator==" ref="qlatin1constant.html#operator-eq-eq"/>
             <keyword name="QMagnetometer" id="QMagnetometer" ref="qmagnetometer.html"/>
             <keyword name="reading" id="QMagnetometer::reading" ref="qmagnetometer.html#reading"/>
             <keyword name="returnGeoValues" id="QMagnetometer::returnGeoValues" ref="qmagnetometer.html#returnGeoValues-prop"/>
@@ -3334,6 +3338,8 @@
             <keyword name="~QVideoWindowControl" id="QVideoWindowControl::~QVideoWindowControl" ref="qvideowindowcontrol.html#dtor.QVideoWindowControl"/>
             <keyword name="QVideoWindowControl_iid" id="QVideoWindowControl_iid" ref="qvideowindowcontrol.html#QVideoWindowControl_iid"/>
             <keyword name="Q_DECLARE_CUSTOM_CONTACT_DETAIL" id="Q_DECLARE_CUSTOM_CONTACT_DETAIL" ref="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL"/>
+            <keyword name="Q_DECLARE_LATIN1_CONSTANT" id="Q_DECLARE_LATIN1_CONSTANT" ref="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT"/>
+            <keyword name="Q_DEFINE_LATIN1_CONSTANT" id="Q_DEFINE_LATIN1_CONSTANT" ref="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
@@ -3434,6 +3440,9 @@
             <keyword name="QtMedia::Saturation" id="QtMedia::Saturation" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::Sharpness" id="QtMedia::Sharpness" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::DeviceSettingDescription" id="QtMedia::DeviceSettingDescription" ref="qtmedia.html#MetaData-enum"/>
+            <keyword name="QtMedia::PosterImage" id="QtMedia::PosterImage" ref="qtmedia.html#MetaData-enum"/>
+            <keyword name="QtMedia::CoverArtImage" id="QtMedia::CoverArtImage" ref="qtmedia.html#MetaData-enum"/>
+            <keyword name="QtMedia::ThumbnailImage" id="QtMedia::ThumbnailImage" ref="qtmedia.html#MetaData-enum"/>
             <keyword name="QtMedia::SupportEstimate" id="QtMedia::SupportEstimate" ref="qtmedia.html#SupportEstimate-enum"/>
             <keyword name="QtMedia::NotSupported" id="QtMedia::NotSupported" ref="qtmedia.html#SupportEstimate-enum"/>
             <keyword name="QtMedia::MaybeSupported" id="QtMedia::MaybeSupported" ref="qtmedia.html#SupportEstimate-enum"/>
@@ -3571,6 +3580,7 @@
             <file>publish-subscribe-publisherdialog-cpp.html</file>
             <file>qsystemnetworkinfo.html</file>
             <file>filemanagerplugin-filemanagerstorage-h.html</file>
+            <file>images/sample-phonebook-2.png</file>
             <file>qtapfilter-members.html</file>
             <file>qversitcontactimporterpropertyhandler.html</file>
             <file>qmessageaccountid-members.html</file>
@@ -3661,6 +3671,7 @@
             <file>qvideoencodersettings.html</file>
             <file>quickstart-quickstart-pro.html</file>
             <file>declarative-sfw-dialer-declarative-sfw-dialer-pro.html</file>
+            <file>images/sample-phonebook-4.png</file>
             <file>querymessages-main-cpp.html</file>
             <file>bearercloud-bearercloud-pro.html</file>
             <file>serviceactions.html</file>
@@ -3762,8 +3773,8 @@
             <file>qcontactactionfactory.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-h.html</file>
             <file>qcontactdetaildefinition-members.html</file>
-            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
+            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qsensorreading-members.html</file>
             <file>samplephonebook-filterpage-h.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
@@ -3874,6 +3885,7 @@
             <file>images/weatherinfo-bris.png</file>
             <file>publish-subscribe-publish-subscribe-pro.html</file>
             <file>qmediaservice-members.html</file>
+            <file>qlatin1constant-members.html</file>
             <file>examples.html</file>
             <file>qcontacttag.html</file>
             <file>qcontactaction-members.html</file>
@@ -3939,6 +3951,7 @@
             <file>qambientlightfilter-members.html</file>
             <file>qgeoareamonitor.html</file>
             <file>qcontactphonenumber-members.html</file>
+            <file>images/sample-phonebook-1.png</file>
             <file>qmediatimeinterval.html</file>
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
@@ -4013,12 +4026,14 @@
             <file>player-playlistmodel-cpp.html</file>
             <file>qsensor-members.html</file>
             <file>qmediaservicesupporteddevicesinterface-members.html</file>
+            <file>qlatin1constant.html</file>
             <file>qsystemscreensaver.html</file>
             <file>qcontactaddress-members.html</file>
             <file>player-playercontrols-cpp.html</file>
             <file>qambientlightreading-members.html</file>
             <file>qcontactid-members.html</file>
             <file>qvaluespacesubscriber.html</file>
+            <file>images/sample-phonebook-3.png</file>
             <file>qcontactlocalidfetchrequest.html</file>
             <file>qrotationsensor.html</file>
             <file>qcontactinvalidengine-members.html</file>
@@ -4044,7 +4059,6 @@
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
-            <file>images/spb-screen.png</file>
             <file>qmlcontacts-qmlcontact-cpp.html</file>
             <file>qmessagecontentcontainer.html</file>
             <file>qambientlightsensor.html</file>
@@ -4133,12 +4147,14 @@
             <file>images/flickr-demo.png</file>
             <file>images/slideshow-img1.png</file>
             <file>images/Rotation_angles.png</file>
+            <file>images/sample-phonebook-1.png</file>
             <file>images/servicebrowser-attributes.png</file>
             <file>images/sensors-overview.png</file>
             <file>images/bearercloud-example.png</file>
             <file>images/weatherinfo-bris.png</file>
             <file>images/writemessage-example.png</file>
             <file>images/lightmaps-oslo.png</file>
+            <file>images/sample-phonebook-4.png</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>images/qtlogo.png</file>
             <file>images/codeless.png</file>
@@ -4146,11 +4162,12 @@
             <file>images/publish-subscribe-subscriber.png</file>
             <file>images/battery-subscriber.png</file>
             <file>images/servicebrowser.png</file>
+            <file>images/sample-phonebook-3.png</file>
             <file>images/battery-publisher.png</file>
             <file>images/keepintouch-example.png</file>
             <file>classic.css</file>
             <file>images/sysinfo.png</file>
-            <file>images/spb-screen.png</file>
+            <file>images/sample-phonebook-2.png</file>
             <file>images/roaming-states.png</file>
             <file>images/DialerServiceGUI.png</file>
             <file>images/qserviceinterfacedescriptor.png</file>

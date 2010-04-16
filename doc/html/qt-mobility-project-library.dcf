@@ -161,9 +161,7 @@
         <keyword ref="qcontact.html#availableActions">availableActions</keyword>
         <keyword ref="qcontact.html#clearDetails">clearDetails</keyword>
         <keyword ref="qcontact.html#detail">detail</keyword>
-        <keyword ref="qcontact.html#detailWithAction">detailWithAction</keyword>
         <keyword ref="qcontact.html#details">details</keyword>
-        <keyword ref="qcontact.html#detailsWithAction">detailsWithAction</keyword>
         <keyword ref="qcontact.html#displayLabel">displayLabel</keyword>
         <keyword ref="qcontact.html#id">id</keyword>
         <keyword ref="qcontact.html#isEmpty">isEmpty</keyword>
@@ -398,7 +396,6 @@
         <keyword ref="qcontactdetail.html#AccessConstraint-enum">QContactDetail::Irremovable</keyword>
         <keyword ref="qcontactdetail.html#AccessConstraint-enum">QContactDetail::ReadOnly</keyword>
         <keyword ref="qcontactdetail.html#accessConstraints">accessConstraints</keyword>
-        <keyword ref="qcontactdetail.html#assign">assign</keyword>
         <keyword ref="qcontactdetail.html#contexts">contexts</keyword>
         <keyword ref="qcontactdetail.html#definitionName">definitionName</keyword>
         <keyword ref="qcontactdetail.html#detailUri">detailUri</keyword>
@@ -1352,6 +1349,15 @@
         <keyword ref="qimageencodersettings.html#operator-eq">operator=</keyword>
         <keyword ref="qimageencodersettings.html#operator-eq-eq">operator==</keyword>
         <section ref="qimageencodersettings-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlatin1constant.html" title="QLatin1Constant Class Reference">
+        <keyword ref="qlatin1constant.html">QLatin1Constant</keyword>
+        <keyword ref="qlatin1constant.html#latin1">latin1</keyword>
+        <keyword ref="qlatin1constant.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qlatin1constant.html#operator-eq-eq">operator==</keyword>
+        <keyword ref="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT">Q_DECLARE_LATIN1_CONSTANT</keyword>
+        <keyword ref="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT">Q_DEFINE_LATIN1_CONSTANT</keyword>
+        <section ref="qlatin1constant-members.html" title="List of all members"/>
     </section>
     <section ref="qmagnetometer.html" title="QMagnetometer Class Reference">
         <keyword ref="qmagnetometer.html">QMagnetometer</keyword>
@@ -2916,8 +2922,10 @@
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::AverageLevel</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::ChapterNumber</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::FocalLengthIn35mmFilm</keyword>
+        <keyword ref="qtmedia.html#MetaData-enum">QtMedia::PosterImage</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Saturation</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Duration</keyword>
+        <keyword ref="qtmedia.html#MetaData-enum">QtMedia::CoverArtImage</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Publisher</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::MediaType</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::VideoFrameRate</keyword>
@@ -2962,6 +2970,7 @@
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::AlbumTitle</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::FocalLength</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::Resolution</keyword>
+        <keyword ref="qtmedia.html#MetaData-enum">QtMedia::ThumbnailImage</keyword>
         <keyword ref="qtmedia.html#MetaData-enum">QtMedia::ExposureTime</keyword>
         <keyword ref="qtmedia.html#SupportEstimate-enum">SupportEstimate</keyword>
         <keyword ref="qtmedia.html#SupportEstimate-enum">QtMedia::NotSupported</keyword>
