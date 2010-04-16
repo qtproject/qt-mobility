@@ -181,6 +181,6 @@ To make a release build and SIS package for a device run:
 
 For further details on how to build applications for
 Symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html} 
-{The Symbian Platform - Introduction to Qt}, \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
-{Qt Quick Start} and the \c {symbian\install.txt}
+{The Symbian Platform - Introduction to Qt} and \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
+{Qt Quick Start}
 */
