@@ -60,7 +60,7 @@
     \o add contacts
     \o edit contacts
     \o use filters to find contacts matching certain criteria
-    \o import and export contact lists as vCards*
+    \o import and export contact lists as vCards\reg *
     \endlist
 
     [*] \i{vCard is a registered trademark of the Internet Mail Consortium}
@@ -72,16 +72,41 @@
     their device.
 
     \section2 Interface
-    The application is designed to work on desktop and mobile platforms with minimal differences in code
-    between the platforms.  The interface is organized into a paged view, showing the \i {Contact List} by
-    default.  Contacts can be added, edited or deleted using the buttons at the bottom of the contact list.
-    To search for a contact in the list, a filter can be applied using the \i {Apply Filter} item in the
-    \i Contacts menu.
+    The application is designed to work on desktop and mobile platforms with
+    minimal differences in code between the platforms.  The interface is
+    organized into a paged view, showing the \i {Contact List} by default.
+    Contacts can be added, edited or deleted using the buttons at the bottom
+    of the contact list.
+    To search for a contact in the list, a filter can be applied using the
+    \i {Apply Filter} item in the \i Contacts menu.
 
-    The contact list can also be imported and exported to the vCard format through the \i {Import Contacts}
-    and \i {Export Contacts} items in the \i Contacts menu.  This functionality can be used to populate the
+    Here we see the \l {Contact List} with some names added.
+
+    \image sample-phonebook-1.png
+
+    When adding a new contact a new page is shown, with a \i{Set Picture}
+    button to import an image. It is a good idea to use smaller images if
+    you intend to export the contacts to a file later.
+
+    \image sample-phonebook-2.png
+
+    From the main menu, \i{Contacts}, you can select \i{Apply Filter}. This
+    will display a new page which enables the user to specify filter criteria.
+    In the screenshot below, we are selecting based on the first two characters
+    of the Name,
+
+    \image sample-phonebook-3.png
+
+    which gives us a subset of the list of contacts.
+
+    \image sample-phonebook-4.png
+
+    To reset this, just select \i{Clear Filter} from the \i {Contacts} menu.
+
+    The contact list can also be imported and exported to the vCard format
+    through the \i {Import Contacts} and \i {Export Contacts} items in the
+    \i Contacts menu.  This functionality can be used to populate the
     list from another device or application.
-    \image spb-screen.png Screenshot of the sample phone book
 
     \section2 Known Issues
     The example is not intended to be feature complete.  Only a very limited subset of detail types are
