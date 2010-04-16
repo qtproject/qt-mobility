@@ -68,6 +68,8 @@ PUBLIC_HEADERS += \
                     qmaptilereply.h \
                     qmaptileservice.h \
                     qmapview.h \
+                    qmapcontainer.h \
+                    qgeoboundingbox.h \
                     qnmeapositioninfosource.h \
                     qreversegeocodingrequest.h
 
@@ -256,6 +258,8 @@ SOURCES += \
             qmaptileservice_nokia.cpp \
             qmapview.cpp \
             qmapview_p.cpp \
+            qmapcontainer.cpp \
+            qgeoboundingbox.cpp \
             qnmeapositioninfosource.cpp \
             qreversegeocodingrequest.cpp
 

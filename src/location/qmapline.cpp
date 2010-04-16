@@ -167,8 +167,8 @@ QLineF QMapLine::connectShortest(const QMapView &mapView, const QGeoCoordinate& 
         pt2 = point1;
     }
 
-    QPointF mpt1 = mapView.geoToMap(pt1);
-    QPointF mpt2 = mapView.geoToMap(pt2);
+    QPointF mpt1 = mapView.translateToViewport(pt1);
+    QPointF mpt2 = mapView.translateToViewport(pt2);
 
     if (pt2.longitude() - pt1.longitude() > 180.0) {
         mpt1.rx() += mapView.mapWidth();

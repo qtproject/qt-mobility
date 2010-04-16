@@ -43,6 +43,7 @@
 #define QLANDMARKCATEGORYFILTER_H
 
 #include "qlandmarkfilter.h"
+#include "qlandmarkcategoryid.h"
 
 QT_BEGIN_HEADER
 
@@ -54,7 +55,7 @@ class QLandmarkCategoryFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkCategoryFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId);
+    QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId = QLandmarkCategoryId());
     virtual ~QLandmarkCategoryFilter();
 
     QLandmarkCategoryId categoryId() const;

@@ -101,7 +101,7 @@ void QMapPixmap::compMapCoords()
     if (!d->mapView)
         return;
 
-    QPointF mapTopLeft(d->mapView->geoToMap(d->geoTopLeft));
+    QPointF mapTopLeft(d->mapView->translateToViewport(d->geoTopLeft));
     d->pixRect = d->pic.rect();
     d->pixRect.moveTopLeft(mapTopLeft);
     //compute intersecting map tiles now

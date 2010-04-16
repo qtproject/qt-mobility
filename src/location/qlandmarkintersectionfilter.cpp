@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkIntersectionFilter
     \brief The QLandmarkIntersectionFilter class provides a filter which intersects the results
             of its constituent filters.
-    \ingroup location
+    \ingroup landmarks-filter
 
     Conceptually it performs an AND operation and thus may be used to
     select landmarks which match all of it's constituent filters.

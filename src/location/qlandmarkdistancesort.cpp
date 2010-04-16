@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkDistanceSort
     \brief The QLandmarkDistanceSort class is used to sort landmarks by distance
     from a given coordinate.
-    \ingroup location
+    \ingroup landmarks-sort
 */
 
 /*!

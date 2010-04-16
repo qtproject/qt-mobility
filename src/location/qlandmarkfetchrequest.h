@@ -47,11 +47,11 @@
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkFetchRequestPrivate;
-class QLandmarkFetchRequest : public QLandmarkAbstractRequest
+class Q_LOCATION_EXPORT QLandmarkFetchRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    QLandmarkFetchRequest();
+    QLandmarkFetchRequest(QObject *parent = 0);
     ~QLandmarkFetchRequest();
 
     QLandmarkFilter filter() const;
@@ -59,6 +59,7 @@ public:
 
     QList<QLandmarkSortOrder> sorting() const;
     void setSorting(QList<QLandmarkSortOrder> &sorting);
+    void setSorting(const QLandmarkSortOrder &sortOrder);
 
     QList<QLandmark> landmarks() const;
 private:

@@ -43,10 +43,10 @@
 QTM_USE_NAMESPACE
 /*!
     \class QLandmarkAbstractRequest
-    \brief The QLandmarkAbstractRequest class provides a mechanism for
-    asynchronous requests to be made.
+    \brief The QLandmarkAbstractRequest class provides the interface
+    from which all asynchronous request classes inherit.
 
-    \ingroup location
+    \ingroup landmarks-request
 
     It allows a client to asynchronously request some functionality
     from a QLandmarkManager.
@@ -81,9 +81,10 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    Constructs a new, invalid asynchronous request.
+    Constructs a new, invalid asynchronous request with the given \a parent.
 */
-QLandmarkAbstractRequest::QLandmarkAbstractRequest()
+QLandmarkAbstractRequest::QLandmarkAbstractRequest(QObject *parent)
+    : QObject(parent)
 {
 }
 

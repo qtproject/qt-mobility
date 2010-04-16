@@ -44,8 +44,7 @@
 
 #include "qlandmarkfilter.h"
 #include <Qt>
-
-class QString;
+#include <QString>
 
 QT_BEGIN_HEADER
 
@@ -55,7 +54,7 @@ class QLandmarkNameFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkNameFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkNameFilter(const QString &name);
+    QLandmarkNameFilter(const QString &name = QString(), Qt::CaseSensitivity sensitivity = Qt::CaseInsensitive);
     virtual ~QLandmarkNameFilter();
 
     QString name() const;

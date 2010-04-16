@@ -56,13 +56,14 @@ QTM_BEGIN_NAMESPACE
     retrieved by calling error()), or when individual items have been
     saved (which may be retrieved by calling categories()).
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!
-    Constructs a category save request.
+    Constructs a category save request with the given \a parent.
 */
-QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest()
+QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 
@@ -85,8 +86,18 @@ QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 
 /*!
     Sets the list of \a categories to be saved.
+    \sa setCategory()
 */
 void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> &categories)
+{
+}
+
+/*!
+    Convenience function to set a single \a category to be saved.
+
+    \sa setCategories()
+*/
+void QLandmarkCategorySaveRequest::setCategory(const QLandmarkCategory& category)
 {
 }
 

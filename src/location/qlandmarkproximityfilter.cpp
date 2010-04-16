@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qlandmarkproximityfilter.h"
-#include "qgeocoordinate.h"
 #include "qlandmarkfilter_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -78,7 +77,7 @@ QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate()
     \class QLandmarkProximityFilter
     \brief The QLandmarkProximityFilter class is used to search for landmarks based on the radius
     around a given coordinate.
-    \ingroup location
+    \ingroup landmarks-filter
 */
 
 /*!

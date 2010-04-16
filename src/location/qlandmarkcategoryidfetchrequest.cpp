@@ -54,13 +54,14 @@ QTM_BEGIN_NAMESPACE
      as well as if an overall operation error occurred(which may be retrieved by calling
      QLandmarkAbstractRequest::error()).
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!
-    Creates a new category identifier fetch request object.
+    Creates a new category identifier fetch request object with the given \a parent.
 */
-QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest()
+QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 

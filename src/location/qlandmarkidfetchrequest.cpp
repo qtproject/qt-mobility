@@ -54,13 +54,14 @@ QTM_BEGIN_NAMESPACE
     identifiers (which may be retrieved by calling ids()), are updated, as well as if
     the overall operation error (which may be retrieved by calling error()) is updated.
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!
-    Creates a new landmark id fetch request object.
+    Creates a new landmark id fetch request object with the given \a parent.
 */
-QLandmarkIdFetchRequest::QLandmarkIdFetchRequest()
+QLandmarkIdFetchRequest::QLandmarkIdFetchRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 

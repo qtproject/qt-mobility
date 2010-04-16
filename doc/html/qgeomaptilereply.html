@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeomaptilereply.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGeoMapTileReply Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoMapTileReply"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMapTileReply Class Reference</h1>
+<p>The QGeoMapTileReply class represents the response from a mapping service. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoMapTileReply&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="qgeomaptilereply-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#ErrorCode-enum">ErrorCode</a></b> { NoError, NetworkError, NoContentError, UnknownError }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#QGeoMapTileReply">QGeoMapTileReply</a></b> ( const QGeoMapTileRequest &amp; <i>request</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#dtor.QGeoMapTileReply">~QGeoMapTileReply</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#data">data</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoMapTileRequest </td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#request">request</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#setData">setData</a></b> ( const QByteArray &amp; <i>data</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="public-slots"></a>
+<h2>Public Slots</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#cancel">cancel</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#done">done</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#error">error</a></b> ( QGeoMapTileReply::ErrorCode <i>errorCode</i>, const QString &amp; <i>errorString</i> = QString() )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomaptilereply.html#finished">finished</a></b> ()</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoMapTileReply class represents the response from a mapping service.</p>
+<p>This class represents the response from a mapping service. It also takes responsibility for any errors that happen while the request is in submitted to and processed by the service.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QGeoMapTileReply/ErrorCode"></a>
+<h3 class="fn"><a name="ErrorCode-enum"></a>enum QGeoMapTileReply::ErrorCode</h3>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoMapTileReply/QGeoMapTileReply"></a>
+<h3 class="fn"><a name="QGeoMapTileReply"></a>QGeoMapTileReply::QGeoMapTileReply ( const QGeoMapTileRequest &amp; <i>request</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a <a href="qgeomaptilereply.html">QGeoMapTileReply</a> from a QGeoMapTileRequest <i>request</i>, and with parent <i>parent</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapTileReply/~QGeoMapTileReply"></a>
+<h3 class="fn"><a name="dtor.QGeoMapTileReply"></a>QGeoMapTileReply::~QGeoMapTileReply ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destructor.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapTileReply/cancel"></a>
+<h3 class="fn"><a name="cancel"></a>void QGeoMapTileReply::cancel ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
+<p>Cancels the receiving of this reply if the reply hasn't been received already.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapTileReply/data"></a>
+<h3 class="fn"><a name="data"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QGeoMapTileReply::data () const</h3>
+<p>Returns the requested map data.</p>
+<p>See also <a href="qgeomaptilereply.html#setData">setData</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapTileReply/done"></a>
+<h3 class="fn"><a name="done"></a>void QGeoMapTileReply::done ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Causes this <a href="qgeomaptilereply.html">QGeoMapTileReply</a> to emit <a href="qgeomaptilereply.html#finished">finished</a>() if it has been configured properly or <a href="qgeomaptilereply.html#error">error</a>() if there is a problem with the configuration.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapTileReply/error"></a>
+<h3 class="fn"><a name="error"></a>void QGeoMapTileReply::error ( <a href="qgeomaptilereply.html#ErrorCode-enum">QGeoMapTileReply::ErrorCode</a> <i>errorCode</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>errorString</i> = QString() )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Indicates that an error occurred during the receiving or processing of the reply.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapTileReply/finished"></a>
+<h3 class="fn"><a name="finished"></a>void QGeoMapTileReply::finished ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Indicates that the reply has been received and processed without error, and is ready to be used.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapTileReply/request"></a>
+<h3 class="fn"><a name="request"></a>QGeoMapTileRequest QGeoMapTileReply::request () const</h3>
+<p>Returns the request which prompted this reply.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapTileReply/setData"></a>
+<h3 class="fn"><a name="setData"></a>void QGeoMapTileReply::setData ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>data</i> )</h3>
+<p>Sets the requested map data to <i>data</i>.</p>
+<p>See also <a href="qgeomaptilereply.html#data">data</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

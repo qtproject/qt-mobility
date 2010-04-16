@@ -143,7 +143,7 @@ void QMapView::init(QMapTileService* mapService, const QGeoCoordinate& center)
     d->numColRow = (qint32) pow(2.0, d->currZoomLevel);
     d->viewPort = boundingRect();
     d->routeDetails = DEFAULT_ROUTE_DETAIL_LEVEL;
-    centerOn(center);
+    setCenter(center);
 
     d->releaseTimer.start(RELEASE_INTERVAL);
 }
@@ -318,7 +318,7 @@ void QMapView::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     Q_D(QMapView);
     QPointF mapCoord = event->pos() + d->viewPort.topLeft();
-    QGeoCoordinate geoCoord = mapToGeo(mapCoord);
+    QGeoCoordinate geoCoord = translateFromViewport(mapCoord);
 
     if (event->button() == Qt::LeftButton && d->pannable)
         d->panActive = true;
@@ -349,7 +349,7 @@ void QMapView::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if (d->panActive) {
         int deltaLeft = event->lastPos().x() - event->pos().x();
         int deltaTop  = event->lastPos().y() - event->pos().y();
-        moveViewPort(deltaLeft, deltaTop);
+        pan(deltaLeft, deltaTop);
     }
 }
 
@@ -376,7 +376,7 @@ quint16 QMapView::maxZoomLevel() const
 /*!
     Returns the current zoom level.
 */
-quint16 QMapView::zoomLevel() const
+quint16 QMapView::getZoomLevel() const
 {
     Q_D(const QMapView);
     return d->currZoomLevel;
@@ -385,7 +385,7 @@ quint16 QMapView::zoomLevel() const
 /*!
     Sets the current zoom level.
 */
-void QMapView::setZoomLevel(int zoomLevel)
+void QMapView::setZoomLevel(int level)
 {
     Q_D(QMapView);
 
@@ -394,12 +394,12 @@ void QMapView::setZoomLevel(int zoomLevel)
 
     quint16 oldZoomLevel = d->currZoomLevel;
 
-    if (zoomLevel > d->mapService->maxZoomLevel())
+    if (level > d->mapService->maxZoomLevel())
         d->currZoomLevel = d->mapService->maxZoomLevel();
-    else if (zoomLevel < 0)
+    else if (level < 0)
         d->currZoomLevel = 0;
     else
-        d->currZoomLevel = zoomLevel;
+        d->currZoomLevel = level;
 
     if (oldZoomLevel == d->currZoomLevel)
         return; //nothing to be done
@@ -421,21 +421,14 @@ void QMapView::setZoomLevel(int zoomLevel)
     QPointF newCenter(static_cast<qint64>(ratioX * d->numColRow * tileWidth),
                       static_cast<qint64>(ratioY * d->numColRow * tileHeight));
     d->viewPort.moveCenter(newCenter.toPoint());
-    moveViewPort(0, 0);
+    pan(0, 0);
 
     //reconstruct all object mappings
     //***************************************
     d->mapTiles.clear();
     d->mapTiles = scaledTiles;
     d->tileToObjects.clear();
-    QSetIterator<QMapObject*> it(d->mapObjects);
-
-    while (it.hasNext()) {
-        QMapObject* obj = it.next();
-        obj->compMapCoords();
-        d->addMapObjectToTiles(obj);
-    }
-
+    d->mapObjects.reconstructObjects(d->tileToObjects);
     //***************************************
 
     d->cancelPendingTiles();
@@ -472,24 +465,24 @@ void QMapView::centerOn(qreal x, qreal y)
 /*
     Centers the view port on the given \a geoPos.
 */
-void QMapView::centerOn(const QGeoCoordinate& geoPos)
+void QMapView::setCenter(const QGeoCoordinate& coord)
 {
-    centerOn(geoToMap(geoPos));
+    centerOn(translateToViewport(coord));
 }
 
 /*!
     Returns the geo coordinate at the center of the map's current view port.
 */
-QGeoCoordinate QMapView::center() const
+QGeoCoordinate QMapView::getCenter() const
 {
     Q_D(const QMapView);
-    return mapToGeo(d->viewPort.center());
+    return translateFromViewport(d->viewPort.center());
 }
 
 /*!
     Returns the map coordinate (in pixels) at the center of the map's current view port.
 */
-QPointF QMapView::mapCenter() const
+QPointF QMapView::getViewportCenter() const
 {
     Q_D(const QMapView);
     return d->viewPort.center();
@@ -500,7 +493,7 @@ QPointF QMapView::mapCenter() const
     with \a deltaX specifying the number of pixels the view port is moved along the x-axis
     and \a deltaY specifying the number of pixels the view port is moved along the y-axis.
 */
-void QMapView::moveViewPort(int deltaX, int deltaY)
+void QMapView::pan(int deltaX, int deltaY)
 {
     Q_D(QMapView);
 
@@ -524,6 +517,11 @@ void QMapView::moveViewPort(int deltaX, int deltaY)
     emit centerChanged();
 }
 
+void QMapView::pan(int dragX, int dragY, int dropX, int dropY)
+{
+    pan(dropX-dragX, dropY-dragY);
+}
+    
 void QMapView::resizeEvent(QGraphicsSceneResizeEvent* /*event*/)
 {
     Q_D(QMapView);
@@ -560,10 +558,10 @@ void QMapView::releaseRemoteTiles()
 /*!
     Converts a \a geoCoordinate to a map coordinate (in pixels).
 */
-QPointF QMapView::geoToMap(const QGeoCoordinate& geoCoordinate) const
+QPointF QMapView::translateToViewport(const QGeoCoordinate& coord) const
 {
-    float lng = geoCoordinate.longitude();
-    float lat = geoCoordinate.latitude();
+    float lng = coord.longitude();
+    float lat = coord.latitude();
 
     lng = lng / 360.0f + 0.5f;
 
@@ -611,9 +609,9 @@ qreal rmod(const qreal a, const qreal b)
 /*!
     Converts a \a mapCoordinate (in pixels) into its corresponding geo coordinate.
 */
-QGeoCoordinate QMapView::mapToGeo(const QPointF& mapCoordinate) const
+QGeoCoordinate QMapView::translateFromViewport(const QPointF& point) const
 {
-    QPointF mercCoord = mapToMercator(mapCoordinate);
+    QPointF mercCoord = mapToMercator(point);
     qreal x = mercCoord.x();
     qreal y = mercCoord.y();
 
@@ -661,12 +659,9 @@ void QMapView::mapToTile(const QPointF& mapCoordinate, quint32* col, quint32* ro
 void QMapView::removeMapObject(QMapObject* mapObject)
 {
     Q_D(QMapView);
-    QHash<quint64, QList<QMapObject*> > tileToObjectsMap; //!< Map tile to map object hash map.
-    d->mapObjects.remove(mapObject);
+    d->mapObjects.removeMapObject(mapObject);
 
     for (int i = 0; i < mapObject->d_ptr->intersectingTiles.count(); i++) {
-        if (tileToObjectsMap.contains(mapObject->d_ptr->intersectingTiles[i]))
-            tileToObjectsMap[mapObject->d_ptr->intersectingTiles[i]].removeAll(mapObject);
         if (d->tileToObjects.contains(mapObject->d_ptr->intersectingTiles[i]))
             d->tileToObjects[mapObject->d_ptr->intersectingTiles[i]].removeAll(mapObject);
     }
@@ -681,8 +676,7 @@ void QMapView::addMapObject(QMapObject* mapObject)
 {
     Q_D(QMapView);
     mapObject->setParentView(this);
-    d->mapObjects.insert(mapObject);
-    mapObject->compMapCoords();
+    d->mapObjects.addMapObject(mapObject);
     d->addMapObjectToTiles(mapObject);
     update();
 }
@@ -703,7 +697,7 @@ QRectF QMapView::getTileRect(quint32 col, quint32 row) const
 */
 QMapObject* QMapView::getTopmostMapObject(const QGeoCoordinate& geoCoordinate)
 {
-    return getTopmostMapObject(geoToMap(geoCoordinate));
+    return getTopmostMapObject(translateToViewport(geoCoordinate));
 }
 
 /*!
@@ -807,6 +801,61 @@ quint64 QMapView::getTileIndex(quint32 col, quint32 row) const
 {
     Q_D(const QMapView);
     return ((quint64) row) * d->numColRow + col;
+}
+
+/*!
+    Returns the current heading.
+*/
+quint16 QMapView::getHeading() const
+{
+    Q_D(const QMapView);
+    return d->heading;
+}
+
+/*!
+    Sets the current heading.
+*/
+void QMapView::setHeading(quint16 heading)
+{
+    //TODO: Map view heading
+    Q_D(QMapView);
+    d->heading = heading;
+}
+
+/*!
+    Returns the current tilt.
+*/
+quint16 QMapView::getTilt() const
+{
+    Q_D(const QMapView);
+    return d->heading;
+}
+
+/*!
+    Sets the current tilt.
+*/
+void QMapView::setTilt(quint16 tilt)
+{
+    //TODO: Map view tilt
+    Q_D(QMapView);
+    d->tilt = tilt;
+}
+
+/*!
+    Returns the current map view bounds.
+*/
+QRectF QMapView::getViewBounds() const
+{
+    Q_D(const QMapView);
+    return d->viewPort;
+}
+
+/*!
+    Sets hotspot.
+*/
+void QMapView::setHotSpot(QPointF& /*hotspot*/)
+{
+    //TODO: Implement hotspot support
 }
 
 /*****************************************************************************
