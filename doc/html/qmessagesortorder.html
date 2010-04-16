@@ -1,28 +1,13 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qmessagesortorder.cpp -->
+<head>
   <title>Qt Mobility Project 1.0: QMessageSortOrder Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <!--[if IE]>
-	<meta name="MSSmartTagsPreventParsing" content="true">
-	<meta http-equiv="imagetoolbar" content="no">
-	<![endif]-->
-  <!--[if lt IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
-	<![endif]-->
-  <!--[if IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
-	<![endif]-->
-  <!--[if IE 8]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
-	<![endif]-->
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
-<body class="">
+<body>
 <a name="//apple_ref/cpp/cl//QMessageSortOrder"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -37,7 +22,7 @@
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortorder.html#QMessageSortOrder">QMessageSortOrder</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortorder.html#QMessageSortOrder-2">QMessageSortOrder</a></b> ( const QMessageSortOrder &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortorder.html#dtor.QMessageSortOrder">~QMessageSortOrder</a></b> ()</td></tr>
@@ -49,7 +34,7 @@
 <hr />
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QMessageSortOrder </td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortorder.html#byPriority">byPriority</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageSortOrder </td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortorder.html#byReceptionTimeStamp">byReceptionTimeStamp</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageSortOrder </td><td class="memItemRight" valign="bottom"><b><a href="qmessagesortorder.html#byRecipients">byRecipients</a></b> ( Qt::SortOrder <i>order</i> = Qt::AscendingOrder )</td></tr>
@@ -62,17 +47,14 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageSortOrder class defines the parameters used for sorting a subset of queried messages from the messaging store.</p>
 <p>A QMessageSortOrder is composed of a message property to sort and a sort order. The QMessageSortOrder class is used in conjunction with the <a href="qmessagemanager.html#queryMessages">QMessageManager::queryMessages</a>() and <a href="qmessageservice.html#queryMessages">QMessageService::queryMessages</a>() functions to sort message results according to the criteria defined by the sort order.</p>
 <p>For example: To create a query for all messages sorted by their timestamp in decending order:</p>
 <pre>    QMessageSortOrder sortOrder(QMessageSortOrder::byTimeStamp(Qt::DescendingOrder));
     QMessageIdList results = QMessageManager().queryMessages(QMessageFilter(), sortOrder);</pre>
-</div>
 <p>See also <a href="qmessagemanager.html">QMessageManager</a> and <a href="qmessagefilter.html">QMessageFilter</a>.</p>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMessageSortOrder/QMessageSortOrder"></a>
 <h3 class="fn"><a name="QMessageSortOrder"></a>QMessageSortOrder::QMessageSortOrder ()</h3>
@@ -142,7 +124,6 @@
 <p>Appends the value of the sort order <i>other</i> with the value of this sort order and assigns the result to this sort order.</p>
 <p>This function determines sorting precedence.</p>
 <p>On the Windows Mobile platform <a href="qmessagesortorder.html#bySubject">bySubject</a>() and <a href="qmessagesortorder.html#byReceptionTimeStamp">byReceptionTimeStamp</a>() sort orders can not be combined with each other.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
