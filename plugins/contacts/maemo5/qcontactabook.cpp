@@ -513,7 +513,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
 
   // update our list of ids...
-  QContactLocalId id = m_localId[contactUidCopy];
+  QContactLocalId id = m_localIds[contactUidCopy];
   m_localIds.remove(contactUidCopy);
   if (contactUidCopy)
     free(contactUidCopy);
