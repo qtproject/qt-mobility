@@ -53,7 +53,7 @@ as per \l {Installation Guide}.
 One can start using Qt Mobility with 3 simple steps.
 \list 1
     \o Include the appropriate headers
-    \o Use the \c QtMobility namespace
+    \o Use the QTM_USE_NAMESPACE macro (defined in qmobilityglobal.h but implicitly included from any Qt Mobility header)
     \o Declare the usage of Qt Mobility
        and appropriate API(s) in the project(.pro) file
 \endlist
@@ -63,9 +63,8 @@ Steps 1 and 2 are shown in the example below:
 
 This example uses the QSystemInfo headers to print out the 
 system's current country code.  All the domain APIs are wrapped
-within the \c QtMobility namespace and thus developers either 
-need to declare \c {using namespace QtMobility} or
-qualify their symbols e.g. \c {QtMobility::QSystemInfo}.
+within a Qt Mobility namespace and thus developers 
+need to use the QTM_USE_NAMESPACE macro.
 (\bold{Note}:  If you are on the Symbian platform you will
 need to define the actual header file, in this case
 <qsysteminfo.h> rather than using the standard header form
