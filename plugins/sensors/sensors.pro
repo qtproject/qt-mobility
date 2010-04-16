@@ -6,6 +6,10 @@ maemo5 {
     SUBDIRS += n900
 }
 
+maemo6 {
+    SUBDIRS += maemo6
+}
+
 symbian {
     equals(sensors_symbian_enabled,yes) {
         SUBDIRS += symbian
