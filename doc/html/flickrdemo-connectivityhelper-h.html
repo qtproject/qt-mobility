@@ -65,6 +65,9 @@
 
     class QWidget;
 
+    QTM_BEGIN_NAMESPACE
+    class QNetworkSession;
+    QTM_END_NAMESPACE
 <span class="comment">    // Use the QtMobility namespace</span>
     QTM_USE_NAMESPACE
 
@@ -73,16 +76,16 @@
         Q_OBJECT
 
     public:
-        ConnectivityHelper(QNetworkSession *session, QWidget *parent = 0);
+        ConnectivityHelper(QtMobility::QNetworkSession *session, QWidget *parent = 0);
 
     signals:
         void networkingCancelled();
 
     private slots:
-        void error(QNetworkSession::SessionError error);
+        void error(QtMobility::QNetworkSession::SessionError error);
 
     private:
-        QNetworkSession *m_session;
+        QtMobility::QNetworkSession *m_session;
     };
 
     #endif <span class="comment">// #ifndef CONNECTIVITYHELPER_H</span></pre>

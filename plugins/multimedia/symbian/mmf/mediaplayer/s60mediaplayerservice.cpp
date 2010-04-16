@@ -74,6 +74,7 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     m_control = new S60MediaPlayerControl(*this, this);
     m_mediaRecognizer = new S60MediaRecognizer(this);  
     m_metaData = new S60MediaMetaDataProvider(*this);
+    m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control, this);
 }
 
 S60MediaPlayerService::~S60MediaPlayerService()
@@ -82,7 +83,6 @@ S60MediaPlayerService::~S60MediaPlayerService()
     delete m_videoRenderer;
     delete m_videoWindow;
     delete m_videoOutput;
-    delete m_metaData;
 }
 
 QMediaControl *S60MediaPlayerService::control(const char *name) const
@@ -127,8 +127,6 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
     }
 
     if (qstrcmp(name, QAudioEndpointSelector_iid) == 0) {
-        if (!m_audioEndpointSelector)
-            m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control);
         return m_audioEndpointSelector;
     }
 
@@ -209,10 +207,13 @@ S60MediaPlayerSession* S60MediaPlayerService::VideoPlayerSession()
                 m_control, SIGNAL(error(int, const QString &)));
         connect(m_videoPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
+        connect(m_videoPlayerSession, SIGNAL(activeEndpointChanged(const QString&)), 
+                m_audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)));
     }
     
     m_videoPlayerSession->setVolume(m_control->mediaControlSettings().volume());
     m_videoPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
+    m_videoPlayerSession->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
     return m_videoPlayerSession;
 }
 
@@ -243,9 +244,12 @@ S60MediaPlayerSession* S60MediaPlayerService::AudioPlayerSession()
                 m_control, SIGNAL(error(int, const QString &)));
         connect(m_audioPlayerSession, SIGNAL(metaDataChanged()), 
                 m_metaData, SIGNAL(metaDataChanged()));
+        connect(m_audioPlayerSession, SIGNAL(activeEndpointChanged(const QString&)), 
+                m_audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)));
     }
     
     m_audioPlayerSession->setVolume(m_control->mediaControlSettings().volume());
     m_audioPlayerSession->setMuted(m_control->mediaControlSettings().isMuted());
+    m_audioPlayerSession->setAudioEndpoint(m_control->mediaControlSettings().audioEndpoint());
     return m_audioPlayerSession;
 }

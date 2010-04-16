@@ -59,7 +59,7 @@ class Q_CONTACTS_EXPORT QContactRelationshipFetchRequest : public QContactAbstra
     Q_OBJECT
 
 public:
-    QContactRelationshipFetchRequest();
+    QContactRelationshipFetchRequest(QObject* parent = 0);
 
     /* Selection */
     void setFirst(const QContactId& firstId);

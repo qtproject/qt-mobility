@@ -7,7 +7,7 @@ include(../../../common.pri)
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(sensors_sym)
+TARGET = $$qtLibraryTarget(qtsensors_sym)
 
 SOURCES +=  \			
 			sensorbackendsym.cpp \
@@ -61,7 +61,7 @@ symbian: {
 load(data_caging_paths)
  
 # Defines plugin files into Symbian .pkg package
-pluginDep.sources = sensors_sym.dll
+pluginDep.sources = qtsensors_sym.dll
 pluginDep.path = $$QT_PLUGINS_BASE_DIR/sensors
 DEPLOYMENT += pluginDep
 }

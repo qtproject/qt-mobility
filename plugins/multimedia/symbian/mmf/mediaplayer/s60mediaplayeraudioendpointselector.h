@@ -46,7 +46,7 @@
 
 #include <QAudioEndpointSelector>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60MediaPlayerControl;
 class S60MediaPlayerSession;
@@ -72,7 +72,6 @@ private:
     S60MediaPlayerControl* m_control;
     QString m_audioInput;
     QList<QString> *m_audioEndpointNames;
-    QList<QString> *m_audioEndpointDescriptions;
 };
 
 #endif // S60MEDIAPLAYERAUDIOENDPOINTSELECTOR_H

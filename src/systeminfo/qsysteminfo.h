@@ -245,9 +245,9 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked)
 
 
-    Q_ENUMS(BatteryLevel)
+    Q_ENUMS(BatteryStatus)
     Q_ENUMS(PowerState)
-    Q_ENUMS(InputMethod)
+    Q_FLAGS(InputMethod InputMethodFlags)
     Q_ENUMS(SimStatus)
     Q_ENUMS(Profile)
 
@@ -281,6 +281,7 @@ public:
         MultiTouch = 0x0000010,
         Mouse = 0x0000020
     };
+
     Q_DECLARE_FLAGS(InputMethodFlags, InputMethod)
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
@@ -327,6 +328,7 @@ private:
     QSystemDeviceInfoPrivate *d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QSystemDeviceInfo::InputMethodFlags )
 
 class QSystemScreenSaverPrivate;
 class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject

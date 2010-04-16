@@ -55,11 +55,13 @@ class Q_CONTACTS_EXPORT QContactDetailDefinitionRemoveRequest : public QContactA
     Q_OBJECT
 
 public:
-    QContactDetailDefinitionRemoveRequest();
+    QContactDetailDefinitionRemoveRequest(QObject* parent = 0);
 
     /* Selection */
-    void setDefinitionNames(const QString& contactType, const QStringList& names);
+    void setDefinitionName(const QString& definitionName);
+    void setDefinitionNames(const QStringList& names);
     QStringList definitionNames() const;
+    void setContactType(const QString& contactType);
     QString contactType() const;
 
     /* Results */

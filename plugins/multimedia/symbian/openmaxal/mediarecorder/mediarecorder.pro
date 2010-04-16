@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = xarecordservice
+TARGET = qtmedia_xarecordservice
 
 PLUGIN_SUBDIR = mediaservice
 
@@ -12,7 +12,7 @@ symbian {
 
 # Input parameters for qmake to make the dll a qt plugin
 # ------------------------------------------------------
-pluginstub.sources = qmakepluginstubs/xarecordservice.dll
+pluginstub.sources = qmakepluginstubs/qtmedia_xarecordservice.dll
 pluginstub.path = /resource/qt/plugins/mediaservice
 DEPLOYMENT += pluginstub
 

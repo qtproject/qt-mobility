@@ -142,7 +142,6 @@ a
 ./tst_qversitproperty
 ./tst_qversitreader
 ./tst_qversitwriter
-./tst_versitutils
 
 #QMessaging
 ./tst_qmessage

@@ -45,7 +45,7 @@
 #include "qmediacontrol.h"
 #include "qradiotuner.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QRadioTunerControl : public QMediaControl
 {
@@ -55,7 +55,7 @@ public:
     ~QRadioTunerControl();
 
     virtual bool isAvailable() const = 0;
-    virtual QtMedia::AvailabilityError availabilityError() const = 0;
+    virtual QtMultimedia::AvailabilityError availabilityError() const = 0;
 
     virtual QRadioTuner::State state() const = 0;
 
@@ -110,6 +110,6 @@ protected:
 #define QRadioTunerControl_iid "com.nokia.Qt.QRadioTunerControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QRadioTunerControl, QRadioTunerControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QRADIOTUNERCONTROL_H

@@ -45,7 +45,7 @@
 #include <QMetaDataControl>
 #include "ms60mediaplayerresolver.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60MediaPlayerSession;
 
@@ -60,16 +60,16 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimedia::MetaData key) const;
+    void setMetaData(QtMultimedia::MetaData key, const QVariant &value);
+    QList<QtMultimedia::MetaData> availableMetaData() const;
     
     QVariant extendedMetaData(const QString &key) const ;
     void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
     
 private:
-    QString metaDataKeyAsString(QtMedia::MetaData key) const;
+    QString metaDataKeyAsString(QtMultimedia::MetaData key) const;
 
 private:
     MS60MediaPlayerResolver& m_mediaPlayerResolver;

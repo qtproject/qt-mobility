@@ -47,7 +47,7 @@
 #include "qmediarecorder.h"
 #include "xarecordsessioncommon.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class XARecordSessionImpl;
 

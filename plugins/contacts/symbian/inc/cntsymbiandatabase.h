@@ -89,11 +89,11 @@ private:
     QSet<QContactLocalId> groupMembersL(QContactLocalId groupId);
 
 private:
+    QContactManagerEngine *m_engine;
     CContactDatabase* m_contactDatabase;
 #ifndef SYMBIAN_BACKEND_USE_SQLITE
     CContactChangeNotifier* m_contactChangeNotifier;
 #endif
-    QContactManagerEngine *m_engine;
     QList<QContactLocalId> m_contactsEmitted;
     QContactLocalId m_currentOwnCardId;
     QMap<QContactLocalId, QSet<QContactLocalId> > m_groupContents;

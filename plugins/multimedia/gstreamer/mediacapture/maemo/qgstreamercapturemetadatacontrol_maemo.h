@@ -44,7 +44,7 @@
 
 #include <qmetadatacontrol.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerCaptureMetaDataControl : public QMetaDataControl
 {
@@ -57,9 +57,9 @@ public:
     bool isMetaDataAvailable() const { return true; }
     bool isWritable() const { return true; }
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimedia::MetaData key) const;
+    void setMetaData(QtMultimedia::MetaData key, const QVariant &value);
+    QList<QtMultimedia::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(QString const &name) const;
     void setExtendedMetaData(QString const &name, QVariant const &value);
