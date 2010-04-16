@@ -499,6 +499,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   GList* rosterContacts = NULL;
   rosterContacts = osso_abook_contact_get_roster_contacts(aContact);
   const char *masterUid = CONST_CHAR(e_contact_get_const(E_CONTACT(aContact), E_CONTACT_UID));
+  char *contactUidCopy = strdup(masterUid);
   while(rosterContacts){
     OssoABookContact *rosterContact = A_CONTACT(rosterContacts->data);
     osso_abook_contact_reject_for_uid(rosterContact, masterUid, NULL);
@@ -512,9 +513,11 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
 
   // update our list of ids...
-  m_localIds.remove(masterUid);
+  QContactLocalId id = m_localId[contactUidCopy];
+  m_localIds.remove(contactUidCopy);
+  if (contactUidCopy)
+    free(contactUidCopy);
   
-  QContactLocalId id = m_localIds[masterUid];
   if (id)
     _contactsRemoved(QList<QContactLocalId>() << id);
   
