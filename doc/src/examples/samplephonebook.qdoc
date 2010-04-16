@@ -84,8 +84,9 @@
 
     \image sample-phonebook-1.png
 
-    When adding a new contact a new page is shown, with an Avatar button to
-    import an image.
+    When adding a new contact a new page is shown, with a \i{Set Picture}
+    button to import an image. It is a good idea to use smaller images if
+    you intend to export the contacts to a file later.
 
     \image sample-phonebook-2.png
 
