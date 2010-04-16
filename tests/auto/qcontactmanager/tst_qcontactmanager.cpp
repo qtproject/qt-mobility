@@ -739,11 +739,11 @@ void tst_QContactManager::add()
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
 
-    QVERIFY(alice.id() != QContactId());
+    QVERIFY(!alice.id().managerUri().isEmpty());
+    QVERIFY(alice.id().localId() != 0);
     QCOMPARE(cm->contactIds().count(), currCount+1);
 
     QContact added = cm->contact(alice.id().localId());
-    QVERIFY(added.id() != QContactId());
     QVERIFY(added.id() == alice.id());
     
     if (!isSuperset(added, alice)) {
@@ -1865,12 +1865,9 @@ void tst_QContactManager::contactValidation()
 
 void tst_QContactManager::signalEmission()
 {
+    QTest::qWait(500); // clear the signal queue
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> m1(QContactManager::fromUri(uri));
-    QScopedPointer<QContactManager> m2(QContactManager::fromUri(uri));
-
-    QVERIFY(m1->hasFeature(QContactManager::Anonymous) ==
-        m2->hasFeature(QContactManager::Anonymous));
 
     qRegisterMetaType<QContactLocalId>("QContactLocalId");
     qRegisterMetaType<QList<QContactLocalId> >("QList<QContactLocalId>");
@@ -1879,8 +1876,8 @@ void tst_QContactManager::signalEmission()
     QSignalSpy spyCR(m1.data(), SIGNAL(contactsRemoved(QList<QContactLocalId>)));
 
     QList<QVariant> args;
+    QList<QContactLocalId> arg;
     QContact c;
-    QContactLocalId temp;
     QList<QContact> batchAdd;
     QList<QContactLocalId> batchRemove;
     QList<QContactLocalId> sigids;
@@ -1894,12 +1891,14 @@ void tst_QContactManager::signalEmission()
     QContactName nc;
     saveContactName(&c, nameDef, &nc, "John");
     QVERIFY(m1->saveContact(&c));
+    QContactLocalId cid = c.id().localId();
     addSigCount += 1;
     QTRY_COMPARE(spyCA.count(), addSigCount);
     args = spyCA.takeFirst();
     addSigCount -= 1;
-    QVERIFY(args.count() == 1);
-    temp = QContactLocalId(args.at(0).value<quint32>());
+    arg = args.first().value<QList<quint32> >();
+    QVERIFY(arg.count() == 1);
+    QCOMPARE(QContactLocalId(arg.at(0)), cid);
 
     // verify save modified emits signal changed
     saveContactName(&c, nameDef, &nc, "Citizen");
@@ -1908,8 +1907,9 @@ void tst_QContactManager::signalEmission()
     QTRY_COMPARE(spyCM.count(), modSigCount);
     args = spyCM.takeFirst();
     modSigCount -= 1;
-    QVERIFY(args.count() == 1);
-    QCOMPARE(temp, QContactLocalId(args.at(0).value<quint32>()));
+    arg = args.first().value<QList<quint32> >();
+    QVERIFY(arg.count() == 1);
+    QCOMPARE(QContactLocalId(arg.at(0)), cid);
 
     // verify remove emits signal removed
     m1->removeContact(c.id().localId());
@@ -1917,8 +1917,9 @@ void tst_QContactManager::signalEmission()
     QTRY_COMPARE(spyCR.count(), remSigCount);
     args = spyCR.takeFirst();
     remSigCount -= 1;
-    QVERIFY(args.count() == 1);
-    QCOMPARE(temp, QContactLocalId(args.at(0).value<quint32>()));
+    arg = args.first().value<QList<quint32> >();
+    QVERIFY(arg.count() == 1);
+    QCOMPARE(QContactLocalId(arg.at(0)), cid);
 
     // verify multiple adds works as advertised
     QContact c2, c3;
@@ -2009,6 +2010,11 @@ void tst_QContactManager::signalEmission()
 
     QTRY_COMPARE(spyCA.count(), 0);
     QTRY_COMPARE(spyCM.count(), 0);
+
+    QScopedPointer<QContactManager> m2(QContactManager::fromUri(uri));
+
+    QVERIFY(m1->hasFeature(QContactManager::Anonymous) ==
+        m2->hasFeature(QContactManager::Anonymous));
 
     /* Now some cross manager testing */
     if (!m1->hasFeature(QContactManager::Anonymous)) {
