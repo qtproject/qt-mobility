@@ -95,7 +95,7 @@ QGeoCoordinate QGeoBoundingBox::getCenter() const
 
 double QGeoBoundingBox::getHeight() const
 {
-    return coordBR.latitude()-coordTL.latitude();
+    return coordTL.latitude()-coordBR.latitude();
 }
 
 double QGeoBoundingBox::getWidth() const
@@ -125,8 +125,9 @@ bool QGeoBoundingBox::contains(const QGeoCoordinate coord)
     double right = coordBR.longitude();
     
     double cLong = coord.longitude();
-    if (left>right && cLong<left && cLong > right) { //going over date line
-        return false;
+    if (left>right) { //going over date line
+        if(cLong<left && cLong > right)
+            return false;
     }
     else if (cLong < left || cLong > right) {
         return false;
@@ -151,13 +152,17 @@ bool QGeoBoundingBox::intersects(const QGeoBoundingBox bbox) const
     
     double left = coordTL.longitude();
     double right = coordBR.longitude();
-    if (left>right) //going over date line
-        right += 360;
-
     double bbLeft = bbox.topLeft().longitude();
     double bbRight = bbox.bottomRight().longitude();
+    
+    if (left>right) //going over date line
+        right += 360;
     if (bbLeft>bbRight) //going over date line
         bbRight += 360;
+    else if (right>180) {
+        bbRight += 360;
+        bbLeft += 360;
+    }
 
     if (left > bbRight || bbLeft > right)
         return false;
