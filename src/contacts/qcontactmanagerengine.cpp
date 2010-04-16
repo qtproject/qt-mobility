@@ -1517,6 +1517,7 @@ bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contact
 QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error* error) const
 {
     QContact conforming;
+    conforming.setId(original.id());
     QContactManager::Error tempError;
     QList<QString> uniqueDefinitionIds;
     foreach (QContactDetail detail, original.details()) {
