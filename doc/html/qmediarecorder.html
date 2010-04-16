@@ -1,13 +1,28 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qmediarecorder.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qmediarecorder.cpp -->
   <title>Qt Mobility Project 1.0: QMediaRecorder Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]>
+	<meta name="MSSmartTagsPreventParsing" content="true">
+	<meta http-equiv="imagetoolbar" content="no">
+	<![endif]-->
+  <!--[if lt IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+	<![endif]-->
+  <!--[if IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+	<![endif]-->
+  <!--[if IE 8]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+	<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="">
 <a name="//apple_ref/cpp/cl//QMediaRecorder"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -23,7 +38,7 @@
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#Error-enum">Error</a></b> { NoError, ResourceError, FormatError }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#State-enum">State</a></b> { StoppedState, RecordingState, PausedState }</td></tr>
 </table>
@@ -41,7 +56,7 @@
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#QMediaRecorder">QMediaRecorder</a></b> ( QMediaObject * <i>mediaObject</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#dtor.QMediaRecorder">~QMediaRecorder</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#audioCodecDescription">audioCodecDescription</a></b> ( const QString &amp; <i>codec</i> ) const</td></tr>
@@ -67,8 +82,8 @@
 <hr />
 <a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual QtMedia::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#availabilityError">availabilityError</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMultimedia::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#availabilityError">availabilityError</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#isAvailable">isAvailable</a></b> () const</td></tr>
 </table>
 <ul>
@@ -78,7 +93,7 @@
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#pause">pause</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#record">record</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#stop">stop</a></b> ()</td></tr>
@@ -89,7 +104,7 @@
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#error-2">error</a></b> ( QMediaRecorder::Error <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#stateChanged">stateChanged</a></b> ( QMediaRecorder::State <i>state</i> )</td></tr>
@@ -100,7 +115,7 @@
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -108,31 +123,33 @@
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaRecorder class is used for the recording of media content.</p>
 <p>The QMediaRecorder class is a high level media recording class. It's not intended to be used alone but for accessing the media recording functions of other media objects, like <a href="qradiotuner.html">QRadioTuner</a>, or <a href="qaudiocapturesource.html">QAudioCaptureSource</a>.</p>
 <p>If the radio is used as a source, recording is only possible when the source is in appropriate state</p>
-<pre><span class="comment">    // Audio only recording</span>
+<pre>    // Audio only recording
     audioSource = new QAudioCaptureSource;
     recorder = new QMediaRecorder(audioSource);
 
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec(&quot;audio/vorbis&quot;);
-    audioSettings.setQuality(QtMedia::HighQuality);
+    audioSettings.setQuality(QtMultimedia::HighQuality);
 
     recorder-&gt;setEncodingSettings(audioSettings);
 
     recorder-&gt;setOutputLocation(QUrl::fromLocalFile(fileName));
     recorder-&gt;record();</pre>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QMediaRecorder/Error"></a>
 <a name="//apple_ref/cpp/econst/QMediaRecorder/NoError"></a>
 <a name="//apple_ref/cpp/econst/QMediaRecorder/ResourceError"></a>
 <a name="//apple_ref/cpp/econst/QMediaRecorder/FormatError"></a>
 <h3 class="fn"><a name="Error-enum"></a>enum QMediaRecorder::Error</h3>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<p><table class="valuelist"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td valign="top"><tt>QMediaRecorder::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No Errors.</td></tr>
 <tr><td valign="top"><tt>QMediaRecorder::ResourceError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Device is not ready or not available.</td></tr>
 <tr><td valign="top"><tt>QMediaRecorder::FormatError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Current format is not supported.</td></tr>
@@ -142,24 +159,25 @@
 <a name="//apple_ref/cpp/econst/QMediaRecorder/RecordingState"></a>
 <a name="//apple_ref/cpp/econst/QMediaRecorder/PausedState"></a>
 <h3 class="fn"><a name="State-enum"></a>enum QMediaRecorder::State</h3>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<p><table class="valuelist"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td valign="top"><tt>QMediaRecorder::StoppedState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The recorder is not active.</td></tr>
 <tr><td valign="top"><tt>QMediaRecorder::RecordingState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The recorder is currently active and producing data.</td></tr>
 <tr><td valign="top"><tt>QMediaRecorder::PausedState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The recorder is paused.</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaRecorder/duration"></a>
 <a name="//apple_ref/cpp/instm/QMediaRecorder/durationChanged"></a>
 <h3 class="fn"><a name="duration-prop"></a>duration : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a></h3>
 <p>This property holds the recorded media duration in milliseconds.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b>duration</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediarecorder.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QMediaRecorder/outputLocation"></a>
@@ -168,11 +186,13 @@
 <p>This property holds the destination location of media content.</p>
 <p>Setting the location can fail for example when the service supports only local file system locations while the network url was passed, or the service doesn't support media recording.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b>outputLocation</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>setOutputLocation</b> ( const QUrl &amp; <i>location</i> )</td></tr>
 </table>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaRecorder/QMediaRecorder"></a>
 <h3 class="fn"><a name="QMediaRecorder"></a>QMediaRecorder::QMediaRecorder ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -189,7 +209,7 @@
 <p>Returns the audio encoder settings being used.</p>
 <p>See also <a href="qmediarecorder.html#setEncodingSettings">setEncodingSettings</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaRecorder/availabilityError"></a>
-<h3 class="fn"><a name="availabilityError"></a><a href="qtmedia.html#AvailabilityError-enum">QtMedia::AvailabilityError</a> QMediaRecorder::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmultimedia.html#AvailabilityError-enum">QtMultimedia::AvailabilityError</a> QMediaRecorder::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediaobject.html#availabilityError">QMediaObject::availabilityError</a>().</p>
 <p>Returns the availability error code.</p>
 <a name="//apple_ref/cpp/instm/QMediaRecorder/containerDescription"></a>
@@ -273,6 +293,7 @@
 <h3 class="fn"><a name="videoSettings"></a><a href="qvideoencodersettings.html">QVideoEncoderSettings</a> QMediaRecorder::videoSettings () const</h3>
 <p>Returns the video encoder settings being used.</p>
 <p>See also <a href="qmediarecorder.html#setEncodingSettings">setEncodingSettings</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

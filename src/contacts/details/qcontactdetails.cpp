@@ -1536,6 +1536,18 @@ Q_DEFINE_LATIN1_CONSTANT(QContactDisplayLabel::FieldLabel, "Label");
    \class QContactOnlineAccount
    \brief The QContactOnlineAccount class provides an online account,
    which the contact uses to communicate with friends and family.
+
+   A QContactOnlineAccount consists of the account details required to
+   communicate with the contact, including the account URI, the capabilities
+   of the account, the service provider of the account, and the type of the account.
+
+   Presence information for a particular QContactOnlineAccount detail is provided
+   in a QContactPresence detail which is linked (via linkedDetailUris()) to the
+   account detail.  This information is generally provided by the backend, and is
+   not modifiable by clients.
+
+   \sa QContactPresence
+
    \ingroup contacts-details
  */
 
@@ -1911,6 +1923,18 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRingtone::FieldVibrationRingtoneUrl, "Vibration
    \class QContactPresence
    \brief The QContactPresence class provides presence information
    for an online account of a contact.
+
+   Presence information for a particular QContactOnlineAccount detail is provided
+   in a QContactPresence detail which is linked (via linkedDetailUris()) to the
+   account detail.  This information is generally provided by the backend, and is
+   not modifiable by clients.
+
+   Presence information can include update timestamp, screen name,
+   and the status icon, status value, and status text provided by
+   the service provider, as well as user defined status message.
+
+   \sa QContactOnlineAccount
+
    \ingroup contacts-details
  */
 
@@ -2039,6 +2063,8 @@ Q_DEFINE_LATIN1_CONSTANT(QContactPresence::FieldCustomMessage, "CustomMessage");
 
    Sets the custom status message from the contact for the online account
    about which this detail stores presence information, to \a customMessage.
+   This custom message would have been set by the contact,
+   and does not necessarily correspond to a particular presence state.
  */
 
 /*!

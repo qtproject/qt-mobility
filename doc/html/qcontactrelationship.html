@@ -1,13 +1,28 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qcontactrelationship.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qcontactrelationship.cpp -->
   <title>Qt Mobility Project 1.0: QContactRelationship Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]>
+	<meta name="MSSmartTagsPreventParsing" content="true">
+	<meta http-equiv="imagetoolbar" content="no">
+	<![endif]-->
+  <!--[if lt IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+	<![endif]-->
+  <!--[if IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+	<![endif]-->
+  <!--[if IE 8]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+	<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="">
 <a name="//apple_ref/cpp/cl//QContactRelationship"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -21,13 +36,13 @@
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#Role-enum">Role</a></b> { First, Second, Either }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#QContactRelationship">QContactRelationship</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#QContactRelationship-2">QContactRelationship</a></b> ( const QContactRelationship &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#dtor.QContactRelationship">~QContactRelationship</a></b> ()</td></tr>
@@ -44,7 +59,7 @@
 <hr />
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#Aggregates-var">Aggregates</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#HasAssistant-var">HasAssistant</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#HasManager-var">HasManager</a></b></td></tr>
@@ -54,13 +69,16 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactRelationship class describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact.</p>
 <p>Each relationship is uniquely identified by the combination of the first contact id, second contact id, and the relationship type.</p>
 <p>A relationship should not contain a second contact which is the same as the first contact. Any local contacts which are referenced in the relationship (that is, any source contact, or any second contact whose manager URI is left empty or whose manager URI references the manager that stores the source contact, and in which the relationship will be saved) should exist.</p>
 <p>If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship in a <a href="qcontactmanager.html">QContactManager</a>.</p>
+</div>
 <p>See also <a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactRelationship/Role"></a>
 <a name="//apple_ref/cpp/econst/QContactRelationship/First"></a>
@@ -68,13 +86,14 @@
 <a name="//apple_ref/cpp/econst/QContactRelationship/Either"></a>
 <h3 class="fn"><a name="Role-enum"></a>enum QContactRelationship::Role</h3>
 <p>Describes the roles that a contact may take in a relationship.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<p><table class="valuelist"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td valign="top"><tt>QContactRelationship::First</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The contact is the first contact in the relationship</td></tr>
 <tr><td valign="top"><tt>QContactRelationship::Second</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The contact is the second contact in the relationship</td></tr>
 <tr><td valign="top"><tt>QContactRelationship::Either</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The contact is either the first or second contact in the relationship</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactRelationship/QContactRelationship"></a>
 <h3 class="fn"><a name="QContactRelationship"></a>QContactRelationship::QContactRelationship ()</h3>
@@ -117,26 +136,29 @@
 <a name="//apple_ref/cpp/instm/QContactRelationship/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactRelationship::operator== ( const QContactRelationship &amp; <i>other</i> ) const</h3>
 <p>Returns true if this relationship is equal to the <i>other</i> relationship, otherwise returns false.</p>
+</div>
 <hr />
+<div class="vars"/>
 <h2>Member Variable Documentation</h2>
 <a name="//apple_ref/cpp/data/QContactRelationship/Aggregates"></a>
-<h3 class="fn"><a name="Aggregates-var"></a>const QLatin1Constant QContactRelationship::Aggregates</h3>
+<h3 class="fn"><a name="Aggregates-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::Aggregates</h3>
 <p>The relationship type which identifies the first contact as aggregating the second contact into a metacontact</p>
 <a name="//apple_ref/cpp/data/QContactRelationship/HasAssistant"></a>
-<h3 class="fn"><a name="HasAssistant-var"></a>const QLatin1Constant QContactRelationship::HasAssistant</h3>
+<h3 class="fn"><a name="HasAssistant-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::HasAssistant</h3>
 <p>The relationship type which identifies the second contact as being the assistant of the first contact</p>
 <a name="//apple_ref/cpp/data/QContactRelationship/HasManager"></a>
-<h3 class="fn"><a name="HasManager-var"></a>const QLatin1Constant QContactRelationship::HasManager</h3>
+<h3 class="fn"><a name="HasManager-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::HasManager</h3>
 <p>The relationship type which identifies the second contact as being the manager of the first contact</p>
 <a name="//apple_ref/cpp/data/QContactRelationship/HasMember"></a>
-<h3 class="fn"><a name="HasMember-var"></a>const QLatin1Constant QContactRelationship::HasMember</h3>
+<h3 class="fn"><a name="HasMember-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::HasMember</h3>
 <p>The relationship type which identifies the first contact as being a group which includes the second contact</p>
 <a name="//apple_ref/cpp/data/QContactRelationship/HasSpouse"></a>
-<h3 class="fn"><a name="HasSpouse-var"></a>const QLatin1Constant QContactRelationship::HasSpouse</h3>
+<h3 class="fn"><a name="HasSpouse-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::HasSpouse</h3>
 <p>The relationship type which identifies the second contact as being the spouse of the first contact</p>
 <a name="//apple_ref/cpp/data/QContactRelationship/IsSameAs"></a>
-<h3 class="fn"><a name="IsSameAs-var"></a>const QLatin1Constant QContactRelationship::IsSameAs</h3>
+<h3 class="fn"><a name="IsSameAs-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::IsSameAs</h3>
 <p>The relationship type which identifies the first contact as being the same contact as the second contact</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -1,13 +1,28 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qversitcontactimporter.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qversitcontactimporter.cpp -->
   <title>Qt Mobility Project 1.0: QVersitContactImporterPropertyHandler Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]>
+	<meta name="MSSmartTagsPreventParsing" content="true">
+	<meta http-equiv="imagetoolbar" content="no">
+	<![endif]-->
+  <!--[if lt IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+	<![endif]-->
+  <!--[if IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+	<![endif]-->
+  <!--[if IE 8]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+	<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="">
 <a name="//apple_ref/cpp/cl//QVersitContactImporterPropertyHandler"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -22,17 +37,20 @@
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporterpropertyhandler.html#dtor.QVersitContactImporterPropertyHandler">~QVersitContactImporterPropertyHandler</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporterpropertyhandler.html#postProcessProperty">postProcessProperty</a></b> ( const QVersitDocument &amp; <i>document</i>, const QVersitProperty &amp; <i>property</i>, bool <i>alreadyProcessed</i>, int <i>contactIndex</i>, QContact * <i>contact</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporterpropertyhandler.html#preProcessProperty">preProcessProperty</a></b> ( const QVersitDocument &amp; <i>document</i>, const QVersitProperty &amp; <i>property</i>, int <i>contactIndex</i>, QContact * <i>contact</i> ) = 0</td></tr>
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitContactImporterPropertyHandler class is an interface for clients wishing to implement custom import behaviour for versit properties</p>
+</div>
 <p>See also <a href="qversitcontactimporter.html">QVersitContactImporter</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitContactImporterPropertyHandler/~QVersitContactImporterPropertyHandler"></a>
 <h3 class="fn"><a name="dtor.QVersitContactImporterPropertyHandler"></a>QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -47,6 +65,7 @@
 <p>Process <i>property</i> and update <i>contact</i> with the corresponding <a href="qcontactdetail.html">QContactDetail</a>(s). <i>document</i> provides the context within which the property was found. <i>contactIndex</i> specifies the position that <i>contact</i> will take in the list returned by <a href="qversitcontactimporter.html#importDocuments">QVersitContactImporter::importDocuments</a>().</p>
 <p>Returns true if the property has been handled and requires no further processing, false otherwise.</p>
 <p>This function is called on every <a href="qversitproperty.html">QVersitProperty</a> encountered during an import. Supply this function and return true to implement custom import behaviour.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

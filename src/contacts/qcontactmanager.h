@@ -61,8 +61,6 @@
 QTM_BEGIN_NAMESPACE
 
 class QContactFilter;
-class QContactAction;
-
 class QContactManagerData;
 class Q_CONTACTS_EXPORT QContactManager : public QObject
 {

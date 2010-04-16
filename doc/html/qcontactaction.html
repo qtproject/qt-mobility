@@ -1,13 +1,28 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qcontactaction.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qcontactaction.cpp -->
   <title>Qt Mobility Project 1.0: QContactAction Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]>
+	<meta name="MSSmartTagsPreventParsing" content="true">
+	<meta http-equiv="imagetoolbar" content="no">
+	<![endif]-->
+  <!--[if lt IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+	<![endif]-->
+  <!--[if IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+	<![endif]-->
+  <!--[if IE 8]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+	<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="">
 <a name="//apple_ref/cpp/cl//QContactAction"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -22,13 +37,13 @@
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#State-enum">State</a></b> { InactiveState, FinishedDetachedState, ActiveState, FinishedState, FinishedWithErrorState }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#dtor.QContactAction">~QContactAction</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QContactActionDescriptor </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#actionDescriptor">actionDescriptor</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QContactFilter </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#contactFilter">contactFilter</a></b> ( const QVariant &amp; <i>value</i> = QVariant() ) const = 0</td></tr>
@@ -45,7 +60,7 @@
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#resultsAvailable">resultsAvailable</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#stateChanged">stateChanged</a></b> ( QContactAction::State <i>newState</i> )</td></tr>
 </table>
@@ -55,7 +70,7 @@
 <hr />
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">QContactAction * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#action">action</a></b> ( const QContactActionDescriptor &amp; <i>descriptor</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactActionDescriptor&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#actionDescriptors">actionDescriptors</a></b> ( const QString &amp; <i>actionName</i> = QString(), const QString &amp; <i>vendorName</i> = QString(), int <i>implementationVersion</i> = -1 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactaction.html#availableActions">availableActions</a></b> ( const QString &amp; <i>vendor</i> = QString(), int <i>implementationVersion</i> = -1 )</td></tr>
@@ -67,19 +82,22 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactAction class provides an interface for performing an action on a <a href="qcontact.html">QContact</a> or <a href="qcontactdetail.html">QContactDetail</a>.</p>
 <p>An action is anything that can be performed on a contact, or a detail of a contact. An example of an action might be &quot;Send Email&quot; or &quot;Dial&quot; or &quot;Plot Navigation Route&quot;. One action may be implemented by multiple vendors, and indeed one vendor may provide multiple implementations of the same action. The name of an action identifies its semantics, while its implementation version distinguishes it from other implementations of the action by the same vendor.</p>
 <p>Invocation of an action is asynchronous; at some stage after calling <a href="qcontactaction.html#invokeAction">invokeAction</a>() the action instance will emit the <a href="qcontactaction.html#stateChanged">stateChanged</a>() signal. Any results of the action may be retrieved by calling <a href="qcontactaction.html#results">results</a>(), and as results become available the action will emit <a href="qcontactaction.html#resultsAvailable">resultsAvailable</a>().</p>
 <p>Each instance of a QContactAction is created by a <a href="qcontactactionfactory.html">QContactActionFactory</a> when <a href="qcontactactionfactory.html#instance">QContactActionFactory::instance</a>() is called; the caller takes ownership of the action instance.</p>
+</div>
 <p>See also <a href="qcontactactionfactory.html">QContactActionFactory</a> and <a href="qcontactactionfilter.html">QContactActionFilter</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactAction/State"></a>
 <a name="//apple_ref/cpp/econst/QContactAction/InactiveState"></a>
@@ -89,15 +107,16 @@
 <a name="//apple_ref/cpp/econst/QContactAction/FinishedWithErrorState"></a>
 <h3 class="fn"><a name="State-enum"></a>enum QContactAction::State</h3>
 <p>Describes the current status of the asynchronous action operation</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<p><table class="valuelist"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td valign="top"><tt>QContactAction::InactiveState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The operation has not yet been initiated</td></tr>
 <tr><td valign="top"><tt>QContactAction::FinishedDetachedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The operation was initiated but no further information is or will be available</td></tr>
 <tr><td valign="top"><tt>QContactAction::ActiveState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The operation was initiated and is not yet finished</td></tr>
 <tr><td valign="top"><tt>QContactAction::FinishedState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The operation successfully completed</td></tr>
 <tr><td valign="top"><tt>QContactAction::FinishedWithErrorState</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The operation has finished, but an error occurred</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactAction/~QContactAction"></a>
 <h3 class="fn"><a name="dtor.QContactAction"></a>QContactAction::~QContactAction ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -148,6 +167,7 @@
 <h3 class="fn"><a name="supportedDetails"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactdetail.html">QContactDetail</a>&gt; QContactAction::supportedDetails ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a list of the details saved in the given <i>contact</i> which contain the fields required for this action to be performed on them.</p>
 <p>The default implementation of this function simply tests all the details in the contact using <a href="qcontactaction.html#isDetailSupported">isDetailSupported</a>()</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
