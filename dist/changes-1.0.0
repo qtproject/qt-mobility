@@ -145,13 +145,31 @@ QtServiceFramework
 
 QtSystemInfo
 ------
+ - Mac
+    * Implemented remaining backend.
+    * Fix memory leakage.
 
- - Fixed MOBILITY-748: Private Qt header usage has been removed
- - currentMode() added in network info
- - Maemo 5 (Fremantle) backend finalized
-    * Network info completed
-    * Screensaver inhibit implemented
+ - Maemo 5 (Fremantle)
+    * Implemented remaining backend.
+    * Improved implementation of Maemo's WLAN networkSignalStrengthChanged().
+    * Improved network mode and network status.
     * Example application modified to better fit in N900's horizontal screen
+    * Screensaver inhibit implemented
+
+ - Linux
+    * Storage volume names are now more consistant across the platforms.
+
+ - Symbian
+    * Improved colorDepth detection on some versions.
+    * Improved power state detection.
+    * Fix network name on some versions.
+
+ - Signals/timers/event loops not started unless something is connected to the Q_SIGNAL.
+ - Improved QML support.
+ - rssi timers now fire every 5 seconds on all platforms.
+ - Added currentMode to API.
+ - currentMode() added in network info
+ - Fixed MOBILITY-748: Private Qt header usage has been removed
 
 QtSensors
 ------
