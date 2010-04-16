@@ -17,8 +17,9 @@ symbian {
 
 SUBDIRS += generic
 
+# Allow forcing extra plugins to build even if they won't run
 BUILD_ALL_PLUGINS=$$(BUILD_ALL_PLUGINS)
 equals(BUILD_ALL_PLUGINS,1) {
-    SUBDIRS *= n900
+    SUBDIRS *= n900 dummy
 }
 
