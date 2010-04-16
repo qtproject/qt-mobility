@@ -555,20 +555,21 @@ namespace {
                 if (HR_SUCCEEDED(attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, 0, MAPI_MODIFY | MAPI_CREATE, (LPUNKNOWN*)&os))) {
                     const int BUF_SIZE=4096;
                     char pData[BUF_SIZE];
-                    ULONG ulSize=0,ulRead,ulWritten;
+                    ULONG ulSize=0,ulRead,ulWritten, ulTotalWritten=0;
 
                     QDataStream attachmentStream(attachmentContainer.content());
 
                     ulRead=attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
                     while (ulRead) {
                         os->Write(pData,ulRead, &ulWritten);
+                        ulTotalWritten += ulWritten;
 
                         ulSize += ulRead;
                         ulRead = attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
                     }
 
                     ULARGE_INTEGER uli = { 0 };
-                    uli.LowPart = ulWritten;
+                    uli.LowPart = ulTotalWritten;
                     os->SetSize(uli);
 
                     os->Commit(STGC_DEFAULT);
