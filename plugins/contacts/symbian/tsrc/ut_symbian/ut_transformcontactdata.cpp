@@ -58,6 +58,7 @@
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
 #include "cnttransformringtone.h"
+#include "cnttransformpresence.h"
 
 #include "cntmodelextuids.h"
 
@@ -155,14 +156,21 @@ void TestCntTransformContactData::executeCntTransformBithday()
 void TestCntTransformContactData::executeCntTransformOnlineAccount()
 {
     TRAPD(err, validateCntTransformOnlineAccountL(_L("dummysip"), QString("dummysip"),
-                                                  _L("nokia"), QString("nokia"),
-                                                  _L("Available"), QString("Available"),
-                                                  _L("Sleeping.."), QString("Sleeping.."));
+                                                  _L("nokia"), QString("nokia"));
     
         validateCntTransformOnlineAccountL(_L(""), QString(""),
-                                           _L(""), QString(""),
-                                           _L(""), QString(""),
                                            _L(""), QString(""));
+        );
+    QVERIFY(err == 0);
+}
+
+void TestCntTransformContactData::executeCntTransformPresence()
+{
+    TRAPD(err, validateCntTransformPresenceL(_L("1"), QString("1"),
+                                             _L("Sleeping.."), QString("Sleeping.."));
+    
+        validateCntTransformPresenceL(_L(""), QString("0"),
+                                      _L(""), QString(""));
         );
     QVERIFY(err == 0);
 }
@@ -1040,9 +1048,7 @@ void TestCntTransformContactData::validateCntTransformBirthdayL(TTime field, QDa
 
 void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     TPtrC16 sipField, QString sipDetail,
-    TPtrC16 providerField, QString providerDetail,
-    TPtrC16 /*presenceField*/, QString presenceDetail,
-    TPtrC16 statusField, QString statusDetail)
+    TPtrC16 providerField, QString providerDetail)
 {
 	CntTransformContactData* transformOnlineAccount = new CntTransformOnlineAccount();
     QVERIFY(transformOnlineAccount != 0);
@@ -1199,6 +1205,74 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     delete transformOnlineAccount;
 }
 
+void TestCntTransformContactData::validateCntTransformPresenceL(TPtrC16 presenceStateField, QString presenceStateDetail,
+    TPtrC16 presenceStatusMsgField, QString presenceStatusMsgDetail)
+{
+    CntTransformContactData* transformPresence = new CntTransformPresence();
+    QVERIFY(transformPresence != 0);
+    QVERIFY(transformPresence->supportsField(KUidContactFieldPresence.iUid));
+    QVERIFY(transformPresence->supportsField(KUidContactFieldStatusMsg.iUid));
+    QVERIFY(!(transformPresence->supportsField(0))); //Test for Wrong value
+    QVERIFY(transformPresence->supportsDetail(QContactPresence::DefinitionName));
+    QVERIFY(!(transformPresence->supportsDetail("WrongValue")));
+     
+    validateGetIdForField(*transformPresence, QContactPresence::FieldPresenceState,KUidContactFieldPresence.iUid);
+    validateGetIdForField(*transformPresence, QContactPresence::FieldPresenceStateText,KUidContactFieldStatusMsg.iUid);
+    validateGetIdForField(*transformPresence, "WrongValue", 0);
+    QVERIFY( !(transformPresence->supportsSubType("WrongValue")));
+     
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    validateSupportedSortingFieldTypes(*transformPresence,"WrongValue",uidsToVerify);
+     
+    validateContextsL(transformPresence);
+     
+    bool ok = false;
+    QContactPresence presence;
+    presence.setPresenceState((QContactPresence::PresenceState)presenceStateDetail.toInt(&ok));
+    presence.setPresenceStateText(presenceStatusMsgDetail);
+     
+    QList<CContactItemField *> fields = transformPresence->transformDetailL(presence);
+    if(presenceStatusMsgDetail.isEmpty()) {
+        QVERIFY(fields.count() == 0);
+    } else {
+        QVERIFY(fields.count() == 2);
+         
+        QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPresence));
+        QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(presenceStateField), 0);
+     
+        QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldStatusMsg));
+        QCOMPARE(fields.at(1)->TextStorage()->Text(), presenceStatusMsgField );
+    }
+     
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPresence);
+    newField->TextStorage()->SetTextL(presenceStateField);
+    QContact contact;
+    QContactDetail* contactDetail = transformPresence->transformItemField(*newField, contact);
+    const QContactPresence* presenceDetail1(static_cast<const QContactPresence*>(contactDetail));
+    
+    
+    
+    QCOMPARE(QString::number(presenceDetail1->presenceState()), presenceStateDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+     
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldStatusMsg);
+    newField->TextStorage()->SetTextL(presenceStatusMsgField);
+    contactDetail = transformPresence->transformItemField(*newField, contact);
+    const QContactPresence* presenceDetail2(static_cast<const QContactPresence*>(contactDetail));
+    QCOMPARE(presenceDetail2->presenceStateText(), presenceStatusMsgDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+     
+    delete transformPresence;
+    }
 #endif // SYMBIAN_BACKEND_USE_SQLITE
 
 void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,

@@ -40,6 +40,7 @@ symbian: {
         inc/transform/cnttransformurl.h \
         inc/transform/cnttransformbirthday.h \
         inc/transform/cnttransformonlineaccount.h \
+        inc/transform/cnttransformpresence.h \
         inc/transform/cnttransformorganisation.h \
         inc/transform/cnttransformringtone.h \
         inc/transform/cnttransformthumbnail.h \
@@ -85,6 +86,7 @@ symbian: {
         src/transform/cnttransformurl.cpp \
         src/transform/cnttransformbirthday.cpp \
         src/transform/cnttransformonlineaccount.cpp \
+        src/transform/cnttransformpresence.cpp \
         src/transform/cnttransformorganisation.cpp \
         src/transform/cnttransformringtone.cpp \
         src/transform/cnttransformthumbnail.cpp \

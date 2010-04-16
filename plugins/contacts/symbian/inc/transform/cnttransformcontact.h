@@ -88,6 +88,7 @@ private:
 		Address,
 		URL,
 		OnlineAccount,
+		Presence,
 		Birthday,
 		Organisation,
 		Avatar,

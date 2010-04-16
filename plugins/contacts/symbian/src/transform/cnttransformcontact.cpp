@@ -49,6 +49,7 @@
 #include "cnttransformaddress.h"
 #include "cnttransformbirthday.h"
 #include "cnttransformonlineaccount.h"
+#include "cnttransformpresence.h"
 #include "cnttransformorganisation.h"
 #include "cnttransformavatar.h"
 #include "cnttransformringtone.h"
@@ -125,6 +126,9 @@ void CntTransformContact::initializeCntTransformContactData()
     // 3.2.3 and 5.0 releases), it may be safer not to include online account
     // at all.
     m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
+    
+    // not supported on pre-10.1
+    m_transformContactData.insert(Presence, new CntTransformPresence);
 
 #else
     // Empty transform class for removing unsupported detail definitions

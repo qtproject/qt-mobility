@@ -62,6 +62,7 @@ private slots:
 	void executeCntTransformBithday();
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
 	void executeCntTransformOnlineAccount();
+	void executeCntTransformPresence();	
 #endif
 	void executeCntTransformOrganisation();
 	void executeCntTransformAvatar();
@@ -94,9 +95,9 @@ private:
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
     void validateCntTransformOnlineAccountL(
         TPtrC16 sipField, QString sipDetail,
-        TPtrC16 providerField, QString providerDetail,
-        TPtrC16 presenceField, QString presenceDetail,
-        TPtrC16 statusField, QString statusDetail);
+        TPtrC16 providerField, QString providerDetail);
+    void validateCntTransformPresenceL(TPtrC16 presenceStateField, QString presenceStateDetail,
+                                 TPtrC16 presenceStatusMsgField, QString presenceStatusMsgDetail);
 #endif
     void validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,
                                        TPtrC16 departmentField, QStringList departmentDetail,

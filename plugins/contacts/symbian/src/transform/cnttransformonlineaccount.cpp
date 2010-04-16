@@ -119,37 +119,14 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	    
         // Transform Service Provider Text
 	    TPtrC ServiceProviderText(reinterpret_cast<const TUint16*>(onlineAccount.serviceProvider().utf16()));
-	         if(ServiceProviderText.Length()) {
-	             CContactItemField* serviceProviderField = CContactItemField::NewLC(KStorageTypeText);
-	             serviceProviderField->TextStorage()->SetTextL(ServiceProviderText);
-	             serviceProviderField->AddFieldTypeL(KUidContactFieldServiceProvider);
-	             serviceProviderField->SetUserFlags(m_detailCounter);
-	             fieldList.append(serviceProviderField);
-	             CleanupStack::Pop(serviceProviderField);
-	         }
-	         
-                 //FIXME:no presence in onlineaccount anymore..
-//	     // Transform presence informaiton
-//        TPtrC presenceText(reinterpret_cast<const TUint16*>(onlineAccount.presence().utf16()));
-//            if(presenceText.Length()) {
-//                QString presence = QString::number(encodePresence(onlineAccount.presence()));
-//                CContactItemField* presenceField = CContactItemField::NewLC(KStorageTypeText);
-//                TPtrC presenceEncodedText(reinterpret_cast<const TUint16*>(presence.utf16()));
-//                presenceField->TextStorage()->SetTextL(presenceEncodedText);
-//                presenceField->AddFieldTypeL(KUidContactFieldPresence);
-//                fieldList.append(presenceField);
-//                CleanupStack::Pop(presenceField);
-//            }
-	         
-//	     // Transform statusMessage
-//	     TPtrC statusMsgText(reinterpret_cast<const TUint16*>(onlineAccount.statusMessage().utf16()));
-//	         if(statusMsgText.Length()) {
-//	             CContactItemField* statusMsgField = CContactItemField::NewLC(KStorageTypeText);
-//	             statusMsgField->TextStorage()->SetTextL(statusMsgText);
-//	             statusMsgField->AddFieldTypeL(KUidContactFieldStatusMsg);
-//	             fieldList.append(statusMsgField);
-//	             CleanupStack::Pop(statusMsgField);
-//	         }
+	    if(ServiceProviderText.Length()) {
+            CContactItemField* serviceProviderField = CContactItemField::NewLC(KStorageTypeText);
+	        serviceProviderField->TextStorage()->SetTextL(ServiceProviderText);
+	        serviceProviderField->AddFieldTypeL(KUidContactFieldServiceProvider);
+	        serviceProviderField->SetUserFlags(m_detailCounter);
+	        fieldList.append(serviceProviderField);
+	        CleanupStack::Pop(serviceProviderField);
+	    }
 	}
 
 	if(fieldList.count() > 0) {
@@ -201,15 +178,6 @@ QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItem
         else if (field.ContentType().FieldType(i) == KUidContactFieldServiceProvider) {
             onlineAccount->setServiceProvider(onlineAccountString);
         }
-        //Presence
-        else if (field.ContentType().FieldType(i) == KUidContactFieldPresence) {
-            QString presenceInfo = decodePresence(onlineAccountString.toInt());
-//            onlineAccount->setPresence(presenceInfo);
-        }
-        //Status Message
-        else if (field.ContentType().FieldType(i) == KUidContactFieldStatusMsg) {
-//            onlineAccount->setStatusMessage(onlineAccountString);
-        }
     }
 
     // set context
@@ -225,9 +193,7 @@ bool CntTransformOnlineAccount::supportsField(TUint32 fieldType) const
     bool ret = false;
     if (fieldType == KUidContactFieldSIPID.iUid ||
         fieldType == KUidContactFieldIMPP.iUid  ||
-        fieldType == KUidContactFieldServiceProvider.iUid  ||
-        fieldType == KUidContactFieldPresence.iUid  ||
-        fieldType == KUidContactFieldStatusMsg.iUid )         
+        fieldType == KUidContactFieldServiceProvider.iUid )         
     {
         ret = true;
     }
@@ -326,55 +292,6 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
 void CntTransformOnlineAccount::reset()
 {
     m_detailCounter = 0;
-}
-
-/*!
- * Encode the presence information.
- * \a aPresence
- */
-quint32 CntTransformOnlineAccount::encodePresence(QString aPresence)
-{
-    //FIXME:presence
-//    if (QContactPresence::PresenceAvailable  == aPresence)
-//        return CntTransformOnlineAccount::EPresenceAvailable;
-//    else if (QContactPresence::PresenceHidden == aPresence)
-//        return CntTransformOnlineAccount::EPresenceHidden;
-//    else if (QContactPresence::PresenceBusy == aPresence)
-//        return CntTransformOnlineAccount::EPresenceBusy;
-//    else if (QContactPresence::PresenceAway == aPresence)
-//        return CntTransformOnlineAccount::EPresenceAway;
-//    else if (QContactPresence::PresenceExtendedAway == aPresence)
-//        return CntTransformOnlineAccount::EPresenceExtendedAway;
-//    else if (QContactPresence::PresenceUnknown == aPresence)
-//        return CntTransformOnlineAccount::EPresenceUnknown;
-//    else
-        return CntTransformOnlineAccount::EPresenceOffline;
-}
-
-
-
-/*!
- * Decode the presence information.
- * \a aPresence
- */
-QString CntTransformOnlineAccount::decodePresence(quint32 aPresence)
-{
-    //FIXME:presence
-//    if (CntTransformOnlineAccount::EPresenceAvailable  == aPresence)
-//        return QContactPresence::PresenceAvailable;
-//    else if (CntTransformOnlineAccount::EPresenceHidden == aPresence)
-//        return QContactPresence::PresenceHidden;
-//    else if (CntTransformOnlineAccount::EPresenceBusy == aPresence)
-//        return QContactPresence::PresenceBusy;
-//    else if ( CntTransformOnlineAccount::EPresenceAway == aPresence)
-//        return QContactPresence::PresenceAway;
-//    else if ( CntTransformOnlineAccount::EPresenceExtendedAway == aPresence)
-//        return QContactPresence::PresenceExtendedAway;
-//    else if ( CntTransformOnlineAccount::EPresenceUnknown == aPresence)
-//        return QContactPresence::PresenceUnknown;
-//    else
-//        return QContactPresence::PresenceOffline;
-    return QString();
 }
 
 #endif // SYMBIAN_BACKEND_USE_SQLITE

@@ -41,17 +41,17 @@
 
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
 
-#ifndef TRANSFORMONLINEACCOUNT_H
-#define TRANSFORMONLINEACCOUNT_H
+#ifndef TRANSFORMPRESENCE_H
+#define TRANSFORMPRESENCE_H
 
 #include "cnttransformcontactdata.h"
 
 QTM_USE_NAMESPACE
 
-class CntTransformOnlineAccount : public CntTransformContactData
+class CntTransformPresence : public CntTransformContactData
 {
 public:
-    CntTransformOnlineAccount();
+    CntTransformPresence();
     
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
@@ -65,9 +65,12 @@ protected:
     void reset();
 
 private:
+    QContactPresence::PresenceState decodePresence(QString presence);
+    
+private:
     quint32 m_detailCounter;
 };
 
-#endif // TRANSFORMONLINEACCOUNT_H
+#endif // TRANSFORMPRESENCE_H
 
 #endif // SYMBIAN_BACKEND_USE_SQLITE
