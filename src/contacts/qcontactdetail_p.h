@@ -135,7 +135,7 @@ public:
         return (other.m_str == m_str) || (qstrcmp(other.m_str, m_str) == 0);
     }
 
-    operator QString() const
+    QString toQString() const
     {
         QString s = s_qstrings.value(m_str);
         if (!s.isEmpty())
@@ -152,6 +152,8 @@ public:
     static QHash<QString, char*> s_allocated;
     static QHash<const char *, QString> s_qstrings;
 };
+
+uint qHash(const QContactStringHolder& key);
 
 class QContactDetailPrivate : public QSharedData
 {

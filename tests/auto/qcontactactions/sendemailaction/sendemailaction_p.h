@@ -84,7 +84,7 @@ private slots:
     void performAction();
 };
 
-class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactActionFactory
+class QContactSendEmailActionFactory : public QContactActionFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactActionFactory)

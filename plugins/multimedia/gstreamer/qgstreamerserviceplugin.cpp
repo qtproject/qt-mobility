@@ -103,4 +103,4 @@ void QGstreamerServicePlugin::release(QMediaService *service)
     delete service;
 }
 
-Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
+Q_EXPORT_PLUGIN2(qtmedia_gstengine, QGstreamerServicePlugin);

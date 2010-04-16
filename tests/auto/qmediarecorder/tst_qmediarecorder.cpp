@@ -521,7 +521,7 @@ void tst_QMediaRecorder::testNullControls()
 
     QAudioEncoderSettings audio;
     audio.setCodec(id);
-    audio.setQuality(QtMedia::LowQuality);
+    audio.setQuality(QtMultimedia::LowQuality);
 
     QVideoEncoderSettings video;
     video.setCodec(id);
@@ -664,18 +664,18 @@ void tst_QMediaRecorder::testEncodingSettings()
     QCOMPARE(audioSettings.codec(), QString("audio/pcm"));
     QCOMPARE(audioSettings.bitRate(), 128*1024);
     QCOMPARE(audioSettings.sampleRate(), -1);
-    QCOMPARE(audioSettings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(audioSettings.quality(), QtMultimedia::NormalQuality);
     QCOMPARE(audioSettings.channelCount(), -1);
 
-    QCOMPARE(audioSettings.encodingMode(), QtMedia::ConstantQualityEncoding);
+    QCOMPARE(audioSettings.encodingMode(), QtMultimedia::ConstantQualityEncoding);
 
     QVideoEncoderSettings videoSettings = capture->videoSettings();
     QCOMPARE(videoSettings.codec(), QString());
     QCOMPARE(videoSettings.bitRate(), -1);
     QCOMPARE(videoSettings.resolution(), QSize());
     QCOMPARE(videoSettings.frameRate(), 0.0);
-    QCOMPARE(videoSettings.quality(), QtMedia::NormalQuality);
-    QCOMPARE(videoSettings.encodingMode(), QtMedia::ConstantQualityEncoding);
+    QCOMPARE(videoSettings.quality(), QtMultimedia::NormalQuality);
+    QCOMPARE(videoSettings.encodingMode(), QtMultimedia::ConstantQualityEncoding);
 
     QString format = capture->containerMimeType();
     QCOMPARE(format, QString());
@@ -683,15 +683,15 @@ void tst_QMediaRecorder::testEncodingSettings()
     audioSettings.setCodec("audio/mpeg");
     audioSettings.setSampleRate(44100);
     audioSettings.setBitRate(256*1024);
-    audioSettings.setQuality(QtMedia::HighQuality);
-    audioSettings.setEncodingMode(QtMedia::AverageBitRateEncoding);
+    audioSettings.setQuality(QtMultimedia::HighQuality);
+    audioSettings.setEncodingMode(QtMultimedia::AverageBitRateEncoding);
 
     videoSettings.setCodec("video/3gpp");
     videoSettings.setBitRate(800);
     videoSettings.setFrameRate(24*1024);
     videoSettings.setResolution(QSize(800,600));
-    videoSettings.setQuality(QtMedia::HighQuality);
-    audioSettings.setEncodingMode(QtMedia::TwoPassEncoding);
+    videoSettings.setQuality(QtMultimedia::HighQuality);
+    audioSettings.setEncodingMode(QtMultimedia::TwoPassEncoding);
 
     format = QString("mov");
 
@@ -721,9 +721,9 @@ void tst_QMediaRecorder::testAudioSettings()
     QVERIFY(!settings.isNull());
 
     settings = QAudioEncoderSettings();
-    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
-    settings.setQuality(QtMedia::HighQuality);
-    QCOMPARE(settings.quality(), QtMedia::HighQuality);
+    QCOMPARE(settings.quality(), QtMultimedia::NormalQuality);
+    settings.setQuality(QtMultimedia::HighQuality);
+    QCOMPARE(settings.quality(), QtMultimedia::HighQuality);
     QVERIFY(!settings.isNull());
 
     settings = QAudioEncoderSettings();
@@ -742,7 +742,7 @@ void tst_QMediaRecorder::testAudioSettings()
     QVERIFY(settings.isNull());
     QCOMPARE(settings.codec(), QString());
     QCOMPARE(settings.bitRate(), -1);
-    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(settings.quality(), QtMultimedia::NormalQuality);
     QCOMPARE(settings.sampleRate(), -1);
 
     {
@@ -754,7 +754,7 @@ void tst_QMediaRecorder::testAudioSettings()
         QCOMPARE(settings2, settings1);
         QVERIFY(settings2.isNull());
 
-        settings1.setQuality(QtMedia::HighQuality);
+        settings1.setQuality(QtMultimedia::HighQuality);
 
         QVERIFY(settings2.isNull());
         QVERIFY(!settings1.isNull());
@@ -770,7 +770,7 @@ void tst_QMediaRecorder::testAudioSettings()
         QCOMPARE(settings2, settings1);
         QVERIFY(settings2.isNull());
 
-        settings1.setQuality(QtMedia::HighQuality);
+        settings1.setQuality(QtMultimedia::HighQuality);
 
         QVERIFY(settings2.isNull());
         QVERIFY(!settings1.isNull());
@@ -802,19 +802,19 @@ void tst_QMediaRecorder::testAudioSettings()
     QVERIFY(settings1 != settings2);
 
     settings1 = QAudioEncoderSettings();
-    settings1.setEncodingMode(QtMedia::ConstantBitRateEncoding);
+    settings1.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
     settings2 = QAudioEncoderSettings();
-    settings2.setEncodingMode(QtMedia::ConstantBitRateEncoding);
+    settings2.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
     QVERIFY(settings1 == settings2);
-    settings2.setEncodingMode(QtMedia::TwoPassEncoding);
+    settings2.setEncodingMode(QtMultimedia::TwoPassEncoding);
     QVERIFY(settings1 != settings2);
 
     settings1 = QAudioEncoderSettings();
-    settings1.setQuality(QtMedia::NormalQuality);
+    settings1.setQuality(QtMultimedia::NormalQuality);
     settings2 = QAudioEncoderSettings();
-    settings2.setQuality(QtMedia::NormalQuality);
+    settings2.setQuality(QtMultimedia::NormalQuality);
     QVERIFY(settings1 == settings2);
-    settings2.setQuality(QtMedia::LowQuality);
+    settings2.setQuality(QtMultimedia::LowQuality);
     QVERIFY(settings1 != settings2);
 
     settings1 = QAudioEncoderSettings();
@@ -845,9 +845,9 @@ void tst_QMediaRecorder::testVideoSettings()
     QVERIFY(!settings.isNull());
 
     settings = QVideoEncoderSettings();
-    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
-    settings.setQuality(QtMedia::HighQuality);
-    QCOMPARE(settings.quality(), QtMedia::HighQuality);
+    QCOMPARE(settings.quality(), QtMultimedia::NormalQuality);
+    settings.setQuality(QtMultimedia::HighQuality);
+    QCOMPARE(settings.quality(), QtMultimedia::HighQuality);
     QVERIFY(!settings.isNull());
 
     settings = QVideoEncoderSettings();
@@ -870,7 +870,7 @@ void tst_QMediaRecorder::testVideoSettings()
     QVERIFY(settings.isNull());
     QCOMPARE(settings.codec(), QString());
     QCOMPARE(settings.bitRate(), -1);
-    QCOMPARE(settings.quality(), QtMedia::NormalQuality);
+    QCOMPARE(settings.quality(), QtMultimedia::NormalQuality);
     QCOMPARE(settings.frameRate(), qreal());
     QCOMPARE(settings.resolution(), QSize());
 
@@ -883,7 +883,7 @@ void tst_QMediaRecorder::testVideoSettings()
         QCOMPARE(settings2, settings1);
         QVERIFY(settings2.isNull());
 
-        settings1.setQuality(QtMedia::HighQuality);
+        settings1.setQuality(QtMultimedia::HighQuality);
 
         QVERIFY(settings2.isNull());
         QVERIFY(!settings1.isNull());
@@ -899,7 +899,7 @@ void tst_QMediaRecorder::testVideoSettings()
         QCOMPARE(settings2, settings1);
         QVERIFY(settings2.isNull());
 
-        settings1.setQuality(QtMedia::HighQuality);
+        settings1.setQuality(QtMultimedia::HighQuality);
 
         QVERIFY(settings2.isNull());
         QVERIFY(!settings1.isNull());
@@ -931,19 +931,19 @@ void tst_QMediaRecorder::testVideoSettings()
     QVERIFY(settings1 != settings2);
 
     settings1 = QVideoEncoderSettings();
-    settings1.setEncodingMode(QtMedia::ConstantBitRateEncoding);
+    settings1.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
     settings2 = QVideoEncoderSettings();
-    settings2.setEncodingMode(QtMedia::ConstantBitRateEncoding);
+    settings2.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
     QVERIFY(settings1 == settings2);
-    settings2.setEncodingMode(QtMedia::TwoPassEncoding);
+    settings2.setEncodingMode(QtMultimedia::TwoPassEncoding);
     QVERIFY(settings1 != settings2);
 
     settings1 = QVideoEncoderSettings();
-    settings1.setQuality(QtMedia::NormalQuality);
+    settings1.setQuality(QtMultimedia::NormalQuality);
     settings2 = QVideoEncoderSettings();
-    settings2.setQuality(QtMedia::NormalQuality);
+    settings2.setQuality(QtMultimedia::NormalQuality);
     QVERIFY(settings1 == settings2);
-    settings2.setQuality(QtMedia::LowQuality);
+    settings2.setQuality(QtMultimedia::LowQuality);
     QVERIFY(settings1 != settings2);
 
     settings1 = QVideoEncoderSettings();

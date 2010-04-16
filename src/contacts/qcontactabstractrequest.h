@@ -54,7 +54,7 @@ class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
     Q_OBJECT
 
 public:
-    QContactAbstractRequest() {}
+    QContactAbstractRequest(QObject* parent = 0) : QObject(parent) {}
     ~QContactAbstractRequest();
 
     enum State {
@@ -104,7 +104,7 @@ Q_SIGNALS:
     void resultsAvailable();
 
 protected:
-    QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);
+    QContactAbstractRequest(QContactAbstractRequestPrivate* otherd, QObject* parent = 0);
     QContactAbstractRequestPrivate* d_ptr;
 
 private:
