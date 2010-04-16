@@ -1,13 +1,28 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qmediaplaylistcontrol.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qmediaplaylistcontrol.cpp -->
   <title>Qt Mobility Project 1.0: QMediaPlaylistControl Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]>
+	<meta name="MSSmartTagsPreventParsing" content="true">
+	<meta http-equiv="imagetoolbar" content="no">
+	<![endif]-->
+  <!--[if lt IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+	<![endif]-->
+  <!--[if IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+	<![endif]-->
+  <!--[if IE 8]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+	<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="">
 <a name="//apple_ref/cpp/cl//QMediaPlaylistControl"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -23,7 +38,7 @@
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#dtor.QMediaPlaylistControl">~QMediaPlaylistControl</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#currentIndex">currentIndex</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#next">next</a></b> () = 0</td></tr>
@@ -42,7 +57,7 @@
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playbackModeChanged">playbackModeChanged</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> )</td></tr>
@@ -54,7 +69,7 @@
 <hr />
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#QMediaPlaylistControl">QMediaPlaylistControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
 <ul>
@@ -63,26 +78,29 @@
 <hr />
 <a name="macros"></a>
 <h2>Macros</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<table class="alignedsummary">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid">QMediaPlaylistControl_iid</a></b></td></tr>
 </table>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaPlaylistControl class provides access to the playlist functionality of a <a href="qmediaservice.html">QMediaService</a>.</p>
 <p>If a <a href="qmediaservice.html">QMediaService</a> contains an internal playlist it will implement QMediaPlaylistControl. This control provides access to the contents of the <a href="qmediaplaylistcontrol.html#playlistProvider">playlist</a>, as well as the <a href="qmediaplaylistcontrol.html#currentIndex">position</a> of the current media, and a means of navigating to the <a href="qmediaplaylistcontrol.html#next">next</a> and <a href="qmediaplaylistcontrol.html#previous">previous</a> media.</p>
 <p>The functionality provided by the control is exposed to application code through the <a href="qmediaplaylist.html">QMediaPlaylist</a> class.</p>
 <p>The interface name of QMediaPlaylistControl is <tt>com.nokia.Qt.QMediaPlaylistControl/1.0</tt> as defined in <a href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid">QMediaPlaylistControl_iid</a>.</p>
+</div>
 <p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qmediaplayer.html">QMediaPlayer</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistControl/QMediaPlaylistControl"></a>
 <h3 class="fn"><a name="QMediaPlaylistControl"></a>QMediaPlaylistControl::QMediaPlaylistControl ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -143,12 +161,15 @@
 <p>In many cases it is possible just to use the playlist constructed by player, but sometimes replacing the whole playlist allows to avoid copyting of all the items bettween playlists.</p>
 <p>Returns true if player can use this passed playlist; otherwise returns false.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#playlistProvider">playlistProvider</a>().</p>
+</div>
 <hr />
+<div class="macros"/>
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//QMediaPlaylistControl_iid"></a>
 <h3 class="fn"><a name="QMediaPlaylistControl_iid"></a>QMediaPlaylistControl_iid</h3>
 <p><tt>com.nokia.Qt.QMediaPlaylistControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a> class.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

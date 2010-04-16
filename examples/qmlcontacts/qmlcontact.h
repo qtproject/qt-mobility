@@ -54,7 +54,6 @@ Q_PROPERTY(QContact contact READ contact WRITE setContact NOTIFY contactChanged)
 Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 Q_PROPERTY(QString email READ email WRITE setEmail NOTIFY emailChanged)
 Q_PROPERTY(QString test READ test)
-Q_PROPERTY(QStringList availableActions READ availableActions)
 Q_PROPERTY(QStringList details READ details)
 Q_PROPERTY(QStringList contexts READ contexts)
 public:
@@ -71,7 +70,6 @@ public:
     QString email();
     void setEmail(QString email);
 
-    QStringList availableActions();
     QStringList details();
 
     QStringList contexts();
