@@ -194,7 +194,7 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
          * GetMeasurementrangeAndAccuracy used to get measurement ranges and accuracy from
          * symbian and set as outputRanges in Qt
          */
-        void GetMeasurementrangeAndAccuracy();
+        virtual void GetMeasurementrangeAndAccuracy();
         
         /*
          * Close is used to release all the sensor server objects

@@ -373,10 +373,12 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
     TRAP(err, iBackendData.iSensorChannel->GetAllPropertiesL(KSensrvPropIdChannelAccuracy, accuracyList));
     if(err == KErrNone)
         {            
+        // If only one accuracy value present set value to accuracy
         if(accuracyList.Count() == 1)
             {
             accuracyList[0].GetValue(accuracy);          
             }
+        // If more than one accuracy values present set accuracy to invalid
         else
             {
             accuracy = KAccuracyInvalid; 
@@ -399,10 +401,12 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
                 TInt min, max;
                 list[i].GetMinValue(min);
                 list[i].GetMaxValue(max);
+                // If only one accuracy value is present set same accuracy for all 
                 if(accuracy != KAccuracyInvalid)
                     {
                     addOutputRange(min, max, accuracy);
                     }
+                // If more than one accuracy values are there then map them linearly
                 else
                     {
                     if(accuracyList.Count() > i)
@@ -412,6 +416,8 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
                         }
                     else
                         {
+                        // If less accuracy values are present than measurement ranges then 
+                        // set invalid accuracy for rest of measument ranges
                         addOutputRange(min, max, KAccuracyInvalid);
                         }
                     }
@@ -421,10 +427,12 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
                 TReal min, max;
                 list[i].GetMinValue(min);
                 list[i].GetMaxValue(max);
+                // If only one accuracy value is present set same accuracy for all 
                 if(accuracy != KAccuracyInvalid)
                     {
                     addOutputRange(min, max, accuracy);
                     }
+                // If more than one accuracy values are there then map them linearly
                 else
                     {
                     if(accuracyList.Count() > i)
@@ -434,6 +442,8 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
                         }
                     else
                         {
+                        // If less accuracy values are present than measurement ranges then 
+                        // set invalid accuracy for rest of measument ranges
                         addOutputRange(min, max, KAccuracyInvalid);
                         }
                     }

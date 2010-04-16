@@ -103,7 +103,7 @@ void CMagnetometerSensorSym::start()
         }
     // get current property value for calibration and set it to reading
     TSensrvProperty calibration;
-    TRAPD(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropCalibrationLevel,ESensrvSingleProperty, calibration));
+    TRAPD(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropCalibrationLevel, ESensrvSingleProperty, calibration));
     // If error in getting the calibration level, continue to start the sensor
     // as it is not a fatal error
     if ( err == KErrNone )
