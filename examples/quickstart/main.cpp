@@ -48,7 +48,8 @@
 #else
 #include <QSystemInfo> //(1)
 #endif
-using namespace QtMobility; //(2)
+
+QTM_USE_NAMESPACE //(2)
 
 int main(int argc, char *argv[])
 {
