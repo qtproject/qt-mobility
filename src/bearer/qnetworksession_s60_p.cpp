@@ -57,7 +57,10 @@ QNetworkSessionPrivate::QNetworkSessionPrivate()
       iALREnabled(0), iConnectInBackground(false)
 {
     CActiveScheduler::Add(this);
-    
+
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
+    iMobility = NULL;
+#endif
     TRAP_IGNORE(iConnectionMonitor.ConnectL());
 }
 
@@ -507,22 +510,26 @@ void QNetworkSessionPrivate::stop()
 void QNetworkSessionPrivate::migrate()
 {
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
-    // Close global 'Open C' RConnection
-    setdefaultif(0);
-    
-    // Start migrating to new IAP
-    iMobility->MigrateToPreferredCarrier();
+    if (iMobility) {
+        // Close global 'Open C' RConnection
+        setdefaultif(0);
+        // Start migrating to new IAP
+        iMobility->MigrateToPreferredCarrier();
+    }
 #endif
 }
 
 void QNetworkSessionPrivate::ignore()
 {
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
-    iMobility->IgnorePreferredCarrier();
-    if (!iALRUpgradingConnection) {
-        newState(QNetworkSession::Disconnected);
-    } else {
-        newState(QNetworkSession::Connected,iOldRoamingIap);
+    if (iMobility) {
+        iMobility->IgnorePreferredCarrier();
+
+        if (!iALRUpgradingConnection) {
+            newState(QNetworkSession::Disconnected);
+        } else {
+            newState(QNetworkSession::Connected,iOldRoamingIap);
+        }
     }
 #endif
 }
@@ -530,39 +537,43 @@ void QNetworkSessionPrivate::ignore()
 void QNetworkSessionPrivate::accept()
 {
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
-    iMobility->NewCarrierAccepted();
-    
-    QNetworkConfiguration newActiveConfig = activeConfiguration(iNewRoamingIap);
+    if (iMobility) {
+        iMobility->NewCarrierAccepted();
 
-    // Use name of the new IAP to open global 'Open C' RConnection
-    QByteArray nameAsByteArray = newActiveConfig.name().toUtf8();
-    ifreq ifr;
-    memset(&ifr, 0, sizeof(struct ifreq));
-    strcpy(ifr.ifr_name, nameAsByteArray.constData());
-    setdefaultif(&ifr);
-    
-    newState(QNetworkSession::Connected, iNewRoamingIap);
-#endif
-}
+        QNetworkConfiguration newActiveConfig = activeConfiguration(iNewRoamingIap);
 
-void QNetworkSessionPrivate::reject()
-{
-#ifdef SNAP_FUNCTIONALITY_AVAILABLE
-    iMobility->NewCarrierRejected();
-
-    if (!iALRUpgradingConnection) {
-        newState(QNetworkSession::Disconnected);
-    } else {
-        QNetworkConfiguration newActiveConfig = activeConfiguration(iOldRoamingIap);
-
-        // Use name of the old IAP to open global 'Open C' RConnection
+        // Use name of the new IAP to open global 'Open C' RConnection
         QByteArray nameAsByteArray = newActiveConfig.name().toUtf8();
         ifreq ifr;
         memset(&ifr, 0, sizeof(struct ifreq));
         strcpy(ifr.ifr_name, nameAsByteArray.constData());
         setdefaultif(&ifr);
 
-        newState(QNetworkSession::Connected, iOldRoamingIap);
+        newState(QNetworkSession::Connected, iNewRoamingIap);
+    }
+#endif
+}
+
+void QNetworkSessionPrivate::reject()
+{
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
+    if (iMobility) {
+        iMobility->NewCarrierRejected();
+
+        if (!iALRUpgradingConnection) {
+            newState(QNetworkSession::Disconnected);
+        } else {
+            QNetworkConfiguration newActiveConfig = activeConfiguration(iOldRoamingIap);
+
+            // Use name of the old IAP to open global 'Open C' RConnection
+            QByteArray nameAsByteArray = newActiveConfig.name().toUtf8();
+            ifreq ifr;
+            memset(&ifr, 0, sizeof(struct ifreq));
+            strcpy(ifr.ifr_name, nameAsByteArray.constData());
+            setdefaultif(&ifr);
+
+            newState(QNetworkSession::Connected, iOldRoamingIap);
+        }
     }
 #endif
 }
