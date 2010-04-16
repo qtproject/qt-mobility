@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "qgeomapservice.h"
+#include "qmaptileservice.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QGeoMapService
-    \brief The QGeoMapService class handles all communication to and from a geographic map service.
+    \class QMapTileService
+    \brief The QMapTileService class handles all communication to and from a geographic map service.
     \ingroup location
 
     This is the abstract base class for all classes that handle
@@ -55,68 +55,68 @@ QTM_BEGIN_NAMESPACE
 /*!
     Default constructor.
 */
-QGeoMapService::QGeoMapService() {}
+QMapTileService::QMapTileService() {}
 /*!
     Virtual destructor.
 */
-QGeoMapService::~QGeoMapService() {}
+QMapTileService::~QMapTileService() {}
 
 /*!
-    \fn QGeoMapTileReply* QGeoMapService::getMapTile(const QGeoMapTileRequest& request)
+    \fn QMapTileReply* QMapTileService::getMapTile(const QGeoMapTileRequest& request)
 
-    Submits a map tile request \a request and returns the corresponding QGeoMapTileReply.
+    Submits a map tile request \a request and returns the corresponding QMapTileReply.
 
     \note Due to the asynchronous nature of requests, you should wait for the
-    QGeoMapService::finished(QGeoMapTileReply*) signal from this object or the
-    QGeoMapTileReply::finished() signal from the returned QGeoMapTileReply object before
+    QMapTileService::finished(QMapTileReply*) signal from this object or the
+    QMapTileReply::finished() signal from the returned QMapTileReply object before
     working with the reply.
 */
 
 /*!
-    \fn quint16 QGeoMapService::maxZoomLevel() const
+    \fn quint16 QMapTileService::maxZoomLevel() const
 
     Returns the maximum zoom level supported by this geo engine.
 */
 
 /*!
-    \fn QList<MapVersion> QGeoMapService::versions() const
+    \fn QList<MapVersion> QMapTileService::versions() const
 
     Returns a list of all available \l {MapVersion} {MapVersions}.
 */
 
 /*!
-    \fn QList<MapResolution> QGeoMapService::resolutions() const
+    \fn QList<MapResolution> QMapTileService::resolutions() const
 
     Returns a list of all available \l {MapResolution} {MapResolutions}.
 */
 
 /*!
-    \fn QList<MapFormat> QGeoMapService::formats() const
+    \fn QList<MapFormat> QMapTileService::formats() const
 
     Returns a list of all available \l {MapFormat} {MapFormats}.
 */
 
 /*!
-    \fn QList<MapScheme> QGeoMapService::schemes() const
+    \fn QList<MapScheme> QMapTileService::schemes() const
 
     Returns a list of all available \l {MapScheme} {MapSchemes}.
 */
 
 /*!
-    \fn void QGeoMapService::finished(QGeoMapTileReply* reply)
+    \fn void QMapTileService::finished(QMapTileReply* reply)
 
-    This signal is emitted when a QGeoMapTileReply is available in
+    This signal is emitted when a QMapTileReply is available in
     response to a previously submitted QGeoMapTileRequest.
 */
 
 /*!
-    \fn void QGeoMapService::error(QGeoMapTileReply* reply, QGeoReply::ErrorCode code)
+    \fn void QMapTileService::error(QMapTileReply* reply, QGeoReply::ErrorCode code)
 
-    This signal is emitted when a QGeoMapTileReply encountered an error
+    This signal is emitted when a QMapTileReply encountered an error
     in response to a previously submitted QGeoMapTileRequest.
     \note For QGeoNetworkManager, the error code will be identical to QNetworkReply::NetworkError.
 */
 
-#include "moc_qgeomapservice.cpp"
+#include "moc_qmaptileservice.cpp"
 
 QTM_END_NAMESPACE

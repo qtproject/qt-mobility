@@ -39,12 +39,12 @@
 **
 ****************************************************************************/
 
-#include "qgeomaptilereply_nokia_p.h"
+#include "qmaptilereply_nokia_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapTileReplyNokia::QGeoMapTileReplyNokia(const QGeoMapTileRequest &request, QNetworkReply *reply)
-        : QGeoMapTileReply(request),
+QMapTileReplyNokia::QMapTileReplyNokia(QNetworkReply *reply)
+        : QMapTileReply(0),
         m_reply(reply)
 {
     if (reply) {
@@ -73,7 +73,7 @@ QGeoMapTileReplyNokia::QGeoMapTileReplyNokia(const QGeoMapTileRequest &request, 
             */
 }
 
-QGeoMapTileReplyNokia::~QGeoMapTileReplyNokia()
+QMapTileReplyNokia::~QMapTileReplyNokia()
 {
     if (m_reply)
         m_reply->abort();
@@ -84,24 +84,64 @@ QGeoMapTileReplyNokia::~QGeoMapTileReplyNokia()
   emits finished if all went well
   otherwise emits error
 */
-void QGeoMapTileReplyNokia::parse()
+void QMapTileReplyNokia::parse()
 {
     setData(m_reply->readAll());
     done();
 }
 
-void QGeoMapTileReplyNokia::translateError(QNetworkReply::NetworkError errorCode)
+void QMapTileReplyNokia::translateError(QNetworkReply::NetworkError errorCode)
 {
     // TODO map errors across from errorCode
-    emit error(QGeoMapTileReply::NetworkError, QString("Network error: %1").arg(m_reply->errorString()));
+    emit error(QMapTileReply::NetworkError, QString("Network error: %1").arg(m_reply->errorString()));
 }
 
-void QGeoMapTileReplyNokia::cancel()
+void QMapTileReplyNokia::cancel()
 {
     if (m_reply)
         m_reply->abort();
 }
 
-#include "moc_qgeomaptilereply_nokia_p.cpp"
+void QMapTileReplyNokia::setFormat(QMapTileServiceNokia::MapFormat format)
+{
+    m_format = format;
+}
+
+QMapTileServiceNokia::MapFormat QMapTileReplyNokia::format() const
+{
+    return m_format;
+}
+
+void QMapTileReplyNokia::setScheme(QMapTileServiceNokia::MapScheme scheme)
+{
+    m_scheme = scheme;
+}
+
+QMapTileServiceNokia::MapScheme QMapTileReplyNokia::scheme() const
+{
+    return m_scheme;
+}
+
+void QMapTileReplyNokia::setVersion(QMapTileServiceNokia::MapVersion version)
+{
+    m_version = version;
+}
+
+QMapTileServiceNokia::MapVersion QMapTileReplyNokia::version() const
+{
+    return m_version;
+}
+
+void QMapTileReplyNokia::setTileSize(QMapTileServiceNokia::TileSize size)
+{
+    m_size = size;
+}
+
+QMapTileServiceNokia::TileSize QMapTileReplyNokia::tileSize() const
+{
+    return m_size;
+}
+
+#include "moc_qmaptilereply_nokia_p.cpp"
 
 QTM_END_NAMESPACE

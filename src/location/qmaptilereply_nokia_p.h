@@ -42,19 +42,29 @@
 #ifndef QMAPTILEREPLY_NOKIA_P_H
 #define QMAPTILEREPLY_NOKIA_P_H
 
-#include "qgeomaptilereply.h"
+#include "qmaptilereply.h"
+#include "qmaptileservice_nokia_p.h"
 
 #include <QNetworkReply>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTileReplyNokia : public QGeoMapTileReply
+class QMapTileReplyNokia : public QMapTileReply
 {
     Q_OBJECT
 
 public:
-    QGeoMapTileReplyNokia(const QGeoMapTileRequest &request, QNetworkReply *reply);
-    ~QGeoMapTileReplyNokia();
+    QMapTileReplyNokia(QNetworkReply *reply);
+    ~QMapTileReplyNokia();
+
+    void setFormat(QMapTileServiceNokia::MapFormat format);
+    QMapTileServiceNokia::MapFormat format() const;
+    void setScheme(QMapTileServiceNokia::MapScheme scheme);
+    QMapTileServiceNokia::MapScheme scheme() const;
+    void setVersion(QMapTileServiceNokia::MapVersion version);
+    QMapTileServiceNokia::MapVersion version() const;
+    void setTileSize(QMapTileServiceNokia::TileSize size);
+    QMapTileServiceNokia::TileSize tileSize() const;
 
 public slots:
     virtual void parse();
@@ -63,6 +73,10 @@ public slots:
 
 private:
     QNetworkReply *m_reply;
+    QMapTileServiceNokia::MapFormat m_format;
+    QMapTileServiceNokia::MapScheme m_scheme;
+    QMapTileServiceNokia::MapVersion m_version;
+    QMapTileServiceNokia::TileSize m_size;
 };
 
 QTM_END_NAMESPACE

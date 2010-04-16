@@ -39,58 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPTILEREQUEST_H
-#define QLOCATION_MAPTILEREQUEST_H
+#ifndef QMAPTILEREPLY_H
+#define QMAPTILEREPLY_H
 
-#include <QString>
+#include "qmobilityglobal.h"
 
-#include "qgeomaptile.h"
+#include <QByteArray>
+#include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTileRequestPrivate;
-class Q_LOCATION_EXPORT QGeoMapTileRequest
+class QMapTileReplyPrivate;
+class Q_LOCATION_EXPORT QMapTileReply : public QObject
 {
+    Q_OBJECT
+
 public:
-    QGeoMapTileRequest(const MapVersion& mapVersion,
-                       const MapScheme& mapScheme,
-                       const MapResolution& mapResolution,
-                       const MapFormat& mapFormat);
-    QGeoMapTileRequest();
+    // TODO populate this some more...
+    enum ErrorCode {
+        NoError,
+        // flesh out the more common specific network errors
+        NetworkError,
+        NoContentError,
+        UnknownError
+    };
 
-    QGeoMapTileRequest(const QGeoMapTileRequest &mtr);
-    QGeoMapTileRequest& operator= (const QGeoMapTileRequest &mtr);
+    QMapTileReply(QObject *parent = 0);
+    virtual ~QMapTileReply();
 
-    ~QGeoMapTileRequest();
+    // TODO this should probably become a pixmap if / when we have enough
+    // metadata to convert it
+    QByteArray data() const;
+    void setData(const QByteArray &data);
 
-    quint32 col() const;
-    void setCol(quint32 c);
-
+    quint32 level() const;
+    void setLevel(quint32 level);
     quint32 row() const;
-    void setRow(quint32 r);
+    void setRow(quint32 row);
+    quint32 col() const;
+    void setCol(quint32 col);
 
-    MapVersion version() const;
-    void setVersion(const MapVersion& version);
+public slots:
+    void done();
+    virtual void cancel() = 0;
 
-    MapResolution resolution() const;
-    void setResolution(const MapResolution& resolution);
+signals:
+    void finished();
+    void error(QMapTileReply::ErrorCode errorCode, const QString &errorString = QString());
 
-    MapFormat format() const;
-    void setFormat(const MapFormat& format);
-
-    MapScheme scheme() const;
-    void setScheme(const MapScheme& scheme);
-
-    quint16 zoomLevel() const;
-    void setZoomLevel(quint16 level);
-
-    QString requestString(const QString &host, const QString &token, const QString &referrer) const;
-
-private:
-    //Q_DISABLE_COPY(QGeoMapTileRequest);
-
-    QGeoMapTileRequestPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapTileRequest);
+    // CHOICE: could lose the setters and make this protected
+protected:
+    QMapTileReplyPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QMapTileReply);
 };
 
 QTM_END_NAMESPACE

@@ -39,41 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPSERVICE_H
-#define QGEOMAPSERVICE_H
+#ifndef QMAPTILEREPLY_P_H
+#define QMAPTILEREPLY_P_H
 
-#include "qmobilityglobal.h"
-
-#include "qgeomaptilerequest.h"
-#include "qgeomaptilereply.h"
-
-#include <QObject>
+#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QGeoMapService : public QObject
+class QMapTileReplyPrivate
 {
-    Q_OBJECT
 public:
-    QGeoMapService();
-    virtual ~QGeoMapService();
+    QMapTileReplyPrivate();
 
-    virtual QGeoMapTileReply* getMapTile(const QGeoMapTileRequest& request) = 0;
-
-    virtual quint16 maxZoomLevel() const = 0;
-    virtual QList<MapVersion> versions() const = 0;
-    virtual QList<MapResolution> resolutions() const = 0;
-    virtual QList<MapFormat> formats() const = 0;
-    virtual QList<MapScheme> schemes() const = 0;
-
-signals:
-    void finished(QGeoMapTileReply* reply);
-    void error(QGeoMapTileReply* reply, QGeoMapTileReply::ErrorCode errorCode, QString errorString = QString());
-
-private:
-    Q_DISABLE_COPY(QGeoMapService)
+    QByteArray data;
+    quint32 level;
+    quint32 row;
+    quint32 col;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QGEOMAPSERVICE_H
+#endif // QMAPTILEREPLY_P_H

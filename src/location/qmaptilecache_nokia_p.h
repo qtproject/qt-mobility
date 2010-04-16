@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPTILECACHE_H
-#define QMAPTILECACHE_H
+#ifndef QMAPTILECACHE_NOKIA_P_H
+#define QMAPTILECACHE_NOKIA_P_H
 
 #include <QString>
 #include <QDir>
 #include <QDateTime>
 
-#include "qgeomaptilereply.h"
-#include "qgeomaptilerequest.h"
+#include "qmaptileservice_nokia_p.h"
+#include "qmaptilereply_nokia_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,18 +57,18 @@ QTM_BEGIN_NAMESPACE
 * be constructed in Qt::QDir::home(). When the cache becomes full,
 * a LRU strategy is applied to clean up.
 */
-class QGeoMapTileCache
+class QMapTileCacheNokia
 {
 public:
     /*!
     * Constructor.
     */
-    QGeoMapTileCache();
+    QMapTileCacheNokia();
     /*!
     * Constructor.
     * @param directory The base directory of the cache.
     */
-    QGeoMapTileCache(QDir& directory);
+    QMapTileCacheNokia(QDir& directory);
 
     /*!
     * Sets the limits of the cache in bytes. When the
@@ -144,16 +144,20 @@ public:
     * Checks whether the map tile being requested can be served
     * from the cache.
     * @param request The request specifying the requested map tile.
-    * @return A QGeoMapTileReply containing the request map tile if found,
+    * @return A QMapTileReply containing the request map tile if found,
               NULL otherwise.
     */
-    QGeoMapTileReply* get(const QGeoMapTileRequest& request);
+    QMapTileReplyNokia* get(quint32 level, quint32 row, quint32 col,
+                            QMapTileServiceNokia::MapVersion version,
+                            QMapTileServiceNokia::TileSize size,
+                            QMapTileServiceNokia::MapFormat format,
+                            QMapTileServiceNokia::MapScheme scheme);
     /*!
     * Inserts the map tile contained in the <i>reply</i>
     * into the cache.
     * @param reply The reply containing the map tile.
     */
-    void cache(const QGeoMapTileRequest &request, const QGeoMapTileReply& reply);
+    void cache(const QMapTileReplyNokia& reply);
     /*!
     * @return The current size of the cache.
     */
@@ -186,7 +190,11 @@ private:
     * @param request The request containing the map tile.
     * @return The file name.
     */
-    static QString constrFileName(const QGeoMapTileRequest& request);
+    static QString constrFileName(quint32 level, quint32 row, quint32 col,
+                                  QMapTileServiceNokia::MapVersion version,
+                                  QMapTileServiceNokia::TileSize size,
+                                  QMapTileServiceNokia::MapFormat format,
+                                  QMapTileServiceNokia::MapScheme scheme);
 
 private:
     QDir cacheDir; //!< The base directory of the cache.

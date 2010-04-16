@@ -39,54 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPTILEREPLY_H
-#define QMAPTILEREPLY_H
+#ifndef QMAPTILESERVICE_H
+#define QMAPTILESERVICE_H
 
-#include "qgeomaptilerequest.h"
+#include "qmobilityglobal.h"
 
-#include <QByteArray>
+#include "qmaptilereply.h"
+#include "qgeocoordinate.h"
+
+#include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTileReplyPrivate;
-class Q_LOCATION_EXPORT QGeoMapTileReply : public QObject
+class Q_LOCATION_EXPORT QMapTileService : public QObject
 {
     Q_OBJECT
-
 public:
-    // TODO populate this some more...
-    enum ErrorCode {
-        NoError,
-        // flesh out the more common specific network errors
-        NetworkError,
-        NoContentError,
-        UnknownError
-    };
+    QMapTileService();
+    virtual ~QMapTileService();
 
-    QGeoMapTileReply(const QGeoMapTileRequest &request, QObject *parent = 0);
-    virtual ~QGeoMapTileReply();
-
-    QGeoMapTileRequest request() const;
-
-    // TODO this should probably become a pixmap if / when we have enough
-    // metadata to convert it
-    QByteArray data() const;
-    void setData(const QByteArray &data);
-
-public slots:
-    void done();
-    virtual void cancel() = 0;
+    virtual QMapTileReply* request(quint32 level, quint32 row, quint32 col) = 0;
+    virtual quint32 maxZoomLevel() const = 0;
+    virtual void getMercatorTileIndex(const QGeoCoordinate& coordinate, quint32 level, quint32* row, quint32* col) = 0;
 
 signals:
-    void finished();
-    void error(QGeoMapTileReply::ErrorCode errorCode, const QString &errorString = QString());
+    void finished(QMapTileReply* reply);
+    void error(QMapTileReply* reply, QMapTileReply::ErrorCode errorCode, QString errorString = QString());
 
-    // CHOICE: could lose the setters and make this protected
 private:
-    QGeoMapTileReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapTileReply);
+    Q_DISABLE_COPY(QMapTileService)
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QOMAPTILESERVICE_H
