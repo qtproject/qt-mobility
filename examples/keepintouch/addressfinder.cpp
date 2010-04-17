@@ -504,6 +504,25 @@ void AddressFinder::setupUi()
 #ifndef USE_SEARCH_BUTTON
     tabChanged(0);
 #endif
+
+    QWidgetList focusableWidgets;
+    focusableWidgets << excludeCheckBox
+                     << includePeriod
+                     << excludePeriod
+                     << contactList
+                     << messageCombo
+                     << showButton
+#ifndef USE_SEARCH_BUTTON
+                     << tabWidget
+#else
+                     << searchButton
+#endif
+                     << forwardButton;
+
+  foreach(QWidget* w, focusableWidgets)
+       w->setContextMenuPolicy(Qt::NoContextMenu);
+
+    excludePeriod->setFocus();
 }
 
 void AddressFinder::setSearchActionEnabled(bool val)
