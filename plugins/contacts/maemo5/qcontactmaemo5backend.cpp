@@ -42,6 +42,7 @@
 #include "qcontactmaemo5backend_p.h"
 
 #include <QSharedData>
+#include <QTimer>
 
 #include "qcontactmaemo5debug_p.h"
 
@@ -127,6 +128,11 @@ bool QContactMaemo5Engine::validateDefinition(const QContactDetailDefinition& de
     return false;
 }
 
+QContact QContactMaemo5Engine::compatibleContact(const QContact& contact, QContactManager::Error* error) const
+{
+    return QContactManagerEngine::compatibleContact(contact, error);
+}
+
 QContactLocalId QContactMaemo5Engine::selfContactId(QContactManager::Error* error) const
 {
   Q_CHECK_PTR(d->m_abook);
@@ -181,7 +187,8 @@ bool QContactMaemo5Engine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
     for (int i = 0; i < contacts->size(); i++) {
         curr = contacts->at(i);
         if (!saveContact(&curr, &tempError)) {
-            errorMap->insert(i, tempError);
+            if (errorMap)
+                errorMap->insert(i, tempError);
             *error = tempError;
         } else {
             contacts->replace(i, curr);
@@ -198,7 +205,8 @@ bool QContactMaemo5Engine::removeContacts(const QList<QContactLocalId>& ids, QMa
     QContact curr;
     for (int i = 0; i < ids.size(); i++) {
         if (!removeContact(ids.at(i), &tempError)) {
-            errorMap->insert(i, tempError);
+            if (errorMap)
+                errorMap->insert(i, tempError);
             *error = tempError;
         }
     }
@@ -249,18 +257,26 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     
     // QContactAddress
     fields = defns[contactType][QContactAddress::DefinitionName].fields();
-    //fields.remove(QContactAddress::FieldSubTypes);
-    fields.insert("Estension", gsfd);
+    fields.remove(QContactAddress::FieldSubTypes);
+    fields.insert(AddressFieldExtension, gsfd);
     fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactAddress::DefinitionName].setFields(fields);
     
-    // QContactAnniversary
+    // No QContactAnniversary
     defns[contactType].remove(QContactAnniversary::DefinitionName);
     
-    // QContactAvatar
+    // No QContactAvatar
+    defns[contactType].remove(QContactAvatar::DefinitionName);
+
     // TODO setUnique(true);
     // QContactBirthday
+    fields = defns[contactType][QContactBirthday::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
+    defns[contactType][QContactBirthday::DefinitionName].setFields(fields);
+
     // QContactDisplayLabel
+    fields = defns[contactType][QContactDisplayLabel::DefinitionName].fields();
+    defns[contactType][QContactDisplayLabel::DefinitionName].setFields(fields);
     
     // QContactEmailAddress
     fields = defns[contactType][QContactEmailAddress::DefinitionName].fields();
@@ -268,22 +284,48 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     defns[contactType][QContactEmailAddress::DefinitionName].setFields(fields);
     
     // QContactFamily
+    fields = defns[contactType][QContactFamily::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
+    defns[contactType][QContactFamily::DefinitionName].setFields(fields);
+
     // QContactGender
-    // QContactGeoLocation
+    fields = defns[contactType][QContactGender::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
+    defns[contactType][QContactGender::DefinitionName].setFields(fields);
+
+    // No QContactGeoLocation
     defns[contactType].remove(QContactGeoLocation::DefinitionName);
     
     // QContactGuid
+    fields = defns[contactType][QContactGuid::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
+    defns[contactType][QContactGuid::DefinitionName].setFields(fields);
+  
+    // No QContactGlobalPresence
+    defns[contactType].remove(QContactGlobalPresence::DefinitionName);
+
     // QContactName
     fields = defns[contactType][QContactName::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
     fields.remove(QContactName::FieldCustomLabel);
+    fields.remove(QContactName::FieldMiddleName);
     fields.remove(QContactName::FieldPrefix);
     fields.remove(QContactName::FieldSuffix);
     defns[contactType][QContactName::DefinitionName].setFields(fields);
     
     // QContactNickname
+    fields = defns[contactType][QContactNickname::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
+    defns[contactType][QContactNickname::DefinitionName].setFields(fields);
+
     // QContactNote
+    fields = defns[contactType][QContactNote::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
+    defns[contactType][QContactNote::DefinitionName].setFields(fields);
+
     // QContactOnlineAccount
     fields = defns[contactType][QContactOnlineAccount::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
     fields.remove(QContactOnlineAccount::FieldAccountUri);
     fields.remove(QContactOnlineAccount::FieldSubTypes);
     fields.insert("AccountPath", gsfd);
@@ -291,6 +333,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     
     // QContactOrganization
     fields = defns[contactType][QContactOrganization::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
     fields.remove(QContactOrganization::FieldAssistantName);
     fields.remove(QContactOrganization::FieldDepartment);
     fields.remove(QContactOrganization::FieldLocation);
@@ -302,19 +345,41 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     // QContactPhoneNumber
     fields = defns[contactType][QContactPhoneNumber::DefinitionName].fields();
     fields.insert(QContactDetail::FieldDetailUri, gsfd);
+    QContactDetailFieldDefinition phoneSubtype = fields.value(QContactPhoneNumber::FieldSubTypes);
+    QVariantList allowableValues;
+    allowableValues << QContactPhoneNumber::SubTypeMobile;
+    allowableValues << QContactPhoneNumber::SubTypeVoice;
+    phoneSubtype.setAllowableValues(allowableValues);
+    fields.insert(QContactPhoneNumber::FieldSubTypes, phoneSubtype);
     defns[contactType][QContactPhoneNumber::DefinitionName].setFields(fields);
+
+    // No QContactPresence
+    defns[contactType].remove(QContactPresence::DefinitionName);
+
+    // No QContactRingtone
+    defns[contactType].remove(QContactRingtone::DefinitionName);
     
-    // QContactSyncTarget
+    // No QContactSyncTarget
     defns[contactType].remove(QContactSyncTarget::DefinitionName);
+
+    // No QContactTag
+    defns[contactType].remove(QContactTag::DefinitionName);
     
     // QContactTimestamp
+    fields = defns[contactType][QContactTimestamp::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
+    defns[contactType][QContactTimestamp::DefinitionName].setFields(fields);
+
     // QContactType
+    fields = defns[contactType][QContactType::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
+    defns[contactType][QContactType::DefinitionName].setFields(fields);
+
     // QContactUrl
     fields = defns[contactType][QContactUrl::DefinitionName].fields();
+    fields.remove(QContactDetail::FieldContext);
     fields.remove(QContactUrl::FieldSubType);
     defns[contactType][QContactUrl::DefinitionName].setFields(fields);
-  
-    //Still unmanaged: GlobalPresence, Presence, Ringtone, Tag
     
     QCM5_DEBUG << "Contact type" << contactType << "Keys" <<  defns.keys();
     
@@ -361,3 +426,148 @@ QList<QVariant::Type> QContactMaemo5Engine::supportedDataTypes() const {
 
   return st;   
 }
+
+void QContactMaemo5Engine::requestDestroyed(QContactAbstractRequest* req){
+  m_asynchronousOperations.removeOne(req);
+}
+
+bool QContactMaemo5Engine::startRequest(QContactAbstractRequest* req){
+  if (!m_asynchronousOperations.contains(req))
+    m_asynchronousOperations.enqueue(req);
+  updateRequestState(req, QContactAbstractRequest::ActiveState);
+  QTimer::singleShot(0, this, SLOT(performAsynchronousOperation()));
+  return true;
+}
+
+bool QContactMaemo5Engine::cancelRequest(QContactAbstractRequest* req){
+  updateRequestState(req, QContactAbstractRequest::CanceledState);
+  return true;
+}
+
+bool QContactMaemo5Engine::waitForRequestProgress(QContactAbstractRequest* req, int msecs){
+  Q_UNUSED(msecs);
+  
+  if (!m_asynchronousOperations.removeOne(req))
+    return false; // didn't exist.
+
+  // replace at head of queue
+  m_asynchronousOperations.insert(0, req);
+
+  // and perform the operation.
+  performAsynchronousOperation();
+
+  return true;
+}
+
+bool QContactMaemo5Engine::waitForRequestFinished(QContactAbstractRequest* req, int msecs){
+  // in our implementation, we always complete any operation we start.
+  // so, waitForRequestFinished is equivalent to waitForRequestProgress.
+  return waitForRequestProgress(req, msecs);
+}
+
+void QContactMaemo5Engine::performAsynchronousOperation(){
+  QContactAbstractRequest *currentRequest;
+
+  // take the first pending request and finish it
+  if (m_asynchronousOperations.isEmpty())
+    return;
+  currentRequest = m_asynchronousOperations.dequeue();
+
+  // check to see if it is cancelling; if so, remove it from the queue and return.
+  if (currentRequest->state() == QContactAbstractRequest::CanceledState)
+    return;
+
+  // Now perform the active request and emit required signals.
+  Q_ASSERT(currentRequest->state() == QContactAbstractRequest::ActiveState);
+  switch (currentRequest->type()) {
+    case QContactAbstractRequest::ContactFetchRequest:
+    {
+      QContactFetchRequest* r = static_cast<QContactFetchRequest*>(currentRequest);
+      QContactFilter filter = r->filter();
+      QList<QContactSortOrder> sorting = r->sorting();
+      QContactFetchHint fh = r->fetchHint();
+
+      QContactManager::Error operationError;
+      QList<QContact> requestedContacts = contacts(filter, sorting, fh, &operationError);
+
+      // update the request with the results.
+      updateContactFetchRequest(r, requestedContacts, operationError, QContactAbstractRequest::FinishedState); // emit resultsAvailable()
+    } break;
+    case QContactAbstractRequest::ContactLocalIdFetchRequest:
+    {
+      QContactLocalIdFetchRequest* r = static_cast<QContactLocalIdFetchRequest*>(currentRequest);
+      QContactFilter filter = r->filter();
+      QList<QContactSortOrder> sorting = r->sorting();
+
+      QContactManager::Error operationError = QContactManager::NoError;
+      QList<QContactLocalId> requestedContactIds = contactIds(filter, sorting, &operationError);
+
+      updateContactLocalIdFetchRequest(r, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
+    } break;
+    case QContactAbstractRequest::ContactSaveRequest:
+    {
+      QContactSaveRequest* r = static_cast<QContactSaveRequest*>(currentRequest);
+      QList<QContact> contacts = r->contacts();
+
+      QContactManager::Error operationError = QContactManager::NoError;
+      QMap<int, QContactManager::Error> errorMap;
+      saveContacts(&contacts, &errorMap, &operationError);
+
+      updateContactSaveRequest(r, contacts, operationError, errorMap, QContactAbstractRequest::FinishedState); // there will always be results of some form.  emit resultsAvailable().
+     } break;
+     case QContactAbstractRequest::ContactRemoveRequest:
+     {
+       // this implementation provides scant information to the user
+       // the operation either succeeds (all contacts matching the filter were removed)
+       // or it fails (one or more contacts matching the filter could not be removed)
+       // if a failure occurred, the request error will be set to the most recent
+       // error that occurred during the remove operation.
+       QContactRemoveRequest* r = static_cast<QContactRemoveRequest*>(currentRequest);
+       QContactManager::Error operationError = QContactManager::NoError;
+       QList<QContactLocalId> contactsToRemove = r->contactIds();
+       QMap<int, QContactManager::Error> errorMap;
+
+       for (int i = 0; i < contactsToRemove.size(); i++) {
+         QContactManager::Error tempError;
+         removeContact(contactsToRemove.at(i), /*changeSet,*/ &tempError);
+
+         errorMap.insert(i, tempError);                
+         if (tempError != QContactManager::NoError) {
+           operationError = tempError;
+         }
+       }
+
+       updateContactRemoveRequest(r, operationError, errorMap, QContactAbstractRequest::FinishedState);
+     } break;
+     case QContactAbstractRequest::DetailDefinitionFetchRequest:
+     {
+       QContactDetailDefinitionFetchRequest* r = static_cast<QContactDetailDefinitionFetchRequest*>(currentRequest);
+       QContactManager::Error operationError = QContactManager::NoError;
+       QMap<int, QContactManager::Error> errorMap;
+       QMap<QString, QContactDetailDefinition> requestedDefinitions;
+       QStringList names = r->definitionNames();
+       if (names.isEmpty())
+         names = detailDefinitions(r->contactType(), &operationError).keys(); // all definitions.
+
+       QContactManager::Error tempError;
+       for (int i = 0; i < names.size(); i++) {
+         QContactDetailDefinition current = detailDefinition(names.at(i), r->contactType(), &tempError);
+         requestedDefinitions.insert(names.at(i), current);
+
+         errorMap.insert(i, tempError);              
+         if (tempError != QContactManager::NoError) {
+           operationError = tempError;
+         }
+       }
+
+       updateDefinitionFetchRequest(r, requestedDefinitions, operationError, errorMap, QContactAbstractRequest::FinishedState);
+     } break;
+     default:
+     {
+       // symbian engine currently does not support mutable definitions.
+     } break;
+
+    
+  } 
+}
+

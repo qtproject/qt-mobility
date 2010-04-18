@@ -182,22 +182,18 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
             }
         } else if (filter._comparatorType == QMessageFilterPrivate::Inclusion) {
             QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(filter._comparatorValue));
-            if (filter._ids.count() > 0) { // QMessageIdList
-               if (cmp == QMessageDataComparator::Includes) {
-                   if (filter._ids.contains(message.id())) {
-                       return true;
-                   }
-               } else { // Excludes
-                   if (!filter._ids.contains(message.id())) {
-                       return true;
-                   }
-               }
-            } else { // QMessageFilter
-               if (cmp == QMessageDataComparator::Includes) {
-                   // TODO:
-               } else { // Excludes
-                   // TODO:
-               }
+            if (cmp == QMessageDataComparator::Includes) {
+                if (filter._ids.isEmpty()) {
+                    return false;
+                } else if (filter._ids.contains(message.id())) {
+                    return true;
+                }
+            } else { // Excludes
+                if (filter._ids.isEmpty()) {
+                    return true;
+                } else if (!filter._ids.contains(message.id())) {
+                   return true;
+                }
             }
         }
         break;

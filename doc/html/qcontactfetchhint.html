@@ -55,8 +55,20 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactFetchHint/OptimizationHint"></a>
+<a name="//apple_ref/cpp/econst/QContactFetchHint/AllRequired"></a>
+<a name="//apple_ref/cpp/econst/QContactFetchHint/NoRelationships"></a>
+<a name="//apple_ref/cpp/econst/QContactFetchHint/NoActionPreferences"></a>
+<a name="//apple_ref/cpp/econst/QContactFetchHint/NoBinaryBlobs"></a>
 <a name="//apple_ref/cpp/tdef/QContactFetchHint/OptimizationHints"></a>
 <h3 class="flags"><a name="OptimizationHint-enum"></a>enum QContactFetchHint::OptimizationHint<br />flags QContactFetchHint::OptimizationHints</h3>
+<p>This enum defines flags which may be set to inform the backend that the client does not require certain information. The backend may safely ignore the hint, but then must return the full set of information relating to the optimization hint.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QContactFetchHint::AllRequired</tt></td><td align="center" valign="top"><tt>0x0</tt></td><td valign="top">Tells the backend that all information is required</td></tr>
+<tr><td valign="top"><tt>QContactFetchHint::NoRelationships</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">Tells the backend that the client does not require retrieved contacts to include a cache of relationships</td></tr>
+<tr><td valign="top"><tt>QContactFetchHint::NoActionPreferences</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">Tells the backend that the client does not require retrieved contacts to include a cache of action preferences</td></tr>
+<tr><td valign="top"><tt>QContactFetchHint::NoBinaryBlobs</tt></td><td align="center" valign="top"><tt>0x4</tt></td><td valign="top">Tells the backend that the client does not require retrieved contacts to include binary blobs such as thumbnail images</td></tr>
+</table></p>
 <p>The OptimizationHints type is a typedef for <a href="qflags.html">QFlags</a>&lt;OptimizationHint&gt;. It stores an OR combination of OptimizationHint values.</p>
 <hr />
 <h2>Member Function Documentation</h2>

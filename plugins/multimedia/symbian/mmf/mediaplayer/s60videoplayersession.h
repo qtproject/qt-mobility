@@ -99,6 +99,7 @@ protected:
     void updateMetaDataEntriesL();
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
+    void doSetAudioEndpoint(const QString& audioEndpoint);
 
 private slots: 
     void resetVideoDisplay();
@@ -137,6 +138,7 @@ private:
     Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_originalSize;
     CAudioOutput *m_audioOutput;
+    QString m_audioEndpoint;
 };
 
 #endif

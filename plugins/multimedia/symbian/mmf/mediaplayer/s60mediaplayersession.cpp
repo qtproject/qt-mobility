@@ -300,6 +300,11 @@ void S60MediaPlayerSession::setPosition(qint64 pos)
     emit positionChanged(position());
 }
 
+void S60MediaPlayerSession::setAudioEndpoint(const QString& audioEndpoint)
+{
+    doSetAudioEndpoint(audioEndpoint);
+}
+
 void S60MediaPlayerSession::loaded()
 {
     stopStalledTimer();

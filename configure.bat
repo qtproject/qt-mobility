@@ -461,6 +461,8 @@ call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
 call :compileTest SymbianContactSIM symbiancntsim
+call :compileTest S60_Sensor_API sensors_s60_31
+call :compileTest Symbian_Sensor_Framework sensors_symbian
 echo End of compile tests
 echo.
 echo.

@@ -57,7 +57,7 @@
 #include <qmediaplaylistnavigator.h>
 #include <qmediaplaylist.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QT7PlayerService::QT7PlayerService(QObject *parent):
     QMediaService(parent)

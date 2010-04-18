@@ -52,9 +52,9 @@
 #include "qt7videooutputcontrol.h"
 #include <QtMultimedia/qvideoframe.h>
 
-class QVideoFrame;
+QT_BEGIN_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+class QVideoFrame;
 
 class QT7PlayerSession;
 class QT7PlayerService;
@@ -87,6 +87,6 @@ private:
     QMutex m_mutex;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

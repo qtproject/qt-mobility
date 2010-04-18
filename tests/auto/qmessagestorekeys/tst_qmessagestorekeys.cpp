@@ -788,12 +788,10 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] )
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] );
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("id list inclusion empty")
         << QMessageFolderFilter::byId(QMessageFolderIdList(), QMessageDataComparator::Includes) 
         << QMessageFolderIdList()
         << folderIds;
-#endif
 
     QTest::newRow("id list exclusion 1")
         << QMessageFolderFilter::byId(QMessageFolderIdList() << folderIds[0], QMessageDataComparator::Excludes) 
@@ -810,12 +808,10 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << ( QMessageFolderIdList() << folderIds[2] << folderIds[3] )
         << ( QMessageFolderIdList() << folderIds[0] << folderIds[1] );
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("id list exclusion empty")
         << QMessageFolderFilter::byId(QMessageFolderIdList(), QMessageDataComparator::Excludes) 
         << folderIds
         << QMessageFolderIdList();
-#endif
 
     QTest::newRow("id filter inclusion 1")
         << QMessageFolderFilter::byId(QMessageFolderFilter::byPath("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
@@ -1109,7 +1105,6 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << folderIds
         << QMessageFolderIdList();
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId filter inclusion 1")
         << QMessageFolderFilter::byParentAccountId(QMessageAccountFilter::byName("Alter Ego", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
         << ( QMessageFolderIdList() << folderIds[0] )
@@ -1159,7 +1154,6 @@ void tst_QMessageStoreKeys::testFolderFilter_data()
         << QMessageFolderFilter::byParentAccountId(QMessageAccountFilter::byName("NoneSuch"), QMessageDataComparator::Excludes) 
         << folderIds
         << QMessageFolderIdList();
-#endif
 
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentFolderId equality 1")
@@ -1536,13 +1530,11 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("id list inclusion empty")
         << QMessageFilter::byId(QMessageIdList(), QMessageDataComparator::Includes) 
         << QMessageIdList()
         << messageIds
         << "";
-#endif
 
     QTest::newRow("id list exclusion 1")
         << QMessageFilter::byId(QMessageIdList() << messageIds[0], QMessageDataComparator::Excludes) 
@@ -1562,13 +1554,11 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] )
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("id list exclusion empty")
         << QMessageFilter::byId(QMessageIdList(), QMessageDataComparator::Excludes) 
         << messageIds
         << QMessageIdList()
         << "";
-#endif
 
     QTest::newRow("id filter inclusion empty")
         << QMessageFilter::byId(QMessageFilter(), QMessageDataComparator::Includes) 
@@ -2376,6 +2366,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
     uint discriminator(messageSizes[1]);
 #endif
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("size less than")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::LessThan) 
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
@@ -2425,8 +2416,8 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
 #endif
         << "";
+#endif
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId equality 1")
         << QMessageFilter::byParentAccountId(accountIds[0], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
@@ -2438,7 +2429,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
-#endif
 
     QTest::newRow("parentAccountId equality invalid")
         << QMessageFilter::byParentAccountId(QMessageAccountId(), QMessageDataComparator::Equal) 
@@ -2446,7 +2436,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << messageIds
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId inequality 1")
         << QMessageFilter::byParentAccountId(accountIds[0], QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] )
@@ -2458,7 +2447,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] )
         << "";
-#endif
 
     QTest::newRow("parentAccountId inequality invalid")
         << QMessageFilter::byParentAccountId(QMessageAccountId(), QMessageDataComparator::NotEqual) 
@@ -2466,7 +2454,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << QMessageIdList()
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId filter inclusion 1")
         << QMessageFilter::byParentAccountId(QMessageAccountFilter::byName("Alter Ego", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[0] )
@@ -2526,11 +2513,10 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << messageIds
         << QMessageIdList()
         << "";
-#endif
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
     QTest::newRow("standardFolder equality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal)
+        << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal)
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << messageIds
         << ( QMessageIdList() )
@@ -2554,7 +2540,7 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 
     QTest::newRow("standardFolder inequality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::NotEqual) 
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << ( QMessageIdList() )
         << messageIds
@@ -3015,6 +3001,7 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[4] ) );
 #endif
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("size ascending")
         << ( MessageSortList() << QMessageSortOrder::bySize(Qt::AscendingOrder) )
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
@@ -3053,21 +3040,20 @@ void tst_QMessageStoreKeys::testMessageOrdering_data()
                                << ( QMessageIdList() << messageIds[3] )
 #endif
                                << ( QMessageIdList() << messageIds[0] ) );
-#endif        
+#endif
+#endif
 
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status:HasAttachments ascending")
         << ( MessageSortList() << QMessageSortOrder::byStatus(QMessage::HasAttachments, Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[0] << messageIds[3] )
                                << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] ) );
-#endif
 
     QTest::newRow("status:HasAttachments descending")
         << ( MessageSortList() << QMessageSortOrder::byStatus(QMessage::HasAttachments, Qt::DescendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
                                << ( QMessageIdList() << messageIds[0] << messageIds[3] ) );
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status:Read ascending")
         << ( MessageSortList() << QMessageSortOrder::byStatus(QMessage::Read, Qt::AscendingOrder) )
         << ( MessageListList() << ( QMessageIdList() << messageIds[1] << messageIds[2] )

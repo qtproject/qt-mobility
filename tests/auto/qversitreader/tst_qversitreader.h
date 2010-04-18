@@ -93,6 +93,7 @@ private slots: // Tests
     void testParseVersitDocument();
     void testParseVersitDocument_data();
     void testDecodeQuotedPrintable();
+    void testDecodeQuotedPrintable_data();
     void testParamName();
     void testParamValue();
     void testExtractPart();

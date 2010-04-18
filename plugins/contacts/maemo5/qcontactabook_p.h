@@ -48,9 +48,10 @@
 #include "qtcontacts.h"
 #include "qcontactmaemo5debug_p.h"
 
+#undef signals
+#include <libosso-abook/osso-abook.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "osso-abook-workaround.h"
 #include "qcontactidshash.h"
 
 QTM_USE_NAMESPACE
@@ -97,7 +98,7 @@ private:
   
   bool setDetailValues(const QVariantMap& data, QContactDetail* detail) const;
   
-  OssoABookContact* getAContact(const QContactLocalId& contactId) const;
+  OssoABookContact* getAContact(const QContactLocalId& contactId, QContactManager::Error* error) const;
   
   /* Filtering */
   bool contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const;
@@ -125,7 +126,7 @@ private:
   QContactUrl* getUrlDetail(EContact *eContact) const;
   
   /* Saving - QContact to abookContact */
-  OssoABookContact* convert(const QContact *contact) const;
+  OssoABookContact* convert(const QContact *contact, QContactManager::Error* error) const;
   
   /* Save QDetails in OssoABookContact attributes */
   void setAddressDetail(const OssoABookContact* aContact, const QContactAddress& detail) const;

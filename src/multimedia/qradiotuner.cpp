@@ -47,7 +47,7 @@
 #include <QPair>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QRadioTuner
@@ -141,12 +141,12 @@ bool QRadioTuner::isAvailable() const
 /*!
     Returns the availability error state.
 */
-QtMedia::AvailabilityError QRadioTuner::availabilityError() const
+QtMediaServices::AvailabilityError QRadioTuner::availabilityError() const
 {
     if (d_func()->control != NULL)
         return d_func()->control->availabilityError();
     else
-        return QtMedia::ServiceMissingError;
+        return QtMediaServices::ServiceMissingError;
 }
 
 /*!
@@ -580,5 +580,5 @@ QString QRadioTuner::errorString() const
  */
 
 #include "moc_qradiotuner.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

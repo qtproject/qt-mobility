@@ -70,13 +70,13 @@ class Q_CONTACTS_EXPORT QContactManager : public QObject
 
 public:
 #if Q_QDOC // qdoc's parser fails to recognise the default map argument
-    QContactManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
+    explicit QContactManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
     QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
-    QContactManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
+    explicit QContactManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
     QContactManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
-    QContactManager(QObject* parent);
+    explicit QContactManager(QObject* parent);
 
     static QContactManager* fromUri(const QString& uri, QObject* parent = 0);
     ~QContactManager();                     // dtor
@@ -127,7 +127,8 @@ public:
     QContact compatibleContact(const QContact& original); // Preliminary function!
 
     /* Synthesize the display label of a contact */
-    QString synthesizedDisplayLabel(const QContact& contact) const;
+    QString synthesizedContactDisplayLabel(const QContact& contact) const;
+    void synthesizeContactDisplayLabel(QContact* contact) const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId);

@@ -167,8 +167,8 @@ public:
         m_phonemeta(PIMPR_INVALID_ID),
         m_emailmeta(PIMPR_INVALID_ID),
         m_factory(0),
-        m_avatarmeta(PIMPR_INVALID_ID),
-        m_avatartypemeta(PIMPR_INVALID_ID)
+        m_avatarImageMeta(PIMPR_INVALID_ID),
+        m_avatarVideoMeta(PIMPR_INVALID_ID)
     {
     }
 
@@ -187,8 +187,8 @@ public:
     // The ID of our sekrit extra phone number and email metadata id
     PROPID m_phonemeta;
     PROPID m_emailmeta;
-    PROPID m_avatarmeta;
-    PROPID m_avatartypemeta;
+    PROPID m_avatarImageMeta;
+    PROPID m_avatarVideoMeta;
 
     // List of ids (OIDs are equiv to unique ids, yay)
     QList<QContactLocalId> m_ids;
@@ -209,7 +209,6 @@ public:
 
     /* URI reporting */
     virtual QString managerName() const;
-    QMap<QString, QString> managerParameters() const;
     virtual int managerVersion() const;
 
     /* Filtering */
@@ -220,50 +219,15 @@ public:
 
     virtual bool saveContact(QContact* contact, QContactManager::Error* error);
     virtual bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
-    virtual bool saveRelationship(QContactRelationship* relationship, QContactManager::Error* error);
-    virtual bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error* error);
 
     virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
     virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
-    /* Return a pruned or modified contact which is valid and can be saved in the backend */
-    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error)
-    {
-        return QContactManagerEngine::compatibleContact(original, error);
-    }
-
     /* Synthesize the display label of a contact */
     virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
 
-
-    /* "Self" contact id (MyCard) */
-    virtual bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error);
-    virtual QContactLocalId selfContactId(QContactManager::Error* error) const;
-
-    /* Relationships between contacts */
-    virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const;
-    virtual bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
-    virtual bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
-
-    /* Validation for saving */
-    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error =  QContactManager::NotSupportedError;return QContact();}
-    virtual bool validateContact(const QContact& contact, QContactManager::Error* error) const
-    {
-        return QContactManagerEngine::validateContact(contact, error);
-    }
-    virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error* error) const
-    {
-        return QContactManagerEngine::validateDefinition(def, error);
-    }
-
     /* Definitions - Accessors and Mutators */
     virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
-    virtual QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error) const
-    {
-        return QContactManagerEngine::detailDefinition(definitionId, contactType, error);
-    }
-    virtual bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error);
-    virtual bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error);
 
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QContactAbstractRequest* req);
@@ -288,8 +252,8 @@ public:
     }
 
     /*helper functions*/
-    PROPID metaAvatar() const;
-    PROPID metaAvatarType() const;
+    PROPID metaAvatarImage() const;
+    PROPID metaAvatarVideo() const;
     PROPID metaEmail() const;
     PROPID metaPhone() const;
 
