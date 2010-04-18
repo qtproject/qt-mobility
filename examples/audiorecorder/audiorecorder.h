@@ -65,6 +65,9 @@ public:
 
 private:
     QUrl recordPathAudio(QUrl filePath);
+    void updateSamplerates(int idx);
+    void updateChannelCount(int idx);
+    void updateQuality(int idx);
     
 private slots:
     void deviceChanged(int idx);
