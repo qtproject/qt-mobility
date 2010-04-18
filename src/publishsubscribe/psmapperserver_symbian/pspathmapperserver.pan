@@ -42,7 +42,7 @@
 #define PSPATHMAPPERSERVER_PAN_
 
 // Panic category
-_LIT(KPSPathMapperServer, "PSPathMapperServer");
+_LIT(KPSPathMapperServer, "!qpspathmapperserver");
 _LIT(KUnknownOpCode, "Unknown op code");
 _LIT(KBadDescriptor, "Bad descriptor");
 
