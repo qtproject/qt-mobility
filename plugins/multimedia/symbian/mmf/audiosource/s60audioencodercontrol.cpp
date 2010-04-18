@@ -195,7 +195,7 @@ QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSetti
     if (continuous)
         *continuous = false;
     
-    return m_session->supportedAudioSampleRates();       
+    return m_session->supportedAudioSampleRates(settings);       
 }
 
 int S60AudioEncoderControl::channelCount() const

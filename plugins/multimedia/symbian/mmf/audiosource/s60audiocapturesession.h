@@ -49,6 +49,7 @@
 #include <QList>
 #include <QHash>
 #include <QAudioFormat>
+#include <QMediaRecorder>
 
 #include <Mda\Common\Audio.h>
 #include <Mda\Common\Resource.h>
@@ -62,6 +63,7 @@ struct ControllerData
 	int controllerUid;
 	int destinationFormatUid;
 	QString destinationFormatDescription;
+	QString fileExtension;
 };
 
 struct CodecData
@@ -78,7 +80,7 @@ class S60AudioCaptureSession : public QObject, public MMdaObjectStateChangeObser
     Q_OBJECT
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_ENUMS(TAudioCaptureState)
-public:
+public:    
     
     enum TAudioCaptureState
     {
@@ -104,7 +106,7 @@ public:
     QStringList supportedAudioContainers() const;
     bool setAudioContainer(const QString &containerMimeType); 
     QString audioContainerDescription(const QString &containerName);
-    QList<int> supportedAudioSampleRates() const;
+    QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings) const;
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);
     qint64 position() const;    
@@ -114,6 +116,9 @@ public:
     
 private:    
     void initializeSessionL();
+    void setError(TInt aError);
+    QMediaRecorder::Error fromSymbianErrorToMultimediaError(int error);    
+    QString initializeSinkL();
     void updateAudioContainersL();    
     void populateAudioCodecsDataL();
     void retrieveSupportedAudioSampleRatesL();
@@ -133,6 +138,7 @@ public slots:
 Q_SIGNALS:
     void stateChanged(S60AudioCaptureSession::TAudioCaptureState);
     void positionChanged(qint64 position);
+    void error(int error, const QString &errorString);
 
 private:
     QString m_container;    
@@ -145,6 +151,7 @@ private:
     QHash<QString, ControllerData> m_controllerIdMap;
     QHash<QString, CodecData>  m_audioCodeclist;
     QList<int> m_supportedSampleRates;    
+    int m_error; 
 };
 
 #endif // S60AUDIOCAPTURESESSION_H
