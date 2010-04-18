@@ -137,7 +137,7 @@
         QStringList list;
 
         for (int i = 0; i &lt; contact.count(); i++) {
-            list += qc-&gt;synthesizedDisplayLabel(contact.at(i));
+            list += qc-&gt;synthesizedContactDisplayLabel(contact.at(i));
          }
 
         return list;
@@ -188,7 +188,7 @@
     QString QMLContactManagerAsync::idToName(QString name)
     {
         QContact c = qc-&gt;contact(name.toInt());
-        return qc-&gt;synthesizedDisplayLabel(c);
+        return qc-&gt;synthesizedContactDisplayLabel(c);
     }
 
 <span class="comment">    // </span>![0]

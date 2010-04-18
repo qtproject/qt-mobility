@@ -28,6 +28,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactDetailDefinition&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionsaverequest.html#definitions">definitions</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionsaverequest.html#errorMap">errorMap</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionsaverequest.html#setContactType">setContactType</a></b> ( const QString &amp; <i>contactType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionsaverequest.html#setDefinition">setDefinition</a></b> ( const QContactDetailDefinition &amp; <i>definition</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionsaverequest.html#setDefinitions">setDefinitions</a></b> ( const QList&lt;QContactDetailDefinition&gt; &amp; <i>definitions</i> )</td></tr>
 </table>
 <ul>
@@ -71,6 +72,10 @@
 <h3 class="fn"><a name="setContactType"></a>void QContactDetailDefinitionSaveRequest::setContactType ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>contactType</i> )</h3>
 <p>Sets the type of contact for which detail definitions should be saved to <i>contactType</i></p>
 <p>See also <a href="qcontactdetaildefinitionsaverequest.html#contactType">contactType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionSaveRequest/setDefinition"></a>
+<h3 class="fn"><a name="setDefinition"></a>void QContactDetailDefinitionSaveRequest::setDefinition ( const <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> &amp; <i>definition</i> )</h3>
+<p>Sets the definition to save to be the given <i>definition</i>. Equivalent to calling:</p>
+<pre>    setDefinitions(QList&lt;QContactDetailDefinition&gt;() &lt;&lt; definition);</pre>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinitionSaveRequest/setDefinitions"></a>
 <h3 class="fn"><a name="setDefinitions"></a>void QContactDetailDefinitionSaveRequest::setDefinitions ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&gt; &amp; <i>definitions</i> )</h3>
 <p>Sets the definitions to save to be <i>definitions</i></p>

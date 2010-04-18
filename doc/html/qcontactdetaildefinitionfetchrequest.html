@@ -29,6 +29,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QContactDetailDefinition&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#definitions">definitions</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#errorMap">errorMap</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#setContactType">setContactType</a></b> ( const QString &amp; <i>contactType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#setDefinitionName">setDefinitionName</a></b> ( const QString &amp; <i>definitionName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinitionfetchrequest.html#setDefinitionNames">setDefinitionNames</a></b> ( const QStringList &amp; <i>names</i> )</td></tr>
 </table>
 <ul>
@@ -75,6 +76,10 @@
 <h3 class="fn"><a name="setContactType"></a>void QContactDetailDefinitionFetchRequest::setContactType ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>contactType</i> )</h3>
 <p>Sets the type of contact for which detail definitions should be retrieved to <i>contactType</i></p>
 <p>See also <a href="qcontactdetaildefinitionfetchrequest.html#contactType">contactType</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinitionFetchRequest/setDefinitionName"></a>
+<h3 class="fn"><a name="setDefinitionName"></a>void QContactDetailDefinitionFetchRequest::setDefinitionName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>definitionName</i> )</h3>
+<p>Sets the name of the detail definition to retrieve to <i>definitionName</i>. Equivalent to calling</p>
+<pre>    setDefinitionNames(QList&lt;QContactDetailDefinition&gt;() &lt;&lt; definitionName);</pre>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinitionFetchRequest/setDefinitionNames"></a>
 <h3 class="fn"><a name="setDefinitionNames"></a>void QContactDetailDefinitionFetchRequest::setDefinitionNames ( const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>names</i> )</h3>
 <p>Sets the names of the detail definitions to retrieve to <i>names</i></p>

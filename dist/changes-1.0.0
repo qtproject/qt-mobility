@@ -61,8 +61,34 @@ QtBearer
 QtContacts
 ------
 
- - foo
-    * bar
+ - A large number of API changes have been made.  These were largely
+   cosmetic or minor structural changes - the overall structure of the
+   API is similar to the beta, with more consistency between different
+   parts (particularly related to returning bool and using a map of
+   errors)
+    * The QContactAction (& related classes and APIs) has been removed - the
+      intent is to re-add them once their design and implementation has been
+      stabilized.
+    * Some functionality has been removed (relationship ordering, action
+      preferences for details).
+    * QContactAvatar has been split into QContactThumbnail and QContactAvatar.
+    * QContactOnlineAccount has been split into QContactPresence and QCOA
+ - A number of new functions have been added (QCM::compatibleContact, 
+      QCM::synthesizeContactDisplayLabel)
+ - The API uses QImage instead of QPixmap, to avoid non-gui thread
+   issues with QPixmap usage.
+ - The names of details, and the keys of fields in details are now
+   restricted to Latin 1 (for performance and memory usage optimization).
+ - Bugs fixed etc
+
+QtVersit
+------
+
+ - A number of API changes have been made, to make it easier to use
+   the QtVersit library for simple tasks (like reading directly from
+   a QByteArray), and to make the API more consistent with QtContacts
+ - The API uses QImage instead of QPixmap, to avoid non-gui thread
+   issues with QPixmap usage.
 
 QtLocation
 ------
@@ -70,8 +96,8 @@ QtLocation
  - API change
     * QGeoPositionInfo::dateTime()/setDateTime() changed into
       QGeoPositionInfo::timestamp()/setTimestamp() respectively.
+    * Added serialization functions for QGeoSatelliteInfo
  - Maemo 5 (Fremantle) backend implemented
-
 
 QtMessaging
 ------
@@ -145,13 +171,31 @@ QtServiceFramework
 
 QtSystemInfo
 ------
+ - Mac
+    * Implemented remaining backend.
+    * Fix memory leakage.
 
- - Fixed MOBILITY-748: Private Qt header usage has been removed
- - currentMode() added in network info
- - Maemo 5 (Fremantle) backend finalized
-    * Network info completed
-    * Screensaver inhibit implemented
+ - Maemo 5 (Fremantle)
+    * Implemented remaining backend.
+    * Improved implementation of Maemo's WLAN networkSignalStrengthChanged().
+    * Improved network mode and network status.
     * Example application modified to better fit in N900's horizontal screen
+    * Screensaver inhibit implemented
+
+ - Linux
+    * Storage volume names are now more consistant across the platforms.
+
+ - Symbian
+    * Improved colorDepth detection on some versions.
+    * Improved power state detection.
+    * Fix network name on some versions.
+
+ - Signals/timers/event loops not started unless something is connected to the Q_SIGNAL.
+ - Improved QML support.
+ - rssi timers now fire every 5 seconds on all platforms.
+ - Added currentMode to API.
+ - currentMode() added in network info
+ - Fixed MOBILITY-748: Private Qt header usage has been removed
 
 QtSensors
 ------

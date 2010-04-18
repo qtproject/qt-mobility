@@ -281,11 +281,11 @@
             setTrackInfo(QString(&quot;(%1/%2) %3 - %4&quot;)
                     .arg(playlist-&gt;currentIndex()+1)
                     .arg(playlist-&gt;mediaCount())
-                    .arg(player-&gt;metaData(QtMedia::AlbumArtist).toString())
-                    .arg(player-&gt;metaData(QtMedia::Title).toString()));
+                    .arg(player-&gt;metaData(QtMediaServices::AlbumArtist).toString())
+                    .arg(player-&gt;metaData(QtMediaServices::Title).toString()));
 
             if (!player-&gt;isVideoAvailable()) {
-                QUrl uri = player-&gt;metaData(QtMedia::CoverArtUrlLarge).value&lt;QUrl&gt;();
+                QUrl uri = player-&gt;metaData(QtMediaServices::CoverArtUrlLarge).value&lt;QUrl&gt;();
                 QPixmap pixmap = NULL;
 
                 if (uri.isEmpty()) {
@@ -321,14 +321,14 @@
         hideOrShowCoverArt();
         }
     #else
-        <span class="comment">//qDebug() &lt;&lt; &quot;update metadata&quot; &lt;&lt; player-&gt;metaData(QtMedia::Title).toString();</span>
+        <span class="comment">//qDebug() &lt;&lt; &quot;update metadata&quot; &lt;&lt; player-&gt;metaData(QtMediaServices::Title).toString();</span>
         if (player-&gt;isMetaDataAvailable()) {
             setTrackInfo(QString(&quot;%1 - %2&quot;)
-                    .arg(player-&gt;metaData(QtMedia::AlbumArtist).toString())
-                    .arg(player-&gt;metaData(QtMedia::Title).toString()));
+                    .arg(player-&gt;metaData(QtMediaServices::AlbumArtist).toString())
+                    .arg(player-&gt;metaData(QtMediaServices::Title).toString()));
 
             if (coverLabel) {
-                QUrl url = player-&gt;metaData(QtMedia::CoverArtUrlLarge).value&lt;QUrl&gt;();
+                QUrl url = player-&gt;metaData(QtMediaServices::CoverArtUrlLarge).value&lt;QUrl&gt;();
 
                 coverLabel-&gt;setPixmap(!url.isEmpty()
                         ? QPixmap(url.toString())

@@ -319,13 +319,11 @@ void tst_QContactDetails::displayLabel()
 
     // test property add [== fail]
     QVERIFY(!c.saveDetail(&d2));
-    QVERIFY(d2.accessConstraints() & QContactDetail::ReadOnly);
     QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
 
     // test property update [== fail]
     d1 = c.detail<QContactDisplayLabel>();
     QVERIFY(!c.saveDetail(&d1));
-    QVERIFY(d1.accessConstraints() & QContactDetail::ReadOnly);
 
     // test property remove
     QVERIFY(!c.removeDetail(&d1)); // cannot remove display label

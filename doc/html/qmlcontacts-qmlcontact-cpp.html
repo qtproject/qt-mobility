@@ -117,17 +117,6 @@
         emit emailChanged(this);
     }
 
-    QStringList QmlContact::availableActions()
-    {
-        QList&lt;QContactActionDescriptor&gt; actions =  m_contact.availableActions();
-        QStringList names;
-
-        foreach (const QContactActionDescriptor&amp; action, actions) {
-            names &lt;&lt; action.actionName();
-        }
-        return names;
-    }
-
     QStringList QmlContact::details()
     {
         QStringList dets;
