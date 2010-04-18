@@ -166,8 +166,10 @@ QtPublishSubscribe
 QtServiceFramework
 ------
 
- - foo
-    * bar
+ - Symbian backend improvements
+    * Mainly security fixes
+       - Security token usage in databases, db server in protected namespace etc.
+    * Capability fixes (reduced)
 
 QtSystemInfo
 ------
