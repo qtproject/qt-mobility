@@ -1,3 +1,0 @@
-usr/lib/lib*.so*
-#usr/share/dbus-1/services/*
-#../../tests/fake_npe/fake* /usr/lib/libqtlocation-tests/
