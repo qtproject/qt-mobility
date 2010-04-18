@@ -50,7 +50,7 @@
 #include <QtGui/qmacdefines_mac.h>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QT7PlayerSession;
 class QT7PlayerService;
@@ -119,6 +119,6 @@ private:
     QT7PlayerSession *m_session;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

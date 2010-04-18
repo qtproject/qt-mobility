@@ -72,6 +72,8 @@ public slots:
 
 private slots:
 
+    void robustnessBombing();
+
     void outOfProcessSession();
     void invalidSession();
 
@@ -228,6 +230,23 @@ void tst_QNetworkSession::cleanupTestCase()
     icd_stub->waitForFinished();
 #endif
 }
+
+// Robustness test for calling interfaces in nonsense order / with nonsense parameters
+void tst_QNetworkSession::robustnessBombing() 
+{
+    QNetworkConfigurationManager mgr;
+    QNetworkSession testSession(mgr.defaultConfiguration());
+    // Should not reset even session is not opened
+    testSession.migrate();
+    testSession.accept();
+    testSession.ignore();
+    testSession.reject();
+    quint64 temp;
+    temp = testSession.bytesWritten();
+    temp = testSession.bytesReceived();
+    temp = testSession.activeTime();
+}
+
 
 void tst_QNetworkSession::invalidSession()
 {

@@ -45,7 +45,7 @@
 #include <QtTest/QtTest>
 #include <QDebug>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class tst_QMediaPluginLoader : public QObject
 {

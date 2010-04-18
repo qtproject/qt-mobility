@@ -7,7 +7,7 @@ include(version.pri)
 TEMPLATE = lib
 CONFIG += plugin
 
-TARGET = $$qtLibraryTarget(sensor_s60sensorapi)
+TARGET = $$qtLibraryTarget(qtsensors_s60sensorapi)
 TARGET.EPOCALLOWDLLDATA = 1
 TARGET.UID3 = 0x2002BFC1
 TARGET.CAPABILITY = ALL -TCB

@@ -461,6 +461,8 @@ call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
 call :compileTest SymbianContactSIM symbiancntsim
+call :compileTest S60_Sensor_API sensors_s60_31
+call :compileTest Symbian_Sensor_Framework sensors_symbian
 echo End of compile tests
 echo.
 echo.
@@ -495,7 +497,6 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\experimental
 ) else if %FIRST% == publishsubscribe (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\publishsubscribe
 ) else if %FIRST% == systeminfo (

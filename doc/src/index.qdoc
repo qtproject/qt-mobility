@@ -278,47 +278,63 @@
 
     \raw HTML
 
-    <table border="0">
+    <table cellpadding="2" cellspacing="1" border="0">
+    <tbody>
     <tr>
     <td>Color</td>
     <td>Explanation</td>
+
     </tr>
-    <tr>
-    <td bgcolor="green"></td>
-    <td>A functional backend for the API on the platform exists inside QDF source code.</td>
-    </tr>
-    <tr>
-    <td bgcolor="lightgreen"></td>
-    <td>A functional backend for the API on the platform is being worked however it is not functionally complete.</td>
-    </tr>
+        </tr>
+        <tr>
+        <td bgcolor="green"></td>
+        <td>A functional backend for the API on the platform is complete.</td>
+        </tr>
+        <tr>
+        <td bgcolor="yellow"></td>
+        <td>A functional backend for the API on the platform is being worked however it is not functionally complete.</td>
+
+        </tr>
+        <tr>
     <tr>
     <td bgcolor="lightgray"></td>
-    <td>A functional backend for the API on the platform is being worked on.
-    At this point it is far from functionally complete or there is no platform specific code inside QDF source code.</td>
+    <td>A functional backend for the API on the platform is being worked on. At this point it is far from functionally complete or there is no platform specific code inside QDF source code.</td>
     </tr>
     <tr>
     <td bgcolor="gray"></td>
-    <td>A functional backend for the API on the platform is not being worked on. It is
-    possible for others to implement and integrate support.</td>
+    <td>A functional backend for the API on the platform is not being worked on. It is possible for others to implement and integrate support.</td>
     </tr>
+    </tbody>
     </table>
     <br>
-    <table border="1">
+
+    <b>Tier 1 Platforms</b><br>
+    Primary platforms are the main focus of Mobility API. There platforms are frequently tested by our unit test suite and other internal testing tools. However, the timeline of availability for each backend is subject to change.
+    <br>
+    <b>Tier 2 Platforms</b><br>
+    Secondary platforms include future direction of Qt Mobility API. Contributions to these platforms are welcome.
+    <br>
+    <br>
+    <table align="center" cellpadding="2" cellspacing="1" border="1">
+    <tbody>
     <tr>
-    <td></td>
-    <td><b>API Maturity Level</b></td>
-    <td><b>S60 3rd Edition, Feature Pack 1</b></td>
-    <td><b>S60 3rd Edition, Feature Pack 2</b></td>
-    <td><b>S60 5th Edition</b></td>
-    <td><b>Symbian 9.2</b></td>
-    <td><b>Symbian 10.1</b></td>
-    <td><b>Maemo 5</b></td>
-    <td><b>Maemo 6</b></td>
-    <td><b>Windows CE/Mobile<b></td>
-    <td><b>Windows XP/Vista</b></td>
-    <td><b>Linux</b></td>
-    <td><b>Mac OS X</b></td>
-    <td><b>Other</b></td>
+    <td rowspan="2">&nbsp;</td>
+    <td rowspan="2"><b>API Maturity Level</b></td>
+    <td colspan="5" align="center" bgcolor="#96E066"><b>Tier 1 Platforms</b></td>
+
+    <td colspan="4" align="center" bgcolor="#96E066"><b>Tier 2 Platforms</b></td>
+    </tr>
+    <tr>
+    <td width="9%"><b>S60 3rd Edition, Feature Pack 1</b></td>
+    <td width="9%"><b>S60 3rd Edition, Feature Pack 2</b></td>
+    <td width="9%"><b>S60 5th Edition</b></td>
+    <td width="9%"><b>Symbian^3</b></td>
+    <td width="9%"><b>Maemo 5</b></td>
+    <td width="9%"><b>Windows CE/Mobile<b></b></b></td>
+    <td width="9%"><b>Windows XP/Vista</b></td>
+
+    <td width="9%"><b>Linux</b></td>
+    <td width="9%"><b>Mac OS X</b></td>
     </tr>
     <tr>
     <td>Service Framework (in-process)</td>
@@ -330,11 +346,9 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td></td>
     </tr>
     <tr>
     <td>Messaging</td>
@@ -342,15 +356,13 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="green">Using MAPI and Pocket Outlook Object Model</td>
-    <td bgcolor="lightgreen">Using MAPI and Outlook</td>
-    <td bgcolor="green">Using QMF</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
-    <td></td>
+
     </tr>
     <tr>
     <td>Bearer Management</td>
@@ -364,32 +376,26 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td></td>
     </tr>
     <tr>
+
     <td>Publish and Subscribe</td>
     <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Contacts</td>
+
     <td>FINAL</td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -398,39 +404,34 @@
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
-    <td></td>
     </tr>
     <tr>
     <td>Location</td>
     <td>FINAL</td>
+
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td bgcolor="green">NMEA data provider support</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>Multimedia</td>
     <td>BETA</td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="green">GStreamer</td>
-    <td bgcolor="lightgray"></td>
-    <td></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="gray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
     <tr>
     <td>System Information</td>
@@ -438,33 +439,31 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgreen"></td>
+    <td bgcolor="green"></td>
+
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgreen"></td>
-    <td></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     </tr>
+    <tr>
     <td>Sensors</td>
-    <td>FINAL</td>
-    <td bgcolor="lightgreen"></td>
-    <td bgcolor="lightgray"></td>
+    <td>BETA</td>
+    <td bgcolor="yellow"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="gray"></td>
+
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="gray"></td>
-    <td bgcolor="gray"></td>
-    <td></td>
     </tr>
+    <tr>
     <td>Versit</td>
-    <td>TP</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -473,13 +472,12 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
+
     <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
-    <td></td>
     </tr>
-    <p />
-    <p />
+    <p></p>
+    <p></p>
+    </tbody>
     </table>
     <br>
 

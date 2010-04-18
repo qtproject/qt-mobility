@@ -52,7 +52,7 @@
 #include "s60radiotunercontrol_since32.h"
 #endif
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60RadioTunerService : public QMediaService
 {

@@ -106,12 +106,11 @@
 <pre>    void RecentMessagesWidget::load()
     {
         m_ids.clear();
+        m_state = Loading;
+        bool b;
 
-        if(!m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent))
-            m_state = LoadFailed;
-        else
-            m_state = Loading;
-    }</pre>
+        b=m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
+        <span class="comment">//    qDebug() &lt;&lt; &quot;RecentMessagesWidget::load&quot; &lt;&lt; b &lt;&lt; m_state;</span></pre>
 <p>Once the results of the query are returned via the <a href="qmessageservice.html#messagesFound">QMessageService::messagesFound</a>() signal, the widget loads each of the returned messages in turn and populates it's list with message subjects.</p>
 <pre>    void RecentMessagesWidget::messagesFound(const QMessageIdList&amp; ids)
     {

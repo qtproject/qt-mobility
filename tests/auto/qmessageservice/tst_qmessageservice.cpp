@@ -1420,6 +1420,7 @@ void tst_QMessageService::testQueryCountData()
     uint discriminator(messageSizes[1]);
 #endif
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("size less than")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::LessThan) 
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
@@ -1469,6 +1470,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
 #endif
         << "";
+#endif
 
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId equality 1")

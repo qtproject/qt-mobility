@@ -46,7 +46,7 @@
 
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -131,5 +131,5 @@ QMediaService::~QMediaService()
 
 #include "moc_qmediaservice.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

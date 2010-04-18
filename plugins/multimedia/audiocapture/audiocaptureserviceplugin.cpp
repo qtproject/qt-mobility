@@ -65,5 +65,5 @@ void AudioCaptureServicePlugin::release(QMediaService *service)
     delete service;
 }
 
-Q_EXPORT_PLUGIN2(audioengine, AudioCaptureServicePlugin);
+Q_EXPORT_PLUGIN2(qtmedia_audioengine, AudioCaptureServicePlugin);
 

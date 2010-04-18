@@ -49,7 +49,7 @@
 
 #include "directshowplayerservice.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DirectShowPlayerControl : public QMediaPlayerControl
 {

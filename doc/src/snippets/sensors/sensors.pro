@@ -6,7 +6,7 @@ SOURCES+=main.cpp\
     creating.cpp\
     start.cpp\
     plugin.cpp
-HEADERS+=myplugin.h
+HEADERS+=mybackend.h
 LIBS+=-rdynamic
 CONFIG+=mobility
 MOBILITY+=sensors

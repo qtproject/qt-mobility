@@ -51,7 +51,7 @@
 #include "qt7videooutputcontrol.h"
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QT7PlayerSession;
 class QT7PlayerService;
@@ -110,6 +110,6 @@ private:
     int m_saturation;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

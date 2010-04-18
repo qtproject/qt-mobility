@@ -29,20 +29,16 @@
 <tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#videoUrl">videoUrl</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>23 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
 <hr />
-<a name="public-variables"></a>
-<h2>Public Variables</h2>
+<a name="static-public-members"></a>
+<h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#DefinitionName-var">DefinitionName</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#FieldImageUrl-var">FieldImageUrl</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#FieldVideoUrl-var">FieldVideoUrl</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#DefinitionName-var">DefinitionName</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#FieldImageUrl-var">FieldImageUrl</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactavatar.html#FieldVideoUrl-var">FieldVideoUrl</a></b></td></tr>
 </table>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 protected function inherited from <a href="qcontactdetail.html#protected-functions">QContactDetail</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -51,6 +47,7 @@
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactAvatar/imageUrl"></a>
 <h3 class="fn"><a name="imageUrl"></a><a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> QContactAvatar::imageUrl () const</h3>
+<p>Returns the url of an avatar image associated with the contact</p>
 <p>See also <a href="qcontactavatar.html#setImageUrl">setImageUrl</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactAvatar/setImageUrl"></a>
 <h3 class="fn"><a name="setImageUrl"></a>void QContactAvatar::setImageUrl ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>imageUrl</i> )</h3>
@@ -58,22 +55,25 @@
 <p>See also <a href="qcontactavatar.html#imageUrl">imageUrl</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactAvatar/setVideoUrl"></a>
 <h3 class="fn"><a name="setVideoUrl"></a>void QContactAvatar::setVideoUrl ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>videoUrl</i> )</h3>
-<p>Sets the url of an avatar video associated with the contact to <i>imageUrl</i></p>
+<p>Sets the url of an avatar video associated with the contact to <i>videoUrl</i></p>
 <p>See also <a href="qcontactavatar.html#videoUrl">videoUrl</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactAvatar/videoUrl"></a>
 <h3 class="fn"><a name="videoUrl"></a><a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> QContactAvatar::videoUrl () const</h3>
+<p>Returns the url of an avatar video associated with the contact</p>
 <p>See also <a href="qcontactavatar.html#setVideoUrl">setVideoUrl</a>().</p>
 <hr />
 <h2>Member Variable Documentation</h2>
 <a name="//apple_ref/cpp/data/QContactAvatar/DefinitionName"></a>
-<h3 class="fn"><a name="DefinitionName-var"></a>const char * QContactAvatar::DefinitionName</h3>
-<p>The constant string which identifies the definition of details which are avatars.</p>
+<h3 class="fn"><a name="DefinitionName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactAvatar::DefinitionName</h3>
+<p>The string constant for the definition name of <a href="qcontactavatar.html">QContactAvatar</a> details.</p>
 <a name="//apple_ref/cpp/data/QContactAvatar/FieldImageUrl"></a>
-<h3 class="fn"><a name="FieldImageUrl-var"></a>const char * QContactAvatar::FieldImageUrl</h3>
-<p>The constant key for which the url of the avatar image value is stored in details of the <a href="qcontactavatar.html">QContactAvatar</a> type.</p>
+<h3 class="fn"><a name="FieldImageUrl-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactAvatar::FieldImageUrl</h3>
+<p>The field key constant for the value containing the URL of the avatar image.</p>
+<p>See also <a href="qcontactavatar.html#imageUrl">imageUrl</a>() and <a href="qcontactavatar.html#setImageUrl">setImageUrl</a>().</p>
 <a name="//apple_ref/cpp/data/QContactAvatar/FieldVideoUrl"></a>
-<h3 class="fn"><a name="FieldVideoUrl-var"></a>const char * QContactAvatar::FieldVideoUrl</h3>
-<p>The constant key for which the url of the avatar video value is stored in details of the <a href="qcontactavatar.html">QContactAvatar</a> type.</p>
+<h3 class="fn"><a name="FieldVideoUrl-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactAvatar::FieldVideoUrl</h3>
+<p>The field key constant for the value containing the URL of a video avatar.</p>
+<p>See also <a href="qcontactavatar.html#videoUrl">videoUrl</a>() and <a href="qcontactavatar.html#setVideoUrl">setVideoUrl</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

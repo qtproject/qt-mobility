@@ -66,4 +66,4 @@ void QXARecordMediaServiceProviderPlugin::release(QMediaService *service)
     QT_TRACE_FUNCTION_EXIT;
 }
 
-Q_EXPORT_PLUGIN2(xarecordservice, QXARecordMediaServiceProviderPlugin);
+Q_EXPORT_PLUGIN2(qtmedia_xarecordservice, QXARecordMediaServiceProviderPlugin);

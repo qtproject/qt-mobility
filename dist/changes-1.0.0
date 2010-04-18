@@ -44,14 +44,51 @@ Optimizations
 QtBearer
 ------
 
- - foo
-    * bar
+ - Fixed MOBILITY-748: Private Qt header usage has been removed
+ - Fixed MOBILITY-600: Memory leak on Mac fixed
+ - Multiple optimizations on Mac OS
+ - Maemo 5 and Maemo 6 use exact same code base
+ - ConnectInBackground support for Symbian added
+ - Maemo 5 (Fremantle) specific fixes
+    * Fixed QTMOBILITY-70: bearermonitor application has serious layout issues
+      preventing any use of the app
+    * Fixed MOBILITY-723: BearerEx test application isn't usable in N900
+    * Fixed MOBILITY-600: QNetworkSession is not asynchronous on Maemo and
+      leads to crashes
+ - Static analysis errors fixed
+    
 
 QtContacts
 ------
 
- - foo
-    * bar
+ - A large number of API changes have been made.  These were largely
+   cosmetic or minor structural changes - the overall structure of the
+   API is similar to the beta, with more consistency between different
+   parts (particularly related to returning bool and using a map of
+   errors)
+    * The QContactAction (& related classes and APIs) has been removed - the
+      intent is to re-add them once their design and implementation has been
+      stabilized.
+    * Some functionality has been removed (relationship ordering, action
+      preferences for details).
+    * QContactAvatar has been split into QContactThumbnail and QContactAvatar.
+    * QContactOnlineAccount has been split into QContactPresence and QCOA
+ - A number of new functions have been added (QCM::compatibleContact, 
+      QCM::synthesizeContactDisplayLabel)
+ - The API uses QImage instead of QPixmap, to avoid non-gui thread
+   issues with QPixmap usage.
+ - The names of details, and the keys of fields in details are now
+   restricted to Latin 1 (for performance and memory usage optimization).
+ - Bugs fixed etc
+
+QtVersit
+------
+
+ - A number of API changes have been made, to make it easier to use
+   the QtVersit library for simple tasks (like reading directly from
+   a QByteArray), and to make the API more consistent with QtContacts
+ - The API uses QImage instead of QPixmap, to avoid non-gui thread
+   issues with QPixmap usage.
 
 QtLocation
 ------
@@ -59,10 +96,20 @@ QtLocation
  - API change
     * QGeoPositionInfo::dateTime()/setDateTime() changed into
       QGeoPositionInfo::timestamp()/setTimestamp() respectively.
+    * Added serialization functions for QGeoSatelliteInfo
+ - Maemo 5 (Fremantle) backend implemented
 
 QtMessaging
 ------
 
+ - Maemo 5 (Fremantle) backend implemented
+    * SMS and Email message types supported.
+    * modest process must be restarted before Fremantle backend is fully
+      operational. This can be achieved by restarting the device.
+ - API changes
+    * QMessageAddress::recipient()/setRecipient renamed to 
+      QMessageAddress::addressee()/setAddressee respectively.
+    * QMessage::XMPP renamed to QMessage::InstantMessage.
  - Symbian specific fixes
     * Notifications which are related to internal folders (0x100001
       and 0x100002) are ignored.
@@ -79,18 +126,42 @@ QtMessaging
       registerNotificationFilter(
           QMessageFilter::byStandardFolder(QMessage::InboxFolder) &
           QMessageFilter::byType(QMessage::Mms))
+ - Regression in keepintouch example fixed, incorrect results were returned 
+   when 'but not last' checkbox was unchecked.
+ - Format of identifiers changed
+   * For forwards compatibility.
 
 QtMedia
 ------
-
- - foo
-    * bar
+ - Symbian backend improvements
+    * AudioCapture
+      - Bug fixes and codec support improvements
+    * Mediaplayer
+      - Audio routing implemented (destinations speaker, headphones, default)
+    * Camera
+      - Camera bug fixes and feature improvements
+      - Note: Camera eventually separated from QtMedia API (has its own plugin)
+ - Symbian^3 backend for audio recording (uses OpenMaxAL)
+ - Tweaked few examples to have more features
+ - Maemo 5 (Fremantle) backend implemented
+ - AudioCapture
+ - API changes
+    * Added CoverArtImage, PosterImage, and ThumbnailImage meta-data keys to
+      address embedded images.
+    * Changed QVideoWidget to use the Qt::AspectRatioMode enumeration instead
+      of defining its own enumeration of the same name.
+ - Behavioural changes
+   * Changed to QVideoWidget to consistently not fill the background with black
+     by default.
 
 QtPublishSubscribe
 ------
 
- - foo
-    * bar
+ - Maemo 5 (Fremantle) GConf backend finalized
+    * Support for monitoring changes in GConf
+    * Serialize unsupported QVariant data types in string with BASE64 encoding
+    * Autotests
+    * Example application modified to be usable in N900
 
 QtServiceFramework
 ------
@@ -100,9 +171,31 @@ QtServiceFramework
 
 QtSystemInfo
 ------
+ - Mac
+    * Implemented remaining backend.
+    * Fix memory leakage.
 
- - foo
-    * bar
+ - Maemo 5 (Fremantle)
+    * Implemented remaining backend.
+    * Improved implementation of Maemo's WLAN networkSignalStrengthChanged().
+    * Improved network mode and network status.
+    * Example application modified to better fit in N900's horizontal screen
+    * Screensaver inhibit implemented
+
+ - Linux
+    * Storage volume names are now more consistant across the platforms.
+
+ - Symbian
+    * Improved colorDepth detection on some versions.
+    * Improved power state detection.
+    * Fix network name on some versions.
+
+ - Signals/timers/event loops not started unless something is connected to the Q_SIGNAL.
+ - Improved QML support.
+ - rssi timers now fire every 5 seconds on all platforms.
+ - Added currentMode to API.
+ - currentMode() added in network info
+ - Fixed MOBILITY-748: Private Qt header usage has been removed
 
 QtSensors
 ------
