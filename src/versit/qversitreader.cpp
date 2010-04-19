@@ -53,7 +53,6 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitReader
-  \preliminary
   \brief The QVersitReader class reads Versit documents such as vCards from a device.
   \ingroup versit
 
