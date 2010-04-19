@@ -61,7 +61,7 @@ QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
 QMessageAccountId::QMessageAccountId(const QString& id)
  : d_ptr(new QMessageAccountIdPrivate(this))
 {
-    d_ptr->_id = stripIdPrefix(id);
+    d_ptr->_id = id;
 }
 
 QMessageAccountId::~QMessageAccountId()
@@ -117,8 +117,7 @@ QString QMessageAccountId::toString() const
     if (!isValid()) {
         return QString();
     }
-
-    return addIdPrefix(d_ptr->_id);
+    return d_ptr->_id;
 }
 
 bool QMessageAccountId::isValid() const
@@ -128,6 +127,6 @@ bool QMessageAccountId::isValid() const
 
 uint qHash(const QMessageAccountId &id)
 {
-    return qHash(stripIdPrefix(id.toString()));
+    return qHash(id.toString());
 }
 QTM_END_NAMESPACE

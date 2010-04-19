@@ -54,7 +54,7 @@ namespace SymbianHelpers {
         if (id.startsWith(mtmPrefix)) {
             return EngineTypeMTM;
         } else if (id.startsWith(freestylePrefix)) {
-            return EngineTypeMTM;
+            return EngineTypeFreestyle;
         } else {
             return EngineTypeMTM;
         }
@@ -65,7 +65,7 @@ namespace SymbianHelpers {
         if (id.toString().startsWith(mtmPrefix)) {
             return EngineTypeMTM;
         } else if (id.toString().startsWith(freestylePrefix)) {
-            return EngineTypeMTM;
+            return EngineTypeFreestyle;
         } else {
             return EngineTypeMTM;
         }
@@ -76,7 +76,7 @@ namespace SymbianHelpers {
         if (id.toString().startsWith(mtmPrefix)) {
             return EngineTypeMTM;
         } else if (id.toString().startsWith(freestylePrefix)) {
-            return EngineTypeMTM;
+            return EngineTypeFreestyle;
         } else {
             return EngineTypeMTM;
         }
@@ -87,7 +87,7 @@ namespace SymbianHelpers {
         if (id.toString().startsWith(mtmPrefix)) {
             return EngineTypeMTM;
         } else if (id.toString().startsWith(freestylePrefix)) {
-            return EngineTypeMTM;
+            return EngineTypeFreestyle;
         } else {
             return EngineTypeMTM;
         }
@@ -102,9 +102,10 @@ namespace SymbianHelpers {
             return QString(freestylePrefix) + id;
             break;
         case EngineTypeMTM:
-        default:
             Q_ASSERT(!id.startsWith(mtmPrefix));
             return QString(mtmPrefix) + id;
+        default:
+            return QString(id);
             break;
         }
     }
@@ -117,9 +118,11 @@ namespace SymbianHelpers {
             return QMessageAccountId(QString(freestylePrefix) + id.toString());
             break;
         case EngineTypeMTM:
-        default:
             Q_ASSERT(!id.toString().startsWith(mtmPrefix));
             return QMessageAccountId(QString(mtmPrefix) + id.toString());
+            break;
+        default:
+            return QMessageAccountId(id);
             break;
         }
     }
@@ -132,9 +135,11 @@ namespace SymbianHelpers {
             return QMessageFolderId(QString(freestylePrefix) + id.toString());
             break;
         case EngineTypeMTM:
-        default:
             Q_ASSERT(!id.toString().startsWith(mtmPrefix));
             return QMessageFolderId(QString(mtmPrefix) + id.toString());
+            break;
+        default:
+            return QMessageFolderId(id);
             break;
         }
     }
@@ -147,9 +152,11 @@ namespace SymbianHelpers {
             return QMessageId(QString(freestylePrefix) + id.toString());
             break;
         case EngineTypeMTM:
-        default:
             Q_ASSERT(!id.toString().startsWith(mtmPrefix));
             return QMessageId(QString(mtmPrefix) + id.toString());
+            break;
+        default:
+            return QMessageId(id);
             break;
         }
     }

@@ -107,8 +107,7 @@ QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filt
     if (filter.isEmpty()) {
         if (!privateMessageAccountFilter->_notFilter) {
             // All accounts are returned for empty filter
-            foreach (QMessageAccount value, m_accounts) {
-                QString v = value.id().toString();
+            foreach (QMessageAccount value, m_accounts) {                
                 accountIds.append(value.id());
             }
         }
@@ -129,7 +128,6 @@ QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filt
     }
 
     //TODO: Sort accounts according to QMessageAccountSortOrder
-    
     return accountIds;
 }
 
@@ -160,31 +158,27 @@ void CFSEngine::updateEmailAccountsL() const
         MEmailMailbox *mailbox = mailboxes[i];
         QString idAsString = QString::number(mailbox->MailboxId().iId);
         QString fsIdAsString = addIdPrefix(idAsString, EngineTypeFreestyle);
-        
-        if (!m_accounts.contains(fsIdAsString)) {
-            
+        if (!m_accounts.contains(fsIdAsString)) {     
             QMessageAccount account = QMessageAccountPrivate::from(
-                QMessageAccountId(fsIdAsString),
-                addIdPrefix(QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length()), EngineTypeFreestyle),
-                0, //TODO: ID for IMAP service if needed
-                0, //TODO: ID for SMTP service if needed
-                QMessage::Email);
-            
+                                      QMessageAccountId(fsIdAsString),
+                                      QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length()),
+                                      0,
+                                      0,
+                                      QMessage::Email);
+          
             m_accounts.insert(fsIdAsString, account);
-
         } else {
             keys.removeOne(fsIdAsString);
         }
 
-    }
+    }  
     
     mailboxes.Reset();
     CleanupStack::PopAndDestroy();
     
     for (int i=0; i < keys.count(); i++) {
         m_accounts.remove(keys[i]);
-    }
-    
+    }   
 }
 
 MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
@@ -838,7 +832,7 @@ bool CFSEngine::sendEmail(QMessage &message)
         fsMessage->SaveChangesL();
         fsMessage->SendL();
         m_mailboxId = stripIdPrefix(message.parentAccountId().toString()).toInt();
-        MEmailMailbox* mailbox = m_clientApi->MailboxL(m_mailboxId);       
+        MEmailMailbox* mailbox = m_clientApi->MailboxL(m_mailboxId); 
         mailbox->SynchroniseL(*this);  
     );
     if (err != KErrNone)

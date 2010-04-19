@@ -55,7 +55,8 @@ namespace SymbianHelpers {
 
     enum EngineType {
         EngineTypeMTM = 0,
-        EngineTypeFreestyle
+        EngineTypeFreestyle,
+        EngineDefault
     };
 
     EngineType idType(const QString& id);
@@ -63,10 +64,10 @@ namespace SymbianHelpers {
     EngineType idType(const QMessageAccountId& id);
     EngineType idType(const QMessageFolderId& id);
 
-    QString addIdPrefix(const QString& id, const EngineType& type = EngineTypeMTM);
-    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type = EngineTypeMTM);
-    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type = EngineTypeMTM);
-    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type = EngineTypeMTM);
+    QString addIdPrefix(const QString& id, const EngineType& type = EngineDefault);
+    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type = EngineDefault);
+    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type = EngineDefault);
+    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type = EngineDefault);
 
     QString stripIdPrefix(const QString& id);
     QMessageId stripIdPrefix(const QMessageId& id);
