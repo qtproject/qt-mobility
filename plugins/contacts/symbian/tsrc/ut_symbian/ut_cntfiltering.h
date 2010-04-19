@@ -80,6 +80,7 @@ private slots:  // Test cases
     void testContactDetailFilter();
     void testContactDetailRangeFilter();
     void testChangeLogFilter();
+    void testActionFilter();
     void testRelationshipFilter();
     void testIntersectionFilter();
     void testUnionFilter();

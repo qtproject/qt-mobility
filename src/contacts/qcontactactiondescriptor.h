@@ -39,20 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTERS_H
-#define QCONTACTFILTERS_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Contacts API.
+#ifndef QCONTACTACTIONDESCRIPTOR_H
+#define QCONTACTACTIONDESCRIPTOR_H
 
-#include "qcontactactionfilter.h"
-#include "qcontactchangelogfilter.h"
-#include "qcontactdetailfilter.h"
-#include "qcontactdetailrangefilter.h"
-#include "qcontactlocalidfilter.h"
-#include "qcontactintersectionfilter.h"
-#include "qcontactinvalidfilter.h"
-#include "qcontactrelationshipfilter.h"
-#include "qcontactunionfilter.h"
+#include "qtcontactsglobal.h"
+#include <QString>
+#include <QSharedDataPointer>
+
+QTM_BEGIN_NAMESPACE
+
+class QContactActionDescriptorPrivate;
+class Q_CONTACTS_EXPORT QContactActionDescriptor
+{
+public:
+    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
+    QContactActionDescriptor(const QContactActionDescriptor& other);
+    QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
+    ~QContactActionDescriptor();
+
+    bool isEmpty() const;
+    bool operator==(const QContactActionDescriptor& other) const;
+    bool operator!=(const QContactActionDescriptor& other) const;
+    bool operator<(const QContactActionDescriptor& other) const;
+
+    void setActionName(const QString& actionName);
+    void setVendorName(const QString& vendorName);
+    void setImplementationVersion(int implementationVersion);
+
+    QString actionName() const;
+    QString vendorName() const;
+    int implementationVersion() const;
+
+private:
+    QSharedDataPointer<QContactActionDescriptorPrivate> d;
+};
+
+Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
+
+QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactActionDescriptor), Q_MOVABLE_TYPE);
 
 #endif

@@ -51,6 +51,7 @@
 #include "cntfilterdefault.h"
 #include "cntfilterunion.h"
 #include "cntfilterintersection.h"
+#include "cntfilteraction.h"
 #include "cntfilterlocalid.h"
 #include "cntfilterinvalid.h"
 #include "cntfilterchangelog.h"
@@ -560,6 +561,19 @@ void TestFiltering::testChangeLogFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
+void TestFiltering::testActionFilter()
+{
+    QList<QContactLocalId> cnt_ids;
+    QContactActionFilter filter;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
+    
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
+
+    QVERIFY(error == QContactManager::NotSupportedError);
+}
+
 void TestFiltering::testRelationshipFilter()
 {
     // create a group contact
@@ -915,6 +929,10 @@ void TestFiltering::testFilterSupported()
     flag = filterInvalid.filterSupported(f1);
     QVERIFY(flag ==false);   
             
+    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
+    flag = filterAction.filterSupported(f1);
+    QVERIFY(flag ==false);   
+               
     CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
     flag = filterUnion.filterSupported(f1);
     QVERIFY(flag ==false);   
@@ -964,7 +982,12 @@ void TestFiltering::testCreateSelectQuery()
     error = QContactManager::NoError;
     filterInvalid.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
-                        
+            
+    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
+    error = QContactManager::NoError;
+    filterAction.createSelectQuery(f1,sqlquery,&error);
+    QVERIFY(error == QContactManager::NotSupportedError);
+               
     CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
     filterUnion.createSelectQuery(f1,sqlquery,&error);

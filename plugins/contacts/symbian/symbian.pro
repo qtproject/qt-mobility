@@ -61,6 +61,7 @@ symbian: {
         inc/filtering/cntfilterintersection.h \
         inc/filtering/cntfilterunion.h \
         inc/filtering/cntfilterinvalid.h \
+        inc/filtering/cntfilteraction.h \
         inc/filtering/cntfilterlocalid.h \
 				inc/filtering/cntfilterchangelog.h \
 				inc/filtering/cntfilterdetailrange.h \
@@ -105,6 +106,7 @@ symbian: {
         src/filtering/cntfilterintersection.cpp \
         src/filtering/cntfilterunion.cpp \
         src/filtering/cntfilterinvalid.cpp \
+        src/filtering/cntfilteraction.cpp \
         src/filtering/cntfilterlocalid.cpp \
 				src/filtering/cntfilterchangelog.cpp \
 				src/filtering/cntfilterdetailrange.cpp \

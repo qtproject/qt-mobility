@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtCore module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,20 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTERS_H
-#define QCONTACTFILTERS_H
+#ifndef CNTFILTERACTION_H_
+#define CNTFILTERACTION_H_
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Contacts API.
+#include "cntabstractcontactfilter.h"
+#include "cntsymbiansrvconnection.h"
+#include "cntdbinfo.h"
 
-#include "qcontactactionfilter.h"
-#include "qcontactchangelogfilter.h"
-#include "qcontactdetailfilter.h"
-#include "qcontactdetailrangefilter.h"
-#include "qcontactlocalidfilter.h"
-#include "qcontactintersectionfilter.h"
-#include "qcontactinvalidfilter.h"
-#include "qcontactrelationshipfilter.h"
-#include "qcontactunionfilter.h"
+class CntFilterAction : public CntAbstractContactFilter
+{
+public:
+    CntFilterAction(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo);
+    ~CntFilterAction();
+    QList<QContactLocalId> contacts(
+            const QContactFilter &filter,
+            const QList<QContactSortOrder> &sortOrders,
+            bool &filterSupported,
+            QContactManager::Error* error);
+    bool filterSupported(const QContactFilter& filter);
 
-#endif
+    void createSelectQuery(const QContactFilter& filter,
+                                 QString& sqlQuery,
+                                 QContactManager::Error* error);
+private:
+
+protected:
+    CContactDatabase& m_contactdatabase;
+    CntSymbianSrvConnection &m_srvConnection;
+    CntDbInfo& m_dbInfo;
+};
+
+#endif /* CNTFILTERACTION_H_ */

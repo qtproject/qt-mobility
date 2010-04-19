@@ -39,20 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTERS_H
-#define QCONTACTFILTERS_H
+#include "qcontactactionfactory.h"
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Contacts API.
+QTM_BEGIN_NAMESPACE
 
-#include "qcontactactionfilter.h"
-#include "qcontactchangelogfilter.h"
-#include "qcontactdetailfilter.h"
-#include "qcontactdetailrangefilter.h"
-#include "qcontactlocalidfilter.h"
-#include "qcontactintersectionfilter.h"
-#include "qcontactinvalidfilter.h"
-#include "qcontactrelationshipfilter.h"
-#include "qcontactunionfilter.h"
+/*!
+  \class QContactActionFactory
+  \brief The QContactActionFactory class provides an interface for clients
+  to retrieve instances of action implementations
+  \ingroup contacts-actions
+ */
 
-#endif
+QContactActionFactory::~QContactActionFactory()
+{
+}
+
+/*!
+ * \fn QContactActionFactory::~QContactActionFactory()
+ * Clears any memory in use by this factory
+ */
+
+/*!
+ * \fn QContactActionFactory::name() const
+ * Returns the name of this factory.  The name is used to identify the factory
+ * when it is retrieved using the Qt Plugin framework.
+ */
+
+/*!
+ * \fn QContactActionFactory::actionDescriptors() const
+ * Returns a list of descriptors of the actions of which instances of their implementations are able to be retrieved
+ * from this factory.
+ */
+
+/*!
+ * \fn QContactActionFactory::instance(const QContactActionDescriptor& descriptor) const
+ * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor.
+ * The caller takes ownership of the action instance returned from this function, and must delete it when
+ * they are finished using it in order to avoid a memory leak.
+ */
+
+/*!
+ * \fn QContactActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
+ * Returns the metadata associated with the action identified by the given \a descriptor
+ */
+
+#include "moc_qcontactactionfactory.cpp"
+
+QTM_END_NAMESPACE

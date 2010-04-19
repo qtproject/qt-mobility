@@ -55,6 +55,7 @@ private slots:
     
     void ctors();
     void saveContact();
+    void saveContactWithPreferredDetails();
     void saveContacts();
     void retrieveContact();
     void retrieveContacts();

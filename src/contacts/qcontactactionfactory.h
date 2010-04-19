@@ -39,20 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTERS_H
-#define QCONTACTFILTERS_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Contacts API.
+#ifndef QCONTACTACTIONFACTORY_H
+#define QCONTACTACTIONFACTORY_H
 
-#include "qcontactactionfilter.h"
-#include "qcontactchangelogfilter.h"
-#include "qcontactdetailfilter.h"
-#include "qcontactdetailrangefilter.h"
-#include "qcontactlocalidfilter.h"
-#include "qcontactintersectionfilter.h"
-#include "qcontactinvalidfilter.h"
-#include "qcontactrelationshipfilter.h"
-#include "qcontactunionfilter.h"
+#include "qtcontactsglobal.h"
+#include "qcontactactiondescriptor.h"
+
+#include <QObject>
+#include <QtPlugin>
+#include <QString>
+#include <QList>
+#include <QVariantMap>
+#include <QStringList>
+#include <QHash>
+
+QTM_BEGIN_NAMESPACE
+
+class QContactAction;
+class Q_CONTACTS_EXPORT QContactActionFactory : public QObject
+{
+    Q_OBJECT
+
+public:
+    virtual ~QContactActionFactory() = 0;
+    virtual QString name() const = 0;
+    virtual QList<QContactActionDescriptor> actionDescriptors() const = 0;
+    virtual QContactAction* instance(const QContactActionDescriptor& descriptor) const = 0;
+    virtual QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const = 0;
+};
+
+QTM_END_NAMESPACE
+
+QT_BEGIN_NAMESPACE
+#define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QContactActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
+QT_END_NAMESPACE
+
 
 #endif

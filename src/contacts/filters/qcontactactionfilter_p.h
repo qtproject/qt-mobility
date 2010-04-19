@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-
-#ifndef QCONTACT_P_H
-#define QCONTACT_P_H
+#ifndef QCONTACTACTIONFILTER_P_H
+#define QCONTACTACTIONFILTER_P_H
 
 //
 //  W A R N I N G
@@ -54,43 +53,54 @@
 // We mean it.
 //
 
-#include <QSharedData>
-#include <QList>
-#include <QDateTime>
-#include <QMultiHash>
+#include "qcontactfilter_p.h"
+#include "qcontactfilter.h"
 
-#include "qtcontacts.h"
+#include <QString>
+#include <QVariant>
 
 QTM_BEGIN_NAMESPACE
 
-class QContactData : public QSharedData
+class QContactActionFilterPrivate : public QContactFilterPrivate
 {
 public:
-    QContactData()
-        : QSharedData()
+    QContactActionFilterPrivate()
+        : QContactFilterPrivate(),
+        m_implementationVersion(-1)
     {
     }
 
-    QContactData(const QContactData& other)
-        : QSharedData(other),
-        m_id(other.m_id),
-        m_details(other.m_details),
-        m_relationshipsCache(other.m_relationshipsCache),
-        m_reorderedRelationshipsCache(other.m_reorderedRelationshipsCache),
-        m_preferences(other.m_preferences)
+    QContactActionFilterPrivate(const QContactActionFilterPrivate& other)
+        : QContactFilterPrivate(other),
+        m_action(other.m_action),
+        m_value(other.m_value),
+        m_vendorName(other.m_vendorName),
+        m_implementationVersion(other.m_implementationVersion)
     {
     }
 
-    ~QContactData() {}
+    virtual bool compare(const QContactFilterPrivate* other) const
+    {
+        const QContactActionFilterPrivate *od = static_cast<const QContactActionFilterPrivate*>(other);
+        if (m_action != od->m_action)
+            return false;
+        if (m_value != od->m_value)
+            return false;
+        if (m_vendorName != od->m_vendorName)
+            return false;
+        if (m_implementationVersion != od->m_implementationVersion)
+            return false;
+        return true;
+    }
 
-    QContactId m_id;
-    QList<QContactDetail> m_details;
-    QList<QContactRelationship> m_relationshipsCache;
-    QList<QContactRelationship> m_reorderedRelationshipsCache;
-    QMap<QString, int> m_preferences;
+    Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactActionFilter, QContactFilter::ActionFilter)
+
+    QString m_action;
+    QVariant m_value;
+    QString m_vendorName;
+    int m_implementationVersion;
 };
 
 QTM_END_NAMESPACE
 
 #endif
-

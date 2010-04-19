@@ -39,20 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTFILTERS_H
-#define QCONTACTFILTERS_H
+#ifndef QCONTACTACTIONFILTER_H
+#define QCONTACTACTIONFILTER_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Contacts API.
+#include "qcontactfilter.h"
 
-#include "qcontactactionfilter.h"
-#include "qcontactchangelogfilter.h"
-#include "qcontactdetailfilter.h"
-#include "qcontactdetailrangefilter.h"
-#include "qcontactlocalidfilter.h"
-#include "qcontactintersectionfilter.h"
-#include "qcontactinvalidfilter.h"
-#include "qcontactrelationshipfilter.h"
-#include "qcontactunionfilter.h"
+QTM_BEGIN_NAMESPACE
+
+class QContactActionFilterPrivate;
+class Q_CONTACTS_EXPORT QContactActionFilter : public QContactFilter
+{
+public:
+    QContactActionFilter();
+    QContactActionFilter(const QContactFilter& other);
+
+    void setActionName(const QString& action);
+    void setValue(const QVariant& value);
+    void setVendor(const QString& vendorName, int implementationVersion = -1);
+
+    /* Accessors */
+    QString actionName() const;
+    QVariant value() const;
+    QString vendorName() const;
+    int implementationVersion() const;
+
+private:
+    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactActionFilter)
+};
+
+QTM_END_NAMESPACE
 
 #endif

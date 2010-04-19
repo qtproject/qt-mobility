@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-
-#ifndef QCONTACT_P_H
-#define QCONTACT_P_H
+#ifndef QCONTACTSENDEMAILACTION_P_H
+#define QCONTACTSENDEMAILACTION_P_H
 
 //
 //  W A R N I N G
@@ -54,43 +53,50 @@
 // We mean it.
 //
 
+#include "qcontactaction.h"
+#include "qcontactactionfactory.h"
+
 #include <QSharedData>
-#include <QList>
-#include <QDateTime>
-#include <QMultiHash>
+#include <QString>
+#include <QVariantMap>
 
-#include "qtcontacts.h"
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class QContactData : public QSharedData
+class QContactSendEmailAction : public QContactAction
 {
+    Q_OBJECT
+
 public:
-    QContactData()
-        : QSharedData()
-    {
-    }
+    QContactSendEmailAction();
+    ~QContactSendEmailAction();
 
-    QContactData(const QContactData& other)
-        : QSharedData(other),
-        m_id(other.m_id),
-        m_details(other.m_details),
-        m_relationshipsCache(other.m_relationshipsCache),
-        m_reorderedRelationshipsCache(other.m_reorderedRelationshipsCache),
-        m_preferences(other.m_preferences)
-    {
-    }
+    QContactActionDescriptor actionDescriptor() const;
+    QVariantMap metaData() const;
 
-    ~QContactData() {}
+    QContactFilter contactFilter(const QVariant& value) const;
+    bool isDetailSupported(const QContactDetail& detail, const QContact& contact = QContact()) const;
+    QList<QContactDetail> supportedDetails(const QContact& contact) const;
+    bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& params = QVariantMap());
+    QVariantMap results() const;
+    State state() const {return QContactAction::FinishedState;}
 
-    QContactId m_id;
-    QList<QContactDetail> m_details;
-    QList<QContactRelationship> m_relationshipsCache;
-    QList<QContactRelationship> m_reorderedRelationshipsCache;
-    QMap<QString, int> m_preferences;
+private slots:
+    void performAction();
 };
 
-QTM_END_NAMESPACE
+class QContactSendEmailActionFactory : public QContactActionFactory
+{
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QContactActionFactory)
+
+public:
+    QContactSendEmailActionFactory();
+    ~QContactSendEmailActionFactory();
+
+    QString name() const;
+    QList<QContactActionDescriptor> actionDescriptors() const;
+    QContactAction* instance(const QContactActionDescriptor& descriptor) const;
+    QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const;
+};
 
 #endif
-
