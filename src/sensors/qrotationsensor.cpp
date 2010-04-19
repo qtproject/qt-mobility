@@ -68,7 +68,7 @@ IMPLEMENT_READING(QRotationReading)
     \list
     \o Right-handed rotation z (-180, 180]. Starting from the x-axis and
      incrementing in the direction of the y-axis.
-    \o Right-handed rotation x (-90, 90]. Starting from the new
+    \o Right-handed rotation x [-90, 90]. Starting from the new
      (once-rotated) y-axis and incrementing towards the z-axis.
     \o Right-handed rotation y (-180, 180]. Starting from the new
      (twice-rotated) z-axis and incrementing towards the x-axis.
@@ -87,6 +87,10 @@ IMPLEMENT_READING(QRotationReading)
 
     The 0 point for the x and y angles are defined as when the x and y axes
     of the device are oriented towards the horizon.
+
+    Note that when x is 90 or -90, values for z and y achieve rotation around
+    the same axis (due to the order of operations). In this case the y
+    rotation will be 0.
 */
 
 /*!

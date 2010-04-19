@@ -249,8 +249,6 @@ private slots:
         TestSensor sensor;
         sensor.setProperty("doThis", "rates(0)");
         QTest::ignoreMessage(QtWarningMsg, "ERROR: Cannot call QSensorBackend::setDataRates with 0 ");
-        QTest::ignoreMessage(QtWarningMsg, "\"test sensor impl\" backend does not support any data rates. It cannot be used. ");
-        QTest::ignoreMessage(QtWarningMsg, "\"test sensor impl\" backend did not supply default data rate. ");
         sensor.connectToBackend();
     }
 
@@ -261,6 +259,14 @@ private slots:
         sensor.connectToBackend();
 
         sensor.availableDataRates();
+    }
+
+    void testMetaData4()
+    {
+        TestSensor sensor;
+        sensor.setProperty("doThis", "rates(nodef)");
+        QTest::ignoreMessage(QtWarningMsg, "\"test sensor impl\" backend did not supply default data rate. ");
+        sensor.connectToBackend();
     }
 
     void testFilter()

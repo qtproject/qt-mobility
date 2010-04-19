@@ -192,10 +192,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     return 0;
 
 gotbackend:
-    if (sensor->availableDataRates().count() == 0) {
-        qWarning() << sensor->identifier() << "backend does not support any data rates. It cannot be used.";
-    }
-    if (sensor->dataRate() == 0) {
+    if (sensor->availableDataRates().count() != 0 && sensor->dataRate() == 0) {
         qWarning() << sensor->identifier() << "backend did not supply default data rate.";
     }
     return backend;
