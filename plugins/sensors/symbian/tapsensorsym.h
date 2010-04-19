@@ -39,25 +39,63 @@
 **
 ****************************************************************************/
 
-#ifndef SENSORBACKENDDATASYM_H
-#define SENSORBACKENDDATASYM_H
+#ifndef TAPSENSORSYM_H
+#define TAPSENSORSYM_H
 
-class CSensrvChannel;
-class TSensrvChannelInfo;
+// QT Mobility Sensor API headers
+#include <qsensorbackend.h>
+#include <qtapsensor.h>
+
+// Internal Headers
+#include "sensorbackendsym.h"
+
+// Sensor client headers
+// Double Tap Sensor specific header
+#include <sensrvtappingsensor.h>
 
 QTM_USE_NAMESPACE
-class TSensorBackendDataSym
+
+class CTapSensorSym: public CSensorBackendSym
     {
 public:
-    TBool iSensorAvailable;    
-    CSensrvChannel* iSensorChannel;
-    TSensrvChannelTypeId iSensorType;
-    TSensrvChannelInfo iChannelInfo;
-    RFastLock iReadingLock;
-    TInt iTimerId;
-    TBool iPropertyListening;
-    TBool iDataListening;
-    TBool iTimerRequired;
+    /**
+     * Factory function, this is used to create the tap sensor object
+     * @return CTapSensorSym if successful, leaves on failure
+     */
+    static CTapSensorSym* NewL(QSensor *sensor);
+    /**
+     * Destructor
+     * Closes the backend resources
+     */
+    ~CTapSensorSym();
+    
+private:
+	  /**
+     * Default constructor
+     */
+    CTapSensorSym(QSensor *sensor);
+    /**
+     * RecvData is used to retrieve the sensor reading from sensor server
+     * It is implemented here to handle tap sensor specific
+     * reading data and provides conversion and utility code
+     */ 
+    void RecvData(CSensrvChannel &aChannel);
+   /**
+     * Second phase constructor
+     * Initialize the backend resources
+     */
+    void ConstructL();
+    
+public:
+    /**
+     * Holds the id of the magnetometer
+     */	
+    static const char *id;
+    
+private:
+    QTapReading iReading;
+    TSensrvTappingData iData;
     };
 
-#endif //SENSORBACKENDDATASYM_H
+#endif //TAPSENSORSYM_H
+

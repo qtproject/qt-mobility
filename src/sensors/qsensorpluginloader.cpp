@@ -71,9 +71,9 @@ void QSensorPluginLoader::load()
         return;
 
     QStringList     paths = QCoreApplication::libraryPaths();
-    QString val = qt_mobility_configure_prefix_path_str;
+    QString val = QLatin1String(qt_mobility_configure_prefix_path_str);
     if(val.length() > 0){
-        val += "/plugins";
+        val += QLatin1String("/plugins");
         paths << val;
     }
 
