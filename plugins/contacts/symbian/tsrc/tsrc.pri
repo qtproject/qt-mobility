@@ -58,6 +58,7 @@ SYMBIAN_HEADERS += \
         ../../inc/filtering/cntfilterinvalid.h \
         ../../inc/filtering/cntfilterdetailrange.h \
         ../../inc/filtering/cntfilterchangelog.h \
+        ../../inc/filtering/cntfilteraction.h \
         ../../inc/filtering/cntfilterlocalid.h \
         ../../inc/filtering/cntfilterdetaildisplaylabel.h \
         
@@ -108,6 +109,7 @@ SYMBIAN_SOURCES += \
         ../../src/filtering/cntfilterinvalid.cpp \
         ../../src/filtering/cntfilterdetailrange.cpp \
         ../../src/filtering/cntfilterchangelog.cpp \
+        ../../src/filtering/cntfilteraction.cpp \
         ../../src/filtering/cntfilterlocalid.cpp \
         ../../src/filtering/cntfilterdetaildisplaylabel.cpp \
  
