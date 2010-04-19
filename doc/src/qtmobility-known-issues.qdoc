@@ -157,37 +157,36 @@ Support is present for the following System Info API classes
     \o S60: Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.
 \endlist
 
-\section2 Location API
-\list
-    \o Maemo: backends are not yet fully implemented.
-\endlist
-
 \section2 Messaging API
 \list
     \o Messaging filtering and Sorting functions are not fully optimized.
-    \o Maemo: Messaging backends are not fully implemented.
-    \o S60: Exporting IMAP or POP3 Message Updates from client to server is not supported
+    \o Fremantle: \c {QMessageService::compose} not supported for SMS type messages.
+    \o Fremantle: queryMessages service action is synchronous for SMS type messages.
+    \o Fremantle: \c {QMessageService::show} not supported for SMS type messages.
+    \o Fremantle: \c {QMessageManager::messageAdded} signal is not reported for messages in inbox when inbox is open in modest.
+    \o Fremantle: \c {QMessageManager::updateMessage} is not supported.
+    \o Fremantle: \c {QMessageManager::addMessage} is not supported for SMS type messages.
+    \o Fremantle: \c {QMessageManager::addMessage} can not be used to set priority and status of email messages.
+    \o Fremantle and Windows: \c {QMessageServiceAction::send}: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's disgression.
+    \o Fremantle, S60 and Windows: \c {QMessageManager::addMessage} can not be used to set size of messages.
+    \o Fremantle and Windows: \c {QMessageManager::addMessage} can not be used to set the date of messages.
+    \o S60: Exporting POP3 Message Updates from client to server is not supported.
     \o S60: Only one level of folders is supported <=> Symbian/S60 applications do not use nested folders
-    \o S60: Complex filter cases are not supported where nested filters are used (for example: \c {QMessageFilter::byParentAccountId(const QMessageAccountFilter ,...)}
     \o S60: ReceptionTimeStamp is not supported in filtering <=> Symbian reports only one date for SMS & MMS which means that \c {QMessage::date()} field is used, not \c {receivedDate()})
-    \o S60: Message size reporting should be improved
     \o S60: Local services messages, for example bluetooth, are listed/read in Inbox
     \o Windows: \c {QMessageServiceAction::queryMessages} does not incrementally emit matching message identifiers or progress information.
-    \o Windows: \c {QMessageStore::instance} shows a blocking modal dialog if MAPI is not installed.
-    \o Windows mobile: \c {QMessageServiceAction::exportUpdates} : Full account synchronization currently unavailable due to lack of synchronous
+    \o Windows: \c {QMessageServiceAction::exportUpdates}: Performs no operation as changes are automatically synchronized with external servers when a connection is available.
     control of update progress.
-    \o Windows mobile: \c {QMessageSerivceAction::retrieve} : Only retrieves content for messages bodies at present. Attachment retrieval
+    \o Windows desktop: \c {QMessageStore::instance} shows a blocking modal dialog if MAPI is not installed.
+    \o Windows mobile: \c {QMessageSerivceAction::retrieve}: Only retrieves content for messages bodies at present. Attachment retrieval
     overridden by mapi/mail client settings.
-    \o Windows mobile: \c {QMessageServiceAction::cancelOperation} : Async nature of native calls used to implement service actions means that
-    cancelOperation will only operate on  \c ::retieveBody at present.
-    \o Windows Mobile: \c {QMessageServiceAction::send}: Provides no way of determining actual transmission failure.
+    \o Windows mobile: \c {QMessageServiceAction::cancelOperation}: Async nature of native calls used to implement service actions means that cancelOperation will only operate on the ::retrieveBody service action.
 \endlist
 
 \section2 Multimedia API
 \list
-    \o S60: S60 specific play list not supported
-    \o S60: Device specific play list management not supported.
-    \o S60: Audio capture does not support currently any special features like format, encoding etc...
+    \o \bold {Multimedia API is in beta state.}
+    \o S60: Audio capture does not support currently any special features like format, encoding etc.
     \o S60: seeking is not working properly
     \o S60: video size does not remain constant in repeated plays
     \o S60: full screen video not working OK
@@ -195,14 +194,9 @@ Support is present for the following System Info API classes
     \o Windows desktop: wmp multimedia plugin does not display video with Windows Media Player 10 or 12
 \endlist
 
-\section2 Publish and Subscribe API
-\list
-    \o Maemo: only supports subscribing but not publishing.
-\endlist
-
 \section2 Sensors API
 \list
-    \o \bold {Sensors API is in technology preview state.}
+    \o \bold {Sensors API is in beta state.}
 \endlist
 
 \section2 System Info API
@@ -210,10 +204,5 @@ Support is present for the following System Info API classes
     \o S60: Battery status incorrect on test applications startup.
     \o S60: Phone is still charging but power state shows 100% and "wall power".
     \o S60: number of bars for network reporting signal strength is hardcoded.
-\endlist
-
-\section2 Versit API
-\list
-    \o \bold {Versit support for Contacts API is in technology preview state, see \c {src/versit/README}.}
 \endlist
 */
