@@ -161,7 +161,7 @@ EXPORTS
 	?trUtf8@QContactManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 160 NONAME ; class QString QtMobility::QContactManager::trUtf8(char const *, char const *, int)
 	?d_func@QContactDetailDefinitionRemoveRequest@QtMobility@@ABEPBVQContactDetailDefinitionRemoveRequestPrivate@2@XZ @ 161 NONAME ; class QtMobility::QContactDetailDefinitionRemoveRequestPrivate const * QtMobility::QContactDetailDefinitionRemoveRequest::d_func(void) const
 	?tr@QContactDetailDefinitionRemoveRequest@QtMobility@@SA?AVQString@@PBD0H@Z @ 162 NONAME ; class QString QtMobility::QContactDetailDefinitionRemoveRequest::tr(char const *, char const *, int)
-	??0QContactAbstractRequest@QtMobility@@QAE@PAVQObject@@@Z @ 163 NONAME ; QtMobility::QContactAbstractRequest::QContactAbstractRequest(class QObject *)
+	??0QContactAbstractRequest@QtMobility@@AAE@PAVQObject@@@Z @ 163 NONAME ; QtMobility::QContactAbstractRequest::QContactAbstractRequest(class QObject *)
 	?DefinitionName@QContactPhoneNumber@QtMobility@@2U?$QLatin1Constant@$0M@@2@B @ 164 NONAME ; struct QtMobility::QLatin1Constant<12> const QtMobility::QContactPhoneNumber::DefinitionName
 	?customLabel@QContactName@QtMobility@@QBE?AVQString@@XZ @ 165 NONAME ; class QString QtMobility::QContactName::customLabel(void) const
 	?definitions@QContactDetailDefinitionFetchRequest@QtMobility@@QBE?AV?$QMap@VQString@@VQContactDetailDefinition@QtMobility@@@@XZ @ 166 NONAME ; class QMap<class QString, class QtMobility::QContactDetailDefinition> QtMobility::QContactDetailDefinitionFetchRequest::definitions(void) const
