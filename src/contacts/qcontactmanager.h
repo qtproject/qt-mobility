@@ -61,8 +61,6 @@
 QTM_BEGIN_NAMESPACE
 
 class QContactFilter;
-class QContactAction;
-
 class QContactManagerData;
 class Q_CONTACTS_EXPORT QContactManager : public QObject
 {
@@ -127,7 +125,8 @@ public:
     QContact compatibleContact(const QContact& original); // Preliminary function!
 
     /* Synthesize the display label of a contact */
-    QString synthesizedDisplayLabel(const QContact& contact) const;
+    QString synthesizedContactDisplayLabel(const QContact& contact) const;
+    void synthesizeContactDisplayLabel(QContact* contact) const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId);

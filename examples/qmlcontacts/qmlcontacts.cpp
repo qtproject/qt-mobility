@@ -123,7 +123,7 @@ QStringList QMLContactManagerAsync::contactListToQString(const QList<QContact>& 
     QStringList list;
 
     for (int i = 0; i < contact.count(); i++) {
-        list += qc->synthesizedDisplayLabel(contact.at(i));
+        list += qc->synthesizedContactDisplayLabel(contact.at(i));
      }
 
     return list;
@@ -174,7 +174,7 @@ void QMLContactManagerAsync::contactProgress(QContactAbstractRequest::State newS
 QString QMLContactManagerAsync::idToName(QString name)
 {
     QContact c = qc->contact(name.toInt());
-    return qc->synthesizedDisplayLabel(c);
+    return qc->synthesizedContactDisplayLabel(c);
 }
 
 // ![0]

@@ -39,34 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTACTIONFILTER_H
-#define QCONTACTACTIONFILTER_H
+#include "maemo6proximitysensor.h"
 
-#include "qcontactfilter.h"
+const char *maemo6proximitysensor::id("maemo6.proximity");
+bool maemo6proximitysensor::m_initDone = false;
 
-QTM_BEGIN_NAMESPACE
-
-class QContactActionFilterPrivate;
-class Q_CONTACTS_EXPORT QContactActionFilter : public QContactFilter
+maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
+    : maemo6sensorbase(sensor)
 {
-public:
-    QContactActionFilter();
-    QContactActionFilter(const QContactFilter& other);
+    setReading<QProximityReading>(&m_reading);
 
-    void setActionName(const QString& action);
-    void setValue(const QVariant& value);
-    void setVendor(const QString& vendorName, int implementationVersion = -1);
+    if (!m_initDone) {
+        initSensor<ProximitySensorChannelInterface>("proximitysensor");
 
-    /* Accessors */
-    QString actionName() const;
-    QVariant value() const;
-    QString vendorName() const;
-    int implementationVersion() const;
+        if (m_sensorInterface)
+            QObject::connect(static_cast<ProximitySensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const int&)), this, SLOT(slotDataAvailable(const int&)));
+        else
+            qWarning() << "Unable to initialize proximity sensor.";
 
-private:
-    Q_DECLARE_CONTACTFILTER_PRIVATE(QContactActionFilter)
-};
+        // close definition in meters - may be used as metadata even the sensor gives true/false values 
+        addOutputRange(0, 1, 1);
+        setDescription(QLatin1String("Measures if a living object is in proximity or not"));
 
-QTM_END_NAMESPACE
+        m_initDone = true;
+    }
+}
 
-#endif
+void maemo6proximitysensor::slotDataAvailable(const int& data)
+{
+    bool close;
+    if (data)
+        close = true;
+    else
+        close = false;
+
+    m_reading.setClose(close);
+    //m_reading.setTimestamp(data.timestamp());
+    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    newReadingAvailable();
+}

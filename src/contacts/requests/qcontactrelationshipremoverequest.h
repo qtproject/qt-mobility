@@ -58,6 +58,7 @@ public:
     QContactRelationshipRemoveRequest(QObject* parent = 0);
 
     /* Selection */
+    void setRelationship(const QContactRelationship& relationship);
     void setRelationships(const QList<QContactRelationship>& relationships);
     QList<QContactRelationship> relationships() const;
 

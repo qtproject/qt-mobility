@@ -80,7 +80,7 @@ QT_BEGIN_NAMESPACE
 
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("audio/vorbis");
-    audioSettings.setQuality(QtMedia::HighQuality);
+    audioSettings.setQuality(QtMediaServices::HighQuality);
 
     recorder->setEncodingSettings(audioSettings);
 
@@ -235,12 +235,12 @@ bool QMediaRecorder::isAvailable() const
 /*!
     Returns the availability error code.
 */
-QtMedia::AvailabilityError QMediaRecorder::availabilityError() const
+QtMediaServices::AvailabilityError QMediaRecorder::availabilityError() const
 {
     if (d_func()->control != NULL)
-        return QtMedia::NoError;
+        return QtMediaServices::NoError;
     else
-        return QtMedia::ServiceMissingError;
+        return QtMediaServices::ServiceMissingError;
 }
 
 QUrl QMediaRecorder::outputLocation() const

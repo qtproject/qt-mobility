@@ -26,6 +26,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipremoverequest.html#QContactRelationshipRemoveRequest">QContactRelationshipRemoveRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipremoverequest.html#errorMap">errorMap</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactRelationship&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipremoverequest.html#relationships">relationships</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipremoverequest.html#setRelationship">setRelationship</a></b> ( const QContactRelationship &amp; <i>relationship</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipremoverequest.html#setRelationships">setRelationships</a></b> ( const QList&lt;QContactRelationship&gt; &amp; <i>relationships</i> )</td></tr>
 </table>
 <ul>
@@ -61,6 +62,10 @@
 <h3 class="fn"><a name="relationships"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactRelationshipRemoveRequest::relationships () const</h3>
 <p>Returns the list of relationships which will be removed</p>
 <p>See also <a href="qcontactrelationshipremoverequest.html#setRelationships">setRelationships</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipRemoveRequest/setRelationship"></a>
+<h3 class="fn"><a name="setRelationship"></a>void QContactRelationshipRemoveRequest::setRelationship ( const <a href="qcontactrelationship.html">QContactRelationship</a> &amp; <i>relationship</i> )</h3>
+<p>Sets the relationship which will be removed to <i>relationship</i>. Equivalent to calling:</p>
+<pre>    setRelationships(QList&lt;QContactRelationship&gt;() &lt;&lt; relationship);</pre>
 <a name="//apple_ref/cpp/instm/QContactRelationshipRemoveRequest/setRelationships"></a>
 <h3 class="fn"><a name="setRelationships"></a>void QContactRelationshipRemoveRequest::setRelationships ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i> )</h3>
 <p>Sets the list of relationships which will be removed to <i>relationships</i></p>

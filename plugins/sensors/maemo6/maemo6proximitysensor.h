@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,34 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef CNTFILTERACTION_H_
-#define CNTFILTERACTION_H_
+#ifndef MAEMO6PROXIMITYSENSOR_H
+#define MAEMO6PROXIMITYSENSOR_H
 
-#include "cntabstractcontactfilter.h"
-#include "cntsymbiansrvconnection.h"
-#include "cntdbinfo.h"
+#include "maemo6sensorbase.h"
+#include <qproximitysensor.h>
 
-class CntFilterAction : public CntAbstractContactFilter
+#include <sensord/proximitysensor_i.h>
+
+QTM_USE_NAMESPACE
+
+class maemo6proximitysensor : public maemo6sensorbase
 {
+    Q_OBJECT
+
 public:
-    CntFilterAction(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo);
-    ~CntFilterAction();
-    QList<QContactLocalId> contacts(
-            const QContactFilter &filter,
-            const QList<QContactSortOrder> &sortOrders,
-            bool &filterSupported,
-            QContactManager::Error* error);
-    bool filterSupported(const QContactFilter& filter);
+    static const char *id;
 
-    void createSelectQuery(const QContactFilter& filter,
-                                 QString& sqlQuery,
-                                 QContactManager::Error* error);
+    maemo6proximitysensor(QSensor *sensor);
+
 private:
-
-protected:
-    CContactDatabase& m_contactdatabase;
-    CntSymbianSrvConnection &m_srvConnection;
-    CntDbInfo& m_dbInfo;
+    QProximityReading m_reading;
+    static bool m_initDone;
+   
+private slots:
+    void slotDataAvailable(const int& data);
 };
 
-#endif /* CNTFILTERACTION_H_ */
+#endif

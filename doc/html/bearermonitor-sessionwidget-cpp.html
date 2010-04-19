@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -66,7 +66,7 @@
         connect(session, SIGNAL(stateChanged(QNetworkSession::State)),
                 this, SLOT(updateSession()));
         connect(session, SIGNAL(error(QNetworkSession::SessionError)),
-                this, SLOT(updateSession()));
+                this, SLOT(updateSessionError(QNetworkSession::SessionError)));
 
         updateSession();
 
@@ -103,7 +103,6 @@
     void SessionWidget::updateSession()
     {
         updateSessionState(session-&gt;state());
-        updateSessionError(session-&gt;error());
 
         if (session-&gt;configuration().type() == QNetworkConfiguration::InternetAccessPoint)
             bearer-&gt;setText(session-&gt;configuration().bearerName());
@@ -119,12 +118,14 @@
 
     void SessionWidget::openSession()
     {
+        clearError();
         session-&gt;open();
         updateSession();
     }
 
     void SessionWidget::openSyncSession()
     {
+        clearError();
         session-&gt;open();
         session-&gt;waitForOpened();
         updateSession();
@@ -132,12 +133,14 @@
 
     void SessionWidget::closeSession()
     {
+        clearError();
         session-&gt;close();
         updateSession();
     }
 
     void SessionWidget::stopSession()
     {
+        clearError();
         session-&gt;stop();
         updateSession();
     }
@@ -184,6 +187,12 @@
     {
         lastError-&gt;setText(QString::number(error));
         errorString-&gt;setText(session-&gt;errorString());
+    }
+
+    void SessionWidget::clearError()
+    {
+        lastError-&gt;clear();
+        errorString-&gt;clear();
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

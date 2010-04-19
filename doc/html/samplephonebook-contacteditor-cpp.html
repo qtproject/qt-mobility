@@ -57,6 +57,8 @@
 
     #include &lt;QtGui&gt;
 
+    const int MAX_AVATAR_DISPLAY_SIZE = 120;
+
     ContactEditor::ContactEditor(QWidget *parent)
             :QWidget(parent)
     {
@@ -67,16 +69,21 @@
         m_phoneEdit = new QLineEdit(this);
         m_emailEdit = new QLineEdit(this);
         m_addrEdit = new QLineEdit(this);
-        m_avatarBtn = new QPushButton(tr(&quot;Add image&quot;), this);
-        m_avatarBtn-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_avatarBtn = new QPushButton(tr(&quot;Set picture&quot;), this);
+        m_clearAvatarBtn = new QPushButton(tr(&quot;Clear&quot;), this);
+        m_avatarView = new QLabel(this);
         connect(m_avatarBtn, SIGNAL(clicked()), this, SLOT(avatarClicked()));
+        connect(m_clearAvatarBtn, SIGNAL(clicked()), this, SLOT(clearAvatarClicked()));
 
         QFormLayout *detailsLayout = new QFormLayout;
         QLabel *nameLabel = new QLabel(tr(&quot;Name&quot;), this);
         QLabel *phoneLabel = new QLabel(tr(&quot;Phone&quot;), this);
         QLabel *emailLabel = new QLabel(tr(&quot;Email&quot;), this);
         QLabel *addressLabel = new QLabel(tr(&quot;Address&quot;), this);
-        QLabel *avatarLabel = new QLabel(tr(&quot;Avatar&quot;), this);
+        QLabel *avatarLabel = new QLabel(tr(&quot;Picture&quot;), this);
+        QHBoxLayout *avatarBtnLayout = new QHBoxLayout;
+        avatarBtnLayout-&gt;addWidget(m_avatarBtn);
+        avatarBtnLayout-&gt;addWidget(m_clearAvatarBtn);
         if (QApplication::desktop()-&gt;availableGeometry().width() &lt; 360) {
             <span class="comment">// Narrow screen: put label on separate line to textbox</span>
             detailsLayout-&gt;addRow(nameLabel);
@@ -88,14 +95,16 @@
             detailsLayout-&gt;addRow(addressLabel);
             detailsLayout-&gt;addRow(m_addrEdit);
             detailsLayout-&gt;addRow(avatarLabel);
-            detailsLayout-&gt;addRow(m_avatarBtn);
+            detailsLayout-&gt;addRow(avatarBtnLayout);
+            detailsLayout-&gt;addRow(m_avatarView);
         } else {
             <span class="comment">// Wide screen: put label on same line as textbox</span>
             detailsLayout-&gt;addRow(nameLabel, m_nameEdit);
             detailsLayout-&gt;addRow(phoneLabel, m_phoneEdit);
             detailsLayout-&gt;addRow(emailLabel, m_emailEdit);
             detailsLayout-&gt;addRow(addressLabel, m_addrEdit);
-            detailsLayout-&gt;addRow(avatarLabel, m_avatarBtn);
+            detailsLayout-&gt;addRow(avatarLabel, avatarBtnLayout);
+            detailsLayout-&gt;addRow(&quot;&quot;, m_avatarView);
         }
         detailsLayout-&gt;setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
         detailsLayout-&gt;setSizeConstraint(QLayout::SetMinAndMaxSize);
@@ -149,8 +158,6 @@
         m_phoneEdit-&gt;clear();
         m_emailEdit-&gt;clear();
         m_addrEdit-&gt;clear();
-        m_avatarBtn-&gt;setText(&quot;Add image&quot;);
-        m_avatarBtn-&gt;setIcon(QIcon());
 
         if (manager == 0) {
             m_saveBtn-&gt;setEnabled(false);
@@ -171,7 +178,7 @@
         <span class="comment">// name</span>
         <span class="comment">//QContactName nm = curr.detail(QContactName::DefinitionName);</span>
         if (m_contactId != QContactLocalId(0))
-            m_nameEdit-&gt;setText(manager-&gt;synthesizedDisplayLabel(curr));
+            m_nameEdit-&gt;setText(manager-&gt;synthesizedContactDisplayLabel(curr));
 
         <span class="comment">// phonenumber</span>
         QContactPhoneNumber phn = curr.detail(QContactPhoneNumber::DefinitionName);
@@ -197,29 +204,29 @@
             m_addrEdit-&gt;setReadOnly(true);
         }
 
-        <span class="comment">// avatar button</span>
-        if (defs.contains(QContactAvatar::DefinitionName)) {
+        <span class="comment">// avatar viewer</span>
+        if (defs.contains(QContactAvatar::DefinitionName)
+            &amp;&amp; defs.contains(QContactThumbnail::DefinitionName)) {
+            m_avatarBtn-&gt;setEnabled(true);
             QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
             QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
-            m_avatarBtn-&gt;setText(QString());
-            m_avatarBtn-&gt;setIcon(QIcon());
-            if (thumb.thumbnail().isNull()) {
-                if (av.imageUrl().isEmpty()) {
-                    m_avatarBtn-&gt;setText(&quot;Add image&quot;);
+            m_avatarView-&gt;clear();
+            m_newAvatarPath = av.imageUrl().toLocalFile();
+            m_thumbnail = thumb.thumbnail();
+            if (m_thumbnail.isNull()) {
+                if (m_newAvatarPath.isEmpty()) {
+                    m_avatarView-&gt;clear();
+                    m_clearAvatarBtn-&gt;setDisabled(true);
                 } else {
-                    m_avatarBtn-&gt;setIcon(QIcon(QPixmap(av.imageUrl().toLocalFile())));
+                    setAvatarPixmap(QPixmap(av.imageUrl().toLocalFile()));
                     m_thumbnail = QImage(av.imageUrl().toLocalFile());
                 }
             } else {
-                m_newAvatarPath = av.imageUrl().toLocalFile();
-                m_thumbnail = thumb.thumbnail();
-                m_avatarBtn-&gt;setIcon(QIcon(QPixmap::fromImage(thumb.thumbnail())));
+                setAvatarPixmap(QPixmap::fromImage(m_thumbnail));
             }
-            m_avatarBtn-&gt;setDisabled(false);
         } else {
-            m_avatarBtn-&gt;setIcon(QIcon());
-            m_avatarBtn-&gt;setText(&quot;&lt;not supported&gt;&quot;);
             m_avatarBtn-&gt;setDisabled(true);
+            m_clearAvatarBtn-&gt;setDisabled(true);
         }
     }
 
@@ -240,17 +247,36 @@
         }
     }
 
+    void ContactEditor::setAvatarPixmap(const QPixmap &amp;pixmap)
+    {
+        if (pixmap.isNull())
+            return;
+        QPixmap scaled = pixmap.scaled(QSize(MAX_AVATAR_DISPLAY_SIZE, MAX_AVATAR_DISPLAY_SIZE),
+                                       Qt::KeepAspectRatio,
+                                       Qt::SmoothTransformation);
+        m_avatarView-&gt;setPixmap(scaled);
+        m_avatarView-&gt;setMaximumSize(scaled.size());
+        m_clearAvatarBtn-&gt;setEnabled(true);
+    }
+
+    void ContactEditor::clearAvatarClicked()
+    {
+        m_avatarView-&gt;clear();
+        m_thumbnail = QImage();
+        m_newAvatarPath.clear();
+        m_clearAvatarBtn-&gt;setDisabled(true);
+    }
+
     void ContactEditor::avatarClicked()
     {
         <span class="comment">// put up a file dialog, and update the new avatar path.</span>
         QString fileName = QFileDialog::getOpenFileName(this,
-           tr(&quot;Select Avatar Image&quot;), &quot;.&quot;, tr(&quot;Image Files (*.png *.jpg *.bmp)&quot;));
+           tr(&quot;Select Contact Picture&quot;), &quot;.&quot;, tr(&quot;Image Files (*.png *.jpg *.bmp)&quot;));
 
         if (!fileName.isEmpty()) {
             m_newAvatarPath = fileName;
             m_thumbnail = QImage(m_newAvatarPath);
-            m_avatarBtn-&gt;setText(QString());
-            m_avatarBtn-&gt;setIcon(QIcon(m_newAvatarPath));
+            setAvatarPixmap(QPixmap::fromImage(m_thumbnail));
         }
     }
 
@@ -268,7 +294,7 @@
                 return;
             }
 
-            if (m_nameEdit-&gt;text() != m_manager-&gt;synthesizedDisplayLabel(curr)) {
+            if (m_nameEdit-&gt;text() != m_manager-&gt;synthesizedContactDisplayLabel(curr)) {
                 <span class="comment">// if the name has changed (ie, is different to the synthed label) then save it as a custom label.</span>
                 QString saveNameField = nameField();
                 if (!saveNameField.isEmpty()) {

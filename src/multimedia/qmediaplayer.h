@@ -114,7 +114,7 @@ public:
     QMediaPlayer(QObject *parent = 0, Flags flags = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaPlayer();
 
-    static QtMedia::SupportEstimate hasSupport(const QString &mimeType,
+    static QtMediaServices::SupportEstimate hasSupport(const QString &mimeType,
                                             const QStringList& codecs = QStringList(),
                                             Flags flags = 0);
     static QStringList supportedMimeTypes(Flags flags = 0);

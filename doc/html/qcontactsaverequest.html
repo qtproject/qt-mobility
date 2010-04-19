@@ -26,6 +26,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#QContactSaveRequest">QContactSaveRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContact&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#contacts">contacts</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#errorMap">errorMap</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#setContact">setContact</a></b> ( const QContact &amp; <i>contact</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#setContacts">setContacts</a></b> ( const QList&lt;QContact&gt; &amp; <i>contacts</i> )</td></tr>
 </table>
 <ul>
@@ -61,6 +62,10 @@
 <a name="//apple_ref/cpp/instm/QContactSaveRequest/errorMap"></a>
 <h3 class="fn"><a name="errorMap"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactSaveRequest::errorMap () const</h3>
 <p>Returns the map of input definition list indices to errors which occurred</p>
+<a name="//apple_ref/cpp/instm/QContactSaveRequest/setContact"></a>
+<h3 class="fn"><a name="setContact"></a>void QContactSaveRequest::setContact ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> )</h3>
+<p>Sets the contact to be saved to <i>contact</i>. Equivalent to calling:</p>
+<pre>    setContacts(QList&lt;QContact&gt;() &lt;&lt; contact);</pre>
 <a name="//apple_ref/cpp/instm/QContactSaveRequest/setContacts"></a>
 <h3 class="fn"><a name="setContacts"></a>void QContactSaveRequest::setContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; &amp; <i>contacts</i> )</h3>
 <p>Sets the list of contacts to be saved to <i>contacts</i></p>

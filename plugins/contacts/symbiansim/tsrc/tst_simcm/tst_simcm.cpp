@@ -1042,7 +1042,7 @@ void tst_SimCM::sdnContacts()
             foreach (QVariant varianttt, d.variantValues()) {
                 qDebug() << "Variant value: " << varianttt.toString();
             }
-
+            qDebug() << "access constraints: " << d.accessConstraints();
             // Verify that read only details have the read only constraint set
             QVERIFY(d.accessConstraints().testFlag(QContactDetail::ReadOnly));
         }

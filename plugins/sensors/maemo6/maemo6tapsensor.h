@@ -39,46 +39,34 @@
 **
 ****************************************************************************/
 
+#ifndef MAEMO6TAPSENSOR_H
+#define MAEMO6TAPSENSOR_H
 
-#ifndef QCONTACTACTIONDESCRIPTOR_H
-#define QCONTACTACTIONDESCRIPTOR_H
+#include "maemo6sensorbase.h"
+#include <qtapsensor.h>
+#include <qsensorbackend.h>
 
-#include "qtcontactsglobal.h"
-#include <QString>
-#include <QSharedDataPointer>
+#include <sensord/tapsensor_i.h>
+#include <sensord/datatypes/tap.h>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QContactActionDescriptorPrivate;
-class Q_CONTACTS_EXPORT QContactActionDescriptor
+class maemo6tapsensor : public maemo6sensorbase
 {
+    Q_OBJECT
+
 public:
-    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
-    QContactActionDescriptor(const QContactActionDescriptor& other);
-    QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
-    ~QContactActionDescriptor();
+    static const char *id;
 
-    bool isEmpty() const;
-    bool operator==(const QContactActionDescriptor& other) const;
-    bool operator!=(const QContactActionDescriptor& other) const;
-    bool operator<(const QContactActionDescriptor& other) const;
-
-    void setActionName(const QString& actionName);
-    void setVendorName(const QString& vendorName);
-    void setImplementationVersion(int implementationVersion);
-
-    QString actionName() const;
-    QString vendorName() const;
-    int implementationVersion() const;
+    maemo6tapsensor(QSensor *sensor);
 
 private:
-    QSharedDataPointer<QContactActionDescriptorPrivate> d;
+    QTapReading m_reading;
+    static bool m_initDone;
+    QSensor *m_sensor;
+
+private slots:
+    void slotDataAvailable(const Tap&);
 };
-
-Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
-
-QTM_END_NAMESPACE
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactActionDescriptor), Q_MOVABLE_TYPE);
 
 #endif

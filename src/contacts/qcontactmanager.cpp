@@ -358,7 +358,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
   Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
   in the matching contacts will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -379,7 +379,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
   contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
   in the matching contacts will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -400,7 +400,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
   and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
   in the matching contact will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -556,12 +556,46 @@ QContact QContactManager::compatibleContact(const QContact& original)
 }
 
 /*!
-  Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner
+  Returns a display label for a \a contact which is synthesized from its details in a manager specific
+  manner.
+
+  If you want to update the display label stored in the contact, use the synthesizeContactDisplayLabel()
+  function instead.
+
+  \sa synthesizeContactDisplayLabel()
  */
-QString QContactManager::synthesizedDisplayLabel(const QContact& contact) const
+QString QContactManager::synthesizedContactDisplayLabel(const QContact& contact) const
 {
     d->m_error = QContactManager::NoError;
     return d->m_engine->synthesizedDisplayLabel(contact, &d->m_error);
+}
+
+/*!
+ * Updates the display label of the supplied \a contact, according to the formatting rules
+ * of this manager.
+ *
+ * Different managers can format the display label of a contact in different ways -
+ * some managers may only consider first or last name, or might put them in different
+ * orders.  Others might consider an organization, a nickname, or a freeform label.
+ *
+ * This function will update the QContactDisplayLabel of this contact, and the string
+ * returned by QContact::displayLabel().
+ *
+ * If \a contact is null, nothing will happen.
+ *
+ * See the following example for more information:
+ * \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating the display label of a contact
+ *
+ * \sa synthesizedContactDisplayLabel(), QContact::displayLabel()
+ */
+void QContactManager::synthesizeContactDisplayLabel(QContact *contact) const
+{
+    if (contact) {
+        d->m_error = QContactManager::NoError;
+        QContactManagerEngine::setContactDisplayLabel(contact, d->m_engine->synthesizedDisplayLabel(*contact, &d->m_error));
+    } else {
+        d->m_error = QContactManager::BadArgumentError;
+    }
 }
 
 /*!
@@ -740,7 +774,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
   \enum QContactManager::ManagerFeature
   This enum describes the possible features that a particular manager may support
   \value Groups The manager supports saving contacts of the \c QContactType::TypeGroup type
-  \value ActionPreferences The manager supports saving preferred details per action per contact
+  \omitvalue ActionPreferences The manager supports saving preferred details per action per contact
   \value DetailOrdering When a contact is retrieved, the manager will return the details in the same order in which they were saved
   \value Relationships The manager supports at least some types of relationships between contacts
   \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts

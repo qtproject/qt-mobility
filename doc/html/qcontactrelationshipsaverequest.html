@@ -26,6 +26,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#QContactRelationshipSaveRequest">QContactRelationshipSaveRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#errorMap">errorMap</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactRelationship&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#relationships">relationships</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#setRelationship">setRelationship</a></b> ( const QContactRelationship &amp; <i>contactRelationship</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</a></b> ( const QList&lt;QContactRelationship&gt; &amp; <i>contactRelationships</i> )</td></tr>
 </table>
 <ul>
@@ -61,6 +62,10 @@
 <h3 class="fn"><a name="relationships"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; QContactRelationshipSaveRequest::relationships () const</h3>
 <p>Returns the list of relationships that will be saved if called prior to calling <tt>start()</tt>, otherwise returns the list of relationships as they were saved in the contacts store</p>
 <p>See also <a href="qcontactrelationshipsaverequest.html#setRelationships">setRelationships</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/setRelationship"></a>
+<h3 class="fn"><a name="setRelationship"></a>void QContactRelationshipSaveRequest::setRelationship ( const <a href="qcontactrelationship.html">QContactRelationship</a> &amp; <i>contactRelationship</i> )</h3>
+<p>Sets the relationship to save to be <i>contactRelationship</i>. Equivalent to calling:</p>
+<pre>    setRelationships(QList&lt;QContactRelationship&gt;() &lt;&lt; contactRelationships);</pre>
 <a name="//apple_ref/cpp/instm/QContactRelationshipSaveRequest/setRelationships"></a>
 <h3 class="fn"><a name="setRelationships"></a>void QContactRelationshipSaveRequest::setRelationships ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>contactRelationships</i> )</h3>
 <p>Sets the relationships to save to be <i>contactRelationships</i></p>

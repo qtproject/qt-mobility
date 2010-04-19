@@ -39,64 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTACTIONDESCRIPTOR_P_H
-#define QCONTACTACTIONDESCRIPTOR_P_H
+#ifndef MAEMO6SENSORBASE_H
+#define MAEMO6SENSORBASE_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <qsensorbackend.h>
+#include "sensord/sensormanagerinterface.h"
+#include "sensord/abstractsensor_i.h"
 
-#include <QSharedData>
-#include <QString>
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class QContactActionDescriptorPrivate : public QSharedData
+class maemo6sensorbase : public QSensorBackend
 {
 public:
-    QContactActionDescriptorPrivate(const QString& action, const QString& vendor, int version)
-            : QSharedData(),
-            m_actionName(action),
-            m_vendorName(vendor),
-            m_implementationVersion(version)
-    {
-    }
+    maemo6sensorbase(QSensor *sensor);
+    virtual ~maemo6sensorbase();
 
-    ~QContactActionDescriptorPrivate()
-    {
-    }
+    virtual void start();
+    virtual void stop();
 
-    /*
-    bool operator <(const QContactActionDescriptorPrivate& other) const
+protected:
+    static SensorManagerInterface* m_remoteSensorManager;
+    AbstractSensorChannelInterface* m_sensorInterface;
+    bool m_sensorRunning;
+
+    static const float GRAVITY_EARTH;
+    static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
+
+    template<typename T>
+    void initSensor(QString sensorName)
     {
-        if (m_actionName < other.m_actionName)
-            return true;
-        if (m_actionName == other.m_actionName) {
-            if (m_vendorName < other.m_vendorName)
-                return true;
-            else if (m_vendorName == other.m_vendorName) {
-                if (m_implementationVersion < other.m_implementationVersion)
-                    return true;
-                else if (m_implementationVersion == other.m_implementationVersion)
-                    return this < &other; // equality, try to be stable
-            }
+        m_remoteSensorManager->loadPlugin(sensorName);
+        m_remoteSensorManager->registerSensorInterface<T>(sensorName);
+        m_sensorInterface = T::controlInterface(sensorName);
+        if (!m_sensorInterface) {
+            m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
         }
-        return false;
     }
-    */
 
-    QString m_actionName;
-    QString m_vendorName;
-    int m_implementationVersion;
+    qtimestamp createTimestamp();
 };
-
-QTM_END_NAMESPACE
 
 #endif

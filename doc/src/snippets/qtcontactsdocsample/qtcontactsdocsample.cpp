@@ -55,7 +55,6 @@ static void queryManagerCapabilities();
 static void contactDetailManipulation();
 static void contactManipulation();
 static void addContact(QContactManager*);
-static void callContact(QContactManager*);
 static void matchCall(QContactManager*, const QString&);
 static void viewSpecificDetail(QContactManager*);
 static void viewDetails(QContactManager*);
@@ -74,7 +73,6 @@ int stopCompilerWarnings()
     // synchronous API examples
     QContactManager* cm = new QContactManager();
     addContact(cm);
-    callContact(cm);
     matchCall(cm, "111-222-333"); // unknown number.
     matchCall(cm, "12345678");    // alice's number.
     viewSpecificDetail(cm);
@@ -293,7 +291,6 @@ void addContact(QContactManager* cm)
     number.setSubTypes(QContactPhoneNumber::SubTypeMobile);
     number.setNumber("12345678");
     alice.saveDetail(&number);
-    alice.setPreferredDetail("DialAction", number);
 
     /* Add a second phone number */
     QContactPhoneNumber number2;
@@ -309,29 +306,6 @@ void addContact(QContactManager* cm)
 }
 //! [Creating a new contact]
 
-void callContact(QContactManager* cm)
-{
-    QList<QContactLocalId> contactIds = cm->contactIds();
-    QContact a = cm->contact(contactIds.first());
-
-    /* Get this contact's first phone number */
-    QContactAction* action = 0;
-    QContact contact;
-
-    //! [Details with action]
-    QList<QContactDetail> details = contact.detailsWithAction("Call");
-
-    if (details.count() == 0) {
-        // Can't call this contact
-    } else if (details.count() == 1) {
-        // Just call this specific detail
-        action->invokeAction(contact, details.first());
-    } else {
-        // Offer the user the choice of details to call
-        // ...
-    }
-    //! [Details with action]
-}
 
 //! [Filtering by definition and value]
 void matchCall(QContactManager* cm, const QString& incomingCallNbr)
@@ -524,12 +498,8 @@ void displayLabel()
     name.setLastName("Arkansas");
     c.saveDetail(&name);
 
-    /* At this point the display label is not updated, so print what the new one would be if we save it */
-    qDebug() << "New label would be:" << manager->synthesizedDisplayLabel(c);
-
-    /* Now save it */
-    manager->saveContact(&c);
-
+    /* Update the display label */
+    manager->synthesizeContactDisplayLabel(&c);
     qDebug() << "Now the label is:" << c.displayLabel();
 //! [Updating the display label of a contact]
 }

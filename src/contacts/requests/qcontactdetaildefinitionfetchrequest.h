@@ -60,6 +60,7 @@ public:
     QContactDetailDefinitionFetchRequest(QObject* parent = 0);
 
     /* Selection */
+    void setDefinitionName(const QString& definitionName);
     void setDefinitionNames(const QStringList& names);
     QStringList definitionNames() const;
     void setContactType(const QString& contactType);

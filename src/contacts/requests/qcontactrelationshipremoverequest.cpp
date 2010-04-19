@@ -64,6 +64,20 @@ QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* pa
 {
 }
 
+/*!
+  Sets the relationship which will be removed to \a relationship.
+  Equivalent to calling:
+  \code
+      setRelationships(QList<QContactRelationship>() << relationship);
+  \endcode
+ */
+void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationship& relationship)
+{
+    Q_D(QContactRelationshipRemoveRequest);
+    d->m_relationships.clear();
+    d->m_relationships.append(relationship);
+}
+
 /*! Sets the list of relationships which will be removed to \a relationships */
 void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRelationship>& relationships)
 {

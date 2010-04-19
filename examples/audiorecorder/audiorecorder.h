@@ -62,12 +62,21 @@ public:
     AudioRecorder();
     ~AudioRecorder();
 
+private:
+    QUrl recordPathAudio(QUrl filePath);
+    void updateSamplerates(int idx);
+    void updateChannelCount(int idx);
+    void updateQuality(int idx);
+    
 private slots:
     void deviceChanged(int idx);
     void containerChanged(int idx);
     void codecChanged(int idx);
     void qualityChanged(int idx);
+    void sampleRateChanged(int idx);
+    void channelCountChanged(int idx);
     void selectOutputFile();
+    void togglePause();
     void toggleRecord();
     void stateChanged(QMediaRecorder::State);
     void updateProgress(qint64 pos);
@@ -81,13 +90,17 @@ private:
     QComboBox*     containersBox;
     QComboBox*     codecsBox;
     QComboBox*     qualityBox;
+    QComboBox*     sampleRateBox; 
+    QComboBox*     channelBox;
     QLabel*        recTime;
     QLabel*        statusLabel;
     QPushButton*   button;
     QPushButton*   fileButton;
+    QPushButton*   pauseButton;
     bool           active;
     int            currentTime;
     QUrl           destination;
+    bool           paused; 
 };
 
 #endif

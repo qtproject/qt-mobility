@@ -64,6 +64,20 @@ QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest(QObject
 {
 }
 
+/*!
+  Sets the definition to save to be the given \a definition.
+  Equivalent to calling:
+  \code
+      setDefinitions(QList<QContactDetailDefinition>() << definition);
+  \endcode
+ */
+void QContactDetailDefinitionSaveRequest::setDefinition(const QContactDetailDefinition& definition)
+{
+    Q_D(QContactDetailDefinitionSaveRequest);
+    d->m_definitions.clear();
+    d->m_definitions.append(definition);
+}
+
 /*! Sets the definitions to save to be \a definitions */
 void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDetailDefinition>& definitions)
 {

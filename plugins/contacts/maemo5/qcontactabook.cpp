@@ -128,7 +128,9 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
     if (id)
       contactIds << id;
   }
-  d->that->_contactsAdded(contactIds);
+
+  if (!contactIds.isEmpty())
+    d->that->_contactsAdded(contactIds);
 }
 
 static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contacts, gpointer data)
@@ -155,7 +157,9 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
     if (id)
       contactIds << id;
   }
-  d->that->_contactsChanged(contactIds);
+
+  if (!contactIds.isEmpty())
+    d->that->_contactsChanged(contactIds);
 }
 
 static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointer data)
@@ -173,13 +177,15 @@ static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointe
   QList<QContactLocalId> contactIds;
   
   for (p = ids; *p; ++p) {
-    QContactLocalId id = d->hash->take(*p);
-    QCM5_DEBUG << "Contact" << id << "has been removed";
-    if (id)
-      contactIds << id;
+      QContactLocalId id = d->hash->take(*p);
+      if (id) {
+        QCM5_DEBUG << "Contact" << id << "has been removed";
+        contactIds << id;
+      }
   }
   
-  d->that->_contactsRemoved(contactIds);
+  if (!contactIds.isEmpty())
+    d->that->_contactsRemoved(contactIds);
 }
 
 void QContactABook::initAddressBook(){
@@ -317,40 +323,6 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     
     // Non native sorting
     return QContactManagerEngine::sortContacts(contacts, sortOrders);
-  }
-  
-  //Matching action filter
-  //NOTE The code was not really tested
-  if(filter.type() == QContactFilter::ActionFilter){
-    QContactActionFilter af(filter);
-    // This looks a bit strange for me
-    QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
-
-    GList *masterContacts = osso_abook_aggregator_list_master_contacts(m_abookAgregator);
-    for(; masterContacts; ){
-      OssoABookContact *masterContact = A_CONTACT(masterContacts->data);
-      bool match = contactActionsMatch(masterContact, descriptors);
-      if(!match) {
-        GList *rosterContacts = osso_abook_contact_get_roster_contacts(masterContact);
-        for(; rosterContacts && !match; ){
-          OssoABookContact *rosterContact = A_CONTACT(rosterContacts->data);
-          match = contactActionsMatch(rosterContact, descriptors);
-          rosterContacts = g_list_delete_link(rosterContacts, rosterContacts);
-        }
-        g_list_free(rosterContacts);
-      }
-      if(match){
-        EContact *contact = E_CONTACT(masterContact);
-        const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
-        QByteArray localId(data);
-        m_localIds << localId;
-        rtn.append(m_localIds[localId]);
-        QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
-      }
-      masterContacts = g_list_delete_link(masterContacts, masterContacts);
-    }
-    *error = QContactManager::NoError;
-    return  rtn;
   }
   
   EBookQuery* query = convert(filter);
@@ -493,6 +465,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   GList* rosterContacts = NULL;
   rosterContacts = osso_abook_contact_get_roster_contacts(aContact);
   const char *masterUid = CONST_CHAR(e_contact_get_const(E_CONTACT(aContact), E_CONTACT_UID));
+  char *contactUidCopy = strdup(masterUid);
   while(rosterContacts){
     OssoABookContact *rosterContact = A_CONTACT(rosterContacts->data);
     osso_abook_contact_reject_for_uid(rosterContact, masterUid, NULL);
@@ -506,7 +479,13 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
 
   // update our list of ids...
-  m_localIds.remove(masterUid);
+  QContactLocalId id = m_localIds[contactUidCopy];
+  m_localIds.remove(contactUidCopy);
+  if (contactUidCopy)
+    free(contactUidCopy);
+  
+  if (id)
+    _contactsRemoved(QList<QContactLocalId>() << id);
   
   return ok;
 }
@@ -626,38 +605,6 @@ QContactLocalId QContactABook::selfContactId(QContactManager::Error* errors) con
   return id;
 }
 
-bool QContactABook::contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const
-{
-  OssoABookCapsFlags capsFlags = osso_abook_caps_get_capabilities(OSSO_ABOOK_CAPS(contact));
-
-  if(capsFlags & OSSO_ABOOK_CAPS_NONE)
-    return false;
-
-  /* ActionNames could be incorrect */
-  OssoABookCapsFlags actionFlags = OSSO_ABOOK_CAPS_NONE;
-  for(int i = 0; i < descriptors.size(); i++){
-    QString actionName = descriptors.at(i).actionName();
-    QCM5_DEBUG << actionName;
-    if(!actionName.compare("Phone"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_PHONE);
-    else if(!actionName.compare("Voice"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_VOICE);
-    else if(!actionName.compare("SendEmail"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_EMAIL);
-    else if(!actionName.compare("Chat"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_CHAT);
-    else if(!actionName.compare("ChatAdditional"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_CHAT_ADDITIONAL);
-    else if(!actionName.compare("VoiceAdditional"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_VOICE_ADDITIONAL);
-    else if(!actionName.compare("Video"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_VIDEO);
-    else if(!actionName.compare("Addressbook"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_ADDRESSBOOK);
-  }
-  return ((actionFlags & capsFlags) == actionFlags);
-}
-
 EBookQuery* QContactABook::convert(const QContactFilter& filter) const
 {
   EBookQuery* query = NULL;
@@ -735,7 +682,6 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
       query = e_book_query_from_string(qPrintable(queryStr));
     } break;
     case QContactFilter::ActionFilter:
-      QCM5_DEBUG << "ActionFilter"; //eQuery doesn't support ActionFilter
       break;
     case QContactFilter::IntersectionFilter:
     {

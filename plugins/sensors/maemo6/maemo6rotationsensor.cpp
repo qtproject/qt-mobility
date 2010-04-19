@@ -39,50 +39,40 @@
 **
 ****************************************************************************/
 
-#include "qcontactactionfactory.h"
+#include "maemo6rotationsensor.h"
 
-QTM_BEGIN_NAMESPACE
+const char *maemo6rotationsensor::id("maemo6.rotationsensor");
+bool maemo6rotationsensor::m_initDone = false;
 
-/*!
-  \class QContactActionFactory
-  \brief The QContactActionFactory class provides an interface for clients
-  to retrieve instances of action implementations
-  \ingroup contacts-actions
- */
-
-QContactActionFactory::~QContactActionFactory()
+maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
+    : maemo6sensorbase(sensor)
 {
+    setReading<QRotationReading>(&m_reading);
+
+    if (!m_initDone) {
+        qDBusRegisterMetaType<XYZ>();
+
+        initSensor<RotationSensorChannelInterface>("rotationsensor");
+
+        if (m_sensorInterface)
+            QObject::connect(static_cast<RotationSensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
+        else
+            qWarning() << "Unable to initialize rotation sensor.";
+
+        setDescription(QLatin1String("Measures x, y, and z axes rotation"));
+
+        m_initDone = true;
+    }
+    sensor->setProperty("hasZ", true);
 }
 
-/*!
- * \fn QContactActionFactory::~QContactActionFactory()
- * Clears any memory in use by this factory
- */
+void maemo6rotationsensor::slotDataAvailable(const XYZ& data)
+{
+    m_reading.setX(data.x());
+    m_reading.setY(data.y());
+    m_reading.setZ(data.z());
+    //m_reading.setTimestamp(data.timestamp());
+    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    newReadingAvailable();
+}
 
-/*!
- * \fn QContactActionFactory::name() const
- * Returns the name of this factory.  The name is used to identify the factory
- * when it is retrieved using the Qt Plugin framework.
- */
-
-/*!
- * \fn QContactActionFactory::actionDescriptors() const
- * Returns a list of descriptors of the actions of which instances of their implementations are able to be retrieved
- * from this factory.
- */
-
-/*!
- * \fn QContactActionFactory::instance(const QContactActionDescriptor& descriptor) const
- * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor.
- * The caller takes ownership of the action instance returned from this function, and must delete it when
- * they are finished using it in order to avoid a memory leak.
- */
-
-/*!
- * \fn QContactActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
- * Returns the metadata associated with the action identified by the given \a descriptor
- */
-
-#include "moc_qcontactactionfactory.cpp"
-
-QTM_END_NAMESPACE
