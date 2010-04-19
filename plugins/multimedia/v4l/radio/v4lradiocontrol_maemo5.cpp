@@ -386,13 +386,13 @@ int V4LRadioControl::volume() const
 
     snd_hctl_close(hctl);
 
-    return (volume/63.0) * 100;
+    return (volume/118.0) * 100;
 }
 
 void V4LRadioControl::setVolume(int volume)
 {
 
-    int vol = (volume / 100.0) * 63; // 63 is a headphone max setting
+    int vol = (volume / 100.0) * 118; // 118 is a headphone max setting
     callAmixer("Line DAC Playback Volume", QString().setNum(vol)+QString(",")+QString().setNum(vol));
 }
 
@@ -417,7 +417,7 @@ void V4LRadioControl::setupHeadPhone()
     settings["Left DAC_L1 Mixer HP Switch"] = "off";
     settings["Right DAC_R1 Mixer HP Switch"] = "off";
     settings["Line DAC Playback Switch"] = "on";
-    settings["Line DAC Playback Volume"] = "63,63"; // Volume is set to 100%
+    settings["Line DAC Playback Volume"] = "118,118"; // Volume is set to 100%
     settings["HPCOM DAC Playback Switch"] = "off";
     settings["Left DAC_L1 Mixer HP Switch"] = "off";
     settings["Left DAC_L1 Mixer Line Switch"] = "on";
