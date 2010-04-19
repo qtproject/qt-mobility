@@ -105,6 +105,8 @@ public:
     //service side
     void setupSignalIntercepters(QObject * service)
     {
+        Q_ASSERT(endPointType == ObjectEndPoint::Service);
+
         //create a signal intercepter for each signal
         //offered by service 
         //exclude QObject signals
@@ -131,6 +133,8 @@ public:
     */
     int triggerConnectedSlots(QObject* service, const QMetaObject* meta, int id, void **args)
     {
+        Q_ASSERT(endPointType == ObjectEndPoint::Client);
+
         const QMetaObject* parentMeta = meta->superClass();
         if (parentMeta)
             id = triggerConnectedSlots(service, parentMeta, id, args);
@@ -203,7 +207,9 @@ void ObjectEndPoint::disconnected()
 */
 QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
 {
-    
+    //client side 
+    Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
+
     //ask for serialized meta object
     //get proxy based on meta object
     //return meta object
@@ -236,6 +242,8 @@ QObject* ObjectEndPoint::constructProxy(const QRemoteServiceIdentifier& ident)
 
 void ObjectEndPoint::newPackageReady()
 {
+    //client and service side
+
     while(dispatch->packageAvailable())
     {
         QServicePackage p = dispatch->nextPackage();
@@ -261,6 +269,9 @@ void ObjectEndPoint::newPackageReady()
 void ObjectEndPoint::propertyCall(const QServicePackage& p)
 {
     if(p.d->responseType == QServicePackage::NotAResponse) {
+        //service side
+        Q_ASSERT(d->endPointType == ObjectEndPoint::Service);
+
         QByteArray data = p.d->payload.toByteArray();
         QDataStream stream(&data, QIODevice::ReadOnly);
         int metaIndex = -1;
@@ -301,6 +312,10 @@ void ObjectEndPoint::propertyCall(const QServicePackage& p)
             dispatch->writePackage(response);
         }
     } else {
+        //client side
+        Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
+
+
         Response* response = openRequests()->value(p.d->messageId);
         response->isFinished = true;
         if (p.d->responseType == QServicePackage::Failed) {
@@ -319,6 +334,9 @@ void ObjectEndPoint::propertyCall(const QServicePackage& p)
 void ObjectEndPoint::objectRequest(const QServicePackage& p)
 {
     if (p.d->responseType != QServicePackage::NotAResponse ) {
+        //client side
+        Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
+
         //qDebug() << p;
         Response* response = openRequests()->value(p.d->messageId);
         if (p.d->responseType == QServicePackage::Failed) {
@@ -338,6 +356,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
         QTimer::singleShot(0, this, SIGNAL(pendingRequestFinished()));
 
     } else {
+        //service side
+        Q_ASSERT(d->endPointType == ObjectEndPoint::Service);
+
         //qDebug() << p;
         QServicePackage response = p.createResponse();
         InstanceManager* m = InstanceManager::instance();
@@ -377,6 +398,9 @@ void ObjectEndPoint::objectRequest(const QServicePackage& p)
 void ObjectEndPoint::methodCall(const QServicePackage& p)
 {
     if (p.d->responseType == QServicePackage::NotAResponse ) {
+        //service side if slot invocation
+        //client side if signal emission (isSignal==true)
+
         //qDebug() << p;
         QByteArray data = p.d->payload.toByteArray();
         QDataStream stream(&data, QIODevice::ReadOnly);
@@ -390,6 +414,7 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         const int returnType = QMetaType::type(method.typeName());
 
         if (isSignal) {
+            Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
             // Construct the raw argument list.
             /*  we ignore a possible return type of the signal. The value is 
                 not deterministic and it can actually create memory leaks 
@@ -410,6 +435,8 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
             d->triggerConnectedSlots(service, service->metaObject(), metaIndex, a.data());
             return;
         }
+        //service side 
+        Q_ASSERT(d->endPointType == ObjectEndPoint::Service);
 
         const char* typenames[] = {0,0,0,0,0,0,0,0,0,0};
         const void* param[] = {0,0,0,0,0,0,0,0,0,0};
@@ -473,6 +500,9 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
         if (!result)
             qWarning( "%s::%s cannot be called.", service->metaObject()->className(), method.signature());
     } else {
+        //client side
+        Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
+
         //qDebug() << p;
         Response* response = openRequests()->value(p.d->messageId);
         response->isFinished = true;
@@ -494,6 +524,10 @@ void ObjectEndPoint::methodCall(const QServicePackage& p)
 */
 QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg, int /*returnType*/, QMetaObject::Call c )
 {
+    //client and service side 
+    Q_ASSERT(d->endPointType == ObjectEndPoint::Client 
+            || d->endPointType == ObjectEndPoint::Service);
+
     QServicePackage p;
     p.d = new QServicePackagePrivate();
     p.d->packageType = QServicePackage::PropertyCall;
@@ -543,6 +577,9 @@ QVariant ObjectEndPoint::invokeRemoteProperty(int metaIndex, const QVariant& arg
 */
 QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, int returnType)
 {
+    //client side
+    //Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
+
     QServicePackage p;
     p.d = new QServicePackagePrivate();
     p.d->packageType = QServicePackage::MethodCall;
@@ -589,9 +626,10 @@ QVariant ObjectEndPoint::invokeRemote(int metaIndex, const QVariantList& args, i
 
 void ObjectEndPoint::waitForResponse(const QUuid& requestId)
 {
+    Q_ASSERT(d->endPointType == ObjectEndPoint::Client);
+
     if (openRequests()->contains(requestId) ) {
         Response* response = openRequests()->value(requestId);
-
         QEventLoop* loop = new QEventLoop( this );
         connect(this, SIGNAL(pendingRequestFinished()), loop, SLOT(quit())); 
 
