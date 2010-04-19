@@ -1,6 +1,5 @@
 TARGET = qservicemanager_ipc_service
-INCLUDEPATH += ../../../../src/serviceframework \
-                ../../../../src/serviceframework/ipc
+INCLUDEPATH += ../../../../src/serviceframework
 DEPENDPATH += ../../../../src/serviceframework
 
 QT = core testlib
