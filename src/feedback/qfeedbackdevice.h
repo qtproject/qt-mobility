@@ -58,8 +58,8 @@ public:
     };
 
     enum Capability {
-        Envelope
-      //TBD
+        //this might need to be extended
+        Envelope = 1
     };
 
     enum State {
@@ -74,9 +74,12 @@ public:
     bool isValid() const;
     QString name() const;
     State state() const;
-    int simultaneousEffect() const;
 
-    static QFeedbackDevice defaultDevice(Type t = Vibra);
+    bool isEnabled() const;
+    void setEnabled(bool);
+
+    static QFeedbackDevice defaultDevice();
+    static QFeedbackDevice defaultDevice(Type t);
     static QList<QFeedbackDevice> devices();
 
 private:

@@ -58,17 +58,34 @@
 //
 //
 
+class CHWRMVibra;
+
 QTM_BEGIN_NAMESPACE
 
+class QTouchFeedback;
 
-struct QFeedbackEffectBasePrivate : public QAbstractAnimationPrivate
+class QFeedbackEffectPrivate : public QAbstractAnimationPrivate
 {
-    QFeedbackEffectBasePrivate() : duration(250),
+public:
+    QFeedbackEffectPrivate() : duration(250),
                     intensity(1), attackTime(0), attackIntensity(0), fadeTime(0),
-                    device(QFeedbackDevice::defaultDevice())
+                    device(QFeedbackDevice::defaultDevice()),
+#ifdef Q_OS_SYMBIAN
+                  m_feedback(0), m_vibra(0)
+#else
+                  m_hEffect(0)
+#endif
     {
 
     }
+
+#ifdef Q_OS_SYMBIAN
+    ~QFeedbackEffectPrivate()
+    {
+        delete m_vibra;
+    }
+#endif
+
 
     int duration;
     qreal intensity;
@@ -77,6 +94,21 @@ struct QFeedbackEffectBasePrivate : public QAbstractAnimationPrivate
     int fadeTime;
     qreal fadeIntensity;
     QFeedbackDevice device;
+    
+#ifdef Q_OS_SYMBIAN
+    QTouchFeedback *feedback();
+    CHWRMVibra *vibra();
+
+protected:
+    QTouchFeedback *m_feedback;
+    CHWRMVibra *m_vibra;
+#else
+    //for Immersion
+    void checkUpdateEffect();
+    qint32 m_hEffect;
+#endif
+
+   Q_DECLARE_PUBLIC(QFeedbackEffect)
 };
 
 

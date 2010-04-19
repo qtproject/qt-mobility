@@ -40,16 +40,12 @@
 ****************************************************************************/
 
 #include "qfeedbackeffect.h"
-#include "qfeedbackeffect_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QFeedbackEffectPrivate : public QFeedbackEffectBasePrivate
+void QFeedbackEffect::updateCurrentTime(int currentTime)
 {
-};
-
-QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(parent)
-{
+    Q_UNUSED(currentTime);
 }
 
 void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
@@ -57,19 +53,9 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
     QAbstractAnimation::updateState(newState, oldState);
 }
 
-int QFeedbackEffect::duration() const
-{
-    return d_func()->duration;
-}
-
-
 void QFeedbackEffect::setDuration(int msecs)
 {
-    if (msecs < 0) {
-        qWarning("QFeedbackEffect::setDuration: cannot set a negative duration");
-        return;
-    }
-    d_func()->duration = msecs;
+    Q_UNUSED(msecs);
 }
 
 void QFeedbackEffect::setIntensity(qreal intensity)
@@ -77,19 +63,9 @@ void QFeedbackEffect::setIntensity(qreal intensity)
     Q_UNUSED(intensity);
 }
 
-qreal QFeedbackEffect::intensity() const
-{
-    return d_func()->intensity;
-}
-
 void QFeedbackEffect::setAttackTime(int msecs)
 {
     Q_UNUSED(msecs);
-}
-
-int QFeedbackEffect::attackTime() const
-{
-    return d_func()->attackTime;
 }
 
 void QFeedbackEffect::setAttackIntensity(qreal intensity)
@@ -97,29 +73,9 @@ void QFeedbackEffect::setAttackIntensity(qreal intensity)
     Q_UNUSED(intensity);
 }
 
-qreal QFeedbackEffect::attackIntensity() const
-{
-    return d_func()->attackIntensity;
-}
-
 void QFeedbackEffect::setFadeTime(int msecs)
 {
     Q_UNUSED(msecs);
-}
-
-int QFeedbackEffect::fadeTime() const
-{
-    return d_func()->fadeTime;
-}
-
-void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
-{
-    d_func()->device = device;
-}
-
-QFeedbackDevice QFeedbackEffect::device() const
-{
-    return d_func()->device;
 }
 
 QTM_END_NAMESPACE

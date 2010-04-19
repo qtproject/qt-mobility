@@ -50,39 +50,47 @@ QTM_BEGIN_NAMESPACE
 
 extern VibeInt32 qHandleForDevice(const QFeedbackDevice &device);
 
-class QFeedbackEffectPrivate : public QFeedbackEffectBasePrivate
+void QFeedbackEffectPrivate::checkUpdateEffect()
 {
-public:
-    QFeedbackEffectPrivate() : hEffect(-1)
+    if (VIBE_IS_INVALID_EFFECT_HANDLE(m_hEffect))
+        return;
+
+    Q_Q(QFeedbackEffect);
+    ImmVibeModifyPlayingPeriodicEffect(qHandleForDevice(device),
+                                       m_hEffect,
+                                       q->totalDuration(),
+                                       intensity / qreal(VIBE_MAX_MAGNITUDE),
+                                       duration,
+                                       VIBE_DEFAULT_STYLE,
+                                       attackTime,
+                                       attackIntensity,
+                                       fadeTime,
+                                       fadeIntensity);
+}
+
+
+void QFeedbackEffect::updateCurrentTime(int currentTime)
+{
+    Q_UNUSED(currentTime);
+    Q_D(QFeedbackEffect);
+
+    VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
+    ImmVibeGetEffectState(qHandleForDevice(d->device), d->m_hEffect, &effectState);
+
+    //here we detect changes in the state of the effect
+    switch(effectState)
     {
+    case VIBE_EFFECT_STATE_NOT_PLAYING:
+        stop();
+        break;
+    case VIBE_EFFECT_STATE_PAUSED:
+        pause();
+        break;
+    case VIBE_EFFECT_STATE_PLAYING:
+        start();
+        break;
     }
 
-    void checkUpdateEffect()
-    {
-        if (hEffect == -1)
-            return;
-
-        Q_Q(QFeedbackEffect);
-        ImmVibeModifyPlayingPeriodicEffect(qHandleForDevice(device),
-                                           hEffect,
-                                           q->totalDuration(),
-                                           intensity / qreal(VIBE_MAX_MAGNITUDE),
-                                           duration,
-                                           VIBE_STYLE_STRONG,
-                                           attackTime,
-                                           attackIntensity,
-                                           fadeTime,
-                                           fadeIntensity);
-    }
-
-    VibeInt32 hEffect; //handle to the effect
-
-private:
-    Q_DECLARE_PUBLIC(QFeedbackEffect);
-};
-
-QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(parent)
-{
 }
 
 void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
@@ -91,39 +99,29 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
     switch (newState)
     {
     case Stopped:
-        ImmVibeStopPlayingEffect(qHandleForDevice(d->device), d->hEffect);
-        d->hEffect = -1;
+        ImmVibeStopPlayingEffect(qHandleForDevice(d->device), d->m_hEffect);
+        d->m_hEffect = VIBE_INVALID_EFFECT_HANDLE_VALUE;
         break;
     case Paused:
-        ImmVibePausePlayingEffect(qHandleForDevice(d->device), d->hEffect);
+        ImmVibePausePlayingEffect(qHandleForDevice(d->device), d->m_hEffect);
         break;
     case Running:
         if (oldState == Paused)
-            ImmVibeResumePausedEffect(qHandleForDevice(d->device), d->hEffect);
+            ImmVibeResumePausedEffect(qHandleForDevice(d->device), d->m_hEffect);
         else
             ImmVibePlayPeriodicEffect(qHandleForDevice(d->device), totalDuration(),
                 intensity() / qreal(VIBE_MAX_MAGNITUDE), duration(),
                 VIBE_STYLE_STRONG, attackTime(), attackIntensity(),
-                fadeTime(), fadeIntensity(), &d->hEffect);
+                fadeTime(), fadeIntensity(), &d->m_hEffect);
         break;
     }
 
     QAbstractAnimation::updateState(newState, oldState);
 }
 
-int QFeedbackEffect::duration() const
-{
-    return d_func()->duration;
-}
-
-
 void QFeedbackEffect::setDuration(int msecs)
 {
     Q_D(QFeedbackEffect);
-    if (msecs < 0) {
-        qWarning("QFeedbackEffect::setDuration: cannot set a negative duration");
-        return;
-    }
     if (d->duration == msecs)
         return;
     d->duration = msecs;
@@ -140,11 +138,6 @@ void QFeedbackEffect::setIntensity(qreal intensity)
     d->checkUpdateEffect();
 }
 
-qreal QFeedbackEffect::intensity() const
-{
-    return d_func()->intensity;
-}
-
 void QFeedbackEffect::setAttackTime(int msecs)
 {
     Q_D(QFeedbackEffect);
@@ -154,10 +147,6 @@ void QFeedbackEffect::setAttackTime(int msecs)
     d->checkUpdateEffect();
 }
 
-int QFeedbackEffect::attackTime() const
-{
-    return d_func()->attackTime;
-}
 
 void QFeedbackEffect::setAttackIntensity(qreal intensity)
 {
@@ -166,11 +155,6 @@ void QFeedbackEffect::setAttackIntensity(qreal intensity)
         return;
     d->attackIntensity = intensity;
     d->checkUpdateEffect();
-}
-
-qreal QFeedbackEffect::attackIntensity() const
-{
-    return d_func()->attackIntensity;
 }
 
 void QFeedbackEffect::setFadeTime(int msecs)
@@ -182,11 +166,6 @@ void QFeedbackEffect::setFadeTime(int msecs)
     d->checkUpdateEffect();
 }
 
-int QFeedbackEffect::fadeTime() const
-{
-    return d_func()->fadeTime;
-}
-
 void QFeedbackEffect::setFadeIntensity(qreal intensity)
 {
     Q_D(QFeedbackEffect);
@@ -196,21 +175,4 @@ void QFeedbackEffect::setFadeIntensity(qreal intensity)
     d->checkUpdateEffect();
 }
 
-qreal QFeedbackEffect::fadeIntensity() const
-{
-    return d_func()->fadeIntensity;
-}
-
-void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
-{
-    d_func()->device = device;
-}
-
-QFeedbackDevice QFeedbackEffect::device() const
-{
-    return d_func()->device;
-}
-
 QTM_END_NAMESPACE
-
-

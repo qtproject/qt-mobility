@@ -54,11 +54,6 @@ QFeedbackDevice::State QFeedbackDevice::state() const
     return Unknown;
 }
 
-int QFeedbackDevice::simultaneousEffect() const
-{
-    return 0;
-}
-
 QFeedbackDevice QFeedbackDevice::defaultDevice(Type /*t*/)
 {
     return QFeedbackDevice();
@@ -70,5 +65,14 @@ QList<QFeedbackDevice> QFeedbackDevice::devices()
     return ret;
 }
 
+bool QFeedbackDevice::isEnabled() const
+{
+    return false;
+}
+
+void QFeedbackDevice::setEnabled(bool enabled)
+{
+    Q_UNUSED(enabled);
+}
 
 QTM_END_NAMESPACE

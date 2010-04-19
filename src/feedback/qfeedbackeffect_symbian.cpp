@@ -166,39 +166,24 @@ public:
 };
 #endif
 
-class QFeedbackEffectPrivate : public QFeedbackEffectBasePrivate
+QTouchFeedback *QFeedbackEffectPrivate::feedback()
 {
-public:
-    QFeedbackEffectPrivate() : m_feedback(0), m_vibra(0)
-    {
-    }
+    if (!m_feedback)
+        m_feedback = QTouchFeedback::Instance();
+    return m_feedback;
+}
 
-    ~QFeedbackEffectPrivate()
-    {
-        delete m_vibra;
-    }
-
-    QTouchFeedback *feedback()
-    {
-        if (!m_feedback)
-            m_feedback = QTouchFeedback::Instance();
-        return m_feedback;
-    }
-
-    CHWRMVibra *vibra()
-    {
-        if (!m_vibra)
-            m_vibra = CHWRMVibra::NewL();
-        return m_vibra;
-    }
-
-private:
-    QTouchFeedback *m_feedback;
-    CHWRMVibra *m_vibra;
-};
-
-QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(*new QFeedbackEffectPrivate, parent)
+CHWRMVibra *QFeedbackEffectPrivate::vibra()
 {
+    if (!m_vibra)
+        m_vibra = CHWRMVibra::NewL();
+    return m_vibra;
+}
+
+void QFeedbackEffect::updateCurrentTime(int currentTime)
+{
+    Q_UNUSED(currentTime);
+    //no random access for feedback
 }
 
 void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
@@ -243,18 +228,8 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
     }
 }
 
-int QFeedbackEffect::duration() const
-{
-    return d_func()->duration;
-}
-
-
 void QFeedbackEffect::setDuration(int msecs)
 {
-    if (msecs < 0) {
-        qWarning("QFeedbackEffect::setDuration: cannot set a negative duration");
-        return;
-    }
     d_func()->duration = msecs;
 }
 
@@ -282,21 +257,10 @@ void QFeedbackEffect::setIntensity(qreal intensity)
 
 }
 
-qreal QFeedbackEffect::intensity() const
-{
-    return d_func()->intensity;
-}
-
-
 //envelope is not supported on S60
 void QFeedbackEffect::setAttackTime(int msecs)
 {
     Q_UNUSED(msecs);
-}
-
-int QFeedbackEffect::attackTime() const
-{
-    return d_func()->attackTime;
 }
 
 void QFeedbackEffect::setAttackIntensity(qreal intensity)
@@ -304,19 +268,9 @@ void QFeedbackEffect::setAttackIntensity(qreal intensity)
     Q_UNUSED(intensity);
 }
 
-qreal QFeedbackEffect::attackIntensity() const
-{
-    return d_func()->attackIntensity;
-}
-
 void QFeedbackEffect::setFadeTime(int msecs)
 {
     Q_UNUSED(msecs);
-}
-
-int QFeedbackEffect::fadeTime() const
-{
-    return d_func()->fadeTime;
 }
 
 void QFeedbackEffect::setFadeIntensity(qreal intensity)
@@ -324,20 +278,4 @@ void QFeedbackEffect::setFadeIntensity(qreal intensity)
     Q_UNUSED(intensity);
 }
 
-qreal QFeedbackEffect::fadeIntensity() const
-{
-    return d_func()->fadeIntensity;
-}
-
-void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
-{
-    d_func()->device = device;
-}
-
-QFeedbackDevice QFeedbackEffect::device() const
-{
-    return d_func()->device;
-}
-
 QTM_END_NAMESPACE
-

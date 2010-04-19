@@ -49,7 +49,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-static int g_defaultDevices[2] = {-1, -1};
+static int g_defaultDevices[2] = {VIBE_INVALID_DEVICE_HANDLE_VALUE, VIBE_INVALID_DEVICE_HANDLE_VALUE};
 
 class DeviceHandler
 {
@@ -68,9 +68,9 @@ public:
             VibeInt32 type = 0;
             ImmVibeGetDeviceCapabilityInt32(i, VIBE_DEVCAPTYPE_ACTUATOR_TYPE, &type);
             if (type == VIBE_DEVACTUATORTYPE_PIEZO_WAVE || type == VIBE_DEVACTUATORTYPE_PIEZO) {
-                if (g_defaultDevices[QFeedbackDevice::Touch] == -1)
+                if (VIBE_IS_INVALID_DEVICE_HANDLE(g_defaultDevices[QFeedbackDevice::Touch]))
                     g_defaultDevices[QFeedbackDevice::Touch] = i;
-            } else if (g_defaultDevices[QFeedbackDevice::Vibra] == -1) {
+            } else if (VIBE_IS_INVALID_DEVICE_HANDLE(g_defaultDevices[QFeedbackDevice::Vibra])) {
                 g_defaultDevices[QFeedbackDevice::Vibra] = i;
             }
         }
@@ -91,12 +91,12 @@ public:
         if (handles.size() <= device.id()) {
             QMutexLocker locker(&mutex);
             while (handles.size() <= device.id())
-                handles.append(-1); //-1 means no handle
+                handles.append(VIBE_INVALID_DEVICE_HANDLE_VALUE);
         }
 
-        if (handles.at(device.id()) == -1) {
+        if (VIBE_IS_INVALID_DEVICE_HANDLE(handles.at(device.id()))) {
             QMutexLocker locker(&mutex);
-            if (handles.at(device.id()) == -1)
+            if (VIBE_IS_INVALID_DEVICE_HANDLE(handles.at(device.id())))
                 ImmVibeOpenDevice(device.id(), &handles[device.id()] );
         }
         return handles.at(device.id());
@@ -140,12 +140,19 @@ QFeedbackDevice::State QFeedbackDevice::state() const
 
 }
 
-int QFeedbackDevice::simultaneousEffect() const
+
+bool QFeedbackDevice::isEnabled() const
 {
-    VibeInt32 ret = 0;
-    ImmVibeGetDeviceCapabilityInt32(m_id, VIBE_DEVCAPTYPE_NUM_EFFECT_SLOTS, &ret);
+    VibeBool ret = false;
+    ImmVibeGetDevicePropertyBool(qHandleForDevice(*this), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, &ret);
     return ret;
 }
+
+void QFeedbackDevice::setEnabled(bool enabled)
+{
+    ImmVibeSetDevicePropertyBool(qHandleForDevice(*this), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, enabled);
+}
+
 
 QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)
 {

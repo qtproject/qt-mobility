@@ -43,6 +43,103 @@
 
 QTM_BEGIN_NAMESPACE
 
+
+        /*!
+            \class QFeedbackDevice
+            \brief The QFeedbackDevice class is describing devices for tactile feedback.
+
+            The class gives access to a specified device for tactile feedback.
+            It allows the program to know the kind of device, its state and can be used
+            in combination with QFeedbackEffect.
+
+            You can query the devices available on your system.
+
+            \sa QFeedbackEffect
+        */
+
+        /*!
+            \enum QFeedbackDevice::Type
+
+            \value Vibra The device represents a Vibra motor on your system.
+            \value Touch The device represents touch feedback (piezzo...).
+        */
+
+        /*!
+            \enum QFeedbackDevice::Type
+
+            \value Vibra The device represents a Vibra motor on your system.
+            \value Touch The device represents touch feedback (piezzo...).
+        */
+
+        /*!
+            \enum QFeedbackDevice::Capability
+
+            \value Envelope Capacity defining the wave type with attack/fade times and levels.
+        */
+
+        /*!
+            \enum QFeedbackDevice::State
+
+            \value Busy    The device is busy.
+            \value Ready   The device is ready to play an effect.
+            \value Unknown The device is in an anknown state.
+        */
+
+        /*!
+            \fn QFeedbackDevice::id()
+
+            returns the id of the device
+        */
+
+        /*!
+            \fn QFeedbackDevice::isValid()
+
+            returns true if the device is valid. Default constructed devices are invalid.
+        */
+
+
+        /*!
+            \fn QFeedbackDevice::name()
+
+            returns the name of the device.
+        */
+
+        /*!
+            \fn QFeedbackDevice::state()
+
+            returns the state of the device.
+        */
+
+        /*!
+            \fn defaultDevice()
+
+            returns the default device.
+        */
+
+        /*!
+            \fn defaultDevice(Type t)
+
+            returns the default device of the specified type.
+        */
+
+        /*!
+            \fn devices()
+
+            returns the list of devices available on the system.
+        */
+
+        /*!
+            \fn  isEnabled()
+
+            returns true if you can use this device to start effects.
+        */
+
+        /*!
+            \fn  setEnabled()
+
+            Allows to enable or disable a device.
+        */
+
 QFeedbackDevice::QFeedbackDevice() : m_id(-1)
 {
 }
@@ -57,5 +154,13 @@ bool QFeedbackDevice::isValid() const
     return m_id >= 0;
 }
 
+QFeedbackDevice QFeedbackDevice::defaultDevice()
+{
+    QList<QFeedbackDevice> ret = devices();
+    if (ret.isEmpty())
+        return QFeedbackDevice();
+
+    return ret.first();
+}
 
 QTM_END_NAMESPACE

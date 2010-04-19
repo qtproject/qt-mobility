@@ -48,6 +48,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+static bool g_vibraActive = true;
+
 QString QFeedbackDevice::name() const
 {
     switch(m_id)
@@ -92,10 +94,32 @@ QFeedbackDevice::State QFeedbackDevice::state() const
     return ret;
 }
 
-int QFeedbackDevice::simultaneousEffect() const
+bool QFeedbackDevice::isEnabled() const
 {
-    // I guess usually 1
-    return 1;
+    switch(m_id)
+    {
+    case Vibra:
+        return g_vibraActive;
+    case Touch:
+        return MTouchFeedback::Instance()->FeedbackEnabledForThisApp();
+    default:
+        return false;
+    }
+}
+
+void QFeedbackDevice::setEnabled(bool enabled)
+{
+    switch(m_id)
+    {
+    case Vibra:
+        g_vibraActive = enabled;
+        break;
+    case Touch:
+        MTouchFeedback::Instance()->SetFeedbackEnabledForThisApp(enabled);
+        break;
+    default:
+        break;
+    }
 }
 
 QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)

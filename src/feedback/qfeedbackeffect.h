@@ -45,12 +45,13 @@
 #include <qmobilityglobal.h>
 #include <QtCore/QAbstractAnimation>
 
-//#include "qfeedbackdevice.h"
 
 QTM_BEGIN_NAMESPACE
 
 class QFeedbackDevice;
 class QFeedbackEffectPrivate;
+
+
         //TODO: what to do with those enums?
 //continous
 enum ContinuousEffect {
@@ -119,14 +120,6 @@ public:
 
     void setDevice(const QFeedbackDevice &device);
     QFeedbackDevice device() const;
-
-    //What do we do with
-    //- the period (and more generally the difference between magSweep and periodic
-    //- the wave type
-    //- the effect style (there is an equivalent to that in S60)
-    //- priority
-
-    //Is it enough to be able to repeat an animation with the animation framework?
 
 signals:
     void error(ErrorType); //the feedback could not be played (name should be better)

@@ -44,14 +44,122 @@
 
 QTM_BEGIN_NAMESPACE
 
+
+/*!
+    \class QFeedbackEffect
+    \brief The QFeedback allows to play a tactile feedback on a device.
+
+    It is possible to set the duration, intenisy and envelope of the effect.
+    It is a subclass of QAbstractAnimation which makes it inherit properties from it like
+    the possibility to loop or be integrated in an animation group. It can also be started
+    stopped or paused.
+
+    You can set the duration to INFINITE. It is then up to the program to stop the effect.
+
+    A feedback effect always works on a feedback device.
+
+    it can report errors through the error signal.
+
+    \sa QAbstractAnimation, QFeedbackDevice
+*/
+
+QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(*new QFeedbackEffectPrivate, parent)
+{
+}
+
+
 QFeedbackEffect::~QFeedbackEffect()
 {
 }
 
-void QFeedbackEffect::updateCurrentTime(int currentTime)
+/*!
+    \property QFeedbackEffect::duration
+    \brief the expected duration of the effect.
+
+    This property defines the duration of the feedback effect.
+*/
+int QFeedbackEffect::duration() const
 {
-    Q_UNUSED(currentTime);
-    //no random access for feedback
+    return d_func()->duration;
+}
+
+/*!
+    \property QFeedbackEffect::intensity
+    \brief the intensity of the effect.
+
+    This property defines the intensity of the feedback effect.
+    The value can be between 0. and 1.
+*/
+qreal QFeedbackEffect::intensity() const
+{
+    return d_func()->intensity;
+}
+
+/*!
+    \property QFeedbackEffect::attackTime
+    \brief the duration of the fade-in effect.
+
+    This property defines the duration of the fade-in effect in msecs.
+*/
+int QFeedbackEffect::attackTime() const
+{
+    return d_func()->attackTime;
+}
+
+/*!
+    \property QFeedbackEffect::attackIntensity
+    \brief the initial intensity of the effect.
+
+    This property defines the initial intensity of the effect, before it fades in.
+    It is usually lower than intensity.
+*/
+qreal QFeedbackEffect::attackIntensity() const
+{
+    return d_func()->attackIntensity;
+}
+
+/*!
+    \property QFeedbackEffect::fadeTime
+    \brief the duration of the fade-out effect.
+
+    This property defines the duration of the fade-out effect in msecs.
+*/
+int QFeedbackEffect::fadeTime() const
+{
+    return d_func()->fadeTime;
+}
+
+/*!
+    \property QFeedbackEffect::fadeIntensity
+    \brief the final intensity of the effect.
+
+    This property defines the final intensity of the effect, after it fades out.
+    It is usually lower than intensity.
+*/
+qreal QFeedbackEffect::fadeIntensity() const
+{
+    return d_func()->fadeIntensity;
+}
+
+/*!
+    \property QFeedbackEffect::device
+    \brief the device on which the effect operates.
+
+    This property defines the device on which the effect operates.
+*/
+void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
+{
+    if (state() != Stopped) {
+        qWarning("QFeedbackEffect::setDevice: The effect is not stopped");
+        return;
+    }
+
+    d_func()->device = device;
+}
+
+QFeedbackDevice QFeedbackEffect::device() const
+{
+    return d_func()->device;
 }
 
 QTM_END_NAMESPACE
