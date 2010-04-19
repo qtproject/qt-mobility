@@ -222,7 +222,7 @@ void tst_QMessageStore::testAccount()
     QVERIFY(accountId.isValid());
     QVERIFY(accountId != QMessageAccountId());
     QCOMPARE(manager->countAccounts(), originalCount + 1);
-
+    
     QMessageAccount account(accountId);
     QCOMPARE(account.id(), accountId);
     QCOMPARE(account.name(), name);

@@ -38,21 +38,32 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGESYMBIANHELPERS_H
-#define QMESSAGESYMBIANHELPERS_H
 
-#include <qmessageglobal.h>
-#include <QString>
+#ifndef MAEMO6PROXIMITYSENSOR_H
+#define MAEMO6PROXIMITYSENSOR_H
 
-QTM_BEGIN_NAMESPACE
+#include "maemo6sensorbase.h"
+#include <qproximitysensor.h>
 
-namespace SymbianHelpers {
+#include <sensord/proximitysensor_i.h>
 
-    QString addIdPrefix(const QString& id);
-    QString stripIdPrefix(const QString& id);
-    static const char* idPrefix = "MTM_";
+QTM_USE_NAMESPACE
+
+class maemo6proximitysensor : public maemo6sensorbase
+{
+    Q_OBJECT
+
+public:
+    static const char *id;
+
+    maemo6proximitysensor(QSensor *sensor);
+
+private:
+    QProximityReading m_reading;
+    static bool m_initDone;
+   
+private slots:
+    void slotDataAvailable(const int& data);
 };
-
-QTM_END_NAMESPACE
 
 #endif

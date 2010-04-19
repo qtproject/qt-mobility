@@ -69,6 +69,6 @@ void QT7ServicePlugin::release(QMediaService *service)
     delete service;
 }
 
-Q_EXPORT_PLUGIN2(qt7_serviceplugin, QT7ServicePlugin);
+Q_EXPORT_PLUGIN2(qtmedia_qt7engine, QT7ServicePlugin);
 
 QT_END_NAMESPACE

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-
+#include <src/global/qbuildcfg.h>
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
@@ -313,6 +313,10 @@ void QContactManagerData::loadFactories()
         QSet<QString> processed;
 
         paths << QApplication::applicationDirPath() << QApplication::libraryPaths();
+        QString val = qt_mobility_configure_prefix_path_str;
+        if(val.length() > 0){
+            paths << val;
+        }
 #if !defined QT_NO_DEBUG
         if (showDebug)
             qDebug() << "Plugin paths:" << paths;

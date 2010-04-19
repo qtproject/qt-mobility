@@ -6,7 +6,7 @@ include(../../../common.pri)
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(sensors_dummy)
+TARGET = $$qtLibraryTarget(qtsensors_dummy)
 symbian:TARGET.EPOCALLOWDLLDATA = 1
 
 QT=core

@@ -79,7 +79,7 @@ public:
     }
 };
 
-Q_EXPORT_PLUGIN2(libsensors_generic, genericSensorPlugin)
+Q_EXPORT_PLUGIN2(qtsensors_generic, genericSensorPlugin)
 
 #include "main.moc"
 

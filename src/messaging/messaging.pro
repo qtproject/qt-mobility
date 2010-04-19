@@ -143,8 +143,7 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagestore_symbian_p.h \
             qmessageservice_symbian_p.h \
             qmessagecontentcontainer_symbian_p.h \
-            qmessage_symbian_p.h \
-            symbianhelpers_p.h
+            qmessage_symbian_p.h
         SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
@@ -161,8 +160,7 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagefilter_symbian.cpp \
             qmessagesortorder_symbian.cpp \
             qmessagestore_symbian.cpp \
-            qmessageservice_symbian.cpp \
-            symbianhelpers.cpp
+            qmessageservice_symbian.cpp
         LIBS += -lsendas2 \
             -lmsgs \
             -letext \

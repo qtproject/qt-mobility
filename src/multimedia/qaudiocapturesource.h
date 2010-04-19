@@ -70,7 +70,7 @@ public:
     ~QAudioCaptureSource();
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMediaServices::AvailabilityError availabilityError() const;
 
     QList<QString> audioInputs() const;
 

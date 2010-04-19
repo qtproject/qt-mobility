@@ -39,19 +39,15 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
-#include <symbianhelpers_p.h>
-
 
 QTM_BEGIN_NAMESPACE
-
-using namespace SymbianHelpers;
 
 class QMessageContentContainerIdPrivate
 {
 public:
     enum {
-		Invalid = -1,
-		Body = 0
+		Invalid = -1, 
+		Body = 0 
 	};
 
     int _number;
@@ -74,7 +70,7 @@ QMessageContentContainerId::QMessageContentContainerId(const QString& id)
 : d_ptr(new QMessageContentContainerIdPrivate)
 {
 	if (!id.isEmpty()) {
-		d_ptr->_number = stripIdPrefix(id).toUInt();
+		d_ptr->_number = id.toUInt();
 	}
 }
 
@@ -93,13 +89,13 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
 	if (&other != this) {
 		d_ptr->_number = other.d_ptr->_number;
 	}
-
-    return *this;
+	
+	return *this;
 }
 
 QString QMessageContentContainerId::toString() const
 {
-	return addIdPrefix(QString::number(d_ptr->_number));
+	return QString::number(d_ptr->_number);
 }
 
 bool QMessageContentContainerId::isValid() const
