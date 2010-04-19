@@ -8,6 +8,8 @@ CONFIG += plugin
 CONFIG += sensord
 CONFIG += link_pkgconfig
 CONFIG += mobility
+MOBILITY += sensors
+INCLUDEPATH += ../../../src/sensors
 HEADERS += maemo6sensorbase.h \
     maemo6accelerometer.h \
     maemo6als.h \
