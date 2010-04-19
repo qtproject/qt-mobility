@@ -346,12 +346,6 @@ void CSensorBackendSym::GetDataRate()
                 }
             }
         }
-    // QT requires atleast one datarate to be available, Sensor server does not
-    // define a datarate for state based sensors, hence this hack
-    if(list.Count() == 0)
-        {
-        addDataRate(KInvalidDataRate, KInvalidDataRate);
-        }
     }
 
 void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
