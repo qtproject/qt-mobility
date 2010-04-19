@@ -80,7 +80,6 @@ V4LRadioControl::V4LRadioControl(QObject *parent)
     timer = new QTimer(this);
     timer->setInterval(200);
     connect(timer,SIGNAL(timeout()),this,SLOT(search()));
-    timer->start();
 
     tickTimer = new QTimer(this);
     tickTimer->setInterval(10000);
@@ -264,6 +263,12 @@ void V4LRadioControl::setFrequency(int frequency)
             ::ioctl(fd, VIDIOC_S_FREQUENCY, &freq);
             currentFreq = f;
             emit frequencyChanged(currentFreq);
+	    
+            int signal = signalStrength();
+            if(sig != signal) {
+                sig = signal;
+                emit signalStrengthChanged(sig);
+            }
         }
     }
 }
@@ -553,28 +558,31 @@ bool V4LRadioControl::isSearching() const
 void V4LRadioControl::cancelSearch()
 {
     scanning = false;
+    timer->stop();
 }
 
 void V4LRadioControl::searchForward()
 {
     // Scan up
     if(scanning) {
-        scanning = false;
+        cancelSearch();
         return;
     }
     scanning = true;
     forward  = true;
+    timer->start();
 }
 
 void V4LRadioControl::searchBackward()
 {
     // Scan down
     if(scanning) {
-        scanning = false;
+        cancelSearch();
         return;
     }
     scanning = true;
     forward  = false;
+    timer->start();
 }
 
 void V4LRadioControl::start()
@@ -600,25 +608,24 @@ QString V4LRadioControl::errorString() const
 
 void V4LRadioControl::search()
 {
-    int signal = signalStrength();
-    if(sig != signal) {
-        sig = signal;
-        emit signalStrengthChanged(sig);
-    }
-
     if(!scanning) return;
-
-    if (signal > 25) {
-        cancelSearch();
-        return;
-    }
 
     if(forward) {
         setFrequency(currentFreq+step);
     } else {
         setFrequency(currentFreq-step);
     }
-    emit signalStrengthChanged(signalStrength());
+    
+    int signal = signalStrength();
+    if(sig != signal) {
+        sig = signal;
+        emit signalStrengthChanged(sig);
+    }
+    
+    if (signal > 25) {
+        cancelSearch();
+        return;
+    }
 }
 
 bool V4LRadioControl::initRadio()
@@ -637,8 +644,7 @@ bool V4LRadioControl::initRadio()
         // Capabilites
         memset(&cap, 0, sizeof(cap));
         if(::ioctl(fd, VIDIOC_QUERYCAP, &cap ) >= 0) {
-            if(((cap.capabilities & V4L2_CAP_RADIO) == 0) && ((cap.capabilities & V4L2_CAP_AUDIO) == 0))
-                available = true;
+            available = true;
         }
 
         tuner.index = 0;
