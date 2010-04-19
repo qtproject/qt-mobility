@@ -53,10 +53,14 @@ Q_OBJECT
 Q_PROPERTY(QContact contact READ contact WRITE setContact NOTIFY contactChanged)
 Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 Q_PROPERTY(QString email READ email WRITE setEmail NOTIFY emailChanged)
-Q_PROPERTY(QString test READ test)
+Q_PROPERTY(QString avatar READ avatar NOTIFY avatarChanged)
+Q_PROPERTY(QPixmap thumbnail READ thumbnail)
+Q_PROPERTY(bool hasThumbnail READ hasThumbnail)
 Q_PROPERTY(QStringList availableActions READ availableActions)
 Q_PROPERTY(QStringList details READ details)
 Q_PROPERTY(QStringList contexts READ contexts)
+Q_PROPERTY(QString interest READ interest)
+Q_PROPERTY(QString interestLabel READ interestLabel)
 public:
     explicit QmlContact(const QContact& contact, QObject *parent = 0);
     QmlContact();
@@ -65,11 +69,18 @@ public:
     QContact& contact();
     void setContact(QContact& contact);
 
-    QString name();
+    QString name() const;
     void setName(QString name);
 
-    QString email();
+    QString email() const;
     void setEmail(QString email);
+
+    bool hasThumbnail() const;
+    QString avatar() const;
+    QPixmap thumbnail() const;
+
+    QString interest() const;
+    QString interestLabel() const;
 
     QStringList availableActions();
     QStringList details();
@@ -77,8 +88,6 @@ public:
     QStringList contexts();
 
     Q_INVOKABLE QVariantMap values(QString definitionId);
-
-    QString test() { return "test string"; }
 
 signals:
     void contactChanged(QmlContact* qmlcontact);
