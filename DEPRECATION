@@ -242,3 +242,22 @@ QVersitWriter:
         Added ctors with iodevice and bytearray for destination
         startWriting() and cancel() are now slots
         waitForFinished() is now an invokable
+
+-----------------------
+Deprecated Guide (19th April 2010)
+
+QContact:
+    - QContact::detailWithAction(const QString& actionName) is deprecated
+    - QContact::detailsWithAction(const QString& actionName) is deprecated
+    -> these are replaced by QContact::detail(s)WithAction(QAction* actionPtr)
+
+QContactManager:
+    - QContactManager::synthesizedDisplayLabel(const QContact& contact) is deprecated
+    -> replaced by QContactManager::synthesizedContactDisplayLabel(const QContact& contact)
+
+QContactManagerEngine:
+    - functions no longer pure virtual.
+
+QContactDetailDefinitionRemoveRequest:
+    - QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QString& contactType, const QStringList& definitionNames)) is deprecated
+    -> replaced by QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType) + QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& definitionNames).
