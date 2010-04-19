@@ -106,9 +106,9 @@ QMap <QString, QString> networkInterfaces;
     QTM_NAMESPACE::QCoreWlanEngine::instance()->requestUpdate();
 }
 @end
-#endif
 
 QNSListener *listener = 0;
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -175,9 +175,10 @@ void QScanThread::quit()
 
 void QScanThread::run()
 {
+#if defined(MAC_SDK_10_6)
     getUserProfiles();
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    QStringList found;
+    iQStringList found;
     mutex.lock();
     CWInterface *currentInterface;
     if(interfaceName.isEmpty()) {
@@ -273,6 +274,7 @@ void QScanThread::run()
     }
     emit networksChanged();
     [pool release];
+#endif
 }
 
 QStringList QScanThread::foundNetwork(const QString &id, const QString &name, const QNetworkConfiguration::StateFlags state, const QString &interfaceName, const QNetworkConfiguration::Purpose purpose)
@@ -325,6 +327,7 @@ QList<QNetworkConfigurationPrivate *> QScanThread::getConfigurations()
 
 void QScanThread::getUserProfiles()
 {
+#if defined(MAC_SDK_10_6)
     QMutexLocker locker(&mutex);
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     userProfiles.clear();
@@ -399,6 +402,7 @@ void QScanThread::getUserProfiles()
     }
 
     [pool release];
+#endif    
 }
 
 QString QScanThread::getSsidFromNetworkName(const QString &name)
