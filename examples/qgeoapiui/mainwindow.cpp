@@ -44,7 +44,6 @@
 
 #include "routepresenter.h"
 #include "placepresenter.h"
-#include "qgeomaptile.h"
 
 #include "qgeoroutingservice_nokia_p.h"
 #include "qmaptileservice_nokia_p.h"
