@@ -137,8 +137,11 @@ public:
     /* Return a pruned or modified contact which is valid and can be saved in the manager */
     QContact compatibleContact(const QContact& original); // Preliminary function!
 
+    /* deprecated - to be removed after the transition period has elapsed */
+    QString Q_DECL_DEPRECATED synthesizedDisplayLabel(const QContact& contact) const;
     /* Synthesize the display label of a contact */
-    QString synthesizedDisplayLabel(const QContact& contact) const; // replaces the above
+    QString synthesizedContactDisplayLabel(const QContact& contact) const;
+    void synthesizeContactDisplayLabel(QContact* contact) const;
 
     /* "Self" contact id (MyCard) */
     bool setSelfContactId(const QContactLocalId& contactId);

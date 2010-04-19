@@ -49,7 +49,7 @@
 class QWmpEvents;
 class QWmpPlaylist;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QWmpPlaylistControl : public QMediaPlaylistControl
 {
     Q_OBJECT

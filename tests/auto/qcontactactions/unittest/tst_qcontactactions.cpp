@@ -44,7 +44,6 @@
 #include <QApplication>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 #include "qcontactaction.h"
 #include "qcontactactionfactory.h"
 #include "qcontactactiondescriptor.h"
@@ -58,8 +57,6 @@ Q_OBJECT
 public:
     tst_QContactActions();
     virtual ~tst_QContactActions();
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();

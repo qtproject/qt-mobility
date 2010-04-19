@@ -1,19 +1,43 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- serviceactions.qdoc -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- serviceactions.qdoc -->
   <title>Qt Mobility Project 1.0: Service Actions Example</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]>
+	<meta name="MSSmartTagsPreventParsing" content="true">
+	<meta http-equiv="imagetoolbar" content="no">
+	<![endif]-->
+  <!--[if lt IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+	<![endif]-->
+  <!--[if IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+	<![endif]-->
+  <!--[if IE 8]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+	<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Service Actions Example<br /><span class="subtitle"></span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><div class="toc">
+<ul class="level1">
+<li><a href="#send-and-compose">Send and Compose</a></li>
+<li><a href="#show">Show</a></li>
+<li><a href="#query-and-retrieve">Query and Retrieve</a></li>
+<li><a href="#store-signals">Store Signals</a></li>
+</ul>
+</div>
+<h1 class="title">Service Actions Example<br /><span class="subtitle"></span>
 </h1>
+<div class="descr"/>
 <p>Files:</p>
 <ul>
 <li><a href="serviceactions-attachmentlistwidget-cpp.html">serviceactions/attachmentlistwidget.cpp</a></li>
@@ -106,12 +130,11 @@
 <pre>    void RecentMessagesWidget::load()
     {
         m_ids.clear();
+        m_state = Loading;
+        bool b;
 
-        if(!m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent))
-            m_state = LoadFailed;
-        else
-            m_state = Loading;
-    }</pre>
+        b=m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
+        <span class="comment">//    qDebug() &lt;&lt; &quot;RecentMessagesWidget::load&quot; &lt;&lt; b &lt;&lt; m_state;</span></pre>
 <p>Once the results of the query are returned via the <a href="qmessageservice.html#messagesFound">QMessageService::messagesFound</a>() signal, the widget loads each of the returned messages in turn and populates it's list with message subjects.</p>
 <pre>    void RecentMessagesWidget::messagesFound(const QMessageIdList&amp; ids)
     {
@@ -250,6 +273,7 @@
         QString msg = QString(&quot;Removed ID: %1 ...&quot;).arg(idString);
         m_activityListWidget-&gt;addItem(msg);
     }</pre>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -6,8 +6,17 @@ include(../../../common.pri)
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(sensors_generic)
-symbian:TARGET.EPOCALLOWDLLDATA = 1
+TARGET = $$qtLibraryTarget(qtsensors_generic)
+
+symbian {
+   TARGET.EPOCALLOWDLLDATA = 1
+   TARGET.UID3 = 0x2002BFC3
+   TARGET.CAPABILITY = ALL -TCB
+
+   pluginDep.sources = $${TARGET}.dll
+   pluginDep.path = $${QT_PLUGINS_BASE_DIR}/sensors
+   DEPLOYMENT += pluginDep
+}
 
 QT=core
 CONFIG+=mobility

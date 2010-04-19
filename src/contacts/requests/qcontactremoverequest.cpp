@@ -56,9 +56,9 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new contact remove request */
-QContactRemoveRequest::QContactRemoveRequest()
-    : QContactAbstractRequest(new QContactRemoveRequestPrivate)
+/*! Constructs a new contact remove request whose parent is the specified \a parent */
+QContactRemoveRequest::QContactRemoveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRemoveRequestPrivate, parent)
 {
 }
 
@@ -84,6 +84,19 @@ QContactFilter QContactRemoveRequest::filter() const
     return d->m_filter;
 }
 
+/*!
+  Sets the id of the contact which will be removed to \a contactId.
+  Equivalent to calling:
+  \code
+      setContactIds(QList<QContactLocalId>() << contactIds);
+  \endcode
+ */
+void QContactRemoveRequest::setContactId(const QContactLocalId& contactId)
+{
+    Q_D(QContactRemoveRequest);
+    d->m_contactIds.clear();
+    d->m_contactIds.append(contactId);
+}
 
 /*! Sets the list of ids of contacts which will be removed to \a contactIds */
 void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactIds)

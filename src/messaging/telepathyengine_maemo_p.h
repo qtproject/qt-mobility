@@ -65,9 +65,6 @@ public:
     QMessageAccount account(const QMessageAccountId &id) const;
     QMessageAccountId defaultAccount(QMessage::Type type) const;
 
-    bool queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    bool queryMessages(QMessageService& messageService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
-    bool countMessages(QMessageService& messageService, const QMessageFilter &filter);
 
     bool sendMessage(QMessage &message);
 

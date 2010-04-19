@@ -43,7 +43,6 @@
 #include <qt_windows.h>
 
 #include <QtCore/qmutex.h>
-#include <QtCore/private/qmutexpool_p.h>
 
 #include <QStringList>
 #include <QSize>
@@ -359,6 +358,8 @@ static BluetoothFindFirstRadio local_BluetoothFindFirstRadio=0;
 
 QTM_BEGIN_NAMESPACE
 
+Q_GLOBAL_STATIC_WITH_ARGS(QMutex, dynamicLoadMutex, (QMutex::Recursive));
+
 static void resolveLibrary()
 {
 #if !defined( Q_OS_WINCE)
@@ -366,7 +367,7 @@ static void resolveLibrary()
 
     if (!triedResolve) {
 #ifndef QT_NO_THREAD
-        QMutexLocker locker(QMutexPool::globalInstanceGet(&local_WlanOpenHandle));
+        QMutexLocker locker(dynamicLoadMutex());
 #endif
 
         if (!triedResolve) {
@@ -1700,12 +1701,12 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-        return "Sim Not Available";
+        return "";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-        return "Sim Not Available";
+        return "";
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()

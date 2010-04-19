@@ -1088,6 +1088,6 @@ QString CntSymbianFactory::managerName() const
     return CNT_SYMBIAN_MANAGER_NAME;
 }
 
-Q_EXPORT_PLUGIN2(mobapicontactspluginsymbian, CntSymbianFactory);
+Q_EXPORT_PLUGIN2(qtcontacts_symbian, CntSymbianFactory);
 
 #endif  //PBK_UNIT_TEST

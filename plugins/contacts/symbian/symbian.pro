@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(mobapicontactspluginsymbian)
+TARGET = $$qtLibraryTarget(qtcontacts_symbian)
 PLUGIN_TYPE=contacts
 
 include(../../../common.pri)

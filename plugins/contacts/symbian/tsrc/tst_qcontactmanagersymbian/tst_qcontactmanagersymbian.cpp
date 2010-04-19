@@ -339,11 +339,7 @@ void tst_QContactManagerSymbian::avatarImage()
 
     QContact testContact = m_cm->contact(m_contactId.localId());
 
-    // Verify the image exists
-    QImage image(fileName);
-    QVERIFY(!image.isNull());
-    
-    // Set image
+    // Set image, the image file may or may not actually exist
     QContactAvatar avatar;
     QUrl url(fileName);
     QVERIFY(url.isValid());
@@ -355,10 +351,7 @@ void tst_QContactManagerSymbian::avatarImage()
     testContact = m_cm->contact(m_contactId.localId());
     avatar = testContact.detail(QContactAvatar::DefinitionName);
     QVERIFY(!avatar.isEmpty());
-    url = avatar.imageUrl();
-    QVERIFY(url.isValid());
-    image = QImage(url.toString());
-    QVERIFY(!image.isNull());
+    QCOMPARE(url, avatar.imageUrl());
 }
 
 void tst_QContactManagerSymbian::thumbnail_data()

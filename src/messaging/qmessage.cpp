@@ -238,7 +238,7 @@ QList<QByteArray> charsets;
   
     Returns the standard folder of the message.
     
-    Defaults to InboxFolder.
+    Defaults to DraftsFolder.
 */
     
 /*!

@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include <qmediaplaylistnavigator.h>
-#include <qmediaplaylistprovider.h>
-#include <qmediaplaylist.h>
-#include <qmediaobject_p.h>
+#include "qmediaplaylistnavigator.h"
+#include "qmediaplaylistprovider.h"
+#include "qmediaplaylist.h"
+#include "qmediaobject_p.h"
 
 #include <QtCore/qdebug.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistNullProvider : public QMediaPlaylistProvider
 {
@@ -539,5 +539,5 @@ void QMediaPlaylistNavigatorPrivate::_q_mediaChanged(int start, int end)
 */
 
 #include "moc_qmediaplaylistnavigator.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

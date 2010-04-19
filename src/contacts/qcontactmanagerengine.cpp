@@ -487,7 +487,7 @@ void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QStr
 {
     QContactDisplayLabel dl;
     dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
-    setDetailAccessConstraints(&dl, QContactDetail::Irremovable);
+    setDetailAccessConstraints(&dl, QContactDetail::Irremovable | QContactDetail::ReadOnly);
     contact->d->m_details.replace(0, dl);
 }
 
@@ -574,7 +574,7 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
             f.setFilters(filters);
             return canonicalizedFilter(f);
         }
-        break;
+        // unreachable
 
         case QContactFilter::IntersectionFilter:
         {
@@ -603,7 +603,7 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
             f.setFilters(filters);
             return f;
         }
-        break;
+        // unreachable
 
         case QContactFilter::UnionFilter:
         {
@@ -632,7 +632,7 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
             f.setFilters(filters);
             return f;
         }
-        break;
+        // unreachable
 
         case QContactFilter::LocalIdFilter:
         {
@@ -1531,6 +1531,7 @@ bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contact
 QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error* error) const
 {
     QContact conforming;
+    conforming.setId(original.id());
     QContactManager::Error tempError;
     QList<QString> uniqueDefinitionIds;
     foreach (QContactDetail detail, original.details()) {
@@ -1540,7 +1541,7 @@ QContact QContactManagerEngine::compatibleContact(const QContact& original, QCon
         QVariantMap values = detail.variantValues();
         QContactDetailDefinition def = detailDefinition(detail.definitionName(), original.type(), &tempError);
         // check that the definition is supported
-        if (*error != QContactManager::NoError) {
+        if (tempError != QContactManager::NoError) {
             continue; // this definition is not supported.
         }
 
@@ -2122,10 +2123,23 @@ int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, 
         const QVariant& aVal = a.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
         const QVariant& bVal = b.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
 
+        bool aIsNull = false;
+        bool bIsNull = false;
+
+        // treat empty strings as null qvariants.
+        if ((aVal.type() == QVariant::String && aVal.toString().isEmpty()) || aVal.isNull()) {
+            aIsNull = true;
+        }
+        if ((bVal.type() == QVariant::String && bVal.toString().isEmpty()) || bVal.isNull()) {
+            bIsNull = true;
+        }
+
         // early exit error checking
-        if (aVal.isNull())
+        if (aIsNull && bIsNull)
+            continue; // use next sort criteria.
+        if (aIsNull)
             return (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst ? -1 : 1);
-        if (bVal.isNull())
+        if (bIsNull)
             return (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst ? 1 : -1);
 
         // real comparison

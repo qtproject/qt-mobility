@@ -58,9 +58,9 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new relationship remove request */
-QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest()
-    : QContactAbstractRequest(new QContactRelationshipRemoveRequestPrivate)
+/*! Constructs a new relationship remove request whose parent is the specified \a parent */
+QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRelationshipRemoveRequestPrivate, parent)
 {
 }
 
@@ -137,6 +137,20 @@ QContactId QContactRelationshipRemoveRequest::second() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
     return d->m_second;
+}
+
+/*!
+  Sets the relationship which will be removed to \a relationship.
+  Equivalent to calling:
+  \code
+      setRelationships(QList<QContactRelationship>() << relationship);
+  \endcode
+ */
+void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationship& relationship)
+{
+    Q_D(QContactRelationshipRemoveRequest);
+    d->m_relationships.clear();
+    d->m_relationships.append(relationship);
 }
 
 /*! Sets the list of relationships which will be removed to \a relationships */

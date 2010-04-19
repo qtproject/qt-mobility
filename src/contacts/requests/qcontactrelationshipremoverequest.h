@@ -55,7 +55,7 @@ class Q_CONTACTS_EXPORT QContactRelationshipRemoveRequest : public QContactAbstr
     Q_OBJECT
 
 public:
-    QContactRelationshipRemoveRequest();
+    QContactRelationshipRemoveRequest(QObject* parent = 0);
 
     /* Selection */
     void Q_DECL_DEPRECATED setFirst(const QContactId& firstId);                   // deprecated, replaced by explicitly defined relationship list
@@ -67,7 +67,8 @@ public:
     void Q_DECL_DEPRECATED setSecond(const QContactId& secondId);                 // deprecated, replaced by explicitly defined relationship list
     QContactId Q_DECL_DEPRECATED second() const;                                  // deprecated, replaced by explicitly defined relationship list
 
-    void setRelationships(const QList<QContactRelationship>& relationships);      // replaces the above functions.
+    void setRelationship(const QContactRelationship& relationship);
+    void setRelationships(const QList<QContactRelationship>& relationships);
     QList<QContactRelationship> relationships() const;
 
     /* Results */

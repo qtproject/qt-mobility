@@ -9,10 +9,10 @@ contains(mobility_modules,serviceframework) {
                notesmanagerplugin \
                servicebrowser
 
-    !symbian:SUBDIRS+= servicenotesmanager/sfw-notes
+    !symbian:SUBDIRS+= sfw-notes
     
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += servicenotesmanager/declarative-sfw-notes \
+        SUBDIRS += declarative-sfw-notes \
                    declarative-sfw-dialer
     }
 }
@@ -77,9 +77,12 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
                 writemessage \
                 serviceactions
 
-                contains(mobility_modules,contacts) {
-                    SUBDIRS += keepintouch
-                }
+            contains(mobility_modules,contacts) {
+                SUBDIRS += keepintouch
+            }
+
+            # MessagingEx lives in tests for some reason
+            maemo5:SUBDIRS += ../tests/messagingex
          }
     }
 }

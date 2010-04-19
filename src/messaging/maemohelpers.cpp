@@ -67,27 +67,29 @@ MessagingHelper::~MessagingHelper()
 
 void MessagingHelper::filterAccounts(QMessageAccountIdList& accountIds, const QMessageAccountFilter& filter)
 {
-    QMessageAccountFilterPrivate* pf = QMessageAccountFilterPrivate::implementation(filter);
-    if ((pf->_field == QMessageAccountFilterPrivate::None) &&
-        (pf->_filterList.count() == 0)) {
-        if (pf->_notFilter) {
-            // There is only one filter: empty ~QMessageFilter()
-            // => accountIds must be cleared
-            accountIds.clear();
-            return;
-        } else {
-            // There is only one filter: empty QMessageFilter()
-            // => accountIds list can remain intact
-            return;
+    if (accountIds.count() && !filter.isEmpty()) {
+        QMessageAccountFilterPrivate* pf = QMessageAccountFilterPrivate::implementation(filter);
+        if ((pf->_field == QMessageAccountFilterPrivate::None) &&
+            (pf->_filterList.count() == 0)) {
+            if (pf->_notFilter) {
+                // There is only one filter: empty ~QMessageFilter()
+                // => accountIds must be cleared
+                accountIds.clear();
+                return;
+            } else {
+                // There is only one filter: empty QMessageFilter()
+                // => accountIds list can remain intact
+                return;
+            }
         }
-    }
 
-    if (pf->_valid) {
-        QMessageStore* store = QMessageStore::instance();
-        for (int i=accountIds.count()-1; i >= 0; i--) {
-            QMessageAccount account = store->account(accountIds[i]);
-            if (!pf->filter(account)) {
-                accountIds.removeAt(i);
+        if (pf->_valid) {
+            QMessageStore* store = QMessageStore::instance();
+            for (int i=accountIds.count()-1; i >= 0; i--) {
+                QMessageAccount account = store->account(accountIds[i]);
+                if (!pf->filter(account)) {
+                    accountIds.removeAt(i);
+                }
             }
         }
     }
@@ -111,6 +113,10 @@ void MessagingHelper::orderAccounts(QMessageAccountIdList& accountIds, const QMe
 
 void MessagingHelper::applyOffsetAndLimitToAccountIdList(QMessageAccountIdList& accountIds, int limit, int offset)
 {
+    if (accountIds.count() == 0) {
+        return;
+    }
+
     if (offset > 0) {
         if (offset > accountIds.count()) {
             accountIds.clear();
@@ -129,27 +135,29 @@ void MessagingHelper::applyOffsetAndLimitToAccountIdList(QMessageAccountIdList& 
 
 void MessagingHelper::filterFolders(QMessageFolderIdList& folderIds, const QMessageFolderFilter& filter)
 {
-    QMessageFolderFilterPrivate* pf = QMessageFolderFilterPrivate::implementation(filter);
-    if ((pf->_field == QMessageFolderFilterPrivate::None) &&
-        (pf->_filterList.count() == 0)) {
-        if (pf->_notFilter) {
-            // There is only one filter: empty ~QMessageFilter()
-            // => accountIds must be cleared
-            folderIds.clear();
-            return;
-        } else {
-            // There is only one filter: empty QMessageFilter()
-            // => accountIds list can remain intact
-            return;
+    if (folderIds.count() && !filter.isEmpty()) {
+        QMessageFolderFilterPrivate* pf = QMessageFolderFilterPrivate::implementation(filter);
+        if ((pf->_field == QMessageFolderFilterPrivate::None) &&
+            (pf->_filterList.count() == 0)) {
+            if (pf->_notFilter) {
+                // There is only one filter: empty ~QMessageFilter()
+                // => accountIds must be cleared
+                folderIds.clear();
+                return;
+            } else {
+                // There is only one filter: empty QMessageFilter()
+                // => accountIds list can remain intact
+                return;
+            }
         }
-    }
 
-    if (pf->_valid) {
-        QMessageStore* store = QMessageStore::instance();
-        for (int i=folderIds.count()-1; i >= 0; i--) {
-            QMessageFolder folder = store->folder(folderIds[i]);
-            if (!pf->filter(folder)) {
-                folderIds.removeAt(i);
+        if (pf->_valid) {
+            QMessageStore* store = QMessageStore::instance();
+            for (int i=folderIds.count()-1; i >= 0; i--) {
+                QMessageFolder folder = store->folder(folderIds[i]);
+                if (!pf->filter(folder)) {
+                    folderIds.removeAt(i);
+                }
             }
         }
     }
@@ -173,6 +181,10 @@ void MessagingHelper::orderFolders(QMessageFolderIdList& folderIds,  const QMess
 
 void MessagingHelper::applyOffsetAndLimitToFolderIdList(QMessageFolderIdList& folderIds, int limit, int offset)
 {
+    if (folderIds.count() == 0) {
+        return;
+    }
+
     if (offset > 0) {
         if (offset > folderIds.count()) {
             folderIds.clear();
@@ -191,27 +203,29 @@ void MessagingHelper::applyOffsetAndLimitToFolderIdList(QMessageFolderIdList& fo
 
 void MessagingHelper::filterMessages(QMessageIdList& messageIds, const QMessageFilter& filter)
 {
-    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filter);
-    if ((pf->_field == QMessageFilterPrivate::None) &&
-        (pf->_filterList.count() == 0)) {
-        if (pf->_notFilter) {
-            // There is only one filter: empty ~QMessageFilter()
-            // => accountIds must be cleared
-            messageIds.clear();
-            return;
-        } else {
-            // There is only one filter: empty QMessageFilter()
-            // => accountIds list can remain intact
-            return;
+    if (messageIds.count() && !filter.isEmpty()) {
+        QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filter);
+        if ((pf->_field == QMessageFilterPrivate::None) &&
+            (pf->_filterList.count() == 0)) {
+            if (pf->_notFilter) {
+                // There is only one filter: empty ~QMessageFilter()
+                // => accountIds must be cleared
+                messageIds.clear();
+                return;
+            } else {
+                // There is only one filter: empty QMessageFilter()
+                // => accountIds list can remain intact
+                return;
+            }
         }
-    }
 
-    if (pf->_valid) {
-        QMessageStore* store = QMessageStore::instance();
-        for (int i=messageIds.count()-1; i >= 0; i--) {
-            QMessage message = store->message(messageIds[i]);
-            if (!pf->filter(message)) {
-                messageIds.removeAt(i);
+        if (pf->_valid) {
+            QMessageStore* store = QMessageStore::instance();
+            for (int i=messageIds.count()-1; i >= 0; i--) {
+                QMessage message = store->message(messageIds[i]);
+                if (!pf->filter(message)) {
+                    messageIds.removeAt(i);
+                }
             }
         }
     }
@@ -235,6 +249,10 @@ void MessagingHelper::orderMessages(QMessageIdList& messageIds,  const QMessageS
 
 void MessagingHelper::applyOffsetAndLimitToMessageIdList(QMessageIdList& messageIds, int limit, int offset)
 {
+    if (messageIds.count() == 0) {
+        return;
+    }
+
     if (offset > 0) {
         if (offset > messageIds.count()) {
             messageIds.clear();
@@ -247,6 +265,241 @@ void MessagingHelper::applyOffsetAndLimitToMessageIdList(QMessageIdList& message
     if (limit > 0) {
         for (int i = messageIds.count()-1; i >= limit; i--) {
             messageIds.removeAt(i);
+        }
+    }
+}
+
+void MessagingHelper::handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter)
+{
+    QMessageStore* store = QMessageStore::instance();
+
+    QMessageFolderFilterPrivate* pMFFilter = QMessageFolderFilterPrivate::implementation(filter);
+    if (pMFFilter->_filterList.count() > 0) {
+        int filterListCount = pMFFilter->_filterList.count();
+        for (int i=0; i < filterListCount; i++) {
+            for (int j=0; j < pMFFilter->_filterList[i].count(); j++) {
+                QMessageFolderFilterPrivate* pMFFilter2 = QMessageFolderFilterPrivate::implementation(pMFFilter->_filterList[i][j]);
+                if (pMFFilter2->_field == QMessageFolderFilterPrivate::ParentAccountIdFilter) {
+                    QMessageAccountIdList accountIds = store->queryAccounts(*pMFFilter2->_accountFilter, QMessageAccountSortOrder(), 0, 0);
+                    QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pMFFilter2->_comparatorValue));
+                    if (accountIds.count() > 0) {
+                        pMFFilter->_filterList[i].removeAt(j);
+                        if (cmp == QMessageDataComparator::Includes) {
+                            for (int x = 0; x < accountIds.count(); x++) {
+                                if (x == 0) {
+                                    if (x+1 < accountIds.count()) {
+                                        pMFFilter->_filterList.append(pMFFilter->_filterList[i]);
+                                    }
+                                    pMFFilter->_filterList[i].append(QMessageFolderFilter::byParentAccountId(accountIds[x],QMessageDataComparator::Equal));
+                                    qSort(pMFFilter->_filterList[i].begin(), pMFFilter->_filterList[i].end(), QMessageFolderFilterPrivate::lessThan);
+                                } else {
+                                    if (x+1 < accountIds.count()) {
+                                        pMFFilter->_filterList.append(pMFFilter->_filterList[pMFFilter->_filterList.count()-1]);
+                                        pMFFilter->_filterList[pMFFilter->_filterList.count()-2].append(QMessageFolderFilter::byParentAccountId(accountIds[x],QMessageDataComparator::Equal));
+                                        qSort(pMFFilter->_filterList[pMFFilter->_filterList.count()-2].begin(), pMFFilter->_filterList[pMFFilter->_filterList.count()-2].end(), QMessageFolderFilterPrivate::lessThan);
+                                    } else {
+                                        pMFFilter->_filterList[pMFFilter->_filterList.count()-1].append(QMessageFolderFilter::byParentAccountId(accountIds[x],QMessageDataComparator::Equal));
+                                        qSort(pMFFilter->_filterList[pMFFilter->_filterList.count()-1].begin(), pMFFilter->_filterList[pMFFilter->_filterList.count()-1].end(), QMessageFolderFilterPrivate::lessThan);
+                                    }
+                                }
+                            }
+                        } else { // Excludes
+                            for (int x = 0; x < accountIds.count(); x++) {
+                                pMFFilter->_filterList[i].append(QMessageFolderFilter::byParentAccountId(accountIds[x],QMessageDataComparator::NotEqual));
+                            }
+                            qSort(pMFFilter->_filterList[i].begin(), pMFFilter->_filterList[i].end(), QMessageFolderFilterPrivate::lessThan);
+                        }
+                    } else {
+                        delete pMFFilter2->_accountFilter;
+                        pMFFilter2->_accountFilter = 0;
+                        pMFFilter2->_field = QMessageFolderFilterPrivate::Id;
+                        qSort(pMFFilter->_filterList[i].begin(), pMFFilter->_filterList[i].end(), QMessageFolderFilterPrivate::lessThan);
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+    } else {
+        if (pMFFilter->_field == QMessageFolderFilterPrivate::ParentAccountIdFilter) {
+            QMessageAccountIdList accountIds = store->queryAccounts(*pMFFilter->_accountFilter, QMessageAccountSortOrder(), 0, 0);
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pMFFilter->_comparatorValue));
+            if (accountIds.count() > 0) {
+                for (int i=0; i < accountIds.count(); i++) {
+                    if (i == 0) {
+                        delete pMFFilter->_accountFilter;
+                        pMFFilter->_accountFilter = 0;
+                        pMFFilter->_field = QMessageFolderFilterPrivate::ParentAccountId;
+                        pMFFilter->_value = accountIds[0].toString();
+                        pMFFilter->_comparatorType = QMessageFolderFilterPrivate::Equality;
+                        if (cmp == QMessageDataComparator::Includes) {
+                            pMFFilter->_comparatorValue = static_cast<int>(QMessageDataComparator::Equal);
+                        } else { // Excludes
+                            pMFFilter->_comparatorValue = static_cast<int>(QMessageDataComparator::NotEqual);
+                        }
+                    } else {
+                        if (cmp == QMessageDataComparator::Includes) {
+                            filter |= QMessageFolderFilter::byParentAccountId(accountIds[i],QMessageDataComparator::Equal);
+                        } else { // Excludes
+                            filter &= QMessageFolderFilter::byParentAccountId(accountIds[i],QMessageDataComparator::NotEqual);
+                        }
+                    }
+                }
+            } else {
+                delete pMFFilter->_accountFilter;
+                pMFFilter->_accountFilter = 0;
+                pMFFilter->_field = QMessageFolderFilterPrivate::Id;
+            }
+        }
+    }
+}
+
+void MessagingHelper::handleNestedFiltersFromMessageFilter(QMessageFilter &filter)
+{
+    QMessageStore* store = QMessageStore::instance();
+
+    QMessageFilterPrivate* pMFFilter = QMessageFilterPrivate::implementation(filter);
+    if (pMFFilter->_filterList.count() > 0) {
+        int filterListCount = pMFFilter->_filterList.count();
+        for (int i=0; i < filterListCount; i++) {
+            for (int j=0; j < pMFFilter->_filterList[i].count(); j++) {
+                QMessageFilterPrivate* pMFFilter2 = QMessageFilterPrivate::implementation(pMFFilter->_filterList[i][j]);
+                if (pMFFilter2->_field == QMessageFilterPrivate::ParentAccountIdFilter) {
+                    QMessageAccountIdList accountIds = store->queryAccounts(*pMFFilter2->_accountFilter, QMessageAccountSortOrder(), 0, 0);
+                    QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pMFFilter2->_comparatorValue));
+                    if (accountIds.count() > 0) {
+                        pMFFilter->_filterList[i].removeAt(j);
+                        if (cmp == QMessageDataComparator::Includes) {
+                            for (int x = 0; x < accountIds.count(); x++) {
+                                if (x == 0) {
+                                    if (x+1 < accountIds.count()) {
+                                        pMFFilter->_filterList.append(pMFFilter->_filterList[i]);
+                                    }
+                                    pMFFilter->_filterList[i].append(QMessageFilter::byParentAccountId(accountIds[x],QMessageDataComparator::Equal));
+                                    qSort(pMFFilter->_filterList[i].begin(), pMFFilter->_filterList[i].end(), QMessageFilterPrivate::lessThan);
+                                } else {
+                                    if (x+1 < accountIds.count()) {
+                                        pMFFilter->_filterList.append(pMFFilter->_filterList[pMFFilter->_filterList.count()-1]);
+                                        pMFFilter->_filterList[pMFFilter->_filterList.count()-2].append(QMessageFilter::byParentAccountId(accountIds[x],QMessageDataComparator::Equal));
+                                        qSort(pMFFilter->_filterList[pMFFilter->_filterList.count()-2].begin(), pMFFilter->_filterList[pMFFilter->_filterList.count()-2].end(), QMessageFilterPrivate::lessThan);
+                                    } else {
+                                        pMFFilter->_filterList[pMFFilter->_filterList.count()-1].append(QMessageFilter::byParentAccountId(accountIds[x],QMessageDataComparator::Equal));
+                                        qSort(pMFFilter->_filterList[pMFFilter->_filterList.count()-1].begin(), pMFFilter->_filterList[pMFFilter->_filterList.count()-1].end(), QMessageFilterPrivate::lessThan);
+                                    }
+                                }
+                            }
+                        } else { // Excludes
+                            for (int x = 0; x < accountIds.count(); x++) {
+                                pMFFilter->_filterList[i].append(QMessageFilter::byParentAccountId(accountIds[x],QMessageDataComparator::NotEqual));
+                            }
+                            qSort(pMFFilter->_filterList[i].begin(), pMFFilter->_filterList[i].end(), QMessageFilterPrivate::lessThan);
+                        }
+                    } else {
+                        delete pMFFilter2->_accountFilter;
+                        pMFFilter2->_accountFilter = 0;
+                        pMFFilter2->_field = QMessageFilterPrivate::Id;
+                        qSort(pMFFilter->_filterList[i].begin(), pMFFilter->_filterList[i].end(), QMessageFilterPrivate::lessThan);
+                    }
+                } else if (pMFFilter2->_field == QMessageFilterPrivate::ParentFolderIdFilter) {
+                    QMessageFolderIdList folderIds = store->queryFolders(*pMFFilter2->_folderFilter, QMessageFolderSortOrder(), 0, 0);
+                    QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pMFFilter2->_comparatorValue));
+                    if (folderIds.count() > 0) {
+                        pMFFilter->_filterList[i].removeAt(j);
+                        if (cmp == QMessageDataComparator::Includes) {
+                            for (int x = 0; x < folderIds.count(); x++) {
+                                if (x == 0) {
+                                    if (x+1 < folderIds.count()) {
+                                        pMFFilter->_filterList.append(pMFFilter->_filterList[i]);
+                                    }
+                                    pMFFilter->_filterList[i].append(QMessageFilter::byParentFolderId(folderIds[x],QMessageDataComparator::Equal));
+                                    qSort(pMFFilter->_filterList[i].begin(), pMFFilter->_filterList[i].end(), QMessageFilterPrivate::lessThan);
+                                } else {
+                                    if (x+1 < folderIds.count()) {
+                                        pMFFilter->_filterList.append(pMFFilter->_filterList[pMFFilter->_filterList.count()-1]);
+                                        pMFFilter->_filterList[pMFFilter->_filterList.count()-2].append(QMessageFilter::byParentFolderId(folderIds[x],QMessageDataComparator::Equal));
+                                        qSort(pMFFilter->_filterList[pMFFilter->_filterList.count()-2].begin(), pMFFilter->_filterList[pMFFilter->_filterList.count()-2].end(), QMessageFilterPrivate::lessThan);
+                                    } else {
+                                        pMFFilter->_filterList[pMFFilter->_filterList.count()-1].append(QMessageFilter::byParentFolderId(folderIds[x],QMessageDataComparator::Equal));
+                                        qSort(pMFFilter->_filterList[pMFFilter->_filterList.count()-1].begin(), pMFFilter->_filterList[pMFFilter->_filterList.count()-1].end(), QMessageFilterPrivate::lessThan);
+                                    }
+                                }
+                            }
+                        } else { // Excludes
+                            for (int x = 0; x < folderIds.count(); x++) {
+                                pMFFilter->_filterList[i].append(QMessageFilter::byParentFolderId(folderIds[x],QMessageDataComparator::NotEqual));
+                            }
+                            qSort(pMFFilter->_filterList[i].begin(), pMFFilter->_filterList[i].end(), QMessageFilterPrivate::lessThan);
+                        }
+                    } else {
+                        delete pMFFilter2->_folderFilter;
+                        pMFFilter2->_folderFilter = 0;
+                        pMFFilter2->_field = QMessageFilterPrivate::Id;
+                        qSort(pMFFilter->_filterList[i].begin(), pMFFilter->_filterList[i].end(), QMessageFilterPrivate::lessThan);
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+    } else {
+        if (pMFFilter->_field == QMessageFilterPrivate::ParentAccountIdFilter) {
+            QMessageAccountIdList accountIds = store->queryAccounts(*pMFFilter->_accountFilter, QMessageAccountSortOrder(), 0, 0);
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pMFFilter->_comparatorValue));
+            if (accountIds.count() > 0) {
+                for (int i=0; i < accountIds.count(); i++) {
+                    if (i == 0) {
+                        delete pMFFilter->_accountFilter;
+                        pMFFilter->_accountFilter = 0;
+                        pMFFilter->_field = QMessageFilterPrivate::ParentAccountId;
+                        pMFFilter->_value = accountIds[0].toString();
+                        pMFFilter->_comparatorType = QMessageFilterPrivate::Equality;
+                        if (cmp == QMessageDataComparator::Includes) {
+                            pMFFilter->_comparatorValue = static_cast<int>(QMessageDataComparator::Equal);
+                        } else { // Excludes
+                            pMFFilter->_comparatorValue = static_cast<int>(QMessageDataComparator::NotEqual);
+                        }
+                    } else {
+                        if (cmp == QMessageDataComparator::Includes) {
+                            filter |= QMessageFilter::byParentAccountId(accountIds[i],QMessageDataComparator::Equal);
+                        } else { // Excludes
+                            filter &= QMessageFilter::byParentAccountId(accountIds[i],QMessageDataComparator::NotEqual);
+                        }
+                    }
+                }
+            } else {
+                delete pMFFilter->_accountFilter;
+                pMFFilter->_accountFilter = 0;
+                pMFFilter->_field = QMessageFilterPrivate::Id;
+            }
+        } else if (pMFFilter->_field == QMessageFilterPrivate::ParentFolderIdFilter) {
+            QMessageFolderIdList folderIds = store->queryFolders(*pMFFilter->_folderFilter, QMessageFolderSortOrder(), 0, 0);
+            QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pMFFilter->_comparatorValue));
+            if (folderIds.count() > 0) {
+                for (int i=0; i < folderIds.count(); i++) {
+                    if (i == 0) {
+                        delete pMFFilter->_folderFilter;
+                        pMFFilter->_folderFilter = 0;
+                        pMFFilter->_field = QMessageFilterPrivate::ParentFolderId;
+                        pMFFilter->_value = folderIds[0].toString();
+                        pMFFilter->_comparatorType = QMessageFilterPrivate::Equality;
+                        if (cmp == QMessageDataComparator::Includes) {
+                            pMFFilter->_comparatorValue = static_cast<int>(QMessageDataComparator::Equal);
+                        } else { // Excludes
+                            pMFFilter->_comparatorValue = static_cast<int>(QMessageDataComparator::NotEqual);
+                        }
+                    } else {
+                        if (cmp == QMessageDataComparator::Includes) {
+                            filter |= QMessageFilter::byParentFolderId(folderIds[i],QMessageDataComparator::Equal);
+                        } else { // Excludes
+                            filter &= QMessageFilter::byParentFolderId(folderIds[i],QMessageDataComparator::NotEqual);
+                        }
+                    }
+                }
+            } else {
+                delete pMFFilter->_folderFilter;
+                pMFFilter->_folderFilter = 0;
+                pMFFilter->_field = QMessageFilterPrivate::Id;
+            }
         }
     }
 }

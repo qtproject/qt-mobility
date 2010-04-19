@@ -54,15 +54,15 @@
 //
 
 #include <qmobilityglobal.h>
-#include <qvideowidget.h>
+#include "qvideowidget.h"
 
 #ifndef QT_NO_OPENGL
 #include <QGLWidget>
 #endif
 
-#include <qpaintervideosurface_p.h>
+#include "qpaintervideosurface_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QVideoWidgetControlInterface
 {
@@ -261,6 +261,6 @@ public:
     void _q_dimensionsChanged();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

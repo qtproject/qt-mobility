@@ -49,17 +49,16 @@
 
 #include <limits.h>
 
-QTM_USE_NAMESPACE
-
+QT_BEGIN_NAMESPACE
 class QMediaPlaylist;
+class QMediaPlaylistNavigator;
+class QSocketNotifier;
+QT_END_NAMESPACE
+
+QT_USE_NAMESPACE
 
 class QGstreamerPlayerSession;
 class QGstreamerPlayerService;
-class QMediaPlaylistNavigator;
-
-QT_BEGIN_NAMESPACE
-class QSocketNotifier;
-QT_END_NAMESPACE
 
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {

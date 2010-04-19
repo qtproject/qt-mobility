@@ -142,17 +142,20 @@ public:
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
     QSystemNetworkInfo::NetworkMode currentMode();
+    void setWlanSignalStrengthCheckEnabled(bool enabled);
 
 protected:
     void setupNetworkInfo();
 
 private Q_SLOTS:
+    void bluetoothNetworkStatusCheck();
     void cellNetworkSignalStrengthChanged(uchar,uchar);
     void icdStatusChanged(QString,QString,QString,QString);
     void networkModeChanged(int);
     void operatorNameChanged(uchar,QString,QString,uint,uint);
     void registrationStatusChanged(uchar,ushort,uint,uint,uint,uchar,uchar);
     void usbCableAction();
+    void wlanSignalStrengthCheck();
 
 private:
     // The index of wanted argument in the QDBusMessage which is received as a
@@ -167,6 +170,7 @@ private:
     };
 
     int cellSignalStrength;
+    QSystemNetworkInfo::NetworkStatus currentBluetoothNetworkStatus;
     int currentCellId;
     int currentCellNetworkStatus;
     int currentEthernetSignalStrength;
@@ -177,6 +181,8 @@ private:
     QString currentOperatorName;
     int currentWlanSignalStrength;
     int radioAccessTechnology;
+    int iWlanStrengthCheckEnabled;
+    QTimer *wlanSignalStrengthTimer;
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate

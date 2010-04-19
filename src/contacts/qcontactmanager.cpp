@@ -57,8 +57,16 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.
   \ingroup contacts-main
  
-  This class provides adding, updating and removal of contacts.
-  It also provides definitions for details and fields that can be found in contacts.
+  This class provides an abstraction of a datastore or aggregation of datastores which contains contact information.
+  It provides methods to retrieve and manipulate contact information, contact relationship information, and
+  supported schema definitions.  It also provides metadata and error information reporting.
+
+  The functions provided by QContactManager are purely synchronous; to access the same functionality in an
+  asynchronous manner, clients should use the use-case-specific classes derived from QContactAbstractRequest.
+
+  Some functionality provided by QContactManager directly is not accessible using the asynchronous API; see
+  the \l{Contacts Synchronous API}{synchronous} and \l{Contacts Asynchronous API}{asynchronous} API
+  information from the \l{Contacts}{contacts module} API documentation.
  */
 
 /*!
@@ -728,12 +736,55 @@ QList<QContactManager::Error> QContactManager::removeContacts(QList<QContactLoca
 }
 
 /*!
-  Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner
- */
+  \deprecated
+*/
 QString QContactManager::synthesizedDisplayLabel(const QContact& contact) const
 {
     d->m_error = QContactManager::NoError;
     return d->m_engine->synthesizedDisplayLabel(contact, &d->m_error);
+}
+
+/*!
+  Returns a display label for a \a contact which is synthesized from its details in a manager specific
+  manner.
+
+  If you want to update the display label stored in the contact, use the synthesizeContactDisplayLabel()
+  function instead.
+
+  \sa synthesizeContactDisplayLabel()
+ */
+QString QContactManager::synthesizedContactDisplayLabel(const QContact& contact) const
+{
+    d->m_error = QContactManager::NoError;
+    return d->m_engine->synthesizedDisplayLabel(contact, &d->m_error);
+}
+
+/*!
+ * Updates the display label of the supplied \a contact, according to the formatting rules
+ * of this manager.
+ *
+ * Different managers can format the display label of a contact in different ways -
+ * some managers may only consider first or last name, or might put them in different
+ * orders.  Others might consider an organization, a nickname, or a freeform label.
+ *
+ * This function will update the QContactDisplayLabel of this contact, and the string
+ * returned by QContact::displayLabel().
+ *
+ * If \a contact is null, nothing will happen.
+ *
+ * See the following example for more information:
+ * \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating the display label of a contact
+ *
+ * \sa synthesizedContactDisplayLabel(), QContact::displayLabel()
+ */
+void QContactManager::synthesizeContactDisplayLabel(QContact *contact) const
+{
+    if (contact) {
+        d->m_error = QContactManager::NoError;
+        QContactManagerEngine::setContactDisplayLabel(contact, d->m_engine->synthesizedDisplayLabel(*contact, &d->m_error));
+    } else {
+        d->m_error = QContactManager::BadArgumentError;
+    }
 }
 
 /*!
@@ -992,7 +1043,7 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
 /*!
   \enum QContactManager::ManagerFeature
   This enum describes the possible features that a particular manager may support
-  \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
+  \value Groups The manager supports saving contacts of the \c QContactType::TypeGroup type
   \value ActionPreferences The manager supports saving preferred details per action per contact
   \value DetailOrdering When a contact is retrieved, the manager will return the details in the same order in which they were saved
   \value Relationships The manager supports at least some types of relationships between contacts

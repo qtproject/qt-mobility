@@ -42,22 +42,22 @@
 #include <qmobilityglobal.h>
 #include <QtTest/QtTest>
 
-#include "qvideowidget.h"
+#include "../../../src/multimedia/qvideowidget.h"
 
-#include "qmediaobject.h"
-#include "qmediaservice.h"
-#include "qpaintervideosurface_p.h"
-#include "qvideooutputcontrol.h"
-#include "qvideowindowcontrol.h"
-#include "qvideowidgetcontrol.h"
+#include "../../../src/multimedia/qmediaobject.h"
+#include "../../../src/multimedia/qmediaservice.h"
+#include "../../../src/multimedia/qpaintervideosurface_p.h"
+#include "../../../src/multimedia/qvideooutputcontrol.h"
+#include "../../../src/multimedia/qvideowindowcontrol.h"
+#include "../../../src/multimedia/qvideowidgetcontrol.h"
 
-#include "qvideorenderercontrol.h"
+#include "../../../src/multimedia/qvideorenderercontrol.h"
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
 #include <QtGui/qapplication.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class tst_QVideoWidget : public QObject
 {
     Q_OBJECT

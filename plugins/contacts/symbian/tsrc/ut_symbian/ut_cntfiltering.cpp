@@ -724,18 +724,14 @@ void TestFiltering::testRelationshipFilter()
     mCntMng->saveRelationship(&relationship);
     
     
-    QList<QContactLocalId> cnt_ids;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
-    
     QContactRelationshipFilter groupFilter;                   
     groupFilter.setRelationshipType(QContactRelationship::HasMember);
     groupFilter.setRelatedContactId(groupContact.id());                
     groupFilter.setRelatedContactRole(QContactRelationship::First);
 
-    
-    cnt_ids = mCntMng->contactIds(groupFilter, sortOrder);
-    error = mCntMng->error();
+    QList<QContactSortOrder> sortOrder = QList<QContactSortOrder>();
+    QList<QContactLocalId> cnt_ids = mCntMng->contactIds(groupFilter, sortOrder);
+    QContactManager::Error error = mCntMng->error();
     
     // check counts 
     int seachedcontactcount = cnt_ids.count();

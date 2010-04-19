@@ -54,7 +54,6 @@ class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
     Q_OBJECT
 
 public:
-    QContactAbstractRequest() {}
     ~QContactAbstractRequest();
 
     QList<QContactManager::Error> Q_DECL_DEPRECATED errors() const; // deprecated, removed in week 3.  see leaf classes for detailed error reporting.
@@ -105,10 +104,11 @@ Q_SIGNALS:
     void resultsAvailable();
 
 protected:
-    QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);
+    QContactAbstractRequest(QContactAbstractRequestPrivate* otherd, QObject* parent = 0);
     QContactAbstractRequestPrivate* d_ptr;
 
 private:
+    QContactAbstractRequest(QObject* parent = 0) : QObject(parent), d_ptr(0) {}
     Q_DISABLE_COPY(QContactAbstractRequest)
     friend class QContactManagerEngine;
 };

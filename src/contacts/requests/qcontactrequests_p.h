@@ -160,7 +160,8 @@ class QContactDetailDefinitionFetchRequestPrivate : public QContactAbstractReque
 {
 public:
     QContactDetailDefinitionFetchRequestPrivate()
-        : QContactAbstractRequestPrivate()
+        : QContactAbstractRequestPrivate(),
+        m_contactType(QString(QLatin1String(QContactType::TypeContact)))
     {
     }
 
@@ -183,7 +184,8 @@ class QContactDetailDefinitionSaveRequestPrivate : public QContactAbstractReques
 {
 public:
     QContactDetailDefinitionSaveRequestPrivate()
-        : QContactAbstractRequestPrivate()
+        : QContactAbstractRequestPrivate(),
+        m_contactType(QString(QLatin1String(QContactType::TypeContact)))
     {
     }
 
@@ -205,7 +207,8 @@ class QContactDetailDefinitionRemoveRequestPrivate : public QContactAbstractRequ
 {
 public:
     QContactDetailDefinitionRemoveRequestPrivate()
-        : QContactAbstractRequestPrivate()
+        : QContactAbstractRequestPrivate(),
+        m_contactType(QString(QLatin1String(QContactType::TypeContact)))
     {
     }
 

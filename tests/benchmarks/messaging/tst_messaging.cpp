@@ -60,6 +60,11 @@
 #include <MSVFIND.H>  
 #include <IMPCMTM.H>
 #include <mmsclient.h>
+#include <etelmm.h>
+#include <msvapi.h>
+#include <IAPPrefs.h>
+#include <SMTCMTM.H>
+#include <SMUTHDR.H>
 #endif
 
 #include <qdebug.h>
@@ -79,125 +84,467 @@ public:
   
   void getFolders(RArray<TMsvId> &folders);
   
+  int countMessages();
+  void deleteAllMessages();
+  void createMailAccountL();
+  void printAccounts();
+  void deleteAccounts();
+  void deleteAllFolders();
+  TInt createFolder(TPtrC name);
+  
   TMsvId makeSMS(TMsvId folder);
   TMsvId makeIMAP4(TMsvId folder);
   
   CMsvSession *iSession;
   CClientMtmRegistry *iMtmRegistry;
   CSmsClientMtm *iSmsMtm;
-  CImap4ClientMtm *iImap4Mtm;  
+  CImap4ClientMtm *iImap4Mtm;
+  CSmtpClientMtm *iSmtpMtm;
   CMmsClientMtm *iMmsMtm;
- 
+   
   RArray<TMsvId> iFolders;
   RArray<TMsvId> iNewMsgs;
+  TMsvId iMsvImapService;
+  TMsvId iMsvSmtpService;
 
 };
 
-TMsvId OsNative::makeSMS(TMsvId folder){
-  TBuf<10> aAddress(_L("Nokia"));
-  TBuf<20> aDescription(_L("Important Message"));
-
-  _LIT(KTxt1,"Hi phone owner, how r u?");
-
-  TBuf<150> iMessage;     
-  iMessage.Copy(KTxt1);
-
-//      m_native->iSmsMtm->SwitchCurrentEntryL(KMsvGlobalInBoxIndexEntryId); //inbox KMsvDraftEntryId
-  iSmsMtm->SwitchCurrentEntryL(folder);
-
-  iSmsMtm->CreateMessageL(KUidMsgTypeSMS.iUid);
-
-  CSmsHeader& iHeader = iSmsMtm->SmsHeader();
-  iHeader.SetFromAddressL(aAddress);
-
-
-  CRichText& body = iSmsMtm->Body();
-  body.Reset();
-  body.InsertL(0, iMessage);
-
-  TMsvEntry entry = iSmsMtm->Entry().Entry();
-  entry.SetInPreparation(EFalse);
-  entry.SetVisible(ETrue);
-  entry.iDate.HomeTime();
-  entry.iDescription.Set(aDescription);
-  entry.iDetails.Set(aAddress);
-  entry.SetUnread(EFalse);
-
-
-  iSmsMtm->Entry().ChangeL(entry);
-  iSmsMtm->SaveMessageL();
+TMsvId OsNative::makeSMS(TMsvId folder){    
+    TBuf<10> aAddress(_L("Nokia"));
+    TBuf<20> aDescription(_L("Important Message"));
+ 
+    _LIT(KTxt1,"Hi phone owner, how r u?");
+ 
+    TBuf<150> iMessage; 
+    iMessage.Copy(KTxt1);
   
-  return entry.Id();
+    iSmsMtm->SwitchCurrentEntryL(folder); //inbox
+// Clean phones without a SIM doesn't have a default service
+//    TMsvId serviceId;
+//    TRAPD(err, serviceId = iSmsMtm->DefaultServiceL());
+//    if(err) {
+//      qDebug() << "No default service";
+//      return 0;
+//    }
+      
+    
+    TRAPD(err1, iSmsMtm->SwitchCurrentEntryL( folder ));
+    if(err1){
+        qDebug() << "Failed to create SMS1: " << err1;
+        return 0;
+    }
+
+    TRAPD(err, iSmsMtm->CreateMessageL( iSmsMtm->ServiceId() )); 
+    
+    //TRAPD(err, iSmsMtm->CreateMessageL(KMsvLocalServiceIndexEntryId));
+    if(err){
+        qDebug() << "Failed to create SMS: " << err;
+        return 0;
+    }
+    
+    CSmsHeader& iHeader = iSmsMtm->SmsHeader();
+    TRAP(err, iHeader.SetFromAddressL(aAddress));
+    if(err)
+      qDebug() << "Failed to set from address: " << err;    
+ 
+    CRichText& body = iSmsMtm->Body();
+    body.Reset();
+    TRAP(err, body.InsertL(0, iMessage));
+    if(err)
+      qDebug() << "Failed to add body: " << err;
+ 
+    TMsvEntry entry = iSmsMtm->Entry().Entry();
+    entry.SetInPreparation(EFalse);
+    entry.SetVisible(ETrue);
+    entry.iDate.HomeTime();
+    entry.iDescription.Set(aDescription);
+    entry.iDetails.Set(aAddress);
+    entry.SetUnread(ETrue);
+ 
+    TRAP(err,
+        iSmsMtm->Entry().ChangeL(entry);
+        iSmsMtm->SaveMessageL();
+        );
+    if(err)
+      qDebug() << "Failed to save changes: " << err;
+    
+   return entry.Id();
+}
+
+void OsNative::printAccounts(){
+  RArray<TPopAccount> aPop;
+  RArray<TImapAccount> aImap;
+  RArray<TSmtpAccount> aSmtp;
+  CEmailAccounts* account = CEmailAccounts::NewLC();
+  TRAPD(err, 
+      account->GetPopAccountsL(aPop);
+      account->GetImapAccountsL(aImap);
+      account->GetSmtpAccountsL(aSmtp);
+      );
+  if(err){
+    qDebug()<< "Can't get all accounts";
+  }
+  
+  for(int i = 0; i < aPop.Count(); i++){
+    QString name  = QString::fromUtf16(aPop[i].iPopAccountName.Ptr(), aPop[i].iPopAccountName.Length());
+    qDebug() << "Pop account: " << name << hex << " SMTP: " << aPop[i].iSmtpService;
+//    account->DeletePopAccountL(aPop[i]);
+  }
+  for(int i = 0; i < aImap.Count(); i++){
+    QString name  = QString::fromUtf16(aImap[i].iImapAccountName.Ptr(), aImap[i].iImapAccountName.Length());
+    qDebug() << "Imap account: " << name << hex << " SMTP: " << aImap[i].iSmtpService;
+//    account->DeleteImapAccountL(aImap[i]);
+  }
+  for(int i = 0; i < aSmtp.Count(); i++){
+    QString name  = QString::fromUtf16(aSmtp[i].iSmtpAccountName.Ptr(), aSmtp[i].iSmtpAccountName.Length());
+    qDebug() << "SMTP account: " << name << hex << " Related: " << aSmtp[i].iRelatedService;
+//    account->DeleteSmtpAccountL(aSmtp[i]);
+  }
+  aPop.Close();
+  aSmtp.Close();
+  aImap.Close();
+  CleanupStack::PopAndDestroy(account);
+}
+
+void OsNative::deleteAccounts(){
+  RArray<TPopAccount> aPop;
+  RArray<TImapAccount> aImap;
+  RArray<TSmtpAccount> aSmtp;
+  CEmailAccounts* account = CEmailAccounts::NewLC();
+  TRAPD(err, 
+      account->GetPopAccountsL(aPop);
+      account->GetImapAccountsL(aImap);
+      account->GetSmtpAccountsL(aSmtp);
+      );
+  if(err){
+    qDebug()<< "Can't get all accounts";
+  }
+  
+  for(int i = 0; i < aPop.Count(); i++){
+    QString name  = QString::fromUtf16(aPop[i].iPopAccountName.Ptr(), aPop[i].iPopAccountName.Size());
+    if(name.startsWith("BMTestAccount"))
+      account->DeletePopAccountL(aPop[i]);
+  }
+  for(int i = 0; i < aImap.Count(); i++){
+    QString name  = QString::fromUtf16(aImap[i].iImapAccountName.Ptr(), aImap[i].iImapAccountName.Size());
+    if(name.startsWith("BMTestAccount"))
+      account->DeleteImapAccountL(aImap[i]);
+
+  }
+  for(int i = 0; i < aSmtp.Count(); i++){
+    QString name  = QString::fromUtf16(aSmtp[i].iSmtpAccountName.Ptr(), aSmtp[i].iSmtpAccountName.Size());
+    if(name.startsWith("BMTestAccount"))
+      account->DeleteSmtpAccountL(aSmtp[i]);
+  }
+  aPop.Close();
+  aSmtp.Close();
+  aImap.Close();
+  CleanupStack::PopAndDestroy(account);
 }
 
 TMsvId OsNative::makeIMAP4(TMsvId folder){
-  TBuf<20> aSubject(_L("Test Subject"));
-  TBuf<20> aFrom(_L("Nokia@foo.com"));
-  TBuf<20> aTo(_L("Boo@bar.com"));
-  TBuf<20> aDescription(_L("Test Message"));
 
-  _LIT(KTo, "Boo@bar.com");
-  _LIT(KTxt1,"Test autogenerated message by benchmark/tst_messaging for performance testing");
+  // create a new object to access an existing entry
+  CMsvEntry* msvEntry = CMsvEntry::NewL(*iSession, KMsvGlobalInBoxIndexEntryId, TMsvSelectionOrdering());
+  CleanupStack::PushL(msvEntry); // 1
+              
+  msvEntry->SetEntryL(folder);
+  
+  // mtm takes ownership of entry context     
+  CleanupStack::Pop(msvEntry); // 0
+  iSmtpMtm->SetCurrentEntryL(msvEntry);
+  
+  // create a new message
+  TMsvId defaultServiceId(0);
+  defaultServiceId = iSmtpMtm->DefaultServiceL();
+  CMsvEntry *pE = iSession->GetEntryL(defaultServiceId);
+  CleanupStack::PushL(pE);  
+  QString name = QString::fromUtf16(pE->Entry().iDetails.Ptr(), pE->Entry().iDetails.Length());
+  CleanupStack::PopAndDestroy(pE);
+  iSmtpMtm->CreateMessageL(defaultServiceId);
+  
+  // set subject
+  iSmtpMtm->SetSubjectL( _L("Test Message") );
+  // set body
+  iSmtpMtm->Body().Reset();
+  iSmtpMtm->Body().InsertL(0, _L("This is the text body")); 
 
-  TBuf<150> iMessage;     
-  iMessage.Copy(KTxt1);
+  // get the entry of the message
+  TMsvEntry messageEntry = iSmtpMtm->Entry().Entry();
+//      AddSenderToMtmAddresseeL(*iSmtpMtm, parameters, ETrue );
+//      SetSenderToEntryDetails(messageEntry, parameters, ETrue);
+  messageEntry.iMtm = KUidMsgTypeIMAP4;  // or any other than KUidMsgTypeSMTP to display 'from' field instead of 'to' field 
 
-//      m_native->iSmsMtm->SwitchCurrentEntryL(KMsvGlobalInBoxIndexEntryId); //inbox KMsvDraftEntryId
-  iImap4Mtm->SwitchCurrentEntryL(folder); 
+  // set the description field same as the message subject
+  messageEntry.iDescription.Set( _L("test") );  
+  messageEntry.iDetails.Set( _L("test subject") );
 
-  // Set the context to the folder in which message has to be created
-  CMsvEntry* entry = CMsvEntry::NewL(*iSession,folder,TMsvSelectionOrdering());
-  CleanupStack::PushL(entry);
-  entry->SetEntryL(folder);
+  // save the changes done above
+  iSmtpMtm->Entry().ChangeL(messageEntry);
+  // get an access to the message store
+  CMsvStore* store = msvEntry->EditStoreL();
+  CleanupStack::PushL(store); // 1
+  
+  // save the attachments
 
-  CMsvOperationActiveSchedulerWait* waiter=CMsvOperationActiveSchedulerWait::NewLC();  
-  //CleanupStack::PushL(waiter);
-
-  TMsvEmailTypeList msvEmailTypeList = 0;
-  TMsvPartList partList = (KMsvMessagePartBody | KMsvMessagePartAttachments);
-
-  CImEmailOperation* emailOperation = CImEmailOperation::CreateNewL(waiter->iStatus, *iSession,KMsvGlobalOutBoxIndexEntryId, partList, msvEmailTypeList, KUidMsgTypeSMTP);
-  CleanupStack::PushL(emailOperation);
-  waiter->Start();
-
-  TMsvId temp;
-  TPckgC<TMsvId> paramPack(temp);
-  const TDesC8& progBuf = emailOperation->ProgressL();
-  paramPack.Set(progBuf);
-  TMsvId newMessageId;
-  newMessageId = paramPack();
-
-  entry->SetEntryL(newMessageId);
-
-  CMsvStore* store = entry->EditStoreL();
-  CleanupStack::PushL(store);
-  CImHeader* emailEntry = CImHeader::NewLC();
-  emailEntry->RestoreL(*store);
-  emailEntry->SetFromL((TDesC8&)aFrom);
-  emailEntry->SetSubjectL((TDesC&)aDescription);
-  emailEntry->ToRecipients().AppendL(KTo);
-
-  // Paragraph format layer for the rich text object 
-  CParaFormatLayer* paraFormatLayer = CParaFormatLayer::NewL();
-  CleanupStack::PushL(paraFormatLayer);
-  // Character format layer for the rich text object
-  CCharFormatLayer* charFormatLayer = CCharFormatLayer::NewL(); 
-  CleanupStack::PushL(charFormatLayer);
-
-  CRichText* bodyText = CRichText::NewL(paraFormatLayer, charFormatLayer, CEditableText::EFlatStorage, 256);
-  CleanupStack::PushL(bodyText);
-
-  // Insert the contents of a buffer into the document at specified position
-  bodyText->InsertL(0, KTxt1);
-  store->StoreBodyTextL(*bodyText);
-  emailEntry->StoreL(*store);
-  // Store the changes permanently
+  // save the changes made to the message store
   store->CommitL();
+  CleanupStack::PopAndDestroy(store); // 0 
+  // save the message      
+  iSmtpMtm->SaveMessageL();
+  // final fine tuning
+  TMsvEmailEntry temailEntry = static_cast<TMsvEmailEntry>(messageEntry);
+  temailEntry.SetMessageFolderType(EFolderTypeUnknown);
+  temailEntry.SetDisconnectedOperation(ENoDisconnectedOperations);
+  temailEntry.SetEncrypted(EFalse);
+  temailEntry.SetSigned(EFalse);
+  temailEntry.SetVCard(EFalse);
+  temailEntry.SetVCalendar(EFalse);
+  temailEntry.SetReceipt(EFalse);
+  temailEntry.SetMHTMLEmail(EFalse);
+  temailEntry.SetBodyTextComplete(ETrue);
+  
+  temailEntry.SetAttachment(EFalse);
+      
+  temailEntry.iDate.HomeTime();
+  temailEntry.SetVisible(ETrue);
+  temailEntry.SetInPreparation(EFalse);
+  temailEntry.SetUnread(ETrue);
+  temailEntry.SetNew(ETrue);
 
-  CleanupStack::PopAndDestroy(8,entry); // bodyText,charFormatLayer,paraFormatLayer,emailEntry,store, emailOperationg,waiter,entry
- 
-  return entry->EntryId();
+  temailEntry.SetComplete(ETrue);
+  temailEntry.iServiceId = iMsvSmtpService;
+  temailEntry.iRelatedId = 0;
+  
+  iSmtpMtm->Entry().ChangeL(temailEntry);
+
+  // reset email headers
+  CImHeader* header = CImHeader::NewLC(); // 1
+  CMsvStore* msvStore = msvEntry->EditStoreL();
+  CleanupStack::PushL(msvStore); // 2
+  header->RestoreL(*msvStore);
+  header->SetSubjectL( _L("test email") );
+  header->SetFromL( _L("blah@blah.com") );
+  header->SetReceiptAddressL( _L("Foo@bar.com") );
+  header->StoreL( *msvStore );
+  msvStore->CommitL();
+  CleanupStack::PopAndDestroy(2); // msvStore, header // 0
+  
+  // id has been generated, store it for being able to delete
+  // only entries created with Creator
+  TMsvId id = messageEntry.Id();
+  return id;
 }
+
+
+void OsNative::deleteAllFolders() {
+
+    RArray<TMsvId> aFolders;
+    
+    TRAP_IGNORE(getFolders(aFolders));   
+    
+    TMsvSelectionOrdering sort;
+    sort.SetSorting(EMsvSortByNone);
+    sort.SetShowInvisibleEntries(ETrue);
+
+    for(int i = 0; i < aFolders.Count(); i++) {
+        CMsvEntry* inboxContext = CMsvEntry::NewL(*iSession, aFolders[i], sort);                
+        CleanupStack::PushL(inboxContext);
+    
+        // Get all entries in the folder
+        CMsvEntrySelection* entries = inboxContext->ChildrenL();
+        CleanupStack::PushL(entries);
+        QString desc = QString::fromUtf16(inboxContext->Entry().iDetails.Ptr(), inboxContext->Entry().iDetails.Length());
+        
+        for (TInt j = 0; j < entries->Count(); j++) {
+            CMsvEntry* pEntry = CMsvEntry::NewL(*iSession, entries->At(j), sort);
+            CleanupStack::PushL(pEntry);
+            QString desc2 = QString::fromUtf16(pEntry->Entry().iDetails.Ptr(), pEntry->Entry().iDetails.Length());
+
+            const TMsvEntry &entry = pEntry->Entry();            
+            if((desc != "My folders" || desc2 == "Templates")) {
+              CleanupStack::PopAndDestroy(pEntry);
+              continue;
+            }
+                        
+            CleanupStack::PopAndDestroy(pEntry);
+            
+            TMsvId id = entries->At(j);
+            qDebug() << "Deleting: " << desc << "/" << desc2;
+            TRAPD(ierr, iSession->RemoveEntry(id)); // works
+            if(ierr){
+                qDebug() << "Failed to delete: " << ierr << " " << hex << entries->At(j);
+            }            
+        }        
+        CleanupStack::PopAndDestroy(2, inboxContext);
+    }
+}
+
+void OsNative::createMailAccountL() {
+  CImIAPPreferences* outgoingIAPSet = CImIAPPreferences::NewLC(); // 1
+  CImIAPPreferences* incomingIAPSet = CImIAPPreferences::NewLC(); // 2
+  CEmailAccounts* account = CEmailAccounts::NewLC(); // 3
+
+  CImImap4Settings* imap4Set = new(ELeave) CImImap4Settings;
+  CleanupStack::PushL(imap4Set); // 4
+  CImSmtpSettings* smtpSet = new(ELeave) CImSmtpSettings;
+  CleanupStack::PushL(smtpSet); // 5
+
+  account->PopulateDefaultSmtpSettingsL(*smtpSet, *outgoingIAPSet);
+  account->PopulateDefaultImapSettingsL(*imap4Set, *outgoingIAPSet);
+  
+ imap4Set->SetDisconnectedUserMode(ETrue);
+ imap4Set->SetSynchronise(EUseLocal);
+ imap4Set->SetSubscribe(EUpdateNeither);
+ imap4Set->SetAutoSendOnConnect(EFalse);
+ imap4Set->SetGetMailOptions(EGetImap4EmailBodyText);
+ imap4Set->SetUpdatingSeenFlags(ETrue);
+ imap4Set->SetServerAddressL(_L("test.sdfsdf.wer.sadazsdsddf.com"));
+
+ TImapAccount imapAccountId = account->CreateImapAccountL(_L("BMTestAccount"), *imap4Set, *incomingIAPSet, EFalse);
+ TSmtpAccount smtpAccountId = account->CreateSmtpAccountL(imapAccountId, *smtpSet, *outgoingIAPSet, EFalse);
+ account->SetDefaultSmtpAccountL(smtpAccountId);
+
+ iMsvImapService = imapAccountId.iImapService;
+ iMsvSmtpService = smtpAccountId.iSmtpAccountId;
+ 
+ // Fails with NotSupported 
+ //iImap4Mtm->ChangeDefaultServiceL(iMsvImapService);
+ // Failed with invalid arg
+ // iSmtpMtm->ChangeDefaultServiceL(iMsvSmtpService);
+ CleanupStack::PopAndDestroy(5);
+ 
+}
+
+int OsNative::countMessages() {
+
+    RArray<TMsvId> aFolders;
+    int total = 0;
+
+    TRAPD(err, getFolders(aFolders));
+    if(err){
+        qDebug() << "getFodlers faield: " << err;
+        return 0;
+    }
+
+    for(int i = 0; i < aFolders.Count(); i++){
+        TMsvSelectionOrdering sort;
+        sort.SetSorting(EMsvSortByNone);
+        sort.SetShowInvisibleEntries(ETrue);
+        CMsvEntry* inboxContext = CMsvEntry::NewL(*iSession, 
+                aFolders[i], sort);                
+        CleanupStack::PushL(inboxContext); // 1
+    
+        // Get all entries in the Inbox
+        CMsvEntrySelection* entries = inboxContext->ChildrenL();
+        CleanupStack::PushL(entries); // 2
+        for (TInt i = 0; i < entries->Count(); i++) {              
+    
+            TMsvId entryID = entries->At(i);
+        
+            const TUid mtm = inboxContext->ChildDataL(entryID).iMtm;
+            if (mtm == KUidMsgTypeSMS) {
+                total++;
+            }
+            else if ((mtm == KUidMsgTypeIMAP4) || (mtm == KUidMsgTypeSMTP)) {
+                total++;                
+            }
+            else {
+            }           
+        }
+        CleanupStack::PopAndDestroy(2, inboxContext);
+    }
+    return total;
+}
+
+void OsNative::deleteAllMessages() {
+
+    RArray<TMsvId> aFolders;    
+
+    TRAPD(err, getFolders(aFolders));
+    if(err){
+        qDebug() << "getFodlers faield: " << err;
+        return;
+    }
+
+    for(int i = 0; i < aFolders.Count(); i++){
+        TMsvSelectionOrdering sort;
+        CMsvEntry* inboxContext = CMsvEntry::NewL(*iSession, aFolders[i], sort);                
+        CleanupStack::PushL(inboxContext); // 1
+    
+        // Get all entries in the Inbox
+        CMsvEntrySelection* entries = inboxContext->ChildrenL();
+        CleanupStack::PushL(entries); // 2
+        for (TInt i = 0; i < entries->Count(); i++) {              
+    
+            TMsvId entryID = entries->At(i);        
+            const TUid mtm = inboxContext->ChildDataL(entryID).iMtm;
+            
+            if ((mtm == KUidMsgTypeSMS) || (mtm == KUidMsgTypeIMAP4) || (mtm == KUidMsgTypeSMTP)) {
+                iSession->RemoveEntry(entryID);                
+            }
+        }
+        CleanupStack::PopAndDestroy(2, inboxContext);
+    }
+}
+
+
+#define KMsvMyFoldersEntryIdValue 0x1008
+const TMsvId KMsvMyFoldersEntryId=KMsvMyFoldersEntryIdValue;
+
+TInt OsNative::createFolder(TPtrC name){
+    TMsvId msvServId;                                                                       
+    CMsvEntry *entry1 = NULL;                                                                
+    CMsvEntry * rootEntry = NULL;                                                           
+    CMsvEntry *entryRootService = NULL;                                                     
+     
+    TInt newFldrID = 0;                                                                     
+     
+    //Get the entry (whatever is passed in)                                                    
+    entry1 = iSession->GetEntryL(KMsvMyFoldersEntryIdValue);   
+    CleanupStack::PushL(entry1);                                                             
+     
+    if (entry1)                                                                              
+    {                          
+        msvServId = entry1->OwningService();                                                    
+     
+        entryRootService = iSession->GetEntryL(msvServId);                            
+        CleanupStack::PushL(entryRootService);                                                 
+     
+        rootEntry = iSession->GetEntryL(msvServId);                                   
+        CleanupStack::PushL(rootEntry);                                                        
+     
+        rootEntry->SetEntryL(KMsvMyFoldersEntryIdValue); // set to parent
+     
+        TMsvEntry newServiceEntry;                                                             
+
+        newServiceEntry.iDate.HomeTime();
+        newServiceEntry.iSize = 0;
+        newServiceEntry.iType = KUidMsvFolderEntry;                                            
+        newServiceEntry.iMtm = KUidMsvLocalServiceMtm;
+//        newServiceEntry.iServiceId = iSmsMtm->ServiceId();
+//        newServiceEntry.iServiceId = KMsvLocalServiceIndexEntryId;
+        newServiceEntry.iServiceId = iMsvImapService;
+        newServiceEntry.iDetails.Set(name);                                             
+        newServiceEntry.iDescription.Set(KNullDesC);
+        newServiceEntry.SetVisible(ETrue);        
+
+        TRAPD(err, rootEntry->CreateL(newServiceEntry));
+        if(err){
+            QString n = QString::fromUtf16(name.Ptr(), name.Size());
+            qDebug() << "Failed to create folder "<< n << ": " << err;
+            User::Panic(_L("Fail"), err);            
+        }
+//        qDebug() << "iError: " << newServiceEntry.iError << " complete: " << newServiceEntry.Complete() << " prot: " << newServiceEntry.DeleteProtected();
+//        newFldrID = newServiceEntry.Id();                                                      
+        CleanupStack::PopAndDestroy();                                                         
+        CleanupStack::PopAndDestroy();                                                         
+    }
+    CleanupStack::PopAndDestroy(entry1);
+    
+    return newFldrID;
+}
+
 
 #else
     class OsNative {
@@ -258,7 +605,7 @@ public:
 private slots:
     void initTestCase();
     void cleanupTestCase();
-    
+                
     void tst_createTime_data();
     void tst_createTime();
 
@@ -279,7 +626,7 @@ private slots:
 
     void tst_addMessage_data();
     void tst_addMessage();
-            
+
     void tst_removeMessage_data();
     void tst_removeMessage();
     
@@ -323,20 +670,6 @@ void tst_messaging::initTestCase()
     QFAIL("Platform not supported");
 #endif
 
-    m_mgr = new QMessageManager();
-    
-    QMessageAccountIdList list;
-    list = m_mgr->queryAccounts();
-    while(!list.empty()) {      
-      QMessageAccount act = m_mgr->account(list.takeFirst());
-      qDebug() << "Account: " << act.name();
-#if defined(Q_OS_SYMBIAN)      
-      if(act.name() == "Personal"){
-        m_act = act;
-        break;
-      }     
-#endif      
-    }
 
 //    QMessageFolderIdList flist = m_mgr->queryFolders();
 //    while(!flist.empty()) {      
@@ -358,18 +691,90 @@ void tst_messaging::initTestCase()
     m_native->iSmsMtm = STATIC_CAST(CSmsClientMtm*, m_native->iMtmRegistry->NewMtmL(KUidMsgTypeSMS));
     m_native->iImap4Mtm = STATIC_CAST(CImap4ClientMtm*, m_native->iMtmRegistry->NewMtmL(KUidMsgTypeIMAP4));
     m_native->iMmsMtm = STATIC_CAST(CMmsClientMtm*, m_native->iMtmRegistry->NewMtmL(KUidMsgTypeMultimedia));
+    m_native->iSmtpMtm = STATIC_CAST(CSmtpClientMtm*,(m_native->iMtmRegistry->NewMtmL(KUidMsgTypeSMTP)));  
+
+    qDebug() << "Print accounts";
+    m_native->printAccounts();
+    qDebug() << "Delete accounts";
+    m_native->deleteAccounts();
+    qDebug() << "Delete all folders and messages";
+    m_native->deleteAllFolders();
+    m_native->deleteAllMessages();
+    qDebug() << "Create accounts";
+    TRAPD(err, m_native->createMailAccountL());
+    if(err)
+      qDebug() << "Account create failed: " << err;
+    qDebug() << "Oustanding ops: " << m_native->iSession->OutstandingOperationsL();
+    m_native->printAccounts();
+    qDebug() << "Create 3 folders";
+    m_native->createFolder(_L("Test1"));    
+    m_native->createFolder(_L("Test2"));
+    m_native->createFolder(_L("Test3"));
     
+// Created messages with QMF, our symbian messages aren't very good    
+//    qDebug() << "Create 15 emails";
+//    for(int count = 0; count < 15; count++){
+//      TRAP(err, TMsvId id = m_native->makeIMAP4(KMsvGlobalInBoxIndexEntryId);
+//      m_native->iNewMsgs.Append(id));
+//      if(err){
+//        qDebug() << "Error: " << err;
+//      }
+//    }
+    
+   
+// Can't create SMS messages on a phone with no msg center
+//    qDebug() << "Create 15 SMS: " << m_native->iNewMsgs.Count();
+//    TRAPD(err, 
+//    for(int count = 0; count < 15; count++){
+//        TMsvId id = m_native->makeSMS(KMsvDraftEntryId); 
+//        m_native->iNewMsgs.Append(id);
+//    }
+//    );    
+    qDebug() << "Initial state is set: " << m_native->iNewMsgs.Count();
+    RArray<TMsvId> folders;
+    m_native->getFolders(folders);
+    qDebug() << "Number of folders: " << folders.Count();
+    folders.Close();    
+    qDebug() << "Number of messages: " << m_native->countMessages();    
+#else
+// this doesn't really create testable messages on symbian
+    for(int i = 0; i < 30; i++)
+      createMessage();
 #endif
 
-    for(int i = 0; i < 20; i++)
-      createMessage();
+    m_mgr = new QMessageManager();
     
+    QMessageAccountIdList list;
+    list = m_mgr->queryAccounts();
+    while(!list.empty()) {      
+      QMessageAccount act = m_mgr->account(list.takeFirst());
+      qDebug() << "Account: " << act.name();
+#if defined(Q_OS_SYMBIAN)           
+      if(act.name() == "BMTestAccount"){
+        qDebug() << "Using this account";
+        m_act = act;        
+        break;
+      }     
+#endif      
+    }
+
+    
+    for(int i = 0; i < 30; i++)
+      createMessage();
 }
 
 void tst_messaging::cleanupTestCase()
 {
   
+  clearMessages();
+  
 #if defined(Q_OS_SYMBIAN)
+  qDebug() << "Delete: Oustanding ops: " << m_native->iSession->OutstandingOperationsL() << " outstanding messages: " << m_native->countMessages();
+  m_native->deleteAccounts();
+  m_native->deleteAllFolders();
+  m_native->deleteAllMessages();
+  m_native->iSession->RemoveEntry(m_native->iMsvImapService);
+  m_native->iSession->RemoveEntry(m_native->iMsvSmtpService);
   delete m_native->iMmsMtm;
   delete m_native->iImap4Mtm;
   delete m_native->iSmsMtm;
@@ -377,8 +782,7 @@ void tst_messaging::cleanupTestCase()
   delete m_native->iSession;
   delete m_native;
 #endif
-  
-  clearMessages();
+    
   delete m_mgr;
 
 
@@ -416,6 +820,7 @@ void tst_messaging::tst_createTime()
       __UHEAP_MARK;
       
       if(m_native){
+        delete m_native->iSmtpMtm;
         delete m_native->iMmsMtm;
         delete m_native->iImap4Mtm;
         delete m_native->iSmsMtm;
@@ -432,6 +837,7 @@ void tst_messaging::tst_createTime()
         m_native->iSmsMtm = STATIC_CAST(CSmsClientMtm*, m_native->iMtmRegistry->NewMtmL(KUidMsgTypeSMS));
         m_native->iImap4Mtm = STATIC_CAST(CImap4ClientMtm*, m_native->iMtmRegistry->NewMtmL(KUidMsgTypeIMAP4));
         m_native->iMmsMtm = STATIC_CAST(CMmsClientMtm*, m_native->iMtmRegistry->NewMtmL(KUidMsgTypeMultimedia));
+        m_native->iSmtpMtm = STATIC_CAST(CSmtpClientMtm*, m_native->iMtmRegistry->NewMtmL(KUidMsgTypeSMTP));
       }
       
       __UHEAP_MARKEND;
@@ -609,127 +1015,23 @@ void tst_messaging::tst_query()
         
       }
       else if(base == tst_messaging::Folders){
-        
-        __UHEAP_MARK;
-        
-        CEmailAccounts *email = CEmailAccounts::NewLC();
-        RArray<TPopAccount> aPop;
-        RArray<TImapAccount> aImap;
-        RArray<TSmtpAccount> aSmtp;
-                
-        email->GetPopAccountsL(aPop);
-        email->GetImapAccountsL(aImap);
-        email->GetSmtpAccountsL(aSmtp);
-                
-
-        RArray<TMsvId> aService;
-        
-//        qDebug() << "Pop Service: " << aPop.Count();
-//        qDebug() << "Imap Service: " << aImap.Count();
-//        qDebug() << "Smtp Service: " << aSmtp.Count();
-        
-        for(int i = 0; i < aPop.Count(); i++){
-          aService.Append(aPop[i].iPopService);
-        }
-        for(int i = 0; i < aImap.Count(); i++){
-          aService.Append(aImap[i].iImapService);
-        }
-        for(int i = 0; i < aSmtp.Count(); i++){
-          aService.Append(aSmtp[i].iSmtpService);
-        }
-        
-             
-        if(aService.Count() == 0)
-          QFAIL("No folders avaailable to query");
-        
-//        qDebug() << "Total services: " << aService.Count();
-        
-        int total;
-
-        
-        CMsvEntry* pEntry = NULL;        
-        TRAPD(err, pEntry = m_native->iSession->GetEntryL(aService[0]));        
-        if(err)
-          QFAIL("Can't create entry object");
-        CleanupStack::PushL(pEntry);
-
-        
-        QBENCHMARK {
-          total = 0;
-          for(int i = 0; i < aService.Count(); i++){
-            
-            TMsvId msvid = aService[i];
-            
-            TRAP(err, pEntry->SetEntryL(msvid)); // faster to call set, saves .2ms out of 2.7ms.
-            if(err){
-              qDebug() << "Failed: " << err;
-              continue;
-            }
-
-            
-            const TMsvEntry& entry = pEntry->Entry();
-                        
-            if (entry.iMtm == KUidMsgTypeSMS || entry.iMtm == KUidMsgTypeMultimedia || entry.iMtm == KUidMsgTypeSMTP) {
-              total += 4;
-#define KDocumentsEntryIdValue    0x1008
-              pEntry->SetEntryL(KDocumentsEntryIdValue);
-            }
-            
-            if (entry.iMtm == KUidMsgTypePOP3) {
-                total+=1;
-                continue;
-            }
-            
-            CMsvEntryFilter* pFilter = CMsvEntryFilter::NewLC();
-            pFilter->SetService(msvid);
-            pFilter->SetType(KUidMsvFolderEntry);
-
-            CMsvEntrySelection* pSelection = new(ELeave) CMsvEntrySelection;
-            CleanupStack::PushL(pSelection);
-
-            m_native->iSession->GetChildIdsL(pEntry->Entry().Id(), *pFilter, *pSelection);
-            if (pSelection->Count() > 0) {
-              for(TInt i = 0; i < pSelection->Count(); i++) {
-//                ids.append(createQMessageFolderId(folderServiceEntryId, pSelection->At(i)));
-//                qDebug() << "serviceId: " << msvid << " Got one: " <<  "selected: " << pSelection->At(i);
-                total++;
-                m_native->iFolders.Append(pSelection->At(i));
-              }              
-            }
-            else {               
-//              QString details = QString::fromUtf16(entry.iDetails.Ptr(),entry.iDetails.Length());
-//              QString desc = QString::fromUtf16(entry.iDescription.Ptr(),entry.iDescription.Length());
-//              qDebug() << "Nothing returned for: " << msvid << "entry: " << details << " - " << desc;
-            }
-            CleanupStack::PopAndDestroy(pSelection);
-            CleanupStack::PopAndDestroy(pFilter);
-
+          RArray<TMsvId> aFolders;
+          QBENCHMARK {
+              m_native->getFolders(aFolders);
+              aFolders.Close();              
           }
-        }
-        
-//        qDebug() << "Number of Folders: " << total;
-        
-        aPop.Close();
-        aImap.Close();
-        aSmtp.Close();
-        aService.Close();
-        
-        CleanupStack::PopAndDestroy(pEntry);        
-        CleanupStack::PopAndDestroy(email);
-        
-        __UHEAP_MARKEND;
-        
       }
       else if(base == tst_messaging::Messages) {
         
         RArray<TMsvId> aFolders;
         
-        aFolders.Append(KMsvGlobalInBoxIndexEntryId);
-        aFolders.Append(KMsvGlobalOutBoxIndexEntryId);
-        aFolders.Append(KMsvDraftEntryId);
-        aFolders.Append(KMsvSentEntryId);
-        for(int i = 0; i < m_native->iFolders.Count(); i++)
-          aFolders.Append(m_native->iFolders[i]);
+//        aFolders.Append(KMsvGlobalInBoxIndexEntryId);
+//        aFolders.Append(KMsvGlobalOutBoxIndexEntryId);
+//        aFolders.Append(KMsvDraftEntryId);
+//        aFolders.Append(KMsvSentEntryId);
+//        for(int i = 0; i < m_native->iFolders.Count(); i++)
+//          aFolders.Append(m_native->iFolders[i]);
+        m_native->getFolders(aFolders);
 
         // Access the Inbox
         QBENCHMARK {
@@ -777,7 +1079,6 @@ void tst_messaging::tst_fetch_data()
     QTest::newRow("Native-Folders") << tst_messaging::Native << tst_messaging::Folders;
     QTest::newRow("Qt-Messages") << tst_messaging::QMessaging << tst_messaging::Messages;
     QTest::newRow("Native-Messages") << tst_messaging::Native << tst_messaging::Messages;
-  //qDebug() << "End fetch_data";
 }
 
 void tst_messaging::tst_fetch()
@@ -834,24 +1135,26 @@ void tst_messaging::tst_fetch()
         __UHEAP_MARK;
         // Access the Inbox
         QBENCHMARK {
-
           TMsvSelectionOrdering sort;
           sort.SetSorting(EMsvSortByDateReverse);
           sort.SetShowInvisibleEntries(ETrue);
 
           CMsvEntry* inboxContext = CMsvEntry::NewL(*m_native->iSession, 
-              KMsvGlobalInBoxIndexEntryId, sort);                
+                  KMsvDraftEntryIdValue /*KMsvGlobalInBoxIndexEntryId*/, sort);                
           CleanupStack::PushL(inboxContext);
 
           // Get all entries in the Inbox
           CMsvEntrySelection* entries = inboxContext->ChildrenL();
           CleanupStack::PushL(entries);
 
+          if(entries->Count() == 0){
+              CleanupStack::PopAndDestroy(2, inboxContext);
+              QSKIP("No messages on device to list", SkipAll);              
+          }
           TMsvId entryID = entries->At(0);
           const TUid mtm = inboxContext->ChildDataL(entryID).iMtm;
 
           if (mtm == KUidMsgTypeSMS) {
-
             m_native->iSmsMtm->SwitchCurrentEntryL(entryID);
             TRAPD(err, m_native->iSmsMtm->LoadMessageL());
             if(err){
@@ -861,7 +1164,6 @@ void tst_messaging::tst_fetch()
             CSmsHeader& header = m_native->iSmsMtm->SmsHeader();
           }
           else if (mtm == KUidMsgTypeMultimedia) {
-
             // TODO None of these have a data store...skip until it can be fixed
             QFAIL("MMS message handeling is broken, change setup to use non-MMS type");
           }
@@ -869,12 +1171,16 @@ void tst_messaging::tst_fetch()
             m_native->iImap4Mtm->SwitchCurrentEntryL(entryID);
             m_native->iImap4Mtm->LoadMessageL();            
           }
+          else if (mtm == KUidMsgTypeSMTP){
+            m_native->iSmtpMtm->SwitchCurrentEntryL(entryID);
+            m_native->iSmtpMtm->LoadMessageL();
+          }
           else {
-            qDebug() << "Got Type: " << mtm.iUid;
+            qDebug() << "Got Type: " << hex << mtm.iUid;
           }
           CleanupStack::PopAndDestroy(2, inboxContext);
         }
-        __UHEAP_MARKEND;        
+        __UHEAP_MARKEND;
       }
 
 #endif
@@ -927,18 +1233,14 @@ void tst_messaging::tst_fetchAll()
         QMessageIdList list;
         QMessage msg;
         list = m_mgr->queryMessages();
+        if(list.count() == 0)
+          QFAIL("No messages to fetch");
+
         qDebug() << "Total fetched messages: " << list.count(); 
         QBENCHMARK {
           while(!list.empty())
             msg = m_mgr->message(list.takeFirst());
-        }
-// TODO this selects messages in built "My Folders" which the test for symbian native doesn't.  Fix me.        
-//        list = m_mgr->queryMessages();
-//        while(!list.empty()) {
-//          msg = m_mgr->message(list.takeFirst());
-//          qDebug() << "From: " << msg.from().recipient() << " subject: " << msg.subject();
-//        }        
-        
+        }        
       }
       //qDebug() << "Got cnt: " << cnt;      
     }
@@ -1012,13 +1314,13 @@ void tst_messaging::tst_fetchAll()
 //                }
                 skipped++;
               }
-              else if (mtm == KUidMsgTypeIMAP4) {                 
+              else if (mtm == KUidMsgTypeIMAP4 || mtm == KUidMsgTypeSMTP) {                 
                  CMsvEntry* pEntry = NULL;        
                  pEntry = m_native->iSession->GetEntryL(entryID);
 
                  CImEmailMessage *pMsg = CImEmailMessage::NewLC(*pEntry);                 
 
-                 CMsvStore *store;                 
+                 CMsvStore *store = 0x0;
                  TRAPD(err, store = pEntry->ReadStoreL());
                  if(err){
 //                   TPtrC sub;
@@ -1044,25 +1346,20 @@ void tst_messaging::tst_fetchAll()
                  //header buffer contains the "header" of the mail.
                  TBuf<50> from = header->From();
 
-//                 TODO: Find out why we don't select messages from the system My Folder store.
-//                 QString qsubject = QString::fromUtf16(subject.Ptr(),subject.Length());
-//                 QString qfrom = QString::fromUtf16(from.Ptr(),from.Length());
-//                 qDebug() << "From: " << qfrom << " subject: " << qsubject;
-
                  CleanupStack::PopAndDestroy(header);
                  CleanupStack::PopAndDestroy(store);
                  CleanupStack::PopAndDestroy(pMsg);
-                 
+                                  
                  total++;
-               }
+               }              
               else {
 //                qDebug() << "Got Type: " << mtm.iUid;
-              }
+              }              
             }
             CleanupStack::PopAndDestroy(2, inboxContext);           
           }          
         }
-        qDebug() << "Total messages fetched: " << total << " skipped: " << skipped;
+//        qDebug() << "Total messages fetched: " << total << " skipped: " << skipped;
         __UHEAP_MARKEND;
       }            
 #endif
@@ -1085,7 +1382,8 @@ void tst_messaging::tst_fetchFilter_data()
   QTest::newRow("Qt-Status") << tst_messaging::QMessaging << tst_messaging::Status;
   QTest::newRow("Qt-Priority") << tst_messaging::QMessaging << tst_messaging::Priority;
   QTest::newRow("Qt-Size") << tst_messaging::QMessaging << tst_messaging::Size;
-  QTest::newRow("Qt-AllId") << tst_messaging::QMessaging << tst_messaging::AllId;
+  // XXX Test is broken, User::Panic(47) on symbian
+//  QTest::newRow("Qt-AllId") << tst_messaging::QMessaging << tst_messaging::AllId;
   QTest::newRow("Qt-AllSender") << tst_messaging::QMessaging << tst_messaging::AllSender;
   
   QTest::newRow("Native-Id") << tst_messaging::Native << tst_messaging::Id;
@@ -1095,7 +1393,7 @@ void tst_messaging::tst_fetchFilter_data()
   QTest::newRow("Native-TimeStamp") << tst_messaging::Native << tst_messaging::TimeStamp;
   QTest::newRow("Native-Status") << tst_messaging::Native << tst_messaging::Status;
   QTest::newRow("Native-Priority") << tst_messaging::Native << tst_messaging::Priority;
-  QTest::newRow("Native-Size") << tst_messaging::Native << tst_messaging::Size;
+  QTest::newRow("Native-Size") << tst_messaging::Native << tst_messaging::Size;  
   QTest::newRow("Native-AllId") << tst_messaging::Native << tst_messaging::AllId;
   QTest::newRow("Native-AllSender") << tst_messaging::Native << tst_messaging::AllSender;
   
@@ -1115,13 +1413,12 @@ void tst_messaging::tst_fetchFilter()
     // let's assume we want equal tests for all the filters.
     // So let's try and filter out 1 message from each filter request.    
     if(filter == tst_messaging::Id){
+      id = msg_list.takeFirst();
         mf = QMessageFilter::byId(id);
         msg_list.push_back(id);        
     }
     else if(filter == tst_messaging::Type){      
         QMessage *msg = messageTemplate();
-        // XXX this segfault
-        //msg->setType(QMessage::Sms);
         
         msgId = addMessage(msg);       
         mf = QMessageFilter::byType(QMessage::Sms);
@@ -1179,8 +1476,9 @@ void tst_messaging::tst_fetchFilter()
 
         mf = QMessageFilter::bySize(5000, QMessageDataComparator::GreaterThan);
     }
-    else if(filter == tst_messaging::AllId){      
-      mf = QMessageFilter::byId(msg_list);       
+    else if(filter == tst_messaging::AllId){
+//      mf = QMessageFilter::byId(msg_list.mid(0, 2)); works, mid(0,15) fails...
+      mf = QMessageFilter::byId(msg_list);
     }
     else if(filter == tst_messaging::AllSender){
       id = msg_list.takeFirst();      
@@ -1198,11 +1496,9 @@ void tst_messaging::tst_fetchFilter()
     else {
         QMessageIdList list;
         QMessageSortOrder sortOrder(QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder));
-   
         QBENCHMARK {          
             list = m_mgr->queryMessages(mf, sortOrder, 100);
         }
- 
         if(list.count() != 1 && filter != tst_messaging::AllId && filter != tst_messaging::AllSender)
             qDebug() << "Wanted 1 message got: " << list.count();
     }
@@ -1222,12 +1518,16 @@ void tst_messaging::tst_fetchFilter()
         sort.SetShowInvisibleEntries(ETrue);
           
         CMsvEntry* inboxContext = CMsvEntry::NewL(*m_native->iSession, 
-            KMsvGlobalInBoxIndexEntryId, sort);                
-        CleanupStack::PushL(inboxContext);
+                KMsvDraftEntryIdValue /*KMsvGlobalInBoxIndexEntryId*/, sort);                
+        CleanupStack::PushL(inboxContext); // 1
 
         // Get all entries in the Inbox
         CMsvEntrySelection* entries = inboxContext->ChildrenL();
-        CleanupStack::PushL(entries);
+        CleanupStack::PushL(entries); // 2
+        if(entries->Count() == 0){
+            CleanupStack::PopAndDestroy(2, inboxContext);
+            QSKIP("No messages on device to list", SkipAll);                        
+        }
         
         TMsvId entryID = entries->At(0);
 
@@ -1341,7 +1641,7 @@ void tst_messaging::tst_fetchFilter()
         const CMsvFindResultSelection &res = finder->GetFindResult();
         
         for(int i = 0; i < res.Count(); i++){          
-          CMsvEntry *pEntry;
+          CMsvEntry *pEntry = 0x0;
           TRAPD(err, pEntry = m_native->iSession->GetEntryL(res.At(i).iId));
           if(err){
             qDebug() << "Failed to fetch: " << i << " - " << res.At(i).iId;
@@ -1374,7 +1674,7 @@ void tst_messaging::tst_fetchFilter()
         const CMsvFindResultSelection &res = finder->GetFindResult();
         
         for(int i = 0; i < res.Count(); i++){          
-          CMsvEntry *pEntry;
+          CMsvEntry *pEntry = 0x0;
           TRAPD(err, pEntry = m_native->iSession->GetEntryL(res.At(i).iId));
           if(err){
             qDebug() << "Failed to fetch: " << i << " - " << res.At(i).iId;
@@ -1461,14 +1761,24 @@ void tst_messaging::tst_fetchFilter()
 void tst_messaging::clearMessages()
 {
   QMessageId id;
+  int num = 0;
+  qDebug() << "Start QtMessaging removal";
   while(!msg_list.empty())
-    m_mgr->removeMessage(msg_list.takeFirst());
+    m_mgr->removeMessage(msg_list.takeFirst()), num++;
+  qDebug() << "Start Native removal";
+#ifdef Q_OS_SYMBIAN
+  while(m_native->iNewMsgs.Count())
+    m_native->iSession->RemoveEntry(m_native->iNewMsgs[0]), m_native->iNewMsgs.Remove(0), num++;
+#endif
+
+  qDebug() << "Cleanup Removed: " << num;
 }
 
 QMessage *tst_messaging::messageTemplate()
 {
   QMessage *msg = new QMessage;
   
+  msg->setType(QMessage::Email);
   msg->setDate(QDateTime::currentDateTime());
   msg->setSubject("test");
   QMessageAddress addr;
@@ -1478,20 +1788,15 @@ QMessage *tst_messaging::messageTemplate()
   addr.setAddressee("from@bar.com");
   addr.setType(QMessageAddress::Email);
   msg->setFrom(addr);
-
-// XXX one or more of these cause problems 
-//  msg->setType(QMessage::Email);
-//  msg->setStatus(QMessage::Read);
-  
-//  msg->setBody("I have a body!");
-//  msg->setParentAccountId(m_fol.parentAccountId());
   
   return msg;
 }
 
 QMessageId tst_messaging::addMessage(QMessage *msg)
 {
-  m_mgr->addMessage(msg);  
+  if(!m_mgr->addMessage(msg))
+    qDebug() << "Failed to add message: " << m_mgr->error();  
+
   msg_list.append(msg->id());
 
   //qDebug() << "id: " << msg->id().toString();
@@ -1519,7 +1824,8 @@ void tst_messaging::tst_addMessage_data()
     QTest::addColumn<tst_messaging::types>("type");
     
     QTest::newRow("Qt-Email") << tst_messaging::QMessaging << tst_messaging::Email;
-    QTest::newRow("Native-SMS") << tst_messaging::Native << tst_messaging::Sms; 
+// XXX SMS broken. On clean devices there is no SMSMC to create messages for.    
+//    QTest::newRow("Native-SMS") << tst_messaging::Native << tst_messaging::Sms; 
     QTest::newRow("Native-Email") << tst_messaging::Native << tst_messaging::Email;
    
 }
@@ -1540,14 +1846,21 @@ void tst_messaging::tst_addMessage()
       if(type == tst_messaging::Sms){
         TMsvId id;
         QBENCHMARK {
-          id = m_native->makeSMS(KMsvDraftEntryIdValue);
+          TRAPD(err, id = m_native->makeSMS(KMsvGlobalInBoxIndexEntryId));
+          if(err){
+              qDebug() << "Failed to create sms: " << err;
+          }
         }
         m_native->iNewMsgs.Append(id);
       }
       else if(type == tst_messaging::Email){
         TMsvId id;
         QBENCHMARK {
-          m_native->makeIMAP4(KMsvDraftEntryIdValue);
+          TRAPD(err, id = m_native->makeIMAP4(KMsvGlobalInBoxIndexEntryId));
+          if(err){
+              qDebug() << "Failed to create sms: " << err;
+          }
+
         }
         m_native->iNewMsgs.Append(id);
       }
@@ -1571,15 +1884,15 @@ void tst_messaging::tst_removeMessage()
   QFETCH(tst_messaging::platform, platform);
 
   if(platform == tst_messaging::QMessaging){
-#ifdef Q_OS_SYMBIAN
-      TMsvId id;
-      id = m_native->makeIMAP4(KMsvDraftEntryIdValue);
-      QString str;
-      str.setNum(id);
-      QMessageId qmid = str;    
-#else
+//#ifdef Q_OS_SYMBIAN
+//      TMsvId id;
+//      id = m_native->makeIMAP4(KMsvDraftEntryIdValue);
+//      QString str;
+//      str.setNum(id);
+//      QMessageId qmid = str;    
+//#else
       QMessageId qmid = msg_list.takeFirst();
-#endif
+//#endif
 
    QBENCHMARK_ONCE {
           m_mgr->removeMessage(qmid);
@@ -1626,12 +1939,12 @@ void tst_messaging::tst_removeAllMessage()
     // make sure there's enough messages to delete
     while(m_native->iNewMsgs.Count() < 30) {
       TMsvId id;
-      id = m_native->makeSMS(KMsvDraftEntryIdValue);      
+      id = m_native->makeIMAP4(KMsvDraftEntryIdValue);      
       m_native->iNewMsgs.Append(id);
     }
     
     QBENCHMARK {      
-      CMsvEntry *pEntry;
+      CMsvEntry *pEntry = 0x0;
       TRAPD(err, pEntry = CMsvEntry::NewL(*m_native->iSession, KMsvRootIndexEntryId, TMsvSelectionOrdering()));
       if(err){
         qDebug() << "Failed to init CMsvEntryL " << err;
@@ -1673,12 +1986,16 @@ void OsNative::getFolders(RArray<TMsvId> &folders) {
   folders.Append(KMsvSentEntryId);
   folders.Append(KMsvDeletedEntryFolderEntryId);
   folders.Append(KDocumentsEntryIdValue);
+  folders.Append(KMsvMyFoldersEntryId);
 
   email->GetPopAccountsL(aPop);
   email->GetImapAccountsL(aImap);
   email->GetSmtpAccountsL(aSmtp);
 
   RArray<TMsvId> aService;
+  
+//  aService.Append(KMsvLocalServiceIndexEntryId);
+//  aService.Append(KMsvRootIndexEntryId);
 
   for(int i = 0; i < aPop.Count(); i++){
     aService.Append(aPop[i].iPopService);
@@ -1694,48 +2011,49 @@ void OsNative::getFolders(RArray<TMsvId> &folders) {
   if(email->DefaultSmtpAccountL(sacc))
     aService.Append(sacc.iSmtpService);
 
-  if(aService.Count() == 0)
-    QFAIL("No folders avaailable to query");
-
-  CMsvEntry* pEntry = NULL;        
-  pEntry = iSession->GetEntryL(aService[0]);        
-  CleanupStack::PushL(pEntry);
-
-  for(int i = 0; i < aService.Count(); i++){
-      TMsvId msvid = aService[i];
-
-      pEntry->SetEntryL(msvid); // faster to call set, saves .2ms out of 2.7ms.
-
-      const TMsvEntry& entry = pEntry->Entry();
- 
-      CMsvEntryFilter* pFilter = CMsvEntryFilter::NewLC();
-      pFilter->SetService(msvid);
-      pFilter->SetType(KUidMsvFolderEntry);
-
-      CMsvEntrySelection* pSelection = new(ELeave) CMsvEntrySelection;
-      CleanupStack::PushL(pSelection);
+  if(aService.Count() > 0) {
+      CMsvEntry* pEntry = NULL;
       
-      if (entry.iMtm == KUidMsgTypeSMS || entry.iMtm == KUidMsgTypeMultimedia || entry.iMtm == KUidMsgTypeSMTP) 
-        pEntry->SetEntryL(KDocumentsEntryIdValue);          
-      
-      //iSession->GetChildIdsL(pEntry->Entry().Id(), *pFilter, *pSelection);
-      iSession->GetChildIdsL(pEntry->Entry().Id(), *pFilter, *pSelection);
-     
-      for(TInt i = 0; i < pSelection->Count(); i++) {
-        folders.Append(pSelection->At(i));
-      }              
-      
-      CleanupStack::PopAndDestroy(pSelection);
-      CleanupStack::PopAndDestroy(pFilter);
+      TRAPD(err, pEntry = iSession->GetEntryL(aService[0]));
+      if(!err) {
+          CleanupStack::PushL(pEntry);
+          for(int i = 0; i < aService.Count(); i++){
+              TMsvId msvid = aService[i];
+              
+              TRAP(err, pEntry->SetEntryL(msvid)); // faster to call set, saves .2ms out of 2.7ms.
+              if(err)
+                  continue;
+        
+              const TMsvEntry& entry = pEntry->Entry();
+              CMsvEntryFilter* pFilter = CMsvEntryFilter::NewLC();
+              pFilter->SetService(msvid);
+              pFilter->SetType(KUidMsvFolderEntry);
+              CMsvEntrySelection* pSelection = new(ELeave) CMsvEntrySelection;
+              CleanupStack::PushL(pSelection);
 
-    }
-
+              if (entry.iMtm == KUidMsgTypeSMS || entry.iMtm == KUidMsgTypeMultimedia || entry.iMtm == KUidMsgTypeSMTP) 
+                pEntry->SetEntryL(KDocumentsEntryIdValue);          
+              
+              iSession->GetChildIdsL(msvid, *pFilter, *pSelection);
+              for(TInt i = 0; i < pSelection->Count(); i++) {
+                folders.Append(pSelection->At(i));
+                pEntry->SetEntryL(pSelection->At(i));
+                if(pEntry->Entry().iMtm == KUidMsvFolderEntry){
+                    aService.Append(pSelection->At(i));
+                }            
+              }              
+              CleanupStack::PopAndDestroy(pSelection);
+              CleanupStack::PopAndDestroy(pFilter);
+        
+            }
+          CleanupStack::PopAndDestroy(pEntry);
+        }
+  }
     aPop.Close();
     aImap.Close();
     aSmtp.Close();
     aService.Close();
-
-    CleanupStack::PopAndDestroy(pEntry);        
+        
     CleanupStack::PopAndDestroy(email);
   __UHEAP_MARKEND;
 }

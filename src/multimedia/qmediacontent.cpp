@@ -42,9 +42,9 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-#include <qmediacontent.h>
+#include "qmediacontent.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 class QMediaContentPrivate : public QSharedData
@@ -235,5 +235,5 @@ QMediaResourceList QMediaContent::resources() const
             : QMediaResourceList();
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

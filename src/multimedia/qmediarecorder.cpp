@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#include <qmediarecorder.h>
+#include "qmediarecorder.h"
 
-#include <qmediarecordercontrol.h>
-#include <qmediaobject_p.h>
-#include <qmediaservice.h>
-#include <qmediaserviceprovider.h>
-#include <qaudioencodercontrol.h>
-#include <qvideoencodercontrol.h>
-#include <qmediacontainercontrol.h>
+#include "qmediarecordercontrol.h"
+#include "qmediaobject_p.h"
+#include "qmediaservice.h"
+#include "qmediaserviceprovider.h"
+#include "qaudioencodercontrol.h"
+#include "qvideoencodercontrol.h"
+#include "qmediacontainercontrol.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
@@ -56,7 +56,7 @@
 
 #include <QtMultimedia/qaudioformat.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaRecorder
@@ -80,7 +80,7 @@ QTM_BEGIN_NAMESPACE
 
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("audio/vorbis");
-    audioSettings.setQuality(QtMedia::HighQuality);
+    audioSettings.setQuality(QtMultimedia::HighQuality);
 
     recorder->setEncodingSettings(audioSettings);
 
@@ -235,12 +235,12 @@ bool QMediaRecorder::isAvailable() const
 /*!
     Returns the availability error code.
 */
-QtMedia::AvailabilityError QMediaRecorder::availabilityError() const
+QtMultimedia::AvailabilityError QMediaRecorder::availabilityError() const
 {
     if (d_func()->control != NULL)
-        return QtMedia::NoError;
+        return QtMultimedia::NoError;
     else
-        return QtMedia::ServiceMissingError;
+        return QtMultimedia::ServiceMissingError;
 }
 
 QUrl QMediaRecorder::outputLocation() const
@@ -563,5 +563,5 @@ void QMediaRecorder::stop()
 
 
 #include "moc_qmediarecorder.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

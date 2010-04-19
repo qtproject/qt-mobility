@@ -42,7 +42,6 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 #include <QSet>
 
 //TESTED_CLASS=
@@ -56,8 +55,6 @@ Q_OBJECT
 public:
     tst_QContactDetail();
     virtual ~tst_QContactDetail();
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();

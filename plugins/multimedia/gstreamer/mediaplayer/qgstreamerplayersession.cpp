@@ -49,7 +49,7 @@
 #include <QtCore/qdatetime.h>
 #include <QtCore/qdebug.h>
 
-#ifdef Q_WS_MAEMO_5
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #define USE_PLAYBIN2
 #endif
 
@@ -658,7 +658,7 @@ void QGstreamerPlayerSession::getStreamsInfo()
 
     for (int i=0; i<m_streamTypes.count(); i++) {
         QMediaStreamsControl::StreamType streamType = m_streamTypes[i];
-        QMap<QtMedia::MetaData, QVariant> streamProperties;
+        QMap<QtMultimedia::MetaData, QVariant> streamProperties;
 
         int streamIndex = i - m_playbin2StreamOffset[streamType];
 
@@ -680,7 +680,7 @@ void QGstreamerPlayerSession::getStreamsInfo()
         if (tags && gst_is_tag_list(tags)) {
             gchar *languageCode = 0;
             if (gst_tag_list_get_string(tags, GST_TAG_LANGUAGE_CODE, &languageCode))
-                streamProperties[QtMedia::Language] = QString::fromUtf8(languageCode);
+                streamProperties[QtMultimedia::Language] = QString::fromUtf8(languageCode);
 
             //qDebug() << "language for setream" << i << QString::fromUtf8(languageCode);
             g_free (languageCode);
@@ -733,8 +733,8 @@ void QGstreamerPlayerSession::getStreamsInfo()
             break;
         }
 
-        QMap<QtMedia::MetaData, QVariant> streamProperties;
-        streamProperties[QtMedia::Language] = QString::fromUtf8(languageCode);
+        QMap<QtMultimedia::MetaData, QVariant> streamProperties;
+        streamProperties[QtMultimedia::Language] = QString::fromUtf8(languageCode);
 
         m_streamProperties.append(streamProperties);
         m_streamTypes.append(streamType);
