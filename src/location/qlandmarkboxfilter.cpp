@@ -40,37 +40,10 @@
 ****************************************************************************/
 
 #include "qlandmarkboxfilter.h"
-#include "qlandmarkfilter_p.h"
+#include "qlandmarkboxfilter_p.h"
 #include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkBoxFilterPrivate : public QLandmarkFilterPrivate
-{
-public:
-    QLandmarkBoxFilterPrivate();
-    QLandmarkBoxFilterPrivate(const QLandmarkBoxFilterPrivate &other);
-    ~QLandmarkBoxFilterPrivate();
-
-    QGeoCoordinate topLeftCoord;
-    QGeoCoordinate bottomRightCoord;
-};
-
-QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate()
-        : QLandmarkFilterPrivate()
-{
-}
-
-QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QLandmarkBoxFilterPrivate &other)
-        : QLandmarkFilterPrivate(other),
-        topLeftCoord(other.topLeftCoord),
-        bottomRightCoord(other.bottomRightCoord)
-{
-}
-
-QLandmarkBoxFilterPrivate::~QLandmarkBoxFilterPrivate()
-{
-}
 
 /*!
     \class QLandmarkBoxFilter
@@ -84,11 +57,8 @@ QLandmarkBoxFilterPrivate::~QLandmarkBoxFilterPrivate()
 */
 QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &topLeft,
                                        const QGeoCoordinate &bottomRight)
-        : QLandmarkFilter(*new QLandmarkBoxFilterPrivate)
+        : QLandmarkFilter(new QLandmarkBoxFilterPrivate(topLeft, bottomRight))
 {
-    Q_UNUSED(topLeft);
-    Q_UNUSED(bottomRight);
-    //TODO: implement
 }
 
 /*!
@@ -96,7 +66,7 @@ QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &topLeft,
 */
 QLandmarkBoxFilter::~QLandmarkBoxFilter()
 {
-    //TODO: implement
+    // pointer deleted in superclass destructor
 }
 
 /*!
@@ -105,7 +75,8 @@ QLandmarkBoxFilter::~QLandmarkBoxFilter()
 */
 QGeoCoordinate QLandmarkBoxFilter::topLeftCoordinate() const
 {
-    return QGeoCoordinate();
+    Q_D(const QLandmarkBoxFilter);
+    return d->topLeftCoord;
 }
 
 /*!
@@ -114,6 +85,8 @@ QGeoCoordinate QLandmarkBoxFilter::topLeftCoordinate() const
 */
 void QLandmarkBoxFilter::setTopLeftCoordinate(const QGeoCoordinate &topLeft)
 {
+    Q_D(QLandmarkBoxFilter);
+    d->topLeftCoord = topLeft;
 }
 
 /*!
@@ -122,7 +95,8 @@ void QLandmarkBoxFilter::setTopLeftCoordinate(const QGeoCoordinate &topLeft)
 */
 QGeoCoordinate QLandmarkBoxFilter::bottomRightCoordinate() const
 {
-    return QGeoCoordinate();
+    Q_D(const QLandmarkBoxFilter);
+    return d->bottomRightCoord;
 }
 
 /*!
@@ -131,6 +105,26 @@ QGeoCoordinate QLandmarkBoxFilter::bottomRightCoordinate() const
 */
 void QLandmarkBoxFilter::setBottomRightCoordinate(const QGeoCoordinate &bottomRight)
 {
+    Q_D(QLandmarkBoxFilter);
+    d->bottomRightCoord = bottomRight;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QGeoCoordinate &topLeft,
+                                                     const QGeoCoordinate &bottomRight)
+        : topLeftCoord(topLeft),
+        bottomRightCoord(bottomRight)
+{
+    type = QLandmarkFilter::BoxFilter;
+}
+
+QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QLandmarkBoxFilterPrivate &other)
+        : QLandmarkFilterPrivate(other),
+        topLeftCoord(other.topLeftCoord),
+        bottomRightCoord(other.bottomRightCoord) {}
+
+QLandmarkBoxFilterPrivate::~QLandmarkBoxFilterPrivate() {}
 
 QTM_END_NAMESPACE

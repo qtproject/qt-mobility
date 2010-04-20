@@ -109,14 +109,45 @@ QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QStrin
     }
 
     if (managerName == "com.nokia.qt.landmarks.engines.sqlite") {
-        d->engine = QLandmarkManagerEngineFactorySqlite::engine(parameters,
-                                                                &(d->errorCode),
-                                                                &(d->errorString));
+        QLandmarkManagerEngineFactorySqlite factory;
+        d->engine = factory.engine(parameters,
+                                   &(d->errorCode),
+                                   &(d->errorString));
     } else {
         // set some kind of error? or use the else instead of the contains check?
         // should there be a static list of factories for this and for availableManagers()?
     }
 
+    if (d->engine) {
+        connect(d->engine,
+                SIGNAL(dataChanged()),
+                this,
+                SIGNAL(dataChanged()));
+        connect(d->engine,
+                SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        connect(d->engine,
+                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+        connect(d->engine,
+                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+    }
 }
 
 /*!
@@ -141,13 +172,48 @@ QLandmarkManager::QLandmarkManager(const QString& managerName, int implementatio
     }
 
     if (managerName == "com.nokia.qt.landmarks.engines.sqlite") {
-        d->engine = QLandmarkManagerEngineFactorySqlite::engine(parameters,
-                                                                &(d->errorCode),
-                                                                &(d->errorString));
+        QLandmarkManagerEngineFactorySqlite factory;
+        d->engine = factory.engine(parameters,
+                                   &(d->errorCode),
+                                   &(d->errorString));
         // TODO check version versus supported versions - seems kind of pointless unless the above takes a version argument
     } else {
         // set some kind of error? or use the else instead of the contains check?
         // should there be a static list of factories for this and for availableManagers()?
+        d->errorCode = NotSupportedError;
+        d->errorString = QString("The landmark engine %1 is not supported.").arg(managerName);
+        d->engine = 0;
+    }
+
+    if (d->engine) {
+        connect(d->engine,
+                SIGNAL(dataChanged()),
+                this,
+                SIGNAL(dataChanged()));
+        connect(d->engine,
+                SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        connect(d->engine,
+                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+        connect(d->engine,
+                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
     }
 }
 
@@ -409,7 +475,7 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter *filter, const QList<QLandmarkSortOrder> &sortOrders) const
 {
     Q_D(const QLandmarkManager);
 
@@ -454,7 +520,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     Returns a list of landmark identifiers of landmarks that match the given \a filter, sorted
     according to the given \a sortOrders.
 */
-QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter *filter,
         const QList<QLandmarkSortOrder> &sortOrders) const
 {
     Q_D(const QLandmarkManager);

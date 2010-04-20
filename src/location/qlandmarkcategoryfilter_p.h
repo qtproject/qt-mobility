@@ -39,51 +39,36 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkmanagerenginefactory_sqlite_p.h"
-#include "qlandmarkmanagerengine_sqlite_p.h"
+#ifndef QLANDMARKCATEGORYFILTER_P_H
+#define QLANDMARKCATEGORYFILTER_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qlandmarkfilter_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QLandmarkManagerEngineFactorySqlite::QLandmarkManagerEngineFactorySqlite() {}
+class QLandmarkCategoryId;
 
-QLandmarkManagerEngineFactorySqlite::~QLandmarkManagerEngineFactorySqlite() {}
-
-QList<int> QLandmarkManagerEngineFactorySqlite::supportedImplementationVersions() const
+class QLandmarkCategoryFilterPrivate : public QLandmarkFilterPrivate
 {
-    QList<int> versions;
-    versions << 1;
-    return versions;
-}
+public:
+    QLandmarkCategoryFilterPrivate(const QLandmarkCategoryId &id);
+    QLandmarkCategoryFilterPrivate(const QLandmarkCategoryFilterPrivate &other);
+    virtual ~QLandmarkCategoryFilterPrivate();
 
-QLandmarkManagerEngine* QLandmarkManagerEngineFactorySqlite::engine(const QMap<QString, QString> &parameters,
-                                       QLandmarkManager::Error *error,
-                                       QString *errorString)
-{
-    QString filename;
-
-    QList<QString> keys = parameters.keys();
-    for (int i = 0; i < keys.size(); ++i) {
-        QString key = keys.at(i);
-        if (key == "filename") {
-            filename = parameters.value(keys.at(i));
-        } else {
-            *error = QLandmarkManager::NotSupportedError;
-            *errorString = QString("The landmark engine %1 does not support the parameter %2").arg(managerName()).arg(key);
-            return NULL;
-        }
-    }
-
-    if (filename.isEmpty()) {
-        return new QLandmarkManagerEngineSqlite();
-    } else {
-        return new QLandmarkManagerEngineSqlite(filename);
-    }
-}
-
-QString QLandmarkManagerEngineFactorySqlite::managerName() const
-{
-    return "com.nokia.qt.landmarks.engines.sqlite";
-}
+    QLandmarkCategoryId id;
+};
 
 QTM_END_NAMESPACE
 
+#endif

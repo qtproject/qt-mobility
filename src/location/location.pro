@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core gui network
+QT = core gui network sql
 
 include(../../common.pri)
 
@@ -95,14 +95,21 @@ PRIVATE_HEADERS += \
                     qgeoroutingservice_nokia_p.h \
                     qlandmark_p.h \
                     qlandmark_p.h \
+                    qlandmarkboxfilter_p.h \
                     qlandmarkcategory_p.h \
                     qlandmarkcategoryid_p.h \
+                    qlandmarkcategoryfilter_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkid_p.h \
+                    qlandmarkintersectionfilter_p.h \
                     qlandmarkmanager_p.h \
-                    qlandmarkmanager_sqlite_p.h \
                     qlandmarkmanagerengine_sqlite_p.h \
+                    qlandmarkmanagerenginefactory_sqlite_p.h \
+                    qlandmarknamefilter_p.h \
+                    qlandmarknearestfilter_p.h \
+                    qlandmarkproximityfilter_p.h \
+                    qlandmarkunionfilter_p.h \
                     qlocationutils_p.h \
                     qmaneuver_p.h \
                     qmapellipse_p.h \
@@ -266,6 +273,8 @@ SOURCES += \
             qmapview_p.cpp \
             qnmeapositioninfosource.cpp \
             qreversegeocodingrequest.cpp
+
+RESOURCES += qlandmarkmanagerengine_sqlite.qrc
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

@@ -1,11 +1,11 @@
 
 PRAGMA foreign_keys = ON;
 
-CREATE TABLE landmark(
+CREATE TABLE IF NOT EXISTS landmark (
     id INTEGER PRIMARY KEY,
     name TEXT,
     description TEXT,
-    iconUrl TEXT,
+    icon_url TEXT,
     latitude REAL,
     longitude REAL,
     altitude REAL,
@@ -23,44 +23,46 @@ CREATE TABLE landmark(
     thoroughfare_name TEXT,
     thoroughfare_number TEXT,
     postcode TEXT,
-    post_office_box TEXT
+    post_office_box TEXT,
+    phone TEXT,
+    url TEXT
 );
 
-CREATE TABLE landmark_attribute(
+CREATE TABLE IF NOT EXISTS landmark_attribute (
     landmark_id INTEGER,
     key TEXT,
     value TEXT,
-    PRIMARY_KEY(landmark_id, key),
-    FOREIGN KEY(landmark_id) REFERENCES landmark(id)
+    PRIMARY KEY (landmark_id,key),
+    FOREIGN KEY (landmark_id) REFERENCES landmark(id)
 );
 
-CREATE INDEX landmark_attribute_fk_index ON landmark_attribute(landmark_id);
+CREATE INDEX IF NOT EXISTS landmark_attribute_fk_index ON landmark_attribute(landmark_id);
 
-CREATE TABLE category(
+CREATE TABLE IF NOT EXISTS category (
     id INTEGER PRIMARY KEY,
     name TEXT,
     description TEXT,
-    iconUrl TEXT
+    icon_url TEXT
 );
 
-CREATE TABLE category_attribute(
-    cat_id INTEGER,
+CREATE TABLE IF NOT EXISTS category_attribute (
+    category_id INTEGER,
     key TEXT,
     value TEXT,
-    PRIMARY_KEY(category_id, key),
-    FOREIGN KEY(category_id) REFERENCES category(id)
+    PRIMARY KEY (category_id,key),
+    FOREIGN KEY (category_id) REFERENCES category(id)
 );
 
-CREATE INDEX category_attribute_fk_index ON category_attribute(category_id);
+CREATE INDEX IF NOT EXISTS category_attribute_fk_index ON category_attribute(category_id);
 
-CREATE TABLE landmark_category(
+CREATE TABLE IF NOT EXISTS landmark_category (
     landmark_id INTEGER,
     category_id INTEGER,
-    PRIMARY KEY(landmark_id, category_id),
-    FOREIGN KEY(landmark_id) REFERENCES landmark(id),
-    FOREIGN KEY(category_id) REFERENCES category(id)
+    PRIMARY KEY (landmark_id,category_id),
+    FOREIGN KEY (landmark_id) REFERENCES landmark(id),
+    FOREIGN KEY (category_id) REFERENCES category(id)
 );
 
-CREATE INDEX landmark_category_fk_lm_index ON landmark_category(landmark_id);
-CREATE INDEX landmark_category_fk_cat_index ON landmark_category(category_id);
+CREATE INDEX IF NOT EXISTS landmark_category_fk_lm_index ON landmark_category(landmark_id);
+CREATE INDEX IF NOT EXISTS landmark_category_fk_cat_index ON landmark_category(category_id);
 

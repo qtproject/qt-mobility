@@ -68,13 +68,45 @@ QTM_BEGIN_NAMESPACE
     \value CustomSort Is a custom sort order.
 */
 
+class QLandmarkSortOrderPrivate
+{
+public:
+        QLandmarkSortOrderPrivate();
+        QLandmarkSortOrderPrivate(const QLandmarkSortOrderPrivate &other);
+        ~QLandmarkSortOrderPrivate();
+
+        QLandmarkSortOrder::SortType type;
+        Qt::SortOrder order;
+};
+
+
+QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate()
+    : type(QLandmarkSortOrder::InvalidSort),
+    order (Qt::AscendingOrder) {}
+
+QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate(const QLandmarkSortOrderPrivate &other)
+    : type(other.type),
+    order(other.order){}
+
+QLandmarkSortOrderPrivate::~QLandmarkSortOrderPrivate() {}
+
 /*!
     Constructs a landmark sort order.
 
     The type of the sort order is InvalidSort.
 */
 QLandmarkSortOrder::QLandmarkSortOrder()
+    : d_ptr(new QLandmarkSortOrderPrivate())
+{}
+
+QLandmarkSortOrder::QLandmarkSortOrder(QLandmarkSortOrderPrivate *d_ptr)
+    : d_ptr(d_ptr)
+{}
+
+QLandmarkSortOrder::~QLandmarkSortOrder()
 {
+    Q_D(QLandmarkSortOrder);
+    delete d;
 }
 
 /*!
@@ -82,7 +114,8 @@ QLandmarkSortOrder::QLandmarkSortOrder()
 */
 QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 {
-    return QLandmarkSortOrder::InvalidSort;
+    Q_D(const QLandmarkSortOrder);
+    return d->type;
 }
 
 /*!
@@ -90,7 +123,8 @@ QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 */
 Qt::SortOrder QLandmarkSortOrder::direction() const
 {
-    return Qt::AscendingOrder;
+    Q_D(const QLandmarkSortOrder);
+    return d->order;
 }
 
 /*!
@@ -98,6 +132,8 @@ Qt::SortOrder QLandmarkSortOrder::direction() const
 */
 void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
 {
+    Q_D(QLandmarkSortOrder);
+    d->order = direction;
 }
 
 QTM_END_NAMESPACE

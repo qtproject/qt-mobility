@@ -52,15 +52,13 @@
 QTM_BEGIN_NAMESPACE
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate()
-        : QSharedData(),
-        type(QLandmarkFilter::DefaultFilter),
+        : type(QLandmarkFilter::DefaultFilter),
         maxMatches(-1)
 {
 }
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate(const QLandmarkFilterPrivate &other)
-        : QSharedData(other),
-        type(other.type),
+        : type(other.type),
         maxMatches(other.maxMatches)
 {
 }
@@ -109,33 +107,42 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     Constructs an default landmark filter.
 */
 QLandmarkFilter::QLandmarkFilter()
+    : d_ptr(new QLandmarkFilterPrivate())
 {
-    //TODO: implement
+}
+/*!
+  Internal
+*/
+QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *d_ptr)
+    : d_ptr(d_ptr)
+{
 }
 
 /*!
     Constructs a copy of \a other.
 */
 QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
-        : d(other.d)
+        : d_ptr(new QLandmarkFilterPrivate(*(other.d_ptr)))
 {
 }
 
 /*!
-    \internal
+    Assigns \a other to this filter and returns a reference to this filter.
 */
-QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate &dd)
-        : d(&dd)
+QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter & other)
 {
-    //TODO: implement
+    *d_ptr = *(other.d_ptr);
+    return *this;
 }
+
 
 /*!
     Destroys the filter.
 */
 QLandmarkFilter::~QLandmarkFilter()
 {
-    //TODO: implement
+    Q_D(QLandmarkFilter);
+    delete d;
 }
 
 /*!
@@ -143,7 +150,8 @@ QLandmarkFilter::~QLandmarkFilter()
 */
 QLandmarkFilter::FilterType QLandmarkFilter::type() const
 {
-    return QLandmarkFilter::InvalidFilter;
+    Q_D(const QLandmarkFilter);
+    return d->type;
 }
 
 /*!
@@ -151,7 +159,8 @@ QLandmarkFilter::FilterType QLandmarkFilter::type() const
 */
 int QLandmarkFilter::maximumMatches() const
 {
-    return 0;
+    Q_D(const QLandmarkFilter);
+    return d->maxMatches;
 }
 
 /*!
@@ -160,7 +169,8 @@ int QLandmarkFilter::maximumMatches() const
 */
 void QLandmarkFilter::setMaximumMatches(int maxMatches)
 {
-    //TODO: implement
+    Q_D(QLandmarkFilter);
+    d->maxMatches = maxMatches;
 }
 
 
@@ -169,55 +179,54 @@ void QLandmarkFilter::setMaximumMatches(int maxMatches)
 
     \sa operator==()
 */
-bool QLandmarkFilter::operator!=(const QLandmarkFilter &other) const
+/*bool QLandmarkFilter::operator!=(const QLandmarkFilter &other) const
 {
-    return true;
-}
+    if (d_ptr->type != other.d_ptr->type)
+        return true;
+    return (*d_ptr != *(other.d_ptr));
+}*/
 
 /*!
     Returns true if the filter has the same type and criteria as \a other.
     \sa operator!=()
 */
-bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
+/*bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
 {
-    return false;
-}
-
-/*!
-    Assigns \a other to this filter and returns a reference to this filter.
-*/
-QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter & other)
-{
-    return *this;
-}
+    if (d_ptr->type != other.d_ptr->type)
+        return false;
+    return (*d_ptr == *(other.d_ptr));
+}*/
 
 /*!
  \relates QLandmarkFilter
  Returns a filter which is the intersection of the \a left and \a right filters
  \sa QLandmarkIntersectionFilter
  */
-const QLandmarkFilter operator&(const QLandmarkFilter& left, const QLandmarkFilter& right)
-{
-    /* TODO implement better handling when left or right is an intersection filter */
+//const QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right)
+//{
+//    /* TODO implement better handling when left or right is an intersection filter */
 
-    /* usual fallback case */
-    QLandmarkIntersectionFilter nif;
-    nif << left << right;
-    return nif;
-}
+//    /* usual fallback case */
+
+//    QLandmarkIntersectionFilter nif;
+//    nif << left << right;
+//    return nif;
+//}
 
 /*!
  \relates QLandmarkFilter
  Returns a filter which is the union of the \a left and \a right filters
  \sa QLandmarkUnionFilter
  */
-const QLandmarkFilter operator|(const QLandmarkFilter& left, const QLandmarkFilter& right)
-{
-    /* TODO implement better handling when left or right is a union filter */
-    /* usual fallback case */
-    QLandmarkUnionFilter nif;
-    nif << left << right;
-    return nif;
-}
+//const QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right)
+//{
+//    /* TODO implement better handling when left or right is a union filter */
+//    /* usual fallback case */
+
+//    return 0;
+//    QLandmarkUnionFilter nuf;
+//    nuf << left << right;
+//    return nuf;
+//}
 
 QTM_END_NAMESPACE

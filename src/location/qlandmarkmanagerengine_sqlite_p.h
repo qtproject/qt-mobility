@@ -44,7 +44,18 @@
 
 #include "qlandmarkmanagerengine.h"
 
+#include <QSqlDatabase>
+
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkNameFilter;
+class QLandmarkProximityFilter;
+class QLandmarkNearestFilter;
+class QLandmarkCategoryFilter;
+class QLandmarkBoxFilter;
+class QLandmarkIntersectionFilter;
+class QLandmarkUnionFilter;
+class QLandmarkCustomFilter;
 
 class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
@@ -58,11 +69,8 @@ public:
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    // TODO do in base class using other methods?
-    //QString managerUri() const;
-
     /* Filtering */
-    QList<QLandmarkId> landmarkIds(const QLandmarkFilter& filter,
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter* filter,
                                    const QList<QLandmarkSortOrder>& sortOrders,
                                    QLandmarkManager::Error *error,
                                    QString *errorString) const;
@@ -73,7 +81,7 @@ public:
     QLandmark landmark(const QLandmarkId &landmarkId,
                        QLandmarkManager::Error *error,
                        QString *errorString) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter &filter,
+    QList<QLandmark> landmarks(const QLandmarkFilter *filter,
                                const QList<QLandmarkSortOrder>& sortOrders,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
@@ -130,7 +138,53 @@ public:
     bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs);
 
 private:
+    QList<QLandmarkId> landmarkIdsDefault(const QLandmarkFilter* filter,
+                                          QLandmarkManager::Error *error,
+                                          QString *errorString) const;
+
+    QList<QLandmarkId> landmarkIdsName(const QLandmarkNameFilter* filter,
+                                       QLandmarkManager::Error *error,
+                                       QString *errorString) const;
+
+    QList<QLandmarkId> landmarkIdsProximity(const QLandmarkProximityFilter* filter,
+                                            QLandmarkManager::Error *error,
+                                            QString *errorString) const;
+
+    QList<QLandmarkId> landmarkIdsNearest(const QLandmarkNearestFilter* filter,
+                                          QLandmarkManager::Error *error,
+                                          QString *errorString) const;
+
+    QList<QLandmarkId> landmarkIdsCategory(const QLandmarkCategoryFilter* filter,
+                                           QLandmarkManager::Error *error,
+                                           QString *errorString) const;
+
+    QList<QLandmarkId> landmarkIdsBox(const QLandmarkBoxFilter* filter,
+                                      QLandmarkManager::Error *error,
+                                      QString *errorString) const;
+
+    QList<QLandmarkId> landmarkIdsIntersection(const QLandmarkIntersectionFilter* filter,
+                                               QLandmarkManager::Error *error,
+                                               QString *errorString) const;
+
+    QList<QLandmarkId> landmarkIdsUnion(const QLandmarkUnionFilter* filter,
+                                        QLandmarkManager::Error *error,
+                                        QString *errorString) const;
+
+    QList<QLandmarkId> landmarkIdsCustom(const QLandmarkCustomFilter* filter,
+                                         QLandmarkManager::Error *error,
+                                         QString *errorString) const;
+
+    bool saveLandmarkInternal(QLandmark* landmark,
+                              QLandmarkManager::Error *error,
+                              QString *errorString,
+                              bool *added,
+                              bool *changed);
+    bool removeLandmarkInternal(const QLandmarkId &landmarkId,
+                                QLandmarkManager::Error *error,
+                                QString *errorString,
+                                bool *removed);
     QString m_dbFilename;
+    mutable QSqlDatabase m_db;
 };
 
 QTM_END_NAMESPACE

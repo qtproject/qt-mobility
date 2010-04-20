@@ -50,6 +50,17 @@ QTM_BEGIN_NAMESPACE
     \ingroup location
 */
 
+/*
+class QLandmarkNameSortPrivate : public QLandmarkSortPrivate
+{
+public:
+    QLandmarkNameSortPrivate(Qt::CaseSensitivity sensitivity);
+    QLandmarkNameSortPrivate(const QLandmarkNameSortPrivate &other);
+    virtual ~QLandmarkNameSortPrivate();
+
+    Qt::CaseSensitivity sensitivity;
+};
+*/
 /*!
     Creates a sort order that sorts by name in the given \a direction.
 */

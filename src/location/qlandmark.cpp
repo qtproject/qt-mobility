@@ -60,6 +60,7 @@ QTM_USE_NAMESPACE
 QLandmarkPrivate::QLandmarkPrivate()
         : QSharedData()
 {
+    radius = -1.0;
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
@@ -105,8 +106,8 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (phone == other.phone)
             && (url == other.url)
             && (categories == other.categories)
-            && (attributes == other.attributes))
-           && (id == other.id);
+            && (attributes == other.attributes)
+           && (id == other.id));
 }
 
 /*!
@@ -181,7 +182,7 @@ QLandmark &QLandmark::operator= (const QLandmark & other)
 */
 bool QLandmark::operator== (const QLandmark &other) const
 {
-    return d == other.d;
+    return (*d == *(other.d));
 }
 
 /*!

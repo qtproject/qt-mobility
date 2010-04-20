@@ -9,7 +9,7 @@ INCLUDEPATH += ../../../src/location
 # Input 
 SOURCES += tst_qlandmarkmanagerengine_sqlite.cpp
 
-QT += sql
+QT += sql testlib
 
 CONFIG += mobility
 MOBILITY = location

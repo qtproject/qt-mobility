@@ -58,6 +58,7 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivat
     iconUrl = other.iconUrl;
     description = other.description;
     readOnly = false;
+    id = other.id;
 }
 
 QLandmarkCategoryPrivate::~QLandmarkCategoryPrivate() {}
@@ -67,6 +68,7 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
     name = other.name;
     iconUrl = other.iconUrl;
     description = other.description;
+    id = other.id;
 
     return *this;
 }
@@ -75,7 +77,8 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
 {
     return ((name == other.name)
             && (iconUrl == other.iconUrl)
-            && (description == other.description));
+            && (description == other.description)
+            && (id == other.id));
 }
 
 /*!

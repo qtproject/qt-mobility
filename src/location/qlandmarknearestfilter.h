@@ -61,7 +61,7 @@ public:
     void setCoordinate(const QGeoCoordinate &coordinate);
 
 private:
-    QLandmarkNearestFilter *d;
+    Q_DECLARE_PRIVATE(QLandmarkNearestFilter);
 };
 
 QTM_END_NAMESPACE

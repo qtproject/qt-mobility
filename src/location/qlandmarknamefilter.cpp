@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarknamefilter.h"
+#include "qlandmarknamefilter_p.h"
 #include <QString>
 
 QTM_BEGIN_NAMESPACE
@@ -53,8 +54,8 @@ QTM_BEGIN_NAMESPACE
     Creates a filter that selects landmarks by \a name.
 */
 QLandmarkNameFilter::QLandmarkNameFilter(const QString &name)
+    : QLandmarkFilter(new QLandmarkNameFilterPrivate(name))
 {
-    //TODO: implement
 }
 
 /*!
@@ -62,7 +63,7 @@ QLandmarkNameFilter::QLandmarkNameFilter(const QString &name)
 */
 QLandmarkNameFilter::~QLandmarkNameFilter()
 {
-    //TODO: implement
+    // pointer deleted in superclass descructor
 }
 
 /*!
@@ -70,7 +71,8 @@ QLandmarkNameFilter::~QLandmarkNameFilter()
 */
 QString QLandmarkNameFilter::name() const
 {
-    return QString();
+    Q_D(const QLandmarkNameFilter);
+    return d->name;
 }
 
 /*!
@@ -78,6 +80,8 @@ QString QLandmarkNameFilter::name() const
 */
 void QLandmarkNameFilter::setName(const QString &name)
 {
+    Q_D(QLandmarkNameFilter);
+    d->name = name;
 }
 
 /*!
@@ -85,7 +89,8 @@ void QLandmarkNameFilter::setName(const QString &name)
 */
 Qt::CaseSensitivity QLandmarkNameFilter::caseSensitivity() const
 {
-    return Qt::CaseInsensitive;
+    Q_D(const QLandmarkNameFilter);
+    return d->sensitivity;
 }
 
 /*!
@@ -93,6 +98,25 @@ Qt::CaseSensitivity QLandmarkNameFilter::caseSensitivity() const
 */
 void QLandmarkNameFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
 {
+    Q_D(QLandmarkNameFilter);
+    d->sensitivity = caseSensitivity;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QString &name)
+    : name(name),
+    sensitivity(Qt::CaseSensitive)
+{
+    type = QLandmarkFilter::NameFilter;
+}
+
+QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QLandmarkNameFilterPrivate &other)
+    : QLandmarkFilterPrivate(other),
+    name(other.name),
+    sensitivity(other.sensitivity) {}
+
+QLandmarkNameFilterPrivate::~QLandmarkNameFilterPrivate() {}
 
 QTM_END_NAMESPACE

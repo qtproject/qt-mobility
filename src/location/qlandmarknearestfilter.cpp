@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarknearestfilter.h"
+#include "qlandmarknearestfilter_p.h"
 #include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
@@ -56,8 +57,8 @@ QTM_BEGIN_NAMESPACE
     \a coordinate.
 */
 QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate)
+    : QLandmarkFilter(new QLandmarkNearestFilterPrivate(coordinate))
 {
-    //TODO: implement
 }
 
 /*!
@@ -65,7 +66,7 @@ QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate)
 */
 QLandmarkNearestFilter::~QLandmarkNearestFilter()
 {
-    //TODO: implement
+    // pointer deleted in superclass destructor
 }
 
 /*!
@@ -73,7 +74,8 @@ QLandmarkNearestFilter::~QLandmarkNearestFilter()
 */
 QGeoCoordinate QLandmarkNearestFilter::coordinate() const
 {
-    return QGeoCoordinate();
+    Q_D(const QLandmarkNearestFilter);
+    return d->coordinate;
 }
 
 /*!
@@ -81,6 +83,23 @@ QGeoCoordinate QLandmarkNearestFilter::coordinate() const
 */
 void QLandmarkNearestFilter::setCoordinate(const QGeoCoordinate &coordinate)
 {
+    Q_D(QLandmarkNearestFilter);
+    d->coordinate = coordinate;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkNearestFilterPrivate::QLandmarkNearestFilterPrivate(const QGeoCoordinate &coordinate)
+        : coordinate(coordinate)
+{
+    type = QLandmarkFilter::NearestFilter;
+}
+
+QLandmarkNearestFilterPrivate::QLandmarkNearestFilterPrivate(const QLandmarkNearestFilterPrivate &other)
+        : QLandmarkFilterPrivate(other),
+        coordinate(other.coordinate) {}
+
+QLandmarkNearestFilterPrivate::~QLandmarkNearestFilterPrivate() {}
 
 QTM_END_NAMESPACE

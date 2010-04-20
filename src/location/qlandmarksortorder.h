@@ -59,14 +59,18 @@ class Q_LOCATION_EXPORT QLandmarkSortOrder
 
 public:
     QLandmarkSortOrder();
+    virtual ~QLandmarkSortOrder();
     enum SortType {InvalidSort, NameSort, DistanceSort, CustomSort = 500};
 
     SortType type() const;
     Qt::SortOrder direction() const;
     void setDirection(Qt::SortOrder direction);
 
+protected:
+    QLandmarkSortOrder(QLandmarkSortOrderPrivate *d_ptr);
+    QLandmarkSortOrderPrivate *d_ptr;
 private:
-    QLandmarkSortOrderPrivate *d;
+    Q_DECLARE_PRIVATE(QLandmarkSortOrder);
 };
 
 QTM_END_NAMESPACE

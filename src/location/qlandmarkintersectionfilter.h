@@ -54,17 +54,17 @@ public:
     QLandmarkIntersectionFilter();
     virtual ~QLandmarkIntersectionFilter();
 
-    void setFilters(const QList<QLandmarkFilter>& filters);
+    void setFilters(const QList<const QLandmarkFilter*>& filters);
 
-    void prepend(const QLandmarkFilter& filter);
-    void append(const QLandmarkFilter& filter);
-    void remove(const QLandmarkFilter& filter);
+    void prepend(const QLandmarkFilter *filter);
+    void append(const QLandmarkFilter *filter);
+    void remove(const QLandmarkFilter *filter);
 
-    QLandmarkIntersectionFilter& operator<<(const QLandmarkFilter& filter);
-    QList<QLandmarkFilter> filters() const;
+    QLandmarkIntersectionFilter& operator<<(const QLandmarkFilter *filter);
+    QList<const QLandmarkFilter*> filters() const;
 
 private:
-
+    Q_DECLARE_PRIVATE(QLandmarkIntersectionFilter);
 };
 
 QTM_END_NAMESPACE

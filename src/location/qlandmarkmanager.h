@@ -103,9 +103,9 @@ public:
     QList<QLandmarkCategoryId> categoryIds() const;
 
     QLandmark landmark(const QLandmarkId &landmarkId) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QList<QLandmarkSortOrder>& sortOrders) const;
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
-    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter *filter,
                                    const QList<QLandmarkSortOrder> &sortOrders) const;
 
     bool importLandmarks(QIODevice *device, Format format);
