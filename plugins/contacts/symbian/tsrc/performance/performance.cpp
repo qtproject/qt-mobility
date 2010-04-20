@@ -214,6 +214,17 @@ void SymbianPluginPerfomance::sortContacts()
             sortOrders);
 }
 
+void SymbianPluginPerfomance::fetchAllNames()
+{
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactType::DefinitionName);
+    filter.setValue(QContactType::TypeContact);
+    
+    measureNamesFetch(
+            "Fetching the names of all contacts with",
+            filter);
+}
+
 void SymbianPluginPerfomance::filterContacts()
 {
     QContactIntersectionFilter intersectionFilter;
@@ -398,6 +409,35 @@ int SymbianPluginPerfomance::measureContactsFetch(
             << mCntMng->contactIds().count() << "contacts, gave" << cnt_ids.count() << "contacts."
             << "Time taken:" << elapsed / 1000 << "s" << elapsed % 1000 << "ms";
     return cnt_ids.count();
+}
+
+int SymbianPluginPerfomance::measureNamesFetch(
+        QString debugMessage,
+        const QContactFilter &filter,
+        const QList<QContactSortOrder>& sortOrders)
+{
+    QList<QContact> contacts;
+    TInt before, after;
+    
+    QStringList definitionRestrictions;
+    definitionRestrictions.append(QContactDisplayLabel::DefinitionName);
+    QContactFetchHint fh;
+    fh.setDetailDefinitionsHint(definitionRestrictions);
+
+    User::AllocSize(before);
+    mTime.restart();
+
+    contacts = mCntMng->contacts(filter, sortOrders, fh);
+
+    int elapsed = mTime.elapsed();
+    User::AllocSize(after);
+
+    qDebug() << debugMessage
+             << mCntMng->contactIds().count() << "contacts, gave" << contacts.count() << "contact names."
+             << "Time taken:" << elapsed / 1000 << "s" << elapsed % 1000 << "ms"
+             << "Memory used:" << (after - before) / 1024 << "KB";
+
+    return contacts.count();
 }
 
 void SymbianPluginPerfomance::createComplexContactsWithOnlineAccount()
