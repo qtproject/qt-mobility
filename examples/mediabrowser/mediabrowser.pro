@@ -15,6 +15,8 @@ HEADERS = \
     browser.h \
     gallerymodel.h \
     galleryview.h \
+    photodelegate.h \
+    photoview.h \
     songview.h
 
 SOURCES = \
@@ -26,4 +28,6 @@ SOURCES = \
     gallerymodel.cpp \
     galleryview.cpp \
     main.cpp \
+    photodelegate.cpp \
+    photoview.cpp \
     songview.cpp

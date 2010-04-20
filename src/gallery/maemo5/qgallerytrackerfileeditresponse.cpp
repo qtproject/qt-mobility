@@ -184,7 +184,7 @@ QList<QGalleryResource> QGalleryTrackerFileEditResponse::resources(int) const
     return QList<QGalleryResource>();
 }
 
-QGalleryItemList::ItemStatus QGalleryTrackerFileEditResponse::status(int index) const
+QGalleryItemList::ItemStatus QGalleryTrackerFileEditResponse::status(int) const
 {
     return ItemStatus();
 }

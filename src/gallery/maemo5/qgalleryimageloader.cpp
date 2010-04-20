@@ -39,48 +39,74 @@
 **
 ****************************************************************************/
 
-#ifndef BROWSER_H
-#define BROWSER_H
+#include "qgalleryimageloader_p.h"
 
-#include <QtGui/QWidget>
-
-#include <qgalleryfilter.h>
-
-QT_BEGIN_NAMESPACE
-class QStackedWidget;
-QT_END_NAMESPACE
+#include <QtCore/qfile.h>
+#include <QtCore/qreadwritelock.h>
+#include <QtDBus/qdbuspendingreply.h>
 
 QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-QTM_END_NAMESPACE
 
-class GalleryView;
-
-QTM_USE_NAMESPACE
-
-class Browser : public QWidget
+QGalleryImageData::QGalleryImageData(uint id)
+    : id(id)
 {
-    Q_OBJECT
-public:
-    Browser(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~Browser();
+}
 
-public Q_SLOTS:
-    void showArtists(const QString &containerId = QString());
-    void showAlbumArtists(const QString &containerId = QString());
-    void showAlbums(const QString &containerId = QString());
-    void showSongs(const QString &containerId = QString());
-    void showPhotos(const QString &containerId = QString());
+QGalleryImage::QGalleryImage()
+    : d(0)
+{
+}
 
-private:
-    QDocumentGallery *gallery;
-    QStackedWidget *stack;
-    GalleryView *artistView;
-    GalleryView *albumArtistView;
-    GalleryView *albumView;
-    GalleryView *songView;
-    GalleryView *photoView;
-};
+QGalleryImage::QGalleryImage(QGalleryImageData *data)
+    : d(data)
+{
+}
 
+QGalleryImage::QGalleryImage(const QGalleryImage &image)
+    : d(image.d)
+{
+}
 
-#endif
+QGalleryImage::~QGalleryImage()
+{
+}
+
+QGalleryImage &QGalleryImage::operator =(const QGalleryImage &image)
+{
+    d = image.d;
+
+    return *this;
+}
+
+uint QGalleryImage::id() const
+{
+    return d ? d->id : 0;
+}
+
+QImage QGalleryImage::image() const
+{
+    return d ? d->image : QImage();
+}
+
+QGalleryImageLoader::QGalleryImageLoader(QObject *parent)
+    : QObject(parent)
+    , d_ptr(0)
+{
+}
+
+QGalleryImageLoader::QGalleryImageLoader(
+        QGalleryImageLoaderPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
+{
+    d_ptr->q_ptr = this;
+}
+
+QGalleryImageLoader::~QGalleryImageLoader()
+{
+    delete d_ptr;
+}
+
+#include "moc_qgalleryimageloader_p.cpp"
+
+QTM_END_NAMESPACE

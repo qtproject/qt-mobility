@@ -39,48 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef BROWSER_H
-#define BROWSER_H
+#include "photodelegate.h"
 
-#include <QtGui/QWidget>
+#include "gallerymodel.h"
 
-#include <qgalleryfilter.h>
+#include <QtGui>
 
-QT_BEGIN_NAMESPACE
-class QStackedWidget;
-QT_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-QTM_END_NAMESPACE
-
-class GalleryView;
-
-QTM_USE_NAMESPACE
-
-class Browser : public QWidget
+PhotoDelegate::PhotoDelegate(QObject *parent)
+    : QAbstractItemDelegate(parent)
 {
-    Q_OBJECT
-public:
-    Browser(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~Browser();
 
-public Q_SLOTS:
-    void showArtists(const QString &containerId = QString());
-    void showAlbumArtists(const QString &containerId = QString());
-    void showAlbums(const QString &containerId = QString());
-    void showSongs(const QString &containerId = QString());
-    void showPhotos(const QString &containerId = QString());
+}
 
-private:
-    QDocumentGallery *gallery;
-    QStackedWidget *stack;
-    GalleryView *artistView;
-    GalleryView *albumArtistView;
-    GalleryView *albumView;
-    GalleryView *songView;
-    GalleryView *photoView;
-};
+PhotoDelegate::~PhotoDelegate()
+{
+}
+
+void PhotoDelegate::paint(
+        QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    layout(option);
 
 
-#endif
+    QPixmap thumbnail = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
+    if (!thumbnail.isNull())
+        painter->drawPixmap(thumbnailRect.translated(option.rect.topLeft()), thumbnail);
+}
+
+QSize PhotoDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const
+{
+    layout(option);
+
+    return size;
+}
+
+
+void PhotoDelegate::layout(const QStyleOptionViewItem &option) const
+{
+    PhotoDelegate *delegate = const_cast<PhotoDelegate *>(this);
+
+    int height = option.decorationSize.height();
+
+    int width = qMax(height, option.decorationSize.width());
+
+    delegate->thumbnailRect = QRect(
+            QPoint((width - option.decorationSize.width()) / 2, 0), option.decorationSize);
+
+    delegate->size = QSize(width, height);
+}

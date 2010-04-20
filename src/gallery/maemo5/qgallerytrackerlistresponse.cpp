@@ -54,7 +54,9 @@ QGalleryTrackerListResponse::QGalleryTrackerListResponse(
     , m_insertIndex(0)
     , m_insertCount(0)
     , m_rowOffset(-1)
+    , m_imageColumn(-1)
     , m_cursorOutdated(false)
+    , m_imageLoader(0)
     , m_call(0)
 {
 }
@@ -103,7 +105,12 @@ QGalleryItemList::ItemStatus QGalleryTrackerListResponse::status(int index) cons
 
 QVariant QGalleryTrackerListResponse::metaData(int index, int key) const
 {
-    return m_rows.value(index - m_rowOffset).value(key);
+    if (key == m_imageColumn) {
+        return m_images.value(index - m_rowOffset).image();
+    } else {
+        return m_rows.value(index - m_rowOffset).value(key);
+    }
+    return QVariant();
 }
 
 void QGalleryTrackerListResponse::setMetaData(int index, int key, const QVariant &value)
@@ -179,6 +186,42 @@ void QGalleryTrackerListResponse::setCursorPosition(int position)
     QGalleryAbstractResponse::setCursorPosition(position);
 }
 
+void QGalleryTrackerListResponse::setImageColumn(QGalleryImageLoader *loader, int column)
+{
+    Q_ASSERT(m_imageLoader == 0);
+    Q_ASSERT(loader != 0);
+
+    m_imageLoader = loader;
+    m_imageColumn = column;
+
+    connect(m_imageLoader, SIGNAL(imagesLoaded(QList<uint>)),
+            this, SLOT(imagesLoaded(QList<uint>)));
+}
+
+void QGalleryTrackerListResponse::imagesLoaded(const QList<uint> &ids)
+{
+    // The ids retain the sort order of the rows they were requested for, so a linear scan is
+    // sufficient here.
+
+    QList<uint>::const_iterator id = ids.begin();
+    QList<uint>::const_iterator endId = ids.end();
+
+    for (int i = 0; i < m_images.count() && id != endId; ++i)  {
+        if (m_images.at(i).id() == *id) {
+            int count = 0;
+
+            do {
+                ++count;
+                ++id;
+            } while (i + count < m_images.count() && id != endId && *id == m_images.at(i + count).id());
+
+            emit metaDataChanged(i, count, QList<int>() << m_imageColumn);
+
+            i += count - 1;
+        }
+    }
+}
+
 void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
 {
     if (watcher != m_call) {
@@ -207,6 +250,10 @@ void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
     if (m_insertIndex < m_rowOffset) {
         if (m_insertIndex + rows.count() < m_rowOffset) {
             m_rows = rows;
+
+            if (m_imageLoader)
+                m_images = m_imageLoader->loadImages(rows.constBegin(), rows.constEnd());
+
             m_rowOffset = m_insertIndex;
 
             metaDataChanged(m_insertIndex, rows.count());
@@ -216,9 +263,16 @@ void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
             const int alignedCount = ~PageAlignment & qMax(
                     0, m_insertIndex + m_minimumPagedItems + PageAlignment);
 
-            m_rows = rows + m_rows.mid(
-                    m_insertIndex + rows.count() - m_rowOffset,
-                    alignedCount - m_rowOffset);
+            const int midIndex = m_insertIndex + rows.count() - m_rowOffset;
+            const int midCount = alignedCount - m_rowOffset;
+
+            m_rows = rows + m_rows.mid(midIndex, midCount);
+
+            if (m_imageLoader) {
+                QVector<QGalleryImage> images = m_imageLoader->loadImages(
+                        rows.constBegin(), rows.constEnd());
+                m_images = images + m_images.mid(midIndex, midCount);
+            }
 
             m_rowOffset = m_insertIndex;
 
@@ -228,6 +282,13 @@ void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
                     0, m_insertIndex + m_minimumPagedItems + PageAlignment);
 
             m_rows = rows + m_rows.mid(0, alignedCount - m_rowOffset);
+
+            if (m_imageLoader) {
+                QVector<QGalleryImage> images = m_imageLoader->loadImages(
+                        rows.constBegin(), rows.constEnd());
+                m_images = images + m_images.mid(0, alignedCount - m_rowOffset);
+            }
+
             m_rowOffset = m_insertIndex;
 
             metaDataChanged(m_insertIndex, rows.count());
@@ -235,6 +296,10 @@ void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
     } else {
         if (m_insertIndex > m_rowOffset + m_rows.count()) {
             m_rows = rows;
+
+            if (m_imageLoader)
+                m_images = m_imageLoader->loadImages(rows.constBegin(), rows.constEnd());
+
             m_rowOffset = m_insertIndex;
 
             appendedItemsUpdate(m_insertIndex, rows.count());
@@ -243,9 +308,16 @@ void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
             Q_ASSERT(false);
             const int alignedIndex = ~PageAlignment & qMax(0, m_insertIndex - m_minimumPagedItems);
 
-            m_rows = m_rows.mid(
-                    alignedIndex - m_rowOffset,
-                    m_insertIndex - m_rowOffset - m_rows.count()) + rows;
+            const int midIndex = alignedIndex - m_rowOffset;
+            const int midCount = m_insertIndex - m_rowOffset - m_rows.count();
+
+            m_rows = m_rows.mid(midIndex, midCount) + rows;
+
+            if (m_imageLoader) {
+                QVector<QGalleryImage> images = m_imageLoader->loadImages(
+                        rows.constBegin(), rows.constEnd());
+                m_images = images + m_images.mid(midIndex, midCount);
+            }
 
             m_rowOffset = alignedIndex;
 
@@ -254,6 +326,13 @@ void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
             const int alignedIndex = ~PageAlignment & qMax(0, m_insertIndex - m_minimumPagedItems);
 
             m_rows = m_rows.mid(alignedIndex - m_rowOffset) + rows;
+
+            if (m_imageLoader) {
+                QVector<QGalleryImage> images = m_imageLoader->loadImages(
+                        rows.constBegin(), rows.constEnd());
+                m_images = m_images.mid(alignedIndex - m_rowOffset) + images;
+            }
+
             m_rowOffset = alignedIndex;
 
             appendedItemsUpdate(m_insertIndex, rows.count());

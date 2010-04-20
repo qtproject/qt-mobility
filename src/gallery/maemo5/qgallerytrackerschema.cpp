@@ -861,7 +861,7 @@ static const QGalleryPropertyMapItem qt_galleryAlbumIdentity[] =
 static const QGalleryPropertyMapItem qt_galleryAlbumPropertyMap[] =
 {
     QT_GALLERY_PROPERTY("title"     , "Audio:Album"),
-    QT_GALLERY_PROPERTY("artist"    , "Audio:AlbumArtist")
+    QT_GALLERY_PROPERTY("artist", "Audio:AlbumArtist")
 };
 
 static const QGalleryAggregatePropertyMapItem qt_galleryAlbumAggregateMap[] =

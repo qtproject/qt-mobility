@@ -120,7 +120,7 @@ QList<QGalleryResource> QGalleryTrackerCountResponse::resources(int) const
     return QList<QGalleryResource>();
 }
 
-QGalleryItemList::ItemStatus QGalleryTrackerCountResponse::status(int index) const
+QGalleryItemList::ItemStatus QGalleryTrackerCountResponse::status(int) const
 {
     return ItemStatus();
 }

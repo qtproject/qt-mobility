@@ -39,48 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef BROWSER_H
-#define BROWSER_H
+#ifndef PHOTOVIEW_H
+#define PHOTOVIEW_H
 
-#include <QtGui/QWidget>
-
-#include <qgalleryfilter.h>
+#include "galleryview.h"
 
 QT_BEGIN_NAMESPACE
-class QStackedWidget;
+class QModelIndex;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-QTM_END_NAMESPACE
+class GalleryModel;
 
-class GalleryView;
-
-QTM_USE_NAMESPACE
-
-class Browser : public QWidget
+class PhotoView : public GalleryView
 {
     Q_OBJECT
 public:
-    Browser(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~Browser();
+    PhotoView(QWidget *parent = 0);
+    ~PhotoView();
 
-public Q_SLOTS:
-    void showArtists(const QString &containerId = QString());
-    void showAlbumArtists(const QString &containerId = QString());
-    void showAlbums(const QString &containerId = QString());
-    void showSongs(const QString &containerId = QString());
-    void showPhotos(const QString &containerId = QString());
+signals:
+    void showSongs(const QString &containerId);
+
+protected slots:
+    void mediaChanged();
+
+private slots:
+    void activated(const QModelIndex &index);
 
 private:
-    QDocumentGallery *gallery;
-    QStackedWidget *stack;
-    GalleryView *artistView;
-    GalleryView *albumArtistView;
-    GalleryView *albumView;
-    GalleryView *songView;
-    GalleryView *photoView;
+    GalleryModel *model;
 };
-
 
 #endif

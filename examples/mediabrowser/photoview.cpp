@@ -39,48 +39,61 @@
 **
 ****************************************************************************/
 
-#ifndef BROWSER_H
-#define BROWSER_H
+#include "photoview.h"
 
-#include <QtGui/QWidget>
+#include "photodelegate.h"
+#include "gallerymodel.h"
 
-#include <qgalleryfilter.h>
+#include <QtGui>
 
-QT_BEGIN_NAMESPACE
-class QStackedWidget;
-QT_END_NAMESPACE
+#include <qdocumentgallery.h>
+#include <qgalleryitemlist.h>
 
-QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-QTM_END_NAMESPACE
-
-class GalleryView;
-
-QTM_USE_NAMESPACE
-
-class Browser : public QWidget
+PhotoView::PhotoView(QWidget *parent)
+    : GalleryView(parent)
 {
-    Q_OBJECT
-public:
-    Browser(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~Browser();
+    setType(QDocumentGallery::Image);
+    setFields(QStringList()
+            << QDocumentGallery::fileName
+            << QDocumentGallery::thumbnail);
+    setSortFields(QStringList()
+            << QDocumentGallery::title);
 
-public Q_SLOTS:
-    void showArtists(const QString &containerId = QString());
-    void showAlbumArtists(const QString &containerId = QString());
-    void showAlbums(const QString &containerId = QString());
-    void showSongs(const QString &containerId = QString());
-    void showPhotos(const QString &containerId = QString());
+    model = new GalleryModel;
+    model->setDisplayFieldForColumn(0, QDocumentGallery::fileName);
+    model->setDecorationFieldForColumn(0, QDocumentGallery::thumbnail);
 
-private:
-    QDocumentGallery *gallery;
-    QStackedWidget *stack;
-    GalleryView *artistView;
-    GalleryView *albumArtistView;
-    GalleryView *albumView;
-    GalleryView *songView;
-    GalleryView *photoView;
-};
+    QListView *view = new QListView;
+    view->setIconSize(QSize(128, 128));
+    view->setFlow(QListView::TopToBottom);
+    view->setViewMode(QListView::IconMode);
+    view->setUniformItemSizes(true);
+    view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
+    view->setWrapping(true);
+    view->setModel(model);
+    view->setItemDelegate(new PhotoDelegate(this));
+    connect(view->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(sliderMoved(int)));
+    connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
 
 
-#endif
+    QBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    layout->setSpacing(0);
+    layout->addWidget(view);
+
+    setLayout(layout);
+}
+
+PhotoView::~PhotoView()
+{
+}
+
+void PhotoView::mediaChanged()
+{
+    model->setList(media());
+}
+
+void PhotoView::activated(const QModelIndex &index)
+{
+}
+

@@ -39,48 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef BROWSER_H
-#define BROWSER_H
+#ifndef PHOTODELEGATE_H
+#define PHOTODELEGATE_H
 
-#include <QtGui/QWidget>
+#include <QtGui/QAbstractItemDelegate>
 
-#include <qgalleryfilter.h>
-
-QT_BEGIN_NAMESPACE
-class QStackedWidget;
-QT_END_NAMESPACE
-
-QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-QTM_END_NAMESPACE
-
-class GalleryView;
-
-QTM_USE_NAMESPACE
-
-class Browser : public QWidget
+class PhotoDelegate : public QAbstractItemDelegate
 {
     Q_OBJECT
 public:
-    Browser(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~Browser();
+    PhotoDelegate(QObject *parent = 0);
+    ~PhotoDelegate();
 
-public Q_SLOTS:
-    void showArtists(const QString &containerId = QString());
-    void showAlbumArtists(const QString &containerId = QString());
-    void showAlbums(const QString &containerId = QString());
-    void showSongs(const QString &containerId = QString());
-    void showPhotos(const QString &containerId = QString());
+    void paint(
+            QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private:
-    QDocumentGallery *gallery;
-    QStackedWidget *stack;
-    GalleryView *artistView;
-    GalleryView *albumArtistView;
-    GalleryView *albumView;
-    GalleryView *songView;
-    GalleryView *photoView;
-};
+    void layout(const QStyleOptionViewItem &option) const;
 
+    QRect thumbnailRect;
+    QSize size;
+};
 
 #endif

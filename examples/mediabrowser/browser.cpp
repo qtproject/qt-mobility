@@ -43,6 +43,7 @@
 
 #include "albumview.h"
 #include "artistview.h"
+#include "photoview.h"
 #include "songview.h"
 
 #include "qdocumentgallery.h"
@@ -57,6 +58,7 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
     , albumArtistView(0)
     , albumView(0)
     , songView(0)
+    , photoView(0)
 {
     gallery = new QDocumentGallery;
 
@@ -77,11 +79,15 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
     songView = new SongView;
     songView->setGallery(gallery);
 
+    photoView = new PhotoView;
+    photoView->setGallery(gallery);
+
     stack = new QStackedWidget;
     stack->addWidget(artistView);
     stack->addWidget(albumArtistView);
     stack->addWidget(albumView);
     stack->addWidget(songView);
+    stack->addWidget(photoView);
 
     QPushButton *artistButton = new QPushButton(tr("Artists"));
     connect(artistButton, SIGNAL(clicked()), this, SLOT(showArtists()));
@@ -95,11 +101,15 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
     QPushButton *songButton = new QPushButton(tr("Songs"));
     connect(songButton, SIGNAL(clicked()), this, SLOT(showSongs()));
 
+    QPushButton *photoButton = new QPushButton(tr("Photos"));
+    connect(photoButton, SIGNAL(clicked()), this, SLOT(showPhotos()));
+
     QBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(artistButton);
     hLayout->addWidget(albumArtistButton);
     hLayout->addWidget(albumButton);
     hLayout->addWidget(songButton);
+    hLayout->addWidget(photoButton);
 
     QBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setMargin(0);
@@ -140,5 +150,12 @@ void Browser::showSongs(const QString &containerId)
     songView->showChildren(containerId);
 
     stack->setCurrentWidget(songView);
+}
+
+void Browser::showPhotos(const QString &containerId)
+{
+    photoView->showChildren(containerId);
+
+    stack->setCurrentWidget(photoView);
 }
 

@@ -75,6 +75,9 @@ public:
     QString displayFieldForColumn(int column) const;
     void setDisplayFieldForColumn(int column, const QString &field);
 
+    QString decorationFieldForColumn(int column) const;
+    void setDecorationFieldForColumn(int column, const QString &field);
+
     QVector<QString> userRoleFields() const;
     void setUserRoleFields(const QVector<QString> &fields);
 
@@ -88,6 +91,8 @@ private:
     QGalleryItemList *mediaList;
     QVector<int> displayKeys;
     QVector<QString> displayFields;
+    QVector<int> decorationKeys;
+    QVector<QString> decorationFields;
     QVector<int> userKeys;
     QVector<QString> userFields;
 };

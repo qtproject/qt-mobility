@@ -4,6 +4,9 @@ INCLUDEPATH += $$PWD
 QT += dbus
 
 HEADERS += \
+        $$PWD\qgalleryimageloader_p.h \
+        $$PWD\qgallerymediaartloader_p.h \
+        $$PWD\qgallerythumbnailloader_p.h \
         $$PWD\qgallerytrackeraggregatelistresponse_p.h \
         $$PWD\qgallerytrackercountresponse_p.h \
         $$PWD\qgallerytrackerfilecopyresponse_p.h \
@@ -16,6 +19,9 @@ HEADERS += \
 
 SOURCES += \
         $$PWD\qdocumentgallery_maemo5.cpp \
+        $$PWD\qgalleryimageloader.cpp \
+        $$PWD\qgallerymediaartloader.cpp \
+        $$PWD\qgallerythumbnailloader.cpp \
         $$PWD\qgallerytrackeraggregatelistresponse.cpp \
         $$PWD\qgallerytrackercountresponse.cpp \
         $$PWD\qgallerytrackerfilecopyresponse.cpp \

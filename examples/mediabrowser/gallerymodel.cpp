@@ -48,6 +48,8 @@ GalleryModel::GalleryModel(QObject *parent)
     , mediaList(0)
     , displayKeys(1, -1)
     , displayFields(1)
+    , decorationKeys(1, -1)
+    , decorationFields(1)
 {
 }
 
@@ -62,6 +64,8 @@ QVariant GalleryModel::data(const QModelIndex &index, int role) const
 
         if (role == Qt::DisplayRole)
             key = displayKeys.at(index.column());
+        else if (role == Qt::DecorationRole)
+            key = decorationKeys.at(index.column());
         else if (role >= Qt::UserRole)
             key = userKeys.at(role - Qt::UserRole);
 
@@ -104,6 +108,8 @@ void GalleryModel::setColumnCount(int count)
 
         displayFields.resize(count);
         displayKeys.resize(count);
+        decorationFields.resize(count);
+        decorationKeys.resize(count);
 
         endRemoveColumns();
     } else if (displayFields.count() < count) {
@@ -113,6 +119,8 @@ void GalleryModel::setColumnCount(int count)
 
         displayFields.resize(count);
         displayKeys.fill(-1, count);
+        decorationFields.resize(count);
+        decorationKeys.fill(-1, count);
 
         endInsertColumns();
     }
@@ -135,6 +143,7 @@ void GalleryModel::setList(QGalleryItemList *list)
                 this, SLOT(metaDataChanged(int,int,QList<int>)));
 
         displayKeys.fill(-1);
+        decorationKeys.fill(-1);
         userKeys.fill(-1);
     }
 
@@ -143,6 +152,9 @@ void GalleryModel::setList(QGalleryItemList *list)
     if (mediaList) {
         for (int i = 0; i < displayFields.count(); ++i)
             displayKeys[i] = mediaList->propertyKey(displayFields.at(i));
+
+        for (int i = 0; i < decorationFields.count(); ++i)
+            decorationKeys[i] = mediaList->propertyKey(decorationFields.at(i));
 
         for (int i = 0; i < userFields.count(); ++i)
             userKeys[i] = mediaList->propertyKey(userFields.at(i));
@@ -167,6 +179,22 @@ void GalleryModel::setDisplayFieldForColumn(int column, const QString &field)
 
     if (mediaList) {
         displayKeys[column] = mediaList->propertyKey(field);
+
+        emit dataChanged(createIndex(0, column), createIndex(mediaList->count() - 1, column));
+    }
+}
+
+QString GalleryModel::decorationFieldForColumn(int column) const
+{
+    return decorationFields.at(column);
+}
+
+void GalleryModel::setDecorationFieldForColumn(int column, const QString &field)
+{
+    decorationFields[column] = field;
+
+    if (mediaList) {
+        decorationKeys[column] = mediaList->propertyKey(field);
 
         emit dataChanged(createIndex(0, column), createIndex(mediaList->count() - 1, column));
     }

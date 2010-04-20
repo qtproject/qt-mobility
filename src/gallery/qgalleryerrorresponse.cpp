@@ -62,7 +62,7 @@ int QGalleryErrorResponse::propertyKey(const QString &) const
 {
     return -1;
 }
-QGalleryProperty::Attributes QGalleryErrorResponse::propertyAttributes(int key) const
+QGalleryProperty::Attributes QGalleryErrorResponse::propertyAttributes(int) const
 {
     return QGalleryProperty::Attributes();
 }
@@ -97,7 +97,7 @@ QList<QGalleryResource> QGalleryErrorResponse::resources(int) const
     return QList<QGalleryResource>();
 }
 
-QGalleryItemList::ItemStatus QGalleryErrorResponse::status(int index) const
+QGalleryItemList::ItemStatus QGalleryErrorResponse::status(int) const
 {
     return ItemStatus();
 }

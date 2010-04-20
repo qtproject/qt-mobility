@@ -70,7 +70,7 @@ public:
     QString type(int) const { return QString(); }
     QString parentId(int) const { return QString(); }
     QList<QGalleryResource> resources(int) const { return QList<QGalleryResource>(); }
-    ItemStatus status(int index) const { return ItemStatus(); }
+    ItemStatus status(int) const { return ItemStatus(); }
 
     QVariant metaData(int, int) const { return QVariant(); }
     void setMetaData(int, int, const QVariant &) {}

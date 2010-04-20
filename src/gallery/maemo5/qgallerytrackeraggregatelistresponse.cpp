@@ -41,6 +41,7 @@
 
 #include "qgallerytrackeraggregatelistresponse_p.h"
 
+#include "qgallerymediaartloader_p.h"
 #include "qgallerytrackerschema_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -114,6 +115,14 @@ QGalleryTrackerAggregateListResponse::QGalleryTrackerAggregateListResponse(
             m_aggregateFields.append(field.first);
             m_propertyNames.append(*property);
         }
+    }
+
+    if (schema.itemType() == QLatin1String("Album")
+            && properties.contains(QLatin1String("thumbnail"))) {
+        QGalleryMediaArtLoader *imageLoader = new QGalleryMediaArtLoader(this);
+
+        setImageColumn(imageLoader, m_propertyNames.count());
+        m_propertyNames.append(QLatin1String("thumbnail"));
     }
 }
 

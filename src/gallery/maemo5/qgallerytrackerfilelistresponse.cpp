@@ -41,6 +41,7 @@
 
 #include "qgallerytrackerfilelistresponse_p.h"
 
+#include "qgallerythumbnailloader_p.h"
 #include "qgallerytrackerschema_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -71,7 +72,7 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
             m_fields.append(field);
             m_propertyNames.append(*property);
         }
-    }
+    }           
 
     m_sortDescending = !sortProperties.isEmpty()
             && sortProperties.first().startsWith(QLatin1Char('-'));
@@ -86,6 +87,13 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
 
         if (!field.isEmpty())
             m_sortFields.append(field);
+    }
+
+    if (properties.contains(QLatin1String("thumbnail"))) {
+        QGalleryThumbnailLoader *imageLoader = new QGalleryThumbnailLoader(this);
+
+        setImageColumn(imageLoader, m_propertyNames.count() + 2);
+        m_propertyNames.append(QLatin1String("thumbnail"));
     }
 }
 

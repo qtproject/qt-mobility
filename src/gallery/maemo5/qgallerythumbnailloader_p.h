@@ -39,48 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef BROWSER_H
-#define BROWSER_H
+#ifndef QGALLERYTHUMBNAILLOADER_P_H
+#define QGALLERYTHUMBNAILLOADER_P_H
 
-#include <QtGui/QWidget>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <qgalleryfilter.h>
-
-QT_BEGIN_NAMESPACE
-class QStackedWidget;
-QT_END_NAMESPACE
+#include "qgalleryimageloader_p.h"
 
 QTM_BEGIN_NAMESPACE
-class QDocumentGallery;
-QTM_END_NAMESPACE
 
-class GalleryView;
+class QGalleryThumbnailLoaderPrivate;
 
-QTM_USE_NAMESPACE
-
-class Browser : public QWidget
+class QGalleryThumbnailLoader : public QGalleryImageLoader
 {
     Q_OBJECT
 public:
-    Browser(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~Browser();
+    QGalleryThumbnailLoader(QObject *parent = 0);
+    ~QGalleryThumbnailLoader();
 
-public Q_SLOTS:
-    void showArtists(const QString &containerId = QString());
-    void showAlbumArtists(const QString &containerId = QString());
-    void showAlbums(const QString &containerId = QString());
-    void showSongs(const QString &containerId = QString());
-    void showPhotos(const QString &containerId = QString());
+    QVector<QGalleryImage> loadImages(
+                QVector<QStringList>::const_iterator beginRows,
+                QVector<QStringList>::const_iterator endRows);
 
 private:
-    QDocumentGallery *gallery;
-    QStackedWidget *stack;
-    GalleryView *artistView;
-    GalleryView *albumArtistView;
-    GalleryView *albumView;
-    GalleryView *songView;
-    GalleryView *photoView;
+    Q_DECLARE_PRIVATE(QGalleryThumbnailLoader)
+    Q_PRIVATE_SLOT(d_func(), void _q_dbusWatcherFinished(QDBusPendingCallWatcher*))
+    Q_PRIVATE_SLOT(d_func(), void _q_dbusFinished(uint));
+    Q_PRIVATE_SLOT(d_func(), void _q_dbusError(uint, const QStringList &, int, const QString &))
+    Q_PRIVATE_SLOT(d_func(), void _q_loadWatcherFinished())
+    Q_PRIVATE_SLOT(d_func(), void _q_imagesLoaded(int,int))
 };
 
+QTM_END_NAMESPACE
 
 #endif

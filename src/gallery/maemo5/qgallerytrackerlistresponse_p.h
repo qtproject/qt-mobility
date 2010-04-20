@@ -55,6 +55,7 @@
 
 #include "qgalleryabstractresponse.h"
 
+#include "qgalleryimageloader_p.h"
 #include "qgallerytrackerschema_p.h"
 
 #include <QtDBus/qdbuspendingcall.h>
@@ -66,7 +67,9 @@ class QGalleryTrackerListResponse : public QGalleryAbstractResponse
     Q_OBJECT
 public:
     QGalleryTrackerListResponse(
-            const QGalleryTrackerSchema &schema, int minimumPagedItems, QObject *parent = 0);
+            const QGalleryTrackerSchema &schema,
+            int minimumPagedItems,
+            QObject *parent = 0);
 
     ~QGalleryTrackerListResponse();
 
@@ -95,7 +98,10 @@ public Q_SLOTS:
 protected:
     virtual QDBusPendingCall queryRows(int offset, int limit) = 0;
 
+    void setImageColumn(QGalleryImageLoader *loader, int column);
+
 private Q_SLOTS:
+    void imagesLoaded(const QList<uint> &ids);
     void callFinished(QDBusPendingCallWatcher *watcher);
 
 private:
@@ -112,9 +118,12 @@ private:
     int m_insertIndex;
     int m_insertCount;
     int m_rowOffset;
+    int m_imageColumn;
     bool m_cursorOutdated;
+    QGalleryImageLoader *m_imageLoader;
     QDBusPendingCallWatcher *m_call;
     QVector<QStringList> m_rows;
+    QVector<QGalleryImage> m_images;
 
 };
 
