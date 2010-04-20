@@ -123,7 +123,7 @@
             QMessageId id = m_ids.takeFirst();
             QMessage message(id);
 
-            QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(&quot;:&quot;)+message.subject());
+            QListWidgetItem* newItem = new QListWidgetItem(message.subject());
             newItem-&gt;setData(MessageIdRole,id.toString());
             QFont itemFont = newItem-&gt;font();
             bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
