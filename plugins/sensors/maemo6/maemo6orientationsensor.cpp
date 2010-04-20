@@ -41,7 +41,7 @@
 
 #include "maemo6orientationsensor.h"
 
-#include "sensord/filters/posedata.h"
+#include "filters/posedata.h"
 
 const char *maemo6orientationsensor::id("maemo6.orientationsensor");
 bool maemo6orientationsensor::m_initDone = false;
