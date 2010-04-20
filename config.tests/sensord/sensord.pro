@@ -1,5 +1,7 @@
 TEMPLATE=app
 TARGET=sensord
 SOURCES=main.cpp
-LIBS+=-lsensord
+QT+=network dbus
+CONFIG+=link_pkgconfig
+PKGCONFIG+=sensord
 

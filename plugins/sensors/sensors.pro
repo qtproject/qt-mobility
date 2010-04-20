@@ -6,8 +6,12 @@ maemo5 {
     SUBDIRS += n900
 }
 
-maemo6:equals(sensord_enabled,yes) {
-    SUBDIRS += maemo6
+maemo6 {
+    equals(sensord_enabled,yes) {
+        SUBDIRS += maemo6
+    } else {
+        message("sensord library missing")
+    }
 }
 
 symbian {
