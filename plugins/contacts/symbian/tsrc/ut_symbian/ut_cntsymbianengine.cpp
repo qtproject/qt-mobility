@@ -495,6 +495,94 @@ void TestSymbianEngine::retrieveContacts()
     QVERIFY(err == QContactManager::NoError);
 }
 
+void TestSymbianEngine::retrieveName()
+{
+    QContactManager::Error err;
+    QContactFetchHint hint = QContactFetchHint();
+    QStringList hints;
+    hints << QContactDisplayLabel::DefinitionName;
+    hint.setDetailDefinitionsHint(hints);
+
+    QContact alice;
+    alice.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setFirstName("Alice");
+    name.setLastName("Wonders");
+    alice.saveDetail(&name);
+    QVERIFY(m_engine->saveContact(&alice, &err));
+    QVERIFY(err == QContactManager::NoError);
+
+    // Retrieve name of "non contact"
+    QContact c = m_engine->contact(0, hint, &err);
+    QVERIFY(&c != NULL);
+    QVERIFY(c.localId() == 0);
+    QVERIFY(err == QContactManager::DoesNotExistError);
+
+    // Retrieve name of valid existing contact
+    QContactLocalId aid = alice.localId();
+    c = m_engine->contact(aid, hint, &err);
+    QVERIFY(&c != NULL);
+    QVERIFY(c.localId() == aid);
+    QVERIFY(c.displayLabel() == alice.displayLabel());
+    QVERIFY(err == QContactManager::NoError);
+}
+
+void TestSymbianEngine::retrieveNames()
+{
+    QContactManager::Error err;
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactType::DefinitionName);
+    filter.setValue(QContactType::TypeContact);
+
+    QList<QContactSortOrder> sortOrders;
+
+    QContactFetchHint hint = QContactFetchHint();
+    QStringList hints;
+    hints << QContactDisplayLabel::DefinitionName;
+    hint.setDetailDefinitionsHint(hints);
+
+    QContact alice;
+    alice.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setFirstName("Alice");
+    name.setLastName("Wonders");
+    alice.saveDetail(&name);
+    QVERIFY(m_engine->saveContact(&alice, &err));
+    QVERIFY(err == QContactManager::NoError);
+
+    QContact charlie;
+    charlie.setType(QContactType::TypeContact);
+    name.setFirstName("Charlie");
+    name.setLastName("Choco");
+    charlie.saveDetail(&name);
+    QVERIFY(m_engine->saveContact(&charlie, &err));
+    QVERIFY(err == QContactManager::NoError);
+
+    int numContacts = m_engine->contactIds(filter, sortOrders, &err).count();
+
+    // Retrieve names
+    QList<QContact> contacts = m_engine->contacts(filter, sortOrders, hint, &err);
+    QVERIFY(contacts.count() == numContacts);
+
+    int verifiedContacts = 0;
+    foreach (QContact contact, contacts) {
+        if (contact.localId() == alice.localId()) {
+            TInt contactId = contact.localId();
+            TInt aliceId = alice.localId();
+            QString contactName = contact.displayLabel();
+            QString aliceName = alice.displayLabel();
+            QVERIFY(contact.displayLabel() == alice.displayLabel());  
+            ++verifiedContacts;
+        }
+        if (contact.localId() == charlie.localId()) {
+            QVERIFY(contact.displayLabel() == charlie.displayLabel());
+            ++verifiedContacts;
+        }
+    }
+
+    QVERIFY(verifiedContacts == 2);
+}
+
 void TestSymbianEngine::updateContact()
 {
     QContactManager::Error err;

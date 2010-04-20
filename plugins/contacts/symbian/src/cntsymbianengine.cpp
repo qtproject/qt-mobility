@@ -46,6 +46,7 @@
 #include <QDebug>
 
 #include <qtcontacts.h>
+#include <qcontactname.h>
 
 #include "cntsymbianengine.h"
 #include "qcontactchangeset.h"
@@ -57,6 +58,7 @@
 #include "cntsymbiansorterdbms.h"
 #include "cntrelationship.h"
 #include "cntdisplaylabel.h"
+#include "cntsymbiansrvconnection.h"
 
 typedef QList<QContactLocalId> QContactLocalIdList;
 typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
@@ -79,13 +81,14 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
     *error = QContactManager::NoError;
 
     m_dataBase = new CntSymbianDatabase(this, error);
-
-    //Database opened successfully
-    if(*error == QContactManager::NoError) {
+    
+    // Database opened successfully
+    if (*error == QContactManager::NoError) {
         m_managerUri = QContactManager::buildUri(CNT_SYMBIAN_MANAGER_NAME, parameters);
         m_transformContact = new CntTransformContact;
+        m_srvConnection    = new CntSymbianSrvConnection(this);
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
-        m_contactFilter    = new CntSymbianFilter(*this, *m_dataBase->contactDatabase(), *m_transformContact);
+        m_contactFilter    = new CntSymbianFilter(*this, *m_dataBase->contactDatabase(), *m_srvConnection, *m_transformContact);
 #else
         m_contactFilter    = new CntSymbianFilter(*m_dataBase->contactDatabase());
         m_contactSorter    = new CntSymbianSorterDbms(*m_dataBase->contactDatabase(), *m_transformContact);
@@ -99,6 +102,7 @@ CntSymbianEngine::~CntSymbianEngine()
 {
     delete m_contactFilter; // needs to be deleted before database
     delete m_dataBase;
+    delete m_srvConnection;
     delete m_transformContact;
 #ifndef SYMBIAN_BACKEND_USE_SQLITE
     delete m_contactSorter;
@@ -155,6 +159,21 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
 QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fh, QContactManager::Error* error) const
 {
     *error = QContactManager::NoError;
+
+    // special case: use optimized fetch if
+    //   * only display labels are requested
+    //   * the filter is a detail filter for QContactType's TypeContact
+    //   * there are no sort orders
+    QStringList detailRestrictions = fh.detailDefinitionsHint();
+    if (detailRestrictions.count() == 1 &&
+        detailRestrictions.at(0) == QContactDisplayLabel::DefinitionName &&
+        filter.type() == QContactFilter::ContactDetailFilter &&
+        QContactDetailFilter(filter).detailDefinitionName() == QContactType::DefinitionName &&
+        QContactDetailFilter(filter).value().toString() == QContactType::TypeContact &&
+        sortOrders.isEmpty()) {
+        return m_srvConnection->searchAllContactNames(error);
+    }
+
     QList<QContact> contacts;
     QList<QContactLocalId> contactIds = this->contactIds(filter, sortOrders, error);
     if (*error == QContactManager::NoError ) {
@@ -166,6 +185,7 @@ QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const Q
             contacts.append(contact);
         }
     }
+
     return contacts;
 }
 
@@ -179,8 +199,15 @@ QList<QContact> CntSymbianEngine::contacts(const QContactFilter& filter, const Q
  */
 QContact CntSymbianEngine::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
 {
+    // special case: use optimized fetch if only display label is requested
+    QStringList detailRestrictions = fetchHint.detailDefinitionsHint();
+    if (detailRestrictions.count() == 1 &&
+        detailRestrictions.at(0) == QContactDisplayLabel::DefinitionName) {
+        return m_srvConnection->searchContactName(contactId, error);
+    }
+    
     QContact* contact = new QContact();
-    TRAPD(err, *contact = fetchContactL(contactId, fetchHint.detailDefinitionsHint()));
+    TRAPD(err, *contact = fetchContactL(contactId, detailRestrictions));
     CntSymbianTransformError::transformError(err, error);
 
     if(*error == QContactManager::NoError) {

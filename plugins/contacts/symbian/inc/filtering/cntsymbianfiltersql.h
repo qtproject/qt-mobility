@@ -56,7 +56,7 @@ QTM_USE_NAMESPACE
 class CntSymbianFilter : public CntAbstractContactFilter
 {
 public:
-    CntSymbianFilter(QContactManagerEngine& manager, CContactDatabase& contactDatabase, const CntTransformContact &transformContact);
+    CntSymbianFilter(QContactManagerEngine& manager, CContactDatabase& contactDatabase, CntSymbianSrvConnection &srvConnection, const CntTransformContact &transformContact);
     ~CntSymbianFilter();
 
     /* from CntAbstractContactFilter */
@@ -77,7 +77,7 @@ private:
     CContactDatabase& m_contactDatabase;
     CntDbInfo* m_dbInfo;
     const CntTransformContact &m_transformContact;
-    CntSymbianSrvConnection* m_srvConnection;
+    CntSymbianSrvConnection& m_srvConnection;
     QMap<QContactFilter::FilterType, CntAbstractContactFilter*> m_filterMap; 
 
 };

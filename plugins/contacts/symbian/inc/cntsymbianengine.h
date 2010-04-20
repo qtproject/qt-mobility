@@ -71,6 +71,7 @@ class QContactChangeSet;
 class QContactAbstractRequest;
 QTM_END_NAMESPACE
 class CntSymbianDatabase;
+class CntSymbianSrvConnection;
 class CntTransformContact;
 class CntAbstractContactFilter;
 class CntAbstractContactSorter;
@@ -163,6 +164,7 @@ private slots:
 
 private:
     CntSymbianDatabase *m_dataBase;
+    CntSymbianSrvConnection *m_srvConnection;
     QString m_managerUri;
     CntTransformContact *m_transformContact;
     CntAbstractContactFilter *m_contactFilter;

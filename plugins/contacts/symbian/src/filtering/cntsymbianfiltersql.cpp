@@ -61,37 +61,31 @@
 #include <cntdb.h>
 
 
-CntSymbianFilter::CntSymbianFilter(QContactManagerEngine& /*manager*/, CContactDatabase& contactDatabase, const CntTransformContact &transformContact):
+CntSymbianFilter::CntSymbianFilter(QContactManagerEngine& /*manager*/, CContactDatabase& contactDatabase, CntSymbianSrvConnection &srvConnection, const CntTransformContact &transformContact):
     m_contactDatabase(contactDatabase),
+    m_srvConnection(srvConnection),
     m_transformContact(transformContact)
 {
-    m_srvConnection = new CntSymbianSrvConnection();
     m_dbInfo = new CntDbInfo();
     initializeFilters();
-      
 }
 
 void CntSymbianFilter::initializeFilters()
-    {
-    m_filterMap.insert(QContactFilter::ContactDetailFilter, new CntFilterDetail(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::DefaultFilter, new CntFilterDefault(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::IntersectionFilter, new CntFilterIntersection(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::UnionFilter, new CntFilterUnion(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::RelationshipFilter, new CntFilterRelationship(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::InvalidFilter, new CntFilterInvalid(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::ContactDetailRangeFilter, new CntFilterdetailrange(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::ChangeLogFilter, new CntFilterChangeLog(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::ActionFilter, new CntFilterAction(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::LocalIdFilter, new CntFilterLocalId(m_contactDatabase,*m_srvConnection,*m_dbInfo));
-    
-    }
-
-
+{
+    m_filterMap.insert(QContactFilter::ContactDetailFilter, new CntFilterDetail(m_contactDatabase,m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::DefaultFilter, new CntFilterDefault(m_contactDatabase,m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::IntersectionFilter, new CntFilterIntersection(m_contactDatabase,m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::UnionFilter, new CntFilterUnion(m_contactDatabase,m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::RelationshipFilter, new CntFilterRelationship(m_contactDatabase,m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::InvalidFilter, new CntFilterInvalid(m_contactDatabase,m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::ContactDetailRangeFilter, new CntFilterdetailrange(m_contactDatabase,m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::ChangeLogFilter, new CntFilterChangeLog(m_contactDatabase,m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::ActionFilter, new CntFilterAction(m_contactDatabase,m_srvConnection,*m_dbInfo));
+    m_filterMap.insert(QContactFilter::LocalIdFilter, new CntFilterLocalId(m_contactDatabase,m_srvConnection,*m_dbInfo));
+}
 
 CntSymbianFilter::~CntSymbianFilter()
 {
-    
-    
     //delete the all filters from the map
     QMap<QContactFilter::FilterType, CntAbstractContactFilter*>::iterator itr;
 
@@ -102,7 +96,6 @@ CntSymbianFilter::~CntSymbianFilter()
         value = 0;
     }
     
-    delete m_srvConnection;
     delete m_dbInfo;  
 }
 

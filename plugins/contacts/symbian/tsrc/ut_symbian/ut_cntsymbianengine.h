@@ -59,6 +59,8 @@ private slots:
     void saveContacts();
     void retrieveContact();
     void retrieveContacts();
+    void retrieveName();
+    void retrieveNames();
     void updateContact();
     void updateContactByUid();
     void removeContact();
