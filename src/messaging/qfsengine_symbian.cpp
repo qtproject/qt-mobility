@@ -258,6 +258,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
         fsMessage->SetRecipientsL(MEmailAddress::EBcc, bccAddress);
     }
     if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
+        qDebug() << "CFSEngine::createFSMessageL, Message contains only body";
         // Message contains only body (not attachments)
         QString messageBody = message.textContent();
         if (!messageBody.isEmpty()) {
@@ -273,9 +274,12 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
                     textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
                 }
             }
+            else
+                fsMessage->SetPlainTextBodyL(TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
         }
     } else {
         // Message contains body and attachments
+        qDebug() << "CFSEngine::createFSMessageL, Message contains body and attachments";
         QMessageContentContainerIdList contentIds = message.contentIds();
         foreach (QMessageContentContainerId id, contentIds){
             QMessageContentContainer container = message.find(id);
@@ -283,26 +287,36 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
             QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
             if (pPrivateContainer->_id == message.bodyId()) {
                 // ContentContainer is body
+                qDebug() << "CFSEngine::createFSMessageL, ContentContainer is body";
                 if (!container.textContent().isEmpty()) {               
                     MEmailTextContent* textContent = content->AsTextContentOrNull();
-                    QByteArray type = container.contentType();
-                    QByteArray subType = container.contentSubType();
-                    if (type == "text" && subType == "plain") {
-                        textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                    if (textContent) {
+                        qDebug() << "CFSEngine::createFSMessageL, textContent";
+                        QByteArray type = container.contentType();
+                        QByteArray subType = container.contentSubType();
+                        if (type == "text" && subType == "plain") {
+                            qDebug() << "CFSEngine::createFSMessageL, set plain text";
+                            textContent->SetTextL(MEmailTextContent::EPlainText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                        }
+                        else if (type == "text" && subType == "html") {
+                            qDebug() << "CFSEngine::createFSMessageL, set html text";
+                            textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
+                        } 
                     }
-                    else if (type == "text" && subType == "html") {
-                        textContent->SetTextL(MEmailTextContent::EHtmlText, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-                    }                    
+                    else
+                        qDebug() << "CFSEngine::createFSMessageL, SetPlainTextBodyL";
+                        fsMessage->SetPlainTextBodyL(TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
                 }
             } else {
                 // ContentContainer is attachment
+                qDebug() << "CFSEngine::createFSMessageL, ContentContainer is attachment";
                 QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
                 // Replace Qt style path separator "/" with Symbian path separator "\"
                 filePath.replace(QByteArray("/"), QByteArray("\\"));
                 QString temp_path = QString(filePath);
                 TPtrC16 attachmentPath(KNullDesC);
                 attachmentPath.Set(reinterpret_cast<const TUint16*>(temp_path.utf16()));
-                MEmailAttachment* att = fsMessage->AddAttachmentL(attachmentPath);
+                fsMessage->AddAttachmentL(attachmentPath);
             }        
         }
     }
