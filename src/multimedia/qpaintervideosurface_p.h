@@ -67,7 +67,7 @@ QT_END_NAMESPACE
 
 QT_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QVideoSurfacePainter;
 class Q_AUTOTEST_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
@@ -152,6 +152,6 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPainterVideoSurface::ShaderTypes)
 #endif
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

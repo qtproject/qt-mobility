@@ -429,7 +429,7 @@
                 result.append(groupRelationships.at(i));
             }
         }</pre>
-<p>Clients can inform the manager that they do not require this cache of relationships to be populated when retrieving a contact, which can allow a manager to optimize contact retrieval. Other retrieval optimizations are also possible to specify, for example that they do not require action preferences to be returned, or that they are only interested in certain types of details. The following code shows how the client can inform the manager that they are only interested in relationships of the <tt>HasMember</tt> type (groups):</p>
+<p>Clients can inform the manager that they do not require this cache of relationships to be populated when retrieving a contact, which can allow a manager to optimize contact retrieval. Other retrieval optimizations are also possible to specify, for example that they are only interested in certain types of details. The following code shows how the client can inform the manager that they are only interested in relationships of the <tt>HasMember</tt> type (groups):</p>
 <pre>        QContactFetchHint hasMemberRelationshipsOnly;
         hasMemberRelationshipsOnly.setRelationshipTypesHint(QStringList(QContactRelationship::HasMember));
 

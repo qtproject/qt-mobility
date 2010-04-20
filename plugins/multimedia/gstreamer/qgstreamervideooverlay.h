@@ -46,12 +46,12 @@
 
 #include "qgstreamervideorendererinterface.h"
 
-QTM_USE_NAMESPACE
-
 QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 QT_END_NAMESPACE
 class QX11VideoSurface;
+
+QT_USE_NAMESPACE
 
 class QGstreamerVideoOverlay : public QVideoWindowControl, public QGstreamerVideoRendererInterface
 {

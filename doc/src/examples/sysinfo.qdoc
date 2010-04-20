@@ -59,30 +59,30 @@
 
     The current language
 
-    \snippet snippets/sysinfo-snippets/dialog.cpp  lang
+    \snippet ../../examples/sysinfo/dialog.cpp  lang
 
     Device information, starting with the battery level
 
-    \snippet snippets/sysinfo-snippets/dialog.cpp  createdi
+    \snippet ../../examples/sysinfo/dialog.cpp  createdi
     \dots
-    \snippet snippets/sysinfo-snippets/dialog.cpp  batteryLevel
+    \snippet ../../examples/sysinfo/dialog.cpp  batteryLevel
 
     The manufacturer id and the product name
     
-    \snippet snippets/sysinfo-snippets/dialog.cpp  manuf-id
+    \snippet ../../examples/sysinfo/dialog.cpp  manuf-id
     \dots
-    \snippet snippets/sysinfo-snippets/dialog.cpp  productName
+    \snippet ../../examples/sysinfo/dialog.cpp  productName
 
     And there are signals that can be used to update progress bars and other
     indicators. An example is when the battery level changes, the batteryLevelChanged() signal is emitted
 
-    \snippet snippets/sysinfo-snippets/dialog.cpp  sig batteryLevelChanged
+    \snippet ../../examples/sysinfo/dialog.cpp  sig batteryLevelChanged
 
 
     Other information is stored as bitwise flags. The following code shows
     the input methods being determined using flags.
 
-    \snippet snippets/sysinfo-snippets/dialog.cpp  inputMethod flags
+    \snippet ../../examples/sysinfo/dialog.cpp  inputMethod flags
 
     Various capabilities of the device can be found by testing for features.
     In the example a Feature combo box, on the General tab, has a hard coded
@@ -90,11 +90,11 @@
     function is called with the index which is handled by applying a test to
     the corresponding feaure.
 
-    \snippet snippets/sysinfo-snippets/dialog.cpp  feature
+    \snippet ../../examples/sysinfo/dialog.cpp  feature
     \dots
-    \snippet snippets/sysinfo-snippets/dialog.cpp  feature-bluetooth
+    \snippet ../../examples/sysinfo/dialog.cpp  feature-bluetooth
     \dots
-    \snippet snippets/sysinfo-snippets/dialog.cpp  feature test
+    \snippet ../../examples/sysinfo/dialog.cpp  feature test
 
 
 */

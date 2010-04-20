@@ -48,7 +48,7 @@
 
 #include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QMediaResource
 {
@@ -119,10 +119,10 @@ private:
 
 typedef QList<QMediaResource> QMediaResourceList;
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaResource))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaResourceList))
+Q_DECLARE_METATYPE(QMediaResource)
+Q_DECLARE_METATYPE(QMediaResourceList)
 
 
 #endif

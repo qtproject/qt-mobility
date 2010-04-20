@@ -1033,7 +1033,17 @@ void tst_SimCM::sdnContacts()
     QList<QContact> contacts = cm->contacts();
     QVERIFY(contacts.count());
     foreach(const QContact& c, contacts) {
+        // Assume a valid SDN contact always has a display label and a phone number
+        QVERIFY(!c.displayLabel().isEmpty());
+        QVERIFY(!c.displayLabel().contains("unnamed", Qt::CaseInsensitive));
+        QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
         foreach(const QContactDetail& d, c.details()) {
+            qDebug() << "Detail: " << d.definitionName();
+            foreach (QVariant varianttt, d.variantValues()) {
+                qDebug() << "Variant value: " << varianttt.toString();
+            }
+            qDebug() << "access constraints: " << d.accessConstraints();
+            // Verify that read only details have the read only constraint set
             QVERIFY(d.accessConstraints().testFlag(QContactDetail::ReadOnly));
         }
     }
@@ -1143,7 +1153,7 @@ void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QCont
         // Use existing detail if available and would not cause an overwrite of
         // a field value
         QContactDetail contactDetail = QContactDetail(detailParts[0]);
-        if (contact.details().contains(detailParts[0])
+        if (contact.details().contains(QContactDetail(detailParts[0]))
             && contact.detail(detailParts[0]).variantValues().key(detailParts[1]).isNull()) {
             contactDetail = contact.detail(detailParts[0]);
         }

@@ -42,13 +42,13 @@
 #include <QMetaType>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QContact)
 Q_DECLARE_METATYPE(QContactFilter)
 
 class tst_QContactFilter : public QObject
@@ -58,9 +58,6 @@ Q_OBJECT
 public:
     tst_QContactFilter();
     virtual ~tst_QContactFilter();
-
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();
@@ -72,12 +69,13 @@ private slots:
     void detailFilter();
     void detailRangeFilter();
     void changeLogFilter();
-    void actionFilter();
     void relationshipFilter();
     void boringFilters();
     void idListFilter();
     void canonicalizedFilter();
     void canonicalizedFilter_data();
+    void testFilter();
+    void testFilter_data();
 
     void traits();
 
@@ -351,86 +349,6 @@ void tst_QContactFilter::unionFilter()
     QVERIFY(bf3.filters().at(1) == df2);
     QVERIFY(bf3.filters().at(2) == df);
     QVERIFY(bf3.filters().at(3) == df3);
-}
-
-void tst_QContactFilter::actionFilter()
-{
-    QContactActionFilter af;
-
-    /* Test initial conditions */
-    QVERIFY(af.type() == QContactFilter::ActionFilter);
-    QVERIFY(af.actionName().isEmpty());
-    QVERIFY(af.value().isNull());
-    QVERIFY(af.vendorName().isEmpty());
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setActionName("Action Name");
-    QVERIFY(af.actionName() == "Action Name");
-
-    af.setActionName(QString());
-    QVERIFY(af.actionName().isEmpty());
-
-    af.setValue(5);
-    QVERIFY(af.value() == 5);
-
-    af.setValue("This is a string");
-    QVERIFY(af.value() == "This is a string");
-
-    af.setVendor("Vendor");
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setVendor(QString());
-    QVERIFY(af.vendorName().isEmpty());
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setVendor(QString(), 10);
-    QVERIFY(af.vendorName().isEmpty());
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setVendor("Vendor", 10);
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == 10);
-
-    af.setVendor("Vendor", -1);
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == -1);
-
-    af.setVendor("Vendor", 10);
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == 10);
-
-    af.setVendor("Vendor");
-    QVERIFY(af.vendorName() == "Vendor");
-    QVERIFY(af.implementationVersion() == -1);
-
-    // Make sure there isn't a shadow copy
-    af.setVendor("Vendor", 10);
-    af.setVendor(QString());
-    QVERIFY(af.implementationVersion() == -1);
-    af.setVendor("Vendor");
-    QVERIFY(af.implementationVersion() == -1);
-
-    /* Test op= */
-    QContactFilter f = af;
-    QVERIFY(f == af);
-
-    QContactActionFilter af2 = f;
-    QVERIFY(af2 == af);
-
-    /* Self assignment should do nothing */
-    af2 = af2;
-    QVERIFY(af2 == af);
-
-    QContactDetailFilter dfil;
-    QContactActionFilter af3(dfil);
-    QVERIFY(af3.type() == QContactFilter::ActionFilter);
-    QContactActionFilter af4(af);
-    QVERIFY(af4 == af);
-    af = dfil;
-    QVERIFY(af == af3);
-    af = af3;
-    af.setActionName("test"); // should force a detach
 }
 
 void tst_QContactFilter::changeLogFilter()
@@ -1138,6 +1056,121 @@ void tst_QContactFilter::canonicalizedFilter_data()
         QTest::newRow("Empty detail filter")
                 << static_cast<QContactFilter>(qcdf)
                 << static_cast<QContactFilter>(invalidFilter);
+    }
+}
+
+void tst_QContactFilter::testFilter()
+{
+    QFETCH(QContact, contact);
+    QFETCH(QContactFilter, filter);
+    QFETCH(bool, expected);
+
+    QCOMPARE(QContactManagerEngine::testFilter(filter, contact), expected);
+}
+
+void tst_QContactFilter::testFilter_data()
+{
+    QTest::addColumn<QContact>("contact");
+    QTest::addColumn<QContactFilter>("filter");
+    QTest::addColumn<bool>("expected");
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setFirstName(QLatin1String("first"));
+        name.setMiddleName(QLatin1String("middle"));
+        name.setLastName(QLatin1String("last"));
+        name.setPrefix(QLatin1String("prefix"));
+        name.setSuffix(QLatin1String("suffix"));
+        contact.saveDetail(&name);
+
+        QTest::newRow("QContactName::match firstname")
+                << contact
+                << QContactName::match("first")
+                << true;
+        QTest::newRow("QContactName::match lastname")
+                << contact
+                << QContactName::match("last")
+                << true;
+        QTest::newRow("QContactName::match middlename")
+                << contact
+                << QContactName::match("middle")
+                << true;
+        QTest::newRow("QContactName::match prefix")
+                << contact
+                << QContactName::match("prefix")
+                << true;
+        QTest::newRow("QContactName::match suffix")
+                << contact
+                << QContactName::match("suffix")
+                << true;
+        QTest::newRow("QContactName::match first last")
+                << contact
+                << QContactName::match(QLatin1String("first"), QLatin1String("last"))
+                << true;
+        QTest::newRow("QContactName::match substring")
+                << contact
+                << QContactName::match(QLatin1String("irs"))
+                << true;
+        QTest::newRow("QContactName::match first last substring")
+                << contact
+                << QContactName::match(QLatin1String("irs"), QLatin1String("as"))
+                << true;
+        QTest::newRow("QContactName::match negative")
+                << contact
+                << QContactName::match("foo")
+                << false;
+    }
+
+    {
+        QContact contact;
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("foo"));
+        QTest::newRow("QContactDisplayLabel::match positive")
+                << contact
+                << QContactDisplayLabel::match("foo")
+                << true;
+        QTest::newRow("QContactDisplayLabel::match positive substring")
+                << contact
+                << QContactDisplayLabel::match("o")
+                << true;
+        QTest::newRow("QContactDisplayLabel::match negative")
+                << contact
+                << QContactDisplayLabel::match("bar")
+                << false;
+    }
+
+    {
+        QContact contact;
+        QContactPhoneNumber phone;
+        phone.setNumber("1234");
+        contact.saveDetail(&phone);
+        QTest::newRow("QContactPhoneNumber::match positive")
+                << contact
+                << QContactPhoneNumber::match("1234")
+                << true;
+        QTest::newRow("QContactPhoneNumber::match negative")
+                << contact
+                << QContactPhoneNumber::match("5678")
+                << false;
+    }
+
+    {
+        QContact contact;
+        QContactEmailAddress email;
+        email.setEmailAddress("foo");
+        contact.saveDetail(&email);
+        QTest::newRow("QContactEmailAddress::match positive")
+                << contact
+                << QContactEmailAddress::match("foo")
+                << true;
+        QTest::newRow("QContactEmailAddress::match positive substring")
+                << contact
+                << QContactEmailAddress::match("o")
+                << true;
+        QTest::newRow("QContactEmailAddress::match negative")
+                << contact
+                << QContactEmailAddress::match("bar")
+                << false;
     }
 }
 

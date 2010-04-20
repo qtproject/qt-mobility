@@ -51,7 +51,6 @@
 #include "cntfilterdefault.h"
 #include "cntfilterunion.h"
 #include "cntfilterintersection.h"
-#include "cntfilteraction.h"
 #include "cntfilterlocalid.h"
 #include "cntfilterinvalid.h"
 #include "cntfilterchangelog.h"
@@ -561,19 +560,6 @@ void TestFiltering::testChangeLogFilter()
     QVERIFY(error == QContactManager::NotSupportedError);
 }
 
-void TestFiltering::testActionFilter()
-{
-    QList<QContactLocalId> cnt_ids;
-    QContactActionFilter filter;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
-    
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
-
-    QVERIFY(error == QContactManager::NotSupportedError);
-}
-
 void TestFiltering::testRelationshipFilter()
 {
     // create a group contact
@@ -596,18 +582,14 @@ void TestFiltering::testRelationshipFilter()
     mCntMng->saveRelationship(&relationship);
     
     
-    QList<QContactLocalId> cnt_ids;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
-    
     QContactRelationshipFilter groupFilter;                   
     groupFilter.setRelationshipType(QContactRelationship::HasMember);
     groupFilter.setRelatedContactId(groupContact.id());                
     groupFilter.setRelatedContactRole(QContactRelationship::First);
 
-    
-    cnt_ids = mCntMng->contactIds(groupFilter, sortOrder);
-    error = mCntMng->error();
+    QList<QContactSortOrder> sortOrder = QList<QContactSortOrder>();
+    QList<QContactLocalId> cnt_ids = mCntMng->contactIds(groupFilter, sortOrder);
+    QContactManager::Error error = mCntMng->error();
     
     // check counts 
     int seachedcontactcount = cnt_ids.count();
@@ -881,17 +863,15 @@ void TestFiltering::testZeroSearch()
 {
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
-    QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
 
-    bool isPredSearch = false;
     QString pattern = "60";
        
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
     cnt_ids = mCntMng->contactIds(df, sortOrder);
-    error = mCntMng->error();
+    QContactManager::Error error = mCntMng->error();
 
     for( int i=0;i<cnt_ids.count();i++ ) {
             QString firstName("Micheal");
@@ -935,10 +915,6 @@ void TestFiltering::testFilterSupported()
     flag = filterInvalid.filterSupported(f1);
     QVERIFY(flag ==false);   
             
-    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
-    flag = filterAction.filterSupported(f1);
-    QVERIFY(flag ==false);   
-               
     CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
     flag = filterUnion.filterSupported(f1);
     QVERIFY(flag ==false);   
@@ -988,12 +964,7 @@ void TestFiltering::testCreateSelectQuery()
     error = QContactManager::NoError;
     filterInvalid.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
-            
-    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
-    error = QContactManager::NoError;
-    filterAction.createSelectQuery(f1,sqlquery,&error);
-    QVERIFY(error == QContactManager::NotSupportedError);
-               
+                        
     CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
     filterUnion.createSelectQuery(f1,sqlquery,&error);

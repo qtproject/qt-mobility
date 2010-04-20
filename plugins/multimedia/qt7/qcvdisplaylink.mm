@@ -44,7 +44,7 @@
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qdebug.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 static CVReturn CVDisplayLinkCallback(CVDisplayLinkRef displayLink,
                                  const CVTimeStamp *inNow,

@@ -42,7 +42,7 @@
 
 # return status of 1 if absolute path as first argument
 # also prints the return status
-function isAbsPath() {
+isAbsPath() {
     slash=$(echo $1 | cut -c 1)
     if [ "$slash" != "/" ]; then
         echo 0
@@ -57,7 +57,7 @@ function isAbsPath() {
 # This is required because when building in scratchbox for
 # maemo we do not want to follow symbolic links that are 
 # introduced by scratchbox
-function absPath() {
+absPath() {
     
     if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
         if [ `isAbsPath $1` = '1' ]; then
@@ -89,6 +89,7 @@ QT_MOBILITY_BIN=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
 BUILD_DOCS=yes
+BUILD_TOOLS=yes
 RELEASEMODE=
 BUILD_SILENT=
 LINUX_TARGET=
@@ -103,7 +104,8 @@ usage()
 {
     echo "Usage: configure [-prefix <dir>] [headerdir <dir>] [libdir <dir>]"
     echo "                 [-bindir <dir>] [-tests] [-examples] [-no-docs]"
-    echo "                 [-debug] [-release] [-silent] [-modules <list>]"
+    echo "                 [-no-tools] [-debug] [-release] [-silent]"
+    echo "                 [-modules <list>]"
     echo
     echo "Options:"
     echo
@@ -123,6 +125,7 @@ usage()
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
     echo "-no-docs .......... Do not build documentation (build by default)"
+    echo "-no-tools ......... Do not build tools (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
     echo "                    Choose from: bearer contacts location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework versit"
@@ -174,6 +177,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -no-docs)
             BUILD_DOCS=
+            ;;
+        -no-tools)
+            BUILD_TOOLS=
             ;;
         -debug)
             RELEASEMODE=debug
@@ -350,6 +356,12 @@ if [ -z "$BUILD_DOCS" ]; then
     echo "build_docs = no" >> "$CONFIG_IN"
 else
     echo "build_docs = yes" >> "$CONFIG_IN"
+fi
+
+if [ -z "$BUILD_TOOLS" ]; then
+    echo "build_tools = no" >> "$CONFIG_IN"
+else
+    echo "build_tools = yes" >> "$CONFIG_IN"
 fi
 
 echo "Configuring Qt Mobility"

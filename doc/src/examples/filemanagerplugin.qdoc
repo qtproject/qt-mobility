@@ -55,7 +55,7 @@
     only needs to create the appropriate object based on the interface name
     and return a pointer to it.
 
-    \snippet snippets/service-snippets/filemanagerplugin.cpp createinstance
+    \snippet ../../examples/filemanagerplugin/filemanagerplugin.cpp createinstance
 
     The functionality of the FileManager and the FileTransfer classes are
     in the separate classes FileManagerStorage and FileManagerTransfer respectively. The existing functions are merely test stubs to demonstrate

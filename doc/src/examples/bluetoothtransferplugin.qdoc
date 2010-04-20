@@ -51,10 +51,10 @@
     \section1 Writing the Plugin
     To implement a plugin it is necessary to create a new plugin class derived from QObject and QServicePluginInterface. The function QServicePluginInterface::createInstance() is implemented to return the appropriate instantiated object based on the interface name passed into the function. Since there is only one interface name for this example there is no test involved, so we can simply create the object implementing the service and return its pointer.
 
-    \snippet snippets/service-snippets/bluetoothtransferplugin.cpp createinstance
+    \snippet ../../examples/bluetoothtransferplugin/bluetoothtransferplugin.cpp createinstance
 
     The implementation of the service BluetoothTransfer is simply a test function for this example. The BluetoothTransfer class is very simple, with only an empty constructor and the sendFile() function
 
-    \snippet snippets/service-snippets/bluetoothtransfer.cpp sendFile
+    \snippet ../../examples/bluetoothtransferplugin/bluetoothtransfer.cpp sendFile
     
 */

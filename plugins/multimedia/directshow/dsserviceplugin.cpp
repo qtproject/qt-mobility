@@ -179,5 +179,5 @@ void DSServicePlugin::updateDevices() const
 }
 #endif
 
-Q_EXPORT_PLUGIN2(dsengine, DSServicePlugin);
+Q_EXPORT_PLUGIN2(qtmedia_dsengine, DSServicePlugin);
 

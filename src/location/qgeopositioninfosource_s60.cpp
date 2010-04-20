@@ -322,6 +322,28 @@ TInt CQGeoPositionInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBi
             }
         }
     }
+
+    if (index != -1) {
+        return index;
+    }
+
+    bool minSet = false;
+    microSeconds = 0;
+
+    for (TInt i = 0 ; i < mListSize; i++) {
+        if (mList[i].mIsAvailable
+                //&& posMethods.testFlag(mList[i].mPosMethod)
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
+                && (((aBits >> i) & 1))) {
+            if (!minSet || (mList[i].mTimeToFirstFix < microSeconds)) {
+                index = i;
+                minSet = true;
+                microSeconds = mList[i].mTimeToFirstFix;
+            }
+        }
+    }
+
     return index;
 }
 
@@ -693,6 +715,11 @@ void CQGeoPositionInfoSourceS60::requestUpdate(int aTimeout)
     //return if already a request update is pending
     if (mReqUpdateAO && mReqUpdateAO->isRequestPending())
         return;
+
+    if (aTimeout < 0 || (aTimeout != 0 && aTimeout < minimumUpdateInterval())) {
+        emit updateTimeout();
+        return;
+    }
 
     if (aTimeout == 0)
         aTimeout = 20000;

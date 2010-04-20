@@ -45,7 +45,7 @@
 #include <qmediaplaylistioplugin.h>
 #include <QObject>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QM3uPlaylistPlugin : public QMediaPlaylistIOPlugin
 {

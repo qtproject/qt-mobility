@@ -82,7 +82,7 @@
 <h2>Detailed Description</h2>
 <p>The QMessageService class provides the interface for requesting messaging service operations.</p>
 <p>QMessageService provides the mechanisms for messaging clients to request services, and to receive information in response. All requestable service operations present the same interface for communicating status, and progress information.</p>
-<p>All service request operations communicate changes in their operational state by emitting the activityChanged() signal.</p>
+<p>All service request operations communicate changes in their operational state by emitting the <a href="qmessageservice.html#stateChanged">stateChanged</a>() signal.</p>
 <p>Service request operations report progress information by emitting the <a href="qmessageservice.html#progressChanged">progressChanged</a>() signal.</p>
 <p>If a requested operation fails after being initiated then the <a href="qmessageservice.html#error">error</a>() function will return a value indicating the failure mode encountered.</p>
 <p>A client may attempt to cancel a requested operation after it has been initiated. The <a href="qmessageservice.html#cancel">cancel</a>() slot is provided for this purpose. Cancelation is not guaranteed to succeed, and is not possible on all platforms.</p>
@@ -128,6 +128,7 @@
 <h3 class="fn"><a name="countMessages"></a>bool QMessageService::countMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i> = QMessageFilter() )</h3>
 <p>Emits via a <a href="qmessageservice.html#messagesCounted">messagesCounted</a>() signal the number messages in the messaging store matching <i>filter</i>.</p>
 <p>Calling this function may result in the <a href="qmessageservice.html#progressChanged">progressChanged</a>() signal being emitted multiple times. An emission of the <a href="qmessageservice.html#progressChanged">progressChanged</a>() signal with a total of 0 indicates that the number of progress steps is unknown.</p>
+<p>The performance of counting messages is currently significantly less than optimal for some filters on some platforms.</p>
 <p>Returns true if the operation can be initiated; otherwise returns false.</p>
 <p>Note: This function should not initiate network activity, instead only message data already stored on the device will be used during evaluation of the function.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilter.html">QMessageFilter</a>, <a href="qmessageservice.html#messagesCounted">messagesCounted</a>(), <a href="qmessageservice.html#progressChanged">progressChanged</a>(), and <a href="qmessageservice.html#queryMessages">queryMessages</a>().</p>
@@ -159,12 +160,14 @@
 <h3 class="fn"><a name="queryMessages"></a>bool QMessageService::queryMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i> = QMessageFilter(), const <a href="qmessagesortorder.html">QMessageSortOrder</a> &amp; <i>sortOrder</i> = QMessageSortOrder(), <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 )</h3>
 <p>Emits via <a href="qmessageservice.html#messagesFound">messagesFound</a>() signals <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>filter</i> is not empty only identifiers for messages matching the parameters set by <i>filter</i> will be emitted, otherwise identifiers for all messages will be emitted. If <i>sortOrder</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortOrder</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
 <p>Calling this function may result in the <a href="qmessageservice.html#messagesFound">messagesFound</a>() and <a href="qmessageservice.html#progressChanged">progressChanged</a>() signals being emitted multiple times. An emission of the <a href="qmessageservice.html#progressChanged">progressChanged</a>() signal with a total of 0 indicates that the number of progress steps is unknown.</p>
+<p>The performance of querying messages is currently significantly less than optimal for some querying criteria on some platforms.</p>
 <p>Returns true if the operation can be initiated; otherwise returns false.</p>
 <p>Note: This function should not initiate network activity, instead only message data already stored on the device will be used during evaluation of the function.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilter.html">QMessageFilter</a>, <a href="qmessagesortorder.html">QMessageSortOrder</a>, <a href="qmessageservice.html#messagesFound">messagesFound</a>(), <a href="qmessageservice.html#progressChanged">progressChanged</a>(), and <a href="qmessageservice.html#countMessages">countMessages</a>().</p>
 <h3 class="fn"><a name="queryMessages-2"></a>bool QMessageService::queryMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>body</i>, <a href="qmessagedatacomparator.html#MatchFlag-enum">QMessageDataComparator::MatchFlags</a> <i>matchFlags</i> = 0, const <a href="qmessagesortorder.html">QMessageSortOrder</a> &amp; <i>sortOrder</i> = QMessageSortOrder(), <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 )</h3>
 <p>Emits via the <a href="qmessageservice.html#messagesFound">messagesFound</a>() signal <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>filter</i> is not empty only identifiers for messages matching the parameters set by <i>filter</i> and with a body containing the string <i>body</i> will be emitted, otherwise identifiers for all messages with a body containing <i>body</i> using matching flags <i>matchFlags</i> will be emitted. If <i>sortOrder</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortOrder</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
 <p>Calling this function may result in the <a href="qmessageservice.html#messagesFound">messagesFound</a>() and <a href="qmessageservice.html#progressChanged">progressChanged</a>() signals being emitted multiple times. An emission of the <a href="qmessageservice.html#progressChanged">progressChanged</a>() signal with a total of 0 indicates that the number of progress steps is unknown.</p>
+<p>The performance of querying messages is currently significantly less than optimal for some querying criteria on some platforms.</p>
 <p>Returns true if the operation can be initiated; otherwise returns false.</p>
 <p>Note: This function should not initiate network activity, instead only message data already stored on the device will be used during evaluation of the function.</p>
 <p>See also <a href="qmessage.html">QMessage</a>, <a href="qmessagefilter.html">QMessageFilter</a>, <a href="qmessagesortorder.html">QMessageSortOrder</a>, <a href="qmessageservice.html#messagesFound">messagesFound</a>(), <a href="qmessageservice.html#progressChanged">progressChanged</a>(), and <a href="qmessageservice.html#countMessages">countMessages</a>().</p>
@@ -190,6 +193,7 @@
 <h3 class="fn"><a name="send"></a>bool QMessageService::send ( <a href="qmessage.html">QMessage</a> &amp; <i>message</i> )</h3>
 <p>Transmit <i>message</i> using the account identified by the message's <a href="qmessage.html#parentAccountId">parentAccountId</a> function. If the message does not have a valid parentAccountId, it will be set to the result of <a href="qmessageaccount.html#defaultAccount">QMessageAccount::defaultAccount</a>() for the message's <a href="qmessage.html#Type-enum">type</a>.</p>
 <p>The message will be stored in the standard Outbox folder for the account before transmission, or moved to that folder if it is already stored in another folder. If transmission is successful, the message will be moved to the standard Sent folder for the account.</p>
+<p>Currently on the Maemo 5 (Fremantle) and Windows Mobile platforms the service action object enters the <a href="qmessageservice.html#State-enum">FinishedState</a> when the message is queued for sending rather than actually sent.</p>
 <p>Returns true if the operation can be initiated; otherwise returns false.</p>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessageaccountid.html">QMessageAccountId</a>.</p>
 <a name="//apple_ref/cpp/instm/QMessageService/show"></a>
@@ -197,6 +201,7 @@
 <p>Show the message identified by <i>id</i>.</p>
 <p>The default application for handling the type of message that <i>id</i> identifies should be used.</p>
 <p>Returns true if the operation can be initiated; otherwise returns false.</p>
+<p>On the Maemo 5 (Fremantle) platform this function is not yet supported for SMS type messages.</p>
 <p>On the QMF platform implementation of this function is left as a task for system integrators.</p>
 <p>See also <a href="qmessageid.html">QMessageId</a> and <a href="qmessage.html#type">QMessage::type</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageService/state"></a>

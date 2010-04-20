@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(audioengine)
+TARGET = $$qtLibraryTarget(qtmedia_audioengine)
 PLUGIN_TYPE=mediaservice
 
 QT += multimedia

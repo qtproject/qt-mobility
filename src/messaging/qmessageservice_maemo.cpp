@@ -72,10 +72,12 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
                                            uint limit, uint offset,
                                            EnginesToCall enginesToCall)
 {
-  qDebug() << "QMessageServicePrivate::queryMessages 1";
     if (_active) {
         return false;
     }
+
+    _filter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(_filter);
 
     _ids.clear();
     _sorted = true;
@@ -83,54 +85,30 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
 
     _active = true;
     _error = QMessageManager::NoError;
-    bool modestEngineCalled=false;
-
-    if (enginesToCall & EnginesToCallTelepathy) {
-      _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
-      qDebug() << "QMessageServicePrivate::queryMessages filterAndOrderMessages:";
-    }
 
     _pendingRequestCount = 0;
-    if (enginesToCall & EnginesToCallModest) {
-      qDebug() << "QMessageServicePrivate::queryMessages modest";
-      modestEngineCalled=true;
-      if (ModestEngine::instance()->queryMessages(messageService, filter, sortOrder, limit, offset)) {
-	  qDebug() << "QMessageServicePrivate::queryMessages modest done";
-	  _pendingRequestCount++;
 
-        }
-      qDebug() << "QMessageServicePrivate::queryMessages modest done 2";
-    } 
-
-    if (!modestEngineCalled && enginesToCall & EnginesToCallTelepathy && _pendingRequestCount==0 ) {
-      qDebug() << "QMessageServicePrivate::queryMessages only eventloggerengine";
-      if (!_sorted) {
-	MessagingHelper::orderMessages(_ids, sortOrder);
-      }
-      MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, limit, offset);
-      
-      emit q_ptr->messagesFound(_ids);
-
-      qDebug() << "QMessageServicePrivate::queryMessages setFinished(true)";
-      setFinished(true);
-      
-      _ids.clear();
-      qDebug() << "QMessageServicePrivate::queryMessages return true";
-      return true; // Operation initialized and completed
+    if (enginesToCall & EnginesToCallTelepathy) {
+        _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+        QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+        _pendingRequestCount++;
     }
 
+    if (enginesToCall & EnginesToCallModest) {
+        if (ModestEngine::instance()->queryMessages(messageService, _filter, sortOrder, limit, offset)) {
+            _pendingRequestCount++;
+        }
+    } 
 
     if (_pendingRequestCount > 0) {
-        _filter = filter;
         _sortOrder = sortOrder;
         _limit = limit;
         _offset = offset;
 
-        _state = QMessageService::ActiveState;
-        emit messageService.stateChanged(_state);
+        stateChanged(QMessageService::ActiveState);
     } else {
-      qDebug() << "QMessageServicePrivate::queryMessages setFinixhed() active=" << _active;
-      if(_active)setFinished(false);
+        _filter = QMessageFilter();
+        setFinished(false);
     }
 
     return _active;
@@ -144,10 +122,12 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
                                            uint limit, uint offset,
                                            EnginesToCall enginesToCall)
 {
-  qDebug() << "QMessageServicePrivate::queryMessages 2";
     if (_active) {
         return false;
     }
+
+    _filter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(_filter);
 
     _ids.clear();
     _sorted = true;
@@ -158,44 +138,28 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
 
     _pendingRequestCount = 0;
 
-    bool modestEngineCalled=false;
-    
     if (enginesToCall & EnginesToCallTelepathy) {
         _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
+        QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+        _pendingRequestCount++;
     }
 
     if (enginesToCall & EnginesToCallModest) {
-      modestEngineCalled=true;
-        if (ModestEngine::instance()->queryMessages(messageService, filter, body, matchFlags,
+        if (ModestEngine::instance()->queryMessages(messageService, _filter, body, matchFlags,
                                                     sortOrder, limit, offset)) {
             _pendingRequestCount++;
         }
     }
 
-    if (!modestEngineCalled && enginesToCall & EnginesToCallTelepathy && _pendingRequestCount==0 ) {
-      if (!_sorted) {
-	MessagingHelper::orderMessages(_ids, sortOrder);
-      }
-      MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, limit, offset);
-      
-      emit q_ptr->messagesFound(_ids);
-      setFinished(true);
-      
-      _ids.clear();
-      qDebug() << "QMessageServicePrivate::queryMessages return true";
-      return true; // Operation initialized and completed
-    }
-
     if (_pendingRequestCount > 0) {
-        _filter = filter;
         _sortOrder = sortOrder;
         _limit = limit;
         _offset = offset;
 
-        _state = QMessageService::ActiveState;
-        emit stateChanged(_state);
+        stateChanged(QMessageService::ActiveState);
     } else {
-      if(_active)setFinished(false);
+        _filter = QMessageFilter();
+        setFinished(false);
     }
 
     return _active;
@@ -209,25 +173,28 @@ bool QMessageServicePrivate::countMessages(QMessageService &messageService,
         return false;
     }
 
+    QMessageFilter handledFilter = filter;
+    MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
+
     _count = 0;
 
     _active = true;
     _error = QMessageManager::NoError;
 
     _pendingRequestCount = 0;
-    if (enginesToCall & EnginesToCallModest) {
-        if (ModestEngine::instance()->countMessages(messageService, filter)) {
-            _pendingRequestCount++;
-        }
-    }
 
     //TODO: SMS count support
     //if (enginesToCall & EnginesToCallTelepathy) {
     //}
 
+    if (enginesToCall & EnginesToCallModest) {
+        if (ModestEngine::instance()->countMessages(messageService, handledFilter)) {
+            _pendingRequestCount++;
+        }
+    }
+
     if (_pendingRequestCount > 0) {
-        _state = QMessageService::ActiveState;
-        emit stateChanged(_state);
+        stateChanged(QMessageService::ActiveState);
     } else {
         setFinished(false);
     }
@@ -238,7 +205,6 @@ bool QMessageServicePrivate::countMessages(QMessageService &messageService,
 
 void QMessageServicePrivate::setFinished(bool successful)
 {
-  qDebug() << "setFinished" << successful;
     if (!successful && _pendingRequestCount > 0) {
         _pendingRequestCount--;
     }
@@ -248,23 +214,20 @@ void QMessageServicePrivate::setFinished(bool successful)
             // We must report an error of some sort
             _error = QMessageManager::RequestIncomplete;
         }
-	qDebug() << "emit stateChanged(FinishedState)";
-        _state = QMessageService::FinishedState;
+
         _active = false;
-        emit q_ptr->stateChanged(_state);
+        stateChanged(QMessageService::FinishedState);
     }
 }
 
 void QMessageServicePrivate::stateChanged(QMessageService::State state)
 {
     _state = state;
-    qDebug() <<" StateChanged" << state;
     emit q_ptr->stateChanged(_state);
 }
 
 void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)
 {
-    qDebug() <<" MessagesFound";
     _pendingRequestCount--;
 
     if (!isFiltered) {
@@ -290,6 +253,8 @@ void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFil
         }
         MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, _limit, _offset);
 
+        ModestEngine::instance()->clearHeaderCache();
+
         emit q_ptr->messagesFound(_ids);
 
         setFinished(true);
@@ -303,8 +268,12 @@ void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFil
 void QMessageServicePrivate::messagesCounted(int count)
 {
     _pendingRequestCount--;
+
     _count += count;
+
     if (_pendingRequestCount == 0) {
+        ModestEngine::instance()->clearHeaderCache();
+
         emit q_ptr->messagesCounted(_count);
 
         setFinished(true);
@@ -318,6 +287,15 @@ void QMessageServicePrivate::progressChanged(uint value, uint total)
     emit q_ptr->progressChanged(value, total);
 }
 
+void QMessageServicePrivate::messagesFoundSlot()
+{
+    messagesFound(QMessageIdList(), true, false);
+}
+
+void QMessageServicePrivate::messagesCountedSlot()
+{
+    messagesCounted(0);
+}
 
 
 QMessageService::QMessageService(QObject *parent)
@@ -560,5 +538,7 @@ QMessageManager::Error QMessageService::error() const
 {
     return d_ptr->_error;
 }
+
+#include "moc_qmessageservice_maemo_p.cpp"
 
 QTM_END_NAMESPACE
