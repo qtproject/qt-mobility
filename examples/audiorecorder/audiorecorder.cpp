@@ -324,7 +324,8 @@ void AudioRecorder::toggleRecord()
             currentTime = 0;
         }
 #ifdef Q_OS_SYMBIAN    
-    capture->setOutputLocation(recordPathAudio(destination));
+    if (!paused)    
+        capture->setOutputLocation(recordPathAudio(destination));
 #endif
         capture->record();        
         active = true;
