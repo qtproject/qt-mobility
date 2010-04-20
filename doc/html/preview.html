@@ -1,24 +1,52 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- preview.qdoc -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- preview.qdoc -->
   <title>Qt Mobility Project 1.0: Technology Preview</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]>
+	<meta name="MSSmartTagsPreventParsing" content="true">
+	<meta http-equiv="imagetoolbar" content="no">
+	<![endif]-->
+  <!--[if lt IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
+	<![endif]-->
+  <!--[if IE 7]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
+	<![endif]-->
+  <!--[if IE 8]>
+	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
+	<![endif]-->
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Technology Preview<br /><span class="subtitle"></span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><div class="toc">
+<h3>Table of Contents</h3>
+<ul class="level1">
+<li><a href="#management-of-versit-documents">Management of Versit Documents</a></li>
+<li><a href="#sensor-api">Sensor API</a></li>
+<ul class="level2">
+<li><a href="#main-classes">Main Classes</a></li>
+<li><a href="#helper-classes">Helper Classes</a></li>
+<li><a href="#backend-classes">Backend Classes</a></li>
+</ul>
+</ul>
+</div>
+<h1 class="title">Technology Preview<br /><span class="subtitle"></span>
 </h1>
+<div class="descr"/>
 <a name="management-of-versit-documents"></a><a name="management-of-versit-documents"></a>
 <h3>Management of Versit Documents</h3>
 <p><a href="versit.html">Versit API Documentation</a></p>
 <p>An overview is available for the <a href="versit.html">Versit API</a></p>
-<p>Versit Classes. <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<p>Versit Classes. <p><table class="annotated">
 <tr valign="top" class="odd"><th><a href="qversitcontactexporter.html">QVersitContactExporter</a></th><td>Converts QContacts into QVersitDocuments</td></tr>
 <tr valign="top" class="even"><th><a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a></th><td>Interface for clients wishing to implement custom export behaviour for certain contact details</td></tr>
 <tr valign="top" class="odd"><th><a href="qversitcontactimporter.html">QVersitContactImporter</a></th><td>Creates QContacts from QVersitDocuments</td></tr>
@@ -36,23 +64,24 @@
 <p>An overview is available for the <a href="sensors-api.html">Sensor API</a></p>
 <a name="main-classes"></a>
 <h4>Main Classes</h4>
-<p>If you want to use the sensors on a device, these are the classes to use. <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<p>If you want to use the sensors on a device, these are the classes to use. <p><table class="annotated">
 </table></p>
 </p>
 <a name="helper-classes"></a>
 <h4>Helper Classes</h4>
-<p>These classes provide convenience wrappers that reduce the need for casting. <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<p>These classes provide convenience wrappers that reduce the need for casting. <p><table class="annotated">
 </table></p>
 </p>
 <a name="backend-classes"></a>
 <h4>Backend Classes</h4>
-<p>If you are making sensors available through the Sensors API, these are the classes to use. <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<p>If you are making sensors available through the Sensors API, these are the classes to use. <p><table class="annotated">
 <tr valign="top" class="odd"><th><a href="qsensorbackend.html">QSensorBackend</a></th><td>Sensor implementation</td></tr>
 <tr valign="top" class="even"><th><a href="qsensorbackendfactory.html">QSensorBackendFactory</a></th><td>Instantiates instances of QSensorBackend</td></tr>
 <tr valign="top" class="odd"><th><a href="qsensormanager.html">QSensorManager</a></th><td>Handles registration and creation of sensor backends</td></tr>
 <tr valign="top" class="even"><th><a href="qsensorplugininterface.html">QSensorPluginInterface</a></th><td>The pure virtual interface to sensor plugins</td></tr>
 </table></p>
 </p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

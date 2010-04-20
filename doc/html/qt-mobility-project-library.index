@@ -6791,20 +6791,20 @@
             <page access="public" status="commendable" name="quickstart/quickstart.pro" href="quickstart-quickstart-pro.html" subtype="file" title="" fulltitle="quickstart.pro Example File" subtitle="quickstart/quickstart.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="3rdparty.html" href="3rdparty.html" subtype="page" title="Third-Party Licenses Used in Qt" fulltitle="Third-Party Licenses Used in Qt" subtitle="" location="3rdparty.qdoc">
-            <contents name="des" title="DES ()" level="1"/>
-            <contents name="freetype-2-version-2-3-6" title="FreeType 2 () version 2.3.6" level="1"/>
-            <contents name="harfbuzz" title="HarfBuzz ()" level="1"/>
-            <contents name="the-independent-jpeg-group-s-jpeg-software-version-6b" title="The Independent JPEG Group's JPEG Software () version 6b" level="1"/>
-            <contents name="md4-and" title="MD4 ( and )" level="1"/>
-            <contents name="md5-and" title="MD5 ( and )" level="1"/>
-            <contents name="mng-library-version-1-0-10" title="MNG Library () version 1.0.10" level="1"/>
-            <contents name="png-reference-library-version-1-2-29" title="PNG Reference Library () version 1.2.29" level="1"/>
-            <contents name="the-ptmalloc-memory-allocator-version-1-8" title="The ptmalloc memory allocator () version 1.8" level="1"/>
-            <contents name="sha-1" title="SHA-1 ()" level="1"/>
-            <contents name="sqlite-version-3-5-9" title="SQLite () version 3.5.9" level="1"/>
-            <contents name="tiff-software-distribution-version-3-8-2" title="TIFF Software Distribution () version 3.8.2" level="1"/>
-            <contents name="wintab-api" title="Wintab API ()" level="1"/>
-            <contents name="data-compression-library-version-1-2-3" title="Data Compression Library () version 1.2.3" level="1"/>
+            <contents name="des-()" title="DES ()" level="1"/>
+            <contents name="freetype-2-() version-2-3-6" title="FreeType 2 () version 2.3.6" level="1"/>
+            <contents name="harfbuzz-()" title="HarfBuzz ()" level="1"/>
+            <contents name="the-independent-jpeg-group-s-jpeg-software-() version-6b" title="The Independent JPEG Group's JPEG Software () version 6b" level="1"/>
+            <contents name="md4-( and-)" title="MD4 ( and )" level="1"/>
+            <contents name="md5-( and-)" title="MD5 ( and )" level="1"/>
+            <contents name="mng-library-() version-1-0-10" title="MNG Library () version 1.0.10" level="1"/>
+            <contents name="png-reference-library-() version-1-2-29" title="PNG Reference Library () version 1.2.29" level="1"/>
+            <contents name="the-ptmalloc-memory-allocator-() version-1-8" title="The ptmalloc memory allocator () version 1.8" level="1"/>
+            <contents name="sha-1-()" title="SHA-1 ()" level="1"/>
+            <contents name="sqlite-() version-3-5-9" title="SQLite () version 3.5.9" level="1"/>
+            <contents name="tiff-software-distribution-() version-3-8-2" title="TIFF Software Distribution () version 3.8.2" level="1"/>
+            <contents name="wintab-api-()" title="Wintab API ()" level="1"/>
+            <contents name="data-compression-library-() version-1-2-3" title="Data Compression Library () version 1.2.3" level="1"/>
         </page>
         <page access="public" status="commendable" name="slideshow" href="slideshow.html" subtype="example" title="SlideShow Example" fulltitle="SlideShow Example" subtitle="" location="slideshow.qdoc">
             <page access="public" status="commendable" name="slideshow/slideshow.cpp" href="slideshow-slideshow-cpp.html" subtype="file" title="" fulltitle="slideshow.cpp Example File" subtitle="slideshow/slideshow.cpp" location=""/>
@@ -6863,7 +6863,7 @@
             <contents name="building-and-compiling" title="Building and compiling" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
-            <contents name="contact-details-leaf-classes" title="&quot;Contact Details&quot; Leaf Classes" level="2"/>
+            <contents name="contact-details- leaf-classes" title="&quot;Contact Details&quot; Leaf Classes" level="2"/>
             <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
             <contents name="contact-selection" title="Contact Selection" level="2"/>
             <contents name="implementing-backends" title="Implementing Backends" level="2"/>
@@ -6905,7 +6905,7 @@
             <contents name="backend-classes" title="Backend Classes" level="2"/>
         </page>
         <page access="public" status="commendable" name="lgpl.html" href="lgpl.html" subtype="page" title="GNU Lesser General Public License (LGPL)" fulltitle="GNU Lesser General Public License (LGPL)" subtitle="" location="gpl.qdoc">
-            <contents name="the-gnu-lesser-general-public-license-version-2-1" title="The GNU Lesser General Public License (Version 2.1)" level="1"/>
+            <contents name="the-gnu-lesser-general-public-license-(version-2-1" title="The GNU Lesser General Public License (Version 2.1)" level="1"/>
             <contents name="nokia-qt-lgpl-exception-version-1-0" title="Nokia Qt LGPL Exception version 1.0" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWindowControl_iid" href="qvideowindowcontrol.html#QVideoWindowControl_iid" location="qvideowindowcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWindowControl" type="" signature="QVideoWindowControl_iid()"/>
@@ -6922,7 +6922,7 @@
             <contents name="requesting-location-data-from-data-sources" title="Requesting location data from data sources" level="2"/>
             <contents name="controlling-aspects-of-data-sources" title="Controlling aspects of data sources" level="2"/>
             <contents name="reading-nmea-data" title="Reading NMEA data" level="2"/>
-            <contents name="example-creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="1"/>
+            <contents name="example- creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="1"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="flickr-demo" title="Flickr Demo" level="2"/>
             <contents name="weather-info-demo" title="Weather Info Demo" level="2"/>
@@ -7040,7 +7040,7 @@
         <page access="public" status="commendable" name="servicebrowser" href="servicebrowser.html" subtype="example" title="Service Browser Example" fulltitle="Service Browser Example" subtitle="" location="servicebrowser.qdoc">
             <contents name="servicebrowser-class-definition" title="ServiceBrowser Class Definition" level="1"/>
             <contents name="servicebrowser-class-implementation" title="ServiceBrowser Class Implementation" level="1"/>
-            <contents name="invoking-attributes-an-example" title="Invoking attributes: an example" level="2"/>
+            <contents name="invoking-attributes- an-example" title="Invoking attributes: an example" level="2"/>
             <page access="public" status="commendable" name="servicebrowser/servicebrowser.cpp" href="servicebrowser-servicebrowser-cpp.html" subtype="file" title="" fulltitle="servicebrowser.cpp Example File" subtitle="servicebrowser/servicebrowser.cpp" location=""/>
             <page access="public" status="commendable" name="servicebrowser/servicebrowser.h" href="servicebrowser-servicebrowser-h.html" subtype="file" title="" fulltitle="servicebrowser.h Example File" subtitle="servicebrowser/servicebrowser.h" location=""/>
             <page access="public" status="commendable" name="servicebrowser/main.cpp" href="servicebrowser-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="servicebrowser/main.cpp" location=""/>
@@ -7102,7 +7102,7 @@
             <contents name="limitations" title="Limitations" level="3"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
-            <contents name="battery-charging-accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
+            <contents name="battery-charging-- accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
             <contents name="namespaces-and-classes" title="Namespaces and Classes" level="1"/>
         </page>
         <page access="public" status="commendable" name="sysinfo" href="sysinfo.html" subtype="example" title="System Information Example" fulltitle="System Information Example" subtitle="" location="sysinfo.qdoc">
@@ -7119,7 +7119,7 @@
             <contents name="overview" title="Overview" level="1"/>
             <contents name="information-categories" title="Information Categories" level="2"/>
             <contents name="version" title="Version" level="3"/>
-            <contents name="features-hardware" title="Features (hardware)" level="3"/>
+            <contents name="features-(hardware" title="Features (hardware)" level="3"/>
             <contents name="network" title="Network" level="3"/>
             <contents name="display-information" title="Display Information" level="3"/>
             <contents name="storage-information" title="Storage Information" level="3"/>
@@ -7246,7 +7246,7 @@
         </page>
         <page access="public" status="commendable" name="installation.html" href="installation.html" subtype="page" title="Installation Guide" fulltitle="Installation Guide" subtitle="" location="installation.qdoc">
             <contents name="get-the-qt-mobility-api-package" title="Get the Qt Mobility API Package" level="1"/>
-            <contents name="pre-requisites-dependencies" title="Pre-requisites &amp; Dependencies" level="1"/>
+            <contents name="pre-requisites-&amp; dependencies" title="Pre-requisites &amp; Dependencies" level="1"/>
             <contents name="unpacking" title="Unpacking" level="1"/>
             <contents name="building" title="Building" level="1"/>
             <contents name="building-on-unix" title="Building On Unix" level="2"/>
@@ -7311,7 +7311,7 @@
         <page access="public" status="commendable" name="http://bugreports.qt.nokia.com" href="http-bugreports-qt-nokia-com.html" subtype="externalpage" title="QtMobility Project Bug Tracker" fulltitle="QtMobility Project Bug Tracker" subtitle="" location="qtmobility-known-issues.qdoc"/>
         <page access="public" status="commendable" name="qtmobility-known-issues.html" href="qtmobility-known-issues.html" subtype="page" title="Release Notes of the QtMobility Project" fulltitle="Release Notes of the QtMobility Project" subtitle="" location="qtmobility-known-issues.qdoc">
             <contents name="new-features" title="New Features" level="1"/>
-            <contents name="detailed-feature-support-symbian-s60" title="Detailed Feature support - Symbian/S60" level="2"/>
+            <contents name="detailed-feature-support-- symbian-s60" title="Detailed Feature support - Symbian/S60" level="2"/>
             <contents name="bearer-management-api" title="Bearer Management API" level="3"/>
             <contents name="contacts-api" title="Contacts API" level="3"/>
             <contents name="messaging-api" title="Messaging API" level="3"/>
@@ -7376,13 +7376,13 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="REGISTER_STATIC_PLUGIN" href="qsensormanager.html#REGISTER_STATIC_PLUGIN" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QSensorManager" type="" signature="REGISTER_STATIC_PLUGIN( pluginname)">
             <parameter left="" right="" name="pluginname" default=""/>
         </function>
-        <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API (technology preview)" fulltitle="Sensors API (technology preview)" subtitle="" location="sensors.qdoc">
+        <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API" fulltitle="Sensors API" subtitle="" location="sensors.qdoc">
             <contents name="namespace" title="Namespace" level="1"/>
             <contents name="sensor-types" title="Sensor Types" level="1"/>
             <contents name="common-conventions" title="Common Conventions" level="1"/>
             <contents name="using-a-sensor" title="Using a Sensor" level="1"/>
             <contents name="accessing-sensor-data-in-a-generic-fashion" title="Accessing sensor data in a generic fashion" level="1"/>
-            <contents name="front-end-back-end" title="Front end, back end" level="1"/>
+            <contents name="front-end- back-end" title="Front end, back end" level="1"/>
             <contents name="main-classes" title="Main Classes" level="1"/>
             <contents name="reading-classes" title="Reading Classes" level="1"/>
             <contents name="sensor-classes" title="Sensor Classes" level="1"/>

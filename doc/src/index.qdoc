@@ -258,7 +258,7 @@
     sensors such as screen orientation (portrait, landscape) and low-level,
     real-time sensors such as accelerometer data.
 
-    For more details see the \l{Sensors API (technology preview)}{Sensors API overview}.
+    For more details see the \l{Sensors API}{Sensors API overview}.
 
     \section2 Versit
 
@@ -392,7 +392,7 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Contacts</td>
+    <td>Contacts*</td>
 
     <td>FINAL</td>
     <td bgcolor="yellow"></td>
@@ -420,7 +420,7 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Multimedia</td>
+    <td>Multimedia**</td>
     <td>BETA</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -448,8 +448,8 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Sensors</td>
-    <td>BETA</td>
+    <td>Sensors*</td>
+    <td>FINAL</td>
     <td bgcolor="yellow"></td>
     <td bgcolor="lightgray"></td>
     <td bgcolor="lightgray"></td>
@@ -482,6 +482,15 @@
     <br>
 
     \endraw
+
+    [*] \i {These APIs are considered FINAL however there are some known
+    issues with Symbian backends. These backend issues will be resolved
+    in a future release. }
+    \raw HTML
+    <p>
+    \endraw
+    [**] \i {These APIs are considered BETA pending final API reviews. We
+    anticipate moving the status to Final in a future release.}
 
     \section1 Feedback and bug reports
     Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com
