@@ -46,6 +46,7 @@
 #include "qmobilityglobal.h"
 #include "qlandmarkmanager.h"
 #include "qlandmarkabstractrequest.h"
+#include "qlandmarkfilter.h"
 
 class QIODevice;
 
@@ -54,9 +55,7 @@ class QLandmarkCategory;
 class QLandmarkCategoryId;
 class QLandmark;
 class QLandmarkId;
-class QLandmarkFilter;
 class QLandmarkSortOrder;
-class QLandmarkAbstractRequest;
 class QLandmarkIdFetchRequest;
 class QLandmarkRemoveRequest;
 class QLandmarkSaveRequest;
@@ -66,7 +65,7 @@ class QLandmarkCategorySaveRequest;
 class QLandmarkImportRequest;
 class QLandmarkExportRequest;
 
-class QLandmarkManagerEngine : public QObject
+class Q_LOCATION_EXPORT QLandmarkManagerEngine : public QObject
 {
     Q_OBJECT
 public:

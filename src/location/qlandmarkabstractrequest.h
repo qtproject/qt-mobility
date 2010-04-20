@@ -73,7 +73,7 @@ public:
         ExportRequest
     };
 
-    QLandmarkAbstractRequest(QObject *parent = 0);
+    QLandmarkAbstractRequest(QLandmarkManager *manager, QObject *parent = 0);
     virtual ~QLandmarkAbstractRequest();
 
     RequestType type() const;
@@ -99,8 +99,8 @@ signals:
     void resultsAvailable();
     void stateChanged(QLandmarkAbstractRequest::State newState);
 protected:
-    QLandmarkAbstractRequest(QLandmarkAbstractRequestPrivate *otherd);
-    QLandmarkAbstractRequestPrivate *d;
+    QLandmarkAbstractRequest(QLandmarkAbstractRequestPrivate *otherd, QObject *parent = 0);
+    QLandmarkAbstractRequestPrivate *d_ptr;
 private:
     Q_DISABLE_COPY(QLandmarkAbstractRequest)
 };
