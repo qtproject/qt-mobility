@@ -92,7 +92,6 @@ protected: // From MS60MediaPlayerResolver
     
 private:
     S60MediaPlayerControl *m_control;
-    S60MediaRecognizer *m_mediaRecognizer;
     mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;

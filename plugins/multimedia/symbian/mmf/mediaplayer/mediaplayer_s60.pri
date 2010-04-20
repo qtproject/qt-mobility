@@ -6,10 +6,15 @@ LIBS += -lmediaclientvideo \
 	-lcone \
     -lmmfcontrollerframework \
     -lefsrv \
-    -lbitgdi 
+    -lbitgdi \
+    -lapgrfx \
+    -lapmime
 
 # If support to DRM is wanted then comment out the following line 
 #CONFIG += drm_supported
+
+# We are building Symbian backend with media player support
+DEFINES += HAS_MEDIA_PLAYER
 
 drm_supported {
     LIBS + = -ldrmaudioplayutility
@@ -50,11 +55,6 @@ contains(S60_VERSION, 3.1) {
     #3.1 doesn't provide audio routing in videoplayer
     DEFINES += HAS_NO_AUDIOROUTING_IN_VIDEOPLAYER
 
-    MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
-    "LIBRARY    MPEngine.lib" \
-    "MACRO    HAS_MEDIA_PLAYER" \
-    "$${LITERAL_HASH}endif"
-
     !exists($${EPOCROOT}epoc32\release\winscw\udeb\audiooutputrouting.lib) {
         MMP_RULES += "$${LITERAL_HASH}ifdef WINSCW" \
                      "MACRO HAS_NO_AUDIOROUTING" \
@@ -65,18 +65,9 @@ contains(S60_VERSION, 3.1) {
     }
 
 } else {
-    LIBS += -lMPEngine
-    DEFINES += HAS_MEDIA_PLAYER
     LIBS += -laudiooutputrouting
 }
 
-exists($${EPOCROOT}epoc32\include\platform\mw\mediarecognizer.h) {
-    symbian:LIBS += -lplaybackhelper
-    DEFINES += USE_SYMBIAN_MEDIARECOGNIZER
-    #these are sdk plugins that don't exits in Symbian3
-    symbian:LIBS -= -lMPEngine
-    message("Using Symbian mediarecognizer")
-}
 exists($$[QT_INSTALL_HEADERS]\QtGui\private\qwidget_p.h) {
     DEFINES += USE_PRIVATE_QWIDGET_METHODS
     message("Enabling use of private QWidget methods")
