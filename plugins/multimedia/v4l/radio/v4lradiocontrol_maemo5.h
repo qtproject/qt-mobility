@@ -101,6 +101,9 @@ public:
     QRadioTuner::Error error() const;
     QString errorString() const;
 
+public slots:
+    void enablePipeline(bool enable = true);
+
 private slots:
     void search();
     void enableFMRX();
