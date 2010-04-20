@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkManagerEngine
     \brief The QLandmarkManagerEngine class provides the interface for all implementations
     of the landmark manager backend functionality.
+    \ingroup landmarks-backend
 
     Instances of this class are usually provided by \l QLandmarkManagerEngineFactory, which is loaded
     from a plugin.

@@ -44,11 +44,9 @@
 
 #include "routepresenter.h"
 #include "placepresenter.h"
-#include "qgeomaptile.h"
 
-#include "qgeocodingservice_nokia_p.h"
 #include "qgeoroutingservice_nokia_p.h"
-#include "qgeomapservice_nokia_p.h"
+#include "qmaptileservice_nokia_p.h"
 
 #include <QTimer>
 #ifdef Q_OS_SYMBIAN
@@ -64,10 +62,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     geocodingService = new QGeocodingServiceNokia();
+    geocodingService->setProxy( QNetworkProxy(QNetworkProxy::HttpProxy, "172.16.42.137", 8080) );
+    geocodingService->setHost("loc.desktop.maps.svc.ovi.com");
     routingService = new QGeoRoutingServiceNokia();
-    QGeoMapServiceNokia *mService = new QGeoMapServiceNokia();
+    QMapTileServiceNokia *mService = new QMapTileServiceNokia();
 
-    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.41", 8080);
+    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.40", 8080);
     mService->setProxy(proxy);
     mService->setHost("origin.maptile.svc.tst.s2g.gate5.de");
 
@@ -80,8 +80,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(geocodingService, SIGNAL(finished(QGeocodingReply*)),
                      this, SLOT(codingReplyFinished(QGeocodingReply*)));
 
-    QObject::connect(mapService, SIGNAL(finished(QGeoMapTileReply*)),
-                     this, SLOT(mapTileReplyFinished(QGeoMapTileReply*)));
+    QObject::connect(mapService, SIGNAL(finished(QMapTileReply*)),
+                     this, SLOT(mapTileReplyFinished(QMapTileReply*)));
 
     ui->mapTileLabel->setVisible(false);
 
@@ -242,25 +242,15 @@ void MainWindow::on_btnRequestTile_clicked()
     QGeoCoordinate coord(ui->tileLat->toPlainText().toDouble(),
                          ui->tileLong->toPlainText().toDouble()
                         );
-    quint16 zoomLevel = ui->tileZoomLevel->toPlainText().toInt();
+    quint32 zoomLevel = ui->tileZoomLevel->toPlainText().toInt();
 
     ui->mapTileLabel->setVisible(true);
     ui->treeWidget->setVisible(false);
 
-    QGeoMapTileRequest request;
-    request.setVersion(MapVersion(MapVersion::Newest));
-    request.setScheme(MapScheme(MapScheme::Normal_Day));
-    request.setResolution(MapResolution(MapResolution::Res_256_256));
-    request.setFormat(MapFormat(MapFormat::Png));
-
     quint32 col;
     quint32 row;
-    QGeoMapServiceNokia::getMercatorTileIndex(coord, zoomLevel, &col, &row);
-    request.setCol((quint32) col);
-    request.setRow((quint32) row);
-    request.setZoomLevel(zoomLevel);
-
-    mapService->getMapTile(request);
+    mapService->getMercatorTileIndex(coord, zoomLevel, &row, &col);
+    mapService->request(zoomLevel, row, col);
 }
 
 void MainWindow::routeReplyFinished(QGeoRouteReply* reply)
@@ -277,7 +267,7 @@ void MainWindow::codingReplyFinished(QGeocodingReply* reply)
     reply->deleteLater();
 }
 
-void MainWindow::mapTileReplyFinished(QGeoMapTileReply* reply)
+void MainWindow::mapTileReplyFinished(QMapTileReply* reply)
 {
     QPixmap pixmap;
     pixmap.loadFromData(reply->data());

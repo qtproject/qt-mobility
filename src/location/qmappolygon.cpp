@@ -131,10 +131,10 @@ void QMapPolygon::compMapCoords()
     QPolygonF pgn;
 
     for (int i = 0; i < d->poly.count(); i++) {
-        pgn << d->mapView->geoToMap(d->poly[i]);
+        pgn << d->mapView->translateToViewport(d->poly[i]);
     }
 
-    pgn << d->mapView->geoToMap(d->poly[0]);
+    pgn << d->mapView->translateToViewport(d->poly[0]);
     d->path = QPainterPath();
     d->path.addPolygon(pgn);
     //compute intersecting map tiles now

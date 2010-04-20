@@ -44,15 +44,14 @@
 
 #include <QRectF>
 #include <QTimer>
-#include <QSet>
-#include <QHash>
 
-#include "qgeomaptile.h"
 #include "qmapview.h"
+#include "qmaptilereply.h"
+#include "qmapcontainer.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapService;
+class QMapTileService;
 
 class QMapViewPrivate
 {
@@ -74,7 +73,7 @@ public:
 
     QRectF viewPort; //!< The logical view port.
     quint32 numColRow; //!< The number of tiles along both the x- and y-axis
-    QGeoMapService* mapService; //!< the underlying map service
+    QMapTileService* mapService; //!< the underlying map service
     quint32 horizontalPadding; //!< horizontal preload padding
     quint32 verticalPadding; //!< vertical preload padding
     quint32 routeDetails; //!< Minimum manhattan distance betwee two consecutive visible route way points.
@@ -86,12 +85,12 @@ public:
     QTimer releaseTimer; //!< Periodic release timer
 
     quint16 currZoomLevel; //!< The current zoom level
-    MapVersion mapVersion; //!< The current map version
-    MapScheme mapSchmeme; //!< The current map scheme
-    MapResolution mapResolution; //!< The current map resolution
-    MapFormat mapFormat; //!< The current map format
+    QMapTileServiceNokia::MapVersion mapVersion; //!< The current map version
+    QMapTileServiceNokia::MapScheme mapSchmeme; //!< The current map scheme
+    QMapTileServiceNokia::TileSize tileSize; //!< The current map resolution
+    QMapTileServiceNokia::MapFormat mapFormat; //!< The current map format
 
-    QSet<QMapObject*> mapObjects; //!< Keeps track of all map objects.
+    QMapContainer mapObjects; //!< Keeps track of all map objects.
     /*!
     * Stores for each map tile (as specified by its one-dimensional index)
     * a list of all map objects that intersect or are completely covered by
@@ -101,12 +100,13 @@ public:
 
     /*!
     * Stores for each requested map tile (as given by its
-    * one-dimensional tile index) the corresonding QGeoMapTileReply.
+    * one-dimensional tile index) the corresonding QMapTileReply.
     */
-    QHash<quint64, QGeoMapTileReply*> pendingTiles; //!< Pending requested map tiles
+    QHash<quint64, QMapTileReply*> pendingTiles; //!< Pending requested map tiles
 
     QHash<quint64, QPair<QPixmap, bool> > mapTiles;
-
+    quint16 heading;
+    quint16 tilt;
     bool panActive;
     bool pannable;
 };

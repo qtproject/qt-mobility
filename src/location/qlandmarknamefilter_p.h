@@ -62,7 +62,7 @@ QTM_BEGIN_NAMESPACE
 class QLandmarkNameFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkNameFilterPrivate(const QString &name);
+    QLandmarkNameFilterPrivate(const QString &name, Qt::CaseSensitivity sensitivity);
     QLandmarkNameFilterPrivate(const QLandmarkNameFilterPrivate &other);
     virtual ~QLandmarkNameFilterPrivate();
 

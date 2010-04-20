@@ -168,13 +168,13 @@ void QMapMarker::compMapCoords()
         return;
 
     if (d->icn.isNull()) {
-        d->mapPt = d->mapView->geoToMap(d->pt);
+        d->mapPt = d->mapView->translateToViewport(d->pt);
         d->box.moveLeft(d->mapPt.x() - (MARKER_WIDTH / 2));
         d->box.moveTop(d->mapPt.y() - (MARKER_HEIGHT - 1));
         d->intersectingTiles.clear();
         compIntersectingTiles(d->box);
     } else {
-        d->mapPt = d->mapView->geoToMap(d->pt);
+        d->mapPt = d->mapView->translateToViewport(d->pt);
         d->box.moveLeft(d->mapPt.x() - (d->icn.width() / 2));
         d->box.moveTop(d->mapPt.y() - (d->icn.height() - 1));
         d->intersectingTiles.clear();

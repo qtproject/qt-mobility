@@ -55,13 +55,14 @@ QTM_BEGIN_NAMESPACE
     by calling errorMap()) or an  overall operation error occurs(which may be
     retrieved by calling QLandmarkAbstractRequest::error()).
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!
-    Constructs a category remove request.
+    Constructs a category remove request with the given \a parent.
 */
-QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest()
+QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest(QObject *parent)
+    : QLandmarkAbstractRequest(parent)
 {
 }
 
@@ -82,9 +83,22 @@ QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 
 /*!
     Sets the list of \a categoryIds of categories which will be removed.
+
+    \sa setCategoryId()
 */
 void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
+    Q_UNUSED(categoryIds);
+}
+
+/*!
+    Convenience function to set the \a categoryId of a sisngle category to be removed.
+
+    \sa setCategoryIds()
+*/
+void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
+{
+    Q_UNUSED(categoryId);
 }
 
 /*!

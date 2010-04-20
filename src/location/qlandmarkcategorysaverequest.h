@@ -53,11 +53,12 @@ class Q_LOCATION_EXPORT QLandmarkCategorySaveRequest : public QLandmarkAbstractR
 {
     Q_OBJECT
 public:
-    QLandmarkCategorySaveRequest();
+    QLandmarkCategorySaveRequest(QObject *parent = 0);
     ~QLandmarkCategorySaveRequest();
 
     QList<QLandmarkCategory> categories() const;
     void setCategories(const QList<QLandmarkCategory> &categories);
+    void setCategory(const QLandmarkCategory &category);
 
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:

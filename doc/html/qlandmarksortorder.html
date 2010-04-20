@@ -23,7 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksortorder.html#SortType-enum">SortType</a></b> { InvalidSort, NameSort, DistanceSort, CustomSort }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksortorder.html#SortType-enum">SortType</a></b> { DefaultSort, NameSort, DistanceSort, CustomSort }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -43,7 +43,7 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QLandmarkSortOrder/SortType"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkSortOrder/InvalidSort"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkSortOrder/DefaultSort"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkSortOrder/NameSort"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkSortOrder/DistanceSort"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkSortOrder/CustomSort"></a>
@@ -51,7 +51,7 @@
 <p>Defines the type of sort order.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QLandmarkSortOrder::InvalidSort</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">An invalid sort order.</td></tr>
+<tr><td valign="top"><tt>QLandmarkSortOrder::DefaultSort</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The default sort order that does nothing</td></tr>
 <tr><td valign="top"><tt>QLandmarkSortOrder::NameSort</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Sorts landmarks by name.</td></tr>
 <tr><td valign="top"><tt>QLandmarkSortOrder::DistanceSort</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Sorts landmarks by distance from a particular coordinate.</td></tr>
 <tr><td valign="top"><tt>QLandmarkSortOrder::CustomSort</tt></td><td align="center" valign="top"><tt>500</tt></td><td valign="top">Is a custom sort order.</td></tr>
@@ -61,7 +61,7 @@
 <a name="//apple_ref/cpp/instm/QLandmarkSortOrder/QLandmarkSortOrder"></a>
 <h3 class="fn"><a name="QLandmarkSortOrder"></a>QLandmarkSortOrder::QLandmarkSortOrder ()</h3>
 <p>Constructs a landmark sort order.</p>
-<p>The type of the sort order is <a href="qlandmarksortorder.html#SortType-enum">InvalidSort</a>.</p>
+<p>The type of the sort order is InvalidSort.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkSortOrder/direction"></a>
 <h3 class="fn"><a name="direction"></a><a href="http://qt.nokia.com/doc/4.6/qt.html#SortOrder-enum">Qt::SortOrder</a> QLandmarkSortOrder::direction () const</h3>
 <p>Returns the direction of the sort order.</p>

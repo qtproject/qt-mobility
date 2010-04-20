@@ -51,11 +51,12 @@ class Q_LOCATION_EXPORT QLandmarkCategoryRemoveRequest : public QLandmarkAbstrac
 {
     Q_OBJECT
 public:
-    QLandmarkCategoryRemoveRequest();
+    QLandmarkCategoryRemoveRequest(QObject *parent = 0);
     ~QLandmarkCategoryRemoveRequest();
 
     QList<QLandmarkCategoryId> categoryIds() const;
     void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds);
+    void setCategoryId(const QLandmarkCategoryId &categoryId);
 
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:

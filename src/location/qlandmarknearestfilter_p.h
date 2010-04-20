@@ -62,11 +62,12 @@ class QGeoCoordinate;
 class QLandmarkNearestFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkNearestFilterPrivate(const QGeoCoordinate &coordinate);
+    QLandmarkNearestFilterPrivate(const QGeoCoordinate &coordinate, double radius);
     QLandmarkNearestFilterPrivate(const QLandmarkNearestFilterPrivate &other);
     virtual ~QLandmarkNearestFilterPrivate();
 
     QGeoCoordinate coordinate;
+    double radius;
 };
 
 QTM_END_NAMESPACE

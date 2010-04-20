@@ -51,7 +51,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "qgeomaptile.h"
 #include "qgeorouterequest.h"
 #include "qmapmarker.h"
 #include "qmapellipse.h"
@@ -61,8 +60,7 @@
 #include "qmappolygon.h"
 #include "qmappixmap.h"
 #include "qmapmarker.h"
-
-#include "qgeomapservice_nokia_p.h"
+#include "qmaptileservice_nokia_p.h"
 #include "qgeoroutingservice_nokia_p.h"
 
 QTM_USE_NAMESPACE
@@ -141,12 +139,12 @@ void MainWindow::delayedInit()
     session->waitForOpened(-1);
 #endif
     
-    QGeoMapServiceNokia *mService = new QGeoMapServiceNokia();
+    QMapTileServiceNokia *mService = new QMapTileServiceNokia();
     QGeoRoutingServiceNokia *rService = new QGeoRoutingServiceNokia();
 
-    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.41", 8080);
+    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.40", 8080);
     mService->setProxy(proxy);
-    mService->setHost("maptile.mapplayer.maps.svc.ovi.com");
+    mService->setHost("origin.maptile.svc.tst.s2g.gate5.de");
 
     mapService = mService;
     routingService = rService;
@@ -320,11 +318,11 @@ void MainWindow::zoomLevelChanged(quint16 /*oldZoomLevel*/, quint16 newZoomLevel
 void MainWindow::setScheme(bool /*checked*/)
 {
     if (sender() == mnDay)
-        mapView->setScheme(MapScheme(MapScheme::Normal_Day));
+        mapView->setScheme(QMapTileServiceNokia::NormalDay);
     else if (sender() == mnSat)
-        mapView->setScheme(MapScheme(MapScheme::Satellite_Day));
+        mapView->setScheme(QMapTileServiceNokia::SatelliteDay);
     else if (sender() == mnTer)
-        mapView->setScheme(MapScheme(MapScheme::Terrain_Day));
+        mapView->setScheme(QMapTileServiceNokia::TerrainDay);
 }
 
 void MainWindow::addMarker(bool /*checked*/)

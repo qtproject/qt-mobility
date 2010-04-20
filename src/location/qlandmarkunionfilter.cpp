@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkUnionFilter
     \brief The QLandmarkUnionFilter class provides a filter which unions the results
             of its constituent filters.
-    \ingroup location
+    \ingroup landmarks-filter
 
     Conceptually it performs an OR operation and may thus be used
     to select landmarks which match any one of it's constituent filters.

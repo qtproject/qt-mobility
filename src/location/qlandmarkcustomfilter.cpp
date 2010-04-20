@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkCustomFilter
     \brief The QLandmarkCustomFilter class provides the interface which
     all custom filters should inherit.
-    \ingroup location
+    \ingroup landmarks-filter
 
     All custom landmark filters should inherit off the QLandmarkCustomFilter
     and must implement the isMatch() function.

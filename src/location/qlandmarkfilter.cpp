@@ -69,8 +69,9 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
 
 /*!
     \class QLandmarkFilter
-    \brief The QLandmarkFilter class is used to select landmarks.
-    \ingroup location
+    \brief The QLandmarkFilter class serves as the base class for all filter classes.
+    Also serves as the default filter which retrieves all landmarks.
+    \ingroup landmarks-filter
 
     This class is used as a parameter to search for landmarks, it allows selection of
     landmarks which meet certain criteria.  It is used with QLandmarkManager
@@ -172,7 +173,6 @@ void QLandmarkFilter::setMaximumMatches(int maxMatches)
     Q_D(QLandmarkFilter);
     d->maxMatches = maxMatches;
 }
-
 
 /*!
     Returns true if this filter is not identical to \a other.

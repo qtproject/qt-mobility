@@ -90,7 +90,7 @@ bool QGeocodingXmlParserNokia::parseRootElement(QGeocodingReplyNokia *output)
                     if (!parsePlace(&location))
                         return false;
 
-                    output->places().append(location);
+                    output->addPlace(location);
                 } else {
                     m_reader->raiseError(QString("The element \"places\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
                     return false;

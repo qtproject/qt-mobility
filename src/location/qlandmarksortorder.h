@@ -60,7 +60,7 @@ class Q_LOCATION_EXPORT QLandmarkSortOrder
 public:
     QLandmarkSortOrder();
     virtual ~QLandmarkSortOrder();
-    enum SortType {InvalidSort, NameSort, DistanceSort, CustomSort = 500};
+    enum SortType {DefaultSort, NameSort, DistanceSort, CustomSort = 500};
 
     SortType type() const;
     Qt::SortOrder direction() const;

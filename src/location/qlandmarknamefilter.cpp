@@ -48,15 +48,15 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QLandmarkNameFilter
     \brief The QLandmarkNameFilter class is used to search for landmarks by name.
+    \ingroup landmarks-filter
 */
 
 /*!
     Creates a filter that selects landmarks by \a name.
 */
-QLandmarkNameFilter::QLandmarkNameFilter(const QString &name)
-    : QLandmarkFilter(new QLandmarkNameFilterPrivate(name))
-{
-}
+QLandmarkNameFilter::QLandmarkNameFilter(const QString &name,
+                                         Qt::CaseSensitivity sensitivity)
+    : QLandmarkFilter(new QLandmarkNameFilterPrivate(name, sensitivity)) {}
 
 /*!
     Destroys the filter.
@@ -105,9 +105,10 @@ void QLandmarkNameFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity
 /*******************************************************************************
 *******************************************************************************/
 
-QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QString &name)
+QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QString &name,
+                                                       Qt::CaseSensitivity sensitivity)
     : name(name),
-    sensitivity(Qt::CaseSensitive)
+    sensitivity(sensitivity)
 {
     type = QLandmarkFilter::NameFilter;
 }

@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 * The qlocation package provides wrapper classes for (reverse) geocoding requests/replies
 * (QGeocodingRequest, QReverseGeocodingRequest, QGeocodingReply),
 * geo routing requests/replies (QGeoRouteRequest, QGeoRouteReply), and map tile requests/replies
-* (QGeoMapTileRequest, QGeoMapTileReply). QMapView is a Qt::QGraphicsView based widget that displays
+* (QGeoMapTileRequest, QMapTileReply). QMapView is a Qt::QGraphicsView based widget that displays
 * a tile based map.
 *
 * \section sec_geo_engine The QGeoEngine
@@ -87,7 +87,7 @@ QTM_BEGIN_NAMESPACE
 *
 * \section sec_map_tile Map Tile Requests and Replies
 * A QGeoMapTileRequest is specified by a column and row index and various format parameters.
-* The returned QGeoMapTileReply contains the raw byte array of the Qt::QPixmap of the tile.
+* The returned QMapTileReply contains the raw byte array of the Qt::QPixmap of the tile.
 *
 * \section sec_map_view The QMapView Widget
 * The QMapView displays a tile based map. It supports panning and zooming, different map formats,

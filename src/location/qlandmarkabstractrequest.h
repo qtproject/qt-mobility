@@ -48,7 +48,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkAbstractRequestPrivate;
-class QLandmarkAbstractRequest : public QObject
+class Q_LOCATION_EXPORT QLandmarkAbstractRequest : public QObject
 {
     Q_OBJECT
 public:
@@ -73,7 +73,7 @@ public:
         ExportRequest
     };
 
-    QLandmarkAbstractRequest();
+    QLandmarkAbstractRequest(QObject *parent = 0);
     virtual ~QLandmarkAbstractRequest();
 
     RequestType type() const;

@@ -60,7 +60,7 @@ QTM_USE_NAMESPACE
     \class QLandmarkManager
     \brief The QLandmarkManager class provides an interface for storage
     and retrieval of landmarks from a landmark store.
-    \ingroup location
+    \ingroup landmarks-main
 */
 
 /*!
@@ -87,6 +87,17 @@ QTM_USE_NAMESPACE
     \value CommaSeparatedValues Comma separated values format (csv)
     \value Custom Custom landmark format
 */
+
+/*!
+    Constructs a QLandmarkManager. The default implementation for the platform will be used.
+
+    The \a parent QObject will be used as the parent of this QLandmarkManager.
+*/
+QLandmarkManager::QLandmarkManager(QObject *parent)
+        : d_ptr(new QLandmarkManagerPrivate())
+{
+    //TODO: implement
+}
 
 /*!
     Constructs a QLandmarkManager whose implementation is identified by \a managerName with the given
@@ -413,6 +424,10 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
 
 /*!
     Returns a list of categories identified by \a categoryIds.
+    The returned list is sorted in alphabetical order according to the
+    category name.
+
+    if \a categoryIds is empty, then all categories are returned.
 
     If any of the \a categoryIds are not found by the manager, they are simply ignored.
  */
@@ -494,6 +509,29 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter *filter, cons
 }
 
 /*!
+    Returns a list of landmarks which match the given \a filter and are sorted according to the given \a sortOrder.
+*/
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder) const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine)
+        return QList<QLandmark>();
+
+    QList<QLandmarkSortOrder> sortOrders;
+    sortOrders.append(sortOrder);
+    QList<QLandmark> lms = d->engine->landmarks(filter,
+                                                sortOrders,
+                                                &(d->errorCode),
+                                                &(d->errorString));
+
+    if (d->errorCode != NoError)
+        return QList<QLandmark>();
+
+    return lms;
+}
+
+/*!
     Returns a list of landmarks which match the given \a landmarkIds.
 
 */
@@ -528,6 +566,33 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter *filter,
     if (!d->engine)
         return QList<QLandmarkId>();
 
+    QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
+                                                    sortOrders,
+                                                    &(d->errorCode),
+                                                    &(d->errorString));
+
+    if (d->errorCode != NoError)
+        return QList<QLandmarkId>();
+
+    return ids;
+}
+
+/*!
+    Convenience function for returning a list of landmark identifiers of landmarks that match the given \a filter, sorted
+    according to the given \a sortOrder.
+
+    This is a convenience function.
+*/
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
+        const QLandmarkSortOrder &sortOrder) const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine)
+        return QList<QLandmarkId>();
+
+    QList<QLandmarkSortOrder> sortOrders;
+    sortOrders.append(sortOrder);
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
                                                     sortOrders,
                                                     &(d->errorCode),

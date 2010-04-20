@@ -43,17 +43,17 @@
 #define QLANDMARKPROXIMITY_H
 
 #include "qlandmarkfilter.h"
+#include "qgeocoordinate.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
 class QLandmarkProximityFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkProximityFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius);
+    QLandmarkProximityFilter(const QGeoCoordinate &coordinate = QGeoCoordinate(), double radius = -1);
     virtual ~QLandmarkProximityFilter();
 
     QGeoCoordinate coordinate() const;

@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkProximityFilter
     \brief The QLandmarkProximityFilter class is used to search for landmarks based on the radius
     around a given coordinate.
-    \ingroup location
+    \ingroup landmarks-filter
 */
 
 /*!

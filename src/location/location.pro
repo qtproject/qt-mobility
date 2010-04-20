@@ -17,11 +17,6 @@ PUBLIC_HEADERS += \
                     qgeocodingservice.h \
                     qgeocoordinate.h \
                     qgeolocation.h \
-                    qgeomapservice.h \
-                    qgeomaptile.h \
-                    qgeomaptilecache.h \
-                    qgeomaptilereply.h \
-                    qgeomaptilerequest.h \
                     qgeopositioninfo.h \
                     qgeopositioninfosource.h \
                     qgeoroute.h \
@@ -70,7 +65,11 @@ PUBLIC_HEADERS += \
                     qmappolygon.h \
                     qmaprect.h \
                     qmaproute.h \
+                    qmaptilereply.h \
+                    qmaptileservice.h \
                     qmapview.h \
+                    qmapcontainer.h \
+                    qgeoboundingbox.h \
                     qnmeapositioninfosource.h \
                     qreversegeocodingrequest.h
 
@@ -83,10 +82,6 @@ PRIVATE_HEADERS += \
                     qgeocodingxmlparser_nokia_p.h \
                     qgeolocation_p.h \
                     qgeolocation_p.h \
-                    qgeomapservice_nokia_p.h \
-                    qgeomaptilereply_nokia_p.h \
-                    qgeomaptilereply_p.h \
-                    qgeomaptilerequest_p.h \
                     qgeoroute_p.h \
                     qgeoroutereply_nokia_p.h \
                     qgeoroutereply_p.h \
@@ -120,6 +115,10 @@ PRIVATE_HEADERS += \
                     qmappolygon_p.h \
                     qmaprect_p.h\
                     qmaproute_p.h \
+                    qmaptilecache_nokia_p.h \
+                    qmaptilereply_nokia_p.h \
+                    qmaptilereply_p.h \
+                    qmaptileservice_nokia_p.h \
                     qmapview_p.h \
                     qnmeapositioninfosource_p.h \
                     qreversegeocodingrequest_p.h
@@ -209,12 +208,6 @@ SOURCES += \
             qgeocodingxmlparser_nokia.cpp \
             qgeocoordinate.cpp \
             qgeolocation.cpp \
-            qgeomapservice.cpp \
-            qgeomapservice_nokia.cpp \
-            qgeomaptilecache.cpp \
-            qgeomaptilereply.cpp \
-            qgeomaptilereply_nokia.cpp \
-            qgeomaptilerequest.cpp \
             qgeopositioninfo.cpp \
             qgeopositioninfosource.cpp \
             qgeoroute.cpp \
@@ -269,8 +262,15 @@ SOURCES += \
             qmappolygon.cpp \
             qmaprect.cpp \
             qmaproute.cpp \
+            qmaptilecache_nokia.cpp \
+            qmaptilereply.cpp \
+            qmaptilereply_nokia.cpp \
+            qmaptileservice.cpp \
+            qmaptileservice_nokia.cpp \
             qmapview.cpp \
             qmapview_p.cpp \
+            qmapcontainer.cpp \
+            qgeoboundingbox.cpp \
             qnmeapositioninfosource.cpp \
             qreversegeocodingrequest.cpp
 

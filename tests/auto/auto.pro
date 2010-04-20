@@ -25,6 +25,7 @@ contains(mobility_modules,bearer) {
 
 contains(mobility_modules,location) {
     SUBDIRS += qgeocoordinate \                 #Location
+          qgeoboundingbox \
           qgeopositioninfo \
           qgeosatelliteinfo \
           qgeosatelliteinfosource \
