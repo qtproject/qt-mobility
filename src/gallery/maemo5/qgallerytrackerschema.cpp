@@ -91,7 +91,8 @@ namespace
 
         const int length;
 
-        QStringRef strip(const QString &id) const { return QStringRef(&id, 0, length); }
+        QStringRef strip(const QString &id) const {
+            return QStringRef(&id, length, id.length() - length); }
     };
 
     struct QGalleryTypeMapItem
