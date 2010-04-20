@@ -196,7 +196,7 @@ Support is present for the following System Info API classes
 
 \section2 Sensors API
 \list
-    \o \bold {Sensors API is in beta state.}
+    \o S60: The S60 sensor backends are under development and may not be complete.
 \endlist
 
 \section2 System Info API

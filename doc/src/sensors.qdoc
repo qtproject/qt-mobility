@@ -41,7 +41,7 @@
 
 /*!
 \page sensors-api.html
-\title Sensors API (beta)
+\title Sensors API
 \brief The Sensors API provides access to sensors.
 \ingroup mobility
 
