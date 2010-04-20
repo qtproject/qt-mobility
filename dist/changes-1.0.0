@@ -1,4 +1,4 @@
-Qt Mobility 1.0.0 is a final minor release. It contains a number of API
+Welcome to Qt Mobility 1.0.0. Qt Mobility 1.0.0 contains a number of API
 improvements and bug fixes since Qt Mobility 1.0.0-beta1. For
 more details, please refer to the online documentation included in this
 distribution. The documentation is also available online:
@@ -11,30 +11,6 @@ of the public source repository.
 
 Qt Bug Tracker: http://bugreports.qt.nokia.com
 Merge Request:  http://qt.gitorious.org
-
-
-****************************************************************************
-*                           General                                        *
-****************************************************************************
-
-New features
-------
-
- - SomeClass, SomeOtherClass
-    * New classes for foo, bar and baz
-
-Optimizations
-------
-
- - Optimized foo in QSomeClass
-    * See list of Important Behavior Changes below
-
-
-****************************************************************************
-*                   Important Behavior Changes                             *
-****************************************************************************
-
- -
 
 
 ****************************************************************************
@@ -81,6 +57,7 @@ QtContacts
    restricted to Latin 1 (for performance and memory usage optimization).
  - Bugs fixed etc
 
+
 QtVersit
 ------
 
@@ -90,6 +67,7 @@ QtVersit
  - The API uses QImage instead of QPixmap, to avoid non-gui thread
    issues with QPixmap usage.
 
+
 QtLocation
 ------
 
@@ -98,6 +76,7 @@ QtLocation
       QGeoPositionInfo::timestamp()/setTimestamp() respectively.
     * Added serialization functions for QGeoSatelliteInfo
  - Maemo 5 (Fremantle) backend implemented
+
 
 QtMessaging
 ------
@@ -131,6 +110,7 @@ QtMessaging
  - Format of identifiers changed
    * For forwards compatibility.
 
+
 QtMedia
 ------
  - Symbian backend improvements
@@ -154,6 +134,7 @@ QtMedia
    * Changed to QVideoWidget to consistently not fill the background with black
      by default.
 
+
 QtPublishSubscribe
 ------
 
@@ -163,11 +144,15 @@ QtPublishSubscribe
     * Autotests
     * Example application modified to be usable in N900
 
+
 QtServiceFramework
 ------
 
- - foo
-    * bar
+ - Symbian backend improvements
+    * Mainly security fixes
+       - Security token usage in databases, db server in protected namespace etc.
+    * Capability fixes (reduced)
+
 
 QtSystemInfo
 ------
@@ -197,6 +182,7 @@ QtSystemInfo
  - currentMode() added in network info
  - Fixed MOBILITY-748: Private Qt header usage has been removed
 
+
 QtSensors
 ------
 
@@ -211,48 +197,19 @@ QtSensors
  - Removed setType().
  - Renamed QSensor::connect() to QSensor::connectToBackend().
 
+
 Qt Mobility Plugins
 ------
 
- - foo
-    * bar
+ - mobapicontactspluginsymbian was renamed to qtcontacts_symbian.
+ - mobapicontactspluginsymbiansim was renamed to qtcontacts_symbiansim.
+ - m3u was renamed to qtmedia_m3u.
+ - QtMobilityMmfEngine was renamed to qtmedia_mmfengine.
 
 
 ****************************************************************************
 *                      Platform Specific Changes                           *
 ****************************************************************************
-
-Qt Mobility for Embedded Linux
-------
-
- -
-
-Qt Mobility for Unix (X11 and Mac OS X)
-------
-
- - 
-
-Qt Mobility for Linux/X11
-------
-
- -
-
-Qt Mobility for Windows
-------
-
- -
-
-Qt Mobility for Mac OS X
-------
-
- -
-
-
-
-Qt Mobility for Windows CE
-------
-
- -
 
 Qt Mobility for Symbian
 ------
@@ -279,10 +236,3 @@ Qt Mobility for Symbian
     * Bug fix: Batch saving of SIM contacts did not update contact details
     * The schema definition of SIM backend now does not include e-mail and nick name details in case they are not supported by the SIM card
     * Trying to save too long details to a SIM card now gives an appropriate error
-
-****************************************************************************
-*                          Tools                                           *
-****************************************************************************
-
- - tool
-    * foo
