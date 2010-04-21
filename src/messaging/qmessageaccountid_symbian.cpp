@@ -45,8 +45,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-using namespace MessagingUtil;
-
 QMessageAccountId::QMessageAccountId()
  : d_ptr(0)
 {
@@ -61,7 +59,7 @@ QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
 QMessageAccountId::QMessageAccountId(const QString& id)
  : d_ptr(new QMessageAccountIdPrivate(this))
 {
-    d_ptr->_id = stripIdPrefix(id);
+    d_ptr->_id = id;
 }
 
 QMessageAccountId::~QMessageAccountId()
@@ -103,10 +101,10 @@ bool QMessageAccountId::operator<(const QMessageAccountId& other) const
     long left = 0;
     long right = 0;
     if (d_ptr) {
-        left = d_ptr->_id.toLong();
+        left = SymbianHelpers::stripIdPrefix(d_ptr->_id).toLong();
     }
     if (other.d_ptr) {
-        right = other.d_ptr->_id.toLong();
+        right = SymbianHelpers::stripIdPrefix(other.d_ptr->_id).toLong();
     }
 
     return (left < right);
@@ -115,10 +113,10 @@ bool QMessageAccountId::operator<(const QMessageAccountId& other) const
 QString QMessageAccountId::toString() const
 {
     if (!isValid()) {
-        return addIdPrefix(QString());
+        return QString();
     }
 
-    return addIdPrefix(d_ptr->_id);
+    return d_ptr->_id;
 }
 
 bool QMessageAccountId::isValid() const
@@ -128,6 +126,6 @@ bool QMessageAccountId::isValid() const
 
 uint qHash(const QMessageAccountId &id)
 {
-    return qHash(stripIdPrefix(id.toString()));
+    return qHash(id.toString());
 }
 QTM_END_NAMESPACE
