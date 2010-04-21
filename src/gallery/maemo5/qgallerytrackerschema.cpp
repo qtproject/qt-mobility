@@ -781,10 +781,10 @@ static QString qt_galleryFileId(const QStringList &row)
 
     for (int i = 0; i < typeMap.count; ++i) {
         if (typeMap.items[i].trackerKey == service) {
-            return typeMap.items->prefix + row.value(0);
+            return typeMap.items[i].prefix + row.value(0);
         }
     }
-    return QLatin1String("file::") + row.value(0);
+    return typeMap.items[0].prefix + row.value(0);
 }
 
 /////////

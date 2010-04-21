@@ -60,6 +60,7 @@
 #include "qgallerytrackerfilemoveresponse_p.h"
 #include "qgallerytrackerfileremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
+#include "qgallerytrackerurlresponse_p.h"
 
 #include <QtDBus/qdbusmetatype.h>
 
@@ -121,7 +122,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
         QGalleryUrlRequest *request)
 {
-    return 0;
+    return new QGalleryTrackerUrlResponse(QDBusConnection::sessionBus(), request);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
@@ -147,6 +148,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
                     request->sortPropertyNames(),
                     request->minimumPagedItems());
             response->setCursorPosition(request->initialCursorPosition());
+
+            return response;
         } else if (schema.isAggregateType()) {
             response = new QGalleryTrackerAggregateListResponse(
                     QDBusConnection::sessionBus(),
@@ -156,6 +159,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
                     request->sortPropertyNames(),
                     request->minimumPagedItems());
             response->setCursorPosition(request->initialCursorPosition());
+
+            return response;
         } else {
             result = QGalleryAbstractRequest::ItemTypeError;
         }
@@ -324,6 +329,7 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
 {
     switch (type) {
     case QGalleryAbstractRequest::Item:
+    case QGalleryAbstractRequest::Url:
     case QGalleryAbstractRequest::Container:
     case QGalleryAbstractRequest::Filter:
     case QGalleryAbstractRequest::Count:

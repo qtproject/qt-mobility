@@ -71,6 +71,7 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
     gallery = new QDocumentGallery(this);
 
     documentsRequest = new QGalleryUrlRequest(this);
+    documentsRequest->setGallery(gallery);
     documentsRequest->setItemUrl(QUrl::fromLocalFile(
             QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)));
     connect(documentsRequest, SIGNAL(itemChanged()), this, SLOT(documentsListChanged()));
@@ -327,7 +328,6 @@ void Manager::actionProgressChanged(int current, int maximum)
 
 void Manager::sourceRequestFinished(int)
 {
-
 }
 
 void Manager::destinationRequestFinished(int)
