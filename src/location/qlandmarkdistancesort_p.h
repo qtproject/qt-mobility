@@ -39,63 +39,36 @@
 **
 ****************************************************************************/
 
-#include "qlandmarknamesort.h"
-#include "qlandmarknamesort_p.h"
+#ifndef QLANDMARKDISTANCESORT_P_H
+#define QLANDMARKDISTANCESORT_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qlandmarksortorder_p.h"
+
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QLandmarkNameSort
-    \brief The QLandmarkNameSort class is used to sort landmarks by name.
-    \ingroup landmarks-sort
-*/
-
-/*!
-    Creates a sort order that sorts by name in the given \a direction.
-*/
-QLandmarkNameSort::QLandmarkNameSort(Qt::SortOrder direction)
-        : QLandmarkSortOrder(new QLandmarkNameSortPrivate(direction)) {}
-
-/*!
-    Destroys the sort order.
-*/
-QLandmarkNameSort::~QLandmarkNameSort()
+class QLandmarkDistanceSortPrivate : public QLandmarkSortOrderPrivate
 {
-    // pointer deleted in superclass destructor
-}
+public:
+    QLandmarkDistanceSortPrivate(const QGeoCoordinate &origin, Qt::SortOrder direction);
+    QLandmarkDistanceSortPrivate(const QLandmarkDistanceSortPrivate &other);
+    virtual ~QLandmarkDistanceSortPrivate();
 
-/*!
-    Returns the case sensitivity of the sort order.
-*/
-Qt::CaseSensitivity QLandmarkNameSort::caseSensitivity() const
-{
-    Q_D(const QLandmarkNameSort);
-    return d->sensitivity;
-}
-
-/*!
-    Sets the the \a caseSensitivity of the sort order.
-*/
-void QLandmarkNameSort::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
-{
-    Q_D(QLandmarkNameSort);
-    d->sensitivity = caseSensitivity;
-}
-
-/*******************************************************************************
-*******************************************************************************/
-QLandmarkNameSortPrivate::QLandmarkNameSortPrivate(Qt::SortOrder direction)
-        : sensitivity(Qt::CaseSensitive)
-{
-    type = QLandmarkSortOrder::NameSort;
-    order = direction;
-}
-
-QLandmarkNameSortPrivate::QLandmarkNameSortPrivate(const QLandmarkNameSortPrivate &other)
-        : QLandmarkSortOrderPrivate(other),
-        sensitivity(other.sensitivity) {}
-
-QLandmarkNameSortPrivate::~QLandmarkNameSortPrivate() {}
-
+    QGeoCoordinate origin;
+};
 
 QTM_END_NAMESPACE
+
+#endif

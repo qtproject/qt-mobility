@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
     Constructs an intersection filter.
 */
 QLandmarkIntersectionFilter::QLandmarkIntersectionFilter()
-    : QLandmarkFilter(new QLandmarkIntersectionFilterPrivate())
+        : QLandmarkFilter(new QLandmarkIntersectionFilterPrivate())
 {
 }
 
@@ -67,7 +67,7 @@ QLandmarkIntersectionFilter::QLandmarkIntersectionFilter()
 */
 QLandmarkIntersectionFilter::~QLandmarkIntersectionFilter()
 {
-    // pointer destroyed in superclass destructor
+    // pointer deleted in superclass destructor
 }
 
 /*!

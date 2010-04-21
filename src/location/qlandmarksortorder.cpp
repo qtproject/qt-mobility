@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarksortorder.h"
+#include "qlandmarksortorder_p.h"
 #include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
@@ -69,40 +70,29 @@ QTM_BEGIN_NAMESPACE
     \value CustomSort Is a custom sort order.
 */
 
-class QLandmarkSortOrderPrivate
-{
-public:
-        QLandmarkSortOrderPrivate();
-        QLandmarkSortOrderPrivate(const QLandmarkSortOrderPrivate &other);
-        ~QLandmarkSortOrderPrivate();
-
-        QLandmarkSortOrder::SortType type;
-        Qt::SortOrder order;
-};
-
-
-QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate()
-    : type(QLandmarkSortOrder::InvalidSort),
-    order (Qt::AscendingOrder) {}
-
-QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate(const QLandmarkSortOrderPrivate &other)
-    : type(other.type),
-    order(other.order){}
-
-QLandmarkSortOrderPrivate::~QLandmarkSortOrderPrivate() {}
-
 /*!
     Constructs a landmark sort order.
 
     The type of the sort order is InvalidSort.
 */
 QLandmarkSortOrder::QLandmarkSortOrder()
-    : d_ptr(new QLandmarkSortOrderPrivate())
+        : d_ptr(new QLandmarkSortOrderPrivate())
 {}
 
+/*!
+  Internal
+*/
 QLandmarkSortOrder::QLandmarkSortOrder(QLandmarkSortOrderPrivate *d_ptr)
-    : d_ptr(d_ptr)
-{}
+        : d_ptr(d_ptr) {}
+
+QLandmarkSortOrder::QLandmarkSortOrder(const QLandmarkSortOrder &other)
+        : d_ptr(new QLandmarkSortOrderPrivate(*(other.d_ptr))) {}
+
+QLandmarkSortOrder &QLandmarkSortOrder::operator=(const QLandmarkSortOrder & other)
+{
+    *d_ptr = *(other.d_ptr);
+    return *this;
+}
 
 QLandmarkSortOrder::~QLandmarkSortOrder()
 {
@@ -136,5 +126,18 @@ void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
     Q_D(QLandmarkSortOrder);
     d->order = direction;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate()
+        : type(QLandmarkSortOrder::DefaultSort),
+        order(Qt::AscendingOrder) {}
+
+QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate(const QLandmarkSortOrderPrivate &other)
+        : type(other.type),
+        order(other.order) {}
+
+QLandmarkSortOrderPrivate::~QLandmarkSortOrderPrivate() {}
 
 QTM_END_NAMESPACE

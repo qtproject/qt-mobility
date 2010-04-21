@@ -57,7 +57,7 @@ QTM_BEGIN_NAMESPACE
     identified by \a categoryId.
 */
 QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId)
-    : QLandmarkFilter(new QLandmarkCategoryFilterPrivate(categoryId))
+        : QLandmarkFilter(new QLandmarkCategoryFilterPrivate(categoryId))
 {
 }
 
@@ -92,14 +92,14 @@ void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryI
 *******************************************************************************/
 
 QLandmarkCategoryFilterPrivate::QLandmarkCategoryFilterPrivate(const QLandmarkCategoryId &id)
-    : id(id)
+        : id(id)
 {
     type = QLandmarkFilter::CategoryFilter;
 }
 
 QLandmarkCategoryFilterPrivate::QLandmarkCategoryFilterPrivate(const QLandmarkCategoryFilterPrivate &other)
-    : QLandmarkFilterPrivate(other),
-    id(other.id) {}
+        : QLandmarkFilterPrivate(other),
+        id(other.id) {}
 
 QLandmarkCategoryFilterPrivate::~QLandmarkCategoryFilterPrivate() {}
 

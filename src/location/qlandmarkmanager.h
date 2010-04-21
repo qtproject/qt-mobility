@@ -82,11 +82,11 @@ public:
     enum Format {LandmarkExchange, GPSExchange, KeyholeMarkupLanguage, CommaSeparatedValues, Custom};
 
 #ifdef Q_QDOC
-    QLandmarkManager(QObject *parent=0);
+    QLandmarkManager(QObject *parent = 0);
     QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters = 0, QObject *parent = 0);
     QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
-    QLandmarkManager(QObject *parent=0);
+    QLandmarkManager(QObject *parent = 0);
     QLandmarkManager(const QString &managerName, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject *parent = 0);
     QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
@@ -105,13 +105,13 @@ public:
     QList<QLandmarkCategoryId> categoryIds() const;
 
     QLandmark landmark(const QLandmarkId &landmarkId) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QList<QLandmarkSortOrder>& sortOrders) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QList<const QLandmarkSortOrder*>& sortOrders) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QLandmarkSortOrder *sortOrder = 0) const;
 
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter *filter,
-                                   const QList<QLandmarkSortOrder> &sortOrders) const;
-    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
+                                   const QList<const QLandmarkSortOrder*> &sortOrders) const;
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter *filter, const QLandmarkSortOrder *sortOrder = 0) const;
 
     bool importLandmarks(QIODevice *device, Format format);
     bool importLandmarks(const QString &fileName, Format format);

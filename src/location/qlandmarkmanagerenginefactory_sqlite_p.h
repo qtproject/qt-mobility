@@ -55,8 +55,8 @@ public:
     QList<int> supportedImplementationVersions() const;
 
     QLandmarkManagerEngine *engine(const QMap<QString, QString> &parameters,
-                                           QLandmarkManager::Error *error,
-                                           QString *errorString);
+                                   QLandmarkManager::Error *error,
+                                   QString *errorString);
     QString managerName() const;
 };
 

@@ -41,7 +41,6 @@
 
 #include "qlandmarknamefilter.h"
 #include "qlandmarknamefilter_p.h"
-#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,15 +54,15 @@ QTM_BEGIN_NAMESPACE
     Creates a filter that selects landmarks by \a name.
 */
 QLandmarkNameFilter::QLandmarkNameFilter(const QString &name,
-                                         Qt::CaseSensitivity sensitivity)
-    : QLandmarkFilter(new QLandmarkNameFilterPrivate(name, sensitivity)) {}
+        Qt::CaseSensitivity sensitivity)
+        : QLandmarkFilter(new QLandmarkNameFilterPrivate(name, sensitivity)) {}
 
 /*!
     Destroys the filter.
 */
 QLandmarkNameFilter::~QLandmarkNameFilter()
 {
-    // pointer deleted in superclass descructor
+    // pointer deleted in superclass destructor
 }
 
 /*!
@@ -106,17 +105,17 @@ void QLandmarkNameFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity
 *******************************************************************************/
 
 QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QString &name,
-                                                       Qt::CaseSensitivity sensitivity)
-    : name(name),
-    sensitivity(sensitivity)
+        Qt::CaseSensitivity sensitivity)
+        : name(name),
+        sensitivity(sensitivity)
 {
     type = QLandmarkFilter::NameFilter;
 }
 
 QLandmarkNameFilterPrivate::QLandmarkNameFilterPrivate(const QLandmarkNameFilterPrivate &other)
-    : QLandmarkFilterPrivate(other),
-    name(other.name),
-    sensitivity(other.sensitivity) {}
+        : QLandmarkFilterPrivate(other),
+        name(other.name),
+        sensitivity(other.sensitivity) {}
 
 QLandmarkNameFilterPrivate::~QLandmarkNameFilterPrivate() {}
 

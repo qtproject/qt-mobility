@@ -45,7 +45,7 @@
 #include "qlandmarkfilter.h"
 #include "qnamespace.h"
 
-class QString;
+#include <QString>
 
 QT_BEGIN_HEADER
 

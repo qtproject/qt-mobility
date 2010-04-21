@@ -54,14 +54,14 @@ class QLandmarkDistanceSortPrivate;
 class Q_LOCATION_EXPORT QLandmarkDistanceSort : public QLandmarkSortOrder
 {
 public:
-    QLandmarkDistanceSort(QGeoCoordinate coordinate, Qt::SortOrder direction);
+    QLandmarkDistanceSort(const QGeoCoordinate &coordinate, Qt::SortOrder direction);
     virtual ~QLandmarkDistanceSort();
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
 
 private:
-    QLandmarkDistanceSortPrivate *d;
+    Q_DECLARE_PRIVATE(QLandmarkDistanceSort);
 };
 
 QTM_END_NAMESPACE

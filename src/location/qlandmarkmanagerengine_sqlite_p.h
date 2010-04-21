@@ -71,7 +71,7 @@ public:
 
     /* Filtering */
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter* filter,
-                                   const QList<QLandmarkSortOrder>& sortOrders,
+                                   const QList<const QLandmarkSortOrder*>& sortOrders,
                                    QLandmarkManager::Error *error,
                                    QString *errorString) const;
     QList<QLandmarkCategoryId> categoryIds(QLandmarkManager::Error *error,
@@ -82,7 +82,7 @@ public:
                        QLandmarkManager::Error *error,
                        QString *errorString) const;
     QList<QLandmark> landmarks(const QLandmarkFilter *filter,
-                               const QList<QLandmarkSortOrder>& sortOrders,
+                               const QList<const QLandmarkSortOrder*>& sortOrders,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds,
@@ -163,8 +163,8 @@ private:
                                       QString *errorString) const;
 
     QList<QLandmarkId> landmarkIdsIntersection(const QLandmarkIntersectionFilter* filter,
-                                               QLandmarkManager::Error *error,
-                                               QString *errorString) const;
+            QLandmarkManager::Error *error,
+            QString *errorString) const;
 
     QList<QLandmarkId> landmarkIdsUnion(const QLandmarkUnionFilter* filter,
                                         QLandmarkManager::Error *error,

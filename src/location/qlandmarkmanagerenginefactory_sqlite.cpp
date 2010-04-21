@@ -56,8 +56,8 @@ QList<int> QLandmarkManagerEngineFactorySqlite::supportedImplementationVersions(
 }
 
 QLandmarkManagerEngine* QLandmarkManagerEngineFactorySqlite::engine(const QMap<QString, QString> &parameters,
-                                       QLandmarkManager::Error *error,
-                                       QString *errorString)
+        QLandmarkManager::Error *error,
+        QString *errorString)
 {
     QString filename;
 

@@ -56,8 +56,9 @@ QTM_BEGIN_NAMESPACE
     Creates a filter that will match the landmark nearest to a given central
     \a coordinate.
 */
-QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate,                                               double radius)
-    : QLandmarkFilter(new QLandmarkNearestFilterPrivate(coordinate, radius))
+QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate,
+        double radius)
+        : QLandmarkFilter(new QLandmarkNearestFilterPrivate(coordinate, radius))
 {
 }
 

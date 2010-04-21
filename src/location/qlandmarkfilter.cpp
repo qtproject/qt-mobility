@@ -108,14 +108,14 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     Constructs an default landmark filter.
 */
 QLandmarkFilter::QLandmarkFilter()
-    : d_ptr(new QLandmarkFilterPrivate())
+        : d_ptr(new QLandmarkFilterPrivate())
 {
 }
 /*!
   Internal
 */
 QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *d_ptr)
-    : d_ptr(d_ptr)
+        : d_ptr(d_ptr)
 {
 }
 

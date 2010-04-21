@@ -94,6 +94,7 @@ PRIVATE_HEADERS += \
                     qlandmarkcategory_p.h \
                     qlandmarkcategoryid_p.h \
                     qlandmarkcategoryfilter_p.h \
+                    qlandmarkdistancesort_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkid_p.h \
@@ -102,8 +103,10 @@ PRIVATE_HEADERS += \
                     qlandmarkmanagerengine_sqlite_p.h \
                     qlandmarkmanagerenginefactory_sqlite_p.h \
                     qlandmarknamefilter_p.h \
+                    qlandmarknamesort_p.h \
                     qlandmarknearestfilter_p.h \
                     qlandmarkproximityfilter_p.h \
+                    qlandmarksortorder_p.h \
                     qlandmarkunionfilter_p.h \
                     qlocationutils_p.h \
                     qmaneuver_p.h \

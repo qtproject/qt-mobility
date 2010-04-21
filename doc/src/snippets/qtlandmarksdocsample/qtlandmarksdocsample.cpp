@@ -352,7 +352,8 @@ void landmarkFetch(QLandmarkManager *lm)
 
     //retrieval via ids
     QList<QLandmarkId> landmarkIds;
-    landmarkIds = lm->landmarkIds(filter, QLandmarkNameSort(Qt::AscendingOrder));
+    QLandmarkNameSort sortOrder(Qt::AscendingOrder);
+    landmarkIds = lm->landmarkIds(&filter, &sortOrder);
     foreach(QLandmarkId id, landmarkIds) {
         qDebug() << "Found landmark:" << lm->landmark(id).name();
     }
@@ -360,7 +361,7 @@ void landmarkFetch(QLandmarkManager *lm)
 
     //! [Retrieve landmarks synchronously]
     QList<QLandmark> landmarks;
-    landmarks = lm->landmarks(filter, QLandmarkNameSort(Qt::AscendingOrder));
+    landmarks = lm->landmarks(&filter, &sortOrder);
     foreach(QLandmark landmark, landmarks) {
         qDebug() << "Found landmark:" << landmark.name();
     }
@@ -370,7 +371,7 @@ void landmarkFetch(QLandmarkManager *lm)
 void filterByName(QLandmarkManager *lm)
 {
     QLandmarkNameFilter filter("Monk's cafe");
-    QList<QLandmarkId> matchingIds = lm->landmarkIds(filter);
+    QList<QLandmarkId> matchingIds = lm->landmarkIds(&filter);
 
     if (matchingIds.count() == 0) {
         qDebug() << "No matches found";
@@ -384,7 +385,8 @@ void filterByProximity(QLandmarkManager *lm)
 {
     QGeoCoordinate origin(41,74);
     QLandmarkProximityFilter filter(origin, 5000);
-    QList<QLandmarkId> matchingIds = lm->landmarkIds(filter, QLandmarkDistanceSort(origin, Qt::AscendingOrder));
+    QLandmarkDistanceSort sort(origin, Qt::AscendingOrder);
+    QList<QLandmarkId> matchingIds = lm->landmarkIds(&filter, &sort);
 
     if(matchingIds.count() == 0) {
         qDebug() << "No matches found";

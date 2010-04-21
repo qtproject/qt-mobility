@@ -113,7 +113,7 @@ void QLandmarkBoxFilter::setBottomRightCoordinate(const QGeoCoordinate &bottomRi
 *******************************************************************************/
 
 QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QGeoCoordinate &topLeft,
-                                                     const QGeoCoordinate &bottomRight)
+        const QGeoCoordinate &bottomRight)
         : topLeftCoord(topLeft),
         bottomRightCoord(bottomRight)
 {

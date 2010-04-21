@@ -58,9 +58,12 @@ class Q_LOCATION_EXPORT QLandmarkSortOrder
 {
 
 public:
-    QLandmarkSortOrder();
-    virtual ~QLandmarkSortOrder();
     enum SortType {DefaultSort, NameSort, DistanceSort, CustomSort = 500};
+
+    QLandmarkSortOrder();
+    QLandmarkSortOrder(const QLandmarkSortOrder &other);
+    QLandmarkSortOrder& operator = (const QLandmarkSortOrder &other);
+    virtual ~QLandmarkSortOrder();
 
     SortType type() const;
     Qt::SortOrder direction() const;
