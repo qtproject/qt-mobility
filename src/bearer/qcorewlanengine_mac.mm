@@ -178,7 +178,7 @@ void QScanThread::run()
 #if defined(MAC_SDK_10_6)
     getUserProfiles();
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    iQStringList found;
+    QStringList found;
     mutex.lock();
     CWInterface *currentInterface;
     if(interfaceName.isEmpty()) {
@@ -359,7 +359,7 @@ void QScanThread::getUserProfiles()
 
         // 802.1X user profiles
         QString userProfilePath = QDir::homePath() + "/Library/Preferences/com.apple.eap.profiles.plist";
-        NSDictionary* eapDict = [[NSDictionary alloc] initWithContentsOfFile:qstringToNSString(userProfilePath)];
+        NSDictionary* eapDict = [[[NSDictionary alloc] initWithContentsOfFile:qstringToNSString(userProfilePath)] autorelease];
         NSString *profileStr= @"Profiles";
         NSString *nameStr = @"UserDefinedName";
         NSString *networkSsidStr = @"Wireless Network";
@@ -396,7 +396,6 @@ void QScanThread::getUserProfiles()
                         }
                     }
                 }
-                [itemDict release];
             }
         }
     }
