@@ -158,7 +158,7 @@ void QGstreamerPlayerSession::setPlaybackRate(qreal rate)
         m_playbackRate = rate;
         if (m_playbin) {
             gst_element_seek(m_playbin, rate, GST_FORMAT_TIME,
-                             GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT),
+                             GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH),
                              GST_SEEK_TYPE_NONE,0,
                              GST_SEEK_TYPE_NONE,0 );
         }
@@ -306,8 +306,15 @@ void QGstreamerPlayerSession::stop()
 bool QGstreamerPlayerSession::seek(qint64 ms)
 {
     if (m_playbin && m_state != QMediaPlayer::StoppedState) {
-        gint64  position = (gint64)ms * 1000000;
-        return gst_element_seek_simple(m_playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH, position);
+        gint64  position = qMax(ms,qint64(0)) * 1000000;
+        return gst_element_seek(m_playbin,
+                                m_playbackRate,
+                                GST_FORMAT_TIME,
+                                GstSeekFlags(GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH),
+                                GST_SEEK_TYPE_SET,
+                                position,
+                                GST_SEEK_TYPE_NONE,
+                                0);
     }
 
     return false;
@@ -512,8 +519,11 @@ void QGstreamerPlayerSession::busMessage(const QGstreamerMessage &message)
 
                             setSeekable(true);
 
-                            if (!qFuzzyCompare(m_playbackRate, qreal(1.0)))
-                                setPlaybackRate(m_playbackRate);
+                            if (!qFuzzyCompare(m_playbackRate, qreal(1.0))) {
+                                qreal rate = m_playbackRate;
+                                m_playbackRate = 1.0;
+                                setPlaybackRate(rate);
+                            }
 
                             if (m_renderer)
                                 m_renderer->precessNewStream();
