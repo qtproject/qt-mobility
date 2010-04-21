@@ -51,16 +51,17 @@ class Q_LOCATION_EXPORT QLandmarkCategoryRemoveRequest : public QLandmarkAbstrac
 {
     Q_OBJECT
 public:
-    QLandmarkCategoryRemoveRequest();
+    QLandmarkCategoryRemoveRequest(QLandmarkManager *manager, QObject *parent = 0);
     ~QLandmarkCategoryRemoveRequest();
 
     QList<QLandmarkCategoryId> categoryIds() const;
     void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds);
+    void setCategoryId(const QLandmarkCategoryId &categoryId);
 
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:
     Q_DISABLE_COPY(QLandmarkCategoryRemoveRequest)
-    Q_DECLARE_PRIVATE_D(d, QLandmarkCategoryRemoveRequest)
+    Q_DECLARE_PRIVATE(QLandmarkCategoryRemoveRequest)
 };
 
 QTM_END_NAMESPACE

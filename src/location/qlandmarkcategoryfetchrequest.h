@@ -47,17 +47,17 @@
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkCategoryFetchRequestPrivate;
-class QLandmarkCategoryFetchRequest : public QLandmarkAbstractRequest
+class Q_LOCATION_EXPORT QLandmarkCategoryFetchRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    QLandmarkCategoryFetchRequest();
+    QLandmarkCategoryFetchRequest(QLandmarkManager *manager, QObject *parent=0);
     ~QLandmarkCategoryFetchRequest();
 
     QList<QLandmarkCategory> categories() const;
 private:
     Q_DISABLE_COPY(QLandmarkCategoryFetchRequest)
-    Q_DECLARE_PRIVATE_D(d, QLandmarkCategoryFetchRequest)
+    Q_DECLARE_PRIVATE(QLandmarkCategoryFetchRequest)
 };
 
 QTM_END_NAMESPACE

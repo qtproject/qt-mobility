@@ -51,16 +51,17 @@ class Q_LOCATION_EXPORT QLandmarkSaveRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    QLandmarkSaveRequest();
+    QLandmarkSaveRequest(QLandmarkManager *manager, QObject *parent = 0);
     ~QLandmarkSaveRequest();
 
     QList<QLandmark> landmarks() const;
     void setLandmarks(const QList<QLandmark> &landmarks);
+    void setLandmark(const QLandmark &landmark);
 
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:
     Q_DISABLE_COPY(QLandmarkSaveRequest)
-    Q_DECLARE_PRIVATE_D(d, QLandmarkSaveRequest)
+    Q_DECLARE_PRIVATE(QLandmarkSaveRequest)
 };
 
 QTM_END_NAMESPACE

@@ -45,9 +45,11 @@
 
 #include "qgeocodingservice.h"
 #include "qgeoroutingservice.h"
-#include "qgeomapservice.h"
+#include "qmaptileservice.h"
 #include "qgeoroutereply.h"
 #include "qgeocodingreply.h"
+#include "qgeocodingservice_nokia_p.h"
+
 
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
 #define QGEOAPIUI_USEPOPUPMENU
@@ -88,7 +90,7 @@ private slots:
 
     void routeReplyFinished(QGeoRouteReply* reply);
     void codingReplyFinished(QGeocodingReply* reply);
-    void mapTileReplyFinished(QGeoMapTileReply* reply);
+    void mapTileReplyFinished(QMapTileReply* reply);
 
     void delayedInit();
 #ifdef QGEOAPIUI_USEPOPUPMENU
@@ -100,9 +102,9 @@ private slots:
 #endif
 
 private:
-    QGeocodingService *geocodingService;
+    QGeocodingServiceNokia *geocodingService;
     QGeoRoutingService *routingService;
-    QGeoMapService *mapService;
+    QMapTileService *mapService;
 #ifdef Q_OS_SYMBIAN
     QNetworkSession *session;
 #endif

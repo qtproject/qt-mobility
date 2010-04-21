@@ -40,9 +40,20 @@
 ****************************************************************************/
 
 #include "qlandmarkcategoryidfetchrequest.h"
+#include "qlandmarkabstractrequest_p.h"
 #include "qlandmarkcategoryid.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkCategoryIdFetchRequestPrivate: public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkCategoryIdFetchRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {}
+
+    QList<QLandmarkCategoryId> categoryIds;
+};
 
 /*!
     \class QLandmarkCategoryIdFetchRequest
@@ -54,13 +65,15 @@ QTM_BEGIN_NAMESPACE
      as well as if an overall operation error occurred(which may be retrieved by calling
      QLandmarkAbstractRequest::error()).
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!
-    Creates a new category identifier fetch request object.
+    Creates a new category identifier fetch request object with the given \a manager
+    aand \a parent.
 */
-QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest()
+QLandmarkCategoryIdFetchRequest::QLandmarkCategoryIdFetchRequest(QLandmarkManager * manager, QObject *parent)
+    : QLandmarkAbstractRequest(new QLandmarkCategoryIdFetchRequestPrivate(manager), parent)
 {
 }
 
@@ -77,7 +90,8 @@ QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest()
 */
 QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::ids() const
 {
-    return QList<QLandmarkCategoryId>();
+    Q_D(const QLandmarkCategoryIdFetchRequest);
+    return d->categoryIds;
 }
 
 #include "moc_qlandmarkcategoryidfetchrequest.cpp"

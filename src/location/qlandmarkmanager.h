@@ -45,25 +45,24 @@
 #include "qmobilityglobal.h"
 #include "qlandmarkid.h"
 #include "qlandmarkfilter.h"
-
+#include "qlandmarksortorder.h"
+#include "qlandmarkcategoryid.h"
 
 #include <QObject>
 #include <QMap>
 class QIODevice;
 class QStringList;
 
-QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 class QLandmarkCategory;
-class QLandmarkSortOrder;
 class QLandmarkSearchResult;
 class QLandmarkManagerPrivate;
-class QLandmarkCategoryId;
 class QLandmark;
+class QLandmarkManagerEngine;
 
 class Q_LOCATION_EXPORT QLandmarkManager: public QObject
 {
+    friend class QLandmarkAbstractRequest;
     Q_OBJECT
 public:
     enum Error {
@@ -82,10 +81,12 @@ public:
     enum Format {LandmarkExchange, GPSExchange, KeyholeMarkupLanguage, CommaSeparatedValues, Custom};
 
 #ifdef Q_QDOC
-    QLandmarkManager(const QString &managerName = QString(), const QMap<QString, QString> &parameters = 0, QObject *parent = 0);
+    QLandmarkManager(QObject *parent = 0);
+    QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters = 0, QObject *parent = 0);
     QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
-    QLandmarkManager(const QString &managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject *parent = 0);
+    QLandmarkManager(QObject *parent = 0);
+    QLandmarkManager(const QString &managerName, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject *parent = 0);
     QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
     virtual ~QLandmarkManager();
@@ -99,19 +100,23 @@ public:
     bool removeCategory(const QLandmarkCategoryId &categoryId);
 
     QLandmarkCategory category(const QLandmarkCategoryId &categoryId) const;
-    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds) const;
+    QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &categoryIds = QList<QLandmarkCategoryId>()) const;
     QList<QLandmarkCategoryId> categoryIds() const;
 
     QLandmark landmark(const QLandmarkId &landmarkId) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QList<const QLandmarkSortOrder*>& sortOrders) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QLandmarkSortOrder *sortOrder = 0) const;
+
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
-    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
-                                   const QList<QLandmarkSortOrder> &sortOrders) const;
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter *filter,
+                                   const QList<const QLandmarkSortOrder*> &sortOrders) const;
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter *filter, const QLandmarkSortOrder *sortOrder = 0) const;
 
     bool importLandmarks(QIODevice *device, Format format);
     bool importLandmarks(const QString &fileName, Format format);
     bool exportLandmarks(QIODevice *device, Format format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
     bool exportLandmarks(const QString &, Format format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+
     Error error() const;
     QString errorString() const;
 
@@ -138,7 +143,10 @@ Q_SIGNALS:
     void categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds);
 
 private:
-    QLandmarkManagerPrivate *d;
+    QLandmarkManagerPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QLandmarkManager);
+
+    QLandmarkManagerEngine *engine();
 };
 
 /*
@@ -179,7 +187,5 @@ private:
 };*/
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

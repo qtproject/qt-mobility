@@ -47,23 +47,24 @@
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkFetchRequestPrivate;
-class QLandmarkFetchRequest : public QLandmarkAbstractRequest
+class Q_LOCATION_EXPORT QLandmarkFetchRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    QLandmarkFetchRequest();
+    QLandmarkFetchRequest(QLandmarkManager *manager, QObject *parent = 0);
     ~QLandmarkFetchRequest();
 
-    QLandmarkFilter filter() const;
-    void setFilter(const QLandmarkFilter &filter);
+    const QLandmarkFilter *filter() const;
+    void setFilter(const QLandmarkFilter *filter);
 
-    QList<QLandmarkSortOrder> sorting() const;
-    void setSorting(QList<QLandmarkSortOrder> &sorting);
+    QList<const QLandmarkSortOrder *> sorting() const;
+    void setSorting(const QList<const QLandmarkSortOrder*> &sorting);
+    void setSorting(const QLandmarkSortOrder *sorting);
 
     QList<QLandmark> landmarks() const;
 private:
     Q_DISABLE_COPY(QLandmarkFetchRequest)
-    Q_DECLARE_PRIVATE_D(d, QLandmarkFetchRequest)
+    Q_DECLARE_PRIVATE(QLandmarkFetchRequest)
 };
 
 QTM_END_NAMESPACE

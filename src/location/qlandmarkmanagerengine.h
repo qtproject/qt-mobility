@@ -46,6 +46,7 @@
 #include "qmobilityglobal.h"
 #include "qlandmarkmanager.h"
 #include "qlandmarkabstractrequest.h"
+#include "qlandmarkfilter.h"
 
 class QIODevice;
 
@@ -54,9 +55,7 @@ class QLandmarkCategory;
 class QLandmarkCategoryId;
 class QLandmark;
 class QLandmarkId;
-class QLandmarkFilter;
 class QLandmarkSortOrder;
-class QLandmarkAbstractRequest;
 class QLandmarkIdFetchRequest;
 class QLandmarkRemoveRequest;
 class QLandmarkSaveRequest;
@@ -66,7 +65,7 @@ class QLandmarkCategorySaveRequest;
 class QLandmarkImportRequest;
 class QLandmarkExportRequest;
 
-class QLandmarkManagerEngine : public QObject
+class Q_LOCATION_EXPORT QLandmarkManagerEngine : public QObject
 {
     Q_OBJECT
 public:
@@ -80,7 +79,7 @@ public:
     QString managerUri() const;
 
     /* Filtering */
-    virtual QList<QLandmarkId> landmarkIds(const QLandmarkFilter& filter, const QList<QLandmarkSortOrder>& sortOrders,
+    virtual QList<QLandmarkId> landmarkIds(const QLandmarkFilter* filter, const QList<const QLandmarkSortOrder*>& sortOrders,
                                            QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QList<QLandmarkCategoryId> categoryIds(QLandmarkManager::Error *error,
             QString *errorString) const = 0;
@@ -88,7 +87,7 @@ public:
     /* Retrieval */
     virtual QLandmark landmark(const QLandmarkId &landmarkId, QLandmarkManager::Error *error,
                                QString *errorString) const;
-    virtual QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders,
+    virtual QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QList<const QLandmarkSortOrder*>& sortOrders,
                                        QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
                                        QString *errorString) const = 0;
@@ -102,7 +101,7 @@ public:
     virtual bool saveLandmarks(QList<QLandmark> * landmark, QMap<int, QLandmarkManager::Error> *errorMap,
                                QLandmarkManager::Error *error, QString *errorString);
     virtual bool removeLandmark(const QLandmarkId &landmarkId, QLandmarkManager::Error *error, QString *errorString);
-    virtual bool removeLandmarks(QList<QLandmarkId> &landmarkId, QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
+    virtual bool removeLandmarks(const QList<QLandmarkId> &landmarkId, QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
                                  QString *errorString);
 
     virtual bool saveCategory(QLandmarkCategory* category, QLandmarkManager::Error *error, QString *errorString);

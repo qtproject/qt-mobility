@@ -43,17 +43,18 @@
 #define QLANDMARKBOXFILTER_H
 
 #include "qlandmarkfilter.h"
+#include "qgeocoordinate.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
-class QGeoCoordinate;
 
 class QLandmarkBoxFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkBoxFilter(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+    QLandmarkBoxFilter(const QGeoCoordinate &topLeft = QGeoCoordinate(),
+                       const QGeoCoordinate &bottomRight = QGeoCoordinate());
     virtual ~QLandmarkBoxFilter();
 
     QGeoCoordinate topLeftCoordinate() const;
@@ -61,6 +62,9 @@ public:
 
     QGeoCoordinate bottomRightCoordinate() const;
     void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
+
+private:
+    Q_DECLARE_PRIVATE(QLandmarkBoxFilter);
 };
 
 QTM_END_NAMESPACE

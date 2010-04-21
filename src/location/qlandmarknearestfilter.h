@@ -43,25 +43,27 @@
 #define QLANDMARKNEARESTFILTER_H
 
 #include "qlandmarkfilter.h"
+#include "qgeocoordinate.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-
 class QLandmarkNearestFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkNearestFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkNearestFilter(const QGeoCoordinate &coordinate);
+    QLandmarkNearestFilter(const QGeoCoordinate &coordinate = QGeoCoordinate(), double radius = -1);
     virtual ~QLandmarkNearestFilter();
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
 
+    double radius() const;
+    void setRadius(double radius);
+
 private:
-    QLandmarkNearestFilter *d;
+    Q_DECLARE_PRIVATE(QLandmarkNearestFilter);
 };
 
 QTM_END_NAMESPACE

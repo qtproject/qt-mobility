@@ -51,7 +51,7 @@ class Q_LOCATION_EXPORT QLandmarkImportRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
 public:
-    QLandmarkImportRequest();
+    QLandmarkImportRequest(QLandmarkManager *manager, QObject *parent = 0);
     ~QLandmarkImportRequest();
 
     QIODevice *device() const;
@@ -63,10 +63,10 @@ public:
     QLandmarkManager::Format format() const;
     void setFormat(QLandmarkManager::Format format);
 
-    QList<QLandmarkId> ids() const;
+    QList<QLandmarkId> landmarkIds() const;
 private:
     Q_DISABLE_COPY(QLandmarkImportRequest)
-    Q_DECLARE_PRIVATE_D(d, QLandmarkImportRequest)
+    Q_DECLARE_PRIVATE(QLandmarkImportRequest)
 };
 
 QTM_END_NAMESPACE

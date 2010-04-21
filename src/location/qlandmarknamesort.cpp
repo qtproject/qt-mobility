@@ -40,30 +40,28 @@
 ****************************************************************************/
 
 #include "qlandmarknamesort.h"
-#include "qlandmarkid.h"
+#include "qlandmarknamesort_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
     \class QLandmarkNameSort
     \brief The QLandmarkNameSort class is used to sort landmarks by name.
-    \ingroup location
+    \ingroup landmarks-sort
 */
 
 /*!
     Creates a sort order that sorts by name in the given \a direction.
 */
 QLandmarkNameSort::QLandmarkNameSort(Qt::SortOrder direction)
-{
-    //TODO: implement
-}
+        : QLandmarkSortOrder(new QLandmarkNameSortPrivate(direction)) {}
 
 /*!
     Destroys the sort order.
 */
 QLandmarkNameSort::~QLandmarkNameSort()
 {
-    //TODO: implement
+    // pointer deleted in superclass destructor
 }
 
 /*!
@@ -71,7 +69,8 @@ QLandmarkNameSort::~QLandmarkNameSort()
 */
 Qt::CaseSensitivity QLandmarkNameSort::caseSensitivity() const
 {
-    return Qt::CaseInsensitive;
+    Q_D(const QLandmarkNameSort);
+    return d->sensitivity;
 }
 
 /*!
@@ -79,6 +78,24 @@ Qt::CaseSensitivity QLandmarkNameSort::caseSensitivity() const
 */
 void QLandmarkNameSort::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
 {
+    Q_D(QLandmarkNameSort);
+    d->sensitivity = caseSensitivity;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+QLandmarkNameSortPrivate::QLandmarkNameSortPrivate(Qt::SortOrder direction)
+        : sensitivity(Qt::CaseSensitive)
+{
+    type = QLandmarkSortOrder::NameSort;
+    order = direction;
+}
+
+QLandmarkNameSortPrivate::QLandmarkNameSortPrivate(const QLandmarkNameSortPrivate &other)
+        : QLandmarkSortOrderPrivate(other),
+        sensitivity(other.sensitivity) {}
+
+QLandmarkNameSortPrivate::~QLandmarkNameSortPrivate() {}
+
 
 QTM_END_NAMESPACE

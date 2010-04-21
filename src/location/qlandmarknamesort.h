@@ -58,7 +58,7 @@ public:
     Qt::CaseSensitivity caseSensitivity() const;
     void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
 private:
-    QLandmarkNameSortPrivate *d;
+    Q_DECLARE_PRIVATE(QLandmarkNameSort);
 };
 
 QTM_END_NAMESPACE

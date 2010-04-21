@@ -123,15 +123,7 @@ void QMapLine::compMapCoords()
     if (!d->mapView)
         return;
 
-    QPointF p1 = d->mapView->geoToMap(d->pt1);
-    QPointF p2 = d->mapView->geoToMap(d->pt2);
-    d->line = QLineF(p1, p2);
-
-    //lines are drawn from west to east
-    if (d->pt2.longitude() < d->pt1.longitude()) {
-        p2.rx() += d->mapView->mapWidth();
-        d->line.setP2(p2);
-    }
+    d->line = connectShortest(*(d->mapView), d->pt1, d->pt2);
 
     //compute intersecting map tiles now
     d->intersectingTiles.clear();
@@ -146,39 +138,44 @@ void QMapLine::paint(QPainter* painter, const QRectF& viewPort)
     if (!d->mapView)
         return;
 
-    qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
-    QPen oldPen = painter->pen();
+    painter->save();
+
     painter->setPen(d->p);
-    d->line.translate(-viewPort.left(), -viewPort.top());
+    painter->translate(-viewPort.left(), -viewPort.top());
     painter->drawLine(d->line);
-    d->line.translate(viewPort.left(), viewPort.top());
 
-    //Is view port wrapping around date line?
-    qreal right = viewPort.right();
-    for (int i = 1;right >= mapWidth;++i, right -= mapWidth) {
-        qint64 width = mapWidth * i;
-        d->line.translate(-viewPort.left(), -viewPort.top());
-        d->line.translate(width, 0);
-        painter->drawLine(d->line);
-        d->line.translate(-width, 0);
-        d->line.translate(viewPort.left(), viewPort.top());
-    }
-    //Is line crossing date line?
-    if (d->line.x2() >= mapWidth) {
-        d->line.translate(-viewPort.left(), -viewPort.top());
-        d->line.translate(-mapWidth, 0);
-        painter->drawLine(d->line);
-        d->line.translate(mapWidth, 0);
-        d->line.translate(viewPort.left(), viewPort.top());
-    }
-
-    painter->setPen(oldPen);
+    painter->restore();
 }
 
 bool QMapLine::intersects(const QRectF& rect) const
 {
     Q_D(const QMapLine);
     return QMapObject::intersect(rect, d->line);
+}
+
+QLineF QMapLine::connectShortest(const QMapView &mapView, const QGeoCoordinate& point1, const QGeoCoordinate& point2)
+{
+    //order from west to east
+    QGeoCoordinate pt1;
+    QGeoCoordinate pt2;
+
+    if (point1.longitude() < point2.longitude()) {
+        pt1 = point1;
+        pt2 = point2;
+    } else {
+        pt1 = point2;
+        pt2 = point1;
+    }
+
+    QPointF mpt1 = mapView.translateToViewport(pt1);
+    QPointF mpt2 = mapView.translateToViewport(pt2);
+
+    if (pt2.longitude() - pt1.longitude() > 180.0) {
+        mpt1.rx() += mapView.mapWidth();
+        return QLineF(mpt2, mpt1);
+    }
+
+    return QLineF(mpt1, mpt2);
 }
 
 QTM_END_NAMESPACE

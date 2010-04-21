@@ -44,6 +44,7 @@
 
 #include "qmobilityglobal.h"
 #include <QVariant>
+#include <QSharedDataPointer>
 
 
 class QStringList;
@@ -87,7 +88,7 @@ public:
     QStringList attributes() const;
 
 private:
-    QLandmarkCategoryPrivate *d;
+    QSharedDataPointer<QLandmarkCategoryPrivate> d;
 };
 
 QTM_END_NAMESPACE

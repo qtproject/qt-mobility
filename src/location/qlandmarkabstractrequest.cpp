@@ -39,14 +39,27 @@
 **
 ****************************************************************************/
 #include "qlandmarkabstractrequest.h"
+#include "qlandmarkabstractrequest_p.h"
+#include "qlandmarkmanagerengine.h"
+#include <QDebug>
 
 QTM_USE_NAMESPACE
+
+QLandmarkAbstractRequestPrivate::QLandmarkAbstractRequestPrivate(QLandmarkManager *mgr)
+    : type(QLandmarkAbstractRequest::InvalidRequest),
+      state(QLandmarkAbstractRequest::InactiveState),
+      error(QLandmarkManager::NoError),
+      errorString(QString()),
+      manager(mgr)
+{
+}
+
 /*!
     \class QLandmarkAbstractRequest
-    \brief The QLandmarkAbstractRequest class provides a mechanism for
-    asynchronous requests to be made.
+    \brief The QLandmarkAbstractRequest class provides the interface
+    from which all asynchronous request classes inherit.
 
-    \ingroup location
+    \ingroup landmarks-request
 
     It allows a client to asynchronously request some functionality
     from a QLandmarkManager.
@@ -81,16 +94,20 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    Constructs a new, invalid asynchronous request.
+    Constructs a new, invalid asynchronous request with the given \a manager and \a parent.
 */
-QLandmarkAbstractRequest::QLandmarkAbstractRequest()
+QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkManager *manager, QObject *parent)
+    : QObject(parent),
+      d_ptr(new QLandmarkAbstractRequestPrivate(manager))
 {
 }
 
 /*!
     \internal
 */
-QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPrivate *dd)
+QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPrivate *dd, QObject *parent)
+    : QObject(parent),
+     d_ptr(dd)
 {
 }
 
@@ -99,6 +116,7 @@ QLandmarkAbstractRequest::QLandmarkAbstractRequest(QLandmarkAbstractRequestPriva
 */
 QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 {
+    delete d_ptr;
 }
 
 /*!
@@ -106,7 +124,7 @@ QLandmarkAbstractRequest::~QLandmarkAbstractRequest()
 */
 QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 {
-    return QLandmarkAbstractRequest::InvalidRequest;
+    return d_ptr->type;
 }
 
 /*!
@@ -114,7 +132,7 @@ QLandmarkAbstractRequest::RequestType QLandmarkAbstractRequest::type() const
 */
 QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 {
-    return QLandmarkAbstractRequest::InactiveState;
+    return d_ptr->state;
 }
 
 /*!
@@ -124,7 +142,7 @@ QLandmarkAbstractRequest::State QLandmarkAbstractRequest::state()
 */
 bool QLandmarkAbstractRequest::isInactive() const
 {
-    return true;
+    return d_ptr->state == QLandmarkAbstractRequest::InactiveState;
 }
 
 /*!
@@ -134,7 +152,7 @@ bool QLandmarkAbstractRequest::isInactive() const
 */
 bool QLandmarkAbstractRequest::isActive() const
 {
-    return false;
+    return d_ptr->state == QLandmarkAbstractRequest::ActiveState;
 }
 
 /*!
@@ -144,7 +162,7 @@ bool QLandmarkAbstractRequest::isActive() const
 */
 bool QLandmarkAbstractRequest::isFinished() const
 {
-    return false;
+    return d_ptr->state == QLandmarkAbstractRequest::FinishedState;
 }
 
 /*!
@@ -154,7 +172,7 @@ bool QLandmarkAbstractRequest::isFinished() const
 */
 bool QLandmarkAbstractRequest::isCanceled() const
 {
-    return false;
+    return d_ptr->state == QLandmarkAbstractRequest::CanceledState;
 }
 
 /*!
@@ -163,7 +181,7 @@ bool QLandmarkAbstractRequest::isCanceled() const
 */
 QLandmarkManager::Error QLandmarkAbstractRequest::error() const
 {
-    return QLandmarkManager::NoError;
+    return d_ptr->error;
 }
 
 /*!
@@ -173,7 +191,7 @@ QLandmarkManager::Error QLandmarkAbstractRequest::error() const
 */
 QString QLandmarkAbstractRequest::errorString() const
 {
-    return QString();
+    return d_ptr->errorString;
 }
 
 /*!
@@ -182,7 +200,7 @@ QString QLandmarkAbstractRequest::errorString() const
 */
 QLandmarkManager *QLandmarkAbstractRequest::manager() const
 {
-    return 0;
+        return d_ptr->manager;
 }
 
 /*!
@@ -190,6 +208,7 @@ QLandmarkManager *QLandmarkAbstractRequest::manager() const
 */
 void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 {
+    d_ptr->manager = manager;
 }
 
 /*!
@@ -200,7 +219,19 @@ void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 */
 bool QLandmarkAbstractRequest::start()
 {
-    return false;
+    if (!d_ptr->manager) {
+        d_ptr->error = QLandmarkManager::BadArgumentError;
+        d_ptr->errorString = "No manager assigned to landmark request object";
+        qWarning() << d_ptr->errorString;
+        return false;
+    }
+    QLandmarkManagerEngine *engine = d_ptr->manager->engine();
+
+    if (d_ptr->state != QLandmarkAbstractRequest::ActiveState)
+        return engine->startRequest(this);
+     else {
+        return false;
+     }
 }
 
 /*!
@@ -211,7 +242,19 @@ bool QLandmarkAbstractRequest::start()
 */
 bool QLandmarkAbstractRequest::cancel()
 {
-    return false;
+    if (!d_ptr->manager) {
+        d_ptr->error = QLandmarkManager::BadArgumentError;
+        d_ptr->errorString = "No manager assigned to landmark request object";
+        qWarning() << d_ptr->errorString;
+        return false;
+    }
+    QLandmarkManagerEngine *engine = d_ptr->manager->engine();
+
+    if(d_ptr->state == QLandmarkAbstractRequest::ActiveState)
+        return engine->cancelRequest(this);
+    else {
+        return true;
+    }
 }
 
 /*!
@@ -223,6 +266,24 @@ bool QLandmarkAbstractRequest::cancel()
 */
 bool QLandmarkAbstractRequest::waitForFinished(int msecs)
 {
+
+    if (!d_ptr->manager) {
+        d_ptr->error = QLandmarkManager::BadArgumentError;
+        d_ptr->errorString = "No manager assigned to landmark request object";
+        qWarning() << d_ptr->errorString;
+        return false;
+    }
+    QLandmarkManagerEngine *engine = d_ptr->manager->engine();
+
+    switch(d_ptr->state) {
+        case QLandmarkAbstractRequest::ActiveState:
+            return engine->waitForRequestFinished(this, msecs);
+        case QLandmarkAbstractRequest::CanceledState:
+        case QLandmarkAbstractRequest::FinishedState:
+            return true;
+        default:
+            return false;
+    }
     return false;
 }
 

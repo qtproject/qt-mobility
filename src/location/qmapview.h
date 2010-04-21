@@ -54,7 +54,7 @@
 
 #include "qgeocoordinate.h"
 #include "qgeoroute.h"
-#include "qgeomaptile.h"
+#include "qmaptileservice_nokia_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,8 +67,8 @@ class QMapEllipse;
 class QMapObject;
 class QMapMarker;
 class QMapViewPrivate;
-class QGeoMapService;
-class QGeoMapTileReply;
+class QMapTileService;
+class QMapTileReply;
 
 class Q_LOCATION_EXPORT QMapView : public QGraphicsWidget
 {
@@ -102,19 +102,58 @@ public:
     QMapView(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
     virtual ~QMapView();
 
-    void init(QGeoMapService* mapService, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
+    void init(QMapTileService* mapService, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
 
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
-    QGeoCoordinate center() const;
-    QPointF mapCenter() const;
     void centerOn(const QPointF& pos);
     void centerOn(qreal x, qreal y);
-    void centerOn(const QGeoCoordinate& geoPos);
-    void moveViewPort(int deltaX, int deltaY);
+    QPointF getViewportCenter() const;
+    QGeoCoordinate getCenter() const;
+    void setCenter(const QGeoCoordinate& coord);
 
+    /*!
+    * Returns the current heading.
+    */
+    quint16 getHeading() const;
+    /*!
+    * Sets heading.
+    * @param heading The new heading.
+    */
+    void setHeading(quint16 heading);
+    /*!
+    * Returns the current tilt.
+    */
+    quint16 getTilt() const;
+    /*!
+    * Sets tilt.
+    * @param tilt The new tilt.
+    */
+    void setTilt(quint16 tilt);
+    /*!
+    * Returns the map view bounds.
+    */
+    QRectF getViewBounds() const;
+    
+    quint16 maxZoomLevel() const;
+    quint16 getZoomLevel() const;
+    
+    void pan(int deltaX, int deltaY);
+    void pan(int dragX, int dragY, int dropX, int dropY);
+    
     quint64 mapWidth() const;
     quint64 mapHeight() const;
+
+    //setBaseMapType()
+    
+    /*!
+    * Sets hotspot.
+    * @param hotspot The new hotspot.
+    */
+    void setHotSpot(QPointF& hotspot);
+
+    QPointF translateToViewport(const QGeoCoordinate& coord) const;
+    QGeoCoordinate translateFromViewport(const QPointF& point) const;
 
     void setHorizontalPadding(quint32 range);
     quint32 horizontalPadding() const;
@@ -124,42 +163,30 @@ public:
     void setPannable(bool isPannable);
     bool isPannable() const;
 
-    QPointF geoToMap(const QGeoCoordinate& geoCoordinate) const;
-    QGeoCoordinate mapToGeo(const QPointF& mapCoordinate) const;
-
     void setRouteDetailLevel(quint32 pixels);
     quint32 routeDetailLevel() const;
-
-    quint16 maxZoomLevel() const;
-    quint16 zoomLevel() const;
 
     void addMapObject(QMapObject* mapObject);
     void removeMapObject(QMapObject* mapObject);
     QMapObject* getTopmostMapObject(const QGeoCoordinate& geoCoordinate);
     QMapObject* getTopmostMapObject(const QPointF& mapCoordinate);
 
-    QLineF connectShortest(const QGeoCoordinate& point1, const QGeoCoordinate& point2) const;
-
-    MapVersion version() const;
     /*!
     * Sets the map version.
     * @param mapVersion The new map version.
     */
-    void setVersion(const MapVersion& mapVersion);
-    MapResolution resolution() const;
+    void setVersion(QMapTileServiceNokia::MapVersion mapVersion);
     /*!
     * Sets the map resolution.
     * @param mapResolution The new map resolution.
     */
-    void setResolution(const MapResolution& mapResolution);
-    MapFormat format() const;
+    void setTileSize(QMapTileServiceNokia::TileSize tileSize);
     /*!
     * Sets the map format.
     * @param mapVersion The new map format.
     */
-    void setFormat(const MapFormat& mapFormat);
-    MapScheme scheme() const;
-    void setScheme(const MapScheme& mapScheme);
+    void setFormat(QMapTileServiceNokia::MapFormat mapFormat);
+    void setScheme(QMapTileServiceNokia::MapScheme scheme);
 
 private:
     Q_DISABLE_COPY(QMapView)
@@ -180,8 +207,8 @@ protected:
 
 public slots:
     void releaseRemoteTiles();
-    void tileFetched(QGeoMapTileReply* reply);
-    void setZoomLevel(int zoomLevel);
+    void tileFetched(QMapTileReply* reply);
+    void setZoomLevel(int level);
 
 signals:
     void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);

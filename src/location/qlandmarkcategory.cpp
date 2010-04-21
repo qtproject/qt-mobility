@@ -50,22 +50,34 @@ QTM_USE_NAMESPACE
 
 // ----- QLandmarkCategoryPrivate -----
 
-QLandmarkCategoryPrivate::QLandmarkCategoryPrivate() {}
-
-QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivate &other)
+QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
+    : QSharedData()
 {
-    name = other.name;
-    iconUrl = other.iconUrl;
-    description = other.description;
 }
 
-QLandmarkCategoryPrivate::~QLandmarkCategoryPrivate() {}
+QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivate &other)
+    : QSharedData(other),
+      name(other.name),
+      iconUrl(other.iconUrl),
+      description(other.description),
+      readOnly(false),
+      attributes(other.attributes),
+      id(other.id)
+{
+}
+
+QLandmarkCategoryPrivate::~QLandmarkCategoryPrivate()
+{
+}
 
 QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCategoryPrivate & other)
 {
     name = other.name;
     iconUrl = other.iconUrl;
     description = other.description;
+    readOnly = other.readOnly;
+    attributes = other.attributes;
+    id = other.id;
 
     return *this;
 }
@@ -74,7 +86,10 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
 {
     return ((name == other.name)
             && (iconUrl == other.iconUrl)
-            && (description == other.description));
+            && (description == other.description)
+            && (readOnly == other.readOnly)
+            && (attributes == other.attributes)
+            && (id == other.id));
 }
 
 /*!
@@ -83,7 +98,7 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     \brief The QLandmarkCategory class designates a grouping of
     landmarks of similar type.
 
-    \ingroup location
+    \ingroup landmarks-main
 
     Landmarks of similar type may be grouped together into categories,
     e.g. restaurants, accommodation etc.  A QLandmarkCategory object
@@ -109,16 +124,16 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     id() is called.
 */
 QLandmarkCategory::QLandmarkCategory()
+    : d(new QLandmarkCategoryPrivate)
 {
-    d = new QLandmarkCategoryPrivate();
 }
 
 /*!
     Constructs a copy of \a other.
 */
 QLandmarkCategory::QLandmarkCategory(const QLandmarkCategory &other)
+    : d(other.d)
 {
-    d = new QLandmarkCategoryPrivate(*(other.d));
 }
 
 /*!
@@ -126,7 +141,6 @@ QLandmarkCategory::QLandmarkCategory(const QLandmarkCategory &other)
 */
 QLandmarkCategory::~QLandmarkCategory()
 {
-    delete d;
 }
 /*!
     Assigns \a other to this category and returns a reference to this category.
@@ -212,7 +226,7 @@ void QLandmarkCategory::setDescription(const QString &description)
 */
 bool QLandmarkCategory::isReadOnly() const
 {
-    return true;
+    return d->readOnly;
 }
 
 /*!
@@ -220,7 +234,7 @@ bool QLandmarkCategory::isReadOnly() const
 */
 QLandmarkCategoryId QLandmarkCategory::id() const
 {
-    return QLandmarkCategoryId();
+    return d->id;
 }
 
 /*!
@@ -231,6 +245,7 @@ QLandmarkCategoryId QLandmarkCategory::id() const
 */
 void QLandmarkCategory::setId(const QLandmarkCategoryId &id)
 {
+    d->id = id;
 }
 
 /*!
@@ -241,7 +256,7 @@ void QLandmarkCategory::setId(const QLandmarkCategoryId &id)
 */
 QVariant QLandmarkCategory::attribute(const QString &key, const QVariant &defaultValue) const
 {
-    return QVariant();
+    return d->attributes.value(key, defaultValue);
 }
 
 /*!
@@ -249,7 +264,7 @@ QVariant QLandmarkCategory::attribute(const QString &key, const QVariant &defaul
 */
 void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 {
-
+    d->attributes[key] = value;
 }
 
 /*!
@@ -259,5 +274,5 @@ void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 */
 QStringList QLandmarkCategory::attributes() const
 {
-    return QStringList();
+    return d->attributes.keys();
 }

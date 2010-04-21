@@ -48,15 +48,15 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkCustomSortPrivate;
 class Q_LOCATION_EXPORT QLandmarkCustomSort : public QLandmarkSortOrder
 {
+public:
     virtual ~QLandmarkCustomSort();
+
+    virtual int compare(const QLandmark &l1, const QLandmark &l2) const = 0;
+
 protected:
     QLandmarkCustomSort();
-    virtual int compare(const QLandmark &l1, const QLandmark &l2) const = 0;
-private:
-    QLandmarkCustomSortPrivate *d;
 };
 
 QTM_END_NAMESPACE

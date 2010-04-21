@@ -44,7 +44,11 @@
 #include "qmapview_p.h"
 #include "qmapobject.h"
 #include "qmapobject_p.h"
-#include "qgeomapservice.h"
+#include "qmaptileservice.h"
+
+//TODO: get rid of this
+#define TILE_WIDTH 256
+#define TILE_HEIGHT 256
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,13 +56,12 @@ QMapViewPrivate::QMapViewPrivate(QtMobility::QMapView *q)
         : q_ptr(q), numColRow(1), mapService(0), currZoomLevel(0),
         horizontalPadding(0), verticalPadding(0), routeDetails(0),
         panActive(false), pannable(true), releaseTimer(q),
-        mapVersion(MapVersion(MapVersion::Newest)),
-        mapSchmeme(MapScheme(MapScheme::Normal_Day)),
-        mapResolution(MapResolution(MapResolution::Res_256_256)),
-        mapFormat(MapFormat(MapFormat::Png))
+        mapVersion(QMapTileServiceNokia::Newest),
+        mapSchmeme(QMapTileServiceNokia::NormalDay),
+        tileSize(QMapTileServiceNokia::Tile_256_256),
+        mapFormat(QMapTileServiceNokia::Png)
 {
 }
-
 /*!
     When the zoom level is increased, this method is invoked to scale and add the
     map tiles in the view port of the old map scene to cover (as much as possible)
@@ -82,15 +85,26 @@ QHash<quint64, QPair<QPixmap, bool> > QMapViewPrivate::preZoomIn(qreal scale)
 
         if (mapTiles.contains(index)) {
             QPixmap& pixmap = mapTiles[index].first;
-            QPixmap scaledPixmap = pixmap.scaled(mapResolution.size * scale);
+            //TODO: tile size
+            //QPixmap scaledPixmap = pixmap.scaled(mapResolution.size * scale);
+            QSize size;
+            size.setWidth(TILE_WIDTH);
+            size.setHeight(TILE_WIDTH);
+            QPixmap scaledPixmap = pixmap.scaled(size * scale);
 
             for (int i = 0; i < scale; i++)
 
                 for (int j = 0; j < scale; j++) {
-                    QPixmap scaledTile = scaledPixmap.copy(i * mapResolution.size.width(),
-                                                           j * mapResolution.size.height(),
-                                                           mapResolution.size.width(),
-                                                           mapResolution.size.height()
+                    //TODO: tile size
+                    //QPixmap scaledTile = scaledPixmap.copy(i * mapResolution.size.width(),
+                    //                                       j * mapResolution.size.height(),
+                    //                                       mapResolution.size.width(),
+                    //                                       mapResolution.size.height()
+                    //                                      );
+                    QPixmap scaledTile = scaledPixmap.copy(i * TILE_WIDTH,
+                                                           j * TILE_WIDTH,
+                                                           TILE_WIDTH,
+                                                           TILE_WIDTH
                                                           );
                     quint32 scaledCol = it.col() * scale + i;
                     quint32 scaledRow = it.row() * scale + j;
@@ -128,7 +142,7 @@ QHash<quint64, QPair<QPixmap, bool> > QMapViewPrivate::preZoomOut(qreal scale)
         quint64 scaledIndex = ((quint64) scaledRow) * (numColRow / reverseScale) + scaledCol;
 
         if (!combinedTiles.contains(scaledIndex)) {
-            combinedTiles[scaledIndex] = QImage(mapResolution.size, QImage::Format_ARGB32_Premultiplied);
+            combinedTiles[scaledIndex] = QImage(QSize(TILE_WIDTH, TILE_WIDTH), QImage::Format_ARGB32_Premultiplied);
         }
 
         QImage& combinedTile = combinedTiles[scaledIndex];
@@ -137,9 +151,9 @@ QHash<quint64, QPair<QPixmap, bool> > QMapViewPrivate::preZoomOut(qreal scale)
 
         if (mapTiles.contains(index)) {
             QPixmap& pixmap = mapTiles[index].first;
-            QPixmap scaledPixmap = pixmap.scaled(mapResolution.size * scale);
-            painter.drawPixmap(mapResolution.size.width() * scale * (it.col() % reverseScale),
-                               mapResolution.size.height() * scale * (it.row() % reverseScale),
+            QPixmap scaledPixmap = pixmap.scaled(QSize(TILE_WIDTH, TILE_WIDTH) * scale);
+            painter.drawPixmap(TILE_WIDTH * scale * (it.col() % reverseScale),
+                               TILE_HEIGHT * scale * (it.row() % reverseScale),
                                scaledPixmap);
         }
     }
@@ -171,16 +185,16 @@ void QMapViewPrivate::requestTile(quint32 col, quint32 row)
         return;
     }
 
-    QGeoMapTileRequest request;
-    request.setVersion(mapVersion);
-    request.setScheme(mapSchmeme);
-    request.setResolution(mapResolution);
-    request.setFormat(mapFormat);
-    request.setCol(col);
-    request.setRow(row);
-    request.setZoomLevel(currZoomLevel);
+    //request.setVersion(mapVersion);
+    //request.setScheme(mapSchmeme);
+    //request.setResolution(mapResolution);
+    //request.setFormat(mapFormat);
+    //request.setCol(col);
+    //request.setRow(row);
+    //request.setZoomLevel(currZoomLevel);
 
-    QGeoMapTileReply* reply = mapService->getMapTile(request);
+    //TODO: set map configuration
+    QMapTileReply* reply = mapService->request(currZoomLevel, row, col);
     pendingTiles[tileIndex] = reply;
 }
 
@@ -189,7 +203,7 @@ void QMapViewPrivate::requestTile(quint32 col, quint32 row)
 */
 void QMapViewPrivate::cancelPendingTiles()
 {
-    QHashIterator<quint64, QGeoMapTileReply*> it(pendingTiles);
+    QHashIterator<quint64, QMapTileReply*> it(pendingTiles);
 
     while (it.hasNext()) {
         it.next();
@@ -206,7 +220,12 @@ void QMapViewPrivate::cancelPendingTiles()
 void QMapViewPrivate::paintLayers(QPainter* painter)
 {
     Q_Q(QMapView);
-    QMapView::TileIterator it(*q, viewPort);
+
+    QRectF paddedRect(viewPort);
+    qint64 mapWidth = q->mapWidth();
+    int objectPadding = viewPort.width()<mapWidth?viewPort.width():mapWidth;
+    paddedRect.setWidth(paddedRect.width()+objectPadding);
+    QMapView::TileIterator it(*q, paddedRect);
     QMap<quint16, QSet<QMapObject*> > stackedObj;
 
     while (it.hasNext()) {
@@ -220,29 +239,38 @@ void QMapViewPrivate::paintLayers(QPainter* painter)
                 QMapObject* obj = mapObjects[i];
 
                 if (!stackedObj.contains(obj->zValue()))
-                    stackedObj[obj->zValue()] = QSet<QMapObject*>();
+                stackedObj[obj->zValue()] = QSet<QMapObject*>();
 
                 if (!stackedObj[obj->zValue()].contains(obj))
-                    stackedObj[obj->zValue()].insert(obj);
+                stackedObj[obj->zValue()].insert(obj);
             }
         }
     }
 
     QMapIterator<quint16, QSet<QMapObject*> > mit(stackedObj);
-
     while (mit.hasNext()) {
         mit.next();
         QSetIterator<QMapObject*> sit(mit.value());
-
-        while (sit.hasNext())
-            sit.next()->paint(painter, viewPort);
+        while (sit.hasNext()) {
+            QMapObject *obj = sit.next();
+            //Is view port wrapping around date line?
+            int i=viewPort.x()<=objectPadding?-1:0;
+            do {
+                painter->save();
+                painter->translate(mapWidth*i, 0);
+                obj->paint(painter, viewPort);
+                painter->restore();
+                ++i;
+            }while( viewPort.right()+objectPadding > i*mapWidth );
+        }
     }
 }
 
 /*!
     Adds an entry to tileToObjects for each tile that
-    intersects or completely covers he given \a mapObject.
+    intersects or completely covers the given \a mapObject.
 */
+
 void QMapViewPrivate::addMapObjectToTiles(QMapObject* mapObject)
 {
     for (int i = 0; i < mapObject->d_ptr->intersectingTiles.count(); i++) {
@@ -250,6 +278,31 @@ void QMapViewPrivate::addMapObjectToTiles(QMapObject* mapObject)
             tileToObjects[mapObject->d_ptr->intersectingTiles[i]] = QList<QMapObject*>();
 
         tileToObjects[mapObject->d_ptr->intersectingTiles[i]].append(mapObject);
+    }
+}
+
+void QMapViewPrivate::requestMissingMapTiles()
+{
+    Q_Q(QMapView);
+    QRectF paddedViewPort = QRectF(viewPort.x()-horizontalPadding,
+                                   viewPort.y()-verticalPadding,
+                                   viewPort.width()+(2*horizontalPadding),
+                                   viewPort.height()+(2*verticalPadding));
+
+    QMapView::TileIterator it(*q, paddedViewPort);
+    
+    while (it.hasNext()) {
+        it.next();
+        if (!it.isValid())
+            continue;
+        quint64 index = q->getTileIndex(it.col(), it.row());
+
+        if (mapTiles.contains(index)) {
+            QPair<QPixmap, bool>& tileData = mapTiles[index];
+            if (!tileData.second)
+                requestTile(it.col(), it.row());
+        } else
+            requestTile(it.col(), it.row());
     }
 }
 

@@ -40,29 +40,40 @@
 ****************************************************************************/
 
 #include "qlandmarksaverequest.h"
+#include "qlandmarkabstractrequest_p.h"
 #include "qlandmark.h"
 
 
 QTM_BEGIN_NAMESPACE
 
+class QLandmarkSaveRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkSaveRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr){}
+    QList<QLandmark> landmarks;
+    QMap<int, QLandmarkManager::Error> errorMap;
+
+};
+
 /*!
     \class QLandmarkSaveRequest
     \brief The QLandmarkSaveRequest class allows a client to asynchronously
     request that certain landmarks be saved by a landmark manager.
+    \ingroup landmarks-request
 
     For a QLandmarkSaveRequest, the resultsAvailable() signal will be emitted
     when either an individual items error out (individaul errors may be retrieved
     by calling errorMap()), an  overall operation error occurs(which may be
     retrieved by calling error()), or when individual items have been
     saved (which may be retrieved by calling landmarks()).
-
-    \ingroup location
 */
 
 /*!
-    Constructs a landmark save request
+    Constructs a landmark save request with the given \a manager and \a parent.
 */
-QLandmarkSaveRequest::QLandmarkSaveRequest()
+QLandmarkSaveRequest::QLandmarkSaveRequest(QLandmarkManager *manager, QObject *parent)
+    : QLandmarkAbstractRequest(new QLandmarkSaveRequestPrivate(manager), parent)
 {
 }
 
@@ -80,14 +91,31 @@ QLandmarkSaveRequest::~QLandmarkSaveRequest()
 */
 QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 {
-    return QList<QLandmark>();
+    Q_D(const QLandmarkSaveRequest);
+    return d->landmarks;
 }
 
 /*!
     Sets the list of \a landmarks to be saved.
+
+    \sa setLandmark()
 */
 void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 {
+    Q_D(QLandmarkSaveRequest);
+    d->landmarks = landmarks;
+}
+
+/*!
+    Convenience function to set a single \a landmark to be saved.
+
+    \sa setLandmarks()
+*/
+void QLandmarkSaveRequest::setLandmark(const QLandmark &landmark)
+{
+    Q_D(QLandmarkSaveRequest);
+    d->landmarks.clear();
+    d->landmarks.append(landmark);
 }
 
 /*!
@@ -95,7 +123,8 @@ void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 */
 QMap<int, QLandmarkManager::Error> QLandmarkSaveRequest::errorMap() const
 {
-    return QMap<int, QLandmarkManager::Error>();
+    Q_D(const QLandmarkSaveRequest);
+    return d->errorMap;
 }
 
 #include "moc_qlandmarksaverequest.cpp"

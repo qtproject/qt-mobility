@@ -40,40 +40,15 @@
 ****************************************************************************/
 
 #include "qlandmarkunionfilter.h"
-#include "qlandmarkfilter_p.h"
+#include "qlandmarkunionfilter_p.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkUnionFilterPrivate : public QLandmarkFilterPrivate
-{
-public:
-    QLandmarkUnionFilterPrivate();
-    QLandmarkUnionFilterPrivate(const QLandmarkUnionFilterPrivate &other);
-    ~QLandmarkUnionFilterPrivate();
-
-    QList<QLandmarkFilter> filters;
-};
-
-QLandmarkUnionFilterPrivate::QLandmarkUnionFilterPrivate()
-        : QLandmarkFilterPrivate()
-{
-}
-
-QLandmarkUnionFilterPrivate::QLandmarkUnionFilterPrivate(const QLandmarkUnionFilterPrivate &other)
-        : QLandmarkFilterPrivate(other),
-        filters(other.filters)
-{
-}
-
-QLandmarkUnionFilterPrivate::~QLandmarkUnionFilterPrivate()
-{
-}
 
 /*!
     \class QLandmarkUnionFilter
     \brief The QLandmarkUnionFilter class provides a filter which unions the results
             of its constituent filters.
-    \ingroup location
+    \ingroup landmarks-filter
 
     Conceptually it performs an OR operation and may thus be used
     to select landmarks which match any one of it's constituent filters.
@@ -83,7 +58,7 @@ QLandmarkUnionFilterPrivate::~QLandmarkUnionFilterPrivate()
     Constructs a new union filter.
 */
 QLandmarkUnionFilter::QLandmarkUnionFilter()
-        : QLandmarkFilter(*new QLandmarkUnionFilterPrivate)
+        : QLandmarkFilter(new QLandmarkUnionFilterPrivate)
 {
 }
 
@@ -92,14 +67,17 @@ QLandmarkUnionFilter::QLandmarkUnionFilter()
 */
 QLandmarkUnionFilter::~QLandmarkUnionFilter()
 {
+    // pointer deleted in superclass destructor
 }
 
 /*!
     Sets the \a filters whose criteria will be unioned.
     \sa filters()
 */
-void QLandmarkUnionFilter::setFilters(const QList<QLandmarkFilter>& filters)
+void QLandmarkUnionFilter::setFilters(const QList<const QLandmarkFilter*>& filters)
 {
+    Q_D(QLandmarkUnionFilter);
+    d->filters = filters;
 }
 
 /*!
@@ -107,8 +85,10 @@ void QLandmarkUnionFilter::setFilters(const QList<QLandmarkFilter>& filters)
 
     \sa append(), filters()
 */
-void QLandmarkUnionFilter::prepend(const QLandmarkFilter& filter)
+void QLandmarkUnionFilter::prepend(const QLandmarkFilter *filter)
 {
+    Q_D(QLandmarkUnionFilter);
+    d->filters.prepend(filter);
 }
 
 /*!
@@ -116,25 +96,45 @@ void QLandmarkUnionFilter::prepend(const QLandmarkFilter& filter)
 
     \sa operator<<(), prepend(), filters()
 */
-void QLandmarkUnionFilter::append(const QLandmarkFilter& filter)
+void QLandmarkUnionFilter::append(const QLandmarkFilter *filter)
 {
+    Q_D(QLandmarkUnionFilter);
+    d->filters.append(filter);
 }
 
 /*!
     Removes the given \a filter from the union list.
     \sa filters(), append(), prepend()
 */
-void QLandmarkUnionFilter::remove(const QLandmarkFilter& filter)
+void QLandmarkUnionFilter::remove(const QLandmarkFilter *filter)
 {
+    Q_D(QLandmarkUnionFilter);
+    d->filters.removeAll(filter);
 }
+
+/*!
+  Internal
+*/
+//QLandmarkFilter* QLandmarkUnionFilter::createSubclassInstance(const QLandmarkFilter &filter)
+//{
+//    QLandmarkFilter *f = NULL;
+
+//    switch(filter.type()) {
+
+//    }
+
+//    return f;
+//}
 
 /*!
     Appends the given \a filter to the list of unioned filters.
 
     \sa append()
  */
-QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter& filter)
+QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter *filter)
 {
+    Q_D(QLandmarkUnionFilter);
+    d->filters.append(filter);
     return *this;
 }
 
@@ -143,9 +143,25 @@ QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter& fi
 
     \sa setFilters(), prepend(), append(), remove()
  */
-QList<QLandmarkFilter> QLandmarkUnionFilter::filters() const
+QList<const QLandmarkFilter*> QLandmarkUnionFilter::filters() const
 {
-    return QList<QLandmarkFilter>();
+    Q_D(const QLandmarkUnionFilter);
+    return d->filters;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkUnionFilterPrivate::QLandmarkUnionFilterPrivate()
+        : QLandmarkFilterPrivate()
+{
+    type = QLandmarkFilter::UnionFilter;
+}
+
+QLandmarkUnionFilterPrivate::QLandmarkUnionFilterPrivate(const QLandmarkUnionFilterPrivate &other)
+        : QLandmarkFilterPrivate(other),
+        filters(other.filters) {}
+
+QLandmarkUnionFilterPrivate::~QLandmarkUnionFilterPrivate() {}
 
 QTM_END_NAMESPACE

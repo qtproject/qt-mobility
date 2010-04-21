@@ -49,17 +49,15 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 class QLandmark;
 
-class QLandmarkCustomFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkCustomFilter : public QLandmarkFilter
 {
 public:
     virtual ~QLandmarkCustomFilter();
 
+    virtual bool isMatch(const QLandmark &landmark) const = 0;
+
 protected:
     QLandmarkCustomFilter();
-    virtual bool isMatch(const QLandmark &landmark) = 0;
-private:
-    QLandmarkCustomFilterPrivate *d;
 };
 
 QTM_END_NAMESPACE

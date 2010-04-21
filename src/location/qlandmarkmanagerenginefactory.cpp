@@ -48,6 +48,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkManagerEngineFactory
     \brief The QLandmarkManagerEngineFactory class provides the interface for
     plugins that implement QLandmarkManagerEngine functionality.
+    \ingroup landmarks-backend
 
     This class provides a simple interface for the creation of
     landmark manager engine instances.  Each factory has a specific id

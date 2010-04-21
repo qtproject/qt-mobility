@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
     \class QLandmarkCustomSort
     \brief The QLandmarkCustomSort class is the interface which all
     custom sort orders should inherit.
+    \ingroup landmarks-sort
 
     All custom sort orders should inherit this class and implement the
     compare() function.

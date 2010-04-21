@@ -24,8 +24,10 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#QReverseGeocodingRequest">QReverseGeocodingRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#QReverseGeocodingRequest-2">QReverseGeocodingRequest</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#dtor.QReverseGeocodingRequest">~QReverseGeocodingRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#coordinate">coordinate</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#language">language</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#requestString">requestString</a></b> ( const QString &amp; <i>host</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#setCoordinate">setCoordinate</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#setLanguage">setLanguage</a></b> ( const QString &amp; <i>language</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qreversegeocodingrequest.html#version">version</a></b> () const</td></tr>
@@ -41,6 +43,9 @@
 <p>Default constructor.</p>
 <h3 class="fn"><a name="QReverseGeocodingRequest-2"></a>QReverseGeocodingRequest::QReverseGeocodingRequest ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
 <p>Constructs a request for the geocoordinate <i>coordinate</i>.</p>
+<a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/~QReverseGeocodingRequest"></a>
+<h3 class="fn"><a name="dtor.QReverseGeocodingRequest"></a>QReverseGeocodingRequest::~QReverseGeocodingRequest ()</h3>
+<p>Destructor.</p>
 <a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/coordinate"></a>
 <h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QReverseGeocodingRequest::coordinate () const</h3>
 <p>Return the geocoordinate for this request.</p>
@@ -49,6 +54,9 @@
 <h3 class="fn"><a name="language"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QReverseGeocodingRequest::language () const</h3>
 <p>Returns the MARC language code.</p>
 <p>See also <a href="qreversegeocodingrequest.html#setLanguage">setLanguage</a>().</p>
+<a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/requestString"></a>
+<h3 class="fn"><a name="requestString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QReverseGeocodingRequest::requestString ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>host</i> ) const</h3>
+<p>Returns the request string based on this request and <i>host</i>.</p>
 <a name="//apple_ref/cpp/instm/QReverseGeocodingRequest/setCoordinate"></a>
 <h3 class="fn"><a name="setCoordinate"></a>void QReverseGeocodingRequest::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
 <p>Sets the geocoordinate for this request to <i>coordinate</i>.</p>

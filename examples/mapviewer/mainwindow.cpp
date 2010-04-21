@@ -51,7 +51,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "qgeomaptile.h"
 #include "qgeorouterequest.h"
 #include "qmapmarker.h"
 #include "qmapellipse.h"
@@ -61,8 +60,7 @@
 #include "qmappolygon.h"
 #include "qmappixmap.h"
 #include "qmapmarker.h"
-
-#include "qgeomapservice_nokia_p.h"
+#include "qmaptileservice_nokia_p.h"
 #include "qgeoroutingservice_nokia_p.h"
 
 QTM_USE_NAMESPACE
@@ -70,19 +68,11 @@ QTM_USE_NAMESPACE
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::MainWindow),
-        popupMenu(NULL)
+        popupMenu(NULL),
+        mapService(NULL),
+        routingService(NULL)
 {
     ui->setupUi(this);
-
-    QGeoMapServiceNokia *mService = new QGeoMapServiceNokia();
-    QGeoRoutingServiceNokia *rService = new QGeoRoutingServiceNokia();
-
-    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.41", 8080);
-    mService->setProxy(proxy);
-    mService->setHost("maptile.mapplayer.maps.svc.ovi.com");
-
-    mapService = mService;
-    routingService = rService;
 
     qgv = new QGraphicsView(this);
     qgv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -97,8 +87,6 @@ MainWindow::MainWindow(QWidget *parent) :
     qgv->scene()->addItem(mapView);
     mapView->setGeometry(0, 0, width(), height());
 
-    QObject::connect(routingService, SIGNAL(finished(QGeoRouteReply*)),
-                     this, SLOT(routeReplyFinished(QGeoRouteReply*)));
     QObject::connect(mapView, SIGNAL(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)),
                      this, SLOT(mapClicked(QGeoCoordinate, QGraphicsSceneMouseEvent*)));
     QObject::connect(mapView, SIGNAL(zoomLevelChanged(quint16, quint16)),
@@ -114,8 +102,6 @@ MainWindow::MainWindow(QWidget *parent) :
     slider->setVisible(true);
     QObject::connect(slider, SIGNAL(sliderMoved(int)),
                      mapView, SLOT(setZoomLevel(int)));
-
-    //QGraphicsProxyWidget* proxy = qgv->scene()->addWidget(slider);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -152,7 +138,22 @@ void MainWindow::delayedInit()
     session->open();
     session->waitForOpened(-1);
 #endif
+    
+    QMapTileServiceNokia *mService = new QMapTileServiceNokia();
+    QGeoRoutingServiceNokia *rService = new QGeoRoutingServiceNokia();
 
+    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.40", 8080);
+    mService->setProxy(proxy);
+    mService->setHost("origin.maptile.svc.tst.s2g.gate5.de");
+
+    mapService = mService;
+    routingService = rService;
+    
+    QObject::connect(routingService, SIGNAL(finished(QGeoRouteReply*)),
+                     this, SLOT(routeReplyFinished(QGeoRouteReply*)));
+
+    mapView->setHorizontalPadding(100);
+    mapView->setVerticalPadding(100);
     mapView->init(mapService, QGeoCoordinate(52.35, 13));
 }
 
@@ -317,11 +318,11 @@ void MainWindow::zoomLevelChanged(quint16 /*oldZoomLevel*/, quint16 newZoomLevel
 void MainWindow::setScheme(bool /*checked*/)
 {
     if (sender() == mnDay)
-        mapView->setScheme(MapScheme(MapScheme::Normal_Day));
+        mapView->setScheme(QMapTileServiceNokia::NormalDay);
     else if (sender() == mnSat)
-        mapView->setScheme(MapScheme(MapScheme::Satellite_Day));
+        mapView->setScheme(QMapTileServiceNokia::SatelliteDay);
     else if (sender() == mnTer)
-        mapView->setScheme(MapScheme(MapScheme::Terrain_Day));
+        mapView->setScheme(QMapTileServiceNokia::TerrainDay);
 }
 
 void MainWindow::addMarker(bool /*checked*/)

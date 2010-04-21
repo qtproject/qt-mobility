@@ -131,8 +131,8 @@ void QMapEllipse::compMapCoords()
     if (!d->mapView)
         return;
 
-    QPointF p1 = d->mapView->geoToMap(d->geoTopLeft);
-    QPointF p2 = d->mapView->geoToMap(d->geoBottomRight);
+    QPointF p1 = d->mapView->translateToViewport(d->geoTopLeft);
+    QPointF p2 = d->mapView->translateToViewport(d->geoBottomRight);
 
     if (p2.y() < p1.y()) {
         qreal y = p2.y();
@@ -159,37 +159,14 @@ void QMapEllipse::paint(QPainter* painter, const QRectF& viewPort)
     if (!d->mapView)
         return;
 
-    QPen oldPen = painter->pen();
-    QBrush oldBrush = painter->brush();
+    painter->save();
+
     painter->setPen(d->p);
     painter->setBrush(d->b);
-    d->path.translate(-viewPort.left(), -viewPort.top());
+    painter->translate(-viewPort.left(), -viewPort.top());
     painter->drawPath(d->path);
-    qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
-    d->path.translate(viewPort.left(), viewPort.top());
 
-    //Is view port wrapping around date line?
-    qreal right = viewPort.right();
-    for (int i = 1;right >= mapWidth;++i, right -= mapWidth) {
-        qint64 width = mapWidth * i;
-        d->path.translate(-viewPort.left(), -viewPort.top());
-        d->path.translate(width, 0);
-        painter->drawPath(d->path);
-        d->path.translate(-width, 0);
-        d->path.translate(viewPort.left(), viewPort.top());
-    }
-
-    //Is line crossing date line?
-    if (d->path.boundingRect().right() >= mapWidth) {
-        d->path.translate(-viewPort.left(), -viewPort.top());
-        d->path.translate(-mapWidth, 0);
-        painter->drawPath(d->path);
-        d->path.translate(mapWidth, 0);
-        d->path.translate(viewPort.left(), viewPort.top());
-    }
-
-    painter->setPen(oldPen);
-    painter->setBrush(oldBrush);
+    painter->restore();
 }
 
 bool QMapEllipse::intersects(const QRectF& rect) const

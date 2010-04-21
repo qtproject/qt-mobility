@@ -101,7 +101,7 @@ void QMapPixmap::compMapCoords()
     if (!d->mapView)
         return;
 
-    QPointF mapTopLeft(d->mapView->geoToMap(d->geoTopLeft));
+    QPointF mapTopLeft(d->mapView->translateToViewport(d->geoTopLeft));
     d->pixRect = d->pic.rect();
     d->pixRect.moveTopLeft(mapTopLeft);
     //compute intersecting map tiles now
@@ -115,32 +115,13 @@ void QMapPixmap::paint(QPainter* painter, const QRectF& viewPort)
     if (!d->mapView)
         return;
 
-    d->pixRect.translate(-viewPort.left(), -viewPort.top());
+    painter->save();
+
+    painter->translate(-viewPort.left(), -viewPort.top());
     painter->drawPixmap(d->pixRect.topLeft(), d->pic);
     painter->drawRect(d->pixRect);
-    d->pixRect.translate(viewPort.left(), viewPort.top());
-    qint64 mapWidth = static_cast<qint64>(d->mapView->mapWidth());
 
-    //Is view port wrapping around date line?
-    qreal right = viewPort.right();
-    for (int i = 1;right >= mapWidth;++i, right -= mapWidth) {
-        qint64 width = mapWidth * i;
-        d->pixRect.translate(-viewPort.left(), -viewPort.top());
-        d->pixRect.translate(width, 0);
-        painter->drawPixmap(d->pixRect.topLeft(), d->pic);
-        painter->drawRect(d->pixRect);
-        d->pixRect.translate(-width, 0);
-        d->pixRect.translate(viewPort.left(), viewPort.top());
-    }
-    //Is rect crossing date line?
-    if (d->pixRect.right() >= mapWidth) {
-        d->pixRect.translate(-viewPort.left(), -viewPort.top());
-        d->pixRect.translate(-mapWidth, 0);
-        painter->drawPixmap(d->pixRect.topLeft(), d->pic);
-        painter->drawRect(d->pixRect);
-        d->pixRect.translate(mapWidth, 0);
-        d->pixRect.translate(viewPort.left(), viewPort.top());
-    }
+    painter->restore();
 }
 
 bool QMapPixmap::intersects(const QRectF& rect) const

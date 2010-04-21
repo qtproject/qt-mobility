@@ -40,8 +40,22 @@
 ****************************************************************************/
 
 #include "qlandmarkimportrequest.h"
+#include "qlandmarkabstractrequest_p.h"
+#include <QFile>
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkImportRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkImportRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr) {}
+
+    QIODevice *device;
+    QString fileName;
+    QLandmarkManager::Format format;
+    QList<QLandmarkId> landmarkIds;
+};
 
 /*!
     \class QLandmarkImportRequest
@@ -53,13 +67,14 @@ QTM_BEGIN_NAMESPACE
     of added landmarks may be retrieved by the ids() function.  The resultsAvailable()
     signal may also be emitted if an overall operational error occurs.
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!
-    Constructs a landmark import request
+    Constructs a landmark import request with the given \a manager \a parent.
 */
-QLandmarkImportRequest::QLandmarkImportRequest()
+QLandmarkImportRequest::QLandmarkImportRequest(QLandmarkManager *manager, QObject *parent)
+    : QLandmarkAbstractRequest(new QLandmarkImportRequestPrivate(manager), parent)
 {
 }
 
@@ -75,7 +90,8 @@ QLandmarkImportRequest::~QLandmarkImportRequest()
 */
 QIODevice *QLandmarkImportRequest::device() const
 {
-    return 0;
+    Q_D(const QLandmarkImportRequest);
+    return d->device;
 }
 
 /*!
@@ -83,6 +99,8 @@ QIODevice *QLandmarkImportRequest::device() const
 */
 void QLandmarkImportRequest::setDevice(QIODevice *device)
 {
+    Q_D(QLandmarkImportRequest);
+    d->device = device;
 }
 
 /*!
@@ -94,7 +112,9 @@ void QLandmarkImportRequest::setDevice(QIODevice *device)
 */
 QString QLandmarkImportRequest::fileName() const
 {
-    return QString();
+    Q_D(const QLandmarkImportRequest);
+    QFile *file = qobject_cast<QFile *>(d->device);
+    return file ? file->fileName() : QString();
 }
 
 /*!
@@ -106,6 +126,8 @@ QString QLandmarkImportRequest::fileName() const
 */
 void QLandmarkImportRequest::setFileName(const QString &fileName)
 {
+    Q_D(QLandmarkImportRequest);
+    d->device = new QFile(fileName);
 }
 
 /*!
@@ -113,7 +135,8 @@ void QLandmarkImportRequest::setFileName(const QString &fileName)
 */
 QLandmarkManager::Format QLandmarkImportRequest::format() const
 {
-    return QLandmarkManager::Custom;
+    Q_D(const QLandmarkImportRequest);
+    return d->format;
 }
 
 /*!
@@ -121,14 +144,17 @@ QLandmarkManager::Format QLandmarkImportRequest::format() const
 */
 void QLandmarkImportRequest::setFormat(QLandmarkManager::Format format)
 {
+    Q_D(QLandmarkImportRequest);
+    d->format = format;
 }
 
 /*!
     Returns a list of identifiers of landmarks that have been imported.
 */
-QList<QLandmarkId> QLandmarkImportRequest::ids() const
+QList<QLandmarkId> QLandmarkImportRequest::landmarkIds() const
 {
-    return QList<QLandmarkId>();
+    Q_D(const QLandmarkImportRequest);
+    return d->landmarkIds;
 }
 
 #include "moc_qlandmarkimportrequest.cpp"

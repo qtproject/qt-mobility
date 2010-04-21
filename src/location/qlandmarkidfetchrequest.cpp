@@ -40,10 +40,22 @@
 ****************************************************************************/
 
 #include "qlandmarkidfetchrequest.h"
+#include "qlandmarkabstractrequest_p.h"
 #include "qlandmarkfilter.h"
 #include "qlandmarksortorder.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkIdFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkIdFetchRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr){}
+
+    const QLandmarkFilter *filter;
+    QList<const QLandmarkSortOrder*>sorting;
+    QList<QLandmarkId> landmarkIds;
+};
 
 /*!
     \class QLandmarkIdFetchRequest
@@ -54,13 +66,14 @@ QTM_BEGIN_NAMESPACE
     identifiers (which may be retrieved by calling ids()), are updated, as well as if
     the overall operation error (which may be retrieved by calling error()) is updated.
 
-    \ingroup location
+    \ingroup landmarks-request
 */
 
 /*!
-    Creates a new landmark id fetch request object.
+    Creates a new landmark id fetch request object with the given \a manager and \a parent.
 */
-QLandmarkIdFetchRequest::QLandmarkIdFetchRequest()
+QLandmarkIdFetchRequest::QLandmarkIdFetchRequest(QLandmarkManager *manager, QObject *parent)
+    : QLandmarkAbstractRequest(new QLandmarkIdFetchRequestPrivate(manager), parent)
 {
 }
 
@@ -78,25 +91,29 @@ QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest()
     By default, the filter's type will be a LandmarkFilter::DefaultFilter
     and thus match all landmarks.
 */
-QLandmarkFilter QLandmarkIdFetchRequest::filter() const
+const QLandmarkFilter *QLandmarkIdFetchRequest::filter() const
 {
-    return QLandmarkFilter();
+    Q_D(const QLandmarkIdFetchRequest);
+    return d->filter;
 }
 
 /*!
     Sets the \a filter which will be used to select landmark identifiers.
 
 */
-void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter &filter)
+void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter *filter)
 {
+    Q_D(QLandmarkIdFetchRequest);
+    d->filter = filter;
 }
 
 /*!
     Returns the sort ordering which is used to sort the result.
 */
-QList<QLandmarkSortOrder> QLandmarkIdFetchRequest::sorting() const
+QList<const QLandmarkSortOrder*> QLandmarkIdFetchRequest::sorting() const
 {
-    return QList<QLandmarkSortOrder>();
+    Q_D(const QLandmarkIdFetchRequest);
+    return d->sorting;
 }
 
 /*!
@@ -104,17 +121,33 @@ QList<QLandmarkSortOrder> QLandmarkIdFetchRequest::sorting() const
     function will only have an effect on the results if invoked
     prior to calling QLandmarkAbstractRequest::start().
 */
-void QLandmarkIdFetchRequest::setSorting(QList<QLandmarkSortOrder> &sorting)
+void QLandmarkIdFetchRequest::setSorting(const QList<const QLandmarkSortOrder*> &sorting)
 {
+    Q_D(QLandmarkIdFetchRequest);
+    d->sorting = sorting;
+}
+
+/*!
+    Sets the sort ordering of the request to a single \a sorting.  This
+    function will only have an effect on the results if invoked
+    prior to calling QLandmarkAbstractRequest::start().
+*/
+void QLandmarkIdFetchRequest::setSorting(const QLandmarkSortOrder *sorting)
+{
+    Q_D(QLandmarkIdFetchRequest);
+    d->sorting.clear();
+    d->sorting.append(sorting);
 }
 
 /*!
     Returns the list of identifiers of landmarks which matched the
     filter.
 */
-QList<QLandmarkId> QLandmarkIdFetchRequest::ids() const
+
+QList<QLandmarkId> QLandmarkIdFetchRequest::landmarkIds() const
 {
-    return QList<QLandmarkId>();
+    Q_D(const QLandmarkIdFetchRequest);
+    return d->landmarkIds;
 }
 
 #include "moc_qlandmarkidfetchrequest.cpp"
