@@ -39,25 +39,65 @@
 **
 ****************************************************************************/
 
-#ifndef SENSORBACKENDDATASYM_H
-#define SENSORBACKENDDATASYM_H
+#ifndef ROTATIONSENSORSYM_H
+#define ROTATIONSENSORSYM_H
 
-class CSensrvChannel;
-class TSensrvChannelInfo;
+// QT Mobility Sensor API headers
+#include <qsensorbackend.h>
+#include <qrotationsensor.h>
+
+// Internal Headers
+#include "sensorbackendsym.h"
+
+// Sensor client headers
+// Rotation Sensor specific header
+#include <sensrvorientationsensor.h>
 
 QTM_USE_NAMESPACE
-class TSensorBackendDataSym
+
+class CRotationSensorSym: public CSensorBackendSym
     {
 public:
-    TBool iSensorAvailable;    
-    CSensrvChannel* iSensorChannel;
-    TSensrvChannelTypeId iSensorType;
-    TSensrvChannelInfo iChannelInfo;
-    RFastLock iReadingLock;
-    TInt iTimerId;
-    TBool iPropertyListening;
-    TBool iDataListening;
-    TBool iTimerRequired;
+    /**
+     * Factory function, this is used to create the rotation sensor object
+     * @return CRotationSensorSym if successful, leaves on failure
+     */
+    static CRotationSensorSym* NewL(QSensor *sensor);
+    
+    /**
+     * Destructor
+     * Closes the backend resources
+     */
+    ~CRotationSensorSym();
+    
+private:
+    /**
+     * Default constructor
+     */
+    CRotationSensorSym(QSensor *sensor);
+    
+    /*
+     * RecvData is used to retrieve the sensor reading from sensor server
+     * It is implemented here to handle rotation sensor specific
+     * reading data and provides conversion and utility code
+     */ 
+    void RecvData(CSensrvChannel &aChannel);
+
+    /**
+     * Second phase constructor
+     * Initialize the backend resources
+     */
+    void ConstructL();
+    
+public:
+    /**
+     * Holds the id of the proximity sensor
+     */
+    static const char *id;
+    
+private:     
+    QRotationReading iReading;
+    TSensrvRotationData iData;
     };
 
-#endif //SENSORBACKENDDATASYM_H
+#endif //ROTATIONSENSORSYM_H
