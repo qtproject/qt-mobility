@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include "qgeomaptilereply.h"
-#include "qgeomaptilereply_p.h"
+#include "qmaptilereply.h"
+#include "qmaptilereply_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QGeoMapTileReply
-    \brief The QGeoMapTileReply class represents the response from a mapping service.
+    \class QMapTileReply
+    \brief The QMapTileReply class represents the response from a mapping service.
     \ingroup location
 
     This class represents the response from a mapping service.
@@ -68,78 +68,103 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a QGeoMapTileReply from a QGeoMapTileRequest \a request, and with parent \a parent.
+    Constructs a QMapTileReply from a QMapTileRequest \a request, and with parent \a parent.
 */
-QGeoMapTileReply::QGeoMapTileReply(const QGeoMapTileRequest &request, QObject *parent)
-        : QObject(parent), d_ptr(new QGeoMapTileReplyPrivate())
+QMapTileReply::QMapTileReply(QObject *parent)
+        : QObject(parent), d_ptr(new QMapTileReplyPrivate())
 {
-    Q_D(QGeoMapTileReply);
-    d->request = request;
 }
 
 /*!
     Destructor.
 */
-QGeoMapTileReply::~QGeoMapTileReply()
+QMapTileReply::~QMapTileReply()
 {
-    Q_D(QGeoMapTileReply);
+    Q_D(QMapTileReply);
     delete d;
-}
-
-/*!
-    Returns the request which prompted this reply.
-*/
-QGeoMapTileRequest QGeoMapTileReply::request() const
-{
-    Q_D(const QGeoMapTileReply);
-    return d->request;
 }
 
 /*!
     Returns the requested map data.
 */
-QByteArray QGeoMapTileReply::data() const
+QByteArray QMapTileReply::data() const
 {
-    Q_D(const QGeoMapTileReply);
+    Q_D(const QMapTileReply);
     return d->data;
 }
 
 /*!
     Sets the requested map data to \a data.
 */
-void QGeoMapTileReply::setData(const QByteArray &data)
+void QMapTileReply::setData(const QByteArray &data)
 {
-    Q_D(QGeoMapTileReply);
+    Q_D(QMapTileReply);
     d->data = data;
 }
 
 /*!
-    Causes this QGeoMapTileReply to emit finished() if it has been configured properly
+    Causes this QMapTileReply to emit finished() if it has been configured properly
     or error() if there is a problem with the configuration.
 */
-void QGeoMapTileReply::done()
+void QMapTileReply::done()
 {
-    Q_D(QGeoMapTileReply);
+    Q_D(QMapTileReply);
     if (d->data.size() > 0) {
         emit finished();
     } else {
-        emit error(QGeoMapTileReply::NoContentError, "The reply to the routing request was empty.");
+        emit error(QMapTileReply::NoContentError, "The reply to the routing request was empty.");
     }
 }
 
+quint32 QMapTileReply::level() const
+{
+    Q_D(const QMapTileReply);
+    return d->level;
+}
+
+void QMapTileReply::setLevel(quint32 level)
+{
+    Q_D(QMapTileReply);
+    d->level = level;
+}
+
+quint32 QMapTileReply::row() const
+{
+    Q_D(const QMapTileReply);
+    return d->row;
+}
+
+void QMapTileReply::setRow(quint32 row)
+{
+    Q_D(QMapTileReply);
+    d->row = row;
+}
+
+quint32 QMapTileReply::col() const
+{
+    Q_D(const QMapTileReply);
+    return d->col;
+}
+
+void QMapTileReply::setCol(quint32 col)
+{
+    Q_D(QMapTileReply);
+    d->col = col;
+}
+
 /*!
-    \fn void QGeoMapTileReply::cancel()
+    \fn void QMapTileReply::cancel()
 
     Cancels the receiving of this reply if the reply hasn't been received already.
 */
 
 /*!
-    \fn void QGeoMapTileReply::finished()
+    \fn void QMapTileReply::finished()
 
     Indicates that the reply has been received and processed without error, and is ready to be used.
 */
 /*!
-    \fn void QGeoMapTileReply::error(QGeoMapTileReply::ErrorCode errorCode, const QString &errorString = QString())
+    \fn void QMapTileReply::error(QMapTileReply::ErrorCode errorCode, const QString &errorString = QString())
 
     Indicates that an error occurred during the receiving or processing of the reply.
 */
@@ -147,8 +172,8 @@ void QGeoMapTileReply::done()
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapTileReplyPrivate::QGeoMapTileReplyPrivate() {}
+QMapTileReplyPrivate::QMapTileReplyPrivate() {}
 
-#include "moc_qgeomaptilereply.cpp"
+#include "moc_qmaptilereply.cpp"
 
 QTM_END_NAMESPACE

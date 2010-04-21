@@ -39,41 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPSERVICE_H
-#define QGEOMAPSERVICE_H
+#ifndef QMAPTILESERVICE_H
+#define QMAPTILESERVICE_H
 
 #include "qmobilityglobal.h"
 
-#include "qgeomaptilerequest.h"
-#include "qgeomaptilereply.h"
+#include "qmaptilereply.h"
+#include "qgeocoordinate.h"
 
 #include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QGeoMapService : public QObject
+class Q_LOCATION_EXPORT QMapTileService : public QObject
 {
     Q_OBJECT
 public:
-    QGeoMapService();
-    virtual ~QGeoMapService();
+    QMapTileService();
+    virtual ~QMapTileService();
 
-    virtual QGeoMapTileReply* getMapTile(const QGeoMapTileRequest& request) = 0;
-
-    virtual quint16 maxZoomLevel() const = 0;
-    virtual QList<MapVersion> versions() const = 0;
-    virtual QList<MapResolution> resolutions() const = 0;
-    virtual QList<MapFormat> formats() const = 0;
-    virtual QList<MapScheme> schemes() const = 0;
+    virtual QMapTileReply* request(quint32 level, quint32 row, quint32 col) = 0;
+    virtual quint32 maxZoomLevel() const = 0;
+    virtual void getMercatorTileIndex(const QGeoCoordinate& coordinate, quint32 level, quint32* row, quint32* col) = 0;
 
 signals:
-    void finished(QGeoMapTileReply* reply);
-    void error(QGeoMapTileReply* reply, QGeoMapTileReply::ErrorCode errorCode, QString errorString = QString());
+    void finished(QMapTileReply* reply);
+    void error(QMapTileReply* reply, QMapTileReply::ErrorCode errorCode, QString errorString = QString());
 
 private:
-    Q_DISABLE_COPY(QGeoMapService)
+    Q_DISABLE_COPY(QMapTileService)
 };
 
 QTM_END_NAMESPACE
 
-#endif // QGEOMAPSERVICE_H
+#endif // QOMAPTILESERVICE_H

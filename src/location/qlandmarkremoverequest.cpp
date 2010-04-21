@@ -40,9 +40,20 @@
 ****************************************************************************/
 
 #include "qlandmarkremoverequest.h"
-
+#include "qlandmarkabstractrequest_p.h"
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkRemoveRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkRemoveRequestPrivate(QLandmarkManager *manager)
+        : QLandmarkAbstractRequestPrivate(manager) {}
+
+    QList<QLandmarkId> landmarkIds;
+    QMap<int, QLandmarkManager::Error> errorMap;
+};
 
 /*!
     \class QLandmarkRemoveRequest
@@ -58,10 +69,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a landmark remove request with the given \a parent.
+    Constructs a landmark remove request with the given \a manager and \a parent.
 */
-QLandmarkRemoveRequest::QLandmarkRemoveRequest(QObject *parent)
-    : QLandmarkAbstractRequest(parent)
+QLandmarkRemoveRequest::QLandmarkRemoveRequest(QLandmarkManager *manager, QObject *parent)
+    : QLandmarkAbstractRequest(new QLandmarkRemoveRequestPrivate(manager), parent)
 {
 }
 
@@ -77,7 +88,8 @@ QLandmarkRemoveRequest::~QLandmarkRemoveRequest()
 */
 QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 {
-    return QList<QLandmarkId>();
+    Q_D(const QLandmarkRemoveRequest);
+    return d->landmarkIds;
 }
 
 /*!
@@ -87,7 +99,8 @@ QList<QLandmarkId> QLandmarkRemoveRequest::landmarkIds() const
 */
 void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkIds)
 {
-    Q_UNUSED(landmarkIds);
+    Q_D(QLandmarkRemoveRequest);
+    d->landmarkIds = landmarkIds;
 }
 
 /*!
@@ -97,7 +110,9 @@ void QLandmarkRemoveRequest::setLandmarkIds(const QList<QLandmarkId> &landmarkId
 */
 void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
 {
-    Q_UNUSED(landmarkId);
+    Q_D(QLandmarkRemoveRequest);
+    d->landmarkIds.clear();
+    d->landmarkIds.append((landmarkId));
 }
 
 /*!
@@ -106,7 +121,8 @@ void QLandmarkRemoveRequest::setLandmarkId(const QLandmarkId &landmarkId)
 */
 QMap<int, QLandmarkManager::Error> QLandmarkRemoveRequest::errorMap() const
 {
-    return QMap<int, QLandmarkManager::Error>();
+    Q_D(const QLandmarkRemoveRequest);
+    return d->errorMap;
 }
 
 #include "moc_qlandmarkremoverequest.cpp"

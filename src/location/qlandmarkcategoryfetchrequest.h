@@ -51,13 +51,13 @@ class Q_LOCATION_EXPORT QLandmarkCategoryFetchRequest : public QLandmarkAbstract
 {
     Q_OBJECT
 public:
-    QLandmarkCategoryFetchRequest(QObject *parent=0);
+    QLandmarkCategoryFetchRequest(QLandmarkManager *manager, QObject *parent=0);
     ~QLandmarkCategoryFetchRequest();
 
     QList<QLandmarkCategory> categories() const;
 private:
     Q_DISABLE_COPY(QLandmarkCategoryFetchRequest)
-    Q_DECLARE_PRIVATE_D(d, QLandmarkCategoryFetchRequest)
+    Q_DECLARE_PRIVATE(QLandmarkCategoryFetchRequest)
 };
 
 QTM_END_NAMESPACE

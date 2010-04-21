@@ -53,7 +53,7 @@ class Q_LOCATION_EXPORT QLandmarkCategorySaveRequest : public QLandmarkAbstractR
 {
     Q_OBJECT
 public:
-    QLandmarkCategorySaveRequest(QObject *parent = 0);
+    QLandmarkCategorySaveRequest(QLandmarkManager *manager, QObject *parent = 0);
     ~QLandmarkCategorySaveRequest();
 
     QList<QLandmarkCategory> categories() const;
@@ -63,7 +63,7 @@ public:
     QMap<int, QLandmarkManager::Error> errorMap() const;
 private:
     Q_DISABLE_COPY(QLandmarkCategorySaveRequest)
-    Q_DECLARE_PRIVATE_D(d, QLandmarkCategorySaveRequest)
+    Q_DECLARE_PRIVATE(QLandmarkCategorySaveRequest)
 };
 
 QTM_END_NAMESPACE

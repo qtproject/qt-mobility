@@ -39,52 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPTILEREPLY_H
-#define QMAPTILEREPLY_H
+#ifndef QLANDMARKABSTRACTREQUEST_P_H
+#define QLANDMARKABSTRACTREQUEST_P_H
 
-#include "qgeomaptilerequest.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QByteArray>
+#include "qlandmarkabstractrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTileReplyPrivate;
-class Q_LOCATION_EXPORT QGeoMapTileReply : public QObject
+class QLandmarkAbstractRequestPrivate
 {
-    Q_OBJECT
-
 public:
-    // TODO populate this some more...
-    enum ErrorCode {
-        NoError,
-        // flesh out the more common specific network errors
-        NetworkError,
-        NoContentError,
-        UnknownError
-    };
+    QLandmarkAbstractRequestPrivate(QLandmarkManager *mgr);
 
-    QGeoMapTileReply(const QGeoMapTileRequest &request, QObject *parent = 0);
-    virtual ~QGeoMapTileReply();
-
-    QGeoMapTileRequest request() const;
-
-    // TODO this should probably become a pixmap if / when we have enough
-    // metadata to convert it
-    QByteArray data() const;
-    void setData(const QByteArray &data);
-
-public slots:
-    void done();
-    virtual void cancel() = 0;
-
-signals:
-    void finished();
-    void error(QGeoMapTileReply::ErrorCode errorCode, const QString &errorString = QString());
-
-    // CHOICE: could lose the setters and make this protected
-private:
-    QGeoMapTileReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapTileReply);
+    QLandmarkAbstractRequest::RequestType type;
+    QLandmarkAbstractRequest::State state;
+    QLandmarkManager::Error error;
+    QString errorString;
+    QLandmarkManager *manager;
 };
 
 QTM_END_NAMESPACE

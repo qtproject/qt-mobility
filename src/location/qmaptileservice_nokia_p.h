@@ -39,24 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPSERVICE_NOKIA_P_H
-#define QGEOMAPSERVICE_NOKIA_P_H
+#ifndef QMAPTILESERVICE_NOKIA_P_H
+#define QMAPTILESERVICE_NOKIA_P_H
 
-#include "qgeomapservice.h"
-#include "qgeomaptilecache.h"
+#include "qmaptileservice.h"
 #include "qgeocoordinate.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkProxy>
+#include <QSize>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QGeoMapServiceNokia : public QGeoMapService
+class QMapTileCacheNokia;
+
+class Q_LOCATION_EXPORT QMapTileServiceNokia : public QMapTileService
 {
     Q_OBJECT
 public:
-    QGeoMapServiceNokia();
-    ~QGeoMapServiceNokia();
+    enum MapVersion {
+        Newest
+    };
+
+    enum TileSize {
+        Tile_128_128,
+        Tile_256_256
+    };
+
+    enum MapFormat {
+        Png,
+        Png8
+    };
+
+    enum MapScheme {
+        NormalDay,
+        SatelliteDay,
+        TerrainDay
+    };
+
+    QMapTileServiceNokia();
+    ~QMapTileServiceNokia();
 
     QString token() const;
     void setToken(const QString &token);
@@ -70,36 +92,48 @@ public:
     QNetworkProxy proxy() const;
     void setProxy(const QNetworkProxy &proxy);
 
-    virtual QGeoMapTileReply* getMapTile(const QGeoMapTileRequest& request);
+    virtual QMapTileReply* request(quint32 level, quint32 row, quint32 col);
 
-    virtual quint16 maxZoomLevel() const;
-    virtual QList<MapVersion> versions() const;
-    virtual QList<MapResolution> resolutions() const;
-    virtual QList<MapFormat> formats() const;
-    virtual QList<MapScheme> schemes() const;
+    virtual quint32 maxZoomLevel() const;
 
-    static void getMercatorTileIndex(const QGeoCoordinate& coordinate, quint16 zoomLevel, quint32* col, quint32* row);
+    virtual void getMercatorTileIndex(const QGeoCoordinate& coordinate, quint32 zoomLevel, quint32* row, quint32* col);
+
+    MapVersion version() const;
+    void setVersion(MapVersion version);
+    TileSize tileSize() const;
+    void setTileSize(TileSize tileSize);
+    MapFormat format() const;
+    void setFormat(MapFormat format);
+    MapScheme scheme() const;
+    void setScheme(MapScheme scheme);
+
+    static QString versionToStr(MapVersion version);
+    static QString tileSizeToStr(TileSize size);
+    static QString formatToStr(MapFormat format);
+    static QString schemeToStr(MapScheme scheme);
 
 private slots:
     void finishedReply();
-    void errorReply(QGeoMapTileReply::ErrorCode errorCode, QString errorString);
+    void errorReply(QMapTileReply::ErrorCode errorCode, QString errorString);
 
 private:
+    QString getRequestString(quint16 level, quint32 row, quint32 col) const;
+
     QString m_token;
     QString m_referrer;
     QString m_host;
     QNetworkProxy m_proxy;
     QNetworkAccessManager m_nam;
 
-    QGeoMapTileCache m_cache;
-    quint16 m_maxZoomLevel;
-    QList<MapVersion> m_versions;
-    QList<MapResolution> m_resolutions;
-    QList<MapFormat> m_formats;
-    QList<MapScheme> m_schemes;
+    QMapTileCacheNokia* m_cache;
+    quint32 m_maxZoomLevel;
 
+    MapVersion m_version;
+    TileSize m_size;
+    MapFormat m_format;
+    MapScheme m_scheme;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QGEOMAPSERVICE_NOKIA_P_H
+#endif // QMAPTILESERVICE_NOKIA_P_H

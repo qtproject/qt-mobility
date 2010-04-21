@@ -39,23 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPTILEREPLY_P_H
-#define QMAPTILEREPLY_P_H
+#ifndef QMAPTILEREPLY_NOKIA_P_H
+#define QMAPTILEREPLY_NOKIA_P_H
 
-#include "qgeomaptilerequest.h"
-#include <QByteArray>
+#include "qmaptilereply.h"
+#include "qmaptileservice_nokia_p.h"
+
+#include <QNetworkReply>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTileReplyPrivate
+class QMapTileReplyNokia : public QMapTileReply
 {
-public:
-    QGeoMapTileReplyPrivate();
+    Q_OBJECT
 
-    QGeoMapTileRequest request;
-    QByteArray data;
+public:
+    QMapTileReplyNokia(QNetworkReply *reply);
+    ~QMapTileReplyNokia();
+
+    void setFormat(QMapTileServiceNokia::MapFormat format);
+    QMapTileServiceNokia::MapFormat format() const;
+    void setScheme(QMapTileServiceNokia::MapScheme scheme);
+    QMapTileServiceNokia::MapScheme scheme() const;
+    void setVersion(QMapTileServiceNokia::MapVersion version);
+    QMapTileServiceNokia::MapVersion version() const;
+    void setTileSize(QMapTileServiceNokia::TileSize size);
+    QMapTileServiceNokia::TileSize tileSize() const;
+
+public slots:
+    virtual void parse();
+    virtual void translateError(QNetworkReply::NetworkError errorCode);
+    virtual void cancel();
+
+private:
+    QNetworkReply *m_reply;
+    QMapTileServiceNokia::MapFormat m_format;
+    QMapTileServiceNokia::MapScheme m_scheme;
+    QMapTileServiceNokia::MapVersion m_version;
+    QMapTileServiceNokia::TileSize m_size;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QMAPTILEREPLY_P_H
+#endif

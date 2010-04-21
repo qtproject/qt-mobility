@@ -47,8 +47,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkManagerEngine;
-
 class QLandmarkManagerPrivate
 {
 public:

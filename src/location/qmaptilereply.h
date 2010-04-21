@@ -39,30 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPTILEREPLY_NOKIA_P_H
-#define QMAPTILEREPLY_NOKIA_P_H
+#ifndef QMAPTILEREPLY_H
+#define QMAPTILEREPLY_H
 
-#include "qgeomaptilereply.h"
+#include "qmobilityglobal.h"
 
-#include <QNetworkReply>
+#include <QByteArray>
+#include <QObject>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTileReplyNokia : public QGeoMapTileReply
+class QMapTileReplyPrivate;
+class Q_LOCATION_EXPORT QMapTileReply : public QObject
 {
     Q_OBJECT
 
 public:
-    QGeoMapTileReplyNokia(const QGeoMapTileRequest &request, QNetworkReply *reply);
-    ~QGeoMapTileReplyNokia();
+    // TODO populate this some more...
+    enum ErrorCode {
+        NoError,
+        // flesh out the more common specific network errors
+        NetworkError,
+        NoContentError,
+        UnknownError
+    };
+
+    QMapTileReply(QObject *parent = 0);
+    virtual ~QMapTileReply();
+
+    // TODO this should probably become a pixmap if / when we have enough
+    // metadata to convert it
+    QByteArray data() const;
+    void setData(const QByteArray &data);
+
+    quint32 level() const;
+    void setLevel(quint32 level);
+    quint32 row() const;
+    void setRow(quint32 row);
+    quint32 col() const;
+    void setCol(quint32 col);
 
 public slots:
-    virtual void parse();
-    virtual void translateError(QNetworkReply::NetworkError errorCode);
-    virtual void cancel();
+    void done();
+    virtual void cancel() = 0;
 
-private:
-    QNetworkReply *m_reply;
+signals:
+    void finished();
+    void error(QMapTileReply::ErrorCode errorCode, const QString &errorString = QString());
+
+    // CHOICE: could lose the setters and make this protected
+protected:
+    QMapTileReplyPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QMapTileReply);
 };
 
 QTM_END_NAMESPACE

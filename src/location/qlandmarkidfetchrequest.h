@@ -51,19 +51,20 @@ class Q_LOCATION_EXPORT QLandmarkIdFetchRequest : public QLandmarkAbstractReques
 {
     Q_OBJECT
 public:
-    QLandmarkIdFetchRequest(QObject *parent = 0);
+    QLandmarkIdFetchRequest(QLandmarkManager *manager, QObject *parent = 0);
     ~QLandmarkIdFetchRequest();
 
-    QLandmarkFilter filter() const;
-    void setFilter(const QLandmarkFilter &filter);
+    const QLandmarkFilter *filter() const;
+    void setFilter(const QLandmarkFilter *filter);
 
-    QList<QLandmarkSortOrder> sorting() const;
-    void setSorting(QList<QLandmarkSortOrder> &sorting);
+    QList<const QLandmarkSortOrder*> sorting() const;
+    void setSorting(const QList< const QLandmarkSortOrder*> &sorting);
+    void setSorting(const QLandmarkSortOrder *sorting);
 
-    QList<QLandmarkId> ids() const;
+    QList<QLandmarkId> landmarkIds() const;
 private:
     Q_DISABLE_COPY(QLandmarkIdFetchRequest)
-    Q_DECLARE_PRIVATE_D(d, QLandmarkIdFetchRequest)
+    Q_DECLARE_PRIVATE(QLandmarkIdFetchRequest)
 };
 
 QTM_END_NAMESPACE

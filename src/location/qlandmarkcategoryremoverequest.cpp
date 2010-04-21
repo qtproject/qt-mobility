@@ -40,10 +40,23 @@
 ****************************************************************************/
 
 #include "qlandmarkcategoryremoverequest.h"
+#include "qlandmarkabstractrequest_p.h"
 #include "qlandmarkcategoryid.h"
+#include <QMap>
 
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkCategoryRemoveRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkCategoryRemoveRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr) {}
+
+
+    QList<QLandmarkCategoryId> categoryIds;
+    QMap<int, QLandmarkManager::Error> errorMap;
+};
 
 /*!
     \class QLandmarkCategoryRemoveRequest
@@ -59,10 +72,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a category remove request with the given \a parent.
+    Constructs a category remove request with the given \a manager and \a parent.
 */
-QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest(QObject *parent)
-    : QLandmarkAbstractRequest(parent)
+QLandmarkCategoryRemoveRequest::QLandmarkCategoryRemoveRequest(QLandmarkManager *manager, QObject *parent)
+    : QLandmarkAbstractRequest(new QLandmarkCategoryRemoveRequestPrivate(manager), parent)
 {
 }
 
@@ -78,7 +91,8 @@ QLandmarkCategoryRemoveRequest::~QLandmarkCategoryRemoveRequest()
 */
 QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 {
-    return QList<QLandmarkCategoryId>();
+    Q_D(const QLandmarkCategoryRemoveRequest);
+    return d->categoryIds;
 }
 
 /*!
@@ -88,7 +102,8 @@ QList<QLandmarkCategoryId> QLandmarkCategoryRemoveRequest::categoryIds() const
 */
 void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
-    Q_UNUSED(categoryIds);
+    Q_D(QLandmarkCategoryRemoveRequest);
+    d->categoryIds = categoryIds;
 }
 
 /*!
@@ -98,7 +113,9 @@ void QLandmarkCategoryRemoveRequest::setCategoryIds(const QList<QLandmarkCategor
 */
 void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
-    Q_UNUSED(categoryId);
+    Q_D(QLandmarkCategoryRemoveRequest);
+    d->categoryIds.clear();
+    d->categoryIds.append(categoryId);
 }
 
 /*!
@@ -107,7 +124,8 @@ void QLandmarkCategoryRemoveRequest::setCategoryId(const QLandmarkCategoryId &ca
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategoryRemoveRequest::errorMap() const
 {
-    return QMap<int, QLandmarkManager::Error>();
+    Q_D(const QLandmarkCategoryRemoveRequest);
+    return d->errorMap;
 }
 
 #include "moc_qlandmarkcategoryremoverequest.cpp"

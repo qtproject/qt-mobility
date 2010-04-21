@@ -39,60 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPTILEREQUEST_H
-#define QLOCATION_MAPTILEREQUEST_H
+#ifndef QMAPTILEREPLY_P_H
+#define QMAPTILEREPLY_P_H
 
-#include <QString>
-
-#include "qgeomaptile.h"
+#include <QByteArray>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapTileRequestPrivate;
-class Q_LOCATION_EXPORT QGeoMapTileRequest
+class QMapTileReplyPrivate
 {
 public:
-    QGeoMapTileRequest(const MapVersion& mapVersion,
-                       const MapScheme& mapScheme,
-                       const MapResolution& mapResolution,
-                       const MapFormat& mapFormat);
-    QGeoMapTileRequest();
+    QMapTileReplyPrivate();
 
-    QGeoMapTileRequest(const QGeoMapTileRequest &mtr);
-    QGeoMapTileRequest& operator= (const QGeoMapTileRequest &mtr);
-
-    ~QGeoMapTileRequest();
-
-    quint32 col() const;
-    void setCol(quint32 c);
-
-    quint32 row() const;
-    void setRow(quint32 r);
-
-    MapVersion version() const;
-    void setVersion(const MapVersion& version);
-
-    MapResolution resolution() const;
-    void setResolution(const MapResolution& resolution);
-
-    MapFormat format() const;
-    void setFormat(const MapFormat& format);
-
-    MapScheme scheme() const;
-    void setScheme(const MapScheme& scheme);
-
-    quint16 zoomLevel() const;
-    void setZoomLevel(quint16 level);
-
-    QString requestString(const QString &host, const QString &token, const QString &referrer) const;
-
-private:
-    //Q_DISABLE_COPY(QGeoMapTileRequest);
-
-    QGeoMapTileRequestPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapTileRequest);
+    QByteArray data;
+    quint32 level;
+    quint32 row;
+    quint32 col;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif // QMAPTILEREPLY_P_H

@@ -50,7 +50,6 @@
 
 #include "qmapview.h"
 #include "qmapview_p.h"
-#include "qgeomaptile.h"
 #include "qmaproute.h"
 #include "qmapobject.h"
 #include "qmapobject_p.h"
@@ -61,11 +60,15 @@
 #include "qmapellipse.h"
 #include "qmapmarker.h"
 #include "qmapmarker_p.h"
-#include "qgeomapservice.h"
+#include "qmaptileservice.h"
 
 #define RELEASE_INTERVAL 10000
 #define DEFAULT_ZOOM_LEVEL 4
 #define DEFAULT_ROUTE_DETAIL_LEVEL 20
+
+//TODO: get rid of this
+#define TILE_WIDTH 256
+#define TILE_HEIGHT 256
 
 QTM_BEGIN_NAMESPACE
 
@@ -113,7 +116,7 @@ QMapView::~QMapView()
     Initializes a the map view with a given \a mapService and centers
     the map at \a center.
 */
-void QMapView::init(QGeoMapService* mapService, const QGeoCoordinate& center)
+void QMapView::init(QMapTileService* mapService, const QGeoCoordinate& center)
 {
     Q_D(QMapView);
 
@@ -122,8 +125,8 @@ void QMapView::init(QGeoMapService* mapService, const QGeoCoordinate& center)
 
     //Is this map engine replacing an old one?
     if (d->mapService) {
-        QObject::disconnect(mapService, SIGNAL(finished(QGeoMapTileReply*)),
-                            this, SLOT(tileFetched(QGeoMapTileReply*)));
+        QObject::disconnect(mapService, SIGNAL(finished(QMapTileReply*)),
+                            this, SLOT(tileFetched(QMapTileReply*)));
     }
 
     QObject::disconnect(&d->releaseTimer, SIGNAL(timeout()),
@@ -131,8 +134,8 @@ void QMapView::init(QGeoMapService* mapService, const QGeoCoordinate& center)
 
     d->mapService = mapService;
 
-    QObject::connect(d->mapService, SIGNAL(finished(QGeoMapTileReply*)),
-                     this, SLOT(tileFetched(QGeoMapTileReply*)), Qt::QueuedConnection);
+    QObject::connect(d->mapService, SIGNAL(finished(QMapTileReply*)),
+                     this, SLOT(tileFetched(QMapTileReply*)), Qt::QueuedConnection);
     QObject::connect(&d->releaseTimer, SIGNAL(timeout()),
                      this, SLOT(releaseRemoteTiles()));
 
@@ -216,7 +219,7 @@ quint32 QMapView::verticalPadding() const
 quint64 QMapView::mapWidth() const
 {
     Q_D(const QMapView);
-    return d->numColRow * d->mapResolution.size.width();
+    return d->numColRow * TILE_WIDTH;
 }
 
 /*!
@@ -226,7 +229,7 @@ quint64 QMapView::mapWidth() const
 quint64 QMapView::mapHeight() const
 {
     Q_D(const QMapView);
-    return d->numColRow * d->mapResolution.size.height();
+    return d->numColRow * TILE_HEIGHT;
 }
 
 void QMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* /*widget*/)
@@ -251,7 +254,7 @@ void QMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
             QPointF tileTopLeft = it.tileRect().topLeft();
             tileTopLeft -= d->viewPort.topLeft();
             painter->drawPixmap(tileTopLeft, pixmap);
-            painter->drawRect(tileTopLeft.x(), tileTopLeft.y(), d->mapResolution.size.width(), d->mapResolution.size.height());
+            painter->drawRect(tileTopLeft.x(), tileTopLeft.y(), TILE_WIDTH, TILE_HEIGHT);
 
             if (!tileData.second)
                 d->requestTile(it.col(), it.row());
@@ -265,9 +268,9 @@ void QMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 
 /*!
     This slot is called when a requested map tile has become available.
-    Internally, this slot is connected to QGeoEngine::finished(QGeoMapTileReply*).
+    Internally, this slot is connected to QGeoEngine::finished(QMapTileReply*).
 */
-void QMapView::tileFetched(QGeoMapTileReply* reply)
+void QMapView::tileFetched(QMapTileReply* reply)
 {
     Q_D(QMapView);
 
@@ -275,33 +278,35 @@ void QMapView::tileFetched(QGeoMapTileReply* reply)
         return; //This really should not be happening
 
     //Are we actually waiting for this tile?
-    const QGeoMapTileRequest& request = reply->request();
-    quint64 tileIndex = getTileIndex(request.col(), request.row());
+    //TODO: check if expected tile
+    //const QGeoMapTileRequest& request = reply->request();
+    //quint64 tileIndex = getTileIndex(request.col(), request.row());
 
-    if (!d->pendingTiles.contains(tileIndex)) {
-        delete reply;
-        return; //discard
-    }
+    //if (!d->pendingTiles.contains(tileIndex)) {
+    //    delete reply;
+    //    return; //discard
+    //}
 
-    //Not the reply we expected?
-    if (reply != d->pendingTiles[tileIndex]) {
-        delete reply;
-        return; //discard
-    }
+    ////Not the reply we expected?
+    //if (reply != d->pendingTiles[tileIndex]) {
+    //    delete reply;
+    //    return; //discard
+    //}
 
-    d->pendingTiles.remove(tileIndex);
-    //has map configuration changed in the meantime?
-    if (request.zoomLevel() != d->currZoomLevel ||
-            request.format().id != d->mapFormat.id ||
-            request.resolution().id != d->mapResolution.id ||
-            request.scheme().id != d->mapSchmeme.id ||
-            request.version().id != d->mapVersion.id) {
-        delete reply;
-        return; //discard
-    }
+    //d->pendingTiles.remove(tileIndex);
+    ////has map configuration changed in the meantime?
+    //if (request.zoomLevel() != d->currZoomLevel ||
+    //        request.format().id != d->mapFormat.id ||
+    //        request.resolution().id != d->mapResolution.id ||
+    //        request.scheme().id != d->mapSchmeme.id ||
+    //        request.version().id != d->mapVersion.id) {
+    //    delete reply;
+    //    return; //discard
+    //}
 
     QPixmap tile;
     tile.loadFromData(reply->data(), "PNG");
+    quint64 tileIndex = getTileIndex(reply->col(), reply->row());
     if(!tile.isNull() && !tile.size().isEmpty()) {
         d->mapTiles[tileIndex] = qMakePair(tile, true);
         this->update();
@@ -399,8 +404,8 @@ void QMapView::setZoomLevel(int level)
     if (oldZoomLevel == d->currZoomLevel)
         return; //nothing to be done
 
-    int tileWidth = d->mapResolution.size.width();
-    int tileHeight = d->mapResolution.size.height();
+    int tileWidth = TILE_WIDTH;
+    int tileHeight = TILE_HEIGHT;
 
     QHash<quint64, QPair<QPixmap, bool> > scaledTiles;
     qreal scale = pow(2.0, ((qint16) d->currZoomLevel) - oldZoomLevel);
@@ -503,7 +508,7 @@ void QMapView::pan(int deltaX, int deltaY)
     if (!d->mapService)
         return;
 
-    qreal pixelPerXAxis = d->numColRow * d->mapResolution.size.width();
+    qreal pixelPerXAxis = d->numColRow * TILE_WIDTH;
     d->viewPort.translate(deltaX, deltaY);
 
     //have we gone past the left edge?
@@ -585,8 +590,8 @@ QPointF QMapView::mercatorToMap(const QPointF& mercatorCoordinate) const
     if (!d->mapService)
         return QPointF();
 
-    return QPointF(static_cast<qint64>(mercatorCoordinate.x() * ((qreal) d->numColRow) * ((qreal) d->mapResolution.size.width())),
-                   static_cast<qint64>(mercatorCoordinate.y() * ((qreal) d->numColRow) * ((qreal) d->mapResolution.size.height())));
+    return QPointF(static_cast<qint64>(mercatorCoordinate.x() * ((qreal) d->numColRow) * ((qreal) TILE_WIDTH)),
+                   static_cast<qint64>(mercatorCoordinate.y() * ((qreal) d->numColRow) * ((qreal) TILE_HEIGHT)));
 }
 
 /*!
@@ -599,8 +604,8 @@ QPointF QMapView::mapToMercator(const QPointF& mapCoordinate) const
     if (!d->mapService)
         return QPointF();
 
-    return QPointF(mapCoordinate.x() / (((qreal) d->numColRow) * ((qreal) d->mapResolution.size.width())),
-                   mapCoordinate.y() / (((qreal) d->numColRow) * ((qreal) d->mapResolution.size.height())));
+    return QPointF(mapCoordinate.x() / (((qreal) d->numColRow) * ((qreal) TILE_WIDTH)),
+                   mapCoordinate.y() / (((qreal) d->numColRow) * ((qreal) TILE_HEIGHT)));
 }
 
 qreal rmod(const qreal a, const qreal b)
@@ -651,8 +656,8 @@ QGeoCoordinate QMapView::translateFromViewport(const QPointF& point) const
 void QMapView::mapToTile(const QPointF& mapCoordinate, quint32* col, quint32* row) const
 {
     Q_D(const QMapView);
-    *col = mapCoordinate.x() / d->mapResolution.size.width();
-    *row = mapCoordinate.y() / d->mapResolution.size.height();
+    *col = mapCoordinate.x() / TILE_WIDTH;
+    *row = mapCoordinate.y() / TILE_HEIGHT;
 }
 
 /*!
@@ -691,8 +696,8 @@ void QMapView::addMapObject(QMapObject* mapObject)
 QRectF QMapView::getTileRect(quint32 col, quint32 row) const
 {
     Q_D(const QMapView);
-    QPointF topLeft(((quint64) col) * d->mapResolution.size.width(), ((quint64) row) * d->mapResolution.size.height());
-    return QRectF(topLeft, d->mapResolution.size);
+    QPointF topLeft(((quint64) col) * TILE_WIDTH, ((quint64) row) * TILE_HEIGHT);
+    return QRectF(topLeft, QSize(TILE_WIDTH, TILE_HEIGHT));
 }
 
 /*!
@@ -738,11 +743,11 @@ QMapObject* QMapView::getTopmostMapObject(const QPointF& mapCoordinate)
 /*!
     Sets the map scheme.
 */
-void QMapView::setScheme(const MapScheme& mapScheme)
+void QMapView::setScheme(QMapTileServiceNokia::MapScheme mapScheme)
 {
     Q_D(QMapView);
 
-    if (d->mapSchmeme.id == mapScheme.id)
+    if (d->mapSchmeme == mapScheme)
         return; //nothing to do
 
     d->cancelPendingTiles();
@@ -804,42 +809,6 @@ quint64 QMapView::getTileIndex(quint32 col, quint32 row) const
 {
     Q_D(const QMapView);
     return ((quint64) row) * d->numColRow + col;
-}
-
-/*!
-    Returns the current map format.
-*/
-MapFormat QMapView::format() const
-{
-    Q_D(const QMapView);
-    return d->mapFormat;
-}
-
-/*!
-    Returns the current map scheme.
-*/
-MapScheme QMapView::scheme() const
-{
-    Q_D(const QMapView);
-    return d->mapSchmeme;
-}
-
-/*!
-    Returns the current map version.
-*/
-MapVersion QMapView::version() const
-{
-    Q_D(const QMapView);
-    return d->mapVersion;
-}
-
-/*!
-    Returns the current map resolution.
-*/
-MapResolution QMapView::resolution() const
-{
-    Q_D(const QMapView);
-    return d->mapResolution;
 }
 
 /*!
@@ -907,12 +876,11 @@ public:
     TileIteratorPrivate(const QMapViewPrivate* mapViewPrivate, const QRectF& viewPort)
             : hasNext(true), viewPort(viewPort),
             numColRow(mapViewPrivate->numColRow),
-            mapRes(mapViewPrivate->mapResolution),
             currX(static_cast<qint64>(viewPort.left())),
             currY(static_cast<qint64>(viewPort.top())),
-            rect(QPointF(), mapViewPrivate->mapResolution.size),
-            valid(false) {
-    }
+            rect(QPointF(), QSize(TILE_WIDTH, TILE_HEIGHT)),
+            valid(false)
+    {}
 
     quint32 cl;
     quint32 rw;
@@ -920,7 +888,7 @@ public:
     bool hasNext;
     QRectF viewPort;
     quint64 numColRow;
-    MapResolution mapRes;
+    //MapResolution mapRes;
     qint64 currX;
     qint64 currY;
     QRectF rect;
@@ -959,27 +927,27 @@ QMapView::TileIterator::~TileIterator()
 void QMapView::TileIterator::next()
 {
     Q_D(QMapView::TileIterator);
-    d->cl = (d->currX / d->mapRes.size.width()) % d->numColRow;
-    qint64 left = (d->currX / d->mapRes.size.width()) * d->mapRes.size.width();
-    d->rw = d->currY / d->mapRes.size.height();
+    d->cl = (d->currX / TILE_WIDTH) % d->numColRow;
+    qint64 left = (d->currX / TILE_WIDTH) * TILE_WIDTH;
+    d->rw = d->currY / TILE_HEIGHT;
     d->tileIndex = ((quint64) d->rw) * d->numColRow + d->cl;
 
     if (d->currY > 0) {
-        qint64 top = (d->currY / d->mapRes.size.height()) * d->mapRes.size.height();
+        qint64 top = (d->currY / TILE_HEIGHT) * TILE_HEIGHT;
         d->rect.moveTopLeft(QPointF(left, top));
         d->valid = true;
     } else
         d->valid = false;
 
-    d->currX += d->mapRes.size.width();
-    qint64 nextLeft = (d->currX / d->mapRes.size.width()) * d->mapRes.size.width();
+    d->currX += TILE_WIDTH;
+    qint64 nextLeft = (d->currX / TILE_WIDTH) * TILE_WIDTH;
 
     if (nextLeft > d->viewPort.right()) {
         d->currX = d->viewPort.left();
-        d->currY += d->mapRes.size.height();
+        d->currY += TILE_HEIGHT;
     }
 
-    qint64 nextTop = (d->currY / d->mapRes.size.height()) * d->mapRes.size.height();
+    qint64 nextTop = (d->currY / TILE_HEIGHT) * TILE_HEIGHT;
 
     if (nextTop > d->viewPort.bottom())
         d->hasNext = false;

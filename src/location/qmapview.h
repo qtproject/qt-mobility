@@ -55,7 +55,7 @@
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
 #include "qgeoroute.h"
-#include "qgeomaptile.h"
+#include "qmaptileservice_nokia_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -68,8 +68,8 @@ class QMapEllipse;
 class QMapObject;
 class QMapMarker;
 class QMapViewPrivate;
-class QGeoMapService;
-class QGeoMapTileReply;
+class QMapTileService;
+class QMapTileReply;
 
 class Q_LOCATION_EXPORT QMapView : public QGraphicsWidget
 {
@@ -103,7 +103,8 @@ public:
     QMapView(QGraphicsItem* parent = 0, Qt::WindowFlags wFlags = 0);
     virtual ~QMapView();
 
-    void init(QGeoMapService* mapService, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
+    void init(QMapTileService* mapService, const QGeoCoordinate& center = QGeoCoordinate(0, 0));
+
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 
     void centerOn(const QPointF& pos);
@@ -172,26 +173,22 @@ public:
     QMapObject* getTopmostMapObject(const QGeoCoordinate& geoCoordinate);
     QMapObject* getTopmostMapObject(const QPointF& mapCoordinate);
 
-    MapVersion version() const;
     /*!
     * Sets the map version.
     * @param mapVersion The new map version.
     */
-    void setVersion(const MapVersion& mapVersion);
-    MapResolution resolution() const;
+    void setVersion(QMapTileServiceNokia::MapVersion mapVersion);
     /*!
     * Sets the map resolution.
     * @param mapResolution The new map resolution.
     */
-    void setResolution(const MapResolution& mapResolution);
-    MapFormat format() const;
+    void setTileSize(QMapTileServiceNokia::TileSize tileSize);
     /*!
     * Sets the map format.
     * @param mapVersion The new map format.
     */
-    void setFormat(const MapFormat& mapFormat);
-    MapScheme scheme() const;
-    void setScheme(const MapScheme& mapScheme);
+    void setFormat(QMapTileServiceNokia::MapFormat mapFormat);
+    void setScheme(QMapTileServiceNokia::MapScheme scheme);
 
 private:
     Q_DISABLE_COPY(QMapView)
@@ -212,7 +209,7 @@ protected:
 
 public slots:
     void releaseRemoteTiles();
-    void tileFetched(QGeoMapTileReply* reply);
+    void tileFetched(QMapTileReply* reply);
     void setZoomLevel(int level);
 
 signals:

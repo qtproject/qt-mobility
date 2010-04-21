@@ -52,8 +52,8 @@
 
 #include "qmapview.h"
 #include "qgeoroutereply.h"
-#include "qgeomapservice.h"
 #include "qgeoroutingservice.h"
+#include "qmaptileservice.h"
 
 namespace Ui
 {
@@ -103,7 +103,7 @@ private:
 
 private:
     QGraphicsView* qgv;
-    QGeoMapService *mapService;
+    QMapTileService *mapService;
     QGeoRoutingService *routingService;
     QMapView* mapView;
     QSlider* slider;
