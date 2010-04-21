@@ -19,28 +19,6 @@ include(staticconfig.pri)
     #happen if we are trying to shadow build w/o running configure
 }
 
-#creating qbuildcfg header
-!exists($$QT_MOBILITY_BUILD_TREE/src/global){
-	message("creating qbuildcfg header")
-	symbian|win32|wince*{
-		system($$QMAKE_MKDIR $$QT_MOBILITY_BUILD_TREE\src\global)
-	}
-	else{
-		system($$QMAKE_MKDIR $$QT_MOBILITY_BUILD_TREE/src/global)
-	}
-}
-	
-QCFGH_OUTPUT=$$QT_MOBILITY_BUILD_TREE/src/global/qbuildcfg.h
-mobilityprefixpath = $$QT_MOBILITY_PREFIX
-symbian|win32|wince*{
-	mobilityprefixpath = $$replace(mobilityprefixpath, \\\, \\\\)
-	system(echo static const char qt_mobility_configure_prefix_path_str [512 + 12] = \"$$mobilityprefixpath\\0\"; > $$QCFGH_OUTPUT)
-}
-else{
-	system(echo static const char qt_mobility_configure_prefix_path_str [512 + 12] = '\\\"$$mobilityprefixpath\\\0\\\"\;' > $$QCFGH_OUTPUT)
-}
-
-
 #don't build QtMobility if chosen config mismatches Qt's config
 win32:!contains(CONFIG_WIN32,build_all) {
    contains(QT_CONFIG,debug):!contains(QT_CONFIG,release):contains(CONFIG_WIN32,release) {
