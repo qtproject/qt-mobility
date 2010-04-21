@@ -34,14 +34,14 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#addMapObject">addMapObject</a></b> ( QMapObject * <i>mapObject</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#centerOn">centerOn</a></b> ( const QPointF &amp; <i>pos</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#centerOn-2">centerOn</a></b> ( qreal <i>x</i>, qreal <i>y</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">MapFormat </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#format">format</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#centerOn-3">centerOn</a></b> ( QGeoBoundingBox <i>rect</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#getCenter">getCenter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMapObject * </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#getTopmostMapObject">getTopmostMapObject</a></b> ( const QGeoCoordinate &amp; <i>geoCoordinate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMapObject * </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#getTopmostMapObject-2">getTopmostMapObject</a></b> ( const QPointF &amp; <i>mapCoordinate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#getViewportCenter">getViewportCenter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">quint16 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#getZoomLevel">getZoomLevel</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#horizontalPadding">horizontalPadding</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#init">init</a></b> ( QGeoMapService * <i>mapService</i>, const QGeoCoordinate &amp; <i>center</i> = QGeoCoordinate( 0, 0 ) )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#init">init</a></b> ( QMapTileService * <i>mapService</i>, const QGeoCoordinate &amp; <i>center</i> = QGeoCoordinate( 0, 0 ) )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#isPannable">isPannable</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapHeight">mapHeight</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">quint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#mapWidth">mapWidth</a></b> () const</td></tr>
@@ -49,18 +49,15 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#pan">pan</a></b> ( int <i>deltaX</i>, int <i>deltaY</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#pan-2">pan</a></b> ( int <i>dragX</i>, int <i>dragY</i>, int <i>dropX</i>, int <i>dropY</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#removeMapObject">removeMapObject</a></b> ( QMapObject * <i>mapObject</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">MapResolution </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#resolution">resolution</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#routeDetailLevel">routeDetailLevel</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">MapScheme </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#scheme">scheme</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; <i>coord</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setHorizontalPadding">setHorizontalPadding</a></b> ( quint32 <i>range</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setPannable">setPannable</a></b> ( bool <i>isPannable</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setRouteDetailLevel">setRouteDetailLevel</a></b> ( quint32 <i>pixels</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setScheme">setScheme</a></b> ( const MapScheme &amp; <i>mapScheme</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setScheme">setScheme</a></b> ( QMapTileServiceNokia::MapScheme <i>mapScheme</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setVerticalPadding">setVerticalPadding</a></b> ( quint32 <i>range</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#translateFromViewport">translateFromViewport</a></b> ( const QPointF &amp; <i>point</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#translateToViewport">translateToViewport</a></b> ( const QGeoCoordinate &amp; <i>coord</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">MapVersion </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#version">version</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#verticalPadding">verticalPadding</a></b> () const</td></tr>
 </table>
 <hr />
@@ -81,7 +78,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#releaseRemoteTiles">releaseRemoteTiles</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#setZoomLevel">setZoomLevel</a></b> ( int <i>level</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#tileFetched">tileFetched</a></b> ( QGeoMapTileReply * <i>reply</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmapview.html#tileFetched">tileFetched</a></b> ( QMapTileReply * <i>reply</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-slots">QGraphicsWidget</a></li>
@@ -157,9 +154,7 @@
 <h3 class="fn"><a name="centerOn"></a>void QMapView::centerOn ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>pos</i> )</h3>
 <p>Centers the view port on the given map coordinate <i>pos</i>.</p>
 <h3 class="fn"><a name="centerOn-2"></a>void QMapView::centerOn ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>x</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>y</i> )</h3>
-<a name="//apple_ref/cpp/instm/QMapView/format"></a>
-<h3 class="fn"><a name="format"></a>MapFormat QMapView::format () const</h3>
-<p>Returns the current map format.</p>
+<h3 class="fn"><a name="centerOn-3"></a>void QMapView::centerOn ( QGeoBoundingBox <i>rect</i> )</h3>
 <a name="//apple_ref/cpp/instm/QMapView/getCenter"></a>
 <h3 class="fn"><a name="getCenter"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QMapView::getCenter () const</h3>
 <p>Returns the geo coordinate at the center of the map's current view port.</p>
@@ -179,7 +174,7 @@
 <p>Returns the horizontal range beyond the immediate limits of the view port, for which map tiles should also be loaded.</p>
 <p>See also <a href="qmapview.html#setHorizontalPadding">setHorizontalPadding</a>().</p>
 <a name="//apple_ref/cpp/instm/QMapView/init"></a>
-<h3 class="fn"><a name="init"></a>void QMapView::init ( <a href="qgeomapservice.html">QGeoMapService</a> * <i>mapService</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> = QGeoCoordinate( 0, 0 ) )</h3>
+<h3 class="fn"><a name="init"></a>void QMapView::init ( <a href="qmaptileservice.html">QMapTileService</a> * <i>mapService</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> = QGeoCoordinate( 0, 0 ) )</h3>
 <p>Initializes a the map view with a given <i>mapService</i> and centers the map at <i>center</i>.</p>
 <a name="//apple_ref/cpp/instm/QMapView/isPannable"></a>
 <h3 class="fn"><a name="isPannable"></a>bool QMapView::isPannable () const</h3>
@@ -219,17 +214,10 @@
 <p>Removes the given <i>mapObject</i> from the map. The <i>mapObject</i> is deleted in the process.</p>
 <a name="//apple_ref/cpp/instm/QMapView/resizeEvent"></a>
 <h3 class="fn"><a name="resizeEvent"></a>void QMapView::resizeEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicssceneresizeevent.html">QGraphicsSceneResizeEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<a name="//apple_ref/cpp/instm/QMapView/resolution"></a>
-<h3 class="fn"><a name="resolution"></a>MapResolution QMapView::resolution () const</h3>
-<p>Returns the current map resolution.</p>
 <a name="//apple_ref/cpp/instm/QMapView/routeDetailLevel"></a>
 <h3 class="fn"><a name="routeDetailLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> QMapView::routeDetailLevel () const</h3>
 <p>Returns the minum manhattan distance between two consecutive visible route way points.</p>
 <p>See also <a href="qmapview.html#setRouteDetailLevel">setRouteDetailLevel</a>().</p>
-<a name="//apple_ref/cpp/instm/QMapView/scheme"></a>
-<h3 class="fn"><a name="scheme"></a>MapScheme QMapView::scheme () const</h3>
-<p>Returns the current map scheme.</p>
-<p>See also <a href="qmapview.html#setScheme">setScheme</a>().</p>
 <a name="//apple_ref/cpp/instm/QMapView/setCenter"></a>
 <h3 class="fn"><a name="setCenter"></a>void QMapView::setCenter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coord</i> )</h3>
 <a name="//apple_ref/cpp/instm/QMapView/setHorizontalPadding"></a>
@@ -246,9 +234,8 @@
 <p>This method sets the minimum manhattan distance in <i>pixels</i> between two consecutive visible route way points. In other words, specifying <i>0</i> here, will force the map view to always draw all individual route legs that are in the current view port. Higher values will allow for much faster rendering, especially at far out zoom levels, but the route may appear less smooth.&lt;br&gt; The default value is 20 pixels. At QGeoEngine::maxZoomLevel(), all route legs are always shown.</p>
 <p>See also <a href="qmapview.html#routeDetailLevel">routeDetailLevel</a>().</p>
 <a name="//apple_ref/cpp/instm/QMapView/setScheme"></a>
-<h3 class="fn"><a name="setScheme"></a>void QMapView::setScheme ( const MapScheme &amp; <i>mapScheme</i> )</h3>
+<h3 class="fn"><a name="setScheme"></a>void QMapView::setScheme ( <a href="qmaptileservicenokia.html#MapScheme-enum">QMapTileServiceNokia::MapScheme</a> <i>mapScheme</i> )</h3>
 <p>Sets the map scheme.</p>
-<p>See also <a href="qmapview.html#scheme">scheme</a>().</p>
 <a name="//apple_ref/cpp/instm/QMapView/setVerticalPadding"></a>
 <h3 class="fn"><a name="setVerticalPadding"></a>void QMapView::setVerticalPadding ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>range</i> )</h3>
 <p>This method sets the vertical <i>range</i> (in pixels) beyond the immediate limits of the view port, for which map tiles should also be loaded. This can make for a smoother panning experience.</p>
@@ -257,17 +244,14 @@
 <h3 class="fn"><a name="setZoomLevel"></a>void QMapView::setZoomLevel ( int <i>level</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Sets the current zoom level.</p>
 <a name="//apple_ref/cpp/instm/QMapView/tileFetched"></a>
-<h3 class="fn"><a name="tileFetched"></a>void QMapView::tileFetched ( <a href="qgeomaptilereply.html">QGeoMapTileReply</a> * <i>reply</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>This slot is called when a requested map tile has become available. Internally, this slot is connected to QGeoEngine::finished(<a href="qgeomaptilereply.html">QGeoMapTileReply</a>*).</p>
+<h3 class="fn"><a name="tileFetched"></a>void QMapView::tileFetched ( <a href="qmaptilereply.html">QMapTileReply</a> * <i>reply</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>This slot is called when a requested map tile has become available. Internally, this slot is connected to QGeoEngine::finished(<a href="qmaptilereply.html">QMapTileReply</a>*).</p>
 <a name="//apple_ref/cpp/instm/QMapView/translateFromViewport"></a>
 <h3 class="fn"><a name="translateFromViewport"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QMapView::translateFromViewport ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>point</i> ) const</h3>
 <p>Converts a <i>mapCoordinate</i> (in pixels) into its corresponding geo coordinate.</p>
 <a name="//apple_ref/cpp/instm/QMapView/translateToViewport"></a>
 <h3 class="fn"><a name="translateToViewport"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QMapView::translateToViewport ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coord</i> ) const</h3>
 <p>Converts a <i>geoCoordinate</i> to a map coordinate (in pixels).</p>
-<a name="//apple_ref/cpp/instm/QMapView/version"></a>
-<h3 class="fn"><a name="version"></a>MapVersion QMapView::version () const</h3>
-<p>Returns the current map version.</p>
 <a name="//apple_ref/cpp/instm/QMapView/verticalPadding"></a>
 <h3 class="fn"><a name="verticalPadding"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> QMapView::verticalPadding () const</h3>
 <p>* <a href="http://qt.nokia.com/doc/4.6/qdialog.html">@return</a> The vertical range beyond the immediate limits of * the view port, for which map tiles should also be loaded.</p>

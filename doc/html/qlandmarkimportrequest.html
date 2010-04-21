@@ -23,12 +23,12 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#QLandmarkImportRequest">QLandmarkImportRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#QLandmarkImportRequest">QLandmarkImportRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#dtor.QLandmarkImportRequest">~QLandmarkImportRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#device">device</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#fileName">fileName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkManager::Format </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#format">format</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#ids">ids</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#landmarkIds">landmarkIds</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#setDevice">setDevice</a></b> ( QIODevice * <i>device</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#setFileName">setFileName</a></b> ( const QString &amp; <i>fileName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkimportrequest.html#setFormat">setFormat</a></b> ( QLandmarkManager::Format <i>format</i> )</td></tr>
@@ -53,12 +53,12 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QLandmarkImportRequest class allows a client to asynchronously request that a landmark manager import a set of landmarks.</p>
-<p>For a QLandmarkImportRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when landmarks have been successfully added by the manager. The list of added landmarks may be retrieved by the <a href="qlandmarkimportrequest.html#ids">ids</a>() function. The <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal may also be emitted if an overall operational error occurs.</p>
+<p>For a QLandmarkImportRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when landmarks have been successfully added by the manager. The list of added landmarks may be retrieved by the ids() function. The <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal may also be emitted if an overall operational error occurs.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkImportRequest/QLandmarkImportRequest"></a>
-<h3 class="fn"><a name="QLandmarkImportRequest"></a>QLandmarkImportRequest::QLandmarkImportRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Constructs a landmark import request with the given <i>parent</i>.</p>
+<h3 class="fn"><a name="QLandmarkImportRequest"></a>QLandmarkImportRequest::QLandmarkImportRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a landmark import request with the given <i>manager</i> <i>parent</i>.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkImportRequest/~QLandmarkImportRequest"></a>
 <h3 class="fn"><a name="dtor.QLandmarkImportRequest"></a>QLandmarkImportRequest::~QLandmarkImportRequest ()</h3>
 <p>Destroys the request object.</p>
@@ -74,8 +74,8 @@
 <h3 class="fn"><a name="format"></a><a href="qlandmarkmanager.html#Format-enum">QLandmarkManager::Format</a> QLandmarkImportRequest::format () const</h3>
 <p>Returns the expected data format for the import operation.</p>
 <p>See also <a href="qlandmarkimportrequest.html#setFormat">setFormat</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/ids"></a>
-<h3 class="fn"><a name="ids"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkImportRequest::ids () const</h3>
+<a name="//apple_ref/cpp/instm/QLandmarkImportRequest/landmarkIds"></a>
+<h3 class="fn"><a name="landmarkIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkImportRequest::landmarkIds () const</h3>
 <p>Returns a list of identifiers of landmarks that have been imported.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkImportRequest/setDevice"></a>
 <h3 class="fn"><a name="setDevice"></a>void QLandmarkImportRequest::setDevice ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i> )</h3>

@@ -23,14 +23,14 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#QLandmarkFetchRequest">QLandmarkFetchRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#QLandmarkFetchRequest">QLandmarkFetchRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#dtor.QLandmarkFetchRequest">~QLandmarkFetchRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QLandmarkFilter </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#filter">filter</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLandmarkFilter * </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#filter">filter</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmark&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#landmarks">landmarks</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#setFilter">setFilter</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#setSorting">setSorting</a></b> ( QList&lt;QLandmarkSortOrder&gt; &amp; <i>sorting</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#setSorting-2">setSorting</a></b> ( const QLandmarkSortOrder &amp; <i>sortOrder</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkSortOrder&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#sorting">sorting</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#setFilter">setFilter</a></b> ( const QLandmarkFilter * <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#setSorting">setSorting</a></b> ( const QList&lt;const QLandmarkSortOrder *&gt; &amp; <i>sorting</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#setSorting-2">setSorting</a></b> ( const QLandmarkSortOrder * <i>sorting</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;const QLandmarkSortOrder *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfetchrequest.html#sorting">sorting</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>10 public functions inherited from <a href="qlandmarkabstractrequest.html#public-functions">QLandmarkAbstractRequest</a></li>
@@ -56,13 +56,13 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkFetchRequest/QLandmarkFetchRequest"></a>
-<h3 class="fn"><a name="QLandmarkFetchRequest"></a>QLandmarkFetchRequest::QLandmarkFetchRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Creates a new landmark fetch request object with the given <i>parent</i>.</p>
+<h3 class="fn"><a name="QLandmarkFetchRequest"></a>QLandmarkFetchRequest::QLandmarkFetchRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Creates a new landmark fetch request object with the given <i>manager</i> <i>parent</i>.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFetchRequest/~QLandmarkFetchRequest"></a>
 <h3 class="fn"><a name="dtor.QLandmarkFetchRequest"></a>QLandmarkFetchRequest::~QLandmarkFetchRequest ()</h3>
 <p>Destroys the request object.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFetchRequest/filter"></a>
-<h3 class="fn"><a name="filter"></a><a href="qlandmarkfilter.html">QLandmarkFilter</a> QLandmarkFetchRequest::filter () const</h3>
+<h3 class="fn"><a name="filter"></a>const <a href="qlandmarkfilter.html">QLandmarkFilter</a> * QLandmarkFetchRequest::filter () const</h3>
 <p>Returns the filter which will be used to select the landmarks.</p>
 <p>By default, the filter's type will be a LandmarkFilter::DefaultFilter and thus match all landmarks.</p>
 <p>See also <a href="qlandmarkfetchrequest.html#setFilter">setFilter</a>().</p>
@@ -70,17 +70,17 @@
 <h3 class="fn"><a name="landmarks"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmark.html">QLandmark</a>&gt; QLandmarkFetchRequest::landmarks () const</h3>
 <p>Returns the list of landmarks which matched the filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFetchRequest/setFilter"></a>
-<h3 class="fn"><a name="setFilter"></a>void QLandmarkFetchRequest::setFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="setFilter"></a>void QLandmarkFetchRequest::setFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> * <i>filter</i> )</h3>
 <p>Sets the <i>filter</i> which will be used to select landmarks.</p>
 <p>See also <a href="qlandmarkfetchrequest.html#filter">filter</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFetchRequest/setSorting"></a>
-<h3 class="fn"><a name="setSorting"></a>void QLandmarkFetchRequest::setSorting ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; &amp; <i>sorting</i> )</h3>
+<h3 class="fn"><a name="setSorting"></a>void QLandmarkFetchRequest::setSorting ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> *&gt; &amp; <i>sorting</i> )</h3>
 <p>Sets the sort ordering of the request to <i>sorting</i>. This function will only have an effect on the results if invoked prior to calling <a href="qlandmarkabstractrequest.html#start">QLandmarkAbstractRequest::start</a>().</p>
 <p>See also <a href="qlandmarkfetchrequest.html#sorting">sorting</a>().</p>
-<h3 class="fn"><a name="setSorting-2"></a>void QLandmarkFetchRequest::setSorting ( const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> &amp; <i>sortOrder</i> )</h3>
-<p>Sets the sort ordering of the request to <i>sortOrder</i>. This function will only have an effect on results if invoked prior to calling <a href="qlandmarkabstractrequest.html#start">QLandmarkAbstractRequest::start</a>()</p>
+<h3 class="fn"><a name="setSorting-2"></a>void QLandmarkFetchRequest::setSorting ( const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> * <i>sorting</i> )</h3>
+<p>Sets the sort ordering of the request to a single<i>sorting</i>. This function will only have an effect on results if invoked prior to calling <a href="qlandmarkabstractrequest.html#start">QLandmarkAbstractRequest::start</a>()</p>
 <a name="//apple_ref/cpp/instm/QLandmarkFetchRequest/sorting"></a>
-<h3 class="fn"><a name="sorting"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarksortorder.html">QLandmarkSortOrder</a>&gt; QLandmarkFetchRequest::sorting () const</h3>
+<h3 class="fn"><a name="sorting"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;const <a href="qlandmarksortorder.html">QLandmarkSortOrder</a> *&gt; QLandmarkFetchRequest::sorting () const</h3>
 <p>Returns the sort ordering which is used to sort the result.</p>
 <p>See also <a href="qlandmarkfetchrequest.html#setSorting">setSorting</a>().</p>
 <p /><address><hr /><div align="center">

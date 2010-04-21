@@ -25,15 +25,15 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#QLandmarkUnionFilter">QLandmarkUnionFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#dtor.QLandmarkUnionFilter">~QLandmarkUnionFilter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#append">append</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkFilter&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#filters">filters</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#prepend">prepend</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#remove">remove</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#setFilters">setFilters</a></b> ( const QList&lt;QLandmarkFilter&gt; &amp; <i>filters</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QLandmarkUnionFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#operator-lt-lt">operator&lt;&lt;</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#append">append</a></b> ( const QLandmarkFilter * <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;const QLandmarkFilter *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#filters">filters</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#prepend">prepend</a></b> ( const QLandmarkFilter * <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#remove">remove</a></b> ( const QLandmarkFilter * <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#setFilters">setFilters</a></b> ( const QList&lt;const QLandmarkFilter *&gt; &amp; <i>filters</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QLandmarkUnionFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkunionfilter.html#operator-lt-lt">operator&lt;&lt;</a></b> ( const QLandmarkFilter * <i>filter</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>6 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
+<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -49,27 +49,27 @@
 <h3 class="fn"><a name="dtor.QLandmarkUnionFilter"></a>QLandmarkUnionFilter::~QLandmarkUnionFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/append"></a>
-<h3 class="fn"><a name="append"></a>void QLandmarkUnionFilter::append ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="append"></a>void QLandmarkUnionFilter::append ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> * <i>filter</i> )</h3>
 <p>Appends the given <i>filter</i> to the list of unioned filters.</p>
 <p>See also <a href="qlandmarkunionfilter.html#operator-lt-lt">operator&lt;&lt;</a>(), <a href="qlandmarkunionfilter.html#prepend">prepend</a>(), and <a href="qlandmarkunionfilter.html#filters">filters</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/filters"></a>
-<h3 class="fn"><a name="filters"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkfilter.html">QLandmarkFilter</a>&gt; QLandmarkUnionFilter::filters () const</h3>
+<h3 class="fn"><a name="filters"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;const <a href="qlandmarkfilter.html">QLandmarkFilter</a> *&gt; QLandmarkUnionFilter::filters () const</h3>
 <p>Returns the list of filters which form the union filter.</p>
 <p>See also <a href="qlandmarkunionfilter.html#setFilters">setFilters</a>(), <a href="qlandmarkunionfilter.html#prepend">prepend</a>(), <a href="qlandmarkunionfilter.html#append">append</a>(), and <a href="qlandmarkunionfilter.html#remove">remove</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/prepend"></a>
-<h3 class="fn"><a name="prepend"></a>void QLandmarkUnionFilter::prepend ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="prepend"></a>void QLandmarkUnionFilter::prepend ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> * <i>filter</i> )</h3>
 <p>Prepends the given <i>filter</i> to the list of unioned filters.</p>
 <p>See also <a href="qlandmarkunionfilter.html#append">append</a>() and <a href="qlandmarkunionfilter.html#filters">filters</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/remove"></a>
-<h3 class="fn"><a name="remove"></a>void QLandmarkUnionFilter::remove ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="remove"></a>void QLandmarkUnionFilter::remove ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> * <i>filter</i> )</h3>
 <p>Removes the given <i>filter</i> from the union list.</p>
 <p>See also <a href="qlandmarkunionfilter.html#filters">filters</a>(), <a href="qlandmarkunionfilter.html#append">append</a>(), and <a href="qlandmarkunionfilter.html#prepend">prepend</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/setFilters"></a>
-<h3 class="fn"><a name="setFilters"></a>void QLandmarkUnionFilter::setFilters ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkfilter.html">QLandmarkFilter</a>&gt; &amp; <i>filters</i> )</h3>
+<h3 class="fn"><a name="setFilters"></a>void QLandmarkUnionFilter::setFilters ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;const <a href="qlandmarkfilter.html">QLandmarkFilter</a> *&gt; &amp; <i>filters</i> )</h3>
 <p>Sets the <i>filters</i> whose criteria will be unioned.</p>
 <p>See also <a href="qlandmarkunionfilter.html#filters">filters</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkUnionFilter/operator&lt;&lt;"></a>
-<h3 class="fn"><a name="operator-lt-lt"></a>QLandmarkUnionFilter &amp; QLandmarkUnionFilter::operator&lt;&lt; ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
+<h3 class="fn"><a name="operator-lt-lt"></a>QLandmarkUnionFilter &amp; QLandmarkUnionFilter::operator&lt;&lt; ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> * <i>filter</i> )</h3>
 <p>Appends the given <i>filter</i> to the list of unioned filters.</p>
 <p>See also <a href="qlandmarkunionfilter.html#append">append</a>().</p>
 <p /><address><hr /><div align="center">

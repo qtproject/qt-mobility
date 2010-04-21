@@ -1411,41 +1411,6 @@
         <keyword ref="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</keyword>
         <section ref="qgeoareamonitor-members.html" title="List of all members"/>
     </section>
-    <section ref="qgeocodingreply.html" title="QGeocodingReply Class Reference">
-        <keyword ref="qgeocodingreply.html">QGeocodingReply</keyword>
-        <keyword ref="qgeocodingreply.html#ErrorCode-enum">ErrorCode</keyword>
-        <keyword ref="qgeocodingreply.html#addPlace">addPlace</keyword>
-        <keyword ref="qgeocodingreply.html#cancel">cancel</keyword>
-        <keyword ref="qgeocodingreply.html#description">description</keyword>
-        <keyword ref="qgeocodingreply.html#error">error</keyword>
-        <keyword ref="qgeocodingreply.html#finished">finished</keyword>
-        <keyword ref="qgeocodingreply.html#places">places</keyword>
-        <keyword ref="qgeocodingreply.html#setDescription">setDescription</keyword>
-        <keyword ref="qgeocodingreply.html#setPlaces">setPlaces</keyword>
-        <section ref="qgeocodingreply-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgeocodingrequest.html" title="QGeocodingRequest Class Reference">
-        <keyword ref="qgeocodingrequest.html">QGeocodingRequest</keyword>
-        <keyword ref="qgeocodingrequest.html#city">city</keyword>
-        <keyword ref="qgeocodingrequest.html#country">country</keyword>
-        <keyword ref="qgeocodingrequest.html#language">language</keyword>
-        <keyword ref="qgeocodingrequest.html#number">number</keyword>
-        <keyword ref="qgeocodingrequest.html#oneBoxLocation">oneBoxLocation</keyword>
-        <keyword ref="qgeocodingrequest.html#postCode">postCode</keyword>
-        <keyword ref="qgeocodingrequest.html#requestString">requestString</keyword>
-        <keyword ref="qgeocodingrequest.html#setCity">setCity</keyword>
-        <keyword ref="qgeocodingrequest.html#setCountry">setCountry</keyword>
-        <keyword ref="qgeocodingrequest.html#setLanguage">setLanguage</keyword>
-        <keyword ref="qgeocodingrequest.html#setNumber">setNumber</keyword>
-        <keyword ref="qgeocodingrequest.html#setOneBoxLocation">setOneBoxLocation</keyword>
-        <keyword ref="qgeocodingrequest.html#setPostCode">setPostCode</keyword>
-        <keyword ref="qgeocodingrequest.html#setState">setState</keyword>
-        <keyword ref="qgeocodingrequest.html#setStreet">setStreet</keyword>
-        <keyword ref="qgeocodingrequest.html#state">state</keyword>
-        <keyword ref="qgeocodingrequest.html#street">street</keyword>
-        <keyword ref="qgeocodingrequest.html#version">version</keyword>
-        <section ref="qgeocodingrequest-members.html" title="List of all members"/>
-    </section>
     <section ref="qgeocodingservice.html" title="QGeocodingService Class Reference">
         <keyword ref="qgeocodingservice.html">QGeocodingService</keyword>
         <keyword ref="qgeocodingservice.html#error">error</keyword>
@@ -1495,30 +1460,6 @@
         <keyword ref="qgeolocation.html#operator-eq">operator=</keyword>
         <keyword ref="qgeolocation.html#operator-eq-eq">operator==</keyword>
         <section ref="qgeolocation-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgeomapservice.html" title="QGeoMapService Class Reference">
-        <keyword ref="qgeomapservice.html">QGeoMapService</keyword>
-        <keyword ref="qgeomapservice.html#error">error</keyword>
-        <keyword ref="qgeomapservice.html#finished">finished</keyword>
-        <keyword ref="qgeomapservice.html#formats">formats</keyword>
-        <keyword ref="qgeomapservice.html#getMapTile">getMapTile</keyword>
-        <keyword ref="qgeomapservice.html#maxZoomLevel">maxZoomLevel</keyword>
-        <keyword ref="qgeomapservice.html#resolutions">resolutions</keyword>
-        <keyword ref="qgeomapservice.html#schemes">schemes</keyword>
-        <keyword ref="qgeomapservice.html#versions">versions</keyword>
-        <section ref="qgeomapservice-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgeomaptilereply.html" title="QGeoMapTileReply Class Reference">
-        <keyword ref="qgeomaptilereply.html">QGeoMapTileReply</keyword>
-        <keyword ref="qgeomaptilereply.html#ErrorCode-enum">ErrorCode</keyword>
-        <keyword ref="qgeomaptilereply.html#cancel">cancel</keyword>
-        <keyword ref="qgeomaptilereply.html#data">data</keyword>
-        <keyword ref="qgeomaptilereply.html#done">done</keyword>
-        <keyword ref="qgeomaptilereply.html#error">error</keyword>
-        <keyword ref="qgeomaptilereply.html#finished">finished</keyword>
-        <keyword ref="qgeomaptilereply.html#request">request</keyword>
-        <keyword ref="qgeomaptilereply.html#setData">setData</keyword>
-        <section ref="qgeomaptilereply-members.html" title="List of all members"/>
     </section>
     <section ref="qgeopositioninfo.html" title="QGeoPositionInfo Class Reference">
         <keyword ref="qgeopositioninfo.html">QGeoPositionInfo</keyword>
@@ -1941,9 +1882,7 @@
         <keyword ref="qlandmarkfilter.html#maximumMatches">maximumMatches</keyword>
         <keyword ref="qlandmarkfilter.html#setMaximumMatches">setMaximumMatches</keyword>
         <keyword ref="qlandmarkfilter.html#type">type</keyword>
-        <keyword ref="qlandmarkfilter.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qlandmarkfilter.html#operator-eq">operator=</keyword>
-        <keyword ref="qlandmarkfilter.html#operator-eq-eq">operator==</keyword>
         <section ref="qlandmarkfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkid.html" title="QLandmarkId Class Reference">
@@ -1961,7 +1900,7 @@
     <section ref="qlandmarkidfetchrequest.html" title="QLandmarkIdFetchRequest Class Reference">
         <keyword ref="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#filter">filter</keyword>
-        <keyword ref="qlandmarkidfetchrequest.html#ids">ids</keyword>
+        <keyword ref="qlandmarkidfetchrequest.html#landmarkIds">landmarkIds</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#setFilter">setFilter</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#setSorting">setSorting</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#sorting">sorting</keyword>
@@ -1972,7 +1911,7 @@
         <keyword ref="qlandmarkimportrequest.html#device">device</keyword>
         <keyword ref="qlandmarkimportrequest.html#fileName">fileName</keyword>
         <keyword ref="qlandmarkimportrequest.html#format">format</keyword>
-        <keyword ref="qlandmarkimportrequest.html#ids">ids</keyword>
+        <keyword ref="qlandmarkimportrequest.html#landmarkIds">landmarkIds</keyword>
         <keyword ref="qlandmarkimportrequest.html#setDevice">setDevice</keyword>
         <keyword ref="qlandmarkimportrequest.html#setFileName">setFileName</keyword>
         <keyword ref="qlandmarkimportrequest.html#setFormat">setFormat</keyword>
@@ -2151,6 +2090,7 @@
         <keyword ref="qlandmarksortorder.html#direction">direction</keyword>
         <keyword ref="qlandmarksortorder.html#setDirection">setDirection</keyword>
         <keyword ref="qlandmarksortorder.html#type">type</keyword>
+        <keyword ref="qlandmarksortorder.html#operator-eq">operator=</keyword>
         <section ref="qlandmarksortorder-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkunionfilter.html" title="QLandmarkUnionFilter Class Reference">
@@ -2315,12 +2255,37 @@
         <keyword ref="qmaproute.html#pen">pen</keyword>
         <section ref="qmaproute-members.html" title="List of all members"/>
     </section>
+    <section ref="qmaptilereply.html" title="QMapTileReply Class Reference">
+        <keyword ref="qmaptilereply.html">QMapTileReply</keyword>
+        <keyword ref="qmaptilereply.html#ErrorCode-enum">ErrorCode</keyword>
+        <keyword ref="qmaptilereply.html#cancel">cancel</keyword>
+        <keyword ref="qmaptilereply.html#col">col</keyword>
+        <keyword ref="qmaptilereply.html#data">data</keyword>
+        <keyword ref="qmaptilereply.html#done">done</keyword>
+        <keyword ref="qmaptilereply.html#error">error</keyword>
+        <keyword ref="qmaptilereply.html#finished">finished</keyword>
+        <keyword ref="qmaptilereply.html#level">level</keyword>
+        <keyword ref="qmaptilereply.html#row">row</keyword>
+        <keyword ref="qmaptilereply.html#setCol">setCol</keyword>
+        <keyword ref="qmaptilereply.html#setData">setData</keyword>
+        <keyword ref="qmaptilereply.html#setLevel">setLevel</keyword>
+        <keyword ref="qmaptilereply.html#setRow">setRow</keyword>
+        <section ref="qmaptilereply-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmaptileservice.html" title="QMapTileService Class Reference">
+        <keyword ref="qmaptileservice.html">QMapTileService</keyword>
+        <keyword ref="qmaptileservice.html#error">error</keyword>
+        <keyword ref="qmaptileservice.html#finished">finished</keyword>
+        <keyword ref="qmaptileservice.html#getMercatorTileIndex">getMercatorTileIndex</keyword>
+        <keyword ref="qmaptileservice.html#maxZoomLevel">maxZoomLevel</keyword>
+        <keyword ref="qmaptileservice.html#request">request</keyword>
+        <section ref="qmaptileservice-members.html" title="List of all members"/>
+    </section>
     <section ref="qmapview.html" title="QMapView Class Reference">
         <keyword ref="qmapview.html">QMapView</keyword>
         <keyword ref="qmapview.html#addMapObject">addMapObject</keyword>
         <keyword ref="qmapview.html#centerChanged">centerChanged</keyword>
         <keyword ref="qmapview.html#centerOn">centerOn</keyword>
-        <keyword ref="qmapview.html#format">format</keyword>
         <keyword ref="qmapview.html#getCenter">getCenter</keyword>
         <keyword ref="qmapview.html#getTopmostMapObject">getTopmostMapObject</keyword>
         <keyword ref="qmapview.html#getViewportCenter">getViewportCenter</keyword>
@@ -2341,9 +2306,7 @@
         <keyword ref="qmapview.html#releaseRemoteTiles">releaseRemoteTiles</keyword>
         <keyword ref="qmapview.html#removeMapObject">removeMapObject</keyword>
         <keyword ref="qmapview.html#resizeEvent">resizeEvent</keyword>
-        <keyword ref="qmapview.html#resolution">resolution</keyword>
         <keyword ref="qmapview.html#routeDetailLevel">routeDetailLevel</keyword>
-        <keyword ref="qmapview.html#scheme">scheme</keyword>
         <keyword ref="qmapview.html#setCenter">setCenter</keyword>
         <keyword ref="qmapview.html#setHorizontalPadding">setHorizontalPadding</keyword>
         <keyword ref="qmapview.html#setPannable">setPannable</keyword>
@@ -2354,7 +2317,6 @@
         <keyword ref="qmapview.html#tileFetched">tileFetched</keyword>
         <keyword ref="qmapview.html#translateFromViewport">translateFromViewport</keyword>
         <keyword ref="qmapview.html#translateToViewport">translateToViewport</keyword>
-        <keyword ref="qmapview.html#version">version</keyword>
         <keyword ref="qmapview.html#verticalPadding">verticalPadding</keyword>
         <keyword ref="qmapview.html#wheelEvent">wheelEvent</keyword>
         <keyword ref="qmapview.html#zoomLevelChanged">zoomLevelChanged</keyword>
@@ -3467,16 +3429,6 @@
         <keyword ref="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</keyword>
         <section ref="qradiotunercontrol-members.html" title="List of all members"/>
     </section>
-    <section ref="qreversegeocodingrequest.html" title="QReverseGeocodingRequest Class Reference">
-        <keyword ref="qreversegeocodingrequest.html">QReverseGeocodingRequest</keyword>
-        <keyword ref="qreversegeocodingrequest.html#coordinate">coordinate</keyword>
-        <keyword ref="qreversegeocodingrequest.html#language">language</keyword>
-        <keyword ref="qreversegeocodingrequest.html#requestString">requestString</keyword>
-        <keyword ref="qreversegeocodingrequest.html#setCoordinate">setCoordinate</keyword>
-        <keyword ref="qreversegeocodingrequest.html#setLanguage">setLanguage</keyword>
-        <keyword ref="qreversegeocodingrequest.html#version">version</keyword>
-        <section ref="qreversegeocodingrequest-members.html" title="List of all members"/>
-    </section>
     <section ref="qrotationfilter.html" title="QRotationFilter Class Reference">
         <keyword ref="qrotationfilter.html">QRotationFilter</keyword>
         <keyword ref="qrotationfilter.html#filter">filter</keyword>
@@ -3496,6 +3448,19 @@
         <keyword ref="qrotationsensor.html">QRotationSensor</keyword>
         <keyword ref="qrotationsensor.html#reading">reading</keyword>
         <section ref="qrotationsensor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qsearchresponse.html" title="QSearchResponse Class Reference">
+        <keyword ref="qsearchresponse.html">QSearchResponse</keyword>
+        <keyword ref="qsearchresponse.html#ErrorCode-enum">ErrorCode</keyword>
+        <keyword ref="qsearchresponse.html#addPlace">addPlace</keyword>
+        <keyword ref="qsearchresponse.html#cancel">cancel</keyword>
+        <keyword ref="qsearchresponse.html#description">description</keyword>
+        <keyword ref="qsearchresponse.html#error">error</keyword>
+        <keyword ref="qsearchresponse.html#finished">finished</keyword>
+        <keyword ref="qsearchresponse.html#places">places</keyword>
+        <keyword ref="qsearchresponse.html#setDescription">setDescription</keyword>
+        <keyword ref="qsearchresponse.html#setPlaces">setPlaces</keyword>
+        <section ref="qsearchresponse-members.html" title="List of all members"/>
     </section>
     <section ref="qsensor.html" title="QSensor Class Reference">
         <keyword ref="qsensor.html">QSensor</keyword>
