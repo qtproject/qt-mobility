@@ -248,6 +248,8 @@ bool QVersitContactImporterPrivate::createPhone(
     QContactPhoneNumber phone;
     phone.setNumber(property.value());
     phone.setSubTypes(extractSubTypes(property));
+    if (property.name() == QLatin1String("X-ASSISTANT-TEL"))
+        phone.setSubTypes(QContactPhoneNumber::SubTypeAssistant);
 
     saveDetailWithContext(contact, &phone, extractContexts(property));
     return true;
