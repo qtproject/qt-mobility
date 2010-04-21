@@ -7,9 +7,8 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .
-
+INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 # Input
 SOURCES += main.cpp
 
-INCLUDEPATH += $${EPOCROOT}epoc32\include\LBTHeaders
 LIBS += -llbt
