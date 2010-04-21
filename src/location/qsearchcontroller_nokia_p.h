@@ -52,8 +52,8 @@ class Q_LOCATION_EXPORT QSearchControllerNokia : public QSearchController
     Q_OBJECT
     
 public:
-    QSearchControllerNokia();
-    QSearchControllerNokia(QGeocodingServiceNokia* service);
+    QSearchControllerNokia(QObject* parent=0);
+    QSearchControllerNokia(QGeocodingServiceNokia* service, QObject* parent=0);
     ~QSearchControllerNokia();
 
     virtual void geocode(QSearchRequest& request);

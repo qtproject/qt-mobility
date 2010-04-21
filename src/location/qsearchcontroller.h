@@ -52,7 +52,7 @@ class Q_LOCATION_EXPORT QSearchController : public QObject
     Q_OBJECT
 
 public:
-    QSearchController();
+    QSearchController(QObject* parent=0);
     virtual ~QSearchController();
 
     virtual void geocode(QSearchRequest& request)=0;

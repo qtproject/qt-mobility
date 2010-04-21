@@ -62,29 +62,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    geocodingService = new QGeocodingServiceNokia();
-    geocodingService->setProxy( QNetworkProxy(QNetworkProxy::HttpProxy, "172.16.42.137", 8080) );
-    geocodingService->setHost("loc.desktop.maps.svc.ovi.com");
-    routingService = new QGeoRoutingServiceNokia();
-    QMapTileServiceNokia *mService = new QMapTileServiceNokia();
-
-    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.40", 8080);
-    mService->setProxy(proxy);
-    mService->setHost("origin.maptile.svc.tst.s2g.gate5.de");
-
-    mapService = mService;
-    searchController=new QSearchControllerNokia(geocodingService);
-
-    QObject::connect(routingService, SIGNAL(finished(QGeoRouteReply*)),
-                     this, SLOT(routeReplyFinished(QGeoRouteReply*)));
-
-    QObject::connect(mapService, SIGNAL(finished(QMapTileReply*)),
-                     this, SLOT(mapTileReplyFinished(QMapTileReply*)));
-
-    QObject::connect(searchController, SIGNAL(searchRequestFinished(QSearchResponse*)),
-                     this, SLOT(codingReplyFinished(QSearchResponse*)));
-    
-
     ui->mapTileLabel->setVisible(false);
 
 #ifdef QGEOAPIUI_USEPOPUPMENU
@@ -139,7 +116,30 @@ void MainWindow::delayedInit()
     session->open();
     session->waitForOpened(-1);
 #endif
+    
+    geocodingService = new QGeocodingServiceNokia();
+    geocodingService->setProxy( QNetworkProxy(QNetworkProxy::HttpProxy, "172.16.42.137", 8080) );
+    geocodingService->setHost("loc.desktop.maps.svc.ovi.com");
+    routingService = new QGeoRoutingServiceNokia();
+    QMapTileServiceNokia *mService = new QMapTileServiceNokia();
 
+    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.40", 8080);
+    mService->setProxy(proxy);
+    mService->setHost("origin.maptile.svc.tst.s2g.gate5.de");
+
+    mapService = mService;
+    searchController=new QSearchControllerNokia(geocodingService);
+
+    QObject::connect(routingService, SIGNAL(finished(QGeoRouteReply*)),
+                     this, SLOT(routeReplyFinished(QGeoRouteReply*)));
+
+    QObject::connect(mapService, SIGNAL(finished(QMapTileReply*)),
+                     this, SLOT(mapTileReplyFinished(QMapTileReply*)));
+
+    QObject::connect(searchController, SIGNAL(searchRequestFinished(QSearchResponse*)),
+                     this, SLOT(codingReplyFinished(QSearchResponse*)));
+
+    
 #ifdef QGEOAPIUI_USEPOPUPMENU
     popupMenu = new QMenu(this);
     QAction* menuItem;

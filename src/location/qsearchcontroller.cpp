@@ -43,7 +43,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-QSearchController::QSearchController() {}
+QSearchController::QSearchController(QObject* parent)
+    : QObject(parent)
+{}
 
 QSearchController::~QSearchController() {}
 

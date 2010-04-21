@@ -46,8 +46,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QSearchResponseNokia::QSearchResponseNokia(QNetworkReply *reply)
-        : m_reply(reply)
+QSearchResponseNokia::QSearchResponseNokia(QNetworkReply *reply, QObject* parent)
+        : QSearchResponse(parent), m_reply(reply)
 {
     connect(m_reply,
             SIGNAL(finished()),

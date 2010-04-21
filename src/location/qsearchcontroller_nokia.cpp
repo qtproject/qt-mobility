@@ -44,16 +44,16 @@
 
 QTM_BEGIN_NAMESPACE
 
-QSearchControllerNokia::QSearchControllerNokia()
-    : searchService(new QGeocodingServiceNokia)
+QSearchControllerNokia::QSearchControllerNokia(QObject* parent)
+    : QSearchController(parent), searchService(new QGeocodingServiceNokia)
 {
     searchResponse=NULL;
     QObject::connect(searchService, SIGNAL(finished(QSearchResponse*)),
                      this, SLOT(codingReplyFinished(QSearchResponse*)));
 }
 
-QSearchControllerNokia::QSearchControllerNokia(QGeocodingServiceNokia* service)
-    : searchService(service)
+QSearchControllerNokia::QSearchControllerNokia(QGeocodingServiceNokia* service, QObject* parent)
+    : QSearchController(parent), searchService(service)
 {
     searchResponse=NULL;
     QObject::connect(searchService, SIGNAL(finished(QSearchResponse*)),

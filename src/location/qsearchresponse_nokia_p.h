@@ -58,7 +58,7 @@ public:
         Failed
     };
 
-    QSearchResponseNokia(QNetworkReply *reply);
+    QSearchResponseNokia(QNetworkReply *reply, QObject* parent=0);
     ~QSearchResponseNokia();
 
     QSearchResponseNokia::ResultCode resultCode() const;
