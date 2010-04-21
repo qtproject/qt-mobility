@@ -72,10 +72,9 @@ public:
     QLandmarkPrivate& operator= (const QLandmarkPrivate &other);
 
     bool operator== (const QLandmarkPrivate &other) const;
-    // consider inline != in terms of ==?
 
     QString name;
-    QList<QLandmarkCategoryId> categories;
+    QList<QLandmarkCategoryId> categoryIds;
     QGeoLocation location;
     QString description;
     QUrl iconUrl;

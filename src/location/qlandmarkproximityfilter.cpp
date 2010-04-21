@@ -40,38 +40,10 @@
 ****************************************************************************/
 
 #include "qlandmarkproximityfilter.h"
-#include "qlandmarkfilter_p.h"
+#include "qlandmarkproximityfilter_p.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkProximityFilterPrivate : public QLandmarkFilterPrivate
-{
-public:
-    QLandmarkProximityFilterPrivate();
-    QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other);
-    ~QLandmarkProximityFilterPrivate();
-
-    QGeoCoordinate coordinate;
-    double radius;
-};
-
-QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate()
-        : QLandmarkFilterPrivate(),
-        coordinate(QGeoCoordinate()),
-        radius(0.0)
-{
-}
-
-QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other)
-        : QLandmarkFilterPrivate(other),
-        coordinate(other.coordinate),
-        radius(other.radius)
-{
-}
-
-QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate()
-{
-}
 
 /*!
     \class QLandmarkProximityFilter
@@ -85,11 +57,8 @@ QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate()
     a central \a coordinate.
 */
 QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &coordinate, double radius)
-        : QLandmarkFilter(*new QLandmarkProximityFilterPrivate)
+        : QLandmarkFilter(new QLandmarkProximityFilterPrivate(coordinate, radius))
 {
-    Q_UNUSED(coordinate);
-    Q_UNUSED(radius);
-    //TODO: implement
 }
 
 /*!
@@ -97,7 +66,7 @@ QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &coordin
 */
 QLandmarkProximityFilter::~QLandmarkProximityFilter()
 {
-    //TODO: implement
+    // pointer deleted in superclass destructor
 }
 
 /*!
@@ -105,7 +74,8 @@ QLandmarkProximityFilter::~QLandmarkProximityFilter()
 */
 QGeoCoordinate QLandmarkProximityFilter::coordinate() const
 {
-    return QGeoCoordinate();
+    Q_D(const QLandmarkProximityFilter);
+    return d->coordinate;
 }
 
 /*!
@@ -113,6 +83,8 @@ QGeoCoordinate QLandmarkProximityFilter::coordinate() const
 */
 void QLandmarkProximityFilter::setCoordinate(const QGeoCoordinate &coordinate)
 {
+    Q_D(QLandmarkProximityFilter);
+    d->coordinate = coordinate;
 }
 
 /*!
@@ -120,7 +92,8 @@ void QLandmarkProximityFilter::setCoordinate(const QGeoCoordinate &coordinate)
 */
 double QLandmarkProximityFilter::radius() const
 {
-    return 0.0;
+    Q_D(const QLandmarkProximityFilter);
+    return d->radius;
 }
 
 /*!
@@ -128,6 +101,26 @@ double QLandmarkProximityFilter::radius() const
 */
 void QLandmarkProximityFilter::setRadius(double radius)
 {
+    Q_D(QLandmarkProximityFilter);
+    d->radius = radius;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QGeoCoordinate &coordinate, double radius)
+        : QLandmarkFilterPrivate(),
+        coordinate(coordinate),
+        radius(radius)
+{
+    type = QLandmarkFilter::ProximityFilter;
+}
+
+QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other)
+        : QLandmarkFilterPrivate(other),
+        coordinate(other.coordinate),
+        radius(other.radius) {}
+
+QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate() {}
 
 QTM_END_NAMESPACE

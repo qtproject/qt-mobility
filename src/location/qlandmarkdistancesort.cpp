@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 #include "qlandmarkdistancesort.h"
+#include "qlandmarkdistancesort_p.h"
 #include "qgeocoordinate.h"
-#include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -57,17 +57,15 @@ QTM_BEGIN_NAMESPACE
     If the \a direction is Qt::Ascending, it means that landmarks are listed in
     increasing order of distance.
 */
-QLandmarkDistanceSort::QLandmarkDistanceSort(QGeoCoordinate coordinate, Qt::SortOrder direction)
-{
-    //TODO: implement
-}
+QLandmarkDistanceSort::QLandmarkDistanceSort(const QGeoCoordinate &coordinate, Qt::SortOrder direction)
+        : QLandmarkSortOrder(new QLandmarkDistanceSortPrivate(coordinate, direction)) {}
 
 /*!
     Destroys the sort order.
 */
 QLandmarkDistanceSort::~QLandmarkDistanceSort()
 {
-    //TODO: implement
+    // pointer deleted in superclass destructor
 }
 
 /*!
@@ -75,7 +73,8 @@ QLandmarkDistanceSort::~QLandmarkDistanceSort()
 */
 QGeoCoordinate QLandmarkDistanceSort::coordinate() const
 {
-    return QGeoCoordinate();
+    Q_D(const QLandmarkDistanceSort);
+    return d->origin;
 }
 
 /*!
@@ -83,6 +82,24 @@ QGeoCoordinate QLandmarkDistanceSort::coordinate() const
 */
 void QLandmarkDistanceSort::setCoordinate(const QGeoCoordinate &coordinate)
 {
+    Q_D(QLandmarkDistanceSort);
+    d->origin = coordinate;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkDistanceSortPrivate::QLandmarkDistanceSortPrivate(const QGeoCoordinate &origin, Qt::SortOrder direction)
+        : origin(origin)
+{
+    type = QLandmarkSortOrder::DistanceSort;
+    order = direction;
+}
+
+QLandmarkDistanceSortPrivate::QLandmarkDistanceSortPrivate(const QLandmarkDistanceSortPrivate &other)
+        : QLandmarkSortOrderPrivate(other),
+        origin(other.origin) {}
+
+QLandmarkDistanceSortPrivate::~QLandmarkDistanceSortPrivate() {}
 
 QTM_END_NAMESPACE

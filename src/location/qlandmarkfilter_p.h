@@ -57,12 +57,12 @@
 #include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
-class QLandmarkFilterPrivate : public QSharedData
+class QLandmarkFilterPrivate
 {
 public:
     QLandmarkFilterPrivate();
     QLandmarkFilterPrivate(const QLandmarkFilterPrivate &);
-    ~QLandmarkFilterPrivate();
+    virtual ~QLandmarkFilterPrivate();
 
     QLandmarkFilter::FilterType type;
     int maxMatches;
@@ -71,3 +71,4 @@ public:
 QTM_END_NAMESPACE
 
 #endif
+

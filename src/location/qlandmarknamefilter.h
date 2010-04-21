@@ -43,7 +43,8 @@
 #define QLANDMARKNAMEFILTER_H
 
 #include "qlandmarkfilter.h"
-#include <Qt>
+#include "qnamespace.h"
+
 #include <QString>
 
 QT_BEGIN_HEADER
@@ -62,6 +63,9 @@ public:
 
     Qt::CaseSensitivity caseSensitivity() const;
     void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
+
+private:
+    Q_DECLARE_PRIVATE(QLandmarkNameFilter);
 };
 
 QTM_END_NAMESPACE

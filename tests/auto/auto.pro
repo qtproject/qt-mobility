@@ -37,6 +37,8 @@ contains(mobility_modules,location) {
     wince* {
         SUBDIRS += qgeoinfosources_wince
     }
+
+    SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
 contains(mobility_modules,landmarks) {

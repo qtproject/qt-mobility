@@ -42,6 +42,8 @@
 #include "qlandmarkmanager.h"
 #include "qlandmarkmanager_p.h"
 
+#include "qlandmarkmanagerenginefactory_sqlite_p.h"
+
 #include <QStringList>
 #include <QString>
 #include <QIODevice>
@@ -108,7 +110,55 @@ QLandmarkManager::QLandmarkManager(QObject *parent)
 QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters, QObject *parent)
         : d_ptr(new QLandmarkManagerPrivate())
 {
-    //TODO: implement
+    Q_D(QLandmarkManager);
+
+    if (!availableManagers().contains(managerName)) {
+        d->errorCode = NotSupportedError;
+        d->errorString = QString("The landmark engine %1 is not supported.").arg(managerName);
+        d->engine = 0;
+        return;
+    }
+
+    if (managerName == "com.nokia.qt.landmarks.engines.sqlite") {
+        QLandmarkManagerEngineFactorySqlite factory;
+        d->engine = factory.engine(parameters,
+                                   &(d->errorCode),
+                                   &(d->errorString));
+    } else {
+        // set some kind of error? or use the else instead of the contains check?
+        // should there be a static list of factories for this and for availableManagers()?
+    }
+
+    if (d->engine) {
+        connect(d->engine,
+                SIGNAL(dataChanged()),
+                this,
+                SIGNAL(dataChanged()));
+        connect(d->engine,
+                SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        connect(d->engine,
+                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+        connect(d->engine,
+                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+    }
 }
 
 /*!
@@ -123,7 +173,59 @@ QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QStrin
 QLandmarkManager::QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent)
         : d_ptr(new QLandmarkManagerPrivate())
 {
-    //TODO: implement
+    Q_D(QLandmarkManager);
+
+    if (!availableManagers().contains(managerName)) {
+        d->errorCode = NotSupportedError;
+        d->errorString = QString("The landmark engine %1 is not supported.").arg(managerName);
+        d->engine = 0;
+        return;
+    }
+
+    if (managerName == "com.nokia.qt.landmarks.engines.sqlite") {
+        QLandmarkManagerEngineFactorySqlite factory;
+        d->engine = factory.engine(parameters,
+                                   &(d->errorCode),
+                                   &(d->errorString));
+        // TODO check version versus supported versions - seems kind of pointless unless the above takes a version argument
+    } else {
+        // set some kind of error? or use the else instead of the contains check?
+        // should there be a static list of factories for this and for availableManagers()?
+        d->errorCode = NotSupportedError;
+        d->errorString = QString("The landmark engine %1 is not supported.").arg(managerName);
+        d->engine = 0;
+    }
+
+    if (d->engine) {
+        connect(d->engine,
+                SIGNAL(dataChanged()),
+                this,
+                SIGNAL(dataChanged()));
+        connect(d->engine,
+                SIGNAL(landmarksAdded(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksAdded(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(landmarksChanged(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
+                this,
+                SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
+        connect(d->engine,
+                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        connect(d->engine,
+                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+        connect(d->engine,
+                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
+                this,
+                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+    }
 }
 
 /*!
@@ -311,8 +413,8 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
         return QLandmarkCategory();
 
     QLandmarkCategory cat = d->engine->category(categoryId,
-                                                &(d->errorCode),
-                                                &(d->errorString));
+                            &(d->errorCode),
+                            &(d->errorString));
 
     if (d->errorCode != NoError)
         return QLandmarkCategory();
@@ -337,8 +439,8 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCateg
         return QList<QLandmarkCategory>();
 
     QList<QLandmarkCategory> cats = d->engine->categories(categoryIds,
-                          &(d->errorCode),
-                          &(d->errorString));
+                                    &(d->errorCode),
+                                    &(d->errorString));
 
     if (d->errorCode != NoError)
         return QList<QLandmarkCategory>();
@@ -357,7 +459,7 @@ QList<QLandmarkCategoryId> QLandmarkManager::categoryIds() const
         return QList<QLandmarkCategoryId>();
 
     QList<QLandmarkCategoryId> ids = d->engine->categoryIds(&(d->errorCode),
-                                                            &(d->errorString));
+                                     &(d->errorString));
 
     if (d->errorCode != NoError)
         return QList<QLandmarkCategoryId>();
@@ -388,7 +490,7 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter *filter, const QList<const QLandmarkSortOrder*> &sortOrders) const
 {
     Q_D(const QLandmarkManager);
 
@@ -396,9 +498,9 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
         return QList<QLandmark>();
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
-                                                sortOrders,
-                                                &(d->errorCode),
-                                                &(d->errorString));
+                           sortOrders,
+                           &(d->errorCode),
+                           &(d->errorString));
 
     if (d->errorCode != NoError)
         return QList<QLandmark>();
@@ -409,19 +511,20 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the given \a sortOrder.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter *filter, const QLandmarkSortOrder *sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
     if (!d->engine)
         return QList<QLandmark>();
 
-    QList<QLandmarkSortOrder> sortOrders;
-    sortOrders.append(sortOrder);
+    QList<const QLandmarkSortOrder*> sortOrders;
+    if (sortOrder)
+        sortOrders.append(sortOrder);
     QList<QLandmark> lms = d->engine->landmarks(filter,
-                                                sortOrders,
-                                                &(d->errorCode),
-                                                &(d->errorString));
+                           sortOrders,
+                           &(d->errorCode),
+                           &(d->errorString));
 
     if (d->errorCode != NoError)
         return QList<QLandmark>();
@@ -443,9 +546,9 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     // use the error map to add to the error string?
     // or use it to remove the landmarks which had errors?
     QList<QLandmark> lms = d->engine->landmarks(landmarkIds,
-                                                0,
-                                                &(d->errorCode),
-                                                &(d->errorString));
+                           0,
+                           &(d->errorCode),
+                           &(d->errorString));
     if (d->errorCode != NoError)
         return QList<QLandmark>();
 
@@ -456,8 +559,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     Returns a list of landmark identifiers of landmarks that match the given \a filter, sorted
     according to the given \a sortOrders.
 */
-QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
-        const QList<QLandmarkSortOrder> &sortOrders) const
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter *filter,
+        const QList<const QLandmarkSortOrder*> &sortOrders) const
 {
     Q_D(const QLandmarkManager);
 
@@ -465,9 +568,9 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
         return QList<QLandmarkId>();
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
-                                                    sortOrders,
-                                                    &(d->errorCode),
-                                                    &(d->errorString));
+                             sortOrders,
+                             &(d->errorCode),
+                             &(d->errorString));
 
     if (d->errorCode != NoError)
         return QList<QLandmarkId>();
@@ -481,20 +584,21 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 
     This is a convenience function.
 */
-QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
-        const QLandmarkSortOrder &sortOrder) const
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter *filter,
+        const QLandmarkSortOrder *sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
     if (!d->engine)
         return QList<QLandmarkId>();
 
-    QList<QLandmarkSortOrder> sortOrders;
-    sortOrders.append(sortOrder);
+    QList<const QLandmarkSortOrder*> sortOrders;
+    if (sortOrder)
+        sortOrders.append(sortOrder);
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
-                                                    sortOrders,
-                                                    &(d->errorCode),
-                                                    &(d->errorString));
+                             sortOrders,
+                             &(d->errorCode),
+                             &(d->errorString));
 
     if (d->errorCode != NoError)
         return QList<QLandmarkId>();
@@ -689,8 +793,9 @@ int QLandmarkManager::managerVersion() const
 */
 QStringList QLandmarkManager::availableManagers()
 {
-    // call managername on each of a list of factories?
-    return QStringList(); //TODO: implement
+    QStringList names;
+    names << "com.nokia.qt.landmarks.engines.sqlite";
+    return names;
 }
 
 /*! Returns a URI that completely describes a manager implementation, datastore,
@@ -841,8 +946,8 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 *******************************************************************************/
 
 QLandmarkManagerPrivate::QLandmarkManagerPrivate()
-    : engine(0),
-    errorCode(QLandmarkManager::NoError)
+        : engine(0),
+        errorCode(QLandmarkManager::NoError)
 {
 }
 

@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtLocation
-QT = core gui network
+QT = core gui network sql
 
 include(../../common.pri)
 
@@ -91,14 +91,25 @@ PRIVATE_HEADERS += \
                     qgeoroutexmlparser_nokia_p.h \
                     qgeoroutingservice_nokia_p.h \
                     qlandmark_p.h \
-                    qlandmark_p.h \
+                    qlandmarkboxfilter_p.h \
+                    qlandmarkabstractrequest_p.h \
                     qlandmarkcategory_p.h \
                     qlandmarkcategoryid_p.h \
+                    qlandmarkcategoryfilter_p.h \
+                    qlandmarkdistancesort_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkid_p.h \
+                    qlandmarkintersectionfilter_p.h \
                     qlandmarkmanager_p.h \
-                    qlandmarkabstractrequest_p.h \
+                    qlandmarkmanagerengine_sqlite_p.h \
+                    qlandmarkmanagerenginefactory_sqlite_p.h \
+                    qlandmarknamefilter_p.h \
+                    qlandmarknamesort_p.h \
+                    qlandmarknearestfilter_p.h \
+                    qlandmarkproximityfilter_p.h \
+                    qlandmarksortorder_p.h \
+                    qlandmarkunionfilter_p.h \
                     qlocationutils_p.h \
                     qmaneuver_p.h \
                     qmapellipse_p.h \
@@ -236,7 +247,9 @@ SOURCES += \
             qlandmarkintersectionfilter.cpp \
             qlandmarkmanager.cpp \
             qlandmarkmanagerengine.cpp \
+            qlandmarkmanagerengine_sqlite.cpp \
             qlandmarkmanagerenginefactory.cpp \
+            qlandmarkmanagerenginefactory_sqlite.cpp \
             qlandmarknamefilter.cpp \
             qlandmarknamesort.cpp \
             qlandmarknearestfilter.cpp \
@@ -265,6 +278,8 @@ SOURCES += \
             qmapcontainer.cpp \
             qgeoboundingbox.cpp \
             qnmeapositioninfosource.cpp
+
+RESOURCES += qlandmarkmanagerengine_sqlite.qrc
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

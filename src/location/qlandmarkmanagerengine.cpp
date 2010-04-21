@@ -87,7 +87,7 @@ QMap<QString, QString> QLandmarkManagerEngine::managerParameters() const
  */
 QString QLandmarkManagerEngine::managerUri() const
 {
-    return QString();
+    return QLandmarkManager::buildUri(managerName(), managerParameters(), managerVersion());
 }
 
 /*!
@@ -104,8 +104,8 @@ int QLandmarkManagerEngine::managerVersion() const
     may involve retrieving all the landmarks.  Any error which occurs will be saved in \a error
     and \a errorString.
  */
-QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& filter,
-        const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error* error,
+QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter* filter,
+        const QList<const QLandmarkSortOrder*>& sortOrders, QLandmarkManager::Error* error,
         QString *errorString) const
 {
     return QList<QLandmarkId>();
@@ -153,7 +153,7 @@ QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId> &lan
 
     Overall operation errors are stored in \a error and \a errorString.
 */
-QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
+QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter *filter, const QList<const QLandmarkSortOrder*> &sortOrders,
         QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmark>();

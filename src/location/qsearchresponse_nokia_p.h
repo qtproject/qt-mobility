@@ -43,7 +43,6 @@
 #define QSEARCHRESPONSE_NOKIA_P_H
 
 #include "qsearchresponse.h"
-
 #include <QNetworkReply>
 
 QTM_BEGIN_NAMESPACE

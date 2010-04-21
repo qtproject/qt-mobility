@@ -61,6 +61,9 @@ public:
 
     double radius() const;
     void setRadius(double radius);
+
+private:
+    Q_DECLARE_PRIVATE(QLandmarkProximityFilter);
 };
 
 QTM_END_NAMESPACE

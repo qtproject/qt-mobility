@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarkcategoryfilter.h"
+#include "qlandmarkcategoryfilter_p.h"
 #include "qlandmarkcategoryid.h"
 
 QTM_BEGIN_NAMESPACE
@@ -56,8 +57,8 @@ QTM_BEGIN_NAMESPACE
     identified by \a categoryId.
 */
 QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId)
+        : QLandmarkFilter(new QLandmarkCategoryFilterPrivate(categoryId))
 {
-    //TODO: implement
 }
 
 /*!
@@ -65,7 +66,7 @@ QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkCategoryId &cate
 */
 QLandmarkCategoryFilter::~QLandmarkCategoryFilter()
 {
-    //TODO: implement
+    // pointer deleted in superclass destructor
 }
 
 /*!
@@ -73,7 +74,8 @@ QLandmarkCategoryFilter::~QLandmarkCategoryFilter()
 */
 QLandmarkCategoryId QLandmarkCategoryFilter::categoryId() const
 {
-    return QLandmarkCategoryId();
+    Q_D(const QLandmarkCategoryFilter);
+    return d->id;
 }
 
 /*!
@@ -82,6 +84,23 @@ QLandmarkCategoryId QLandmarkCategoryFilter::categoryId() const
 */
 void QLandmarkCategoryFilter::setCategoryId(const QLandmarkCategoryId &categoryId)
 {
+    Q_D(QLandmarkCategoryFilter);
+    d->id = categoryId;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkCategoryFilterPrivate::QLandmarkCategoryFilterPrivate(const QLandmarkCategoryId &id)
+        : id(id)
+{
+    type = QLandmarkFilter::CategoryFilter;
+}
+
+QLandmarkCategoryFilterPrivate::QLandmarkCategoryFilterPrivate(const QLandmarkCategoryFilterPrivate &other)
+        : QLandmarkFilterPrivate(other),
+        id(other.id) {}
+
+QLandmarkCategoryFilterPrivate::~QLandmarkCategoryFilterPrivate() {}
 
 QTM_END_NAMESPACE

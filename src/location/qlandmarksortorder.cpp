@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarksortorder.h"
+#include "qlandmarksortorder_p.h"
 #include "qlandmarkid.h"
 
 QTM_BEGIN_NAMESPACE
@@ -75,7 +76,28 @@ QTM_BEGIN_NAMESPACE
     The type of the sort order is InvalidSort.
 */
 QLandmarkSortOrder::QLandmarkSortOrder()
+        : d_ptr(new QLandmarkSortOrderPrivate())
+{}
+
+/*!
+  Internal
+*/
+QLandmarkSortOrder::QLandmarkSortOrder(QLandmarkSortOrderPrivate *d_ptr)
+        : d_ptr(d_ptr) {}
+
+QLandmarkSortOrder::QLandmarkSortOrder(const QLandmarkSortOrder &other)
+        : d_ptr(new QLandmarkSortOrderPrivate(*(other.d_ptr))) {}
+
+QLandmarkSortOrder &QLandmarkSortOrder::operator=(const QLandmarkSortOrder & other)
 {
+    *d_ptr = *(other.d_ptr);
+    return *this;
+}
+
+QLandmarkSortOrder::~QLandmarkSortOrder()
+{
+    Q_D(QLandmarkSortOrder);
+    delete d;
 }
 
 /*!
@@ -83,7 +105,8 @@ QLandmarkSortOrder::QLandmarkSortOrder()
 */
 QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 {
-    return QLandmarkSortOrder::DefaultSort;
+    Q_D(const QLandmarkSortOrder);
+    return d->type;
 }
 
 /*!
@@ -91,7 +114,8 @@ QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 */
 Qt::SortOrder QLandmarkSortOrder::direction() const
 {
-    return Qt::AscendingOrder;
+    Q_D(const QLandmarkSortOrder);
+    return d->order;
 }
 
 /*!
@@ -99,6 +123,21 @@ Qt::SortOrder QLandmarkSortOrder::direction() const
 */
 void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
 {
+    Q_D(QLandmarkSortOrder);
+    d->order = direction;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate()
+        : type(QLandmarkSortOrder::DefaultSort),
+        order(Qt::AscendingOrder) {}
+
+QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate(const QLandmarkSortOrderPrivate &other)
+        : type(other.type),
+        order(other.order) {}
+
+QLandmarkSortOrderPrivate::~QLandmarkSortOrderPrivate() {}
 
 QTM_END_NAMESPACE

@@ -62,7 +62,7 @@ public:
     void setCategoryId(const QLandmarkCategoryId &categoryId);
 
 private:
-    QLandmarkCategoryFilterPrivate *d;
+    Q_DECLARE_PRIVATE(QLandmarkCategoryFilter);
 };
 
 QTM_END_NAMESPACE

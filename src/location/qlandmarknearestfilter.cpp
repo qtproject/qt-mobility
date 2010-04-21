@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qlandmarknearestfilter.h"
+#include "qlandmarknearestfilter_p.h"
 #include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
@@ -55,9 +56,10 @@ QTM_BEGIN_NAMESPACE
     Creates a filter that will match the landmark nearest to a given central
     \a coordinate.
 */
-QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate, double radius)
+QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate,
+        double radius)
+        : QLandmarkFilter(new QLandmarkNearestFilterPrivate(coordinate, radius))
 {
-    //TODO: implement
 }
 
 /*!
@@ -65,7 +67,7 @@ QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate,
 */
 QLandmarkNearestFilter::~QLandmarkNearestFilter()
 {
-    //TODO: implement
+    // pointer deleted in superclass destructor
 }
 
 /*!
@@ -73,7 +75,8 @@ QLandmarkNearestFilter::~QLandmarkNearestFilter()
 */
 QGeoCoordinate QLandmarkNearestFilter::coordinate() const
 {
-    return QGeoCoordinate();
+    Q_D(const QLandmarkNearestFilter);
+    return d->coordinate;
 }
 
 /*!
@@ -81,6 +84,8 @@ QGeoCoordinate QLandmarkNearestFilter::coordinate() const
 */
 void QLandmarkNearestFilter::setCoordinate(const QGeoCoordinate &coordinate)
 {
+    Q_D(QLandmarkNearestFilter);
+    d->coordinate = coordinate;
 }
 
 /*!
@@ -90,7 +95,8 @@ void QLandmarkNearestFilter::setCoordinate(const QGeoCoordinate &coordinate)
 */
 double QLandmarkNearestFilter::radius() const
 {
-    return 0;
+    Q_D(const QLandmarkNearestFilter);
+    return d->radius;
 }
 
 /*!
@@ -100,7 +106,25 @@ double QLandmarkNearestFilter::radius() const
 */
 void QLandmarkNearestFilter::setRadius(double radius)
 {
-    Q_UNUSED(radius);
+    Q_D(QLandmarkNearestFilter);
+    d->radius = radius;
 }
+
+/*******************************************************************************
+*******************************************************************************/
+
+QLandmarkNearestFilterPrivate::QLandmarkNearestFilterPrivate(const QGeoCoordinate &coordinate, double radius)
+        : coordinate(coordinate),
+        radius(radius)
+{
+    type = QLandmarkFilter::NearestFilter;
+}
+
+QLandmarkNearestFilterPrivate::QLandmarkNearestFilterPrivate(const QLandmarkNearestFilterPrivate &other)
+        : QLandmarkFilterPrivate(other),
+        coordinate(other.coordinate),
+        radius(other.radius) {}
+
+QLandmarkNearestFilterPrivate::~QLandmarkNearestFilterPrivate() {}
 
 QTM_END_NAMESPACE
