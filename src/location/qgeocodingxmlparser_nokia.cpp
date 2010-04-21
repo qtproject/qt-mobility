@@ -2,7 +2,7 @@
 #include "qgeocodingxmlparser_nokia_p.h"
 
 #include "qgeocoordinate.h"
-#include "qgeocodingreply_nokia_p.h"
+#include "qsearchresponse_nokia_p.h"
 #include "qgeolocation.h"
 #include "qgeoaddress.h"
 
@@ -23,7 +23,7 @@ QGeocodingXmlParserNokia::~QGeocodingXmlParserNokia()
         delete m_reader;
 }
 
-bool QGeocodingXmlParserNokia::parse(QIODevice* source, QGeocodingReplyNokia *output)
+bool QGeocodingXmlParserNokia::parse(QIODevice* source, QSearchResponseNokia *output)
 {
     if (m_reader)
         delete m_reader;
@@ -44,7 +44,7 @@ QString QGeocodingXmlParserNokia::errorString() const
     return m_errorString;
 }
 
-bool QGeocodingXmlParserNokia::parseRootElement(QGeocodingReplyNokia *output)
+bool QGeocodingXmlParserNokia::parseRootElement(QSearchResponseNokia *output)
 {
     /*
     <xsd:element name="places">
@@ -71,9 +71,9 @@ bool QGeocodingXmlParserNokia::parseRootElement(QGeocodingReplyNokia *output)
             if (m_reader->attributes().hasAttribute("resultCode")) {
                 QStringRef result = m_reader->attributes().value("resultCode");
                 if (result == "OK") {
-                    output->setResultCode(QGeocodingReplyNokia::OK);
+                    output->setResultCode(QSearchResponseNokia::OK);
                 } else if (result == "FAILED") {
-                    output->setResultCode(QGeocodingReplyNokia::Failed);
+                    output->setResultCode(QSearchResponseNokia::Failed);
                 } else {
                     m_reader->raiseError(QString("The attribute \"resultCode\" of the element \"places\" has an unknown value (value was %1).").arg(result.toString()));
                     return false;

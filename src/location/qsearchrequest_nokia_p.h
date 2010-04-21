@@ -39,26 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_GEOCODINGREPLY_P_H
-#define QLOCATION_GEOCODINGREPLY_P_H
+#ifndef QSEARCHREQUEST_NOKIA_P_H_
+#define QSEARCHREQUEST_NOKIA_P_H_
 
+#include "qsearchrequest.h"
+#include "qsearchrequest_nokia.h"
 #include "qmobilityglobal.h"
-
-#include "qgeolocation.h"
-
-#include <QList>
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeocodingReplyPrivate
+class QSearchRequestNokiaPrivate
 {
 public:
-    QGeocodingReplyPrivate();
+    QSearchRequestNokiaPrivate(QSearchRequestNokia* parent);
+    ~QSearchRequestNokiaPrivate();
 
-    QString description;
-    QList<QGeoLocation> places;
+    /*!
+     Returns the request string for this request and the given \a host.
+     */
+    QString requestGeocodingString(const QString &host) const;
+
+    //ReverseGeocoding
+    /*!
+     Returns the request string for this request and the given \a host.
+     */
+    QString requestReverseGeocodingString(const QString &host) const;
+
+    QString trimDouble(qreal degree, int decimalDigits = 10) const;
+
+    QGeoCoordinate coord;
+    QSearchRequestNokia* q_ptr;
+    Q_DECLARE_PUBLIC(QSearchRequestNokia)
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif /* QSEARCHREQUEST_NOKIA_P_H_ */

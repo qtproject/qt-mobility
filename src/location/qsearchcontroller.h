@@ -39,28 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_REVERSEGEOCODINGREQUEST_PRIVATE_H
-#define QLOCATION_REVERSEGEOCODINGREQUEST_PRIVATE_H
+#ifndef QSEARCHCONTROLLER_H_
+#define QSEARCHCONTROLLER_H_
 
-#include <QString>
-
-#include "qgeocoordinate.h"
+#include <QObject>
+#include "qgeocodingservice.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QReverseGeocodingRequestPrivate
+class Q_LOCATION_EXPORT QSearchController : public QObject
 {
+    Q_OBJECT
+
 public:
-    QReverseGeocodingRequestPrivate();
+    QSearchController();
+    virtual ~QSearchController();
 
-    QString requestString(const QString &host) const;
-    QString trimDouble(qreal degree, int decimalDigits = 10) const;
+    virtual void geocode(QSearchRequest& request)=0;
+    virtual void reverseGeocode(QSearchRequest& request)=0;
+    virtual void POISearch(QSearchRequest& request)=0;
+    virtual void search(QSearchRequest& request)=0;
+    virtual void nextPage()=0;
+    virtual void previousPage()=0;
+    virtual void clear()=0;
 
-    QString        vers;
-    QString        languageMARC;
-    QGeoCoordinate coord;
+signals:
+    void searchRequestStarted(QSearchRequest* request);
+    void searchRequestFinished(QSearchResponse* response);
+    void searchResponseCleared(QSearchResponse* response);
+
+protected:
+    QSearchResponse* searchResponse;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif /* QSEARCHCONTROLLER_H_ */

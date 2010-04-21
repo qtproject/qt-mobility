@@ -39,58 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_GEOCODINGREQUEST_H
-#define QLOCATION_GEOCODINGREQUEST_H
+#ifndef QSEARCHCONTROLLER_NOKIA_P_H_
+#define QSEARCHCONTROLLER_NOKIA_P_H_
 
-#include "qmobilityglobal.h"
-#include <QString>
+#include "qsearchcontroller.h"
+#include "qgeocodingservice_nokia_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeocodingRequestPrivate;
-class Q_LOCATION_EXPORT QGeocodingRequest
+class Q_LOCATION_EXPORT QSearchControllerNokia : public QSearchController
 {
-    friend class QGeoNetworkManager;
-
+    Q_OBJECT
+    
 public:
-    QGeocodingRequest();
-    ~QGeocodingRequest();
+    QSearchControllerNokia();
+    QSearchControllerNokia(QGeocodingServiceNokia* service);
+    ~QSearchControllerNokia();
 
-    QString version() const;
+    virtual void geocode(QSearchRequest& request);
+    virtual void reverseGeocode(QSearchRequest& request);
+    virtual void POISearch(QSearchRequest& request);
+    virtual void search(QSearchRequest& request);
+    virtual void nextPage();
+    virtual void previousPage();
+    virtual void clear();
 
-    QString language() const;
-    void setLanguage(const QString& language);
-
-    QString oneBoxLocation() const;
-    void setOneBoxLocation(const QString& obloc);
-
-    QString country() const;
-    void setCountry(const QString& country);
-
-    QString state() const;
-    void setState(const QString& state);
-
-    QString city() const;
-    void setCity(const QString& city);
-
-    QString postCode() const;
-    void setPostCode(const QString& postCode);
-
-    QString street() const;
-    void setStreet(const QString& street);
-
-    QString number() const;
-    void setNumber(const QString& number);
-
-    QString requestString(const QString &host) const;
+private slots:
+    void codingReplyFinished(QSearchResponse* response);
 
 private:
-    Q_DISABLE_COPY(QGeocodingRequest)
-
-    QGeocodingRequestPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeocodingRequest)
+    QGeocodingServiceNokia* searchService;    
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif /* QSEARCHCONTROLLER_NOKIA_P_H_ */

@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qgeocodingservice_nokia_p.h"
-#include "qgeocodingreply_nokia_p.h"
+#include "qsearchresponse_nokia_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -97,54 +97,54 @@ void QGeocodingServiceNokia::setProxy(const QNetworkProxy &proxy)
     m_nam.setProxy(m_proxy);
 }
 
-QGeocodingReply* QGeocodingServiceNokia::geocode(const QGeocodingRequest& request)
+QSearchResponse* QGeocodingServiceNokia::geocode(const QSearchRequest& request)
 {
-    QString rawRequest = request.requestString(m_host);
+    QString rawRequest = request.searchText;
     QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
     QNetworkReply* reply = m_nam.get(netRequest);
 
-    QGeocodingReply* codingReply = new QGeocodingReplyNokia(reply);
+    QSearchResponse* codingReply = new QSearchResponseNokia(reply);
 
     connect(codingReply,
             SIGNAL(finished()),
             this,
             SLOT(finishedReply()));
     connect(codingReply,
-            SIGNAL(error(QGeocodingReply::ErrorCode, QString)),
+            SIGNAL(error(QSearchResponse::ErrorCode, QString)),
             this,
-            SLOT(errorReply(QGeocodingReply::ErrorCode, QString)));
+            SLOT(errorReply(QSearchResponse::ErrorCode, QString)));
 
     return codingReply;
 }
 
-QGeocodingReply* QGeocodingServiceNokia::reverseGeocode(const QReverseGeocodingRequest& request)
+QSearchResponse* QGeocodingServiceNokia::reverseGeocode(const QSearchRequest& request)
 {
-    QString rawRequest = request.requestString(m_host);
+    QString rawRequest = request.searchText;
     QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
     QNetworkReply* reply = m_nam.get(netRequest);
 
-    QGeocodingReply* codingReply = new QGeocodingReplyNokia(reply);
+    QSearchResponse* codingReply = new QSearchResponseNokia(reply);
 
     connect(codingReply,
             SIGNAL(finished()),
             this,
             SLOT(finishedReply()));
     connect(codingReply,
-            SIGNAL(error(QGeocodingReply::ErrorCode, QString)),
+            SIGNAL(error(QSearchResponse::ErrorCode, QString)),
             this,
-            SLOT(errorReply(QGeocodingReply::ErrorCode, QString)));
+            SLOT(errorReply(QSearchResponse::ErrorCode, QString)));
 
     return codingReply;
 }
 
 void QGeocodingServiceNokia::finishedReply()
 {
-    emit finished(static_cast<QGeocodingReply *>(this->sender()));
+    emit finished(static_cast<QSearchResponse *>(this->sender()));
 }
 
-void QGeocodingServiceNokia::errorReply(QGeocodingReply::ErrorCode errorCode, QString errorString)
+void QGeocodingServiceNokia::errorReply(QSearchResponse::ErrorCode errorCode, QString errorString)
 {
-    emit error(static_cast<QGeocodingReply *>(this->sender()), errorCode, errorString);
+    emit error(static_cast<QSearchResponse *>(this->sender()), errorCode, errorString);
 }
 
 #include "moc_qgeocodingservice_nokia_p.cpp"

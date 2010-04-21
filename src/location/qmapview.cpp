@@ -458,6 +458,14 @@ void QMapView::centerOn(qreal x, qreal y)
 }
 
 /*
+    Centers the view port on the given rect center.
+*/
+void QMapView::centerOn(QGeoBoundingBox rect)
+{
+    setCenter(rect.getCenter());
+}
+
+/*
     Centers the view port on the given \a geoPos.
 */
 void QMapView::setCenter(const QGeoCoordinate& coord)

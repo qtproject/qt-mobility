@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "qgeocodingreply.h"
-#include "qgeocodingreply_p.h"
+#include "qsearchresponse.h"
+#include "qsearchresponse_p.h"
 
 QTM_BEGIN_NAMESPACE
 /*!
-    \class QGeocodingReply
-    \brief The QGeocodingReply class represents the response from a geocoding service.
+    \class QSearchResponse
+    \brief The QSearchResponse class represents the response from a geocoding service.
     \ingroup location
 
     This class represents the response from a geocoding service.
@@ -67,81 +67,81 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a QGeocodingReply with parent \a parent.
+    Constructs a QSearchResponse with parent \a parent.
 */
-QGeocodingReply::QGeocodingReply(QObject *parent)
+QSearchResponse::QSearchResponse(QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeocodingReplyPrivate())
+        d_ptr(new QSearchResponsePrivate())
 {
 }
 
 /*!
     Destructor.
 */
-QGeocodingReply::~QGeocodingReply()
+QSearchResponse::~QSearchResponse()
 {
-    Q_D(QGeocodingReply);
+    Q_D(QSearchResponse);
     delete d;
 }
 
 /*!
     Returns the description of the geocoding or reverse geocoding reply.
 */
-QString QGeocodingReply::description() const
+QString QSearchResponse::description() const
 {
-    Q_D(const QGeocodingReply);
+    Q_D(const QSearchResponse);
     return d->description;
 }
 
 /*!
     Sets the description of the geocoding or reverse geocoding reply to \a description.
 */
-void QGeocodingReply::setDescription(const QString &description)
+void QSearchResponse::setDescription(const QString &description)
 {
-    Q_D(QGeocodingReply);
+    Q_D(QSearchResponse);
     d->description = description;
 }
 
 /*!
     Returns a list of places corresponding to the request.
 */
-QList<QGeoLocation> QGeocodingReply::places() const
+QList<QGeoLocation> QSearchResponse::places() const
 {
-    Q_D(const QGeocodingReply);
+    Q_D(const QSearchResponse);
     return d->places;
 }
 
 /*!
     Adds \a place to the list of places in this reply.
 */
-void QGeocodingReply::addPlace(const QGeoLocation &place)
+void QSearchResponse::addPlace(const QGeoLocation &place)
 {
-    Q_D(QGeocodingReply);
+    Q_D(QSearchResponse);
     d->places.append(place);
 }
 
 /*!
     Sets the list of places in the reply to \a places.
 */
-void QGeocodingReply::setPlaces(const QList<QGeoLocation> &places)
+void QSearchResponse::setPlaces(const QList<QGeoLocation> &places)
 {
-    Q_D(QGeocodingReply);
+    Q_D(QSearchResponse);
     d->places = places;
 }
 
 /*!
-    \fn void QGeocodingReply::cancel()
+    \fn void QSearchResponse::cancel()
 
     Cancels the receiving of this reply if the reply hasn't been received already.
 */
 
 /*!
-    \fn void QGeocodingReply::finished()
+    \fn void QSearchResponse::finished()
 
     Indicates that the reply has been received and processed without error, and is ready to be used.
 */
 /*!
-    \fn void QGeocodingReply::error(QGeocodingReply::ErrorCode errorCode, const QString &errorString = QString())
+    \fn void QSearchResponse::error(QSearchResponse::ErrorCode errorCode, const QString &errorString = QString())
 
     Indicates that an error occurred during the receiving or processing of the reply.
 */
@@ -149,8 +149,8 @@ void QGeocodingReply::setPlaces(const QList<QGeoLocation> &places)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeocodingReplyPrivate::QGeocodingReplyPrivate() {}
+QSearchResponsePrivate::QSearchResponsePrivate() {}
 
-#include "moc_qgeocodingreply.cpp"
+#include "moc_qsearchresponse.cpp"
 
 QTM_END_NAMESPACE

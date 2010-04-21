@@ -39,29 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef PLACEPRESENTER_H
-#define PLACEPRESENTER_H
+#include "qsearchcontroller.h"
 
-#include <QTreeWidget>
+QTM_BEGIN_NAMESPACE
 
-#include "qsearchresponse.h"
-#include "geopresenter.h"
+QSearchController::QSearchController() {}
 
-QTM_USE_NAMESPACE
+QSearchController::~QSearchController() {}
 
-class PlacePresenter : GeoPresenter
-{
-public:
-    PlacePresenter(QTreeWidget* treeWidget, const QSearchResponse* codingReply);
-    virtual void show();
+#include "moc_qsearchcontroller.cpp"
 
-private:
-    QTreeWidgetItem* showPlaces();
-    void showPlace(QTreeWidgetItem* top, const QGeoLocation& place);
-    void showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& address);
-
-private:
-    const QSearchResponse* codingReply;
-};
-
-#endif
+QTM_END_NAMESPACE

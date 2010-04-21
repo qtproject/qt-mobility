@@ -68,12 +68,12 @@ public:
     QNetworkProxy proxy() const;
     void setProxy(const QNetworkProxy &proxy);
 
-    virtual QGeocodingReply* geocode(const QGeocodingRequest& request);
-    virtual QGeocodingReply* reverseGeocode(const QReverseGeocodingRequest& request);
+    virtual QSearchResponse* geocode(const QSearchRequest& request);
+    virtual QSearchResponse* reverseGeocode(const QSearchRequest& request);
 
 private slots:
     void finishedReply();
-    void errorReply(QGeocodingReply::ErrorCode errorCode, QString errorString);
+    void errorReply(QSearchResponse::ErrorCode errorCode, QString errorString);
 
 private:
     QString m_token;

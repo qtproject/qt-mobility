@@ -39,29 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef PLACEPRESENTER_H
-#define PLACEPRESENTER_H
-
-#include <QTreeWidget>
+#ifndef QSEARCHRESPONSE_NOKIA_P_H
+#define QSEARCHRESPONSE_NOKIA_P_H
 
 #include "qsearchresponse.h"
-#include "geopresenter.h"
 
-QTM_USE_NAMESPACE
+#include <QNetworkReply>
 
-class PlacePresenter : GeoPresenter
+QTM_BEGIN_NAMESPACE
+
+class QSearchResponseNokia : public QSearchResponse
 {
+    Q_OBJECT
+
 public:
-    PlacePresenter(QTreeWidget* treeWidget, const QSearchResponse* codingReply);
-    virtual void show();
+    enum ResultCode {
+        OK,
+        Failed
+    };
+
+    QSearchResponseNokia(QNetworkReply *reply);
+    ~QSearchResponseNokia();
+
+    QSearchResponseNokia::ResultCode resultCode() const;
+    void setResultCode(QSearchResponseNokia::ResultCode code);
+
+public slots:
+    virtual void parse();
+    virtual void translateError(QNetworkReply::NetworkError errorCode);
+    virtual void cancel();
 
 private:
-    QTreeWidgetItem* showPlaces();
-    void showPlace(QTreeWidgetItem* top, const QGeoLocation& place);
-    void showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& address);
-
-private:
-    const QSearchResponse* codingReply;
+    QNetworkReply *m_reply;
+    QSearchResponseNokia::ResultCode m_code;
 };
+
+QTM_END_NAMESPACE
 
 #endif
