@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QLandmarkBoxFilter
     \brief The QLandmarkBoxFilter class is used to search for landmarks within a given bounding box.
-    \ingroup location
+    \ingroup landmarks-filter
 */
 
 /*!
