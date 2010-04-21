@@ -39,17 +39,42 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include "tabbeddialog.h"
+#ifndef GEOCODINGTAB_H_
+#define GEOCODINGTAB_H_
 
-int main(int argc, char *argv[])
+#include <QWidget>
+#include "qsearchresponse.h"
+#include "qgeocodingservice_nokia_p.h"
+#include "qsearchcontroller_nokia_p.h"
+
+class QTreeWidget;
+class QLineEdit;
+
+QTM_USE_NAMESPACE
+
+class GeocodingTab: public QWidget
 {
-    QApplication a(argc, argv);
-    TabbedDialog w;
-#ifdef Q_OS_SYMBIAN
-    w.showFullScreen();
-#else
-    w.show();
-#endif
-    return a.exec();
-}
+    Q_OBJECT
+
+public:
+    GeocodingTab(QWidget *parent = 0);
+    ~GeocodingTab();
+
+private slots:
+    void on_btnRequest_clicked();
+    void replyFinished(QSearchResponse* reply);
+    void testReplyFinishedSignal();
+    
+private:
+    QGeocodingServiceNokia *geocodingService; //owned by searchController
+    QSearchController *searchController;
+    QLineEdit *obloc;
+    QLineEdit *country;
+    QLineEdit *state;
+    QLineEdit *city;
+    QLineEdit *zip;
+    QLineEdit *street;
+    QLineEdit *streetNumber;
+    QTreeWidget *resultTree;
+};
+#endif /* ROUTETAB_H_ */

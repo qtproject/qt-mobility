@@ -38,82 +38,34 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
 
-#include <QMainWindow>
+#ifndef ROUTETAB_H_
+#define ROUTETAB_H_
 
-#include "qgeocodingservice.h"
+#include <QWidget>
 #include "qgeoroutingservice.h"
-#include "qmaptileservice.h"
-#include "qgeoroutereply.h"
-#include "qsearchresponse.h"
-#include "qgeocodingservice_nokia_p.h"
-#include "qsearchcontroller_nokia_p.h"
 
-
-
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
-#define QGEOAPIUI_USEPOPUPMENU
-#include <QMenu>
-#endif
-
-namespace Ui
-{
-class MainWindow;
-}
-#ifdef Q_OS_SYMBIAN
-QTM_BEGIN_NAMESPACE
-class QNetworkSession;
-QTM_END_NAMESPACE
-#endif
+class QTreeWidget;
+class QLineEdit;
 
 QTM_USE_NAMESPACE
 
-class MainWindow : public QMainWindow
+class RouteTab: public QWidget
 {
     Q_OBJECT
+
 public:
-    MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-
-protected:
-    void changeEvent(QEvent *e);
-
-private:
-    Ui::MainWindow *ui;
-
+    RouteTab(QWidget *parent = 0);
+    ~RouteTab();
 private slots:
-    void on_btnRequestTile_clicked();
-    void on_btnCoding_clicked();
-    void on_btnReverseCoding_clicked();
     void on_btnRequest_clicked();
-    void testReplyFinishedSignal();
-
-    void routeReplyFinished(QGeoRouteReply* reply);
-    void codingReplyFinished(QSearchResponse* reply);
-    void mapTileReplyFinished(QMapTileReply* reply);
-
-    void delayedInit();
-#ifdef QGEOAPIUI_USEPOPUPMENU
-    void customContextMenuRequest(const QPoint&);
-    void showRouteRequestControls(bool visible = true);
-    void showGeocodingControls(bool visible = true);
-    void showReverseGeocodingControls(bool visible = true);
-    void showMapTileControls(bool visible = true);
-#endif
-
+    void replyFinished(QGeoRouteReply* reply);
 private:
-    QGeocodingServiceNokia *geocodingService; //owned by searchController
     QGeoRoutingService *routingService;
-    QSearchController *searchController;
-    QMapTileService *mapService;
-#ifdef Q_OS_SYMBIAN
-    QNetworkSession *session;
-#endif
-#ifdef QGEOAPIUI_USEPOPUPMENU
-    QMenu* popupMenu;
-#endif
+    QLineEdit *srcLong;
+    QLineEdit *srcLat;
+    QLineEdit *destLong;
+    QLineEdit *destLat;
+    QTreeWidget *resultTree;
 };
-
-#endif // MAINWINDOW_H
+#endif /* ROUTETAB_H_ */

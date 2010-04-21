@@ -39,17 +39,34 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include "tabbeddialog.h"
+#ifndef MAPTILETAB_H_
+#define MAPTILETAB_H_
 
-int main(int argc, char *argv[])
+#include <QWidget>
+#include "qmaptileservice.h"
+
+class QLabel;
+class QLineEdit;
+
+QTM_USE_NAMESPACE
+
+class MapTileTab: public QWidget
 {
-    QApplication a(argc, argv);
-    TabbedDialog w;
-#ifdef Q_OS_SYMBIAN
-    w.showFullScreen();
-#else
-    w.show();
-#endif
-    return a.exec();
-}
+    Q_OBJECT
+
+public:
+    MapTileTab(QWidget *parent = 0);
+    ~MapTileTab();
+
+private slots:
+    void on_btnRequest_clicked();
+    void replyFinished(QMapTileReply* reply);
+
+private:
+    QMapTileService *mapService;
+    QLineEdit *tileLong;
+    QLineEdit *tileLat;
+    QLineEdit *tileZoomLevel;
+    QLabel *result;
+};
+#endif /* ROUTETAB_H_ */

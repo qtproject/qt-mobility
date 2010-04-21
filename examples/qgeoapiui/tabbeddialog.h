@@ -39,17 +39,31 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include "tabbeddialog.h"
+#ifndef TABBEDDIALOG_H_
+#define TABBEDDIALOG_H_
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    TabbedDialog w;
+#include <QDialog>
+#include <QTabWidget>
+
+class QTabWidget;
 #ifdef Q_OS_SYMBIAN
-    w.showFullScreen();
-#else
-    w.show();
+#include <qnetworksession.h>
+QTM_USE_NAMESPACE
 #endif
-    return a.exec();
-}
+
+class TabbedDialog: public QDialog
+{
+Q_OBJECT
+
+public:
+    TabbedDialog(QWidget *parent = 0);
+    virtual ~TabbedDialog();
+
+private:
+    QTabWidget *tabWidget;
+#ifdef Q_OS_SYMBIAN
+    QNetworkSession *session;
+#endif
+};
+
+#endif /* TABBEDDIALOG_H_ */

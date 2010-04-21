@@ -39,17 +39,52 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
+#include <QTabWidget>
+#include <QVBoxLayout>
 #include "tabbeddialog.h"
+#include "routetab.h"
+#include "geocodingtab.h"
+#include "revgeocodingtab.h"
+#include "maptiletab.h"
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    TabbedDialog w;
 #ifdef Q_OS_SYMBIAN
-    w.showFullScreen();
-#else
-    w.show();
+#include <QMessageBox>
+#include <qnetworkconfigmanager.h>
 #endif
-    return a.exec();
+
+TabbedDialog::TabbedDialog(QWidget *parent)
+    : QDialog(parent)
+{
+#ifdef Q_OS_SYMBIAN
+    // Set Internet Access Point
+    QNetworkConfigurationManager manager;
+    const bool canStartIAP = (manager.capabilities()
+                              & QNetworkConfigurationManager::CanStartAndStopInterfaces);
+    // Is there default access point, use it
+    QNetworkConfiguration cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+        QMessageBox::information(this, tr("QGeoApiUI Example"), tr(
+                                     "Available Access Points not found."));
+        return;
+    }
+
+    session = new QNetworkSession(cfg, this);
+    session->open();
+    session->waitForOpened(-1);
+#endif
+    tabWidget = new QTabWidget;
+    tabWidget->addTab(new RouteTab(), tr("Route"));
+    tabWidget->addTab(new GeocodingTab(), tr("Geocoding"));
+    tabWidget->addTab(new ReverseGeocodingTab(), tr("Reverse Geocoding"));
+    tabWidget->addTab(new MapTileTab(), tr("Map Tile"));
+    
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(tabWidget);
+    setLayout(mainLayout);
+    setWindowTitle(tr("QGeoApiUI Example"));    
 }
+
+TabbedDialog::~TabbedDialog()
+{
+}
+

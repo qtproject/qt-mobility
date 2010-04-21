@@ -39,17 +39,36 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include "tabbeddialog.h"
+#ifndef REVERSEGEOCODINGTAB_H_
+#define REVERSEGEOCODINGTAB_H_
 
-int main(int argc, char *argv[])
+#include <QWidget>
+#include "qsearchresponse.h"
+#include "qgeocodingservice_nokia_p.h"
+#include "qsearchcontroller_nokia_p.h"
+
+class QTreeWidget;
+class QLineEdit;
+
+QTM_USE_NAMESPACE
+
+class ReverseGeocodingTab: public QWidget
 {
-    QApplication a(argc, argv);
-    TabbedDialog w;
-#ifdef Q_OS_SYMBIAN
-    w.showFullScreen();
-#else
-    w.show();
-#endif
-    return a.exec();
-}
+    Q_OBJECT
+
+public:
+    ReverseGeocodingTab(QWidget *parent = 0);
+    ~ReverseGeocodingTab();
+
+private slots:
+    void on_btnRequest_clicked();
+    void replyFinished(QSearchResponse* reply);
+
+private:
+    QGeocodingServiceNokia *geocodingService; //owned by searchController
+    QSearchController *searchController;
+    QLineEdit *locLong;
+    QLineEdit *locLat;
+    QTreeWidget *resultTree;
+};
+#endif /* ROUTETAB_H_ */
