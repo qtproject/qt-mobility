@@ -46,8 +46,8 @@
 #include <qaccelerometer.h>
 #include <qsensorbackend.h>
 
-#include <accelerometersensor_i.h>
-#include <datatypes/xyz.h>
+#include <sensord/accelerometersensor_i.h>
+#include <sensord/datatypes/xyz.h>
 
 QTM_USE_NAMESPACE
 

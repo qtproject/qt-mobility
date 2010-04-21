@@ -45,8 +45,8 @@
 #include "maemo6sensorbase.h"
 #include <qmagnetometer.h>
 
-#include <magnetometersensor_i.h>
-#include <datatypes/magneticfield.h>
+#include <sensord/magnetometersensor_i.h>
+#include <sensord/datatypes/magneticfield.h>
 
 QTM_USE_NAMESPACE
 
