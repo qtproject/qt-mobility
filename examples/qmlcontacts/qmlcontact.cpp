@@ -103,17 +103,6 @@ void QmlContact::setEmail(QString email)
 }
 
 
-QStringList QmlContact::availableActions()
-{
-    QList<QContactActionDescriptor> actions =  m_contact.availableActions();
-    QStringList names;
-
-    foreach (const QContactActionDescriptor& action, actions) {
-        names << action.actionName();
-    }
-    return names;
-}
-
 QStringList QmlContact::details()
 {
     QStringList dets;

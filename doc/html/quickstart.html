@@ -23,7 +23,7 @@
 <p>One can start using Qt Mobility with 3 simple steps.</p>
 <ol type="1">
 <li>Include the appropriate headers</li>
-<li>Use the <tt>QtMobility</tt> namespace</li>
+<li>Use the QTM_USE_NAMESPACE macro (defined in qmobilityglobal.h but implicitly included from any Qt Mobility header)</li>
 <li>Declare the usage of Qt Mobility and appropriate API(s) in the project(.pro) file</li>
 </ol>
 <p>Steps 1 and 2 are shown in the example below:</p>
@@ -35,7 +35,8 @@
     #else
     #include &lt;QSystemInfo&gt; <span class="comment">//(1)</span>
     #endif
-    using namespace QtMobility; <span class="comment">//(2)</span>
+
+    QTM_USE_NAMESPACE <span class="comment">//(2)</span>
 
     int main(int argc, char *argv[])
     {
@@ -46,7 +47,7 @@
         label-&gt;resize(100,30);
         return app.exec();
     }</pre>
-<p>This example uses the <a href="qsysteminfo.html">QSystemInfo</a> headers to print out the system's current country code. All the domain APIs are wrapped within the <tt>QtMobility</tt> namespace and thus developers either need to declare <tt>using namespace QtMobility</tt> or qualify their symbols e.g&#x2e; <tt>QtMobility::QSystemInfo</tt>. (<b>Note</b>: If you are on the Symbian platform you will need to define the actual header file, in this case &lt;qsysteminfo.h&gt; rather than using the standard header form &lt;<a href="qsysteminfo.html">QSystemInfo</a>&gt;, this is a known bug that is to be addressed in a future release)</p>
+<p>This example uses the <a href="qsysteminfo.html">QSystemInfo</a> headers to print out the system's current country code. All the domain APIs are wrapped within a Qt Mobility namespace and thus developers need to use the QTM_USE_NAMESPACE macro. (<b>Note</b>: If you are on the Symbian platform you will need to define the actual header file, in this case &lt;qsysteminfo.h&gt; rather than using the standard header form &lt;<a href="qsysteminfo.html">QSystemInfo</a>&gt;, this is a known bug that is to be addressed in a future release)</p>
 <p>In step 3, to specify that our project is using System Information we declare in the project file:</p>
 <pre>    CONFIG += mobility
     MOBILITY += systeminfo</pre>
@@ -92,7 +93,7 @@
 <pre>    qmake
     make release-gcce
     make sis</pre>
-<p>For further details on how to build applications for Symbian see <a href="http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html">The Symbian Platform - Introduction to Qt</a>, <a href="http://developer.symbian.org/wiki/index.php/Qt_Quick_Start">Qt Quick Start</a> and the <tt>symbian\install.txt</tt></p>
+<p>For further details on how to build applications for Symbian see <a href="http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html">The Symbian Platform - Introduction to Qt</a> and <a href="http://developer.symbian.org/wiki/index.php/Qt_Quick_Start">Qt Quick Start</a></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

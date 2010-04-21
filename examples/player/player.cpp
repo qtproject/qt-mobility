@@ -266,11 +266,11 @@ void Player::metaDataChanged()
         setTrackInfo(QString("(%1/%2) %3 - %4")
                 .arg(playlist->currentIndex()+1)
                 .arg(playlist->mediaCount())
-                .arg(player->metaData(QtMultimedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMultimedia::Title).toString()));
+                .arg(player->metaData(QtMediaServices::AlbumArtist).toString())
+                .arg(player->metaData(QtMediaServices::Title).toString()));
 
         if (!player->isVideoAvailable()) {
-            QUrl uri = player->metaData(QtMultimedia::CoverArtUrlLarge).value<QUrl>();
+            QUrl uri = player->metaData(QtMediaServices::CoverArtUrlLarge).value<QUrl>();
             QPixmap pixmap = NULL;
 
             if (uri.isEmpty()) {
@@ -306,14 +306,14 @@ void Player::metaDataChanged()
     hideOrShowCoverArt();
     }
 #else
-    //qDebug() << "update metadata" << player->metaData(QtMultimedia::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QtMediaServices::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(player->metaData(QtMultimedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMultimedia::Title).toString()));
+                .arg(player->metaData(QtMediaServices::AlbumArtist).toString())
+                .arg(player->metaData(QtMediaServices::Title).toString()));
 
         if (coverLabel) {
-            QUrl url = player->metaData(QtMultimedia::CoverArtUrlLarge).value<QUrl>();
+            QUrl url = player->metaData(QtMediaServices::CoverArtUrlLarge).value<QUrl>();
 
             coverLabel->setPixmap(!url.isEmpty()
                     ? QPixmap(url.toString())

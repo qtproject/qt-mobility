@@ -63,7 +63,7 @@ public:
     ~QMediaObject();
 
     virtual bool isAvailable() const;
-    virtual QtMultimedia::AvailabilityError availabilityError() const;
+    virtual QtMediaServices::AvailabilityError availabilityError() const;
 
     virtual QMediaService* service() const;
 
@@ -76,9 +76,9 @@ public:
     bool isMetaDataAvailable() const;
     bool isMetaDataWritable() const;
 
-    QVariant metaData(QtMultimedia::MetaData key) const;
-    void setMetaData(QtMultimedia::MetaData key, const QVariant &value);
-    QList<QtMultimedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMediaServices::MetaData key) const;
+    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
+    QList<QtMediaServices::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const;
     void setExtendedMetaData(const QString &key, const QVariant &value);
