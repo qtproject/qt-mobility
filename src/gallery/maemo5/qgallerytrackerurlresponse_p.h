@@ -55,6 +55,7 @@
 
 #include "qgalleryabstractresponse.h"
 
+#include "qgallerydbusinterface_p.h"
 #include "qgallerytrackerschema_p.h"
 
 #include <QtDBus/qdbusinterface.h>
@@ -70,7 +71,7 @@ class QGalleryTrackerUrlResponse : public QGalleryAbstractResponse
     Q_OBJECT
 public:
     QGalleryTrackerUrlResponse(
-            const QDBusConnection &connection,
+            const QGalleryDBusInterfacePointer &searchInterface,
             QGalleryUrlRequest *request,
             QObject *parent = 0);
     ~QGalleryTrackerUrlResponse();
@@ -106,7 +107,7 @@ private:
     QDBusPendingCallWatcher *m_fileQueryWatcher;
     QDBusPendingCallWatcher *m_typeQueryWatcher;
 
-    QDBusInterface m_searchInterface;
+    QGalleryDBusInterfacePointer m_searchInterface;
     QStringList m_propertyNames;
     QStringList m_row;
     QVector<int> m_rowIndexes;

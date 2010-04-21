@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYTRACKERCOUNTRESPONSE_P_H
-#define QGALLERYTRACKERCOUNTRESPONSE_P_H
+#ifndef QGALLERYDBUSINTERFACE_P_H
+#define QGALLERYDBUSINTERFACE_P_H
 
 //
 //  W A R N I N G
@@ -53,69 +53,27 @@
 // We mean it.
 //
 
-#include "qgalleryabstractresponse.h"
+#include <qmobilityglobal.h>
 
-#include "qgallerydbusinterface_p.h"
-
+#include <QtCore/qshareddata.h>
 #include <QtDBus/qdbusinterface.h>
-#include <QtDBus/qdbuspendingcall.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerSchema;
-
-class QGalleryTrackerCountResponse : public QGalleryAbstractResponse
+class QGalleryDBusInterface : public QDBusInterface, public QSharedData
 {
-    Q_OBJECT
 public:
-    QGalleryTrackerCountResponse(
-            const QGalleryDBusInterfacePointer &metaDataInterface,
-            const QGalleryTrackerSchema &schema,
-            const QString &query,
-            QObject *parent = 0);
-    ~QGalleryTrackerCountResponse();
-
-    QStringList propertyNames() const;
-    int propertyKey(const QString &name) const;
-    QGalleryProperty::Attributes propertyAttributes(int key) const;
-
-    int count() const;
-
-    QString id(int index) const;
-    QUrl url(int index) const;
-    QString type(int index) const;
-    QList<QGalleryResource> resources(int index) const;
-    ItemStatus status(int index) const;
-
-    QVariant metaData(int index, int key) const;
-    void setMetaData(int index, int key, const QVariant &value);
-
-    void cancel();
-
-    bool waitForFinished(int msecs);
-
-private Q_SLOTS:
-    void callFinished(QDBusPendingCallWatcher *watcher);
-
-private:
-    void queryCount();
-
-    enum
-    {
-        MaximumFetchSize = 512
-    };
-
-    int m_count;
-    int m_workingCount;
-    int m_currentOffset;
-    QDBusPendingCallWatcher *m_call;
-    QGalleryDBusInterfacePointer m_metaDataInterface;
-    QString m_query;
-    QString m_service;
-    QString m_countField;
-    QStringList m_identityFields;
-
+    QGalleryDBusInterface(
+            const QString &service,
+            const QString &path,
+            const QString &interface,
+            const QDBusConnection &connection = QDBusConnection::sessionBus(),
+            QObject *parent = 0)
+        : QDBusInterface(service, path, interface, connection, parent) {}
+    ~QGalleryDBusInterface() {}
 };
+
+typedef QExplicitlySharedDataPointer<QGalleryDBusInterface> QGalleryDBusInterfacePointer;
 
 QTM_END_NAMESPACE
 

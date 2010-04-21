@@ -53,17 +53,13 @@ Q_DECLARE_METATYPE(QVector<QStringList>)
 QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerUrlResponse::QGalleryTrackerUrlResponse(
-        const QDBusConnection &connection,
+        const QGalleryDBusInterfacePointer &searchInterface,
         QGalleryUrlRequest *request,
         QObject *parent)
     : QGalleryAbstractResponse(parent)
     , m_fileQueryWatcher(0)
     , m_typeQueryWatcher(0)
-    , m_searchInterface(
-            QLatin1String("org.freedesktop.Tracker"),
-            QLatin1String("/org/freedesktop/Tracker/Search"),
-            QLatin1String("org.freedesktop.Tracker.Search"),
-            connection)
+    , m_searchInterface(searchInterface)
     , m_propertyNames(request->propertyNames())
     , m_rowIndexes(m_propertyNames.count(), -1)
     , m_pendingRowIndexes(m_propertyNames.count(), -1)
@@ -287,7 +283,7 @@ QDBusPendingCallWatcher *QGalleryTrackerUrlResponse::execute(
             << 1;
 
     return new QDBusPendingCallWatcher(
-            m_searchInterface.asyncCallWithArgumentList(QLatin1String("Query"), arguments), this);
+            m_searchInterface->asyncCallWithArgumentList(QLatin1String("Query"), arguments), this);
 }
 
 #include "moc_qgallerytrackerurlresponse_p.cpp"

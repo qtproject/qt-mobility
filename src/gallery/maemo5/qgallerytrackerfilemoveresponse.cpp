@@ -46,13 +46,13 @@
 QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerFileMoveResponse::QGalleryTrackerFileMoveResponse(
-        const QDBusConnection &connection,
+        const QGalleryDBusInterfacePointer &metaDataInterface,
         const QGalleryTrackerSchema &schema,
         const QStringList &properties,
         const QStringList &fileNames,
         const QString &destinationPath,
         QObject *parent)
-    : QGalleryTrackerFileEditResponse(connection, schema, properties, fileNames, parent)
+    : QGalleryTrackerFileEditResponse(metaDataInterface, schema, properties, fileNames, parent)
     , m_destinationPath(destinationPath)
 {
     if (!m_destinationPath.endsWith(QLatin1Char('/')))

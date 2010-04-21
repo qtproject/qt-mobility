@@ -47,7 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerAggregateListResponse::QGalleryTrackerAggregateListResponse(
-        const QDBusConnection &connection,
+        const QGalleryDBusInterfacePointer &metaDataInterface,
         const QGalleryTrackerSchema &schema,
         const QString &query,
         const QStringList &properties,
@@ -55,11 +55,7 @@ QGalleryTrackerAggregateListResponse::QGalleryTrackerAggregateListResponse(
         int minimumPagedItems,
         QObject *parent)
     : QGalleryTrackerListResponse(schema, minimumPagedItems, parent)
-    , m_dbusInterface(
-            QLatin1String("org.freedesktop.Tracker"),
-            QLatin1String("/org/freedesktop/Tracker/Metadata"),
-            QLatin1String("org.freedesktop.Tracker.Metadata"),
-            connection)
+    , m_metaDataInterface(metaDataInterface)
     , m_type(schema.itemType())
     , m_service(schema.service())
     , m_query(query)
@@ -164,7 +160,7 @@ QList<QGalleryResource> QGalleryTrackerAggregateListResponse::resources(int) con
 
 QDBusPendingCall QGalleryTrackerAggregateListResponse::queryRows(int offset, int limit)
 {
-    return m_dbusInterface.asyncCall(QLatin1String("GetUniqueValuesWithAggregates"),
+    return m_metaDataInterface->asyncCall(QLatin1String("GetUniqueValuesWithAggregates"),
             m_service,
             m_identityFields,
             m_query,

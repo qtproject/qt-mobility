@@ -325,7 +325,6 @@ void Manager::actionProgressChanged(int current, int maximum)
     actionProgress->setValue(current);
 }
 
-
 void Manager::sourceRequestFinished(int)
 {
 }

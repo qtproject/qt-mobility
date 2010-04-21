@@ -77,7 +77,36 @@ public:
     QGalleryAbstractResponse *createCopyResponse(QGalleryCopyRequest *request);
     QGalleryAbstractResponse *createMoveResponse(QGalleryMoveRequest *request);
     QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
+
+private:
+    QGalleryDBusInterfacePointer metaDataInterface();
+    QGalleryDBusInterfacePointer searchInterface();
+
+    QGalleryDBusInterfacePointer metaDataService;
+    QGalleryDBusInterfacePointer searchService;
 };
+
+QGalleryDBusInterfacePointer QDocumentGalleryPrivate::metaDataInterface()
+{
+    if (!metaDataService) {
+        metaDataService = new QGalleryDBusInterface(
+                QLatin1String("org.freedesktop.Tracker"),
+                QLatin1String("/org/freedesktop/Tracker/Metadata"),
+                QLatin1String("org.freedesktop.Tracker.Metadata"));
+    }
+    return metaDataService;
+}
+
+QGalleryDBusInterfacePointer QDocumentGalleryPrivate::searchInterface()
+{
+    if (!searchService) {
+        searchService = new QGalleryDBusInterface(
+                QLatin1String("org.freedesktop.Tracker"),
+                QLatin1String("/org/freedesktop/Tracker/Search"),
+                QLatin1String("org.freedesktop.Tracker.Search"));
+    }
+    return searchService;
+}
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
 {
@@ -94,7 +123,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
         QGalleryAbstractResponse *response = 0;
         if (schema.isFileType()) {
             response = new QGalleryTrackerFileListResponse(
-                    QDBusConnection::sessionBus(),
+                    searchInterface(),
                     schema,
                     query,
                     request->propertyNames(),
@@ -103,7 +132,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
             response->setCursorPosition(0);
         } else if (schema.isAggregateType()) {
             response = new QGalleryTrackerAggregateListResponse(
-                    QDBusConnection::sessionBus(),
+                    metaDataInterface(),
                     schema,
                     query,
                     request->propertyNames(),
@@ -122,7 +151,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
         QGalleryUrlRequest *request)
 {
-    return new QGalleryTrackerUrlResponse(QDBusConnection::sessionBus(), request);
+    return new QGalleryTrackerUrlResponse(searchInterface(), request);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
@@ -141,7 +170,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
         QGalleryAbstractResponse *response = 0;
         if (schema.isFileType()) {
             response = new QGalleryTrackerFileListResponse(
-                    QDBusConnection::sessionBus(),
+                    searchInterface(),
                     schema,
                     query,
                     request->propertyNames(),
@@ -152,7 +181,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
             return response;
         } else if (schema.isAggregateType()) {
             response = new QGalleryTrackerAggregateListResponse(
-                    QDBusConnection::sessionBus(),
+                    metaDataInterface(),
                     schema,
                     query,
                     request->propertyNames(),
@@ -184,7 +213,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
     } else {
         if (schema.isFileType()) {
             QGalleryAbstractResponse *response = new QGalleryTrackerFileListResponse(
-                    QDBusConnection::sessionBus(),
+                    searchInterface(),
                     schema,
                     query,
                     request->propertyNames(),
@@ -195,7 +224,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
             return response;
         } else if (schema.isAggregateType()) {
             QGalleryAbstractResponse *response = new QGalleryTrackerAggregateListResponse(
-                    QDBusConnection::sessionBus(),
+                    metaDataInterface(),
                     schema,
                     query,
                     request->propertyNames(),
@@ -225,7 +254,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else if (schema.isFileType() || schema.isAggregateType()) {
-        return new QGalleryTrackerCountResponse(QDBusConnection::sessionBus(), schema, query);
+        return new QGalleryTrackerCountResponse(metaDataInterface(), schema, query);
     }
 
     return new QGalleryErrorResponse(result);
@@ -250,7 +279,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCopyResponse(QGalleryCo
             result = QGalleryAbstractRequest::InvalidDestinationError;
         } else {
             return new QGalleryTrackerFileCopyResponse(
-                    QDBusConnection::sessionBus(),
+                    metaDataInterface(),
                     schema,
                     request->propertyNames(),
                     fileNames,
@@ -280,7 +309,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createMoveResponse(QGalleryMo
             result = QGalleryAbstractRequest::InvalidDestinationError;
         } else {
             return new QGalleryTrackerFileMoveResponse(
-                    QDBusConnection::sessionBus(),
+                    metaDataInterface(),
                     schema,
                     request->propertyNames(),
                     fileNames,
@@ -306,7 +335,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
             result = QGalleryAbstractRequest::InvalidItemError;
     } else {
         return new QGalleryTrackerFileRemoveResponse(
-                QDBusConnection::sessionBus(),
+                metaDataInterface(),
                 schema,
                 request->propertyNames(),
                 fileNames);

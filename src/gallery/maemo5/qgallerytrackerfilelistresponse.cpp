@@ -47,7 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
-        const QDBusConnection &connection,
+        const QGalleryDBusInterfacePointer &searchInterface,
         const QGalleryTrackerSchema &schema,
         const QString &query,
         const QStringList &properties,
@@ -55,11 +55,7 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
         int minimumPagedItems,
         QObject *parent)
     : QGalleryTrackerListResponse(schema, minimumPagedItems, parent)
-    , m_dbusInterface(
-            QLatin1String("org.freedesktop.Tracker"),
-            QLatin1String("/org/freedesktop/Tracker/Search"),
-            QLatin1String("org.freedesktop.Tracker.Search"),
-            connection)
+    , m_searchInterface(searchInterface)
     , m_service(schema.service())
     , m_query(query)
 {
@@ -173,7 +169,7 @@ QDBusPendingCall QGalleryTrackerFileListResponse::queryRows(int offset, int limi
             << offset
             << limit;
 
-    return m_dbusInterface.asyncCallWithArgumentList (QLatin1String("Query"), arguments);
+    return m_searchInterface->asyncCallWithArgumentList(QLatin1String("Query"), arguments);
 }
 
 #include "moc_qgallerytrackerfilelistresponse_p.cpp"

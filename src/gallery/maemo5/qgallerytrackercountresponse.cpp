@@ -50,7 +50,7 @@ Q_DECLARE_METATYPE(QVector<QStringList>)
 QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerCountResponse::QGalleryTrackerCountResponse(
-        const QDBusConnection &connection,
+        const QGalleryDBusInterfacePointer &metaDataInterface,
         const QGalleryTrackerSchema &schema,
         const QString &query,
         QObject *parent)
@@ -59,11 +59,7 @@ QGalleryTrackerCountResponse::QGalleryTrackerCountResponse(
     , m_workingCount(0)
     , m_currentOffset(0)
     , m_call(0)
-    , m_dbusInterface(
-            QLatin1String("org.freedesktop.Tracker"),
-            QLatin1String("/org/freedesktop/Tracker/Metadata"),
-            QLatin1String("org.freedesktop.Tracker.Metadata"),
-            connection)
+    , m_metaDataInterface(metaDataInterface)
     , m_query(query)
     , m_service(schema.service())
     , m_identityFields(schema.identityFields())
@@ -209,13 +205,13 @@ void QGalleryTrackerCountResponse::callFinished(QDBusPendingCallWatcher *watcher
 void QGalleryTrackerCountResponse::queryCount()
 {
     if (m_countField.isEmpty()) {
-        m_call = new QDBusPendingCallWatcher(m_dbusInterface.asyncCall(
+        m_call = new QDBusPendingCallWatcher(m_metaDataInterface->asyncCall(
                 QLatin1String("GetCount"), m_service, QLatin1String("*"), m_query), this);
     } else if (m_identityFields.isEmpty()) {
-        m_call = new QDBusPendingCallWatcher(m_dbusInterface.asyncCall(
+        m_call = new QDBusPendingCallWatcher(m_metaDataInterface->asyncCall(
                 QLatin1String("GetCount"), m_service, m_countField, m_query), this);
     } else {
-        m_call = new QDBusPendingCallWatcher(m_dbusInterface.asyncCall(
+        m_call = new QDBusPendingCallWatcher(m_metaDataInterface->asyncCall(
                 QLatin1String("GetUniqueValuesWithCount"),
                 m_service,
                 m_identityFields,

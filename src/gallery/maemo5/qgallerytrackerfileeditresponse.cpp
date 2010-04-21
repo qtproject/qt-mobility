@@ -72,7 +72,7 @@ private:
 };
 
 QGalleryTrackerFileEditResponse::QGalleryTrackerFileEditResponse(
-        const QDBusConnection &connection,
+        const QGalleryDBusInterfacePointer &metaDataInterface,
         const QGalleryTrackerSchema &schema,
         const QStringList &properties,
         const QStringList &fileNames,
@@ -84,11 +84,7 @@ QGalleryTrackerFileEditResponse::QGalleryTrackerFileEditResponse(
     , m_cancelled(0)
     , m_call(0)
     , m_thread(0)
-    , m_dbusInterface(
-            QLatin1String("org.freedesktop.Tracker"),
-            QLatin1String("/org/freedesktop/Tracker/Metadata"),
-            QLatin1String("org.freedesktop.Tracker.Metadata"),
-            connection)
+    , m_metaDataInterface(metaDataInterface)
 {
     QStringList fields;
 
@@ -109,7 +105,7 @@ QGalleryTrackerFileEditResponse::QGalleryTrackerFileEditResponse(
         }
     }
 
-    m_call = new QDBusPendingCallWatcher(m_dbusInterface.asyncCall(
+    m_call = new QDBusPendingCallWatcher(m_metaDataInterface->asyncCall(
             QLatin1String("GetMultiple"),
             QLatin1String("Files"),
             fileNames,

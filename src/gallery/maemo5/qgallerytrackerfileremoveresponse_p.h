@@ -62,7 +62,7 @@ class QGalleryTrackerFileRemoveResponse : public QGalleryTrackerFileEditResponse
     Q_OBJECT
 public:
     QGalleryTrackerFileRemoveResponse(
-            const QDBusConnection &connection,
+            const QGalleryDBusInterfacePointer &metaDataInterface,
             const QGalleryTrackerSchema &schema,
             const QStringList &properties,
             const QStringList &fileNames,

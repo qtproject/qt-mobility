@@ -62,7 +62,7 @@ class QGalleryTrackerFileCopyResponse : public QGalleryTrackerFileEditResponse
     Q_OBJECT
 public:
     QGalleryTrackerFileCopyResponse(
-            const QDBusConnection &connection,
+            const QGalleryDBusInterfacePointer &metaDataInterface,
             const QGalleryTrackerSchema &schema,
             const QStringList &properties,
             const QStringList &fileNames,

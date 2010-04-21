@@ -4,6 +4,7 @@ INCLUDEPATH += $$PWD
 QT += dbus
 
 HEADERS += \
+        $$PWD/qgallerydbusinterface_p.h \
         $$PWD/qgalleryimageloader_p.h \
         $$PWD/qgallerymediaartloader_p.h \
         $$PWD/qgallerythumbnailloader_p.h \

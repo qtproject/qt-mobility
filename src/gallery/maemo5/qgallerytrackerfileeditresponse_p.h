@@ -55,9 +55,8 @@
 
 #include "qgalleryabstractresponse.h"
 
+#include "qgallerydbusinterface_p.h"
 #include "qgallerytrackerschema_p.h"
-
-#include <QtDBus/qdbusinterface.h>
 
 class QDBusPendingCallWatcher;
 class QThread;
@@ -69,7 +68,7 @@ class QGalleryTrackerFileEditResponse : public QGalleryAbstractResponse
     Q_OBJECT
 public:
     QGalleryTrackerFileEditResponse(
-            const QDBusConnection &connection,
+            const QGalleryDBusInterfacePointer &metaDataInterface,
             const QGalleryTrackerSchema &schema,
             const QStringList &properties,
             const QStringList &fileNames,
@@ -115,7 +114,7 @@ private:
     QAtomicInt m_cancelled;
     QDBusPendingCallWatcher *m_call;
     QThread *m_thread;
-    QDBusInterface m_dbusInterface;
+    QGalleryDBusInterfacePointer m_metaDataInterface;
     QStringList m_propertyNames;
     QVector<QStringList> m_rows;
 

@@ -55,6 +55,8 @@
 
 #include "qgallerytrackerlistresponse_p.h"
 
+#include "qgallerydbusinterface_p.h"
+
 #include <QtDBus/qdbusinterface.h>
 
 QTM_BEGIN_NAMESPACE
@@ -64,7 +66,7 @@ class QGalleryTrackerAggregateListResponse : public QGalleryTrackerListResponse
     Q_OBJECT
 public:
     QGalleryTrackerAggregateListResponse(
-            const QDBusConnection &connection,
+            const QGalleryDBusInterfacePointer &metaDataInterface,
             const QGalleryTrackerSchema &schema,
             const QString &query,
             const QStringList &properties,
@@ -85,7 +87,7 @@ protected:
     QDBusPendingCall queryRows(int offset, int limit);
 
 private:
-    QDBusInterface m_dbusInterface;
+    QGalleryDBusInterfacePointer m_metaDataInterface;
     int m_pathIndex;
     int m_fileNameIndex;
     int m_serviceIndex;

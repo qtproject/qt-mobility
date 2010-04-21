@@ -46,12 +46,12 @@
 QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerFileRemoveResponse::QGalleryTrackerFileRemoveResponse(
-        const QDBusConnection &connection,
+        const QGalleryDBusInterfacePointer &metaDataInterface,
         const QGalleryTrackerSchema &schema,
         const QStringList &properties,
         const QStringList &fileNames,
         QObject *parent)
-    : QGalleryTrackerFileEditResponse(connection, schema, properties, fileNames, parent)
+    : QGalleryTrackerFileEditResponse(metaDataInterface, schema, properties, fileNames, parent)
 {
 }
 
