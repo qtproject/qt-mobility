@@ -69,14 +69,14 @@ public:
     QLandmarkCategoryIdPrivate(const QLandmarkCategoryIdPrivate &other)
             : QSharedData(other),
             m_id(other.m_id),
-            m_databaseName(other.m_databaseName) {
+            m_uri(other.m_uri) {
     }
 
     ~QLandmarkCategoryIdPrivate() {
     }
 
     QString m_id;
-    QString m_databaseName;
+    QString m_uri;
 };
 
 QTM_END_NAMESPACE

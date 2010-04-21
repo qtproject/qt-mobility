@@ -88,7 +88,7 @@ QLandmarkCategoryId::~QLandmarkCategoryId()
 */
 bool QLandmarkCategoryId::isValid() const
 {
-    return (!d->m_databaseName.isEmpty() && !d->m_id.isEmpty());
+    return (!d->m_uri.isEmpty() && !d->m_id.isEmpty());
 }
 
 /*!
@@ -115,7 +115,7 @@ void QLandmarkCategoryId::setId(const QString &id)
 */
 QString QLandmarkCategoryId::managerUri() const
 {
-    return d->m_databaseName;
+    return d->m_uri;
 }
 
 /*!
@@ -124,7 +124,7 @@ QString QLandmarkCategoryId::managerUri() const
 */
 void QLandmarkCategoryId::setManagerUri(const QString &uri)
 {
-    d->m_databaseName = uri;
+    d->m_uri = uri;
 }
 
 /*!
@@ -149,7 +149,7 @@ QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId & 
 bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
 {
     return ((d->m_id == other.d->m_id)
-            && (d->m_databaseName == other.d->m_databaseName));
+            && (d->m_uri == other.d->m_uri));
 }
 
 /*!

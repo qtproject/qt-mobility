@@ -65,7 +65,7 @@ QLandmarkPrivate::QLandmarkPrivate()
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
         : QSharedData(other),
         name(other.name),
-        categories(other.categories),
+        categoryIds(other.categoryIds),
         location(other.location),
         description(other.description),
         iconUrl(other.iconUrl),
@@ -88,7 +88,7 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
     radius = other.radius;
     phone = other.phone;
     url = other.url;
-    categories = other.categories;
+    categoryIds = other.categoryIds;
     attributes = other.attributes;
     id = other.id;
 
@@ -104,7 +104,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
             && (radius == other.radius)
             && (phone == other.phone)
             && (url == other.url)
-            && (categories == other.categories)
+            && (categoryIds == other.categoryIds)
             && (attributes == other.attributes))
            && (id == other.id);
 }
@@ -289,7 +289,7 @@ void QLandmark::setAddress(const QGeoAddress &address)
 */
 QList<QLandmarkCategoryId> QLandmark::categories() const
 {
-    return d->categories;
+    return d->categoryIds;
 }
 
 /*!
@@ -301,11 +301,13 @@ QList<QLandmarkCategoryId> QLandmark::categories() const
 */
 void QLandmark::setCategories(const QList<QLandmarkCategoryId> &categoryIds)
 {
+
+    d->categoryIds.clear();
+
     // remove duplicates
-    d->categories.clear();
     for (int i = 0; i < categoryIds.size(); ++i) {
-        if (!d->categories.contains(categoryIds.at(i)))
-            d->categories.append(categoryIds.at(i));
+        if (!d->categoryIds.contains(categoryIds.at(i)))
+            d->categoryIds.append(categoryIds.at(i));
     }
 }
 
@@ -317,8 +319,8 @@ void QLandmark::setCategories(const QList<QLandmarkCategoryId> &categoryIds)
 */
 void QLandmark::addCategory(const QLandmarkCategoryId &categoryId)
 {
-    if (!d->categories.contains(categoryId))
-        d->categories.append(categoryId);
+    if (!d->categoryIds.contains(categoryId))
+        d->categoryIds.append(categoryId);
 }
 
 /*!
@@ -328,7 +330,7 @@ void QLandmark::addCategory(const QLandmarkCategoryId &categoryId)
 */
 void QLandmark::removeCategory(const QLandmarkCategoryId &categoryId)
 {
-    d->categories.removeAll(categoryId);
+    d->categoryIds.removeAll(categoryId);
 }
 
 /*!

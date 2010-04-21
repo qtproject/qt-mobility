@@ -50,23 +50,34 @@ QTM_USE_NAMESPACE
 
 // ----- QLandmarkCategoryPrivate -----
 
-QLandmarkCategoryPrivate::QLandmarkCategoryPrivate() {}
-
-QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivate &other)
+QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
+    : QSharedData()
 {
-    name = other.name;
-    iconUrl = other.iconUrl;
-    description = other.description;
-    readOnly = false;
 }
 
-QLandmarkCategoryPrivate::~QLandmarkCategoryPrivate() {}
+QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivate &other)
+    : QSharedData(other),
+      name(other.name),
+      iconUrl(other.iconUrl),
+      description(other.description),
+      readOnly(false),
+      attributes(other.attributes),
+      id(other.id)
+{
+}
+
+QLandmarkCategoryPrivate::~QLandmarkCategoryPrivate()
+{
+}
 
 QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCategoryPrivate & other)
 {
     name = other.name;
     iconUrl = other.iconUrl;
     description = other.description;
+    readOnly = other.readOnly;
+    attributes = other.attributes;
+    id = other.id;
 
     return *this;
 }
@@ -75,7 +86,10 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
 {
     return ((name == other.name)
             && (iconUrl == other.iconUrl)
-            && (description == other.description));
+            && (description == other.description)
+            && (readOnly == other.readOnly)
+            && (attributes == other.attributes)
+            && (id == other.id));
 }
 
 /*!
@@ -110,16 +124,16 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     id() is called.
 */
 QLandmarkCategory::QLandmarkCategory()
+    : d(new QLandmarkCategoryPrivate)
 {
-    d = new QLandmarkCategoryPrivate();
 }
 
 /*!
     Constructs a copy of \a other.
 */
 QLandmarkCategory::QLandmarkCategory(const QLandmarkCategory &other)
+    : d(other.d)
 {
-    d = new QLandmarkCategoryPrivate(*(other.d));
 }
 
 /*!
@@ -127,7 +141,6 @@ QLandmarkCategory::QLandmarkCategory(const QLandmarkCategory &other)
 */
 QLandmarkCategory::~QLandmarkCategory()
 {
-    delete d;
 }
 /*!
     Assigns \a other to this category and returns a reference to this category.
