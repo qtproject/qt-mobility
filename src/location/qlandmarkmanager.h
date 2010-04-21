@@ -48,22 +48,21 @@
 #include "qlandmarksortorder.h"
 #include "qlandmarkcategoryid.h"
 
-
 #include <QObject>
 #include <QMap>
 class QIODevice;
 class QStringList;
-
-QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 class QLandmarkCategory;
 class QLandmarkSearchResult;
 class QLandmarkManagerPrivate;
 class QLandmark;
+class QLandmarkManagerEngine;
 
 class Q_LOCATION_EXPORT QLandmarkManager: public QObject
 {
+    friend class QLandmarkAbstractRequest;
     Q_OBJECT
 public:
     enum Error {
@@ -146,6 +145,8 @@ Q_SIGNALS:
 private:
     QLandmarkManagerPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QLandmarkManager);
+
+    QLandmarkManagerEngine *engine();
 };
 
 /*
@@ -186,7 +187,5 @@ private:
 };*/
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

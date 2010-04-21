@@ -876,6 +876,11 @@ bool QLandmarkManager::parseUri(const QString& uri, QString* pManagerId, QMap<QS
     return true;
 }
 
+QLandmarkManagerEngine *QLandmarkManager::engine()
+{
+    return d_ptr->engine;
+}
+
 /*!
     \fn QLandmarkManager::dataChanged()
     This signal is emitted by the manager if its internal state changes and it is unable to precisely determine

@@ -40,8 +40,24 @@
 ****************************************************************************/
 
 #include "qlandmarkexportrequest.h"
+#include "qlandmarkabstractrequest_p.h"
+#include <QIODevice>
+#include <QFile>
+
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkExportRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkExportRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr) {}
+
+    QIODevice *device;
+    QString fileName;
+    QLandmarkManager::Format format;
+    QList<QLandmarkId> landmarkIds;
+};
 
 /*!
     \class QLandmarkExportRequest
@@ -60,10 +76,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a landmark export request with the given \a parent.
+    Constructs a landmark export request with the given \a manager and \a parent.
 */
-QLandmarkExportRequest::QLandmarkExportRequest(QObject *parent)
-    : QLandmarkAbstractRequest(parent)
+QLandmarkExportRequest::QLandmarkExportRequest(QLandmarkManager *manager, QObject *parent)
+    : QLandmarkAbstractRequest(new QLandmarkExportRequestPrivate(manager), parent)
 {
 }
 
@@ -79,7 +95,8 @@ QLandmarkExportRequest::~QLandmarkExportRequest()
 */
 QIODevice *QLandmarkExportRequest::device() const
 {
-    return 0;
+    Q_D(const QLandmarkExportRequest);
+    return d->device;
 }
 
 /*!
@@ -87,6 +104,8 @@ QIODevice *QLandmarkExportRequest::device() const
 */
 void QLandmarkExportRequest::setDevice(QIODevice *device)
 {
+    Q_D(QLandmarkExportRequest);
+    d->device = device;
 }
 
 /*!
@@ -98,7 +117,9 @@ void QLandmarkExportRequest::setDevice(QIODevice *device)
 */
 QString QLandmarkExportRequest::fileName() const
 {
-    return QString();
+    Q_D(const QLandmarkExportRequest);
+    QFile *file = qobject_cast<QFile *>(d->device);
+    return file ? file->fileName() : QString();
 }
 
 /*!
@@ -110,6 +131,8 @@ QString QLandmarkExportRequest::fileName() const
 */
 void QLandmarkExportRequest::setFileName(const QString &fileName)
 {
+    Q_D(QLandmarkExportRequest);
+    d->device = new QFile(fileName);
 }
 
 /*!
@@ -117,7 +140,8 @@ void QLandmarkExportRequest::setFileName(const QString &fileName)
 */
 QLandmarkManager::Format QLandmarkExportRequest::format() const
 {
-    return QLandmarkManager::Custom;
+    Q_D(const QLandmarkExportRequest);
+    return d->format;
 }
 
 /*!
@@ -125,6 +149,8 @@ QLandmarkManager::Format QLandmarkExportRequest::format() const
 */
 void QLandmarkExportRequest::setFormat(QLandmarkManager::Format format)
 {
+    Q_D(QLandmarkExportRequest);
+    d->format = format;
 }
 
 /*!
@@ -132,7 +158,8 @@ void QLandmarkExportRequest::setFormat(QLandmarkManager::Format format)
 */
 QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 {
-    return QList<QLandmarkId>();
+    Q_D(const QLandmarkExportRequest);
+    return d->landmarkIds;
 }
 
 /*!
@@ -141,6 +168,8 @@ QList<QLandmarkId> QLandmarkExportRequest::landmarkIds() const
 */
 void QLandmarkExportRequest::setLandmarkIds(QList<QLandmarkId> &landmarkIds)
 {
+    Q_D(QLandmarkExportRequest);
+    d->landmarkIds = landmarkIds;
 }
 
 #include "moc_qlandmarkexportrequest.cpp"

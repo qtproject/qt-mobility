@@ -89,8 +89,8 @@ PRIVATE_HEADERS += \
                     qgeoroutexmlparser_nokia_p.h \
                     qgeoroutingservice_nokia_p.h \
                     qlandmark_p.h \
-                    qlandmark_p.h \
                     qlandmarkboxfilter_p.h \
+                    qlandmarkabstractrequest_p.h \
                     qlandmarkcategory_p.h \
                     qlandmarkcategoryid_p.h \
                     qlandmarkcategoryfilter_p.h \

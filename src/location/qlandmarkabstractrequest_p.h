@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,32 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKIDFETCHREQUEST_H
-#define QLANDMARKIDFETCHREQUEST_H
+#ifndef QLANDMARKABSTRACTREQUEST_P_H
+#define QLANDMARKABSTRACTREQUEST_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include "qlandmarkabstractrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkIdFetchRequestPrivate;
-class Q_LOCATION_EXPORT QLandmarkIdFetchRequest : public QLandmarkAbstractRequest
+class QLandmarkAbstractRequestPrivate
 {
-    Q_OBJECT
 public:
-    QLandmarkIdFetchRequest(QLandmarkManager *manager, QObject *parent = 0);
-    ~QLandmarkIdFetchRequest();
+    QLandmarkAbstractRequestPrivate(QLandmarkManager *mgr);
 
-    const QLandmarkFilter *filter() const;
-    void setFilter(const QLandmarkFilter *filter);
-
-    QList<const QLandmarkSortOrder*> sorting() const;
-    void setSorting(const QList< const QLandmarkSortOrder*> &sorting);
-    void setSorting(const QLandmarkSortOrder *sorting);
-
-    QList<QLandmarkId> landmarkIds() const;
-private:
-    Q_DISABLE_COPY(QLandmarkIdFetchRequest)
-    Q_DECLARE_PRIVATE(QLandmarkIdFetchRequest)
+    QLandmarkAbstractRequest::RequestType type;
+    QLandmarkAbstractRequest::State state;
+    QLandmarkManager::Error error;
+    QString errorString;
+    QLandmarkManager *manager;
 };
 
 QTM_END_NAMESPACE

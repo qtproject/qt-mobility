@@ -56,10 +56,11 @@
 #include "qlandmarkcategoryid.h"
 #include <QString>
 #include <QUrl>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkCategoryPrivate
+class QLandmarkCategoryPrivate : public QSharedData
 {
 public:
     QLandmarkCategoryPrivate();

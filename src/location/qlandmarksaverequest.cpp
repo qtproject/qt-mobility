@@ -40,10 +40,21 @@
 ****************************************************************************/
 
 #include "qlandmarksaverequest.h"
+#include "qlandmarkabstractrequest_p.h"
 #include "qlandmark.h"
 
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkSaveRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkSaveRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr){}
+    QList<QLandmark> landmarks;
+    QMap<int, QLandmarkManager::Error> errorMap;
+
+};
 
 /*!
     \class QLandmarkSaveRequest
@@ -59,10 +70,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a landmark save request with the given \a parent.
+    Constructs a landmark save request with the given \a manager and \a parent.
 */
-QLandmarkSaveRequest::QLandmarkSaveRequest(QObject *parent)
-    : QLandmarkAbstractRequest(parent)
+QLandmarkSaveRequest::QLandmarkSaveRequest(QLandmarkManager *manager, QObject *parent)
+    : QLandmarkAbstractRequest(new QLandmarkSaveRequestPrivate(manager), parent)
 {
 }
 
@@ -80,7 +91,8 @@ QLandmarkSaveRequest::~QLandmarkSaveRequest()
 */
 QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 {
-    return QList<QLandmark>();
+    Q_D(const QLandmarkSaveRequest);
+    return d->landmarks;
 }
 
 /*!
@@ -90,6 +102,8 @@ QList<QLandmark> QLandmarkSaveRequest::landmarks() const
 */
 void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 {
+    Q_D(QLandmarkSaveRequest);
+    d->landmarks = landmarks;
 }
 
 /*!
@@ -99,6 +113,9 @@ void QLandmarkSaveRequest::setLandmarks(const QList<QLandmark> &landmarks)
 */
 void QLandmarkSaveRequest::setLandmark(const QLandmark &landmark)
 {
+    Q_D(QLandmarkSaveRequest);
+    d->landmarks.clear();
+    d->landmarks.append(landmark);
 }
 
 /*!
@@ -106,7 +123,8 @@ void QLandmarkSaveRequest::setLandmark(const QLandmark &landmark)
 */
 QMap<int, QLandmarkManager::Error> QLandmarkSaveRequest::errorMap() const
 {
-    return QMap<int, QLandmarkManager::Error>();
+    Q_D(const QLandmarkSaveRequest);
+    return d->errorMap;
 }
 
 #include "moc_qlandmarksaverequest.cpp"

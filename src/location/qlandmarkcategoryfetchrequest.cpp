@@ -40,9 +40,20 @@
 ****************************************************************************/
 
 #include "qlandmarkcategoryfetchrequest.h"
+#include "qlandmarkabstractrequest_p.h"
 #include "qlandmarkcategory.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkCategoryFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkCategoryFetchRequestPrivate(QLandmarkManager *mgr)
+        :QLandmarkAbstractRequestPrivate(mgr){
+    }
+
+    QList<QLandmarkCategory> categories;
+};
 
 /*!
     \class QLandmarkCategoryFetchRequest
@@ -58,10 +69,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Creates a new category fetch request object with the given \a parent.
+    Creates a new category fetch request object with the given \a manager and \a parent.
 */
-QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest(QObject *parent)
-    :QLandmarkAbstractRequest(parent)
+QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest(QLandmarkManager *manager, QObject *parent)
+    :QLandmarkAbstractRequest(new QLandmarkCategoryFetchRequestPrivate(manager), parent)
 {
 }
 
@@ -78,7 +89,8 @@ QLandmarkCategoryFetchRequest::~QLandmarkCategoryFetchRequest()
 */
 QList<QLandmarkCategory> QLandmarkCategoryFetchRequest::categories() const
 {
-    return QList<QLandmarkCategory>();
+    Q_D(const QLandmarkCategoryFetchRequest);
+    return d->categories;
 }
 
 #include "moc_qlandmarkcategoryfetchrequest.cpp"

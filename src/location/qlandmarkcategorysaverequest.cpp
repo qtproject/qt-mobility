@@ -40,10 +40,20 @@
 ****************************************************************************/
 
 #include "qlandmarkcategorysaverequest.h"
-
+#include "qlandmarkabstractrequest_p.h"
 #include "qlandmarkcategory.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QLandmarkCategorySaveRequestPrivate : public QLandmarkAbstractRequestPrivate
+{
+public:
+    QLandmarkCategorySaveRequestPrivate(QLandmarkManager *mgr)
+        : QLandmarkAbstractRequestPrivate(mgr) {}
+
+    QList<QLandmarkCategory> categories;
+    QMap<int, QLandmarkManager::Error> errorMap;
+};
 
 /*!
     \class QLandmarkCategorySaveRequest
@@ -60,10 +70,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a category save request with the given \a parent.
+    Constructs a category save request with the given \a manager and \a parent.
 */
-QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest(QObject *parent)
-    : QLandmarkAbstractRequest(parent)
+QLandmarkCategorySaveRequest::QLandmarkCategorySaveRequest(QLandmarkManager *manager, QObject *parent)
+    : QLandmarkAbstractRequest(new QLandmarkCategorySaveRequestPrivate(manager), parent)
 {
 }
 
@@ -81,7 +91,8 @@ QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest()
 */
 QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 {
-    return QList<QLandmarkCategory>();
+    Q_D(const QLandmarkCategorySaveRequest);
+   return d->categories;
 }
 
 /*!
@@ -90,6 +101,8 @@ QList<QLandmarkCategory> QLandmarkCategorySaveRequest::categories() const
 */
 void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> &categories)
 {
+    Q_D(QLandmarkCategorySaveRequest);
+    d->categories = categories;
 }
 
 /*!
@@ -99,6 +112,9 @@ void QLandmarkCategorySaveRequest::setCategories(const QList<QLandmarkCategory> 
 */
 void QLandmarkCategorySaveRequest::setCategory(const QLandmarkCategory& category)
 {
+    Q_D(QLandmarkCategorySaveRequest);
+    d->categories.clear();
+    d->categories.append(category);
 }
 
 /*!
@@ -107,7 +123,8 @@ void QLandmarkCategorySaveRequest::setCategory(const QLandmarkCategory& category
 */
 QMap<int, QLandmarkManager::Error> QLandmarkCategorySaveRequest::errorMap() const
 {
-    return QMap<int, QLandmarkManager::Error>();
+    Q_D(const QLandmarkCategorySaveRequest);
+    return d->errorMap;
 }
 
 #include "moc_qlandmarkcategorysaverequest.cpp"
