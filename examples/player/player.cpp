@@ -227,13 +227,22 @@ Player::Player(QWidget *parent)
 
     metaDataChanged();
 
-    QStringList fileNames = qApp->arguments();
-    fileNames.removeAt(0);
-    foreach (QString const &fileName, fileNames) {
-        if (fileName.startsWith(QLatin1String("http://")))
-            playlist->addMedia(QUrl(fileName));
-        else if (QFileInfo(fileName).exists())
-            playlist->addMedia(QUrl::fromLocalFile(fileName));
+    QStringList arguments = qApp->arguments();
+    arguments.removeAt(0);
+    foreach (QString const &argument, arguments) {
+        QFileInfo fileInfo(argument);
+        if (fileInfo.exists()) {
+            QUrl url = QUrl::fromLocalFile(fileInfo.absoluteFilePath());
+            if (fileInfo.suffix().toLower() == QLatin1String("m3u")) {
+                playlist->load(url);
+            } else
+                playlist->addMedia(url);
+        } else {
+            QUrl url(argument);
+            if (url.isValid()) {
+                playlist->addMedia(url);
+            }
+        }
     }
 }
 
