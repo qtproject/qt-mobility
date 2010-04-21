@@ -37,7 +37,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qcontactglobalpresence.html#timestamp">timestamp</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>35 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
 <hr />
 <a name="static-public-members"></a>
@@ -51,10 +51,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactglobalpresence.html#FieldPresenceStateText-var">FieldPresenceStateText</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactglobalpresence.html#FieldTimestamp-var">FieldTimestamp</a></b></td></tr>
 </table>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>2 protected functions inherited from <a href="qcontactdetail.html#protected-functions">QContactDetail</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
@@ -112,26 +108,32 @@
 <hr />
 <h2>Member Variable Documentation</h2>
 <a name="//apple_ref/cpp/data/QContactGlobalPresence/DefinitionName"></a>
-<h3 class="fn"><a name="DefinitionName-var"></a>const QLatin1Constant QContactGlobalPresence::DefinitionName</h3>
-<p>The constant string which identifies the definition of details which contain presence information.</p>
+<h3 class="fn"><a name="DefinitionName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::DefinitionName</h3>
+<p>The string constant for the definition name of <a href="qcontactglobalpresence.html">QContactGlobalPresence</a> details.</p>
 <a name="//apple_ref/cpp/data/QContactGlobalPresence/FieldCustomMessage"></a>
-<h3 class="fn"><a name="FieldCustomMessage-var"></a>const QLatin1Constant QContactGlobalPresence::FieldCustomMessage</h3>
-<p>The constant key for which the user-entered custom message for their state is stored in details of the <a href="qcontactglobalpresence.html">QContactGlobalPresence</a> type.</p>
+<h3 class="fn"><a name="FieldCustomMessage-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldCustomMessage</h3>
+<p>The field key constant for the user-entered custom presence message.</p>
+<p>See also <a href="qcontactglobalpresence.html#setCustomMessage">setCustomMessage</a>() and <a href="qcontactglobalpresence.html#customMessage">customMessage</a>().</p>
 <a name="//apple_ref/cpp/data/QContactGlobalPresence/FieldNickname"></a>
-<h3 class="fn"><a name="FieldNickname-var"></a>const QLatin1Constant QContactGlobalPresence::FieldNickname</h3>
-<p>The constant key for which the nickname value is stored in details of the <a href="qcontactglobalpresence.html">QContactGlobalPresence</a> type.</p>
+<h3 class="fn"><a name="FieldNickname-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldNickname</h3>
+<p>The field key constant for the nickname value.</p>
+<p>See also <a href="qcontactglobalpresence.html#setNickname">setNickname</a>() and <a href="qcontactglobalpresence.html#nickname">nickname</a>().</p>
 <a name="//apple_ref/cpp/data/QContactGlobalPresence/FieldPresenceState"></a>
-<h3 class="fn"><a name="FieldPresenceState-var"></a>const QLatin1Constant QContactGlobalPresence::FieldPresenceState</h3>
-<p>The constant key for which the presence state value is stored in details of the <a href="qcontactglobalpresence.html">QContactGlobalPresence</a> typel.</p>
+<h3 class="fn"><a name="FieldPresenceState-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldPresenceState</h3>
+<p>The field key constant for the presence state enumeration value.</p>
+<p>See also <a href="qcontactglobalpresence.html#setPresenceState">setPresenceState</a>() and <a href="qcontactglobalpresence.html#presenceState">presenceState</a>().</p>
 <a name="//apple_ref/cpp/data/QContactGlobalPresence/FieldPresenceStateImageUrl"></a>
-<h3 class="fn"><a name="FieldPresenceStateImageUrl-var"></a>const QLatin1Constant QContactGlobalPresence::FieldPresenceStateImageUrl</h3>
-<p>The constant key for which the image url value for the current presence state is stored in details of the <a href="qcontactglobalpresence.html">QContactGlobalPresence</a> type.</p>
+<h3 class="fn"><a name="FieldPresenceStateImageUrl-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldPresenceStateImageUrl</h3>
+<p>The field key constant for the presence state image URL.</p>
+<p>See also <a href="qcontactglobalpresence.html#setPresenceStateImageUrl">setPresenceStateImageUrl</a>() and <a href="qcontactglobalpresence.html#presenceStateImageUrl">presenceStateImageUrl</a>().</p>
 <a name="//apple_ref/cpp/data/QContactGlobalPresence/FieldPresenceStateText"></a>
-<h3 class="fn"><a name="FieldPresenceStateText-var"></a>const QLatin1Constant QContactGlobalPresence::FieldPresenceStateText</h3>
-<p>The constant key for which the presence provider provided text representation of the presence state is stored in details of the <a href="qcontactglobalpresence.html">QContactGlobalPresence</a> type.</p>
+<h3 class="fn"><a name="FieldPresenceStateText-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldPresenceStateText</h3>
+<p>The field key constant for the presence state description value.</p>
+<p>See also <a href="qcontactglobalpresence.html#setPresenceStateText">setPresenceStateText</a>() and <a href="qcontactglobalpresence.html#presenceStateText">presenceStateText</a>().</p>
 <a name="//apple_ref/cpp/data/QContactGlobalPresence/FieldTimestamp"></a>
-<h3 class="fn"><a name="FieldTimestamp-var"></a>const QLatin1Constant QContactGlobalPresence::FieldTimestamp</h3>
-<p>The constant key for which the last update timestamp value is stored in details of the <a href="qcontactglobalpresence.html">QContactGlobalPresence</a> type.</p>
+<h3 class="fn"><a name="FieldTimestamp-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGlobalPresence::FieldTimestamp</h3>
+<p>The field key constant for the timestamp value.</p>
+<p>See also <a href="qcontactglobalpresence.html#setTimestamp">setTimestamp</a>() and <a href="qcontactglobalpresence.html#timestamp">timestamp</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

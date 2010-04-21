@@ -105,7 +105,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#updateRelationshipRemoveRequest">updateRelationshipRemoveRequest</a></b> ( QContactRelationshipRemoveRequest * <i>req</i>, QContactManager::Error <i>error</i>, const QMap&lt;int, QContactManager::Error&gt; &amp; <i>errorMap</i>, QContactAbstractRequest::State <i>newState</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#updateRelationshipSaveRequest">updateRelationshipSaveRequest</a></b> ( QContactRelationshipSaveRequest * <i>req</i>, const QList&lt;QContactRelationship&gt; &amp; <i>result</i>, QContactManager::Error <i>error</i>, const QMap&lt;int, QContactManager::Error&gt; &amp; <i>errorMap</i>, QContactAbstractRequest::State <i>newState</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#updateRequestState">updateRequestState</a></b> ( QContactAbstractRequest * <i>req</i>, QContactAbstractRequest::State <i>state</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanagerengine.html#validateActionFilter">validateActionFilter</a></b> ( const QContactFilter &amp; <i>filter</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
@@ -143,7 +142,6 @@
 <p>Given an input <i>filter</i>, returns the canonical version of the filter.</p>
 <p>Some of the following transformations may be applied:</p>
 <ul>
-<li>Any QContactActionFilters are transformed into the corresponding QContactFilters returned by matching actions</li>
 <li>Any QContactInvalidFilters contained in a union filter will be removed</li>
 <li>Any default QContactFilters contained in an intersection filter will be removed</li>
 <li>Any QContactIntersectionFilters with a <a href="qcontactinvalidfilter.html">QContactInvalidFilter</a> contained will be replaced with a <a href="qcontactinvalidfilter.html">QContactInvalidFilter</a></li>
@@ -171,7 +169,7 @@
 <p>Returns the contact in the database identified by <i>contactId</i>.</p>
 <p>If the contact does not exist, an empty, default constructed <a href="qcontact.html">QContact</a> will be returned, and the <i>error</i> will be set to <tt>QContactManager::DoesNotExistError</tt>.</p>
 <p>Any operation error which occurs will be saved in <i>error</i>.</p>
-<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details, relationships and action preferences in the matching contact will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
+<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details and relationships in the matching contact will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
 <p>See also <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/contactIds"></a>
 <h3 class="fn"><a name="contactIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; QContactManagerEngine::contactIds ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -180,7 +178,7 @@
 <h3 class="fn"><a name="contacts"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; QContactManagerEngine::contacts ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the list of contacts which match the given <i>filter</i> stored in the manager sorted according to the given list of <i>sortOrders</i>.</p>
 <p>Any operation error which occurs will be saved in <i>error</i>.</p>
-<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details, relationships and action preferences in the matching contacts will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
+<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details and relationships in the matching contacts will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
 <p>See also <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/contactsAdded"></a>
 <h3 class="fn"><a name="contactsAdded"></a>void QContactManagerEngine::contactsAdded ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -404,11 +402,6 @@
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/updateRequestState"></a>
 <h3 class="fn"><a name="updateRequestState"></a>void QContactManagerEngine::updateRequestState ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, <a href="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Updates the given asynchronous request <i>req</i> by setting the new <i>state</i> of the request. If the new state is different, the stateChanged() signal will be emitted by the request.</p>
-<a name="//apple_ref/cpp/clm/QContactManagerEngine/validateActionFilter"></a>
-<h3 class="fn"><a name="validateActionFilter"></a>bool QContactManagerEngine::validateActionFilter ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Given a <a href="qcontactfilter.html">QContactFilter</a> <i>filter</i> retrieved from a <a href="qcontactaction.html">QContactAction</a>, check that it is valid and cannot cause infinite recursion.</p>
-<p>In particular, a filter from a <a href="qcontactaction.html">QContactAction</a> cannot contain any instances of a <a href="qcontactactionfilter.html">QContactActionFilter</a>.</p>
-<p>Returns true if <i>filter</i> seems ok, or false otherwise.</p>
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/validateContact"></a>
 <h3 class="fn"><a name="validateContact"></a>bool QContactManagerEngine::validateContact ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> * <i>error</i> ) const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Checks that the given contact <i>contact</i> does not have details which don't conform to a valid definition, violate uniqueness constraints, or contain values for nonexistent fields, and that the values contained are of the correct type for each field, and are allowable values for that field.</p>
