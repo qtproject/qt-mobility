@@ -3360,8 +3360,8 @@
     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project">
         <keyword ref="qtmobility-known-issues.html">Release Notes of the QtMobility Project</keyword>
     </section>
-    <section ref="sensors-api.html" title="Sensors API (technology preview)">
-        <keyword ref="sensors-api.html">Sensors API (technology preview)</keyword>
+    <section ref="sensors-api.html" title="Sensors API">
+        <keyword ref="sensors-api.html">Sensors API</keyword>
     </section>
     <section ref="sensors-backend.html" title="Sensors Backend">
         <keyword ref="sensors-backend.html">Sensors Backend</keyword>
@@ -3384,8 +3384,8 @@
     <section ref="trademarks.html" title="Trademarks">
         <keyword ref="trademarks.html">Trademarks</keyword>
     </section>
-    <section ref="versit.html" title="Versit API (technology preview)">
-        <keyword ref="versit.html">Versit API (technology preview)</keyword>
+    <section ref="versit.html" title="Versit API">
+        <keyword ref="versit.html">Versit API</keyword>
     </section>
 </section>
 <section ref="examples.html" title="Tutorial &amp; Examples">
