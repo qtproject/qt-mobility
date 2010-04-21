@@ -39,46 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILDEFINITIONFIELD_H
-#define QORGANIZERITEMDETAILDEFINITIONFIELD_H
+#ifndef QORGANIZERITEMFETCHHINT_H
+#define QORGANIZERITEMFETCHHINT_H
 
-#include <QList>
 #include <QVariant>
-#include <QSharedDataPointer>
+#include <QList>
+#include <QSharedData>
 
-#include "qtcontactsglobal.h"
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemdetaildefinition.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemDetailDefinitionFieldPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemDetailDefinitionField
-{
+class QOrganizerItemFetchHintPrivate;
+class Q_CONTACTS_EXPORT QOrganizerItemFetchHint {
 public:
-    QOrganizerItemDetailDefinitionField();
-    ~QOrganizerItemDetailDefinitionField();
+    QOrganizerItemFetchHint();
+    QOrganizerItemFetchHint(const QOrganizerItemFetchHint& other);
+    ~QOrganizerItemFetchHint();
+    QOrganizerItemFetchHint& operator=(const QOrganizerItemFetchHint& other);
 
-    QOrganizerItemDetailDefinitionField(const QOrganizerItemDetailDefinitionField& other);
-    QOrganizerItemDetailDefinitionField& operator=(const QOrganizerItemDetailDefinitionField& other);
+    QStringList detailDefinitionsHint() const;
+    void setDetailDefinitionsHint(const QStringList& definitionNames);
 
-    QVariant::Type dataType() const;
-    void setDataType(QVariant::Type type);
+    QStringList relationshipTypesHint() const;
+    void setRelationshipTypesHint(const QStringList& relationshipTypes);
 
-    QVariantList allowableValues() const;
-    void setAllowableValues(const QVariantList values);
-
-    enum AccessConstraint {
-        NoConstraint = 0,
-        ReadOnly
+    enum OptimizationHint {
+        AllRequired = 0x0,
+        NoRelationships = 0x1,
+        NoActionPreferences = 0x2,
+        NoBinaryBlobs = 0x4
+        // any other optimization hints?
     };
+    Q_DECLARE_FLAGS(OptimizationHints, OptimizationHint)
 
-    QOrganizerItemDetailDefinitionField::AccessConstraint accessConstraint() const;
-    void setAccessConstraint(QOrganizerItemDetailDefinitionField::AccessConstraint constraint);
-
-    bool operator==(const QOrganizerItemDetailDefinitionField& other) const;
-    bool operator!=(const QOrganizerItemDetailDefinitionField& other) const;
+    OptimizationHints optimizationHints() const;
+    void setOptimizationHints(OptimizationHints hints);
 
 private:
-    QSharedDataPointer<QOrganizerItemDetailDefinitionFieldPrivate> d;
+    QSharedDataPointer<QOrganizerItemFetchHintPrivate> d;
 };
 
 QTM_END_NAMESPACE

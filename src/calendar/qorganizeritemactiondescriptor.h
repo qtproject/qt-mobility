@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -43,7 +43,7 @@
 #ifndef QORGANIZERITEMACTIONDESCRIPTOR_H
 #define QORGANIZERITEMACTIONDESCRIPTOR_H
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include <QString>
 #include <QSharedDataPointer>
 
@@ -53,7 +53,7 @@ class QOrganizerItemActionDescriptorPrivate;
 class Q_CONTACTS_EXPORT QOrganizerItemActionDescriptor
 {
 public:
-    QOrganizerItemActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
+    explicit QOrganizerItemActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
     QOrganizerItemActionDescriptor(const QOrganizerItemActionDescriptor& other);
     QOrganizerItemActionDescriptor& operator=(const QOrganizerItemActionDescriptor& other);
     ~QOrganizerItemActionDescriptor();
@@ -61,6 +61,7 @@ public:
     bool isEmpty() const;
     bool operator==(const QOrganizerItemActionDescriptor& other) const;
     bool operator!=(const QOrganizerItemActionDescriptor& other) const;
+    bool operator<(const QOrganizerItemActionDescriptor& other) const;
 
     void setActionName(const QString& actionName);
     void setVendorName(const QString& vendorName);
@@ -74,6 +75,10 @@ private:
     QSharedDataPointer<QOrganizerItemActionDescriptorPrivate> d;
 };
 
+Q_CONTACTS_EXPORT uint qHash(const QOrganizerItemActionDescriptor& key);
+
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemActionDescriptor), Q_MOVABLE_TYPE);
 
 #endif

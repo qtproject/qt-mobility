@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -43,7 +43,7 @@
 #ifndef QORGANIZERITEMACTION_H
 #define QORGANIZERITEMACTION_H
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 
 #include "qorganizeritemfilter.h"
 #include "qorganizeritemdetail.h"
@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemActionDescriptor;
 class QOrganizerItemActionData;
-class Q_CALENDAR_EXPORT QOrganizerItemAction : public QObject
+class Q_CONTACTS_EXPORT QOrganizerItemAction : public QObject
 {
     Q_OBJECT
 
@@ -73,29 +73,32 @@ public:
     virtual ~QOrganizerItemAction() = 0;
 
     virtual QOrganizerItemActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
-    virtual QVariantMap metadata() const = 0;                               // label, icon etc - under discussion!
+    virtual QVariantMap metaData() const = 0;                               // label, icon etc - under discussion
 
     virtual QOrganizerItemFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
-    virtual bool supportsDetail(const QOrganizerItemDetail& detail) const = 0;    // whether this implementation supports the given detail
-    virtual QList<QOrganizerItemDetail> supportedDetails(const QOrganizerItem& contact) const;
+    virtual bool isDetailSupported(const QOrganizerItemDetail &detail, const QOrganizerItem &contact = QOrganizerItem()) const = 0;
+    virtual QList<QOrganizerItemDetail> supportedDetails(const QOrganizerItem& contact) const = 0;
 
     /* Initiate the asynchronous action on the given contact (and optionally detail) */
-    virtual void invokeAction(const QOrganizerItem& contact, const QOrganizerItemDetail& detail = QOrganizerItemDetail()) = 0;
+    virtual bool invokeAction(const QOrganizerItem& contact, const QOrganizerItemDetail& detail = QOrganizerItemDetail(), const QVariantMap& parameters = QVariantMap()) = 0;
 
     /* The possible states of an action */
-    enum Status {
-        Inactive = 0,      // operation not yet started
-        Autonomous,        // operation started, no further information available - name under discussion.
-        Active,            // operation started, not yet finished
-        Finished,          // operation successfully completed
-        FinishedWithError  // operation finished, but error occurred
+    enum State {
+        InactiveState = 0,      // operation not yet started
+        ActiveState,            // operation started, not yet finished
+        FinishedState,          // operation successfully completed
+        FinishedDetachedState,  // operation started, no further information available - name under discussion.
+        FinishedWithErrorState  // operation finished, but error occurred
     };
 
-    /* Returns the most recently received result, or an invalid QVariantMap if no results received */
-    virtual QVariantMap result() const = 0;
+    virtual State state() const = 0;
 
-signals:
-    void progress(QOrganizerItemAction::Status status, const QVariantMap& result);
+    /* Returns the most recently received result, or an empty QVariantMap if no results received */
+    virtual QVariantMap results() const = 0;
+
+Q_SIGNALS:
+    void stateChanged(QOrganizerItemAction::State);
+    void resultsAvailable();
 };
 
 QTM_END_NAMESPACE

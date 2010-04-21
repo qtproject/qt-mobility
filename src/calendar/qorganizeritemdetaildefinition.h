@@ -48,13 +48,13 @@
 #include <QSharedDataPointer>
 #include <QVariant>
 
-#include "qtcalendarglobal.h"
-#include "qorganizeritemdetaildefinitionfield.h"
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemdetailfielddefinition.h"
 
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemDetailDefinitionData;
-class Q_CALENDAR_EXPORT QOrganizerItemDetailDefinition
+class Q_CONTACTS_EXPORT QOrganizerItemDetailDefinition
 {
     friend class QOrganizerItemManager;
 
@@ -83,25 +83,17 @@ public:
     bool isUnique() const;
 
     /* Mapping of field key to fields allowed in details of this definition */
-    void setFields(const QMap<QString, QOrganizerItemDetailDefinitionField>& fields);
-    QMap<QString, QOrganizerItemDetailDefinitionField> fields() const;
-    QMap<QString, QOrganizerItemDetailDefinitionField>& fields();
-
-    /* Access constraints which may apply to details of a definition */
-    enum AccessConstraint {
-        NoConstraint = 0,
-        ReadOnly,
-        CreateOnly
-    };
-
-    /* Accessor and mutator for access constraints on details of this definition */
-    QOrganizerItemDetailDefinition::AccessConstraint accessConstraint() const;
-    void setAccessConstraint(const QOrganizerItemDetailDefinition::AccessConstraint& constraint);
+    void setFields(const QMap<QString, QOrganizerItemDetailFieldDefinition>& fields);
+    QMap<QString, QOrganizerItemDetailFieldDefinition> fields() const;
+    void insertField(const QString& key, const QOrganizerItemDetailFieldDefinition& field);
+    void removeField(const QString& key);
 
 private:
     QSharedDataPointer<QOrganizerItemDetailDefinitionData> d;
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemDetailDefinition), Q_MOVABLE_TYPE);
 
 #endif

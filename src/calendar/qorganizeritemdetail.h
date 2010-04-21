@@ -43,7 +43,8 @@
 #ifndef QORGANIZERITEMDETAIL_H
 #define QORGANIZERITEMDETAIL_H
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemactiondescriptor.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -52,28 +53,41 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemDetailPrivate;
-class Q_CALENDAR_EXPORT QOrganizerItemDetail
+class Q_CONTACTS_EXPORT QOrganizerItemDetail
 {
 public:
     QOrganizerItemDetail();
-    QOrganizerItemDetail(const QString& definitionName);
-    virtual ~QOrganizerItemDetail();
+    explicit QOrganizerItemDetail(const char* definitionName); // possibly internal
+    explicit QOrganizerItemDetail(const QString& definitionName);
+    ~QOrganizerItemDetail();
 
     QOrganizerItemDetail(const QOrganizerItemDetail& other);
     QOrganizerItemDetail& operator=(const QOrganizerItemDetail& other);
 
+    enum AccessConstraint {
+        NoConstraint = 0,
+        ReadOnly = 0x01,
+        Irremovable = 0x02
+    };
+    Q_DECLARE_FLAGS(AccessConstraints, AccessConstraint)
+
+    AccessConstraints accessConstraints() const;
 
     // Predefined attribute names and values
 #ifdef Q_QDOC
-    const char* FieldContext;
-    const char* ContextHome;
-    const char* ContextWork;
-    const char* ContextOther;
+    static const QLatin1Constant FieldContext;
+    static const QLatin1Constant ContextHome;
+    static const QLatin1Constant ContextWork;
+    static const QLatin1Constant ContextOther;
+    static const QLatin1Constant FieldDetailUri;
+    static const QLatin1Constant FieldLinkedDetailUris;
 #else
-    Q_DECLARE_LATIN1_LITERAL(FieldContext, "Context");
-    Q_DECLARE_LATIN1_LITERAL(ContextHome, "Home");
-    Q_DECLARE_LATIN1_LITERAL(ContextWork, "Work");
-    Q_DECLARE_LATIN1_LITERAL(ContextOther, "Other");
+    Q_DECLARE_LATIN1_CONSTANT(FieldContext, "Context");
+    Q_DECLARE_LATIN1_CONSTANT(ContextHome, "Home");
+    Q_DECLARE_LATIN1_CONSTANT(ContextWork, "Work");
+    Q_DECLARE_LATIN1_CONSTANT(ContextOther, "Other");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDetailUri, "DetailUri");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLinkedDetailUris, "LinkedDetailUris");
 #endif
 
     bool operator==(const QOrganizerItemDetail& other) const;
@@ -82,17 +96,64 @@ public:
     QString definitionName() const;
     bool isEmpty() const;
 
-    QVariantMap values() const;
+    int key() const;
+    void resetKey();
+
     QString value(const QString& key) const;
     bool setValue(const QString& key, const QVariant& value);
     bool removeValue(const QString& key);
     bool hasValue(const QString& key) const;
 
+    QVariantMap variantValues() const;
     QVariant variantValue(const QString& key) const;
     template <typename T> T value(const QString& key) const
     {
         return variantValue(key).value<T>();
     }
+
+    /* These are probably internal */
+    QString value(const char* key) const;
+    bool setValue(const char* key, const QVariant& value);
+    bool removeValue(const char* key);
+    bool hasValue(const char* key) const;
+    QVariant variantValue(const char *key) const;
+    template<typename T> T value(const char *key) const
+    {
+        return variantValue(key).value<T>();
+    }
+#ifdef Q_QDOC
+    QString value(const QLatin1Constant& key) const;
+    bool setValue(const QLatin1Constant& key, const QVariant& value);
+    bool removeValue(const QLatin1Constant& key);
+    bool hasValue(const QLatin1Constant& key) const;
+    QVariant variantValue(const QLatin1Constant& key) const;
+    T value(const QLatin1Constant& key) const;
+#else
+    template<int N> QString value(const QLatin1Constant<N>& key) const
+    {
+        return value(key.latin1());
+    }
+    template<int N> bool setValue(const QLatin1Constant<N>& key, const QVariant& value)
+    {
+        return setValue(key.latin1(), value);
+    }
+    template<int N> bool removeValue(const QLatin1Constant<N>& key)
+    {
+        return removeValue(key.latin1());
+    }
+    template<int N> bool hasValue(const QLatin1Constant<N>& key) const
+    {
+        return hasValue(key.latin1());
+    }
+    template<int N> QVariant variantValue(const QLatin1Constant<N>& key) const
+    {
+        return variantValue(key.latin1());
+    }
+    template<typename T, int N> T value(const QLatin1Constant<N>& key) const
+    {
+        return value<T>(key.latin1());
+    }
+#endif
 
     void setContexts(const QStringList& contexts)
     {
@@ -109,25 +170,64 @@ public:
         return value<QStringList>(FieldContext);
     }
 
+    void setDetailUri(const QString& detailUri)
+    {
+        setValue(FieldDetailUri, detailUri);
+    }
+
+    QString detailUri() const
+    {
+        return value(FieldDetailUri);
+    }
+
+    void setLinkedDetailUris(const QStringList& linkedDetailUris)
+    {
+        setValue(FieldLinkedDetailUris, linkedDetailUris);
+    }
+
+    void setLinkedDetailUris(const QString& linkedDetailUri)
+    {
+        setValue(FieldLinkedDetailUris, QStringList(linkedDetailUri));
+    }
+
+    QStringList linkedDetailUris() const
+    {
+        return value<QStringList>(FieldLinkedDetailUris);
+    }
+
 protected:
-    QOrganizerItemDetail(const QOrganizerItemDetail& other, const QString& expectedDefinitionId);
-    QOrganizerItemDetail& assign(const QOrganizerItemDetail& other, const QString& expectedDefinitionId);
+    QOrganizerItemDetail(const QOrganizerItemDetail &other, const QString& expectedDefinitionId);
+    QOrganizerItemDetail& assign(const QOrganizerItemDetail &other, const QString& expectedDefinitionId);
+    QOrganizerItemDetail(const QOrganizerItemDetail &other, const char* expectedDefinitionId);
+    QOrganizerItemDetail& assign(const QOrganizerItemDetail &other, const char* expectedDefinitionId);
 
 private:
     friend class QOrganizerItem;
+    friend class QOrganizerItemDetailPrivate;
     QSharedDataPointer<QOrganizerItemDetailPrivate> d;
 };
 
-#define Q_DECLARE_CUSTOM_CALENDAR_DETAIL(className, definitionNameString) \
-    className() : QOrganizerItemDetail(DefinitionName) {} \
-    className(const QOrganizerItemDetail& field) : QOrganizerItemDetail(field, DefinitionName) {} \
-    className& operator=(const QOrganizerItemDetail& other) {assign(other, DefinitionName); return *this;} \
-    \
-    Q_DECLARE_LATIN1_LITERAL(DefinitionName, definitionNameString);
+Q_CONTACTS_EXPORT uint qHash(const QOrganizerItemDetail& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemDetail& detail);
+#endif
 
-#define Q_IMPLEMENT_CUSTOM_CALENDAR_DETAIL(className, definitionNameString) \
-    Q_DEFINE_LATIN1_LITERAL(className::DefinitionName, definitionNameString)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QOrganizerItemDetail::AccessConstraints);
+
+#define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
+    className() : QOrganizerItemDetail(DefinitionName.latin1()) {} \
+    className(const QOrganizerItemDetail& field) : QOrganizerItemDetail(field, DefinitionName.latin1()) {} \
+    className& operator=(const QOrganizerItemDetail& other) {assign(other, DefinitionName.latin1()); return *this;} \
+    \
+    Q_DECLARE_LATIN1_CONSTANT(DefinitionName, definitionNameString);
+
+#define Q_IMPLEMENT_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
+    Q_DEFINE_LATIN1_CONSTANT(className::DefinitionName, definitionNameString)
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemDetail), Q_MOVABLE_TYPE);
+
+
 #endif
 

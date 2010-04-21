@@ -39,60 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMSORTORDER_H
-#define QORGANIZERITEMSORTORDER_H
+
+#ifndef QORGANIZERITEMACTIONFACTORY_H
+#define QORGANIZERITEMACTIONFACTORY_H
 
 #include "qtorganizeritemsglobal.h"
+#include "qorganizeritemactiondescriptor.h"
 
+#include <QObject>
+#include <QtPlugin>
 #include <QString>
-#include <QSharedData>
 #include <QList>
+#include <QVariantMap>
+#include <QStringList>
+#include <QHash>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemSortOrderPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemSortOrder
+class QOrganizerItemAction;
+class Q_CONTACTS_EXPORT QOrganizerItemActionFactory : public QObject
 {
+    Q_OBJECT
+
 public:
-    QOrganizerItemSortOrder();
-    ~QOrganizerItemSortOrder();
-
-    QOrganizerItemSortOrder(const QOrganizerItemSortOrder& other);
-    QOrganizerItemSortOrder& operator=(const QOrganizerItemSortOrder& other);
-
-    enum BlankPolicy {
-        BlanksFirst,
-        BlanksLast,
-    };
-
-    /* Mutators */
-    void setDetailDefinitionName(const QString& definitionName, const QString& fieldName);
-    void setBlankPolicy(BlankPolicy blankPolicy);
-    void setDirection(Qt::SortOrder direction);
-    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
-
-    /* Accessors */
-    QString detailDefinitionName() const;
-    QString detailFieldName() const;
-    BlankPolicy blankPolicy() const;
-    Qt::SortOrder direction() const;
-    Qt::CaseSensitivity caseSensitivity() const;
-
-    bool isValid() const;
-
-    bool operator==(const QOrganizerItemSortOrder& other) const;
-    bool operator!=(const QOrganizerItemSortOrder& other) const {return !operator==(other);}
-
-    /* Convenience cast */
-    operator QList<QOrganizerItemSortOrder>() const {return QList<QOrganizerItemSortOrder>() << *this;}
-
-private:
-    QSharedDataPointer<QOrganizerItemSortOrderPrivate> d;
+    virtual ~QOrganizerItemActionFactory() = 0;
+    virtual QString name() const = 0;
+    virtual QList<QOrganizerItemActionDescriptor> actionDescriptors() const = 0;
+    virtual QOrganizerItemAction* instance(const QOrganizerItemActionDescriptor& descriptor) const = 0;
+    virtual QVariantMap actionMetadata(const QOrganizerItemActionDescriptor& descriptor) const = 0;
 };
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemSortOrder), Q_MOVABLE_TYPE);
+QT_BEGIN_NAMESPACE
+#define QT_CONTACTS_ACTION_FACTORY_INTERFACE "com.nokia.qt.mobility.contacts.actionfactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QOrganizerItemActionFactory, QT_CONTACTS_ACTION_FACTORY_INTERFACE);
+QT_END_NAMESPACE
 
 
 #endif

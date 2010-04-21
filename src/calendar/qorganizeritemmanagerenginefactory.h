@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -55,23 +55,17 @@ class QOrganizerItemManagerEngine;
 class Q_CONTACTS_EXPORT QOrganizerItemManagerEngineFactory
 {
 public:
-
-    int version() const
-    {
-        return QOrganizerItemManager::version();
-    }
-
-    virtual QList<int> supportedImplementationVersions() const
-    {
-        return QList<int>();
-    }
-    virtual ~QOrganizerItemManagerEngineFactory() {}
-    virtual QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error& error) = 0;
+    // engine factory functions
+    virtual QList<int> supportedImplementationVersions() const;
+    virtual ~QOrganizerItemManagerEngineFactory();
+    virtual QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error) = 0;
     virtual QString managerName() const = 0;
 };
 QTM_END_NAMESPACE
 
-#define QT_CALENDAR_BACKEND_INTERFACE "com.nokia.qt.mobility.calendar.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QOrganizerItemManagerEngineFactory, QT_CALENDAR_BACKEND_INTERFACE);
+QT_BEGIN_NAMESPACE
+#define QT_CONTACTS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QOrganizerItemManagerEngineFactory, QT_CONTACTS_BACKEND_INTERFACE);
+QT_END_NAMESPACE
 
 #endif

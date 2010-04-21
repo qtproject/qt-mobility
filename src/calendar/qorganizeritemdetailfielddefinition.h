@@ -39,60 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMSORTORDER_H
-#define QORGANIZERITEMSORTORDER_H
+#ifndef QORGANIZERITEMDETAILFIELDDEFINITION_H
+#define QORGANIZERITEMDETAILFIELDDEFINITION_H
+
+#include <QList>
+#include <QVariant>
+#include <QSharedDataPointer>
 
 #include "qtorganizeritemsglobal.h"
 
-#include <QString>
-#include <QSharedData>
-#include <QList>
-
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemSortOrderPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemSortOrder
+class QOrganizerItemDetailFieldDefinitionPrivate;
+class Q_CONTACTS_EXPORT QOrganizerItemDetailFieldDefinition
 {
 public:
-    QOrganizerItemSortOrder();
-    ~QOrganizerItemSortOrder();
+    QOrganizerItemDetailFieldDefinition();
+    ~QOrganizerItemDetailFieldDefinition();
 
-    QOrganizerItemSortOrder(const QOrganizerItemSortOrder& other);
-    QOrganizerItemSortOrder& operator=(const QOrganizerItemSortOrder& other);
+    QOrganizerItemDetailFieldDefinition(const QOrganizerItemDetailFieldDefinition& other);
+    QOrganizerItemDetailFieldDefinition& operator=(const QOrganizerItemDetailFieldDefinition& other);
 
-    enum BlankPolicy {
-        BlanksFirst,
-        BlanksLast,
-    };
+    QVariant::Type dataType() const;
+    void setDataType(QVariant::Type type);
 
-    /* Mutators */
-    void setDetailDefinitionName(const QString& definitionName, const QString& fieldName);
-    void setBlankPolicy(BlankPolicy blankPolicy);
-    void setDirection(Qt::SortOrder direction);
-    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
+    QVariantList allowableValues() const;
+    void setAllowableValues(const QVariantList values);
 
-    /* Accessors */
-    QString detailDefinitionName() const;
-    QString detailFieldName() const;
-    BlankPolicy blankPolicy() const;
-    Qt::SortOrder direction() const;
-    Qt::CaseSensitivity caseSensitivity() const;
-
-    bool isValid() const;
-
-    bool operator==(const QOrganizerItemSortOrder& other) const;
-    bool operator!=(const QOrganizerItemSortOrder& other) const {return !operator==(other);}
-
-    /* Convenience cast */
-    operator QList<QOrganizerItemSortOrder>() const {return QList<QOrganizerItemSortOrder>() << *this;}
+    bool operator==(const QOrganizerItemDetailFieldDefinition& other) const;
+    bool operator!=(const QOrganizerItemDetailFieldDefinition& other) const;
 
 private:
-    QSharedDataPointer<QOrganizerItemSortOrderPrivate> d;
+    QSharedDataPointer<QOrganizerItemDetailFieldDefinitionPrivate> d;
 };
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemSortOrder), Q_MOVABLE_TYPE);
-
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemDetailFieldDefinition), Q_MOVABLE_TYPE);
 
 #endif

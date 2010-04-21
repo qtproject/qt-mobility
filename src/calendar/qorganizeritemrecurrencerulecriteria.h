@@ -49,7 +49,7 @@
 #include <QPair>
 #include <QSharedDataPointer>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 
 QTM_BEGIN_NAMESPACE
 

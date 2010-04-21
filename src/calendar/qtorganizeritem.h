@@ -25,7 +25,7 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please organizeritem
+** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
 **
 **
@@ -39,29 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QTCALENDAR_H
-#define QTCALENDAR_H
+#ifndef QTORGANIZERITEM_H
+#define QTORGANIZERITEM_H
 
 // this file includes all of the public header files
-// provided by the Qt Calendar API
+// provided by the Qt Organizer Item API
 
-#include "qtcalendarglobal.h"                         // global exports
-#include "qorganizeritemmanager.h"                    // manager
-#include "qorganizeritemmanagerengine.h"              // manager backend
-#include "qorganizeritemmanagerenginefactory.h"       // manage backend instantiator
-#include "qorganizeritem.h"                           // organizeritem
-#include "qorganizeritemid.h"                         // organizeritem identifier
-#include "qorganizeritemdetaildefinition.h"           // detail definition
-#include "qorganizeritemdetaildefinitionfield.h"      // field in a detail definition
-#include "qorganizeritemdetail.h"                     // organizeritem detail
-#include "qorganizeritemdetails.h"                    // leaf detail classes
-#include "qorganizeritemfilter.h"                     // organizeritem filter
-#include "qorganizeritemfilters.h"                    // leaf filter classes
-#include "qorganizeritemsortorder.h"                  // organizeritem sorting
+#include "qtorganizeritemsglobal.h"                   // global exports
+#include "qorganizeritemabstractrequest.h"            // asynchronous request
 #include "qorganizeritemaction.h"                     // actions
 #include "qorganizeritemactiondescriptor.h"           // action descriptors
 #include "qorganizeritemactionfactory.h"              // action factory
-#include "qorganizeritemabstractrequest.h"            // asynchronous request
+#include "qorganizeritemdetail.h"                     // organizeritem detail
+#include "qorganizeritemdetaildefinition.h"           // detail definition
+#include "qorganizeritemdetailfielddefinition.h"      // field in a detail definition
+#include "qorganizeritemdetails.h"                    // leaf detail classes
+#include "qorganizeritemfetchhint.h"                  // fetch hint class
+#include "qorganizeritemfilter.h"                     // organizeritem filter
+#include "qorganizeritemfilters.h"                    // leaf filter classes
+#include "qorganizeritem.h"                           // organizeritem
+#include "qorganizeritemid.h"                         // organizeritem identifier
+#include "qorganizeritemmanager.h"                    // manager
+#include "qorganizeritemmanagerengine.h"              // manager backend
+#include "qorganizeritemmanagerenginefactory.h"       // manage backend instantiator
+#include "qorganizeritemrecurrencerulecriteria.h"     // recurrence rule criteria
+#include "qorganizeritemrecurrencerules.h"            // recurrence rules made up of criteria
+#include "qorganizeritemrelationship.h"               // relationships between items
 #include "qorganizeritemrequests.h"                   // request leaf classes
+#include "qorganizeritemsortorder.h"                  // organizeritem sorting
 
 #endif

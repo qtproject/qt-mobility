@@ -47,13 +47,13 @@
 #include <QDateTime>
 #include <QSharedData>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
 /* Manual Q_DECLARE_CONTACTFILTER_PRIVATE macro */
 
-#define Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(Class) \
+#define Q_DECLARE_CONTACTFILTER_PRIVATE(Class) \
     inline Class##Private* d_func(); \
     inline const Class##Private* d_func() const; \
     friend class Class##Private;
@@ -63,14 +63,14 @@ class Q_CONTACTS_EXPORT QOrganizerItemFilter
 {
 public:
     QOrganizerItemFilter();
-    virtual ~QOrganizerItemFilter();
+    ~QOrganizerItemFilter();
     QOrganizerItemFilter(const QOrganizerItemFilter& other);
     QOrganizerItemFilter& operator=(const QOrganizerItemFilter& other);
 
     enum FilterType {
         InvalidFilter,
-        OrganizerItemDetailFilter,
-        OrganizerItemDetailRangeFilter,
+        ContactDetailFilter,
+        ContactDetailRangeFilter,
         ChangeLogFilter,
         ActionFilter,
         RelationshipFilter,
@@ -89,8 +89,9 @@ public:
         MatchStartsWith = Qt::MatchStartsWith,  // 2
         MatchEndsWith = Qt::MatchEndsWith, // 3
         MatchFixedString = Qt::MatchFixedString, // 8
-        MatchCaseSensitive = Qt::MatchCaseSensitive // 16
-        // MatchTimePeriod ? MatchLocation ? // fuzzy?
+        MatchCaseSensitive = Qt::MatchCaseSensitive, // 16
+        MatchPhoneNumber = 1024,
+        MatchKeypadCollation = 2048
     };
     Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
 
@@ -105,9 +106,11 @@ protected:
     QSharedDataPointer<QOrganizerItemFilterPrivate> d_ptr;
 };
 
-const Q_CALENDAR_EXPORT QOrganizerItemFilter operator&(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right);
-const Q_CALENDAR_EXPORT QOrganizerItemFilter operator|(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right);
+const Q_CONTACTS_EXPORT QOrganizerItemFilter operator&(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right);
+const Q_CONTACTS_EXPORT QOrganizerItemFilter operator|(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right);
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemFilter), Q_MOVABLE_TYPE);
 
 #endif

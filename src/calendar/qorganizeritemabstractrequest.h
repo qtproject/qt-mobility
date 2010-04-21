@@ -49,37 +49,39 @@ QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemManagerEngine;
 class QOrganizerItemAbstractRequestPrivate;
-class Q_CALENDAR_EXPORT QOrganizerItemAbstractRequest : public QObject
+class Q_CONTACTS_EXPORT QOrganizerItemAbstractRequest : public QObject
 {
     Q_OBJECT
 
 public:
-    QOrganizerItemAbstractRequest() {}
-    virtual ~QOrganizerItemAbstractRequest();
+    ~QOrganizerItemAbstractRequest();
 
-    enum Status {
-        Inactive = 0,   // operation not yet started
-        Active,         // operation started, not yet finished
-        Cancelling,     // operation started then cancelled, not yet finished
-        Cancelled,      // operation is finished due to cancellation
-        Finished        // operation successfully completed
+    enum State {
+        InactiveState = 0,   // operation not yet started
+        ActiveState,         // operation started, not yet finished
+        CanceledState,       // operation is finished due to cancellation
+        FinishedState        // operation either completed successfully or failed.  No further results will become available.
     };
 
-    Status status() const;
+    State state() const; // replaces status()
+    bool isInactive() const;
     bool isActive() const;
     bool isFinished() const;
-    QList<QOrganizerItemManager::Error> errors() const;
+    bool isCanceled() const;
     QOrganizerItemManager::Error error() const;
 
     enum RequestType {
         InvalidRequest = 0,
-        OrganizerItemFetchRequest,
-        OrganizerItemLocalIdFetchRequest,
-        OrganizerItemRemoveRequest,
-        OrganizerItemSaveRequest,
+        ContactFetchRequest,
+        ContactLocalIdFetchRequest,
+        ContactRemoveRequest,
+        ContactSaveRequest,
         DetailDefinitionFetchRequest,
         DetailDefinitionRemoveRequest,
-        DetailDefinitionSaveRequest
+        DetailDefinitionSaveRequest,
+        RelationshipFetchRequest,
+        RelationshipRemoveRequest,
+        RelationshipSaveRequest
     };
 
     RequestType type() const;
@@ -88,20 +90,24 @@ public:
     QOrganizerItemManager* manager() const;
     void setManager(QOrganizerItemManager* manager);
 
-public slots:
+public Q_SLOTS:
     /* Verbs */
     bool start();
     bool cancel();
 
     /* waiting for stuff */
     bool waitForFinished(int msecs = 0);
-    bool waitForProgress(int msecs = 0);
+
+Q_SIGNALS:
+    void stateChanged(QOrganizerItemAbstractRequest::State newState);
+    void resultsAvailable();
 
 protected:
-    QOrganizerItemAbstractRequest(QOrganizerItemAbstractRequestPrivate* otherd);
+    QOrganizerItemAbstractRequest(QOrganizerItemAbstractRequestPrivate* otherd, QObject* parent = 0);
     QOrganizerItemAbstractRequestPrivate* d_ptr;
 
 private:
+    QOrganizerItemAbstractRequest(QObject* parent = 0) : QObject(parent), d_ptr(0) {}
     Q_DISABLE_COPY(QOrganizerItemAbstractRequest)
     friend class QOrganizerItemManagerEngine;
 };

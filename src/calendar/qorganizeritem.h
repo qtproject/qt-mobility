@@ -50,20 +50,23 @@
 #include <QDateTime>
 #include <QSharedDataPointer>
 
-#include "qorganizeritemid.h"
+#include "qtorganizeritemsglobal.h"
+
 #include "qorganizeritemdetail.h"
 #include "qorganizeritemdetaildefinition.h"
-#include "qorganizeritemactiondescriptor.h"
+#include "qorganizeritemdisplaylabel.h"
+#include "qorganizeritemrelationship.h"
+#include "qorganizeritemrelationshipfilter.h"
 #include "qorganizeritemtype.h"
-#include "qorganizeritemrecurrencerules.h"
 
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemManager;
 class QOrganizerItemData;
 class QOrganizerItemName;
+class QOrganizerItemAction;
 
-class Q_CALENDAR_EXPORT QOrganizerItem
+class Q_CONTACTS_EXPORT QOrganizerItem
 {
 public:
     QOrganizerItem();
@@ -86,33 +89,55 @@ public:
     void setType(const QString& type);
     void setType(const QOrganizerItemType& type);
 
-    /* The (backend synthesized) display label of the item */
+    /* The (backend synthesized) display label of the organizeritem */
     QString displayLabel() const;
 
-    /* Is this an empty item? */
+    /* Is this an empty organizeritem? */
     bool isEmpty() const;
     void clearDetails();
-
-    /* The recurrence rules which apply to this item */
-    bool setRecurrenceRules(const QOrganizerItemRecurrenceRules& rules);
-    QOrganizerItemRecurrenceRules recurrenceRules() const;
 
     /* Access details of particular type or which support a particular action */
     QOrganizerItemDetail detail(const QString& definitionId) const;
     QList<QOrganizerItemDetail> details(const QString& definitionId = QString()) const;
-    QOrganizerItemDetail detailWithAction(const QString& actionName) const;
-    QList<QOrganizerItemDetail> detailsWithAction(const QString& actionName) const;
+    QOrganizerItemDetail detailWithAction(QOrganizerItemAction* action) const;
+    QList<QOrganizerItemDetail> detailsWithAction(QOrganizerItemAction* action) const;
+
+    QList<QOrganizerItemDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
+
+    QOrganizerItemDetail detail(const char* definitionId) const;
+    QList<QOrganizerItemDetail> details(const char* definitionId) const;
+    QList<QOrganizerItemDetail> details(const char* definitionId, const char* fieldName, const QString& value) const;
+
+    /* Templated retrieval for definition names */
+#ifdef Q_QDOC
+    QOrganizerItemDetail detail(const QLatin1Constant& definitionName) const;
+    QList<QOrganizerItemDetail> details(const QLatin1Constant& definitionName) const;
+    QList<QOrganizerItemDetail> details(const QLatin1Constant& definitionName, const QLatin1Constant& fieldName, const QString& value);
+#else
+    template <int N> QOrganizerItemDetail detail(const QLatin1Constant<N>& definitionName) const
+    {
+        return detail(definitionName.latin1());
+    }
+    template <int N> QList<QOrganizerItemDetail> details(const QLatin1Constant<N>& definitionName) const
+    {
+        return details(definitionName.latin1());
+    }
+    template <int N, int M> QList<QOrganizerItemDetail> details(const QLatin1Constant<N>& definitionName, const QLatin1Constant<M>& fieldName, const QString& value)
+    {
+        return details(definitionName.latin1(), fieldName.latin1(), value);
+    }
+#endif
 
     /* Templated (type-specific) detail retrieval */
     template<typename T> QList<T> details() const
     {
-        QList<QOrganizerItemDetail> props = details(T::DefinitionName);
+        QList<QOrganizerItemDetail> props = details(T::DefinitionName.latin1());
         QList<T> ret;
         foreach(QOrganizerItemDetail prop, props)
             ret.append(T(prop));
         return ret;
     }
-    
+
     /* Templated (type-specific) detail retrieval base on given detail field name and field value */
     template<typename T> QList<T> details(const QString& fieldName, const QString& value) const
     {
@@ -122,24 +147,37 @@ public:
             ret.append(T(prop));
         return ret;
     }
-    
-    /* Detail retrieval base on given detail definition name, field name and field value */
-    QList<QOrganizerItemDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
+
+    template<typename T> QList<T> details(const char* fieldName, const QString& value) const
+    {
+        QList<QOrganizerItemDetail> props = details(T::DefinitionName.latin1(), fieldName, value);
+        QList<T> ret;
+        foreach(QOrganizerItemDetail prop, props)
+            ret.append(T(prop));
+        return ret;
+    }
 
     template<typename T> T detail() const
     {
-        return T(detail(T::DefinitionName));
+        return T(detail(T::DefinitionName.latin1()));
     }
 
     /* generic detail addition/removal functions */
     bool saveDetail(QOrganizerItemDetail* detail);   // modifies the detail - sets its ID if detail already exists
     bool removeDetail(QOrganizerItemDetail* detail); // modifies the detail - unsets its ID
 
-    /* Other items which are directly related to this item */
-    QList<QOrganizerItemId> relatedItems(const QString& relationshipType = QString(), QOrganizerItemRelationshipFilter::Role role = QOrganizerItemRelationshipFilter::Either) const;
+    /* Relationships that this organizeritem was involved in when it was retrieved from the manager */
+    QList<QOrganizerItemRelationship> relationships(const QString& relationshipType = QString()) const;
+    QList<QOrganizerItemId> relatedContacts(const QString& relationshipType = QString(), QOrganizerItemRelationship::Role role = QOrganizerItemRelationship::Either) const;
 
-    /* Actions available to be performed on this item (publish details? set alarm? or..?) */
+    /* Actions available to be performed on this organizeritem (publish details? set alarm? or..?) */
     QList<QOrganizerItemActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
+
+    /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
+    bool setPreferredDetail(const QString& actionName, const QOrganizerItemDetail& preferredDetail);
+    bool isPreferredDetail(const QString& actionName, const QOrganizerItemDetail& detail) const;
+    QOrganizerItemDetail preferredDetail(const QString& actionName) const;
+    QMap<QString, QOrganizerItemDetail> preferredDetails() const;
 
 private:
     friend class QOrganizerItemManager;
@@ -149,7 +187,15 @@ private:
     QSharedDataPointer<QOrganizerItemData> d;
 };
 
+Q_CONTACTS_EXPORT uint qHash(const QOrganizerItem& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem);
+#endif
+
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItem), Q_MOVABLE_TYPE);
+
 
 #endif
 

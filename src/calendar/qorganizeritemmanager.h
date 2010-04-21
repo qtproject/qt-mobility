@@ -51,10 +51,12 @@
 #include <QList>
 #include <QDateTime>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritem.h"
 #include "qorganizeritemid.h"
+#include "qorganizeritemrelationship.h"
 #include "qorganizeritemsortorder.h"
+#include "qorganizeritemfetchhint.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -62,18 +64,19 @@ class QOrganizerItemFilter;
 class QOrganizerItemAction;
 
 class QOrganizerItemManagerData;
-class Q_CALENDAR_EXPORT QOrganizerItemManager : public QObject
+class Q_CONTACTS_EXPORT QOrganizerItemManager : public QObject
 {
     Q_OBJECT
 
 public:
 #if Q_QDOC // qdoc's parser fails to recognise the default map argument
-    QOrganizerItemManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
+    explicit QOrganizerItemManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
     QOrganizerItemManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = 0, QObject* parent = 0);
 #else
-    QOrganizerItemManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
+    explicit QOrganizerItemManager(const QString& managerName = QString(), const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
     QOrganizerItemManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters = (QMap<QString, QString>()), QObject* parent = 0);
 #endif
+    explicit QOrganizerItemManager(QObject* parent);
 
     static QOrganizerItemManager* fromUri(const QString& uri, QObject* parent = 0);
     ~QOrganizerItemManager();                     // dtor
@@ -83,7 +86,7 @@ public:
     QString managerUri() const;                        // managerName + managerParameters
     int managerVersion() const;
 
-    static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
+    static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params); // replaces the above.
     static QString buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion = -1);
 
     /* The values of the Error enum are still to be decided! */
@@ -92,6 +95,7 @@ public:
         DoesNotExistError,
         AlreadyExistsError,
         InvalidDetailError,
+        InvalidRelationshipError,
         LockedError,
         DetailAccessError,
         PermissionsError,
@@ -101,53 +105,82 @@ public:
         UnspecifiedError,
         VersionMismatchError,
         LimitReachedError,
-        InvalidOrganizerItemTypeError
+        InvalidContactTypeError
     };
 
     /* Error reporting */
     QOrganizerItemManager::Error error() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QOrganizerItemLocalId> organizerItems(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;    // retrieve contact ids
-    QList<QOrganizerItemLocalId> organizerItems(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const; // retrieve ids of contacts matching the filter
+    QList<QOrganizerItemLocalId> contactIds(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
+    QList<QOrganizerItemLocalId> contactIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
 
-    QOrganizerItem organizerItem(const QOrganizerItemLocalId& contactId) const;  // retrieve a contact
+    // these three functions replace the three deprecated functions above.
+    QList<QOrganizerItem> contacts(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+    QList<QOrganizerItem> contacts(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+    QOrganizerItem contact(const QOrganizerItemLocalId& contactId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve a contact
 
-    bool saveOrganizerItem(QOrganizerItem* contact);                 // note: MODIFIES contact (sets the contactId)
-    bool removeOrganizerItem(const QOrganizerItemLocalId& contactId);      // remove the contact from the persistent store
-    QList<QOrganizerItemManager::Error> saveOrganizerItems(QList<QOrganizerItem>* contacts);       // batch API - save
-    QList<QOrganizerItemManager::Error> removeOrganizerItems(QList<QOrganizerItemLocalId>* contactIds);  // batch API - remove
+    bool saveContact(QOrganizerItem* contact);                 // note: MODIFIES contact (sets the contactId)
+    bool removeContact(const QOrganizerItemLocalId& contactId);      // remove the contact from the persistent store
 
-    /* Synthesize the display label of an organizer item */
-    QString synthesizeDisplayLabel(const QOrganizerItem& organizerItem) const;
+    bool saveContacts(QList<QOrganizerItem>* contacts, QMap<int, QOrganizerItemManager::Error>* errorMap); // batch API - save.
+    bool removeContacts(const QList<QOrganizerItemLocalId>& contactIds, QMap<int, QOrganizerItemManager::Error>* errorMap); // batch API - remove.
+
+    /* Return a pruned or modified contact which is valid and can be saved in the manager */
+    QOrganizerItem compatibleContact(const QOrganizerItem& original); // Preliminary function!
+
+    /* Synthesize the display label of a contact */
+    QString synthesizedContactDisplayLabel(const QOrganizerItem& contact) const;
+    void synthesizeContactDisplayLabel(QOrganizerItem* contact) const;
+
+    /* "Self" contact id (MyCard) */
+    bool setSelfContactId(const QOrganizerItemLocalId& contactId);
+    QOrganizerItemLocalId selfContactId() const;
+
+    /* Relationships */
+    QList<QOrganizerItemRelationship> relationships(const QOrganizerItemId& participantId, QOrganizerItemRelationship::Role role = QOrganizerItemRelationship::Either) const;
+    QList<QOrganizerItemRelationship> relationships(const QString& relationshipType = QString(), const QOrganizerItemId& participantId = QOrganizerItemId(), QOrganizerItemRelationship::Role role = QOrganizerItemRelationship::Either ) const;
+    bool saveRelationship(QOrganizerItemRelationship* relationship);
+    bool saveRelationships(QList<QOrganizerItemRelationship>* relationships, QMap<int, QOrganizerItemManager::Error>* errorMap);
+    bool removeRelationship(const QOrganizerItemRelationship& relationship);
+    bool removeRelationships(const QList<QOrganizerItemRelationship>& relationships, QMap<int, QOrganizerItemManager::Error>* errorMap);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& organizerItemType = QOrganizerItemType::TypeEvent) const;
-    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& organizerItemType = QOrganizerItemType::TypeEvent) const;
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizerItemType = QOrganizerItemType::TypeEvent);
-    bool removeDetailDefinition(const QString& definitionName, const QString& organizerItemType = QOrganizerItemType::TypeEvent);
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& contactType = QOrganizerItemType::TypeContact) const;
+    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType = QOrganizerItemType::TypeContact) const;
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& contactType = QOrganizerItemType::TypeContact);
+    bool removeDetailDefinition(const QString& definitionName, const QString& contactType = QOrganizerItemType::TypeContact);
 
     /* Functionality reporting */
     enum ManagerFeature {
-        ActionPreferences = 0,
+        Groups = 0,               // backend supports QOrganizerItemType::TypeGroup type contacts (convenience for clients... should be deprecated)
+        ActionPreferences,        // per-contact action preferences
         MutableDefinitions,
+        Relationships,
+        ArbitraryRelationshipTypes,
+        RelationshipOrdering,     // deprecated along with setRelationshipOrder() etc in QOrganizerItem.
+        DetailOrdering,
+        SelfContact,
         Anonymous,
         ChangeLogs
     };
-    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizerItemType = QOrganizerItemType::TypeEvent) const;
-    QStringList supportedRelationshipTypes(const QString& organizerItemType = QOrganizerItemType::TypeEvent) const;
+    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& contactType = QOrganizerItemType::TypeContact) const;
+    bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType = QOrganizerItemType::TypeContact) const;
     QList<QVariant::Type> supportedDataTypes() const;
-    bool filterSupported(const QOrganizerItemFilter& filter) const;
-    QStringList supportedOrganizerItemTypes() const; // probably not needed; types are probably auto-synthesised from details?
+    bool isFilterSupported(const QOrganizerItemFilter& filter) const;
+    QStringList supportedContactTypes() const;
 
     /* return a list of available backends for which a QOrganizerItemManager can be constructed. */
     static QStringList availableManagers();
 
-signals:
+Q_SIGNALS:
     void dataChanged();
-    void organizerItemsAdded(const QList<QOrganizerItemLocalId>& organizerItemIds);
-    void organizerItemsChanged(const QList<QOrganizerItemLocalId>& organizerItemIds);
-    void organizerItemsRemoved(const QList<QOrganizerItemLocalId>& organizerItemIds);
+    void contactsAdded(const QList<QOrganizerItemLocalId>& contactIds);
+    void contactsChanged(const QList<QOrganizerItemLocalId>& contactIds);
+    void contactsRemoved(const QList<QOrganizerItemLocalId>& contactIds);
+    void relationshipsAdded(const QList<QOrganizerItemLocalId>& affectedContactIds);
+    void relationshipsRemoved(const QList<QOrganizerItemLocalId>& affectedContactIds);
+    void selfContactIdChanged(const QOrganizerItemLocalId& oldId, const QOrganizerItemLocalId& newId); // need both? or just new?
 
 private:
     friend class QOrganizerItemManagerData;

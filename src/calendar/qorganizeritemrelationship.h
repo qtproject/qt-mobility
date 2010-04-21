@@ -39,60 +39,65 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMSORTORDER_H
-#define QORGANIZERITEMSORTORDER_H
 
-#include "qtorganizeritemsglobal.h"
+#ifndef QORGANIZERITEMRELATIONSHIP_H
+#define QORGANIZERITEMRELATIONSHIP_H
 
 #include <QString>
-#include <QSharedData>
 #include <QList>
+#include <QPair>
+#include <QSharedDataPointer>
+
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemSortOrderPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemSortOrder
+class QOrganizerItemRelationshipPrivate;
+
+class Q_CONTACTS_EXPORT QOrganizerItemRelationship
 {
 public:
-    QOrganizerItemSortOrder();
-    ~QOrganizerItemSortOrder();
+#ifdef Q_QDOC
+    static const QLatin1Constant DependsOn;
+    static const QLatin1Constant ParentEventOf;
+#else
+    Q_DECLARE_LATIN1_CONSTANT(DependsOn, "DependsOn");
+    Q_DECLARE_LATIN1_CONSTANT(ParentEventOf, "ParentEventOf");
+#endif
 
-    QOrganizerItemSortOrder(const QOrganizerItemSortOrder& other);
-    QOrganizerItemSortOrder& operator=(const QOrganizerItemSortOrder& other);
+    QOrganizerItemRelationship();
+    ~QOrganizerItemRelationship();
 
-    enum BlankPolicy {
-        BlanksFirst,
-        BlanksLast,
+    QOrganizerItemRelationship(const QOrganizerItemRelationship& other);
+    QOrganizerItemRelationship& operator=(const QOrganizerItemRelationship& other);
+    bool operator==(const QOrganizerItemRelationship &other) const;
+    bool operator!=(const QOrganizerItemRelationship &other) const { return !(*this==other); }
+
+    QOrganizerItemId first() const;
+    QOrganizerItemId second() const;
+    QString relationshipType() const;
+
+    void setFirst(const QOrganizerItemId& firstId);
+    void setSecond(const QOrganizerItemId& secondId);
+    void setRelationshipType(const QString& relationshipType);
+
+    enum Role {
+        First = 0,
+        Second,
+        Either
     };
 
-    /* Mutators */
-    void setDetailDefinitionName(const QString& definitionName, const QString& fieldName);
-    void setBlankPolicy(BlankPolicy blankPolicy);
-    void setDirection(Qt::SortOrder direction);
-    void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
-
-    /* Accessors */
-    QString detailDefinitionName() const;
-    QString detailFieldName() const;
-    BlankPolicy blankPolicy() const;
-    Qt::SortOrder direction() const;
-    Qt::CaseSensitivity caseSensitivity() const;
-
-    bool isValid() const;
-
-    bool operator==(const QOrganizerItemSortOrder& other) const;
-    bool operator!=(const QOrganizerItemSortOrder& other) const {return !operator==(other);}
-
-    /* Convenience cast */
-    operator QList<QOrganizerItemSortOrder>() const {return QList<QOrganizerItemSortOrder>() << *this;}
-
 private:
-    QSharedDataPointer<QOrganizerItemSortOrderPrivate> d;
+    QSharedDataPointer<QOrganizerItemRelationshipPrivate> d;
 };
+
+Q_CONTACTS_EXPORT uint qHash(const QOrganizerItemRelationship& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemRelationship& rel);
+#endif
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemSortOrder), Q_MOVABLE_TYPE);
-
-
 #endif
+

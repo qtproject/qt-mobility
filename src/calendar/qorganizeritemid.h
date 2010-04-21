@@ -45,14 +45,14 @@
 #include <QString>
 #include <QSharedDataPointer>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
 typedef quint32 QOrganizerItemLocalId;
 
 class QOrganizerItemIdPrivate;
-class Q_CALENDAR_EXPORT QOrganizerItemId
+class Q_CONTACTS_EXPORT QOrganizerItemId
 {
 public:
     QOrganizerItemId();
@@ -63,6 +63,7 @@ public:
 
     bool operator==(const QOrganizerItemId& other) const;
     bool operator!=(const QOrganizerItemId& other) const;
+    bool operator<(const QOrganizerItemId& other) const;
 
     QString managerUri() const;
     QOrganizerItemLocalId localId() const;
@@ -74,7 +75,15 @@ private:
     QSharedDataPointer<QOrganizerItemIdPrivate> d;
 };
 
+Q_CONTACTS_EXPORT uint qHash(const QOrganizerItemId& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemId& id);
+#endif
+
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItemId), Q_MOVABLE_TYPE);
+
 
 #endif
 
