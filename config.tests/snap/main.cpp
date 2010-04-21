@@ -39,10 +39,8 @@
 **
 ****************************************************************************/
 
-#include <cmmanager.h>
 
 int main(int argc, char** argv)
 {
-	RCmManager test_if_this_compiles_or_not;
 	return 0;
 }
