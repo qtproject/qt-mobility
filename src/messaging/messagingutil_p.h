@@ -38,19 +38,52 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGINGUTIL_P_H
-#define QMESSAGINGUTIL_P_H
 
-#include <qmessageglobal.h>
-#include <QString>
+#ifndef _SYMBIANHELPERS_H_
+#define _SYMBIANHELPERS_H_
+
+#include <QtCore>
+#include "qmessage.h"
 
 QTM_BEGIN_NAMESPACE
 
-namespace MessagingUtil {
+class QMessageId;
+class QMessageAccountId;
+class QMessageFolderId;
+
+namespace SymbianHelpers {
+
+    enum EngineType {
+        EngineTypeMTM = 0,
+        EngineTypeFreestyle,
+        EngineDefault
+    };
+
+    EngineType idType(const QString& id);
+    EngineType idType(const QMessageId& id);
+    EngineType idType(const QMessageAccountId& id);
+    EngineType idType(const QMessageFolderId& id);
+
+    QString addIdPrefix(const QString& id, const EngineType& type = EngineDefault);
+    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type = EngineDefault);
+    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type = EngineDefault);
+    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type = EngineDefault);
+
+    QString stripIdPrefix(const QString& id);
+    QMessageId stripIdPrefix(const QMessageId& id);
+    QMessageAccountId stripIdPrefix(const QMessageAccountId& id);
+    QMessageFolderId stripIdPrefix(const QMessageFolderId& id);
+
+    static const char* mtmPrefix = "MTM_";
+    static const char* freestylePrefix = "FS_";
+}
+
+namespace MessagingUtil
+{
     QString addIdPrefix(const QString& id);
     QString stripIdPrefix(const QString& id);
     QString idPrefix();
-};
+}
 
 QTM_END_NAMESPACE
 

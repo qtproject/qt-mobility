@@ -44,8 +44,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-using namespace MessagingUtil;
-
 class QMessageIdPrivate
 {
 public:
@@ -66,7 +64,7 @@ QMessageId::QMessageId(const QMessageId& other)
 QMessageId::QMessageId(const QString& id)
 {
     d_ptr = new QMessageIdPrivate;
-    d_ptr->_id = stripIdPrefix(id);
+    d_ptr->_id = id;
 }
 
 QMessageId::~QMessageId()
@@ -93,10 +91,10 @@ bool QMessageId::operator==(const QMessageId& other) const
 {
     if (!other.d_ptr && !d_ptr)
         return true;
-    
+
     if (!other.d_ptr || !d_ptr)
         return false;
-    
+
     return (d_ptr->_id == other.d_ptr->_id);
 }
 
@@ -105,18 +103,18 @@ bool QMessageId::operator<(const QMessageId& other) const
     long left = 0;
     long right = 0;
     if (d_ptr) {
-        left = d_ptr->_id.toLong();
+        left = SymbianHelpers::stripIdPrefix(d_ptr->_id).toLong();
     }
     if (other.d_ptr) {
-        right = other.d_ptr->_id.toLong();
+        right = SymbianHelpers::stripIdPrefix(other.d_ptr->_id).toLong();
     }
-    
+
     return (left < right);
 }
 
 QString QMessageId::toString() const
 {
-    return d_ptr ? addIdPrefix(d_ptr->_id) : addIdPrefix(QString());
+    return d_ptr ? d_ptr->_id : QString();
 }
 
 bool QMessageId::isValid() const
@@ -126,7 +124,7 @@ bool QMessageId::isValid() const
 
 uint qHash(const QMessageId &id)
 {
-    return qHash(stripIdPrefix(id.toString()));
+    return qHash(id.toString());
 }
 
 

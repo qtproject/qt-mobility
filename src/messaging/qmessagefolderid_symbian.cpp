@@ -45,8 +45,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-using namespace MessagingUtil;
-
 QMessageFolderId::QMessageFolderId()
  : d_ptr(0)
 {
@@ -61,7 +59,7 @@ QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
 QMessageFolderId::QMessageFolderId(const QString& id)
  : d_ptr(new QMessageFolderIdPrivate(this))
 {
-   d_ptr->_id = stripIdPrefix(id);
+   d_ptr->_id = id;
 }
 
 QMessageFolderId::~QMessageFolderId()
@@ -115,10 +113,10 @@ bool QMessageFolderId::operator<(const QMessageFolderId& other) const
 QString QMessageFolderId::toString() const
 {
     if (!isValid()) {
-        return addIdPrefix(QString());
+        return QString();
     }
-    
-    return addIdPrefix(d_ptr->_id);
+
+    return d_ptr->_id;
 }
 
 bool QMessageFolderId::isValid() const
@@ -128,7 +126,7 @@ bool QMessageFolderId::isValid() const
 
 uint qHash(const QMessageFolderId &id)
 {
-    return qHash(stripIdPrefix(id.toString()));
+    return qHash(id.toString());
 }
 
 QTM_END_NAMESPACE

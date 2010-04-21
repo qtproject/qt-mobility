@@ -40,9 +40,172 @@
 ****************************************************************************/
 
 #include "messagingutil_p.h"
+#include "qmessageid.h"
+#include "qmessageaccountid.h"
+#include "qmessagefolderid.h"
+#include <qmessageglobal.h>
+
 #include <QDebug>
 
+
+
 QTM_BEGIN_NAMESPACE
+
+namespace SymbianHelpers {
+
+    EngineType idType(const QString& id)
+    {
+        if (id.startsWith(mtmPrefix)) {
+            return EngineTypeMTM;
+        } else if (id.startsWith(freestylePrefix)) {
+            return EngineTypeFreestyle;
+        } else {
+            return EngineTypeMTM;
+        }
+    }
+
+    EngineType idType(const QMessageId& id)
+    {
+        if (id.toString().startsWith(mtmPrefix)) {
+            return EngineTypeMTM;
+        } else if (id.toString().startsWith(freestylePrefix)) {
+            return EngineTypeFreestyle;
+        } else {
+            return EngineTypeMTM;
+        }
+    }
+    
+    EngineType idType(const QMessageAccountId& id)
+    {
+        if (id.toString().startsWith(mtmPrefix)) {
+            return EngineTypeMTM;
+        } else if (id.toString().startsWith(freestylePrefix)) {
+            return EngineTypeFreestyle;
+        } else {
+            return EngineTypeMTM;
+        }
+    }
+    
+    EngineType idType(const QMessageFolderId& id)
+    {
+        if (id.toString().startsWith(mtmPrefix)) {
+            return EngineTypeMTM;
+        } else if (id.toString().startsWith(freestylePrefix)) {
+            return EngineTypeFreestyle;
+        } else {
+            return EngineTypeMTM;
+        }
+    }
+
+    
+    QString addIdPrefix(const QString& id, const EngineType& type)
+    {
+        switch (type) {
+        case EngineTypeFreestyle:
+            Q_ASSERT(!id.startsWith(freestylePrefix));
+            return QString(freestylePrefix) + id;
+            break;
+        case EngineTypeMTM:
+            Q_ASSERT(!id.startsWith(mtmPrefix));
+            return QString(mtmPrefix) + id;
+        default:
+            return QString(id);
+            break;
+        }
+    }
+
+    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type)
+    {
+        switch (type) {
+        case EngineTypeFreestyle:
+            Q_ASSERT(!id.toString().startsWith(freestylePrefix));
+            return QMessageAccountId(QString(freestylePrefix) + id.toString());
+            break;
+        case EngineTypeMTM:
+            Q_ASSERT(!id.toString().startsWith(mtmPrefix));
+            return QMessageAccountId(QString(mtmPrefix) + id.toString());
+            break;
+        default:
+            return QMessageAccountId(id);
+            break;
+        }
+    }
+
+    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type)
+    {
+        switch (type) {
+        case EngineTypeFreestyle:
+            Q_ASSERT(!id.toString().startsWith(freestylePrefix));
+            return QMessageFolderId(QString(freestylePrefix) + id.toString());
+            break;
+        case EngineTypeMTM:
+            Q_ASSERT(!id.toString().startsWith(mtmPrefix));
+            return QMessageFolderId(QString(mtmPrefix) + id.toString());
+            break;
+        default:
+            return QMessageFolderId(id);
+            break;
+        }
+    }
+
+    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type)
+    {
+        switch (type) {
+        case EngineTypeFreestyle:
+            Q_ASSERT(!id.toString().startsWith(freestylePrefix));
+            return QMessageId(freestylePrefix + id.toString());
+            break;
+        case EngineTypeMTM:
+            Q_ASSERT(!id.toString().startsWith(mtmPrefix));
+            return QMessageId(mtmPrefix + id.toString());
+            break;
+        default:
+            return QMessageId(id);
+            break;
+        }
+    }
+
+    QString stripIdPrefix(const QString& id)
+    {
+        if (id.startsWith(freestylePrefix))
+            return id.right(id.length() - QString(freestylePrefix).length());
+        else if (id.startsWith(mtmPrefix))
+            return id.right(id.length() - QString(mtmPrefix).length());
+        else
+            return QString(id);
+    }
+
+    QMessageId stripIdPrefix(const QMessageId& id)
+    {
+        if (id.toString().startsWith(freestylePrefix))
+            return QMessageId(id.toString().right(id.toString().length() - QString(freestylePrefix).length()));
+        else if (id.toString().startsWith(mtmPrefix))
+            return QMessageId(id.toString().right(id.toString().length() - QString(mtmPrefix).length()));
+        else
+            return QMessageId(id);
+    }
+
+    QMessageAccountId stripIdPrefix(const QMessageAccountId& id)
+    {
+        if (id.toString().startsWith(freestylePrefix))
+            return QMessageAccountId(id.toString().right(id.toString().length() - QString(freestylePrefix).length()));
+        else if (id.toString().startsWith(mtmPrefix))
+            return QMessageAccountId(id.toString().right(id.toString().length() - QString(mtmPrefix).length()));
+        else
+            return QMessageAccountId(id);
+    }
+
+    QMessageFolderId stripIdPrefix(const QMessageFolderId& id)
+    {
+        if (id.toString().startsWith(freestylePrefix))
+            return QMessageFolderId(id.toString().right(id.toString().length() - QString(freestylePrefix).length()));
+        else if (id.toString().startsWith(mtmPrefix))
+            return QMessageFolderId(id.toString().right(id.toString().length() - QString(mtmPrefix).length()));
+        else
+            return QMessageFolderId(id);
+    }
+
+}
 
 namespace MessagingUtil {
 
@@ -65,7 +228,7 @@ namespace MessagingUtil {
     QString idPrefix()
     {
 #ifdef Q_OS_SYMBIAN
-        static QString prefix("MTM_");
+        static QString prefix(SymbianHelpers::mtmPrefix);
 #elif defined(Q_OS_WIN)
         static QString prefix("WIN_");
 #else
@@ -73,6 +236,7 @@ namespace MessagingUtil {
 #endif
         return prefix;
     }
+
 }
 
 QTM_END_NAMESPACE
