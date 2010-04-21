@@ -141,9 +141,9 @@ Support is present for the following System Info API classes
 
 \section2 Non-API specific issues
 \list
-    \o Qt Mobility does not compile if Qt using a namespace
-    \o Not all example applications will display(fit) well on small screens
-    \o On S60, it is currently not possible to use Qt convenience header includes:
+    \o Qt Mobility does not compile if Qt using a namespace.
+    \o Not all example applications will display(fit) well on small screens.
+    \o S60: it is currently not possible to use Qt convenience header includes:
     \code
         #include <QSystemInfo> //does not work on Symbian
         //use
@@ -155,6 +155,7 @@ Support is present for the following System Info API classes
 \list
     \o S60: Async contact operations not supported
     \o S60: Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.
+    \o S60 3.1: the Symbian contacts plugins are not loaded on a device.
 \endlist
 
 \section2 Messaging API
@@ -196,7 +197,8 @@ Support is present for the following System Info API classes
 
 \section2 Sensors API
 \list
-    \o \bold {Sensors API is in beta state.}
+    \o S60: The S60 sensor backends are under development and may not be complete.
+    \o S60 3.1: src/s60installs/s60installs.pro: the s60_sensor_api plugin for 3.1 devices is not added to the sis file when generating the sis file for multiple SDKs.
 \endlist
 
 \section2 System Info API

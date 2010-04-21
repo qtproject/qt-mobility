@@ -52,6 +52,7 @@ DEFINES+=QT_MAKEDLL
 #target.path = $$SOURCE_DIR/plugins/sensors
 #INSTALLS += target
 symbian {
+    TARGET.UID3 = 0x2002BFC8
     TARGET.CAPABILITY = ALL -TCB    
     LIBS += -lSensrvClient
     LIBS += -lsensrvutil   
