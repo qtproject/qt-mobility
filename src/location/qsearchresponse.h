@@ -39,40 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_REVERSEGEOCODINGREQUEST_H
-#define QLOCATION_REVERSEGEOCODINGREQUEST_H
+#ifndef QSEARCHRESPONSE_H
+#define QSEARCHRESPONSE_H
 
-#include <QString>
+#include "qgeolocation.h"
 
-#include "qgeocoordinate.h"
+#include <QObject>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class QReverseGeocodingRequestPrivate;
-class Q_LOCATION_EXPORT QReverseGeocodingRequest
+class QSearchResponsePrivate;
+
+class Q_LOCATION_EXPORT QSearchResponse : public QObject
 {
-    friend class QGeoNetworkManager;
+    Q_OBJECT
 
 public:
-    QReverseGeocodingRequest();
-    QReverseGeocodingRequest(const QGeoCoordinate& coordinate);
-    ~QReverseGeocodingRequest();
+    // TODO populate this some more...
+    enum ErrorCode {
+        NoError,
+        // flesh out the more common specific network errors
+        NetworkError,
+        // File errors
+        NoContentError,
+        ParsingError,
+        UnknownError
+    };
 
-    QString version() const;
+    QSearchResponse(QObject *parent = 0);
+    virtual ~QSearchResponse();
 
-    QString language() const;
-    void setLanguage(const QString& language);
+    QString description() const;
+    void setDescription(const QString &description);
 
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate& coordinate);
+    QList<QGeoLocation> places() const;
+    void addPlace(const QGeoLocation &place);
+    void setPlaces(const QList<QGeoLocation> &places);
 
-    QString requestString(const QString &host) const;
+public slots:
+    virtual void cancel() = 0;
+
+signals:
+    void finished();
+    void error(QSearchResponse::ErrorCode errorCode, const QString &errorString = QString());
 
 private:
-    Q_DISABLE_COPY(QReverseGeocodingRequest)
-
-    QReverseGeocodingRequestPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QReverseGeocodingRequest)
+    QSearchResponsePrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QSearchResponse);
 };
 
 QTM_END_NAMESPACE

@@ -39,55 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOCODINGREPLY_H
-#define QGEOCODINGREPLY_H
+#ifndef QSEARCHRESPONSE_NOKIA_P_H
+#define QSEARCHRESPONSE_NOKIA_P_H
 
-#include "qgeolocation.h"
-
-#include <QObject>
-#include <QList>
+#include "qsearchresponse.h"
+#include <QNetworkReply>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeocodingReplyPrivate;
-
-class Q_LOCATION_EXPORT QGeocodingReply : public QObject
+class QSearchResponseNokia : public QSearchResponse
 {
     Q_OBJECT
 
 public:
-    // TODO populate this some more...
-    enum ErrorCode {
-        NoError,
-        // flesh out the more common specific network errors
-        NetworkError,
-        // File errors
-        NoContentError,
-        ParsingError,
-        UnknownError
+    enum ResultCode {
+        OK,
+        Failed
     };
 
-    QGeocodingReply(QObject *parent = 0);
-    virtual ~QGeocodingReply();
+    QSearchResponseNokia(QNetworkReply *reply, QObject* parent=0);
+    ~QSearchResponseNokia();
 
-    QString description() const;
-    void setDescription(const QString &description);
-
-    QList<QGeoLocation> places() const;
-    void addPlace(const QGeoLocation &place);
-    void setPlaces(const QList<QGeoLocation> &places);
+    QSearchResponseNokia::ResultCode resultCode() const;
+    void setResultCode(QSearchResponseNokia::ResultCode code);
 
 public slots:
-    virtual void cancel() = 0;
+    virtual void parse();
+    virtual void translateError(QNetworkReply::NetworkError errorCode);
+    virtual void cancel();
 
-signals:
-    void finished();
-    void error(QGeocodingReply::ErrorCode errorCode, const QString &errorString = QString());
-
-    // CHOICE: could lose the setters and make this protected
 private:
-    QGeocodingReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeocodingReply);
+    QNetworkReply *m_reply;
+    QSearchResponseNokia::ResultCode m_code;
 };
 
 QTM_END_NAMESPACE

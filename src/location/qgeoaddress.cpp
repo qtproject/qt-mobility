@@ -76,7 +76,7 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
 
     This class represents an address of a location.
 
-    \sa QGeocodingReply
+    \sa QSearchResponse
 */
 
 /*!

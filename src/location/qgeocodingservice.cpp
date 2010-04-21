@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 /* \mainpage
 * \section sec_brief_overview Brief Overview
 * The qlocation package provides wrapper classes for (reverse) geocoding requests/replies
-* (QGeocodingRequest, QReverseGeocodingRequest, QGeocodingReply),
+* (QSearchRequest, QReverseGeocodingRequest, QSearchResponse),
 * geo routing requests/replies (QGeoRouteRequest, QGeoRouteReply), and map tile requests/replies
 * (QGeoMapTileRequest, QMapTileReply). QMapView is a Qt::QGraphicsView based widget that displays
 * a tile based map.
@@ -70,15 +70,15 @@ QTM_BEGIN_NAMESPACE
 * that goes on "behind the scenes".
 
 * \section sec_geocoding Geocoding Requests and Replies
-* A QGeocodingRequest tries to map an address to its geographical location (longitude/latitude).
+* A QSearchRequest tries to map an address to its geographical location (longitude/latitude).
 * An address can either be specified by a "one box location" description, or by its individual
 * country, state, city, post code, street name and street number fields.<br>
-* Depending on the address input, the corresponding QGeocodingReply can contain several QGeoLocation<i></i>s, each
+* Depending on the address input, the corresponding QSearchResponse can contain several QGeoLocation<i></i>s, each
 * containing a QGeoCoordinate and a QGeoAddress.
 
 * \section sec_reverse_geocoding Reverse Geocoding Requests and Replies
 * A QReverseGeocodingRequests tries to map a QGeoCoordinate to an address.<br>
-* It too returns a QGeocodingReply.
+* It too returns a QSearchResponse.
 
 * \section sec_routing Routing Requests and Replies
 * A QGeoRouteRequest requests a route from a source QGeoCoordinate to a destination QGeoCoordinate.<br>
@@ -115,39 +115,39 @@ QGeocodingService::QGeocodingService() {}
 QGeocodingService::~QGeocodingService() {}
 
 /*!
-    \fn QGeocodingReply* QGeocodingService::geocode(const QGeocodingRequest& request)
+    \fn QSearchResponse* QGeocodingService::geocode(const QSearchRequest& request)
 
-    Submits a geocoding request \a request and returns the corresponding QGeocodingReply.
+    Submits a geocoding request \a request and returns the corresponding QSearchResponse.
 
     \note Due to the asynchronous nature of requests, you should wait for the
-    QGeocodingService::finished(QGeocodingReply*) signal from this object or the
-    QGeocodingReply::finished() signal from the returned QGeocodingReply object before
+    QGeocodingService::finished(QSearchResponse*) signal from this object or the
+    QSearchResponse::finished() signal from the returned QSearchResponse object before
     working with the reply.
 */
 
 /*!
-    \fn QGeocodingReply* QGeocodingService::reverseGeocode(const QReverseGeocodingRequest& request)
+    \fn QSearchResponse* QGeocodingService::reverseGeocode(const QReverseGeocodingRequest& request)
 
-    Submits a reverse geocoding request \a request and returns the corresponding QGeocodingReply.
+    Submits a reverse geocoding request \a request and returns the corresponding QSearchResponse.
 
     \note Due to the asynchronous nature of requests, you should wait for the
-    QGeocodingService::finished(QGeocodingReply*) signal from this object or the
-    QGeocodingReply::finished() signal from the returned QGeocodingReply object before
+    QGeocodingService::finished(QSearchResponse*) signal from this object or the
+    QSearchResponse::finished() signal from the returned QSearchResponse object before
     working with the reply.
 */
 
 /*!
-    \fn void QGeocodingService::finished(QGeocodingReply* reply)
+    \fn void QGeocodingService::finished(QSearchResponse* reply)
 
-    This signal is emitted when a QGeocodingReply is available in
-    response to a previously submitted QGeocodingRequest
+    This signal is emitted when a QSearchResponse is available in
+    response to a previously submitted QSearchRequest
     or QReverseGeocodingRequest.
 */
 
 /*!
-    \fn void QGeocodingService::error(QGeocodingReply* reply, QGeoReply::ErrorCode code)
+    \fn void QGeocodingService::error(QSearchResponse* reply, QGeoReply::ErrorCode code)
 
-    This signal is emitted when a QGeocodingReply encountered an error
+    This signal is emitted when a QSearchResponse encountered an error
     in response to a previously submitted QGeocodingReques or QReverseGeocodingRequest.
     \note For QGeoNetworkManager, the error code will be identical to QNetworkReply::NetworkError.
 */

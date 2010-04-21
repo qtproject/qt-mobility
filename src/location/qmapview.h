@@ -52,6 +52,7 @@
 #include <QFont>
 #include <QColor>
 
+#include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
 #include "qgeoroute.h"
 #include "qmaptileservice_nokia_p.h"
@@ -108,6 +109,7 @@ public:
 
     void centerOn(const QPointF& pos);
     void centerOn(qreal x, qreal y);
+    void centerOn(QGeoBoundingBox rect);
     QPointF getViewportCenter() const;
     QGeoCoordinate getCenter() const;
     void setCenter(const QGeoCoordinate& coord);

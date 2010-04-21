@@ -66,7 +66,7 @@ QGeoLocationPrivate::~QGeoLocationPrivate()
     \brief The QGeoLocation class represents a geolocation.
     \ingroup location
 
-    This class represent a geo location as returned by QGeocodingReply::places().
+    This class represent a geo location as returned by QSearchResponse::places().
 */
 
 /*!

@@ -39,41 +39,59 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOCODINGREPLY_NOKIA_P_H
-#define QGEOCODINGREPLY_NOKIA_P_H
+#ifndef QSEARCHREQUEST_NOKIA_H_
+#define QSEARCHREQUEST_NOKIA_H_
 
-#include "qgeocodingreply.h"
-
-#include <QNetworkReply>
+#include "qsearchrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeocodingReplyNokia : public QGeocodingReply
+class QSearchRequestNokiaPrivate;
+class Q_LOCATION_EXPORT QSearchRequestNokia: public QSearchRequest
 {
-    Q_OBJECT
-
 public:
-    enum ResultCode {
-        OK,
-        Failed
-    };
+    QSearchRequestNokia();
+    virtual ~QSearchRequestNokia();
+    
+    //Common    
+    QString version() const;
 
-    QGeocodingReplyNokia(QNetworkReply *reply);
-    ~QGeocodingReplyNokia();
+    QString language() const;
+    void setLanguage(const QString& language);
 
-    QGeocodingReplyNokia::ResultCode resultCode() const;
-    void setResultCode(QGeocodingReplyNokia::ResultCode code);
+    //Geocoding    
+    QString oneBoxLocation() const;
+    void setOneBoxLocation(const QString& obloc);
 
-public slots:
-    virtual void parse();
-    virtual void translateError(QNetworkReply::NetworkError errorCode);
-    virtual void cancel();
+    QString country() const;
+    void setCountry(const QString& country);
+
+    QString state() const;
+    void setState(const QString& state);
+
+    QString city() const;
+    void setCity(const QString& city);
+
+    QString postCode() const;
+    void setPostCode(const QString& postCode);
+
+    QString street() const;
+    void setStreet(const QString& street);
+
+    QString number() const;
+    void setNumber(const QString& number);
+    QGeoCoordinate coordinate() const;
+    void setCoordinate(const QGeoCoordinate& coordinate);
+
+    QString requestGeocodingString(const QString &host) const;
+    QString requestReverseGeocodingString(const QString &host) const;
 
 private:
-    QNetworkReply *m_reply;
-    QGeocodingReplyNokia::ResultCode m_code;
+    QSearchRequestNokiaPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QSearchRequestNokia)
+
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif /* QSEARCHREQUEST_NOKIA_P_H_ */

@@ -39,30 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_GEOCODINGREQUEST_P_H
-#define QLOCATION_GEOCODINGREQUEST_P_H
+#ifndef QLOCATION_SEARCHRESPONSE_P_H
+#define QLOCATION_SEARCHRESPONSE_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include "qmobilityglobal.h"
 
+#include "qgeolocation.h"
+
+#include <QList>
+
 QTM_BEGIN_NAMESPACE
 
-class QGeocodingRequestPrivate
+class QSearchResponsePrivate
 {
 public:
-    QGeocodingRequestPrivate();
+    QSearchResponsePrivate();
 
-    QString requestString(const QString &host) const;
-
-    QString vers;
-    QString languageMARC;
-
-    QString obloc;
-    QString cntry;
-    QString st;
-    QString cty;
-    QString pCode;
-    QString strt;
-    QString num;
+    QString description;
+    QList<QGeoLocation> places;
 };
 
 QTM_END_NAMESPACE

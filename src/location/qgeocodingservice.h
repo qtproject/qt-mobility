@@ -44,9 +44,8 @@
 
 #include "qmobilityglobal.h"
 
-#include "qgeocodingreply.h"
-#include "qgeocodingrequest.h"
-#include "qreversegeocodingrequest.h"
+#include "qsearchresponse.h"
+#include "qsearchrequest.h"
 
 #include <QObject>
 
@@ -59,12 +58,12 @@ public:
     QGeocodingService();
     virtual ~QGeocodingService();
 
-    virtual QGeocodingReply* geocode(const QGeocodingRequest& request) = 0;
-    virtual QGeocodingReply* reverseGeocode(const QReverseGeocodingRequest& request) = 0;
+    virtual QSearchResponse* geocode(const QSearchRequest& request) = 0;
+    virtual QSearchResponse* reverseGeocode(const QSearchRequest& request) = 0;
 
 signals:
-    void finished(QGeocodingReply* reply);
-    void error(QGeocodingReply* reply, QGeocodingReply::ErrorCode errorCode, QString errorString = QString());
+    void finished(QSearchResponse* reply);
+    void error(QSearchResponse* reply, QSearchResponse::ErrorCode errorCode, QString errorString = QString());
 
 private:
     Q_DISABLE_COPY(QGeocodingService)

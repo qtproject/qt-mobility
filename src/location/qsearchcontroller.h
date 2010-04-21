@@ -39,39 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_MAPPOLYGON_P_H
-#define QLOCATION_MAPPOLYGON_P_H
+#ifndef QSEARCHCONTROLLER_H_
+#define QSEARCHCONTROLLER_H_
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qmapobject_p.h"
-
-#include "qgeocoordinate.h"
-#include <QPen>
-#include <QBrush>
-#include <QPainterPath>
+#include <QObject>
+#include "qgeocodingservice.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMapPolygonPrivate : public QMapObjectPrivate
+class Q_LOCATION_EXPORT QSearchController : public QObject
 {
+    Q_OBJECT
+
 public:
-    QMapPolygonPrivate();
-    QList<QGeoCoordinate> poly; //!< The polygon.
-    QPen p; //!< The pen used for drawing the polygon.
-    QBrush br; //!< The brush used for drawing the polygon.
-    QPainterPath path;
+    QSearchController(QObject* parent=0);
+    virtual ~QSearchController();
+
+    virtual void geocode(QSearchRequest& request)=0;
+    virtual void reverseGeocode(QSearchRequest& request)=0;
+    virtual void POISearch(QSearchRequest& request)=0;
+    virtual void search(QSearchRequest& request)=0;
+    virtual void nextPage()=0;
+    virtual void previousPage()=0;
+    virtual void clear()=0;
+
+signals:
+    void searchRequestStarted(QSearchRequest* request);
+    void searchRequestFinished(QSearchResponse* response);
+    void searchResponseCleared(QSearchResponse* response);
+
+protected:
+    QSearchResponse* searchResponse;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif /* QSEARCHCONTROLLER_H_ */

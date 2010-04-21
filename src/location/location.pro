@@ -12,9 +12,11 @@ DEPENDPATH += .
 PUBLIC_HEADERS += \
                     qgeoaddress.h \
                     qgeoareamonitor.h \
-                    qgeocodingreply.h \
-                    qgeocodingrequest.h \
+                    qsearchresponse.h \
+                    qsearchrequest.h \
+                    qsearchrequest_nokia.h \
                     qgeocodingservice.h \
+                    qsearchcontroller.h \
                     qgeocoordinate.h \
                     qgeolocation.h \
                     qgeopositioninfo.h \
@@ -70,15 +72,15 @@ PUBLIC_HEADERS += \
                     qmapview.h \
                     qmapcontainer.h \
                     qgeoboundingbox.h \
-                    qnmeapositioninfosource.h \
-                    qreversegeocodingrequest.h
+                    qnmeapositioninfosource.h 
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
-                    qgeocodingreply_nokia_p.h \
-                    qgeocodingreply_p.h \
-                    qgeocodingrequest_p.h \
+                    qsearchresponse_nokia_p.h \
+                    qsearchresponse_p.h \
+                    qsearchrequest_nokia_p.h \
                     qgeocodingservice_nokia_p.h \
+                    qsearchcontroller_nokia_p.h \
                     qgeocodingxmlparser_nokia_p.h \
                     qgeolocation_p.h \
                     qgeolocation_p.h \
@@ -123,8 +125,7 @@ PRIVATE_HEADERS += \
                     qmaptilereply_p.h \
                     qmaptileservice_nokia_p.h \
                     qmapview_p.h \
-                    qnmeapositioninfosource_p.h \
-                    qreversegeocodingrequest_p.h
+                    qnmeapositioninfosource_p.h 
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -203,11 +204,13 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 SOURCES += \
             qgeoaddress.cpp \
             qgeoareamonitor.cpp \
-            qgeocodingreply.cpp \
-            qgeocodingreply_nokia.cpp \
-            qgeocodingrequest.cpp \
+            qsearchresponse.cpp \
+            qsearchresponse_nokia.cpp \
+            qsearchrequest_nokia.cpp \
             qgeocodingservice.cpp \
+            qsearchcontroller.cpp \
             qgeocodingservice_nokia.cpp \
+            qsearchcontroller_nokia.cpp \
             qgeocodingxmlparser_nokia.cpp \
             qgeocoordinate.cpp \
             qgeolocation.cpp \
@@ -274,8 +277,7 @@ SOURCES += \
             qmapview_p.cpp \
             qmapcontainer.cpp \
             qgeoboundingbox.cpp \
-            qnmeapositioninfosource.cpp \
-            qreversegeocodingrequest.cpp
+            qnmeapositioninfosource.cpp
 
 RESOURCES += qlandmarkmanagerengine_sqlite.qrc
 

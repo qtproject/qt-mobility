@@ -47,8 +47,10 @@
 #include "qgeoroutingservice.h"
 #include "qmaptileservice.h"
 #include "qgeoroutereply.h"
-#include "qgeocodingreply.h"
+#include "qsearchresponse.h"
 #include "qgeocodingservice_nokia_p.h"
+#include "qsearchcontroller_nokia_p.h"
+
 
 
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5)
@@ -89,7 +91,7 @@ private slots:
     void testReplyFinishedSignal();
 
     void routeReplyFinished(QGeoRouteReply* reply);
-    void codingReplyFinished(QGeocodingReply* reply);
+    void codingReplyFinished(QSearchResponse* reply);
     void mapTileReplyFinished(QMapTileReply* reply);
 
     void delayedInit();
@@ -102,8 +104,9 @@ private slots:
 #endif
 
 private:
-    QGeocodingServiceNokia *geocodingService;
+    QGeocodingServiceNokia *geocodingService; //owned by searchController
     QGeoRoutingService *routingService;
+    QSearchController *searchController;
     QMapTileService *mapService;
 #ifdef Q_OS_SYMBIAN
     QNetworkSession *session;
