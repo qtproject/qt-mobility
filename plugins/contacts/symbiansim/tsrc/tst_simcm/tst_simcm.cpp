@@ -105,6 +105,8 @@ private slots:
     void updateContactDetail();
     void batchOperations_data();
     void batchOperations();
+    void detailFilter_data();
+    void detailFilter();
 
     /* Test cases that take no data */
     void signalEmission();
@@ -117,6 +119,7 @@ private:
     void parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails);
     void compareDetails(QContact contact, QList<QContactDetail> expectedDetails);
     QContact createContact(QString name, QString number);
+    QContact saveContact(QString name, QString number);
 
 private:
     QContactManager* m_cm;
@@ -961,6 +964,115 @@ void tst_SimCM::batchOperations()
     }
 }
 
+void tst_SimCM::detailFilter_data()
+{
+    QTest::addColumn<QString>("detailName");
+    QTest::addColumn<QString>("detailField");
+    QTest::addColumn<QString>("value");
+    QTest::addColumn<int>("flags");
+    QTest::addColumn<QString>("expected");
+
+    // Phone number
+    
+    QString detail = QContactPhoneNumber::DefinitionName;
+    QString field = QContactPhoneNumber::FieldNumber;
+    
+    QTest::newRow("phonenumber=123456789, flags=MatchExactly")
+        << detail << field << "123456789" << (int) QContactFilter::MatchExactly << "a";
+    
+    QTest::newRow("phonenumber=123456789, flags=MatchContains")
+        << detail << field << "123456789" << (int) QContactFilter::MatchContains << "abc";
+    
+    QTest::newRow("phonenumber=#, flags=MatchContains")
+        << detail << field << "#" << (int) QContactFilter::MatchContains << "f";
+    
+    QTest::newRow("phonenumber=p, flags=MatchContains")
+        << detail << field << "p" << (int) QContactFilter::MatchContains << "e";
+        
+    QTest::newRow("phonenumber=0, flags=MatchStartsWith")
+        << detail << field << "0" << (int) QContactFilter::MatchStartsWith << "defi";    
+    
+    QTest::newRow("phonenumber=012, flags=MatchEndsWith")
+        << detail << field << "012" << (int) QContactFilter::MatchEndsWith << "c";
+    
+    QTest::newRow("phonenumber=+358505555555, flags=MatchPhoneNumber")
+        << detail << field << "+358505555555" << (int) QContactFilter::MatchPhoneNumber << "ij"; // should match to 0505555555 also
+    
+    QTest::newRow("phonenumber=313, flags=MatchPhoneNumber")
+        << detail << field << "313" << (int) QContactFilter::MatchPhoneNumber << "h";
+    
+    // Custom label
+    detail = (QString) QContactName::DefinitionName;
+    field = (QString) QContactName::FieldCustomLabel;
+    
+    QTest::newRow("customlabel=frederik")
+            << detail << field << "frederik" << 0 << "c";
+    
+    QTest::newRow("customlabel=Juhani flags=MatchContains")
+            << detail << field << "Juhani" << (int) (QContactFilter::MatchContains) << "d";
+    
+    QTest::newRow("customlabel=Matti flags=MatchStartsWith")
+            << detail << field << "Matti" << (int) (QContactFilter::MatchStartsWith) << "b";
+    
+    QTest::newRow("customlabel=co flags=MatchEndsWith")
+            << detail << field << "co" << (int) (QContactFilter::MatchEndsWith) << "f";
+    
+    // ITU-T standard keypad collation:
+    // 2 = abc, 3 = def, 4 = ghi, 5 = jkl, 6 = mno, 7 = pqrs, 8 = tuv, 9 = wxyz, 0 = space
+    
+    QTest::newRow("customlabel T9 olli, flags=MatchKeypadCollation|MatchExactly")
+        << detail << field << "6554" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchExactly)<< "g";
+
+    QTest::newRow("customlabel T9 olli, flags=MatchKeypadCollation|MatchContains")
+        << detail << field << "6554" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchContains)<< "adg";
+    
+    QTest::newRow("customlabel T9 jorma, flags=MatchKeypadCollation|MatchStartsWith")
+        << detail << field << "56762" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchStartsWith)<< "a";
+
+    QTest::newRow("customlabel T9 nen, flags=MatchKeypadCollation|MatchEndsWith")
+        << detail << field << "636" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchEndsWith)<< "b";
+}
+
+void tst_SimCM::detailFilter()
+{
+    QFETCH(QString, detailName);
+    QFETCH(QString, detailField);
+    QFETCH(QString, value);
+    QFETCH(int, flags);
+    QFETCH(QString, expected);
+
+    initManager("ADN");
+    QVERIFY(m_cm->error() == QContactManager::NoError);
+
+    QMap<QContactLocalId, QString> saved;
+    saved.insert(saveContact("Jorma Ollila", "123456789").localId(), "a");
+    saved.insert(saveContact("Matti Nykänen", "+123456789").localId(), "b");
+    saved.insert(saveContact("Frederik", "+123456789012").localId(), "c");
+    saved.insert(saveContact("Olli-Pekka Juhani Kallasvuo", "0718008000").localId(), "d");
+    saved.insert(saveContact("Foobar", "0987654321p").localId(), "e");
+    saved.insert(saveContact("Telco", "0718008000#1234#123").localId(), "f");
+    saved.insert(saveContact("Olli", "543253425").localId(), "g");
+    saved.insert(saveContact("Donald Duck", "313").localId(), "h");
+    saved.insert(saveContact("Daisy Duck", "0505555555").localId(), "i");
+    saved.insert(saveContact("Daisy Duck (international)", "+358505555555").localId(), "j");
+        
+    QContactDetailFilter f;
+    f.setDetailDefinitionName(detailName, detailField);
+    f.setMatchFlags(QContactFilter::MatchFlags(flags));
+    f.setValue(value);
+
+    QList<QContactLocalId> ids = m_cm->contactIds(f);
+    QVERIFY(m_cm->error() == QContactManager::NoError);
+
+    QString result;
+    foreach (QContactLocalId id, ids)
+        result += saved.value(id);
+    
+    QCOMPARE(result, expected);
+}
+
+
+
 /*
  * Test if signals contactsAdded, contactsChanged and contactsRemoved are
  * emitted correctly.
@@ -1214,6 +1326,27 @@ QContact tst_SimCM::createContact(QString name, QString number)
     QContactPhoneNumber nb;
     nb.setNumber(number);
     c.saveDetail(&nb);
+
+    return c;
+}
+
+QContact tst_SimCM::saveContact(QString name, QString number)
+{
+    QContact c;
+    
+    QContactName n;
+    n.setCustomLabel(name);
+    c.saveDetail(&n);
+    
+    QContactPhoneNumber nb;
+    nb.setNumber(number);
+    c.saveDetail(&nb);
+    
+    if (!m_cm->saveContact(&c)) {
+        qWarning() << 
+            QString("Failed to save a contact! (name=%1,number=%2) error:%3")
+                .arg(name).arg(number).arg(m_cm->error());
+    }
 
     return c;
 }
