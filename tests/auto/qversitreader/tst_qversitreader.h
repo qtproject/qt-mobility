@@ -88,8 +88,8 @@ private slots: // Tests
     void testReading();
     void testResult();
     void testSetVersionFromProperty();
-    void testParseNextVersitPropertyVCard21();
-    void testParseNextVersitPropertyVCard30();
+    void testParseNextVersitProperty();
+    void testParseNextVersitProperty_data();
     void testParseVersitDocument();
     void testParseVersitDocument_data();
     void testDecodeQuotedPrintable();
