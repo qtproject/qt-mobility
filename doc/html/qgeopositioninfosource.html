@@ -1,46 +1,19 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qgeopositioninfosource.cpp -->
+<head>
   <title>Qt Mobility Project 1.0: QGeoPositionInfoSource Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <!--[if IE]>
-	<meta name="MSSmartTagsPreventParsing" content="true">
-	<meta http-equiv="imagetoolbar" content="no">
-	<![endif]-->
-  <!--[if lt IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
-	<![endif]-->
-  <!--[if IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
-	<![endif]-->
-  <!--[if IE 8]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
-	<![endif]-->
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
-<body class="">
+<body>
 <a name="//apple_ref/cpp/cl//QGeoPositionInfoSource"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><div class="toc">
-<h3>Table of Contents</h3>
-<ul class="level1">
-<li><a href="#public-types">Public Types</a></li>
-<li><a href="#properties">Properties</a></li>
-<li><a href="#public-functions">Public Functions</a></li>
-<li><a href="#public-slots">Public Slots</a></li>
-<li><a href="#signals">Signals</a></li>
-<li><a href="#static-public-members">Static Public Members</a></li>
-<li><a href="#details">Detailed Description</a></li>
-</ul>
-</div>
-<h1 class="title">QGeoPositionInfoSource Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoPositionInfoSource Class Reference</h1>
 <p>The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGeoPositionInfoSource&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <p>Inherited by <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a>.</p>
@@ -50,7 +23,7 @@
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#PositioningMethod-enum">PositioningMethod</a></b> { SatellitePositioningMethods, NonSatellitePositioningMethods, AllPositioningMethods }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#PositioningMethod-enum">PositioningMethods</a></b></td></tr>
 </table>
@@ -67,7 +40,7 @@
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#QGeoPositionInfoSource">QGeoPositionInfoSource</a></b> ( QObject * <i>parent</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#dtor.QGeoPositionInfoSource">~QGeoPositionInfoSource</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QGeoPositionInfo </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#lastKnownPosition">lastKnownPosition</a></b> ( bool <i>fromSatellitePositioningMethodsOnly</i> = false ) const = 0</td></tr>
@@ -84,7 +57,7 @@
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a></b> ( int <i>timeout</i> = 0 ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#startUpdates">startUpdates</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#stopUpdates">stopUpdates</a></b> () = 0</td></tr>
@@ -95,7 +68,7 @@
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a></b> ( const QGeoPositionInfo &amp; <i>update</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#updateTimeout">updateTimeout</a></b> ()</td></tr>
 </table>
@@ -105,7 +78,7 @@
 <hr />
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QGeoPositionInfoSource * </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#createDefaultSource">createDefaultSource</a></b> ( QObject * <i>parent</i> )</td></tr>
 </table>
 <ul>
@@ -113,28 +86,25 @@
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.</p>
 <p>The static function <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>() creates a default position source that is appropriate for the platform, if one is available. Otherwise, QGeoPositionInfoSource can be subclassed to create an appropriate custom source of position data.</p>
 <p>Users of a QGeoPositionInfoSource subclass can request the current position using <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>(), or start and stop regular position updates using <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() and <a href="qgeopositioninfosource.html#stopUpdates">stopUpdates</a>(). When an update is available, <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a>() is emitted. The last known position can be accessed with <a href="qgeopositioninfosource.html#lastKnownPosition">lastKnownPosition</a>().</p>
 <p>If regular position updates are required, <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() can be used to specify how often these updates should be emitted. If no interval is specified, updates are simply provided whenever they are available. For example:</p>
-<pre>    // Emit updates every 10 seconds if available
+<pre><span class="comment">    // Emit updates every 10 seconds if available</span>
     QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
     if (source)
         source-&gt;setUpdateInterval(10000);</pre>
 <p>To remove an update interval that was previously set, call <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() with a value of 0.</p>
 <p>Note that the position source may have a minimum value requirement for update intervals, as returned by <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</a>().</p>
 <p><b>Warning:</b> On Windows CE it is not possible to detect if a device is GPS enabled. The default position source on a Windows CE device without GPS support will never provide any position data.</p>
-</div>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QGeoPositionInfoSource/PositioningMethod"></a>
 <a name="//apple_ref/cpp/econst/QGeoPositionInfoSource/SatellitePositioningMethods"></a>
@@ -143,22 +113,21 @@
 <a name="//apple_ref/cpp/tdef/QGeoPositionInfoSource/PositioningMethods"></a>
 <h3 class="flags"><a name="PositioningMethod-enum"></a>enum QGeoPositionInfoSource::PositioningMethod<br />flags QGeoPositionInfoSource::PositioningMethods</h3>
 <p>Defines the types of positioning methods.</p>
-<p><table class="valuelist"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QGeoPositionInfoSource::SatellitePositioningMethods</tt></td><td align="center" valign="top"><tt>0x000000ff</tt></td><td valign="top">Satellite-based positioning methods such as GPS.</td></tr>
 <tr><td valign="top"><tt>QGeoPositionInfoSource::NonSatellitePositioningMethods</tt></td><td align="center" valign="top"><tt>0xffffff00</tt></td><td valign="top">Other positioning methods.</td></tr>
 <tr><td valign="top"><tt>QGeoPositionInfoSource::AllPositioningMethods</tt></td><td align="center" valign="top"><tt>0xffffffff</tt></td><td valign="top">A flag that matches all positioning methods.</td></tr>
 </table></p>
 <p>The PositioningMethods type is a typedef for <a href="qflags.html">QFlags</a>&lt;PositioningMethod&gt;. It stores an OR combination of PositioningMethod values.</p>
-</div>
 <hr />
-<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/minimumUpdateInterval"></a>
 <h3 class="fn"><a name="minimumUpdateInterval-prop"></a>minimumUpdateInterval : const int</h3>
 <p>This property holds this property holds the minimum time (in milliseconds) required to retrieve a position update.</p>
 <p>This is the minimum value accepted by <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() and <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>().</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b>minimumUpdateInterval</b> () const = 0</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/updateInterval"></a>
@@ -171,13 +140,11 @@
 <p>The default value for this property is 0.</p>
 <p>Note: Subclass implementations must call the base implementation of setUpdateInterval() so that updateInterval() returns the correct value.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>updateInterval</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setUpdateInterval</b> ( int <i>msec</i> )</td></tr>
 </table>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/QGeoPositionInfoSource"></a>
 <h3 class="fn"><a name="QGeoPositionInfoSource"></a>QGeoPositionInfoSource::QGeoPositionInfoSource ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> )</h3>
@@ -230,7 +197,6 @@
 <h3 class="fn"><a name="updateTimeout"></a>void QGeoPositionInfoSource::updateTimeout ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>If <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>() was called, this signal will be emitted if the current position could not be retrieved within the specified timeout.</p>
 <p>If <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() has been called, this signal will be emitted if this <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> subclass determines that it will not be able to provide further regular updates. This signal will not be emitted again until after the regular updates resume.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

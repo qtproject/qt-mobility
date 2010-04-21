@@ -1,42 +1,19 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qversitdocument.cpp -->
+<head>
   <title>Qt Mobility Project 1.0: QVersitDocument Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <!--[if IE]>
-	<meta name="MSSmartTagsPreventParsing" content="true">
-	<meta http-equiv="imagetoolbar" content="no">
-	<![endif]-->
-  <!--[if lt IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie6.css">
-	<![endif]-->
-  <!--[if IE 7]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie7.css">
-	<![endif]-->
-  <!--[if IE 8]>
-	<link rel="stylesheet" type="text/css" href="style/style_ie8.css">
-	<![endif]-->
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
-<body class="">
+<body>
 <a name="//apple_ref/cpp/cl//QVersitDocument"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><div class="toc">
-<h3>Table of Contents</h3>
-<ul class="level1">
-<li><a href="#public-types">Public Types</a></li>
-<li><a href="#public-functions">Public Functions</a></li>
-<li><a href="#details">Detailed Description</a></li>
-</ul>
-</div>
-<h1 class="title">QVersitDocument Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitDocument Class Reference</h1>
 <p>The QVersitDocument class is a container for a list of versit properties. <a href="#details">More...</a></p>
 <pre>    #include &lt;QVersitDocument&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <ul>
@@ -45,13 +22,13 @@
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#VersitType-enum">VersitType</a></b> { InvalidType, VCard21Type, VCard30Type }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary">
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#QVersitDocument">QVersitDocument</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#QVersitDocument-2">QVersitDocument</a></b> ( const QVersitDocument &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitdocument.html#QVersitDocument-3">QVersitDocument</a></b> ( VersitType <i>type</i> )</td></tr>
@@ -70,15 +47,12 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitDocument class is a container for a list of versit properties.</p>
 <p>For example a vCard can be presented as a QVersitDocument that consists of a number of properties such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few. Each of these properties is stored as an instance of a <a href="qversitproperty.html">QVersitProperty</a> in a QVersitDocument.</p>
 <p>QVersitDocument supports implicit sharing.</p>
-</div>
 <p>See also <a href="qversitproperty.html">QVersitProperty</a>.</p>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QVersitDocument/VersitType"></a>
 <a name="//apple_ref/cpp/econst/QVersitDocument/InvalidType"></a>
@@ -86,14 +60,13 @@
 <a name="//apple_ref/cpp/econst/QVersitDocument/VCard30Type"></a>
 <h3 class="fn"><a name="VersitType-enum"></a>enum QVersitDocument::VersitType</h3>
 <p>This enum describes a versit document type and version.</p>
-<p><table class="valuelist"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QVersitDocument::InvalidType</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No type specified or a document with an invalid type was parsed</td></tr>
 <tr><td valign="top"><tt>QVersitDocument::VCard21Type</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">vCard version 2.1</td></tr>
 <tr><td valign="top"><tt>QVersitDocument::VCard30Type</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">vCard version 3.0</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitDocument/QVersitDocument"></a>
 <h3 class="fn"><a name="QVersitDocument"></a>QVersitDocument::QVersitDocument ()</h3>
@@ -140,7 +113,6 @@
 <a name="//apple_ref/cpp/instm/QVersitDocument/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QVersitDocument::operator== ( const QVersitDocument &amp; <i>other</i> ) const</h3>
 <p>Returns true if this is equal to <i>other</i>; false otherwise.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
