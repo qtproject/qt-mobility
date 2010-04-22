@@ -58,6 +58,8 @@
 #include <cemapi.h>
 #endif
 
+#include <messagingutil_p.h>
+
 // Missing definitions
 #ifndef PR_PST_CONFIG_FLAGS
 #define PR_PST_CONFIG_FLAGS PROP_TAG( PT_LONG, 0x6770 )
@@ -386,7 +388,11 @@ QMessageAccountId accountIdFromRecordKey(const QByteArray &recordKey)
         encodedIdStream << recordKey;
     }
 
+<<<<<<< HEAD
 	return QMessageAccountId(QString("WIN_")+encodedId.toBase64());
+=======
+	return QMessageAccountId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
+>>>>>>> 4635486c8fec4ee581a0d9750fdac796c185e57e
 }
 
 QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByteArray &entryId, const QByteArray &storeKey)
@@ -407,7 +413,11 @@ QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByte
 #endif
     }
 
+<<<<<<< HEAD
 	return QMessageFolderId(QString("WIN_") + encodedId.toBase64());
+=======
+	return QMessageFolderId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
+>>>>>>> 4635486c8fec4ee581a0d9750fdac796c185e57e
 }
 
 QByteArray objectProperty(IMAPIProp *object, ULONG tag)

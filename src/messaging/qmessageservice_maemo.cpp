@@ -91,6 +91,9 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     if (enginesToCall & EnginesToCallTelepathy) {
         _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+#else
+        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+#endif
         _pendingRequestCount++;
     }
 
@@ -141,6 +144,9 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     if (enginesToCall & EnginesToCallTelepathy) {
         _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+#else
+        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,body,matchFlags);
+#endif
         _pendingRequestCount++;
     }
 
@@ -327,7 +333,7 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
 
 bool QMessageService::send(QMessage &message)
 {
-  //  qDebug() << "QMessageService::send";
+   qDebug() << "QMessageService::send";
     if (d_ptr->_active) {
         return false;
     }
@@ -418,11 +424,13 @@ bool QMessageService::send(QMessage &message)
     }
 
     d_ptr->setFinished(retVal);
+    qDebug() << "send returns=" << retVal;
     return retVal;
 }
 
 bool QMessageService::compose(const QMessage &message)
 {
+  //  qDebug() << "qMessageService::compose";
     if (d_ptr->_active) {
         return false;
     }
@@ -430,14 +438,19 @@ bool QMessageService::compose(const QMessage &message)
     d_ptr->_active = true;
     d_ptr->_error = QMessageManager::NoError;
 
-    bool retVal = true;
+    bool retVal=false;
     d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
+    qDebug() << "qMessageService::compose stateChanged";
 
-    if (message.type() == QMessage::Sms) {
-        d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
-        qWarning() << "QMessageService::compose not yet implemented for SMS";
-        retVal = false;
+    if (message.type() == QMessage::Sms && !message.to().isEmpty() && !message.to().first().addressee().isEmpty()) {
+      QUrl smsUrl((QString("sms:%1").arg(message.to().first().addressee())));
+      smsUrl.addQueryItem("body",message.textContent());
+      //      qDebug() << "compose SMS url=" << smsUrl.toString();
+      hildon_uri_open(smsUrl.toString().toStdString().c_str(),NULL,NULL);
+      retVal = true;
+
+
     } else if (message.type() == QMessage::Mms) {
         d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
         qWarning() << "QMessageService::compose not yet implemented for MMS";
@@ -446,7 +459,8 @@ bool QMessageService::compose(const QMessage &message)
         retVal = ModestEngine::instance()->composeEmail(message);
     }
 
-    d_ptr->setFinished(retVal);
+    d_ptr->setFinished(retVal); 
+    //    qDebug() << "compose returns=" << retVal;
     return retVal;
 }
 

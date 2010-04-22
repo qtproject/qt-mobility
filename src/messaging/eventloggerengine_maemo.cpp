@@ -19,6 +19,7 @@ EventLoggerEngine::EventLoggerEngine(QObject *parent)
   Q_UNUSED(parent);
   //    qDebug() << "EventLoggerEngine::EventLoggerEngine";
     DBusError err=DBUS_ERROR_INIT;
+    active = false;
     g_type_init();
     dbus = dbus_bus_get(DBUS_BUS_SESSION, &err); // Create dummy Dbus object and
     dbus_connection_setup_with_g_main (dbus, NULL); //add it to g_mainloop because eventlogger library expects that someone alse has added session bus to g_mainloop
