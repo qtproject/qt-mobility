@@ -115,6 +115,65 @@ contains(build_examples, yes):SUBDIRS+=examples
 
 # install Qt style headers
 qtmheaders.path = $${QT_MOBILITY_INCLUDE}
-qtmheaders.files = $${QT_MOBILITY_BUILD_TREE}/include/*
 
-INSTALLS += qtmheaders
+!symbian {
+    qtmheaders.files = $${QT_MOBILITY_BUILD_TREE}/include/QtmBearer/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmContacts/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmLocation/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmMessaging/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmMedia/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmPubSub/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmServiceFramework/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmVersit/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmSystemInfo/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmSensors/*
+    INSTALLS += qtmheaders
+} else {
+
+#    Can we assume the path exists?
+#    paths = $$MW_LAYER_PUBLIC_EXPORT_PATH("") \
+#            $$APP_LAYER_PUBLIC_EXPORT_PATH("")
+#    for(i, paths) {
+#        exportPath=$$EPOCROOT"."$$dirname($$i)
+#        nativePath=$$replace(exportPath, /,\)
+#        !exists($$nativePath):system($$QMAKE_MKDIR $$nativePath)
+#    }
+
+    #absolute path does not work and so is shadow building for Symbian
+    qtmAppHeaders = include/QtmContacts/* \
+                          include/QtmVersit/*
+
+    qtmMwHeaders = include/QtmBearer/* \
+                       include/QtmLocation/* \
+                       include/QtmMessaging/* \
+                       include/QtmMedia/* \
+                       include/QtmPubSub/* \
+                       include/QtmServiceFramework/* \
+                       include/QtmSystemInfo/* \
+                       include/QtmSensors/*
+
+    contains(mobility_modules,contacts|versit) {
+        for(api, qtmAppHeaders) {
+            INCLUDEFILES=$$files($$api);
+            #files() attaches a ';' at the end which we need to remove
+            cleanedFiles=$$replace(INCLUDEFILES, ;,)
+            for(header, cleanedFiles) {
+                exists($$header):
+                    BLD_INF_RULES.prj_exports += "$$header $$APP_LAYER_PUBLIC_EXPORT_PATH($$basename(header))"
+            }
+        }
+    }
+
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging) {
+        for(api, qtmMwHeaders) {
+            INCLUDEFILES=$$files($$api);
+            #files() attaches a ';' at the end which we need to remove
+            cleanedFiles=$$replace(INCLUDEFILES, ;,)
+            for(header, cleanedFiles) {
+                exists($$header):
+                    BLD_INF_RULES.prj_exports += "$$header $$MW_LAYER_PUBLIC_EXPORT_PATH($$basename(header))"
+            }
+        }
+    }
+}
+
