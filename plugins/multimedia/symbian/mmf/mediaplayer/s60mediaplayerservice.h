@@ -44,7 +44,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <QMediaService>
+#include <qmediaservice.h>
 #include <qvideooutputcontrol.h>
 
 #include "s60videooutputcontrol.h"
