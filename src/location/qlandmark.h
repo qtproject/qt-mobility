@@ -103,7 +103,7 @@ public:
 
     QVariant attribute(const QString &key, const QVariant &defaultValue = QVariant()) const;
     void setAttribute(const QString &key, const QVariant &value);
-    QStringList attributes() const;
+    QStringList attributeKeys() const;
 
     QString phone() const;
     void setPhone(const QString &phone);

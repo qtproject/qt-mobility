@@ -39,46 +39,34 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkcustomfilter.h"
-#include "qlandmarkid.h"
+#ifndef QLANDMARKATTRIBUTEFILTER_H
+#define QLANDMARKATTRIBUTEFILTER_H
+
+#include "qlandmarkfilter.h"
+#include <QVariant>
+#include <QString>
+#include <QStringList>
 
 QTM_BEGIN_NAMESPACE
+class QLandmark;
 
-/*!
-    \class QLandmarkCustomFilter
-    \brief The QLandmarkCustomFilter class provides the interface which
-    all custom filters should inherit.
-    \ingroup landmarks-filter
-
-    All custom landmark filters should inherit off the QLandmarkCustomFilter
-    and must implement the isMatch() function.
-
-    Custom filters inherently do not have native support and are thus
-    may be subject to performance issues.
-*/
-
-/*!
-    Creates a custom landmark filter.
-*/
-QLandmarkCustomFilter::QLandmarkCustomFilter()
+class QLandmarkAttributeFilterPrivate;
+class Q_LOCATION_EXPORT QLandmarkAttributeFilter : public QLandmarkFilter
 {
-}
+public:
+    QLandmarkAttributeFilter();
+    virtual ~QLandmarkAttributeFilter();
 
-/*!
-    Destroys the filter.
-*/
-QLandmarkCustomFilter::~QLandmarkCustomFilter()
-{
-}
+    QVariant attribute(const QString &key) const;
+    void setAttribute(const QString &key, const QVariant &value);
+    void removeAttribute(const QString &key);
+    void clearAttributes();
+    QStringList attributeKeys() const;
 
-/*!
-    Returns true if the \a landmark
-    should be matched by the filter.  All custom landmark filters
-    need to implement this function.
-*/
-bool QLandmarkCustomFilter::isMatch(const QLandmark &landmark) const
-{
-    return false;
-}
+private:
+    Q_DECLARE_PRIVATE(QLandmarkAttributeFilter);
+};
 
 QTM_END_NAMESPACE
+
+#endif

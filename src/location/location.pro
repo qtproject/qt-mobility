@@ -37,7 +37,7 @@ PUBLIC_HEADERS += \
                     qlandmarkcategoryidfetchrequest.h \
                     qlandmarkcategoryremoverequest.h \
                     qlandmarkcategorysaverequest.h \
-                    qlandmarkcustomfilter.h \
+                    qlandmarkattributefilter.h \
                     qlandmarkcustomsort.h \
                     qlandmarkdistancesort.h \
                     qlandmarkexportrequest.h \
@@ -72,7 +72,7 @@ PUBLIC_HEADERS += \
                     qmapview.h \
                     qmapcontainer.h \
                     qgeoboundingbox.h \
-                    qnmeapositioninfosource.h 
+                    qnmeapositioninfosource.h
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
@@ -125,7 +125,7 @@ PRIVATE_HEADERS += \
                     qmaptilereply_p.h \
                     qmaptileservice_nokia_p.h \
                     qmapview_p.h \
-                    qnmeapositioninfosource_p.h 
+                    qnmeapositioninfosource_p.h
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -235,7 +235,7 @@ SOURCES += \
             qlandmarkcategoryidfetchrequest.cpp \
             qlandmarkcategoryremoverequest.cpp \
             qlandmarkcategorysaverequest.cpp \
-            qlandmarkcustomfilter.cpp \
+            qlandmarkattributefilter.cpp \
             qlandmarkcustomsort.cpp \
             qlandmarkdistancesort.cpp \
             qlandmarkexportrequest.cpp \

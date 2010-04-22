@@ -66,7 +66,7 @@ class QLandmarkCategoryFilter;
 class QLandmarkBoxFilter;
 class QLandmarkIntersectionFilter;
 class QLandmarkUnionFilter;
-class QLandmarkCustomFilter;
+class QLandmarkAttributeFilter;
 
 class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
@@ -181,7 +181,7 @@ private:
                                         QLandmarkManager::Error *error,
                                         QString *errorString) const;
 
-    QList<QLandmarkId> landmarkIdsCustom(const QLandmarkCustomFilter* filter,
+    QList<QLandmarkId> landmarkIdsAttribute(const QLandmarkAttributeFilter* filter,
                                          QLandmarkManager::Error *error,
                                          QString *errorString) const;
 

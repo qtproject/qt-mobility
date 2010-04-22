@@ -55,7 +55,7 @@
 #include "qlandmarkboxfilter.h"
 #include "qlandmarkintersectionfilter.h"
 #include "qlandmarkunionfilter.h"
-#include "qlandmarkcustomfilter.h"
+#include "qlandmarkattributefilter.h"
 
 #include "qlandmarksortorder.h"
 #include "qlandmarknamesort.h"
@@ -620,7 +620,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsUnion(const QLandmar
     return result;
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsCustom(const QLandmarkCustomFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsAttribute(const QLandmarkAttributeFilter* filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
@@ -636,8 +636,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsCustom(const QLandma
         QLandmarkManager::Error loopError;
         QLandmark lm = landmark(id, &loopError, 0);
 
-        if ((loopError == QLandmarkManager::NoError) && filter->isMatch(lm))
-            result << id;
+        //TODO: implment attribute searching
     }
 
     return result;
@@ -774,8 +773,8 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilt
         case QLandmarkFilter::UnionFilter:
             filterResult = landmarkIdsUnion(static_cast<const QLandmarkUnionFilter*>(filter), error, errorString);
             break;
-        case QLandmarkFilter::CustomFilter:
-            filterResult = landmarkIdsCustom(static_cast<const QLandmarkCustomFilter*>(filter), error, errorString);
+        case QLandmarkFilter::AttributeFilter:
+            filterResult = landmarkIdsAttribute(static_cast<const QLandmarkAttributeFilter*>(filter), error, errorString);
             break;
         default:
             break;
@@ -1806,7 +1805,7 @@ bool QLandmarkManagerEngineSqlite::isFilterSupported(QLandmarkFilter::FilterType
         case QLandmarkFilter::BoxFilter:
         case QLandmarkFilter::IntersectionFilter:
         case QLandmarkFilter::UnionFilter:
-        case QLandmarkFilter::CustomFilter:
+        case QLandmarkFilter::AttributeFilter:
             return true;
 
             // fall through for unsupported filters

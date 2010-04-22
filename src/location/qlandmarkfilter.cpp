@@ -82,8 +82,6 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     for all filter types.  However it also has the type of a QLandmark::DefaultFilter,
     and may thus be used as a filter to match all landmarks.
 
-    If the existing collection of filter types is not sufficient then
-    custom filter should be created by inheriting from QLandmarkCustomFilter.
 */
 
 /*!
@@ -101,7 +99,7 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     \value UnionFilter A filter which performs an OR operation with its constiuent
                                filters
     \value DefaultFilter A filter which matches all landmarks.
-    \value CustomFilter A filter which matches landmarks based on a custom made algorithm.
+    \value AttributeFilter A filter which matches landmarks based on generic attributes.
 */
 
 /*!
