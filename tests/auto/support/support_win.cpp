@@ -409,15 +409,7 @@ QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByte
 #endif
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-	return QMessageFolderId(QString("WIN_") + encodedId.toBase64());
-=======
-	return QMessageFolderId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
->>>>>>> 4635486c8fec4ee581a0d9750fdac796c185e57e
-=======
     return QMessageFolderId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
->>>>>>> 4897d31891b8e5af9280d8b8ef5bf83bb18b348d
 }
 
 QByteArray objectProperty(IMAPIProp *object, ULONG tag)
