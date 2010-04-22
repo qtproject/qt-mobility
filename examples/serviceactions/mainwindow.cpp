@@ -382,7 +382,6 @@ void RecentMessagesWidget::messagesFound(const QMessageIdList& ids)
 
 void RecentMessagesWidget::stateChanged(QMessageService::State newState)
 {
-    //  qDebug() << "stateChanged state=" << m_state << " newState=" << newState << "error=" << m_service->error();
     if (newState == QMessageService::FinishedState) {
         if ((m_state != LoadFailed) && (m_service->error() == QMessageManager::NoError)) {
             m_state = LoadFinished;
@@ -505,7 +504,6 @@ void RecentMessagesWidget::load()
     bool b;
 
     b=m_service->queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
-    //    qDebug() << "RecentMessagesWidget::load" << b << m_state;
 //! [load-message]
 };
 
