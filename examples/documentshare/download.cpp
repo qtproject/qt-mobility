@@ -48,11 +48,9 @@
 #include <QtGui>
 #include <QtNetwork>
 
-Download::Download(QNetworkReply *networkReply, ShareWidget *parent)
+Download::Download(QNetworkReply *networkReply, QObject *parent)
     : QObject(parent)
     , networkReply(networkReply)
-    , shareWidget(parent)
-    , urlRequest(0)
 {
     connect(networkReply, SIGNAL(metaDataChanged()), this, SLOT(networkMetaDataChanged()));
     connect(networkReply, SIGNAL(readyRead()), this, SLOT(networkReadyRead()));
@@ -62,6 +60,11 @@ Download::Download(QNetworkReply *networkReply, ShareWidget *parent)
 Download::~Download()
 {
     delete networkReply;
+}
+
+QString Download::fileName() const
+{
+    return file.fileName();
 }
 
 void Download::networkMetaDataChanged()
@@ -102,22 +105,15 @@ void Download::networkMetaDataChanged()
                 + QLatin1Char('/')
                 + fileName;
 
-        fileName = QFileDialog::getSaveFileName(shareWidget, tr("Save File"), fileName);
+        fileName = QFileDialog::getSaveFileName(
+                qobject_cast<QWidget *>(parent()), tr("Save File"), fileName);
 
         if (!fileName.isEmpty()) {
             file.setFileName(fileName);
-            if (file.open(QIODevice::WriteOnly)) {
+            if (file.open(QIODevice::WriteOnly))
                 networkReadyRead();
-
-                urlRequest = new QGalleryUrlRequest(shareWidget->gallery(), this);
-                urlRequest->setItemUrl(QUrl::fromLocalFile(fileName));
-                urlRequest->setCreate(true);
-                connect(urlRequest, SIGNAL(succeeded()), this, SLOT(insertSucceeded()));
-
-                urlRequest->execute();
-            } else {
+            else
                 networkReply->abort();
-            }
         }
     }
 }
@@ -150,9 +146,7 @@ void Download::networkFinished()
 
         file.close();
     }
+
+    emit finished(this);
 }
 
-void Download::insertSucceeded()
-{
-    // Set some properties on the new document, maybe the download URL.
-}

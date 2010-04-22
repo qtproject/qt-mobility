@@ -151,7 +151,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
         QGalleryUrlRequest *request)
 {
-    return new QGalleryTrackerUrlResponse(searchInterface(), request);
+    return new QGalleryTrackerUrlResponse(searchInterface(), metaDataInterface(), request);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(

@@ -42,9 +42,12 @@
 
 #include "qgallerytrackerurlresponse_p.h"
 
+#include "qgallerytrackermetadataedit_p.h"
 #include "qgallerytrackerschema_p.h"
 #include "qgalleryurlrequest.h"
 
+#include <QtCore/qcoreapplication.h>
+#include <QtCore/qcoreevent.h>
 #include <QtCore/qdatetime.h>
 #include <QtDBus/qdbuspendingreply.h>
 
@@ -54,12 +57,16 @@ QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerUrlResponse::QGalleryTrackerUrlResponse(
         const QGalleryDBusInterfacePointer &searchInterface,
+        const QGalleryDBusInterfacePointer &metaDataInterface,
         QGalleryUrlRequest *request,
         QObject *parent)
     : QGalleryAbstractResponse(parent)
     , m_fileQueryWatcher(0)
     , m_typeQueryWatcher(0)
+    , m_edit(0)
+    , m_outstandingEdits(0)
     , m_searchInterface(searchInterface)
+    , m_metaDataInterface(metaDataInterface)
     , m_propertyNames(request->propertyNames())
     , m_rowIndexes(m_propertyNames.count(), -1)
     , m_pendingRowIndexes(m_propertyNames.count(), -1)
@@ -89,6 +96,8 @@ QGalleryTrackerUrlResponse::QGalleryTrackerUrlResponse(
 
 QGalleryTrackerUrlResponse::~QGalleryTrackerUrlResponse()
 {
+    if (m_edit)
+        m_edit->commit();
 }
 
 int QGalleryTrackerUrlResponse::minimumPagedItems() const
@@ -138,18 +147,44 @@ QList<QGalleryResource> QGalleryTrackerUrlResponse::resources(int) const
 
 QGalleryItemList::ItemStatus QGalleryTrackerUrlResponse::status(int) const
 {
-    return ItemStatus();
+    ItemStatus status;
+
+    if (m_fileQueryWatcher || m_typeQueryWatcher)
+        status |= Reading;
+
+    if (m_outstandingEdits > 0)
+        status |= Writing;
+
+    return status;
 }
 
 QVariant QGalleryTrackerUrlResponse::metaData(int, int key) const
 {
     int column = m_rowIndexes.value(key, -1);
 
-    return column > 0 ? m_row.value(column) : QVariant();
+    return column >= 0 ? m_row.value(column + 2) : QVariant();
 }
 
-void QGalleryTrackerUrlResponse::setMetaData(int, int, const QVariant &)
+void QGalleryTrackerUrlResponse::setMetaData(int index, int key, const QVariant &value)
 {
+    if (!m_row.isEmpty() && index == 0) {
+        QString field = m_fields.value(key);
+
+        if (!field.isNull()) {
+            if (!m_edit) {
+                m_edit = new QGalleryTrackerMetaDataEdit(
+                        m_metaDataInterface, m_row.value(0), m_row.value(1), this);
+                connect(m_edit, SIGNAL(finished(QGalleryTrackerMetaDataEdit*)),
+                        this, SLOT(editFinished(QGalleryTrackerMetaDataEdit*)));
+
+                QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+
+                m_outstandingEdits += 1;
+            }
+
+            m_edit->setValue(field, value.toString());
+        }
+    }
 }
 
 void QGalleryTrackerUrlResponse::cancel()
@@ -174,6 +209,48 @@ bool QGalleryTrackerUrlResponse::waitForFinished(int msecs)
         }
     }
     return false;
+}
+
+bool QGalleryTrackerUrlResponse::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        if (m_edit) {
+            m_edit->commit();
+            m_edit = 0;
+        }
+
+        return true;
+    } else {
+        return QGalleryAbstractResponse::event(event);
+    }
+}
+
+void QGalleryTrackerUrlResponse::editFinished(QGalleryTrackerMetaDataEdit *edit)
+{
+    edit->deleteLater();
+
+    m_outstandingEdits -= 1;
+
+    if (!m_row.isEmpty()) {
+        QList<int> keys;
+
+        QMap<QString, QString> values = edit->values();
+
+        for (QMap<QString, QString>::const_iterator it = values.constBegin();
+                it != values.constEnd();
+                ++it) {
+            int key = m_fields.indexOf(it.key());
+
+            m_row[m_rowIndexes.at(key) + 2] = it.value();
+
+            do {
+                keys.append(key);
+            } while ((key = m_fields.indexOf(it.key(), key + 1)) != -1);
+        }
+
+        if (keys.isEmpty())
+            emit metaDataChanged(0, 1, keys);
+    }
 }
 
 void QGalleryTrackerUrlResponse::fileQueryFinished(QDBusPendingCallWatcher *watcher)
@@ -208,10 +285,10 @@ void QGalleryTrackerUrlResponse::fileQueryFinished(QDBusPendingCallWatcher *watc
 
                 m_itemId = schema.idFunc()(m_row);
 
-                emit inserted(0, 1);
-
                 int error = QGalleryAbstractRequest::NoResult;
                 QString query = schema.buildIdQuery(&error, m_itemId);
+
+                emit inserted(0, 1);
 
                 if (error != QGalleryAbstractRequest::NoResult) {
                     finish(error);
@@ -254,18 +331,23 @@ void QGalleryTrackerUrlResponse::typeQueryFinished(QDBusPendingCallWatcher *watc
     }
 }
 
-
 QDBusPendingCallWatcher *QGalleryTrackerUrlResponse::execute(
         const QString &query, const QGalleryTrackerSchema &schema)
 {
+    m_fields.clear();
+
     QStringList fields;
 
     for (int i = 0; i < m_propertyNames.count(); ++i) {
         QString field = schema.field(m_propertyNames.at(i));
 
+        m_fields.append(field);
+
         if (!field.isNull()) {
             m_pendingRowIndexes[i] = fields.count();
             fields.append(field);
+        } else {
+            m_pendingRowIndexes[i] = -1;
         }
     }
 

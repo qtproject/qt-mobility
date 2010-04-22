@@ -11,9 +11,11 @@ INCLUDEPATH += ../../src/gallery
 
 HEADERS = \
     download.h \
+    downloadcompletedialog.h \
     sharewidget.h
 
 SOURCES = \
     download.cpp \
+    downloadcompletedialog.cpp \
     main.cpp \
     sharewidget.cpp

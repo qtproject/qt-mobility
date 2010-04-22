@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYTRACKERURLRESPONSE_P_H
-#define QGALLERYTRACKERURLRESPONSE_P_H
+#ifndef QGALLERYTRACKERMETADATAEDIT_P_H
+#define QGALLERYTRACKERMETADATAEDIT_P_H
 
 //
 //  W A R N I N G
@@ -53,78 +53,56 @@
 // We mean it.
 //
 
-#include "qgalleryabstractresponse.h"
+#include <qmobilityglobal.h>
 
 #include "qgallerydbusinterface_p.h"
 
-#include <QtCore/qbasictimer.h>
-#include <QtDBus/qdbusinterface.h>
+#include <QtCore/qstringlist.h>
 
 class QDBusPendingCallWatcher;
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerMetaDataEdit;
-class QGalleryTrackerSchema;
-class QGalleryUrlRequest;
-
-class QGalleryTrackerUrlResponse : public QGalleryAbstractResponse
+class QGalleryTrackerMetaDataEdit : public QObject
 {
     Q_OBJECT
 public:
-    QGalleryTrackerUrlResponse(
-            const QGalleryDBusInterfacePointer &searchInterface,
+    QGalleryTrackerMetaDataEdit(
             const QGalleryDBusInterfacePointer &metaDataInterface,
-            QGalleryUrlRequest *request,
+            const QString &uri,
+            const QString &service,
             QObject *parent = 0);
-    ~QGalleryTrackerUrlResponse();
+    ~QGalleryTrackerMetaDataEdit();
 
-    int minimumPagedItems() const;
+    int index() const { return m_index; }
+    void setIndex(int index) { m_index = index; }
 
-    QStringList propertyNames() const;
-    int propertyKey(const QString &name) const;
-    QGalleryProperty::Attributes propertyAttributes(int key) const;
+    QString uri() const { return m_uri; }
+    QString service() const { return m_service; }
 
-    int count() const;
+    QStringList fields() const { return m_values.keys(); }
 
-    QString id(int index) const;
-    QUrl url(int index) const;
-    QString type(int index) const;
-    QList<QGalleryResource> resources(int index) const;
-    ItemStatus status(int index) const;
+    QString value(const QString &field) const { return m_values.value(field); }
+    void setValue(const QString &field, const QString &value) {
+        Q_ASSERT(!m_watcher); m_values[field] = value; }
 
-    QVariant metaData(int index, int key) const;
-    void setMetaData(int index, int key, const QVariant &value);
+    QMap<QString, QString> values() const { return m_values; }
 
-    void cancel();
+    void commit();
 
-    bool waitForFinished(int msecs);
-
-    bool event(QEvent *event);
+Q_SIGNALS:
+    void finished(QGalleryTrackerMetaDataEdit *edit);
 
 private Q_SLOTS:
-    void editFinished(QGalleryTrackerMetaDataEdit *edit);
-    void fileQueryFinished(QDBusPendingCallWatcher *watcher);
-    void typeQueryFinished(QDBusPendingCallWatcher *watcher);
+    void watcherFinished(QDBusPendingCallWatcher *watcher);
 
 private:
-    QDBusPendingCallWatcher *execute(const QString &itemId, const QGalleryTrackerSchema &schema);
-
-    QDBusPendingCallWatcher *m_fileQueryWatcher;
-    QDBusPendingCallWatcher *m_typeQueryWatcher;
-    QGalleryTrackerMetaDataEdit *m_edit;
-    int m_outstandingEdits;
-
-    QGalleryDBusInterfacePointer m_searchInterface;
+    QDBusPendingCallWatcher *m_watcher;
+    int m_index;
     QGalleryDBusInterfacePointer m_metaDataInterface;
-    QStringList m_propertyNames;
-    QStringList m_fields;
-    QStringList m_row;
-    QVector<int> m_rowIndexes;
-    QVector<int> m_pendingRowIndexes;
-    QUrl m_url;
-    QString m_itemId;
-    QString m_itemType;
+    QString m_uri;
+    QString m_service;
+    QMap<QString, QString> m_values;
 };
 
 QTM_END_NAMESPACE

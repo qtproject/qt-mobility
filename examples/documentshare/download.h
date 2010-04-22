@@ -62,8 +62,10 @@ class Download : public QObject
 {
     Q_OBJECT
 public:
-    Download(QNetworkReply *networkReply, ShareWidget *parent);
+    Download(QNetworkReply *networkReply, QObject *parent);
     ~Download();
+
+    QString fileName() const;
 
 signals:
     void finished(Download *download);
@@ -72,12 +74,9 @@ private slots:
     void networkMetaDataChanged();
     void networkReadyRead();
     void networkFinished();
-    void insertSucceeded();
 
 private:
     QNetworkReply *networkReply;
-    ShareWidget *shareWidget;
-    QGalleryUrlRequest *urlRequest;
     QFile file;
 };
 

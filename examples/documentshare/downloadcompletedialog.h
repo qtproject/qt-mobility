@@ -39,45 +39,60 @@
 **
 ****************************************************************************/
 
-#ifndef SHAREWIDGET_H
-#define SHAREWIDGET_H
+#ifndef DOWNLOADCOMPLETEDIALOG_H
+#define DOWNLOADCOMPLETEDIALOG_H
 
 #include <qmobilityglobal.h>
 
-#include <QtGui/qwidget.h>
+#include <QtGui/qdialog.h>
 
 QT_BEGIN_NAMESPACE
-class QNetworkReply;
-class QNetworkRequest;
-class QWebView;
+class QLabel;
+class QLineEdit;
+class QTextEdit;
 QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QDocumentGallery;
+class QGalleryItemList;
+class QGalleryUrlRequest;
 QTM_END_NAMESPACE
 
 class Download;
-class DownloadCompleteDialog;
 
 QTM_USE_NAMESPACE;
 
-class ShareWidget : public QWidget
+class DownloadCompleteDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ShareWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    DownloadCompleteDialog(
+            QDocumentGallery *gallery, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+
+    void show(const QString &fileName);
 
 private slots:
-    void unsupportedContent(QNetworkReply *reply);
-    void downloadRequested(const QNetworkRequest &request);
-    void downloadFinished(Download *download);
+    void itemChanged();
+    void itemsInserted(int index, int count);
+    void itemsRemoved(int index, int count);
+    void metaDataChanged(int index, int count, const QList<int> &keys);
+
+    void titleEdited();
+    void subjectEdited();
 
 private:
-    QDocumentGallery *documentGallery;
-    QWebView *webView;
-    DownloadCompleteDialog *downloadCompleteDialog;
-
-
+    QGalleryUrlRequest *request;
+    QGalleryItemList *item;
+    QLabel *fileName;
+    QLabel *mimeType;
+    QLineEdit *title;
+    QLineEdit *subject;
+    QTextEdit *description;
+    int fileNameKey;
+    int mimeTypeKey;
+    int titleKey;
+    int subjectKey;
+    int descriptionKey;
 };
 
 #endif

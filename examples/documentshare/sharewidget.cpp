@@ -42,6 +42,7 @@
 #include "sharewidget.h"
 
 #include "download.h"
+#include "downloadcompletedialog.h"
 
 #include <qdocumentgallery.h>
 
@@ -50,8 +51,9 @@
 
 ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
-    , webView(0)
     , documentGallery(0)
+    , webView(0)
+    , downloadCompleteDialog(0)
 {
     webView = new QWebView;
     webView->setUrl(QUrl(QLatin1String("http://share.ovi.com")));
@@ -71,11 +73,6 @@ ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
     documentGallery = new QDocumentGallery(this);
 }
 
-QAbstractGallery *ShareWidget::gallery() const
-{
-    return documentGallery;
-}
-
 void ShareWidget::unsupportedContent(QNetworkReply *reply)
 {
     Download *download = new Download(reply, this);
@@ -90,5 +87,12 @@ void ShareWidget::downloadRequested(const QNetworkRequest &request)
 
 void ShareWidget::downloadFinished(Download *download)
 {
+    if (!downloadCompleteDialog) {
+        downloadCompleteDialog = new DownloadCompleteDialog(documentGallery, this);
+        downloadCompleteDialog->setModal(true);
+    }
+
+    downloadCompleteDialog->show(download->fileName());
+
     download->deleteLater();
 }
