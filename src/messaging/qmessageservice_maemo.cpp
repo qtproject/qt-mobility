@@ -45,8 +45,12 @@
 #include "modestengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
 #include "eventloggerengine_maemo_p.h"
+#include <QUrl>
+#include "hildon-uri.h"
 
 QTM_BEGIN_NAMESPACE
+#define EVENTLOGGER_THREAD
+
 
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
  : q_ptr(parent),
@@ -55,6 +59,10 @@ QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
    _active(false), _actionId(-1),
    _pendingRequestCount(0)
 {
+#ifdef EVENTLOGGER_THREAD
+    connect(EventLoggerEngine::instance(),SIGNAL(messagesFound(const QMessageIdList &,bool,bool)),this,SLOT(messagesFound(const QMessageIdList &,bool,bool)));
+
+#endif
 }
 
 QMessageServicePrivate::~QMessageServicePrivate()
@@ -89,7 +97,8 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     _pendingRequestCount = 0;
 
     if (enginesToCall & EnginesToCallTelepathy) {
-        _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+#ifndef EVENTLOGGER_THREAD
+      _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
 #else
         EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
@@ -142,6 +151,7 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     _pendingRequestCount = 0;
 
     if (enginesToCall & EnginesToCallTelepathy) {
+#ifndef EVENTLOGGER_THREAD
         _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
 #else
@@ -463,6 +473,8 @@ bool QMessageService::compose(const QMessage &message)
     //    qDebug() << "compose returns=" << retVal;
     return retVal;
 }
+
+
 
 bool QMessageService::retrieveHeader(const QMessageId& id)
 {
