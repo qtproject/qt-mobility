@@ -78,6 +78,13 @@ namespace SymbianHelpers {
     static const char* freestylePrefix = "FS_";
 }
 
+namespace MessagingUtil
+{
+    QString addIdPrefix(const QString& id);
+    QString stripIdPrefix(const QString& id);
+    QString idPrefix();
+}
+
 QTM_END_NAMESPACE
 
 #endif

@@ -43,7 +43,7 @@
 #ifdef FREESTYLEMAILUSED
 #include "qfsengine_symbian_p.h"
 #endif
-#include "symbianhelpers_p.h"
+#include "messagingutil_p.h"
 
 #include <QString>
 

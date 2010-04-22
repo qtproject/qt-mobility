@@ -43,7 +43,7 @@
 #include "qmessageservice_symbian_p.h"
 #include "qfsengine_symbian_p.h"
 #include "qmessage_symbian_p.h"
-#include "symbianhelpers_p.h"
+#include "messagingutil_p.h"
 #include "qmessageaccount.h"
 #include "qmessageaccount_p.h"
 #include "qmessageaccountfilter.h"
@@ -75,7 +75,6 @@ using namespace EmailInterface;
 QTM_BEGIN_NAMESPACE
 
 using namespace SymbianHelpers;
-using namespace EmailInterface;
 
 Q_GLOBAL_STATIC(CFSEngine,fsEngine);
 
@@ -1049,7 +1048,9 @@ TTime CFSEngine::qDateTimeToSymbianTTime(const QDateTime& date) const
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
     : m_owner(aOwner), 
       m_operationId(aOperationId),
-      iResultCorrectlyOrdered(false)
+      iResultCorrectlyOrdered(false),
+      m_mailbox(NULL),
+      m_search(NULL)
 {
 }
 
@@ -1213,7 +1214,8 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
 void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria)
 {
     TMailboxId mailboxId(stripIdPrefix(messageAccount.id().toString()).toInt());
-    m_mailbox->Release();
+    if (m_mailbox)
+        m_mailbox->Release();
     if (m_search)
         m_search->Release();
     m_mailbox = m_clientApi->MailboxL(mailboxId);

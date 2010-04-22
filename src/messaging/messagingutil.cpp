@@ -39,10 +39,14 @@
 **
 ****************************************************************************/
 
-#include "symbianhelpers_p.h"
+#include "messagingutil_p.h"
 #include "qmessageid.h"
 #include "qmessageaccountid.h"
 #include "qmessagefolderid.h"
+#include <qmessageglobal.h>
+
+#include <QDebug>
+
 
 
 QTM_BEGIN_NAMESPACE
@@ -149,11 +153,11 @@ namespace SymbianHelpers {
         switch (type) {
         case EngineTypeFreestyle:
             Q_ASSERT(!id.toString().startsWith(freestylePrefix));
-            return QMessageId(QString(freestylePrefix) + id.toString());
+            return QMessageId(freestylePrefix + id.toString());
             break;
         case EngineTypeMTM:
             Q_ASSERT(!id.toString().startsWith(mtmPrefix));
-            return QMessageId(QString(mtmPrefix) + id.toString());
+            return QMessageId(mtmPrefix + id.toString());
             break;
         default:
             return QMessageId(id);
@@ -161,7 +165,6 @@ namespace SymbianHelpers {
         }
     }
 
-    
     QString stripIdPrefix(const QString& id)
     {
         if (id.startsWith(freestylePrefix))
@@ -203,4 +206,37 @@ namespace SymbianHelpers {
     }
 
 }
+
+namespace MessagingUtil {
+
+    QString addIdPrefix(const QString& id)
+    {
+        if(id.startsWith(idPrefix()))
+			qWarning() << "ID already prefixed";
+
+        return idPrefix() + id;
+    }
+
+    QString stripIdPrefix(const QString& id)
+    {
+		if(!id.startsWith(idPrefix()))
+			qWarning() << "ID not prefixed";
+
+		return id.right(id.length() - idPrefix().length());
+    }
+
+    QString idPrefix()
+    {
+#ifdef Q_OS_SYMBIAN
+        static QString prefix(SymbianHelpers::mtmPrefix);
+#elif defined(Q_OS_WIN)
+        static QString prefix("WIN_");
+#else
+        static QString prefix("QMF_");
+#endif
+        return prefix;
+    }
+
+}
+
 QTM_END_NAMESPACE

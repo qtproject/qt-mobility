@@ -50,7 +50,7 @@
 #include "qmessageservice_symbian_p.h"
 #include "qmtmengine_symbian_p.h"
 #include "qmessage_symbian_p.h"
-#include "symbianhelpers_p.h"
+#include "messagingutil_p.h"
 #include "maemohelpers_p.h" // contains non-meamo specific helpers for messaging
 #ifdef FREESTYLEMAILUSED
 #include "qfsengine_symbian_p.h"
