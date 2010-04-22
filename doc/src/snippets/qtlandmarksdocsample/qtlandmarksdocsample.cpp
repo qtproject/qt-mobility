@@ -75,9 +75,8 @@ void RequestExample::categorySaveRequest()
     cafes.setDescription("Small diners");
     cafes.setIconUrl(QUrl("cafe.png"));
 
-    //catSaveRequest was created with catSaveRequest = new QLandmarkCategorySaveRequest()
-    //in the ctor
-    catSaveRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
+    //catSaveRequest was created with catSaveRequest = new QLandmarkCategorySaveRequest(lmManager)
+    //in the ctor, where lmManager is a QLandmarkManager *
     catSaveRequest->setCategory(cafes);
 
     connect(catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
@@ -117,9 +116,8 @@ void RequestExample::landmarkSaveRequest()
     address.setCountryCode("US");
     monks.setAddress(address);
 
-    //lmSaveRequest was created with lmSaveRequest = new QLandmarkSaveRequest()
-    //in the ctor
-    lmSaveRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
+    //lmSaveRequest was created with lmSaveRequest = new QLandmarkSaveRequest(lmManager)
+    //in the ctor, where lmManager is a QLandamrkManager constructor
     lmSaveRequest->setLandmark(monks);
 
     monks.setDescription("Jerry's favourite diner");
@@ -151,9 +149,8 @@ void RequestExample::landmarkSaveRequestHandler(QLandmarkAbstractRequest::State 
 void RequestExample::categoryFetchRequest()
 {
     //! [Retrieve categories asynchronously]
-    //catFetchRequest was created with catFetchRequest = new QLandmarkCategoryFetchRequest()
-    //in the ctor
-    catFetchRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
+    //catFetchRequest was created with catFetchRequest = new QLandmarkCategoryFetchRequest(lmManager)
+    //in the ctor, where lmManager is a QLandmarkManager*
 
     connect(catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
             this, SLOT(categoryFetchRequestHandler(QLandmarkAbstractRequest::State)));
@@ -190,14 +187,14 @@ void RequestExample::landmarkFetchRequest()
 {
     //! [Retrieve landmarks asynchronously]
     QLandmarkCategoryFilter filter;
+    QLandmarkNameSort sort(Qt::AscendingOrder);
     //categoryId is a previously retrieved QLandmarkCategoryId
     filter.setCategoryId(categoryId);
 
-    //lmFetchRequest was created with lmFetchRequest = new QLandmarkFetchRequest()
-    //in the ctor
-    lmFetchRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
-    lmFetchRequest->setFilter(filter);
-    lmFetchRequest->setSorting(QLandmarkNameSort(Qt::AscendingOrder));
+    //lmFetchRequest was created with lmFetchRequest = new QLandmarkFetchRequest(lmManager)
+    //in the ctor, where lmManager is a QLandmarkManger *
+    lmFetchRequest->setFilter(&filter);
+    lmFetchRequest->setSorting(&sort);
 
     connect(lmFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
             this, SLOT(landmarkFetchRequestHandler(QLandmarkAbstractRequest::State)));
@@ -233,9 +230,8 @@ void RequestExample::landmarkFetchRequestHandler(QLandmarkAbstractRequest::State
 //! [Remove category asynchronously]
 void RequestExample::categoryRemoveRequest()
 {
-    //catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest()
-    //in the ctor
-    catRemoveRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
+    //catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest(lmManager)
+    //in the ctor, where lmManager is a QLandmarkManager*
     catRemoveRequest->setCategoryId(category.id()); //category is a previously retrieved QLandmarkCategory
 
     connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
@@ -267,9 +263,8 @@ void RequestExample::categoryRemoveRequestHandler(QLandmarkAbstractRequest::Stat
 //! [Remove landmark asynchronously]
 void RequestExample::landmarkRemoveRequest()
 {
-    //lmRemoveRequest was created with lmRemoveRequest = new QLandmarkSaveRequest()
-    //in the ctor
-    lmRemoveRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
+    //lmRemoveRequest was created with lmRemoveRequest = new QLandmarkSaveRequest(lmManager)
+    //in the ctor, where lmManager is a QLandmarkManager*
     lmRemoveRequest->setLandmarkId(landmark.id());  //landmark is a previously retrieved QLandmark
 
     connect(lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
