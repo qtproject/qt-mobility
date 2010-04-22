@@ -60,7 +60,6 @@
 #include "qlandmarksortorder.h"
 #include "qlandmarknamesort.h"
 #include "qlandmarkdistancesort.h"
-#include "qlandmarkcustomsort.h"
 
 #include <math.h>
 #include <qnumeric.h>
@@ -679,9 +678,6 @@ int SortFunctor::compare(const QLandmark &lm1, const QLandmark &lm2) const
                 break;
             case QLandmarkSortOrder::DistanceSort:
                 result = compareDistance(static_cast<const QLandmarkDistanceSort*>(m_sortOrders.at(i)), lm1, lm2);
-                break;
-            case QLandmarkSortOrder::CustomSort:
-                result = static_cast<const QLandmarkCustomSort*>(m_sortOrders.at(i))->compare(lm1, lm2);
                 break;
             default:
                 continue;

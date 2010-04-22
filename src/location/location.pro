@@ -38,7 +38,6 @@ PUBLIC_HEADERS += \
                     qlandmarkcategoryremoverequest.h \
                     qlandmarkcategorysaverequest.h \
                     qlandmarkattributefilter.h \
-                    qlandmarkcustomsort.h \
                     qlandmarkdistancesort.h \
                     qlandmarkexportrequest.h \
                     qlandmarkfetchrequest.h \
@@ -236,7 +235,6 @@ SOURCES += \
             qlandmarkcategoryremoverequest.cpp \
             qlandmarkcategorysaverequest.cpp \
             qlandmarkattributefilter.cpp \
-            qlandmarkcustomsort.cpp \
             qlandmarkdistancesort.cpp \
             qlandmarkexportrequest.cpp \
             qlandmarkfetchrequest.cpp \
