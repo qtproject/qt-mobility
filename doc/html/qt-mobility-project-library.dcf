@@ -1693,7 +1693,7 @@
         <keyword ref="qlandmark.html#addCategory">addCategory</keyword>
         <keyword ref="qlandmark.html#address">address</keyword>
         <keyword ref="qlandmark.html#attribute">attribute</keyword>
-        <keyword ref="qlandmark.html#attributes">attributes</keyword>
+        <keyword ref="qlandmark.html#attributeKeys">attributeKeys</keyword>
         <keyword ref="qlandmark.html#categories">categories</keyword>
         <keyword ref="qlandmark.html#coordinate">coordinate</keyword>
         <keyword ref="qlandmark.html#description">description</keyword>
@@ -1757,6 +1757,15 @@
         <keyword ref="qlandmarkabstractrequest.html#type">type</keyword>
         <keyword ref="qlandmarkabstractrequest.html#waitForFinished">waitForFinished</keyword>
         <section ref="qlandmarkabstractrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkattributefilter.html" title="QLandmarkAttributeFilter Class Reference">
+        <keyword ref="qlandmarkattributefilter.html">QLandmarkAttributeFilter</keyword>
+        <keyword ref="qlandmarkattributefilter.html#attribute">attribute</keyword>
+        <keyword ref="qlandmarkattributefilter.html#attributeKeys">attributeKeys</keyword>
+        <keyword ref="qlandmarkattributefilter.html#clearAttributes">clearAttributes</keyword>
+        <keyword ref="qlandmarkattributefilter.html#removeAttribute">removeAttribute</keyword>
+        <keyword ref="qlandmarkattributefilter.html#setAttribute">setAttribute</keyword>
+        <section ref="qlandmarkattributefilter-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkboxfilter.html" title="QLandmarkBoxFilter Class Reference">
         <keyword ref="qlandmarkboxfilter.html">QLandmarkBoxFilter</keyword>
@@ -1829,11 +1838,6 @@
         <keyword ref="qlandmarkcategorysaverequest.html#setCategory">setCategory</keyword>
         <section ref="qlandmarkcategorysaverequest-members.html" title="List of all members"/>
     </section>
-    <section ref="qlandmarkcustomfilter.html" title="QLandmarkCustomFilter Class Reference">
-        <keyword ref="qlandmarkcustomfilter.html">QLandmarkCustomFilter</keyword>
-        <keyword ref="qlandmarkcustomfilter.html#isMatch">isMatch</keyword>
-        <section ref="qlandmarkcustomfilter-members.html" title="List of all members"/>
-    </section>
     <section ref="qlandmarkcustomsort.html" title="QLandmarkCustomSort Class Reference">
         <keyword ref="qlandmarkcustomsort.html">QLandmarkCustomSort</keyword>
         <keyword ref="qlandmarkcustomsort.html#compare">compare</keyword>
@@ -1876,9 +1880,9 @@
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::NameFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::NearestFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::IntersectionFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::AttributeFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::CategoryFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::BoxFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::CustomFilter</keyword>
         <keyword ref="qlandmarkfilter.html#maximumMatches">maximumMatches</keyword>
         <keyword ref="qlandmarkfilter.html#setMaximumMatches">setMaximumMatches</keyword>
         <keyword ref="qlandmarkfilter.html#type">type</keyword>

@@ -4506,7 +4506,7 @@
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="attributes" fullname="QLandmark::attributes" href="qlandmark.html#attributes" location="qlandmark.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="attributes() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="attributeKeys" fullname="QLandmark::attributeKeys" href="qlandmark.html#attributeKeys" location="qlandmark.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="attributeKeys() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="phone" fullname="QLandmark::phone" href="qlandmark.html#phone" location="qlandmark.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="phone() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setPhone" fullname="QLandmark::setPhone" href="qlandmark.html#setPhone" location="qlandmark.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setPhone(const QString &amp; phone)">
                 <parameter left="const QString &amp;" right="" name="phone" default=""/>
@@ -5848,6 +5848,22 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isAllowed" fullname="QAbstractSecuritySession::isAllowed" href="qabstractsecuritysession.html#isAllowed" location="qabstractsecuritysession.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="isAllowed(const QStringList &amp; capabilities)">
                 <parameter left="const QStringList &amp;" right="" name="capabilities" default=""/>
             </function>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkAttributeFilter" href="qlandmarkattributefilter.html" location="qlandmarkattributefilter.h" bases="QLandmarkFilter" module="">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkAttributeFilter" fullname="QLandmarkAttributeFilter::QLandmarkAttributeFilter" href="qlandmarkattributefilter.html#QLandmarkAttributeFilter" location="qlandmarkattributefilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkAttributeFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkAttributeFilter" fullname="QLandmarkAttributeFilter::~QLandmarkAttributeFilter" href="qlandmarkattributefilter.html#dtor.QLandmarkAttributeFilter" location="qlandmarkattributefilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkAttributeFilter()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="attribute" fullname="QLandmarkAttributeFilter::attribute" href="qlandmarkattributefilter.html#attribute" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="attribute(const QString &amp; key) const">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setAttribute" fullname="QLandmarkAttributeFilter::setAttribute" href="qlandmarkattributefilter.html#setAttribute" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setAttribute(const QString &amp; key, const QVariant &amp; value)">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeAttribute" fullname="QLandmarkAttributeFilter::removeAttribute" href="qlandmarkattributefilter.html#removeAttribute" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeAttribute(const QString &amp; key)">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clearAttributes" fullname="QLandmarkAttributeFilter::clearAttributes" href="qlandmarkattributefilter.html#clearAttributes" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clearAttributes()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="attributeKeys" fullname="QLandmarkAttributeFilter::attributeKeys" href="qlandmarkattributefilter.html#attributeKeys" location="qlandmarkattributefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="attributeKeys() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitResourceHandler" href="qversitresourcehandler.html" location="qversitresourcehandler.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitResourceHandler" fullname="QVersitResourceHandler::~QVersitResourceHandler" href="qversitresourcehandler.html#dtor.QVersitResourceHandler" location="qversitresourcehandler.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitResourceHandler()"/>
@@ -8050,13 +8066,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="landmarks" fullname="QLandmarkFetchRequest::landmarks" href="qlandmarkfetchrequest.html#landmarks" location="qlandmarkfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QLandmark&gt;" signature="landmarks() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCustomFilter" href="qlandmarkcustomfilter.html" location="qlandmarkcustomfilter.h" bases="QLandmarkFilter" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkCustomFilter" fullname="QLandmarkCustomFilter::~QLandmarkCustomFilter" href="qlandmarkcustomfilter.html#dtor.QLandmarkCustomFilter" location="qlandmarkcustomfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkCustomFilter()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isMatch" fullname="QLandmarkCustomFilter::isMatch" href="qlandmarkcustomfilter.html#isMatch" location="qlandmarkcustomfilter.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isMatch(const QLandmark &amp; landmark) const">
-                <parameter left="const QLandmark &amp;" right="" name="landmark" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QLandmarkCustomFilter" fullname="QLandmarkCustomFilter::QLandmarkCustomFilter" href="qlandmarkcustomfilter.html#QLandmarkCustomFilter" location="qlandmarkcustomfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCustomFilter()"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkManager" href="qlandmarkmanager.html" location="qlandmarkmanager.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QLandmarkManager::Error" href="qlandmarkmanager.html#Error-enum" location="qlandmarkmanager.h">
                 <value name="NoError" value="0"/>
@@ -8214,7 +8223,7 @@
                 <value name="BoxFilter" value="6"/>
                 <value name="IntersectionFilter" value="7"/>
                 <value name="UnionFilter" value="8"/>
-                <value name="CustomFilter" value="500"/>
+                <value name="AttributeFilter" value="9"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkFilter" fullname="QLandmarkFilter::QLandmarkFilter" href="qlandmarkfilter.html#QLandmarkFilter" location="qlandmarkfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkFilter" fullname="QLandmarkFilter::QLandmarkFilter" href="qlandmarkfilter.html#QLandmarkFilter-2" location="qlandmarkfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QLandmarkFilter(const QLandmarkFilter &amp; other)">

@@ -90,9 +90,8 @@
         cafes.setDescription(&quot;Small diners&quot;);
         cafes.setIconUrl(QUrl(&quot;cafe.png&quot;));
 
-        <span class="comment">//catSaveRequest was created with catSaveRequest = new QLandmarkCategorySaveRequest()</span>
-        <span class="comment">//in the ctor</span>
-        catSaveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
+        <span class="comment">//catSaveRequest was created with catSaveRequest = new QLandmarkCategorySaveRequest(lmManager)</span>
+        <span class="comment">//in the ctor, where lmManager is a QLandmarkManager *</span>
         catSaveRequest-&gt;setCategory(cafes);
 
         connect(catSaveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
@@ -130,9 +129,8 @@
         address.setCountryCode(&quot;US&quot;);
         monks.setAddress(address);
 
-        <span class="comment">//lmSaveRequest was created with lmSaveRequest = new QLandmarkSaveRequest()</span>
-        <span class="comment">//in the ctor</span>
-        lmSaveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
+        <span class="comment">//lmSaveRequest was created with lmSaveRequest = new QLandmarkSaveRequest(lmManager)</span>
+        <span class="comment">//in the ctor, where lmManager is a QLandamrkManager constructor</span>
         lmSaveRequest-&gt;setLandmark(monks);
 
         monks.setDescription(&quot;Jerry's favourite diner&quot;);
@@ -197,9 +195,8 @@
 <a name="retrieving-categories"></a>
 <h4>Retrieving categories</h4>
 <p>To retrieve categories we can use a <a href="qlandmarkcategoryfetchrequest.html">QLandmarkCategoryFetchRequest</a> (or if we wish to fetch id's then a <a href="qlandmarkcategoryidfetchrequest.html">QLandmarkCategoryIdFetchRequest</a>) and set its manager. The request's <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal is connected to a slot which detects whether the operation is complete. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a>.</p>
-<pre>        <span class="comment">//catFetchRequest was created with catFetchRequest = new QLandmarkCategoryFetchRequest()</span>
-        <span class="comment">//in the ctor</span>
-        catFetchRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
+<pre>        <span class="comment">//catFetchRequest was created with catFetchRequest = new QLandmarkCategoryFetchRequest(lmManager)</span>
+        <span class="comment">//in the ctor, where lmManager is a QLandmarkManager*</span>
 
         connect(catFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
                 this, SLOT(categoryFetchRequestHandler(QLandmarkAbstractRequest::State)));
@@ -231,14 +228,14 @@
 <h4>Retrieving landmarks</h4>
 <p>To retrieve landmarks we create an appropriate filter, in this case a category filter, and use it with a sort order on a <a href="qlandmarkfetchrequest.html">QLandmarkFetchRequest</a>. (If we wanted to operate with ids we would use a <a href="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</a>). We also set the manager of the request. The request's <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal is connected to a slot which detects whether the operation is complete. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a>.</p>
 <pre>        QLandmarkCategoryFilter filter;
+        QLandmarkNameSort sort(Qt::AscendingOrder);
         <span class="comment">//categoryId is a previously retrieved QLandmarkCategoryId</span>
         filter.setCategoryId(categoryId);
 
-        <span class="comment">//lmFetchRequest was created with lmFetchRequest = new QLandmarkFetchRequest()</span>
-        <span class="comment">//in the ctor</span>
-        lmFetchRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
-        lmFetchRequest-&gt;setFilter(filter);
-        lmFetchRequest-&gt;setSorting(QLandmarkNameSort(Qt::AscendingOrder));
+        <span class="comment">//lmFetchRequest was created with lmFetchRequest = new QLandmarkFetchRequest(lmManager)</span>
+        <span class="comment">//in the ctor, where lmManager is a QLandmarkManger *</span>
+        lmFetchRequest-&gt;setFilter(&amp;filter);
+        lmFetchRequest-&gt;setSorting(&amp;sort);
 
         connect(lmFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
                 this, SLOT(landmarkFetchRequestHandler(QLandmarkAbstractRequest::State)));
@@ -287,9 +284,8 @@
 <p>To remove a category we use a <a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a> and set its manager and the id of the category we want to remove. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a></p>
 <pre>    void RequestExample::categoryRemoveRequest()
     {
-        <span class="comment">//catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest()</span>
-        <span class="comment">//in the ctor</span>
-        catRemoveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
+        <span class="comment">//catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest(lmManager)</span>
+        <span class="comment">//in the ctor, where lmManager is a QLandmarkManager*</span>
         catRemoveRequest-&gt;setCategoryId(category.id()); <span class="comment">//category is a previously retrieved QLandmarkCategory</span>
 
         connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
@@ -305,9 +301,8 @@
 <p>For brevity, the slot does not process all the different request states. In our example we watch for the QLandmarkAbstractRequest::Finished state and see if there are any errors or not. We may reuse the <a href="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</a> by setting another category id and running <a href="qlandmarkabstractrequest.html#start">start()</a> again.</p>
 <pre>    void RequestExample::categoryRemoveRequest()
     {
-        <span class="comment">//catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest()</span>
-        <span class="comment">//in the ctor</span>
-        catRemoveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
+        <span class="comment">//catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest(lmManager)</span>
+        <span class="comment">//in the ctor, where lmManager is a QLandmarkManager*</span>
         catRemoveRequest-&gt;setCategoryId(category.id()); <span class="comment">//category is a previously retrieved QLandmarkCategory</span>
 
         connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
@@ -325,9 +320,8 @@
 <p>To remove a landmark we use a <a href="qlandmarkremoverequest.html">QLandmarkRemoveRequest</a> and set its manager and the id of the landmark we want to remove. We then connect the <a href="qlandmarkabstractrequest.html#stateChanged">stateChanged()</a> signal up to a slot which watches the state of the request. To begin the request we invoke <a href="qlandmarkabstractrequest.html#start">start()</a></p>
 <pre>    void RequestExample::landmarkRemoveRequest()
     {
-        <span class="comment">//lmRemoveRequest was created with lmRemoveRequest = new QLandmarkSaveRequest()</span>
-        <span class="comment">//in the ctor</span>
-        lmRemoveRequest-&gt;setManager(lmManager); <span class="comment">//lmManager is a QLandmarkManager*</span>
+        <span class="comment">//lmRemoveRequest was created with lmRemoveRequest = new QLandmarkSaveRequest(lmManager)</span>
+        <span class="comment">//in the ctor, where lmManager is a QLandmarkManager*</span>
         lmRemoveRequest-&gt;setLandmarkId(landmark.id());  <span class="comment">//landmark is a previously retrieved QLandmark</span>
 
         connect(lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,

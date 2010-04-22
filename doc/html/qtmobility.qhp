@@ -299,6 +299,9 @@
                     <section ref="qlandmarkabstractrequest.html" title="QLandmarkAbstractRequest Class Reference">
                         <section ref="qlandmarkabstractrequest-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qlandmarkattributefilter.html" title="QLandmarkAttributeFilter Class Reference">
+                        <section ref="qlandmarkattributefilter-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qlandmarkboxfilter.html" title="QLandmarkBoxFilter Class Reference">
                         <section ref="qlandmarkboxfilter-members.html" title="List of all members"/>
                     </section>
@@ -322,9 +325,6 @@
                     </section>
                     <section ref="qlandmarkcategorysaverequest.html" title="QLandmarkCategorySaveRequest Class Reference">
                         <section ref="qlandmarkcategorysaverequest-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qlandmarkcustomfilter.html" title="QLandmarkCustomFilter Class Reference">
-                        <section ref="qlandmarkcustomfilter-members.html" title="List of all members"/>
                     </section>
                     <section ref="qlandmarkcustomsort.html" title="QLandmarkCustomSort Class Reference">
                         <section ref="qlandmarkcustomsort-members.html" title="List of all members"/>
@@ -2202,7 +2202,7 @@
             <keyword name="addCategory" id="QLandmark::addCategory" ref="qlandmark.html#addCategory"/>
             <keyword name="address" id="QLandmark::address" ref="qlandmark.html#address"/>
             <keyword name="attribute" id="QLandmark::attribute" ref="qlandmark.html#attribute"/>
-            <keyword name="attributes" id="QLandmark::attributes" ref="qlandmark.html#attributes"/>
+            <keyword name="attributeKeys" id="QLandmark::attributeKeys" ref="qlandmark.html#attributeKeys"/>
             <keyword name="categories" id="QLandmark::categories" ref="qlandmark.html#categories"/>
             <keyword name="coordinate" id="QLandmark::coordinate" ref="qlandmark.html#coordinate"/>
             <keyword name="description" id="QLandmark::description" ref="qlandmark.html#description"/>
@@ -2264,6 +2264,13 @@
             <keyword name="type" id="QLandmarkAbstractRequest::type" ref="qlandmarkabstractrequest.html#type"/>
             <keyword name="waitForFinished" id="QLandmarkAbstractRequest::waitForFinished" ref="qlandmarkabstractrequest.html#waitForFinished"/>
             <keyword name="~QLandmarkAbstractRequest" id="QLandmarkAbstractRequest::~QLandmarkAbstractRequest" ref="qlandmarkabstractrequest.html#dtor.QLandmarkAbstractRequest"/>
+            <keyword name="QLandmarkAttributeFilter" id="QLandmarkAttributeFilter" ref="qlandmarkattributefilter.html"/>
+            <keyword name="attribute" id="QLandmarkAttributeFilter::attribute" ref="qlandmarkattributefilter.html#attribute"/>
+            <keyword name="attributeKeys" id="QLandmarkAttributeFilter::attributeKeys" ref="qlandmarkattributefilter.html#attributeKeys"/>
+            <keyword name="clearAttributes" id="QLandmarkAttributeFilter::clearAttributes" ref="qlandmarkattributefilter.html#clearAttributes"/>
+            <keyword name="removeAttribute" id="QLandmarkAttributeFilter::removeAttribute" ref="qlandmarkattributefilter.html#removeAttribute"/>
+            <keyword name="setAttribute" id="QLandmarkAttributeFilter::setAttribute" ref="qlandmarkattributefilter.html#setAttribute"/>
+            <keyword name="~QLandmarkAttributeFilter" id="QLandmarkAttributeFilter::~QLandmarkAttributeFilter" ref="qlandmarkattributefilter.html#dtor.QLandmarkAttributeFilter"/>
             <keyword name="QLandmarkBoxFilter" id="QLandmarkBoxFilter" ref="qlandmarkboxfilter.html"/>
             <keyword name="bottomRightCoordinate" id="QLandmarkBoxFilter::bottomRightCoordinate" ref="qlandmarkboxfilter.html#bottomRightCoordinate"/>
             <keyword name="setBottomRightCoordinate" id="QLandmarkBoxFilter::setBottomRightCoordinate" ref="qlandmarkboxfilter.html#setBottomRightCoordinate"/>
@@ -2319,9 +2326,6 @@
             <keyword name="setCategories" id="QLandmarkCategorySaveRequest::setCategories" ref="qlandmarkcategorysaverequest.html#setCategories"/>
             <keyword name="setCategory" id="QLandmarkCategorySaveRequest::setCategory" ref="qlandmarkcategorysaverequest.html#setCategory"/>
             <keyword name="~QLandmarkCategorySaveRequest" id="QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest" ref="qlandmarkcategorysaverequest.html#dtor.QLandmarkCategorySaveRequest"/>
-            <keyword name="QLandmarkCustomFilter" id="QLandmarkCustomFilter" ref="qlandmarkcustomfilter.html"/>
-            <keyword name="isMatch" id="QLandmarkCustomFilter::isMatch" ref="qlandmarkcustomfilter.html#isMatch"/>
-            <keyword name="~QLandmarkCustomFilter" id="QLandmarkCustomFilter::~QLandmarkCustomFilter" ref="qlandmarkcustomfilter.html#dtor.QLandmarkCustomFilter"/>
             <keyword name="QLandmarkCustomSort" id="QLandmarkCustomSort" ref="qlandmarkcustomsort.html"/>
             <keyword name="compare" id="QLandmarkCustomSort::compare" ref="qlandmarkcustomsort.html#compare"/>
             <keyword name="~QLandmarkCustomSort" id="QLandmarkCustomSort::~QLandmarkCustomSort" ref="qlandmarkcustomsort.html#dtor.QLandmarkCustomSort"/>
@@ -2357,7 +2361,7 @@
             <keyword name="QLandmarkFilter::BoxFilter" id="QLandmarkFilter::BoxFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::IntersectionFilter" id="QLandmarkFilter::IntersectionFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::UnionFilter" id="QLandmarkFilter::UnionFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
-            <keyword name="QLandmarkFilter::CustomFilter" id="QLandmarkFilter::CustomFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
+            <keyword name="QLandmarkFilter::AttributeFilter" id="QLandmarkFilter::AttributeFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="maximumMatches" id="QLandmarkFilter::maximumMatches" ref="qlandmarkfilter.html#maximumMatches"/>
             <keyword name="operator=" id="QLandmarkFilter::operator=" ref="qlandmarkfilter.html#operator-eq"/>
             <keyword name="setMaximumMatches" id="QLandmarkFilter::setMaximumMatches" ref="qlandmarkfilter.html#setMaximumMatches"/>
@@ -4575,7 +4579,6 @@
             <file>declarative-voipdialer-voipdialerplugin-h.html</file>
             <file>qlandmarknearestfilter-members.html</file>
             <file>qcontactdisplaylabel-members.html</file>
-            <file>qlandmarkcustomfilter-members.html</file>
             <file>qmaptileservice-members.html</file>
             <file>qcontactdetailfilter.html</file>
             <file>qmagnetometerfilter.html</file>
@@ -4858,7 +4861,6 @@
             <file>bearercloud-main-cpp.html</file>
             <file>qcontactintersectionfilter-members.html</file>
             <file>qsystemdeviceinfo.html</file>
-            <file>qlandmarkcustomfilter.html</file>
             <file>samplephonebook-filterpage-cpp.html</file>
             <file>qcontactdetail-members.html</file>
             <file>qcontactfamily-members.html</file>
@@ -4882,6 +4884,7 @@
             <file>qimageencodersettings-members.html</file>
             <file>qsensorbackend.html</file>
             <file>qcontactbirthday.html</file>
+            <file>qlandmarkattributefilter.html</file>
             <file>qmessageaccountsortorder.html</file>
             <file>qcontactdetailfielddefinition.html</file>
             <file>qgeosatelliteinfo-members.html</file>
@@ -5208,6 +5211,7 @@
             <file>qmediaplaylist-members.html</file>
             <file>multimedia.html</file>
             <file>qcontactinvalidfilter-members.html</file>
+            <file>qlandmarkattributefilter-members.html</file>
             <file>qlandmarksaverequest-members.html</file>
             <file>qmagnetometerfilter-members.html</file>
             <file>player-mediakeysobserver-cpp.html</file>

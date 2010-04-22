@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkFilter Class Reference</h1>
 <p>The QLandmarkFilter class serves as the base class for all filter classes. Also serves as the default filter which retrieves all landmarks. <a href="#details">More...</a></p>
-<pre>    #include &lt;QLandmarkFilter&gt;</pre><p>Inherited by <a href="qlandmarkboxfilter.html">QLandmarkBoxFilter</a>, <a href="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</a>, <a href="qlandmarkcustomfilter.html">QLandmarkCustomFilter</a>, <a href="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</a>, <a href="qlandmarknamefilter.html">QLandmarkNameFilter</a>, <a href="qlandmarknearestfilter.html">QLandmarkNearestFilter</a>, <a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a>, and <a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a>.</p>
+<pre>    #include &lt;QLandmarkFilter&gt;</pre><p>Inherited by <a href="qlandmarkattributefilter.html">QLandmarkAttributeFilter</a>, <a href="qlandmarkboxfilter.html">QLandmarkBoxFilter</a>, <a href="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</a>, <a href="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</a>, <a href="qlandmarknamefilter.html">QLandmarkNameFilter</a>, <a href="qlandmarknearestfilter.html">QLandmarkNearestFilter</a>, <a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a>, and <a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a>.</p>
 <ul>
 <li><a href="qlandmarkfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -23,7 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a></b> { InvalidFilter, NameFilter, ProximityFilter, NearestFilter, ..., CustomFilter }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkfilter.html#FilterType-enum">FilterType</a></b> { InvalidFilter, NameFilter, ProximityFilter, NearestFilter, ..., AttributeFilter }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -49,7 +49,6 @@
 <p>The QLandmarkFilter class serves as the base class for all filter classes. Also serves as the default filter which retrieves all landmarks.</p>
 <p>This class is used as a parameter to search for landmarks, it allows selection of landmarks which meet certain criteria. It is used with <a href="qlandmarkmanager.html">QLandmarkManager</a> for synchronous searches or the appropriate request classes for asynchronous searches.</p>
 <p>The QLandmarkFilter is primarily intended to serve as the base class for all filter types. However it also has the type of a QLandmark::DefaultFilter, and may thus be used as a filter to match all landmarks.</p>
-<p>If the existing collection of filter types is not sufficient then custom filter should be created by inheriting from <a href="qlandmarkcustomfilter.html">QLandmarkCustomFilter</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QLandmarkFilter/FilterType"></a>
@@ -62,7 +61,7 @@
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/IntersectionFilter"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/UnionFilter"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/DefaultFilter"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkFilter/CustomFilter"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkFilter/AttributeFilter"></a>
 <h3 class="fn"><a name="FilterType-enum"></a>enum QLandmarkFilter::FilterType</h3>
 <p>Describes the type of the filter</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -76,7 +75,7 @@
 <tr><td valign="top"><tt>QLandmarkFilter::IntersectionFilter</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">A filter which performs an AND operation with its constituent filters</td></tr>
 <tr><td valign="top"><tt>QLandmarkFilter::UnionFilter</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">A filter which performs an OR operation with its constiuent filters</td></tr>
 <tr><td valign="top"><tt>QLandmarkFilter::DefaultFilter</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A filter which matches all landmarks.</td></tr>
-<tr><td valign="top"><tt>QLandmarkFilter::CustomFilter</tt></td><td align="center" valign="top"><tt>500</tt></td><td valign="top">A filter which matches landmarks based on a custom made algorithm.</td></tr>
+<tr><td valign="top"><tt>QLandmarkFilter::AttributeFilter</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A filter which matches landmarks based on generic attributes.</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
