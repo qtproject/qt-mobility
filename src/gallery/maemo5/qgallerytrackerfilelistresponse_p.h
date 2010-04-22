@@ -61,12 +61,15 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGalleryTrackerMetaDataEdit;
+
 class QGalleryTrackerFileListResponse : public QGalleryTrackerListResponse
 {
     Q_OBJECT
 public:
     QGalleryTrackerFileListResponse(
             const QGalleryDBusInterfacePointer &searchInterface,
+            const QGalleryDBusInterfacePointer &metaDataInterface,
             const QGalleryTrackerSchema &schema,
             const QString &query,
             const QStringList &properties,
@@ -84,11 +87,19 @@ public:
     QString type(int index) const;
     QList<QGalleryResource> resources(int index) const;
 
+    void setMetaData(int index, int key, const QVariant &value);
+
+    bool event(QEvent *event);
+
 protected:
     QDBusPendingCall queryRows(int offset, int limit);
 
+private Q_SLOTS:
+    void editFinished(QGalleryTrackerMetaDataEdit *edit);
+
 private:
     QGalleryDBusInterfacePointer m_searchInterface;
+    QGalleryDBusInterfacePointer m_metaDataInterface;
     int m_pathIndex;
     int m_fileNameIndex;
     int m_serviceIndex;
@@ -99,6 +110,7 @@ private:
     QStringList m_sortFields;
     QStringList m_propertyNames;
     QList<int> m_resourceKeys;
+    QList<QGalleryTrackerMetaDataEdit *> m_edits;
 };
 
 QTM_END_NAMESPACE

@@ -42,12 +42,17 @@
 #include "qgallerytrackerfilelistresponse_p.h"
 
 #include "qgallerythumbnailloader_p.h"
+#include "qgallerytrackermetadataedit_p.h"
 #include "qgallerytrackerschema_p.h"
+
+#include <QtCore/qcoreapplication.h>
+#include <QtCore/qcoreevent.h>
 
 QTM_BEGIN_NAMESPACE
 
 QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
         const QGalleryDBusInterfacePointer &searchInterface,
+        const QGalleryDBusInterfacePointer &metaDataInterface,
         const QGalleryTrackerSchema &schema,
         const QString &query,
         const QStringList &properties,
@@ -56,6 +61,7 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
         QObject *parent)
     : QGalleryTrackerListResponse(schema, minimumPagedItems, parent)
     , m_searchInterface(searchInterface)
+    , m_metaDataInterface(metaDataInterface)
     , m_service(schema.service())
     , m_query(query)
 {
@@ -68,7 +74,7 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
             m_fields.append(field);
             m_propertyNames.append(*property);
         }
-    }           
+    }
 
     m_sortDescending = !sortProperties.isEmpty()
             && sortProperties.first().startsWith(QLatin1Char('-'));
@@ -95,6 +101,11 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
 
 QGalleryTrackerFileListResponse::~QGalleryTrackerFileListResponse()
 {
+    for (QList<QGalleryTrackerMetaDataEdit *>::iterator it = m_edits.begin();
+            it != m_edits.end();
+            ++it) {
+        (*it)->commit();
+    }
 }
 
 QStringList QGalleryTrackerFileListResponse::propertyNames() const
@@ -109,7 +120,7 @@ int QGalleryTrackerFileListResponse::propertyKey(const QString &name) const
 
 QGalleryProperty::Attributes QGalleryTrackerFileListResponse::propertyAttributes(int) const
 {
-    return QGalleryProperty::CanRead | QGalleryProperty::CanSort;
+    return QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanWrite;
 }
 
 QUrl QGalleryTrackerFileListResponse::url(int index) const
@@ -151,6 +162,92 @@ QList<QGalleryResource> QGalleryTrackerFileListResponse::resources(int index) co
         return QList<QGalleryResource>() << QGalleryResource(QUrl(row.at(0)), properties);
     } else {
         return QList<QGalleryResource>();
+    }
+}
+
+void QGalleryTrackerFileListResponse::setMetaData(int index, int key, const QVariant &value)
+{
+    key -= 2;
+
+    if (key > 0 && key < m_fields.count()) {
+        QGalleryTrackerMetaDataEdit *edit = 0;
+
+        for (QList<QGalleryTrackerMetaDataEdit *>::iterator it = m_edits.begin();
+                it != m_edits.end();
+                ++it) {
+            if ((*it)->index() == index) {
+                edit = *it;
+                break;
+            }
+        }
+
+        if (!edit) {
+            QStringList row = QGalleryTrackerListResponse::row(index);
+
+            if (row.isEmpty())
+                return;
+
+            edit = new QGalleryTrackerMetaDataEdit(
+                    m_metaDataInterface, row.value(0), row.value(1), this);
+            edit->setIndex(index);
+
+            connect(edit, SIGNAL(finished(QGalleryTrackerMetaDataEdit*)),
+                    this, SLOT(editFinished(QGalleryTrackerMetaDataEdit*)));
+
+            if (m_edits.isEmpty())
+                QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+
+            m_edits.append(edit);
+        }
+
+        edit->setValue(m_fields.at(key), value.toString());
+    }
+}
+
+bool QGalleryTrackerFileListResponse::event(QEvent *event)
+{
+    if (event->type() == QEvent::UpdateRequest) {
+        for (QList<QGalleryTrackerMetaDataEdit *>::iterator it = m_edits.begin();
+                it != m_edits.end();
+                ++it) {
+            (*it)->commit();
+        }
+        m_edits.clear();
+
+        return true;
+    } else {
+        return QGalleryTrackerListResponse::event(event);
+    }
+}
+
+void QGalleryTrackerFileListResponse::editFinished(QGalleryTrackerMetaDataEdit *edit)
+{
+    edit->deleteLater();
+
+    QStringList updatedRow = row(edit->index());
+
+    if (!updatedRow.isEmpty()) {
+        QList<int> keys;
+
+        QMap<QString, QString> values = edit->values();
+
+        for (QMap<QString, QString>::const_iterator it = values.constBegin();
+                it != values.constEnd();
+                ++it) {
+            int key = m_fields.indexOf(it.key());
+
+            updatedRow[key + 2] = it.value();
+
+            do {
+                keys.append(key);
+            } while ((key = m_fields.indexOf(it.key(), key + 1)) != -1);
+        }
+
+        if (!keys.isEmpty()) {
+            replaceRow(edit->index(), updatedRow);
+
+            emit metaDataChanged(edit->index(), 1, keys);
+        }
     }
 }
 

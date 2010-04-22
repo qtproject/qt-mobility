@@ -98,7 +98,10 @@ public Q_SLOTS:
 protected:
     virtual QDBusPendingCall queryRows(int offset, int limit) = 0;
 
+    void replaceRow(int index, const QStringList &row);
+
     void setImageColumn(QGalleryImageLoader *loader, int column);
+
 
 private Q_SLOTS:
     void imagesLoaded(const QList<uint> &ids);
@@ -124,7 +127,6 @@ private:
     QDBusPendingCallWatcher *m_call;
     QVector<QStringList> m_rows;
     QVector<QGalleryImage> m_images;
-
 };
 
 QTM_END_NAMESPACE

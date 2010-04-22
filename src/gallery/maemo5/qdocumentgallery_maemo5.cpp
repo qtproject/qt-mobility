@@ -124,6 +124,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
         if (schema.isFileType()) {
             response = new QGalleryTrackerFileListResponse(
                     searchInterface(),
+                    metaDataInterface(),
                     schema,
                     query,
                     request->propertyNames(),
@@ -171,6 +172,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
         if (schema.isFileType()) {
             response = new QGalleryTrackerFileListResponse(
                     searchInterface(),
+                    metaDataInterface(),
                     schema,
                     query,
                     request->propertyNames(),
@@ -214,6 +216,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
         if (schema.isFileType()) {
             QGalleryAbstractResponse *response = new QGalleryTrackerFileListResponse(
                     searchInterface(),
+                    metaDataInterface(),
                     schema,
                     query,
                     request->propertyNames(),

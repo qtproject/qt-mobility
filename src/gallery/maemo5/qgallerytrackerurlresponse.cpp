@@ -248,7 +248,7 @@ void QGalleryTrackerUrlResponse::editFinished(QGalleryTrackerMetaDataEdit *edit)
             } while ((key = m_fields.indexOf(it.key(), key + 1)) != -1);
         }
 
-        if (keys.isEmpty())
+        if (!keys.isEmpty())
             emit metaDataChanged(0, 1, keys);
     }
 }

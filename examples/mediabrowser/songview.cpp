@@ -56,6 +56,7 @@ SongView::SongView(QWidget *parent)
             << QDocumentGallery::trackNumber
             << QDocumentGallery::title
             << QDocumentGallery::duration
+            << QDocumentGallery::albumArtist
             << QDocumentGallery::artist
             << QDocumentGallery::composer);
     setSortFields(QStringList()
@@ -65,12 +66,13 @@ SongView::SongView(QWidget *parent)
             << QDocumentGallery::title);
 
     model = new GalleryModel;
-    model->setColumnCount(5);
+    model->setColumnCount(6);
     model->setDisplayFieldForColumn(0, QDocumentGallery::trackNumber);
     model->setDisplayFieldForColumn(1, QDocumentGallery::title);
     model->setDisplayFieldForColumn(2, QDocumentGallery::duration);
     model->setDisplayFieldForColumn(3, QDocumentGallery::artist);
-    model->setDisplayFieldForColumn(4, QDocumentGallery::composer);
+    model->setDisplayFieldForColumn(4, QDocumentGallery::albumArtist);
+    model->setDisplayFieldForColumn(5, QDocumentGallery::composer);
 
     QTableView *view = new QTableView;
     view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);

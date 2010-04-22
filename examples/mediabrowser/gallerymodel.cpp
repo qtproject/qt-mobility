@@ -62,7 +62,7 @@ QVariant GalleryModel::data(const QModelIndex &index, int role) const
     if (index.isValid()) {
         int key = -1;
 
-        if (role == Qt::DisplayRole)
+        if (role == Qt::DisplayRole || role == Qt::EditRole)
             key = displayKeys.at(index.column());
         else if (role == Qt::DecorationRole)
             key = decorationKeys.at(index.column());
@@ -73,6 +73,34 @@ QVariant GalleryModel::data(const QModelIndex &index, int role) const
             return mediaList->metaData(index.row(), key);
     }
     return QVariant();
+}
+
+bool GalleryModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (index.isValid() && role == Qt::EditRole) {
+        int key = displayKeys.at(index.column());
+
+        if (key >= 0) {
+            mediaList->setMetaData(index.row(), key, value);
+
+            return true;
+        }
+    }
+    return false;
+}
+
+Qt::ItemFlags GalleryModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags flags = Qt::ItemIsEnabled;
+
+    if (index.isValid()) {
+        int key = displayKeys.at(index.column());
+
+        if (key >= 0 && mediaList->propertyAttributes(key) & QGalleryProperty::CanWrite)
+            flags |= Qt::ItemIsEditable;
+    }
+
+    return flags;
 }
 
 QModelIndex GalleryModel::index(int row, int column, const QModelIndex &parent) const

@@ -186,6 +186,14 @@ void QGalleryTrackerListResponse::setCursorPosition(int position)
     QGalleryAbstractResponse::setCursorPosition(position);
 }
 
+void QGalleryTrackerListResponse::replaceRow(int index, const QStringList &row)
+{
+    index -= m_rowOffset;
+
+    if (index < m_rows.count())
+        m_rows[index] = row;
+}
+
 void QGalleryTrackerListResponse::setImageColumn(QGalleryImageLoader *loader, int column)
 {
     Q_ASSERT(m_imageLoader == 0);
