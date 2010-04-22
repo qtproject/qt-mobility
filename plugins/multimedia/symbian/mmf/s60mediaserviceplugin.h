@@ -44,8 +44,8 @@
 #define S60SERVICEPLUGIN_H
 
 #include <QtCore/qobject.h>
-#include <QMediaService>
-#include <QMediaServiceProviderPlugin>
+#include <qmediaservice.h>
+#include <qmediaserviceproviderplugin.h>
 
 QT_USE_NAMESPACE
 

@@ -42,7 +42,7 @@
 #ifndef S60MEDIAMETADATAPROVIDER_H
 #define S60MEDIAMETADATAPROVIDER_H
 
-#include <QMetaDataControl>
+#include <qmetadatacontrol.h>
 #include "ms60mediaplayerresolver.h"
 
 QT_USE_NAMESPACE

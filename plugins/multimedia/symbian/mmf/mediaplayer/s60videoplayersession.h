@@ -46,7 +46,7 @@
 #include "s60mediaplayeraudioendpointselector.h"
 #include <videoplayer.h>
 #include <QtGui/qwidget.h>
-#include <QVideoWidget>
+#include <qvideowidget.h>
 
 #include <AudioOutput.h>
 #include <MAudioOutputObserver.h>

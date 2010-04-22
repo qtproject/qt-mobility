@@ -43,8 +43,8 @@
 #define S60RADIOTUNERCONTROL_H
 
 #include <QtCore/qobject.h>
-#include <QRadioTunerControl>
-#include <QRadioTuner>
+#include <qradiotunercontrol.h>
+#include <qradiotuner.h>
 #include <tuner.h>
 
 class S60RadioTunerService;

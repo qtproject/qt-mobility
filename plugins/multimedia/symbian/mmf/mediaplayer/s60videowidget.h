@@ -42,7 +42,7 @@
 #ifndef S60VIDEOWIDGET_H
 #define S60VIDEOWIDGET_H
 
-#include <QVideoWidgetControl>
+#include <qvideowidgetcontrol.h>
 #include <qmediaplayer.h>
 
 QT_USE_NAMESPACE

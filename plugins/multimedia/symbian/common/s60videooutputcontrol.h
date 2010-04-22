@@ -43,7 +43,7 @@
 #define S60VIDEOOUTPUTCONTROL_H
 
 #include <QObject>
-#include <QVideoOutputControl>
+#include <qvideooutputcontrol.h>
 
 QT_USE_NAMESPACE
 

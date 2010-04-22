@@ -44,7 +44,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <QMediaService>
+#include <qmediaservice.h>
 
 QT_USE_NAMESPACE
 

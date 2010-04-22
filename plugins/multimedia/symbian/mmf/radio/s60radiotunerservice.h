@@ -44,7 +44,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <QMediaService>
+#include <qmediaservice.h>
 
 #ifdef TUNERLIBUSED
 #include "s60radiotunercontrol_31.h"
