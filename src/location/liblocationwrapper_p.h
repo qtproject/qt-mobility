@@ -50,7 +50,7 @@
 #include "qgeopositioninfo.h"
 #include "qgeosatelliteinfo.h"
 
-#include "gconfitem.h"
+#include "gconfitem_p.h"
 
 extern "C" {
    #include <glib.h>
