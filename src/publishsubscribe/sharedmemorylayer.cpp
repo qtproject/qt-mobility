@@ -1921,31 +1921,32 @@ bool SharedMemoryLayer::startup(Type type)
 
     if(Server == type) {
         shm = new QSharedMemory(socket(), this);
-        bool created = shm->create(SHMLAYER_SIZE);
-        if (!created)  {
-            //qDebug() << "Reattaching to existing memory";
+        // create or reattach to existing shared memory
+        if (!shm->create(SHMLAYER_SIZE))
             shm->attach();
+
+        if (shm->error() != QSharedMemory::NoError) {
+            qFatal("SharedMemoryLayer: Unable to create or access shared resource. %d(%s)",
+                   shm->error(),
+                   shm->errorString().toLatin1().constData());
         }
         lock = new QSystemReadWriteLock(socket() + "_lock", QSystemReadWriteLock::Create);
     } else {
         shm = new QSharedMemory(socket(), this);
         shm->attach(QSharedMemory::ReadOnly);
+        if (shm->error() != QSharedMemory::NoError) {
+            qFatal("SharedMemoryLayer: Unable to access shared memory. %d(%s)",
+                   shm->error(), shm->errorString().toLatin1().constData());
+        }
+
         qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
         subShm = new QSharedMemory(socket()+QString::number(qrand()), this);
         if (!subShm->create((VERSION_TABLE_ENTRIES + 7) / 8, QSharedMemory::ReadWrite)) {
-            qWarning() << "SharedMemoryLayer client cannot create clientIndex:"
-                       << subShm->errorString() << subShm->key();
+            qWarning("SharedMemoryLayer: client cannot create clientIndex: %s %s",
+                     subShm->errorString().toLatin1().constData(), subShm->key().toLatin1().constData());
         }
 
         lock = new QSystemReadWriteLock(socket() + "_lock", QSystemReadWriteLock::Open);
-    }
-
-    if (shm->error() != QSharedMemory::NoError ||
-        ((!subShm || subShm->error()!= QSharedMemory::NoError) && Server != type)) {
-        qFatal("SharedMemoryLayer: Unable to create or access shared resources. (%s - %s)",
-               shm->errorString().toLatin1().constData(),
-               subShm->errorString().toLatin1().constData());
-        return false;
     }
 
     if (subShm)
