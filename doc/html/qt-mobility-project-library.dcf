@@ -1838,11 +1838,6 @@
         <keyword ref="qlandmarkcategorysaverequest.html#setCategory">setCategory</keyword>
         <section ref="qlandmarkcategorysaverequest-members.html" title="List of all members"/>
     </section>
-    <section ref="qlandmarkcustomsort.html" title="QLandmarkCustomSort Class Reference">
-        <keyword ref="qlandmarkcustomsort.html">QLandmarkCustomSort</keyword>
-        <keyword ref="qlandmarkcustomsort.html#compare">compare</keyword>
-        <section ref="qlandmarkcustomsort-members.html" title="List of all members"/>
-    </section>
     <section ref="qlandmarkdistancesort.html" title="QLandmarkDistanceSort Class Reference">
         <keyword ref="qlandmarkdistancesort.html">QLandmarkDistanceSort</keyword>
         <keyword ref="qlandmarkdistancesort.html#coordinate">coordinate</keyword>
@@ -2089,7 +2084,6 @@
         <keyword ref="qlandmarksortorder.html#SortType-enum">SortType</keyword>
         <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::NameSort</keyword>
         <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::DefaultSort</keyword>
-        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::CustomSort</keyword>
         <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::DistanceSort</keyword>
         <keyword ref="qlandmarksortorder.html#direction">direction</keyword>
         <keyword ref="qlandmarksortorder.html#setDirection">setDirection</keyword>

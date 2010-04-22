@@ -3379,14 +3379,6 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkCustomSort" href="qlandmarkcustomsort.html" location="qlandmarkcustomsort.h" bases="QLandmarkSortOrder" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkCustomSort" fullname="QLandmarkCustomSort::~QLandmarkCustomSort" href="qlandmarkcustomsort.html#dtor.QLandmarkCustomSort" location="qlandmarkcustomsort.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkCustomSort()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="compare" fullname="QLandmarkCustomSort::compare" href="qlandmarkcustomsort.html#compare" location="qlandmarkcustomsort.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="int" signature="compare(const QLandmark &amp; l1, const QLandmark &amp; l2) const">
-                <parameter left="const QLandmark &amp;" right="" name="l1" default=""/>
-                <parameter left="const QLandmark &amp;" right="" name="l2" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QLandmarkCustomSort" fullname="QLandmarkCustomSort::QLandmarkCustomSort" href="qlandmarkcustomsort.html#QLandmarkCustomSort" location="qlandmarkcustomsort.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkCustomSort()"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QMapTileReply" href="qmaptilereply.html" location="qmaptilereply.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="ErrorCode" fullname="QMapTileReply::ErrorCode" href="qmaptilereply.html#ErrorCode-enum" location="qmaptilereply.h">
                 <value name="NoError" value="0"/>
@@ -6945,7 +6937,6 @@
                 <value name="DefaultSort" value="0"/>
                 <value name="NameSort" value="1"/>
                 <value name="DistanceSort" value="2"/>
-                <value name="CustomSort" value="500"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkSortOrder" fullname="QLandmarkSortOrder::QLandmarkSortOrder" href="qlandmarksortorder.html#QLandmarkSortOrder" location="qlandmarksortorder.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkSortOrder()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkSortOrder" fullname="QLandmarkSortOrder::QLandmarkSortOrder" href="qlandmarksortorder.html#QLandmarkSortOrder-2" location="qlandmarksortorder.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QLandmarkSortOrder(const QLandmarkSortOrder &amp; other)">

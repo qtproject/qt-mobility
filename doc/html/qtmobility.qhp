@@ -326,9 +326,6 @@
                     <section ref="qlandmarkcategorysaverequest.html" title="QLandmarkCategorySaveRequest Class Reference">
                         <section ref="qlandmarkcategorysaverequest-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qlandmarkcustomsort.html" title="QLandmarkCustomSort Class Reference">
-                        <section ref="qlandmarkcustomsort-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qlandmarkdistancesort.html" title="QLandmarkDistanceSort Class Reference">
                         <section ref="qlandmarkdistancesort-members.html" title="List of all members"/>
                     </section>
@@ -2326,9 +2323,6 @@
             <keyword name="setCategories" id="QLandmarkCategorySaveRequest::setCategories" ref="qlandmarkcategorysaverequest.html#setCategories"/>
             <keyword name="setCategory" id="QLandmarkCategorySaveRequest::setCategory" ref="qlandmarkcategorysaverequest.html#setCategory"/>
             <keyword name="~QLandmarkCategorySaveRequest" id="QLandmarkCategorySaveRequest::~QLandmarkCategorySaveRequest" ref="qlandmarkcategorysaverequest.html#dtor.QLandmarkCategorySaveRequest"/>
-            <keyword name="QLandmarkCustomSort" id="QLandmarkCustomSort" ref="qlandmarkcustomsort.html"/>
-            <keyword name="compare" id="QLandmarkCustomSort::compare" ref="qlandmarkcustomsort.html#compare"/>
-            <keyword name="~QLandmarkCustomSort" id="QLandmarkCustomSort::~QLandmarkCustomSort" ref="qlandmarkcustomsort.html#dtor.QLandmarkCustomSort"/>
             <keyword name="QLandmarkDistanceSort" id="QLandmarkDistanceSort" ref="qlandmarkdistancesort.html"/>
             <keyword name="coordinate" id="QLandmarkDistanceSort::coordinate" ref="qlandmarkdistancesort.html#coordinate"/>
             <keyword name="setCoordinate" id="QLandmarkDistanceSort::setCoordinate" ref="qlandmarkdistancesort.html#setCoordinate"/>
@@ -2540,7 +2534,6 @@
             <keyword name="QLandmarkSortOrder::DefaultSort" id="QLandmarkSortOrder::DefaultSort" ref="qlandmarksortorder.html#SortType-enum"/>
             <keyword name="QLandmarkSortOrder::NameSort" id="QLandmarkSortOrder::NameSort" ref="qlandmarksortorder.html#SortType-enum"/>
             <keyword name="QLandmarkSortOrder::DistanceSort" id="QLandmarkSortOrder::DistanceSort" ref="qlandmarksortorder.html#SortType-enum"/>
-            <keyword name="QLandmarkSortOrder::CustomSort" id="QLandmarkSortOrder::CustomSort" ref="qlandmarksortorder.html#SortType-enum"/>
             <keyword name="direction" id="QLandmarkSortOrder::direction" ref="qlandmarksortorder.html#direction"/>
             <keyword name="operator=" id="QLandmarkSortOrder::operator=" ref="qlandmarksortorder.html#operator-eq"/>
             <keyword name="setDirection" id="QLandmarkSortOrder::setDirection" ref="qlandmarksortorder.html#setDirection"/>
@@ -4708,7 +4701,6 @@
             <file>qcontactactionfactory-members.html</file>
             <file>qmediarecordercontrol-members.html</file>
             <file>qcontactorganization.html</file>
-            <file>qlandmarkcustomsort-members.html</file>
             <file>qvideoencodercontrol.html</file>
             <file>flickrdemo-flickrdemo-cpp.html</file>
             <file>qcompass.html</file>
@@ -4956,7 +4948,6 @@
             <file>declarative.html</file>
             <file>qgeocodingservice.html</file>
             <file>images/DialerServiceGUI.png</file>
-            <file>qlandmarkcustomsort.html</file>
             <file>qcontactdetailfielddefinition-members.html</file>
             <file>servicefw.html</file>
             <file>qmapobject.html</file>
