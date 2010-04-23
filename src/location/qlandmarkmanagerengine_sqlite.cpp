@@ -1306,7 +1306,16 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
         bool *changed)
 {
     QString uri = managerUri();
-    bool update = (landmark->id().isValid() && landmark->id().managerUri() == uri);
+
+    if (!landmark->id().managerUri().isEmpty() && landmark->id().managerUri() != uri) {
+        if (error)
+            *error = QLandmarkManager::DoesNotExistError;
+        if (errorString)
+            *errorString = "Landmark id comes from different landmark manager.";
+        return false;
+    }
+
+    bool update = landmark->id().isValid();
 
     if (added)
         *added = false;
@@ -1316,11 +1325,28 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
     QStringList columns;
     QStringList values;
 
+    QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
+
+    bool transacting = db.transaction();
+
     if (update) {
         columns << "id";
         values << landmark->id().id();
-    }
 
+        QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmark->id().id());
+        QSqlQuery query0(q0, db);
+        if (!query0.next()) {
+            if (transacting)
+                db.rollback();
+
+            if (error)
+                *error = QLandmarkManager::DoesNotExistError;
+            if (errorString)
+                *errorString = "Landmark id does not exist in this landmark manager.";
+
+            return false;
+        }
+    }
     columns << "name";
     if (!landmark->name().isEmpty())
         values << quoteString(landmark->name());
@@ -1458,14 +1484,11 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
     else
         values << "null";
 
-    QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
-
-    bool transacting = db.transaction();
     QString q1 = QString("REPLACE INTO landmark (%1) VALUES (%2);").arg(columns.join(",")).arg(values.join(","));
-    QSqlQuery query(db);
-    if (!query.exec(q1)) {
+    QSqlQuery query1(db);
+    if (!query1.exec(q1)) {
         // TODO set error
-        qWarning() << query.lastError().databaseText();
+        //qWarning() << query1.lastError().databaseText();
         if (transacting)
             db.rollback();
         return false;
@@ -1474,7 +1497,7 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
     if (!update) {
         QLandmarkId id;
         id.setManagerUri(managerUri());
-        id.setId(query.lastInsertId().toString());
+        id.setId(query1.lastInsertId().toString());
         landmark->setId(id);
     }
 
@@ -1726,14 +1749,42 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    bool update = (category->id().isValid() && category->id().managerUri() == managerUri());
+    QString uri = managerUri();
+
+    if (!category->id().managerUri().isEmpty() && category->id().managerUri() != uri) {
+        if (error)
+            *error = QLandmarkManager::DoesNotExistError;
+        if (errorString)
+            *errorString = "Category id comes from different landmark manager.";
+        return false;
+    }
+
+    bool update = category->id().isValid();
 
     QStringList columns;
     QStringList values;
 
+    QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
+
+    bool transacting = db.transaction();
+
     if (update) {
         columns << "id";
         values << category->id().id();
+
+        QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(category->id().id());
+        QSqlQuery query0(q0, db);
+        if (!query0.next()) {
+            if (transacting)
+                db.rollback();
+
+            if (error)
+                *error = QLandmarkManager::DoesNotExistError;
+            if (errorString)
+                *errorString = "Category id does not exist in this landmark manager.";
+
+            return false;
+        }
     }
 
     columns << "name";
@@ -1754,14 +1805,11 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
     else
         values << "null";
 
-    QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
-
-    bool transacting = db.transaction();
     QString q1 = QString("REPLACE INTO category (%1) VALUES (%2);").arg(columns.join(",")).arg(values.join(","));
-    QSqlQuery query(db);
-    if (!query.exec(q1)) {
+    QSqlQuery query1(db);
+    if (!query1.exec(q1)) {
         // TODO set error
-        qWarning() << query.lastError().databaseText();
+        //qWarning() << query1.lastError().databaseText();
         if (transacting)
             db.rollback();
         return false;
@@ -1769,8 +1817,8 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
 
     if (!update) {
         QLandmarkCategoryId id;
-        id.setManagerUri(managerUri());
-        id.setId(query.lastInsertId().toString());
+        id.setManagerUri(uri);
+        id.setId(query1.lastInsertId().toString());
         category->setId(id);
     }
 
