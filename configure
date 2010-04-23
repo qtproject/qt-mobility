@@ -100,7 +100,7 @@ MAC_SDK=
 MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
-OS=
+OS="other"
 
 usage() 
 {
@@ -237,7 +237,7 @@ done
 checkostype()
 {
     match="darwin" 
-    if [[ "$OSTYPE" =~ "${match}" ]]; then
+    if [ "$OSTYPE" = "${match}"* ]; then
         OS="darwin"
         QMKSPEC="-spec macx-g++"
         echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"
@@ -277,7 +277,7 @@ findUniversal()
 
 checkostype
 
-if [ "$OS" == "darwin" ]; then
+if [ "$OS" = "darwin" ] ; then
     findframeworks
 fi
 
@@ -285,7 +285,7 @@ if [ -n "$BUILD_SILENT" ]; then
     echo "CONFIG += silent"  > "$CONFIG_IN"
 fi
 
-if [ "$OS" == "darwin" ]; then
+if [ "$OS" = "darwin" ] ; then
     findUniversal
 fi
 
