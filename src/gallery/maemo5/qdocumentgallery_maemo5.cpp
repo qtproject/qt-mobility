@@ -56,9 +56,9 @@
 #include "qgallerytrackeraggregatelistresponse_p.h"
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackerfilecopyresponse_p.h"
-#include "qgallerytrackerfilelistresponse_p.h"
 #include "qgallerytrackerfilemoveresponse_p.h"
 #include "qgallerytrackerfileremoveresponse_p.h"
+#include "qgallerytrackeritemlistresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 #include "qgallerytrackerurlresponse_p.h"
 
@@ -135,7 +135,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     } else {
         QGalleryAbstractResponse *response = 0;
         if (schema.isFileType()) {
-            response = new QGalleryTrackerFileListResponse(
+            response = new QGalleryTrackerItemListResponse(
                     searchInterface(),
                     metaDataInterface(),
                     schema,
@@ -187,7 +187,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
     } else {
         QGalleryAbstractResponse *response = 0;
         if (schema.isFileType()) {
-            response = new QGalleryTrackerFileListResponse(
+            response = new QGalleryTrackerItemListResponse(
                     searchInterface(),
                     metaDataInterface(),
                     schema,
@@ -231,7 +231,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
         if (schema.isFileType()) {
-            QGalleryAbstractResponse *response = new QGalleryTrackerFileListResponse(
+            QGalleryAbstractResponse *response = new QGalleryTrackerItemListResponse(
                     searchInterface(),
                     metaDataInterface(),
                     schema,
