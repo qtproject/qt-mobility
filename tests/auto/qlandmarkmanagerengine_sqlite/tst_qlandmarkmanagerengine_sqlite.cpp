@@ -42,8 +42,6 @@
 #include <QtTest/QtTest>
 #include <QtTest/QSignalSpy>
 
-//#include "qmobilityglobal.h"
-
 #include "qlandmark.h"
 #include "qlandmarkid.h"
 #include "qlandmarkcategory.h"
@@ -103,13 +101,15 @@ private:
     }
 
     void deleteDb() {
-        QSqlDatabase db = QSqlDatabase::database("landmarks");
-        QSqlQuery q1("delete from landmark;", db);
-        q1.exec();
-        QSqlQuery q2("delete from category;", db);
-        q2.exec();
-        QSqlQuery q3("delete from landmark_category;", db);
-        q3.exec();
+        {
+            QSqlDatabase db = QSqlDatabase::database("landmarks");
+            QSqlQuery q1("delete from landmark;", db);
+            q1.exec();
+            QSqlQuery q2("delete from category;", db);
+            q2.exec();
+            QSqlQuery q3("delete from landmark_category;", db);
+            q3.exec();
+        }
 
         delete m_manager;
         QFile file("test.db");
@@ -229,6 +229,32 @@ private slots:
         QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
         QSignalSpy spyChange(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
 
+        // bad manager uri
+        QLandmarkCategory badCat1;
+        QLandmarkCategoryId badCatId1;
+
+        badCat1.setName("BAD1");
+        badCatId1.setId("1");
+        badCatId1.setManagerUri("bad manager uri");
+        badCat1.setId(badCatId1);
+
+        QVERIFY(!m_manager->saveCategory(&badCat1));
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
+        QCOMPARE(m_manager->errorString(), QString("Category id comes from different landmark manager."));
+
+        // non existent id
+        QLandmarkCategory badCat2;
+        QLandmarkCategoryId badCatId2;
+
+        badCat2.setName("BAD2");
+        badCatId2.setId("bad integer id");
+        badCatId2.setManagerUri(m_manager->managerUri());
+        badCat2.setId(badCatId2);
+
+        QVERIFY(!m_manager->saveCategory(&badCat2));
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
+        QCOMPARE(m_manager->errorString(), QString("Category id does not exist in this landmark manager."));
+
         // add - with attributes
         QLandmarkCategory cat1;
         cat1.setName("CAT1");
@@ -290,6 +316,32 @@ private slots:
     void updateLandmark() {
         QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
         QSignalSpy spyChange(m_manager, SIGNAL(landmarksChanged(QList<QLandmarkId>)));
+
+        // bad manager uri
+        QLandmark badLm1;
+        QLandmarkId badLmId1;
+
+        badLm1.setName("BAD1");
+        badLmId1.setId("1");
+        badLmId1.setManagerUri("bad manager uri");
+        badLm1.setId(badLmId1);
+
+        QVERIFY(!m_manager->saveLandmark(&badLm1));
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
+        QCOMPARE(m_manager->errorString(), QString("Landmark id comes from different landmark manager."));
+
+        // non existent id
+        QLandmark badLm2;
+        QLandmarkId badLmId2;
+
+        badLm2.setName("BAD2");
+        badLmId2.setId("bad integer id");
+        badLmId2.setManagerUri(m_manager->managerUri());
+        badLm2.setId(badLmId2);
+
+        QVERIFY(!m_manager->saveLandmark(&badLm2));
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
+        QCOMPARE(m_manager->errorString(), QString("Landmark id does not exist in this landmark manager."));
 
         // add - with attributes
         QLandmark lm1;
@@ -487,15 +539,15 @@ private slots:
         QVERIFY(m_manager->saveCategory(&cat1));
         catIds << cat1.id();
 
-        QLandmarkCategory cat2;
-        cat2.setName("CAT2");
-        QVERIFY(m_manager->saveCategory(&cat2));
-        catIds << cat2.id();
-
         QLandmarkCategory cat3;
         cat3.setName("CAT3");
         QVERIFY(m_manager->saveCategory(&cat3));
         catIds << cat3.id();
+
+        QLandmarkCategory cat2;
+        cat2.setName("CAT2");
+        QVERIFY(m_manager->saveCategory(&cat2));
+        catIds << cat2.id();
 
         QString uri = m_manager->managerUri();
         int i = 1;

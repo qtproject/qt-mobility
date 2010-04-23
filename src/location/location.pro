@@ -38,7 +38,6 @@ PUBLIC_HEADERS += \
                     qlandmarkcategoryremoverequest.h \
                     qlandmarkcategorysaverequest.h \
                     qlandmarkattributefilter.h \
-                    qlandmarkcustomsort.h \
                     qlandmarkdistancesort.h \
                     qlandmarkexportrequest.h \
                     qlandmarkfetchrequest.h \
@@ -97,6 +96,8 @@ PRIVATE_HEADERS += \
                     qlandmarkcategoryid_p.h \
                     qlandmarkcategoryfilter_p.h \
                     qlandmarkdistancesort_p.h \
+                   qlandmarkfilehandler_gpx_p.h \
+                   qlandmarkfilehandler_lmx_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkid_p.h \
@@ -237,10 +238,11 @@ SOURCES += \
             qlandmarkcategoryremoverequest.cpp \
             qlandmarkcategorysaverequest.cpp \
             qlandmarkattributefilter.cpp \
-            qlandmarkcustomsort.cpp \
             qlandmarkdistancesort.cpp \
             qlandmarkexportrequest.cpp \
             qlandmarkfetchrequest.cpp \
+            qlandmarkfilehandler_gpx.cpp \
+            qlandmarkfilehandler_lmx.cpp \
             qlandmarkfilter.cpp \
             qlandmarkid.cpp \
             qlandmarkidfetchrequest.cpp \
