@@ -557,6 +557,13 @@ void CntSymbianEngine::updateContactL(QContact &contact)
     // note commitContactL removes empty fields from the contact
     m_dataBase->contactDatabase()->CommitContactL(*contactItem);
 
+    // Update "last modified" time stamp; the contact item needs to be
+    // explicitly refreshed by reading it again from the database
+    CleanupStack::PopAndDestroy(contactItem);
+    contactItem = 0;
+    contactItem = m_dataBase->contactDatabase()->ReadContactLC(contact.localId());
+    m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
+
     updateDisplayLabel(contact);
 
     CleanupStack::PopAndDestroy(contactItem);

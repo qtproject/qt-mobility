@@ -136,7 +136,8 @@ symbian: {
         -lfbscli \
         -limageconversion \
         -lbitmaptransforms \
-        -lbafl
+        -lbafl \
+        -ltzclient
 
     target.path = /sys/bin
     INSTALLS += target

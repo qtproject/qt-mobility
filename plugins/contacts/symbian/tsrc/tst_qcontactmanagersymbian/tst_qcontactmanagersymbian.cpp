@@ -107,6 +107,7 @@ private slots:
     void ringTone();
     void displayLabel_data();
     void displayLabel();
+    void timestamp();
     void invalidContactItems();
 
 private:
@@ -532,6 +533,34 @@ void tst_QContactManagerSymbian::displayLabel()
     }
 
     // Remove contact
+    QVERIFY(m_cm->removeContact(contact.localId()));
+}
+
+void tst_QContactManagerSymbian::timestamp()
+{
+    // Save a contact
+    QContact contact = createContact(QContactType::TypeContact, "Jame", "Hunt");
+    QVERIFY(m_cm->saveContact(&contact));
+
+    // Wait a second to make the contact's timestamp a little older
+    QTest::qWait(1001);
+
+    // Modify the contact
+    QContactName name = contact.detail(QContactName::DefinitionName);
+    name.setFirstName("James");
+    contact.saveDetail(&name);
+    QVERIFY(m_cm->saveContact(&contact));
+
+    // Verify
+    QContactTimestamp timestamp = contact.detail(QContactTimestamp::DefinitionName);
+    QDateTime current = QDateTime::currentDateTime();
+    // assume one contact save operation takes less than one second
+    QVERIFY(timestamp.created().secsTo(current) <= 2);
+    QVERIFY(timestamp.created().secsTo(current) >= 1);
+    QVERIFY(timestamp.lastModified().secsTo(current) <= 1);
+    QVERIFY(timestamp.lastModified().secsTo(current) >= 0);
+
+    // Delete the contact
     QVERIFY(m_cm->removeContact(contact.localId()));
 }
 
