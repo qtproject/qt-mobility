@@ -42,8 +42,6 @@
 #include <QtTest/QtTest>
 #include <QtTest/QSignalSpy>
 
-//#include "qmobilityglobal.h"
-
 #include "qlandmark.h"
 #include "qlandmarkid.h"
 #include "qlandmarkcategory.h"
@@ -103,13 +101,15 @@ private:
     }
 
     void deleteDb() {
-        QSqlDatabase db = QSqlDatabase::database("landmarks");
-        QSqlQuery q1("delete from landmark;", db);
-        q1.exec();
-        QSqlQuery q2("delete from category;", db);
-        q2.exec();
-        QSqlQuery q3("delete from landmark_category;", db);
-        q3.exec();
+        {
+            QSqlDatabase db = QSqlDatabase::database("landmarks");
+            QSqlQuery q1("delete from landmark;", db);
+            q1.exec();
+            QSqlQuery q2("delete from category;", db);
+            q2.exec();
+            QSqlQuery q3("delete from landmark_category;", db);
+            q3.exec();
+        }
 
         delete m_manager;
         QFile file("test.db");
@@ -487,15 +487,15 @@ private slots:
         QVERIFY(m_manager->saveCategory(&cat1));
         catIds << cat1.id();
 
-        QLandmarkCategory cat2;
-        cat2.setName("CAT2");
-        QVERIFY(m_manager->saveCategory(&cat2));
-        catIds << cat2.id();
-
         QLandmarkCategory cat3;
         cat3.setName("CAT3");
         QVERIFY(m_manager->saveCategory(&cat3));
         catIds << cat3.id();
+
+        QLandmarkCategory cat2;
+        cat2.setName("CAT2");
+        QVERIFY(m_manager->saveCategory(&cat2));
+        catIds << cat2.id();
 
         QString uri = m_manager->managerUri();
         int i = 1;

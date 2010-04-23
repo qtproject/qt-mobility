@@ -1259,33 +1259,41 @@ QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategory
     // QString(SELECT key, value from category_attribute WHERE id = %1).arg(landmarkCategoryId.id())
 }
 
+bool categoryNameCompare(const QLandmarkCategory &cat1, const QLandmarkCategory &cat2) {
+    return (cat1.name() < cat2.name());
+}
+
 QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
     QList<QLandmarkCategory> result;
 
-    bool noErrors = true;
-    for (int i = 0; i < landmarkCategoryIds.size(); ++i) {
-        QLandmarkManager::Error loopError;
-        QLandmarkCategory cat = category(landmarkCategoryIds.at(i), &loopError, 0);
-        if (cat.id().isValid())
-            result << cat;
-        if (loopError != QLandmarkManager::NoError)
-            noErrors = false;
+    QList<QLandmarkCategoryId> ids = landmarkCategoryIds;
+    if (ids.size() == 0) {
+        QLandmarkManager::Error idError;
+        ids = categoryIds(&idError, errorString);
+
+        if (idError != QLandmarkManager::NoError) {
+            if (error)
+                *error = idError;
+            result;
+        }
     }
 
-    if (noErrors) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
-    } else {
-        if (error)
-            *error = QLandmarkManager::UnknownError;
-        if (errorString)
-            *errorString =  "Errors occurred while retrieving categories.";
+    for (int i = 0; i < ids.size(); ++i) {
+        QLandmarkManager::Error loopError;
+        QLandmarkCategory cat = category(ids.at(i), &loopError, 0);
+        if (loopError == QLandmarkManager::NoError)
+            result << cat;
     }
+
+    qSort(result.begin(), result.end(), categoryNameCompare);
+
+    if (error)
+        *error = QLandmarkManager::NoError;
+    if (errorString)
+        *errorString = "";
 
     return result;
 }
