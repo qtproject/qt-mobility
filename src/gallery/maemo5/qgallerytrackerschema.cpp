@@ -56,6 +56,7 @@ namespace
     {
         QLatin1String galleryKey;
         QLatin1String trackerKey;
+        QGalleryProperty::Attributes attributes;
     };
 
     struct QGalleryPropertyMap
@@ -175,10 +176,19 @@ namespace
         }
         return -1;
     }
+
+    // Re-declare to cut down on prefixes.
+    enum
+    {
+        CanRead = QGalleryProperty::CanRead,
+        CanWrite = QGalleryProperty::CanWrite,
+        CanSort = QGalleryProperty::CanSort,
+        CanFilter = QGalleryProperty::CanFilter
+    };
 }
 
-#define QT_GALLERY_PROPERTY(GalleryKey, TrackerKey) \
-{ QLatin1String(GalleryKey), QLatin1String(TrackerKey) }
+#define QT_GALLERY_PROPERTY(GalleryKey, TrackerKey, Attr) \
+{ QLatin1String(GalleryKey), QLatin1String(TrackerKey), QGalleryProperty::Attributes(Attr) }
 
 #define QT_GALLERY_AGGREGATE_PROPERTY(GalleryKey, TrackerKey, AggregateType) \
 { QLatin1String(GalleryKey), QLatin1String(TrackerKey), QGalleryTrackerSchema::AggregateType }
@@ -510,40 +520,40 @@ static bool qt_writeCondition(
 
 // These are repeated in a few lists.
 #define QT_GALLERY_FILE_PROPERTYS \
-    QT_GALLERY_PROPERTY("fileName"    , "File:Name"), \
-    QT_GALLERY_PROPERTY(""            , "File:Contents"), \
-    QT_GALLERY_PROPERTY(""            , "File:Link"), \
-    QT_GALLERY_PROPERTY("mimeType"    , "File:Mime"), \
-    QT_GALLERY_PROPERTY(""            , "File:Size"), \
-    QT_GALLERY_PROPERTY(""            , "File:License"), \
-    QT_GALLERY_PROPERTY("copyright"   , "File:Copyright"), \
-    QT_GALLERY_PROPERTY("lastModified", "File:Modified"), \
-    QT_GALLERY_PROPERTY("lastAccessed", "File:Accessed"), \
-    QT_GALLERY_PROPERTY(""            , "File:Added"), \
-    QT_GALLERY_PROPERTY(""            , "File:Other"), \
-    QT_GALLERY_PROPERTY("language"    , "File:Language")
+    QT_GALLERY_PROPERTY("fileName"    , "File:Name"     , CanRead | CanSort | CanFilter), \
+  /*QT_GALLERY_PROPERTY(""            , "File:Contents" , QGalleryProperty::Attributes()),*/ \
+  /*QT_GALLERY_PROPERTY(""            , "File:Link"     , QGalleryProperty::Attributes()),*/ \
+    QT_GALLERY_PROPERTY("mimeType"    , "File:Mime"     , CanRead | CanSort | CanFilter), \
+  /*QT_GALLERY_PROPERTY(""            , "File:Size"     , QGalleryProperty::Attributes()),*/ \
+  /*QT_GALLERY_PROPERTY(""            , "File:License"  , QGalleryProperty::Attributes()),*/ \
+    QT_GALLERY_PROPERTY("copyright"   , "File:Copyright", CanRead | CanWrite | CanSort | CanFilter), \
+    QT_GALLERY_PROPERTY("lastModified", "File:Modified" , CanRead | CanSort | CanFilter), \
+    QT_GALLERY_PROPERTY("lastAccessed", "File:Accessed" , CanRead | CanSort | CanFilter), \
+  /*QT_GALLERY_PROPERTY(""            , "File:Added"    , QGalleryProperty::Attributes()),*/ \
+  /*QT_GALLERY_PROPERTY(""            , "File:Other"    , QGalleryProperty::Attributes()),*/ \
+    QT_GALLERY_PROPERTY("language"    , "File:Language" , CanRead | CanSort | CanFilter)
 
 static const QGalleryPropertyMapItem qt_galleryFilePropertyMap[] =
 {
     QT_GALLERY_FILE_PROPERTYS,
-//    QT_GALLERY_PROPERTY(""         , "DC:Contributor"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Coverage"),
-    QT_GALLERY_PROPERTY("author"     , "DC:Creator"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Date"),
-    QT_GALLERY_PROPERTY("description", "DC:Description"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Format"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Identifier"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Language"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Publisher"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Relation"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Rights"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Source"),
-    QT_GALLERY_PROPERTY("subject"    , "DC:Subject"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Keywords"),
-    QT_GALLERY_PROPERTY("title"      , "DC:Title"),
-//    QT_GALLERY_PROPERTY(""         , "DC:Type"),
-    QT_GALLERY_PROPERTY("rating"     , "User:Rank"),
-    QT_GALLERY_PROPERTY("keywords"   , "User:Keywords")
+//    QT_GALLERY_PROPERTY(""         , "DC:Contributor", QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""         , "DC:Coverage"   , QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("author"     , "DC:Creator"    , CanRead | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""         , "DC:Date"       , QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("description", "DC:Description", CanRead | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""         , "DC:Format"     , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""         , "DC:Identifier" , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""         , "DC:Language"   , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""         , "DC:Publisher"  , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""         , "DC:Relation"   , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""         , "DC:Rights"     , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""         , "DC:Source"     , QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("subject"    , "DC:Subject"    , CanRead | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""         , "DC:Keywords"   , QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("title"      , "DC:Title"      , CanRead | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""         , "DC:Type"       , QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("rating"     , "User:Rank"     , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("keywords"   , "User:Keywords" , CanRead | CanSort | CanFilter)
 };
 
 static QString qt_galleryFileId(const QStringList &row);
@@ -607,29 +617,29 @@ static QString qt_galleryFolderId(const QStringList &row)
 static const QGalleryPropertyMapItem qt_galleryAudioPropertyMap[] =
 {
     QT_GALLERY_FILE_PROPERTYS,
-    QT_GALLERY_PROPERTY("title"       , "Audio:Title"),
-    QT_GALLERY_PROPERTY("artist"      , "Audio:Artist"),
-    QT_GALLERY_PROPERTY("albumTitle"  , "Audio:Album"),
-    QT_GALLERY_PROPERTY("genre"       , "Audio:Genre"),
-    QT_GALLERY_PROPERTY("duration"    , "Audio:Duration"),
-//    QT_GALLERY_PROPERTY(""          , "Audio:ReleaseDate"),
-    QT_GALLERY_PROPERTY("albumArtist" , "Audio:AlbumArtist"),
-    QT_GALLERY_PROPERTY("trackNumber" , "Audio:TrackNo"),
-    QT_GALLERY_PROPERTY("discNumber"  , "Audio:DiscNo"),
-    QT_GALLERY_PROPERTY("performer"   , "Audio:Performer"),
-//    QT_GALLERY_PROPERTY(""          , "Audio:TrackGain"),
-//    QT_GALLERY_PROPERTY(""          , "Audio:AlbumGain"),
-//    QT_GALLERY_PROPERTY(""          , "Audio:AlbumPeakGain"),
-    QT_GALLERY_PROPERTY("description" , "Audio:Comment"),
-    QT_GALLERY_PROPERTY("audioCodec"  , "Audio:Codec"),
-    QT_GALLERY_PROPERTY(""            , "Audio:CodecVersion"),
-    QT_GALLERY_PROPERTY("sampleRate"  , "Audio:SampleRate"),
-    QT_GALLERY_PROPERTY("audioBitRate", "Audio:Bitrate"),
-    QT_GALLERY_PROPERTY("channelCount", "Audio:Channels"),
-    QT_GALLERY_PROPERTY("lastPlayed"  , "Audio:LastPlay"),
-    QT_GALLERY_PROPERTY("playCount"   , "Audio:PlayCount"),
-//    QT_GALLERY_PROPERTY(""          , "Audio:DateAdded"),
-    QT_GALLERY_PROPERTY("lyrics"      , "Audio:Lyrics")
+    QT_GALLERY_PROPERTY("title"       , "Audio:Title"        , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("artist"      , "Audio:Artist"       , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("albumTitle"  , "Audio:Album"        , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("genre"       , "Audio:Genre"        , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("duration"    , "Audio:Duration"     , CanRead | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""          , "Audio:ReleaseDate"  , QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("albumArtist" , "Audio:AlbumArtist"  , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("trackNumber" , "Audio:TrackNo"      , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("discNumber"  , "Audio:DiscNo"       , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("performer"   , "Audio:Performer"    , CanRead | CanWrite | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""          , "Audio:TrackGain"    , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""          , "Audio:AlbumGain"    , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""          , "Audio:AlbumPeakGain", QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("description" , "Audio:Comment"      , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("audioCodec"  , "Audio:Codec"        , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY(""            , "Audio:CodecVersion" , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("sampleRate"  , "Audio:SampleRate"   , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("audioBitRate", "Audio:Bitrate"      , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("channelCount", "Audio:Channels"     , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("lastPlayed"  , "Audio:LastPlay"     , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("playCount"   , "Audio:PlayCount"    , CanRead | CanWrite | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""          , "Audio:DateAdded"    , QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("lyrics"      , "Audio:Lyrics"       , CanRead | CanWrite | CanSort | CanFilter)
 };
 
 static QString qt_galleryAudioId(const QStringList &row)
@@ -644,10 +654,10 @@ static QString qt_galleryAudioId(const QStringList &row)
 static const QGalleryPropertyMapItem qt_galleryPlaylistPropertyMap[] =
 {
     QT_GALLERY_FILE_PROPERTYS,
-    QT_GALLERY_PROPERTY("duration"  , "Playlist:Duration"),
-    QT_GALLERY_PROPERTY("trackCount", "Playlist:Songs")
-//    QT_GALLERY_PROPERTY(""        , "Playlist:Name"),
-//    QT_GALLERY_PROPERTY(""        , "Playlist:ValidDuration")
+    QT_GALLERY_PROPERTY("duration"  , "Playlist:Duration"     , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("trackCount", "Playlist:Songs"        , CanRead | CanSort | CanFilter)
+//    QT_GALLERY_PROPERTY(""        , "Playlist:Name"         , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""        , "Playlist:ValidDuration", QGalleryProperty::Attributes())
 };
 
 static QString qt_galleryPlaylistId(const QStringList &row)
@@ -662,33 +672,33 @@ static QString qt_galleryPlaylistId(const QStringList &row)
 static const QGalleryPropertyMapItem qt_galleryImagePropertyMap[] =
 {
     QT_GALLERY_FILE_PROPERTYS,
-    QT_GALLERY_PROPERTY("title"             , "Image:Title"),
-    QT_GALLERY_PROPERTY("keywords"          , "Image:Keywords"),
-    QT_GALLERY_PROPERTY("height"            , "Image:Height"),
-    QT_GALLERY_PROPERTY("width"             , "Image:Width"),
-    QT_GALLERY_PROPERTY("album"             , "Image:Album"),
-    QT_GALLERY_PROPERTY("dateTaken"         , "Image:Date"),
-    QT_GALLERY_PROPERTY("author"            , "Image:Creator"),
-    QT_GALLERY_PROPERTY("comment"           , "Image:Comments"),
-    QT_GALLERY_PROPERTY("description"       , "Image:Description"),
-//    QT_GALLERY_PROPERTY(""                , "Image:Software"),
-    QT_GALLERY_PROPERTY("cameraManufacturer", "Image:CameraMake"),
-    QT_GALLERY_PROPERTY("cameraModel"       , "Image:CameraModel"),
-    QT_GALLERY_PROPERTY("orientation"       , "Image:Orientation"),
-    QT_GALLERY_PROPERTY("exposureProgram"   , "Image:ExposureProgram"),
-    QT_GALLERY_PROPERTY("exposureTime"      , "Image:ExposureTime"),
-    QT_GALLERY_PROPERTY("fNumber"           , "Image:FNumber"),
-    QT_GALLERY_PROPERTY("flashEnabled"      , "Image:Flash"),
-    QT_GALLERY_PROPERTY("focalLength"       , "Image:FocalLength"),
-//    QT_GALLERY_PROPERTY(""                , "Image:ISOSpeed"),
-    QT_GALLERY_PROPERTY("meteringMode"      , "Image:MeteringMode"),
-    QT_GALLERY_PROPERTY("whiteBalance"      , "Image:WhiteBalance"),
-    QT_GALLERY_PROPERTY("rating"            , "Image:Rating"),
-//    QT_GALLERY_PROPERTY(""                , "Image:Location"),
-//    QT_GALLERY_PROPERTY(""                , "Image:Sublocation"),
-//    QT_GALLERY_PROPERTY(""                , "Image:Country"),
-//    QT_GALLERY_PROPERTY(""                , "Image:City"),
-//    QT_GALLERY_PROPERTY(""                , "Image:HasKeywords")
+    QT_GALLERY_PROPERTY("title"             , "Image:Title"          , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("keywords"          , "Image:Keywords"       , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("height"            , "Image:Height"         , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("width"             , "Image:Width"          , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("album"             , "Image:Album"          , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("dateTaken"         , "Image:Date"           , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("author"            , "Image:Creator"        , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("comment"           , "Image:Comments"       , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("description"       , "Image:Description"    , CanRead | CanWrite | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""                , "Image:Software"       , QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("cameraManufacturer", "Image:CameraMake"     , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("cameraModel"       , "Image:CameraModel"    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("orientation"       , "Image:Orientation"    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("exposureProgram"   , "Image:ExposureProgram", CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("exposureTime"      , "Image:ExposureTime"   , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("fNumber"           , "Image:FNumber"        , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("flashEnabled"      , "Image:Flash"          , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("focalLength"       , "Image:FocalLength"    , CanRead | CanWrite | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""                , "Image:ISOSpeed"       , QGalleryProperty::Attributes()),
+    QT_GALLERY_PROPERTY("meteringMode"      , "Image:MeteringMode"   , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("whiteBalance"      , "Image:WhiteBalance"   , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("rating"            , "Image:Rating"         , CanRead | CanWrite | CanSort | CanFilter),
+//    QT_GALLERY_PROPERTY(""                , "Image:Location"       , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""                , "Image:Sublocation"    , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""                , "Image:Country"        , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""                , "Image:City"           , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""                , "Image:HasKeywords"    , QGalleryProperty::Attributes())
 };
 
 static QString qt_galleryImageId(const QStringList &row)
@@ -703,19 +713,19 @@ static QString qt_galleryImageId(const QStringList &row)
 static const QGalleryPropertyMapItem qt_galleryVideoPropertyMap[] =
 {
     QT_GALLERY_FILE_PROPERTYS,
-    QT_GALLERY_PROPERTY("title"         , "Video:Title"),
-    QT_GALLERY_PROPERTY("author"        , "Video:Author"),
-    QT_GALLERY_PROPERTY("height"        , "Video:Height"),
-    QT_GALLERY_PROPERTY("width"         , "Video:Width"),
-    QT_GALLERY_PROPERTY("duration"      , "Video:Duration"),
-    QT_GALLERY_PROPERTY("description"   , "Video:Comments"),
-    QT_GALLERY_PROPERTY("frameRate"     , "Video:FrameRate"),
-    QT_GALLERY_PROPERTY("videoCodec"    , "Video:Codec"),
-    QT_GALLERY_PROPERTY("videoBitRate"  , "Video:Bitrate"),
-    QT_GALLERY_PROPERTY("playCount"     , "Video:PlayCount"),
-    QT_GALLERY_PROPERTY("resumePosition", "Video:PausePosition")
-//    QT_GALLERY_PROPERTY(""            , "Video:LastPlayedFrame"),
-//    QT_GALLERY_PROPERTY(""            , "Video:Source")
+    QT_GALLERY_PROPERTY("title"         , "Video:Title"          , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("author"        , "Video:Author"         , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("height"        , "Video:Height"         , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("width"         , "Video:Width"          , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("duration"      , "Video:Duration"       , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("comments"      , "Video:Comments"       , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("frameRate"     , "Video:FrameRate"      , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("videoCodec"    , "Video:Codec"          , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("videoBitRate"  , "Video:Bitrate"        , CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("playCount"     , "Video:PlayCount"      , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("resumePosition", "Video:PausePosition"  , CanRead | CanWrite | CanSort | CanFilter)
+//    QT_GALLERY_PROPERTY(""            , "Video:LastPlayedFrame", QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""            , "Video:Source"         , QGalleryProperty::Attributes())
 };
 
 static QString qt_galleryVideoId(const QStringList &row)
@@ -730,15 +740,15 @@ static QString qt_galleryVideoId(const QStringList &row)
 static const QGalleryPropertyMapItem qt_galleryDocumentPropertyMap[] =
 {
     QT_GALLERY_FILE_PROPERTYS,
-    QT_GALLERY_PROPERTY("title"    , "Doc:Title"),
-    QT_GALLERY_PROPERTY("subject"  , "Doc:Subject"),
-    QT_GALLERY_PROPERTY("author"   , "Doc:Author"),
-    QT_GALLERY_PROPERTY("keywords" , "Doc:Keywords"),
-    QT_GALLERY_PROPERTY("comment"  , "Doc:Comments"),
-    QT_GALLERY_PROPERTY("pageCount", "Doc:PageCount"),
-    QT_GALLERY_PROPERTY("wordCount", "Doc:WordCount")
-//    QT_GALLERY_PROPERTY(""       , "Doc:Creator"),
-//    QT_GALLERY_PROPERTY(""       , "Doc:URL")
+    QT_GALLERY_PROPERTY("title"    , "Doc:Title"    , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("subject"  , "Doc:Subject"  , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("author"   , "Doc:Author"   , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("keywords" , "Doc:Keywords" , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("comment"  , "Doc:Comments" , CanRead | CanWrite | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("pageCount", "Doc:PageCount", CanRead | CanSort | CanFilter),
+    QT_GALLERY_PROPERTY("wordCount", "Doc:WordCount", CanRead | CanSort | CanFilter)
+//    QT_GALLERY_PROPERTY(""       , "Doc:Creator"  , QGalleryProperty::Attributes()),
+//    QT_GALLERY_PROPERTY(""       , "Doc:URL"      , QGalleryProperty::Attributes())
 };
 
 static QString qt_galleryDocumentId(const QStringList &row)
@@ -793,13 +803,13 @@ static QString qt_galleryFileId(const QStringList &row)
 
 static const QGalleryPropertyMapItem qt_galleryArtistIdentity[] =
 {
-    QT_GALLERY_PROPERTY("title", "Audio:Artist")
+    QT_GALLERY_PROPERTY("title", "Audio:Artist", CanRead | CanFilter)
 };
 
 static const QGalleryPropertyMapItem qt_galleryArtistPropertyMap[] =
 {
-    QT_GALLERY_PROPERTY("artist", "Audio:Artist"),
-    QT_GALLERY_PROPERTY("title" , "Audio:Artist"),
+    QT_GALLERY_PROPERTY("artist", "Audio:Artist", CanRead | CanFilter),
+    QT_GALLERY_PROPERTY("title" , "Audio:Artist", CanRead | CanFilter),
 };
 
 static const QGalleryAggregatePropertyMapItem qt_galleryArtistAggregateMap[] =
@@ -824,13 +834,13 @@ static void qt_writeArtistIdCondition(int *, QXmlStreamWriter *xml, const QStrin
 
 static const QGalleryPropertyMapItem qt_galleryAlbumArtistIdentity[] =
 {
-    QT_GALLERY_PROPERTY("title", "Audio:AlbumArtist")
+    QT_GALLERY_PROPERTY("title", "Audio:AlbumArtist", CanRead | CanFilter)
 };
 
 static const QGalleryPropertyMapItem qt_galleryAlbumArtistPropertyMap[] =
 {
-    QT_GALLERY_PROPERTY("artist", "Audio:AlbumArtist"),
-    QT_GALLERY_PROPERTY("title" , "Audio:AlbumArtist"),
+    QT_GALLERY_PROPERTY("artist", "Audio:AlbumArtist", CanRead | CanFilter),
+    QT_GALLERY_PROPERTY("title" , "Audio:AlbumArtist", CanRead | CanFilter),
 };
 
 static const QGalleryAggregatePropertyMapItem qt_galleryAlbumArtistAggregateMap[] =
@@ -855,14 +865,14 @@ static void qt_writeAlbumArtistIdCondition(int *, QXmlStreamWriter *xml, const Q
 
 static const QGalleryPropertyMapItem qt_galleryAlbumIdentity[] =
 {
-    QT_GALLERY_PROPERTY("title", "Audio:Album"),
-    QT_GALLERY_PROPERTY("artist", "Audio:AlbumArtist")
+    QT_GALLERY_PROPERTY("title", "Audio:Album"       , CanRead | CanFilter),
+    QT_GALLERY_PROPERTY("artist", "Audio:AlbumArtist", CanRead | CanFilter)
 };
 
 static const QGalleryPropertyMapItem qt_galleryAlbumPropertyMap[] =
 {
-    QT_GALLERY_PROPERTY("title"     , "Audio:Album"),
-    QT_GALLERY_PROPERTY("artist", "Audio:AlbumArtist")
+    QT_GALLERY_PROPERTY("title" , "Audio:Album"      , CanRead | CanFilter),
+    QT_GALLERY_PROPERTY("artist", "Audio:AlbumArtist", CanRead | CanFilter)
 };
 
 static const QGalleryAggregatePropertyMapItem qt_galleryAlbumAggregateMap[] =
@@ -914,13 +924,13 @@ static void qt_writeAlbumIdCondition(
 
 static const QGalleryPropertyMapItem qt_galleryAudioGenreIdentity[] =
 {
-    QT_GALLERY_PROPERTY("title", "Audio:Genre")
+    QT_GALLERY_PROPERTY("title", "Audio:Genre", CanRead | CanFilter)
 };
 
 static const QGalleryPropertyMapItem qt_galleryAudioGenrePropertyMap[] =
 {
-    QT_GALLERY_PROPERTY("genre", "Audio:Genre"),
-    QT_GALLERY_PROPERTY("title", "Audio:Genre"),
+    QT_GALLERY_PROPERTY("genre", "Audio:Genre", CanRead | CanFilter),
+    QT_GALLERY_PROPERTY("title", "Audio:Genre", CanRead | CanFilter),
 };
 
 static const QGalleryAggregatePropertyMapItem qt_galleryAudioGenreAggregateMap[] =
@@ -945,12 +955,12 @@ static void qt_writeAudioGenreIdCondition(int *, QXmlStreamWriter *xml, const QS
 
 static const QGalleryPropertyMapItem qt_galleryPhotoAlbumIdentity[] =
 {
-    QT_GALLERY_PROPERTY("title", "Image:Album")
+    QT_GALLERY_PROPERTY("title", "Image:Album", CanRead | CanFilter)
 };
 
 static const QGalleryPropertyMapItem qt_galleryPhotoAlbumPropertyMap[] =
 {
-    QT_GALLERY_PROPERTY("title", "Image:Album"),
+    QT_GALLERY_PROPERTY("title", "Image:Album", CanRead | CanFilter),
 };
 
 static const QGalleryAggregatePropertyMapItem qt_galleryPhotoAlbumAggregateMap[] =
@@ -1214,6 +1224,54 @@ QGalleryTrackerSchema::IdFunc QGalleryTrackerSchema::idFunc() const
     else
         return 0;
 }
+
+
+QStringList QGalleryTrackerSchema::propertyNames() const
+{
+    QStringList propertyNames;
+
+    if (m_fileTypeIndex >= 0) {
+        const QGalleryPropertyMap propertyMap = qt_galleryTypeMap[m_fileTypeIndex].propertyMap;
+
+        for (int i = 0; i < propertyMap.count; ++i)
+            propertyNames.append(propertyMap.items[i].galleryKey);
+    } else if (m_aggregateTypeIndex >= 0) {
+        const QGalleryPropertyMap propertyMap
+                = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].propertyMap;
+
+        for (int i = 0; i < propertyMap.count; ++i)
+            propertyNames.append(propertyMap.items[i].galleryKey);
+    }
+    return propertyNames;
+}
+
+QGalleryProperty::Attributes QGalleryTrackerSchema::propertyAttributes(
+        const QString &propertyName) const
+{
+    if (m_fileTypeIndex >= 0) {
+        const QGalleryPropertyMap propertyMap = qt_galleryTypeMap[m_fileTypeIndex].propertyMap;
+        for (int i = 0; i < propertyMap.count; ++i) {
+            if (propertyName == propertyMap.items[i].galleryKey)
+                return propertyMap.items[i].attributes;
+        }
+    } else if (m_aggregateTypeIndex >= 0) {
+        const QGalleryPropertyMap propertyMap
+                = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].propertyMap;
+        for (int i = 0; i < propertyMap.count; ++i) {
+            if (propertyName == propertyMap.items[i].galleryKey)
+                return propertyMap.items[i].attributes;
+        }
+
+        const QGalleryAggregatePropertyMap aggregateMap
+                = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].aggregatePropertyMap;
+        for (int i = 0; i < aggregateMap.count; ++i) {
+            if (propertyName == aggregateMap.items[i].galleryKey)
+                return QGalleryProperty::CanRead;
+        }
+    }
+    return QGalleryProperty::Attributes();
+}
+
 
 QStringList QGalleryTrackerSchema::identityFields() const
 {

@@ -53,8 +53,6 @@ class QDocumentGalleryPrivate;
 class Q_GALLERY_EXPORT QDocumentGallery : public QAbstractGallery
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList itemTypes READ itemTypes)
-    Q_DECLARE_PRIVATE(QDocumentGallery)
 public:
     static const QGalleryType File;
     static const QGalleryType Folder;
@@ -153,10 +151,15 @@ public:
 
     bool isRequestSupported(QGalleryAbstractRequest::Type type) const;
 
-    QStringList itemTypes() const;
+    QStringList itemTypePropertyNames(const QString &itemType) const;
+    QGalleryProperty::Attributes propertyAttributes(
+            const QString &propertyName, const QString &itemType) const;
 
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request);
+
+private:
+    Q_DECLARE_PRIVATE(QDocumentGallery)
 };
 
 QTM_END_NAMESPACE

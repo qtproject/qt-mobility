@@ -662,9 +662,15 @@ const QGalleryProperty QDocumentGallery::director("director");
 */
 
 /*!
-    \property QDocumentGallery::itemTypes
+    \fn QDocumentGallery::itemTypePropertyNames(const QString &itemType) const;
 
-    Returns a list of item types supported by a document gallery.
+    Returns a list of names of properties that are valid for an \a itemType.
+*/
+
+/*!
+    \fn QDocumentGallery::propertyAttributes(const QString &propertyName, const QString &itemType) const
+
+    Returns the attributes of a property of \a itemType identified by \a propertyName
 */
 
 /*!
@@ -692,9 +698,14 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
     return false;
 }
 
-QStringList QDocumentGallery::itemTypes() const
+QStringList QDocumentGallery::itemTypePropertyNames(const QString &) const
 {
     return QStringList();
+}
+
+QGalleryProperty::Attributes QDocumentGallery::propertyAttributes(const QString &, const QString &) const
+{
+    return QGalleryProperty::Attributes();
 }
 
 QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractRequest *request)

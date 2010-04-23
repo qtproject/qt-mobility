@@ -109,6 +109,7 @@ private:
     QStringList m_fields;
     QStringList m_sortFields;
     QStringList m_propertyNames;
+    QVector<QGalleryProperty::Attributes> m_propertyAttributes;
     QList<int> m_resourceKeys;
     QList<QGalleryTrackerMetaDataEdit *> m_edits;
 };

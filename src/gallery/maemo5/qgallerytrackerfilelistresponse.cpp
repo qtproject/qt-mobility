@@ -73,6 +73,8 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
         if (!field.isEmpty() && !m_fields.contains(field)) {
             m_fields.append(field);
             m_propertyNames.append(*property);
+            m_propertyAttributes.append(schema.propertyAttributes(*property)
+                    & (QGalleryProperty::CanRead | QGalleryProperty::CanWrite));
         }
     }
 
@@ -96,6 +98,7 @@ QGalleryTrackerFileListResponse::QGalleryTrackerFileListResponse(
 
         setImageColumn(imageLoader, m_propertyNames.count() + 2);
         m_propertyNames.append(QLatin1String("thumbnail"));
+        m_propertyAttributes.append(QGalleryProperty::CanRead);
     }
 }
 
@@ -118,9 +121,9 @@ int QGalleryTrackerFileListResponse::propertyKey(const QString &name) const
     return m_propertyNames.indexOf(name) + 2;
 }
 
-QGalleryProperty::Attributes QGalleryTrackerFileListResponse::propertyAttributes(int) const
+QGalleryProperty::Attributes QGalleryTrackerFileListResponse::propertyAttributes(int key) const
 {
-    return QGalleryProperty::CanRead | QGalleryProperty::CanSort | QGalleryProperty::CanWrite;
+    return m_propertyAttributes.value(key - 2);
 }
 
 QUrl QGalleryTrackerFileListResponse::url(int index) const

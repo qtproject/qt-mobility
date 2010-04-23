@@ -55,7 +55,8 @@ public:
     {
         CanRead  = 0x01,
         CanWrite = 0x02,
-        CanSort = 0x04
+        CanSort = 0x04,
+        CanFilter = 0x08
     };
 
     Q_DECLARE_FLAGS(Attributes, Attribute)

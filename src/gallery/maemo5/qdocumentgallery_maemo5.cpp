@@ -391,9 +391,21 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
     }
 }
 
-QStringList QDocumentGallery::itemTypes() const
+QStringList QDocumentGallery::itemTypePropertyNames(const QString &itemType) const
 {
-    return QStringList();
+    QGalleryTrackerSchema schema;
+    schema.setItemType(itemType);
+
+    return schema.propertyNames();
+}
+
+QGalleryProperty::Attributes QDocumentGallery::propertyAttributes(
+        const QString &propertyName, const QString &itemType) const
+{
+    QGalleryTrackerSchema schema;
+    schema.setItemType(itemType);
+
+    return schema.propertyAttributes(propertyName);
 }
 
 QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractRequest *request)

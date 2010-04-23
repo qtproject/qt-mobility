@@ -54,6 +54,7 @@
 //
 
 #include "qgalleryfilter.h"
+#include "qgalleryproperty.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -92,6 +93,9 @@ public:
     QString field(const QString &propertyName) const;
 
     IdFunc idFunc() const;
+
+    QStringList propertyNames() const;
+    QGalleryProperty::Attributes propertyAttributes(const QString &propertyName) const;
 
     QStringList identityFields() const;
     QStringList identityPropertyNames() const;

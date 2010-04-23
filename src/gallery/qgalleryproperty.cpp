@@ -58,6 +58,7 @@ QTM_BEGIN_NAMESPACE
     \value CanRead The value of this property can be read.
     \value CanWrite The value of this property can be written.
     \value CanSort The value of this property can be used to sort items.
+    \value CanFilter The value of this property can be used in a filter.
 */
 
 /*!
