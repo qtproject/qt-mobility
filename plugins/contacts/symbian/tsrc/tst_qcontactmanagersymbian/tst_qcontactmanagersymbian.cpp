@@ -68,11 +68,13 @@ QTM_USE_NAMESPACE
     QTRY_COMPARE(spyContactsRemoved.count(), contactsRemoved); \
     QTRY_COMPARE(spyRelationshipsAdded.count(), relationshipsAdded); \
     QTRY_COMPARE(spyRelationshipsRemoved.count(), relationshipsRemoved); \
+    QTRY_COMPARE(spySelfContactIdChanged.count(), selfContactIdChanged); \
     QTRY_COMPARE(spyContactsAdded2.count(), contactsAdded); \
     QTRY_COMPARE(spyContactsChanged2.count(), contactsChanged); \
     QTRY_COMPARE(spyContactsRemoved2.count(), contactsRemoved); \
     QTRY_COMPARE(spyRelationshipsAdded2.count(), relationshipsAdded); \
-    QTRY_COMPARE(spyRelationshipsRemoved2.count(), relationshipsRemoved);
+    QTRY_COMPARE(spyRelationshipsRemoved2.count(), relationshipsRemoved); \
+    QTRY_COMPARE(spySelfContactIdChanged2.count(), selfContactIdChanged);
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -166,6 +168,7 @@ void tst_QContactManagerSymbian::signalEmission()
     int contactsRemoved(0);
     int relationshipsAdded(0);
     int relationshipsRemoved(0);
+    int selfContactIdChanged(0);
     
     // Signal spys for verifying signal emissions
     qRegisterMetaType<QContactLocalId>("QContactLocalId");
@@ -175,11 +178,13 @@ void tst_QContactManagerSymbian::signalEmission()
     QSignalSpy spyContactsRemoved(m_cm, SIGNAL(contactsRemoved(QList<QContactLocalId>)));
     QSignalSpy spyRelationshipsAdded(m_cm, SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
     QSignalSpy spyRelationshipsRemoved(m_cm, SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
+    QSignalSpy spySelfContactIdChanged(m_cm, SIGNAL(selfContactIdChanged(QContactLocalId, QContactLocalId)));
     QSignalSpy spyContactsAdded2(cm2.data(), SIGNAL(contactsAdded(QList<QContactLocalId>)));
     QSignalSpy spyContactsChanged2(cm2.data(), SIGNAL(contactsChanged(QList<QContactLocalId>)));
     QSignalSpy spyContactsRemoved2(cm2.data(), SIGNAL(contactsRemoved(QList<QContactLocalId>)));
     QSignalSpy spyRelationshipsAdded2(cm2.data(), SIGNAL(relationshipsAdded(QList<QContactLocalId>)));
     QSignalSpy spyRelationshipsRemoved2(cm2.data(), SIGNAL(relationshipsRemoved(QList<QContactLocalId>)));
+    QSignalSpy spySelfContactIdChanged2(cm2.data(), SIGNAL(selfContactIdChanged(QContactLocalId, QContactLocalId)));
 
     // create a group
     QContact group = createContact(QContactType::TypeGroup, "Hesketh", "");
@@ -262,6 +267,19 @@ void tst_QContactManagerSymbian::signalEmission()
     QTRY_COMPARE_SIGNAL_COUNTS();
     QVERIFY(m_cm->removeContact(group2.localId()));
     contactsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+
+    // Self contact
+    QContact memyself = createContact(QContactType::TypeContact, "Kimi", "Raikkonen");
+    QVERIFY(m_cm->saveContact(&memyself));
+    contactsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QVERIFY(m_cm->setSelfContactId(memyself.localId()));
+    selfContactIdChanged++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QVERIFY(m_cm->removeContact(memyself.localId()));
+    contactsRemoved++;
+    selfContactIdChanged++;
     QTRY_COMPARE_SIGNAL_COUNTS();
 }
 
