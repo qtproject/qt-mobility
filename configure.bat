@@ -457,12 +457,12 @@ endlocal&goto :EOF
 echo.
 echo Start of compile tests
 REM compile tests go here.
-REM call :compileTest LBT lbt
-REM call :compileTest SNAP snap
-REM call :compileTest OCC occ
-REM call :compileTest SymbianContactSIM symbiancntsim
-REM call :compileTest S60_Sensor_API sensors_s60_31
-REM call :compileTest Symbian_Sensor_Framework sensors_symbian
+call :compileTest LBT lbt
+call :compileTest SNAP snap
+call :compileTest OCC occ
+call :compileTest SymbianContactSIM symbiancntsim
+call :compileTest S60_Sensor_API sensors_s60_31
+call :compileTest Symbian_Sensor_Framework sensors_symbian
 echo End of compile tests
 echo.
 echo.
