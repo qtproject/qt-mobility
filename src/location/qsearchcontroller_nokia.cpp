@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qsearchcontroller_nokia_p.h"
-#include "qsearchrequest_nokia.h"
+#include "qsearchrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
