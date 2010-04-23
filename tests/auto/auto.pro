@@ -38,6 +38,8 @@ contains(mobility_modules,location) {
         SUBDIRS += qgeoinfosources_wince
     }
 
+    SUBDIRS +=  qlandmarkfilehandler_gpx \
+                qlandmarkfilehandler_lmx
     SUBDIRS += qlandmarkmanagerengine_sqlite
 }
 
