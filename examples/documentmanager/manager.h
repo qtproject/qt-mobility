@@ -81,10 +81,7 @@ private slots:
     void move();
     void remove();
 
-    void documentsListChanged();
-    void documentsInserted(int index, int count);
-    void documentsRemoved(int index, int count);
-
+    void documentsSucceeded();
 
     void sourceListChanged();
     void destinationListChanged();

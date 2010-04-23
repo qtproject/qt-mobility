@@ -55,22 +55,14 @@ class QGalleryUrlRequestPrivate;
 class Q_GALLERY_EXPORT QGalleryUrlRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QGalleryUrlRequest)
-    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl)
     Q_PROPERTY(bool create READ create WRITE setCreate)
-    Q_PROPERTY(QGalleryItemList* item READ item NOTIFY itemChanged)
+    Q_PROPERTY(QString itemId READ itemId NOTIFY itemChanged)
+    Q_PROPERTY(QString itemType READ itemType NOTIFY itemChanged)
 public:
     QGalleryUrlRequest(QObject *parent = 0);
     QGalleryUrlRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryUrlRequest();
-
-    QStringList propertyNames() const;
-    void setPropertyNames(const QStringList &names);
-
-    bool isLive() const;
-    void setLive(bool live);
 
     QUrl itemUrl() const;
     void setItemUrl(const QUrl &url);
@@ -78,13 +70,20 @@ public:
     bool create() const;
     void setCreate(bool create);
 
-    QGalleryItemList *item() const;
+    // Results
+
+    QString itemId() const;
+    QString itemType() const;
 
 Q_SIGNALS:
     void itemChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);
+
+private:
+    Q_DECLARE_PRIVATE(QGalleryUrlRequest)
+    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted(int, int))
 };
 
 QTM_END_NAMESPACE

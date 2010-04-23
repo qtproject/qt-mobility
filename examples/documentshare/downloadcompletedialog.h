@@ -55,7 +55,7 @@ QT_END_NAMESPACE
 QTM_BEGIN_NAMESPACE
 class QDocumentGallery;
 class QGalleryItemList;
-class QGalleryUrlRequest;
+class QGalleryItemRequest;
 QTM_END_NAMESPACE
 
 class Download;
@@ -69,7 +69,7 @@ public:
     DownloadCompleteDialog(
             QDocumentGallery *gallery, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
-    void show(const QString &fileName);
+    void show(const QString &itemId);
 
 private slots:
     void itemChanged();
@@ -81,7 +81,7 @@ private slots:
     void subjectEdited();
 
 private:
-    QGalleryUrlRequest *request;
+    QGalleryItemRequest *request;
     QGalleryItemList *item;
     QLabel *fileName;
     QLabel *mimeType;

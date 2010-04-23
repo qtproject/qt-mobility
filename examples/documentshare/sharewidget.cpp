@@ -75,9 +75,10 @@ ShareWidget::ShareWidget(QWidget *parent, Qt::WindowFlags flags)
 
 void ShareWidget::unsupportedContent(QNetworkReply *reply)
 {
-    Download *download = new Download(reply, this);
+    Download *download = new Download(reply, documentGallery, this);
 
-    connect(download, SIGNAL(finished(Download*)), this, SLOT(downloadFinished(Download*)));
+    connect(download, SIGNAL(succeeded(Download*)), this, SLOT(downloadSucceeded(Download*)));
+    connect(download, SIGNAL(failed(Download*)), this, SLOT(downloadFailed(Download*)));
 }
 
 void ShareWidget::downloadRequested(const QNetworkRequest &request)
@@ -85,14 +86,19 @@ void ShareWidget::downloadRequested(const QNetworkRequest &request)
     unsupportedContent(webView->page()->networkAccessManager()->get(request));
 }
 
-void ShareWidget::downloadFinished(Download *download)
+void ShareWidget::downloadSucceeded(Download *download)
 {
     if (!downloadCompleteDialog) {
         downloadCompleteDialog = new DownloadCompleteDialog(documentGallery, this);
         downloadCompleteDialog->setModal(true);
     }
 
-    downloadCompleteDialog->show(download->fileName());
+    downloadCompleteDialog->show(download->itemId());
 
+    download->deleteLater();
+}
+
+void ShareWidget::downloadFailed(Download *download)
+{
     download->deleteLater();
 }

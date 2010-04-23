@@ -73,9 +73,9 @@ class QGalleryTrackerUrlResponse : public QGalleryAbstractResponse
     Q_OBJECT
 public:
     QGalleryTrackerUrlResponse(
-            const QGalleryDBusInterfacePointer &searchInterface,
-            const QGalleryDBusInterfacePointer &metaDataInterface,
-            QGalleryUrlRequest *request,
+            const QGalleryDBusInterfacePointer &fileInterface,
+            const QUrl &itemUrl,
+            bool create,
             QObject *parent = 0);
     ~QGalleryTrackerUrlResponse();
 
@@ -100,29 +100,13 @@ public:
 
     bool waitForFinished(int msecs);
 
-    bool event(QEvent *event);
-
 private Q_SLOTS:
-    void editFinished(QGalleryTrackerMetaDataEdit *edit);
-    void fileQueryFinished(QDBusPendingCallWatcher *watcher);
-    void typeQueryFinished(QDBusPendingCallWatcher *watcher);
+    void callFinished(QDBusPendingCallWatcher *watcher);
 
 private:
-    QDBusPendingCallWatcher *execute(const QString &itemId, const QGalleryTrackerSchema &schema);
-
-    QDBusPendingCallWatcher *m_fileQueryWatcher;
-    QDBusPendingCallWatcher *m_typeQueryWatcher;
-    QGalleryTrackerMetaDataEdit *m_edit;
-    int m_outstandingEdits;
-
-    QGalleryDBusInterfacePointer m_searchInterface;
-    QGalleryDBusInterfacePointer m_metaDataInterface;
-    QStringList m_propertyNames;
-    QStringList m_fields;
-    QStringList m_row;
-    QVector<int> m_rowIndexes;
-    QVector<int> m_pendingRowIndexes;
-    QUrl m_url;
+    QDBusPendingCallWatcher *m_watcher;
+    QGalleryDBusInterfacePointer m_fileInterface;
+    QUrl m_itemUrl;
     QString m_itemId;
     QString m_itemType;
 };

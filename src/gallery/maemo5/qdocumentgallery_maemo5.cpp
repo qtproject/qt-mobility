@@ -81,9 +81,11 @@ public:
 private:
     QGalleryDBusInterfacePointer metaDataInterface();
     QGalleryDBusInterfacePointer searchInterface();
+    QGalleryDBusInterfacePointer fileInterface();
 
     QGalleryDBusInterfacePointer metaDataService;
     QGalleryDBusInterfacePointer searchService;
+    QGalleryDBusInterfacePointer fileService;
 };
 
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::metaDataInterface()
@@ -106,6 +108,17 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::searchInterface()
                 QLatin1String("org.freedesktop.Tracker.Search"));
     }
     return searchService;
+}
+
+QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
+{
+    if (!fileService) {
+        fileService = new QGalleryDBusInterface(
+                QLatin1String("org.freedesktop.Tracker"),
+                QLatin1String("/org/freedesktop/Tracker/Files"),
+                QLatin1String("org.freedesktop.Tracker.Files"));
+    }
+    return fileService;
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
@@ -152,7 +165,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
         QGalleryUrlRequest *request)
 {
-    return new QGalleryTrackerUrlResponse(searchInterface(), metaDataInterface(), request);
+    return new QGalleryTrackerUrlResponse(fileInterface(), request->itemUrl(), request->create());
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(

@@ -47,17 +47,31 @@ QTM_BEGIN_NAMESPACE
 
 class QGalleryUrlRequestPrivate : public QGalleryAbstractRequestPrivate
 {
+    Q_DECLARE_PUBLIC(QGalleryUrlRequest)
 public:
     QGalleryUrlRequestPrivate(QAbstractGallery *gallery)
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Url)
-        , live(false)
+        , create(false)
     {
     }
 
-    bool live;
+    void _q_itemsInserted(int index, int count)
+    {
+        if (index == 0 && count == 1) {
+            itemId = response->id(0);
+            itemType = response->type(0);
+
+            emit q_func()->itemChanged();
+        } else {
+            qWarning("QGalleryUrlRequest::insert: Response contained an irregular number of items."
+                     "Index: %d, Count %d", index, count);
+        }
+    }
+
     bool create;
-    QStringList propertyNames;
     QUrl itemUrl;
+    QString itemId;
+    QString itemType;
 };
 
 /*!
@@ -98,42 +112,6 @@ QGalleryUrlRequest::~QGalleryUrlRequest()
 }
 
 /*!
-    \property QGalleryUrlRequest::propertyNames
-
-    \brief A list of names of meta-data properties a request should return values for.
-*/
-
-QStringList QGalleryUrlRequest::propertyNames() const
-{
-    return d_func()->propertyNames;
-}
-
-void QGalleryUrlRequest::setPropertyNames(const QStringList &names)
-{
-    d_func()->propertyNames = names;
-}
-
-/*!
-    \property QGalleryUrlRequest::live
-
-    \brief Whether a the results of a request should be updated after a request
-    has finished.
-
-    If this is true the request will go into the Idle state when the request has
-    finished rather than returning to Inactive.
-*/
-
-bool QGalleryUrlRequest::isLive() const
-{
-    return d_func()->live;
-}
-
-void QGalleryUrlRequest::setLive(bool live)
-{
-    d_func()->live = live;
-}
-
-/*!
     \property QGalleryUrlRequest::itemUrl
 
     \brief The url of the item a request should return.
@@ -167,20 +145,31 @@ void QGalleryUrlRequest::setCreate(bool create)
 }
 
 /*!
-    \property QGalleryUrlRequest::item
+    \property QGalleryUrlRequest::itemId
 
-    \brief A list containing the item returned by the request.
+    \brief The ID of the requested item.
 */
 
-QGalleryItemList *QGalleryUrlRequest::item() const
+QString QGalleryUrlRequest::itemId() const
 {
-    return d_func()->response;
+    return d_func()->itemId;
+}
+
+/*!
+    \property QGalleryUrlRequest::itemType
+
+    \brief The type of the requested item.
+*/
+
+QString QGalleryUrlRequest::itemType() const
+{
+    return d_func()->itemType;
 }
 
 /*!
     \fn void QGalleryUrlRequest::itemChanged()
 
-    Signals that the \l item property has changed.
+    Signals that the \l itemId and \l itemType properties have changed.
 */
 
 /*!
@@ -189,9 +178,24 @@ QGalleryItemList *QGalleryUrlRequest::item() const
 
 void QGalleryUrlRequest::setResponse(QGalleryAbstractResponse *response)
 {
-    Q_UNUSED(response);
+    Q_D(QGalleryUrlRequest);
 
-    emit itemChanged();
+    if (response && response->count() > 0) {
+        d->itemId = response->id(0);
+        d->itemType = response->type(0);
+
+        emit itemChanged();
+    } else {
+        if (response)
+            connect(response, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
+
+        if (!d->itemId.isNull() || !d->itemType.isNull()) {
+            d->itemId = QString();
+            d->itemType = QString();
+
+            emit itemChanged();
+        }
+    }
 }
 
 #include "moc_qgalleryurlrequest.cpp"

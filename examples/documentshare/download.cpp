@@ -43,18 +43,23 @@
 
 #include "sharewidget.h"
 
+#include <qdocumentgallery.h>
 #include <qgalleryurlrequest.h>
 
 #include <QtGui>
 #include <QtNetwork>
 
-Download::Download(QNetworkReply *networkReply, QObject *parent)
+Download::Download(QNetworkReply *networkReply, QDocumentGallery *gallery, QObject *parent)
     : QObject(parent)
     , networkReply(networkReply)
+    , urlRequest(0)
 {
     connect(networkReply, SIGNAL(metaDataChanged()), this, SLOT(networkMetaDataChanged()));
     connect(networkReply, SIGNAL(readyRead()), this, SLOT(networkReadyRead()));
     connect(networkReply, SIGNAL(finished()), this, SLOT(networkFinished()));
+
+    urlRequest = new QGalleryUrlRequest(gallery, this);
+    connect(urlRequest, SIGNAL(finished(int)), this, SLOT(urlRequestFinished(int)));
 }
 
 Download::~Download()
@@ -62,9 +67,9 @@ Download::~Download()
     delete networkReply;
 }
 
-QString Download::fileName() const
+QString Download::itemId() const
 {
-    return file.fileName();
+    return urlRequest->itemId();
 }
 
 void Download::networkMetaDataChanged()
@@ -140,13 +145,24 @@ void Download::networkFinished()
             file.close();
             file.remove();
         }
+
+        emit failed(this);
     } else {
         networkMetaDataChanged();
         networkReadyRead();
 
         file.close();
-    }
 
-    emit finished(this);
+        urlRequest->setItemUrl(QUrl::fromLocalFile(file.fileName()));
+        urlRequest->execute();
+    }
+}
+
+void Download::urlRequestFinished(int result)
+{
+    if (result == QGalleryAbstractRequest::Succeeded)
+        emit succeeded(this);
+    else
+        emit failed(this);
 }
 

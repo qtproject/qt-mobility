@@ -51,6 +51,7 @@ class QNetworkReply;
 QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
+class QDocumentGallery;
 class QGalleryUrlRequest;
 QTM_END_NAMESPACE
 
@@ -62,21 +63,24 @@ class Download : public QObject
 {
     Q_OBJECT
 public:
-    Download(QNetworkReply *networkReply, QObject *parent);
+    Download(QNetworkReply *networkReply, QDocumentGallery *gallery, QObject *parent);
     ~Download();
 
-    QString fileName() const;
+    QString itemId() const;
 
 signals:
-    void finished(Download *download);
+    void succeeded(Download *download);
+    void failed(Download *download);
 
 private slots:
     void networkMetaDataChanged();
     void networkReadyRead();
     void networkFinished();
+    void urlRequestFinished(int result);
 
 private:
     QNetworkReply *networkReply;
+    QGalleryUrlRequest *urlRequest;
     QFile file;
 };
 

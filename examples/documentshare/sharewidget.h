@@ -70,7 +70,8 @@ public:
 private slots:
     void unsupportedContent(QNetworkReply *reply);
     void downloadRequested(const QNetworkRequest &request);
-    void downloadFinished(Download *download);
+    void downloadSucceeded(Download *download);
+    void downloadFailed(Download *download);
 
 private:
     QDocumentGallery *documentGallery;

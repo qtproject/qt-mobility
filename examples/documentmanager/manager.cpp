@@ -74,7 +74,7 @@ Manager::Manager(QWidget *parent, Qt::WindowFlags flags)
     documentsRequest->setGallery(gallery);
     documentsRequest->setItemUrl(QUrl::fromLocalFile(
             QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)));
-    connect(documentsRequest, SIGNAL(itemChanged()), this, SLOT(documentsListChanged()));
+    connect(documentsRequest, SIGNAL(succeeded()), this, SLOT(documentsSucceeded()));
 
     sourceItemRequest = new QGalleryContainerRequest(this);
     sourceItemRequest->setGallery(gallery);
@@ -245,56 +245,15 @@ void Manager::executeActionRequest(QGalleryAbstractRequest *request)
     actionRequest->execute();
 }
 
-void Manager::documentsListChanged()
+void Manager::documentsSucceeded()
 {
-    documentsId = QString();
+    documentsId = documentsRequest->itemId();
 
-    if (QGalleryItemList *item = documentsRequest->item()) {
-        connect(item, SIGNAL(inserted(int,int)), this, SLOT(documentsInserted(int,int)));
-        connect(item, SIGNAL(removed(int,int)), this, SLOT(documentsRemoved(int,int)));
+    sourceItemRequest->setContainerId(documentsId);
+    sourceItemRequest->execute();
 
-        if (item->count() > 0) {
-            documentsId = item->id(0);
-
-            sourceItemRequest->setContainerId(documentsId);
-            sourceItemRequest->execute();
-
-            destinationItemRequest->setContainerId(documentsId);
-            destinationItemRequest->execute();
-        }
-    } else {
-        documentsId = QString();
-
-        sourceFolderId.clear();
-        destinationFolderId.clear();
-
-        sourceItemRequest->clear();
-        destinationItemRequest->clear();
-    }
-}
-
-void Manager::documentsInserted(int, int count)
-{
-    if (count > 0) {
-        documentsId = documentsRequest->item()->id(0);
-
-        sourceItemRequest->setContainerId(documentsId);
-        sourceItemRequest->execute();
-
-        destinationItemRequest->setContainerId(documentsId);
-        destinationItemRequest->execute();
-    }
-}
-
-void Manager::documentsRemoved(int, int)
-{
-    documentsId = QString();
-
-    sourceFolderId.clear();
-    destinationFolderId.clear();
-
-    sourceItemRequest->clear();
-    destinationItemRequest->clear();
+    destinationItemRequest->setContainerId(documentsId);
+    destinationItemRequest->execute();
 }
 
 void Manager::sourceListChanged()

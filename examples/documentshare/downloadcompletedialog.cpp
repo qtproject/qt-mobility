@@ -43,7 +43,7 @@
 
 #include <qdocumentgallery.h>
 #include <qgalleryitemlist.h>
-#include <qgalleryurlrequest.h>
+#include <qgalleryitemrequest.h>
 
 #include <QtGui>
 
@@ -63,14 +63,13 @@ DownloadCompleteDialog::DownloadCompleteDialog(
     , subjectKey(-1)
     , descriptionKey(-1)
 {
-    request = new QGalleryUrlRequest(gallery, this);
+    request = new QGalleryItemRequest(gallery, this);
     request->setPropertyNames(QStringList()
             << QDocumentGallery::fileName
             << QDocumentGallery::mimeType
             << QDocumentGallery::title
             << QDocumentGallery::subject
             << QDocumentGallery::description);
-    request->setCreate(true);
 
     connect(request, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
 
@@ -101,9 +100,9 @@ DownloadCompleteDialog::DownloadCompleteDialog(
     setWindowTitle(tr("Download Complete"));
 }
 
-void DownloadCompleteDialog::show(const QString &fileName)
+void DownloadCompleteDialog::show(const QString &itemId)
 {
-    request->setItemUrl(QUrl::fromLocalFile(fileName));
+    request->setItemId(itemId);
     request->execute();
 
     QDialog::show();
