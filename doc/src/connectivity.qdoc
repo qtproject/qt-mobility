@@ -40,21 +40,19 @@
 ****************************************************************************/
 
 /*!
+\page connectivity-api.html
+\title Connectivity API (technology preview)
+\brief The connectivity API facilitates communication with local devices.
+\ingroup mobility
 
-\page index.html
-
-\title Connectivity Library Developer Resources
-
-\tableofcontents
-
-
-\section1 Introduction
+\warning This API should be considered in a technology preview state. It is under development and
+subject to change.
 
 The Connectivity API provides a set of APIs for communicating with local devices.
 
-\section1 Reference documentation
+\tableofcontents
 
-\section2 Main classes
+\section1 Main classes
 
 \list
     \o \l{QBluetoothAddress}
