@@ -144,6 +144,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
                     QStringList(),
                     1);
             response->setCursorPosition(0);
+
+            return response;
         } else if (schema.isAggregateType()) {
             response = new QGalleryTrackerAggregateListResponse(
                     metaDataInterface(),
@@ -153,6 +155,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
                     QStringList(),
                     1);
             response->setCursorPosition(0);
+
+            return response;
         } else {
             result = QGalleryAbstractRequest::InvalidItemError;
         }
