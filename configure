@@ -484,10 +484,10 @@ for module in $MOBILITY_MODULES; do
         versit)
             #versit implies contacts
             $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/versit
-            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
             ;;
         sensors)
             $relpath/bin/syncheaders $shadowpath/include/QtmSensors $relpath/src/sensors
