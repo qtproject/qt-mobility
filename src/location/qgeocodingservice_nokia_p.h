@@ -79,14 +79,21 @@ public:
     QNetworkProxy proxy() const;
     void setProxy(const QNetworkProxy &proxy);
 
-    virtual QSearchResponse* geocode(const QSearchRequest& request);
-    virtual QSearchResponse* reverseGeocode(const QSearchRequest& request);
+    virtual QSearchResponse* geocode(QSearchRequest& request);
+    virtual QSearchResponse* reverseGeocode(QSearchRequest& request);
+
+private:
+    QString requestGeocodingString(QSearchRequest& request) const;
+    QString requestReverseGeocodingString(QSearchRequest& request) const;
+    QString trimDouble(qreal degree, int decimalDigits=10) const;
 
 private slots:
     void finishedReply();
     void errorReply(QSearchResponse::ErrorCode errorCode, QString errorString);
 
 private:
+    QString m_version;
+    QString m_language;
     QString m_token;
     QString m_referrer;
     QString m_host;

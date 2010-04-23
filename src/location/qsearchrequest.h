@@ -42,35 +42,42 @@
 #ifndef QLOCATION_SEARCHREQUEST_H
 #define QLOCATION_SEARCHREQUEST_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
 #include "qmobilityglobal.h"
-#include "qgeocoordinate.h"
+#include "qlocationfilter.h"
+
 #include <QString>
 #include <QMap>
 
 QTM_BEGIN_NAMESPACE
 
+class QSearchRequestPrivate;
 class Q_LOCATION_EXPORT QSearchRequest
 {
 public:
-    QSearchRequest(){};
-    virtual ~QSearchRequest(){};
-
-    QString searchText;    
-    QMap<QString,QString> additionalData;
+    enum ReverseGeocodeMode {
+        NonReverseGeocode,
+        RetrieveAddresses,
+        RetrieveAreas
+    };
+    
+public:
+    QSearchRequest();
+    virtual ~QSearchRequest();
+    QLocationFilter locationFilter();
+    QString language() const;
+    void setLanguage(const QString& language);
+    QString searchText() const;
+    void setSearchText(const QString& search);
+    QString additionalData(const QString& key) const;
+    void setAdditionalData(const QString& key, const QString& data);
+    void removeAdditionalData(const QString& key);
+    ReverseGeocodeMode reverseGeocodeMode() const;
+    void setReverseGeocodeMode(ReverseGeocodeMode mode);
     
 private:
     Q_DISABLE_COPY(QSearchRequest)
+    QSearchRequestPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QSearchRequest);
 };
 
 QTM_END_NAMESPACE

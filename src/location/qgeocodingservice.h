@@ -58,8 +58,8 @@ public:
     QGeocodingService();
     virtual ~QGeocodingService();
 
-    virtual QSearchResponse* geocode(const QSearchRequest& request) = 0;
-    virtual QSearchResponse* reverseGeocode(const QSearchRequest& request) = 0;
+    virtual QSearchResponse* geocode(QSearchRequest& request) = 0;
+    virtual QSearchResponse* reverseGeocode(QSearchRequest& request) = 0;
 
 signals:
     void finished(QSearchResponse* reply);

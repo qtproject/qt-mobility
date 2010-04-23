@@ -14,11 +14,11 @@ PUBLIC_HEADERS += \
                     qgeoareamonitor.h \
                     qsearchresponse.h \
                     qsearchrequest.h \
-                    qsearchrequest_nokia.h \
                     qgeocodingservice.h \
                     qsearchcontroller.h \
                     qgeocoordinate.h \
                     qgeolocation.h \
+                    qlocationfilter.h \
                     qgeopositioninfo.h \
                     qgeopositioninfosource.h \
                     qgeoroute.h \
@@ -78,12 +78,12 @@ PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qsearchresponse_nokia_p.h \
                     qsearchresponse_p.h \
-                    qsearchrequest_nokia_p.h \
+                    qsearchrequest_p.h \
                     qgeocodingservice_nokia_p.h \
                     qsearchcontroller_nokia_p.h \
                     qgeocodingxmlparser_nokia_p.h \
                     qgeolocation_p.h \
-                    qgeolocation_p.h \
+                    qlocationfilter_p.h \
                     qgeoroute_p.h \
                     qgeoroutereply_nokia_p.h \
                     qgeoroutereply_p.h \
@@ -206,7 +206,7 @@ SOURCES += \
             qgeoareamonitor.cpp \
             qsearchresponse.cpp \
             qsearchresponse_nokia.cpp \
-            qsearchrequest_nokia.cpp \
+            qsearchrequest.cpp \
             qgeocodingservice.cpp \
             qsearchcontroller.cpp \
             qgeocodingservice_nokia.cpp \
@@ -214,6 +214,7 @@ SOURCES += \
             qgeocodingxmlparser_nokia.cpp \
             qgeocoordinate.cpp \
             qgeolocation.cpp \
+            qlocationfilter.cpp \
             qgeopositioninfo.cpp \
             qgeopositioninfosource.cpp \
             qgeoroute.cpp \

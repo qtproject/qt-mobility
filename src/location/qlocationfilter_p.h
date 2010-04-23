@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_SEARCHRESPONSE_P_H
-#define QLOCATION_SEARCHRESPONSE_P_H
+#ifndef QLOCATIONFILTER_P_H_
+#define QLOCATIONFILTER_P_H_
 
 //
 //  W A R N I N G
@@ -54,21 +54,29 @@
 //
 
 #include "qmobilityglobal.h"
-
-#include "qgeolocation.h"
-#include <QList>
+#include "qgeocoordinate.h"
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
-class QSearchResponsePrivate
+class QLocationFilterPrivate
 {
 public:
-    QSearchResponsePrivate();
+    QLocationFilterPrivate(){};
+    virtual ~QLocationFilterPrivate(){};
 
-    QString description;
-    QList<QGeoLocation> places;
+    QString m_LROId;
+    QString m_country;
+    QString m_state;
+    QString m_county;
+    QString m_city;
+    QString m_district;
+    QString m_street;
+    QString m_houseNumber;
+    QString m_postalCode;
+    QGeoCoordinate m_coord;
 };
 
 QTM_END_NAMESPACE
 
-#endif
+#endif /* QLOCATIONFILTER_H_ */

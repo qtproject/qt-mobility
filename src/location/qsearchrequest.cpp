@@ -39,59 +39,82 @@
 **
 ****************************************************************************/
 
-#ifndef QSEARCHREQUEST_NOKIA_H_
-#define QSEARCHREQUEST_NOKIA_H_
-
+#include "qmobilityglobal.h"
 #include "qsearchrequest.h"
+#include "qsearchrequest_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QSearchRequestNokiaPrivate;
-class Q_LOCATION_EXPORT QSearchRequestNokia: public QSearchRequest
+QSearchRequest::QSearchRequest()
+    : d_ptr(new QSearchRequestPrivate)
 {
-public:
-    QSearchRequestNokia();
-    virtual ~QSearchRequestNokia();
-    
-    //Common    
-    QString version() const;
+}
 
-    QString language() const;
-    void setLanguage(const QString& language);
+QSearchRequest::~QSearchRequest()
+{
+    Q_D(QSearchRequest);
+    delete d;
+}
 
-    //Geocoding    
-    QString oneBoxLocation() const;
-    void setOneBoxLocation(const QString& obloc);
+QLocationFilter QSearchRequest::locationFilter()
+{
+    Q_D(QSearchRequest);
+    return d->m_locationFilter;
+}
 
-    QString country() const;
-    void setCountry(const QString& country);
+QString QSearchRequest::language() const
+{
+    Q_D(const QSearchRequest);
+    return d->m_language;
+}
 
-    QString state() const;
-    void setState(const QString& state);
+void QSearchRequest::setLanguage(const QString& language)
+{
+    Q_D(QSearchRequest);
+    d->m_language = language;
+}
 
-    QString city() const;
-    void setCity(const QString& city);
+QString QSearchRequest::searchText() const
+{
+    Q_D(const QSearchRequest);
+    return d->m_searchText;
+}
 
-    QString postCode() const;
-    void setPostCode(const QString& postCode);
+void QSearchRequest::setSearchText(const QString& search)
+{
+    Q_D(QSearchRequest);
+    d->m_searchText = search;
+}
 
-    QString street() const;
-    void setStreet(const QString& street);
+QString QSearchRequest::additionalData(const QString& key) const
+{
+    Q_D(const QSearchRequest);
+    return d->m_additionalData[key];
+}
 
-    QString number() const;
-    void setNumber(const QString& number);
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate& coordinate);
+void QSearchRequest::setAdditionalData(const QString& key, const QString& data)
+{
+    Q_D(QSearchRequest);
+    d->m_additionalData.insert(key, data);
+}
 
-    QString requestGeocodingString(const QString &host) const;
-    QString requestReverseGeocodingString(const QString &host) const;
+void QSearchRequest::removeAdditionalData(const QString& key)
+{
+    Q_D(QSearchRequest);
+    d->m_additionalData.remove(key);
+}
 
-private:
-    QSearchRequestNokiaPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QSearchRequestNokia)
+QSearchRequest::ReverseGeocodeMode QSearchRequest::reverseGeocodeMode() const
+{
+    Q_D(const QSearchRequest);
+    return d->m_mode;
+}
 
-};
+void QSearchRequest::setReverseGeocodeMode(ReverseGeocodeMode mode)
+{
+    Q_D(QSearchRequest);
+    d->m_mode = mode;
+}
+
 
 QTM_END_NAMESPACE
-
-#endif /* QSEARCHREQUEST_NOKIA_P_H_ */

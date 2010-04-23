@@ -51,7 +51,7 @@
 
 #include "placepresenter.h"
 #include "qgeocodingservice_nokia_p.h"
-#include "qsearchrequest_nokia_p.h"
+#include "qsearchrequest.h"
 
 ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
     QWidget(parent)
@@ -100,9 +100,9 @@ ReverseGeocodingTab::~ReverseGeocodingTab()
 
 void ReverseGeocodingTab::on_btnRequest_clicked()
 {
-   QGeoCoordinate coord(locLat->text().toDouble(), locLong->text().toDouble());
-    QSearchRequestNokia request;
-    request.setCoordinate(coord);
+    QGeoCoordinate coord(locLat->text().toDouble(), locLong->text().toDouble());
+    QSearchRequest request;
+    request.locationFilter().setCoordinate(coord);
     resultTree->clear();
 
     searchController->reverseGeocode(request);

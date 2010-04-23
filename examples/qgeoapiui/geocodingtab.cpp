@@ -50,7 +50,7 @@
 #include "geocodingtab.h"
 
 #include "placepresenter.h"
-#include "qsearchrequest_nokia_p.h"
+#include "qsearchrequest.h"
 #include "qgeocodingservice_nokia_p.h"
 
 GeocodingTab::GeocodingTab(QWidget *parent) :
@@ -129,19 +129,19 @@ GeocodingTab::~GeocodingTab()
 
 void GeocodingTab::on_btnRequest_clicked()
 {
-    QSearchRequestNokia request;
+    QSearchRequest request;
     QString s = obloc->text();
 
     if (!s.isEmpty()) {
-        request.setOneBoxLocation(s);
+        request.setSearchText(s);
     }
     else {
-        request.setCountry(country->text());
-        request.setState(state->text());
-        request.setCity(city->text());
-        request.setPostCode(zip->text());
-        request.setStreet(street->text());
-        request.setNumber(streetNumber->text());
+        request.locationFilter().setCountry(country->text());
+        request.locationFilter().setState(state->text());
+        request.locationFilter().setCity(city->text());
+        request.locationFilter().setPostalCode(zip->text());
+        request.locationFilter().setStreet(street->text());
+        request.locationFilter().setHouseNumber(streetNumber->text());
     }
     resultTree->clear();
     searchController->geocode(request);
