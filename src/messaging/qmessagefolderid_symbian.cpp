@@ -115,7 +115,6 @@ QString QMessageFolderId::toString() const
     if (!isValid()) {
         return QString();
     }
-
     return d_ptr->_id;
 }
 

@@ -87,6 +87,7 @@ CFSEngine::CFSEngine()
 
 CFSEngine::~CFSEngine()
 {
+    m_mtmAccountList.clear();
     m_clientApi->Release();
     delete m_factory;
 }
@@ -94,6 +95,13 @@ CFSEngine::~CFSEngine()
 CFSEngine* CFSEngine::instance()
 {   
     return fsEngine();
+}
+
+void CFSEngine::setMtmAccountIdList(QMessageAccountIdList accountList)
+{
+    for (TInt i = 0; i < accountList.count(); i++) {
+        m_mtmAccountList.append(stripIdPrefix(accountList[i]));
+    }
 }
 
 QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
@@ -156,8 +164,13 @@ void CFSEngine::updateEmailAccountsL() const
     for (TInt i = 0; i < mailboxes.Count(); i++) {
         MEmailMailbox *mailbox = mailboxes[i];
         QString idAsString = QString::number(mailbox->MailboxId().iId);
-        QString fsIdAsString = addIdPrefix(idAsString, EngineTypeFreestyle);
-        if (!m_accounts.contains(fsIdAsString)) {     
+        QString fsIdAsString = addIdPrefix(idAsString, SymbianHelpers::EngineTypeFreestyle);
+        TBool overlap = false;
+        for (TInt j = 0; j < m_mtmAccountList.count(); j++) {
+            if (idAsString == m_mtmAccountList[j].toString())
+                overlap = true;
+        }
+        if (!m_accounts.contains(fsIdAsString) && !overlap) {     
             QMessageAccount account = QMessageAccountPrivate::from(
                                       QMessageAccountId(fsIdAsString),
                                       QString::fromUtf16(mailbox->MailboxName().Ptr(), mailbox->MailboxName().Length()),
@@ -166,6 +179,7 @@ void CFSEngine::updateEmailAccountsL() const
                                       QMessage::Email);
           
             m_accounts.insert(fsIdAsString, account);
+            
         } else {
             keys.removeOne(fsIdAsString);
         }
@@ -568,6 +582,25 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
     m_messageQueries[index].privateService->messagesFound(ids, true, resultSetOrdered);
 }
 
+QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
+                                                                           const QMessageFilter &filter)
+{
+    ipMessageStorePrivate = &aPrivateStore;
+    iListenForNotifications = true;    
+
+    int filterId = ++m_filterId;
+    m_filters.insert(filterId, filter);
+    return filterId;
+}
+
+void CFSEngine::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
+{
+    m_filters.remove(notificationFilterId);
+    if (m_filters.count() == 0) {
+        iListenForNotifications = false;
+    }
+}
+
 QMessageFolderIdList CFSEngine::queryFolders(const QMessageFolderFilter &filter, const QMessageFolderSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageFolderIdList ids;
@@ -820,7 +853,7 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
     for(TInt i=0; i < folders.Count(); i++) {
         MEmailFolder *mailFolder = folders[i];
         
-        QString fsIdAsString = addIdPrefix(QString::number(mailFolder->FolderId().iId), EngineTypeFreestyle);
+        QString fsIdAsString = addIdPrefix(QString::number(mailFolder->FolderId().iId), SymbianHelpers::EngineTypeFreestyle);
         folderIds.append(QMessageFolderId(fsIdAsString));
 
         //TODO: Support for subfolders?
@@ -848,6 +881,9 @@ bool CFSEngine::sendEmail(QMessage &message)
         MEmailMailbox* mailbox = m_clientApi->MailboxL(m_mailboxId); 
         mailbox->SynchroniseL(*this);  
     );
+    CFSMessagesFindOperation* findOp = new CFSMessagesFindOperation((CFSEngine&)*this, 0);
+    m_account = this->account(message.parentAccountId());
+   // findOp->CheckAndNotifyNewMailsL(account);
     if (err != KErrNone)
         return false;
     else
@@ -883,29 +919,20 @@ QByteArray CFSEngine::attachmentContent(long int messageId, unsigned int attachm
     return result;
 }
 
-QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
-                                                                           const QMessageFilter &filter)
-{
-    int filterId;
-    return filterId;
-}
-
-void CFSEngine::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)
-{
-
-}
 
 void CFSEngine::MailboxSynchronisedL(TInt aResult)
 {
    // check new mails
+    qDebug() << "CFSEngine::MailboxSynchronisedL:" << aResult;
     if (aResult == KErrNone) {
         CFSMessagesFindOperation* findOp = new CFSMessagesFindOperation((CFSEngine&)*this, 0);
-        findOp->CheckAndNotifyNewMailsL(m_mailboxId); 
+        findOp->CheckAndNotifyNewMailsL(m_account);
     }
 }
 
-bool CFSEngine::CreateQMessageL(MEmailMessage* aMessage)
+QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage)
 {
+    qDebug() << "CFSEngine::CreateQMessageL";
     QMessage message;
     int size = 0;
     message.setType(QMessage::Email);
@@ -983,7 +1010,7 @@ bool CFSEngine::CreateQMessageL(MEmailMessage* aMessage)
     // TODO: size
     privateMessage->_size = size;
 
-    return true;    
+    return message;    
 }
 
 void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aMessage)
@@ -1007,6 +1034,7 @@ void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aM
             textContent->FetchL(*op);     
             op->Wait();
         }
+        CleanupStack::PopAndDestroy(op);
         availableSize = textContent->AvailableSize();            
         TInt totalSize = textContent->TotalSize();
         TPtrC body = textContent->ContentL();
@@ -1045,6 +1073,23 @@ TTime CFSEngine::qDateTimeToSymbianTTime(const QDateTime& date) const
     return TTime(dateTime);
 }
 
+void CFSEngine::notification(MEmailMessage* aMessage)
+{
+    QMessageManager::NotificationFilterIdSet matchingFilters;
+    bool messageRetrieved = false;
+    QMessage message;
+    message.setType(QMessage::Email);
+    QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
+    message = CreateQMessageL(aMessage);
+    messageRetrieved = true;
+    QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Added;
+    qDebug() << "call messageNotification";
+    ipMessageStorePrivate->messageNotification(notificationType, 
+                            QMessageId(addIdPrefix(QString::number(aMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)), 
+                            matchingFilters);             
+}
+
+
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
     : m_owner(aOwner), 
       m_operationId(aOperationId),
@@ -1052,10 +1097,16 @@ CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOpera
       m_mailbox(NULL),
       m_search(NULL)
 {
+    TRAPD(err,
+            m_factory = CEmailInterfaceFactory::NewL(); 
+            m_interfacePtr = m_factory->InterfaceL(KEmailClientApiInterface); 
+            m_clientApi = static_cast<MEmailClientApi*>(m_interfacePtr); 
+        );
 }
 
 CFSMessagesFindOperation::~CFSMessagesFindOperation()
 {
+    m_receiveNewMessages = false;
     m_search->Release();
     m_mailboxes.Close();
     m_clientApi->Release();
@@ -1088,9 +1139,6 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
 
     iNumberOfHandledFilters = 0;
     
-    m_factory = CEmailInterfaceFactory::NewL(); 
-    m_interfacePtr = m_factory->InterfaceL(KEmailClientApiInterface); 
-    m_clientApi = static_cast<MEmailClientApi*>(m_interfacePtr); 
     m_clientApi->GetMailboxesL(m_mailboxes);
     
     TEmailSortCriteria sortCriteria = TEmailSortCriteria();
@@ -1242,7 +1290,7 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
     MEmailMessage* msg = msgIterator->NextL();
     iIdList.clear();
     while (msg != NULL) {
-        iIdList.append(QMessageId(addIdPrefix(QString::number(msg->MessageId().iId), EngineTypeFreestyle)));
+        iIdList.append(QMessageId(addIdPrefix(QString::number(msg->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)));
         msg = msgIterator->NextL();
     }
 
@@ -1250,20 +1298,31 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
     m_owner.filterAndOrderMessagesReady(true, m_operationId, iIdList, 1, true);
 }
 
-void CFSMessagesFindOperation::CheckAndNotifyNewMailsL(TMailboxId aMailboxId)
+void CFSMessagesFindOperation::CheckAndNotifyNewMailsL(QMessageAccount& messageAccount)
 {
-
+    qDebug() << "CFSMessagesFindOperation::CheckAndNotifyNewMailsL:";
+    TEmailSortCriteria sortCriteria = TEmailSortCriteria();
+    sortCriteria.iField = TEmailSortCriteria::EByDate;
+    TMailboxId mailboxId(stripIdPrefix(messageAccount.id().toString()).toInt());
+   /* m_mailbox->Release();
+    if (m_search)
+        m_search->Release();*/
+    m_mailbox = m_clientApi->MailboxL(mailboxId);
+    m_search = m_mailbox->MessageSearchL();
+    m_search->AddSearchKeyL(_L("*"));
+    m_search->SetSortCriteriaL(sortCriteria);
+    m_search->StartSearchL(*this);
+    m_receiveNewMessages = true;
 }
 
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)
 {
-    iIdList.append(QMessageId(addIdPrefix(QString::number(aMessage->MessageId().iId), EngineTypeFreestyle)));
-    
-    if (!aMessage->Flags() & EFlag_Read) { // new message
-        bool result = m_owner.CreateQMessageL(aMessage);
-        if (result) {
-            // TODO: notification about new message
-        }
+    qDebug() << "CFSMessagesFindOperation::HandleResultL:";
+    if (!(aMessage->Flags() & EFlag_Read) && m_receiveNewMessages) { // new message
+        qDebug() << "CFSMessagesFindOperation::HandleResultL: call CreateQMessageL";
+        m_owner.notification(aMessage);
+    } else {
+        iIdList.append(QMessageId(addIdPrefix(QString::number(aMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)));
     }
 }
 
@@ -1271,7 +1330,10 @@ void CFSMessagesFindOperation::SearchCompletedL()
 {
     qDebug() << "CFSMessagesFindOperation::SearchCompletedL() - found messages: " + QString::number(iIdList.count());
     //m_search->Release();
-    m_owner.filterAndOrderMessagesReady(true, m_operationId, iIdList, 1, true);
+    if (m_receiveNewMessages)
+        m_receiveNewMessages = false;
+    else
+        m_owner.filterAndOrderMessagesReady(true, m_operationId, iIdList, 1, true);
 }
 
 CFetchOperationWait* CFetchOperationWait::NewLC()

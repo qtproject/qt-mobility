@@ -64,7 +64,6 @@
 #include <emailsorting.h>
 #include <memailmessagesearch.h>
 
-
 using namespace EmailInterface;
 
 QTM_BEGIN_NAMESPACE
@@ -133,10 +132,13 @@ public:
 
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                      bool resultSetOrdered);
+    
+    void setMtmAccountIdList(QMessageAccountIdList accountList);
+    void notification(MEmailMessage* aMessage);
 
 public: // from MMailboxSyncObserver
     void MailboxSynchronisedL(TInt aResult);
-    
+        
 private:
     
     void updateEmailAccountsL() const;
@@ -148,10 +150,11 @@ private:
     QMessageFolder folderL(const QMessageFolderId &id) const;
 
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
-    bool CreateQMessageL(MEmailMessage* aMessage);
+    QMessage CreateQMessageL(MEmailMessage* aMessage);
     void AddContentToMessage(MEmailMessageContent* aContent, QMessage* aMessage);
     QDateTime symbianTTimetoQDateTime(const TTime& time) const;
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
+    
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
@@ -164,8 +167,13 @@ private:
     mutable QHash<QString, QMessageAccount> m_accounts;
     mutable int m_operationIds;
     mutable QList<FSMessageQueryInfo> m_messageQueries;
+    QMessageAccountIdList m_mtmAccountList;
     TMailboxId m_mailboxId;
-
+    QMessageStorePrivate* ipMessageStorePrivate;
+    bool iListenForNotifications;
+    QMessageManager::NotificationFilterId m_filterId;
+    QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
+    QMessageAccount m_account;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
 
@@ -204,7 +212,7 @@ public:
                                 const QString body = QString(),
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
     
-    void CheckAndNotifyNewMailsL(TMailboxId aMailboxId);
+    void CheckAndNotifyNewMailsL(QMessageAccount& messageAccount);
     
 private:
     // from memailmessagesearch
@@ -236,6 +244,7 @@ private: // Data
     CEmailInterfaceFactory* m_factory; 
     MEmailInterface* m_interfacePtr; 
     MEmailMailbox* m_mailbox;
+    bool m_receiveNewMessages;
 };
 
 
