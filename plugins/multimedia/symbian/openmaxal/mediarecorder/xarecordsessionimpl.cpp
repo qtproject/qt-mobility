@@ -238,10 +238,10 @@ TInt32 XARecordSessionImpl::record()
         TRACE_LOG(_L("XARecordSessionImpl::Record: MORecorder/RecordItf is not created"));
         returnValue = createMediaRecorderObject();
         RET_ERR_IF_ERR(returnValue);
-    }
 
-    returnValue = setEncoderSettingsToMediaRecorder();
-    RET_ERR_IF_ERR(returnValue);
+        returnValue = setEncoderSettingsToMediaRecorder();
+        RET_ERR_IF_ERR(returnValue);
+    }
 
     XAuint32 state;
     XAresult xa_result = (*m_RecordItf)->GetRecordState(m_RecordItf, &state);
@@ -578,29 +578,7 @@ TInt32 XARecordSessionImpl::getSampleRates(
     if (found == false)
         return returnValue;
 
-    XAuint32 numCaps = 0;
-    XAAudioCodecDescriptor codecDesc;
-    XAresult xa_result = (*m_AudioEncCapsItf)->GetAudioEncoderCapabilities(
-                                        m_AudioEncCapsItf,
-                                        encoderId,
-                                        &numCaps,
-                                        &codecDesc);
-    returnValue = mapError(xa_result, ETrue);
-    RET_ERR_IF_ERR(returnValue);
-
-    /* TODO What do we do if we have more than one caps?? */
-    aIsContinuous = codecDesc.isFreqRangeContinuous;
-    if (aIsContinuous) {
-        aSampleRates.Append(codecDesc.minSampleRate / KMilliToHz);
-        aSampleRates.Append(codecDesc.maxSampleRate / KMilliToHz);
-    }
-    else {
-        XAuint32 numSRSupported = codecDesc.numSampleRatesSupported;
-        XAmilliHertz *pSampleRatesSupported(NULL);
-        pSampleRatesSupported = codecDesc.pSampleRatesSupported;
-        for (TInt index = 0; index < numSRSupported; index++)
-            aSampleRates.Append((*(pSampleRatesSupported + index)) / KMilliToHz);
-    }
+    returnValue = getSampleRatesByAudioCodecID(encoderId, aSampleRates);
 
     TRACE_FUNCTION_EXIT;
     return returnValue;
@@ -704,12 +682,14 @@ TBool XARecordSessionImpl::setCodec(const TDesC &aCodec)
 void XARecordSessionImpl::setBitRate(TUint32 aBitRate) {
     TRACE_FUNCTION_ENTRY;
     m_BitRate = aBitRate;
+    TRACE_LOG((_L("BitRate[%d]"), m_BitRate));
     TRACE_FUNCTION_EXIT;
 }
 
 void XARecordSessionImpl::setChannels(TUint32 aChannels) {
     TRACE_FUNCTION_ENTRY;
     m_ChannelsOut = aChannels;
+    TRACE_LOG((_L("ChannelCount[%d]"), m_ChannelsOut));
     TRACE_FUNCTION_EXIT;
 }
 
@@ -723,12 +703,22 @@ void XARecordSessionImpl::setSampleRate(TUint32 aSampleRate) {
     TRACE_FUNCTION_ENTRY;
     /* convert Hz to MilliHz */
     m_SampleRate = aSampleRate * KMilliToHz;
+    TRACE_LOG((_L("SampleRate[%d]"), aSampleRate));
     TRACE_FUNCTION_EXIT;
 }
 
 void XARecordSessionImpl::setOptimalSampleRate() {
     TRACE_FUNCTION_ENTRY;
-    m_SampleRate = 0xffffffff;
+    m_SampleRate = 0;
+
+    RArray<TInt32> sampleRates;
+    TInt res = getSampleRatesByAudioCodecID(m_AudioEncoderId, sampleRates);
+    if ((res == KErrNone) && (sampleRates.Count() > 0)) {
+        /* Sort the array and pick the middle range sample rate */
+        sampleRates.SortUnsigned();
+        m_SampleRate = sampleRates[sampleRates.Count()/2];
+    }
+
     TRACE_FUNCTION_EXIT;
 }
 
@@ -839,7 +829,7 @@ TInt32 XARecordSessionImpl::createMediaRecorderObject()
         TPtr8 uriPtr = m_URIName->Des();
         m_Uri.URI = (XAchar*) uriPtr.PtrZ();
         m_Mime.formatType    = XA_DATAFORMAT_MIME;
-        m_Mime.containerType = XA_CONTAINERTYPE_WAV;
+        m_Mime.containerType = m_ContainerType;
         TPtr8 mimeTypePtr(m_WAVMime->Des());
         m_Mime.mimeType = (XAchar*)mimeTypePtr.Ptr();
         m_DataSink.pLocator = (void*) &m_Uri;
@@ -1203,6 +1193,41 @@ TInt32 XARecordSessionImpl::getBitratesByAudioCodecID(
         TInt32 index = 0;
         for (index = 0; index < numBrSupported; index++)
             aBitrates.Append(*(pBitratesSupported + index));
+    }
+
+    TRACE_FUNCTION_ENTRY;
+    return returnValue;
+}
+
+TInt32 XARecordSessionImpl::getSampleRatesByAudioCodecID(XAuint32 encoderId,
+                      RArray<TInt32> &aSampleRates)
+{
+    TRACE_FUNCTION_ENTRY;
+
+    if (!m_AudioEncCapsItf)
+        return KErrGeneral;
+
+    XAuint32 numCaps = 0;
+    XAAudioCodecDescriptor codecDesc;
+    XAresult xa_result = (*m_AudioEncCapsItf)->GetAudioEncoderCapabilities(
+                                        m_AudioEncCapsItf,
+                                        encoderId,
+                                        &numCaps,
+                                        &codecDesc);
+    TInt returnValue = mapError(xa_result, ETrue);
+    RET_ERR_IF_ERR(returnValue);
+
+    /* TODO What do we do if we have more than one caps?? */
+    if (codecDesc.isFreqRangeContinuous == XA_BOOLEAN_TRUE) {
+        aSampleRates.Append(codecDesc.minSampleRate / KMilliToHz);
+        aSampleRates.Append(codecDesc.maxSampleRate / KMilliToHz);
+    }
+    else {
+        XAuint32 numSRSupported = codecDesc.numSampleRatesSupported;
+        XAmilliHertz *pSampleRatesSupported(NULL);
+        pSampleRatesSupported = codecDesc.pSampleRatesSupported;
+        for (TInt index = 0; index < numSRSupported; index++)
+            aSampleRates.Append((*(pSampleRatesSupported + index)) / KMilliToHz);
     }
 
     TRACE_FUNCTION_ENTRY;

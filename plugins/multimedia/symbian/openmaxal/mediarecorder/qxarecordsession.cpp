@@ -75,7 +75,8 @@ Q_DECLARE_METATYPE(QList<int>)
 
 QXARecordSession::QXARecordSession(QObject *parent)
 :QObject(parent),
-m_state(QMediaRecorder::StoppedState)
+m_state(QMediaRecorder::StoppedState),
+m_previousState(QMediaRecorder::StoppedState)
 {
     QT_TRACE_FUNCTION_ENTRY;
     m_impl = NULL;
@@ -122,10 +123,12 @@ bool QXARecordSession::setOutputLocation(const QUrl &location)
 
     RETURN_s_IF_m_impl_IS_NULL(false);
 
-    // Location can be set only when recorder is in stopped state.
-    if (state() != QMediaRecorder::StoppedState )
+    /* Location can only be set when the recorder is in the stopped
+     * state after creation. */
+    if ((state() != QMediaRecorder::StoppedState) || (m_state != m_previousState)) {
         return false;
-
+    }
+    
     // Validate URL
     if (!location.isValid())
         return false;
@@ -139,6 +142,7 @@ bool QXARecordSession::setOutputLocation(const QUrl &location)
     bool retVal = false;
     TPtrC16 tempPtr(reinterpret_cast<const TUint16 *>(newUrlStr.utf16()));
     if (m_impl->setURI(tempPtr) == 0) {
+        QT_TRACE2("Location:", newUrlStr);
         m_outputLocation = location;
         retVal = true;
     }
@@ -172,8 +176,16 @@ qint64 QXARecordSession::duration()
 
 void QXARecordSession::applySettings()
 {
-    if (m_appliedaudioencodersettings != m_audioencodersettings)
-        setEncoderSettingsToImpl();
+    /* Settings can only be applied when the recorder is in the stopped
+     * state after creation. */
+    if ((state() == QMediaRecorder::StoppedState) && (m_state == m_previousState)) {
+        if (m_appliedaudioencodersettings != m_audioencodersettings)
+            setEncoderSettingsToImpl();
+    }
+    else {
+        emit error(QMediaRecorder::FormatError, tr("Settings cannot be changed once recording started"));
+        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Settings cannot be changed once recording started\"))");
+    }
 }
 
 void QXARecordSession::record()
@@ -181,6 +193,10 @@ void QXARecordSession::record()
     QT_TRACE_FUNCTION_ENTRY;
 
     RETURN_IF_m_impl_IS_NULL;
+
+    /* No op if object is already in recording state */
+    if (state() == QMediaRecorder::RecordingState)
+        return;
 
     /* 1. Set encoder settings here */
     if (m_appliedaudioencodersettings != m_audioencodersettings)
@@ -204,6 +220,11 @@ void QXARecordSession::pause()
 
     RETURN_IF_m_impl_IS_NULL;
 
+    /* No op if object is already in paused/stopped state */
+    if ((state() == QMediaRecorder::PausedState) || (state() == QMediaRecorder::StoppedState)) {
+        return;
+    }
+
     if (m_impl->pause() == KErrNone) {
         setRecorderState(QMediaRecorder::PausedState);
     }
@@ -221,6 +242,10 @@ void QXARecordSession::stop()
 
     RETURN_IF_m_impl_IS_NULL;
 
+    /* No op if object is already in paused state */
+    if (state() == QMediaRecorder::StoppedState)
+        return;
+
     if ((m_impl->stop() == KErrNone)) {
         setRecorderState(QMediaRecorder::StoppedState);
     }
@@ -234,26 +259,45 @@ void QXARecordSession::stop()
 
 void QXARecordSession::cbDurationChanged(TInt64 new_pos)
 {
+    QT_TRACE_FUNCTION_ENTRY;
+
     emit durationChanged((qint64)new_pos);
     SIGNAL_EMIT_TRACE1("emit durationChanged((qint64)new_pos);");
+
+    QT_TRACE_FUNCTION_EXIT;
 }
 
 void QXARecordSession::cbAvailableAudioInputsChanged()
 {
+    QT_TRACE_FUNCTION_ENTRY;
+
     emit availableAudioInputsChanged();
     SIGNAL_EMIT_TRACE1("emit availableAudioInputsChanged();");
+
+    QT_TRACE_FUNCTION_EXIT;
 }
 
 void QXARecordSession::cbRecordingStarted()
 {
+    QT_TRACE_FUNCTION_ENTRY;
+
     setRecorderState(QMediaRecorder::RecordingState);
+
+    QT_TRACE_FUNCTION_EXIT;
 }
 
 void QXARecordSession::cbRecordingStopped()
 {
+    QT_TRACE_FUNCTION_ENTRY;
+
     emit error(QMediaRecorder::ResourceError, tr("Resources Unavailable"));
     SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ResourceError, tr(\"Resources Unavailable\"))");
     setRecorderState(QMediaRecorder::StoppedState);
+    /* Set record state to Stopped */
+    if (m_impl)
+        m_impl->stop();
+
+    QT_TRACE_FUNCTION_EXIT;
 }
 
 /* For QAudioEndpointSelector begin */
@@ -368,9 +412,12 @@ QList<int> QXARecordSession::supportedSampleRates(
             for (TInt index = 0; index < sampleRates.Count(); index++)
                 srList.append(sampleRates[index]);
             sampleRates.Close();
-            *continuous = false;
-            if (isContinuous == true)
-                *continuous = true;
+            if (continuous)
+                {
+                *continuous = false;
+                if (isContinuous == true)
+                    *continuous = true;
+                }
         }
     }
 
@@ -393,7 +440,11 @@ QStringList QXARecordSession::supportedEncodingOptions(const QString &codec)
     QT_TRACE_FUNCTION_ENTRY;
     Q_UNUSED(codec);
     QStringList options;
-    options << "bitrate";
+    if ((codec.compare("aac") == 0) ||
+            (codec.compare("amr") == 0))
+        {
+        options << "bitrate";
+        }
 
     QT_TRACE_FUNCTION_EXIT;
     return options;
@@ -474,6 +525,7 @@ QString QXARecordSession::containerDescription(const QString &formatMimeType)
 void QXARecordSession::setRecorderState(QMediaRecorder::State state)
 {
     if (state != m_state) {
+        m_previousState = m_state;
         m_state = state;
         emit stateChanged(m_state);
         SIGNAL_EMIT_TRACE1("emit stateChanged(m_state);");
@@ -563,6 +615,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
         m_impl->setCodec(tempPtr);
     }
     else {
+        QT_TRACE2("Codec selected is :", m_audioencodersettings.codec().toLower());
         emit error(QMediaRecorder::FormatError, tr("Invalid codec"));
         SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid codec\"));");
         return false;

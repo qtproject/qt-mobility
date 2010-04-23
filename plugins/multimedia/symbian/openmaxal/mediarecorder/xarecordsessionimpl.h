@@ -124,6 +124,8 @@ private:
     TInt32 setEncoderSettingsToMediaRecorder();
     TInt32 getBitratesByAudioCodecID(XAuint32 encoderId,
                           RArray<TUint32> &aBitrates);
+    TInt32 getSampleRatesByAudioCodecID(XAuint32 encoderId,
+                          RArray<TInt32> &aSampleRates);
 
 
 private:
