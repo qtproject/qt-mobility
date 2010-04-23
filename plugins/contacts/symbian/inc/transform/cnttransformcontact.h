@@ -48,6 +48,7 @@
 #include <cntdb.h>
 #include <cntdef.h>
 #include <cntitem.h>
+#include <tz.h>
 #include <tzconverter.h>
 
 class CntTransformContactData;
