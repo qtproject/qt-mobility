@@ -70,6 +70,7 @@ class Q_LOCATION_EXPORT QLandmarkManagerEngine : public QObject
     Q_OBJECT
 public:
     QLandmarkManagerEngine();
+    virtual ~QLandmarkManagerEngine();
 
     /* URI reporting */
     virtual QString managerName() const;                       // e.g. "com.nokia.qt.landmarks.engines.s60"

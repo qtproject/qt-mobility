@@ -41,14 +41,14 @@
 
 #include "qlandmarkfilehandler_lmx_p.h"
 
-#include "qlandmarkmanager.h"
+#include "qlandmarkmanagerengine.h"
 #include "qlandmarkcategory.h"
 #include "qlandmarkcategoryid.h"
 #include "qgeocoordinate.h"
 #include "qgeoaddress.h"
 
 #include <QFile>
-#include <QBuffer>
+#include <QStringList>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <qnumeric.h>
@@ -57,9 +57,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(QLandmarkManager *manager)
+QLandmarkFileHandlerLmx::QLandmarkFileHandlerLmx(QLandmarkManagerEngine *engine)
     : QObject(),
-    m_manager(manager),
+    m_engine(engine),
     m_writer(0),
     m_reader(0)
 {
@@ -83,24 +83,25 @@ void QLandmarkFileHandlerLmx::setLandmarks(const QList<QLandmark> &landmarks)
     m_landmarks = landmarks;
 }
 
-bool QLandmarkFileHandlerLmx::importData(const QByteArray &data)
+bool QLandmarkFileHandlerLmx::importData(QIODevice *device)
 {
     if (m_reader)
         delete m_reader;
 
-    m_reader = new QXmlStreamReader();
-    m_reader->addData(data);
+    m_reader = new QXmlStreamReader(device);
 
     if (!readLmx()) {
         m_error = m_reader->errorString();
         emit error(m_error);
         return false;
     } else {
-        if (!m_reader->atEnd()) {
+        if (m_reader->atEnd()) {
             m_reader->readNextStartElement();
-            m_error = QString("A single root element named \"lmx\" was expected (second root element was named \"%1\").").arg(m_reader->name().toString());
-            emit error(m_error);
-            return false;
+            if (!m_reader->name().isEmpty()) {
+                m_error = QString("A single root element named \"lmx\" was expected (second root element was named \"%1\").").arg(m_reader->name().toString());
+                emit error(m_error);
+                return false;
+            }
         }
     }
 
@@ -151,6 +152,7 @@ bool QLandmarkFileHandlerLmx::readLmx()
     }
 
     if (!m_reader->readNextStartElement()) {
+        m_reader->skipCurrentElement();
         return true;
     } else {
         m_reader->raiseError(QString("The element \"lmx\" expected a single child element (second child element was named \"%1\").").arg(m_reader->name().toString()));
@@ -555,7 +557,9 @@ bool QLandmarkFileHandlerLmx::readAddressInfo(QLandmark &landmark)
             } else if (name == "postalCode") {
                 address.setPostCode(m_reader->readElementText());
             } else if (name == "street") {
-                address.setThoroughfareName(m_reader->readElementText());
+                QStringList street = m_reader->readElementText().split(' ');
+                address.setThoroughfareNumber(street.takeFirst());
+                address.setThoroughfareName(street.join(" "));
             } else if (name == "phoneNumber") {
                 landmark.setPhone(m_reader->readElementText());
             } else {
@@ -644,7 +648,7 @@ bool QLandmarkFileHandlerLmx::readCategory(QLandmarkCategoryId &categoryId)
     if (m_reader->name() == "id") {
         bool ok = false;
         idString = m_reader->readElementText();
-        double id = idString.toUShort(&ok);
+        unsigned int id = idString.toUShort(&ok);
 
         if (!ok) {
             m_reader->raiseError(QString("The element \"id\" expected a value convertable to type unsigned short (value was \"%1\").").arg(idString));
@@ -661,63 +665,48 @@ bool QLandmarkFileHandlerLmx::readCategory(QLandmarkCategoryId &categoryId)
         QString name = m_reader->readElementText();
         if (!m_reader->readNextStartElement()) {
 
-            // TODO attach category to landmark here
+            QLandmarkCategory cat;
 
+            if (!idString.isEmpty()) {
+                QLandmarkCategoryId id;
+                id.setManagerUri(m_engine->managerUri());
+                id.setId(idString);
+
+                QLandmarkManager::Error error;
+                cat = m_engine->category(id, &error, &m_error);
+
+                if (error != QLandmarkManager::NoError) {
+                    m_reader->raiseError(m_error);
+                    return false;
+                }
+            }
+
+            cat.setName(name);
+            if(!m_engine->saveCategory(&cat, 0, &m_error)) {
+                m_reader->raiseError(m_error);
+                return false;
+            }
+
+            categoryId = cat.id();
             return true;
         }
     }
 
     m_reader->raiseError(QString("The element \"category\" did not expect a child element named \"%1\" at this point (unknown child element or child element out of order).").arg(m_reader->name().toString()));
     return false;
-
-    /*
-    QList<QLandmarkCategoryId> ids = m_manager->categoryIds();
-    for (int i = 0; i < ids.size(); ++i) {
-        QLandmarkCategory cat = m_manager->category(ids.at(i));
-
-        if (id.isEmpty()) {
-            if (cat.name() == name) {
-                categoryId = ids.at(i);
-                //categoryId.setId(ids.at(i).id());
-                //categoryId.setManagerUri(ids.at(i).managerUri());
-                return true;
-            }
-        } else {
-            if ((cat.name() == name) && (cat.categoryId().id() == id)) {
-                categoryId = ids.at(i);
-                //categoryId.setId(ids.at(i).id());
-                //categoryId.setManagerUri(ids.at(i).managerUri());
-                return true;
-            }
-        }
-    }
-
-    QLandmarkCategory cat;
-    cat.setName(name);
-
-    if (!m_manager->saveCategory(&cat))
-        return false;
-
-    categoryId = cat.categoryId();
-
-    return true;
-    */
 }
 
-bool QLandmarkFileHandlerLmx::exportData(QByteArray &data, const QString &nsPrefix)
+bool QLandmarkFileHandlerLmx::exportData(QIODevice *device, const QString &nsPrefix)
 {
     if (m_writer != 0)
         delete m_writer;
 
-    QBuffer b(&data);
-    b.open(QBuffer::WriteOnly);
-    m_writer = new QXmlStreamWriter(&b);
+    m_writer = new QXmlStreamWriter(device);
     m_writer->setAutoFormatting(true);
 
     m_nsPrefix = nsPrefix;
 
     bool result = writeLmx();
-    b.close();
 
     if(!result) {
         emit error(m_error);
@@ -731,10 +720,9 @@ bool QLandmarkFileHandlerLmx::exportData(QByteArray &data, const QString &nsPref
 
 bool QLandmarkFileHandlerLmx::writeLmx()
 {
-    if (m_landmarks.size() == 0) {
-        m_error = "TODO";
-        return false;
-    }
+    // LMX files must contain at least one landmark
+    if (m_landmarks.size() == 0)
+        return true;
 
     QString nsLmx = "http://www.nokia.com/schemas/location/landmarks/1/0/";
     QString nsXsi = "http://www.w3.org/2001/XMLSchema-instance";
@@ -820,8 +808,6 @@ bool QLandmarkFileHandlerLmx::writeLandmark(const QLandmark &landmark)
 
 bool QLandmarkFileHandlerLmx::writeCoordinates(const QLandmark &landmark)
 {
-    // TODO check / correct coordinates
-
     m_writer->writeStartElement(m_ns, "coordinates");
 
     double lat = landmark.coordinate().latitude();
@@ -876,6 +862,10 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
     QString street;
     if (!address.thoroughfareNumber().isEmpty())
         street.append(address.thoroughfareNumber());
+
+    if (!address.thoroughfareNumber().isEmpty() && !address.thoroughfareName().isEmpty())
+        street.append(" ");
+
     if (!address.thoroughfareName().isEmpty())
         street.append(address.thoroughfareName());
 
@@ -901,15 +891,14 @@ bool QLandmarkFileHandlerLmx::writeMediaLink(const QLandmark &landmark)
 
 bool QLandmarkFileHandlerLmx::writeCategory(const QLandmarkCategoryId &id)
 {
-    QLandmarkCategory cat = m_manager->category(id);
-    if (!cat.id().isValid()) {
-        qWarning() << "invalid id";
-        m_error = "TODO";
+    if (!id.isValid()) {
+        m_error = QString("The category with id \"%1\" from manager \"%2\" is invalid.").arg(id.id()).arg(id.managerUri());
         return false;
     }
-    if (cat.name().isEmpty()) {
-        qWarning() << "empty name";
-        m_error = "TODO";
+
+    QLandmarkManager::Error error;
+    QLandmarkCategory cat = m_engine->category(id, &error, &m_error);
+    if (error != QLandmarkManager::NoError) {
         return false;
     }
 

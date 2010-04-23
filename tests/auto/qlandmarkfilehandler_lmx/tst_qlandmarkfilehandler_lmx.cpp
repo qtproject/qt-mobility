@@ -39,129 +39,128 @@
 **
 ****************************************************************************/
 
-#include "../../../src/location/qlandmarklmxhandler_p.h"
-#include "../qlandmarkcategory/mocklandmarkmanager.h"
+#include "../../../src/location/qlandmarkfilehandler_lmx_p.h"
+#include "../../../src/location/qlandmarkmanagerengine_sqlite_p.h"
+
+#include "qgeoaddress.h"
+#include "qgeocoordinate.h"
+#include "qlandmarkcategory.h"
 
 #include <qtest.h>
 #include <QMetaType>
 #include <QFile>
+#include <QBuffer>
 
 #include <QDebug>
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QLandmarkCategoryId);
 Q_DECLARE_METATYPE(QList<QLandmark>);
+Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 
 class tst_QLandmarkLmxHandler : public QObject
 {
     Q_OBJECT
 
 private:
-    QLandmarkManager *m_manager;
+    QLandmarkManagerEngine *m_engine;
+    QLandmarkFileHandlerLmx *m_handler;
 
 private slots:
 
-    void initTestCase() {
-        m_manager = new MockLandmarkManager("test", 0);
+    void init() {
+        m_engine = new QLandmarkManagerEngineSqlite("test.db");
+        m_handler = new QLandmarkFileHandlerLmx(m_engine);
+    }
+
+    void cleanup() {
+        delete m_handler;
+        delete m_engine;
+
+        QFile file("test.db");
+        file.remove();
     }
 
     void cleanupTestCase() {
-        delete m_manager;
+        QFile file("test.db");
+        file.remove();
     }
 
-    /*
-        // add errors in later?
-        void validation() {
-            QFETCH(QString, filename);
-            QFETCH(bool, valid);
+    void fileImport() {
+        QFETCH(QString, fileIn);
+        QFETCH(QString, fileOut);
+        QFETCH(QString, exportPrefix);
+        QFETCH(QList<QLandmark>, landmarks);
+        QFETCH(QList<QLandmarkCategory>, categories);
 
-            QLandmarkLmxHandler handler(m_manager);
-
-            QFile file(filename);
-            file.open(QIODevice::ReadOnly);
-            QByteArray dataIn = file.readAll();
-
-            QCOMPARE(handler.importData(dataIn), valid);
+        QLandmarkManager::Error error = QLandmarkManager::NoError;
+        for (int i = 0; i < categories.size(); ++i) {
+            m_engine->saveCategory(&categories[i], &error, 0);
+            QCOMPARE(error, QLandmarkManager::NoError);
         }
 
-        void validation_data() {
-            QTest::addColumn<QString>("filename");
-            QTest::addColumn<bool>("valid");
+        QFile file(fileIn);
+        file.open(QIODevice::ReadOnly);
 
-            QTest::newRow("valid-single")
-                    << ":/data/convert-single-in.xml"
-                    << true;
-            QTest::newRow("valid-collection")
-                    << ":/data/convert-collection-in.xml"
-                    << true;
+        QVERIFY(m_handler->importData(&file));
+
+        file.close();
+
+        QCOMPARE(m_handler->landmarks(), landmarks);
+    }
+
+    void fileImport_data() {
+        commonData();
+    }
+
+    void dataExport() {
+        QFETCH(QString, fileIn);
+        QFETCH(QString, fileOut);
+        QFETCH(QString, exportPrefix);
+        QFETCH(QList<QLandmark>, landmarks);
+        QFETCH(QList<QLandmarkCategory>, categories);
+
+        QLandmarkManager::Error error;
+        for (int i = 0; i < categories.size(); ++i) {
+            m_engine->saveCategory(&categories[i], &error, 0);
+            QCOMPARE(error, QLandmarkManager::NoError);
         }
 
-        void fileImport() {
-            QFETCH(QString, fileIn);
-            QFETCH(QString, fileOut);
-            QFETCH(QString, exportPrefix);
-            QFETCH(QList<QLandmark>, landmarks);
+        m_handler->setLandmarks(landmarks);
 
-            QLandmarkLmxHandler handler(m_manager);
+        QBuffer buffer;
+        buffer.open(QIODevice::WriteOnly);
+        QVERIFY(m_handler->exportData(&buffer, exportPrefix));
+        QByteArray dataExported = buffer.buffer();
+        buffer.close();
 
-            QFile file(fileIn);
-            file.open(QIODevice::ReadOnly);
+        QFile file(fileOut);
+        file.open(QIODevice::ReadOnly);
 
-            QByteArray data = file.readAll();
+        QByteArray testData = file.readAll();
 
-            QVERIFY(handler.importData(data));
-            QCOMPARE(handler.landmarks(), landmarks);
-        }
+        file.close();
 
-        void fileImport_data() {
-            commonData();
-        }
+        QCOMPARE(dataExported, testData);
+    }
 
-        void dataExport() {
-            QFETCH(QString, fileIn);
-            QFETCH(QString, fileOut);
-            QFETCH(QString, exportPrefix);
-            QFETCH(QList<QLandmark>, landmarks);
-
-            QLandmarkLmxHandler handler(m_manager);
-
-            handler.setLandmarks(landmarks);
-
-            QByteArray dataExported;
-            QVERIFY(handler.exportData(dataExported, exportPrefix));
-
-            QFile file(fileOut);
-            file.open(QIODevice::ReadOnly);
-
-            QByteArray testData = file.readAll();
-
-            //qWarning() << dataExported << testData;
-
-            QCOMPARE(dataExported, testData);
-        }
-
-        void dataExport_data() {
-            commonData();
-        }
-    */
-    // importThenExport?
-    // exportThenImport?
+    void dataExport_data() {
+        commonData();
+    }
 
     void fileImportErrors() {
         QFETCH(QString, file);
         QFETCH(QString, error);
-
-        QLandmarkLmxHandler handler(m_manager);
 
         QString filename = ":/data/errors/";
         filename += file;
         QFile fileIn(filename);
         fileIn.open(QIODevice::ReadOnly);
 
-        QByteArray data = fileIn.readAll();
-        bool result = handler.importData(data);
+        bool result = m_handler->importData(&fileIn);
         QVERIFY(!result);
-        QCOMPARE(handler.errorString(), error);
+        QCOMPARE(m_handler->errorString(), error);
     }
 
     void fileImportErrors_data() {
@@ -296,34 +295,119 @@ private slots:
         << "The element \"category\" did not expect a child element named \"invalid\" at this point (unknown child element or child element out of order).";
     }
 
+    void dataExportErrors() {
+        QFETCH(QLandmarkCategoryId, catId);
+        QFETCH(QString, error);
+
+        QBuffer buffer;
+        buffer.open(QIODevice::WriteOnly);
+
+        QList<QLandmark> landmarks;
+        QLandmark lm;
+        lm.addCategory(catId);
+        landmarks.append(lm);
+        m_handler->setLandmarks(landmarks);
+
+        QVERIFY(!m_handler->exportData(&buffer, ""));
+        QCOMPARE(m_handler->errorString(), error);
+
+        buffer.close();
+    }
+
+    void dataExportErrors_data() {
+        QTest::addColumn<QLandmarkCategoryId>("catId");
+        QTest::addColumn<QString>("error");
+
+        QLandmarkCategoryId catId1;
+
+        QLandmarkCategoryId catId2;
+        catId2.setId("1");
+        catId2.setManagerUri("wrongUri");
+
+        m_engine = new QLandmarkManagerEngineSqlite("test.db");
+
+        QLandmarkCategoryId catId3;
+        catId3.setId("100");
+        catId3.setManagerUri(m_engine->managerUri());
+
+        delete m_engine;
+
+        QTest::newRow("invalid id")
+                << catId1
+                << "The category with id \"\" from manager \"\" is invalid.";
+        QTest::newRow("wrong manager uri")
+                << catId2
+                << "Category id comes from different landmark manager.";
+        QTest::newRow("non existent id")
+                << catId3
+                << "None of the existing categories match the given category id.";
+    }
+
+    void categoryImports() {
+
+        QFile file1(":/data/category-id-unknown.xml");
+        file1.open(QIODevice::ReadOnly);
+
+        QVERIFY(!m_handler->importData(&file1));
+        QCOMPARE(m_handler->errorString(), QString("None of the existing categories match the given category id."));
+
+        file1.close();
+
+        QFile file2(":/data/category-id-empty.xml");
+        file2.open(QIODevice::ReadOnly);
+
+        QVERIFY(m_handler->importData(&file2));
+
+        QCOMPARE(m_handler->landmarks().size(), 1);
+
+        QLandmark lm = m_handler->landmarks().at(0);
+
+        QCOMPARE(lm.categories().size(), 1);
+
+        QLandmarkCategoryId catId = lm.categories().at(0);
+
+        QCOMPARE(catId.isValid(), true);
+
+        QLandmarkManager::Error error;
+        QLandmarkCategory cat = m_engine->category(catId, &error, 0);
+
+        QCOMPARE(error, QLandmarkManager::NoError);
+        QCOMPARE(cat.name(), QString("cat0"));
+
+        file2.close();
+    }
+
 private:
     void commonData() {
         QTest::addColumn<QString>("fileIn");
         QTest::addColumn<QString>("fileOut");
         QTest::addColumn<QString>("exportPrefix");
         QTest::addColumn<QList<QLandmark> >("landmarks");
+        QTest::addColumn<QList<QLandmarkCategory> >("categories");
 
-        QList<QLandmarkCategoryId> categories;
+        QList<QLandmarkCategory> cats;
+        QList<QLandmarkCategoryId> catIds;
+
+        m_engine = new QLandmarkManagerEngineSqlite("test.db");
 
         QLandmarkCategory cat0;
         cat0.setName("cat0");
-
-        m_manager->saveCategory(&cat0);
+        m_engine->saveCategory(&cat0, 0, 0);
 
         QLandmarkCategory cat1;
         cat1.setName("cat1");
-
-        m_manager->saveCategory(&cat1);
+        m_engine->saveCategory(&cat1, 0, 0);
 
         QLandmarkCategory cat2;
         cat2.setName("cat2");
+        m_engine->saveCategory(&cat2, 0, 0);
 
-        m_manager->saveCategory(&cat2);
+        delete m_engine;
+        QFile file("test.db");
+        file.remove();
 
-        categories
-        << cat0.categoryId()
-        << cat1.categoryId()
-        << cat2.categoryId();
+        cats << cat0 << cat1 << cat2;
+        catIds << cat0.id() << cat1.id() << cat2.id();
 
         QList<QLandmark> w;
 
@@ -333,27 +417,32 @@ private:
         w0.setDescription("Test data");
         w0.setCoordinate(QGeoCoordinate(1.0, 2.0, 3.0));
         w0.setRadius(4.0);
-        w0.setStreet("1 Main St");
-        w0.setLocality("Brisbane");
-        w0.setRegion("Queensland");
-        w0.setCountry("Australia");
-        w0.setPostcode("4000");
+        QGeoAddress a0;
+        a0.setThoroughfareNumber("1");
+        a0.setThoroughfareName("Main St");
+        a0.setCity("Brisbane");
+        a0.setState("Queensland");
+        a0.setCountry("Australia");
+        a0.setPostCode("4000");
+        w0.setAddress(a0);
         w0.setPhone("123456789");
         w0.setUrl("http://example.com/testUrl");
-        w0.setCategories(categories);
+        w0.setCategories(catIds);
         w << w0;
 
         QTest::newRow("convert-single")
         << ":/data/convert-single-in.xml"
         << ":/data/convert-single-out.xml"
         << ""
-        << w;
+        << w
+        << cats;
 
         QTest::newRow("convert-single-prefixed")
         << ":/data/convert-single-prefixed-in.xml"
         << ":/data/convert-single-prefixed-out.xml"
         << "lm"
-        << w;
+        << w
+        << cats;
 
         QLandmark w1;
         w << w1;
@@ -379,23 +468,34 @@ private:
         w << w6;
 
         QLandmark w7;
-        w7.setStreet("1 Main St");
+        QGeoAddress a7;
+        a7.setThoroughfareNumber("1");
+        a7.setThoroughfareName("Main St");
+        w7.setAddress(a7);
         w << w7;
 
         QLandmark w8;
-        w8.setLocality("Brisbane");
+        QGeoAddress a8;
+        a8.setCity("Brisbane");
+        w8.setAddress(a8);
         w << w8;
 
         QLandmark w9;
-        w9.setRegion("Queensland");
+        QGeoAddress a9;
+        a9.setState("Queensland");
+        w9.setAddress(a9);
         w << w9;
 
         QLandmark w10;
-        w10.setCountry("Australia");
+        QGeoAddress a10;
+        a10.setCountry("Australia");
+        w10.setAddress(a10);
         w << w10;
 
         QLandmark w11;
-        w11.setPostcode("4000");
+        QGeoAddress a11;
+        a11.setPostCode("4000");
+        w11.setAddress(a11);
         w << w11;
 
         QLandmark w12;
@@ -403,11 +503,14 @@ private:
         w << w12;
 
         QLandmark w13;
-        w13.setStreet("1 Main St");
-        w13.setLocality("Brisbane");
-        w13.setRegion("Queensland");
-        w13.setCountry("Australia");
-        w13.setPostcode("4000");
+        QGeoAddress a13;
+        a13.setThoroughfareNumber("1");
+        a13.setThoroughfareName("Main St");
+        a13.setCity("Brisbane");
+        a13.setState("Queensland");
+        a13.setCountry("Australia");
+        a13.setPostCode("4000");
+        w13.setAddress(a13);
         w13.setPhone("123456789");
         w << w13;
 
@@ -416,16 +519,17 @@ private:
         w << w14;
 
         QLandmark w15;
-        w15.setCategories(categories);
+        w15.setCategories(catIds);
         w << w15;
 
         QTest::newRow("convert-collection")
         << ":/data/convert-collection-in.xml"
         << ":/data/convert-collection-out.xml"
         << ""
-        << w;
+        << w
+        << cats;
     }
 };
 
 QTEST_MAIN(tst_QLandmarkLmxHandler)
-#include "tst_qlandmarklmxhandler.moc"
+#include "tst_qlandmarkfilehandler_lmx.moc"

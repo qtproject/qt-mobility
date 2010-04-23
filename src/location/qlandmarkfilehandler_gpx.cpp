@@ -41,7 +41,7 @@
 
 #include "qlandmarkfilehandler_gpx_p.h"
 
-#include "qlandmarkmanager.h"
+#include "qlandmarkmanagerengine.h"
 #include "qlandmarkcategory.h"
 #include "qlandmarkcategoryid.h"
 #include "qgeocoordinate.h"
@@ -49,7 +49,6 @@
 #include <math.h>
 
 #include <QFile>
-#include <QBuffer>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <qnumeric.h>
@@ -58,9 +57,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-QLandmarkFileHandlerGpx::QLandmarkFileHandlerGpx(QLandmarkManager *manager)
+QLandmarkFileHandlerGpx::QLandmarkFileHandlerGpx(QLandmarkManagerEngine *engine)
     : QObject(),
-    m_manager(manager),
+    m_engine(engine),
     m_writer(0),
     m_reader(0)
 {
@@ -104,26 +103,27 @@ void QLandmarkFileHandlerGpx::setRoutes(const QList<QList<QLandmark> > &routes)
     m_routes = routes;
 }
 
-bool QLandmarkFileHandlerGpx::importData(const QByteArray &data)
+bool QLandmarkFileHandlerGpx::importData(QIODevice *device)
 {
     // rejects GPX 1.0, need add to docs that 1.1 is the only version supported
 
     if (m_reader)
         delete m_reader;
 
-    m_reader = new QXmlStreamReader();
-    m_reader->addData(data);
+    m_reader = new QXmlStreamReader(device);
 
     if (!readGpx()) {
         m_error = m_reader->errorString();
         emit error(m_error);
         return false;
     } else {
-        if(!m_reader->atEnd()) {
+        if(m_reader->atEnd()) {
             m_reader->readNextStartElement();
-            m_error = QString("A single root element named \"gpx\" was expected (second root element was named \"%1\")").arg(m_reader->name().toString());
-            emit error(m_error);
-            return false;
+            if (!m_reader->name().isEmpty()) {
+                m_error = QString("A single root element named \"gpx\" was expected (second root element was named \"%1\")").arg(m_reader->name().toString());
+                emit error(m_error);
+                return false;
+            }
         }
     }
 
@@ -176,14 +176,18 @@ bool QLandmarkFileHandlerGpx::readGpx()
         return false;
     }
 
-    if (!m_reader->readNextStartElement())
+    if (!m_reader->readNextStartElement()) {
+        m_reader->skipCurrentElement();
         return true;
+    }
 
     if (m_reader->name() == "metadata") {
         // Not used outside of schema compliance check
         m_reader->skipCurrentElement();
-        if (!m_reader->readNextStartElement())
+        if (!m_reader->readNextStartElement()) {
+            m_reader->skipCurrentElement();
             return true;
+        }
     }
 
     while (m_reader->name() == "wpt") {
@@ -194,8 +198,10 @@ bool QLandmarkFileHandlerGpx::readGpx()
 
         m_waypoints.append(landmark);
 
-        if(!m_reader->readNextStartElement())
+        if(!m_reader->readNextStartElement()) {
+            m_reader->skipCurrentElement();
             return true;
+        }
     }
 
     while (m_reader->name() == "rte") {
@@ -206,8 +212,10 @@ bool QLandmarkFileHandlerGpx::readGpx()
 
         m_routes.append(route);
 
-        if(!m_reader->readNextStartElement())
+        if(!m_reader->readNextStartElement()) {
+            m_reader->skipCurrentElement();
             return true;
+        }
     }
 
     while (m_reader->name() == "trk") {
@@ -218,30 +226,23 @@ bool QLandmarkFileHandlerGpx::readGpx()
 
         m_tracks.append(track);
 
-        if(!m_reader->readNextStartElement())
+        if(!m_reader->readNextStartElement()) {
+            m_reader->skipCurrentElement();
             return true;
+        }
     }
 
     if (m_reader->name() == "extensions") {
         // Not used outside of schema compliance check
         m_reader->skipCurrentElement();
-        if (!m_reader->readNextStartElement())
+        if (!m_reader->readNextStartElement()) {
+            m_reader->skipCurrentElement();
             return true;
+        }
     }
 
     m_reader->raiseError(QString("The element \"gpx\" did not expect a child element named \"%1\" at this point (unknown child element or child element out of order).").arg(m_reader->name().toString()));
     return false;
-
-/*
-    if (m_reader->readNextStartElement()) {
-        m_reader->raiseError(QString("A single root element named \"gpx\" was expected (second root element was named \"%1\")").arg(m_reader->name().toString()));
-        return false;
-    } else {
-        return true;
-    }
-*/
-
-    return true;
 }
 
 bool QLandmarkFileHandlerGpx::readWaypoint(QLandmark &landmark, const QString &elementName)
@@ -346,6 +347,8 @@ bool QLandmarkFileHandlerGpx::readWaypoint(QLandmark &landmark, const QString &e
         return false;
     }
 
+    landmark.setCoordinate(coord);
+
     if (!m_reader->readNextStartElement())
         return true;
 
@@ -366,12 +369,11 @@ bool QLandmarkFileHandlerGpx::readWaypoint(QLandmark &landmark, const QString &e
         }
 
         coord.setAltitude(alt);
+        landmark.setCoordinate(coord);
 
         if (!m_reader->readNextStartElement())
             return true;
     }
-
-    landmark.setCoordinate(coord);
 
     QList<QString> unusedNames1;
     unusedNames1 << "time";
@@ -588,49 +590,65 @@ bool QLandmarkFileHandlerGpx::readTrack(QList<QLandmark> &track)
 
     while (m_reader->name() == "trkseg") {
 
+        if (!readTrackSegment(track))
+            return false;
+
         if (!m_reader->readNextStartElement())
-            break;
-
-        while (m_reader->name() == "trkpt") {
-            QLandmark landmark;
-
-            if (!readWaypoint(landmark, "trkpt"))
-                return false;
-
-            track << landmark;
-
-            if (!m_reader->readNextStartElement())
-                break;
-        }
-
-        if (m_reader->name() == "extensions") {
-            m_reader->skipCurrentElement();
-            if (!m_reader->readNextStartElement())
-                break;
-        }
-
-        m_reader->raiseError(QString("The element \"trkseg\" did not expect a child element named \"%1\" at this point (unknown child element or child element out of order).").arg(m_reader->name().toString()));
-        return false;
+            return true;
     }
 
     m_reader->raiseError(QString("The element \"trk\" did not expect a child element named \"%1\" at this point (unknown child element or child element out of order).").arg(m_reader->name().toString()));
     return false;
 }
+bool QLandmarkFileHandlerGpx::readTrackSegment(QList<QLandmark> &track)
+{
+    /*
+    <xsd:complexType name="trksegType">
+        <xsd:sequence>
+            <xsd:element name="trkpt" type="wptType" minOccurs="0" maxOccurs="unbounded" />
+            <xsd:element name="extensions" type="extensionsType" minOccurs="0" />
+        </xsd:sequence>
+    </xsd:complexType>
+    */
+    Q_ASSERT(m_reader->isStartElement()
+             && (m_reader->name() == "trkseg"));
 
-bool QLandmarkFileHandlerGpx::exportData(QByteArray &data, const QString &nsPrefix)
+    if (!m_reader->readNextStartElement())
+        return true;
+
+    while (m_reader->name() == "trkpt") {
+        QLandmark landmark;
+
+        if (!readWaypoint(landmark, "trkpt"))
+            return false;
+
+        track << landmark;
+
+        if (!m_reader->readNextStartElement())
+            return true;
+    }
+
+    if (m_reader->name() == "extensions") {
+        m_reader->skipCurrentElement();
+        if (!m_reader->readNextStartElement())
+            return true;
+    }
+
+    m_reader->raiseError(QString("The element \"trkseg\" did not expect a child element named \"%1\" at this point (unknown child element or child element out of order).").arg(m_reader->name().toString()));
+    return false;
+}
+
+bool QLandmarkFileHandlerGpx::exportData(QIODevice *device, const QString &nsPrefix)
 {
     if (m_writer != 0)
         delete m_writer;
 
-    QBuffer b(&data);
-    b.open(QBuffer::WriteOnly);
-    m_writer = new QXmlStreamWriter(&b);
+    m_writer = new QXmlStreamWriter(device);
     m_writer->setAutoFormatting(true);
 
     m_nsPrefix = nsPrefix;
 
-    bool result = readGpx();
-    b.close();
+    bool result = writeGpx();
 
     if (!result) {
         emit error(m_error);
@@ -696,8 +714,8 @@ bool QLandmarkFileHandlerGpx::writeWaypoint(const QLandmark &landmark, const QSt
     if (!qIsNaN(lat)) {
         if (lat >= 90.0)
             lat = 90.0;
-        else if (lat <= 90.0)
-            lat = 90;
+        else if (lat <= -90.0)
+            lat = -90;
     }
 
     if (!qIsNaN(lon)) {

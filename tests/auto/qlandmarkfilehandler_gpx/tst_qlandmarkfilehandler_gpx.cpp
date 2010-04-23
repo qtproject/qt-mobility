@@ -39,13 +39,15 @@
 **
 ****************************************************************************/
 
-#include "../../../src/location/qlandmarkgpxhandler_p.h"
-#include "qlandmarkmanager.h"
-#include "../qlandmarkcategory/mocklandmarkmanager.h"
+#include "../../../src/location/qlandmarkfilehandler_gpx_p.h"
+#include "../../../src/location/qlandmarkmanagerengine_sqlite_p.h"
+
+#include "qgeocoordinate.h"
 
 #include <qtest.h>
 #include <QMetaType>
 #include <QFile>
+#include <QBuffer>
 
 #include <QDebug>
 
@@ -59,43 +61,27 @@ class tst_QLandmarkGpxHandler : public QObject
     Q_OBJECT
 
 private:
-    QLandmarkManager *m_manager;
+    QLandmarkManagerEngine *m_engine;
+    QLandmarkFileHandlerGpx *m_handler;
 
 private slots:
 
-    void initTestCase() {
-        m_manager = new MockLandmarkManager("test", 0);
+    void init() {
+        m_engine = new QLandmarkManagerEngineSqlite("test.db");
+        m_handler = new QLandmarkFileHandlerGpx(m_engine);
+    }
+
+    void cleanup() {
+        delete m_handler;
+        delete m_engine;
+
+        QFile file("test.db");
+        file.remove();
     }
 
     void cleanupTestCase() {
-        delete m_manager;
-    }
-
-    /*
-    // add errors in later?
-    void validation() {
-        QFETCH(QString, filename);
-        QFETCH(bool, valid);
-
-        QLandmarkGpxHandler handler(m_manager);
-
-        QFile file(filename);
-        file.open(QIODevice::ReadOnly);
-        QByteArray dataIn = file.readAll();
-
-        QCOMPARE(handler.importData(dataIn), valid);
-    }
-
-    void validation_data() {
-        QTest::addColumn<QString>("filename");
-        QTest::addColumn<bool>("valid");
-
-        QTest::newRow("valid-empty")
-                << ":/data/convert-empty.xml"
-                << true;
-        QTest::newRow("valid-all")
-                << ":/data/convert-all-in.xml"
-                << true;
+        QFile file("test.db");
+        file.remove();
     }
 
     void fileImport() {
@@ -106,17 +92,16 @@ private slots:
         QFETCH(QList<QList<QLandmark> >, tracks);
         QFETCH(QList<QList<QLandmark> >, routes);
 
-        QLandmarkGpxHandler handler(m_manager);
-
         QFile file(fileIn);
         file.open(QIODevice::ReadOnly);
 
-        QByteArray data = file.readAll();
-        QVERIFY(handler.importData(data));
+        QVERIFY(m_handler->importData(&file));
 
-        QCOMPARE(handler.waypoints(), waypoints);
-        QCOMPARE(handler.tracks(), tracks);
-        QCOMPARE(handler.routes(), routes);
+        file.close();
+
+        QCOMPARE(m_handler->waypoints(), waypoints);
+        QCOMPARE(m_handler->tracks(), tracks);
+        QCOMPARE(m_handler->routes(), routes);
     }
 
     void fileImport_data() {
@@ -131,19 +116,22 @@ private slots:
         QFETCH(QList<QList<QLandmark> >, tracks);
         QFETCH(QList<QList<QLandmark> >, routes);
 
-        QLandmarkGpxHandler handler(m_manager);
+        m_handler->setWaypoints(waypoints);
+        m_handler->setTracks(tracks);
+        m_handler->setRoutes(routes);
 
-        handler.setWaypoints(waypoints);
-        handler.setTracks(tracks);
-        handler.setRoutes(routes);
-
-        QByteArray dataExported;
-        QVERIFY(handler.exportData(dataExported, exportPrefix));
+        QBuffer buffer;
+        buffer.open(QIODevice::WriteOnly);
+        QVERIFY(m_handler->exportData(&buffer, exportPrefix));
+        QByteArray dataExported = buffer.buffer();
+        buffer.close();
 
         QFile file(fileOut);
         file.open(QIODevice::ReadOnly);
 
         QByteArray testData = file.readAll();
+
+        file.close();
 
         QCOMPARE(dataExported, testData);
     }
@@ -151,25 +139,20 @@ private slots:
     void dataExport_data() {
         commonData();
     }
-    */
-    // importThenExport?
-    // exportThenImport?
 
     void fileImportErrors() {
         QFETCH(QString, file);
         QFETCH(QString, error);
-
-        QLandmarkGpxHandler handler(m_manager);
 
         QString filename = ":/data/errors/";
         filename += file;
         QFile fileIn(filename);
         fileIn.open(QIODevice::ReadOnly);
 
-        QByteArray data = fileIn.readAll();
-        bool result = handler.importData(data);
+        bool result = m_handler->importData(&fileIn);
+
         QVERIFY(!result);
-        QCOMPARE(handler.errorString(), error);
+        QCOMPARE(m_handler->errorString(), error);
     }
 
     void fileImportErrors_data() {
@@ -476,4 +459,4 @@ private:
 };
 
 QTEST_MAIN(tst_QLandmarkGpxHandler)
-#include "tst_qlandmarkgpxhandler.moc"
+#include "tst_qlandmarkfilehandler_gpx.moc"

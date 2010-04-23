@@ -5,12 +5,12 @@ TARGET=tst_qlandmarkfilehandler_lmx
 
 include (../../../common.pri)
 
+QT += sql
+
 INCLUDEPATH += ../../../src/location
 
 # Input 
-HEADERS += ../qlandmarkcategory/mocklandmarkmanager.h
-SOURCES += tst_qlandmarkfilehandler_lmx.cpp \
-            ../qlandmarkcategory/mocklandmarkmanager.cpp
+SOURCES += tst_qlandmarkfilehandler_lmx.cpp
 
 RESOURCES += data.qrc
 

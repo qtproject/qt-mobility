@@ -21,15 +21,15 @@
             <lm:url>http://example.com/testUrl</lm:url>
         </lm:mediaLink>
         <lm:category>
-            <lm:id>10</lm:id>
+            <lm:id>1</lm:id>
             <lm:name>cat0</lm:name>
         </lm:category>
         <lm:category>
-            <lm:id>11</lm:id>
+            <lm:id>2</lm:id>
             <lm:name>cat1</lm:name>
         </lm:category>
         <lm:category>
-            <lm:id>12</lm:id>
+            <lm:id>3</lm:id>
             <lm:name>cat2</lm:name>
         </lm:category>
     </lm:landmark>

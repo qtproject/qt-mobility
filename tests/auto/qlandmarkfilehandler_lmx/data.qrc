@@ -1,12 +1,13 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <file>data/invalid.xml</file>
     <file>data/convert-single-in.xml</file>
     <file>data/convert-single-out.xml</file>
     <file>data/convert-single-prefixed-in.xml</file>
     <file>data/convert-single-prefixed-out.xml</file>
     <file>data/convert-collection-in.xml</file>
     <file>data/convert-collection-out.xml</file>
+    <file>data/category-id-unknown.xml</file>
+    <file>data/category-id-empty.xml</file>
     <file>data/errors/lmx/noroot.xml</file>
     <file>data/errors/lmx/wrongroot.xml</file>
     <file>data/errors/lmx/tworoots.xml</file>

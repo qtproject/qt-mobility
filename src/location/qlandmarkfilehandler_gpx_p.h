@@ -42,8 +42,19 @@
 #ifndef QLANDMARKFILEHANDLER_GPX_P_H
 #define QLANDMARKFILEHANDLER_GPX_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qlandmark.h"
-#include "qlandmarkmanager.h"
+#include "qlandmarkmanagerengine.h"
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
@@ -52,16 +63,15 @@ class QIODevice;
 
 QTM_BEGIN_NAMESPACE
 
-// Doing byte arrays to / from local members first
-// Will need to get hold of the database to find categories etc
-// when it's time for that
+class QLandmarkManagerEngine;
 
-class Q_LOCATION_EXPORT QLandmarkFileHandlerGpx : public QObject
+
+class Q_AUTOTEST_EXPORT QLandmarkFileHandlerGpx : public QObject
 {
     Q_OBJECT
 
 public:
-    QLandmarkFileHandlerGpx(QLandmarkManager *manager);
+    QLandmarkFileHandlerGpx(QLandmarkManagerEngine *engine);
     ~QLandmarkFileHandlerGpx();
 
     QList<QLandmark> waypoints() const;
@@ -73,8 +83,8 @@ public:
     QList<QList<QLandmark> > routes() const;
     void setRoutes(const QList<QList<QLandmark> > &routes);
 
-    bool importData(const QByteArray &data);
-    bool exportData(QByteArray &data, const QString &nsPrefix = QString());
+    bool importData(QIODevice *device);
+    bool exportData(QIODevice *device, const QString &nsPrefix = QString());
 
     QString errorString() const;
 
@@ -88,13 +98,14 @@ private:
     bool readWaypoint(QLandmark &landmark, const QString &elementName);
     bool readRoute(QList<QLandmark> &route);
     bool readTrack(QList<QLandmark> &track);
+    bool readTrackSegment(QList<QLandmark> &track);
 
     bool writeGpx();
     bool writeWaypoint(const QLandmark &landmark, const QString &elementName);
     bool writeRoute(const QList<QLandmark> &route);
     bool writeTrack(const QList<QLandmark> &track);
 
-    QLandmarkManager *m_manager;
+    QLandmarkManagerEngine *m_engine;
 
     QString m_nsPrefix;
     QString m_ns;

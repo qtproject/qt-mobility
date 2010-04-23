@@ -42,8 +42,18 @@
 #ifndef QLANDMARKFILEHANDLER_LMX_P_H
 #define QLANDMARKFILEHANDLER_LMX_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qlandmark.h"
-#include "qlandmarkmanager.h"
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
@@ -52,23 +62,21 @@ class QIODevice;
 
 QTM_BEGIN_NAMESPACE
 
-// Doing byte arrays to / from local members first
-// Will need to get hold of the database to find categories etc
-// when it's time for that
+class QLandmarkManagerEngine;
 
-class Q_LOCATION_EXPORT QLandmarkFileHandlerLmx : public QObject
+class Q_AUTOTEST_EXPORT QLandmarkFileHandlerLmx : public QObject
 {
     Q_OBJECT
 
 public:
-    QLandmarkFileHandlerLmx(QLandmarkManager *manager);
+    QLandmarkFileHandlerLmx(QLandmarkManagerEngine *engine);
     ~QLandmarkFileHandlerLmx();
 
     QList<QLandmark> landmarks() const;
     void setLandmarks(const QList<QLandmark> &landmarks);
 
-    bool importData(const QByteArray &data);
-    bool exportData(QByteArray &data, const QString &nsPrefix = QString());
+    bool importData(QIODevice *device);
+    bool exportData(QIODevice *device, const QString &nsPrefix = QString());
 
     QString errorString() const;
 
@@ -94,7 +102,7 @@ private:
     bool writeMediaLink(const QLandmark &landmark);
     bool writeCategory(const QLandmarkCategoryId &categoryId);
 
-    QLandmarkManager *m_manager;
+    QLandmarkManagerEngine *m_engine;
 
     QString m_ns;
     QString m_nsPrefix;

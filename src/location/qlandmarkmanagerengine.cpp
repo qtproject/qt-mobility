@@ -65,6 +65,13 @@ QLandmarkManagerEngine::QLandmarkManagerEngine()
 {
 }
 
+/*!
+    Destructor.
+*/
+QLandmarkManagerEngine::~QLandmarkManagerEngine()
+{
+}
+
 /*! Returns the manager name for this QLandmarkManagerEngine */
 QString QLandmarkManagerEngine::managerName() const
 {
