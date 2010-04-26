@@ -150,7 +150,7 @@ QString CntDbInfo::getSortQuery( const QList<QContactSortOrder> &sortOrders,
                     // Default sort order
                     QString col;
                     if(s.caseSensitivity() == Qt::CaseInsensitive)
-                        col= ' ' + columnName + ' ' + "COLLATE NOCASE ASC";
+                        col= ' ' + columnName + ' ' + "COLLATE CompareC3";
                     else
                         col= ' ' + columnName + ' ' + "ASC";
                     list.append(col);
