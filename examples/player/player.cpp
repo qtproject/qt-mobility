@@ -282,8 +282,8 @@ void Player::metaDataChanged()
             QUrl uri = player->metaData(QtMediaServices::CoverArtUrlLarge).value<QUrl>();
             QPixmap pixmap = NULL;
 
-            if (uri.isEmpty()) {
-                QVariant picture = player->extendedMetaData("attachedpicture");
+            if (uri.isEmpty()) {                
+                QVariant picture = player->metaData(QtMediaServices::CoverArtImage);
                 // Load picture from metadata
                 if (!picture.isNull() && picture.canConvert<QByteArray>())
                     pixmap.loadFromData(picture.value<QByteArray>());
@@ -309,8 +309,10 @@ void Player::metaDataChanged()
                 // Load picture from file pointed by uri
             } else
                 pixmap.load(uri.toString());
-
+            
             coverLabel->setPixmap((!pixmap.isNull())?pixmap:QPixmap());
+            coverLabel->setAlignment(Qt::AlignCenter);            
+            coverLabel->setScaledContents(true);
             }
     hideOrShowCoverArt();
     }
