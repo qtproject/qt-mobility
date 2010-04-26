@@ -730,10 +730,11 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
   }
  
   //Debugging
-  const char *queryString = e_book_query_to_string(query);
-  QCM5_DEBUG << "QUERY" << queryString;
-  FREE(queryString);
-  
+  if (QCM5_DEBUG_ENABLED){
+    const char *queryString = e_book_query_to_string(query);
+    QCM5_DEBUG << "QUERY" << queryString;
+    FREE(queryString);
+  }
   return query;
 } 
 
