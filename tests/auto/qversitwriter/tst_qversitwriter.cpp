@@ -222,7 +222,9 @@ END:VCARD\r\n");
     mOutputDevice->seek(0);
     QByteArray result(mOutputDevice->readAll());
     QCOMPARE(result, vCard30);
-
+    
+    qApp->processEvents(); // clean up before we start sniffing signals
+    
     // Asynchronous writing
     mOutputDevice->reset();
     mSignalCatcher->mReceived.clear();

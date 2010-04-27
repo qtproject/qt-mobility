@@ -16,7 +16,6 @@
 #include "qmessagefilter.h"
 #include "qmessagefilter_p.h"
 #include "qmessagefolderfilter_p.h"
-#include <QThread>
 #include <QObject>
 
 extern "C" {
@@ -30,35 +29,9 @@ extern "C" {
 
 QTM_BEGIN_NAMESPACE
 
-class EventLoggerEngine;
 
-class QueryThread : public QThread
+class EventLoggerEngine
 {
-    Q_OBJECT
-
-
-public:
-    QueryThread();
-    void setArgs(EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset);
-    void run();
-
- signals:
-    void completed();
- public:
-    EventLoggerEngine *_parent;
-    QMessageFilter _filter;
-    QString _body;
-    QMessageDataComparator::MatchFlags _matchFlags;
-    QMessageSortOrder _sortOrder;
-    uint _limit;
-    uint _offset;
-
-};
-
-
-class EventLoggerEngine:public QObject
-{
-    Q_OBJECT
     
 public:
 
@@ -79,24 +52,11 @@ public:
     QMessageIdList filterAndOrderMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
 				      QString body, QMessageDataComparator::MatchFlags matchFlags);
 
-    bool filterMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
-				      QString body, QMessageDataComparator::MatchFlags matchFlags);
-
-    QMessageIdList m_ids;
-
-
 signals:
-    void messagesFound(const QMessageIdList &,bool,bool);
-    void stateChanged(QMessageService::State);
+
 public slots:
-    void reportMatchingIds();
-    void messagesFound_(const QMessageIdList &ids);
-    void completed();
+
 private:
-    bool active;
-    QMessageService::State state;
-    //    EventLoggerThread queryThread;
-    QueryThread *queryThread;
     QMessageStorePrivate* ipMessageStorePrivate;
     void debugMessage(QMessage &message);
     RTComEl *el;

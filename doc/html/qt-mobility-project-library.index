@@ -43,7 +43,12 @@
             </enum>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactSaveRequest" href="qcontactsaverequest.html" location="qcontactsaverequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactSaveRequest" fullname="QContactSaveRequest::QContactSaveRequest" href="qcontactsaverequest.html#QContactSaveRequest" location="qcontactsaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactSaveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactSaveRequest" fullname="QContactSaveRequest::QContactSaveRequest" href="qcontactsaverequest.html#QContactSaveRequest" location="qcontactsaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactSaveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setContact" fullname="QContactSaveRequest::setContact" href="qcontactsaverequest.html#setContact" location="qcontactsaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setContact(const QContact &amp; contact)">
+                <parameter left="const QContact &amp;" right="" name="contact" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setContacts" fullname="QContactSaveRequest::setContacts" href="qcontactsaverequest.html#setContacts" location="qcontactsaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setContacts(const QList&lt;QContact&gt; &amp; contacts)">
                 <parameter left="const QList&lt;QContact&gt; &amp;" right="" name="contacts" default=""/>
             </function>
@@ -623,7 +628,7 @@
                 <parameter left="QMediaServiceProvider *" right="" name="provider" default="QMediaServiceProvider::defaultServiceProvider()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaPlayer" fullname="QMediaPlayer::~QMediaPlayer" href="qmediaplayer.html#dtor.QMediaPlayer" location="qmediaplayer.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaPlayer()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="hasSupport" fullname="QMediaPlayer::hasSupport" href="qmediaplayer.html#hasSupport" location="qmediaplayer.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QtMedia::SupportEstimate" signature="hasSupport(const QString &amp; mimeType, const QStringList &amp; codecs, QFlags&lt;QMediaPlayer::Flag&gt; flags)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasSupport" fullname="QMediaPlayer::hasSupport" href="qmediaplayer.html#hasSupport" location="qmediaplayer.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QtMediaServices::SupportEstimate" signature="hasSupport(const QString &amp; mimeType, const QStringList &amp; codecs, QFlags&lt;QMediaPlayer::Flag&gt; flags)">
                 <parameter left="const QString &amp;" right="" name="mimeType" default=""/>
                 <parameter left="const QStringList &amp;" right="" name="codecs" default="QStringList()"/>
                 <parameter left="QFlags&lt;QMediaPlayer::Flag&gt;" right="" name="flags" default="0"/>
@@ -705,6 +710,16 @@
                 <parameter left="QMediaPlayer::Error" right="" name="error" default=""/>
             </function>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QLatin1Constant" href="qlatin1constant.html" location="qtcontactsglobal.h" bases="" module="">
+            <variable access="public" threadsafety="unspecified" status="commendable" name="chars" fullname="QLatin1Constant::chars" href="qlatin1constant.html#chars-var" location="qtcontactsglobal.h" type="char[N]" static="false"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QLatin1Constant::operator==" href="qlatin1constant.html#operator==" location="qtcontactsglobal.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QLatin1Constant &amp; other) const">
+                <parameter left="const QLatin1Constant &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QLatin1Constant::operator!=" href="qlatin1constant.html#operator!=" location="qtcontactsglobal.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QLatin1Constant &amp; other) const">
+                <parameter left="const QLatin1Constant &amp;" right="" name="other" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="latin1" fullname="QLatin1Constant::latin1" href="qlatin1constant.html#latin1" location="qtcontactsglobal.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="const char *" signature="latin1() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDisplayLabel" href="qcontactdisplaylabel.html" location="qcontactdisplaylabel.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactDisplayLabel::DefinitionName" href="qcontactdisplaylabel.html#DefinitionName-var" location="qcontactdisplaylabel.h" type="const QLatin1Constant" static="true"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldLabel" fullname="QContactDisplayLabel::FieldLabel" href="qcontactdisplaylabel.html#FieldLabel-var" location="qcontactdisplaylabel.h" type="const QLatin1Constant" static="true"/>
@@ -714,7 +729,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipFetchRequest" href="qcontactrelationshipfetchrequest.html" location="qcontactrelationshipfetchrequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipFetchRequest" fullname="QContactRelationshipFetchRequest::QContactRelationshipFetchRequest" href="qcontactrelationshipfetchrequest.html#QContactRelationshipFetchRequest" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipFetchRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipFetchRequest" fullname="QContactRelationshipFetchRequest::QContactRelationshipFetchRequest" href="qcontactrelationshipfetchrequest.html#QContactRelationshipFetchRequest" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipFetchRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setFirst" fullname="QContactRelationshipFetchRequest::setFirst" href="qcontactrelationshipfetchrequest.html#setFirst" location="qcontactrelationshipfetchrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFirst(const QContactId &amp; firstId)">
                 <parameter left="const QContactId &amp;" right="" name="firstId" default=""/>
             </function>
@@ -811,9 +828,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="streamType" fullname="QMediaStreamsControl::streamType" href="qmediastreamscontrol.html#streamType" location="qmediastreamscontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="StreamType" signature="streamType(int stream)">
                 <parameter left="int" right="" name="stream" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="metaData" fullname="QMediaStreamsControl::metaData" href="qmediastreamscontrol.html#metaData" location="qmediastreamscontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QVariant" signature="metaData(int stream, QtMedia::MetaData key)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="metaData" fullname="QMediaStreamsControl::metaData" href="qmediastreamscontrol.html#metaData" location="qmediastreamscontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QVariant" signature="metaData(int stream, QtMediaServices::MetaData key)">
                 <parameter left="int" right="" name="stream" default=""/>
-                <parameter left="QtMedia::MetaData" right="" name="key" default=""/>
+                <parameter left="QtMediaServices::MetaData" right="" name="key" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isActive" fullname="QMediaStreamsControl::isActive" href="qmediastreamscontrol.html#isActive" location="qmediastreamscontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="isActive(int stream)">
                 <parameter left="int" right="" name="stream" default=""/>
@@ -960,7 +977,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="path" fullname="QMessageFolder::path" href="qmessagefolder.html#path" location="qmessagefolder_maemo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="path() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactFetchRequest" href="qcontactfetchrequest.html" location="qcontactfetchrequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactFetchRequest" fullname="QContactFetchRequest::QContactFetchRequest" href="qcontactfetchrequest.html#QContactFetchRequest" location="qcontactfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactFetchRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactFetchRequest" fullname="QContactFetchRequest::QContactFetchRequest" href="qcontactfetchrequest.html#QContactFetchRequest" location="qcontactfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactFetchRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setFilter" fullname="QContactFetchRequest::setFilter" href="qcontactfetchrequest.html#setFilter" location="qcontactfetchrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFilter(const QContactFilter &amp; filter)">
                 <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
             </function>
@@ -1470,7 +1489,12 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="resultsAvailable" fullname="QVersitReader::resultsAvailable" href="qversitreader.html#resultsAvailable" location="qversitreader.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="resultsAvailable()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipRemoveRequest" href="qcontactrelationshipremoverequest.html" location="qcontactrelationshipremoverequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipRemoveRequest" fullname="QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest" href="qcontactrelationshipremoverequest.html#QContactRelationshipRemoveRequest" location="qcontactrelationshipremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipRemoveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipRemoveRequest" fullname="QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest" href="qcontactrelationshipremoverequest.html#QContactRelationshipRemoveRequest" location="qcontactrelationshipremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipRemoveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRelationship" fullname="QContactRelationshipRemoveRequest::setRelationship" href="qcontactrelationshipremoverequest.html#setRelationship" location="qcontactrelationshipremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRelationship(const QContactRelationship &amp; relationship)">
+                <parameter left="const QContactRelationship &amp;" right="" name="relationship" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setRelationships" fullname="QContactRelationshipRemoveRequest::setRelationships" href="qcontactrelationshipremoverequest.html#setRelationships" location="qcontactrelationshipremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRelationships(const QList&lt;QContactRelationship&gt; &amp; relationships)">
                 <parameter left="const QList&lt;QContactRelationship&gt; &amp;" right="" name="relationships" default=""/>
             </function>
@@ -1480,7 +1504,7 @@
         <class access="public" threadsafety="unspecified" status="preliminary" name="QRadioTunerControl" href="qradiotunercontrol.html" location="qradiotunercontrol.h" bases="QMediaControl" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QRadioTunerControl" fullname="QRadioTunerControl::~QRadioTunerControl" href="qradiotunercontrol.html#dtor.QRadioTunerControl" location="qradiotunercontrol.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QRadioTunerControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QRadioTunerControl::isAvailable" href="qradiotunercontrol.html#isAvailable" location="qradiotunercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isAvailable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QRadioTunerControl::availabilityError" href="qradiotunercontrol.html#availabilityError" location="qradiotunercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QtMedia::AvailabilityError" signature="availabilityError() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QRadioTunerControl::availabilityError" href="qradiotunercontrol.html#availabilityError" location="qradiotunercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::AvailabilityError" signature="availabilityError() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QRadioTunerControl::state" href="qradiotunercontrol.html#state" location="qradiotunercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QRadioTuner::State" signature="state() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="band" fullname="QRadioTunerControl::band" href="qradiotunercontrol.html#band" location="qradiotunercontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QRadioTuner::Band" signature="band() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setBand" fullname="QRadioTunerControl::setBand" href="qradiotunercontrol.html#setBand" location="qradiotunercontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setBand(QRadioTuner::Band band)">
@@ -1554,7 +1578,7 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QMediaServiceSupportedFormatsInterface" href="qmediaservicesupportedformatsinterface.html" location="qmediaserviceproviderplugin.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaServiceSupportedFormatsInterface" fullname="QMediaServiceSupportedFormatsInterface::~QMediaServiceSupportedFormatsInterface" href="qmediaservicesupportedformatsinterface.html#dtor.QMediaServiceSupportedFormatsInterface" location="qmediaserviceproviderplugin.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaServiceSupportedFormatsInterface()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="hasSupport" fullname="QMediaServiceSupportedFormatsInterface::hasSupport" href="qmediaservicesupportedformatsinterface.html#hasSupport" location="qmediaserviceproviderplugin.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QtMedia::SupportEstimate" signature="hasSupport(const QString &amp; mimeType, const QStringList &amp; codecs) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasSupport" fullname="QMediaServiceSupportedFormatsInterface::hasSupport" href="qmediaservicesupportedformatsinterface.html#hasSupport" location="qmediaserviceproviderplugin.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::SupportEstimate" signature="hasSupport(const QString &amp; mimeType, const QStringList &amp; codecs) const">
                 <parameter left="const QString &amp;" right="" name="mimeType" default=""/>
                 <parameter left="const QStringList &amp;" right="" name="codecs" default=""/>
             </function>
@@ -1916,42 +1940,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMessageId::isValid" href="qmessageid.html#isValid" location="qmessageid_stub.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageIdList" href="#QMessageIdList-typedef" location="qmessageid.h"/>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QContactActionDescriptor" href="qcontactactiondescriptor.html" location="qcontactactiondescriptor.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionDescriptor" fullname="QContactActionDescriptor::QContactActionDescriptor" href="qcontactactiondescriptor.html#QContactActionDescriptor" location="qcontactactiondescriptor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactActionDescriptor(const QString &amp; actionName, const QString &amp; vendorName, int vendorVersion)">
-                <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
-                <parameter left="const QString &amp;" right="" name="vendorName" default="QString()"/>
-                <parameter left="int" right="" name="vendorVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionDescriptor" fullname="QContactActionDescriptor::QContactActionDescriptor" href="qcontactactiondescriptor.html#QContactActionDescriptor-2" location="qcontactactiondescriptor.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactActionDescriptor(const QContactActionDescriptor &amp; other)">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QContactActionDescriptor::operator=" href="qcontactactiondescriptor.html#operator=" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContactActionDescriptor &amp;" signature="operator=(const QContactActionDescriptor &amp; other)">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactActionDescriptor" fullname="QContactActionDescriptor::~QContactActionDescriptor" href="qcontactactiondescriptor.html#dtor.QContactActionDescriptor" location="qcontactactiondescriptor.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactActionDescriptor()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QContactActionDescriptor::isEmpty" href="qcontactactiondescriptor.html#isEmpty" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactActionDescriptor::operator==" href="qcontactactiondescriptor.html#operator==" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactActionDescriptor &amp; other) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QContactActionDescriptor::operator!=" href="qcontactactiondescriptor.html#operator!=" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QContactActionDescriptor &amp; other) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;" fullname="QContactActionDescriptor::operator&lt;" href="qcontactactiondescriptor.html#operator&lt;" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator&lt;(const QContactActionDescriptor &amp; other) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setActionName" fullname="QContactActionDescriptor::setActionName" href="qcontactactiondescriptor.html#setActionName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setActionName(const QString &amp; actionName)">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setVendorName" fullname="QContactActionDescriptor::setVendorName" href="qcontactactiondescriptor.html#setVendorName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVendorName(const QString &amp; vendorName)">
-                <parameter left="const QString &amp;" right="" name="vendorName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setImplementationVersion" fullname="QContactActionDescriptor::setImplementationVersion" href="qcontactactiondescriptor.html#setImplementationVersion" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setImplementationVersion(int implementationVersion)">
-                <parameter left="int" right="" name="implementationVersion" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionName" fullname="QContactActionDescriptor::actionName" href="qcontactactiondescriptor.html#actionName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="actionName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="vendorName" fullname="QContactActionDescriptor::vendorName" href="qcontactactiondescriptor.html#vendorName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="vendorName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="implementationVersion" fullname="QContactActionDescriptor::implementationVersion" href="qcontactactiondescriptor.html#implementationVersion" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="implementationVersion() const"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" href="qcontactchangelogfilter.html" location="qcontactchangelogfilter.h" bases="QContactFilter" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="EventType" fullname="QContactChangeLogFilter::EventType" href="qcontactchangelogfilter.html#EventType-enum" location="qcontactchangelogfilter.h">
                 <value name="EventAdded" value="0"/>
@@ -1997,7 +1985,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaRecorder" fullname="QMediaRecorder::~QMediaRecorder" href="qmediarecorder.html#dtor.QMediaRecorder" location="qmediarecorder.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaRecorder()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QMediaRecorder::isAvailable" href="qmediarecorder.html#isAvailable" location="qmediarecorder.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isAvailable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QMediaRecorder::availabilityError" href="qmediarecorder.html#availabilityError" location="qmediarecorder.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMedia::AvailabilityError" signature="availabilityError() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QMediaRecorder::availabilityError" href="qmediarecorder.html#availabilityError" location="qmediarecorder.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::AvailabilityError" signature="availabilityError() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="outputLocation" fullname="QMediaRecorder::outputLocation" href="qmediarecorder.html#outputLocation-prop" location="qmediarecorder.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="outputLocation" type="QUrl" signature="outputLocation() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setOutputLocation" fullname="QMediaRecorder::setOutputLocation" href="qmediarecorder.html#outputLocation-prop" location="qmediarecorder.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="outputLocation" type="bool" signature="setOutputLocation(const QUrl &amp; location)">
                 <parameter left="const QUrl &amp;" right="" name="location" default=""/>
@@ -2052,12 +2040,19 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionRemoveRequest" href="qcontactdetaildefinitionremoverequest.html" location="qcontactdetaildefinitionremoverequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionRemoveRequest" fullname="QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest" href="qcontactdetaildefinitionremoverequest.html#QContactDetailDefinitionRemoveRequest" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionRemoveRequest()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setDefinitionNames" fullname="QContactDetailDefinitionRemoveRequest::setDefinitionNames" href="qcontactdetaildefinitionremoverequest.html#setDefinitionNames" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefinitionNames(const QString &amp; contactType, const QStringList &amp; names)">
-                <parameter left="const QString &amp;" right="" name="contactType" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionRemoveRequest" fullname="QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest" href="qcontactdetaildefinitionremoverequest.html#QContactDetailDefinitionRemoveRequest" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionRemoveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDefinitionName" fullname="QContactDetailDefinitionRemoveRequest::setDefinitionName" href="qcontactdetaildefinitionremoverequest.html#setDefinitionName" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefinitionName(const QString &amp; definitionName)">
+                <parameter left="const QString &amp;" right="" name="definitionName" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDefinitionNames" fullname="QContactDetailDefinitionRemoveRequest::setDefinitionNames" href="qcontactdetaildefinitionremoverequest.html#setDefinitionNames" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefinitionNames(const QStringList &amp; names)">
                 <parameter left="const QStringList &amp;" right="" name="names" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="definitionNames" fullname="QContactDetailDefinitionRemoveRequest::definitionNames" href="qcontactdetaildefinitionremoverequest.html#definitionNames" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="definitionNames() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setContactType" fullname="QContactDetailDefinitionRemoveRequest::setContactType" href="qcontactdetaildefinitionremoverequest.html#setContactType" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setContactType(const QString &amp; contactType)">
+                <parameter left="const QString &amp;" right="" name="contactType" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="contactType" fullname="QContactDetailDefinitionRemoveRequest::contactType" href="qcontactdetaildefinitionremoverequest.html#contactType" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="contactType() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactDetailDefinitionRemoveRequest::errorMap" href="qcontactdetaildefinitionremoverequest.html#errorMap" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
         </class>
@@ -2299,32 +2294,17 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRemoveRequest" href="qcontactremoverequest.html" location="qcontactremoverequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactRemoveRequest" fullname="QContactRemoveRequest::QContactRemoveRequest" href="qcontactremoverequest.html#QContactRemoveRequest" location="qcontactremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRemoveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactRemoveRequest" fullname="QContactRemoveRequest::QContactRemoveRequest" href="qcontactremoverequest.html#QContactRemoveRequest" location="qcontactremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRemoveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setContactId" fullname="QContactRemoveRequest::setContactId" href="qcontactremoverequest.html#setContactId" location="qcontactremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setContactId(const QContactLocalId &amp; contactId)">
+                <parameter left="const QContactLocalId &amp;" right="" name="contactId" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setContactIds" fullname="QContactRemoveRequest::setContactIds" href="qcontactremoverequest.html#setContactIds" location="qcontactremoverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setContactIds(const QList&lt;QContactLocalId&gt; &amp; contactIds)">
                 <parameter left="const QList&lt;QContactLocalId&gt; &amp;" right="" name="contactIds" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="contactIds" fullname="QContactRemoveRequest::contactIds" href="qcontactremoverequest.html#contactIds" location="qcontactremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactLocalId&gt;" signature="contactIds() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactRemoveRequest::errorMap" href="qcontactremoverequest.html#errorMap" location="qcontactremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" href="qcontactactionfilter.html" location="qcontactactionfilter.h" bases="QContactFilter" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" fullname="QContactActionFilter::QContactActionFilter" href="qcontactactionfilter.html#QContactActionFilter" location="qcontactactionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactActionFilter()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" fullname="QContactActionFilter::QContactActionFilter" href="qcontactactionfilter.html#QContactActionFilter-2" location="qcontactactionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactActionFilter(const QContactFilter &amp; other)">
-                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setActionName" fullname="QContactActionFilter::setActionName" href="qcontactactionfilter.html#setActionName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setActionName(const QString &amp; action)">
-                <parameter left="const QString &amp;" right="" name="action" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QContactActionFilter::setValue" href="qcontactactionfilter.html#setValue" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setValue(const QVariant &amp; value)">
-                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setVendor" fullname="QContactActionFilter::setVendor" href="qcontactactionfilter.html#setVendor" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVendor(const QString &amp; vendorName, int implementationVersion)">
-                <parameter left="const QString &amp;" right="" name="vendorName" default=""/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionName" fullname="QContactActionFilter::actionName" href="qcontactactionfilter.html#actionName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="actionName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactActionFilter::value" href="qcontactactionfilter.html#value" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="vendorName" fullname="QContactActionFilter::vendorName" href="qcontactactionfilter.html#vendorName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="vendorName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="implementationVersion" fullname="QContactActionFilter::implementationVersion" href="qcontactactionfilter.html#implementationVersion" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="implementationVersion() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfiguration" href="qnetworkconfiguration.html" location="qnetworkconfiguration.h" bases="" module="QtNetwork">
             <contents name="configuration-states" title="Configuration states" level="1"/>
@@ -2407,46 +2387,25 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactDetail&gt;" signature="details(const QString &amp; definitionName) const">
                 <parameter left="const QString &amp;" right="" name="definitionName" default="QString()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="detailWithAction" fullname="QContact::detailWithAction" href="qcontact.html#detailWithAction" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactDetail" signature="detailWithAction(const QString &amp; actionName) const">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="detailsWithAction" fullname="QContact::detailsWithAction" href="qcontact.html#detailsWithAction" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactDetail&gt;" signature="detailsWithAction(const QString &amp; actionName) const">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-2" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QList&lt;QContactDetail&gt;" signature="details(const QString &amp; definitionName, const QString &amp; fieldName, const QString &amp; value) const">
                 <parameter left="const QString &amp;" right="" name="definitionName" default=""/>
                 <parameter left="const QString &amp;" right="" name="fieldName" default=""/>
                 <parameter left="const QString &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="detail" fullname="QContact::detail" href="qcontact.html#detail-2" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QContactDetail" signature="detail(const char * definitionName) const">
-                <parameter left="const char *" right="" name="definitionName" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="detail" fullname="QContact::detail" href="qcontact.html#detail-3" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QContactDetail" signature="detail(const QLatin1Constant &amp; definitionName) const">
+                <parameter left="const QLatin1Constant &amp;" right="" name="definitionName" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-3" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QList&lt;QContactDetail&gt;" signature="details(const char * definitionName) const">
-                <parameter left="const char *" right="" name="definitionName" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-5" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="5" type="QList&lt;QContactDetail&gt;" signature="details(const QLatin1Constant &amp; definitionName) const">
+                <parameter left="const QLatin1Constant &amp;" right="" name="definitionName" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-4" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="4" type="QList&lt;QContactDetail&gt;" signature="details(const char * definitionName, const char * fieldName, const QString &amp; value) const">
-                <parameter left="const char *" right="" name="definitionName" default=""/>
-                <parameter left="const char *" right="" name="fieldName" default=""/>
-                <parameter left="const QString &amp;" right="" name="value" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="detail" fullname="QContact::detail" href="qcontact.html#detail-3" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QContactDetail" signature="detail(const QLatin1Constant&lt;N&gt; &amp; definitionName) const">
-                <parameter left="const QLatin1Constant&lt;N&gt; &amp;" right="" name="definitionName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-5" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="5" type="QList&lt;QContactDetail&gt;" signature="details(const QLatin1Constant&lt;N&gt; &amp; definitionName) const">
-                <parameter left="const QLatin1Constant&lt;N&gt; &amp;" right="" name="definitionName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-6" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="6" type="QList&lt;QContactDetail&gt;" signature="details(const QLatin1Constant&lt;N&gt; &amp; definitionName, const QLatin1Constant&lt;M&gt; &amp; fieldName, const QString &amp; value)">
-                <parameter left="const QLatin1Constant&lt;N&gt; &amp;" right="" name="definitionName" default=""/>
-                <parameter left="const QLatin1Constant&lt;M&gt; &amp;" right="" name="fieldName" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-6" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="6" type="QList&lt;QContactDetail&gt;" signature="details(const QLatin1Constant &amp; definitionName, const QLatin1Constant &amp; fieldName, const QString &amp; value)">
+                <parameter left="const QLatin1Constant &amp;" right="" name="definitionName" default=""/>
+                <parameter left="const QLatin1Constant &amp;" right="" name="fieldName" default=""/>
                 <parameter left="const QString &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-7" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="7" type="QList&lt;T&gt;" signature="details() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-8" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="8" type="QList&lt;T&gt;" signature="details(const QString &amp; fieldName, const QString &amp; value) const">
                 <parameter left="const QString &amp;" right="" name="fieldName" default=""/>
-                <parameter left="const QString &amp;" right="" name="value" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-9" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="9" type="QList&lt;T&gt;" signature="details(const char * fieldName, const QString &amp; value) const">
-                <parameter left="const char *" right="" name="fieldName" default=""/>
                 <parameter left="const QString &amp;" right="" name="value" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="detail" fullname="QContact::detail" href="qcontact.html#detail-4" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="4" type="T" signature="detail() const"/>
@@ -2456,29 +2415,13 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="removeDetail" fullname="QContact::removeDetail" href="qcontact.html#removeDetail" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="removeDetail(QContactDetail * detail)">
                 <parameter left="QContactDetail *" right="" name="detail" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="preliminary" name="relationships" fullname="QContact::relationships" href="qcontact.html#relationships" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactRelationship&gt;" signature="relationships(const QString &amp; relationshipType) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="relationships" fullname="QContact::relationships" href="qcontact.html#relationships" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactRelationship&gt;" signature="relationships(const QString &amp; relationshipType) const">
                 <parameter left="const QString &amp;" right="" name="relationshipType" default="QString()"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="relatedContacts" fullname="QContact::relatedContacts" href="qcontact.html#relatedContacts" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactId&gt;" signature="relatedContacts(const QString &amp; relationshipType, QContactRelationship::Role role) const">
                 <parameter left="const QString &amp;" right="" name="relationshipType" default="QString()"/>
                 <parameter left="QContactRelationship::Role" right="" name="role" default="QContactRelationship::Either"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availableActions" fullname="QContact::availableActions" href="qcontact.html#availableActions" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactActionDescriptor&gt;" signature="availableActions(const QString &amp; vendorName, int implementationVersion) const">
-                <parameter left="const QString &amp;" right="" name="vendorName" default="QString()"/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="preliminary" name="setPreferredDetail" fullname="QContact::setPreferredDetail" href="qcontact.html#setPreferredDetail" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setPreferredDetail(const QString &amp; actionName, const QContactDetail &amp; preferredDetail)">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-                <parameter left="const QContactDetail &amp;" right="" name="preferredDetail" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="preliminary" name="isPreferredDetail" fullname="QContact::isPreferredDetail" href="qcontact.html#isPreferredDetail" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isPreferredDetail(const QString &amp; actionName, const QContactDetail &amp; detail) const">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-                <parameter left="const QContactDetail &amp;" right="" name="detail" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="preliminary" name="preferredDetail" fullname="QContact::preferredDetail" href="qcontact.html#preferredDetail" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactDetail" signature="preferredDetail(const QString &amp; actionName) const">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="preliminary" name="preferredDetails" fullname="QContact::preferredDetails" href="qcontact.html#preferredDetails" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QContactDetail&gt;" signature="preferredDetails() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitProperty" href="qversitproperty.html" location="qversitproperty.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="ValueType" fullname="QVersitProperty::ValueType" href="qversitproperty.html#ValueType-enum" location="qversitproperty.h">
@@ -2593,51 +2536,6 @@
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QGraphicsVideoItem::d_ptr" href="qgraphicsvideoitem.html#d_ptr-var" location="qgraphicsvideoitem.h" type="QGraphicsVideoItemPrivate *" static="false"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QContactAction" href="qcontactaction.html" location="qcontactaction.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="availableActions" fullname="QContactAction::availableActions" href="qcontactaction.html#availableActions" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="availableActions(const QString &amp; vendor, int implementationVersion)">
-                <parameter left="const QString &amp;" right="" name="vendor" default="QString()"/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptors" fullname="QContactAction::actionDescriptors" href="qcontactaction.html#actionDescriptors" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactActionDescriptor&gt;" signature="actionDescriptors(const QString &amp; actionName, const QString &amp; vendorName, int implementationVersion)">
-                <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
-                <parameter left="const QString &amp;" right="" name="vendorName" default="QString()"/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="action" fullname="QContactAction::action" href="qcontactaction.html#action" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactAction *" signature="action(const QContactActionDescriptor &amp; descriptor)">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactAction" fullname="QContactAction::~QContactAction" href="qcontactaction.html#dtor.QContactAction" location="qcontactaction.cpp" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactAction()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptor" fullname="QContactAction::actionDescriptor" href="qcontactaction.html#actionDescriptor" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QContactActionDescriptor" signature="actionDescriptor() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="metaData" fullname="QContactAction::metaData" href="qcontactaction.html#metaData" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="metaData() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="contactFilter" fullname="QContactAction::contactFilter" href="qcontactaction.html#contactFilter" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QContactFilter" signature="contactFilter(const QVariant &amp; value) const">
-                <parameter left="const QVariant &amp;" right="" name="value" default="QVariant()"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isDetailSupported" fullname="QContactAction::isDetailSupported" href="qcontactaction.html#isDetailSupported" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isDetailSupported(const QContactDetail &amp; detail, const QContact &amp; contact) const">
-                <parameter left="const QContactDetail &amp;" right="" name="detail" default=""/>
-                <parameter left="const QContact &amp;" right="" name="contact" default="QContact()"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="supportedDetails" fullname="QContactAction::supportedDetails" href="qcontactaction.html#supportedDetails" location="qcontactaction.cpp" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactDetail&gt;" signature="supportedDetails(const QContact &amp; contact) const">
-                <parameter left="const QContact &amp;" right="" name="contact" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="invokeAction" fullname="QContactAction::invokeAction" href="qcontactaction.html#invokeAction" location="qcontactaction.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="invokeAction(const QContact &amp; contact, const QContactDetail &amp; detail, const QVariantMap &amp; parameters)">
-                <parameter left="const QContact &amp;" right="" name="contact" default=""/>
-                <parameter left="const QContactDetail &amp;" right="" name="detail" default="QContactDetail()"/>
-                <parameter left="const QVariantMap &amp;" right="" name="parameters" default="QVariantMap()"/>
-            </function>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QContactAction::State" href="qcontactaction.html#State-enum" location="qcontactaction.h">
-                <value name="InactiveState" value="0"/>
-                <value name="ActiveState" value="1"/>
-                <value name="FinishedState" value="2"/>
-                <value name="FinishedDetachedState" value="3"/>
-                <value name="FinishedWithErrorState" value="4"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QContactAction::state" href="qcontactaction.html#state" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="State" signature="state() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="results" fullname="QContactAction::results" href="qcontactaction.html#results" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="results() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QContactAction::stateChanged" href="qcontactaction.html#stateChanged" location="qcontactaction.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QContactAction::State newState)">
-                <parameter left="QContactAction::State" right="" name="newState" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="resultsAvailable" fullname="QContactAction::resultsAvailable" href="qcontactaction.html#resultsAvailable" location="qcontactaction.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="resultsAvailable()"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactFetchHint" href="qcontactfetchhint.html" location="qcontactfetchhint.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactFetchHint" fullname="QContactFetchHint::QContactFetchHint" href="qcontactfetchhint.html#QContactFetchHint" location="qcontactfetchhint.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactFetchHint()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactFetchHint" fullname="QContactFetchHint::QContactFetchHint" href="qcontactfetchhint.html#QContactFetchHint-2" location="qcontactfetchhint.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactFetchHint(const QContactFetchHint &amp; other)">
@@ -2750,7 +2648,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="releaseService" fullname="QMediaServiceProvider::releaseService" href="qmediaserviceprovider.html#releaseService" location="qmediaserviceprovider.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="releaseService(QMediaService * service)">
                 <parameter left="QMediaService *" right="" name="service" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="hasSupport" fullname="QMediaServiceProvider::hasSupport" href="qmediaserviceprovider.html#hasSupport" location="qmediaserviceprovider.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMedia::SupportEstimate" signature="hasSupport(const QByteArray &amp; serviceType, const QString &amp; mimeType, const QStringList &amp; codecs, int flags) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasSupport" fullname="QMediaServiceProvider::hasSupport" href="qmediaserviceprovider.html#hasSupport" location="qmediaserviceprovider.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::SupportEstimate" signature="hasSupport(const QByteArray &amp; serviceType, const QString &amp; mimeType, const QStringList &amp; codecs, int flags) const">
                 <parameter left="const QByteArray &amp;" right="" name="serviceType" default=""/>
                 <parameter left="const QString &amp;" right="" name="mimeType" default=""/>
                 <parameter left="const QStringList &amp;" right="" name="codecs" default=""/>
@@ -2792,7 +2690,9 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" href="qcontactabstractrequest.html" location="qcontactabstractrequest.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" fullname="QContactAbstractRequest::QContactAbstractRequest" href="qcontactabstractrequest.html#QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactAbstractRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" fullname="QContactAbstractRequest::QContactAbstractRequest" href="qcontactabstractrequest.html#QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactAbstractRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactAbstractRequest" fullname="QContactAbstractRequest::~QContactAbstractRequest" href="qcontactabstractrequest.html#dtor.QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactAbstractRequest()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QContactAbstractRequest::State" href="qcontactabstractrequest.html#State-enum" location="qcontactabstractrequest.h">
                 <value name="InactiveState" value="0"/>
@@ -2924,8 +2824,11 @@
             <function access="public" threadsafety="unspecified" status="preliminary" name="compatibleContact" fullname="QContactManager::compatibleContact" href="qcontactmanager.html#compatibleContact" location="qcontactmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContact" signature="compatibleContact(const QContact &amp; original)">
                 <parameter left="const QContact &amp;" right="" name="original" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="synthesizedDisplayLabel" fullname="QContactManager::synthesizedDisplayLabel" href="qcontactmanager.html#synthesizedDisplayLabel" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="synthesizedDisplayLabel(const QContact &amp; contact) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="synthesizedContactDisplayLabel" fullname="QContactManager::synthesizedContactDisplayLabel" href="qcontactmanager.html#synthesizedContactDisplayLabel" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="synthesizedContactDisplayLabel(const QContact &amp; contact) const">
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="synthesizeContactDisplayLabel" fullname="QContactManager::synthesizeContactDisplayLabel" href="qcontactmanager.html#synthesizeContactDisplayLabel" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="void" signature="synthesizeContactDisplayLabel(QContact * contact) const">
+                <parameter left="QContact *" right="" name="contact" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setSelfContactId" fullname="QContactManager::setSelfContactId" href="qcontactmanager.html#setSelfContactId" location="qcontactmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setSelfContactId(const QContactLocalId &amp; contactId)">
                 <parameter left="const QContactLocalId &amp;" right="" name="contactId" default=""/>
@@ -3642,14 +3545,14 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMetaDataControl" fullname="QMetaDataControl::~QMetaDataControl" href="qmetadatacontrol.html#dtor.QMetaDataControl" location="qmetadatacontrol.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMetaDataControl()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isWritable" fullname="QMetaDataControl::isWritable" href="qmetadatacontrol.html#isWritable" location="qmetadatacontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isWritable() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isMetaDataAvailable" fullname="QMetaDataControl::isMetaDataAvailable" href="qmetadatacontrol.html#isMetaDataAvailable" location="qmetadatacontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isMetaDataAvailable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="metaData" fullname="QMetaDataControl::metaData" href="qmetadatacontrol.html#metaData" location="qmetadatacontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="metaData(QtMedia::MetaData key) const">
-                <parameter left="QtMedia::MetaData" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="metaData" fullname="QMetaDataControl::metaData" href="qmetadatacontrol.html#metaData" location="qmetadatacontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="metaData(QtMediaServices::MetaData key) const">
+                <parameter left="QtMediaServices::MetaData" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMetaData" fullname="QMetaDataControl::setMetaData" href="qmetadatacontrol.html#setMetaData" location="qmetadatacontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setMetaData(QtMedia::MetaData key, const QVariant &amp; value)">
-                <parameter left="QtMedia::MetaData" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMetaData" fullname="QMetaDataControl::setMetaData" href="qmetadatacontrol.html#setMetaData" location="qmetadatacontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setMetaData(QtMediaServices::MetaData key, const QVariant &amp; value)">
+                <parameter left="QtMediaServices::MetaData" right="" name="key" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availableMetaData" fullname="QMetaDataControl::availableMetaData" href="qmetadatacontrol.html#availableMetaData" location="qmetadatacontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QtMedia::MetaData&gt;" signature="availableMetaData() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availableMetaData" fullname="QMetaDataControl::availableMetaData" href="qmetadatacontrol.html#availableMetaData" location="qmetadatacontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QtMediaServices::MetaData&gt;" signature="availableMetaData() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="extendedMetaData" fullname="QMetaDataControl::extendedMetaData" href="qmetadatacontrol.html#extendedMetaData" location="qmetadatacontrol.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="extendedMetaData(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
@@ -4019,9 +3922,6 @@
                 <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="validateActionFilter" fullname="QContactManagerEngine::validateActionFilter" href="qcontactmanagerengine.html#validateActionFilter" location="qcontactmanagerengine.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="bool" signature="validateActionFilter(const QContactFilter &amp; filter)">
-                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="sortContacts" fullname="QContactManagerEngine::sortContacts" href="qcontactmanagerengine.html#sortContacts" location="qcontactmanagerengine.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactLocalId&gt;" signature="sortContacts(const QList&lt;QContact&gt; &amp; cs, const QList&lt;QContactSortOrder&gt; &amp; sortOrders)">
                 <parameter left="const QList&lt;QContact&gt; &amp;" right="" name="cs" default=""/>
                 <parameter left="const QList&lt;QContactSortOrder&gt; &amp;" right="" name="sortOrders" default=""/>
@@ -4054,9 +3954,9 @@
                 <parameter left="const QAudioEncoderSettings &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QAudioEncoderSettings::isNull" href="qaudioencodersettings.html#isNull" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="encodingMode" fullname="QAudioEncoderSettings::encodingMode" href="qaudioencodersettings.html#encodingMode" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMedia::EncodingMode" signature="encodingMode() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setEncodingMode" fullname="QAudioEncoderSettings::setEncodingMode" href="qaudioencodersettings.html#setEncodingMode" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setEncodingMode(QtMedia::EncodingMode mode)">
-                <parameter left="QtMedia::EncodingMode" right="" name="mode" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="encodingMode" fullname="QAudioEncoderSettings::encodingMode" href="qaudioencodersettings.html#encodingMode" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::EncodingMode" signature="encodingMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setEncodingMode" fullname="QAudioEncoderSettings::setEncodingMode" href="qaudioencodersettings.html#setEncodingMode" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setEncodingMode(QtMediaServices::EncodingMode mode)">
+                <parameter left="QtMediaServices::EncodingMode" right="" name="mode" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="codec" fullname="QAudioEncoderSettings::codec" href="qaudioencodersettings.html#codec" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="codec() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCodec" fullname="QAudioEncoderSettings::setCodec" href="qaudioencodersettings.html#setCodec" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCodec(const QString &amp; codec)">
@@ -4074,9 +3974,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setSampleRate" fullname="QAudioEncoderSettings::setSampleRate" href="qaudioencodersettings.html#setSampleRate" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSampleRate(int rate)">
                 <parameter left="int" right="" name="rate" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="quality" fullname="QAudioEncoderSettings::quality" href="qaudioencodersettings.html#quality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMedia::EncodingQuality" signature="quality() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setQuality" fullname="QAudioEncoderSettings::setQuality" href="qaudioencodersettings.html#setQuality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setQuality(QtMedia::EncodingQuality quality)">
-                <parameter left="QtMedia::EncodingQuality" right="" name="quality" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="quality" fullname="QAudioEncoderSettings::quality" href="qaudioencodersettings.html#quality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::EncodingQuality" signature="quality() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setQuality" fullname="QAudioEncoderSettings::setQuality" href="qaudioencodersettings.html#setQuality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setQuality(QtMediaServices::EncodingQuality quality)">
+                <parameter left="QtMediaServices::EncodingQuality" right="" name="quality" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVideoEncoderSettings" href="qvideoencodersettings.html" location="qmediaencodersettings.h" bases="" module="">
@@ -4095,9 +3995,9 @@
                 <parameter left="const QVideoEncoderSettings &amp;" right="" name="other" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isNull" fullname="QVideoEncoderSettings::isNull" href="qvideoencodersettings.html#isNull" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isNull() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="encodingMode" fullname="QVideoEncoderSettings::encodingMode" href="qvideoencodersettings.html#encodingMode" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMedia::EncodingMode" signature="encodingMode() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setEncodingMode" fullname="QVideoEncoderSettings::setEncodingMode" href="qvideoencodersettings.html#setEncodingMode" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setEncodingMode(QtMedia::EncodingMode mode)">
-                <parameter left="QtMedia::EncodingMode" right="" name="mode" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="encodingMode" fullname="QVideoEncoderSettings::encodingMode" href="qvideoencodersettings.html#encodingMode" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::EncodingMode" signature="encodingMode() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setEncodingMode" fullname="QVideoEncoderSettings::setEncodingMode" href="qvideoencodersettings.html#setEncodingMode" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setEncodingMode(QtMediaServices::EncodingMode mode)">
+                <parameter left="QtMediaServices::EncodingMode" right="" name="mode" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="codec" fullname="QVideoEncoderSettings::codec" href="qvideoencodersettings.html#codec" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="codec() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setCodec" fullname="QVideoEncoderSettings::setCodec" href="qvideoencodersettings.html#setCodec" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCodec(const QString &amp; codec)">
@@ -4119,9 +4019,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setBitRate" fullname="QVideoEncoderSettings::setBitRate" href="qvideoencodersettings.html#setBitRate" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setBitRate(int value)">
                 <parameter left="int" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="quality" fullname="QVideoEncoderSettings::quality" href="qvideoencodersettings.html#quality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMedia::EncodingQuality" signature="quality() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setQuality" fullname="QVideoEncoderSettings::setQuality" href="qvideoencodersettings.html#setQuality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setQuality(QtMedia::EncodingQuality quality)">
-                <parameter left="QtMedia::EncodingQuality" right="" name="quality" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="quality" fullname="QVideoEncoderSettings::quality" href="qvideoencodersettings.html#quality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::EncodingQuality" signature="quality() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setQuality" fullname="QVideoEncoderSettings::setQuality" href="qvideoencodersettings.html#setQuality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setQuality(QtMediaServices::EncodingQuality quality)">
+                <parameter left="QtMediaServices::EncodingQuality" right="" name="quality" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QImageEncoderSettings" href="qimageencodersettings.html" location="qmediaencodersettings.h" bases="" module="">
@@ -4152,9 +4052,9 @@
                 <parameter left="int" right="" name="width" default=""/>
                 <parameter left="int" right="" name="height" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="quality" fullname="QImageEncoderSettings::quality" href="qimageencodersettings.html#quality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMedia::EncodingQuality" signature="quality() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setQuality" fullname="QImageEncoderSettings::setQuality" href="qimageencodersettings.html#setQuality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setQuality(QtMedia::EncodingQuality quality)">
-                <parameter left="QtMedia::EncodingQuality" right="" name="quality" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="quality" fullname="QImageEncoderSettings::quality" href="qimageencodersettings.html#quality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::EncodingQuality" signature="quality() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setQuality" fullname="QImageEncoderSettings::setQuality" href="qimageencodersettings.html#setQuality" location="qmediaencodersettings.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setQuality(QtMediaServices::EncodingQuality quality)">
+                <parameter left="QtMediaServices::EncodingQuality" right="" name="quality" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html" location="qcontactmanagerenginefactory.h" bases="" module="">
@@ -4497,7 +4397,12 @@
             <typedef access="public" threadsafety="unspecified" status="commendable" name="MatchFlags" fullname="QMessageDataComparator::MatchFlags" href="qmessagedatacomparator.html#MatchFlags-typedef" location="qmessagedatacomparator.h" enum="QMessageDataComparator::MatchFlag"/>
         </namespace>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionFetchRequest" href="qcontactdetaildefinitionfetchrequest.html" location="qcontactdetaildefinitionfetchrequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionFetchRequest" fullname="QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest" href="qcontactdetaildefinitionfetchrequest.html#QContactDetailDefinitionFetchRequest" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionFetchRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionFetchRequest" fullname="QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest" href="qcontactdetaildefinitionfetchrequest.html#QContactDetailDefinitionFetchRequest" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionFetchRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDefinitionName" fullname="QContactDetailDefinitionFetchRequest::setDefinitionName" href="qcontactdetaildefinitionfetchrequest.html#setDefinitionName" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefinitionName(const QString &amp; definitionName)">
+                <parameter left="const QString &amp;" right="" name="definitionName" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDefinitionNames" fullname="QContactDetailDefinitionFetchRequest::setDefinitionNames" href="qcontactdetaildefinitionfetchrequest.html#setDefinitionNames" location="qcontactdetaildefinitionfetchrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefinitionNames(const QStringList &amp; names)">
                 <parameter left="const QStringList &amp;" right="" name="names" default=""/>
             </function>
@@ -4605,7 +4510,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QContactDetail::isEmpty" href="qcontactdetail.html#isEmpty" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="key" fullname="QContactDetail::key" href="qcontactdetail.html#key" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="key() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="resetKey" fullname="QContactDetail::resetKey" href="qcontactdetail.html#resetKey" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="resetKey()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value-5" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="5" type="QString" signature="value(const QString &amp; key) const">
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value-3" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QString" signature="value(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QContactDetail::setValue" href="qcontactdetail.html#setValue" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setValue(const QString &amp; key, const QVariant &amp; value)">
@@ -4625,43 +4530,24 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="T" signature="value(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value-6" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="6" type="QString" signature="value(const char * key) const">
-                <parameter left="const char *" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value-6" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="6" type="QString" signature="value(const QLatin1Constant &amp; key) const">
+                <parameter left="const QLatin1Constant &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QContactDetail::setValue" href="qcontactdetail.html#setValue-2" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="setValue(const char * key, const QVariant &amp; value)">
-                <parameter left="const char *" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QContactDetail::setValue" href="qcontactdetail.html#setValue-3" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="bool" signature="setValue(const QLatin1Constant &amp; key, const QVariant &amp; value)">
+                <parameter left="const QLatin1Constant &amp;" right="" name="key" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeValue" fullname="QContactDetail::removeValue" href="qcontactdetail.html#removeValue-2" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="bool" signature="removeValue(const char * key)">
-                <parameter left="const char *" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeValue" fullname="QContactDetail::removeValue" href="qcontactdetail.html#removeValue-3" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="bool" signature="removeValue(const QLatin1Constant &amp; key)">
+                <parameter left="const QLatin1Constant &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="hasValue" fullname="QContactDetail::hasValue" href="qcontactdetail.html#hasValue-2" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="bool" signature="hasValue(const char * key) const">
-                <parameter left="const char *" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="hasValue" fullname="QContactDetail::hasValue" href="qcontactdetail.html#hasValue-3" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="bool" signature="hasValue(const QLatin1Constant &amp; key) const">
+                <parameter left="const QLatin1Constant &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="variantValue" fullname="QContactDetail::variantValue" href="qcontactdetail.html#variantValue-2" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QVariant" signature="variantValue(const char * key) const">
-                <parameter left="const char *" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="variantValue" fullname="QContactDetail::variantValue" href="qcontactdetail.html#variantValue-3" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QVariant" signature="variantValue(const QLatin1Constant &amp; key) const">
+                <parameter left="const QLatin1Constant &amp;" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value-2" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="T" signature="value(const char * key) const">
-                <parameter left="const char *" right="" name="key" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value-3" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QString" signature="value(const QLatin1Constant&lt;N&gt; &amp; key) const">
-                <parameter left="const QLatin1Constant&lt;N&gt; &amp;" right="" name="key" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QContactDetail::setValue" href="qcontactdetail.html#setValue-3" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="bool" signature="setValue(const QLatin1Constant&lt;N&gt; &amp; key, const QVariant &amp; value)">
-                <parameter left="const QLatin1Constant&lt;N&gt; &amp;" right="" name="key" default=""/>
-                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="removeValue" fullname="QContactDetail::removeValue" href="qcontactdetail.html#removeValue-3" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="3" type="bool" signature="removeValue(const QLatin1Constant&lt;N&gt; &amp; key)">
-                <parameter left="const QLatin1Constant&lt;N&gt; &amp;" right="" name="key" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="hasValue" fullname="QContactDetail::hasValue" href="qcontactdetail.html#hasValue-3" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="bool" signature="hasValue(const QLatin1Constant&lt;N&gt; &amp; key) const">
-                <parameter left="const QLatin1Constant&lt;N&gt; &amp;" right="" name="key" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="variantValue" fullname="QContactDetail::variantValue" href="qcontactdetail.html#variantValue-3" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QVariant" signature="variantValue(const QLatin1Constant&lt;N&gt; &amp; key) const">
-                <parameter left="const QLatin1Constant&lt;N&gt; &amp;" right="" name="key" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value-4" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="4" type="T" signature="value(const QLatin1Constant&lt;N&gt; &amp; key) const">
-                <parameter left="const QLatin1Constant&lt;N&gt; &amp;" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactDetail::value" href="qcontactdetail.html#value-2" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="T" signature="value(const QLatin1Constant &amp; key) const">
+                <parameter left="const QLatin1Constant &amp;" right="" name="key" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setContexts" fullname="QContactDetail::setContexts" href="qcontactdetail.html#setContexts" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setContexts(const QStringList &amp; contexts)">
                 <parameter left="const QStringList &amp;" right="" name="contexts" default=""/>
@@ -4681,22 +4567,6 @@
                 <parameter left="const QString &amp;" right="" name="linkedDetailUri" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="linkedDetailUris" fullname="QContactDetail::linkedDetailUris" href="qcontactdetail.html#linkedDetailUris" location="qcontactdetail.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="linkedDetailUris() const"/>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QContactDetail" fullname="QContactDetail::QContactDetail" href="qcontactdetail.html#QContactDetail-5" location="qcontactdetail.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="5" type="" signature="QContactDetail(const QContactDetail &amp; other, const QString &amp; expectedDefinitionId)">
-                <parameter left="const QContactDetail &amp;" right="" name="other" default=""/>
-                <parameter left="const QString &amp;" right="" name="expectedDefinitionId" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="assign" fullname="QContactDetail::assign" href="qcontactdetail.html#assign" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContactDetail &amp;" signature="assign(const QContactDetail &amp; other, const QString &amp; expectedDefinitionId)">
-                <parameter left="const QContactDetail &amp;" right="" name="other" default=""/>
-                <parameter left="const QString &amp;" right="" name="expectedDefinitionId" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QContactDetail" fullname="QContactDetail::QContactDetail" href="qcontactdetail.html#QContactDetail-6" location="qcontactdetail.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="6" type="" signature="QContactDetail(const QContactDetail &amp; other, const char * expectedDefinitionId)">
-                <parameter left="const QContactDetail &amp;" right="" name="other" default=""/>
-                <parameter left="const char *" right="" name="expectedDefinitionId" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="assign" fullname="QContactDetail::assign" href="qcontactdetail.html#assign-2" location="qcontactdetail.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="QContactDetail &amp;" signature="assign(const QContactDetail &amp; other, const char * expectedDefinitionId)">
-                <parameter left="const QContactDetail &amp;" right="" name="other" default=""/>
-                <parameter left="const char *" right="" name="expectedDefinitionId" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaPlaylistNavigator" href="qmediaplaylistnavigator.html" location="qmediaplaylistnavigator.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="playbackMode" fullname="QMediaPlaylistNavigator::playbackMode" href="qmediaplaylistnavigator.html#playbackMode-prop" location="qmediaplaylistnavigator.h" type="QMediaPlaylist::PlaybackMode">
@@ -4758,7 +4628,9 @@
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QMediaPlaylistNavigator::d_ptr" href="qmediaplaylistnavigator.html#d_ptr-var" location="qmediaplaylistnavigator.h" type="QMediaPlaylistNavigatorPrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactLocalIdFetchRequest" href="qcontactlocalidfetchrequest.html" location="qcontactlocalidfetchrequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactLocalIdFetchRequest" fullname="QContactLocalIdFetchRequest::QContactLocalIdFetchRequest" href="qcontactlocalidfetchrequest.html#QContactLocalIdFetchRequest" location="qcontactlocalidfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactLocalIdFetchRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactLocalIdFetchRequest" fullname="QContactLocalIdFetchRequest::QContactLocalIdFetchRequest" href="qcontactlocalidfetchrequest.html#QContactLocalIdFetchRequest" location="qcontactlocalidfetchrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactLocalIdFetchRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setFilter" fullname="QContactLocalIdFetchRequest::setFilter" href="qcontactlocalidfetchrequest.html#setFilter" location="qcontactlocalidfetchrequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setFilter(const QContactFilter &amp; filter)">
                 <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
             </function>
@@ -4782,8 +4654,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMessageContentContainerId::isValid" href="qmessagecontentcontainerid.html#isValid" location="qmessagecontentcontainerid_win.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainerIdList" href="#QMessageContentContainerIdList-typedef" location="qmessagecontentcontainerid.h"/>
-        <namespace access="public" threadsafety="unspecified" status="commendable" name="QtMedia" href="qtmedia.html" location="qtmedianamespace.h" module="">
-            <enum access="public" threadsafety="unspecified" status="commendable" name="MetaData" fullname="QtMedia::MetaData" href="qtmedia.html#MetaData-enum" location="qtmedianamespace.h">
+        <namespace access="public" threadsafety="unspecified" status="commendable" name="QtMediaServices" href="qtmediaservices.html" location="qtmedianamespace.h" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="MetaData" fullname="QtMediaServices::MetaData" href="qtmediaservices.html#MetaData-enum" location="qtmedianamespace.h">
                 <value name="Title" value="0"/>
                 <value name="SubTitle" value="1"/>
                 <value name="Author" value="2"/>
@@ -4857,27 +4729,30 @@
                 <value name="Saturation" value="70"/>
                 <value name="Sharpness" value="71"/>
                 <value name="DeviceSettingDescription" value="72"/>
+                <value name="PosterImage" value="73"/>
+                <value name="CoverArtImage" value="74"/>
+                <value name="ThumbnailImage" value="75"/>
             </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="SupportEstimate" fullname="QtMedia::SupportEstimate" href="qtmedia.html#SupportEstimate-enum" location="qtmedianamespace.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="SupportEstimate" fullname="QtMediaServices::SupportEstimate" href="qtmediaservices.html#SupportEstimate-enum" location="qtmedianamespace.h">
                 <value name="NotSupported" value="0"/>
                 <value name="MaybeSupported" value="1"/>
                 <value name="ProbablySupported" value="2"/>
                 <value name="PreferredService" value="3"/>
             </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="EncodingQuality" fullname="QtMedia::EncodingQuality" href="qtmedia.html#EncodingQuality-enum" location="qtmedianamespace.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="EncodingQuality" fullname="QtMediaServices::EncodingQuality" href="qtmediaservices.html#EncodingQuality-enum" location="qtmedianamespace.h">
                 <value name="VeryLowQuality" value="0"/>
                 <value name="LowQuality" value="1"/>
                 <value name="NormalQuality" value="2"/>
                 <value name="HighQuality" value="3"/>
                 <value name="VeryHighQuality" value="4"/>
             </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="EncodingMode" fullname="QtMedia::EncodingMode" href="qtmedia.html#EncodingMode-enum" location="qtmedianamespace.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="EncodingMode" fullname="QtMediaServices::EncodingMode" href="qtmediaservices.html#EncodingMode-enum" location="qtmedianamespace.h">
                 <value name="ConstantQualityEncoding" value="0"/>
                 <value name="ConstantBitRateEncoding" value="1"/>
                 <value name="AverageBitRateEncoding" value="2"/>
                 <value name="TwoPassEncoding" value="3"/>
             </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="AvailabilityError" fullname="QtMedia::AvailabilityError" href="qtmedia.html#AvailabilityError-enum" location="qtmedianamespace.h">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="AvailabilityError" fullname="QtMediaServices::AvailabilityError" href="qtmediaservices.html#AvailabilityError-enum" location="qtmedianamespace.h">
                 <value name="NoError" value="0"/>
                 <value name="ServiceMissingError" value="1"/>
                 <value name="BusyError" value="2"/>
@@ -5050,7 +4925,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QRadioTuner" fullname="QRadioTuner::~QRadioTuner" href="qradiotuner.html#dtor.QRadioTuner" location="qradiotuner.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QRadioTuner()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QRadioTuner::isAvailable" href="qradiotuner.html#isAvailable" location="qradiotuner.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isAvailable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QRadioTuner::availabilityError" href="qradiotuner.html#availabilityError" location="qradiotuner.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMedia::AvailabilityError" signature="availabilityError() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QRadioTuner::availabilityError" href="qradiotuner.html#availabilityError" location="qradiotuner.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::AvailabilityError" signature="availabilityError() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QRadioTuner::state" href="qradiotuner.html#state-prop" location="qradiotuner.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="state" type="State" signature="state() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="band" fullname="QRadioTuner::band" href="qradiotuner.html#band-prop" location="qradiotuner.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="band" type="Band" signature="band() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isBandSupported" fullname="QRadioTuner::isBandSupported" href="qradiotuner.html#isBandSupported" location="qradiotuner.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isBandSupported(Band band) const">
@@ -5138,17 +5013,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="byPath" fullname="QMessageFolderSortOrder::byPath" href="qmessagefoldersortorder.html#byPath" location="qmessagefoldersortorder_win.cpp" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFolderSortOrder" signature="byPath(Qt::SortOrder order)">
                 <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
-            </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QContactActionFactory" href="qcontactactionfactory.html" location="qcontactactionfactory.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactActionFactory" fullname="QContactActionFactory::~QContactActionFactory" href="qcontactactionfactory.html#dtor.QContactActionFactory" location="qcontactactionfactory.cpp" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactActionFactory()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QContactActionFactory::name" href="qcontactactionfactory.html#name" location="qcontactactionfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptors" fullname="QContactActionFactory::actionDescriptors" href="qcontactactionfactory.html#actionDescriptors" location="qcontactactionfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactActionDescriptor&gt;" signature="actionDescriptors() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="instance" fullname="QContactActionFactory::instance" href="qcontactactionfactory.html#instance" location="qcontactactionfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QContactAction *" signature="instance(const QContactActionDescriptor &amp; descriptor) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionMetadata" fullname="QContactActionFactory::actionMetadata" href="qcontactactionfactory.html#actionMetadata" location="qcontactactionfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="actionMetadata(const QContactActionDescriptor &amp; descriptor) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaPlaylistControl" href="qmediaplaylistcontrol.html" location="qmediaplaylistcontrol.h" bases="QMediaControl" module="">
@@ -5846,7 +5710,6 @@
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldSubType" fullname="QContactAnniversary::FieldSubType" href="qcontactanniversary.html#FieldSubType-var" location="qcontactanniversary.h" type="const QLatin1Constant" static="true"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeWedding" fullname="QContactAnniversary::SubTypeWedding" href="qcontactanniversary.html#SubTypeWedding-var" location="qcontactanniversary.h" type="const QLatin1Constant" static="true"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeEngagement" fullname="QContactAnniversary::SubTypeEngagement" href="qcontactanniversary.html#SubTypeEngagement-var" location="qcontactanniversary.h" type="const QLatin1Constant" static="true"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeHouse" fullname="QContactAnniversary::SubTypeHouse" href="qcontactanniversary.html#SubTypeHouse-var" location="qcontactanniversary.h" type="const QLatin1Constant" static="true"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeEmployment" fullname="QContactAnniversary::SubTypeEmployment" href="qcontactanniversary.html#SubTypeEmployment-var" location="qcontactanniversary.h" type="const QLatin1Constant" static="true"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="SubTypeMemorial" fullname="QContactAnniversary::SubTypeMemorial" href="qcontactanniversary.html#SubTypeMemorial-var" location="qcontactanniversary.h" type="const QLatin1Constant" static="true"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setOriginalDate" fullname="QContactAnniversary::setOriginalDate" href="qcontactanniversary.html#setOriginalDate" location="qcontactanniversary.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setOriginalDate(const QDate &amp; date)">
@@ -5951,7 +5814,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QAudioCaptureSource" fullname="QAudioCaptureSource::~QAudioCaptureSource" href="qaudiocapturesource.html#dtor.QAudioCaptureSource" location="qaudiocapturesource.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAudioCaptureSource()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QAudioCaptureSource::isAvailable" href="qaudiocapturesource.html#isAvailable" location="qaudiocapturesource.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isAvailable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QAudioCaptureSource::availabilityError" href="qaudiocapturesource.html#availabilityError" location="qaudiocapturesource.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMedia::AvailabilityError" signature="availabilityError() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QAudioCaptureSource::availabilityError" href="qaudiocapturesource.html#availabilityError" location="qaudiocapturesource.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::AvailabilityError" signature="availabilityError() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="audioInputs" fullname="QAudioCaptureSource::audioInputs" href="qaudiocapturesource.html#audioInputs" location="qaudiocapturesource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QString&gt;" signature="audioInputs() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="audioDescription" fullname="QAudioCaptureSource::audioDescription" href="qaudiocapturesource.html#audioDescription" location="qaudiocapturesource.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="audioDescription(const QString &amp; name) const">
                 <parameter left="const QString &amp;" right="" name="name" default=""/>
@@ -6264,7 +6127,12 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionSaveRequest" href="qcontactdetaildefinitionsaverequest.html" location="qcontactdetaildefinitionsaverequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionSaveRequest" fullname="QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest" href="qcontactdetaildefinitionsaverequest.html#QContactDetailDefinitionSaveRequest" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionSaveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionSaveRequest" fullname="QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest" href="qcontactdetaildefinitionsaverequest.html#QContactDetailDefinitionSaveRequest" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionSaveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setDefinition" fullname="QContactDetailDefinitionSaveRequest::setDefinition" href="qcontactdetaildefinitionsaverequest.html#setDefinition" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefinition(const QContactDetailDefinition &amp; definition)">
+                <parameter left="const QContactDetailDefinition &amp;" right="" name="definition" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setDefinitions" fullname="QContactDetailDefinitionSaveRequest::setDefinitions" href="qcontactdetaildefinitionsaverequest.html#setDefinitions" location="qcontactdetaildefinitionsaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setDefinitions(const QList&lt;QContactDetailDefinition&gt; &amp; definitions)">
                 <parameter left="const QList&lt;QContactDetailDefinition&gt; &amp;" right="" name="definitions" default=""/>
             </function>
@@ -6505,7 +6373,12 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QVersitDocument::clear" href="qversitdocument.html#clear" location="qversitdocument.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipSaveRequest" href="qcontactrelationshipsaverequest.html" location="qcontactrelationshipsaverequest.h" bases="QContactAbstractRequest" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipSaveRequest" fullname="QContactRelationshipSaveRequest::QContactRelationshipSaveRequest" href="qcontactrelationshipsaverequest.html#QContactRelationshipSaveRequest" location="qcontactrelationshipsaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipSaveRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QContactRelationshipSaveRequest" fullname="QContactRelationshipSaveRequest::QContactRelationshipSaveRequest" href="qcontactrelationshipsaverequest.html#QContactRelationshipSaveRequest" location="qcontactrelationshipsaverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactRelationshipSaveRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setRelationship" fullname="QContactRelationshipSaveRequest::setRelationship" href="qcontactrelationshipsaverequest.html#setRelationship" location="qcontactrelationshipsaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRelationship(const QContactRelationship &amp; contactRelationship)">
+                <parameter left="const QContactRelationship &amp;" right="" name="contactRelationship" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="setRelationships" fullname="QContactRelationshipSaveRequest::setRelationships" href="qcontactrelationshipsaverequest.html#setRelationships" location="qcontactrelationshipsaverequest.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRelationships(const QList&lt;QContactRelationship&gt; &amp; contactRelationships)">
                 <parameter left="const QList&lt;QContactRelationship&gt; &amp;" right="" name="contactRelationships" default=""/>
             </function>
@@ -6612,7 +6485,7 @@
             </property>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaObject" fullname="QMediaObject::~QMediaObject" href="qmediaobject.html#dtor.QMediaObject" location="qmediaobject.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaObject()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QMediaObject::isAvailable" href="qmediaobject.html#isAvailable" location="qmediaobject.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isAvailable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QMediaObject::availabilityError" href="qmediaobject.html#availabilityError" location="qmediaobject.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMedia::AvailabilityError" signature="availabilityError() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QMediaObject::availabilityError" href="qmediaobject.html#availabilityError" location="qmediaobject.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QtMediaServices::AvailabilityError" signature="availabilityError() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="service" fullname="QMediaObject::service" href="qmediaobject.html#service" location="qmediaobject.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMediaService *" signature="service() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="notifyInterval" fullname="QMediaObject::notifyInterval" href="qmediaobject.html#notifyInterval-prop" location="qmediaobject.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="notifyInterval" type="int" signature="notifyInterval() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setNotifyInterval" fullname="QMediaObject::setNotifyInterval" href="qmediaobject.html#notifyInterval-prop" location="qmediaobject.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="notifyInterval" type="void" signature="setNotifyInterval(int milliSeconds)">
@@ -6620,14 +6493,14 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="isMetaDataAvailable" fullname="QMediaObject::isMetaDataAvailable" href="qmediaobject.html#metaDataAvailable-prop" location="qmediaobject.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="metaDataAvailable" type="bool" signature="isMetaDataAvailable() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isMetaDataWritable" fullname="QMediaObject::isMetaDataWritable" href="qmediaobject.html#metaDataWritable-prop" location="qmediaobject.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="metaDataWritable" type="bool" signature="isMetaDataWritable() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="metaData" fullname="QMediaObject::metaData" href="qmediaobject.html#metaData" location="qmediaobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="metaData(QtMedia::MetaData key) const">
-                <parameter left="QtMedia::MetaData" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="metaData" fullname="QMediaObject::metaData" href="qmediaobject.html#metaData" location="qmediaobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="metaData(QtMediaServices::MetaData key) const">
+                <parameter left="QtMediaServices::MetaData" right="" name="key" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMetaData" fullname="QMediaObject::setMetaData" href="qmediaobject.html#setMetaData" location="qmediaobject.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMetaData(QtMedia::MetaData key, const QVariant &amp; value)">
-                <parameter left="QtMedia::MetaData" right="" name="key" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMetaData" fullname="QMediaObject::setMetaData" href="qmediaobject.html#setMetaData" location="qmediaobject.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMetaData(QtMediaServices::MetaData key, const QVariant &amp; value)">
+                <parameter left="QtMediaServices::MetaData" right="" name="key" default=""/>
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availableMetaData" fullname="QMediaObject::availableMetaData" href="qmediaobject.html#availableMetaData" location="qmediaobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QtMedia::MetaData&gt;" signature="availableMetaData() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="availableMetaData" fullname="QMediaObject::availableMetaData" href="qmediaobject.html#availableMetaData" location="qmediaobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QtMediaServices::MetaData&gt;" signature="availableMetaData() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="extendedMetaData" fullname="QMediaObject::extendedMetaData" href="qmediaobject.html#extendedMetaData" location="qmediaobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="extendedMetaData(const QString &amp; key) const">
                 <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
@@ -6903,6 +6776,8 @@
             <page access="public" status="commendable" name="sysinfo/sysinfo.pro" href="sysinfo-sysinfo-pro.html" subtype="file" title="" fulltitle="sysinfo.pro Example File" subtitle="sysinfo/sysinfo.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="filemanagerplugin" href="filemanagerplugin.html" subtype="example" title="File Manager Plugin Example" fulltitle="File Manager Plugin Example" subtitle="" location="filemanagerplugin.qdoc">
+            <contents name="registering-the-service" title="Registering the Service" level="1"/>
+            <contents name="writing-the-plug-in" title="Writing the Plug-In" level="1"/>
             <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.cpp" href="filemanagerplugin-filemanagerplugin-cpp.html" subtype="file" title="" fulltitle="filemanagerplugin.cpp Example File" subtitle="filemanagerplugin/filemanagerplugin.cpp" location=""/>
             <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.h" href="filemanagerplugin-filemanagerplugin-h.html" subtype="file" title="" fulltitle="filemanagerplugin.h Example File" subtitle="filemanagerplugin/filemanagerplugin.h" location=""/>
             <page access="public" status="commendable" name="filemanagerplugin/filemanagerstorage.cpp" href="filemanagerplugin-filemanagerstorage-cpp.html" subtype="file" title="" fulltitle="filemanagerstorage.cpp Example File" subtitle="filemanagerplugin/filemanagerstorage.cpp" location=""/>
@@ -6982,7 +6857,6 @@
             <contents name="meta-data-api" title="Meta Data API" level="3"/>
             <contents name="asynchronous-api" title="Asynchronous API" level="3"/>
             <contents name="synchronous-api" title="Synchronous API" level="3"/>
-            <contents name="actions" title="Actions" level="2"/>
             <contents name="non-client-facing-api" title="Non-Client-Facing API" level="1"/>
             <contents name="manager-engine" title="Manager Engine" level="2"/>
             <contents name="using-the-api" title="Using the API" level="1"/>
@@ -6992,12 +6866,13 @@
             <contents name="contact-details-leaf-classes" title="&quot;Contact Details&quot; Leaf Classes" level="2"/>
             <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
             <contents name="contact-selection" title="Contact Selection" level="2"/>
-            <contents name="actions" title="Actions" level="2"/>
             <contents name="implementing-backends" title="Implementing Backends" level="2"/>
             <contents name="synchronization-and-serialization" title="Synchronization and Serialization" level="2"/>
             <contents name="examples" title="Examples" level="2"/>
         </page>
         <page access="public" status="commendable" name="bluetoothtransferplugin" href="bluetoothtransferplugin.html" subtype="example" title="Bluetooth Transfer Plugin Example" fulltitle="Bluetooth Transfer Plugin Example" subtitle="" location="bluetoothtransferplugin.qdoc">
+            <contents name="registering-the-service" title="Registering the Service" level="1"/>
+            <contents name="writing-the-plugin" title="Writing the Plugin" level="1"/>
             <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransfer.cpp" href="bluetoothtransferplugin-bluetoothtransfer-cpp.html" subtype="file" title="" fulltitle="bluetoothtransfer.cpp Example File" subtitle="bluetoothtransferplugin/bluetoothtransfer.cpp" location=""/>
             <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransfer.h" href="bluetoothtransferplugin-bluetoothtransfer-h.html" subtype="file" title="" fulltitle="bluetoothtransfer.h Example File" subtitle="bluetoothtransferplugin/bluetoothtransfer.h" location=""/>
             <page access="public" status="commendable" name="bluetoothtransferplugin/bluetoothtransferplugin.cpp" href="bluetoothtransferplugin-bluetoothtransferplugin-cpp.html" subtype="file" title="" fulltitle="bluetoothtransferplugin.cpp Example File" subtitle="bluetoothtransferplugin/bluetoothtransferplugin.cpp" location=""/>
@@ -7006,6 +6881,7 @@
         </page>
         <page access="public" status="commendable" name="multimedia" href="multimedia.html" subtype="group" title="Mobility Multimedia" fulltitle="Mobility Multimedia" subtitle="" location="multimedia.qdoc"/>
         <page access="public" status="commendable" name="multimedia.html" href="multimedia.html" subtype="page" title="Multimedia" fulltitle="Multimedia" subtitle="" location="multimedia.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="audio" title="Audio" level="2"/>
             <contents name="video" title="Video" level="2"/>
@@ -7028,9 +6904,6 @@
             <contents name="helper-classes" title="Helper Classes" level="2"/>
             <contents name="backend-classes" title="Backend Classes" level="2"/>
         </page>
-        <page access="public" status="commendable" name="gpl.html" href="gpl.html" subtype="page" title="GNU General Public License (GPL)" fulltitle="GNU General Public License (GPL)" subtitle="" location="gpl.qdoc">
-            <contents name="the-gnu-general-public-license-version-3" title="The GNU General Public License (Version 3)" level="1"/>
-        </page>
         <page access="public" status="commendable" name="lgpl.html" href="lgpl.html" subtype="page" title="GNU Lesser General Public License (LGPL)" fulltitle="GNU Lesser General Public License (LGPL)" subtitle="" location="gpl.qdoc">
             <contents name="the-gnu-lesser-general-public-license-version-2-1" title="The GNU Lesser General Public License (Version 2.1)" level="1"/>
             <contents name="nokia-qt-lgpl-exception-version-1-0" title="Nokia Qt LGPL Exception version 1.0" level="1"/>
@@ -7044,6 +6917,7 @@
         </page>
         <page access="public" status="commendable" name="location" href="location.html" subtype="group" title="Location API" fulltitle="Location API" subtitle="" location="location.qdoc"/>
         <page access="public" status="commendable" name="location-overview.html" href="location-overview.html" subtype="page" title="Location" fulltitle="Location" subtitle="" location="location.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="requesting-location-data-from-data-sources" title="Requesting location data from data sources" level="2"/>
             <contents name="controlling-aspects-of-data-sources" title="Controlling aspects of data sources" level="2"/>
@@ -7056,6 +6930,7 @@
             <contents name="classes" title="Classes" level="1"/>
         </page>
         <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API (technology preview)" fulltitle="Versit API (technology preview)" subtitle="" location="versit.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="usage" title="Usage" level="1"/>
             <contents name="classes" title="Classes" level="1"/>
@@ -7084,6 +6959,7 @@
         </page>
         <page access="public" status="commendable" name="bearer" href="bearer.html" subtype="group" title="Qt Bearer Management API" fulltitle="Qt Bearer Management API" subtitle="" location="bearermanagement.qdoc"/>
         <page access="public" status="commendable" name="bearer-management.html" href="bearer-management.html" subtype="page" title="Bearer Management" fulltitle="Bearer Management" subtitle="" location="bearermanagement.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="the-api-in-detail" title="The API in Detail" level="2"/>
             <contents name="service-networks" title="Service networks" level="3"/>
@@ -7202,8 +7078,8 @@
             <contents name="schema-definition" title="Schema Definition" level="1"/>
             <contents name="default-schema" title="Default Schema" level="1"/>
             <contents name="detail-definition-uniqueness" title="Detail Definition Uniqueness" level="2"/>
-            <contents name="detail-definition-access-constraints" title="Detail Definition Access Constraints" level="2"/>
-            <contents name="field-access-constraints" title="Field Access Constraints" level="2"/>
+            <contents name="detail-access-constraints" title="Detail Access Constraints" level="2"/>
+            <contents name="backend-provided-details" title="Backend-provided Details" level="2"/>
         </page>
         <page access="public" status="commendable" name="notesmanagerplugin" href="notesmanagerplugin.html" subtype="example" title="Notes Manager Plugin Example" fulltitle="Notes Manager Plugin Example" subtitle="" location="notesmanagerplugin.qdoc">
             <page access="public" status="commendable" name="notesmanagerplugin/note.h" href="notesmanagerplugin-note-h.html" subtype="file" title="" fulltitle="note.h Example File" subtitle="notesmanagerplugin/note.h" location=""/>
@@ -7214,6 +7090,7 @@
             <page access="public" status="commendable" name="notesmanagerplugin/notesmanagerplugin.pro" href="notesmanagerplugin-notesmanagerplugin-pro.html" subtype="file" title="" fulltitle="notesmanagerplugin.pro Example File" subtitle="notesmanagerplugin/notesmanagerplugin.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="publ-subs.html" href="publ-subs.html" subtype="page" title="Publish and Subscribe" fulltitle="Publish and Subscribe" subtitle="" location="publ-subs.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="detailed-layer-descriptions" title="Detailed Layer Descriptions" level="1"/>
             <contents name="shared-memory-layer" title="Shared Memory Layer" level="2"/>
@@ -7228,9 +7105,17 @@
             <contents name="battery-charging-accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
             <contents name="namespaces-and-classes" title="Namespaces and Classes" level="1"/>
         </page>
+        <page access="public" status="commendable" name="sysinfo" href="sysinfo.html" subtype="example" title="System Information Example" fulltitle="System Information Example" subtitle="" location="sysinfo.qdoc">
+            <page access="public" status="commendable" name="sysinfo/dialog.cpp" href="sysinfo-dialog-cpp.html" subtype="file" title="" fulltitle="dialog.cpp Example File" subtitle="sysinfo/dialog.cpp" location=""/>
+            <page access="public" status="commendable" name="sysinfo/dialog.h" href="sysinfo-dialog-h.html" subtype="file" title="" fulltitle="dialog.h Example File" subtitle="sysinfo/dialog.h" location=""/>
+            <page access="public" status="commendable" name="sysinfo/main.cpp" href="sysinfo-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="sysinfo/main.cpp" location=""/>
+            <page access="public" status="commendable" name="sysinfo/examples.qrc" href="sysinfo-examples-qrc.html" subtype="file" title="" fulltitle="examples.qrc Example File" subtitle="sysinfo/examples.qrc" location=""/>
+            <page access="public" status="commendable" name="sysinfo/sysinfo.pro" href="sysinfo-sysinfo-pro.html" subtype="file" title="" fulltitle="sysinfo.pro Example File" subtitle="sysinfo/sysinfo.pro" location=""/>
+        </page>
         <page access="public" status="commendable" name="systeminfo" href="systeminfo.html" subtype="group" title="System Information Classes" fulltitle="System Information Classes" subtitle="" location="si.qdoc"/>
         <page access="public" status="commendable" name="systeminfo.html" href="systeminfo.html" subtype="page" title="System Information" fulltitle="System Information" subtitle="" location="si.qdoc">
             <contents name="system-information" title="System Information" level="1"/>
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="information-categories" title="Information Categories" level="2"/>
             <contents name="version" title="Version" level="3"/>
@@ -7241,24 +7126,8 @@
             <contents name="device-information" title="Device Information" level="3"/>
             <contents name="screensaver" title="Screensaver" level="3"/>
             <contents name="building-and-compiling" title="Building and compiling" level="1"/>
-            <contents name="reference-documentation" title="Reference documentation" level="1"/>
-            <contents name="examples" title="Examples" level="2"/>
-        </page>
-        <page access="public" status="commendable" name="licensing" href="licensing.html" subtype="group" title="Licensing Information" fulltitle="Licensing Information" subtitle="" location="licenses.qdoc"/>
-        <page access="public" status="commendable" name="licenses.html" href="licenses.html" subtype="page" title="Other Licenses Used in Qt" fulltitle="Other Licenses Used in Qt" subtitle="" location="licenses.qdoc"/>
-        <page access="public" status="commendable" name="licenses-fonts.html" href="licenses-fonts.html" subtype="page" title="Licenses for Fonts Used in Qt for Embedded Linux" fulltitle="Licenses for Fonts Used in Qt for Embedded Linux" subtitle="" location="licenses.qdoc">
-            <contents name="adobe-helvetica" title="Adobe Helvetica" level="1"/>
-            <contents name="adobe-utopia" title="Adobe Utopia" level="1"/>
-            <contents name="babelfish" title="Babelfish" level="1"/>
-            <contents name="bigelow-holmes-luxi" title="Bigelow &amp; Holmes Luxi" level="1"/>
-            <contents name="bitstream-charter-and-courier" title="Bitstream Charter and Courier" level="1"/>
-            <contents name="bitstream-vera" title="Bitstream Vera" level="1"/>
-            <contents name="cursor" title="Cursor" level="1"/>
-            <contents name="dejavu-fonts" title="DejaVu Fonts" level="1"/>
-            <contents name="fixed-fonts" title="Fixed Fonts" level="1"/>
-            <contents name="ibm-courier" title="IBM Courier" level="1"/>
-            <contents name="micro" title="Micro" level="1"/>
-            <contents name="unifont" title="Unifont" level="1"/>
+            <contents name="examples" title="Examples" level="1"/>
+            <contents name="system-information-example" title="System Information Example" level="2"/>
         </page>
         <page access="public" status="commendable" name="audiorecorder" href="audiorecorder.html" subtype="example" title="Audio Recorder Example" fulltitle="Audio Recorder Example" subtitle="" location="audiorecorder.qdoc">
             <page access="public" status="commendable" name="audiorecorder/audiorecorder.cpp" href="audiorecorder-audiorecorder-cpp.html" subtype="file" title="" fulltitle="audiorecorder.cpp Example File" subtitle="audiorecorder/audiorecorder.cpp" location=""/>
@@ -7268,6 +7137,8 @@
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoDeviceControl_iid" href="qvideodevicecontrol.html#QVideoDeviceControl_iid" location="qvideodevicecontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoDeviceControl" type="" signature="QVideoDeviceControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_CUSTOM_CONTACT_DETAIL" href="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL" location="qcontactdetail.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QContactDetail" type="" signature="Q_DECLARE_CUSTOM_CONTACT_DETAIL()"/>
+        <function access="public" threadsafety="unspecified" status="commendable" name="Q_DECLARE_LATIN1_CONSTANT" href="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT" location="qcontactdetail.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QLatin1Constant" type="" signature="Q_DECLARE_LATIN1_CONSTANT()"/>
+        <function access="public" threadsafety="unspecified" status="commendable" name="Q_DEFINE_LATIN1_CONSTANT" href="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT" location="qcontactdetail.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QLatin1Constant" type="" signature="Q_DEFINE_LATIN1_CONSTANT()"/>
         <page access="public" status="commendable" name="samplephonebook" href="samplephonebook.html" subtype="example" title="Sample Phonebook Example" fulltitle="Sample Phonebook Example" subtitle="" location="samplephonebook.qdoc">
             <contents name="phone-book" title="Phone Book" level="1"/>
             <contents name="motivation" title="Motivation" level="2"/>
@@ -7286,6 +7157,7 @@
             <page access="public" status="commendable" name="samplephonebook/samplephonebook.pro" href="samplephonebook-samplephonebook-pro.html" subtype="file" title="" fulltitle="samplephonebook.pro Example File" subtitle="samplephonebook/samplephonebook.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="messaging.html" href="messaging.html" subtype="page" title="Messaging" fulltitle="Messaging" subtitle="" location="messaging.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
@@ -7297,6 +7169,9 @@
             <contents name="messaging-services" title="Messaging Services" level="1"/>
             <contents name="concurrent-access-to-messaging-data" title="Concurrent Access to Messaging Data" level="1"/>
             <contents name="abstraction-of-messaging-data-storage-mechanism" title="Abstraction of Messaging Data Storage Mechanism" level="1"/>
+            <contents name="examples" title="Examples" level="1"/>
+            <contents name="keep-in-touch" title="Keep In Touch" level="2"/>
+            <contents name="service-actions" title="Service Actions" level="2"/>
         </page>
         <page access="public" status="commendable" name="publish-subscribe" href="publish-subscribe.html" subtype="example" title="Publish and Subscribe Example" fulltitle="Publish and Subscribe Example" subtitle="" location="publish-subscribe.qdoc">
             <contents name="publisher" title="Publisher" level="2"/>
@@ -7349,6 +7224,7 @@
         </page>
         <page access="public" status="commendable" name="servicefw" href="servicefw.html" subtype="group" title="Service Frameworks Classes" fulltitle="Service Frameworks Classes" subtitle="" location="sf.qdoc"/>
         <page access="public" status="commendable" name="service-frameworks.html" href="service-frameworks.html" subtype="page" title="Qt Service Framework" fulltitle="Qt Service Framework" subtitle="" location="sf.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="using-the-framework" title="Using the Framework" level="1"/>
@@ -7501,6 +7377,7 @@
             <parameter left="" right="" name="pluginname" default=""/>
         </function>
         <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API (technology preview)" fulltitle="Sensors API (technology preview)" subtitle="" location="sensors.qdoc">
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="sensor-types" title="Sensor Types" level="1"/>
             <contents name="common-conventions" title="Common Conventions" level="1"/>
             <contents name="using-a-sensor" title="Using a Sensor" level="1"/>

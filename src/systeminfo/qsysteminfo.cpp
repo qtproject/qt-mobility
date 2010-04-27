@@ -539,7 +539,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
   \property QSystemNetworkInfo::homeMobileCountryCode
   \brief The home MNC.
 
-    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -550,7 +550,9 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
   \property QSystemNetworkInfo::homeMobileNetworkCode
   \brief The home MCC.
 
-    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Note: Some platforms don't support retrieving this info. In this case the Network Code is
+    returned only when the device is registered on home network.
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {

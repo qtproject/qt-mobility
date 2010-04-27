@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(m3u)
+TARGET = $$qtLibraryTarget(qtmedia_m3u)
 
 PLUGIN_TYPE = playlistformats
 
@@ -17,6 +17,7 @@ HEADERS += qm3uhandler.h
 SOURCES += main.cpp \
            qm3uhandler.cpp
 symbian {
+    TARGET.UID3 = 0x2002BFC7
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
     

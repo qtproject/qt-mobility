@@ -15,7 +15,8 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Bearer Management<br /><span class="subtitle"></span>
 </h1>
 <p>Bearer Management controls the connectivity state of the system so that the user can start or stop interfaces or roam transparently between access points.</p>
-<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#namespace">Namespace</a></li>
+<li><a href="#overview">Overview</a></li>
 <ul><li><a href="#the-api-in-detail">The API in Detail</a></li>
 <ul><li><a href="#service-networks">Service networks</a></li>
 <li><a href="#managing-network-sessions">Managing network sessions</a></li>
@@ -32,6 +33,9 @@
 </ul>
 <li><a href="#classes">Classes</a></li>
 </ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>The Bearer Management API controls the system's connectivity state. This incorporates simple information such as whether the device is online and how many interfaces there are as well as enables the application developer to start, stop network interfaces and influences other connection specific details. Depending on the platform's capabilities it may even provide session management so that a network interface remains up for as long as clients have a registered interest in them while at the same time optimizes the interface's uptime.</p>

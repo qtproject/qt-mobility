@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qwmp)
+TARGET = $$qtLibraryTarget(qtmedia_wmp)
 
 PLUGIN_TYPE = mediaservice
 

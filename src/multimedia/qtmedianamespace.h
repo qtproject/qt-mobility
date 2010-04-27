@@ -49,7 +49,7 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace QtMedia
+namespace QtMediaServices
 {
     enum MetaData
     {
@@ -142,7 +142,12 @@ namespace QtMedia
         Contrast,
         Saturation,
         Sharpness,
-        DeviceSettingDescription
+        DeviceSettingDescription,
+
+        PosterImage,
+        CoverArtImage,
+        ThumbnailImage
+
     };
 
     enum SupportEstimate

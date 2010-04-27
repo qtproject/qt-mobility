@@ -45,12 +45,8 @@
 #include "modestengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
 #include "eventloggerengine_maemo_p.h"
-#include <QUrl>
-#include "hildon-uri.h"
 
 QTM_BEGIN_NAMESPACE
-#define EVENTLOGGER_THREAD
-
 
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
  : q_ptr(parent),
@@ -59,10 +55,6 @@ QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
    _active(false), _actionId(-1),
    _pendingRequestCount(0)
 {
-#ifdef EVENTLOGGER_THREAD
-    connect(EventLoggerEngine::instance(),SIGNAL(messagesFound(const QMessageIdList &,bool,bool)),this,SLOT(messagesFound(const QMessageIdList &,bool,bool)));
-
-#endif
 }
 
 QMessageServicePrivate::~QMessageServicePrivate()
@@ -97,12 +89,8 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     _pendingRequestCount = 0;
 
     if (enginesToCall & EnginesToCallTelepathy) {
-#ifndef EVENTLOGGER_THREAD
-      _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+        _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
-#else
-        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
-#endif
         _pendingRequestCount++;
     }
 
@@ -151,12 +139,8 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     _pendingRequestCount = 0;
 
     if (enginesToCall & EnginesToCallTelepathy) {
-#ifndef EVENTLOGGER_THREAD
         _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
-#else
-        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,body,matchFlags);
-#endif
         _pendingRequestCount++;
     }
 
@@ -450,13 +434,10 @@ bool QMessageService::compose(const QMessage &message)
     d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
 
-    if (message.type() == QMessage::Sms && !message.to().first().addressee().isEmpty()) {
-      QUrl smsUrl((QString("sms:%1").arg(message.to().first().addressee())));
-      smsUrl.addQueryItem("body",message.textContent());
-      qDebug() << "compose SMS url=" << smsUrl.toString();
-      hildon_uri_open(smsUrl.toString().toStdString().c_str(),NULL,NULL);
-
-
+    if (message.type() == QMessage::Sms) {
+        d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
+        qWarning() << "QMessageService::compose not yet implemented for SMS";
+        retVal = false;
     } else if (message.type() == QMessage::Mms) {
         d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
         qWarning() << "QMessageService::compose not yet implemented for MMS";
@@ -468,8 +449,6 @@ bool QMessageService::compose(const QMessage &message)
     d_ptr->setFinished(retVal);
     return retVal;
 }
-
-
 
 bool QMessageService::retrieveHeader(const QMessageId& id)
 {

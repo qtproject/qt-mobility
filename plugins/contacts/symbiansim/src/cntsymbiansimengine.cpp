@@ -543,4 +543,4 @@ QString CntSymbianSimFactory::managerName() const
     return CNT_SYMBIANSIM_MANAGER_NAME;
 }
 
-Q_EXPORT_PLUGIN2(mobapicontactspluginsymbiansim, CntSymbianSimFactory);
+Q_EXPORT_PLUGIN2(qtcontacts_symbiansim, CntSymbianSimFactory);

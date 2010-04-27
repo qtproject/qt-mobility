@@ -193,7 +193,7 @@ TInt PathMapper::RPathMapperServerSession::StartServer()
     if (findServer.Next(name) != KErrNone) {
         TRequestStatus status;
         RProcess server;
-        ret = server.Create(KPSPathMapperServerName, KNullDesC);
+        ret = server.Create(KPSPathMapperServerProcess, KNullDesC);
         if(ret != KErrNone) {
             return ret;
         }

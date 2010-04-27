@@ -32,7 +32,7 @@ symbian {
                   ../../../src/serviceframework/symbian
     libBlock = \
         "$${LITERAL_HASH}ifdef WINSCW" \
-        "LIBRARY SFWDatabaseManagerServer.lib" \
+        "LIBRARY qsfwdatabasemanagerserver.lib" \
         "$${LITERAL_HASH}endif"
 
     # DEFINES+= QT_NODLL

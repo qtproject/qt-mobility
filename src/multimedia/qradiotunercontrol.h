@@ -55,7 +55,7 @@ public:
     ~QRadioTunerControl();
 
     virtual bool isAvailable() const = 0;
-    virtual QtMedia::AvailabilityError availabilityError() const = 0;
+    virtual QtMediaServices::AvailabilityError availabilityError() const = 0;
 
     virtual QRadioTuner::State state() const = 0;
 
