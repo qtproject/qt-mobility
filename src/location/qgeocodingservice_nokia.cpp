@@ -41,6 +41,7 @@
 
 #include "qgeocodingservice_nokia_p.h"
 #include "qsearchresponse_nokia_p.h"
+#include "qlocationfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -48,7 +49,9 @@ QGeocodingServiceNokia::QGeocodingServiceNokia()
         : m_token(""),
         m_referrer(""),
         m_host("dev-a7.bln.gate5.de"),
-        m_proxy(QNetworkProxy(QNetworkProxy::NoProxy))
+        m_proxy(QNetworkProxy(QNetworkProxy::NoProxy)),
+        m_version("1.0"),
+        m_language("eng")
 {
 }
 
@@ -97,9 +100,9 @@ void QGeocodingServiceNokia::setProxy(const QNetworkProxy &proxy)
     m_nam.setProxy(m_proxy);
 }
 
-QSearchResponse* QGeocodingServiceNokia::geocode(const QSearchRequest& request)
+QSearchResponse* QGeocodingServiceNokia::geocode(QSearchRequest& request)
 {
-    QString rawRequest = request.searchText;
+    QString rawRequest = requestGeocodingString(request);
     QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
     QNetworkReply* reply = m_nam.get(netRequest);
 
@@ -117,9 +120,9 @@ QSearchResponse* QGeocodingServiceNokia::geocode(const QSearchRequest& request)
     return codingReply;
 }
 
-QSearchResponse* QGeocodingServiceNokia::reverseGeocode(const QSearchRequest& request)
+QSearchResponse* QGeocodingServiceNokia::reverseGeocode(QSearchRequest& request)
 {
-    QString rawRequest = request.searchText;
+    QString rawRequest = requestReverseGeocodingString(request);
     QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
     QNetworkReply* reply = m_nam.get(netRequest);
 
@@ -145,6 +148,86 @@ void QGeocodingServiceNokia::finishedReply()
 void QGeocodingServiceNokia::errorReply(QSearchResponse::ErrorCode errorCode, QString errorString)
 {
     emit error(static_cast<QSearchResponse *>(this->sender()), errorCode, errorString);
+}
+
+QString QGeocodingServiceNokia::requestGeocodingString(QSearchRequest& request) const
+{
+    QString requestString = "http://";
+    requestString += m_host;
+    requestString += "/geocoder/gc/";
+    requestString += m_version;
+    requestString += "?referer=localhost";
+
+    if (m_language != "") {
+        requestString += "&lg=";
+        requestString += m_language;
+    }
+
+    QLocationFilter filter = request.locationFilter();
+    
+    if (request.searchText().isEmpty()) {
+        requestString += "&country=";
+        requestString += filter.country();
+
+        if (!filter.state().isEmpty()) {
+            requestString += "&state=";
+            requestString += filter.state();
+        }
+        if (!filter.city().isEmpty()) {
+            requestString += "&city=";
+            requestString += filter.city();
+        }
+        if (!filter.postalCode().isEmpty()) {
+            requestString += "&zip=";
+            requestString += filter.postalCode();
+        }
+        if (!filter.street().isEmpty()) {
+            requestString += "&street=";
+            requestString += filter.street();
+        }
+        if (!filter.houseNumber().isEmpty()) {
+            requestString += "&number=";
+            requestString += filter.houseNumber();
+        }
+    } else {
+        requestString += "&obloc=";
+        requestString += request.searchText();
+    }
+
+    return requestString;
+}
+
+QString QGeocodingServiceNokia::requestReverseGeocodingString(QSearchRequest& request) const
+{
+    QLocationFilter filter = request.locationFilter();
+    QString requestString = "http://";
+    requestString += m_host;
+    requestString += "/geocoder/rgc/";
+    requestString += m_version;
+    requestString += "?referer=localhost";
+    requestString += "&long=";
+    requestString += trimDouble(filter.coordinate().longitude());
+    requestString += "&lat=";
+    requestString += trimDouble(filter.coordinate().latitude());
+
+    if (m_language != "") {
+        requestString += "&lg=";
+        requestString += m_language;
+    }
+
+    return requestString;
+}
+
+QString QGeocodingServiceNokia::trimDouble(qreal degree, int decimalDigits) const
+{
+    QString sDegree = QString::number(degree, 'g', decimalDigits);
+
+    int index = sDegree.indexOf('.');
+
+    if (index == -1)
+        return sDegree;
+    else
+        return QString::number(degree, 'g', decimalDigits + index);
 }
 
 #include "moc_qgeocodingservice_nokia_p.cpp"

@@ -5,23 +5,32 @@ TARGET = QGeoApiUI
 TEMPLATE = app thread
 
 INCLUDEPATH += ../../src/global \
-                ../../src/location
+               ../../src/location
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
         routepresenter.cpp \
-        placepresenter.cpp
-HEADERS  += mainwindow.h \
-        routepresenter.h \
-        placepresenter.h
+        placepresenter.cpp \
+        tabbeddialog.cpp \
+        routetab.cpp \
+        geocodingtab.cpp \
+        revgeocodingtab.cpp \
+        maptiletab.cpp
 
-FORMS    += mainwindow.ui
+HEADERS  += routepresenter.h \
+        placepresenter.h \
+        tabbeddialog.h \
+        routetab.h \
+        geocodingtab.h \
+        revgeocodingtab.h \
+        maptiletab.h
+
 include(../examples.pri)
 
 CONFIG += mobility
 MOBILITY = location
 
 symbian: {
+    INCLUDEPATH += ../../src/bearer
     MOBILITY += bearer
     TARGET.CAPABILITY = Location NetworkServices ReadUserData WriteUserData
 }

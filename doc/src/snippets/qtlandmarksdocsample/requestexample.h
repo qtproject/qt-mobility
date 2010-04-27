@@ -63,7 +63,7 @@ public:
                     lmSaveRequest(new QLandmarkSaveRequest(lmManager, this)),
                     catFetchRequest(new QLandmarkCategoryFetchRequest(lmManager, this)),
                     lmFetchRequest(new QLandmarkFetchRequest(lmManager, this)),
-                    catRemoveRequest(new QLandmarkCategoryRemoveRequest(lmManager,this)),
+                    catRemoveRequest(new QLandmarkCategoryRemoveRequest(lmManager, this)),
                     lmRemoveRequest(new QLandmarkRemoveRequest(lmManager, this))
                     {}
     ~RequestExample(){}

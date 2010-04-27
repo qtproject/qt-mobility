@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qsearchcontroller_nokia_p.h"
-#include "qsearchrequest_nokia.h"
+#include "qsearchrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,14 +67,12 @@ QSearchControllerNokia::~QSearchControllerNokia()
 
 void QSearchControllerNokia::geocode(QSearchRequest& request)
 {
-    request.searchText = static_cast<QSearchRequestNokia*>(&request)->requestGeocodingString(searchService->host());
     searchService->geocode(request);
     emit searchRequestStarted(&request);
 }
 
 void QSearchControllerNokia::reverseGeocode(QSearchRequest& request)
 {
-    request.searchText = static_cast<QSearchRequestNokia*>(&request)->requestReverseGeocodingString(searchService->host());
     searchService->reverseGeocode(request);
     emit searchRequestStarted(&request);
 }
@@ -98,12 +96,14 @@ void QSearchControllerNokia::search(QSearchRequest& request)
 void QSearchControllerNokia::nextPage()
 {
     //TODO: emit with error code? NotSupported? Null for now.
+    clear();
     emit searchRequestFinished(searchResponse);
 }
 
 void QSearchControllerNokia::previousPage()
 {
     //TODO: emit with error code? NotSupported? Null for now.
+    clear();
     emit searchRequestFinished(searchResponse);
 }
 

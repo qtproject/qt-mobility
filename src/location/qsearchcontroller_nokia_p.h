@@ -56,13 +56,13 @@ public:
     QSearchControllerNokia(QGeocodingServiceNokia* service, QObject* parent=0);
     ~QSearchControllerNokia();
 
-    virtual void geocode(QSearchRequest& request);
-    virtual void reverseGeocode(QSearchRequest& request);
-    virtual void POISearch(QSearchRequest& request);
-    virtual void search(QSearchRequest& request);
-    virtual void nextPage();
-    virtual void previousPage();
-    virtual void clear();
+    void geocode(QSearchRequest& request);
+    void reverseGeocode(QSearchRequest& request);
+    void POISearch(QSearchRequest& request);
+    void search(QSearchRequest& request);
+    void nextPage();
+    void previousPage();
+    void clear();
 
 private slots:
     void codingReplyFinished(QSearchResponse* response);

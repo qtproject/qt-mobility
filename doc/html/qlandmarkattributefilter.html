@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qlandmarkattributefilter.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QLandmarkAttributeFilter Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QLandmarkAttributeFilter"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkAttributeFilter Class Reference</h1>
+<p>The QLandmarkAttributeFilter class provides filtering based on generic landmark attributes. <a href="#details">More...</a></p>
+<pre>    #include &lt;QLandmarkAttributeFilter&gt;</pre><p>Inherits <a href="qlandmarkfilter.html">QLandmarkFilter</a>.</p>
+<ul>
+<li><a href="qlandmarkattributefilter-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkattributefilter.html#QLandmarkAttributeFilter">QLandmarkAttributeFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkattributefilter.html#dtor.QLandmarkAttributeFilter">~QLandmarkAttributeFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkattributefilter.html#attribute">attribute</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkattributefilter.html#attributeKeys">attributeKeys</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkattributefilter.html#clearAttributes">clearAttributes</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkattributefilter.html#removeAttribute">removeAttribute</a></b> ( const QString &amp; <i>key</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkattributefilter.html#setAttribute">setAttribute</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QLandmarkAttributeFilter class provides filtering based on generic landmark attributes.</p>
+<p>The QLandmarkAttributeFilter class may be used to filter landmarks whose attributes match certain values. If an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> is provided as the value for an attribute, then any landmark that has that attribute is returned, regardless of its value. More than one attribute may be set in the filter, a landmark will only match if all attributes are matched.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QLandmarkAttributeFilter/QLandmarkAttributeFilter"></a>
+<h3 class="fn"><a name="QLandmarkAttributeFilter"></a>QLandmarkAttributeFilter::QLandmarkAttributeFilter ()</h3>
+<p>Creates an attribute filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkAttributeFilter/~QLandmarkAttributeFilter"></a>
+<h3 class="fn"><a name="dtor.QLandmarkAttributeFilter"></a>QLandmarkAttributeFilter::~QLandmarkAttributeFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkAttributeFilter/attribute"></a>
+<h3 class="fn"><a name="attribute"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QLandmarkAttributeFilter::attribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<p>Returns the value of the attribute corresponding to <i>key</i>.</p>
+<p>If the attribute isn't set an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> is returned.</p>
+<p>See also <a href="qlandmarkattributefilter.html#setAttribute">setAttribute</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkAttributeFilter/attributeKeys"></a>
+<h3 class="fn"><a name="attributeKeys"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QLandmarkAttributeFilter::attributeKeys () const</h3>
+<p>Returns the keys of all attributes set in the filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkAttributeFilter/clearAttributes"></a>
+<h3 class="fn"><a name="clearAttributes"></a>void QLandmarkAttributeFilter::clearAttributes ()</h3>
+<p>Clears all attributes from the filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkAttributeFilter/removeAttribute"></a>
+<h3 class="fn"><a name="removeAttribute"></a>void QLandmarkAttributeFilter::removeAttribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> )</h3>
+<p>Removes the attribute corresponding to <i>key</i> from the filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkAttributeFilter/setAttribute"></a>
+<h3 class="fn"><a name="setAttribute"></a>void QLandmarkAttributeFilter::setAttribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<p>Sets the <i>value</i> of the attribute corresponding to <i>key</i>.</p>
+<p>Setting an invalid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> to an attribute means that the filter will match any landmark that has that attribute set, regardless of its value. Setting a valid <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> means that the filter will match only landmarks whose values exactly match that of <i>value</i>.</p>
+<p>See also <a href="qlandmarkattributefilter.html#attribute">attribute</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

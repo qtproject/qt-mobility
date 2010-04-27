@@ -56,7 +56,6 @@
 #include "qmobilityglobal.h"
 
 #include "qgeolocation.h"
-
 #include <QList>
 
 QTM_BEGIN_NAMESPACE

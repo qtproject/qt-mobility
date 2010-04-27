@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkSortOrder Class Reference</h1>
 <p>The QLandmarkSortOrder class serves as a base class for the different sort order types. <a href="#details">More...</a></p>
-<pre>    #include &lt;QLandmarkSortOrder&gt;</pre><p>Inherited by <a href="qlandmarkcustomsort.html">QLandmarkCustomSort</a>, <a href="qlandmarkdistancesort.html">QLandmarkDistanceSort</a>, and <a href="qlandmarknamesort.html">QLandmarkNameSort</a>.</p>
+<pre>    #include &lt;QLandmarkSortOrder&gt;</pre><p>Inherited by <a href="qlandmarkdistancesort.html">QLandmarkDistanceSort</a> and <a href="qlandmarknamesort.html">QLandmarkNameSort</a>.</p>
 <ul>
 <li><a href="qlandmarksortorder-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -23,7 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksortorder.html#SortType-enum">SortType</a></b> { DefaultSort, NameSort, DistanceSort, CustomSort }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarksortorder.html#SortType-enum">SortType</a></b> { DefaultSort, NameSort, DistanceSort }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -48,14 +48,12 @@
 <h2>Detailed Description</h2>
 <p>The QLandmarkSortOrder class serves as a base class for the different sort order types.</p>
 <p>The sort orders define how a list of landmarks should be ordered when they searched using a <a href="qlandmarkmanager.html">QLandmarkManager</a> or one of the landmark request classes.</p>
-<p>If none of the pre-existing sort orders is sufficient then a custom sort order should be created by inheriting from <a href="qlandmarkcustomsort.html">QLandmarkCustomSort</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QLandmarkSortOrder/SortType"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkSortOrder/DefaultSort"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkSortOrder/NameSort"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkSortOrder/DistanceSort"></a>
-<a name="//apple_ref/cpp/econst/QLandmarkSortOrder/CustomSort"></a>
 <h3 class="fn"><a name="SortType-enum"></a>enum QLandmarkSortOrder::SortType</h3>
 <p>Defines the type of sort order.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -63,7 +61,6 @@
 <tr><td valign="top"><tt>QLandmarkSortOrder::DefaultSort</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The default sort order that does nothing</td></tr>
 <tr><td valign="top"><tt>QLandmarkSortOrder::NameSort</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Sorts landmarks by name.</td></tr>
 <tr><td valign="top"><tt>QLandmarkSortOrder::DistanceSort</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Sorts landmarks by distance from a particular coordinate.</td></tr>
-<tr><td valign="top"><tt>QLandmarkSortOrder::CustomSort</tt></td><td align="center" valign="top"><tt>500</tt></td><td valign="top">Is a custom sort order.</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>

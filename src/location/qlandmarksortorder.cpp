@@ -54,10 +54,6 @@ QTM_BEGIN_NAMESPACE
     The sort orders define how a list of landmarks should be ordered
     when they searched using a QLandmarkManager or one of the
     landmark request classes.
-
-    If none of the pre-existing sort orders
-    is sufficient then a custom sort order should be created by
-    inheriting from QLandmarkCustomSort.
 */
 
 /*!
@@ -67,7 +63,6 @@ QTM_BEGIN_NAMESPACE
     \value NameSort   Sorts landmarks by name.
     \value DistanceSort   Sorts landmarks by distance from a particular
            coordinate.
-    \value CustomSort Is a custom sort order.
 */
 
 /*!
