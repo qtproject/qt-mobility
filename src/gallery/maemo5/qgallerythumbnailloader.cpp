@@ -98,7 +98,11 @@ class QGalleryThumbnailLoaderPrivate : public QGalleryImageLoaderPrivate
 public:
     QGalleryThumbnailLoaderPrivate()
         : thumbnailDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
+#if defined(Q_WS_MAEMO5) || defined(Q_WS_MAEMO6)
+                + QLatin1String("/.thumbnails/cropped/"))
+#else
                 + QLatin1String("/.thumbnails/normal/"))
+#endif
         , dbusInterface(
             QLatin1String("org.freedesktop.thumbnailer"),
             QLatin1String("/org/freedesktop/thumbnailer/Generic"),
