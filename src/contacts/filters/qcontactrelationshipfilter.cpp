@@ -80,20 +80,12 @@ QTM_BEGIN_NAMESPACE
 Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)
 
 /*!
- * \enum QContactRelationshipFilter::Role
- * Describes the roles that a contact may take in a relationship
- * \value First The contact is the first contact in the relationship
- * \value Second The contact is the second contact in the relationship
- * \value Either The contact is either the first or second contact in the relationship
+  \fn QContactRelationshipFilter::QContactRelationshipFilter(const QContactFilter& other)
+  Constructs a copy of \a other if possible, else constructs a new QContactRelationshipFilter.
  */
 
 /*!
- * \fn QContactRelationshipFilter::QContactRelationshipFilter(const QContactFilter& other)
- * Constructs a copy of \a other if possible, else constructs a new QContactRelationshipFilter.
- */
-
-/*!
- * Constructs a new relationship filter
+  Constructs a new relationship filter
  */
 QContactRelationshipFilter::QContactRelationshipFilter()
     : QContactFilter(new QContactRelationshipFilterPrivate)
@@ -101,7 +93,7 @@ QContactRelationshipFilter::QContactRelationshipFilter()
 }
 
 /*!
- * Sets the type of relationship which a contact must have in order to match this filter to \a relationshipType
+  Sets the type of relationship which a contact must have in order to match this filter to \a relationshipType
  */
 void QContactRelationshipFilter::setRelationshipType(const QString& relationshipType)
 {
@@ -110,7 +102,7 @@ void QContactRelationshipFilter::setRelationshipType(const QString& relationship
 }
 
 /*!
- * Returns the type of relationship that a contact must have in order to match the filter
+  Returns the type of relationship that a contact must have in order to match the filter
  */
 QString QContactRelationshipFilter::relationshipType() const
 {
@@ -119,7 +111,7 @@ QString QContactRelationshipFilter::relationshipType() const
 }
 
 /*!
- * Sets the id of the contact with whom the tested contact must have a relationship in order for the tested contact to match this filter to be \a relatedContactId
+  Sets the id of the contact with whom the tested contact must have a relationship in order for the tested contact to match this filter to be \a relatedContactId
  */
 void QContactRelationshipFilter::setRelatedContactId(const QContactId &relatedContactId)
 {
@@ -128,7 +120,7 @@ void QContactRelationshipFilter::setRelatedContactId(const QContactId &relatedCo
 }
 
 /*!
- * Returns the id of the contact with whom the tested contact must have a relationship in order for the tested contact to match this filter
+  Returns the id of the contact with whom the tested contact must have a relationship in order for the tested contact to match this filter
  */
 QContactId QContactRelationshipFilter::relatedContactId() const
 {
@@ -137,88 +129,21 @@ QContactId QContactRelationshipFilter::relatedContactId() const
 }
 
 /*!
- * Sets the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter to be \a relatedContactRole
+  Sets the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter to be \a relatedContactRole
  */
-void QContactRelationshipFilter::setRelatedContactRole(QContactRelationshipFilter::Role relatedContactRole)
+void QContactRelationshipFilter::setRelatedContactRole(QContactRelationship::Role relatedContactRole)
 {
     Q_D(QContactRelationshipFilter);
     d->m_relatedContactRole = relatedContactRole;
 }
 
 /*!
- * Returns the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter
+  Returns the role in the relationship with the tested contact that the related contact must play in order for the tested contact to match this filter
  */
-QContactRelationshipFilter::Role QContactRelationshipFilter::relatedContactRole() const
+QContactRelationship::Role QContactRelationshipFilter::relatedContactRole() const
 {
     Q_D(const QContactRelationshipFilter);
     return d->m_relatedContactRole;
-}
-
-/*!
- * \deprecated
- * Sets the role in the relationship that a contact must be in order to match this filter to \a roleInRelationship
- *
- * This function has been deprecated - you should pass the opposite value (e.g. First instead of Second, Second
- * instead of First) to \c setRelatedContactRole().
- * \sa setRelatedContactRole();
- */
-void QContactRelationshipFilter::setRole(QContactRelationshipFilter::Role roleInRelationship)
-{
-    Q_D(QContactRelationshipFilter);
-    qWarning("QContactRelationshipFilter::setRole() This function is deprecated and will be removed after the transition period has elapsed.  Use setRelatedContactRole() instead!");
-    switch(roleInRelationship) {
-        case QContactRelationshipFilter::Either:
-            d->m_relatedContactRole = QContactRelationshipFilter::Either;
-            break;
-        case QContactRelationshipFilter::First:
-            d->m_relatedContactRole = QContactRelationshipFilter::Second;
-            break;
-        case QContactRelationshipFilter::Second:
-            d->m_relatedContactRole = QContactRelationshipFilter::First;
-            break;
-    }
-}
-
-/*!
- * \deprecated
- * Sets the contact id of the other participant which must be present in the relationship with the contact
- * in order for the contact to match the filter to be \a id
- */
-void QContactRelationshipFilter::setOtherParticipantId(const QContactId& id)
-{
-    Q_D(QContactRelationshipFilter);
-    qWarning("QContactRelationshipFilter::setOtherParticipantId() This function is deprecated and will be removed after the transition period has elapsed.  Use setRelatedContactId() instead!");
-    d->m_relatedContactId = id;
-}
-
-/*!
- * \deprecated
- * Returns the role that a contact must have in a relationship in order to match the filter
- */
-QContactRelationshipFilter::Role QContactRelationshipFilter::role() const
-{
-    Q_D(const QContactRelationshipFilter);
-    qWarning("QContactRelationshipFilter::role() This function is deprecated and will be removed after the transition period has elapsed.  Use relatedContactRole() instead!");
-    switch(d->m_relatedContactRole) {
-        case QContactRelationshipFilter::First:
-            return QContactRelationshipFilter::Second;
-        case QContactRelationshipFilter::Second:
-            return QContactRelationshipFilter::First;
-        case QContactRelationshipFilter::Either:
-        default:
-            return QContactRelationshipFilter::Either;
-    }
-}
-
-/*!
- * \deprecated
- * Returns the id of another contact with whom a contact must have a relationship in order to match the filter
- */
-QContactId QContactRelationshipFilter::otherParticipantId() const
-{
-    Q_D(const QContactRelationshipFilter);
-    qWarning("QContactRelationshipFilter::otherParticipantId() This function is deprecated and will be removed after the transition period has elapsed.  Use relatedContactId() instead!");
-    return d->m_relatedContactId;
 }
 
 QTM_END_NAMESPACE

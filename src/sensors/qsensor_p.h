@@ -63,16 +63,17 @@ class QSensorPrivate
 {
 public:
     QSensorPrivate()
-        : supportedUpdatePolicies(QSensor::Undefined)
-        , updatePolicy(QSensor::Undefined)
-        , updateInterval(0)
+        : identifier()
+        , type()
+        , outputRange(-1)
+        , dataRate(0)
         , backend(0)
-        , signalEnabled(true)
         , active(false)
+        , busy(false)
         , device_reading(0)
         , filter_reading(0)
         , cache_reading(0)
-        , complete(true)
+        , error(0)
     {
     }
 
@@ -80,20 +81,24 @@ public:
     QByteArray identifier;
     QByteArray type;
 
+    QString description;
+
+    qoutputrangelist outputRanges;
+    int outputRange;
+
     // policy
-    QSensor::UpdatePolicies supportedUpdatePolicies;
-    QSensor::UpdatePolicy updatePolicy;
-    int updateInterval;
+    qrangelist availableDataRates;
+    int dataRate;
 
     QSensorBackend *backend;
     QFilterList filters;
-    bool signalEnabled;
     bool active;
+    bool busy;
     QSensorReading *device_reading;
     QSensorReading *filter_reading;
     QSensorReading *cache_reading;
 
-    bool complete;
+    int error;
 };
 
 class QSensorReadingPrivate

@@ -59,29 +59,10 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*!
-
-  \fn QContactRelationshipFetchRequest::progress(QContactRelationshipFetchRequest* self, bool appendOnly)
-  \deprecated
-
-  This signal is emitted when some progress has been made on the
-  request, causing either a change of status or an update of results,
-  or both.  It identifies which request the signal originated from by
-  including a pointer to \a self, and contains an \a appendOnly flag
-  which signifies whether or not the total ordering of the results
-  have been maintained since the last progress signal was emitted.
+/*! Constructs a new relationship fetch request whose parent is the specified \a parent
  */
-
-/*! Constructs a new relationship fetch request
- */
-QContactRelationshipFetchRequest::QContactRelationshipFetchRequest()
-    : QContactAbstractRequest(new QContactRelationshipFetchRequestPrivate)
-{
-}
-
-/*! Cleans up the memory in use by this relationship fetch request
- */
-QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
+QContactRelationshipFetchRequest::QContactRelationshipFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRelationshipFetchRequestPrivate, parent)
 {
 }
 
@@ -137,58 +118,6 @@ QContactId QContactRelationshipFetchRequest::second() const
 {
     Q_D(const QContactRelationshipFetchRequest);
     return d->m_second;
-}
-
-/*!
-  \deprecated
-  Sets the participant criterion of the fetch request to \a
-  participantUri.  If the \a participantUri references a contact in
-  the manager from which the relationships are being fetched and the
-  \a role is \c QContactRelationshipFilter::Either, a relationship
-  will match the criterion if the contact appears in the relationship
-  as either the source or a destination contact.  If the \a
-  participantUri references a contact in a different manager to the
-  one from which the relationships are being fetched and the \a role
-  is \c QContactRelationshipFilter::Either, a relationship will match
-  the criterion only if the contact appears in the relationship as a
-  destination contact.  If the \a participantUri references a contact
-  in a different manager to the one from which the relationships are
-  being fetched and the \a role is \c
-  QContactRelationshipFilter::Source, no relationships will be
-  fetched.
-  
-  If the \a participantUri consists of an empty manager URI and the
-  zero contact id, or if the participant criterion is not set, the
-  request will fetch relationships involving any participant.
- */
-void QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
-{
-    Q_D(QContactRelationshipFetchRequest);
-    qWarning("QContactRelationshipFetchRequest::setParticipant() This function is deprecated and will be removed once the transition period has elapsed.  Use setSecond() instead!");
-    d->m_participantUri = participantUri;
-    d->m_role = role;
-}
-
-/*!
-  \deprecated
-  Returns the participant criterion of the fetch request
- */
-QContactId QContactRelationshipFetchRequest::participant() const
-{
-    Q_D(const QContactRelationshipFetchRequest);
-    qWarning("QContactRelationshipFetchRequest::participant() This function is deprecated and will be removed once the transition period has elapsed.  Use second() instead!");
-    return d->m_participantUri;
-}
-
-/*!
-  \deprecated
-  Returns the role of the participant criterion of the fetch request
- */
-QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRole() const
-{
-    Q_D(const QContactRelationshipFetchRequest);
-    qWarning("QContactRelationshipFetchRequest::participantRole() This function is deprecated and will be removed once the transition period has elapsed.  Use setSecond() instead!");
-    return d->m_role;
 }
 
 /*! Returns the list of relationships that was the result of the request

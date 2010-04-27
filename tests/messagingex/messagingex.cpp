@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "messagingex.h"
-#include "QMessageFilter.h"
+#include "qmessagefilter.h"
 #include <QFileDialog>
 
 MessagingEx::MessagingEx(QWidget* parent)
@@ -67,6 +67,9 @@ MessagingEx::MessagingEx(QWidget* parent)
         priorityAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
     }
     connect(accountComboBox_2,SIGNAL(currentIndexChanged(int)),this,SLOT(sortParentAccountId()));
+
+    timestampdateTimeEdit->setDateTime(QDateTime::currentDateTime());
+    receptiondateTimeEdit->setDateTime(QDateTime::currentDateTime());
 }
 
 void MessagingEx::createMenus()
@@ -276,8 +279,12 @@ void MessagingEx::addMessage()
 void MessagingEx::on_sendSmsButton_clicked()
 {
     QMessage message;
+    foreach (const QMessageAccountId& id,m_accountList) {
+       QMessageAccount acc(id);
+       if(acc.messageTypes() & QMessage::Sms) message.setParentAccountId(id);
+    }
     message.setType(QMessage::Sms);
-    message.setTo(QMessageAddress(QMessageAddress::Email, phoneNumberEdit->text()));
+    message.setTo(QMessageAddress(QMessageAddress::Phone, phoneNumberEdit->text()));
     message.setBody(QString(smsMessageEdit->toPlainText()));
     
     if (!QString(phoneNumberEdit->text()).isEmpty())
@@ -779,7 +786,7 @@ void MessagingEx::messagesFound(const QMessageIdList &ids)
     stackedWidget->setCurrentIndex(12);
     for (int i=0; i < ids.count(); i++) {
         QMessage message = m_manager.message(ids[i]);
-        QString from = message.from().recipient();
+        QString from = message.from().addressee();
         QString subject = message.subject();
         if (subject.length() == 0) {
             subject = message.textContent();

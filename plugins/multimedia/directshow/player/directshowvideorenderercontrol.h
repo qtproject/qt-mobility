@@ -42,14 +42,14 @@
 #ifndef DIRECTSHOWVIDEORENDERERCONTROL_H
 #define DIRECTSHOWVIDEORENDERERCONTROL_H
 
-#include <qvideorenderercontrol.h>
+#include "../../src/multimedia/qvideorenderercontrol.h"
 
 #include <dshow.h>
 
 class DirectShowEventLoop;
 class VideoSurfaceFilter;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DirectShowVideoRendererControl : public QVideoRendererControl
 {

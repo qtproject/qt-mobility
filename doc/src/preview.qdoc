@@ -49,19 +49,12 @@
 \target {Management of Versit Documents}
 \section1 Management of Versit Documents
 
-\l{Versit API}{Versit API Documentation}
+\l{Versit API (technology preview)}{Versit API Documentation}
 
 An overview is available for the \l{versit.html}{Versit API}
 
 Versit Classes.
 \annotatedlist versit
-
-
-\target {Camera Support}
-\section1 Camera Support (Multimedia)
-
-\annotatedlist camera
-
 
 \target {Sensor Classes}
 \section1 Sensor API

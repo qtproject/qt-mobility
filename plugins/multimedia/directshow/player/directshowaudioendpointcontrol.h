@@ -42,13 +42,13 @@
 #ifndef DIRECTSHOWAUDIOENDPOINTCONTROL_H
 #define DIRECTSHOWAUDIOENDPOINTCONTROL_H
 
-#include <qaudioendpointselector.h>
+#include "../../src/multimedia/qaudioendpointselector.h"
 
 #include <dshow.h>
 
 class DirectShowPlayerService;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DirectShowAudioEndpointControl : public QAudioEndpointSelector
 {

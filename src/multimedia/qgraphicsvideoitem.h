@@ -44,13 +44,13 @@
 
 #include <QtGui/qgraphicsitem.h>
 
-#include <qvideowidget.h>
+#include "qvideowidget.h"
 
 QT_BEGIN_NAMESPACE
 class QVideoSurfaceFormat;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGraphicsVideoItemPrivate;
 class  Q_MEDIA_EXPORT QGraphicsVideoItem : public QGraphicsObject
@@ -62,13 +62,6 @@ class  Q_MEDIA_EXPORT QGraphicsVideoItem : public QGraphicsObject
     Q_PROPERTY(QSizeF size READ size WRITE setSize)
     Q_PROPERTY(QSizeF nativeSize READ nativeSize NOTIFY nativeSizeChanged)
 public:
-    enum FillMode
-    {
-        Stretch,
-        PreserveAspectFit,
-        PreserveAspectCrop
-    };
-
     QGraphicsVideoItem(QGraphicsItem *parent = 0);
     ~QGraphicsVideoItem();
 
@@ -91,9 +84,10 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 Q_SIGNALS:
-    void nativeSizeChanged(const QSizeF &size) const;
+    void nativeSizeChanged(const QSizeF &size);
 
 protected:
+    void timerEvent(QTimerEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     QGraphicsVideoItemPrivate *d_ptr;
@@ -106,6 +100,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_mediaObjectDestroyed())
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

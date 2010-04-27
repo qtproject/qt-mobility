@@ -42,13 +42,13 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qmap.h>
 
-#include <qmediaservice.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaserviceproviderplugin.h>
-#include <qmediapluginloader_p.h>
-#include <qmediaplayer.h>
+#include "qmediaservice.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaserviceproviderplugin.h"
+#include "qmediapluginloader_p.h"
+#include "qmediaplayer.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaServiceProviderHintPrivate : public QSharedData
 {
@@ -101,6 +101,9 @@ public:
 
     \value RecordingSupport
             The service provides audio or video recording functions.
+
+    \value StreamPlayback
+            The service is capable of playing QIODevice based streams.
 */
 
 /*!
@@ -333,9 +336,9 @@ public:
                 }
                 break;
             case QMediaServiceProviderHint::ContentType: {
-                    QtMedia::SupportEstimate estimate = QtMedia::NotSupported;
+                    QtMediaServices::SupportEstimate estimate = QtMediaServices::NotSupported;
                     foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
-                        QtMedia::SupportEstimate currentEstimate = QtMedia::MaybeSupported;
+                        QtMediaServices::SupportEstimate currentEstimate = QtMediaServices::MaybeSupported;
                         QMediaServiceSupportedFormatsInterface *iface =
                                 qobject_cast<QMediaServiceSupportedFormatsInterface*>(currentPlugin);
 
@@ -346,7 +349,7 @@ public:
                             estimate = currentEstimate;
                             plugin = currentPlugin;
 
-                            if (currentEstimate == QtMedia::PreferedService)
+                            if (currentEstimate == QtMediaServices::PreferredService)
                                 break;
                         }
                     }
@@ -377,7 +380,7 @@ public:
         }
     }
 
-    QtMedia::SupportEstimate hasSupport(const QByteArray &serviceType,
+    QtMediaServices::SupportEstimate hasSupport(const QByteArray &serviceType,
                                      const QString &mimeType,
                                      const QStringList& codecs,
                                      int flags) const
@@ -385,23 +388,34 @@ public:
         QList<QObject*> instances = loader()->instances(serviceType);
 
         if (instances.isEmpty())
-            return QtMedia::NotSupported;
+            return QtMediaServices::NotSupported;
 
         bool allServicesProvideInterface = true;
-        QtMedia::SupportEstimate supportEstimate = QtMedia::NotSupported;
+        QtMediaServices::SupportEstimate supportEstimate = QtMediaServices::NotSupported;
 
         foreach(QObject *obj, instances) {
             QMediaServiceSupportedFormatsInterface *iface =
                     qobject_cast<QMediaServiceSupportedFormatsInterface*>(obj);
 
-            //if low latency playback was asked, skip services known
-            //not to provide low latency playback
-            if (flags & QMediaPlayer::LowLatency) {
+
+            if (flags) {
                 QMediaServiceFeaturesInterface *iface =
                         qobject_cast<QMediaServiceFeaturesInterface*>(obj);
 
-                if (iface && !(iface->supportedFeatures(serviceType) & QMediaServiceProviderHint::LowLatencyPlayback))
-                    continue;
+                if (iface) {
+                    QMediaServiceProviderHint::Features features = iface->supportedFeatures(serviceType);
+
+                    //if low latency playback was asked, skip services known
+                    //not to provide low latency playback
+                    if ((flags & QMediaPlayer::LowLatency) &&
+                        !(features & QMediaServiceProviderHint::LowLatencyPlayback))
+                            continue;
+
+                    //the same for QIODevice based streams support
+                    if ((flags & QMediaPlayer::StreamPlayback) &&
+                        !(features & QMediaServiceProviderHint::StreamPlayback))
+                            continue;
+                }
             }
 
             if (iface)
@@ -410,13 +424,13 @@ public:
                 allServicesProvideInterface = false;
         }
 
-        //don't return PreferedService
-        supportEstimate = qMin(supportEstimate, QtMedia::ProbablySupported);
+        //don't return PreferredService
+        supportEstimate = qMin(supportEstimate, QtMediaServices::ProbablySupported);
 
         //Return NotSupported only if no services are available of serviceType
         //or all the services returned NotSupported, otherwise return at least MaybeSupported
         if (!allServicesProvideInterface)
-            supportEstimate = qMax(QtMedia::MaybeSupported, supportEstimate);
+            supportEstimate = qMax(QtMediaServices::MaybeSupported, supportEstimate);
 
         return supportEstimate;
     }
@@ -431,14 +445,25 @@ public:
             QMediaServiceSupportedFormatsInterface *iface =
                     qobject_cast<QMediaServiceSupportedFormatsInterface*>(obj);
 
-            // If low latency playback was asked for, skip MIME types from services known
-            // not to provide low latency playback
+
             if (flags & QMediaPlayer::LowLatency) {
                 QMediaServiceFeaturesInterface *iface =
                         qobject_cast<QMediaServiceFeaturesInterface*>(obj);
 
-                if (iface && !(iface->supportedFeatures(serviceType) & QMediaServiceProviderHint::LowLatencyPlayback))
-                    continue;
+                if (iface) {
+                    QMediaServiceProviderHint::Features features = iface->supportedFeatures(serviceType);
+
+                    // If low latency playback was asked for, skip MIME types from services known
+                    // not to provide low latency playback
+                    if ((flags & QMediaPlayer::LowLatency) &&
+                        !(features & QMediaServiceProviderHint::LowLatencyPlayback))
+                        continue;
+
+                    //the same for QIODevice based streams support
+                    if ((flags & QMediaPlayer::StreamPlayback) &&
+                        !(features & QMediaServiceProviderHint::StreamPlayback))
+                            continue;
+                }
             }
 
             if (iface) {
@@ -509,13 +534,13 @@ Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 */
 
 /*!
-    \fn QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs, int flags) const
+    \fn QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs, int flags) const
 
     Returns how confident a media service provider is that is can provide a \a serviceType
     service that is able to play media of a specific \a mimeType that is encoded using the listed
     \a codecs while adhearing to constraints identified in \a flags.
 */
-QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
+QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
                                                         const QString &mimeType,
                                                         const QStringList& codecs,
                                                         int flags) const
@@ -525,7 +550,7 @@ QtMedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &ser
     Q_UNUSED(codecs);
     Q_UNUSED(flags);
 
-    return QtMedia::MaybeSupported;
+    return QtMediaServices::MaybeSupported;
 }
 
 /*!
@@ -563,12 +588,35 @@ QString QMediaServiceProvider::deviceDescription(const QByteArray &serviceType, 
     return QString();
 }
 
+
+#ifdef QT_BUILD_INTERNAL
+
+static QMediaServiceProvider *qt_defaultMediaServiceProvider = 0;
+
+/*!
+    Sets a media service \a provider as the default.
+
+    \internal
+*/
+void QMediaServiceProvider::setDefaultServiceProvider(QMediaServiceProvider *provider)
+{
+    qt_defaultMediaServiceProvider = provider;
+}
+
+#endif
+
 /*!
     Returns a default provider of media services.
 */
 QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 {
+#ifdef QT_BUILD_INTERNAL
+    return qt_defaultMediaServiceProvider != 0
+            ? qt_defaultMediaServiceProvider
+            : static_cast<QMediaServiceProvider *>(pluginProvider());
+#else
     return pluginProvider();
+#endif
 }
 
 /*!
@@ -676,5 +724,5 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 
 #include "moc_qmediaserviceprovider.cpp"
 #include "moc_qmediaserviceproviderplugin.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

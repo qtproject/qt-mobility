@@ -61,11 +61,11 @@ class QProximityReadingPrivate : public QSensorReadingPrivate
 {
 public:
     QProximityReadingPrivate()
-        : proximity(0)
+        : close(false)
     {
     }
 
-    int proximity;
+    bool close;
 };
 
 QTM_END_NAMESPACE

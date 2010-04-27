@@ -31,7 +31,7 @@ Rectangle {
         //! [1]
 
         Particles {
-            id: Bubbles
+            id: bubbles
             width: parent.width
             anchors.bottom: parent.bottom
             source: "bubble.png"
@@ -49,7 +49,7 @@ Rectangle {
             name: "charging"
             when: batteryCharging.value
             PropertyChanges {
-                target: Bubbles
+                target: bubbles
                 count: batteryCharge.value / 5
                 emissionRate: 5
             }

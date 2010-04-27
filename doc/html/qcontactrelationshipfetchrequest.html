@@ -23,8 +23,7 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfetchrequest.html#QContactRelationshipFetchRequest">QContactRelationshipFetchRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfetchrequest.html#dtor.QContactRelationshipFetchRequest">~QContactRelationshipFetchRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfetchrequest.html#QContactRelationshipFetchRequest">QContactRelationshipFetchRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactId </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfetchrequest.html#first">first</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfetchrequest.html#relationshipType">relationshipType</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactRelationship&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfetchrequest.html#relationships">relationships</a></b> () const</td></tr>
@@ -37,21 +36,13 @@
 <li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qcontactabstractrequest.html#public-functions">QContactAbstractRequest</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
-<hr />
-<a name="signals"></a>
-<h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationshipfetchrequest.html#progress">progress</a></b> ( QContactRelationshipFetchRequest * <i>self</i>, bool <i>appendOnly</i> )&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>3 public slots inherited from <a href="qcontactabstractrequest.html#public-slots">QContactAbstractRequest</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -65,19 +56,12 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFetchRequest/QContactRelationshipFetchRequest"></a>
-<h3 class="fn"><a name="QContactRelationshipFetchRequest"></a>QContactRelationshipFetchRequest::QContactRelationshipFetchRequest ()</h3>
-<p>Constructs a new relationship fetch request</p>
-<a name="//apple_ref/cpp/instm/QContactRelationshipFetchRequest/~QContactRelationshipFetchRequest"></a>
-<h3 class="fn"><a name="dtor.QContactRelationshipFetchRequest"></a>QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest ()</h3>
-<p>Cleans up the memory in use by this relationship fetch request</p>
+<h3 class="fn"><a name="QContactRelationshipFetchRequest"></a>QContactRelationshipFetchRequest::QContactRelationshipFetchRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new relationship fetch request whose parent is the specified <i>parent</i></p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFetchRequest/first"></a>
 <h3 class="fn"><a name="first"></a><a href="qcontactid.html">QContactId</a> QContactRelationshipFetchRequest::first () const</h3>
 <p>Returns the source contact criterion of the fetch request</p>
 <p>See also <a href="qcontactrelationshipfetchrequest.html#setFirst">setFirst</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactRelationshipFetchRequest/progress"></a>
-<h3 class="fn"><a name="progress"></a>void QContactRelationshipFetchRequest::progress ( QContactRelationshipFetchRequest * <i>self</i>, bool <i>appendOnly</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This function is deprecated.</p>
-<p>This signal is emitted when some progress has been made on the request, causing either a change of status or an update of results, or both. It identifies which request the signal originated from by including a pointer to <i>self</i>, and contains an <i>appendOnly</i> flag which signifies whether or not the total ordering of the results have been maintained since the last progress signal was emitted.</p>
 <a name="//apple_ref/cpp/instm/QContactRelationshipFetchRequest/relationshipType"></a>
 <h3 class="fn"><a name="relationshipType"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactRelationshipFetchRequest::relationshipType () const</h3>
 <p>Returns the relationship type criterion of the fetch request</p>

@@ -57,10 +57,10 @@ class Q_CONTACTS_EXPORT QContactDetailDefinitionSaveRequest : public QContactAbs
     Q_OBJECT
 
 public:
-    QContactDetailDefinitionSaveRequest();
-    ~QContactDetailDefinitionSaveRequest();
+    QContactDetailDefinitionSaveRequest(QObject* parent = 0);
 
     /* Selection */
+    void setDefinition(const QContactDetailDefinition& definition);
     void setDefinitions(const QList<QContactDetailDefinition>& definitions);
     void setContactType(const QString& contactType);
     QString contactType() const;
@@ -68,9 +68,6 @@ public:
     /* Results */
     QList<QContactDetailDefinition> definitions() const;
     QMap<int, QContactManager::Error> errorMap() const;
-
-signals:
-    void progress(QContactDetailDefinitionSaveRequest* self); // deprecated
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionSaveRequest)

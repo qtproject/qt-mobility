@@ -44,7 +44,7 @@
 #include "qlocalmediaplaylistprovider.h"
 #include "qmediaplaylistnavigator.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class tst_QMediaPlaylistNavigator : public QObject
 {
     Q_OBJECT

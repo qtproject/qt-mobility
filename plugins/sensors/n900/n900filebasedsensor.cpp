@@ -45,11 +45,10 @@ n900filebasedsensor::n900filebasedsensor(QSensor *sensor)
     : QSensorBackend(sensor)
     , m_timerid(0)
 {
-    setSupportedUpdatePolicies(QSensor::OccasionalUpdates |
-            QSensor::InfrequentUpdates |
-            QSensor::FrequentUpdates |
-            QSensor::TimedUpdates |
-            QSensor::PolledUpdates);
+}
+
+n900filebasedsensor::~n900filebasedsensor()
+{
 }
 
 void n900filebasedsensor::start()
@@ -57,26 +56,14 @@ void n900filebasedsensor::start()
     if (m_timerid)
         return;
 
-    int interval = m_sensor->updateInterval();
-
-    switch (m_sensor->updatePolicy()) {
-    case QSensor::OccasionalUpdates:
-        interval = 5000;
-        break;
-    case QSensor::InfrequentUpdates:
-        interval = 1000;
-        break;
-    case QSensor::Undefined: /* fall through */
-    case QSensor::FrequentUpdates:
-        interval = 100;
-        break;
-    case QSensor::TimedUpdates:
-        // already set
-        break;
-    default:
-        interval = 0;
-        break;
+    if (sensor()->dataRate() == 0) {
+        sensorStopped();
+        return;
     }
+
+    int interval = 1000 / sensor()->dataRate();
+    if (interval < 0)
+        interval = 1000;
 
     if (interval)
         m_timerid = startTimer(interval);

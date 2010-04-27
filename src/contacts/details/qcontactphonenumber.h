@@ -57,37 +57,37 @@ class Q_CONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldNumber;
-    const char* FieldSubType;
-    const char* SubTypeLandline;
-    const char* SubTypeMobile;
-    const char* SubTypeFacsimile;
-    const char* SubTypePager;
-    const char* SubTypeVoice;
-    const char* SubTypeModem;
-    const char* SubTypeVideo;
-    const char* SubTypeCar;
-    const char* SubTypeBulletinBoardSystem;
-    const char* SubTypeMessagingCapable;
-    const char* SubTypeAssistant;
-    const char* SubTypeDtmfMenu;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldNumber;
+    static const QLatin1Constant FieldSubTypes;
+    static const QLatin1Constant SubTypeLandline;
+    static const QLatin1Constant SubTypeMobile;
+    static const QLatin1Constant SubTypeFax;
+    static const QLatin1Constant SubTypePager;
+    static const QLatin1Constant SubTypeVoice;
+    static const QLatin1Constant SubTypeModem;
+    static const QLatin1Constant SubTypeVideo;
+    static const QLatin1Constant SubTypeCar;
+    static const QLatin1Constant SubTypeBulletinBoardSystem;
+    static const QLatin1Constant SubTypeMessagingCapable;
+    static const QLatin1Constant SubTypeAssistant;
+    static const QLatin1Constant SubTypeDtmfMenu;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
-    Q_DECLARE_LATIN1_LITERAL(FieldNumber, "PhoneNumber");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeLandline, "Landline");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeMobile, "Mobile");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeFacsimile, "Facsimile");
-    Q_DECLARE_LATIN1_LITERAL(SubTypePager, "Pager");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVoice, "Voice");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeModem, "Modem");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, "Video");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeCar, "Car");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeBulletinBoardSystem, "BulletinBoardSystem");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeMessagingCapable, "MessagingCapable");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeAssistant, "Assistant");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeDtmfMenu, "DtmfMenu");
+    Q_DECLARE_LATIN1_CONSTANT(FieldNumber, "PhoneNumber");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeLandline, "Landline");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeMobile, "Mobile");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeFax, "Fax");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypePager, "Pager");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeVoice, "Voice");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeModem, "Modem");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeVideo, "Video");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeCar, "Car");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeBulletinBoardSystem, "BulletinBoardSystem");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeMessagingCapable, "MessagingCapable");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeAssistant, "Assistant");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeDtmfMenu, "DtmfMenu");
 #endif
 
     void setNumber(const QString& number) {setValue(FieldNumber, number);}

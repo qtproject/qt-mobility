@@ -484,8 +484,6 @@ void QNetworkSessionPrivate::connectionError(const QString &id, QNetworkSessionE
         default:
             lastError = QNetworkSession::UnknownSessionError;
         }
-
-        emit quitPendingWaitsForOpened();
         emit q->error(lastError);
     }
 }
@@ -497,38 +495,33 @@ void QNetworkSessionPrivate::setActiveTimeStamp()
         startTime = QDateTime();
         return;
     }
-    QString connectionIdent = q->configuration().identifier();
     QString interface = currentInterface().hardwareAddress().toLower();
-    QString devicePath = "/org/freedesktop/Hal/devices/net_" + interface.replace(":","_");
+    const QString devicePath = QLatin1String("/org/freedesktop/Hal/devices/net_") +
+                               interface.replace(QLatin1Char(':'), QLatin1Char('_'));
 
     QString path;
     QString serviceName;
-    QNetworkManagerInterface * ifaceD;
-    ifaceD = new QNetworkManagerInterface();
+    QScopedPointer<QNetworkManagerInterface> ifaceD(new QNetworkManagerInterface());
 
-    QList<QDBusObjectPath> connections = ifaceD->activeConnections();
-    foreach(QDBusObjectPath conpath, connections) {
-        QNetworkManagerConnectionActive *conDetails;
-        conDetails = new QNetworkManagerConnectionActive(conpath.path());
-        QDBusObjectPath connection = conDetails->connection();
+    foreach (const QDBusObjectPath &conpath, ifaceD->activeConnections()) {
+        QScopedPointer<QNetworkManagerConnectionActive> conDetails(new QNetworkManagerConnectionActive(conpath.path()));
+        const QDBusObjectPath connection = conDetails->connection();
         serviceName = conDetails->serviceName();
-        QList<QDBusObjectPath> so = conDetails->devices();
-        foreach(QDBusObjectPath device, so) {
-
+        foreach (const QDBusObjectPath &device, conDetails->devices()) {
             if(device.path() == devicePath) {
                 path = connection.path();
             }
             break;
         }
     }
-if(serviceName.isEmpty())
-    return;
-    QNetworkManagerSettings *settingsiface;
-    settingsiface = new QNetworkManagerSettings(serviceName);
-    QList<QDBusObjectPath> list = settingsiface->listConnections();
-    foreach(QDBusObjectPath path, list) {
-        QNetworkManagerSettingsConnection *sysIface;
-        sysIface = new QNetworkManagerSettingsConnection(serviceName, path.path());
+
+    if(serviceName.isEmpty())
+        return;
+
+    QScopedPointer<QNetworkManagerSettings> settingsiface(new QNetworkManagerSettings(serviceName));
+    foreach (const QDBusObjectPath &path, settingsiface->listConnections()) {
+        QScopedPointer<QNetworkManagerSettingsConnection> sysIface;
+        sysIface.reset(new QNetworkManagerSettingsConnection(serviceName, path.path()));
         startTime = QDateTime::fromTime_t(sysIface->getTimestamp());
         //                    isOpen = (publicConfig.state() & QNetworkConfiguration::Active) == QNetworkConfiguration::Active;
     }

@@ -70,22 +70,22 @@
 #include <msvfind.h>   // CMsvFindOperation  
 #include <mtmdef.h>    // TMsvPartList
 #include <utf.h>       // CnvUtfConverter
-#include <MMsvAttachmentManager.h>
-#include <CMsvMimeHeaders.h> // Attachemt mimeheader
+#include <mmsvattachmentmanager.h>
+#include <cmsvmimeheaders.h> // Attachemt mimeheader
 #include <eikenv.h>
 #include <smut.h>
 #include <smuthdr.h>
 #include <mtuireg.h> // CMtmUiRegistry
 #include <mtmuibas.h> // CBaseMtmUi
-#include <senduiconsts.h>
-#include <SendUi.h>    // SendUi API
-#include <cmessagedata.h> //CMessageData
-#include <APGCLI.H>
+#include <SendUiConsts.h>
+#include <sendui.h>    // SendUi API
+#include <CMessageData.h> //CMessageData
+#include <apgcli.h>
 #include <rsendas.h>
 #include <rsendasmessage.h>
 #include <cmsvrecipientlist.h>
 #include <imapset.h>
-#include <MIUTMSG.H>
+#include <miutmsg.h>
 #include <charconv.h>
 #include <imcvtext.h> // KImcvMultipart declaration
 
@@ -774,7 +774,7 @@ bool CMTMEngine::composeSMSL(const QMessage &message)
     TPtrC16 receiver(KNullDesC);
     QString qreceiver;
     for (int i = 0; i < list.size(); ++i) {
-        qreceiver = list.at(i).recipient();
+        qreceiver = list.at(i).addressee();
         receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
         messageData->AppendToAddressL(receiver, KNullDesC);
     }
@@ -809,7 +809,7 @@ bool CMTMEngine::composeMMSL(const QMessage &message)
     TPtrC16 receiver(KNullDesC);
     QString qreceiver;
     for (int i = 0; i < list.size(); ++i) {
-        qreceiver = list.at(i).recipient();
+        qreceiver = list.at(i).addressee();
         receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
         messageData->AppendToAddressL(receiver, KNullDesC);
     }
@@ -878,7 +878,7 @@ bool CMTMEngine::composeEmailL(const QMessage &message)
     TPtrC16 receiver(KNullDesC);
     QString qreceiver;
     for (int i = 0; i < list.size(); ++i) {
-        qreceiver = list.at(i).recipient();
+        qreceiver = list.at(i).addressee();
         receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
         messageData->AppendToAddressL(receiver, KNullDesC);
     }
@@ -887,7 +887,7 @@ bool CMTMEngine::composeEmailL(const QMessage &message)
     TPtrC16 ccReceiver(KNullDesC);
     QString ccQreceiver;
     for (int i = 0; i < ccList.size(); ++i) {
-        ccQreceiver = ccList.at(i).recipient();
+        ccQreceiver = ccList.at(i).addressee();
         ccReceiver.Set(reinterpret_cast<const TUint16*>(ccQreceiver.utf16()));
         messageData->AppendCcAddressL(ccReceiver, KNullDesC);
     }
@@ -896,7 +896,7 @@ bool CMTMEngine::composeEmailL(const QMessage &message)
     TPtrC16 bccReceiver(KNullDesC);
     QString bccQreceiver;
     for (int i = 0; i < bccList.size(); ++i) {
-        bccQreceiver = bccList.at(i).recipient();
+        bccQreceiver = bccList.at(i).addressee();
         bccReceiver.Set(reinterpret_cast<const TUint16*>(bccQreceiver.utf16()));
         messageData->AppendBccAddressL(bccReceiver, KNullDesC);
     }
@@ -2460,7 +2460,7 @@ void CMTMEngine::storeSMSL(QMessage &message)
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < list.size(); ++i) {
-            qreceiver = list.at(i).recipient();
+            qreceiver = list.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             ipSmsMtm->AddAddresseeL(receiver); 
             ipSmsMtm->SaveMessageL();
@@ -2582,7 +2582,7 @@ void CMTMEngine::storeMMSL(QMessage &message)
     TPtrC16 receiver(KNullDesC);
     QString qreceiver;
     for (int i = 0; i < list.size(); ++i) {
-        qreceiver = list.at(i).recipient();
+        qreceiver = list.at(i).addressee();
         receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
         ipMmsMtm->AddAddresseeL(receiver); 
         }
@@ -2801,7 +2801,7 @@ void CMTMEngine::updateSMSL(QMessage &message)
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < list.size(); ++i) {
-            qreceiver = list.at(i).recipient();
+            qreceiver = list.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             ipSmsMtm->AddAddresseeL(receiver); 
             ipSmsMtm->SaveMessageL();
@@ -2862,7 +2862,7 @@ void CMTMEngine::updateMMSL(QMessage &message)
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < list.size(); ++i) {
-            qreceiver = list.at(i).recipient();
+            qreceiver = list.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             ipMmsMtm->AddAddresseeL(receiver); 
             }
@@ -3085,7 +3085,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
     }
     
     msvEntry.iDescription.Set(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
-    msvEntry.iDetails.Set(TPtrC(reinterpret_cast<const TUint16*>(message.from().recipient().utf16())));
+    msvEntry.iDetails.Set(TPtrC(reinterpret_cast<const TUint16*>(message.from().addressee().utf16())));
     
     if (mtmUid == KUidMsgTypeSMTP) {
         ipSmtpMtm->Entry().ChangeL(msvEntry);
@@ -3233,7 +3233,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < toList.size(); ++i) {
-            qreceiver = toList.at(i).recipient();
+            qreceiver = toList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             emailEntry->ToRecipients().AppendL(receiver); 
         }
@@ -3244,7 +3244,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < ccList.size(); ++i) {
-            qreceiver = ccList.at(i).recipient();
+            qreceiver = ccList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             emailEntry->CcRecipients().AppendL(receiver); 
         }
@@ -3255,7 +3255,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < bccList.size(); ++i) {
-            qreceiver = bccList.at(i).recipient();
+            qreceiver = bccList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             emailEntry->BccRecipients().AppendL(receiver); 
         }
@@ -3580,14 +3580,14 @@ void CMTMEngine::storeEmailL(QMessage &message)
     CImHeader* pImHeader = CImHeader::NewLC();
     pImHeader->RestoreL(*pMsvStore);
     pImHeader->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
-    pImHeader->SetFromL(TPtrC(reinterpret_cast<const TUint16*>(message.from().recipient().utf16())));
+    pImHeader->SetFromL(TPtrC(reinterpret_cast<const TUint16*>(message.from().addressee().utf16())));
     
     QList<QMessageAddress> toList(message.to());
     if (toList.count() > 0) {
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < toList.size(); ++i) {
-            qreceiver = toList.at(i).recipient();
+            qreceiver = toList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             pImHeader->ToRecipients().AppendL(receiver); 
         }
@@ -3598,7 +3598,7 @@ void CMTMEngine::storeEmailL(QMessage &message)
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < ccList.size(); ++i) {
-            qreceiver = ccList.at(i).recipient();
+            qreceiver = ccList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             pImHeader->CcRecipients().AppendL(receiver); 
         }
@@ -3609,7 +3609,7 @@ void CMTMEngine::storeEmailL(QMessage &message)
         TPtrC16 receiver(KNullDesC);
         QString qreceiver;
         for (int i = 0; i < bccList.size(); ++i) {
-            qreceiver = bccList.at(i).recipient();
+            qreceiver = bccList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             pImHeader->BccRecipients().AppendL(receiver); 
         }
@@ -3626,7 +3626,7 @@ void CMTMEngine::storeEmailL(QMessage &message)
     TMsvEntry changedEntry = pMsvEntry->Entry();
     changedEntry.iDescription.Set(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
     if (toList.count() > 0) {
-        changedEntry.iDetails.Set(TPtrC(reinterpret_cast<const TUint16*>(toList.at(0).recipient().utf16())));
+        changedEntry.iDetails.Set(TPtrC(reinterpret_cast<const TUint16*>(toList.at(0).addressee().utf16())));
     }
     if (!message.receivedDate().isNull() || !message.date().isNull()) {
         // Change the date to given date

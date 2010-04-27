@@ -55,7 +55,7 @@ IMPLEMENT_READING(QTapReading)
            tap sensor.
 
     \section2 QTapReading Units
-    The tap sensor registers tap and double tap events in one of the six directions.
+    The tap sensor registers tap events in one of the six directions.
     There are 3 axes that originate from the phone. They are arranged as follows.
 \code
              +z
@@ -76,6 +76,9 @@ IMPLEMENT_READING(QTapReading)
     ----------  /
     |_________!/
 \endcode
+
+    By default it returns double tap events. The QTapSensor::returnDoubleTapEvents property
+    must be set to false to return individual tap events.
 */
 
 /*!
@@ -142,8 +145,6 @@ void QTapReading::setDoubleTap(bool doubleTap)
 
 // =====================================================================
 
-// begin generated code
-
 /*!
     \class QTapFilter
     \ingroup sensors_filter
@@ -200,7 +201,17 @@ const char *QTapSensor::type("QTapSensor");
 
     \sa QSensor::reading()
 */
-// end generated code
+
+/*!
+    \property QTapSensor::returnDoubleTapEvents
+    \brief a value indicating if double tap events should be reported.
+
+    Set to true (the default) to have the sensor report on double tap events.
+    Set to false to have the sensor report on individual tap events.
+
+    Note that you must access this property via QObject::property() and QObject::setProperty().
+    The property must be set before calling start().
+*/
 
 #include "moc_qtapsensor.cpp"
 QTM_END_NAMESPACE

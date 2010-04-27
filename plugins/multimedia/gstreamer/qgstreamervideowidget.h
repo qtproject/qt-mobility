@@ -46,7 +46,7 @@
 
 #include "qgstreamervideorendererinterface.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerVideoWidget;
 
@@ -65,8 +65,8 @@ public:
 
     QWidget *videoWidget();
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     bool isFullScreen() const;
     void setFullScreen(bool fullScreen);
@@ -96,7 +96,7 @@ private:
     GstElement *m_videoSink;
     QGstreamerVideoWidget *m_widget;
     WId m_windowId;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     bool m_fullScreen;
 };
 

@@ -59,10 +59,16 @@
 #include <QtTracker/QLive>
 
 #include <qmobilityglobal.h>
-#include "qtcontacts.h"
+#include <qcontactmanagerengine.h>
+#include <qcontactmanagerenginefactory.h>
 
 using namespace SopranoLive;
 #include "qtrackercontactasyncrequest.h"
+
+QTM_BEGIN_NAMESPACE
+class QContactAbstractRequest;
+class QContactChangeSet;
+QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -103,29 +109,30 @@ Q_OBJECT
 
 public:
     QContactTrackerEngine(const QString& managerName, int managerVersion, const QMap<QString, QString>& parameters);
-    QContactTrackerEngine(const QMap<QString, QString>& parameters);
-    QContactTrackerEngine(const QContactTrackerEngine& other);
+    QContactTrackerEngine(const QMap<QString, QString>& parameters);        // XXX FIXME: I don't think this is used in your factory code either?
+    QContactTrackerEngine(const QContactTrackerEngine& other);              // XXX FIXME: not used in your factory code...?
     ~QContactTrackerEngine();
-    QContactTrackerEngine& operator=(const QContactTrackerEngine& other);
-    QContactManagerEngine* clone();
-    void deref();
+    QContactTrackerEngine& operator=(const QContactTrackerEngine& other);   // XXX FIXME: not used in your factory code...?
+    QContactManagerEngine* clone();                                         // XXX FIXME: no longer part of the engine API
+    void deref();                                                           // XXX FIXME: no longer part of the engine API
 
-    /* Filtering */
-    QList<QContactLocalId> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
+    // sync methods, wrapping async methods & waitForFinished
+    QList<QContactLocalId> contactIds(const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const; // XXX FIXME: no longer part of engine API.
+    QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+    QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
 
-    /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    /* Save contacts - single and in batch */
+    bool saveContact( QContact* contact, QContactManager::Error* error);
+    bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
-    bool saveContact(QContact* contact, QContactManager::Error& error);
-
-    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
-
-    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
+    bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
+    bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error) ;
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
+    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
+
+    QContactLocalId selfContactId(QContactManager::Error* error) const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QContactAbstractRequest* req);
@@ -133,23 +140,42 @@ public:
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
-    bool hasFeature(QContactManager::ManagerFeature feature) const;
-    bool filterSupported(const QContactFilter& filter) const;
+    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
+
+    bool isFilterSupported(const QContactFilter& filter) const;
     QList<QVariant::Type> supportedDataTypes() const;
 
     /* Version Reporting */
     QString managerName() const;
-    int implementationVersion() const;
+    int managerVersion() const;
 
     /* Synthesise the display label of a contact */
-    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+    QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
+
+
+
+    /* XXX TODO: pure virtual unimplemented functions! */
+    QMap<QString, QString> managerParameters() const {return QMap<QString,QString>();}
+    bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QList<QContactRelationship>();}
+    bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QContact();}
+    bool validateContact(const QContact&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
+    bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return false;}
+    QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QContactDetailDefinition();}
+    bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
+    bool cancelRequest(QContactAbstractRequest*) {return false;}
+    bool isRelationshipTypeSupported(const QString&, const QString&) const {return false;}
+    QStringList supportedContactTypes() const {return (QStringList() << QContactType::TypeContact);}
 
 
 private:
     //called from both constructors, connecting to all contact NodeList changes signals
     void connectToSignals();
     RDFVariable contactDetail2Rdf(const RDFVariable& rdfContact, const QString& definitionName, const QString& fieldName) const;
-    QContact contact_impl(const QContactLocalId& contactId, QContactManager::Error& error) const;
+    QContact contact_impl(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
 private:
     QSharedDataPointer<QContactTrackerEngineData> d;
     const QString contactArchiveFile;
@@ -157,12 +183,12 @@ private:
     friend class ut_qtcontacts_trackerplugin;
 };
 
-class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QContactManagerEngineFactory
+class Q_DECL_EXPORT ContactTrackerFactory : public QObject, public QtMobility::QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error&);
+        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error*);
         QString managerName() const;
 };
 

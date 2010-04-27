@@ -25,15 +25,14 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#RequestType-enum">RequestType</a></b> { InvalidRequest, ContactFetchRequest, ContactLocalIdFetchRequest, ContactRemoveRequest, ..., RelationshipSaveRequest }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#State-enum">State</a></b> { Inactive, Active, Canceling, Canceled, Finished }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#Status-enum">Status</a></b> { Inactive, Active, Cancelled, Finished, Cancelling }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#State-enum">State</a></b> { InactiveState, ActiveState, CanceledState, FinishedState }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#QContactAbstractRequest">QContactAbstractRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#dtor.QContactAbstractRequest">~QContactAbstractRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#QContactAbstractRequest">QContactAbstractRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#dtor.QContactAbstractRequest">~QContactAbstractRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactManager::Error </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#isActive">isActive</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#isCanceled">isCanceled</a></b> () const</td></tr>
@@ -68,27 +67,21 @@
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
-<hr />
-<a name="protected-functions"></a>
-<h2>Protected Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#QContactAbstractRequest-2">QContactAbstractRequest</a></b> ( QContactAbstractRequestPrivate * <i>otherd</i> )</td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QContactAbstractRequest class provides a mechanism for asynchronous requests to be made of a manager if it supports them.</p>
-<p>It allows a client to asynchronously request some functionality of a particular <a href="qcontactmanager.html">QContactManager</a>.</p>
+<p>It allows a client to asynchronously request some functionality of a particular <a href="qcontactmanager.html">QContactManager</a>. Instances of the class will emit signals when the state of the request changes, or when more results become available.</p>
+<p>Clients should not attempt to create instances of this class directly, but should instead use the use-case-specific classes derived from this class.</p>
+<p>After creating any sort of request, the client retains ownership and must delete the request to avoid leaking memory. The client may either do this directly (if not within a slot connected to a signal emitted by the request) or by using the <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() slot to schedule the request for deletion when control returns to the event loop.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactAbstractRequest/RequestType"></a>
@@ -120,32 +113,26 @@
 <tr><td valign="top"><tt>QContactAbstractRequest::RelationshipSaveRequest</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">A request to save a list of relationships</td></tr>
 </table></p>
 <a name="//apple_ref/cpp/tag/QContactAbstractRequest/State"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Inactive"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Active"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Canceling"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Canceled"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Finished"></a>
+<a name="//apple_ref/cpp/econst/QContactAbstractRequest/InactiveState"></a>
+<a name="//apple_ref/cpp/econst/QContactAbstractRequest/ActiveState"></a>
+<a name="//apple_ref/cpp/econst/QContactAbstractRequest/CanceledState"></a>
+<a name="//apple_ref/cpp/econst/QContactAbstractRequest/FinishedState"></a>
 <h3 class="fn"><a name="State-enum"></a>enum QContactAbstractRequest::State</h3>
 <p>Enumerates the various states that a request may be in at any given time</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Inactive</tt></td><td align="center" valign="top">?</td><td valign="top">Operation not yet started</td></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Active</tt></td><td align="center" valign="top">?</td><td valign="top">Operation started, not yet finished</td></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Canceling</tt></td><td align="center" valign="top">?</td><td valign="top">Operation started then cancelled, not yet finished</td></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Canceled</tt></td><td align="center" valign="top">?</td><td valign="top">Operation is finished due to cancellation</td></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Finished</tt></td><td align="center" valign="top">?</td><td valign="top">Operation successfully completed</td></tr>
+<tr><td valign="top"><tt>QContactAbstractRequest::InactiveState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Operation not yet started</td></tr>
+<tr><td valign="top"><tt>QContactAbstractRequest::ActiveState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Operation started, not yet finished</td></tr>
+<tr><td valign="top"><tt>QContactAbstractRequest::CanceledState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Operation is finished due to cancellation</td></tr>
+<tr><td valign="top"><tt>QContactAbstractRequest::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Operation successfully completed</td></tr>
 </table></p>
-<a name="//apple_ref/cpp/tag/QContactAbstractRequest/Status"></a>
-<h3 class="fn"><a name="Status-enum"></a>enum QContactAbstractRequest::Status</h3>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/QContactAbstractRequest"></a>
-<h3 class="fn"><a name="QContactAbstractRequest"></a>QContactAbstractRequest::QContactAbstractRequest ()</h3>
-<p>Constructs a new, invalid asynchronous request</p>
-<h3 class="fn"><a name="QContactAbstractRequest-2"></a>QContactAbstractRequest::QContactAbstractRequest ( QContactAbstractRequestPrivate * <i>otherd</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Constructs a new request from the given request data <i>otherd</i></p>
+<h3 class="fn"><a name="QContactAbstractRequest"></a>QContactAbstractRequest::QContactAbstractRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new, invalid asynchronous request with the specified <i>parent</i></p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/~QContactAbstractRequest"></a>
-<h3 class="fn"><a name="dtor.QContactAbstractRequest"></a>QContactAbstractRequest::~QContactAbstractRequest ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QContactAbstractRequest"></a>QContactAbstractRequest::~QContactAbstractRequest ()</h3>
 <p>Cleans up the memory used by this request</p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/cancel"></a>
 <h3 class="fn"><a name="cancel"></a>bool QContactAbstractRequest::cancel ()&nbsp;&nbsp;<tt> [slot]</tt></h3>

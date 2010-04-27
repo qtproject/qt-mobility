@@ -187,8 +187,8 @@ maemo5 {
                qgeopositioninfosource_maemo5.cpp \
                qgeosatelliteinfosource_maemo5.cpp \
                qgeoareamonitor_maemo.cpp
-    PRIVATE_HEADERS += gconfitem.h  \
-               liblocationwrapper.h \
+    HEADERS += gconfitem.h  \
+               liblocationwrapper_p.h \
                qgeopositioninfosource_maemo5_p.h \
                qgeosatelliteinfosource_maemo5_p.h \
                qgeoareamonitor_maemo_p.h
@@ -286,7 +286,8 @@ symbian {
     TARGET.UID3 = 0x2002AC83
 
     INCLUDEPATH += $${EPOCROOT}epoc32\include\osextensions \
-                   $${EPOCROOT}epoc32\include\LBTHeaders
+                   $${EPOCROOT}epoc32\include\LBTHeaders \
+                   $${EPOCROOT}epoc32\include\platform
     LIBS += -llbs
     contains(lbt_enabled, yes) {
         LIBS += -llbt

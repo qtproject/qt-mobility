@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>example.qml</file>
-        <file>contents/MediaButton.qml</file>
-        <file>ScrollBar.qml</file>
-        <file>contents/example.vcf</file>
-    </qresource>
-</RCC>

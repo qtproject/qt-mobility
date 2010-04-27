@@ -57,27 +57,27 @@ class Q_CONTACTS_EXPORT QContactGeoLocation : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldLabel;
-    const char* FieldLatitude;
-    const char* FieldLongitude;
-    const char* FieldAccuracy;
-    const char* FieldAltitude;
-    const char* FieldAltitudeAccuracy;
-    const char* FieldHeading;
-    const char* FieldSpeed;
-    const char* FieldTimestamp;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldLabel;
+    static const QLatin1Constant FieldLatitude;
+    static const QLatin1Constant FieldLongitude;
+    static const QLatin1Constant FieldAccuracy;
+    static const QLatin1Constant FieldAltitude;
+    static const QLatin1Constant FieldAltitudeAccuracy;
+    static const QLatin1Constant FieldHeading;
+    static const QLatin1Constant FieldSpeed;
+    static const QLatin1Constant FieldTimestamp;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeoLocation, "GeoLocation")
-    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
-    Q_DECLARE_LATIN1_LITERAL(FieldLatitude, "Latitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldLongitude, "Longitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAccuracy, "Accuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitude, "Altitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitudeAccuracy, "AltitudeAccuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldHeading, "Heading");
-    Q_DECLARE_LATIN1_LITERAL(FieldSpeed, "Speed");
-    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLatitude, "Latitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLongitude, "Longitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAccuracy, "Accuracy");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAltitude, "Altitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAltitudeAccuracy, "AltitudeAccuracy");
+    Q_DECLARE_LATIN1_CONSTANT(FieldHeading, "Heading");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSpeed, "Speed");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTimestamp, "Timestamp");
 #endif
 
     void setLabel(const QString& label) {setValue(FieldLabel, label);}
@@ -98,54 +98,6 @@ public:
     double speed() const {return variantValue(FieldSpeed).toDouble();}
     void setTimestamp(const QDateTime& timestamp) {setValue(FieldTimestamp, timestamp);}
     QDateTime timestamp() const {return variantValue(FieldTimestamp).toDateTime();}
-};
-
-// deprecated! spelling changed to GeoLocation -- see above.
-class Q_CONTACTS_EXPORT QContactGeolocation : public QContactDetail
-{
-public:
-#ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldLabel;
-    const char* FieldLatitude;
-    const char* FieldLongitude;
-    const char* FieldAccuracy;
-    const char* FieldAltitude;
-    const char* FieldAltitudeAccuracy;
-    const char* FieldHeading;
-    const char* FieldSpeed;
-    const char* FieldTimestamp;
-#else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeolocation, "GeoLocation") // change defn name to point to the new class defn name.
-    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
-    Q_DECLARE_LATIN1_LITERAL(FieldLatitude, "Latitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldLongitude, "Longitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAccuracy, "Accuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitude, "Altitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitudeAccuracy, "AltitudeAccuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldHeading, "Heading");
-    Q_DECLARE_LATIN1_LITERAL(FieldSpeed, "Speed");
-    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
-#endif
-
-    void Q_DECL_DEPRECATED setLabel(const QString& label) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldLabel, label);}
-    QString Q_DECL_DEPRECATED label() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return value(FieldLabel);}
-    void Q_DECL_DEPRECATED setLatitude(double latitude) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldLatitude, latitude);}
-    double Q_DECL_DEPRECATED latitude() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldLatitude).toDouble();}
-    void Q_DECL_DEPRECATED setLongitude(double longitude) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldLongitude, longitude);}
-    double Q_DECL_DEPRECATED longitude() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldLongitude).toDouble();}
-    void Q_DECL_DEPRECATED setAccuracy(double accuracy) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldAccuracy, accuracy);}
-    double Q_DECL_DEPRECATED accuracy() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldAccuracy).toDouble();}
-    void Q_DECL_DEPRECATED setAltitude(double altitude) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldAltitude, altitude);}
-    double Q_DECL_DEPRECATED altitude() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldAltitude).toDouble();}
-    void Q_DECL_DEPRECATED setAltitudeAccuracy(double altitudeAccuracy) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldAltitudeAccuracy, altitudeAccuracy);}
-    double Q_DECL_DEPRECATED altitudeAccuracy() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldAltitudeAccuracy).toDouble();}
-    void Q_DECL_DEPRECATED setHeading(double heading) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldHeading, heading);}
-    double Q_DECL_DEPRECATED heading() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldHeading).toDouble();}
-    void Q_DECL_DEPRECATED setSpeed(double speed) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldSpeed, speed);}
-    double Q_DECL_DEPRECATED speed() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldSpeed).toDouble();}
-    void Q_DECL_DEPRECATED setTimestamp(const QDateTime& timestamp) {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");setValue(FieldTimestamp, timestamp);}
-    QDateTime Q_DECL_DEPRECATED timestamp() const {qWarning("This class was deprecated in week 1 and will be removed after the transition period has elapsed!  Use QContactGeoLocation instead!");return variantValue(FieldTimestamp).toDateTime();}
 };
 
 QTM_END_NAMESPACE

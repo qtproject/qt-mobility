@@ -57,23 +57,24 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*!
-  \fn QContactRelationshipSaveRequest::progress(QContactRelationshipSaveRequest* self)
-  \deprecated
-  This signal is emitted when some progress has been made on the request, causing either a change of
-  status or an update of results, or both.  It identifies which request the signal originated from
-  by including a pointer to \a self.
- */
-
-/*! Constructs a new relationship save request */
-QContactRelationshipSaveRequest::QContactRelationshipSaveRequest()
-    : QContactAbstractRequest(new QContactRelationshipSaveRequestPrivate)
+/*! Constructs a new relationship save request whose parent is the specified \a parent */
+QContactRelationshipSaveRequest::QContactRelationshipSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRelationshipSaveRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this relationship save request */
-QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest()
+/*!
+  Sets the relationship to save to be \a contactRelationship.
+  Equivalent to calling:
+  \code
+      setRelationships(QList<QContactRelationship>() << contactRelationships);
+  \endcode
+ */
+void QContactRelationshipSaveRequest::setRelationship(const QContactRelationship& contactRelationship)
 {
+    Q_D(QContactRelationshipSaveRequest);
+    d->m_relationships.clear();
+    d->m_relationships.append(contactRelationship);
 }
 
 /*! Sets the relationships to save to be \a contactRelationships */

@@ -115,9 +115,12 @@ public:
 
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
+    QSystemNetworkInfo::NetworkMode currentMode();
 
-    public Q_SLOTS:
-        void getPrimaryMode();
+public Q_SLOTS:
+#if !defined(QT_NO_NETWORKMANAGER)
+        void primaryModeChanged();
+#endif
 
 private:
 #if !defined(QT_NO_NETWORKMANAGER)
@@ -136,12 +139,15 @@ private:
     QString getNmNetName(QSystemNetworkInfo::NetworkMode mode);
 
     inline QSystemNetworkInfo::NetworkMode deviceTypeToMode(quint32 type);
+
 #endif
     QString getSysNetName(QSystemNetworkInfo::NetworkMode mode);
 
 private Q_SLOTS:
+#if !defined(QT_NO_NETWORKMANAGER)
     void nmPropertiesChanged( const QString &, QMap<QString,QVariant>);
     void nmAPPropertiesChanged( const QString &, QMap<QString,QVariant>);
+#endif
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate

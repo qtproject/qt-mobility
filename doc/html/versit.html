@@ -15,53 +15,64 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Versit API (technology preview)<br /><span class="subtitle"></span>
 </h1>
 <p><b>Warning:</b> This API should be considered in a technology preview state. It is under development and subject to change.</p>
-<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#namespace">Namespace</a></li>
+<li><a href="#overview">Overview</a></li>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#classes">Classes</a></li>
 <li><a href="#mapping-the-vcard-constants">Mapping the vCard constants</a></li>
 </ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>Versit API provides a set of methods to parse/read (<a href="qversitreader.html">QVersitReader</a>) and encode/write (<a href="qversitwriter.html">QVersitWriter</a>) Versit <sup>&reg;</sup> documents such as vCards (<a href="http://www.imc.org/pdi/">http://www.imc.org/pdi/</a>). Currently <a href="qversitreader.html">QVersitReader</a> and <a href="qversitwriter.html">QVersitWriter</a> support reading and writing vCard 2.1 and 3.0 formats.</p>
-<p>Versit API also provides utilities to import (<a href="qversitcontactimporter.html">QVersitContactImporter</a>) QContacts from versit documents and export (<a href="qversitcontactexporter.html">QVersitContactExporter</a>) QContacts to versit documents.</p>
+<p>Versit API also provides utilities to import (<a href="qversitcontactimporter.html">QVersitContactImporter</a>) QContacts from Versit documents and export (<a href="qversitcontactexporter.html">QVersitContactExporter</a>) QContacts to Versit documents.</p>
 <p>Versit <sup>&reg;</sup> is a trademark of the Internet Mail Consortium.</p>
 <a name="usage"></a>
 <h3>Usage</h3>
-<pre><span class="comment">    // Create the input vCard</span>
-    QBuffer input;
-    input.open(QBuffer::ReadWrite);
-    QByteArray inputVCard =
-        &quot;BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John Citizen\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n&quot;;
-    input.write(inputVCard);
-    input.seek(0);
+<pre>        <span class="comment">// Create the input vCard</span>
+        QBuffer input;
+        input.open(QBuffer::ReadWrite);
+        QByteArray inputVCard =
+            &quot;BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John Citizen\r\nN:Citizen;John;Q;;\r\nEND:VCARD\r\n&quot;;
+        input.write(inputVCard);
+        input.seek(0);
 
-<span class="comment">    // Parse the input into QVersitDocument(s)</span>
-    QVersitReader reader;
-    reader.setDevice(&amp;input);
-    reader.readAll(); <span class="comment">// Remember to check the return value</span>
+        <span class="comment">// Parse the input into QVersitDocuments</span>
+        <span class="comment">// Note: we could also use the more convenient QVersitReader(QByteArray) constructor.</span>
+        QVersitReader reader;
+        reader.setDevice(&amp;input);
+        reader.startReading(); <span class="comment">// Remember to check the return value</span>
+        reader.waitForFinished();
 
-<span class="comment">    // Import the QVersitDocument to a QContact</span>
-    QVersitDocument inputDocument = reader.result().takeFirst();
-    QVersitContactImporter importer;
-    QContact contact = importer.importContact(inputDocument);
-<span class="comment">    // Note that the QContact is not saved yet.</span>
-<span class="comment">    // Use QContactManager::saveContact() for saving if necessary</span>
+        <span class="comment">// Convert the QVersitDocuments to QContacts</span>
+        QList&lt;QVersitDocument&gt; inputDocuments = reader.results();
+        QVersitContactImporter importer;
+        if (!importer.importDocuments(inputDocuments))
+            return;
+        QList&lt;QContact&gt; contacts = importer.contacts();
+        <span class="comment">// Note that the QContacts are not saved yet.</span>
+        <span class="comment">// Use QContactManager::saveContacts() for saving if necessary</span>
 
-<span class="comment">    // Export the QContact back to a QVersitDocument</span>
-    QVersitContactExporter exporter;
-    QVersitDocument outputDocument = exporter.exportContact(contact);
+        <span class="comment">// Export the QContacts back to QVersitDocuments</span>
+        QVersitContactExporter exporter;
+        if (!exporter.exportContacts(contacts, QVersitDocument::VCard30Type))
+            return;
+        QList&lt;QVersitDocument&gt; outputDocuments = exporter.documents();
 
-<span class="comment">    // Encode the QVersitDocument back to a vCard</span>
-    QBuffer output;
-    output.open(QBuffer::ReadWrite);
-    QVersitWriter writer;
-    writer.setDevice(&amp;output);
-    writer.setVersitDocument(outputDocument);
-    writer.writeAll(); <span class="comment">// Remember to check the return value</span>
+        <span class="comment">// Encode the QVersitDocument back to a vCard</span>
+        <span class="comment">// Note: we could also use the more convenient QVersitWriter(QByteArray*) constructor.</span>
+        QBuffer output;
+        output.open(QBuffer::ReadWrite);
+        QVersitWriter writer;
+        writer.setDevice(&amp;output);
+        writer.startWriting(outputDocuments); <span class="comment">// Remember to check the return value</span>
+        writer.waitForFinished();
 
-<span class="comment">    // Read the vCard back to a QByteArray</span>
-    output.seek(0);
-    QByteArray outputVCard(output.readAll());</pre>
+        <span class="comment">// Read the vCard back to a QByteArray</span>
+        output.seek(0);
+        QByteArray outputVCard(output.readAll());</pre>
 <a name="classes"></a>
 <h3>Classes</h3>
 <ul>
@@ -75,11 +86,87 @@
 <a name="mapping-the-vcard-constants"></a>
 <h3>Mapping the vCard constants</h3>
 <p>vCard properties are mapped to QContactDetails as follows:</p>
-<pre></pre>
+<pre><span class="comment">    // Mappings from versit property names to Qt contact details</span>
+    const VersitContactDetailMapping versitContactDetailMappings[] = {
+        {&quot;ADR&quot;,           QContactAddress::DefinitionName.latin1(),
+                          &quot;&quot;},
+        {&quot;BDAY&quot;,          QContactBirthday::DefinitionName.latin1(),
+                          QContactBirthday::FieldBirthday.latin1()},
+        {&quot;CATEGORIES&quot;,    QContactTag::DefinitionName.latin1(),
+                          QContactTag::FieldTag.latin1()},
+        {&quot;FN&quot;,            QContactDisplayLabel::DefinitionName.latin1(),
+                          &quot;&quot;},
+        {&quot;GEO&quot;,           QContactGeoLocation::DefinitionName.latin1(),
+                          &quot;&quot;},
+        {&quot;EMAIL&quot;,         QContactEmailAddress::DefinitionName.latin1(),
+                          QContactEmailAddress::FieldEmailAddress.latin1()},
+        {&quot;IMPP&quot;,          QContactOnlineAccount::DefinitionName.latin1(),
+                          QContactOnlineAccount::SubTypeImpp.latin1()},
+        {&quot;LOGO&quot;,          QContactOrganization::DefinitionName.latin1(),
+                          QContactOrganization::FieldLogoUrl.latin1()},
+        {&quot;N&quot;,             QContactName::DefinitionName.latin1(),
+                          &quot;&quot;},
+        {&quot;NICKNAME&quot;,      QContactNickname::DefinitionName.latin1(),
+                          QContactNickname::FieldNickname.latin1()},
+        {&quot;NOTE&quot;,          QContactNote::DefinitionName.latin1(),
+                          QContactNote::FieldNote.latin1()},
+        {&quot;ORG&quot;,           QContactOrganization::DefinitionName.latin1(),
+                          QContactOrganization::FieldName.latin1()},
+        {&quot;PHOTO&quot;,         QContactThumbnail::DefinitionName.latin1(),
+                          &quot;&quot;},
+        {&quot;REV&quot;,           QContactTimestamp::DefinitionName.latin1(),
+                          &quot;&quot;},
+        {&quot;ROLE&quot;,          QContactOrganization::DefinitionName.latin1(),
+                          QContactOrganization::FieldRole.latin1()},
+        {&quot;SOUND&quot;,         QContactRingtone::DefinitionName.latin1(),
+                          QContactRingtone::FieldAudioRingtoneUrl.latin1()},
+        {&quot;TEL&quot;,           QContactPhoneNumber::DefinitionName.latin1(),
+                          QContactPhoneNumber::FieldNumber.latin1()},
+        {&quot;TITLE&quot;,         QContactOrganization::DefinitionName.latin1(),
+                          QContactOrganization::FieldTitle.latin1()},
+        {&quot;UID&quot;,           QContactGuid::DefinitionName.latin1(),
+                          QContactGuid::FieldGuid.latin1()},
+        {&quot;URL&quot;,           QContactUrl::DefinitionName.latin1(),
+                          QContactUrl::FieldUrl.latin1()},
+        {&quot;X-ANNIVERSARY&quot;, QContactAnniversary::DefinitionName.latin1(),
+                          &quot;&quot;},
+        {&quot;X-ASSISTANT&quot;,   QContactOrganization::DefinitionName.latin1(),
+                          QContactOrganization::FieldAssistantName.latin1()},
+        {&quot;X-CHILDREN&quot;,    QContactFamily::DefinitionName.latin1(),
+                          QContactFamily::FieldChildren.latin1()},
+        {&quot;X-EPOCSECONDNAME&quot;,QContactNickname::DefinitionName.latin1(),
+                          QContactNickname::FieldNickname.latin1()},
+        {&quot;X-GENDER&quot;,      QContactGender::DefinitionName.latin1(),
+                          QContactGender::FieldGender.latin1()},
+        {&quot;X-IMPP&quot;,        QContactOnlineAccount::DefinitionName.latin1(),
+                          QContactOnlineAccount::SubTypeImpp.latin1()},
+        {&quot;X-JABBER&quot;,      QContactOnlineAccount::DefinitionName.latin1(),
+                          QContactOnlineAccount::SubTypeImpp.latin1()},
+        {&quot;X-NICKNAME&quot;,    QContactNickname::DefinitionName.latin1(),
+                          QContactNickname::FieldNickname.latin1()},
+        {&quot;X-SIP&quot;,         QContactOnlineAccount::DefinitionName.latin1(),
+                          &quot;&quot;},
+        {&quot;X-SPOUSE&quot;,      QContactFamily::DefinitionName.latin1(),
+                          QContactFamily::FieldSpouse.latin1()}
+    };</pre>
 <p>vCard type parameters are mapped to subtypes in QContactDetails as follows:</p>
-<pre></pre>
-<p>File extensions in vCards are mapped to the file system file extensions as follows:</p>
-<pre></pre>
+<pre><span class="comment">    // Mappings from versit TYPE parameters to Qt contact detail subtypes</span>
+    const VersitMapping versitSubTypeMappings[] = {
+        {&quot;DOM&quot;,    QContactAddress::SubTypeDomestic.latin1()},
+        {&quot;INTL&quot;,   QContactAddress::SubTypeInternational.latin1()},
+        {&quot;POSTAL&quot;, QContactAddress::SubTypePostal.latin1()},
+        {&quot;PARCEL&quot;, QContactAddress::SubTypeParcel.latin1()},
+        {&quot;VOICE&quot;,  QContactPhoneNumber::SubTypeVoice.latin1()},
+        {&quot;CELL&quot;,   QContactPhoneNumber::SubTypeMobile.latin1()},
+        {&quot;MODEM&quot;,  QContactPhoneNumber::SubTypeModem.latin1()},
+        {&quot;CAR&quot;,    QContactPhoneNumber::SubTypeCar.latin1()},
+        {&quot;VIDEO&quot;,  QContactPhoneNumber::SubTypeVideo.latin1()},
+        {&quot;FAX&quot;,    QContactPhoneNumber::SubTypeFax.latin1()},
+        {&quot;BBS&quot;,    QContactPhoneNumber::SubTypeBulletinBoardSystem.latin1()},
+        {&quot;PAGER&quot;,  QContactPhoneNumber::SubTypePager.latin1()},
+        {&quot;SWIS&quot;,   QContactOnlineAccount::SubTypeVideoShare.latin1()},
+        {&quot;VOIP&quot;,   QContactOnlineAccount::SubTypeSipVoip.latin1()}
+    };</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

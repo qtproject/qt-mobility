@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
 class QObject;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaServiceProviderPlugin;
 
@@ -87,6 +87,6 @@ private:
     QMap<QString, QObject*> m_instances;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMEDIAPLUGINLOADER_H

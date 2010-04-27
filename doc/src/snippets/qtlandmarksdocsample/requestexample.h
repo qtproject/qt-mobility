@@ -59,12 +59,12 @@ class RequestExample : public QObject
 public:
     RequestExample():QObject(),
                     lmManager(new QLandmarkManager(this)),
-                    catSaveRequest(new QLandmarkCategorySaveRequest(this)),
-                    lmSaveRequest(new QLandmarkSaveRequest(this)),
-                    catFetchRequest(new QLandmarkCategoryFetchRequest(this)),
-                    lmFetchRequest(new QLandmarkFetchRequest(this)),
-                    catRemoveRequest(new QLandmarkCategoryRemoveRequest(this)),
-                    lmRemoveRequest(new QLandmarkRemoveRequest(this))
+                    catSaveRequest(new QLandmarkCategorySaveRequest(lmManager, this)),
+                    lmSaveRequest(new QLandmarkSaveRequest(lmManager, this)),
+                    catFetchRequest(new QLandmarkCategoryFetchRequest(lmManager, this)),
+                    lmFetchRequest(new QLandmarkFetchRequest(lmManager, this)),
+                    catRemoveRequest(new QLandmarkCategoryRemoveRequest(lmManager,this)),
+                    lmRemoveRequest(new QLandmarkRemoveRequest(lmManager, this))
                     {}
     ~RequestExample(){}
 

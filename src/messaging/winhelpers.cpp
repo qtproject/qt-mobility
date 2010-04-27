@@ -91,6 +91,24 @@
 #include <QTimer>
 #include <QMutexLocker>
 
+QTM_BEGIN_NAMESPACE
+
+namespace WinHelpers {
+	QString addIdPrefix(const QString& id)
+	{
+		Q_ASSERT(!id.startsWith(QString(idPrefix)));
+		return QString(idPrefix) + id;
+	}
+
+	QString stripIdPrefix(const QString& id)
+	{
+		Q_ASSERT(id.startsWith(QString(id)));
+		return id.right(id.length() - QString(idPrefix).length());
+	}
+}
+
+QTM_END_NAMESPACE
+
 
 #include <shlwapi.h>
 #include <shlguid.h>
@@ -120,6 +138,8 @@ QTM_BEGIN_NAMESPACE
 
 namespace WinHelpers
 {
+	
+
     bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
     {
         SPropValue prop = { 0 };
@@ -437,11 +457,11 @@ namespace {
         entry.rgPropVals[0].Value.l = type;
 
 #ifdef _WIN32_WCE
-        QString addressStr = addr.recipient();
+        QString addressStr = addr.addressee();
 #else
         QString addressStr("[%1:%2]");
         addressStr = addressStr.arg(addr.type() == QMessageAddress::Phone ? "SMS" : "SMTP");
-        addressStr = addressStr.arg(addr.recipient());
+        addressStr = addressStr.arg(addr.addressee());
 #endif
 
         // TODO: Escape illegal characters, as per: http://msdn.microsoft.com/en-us/library/cc842281.aspx
@@ -1001,7 +1021,7 @@ namespace {
             qWarning() << "Unable to set subject in message.";
             *error = QMessageManager::FrameworkFault;
         } else {
-            QString emailAddress = source.from().recipient();
+            QString emailAddress = source.from().addressee();
             if (!setMapiProperty(message, PR_SENDER_EMAIL_ADDRESS, emailAddress)) {
                 qWarning() << "Unable to set sender address in message.";
                 *error = QMessageManager::FrameworkFault;
@@ -3032,7 +3052,7 @@ QMessage::StandardFolder MapiStore::standardFolder(const MapiEntryId &entryId) c
         }
     }
 
-    return QMessage::InboxFolder;
+    return QMessage::DraftsFolder;
 }
 
 bool MapiStore::setAdviseSink(ULONG mask, IMAPIAdviseSink *sink)

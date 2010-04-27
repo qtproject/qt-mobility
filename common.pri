@@ -13,6 +13,15 @@ CONFIG(debug, debug|release) {
 
 include(staticconfig.pri)
 
+# use only $$QT_MOBILITY_BUILD_TREE. If you add an subfolder it will create a relative path!!!
+# $$QT_MOBILITY_BUILD_TREE/src/global will become ../global
+INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE
+
+symbian:contains(symbian_symbols_unfrozen,1) {
+    #see configure.bat for details
+    MMP_RULES+="EXPORTUNFROZEN"
+}
+
 mac {
     contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {
         #MacOSX always builds debug and release libs when using mac framework
@@ -80,8 +89,12 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin {
-        contains(TEMPLATE,.*lib):DESTDIR = $$OUTPUT_DIR/lib
-        else:DESTDIR = $$OUTPUT_DIR/bin
+        contains(TEMPLATE,.*lib) {
+            DESTDIR = $$OUTPUT_DIR/lib
+            symbian:defFilePath=../s60installs
+        } else {
+            DESTDIR = $$OUTPUT_DIR/bin
+        }
     } else {
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
         !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
@@ -161,8 +174,6 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
-# For symbian, we are not freezing yet
-symbian:MMP_RULES += "EXPORTUNFROZEN"
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global

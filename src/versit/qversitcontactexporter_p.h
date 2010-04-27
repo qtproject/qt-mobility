@@ -70,9 +70,11 @@ public:
     QVersitContactExporterPrivate();
     ~QVersitContactExporterPrivate();
 
-    void exportContact(const QContact& contact, QVersitDocument& versitDocument);
+    bool exportContact(const QContact& contact, QVersitDocument& versitDocument,
+                       QVersitContactExporter::Error* error);
 
 protected:
+    static bool documentContainsName(const QVersitDocument& document);
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
     void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
     void encodeEmail(QVersitProperty& property, const QContactDetail& detail);
@@ -86,11 +88,13 @@ protected:
     void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
     void encodeGender(QVersitProperty& property, const QContactDetail& detail);
     void encodeNickname(QVersitDocument& document, const QContactDetail& detail);
+    void encodeTag(QVersitDocument& document, const QContactDetail& detail);
     void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
     bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
-    bool encodeAvatar(QVersitProperty& property,
-        const QContactDetail& detail);
+    bool encodeRingtone(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeThumbnail(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeAvatar(QVersitProperty& property, const QContactDetail& detail);
     bool encodeDisplayLabel(QVersitProperty& property,
         const QContactDetail& detail,
         const QContact& contact);
@@ -99,11 +103,10 @@ protected:
         const QStringList& contexts,
         const QStringList& subTypes=QStringList());
     bool encodeContentFromFile(const QString& resourcePath, QVersitProperty& property);
-    bool encodeContentFromPixmap(const QPixmap& pixmap, QVersitProperty& property);
-    void setEscapedValue(QVersitProperty& property,const QString& value);
-    QString escape(const QString& value);
 
 public: // Data
+    QList<QVersitDocument> mDocuments;
+    QMap<int, QVersitContactExporter::Error> mErrors;
     QVersitContactExporterDetailHandler* mDetailHandler;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;

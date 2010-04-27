@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <qvideodevicecontrol.h>
+#include "qvideodevicecontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoDeviceControl
@@ -143,5 +143,5 @@ QVideoDeviceControl::~QVideoDeviceControl()
 */
 
 #include "moc_qvideodevicecontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

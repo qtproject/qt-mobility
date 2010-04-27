@@ -130,7 +130,7 @@ bool PathMapper::getChildren(const QString &path, QSet<QString> &children) const
     QString basePath = path;
     if (basePath.right(1) != QString(QLatin1Char('/')))
         basePath += QLatin1Char('/');
-    foreach (QString foundPath, childPaths(basePath)) {
+    foreach (const QString foundPath, childPaths(basePath)) {
         QString value = foundPath.mid(basePath.size());
         int index = value.indexOf(QLatin1Char('/'));
         if (index != -1)

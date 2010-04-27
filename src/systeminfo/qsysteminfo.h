@@ -120,6 +120,7 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode NOTIFY currentMobileNetworkCodeChanged)
     Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode CONSTANT)
     Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode CONSTANT)
+    Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode)
 
 
 public:
@@ -154,6 +155,7 @@ public:
     Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
     Q_INVOKABLE static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
     int cellId();
     int locationAreaCode();
@@ -173,6 +175,11 @@ Q_SIGNALS:
    void currentMobileNetworkCodeChanged(const QString &);
    void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+
+protected:
+    virtual void connectNotify(const char *signal);
+    virtual void disconnectNotify(const char *signal);
+
 private:
        QSystemNetworkInfoPrivate *d;
 };
@@ -238,9 +245,9 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked)
 
 
-    Q_ENUMS(BatteryLevel)
+    Q_ENUMS(BatteryStatus)
     Q_ENUMS(PowerState)
-    Q_ENUMS(InputMethod)
+    Q_FLAGS(InputMethod InputMethodFlags)
     Q_ENUMS(SimStatus)
     Q_ENUMS(Profile)
 
@@ -274,6 +281,7 @@ public:
         MultiTouch = 0x0000010,
         Mouse = 0x0000020
     };
+
     Q_DECLARE_FLAGS(InputMethodFlags, InputMethod)
 
     QSystemDeviceInfo::InputMethodFlags inputMethodType();
@@ -320,6 +328,7 @@ private:
     QSystemDeviceInfoPrivate *d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QSystemDeviceInfo::InputMethodFlags )
 
 class QSystemScreenSaverPrivate;
 class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject

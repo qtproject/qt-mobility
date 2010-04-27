@@ -57,23 +57,9 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*!
-  \fn QContactLocalIdFetchRequest::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
-  \deprecated
-  This signal is emitted when some progress has been made on the request, causing either a change of
-  status or an update of results, or both.  It identifies which request the signal originated from
-  by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
-  ordering of the results have been maintained since the last progress signal was emitted.
- */
-
-/*! Constructs a new contact id fetch request */
-QContactLocalIdFetchRequest::QContactLocalIdFetchRequest()
-    : QContactAbstractRequest(new QContactLocalIdFetchRequestPrivate)
-{
-}
-
-/*! Cleans up the memory in use by this contact id fetch request */
-QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest()
+/*! Constructs a new contact id fetch request whose parent is the specified \a parent */
+QContactLocalIdFetchRequest::QContactLocalIdFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactLocalIdFetchRequestPrivate, parent)
 {
 }
 

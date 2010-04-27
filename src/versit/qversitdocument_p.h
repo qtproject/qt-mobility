@@ -60,7 +60,9 @@
 #include <QSharedData>
 #include <QList>
 
+QT_BEGIN_NAMESPACE
 class QTextCodec;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -68,9 +70,9 @@ class QVersitDocumentPrivate : public QSharedData
 {
 public:
     QVersitDocumentPrivate();
-    
+
     QVersitDocumentPrivate(const QVersitDocumentPrivate& other);
-    
+
     ~QVersitDocumentPrivate()
     {
     }

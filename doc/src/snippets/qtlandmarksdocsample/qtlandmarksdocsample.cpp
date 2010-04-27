@@ -196,8 +196,8 @@ void RequestExample::landmarkFetchRequest()
     //lmFetchRequest was created with lmFetchRequest = new QLandmarkFetchRequest()
     //in the ctor
     lmFetchRequest->setManager(lmManager); //lmManager is a QLandmarkManager*
-    lmFetchRequest->setFilter(filter);
-    lmFetchRequest->setSorting(QLandmarkNameSort(Qt::AscendingOrder));
+    lmFetchRequest->setFilter(&filter);
+    lmFetchRequest->setSorting(new QLandmarkNameSort(Qt::AscendingOrder));
 
     connect(lmFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
             this, SLOT(landmarkFetchRequestHandler(QLandmarkAbstractRequest::State)));
