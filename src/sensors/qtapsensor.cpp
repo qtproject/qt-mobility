@@ -57,25 +57,8 @@ IMPLEMENT_READING(QTapReading)
     \section2 QTapReading Units
     The tap sensor registers tap events in one of the six directions.
     There are 3 axes that originate from the phone. They are arranged as follows.
-\code
-             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            //|--/--- / |
-           // | /   //  /
-          //  |/   //  /
-         //   '--------------- +x
-        //       //  /
-       //       //  /
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/
-\endcode
+
+    \image sensors-coordinates2.jpg
 
     By default it returns double tap events. The QTapSensor::returnDoubleTapEvents property
     must be set to false to return individual tap events.

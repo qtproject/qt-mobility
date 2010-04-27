@@ -57,12 +57,12 @@ IMPLEMENT_READING(QRotationReading)
     \section2 QRotationReading Units
 
     The rotation reading contains 3 angles, measured in degrees that define
-    the orientation of the device in three-dimensional space. The rotations
-    should not be confused with relative rotations such as yaw and pitch.
-    These rotations are of the devices axes relative to the external
-    reference points that define the reference co-ordinate axes: X, Y and Z
-    in the diagram.
-    
+    the orientation of the device in three-dimensional space. These angles
+    are similar to yaw, pitch and roll but are defined using only right hand
+    rotation with axes as defined by the right hand cartesian coordinate system.
+
+    \image sensors-rotation.jpg
+
     The three angles are applied to the device in the following order.
 
     \list
@@ -74,19 +74,28 @@ IMPLEMENT_READING(QRotationReading)
      (twice-rotated) z-axis and incrementing towards the x-axis.
     \endlist
 
-    \image Rotation_angles.png Visual representation of the rotation angles.
+    Here is a visualisation showing the order in which angles are applied.
+
+    \image sensors-rotation-anim.gif
 
     The 0 point for the z angle is defined as a fixed, external entity and
     is device-specific. While magnetic North is typically used as this
     reference point it may not be. Do not attempt to compare values
     for the z angle between devices or even on the same device if it has
     moved a significant distance.
-    
+
     If the device cannot detect a fixed, external entity the z angle will
     always be 0 and the QRotationSensor::hasZ property will be set to false.
 
     The 0 point for the x and y angles are defined as when the x and y axes
-    of the device are oriented towards the horizon.
+    of the device are oriented towards the horizon. Here is an example of
+    how the x value will change with device movement.
+
+    \image sensors-rotation2.jpg
+
+    Here is an example of how the y value will change with device movement.
+
+    \image sensors-rotation3.jpg
 
     Note that when x is 90 or -90, values for z and y achieve rotation around
     the same axis (due to the order of operations). In this case the y
