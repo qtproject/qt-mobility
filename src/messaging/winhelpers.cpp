@@ -82,6 +82,7 @@
 #include "qmessageaccountfilter_p.h"
 #include "qmessageaccountsortorder_p.h"
 #include "qmessagestore_p.h"
+#include "messagingutil_p.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -90,25 +91,6 @@
 #include <QThreadStorage>
 #include <QTimer>
 #include <QMutexLocker>
-
-QTM_BEGIN_NAMESPACE
-
-namespace WinHelpers {
-	QString addIdPrefix(const QString& id)
-	{
-		Q_ASSERT(!id.startsWith(QString(idPrefix)));
-		return QString(idPrefix) + id;
-	}
-
-	QString stripIdPrefix(const QString& id)
-	{
-		Q_ASSERT(id.startsWith(QString(id)));
-		return id.right(id.length() - QString(idPrefix).length());
-	}
-}
-
-QTM_END_NAMESPACE
-
 
 #include <shlwapi.h>
 #include <shlguid.h>
@@ -573,20 +555,21 @@ namespace {
                 if (HR_SUCCEEDED(attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, 0, MAPI_MODIFY | MAPI_CREATE, (LPUNKNOWN*)&os))) {
                     const int BUF_SIZE=4096;
                     char pData[BUF_SIZE];
-                    ULONG ulSize=0,ulRead,ulWritten;
+                    ULONG ulSize=0,ulRead,ulWritten, ulTotalWritten=0;
 
                     QDataStream attachmentStream(attachmentContainer.content());
 
                     ulRead=attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
                     while (ulRead) {
                         os->Write(pData,ulRead, &ulWritten);
+                        ulTotalWritten += ulWritten;
 
                         ulSize += ulRead;
                         ulRead = attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
                     }
 
                     ULARGE_INTEGER uli = { 0 };
-                    uli.LowPart = ulWritten;
+                    uli.LowPart = ulTotalWritten;
                     os->SetSize(uli);
 
                     os->Commit(STGC_DEFAULT);
