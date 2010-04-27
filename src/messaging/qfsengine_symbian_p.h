@@ -42,6 +42,8 @@
 #ifndef QFSENGINE_SYMBIAN_H
 #define QFSENGINE_SYMBIAN_H
 
+#include <qmessageglobal.h>
+#include <QObject>
 #include <QMap>
 #include <QSet>
 #include <QList>
@@ -67,6 +69,7 @@
 using namespace EmailInterface;
 
 QTM_BEGIN_NAMESPACE
+
 class CFSMessagesFindOperation;
 class QMessageId;
 class QMessageAccount;
@@ -86,6 +89,12 @@ struct FSMessageQueryInfo
     int currentFilterListIndex;
     QMessageIdList ids;
     int count;
+};
+
+struct FSSearchOperation
+{
+    MEmailMailbox* m_mailbox;
+    MEmailMessageSearchAsync* m_search;
 };
 
 class CFSEngine : public MMailboxSyncObserver
@@ -197,8 +206,10 @@ private:
     CActiveSchedulerWait* iWait;
 };
 
-class CFSMessagesFindOperation : public MEmailSearchObserver
+class CFSMessagesFindOperation : public QObject, MEmailSearchObserver
 {
+    Q_OBJECT
+    
 public:
     CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId); 
     ~CFSMessagesFindOperation();
@@ -213,6 +224,9 @@ public:
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
     
     void CheckAndNotifyNewMailsL(QMessageAccount& messageAccount);
+
+public slots:
+    void ClearOperations();
     
 private:
     // from memailmessagesearch
@@ -224,14 +238,17 @@ private:
                                 const QString body = QString(),
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
     
+    void getAllMessagesL(TEmailSortCriteria& sortCriteria);
     void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria);
     void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria& sortCriteria);
+    
     
 private: // Data
     CFSEngine& m_owner;
     
     int iNumberOfHandledFilters;
     int m_operationId;
+    int m_activeSearchCount;
     //TMsvSelectionOrdering iOrdering;
     bool iResultCorrectlyOrdered;
     QMessageIdList iIdList;
@@ -239,14 +256,14 @@ private: // Data
 
     MEmailClientApi* m_clientApi;
     RMailboxPtrArray m_mailboxes;
-    MEmailMessageSearchAsync* m_search;
     
     CEmailInterfaceFactory* m_factory; 
     MEmailInterface* m_interfacePtr; 
-    MEmailMailbox* m_mailbox;
     bool m_receiveNewMessages;
+    QList<FSSearchOperation> m_searchOperations;
 };
 
 
 QTM_END_NAMESPACE
+
 #endif // QFSENGINE_SYMBIAN_H
