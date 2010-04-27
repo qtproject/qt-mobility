@@ -152,7 +152,7 @@ contains(mobility_modules,sensors) {
     SUBDIRS += qsensor
 }
 
-# Local Connectivity
+# Connectivity
 contains(mobility_modules,connectivity) {
     SUBDIRS += \
         qbluetoothaddress\
