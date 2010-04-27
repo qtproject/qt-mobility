@@ -6,7 +6,7 @@ include(../../../common.pri)
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(sensors_n900)
+TARGET = $$qtLibraryTarget(qtsensors_n900)
 
 QT=core
 CONFIG+=mobility

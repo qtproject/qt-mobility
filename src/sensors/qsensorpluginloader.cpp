@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <src/global/qbuildcfg.h>
 #include "qsensorpluginloader_p.h"
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qdir.h>
@@ -70,6 +71,11 @@ void QSensorPluginLoader::load()
         return;
 
     QStringList     paths = QCoreApplication::libraryPaths();
+    QString val = qt_mobility_configure_prefix_path_str;
+    if(val.length() > 0){
+        val += "/plugins";
+        paths << val;
+    }
 
     Q_FOREACH (QString const &path, paths) {
         QString pluginPathName(path + m_location);

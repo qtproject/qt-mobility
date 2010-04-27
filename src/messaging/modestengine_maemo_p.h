@@ -67,7 +67,7 @@ QTM_BEGIN_NAMESPACE
 typedef QMap< QString, QString > ModestStringMap;
 typedef QList< ModestStringMap > ModestStringMapList;
 
-static const int maxCacheSize = 1000;
+static const int maxCacheSize = 100000;
 
 class QMessageService;
 class QMessageServicePrivate;

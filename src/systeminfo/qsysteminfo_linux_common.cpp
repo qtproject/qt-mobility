@@ -987,7 +987,7 @@ qint64 QSystemStorageInfoLinuxCommonPrivate::availableDiskSpace(const QString &d
     }
     mountEntries();
     struct statfs fs;
-    if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
+    if(statfs(driveVolume.toLatin1(), &fs ) == 0 ) {
                 long blockSize = fs.f_bsize;
                 long availBlocks = fs.f_bavail;
                 return (double)availBlocks * blockSize;
@@ -1002,7 +1002,7 @@ qint64 QSystemStorageInfoLinuxCommonPrivate::totalDiskSpace(const QString &drive
     }
     mountEntries();
     struct statfs fs;
-    if(statfs(mountEntriesMap[driveVolume].toLatin1(), &fs ) == 0 ) {
+    if(statfs(driveVolume.toLatin1(), &fs ) == 0 ) {
         const long blockSize = fs.f_bsize;
         const long totalBlocks = fs.f_blocks;
         return (double)totalBlocks * blockSize;
@@ -1020,7 +1020,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
         if(!list.isEmpty()) {
             foreach(const QString vol, list) {
                 QHalDeviceInterface ifaceDevice(vol);
-                if(driveVolume == ifaceDevice.getPropertyString("block.device")) {
+                if(mountEntriesMap.value(driveVolume) == ifaceDevice.getPropertyString("block.device")) {
                     QHalDeviceInterface ifaceDeviceParent(ifaceDevice.getPropertyString("info.parent"), this);
 
                     if(ifaceDeviceParent.getPropertyBool("storage.removable")
@@ -1038,15 +1038,15 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
         //no hal need to manually read sys file for block device
         QString dmFile;
 
-        if(driveVolume.contains("mapper")) {
+        if(mountEntriesMap.value(driveVolume).contains("mapper")) {
             struct stat stat_buf;
-            stat( driveVolume.toLatin1(), &stat_buf);
+            stat( mountEntriesMap.value(driveVolume).toLatin1(), &stat_buf);
 
             dmFile = QString("/sys/block/dm-%1/removable").arg(stat_buf.st_rdev & 0377);
 
         } else {
 
-            dmFile = driveVolume.section("/",2,3);
+            dmFile = mountEntriesMap.value(driveVolume).section("/",2,3);
             if (dmFile.left(3) == "mmc") { //assume this dev is removable sd/mmc card.
                 return QSystemStorageInfo::RemovableDrive;
             }
@@ -1114,8 +1114,8 @@ void QSystemStorageInfoLinuxCommonPrivate::mountEntries()
         } else {
             ok = true;
         }
-        if(ok && !mountEntriesMap.keys().contains(me->mnt_dir)) {
-            mountEntriesMap[me->mnt_fsname] = me->mnt_dir;
+        if(ok && !mountEntriesMap.keys().contains(me->mnt_fsname)) {
+            mountEntriesMap[me->mnt_dir] = me->mnt_fsname;
         }
 
         me = getmntent(mntfp);

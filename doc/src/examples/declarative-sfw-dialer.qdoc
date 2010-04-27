@@ -1,0 +1,225 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+\example declarative-sfw-dialer
+
+\title Service Framework using QML Example
+
+\bold {Explanation:}
+
+This example should demonstrate how to use the Service Framework and 
+access the services in a QMLContext. Currently there is a wrapper class
+which provides functionality for a single service as well as a list of
+services. In future releases this will be included as a plugin. Another 
+example that demonstrates how to connect to a single service object to 
+implement a simple note taking application can be found \l{declarative-sfw-notes}{here}.
+
+\target guidesign
+
+The GUI looks like following picture:
+
+\image DialerServiceGUI.png "GUI"
+
+
+The following steps outline how to make a QML based application 
+using the Service Framework technology.
+It is assumed that Qt Mobility has been
+successfully built and environment variables have been set 
+as per \l {Installation Guide}.
+
+\bold {The main function:}
+
+For the usage of several Qml objects and Service Framework we need to
+prepare our main.cpp:
+\list 1
+    \o Include the appropriate headers
+    \o Include the neccessary service framework type registrations
+    \o Include the QML canvas to be displayed
+\endlist
+
+Step is shown below:
+\snippet declarative-sfw-dialer/sfwexample/main.cpp 0
+
+Now to make our service framework wrappers known to QML as registered types we need the
+following inline method:
+\snippet declarative-sfw-dialer/sfwexample/main.cpp 1
+
+This allows us to import our new types in QML by:
+\snippet declarative-sfw-dialer/sfwexample/content/DialerList.qml 4
+
+We are using QDeclarativeView to load and show our QML content 
+\snippet declarative-sfw-dialer/sfwexample/main.cpp 2
+
+\bold {The Services:}
+
+The services are implemented in a shared library and can be register in the service framework.
+After the service is registered it can be used in different applications.
+In our case we'll access the services over an application that is based on QML scripting.
+We will be able to change between different services and call their properties,
+receiving their signals and so forth.
+
+In this example we've implemented 2 services called
+Landdialer and Voipdialer.
+You can find the projects for those services in:
+
+declarative-sfw-dialer\\landlinedialer and declarative-sfw-dialer\\voipdialer.
+Those projects will create a shared library in each case.
+
+If the library needs to be available over the Service Framework,
+we need to register the library.
+You can do this by using the QServiceManager function addService(...).
+In our example this will be done in the function registerExampleServices in the registration class
+accompanying the main function:
+\snippet declarative-sfw-dialer/sfwexample/sfwexample.cpp 0
+
+As you can see we register the services using a xml file.
+This xml file basically contains all information to register the shared library in the 
+Service Framework enviroment.
+For more information please read more about the Qt Service Framework 
+\l {service-frameworks.html#adding-and-removing-of-services}{XML Format}
+ 
+The QServiceManager creates an instance of a services over a QServicePluginInterface.
+For each services we provide a Plugin.
+
+\snippet declarative-sfw-dialer/voipdialer/voipdialerplugin.h 0
+
+The Q_INTERFACES macro tells Qt which interfaces the class implements.
+
+Both seviceplugins needs to implement the QServicePluginInterface.
+In our case we only need to overwrite the virtual function createInstance.
+\snippet declarative-sfw-dialer/voipdialer/voipdialerplugin.cpp 0
+
+As you can see the createInstance function create the appropriate dialer object
+and returns it.
+The Q_EXPORT_PLUGIN2 macro provides the neccessary implementation for a plugin.
+See \l{How to Create Qt Plugins} for more details.
+
+The last thing we need to provide in our services are
+the states, properties, signals and slots that we
+want to access in out QML script later.
+
+\target voipdialer_h_0
+\snippet declarative-sfw-dialer/voipdialer/voipdialer.h 0
+
+\bold {The ServiceWrapper:}
+
+The ServiceWarpper is our object that is accessible in the QML script.
+Over the ServiceWrapper we can access several service details by calling the properties of the wrapper.
+
+\snippet declarative-sfw-dialer/sfwexample/qdeclarativeservice.h 0
+
+Additionally, there is a QList of ServiceWrapper objects that is also available through QML which can be used to
+obtain a list of services and their details by supplying an interface with an optional minimum version number.  QML
+can gain access to these details including the list using the QML-specific QDeclarativeListProperty with the 
+following properties.
+
+\snippet declarative-sfw-dialer/sfwexample/qdeclarativeservice.h 1
+
+The ServiceWrapperList contains a list of all available services that contain the com.nokia.qt.examples.Dialer interface.
+In the setInterfaceName(..) function which is QML accessible, a QList of ServiceWrapper objects is populated for the
+dialer services (LandLineDialer and VoipDaler). Each ServiceWrapper object containts the QServiceInterfaceDescriptor and 
+properties which allow QML to access the service library functions. This is done by utilising the code below:
+
+\snippet declarative-sfw-dialer/sfwexample/qdeclarativeservice.cpp 0
+
+QML context requires a special declarative list when declaring the property, in this case the property services will
+provide QML with the list of ServiceWrappers which can call serviceObject(..) to reference the service library functions. 
+
+\bold {Service access on the QML site}
+
+The QML elements are implemented in 4 different qml scripting files
+\l {guidesign}{ see GUI design}.
+
+The first step is to use our ServiceWrapperList to specify the interface and minimum version (optional) through QML item
+context, which will produce a list of ServiceWrapper objects.
+
+\snippet declarative-sfw-dialer/sfwexample/content/DialerList.qml 5
+
+In the DialerList.qml file the services property is assigned to the ListView model property. 
+
+\snippet declarative-sfw-dialer/sfwexample/content/DialerList.qml 0
+
+To show the items of the model property we need to create a delegate component and assign it to the ListView
+Delegate property:
+
+\snippet declarative-sfw-dialer/sfwexample/content/DialerList.qml 1
+
+In this component you can define how you want to draw one ListView item.
+You can acces insite of this component the current ListWiew item by using the variable modelData.
+In our example we are using two text lines. Furthermore we can define whats happening if we click
+on a ListView item by using the MouseRegion.
+
+\target DialerList_qml_2
+\snippet declarative-sfw-dialer/sfwexample/content/DialerList.qml 2
+
+Another component can be created for highliting a list item:
+
+\snippet declarative-sfw-dialer/sfwexample/content/DialerList.qml 3
+
+\bold {Service signals and function calls on the QML site}
+
+In sfw-kinetic-example.qml we define a control named DialScreen and implement
+the function onDial and onHangup.
+As you can see in the onDial event we call the service function dialNumber and
+the onHangup calls hangup.
+Both function are implemented in the service \l {voipdialer_h_0} { (see voipdialer header file).}
+
+\snippet declarative-sfw-dialer/sfwexample/sfwexample.qml 0
+
+In DialScreen.qml the dial and the hangup signals are defined.
+The hangup signal will be emited if the HangUpButton was clicked:
+
+\snippet declarative-sfw-dialer/sfwexample/content/DialScreen.qml 1
+
+The dial signal will be emited if the CallButton was clicked:
+
+\snippet declarative-sfw-dialer/sfwexample/content/DialScreen.qml 2
+
+Now we need to connect the stateChanged signal form the services with an event handler on the QML site.
+This is done in our main declarative file:
+
+\snippet declarative-sfw-dialer/sfwexample/sfwexample.qml 1
+
+The DialScreen.currentDialer is assigned during a ListView item click in the
+\l {DialerList_qml_2}{ ServiceList.qml file}.
+
+*/

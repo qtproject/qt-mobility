@@ -279,9 +279,8 @@ void tst_bm_location::timeout()
   loop->exit(2);  
 }
 
-void tst_bm_location::positionUpdated(const QGeoPositionInfo &update)
-{
-//  qDebug() << "Got location info" << update.timestamp() << " - " << update.isValid();
+void tst_bm_location::positionUpdated(const QGeoPositionInfo &)
+{    
   early_exit = 1;
   loop->exit(0);
 }

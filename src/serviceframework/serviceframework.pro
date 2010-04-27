@@ -40,12 +40,12 @@ symbian {
     
     libBlock = \
         "$${LITERAL_HASH}ifdef WINSCW" \
-        "LIBRARY SFWDatabaseManagerServer.lib" \
+        "LIBRARY qsfwdatabasemanagerserver.lib" \
         "$${LITERAL_HASH}endif"
 
     MMP_RULES += libBlock
 
-    QtServiceFrameworkDeployment.sources = QtServiceFramework.dll SFWDatabaseManagerServer.exe
+    QtServiceFrameworkDeployment.sources = QtServiceFramework.dll qsfwdatabasemanagerserver.exe
     QtServiceFrameworkDeployment.path = /sys/bin
 
     DEPLOYMENT += QtServiceFrameworkDeployment

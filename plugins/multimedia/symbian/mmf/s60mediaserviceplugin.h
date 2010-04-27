@@ -47,7 +47,7 @@
 #include <QMediaService>
 #include <QMediaServiceProviderPlugin>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60MediaServicePlugin : public QMediaServiceProviderPlugin
 {

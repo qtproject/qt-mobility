@@ -44,8 +44,9 @@
 
 #include <QAudioEncoderControl>
 #include <QtCore/qstringlist.h>
+#include <QAudioFormat>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60AudioCaptureSession;
 
@@ -57,38 +58,35 @@ public:
     virtual ~S60AudioEncoderControl();
 
     QStringList supportedAudioCodecs() const;
+    QString codecDescription(const QString &codecName) const;
+    
+    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
+    
+    QAudioEncoderSettings audioSettings() const;
+    void setAudioSettings(const QAudioEncoderSettings&);
+    
+    QStringList supportedEncodingOptions(const QString &codec) const;
+    QVariant encodingOption(const QString &codec, const QString &name) const;
+    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);    
+    
+private:    
     QString audioCodec() const;
     bool setAudioCodec(const QString &codecName);
-
-    QString codecDescription(const QString &codecName) const;
-
     int bitRate() const;
     void setBitRate(int);
 
-    QtMedia::EncodingQuality quality() const;
-    void setQuality(QtMedia::EncodingQuality);
-
-    QStringList supportedEncodingOptions(const QString &codec) const;
-    QVariant encodingOption(const QString &codec, const QString &name) const;
-    void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);
+    QtMediaServices::EncodingQuality quality() const;
+    void setQuality(QtMediaServices::EncodingQuality);
 
     int sampleRate() const;
     void setSampleRate(int sampleRate);
-    QList<int> supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous = 0) const;
-
     int channelCount() const;
-    void setChannelCount(int channels);
-    QList<int> supportedChannelCounts() const;
-
+    void setChannelCount(int channels);    
     int sampleSize() const;
-    void setSampleSize(int sampleSize);
-    QList<int> supportedSampleSizes() const;
-
-    QAudioEncoderSettings audioSettings() const;
-    void setAudioSettings(const QAudioEncoderSettings&);
-
+    void setSampleSize(int sampleSize);    
 private:
     S60AudioCaptureSession* m_session;
+    QtMediaServices::EncodingQuality m_quality;
 };
 
 #endif

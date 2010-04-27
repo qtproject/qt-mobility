@@ -44,7 +44,7 @@
 
 #include <qmetadatacontrol.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QT7PlayerSession;
 
@@ -58,9 +58,9 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMediaServices::MetaData key) const;
+    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
+    QList<QtMediaServices::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const ;
     void setExtendedMetaData(const QString &key, const QVariant &value);
@@ -71,9 +71,9 @@ private slots:
 
 private:
     QT7PlayerSession *m_session;
-    QMap<QtMedia::MetaData, QVariant> m_tags;
+    QMap<QtMediaServices::MetaData, QVariant> m_tags;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif
