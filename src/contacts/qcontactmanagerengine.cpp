@@ -60,7 +60,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactManagerEngine
-  \preliminary
   \brief The QContactManagerEngine class provides the interface for all
   implementations of the contact manager backend functionality.
   \ingroup contacts-backends

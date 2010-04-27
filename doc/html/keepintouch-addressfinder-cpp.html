@@ -382,10 +382,10 @@
         connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(tabChanged(int)));
     #else
         QWidget* centralWidget = new QWidget(this);
-        QScrollArea* sa = new QScrollArea(this);
-        sa-&gt;setWidget(centralWidget);
-        sa-&gt;setWidgetResizable(true);
-        setCentralWidget(sa);
+        QScrollArea* scrollArea = new QScrollArea(this);
+        scrollArea-&gt;setWidget(centralWidget);
+        scrollArea-&gt;setWidgetResizable(true);
+        setCentralWidget(scrollArea);
         QVBoxLayout* centralLayout = new QVBoxLayout(centralWidget);
     #endif
 
@@ -500,6 +500,26 @@
     #ifndef USE_SEARCH_BUTTON
         tabChanged(0);
     #endif
+
+        QWidgetList focusableWidgets;
+        focusableWidgets &lt;&lt; excludeCheckBox
+                         &lt;&lt; includePeriod
+                         &lt;&lt; excludePeriod
+                         &lt;&lt; contactList
+                         &lt;&lt; messageCombo
+                         &lt;&lt; showButton
+    #ifndef USE_SEARCH_BUTTON
+                         &lt;&lt; tabWidget
+    #else
+                         &lt;&lt; searchButton
+                         &lt;&lt; scrollArea
+    #endif
+                         &lt;&lt; forwardButton;
+
+      foreach(QWidget* w, focusableWidgets)
+           w-&gt;setContextMenuPolicy(Qt::NoContextMenu);
+
+        excludePeriod-&gt;setFocus();
     }
 
     void AddressFinder::setSearchActionEnabled(bool val)

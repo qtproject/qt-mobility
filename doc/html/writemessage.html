@@ -115,10 +115,11 @@
             }
         }</pre>
 <p>Now that we have created our message, we use the <a href="qmessageservice.html#send">QMessageService::send</a>() operation to request that the message be stored in the system and transmitted:</p>
-<pre>        if (service.send(message)) {
-            sendButton-&gt;setEnabled(false);
+<pre>        sendButton-&gt;setEnabled(false);
+        if (service.send(message)) {
             sendId = message.id();
         } else {
+            sendButton-&gt;setEnabled(true);
             QMessageBox::warning(0, tr(&quot;Failed&quot;), tr(&quot;Unable to send message&quot;));
         }</pre>
 <p>To determine whether our transmission is successful, we wait for changes to the <a href="qmessageservice.html#state">state</a> of the <a href="qmessageservice.html">QMessageService</a> object. When the state changes to the FinishedState, we need to check whether the request was successful or not:</p>

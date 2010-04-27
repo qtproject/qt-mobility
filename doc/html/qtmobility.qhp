@@ -650,7 +650,7 @@
                     <section ref="preview.html" title="Technology Preview"/>
                     <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt"/>
                     <section ref="trademarks.html" title="Trademarks"/>
-                    <section ref="versit.html" title="Versit API (technology preview)"/>
+                    <section ref="versit.html" title="Versit API"/>
                 </section>
             </section>
         </toc>
@@ -3403,7 +3403,7 @@
             <keyword name="Technology Preview" id="Technology Preview" ref="preview.html"/>
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
-            <keyword name="Versit API (technology preview)" id="Versit API (technology preview)" ref="versit.html"/>
+            <keyword name="Versit API" id="Versit API" ref="versit.html"/>
             <keyword name="Weather Info Example" id="Weather Info Example" ref="weatherinfo.html"/>
             <keyword name="Write Message Example" id="Write Message Example" ref="writemessage.html"/>
             <keyword name="qtimestamp" id="qtimestamp" ref="qsensor.html#qtimestamp-typedef"/>

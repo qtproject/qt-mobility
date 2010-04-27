@@ -97,7 +97,11 @@
 
         QServiceInterfaceDescriptor descriptor = current-&gt;data(Qt::UserRole).value&lt;QServiceInterfaceDescriptor&gt;();
         if (descriptor.isValid()) {
+    #if defined(Q_WS_MAEMO_5)
+            defaultInterfaceButton-&gt;setText(tr(&quot;Set as default implementation for \n%1&quot;)
+    #else
             defaultInterfaceButton-&gt;setText(tr(&quot;Set as default implementation for %1&quot;)
+    #endif
                     .arg(descriptor.interfaceName()));
             defaultInterfaceButton-&gt;setEnabled(true);
         }
@@ -246,7 +250,7 @@
         attributesListWidget = new QListWidget;
         attributesListWidget-&gt;addItem(tr(&quot;(Select an interface implementation)&quot;));
 
-    #ifndef Q_OS_SYMBIAN
+    #if !defined(Q_OS_SYMBIAN) &amp;&amp; !defined(Q_WS_MAEMO_5)
         interfacesListWidget-&gt;setMinimumWidth(450);
     #endif
 
@@ -285,12 +289,22 @@
         attributesGroup = new QGroupBox(tr(&quot;Invokable attributes&quot;));
         QVBoxLayout *attributesLayout = new QVBoxLayout;
         attributesLayout-&gt;addWidget(attributesListWidget);
+    #if !defined(Q_WS_MAEMO_5)
+        <span class="comment">// No space on the screen to show following title in Maemo</span>
         attributesLayout-&gt;addWidget(new QLabel(tr(&quot;Show attributes for:&quot;)));
+    #endif
         attributesLayout-&gt;addWidget(selectedImplRadioButton);
         attributesLayout-&gt;addWidget(defaultImplRadioButton);
         attributesGroup-&gt;setLayout(attributesLayout);
 
-    #ifndef Q_OS_SYMBIAN
+    #if defined(Q_WS_MAEMO_5)
+        <span class="comment">// Maemo 5 style doesn't take group box titles into account.</span>
+        int spacingHack = QFontMetrics(QFont()).height();
+        interfacesLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
+        attributesLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
+        servicesLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
+    #endif
+    #if !defined(Q_OS_SYMBIAN) &amp;&amp; !defined(Q_WS_MAEMO_5)
         QGridLayout *layout = new QGridLayout;
         layout-&gt;addWidget(servicesGroup, 0, 0);
         layout-&gt;addWidget(attributesGroup, 0, 1, 2, 1);

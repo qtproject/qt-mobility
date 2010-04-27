@@ -51,7 +51,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageContentContainer
-    \preliminary
 
     \brief The QMessageContentContainer class provides an interface for internet media (MIME) 
     and Transport Neutral Encapsulation Format (TNEF) content that is possibly only 

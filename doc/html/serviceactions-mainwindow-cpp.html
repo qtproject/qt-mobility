@@ -208,7 +208,7 @@
         <span class="comment">//        m_loader.start();</span>
 
     #else
-        if(!runonce)
+        <span class="comment">//    if(</span>!runonce)
              m_loader.start();
     #endif
         runonce = true;
@@ -525,8 +525,8 @@
             QMessageId id = m_ids.takeFirst();
             QMessage message(id);
 
-            QListWidgetItem* newItem = new QListWidgetItem(message.subject());
-            newItem-&gt;setData(MessageIdRole,id.toString());
+            QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(&quot;:&quot;)+message.subject());
+                    newItem-&gt;setData(MessageIdRole,id.toString());
             QFont itemFont = newItem-&gt;font();
             bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
             itemFont.setItalic(isPartialMessage);
@@ -890,7 +890,6 @@
 
     void MessageViewWidget::stateChanged(QMessageService::State newState)
     {
-        <span class="comment">//  qDebug() &lt;&lt; &quot;stateChanged state=&quot; &lt;&lt; m_state &lt;&lt; &quot; newState=&quot; &lt;&lt; newState &lt;&lt; &quot;error=&quot; &lt;&lt; m_service-&gt;error();</span>
         if (m_state == LoadFailed)
             return;
 
@@ -1331,7 +1330,6 @@
 
     void MainWindow::serviceStateChanged(QMessageService::State newState)
     {
-        <span class="comment">//  qDebug() &lt;&lt; &quot;MainWindow::serviceStateChanged&quot;;</span>
         if ((newState == QMessageService::FinishedState) &amp;&amp; (m_service-&gt;error() != QMessageManager::NoError))
             QMessageBox::critical(this,&quot;Error&quot;,&quot;One or more service actions failed&quot;);
     }

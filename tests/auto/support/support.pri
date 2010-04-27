@@ -1,9 +1,13 @@
 
 HEADERS += \
-    $$PWD/support.h
+    $$PWD/support.h \
+    $$PWD/../../../src/messaging/messagingutil_p.h
+
+SOURCES += $$PWD/../../../src/messaging/messagingutil.cpp
 
 symbian|wince*|maemo*|win32|mac {
     symbian {
+
         SOURCES += $$PWD/support_symbian.cpp
         INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
         INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
