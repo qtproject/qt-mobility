@@ -122,17 +122,9 @@ public:
 
     bool filterMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
 				      QString body, QMessageDataComparator::MatchFlags matchFlags);
-<<<<<<< HEAD
 
     QMessageIdList m_ids;
 
-
-=======
-
-    QMessageIdList m_ids;
-
-
->>>>>>> 34ff85ad53564b6053a9bd702fe71a05be2f9da3
 signals:
     void messagesFound(const QMessageIdList &,bool,bool);
     void stateChanged(QMessageService::State);
