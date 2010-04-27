@@ -41,6 +41,7 @@
 #include "qmessagefolderid.h"
 #include "qmessagefolderid_p.h"
 #include <qhash.h>
+#include <messagingutil_p.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -114,7 +115,7 @@ QString QMessageFolderId::toString() const
     if (!isValid()) {
         return QString();
     }
-    
+
     return d_ptr->_id;
 }
 
