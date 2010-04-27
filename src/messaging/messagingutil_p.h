@@ -38,45 +38,52 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEFOLDERID_H
-#define QMESSAGEFOLDERID_H
-#include <QString>
-#include <QList>
-#include <qmessageglobal.h>
+
+#ifndef _SYMBIANHELPERS_H_
+#define _SYMBIANHELPERS_H_
+
+#include <QtCore>
+#include "qmessage.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QMessageFolderIdPrivate;
+class QMessageId;
+class QMessageAccountId;
+class QMessageFolderId;
 
-class Q_MESSAGING_EXPORT QMessageFolderId 
+namespace SymbianHelpers {
+
+    enum EngineType {
+        EngineTypeMTM = 0,
+        EngineTypeFreestyle,
+        EngineDefault
+    };
+
+    EngineType idType(const QString& id);
+    EngineType idType(const QMessageId& id);
+    EngineType idType(const QMessageAccountId& id);
+    EngineType idType(const QMessageFolderId& id);
+
+    QString addIdPrefix(const QString& id, const EngineType& type = EngineDefault);
+    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type = EngineDefault);
+    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type = EngineDefault);
+    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type = EngineDefault);
+
+    QString stripIdPrefix(const QString& id);
+    QMessageId stripIdPrefix(const QMessageId& id);
+    QMessageAccountId stripIdPrefix(const QMessageAccountId& id);
+    QMessageFolderId stripIdPrefix(const QMessageFolderId& id);
+
+    static const char* mtmPrefix = "MTM_";
+    static const char* freestylePrefix = "FS_";
+}
+
+namespace MessagingUtil
 {
-    friend class QMessageFolderIdPrivate;
-
-public:
-    QMessageFolderId();
-    QMessageFolderId(const QMessageFolderId &other);
-    QMessageFolderId(const QString& id);
-    ~QMessageFolderId();
-
-    QMessageFolderId& operator=(const QMessageFolderId &other);
-
-    bool operator==(const QMessageFolderId &other) const;
-    bool operator!=(const QMessageFolderId &other) const;
-
-    bool operator<(const QMessageFolderId &other) const;
-
-    QString toString() const;
-    bool isValid() const;
-
-private:
-    friend Q_MESSAGING_EXPORT uint qHash(const QMessageFolderId &id);
-
-    QMessageFolderIdPrivate *d_ptr;
-};
-
-typedef QList<QMessageFolderId> QMessageFolderIdList;
-
-Q_MESSAGING_EXPORT uint qHash(const QMessageFolderId &id);
+    QString addIdPrefix(const QString& id);
+    QString stripIdPrefix(const QString& id);
+    QString idPrefix();
+}
 
 QTM_END_NAMESPACE
 
