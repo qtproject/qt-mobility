@@ -98,6 +98,7 @@ public:
 private:
     QAccelerometerReading iReading;
     TSensrvAccelerometerAxisData iData;
+    TInt iScale, iUnit;
     };
 
 #endif //ACCELEROMETERSYM_H

@@ -46,7 +46,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageAccountFilter
 
-    \preliminary
     \brief The QMessageAccountFilter class defines the parameters used for querying a subset of
     all available accounts from the messaging store.
     \ingroup messaging
