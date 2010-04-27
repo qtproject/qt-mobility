@@ -331,10 +331,11 @@
             }
         }
 
+        sendButton-&gt;setEnabled(false);
         if (service.send(message)) {
-            sendButton-&gt;setEnabled(false);
             sendId = message.id();
         } else {
+            sendButton-&gt;setEnabled(true);
             QMessageBox::warning(0, tr(&quot;Failed&quot;), tr(&quot;Unable to send message&quot;));
         }
     }

@@ -90,6 +90,8 @@
 #include <imcvtext.h> // KImcvMultipart declaration
 
 #include <QTextCodec>
+#include <messagingutil_p.h>
+
 
 QTM_BEGIN_NAMESPACE
 
@@ -105,7 +107,7 @@ CMTMEngine::CMTMEngine()
     CActiveScheduler::Add(this);
     iTimer.CreateLocal();
 
-    TRAPD(err, 
+    TRAPD(err,
         ipMsvSession = CMsvSession::OpenSyncL(*this);
         iSessionReady = ETrue;
         ipClientMtmReg = CClientMtmRegistry::NewL(*ipMsvSession);
@@ -119,7 +121,7 @@ CMTMEngine::CMTMEngine()
 
     // Create & Add SMS Account
     TRAPD(accountError,
-        iSMSAccountidAsString = QString::number(mtmServiceEntryIdL(CMTMEngine::MTMTypeSMS));
+        iSMSAccountidAsString = SymbianHelpers::addIdPrefix(QString::number(mtmServiceEntryIdL(CMTMEngine::MTMTypeSMS)),SymbianHelpers::EngineTypeMTM);
         QMessageAccount smsAcc = QMessageAccountPrivate::from(QMessageAccountId(iSMSAccountidAsString),
                                                               QString("SMS"),
                                                               mtmServiceEntryIdL(CMTMEngine::MTMTypeSMS),
@@ -129,7 +131,7 @@ CMTMEngine::CMTMEngine()
 
 
         // Create & Add MMS Account
-        iMMSAccountidAsString = QString::number(mtmServiceEntryIdL(CMTMEngine::MTMTypeMMS));
+        iMMSAccountidAsString = SymbianHelpers::addIdPrefix(QString::number(mtmServiceEntryIdL(CMTMEngine::MTMTypeMMS)),SymbianHelpers::EngineTypeMTM);
         QMessageAccount mmsAcc = QMessageAccountPrivate::from(QMessageAccountId(iMMSAccountidAsString),
                                                               QString("MMS"),
                                                               mtmServiceEntryIdL(CMTMEngine::MTMTypeMMS),
@@ -375,9 +377,9 @@ void CMTMEngine::updateEmailAccountsL() const
     if (err == KErrNone) {
         QString idAsString;
         if (defaultAccount.iRelatedService != 0) {
-            idAsString = QString::number(defaultAccount.iRelatedService);
+            idAsString = SymbianHelpers::addIdPrefix(QString::number(defaultAccount.iRelatedService),SymbianHelpers::EngineTypeMTM);
         } else {
-            idAsString = QString::number(defaultAccount.iSmtpService);
+            idAsString = SymbianHelpers::addIdPrefix(QString::number(defaultAccount.iSmtpService),SymbianHelpers::EngineTypeMTM);
         }
         if (!iAccounts.contains(idAsString)) {
             QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(idAsString),
@@ -398,7 +400,7 @@ void CMTMEngine::updateEmailAccountsL() const
     pEmailAccounts->GetImapAccountsL(imapAccounts);
     CleanupClosePushL(imapAccounts);
     for (int i=0; i < imapAccounts.Count(); i++) {
-        QString idAsString = QString::number(imapAccounts[i].iImapService);
+        QString idAsString = SymbianHelpers::addIdPrefix(QString::number(imapAccounts[i].iImapService),SymbianHelpers::EngineTypeMTM);
         if (!iAccounts.contains(idAsString)) {
             QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(idAsString),
                                                                    QString::fromUtf16(imapAccounts[i].iImapAccountName.Ptr(), imapAccounts[i].iImapAccountName.Length()),
@@ -416,9 +418,9 @@ void CMTMEngine::updateEmailAccountsL() const
     pEmailAccounts->GetPopAccountsL(popAccounts);
     CleanupClosePushL(popAccounts);
     for (int i=0; i < popAccounts.Count(); i++) {
-        QString idAsString = QString::number(popAccounts[i].iPopService);
+        QString idAsString = SymbianHelpers::addIdPrefix(QString::number(popAccounts[i].iPopService),SymbianHelpers::EngineTypeMTM);
         if (!iAccounts.contains(idAsString)) {
-            QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(QString::number(popAccounts[i].iPopService)),
+            QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(SymbianHelpers::addIdPrefix(QString::number(popAccounts[i].iPopService),SymbianHelpers::EngineTypeMTM)),
                                                                    QString::fromUtf16(popAccounts[i].iPopAccountName.Ptr(), popAccounts[i].iPopAccountName.Length()),
                                                                    popAccounts[i].iPopService,
                                                                    popAccounts[i].iSmtpService,
@@ -435,9 +437,9 @@ void CMTMEngine::updateEmailAccountsL() const
     CleanupClosePushL(smtpAccounts);
     for (int i=0; i < smtpAccounts.Count(); i++) {
         if (smtpAccounts[i].iRelatedService == 0) {
-            QString idAsString = QString::number(smtpAccounts[i].iSmtpService);
+            QString idAsString = SymbianHelpers::addIdPrefix(QString::number(smtpAccounts[i].iSmtpService),SymbianHelpers::EngineTypeMTM);
             if (!iAccounts.contains(idAsString)) {
-                QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(QString::number(smtpAccounts[i].iSmtpService)),
+                QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(SymbianHelpers::addIdPrefix(QString::number(smtpAccounts[i].iSmtpService),SymbianHelpers::EngineTypeMTM)),
                                                                        QString::fromUtf16(smtpAccounts[i].iSmtpAccountName.Ptr(), smtpAccounts[i].iSmtpAccountName.Length()),
                                                                        smtpAccounts[i].iRelatedService,
                                                                        smtpAccounts[i].iSmtpService,
@@ -699,7 +701,7 @@ bool CMTMEngine::showMessage(const QMessageId &id)
 
 void CMTMEngine::showMessageL(const QMessageId &id)
 {
-    long int messageId = id.toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     
     CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
     CleanupStack::PushL(pEntry);
@@ -967,7 +969,7 @@ void CMTMEngine::retrieveL(const QMessageId &messageId, const QMessageContentCon
 {
     Q_UNUSED(id); // all attachments are retrieved (cannot retrieve only one)
     
-    long int messId = messageId.toString().toLong();
+    long int messId = SymbianHelpers::stripIdPrefix(messageId.toString()).toLong();
     
     CMsvEntry* pEntry = ipMsvSession->GetEntryL(messId);
     CleanupStack::PushL(pEntry);
@@ -1074,7 +1076,7 @@ bool CMTMEngine::retrieveBody(const QMessageId& id)
 
 void CMTMEngine::retrieveBodyL(const QMessageId& id) const
 {
-    long int messageId = id.toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     
     CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
     CleanupStack::PushL(pEntry);
@@ -1181,7 +1183,7 @@ bool CMTMEngine::retrieveHeader(const QMessageId& id)
 
 void CMTMEngine::retrieveHeaderL(const QMessageId& id) const
 {
-    long int messageId = id.toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     
     CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
     CleanupStack::PushL(pEntry);
@@ -1325,7 +1327,7 @@ void CMTMEngine::exportUpdatesL(const QMessageAccountId &id) const
 
 bool CMTMEngine::removeMessageL(const QMessageId &id, QMessageManager::RemovalOption /*option*/)
 {
-    long int messageId = id.toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
     CleanupStack::PushL(pEntry);
     
@@ -1764,6 +1766,7 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
     iMessageQueries.removeAt(index);
 }
 
+
 void CMTMEngine::applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const
 {
     if (offset > 0) {
@@ -1812,7 +1815,7 @@ QMessageFolderIdList CMTMEngine::filterMessageFoldersL(const QMessageFolderFilte
             {
             if (pf->_comparatorType == QMessageFolderFilterPrivate::Equality) {
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
-                if (pf->_value.toString().length() > 0) {
+                if (pf->_value.toString().length() > QString(SymbianHelpers::mtmPrefix).length()) {
                     bool folderOk = false;
                     long int folderId = folderIdFromQMessageFolderId(QMessageFolderId(pf->_value.toString()));
                     CMsvEntry* pEntry = retrieveCMsvEntryAndPushToCleanupStack(folderId);
@@ -1926,12 +1929,12 @@ QMessageFolderIdList CMTMEngine::filterMessageFoldersL(const QMessageFolderFilte
             if (pf->_comparatorType == QMessageFolderFilterPrivate::Equality) {
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (cmp == QMessageDataComparator::Equal) {
-                    if (pf->_value.toString().length() > 0) {
+                    if (pf->_value.toString().length() > QString(SymbianHelpers::mtmPrefix).length()) {
                         ids = folderIdsByAccountId(QMessageAccountId(pf->_value.toString()));
                     }
                 } else { // NotEqual
                     ids = allFolders();
-                    if (pf->_value.toString().length() > 0) {
+                    if (pf->_value.toString().length() > QString(SymbianHelpers::mtmPrefix).length()) {
                         QMessageFolderIdList ids2 = folderIdsByAccountId(QMessageAccountId(pf->_value.toString()));
                         for (int i = 0; i < ids2.count(); i++) {
                             ids.removeOne(ids2[i]);
@@ -1963,7 +1966,7 @@ QMessageFolderIdList CMTMEngine::filterMessageFoldersL(const QMessageFolderFilte
                             CleanupStack::PushL(pSelection);
                             if (pSelection->Count() > 0) {
                                 for(TInt i = 0; i < pSelection->Count(); i++) {
-                                    ids.append(QMessageFolderId(QString::number(pSelection->At(i))));
+                                    ids.append(QMessageFolderId(SymbianHelpers::addIdPrefix(QString::number(pSelection->At(i)),SymbianHelpers::EngineTypeMTM)));
                                 }
                             }
                             CleanupStack::PopAndDestroy(pSelection);
@@ -2092,17 +2095,17 @@ QMessageFolderId CMTMEngine::createQMessageFolderId(const TMsvId& serviceEntryId
     serviceEntryIdString = nullString.left(8-serviceEntryIdString.length()) + serviceEntryIdString;
     QString folderIdString = QString::number(folderId);
     folderIdString = nullString.left(8-folderIdString.length()) + folderIdString;
-    return serviceEntryIdString+folderIdString;
+    return SymbianHelpers::addIdPrefix(serviceEntryIdString+folderIdString,SymbianHelpers::EngineTypeMTM);
 }
 
 TMsvId CMTMEngine::serviceEntryIdFromQMessageFolderId(const QMessageFolderId& folderId) const
 {
-    return folderId.toString().left(8).toLong(); 
+    return SymbianHelpers::stripIdPrefix(folderId.toString()).left(8).toLong(); 
 }
 
 TMsvId CMTMEngine::folderIdFromQMessageFolderId(const QMessageFolderId& folderId) const
 {
-    return folderId.toString().right(8).toLong(); 
+    return SymbianHelpers::stripIdPrefix(folderId.toString()).right(8).toLong(); 
 }
 
 void CMTMEngine::handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter) const
@@ -2310,7 +2313,7 @@ QMessage CMTMEngine::messageL(const QMessageId& id) const
 {
     QMessage message;
 
-    long int messageId = id.toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
     CleanupStack::PushL(pEntry);
     
@@ -2486,7 +2489,7 @@ void CMTMEngine::storeSMSL(QMessage &message)
     CleanupStack::PopAndDestroy(store);
     
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(QString::number(entry.Id()));
+    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(entry.Id()),SymbianHelpers::EngineTypeMTM));
     
     if (!message.receivedDate().isNull() || !message.date().isNull()) {
         // Change the date to given date
@@ -2528,7 +2531,7 @@ void CMTMEngine::sendSMSL(QMessage &message)
         storeSMSL(message);
     }
     
-    long int messageId = message.id().toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
     if (messageId == 0) {
         User::Leave(KErrNotReady);
     }
@@ -2737,7 +2740,7 @@ void CMTMEngine::storeMMSL(QMessage &message)
     CleanupStack::PopAndDestroy(); // store    
     
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(QString::number(indexEntry)); 
+    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(indexEntry,SymbianHelpers::EngineTypeMTM)));
     // Save the changes
     ipMmsMtm->SaveMessageL();
     
@@ -2763,7 +2766,7 @@ void CMTMEngine::updateSMSL(QMessage &message)
     }
     
     QMessageId id = message.id();
-    long int messageId = id.toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     if (messageId == 0)
         return;
     
@@ -2849,7 +2852,7 @@ void CMTMEngine::updateMMSL(QMessage &message)
     }
     
     QMessageId id = message.id();
-    long int messageId = id.toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     if (messageId == 0)
         return;
     
@@ -3042,7 +3045,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
     }
 
     QMessageId id = message.id();
-    long int messageId = id.toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     if (messageId == 0)
         return;
     
@@ -3310,7 +3313,7 @@ void CMTMEngine::sendMMSL(QMessage &message)
         messageCreated = true;
     }
     
-    long int messageId = message.id().toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
     if (messageId == 0) {
         User::Leave(KErrNotReady);
     }
@@ -3654,7 +3657,7 @@ void CMTMEngine::storeEmailL(QMessage &message)
     CleanupStack::PopAndDestroy(pMsvOperationWait);
     
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(QString::number(newMessageId)); 
+    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(newMessageId),SymbianHelpers::EngineTypeMTM));
 }
 
 void CMTMEngine::sendEmailL(QMessage &message)
@@ -3683,7 +3686,7 @@ void CMTMEngine::sendEmailL(QMessage &message)
         messageCreated = true;
     }    
     
-    long int messageId = message.id().toString().toLong();
+    long int messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
     if (messageId == 0) {
         User::Leave(KErrNotReady);
     }    
@@ -4438,7 +4441,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                 } else {
                     message.setType(QMessage::NoType);
                 }
-            } else if ((privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder) && 
+            } else if ((privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder) &&
                        (aMsgType == KUidMsgTypeSMS || aMsgType == KUidMsgTypeMultimedia)) {
                 if (aFolderId == KMsvGlobalInBoxIndexEntryId) {
                     QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
@@ -4448,9 +4451,9 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                     QMessagePrivate::setStandardFolder(message,QMessage::SentFolder);
                 } else if (aFolderId == KMsvDeletedEntryFolderEntryId) {
                     QMessagePrivate::setStandardFolder(message,QMessage::TrashFolder);
-                }       
+                }
             } else if (!messageRetrieved) {
-                message = this->message(QMessageId(QString::number(aMessageId)));
+                message = this->message(QMessageId(SymbianHelpers::addIdPrefix(QString::number(aMessageId),SymbianHelpers::EngineTypeMTM)));
                 if (message.type() == QMessage::NoType) {
                     unableToReadAndFilterMessage = true;
                     matchingFilters.clear();
@@ -4502,7 +4505,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
             // No pending notification events for this messageId.
             // => Deliver notification immediately
             ipMessageStorePrivate->messageNotification(notificationType,
-                                                       QMessageId(QString::number(aMessageId)),
+                                                       QMessageId(SymbianHelpers::addIdPrefix(QString::number(aMessageId),SymbianHelpers::EngineTypeMTM)),
                                                        matchingFilters);
         }
     } else if (unableToReadAndFilterMessage) {
@@ -4538,7 +4541,7 @@ void CMTMEngine::tryToDeliverMessageNotifications()
             MessageEvent event = iUndeliveredMessageEvents[0];
             bool eventHandlingPossible = true;
             if (event.notificationType != QMessageStorePrivate::Removed && event.unfiltered) {
-                QMessage message = this->message(QMessageId(QString::number(event.messageId)));
+                QMessage message = this->message(QMessageId(SymbianHelpers::addIdPrefix(QString::number(event.messageId),SymbianHelpers::EngineTypeMTM)));
                 if (message.type() == QMessage::NoType) {
                     eventHandlingPossible = false;
                 } else {
@@ -4569,7 +4572,7 @@ void CMTMEngine::tryToDeliverMessageNotifications()
                 if (event.matchingFilters.count() > 0) { 
                     // Deliver message event notification
                     ipMessageStorePrivate->messageNotification(event.notificationType,
-                                                               QMessageId(QString::number(event.messageId)),
+                                                               QMessageId(SymbianHelpers::addIdPrefix(QString::number(event.messageId),SymbianHelpers::EngineTypeMTM)),
                                                                event.matchingFilters);
                 }
             } else {
@@ -4707,7 +4710,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
             getAllMessagesL(iOrdering);
             iIdList = QMessageIdList();
             for (int i=0; i < ipEntrySelection->Count(); i++) {
-                iIdList.append(QMessageId(QString::number((*ipEntrySelection)[i]))); 
+                iIdList.append(QMessageId(SymbianHelpers::addIdPrefix(QString::number((*ipEntrySelection)[i]),SymbianHelpers::EngineTypeMTM)));
             }
         }
         iNumberOfHandledFilters++;
@@ -4793,9 +4796,9 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
         iNumberOfHandledFilters++;
         if (pf->_comparatorType == QMessageFilterPrivate::Equality) { // QMessageId
             QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
-            if (!pf->_value.isNull() && pf->_value.toString().length() > 0) {
+            if (!pf->_value.isNull() && pf->_value.toString().length() > QString(SymbianHelpers::mtmPrefix).length()) {
                 if (cmp == QMessageDataComparator::Equal) {
-                    long int messageId = pf->_value.toString().toLong();
+                    long int messageId = SymbianHelpers::stripIdPrefix(pf->_value.toString()).toLong();
                     CMsvEntry* pEntry = iOwner.retrieveCMsvEntryAndPushToCleanupStack(messageId);
                     if (pEntry) {
                         const TMsvEntry& entry = pEntry->Entry();
@@ -4809,7 +4812,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
                 } else { // NotEqual
                     ipEntrySelection = new(ELeave)CMsvEntrySelection;
                     getAllMessagesL(iOrdering);
-                    long int messageId = pf->_value.toString().toLong();
+                    long int messageId = SymbianHelpers::stripIdPrefix(pf->_value.toString()).toLong();
                     for (int i=0; i < ipEntrySelection->Count(); i++) {
                         if (ipEntrySelection->At(i) == messageId) {
                             ipEntrySelection->Delete(i);
@@ -4829,7 +4832,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
                 if (cmp == QMessageDataComparator::Includes) {
                     ipEntrySelection = new(ELeave)CMsvEntrySelection;
                     for (int i=0; i < pf->_ids.count(); i++) {
-                        long int messageId = pf->_ids[i].toString().toLong();
+                        long int messageId = SymbianHelpers::stripIdPrefix(pf->_ids[i].toString()).toLong();
                         CMsvEntry* pEntry = iOwner.retrieveCMsvEntryAndPushToCleanupStack(messageId);
                         if (pEntry) {
                             const TMsvEntry& entry = pEntry->Entry();
@@ -4843,7 +4846,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
                     ipEntrySelection = new(ELeave)CMsvEntrySelection;
                     getAllMessagesL(iOrdering);
                     for (int i=0; i < pf->_ids.count(); i++) {
-                        long int messageId = pf->_ids[i].toString().toLong();
+                        long int messageId = SymbianHelpers::stripIdPrefix(pf->_ids[i].toString()).toLong();
                         for (int i=0; i < ipEntrySelection->Count(); i++) {
                             if (ipEntrySelection->At(i) == messageId) {
                                 ipEntrySelection->Delete(i);
@@ -4944,7 +4947,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
         if (pf->_comparatorType == QMessageFilterPrivate::Equality) { // QMessageFolderId
             QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
             if (cmp == QMessageDataComparator::Equal) {
-                long int folderId = iOwner.folderIdFromQMessageFolderId(QMessageFolderId(pf->_value.toString())); 
+                long int folderId = iOwner.folderIdFromQMessageFolderId(QMessageFolderId(pf->_value.toString()));
                 long int serviceEntryId = iOwner.serviceEntryIdFromQMessageFolderId(QMessageFolderId(pf->_value.toString()));
                 QMessageAccount messageAccount = iOwner.account(iOwner.accountIdByServiceId(serviceEntryId));
                 if (messageAccount.messageTypes() == QMessage::Email) {
@@ -5349,7 +5352,7 @@ void CMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivate:
     } else {
         iIdList = QMessageIdList();
         for (int i=0; i < ipEntrySelection->Count(); i++) {
-            iIdList.append(QMessageId(QString::number((*ipEntrySelection)[i]))); 
+            iIdList.append(QMessageId(SymbianHelpers::addIdPrefix(QString::number((*ipEntrySelection)[i]),SymbianHelpers::EngineTypeMTM)));
         }
         iTimer.After(iStatus, 100);
         if (!IsActive()) {
@@ -5367,7 +5370,7 @@ void CMessagesFindOperation::RunL()
             const CMsvFindResultSelection& findResultSelection = ipMsvFindOperation->GetFindResult();
             QMessageIdList msgIds;
             for (int i=0; i < findResultSelection.Count(); i++) {
-                msgIds.append(QMessageId(QString::number(findResultSelection[i].iId))); 
+                msgIds.append(QMessageId(SymbianHelpers::addIdPrefix(QString::number(findResultSelection[i].iId),SymbianHelpers::EngineTypeMTM)));
             }
             iOwner.filterAndOrderMessagesReady(true, iOperationId, msgIds, iNumberOfHandledFilters, iResultCorrectlyOrdered);
         } else {
