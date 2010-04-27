@@ -41,6 +41,10 @@
 #include <QApplication>
 #include <QStringList>
 
+#if defined(Q_OS_SYMBIAN)
+# include <f32file.h>
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class DirChecker
