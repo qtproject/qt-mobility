@@ -1,7 +1,7 @@
 TARGET = btscanner
 
-INCLUDEPATH += ../../src/connectivity ../../src/connectivity/bluetooth
-DEPENDPATH += ../../src/connectivity ../../src/connectivity/bluetooth
+INCLUDEPATH += ../../src/connectivity
+DEPENDPATH += ../../src/connectivity
 
 include(../examples.pri)
 
@@ -10,12 +10,12 @@ MOBILITY = connectivity
 
 SOURCES = \
     main.cpp \
-	device.cpp \
-	service.cpp
+    device.cpp \
+    service.cpp
 
 HEADERS = \
-	device.h \
-	service.h
+    device.h \
+    service.h
 
 FORMS = \
     device.ui \

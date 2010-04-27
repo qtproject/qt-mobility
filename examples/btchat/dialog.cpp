@@ -40,8 +40,8 @@
 
 #include "dialog.h"
 
-#include <qbluetoothuuid.h>
-#include <qrfcommserver.h>
+#include <bluetooth/qbluetoothuuid.h>
+#include <bluetooth/qrfcommserver.h>
 
 #include <QTimer>
 

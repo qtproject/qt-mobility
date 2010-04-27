@@ -40,9 +40,9 @@
 
 #include "service.h"
 
-#include <qbluetoothaddress.h>
-#include <qbluetoothservicediscoveryagent.h>
-#include <qbluetoothserviceinfo.h>
+#include <bluetooth/qbluetoothaddress.h>
+#include <bluetooth/qbluetoothservicediscoveryagent.h>
+#include <bluetooth/qbluetoothserviceinfo.h>
 
 
 ServiceDiscoveryDialog::ServiceDiscoveryDialog(const QString &name, const QBluetoothAddress &address, QWidget *parent)

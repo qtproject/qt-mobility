@@ -41,8 +41,8 @@
 #include "device.h"
 #include "service.h"
 
-#include <qbluetoothaddress.h>
-#include <qbluetoothdevicediscoveryagent.h>
+#include <bluetooth/qbluetoothaddress.h>
+#include <bluetooth/qbluetoothdevicediscoveryagent.h>
 
 DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
 : QDialog(parent), discoveryAgent(new QBluetoothDeviceDiscoveryAgent)

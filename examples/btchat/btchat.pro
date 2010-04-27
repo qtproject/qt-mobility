@@ -1,7 +1,7 @@
 TARGET = btchat
 
-INCLUDEPATH += ../../src/connectivity ../../src/connectivity/bluetooth
-DEPENDPATH += ../../src/connectivity ../../src/connectivity/bluetooth
+INCLUDEPATH += ../../src/connectivity
+DEPENDPATH += ../../src/connectivity
 
 include(../examples.pri)
 
