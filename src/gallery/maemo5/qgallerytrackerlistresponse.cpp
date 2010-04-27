@@ -248,6 +248,8 @@ void QGalleryTrackerListResponse::callFinished(QDBusPendingCallWatcher *watcher)
         qWarning("DBUS error %s", qPrintable(reply.error().message()));
 
         finish(QGalleryAbstractRequest::ConnectionError);
+
+        return;
     }
 
     QVector<QStringList> rows = reply.value();
