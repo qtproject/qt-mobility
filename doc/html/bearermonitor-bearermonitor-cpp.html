@@ -269,6 +269,7 @@
     void BearerMonitor::registerNetwork()
     {
         QTreeWidgetItem *item = treeWidget-&gt;currentItem();
+        if (!item) return;
 
         QNetworkConfiguration configuration =
             manager.configurationFromIdentifier(item-&gt;data(0, Qt::UserRole).toString());
@@ -290,6 +291,7 @@
     void BearerMonitor::unregisterNetwork()
     {
         QTreeWidgetItem *item = treeWidget-&gt;currentItem();
+        if (!item) return;
 
         QNetworkConfiguration configuration =
             manager.configurationFromIdentifier(item-&gt;data(0, Qt::UserRole).toString());
@@ -398,6 +400,7 @@
     void BearerMonitor::createNewSession()
     {
         QTreeWidgetItem *item = treeWidget-&gt;currentItem();
+        if (!item) return;
 
         createSessionFor(item);
     }

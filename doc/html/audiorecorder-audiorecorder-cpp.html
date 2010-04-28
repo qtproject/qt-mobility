@@ -71,8 +71,8 @@
 
         if (capture-&gt;supportedAudioCodecs().size() &gt; 0) {
             QAudioEncoderSettings audioSettings;
-            audioSettings.setQuality(QtMultimedia::LowQuality);
-            audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
+            audioSettings.setQuality(QtMediaServices::LowQuality);
+            audioSettings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
             audioSettings.setCodec(capture-&gt;supportedAudioCodecs().first());
             capture-&gt;setEncodingSettings(audioSettings,QVideoEncoderSettings(),
                     capture-&gt;supportedContainers().first());
@@ -319,13 +319,13 @@
 
         switch(idx) {
         case 0:
-            settings.setQuality(QtMultimedia::LowQuality);
+            settings.setQuality(QtMediaServices::LowQuality);
             break;
         case 1:
-            settings.setQuality(QtMultimedia::NormalQuality);
+            settings.setQuality(QtMediaServices::NormalQuality);
             break;
         default:
-            settings.setQuality(QtMultimedia::HighQuality);
+            settings.setQuality(QtMediaServices::HighQuality);
         }
         capture-&gt;setEncodingSettings(settings);
     }

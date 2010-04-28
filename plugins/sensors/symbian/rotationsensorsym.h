@@ -39,42 +39,65 @@
 **
 ****************************************************************************/
 
-#include <qtrackercontactidfetchrequest.h>
+#ifndef ROTATIONSENSORSYM_H
+#define ROTATIONSENSORSYM_H
 
-#include <qtcontacts.h>
-#include <qcontactlocalidfetchrequest.h>
-#include <qcontactfetchrequest.h>
+// QT Mobility Sensor API headers
+#include <qsensorbackend.h>
+#include <qrotationsensor.h>
 
-/*!
- * Run QContactFetchRequest instead of QContactLocalIdFetchRequest
- */
-QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractRequest* request,
-                                                             QContactManagerEngine* parent) :
-    QTrackerContactFetchRequest(request, parent)
-{
+// Internal Headers
+#include "sensorbackendsym.h"
 
-    idfetchrequest = qobject_cast<QContactLocalIdFetchRequest*>(request);
-    // replace req with QContactFetchRequest that will be run instead
-    req = new QContactFetchRequest();
-    req->setManager(request->manager());
-    QContactFetchRequest *fetchReq = qobject_cast<QContactFetchRequest*>(req);
-    if( fetchReq && idfetchrequest)
+// Sensor client headers
+// Rotation Sensor specific header
+#include <sensrvorientationsensor.h>
+
+QTM_USE_NAMESPACE
+
+class CRotationSensorSym: public CSensorBackendSym
     {
-        fetchReq->setFilter(idfetchrequest->filter());
-        // IMContacts needs to be fetched to use metacontact matching
-        QContactFetchHint fetchHint;
-        fetchHint.setDetailDefinitionsHint(QStringList() << QContactOnlineAccount::DefinitionName);
-        fetchReq->setFetchHint(fetchHint);
-    }
-}
+public:
+    /**
+     * Factory function, this is used to create the rotation sensor object
+     * @return CRotationSensorSym if successful, leaves on failure
+     */
+    static CRotationSensorSym* NewL(QSensor *sensor);
+    
+    /**
+     * Destructor
+     * Closes the backend resources
+     */
+    ~CRotationSensorSym();
+    
+private:
+    /**
+     * Default constructor
+     */
+    CRotationSensorSym(QSensor *sensor);
+    
+    /*
+     * RecvData is used to retrieve the sensor reading from sensor server
+     * It is implemented here to handle rotation sensor specific
+     * reading data and provides conversion and utility code
+     */ 
+    void RecvData(CSensrvChannel &aChannel);
 
-void QTrackerContactIdFetchRequest::emitFinished(QContactManager::Error error)
-{
-    // for now this only serves get all contacts
-    QList<QContactLocalId> results;
-    foreach(const QContact &c, result) {
-        results << c.localId();
-    }
-    QContactManagerEngine::updateContactLocalIdFetchRequest(idfetchrequest, results, error, QContactAbstractRequest::FinishedState);
-}
+    /**
+     * Second phase constructor
+     * Initialize the backend resources
+     */
+    void ConstructL();
+    
+public:
+    /**
+     * Holds the id of the proximity sensor
+     */
+    static const char *id;
+    
+private:     
+    QRotationReading iReading;
+    TSensrvRotationData iData;
+    };
 
+#endif //ROTATIONSENSORSYM_H

@@ -41,11 +41,11 @@
 
 /*!
 \page sensors-api.html
-\title Sensors API (technology preview)
+\title Sensors API
 \brief The Sensors API provides access to sensors.
 \ingroup mobility
 
-\warning This API should be considered in a technology preview state. It is
+\warning This API should be considered in a beta state. It is
 under development and subject to change.
 
 The Sensors API provides access to sensors.

@@ -26,13 +26,13 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#dtor.QMetaDataControl">~QMetaDataControl</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#availableExtendedMetaData">availableExtendedMetaData</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QtMultimedia::MetaData&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#availableMetaData">availableMetaData</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QtMediaServices::MetaData&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#availableMetaData">availableMetaData</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#extendedMetaData">extendedMetaData</a></b> ( const QString &amp; <i>key</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#isMetaDataAvailable">isMetaDataAvailable</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#isWritable">isWritable</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#metaData">metaData</a></b> ( QtMultimedia::MetaData <i>key</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#metaData">metaData</a></b> ( QtMediaServices::MetaData <i>key</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#setExtendedMetaData">setExtendedMetaData</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#setMetaData">setMetaData</a></b> ( QtMultimedia::MetaData <i>key</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmetadatacontrol.html#setMetaData">setMetaData</a></b> ( QtMediaServices::MetaData <i>key</i>, const QVariant &amp; <i>value</i> ) = 0</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -75,7 +75,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMetaDataControl class provides access to the meta-data of a <a href="qmediaservice.html">QMediaService</a>'s media.</p>
-<p>If a <a href="qmediaservice.html">QMediaService</a> can provide read or write access to the meta-data of its current media it will implement QMetaDataControl. This control provides functions for both retrieving and setting meta-data values. Meta-data may be addressed by the well defined keys in the <a href="qtmultimedia.html#MetaData-enum">QtMultimedia::MetaData</a> enumeration using the <a href="qmetadatacontrol.html#metaData">metaData</a>() functions, or by string keys using the <a href="qmetadatacontrol.html#extendedMetaData">extendedMetaData</a>() functions.</p>
+<p>If a <a href="qmediaservice.html">QMediaService</a> can provide read or write access to the meta-data of its current media it will implement QMetaDataControl. This control provides functions for both retrieving and setting meta-data values. Meta-data may be addressed by the well defined keys in the <a href="qtmediaservices.html#MetaData-enum">QtMediaServices::MetaData</a> enumeration using the <a href="qmetadatacontrol.html#metaData">metaData</a>() functions, or by string keys using the <a href="qmetadatacontrol.html#extendedMetaData">extendedMetaData</a>() functions.</p>
 <p>The functionality provided by this control is exposed to application code by the meta-data members of <a href="qmediaobject.html">QMediaObject</a>, and so meta-data access is potentially available in any of the media object classes. Any media service may implement QMetaDataControl.</p>
 <p>The interface name of QMetaDataControl is <tt>com.nokia.Qt.QMetaDataControl/1.0</tt> as defined in <a href="qmetadatacontrol.html#QMetaDataControl_iid">QMetaDataControl_iid</a>.</p>
 <p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qmediaobject.html">QMediaObject</a>.</p>
@@ -91,7 +91,7 @@
 <h3 class="fn"><a name="availableExtendedMetaData"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMetaDataControl::availableExtendedMetaData () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a list of keys there is extended meta-data available for.</p>
 <a name="//apple_ref/cpp/instm/QMetaDataControl/availableMetaData"></a>
-<h3 class="fn"><a name="availableMetaData"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qtmultimedia.html#MetaData-enum">QtMultimedia::MetaData</a>&gt; QMetaDataControl::availableMetaData () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="availableMetaData"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qtmediaservices.html#MetaData-enum">QtMediaServices::MetaData</a>&gt; QMetaDataControl::availableMetaData () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a list of keys there is meta-data available for.</p>
 <a name="//apple_ref/cpp/instm/QMetaDataControl/extendedMetaData"></a>
 <h3 class="fn"><a name="extendedMetaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMetaDataControl::extendedMetaData ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -107,7 +107,7 @@
 <p>Identifies if a media service's meta-data can be edited.</p>
 <p>Returns true if the meta-data is writable and false otherwise.</p>
 <a name="//apple_ref/cpp/instm/QMetaDataControl/metaData"></a>
-<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMetaDataControl::metaData ( <a href="qtmultimedia.html#MetaData-enum">QtMultimedia::MetaData</a> <i>key</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMetaDataControl::metaData ( <a href="qtmediaservices.html#MetaData-enum">QtMediaServices::MetaData</a> <i>key</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the meta-data for the given <i>key</i>.</p>
 <p>See also <a href="qmetadatacontrol.html#setMetaData">setMetaData</a>().</p>
 <a name="//apple_ref/cpp/instm/QMetaDataControl/metaDataAvailableChanged"></a>
@@ -122,7 +122,7 @@
 <p>The valid selection of keys for extended meta-data is determined by the provider and the meaning and type may differ between providers.</p>
 <p>See also <a href="qmetadatacontrol.html#extendedMetaData">extendedMetaData</a>().</p>
 <a name="//apple_ref/cpp/instm/QMetaDataControl/setMetaData"></a>
-<h3 class="fn"><a name="setMetaData"></a>void QMetaDataControl::setMetaData ( <a href="qtmultimedia.html#MetaData-enum">QtMultimedia::MetaData</a> <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="setMetaData"></a>void QMetaDataControl::setMetaData ( <a href="qtmediaservices.html#MetaData-enum">QtMediaServices::MetaData</a> <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the <i>value</i> of the meta-data element with the given <i>key</i>.</p>
 <p>See also <a href="qmetadatacontrol.html#metaData">metaData</a>().</p>
 <a name="//apple_ref/cpp/instm/QMetaDataControl/writableChanged"></a>

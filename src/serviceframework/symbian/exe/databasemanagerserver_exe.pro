@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = SFWDatabaseManagerServer
+TARGET = qsfwdatabasemanagerserver
 QT = core sql
 TARGET.UID3 = 0x2002AC7F
 
@@ -38,6 +38,6 @@ SOURCES +=  servicemetadata.cpp \
             databasemanagerserver.cpp \
             databasemanagersession.cpp \
             databasemanagersignalhandler.cpp
-            
-TARGET.CAPABILITY = ALL -TCB
 
+#ProtServ is needed so that the server can be in protected namespace (start with '!' -mark).
+TARGET.CAPABILITY = ProtServ

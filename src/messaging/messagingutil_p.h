@@ -39,38 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef UT_QTCONTACTS_TRACKERPLUGIN_SPARQL_H
-#define UT_QTCONTACTS_TRACKERPLUGIN_SPARQL_H
+#ifndef _SYMBIANHELPERS_H_
+#define _SYMBIANHELPERS_H_
 
-#include "ut_qtcontacts_common.h"
+#include <QtCore>
+#include "qmessage.h"
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class ut_qtcontacts_sparql : public ut_qtcontacts_common
+class QMessageId;
+class QMessageAccountId;
+class QMessageFolderId;
+
+namespace SymbianHelpers {
+
+    enum EngineType {
+        EngineTypeMTM = 0,
+        EngineTypeFreestyle,
+        EngineDefault
+    };
+
+    EngineType idType(const QString& id);
+    EngineType idType(const QMessageId& id);
+    EngineType idType(const QMessageAccountId& id);
+    EngineType idType(const QMessageFolderId& id);
+
+    QString addIdPrefix(const QString& id, const EngineType& type = EngineDefault);
+    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type = EngineDefault);
+    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type = EngineDefault);
+    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type = EngineDefault);
+
+    QString stripIdPrefix(const QString& id);
+    QMessageId stripIdPrefix(const QMessageId& id);
+    QMessageAccountId stripIdPrefix(const QMessageAccountId& id);
+    QMessageFolderId stripIdPrefix(const QMessageFolderId& id);
+
+    static const char* mtmPrefix = "MTM_";
+    static const char* freestylePrefix = "FS_";
+}
+
+namespace MessagingUtil
 {
-    Q_OBJECT
+    QString addIdPrefix(const QString& id);
+    QString stripIdPrefix(const QString& id);
+    QString idPrefix();
+}
 
-public:
-    ut_qtcontacts_sparql();
+QTM_END_NAMESPACE
 
-// private slots are called by the QTest framework.
-private slots:
-    // Test functions:
-    void checkDatabaseEmpty();
-    void testSaveContact();
-    void testModifyContact();
-
-private:
-    void setupTestContact(QContact &contact);
-
-    template <class PhoneNumberType>
-    void checkOntology(QContactLocalId contactId, int expectedCount = 1);
-
-    QContactDetailFilter mNameFilter;
-
-    QString mFirstName;
-    QString mLastName;
-    QString mPhoneNumber;
-};
-
-#endif /* UT_QTCONTACTS_TRACKERPLUGIN_SPARQL_H */
+#endif

@@ -91,7 +91,7 @@ public:
     void setPlaybackRate(qreal rate);
 
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
-    QMap<QtMultimedia::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
+    QMap<QtMediaServices::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
     QMediaStreamsControl::StreamType streamType(int streamNumber) { return m_streamTypes.value(streamNumber, QMediaStreamsControl::UnknownStream); }
 
@@ -143,7 +143,7 @@ private:
     QGstreamerVideoRendererInterface *m_renderer;
 
     QMap<QByteArray, QVariant> m_tags;
-    QList< QMap<QtMultimedia::MetaData,QVariant> > m_streamProperties;
+    QList< QMap<QtMediaServices::MetaData,QVariant> > m_streamProperties;
     QList<QMediaStreamsControl::StreamType> m_streamTypes;
     QMap<QMediaStreamsControl::StreamType, int> m_playbin2StreamOffset;
 
