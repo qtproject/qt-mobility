@@ -900,7 +900,7 @@ static void qt_writeAlbumIdCondition(
     for (int index = itemId.string()->indexOf(separator, itemId.position());
             index > 0;
             index = itemId.string()->indexOf(separator, index + 2)) {
-        if (itemId.string()->at(index + 1) != separator) {
+        if (index + 1 == itemId.string()->length() || itemId.string()->at(index + 1) != separator) {
             QString artistName = itemId.string()->mid(itemId.position(), index - itemId.position());
             artistName = artistName.replace(QLatin1String("//"), QLatin1String("/"));
 
