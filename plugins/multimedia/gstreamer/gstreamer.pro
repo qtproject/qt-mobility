@@ -82,5 +82,5 @@ include(mediaplayer/mediaplayer.pri)
     DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API 
 }
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS+=target

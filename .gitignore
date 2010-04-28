@@ -30,7 +30,6 @@ bin/examples/*
 bin/sysinfo*
 bin/qcrmlgen*
 bin/icheck*
-src/global/qbuildcfg.h
 install/*
 lib/*
 *.app
