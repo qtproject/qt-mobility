@@ -10,7 +10,7 @@ LIBS += -lmediaclientvideo \
     -lapgrfx \
     -lapmime
 
-# If support to DRM is wanted then comment out the following line 
+# If support to DRM is wanted then comment out the following line
 #CONFIG += drm_supported
 
 # We are building Symbian backend with media player support
@@ -19,7 +19,7 @@ DEFINES += HAS_MEDIA_PLAYER
 drm_supported {
     LIBS + = -ldrmaudioplayutility
     DEFINES += S60_DRM_SUPPORTED
-}    
+}
 
 HEADERS += \
     $$PWD/s60mediaplayercontrol.h \
@@ -51,25 +51,27 @@ SOURCES += \
     $$PWD/s60mediaplayeraudioendpointselector.cpp
 
 contains(S60_VERSION, 3.1) {
-
     #3.1 doesn't provide audio routing in videoplayer
-    DEFINES += HAS_NO_AUDIOROUTING_IN_VIDEOPLAYER
-
-    !exists($${EPOCROOT}epoc32\release\winscw\udeb\audiooutputrouting.lib) {
-        MMP_RULES += "$${LITERAL_HASH}ifdef WINSCW" \
-                     "MACRO HAS_NO_AUDIOROUTING" \
-                     "$${LITERAL_HASH}else" \
-                     "LIBRARY audiooutputrouting.lib" \
-                     "$${LITERAL_HASH}endif"
-        message("Note: AudioOutput Routing API not supported for 3.1 winscw target and in videoplayer")
+    contains(audiorouting_s60_enabled,yes) {
+    MMP_RULES += "$${LITERAL_HASH}ifndef WINSCW" \
+                "MACRO HAS_AUDIOROUTING" \
+                "LIBRARY audiooutputrouting.lib" \
+                "$${LITERAL_HASH}endif"
+    message("Note: AudioOutput Routing API not supported for 3.1 winscw target and in videoplayer")
     }
 
 } else {
-    LIBS += -laudiooutputrouting
+    contains(audiorouting_s60_enabled,yes) {
+        #We use audiooutputrouting.lib for directing audio output to speaker/earspeaker
+        DEFINES += HAS_AUDIOROUTING_IN_VIDEOPLAYER
+        DEFINES += HAS_AUDIOROUTING
+        message("Audiorouting_s60 enabled for post 3.1 sdk")
+        LIBS += -laudiooutputrouting
+    }
+
 }
 
 exists($$[QT_INSTALL_HEADERS]\QtGui\private\qwidget_p.h) {
     DEFINES += USE_PRIVATE_QWIDGET_METHODS
     message("Enabling use of private QWidget methods")
 }
-
