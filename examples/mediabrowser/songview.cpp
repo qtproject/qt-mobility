@@ -56,26 +56,29 @@ SongView::SongView(QWidget *parent)
             << QDocumentGallery::trackNumber
             << QDocumentGallery::title
             << QDocumentGallery::duration
-            << QDocumentGallery::albumArtist
-            << QDocumentGallery::artist
-            << QDocumentGallery::composer);
+            << QDocumentGallery::artist);
     setSortFields(QStringList()
             << QDocumentGallery::artist
             << QDocumentGallery::albumTitle
-            << QDocumentGallery::trackNumber
-            << QDocumentGallery::title);
+            << QDocumentGallery::trackNumber);
 
     model = new GalleryModel;
-    model->setColumnCount(6);
+    model->setColumnCount(4);
     model->setDisplayFieldForColumn(0, QDocumentGallery::trackNumber);
     model->setDisplayFieldForColumn(1, QDocumentGallery::title);
     model->setDisplayFieldForColumn(2, QDocumentGallery::duration);
     model->setDisplayFieldForColumn(3, QDocumentGallery::artist);
-    model->setDisplayFieldForColumn(4, QDocumentGallery::albumArtist);
-    model->setDisplayFieldForColumn(5, QDocumentGallery::composer);
+
+    model->setColumnName(0, tr("Track"));
+    model->setColumnName(1, tr("Title"));
+    model->setColumnName(2, tr("Duration"));
+    model->setColumnName(3, tr("Artist"));
 
     QTableView *view = new QTableView;
     view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
+    view->setShowGrid(false);
+    view->verticalHeader()->setVisible(false);
+    view->setSelectionBehavior(QAbstractItemView::SelectRows);
     view->setModel(model);
     connect(view->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(sliderMoved(int)));
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));

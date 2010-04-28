@@ -68,6 +68,8 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     QModelIndex parent(const QModelIndex &index) const;
 
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -75,6 +77,9 @@ public:
 
     QGalleryItemList *list() const;
     void setList(QGalleryItemList *list);
+
+    QString columnName(int column) const;
+    void setColumnName(int column, const QString &name);
 
     QString displayFieldForColumn(int column) const;
     void setDisplayFieldForColumn(int column, const QString &field);
@@ -93,6 +98,7 @@ private slots:
 
 private:
     QGalleryItemList *mediaList;
+    QVector<QString> columnNames;
     QVector<int> displayKeys;
     QVector<QString> displayFields;
     QVector<int> decorationKeys;

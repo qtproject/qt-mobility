@@ -64,9 +64,10 @@ PhotoView::PhotoView(QWidget *parent)
     model->setDecorationFieldForColumn(0, QDocumentGallery::thumbnail);
 
     QListView *view = new QListView;
-    view->setIconSize(QSize(128, 128));
+    view->setIconSize(QSize(124, 124));
     view->setFlow(QListView::TopToBottom);
     view->setViewMode(QListView::IconMode);
+    view->setSpacing(4);
     view->setUniformItemSizes(true);
     view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     view->setWrapping(true);

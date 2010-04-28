@@ -69,9 +69,10 @@ AlbumView::AlbumView(QWidget *parent)
     model->setUserRoleFields(QVector<QString>() << QDocumentGallery::artist);
 
     QListView *view = new QListView;
-    view->setIconSize(QSize(100, 100));
+    view->setIconSize(QSize(124, 124));
     view->setFlow(QListView::LeftToRight);
     view->setViewMode(QListView::IconMode);
+    view->setSpacing(4);
     view->setUniformItemSizes(true);
     view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     view->setModel(model);

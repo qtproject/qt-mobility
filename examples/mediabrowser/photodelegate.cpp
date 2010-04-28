@@ -48,7 +48,6 @@
 PhotoDelegate::PhotoDelegate(QObject *parent)
     : QAbstractItemDelegate(parent)
 {
-
 }
 
 PhotoDelegate::~PhotoDelegate()
@@ -60,10 +59,22 @@ void PhotoDelegate::paint(
 {
     layout(option);
 
-
+    QRect imageRect = thumbnailRect.translated(option.rect.topLeft());
     QPixmap thumbnail = qvariant_cast<QPixmap>(index.data(Qt::DecorationRole));
-    if (!thumbnail.isNull())
-        painter->drawPixmap(thumbnailRect.translated(option.rect.topLeft()), thumbnail);
+    if (!thumbnail.isNull()) {
+        painter->drawPixmap(imageRect, thumbnail);
+
+        if (option.state & QStyle::State_HasFocus) {
+            imageRect.adjust(0, 0, -1, -1);
+            painter->drawRect(imageRect);
+        }
+    } else {
+        if (option.state & QStyle::State_HasFocus)
+            painter->fillRect(imageRect, option.palette.highlight());
+
+        imageRect.adjust(0, 0, -1, -1);
+        painter->drawRect(imageRect);
+    }
 }
 
 QSize PhotoDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &) const

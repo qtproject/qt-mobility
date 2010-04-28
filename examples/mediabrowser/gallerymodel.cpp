@@ -46,6 +46,7 @@
 GalleryModel::GalleryModel(QObject *parent)
     : QAbstractItemModel(parent)
     , mediaList(0)
+    , columnNames(1)
     , displayKeys(1, -1)
     , displayFields(1)
     , decorationKeys(1, -1)
@@ -117,6 +118,13 @@ QModelIndex GalleryModel::parent(const QModelIndex &) const
     return QModelIndex();
 }
 
+QVariant GalleryModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    return orientation == Qt::Horizontal && role == Qt::DisplayRole
+            ? columnNames.value(section)
+            : QVariant();
+}
+
 int GalleryModel::rowCount(const QModelIndex &parent) const
 {
     return !parent.isValid() && mediaList
@@ -134,6 +142,7 @@ void GalleryModel::setColumnCount(int count)
     if (displayFields.count() > count) {
         beginRemoveColumns(QModelIndex(), count, displayFields.count() - 1);
 
+        columnNames.resize(count);
         displayFields.resize(count);
         displayKeys.resize(count);
         decorationFields.resize(count);
@@ -145,6 +154,7 @@ void GalleryModel::setColumnCount(int count)
 
         beginInsertColumns(QModelIndex(), index, count - 1);
 
+        columnNames.resize(count);
         displayFields.resize(count);
         displayKeys.fill(-1, count);
         decorationFields.resize(count);
@@ -194,6 +204,18 @@ void GalleryModel::setList(QGalleryItemList *list)
                    this, SLOT(metaDataChanged(int,int,QList<int>)));
     }
     endResetModel();
+}
+
+QString GalleryModel::columnName(int column) const
+{
+    return columnNames.at(column);
+}
+
+void GalleryModel::setColumnName(int column, const QString &name)
+{
+    columnNames[column] = name;
+
+    emit headerDataChanged(Qt::Horizontal, column, column);
 }
 
 QString GalleryModel::displayFieldForColumn(int column) const

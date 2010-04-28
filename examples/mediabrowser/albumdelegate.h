@@ -50,7 +50,7 @@ class AlbumDelegate : public QAbstractItemDelegate
 public:
     enum Role
     {
-        ArtistRole
+        ArtistRole = Qt::UserRole
     };
 
     AlbumDelegate(QObject *parent = 0);
