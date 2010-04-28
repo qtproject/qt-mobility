@@ -55,7 +55,8 @@ QTM_BEGIN_NAMESPACE
   associated with it, which forms the \c managerName parameter
   when creating \l QContactManager objects.
  
-  More information on writing a contacts engine plugin is TODO.
+  More information on writing a contacts engine plugin is available in
+  the \l{Qt Contacts Manager Engines} documentation.
  
   \sa QContactManager, QContactManagerEngine
  */

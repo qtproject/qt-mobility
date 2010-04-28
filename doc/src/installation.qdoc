@@ -191,7 +191,7 @@ On windows, uncompress the zip file into the directory you want
 Qt Mobility Project installed, extracting to \c {C:\QtMobility}
 will create the directory \c {C:\QtMobility\%DISTNAME%}
 
-NOTE: The install path must not contain any spaces.
+NOTE: The install path(prefix) must not contain any spaces.
 
 \section1 Building
 Ensure that all compile time dependencies for your particular
@@ -199,6 +199,8 @@ platform have been met before building.
 
 If Qt is installed for multiple platforms it is also important 
 to ensure that the correct version of \c{qmake} is being used.
+
+bold{Note:} Static builds of Qt are not supported by Qt Mobility.
 
 \section2 Building On Unix
 
@@ -309,6 +311,16 @@ mobility libraries into $PWD/install.
     be ready to use for compiling applications for the
     emulator and/or device.
 
+\section2 Building For Mac OS X
+    The process is the same as for Unix, with the additional configuration
+    option of \c { -sdk /Developer/SDKs/MacOSX10.5.sdk } to specify an Apple SDK 
+    version other than the default.
+ 
+    Note: QtMobility currently has no support for building with Xcode.
+
+    Note: QtMobility will be built using the same frameworks configuration option 
+    that Qt was built with.
+    
 \section2 Building Individual Qt Mobility Modules
 
     Qt Mobility is comprised of several modules but all of
@@ -369,15 +381,19 @@ editing \c{C:\autoexec.bat}
 
 \section2 Making the libraries available on Windows CE
 
-    Environment variables do not exist on Windows CE, and so users 
-    of Qt Mobility for Windows CE have to do things slightly differently.
+Environment variables do not exist on Windows CE, and so users 
+of Qt Mobility for Windows CE have to do things slightly differently.
+A pre-requisite for Qt Mobility applications is that the Qt libraries and plugins have been deployed as per Qt's documentation.
 
-    The deployment of the libraries to the device is normally done 
-    with Microsoft Visual Studio or Microsoft ActiveSync.
+The deployment of the libraries to the device is normally done 
+with Microsoft Visual Studio or Microsoft ActiveSync.
 
-    The libraries can be made globally available by deploying them 
-    to \c{c:\Windows} on the device, or can be deployed once per 
-    application by copying them into the same directory as the executable.
+The libraries can be made globally available by deploying them 
+to \c{C:\Windows} on the device, or can be deployed once per 
+application by copying them into the same directory as the executable. Mobility 
+expects plug-ins in the subdirecty \c {plugins/<APIname>} in one of
+the locations specified by \l QCoreApplication::libraryPaths() which includes 
+\c{C:\Windows} and the Mobility application's directory.
 
 And now the installation is complete, we hope you enjoy 
 using Qt Mobility.

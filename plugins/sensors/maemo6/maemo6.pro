@@ -2,6 +2,7 @@ TEMPLATE = lib
 TARGET = maemo6sensorplugin
 DEPENDPATH += .
 INCLUDEPATH += .
+PLUGIN_TYPE = sensors
 QT += dbus
 QT += network
 CONFIG += plugin
@@ -27,5 +28,5 @@ SOURCES += maemo6sensorbase.cpp \
     maemo6rotationsensor.cpp \
     maemo6tapsensor.cpp \
     main.cpp
-target.path = /usr/lib/qt4/plugins/sensors
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS += target
