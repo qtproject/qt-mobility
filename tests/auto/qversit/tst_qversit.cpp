@@ -213,6 +213,41 @@ void tst_QVersit::testImportFiles_data()
     QTEST_NEW_ROW("Entourage12-kevin.vcf", "UTF-8", QList<QContact>());
     QTEST_NEW_ROW("Entourage12-nonascii.vcf", "UTF-8", QList<QContact>());
     QTEST_NEW_ROW("gmail.vcf", "UTF-8", QList<QContact>());
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setFirstName(QLatin1String("name"));
+        name.setLastName(QString());
+        name.setMiddleName(QString());
+        name.setPrefix(QString());
+        name.setSuffix(QString());
+        contact.saveDetail(&name);
+        QContactFamily family;
+        family.setChildren(QStringList(QLatin1String("Child1")));
+        contact.saveDetail(&family);
+        family.setChildren(QStringList(QLatin1String("Child2")) << QLatin1String("Child3"));
+        contact.saveDetail(&family);
+        QContactNickname nickname;
+        nickname.setNickname(QLatin1String("Nick6"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick5"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick4"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick3"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick2"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick1"));
+        contact.saveDetail(&nickname);
+        QContactPhoneNumber assistantphone;
+        assistantphone.setNumber(QLatin1String("1234"));
+        assistantphone.setSubTypes(QContactPhoneNumber::SubTypeAssistant);
+        contact.saveDetail(&assistantphone);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTEST_NEW_ROW("test1.vcf", "UTF-8", QList<QContact>() << contact);
+    }
 }
 
 QTEST_MAIN(tst_QVersit)
