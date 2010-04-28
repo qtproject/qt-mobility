@@ -188,15 +188,30 @@ private:
 class  Q_SYSINFO_EXPORT QSystemDisplayInfo : public QObject
 {
 Q_OBJECT
+    Q_ENUMS(DisplayOrientation)
 
 public:
 
     QSystemDisplayInfo(QObject *parent = 0);
     ~QSystemDisplayInfo();
 
+    enum DisplayOrientation {
+        Unknown = 0,
+        Landscape,
+        Portrait,
+        InvertedLandscape,
+        InvertedPortrait
+    };
 
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
+
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 };
 
 
@@ -226,8 +241,8 @@ public:
     Q_INVOKABLE QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
 Q_SIGNALS:
-    void storageAdded();
-    void storageRemoved();
+    void storageAdded(/*const QString &driveVolume*/);
+    void storageRemoved(/*const QString &driveVolume*/);
 
 private:
        QSystemStorageInfoPrivate *d;

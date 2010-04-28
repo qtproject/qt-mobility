@@ -672,6 +672,38 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
     return displayInfoPrivate()->colorDepth(screenNumber);
 }
 
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::getOrientation(int screen)
+{
+    return displayInfoPrivate()->getOrientation(screen);
+}
+
+
+float QSystemDisplayInfo::contrast(int screen)
+{
+        return displayInfoPrivate()->contrast(screen);
+}
+
+int QSystemDisplayInfo::getDPIWidth(int screen)
+{
+        return displayInfoPrivate()->getDPIWidth(screen);
+}
+
+int QSystemDisplayInfo::getDPIHeight(int screen)
+{
+        return displayInfoPrivate()->getDPIHeight(screen);
+}
+
+int QSystemDisplayInfo::physicalHeight(int screen)
+{
+        return displayInfoPrivate()->physicalHeight(screen);
+}
+
+int QSystemDisplayInfo::physicalWidth(int screen)
+{
+        return displayInfoPrivate()->physicalWidth(screen);
+}
+
+
  /*!
    \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    Constructs a QSystemStorageInfo object with the given \a parent.
