@@ -98,7 +98,7 @@ class QGalleryThumbnailLoaderPrivate : public QGalleryImageLoaderPrivate
 public:
     QGalleryThumbnailLoaderPrivate()
         : thumbnailDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
-#if defined(Q_WS_MAEMO5) || defined(Q_WS_MAEMO6)
+#ifdef Q_WS_MAEMO_5
                 + QLatin1String("/.thumbnails/cropped/"))
 #else
                 + QLatin1String("/.thumbnails/normal/"))
@@ -204,7 +204,7 @@ QString QGalleryThumbnailLoaderPrivate::thumbnailPath(const QUrl &url) const
 {
     QString hash = QCryptographicHash::hash(url.toEncoded(), QCryptographicHash::Md5).toHex();
 
-#if defined(Q_WS_MAEMO5) || defined(Q_WS_MAEMO6)
+#ifdef Q_WS_MAEMO_5
     return thumbnailDir + hash + QLatin1String(".jpeg");
 #else
     return thumbnailDir + hash + QLatin1String(".png");
