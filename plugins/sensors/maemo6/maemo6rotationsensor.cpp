@@ -62,8 +62,8 @@ maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
         // metadata
         addDataRate(23, 23); // 23Hz
         sensor->setDataRate(23);
-        addOutputRange(-180, 180, 1);
-        setDescription(QLatin1String("Measures x, y, and z axes rotation"));
+        addOutputRange(-179, 180, 1);
+        setDescription(QLatin1String("Measures x, y, and z axes rotation in degrees"));
 
         m_initDone = true;
     }

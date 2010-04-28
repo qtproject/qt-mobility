@@ -45,7 +45,7 @@
 #include "maemo6sensorbase.h"
 #include <qambientlightsensor.h>
 
-#include <sensord/alssensor_i.h>
+#include <alssensor_i.h>
 
 QTM_USE_NAMESPACE
 

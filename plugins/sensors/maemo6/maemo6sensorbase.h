@@ -43,8 +43,8 @@
 #define MAEMO6SENSORBASE_H
 
 #include <qsensorbackend.h>
-#include "sensord/sensormanagerinterface.h"
-#include "sensord/abstractsensor_i.h"
+#include <sensormanagerinterface.h>
+#include <abstractsensor_i.h>
 
 QTM_USE_NAMESPACE
 

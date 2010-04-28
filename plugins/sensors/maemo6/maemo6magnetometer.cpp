@@ -62,7 +62,7 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
         addDataRate(43, 43); // 43Hz
         sensor->setDataRate(43);
         addOutputRange(-0.000614, 0.000614, 0.0000003); // -600 ... 600 mikroteslas, 0.3 uT resolution
-        setDescription(QLatin1String("Magnetic flux density measured in teslas"));
+        setDescription(QLatin1String("Measures magnetic flux density measured in teslas"));
 
         m_initDone = true;
     }

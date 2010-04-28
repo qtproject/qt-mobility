@@ -45,7 +45,7 @@
 #include "maemo6sensorbase.h"
 #include <qproximitysensor.h>
 
-#include <sensord/proximitysensor_i.h>
+#include <proximitysensor_i.h>
 
 QTM_USE_NAMESPACE
 

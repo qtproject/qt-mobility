@@ -41,7 +41,7 @@
 
 #include "maemo6orientationsensor.h"
 
-#include "sensord/filters/posedata.h"
+#include <posedata.h>
 
 const char *maemo6orientationsensor::id("maemo6.orientationsensor");
 bool maemo6orientationsensor::m_initDone = false;
@@ -63,7 +63,7 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
         addDataRate(142, 142); // 142Hz
         sensor->setDataRate(142);
         addOutputRange(0, 6, 1);
-        setDescription(QLatin1String("Orientation of the device screen"));
+        setDescription(QLatin1String("Measures orientation of the device screen as 6 pre-defined levels"));
 
         m_initDone = true;
     }

@@ -44,9 +44,8 @@
 
 #include "maemo6sensorbase.h"
 #include <qcompass.h>
-#include <qsensorbackend.h>
 
-#include <sensord/compasssensor_i.h>
+#include <compasssensor_i.h>
 
 QTM_USE_NAMESPACE
 

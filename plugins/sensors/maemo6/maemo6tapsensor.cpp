@@ -41,7 +41,7 @@
 
 #include "maemo6tapsensor.h"
 
-#include "sensord/filters/tapdata.h"
+#include <tapdata.h>
 
 const char *maemo6tapsensor::id("maemo6.tapsensor");
 bool maemo6tapsensor::m_initDone = false;

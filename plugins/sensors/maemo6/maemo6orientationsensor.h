@@ -44,9 +44,8 @@
 
 #include "maemo6sensorbase.h"
 #include <qorientationsensor.h>
-#include <qsensorbackend.h>
 
-#include <sensord/orientationsensor_i.h>
+#include <orientationsensor_i.h>
 
 QTM_USE_NAMESPACE
 

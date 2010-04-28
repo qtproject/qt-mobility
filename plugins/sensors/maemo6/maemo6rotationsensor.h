@@ -46,8 +46,8 @@
 #include <qrotationsensor.h>
 #include <qsensorbackend.h>
 
-#include <sensord/rotationsensor_i.h>
-#include <sensord/datatypes/xyz.h>
+#include <rotationsensor_i.h>
+#include <xyz.h>
 
 QTM_USE_NAMESPACE
 
