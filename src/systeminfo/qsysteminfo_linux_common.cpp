@@ -970,6 +970,73 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
     return -1;
 }
 
+
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::getOrientation(int screen)
+{
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+
+    if(screen < 16 && screen > -1) {
+        int rotation = 0;
+        switch(rotation) {
+        case 0:
+        case 360:
+            orientation = QSystemDisplayInfo::Landscape;
+            break;
+        case 90:
+            orientation = QSystemDisplayInfo::Portrait;
+            break;
+        case 180:
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+            break;
+        case 270:
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+            break;
+        };
+    }
+    return orientation;
+}
+
+
+float QSystemDisplayInfoLinuxCommonPrivate::contrast(int screen)
+{
+    Q_UNUSED(screen);
+
+    return 0.0;
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+
+        }
+    return dpi;
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+
+    }
+    return dpi;
+}
+
+
+int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
+{
+    int height=0;
+
+    return height;
+}
+
+int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
+{
+    int width=0;
+
+    return width;
+}
+
 QSystemStorageInfoLinuxCommonPrivate::QSystemStorageInfoLinuxCommonPrivate(QObject *parent)
     : QObject(parent)
 {
