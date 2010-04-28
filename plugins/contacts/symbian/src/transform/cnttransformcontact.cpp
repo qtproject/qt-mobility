@@ -72,12 +72,6 @@
 
 #include <QDebug>
 
-//UIDs for preferred (default) fields
-const int KDefaultFieldForCall = 0x10003E70;
-const int KDefaultFieldForVideoCall = 0x101F85A6;
-const int KDefaultFieldForEmail = 0x101F85A7;
-const int KDefaultFieldForMessage = 0x101f4cf1;
-
 CntTransformContact::CntTransformContact() :
     m_tzConverter(0)
 {
