@@ -126,3 +126,4 @@ SYMBIAN_LIBS += \
         -lbitmaptransforms \ 
         -lbafl \
         -lplatformenv
+        -ltzclient

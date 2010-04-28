@@ -79,13 +79,17 @@ const int KDefaultFieldForVideoCall = 0x101F85A6;
 const int KDefaultFieldForEmail = 0x101F85A7;
 const int KDefaultFieldForMessage = 0x101f4cf1;
 
-CntTransformContact::CntTransformContact()
+CntTransformContact::CntTransformContact() :
+    m_tzConverter(0)
 {
 	initializeCntTransformContactData();
 }
 
 CntTransformContact::~CntTransformContact()
 {
+    delete m_tzConverter;
+    m_tzoneServer.Close();
+
     QMap<ContactData, CntTransformContactData*>::iterator itr;
 
     for (itr = m_transformContactData.begin(); itr != m_transformContactData.end(); ++itr)
@@ -198,7 +202,7 @@ void CntTransformContact::transformPostSaveDetailsL(
         const CContactItem& contactItem,
         QContact& contact,
         const CContactDatabase &contactDatabase,
-        QString managerUri) const
+        QString managerUri)
 {
     // Id
     QContactId contactId;
@@ -404,9 +408,16 @@ QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem 
     return guidDetail;
 }
 
-QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
+QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase)
 {
 #ifdef SYMBIAN_CNTMODEL_V2
+
+    // Time zone conversion is needed because contact model uses GMT time stamps
+    if (!m_tzConverter) {
+        User::LeaveIfError(m_tzoneServer.Connect()); 
+        m_tzConverter = CTzConverter::NewL(m_tzoneServer);
+    }
+
     QContactTimestamp *timestampDetail = 0;
     HBufC* guidBuf = contactItem.UidStringL(contactDatabase.MachineId()).AllocLC();
     TPtr ptr = guidBuf->Des();
@@ -419,22 +430,25 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContact
             if (lex.Val(timeValue, EHex) == 0)
             {
                 timestampDetail = new QContactTimestamp();
+                const TInt formattedDateLength(14);
+                _LIT(KDateFormat, "%F%Y%M%D%H%T%S");
+                QString DateFormatQt = QString("yyyyMMddHHmmss");
 
-                //creation date
+                // creation date
                 TTime timeCreation(timeValue);
-                TDateTime dateCreation = timeCreation.DateTime();
-                QDate qDateCreation(dateCreation.Year(), dateCreation.Month() + 1, dateCreation.Day() + 1);
-                QTime qTimeCreation(dateCreation.Hour(), dateCreation.Minute(), dateCreation.Second(), dateCreation.MicroSecond()/1000);
-                QDateTime qDateTimeCreation(qDateCreation, qTimeCreation);
-                timestampDetail->setCreated(qDateTimeCreation);
+                User::LeaveIfError(m_tzConverter->ConvertToLocalTime(timeCreation));
+                TBuf<formattedDateLength> createdBuf;
+                timeCreation.FormatL(createdBuf, KDateFormat);
+                QString createdString = QString::fromUtf16(createdBuf.Ptr(), createdBuf.Length());
+                timestampDetail->setCreated(QDateTime::fromString(createdString, DateFormatQt));
 
-                //last modified date
+                // last modified date
                 TTime timeModified = contactItem.LastModified();
-                TDateTime dateModified = timeModified.DateTime();
-                QDate qDateModified(dateModified.Year(), dateModified.Month() + 1, dateModified.Day() + 1);
-                QTime qTimeModified(dateModified.Hour(), dateModified.Minute(), dateModified.Second(), dateModified.MicroSecond()/1000);
-                QDateTime qDateTimeModified(qDateModified, qTimeModified);
-                timestampDetail->setLastModified(qDateTimeModified);
+                User::LeaveIfError(m_tzConverter->ConvertToLocalTime(timeModified));
+                TBuf<formattedDateLength> modifiedBuf;
+                timeModified.FormatL(modifiedBuf, KDateFormat);
+                QString modifiedString = QString::fromUtf16(modifiedBuf.Ptr(), modifiedBuf.Length());
+                timestampDetail->setLastModified(QDateTime::fromString(modifiedString, DateFormatQt));
             }
         }
     }

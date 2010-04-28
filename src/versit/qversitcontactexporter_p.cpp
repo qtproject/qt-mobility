@@ -257,7 +257,12 @@ void QVersitContactExporterPrivate::encodePhoneNumber(
     const QContactDetail& detail)
 {
     QContactPhoneNumber phoneNumber = static_cast<QContactPhoneNumber>(detail);
-    encodeParameters(property, phoneNumber.contexts(), phoneNumber.subTypes());
+    QStringList subTypes = phoneNumber.subTypes();
+    encodeParameters(property, phoneNumber.contexts(), subTypes);
+    if (subTypes.contains(QContactPhoneNumber::SubTypeAssistant))
+        property.setName(QLatin1String("X-ASSISTANT-TEL"));
+    else
+        property.setName(QLatin1String("TEL"));
     property.setValue(phoneNumber.number());
 }
 
