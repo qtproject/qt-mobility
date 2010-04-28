@@ -63,6 +63,8 @@
         , mediaList(0)
         , displayKeys(1, -1)
         , displayFields(1)
+        , decorationKeys(1, -1)
+        , decorationFields(1)
     {
     }
 
@@ -75,8 +77,10 @@
         if (index.isValid()) {
             int key = -1;
 
-            if (role == Qt::DisplayRole)
+            if (role == Qt::DisplayRole || role == Qt::EditRole)
                 key = displayKeys.at(index.column());
+            else if (role == Qt::DecorationRole)
+                key = decorationKeys.at(index.column());
             else if (role &gt;= Qt::UserRole)
                 key = userKeys.at(role - Qt::UserRole);
 
@@ -84,6 +88,34 @@
                 return mediaList-&gt;metaData(index.row(), key);
         }
         return QVariant();
+    }
+
+    bool GalleryModel::setData(const QModelIndex &amp;index, const QVariant &amp;value, int role)
+    {
+        if (index.isValid() &amp;&amp; role == Qt::EditRole) {
+            int key = displayKeys.at(index.column());
+
+            if (key &gt;= 0) {
+                mediaList-&gt;setMetaData(index.row(), key, value);
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    Qt::ItemFlags GalleryModel::flags(const QModelIndex &amp;index) const
+    {
+        Qt::ItemFlags flags = Qt::ItemIsEnabled;
+
+        if (index.isValid()) {
+            int key = displayKeys.at(index.column());
+
+            if (key &gt;= 0 &amp;&amp; mediaList-&gt;propertyAttributes(key) &amp; QGalleryProperty::CanWrite)
+                flags |= Qt::ItemIsEditable;
+        }
+
+        return flags;
     }
 
     QModelIndex GalleryModel::index(int row, int column, const QModelIndex &amp;parent) const
@@ -119,6 +151,8 @@
 
             displayFields.resize(count);
             displayKeys.resize(count);
+            decorationFields.resize(count);
+            decorationKeys.resize(count);
 
             endRemoveColumns();
         } else if (displayFields.count() &lt; count) {
@@ -128,6 +162,8 @@
 
             displayFields.resize(count);
             displayKeys.fill(-1, count);
+            decorationFields.resize(count);
+            decorationKeys.fill(-1, count);
 
             endInsertColumns();
         }
@@ -150,6 +186,7 @@
                     this, SLOT(metaDataChanged(int,int,QList&lt;int&gt;)));
 
             displayKeys.fill(-1);
+            decorationKeys.fill(-1);
             userKeys.fill(-1);
         }
 
@@ -158,6 +195,9 @@
         if (mediaList) {
             for (int i = 0; i &lt; displayFields.count(); ++i)
                 displayKeys[i] = mediaList-&gt;propertyKey(displayFields.at(i));
+
+            for (int i = 0; i &lt; decorationFields.count(); ++i)
+                decorationKeys[i] = mediaList-&gt;propertyKey(decorationFields.at(i));
 
             for (int i = 0; i &lt; userFields.count(); ++i)
                 userKeys[i] = mediaList-&gt;propertyKey(userFields.at(i));
@@ -182,6 +222,22 @@
 
         if (mediaList) {
             displayKeys[column] = mediaList-&gt;propertyKey(field);
+
+            emit dataChanged(createIndex(0, column), createIndex(mediaList-&gt;count() - 1, column));
+        }
+    }
+
+    QString GalleryModel::decorationFieldForColumn(int column) const
+    {
+        return decorationFields.at(column);
+    }
+
+    void GalleryModel::setDecorationFieldForColumn(int column, const QString &amp;field)
+    {
+        decorationFields[column] = field;
+
+        if (mediaList) {
+            decorationKeys[column] = mediaList-&gt;propertyKey(field);
 
             emit dataChanged(createIndex(0, column), createIndex(mediaList-&gt;count() - 1, column));
         }

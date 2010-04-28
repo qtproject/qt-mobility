@@ -76,6 +76,10 @@
         ~GalleryModel();
 
         QVariant data(const QModelIndex &amp;index, int role = Qt::DisplayRole) const;
+        bool setData(const QModelIndex &amp;index, const QVariant &amp;value, int role);
+
+        Qt::ItemFlags flags(const QModelIndex &amp;index) const;
+
         QModelIndex index(int row, int column, const QModelIndex &amp;parent = QModelIndex()) const;
         QModelIndex parent(const QModelIndex &amp;index) const;
 
@@ -90,6 +94,9 @@
         QString displayFieldForColumn(int column) const;
         void setDisplayFieldForColumn(int column, const QString &amp;field);
 
+        QString decorationFieldForColumn(int column) const;
+        void setDecorationFieldForColumn(int column, const QString &amp;field);
+
         QVector&lt;QString&gt; userRoleFields() const;
         void setUserRoleFields(const QVector&lt;QString&gt; &amp;fields);
 
@@ -103,6 +110,8 @@
         QGalleryItemList *mediaList;
         QVector&lt;int&gt; displayKeys;
         QVector&lt;QString&gt; displayFields;
+        QVector&lt;int&gt; decorationKeys;
+        QVector&lt;QString&gt; decorationFields;
         QVector&lt;int&gt; userKeys;
         QVector&lt;QString&gt; userFields;
     };

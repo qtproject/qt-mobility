@@ -83,6 +83,7 @@
         void showAlbumArtists(const QString &amp;containerId = QString());
         void showAlbums(const QString &amp;containerId = QString());
         void showSongs(const QString &amp;containerId = QString());
+        void showPhotos(const QString &amp;containerId = QString());
 
     private:
         QDocumentGallery *gallery;
@@ -91,6 +92,7 @@
         GalleryView *albumArtistView;
         GalleryView *albumView;
         GalleryView *songView;
+        GalleryView *photoView;
     };
 
     #endif</pre>

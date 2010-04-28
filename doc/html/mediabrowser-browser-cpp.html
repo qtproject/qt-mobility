@@ -58,6 +58,7 @@
 
     #include &quot;albumview.h&quot;
     #include &quot;artistview.h&quot;
+    #include &quot;photoview.h&quot;
     #include &quot;songview.h&quot;
 
     #include &quot;qdocumentgallery.h&quot;
@@ -72,6 +73,7 @@
         , albumArtistView(0)
         , albumView(0)
         , songView(0)
+        , photoView(0)
     {
         gallery = new QDocumentGallery;
 
@@ -92,11 +94,15 @@
         songView = new SongView;
         songView-&gt;setGallery(gallery);
 
+        photoView = new PhotoView;
+        photoView-&gt;setGallery(gallery);
+
         stack = new QStackedWidget;
         stack-&gt;addWidget(artistView);
         stack-&gt;addWidget(albumArtistView);
         stack-&gt;addWidget(albumView);
         stack-&gt;addWidget(songView);
+        stack-&gt;addWidget(photoView);
 
         QPushButton *artistButton = new QPushButton(tr(&quot;Artists&quot;));
         connect(artistButton, SIGNAL(clicked()), this, SLOT(showArtists()));
@@ -110,11 +116,15 @@
         QPushButton *songButton = new QPushButton(tr(&quot;Songs&quot;));
         connect(songButton, SIGNAL(clicked()), this, SLOT(showSongs()));
 
+        QPushButton *photoButton = new QPushButton(tr(&quot;Photos&quot;));
+        connect(photoButton, SIGNAL(clicked()), this, SLOT(showPhotos()));
+
         QBoxLayout *hLayout = new QHBoxLayout;
         hLayout-&gt;addWidget(artistButton);
         hLayout-&gt;addWidget(albumArtistButton);
         hLayout-&gt;addWidget(albumButton);
         hLayout-&gt;addWidget(songButton);
+        hLayout-&gt;addWidget(photoButton);
 
         QBoxLayout *vLayout = new QVBoxLayout;
         vLayout-&gt;setMargin(0);
@@ -155,6 +165,13 @@
         songView-&gt;showChildren(containerId);
 
         stack-&gt;setCurrentWidget(songView);
+    }
+
+    void Browser::showPhotos(const QString &amp;containerId)
+    {
+        photoView-&gt;showChildren(containerId);
+
+        stack-&gt;setCurrentWidget(photoView);
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

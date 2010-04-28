@@ -73,12 +73,14 @@
                 &lt;&lt; QDocumentGallery::artist
                 &lt;&lt; QDocumentGallery::trackCount
                 &lt;&lt; QDocumentGallery::duration
-                &lt;&lt; QDocumentGallery::rating);
+                &lt;&lt; QDocumentGallery::rating
+                &lt;&lt; QDocumentGallery::thumbnail);
         setSortFields(QStringList()
                 &lt;&lt; QDocumentGallery::title);
 
         model = new GalleryModel;
         model-&gt;setDisplayFieldForColumn(0, QDocumentGallery::title);
+        model-&gt;setDecorationFieldForColumn(0, QDocumentGallery::thumbnail);
         model-&gt;setUserRoleFields(QVector&lt;QString&gt;() &lt;&lt; QDocumentGallery::artist);
 
         QListView *view = new QListView;

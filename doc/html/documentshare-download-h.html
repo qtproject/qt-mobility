@@ -64,6 +64,7 @@
     class QNetworkReply;
 
     QTM_BEGIN_NAMESPACE
+    class QDocumentGallery;
     class QGalleryUrlRequest;
     QTM_END_NAMESPACE
 
@@ -75,21 +76,23 @@
     {
         Q_OBJECT
     public:
-        Download(QNetworkReply *networkReply, ShareWidget *parent);
+        Download(QNetworkReply *networkReply, QDocumentGallery *gallery, QObject *parent);
         ~Download();
 
+        QString itemId() const;
+
     signals:
-        void finished(Download *download);
+        void succeeded(Download *download);
+        void failed(Download *download);
 
     private slots:
         void networkMetaDataChanged();
         void networkReadyRead();
         void networkFinished();
-        void insertSucceeded();
+        void urlRequestFinished(int result);
 
     private:
         QNetworkReply *networkReply;
-        ShareWidget *shareWidget;
         QGalleryUrlRequest *urlRequest;
         QFile file;
     };

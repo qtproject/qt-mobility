@@ -59,7 +59,6 @@
 
     #include &lt;qmobilityglobal.h&gt;
 
-    #include &lt;QtCore/qfile.h&gt;
     #include &lt;QtGui/qwidget.h&gt;
 
     class QNetworkReply;
@@ -67,11 +66,11 @@
     class QWebView;
 
     QTM_BEGIN_NAMESPACE
-    class QAbstractGallery;
     class QDocumentGallery;
     QTM_END_NAMESPACE
 
     class Download;
+    class DownloadCompleteDialog;
 
     QTM_USE_NAMESPACE;
 
@@ -81,16 +80,17 @@
     public:
         ShareWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
-        QAbstractGallery *gallery() const;
-
     private slots:
         void unsupportedContent(QNetworkReply *reply);
         void downloadRequested(const QNetworkRequest &amp;request);
-        void downloadFinished(Download *download);
+        void downloadSucceeded(Download *download);
+        void downloadFailed(Download *download);
 
     private:
-        QWebView *webView;
         QDocumentGallery *documentGallery;
+        QWebView *webView;
+        DownloadCompleteDialog *downloadCompleteDialog;
+
     };
 
     #endif</pre>

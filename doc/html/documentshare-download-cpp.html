@@ -58,25 +58,33 @@
 
     #include &quot;sharewidget.h&quot;
 
+    #include &lt;qdocumentgallery.h&gt;
     #include &lt;qgalleryurlrequest.h&gt;
 
     #include &lt;QtGui&gt;
     #include &lt;QtNetwork&gt;
 
-    Download::Download(QNetworkReply *networkReply, ShareWidget *parent)
+    Download::Download(QNetworkReply *networkReply, QDocumentGallery *gallery, QObject *parent)
         : QObject(parent)
         , networkReply(networkReply)
-        , shareWidget(parent)
         , urlRequest(0)
     {
         connect(networkReply, SIGNAL(metaDataChanged()), this, SLOT(networkMetaDataChanged()));
         connect(networkReply, SIGNAL(readyRead()), this, SLOT(networkReadyRead()));
         connect(networkReply, SIGNAL(finished()), this, SLOT(networkFinished()));
+
+        urlRequest = new QGalleryUrlRequest(gallery, this);
+        connect(urlRequest, SIGNAL(finished(int)), this, SLOT(urlRequestFinished(int)));
     }
 
     Download::~Download()
     {
         delete networkReply;
+    }
+
+    QString Download::itemId() const
+    {
+        return urlRequest-&gt;itemId();
     }
 
     void Download::networkMetaDataChanged()
@@ -117,22 +125,15 @@
                     + QLatin1Char('/')
                     + fileName;
 
-            fileName = QFileDialog::getSaveFileName(shareWidget, tr(&quot;Save File&quot;), fileName);
+            fileName = QFileDialog::getSaveFileName(
+                    qobject_cast&lt;QWidget *&gt;(parent()), tr(&quot;Save File&quot;), fileName);
 
             if (!fileName.isEmpty()) {
                 file.setFileName(fileName);
-                if (file.open(QIODevice::WriteOnly)) {
+                if (file.open(QIODevice::WriteOnly))
                     networkReadyRead();
-
-                    urlRequest = new QGalleryUrlRequest(shareWidget-&gt;gallery(), this);
-                    urlRequest-&gt;setItemUrl(QUrl::fromLocalFile(fileName));
-                    urlRequest-&gt;setCreate(true);
-                    connect(urlRequest, SIGNAL(succeeded()), this, SLOT(insertSucceeded()));
-
-                    urlRequest-&gt;execute();
-                } else {
+                else
                     networkReply-&gt;abort();
-                }
             }
         }
     }
@@ -159,17 +160,25 @@
                 file.close();
                 file.remove();
             }
+
+            emit failed(this);
         } else {
             networkMetaDataChanged();
             networkReadyRead();
 
             file.close();
+
+            urlRequest-&gt;setItemUrl(QUrl::fromLocalFile(file.fileName()));
+            urlRequest-&gt;execute();
         }
     }
 
-    void Download::insertSucceeded()
+    void Download::urlRequestFinished(int result)
     {
-        <span class="comment">// Set some properties on the new document, maybe the download URL.</span>
+        if (result == QGalleryAbstractRequest::Succeeded)
+            emit succeeded(this);
+        else
+            emit failed(this);
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

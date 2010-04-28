@@ -86,9 +86,10 @@
         gallery = new QDocumentGallery(this);
 
         documentsRequest = new QGalleryUrlRequest(this);
+        documentsRequest-&gt;setGallery(gallery);
         documentsRequest-&gt;setItemUrl(QUrl::fromLocalFile(
                 QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)));
-        connect(documentsRequest, SIGNAL(itemChanged()), this, SLOT(documentsListChanged()));
+        connect(documentsRequest, SIGNAL(succeeded()), this, SLOT(documentsSucceeded()));
 
         sourceItemRequest = new QGalleryContainerRequest(this);
         sourceItemRequest-&gt;setGallery(gallery);
@@ -259,56 +260,15 @@
         actionRequest-&gt;execute();
     }
 
-    void Manager::documentsListChanged()
+    void Manager::documentsSucceeded()
     {
-        documentsId = QString();
+        documentsId = documentsRequest-&gt;itemId();
 
-        if (QGalleryItemList *item = documentsRequest-&gt;item()) {
-            connect(item, SIGNAL(inserted(int,int)), this, SLOT(documentsInserted(int,int)));
-            connect(item, SIGNAL(removed(int,int)), this, SLOT(documentsRemoved(int,int)));
+        sourceItemRequest-&gt;setContainerId(documentsId);
+        sourceItemRequest-&gt;execute();
 
-            if (item-&gt;count() &gt; 0) {
-                documentsId = item-&gt;id(0);
-
-                sourceItemRequest-&gt;setContainerId(documentsId);
-                sourceItemRequest-&gt;execute();
-
-                destinationItemRequest-&gt;setContainerId(documentsId);
-                destinationItemRequest-&gt;execute();
-            }
-        } else {
-            documentsId = QString();
-
-            sourceFolderId.clear();
-            destinationFolderId.clear();
-
-            sourceItemRequest-&gt;clear();
-            destinationItemRequest-&gt;clear();
-        }
-    }
-
-    void Manager::documentsInserted(int, int count)
-    {
-        if (count &gt; 0) {
-            documentsId = documentsRequest-&gt;item()-&gt;id(0);
-
-            sourceItemRequest-&gt;setContainerId(documentsId);
-            sourceItemRequest-&gt;execute();
-
-            destinationItemRequest-&gt;setContainerId(documentsId);
-            destinationItemRequest-&gt;execute();
-        }
-    }
-
-    void Manager::documentsRemoved(int, int)
-    {
-        documentsId = QString();
-
-        sourceFolderId.clear();
-        destinationFolderId.clear();
-
-        sourceItemRequest-&gt;clear();
-        destinationItemRequest-&gt;clear();
+        destinationItemRequest-&gt;setContainerId(documentsId);
+        destinationItemRequest-&gt;execute();
     }
 
     void Manager::sourceListChanged()
@@ -341,7 +301,6 @@
 
     void Manager::sourceRequestFinished(int)
     {
-
     }
 
     void Manager::destinationRequestFinished(int)
