@@ -68,6 +68,7 @@
 #ifdef Q_WS_X11
 #include <QX11Info>
 #include <X11/Xlib.h>
+#include <X11/extensions/Xrandr.h>
 
 #endif
 #include <bluetooth/bluetooth.h>
@@ -974,21 +975,26 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::getOrientation(int screen)
 {
     QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+    XRRScreenConfiguration *sc;
+    Rotation cur_rotation;
+    sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    if ( !sc ) {
+        return orientation;
+    }
+    XRRConfigRotations(sc, &cur_rotation);
 
     if(screen < 16 && screen > -1) {
-        int rotation = 0;
-        switch(rotation) {
-        case 0:
-        case 360:
+        switch(cur_rotation) {
+        case RR_Rotate_0:
             orientation = QSystemDisplayInfo::Landscape;
             break;
-        case 90:
+        case RR_Rotate_90:
             orientation = QSystemDisplayInfo::Portrait;
             break;
-        case 180:
+        case RR_Rotate_180:
             orientation = QSystemDisplayInfo::InvertedLandscape;
             break;
-        case 270:
+        case RR_Rotate_270:
             orientation = QSystemDisplayInfo::InvertedPortrait;
             break;
         };
