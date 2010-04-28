@@ -118,7 +118,9 @@ QStringList QGalleryTrackerItemListResponse::propertyNames() const
 
 int QGalleryTrackerItemListResponse::propertyKey(const QString &name) const
 {
-    return m_propertyNames.indexOf(name) + 2;
+    int key = m_propertyNames.indexOf(name);
+
+    return key >= 0 ? key + 2 : -1;
 }
 
 QGalleryProperty::Attributes QGalleryTrackerItemListResponse::propertyAttributes(int key) const
