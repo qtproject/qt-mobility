@@ -38,79 +38,40 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMINFO_H
-#define QSYSTEMINFO_H
 
-#include "qmobilityglobal.h"
-
-//#include "qsysteminfocommon.h"
+#ifndef QSYSTEMSCREENSAVER_H
+#define QSYSTEMSCREENSAVER_H
 
 #include <QObject>
-#include <QSize>
-#include <QPair>
-#include <QString>
-#include <QStringList>
-#include <QFileSystemWatcher>
+#include "qmobilityglobal.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QSystemInfoPrivate;
 
-class Q_SYSINFO_EXPORT QSystemInfo : public QObject
+class QSystemScreenSaverPrivate;
+class  Q_SYSINFO_EXPORT QSystemScreenSaver : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString currentLanguage READ currentLanguage NOTIFY currentLanguageChanged)
-    Q_PROPERTY(QStringList availableLanguages READ availableLanguages)
-    Q_PROPERTY(QString currentCountryCode READ currentCountryCode)
-    Q_ENUMS(Version)
-    Q_ENUMS(Feature)
+    Q_ENUMS(ScreenSaverState)
+    Q_PROPERTY(bool screenSaverInhibited READ screenSaverInhibited)
 
 public:
 
-    QSystemInfo(QObject *parent = 0);
-     virtual ~QSystemInfo();
+    explicit QSystemScreenSaver(QObject *parent = 0);
+    ~QSystemScreenSaver();
 
-    QString currentLanguage(); // 2 letter ISO 639-1 //signal
-    QStringList availableLanguages(); // 2 letter ISO 639-1
-    QString currentCountryCode(); //2 letter ISO 3166-1
-    enum Version {
-        Os = 1,
-        QtCore,
-        Firmware
-    };
+    bool screenSaverInhibited();
+    Q_INVOKABLE bool setScreenSaverInhibit();
 
-    QString version(QSystemInfo::Version type, const QString &parameter = QString());
-
-    enum Feature {
-        BluetoothFeature=0,
-        CameraFeature,
-        FmradioFeature,
-        IrFeature,
-        LedFeature,
-        MemcardFeature,
-        UsbFeature,
-        VibFeature,
-        WlanFeature,
-        SimFeature,
-        LocationFeature,
-        VideoOutFeature,
-        HapticsFeature
-	};
-
-    bool hasFeatureSupported(QSystemInfo::Feature feature);
-
-Q_SIGNALS:
-    void currentLanguageChanged(const QString &);
 private:
-    QSystemInfoPrivate *d;
+    bool screenSaverIsInhibited;
+    QSystemScreenSaverPrivate *d;
 };
+
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif /*QSYSTEMSINFO_H*/
-
-// End of file
-
+#endif // QSYSTEMSCREENSAVER_H

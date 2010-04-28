@@ -38,79 +38,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QSYSTEMINFO_H
-#define QSYSTEMINFO_H
-
-#include "qmobilityglobal.h"
-
-//#include "qsysteminfocommon.h"
+#ifndef QSYSTEMDISPLAYINFO_H
+#define QSYSTEMDISPLAYINFO_H
 
 #include <QObject>
-#include <QSize>
-#include <QPair>
-#include <QString>
-#include <QStringList>
-#include <QFileSystemWatcher>
+#include "qmobilityglobal.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QSystemInfoPrivate;
+class QSystemDisplayInfoPrivate;
 
-class Q_SYSINFO_EXPORT QSystemInfo : public QObject
+class  Q_SYSINFO_EXPORT QSystemDisplayInfo : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString currentLanguage READ currentLanguage NOTIFY currentLanguageChanged)
-    Q_PROPERTY(QStringList availableLanguages READ availableLanguages)
-    Q_PROPERTY(QString currentCountryCode READ currentCountryCode)
-    Q_ENUMS(Version)
-    Q_ENUMS(Feature)
+    Q_ENUMS(DisplayOrientation)
 
 public:
 
-    QSystemInfo(QObject *parent = 0);
-     virtual ~QSystemInfo();
+    explicit QSystemDisplayInfo(QObject *parent = 0);
+    ~QSystemDisplayInfo();
 
-    QString currentLanguage(); // 2 letter ISO 639-1 //signal
-    QStringList availableLanguages(); // 2 letter ISO 639-1
-    QString currentCountryCode(); //2 letter ISO 3166-1
-    enum Version {
-        Os = 1,
-        QtCore,
-        Firmware
+    enum DisplayOrientation {
+        Unknown = 0,
+        Landscape,
+        Portrait,
+        InvertedLandscape,
+        InvertedPortrait
     };
 
-    QString version(QSystemInfo::Version type, const QString &parameter = QString());
+    static int displayBrightness(int screen);
+    static int colorDepth(int screen);
 
-    enum Feature {
-        BluetoothFeature=0,
-        CameraFeature,
-        FmradioFeature,
-        IrFeature,
-        LedFeature,
-        MemcardFeature,
-        UsbFeature,
-        VibFeature,
-        WlanFeature,
-        SimFeature,
-        LocationFeature,
-        VideoOutFeature,
-        HapticsFeature
-	};
-
-    bool hasFeatureSupported(QSystemInfo::Feature feature);
-
-Q_SIGNALS:
-    void currentLanguageChanged(const QString &);
-private:
-    QSystemInfoPrivate *d;
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 };
+
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif /*QSYSTEMSINFO_H*/
-
-// End of file
-
+#endif // QSYSTEMDISPLAYINFO_H

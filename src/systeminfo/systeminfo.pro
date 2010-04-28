@@ -6,8 +6,21 @@ QT+= network
 include(../../common.pri)
 
 # Input
-PUBLIC_HEADERS +=   qsysteminfo.h
-SOURCES += qsysteminfo.cpp
+PUBLIC_HEADERS +=   qsysteminfo.h \
+    qsystemdeviceinfo.h \
+    qsystemdisplayinfo.h \
+    qsystemnetworkinfo.h \
+    qsystemscreensaver.h \
+    qsystemstorageinfo.h \
+    qsysteminfocommon.h
+
+SOURCES += qsysteminfo.cpp \
+    qsystemdeviceinfo.cpp \
+    qsystemdisplayinfo.cpp \
+    qsystemnetworkinfo.cpp \
+    qsystemscreensaver.cpp \
+    qsystemstorageinfo.cpp
+
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
 
