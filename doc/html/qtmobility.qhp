@@ -650,6 +650,7 @@
                     <section ref="licenses.html" title="Other Licenses Used in Qt"/>
                     <section ref="publ-subs.html" title="Publish and Subscribe"/>
                     <section ref="bearer.html" title="Qt Bearer Management API"/>
+                    <section ref="contactsengines.html" title="Qt Contacts Manager Engines"/>
                     <section ref="contactsschema.html" title="Qt Contacts Schema"/>
                     <section ref="editions.html" title="Qt Editions"/>
                     <section ref="examples.html" title="Qt Mobility Examples"/>
@@ -1039,13 +1040,6 @@
             <keyword name="variantValues" id="QContactDetail::variantValues" ref="qcontactdetail.html#variantValues"/>
             <keyword name="~QContactDetail" id="QContactDetail::~QContactDetail" ref="qcontactdetail.html#dtor.QContactDetail"/>
             <keyword name="QContactDetailDefinition" id="QContactDetailDefinition" ref="qcontactdetaildefinition.html"/>
-<<<<<<< HEAD
-            <keyword name="QContactDetailDefinition::AccessConstraint" id="QContactDetailDefinition::AccessConstraint" ref="qcontactdetaildefinition-obsolete.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailDefinition::NoConstraint" id="QContactDetailDefinition::NoConstraint" ref="qcontactdetaildefinition-obsolete.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailDefinition::ReadOnly" id="QContactDetailDefinition::ReadOnly" ref="qcontactdetaildefinition-obsolete.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailDefinition::CreateOnly" id="QContactDetailDefinition::CreateOnly" ref="qcontactdetaildefinition-obsolete.html#AccessConstraint-enum"/>
-=======
->>>>>>> 70eb1f34454ab75a66989fd0cb91f707125a8423
             <keyword name="fields" id="QContactDetailDefinition::fields" ref="qcontactdetaildefinition.html#fields"/>
             <keyword name="insertField" id="QContactDetailDefinition::insertField" ref="qcontactdetaildefinition.html#insertField"/>
             <keyword name="isEmpty" id="QContactDetailDefinition::isEmpty" ref="qcontactdetaildefinition.html#isEmpty"/>
@@ -1082,12 +1076,6 @@
             <keyword name="setDefinition" id="QContactDetailDefinitionSaveRequest::setDefinition" ref="qcontactdetaildefinitionsaverequest.html#setDefinition"/>
             <keyword name="setDefinitions" id="QContactDetailDefinitionSaveRequest::setDefinitions" ref="qcontactdetaildefinitionsaverequest.html#setDefinitions"/>
             <keyword name="QContactDetailFieldDefinition" id="QContactDetailFieldDefinition" ref="qcontactdetailfielddefinition.html"/>
-<<<<<<< HEAD
-            <keyword name="QContactDetailFieldDefinition::AccessConstraint" id="QContactDetailFieldDefinition::AccessConstraint" ref="qcontactdetailfielddefinition-obsolete.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailFieldDefinition::NoConstraint" id="QContactDetailFieldDefinition::NoConstraint" ref="qcontactdetailfielddefinition-obsolete.html#AccessConstraint-enum"/>
-            <keyword name="QContactDetailFieldDefinition::ReadOnly" id="QContactDetailFieldDefinition::ReadOnly" ref="qcontactdetailfielddefinition-obsolete.html#AccessConstraint-enum"/>
-=======
->>>>>>> 70eb1f34454ab75a66989fd0cb91f707125a8423
             <keyword name="allowableValues" id="QContactDetailFieldDefinition::allowableValues" ref="qcontactdetailfielddefinition.html#allowableValues"/>
             <keyword name="dataType" id="QContactDetailFieldDefinition::dataType" ref="qcontactdetailfielddefinition.html#dataType"/>
             <keyword name="operator!=" id="QContactDetailFieldDefinition::operator!=" ref="qcontactdetailfielddefinition.html#operator-not-eq"/>
@@ -1510,10 +1498,10 @@
             <keyword name="setRelationshipType" id="QContactRelationshipFetchRequest::setRelationshipType" ref="qcontactrelationshipfetchrequest.html#setRelationshipType"/>
             <keyword name="setSecond" id="QContactRelationshipFetchRequest::setSecond" ref="qcontactrelationshipfetchrequest.html#setSecond"/>
             <keyword name="QContactRelationshipFilter" id="QContactRelationshipFilter" ref="qcontactrelationshipfilter.html"/>
-            <keyword name="QContactRelationshipFilter::Role" id="QContactRelationshipFilter::Role" ref="qcontactrelationshipfilter-obsolete.html#Role-enum"/>
-            <keyword name="QContactRelationshipFilter::First" id="QContactRelationshipFilter::First" ref="qcontactrelationshipfilter-obsolete.html#Role-enum"/>
-            <keyword name="QContactRelationshipFilter::Second" id="QContactRelationshipFilter::Second" ref="qcontactrelationshipfilter-obsolete.html#Role-enum"/>
-            <keyword name="QContactRelationshipFilter::Either" id="QContactRelationshipFilter::Either" ref="qcontactrelationshipfilter-obsolete.html#Role-enum"/>
+            <keyword name="QContactRelationshipFilter::Role" id="QContactRelationshipFilter::Role" ref="qcontactrelationshipfilter.html#Role-enum"/>
+            <keyword name="QContactRelationshipFilter::First" id="QContactRelationshipFilter::First" ref="qcontactrelationshipfilter.html#Role-enum"/>
+            <keyword name="QContactRelationshipFilter::Second" id="QContactRelationshipFilter::Second" ref="qcontactrelationshipfilter.html#Role-enum"/>
+            <keyword name="QContactRelationshipFilter::Either" id="QContactRelationshipFilter::Either" ref="qcontactrelationshipfilter.html#Role-enum"/>
             <keyword name="relatedContactId" id="QContactRelationshipFilter::relatedContactId" ref="qcontactrelationshipfilter.html#relatedContactId"/>
             <keyword name="relatedContactRole" id="QContactRelationshipFilter::relatedContactRole" ref="qcontactrelationshipfilter.html#relatedContactRole"/>
             <keyword name="relationshipType" id="QContactRelationshipFilter::relationshipType" ref="qcontactrelationshipfilter.html#relationshipType"/>
@@ -3373,6 +3361,7 @@
             <keyword name="Q_DEFINE_LATIN1_CONSTANT" id="Q_DEFINE_LATIN1_CONSTANT" ref="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
+            <keyword name="Qt Contacts Manager Engines" id="Qt Contacts Manager Engines" ref="contactsengines.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="examples.html"/>
@@ -3986,6 +3975,7 @@
             <file>gpl.html</file>
             <file>editions.html</file>
             <file>samplephonebook-contactlistpage-h.html</file>
+            <file>contactsengines.html</file>
             <file>qaudioencodercontrol-members.html</file>
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>

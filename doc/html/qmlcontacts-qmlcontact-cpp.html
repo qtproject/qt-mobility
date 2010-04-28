@@ -58,6 +58,9 @@
     #include &lt;QtDebug&gt;
     #include &lt;QStringList&gt;
 
+    #include &lt;QPixmap&gt;
+    #include &lt;QImage&gt;
+
     QT_USE_NAMESPACE
     QTM_USE_NAMESPACE
 
@@ -87,7 +90,7 @@
         emit contactChanged(this);
     }
 
-    QString QmlContact::name()
+    QString QmlContact::name() const
     {
         return m_contact.displayLabel();
     }
@@ -99,7 +102,7 @@
         emit nameChanged(this);
     }
 
-    QString QmlContact::email()
+    QString QmlContact::email() const
     {
         QList&lt;QContactDetail&gt; allEmails = m_contact.details(QContactEmailAddress::DefinitionName);
 
@@ -115,6 +118,59 @@
         Q_UNUSED(email);
         qWarning() &lt;&lt; &quot;Not implemented yet&quot;;
         emit emailChanged(this);
+    }
+
+    QString QmlContact::avatar() const
+    {
+        return m_contact.detail&lt;QContactAvatar&gt;().imageUrl().toString();
+    }
+
+    QPixmap QmlContact::thumbnail() const
+    {
+        return QPixmap::fromImage(m_contact.detail&lt;QContactThumbnail&gt;().thumbnail());
+    }
+
+    bool QmlContact::hasThumbnail() const
+    {
+        return !thumbnail().isNull();
+    }
+
+    QString QmlContact::interest() const
+    {
+        <span class="comment">// Try a phone number</span>
+        QString det = m_contact.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
+        if (!det.isEmpty())
+            return det;
+
+        det = m_contact.detail(QContactEmailAddress::DefinitionName).value(QContactEmailAddress::FieldEmailAddress);
+        if (!det.isEmpty())
+            return det;
+
+        det = m_contact.detail(QContactOnlineAccount::DefinitionName).value(QContactOnlineAccount::FieldAccountUri);
+        if (!det.isEmpty())
+            return det;
+
+        <span class="comment">// Well, don't know.</span>
+        return QString();
+    }
+
+    QString QmlContact::interestLabel() const
+    {
+        <span class="comment">// Try a phone number</span>
+        QString det = m_contact.detail(QContactPhoneNumber::DefinitionName).value(QContactPhoneNumber::FieldNumber);
+        if (!det.isEmpty())
+            return tr(&quot;Phone number:&quot;);
+
+        det = m_contact.detail(QContactEmailAddress::DefinitionName).value(QContactEmailAddress::FieldEmailAddress);
+        if (!det.isEmpty())
+            return tr(&quot;Email:&quot;);
+
+        det = m_contact.detail(QContactOnlineAccount::DefinitionName).value(QContactOnlineAccount::FieldAccountUri);
+        if (!det.isEmpty())
+            return QString(&quot;%1:&quot;).arg(m_contact.detail(QContactOnlineAccount::DefinitionName).value(QContactOnlineAccount::FieldServiceProvider));
+
+        <span class="comment">// Well, don't know.</span>
+        return QString();
     }
 
     QStringList QmlContact::availableActions()

@@ -442,7 +442,6 @@
         <keyword ref="qcontactdetaildefinition.html#operator-eq">operator=</keyword>
         <keyword ref="qcontactdetaildefinition.html#operator-eq-eq">operator==</keyword>
         <section ref="qcontactdetaildefinition-members.html" title="List of all members"/>
-        <section ref="qcontactdetaildefinition-obsolete.html" title="Obsolete members"/>
     </section>
     <section ref="qcontactdetaildefinitionfetchrequest.html" title="QContactDetailDefinitionFetchRequest Class Reference">
         <keyword ref="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</keyword>
@@ -485,7 +484,6 @@
         <keyword ref="qcontactdetailfielddefinition.html#operator-eq">operator=</keyword>
         <keyword ref="qcontactdetailfielddefinition.html#operator-eq-eq">operator==</keyword>
         <section ref="qcontactdetailfielddefinition-members.html" title="List of all members"/>
-        <section ref="qcontactdetailfielddefinition-obsolete.html" title="Obsolete members"/>
     </section>
     <section ref="qcontactdetailfilter.html" title="QContactDetailFilter Class Reference">
         <keyword ref="qcontactdetailfilter.html">QContactDetailFilter</keyword>
@@ -991,6 +989,7 @@
         <keyword ref="qcontactorganization.html#FieldDepartment-var">FieldDepartment</keyword>
         <keyword ref="qcontactorganization.html#FieldLocation-var">FieldLocation</keyword>
         <keyword ref="qcontactorganization.html#FieldLogo-var">FieldLogo</keyword>
+        <keyword ref="qcontactorganization.html#FieldLogoUrl-var">FieldLogoUrl</keyword>
         <keyword ref="qcontactorganization.html#FieldName-var">FieldName</keyword>
         <keyword ref="qcontactorganization.html#FieldRole-var">FieldRole</keyword>
         <keyword ref="qcontactorganization.html#FieldTitle-var">FieldTitle</keyword>
@@ -1072,9 +1071,9 @@
         <keyword ref="qcontactrelationship.html#HasManager-var">HasManager</keyword>
         <keyword ref="qcontactrelationship.html#HasMember-var">HasMember</keyword>
         <keyword ref="qcontactrelationship.html#HasSpouse-var">HasSpouse</keyword>
+        <keyword ref="qcontactrelationship.html#Is-var">Is</keyword>
         <keyword ref="qcontactrelationship.html#IsSameAs-var">IsSameAs</keyword>
         <section ref="qcontactrelationship-members.html" title="List of all members"/>
-        <section ref="qcontactrelationship-obsolete.html" title="Obsolete members"/>
     </section>
     <section ref="qcontactrelationshipfetchrequest.html" title="QContactRelationshipFetchRequest Class Reference">
         <keyword ref="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</keyword>
@@ -1089,6 +1088,10 @@
     </section>
     <section ref="qcontactrelationshipfilter.html" title="QContactRelationshipFilter Class Reference">
         <keyword ref="qcontactrelationshipfilter.html">QContactRelationshipFilter</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#Role-enum">Role</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Second</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Either</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::First</keyword>
         <keyword ref="qcontactrelationshipfilter.html#relatedContactId">relatedContactId</keyword>
         <keyword ref="qcontactrelationshipfilter.html#relatedContactRole">relatedContactRole</keyword>
         <keyword ref="qcontactrelationshipfilter.html#relationshipType">relationshipType</keyword>
@@ -1096,7 +1099,6 @@
         <keyword ref="qcontactrelationshipfilter.html#setRelatedContactRole">setRelatedContactRole</keyword>
         <keyword ref="qcontactrelationshipfilter.html#setRelationshipType">setRelationshipType</keyword>
         <section ref="qcontactrelationshipfilter-members.html" title="List of all members"/>
-        <section ref="qcontactrelationshipfilter-obsolete.html" title="Obsolete members"/>
     </section>
     <section ref="qcontactrelationshipremoverequest.html" title="QContactRelationshipRemoveRequest Class Reference">
         <keyword ref="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</keyword>
@@ -3342,6 +3344,9 @@
     </section>
     <section ref="bearer.html" title="Qt Bearer Management API">
         <keyword ref="bearer.html">Qt Bearer Management API</keyword>
+    </section>
+    <section ref="contactsengines.html" title="Qt Contacts Manager Engines">
+        <keyword ref="contactsengines.html">Qt Contacts Manager Engines</keyword>
     </section>
     <section ref="contactsschema.html" title="Qt Contacts Schema">
         <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>

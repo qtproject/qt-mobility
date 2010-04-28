@@ -17,7 +17,6 @@
 <p>The QContactRelationship class describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact. <a href="#details">More...</a></p>
 <pre>    #include &lt;QContactRelationship&gt;</pre><ul>
 <li><a href="qcontactrelationship-members.html">List of all members, including inherited members</a></li>
-<li><a href="qcontactrelationship-obsolete.html">Obsolete members</a></li>
 </ul>
 <hr />
 <a name="public-types"></a>
@@ -51,6 +50,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#HasManager-var">HasManager</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#HasMember-var">HasMember</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#HasSpouse-var">HasSpouse</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#Is-var">Is</a></b>&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactrelationship.html#IsSameAs-var">IsSameAs</a></b></td></tr>
 </table>
 <a name="details"></a>
@@ -135,6 +135,10 @@
 <a name="//apple_ref/cpp/data/QContactRelationship/HasSpouse"></a>
 <h3 class="fn"><a name="HasSpouse-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::HasSpouse</h3>
 <p>The relationship type which identifies the second contact as being the spouse of the first contact</p>
+<a name="//apple_ref/cpp/data/QContactRelationship/Is"></a>
+<h3 class="fn"><a name="Is-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::Is</h3>
+<p>This documentation is deprecated.</p>
+<p>Deprecated - use <a href="qcontactrelationship.html#IsSameAs-var">QContactRelationship::IsSameAs</a> instead.</p>
 <a name="//apple_ref/cpp/data/QContactRelationship/IsSameAs"></a>
 <h3 class="fn"><a name="IsSameAs-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::IsSameAs</h3>
 <p>The relationship type which identifies the first contact as being the same contact as the second contact</p>

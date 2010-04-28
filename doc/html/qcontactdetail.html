@@ -259,24 +259,6 @@
     {
     public:
     #ifdef Q_QDOC
-<<<<<<< HEAD
-        const char* DefinitionName;
-        const char* FieldNumber;
-        const char* FieldSubTypes;
-        const char* SubTypeLandline;
-        const char* SubTypeMobile;
-        const char* SubTypeFacsimile;
-        const char* SubTypeFax;
-        const char* SubTypePager;
-        const char* SubTypeVoice;
-        const char* SubTypeModem;
-        const char* SubTypeVideo;
-        const char* SubTypeCar;
-        const char* SubTypeBulletinBoardSystem;
-        const char* SubTypeMessagingCapable;
-        const char* SubTypeAssistant;
-        const char* SubTypeDtmfMenu;
-=======
         static const QLatin1Constant DefinitionName;
         static const QLatin1Constant FieldNumber;
         static const QLatin1Constant FieldSubTypes;
@@ -292,14 +274,14 @@
         static const QLatin1Constant SubTypeMessagingCapable;
         static const QLatin1Constant SubTypeAssistant;
         static const QLatin1Constant SubTypeDtmfMenu;
->>>>>>> 70eb1f34454ab75a66989fd0cb91f707125a8423
+
+        static const QLatin1Constant SubTypeFacsimile; <span class="comment">// deprecated key</span>
     #else
         Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, &quot;PhoneNumber&quot;)
         Q_DECLARE_LATIN1_CONSTANT(FieldNumber, &quot;PhoneNumber&quot;);
         Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, &quot;SubTypes&quot;);
         Q_DECLARE_LATIN1_CONSTANT(SubTypeLandline, &quot;Landline&quot;);
         Q_DECLARE_LATIN1_CONSTANT(SubTypeMobile, &quot;Mobile&quot;);
-        Q_DECLARE_LATIN1_CONSTANT(SubTypeFacsimile, &quot;Fax&quot;);
         Q_DECLARE_LATIN1_CONSTANT(SubTypeFax, &quot;Fax&quot;);
         Q_DECLARE_LATIN1_CONSTANT(SubTypePager, &quot;Pager&quot;);
         Q_DECLARE_LATIN1_CONSTANT(SubTypeVoice, &quot;Voice&quot;);
@@ -310,6 +292,9 @@
         Q_DECLARE_LATIN1_CONSTANT(SubTypeMessagingCapable, &quot;MessagingCapable&quot;);
         Q_DECLARE_LATIN1_CONSTANT(SubTypeAssistant, &quot;Assistant&quot;);
         Q_DECLARE_LATIN1_CONSTANT(SubTypeDtmfMenu, &quot;DtmfMenu&quot;);
+
+        <span class="comment">// deprecated keys</span>
+        Q_DECLARE_LATIN1_CONSTANT(SubTypeFacsimile, &quot;Fax&quot;);
     #endif
 
         void setNumber(const QString&amp; number) {setValue(FieldNumber, number);}
