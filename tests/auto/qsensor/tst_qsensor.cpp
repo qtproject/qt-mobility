@@ -49,7 +49,7 @@
 
 QTM_USE_NAMESPACE
 
-class MyFilter : public TestSensorFilter
+        class MyFilter : public TestSensorFilter
 {
     bool filter(TestSensorReading *reading)
     {
@@ -86,9 +86,12 @@ private slots:
     void testTypeRegistered()
     {
         QList<QByteArray> expected;
-        expected << TestSensor::type;
+        expected << "QAccelerometer" << TestSensor::type;
         QList<QByteArray> actual = QSensor::sensorTypes();
-        QCOMPARE(actual, expected);
+
+        for (int i = 0; i < expected.size(); ++i) {
+            QVERIFY2(actual.contains(expected.at(i)),expected.at(i)+" not present");
+        }
     }
 
     void testSensorRegistered()
@@ -246,8 +249,6 @@ private slots:
         TestSensor sensor;
         sensor.setProperty("doThis", "rates(0)");
         QTest::ignoreMessage(QtWarningMsg, "ERROR: Cannot call QSensorBackend::setDataRates with 0 ");
-        QTest::ignoreMessage(QtWarningMsg, "\"test sensor impl\" backend does not support any data rates. It cannot be used. ");
-        QTest::ignoreMessage(QtWarningMsg, "\"test sensor impl\" backend did not supply default data rate. ");
         sensor.connectToBackend();
     }
 
@@ -258,6 +259,14 @@ private slots:
         sensor.connectToBackend();
 
         sensor.availableDataRates();
+    }
+
+    void testMetaData4()
+    {
+        TestSensor sensor;
+        sensor.setProperty("doThis", "rates(nodef)");
+        QTest::ignoreMessage(QtWarningMsg, "\"test sensor impl\" backend did not supply default data rate. ");
+        sensor.connectToBackend();
     }
 
     void testFilter()

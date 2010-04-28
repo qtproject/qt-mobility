@@ -212,6 +212,14 @@
     eventually replace the Phonon API.
 
     For more details see the \l {Multimedia} {Multimedia API overview}.
+    
+    \section2 Sensors
+
+    An API for accessing hardware sensors. This covers both high-level
+    sensors such as screen orientation (portrait, landscape) and low-level,
+    real-time sensors such as accelerometer data.
+
+    For more details see the \l{Sensors API}{Sensors API overview}.
 
     \section2 Service Framework
 
@@ -239,32 +247,11 @@
     
     For more details see the \l {System Information} {System Information API overview}.
 
-    \section1 Included Technology Preview APIs
-    
-    Two additional APIs are included which show future additional APIs. These
-    are pre-release versions and the API will likely change before they are
-    officially released. You may use these APIs in accordance with the terms and
-    conditions contained in the Technology Preview License Agreement
-    accompanying this package.
-
-    We are making these available so that developers can see that future
-    updates will not only refine the API but add important features. We
-    are proud of the work we have done on this project and want to show
-    not only what we are delivering now but what is around the corner.
-    
-    \section2 Sensors
-
-    An API for accessing hardware sensors. This covers both high-level
-    sensors such as screen orientation (portrait, landscape) and low-level,
-    real-time sensors such as accelerometer data.
-
-    For more details see the \l{Sensors API}{Sensors API overview}.
-
     \section2 Versit
 
     An API to manage Versit \reg documents, such as vCards.
 
-    For more details see the \l{Versit API (technology preview)}{Versit API overview}.
+    For more details see the \l{Versit API}{Versit API overview}.
     
     \section1 The QtMobility Namespace 
 

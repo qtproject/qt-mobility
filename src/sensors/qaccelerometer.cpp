@@ -50,7 +50,6 @@ IMPLEMENT_READING(QAccelerometerReading)
     \class QAccelerometerReading
     \ingroup sensors_reading
 
-    \preliminary
     \brief The QAccelerometerReading class reports on linear acceleration
            along the X, Y and Z axes.
 
@@ -153,7 +152,6 @@ void QAccelerometerReading::setZ(qreal z)
     \class QAccelerometerFilter
     \ingroup sensors_filter
 
-    \preliminary
     \brief The QAccelerometerFilter class is a convenience wrapper around QSensorFilter.
 
     The only difference is that the filter() method features a pointer to QAccelerometerReading
@@ -174,7 +172,6 @@ const char *QAccelerometer::type("QAccelerometer");
     \class QAccelerometer
     \ingroup sensors_type
 
-    \preliminary
     \brief The QAccelerometer class is a convenience wrapper around QSensor.
 
     The only behavioural difference is that this class sets the type properly.
