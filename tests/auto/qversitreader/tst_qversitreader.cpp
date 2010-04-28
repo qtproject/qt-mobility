@@ -41,8 +41,11 @@
 
 #include "tst_qversitreader.h"
 #include "qversitreader.h"
+#include "qversitproperty.h"
+#ifdef QT_BUILD_INTERNAL
 #include "qversitreader_p.h"
 #include "versitutils_p.h"
+#endif
 #include <QtTest/QtTest>
 #include <QSignalSpy>
 
@@ -76,7 +79,9 @@ void tst_QVersitReader::init()
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
     mReader = new QVersitReader;
+#ifdef QT_BUILD_INTERNAL    
     mReaderPrivate = new QVersitReaderPrivate;
+#endif
     mSignalCatcher = new SignalCatcher;
     connect(mReader, SIGNAL(stateChanged(QVersitReader::State)),
             mSignalCatcher, SLOT(stateChanged(QVersitReader::State)));
@@ -87,7 +92,9 @@ void tst_QVersitReader::init()
 
 void tst_QVersitReader::cleanup()
 {
+#ifdef QT_BUILD_INTERNAL
     delete mReaderPrivate;
+#endif
     delete mReader;
     delete mInputDevice;
     delete mSignalCatcher;
@@ -119,6 +126,7 @@ void tst_QVersitReader::testDefaultCodec()
     mReader->setDefaultCodec(QTextCodec::codecForName("UTF-16BE"));
     QVERIFY(mReader->defaultCodec() == QTextCodec::codecForName("UTF-16BE"));
 }
+
 
 void tst_QVersitReader::testReading()
 {
@@ -152,8 +160,10 @@ void tst_QVersitReader::testReading()
 
     // Wide charset with no byte-order mark
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
+    QTextCodec::ConverterState converterState(QTextCodec::IgnoreHeader);
+    QString document = QString::fromAscii("BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n");
     const QByteArray& wideDocument =
-            VersitUtils::encode("BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n", codec);
+        codec->fromUnicode(document.data(), document.length(), &converterState);
     mInputDevice->close();
     mInputDevice->setData(wideDocument);
     mInputDevice->open(QBuffer::ReadOnly);
@@ -283,6 +293,9 @@ void tst_QVersitReader::testResult()
 
 void tst_QVersitReader::testSetVersionFromProperty()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QVersitDocument document;
 
     // Some other property than VERSION
@@ -314,10 +327,14 @@ void tst_QVersitReader::testSetVersionFromProperty()
     // VERSION property with BASE64 encoded not supported value
     property.setValue(QString::fromAscii(QByteArray("4.0").toBase64()));
     QVERIFY(!mReaderPrivate->setVersionFromProperty(document,property));
+#endif
 }
 
 void tst_QVersitReader::testParseNextVersitProperty()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QFETCH(QVersitDocument::VersitType, documentType);
     QFETCH(QByteArray, input);
     QFETCH(QVersitProperty, expectedProperty);
@@ -343,10 +360,12 @@ void tst_QVersitReader::testParseNextVersitProperty()
         // Don't check parameters because the reader can add random parameters of its own (like CHARSET)
         // QCOMPARE(property.parameters(), expectedProperty.parameters());
     }
+#endif
 }
 
 void tst_QVersitReader::testParseNextVersitProperty_data()
 {
+#ifdef QT_BUILD_INTERNAL
     QTest::addColumn<QVersitDocument::VersitType>("documentType");
     QTest::addColumn<QByteArray>("input");
     QTest::addColumn<QVersitProperty>("expectedProperty");
@@ -608,10 +627,14 @@ void tst_QVersitReader::testParseNextVersitProperty_data()
             << QByteArray("AGENT:\r\nBEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n")
             << expectedProperty;
     }
+#endif
 }
 
 void tst_QVersitReader::testParseVersitDocument()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QFETCH(QByteArray, vCard);
     QFETCH(bool, expectedSuccess);
     QFETCH(int, expectedProperties);
@@ -624,10 +647,12 @@ void tst_QVersitReader::testParseVersitDocument()
     QCOMPARE(mReaderPrivate->parseVersitDocument(lineReader, document), expectedSuccess);
     QCOMPARE(document.properties().count(), expectedProperties);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel, 0);
+#endif
 }
 
 void tst_QVersitReader::testParseVersitDocument_data()
 {
+#ifdef QT_BUILD_INTERNAL
     QTest::addColumn<QByteArray>("vCard");
     QTest::addColumn<bool>("expectedSuccess");
     QTest::addColumn<int>("expectedProperties");
@@ -724,19 +749,25 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "END:VCARD")
             << false
             << 0;
+#endif
 }
 
 void tst_QVersitReader::testDecodeQuotedPrintable()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QFETCH(QString, encoded);
 
     QFETCH(QString, decoded);
     mReaderPrivate->decodeQuotedPrintable(encoded);
     QCOMPARE(encoded, decoded);
+#endif
 }
 
 void tst_QVersitReader::testDecodeQuotedPrintable_data()
 {
+#ifdef QT_BUILD_INTERNAL
     QTest::addColumn<QString>("encoded");
     QTest::addColumn<QString>("decoded");
 
@@ -780,11 +811,13 @@ void tst_QVersitReader::testDecodeQuotedPrintable_data()
     QTest::newRow("White spaces")
             << QString::fromLatin1("=09=20")
             << QString::fromLatin1("\t ");
-
-
+#endif
 }
 void tst_QVersitReader::testParamName()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // Empty value
     QByteArray param;
     QCOMPARE(mReaderPrivate->paramName(param, mAsciiCodec),QString());
@@ -811,11 +844,14 @@ void tst_QVersitReader::testParamName()
     param = codec->fromUnicode(QString::fromAscii("TIPE=WORK"));
     QCOMPARE(mReaderPrivate->paramName(param, codec),
              QString::fromAscii("TIPE"));
-
+#endif
 }
 
 void tst_QVersitReader::testParamValue()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // Empty value
     QByteArray param;
     QCOMPARE(mReaderPrivate->paramValue(param, mAsciiCodec),QString());
@@ -848,10 +884,14 @@ void tst_QVersitReader::testParamValue()
     param = codec->fromUnicode(QString::fromAscii("TYPE=WORK"));
     QCOMPARE(mReaderPrivate->paramValue(param, codec),
              QString::fromAscii("WORK"));
+#endif
 }
 
 void tst_QVersitReader::testExtractPart()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QByteArray originalStr;
 
     // Negative starting position
@@ -880,10 +920,14 @@ void tst_QVersitReader::testExtractPart()
     // Non-empty substring, from the middle to the end
     QCOMPARE(mReaderPrivate->extractPart(originalStr,29),
              QByteArray("ENCODING=8BIT"));
+#endif
 }
 
 void tst_QVersitReader::testExtractParts()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QList<QByteArray> parts;
 
     // Empty value
@@ -941,10 +985,14 @@ void tst_QVersitReader::testExtractParts()
     QCOMPARE(parts.count(),2);
     QCOMPARE(codec->toUnicode(parts[0]),QString::fromAscii("part1"));
     QCOMPARE(codec->toUnicode(parts[1]),QString::fromAscii("part2"));
+#endif
 }
 
 void tst_QVersitReader::testExtractPropertyGroupsAndName()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QPair<QStringList,QString> groupsAndName;
 
     // Empty string
@@ -1040,11 +1088,14 @@ void tst_QVersitReader::testExtractPropertyGroupsAndName()
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group2"));
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
     QCOMPARE(cursor.position, 36); // 2 bytes * 17 characters + 2 byte BOM.
-
+#endif
 }
 
 void tst_QVersitReader::testExtractVCard21PropertyParams()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // No parameters
     VersitCursor cursor(QByteArray(":123"));
     cursor.setSelection(cursor.data.size());
@@ -1123,10 +1174,14 @@ void tst_QVersitReader::testExtractVCard21PropertyParams()
     encodingParams = params.values(QString::fromAscii("CHARSET"));
     QCOMPARE(1, encodingParams.count());
     QCOMPARE(encodingParams[0],QString::fromAscii("UTF-16"));
+#endif
 }
 
 void tst_QVersitReader::testExtractVCard30PropertyParams()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // No parameters
     VersitCursor cursor(QByteArray(":123"));
     cursor.setSelection(cursor.data.size());
@@ -1212,10 +1267,14 @@ void tst_QVersitReader::testExtractVCard30PropertyParams()
     encodingParams = params.values(QString::fromAscii("CHARSET"));
     QCOMPARE(1, encodingParams.count());
     QCOMPARE(encodingParams[0],QString::fromAscii("UTF-16"));
+#endif
 }
 
 void tst_QVersitReader::testExtractParams()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     VersitCursor cursor;
     QByteArray data = ":123";
     cursor.setData(data);
@@ -1251,13 +1310,16 @@ void tst_QVersitReader::testExtractParams()
     params = mReaderPrivate->extractParams(cursor, codec);
     QCOMPARE(params.size(), 2);
     QCOMPARE(cursor.position, 8);
-
+#endif
 }
 
 Q_DECLARE_METATYPE(QList<QString>)
 
 void tst_QVersitReader::testReadLine()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QFETCH(QByteArray, codecName);
     QFETCH(QString, data);
     QFETCH(QList<QString>, expectedLines);
@@ -1288,10 +1350,12 @@ void tst_QVersitReader::testReadLine()
     QVERIFY(lineReader.atEnd());
 
     delete encoder;
+#endif
 }
 
 void tst_QVersitReader::testReadLine_data()
 {
+#ifdef QT_BUILD_INTERNAL
     // Note: for this test, we set mLineReader to read 10 bytes at a time.  Lines of multiples of
     // 10 bytes are hence border cases.
     QTest::addColumn<QByteArray>("codecName");
@@ -1377,6 +1441,7 @@ void tst_QVersitReader::testReadLine_data()
                 << "one\rtwo\rthree\r"
                 << (QList<QString>() << QLatin1String("one") << QLatin1String("two") << QLatin1String("three"));
     }
+#endif
 }
 
 void tst_QVersitReader::testByteArrayInput()
@@ -1403,6 +1468,9 @@ void tst_QVersitReader::testByteArrayInput()
 
 void tst_QVersitReader::testRemoveBackSlashEscaping()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // Empty string
     QString input;
     QVersitReaderPrivate::removeBackSlashEscaping(input);
@@ -1422,6 +1490,7 @@ void tst_QVersitReader::testRemoveBackSlashEscaping()
     input = QString::fromAscii("\"Quoted \\n \\N \\; \\,\"");
     QVersitReaderPrivate::removeBackSlashEscaping(input);
     QCOMPARE(input, QString::fromAscii("\"Quoted \\n \\N \\; \\,\""));
+#endif
 }
 
 QTEST_MAIN(tst_QVersitReader)

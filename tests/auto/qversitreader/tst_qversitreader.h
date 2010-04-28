@@ -79,7 +79,6 @@ class tst_QVersitReader : public QObject
      Q_OBJECT
 
 private slots: // Tests
-
     void init();
     void cleanup();
 
@@ -109,7 +108,9 @@ private slots: // Tests
 
 private: // Data
     QVersitReader* mReader;
+#ifdef QT_BUILD_INTERNAL
     QVersitReaderPrivate* mReaderPrivate;
+#endif
     QBuffer* mInputDevice;
     QTextCodec* mAsciiCodec;
     SignalCatcher* mSignalCatcher;
