@@ -1,4 +1,5 @@
 #include <sensormanagerinterface.h>
+#include <datatypes/magneticfield.h>
 
 int main()
 {
