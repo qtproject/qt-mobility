@@ -56,7 +56,6 @@ Q_PROPERTY(QString email READ email WRITE setEmail NOTIFY emailChanged)
 Q_PROPERTY(QString avatar READ avatar NOTIFY avatarChanged)
 Q_PROPERTY(QPixmap thumbnail READ thumbnail)
 Q_PROPERTY(bool hasThumbnail READ hasThumbnail)
-Q_PROPERTY(QStringList availableActions READ availableActions)
 Q_PROPERTY(QStringList details READ details)
 Q_PROPERTY(QStringList contexts READ contexts)
 Q_PROPERTY(QString interest READ interest)
@@ -82,7 +81,6 @@ public:
     QString interest() const;
     QString interestLabel() const;
 
-    QStringList availableActions();
     QStringList details();
 
     QStringList contexts();
