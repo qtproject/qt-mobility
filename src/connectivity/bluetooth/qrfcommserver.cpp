@@ -49,6 +49,9 @@ QTM_BEGIN_NAMESPACE
     \class QRfcommServer
     \brief The QRfcommServer class provides an RFCOMM server.
 
+    \ingroup connectivity-bluetooth
+    \inmodule QtConnectivity
+
     QRfcommServer is used to implement Bluetooth services over RFCOMM.
 
     Start listening for incoming connections with listen(). The newConnection() signal is emitted

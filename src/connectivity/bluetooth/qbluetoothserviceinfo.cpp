@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
     \brief The Sequence class provides a data type for Bluetooth Data
            Element Sequence attributes.
 
-    \ingroup io
+    \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
 */
 
@@ -72,7 +72,7 @@ QTM_BEGIN_NAMESPACE
     \brief The Alternative class provides a data type for Bluetooth Data
            Element Alternative attributes.
 
-    \ingroup io
+    \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
 */
 
@@ -92,7 +92,7 @@ QTM_BEGIN_NAMESPACE
     \class QBluetoothServiceInfo
     \brief The QBluetoothServiceInfo class provides information about services.
 
-    \ingroup io
+    \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
 
     QBluetoothServiceInfo provides information about a service offered by a Bluetooth device.

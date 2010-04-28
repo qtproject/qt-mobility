@@ -61,6 +61,44 @@ static quint8 baseUuid[16] = { 0x00, 0x00, 0x00, 0x00,
 };
 
 /*!
+    \class QBluetoothUuid
+    \brief The QBluetoothUuid class provides a Bluetooth UUID.
+
+    \ingroup connectivity-bluetooth
+    \inmodule QtConnectivity
+*/
+
+/*!
+    \enum QBluetoothUuid::ProtocolUuid
+
+    This enum is a convienience type for Bluetooth protocol UUIDs. Values of this type will be
+    implicitly converted into a QBluetoothUuid when necessary.
+
+    \value Sdp      SDP protocol UUID.
+    \value Udp      UDP protocol UUID.
+    \value Rfcomm   RFCOMM protocol UUID.
+    \value Tcp      TCP protocol UUID.
+    \value Obex     OBEX protocol UUID.
+    \value Ip       IP protocol UUID.
+    \value Ftp      FTP protocol UUID.
+    \value Http     HTTP protocol UUID.
+    \value L2cap    L2CAP protocol UUID.
+*/
+
+/*!
+    \enum QBluetoothUuid::ServiceClassUuid
+
+    This enum is a convienience type for Bluetooth service class UUIDs. Values of this type will be
+    implicitly converted into a QBluetoothUuid when necessary.
+
+    \value PublicBrowseGroup    Public browse group service class. Services which have the public
+                                browse group in their
+                                \l {QBluetoothServiceInfo::BrowseGroupList}{browse group list} are
+                                discoverable by remote devices.
+    \value ObexObjectPush       OBEX object push service UUID.
+*/
+
+/*!
     Constructs a new null Bluetooth UUID.
 */
 QBluetoothUuid::QBluetoothUuid()

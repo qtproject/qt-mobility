@@ -51,8 +51,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QBluetoothServiceDiscoveryAgent class provides an API for querying the services
            provided by a Bluetooth device.
 
-
-    \ingroup io
+    \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
 
     To query the services provided by a Bluetooth device create an instance of

@@ -52,19 +52,10 @@ The Connectivity API provides a set of APIs for communicating with local devices
 
 \tableofcontents
 
-\section1 Main classes
+\section1 Main Classes
 
-\list
-    \o \l{QBluetoothAddress}
-    \o \l{QBluetoothDeviceDiscoveryAgent}
-    \o \l{QBluetoothDeviceInfo}
-    \o \l{QRfcommServer}
-    \o \l{QBluetoothServiceDiscoveryAgent}
-    \o \l{QBluetoothServiceInfo}
-    \o \l{QBluetoothServiceInfo::Sequence}
-    \o \l{QBluetoothServiceInfo::Alternative}
-    \o \l{QBluetoothDeviceInfo}
-\endlist
+\section2 Bluetooth Classes
 
+\annotatedlist connectivity-bluetooth
 
 */
