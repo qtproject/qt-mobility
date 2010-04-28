@@ -868,6 +868,7 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
 QMessage CFSEngine::message(const QMessageId& id) const
 {
     QMessage message;
+    // search message by id and call CreateQMessageL
     return message;
 }
 
@@ -877,14 +878,9 @@ bool CFSEngine::sendEmail(QMessage &message)
     TRAPD(err,
         fsMessage = createFSMessageL(message);
         fsMessage->SaveChangesL();
-        fsMessage->SendL();
-        m_mailboxId = stripIdPrefix(message.parentAccountId().toString()).toInt();
-        MEmailMailbox* mailbox = m_clientApi->MailboxL(m_mailboxId); 
-        mailbox->SynchroniseL(*this);  
+        fsMessage->SendL(); 
     );
-    CFSMessagesFindOperation* findOp = new CFSMessagesFindOperation((CFSEngine&)*this, 0);
-    m_account = this->account(message.parentAccountId());
-   // findOp->CheckAndNotifyNewMailsL(account);
+
     if (err != KErrNone)
         return false;
     else
@@ -925,10 +921,6 @@ void CFSEngine::MailboxSynchronisedL(TInt aResult)
 {
    // check new mails
     qDebug() << "CFSEngine::MailboxSynchronisedL:" << aResult;
-    if (aResult == KErrNone) {
-        CFSMessagesFindOperation* findOp = new CFSMessagesFindOperation((CFSEngine&)*this, 0);
-        findOp->CheckAndNotifyNewMailsL(m_account);
-    }
 }
 
 QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage)
@@ -942,14 +934,18 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage)
     message.setReceivedDate(symbianTTimetoQDateTime(aMessage->Date()));
     
     const TFolderId& folderId = aMessage->ParentFolderId();
-   // QMessageAccount messageAccount = messageAccount(folderId.iMailboxId);
-   // message.setParentAccountId(messageAccount.id());
-
+    TMailboxId mailboxId = folderId.iMailboxId;
+    const QMessageAccountId accountId = QMessageAccountId(QString::number(mailboxId.iId));
+    message.setParentAccountId(accountId);
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-  //  privateMessage->_parentFolderId = ;
+    privateMessage->_parentFolderId = QMessageFolderId(QString::number(folderId.iId));
+
     if (aMessage->Flags() & EFlag_Read) {
         privateMessage->_status = privateMessage->_status | QMessage::Read; 
     }
+    if (aMessage->Flags() & EFlag_Attachments) {
+            privateMessage->_status = privateMessage->_status | QMessage::HasAttachments; 
+        }
 
     if (aMessage->Flags() & EFlag_Important) {
         message.setPriority(QMessage::HighPriority); 
@@ -1373,22 +1369,6 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
     CleanupStack::PopAndDestroy(mailbox);
     CleanupStack::PopAndDestroy(&sortCriteriaArray);
     m_owner.filterAndOrderMessagesReady(true, m_operationId, iIdList, 1, true);
-}
-
-void CFSMessagesFindOperation::CheckAndNotifyNewMailsL(QMessageAccount& messageAccount)
-{
-    qDebug() << "CFSMessagesFindOperation::CheckAndNotifyNewMailsL:";
-    TEmailSortCriteria sortCriteria = TEmailSortCriteria();
-    sortCriteria.iField = TEmailSortCriteria::EByDate;
-    TMailboxId mailboxId(stripIdPrefix(messageAccount.id().toString()).toInt());
-    FSSearchOperation operation;
-    operation.m_mailbox = m_clientApi->MailboxL(mailboxId);
-    operation.m_search = operation.m_mailbox->MessageSearchL();
-    operation.m_search->AddSearchKeyL(_L("*"));
-    operation.m_search->SetSortCriteriaL(sortCriteria);
-    operation.m_search->StartSearchL(*this);
-    m_activeSearchCount++;
-    m_receiveNewMessages = true;
 }
 
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)

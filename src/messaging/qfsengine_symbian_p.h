@@ -222,8 +222,6 @@ public:
                                 const QMessageSortOrder& sortOrder,
                                 const QString body = QString(),
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
-    
-    void CheckAndNotifyNewMailsL(QMessageAccount& messageAccount);
 
 public slots:
     void ClearOperations();
