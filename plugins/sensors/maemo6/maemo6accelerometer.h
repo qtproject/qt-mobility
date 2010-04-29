@@ -44,7 +44,6 @@
 
 #include "maemo6sensorbase.h"
 #include <qaccelerometer.h>
-#include <qsensorbackend.h>
 
 #include <accelerometersensor_i.h>
 #include <datatypes/xyz.h>

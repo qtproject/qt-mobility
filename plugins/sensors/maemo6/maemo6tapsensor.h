@@ -44,7 +44,6 @@
 
 #include "maemo6sensorbase.h"
 #include <qtapsensor.h>
-#include <qsensorbackend.h>
 
 #include <tapsensor_i.h>
 #include <tap.h>

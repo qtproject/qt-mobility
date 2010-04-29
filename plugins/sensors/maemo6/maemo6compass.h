@@ -46,6 +46,7 @@
 #include <qcompass.h>
 
 #include <compasssensor_i.h>
+#include <compass.h>
 
 QTM_USE_NAMESPACE
 
@@ -62,8 +63,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotLevelChanged(const int& level);
-    void slotDegreesChanged(const int& degrees);
+    void dataAvailable(const Compass& data);
 };
 
 #endif

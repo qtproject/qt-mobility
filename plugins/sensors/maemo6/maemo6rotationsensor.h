@@ -44,7 +44,6 @@
 
 #include "maemo6sensorbase.h"
 #include <qrotationsensor.h>
-#include <qsensorbackend.h>
 
 #include <rotationsensor_i.h>
 #include <xyz.h>

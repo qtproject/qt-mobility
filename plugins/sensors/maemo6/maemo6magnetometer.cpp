@@ -82,7 +82,6 @@ void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
         m_reading.setZ( 0.0000003 * data.rz() );
         m_reading.setCalibrationLevel(1);
     }
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.timestamp());
     newReadingAvailable();
 }

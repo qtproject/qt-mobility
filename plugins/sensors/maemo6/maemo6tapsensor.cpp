@@ -101,7 +101,6 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
     }
     m_reading.setTapDirection(o);
 
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.tapData().timestamp_);
     newReadingAvailable();
 }

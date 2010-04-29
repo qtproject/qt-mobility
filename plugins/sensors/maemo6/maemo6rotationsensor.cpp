@@ -75,7 +75,6 @@ void maemo6rotationsensor::slotDataAvailable(const XYZ& data)
     m_reading.setX(data.x());
     m_reading.setY(data.y());
     m_reading.setZ(data.z());
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.XYZData().timestamp_);
     newReadingAvailable();
 }

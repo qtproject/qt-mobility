@@ -85,7 +85,6 @@ void maemo6accelerometer::slotDataAvailable(const XYZ& data)
     m_reading.setX(ax);
     m_reading.setY(ay);
     m_reading.setZ(az);
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.XYZData().timestamp_);
     newReadingAvailable();
 }

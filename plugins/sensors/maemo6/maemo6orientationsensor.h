@@ -46,6 +46,7 @@
 #include <qorientationsensor.h>
 
 #include <orientationsensor_i.h>
+#include <unsigned.h>
 
 QTM_USE_NAMESPACE
 
@@ -63,7 +64,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotOrientationChanged(const int& orientation); 
+    void slotOrientationChanged(const Unsigned& orientation);
 };
 
 #endif

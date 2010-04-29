@@ -55,7 +55,7 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
         initSensor<OrientationSensorChannelInterface>("orientationsensor");
 
         if (m_sensorInterface)
-            QObject::connect(static_cast<OrientationSensorChannelInterface*>(m_sensorInterface), SIGNAL(orientationChanged(const int&)), this, SLOT(slotOrientationChanged(const int&)));
+            QObject::connect(static_cast<OrientationSensorChannelInterface*>(m_sensorInterface), SIGNAL(orientationChanged(const Unsigned&)), this, SLOT(slotOrientationChanged(const Unsigned&)));
         else
             qWarning() << "Unable to initialize orientation sensor.";
 
@@ -69,10 +69,10 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
     }
 }
 
-void maemo6orientationsensor::slotOrientationChanged(const int& data)
+void maemo6orientationsensor::slotOrientationChanged(const Unsigned& data)
 {
     QOrientationReading::Orientation o;
-    switch (data) {
+    switch (data.x()) {
         case PoseData::BottomDown: o = QOrientationReading::TopUp;     break;
         case PoseData::BottomUp:   o = QOrientationReading::TopDown;   break;
         case PoseData::LeftUp:     o = QOrientationReading::LeftUp;    break;
@@ -82,7 +82,6 @@ void maemo6orientationsensor::slotOrientationChanged(const int& data)
         default:                   o = QOrientationReading::Undefined;
     }
     m_reading.setOrientation(o);
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
 }

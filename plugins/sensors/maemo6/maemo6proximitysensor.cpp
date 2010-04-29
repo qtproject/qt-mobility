@@ -53,7 +53,7 @@ maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
         initSensor<ProximitySensorChannelInterface>("proximitysensor");
 
         if (m_sensorInterface)
-            QObject::connect(static_cast<ProximitySensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const int&)), this, SLOT(slotDataAvailable(const int&)));
+            QObject::connect(static_cast<ProximitySensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const Unsigned&)), this, SLOT(slotDataAvailable(const Unsigned&)));
         else
             qWarning() << "Unable to initialize proximity sensor.";
 
@@ -67,16 +67,14 @@ maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
     }
 }
 
-void maemo6proximitysensor::slotDataAvailable(const int& data)
+void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
 {
     bool close;
-    if (data)
+    if (data.x())
         close = true;
     else
         close = false;
-
     m_reading.setClose(close);
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
 }

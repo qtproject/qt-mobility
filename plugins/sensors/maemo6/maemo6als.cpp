@@ -52,7 +52,7 @@ maemo6als::maemo6als(QSensor *sensor)
         initSensor<ALSSensorChannelInterface>("alssensor");
 
         if (m_sensorInterface)
-            QObject::connect(static_cast<const ALSSensorChannelInterface*>(m_sensorInterface), SIGNAL(ALSChanged(const int&)), this, SLOT(slotDataAvailable(const int&)));
+            QObject::connect(static_cast<const ALSSensorChannelInterface*>(m_sensorInterface), SIGNAL(ALSChanged(const Unsigned&)), this, SLOT(slotDataAvailable(const Unsigned&)));
         else
             qWarning() << "Unable to initialize ambient light sensor.";
 
@@ -66,29 +66,28 @@ maemo6als::maemo6als(QSensor *sensor)
     }
 }
 
-void maemo6als::slotDataAvailable(const int& data)
+void maemo6als::slotDataAvailable(const Unsigned& data)
 {
     // Convert from integer to fixed levels
     // TODO: verify levels
     QAmbientLightReading::LightLevel level;
-    if (data < 0) {
+    int x = data.x();
+    if (x < 0) {
         level = QAmbientLightReading::Undefined;
-    } else if (data < 10) {
+    } else if (x < 10) {
         level = QAmbientLightReading::Dark;
-    } else if (data < 50) {
+    } else if (x < 50) {
         level = QAmbientLightReading::Twilight;
-    } else if (data < 100) {
+    } else if (x < 100) {
         level = QAmbientLightReading::Light;
-    } else if (data < 150) {
+    } else if (x < 150) {
         level = QAmbientLightReading::Bright;
     } else {
         level = QAmbientLightReading::Sunny;
     }
-
     if (level != m_reading.lightLevel()) {
         m_reading.setLightLevel(level);
-        //m_reading.setTimestamp(data.timestamp());
-        m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+        m_reading.setTimestamp(data.UnsignedData().timestamp_);
         newReadingAvailable();
     }
 }

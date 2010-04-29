@@ -75,8 +75,6 @@ protected:
             m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
         }
     }
-
-    qtimestamp createTimestamp();
 };
 
 #endif
