@@ -58,8 +58,8 @@
 
 CntSymbianFilter::CntSymbianFilter(QContactManagerEngine& /*manager*/, CContactDatabase& contactDatabase, CntSymbianSrvConnection &srvConnection, const CntTransformContact &transformContact):
     m_contactDatabase(contactDatabase),
-    m_srvConnection(srvConnection),
-    m_transformContact(transformContact)
+    m_transformContact(transformContact),
+    m_srvConnection(srvConnection)
 {
     m_dbInfo = new CntDbInfo();
     initializeFilters();
