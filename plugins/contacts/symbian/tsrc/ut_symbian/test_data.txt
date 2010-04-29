@@ -36,31 +36,28 @@
 [ContactDetailFilter7: Name, FirstName, nn,MatchEndsWith, 3, 0]
 [ContactDetailFilter8: Name, LastName, ack,MatchEndsWith, 1, 0]
          //Name - No results search
-[ContactDetailFilter7: Name, FirstName, King,MatchEndsWith, 0, 0]
-[ContactDetailFilter8: Name, LastName, Queen,MatchEndsWith, 0, 0]
+[ContactDetailFilter9: Name, FirstName, King,MatchEndsWith, 0, 0]
+[ContactDetailFilter10: Name, LastName, Queen,MatchEndsWith, 0, 0]
 //-----------------------------------------------------------------------
 //Email - Match exactly
-[ContactDetailFilter9: EmailAddress, EmailAddress, ste.Fed@nokia.com,MatchExactly, 1, 0]
+[ContactDetailFilter11: EmailAddress, EmailAddress, ste.Fed@nokia.com,MatchExactly, 1, 0]
 //Email - MatchContains
-[ContactDetailFilter10: EmailAddress, EmailAddress, nokia,MatchContains, 5, 0]
+[ContactDetailFilter12: EmailAddress, EmailAddress, nokia,MatchContains, 5, 0]
 //Email - MatchStartsWith
-[ContactDetailFilter11: EmailAddress, EmailAddress, Joronn,MatchStartsWith, 1, 0]
+[ContactDetailFilter13: EmailAddress, EmailAddress, Joronn,MatchStartsWith, 1, 0]
 //Email - MatchEndsWith
-[ContactDetailFilter12: EmailAddress, EmailAddress, com,MatchEndsWith, 5, 0]
+[ContactDetailFilter14: EmailAddress, EmailAddress, com,MatchEndsWith, 5, 0]
 //Email - No results search
-[ContactDetailFilter13: EmailAddress, EmailAddress, andrewf,MatchEndsWith, 0, 0]
+[ContactDetailFilter15: EmailAddress, EmailAddress, andrewf,MatchEndsWith, 0, 0]
 //-----------------------------------------------------------------------
-//Phonenumber - Match exactly
-[ContactDetailFilter14: PhoneNumber, PhoneNumber, +026434234423,MatchExactly, 1, 0]
-//Phonenumber - MatchContains
-[ContactDetailFilter15: PhoneNumber, PhoneNumber, 225214,MatchContains, 0, 0]
-//Phonenumber - MatchStartsWith
-[ContactDetailFilter16: PhoneNumber, PhoneNumber, +358,MatchStartsWith, 0, 0]
-//Phonenumber - MatchEndsWith
-[ContactDetailFilter17: PhoneNumber, PhoneNumber, 035022423,MatchEndsWith, 2, 0]
+//Phonenumber - Match number
+[ContactDetailFilter16: PhoneNumber, PhoneNumber, +026434234423,MatchPhoneNumber, 1, 0]
+[ContactDetailFilter17: PhoneNumber, PhoneNumber, 035022423,MatchPhoneNumber, 2, 0]
+[ContactDetailFilter18: PhoneNumber, PhoneNumber, 35891,MatchPhoneNumber, 1, 0]
 //Phonenumber - No results search
-[ContactDetailFilter18: PhoneNumber, PhoneNumber, 52252361425342322,MatchEndsWith, 0, 0]
-
+[ContactDetailFilter19: PhoneNumber, PhoneNumber, 225214,MatchPhoneNumber, 0, 0]
+[ContactDetailFilter20: PhoneNumber, PhoneNumber, +358,MatchPhoneNumber, 0, 0]
+[ContactDetailFilter21: PhoneNumber, PhoneNumber, 52252361425342322,MatchPhoneNumber, 0, 0]
 
 //-----------------------------------------------------------------------
 // [ActionFilter: ActionName, Value, Vendor, 20]

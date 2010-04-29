@@ -104,8 +104,10 @@ private slots:  // Test cases
 private:
     void  testIntersectionFilter_1();
     void  testIntersectionFilter_2();
+    void  testIntersectionFilter_3();
     void  testUnionFilter_1();
     void  testUnionFilter_2();
+    void  testUnionFilter_3();
     void  testContactDetailFilter_1();
     void  testContactDetailFilter_2();
 private:

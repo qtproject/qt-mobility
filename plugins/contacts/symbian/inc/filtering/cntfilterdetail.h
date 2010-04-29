@@ -52,6 +52,23 @@ QTM_USE_NAMESPACE
 
 class CntFilterDetail : public CntAbstractContactFilter
 {
+private:
+    class TMatch {
+        public:
+            TMatch();
+        
+            static TInt32 createHash(const TDesC& phoneNumberString,
+                                     TInt matchLength,
+                                     TInt& numPhoneDigits);
+            static void stripOutNonDigitChars(TDes& text);
+            static TInt32 padOutPhoneMatchNumber(TInt32& phoneNumber,
+                                                 TInt padOutLength);
+        public:
+            TInt32 iLowerSevenDigits;
+            TInt32 iUpperDigits;
+            TInt iNumLowerDigits;
+            TInt iNumUpperDigits;
+    };
 public:
     CntFilterDetail(CContactDatabase& contactDatabase, CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo);
     ~CntFilterDetail();
@@ -62,8 +79,6 @@ public:
             QContactManager::Error* error);
     bool filterSupported(const QContactFilter& filter) ;
     
-    //bool isFilterSupported(const QContactFilter& filter) const;
-
     void getTableNameWhereClause( const QContactDetailFilter& filter,
                                   QString& tableName,
                                   QString& sqlWhereClause ,
@@ -71,21 +86,26 @@ public:
     void createSelectQuery(const QContactFilter& filter,
                                  QString& sqlQuery,
                                  QContactManager::Error* error);
+    void createMatchPhoneNumberQuery(const QContactFilter& filter,
+                                     QString& sqlQuery,
+                                     QContactManager::Error* error);
 private:
-
-    
     void updateForMatchFlag( const QContactDetailFilter& filter,
                              QString& fieldToUpdate ,
                              QContactManager::Error* error) const;
-    QList<QContactLocalId> HandlePhonenumberDetailFilter(const QContactFilter& filter);
     QList<QContactLocalId>  HandlePredictiveSearchFilter(const QContactFilter& filter,
                                                          QContactManager::Error* error);
 
-    TInt CntFilterDetail::searchPhoneNumbers(
-            CContactIdArray*& idArray,
-            const TDesC& phoneNumber,
-            const TInt matchLength);
-    void getMatchLengthL(TInt& matchLength);
+    CntFilterDetail::TMatch createPaddedPhoneDigits(const TDesC& number, 
+                                                    const TInt numLowerDigits,
+                                                    const TInt numUpperDigits,
+                                                    QContactManager::Error* error);
+    CntFilterDetail::TMatch createPhoneMatchNumber(const TDesC& text,
+                                                   TInt lowerMatchLength,
+                                                   TInt upperMatchLength,
+                                                   QContactManager::Error* error);
+    bool getMatchLengthL(TInt& matchLength);
+    
 protected:
     CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;

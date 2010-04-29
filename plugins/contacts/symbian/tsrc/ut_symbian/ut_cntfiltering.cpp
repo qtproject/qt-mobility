@@ -743,6 +743,7 @@ void TestFiltering::testIntersectionFilter()
 {
     testIntersectionFilter_1();
     testIntersectionFilter_2();
+    testIntersectionFilter_3();
 }
 
 void TestFiltering::testIntersectionFilter_1()
@@ -865,10 +866,67 @@ void TestFiltering::testIntersectionFilter_2()
     }
 }
 
+void TestFiltering::testIntersectionFilter_3()
+{
+    //Create first filter
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
+    f1.setValue("Mic");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    //Create second filter
+    QContactDetailFilter f2;
+    f2.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    f2.setValue("035022423");
+    
+    //Create an intersection filter with the above created filters 
+    QList<QContactLocalId> cnt_ids;
+    QContactIntersectionFilter filter;
+    filter.append(f1);
+    filter.append(f2);
+    QList<QContactSortOrder> sortOrder;
+    QContactManager::Error error;
+    
+    QContactSortOrder sortOrderFirstName;
+    sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldFirstName);
+
+    QContactSortOrder sortOrderLastName;
+    sortOrderLastName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldLastName);
+
+    sortOrder.append(sortOrderFirstName);
+    sortOrder.append(sortOrderLastName);
+
+    //Search for contacts 
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
+
+    // Now check the results 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount = 1; 
+    QVERIFY(seachedcontactcount == expectedCount);
+    QVERIFY(error == QContactManager::NoError);
+    
+    for(int j=0; j<seachedcontactcount; j++) 
+    {
+        QContact sc = mCntMng->contact(cnt_ids[j]);
+        //Get the first name
+        QContactName name = sc.detail(QContactName::DefinitionName);
+        QString firstname = name.firstName();
+        //get the Phone number
+        QContactPhoneNumber phoneDetail = sc.detail(QContactPhoneNumber::DefinitionName);
+        QString number = phoneDetail.number();
+        // Not testing equal to due to MatchFlags definitions
+        // in the filter.
+        QVERIFY(firstname.contains("Mic") && (number.contains("5022423")));
+    }
+}
+
 void TestFiltering::testUnionFilter()
     {
     testUnionFilter_1();
     testUnionFilter_2();
+    testUnionFilter_3();
     }
 
 void TestFiltering::testUnionFilter_1()
@@ -972,6 +1030,54 @@ void TestFiltering::testUnionFilter_2()
         // Not testing equal to due to MatchFlags definitions
         // in the filter.
         QVERIFY(firstname.contains("n") || (email.contains("@nok")));     
+    }
+}
+void TestFiltering::testUnionFilter_3()
+{
+    //Create first filter
+    QContactDetailFilter f1;
+    f1.setDetailDefinitionName(QContactName::DefinitionName, QContactName::FieldFirstName);
+    f1.setValue("J");
+    f1.setMatchFlags(QContactFilter::MatchStartsWith);
+    //Create second filter
+    QContactDetailFilter f2;
+    f2.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    f2.setValue("035022423");
+    
+    //Create an union filter
+    QList<QContactLocalId> cnt_ids;
+    QContactUnionFilter filter;
+    filter.append(f1);
+    filter.append(f2);
+    QList<QContactSortOrder> sortOrder;
+    QContactSortOrder sortOrderFirstName;
+    sortOrderFirstName.setDetailDefinitionName(QContactName::DefinitionName,
+        QContactName::FieldFirstName);
+    sortOrder.append(sortOrderFirstName);
+    QContactManager::Error error;
+
+    //Search for contacts 
+    cnt_ids = mCntMng->contactIds(filter, sortOrder);
+    error = mCntMng->error();
+    
+    // Now check the results 
+    int seachedcontactcount = cnt_ids.count();
+    int expectedCount = 4; 
+    QVERIFY(seachedcontactcount == expectedCount);
+    QVERIFY(error == QContactManager::NoError);
+        
+    for(int j=0; j<seachedcontactcount; j++) 
+    {
+        QContact sc = mCntMng->contact(cnt_ids[j]);
+        //Get the first name
+        QContactName name = sc.detail(QContactName::DefinitionName);
+        QString firstname = name.firstName();
+        //get the Phone number
+        QContactPhoneNumber phoneDetail = sc.detail(QContactPhoneNumber::DefinitionName);
+        QString number = phoneDetail.number();
+        // Not testing equal to due to MatchFlags definitions
+        // in the filter.
+        QVERIFY(firstname.contains("J") || (number.contains("5022423")));     
     }
 }
 

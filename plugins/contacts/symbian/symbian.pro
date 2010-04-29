@@ -60,13 +60,8 @@ symbian: {
         inc/filtering/cntdbinfo.h \
         inc/filtering/cntfilterdefault.h \
         inc/filtering/cntfilterintersection.h \
-        inc/filtering/cntfilterunion.h \
-        inc/filtering/cntfilterinvalid.h \
-        inc/filtering/cntfilteraction.h \
-        inc/filtering/cntfilterlocalid.h \
-				inc/filtering/cntfilterchangelog.h \
-				inc/filtering/cntfilterdetailrange.h \
-        inc/filtering/cntabstractcontactsorter.h \
+        inc/filtering/cntfilterunion.h \   				
+				inc/filtering/cntabstractcontactsorter.h \
         inc/filtering/cntabstractcontactfilter.h \
         inc/filtering/cntsymbianfilterdbms.h \
         inc/filtering/cntsymbianfiltersql.h \
@@ -107,18 +102,13 @@ symbian: {
         src/filtering/cntfilterdefault.cpp \
         src/filtering/cntfilterintersection.cpp \
         src/filtering/cntfilterunion.cpp \
-        src/filtering/cntfilterinvalid.cpp \
-        src/filtering/cntfilteraction.cpp \
-        src/filtering/cntfilterlocalid.cpp \
-				src/filtering/cntfilterchangelog.cpp \
-				src/filtering/cntfilterdetailrange.cpp \
         src/filtering/cntsymbianfilterdbms.cpp \
         src/filtering/cntsymbianfiltersql.cpp \
         src/filtering/cntsymbiansorterdbms.cpp \
         src/filtering/cntsymbiansrvconnection.cpp \
         src/filtering/cntdisplaylabelsqlfilter.cpp \
         src/filtering/cntsqlsearch.cpp \
-    	src/cntsymbianengine.cpp \
+    		src/cntsymbianengine.cpp \
         src/cntabstractrelationship.cpp \
         src/cntrelationshipgroup.cpp \
         src/cntsymbiantransformerror.cpp \

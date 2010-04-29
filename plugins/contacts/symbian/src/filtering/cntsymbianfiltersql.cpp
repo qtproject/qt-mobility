@@ -51,11 +51,6 @@
 #include "cntfilterintersection.h"
 #include "cntfilterunion.h"
 #include "cntfilterrelationship.h"
-#include "cntfilterinvalid.h"
-#include "cntfilterdetailrange.h"
-#include "cntfilterchangelog.h"
-#include "cntfilteraction.h"
-#include "cntfilterlocalid.h"
 #include <QLatin1String>
 #include <e32cmn.h>
 #include <cntdb.h>
@@ -77,11 +72,6 @@ void CntSymbianFilter::initializeFilters()
     m_filterMap.insert(QContactFilter::IntersectionFilter, new CntFilterIntersection(m_contactDatabase,m_srvConnection,*m_dbInfo));
     m_filterMap.insert(QContactFilter::UnionFilter, new CntFilterUnion(m_contactDatabase,m_srvConnection,*m_dbInfo));
     m_filterMap.insert(QContactFilter::RelationshipFilter, new CntFilterRelationship(m_contactDatabase,m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::InvalidFilter, new CntFilterInvalid(m_contactDatabase,m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::ContactDetailRangeFilter, new CntFilterdetailrange(m_contactDatabase,m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::ChangeLogFilter, new CntFilterChangeLog(m_contactDatabase,m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::ActionFilter, new CntFilterAction(m_contactDatabase,m_srvConnection,*m_dbInfo));
-    m_filterMap.insert(QContactFilter::LocalIdFilter, new CntFilterLocalId(m_contactDatabase,m_srvConnection,*m_dbInfo));
 }
 
 CntSymbianFilter::~CntSymbianFilter()
@@ -89,8 +79,7 @@ CntSymbianFilter::~CntSymbianFilter()
     //delete the all filters from the map
     QMap<QContactFilter::FilterType, CntAbstractContactFilter*>::iterator itr;
 
-    for (itr = m_filterMap.begin(); itr != m_filterMap.end(); ++itr)
-    {
+    for (itr = m_filterMap.begin(); itr != m_filterMap.end(); ++itr) {
         CntAbstractContactFilter* value = itr.value();
         delete value;
         value = 0;
@@ -99,31 +88,24 @@ CntSymbianFilter::~CntSymbianFilter()
     delete m_dbInfo;  
 }
 
-QList<QContactLocalId> CntSymbianFilter::contacts(
-            const QContactFilter& filter,
-            const QList<QContactSortOrder>& sortOrders,
-            bool &filterSupported,
-            QContactManager::Error* error)
+QList<QContactLocalId> CntSymbianFilter::contacts(const QContactFilter& filter,
+                                                  const QList<QContactSortOrder>& sortOrders,
+                                                  bool &filterSupported,
+                                                  QContactManager::Error* error)
 {
     QList<QContactLocalId> ids;
-    if(m_filterMap.contains(filter.type()))
-        {
-
+    if (m_filterMap.contains(filter.type())) {
         ids = ( m_filterMap.value(filter.type()))->contacts(filter,sortOrders,filterSupported,error);
         return ids;   
-        
-        }
+    }
     *error = QContactManager::NotSupportedError;
     return ids;
-    
 }
 
 bool CntSymbianFilter::filterSupported(const QContactFilter& filter)
 {
     bool result = false;
-    
-    if(m_filterMap.contains(filter.type()))
-    {
+    if (m_filterMap.contains(filter.type())) {
         result = m_filterMap.value(filter.type())->filterSupported(filter);
     }
     return result;

@@ -56,11 +56,6 @@ SYMBIAN_HEADERS += \
         ../../inc/filtering/cntfilterintersection.h \
         ../../inc/filtering/cntfilterunion.h \
         ../../inc/filtering/cntfilterrelationship.h \
-        ../../inc/filtering/cntfilterinvalid.h \
-        ../../inc/filtering/cntfilterdetailrange.h \
-        ../../inc/filtering/cntfilterchangelog.h \
-        ../../inc/filtering/cntfilteraction.h \
-        ../../inc/filtering/cntfilterlocalid.h \
         ../../inc/filtering/cntfilterdetaildisplaylabel.h \
         
 
@@ -107,12 +102,7 @@ SYMBIAN_SOURCES += \
         ../../src/filtering/cntfilterdefault.cpp \
         ../../src/filtering/cntfilterintersection.cpp \
         ../../src/filtering/cntfilterunion.cpp \
-        ../../src/filtering/cntfilterrelationship.cpp \
-        ../../src/filtering/cntfilterinvalid.cpp \
-        ../../src/filtering/cntfilterdetailrange.cpp \
-        ../../src/filtering/cntfilterchangelog.cpp \
-        ../../src/filtering/cntfilteraction.cpp \
-        ../../src/filtering/cntfilterlocalid.cpp \
+        ../../src/filtering/cntfilterrelationship.cpp \     
         ../../src/filtering/cntfilterdetaildisplaylabel.cpp \
  
 SYMBIAN_LIBS += \

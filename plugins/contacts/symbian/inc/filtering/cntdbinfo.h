@@ -57,6 +57,7 @@ class CntDbInfo : public QObject
 {
     Q_OBJECT
     
+public:
     enum TCommAddrType
             {
             EPhoneNumber,
