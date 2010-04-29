@@ -55,12 +55,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-namespace WinHelpers {
-	QString addIdPrefix(const QString& id);
-	QString stripIdPrefix(const QString& id);
-	static const char* idPrefix = "WIN_";
-};
-
 QTM_END_NAMESPACE
 
 #ifndef _WIN32_WCE

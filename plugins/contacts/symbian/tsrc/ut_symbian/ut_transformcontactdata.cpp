@@ -493,17 +493,17 @@ void TestCntTransformContactData::validateCntTransformPhonenumberL(TPtrC16 field
     QVERIFY(transformPhoneNumber->supportsDetail(QContactPhoneNumber::DefinitionName));
     QVERIFY(!(transformPhoneNumber->supportsDetail("WrongValue")));
     validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::FieldNumber,0);
-    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeLandline,0);
-    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeMobile,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeLandline,KUidContactFieldPhoneNumber.iUid);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeMobile,KUidContactFieldPhoneNumber.iUid);
     validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeFax,KUidContactFieldFax.iUid);
-    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypePager,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypePager,KUidContactFieldPhoneNumber.iUid);
     validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeVoice,0);
-    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeModem,0);
-    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeVideo,0);
-    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeCar,0);
-    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeBulletinBoardSystem,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeModem,KUidContactFieldPhoneNumber.iUid);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeVideo,KUidContactFieldPhoneNumber.iUid);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeCar,KUidContactFieldPhoneNumber.iUid);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeBulletinBoardSystem,KUidContactFieldPhoneNumber.iUid);
     validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeMessagingCapable,0);
-    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeAssistant,0);
+    validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeAssistant,KUidContactFieldPhoneNumber.iUid);
     validateGetIdForField(*transformPhoneNumber, QContactPhoneNumber::SubTypeDtmfMenu,KUidContactFieldDTMF.iUid);
     validateGetIdForField(*transformPhoneNumber, "WrongValue", 0);
     QVERIFY(transformPhoneNumber->supportsSubType(QContactPhoneNumber::FieldSubTypes));
@@ -1039,8 +1039,6 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldSIPID.iUid));
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldIMPP.iUid));
     QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldServiceProvider.iUid));
-    QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldPresence.iUid));
-    QVERIFY(transformOnlineAccount->supportsField(KUidContactFieldStatusMsg.iUid));
     QVERIFY(!(transformOnlineAccount->supportsField(0))); //Test for Wrong value
     QVERIFY(transformOnlineAccount->supportsDetail(QContactOnlineAccount::DefinitionName));
     QVERIFY(!(transformOnlineAccount->supportsDetail("WrongValue")));
@@ -1067,15 +1065,13 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     QContactOnlineAccount onlineAccount1;
     onlineAccount1.setAccountUri(sipDetail);
     onlineAccount1.setServiceProvider(providerDetail);
-    onlineAccount1.setPresence(presenceDetail);
-    onlineAccount1.setStatusMessage(statusDetail);
     
     onlineAccount1.setSubTypes(QContactOnlineAccount::SubTypeSipVoip);
     QList<CContactItemField *> fields = transformOnlineAccount->transformDetailL(onlineAccount1);
     if(sipDetail.isEmpty()) {
         QVERIFY(fields.count() == 0);
     } else {
-        QVERIFY(fields.count() == 4);
+        QVERIFY(fields.count() == 2);
         
         QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
         QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldSIPID));
@@ -1086,16 +1082,6 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
         QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
         QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldServiceProvider));
         QCOMPARE(fields.at(1)->TextStorage()->Text(), providerField );
-        
-        QVERIFY(fields.at(2)->StorageType() == KStorageTypeText);
-        QVERIFY(fields.at(2)->ContentType().ContainsFieldType(KUidContactFieldPresence));
-        //Presence information is encoded as single character value defined in enum
-        //1 for Available
-        QCOMPARE(fields.at(2)->TextStorage()->Text(), _L("1") );
-        
-        QVERIFY(fields.at(3)->StorageType() == KStorageTypeText);
-        QVERIFY(fields.at(3)->ContentType().ContainsFieldType(KUidContactFieldStatusMsg));
-        QCOMPARE(fields.at(3)->TextStorage()->Text(), statusField );
     }
 
     QContactOnlineAccount onlineAccount2;
@@ -1195,27 +1181,6 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     const QContactOnlineAccount* onlineAccountDetail5(static_cast<const QContactOnlineAccount*>(contactDetail));
     QCOMPARE(onlineAccountDetail5->serviceProvider(), providerDetail);
-    delete contactDetail;
-    contactDetail = 0;
-    delete newField;
-    newField = 0;
-    
-    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPresence);
-    // Set the presence available i.e. 1
-    newField->TextStorage()->SetTextL(_L("1"));
-    contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
-    const QContactOnlineAccount* onlineAccountDetail6(static_cast<const QContactOnlineAccount*>(contactDetail));
-    QCOMPARE(onlineAccountDetail6->presence(), QString::fromAscii("Available"));
-    delete contactDetail;
-    contactDetail = 0;
-    delete newField;
-    newField = 0;
-    
-    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldStatusMsg);
-    newField->TextStorage()->SetTextL(statusField);
-    contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
-    const QContactOnlineAccount* onlineAccountDetail7(static_cast<const QContactOnlineAccount*>(contactDetail));
-    QCOMPARE(onlineAccountDetail7->statusMessage(), statusDetail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;

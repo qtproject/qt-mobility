@@ -13,10 +13,6 @@ CONFIG(debug, debug|release) {
 
 include(staticconfig.pri)
 
-# use only $$QT_MOBILITY_BUILD_TREE. If you add an subfolder it will create a relative path!!!
-# $$QT_MOBILITY_BUILD_TREE/src/global will become ../global
-INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE
-
 symbian:contains(symbian_symbols_unfrozen,1) {
     #see configure.bat for details
     MMP_RULES+="EXPORTUNFROZEN"
@@ -173,3 +169,4 @@ LIBS += -L$$OUTPUT_DIR/lib
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
+!symbian:!wince*:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PREFIX, \\\\, /)\\\"

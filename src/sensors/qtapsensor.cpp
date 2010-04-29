@@ -50,7 +50,6 @@ IMPLEMENT_READING(QTapReading)
     \class QTapReading
     \ingroup sensors_reading
 
-    \preliminary
     \brief The QTapReading class represents one reading from the
            tap sensor.
 
@@ -132,7 +131,6 @@ void QTapReading::setDoubleTap(bool doubleTap)
     \class QTapFilter
     \ingroup sensors_filter
 
-    \preliminary
     \brief The QTapFilter class is a convenience wrapper around QSensorFilter.
 
     The only difference is that the filter() method features a pointer to QTapReading
@@ -153,7 +151,6 @@ const char *QTapSensor::type("QTapSensor");
     \class QTapSensor
     \ingroup sensors_type
 
-    \preliminary
     \brief The QTapSensor class is a convenience wrapper around QSensor.
 
     The only behavioural difference is that this class sets the type properly.

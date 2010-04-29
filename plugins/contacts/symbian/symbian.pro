@@ -134,7 +134,8 @@ symbian: {
         -lfbscli \
         -limageconversion \
         -lbitmaptransforms \
-        -lbafl
+        -lbafl \
+        -ltzclient
 
     target.path = /sys/bin
     INSTALLS += target
@@ -148,9 +149,9 @@ symbian: {
     }
     
     symbianplugin.sources = $${TARGET}.dll
-    symbianplugin.path = /resource/qt/plugins/contacts
+    symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
 }
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS+=target

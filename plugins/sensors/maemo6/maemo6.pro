@@ -4,6 +4,8 @@ include(version.pri)
 include(maemo6.pri)
 include(../../../common.pri)
 
+PLUGIN_TYPE = sensors
+
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtsensors_maemo6)
@@ -15,6 +17,6 @@ CONFIG += link_pkgconfig
 PKGCONFIG += sensord
 
 DESTDIR = $$OUTPUT_DIR/bin/examples/sensors
-target.path = $$SOURCE_DIR/plugins/sensors
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS += target
 
