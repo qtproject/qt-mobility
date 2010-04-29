@@ -978,7 +978,7 @@ QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoLinuxCommonPrivate::get
     XRRScreenConfiguration *sc;
     Rotation cur_rotation;
     sc = XRRGetScreenInfo(QX11Info::display(), RootWindow(QX11Info::display(), screen));
-    if ( !sc ) {
+    if (!sc) {
         return orientation;
     }
     XRRConfigRotations(sc, &cur_rotation);
@@ -1014,8 +1014,8 @@ int QSystemDisplayInfoLinuxCommonPrivate::getDPIWidth(int screen)
 {
     int dpi=0;
     if(screen < 16 && screen > -1) {
-
-        }
+        dpi = QDesktopWidget().screenGeometry().width() / (physicalWidth(0) / 25.4);
+    }
     return dpi;
 }
 
@@ -1023,22 +1023,42 @@ int QSystemDisplayInfoLinuxCommonPrivate::getDPIHeight(int screen)
 {
     int dpi=0;
     if(screen < 16 && screen > -1) {
-
+        dpi = QDesktopWidget().screenGeometry().height() / (physicalHeight(0) / 25.4);
     }
     return dpi;
 }
 
-
 int QSystemDisplayInfoLinuxCommonPrivate::physicalHeight(int screen)
 {
     int height=0;
+    XRRScreenResources *sr;
 
+    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    for (int i = 0; i < sr->noutput; ++i) {
+        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+        if (output->crtc) {
+           height = output->mm_height;
+        }
+        XRRFreeOutputInfo(output);
+    }
+    XRRFreeScreenResources(sr);
     return height;
 }
 
 int QSystemDisplayInfoLinuxCommonPrivate::physicalWidth(int screen)
 {
     int width=0;
+    XRRScreenResources *sr;
+
+    sr = XRRGetScreenResources(QX11Info::display(), RootWindow(QX11Info::display(), screen));
+    for (int i = 0; i < sr->noutput; ++i) {
+        XRROutputInfo *output = XRRGetOutputInfo(QX11Info::display(),sr,sr->outputs[i]);
+        if (output->crtc) {
+           width = output->mm_width;
+        }
+        XRRFreeOutputInfo(output);
+    }
+    XRRFreeScreenResources(sr);
 
     return width;
 }

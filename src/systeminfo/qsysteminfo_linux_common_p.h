@@ -59,6 +59,12 @@
 #include <QHash>
 
 #include "qsysteminfo.h"
+#include "qsystemdeviceinfo.h"
+#include "qsystemdisplayinfo.h"
+#include "qsystemnetworkinfo.h"
+#include "qsystemscreensaver.h"
+#include "qsystemstorageinfo.h"
+
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
 #include <qhalservice_linux_p.h>
