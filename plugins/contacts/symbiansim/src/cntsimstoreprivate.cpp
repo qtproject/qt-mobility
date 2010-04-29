@@ -726,7 +726,7 @@ void CntSimStorePrivate::updateStoreInfoL()
     m_storeInfo.m_totalEntries = info.iTotalEntries;
     m_storeInfo.m_usedEntries  = info.iUsedEntries;
     
-#if SYMBIANSIM_BACKEND_TEST_EXTRADETAILS
+#ifdef SYMBIANSIM_BACKEND_TEST_EXTRADETAILS
     // Check if store supports the extra details
     //
     // NOTE: 
