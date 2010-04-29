@@ -149,7 +149,7 @@ symbian: {
     }
     
     symbianplugin.sources = $${TARGET}.dll
-    symbianplugin.path = $$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
+    symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
 }
 
