@@ -41,7 +41,6 @@
 #include <QObject>
 #include <QHash>
 #include <qcontactfilter.h>
-#include <qcontactmanager.h>
 #include <cntdb.h>
 #include "cntsymbianengine.h"
 
@@ -80,15 +79,10 @@ private:
     void createContact_8();
     void createContact_9();
 private slots:  // Test cases
-    void testInvalidFilter();
     void testContactDetailFilter();
-    void testContactDetailRangeFilter();
-    void testChangeLogFilter();
-    void testActionFilter();
     void testRelationshipFilter();
     void testIntersectionFilter();
     void testUnionFilter();
-    void testLocalIdFilter();
     void testDefaultFilter();
    	void testDefaultFilterWithPredictiveSearch();
     void testDefaultFilterWithPredictiveSearch2();
@@ -111,7 +105,7 @@ private:
     void  testContactDetailFilter_1();
     void  testContactDetailFilter_2();
 private:
-    QContactManager                             *mCntMng;
     QHash<QContactFilter::FilterType, TFilter>  *mFilters;
     CContactDatabase *m_database;
+    CntSymbianEngine *m_engine;
 };

@@ -51,10 +51,6 @@
 #include "cntfilterdefault.h"
 #include "cntfilterunion.h"
 #include "cntfilterintersection.h"
-#include "cntfilteraction.h"
-#include "cntfilterlocalid.h"
-#include "cntfilterinvalid.h"
-#include "cntfilterchangelog.h"
 #include "cntfilterrelationship.h"
 
 //#define WRITE_LOGS
@@ -79,7 +75,11 @@ void WriteTestPart(const TDesC& s);
 
 void TestFiltering::initTestCase()
 {
-    mCntMng = new QContactManager("symbian");
+    QContactManager::Error err;
+    
+    //create manager
+    m_engine = new CntSymbianEngine(QMap<QString, QString>(), &err);
+        
     //open symbian database
     m_database = 0;
         TRAPD(error, m_database = CContactDatabase::OpenL());
@@ -87,9 +87,11 @@ void TestFiltering::initTestCase()
     mFilters = new QHash<QContactFilter::FilterType, TFilter>;
 
     // Remove all contacts from the database
-    QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
-    mCntMng->removeContacts(cnt_ids, 0);
-    cnt_ids = mCntMng->contactIds();
+    QList<QContactLocalId> contacts = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
+    QMap<int, QContactManager::Error> errorMap;
+    m_engine->removeContacts(contacts, &errorMap, &err);
+        
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(), QList<QContactSortOrder>(), &err);
     QVERIFY(0 == cnt_ids.count());
     parseFilters();
     createContacts();
@@ -97,7 +99,7 @@ void TestFiltering::initTestCase()
 
 void TestFiltering::cleanupTestCase()
 {
-    delete mCntMng;
+    delete m_engine;
     delete mFilters;
 
 }
@@ -245,8 +247,8 @@ void TestFiltering::createContacts()
     //QContact empty;
     //mCntMng->saveContact(&empty);
     
-    QList<QContactLocalId> cnt_ids = mCntMng->contactIds();
-    cnt_ids = mCntMng->contactIds();
+    QContactManager::Error err;
+    QList<QContactLocalId> cnt_ids = m_engine->contactIds(QContactFilter(),QList<QContactSortOrder>(), &err);
     int j = cnt_ids.count();
     // 7contacts created in code, so check if all 5 were created
     QVERIFY(9 == j);
@@ -275,7 +277,9 @@ void TestFiltering::createContact_1()
     QContactEmailAddress email;
     email.setEmailAddress("ste.Fed@nokia.com");
     phonecontact.saveDetail(&email);
-    QVERIFY(mCntMng->saveContact(&phonecontact));
+    
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
    
 
 }
@@ -304,7 +308,8 @@ void TestFiltering::createContact_2()
     email.setEmailAddress("Len.Jo@nokia.com");
     phonecontact.saveDetail(&email);
         
-    QVERIFY(mCntMng->saveContact(&phonecontact));
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
     
     
 
@@ -338,7 +343,8 @@ void TestFiltering::createContact_3()
     accounturi.setSubTypes( QContactOnlineAccount::SubTypeSip );
     phonecontact.saveDetail(&accounturi);
     
-    QVERIFY(mCntMng->saveContact(&phonecontact));
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
     
 
 
@@ -372,7 +378,8 @@ void TestFiltering::createContact_4()
     accounturi.setSubTypes( QContactOnlineAccount::SubTypeSipVoip );
     phonecontact.saveDetail(&accounturi);
     
-    QVERIFY(mCntMng->saveContact(&phonecontact));
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
     
 }
 void TestFiltering::createContact_5()
@@ -398,10 +405,8 @@ void TestFiltering::createContact_5()
     email.setEmailAddress("dan.susa@nokia.com");
     phonecontact.saveDetail(&email);
     
-    QVERIFY(mCntMng->saveContact(&phonecontact));
-    
-
-
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
 }
 
 void TestFiltering::createContact_6()
@@ -427,7 +432,8 @@ void TestFiltering::createContact_6()
     email.setEmailAddress("michael.douglas@mga.com");
     phonecontact.saveDetail(&email);
     
-    QVERIFY(mCntMng->saveContact(&phonecontact));
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
 }
 
 void TestFiltering::createContact_7()
@@ -453,7 +459,8 @@ void TestFiltering::createContact_7()
     email.setEmailAddress("kirk.douglas@mga.com");
     phonecontact.saveDetail(&email);
     
-    QVERIFY(mCntMng->saveContact(&phonecontact));
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
 }
 
 void TestFiltering::createContact_8()
@@ -479,7 +486,8 @@ void TestFiltering::createContact_8()
     email.setEmailAddress("aulis.kekkonen@ak.org");
     phonecontact.saveDetail(&email);
     
-    QVERIFY(mCntMng->saveContact(&phonecontact));
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
 }
 
 void TestFiltering::createContact_9()
@@ -506,7 +514,8 @@ void TestFiltering::createContact_9()
     email.setEmailAddress("jack.kekkonen@ukk.com");
     phonecontact.saveDetail(&email);
     
-    QVERIFY(mCntMng->saveContact(&phonecontact));
+    QContactManager::Error err;
+    QVERIFY(m_engine->saveContact(&phonecontact, &err));
     TEST_PASSED_LOG("createContact_9");
 }
 QContactFilter::MatchFlags TestFiltering::getMatchFlag(QString& inputflag)
@@ -530,20 +539,6 @@ QContactFilter::MatchFlags TestFiltering::getMatchFlag(QString& inputflag)
         return QContactFilter::MatchPhoneNumber ;
     
     }
-
-void TestFiltering::testInvalidFilter()
-{
-    QList<QContactLocalId> cnt_ids;
-    QContactFilter filter;
-    QContactManager::Error error;
-
-    QList<QContactSortOrder> sortOrder;
-    
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
-
-    QVERIFY(error == QContactManager::NoError);
-}
 
 void TestFiltering::testContactDetailFilter()
 {
@@ -573,9 +568,8 @@ void TestFiltering::testContactDetailFilter_1()
     for(int i=0; i< cnt; i++) {
         qDebug() << fs[i].name;
         const QContactDetailFilter cdf(fs[i].filter);
-        cnt_ids = mCntMng->contactIds(cdf, sortOrder);
-        error = mCntMng->error();
-        QVERIFY(error == QContactManager::NoError);
+        cnt_ids = m_engine->contactIds(cdf, sortOrder, &error);
+        QVERIFY(fs[i].error == error);
         
         // check counts 
         int seachedcontactcount = cnt_ids.count();
@@ -586,7 +580,7 @@ void TestFiltering::testContactDetailFilter_1()
         QString field = cdf.detailFieldName();
         QString defname = cdf.detailDefinitionName();
         for(int j=0; j<seachedcontactcount; j++) {
-            QContact sc = mCntMng->contact(cnt_ids[j]);
+            QContact sc = m_engine->contact(cnt_ids[j], QContactFetchHint(), &error);
             QContactDetail scDetail = sc.detail(defname);
             QString scDetailValue = scDetail.value(field);
             QVERIFY(scDetail.definitionName() == defname);
@@ -619,8 +613,7 @@ void TestFiltering::testContactDetailFilter_2()
     cdf1.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::SubTypeSip);
     cdf1.setValue("sip");
     cdf1.setMatchFlags(QContactFilter::MatchStartsWith);
-    cnt_ids = mCntMng->contactIds(cdf1, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(cdf1, sortOrder, &error);
     // check counts 
     int seachedcontactcount = cnt_ids.count();
     int expectedCount =1;  
@@ -630,8 +623,7 @@ void TestFiltering::testContactDetailFilter_2()
     cdf2.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::SubTypeSipVoip);
     cdf2.setValue("voip");
     cdf2.setMatchFlags(QContactFilter::MatchStartsWith);
-    cnt_ids = mCntMng->contactIds(cdf2, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(cdf2, sortOrder, &error);
     // check counts 
     seachedcontactcount = cnt_ids.count();
     expectedCount =1;  
@@ -642,8 +634,7 @@ void TestFiltering::testContactDetailFilter_2()
     cdf3.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
     cdf3.setValue("aba");
     cdf3.setMatchFlags(QContactFilter::MatchFixedString);
-    cnt_ids = mCntMng->contactIds(cdf3, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(cdf3, sortOrder, &error);
     // check counts 
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
@@ -654,8 +645,7 @@ void TestFiltering::testContactDetailFilter_2()
     cdf4.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
     cdf4.setValue("aba");
     cdf4.setMatchFlags(QContactFilter::MatchExactly);
-    cnt_ids = mCntMng->contactIds(cdf4, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(cdf4, sortOrder, &error);
     // check counts 
     seachedcontactcount = cnt_ids.count();
     expectedCount =0;  
@@ -663,56 +653,18 @@ void TestFiltering::testContactDetailFilter_2()
     QVERIFY(error == QContactManager::NotSupportedError);
 }   
 
-void TestFiltering::testContactDetailRangeFilter()
-{
-    QList<QContactLocalId> cnt_ids;
-    QContactDetailRangeFilter filter;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
-    
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
-
-    QVERIFY(error == QContactManager::NotSupportedError);
-}
-
-void TestFiltering::testChangeLogFilter()
-{
-    QList<QContactLocalId> cnt_ids;
-    QContactChangeLogFilter filter;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
-    
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
-
-    QVERIFY(error == QContactManager::NotSupportedError);
-}
-
-void TestFiltering::testActionFilter()
-{
-    QList<QContactLocalId> cnt_ids;
-    QContactActionFilter filter;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
-    
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
-
-    QVERIFY(error == QContactManager::NotSupportedError);
-}
-
 void TestFiltering::testRelationshipFilter()
 {
     // create a group contact
+    QContactManager::Error err;
     QContact groupContact;
     groupContact.setType(QContactType::TypeGroup);
-    mCntMng->saveContact(&groupContact);
+    m_engine->saveContact(&groupContact, &err);
 
     // create a local contact
     QContact aContact;
     aContact.setType(QContactType::TypeContact);
-    mCntMng->saveContact(&aContact);
+    m_engine->saveContact(&aContact, &err);
 
     // create a relationship
     QContactRelationship relationship;
@@ -721,17 +673,19 @@ void TestFiltering::testRelationshipFilter()
     relationship.setSecond(aContact.id());
     
     // save relationship
-    mCntMng->saveRelationship(&relationship);
+    m_engine->saveRelationship(&relationship, &err);
     
+    QList<QContactLocalId> cnt_ids;
+    QContactManager::Error error;
+    QList<QContactSortOrder> sortOrder;
     
     QContactRelationshipFilter groupFilter;                   
     groupFilter.setRelationshipType(QContactRelationship::HasMember);
     groupFilter.setRelatedContactId(groupContact.id());                
     groupFilter.setRelatedContactRole(QContactRelationship::First);
 
-    QList<QContactSortOrder> sortOrder = QList<QContactSortOrder>();
-    QList<QContactLocalId> cnt_ids = mCntMng->contactIds(groupFilter, sortOrder);
-    QContactManager::Error error = mCntMng->error();
+    
+    cnt_ids = m_engine->contactIds(groupFilter, sortOrder, &error);
     
     // check counts 
     int seachedcontactcount = cnt_ids.count();
@@ -779,8 +733,7 @@ void TestFiltering::testIntersectionFilter_1()
     sortOrder.append(sortOrderLastName);
 
     //Search for contacts 
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
 
     // Now check the results 
     int seachedcontactcount = cnt_ids.count();
@@ -790,7 +743,9 @@ void TestFiltering::testIntersectionFilter_1()
     
     for(int j=0; j<seachedcontactcount; j++) 
     {
-        QContact sc = mCntMng->contact(cnt_ids[j]);
+        QContactManager::Error err;
+        QContact sc = m_engine->contact(cnt_ids[j], QContactFetchHint(), &err);
+        
         //Get the first name
         QContactName name = sc.detail(QContactName::DefinitionName);
         QString firstname = name.firstName();
@@ -847,8 +802,7 @@ void TestFiltering::testIntersectionFilter_2()
     QContactManager::Error error;
 
     //Search for contacts 
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
     
     // Now check the results 
     int seachedcontactcount = cnt_ids.count();
@@ -858,7 +812,8 @@ void TestFiltering::testIntersectionFilter_2()
     
     for(int j=0; j<seachedcontactcount; j++) 
     {
-        QContact sc = mCntMng->contact(cnt_ids[j]);
+        QContactManager::Error err;
+        QContact sc = m_engine->contact(cnt_ids[j], QContactFetchHint(), &err);
         //Get the first name
         QContactName name = sc.detail(QContactName::DefinitionName);
         QString firstname = name.firstName();
@@ -898,8 +853,7 @@ void TestFiltering::testIntersectionFilter_3()
     sortOrder.append(sortOrderLastName);
 
     //Search for contacts 
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
 
     // Now check the results 
     int seachedcontactcount = cnt_ids.count();
@@ -909,7 +863,7 @@ void TestFiltering::testIntersectionFilter_3()
     
     for(int j=0; j<seachedcontactcount; j++) 
     {
-        QContact sc = mCntMng->contact(cnt_ids[j]);
+        QContact sc = m_engine->contact(cnt_ids[j],QContactFetchHint(),&error);
         //Get the first name
         QContactName name = sc.detail(QContactName::DefinitionName);
         QString firstname = name.firstName();
@@ -962,8 +916,7 @@ void TestFiltering::testUnionFilter_1()
     sortOrder.append(sortOrderLastName);
 
     //Search for contacts 
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
     
     // Now check the results 
     int seachedcontactcount = cnt_ids.count();
@@ -973,7 +926,8 @@ void TestFiltering::testUnionFilter_1()
         
     for(int j=0; j<seachedcontactcount; j++) 
     {
-        QContact sc = mCntMng->contact(cnt_ids[j]);
+        QContactManager::Error err;
+        QContact sc = m_engine->contact(cnt_ids[j], QContactFetchHint(), &err);
         //Get the first name
         QContactName name = sc.detail(QContactName::DefinitionName);
         QString firstname = name.firstName();
@@ -1009,8 +963,7 @@ void TestFiltering::testUnionFilter_2()
     QContactManager::Error error;
 
     //Search for contacts 
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
     
     // Now check the results 
     int seachedcontactcount = cnt_ids.count();
@@ -1020,7 +973,8 @@ void TestFiltering::testUnionFilter_2()
         
     for(int j=0; j<seachedcontactcount; j++) 
     {
-        QContact sc = mCntMng->contact(cnt_ids[j]);
+        QContactManager::Error err;
+        QContact sc = m_engine->contact(cnt_ids[j], QContactFetchHint(), &err);
         //Get the first name
         QContactName name = sc.detail(QContactName::DefinitionName);
         QString firstname = name.firstName();
@@ -1057,8 +1011,7 @@ void TestFiltering::testUnionFilter_3()
     QContactManager::Error error;
 
     //Search for contacts 
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
     
     // Now check the results 
     int seachedcontactcount = cnt_ids.count();
@@ -1068,7 +1021,7 @@ void TestFiltering::testUnionFilter_3()
         
     for(int j=0; j<seachedcontactcount; j++) 
     {
-        QContact sc = mCntMng->contact(cnt_ids[j]);
+        QContact sc = m_engine->contact(cnt_ids[j],QContactFetchHint(),&error);
         //Get the first name
         QContactName name = sc.detail(QContactName::DefinitionName);
         QString firstname = name.firstName();
@@ -1081,19 +1034,6 @@ void TestFiltering::testUnionFilter_3()
     }
 }
 
-void TestFiltering::testLocalIdFilter()
-{
-    QList<QContactLocalId> cnt_ids;
-    QContactLocalIdFilter filter;
-    QContactManager::Error error;
-    QList<QContactSortOrder> sortOrder;
-
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
-
-    QVERIFY(error == QContactManager::NotSupportedError);
-}
-
 void TestFiltering::testDefaultFilter()
 {
     QList<QContactLocalId> cnt_ids;
@@ -1101,8 +1041,7 @@ void TestFiltering::testDefaultFilter()
     QContactManager::Error error;
     QList<QContactSortOrder> sortOrder;
 
-    cnt_ids = mCntMng->contactIds(filter, sortOrder);
-    error = mCntMng->error();
+    cnt_ids = m_engine->contactIds(filter, sortOrder, &error);
 
     QVERIFY(error == QContactManager::NoError);
 }
@@ -1116,18 +1055,19 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch()
     testString << "Micheal" << "6079949400404";
     QString pattern = "6";
     bool isPredSearch = false;
+    QContactManager::Error err;
     
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds( df );
+    cnt_ids = m_engine->contactIds(df, QList<QContactSortOrder>(), &err);
 
     for( int i=0;i<cnt_ids.count();i++ ) {
             QContactLocalId cid = cnt_ids.at( i );    
-            QContact contact = mCntMng->contact( cid );
+            QContact contact = m_engine->contact( cid,  QContactFetchHint(), &err );
             QContactName contactName = contact.detail( QContactName::DefinitionName );
-            testString.removeAll( contactName.value( QContactName::FieldFirst ) );
-            testString.removeAll( contactName.value( QContactName::FieldLast ) );
+            testString.removeAll( contactName.value( QContactName::FieldFirstName ) );
+            testString.removeAll( contactName.value( QContactName::FieldLastName ) );
             }
     QVERIFY( testString.count() == 0 );
     TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch");
@@ -1140,6 +1080,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch2()
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
     QList<QString> testString;
+    QContactManager::Error err;
 
     bool isPredSearch = false;
     testString << "Frady" << "6079949400404";  
@@ -1148,14 +1089,14 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch2()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds( df );
+    cnt_ids = m_engine->contactIds(df, QList<QContactSortOrder>(), &err);
 
     for( int i=0;i<cnt_ids.count();i++ ) {
                 QContactLocalId cid = cnt_ids.at( i );    
-                QContact contact = mCntMng->contact( cid );
+                QContact contact = m_engine->contact( cid, QContactFetchHint(), &err );
                 QContactName contactName = contact.detail( QContactName::DefinitionName );
-                testString.removeAll( contactName.value( QContactName::FieldFirst ) );
-                testString.removeAll( contactName.value( QContactName::FieldLast ) );
+                testString.removeAll( contactName.value( QContactName::FieldFirstName ) );
+                testString.removeAll( contactName.value( QContactName::FieldLastName ) );
                 } 
    QVERIFY( testString.count() == 0 );
    TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch2");
@@ -1167,6 +1108,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch3()
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
     QList<QString> testString;
+    QContactManager::Error err;
 
     bool isPredSearch = false;
     testString << "Fedrernn"; 
@@ -1175,14 +1117,14 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch3()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds( df );
+    cnt_ids = m_engine->contactIds(df, QList<QContactSortOrder>(), &err);
 
     for( int i=0;i<cnt_ids.count();i++ ) {
                 QContactLocalId cid = cnt_ids.at( i );    
-                QContact contact = mCntMng->contact( cid );
+                QContact contact = m_engine->contact( cid, QContactFetchHint(), &err );
                 QContactName contactName = contact.detail( QContactName::DefinitionName );
-                testString.removeAll( contactName.value( QContactName::FieldFirst ) );
-                testString.removeAll( contactName.value( QContactName::FieldLast ) );
+                testString.removeAll( contactName.value( QContactName::FieldFirstName ) );
+                testString.removeAll( contactName.value( QContactName::FieldLastName ) );
                 } 
     QVERIFY( testString.count() == 0 );
     TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch3");
@@ -1194,6 +1136,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch4()
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
     QList<QString> testString;
+    QContactManager::Error err;
 
     bool isPredSearch = false;
     testString << "Johnn" ; 
@@ -1202,14 +1145,14 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch4()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds( df );
+    cnt_ids = m_engine->contactIds(df, QList<QContactSortOrder>(), &err);
 
     for( int i=0;i<cnt_ids.count();i++ ) {
                     QContactLocalId cid = cnt_ids.at( i );    
-                    QContact contact = mCntMng->contact( cid );
+                    QContact contact = m_engine->contact( cid, QContactFetchHint(), &err );
                     QContactName contactName = contact.detail( QContactName::DefinitionName );
-                    testString.removeAll( contactName.value( QContactName::FieldFirst ) );
-                    testString.removeAll( contactName.value( QContactName::FieldLast ) );
+                    testString.removeAll( contactName.value( QContactName::FieldFirstName ) );
+                    testString.removeAll( contactName.value( QContactName::FieldLastName ) );
                     } 
     QVERIFY( testString.count() == 0 );
     TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch4");
@@ -1221,6 +1164,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch5()
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
     QList<QString> testString;
+    QContactManager::Error err;
 
     bool isPredSearch = false;
     QString pattern = "78";
@@ -1229,14 +1173,14 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch5()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds( df );
+    cnt_ids = m_engine->contactIds(df, QList<QContactSortOrder>(), &err);
 
     for( int i=0;i<cnt_ids.count();i++ ) {
                     QContactLocalId cid = cnt_ids.at( i );    
-                    QContact contact = mCntMng->contact( cid );
+                    QContact contact = m_engine->contact( cid, QContactFetchHint(), &err );
                     QContactName contactName = contact.detail( QContactName::DefinitionName );
-                    testString.removeAll( contactName.value( QContactName::FieldFirst ) );
-                    testString.removeAll( contactName.value( QContactName::FieldLast ) );
+                    testString.removeAll( contactName.value( QContactName::FieldFirstName ) );
+                    testString.removeAll( contactName.value( QContactName::FieldLastName ) );
                     } 
     QVERIFY( testString.count() == 0 );
     TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch5");
@@ -1248,6 +1192,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch6()
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
     QList<QString> testString;
+    QContactManager::Error err;
 
     bool isPredSearch = false;
     QString pattern = "502";
@@ -1256,14 +1201,14 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch6()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds( df );
+    cnt_ids = m_engine->contactIds(df, QList<QContactSortOrder>(), &err);
 
     for( int i=0;i<cnt_ids.count();i++ ) {
             QContactLocalId cid = cnt_ids.at( i );    
-            QContact contact = mCntMng->contact( cid );
+            QContact contact = m_engine->contact( cid, QContactFetchHint(), &err );
             QContactName contactName = contact.detail( QContactName::DefinitionName );
-            testString.removeAll( contactName.value( QContactName::FieldFirst ) );
-            testString.removeAll( contactName.value( QContactName::FieldLast ) );
+            testString.removeAll( contactName.value( QContactName::FieldFirstName ) );
+            testString.removeAll( contactName.value( QContactName::FieldLastName ) );
             }
     QVERIFY( testString.count() == 0 );
     TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch6");
@@ -1275,6 +1220,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch7()
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
     QList<QString> testString;
+    QContactManager::Error err;
 
     bool isPredSearch = false;
     QString pattern = "000";
@@ -1283,7 +1229,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch7()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds( df );
+    cnt_ids = m_engine->contactIds(df, QList<QContactSortOrder>(), &err);
     
     QString count;
     QString contact_id;
@@ -1295,10 +1241,10 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch7()
             QContactLocalId cid = cnt_ids.at( i );
             contact_id.setNum(cid);
             LOG2(pattern,contact_id);
-            QContact contact = mCntMng->contact( cid );
+            QContact contact = m_engine->contact( cid, QContactFetchHint(), &err );
             QContactName contactName = contact.detail( QContactName::DefinitionName );
-            testString.removeAll( contactName.value( QContactName::FieldFirst ) );
-            testString.removeAll( contactName.value( QContactName::FieldLast ) );
+            testString.removeAll( contactName.value( QContactName::FieldFirstName ) );
+            testString.removeAll( contactName.value( QContactName::FieldLastName ) );
             }
     QVERIFY( testString.count() == 0 );
     TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch7");
@@ -1310,6 +1256,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch8()
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
     QList<QString> testString;
+    QContactManager::Error err;
 
     bool isPredSearch = false;
     QString pattern = "99999099999";
@@ -1317,7 +1264,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch8()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds( df );
+    cnt_ids = m_engine->contactIds(df, QList<QContactSortOrder>(), &err);
 
     QVERIFY( cnt_ids.count() == 0 );
     TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch8");
@@ -1329,6 +1276,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch9()
     QList<QContactLocalId> cnt_ids;
     QContactDetailFilter df;
     QList<QString> testString;
+    QContactManager::Error err;
 
     bool isPredSearch = false;
     QString pattern = "12+22";
@@ -1337,53 +1285,56 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch9()
     df.setDetailDefinitionName(QContactName::DefinitionName);
     df.setMatchFlags( QContactFilter::MatchKeypadCollation );
     df.setValue( pattern );
-    cnt_ids = mCntMng->contactIds( df );
+    cnt_ids = m_engine->contactIds(df, QList<QContactSortOrder>(), &err);
 
     QVERIFY( testString.count() == 0 );
     TEST_PASSED_LOG("testDefaultFilterWithPredictiveSearch9");
 }
 void TestFiltering::testFilterSupported()
     {
+    CntSymbianSrvConnection srvConnection;
+    CntDbInfo dbInfo;
     QContactDetailFilter f1;
     f1.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
     f1.setValue("Mic");
     f1.setMatchFlags(QContactFilter::MatchStartsWith);
-    CntSymbianSrvConnection srvConnection(NULL);
-    CntDbInfo dbInfo;
+    bool flag(false);
       
+    //Supported cases
     CntFilterDefault filterDefault(*m_database,srvConnection,dbInfo);
-    bool flag = filterDefault.filterSupported(f1);
+    flag = filterDefault.filterSupported(QContactFilter());
+    QVERIFY(flag ==true);
+    
+    CntFilterDetail filterDetail(*m_database,srvConnection,dbInfo);
+    flag = filterDetail.filterSupported(QContactDetailFilter());
+    QVERIFY(flag ==true);
+        
+    CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
+    QContactRelationshipFilter relationFilter;                   
+    relationFilter.setRelationshipType(QContactRelationship::HasMember);
+    flag = filterRlationship.filterSupported(relationFilter);
+    QVERIFY(flag ==true);
+       
+    CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
+    flag = filterUnion.filterSupported(QContactUnionFilter());
+    QVERIFY(flag ==true);   
+               
+    CntFilterIntersection filterIntersection(*m_database,srvConnection,dbInfo);
+    flag = filterIntersection.filterSupported(QContactIntersectionFilter());
+    QVERIFY(flag ==true);
+        
+    //Not supported cases
+    flag = filterDefault.filterSupported(f1);
     QVERIFY(flag ==false);
         
-    CntFilterChangeLog filterChangeLog(*m_database,srvConnection,dbInfo);
-    flag = filterChangeLog.filterSupported(f1);
-    QVERIFY(flag ==false);   
-    
-    CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
     flag = filterRlationship.filterSupported(f1);
     QVERIFY(flag ==false);   
        
-
-    CntFilterLocalId filterLocalId(*m_database,srvConnection,dbInfo);
-    flag = filterLocalId.filterSupported(f1);
-    QVERIFY(flag ==false);   
-        
-    CntFilterInvalid filterInvalid(*m_database,srvConnection,dbInfo);
-    flag = filterInvalid.filterSupported(f1);
-    QVERIFY(flag ==false);   
-            
-    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
-    flag = filterAction.filterSupported(f1);
-    QVERIFY(flag ==false);   
-               
-    CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
     flag = filterUnion.filterSupported(f1);
     QVERIFY(flag ==false);   
                
-    CntFilterIntersection filterIntersection(*m_database,srvConnection,dbInfo);
     flag = filterIntersection.filterSupported(f1);
-    QVERIFY(flag ==false);   
-    
+    QVERIFY(flag ==false);
     }
 
 void TestFiltering::testCreateSelectQuery()
@@ -1392,12 +1343,15 @@ void TestFiltering::testCreateSelectQuery()
     f1.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
     f1.setValue("Mic");
     f1.setMatchFlags(QContactFilter::MatchStartsWith);
-    CntSymbianSrvConnection srvConnection(NULL);
+    CntSymbianSrvConnection srvConnection;
     CntDbInfo dbInfo;
     QString sqlquery;
     QContactManager::Error error;
+    
+    //Not supported cases
+    error = QContactManager::NoError;
     CntFilterDetail filterDtl(*m_database,srvConnection,dbInfo);
-    filterDtl.createSelectQuery(f1,sqlquery,&error);
+    filterDtl.createSelectQuery(QContactFilter(),sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
     
     CntFilterDefault filterDefault(*m_database,srvConnection,dbInfo);
@@ -1405,32 +1359,11 @@ void TestFiltering::testCreateSelectQuery()
     filterDefault.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError);
         
-    CntFilterChangeLog filterChangeLog(*m_database,srvConnection,dbInfo);
-    error = QContactManager::NoError;
-    filterChangeLog.createSelectQuery(f1,sqlquery,&error);
-    QVERIFY(error == QContactManager::NotSupportedError);
-    
     CntFilterRelationship filterRlationship(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
     filterRlationship.createSelectQuery(f1,sqlquery,&error);
     QVERIFY(error == QContactManager::NotSupportedError); 
        
-
-    CntFilterLocalId filterLocalId(*m_database,srvConnection,dbInfo);
-    error = QContactManager::NoError;
-    filterLocalId.createSelectQuery(f1,sqlquery,&error);
-    QVERIFY(error == QContactManager::NotSupportedError);
-        
-    CntFilterInvalid filterInvalid(*m_database,srvConnection,dbInfo);
-    error = QContactManager::NoError;
-    filterInvalid.createSelectQuery(f1,sqlquery,&error);
-    QVERIFY(error == QContactManager::NotSupportedError);
-            
-    CntFilterAction filterAction(*m_database,srvConnection,dbInfo);
-    error = QContactManager::NoError;
-    filterAction.createSelectQuery(f1,sqlquery,&error);
-    QVERIFY(error == QContactManager::NotSupportedError);
-               
     CntFilterUnion filterUnion(*m_database,srvConnection,dbInfo);
     error = QContactManager::NoError;
     filterUnion.createSelectQuery(f1,sqlquery,&error);
