@@ -39,50 +39,52 @@
 **
 ****************************************************************************/
 
-#include "qcontactactionfactory.h"
+#ifndef _SYMBIANHELPERS_H_
+#define _SYMBIANHELPERS_H_
+
+#include <QtCore>
+#include "qmessage.h"
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-  \class QContactActionFactory
-  \brief The QContactActionFactory class provides an interface for clients
-  to retrieve instances of action implementations
-  \ingroup contacts-actions
- */
+class QMessageId;
+class QMessageAccountId;
+class QMessageFolderId;
 
-QContactActionFactory::~QContactActionFactory()
-{
+namespace SymbianHelpers {
+
+    enum EngineType {
+        EngineTypeMTM = 0,
+        EngineTypeFreestyle,
+        EngineDefault
+    };
+
+    EngineType idType(const QString& id);
+    EngineType idType(const QMessageId& id);
+    EngineType idType(const QMessageAccountId& id);
+    EngineType idType(const QMessageFolderId& id);
+
+    QString addIdPrefix(const QString& id, const EngineType& type = EngineDefault);
+    QMessageId addIdPrefix(const QMessageId& id, const EngineType& type = EngineDefault);
+    QMessageAccountId addIdPrefix(const QMessageAccountId& id, const EngineType& type = EngineDefault);
+    QMessageFolderId addIdPrefix(const QMessageFolderId& id, const EngineType& type = EngineDefault);
+
+    QString stripIdPrefix(const QString& id);
+    QMessageId stripIdPrefix(const QMessageId& id);
+    QMessageAccountId stripIdPrefix(const QMessageAccountId& id);
+    QMessageFolderId stripIdPrefix(const QMessageFolderId& id);
+
+    static const char* mtmPrefix = "MTM_";
+    static const char* freestylePrefix = "FS_";
 }
 
-/*!
- * \fn QContactActionFactory::~QContactActionFactory()
- * Clears any memory in use by this factory
- */
-
-/*!
- * \fn QContactActionFactory::name() const
- * Returns the name of this factory.  The name is used to identify the factory
- * when it is retrieved using the Qt Plugin framework.
- */
-
-/*!
- * \fn QContactActionFactory::actionDescriptors() const
- * Returns a list of descriptors of the actions of which instances of their implementations are able to be retrieved
- * from this factory.
- */
-
-/*!
- * \fn QContactActionFactory::instance(const QContactActionDescriptor& descriptor) const
- * Returns a pointer to an instance of the implementation of the action described by the given \a descriptor.
- * The caller takes ownership of the action instance returned from this function, and must delete it when
- * they are finished using it in order to avoid a memory leak.
- */
-
-/*!
- * \fn QContactActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
- * Returns the metadata associated with the action identified by the given \a descriptor
- */
-
-#include "moc_qcontactactionfactory.cpp"
+namespace MessagingUtil
+{
+    QString addIdPrefix(const QString& id);
+    QString stripIdPrefix(const QString& id);
+    QString idPrefix();
+}
 
 QTM_END_NAMESPACE
+
+#endif

@@ -46,7 +46,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageFolderFilter
 
-    \preliminary
     \brief The QMessageFolderFilter class defines the parameters used for querying a subset of
     all available folders from the messaging store.
     \ingroup messaging

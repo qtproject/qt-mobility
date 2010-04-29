@@ -43,7 +43,7 @@
 #include <QDataStream>
 #include <MAPIUtil.h>
 #include <QDebug>
-
+#include <messagingutil_p.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -180,7 +180,7 @@ QMessageId::QMessageId(const QMessageId& other)
 QMessageId::QMessageId(const QString& id)
     : d_ptr(new QMessageIdPrivate(this))
 {
-	QDataStream idStream(QByteArray::fromBase64(WinHelpers::stripIdPrefix(id).toLatin1()));
+	QDataStream idStream(QByteArray::fromBase64(MessagingUtil::stripIdPrefix(id).toLatin1()));
 
 #ifdef _WIN32_WCE
     idStream >> d_ptr->_entryId;
@@ -270,7 +270,7 @@ bool QMessageId::operator<(const QMessageId& other) const
 QString QMessageId::toString() const
 {
     if (!isValid())
-        return QString();
+        return MessagingUtil::addIdPrefix(QString());
 
 #ifndef _WIN32_WCE
     if (d_ptr->_messageRecordKey.isEmpty())
@@ -290,7 +290,7 @@ QString QMessageId::toString() const
     encodedIdStream << d_ptr->_folderRecordKey;
     encodedIdStream << d_ptr->_storeRecordKey;
 
-	return WinHelpers::addIdPrefix(encodedId.toBase64());
+	return MessagingUtil::addIdPrefix(encodedId.toBase64());
 }
 
 bool QMessageId::isValid() const

@@ -29,7 +29,7 @@ EXPORTS
 	_ZN11QRadioTunerD2Ev @ 28 NONAME
 	_ZN12QMediaObject11qt_metacallEN11QMetaObject4CallEiPPv @ 29 NONAME
 	_ZN12QMediaObject11qt_metacastEPKc @ 30 NONAME
-	_ZN12QMediaObject11setMetaDataEN7QtMedia8MetaDataERK8QVariant @ 31 NONAME
+	_ZN12QMediaObject11setMetaDataEN15QtMediaServices8MetaDataERK8QVariant @ 31 NONAME
 	_ZN12QMediaObject13setupMetaDataEv @ 32 NONAME
 	_ZN12QMediaObject15metaDataChangedEv @ 33 NONAME
 	_ZN12QMediaObject16addPropertyWatchERK10QByteArray @ 34 NONAME
@@ -441,10 +441,10 @@ EXPORTS
 	_ZN20QVideoEncoderControlD1Ev @ 440 NONAME
 	_ZN20QVideoEncoderControlD2Ev @ 441 NONAME
 	_ZN21QAudioEncoderSettings10setBitRateEi @ 442 NONAME
-	_ZN21QAudioEncoderSettings10setQualityEN7QtMedia15EncodingQualityE @ 443 NONAME
+	_ZN21QAudioEncoderSettings10setQualityEN15QtMediaServices15EncodingQualityE @ 443 NONAME
 	_ZN21QAudioEncoderSettings13setSampleRateEi @ 444 NONAME
 	_ZN21QAudioEncoderSettings15setChannelCountEi @ 445 NONAME
-	_ZN21QAudioEncoderSettings15setEncodingModeEN7QtMedia12EncodingModeE @ 446 NONAME
+	_ZN21QAudioEncoderSettings15setEncodingModeEN15QtMediaServices12EncodingModeE @ 446 NONAME
 	_ZN21QAudioEncoderSettings8setCodecERK7QString @ 447 NONAME
 	_ZN21QAudioEncoderSettingsC1ERKS_ @ 448 NONAME
 	_ZN21QAudioEncoderSettingsC1Ev @ 449 NONAME
@@ -453,7 +453,7 @@ EXPORTS
 	_ZN21QAudioEncoderSettingsD1Ev @ 452 NONAME
 	_ZN21QAudioEncoderSettingsD2Ev @ 453 NONAME
 	_ZN21QAudioEncoderSettingsaSERKS_ @ 454 NONAME
-	_ZN21QImageEncoderSettings10setQualityEN7QtMedia15EncodingQualityE @ 455 NONAME
+	_ZN21QImageEncoderSettings10setQualityEN15QtMediaServices15EncodingQualityE @ 455 NONAME
 	_ZN21QImageEncoderSettings13setResolutionERK5QSize @ 456 NONAME
 	_ZN21QImageEncoderSettings13setResolutionEii @ 457 NONAME
 	_ZN21QImageEncoderSettings8setCodecERK7QString @ 458 NONAME
@@ -494,11 +494,11 @@ EXPORTS
 	_ZN21QMediaServiceProvider19getStaticMetaObjectEv @ 493 NONAME
 	_ZN21QMediaServiceProvider22defaultServiceProviderEv @ 494 NONAME
 	_ZN21QVideoEncoderSettings10setBitRateEi @ 495 NONAME
-	_ZN21QVideoEncoderSettings10setQualityEN7QtMedia15EncodingQualityE @ 496 NONAME
+	_ZN21QVideoEncoderSettings10setQualityEN15QtMediaServices15EncodingQualityE @ 496 NONAME
 	_ZN21QVideoEncoderSettings12setFrameRateEf @ 497 NONAME
 	_ZN21QVideoEncoderSettings13setResolutionERK5QSize @ 498 NONAME
 	_ZN21QVideoEncoderSettings13setResolutionEii @ 499 NONAME
-	_ZN21QVideoEncoderSettings15setEncodingModeEN7QtMedia12EncodingModeE @ 500 NONAME
+	_ZN21QVideoEncoderSettings15setEncodingModeEN15QtMediaServices12EncodingModeE @ 500 NONAME
 	_ZN21QVideoEncoderSettings8setCodecERK7QString @ 501 NONAME
 	_ZN21QVideoEncoderSettingsC1ERKS_ @ 502 NONAME
 	_ZN21QVideoEncoderSettingsC1Ev @ 503 NONAME
@@ -648,7 +648,7 @@ EXPORTS
 	_ZNK12QMediaObject19isMetaDataAvailableEv @ 647 NONAME
 	_ZNK12QMediaObject25availableExtendedMetaDataEv @ 648 NONAME
 	_ZNK12QMediaObject7serviceEv @ 649 NONAME
-	_ZNK12QMediaObject8metaDataEN7QtMedia8MetaDataE @ 650 NONAME
+	_ZNK12QMediaObject8metaDataEN15QtMediaServices8MetaDataE @ 650 NONAME
 	_ZNK12QMediaPlayer10isSeekableEv @ 651 NONAME
 	_ZNK12QMediaPlayer10metaObjectEv @ 652 NONAME
 	_ZNK12QMediaPlayer11errorStringEv @ 653 NONAME

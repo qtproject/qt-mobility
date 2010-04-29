@@ -55,7 +55,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QContactSaveRequest::contacts" href="qcontactsaverequest.html#contacts" location="qcontactsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContact&gt;" signature="contacts() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactSaveRequest::errorMap" href="qcontactsaverequest.html#errorMap" location="qcontactsaverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QAmbientLightReading" href="qambientlightreading.html" location="qambientlightsensor.h" bases="QSensorReading" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QAmbientLightReading" href="qambientlightreading.html" location="qambientlightsensor.h" bases="QSensorReading" module="">
             <contents name="qambientlightreading-units" title="QAmbientLightReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="lightLevel" fullname="QAmbientLightReading::lightLevel" href="qambientlightreading.html#lightLevel-prop" location="qambientlightsensor.h" type="LightLevel">
                 <getter name="lightLevel"/>
@@ -73,12 +73,12 @@
                 <parameter left="LightLevel" right="" name="lightLevel" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QAmbientLightFilter" href="qambientlightfilter.html" location="qambientlightsensor.h" bases="QSensorFilter" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QAmbientLightFilter" href="qambientlightfilter.html" location="qambientlightsensor.h" bases="QSensorFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QAmbientLightFilter::filter" href="qambientlightfilter.html#filter" location="qambientlightsensor.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="filter(QAmbientLightReading * reading)">
                 <parameter left="QAmbientLightReading *" right="" name="reading" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QAmbientLightSensor" href="qambientlightsensor.html" location="qambientlightsensor.h" bases="QSensor" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QAmbientLightSensor" href="qambientlightsensor.html" location="qambientlightsensor.h" bases="QSensor" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QAmbientLightSensor" fullname="QAmbientLightSensor::QAmbientLightSensor" href="qambientlightsensor.html#QAmbientLightSensor" location="qambientlightsensor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QAmbientLightSensor(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -86,7 +86,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QAmbientLightSensor::reading" href="qambientlightsensor.html#reading" location="qambientlightsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QAmbientLightReading *" signature="reading() const"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QAmbientLightSensor::type" href="qambientlightsensor.html#type-var" location="qambientlightsensor.h" type="const char *" static="true"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html" location="qversitcontactexporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html" location="qversitcontactexporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactExporterDetailHandler" fullname="QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html#dtor.QVersitContactExporterDetailHandler" location="qversitcontactexporter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactExporterDetailHandler()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="preProcessDetail" fullname="QVersitContactExporterDetailHandler::preProcessDetail" href="qversitcontactexporterdetailhandler.html#preProcessDetail" location="qversitcontactexporter.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="preProcessDetail(const QContact &amp; contact, const QContactDetail &amp; detail, QVersitDocument * document)">
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
@@ -100,7 +100,7 @@
                 <parameter left="QVersitDocument *" right="" name="document" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactExporter" href="qversitcontactexporter.html" location="qversitcontactexporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactExporter" href="qversitcontactexporter.html" location="qversitcontactexporter.h" bases="" module="">
             <contents name="exporting-group-relationships" title="Exporting group relationships" level="1"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QVersitContactExporter::Error" href="qversitcontactexporter.html#Error-enum" location="qversitcontactexporter.h">
                 <value name="NoError" value="0"/>
@@ -124,7 +124,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="resourceHandler" fullname="QVersitContactExporter::resourceHandler" href="qversitcontactexporter.html#resourceHandler" location="qversitcontactexporter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVersitResourceHandler *" signature="resourceHandler() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QOrientationReading" href="qorientationreading.html" location="qorientationsensor.h" bases="QSensorReading" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QOrientationReading" href="qorientationreading.html" location="qorientationsensor.h" bases="QSensorReading" module="">
             <contents name="qorientationreading-units" title="QOrientationReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="orientation" fullname="QOrientationReading::orientation" href="qorientationreading.html#orientation-prop" location="qorientationsensor.h" type="Orientation">
                 <getter name="orientation"/>
@@ -143,12 +143,12 @@
                 <parameter left="Orientation" right="" name="orientation" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QOrientationFilter" href="qorientationfilter.html" location="qorientationsensor.h" bases="QSensorFilter" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QOrientationFilter" href="qorientationfilter.html" location="qorientationsensor.h" bases="QSensorFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QOrientationFilter::filter" href="qorientationfilter.html#filter" location="qorientationsensor.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="filter(QOrientationReading * reading)">
                 <parameter left="QOrientationReading *" right="" name="reading" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QOrientationSensor" href="qorientationsensor.html" location="qorientationsensor.h" bases="QSensor" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QOrientationSensor" href="qorientationsensor.html" location="qorientationsensor.h" bases="QSensor" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QOrientationSensor" fullname="QOrientationSensor::QOrientationSensor" href="qorientationsensor.html#QOrientationSensor" location="qorientationsensor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QOrientationSensor(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -243,7 +243,7 @@
             </enum>
             <typedef access="public" threadsafety="unspecified" status="commendable" name="LayerOptions" fullname="QValueSpace::LayerOptions" href="qvaluespace.html#LayerOptions-typedef" location="qvaluespace.h" enum="QValueSpace::LayerOption"/>
         </namespace>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactImporterPropertyHandler" href="qversitcontactimporterpropertyhandler.html" location="qversitcontactimporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactImporterPropertyHandler" href="qversitcontactimporterpropertyhandler.html" location="qversitcontactimporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactImporterPropertyHandler" fullname="QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler" href="qversitcontactimporterpropertyhandler.html#dtor.QVersitContactImporterPropertyHandler" location="qversitcontactimporter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactImporterPropertyHandler()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="preProcessProperty" fullname="QVersitContactImporterPropertyHandler::preProcessProperty" href="qversitcontactimporterpropertyhandler.html#preProcessProperty" location="qversitcontactimporter.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="preProcessProperty(const QVersitDocument &amp; document, const QVersitProperty &amp; property, int contactIndex, QContact * contact)">
                 <parameter left="const QVersitDocument &amp;" right="" name="document" default=""/>
@@ -259,7 +259,7 @@
                 <parameter left="QContact *" right="" name="contact" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitContactImporter" href="qversitcontactimporter.html" location="qversitcontactimporter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactImporter" href="qversitcontactimporter.html" location="qversitcontactimporter.h" bases="" module="">
             <contents name="importing-categories" title="Importing categories" level="1"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QVersitContactImporter::Error" href="qversitcontactimporter.html#Error-enum" location="qversitcontactimporter.h">
                 <value name="NoError" value="0"/>
@@ -340,7 +340,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QContactType::type" href="qcontacttype.html#type" location="qcontacttype.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="type() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageAccountFilter" href="qmessageaccountfilter.html" location="qmessageaccountfilter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountFilter" href="qmessageaccountfilter.html" location="qmessageaccountfilter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountFilter" fullname="QMessageAccountFilter::QMessageAccountFilter" href="qmessageaccountfilter.html#QMessageAccountFilter" location="qmessageaccountfilter_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageAccountFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountFilter" fullname="QMessageAccountFilter::QMessageAccountFilter" href="qmessageaccountfilter.html#QMessageAccountFilter-2" location="qmessageaccountfilter_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageAccountFilter(const QMessageAccountFilter &amp; other)">
                 <parameter left="const QMessageAccountFilter &amp;" right="" name="other" default=""/>
@@ -386,7 +386,7 @@
                 <parameter left="QMessageDataComparator::InclusionComparator" right="" name="cmp" default="QMessageDataComparator::Includes"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFilter" href="qmessagefilter.html" location="qmessagefilter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageFilter" href="qmessagefilter.html" location="qmessagefilter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFilter" fullname="QMessageFilter::QMessageFilter" href="qmessagefilter.html#QMessageFilter" location="qmessagefilter_maemo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFilter" fullname="QMessageFilter::QMessageFilter" href="qmessagefilter.html#QMessageFilter-2" location="qmessagefilter_maemo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageFilter(const QMessageFilter &amp; other)">
                 <parameter left="const QMessageFilter &amp;" right="" name="other" default=""/>
@@ -845,7 +845,7 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageContentContainer" href="qmessagecontentcontainer.html" location="qmessagecontentcontainer.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainer" href="qmessagecontentcontainer.html" location="qmessagecontentcontainer.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainer" fullname="QMessageContentContainer::QMessageContentContainer" href="qmessagecontentcontainer.html#QMessageContentContainer" location="qmessagecontentcontainer_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageContentContainer()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainer" fullname="QMessageContentContainer::QMessageContentContainer" href="qmessagecontentcontainer.html#QMessageContentContainer-2" location="qmessagecontentcontainer_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageContentContainer(const QMessageContentContainer &amp; other)">
                 <parameter left="const QMessageContentContainer &amp;" right="" name="other" default=""/>
@@ -961,7 +961,7 @@
                 <parameter left="QContactMemoryEngineData *" right="" name="data" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFolder" href="qmessagefolder.html" location="qmessagefolder.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageFolder" href="qmessagefolder.html" location="qmessagefolder.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolder" fullname="QMessageFolder::QMessageFolder" href="qmessagefolder.html#QMessageFolder" location="qmessagefolder_maemo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolder()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolder" fullname="QMessageFolder::QMessageFolder" href="qmessagefolder.html#QMessageFolder-2" location="qmessagefolder_maemo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageFolder(const QMessageFolderId &amp; id)">
                 <parameter left="const QMessageFolderId &amp;" right="" name="id" default=""/>
@@ -1087,7 +1087,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactInvalidEngine" fullname="QContactInvalidEngine::QContactInvalidEngine" href="qcontactinvalidengine.html#QContactInvalidEngine" location="qcontactinvalidbackend_p.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactInvalidEngine()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QContactInvalidEngine::managerName" href="qcontactinvalidengine.html#managerName" location="qcontactinvalidbackend_p.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QTapReading" href="qtapreading.html" location="qtapsensor.h" bases="QSensorReading" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QTapReading" href="qtapreading.html" location="qtapsensor.h" bases="QSensorReading" module="">
             <contents name="qtapreading-units" title="QTapReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="tapDirection" fullname="QTapReading::tapDirection" href="qtapreading.html#tapDirection-prop" location="qtapsensor.h" type="TapDirection">
                 <getter name="tapDirection"/>
@@ -1116,12 +1116,12 @@
                 <parameter left="bool" right="" name="doubleTap" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QTapFilter" href="qtapfilter.html" location="qtapsensor.h" bases="QSensorFilter" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QTapFilter" href="qtapfilter.html" location="qtapsensor.h" bases="QSensorFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QTapFilter::filter" href="qtapfilter.html#filter" location="qtapsensor.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="filter(QTapReading * reading)">
                 <parameter left="QTapReading *" right="" name="reading" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QTapSensor" href="qtapsensor.html" location="qtapsensor.h" bases="QSensor" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QTapSensor" href="qtapsensor.html" location="qtapsensor.h" bases="QSensor" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="returnDoubleTapEvents" fullname="QTapSensor::returnDoubleTapEvents" href="qtapsensor.html#returnDoubleTapEvents-prop" location="qtapsensor.h" type="bool"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QTapSensor" fullname="QTapSensor::QTapSensor" href="qtapsensor.html#QTapSensor" location="qtapsensor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QTapSensor(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -1174,7 +1174,7 @@
                 <parameter left="const QByteArray &amp;" right="" name="format" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageAccount" href="qmessageaccount.html" location="qmessageaccount.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageAccount" href="qmessageaccount.html" location="qmessageaccount.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccount" fullname="QMessageAccount::QMessageAccount" href="qmessageaccount.html#QMessageAccount" location="qmessageaccount_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageAccount()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccount" fullname="QMessageAccount::QMessageAccount" href="qmessageaccount.html#QMessageAccount-2" location="qmessageaccount_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageAccount(const QMessageAccountId &amp; id)">
                 <parameter left="const QMessageAccountId &amp;" right="" name="id" default=""/>
@@ -1200,7 +1200,7 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QRotationReading" href="qrotationreading.html" location="qrotationsensor.h" bases="QSensorReading" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QRotationReading" href="qrotationreading.html" location="qrotationsensor.h" bases="QSensorReading" module="">
             <contents name="qrotationreading-units" title="QRotationReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QRotationReading::x" href="qrotationreading.html#x-prop" location="qrotationsensor.h" type="qreal">
                 <getter name="x"/>
@@ -1224,12 +1224,12 @@
                 <parameter left="qreal" right="" name="z" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QRotationFilter" href="qrotationfilter.html" location="qrotationsensor.h" bases="QSensorFilter" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QRotationFilter" href="qrotationfilter.html" location="qrotationsensor.h" bases="QSensorFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QRotationFilter::filter" href="qrotationfilter.html#filter" location="qrotationsensor.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="filter(QRotationReading * reading)">
                 <parameter left="QRotationReading *" right="" name="reading" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QRotationSensor" href="qrotationsensor.html" location="qrotationsensor.h" bases="QSensor" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QRotationSensor" href="qrotationsensor.html" location="qrotationsensor.h" bases="QSensor" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="hasZ" fullname="QRotationSensor::hasZ" href="qrotationsensor.html#hasZ-prop" location="qrotationsensor.h" type="bool"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QRotationSensor" fullname="QRotationSensor::QRotationSensor" href="qrotationsensor.html#QRotationSensor" location="qrotationsensor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QRotationSensor(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -1441,7 +1441,7 @@
             </function>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMediaResourceList" href="#QMediaResourceList-typedef" location="qmediaresource.h"/>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitReader" href="qversitreader.html" location="qversitreader.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitReader" href="qversitreader.html" location="qversitreader.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QVersitReader::Error" href="qversitreader.html#Error-enum" location="qversitreader.h">
                 <value name="NoError" value="0"/>
                 <value name="UnspecifiedError" value="1"/>
@@ -1755,7 +1755,7 @@
                 <parameter left="int" right="" name="time" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorManager" href="qsensormanager.html" location="qsensormanager.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSensorManager" href="qsensormanager.html" location="qsensormanager.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="registerBackend" fullname="QSensorManager::registerBackend" href="qsensormanager.html#registerBackend" location="qsensormanager.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="void" signature="registerBackend(const QByteArray &amp; type, const QByteArray &amp; identifier, QSensorBackendFactory * factory)">
                 <parameter left="const QByteArray &amp;" right="" name="type" default=""/>
                 <parameter left="const QByteArray &amp;" right="" name="identifier" default=""/>
@@ -1765,7 +1765,7 @@
                 <parameter left="QSensor *" right="" name="sensor" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorBackendFactory" href="qsensorbackendfactory.html" location="qsensormanager.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSensorBackendFactory" href="qsensorbackendfactory.html" location="qsensormanager.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="createBackend" fullname="QSensorBackendFactory::createBackend" href="qsensorbackendfactory.html#createBackend" location="qsensormanager.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QSensorBackend *" signature="createBackend(QSensor * sensor)">
                 <parameter left="QSensor *" right="" name="sensor" default=""/>
             </function>
@@ -1924,7 +1924,7 @@
             <parameter left="const QMediaTimeRange &amp;" right="" name="r1" default=""/>
             <parameter left="const QMediaTimeRange &amp;" right="" name="r2" default=""/>
         </function>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageId" href="qmessageid.html" location="qmessageid.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageId" href="qmessageid.html" location="qmessageid.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageId" fullname="QMessageId::QMessageId" href="qmessageid.html#QMessageId" location="qmessageid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageId()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageId" fullname="QMessageId::QMessageId" href="qmessageid.html#QMessageId-2" location="qmessageid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageId(const QMessageId &amp; other)">
                 <parameter left="const QMessageId &amp;" right="" name="other" default=""/>
@@ -1940,42 +1940,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMessageId::isValid" href="qmessageid.html#isValid" location="qmessageid_stub.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageIdList" href="#QMessageIdList-typedef" location="qmessageid.h"/>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QContactActionDescriptor" href="qcontactactiondescriptor.html" location="qcontactactiondescriptor.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionDescriptor" fullname="QContactActionDescriptor::QContactActionDescriptor" href="qcontactactiondescriptor.html#QContactActionDescriptor" location="qcontactactiondescriptor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactActionDescriptor(const QString &amp; actionName, const QString &amp; vendorName, int vendorVersion)">
-                <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
-                <parameter left="const QString &amp;" right="" name="vendorName" default="QString()"/>
-                <parameter left="int" right="" name="vendorVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionDescriptor" fullname="QContactActionDescriptor::QContactActionDescriptor" href="qcontactactiondescriptor.html#QContactActionDescriptor-2" location="qcontactactiondescriptor.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactActionDescriptor(const QContactActionDescriptor &amp; other)">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator=" fullname="QContactActionDescriptor::operator=" href="qcontactactiondescriptor.html#operator=" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContactActionDescriptor &amp;" signature="operator=(const QContactActionDescriptor &amp; other)">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactActionDescriptor" fullname="QContactActionDescriptor::~QContactActionDescriptor" href="qcontactactiondescriptor.html#dtor.QContactActionDescriptor" location="qcontactactiondescriptor.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactActionDescriptor()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isEmpty" fullname="QContactActionDescriptor::isEmpty" href="qcontactactiondescriptor.html#isEmpty" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isEmpty() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator==" fullname="QContactActionDescriptor::operator==" href="qcontactactiondescriptor.html#operator==" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator==(const QContactActionDescriptor &amp; other) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator!=" fullname="QContactActionDescriptor::operator!=" href="qcontactactiondescriptor.html#operator!=" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator!=(const QContactActionDescriptor &amp; other) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;" fullname="QContactActionDescriptor::operator&lt;" href="qcontactactiondescriptor.html#operator&lt;" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="operator&lt;(const QContactActionDescriptor &amp; other) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setActionName" fullname="QContactActionDescriptor::setActionName" href="qcontactactiondescriptor.html#setActionName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setActionName(const QString &amp; actionName)">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setVendorName" fullname="QContactActionDescriptor::setVendorName" href="qcontactactiondescriptor.html#setVendorName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVendorName(const QString &amp; vendorName)">
-                <parameter left="const QString &amp;" right="" name="vendorName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setImplementationVersion" fullname="QContactActionDescriptor::setImplementationVersion" href="qcontactactiondescriptor.html#setImplementationVersion" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setImplementationVersion(int implementationVersion)">
-                <parameter left="int" right="" name="implementationVersion" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionName" fullname="QContactActionDescriptor::actionName" href="qcontactactiondescriptor.html#actionName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="actionName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="vendorName" fullname="QContactActionDescriptor::vendorName" href="qcontactactiondescriptor.html#vendorName" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="vendorName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="implementationVersion" fullname="QContactActionDescriptor::implementationVersion" href="qcontactactiondescriptor.html#implementationVersion" location="qcontactactiondescriptor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="implementationVersion() const"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" href="qcontactchangelogfilter.html" location="qcontactchangelogfilter.h" bases="QContactFilter" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="EventType" fullname="QContactChangeLogFilter::EventType" href="qcontactchangelogfilter.html#EventType-enum" location="qcontactchangelogfilter.h">
                 <value name="EventAdded" value="0"/>
@@ -2112,7 +2076,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="requestTimeout" fullname="QGeoSatelliteInfoSource::requestTimeout" href="qgeosatelliteinfosource.html#requestTimeout" location="qgeosatelliteinfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="requestTimeout()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitWriter" href="qversitwriter.html" location="qversitwriter.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitWriter" href="qversitwriter.html" location="qversitwriter.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Error" fullname="QVersitWriter::Error" href="qversitwriter.html#Error-enum" location="qversitwriter.h">
                 <value name="NoError" value="0"/>
                 <value name="UnspecifiedError" value="1"/>
@@ -2217,7 +2181,7 @@
                 <parameter left="QContactManagerEngine *" right="" name="engine" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageAddress" href="qmessageaddress.html" location="qmessageaddress.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageAddress" href="qmessageaddress.html" location="qmessageaddress.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QMessageAddress::Type" href="qmessageaddress.html#Type-enum" location="qmessageaddress.h">
                 <value name="System" value="1"/>
                 <value name="Phone" value="2"/>
@@ -2251,7 +2215,7 @@
             </function>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageAddressList" href="#QMessageAddressList-typedef" location="qmessageaddress.h"/>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFolderFilter" href="qmessagefolderfilter.html" location="qmessagefolderfilter.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderFilter" href="qmessagefolderfilter.html" location="qmessagefolderfilter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderFilter" fullname="QMessageFolderFilter::QMessageFolderFilter" href="qmessagefolderfilter.html#QMessageFolderFilter" location="qmessagefolderfilter_symbian.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolderFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderFilter" fullname="QMessageFolderFilter::QMessageFolderFilter" href="qmessagefolderfilter.html#QMessageFolderFilter-2" location="qmessagefolderfilter_symbian.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageFolderFilter(const QMessageFolderFilter &amp; other)">
                 <parameter left="const QMessageFolderFilter &amp;" right="" name="other" default=""/>
@@ -2342,26 +2306,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="contactIds" fullname="QContactRemoveRequest::contactIds" href="qcontactremoverequest.html#contactIds" location="qcontactremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactLocalId&gt;" signature="contactIds() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="errorMap" fullname="QContactRemoveRequest::errorMap" href="qcontactremoverequest.html#errorMap" location="qcontactremoverequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;int, QContactManager::Error&gt;" signature="errorMap() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" href="qcontactactionfilter.html" location="qcontactactionfilter.h" bases="QContactFilter" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" fullname="QContactActionFilter::QContactActionFilter" href="qcontactactionfilter.html#QContactActionFilter" location="qcontactactionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactActionFilter()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactActionFilter" fullname="QContactActionFilter::QContactActionFilter" href="qcontactactionfilter.html#QContactActionFilter-2" location="qcontactactionfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QContactActionFilter(const QContactFilter &amp; other)">
-                <parameter left="const QContactFilter &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setActionName" fullname="QContactActionFilter::setActionName" href="qcontactactionfilter.html#setActionName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setActionName(const QString &amp; action)">
-                <parameter left="const QString &amp;" right="" name="action" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setValue" fullname="QContactActionFilter::setValue" href="qcontactactionfilter.html#setValue" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setValue(const QVariant &amp; value)">
-                <parameter left="const QVariant &amp;" right="" name="value" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setVendor" fullname="QContactActionFilter::setVendor" href="qcontactactionfilter.html#setVendor" location="qcontactactionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVendor(const QString &amp; vendorName, int implementationVersion)">
-                <parameter left="const QString &amp;" right="" name="vendorName" default=""/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionName" fullname="QContactActionFilter::actionName" href="qcontactactionfilter.html#actionName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="actionName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QContactActionFilter::value" href="qcontactactionfilter.html#value" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="vendorName" fullname="QContactActionFilter::vendorName" href="qcontactactionfilter.html#vendorName" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="vendorName() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="implementationVersion" fullname="QContactActionFilter::implementationVersion" href="qcontactactionfilter.html#implementationVersion" location="qcontactactionfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="int" signature="implementationVersion() const"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfiguration" href="qnetworkconfiguration.html" location="qnetworkconfiguration.h" bases="" module="QtNetwork">
             <contents name="configuration-states" title="Configuration states" level="1"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QNetworkConfiguration" fullname="QNetworkConfiguration::QNetworkConfiguration" href="qnetworkconfiguration.html#QNetworkConfiguration" location="qnetworkconfiguration.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QNetworkConfiguration()"/>
@@ -2443,12 +2387,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactDetail&gt;" signature="details(const QString &amp; definitionName) const">
                 <parameter left="const QString &amp;" right="" name="definitionName" default="QString()"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="detailWithAction" fullname="QContact::detailWithAction" href="qcontact.html#detailWithAction" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactDetail" signature="detailWithAction(QContactAction * action) const">
-                <parameter left="QContactAction *" right="" name="action" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="detailsWithAction" fullname="QContact::detailsWithAction" href="qcontact.html#detailsWithAction" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactDetail&gt;" signature="detailsWithAction(QContactAction * action) const">
-                <parameter left="QContactAction *" right="" name="action" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="details" fullname="QContact::details" href="qcontact.html#details-2" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QList&lt;QContactDetail&gt;" signature="details(const QString &amp; definitionName, const QString &amp; fieldName, const QString &amp; value) const">
                 <parameter left="const QString &amp;" right="" name="definitionName" default=""/>
                 <parameter left="const QString &amp;" right="" name="fieldName" default=""/>
@@ -2484,24 +2422,8 @@
                 <parameter left="const QString &amp;" right="" name="relationshipType" default="QString()"/>
                 <parameter left="QContactRelationship::Role" right="" name="role" default="QContactRelationship::Either"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="availableActions" fullname="QContact::availableActions" href="qcontact.html#availableActions" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactActionDescriptor&gt;" signature="availableActions(const QString &amp; vendorName, int implementationVersion) const">
-                <parameter left="const QString &amp;" right="" name="vendorName" default="QString()"/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setPreferredDetail" fullname="QContact::setPreferredDetail" href="qcontact.html#setPreferredDetail" location="qcontact.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setPreferredDetail(const QString &amp; actionName, const QContactDetail &amp; preferredDetail)">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-                <parameter left="const QContactDetail &amp;" right="" name="preferredDetail" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isPreferredDetail" fullname="QContact::isPreferredDetail" href="qcontact.html#isPreferredDetail" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isPreferredDetail(const QString &amp; actionName, const QContactDetail &amp; detail) const">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-                <parameter left="const QContactDetail &amp;" right="" name="detail" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="preferredDetail" fullname="QContact::preferredDetail" href="qcontact.html#preferredDetail" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QContactDetail" signature="preferredDetail(const QString &amp; actionName) const">
-                <parameter left="const QString &amp;" right="" name="actionName" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="preferredDetails" fullname="QContact::preferredDetails" href="qcontact.html#preferredDetails" location="qcontact.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QContactDetail&gt;" signature="preferredDetails() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitProperty" href="qversitproperty.html" location="qversitproperty.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitProperty" href="qversitproperty.html" location="qversitproperty.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="ValueType" fullname="QVersitProperty::ValueType" href="qversitproperty.html#ValueType-enum" location="qversitproperty.h">
                 <value name="PlainType" value="0"/>
                 <value name="CompoundType" value="1"/>
@@ -2613,51 +2535,6 @@
                 <parameter left="QTimerEvent *" right="" name="event" default=""/>
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QGraphicsVideoItem::d_ptr" href="qgraphicsvideoitem.html#d_ptr-var" location="qgraphicsvideoitem.h" type="QGraphicsVideoItemPrivate *" static="false"/>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QContactAction" href="qcontactaction.html" location="qcontactaction.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="availableActions" fullname="QContactAction::availableActions" href="qcontactaction.html#availableActions" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="availableActions(const QString &amp; vendor, int implementationVersion)">
-                <parameter left="const QString &amp;" right="" name="vendor" default="QString()"/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptors" fullname="QContactAction::actionDescriptors" href="qcontactaction.html#actionDescriptors" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactActionDescriptor&gt;" signature="actionDescriptors(const QString &amp; actionName, const QString &amp; vendorName, int implementationVersion)">
-                <parameter left="const QString &amp;" right="" name="actionName" default="QString()"/>
-                <parameter left="const QString &amp;" right="" name="vendorName" default="QString()"/>
-                <parameter left="int" right="" name="implementationVersion" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="action" fullname="QContactAction::action" href="qcontactaction.html#action" location="qcontactaction.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactAction *" signature="action(const QContactActionDescriptor &amp; descriptor)">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactAction" fullname="QContactAction::~QContactAction" href="qcontactaction.html#dtor.QContactAction" location="qcontactaction.cpp" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactAction()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptor" fullname="QContactAction::actionDescriptor" href="qcontactaction.html#actionDescriptor" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QContactActionDescriptor" signature="actionDescriptor() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="metaData" fullname="QContactAction::metaData" href="qcontactaction.html#metaData" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="metaData() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="contactFilter" fullname="QContactAction::contactFilter" href="qcontactaction.html#contactFilter" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QContactFilter" signature="contactFilter(const QVariant &amp; value) const">
-                <parameter left="const QVariant &amp;" right="" name="value" default="QVariant()"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isDetailSupported" fullname="QContactAction::isDetailSupported" href="qcontactaction.html#isDetailSupported" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="bool" signature="isDetailSupported(const QContactDetail &amp; detail, const QContact &amp; contact) const">
-                <parameter left="const QContactDetail &amp;" right="" name="detail" default=""/>
-                <parameter left="const QContact &amp;" right="" name="contact" default="QContact()"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="supportedDetails" fullname="QContactAction::supportedDetails" href="qcontactaction.html#supportedDetails" location="qcontactaction.cpp" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactDetail&gt;" signature="supportedDetails(const QContact &amp; contact) const">
-                <parameter left="const QContact &amp;" right="" name="contact" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="invokeAction" fullname="QContactAction::invokeAction" href="qcontactaction.html#invokeAction" location="qcontactaction.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="invokeAction(const QContact &amp; contact, const QContactDetail &amp; detail, const QVariantMap &amp; parameters)">
-                <parameter left="const QContact &amp;" right="" name="contact" default=""/>
-                <parameter left="const QContactDetail &amp;" right="" name="detail" default="QContactDetail()"/>
-                <parameter left="const QVariantMap &amp;" right="" name="parameters" default="QVariantMap()"/>
-            </function>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QContactAction::State" href="qcontactaction.html#State-enum" location="qcontactaction.h">
-                <value name="InactiveState" value="0"/>
-                <value name="ActiveState" value="1"/>
-                <value name="FinishedState" value="2"/>
-                <value name="FinishedDetachedState" value="3"/>
-                <value name="FinishedWithErrorState" value="4"/>
-            </enum>
-            <function access="public" threadsafety="unspecified" status="commendable" name="state" fullname="QContactAction::state" href="qcontactaction.html#state" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="State" signature="state() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="results" fullname="QContactAction::results" href="qcontactaction.html#results" location="qcontactaction.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="results() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="stateChanged" fullname="QContactAction::stateChanged" href="qcontactaction.html#stateChanged" location="qcontactaction.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="stateChanged(QContactAction::State newState)">
-                <parameter left="QContactAction::State" right="" name="newState" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="resultsAvailable" fullname="QContactAction::resultsAvailable" href="qcontactaction.html#resultsAvailable" location="qcontactaction.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="resultsAvailable()"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactFetchHint" href="qcontactfetchhint.html" location="qcontactfetchhint.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactFetchHint" fullname="QContactFetchHint::QContactFetchHint" href="qcontactfetchhint.html#QContactFetchHint" location="qcontactfetchhint.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactFetchHint()"/>
@@ -2813,9 +2690,6 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" href="qcontactabstractrequest.html" location="qcontactabstractrequest.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QContactAbstractRequest" fullname="QContactAbstractRequest::QContactAbstractRequest" href="qcontactabstractrequest.html#QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactAbstractRequest(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactAbstractRequest" fullname="QContactAbstractRequest::~QContactAbstractRequest" href="qcontactabstractrequest.html#dtor.QContactAbstractRequest" location="qcontactabstractrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactAbstractRequest()"/>
             <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QContactAbstractRequest::State" href="qcontactabstractrequest.html#State-enum" location="qcontactabstractrequest.h">
                 <value name="InactiveState" value="0"/>
@@ -2944,7 +2818,7 @@
                 <parameter left="const QList&lt;QContactLocalId&gt; &amp;" right="" name="contactIds" default=""/>
                 <parameter left="QMap&lt;int, QContactManager::Error&gt; *" right="" name="errorMap" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="preliminary" name="compatibleContact" fullname="QContactManager::compatibleContact" href="qcontactmanager.html#compatibleContact" location="qcontactmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContact" signature="compatibleContact(const QContact &amp; original)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="compatibleContact" fullname="QContactManager::compatibleContact" href="qcontactmanager.html#compatibleContact" location="qcontactmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContact" signature="compatibleContact(const QContact &amp; original)">
                 <parameter left="const QContact &amp;" right="" name="original" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="synthesizedContactDisplayLabel" fullname="QContactManager::synthesizedContactDisplayLabel" href="qcontactmanager.html#synthesizedContactDisplayLabel" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="synthesizedContactDisplayLabel(const QContact &amp; contact) const">
@@ -3254,7 +3128,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="maxValue" fullname="QContactDetailRangeFilter::maxValue" href="qcontactdetailrangefilter.html#maxValue" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="maxValue() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="rangeFlags" fullname="QContactDetailRangeFilter::rangeFlags" href="qcontactdetailrangefilter.html#rangeFlags" location="qcontactdetailrangefilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="RangeFlags" signature="rangeFlags() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessage" href="qmessage.html" location="qmessage.h" bases="QMessageContentContainer" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessage" href="qmessage.html" location="qmessage.h" bases="QMessageContentContainer" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QMessage::Type" href="qmessage.html#Type-enum" location="qmessage.h" typedef="QMessage::TypeFlags">
                 <value name="NoType" value="0"/>
                 <value name="Mms" value="0x1"/>
@@ -3476,7 +3350,7 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageService" href="qmessageservice.html" location="qmessageservice.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageService" href="qmessageservice.html" location="qmessageservice.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="State" fullname="QMessageService::State" href="qmessageservice.html#State-enum" location="qmessageservice.h">
                 <value name="InactiveState" value="0"/>
                 <value name="ActiveState" value="1"/>
@@ -3599,7 +3473,7 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QProximityReading" href="qproximityreading.html" location="qproximitysensor.h" bases="QSensorReading" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QProximityReading" href="qproximityreading.html" location="qproximitysensor.h" bases="QSensorReading" module="">
             <target name="qproximityreading-units"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="close" fullname="QProximityReading::close" href="qproximityreading.html#close-prop" location="qproximitysensor.h" type="bool">
                 <getter name="close"/>
@@ -3609,12 +3483,12 @@
                 <parameter left="bool" right="" name="close" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QProximityFilter" href="qproximityfilter.html" location="qproximitysensor.h" bases="QSensorFilter" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QProximityFilter" href="qproximityfilter.html" location="qproximitysensor.h" bases="QSensorFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QProximityFilter::filter" href="qproximityfilter.html#filter" location="qproximitysensor.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="filter(QProximityReading * reading)">
                 <parameter left="QProximityReading *" right="" name="reading" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QProximitySensor" href="qproximitysensor.html" location="qproximitysensor.h" bases="QSensor" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QProximitySensor" href="qproximitysensor.html" location="qproximitysensor.h" bases="QSensor" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QProximitySensor" fullname="QProximitySensor::QProximitySensor" href="qproximitysensor.html#QProximitySensor" location="qproximitysensor.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QProximitySensor(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -3793,7 +3667,7 @@
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QMediaPlaylistProvider::d_ptr" href="qmediaplaylistprovider.html#d_ptr-var" location="qmediaplaylistprovider.h" type="QMediaPlaylistProviderPrivate *" static="false"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QContactManagerEngine" href="qcontactmanagerengine.html" location="qcontactmanagerengine.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactManagerEngine" href="qcontactmanagerengine.html" location="qcontactmanagerengine.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactManagerEngine" fullname="QContactManagerEngine::QContactManagerEngine" href="qcontactmanagerengine.html#QContactManagerEngine" location="qcontactmanagerengine.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactManagerEngine()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="managerName" fullname="QContactManagerEngine::managerName" href="qcontactmanagerengine.html#managerName" location="qcontactmanagerengine.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="managerName() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="managerParameters" fullname="QContactManagerEngine::managerParameters" href="qcontactmanagerengine.html#managerParameters" location="qcontactmanagerengine.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMap&lt;QString, QString&gt;" signature="managerParameters() const"/>
@@ -4045,9 +3919,6 @@
                 <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
                 <parameter left="const QContact &amp;" right="" name="contact" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="validateActionFilter" fullname="QContactManagerEngine::validateActionFilter" href="qcontactmanagerengine.html#validateActionFilter" location="qcontactmanagerengine.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="bool" signature="validateActionFilter(const QContactFilter &amp; filter)">
-                <parameter left="const QContactFilter &amp;" right="" name="filter" default=""/>
-            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="sortContacts" fullname="QContactManagerEngine::sortContacts" href="qcontactmanagerengine.html#sortContacts" location="qcontactmanagerengine.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QList&lt;QContactLocalId&gt;" signature="sortContacts(const QList&lt;QContact&gt; &amp; cs, const QList&lt;QContactSortOrder&gt; &amp; sortOrders)">
                 <parameter left="const QList&lt;QContact&gt; &amp;" right="" name="cs" default=""/>
                 <parameter left="const QList&lt;QContactSortOrder&gt; &amp;" right="" name="sortOrders" default=""/>
@@ -4183,7 +4054,7 @@
                 <parameter left="QtMediaServices::EncodingQuality" right="" name="quality" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html" location="qcontactmanagerenginefactory.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html" location="qcontactmanagerenginefactory.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedImplementationVersions" fullname="QContactManagerEngineFactory::supportedImplementationVersions" href="qcontactmanagerenginefactory.html#supportedImplementationVersions" location="qcontactmanagerenginefactory.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QList&lt;int&gt;" signature="supportedImplementationVersions() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QContactManagerEngineFactory" fullname="QContactManagerEngineFactory::~QContactManagerEngineFactory" href="qcontactmanagerenginefactory.html#dtor.QContactManagerEngineFactory" location="qcontactmanagerenginefactory.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactManagerEngineFactory()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="engine" fullname="QContactManagerEngineFactory::engine" href="qcontactmanagerenginefactory.html#engine" location="qcontactmanagerenginefactory.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QContactManagerEngine *" signature="engine(const QMap&lt;QString, QString&gt; &amp; parameters, QContactManager::Error * error)">
@@ -4248,7 +4119,7 @@
                 <parameter left="const QContactLocalId &amp;" right="" name="id" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFolderId" href="qmessagefolderid.html" location="qmessagefolderid.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderId" href="qmessagefolderid.html" location="qmessagefolderid.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderId" fullname="QMessageFolderId::QMessageFolderId" href="qmessagefolderid.html#QMessageFolderId" location="qmessagefolderid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolderId()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderId" fullname="QMessageFolderId::QMessageFolderId" href="qmessagefolderid.html#QMessageFolderId-2" location="qmessagefolderid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageFolderId(const QMessageFolderId &amp; other)">
                 <parameter left="const QMessageFolderId &amp;" right="" name="other" default=""/>
@@ -4473,7 +4344,7 @@
                 <parameter left="const QStringList &amp;" right="" name="capabilities" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitResourceHandler" href="qversitresourcehandler.html" location="qversitresourcehandler.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitResourceHandler" href="qversitresourcehandler.html" location="qversitresourcehandler.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitResourceHandler" fullname="QVersitResourceHandler::~QVersitResourceHandler" href="qversitresourcehandler.html#dtor.QVersitResourceHandler" location="qversitresourcehandler.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitResourceHandler()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="loadResource" fullname="QVersitResourceHandler::loadResource" href="qversitresourcehandler.html#loadResource" location="qversitresourcehandler.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="loadResource(const QString &amp; location, QByteArray * contents, QString * mimeType)">
                 <parameter left="const QString &amp;" right="" name="location" default=""/>
@@ -4767,7 +4638,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="sorting" fullname="QContactLocalIdFetchRequest::sorting" href="qcontactlocalidfetchrequest.html#sorting" location="qcontactlocalidfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactSortOrder&gt;" signature="sorting() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="ids" fullname="QContactLocalIdFetchRequest::ids" href="qcontactlocalidfetchrequest.html#ids" location="qcontactlocalidfetchrequest.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactLocalId&gt;" signature="ids() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageContentContainerId" href="qmessagecontentcontainerid.html" location="qmessagecontentcontainerid.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainerId" href="qmessagecontentcontainerid.html" location="qmessagecontentcontainerid.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainerId" fullname="QMessageContentContainerId::QMessageContentContainerId" href="qmessagecontentcontainerid.html#QMessageContentContainerId" location="qmessagecontentcontainerid_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageContentContainerId()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageContentContainerId" fullname="QMessageContentContainerId::QMessageContentContainerId" href="qmessagecontentcontainerid.html#QMessageContentContainerId-2" location="qmessagecontentcontainerid_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageContentContainerId(const QMessageContentContainerId &amp; other)">
                 <parameter left="const QMessageContentContainerId &amp;" right="" name="other" default=""/>
@@ -4930,7 +4801,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactAddress::subTypes" href="qcontactaddress.html#subTypes" location="qcontactaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QCompassReading" href="qcompassreading.html" location="qcompass.h" bases="QSensorReading" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QCompassReading" href="qcompassreading.html" location="qcompass.h" bases="QSensorReading" module="">
             <contents name="qcompassreading-units" title="QCompassReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="azimuth" fullname="QCompassReading::azimuth" href="qcompassreading.html#azimuth-prop" location="qcompass.h" type="qreal">
                 <getter name="azimuth"/>
@@ -4947,12 +4818,12 @@
                 <parameter left="qreal" right="" name="calibrationLevel" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QCompassFilter" href="qcompassfilter.html" location="qcompass.h" bases="QSensorFilter" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QCompassFilter" href="qcompassfilter.html" location="qcompass.h" bases="QSensorFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QCompassFilter::filter" href="qcompassfilter.html#filter" location="qcompass.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="filter(QCompassReading * reading)">
                 <parameter left="QCompassReading *" right="" name="reading" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QCompass" href="qcompass.html" location="qcompass.h" bases="QSensor" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QCompass" href="qcompass.html" location="qcompass.h" bases="QSensor" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QCompass" fullname="QCompass::QCompass" href="qcompass.html#QCompass" location="qcompass.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCompass(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -5120,7 +4991,7 @@
                 <parameter left="Error" right="" name="error" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageFolderSortOrder" href="qmessagefoldersortorder.html" location="qmessagefoldersortorder.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderSortOrder" href="qmessagefoldersortorder.html" location="qmessagefoldersortorder.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderSortOrder" fullname="QMessageFolderSortOrder::QMessageFolderSortOrder" href="qmessagefoldersortorder.html#QMessageFolderSortOrder" location="qmessagefoldersortorder_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageFolderSortOrder()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageFolderSortOrder" fullname="QMessageFolderSortOrder::QMessageFolderSortOrder" href="qmessagefoldersortorder.html#QMessageFolderSortOrder-2" location="qmessagefoldersortorder_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageFolderSortOrder(const QMessageFolderSortOrder &amp; other)">
                 <parameter left="const QMessageFolderSortOrder &amp;" right="" name="other" default=""/>
@@ -5139,17 +5010,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="byPath" fullname="QMessageFolderSortOrder::byPath" href="qmessagefoldersortorder.html#byPath" location="qmessagefoldersortorder_win.cpp" virtual="non" meta="plain" const="false" static="true" overload="false" type="QMessageFolderSortOrder" signature="byPath(Qt::SortOrder order)">
                 <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
-            </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QContactActionFactory" href="qcontactactionfactory.html" location="qcontactactionfactory.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QContactActionFactory" fullname="QContactActionFactory::~QContactActionFactory" href="qcontactactionfactory.html#dtor.QContactActionFactory" location="qcontactactionfactory.cpp" virtual="pure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QContactActionFactory()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QContactActionFactory::name" href="qcontactactionfactory.html#name" location="qcontactactionfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionDescriptors" fullname="QContactActionFactory::actionDescriptors" href="qcontactactionfactory.html#actionDescriptors" location="qcontactactionfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactActionDescriptor&gt;" signature="actionDescriptors() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="instance" fullname="QContactActionFactory::instance" href="qcontactactionfactory.html#instance" location="qcontactactionfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QContactAction *" signature="instance(const QContactActionDescriptor &amp; descriptor) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="actionMetadata" fullname="QContactActionFactory::actionMetadata" href="qcontactactionfactory.html#actionMetadata" location="qcontactactionfactory.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QVariantMap" signature="actionMetadata(const QContactActionDescriptor &amp; descriptor) const">
-                <parameter left="const QContactActionDescriptor &amp;" right="" name="descriptor" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaPlaylistControl" href="qmediaplaylistcontrol.html" location="qmediaplaylistcontrol.h" bases="QMediaControl" module="">
@@ -5188,7 +5048,7 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QAccelerometerReading" href="qaccelerometerreading.html" location="qaccelerometer.h" bases="QSensorReading" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QAccelerometerReading" href="qaccelerometerreading.html" location="qaccelerometer.h" bases="QSensorReading" module="">
             <contents name="qaccelerometerreading-units" title="QAccelerometerReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QAccelerometerReading::x" href="qaccelerometerreading.html#x-prop" location="qaccelerometer.h" type="qreal">
                 <getter name="x"/>
@@ -5212,12 +5072,12 @@
                 <parameter left="qreal" right="" name="z" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QAccelerometerFilter" href="qaccelerometerfilter.html" location="qaccelerometer.h" bases="QSensorFilter" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QAccelerometerFilter" href="qaccelerometerfilter.html" location="qaccelerometer.h" bases="QSensorFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QAccelerometerFilter::filter" href="qaccelerometerfilter.html#filter" location="qaccelerometer.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="filter(QAccelerometerReading * reading)">
                 <parameter left="QAccelerometerReading *" right="" name="reading" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QAccelerometer" href="qaccelerometer.html" location="qaccelerometer.h" bases="QSensor" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QAccelerometer" href="qaccelerometer.html" location="qaccelerometer.h" bases="QSensor" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QAccelerometer" fullname="QAccelerometer::QAccelerometer" href="qaccelerometer.html#QAccelerometer" location="qaccelerometer.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QAccelerometer(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -5225,7 +5085,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QAccelerometer::reading" href="qaccelerometer.html#reading" location="qaccelerometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QAccelerometerReading *" signature="reading() const"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QAccelerometer::type" href="qaccelerometer.html#type-var" location="qaccelerometer.h" type="const char *" static="true"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMagnetometerReading" href="qmagnetometerreading.html" location="qmagnetometer.h" bases="QSensorReading" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMagnetometerReading" href="qmagnetometerreading.html" location="qmagnetometer.h" bases="QSensorReading" module="">
             <contents name="qmagnetometerreading-units" title="QMagnetometerReading Units" level="2"/>
             <property access="public" threadsafety="unspecified" status="commendable" name="x" fullname="QMagnetometerReading::x" href="qmagnetometerreading.html#x-prop" location="qmagnetometer.h" type="qreal">
                 <getter name="x"/>
@@ -5256,12 +5116,12 @@
                 <parameter left="qreal" right="" name="calibrationLevel" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMagnetometerFilter" href="qmagnetometerfilter.html" location="qmagnetometer.h" bases="QSensorFilter" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMagnetometerFilter" href="qmagnetometerfilter.html" location="qmagnetometer.h" bases="QSensorFilter" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QMagnetometerFilter::filter" href="qmagnetometerfilter.html#filter" location="qmagnetometer.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="filter(QMagnetometerReading * reading)">
                 <parameter left="QMagnetometerReading *" right="" name="reading" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMagnetometer" href="qmagnetometer.html" location="qmagnetometer.h" bases="QSensor" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMagnetometer" href="qmagnetometer.html" location="qmagnetometer.h" bases="QSensor" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="returnGeoValues" fullname="QMagnetometer::returnGeoValues" href="qmagnetometer.html#returnGeoValues-prop" location="qmagnetometer.h" type="bool"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMagnetometer" fullname="QMagnetometer::QMagnetometer" href="qmagnetometer.html#QMagnetometer" location="qmagnetometer.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMagnetometer(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -5662,7 +5522,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="screenSaverInhibited" fullname="QSystemScreenSaver::screenSaverInhibited" href="qsystemscreensaver.html#screenSaverInhibited-prop" location="qsysteminfo.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="screenSaverInhibited" type="bool" signature="screenSaverInhibited()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setScreenSaverInhibit" fullname="QSystemScreenSaver::setScreenSaverInhibit" href="qsystemscreensaver.html#setScreenSaverInhibit" location="qsysteminfo.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="bool" signature="setScreenSaverInhibit()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorBackend" href="qsensorbackend.html" location="qsensorbackend.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSensorBackend" href="qsensorbackend.html" location="qsensorbackend.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="start" fullname="QSensorBackend::start" href="qsensorbackend.html#start" location="qsensorbackend.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="start()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="QSensorBackend::stop" href="qsensorbackend.html#stop" location="qsensorbackend.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="stop()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="addDataRate" fullname="QSensorBackend::addDataRate" href="qsensorbackend.html#addDataRate" location="qsensorbackend.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addDataRate(qreal min, qreal max)">
@@ -5731,7 +5591,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="assistantName" fullname="QContactOrganization::assistantName" href="qcontactorganization.html#assistantName" location="qcontactorganization.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="assistantName() const"/>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="qtimestamp" href="qsensor.html#qtimestamp-typedef" location="qsensor.h"/>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QSensor" href="qsensor.html" location="qsensor.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSensor" href="qsensor.html" location="qsensor.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="sensorid" fullname="QSensor::sensorid" href="qsensor.html#sensorid-prop" location="qsensor.h" type="QByteArray">
                 <getter name="identifier"/>
                 <setter name="setIdentifier"/>
@@ -5819,14 +5679,14 @@
                 <parameter left="int" right="" name="error" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorFilter" href="qsensorfilter.html" location="qsensor.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSensorFilter" href="qsensorfilter.html" location="qsensor.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QSensorFilter::filter" href="qsensorfilter.html#filter" location="qsensor.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="bool" signature="filter(QSensorReading * reading)">
                 <parameter left="QSensorReading *" right="" name="reading" default=""/>
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="~QSensorFilter" fullname="QSensorFilter::~QSensorFilter" href="qsensorfilter.html#dtor.QSensorFilter" location="qsensor.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QSensorFilter()"/>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="m_sensor" fullname="QSensorFilter::m_sensor" href="qsensorfilter.html#m_sensor-var" location="qsensor.h" type="QSensor *" static="false"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QSensorReading" href="qsensorreading.html" location="qsensor.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QSensorReading" href="qsensorreading.html" location="qsensor.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="timestamp" fullname="QSensorReading::timestamp" href="qsensorreading.html#timestamp-prop" location="qsensor.h" type="QtMobility::qtimestamp">
                 <getter name="timestamp"/>
             </property>
@@ -5966,7 +5826,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="availableAudioInputsChanged" fullname="QAudioCaptureSource::availableAudioInputsChanged" href="qaudiocapturesource.html#availableAudioInputsChanged" location="qaudiocapturesource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="availableAudioInputsChanged()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageAccountId" href="qmessageaccountid.html" location="qmessageaccountid.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountId" href="qmessageaccountid.html" location="qmessageaccountid.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountId" fullname="QMessageAccountId::QMessageAccountId" href="qmessageaccountid.html#QMessageAccountId" location="qmessageaccountid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageAccountId()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountId" fullname="QMessageAccountId::QMessageAccountId" href="qmessageaccountid.html#QMessageAccountId-2" location="qmessageaccountid_stub.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageAccountId(const QMessageAccountId &amp; other)">
                 <parameter left="const QMessageAccountId &amp;" right="" name="other" default=""/>
@@ -6137,7 +5997,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="contentsChanged" fullname="QValueSpaceSubscriber::contentsChanged" href="qvaluespacesubscriber.html#contentsChanged" location="qvaluespacesubscriber.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="contentsChanged()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageManager" href="qmessagemanager.html" location="qmessagemanager.h" bases="QObject" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageManager" href="qmessagemanager.html" location="qmessagemanager.h" bases="QObject" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="RemovalOption" fullname="QMessageManager::RemovalOption" href="qmessagemanager.html#RemovalOption-enum" location="qmessagemanager.h">
                 <value name="RemoveLocalCopyOnly" value="1"/>
                 <value name="RemoveOnOriginatingServer" value="2"/>
@@ -6469,7 +6329,7 @@
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QVideoWidget::d_ptr" href="qvideowidget.html#d_ptr-var" location="qvideowidget.h" type="QVideoWidgetPrivate *" static="false"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QVersitDocument" href="qversitdocument.html" location="qversitdocument.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QVersitDocument" href="qversitdocument.html" location="qversitdocument.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="VersitType" fullname="QVersitDocument::VersitType" href="qversitdocument.html#VersitType-enum" location="qversitdocument.h">
                 <value name="InvalidType" value="0"/>
                 <value name="VCard21Type" value="1"/>
@@ -6566,7 +6426,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="updateTimeout" fullname="QGeoPositionInfoSource::updateTimeout" href="qgeopositioninfosource.html#updateTimeout" location="qgeopositioninfosource.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="updateTimeout()"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageAccountSortOrder" href="qmessageaccountsortorder.html" location="qmessageaccountsortorder.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountSortOrder" href="qmessageaccountsortorder.html" location="qmessageaccountsortorder.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountSortOrder" fullname="QMessageAccountSortOrder::QMessageAccountSortOrder" href="qmessageaccountsortorder.html#QMessageAccountSortOrder" location="qmessageaccountsortorder_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageAccountSortOrder()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageAccountSortOrder" fullname="QMessageAccountSortOrder::QMessageAccountSortOrder" href="qmessageaccountsortorder.html#QMessageAccountSortOrder-2" location="qmessageaccountsortorder_win.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageAccountSortOrder(const QMessageAccountSortOrder &amp; other)">
                 <parameter left="const QMessageAccountSortOrder &amp;" right="" name="other" default=""/>
@@ -6771,7 +6631,7 @@
                 <parameter left="const QString &amp;" right="" name="lastName" default=""/>
             </function>
         </class>
-        <class access="public" threadsafety="unspecified" status="preliminary" name="QMessageSortOrder" href="qmessagesortorder.html" location="qmessagesortorder.h" bases="" module="">
+        <class access="public" threadsafety="unspecified" status="commendable" name="QMessageSortOrder" href="qmessagesortorder.html" location="qmessagesortorder.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageSortOrder" fullname="QMessageSortOrder::QMessageSortOrder" href="qmessagesortorder.html#QMessageSortOrder" location="qmessagesortorder_qmf.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMessageSortOrder()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QMessageSortOrder" fullname="QMessageSortOrder::QMessageSortOrder" href="qmessagesortorder.html#QMessageSortOrder-2" location="qmessagesortorder_qmf.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QMessageSortOrder(const QMessageSortOrder &amp; other)">
                 <parameter left="const QMessageSortOrder &amp;" right="" name="other" default=""/>
@@ -6994,7 +6854,6 @@
             <contents name="meta-data-api" title="Meta Data API" level="3"/>
             <contents name="asynchronous-api" title="Asynchronous API" level="3"/>
             <contents name="synchronous-api" title="Synchronous API" level="3"/>
-            <contents name="actions" title="Actions" level="2"/>
             <contents name="non-client-facing-api" title="Non-Client-Facing API" level="1"/>
             <contents name="manager-engine" title="Manager Engine" level="2"/>
             <contents name="using-the-api" title="Using the API" level="1"/>
@@ -7004,7 +6863,6 @@
             <contents name="contact-details-leaf-classes" title="&quot;Contact Details&quot; Leaf Classes" level="2"/>
             <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
             <contents name="contact-selection" title="Contact Selection" level="2"/>
-            <contents name="actions" title="Actions" level="2"/>
             <contents name="implementing-backends" title="Implementing Backends" level="2"/>
             <contents name="synchronization-and-serialization" title="Synchronization and Serialization" level="2"/>
             <contents name="examples" title="Examples" level="2"/>
@@ -7043,9 +6901,6 @@
             <contents name="helper-classes" title="Helper Classes" level="2"/>
             <contents name="backend-classes" title="Backend Classes" level="2"/>
         </page>
-        <page access="public" status="commendable" name="gpl.html" href="gpl.html" subtype="page" title="GNU General Public License (GPL)" fulltitle="GNU General Public License (GPL)" subtitle="" location="gpl.qdoc">
-            <contents name="the-gnu-general-public-license-version-3" title="The GNU General Public License (Version 3)" level="1"/>
-        </page>
         <page access="public" status="commendable" name="lgpl.html" href="lgpl.html" subtype="page" title="GNU Lesser General Public License (LGPL)" fulltitle="GNU Lesser General Public License (LGPL)" subtitle="" location="gpl.qdoc">
             <contents name="the-gnu-lesser-general-public-license-version-2-1" title="The GNU Lesser General Public License (Version 2.1)" level="1"/>
             <contents name="nokia-qt-lgpl-exception-version-1-0" title="Nokia Qt LGPL Exception version 1.0" level="1"/>
@@ -7071,7 +6926,7 @@
             <contents name="light-maps-demo" title="Light Maps Demo" level="2"/>
             <contents name="classes" title="Classes" level="1"/>
         </page>
-        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API (technology preview)" fulltitle="Versit API (technology preview)" subtitle="" location="versit.qdoc">
+        <page access="public" status="commendable" name="versit.html" href="versit.html" subtype="page" title="Versit API" fulltitle="Versit API" subtitle="" location="versit.qdoc">
             <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="usage" title="Usage" level="1"/>
@@ -7142,10 +6997,9 @@
             <contents name="location" title="Location" level="2"/>
             <contents name="messaging" title="Messaging" level="2"/>
             <contents name="multimedia" title="Multimedia" level="2"/>
+            <contents name="sensors" title="Sensors" level="2"/>
             <contents name="service-framework" title="Service Framework" level="2"/>
             <contents name="system-information" title="System Information" level="2"/>
-            <contents name="included-technology-preview-apis" title="Included Technology Preview APIs" level="1"/>
-            <contents name="sensors" title="Sensors" level="2"/>
             <contents name="versit" title="Versit" level="2"/>
             <contents name="the-qtmobility-namespace" title="The QtMobility Namespace" level="1"/>
             <contents name="platform-compatability" title="Platform Compatability" level="1"/>
@@ -7272,22 +7126,6 @@
             <contents name="examples" title="Examples" level="1"/>
             <contents name="system-information-example" title="System Information Example" level="2"/>
         </page>
-        <page access="public" status="commendable" name="licensing" href="licensing.html" subtype="group" title="Licensing Information" fulltitle="Licensing Information" subtitle="" location="licenses.qdoc"/>
-        <page access="public" status="commendable" name="licenses.html" href="licenses.html" subtype="page" title="Other Licenses Used in Qt" fulltitle="Other Licenses Used in Qt" subtitle="" location="licenses.qdoc"/>
-        <page access="public" status="commendable" name="licenses-fonts.html" href="licenses-fonts.html" subtype="page" title="Licenses for Fonts Used in Qt for Embedded Linux" fulltitle="Licenses for Fonts Used in Qt for Embedded Linux" subtitle="" location="licenses.qdoc">
-            <contents name="adobe-helvetica" title="Adobe Helvetica" level="1"/>
-            <contents name="adobe-utopia" title="Adobe Utopia" level="1"/>
-            <contents name="babelfish" title="Babelfish" level="1"/>
-            <contents name="bigelow-holmes-luxi" title="Bigelow &amp; Holmes Luxi" level="1"/>
-            <contents name="bitstream-charter-and-courier" title="Bitstream Charter and Courier" level="1"/>
-            <contents name="bitstream-vera" title="Bitstream Vera" level="1"/>
-            <contents name="cursor" title="Cursor" level="1"/>
-            <contents name="dejavu-fonts" title="DejaVu Fonts" level="1"/>
-            <contents name="fixed-fonts" title="Fixed Fonts" level="1"/>
-            <contents name="ibm-courier" title="IBM Courier" level="1"/>
-            <contents name="micro" title="Micro" level="1"/>
-            <contents name="unifont" title="Unifont" level="1"/>
-        </page>
         <page access="public" status="commendable" name="audiorecorder" href="audiorecorder.html" subtype="example" title="Audio Recorder Example" fulltitle="Audio Recorder Example" subtitle="" location="audiorecorder.qdoc">
             <page access="public" status="commendable" name="audiorecorder/audiorecorder.cpp" href="audiorecorder-audiorecorder-cpp.html" subtype="file" title="" fulltitle="audiorecorder.cpp Example File" subtitle="audiorecorder/audiorecorder.cpp" location=""/>
             <page access="public" status="commendable" name="audiorecorder/audiorecorder.h" href="audiorecorder-audiorecorder-h.html" subtype="file" title="" fulltitle="audiorecorder.h Example File" subtitle="audiorecorder/audiorecorder.h" location=""/>
@@ -7412,6 +7250,7 @@
             <contents name="building-on-windows" title="Building On Windows" level="2"/>
             <contents name="building-for-windows-ce" title="Building For Windows CE" level="2"/>
             <contents name="building-for-symbian-on-windows" title="Building For Symbian On Windows" level="2"/>
+            <contents name="building-for-mac-os-x" title="Building For Mac OS X" level="2"/>
             <contents name="building-individual-qt-mobility-modules" title="Building Individual Qt Mobility Modules" level="2"/>
             <contents name="making-the-libraries-available-to-applications" title="Making the libraries available to applications" level="1"/>
             <contents name="making-the-libraries-available-on-unix" title="Making the libraries available on Unix" level="2"/>
@@ -7480,13 +7319,10 @@
             <contents name="known-issues" title="Known Issues" level="1"/>
             <contents name="non-api-specific-issues" title="Non-API specific issues" level="2"/>
             <contents name="contacts-api" title="Contacts API" level="2"/>
-            <contents name="location-api" title="Location API" level="2"/>
             <contents name="messaging-api" title="Messaging API" level="2"/>
             <contents name="multimedia-api" title="Multimedia API" level="2"/>
-            <contents name="publish-and-subscribe-api" title="Publish and Subscribe API" level="2"/>
             <contents name="sensors-api" title="Sensors API" level="2"/>
             <contents name="system-info-api" title="System Info API" level="2"/>
-            <contents name="versit-api" title="Versit API" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMediaPlaylistControl_iid" href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid" location="qmediaplaylistcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMediaPlaylistControl" type="" signature="QMediaPlaylistControl_iid()"/>
@@ -7535,7 +7371,7 @@
         <function access="public" threadsafety="unspecified" status="commendable" name="REGISTER_STATIC_PLUGIN" href="qsensormanager.html#REGISTER_STATIC_PLUGIN" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QSensorManager" type="" signature="REGISTER_STATIC_PLUGIN( pluginname)">
             <parameter left="" right="" name="pluginname" default=""/>
         </function>
-        <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API (technology preview)" fulltitle="Sensors API (technology preview)" subtitle="" location="sensors.qdoc">
+        <page access="public" status="commendable" name="sensors-api.html" href="sensors-api.html" subtype="page" title="Sensors API" fulltitle="Sensors API" subtitle="" location="sensors.qdoc">
             <contents name="namespace" title="Namespace" level="1"/>
             <contents name="sensor-types" title="Sensor Types" level="1"/>
             <contents name="common-conventions" title="Common Conventions" level="1"/>
@@ -7556,6 +7392,27 @@
             <contents name="how-a-sensor-plugin-is-loaded" title="How a sensor plugin is loaded" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QRadioTunerControl_iid" href="qradiotunercontrol.html#QRadioTunerControl_iid" location="qradiotunercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QRadioTunerControl" type="" signature="QRadioTunerControl_iid()"/>
+        <page access="public" status="commendable" name="contactsengines.html" href="contactsengines.html" subtype="page" title="Qt Contacts Manager Engines" fulltitle="Qt Contacts Manager Engines" subtitle="" location="contactsengines.qdoc">
+            <contents name="introduction" title="Introduction" level="1"/>
+            <contents name="information-for-clients" title="Information For Clients" level="1"/>
+            <contents name="where-is-the-data-stored" title="Where Is The Data Stored?" level="2"/>
+            <contents name="schema-differences" title="Schema Differences" level="2"/>
+            <contents name="provided-engines" title="Provided Engines" level="2"/>
+            <contents name="in-memory-example-engine" title="In-Memory Example Engine" level="3"/>
+            <contents name="symbian-3-1-engine" title="Symbian 3.1 Engine" level="3"/>
+            <contents name="symbian-3-2-engine" title="Symbian 3.2 Engine" level="3"/>
+            <contents name="symbian-5-0-engine" title="Symbian 5.0 Engine" level="3"/>
+            <contents name="maemo-5-fremantle-engine" title="Maemo 5 (Fremantle) Engine" level="3"/>
+            <contents name="libqttracker-engine" title="libQtTracker Engine" level="3"/>
+            <contents name="information-for-engine-implementors" title="Information For Engine Implementors" level="1"/>
+            <contents name="which-functions-do-i-need-to-implement" title="Which Functions Do I Need To Implement" level="2"/>
+            <contents name="mandatory-functions" title="Mandatory Functions" level="3"/>
+            <contents name="optional-functionality" title="Optional Functionality" level="3"/>
+            <contents name="optional-implementation" title="Optional Implementation" level="3"/>
+            <contents name="which-signals-do-i-need-to-emit" title="Which Signals Do I Need To Emit" level="2"/>
+            <contents name="other-considerations" title="Other Considerations" level="2"/>
+            <contents name="example-implementation" title="Example Implementation" level="2"/>
+        </page>
         <page access="public" status="commendable" name="declarative-sfw-notes" href="declarative-sfw-notes.html" subtype="example" title="Declarative Service Framework Notes Manager" fulltitle="Declarative Service Framework Notes Manager" subtitle="" location="declarative-sfw-notes.qdoc">
             <page access="public" status="commendable" name="declarative-sfw-notes/qdeclarativeservice.cpp" href="declarative-sfw-notes-qdeclarativeservice-cpp.html" subtype="file" title="" fulltitle="qdeclarativeservice.cpp Example File" subtitle="declarative-sfw-notes/qdeclarativeservice.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-notes/qdeclarativeservice.h" href="declarative-sfw-notes-qdeclarativeservice-h.html" subtype="file" title="" fulltitle="qdeclarativeservice.h Example File" subtitle="declarative-sfw-notes/qdeclarativeservice.h" location=""/>

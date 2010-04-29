@@ -267,21 +267,6 @@ synchronous API only.
 
 For more detailed documentation on the synchronous API, see the \l{Contacts Synchronous API}.
 
-\section2 Actions
-
-Clients can perform \l{QContactAction}{actions} on contacts which support
-them.  Actions are things like "Send Email" or "Dial", and can be provided
-from various sources including Qt Plugins or the Qt Mobility Service
-Framework. Every action implementation is uniquely identified by a
-combination of its name, the name of the vendor which provided the
-implementation, and the version of the implementation according to the
-vendor.  These pieces of data may be encapsulated in a
-\l{QContactActionDescriptor} which can be used to retrieve an instance of the
-implementation from a \l{QContactActionFactory}.
-
-When an instance of a \l{QContactAction} is created, the caller takes
-ownership of the instance, and must delete it after use.
-
 \section1 Non-Client-Facing API
 
 The non-client-facing API allows third party developers to implement a manager
@@ -300,6 +285,9 @@ dynamic loading of different manager engines at runtime.
 A manager backend may be implemented by subclassing
 \l{QContactManagerEngine}, and providing a \l{QContactManagerEngineFactory}
 which can instantiate it when required.
+
+See \l{Qt Contacts Manager Engines} for more information on available engines
+and how to write your own engine.
 
 \section1 Using the API
 
@@ -355,21 +343,18 @@ criteria:
 A client can also request that the results of such a selection be sorted,
 by passing a \l{QContactSortOrder} (or list of sort orders) to the manager.
 
-\section2 Actions
-
-Actions are described by descriptors and are instantiated by factories.
-
-\annotatedlist contacts-actions
-
 \section2 Implementing Backends
 
 A backend implementor must implement the following interfaces:
 
 \annotatedlist contacts-backends
 
+For more information on this topic, see please see the documentation on
+\l{Qt Contacts Manager Engines}{implementing manager engines}.
+
 \section2 Synchronization and Serialization
 
-The contacts API is used by another Qt Mobility module: the \l {Versit API (technology preview)} {Versit}* module.  It allows
+The contacts API is used by another Qt Mobility module: the \l {Versit API} {Versit}* module.  It allows
 serialization of a QContact into a vCard document, and vice versa.
 
 [*] Versit \reg is a trademark of the Internet Mail Consortium.

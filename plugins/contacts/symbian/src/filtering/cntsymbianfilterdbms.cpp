@@ -327,7 +327,17 @@ QList<QContactLocalId> CntSymbianFilter::filterContacts(
             TRAP_IGNORE(getMatchLengthL(matchLength));
 
             TInt err = matchContacts(idArray, commPtr, matchLength);
-            if(err != KErrNone) {
+            if (err == KErrNone) {
+                // Phone number matching sometimes includes nonexisting contacts to
+                // the result for some reason. Remove them.
+                for (TInt i(0); i < idArray->Count(); ) {
+                    if(!contactExists((*idArray)[i])) {
+                        idArray->Remove(i);
+                    } else {
+                        i++;
+                    }
+                }
+            } else {
                 CntSymbianTransformError::transformError(err, error);
             }
         // Names, e-mail, display label (other flags)
@@ -411,6 +421,12 @@ bool CntSymbianFilter::isFalsePositive(const CContactItemFieldSet& fieldSet, con
             value = false;
     }
     return value;
+}
+
+bool CntSymbianFilter::contactExists(const TContactItemId &contactId)
+{
+    TRAPD(err, m_contactDatabase.ReadMinimalContactL(contactId));
+    return err == KErrNone;
 }
 
 /*!

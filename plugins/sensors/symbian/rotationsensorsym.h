@@ -39,46 +39,65 @@
 **
 ****************************************************************************/
 
+#ifndef ROTATIONSENSORSYM_H
+#define ROTATIONSENSORSYM_H
 
-#ifndef QCONTACTACTIONDESCRIPTOR_H
-#define QCONTACTACTIONDESCRIPTOR_H
+// QT Mobility Sensor API headers
+#include <qsensorbackend.h>
+#include <qrotationsensor.h>
 
-#include "qtcontactsglobal.h"
-#include <QString>
-#include <QSharedDataPointer>
+// Internal Headers
+#include "sensorbackendsym.h"
 
-QTM_BEGIN_NAMESPACE
+// Sensor client headers
+// Rotation Sensor specific header
+#include <sensrvorientationsensor.h>
 
-class QContactActionDescriptorPrivate;
-class Q_CONTACTS_EXPORT QContactActionDescriptor
-{
+QTM_USE_NAMESPACE
+
+class CRotationSensorSym: public CSensorBackendSym
+    {
 public:
-    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& vendorName = QString(), int vendorVersion = -1);
-    QContactActionDescriptor(const QContactActionDescriptor& other);
-    QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
-    ~QContactActionDescriptor();
-
-    bool isEmpty() const;
-    bool operator==(const QContactActionDescriptor& other) const;
-    bool operator!=(const QContactActionDescriptor& other) const;
-    bool operator<(const QContactActionDescriptor& other) const;
-
-    void setActionName(const QString& actionName);
-    void setVendorName(const QString& vendorName);
-    void setImplementationVersion(int implementationVersion);
-
-    QString actionName() const;
-    QString vendorName() const;
-    int implementationVersion() const;
-
+    /**
+     * Factory function, this is used to create the rotation sensor object
+     * @return CRotationSensorSym if successful, leaves on failure
+     */
+    static CRotationSensorSym* NewL(QSensor *sensor);
+    
+    /**
+     * Destructor
+     * Closes the backend resources
+     */
+    ~CRotationSensorSym();
+    
 private:
-    QSharedDataPointer<QContactActionDescriptorPrivate> d;
-};
+    /**
+     * Default constructor
+     */
+    CRotationSensorSym(QSensor *sensor);
+    
+    /*
+     * RecvData is used to retrieve the sensor reading from sensor server
+     * It is implemented here to handle rotation sensor specific
+     * reading data and provides conversion and utility code
+     */ 
+    void RecvData(CSensrvChannel &aChannel);
 
-Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
+    /**
+     * Second phase constructor
+     * Initialize the backend resources
+     */
+    void ConstructL();
+    
+public:
+    /**
+     * Holds the id of the proximity sensor
+     */
+    static const char *id;
+    
+private:     
+    QRotationReading iReading;
+    TSensrvRotationData iData;
+    };
 
-QTM_END_NAMESPACE
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactActionDescriptor), Q_MOVABLE_TYPE);
-
-#endif
+#endif //ROTATIONSENSORSYM_H

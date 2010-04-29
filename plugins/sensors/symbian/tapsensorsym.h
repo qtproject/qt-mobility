@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,34 +39,63 @@
 **
 ****************************************************************************/
 
-#ifndef CNTFILTERACTION_H_
-#define CNTFILTERACTION_H_
+#ifndef TAPSENSORSYM_H
+#define TAPSENSORSYM_H
 
-#include "cntabstractcontactfilter.h"
-#include "cntsymbiansrvconnection.h"
-#include "cntdbinfo.h"
+// QT Mobility Sensor API headers
+#include <qsensorbackend.h>
+#include <qtapsensor.h>
 
-class CntFilterAction : public CntAbstractContactFilter
-{
+// Internal Headers
+#include "sensorbackendsym.h"
+
+// Sensor client headers
+// Double Tap Sensor specific header
+#include <sensrvtappingsensor.h>
+
+QTM_USE_NAMESPACE
+
+class CTapSensorSym: public CSensorBackendSym
+    {
 public:
-    CntFilterAction(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo);
-    ~CntFilterAction();
-    QList<QContactLocalId> contacts(
-            const QContactFilter &filter,
-            const QList<QContactSortOrder> &sortOrders,
-            bool &filterSupported,
-            QContactManager::Error* error);
-    bool filterSupported(const QContactFilter& filter);
-
-    void createSelectQuery(const QContactFilter& filter,
-                                 QString& sqlQuery,
-                                 QContactManager::Error* error);
+    /**
+     * Factory function, this is used to create the tap sensor object
+     * @return CTapSensorSym if successful, leaves on failure
+     */
+    static CTapSensorSym* NewL(QSensor *sensor);
+    /**
+     * Destructor
+     * Closes the backend resources
+     */
+    ~CTapSensorSym();
+    
 private:
+	  /**
+     * Default constructor
+     */
+    CTapSensorSym(QSensor *sensor);
+    /**
+     * RecvData is used to retrieve the sensor reading from sensor server
+     * It is implemented here to handle tap sensor specific
+     * reading data and provides conversion and utility code
+     */ 
+    void RecvData(CSensrvChannel &aChannel);
+   /**
+     * Second phase constructor
+     * Initialize the backend resources
+     */
+    void ConstructL();
+    
+public:
+    /**
+     * Holds the id of the magnetometer
+     */	
+    static const char *id;
+    
+private:
+    QTapReading iReading;
+    TSensrvTappingData iData;
+    };
 
-protected:
-    CContactDatabase& m_contactdatabase;
-    CntSymbianSrvConnection &m_srvConnection;
-    CntDbInfo& m_dbInfo;
-};
+#endif //TAPSENSORSYM_H
 
-#endif /* CNTFILTERACTION_H_ */

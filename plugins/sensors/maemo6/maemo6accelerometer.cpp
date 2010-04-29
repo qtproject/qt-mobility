@@ -77,7 +77,7 @@ void maemo6accelerometer::slotDataAvailable(const XYZ& data)
 {
     // Convert from milli-Gs to meters per second per second
     // Using 1 G = 9.80665 m/s^2
-    qreal ax = data.x() * GRAVITY_EARTH_THOUSANDTH;
+    qreal ax = - data.x() * GRAVITY_EARTH_THOUSANDTH;
     qreal ay = - data.y() * GRAVITY_EARTH_THOUSANDTH;
     qreal az = - data.z() * GRAVITY_EARTH_THOUSANDTH;
 
