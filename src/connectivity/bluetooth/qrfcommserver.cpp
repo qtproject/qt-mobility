@@ -98,6 +98,8 @@ QTM_BEGIN_NAMESPACE
     \fn void QRfcommServer::setMaxPendingConnections(int numConnections)
 
     Sets the maximum number of pending connections to \a numConnections.
+
+    \sa maxPendingConnections()
 */
 
 /*!
@@ -121,7 +123,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn quint16 QRfcommServer::serverPort() const
 
-    Returns the servers port number.
+    Returns the server's port number.
 */
 
 /*!
@@ -153,6 +155,8 @@ bool QRfcommServer::isListening() const
 
 /*!
     Returns the maximum number of pending connections.
+
+    \sa setMaxPendingConnections()
 */
 int QRfcommServer::maxPendingConnections() const
 {
