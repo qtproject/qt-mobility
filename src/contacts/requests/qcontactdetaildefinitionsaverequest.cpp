@@ -58,10 +58,24 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new detail definition save request */
-QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate)
+/*! Constructs a new detail definition save request whose parent is the specified \a parent */
+QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate, parent)
 {
+}
+
+/*!
+  Sets the definition to save to be the given \a definition.
+  Equivalent to calling:
+  \code
+      setDefinitions(QList<QContactDetailDefinition>() << definition);
+  \endcode
+ */
+void QContactDetailDefinitionSaveRequest::setDefinition(const QContactDetailDefinition& definition)
+{
+    Q_D(QContactDetailDefinitionSaveRequest);
+    d->m_definitions.clear();
+    d->m_definitions.append(definition);
 }
 
 /*! Sets the definitions to save to be \a definitions */

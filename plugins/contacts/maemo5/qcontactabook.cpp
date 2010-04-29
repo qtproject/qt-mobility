@@ -128,7 +128,9 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
     if (id)
       contactIds << id;
   }
-  d->that->_contactsAdded(contactIds);
+
+  if (!contactIds.isEmpty())
+    d->that->_contactsAdded(contactIds);
 }
 
 static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contacts, gpointer data)
@@ -155,7 +157,9 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
     if (id)
       contactIds << id;
   }
-  d->that->_contactsChanged(contactIds);
+
+  if (!contactIds.isEmpty())
+    d->that->_contactsChanged(contactIds);
 }
 
 static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointer data)
@@ -173,13 +177,15 @@ static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointe
   QList<QContactLocalId> contactIds;
   
   for (p = ids; *p; ++p) {
-    QContactLocalId id = d->hash->take(*p);
-    QCM5_DEBUG << "Contact" << id << "has been removed";
-    if (id)
-      contactIds << id;
+      QContactLocalId id = d->hash->take(*p);
+      if (id) {
+        QCM5_DEBUG << "Contact" << id << "has been removed";
+        contactIds << id;
+      }
   }
   
-  d->that->_contactsRemoved(contactIds);
+  if (!contactIds.isEmpty())
+    d->that->_contactsRemoved(contactIds);
 }
 
 void QContactABook::initAddressBook(){
@@ -264,21 +270,24 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   QList<QContactLocalId> rtn;
 
   // do this naively for now...
-  QContactManager::Error tempError;
+  *error = QContactManager::NoError;
+  QContactManager::Error tempError = QContactManager::NoError;
   QList<QContactLocalId> allIds = m_localIds.keys();
   QList<QContact> sortedAndFiltered;
   QContact *curr = 0;
   foreach (const QContactLocalId& currId, allIds) {
     curr = getQContact(currId, &tempError);
+    if (tempError != QContactManager::NoError)
+      *error = tempError;
     if (QContactManagerEngine::testFilter(filter, *curr)) {
       QContactManagerEngine::addSorted(&sortedAndFiltered, *curr, sortOrders);
     }
+    delete curr;
   }
 
   foreach (const QContact& contact, sortedAndFiltered) {
     rtn.append(contact.localId());
   }
-  *error = tempError;
   return rtn;
 
   /*
@@ -340,7 +349,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
         EContact *contact = E_CONTACT(masterContact);
         const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
         QByteArray localId(data);
-        m_localI/* ds << localId;
+        m_localIds << localId;
         rtn.append(m_localIds[localId]);
         QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
       }
@@ -382,6 +391,9 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   
   //Convert aContact => qContact
   rtn = convert(E_CONTACT(aContact));
+  QContactId cId;
+  cId.setLocalId(contactId);
+  rtn->setId(cId);
   return rtn;
 }
 
@@ -501,6 +513,10 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
 
   // update our list of ids...
   m_localIds.remove(masterUid);
+  
+  QContactLocalId id = m_localIds[masterUid];
+  if (id)
+    _contactsRemoved(QList<QContactLocalId>() << id);
   
   return ok;
 }
@@ -947,7 +963,7 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
   //Ordered list of Fields
   QStringList addressFields;
   addressFields << QContactAddress::FieldPostOfficeBox
-                << "Estension" //XXX FIXME I'm not sure we have to use a new field 
+                << AddressFieldExtension //XXX FIXME I'm not sure we have to use a new field
                 << QContactAddress::FieldStreet
                 << QContactAddress::FieldLocality
                 << QContactAddress::FieldRegion 
@@ -1316,7 +1332,7 @@ QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) c
 {
   QContactOrganization* rtn = new QContactOrganization;
   QVariantMap map;
-  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_TITLE));
+  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_ORG));
   map[QContactOrganization::FieldTitle] = title;
   FREE(title);
   setDetailValues(map, rtn);
@@ -1745,7 +1761,7 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
     QString key = i.key();
       
     if (key == QContactAddress::FieldPostOfficeBox) index = 0;
-    else if (key == "Estension") index = 1;
+    else if (key == AddressFieldExtension) index = 1;
     else if (key == QContactAddress::FieldStreet) index = 2;
     else if (key == QContactAddress::FieldLocality) index = 3;
     else if (key == QContactAddress::FieldRegion) index = 4;
@@ -1981,6 +1997,8 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
       QString value = i.value().toString();
       if (value == QContactPhoneNumber::SubTypeMobile)
         value = "CELL";
+      else if (value == QContactPhoneNumber::SubTypeVoice)
+        value = "VOICE";
       paramValues << value.toUpper();
     } else
       attrValues << i.value().toString();
@@ -1990,7 +2008,7 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
   if (paramValues.isEmpty())
     paramValues << "VOICE";
   
-  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
+  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, false, detail.detailUri().toInt());
 }
 
 void QContactABook::setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const

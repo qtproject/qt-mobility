@@ -111,11 +111,11 @@ QMediaStreamsControl::~QMediaStreamsControl()
 */
 
 /*!
-    \fn QMediaStreamsControl::metaData(int stream, QtMedia::MetaData key)
+    \fn QMediaStreamsControl::metaData(int stream, QtMediaServices::MetaData key)
 
     Returns the meta-data value of \a key for a given \a stream.
 
-    Useful metadata keya are QtMedia::Title, QtMedia::Description and QtMedia::Language.
+    Useful metadata keya are QtMediaServices::Title, QtMediaServices::Description and QtMediaServices::Language.
 */
 
 /*!

@@ -38,21 +38,32 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QDialog>
-#include <QtDBus>
-#include <QtGui>
 
-class StartDialog : public QDialog 
+#ifndef MAEMO6PROXIMITYSENSOR_H
+#define MAEMO6PROXIMITYSENSOR_H
+
+#include "maemo6sensorbase.h"
+#include <qproximitysensor.h>
+
+#include <sensord/proximitysensor_i.h>
+
+QTM_USE_NAMESPACE
+
+class maemo6proximitysensor : public maemo6sensorbase
 {
     Q_OBJECT
+
 public:
-    StartDialog(QWidget* parent = 0);
+    static const char *id;
 
-    QString device() const;
+    maemo6proximitysensor(QSensor *sensor);
 
-public slots:
-    void accept();
 private:
-    QString dev;
-    QComboBox* box;
+    QProximityReading m_reading;
+    static bool m_initDone;
+   
+private slots:
+    void slotDataAvailable(const int& data);
 };
+
+#endif

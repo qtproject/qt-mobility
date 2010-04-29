@@ -234,9 +234,9 @@ QVersitReaderPrivate::QVersitReaderPrivate()
                          QVersitProperty::CompoundType);
     mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("ORG")),
                          QVersitProperty::CompoundType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("NICKNAMES")),
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("NICKNAME")),
                          QVersitProperty::ListType);
-    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("NICKNAMES")),
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("NICKNAME")),
                          QVersitProperty::ListType);
     mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("CATEGORIES")),
                          QVersitProperty::ListType);

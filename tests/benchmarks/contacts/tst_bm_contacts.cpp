@@ -327,11 +327,9 @@ void tst_Contact::tst_fetchAllContactIds()
     filter->SetContactFilterTypeALL(EFalse);
     filter->SetContactFilterTypeCard(ETrue);
     
-    CContactIdArray *iContacts = 0x0;
-    
     QBENCHMARK {
       contactsDb->FilterDatabaseL(*filter);
-      iContacts = CContactIdArray::NewLC(filter->iIds);
+      CContactIdArray *iContacts = CContactIdArray::NewLC(filter->iIds);
     }
     
     CleanupStack::PopAndDestroy(3); //iContacts, filter, contactsDb    
@@ -399,7 +397,7 @@ void tst_Contact::tst_fetchOneContact()
     int id = id_list.takeFirst();
     id_list.append(id);
     
-    CContactItem *item;
+    CContactItem *item = 0;
     TInt r;
         
     QBENCHMARK {
@@ -502,16 +500,16 @@ void tst_Contact::tst_fetchTenContact()
     
     TInt r;
     
-    CContactItem *item1;
-    CContactItem *item2;
-    CContactItem *item3;
-    CContactItem *item4;
-    CContactItem *item5;
-    CContactItem *item6;
-    CContactItem *item7;
-    CContactItem *item8;
-    CContactItem *item9;
-    CContactItem *item10;        
+    CContactItem *item1 = 0;
+    CContactItem *item2 = 0;
+    CContactItem *item3 = 0;
+    CContactItem *item4 = 0;
+    CContactItem *item5 = 0;
+    CContactItem *item6 = 0;
+    CContactItem *item7 = 0;
+    CContactItem *item8 = 0;
+    CContactItem *item9 = 0;
+    CContactItem *item10 = 0;
         
     QBENCHMARK {
       TRAP(r, item1 = contactDb->ReadContactL(id));
