@@ -40,8 +40,112 @@
 ****************************************************************************/
 
 #include "qgeomapwidget.h"
+#include "qgeomapwidget_p.h"
+
+#include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
+
+        /*
+        enum DistanceUnits {
+            Metres,
+            Kilometres,
+            Miles
+        };
+        */
+
+double QGeoMapWidget::convertDistance(double value, DistanceUnits from, DistanceUnits to)
+{
+    Q_UNUSED(value);
+    Q_UNUSED(from);
+    Q_UNUSED(to);
+    return 0.0;
+}
+
+QGeoMapWidget::QGeoMapWidget(QGraphicsItem *parent) : QGraphicsWidget(parent, Qt::Widget)
+{
+}
+
+QGeoMapWidget::~QGeoMapWidget()
+{
+}
+
+void QGeoMapWidget::setMapService(const QGeoMappingService* mapService)
+{
+    Q_UNUSED(mapService);
+}
+
+QGeoMappingService* QGeoMapWidget::mapService() const
+{
+    return 0;
+}
+
+void QGeoMapWidget::setZoomLevel(int zoomLevel)
+{
+    Q_UNUSED(zoomLevel);
+}
+
+int QGeoMapWidget::zoomLevel() const
+{
+    return 0;
+}
+
+void QGeoMapWidget::setCenter(const QGeoCoordinate &center)
+{
+    Q_UNUSED(center);
+}
+
+QGeoCoordinate QGeoMapWidget::center() const
+{
+    return QGeoCoordinate();
+}
+
+QGeoBoundingBox QGeoMapWidget::viewBounds() const
+{
+    return QGeoBoundingBox();
+}
+
+QPointF QGeoMapWidget::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+{
+    Q_UNUSED(coordinate);
+    return QPointF();
+}
+
+QGeoCoordinate QGeoMapWidget::screenPositionToCoordinate(const QPointF &screenPosition) const
+{
+    Q_UNUSED(screenPosition);
+    return QGeoCoordinate();
+}
+
+void QGeoMapWidget::addMapObject(const QGeoMapObject *object)
+{
+    Q_UNUSED(object);
+}
+
+void QGeoMapWidget::removeMapObject(const QGeoMapObject *object)
+{
+    Q_UNUSED(object);
+}
+
+QList<QGeoMapObject*> QGeoMapWidget::mapObjects() const
+{
+    return QList<QGeoMapObject*>();
+}
+
+QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAt(const QPointF &center, int radius, DistanceUnits units) const
+{
+    Q_UNUSED(center);
+    Q_UNUSED(radius);
+    Q_UNUSED(units);
+    return QList<QGeoMapObject*>();
+}
+
+QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAt(const QRectF &rectangle) const
+{
+    Q_UNUSED(rectangle);
+    return QList<QGeoMapObject*>();
+}
 
 #include "moc_qgeomapwidget.cpp"
 

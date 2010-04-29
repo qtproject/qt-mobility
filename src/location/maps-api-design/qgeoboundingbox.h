@@ -65,7 +65,7 @@ public:
     void setUpperLeft(const QGeoCoordinate &upperLeft);
     QGeoCoordinate upperLeft() const;
 
-    void setUpperRight(const QGeoCoordinate &lowerRight);
+    void setLowerRight(const QGeoCoordinate &lowerRight);
     QGeoCoordinate lowerRight() const;
 
     // contains / intersects methods?

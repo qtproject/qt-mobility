@@ -92,6 +92,7 @@ public slots:
     void depart();
     void updatePosition(const QGeoPositionInfo &positionInfo);
 
+    // for use without gps
     void getNextNavigationInstruction();
     void navigationInstructionPerformed(QGeoNavigationInstruction *instruction);
 

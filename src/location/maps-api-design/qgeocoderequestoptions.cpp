@@ -38,3 +38,40 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include "qgeocoderequestoptions.h"
+#include "qgeocoderequestoptions_p.h"
+
+QTM_BEGIN_NAMESPACE
+
+QGeoCodeRequestOptions::QGeoCodeRequestOptions()
+{
+}
+
+QGeoCodeRequestOptions::QGeoCodeRequestOptions(const QGeoCodeRequestOptions &other)
+{
+    Q_UNUSED(other);
+}
+
+QGeoCodeRequestOptions::~QGeoCodeRequestOptions()
+{
+}
+
+QGeoCodeRequestOptions& QGeoCodeRequestOptions::operator= (const QGeoCodeRequestOptions &other)
+{
+    Q_UNUSED(other);
+    return *this;
+}
+
+void QGeoCodeRequestOptions::setMaxResponses(int maxResponses)
+{
+    Q_UNUSED(maxResponses);
+}
+
+int QGeoCodeRequestOptions::maximumResponses() const
+{
+    return 0;
+}
+
+QTM_END_NAMESPACE
+

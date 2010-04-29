@@ -38,3 +38,59 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include "qgeonavigationinstruction.h"
+#include "qgeonavigationinstruction_p.h"
+
+#include "qgeocoordinate.h"
+
+QTM_BEGIN_NAMESPACE
+
+/*
+enum InstructionType {
+    NormalInstruction,
+    PrivateTransportInstruction,
+    PublicTransportInstruction,
+    TruckInstruction
+};
+*/
+
+QGeoNavigationInstruction::QGeoNavigationInstruction()
+{
+}
+
+QGeoNavigationInstruction::QGeoNavigationInstruction(QGeoNavigationInstructionPrivate *d_ptr)
+    : d_ptr(d_ptr)
+{
+}
+
+QGeoNavigationInstruction::~QGeoNavigationInstruction()
+{
+}
+
+QGeoNavigationInstruction::InstructionType QGeoNavigationInstruction::type() const
+{
+    return NormalInstruction;
+}
+
+void QGeoNavigationInstruction::setPosition(const QGeoCoordinate &position)
+{
+    Q_UNUSED(position);
+}
+
+QGeoCoordinate QGeoNavigationInstruction::position() const
+{
+    return QGeoCoordinate();
+}
+
+void QGeoNavigationInstruction::setInstructionText(const QString &instructionText)
+{
+    Q_UNUSED(instructionText);
+}
+
+QString QGeoNavigationInstruction::instructionText() const
+{
+    return QString();
+}
+
+QTM_END_NAMESPACE

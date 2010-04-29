@@ -49,7 +49,6 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QGeoNavigationInstruction;
-
 class QGeoRouteSegmentPrivate;
 
 class Q_LOCATION_EXPORT QGeoRouteSegment {
@@ -83,7 +82,7 @@ public:
     QList<const QGeoNavigationInstruction*> instructions() const;
 
 protected:
-    QGeoRouteSegment(const QGeoRouteSegment *d_ptr);
+    QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr);
     QGeoRouteSegmentPrivate* d_ptr;
 
 private:

@@ -41,7 +41,38 @@
 
 #include "qgeocodereply.h"
 
+#include "qgeolocation.h"
+
 QTM_BEGIN_NAMESPACE
+
+QGeoCodeReply::QGeoCodeReply(QObject *parent) : QObject(parent)
+{
+}
+
+QGeoCodeReply::~QGeoCodeReply()
+{
+}
+
+// ordered from most to least specific
+void QGeoCodeReply::setLocation(const QList<QGeoLocation> &locations)
+{
+    Q_UNUSED(locations);
+}
+
+QList<QGeoLocation> QGeoCodeReply::locations() const
+{
+    return QList<QGeoLocation>();
+}
+
+void QGeoCodeReply::cancel()
+{
+}
+    /*
+    signals:
+        void finished();
+        void error(QGeoCodingService::ErrorCode errorCode,
+                   QString errorString);
+                   */
 
 #include "moc_qgeocodereply.cpp"
 

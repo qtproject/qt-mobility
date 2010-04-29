@@ -38,3 +38,84 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include "qgeoroutesegment.h"
+
+#include "qgeocoordinate.h"
+#include <QDateTime>
+
+QTM_BEGIN_NAMESPACE
+
+/*
+enum RouteSegmentType {
+    NormalSegment,
+    PrivateTransportSegment,
+    PublicTransportSegment,
+    TruckSegment
+};
+*/
+
+QGeoRouteSegment::QGeoRouteSegment()
+{
+}
+
+QGeoRouteSegment::QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr)
+    : d_ptr(d_ptr)
+{
+}
+
+QGeoRouteSegment::~QGeoRouteSegment()
+{
+}
+
+QGeoRouteSegment::RouteSegmentType QGeoRouteSegment::type() const
+{
+    return NormalSegment;
+}
+
+void QGeoRouteSegment::setDuration(const QDateTime &duration)
+{
+    Q_UNUSED(duration);
+}
+
+QDateTime QGeoRouteSegment::duration() const
+{
+    return QDateTime();
+}
+
+void QGeoRouteSegment::setDistance(double value, QGeoMapWidget::DistanceUnits units)
+{
+    Q_UNUSED(value);
+    Q_UNUSED(units);
+}
+
+double QGeoRouteSegment::distance(QGeoMapWidget::DistanceUnits units) const
+{
+    Q_UNUSED(units);
+    return 0.0;
+}
+
+// bounds per segment?  or is bounds per route enough?
+
+void QGeoRouteSegment::setGeometry(const QList<QGeoCoordinate> &geometry)
+{
+    Q_UNUSED(geometry);
+}
+
+QList<QGeoCoordinate> QGeoRouteSegment::geometry() const
+{
+    return QList<QGeoCoordinate>();
+}
+
+void QGeoRouteSegment::setInstructions(const QList<const QGeoNavigationInstruction *> &instructions)
+{
+    Q_UNUSED(instructions);
+}
+
+QList<const QGeoNavigationInstruction*> QGeoRouteSegment::instructions() const
+{
+    return QList<const QGeoNavigationInstruction*>();
+}
+
+QTM_END_NAMESPACE
+

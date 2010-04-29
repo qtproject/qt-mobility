@@ -38,3 +38,79 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include "qgeorouterequestoptions.h"
+#include "qgeorouterequestoptions_p.h"
+
+QTM_BEGIN_NAMESPACE
+
+QGeoRouteRequestOptions::QGeoRouteRequestOptions()
+{
+}
+
+QGeoRouteRequestOptions::QGeoRouteRequestOptions(const QGeoRouteRequestOptions &other)
+{
+    Q_UNUSED(other);
+}
+
+QGeoRouteRequestOptions::~QGeoRouteRequestOptions()
+{
+}
+
+QGeoRouteRequestOptions& QGeoRouteRequestOptions::operator= (const QGeoRouteRequestOptions &other)
+{
+    Q_UNUSED(other);
+    return *this;
+}
+
+// default to 0
+void QGeoRouteRequestOptions::setNumberAlternativeRoutes(int alternatives)
+{
+    Q_UNUSED(alternatives);
+}
+
+int QGeoRouteRequestOptions::numberAlternativeRoutes() const
+{
+    return 0;
+}
+
+// default to QGeoRoutingService::TravelByCar
+void QGeoRouteRequestOptions::setTravelModes(QGeoRoutingService::TravelModes travelModes)
+{
+    Q_UNUSED(travelModes);
+}
+
+QGeoRoutingService::TravelModes QGeoRouteRequestOptions::travelModes() const
+{
+    return QGeoRoutingService::CarTravel;
+}
+
+// defaults to QGeoRoutingService::NoAvoidance
+void QGeoRouteRequestOptions::setAvoidFeatureTypes(QGeoRoutingService::AvoidFeatureTypes avoidFeatureTypes)
+{
+    Q_UNUSED(avoidFeatureTypes);
+}
+
+QGeoRoutingService::AvoidFeatureTypes QGeoRouteRequestOptions::avoidFeatureTypes() const
+{
+    return QGeoRoutingService::AvoidNothing;
+}
+
+// defaults to QGeoRoutingService::OptimizeFastest
+void QGeoRouteRequestOptions::setRouteOptimization(QGeoRoutingService::RouteOptimization optimization)
+{
+    Q_UNUSED(optimization);
+}
+
+QGeoRoutingService::RouteOptimization QGeoRouteRequestOptions::routeOptimization() const
+{
+    return QGeoRoutingService::FastestRoute;
+}
+
+// defaults to empty - no subclass required yet
+// this is how we handle private / public / truck attributes
+//void QGeoRouteRequestOptions::setTransitOptions(const QList<const QGeoRouteTransitOptions *> &transitOptions);
+//QList<const QGeoRouteTransitOptions *> QGeoRouteRequestOptions::transitOptions() const;
+
+QTM_END_NAMESPACE
+

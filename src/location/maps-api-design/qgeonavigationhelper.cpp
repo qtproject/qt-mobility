@@ -40,8 +40,103 @@
 ****************************************************************************/
 
 #include "qgeonavigationhelper.h"
+#include "qgeonavigationhelper_p.h"
+
+#include "qgeoroute.h"
+#include "qgeopositioninfo.h"
 
 QTM_BEGIN_NAMESPACE
+
+        /*
+        enum NavigationStatus {
+            OnRouteStatus,
+            OffRouteStatus,
+            ArrivedStatus
+        };
+        */
+
+QGeoNavigationHelper::QGeoNavigationHelper()
+{
+}
+
+QGeoNavigationHelper::QGeoNavigationHelper(const QGeoNavigationHelper &other)
+{
+    Q_UNUSED(other);
+}
+
+QGeoNavigationHelper::QGeoNavigationHelper(const QGeoRoute &route)
+{
+    Q_UNUSED(route);
+}
+
+QGeoNavigationHelper::~QGeoNavigationHelper()
+{
+}
+
+QGeoNavigationHelper& QGeoNavigationHelper::operator= (const QGeoNavigationHelper &other)
+{
+    Q_UNUSED(other);
+    return *this;
+}
+
+void QGeoNavigationHelper::setRoute(const QGeoRoute &route)
+{
+    Q_UNUSED(route);
+}
+
+void QGeoNavigationHelper::setPositionTolerance(double radius, QGeoMapWidget::DistanceUnits units)
+{
+    Q_UNUSED(radius);
+    Q_UNUSED(units);
+}
+
+double QGeoNavigationHelper::positionTolerance(QGeoMapWidget::DistanceUnits units)
+{
+    Q_UNUSED(units);
+    return 0.0;
+}
+
+QGeoRoute QGeoNavigationHelper::originalRoute() const
+{
+    return QGeoRoute();
+}
+
+QGeoRoute QGeoNavigationHelper::completedRoute() const
+{
+    return QGeoRoute();
+}
+
+QGeoRoute QGeoNavigationHelper::remainingRoute() const
+{
+    return QGeoRoute();
+}
+
+void QGeoNavigationHelper::depart()
+{
+}
+
+void QGeoNavigationHelper::updatePosition(const QGeoPositionInfo &positionInfo)
+{
+    Q_UNUSED(positionInfo);
+}
+
+void QGeoNavigationHelper::getNextNavigationInstruction()
+{
+}
+
+void QGeoNavigationHelper::navigationInstructionPerformed(QGeoNavigationInstruction *instruction)
+{
+    Q_UNUSED(instruction);
+}
+
+//need access to route service for this
+//void QGeoNavigationHelper::newRouteFromPosition(const QGeoPositionInfo &position) {}
+    /*
+    signals:
+        void nextNavigationInstruction(QGeoNavigationInstruction *instruction);
+        void statusChanged(NavigationStatus status);
+        void arrived();
+        */
 
 #include "moc_qgeonavigationhelper.cpp"
 

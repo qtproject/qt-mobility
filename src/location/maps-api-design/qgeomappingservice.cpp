@@ -43,6 +43,79 @@
 
 QTM_BEGIN_NAMESPACE
 
+QGeoMappingService* QGeoMappingService::createService(QGeoMappingService::ServiceProvider provider,
+                                                                QString versionString,
+                                                                QString token)
+{
+    Q_UNUSED(provider);
+    Q_UNUSED(versionString);
+    Q_UNUSED(token);
+    return 0;
+}
+
+/*
+        enum ServiceProvider {
+            NokiaServices
+        };
+
+        // features supported (rotation, tilting, etc..)
+
+        enum MapType {
+            StreetMap,
+            SatelliteMapDay,
+            SatelliteMapNight,
+            TerrainMap
+        };
+
+        enum ErrorCode {
+            NoError
+        };
+*/
+
+QGeoMappingService::QGeoMappingService(QObject *parent) : QObject(parent)
+{
+}
+
+QGeoMappingService::~QGeoMappingService()
+{
+}
+
+        /*
+        virtual QList<MapType> supportedMapTypes() const = 0;
+        virtual QList<QString> supportedImageFormats() const = 0;
+
+        virtual int minimumZoomLevel() const = 0;
+        virtual int maximumZoomLevel() const = 0;
+
+        virtual QSize minimumSize() const = 0;
+        virtual QSize maximumSize() const = 0;
+
+    // Option 1 - simplest
+        virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
+                                 int zoomLevel,
+                                 const QSize &size,
+                                 MapType type,
+                                 QString imageFormat) = 0;
+
+        // Option 2 - a little more extensible
+        //virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
+        //                                 int zoomLevel,
+        //                                 const QSize &size,
+        //                                 const QGeoMapRequestOptions &requestOptions = QGeoMapRequestOptions()) = 0;
+
+        // Option 3 - Could just use a request object straight up
+        // - means things don't get as awkward if/when there's server support for tilting and rotation
+
+        // Option 4 - Could pass the map in along with other options
+        // - it knows the center, zoom level and size
+
+    signals:
+        void replyFinished(QGeoMapReply *reply);
+        void replyError(QGeoMapReply *reply,
+                        QGeoMappingService::ErrorCode errorCode,
+                        QString errorString);
+*/
+
 #include "moc_qgeomappingservice.cpp"
 
 QTM_END_NAMESPACE

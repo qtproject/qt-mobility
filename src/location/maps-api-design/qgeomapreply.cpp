@@ -41,7 +41,35 @@
 
 #include "qgeomapreply.h"
 
+#include <QPixmap>
+
 QTM_BEGIN_NAMESPACE
+
+        QGeoMapReply::QGeoMapReply(QObject *parent) : QObject(parent)
+{
+}
+
+QGeoMapReply::~QGeoMapReply()
+{
+}
+
+void QGeoMapReply::setMapImage(const QPixmap &image)
+{
+    Q_UNUSED(image);
+}
+
+QPixmap QGeoMapReply::mapImage() const
+{
+    return QPixmap();
+}
+
+        /*
+    signals:
+        void finished();
+        void error(QGeoMappingService::ErrorCode errorCode,
+                   QString errorString);
+                   */
+
 
 #include "moc_qgeomapreply.cpp"
 

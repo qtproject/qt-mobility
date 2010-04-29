@@ -43,6 +43,118 @@
 
 QTM_BEGIN_NAMESPACE
 
+
+QGeoRoutingService* QGeoRoutingService::createService(QGeoRoutingService::ServiceProvider provider,
+                                QString versionString,
+                                QString token)
+{
+    Q_UNUSED(provider);
+    Q_UNUSED(versionString);
+    Q_UNUSED(token);
+    return 0;
+}
+/*
+        enum ServiceProvider {
+            NokiaServices
+        };
+
+        enum ErrorCode {
+            NoError
+        };
+
+        enum TravelMode {
+            CarTravel = 0x0001,
+            PedestrianTravel = 0x0002,
+            BicycleTravel = 0x0004,
+            PublicTransitTravel = 0x0008,
+            TruckTravel = 0x000F
+        };
+        Q_DECLARE_FLAGS(TravelModes, TravelMode)
+
+        enum AvoidFeatureType {
+            AvoidNothing = 0x00000000,
+            AvoidTolls = 0x00000001,
+            AvoidHighways = 0x00000002,
+            AvoidPublicTransit = 0x00000004,
+            AvoidFerries = 0x00000008,
+            AvoidTunnels = 0x0000000F,
+            AvoidDirtRoads = 0x00000010,
+            AvoidPark = 0x00000020,
+            AvoidMotorPoolLanes = 0x00000040
+        };
+        Q_DECLARE_FLAGS(AvoidFeatureTypes, AvoidFeatureType)
+
+        enum RouteOptimization {
+            ShortestRoute = 0x0001,
+            FastestRoute = 0x0002,
+            MostEconomicRoute = 0x0004,
+            MostScenicRoute = 0x0008
+        };
+        Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
+
+        // TODO
+        //- move to QGeoRouteTransitOption base class once when we require it
+        //- used to determine subclass type from instances of the base class
+//        enum TransitOptionType {
+//            CarTravel = 0x0001,
+//            PedestrianTravel = 0x0002,
+//            BicycleTravel = 0x0004,
+//            PublicTransitTravel = 0x0008,
+//            TruckTravel = 0x000F
+//        };
+//        Q_DECLARE_FLAGS(TransitOptionTypes, TransitOptionType)
+
+        enum DirectionsDetail {
+            NoDirections = 0x00001,
+            BasicDirections = 0x0002,
+            DetailedDirections = 0x0004
+        };
+        Q_DECLARE_FLAGS(DirectionsDetails, DirectionsDetail)
+*/
+
+QGeoRoutingService::QGeoRoutingService(QObject *parent) : QObject(parent)
+{
+}
+
+QGeoRoutingService::~QGeoRoutingService()
+{
+}
+
+        /*
+        virtual TravelModes supportedTravelModes() const = 0;
+        virtual AvoidFeatureTypes supportedAvoidFeatureTypes() const = 0;
+        virtual RouteOptimizations supportedRouteOptimizations() const = 0;
+
+        // see above
+        //virtual TransitOptionTypes supportedTransitOptionTypes() const = 0;
+
+        virtual DirectionsDetails supportedDirectionDetails() const = 0;
+        virtual bool supportsUpdatingRoutes() const = 0;
+
+        // Option 1, current favourite
+        // TODO - fix include order fiasco preventing requestOptions using default constructor
+//        virtual QGeoRouteReply* requestRoute(const QGeoCoordinate &origin,
+//                                    const QGeoCoordinate &destination,
+//                                    DirectionsDetail detail = NoDirections,
+//                                    const QGeoRouteRequestOptions &requestOptions = 0) = 0;
+//        virtual QGeoRouteReply* requestRoute(const QList<QGeoCoordinate> &waypoints,
+//                                     DirectionsDetail detail = NoDirections,
+//                                    const QGeoRouteRequestOptions &requestOptions = 0) = 0;
+
+        // Option 2 - roll pathing info and directions level-of-detail into request
+        virtual QGeoRouteReply* requestRoute(const QGeoRouteRequestOptions &requestOptions) = 0;
+
+        // Present in both options
+        virtual QGeoRouteReply* updateRoute(const QGeoRoute &route,
+                                    const QGeoCoordinate &currentPosition) = 0;
+
+    signals:
+        void replyFinished(QGeoRouteReply *reply);
+        void replyError(QGeoRouteReply *reply,
+                        QGeoRoutingService::ErrorCode errorCode,
+                        QString errorString);
+        */
+
 #include "moc_qgeoroutingservice.cpp"
 
 QTM_END_NAMESPACE

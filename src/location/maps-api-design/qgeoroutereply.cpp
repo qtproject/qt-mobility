@@ -41,7 +41,35 @@
 
 #include "qgeoroutereply.h"
 
+#include "qgeoroute.h"
+
 QTM_BEGIN_NAMESPACE
+
+QGeoRouteReply::QGeoRouteReply(QObject *parent) : QObject(parent)
+{
+}
+
+QGeoRouteReply::~QGeoRouteReply()
+{
+}
+
+void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
+{
+    Q_UNUSED(routes);
+}
+
+QList<QGeoRoute> QGeoRouteReply::routes() const
+{
+    return QList<QGeoRoute>();
+}
+
+        /*
+    signals:
+        void finished();
+        void error(QGeoRoutingService::ErrorCode errorCode,
+                   QString errorString);
+                   */
+
 
 #include "moc_qgeoroutereply.cpp"
 

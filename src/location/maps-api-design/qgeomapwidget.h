@@ -105,7 +105,7 @@ public:
     void removeMapObject(const QGeoMapObject *object);
 
     QList<QGeoMapObject*> mapObjects() const;
-    QList<QGeoMapObject*> mapObjectsAt(const QPointF &center, int radius = 0) const;
+    QList<QGeoMapObject*> mapObjectsAt(const QPointF &center, int radius = 0, DistanceUnits units = Metres) const;
     QList<QGeoMapObject*> mapObjectsAt(const QRectF &rectangle) const;
 
 private:

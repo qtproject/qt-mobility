@@ -38,3 +38,63 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include "qgeoboundingbox.h"
+#include "qgeoboundingbox_p.h"
+
+#include "qgeocoordinate.h"
+
+QTM_BEGIN_NAMESPACE
+
+QGeoBoundingBox::QGeoBoundingBox()
+{
+}
+
+QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
+{
+    Q_UNUSED(other);
+}
+
+QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &upperLeft, const QGeoCoordinate &lowerRight)
+{
+    Q_UNUSED(upperLeft);
+    Q_UNUSED(lowerRight);
+}
+
+QGeoBoundingBox::~QGeoBoundingBox()
+{
+}
+
+QGeoBoundingBox& QGeoBoundingBox::operator= (const QGeoBoundingBox &other)
+{
+    Q_UNUSED(other);
+    return *this;
+}
+
+bool QGeoBoundingBox::isValid() const
+{
+    return false;
+}
+
+void QGeoBoundingBox::setUpperLeft(const QGeoCoordinate &upperLeft)
+{
+    Q_UNUSED(upperLeft);
+}
+
+QGeoCoordinate QGeoBoundingBox::upperLeft() const
+{
+    return QGeoCoordinate();
+}
+
+void QGeoBoundingBox::setLowerRight(const QGeoCoordinate &lowerRight)
+{
+    Q_UNUSED(lowerRight);
+}
+
+QGeoCoordinate QGeoBoundingBox::lowerRight() const
+{
+    return QGeoCoordinate();
+}
+
+QTM_END_NAMESPACE
+

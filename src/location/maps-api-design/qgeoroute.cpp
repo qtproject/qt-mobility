@@ -38,3 +38,92 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include "qgeoroute.h"
+#include "qgeoroute_p.h"
+
+#include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
+
+#include <QDateTime>
+
+QTM_BEGIN_NAMESPACE
+
+QGeoRoute::QGeoRoute()
+{
+}
+
+QGeoRoute::QGeoRoute(const QGeoRoute &other)
+{
+    Q_UNUSED(other);
+}
+
+QGeoRoute::~QGeoRoute()
+{
+}
+
+QGeoRoute& QGeoRoute::operator= (const QGeoRoute &other)
+{
+    Q_UNUSED(other);
+    return *this;
+}
+
+void QGeoRoute::setRouteOverview(const QList<QGeoCoordinate> &routeOverview)
+{
+    Q_UNUSED(routeOverview);
+}
+
+QList<QGeoCoordinate> QGeoRoute::routeOverview() const
+{
+    return QList<QGeoCoordinate>();
+}
+
+void QGeoRoute::setBounds(const QGeoBoundingBox &bounds)
+{
+    Q_UNUSED(bounds);
+}
+
+QGeoBoundingBox QGeoRoute::bounds() const
+{
+    return QGeoBoundingBox();
+}
+
+void QGeoRoute::setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments)
+{
+    Q_UNUSED(routeSegments);
+}
+
+QList<const QGeoRouteSegment *> QGeoRoute::routeSegments() const
+{
+    return QList<const QGeoRouteSegment *>();
+}
+
+void QGeoRoute::setDuration(const QDateTime &duration)
+{
+    Q_UNUSED(duration);
+}
+
+QDateTime QGeoRoute::duration() const
+{
+    return QDateTime();
+}
+
+void QGeoRoute::setDistance(double value, QGeoMapWidget::DistanceUnits units)
+{
+    Q_UNUSED(value);
+    Q_UNUSED(units);
+}
+
+double QGeoRoute::distance(QGeoMapWidget::DistanceUnits units) const
+{
+    Q_UNUSED(units);
+    return 0.0;
+}
+
+QGeoCoordinate QGeoRoute::closestPointOnRoute(const QGeoCoordinate &position) const
+{
+    Q_UNUSED(position);
+    return QGeoCoordinate();
+}
+
+QTM_END_NAMESPACE

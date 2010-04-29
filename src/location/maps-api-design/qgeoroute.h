@@ -57,11 +57,16 @@ class QGeoCoordinate;
 class QGeoRouteSegment;
 class QGeoNavigationInstruction;
 
+class QGeoRoutePrivate;
+
 class Q_LOCATION_EXPORT QGeoRoute {
 
 public:
     QGeoRoute();
+    QGeoRoute(const QGeoRoute &other);
     ~QGeoRoute();
+
+    QGeoRoute& operator = (const QGeoRoute &other);
 
     void setRouteOverview(const QList<QGeoCoordinate> &routeOverview);
     QList<QGeoCoordinate> routeOverview() const;
@@ -79,6 +84,10 @@ public:
     double distance(QGeoMapWidget::DistanceUnits units = QGeoMapWidget::Metres) const;
 
     QGeoCoordinate closestPointOnRoute(const QGeoCoordinate &position) const;
+
+private:
+    QGeoRoutePrivate* d_ptr;
+    Q_DECLARE_PRIVATE(QGeoRoute)
 };
 
 QTM_END_NAMESPACE

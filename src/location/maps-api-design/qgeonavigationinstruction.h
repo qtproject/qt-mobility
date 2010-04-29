@@ -90,7 +90,7 @@ public:
     QString instructionText() const;
 
 protected:
-    QGeoNavigationInstruction(const QGeoNavigationInstructionPrivate *d_ptr);
+    QGeoNavigationInstruction(QGeoNavigationInstructionPrivate *d_ptr);
     QGeoNavigationInstructionPrivate* d_ptr;
 
 private:

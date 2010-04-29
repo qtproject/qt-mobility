@@ -43,6 +43,69 @@
 
 QTM_BEGIN_NAMESPACE
 
+QGeoCodingService* QGeoCodingService::createService(QGeoCodingService::ServiceProvider provider,
+                                                    QString versionString,
+                                                    QString token)
+{
+    Q_UNUSED(provider);
+    Q_UNUSED(versionString);
+    Q_UNUSED(token);
+    return 0;
+}
+
+        /*
+
+        enum ServiceProvider {
+            NokiaServices
+        };
+
+
+        enum ErrorCode {
+            NoError
+        };
+
+        enum SupportLevel {
+            NoSupport,
+            NoSupportWithCurrentToken,
+            SupportedWithCurrentToken,
+            Supported
+        };
+
+        enum GeocodingFeature {
+            GeocodeFromAddress,
+            GeocodeFromString,
+            ReverseGeocodeFromCoordinate
+        };
+
+        virtual SupportLevel featureSupported(QGeoCodingService::GeocodingFeature feature) = 0;
+        */
+
+QGeoCodingService::QGeoCodingService(QObject *parent) : QObject(parent)
+{
+}
+
+QGeoCodingService::~QGeoCodingService()
+{
+}
+
+        /*
+        virtual QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coord,
+                                        const QGeoBoundingBox &bounds = QGeoBoundingBox(),
+                                        const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
+        virtual QGeoCodeReply* geocode(const QGeoAddress &address,
+                                        const QGeoBoundingBox &bounds = QGeoBoundingBox(),
+                                        const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
+        virtual QGeoCodeReply* geocode(const QString &locationString,
+                                        const QGeoBoundingBox &bounds = QGeoBoundingBox(),
+                                        const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
+
+    signals:
+        void replyFinished(QGeoCodeReply *reply);
+        void replyError(QGeoCodeReply *reply,
+                        QGeoCodingService::ErrorCode errorCode,
+                        QString errorString);
+                        */
+
 #include "moc_qgeocodingservice.cpp"
 
 QTM_END_NAMESPACE

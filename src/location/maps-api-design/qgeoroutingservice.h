@@ -92,6 +92,7 @@ public:
     Q_DECLARE_FLAGS(TravelModes, TravelMode)
 
     enum AvoidFeatureType {
+        AvoidNothing = 0x00000000,
         AvoidTolls = 0x00000001,
         AvoidHighways = 0x00000002,
         AvoidPublicTransit = 0x00000004,
