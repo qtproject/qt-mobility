@@ -20,7 +20,6 @@ CONFIG(debug, debug|release) {
 }
 
 OUTPUT_DIR = $$QT_MOBILITY_BUILD_TREE
-DESTDIR = $$OUTPUT_DIR/bin/examples
 MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
 RCC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/rcc
 UI_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/ui
@@ -29,6 +28,13 @@ mac:LIBS+= -F$$OUTPUT_DIR/lib
 LIBS+= -L$$OUTPUT_DIR/lib
 QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
 INCLUDEPATH+= $$QT_MOBILITY_SOURCE_TREE/src/global
+
+!plugin {
+    target.path=$$QT_MOBILITY_PREFIX/bin
+} else {
+    target.path = $$QT_MOBILITY_PREFIX/plugins/$${PLUGIN_TYPE}
+}
+INSTALLS += target
 
 maemo6 {
     DEFINES+= Q_WS_MAEMO_6

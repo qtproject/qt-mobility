@@ -93,7 +93,6 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
         }
     } else {
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
-        #!testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -169,4 +168,4 @@ LIBS += -L$$OUTPUT_DIR/lib
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
-!symbian:!wince*:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PREFIX, \\\\, /)\\\"
+!symbian:!wince*:DEFINES += QTM_PREFIX_PATH=\\\"$$replace(QT_MOBILITY_PREFIX, \\\\, /)\\\"
