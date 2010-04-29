@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 
 QNetworkSessionPrivate::QNetworkSessionPrivate()
-    : CActive(CActive::EPriorityStandard), state(QNetworkSession::Invalid),
+    : CActive(CActive::EPriorityUserInput), state(QNetworkSession::Invalid),
       isOpen(false), ipConnectionNotifier(0), iHandleStateNotificationsFromManager(false),
       iFirstSync(true), iStoppedByUser(false), iClosedByUser(false), iDeprecatedConnectionId(0),
       iError(QNetworkSession::UnknownSessionError), iALREnabled(0), iConnectInBackground(false)
@@ -1255,7 +1255,7 @@ void QNetworkSessionPrivate::handleSymbianConnectionStatusChange(TInt aConnectio
 }
 
 ConnectionProgressNotifier::ConnectionProgressNotifier(QNetworkSessionPrivate& owner, RConnection& connection)
-    : CActive(CActive::EPriorityStandard), iOwner(owner), iConnection(connection)
+    : CActive(CActive::EPriorityUserInput), iOwner(owner), iConnection(connection)
 {
     CActiveScheduler::Add(this);
 }
