@@ -348,7 +348,7 @@ A backend implementor must implement the following interfaces:
 
 \section2 Synchronization and Serialization
 
-The contacts API is used by another Qt Mobility module: the \l {Versit API (technology preview)} {Versit}* module.  It allows
+The contacts API is used by another Qt Mobility module: the \l {Versit API} {Versit}* module.  It allows
 serialization of a QContact into a vCard document, and vice versa.
 
 [*] Versit \reg is a trademark of the Internet Mail Consortium.

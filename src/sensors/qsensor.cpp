@@ -73,7 +73,6 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     \class QSensor
     \ingroup sensors_main
 
-    \preliminary
     \brief The QSensor class represents a single hardware sensor.
 
     The life cycle of a sensor is typically:
@@ -451,7 +450,6 @@ int QSensor::error() const
     \class QSensorFilter
     \ingroup sensors_main
 
-    \preliminary
     \brief The QSensorFilter class provides an efficient
            callback facility for asynchronous notifications of
            sensor changes.
@@ -516,7 +514,6 @@ void QSensorFilter::setSensor(QSensor *sensor)
     \class QSensorReading
     \ingroup sensors_main
 
-    \preliminary
     \brief The QSensorReading class holds the readings from the sensor.
 
     Note that QSensorReading is not particularly useful by itself. The interesting

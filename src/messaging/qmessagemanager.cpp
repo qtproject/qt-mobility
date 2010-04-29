@@ -48,7 +48,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageManager
 
-    \preliminary
     \brief The QMessageManager class represents the main interface for storage and retrieval
     of messages, folders and accounts in the system message store.
 
