@@ -46,6 +46,8 @@
 #include "../../../../src/bearer/qnetworkconfiguration.h"
 #include "../../../../src/bearer/qnetworksession.h"
 
+#include <QEventLoop>
+#include <QTimer>
 #include <QDebug>
 
 QTM_USE_NAMESPACE
@@ -59,7 +61,14 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
+    // Update configurations so that everything is up to date for this process too.
+    // Event loop is used to wait for awhile.
     QNetworkConfigurationManager manager;
+    manager.updateConfigurations();
+    QEventLoop iIgnoreEventLoop;
+    QTimer::singleShot(3000, &iIgnoreEventLoop, SLOT(quit()));
+    iIgnoreEventLoop.exec();
+
     QList<QNetworkConfiguration> discovered =
         manager.allConfigurations(QNetworkConfiguration::Discovered);
 
@@ -75,7 +84,6 @@ int main(int argc, char** argv)
 
     // Cannot read/write to processes on WinCE or Symbian.
     // Easiest alternative is to use sockets for IPC.
-
     QLocalSocket oopSocket;
 
     oopSocket.connectToServer("tst_qnetworksession");

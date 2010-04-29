@@ -88,7 +88,18 @@ public:
 
     QNetworkConfigurationPrivate::Bearer bearer;
     QString bearerName() const;
+    // So called IAP id from the platform. Remains constant as long as the
+    // platform is aware of the configuration ie. it is stored in the databases
+    // --> does not depend on whether connections are currently open or not.
+    // In practice is the same for the lifetime of the QNetworkConfiguration.
     TUint32 numericId;
+    // So called connection id, or connection monitor ID. A dynamic ID assigned
+    // by RConnectionMonitor whenever a new connection is opened. ConnectionID and
+    // numericId/IAP id have 1-to-1 mapping during the lifetime of the connection at
+    // connection monitor. Notably however it changes whenever a new connection to
+    // a given IAP is created. In a sense it is constant during the time the
+    // configuration remains between states Discovered..Active..Discovered, do not
+    // however relay on this.
     TUint connectionId;
     
     TAny* manager;
