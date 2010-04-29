@@ -165,7 +165,7 @@ private:
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
     
     QMessage messageL(const QMessageId& id) const;
-
+    MEmailMessage* fsMessageL(const QMessageId& id) const;
     
     
     friend class QMessageService;

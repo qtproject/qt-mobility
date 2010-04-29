@@ -68,6 +68,7 @@
 #include <memailcontent.h>
 #include <mmessageiterator.h>
 
+
 #include <QMessageBox>
 
 using namespace EmailInterface;
@@ -149,6 +150,7 @@ QMessageAccount CFSEngine::account(const QMessageAccountId &id) const
     Q_UNUSED(err)
     return m_accounts[id.toString()];
 }
+
 QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
 {
     return QMessageAccountId();
@@ -183,7 +185,6 @@ void CFSEngine::updateEmailAccountsL() const
         } else {
             keys.removeOne(fsIdAsString);
         }
-
     }  
     
     mailboxes.Reset();
@@ -482,8 +483,13 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
 
 bool CFSEngine::showMessage(const QMessageId &id)
 {
-    // we need to search from every mailbox, because we have only messageid to use..
-    return false;
+    MEmailMessage* message = NULL;
+    TRAPD(err, message = fsMessageL(id));
+    if (err == KErrNone) {
+        TRAPD(err2, message->ShowMessageViewerL());
+        Q_UNUSED(err2);
+    } 
+    return true;
 }
 
 bool CFSEngine::composeMessage(const QMessage &message)
@@ -908,6 +914,28 @@ QMessage CFSEngine::messageL(const QMessageId& id) const
     return message;
 }
 
+MEmailMessage* CFSEngine::fsMessageL(const QMessageId& id) const
+{
+    MEmailMessage* fsMessage = NULL;
+    foreach (QMessageAccount account, m_accounts) {
+        TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
+        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+        
+        TMessageId messageId(
+            stripIdPrefix(id.toString()).toInt(),
+            0, //stripIdPrefix(folderId.toString()).toInt(), 
+            mailboxId);
+        
+        TRAPD(err, fsMessage = mailbox->MessageL(messageId));
+        if (err == KErrNone) {               
+            mailbox->Release();
+            return fsMessage;
+        }
+        mailbox->Release();
+    }
+    return fsMessage;
+}
+
 bool CFSEngine::sendEmail(QMessage &message)
 {
     MEmailMessage* fsMessage;
@@ -995,8 +1023,8 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     
     // bodytext and attachment(s)
     MEmailMessageContent* content = aMessage->ContentL();
-    //if (content)
-        //AddContentToMessage(content, &message);
+   // if (content)
+   //     AddContentToMessage(content, &message);
 
     //from
     TPtrC from = aMessage->SenderAddressL()->Address();
@@ -1122,7 +1150,6 @@ void CFSEngine::notification(MEmailMessage* aMessage)
                             QMessageId(addIdPrefix(QString::number(aMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)), 
                             matchingFilters);             
 }
-
 
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
     : m_owner(aOwner), 
