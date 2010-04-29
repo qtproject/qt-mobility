@@ -45,7 +45,7 @@
 #include <QVariant>
 #include <QtDebug>
 
-#include "gconfitem.h"
+#include "gconfitem_p.h"
 
 #include <glib.h>
 #include <gconf/gconf-value.h>

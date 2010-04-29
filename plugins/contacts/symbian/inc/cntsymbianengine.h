@@ -87,21 +87,14 @@ class CntSymbianEngine : public QContactManagerEngine
 
 public:
     CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
-    CntSymbianEngine(const CntSymbianEngine& other);
     ~CntSymbianEngine();
     
     /* URI reporting */
     QString managerName() const;
 
     /* XXX TODO - implement these correctly */
-    QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}
     int managerVersion() const { return 1;}
-    bool validateContact(const QContact& contact, QContactManager::Error* error) const {return QContactManagerEngine::validateContact(contact, error);}
-    bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error* error) const {return QContactManagerEngine::validateDefinition(def, error);}
-    QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error) const  {return QContactManagerEngine::detailDefinition(definitionId, contactType, error);}
-    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error) {return QContactManagerEngine::saveDetailDefinition(def, contactType, error);}
-    bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error)  {return QContactManagerEngine::removeDetailDefinition(definitionId, contactType, error);}
-    QStringList supportedContactTypes() const {return QContactManagerEngine::supportedContactTypes();}
+    QContact compatibleContact(const QContact& contact, QContactManager::Error* error) const {return QContactManagerEngine::compatibleContact(contact, error);}
 
     /* Functions that are optional in the base API */
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error* error);
@@ -174,7 +167,9 @@ private:
     QString m_managerUri;
     CntTransformContact *m_transformContact;
     CntAbstractContactFilter *m_contactFilter;
+#ifndef SYMBIAN_BACKEND_USE_SQLITE    
     CntAbstractContactSorter *m_contactSorter;
+#endif    
     CntRelationship *m_relationship;
     CntDisplayLabel *m_displayLabel;
 

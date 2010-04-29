@@ -150,6 +150,12 @@ public:
     }
 
     /* Validation for saving */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QContact();
+    }
+
     virtual bool validateContact(const QContact&, QContactManager::Error* error) const
     {
         *error = QContactManager::NotSupportedError;
@@ -216,7 +222,7 @@ public:
 
 };
 
-class Q_DECL_EXPORT DummyEngineFactory : public QObject, public QContactManagerEngineFactory
+class DummyEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)

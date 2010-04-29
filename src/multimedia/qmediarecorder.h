@@ -42,9 +42,9 @@
 #ifndef QMEDIARECORDER_H
 #define QMEDIARECORDER_H
 
-#include <qmediaobject.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaencodersettings.h>
+#include "qmediaobject.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaencodersettings.h"
 
 #include <QtCore/qpair.h>
 
@@ -54,7 +54,7 @@ class QSize;
 class QAudioFormat;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaRecorderService;
 class QAudioEncoderSettings;
@@ -88,7 +88,7 @@ public:
     ~QMediaRecorder();
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMediaServices::AvailabilityError availabilityError() const;
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &location);
@@ -144,9 +144,9 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::State))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaRecorder::Error))
+Q_DECLARE_METATYPE(QMediaRecorder::State)
+Q_DECLARE_METATYPE(QMediaRecorder::Error)
 
 #endif  // QMEDIARECORDER_H

@@ -41,7 +41,7 @@
 
 #include "qmediatimerange.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaTimeInterval
@@ -701,5 +701,5 @@ QMediaTimeRange operator-(const QMediaTimeRange &r1, const QMediaTimeRange &r2)
     return (QMediaTimeRange(r1) -= r2);
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -41,11 +41,11 @@
 
 /*!
 \page sensors-api.html
-\title Sensors API (technology preview)
+\title Sensors API
 \brief The Sensors API provides access to sensors.
 \ingroup mobility
 
-\warning This API should be considered in a technology preview state. It is
+\warning This API should be considered in a beta state. It is
 under development and subject to change.
 
 The Sensors API provides access to sensors.
@@ -54,6 +54,13 @@ This covers both high-level sensors such as screen orientation (portrait, landsc
 and low-level, real-time sensors such as accelerometer data.
 
 \tableofcontents
+
+\section1 Namespace
+The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility API's into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
+
 
 \section1 Sensor Types
 
@@ -91,11 +98,6 @@ Here is an example of creating a sensor on the heap and on the stack.
 
 \snippet snippets/sensors/creating.cpp Creating a sensor
 
-The API supports sensors that poll for their data and sensors that push
-data to the app as it arrives. Each sensor will support certain update
-policies that determine how your application can receive the data from
-the sensor.
-
 \section1 Accessing sensor data in a generic fashion
 
 The preferred way to deal with sensor data is via the \l{Reading Classes}.
@@ -123,9 +125,9 @@ shows you information about available sensors.
 
 \section1 Front end, back end
 
-The Sensors API has a front end, for application developers to use and a backend,
+The Sensors API has a front end, for application developers to use and a back end,
 where device implementors write code to access their hardware. As an application
-developer you do not need to access the backend though it may be useful to understand
+developer you do not need to access the back end though it may be useful to understand
 how it works.
 
 Commands from the application are delivered through QSensor and then down to the
@@ -133,7 +135,7 @@ device plugin. Data comes back through the QSensorReading class.
 
 \image sensors-overview.png
 
-More information about the backend can be found in \l{Sensors Backend}.
+More information about the back end can be found in \l{Sensors Backend}.
 
 \section1 Main Classes
 
@@ -182,7 +184,7 @@ QSensor instances talk to a backend object. Backends are usually supplied
 with the QtSensors library for a specific device although third party
 backends may be used as well. A backend may talk
 directly to hardware or it may talk to a system service. In some instances
-it may even talk to another backend or to another device.
+it may even talk to another sensor.
 An example of this is the orientation sensor backend that talks to an
 accelerometer to determine the orientation.
 

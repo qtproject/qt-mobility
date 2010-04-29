@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qt7engine)
+TARGET = $$qtLibraryTarget(qtmedia_qt7engine)
 QT += opengl multimedia
 
 PLUGIN_TYPE = mediaservice
@@ -57,5 +57,5 @@ OBJECTIVE_SOURCES += \
     qcvdisplaylink.mm
 
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS+=target

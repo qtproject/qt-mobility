@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <qvideowindowcontrol.h>
+#include "qvideowindowcontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoWindowControl
@@ -268,5 +268,5 @@ QVideoWindowControl::~QVideoWindowControl()
 */
 
 #include "moc_qvideowindowcontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -42,10 +42,10 @@
 #ifndef DIRECTSHOWPLAYERSERVICE_H
 #define DIRECTSHOWPLAYERSERVICE_H
 
-#include <qmediaplayer.h>
-#include <qmediaresource.h>
-#include <qmediaservice.h>
-#include <qmediatimerange.h>
+#include "../../src/multimedia/qmediaplayer.h"
+#include "../../src/multimedia/qmediaresource.h"
+#include "../../src/multimedia/qmediaservice.h"
+#include "../../src/multimedia/qmediatimerange.h"
 
 #include "directshoweventloop.h"
 #include "directshowglobal.h"
@@ -62,11 +62,11 @@ class DirectShowVideoOutputControl;
 class DirectShowVideoRendererControl;
 class Vmr9VideoWindowControl;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QMediaContent;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DirectShowPlayerService : public QMediaService
 {

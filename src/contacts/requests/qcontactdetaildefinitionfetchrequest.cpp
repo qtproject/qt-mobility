@@ -57,15 +57,23 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new detail definition fetch request */
-QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionFetchRequestPrivate)
+/*! Constructs a new detail definition fetch request whose parent is the specified \a parent */
+QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionFetchRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this detail definition fetch request */
-QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
+/*! Sets the name of the detail definition to retrieve to \a definitionName.
+    Equivalent to calling
+    \code
+        setDefinitionNames(QList<QContactDetailDefinition>() << definitionName);
+    \endcode
+ */
+void QContactDetailDefinitionFetchRequest::setDefinitionName(const QString& definitionName)
 {
+    Q_D(QContactDetailDefinitionFetchRequest);
+    d->m_names.clear();
+    d->m_names.append(definitionName);
 }
 
 /*! Sets the names of the detail definitions to retrieve to \a names */

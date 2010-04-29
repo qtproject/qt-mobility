@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitContactExporter Class Reference</h1>
 <p>The QVersitContactExporter class converts <a href="qcontact.html">QContacts</a> into <a href="qversitdocument.html">QVersitDocuments</a>. <a href="#details">More...</a></p>
-<pre>    #include &lt;QVersitContactExporter&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<ul>
+<pre>    #include &lt;QVersitContactExporter&gt;</pre><ul>
 <li><a href="qversitcontactexporter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -169,11 +168,11 @@
 <p>See also <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/errors"></a>
 <h3 class="fn"><a name="errors"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qversitcontactexporter.html#Error-enum">Error</a>&gt; QVersitContactExporter::errors () const</h3>
-<p>Returns the map of errors encountered in the most recent call to <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>(). The key is the index into the input list of contacts and the value is the error that occured on that contact.</p>
+<p>Returns the map of errors encountered in the most recent call to <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>(). The key is the index into the input list of contacts and the value is the error that occurred on that contact.</p>
 <p>See also <a href="qversitcontactexporter.html#exportContacts">exportContacts</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/exportContacts"></a>
 <h3 class="fn"><a name="exportContacts"></a>bool QVersitContactExporter::exportContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; &amp; <i>contacts</i>, <a href="qversitdocument.html#VersitType-enum">QVersitDocument::VersitType</a> <i>versitType</i> )</h3>
-<p>Converts <i>contacts</i> into a list of corresponding QVersitDocuments, using the format given by <i>versitType</i>. Returns true on success. If any of the contacts could not be exported, false is returned and <a href="qversitcontactexporter.html#errors">errors</a>() will return a list describing the errors that occured. The successfully exported documents will still be available via <a href="qversitcontactexporter.html#documents">documents</a>().</p>
+<p>Converts <i>contacts</i> into a list of corresponding QVersitDocuments, using the format given by <i>versitType</i>. Returns true on success. If any of the contacts could not be exported, false is returned and <a href="qversitcontactexporter.html#errors">errors</a>() will return a list describing the errors that occurred. The successfully exported documents will still be available via <a href="qversitcontactexporter.html#documents">documents</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/resourceHandler"></a>
 <h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitContactExporter::resourceHandler () const</h3>
 <p>Returns the associated resource handler.</p>

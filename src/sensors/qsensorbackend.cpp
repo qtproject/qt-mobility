@@ -49,7 +49,6 @@ QTM_BEGIN_NAMESPACE
     \class QSensorBackend
     \ingroup sensors_backend
 
-    \preliminary
     \brief The QSensorBackend class is a sensor implementation.
 
     Sensors on a device will be represented by sub-classes of
@@ -235,8 +234,13 @@ void QSensorBackend::setDataRates(const QSensor *otherSensor)
         qWarning() << "ERROR: Cannot call QSensorBackend::setDataRates with 0";
         return;
     }
+    if (otherSensor->identifier().isEmpty()) {
+        qWarning() << "ERROR: Cannot call QSensorBackend::setDataRates with an invalid sensor";
+        return;
+    }
     QSensorPrivate *d = m_sensor->d_func();
     d->availableDataRates = otherSensor->availableDataRates();
+    d->dataRate = otherSensor->dataRate();
 }
 
 /*!

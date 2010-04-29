@@ -50,7 +50,7 @@
 #include "qgeopositioninfo.h"
 #include "qgeosatelliteinfo.h"
 
-#include "gconfitem.h"
+#include "gconfitem_p.h"
 
 extern "C" {
    #include <glib.h>
@@ -113,7 +113,10 @@ private:
     int locationState;
 
 private slots:
-    void setLocation(const QGeoPositionInfo &update, bool location3D);
+    void setLocation(const QGeoPositionInfo &update, bool locationValid);
+
+signals:
+    void error();
 };
 
 QTM_END_NAMESPACE

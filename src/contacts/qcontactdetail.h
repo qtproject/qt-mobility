@@ -44,7 +44,6 @@
 #define QCONTACTDETAIL_H
 
 #include "qtcontactsglobal.h"
-#include "qcontactactiondescriptor.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -57,8 +56,9 @@ class Q_CONTACTS_EXPORT QContactDetail
 {
 public:
     QContactDetail();
-    QContactDetail(const QString& definitionName);
-    virtual ~QContactDetail();
+    explicit QContactDetail(const char* definitionName); // possibly internal
+    explicit QContactDetail(const QString& definitionName);
+    ~QContactDetail();
 
     QContactDetail(const QContactDetail& other);
     QContactDetail& operator=(const QContactDetail& other);
@@ -74,12 +74,12 @@ public:
 
     // Predefined attribute names and values
 #ifdef Q_QDOC
-    const char* FieldContext;
-    const char* ContextHome;
-    const char* ContextWork;
-    const char* ContextOther;
-    const char* FieldDetailUri;
-    const char* FieldLinkedDetailUris;
+    static const QLatin1Constant FieldContext;
+    static const QLatin1Constant ContextHome;
+    static const QLatin1Constant ContextWork;
+    static const QLatin1Constant ContextOther;
+    static const QLatin1Constant FieldDetailUri;
+    static const QLatin1Constant FieldLinkedDetailUris;
 #else
     Q_DECLARE_LATIN1_CONSTANT(FieldContext, "Context");
     Q_DECLARE_LATIN1_CONSTANT(ContextHome, "Home");
@@ -110,7 +110,49 @@ public:
         return variantValue(key).value<T>();
     }
 
-
+    /* These are probably internal */
+    QString value(const char* key) const;
+    bool setValue(const char* key, const QVariant& value);
+    bool removeValue(const char* key);
+    bool hasValue(const char* key) const;
+    QVariant variantValue(const char *key) const;
+    template<typename T> T value(const char *key) const
+    {
+        return variantValue(key).value<T>();
+    }
+#ifdef Q_QDOC
+    QString value(const QLatin1Constant& key) const;
+    bool setValue(const QLatin1Constant& key, const QVariant& value);
+    bool removeValue(const QLatin1Constant& key);
+    bool hasValue(const QLatin1Constant& key) const;
+    QVariant variantValue(const QLatin1Constant& key) const;
+    T value(const QLatin1Constant& key) const;
+#else
+    template<int N> QString value(const QLatin1Constant<N>& key) const
+    {
+        return value(key.latin1());
+    }
+    template<int N> bool setValue(const QLatin1Constant<N>& key, const QVariant& value)
+    {
+        return setValue(key.latin1(), value);
+    }
+    template<int N> bool removeValue(const QLatin1Constant<N>& key)
+    {
+        return removeValue(key.latin1());
+    }
+    template<int N> bool hasValue(const QLatin1Constant<N>& key) const
+    {
+        return hasValue(key.latin1());
+    }
+    template<int N> QVariant variantValue(const QLatin1Constant<N>& key) const
+    {
+        return variantValue(key.latin1());
+    }
+    template<typename T, int N> T value(const QLatin1Constant<N>& key) const
+    {
+        return value<T>(key.latin1());
+    }
+#endif
 
     void setContexts(const QStringList& contexts)
     {
@@ -153,8 +195,10 @@ public:
     }
 
 protected:
-    QContactDetail(const QContactDetail& other, const QString& expectedDefinitionId);
-    QContactDetail& assign(const QContactDetail& other, const QString& expectedDefinitionId);
+    QContactDetail(const QContactDetail &other, const QString& expectedDefinitionId);
+    QContactDetail& assign(const QContactDetail &other, const QString& expectedDefinitionId);
+    QContactDetail(const QContactDetail &other, const char* expectedDefinitionId);
+    QContactDetail& assign(const QContactDetail &other, const char* expectedDefinitionId);
 
 private:
     friend class QContact;
@@ -170,9 +214,9 @@ Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactDetail& detail);
 Q_DECLARE_OPERATORS_FOR_FLAGS(QContactDetail::AccessConstraints);
 
 #define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
-    className() : QContactDetail(DefinitionName) {} \
-    className(const QContactDetail& field) : QContactDetail(field, DefinitionName) {} \
-    className& operator=(const QContactDetail& other) {assign(other, DefinitionName); return *this;} \
+    className() : QContactDetail(DefinitionName.latin1()) {} \
+    className(const QContactDetail& field) : QContactDetail(field, DefinitionName.latin1()) {} \
+    className& operator=(const QContactDetail& other) {assign(other, DefinitionName.latin1()); return *this;} \
     \
     Q_DECLARE_LATIN1_CONSTANT(DefinitionName, definitionNameString);
 

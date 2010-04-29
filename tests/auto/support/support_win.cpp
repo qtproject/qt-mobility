@@ -388,7 +388,7 @@ QMessageAccountId accountIdFromRecordKey(const QByteArray &recordKey)
         encodedIdStream << recordKey;
     }
 
-	return QMessageAccountId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
+    return QMessageAccountId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
 }
 
 QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByteArray &entryId, const QByteArray &storeKey)
@@ -409,7 +409,7 @@ QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByte
 #endif
     }
 
-	return QMessageFolderId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
+    return QMessageFolderId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
 }
 
 QByteArray objectProperty(IMAPIProp *object, ULONG tag)

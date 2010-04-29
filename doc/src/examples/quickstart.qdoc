@@ -53,7 +53,7 @@ as per \l {Installation Guide}.
 One can start using Qt Mobility with 3 simple steps.
 \list 1
     \o Include the appropriate headers
-    \o Use the \c QtMobility namespace
+    \o Use the QTM_USE_NAMESPACE macro (defined in qmobilityglobal.h but implicitly included from any Qt Mobility header)
     \o Declare the usage of Qt Mobility
        and appropriate API(s) in the project(.pro) file
 \endlist
@@ -63,9 +63,8 @@ Steps 1 and 2 are shown in the example below:
 
 This example uses the QSystemInfo headers to print out the 
 system's current country code.  All the domain APIs are wrapped
-within the \c QtMobility namespace and thus developers either 
-need to declare \c {using namespace QtMobility} or
-qualify their symbols e.g. \c {QtMobility::QSystemInfo}.
+within a Qt Mobility namespace and thus developers 
+need to use the QTM_USE_NAMESPACE macro.
 (\bold{Note}:  If you are on the Symbian platform you will
 need to define the actual header file, in this case
 <qsysteminfo.h> rather than using the standard header form
@@ -87,6 +86,7 @@ determine the QtMobility library the current project should link to (in this exa
 
 Each QtMobility API has its corresponding value which has to be added to \c MOBILITY. The subsequent table lists the APIs and the 
 corresponding values that can be assigned to \c MOBILITY.
+
 \table
 \header
     \o Domain
@@ -120,6 +120,41 @@ corresponding values that can be assigned to \c MOBILITY.
     \o versit
 \endtable
 
+When developing on Symbian we will also need to add the required capabilites to the project file in order to satisfy the Symbian security model:
+
+\snippet quickstart/quickstart.pro 1
+
+\table 
+\header
+    \o Domain
+    \o Symbian Capabilities
+\row
+    \o \l {Bearer Management}
+    \o ReadUserData NetworkServices (NetworkControl for QNetworkSession::stop())
+\row
+    \o \l {Contacts}
+    \o ReadUserData WriteUserData SwEvent ReadDeviceData WriteDeviceData
+\row
+    \o \l {Location}
+    \o Location
+\row
+    \o \l {Multimedia}
+    \o UserEnvironment ReadUserData WriteUserData ReadDeviceData WriteDeviceData
+\row
+    \o \l {Messaging}
+    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment ReadDeviceData WriteDeviceData
+\row
+    \o \l {Publish And Subscribe}
+    \o ReadDeviceData WriteDeviceData
+\row
+    \o \l {Qt Service Framework} {Service Framework}
+    \o No capabilities requried by itself, the plugins may have capability requirements.
+\row
+    \o \l {System Information}
+    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData
+\row
+\endtable
+
 And we're done.  If you are using the command line simply
 enter:
 \code
@@ -129,12 +164,12 @@ enter:
 
 to generate the executable which can then be run.
 
-If you are developing for symbian, to make a debug build for the emulator run:
+If you are developing for Symbian, to make a debug build for the emulator run:
 \code
     qmake
     make debug-winscw
 \endcode
-This assumes that qmake is in your %PATH% and Qt has been build for the emulator already.
+This assumes that qmake is in your %PATH% and Qt has been built for the emulator already.
 
 
 To make a release build and SIS package for a device run:
@@ -145,7 +180,7 @@ To make a release build and SIS package for a device run:
 \endcode
 
 For further details on how to build applications for
-symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html} 
-{The Symbian Platform - Introduction to Qt}, \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
-{Qt Quick Start} and the \c {symbian\install.txt}
+Symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html} 
+{The Symbian Platform - Introduction to Qt} and \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
+{Qt Quick Start}
 */

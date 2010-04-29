@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
-#include <QDebug>
-
 #include <qmediapluginloader_p.h>
 #include <qmediaserviceproviderplugin.h>
 
-QTM_USE_NAMESPACE
+#include <QtTest/QtTest>
+#include <QDebug>
+
+QT_USE_NAMESPACE
 
 class tst_QMediaPluginLoader : public QObject
 {

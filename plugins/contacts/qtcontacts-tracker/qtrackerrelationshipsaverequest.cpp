@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include "qcontacttrackerbackend_p.h"
 #include "qtrackerrelationshipsaverequest.h"
 
 #include <QtTracker/Tracker>

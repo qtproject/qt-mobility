@@ -482,7 +482,7 @@ void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
     QContactManager::Error error(QContactManager::NoError);
     QString label = synthesizedDisplayLabel(contact, &error);
     if(error == QContactManager::NoError) {
-        contact = setContactDisplayLabel(label, contact);
+        setContactDisplayLabel(&contact, label);
     }
 }
 
@@ -543,4 +543,4 @@ QString CntSymbianSimFactory::managerName() const
     return CNT_SYMBIANSIM_MANAGER_NAME;
 }
 
-Q_EXPORT_PLUGIN2(mobapicontactspluginsymbiansim, CntSymbianSimFactory);
+Q_EXPORT_PLUGIN2(qtcontacts_symbiansim, CntSymbianSimFactory);

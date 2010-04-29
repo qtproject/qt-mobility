@@ -14,7 +14,7 @@ CONFIG += mobility
 MOBILITY = serviceframework
 
 symbian {
-    TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData UserEnvironment WriteUserData
+    TARGET.CAPABILITY = ALL -TCB
 }
 
 xml.path = $$DESTDIR/xmldata

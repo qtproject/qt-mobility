@@ -58,11 +58,15 @@ class tst_QVCard30Writer : public QObject
 
 private slots: // Tests
 
+#ifdef QT_BUILD_INTERNAL
     void init();
     void cleanup();
 
     void testEncodeVersitProperty();
+    void testEncodeVersitProperty_data();
     void testEncodeParameters();
+    void testBackSlashEscape();
+#endif
 
 private: // Data
     QVCard30Writer* mWriter;

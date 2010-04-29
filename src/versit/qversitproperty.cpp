@@ -50,7 +50,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QVersitProperty
-  \preliminary
   \brief The QVersitProperty class stores the name, value, groups and parameters of a Versit property.
   \ingroup versit
 
@@ -120,10 +119,19 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 /*! Returns true if this is equal to \a other; false otherwise. */
 bool QVersitProperty::operator==(const QVersitProperty& other) const
 {
-    return d->mGroups == other.d->mGroups &&
+    bool equal = d->mGroups == other.d->mGroups &&
             d->mName == other.d->mName &&
             d->mParameters == other.d->mParameters &&
-            d->mValue == other.d->mValue;
+            d->mValueType == other.d->mValueType;
+    if (!equal)
+        return false;
+
+    // QVariant doesn't support == on QVersitDocuments - do it manually
+    if (d->mValue.userType() == qMetaTypeId<QVersitDocument>())
+        return  other.d->mValue.userType() == qMetaTypeId<QVersitDocument>()
+            && d->mValue.value<QVersitDocument>() == other.d->mValue.value<QVersitDocument>();
+    else
+        return d->mValue == other.d->mValue;
 }
 
 /*! Returns true if this is not equal to \a other; false otherwise. */
@@ -161,7 +169,7 @@ QDebug operator<<(QDebug dbg, const QVersitProperty& property)
     }
     dbg.nospace() << name;
     QHash<QString,QString>::const_iterator it;
-    for (it = parameters.constBegin(); it != parameters.constEnd(); it++) {
+    for (it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
         dbg.nospace() << ';' << it.key() << '=' << it.value();
     }
     dbg.nospace() << ':' << value;

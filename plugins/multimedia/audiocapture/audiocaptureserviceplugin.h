@@ -43,9 +43,9 @@
 #ifndef AUDIOCAPTURESERVICEPLUGIN_H
 #define AUDIOCAPTURESERVICEPLUGIN_H
 
-#include <qmediaserviceproviderplugin.h>
+#include "../../../src/multimedia/qmediaserviceproviderplugin.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureServicePlugin : public QMediaServiceProviderPlugin
 {

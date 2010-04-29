@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include <etelmm.h>
+#include <mmtsy_names.h>
 
 int main(int argc, char** argv)
 {

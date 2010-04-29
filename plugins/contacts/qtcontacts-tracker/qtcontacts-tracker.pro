@@ -43,5 +43,5 @@ SOURCES += qcontacttrackerbackend.cpp \
            qtrackercontactidfetchrequest.cpp \
            trackerchangelistener.cpp
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS+=target

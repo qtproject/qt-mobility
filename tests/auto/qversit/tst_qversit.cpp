@@ -46,6 +46,7 @@
 #include "qversitcontactimporter.h"
 #include "qcontact.h"
 #include "qcontactmanager.h"
+#include "qcontactmanagerengine.h"
 
 #include <QtTest/QtTest>
 #include <QDebug>
@@ -145,13 +146,13 @@ void tst_QVersit::testImportFiles_data()
     QTest::addColumn<QByteArray>("charset");
     QTest::addColumn<QList<QContact> >("expectedContacts");
 
-    QTEST_NEW_ROW("AAB4/MultipleAll.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/MultipleAscii.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/SingleCompany.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/SingleExtensive.vcf", "", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/SingleNonAscii.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB4/SingleNonAsciiWithPhoto.vcf", "UTF-16BE", QList<QContact>());
-    QTEST_NEW_ROW("AAB5/SingleNonAscii.vcf", "UTF-8", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-MultipleAll.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-MultipleAscii.vcf", "", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-SingleCompany.vcf", "", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-SingleExtensive.vcf", "", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-SingleNonAscii.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("AAB4-SingleNonAsciiWithPhoto.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("AAB5-SingleNonAscii.vcf", "UTF-8", QList<QContact>());
 
     {
         QList<QContact> list;
@@ -169,10 +170,11 @@ void tst_QVersit::testImportFiles_data()
         org.setDepartment(QStringList(QLatin1String("Department Name")));
         org.setTitle(QLatin1String("Job title"));
         contact.saveDetail(&org);
-        list.append(contact);
         QContactNote note;
         note.setNote(QLatin1String("This is a note field.  Pretty boring."));
         contact.saveDetail(&note);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("Firstname Lastname"));
+        list.append(contact);
         QContactUrl homeUrl;
         homeUrl.setUrl(QLatin1String("http://mywebpage.com"));
         homeUrl.setContexts(QContactDetail::ContextHome);
@@ -181,12 +183,12 @@ void tst_QVersit::testImportFiles_data()
         workUrl.setUrl(QLatin1String("http://workwebpage"));
         workUrl.setContexts(QContactDetail::ContextWork);
         contact.saveDetail(&workUrl);
-        QTEST_NEW_ROW("Entourage11/basic.vcf", "UTF-16BE", list);
+        QTEST_NEW_ROW("Entourage11-basic.vcf", "UTF-16BE", list);
     }
 
-    QTEST_NEW_ROW("Entourage11/image.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("Entourage11-image.vcf", "UTF-16BE", QList<QContact>());
 
-    QTEST_NEW_ROW("Entourage11/nonascii.vcf", "UTF-16BE", QList<QContact>());
+    QTEST_NEW_ROW("Entourage11-nonascii.vcf", "UTF-16BE", QList<QContact>());
 
     {
         QList<QContact> list;
@@ -203,13 +205,49 @@ void tst_QVersit::testImportFiles_data()
         org.setName(QLatin1String("Nokia"));
         org.setDepartment(QStringList(QLatin1String("Qt DF")));
         contact.saveDetail(&org);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("first last"));
         list.append(contact);
-        QTEST_NEW_ROW("Entourage12/basic.vcf", "", list);
+        QTEST_NEW_ROW("Entourage12-basic.vcf", "", list);
     }
 
-    QTEST_NEW_ROW("Entourage12/kevin.vcf", "UTF-8", QList<QContact>());
-    QTEST_NEW_ROW("Entourage12/nonascii.vcf", "UTF-8", QList<QContact>());
+    QTEST_NEW_ROW("Entourage12-kevin.vcf", "UTF-8", QList<QContact>());
+    QTEST_NEW_ROW("Entourage12-nonascii.vcf", "UTF-8", QList<QContact>());
     QTEST_NEW_ROW("gmail.vcf", "UTF-8", QList<QContact>());
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setFirstName(QLatin1String("name"));
+        name.setLastName(QString());
+        name.setMiddleName(QString());
+        name.setPrefix(QString());
+        name.setSuffix(QString());
+        contact.saveDetail(&name);
+        QContactFamily family;
+        family.setChildren(QStringList(QLatin1String("Child1")));
+        contact.saveDetail(&family);
+        family.setChildren(QStringList(QLatin1String("Child2")) << QLatin1String("Child3"));
+        contact.saveDetail(&family);
+        QContactNickname nickname;
+        nickname.setNickname(QLatin1String("Nick6"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick5"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick4"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick3"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick2"));
+        contact.saveDetail(&nickname);
+        nickname.setNickname(QLatin1String("Nick1"));
+        contact.saveDetail(&nickname);
+        QContactPhoneNumber assistantphone;
+        assistantphone.setNumber(QLatin1String("1234"));
+        assistantphone.setSubTypes(QContactPhoneNumber::SubTypeAssistant);
+        contact.saveDetail(&assistantphone);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTEST_NEW_ROW("test1.vcf", "UTF-8", QList<QContact>() << contact);
+    }
 }
 
 QTEST_MAIN(tst_QVersit)

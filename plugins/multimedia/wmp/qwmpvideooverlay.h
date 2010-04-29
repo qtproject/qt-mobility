@@ -48,7 +48,7 @@
 
 #include <wmp.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QWmpVideoOverlay
     : public QVideoWindowControl
     , public IOleInPlaceSite

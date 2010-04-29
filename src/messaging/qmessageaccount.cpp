@@ -43,7 +43,6 @@
 /*!
     \class QMessageAccount
 
-    \preliminary
     \brief The QMessageAccount class represents a messaging account in the messaging store.
     
     \ingroup messaging

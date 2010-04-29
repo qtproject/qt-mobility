@@ -44,13 +44,13 @@
 
 #include <QtGui/qgraphicsitem.h>
 
-#include <qvideowidget.h>
+#include "qvideowidget.h"
 
 QT_BEGIN_NAMESPACE
 class QVideoSurfaceFormat;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGraphicsVideoItemPrivate;
 class  Q_MEDIA_EXPORT QGraphicsVideoItem : public QGraphicsObject
@@ -100,6 +100,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_mediaObjectDestroyed())
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

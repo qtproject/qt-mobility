@@ -1,0 +1,319 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+
+\page contactsusagehtml
+
+\title Contacts API Usage
+
+\tableofcontents
+
+\section1 Introduction
+
+This section provides some examples of common usage of the Qt Contacts API.
+
+\section1 Manager Settings And Configuration
+
+Users of the contacts API can define which backend they wish to access if a
+manager for that backend is available.  The list of available managers can be
+queried programmatically at run-time, and the capabilities of different
+managers can be ascertained by inspecting a QContactManager instance.
+Furthermore, some managers can be constructed with parameters which affect the
+operation of the backend.
+
+\section2 Loading the default manager for the platform
+
+Most users of the API will want to use the default manager for the platform,
+which provides access to the system address book.  Instantiating a manager by
+using the default constructor will result in the default manager for that
+platform being instantiated.
+
+The default constructor can either be used to create a manager on the stack,
+in which case it will be deleted automatically when it goes out of scope:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Loading the default manager for the platform
+
+or it can be used explicitly to create a manager on the heap, in which case
+the client must ensure that they delete the manager when they are finished
+with it in order to avoid a memory leak:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Loading the default manager for the platform on heap
+
+\section2 Querying a manager for capabilities
+
+Different managers will support different capabilities and details.  Clients
+can use the meta data reporting functions of QContactManager to determine what
+the capabilities of the manager they have instantiated might be.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Querying a manager for capabilities
+
+\section2 Loading the manager for a specific backend
+
+In this example, the client loads a manager for a specific backend.  While
+this could be found and retrieved using a more advanced plugin framework
+(such as the Qt Service Framework), this code assumes that the client has
+prior knowledge of the backend in question.
+
+Clients may wish to use this feature of the API if they wish to store or
+retrieve contact information to a particular manager (for example, one that
+interfaces with a particular online service).
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Loading a specific manager backend
+
+\section2 Loading a manager with specific parameters
+
+The client loads a manager with specific parameters defined.  The
+parameters which are available are backend specific, and so the client had
+to know that the "Settings" parameter was valid for the particular backend,
+and what argument it took. In this example, the client tells the backend to
+load detail definitions saved in a particular settings file.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Loading a specific manager backend with parameters
+
+\section1 Contact Detail Manipulation
+
+Once a contact has been created (or retrieved from a manager), the client can
+retrieve, create, update or delete details from the contact.  Since QContact
+and QContactDetail are both container (value) classes, the API offered for
+these operations is purely synchronous.
+
+A contact consists of the details it contains, as well as an id.  Some details
+are read-only (such as the display label of a contact) or irremovable (like
+the type of a contact), but most are freely modifiable by clients.
+
+\section2 Adding a detail to a contact
+
+The client adds a name and a phone number to a contact.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Adding a detail to a contact
+
+\section2 Updating a detail in a contact
+
+The client updates the phone number of a contact.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating a detail in a contact
+
+\section2 Removing a detail from a contact
+
+The client removes the phone number of a contact.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Removing a detail from a contact
+
+\section2 Viewing a specific detail of a contact
+
+The client retrieves and displays the first phone number of a contact
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Viewing a specific detail of a contact
+
+\section2 Viewing all of the details of a contact
+
+The client retrieves all of the details of a contact, and displays them
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Viewing the details of a contact
+
+It is important to note that details are implicitly shared objects with
+particular semantics surrounding saving, removal and modification.  The
+following example demonstrates these semantics
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Demonstration of detail sharing semantics
+
+\section1 Persistent Contact Information
+
+After instantiating a manager, clients will wish to retrieve or modify contact
+information (including relationships and possibly detail definitions) which
+is persistently stored in the manager (for example, in a database or online
+cloud).
+
+If the client wishes to use the asynchronous API, it is suggested that their
+class uses member variables for the manager and requests, similarly to:
+
+    \snippet snippets/qtcontactsdocsample/requestexample.h Class setup
+
+This allows them to define slots which deal with the data as required when the
+state of the request changes:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Example of an asynchronous request slot
+
+Note that if the client is interested in receiving the results of the request
+as they become available, rather than only the final set of results once the
+request changes state (to \c FinishedState, for example), the client should
+instead connect the QContactAbstractRequest::resultsAvailable() signal to the
+slot which deals with the results.
+
+\section2 Creating a new contact in a manager
+
+The client creates a new contact and saves it in a manager
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Creating a new contact in a manager
+
+Alternatively, the client can explicitly block execution until the request is
+complete, by doing something like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Creating a new contact in a manager waiting until finished
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously creating a new contact in a manager
+
+\section2 Retrieving contacts from a manager
+
+The client requests all contacts from the manager which match a particular
+filter.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Filtering contacts from a manager
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously filtering contacts from a manager
+
+The client can also retrieve a particular existing contact from a manager, by
+directly requesting the contact with a particular (previously known) id.
+With the asynchronous API, this takes the form of another filter:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Retrieving an existing contact from a manager
+
+The synchronous API provides a function specifically for this purpose:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously retrieving an existing contact from a manager
+
+\section2 Updating an existing contact in a manager
+
+The client updates a previously saved contact by saving the updated version of
+the contact.  Any contact whose id is the same as that of the updated contact
+will be overwritten as a result of the save request.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Updating an existing contact in a manager
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously updating an existing contact in a manager
+
+\section2 Removing a contact from a manager
+
+The client removes a contact from the manager by specifying its local id.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Removing a contact from a manager
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously removing a contact from a manager
+
+\section2 Creating a new relationship between two contacts
+
+The client specifies a relationship between two contacts stored in the manager
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Creating a new relationship between two contacts
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously creating a new relationship between two contacts
+
+\section2 Retrieving relationships between contacts
+
+The client requests the relationships that a particular contact is involved in
+from the manager in which the contact is stored.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Retrieving relationships between contacts
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously retrieving relationships between contacts
+
+When a contact is retrieved, it will contain a cache of the relationships in
+which it is involved at the point in time at which it was retrieved.
+This provides clients with a simple way to retrieve the relationships in which
+a contact is involved, but carries the risk that the cache is stale.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Retrieving relationships from cache
+
+Clients can inform the manager that they do not require this cache of
+relationships to be populated when retrieving a contact, which can allow a
+manager to optimize contact retrieval.  Other retrieval optimizations are also
+possible to specify, for example that they are only interested in certain types of details.
+The following code shows how the client can inform the manager that they are
+only interested in relationships of the \c HasMember type (groups):
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Providing a fetch hint
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously providing a fetch hint
+
+\section2 Removing a relationship between two contacts
+
+The client can remove a relationship directly from a manager.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Removing a relationship
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously removing a relationship
+
+Alternatively, when a contact which is involved in a relationship is removed,
+any relationships in which it is involved will be removed also.
+
+\section2 Querying the schema supported by a manager
+
+The client queries the schema supported by a manager, and checks to see if a
+particular detail definition supports a certain field.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Querying the schema supported by a manager
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously querying the schema supported by a manager
+
+\section2 Modifying the schema supported by a manager
+
+The client attempts to modify a particular detail definition by extending it
+so that it supports an extra field.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsampleasync.cpp Modifying the schema supported by a manager
+
+The equivalent code using the synchronous API looks like:
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Synchronously modifying the schema supported by a manager
+
+Note that some managers do not support mutable definitions, and hence
+attempting to modify or remove detail definitions in those managers will fail.
+
+*/

@@ -42,11 +42,11 @@ win32 {
 
 unix: {
     QT += gui
-    maemo*|linux-*: {
+    maemo5|maemo6|linux-*: {
         SOURCES += qsysteminfo_linux_common.cpp
         HEADERS += qsysteminfo_linux_common_p.h
     }
-    !maemo*:linux-*: {
+    !maemo5:!maemo6:linux-*: {
         SOURCES += qsysteminfo_linux.cpp
         HEADERS += qsysteminfo_linux_p.h
         contains(QT_CONFIG,dbus): {
@@ -63,11 +63,11 @@ unix: {
            DEFINES += QT_NO_NETWORKMANAGER
         }
     }
-    maemo*: {
+    maemo5|maemo6: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
-            HEADERS += qsysteminfo_maemo_p.h gconfitem.h
+            HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
         contains(QT_CONFIG,dbus): {
                 QT += dbus
                 SOURCES += qhalservice_linux.cpp
@@ -108,14 +108,19 @@ unix: {
     }
 
     symbian:{
+        contains(S60_VERSION, 3.1){
+            DEFINES += SYMBIAN_3_1
+        }        
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
         DEPENDPATH += symbian
         
         SOURCES += qsysteminfo_s60.cpp \
-            telephonyinfo_s60.cpp
+            telephonyinfo_s60.cpp \
+            chargingstatus_s60.cpp
 
         HEADERS += qsysteminfo_s60_p.h \
-            telephonyinfo_s60.h
+            telephonyinfo_s60.h \
+            chargingstatus_s60.h
 
         LIBS += -lprofileengine \
             -letel3rdparty \
@@ -131,7 +136,8 @@ unix: {
             -lws32 \
             -lcentralrepository \
             -lprofileengine \
-            -lbluetooth
+            -lbluetooth \
+            -lgdi
 
         TARGET.CAPABILITY = ALL -TCB
 #        TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location ReadDeviceData TrustedUI

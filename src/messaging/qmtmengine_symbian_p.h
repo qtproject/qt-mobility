@@ -226,6 +226,7 @@ private:
     void storeEmailL(QMessage &message);
     void sendEmailL(QMessage &message);
     void storeSMSL(QMessage &message);
+    bool validateSMS();
     void sendSMSL(QMessage &message);
     void retrieveL(const QMessageId &messageId, const QMessageContentContainerId& id);
     void retrieveBodyL(const QMessageId& id) const;

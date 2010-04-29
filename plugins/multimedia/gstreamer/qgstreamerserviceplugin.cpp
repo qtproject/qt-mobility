@@ -50,7 +50,9 @@
 #ifdef QMEDIA_GSTREAMER_PLAYER
 #include "qgstreamerplayerservice.h"
 #endif
-#ifdef QMEDIA_GSTREAMER_CAPTURE
+#if defined(QMEDIA_GSTREAMER_CAPTURE) && (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+#include "qgstreamercaptureservice_maemo.h"
+#elif defined(QMEDIA_GSTREAMER_CAPTURE)
 #include "qgstreamercaptureservice.h"
 #endif
 
@@ -101,4 +103,4 @@ void QGstreamerServicePlugin::release(QMediaService *service)
     delete service;
 }
 
-Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
+Q_EXPORT_PLUGIN2(qtmedia_gstengine, QGstreamerServicePlugin);
