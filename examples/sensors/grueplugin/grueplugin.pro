@@ -17,4 +17,3 @@ CONFIG+=mobility
 MOBILITY+=sensors
 
 CONFIG+=strict_flags
-

@@ -311,6 +311,16 @@ mobility libraries into $PWD/install.
     be ready to use for compiling applications for the
     emulator and/or device.
 
+\section2 Building For Mac OS X
+    The process is the same as for Unix, with the additional configuration
+    option of \c { -sdk /Developer/SDKs/MacOSX10.5.sdk } to specify an Apple SDK 
+    version other than the default.
+ 
+    Note: QtMobility currently has no support for building with Xcode.
+
+    Note: QtMobility will be built using the same frameworks configuration option 
+    that Qt was built with.
+    
 \section2 Building Individual Qt Mobility Modules
 
     Qt Mobility is comprised of several modules but all of
