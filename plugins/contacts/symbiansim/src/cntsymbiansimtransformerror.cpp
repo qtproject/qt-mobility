@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "cntsymbiansimtransformerror.h"
+#include <GsmError.h>
 
 /*! Transform a Symbian contact error id to QContactManager::Error.
  *
@@ -89,6 +90,13 @@ void CntSymbianSimTransformError::transformError(TInt symbianError, QContactMana
         case KErrArgument:
         {
             *qtError = QContactManager::BadArgumentError;
+            break;
+        }
+        case KErrGsmSimServSneFull:
+        case KErrGsmSimServAnrFull:
+        case KErrGsmSimServEmailFull:
+        {
+            *qtError = QContactManager::LimitReachedError;
             break;
         }
         default:

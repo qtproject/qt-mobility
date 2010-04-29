@@ -74,7 +74,7 @@ void CntSimContactFetchRequest::run()
     // Contacts are fetched starting from index 1, all slots are read
     // since slots may be not filled in a sequence.
     int index = 1;
-    int numSlots = simStore()->storeInfo().iTotalEntries;
+    int numSlots = simStore()->storeInfo().m_totalEntries;
     
     if (lidFilter.ids().count() == 1) {
         // Optimization for performance. Fetch a single contact from store.
