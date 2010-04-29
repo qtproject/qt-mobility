@@ -54,18 +54,16 @@ QTM_BEGIN_NAMESPACE
 
 /*
  * This is based on RRULE in iCalendar.
- * An item can have multiple QOIRecurrenceRules, in which case the dates are calculated separately
- * for each and then unioned.
+ * An item can have multiple QOIRecurrence details, in which case the dates are calculated
+ * separately for each and then unioned.
  *
  * The fields of this class all correspond to RRULE fragments.
  * 
- * The general rules for interaction between the fields is as follows:
+ * The general rules for interaction between the fields when generating the occurence dates is as
+ * follows:
  *
  * When a criterion takes a list, the items in the list are unioned together.
  * eg. with [dayOfWeek == Tuesday,Thursday], the event occurs if it is Tuesday or Thursday
- *
- * Different criteria are intersected together. eg. [dayOfWeek == Tuesday,Thursday,
- * frequency == Weekly, month = January] means every Tuesday and Thursday of January.
  *
  * Frequency and specific criteria interact a bit more complicatedly.  For each criterion on a
  * larger timespan than the frequncy, the dates matching the criterion are intersected with the
@@ -83,8 +81,9 @@ QTM_BEGIN_NAMESPACE
  * However, the frequency field may start affecting the result differently when other fields are
  * added like interval and position.
  *
- * Information not contained in the rule is in some cases derived from the startDate field.  There
- * are three cases where such derivation is necessary.
+ * Information not contained in the rule is in some cases derived from the startDate field for the
+ * purpose of calculating occurrence dates.  There are three cases where such derivation is
+ * necessary.
  * Case 1: frequency == Weekly.  If dayOfWeek is not specified, derive it from the week day that
  * startDate occurs on.
  * Case 2: frequency == Monthly.  If neither dayOfWeek or dayOfMonth is specified, dayOfMonth should
@@ -177,8 +176,10 @@ public:
 
     // eg. frequency = Monthly, dayOfWeek = Tuesday, positions = 1,-1 means first and last Tuesday
     // of every month.
-    bool setPositions(const QList<int>& pos);
-    QList<int> positions() const;
+    // All other criteria are applied first, then for each time period as specified by frequency,
+    // dates are selected via the 1-based indices specified by position.
+    bool setPosition(const QList<int>& pos);
+    QList<int> position() const;
 
     // Default: Monday
     // sets the day that the week starts on (significant for Weekly with interval > 1, and for weekOfYear)
