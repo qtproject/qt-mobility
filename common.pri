@@ -93,7 +93,7 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
         }
     } else {
         testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
-        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
+        #!testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc

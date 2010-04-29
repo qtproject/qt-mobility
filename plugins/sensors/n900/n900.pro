@@ -1,14 +1,14 @@
 INCLUDEPATH+=../../../src/sensors
 
-include(version.pri)
-include(n900.pri)
-include(../../../common.pri)
-
 PLUGIN_TYPE = sensors
 
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtsensors_n900)
+
+include(version.pri)
+include(n900.pri)
+include(../../../common.pri)
 
 QT=core
 CONFIG+=mobility
@@ -16,7 +16,6 @@ MOBILITY+=sensors
 
 CONFIG+=strict_flags
 
-DESTDIR = $$OUTPUT_DIR/bin/examples/sensors
 target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS += target
 

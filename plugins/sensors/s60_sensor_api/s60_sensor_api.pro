@@ -1,13 +1,13 @@
 INCLUDEPATH+=../../../src/sensors
 
-include(../../../common.pri)
-include(s60_sensor_api.pri)
-include(version.pri)
-
 PLUGIN_TYPE = sensors
 
 TEMPLATE = lib
 CONFIG += plugin
+
+include(../../../common.pri)
+include(s60_sensor_api.pri)
+include(version.pri)
 
 TARGET = $$qtLibraryTarget(qtsensors_s60sensorapi)
 TARGET.EPOCALLOWDLLDATA = 1

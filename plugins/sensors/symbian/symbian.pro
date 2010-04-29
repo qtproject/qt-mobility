@@ -1,15 +1,15 @@
 INCLUDEPATH+=../../../src/sensors
 INCLUDEPATH+=../../sensors \epoc32\include\osextensions
 
-include(version.pri)
-#include(symbian.pri)
-include(../../../common.pri)
-
 PLUGIN_TYPE = sensors
 
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtsensors_sym)
+
+include(version.pri)
+#include(symbian.pri)
+include(../../../common.pri)
 
 SOURCES +=  \			
 			sensorbackendsym.cpp \
