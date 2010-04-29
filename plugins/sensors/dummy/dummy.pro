@@ -4,6 +4,8 @@ include(version.pri)
 include(dummy.pri)
 include(../../../common.pri)
 
+PLUGIN_TYPE = sensors
+
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtsensors_dummy)
@@ -16,6 +18,6 @@ MOBILITY+=sensors
 CONFIG+=strict_flags
 
 DESTDIR = $$OUTPUT_DIR/bin/examples/sensors
-target.path = $$SOURCE_DIR/plugins/sensors
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS += target
 

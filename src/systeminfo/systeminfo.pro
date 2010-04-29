@@ -67,7 +67,7 @@ unix: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
-            HEADERS += qsysteminfo_maemo_p.h gconfitem.h
+            HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
         contains(QT_CONFIG,dbus): {
                 QT += dbus
                 SOURCES += qhalservice_linux.cpp
