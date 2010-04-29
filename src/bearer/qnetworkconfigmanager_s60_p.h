@@ -55,12 +55,16 @@
 
 #include <qnetworkconfigmanager.h>
 #include <qnetworkconfiguration_s60_p.h>
+#include <qnetworksession.h>
 
 #include <QHash>
 #include <rconnmon.h>
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     #include <cmmanager.h>
 #endif
+
+// Uncomment and compile QtBearer to gain detailed state tracing
+// #define QT_BEARERMGMT_SYMBIAN_DEBUG
 
 class CCommsDatabase;
 class QEventLoop;
@@ -91,6 +95,9 @@ Q_SIGNALS:
     void configurationUpdateComplete();
     void configurationChanged(const QNetworkConfiguration& config);
     void onlineStateChanged(bool isOnline);
+    
+    void configurationStateChanged(TUint32 accessPointId, TUint32 connMonId,
+                                   QNetworkSession::State newState);
     
 public Q_SLOTS:
     void updateConfigurations();
@@ -126,12 +133,17 @@ private:
     void startMonitoringIAPData(TUint32 aIapId);
     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> dataByConnectionId(TUint aConnectionId);
 
-protected: // From CActive
+protected:
+    // From CActive
     void RunL();
     void DoCancel();
     
-private: // MConnectionMonitorObserver
+private:
+    // MConnectionMonitorObserver
     void EventL(const CConnMonEventBase& aEvent);
+    // For QNetworkSessionPrivate to indicate about state changes
+    void configurationStateChangeReport(TUint32 accessPointId,
+                                   QNetworkSession::State newState);
 
 public: // Data
     //this table contains an up to date list of all configs at any time.
