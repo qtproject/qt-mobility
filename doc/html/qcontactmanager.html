@@ -66,7 +66,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#setSelfContactId">setSelfContactId</a></b> ( const QContactLocalId &amp; <i>contactId</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#supportedContactTypes">supportedContactTypes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QVariant::Type&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#supportedDataTypes">supportedDataTypes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#synthesizedDisplayLabel">synthesizedDisplayLabel</a></b> ( const QContact &amp; <i>contact</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a></b> ( QContact * <i>contact</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#synthesizedContactDisplayLabel">synthesizedContactDisplayLabel</a></b> ( const QContact &amp; <i>contact</i> ) const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -345,9 +346,32 @@
 <a name="//apple_ref/cpp/instm/QContactManager/supportedDataTypes"></a>
 <h3 class="fn"><a name="supportedDataTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qvariant.html#Type-enum">QVariant::Type</a>&gt; QContactManager::supportedDataTypes () const</h3>
 <p>Returns the list of data types supported by the manager</p>
-<a name="//apple_ref/cpp/instm/QContactManager/synthesizedDisplayLabel"></a>
-<h3 class="fn"><a name="synthesizedDisplayLabel"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactManager::synthesizedDisplayLabel ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const</h3>
-<p>Returns a display label for a <i>contact</i> which is synthesized from its details in a platform-specific manner</p>
+<a name="//apple_ref/cpp/instm/QContactManager/synthesizeContactDisplayLabel"></a>
+<h3 class="fn"><a name="synthesizeContactDisplayLabel"></a>void QContactManager::synthesizeContactDisplayLabel ( <a href="qcontact.html">QContact</a> * <i>contact</i> ) const</h3>
+<p>Updates the display label of the supplied <i>contact</i>, according to the formatting rules of this manager.</p>
+<p>Different managers can format the display label of a contact in different ways - some managers may only consider first or last name, or might put them in different orders. Others might consider an organization, a nickname, or a freeform label.</p>
+<p>This function will update the <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> of this contact, and the string returned by <a href="qcontact.html#displayLabel">QContact::displayLabel</a>().</p>
+<p>If <i>contact</i> is null, nothing will happen.</p>
+<p>See the following example for more information:</p>
+<pre>        <span class="comment">/* Retrieve a contact */</span>
+        QContact c = manager-&gt;contact(myId);
+        qDebug() &lt;&lt; &quot;Current display label&quot; &lt;&lt; c.displayLabel();
+
+        <span class="comment">/* Update some fields that might influence the display label */</span>
+        QContactName name = c.detail&lt;QContactName&gt;();
+        name.setFirstName(&quot;Abigail&quot;);
+        name.setLastName(&quot;Arkansas&quot;);
+        c.saveDetail(&amp;name);
+
+        <span class="comment">/* Update the display label */</span>
+        manager-&gt;synthesizeContactDisplayLabel(&amp;c);
+        qDebug() &lt;&lt; &quot;Now the label is:&quot; &lt;&lt; c.displayLabel();</pre>
+<p>See also <a href="qcontactmanager.html#synthesizedContactDisplayLabel">synthesizedContactDisplayLabel</a>() and <a href="qcontact.html#displayLabel">QContact::displayLabel</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManager/synthesizedContactDisplayLabel"></a>
+<h3 class="fn"><a name="synthesizedContactDisplayLabel"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactManager::synthesizedContactDisplayLabel ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const</h3>
+<p>Returns a display label for a <i>contact</i> which is synthesized from its details in a manager specific manner.</p>
+<p>If you want to update the display label stored in the contact, use the <a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a>() function instead.</p>
+<p>See also <a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
