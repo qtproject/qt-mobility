@@ -50,6 +50,8 @@
 #include "compasssym.h"
 #include "orientationsym.h"
 #include "accelerometersym.h"
+#include "rotationsensorsym.h"
+#include "tapsensorsym.h"
 
 // QT Utility headers
 #include <QDebug>
@@ -68,6 +70,8 @@ public:
         QSensorManager::registerBackend(QCompass::type, CCompassSym::id, this);
         QSensorManager::registerBackend(QOrientationSensor::type, COrientationSensorSym::id, this);
         QSensorManager::registerBackend(QAccelerometer::type, CAccelerometerSensorSym::id, this);
+        QSensorManager::registerBackend(QRotationSensor::type, CRotationSensorSym::id, this);
+        QSensorManager::registerBackend(QTapSensor::type, CTapSensorSym::id, this);
         }
 
     QSensorBackend *createBackend(QSensor *sensor)
@@ -106,6 +110,18 @@ public:
             {
             CAccelerometerSensorSym *self = NULL;
             TRAPD(err,self = CAccelerometerSensorSym::NewL(sensor));
+            return self;
+            }
+        if (sensor->identifier() == CRotationSensorSym::id)
+            {
+            CRotationSensorSym *self = NULL;
+            TRAPD(err,self = CRotationSensorSym::NewL(sensor));
+            return self;
+            }
+        if (sensor->identifier() == CTapSensorSym::id)
+            {
+            CTapSensorSym *self = NULL;
+            TRAPD(err,self = CTapSensorSym::NewL(sensor));
             return self;
             }
         return 0;

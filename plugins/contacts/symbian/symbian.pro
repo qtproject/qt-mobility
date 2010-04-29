@@ -61,7 +61,6 @@ symbian: {
         inc/filtering/cntfilterintersection.h \
         inc/filtering/cntfilterunion.h \
         inc/filtering/cntfilterinvalid.h \
-        inc/filtering/cntfilteraction.h \
         inc/filtering/cntfilterlocalid.h \
 				inc/filtering/cntfilterchangelog.h \
 				inc/filtering/cntfilterdetailrange.h \
@@ -106,7 +105,6 @@ symbian: {
         src/filtering/cntfilterintersection.cpp \
         src/filtering/cntfilterunion.cpp \
         src/filtering/cntfilterinvalid.cpp \
-        src/filtering/cntfilteraction.cpp \
         src/filtering/cntfilterlocalid.cpp \
 				src/filtering/cntfilterchangelog.cpp \
 				src/filtering/cntfilterdetailrange.cpp \
@@ -136,7 +134,8 @@ symbian: {
         -lfbscli \
         -limageconversion \
         -lbitmaptransforms \
-        -lbafl
+        -lbafl \
+        -ltzclient
 
     target.path = /sys/bin
     INSTALLS += target
@@ -150,9 +149,9 @@ symbian: {
     }
     
     symbianplugin.sources = $${TARGET}.dll
-    symbianplugin.path = /resource/qt/plugins/contacts
+    symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
 }
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS+=target

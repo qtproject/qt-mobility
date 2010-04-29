@@ -45,7 +45,6 @@
 // this file includes all of the leaf filter classes
 // provided by the Qt Contacts API.
 
-#include "qcontactactionfilter.h"
 #include "qcontactchangelogfilter.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactdetailrangefilter.h"

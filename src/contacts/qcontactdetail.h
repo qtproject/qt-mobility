@@ -44,7 +44,6 @@
 #define QCONTACTDETAIL_H
 
 #include "qtcontactsglobal.h"
-#include "qcontactactiondescriptor.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>

@@ -19,30 +19,18 @@ Rectangle {
             if(c == undefined){
                 return;
             }
-/*
-            print("Got contacts: " + c.name);
-            print(" Available actions: " + c.availableActions);
-            print(" details: " + c.details);detailsOpacity
-*/
-            var o = c.values("OnlineAccount");
+
             var q = c.values("Presence");
 
-            nameModel.append({"name": c.name, "accountPath": "Account: " + o.AccountPath, "presence": "Status: " + q.Presence, "email": c.email, "avatarSource": "qrc:/default.svg"});
+            nameModel.append({"name": c.name,
+                                "presence": "Status: " + q.Presence,
+                                "email": c.email,
+                                "avatarSource": c.avatar ? c.avatar : "qrc:/default.svg",
+                                "hasThumbnail" : c.hasThumbnail,
+                                "avatarImage": c.thumbnail,
+                                "interestLabel" : c.interestLabel,
+                                "interest" : c.interest});
 
-/*
-            var j;
-            for(j in c.details){                
-                var o = c.values(c.details[j]);
-                var i;
-                for(i in o){
-                    print(" "+ c.details[j] + "/" + i + ": " + o[i]);
-                }
-            }
-*/
-
-        }
-        function clickedList(index) {
-            mainList.currentIndex = index;
         }
     }
 
@@ -62,7 +50,8 @@ Rectangle {
         Rectangle {
             id: wrapper            
             border.width: 2
-            height: 30;
+            height: mainLabel.height;
+            width: mainList.width;
 
             property color topColor: "#333333";
             property color bottomColor: "#111111";
@@ -71,88 +60,61 @@ Rectangle {
             gradient: Gradient {
                  GradientStop { position: 0.0; color: topColor }
                  GradientStop { position: 1.0; color: bottomColor }
-             }
+            }
 
-            Item {
-                id: mainAvatar;
-                anchors.left: parent.left;
-                anchors.top: parent.top;
-                width: avatarFrame.width;
-                height: avatarFrame.height;
-                anchors.leftMargin:4;
-
-                Rectangle {
-                    id: avatarFrame;
-                    border.width: 2;
-                    radius: 4;
-                    height: wrapper.height-6
+            Row {
+                spacing: 2
+                Item {
+                    id: mainAvatar;
+                    height: wrapper.height;
                     width: height;
-                    x: 3; y: 3;
+
+                    Rectangle {
+                        border.width: 2;
+                        radius: 4;
+                        anchors.fill: parent;
+                        anchors.margins: 3;
+
+                        Image {
+                            id: avatar
+                            anchors.fill: parent;
+                            anchors.margins: 3;
+
+                            pixmap: avatarImage
+                            source: hasThumbnail ? "" : avatarSource;
+                            fillMode: Image.PreserveAspectFit
+                        }
+                    }
                 }
-
-                Image {
-                    id: avatar
-                    anchors.fill: avatarFrame;
-                    anchors.leftMargin: 3;
-                    anchors.rightMargin: 3;
-                    anchors.topMargin: 3;
-                    anchors.bottomMargin: 3;
-
-                    source: avatarSource
-                    fillMode: Image.PreserveAspectFit
-                }
-            }
-
-            Item {
-                id: mainLabel;
-                height: nameTxt.height + 16;
-                property real contactId: 0;
-                anchors.left: mainAvatar.right;
-                anchors.right: parent.right;
-                anchors.leftMargin:8;
-                anchors.rightMargin: 4;
-                anchors.topMargin: 4;
-                anchors.bottomMargin: 4;
-
-                Text {
-                    x:8; y:8;
-                    anchors.left: parent.left;
-                    anchors.right: parent.right;
-                    id: nameTxt
-                    text: name
-                    color: "white";
-                }
-            }
-
-            Item {
-                id: details
-                property color textColor: "#ffffdd";
-                anchors.top: mainLabel.bottom;
-                anchors.bottom: parent.bottom;
-                anchors.left: mainAvatar.right;
-                anchors.right: parent.right;
-                anchors.leftMargin:8;
-                anchors.rightMargin: 4;
-                anchors.bottomMargin: 4;
-                opacity: wrapper.detailsOpacity
 
                 Column {
-                    Text {
-                        id: emailId
-                        text: email
-                        color: details.textColor;
-                    }
-                    Row {
-                        spacing: 5
+                    Item {
+                        id: mainLabel;
+                        width: nameTxt.width
+                        height: nameTxt.height + 16;
                         Text {
-                            id: accountPathId
-                            text: accountPath
-                            color: details.textColor;
+                            id: nameTxt
+                            y: 8;
+                            text: name
+                            color: "white";
                         }
-                        Text {
-                            id: presenceId
-                            text: presence
-                            color: details.textColor;
+                    }
+
+                    Item {
+                        id: details
+                        property color textColor: "#ffffdd";
+                        opacity: wrapper.detailsOpacity
+                        height: childrenRect.height + 6;
+                        width: childrenRect.width;
+                        Column {
+                            Text {
+                                text: interestLabel + interest
+                                color: details.textColor;
+                            }
+                            Text {
+                                text: presence
+                                color: details.textColor;
+                            }
                         }
                     }
                 }
@@ -160,38 +122,40 @@ Rectangle {
 
             states: State {
                 name: "Details"
+                when: wrapper.ListView.isCurrentItem;
                 PropertyChanges { target: wrapper; detailsOpacity: 1; }
-                PropertyChanges { target: wrapper; topColor: "#666666"; }
-                PropertyChanges { target: wrapper; bottomColor: "#222222"; }
-                PropertyChanges { target: wrapper; height: mainLabel.height + emailId.height + accountPathId.height + presenceId.height; }
+                PropertyChanges { target: wrapper; topColor: "#999999"; }
+                PropertyChanges { target: wrapper; bottomColor: "#444444"; }
+                PropertyChanges { target: wrapper; height: mainLabel.height + details.height + 4; }
             }
 
-            transitions: Transition {
-                from: ""
-                to: "Details"
-                reversible: true
-                ParallelAnimation {
-                    ColorAnimation { duration: 150; properties: "topColor, bottomColor";}
-                    NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
+            transitions:  [
+                Transition {
+                    from: ""
+                    to: "Details"
+                    reversible: false
+                    SequentialAnimation {
+                        NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
+                        ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                    }
+                },
+                Transition {
+                    to: ""
+                    from: "Details"
+                    reversible: false
+                    SequentialAnimation {
+                        NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
+                        ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                    }
                 }
-            }
+            ]
             MouseArea {
                 id: mr
                 width: topItem.width;
                 height: wrapper.height;
                 anchors.centerIn: parent;
-                onClicked: wrapper.state == "" ? wrapper.state = "Details" :  wrapper.state = "";
+                onClicked: mainList.currentIndex = index;
             }
-        }
-    }
-
-    Component {
-        id: listhighlight
-        Rectangle {
-            width: parent.width-8
-            height: 40
-            color: "lightsteelblue"
-            radius: 5
         }
     }
 
@@ -200,11 +164,11 @@ Rectangle {
         model: nameModel
         width: parent.width; height: parent.height
         delegate: listdelegate
-        highlight: listhighlight
-        highlightFollowsCurrentItem: true
+        highlightFollowsCurrentItem: false
         focus: true
         anchors.fill: parent
         highlightMoveSpeed: 5000
+        keyNavigationWraps: true
     }
 
     ListModel {
@@ -232,7 +196,5 @@ Rectangle {
         transitions: [ Transition { NumberAnimation { property: "opacity"; duration: 400 } } ]
     }
 }
-
-
 
 // ![0]

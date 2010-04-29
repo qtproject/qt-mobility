@@ -41,6 +41,7 @@
 #include "qmessagecontentcontainerid.h"
 #include "qmessagecontentcontainerid_p.h"
 #include "winhelpers_p.h"
+#include <messagingutil_p.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -59,7 +60,7 @@ QMessageContentContainerId::QMessageContentContainerId(const QString& id)
     : d_ptr(new QMessageContentContainerIdPrivate)
 {
     if (!id.isEmpty()) {
-		d_ptr->_number = WinHelpers::stripIdPrefix(id).toUInt();
+        d_ptr->_number = MessagingUtil::stripIdPrefix(id).toUInt();
     }
 }
 
@@ -84,7 +85,7 @@ QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessage
 
 QString QMessageContentContainerId::toString() const
 {
-	return WinHelpers::addIdPrefix(QString::number(d_ptr->_number));
+    return MessagingUtil::addIdPrefix(QString::number(d_ptr->_number));
 }
 
 bool QMessageContentContainerId::isValid() const

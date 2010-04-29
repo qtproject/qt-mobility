@@ -421,6 +421,11 @@ QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
+    CTelephony::TRegistrationStatus networkStatus = DeviceInfo::instance()
+        ->cellNetworkRegistrationInfo()->cellNetworkStatus();
+    if (networkStatus == CTelephony::ERegisteredOnHomeNetwork) {
+        return DeviceInfo::instance()->cellNetworkInfo()->networkCode();
+    }
     return QString();
 }
 
