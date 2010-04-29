@@ -17,6 +17,7 @@ SOURCES += \
 INCLUDEPATH += $$SOURCE_DIR/src/contacts $$SOURCE_DIR/src/contacts/details $$SOURCE_DIR/src/contacts/filters $$SOURCE_DIR/src/contacts/requests
 
 target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
+maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
 INSTALLS += target
 CONFIG += mobility link_pkgconfig
 MOBILITY = contacts
