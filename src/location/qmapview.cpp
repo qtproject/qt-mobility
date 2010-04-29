@@ -254,7 +254,7 @@ void QMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
             QPointF tileTopLeft = it.tileRect().topLeft();
             tileTopLeft -= d->viewPort.topLeft();
             painter->drawPixmap(tileTopLeft, pixmap);
-            painter->drawRect(tileTopLeft.x(), tileTopLeft.y(), TILE_WIDTH, TILE_HEIGHT);
+            //painter->drawRect(tileTopLeft.x(), tileTopLeft.y(), TILE_WIDTH, TILE_HEIGHT);
 
             if (!tileData.second)
                 d->requestTile(it.col(), it.row());
@@ -263,7 +263,7 @@ void QMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     }
 
     d->paintLayers(painter);
-    painter->drawRect(boundingRect());
+    //painter->drawRect(boundingRect());
 }
 
 /*!
@@ -276,16 +276,18 @@ void QMapView::tileFetched(QMapTileReply* reply)
 
     if (!d->mapService)
         return; //This really should not be happening
+    if (!reply)
+        return;
 
     //Are we actually waiting for this tile?
     //TODO: check if expected tile
     //const QGeoMapTileRequest& request = reply->request();
-    //quint64 tileIndex = getTileIndex(request.col(), request.row());
+    quint64 tileIndex = getTileIndex(reply->col(), reply->row());
 
-    //if (!d->pendingTiles.contains(tileIndex)) {
-    //    delete reply;
-    //    return; //discard
-    //}
+    if (!d->pendingTiles.contains(tileIndex)) {
+        delete reply;
+        return; //discard
+    }
 
     ////Not the reply we expected?
     //if (reply != d->pendingTiles[tileIndex]) {
@@ -293,7 +295,8 @@ void QMapView::tileFetched(QMapTileReply* reply)
     //    return; //discard
     //}
 
-    //d->pendingTiles.remove(tileIndex);
+    d->pendingTiles.remove(tileIndex);
+
     ////has map configuration changed in the meantime?
     //if (request.zoomLevel() != d->currZoomLevel ||
     //        request.format().id != d->mapFormat.id ||
@@ -306,7 +309,7 @@ void QMapView::tileFetched(QMapTileReply* reply)
 
     QPixmap tile;
     tile.loadFromData(reply->data(), "PNG");
-    quint64 tileIndex = getTileIndex(reply->col(), reply->row());
+
     if(!tile.isNull() && !tile.size().isEmpty()) {
         d->mapTiles[tileIndex] = qMakePair(tile, true);
         this->update();
