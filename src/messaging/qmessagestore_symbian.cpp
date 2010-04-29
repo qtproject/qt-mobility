@@ -276,7 +276,19 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
 
 QMessage QMessageStorePrivate::message(const QMessageId& id) const
 {
-    return _mtmEngine->message(id);
+    switch (idType(id)) {
+        case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+            return _fsEngine->message(id);
+#else
+        return QMessage();
+#endif
+            break;
+        case EngineTypeMTM:
+        default:
+            return _mtmEngine->message(id);
+            break;
+        }
 }
 
 QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const

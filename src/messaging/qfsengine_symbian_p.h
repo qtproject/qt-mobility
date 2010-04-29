@@ -159,10 +159,13 @@ private:
     QMessageFolder folderL(const QMessageFolderId &id) const;
 
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
-    QMessage CreateQMessageL(MEmailMessage* aMessage);
-    void AddContentToMessage(MEmailMessageContent* aContent, QMessage* aMessage);
+    QMessage CreateQMessageL(MEmailMessage* aMessage) const; 
+    void AddContentToMessage(MEmailMessageContent* aContent, QMessage* aMessage) const;
     QDateTime symbianTTimetoQDateTime(const TTime& time) const;
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
+    
+    QMessage messageL(const QMessageId& id) const;
+
     
     
     friend class QMessageService;
@@ -240,7 +243,7 @@ private:
     
     void getAllMessagesL(TEmailSortCriteria& sortCriteria);
     void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria);
-    void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria& sortCriteria);
+    void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria);
     
     
 private: // Data
