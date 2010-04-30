@@ -181,14 +181,10 @@ public:
 
 
     // Some common convenience detail accessors
-    // Should these just set the field directly (eg. take and return QStrings?)  If so, what if they
-    // expand to multi-field details in the future?
-    void setType(QOrganizerItemType* type);
-    QOrganizerItemType type() const;
-    void setNote(QOrganizerItemNote* note);
+    void setNote(QString note);
     QOrganizerItemNote note() const;
-    void setDateTime(QOrganizerItemDateTime* dateTime);
-    QOrganizerItemDateTime dateTime() const;
+    void setDateTime(const QDateTime& dateTime);
+    QDateTime dateTime() const;
 
 protected:
     friend class QOrganizerItemManager;

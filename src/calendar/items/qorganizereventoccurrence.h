@@ -43,6 +43,7 @@
 #define QORGANIZEREVENT_H
 
 #include "qtorganizeritem.h"
+#include "qtorganizeritemrecurrenceparent.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,10 +55,11 @@ public:
     QOrganizerEventOccurrence(const QOrganizerEventOccurrence& other);
     QOrganizerEventOccurrence& operator=(const QOrganizerEventOccurrence& other);
 
-    void setEndDateTime(QOrganizerItemEndDateTime* endDateTime);
-    QOrganizerItemEndDateTime endDateTime() const;
-    void setParentId(QOrganizerItemParentId* parentId) const;
-    QOrganizerItemParentId parentId() const;
+    void setEndDateTime(const QDateTime& endDateTime);
+    QDateTime endDateTime() const;
+    // XXX this takes a detail (not a field value), as a const ref (not a pointer, like for saveDetail)
+    void setRecurrenceParent(const QOrganizerItemRecurrenceParent& parentId) const;
+    QOrganizerItemRecurrenceParent recurrenceParent() const;
 };
 
 QTM_END_NAMESPACE

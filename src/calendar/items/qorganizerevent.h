@@ -43,6 +43,7 @@
 #define QORGANIZEREVENT_H
 
 #include "qtorganizeritem.h"
+#include "qtorganizeritemrecurrence.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,9 +55,10 @@ public:
     QOrganizerEvent(const QOrganizerEvent& other);
     QOrganizerEvent& operator=(const QOrganizerEvent& other);
 
-    void setEndDateTime(QOrganizerItemEndDateTime* endDateTime);
-    QOrganizerItemEndDateTime endDateTime() const;
-    void setRecurrence(QOrganizerItemRecurrence* recurrence) const;
+    void setEndDateTime(const QDateTime& endDateTime);
+    QDateTime endDateTime() const;
+    // XXX this takes a detail (not a field value), as a const ref (not a pointer, like for saveDetail)
+    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
     QOrganizerItemRecurrence recurrence() const;
 
     // TODO attendees?  How to handle nonunique details?
