@@ -551,9 +551,6 @@ void CntSimStorePrivate::encodeSimContactL(QContact* contact, TDes8& rawData) co
         {
             QContactName nameDetail = static_cast<QContactName>(detail);
             QString name = nameDetail.customLabel();
-            if (name.isEmpty())
-                name = "Unnamed";
-
             putTagAndValueL(pbBuffer, RMobilePhoneBookStore::ETagPBText, name);
         }
         // Phone number
