@@ -39,32 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDATETIME_H
-#define QORGANIZERITEMDATETIME_H
+#ifndef QORGANIZERITEMRECURRENCEPARENT_H
+#define QORGANIZERITEMRECURRENCEPARENT_H
 
 #include <QString>
 
 #include "qtcalendarglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
+#include "qorganizeritemid.h"
 
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemDateTime : public QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemRecurrenceParent : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldDateTime;
+    const char* FieldOriginalDateTime;
+    const char* FieldParentEventLocalId;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemDateTime, "DateTime")
-    Q_DECLARE_LATIN1_LITERAL(FieldDateTime, "DateTime");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemRecurrenceParent, "RecurrenceParent")
+    Q_DECLARE_LATIN1_LITERAL(FieldOriginalDateTime, "OriginalDateTime");
+    Q_DECLARE_LATIN1_LITERAL(FieldParentEventLocalId, "ParentEventLocalId");
 #endif
 
+    void setParentEventId(QOrganizerItemLocalId localId) {setValue(FieldParentEventLocalId, localId);}
+    QOrganizerItemLocalId parentEventId() const {return value<FieldParentEventLocalId>(FieldParentEventLocalId);}
+
     // XXX: TODO: QDateTime needs upgrading (timezone etc)
-    void setDateTime(const QDateTime& dateTime) {setValue(FieldDateTime, dateTime);}
-    QDateTime dateTime() const {return value<QDateTime>(FieldDateTime);}
+    void setOriginalDateTime(const QDateTime& originalDateTime) {setValue(FieldOriginalDateTime, originalDateTime);}
+    QDateTime originalDateTime() const {return value<QDateTime>(FieldOriginalDateTime);}
 };
 
 QTM_END_NAMESPACE

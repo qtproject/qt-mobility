@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDATETIME_H
-#define QORGANIZERITEMDATETIME_H
+#ifndef QORGANIZERITEMENDDATETIME_H
+#define QORGANIZERITEMENDDATETIME_H
 
 #include <QString>
 
@@ -51,20 +51,20 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemDateTime : public QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemEndDateTime : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldDateTime;
+    const char* FieldEndDateTime;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemDateTime, "DateTime")
-    Q_DECLARE_LATIN1_LITERAL(FieldDateTime, "DateTime");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemDateTime, "EndDateTime")
+    Q_DECLARE_LATIN1_LITERAL(FieldEndDateTime, "EndDateTime");
 #endif
 
     // XXX: TODO: QDateTime needs upgrading (timezone etc)
-    void setDateTime(const QDateTime& dateTime) {setValue(FieldDateTime, dateTime);}
-    QDateTime dateTime() const {return value<QDateTime>(FieldDateTime);}
+    void setEndDateTime(const QDateTime& endDateTime) {setValue(FieldEndDateTime, endDateTime);}
+    QDateTime endDateTime() const {return value<QDateTime>(FieldEndDateTime);}
 };
 
 QTM_END_NAMESPACE

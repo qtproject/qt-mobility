@@ -39,35 +39,22 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDATETIME_H
-#define QORGANIZERITEMDATETIME_H
+#ifndef QORGANIZEREVENT_H
+#define QORGANIZEREVENT_H
 
-#include <QString>
-
-#include "qtcalendarglobal.h"
-#include "qorganizeritemdetail.h"
-#include "qorganizeritem.h"
+#include "qtorganizeritem.h"
 
 QTM_BEGIN_NAMESPACE
 
-/* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemDateTime : public QOrganizerItemDetail
+class Q_CONTACTS_EXPORT QOrganizerJournal : public QOrganizerItem
 {
 public:
-#ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldDateTime;
-#else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemDateTime, "DateTime")
-    Q_DECLARE_LATIN1_LITERAL(FieldDateTime, "DateTime");
-#endif
+    QOrganizerJournal();
 
-    // XXX: TODO: QDateTime needs upgrading (timezone etc)
-    void setDateTime(const QDateTime& dateTime) {setValue(FieldDateTime, dateTime);}
-    QDateTime dateTime() const {return value<QDateTime>(FieldDateTime);}
+    QOrganizerJournal(const QOrganizerJournal& other);
+    QOrganizerJournal& operator=(const QOrganizerJournal& other);
 };
 
 QTM_END_NAMESPACE
 
 #endif
-

@@ -179,7 +179,18 @@ public:
     QOrganizerItemDetail preferredDetail(const QString& actionName) const;
     QMap<QString, QOrganizerItemDetail> preferredDetails() const;
 
-private:
+
+    // Some common convenience detail accessors
+    // Should these just set the field directly (eg. take and return QStrings?)  If so, what if they
+    // expand to multi-field details in the future?
+    void setType(QOrganizerItemType* type);
+    QOrganizerItemType type() const;
+    void setNote(QOrganizerItemNote* note);
+    QOrganizerItemNote note() const;
+    void setDateTime(QOrganizerItemDateTime* dateTime);
+    QOrganizerItemDateTime dateTime() const;
+
+protected:
     friend class QOrganizerItemManager;
     friend class QOrganizerItemManagerData;
     friend class QOrganizerItemManagerEngine;
