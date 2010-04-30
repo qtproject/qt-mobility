@@ -236,7 +236,7 @@ information from the system.
 /*!
   \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
 
-  This signal is emitted whenever the network profile changes, specified by \a profile.
+  This signal is emitted whenever the users active profile changes, specified by \a profile.
 */
 
 
