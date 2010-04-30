@@ -166,7 +166,17 @@ private:
     
     QMessage messageL(const QMessageId& id) const;
 
+    static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
+    void orderAccounts(QMessageAccountIdList& accountIds,  const QMessageAccountSortOrder &sortOrder) const;
+    void applyOffsetAndLimitToAccountIds(QMessageAccountIdList& idList, int offset, int limit) const;
     
+    static bool folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2);
+    void orderFolders(QMessageFolderIdList& folderIds,  const QMessageFolderSortOrder &sortOrder) const;
+    void applyOffsetAndLimitToMsgFolderIds(QMessageFolderIdList& idList, int offset, int limit) const;
+    void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter) const;
+
+    static bool messageLessThan(const QMessage& message1, const QMessage& message2);
+    void orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder) const;
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
@@ -188,6 +198,11 @@ private:
     QMessageAccount m_account;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
+    
+    mutable QMessageAccountSortOrder m_currentAccountOrdering;
+    mutable QMessageFolderSortOrder m_currentFolderOrdering;
+    mutable QMessageSortOrder m_currentMessageOrdering;
+
 
 };
     
