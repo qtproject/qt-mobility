@@ -32,7 +32,8 @@ INCLUDEPATH+= $$QT_MOBILITY_SOURCE_TREE/src/global
 !plugin {
     target.path=$$QT_MOBILITY_PREFIX/bin
 } else {
-    target.path = $$QT_MOBILITY_PREFIX/plugins/$${PLUGIN_TYPE}
+    maemo6:target.path = $$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
+    else:target.path = $$QT_MOBILITY_PREFIX/plugins/$${PLUGIN_TYPE}
 }
 INSTALLS += target
 
