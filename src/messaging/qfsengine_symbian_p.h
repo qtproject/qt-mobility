@@ -165,7 +165,7 @@ private:
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
     
     QMessage messageL(const QMessageId& id) const;
-
+    MEmailMessage* fsMessageL(const QMessageId& id) const;
     static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
     void orderAccounts(QMessageAccountIdList& accountIds,  const QMessageAccountSortOrder &sortOrder) const;
     void applyOffsetAndLimitToAccountIds(QMessageAccountIdList& idList, int offset, int limit) const;

@@ -262,9 +262,25 @@ bool QMessageStorePrivate::removeMessages(const QMessageFilter &filter, QMessage
         loop.exec();
         ids = _ids;
         _ids.clear();
+        
         for (int i=0; i < ids.count(); i++) {
-            if (!_mtmEngine->removeMessage(ids[i], option)) {
-                retVal = false;
+            switch (idType(ids[i])) {
+                case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+                    if (!_fsEngine->removeMessage(ids[i], option)) {
+                        retVal = false;
+                    }
+#else
+                return false;
+#endif
+                    break;  
+                case EngineTypeMTM:
+                    if (!_mtmEngine->removeMessage(ids[i], option)) {
+                        retVal = false;
+                    }
+                    break;
+                default:
+                    return false;
             }
         }
     } else {
@@ -311,7 +327,7 @@ QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
 QMessageManager::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)
 {
 #ifdef FREESTYLEMAILUSED
-    return  _fsEngine->registerNotificationFilter(*this, filter);
+    _fsEngine->registerNotificationFilter(*this, filter);
 #endif
     return _mtmEngine->registerNotificationFilter(*this, filter);
 }
