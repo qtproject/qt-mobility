@@ -10,9 +10,6 @@ DEFINES += QT_BUILD_CALENDAR_LIB \
     QT_ASCII_CAST_WARNINGS
 include(../../common.pri)
 include(details/details.pri)
-include(engines/engines.pri)
-include(filters/filters.pri)
-include(requests/requests.pri)
 
 # Input
 PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
@@ -30,8 +27,6 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qorganizeritemmanager.h \
     qorganizeritemmanagerengine.h \
     qorganizeritemmanagerenginefactory.h \
-    qorganizeritemrecurrencerulecriteria.h \
-    qorganizeritemrecurrencerules.h \
     qorganizeritemrelationship.h \
     qorganizeritemsortorder.h \
     qtorganizeritemsglobal.h \

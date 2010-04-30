@@ -57,7 +57,7 @@ set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
-set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
+set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors calendar
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
@@ -123,7 +123,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
     echo                     messaging multimedia systeminfo serviceframework versit
-    echo                     sensors
+    echo                     sensors calendar
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
     echo                     selected module depends on other modules dependencies
@@ -264,9 +264,11 @@ if %FIRST% == bearer (
 ) else if %FIRST% == serviceframework (
     echo     ServiceFramework selected
 ) else if %FIRST% == versit (
-    echo     Versit selected ^(implies Contacts^)
+    echo     Versit selected ^(implies Contacts & Calendar^)
 ) else if %FIRST% == sensors (
     echo     Sensors selected
+) else if %FIRST% == calendar (
+    echo     Calendar selected
 ) else (
     echo     Unknown module %FIRST%
     goto errorTag
@@ -335,7 +337,7 @@ echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PRO
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 REM no Sysinfo support on Maemo yet
 echo maemo5^|maemo6:mobility_modules -= systeminfo >> %PROJECT_CONFIG%
-echo contains(mobility_modules,versit): mobility_modules *= contacts  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,versit): mobility_modules *= contacts calendar >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -504,14 +506,17 @@ if %FIRST% == bearer (
 ) else if %FIRST% == serviceframework (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == versit (
-    REM versit implies contacts
+    REM versit implies contacts & calendar
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmVersit %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmCalendar %SOURCE_PATH%\src\calendar
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmSensors %SOURCE_PATH%\src\sensors
+) else if %FIRST% == calendar (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmCalendar %SOURCE_PATH%\src\calendar
 )
 
 if "%REMAINING%" == "" (

@@ -28,11 +28,12 @@ contains(mobility_modules,publishsubscribe) {
 contains(mobility_modules,systeminfo): SUBDIRS += systeminfo
 contains(mobility_modules,versit): SUBDIRS += versit
 contains(mobility_modules,sensors): SUBDIRS += sensors
+contains(mobility_modules,calendar): SUBDIRS += calendar
 
-# Versit depends on Contacts
+# Versit depends on Contacts & Calendar
 versit.subdir=versit
 versit.target=sub-versit
-versit.depends=contacts
+versit.depends=contacts calendar
 
 contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5 {
     contains(mobility_modules,messaging) {
