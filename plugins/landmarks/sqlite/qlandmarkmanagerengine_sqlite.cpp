@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qlandmarkmanagerengine_sqlite_p.h>
+#include "qlandmarkmanagerengine_sqlite_p.h"
 #include <qlandmark.h>
 #include <qlandmarkid.h>
 #include <qlandmarkcategory.h>

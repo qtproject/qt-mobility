@@ -59,7 +59,7 @@
 
 QTM_USE_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
+class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
     Q_OBJECT
 public:

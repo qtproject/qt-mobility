@@ -39,19 +39,18 @@
 **
 ****************************************************************************/
 
-#define private public
-#include "../../../src/location/qlandmarkmanager.h"
-
-#include "../../../src/location/qlandmarkfilehandler_gpx_p.h"
-
 #include "qgeocoordinate.h"
 
 #include <qtest.h>
 #include <QMetaType>
 #include <QFile>
 #include <QBuffer>
-
 #include <QDebug>
+
+#define private public
+#include <qlandmarkmanager.h>
+#include "../../../src/location/qlandmarkmanager_p.h"
+#include "../../../src/location/qlandmarkfilehandler_gpx_p.h"
 
 QTM_USE_NAMESPACE
 
@@ -73,7 +72,7 @@ private slots:
         map["filename"] = "test.db";
         m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 
-        m_handler = new QLandmarkFileHandlerGpx(m_manager->engine());
+        m_handler = new QLandmarkFileHandlerGpx(m_manager->d_ptr->engine);
     }
 
     void cleanup() {
