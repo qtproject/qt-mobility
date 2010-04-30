@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
+** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -51,9 +51,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-/* Manual Q_DECLARE_CONTACTFILTER_PRIVATE macro */
+/* Manual Q_DECLARE_CALENDARFILTER_PRIVATE macro */
 
-#define Q_DECLARE_CONTACTFILTER_PRIVATE(Class) \
+#define Q_DECLARE_CALENDARFILTER_PRIVATE(Class) \
     inline Class##Private* d_func(); \
     inline const Class##Private* d_func() const; \
     friend class Class##Private;
@@ -69,8 +69,8 @@ public:
 
     enum FilterType {
         InvalidFilter,
-        ContactDetailFilter,
-        ContactDetailRangeFilter,
+        OrganizerItemDetailFilter,
+        OrganizerItemDetailRangeFilter,
         ChangeLogFilter,
         ActionFilter,
         RelationshipFilter,

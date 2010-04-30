@@ -58,7 +58,6 @@
 #include "qorganizeritemmanager.h"                    // manager
 #include "qorganizeritemmanagerengine.h"              // manager backend
 #include "qorganizeritemmanagerenginefactory.h"       // manage backend instantiator
-#include "qorganizeritemrelationship.h"               // relationships between items
 #include "qorganizeritemsortorder.h"                  // organizeritem sorting
 
 #endif

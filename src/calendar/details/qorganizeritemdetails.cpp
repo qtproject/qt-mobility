@@ -245,7 +245,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisibilityTag::DefinitionName, "Visibilit
    \variable QOrganizerItemAccessControl::FieldReadAccess
 
    The constant key for which the read access value is stored in
-   details of the QContactOrganizerItemAccessControl type.
+   details of the QOrganizerItemAccessControl type.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldReadAccess, "ReadAccess");
 
@@ -253,7 +253,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldReadAccess, "ReadAcce
    \variable QOrganizerItemAccessControl::FieldShareAccess
 
    The constant key for which the share access value is stored in
-   details of the QContactOrganizerItemAccessControl type.
+   details of the QOrganizerItemAccessControl type.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldShareAccess, "ShareAccess");
 
@@ -261,7 +261,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldShareAccess, "ShareAc
    \variable QOrganizerItemAccessControl::FieldWriteAccess
 
    The constant key for which the write access value is stored in
-   details of the QContactOrganizerItemAccessControl type.
+   details of the QOrganizerItemAccessControl type.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldWriteAccess, "WhiteAccess");
 

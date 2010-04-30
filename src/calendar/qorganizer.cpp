@@ -39,56 +39,14 @@
 **
 ****************************************************************************/
 
-
-#ifndef QORGANIZERITEMCHANGESET_H
-#define QORGANIZERITEMCHANGESET_H
-
 #include "qtorganizeritemsglobal.h"
-#include "qorganizeritemid.h"
 
-#include <QSet>
-#include <QPair>
-#include <QSharedDataPointer>
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+// This is just here to make sure moc stuff goes in the right namespace
+#include "moc_qorganizeritemabstractrequest.cpp"
+#include "moc_qorganizeritemmanagerengine.cpp"
+#include "moc_qorganizeritemmanager.cpp"
 
-class QOrganizerItemManagerEngine;
-class QOrganizerItemChangeSetData;
-class Q_CALENDAR_EXPORT QOrganizerItemChangeSet
-{
-public:
-    QOrganizerItemChangeSet();
-    QOrganizerItemChangeSet(const QOrganizerItemChangeSet& other);
-    ~QOrganizerItemChangeSet();
 
-    QOrganizerItemChangeSet& operator=(const QOrganizerItemChangeSet& other);
 
-    void setDataChanged(bool dataChanged);
-    bool dataChanged();
-
-    QSet<QOrganizerItemLocalId> addedItems() const;
-    void insertAddedItem(QOrganizerItemLocalId addedItemId);
-    void insertAddedItems(const QList<QOrganizerItemLocalId>& addedItemIds);
-    void clearAddedItems();
-
-    QSet<QOrganizerItemLocalId> changedItems() const;
-    void insertChangedItem(QOrganizerItemLocalId addedItemId);
-    void insertChangedItems(const QList<QOrganizerItemLocalId>& addedItemIds);
-    void clearChangedItems();
-
-    QSet<QOrganizerItemLocalId> removedItems() const;
-    void insertRemovedItem(QOrganizerItemLocalId addedItemId);
-    void insertRemovedItems(const QList<QOrganizerItemLocalId>& addedItemIds);
-    void clearRemovedItems();
-
-    void clearAll();
-
-    void emitSignals(QOrganizerItemManagerEngine *engine);
-
-private:
-    QSharedDataPointer<QOrganizerItemChangeSetData> d;
-};
-
-QTM_END_NAMESPACE
-
-#endif

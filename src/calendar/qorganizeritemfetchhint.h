@@ -62,12 +62,8 @@ public:
     QStringList detailDefinitionsHint() const;
     void setDetailDefinitionsHint(const QStringList& definitionNames);
 
-    QStringList relationshipTypesHint() const;
-    void setRelationshipTypesHint(const QStringList& relationshipTypes);
-
     enum OptimizationHint {
         AllRequired = 0x0,
-        NoRelationships = 0x1,
         NoActionPreferences = 0x2,
         NoBinaryBlobs = 0x4
         // any other optimization hints?

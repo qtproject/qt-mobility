@@ -64,7 +64,7 @@ public:
 QTM_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
-#define QT_CALENDAR_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
+#define QT_CALENDAR_BACKEND_INTERFACE "com.nokia.qt.mobility.organizeritems.enginefactory/1.0"
 Q_DECLARE_INTERFACE(QtMobility::QOrganizerItemManagerEngineFactory, QT_CALENDAR_BACKEND_INTERFACE);
 QT_END_NAMESPACE
 
