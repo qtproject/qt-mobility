@@ -1023,23 +1023,21 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
         emit currentProfileChanged(currentProfile());
 }
 
-void QSystemDeviceInfoPrivate::profileChanged(bool, bool, QString profile, QList<ProfileDataValue> values)
+void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
-    const QSystemDeviceInfo::Profile previousProfile = currentProfile();
-
-    profileName = profile;
-    foreach (const ProfileDataValue value, values) {
-        if (value.key == "ringing.alert.type")
-            silentProfile = value.val == "silent";
-        else if (value.key == "vibrating.alert.enabled")
-            vibratingAlertEnabled = value.val == "On";
-        else if (value.key == "ringing.alert.volume")
-            ringingAlertVolume = value.val.toInt();
+    if (active) {
+        profileName = profile;
+        foreach (const ProfileDataValue value, values) {
+            if (value.key == "ringing.alert.type")
+                silentProfile = value.val == "silent";
+            else if (value.key == "vibrating.alert.enabled")
+                vibratingAlertEnabled = value.val == "On";
+            else if (value.key == "ringing.alert.volume")
+                ringingAlertVolume = value.val.toInt();
+        }
+        if (changed)
+            emit currentProfileChanged(currentProfile());
     }
-
-    QSystemDeviceInfo::Profile newProfile = currentProfile();
-    if (previousProfile != newProfile)
-        emit currentProfileChanged(newProfile);
 }
 
 #endif
