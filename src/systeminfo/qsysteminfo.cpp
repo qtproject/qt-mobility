@@ -229,7 +229,7 @@ information from the system.
    /*!
   \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
 
-  This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
+  This signal is emitted when the power state has changed, such as when a phone gets plugged in to the wall.
   \a state is the new power state.
  */
 
