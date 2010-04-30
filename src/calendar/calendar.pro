@@ -1,5 +1,5 @@
 # #####################################################################
-# Contacts Mobility API
+# Calendar Mobility API
 # #####################################################################
 TEMPLATE = lib
 
@@ -42,7 +42,7 @@ symbian {
         -TCB
     TARGET.UID3 = 0x2002AC7A
     
-    # ## Contacts
+    # ## Calendar
     # Main library
     CALENDAR_DEPLOYMENT.sources = QtCalendar.dll
     CALENDAR_DEPLOYMENT.path = \sys\bin

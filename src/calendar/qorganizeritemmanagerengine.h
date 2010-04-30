@@ -87,31 +87,31 @@ public:
     QString managerUri() const;
 
     /* Filtering */
-    virtual QList<QOrganizerItemLocalId> contactIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
-    virtual QList<QOrganizerItem> contacts(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
-    virtual QOrganizerItem contact(const QOrganizerItemLocalId& contactId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    virtual QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
-    virtual bool saveContact(QOrganizerItem* contact, QOrganizerItemManager::Error* error);
-    virtual bool removeContact(const QOrganizerItemLocalId& contactId, QOrganizerItemManager::Error* error);
+    virtual bool saveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error);
+    virtual bool removeItem(const QOrganizerItemLocalId& itemId, QOrganizerItemManager::Error* error);
 
-    virtual bool saveContacts(QList<QOrganizerItem>* contacts, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
-    virtual bool removeContacts(const QList<QOrganizerItemLocalId>& contactIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    virtual bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    virtual bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
-    /* Return a pruned or modified contact which is valid and can be saved in the backend */
-    virtual QOrganizerItem compatibleContact(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const;
+    /* Return a pruned or modified item which is valid and can be saved in the backend */
+    virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const;
 
-    /* Synthesize the display label of a contact */
-    virtual QString synthesizedDisplayLabel(const QOrganizerItem& contact, QOrganizerItemManager::Error* error) const;
+    /* Synthesize the display label of a item */
+    virtual QString synthesizedDisplayLabel(const QOrganizerItem& item, QOrganizerItemManager::Error* error) const;
 
     /* Validation for saving */
-    virtual bool validateContact(const QOrganizerItem& contact, QOrganizerItemManager::Error* error) const;
+    virtual bool validateItem(const QOrganizerItem& item, QOrganizerItemManager::Error* error) const;
     virtual bool validateDefinition(const QOrganizerItemDetailDefinition& def, QOrganizerItemManager::Error* error) const;
 
     /* Definitions - Accessors and Mutators */
-    virtual QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& contactType, QOrganizerItemManager::Error* error) const;
-    virtual QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QOrganizerItemManager::Error* error) const;
-    virtual bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& contactType, QOrganizerItemManager::Error* error);
-    virtual bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QOrganizerItemManager::Error* error);
+    virtual QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
+    virtual QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const;
+    virtual bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error);
+    virtual bool removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error);
 
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QOrganizerItemAbstractRequest* req);
@@ -120,42 +120,42 @@ public:
     virtual bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
-    virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& contactType) const;
+    virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
     virtual bool isFilterSupported(const QOrganizerItemFilter& filter) const;
     virtual QList<QVariant::Type> supportedDataTypes() const;
-    virtual QStringList supportedContactTypes() const;
+    virtual QStringList supportedItemTypes() const;
 
     /* Reports the built-in definitions from the schema */
     static QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions();
 
 Q_SIGNALS:
     void dataChanged();
-    void contactsAdded(const QList<QOrganizerItemLocalId>& contactIds);
-    void contactsChanged(const QList<QOrganizerItemLocalId>& contactIds);
-    void contactsRemoved(const QList<QOrganizerItemLocalId>& contactIds);
+    void itemsAdded(const QList<QOrganizerItemLocalId>& itemIds);
+    void itemsChanged(const QList<QOrganizerItemLocalId>& itemIds);
+    void itemsRemoved(const QList<QOrganizerItemLocalId>& itemIds);
 
 public:
     // Async update functions
     static void updateRequestState(QOrganizerItemAbstractRequest* req, QOrganizerItemAbstractRequest::State state);
 
-    static void updateContactLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest* req, const QList<QOrganizerItemLocalId>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State);
-    static void updateContactFetchRequest(QOrganizerItemFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State);
-    static void updateContactRemoveRequest(QOrganizerItemRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
-    static void updateContactSaveRequest(QOrganizerItemSaveRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
+    static void updateItemLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest* req, const QList<QOrganizerItemLocalId>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State);
+    static void updateItemFetchRequest(QOrganizerItemFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State);
+    static void updateItemRemoveRequest(QOrganizerItemRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
+    static void updateItemSaveRequest(QOrganizerItemSaveRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
     static void updateDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest* req, const QList<QOrganizerItemDetailDefinition>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
     static void updateDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
     static void updateDefinitionFetchRequest(QOrganizerItemDetailDefinitionFetchRequest* req, const QMap<QString, QOrganizerItemDetailDefinition>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
-    static void setContactDisplayLabel(QOrganizerItem* contact, const QString& displayLabel);
+    static void setItemDisplayLabel(QOrganizerItem* item, const QString& displayLabel);
 
     /* Helper functions */
-    static int compareContact(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders);
+    static int compareItem(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders);
     static void addSorted(QList<QOrganizerItem>* sorted, const QOrganizerItem& toAdd, const QList<QOrganizerItemSortOrder>& sortOrders);
     static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
-    static bool testFilter(const QOrganizerItemFilter& filter, const QOrganizerItem& contact);
-    static QList<QOrganizerItemLocalId> sortContacts(const QList<QOrganizerItem>& contacts, const QList<QOrganizerItemSortOrder>& sortOrders);
+    static bool testFilter(const QOrganizerItemFilter& filter, const QOrganizerItem& item);
+    static QList<QOrganizerItemLocalId> sortItems(const QList<QOrganizerItem>& items, const QList<QOrganizerItemSortOrder>& sortOrders);
 
     static QOrganizerItemFilter canonicalizedFilter(const QOrganizerItemFilter& filter);
 
