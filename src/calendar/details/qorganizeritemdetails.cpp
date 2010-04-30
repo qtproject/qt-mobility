@@ -130,19 +130,19 @@ QTM_BEGIN_NAMESPACE
    \variable QOrganizerItemAccessControl::DefinitionName
    The constant string which identifies the definition of details which contain access control information.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::DefinitionName, "AccessControl");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::DefinitionName, "AccessControl");
 
 /*!
    \variable QOrganizerItemAttendee::DefinitionName
    The constant string which identifies the definition of details which contain the information about an attendee.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::DefinitionName, "Attendee");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::DefinitionName, "Attendee");
 
 /*!
    \variable QOrganizerItemDateTime::DefinitionName
    The constant string which identifies the definition of details which contain the date and time of an event or appointment.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDateTime::DefinitionName, "DateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::DefinitionName, "DateTime");
 
 /*!
    \variable QOrganizerItemDisplayLabel::DefinitionName
@@ -150,13 +150,13 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDateTime::DefinitionName, "DateTime");
    The constant string which identifies the definition of details
    which contain a display label of an organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDisplayLabel::DefinitionName, "DisplayLabel");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::DefinitionName, "DisplayLabel");
 
 /*!
    \variable QOrganizerItemGuid::DefinitionName
    The constant string which identifies the definition of details which are globally unique identifiers.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemGuid::DefinitionName, "Guid");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::DefinitionName, "Guid");
 
 /*!
    \variable QOrganizerItemLocation::DefinitionName
@@ -164,67 +164,67 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemGuid::DefinitionName, "Guid");
    The constant string which identifies the definition of details
    which describe a location associated with an organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::DefinitionName, "Location");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::DefinitionName, "Location");
 
 /*!
    \variable QOrganizerItemNote::DefinitionName
    The constant string which identifies the definition of details which are notes.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemNote::DefinitionName, "Note");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemNote::DefinitionName, "Note");
 
 /*!
    \variable QOrganizerItemParticipationRole::DefinitionName
    The constant string which identifies the definition of details which describe the participation role of a person or contact at the event or appointment described by the organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemParticipationRole::DefinitionName, "ParticipationRole");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationRole::DefinitionName, "ParticipationRole");
 
 /*!
    \variable QOrganizerItemParticipationStatus::DefinitionName
    The constant string which identifies the definition of details which describe the participation status of a person or contact at the event or appointment described by the organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemParticipationStatus::DefinitionName, "ParticipationStatus");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationStatus::DefinitionName, "ParticipationStatus");
 
 /*!
    \variable QOrganizerItemPriority::DefinitionName
    The constant string which identifies the definition of details which contain the priority of an organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemPriority::DefinitionName, "Priority");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::DefinitionName, "Priority");
 
 /*!
    \variable QOrganizerItemProvenance::DefinitionName
    The constant string which identifies the definition of details which contain the provenance of an organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemProvenance::DefinitionName, "Provenance");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::DefinitionName, "Provenance");
 
 /*!
    \variable QOrganizerItemRecurrenceRule::DefinitionName
    The constant string which identifies the definition of details which contain the recurrence rule of an organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRecurrenceRule::DefinitionName, "RecurrenceRule");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::DefinitionName, "RecurrenceRule");
 
 /*!
    \variable QOrganizerItemRsvpInfo::DefinitionName
    The constant string which identifies the definition of details which contain the RSVP information for an organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::DefinitionName, "RsvpInfo");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::DefinitionName, "RsvpInfo");
 
 /*!
    \variable QOrganizerItemTimestamp::DefinitionName
    The constant string which identifies the definition of details which are contact synchronisation timestamps.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemTimestamp::DefinitionName, "Timestamp");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::DefinitionName, "Timestamp");
 
 /*!
    \variable QOrganizerItemType::DefinitionName
    The constant string which identifies the definition of details which identify the type of the contact.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::DefinitionName, "Type");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::DefinitionName, "Type");
 
 /*!
    \variable QOrganizerItemVisibilityTag::DefinitionName
    The constant string which identifies the definition of details which contain the visibility tag of an organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemVisibilityTag::DefinitionName, "VisibilityTag");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisibilityTag::DefinitionName, "VisibilityTag");
 
 
 
@@ -247,7 +247,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemVisibilityTag::DefinitionName, "Visibility
    The constant key for which the read access value is stored in
    details of the QContactOrganizerItemAccessControl type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::FieldReadAccess, "ReadAccess");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldReadAccess, "ReadAccess");
 
 /*!
    \variable QOrganizerItemAccessControl::FieldShareAccess
@@ -255,7 +255,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::FieldReadAccess, "ReadAcces
    The constant key for which the share access value is stored in
    details of the QContactOrganizerItemAccessControl type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::FieldShareAccess, "ShareAccess");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldShareAccess, "ShareAccess");
 
 /*!
    \variable QOrganizerItemAccessControl::FieldWriteAccess
@@ -263,7 +263,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::FieldShareAccess, "ShareAcc
    The constant key for which the write access value is stored in
    details of the QContactOrganizerItemAccessControl type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::FieldWriteAccess, "WhiteAccess");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldWriteAccess, "WhiteAccess");
 
 /*!
    \variable QOrganizerItemAttendee::FieldAttendeeDisplayLabel
@@ -271,7 +271,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAccessControl::FieldWriteAccess, "WhiteAcc
    The constant key for which the display label value of the attendee is stored in
    details of the QOrganizerItemAttendee type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::FieldAttendeeDisplayLabel, "AttendeeDisplayLabel");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeDisplayLabel, "AttendeeDisplayLabel");
 
 /*!
    \variable QOrganizerItemAttendee::FieldAttendeeContactUri
@@ -279,7 +279,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::FieldAttendeeDisplayLabel, "Atte
    The constant key for which the contact URI value of the attendee is stored in
    details of the QOrganizerItemAttendee type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::FieldAttendeeContactUri, "AttendeeContactUri");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeContactUri, "AttendeeContactUri");
 
 /*!
    \variable QOrganizerItemAttendee::FieldAttendeeParticipationStatus
@@ -287,7 +287,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::FieldAttendeeContactUri, "Attend
    The constant key for which the participation status value of the attendee is stored in
    details of the QOrganizerItemAttendee type.  XXX TODO: detail linking instead?
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
 
 /*!
    \variable QOrganizerItemDateTime::FieldStartDateTime
@@ -295,15 +295,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemAttendee::FieldAttendeeParticipationStatus
    The constant key for which the start datetime value of the organizer item is stored in
    details of the QOrganizerItemDateTime type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDateTime::FieldStartDateTime, "StartDateTime");
-
-/*!
-   \variable QOrganizerItemDateTime::FieldEndDateTime
-
-   The constant key for which the end datetime value of the organizer item is stored in
-   details of the QOrganizerItemDateTime type.
- */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDateTime::FieldEndDateTime, "EndDateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::FieldStartDateTime, "StartDateTime");
 
 /*!
    \variable QOrganizerItemDisplayLabel::FieldLabel
@@ -311,7 +303,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDateTime::FieldEndDateTime, "EndDateTime")
    The constant key for which the display label value is stored in
    details of the QOrganizerItemDisplayLabel type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDisplayLabel::FieldLabel, "Label");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::FieldLabel, "Label");
 
 /*!
    \variable QOrganizerItemGuid::FieldGuid
@@ -319,7 +311,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemDisplayLabel::FieldLabel, "Label");
    The constant key for which the globally unique identifier value is
    stored in details of the QOrganizerItemGuid type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemGuid::FieldGuid, "Guid");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
 
 /*!
    \variable QOrganizerItemLocation::FieldGeoLocation
@@ -327,7 +319,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemGuid::FieldGuid, "Guid");
    The constant key for which the geolocation value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::FieldGeoLocation, "GeoLocation");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldGeoLocation, "GeoLocation");
 
 /*!
    \variable QOrganizerItemLocation::FieldAddress
@@ -335,7 +327,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::FieldGeoLocation, "GeoLocation")
    The constant key for which the street address value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::FieldAddress, "Address");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldAddress, "Address");
 
 /*!
    \variable QOrganizerItemLocation::FieldLocationName
@@ -343,7 +335,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::FieldAddress, "Address");
    The constant key for which the location label value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::FieldLocationName, "LocationName");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationName");
 
 /*!
    \variable QOrganizerItemNote::FieldNote
@@ -351,7 +343,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemLocation::FieldLocationName, "LocationName
    The constant key for which the note value is stored in details of
    the QOrganizerItemNote type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemNote::FieldNote, "Note");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemNote::FieldNote, "Note");
 
 /*!
    \variable QOrganizerItemParticipationRole::FieldParticipationRole
@@ -359,7 +351,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemNote::FieldNote, "Note");
    The constant key for which the participation role value is stored in details of
    the QOrganizerItemParticipationRole type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemParticipationRole::FieldParticipationRole, "ParticipationRole");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationRole::FieldParticipationRole, "ParticipationRole");
 
 /*!
    \variable QOrganizerItemParticipationStatus::FieldParticipationStatus
@@ -367,7 +359,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemParticipationRole::FieldParticipationRole,
    The constant key for which the participation status value is stored in details of
    the QOrganizerItemParticipationStatus type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemParticipationStatus::FieldParticipationStatus, "ParticipationStatus");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationStatus::FieldParticipationStatus, "ParticipationStatus");
 
 /*!
    \variable QOrganizerItemPriority::FieldPriority
@@ -375,7 +367,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemParticipationStatus::FieldParticipationSta
    The constant key for which the priority value is stored in details of
    the QOrganizerItemPriority type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemPriority::FieldPriority, "Priority");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
 
 /*!
    \variable QOrganizerItemProvenance::FieldReceivedFrom
@@ -383,7 +375,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemPriority::FieldPriority, "Priority");
    The constant key for which the contact URI from whom the item was received from is stored in details of
    the QOrganizerItemProvenance type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemProvenance::FieldReceivedFrom, "ReceivedFrom");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldReceivedFrom, "ReceivedFrom");
 
 /*!
    \variable QOrganizerItemProvenance::FieldTimestamp
@@ -391,7 +383,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemProvenance::FieldReceivedFrom, "ReceivedFr
    The constant key for which the receipt timestamp is stored in details of
    the QOrganizerItemProvenance type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemProvenance::FieldTimestamp, "Timestamp");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldTimestamp, "Timestamp");
 
 /*!
    \variable QOrganizerItemRsvpInfo::FieldDeadline
@@ -399,7 +391,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemProvenance::FieldTimestamp, "Timestamp");
    The constant key for which the deadline timestamp is stored in details of
    the QOrganizerItemRsvpInfo type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::FieldDeadline, "Deadline");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldDeadline, "Deadline");
 
 /*!
    \variable QOrganizerItemRsvpInfo::FieldResponseDate
@@ -407,7 +399,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::FieldDeadline, "Deadline");
    The constant key for which the response date timestamp is stored in details of
    the QOrganizerItemRsvpInfo type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::FieldResponseDate, "ResponseDate");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldResponseDate, "ResponseDate");
 
 /*!
    \variable QOrganizerItemRsvpInfo::FieldContactUri
@@ -415,7 +407,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::FieldResponseDate, "ResponseDate
    The constant key for which the contact URI to whom the RSVP must be sent is stored in details of
    the QOrganizerItemRsvpInfo type.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::FieldContactUri, "ContactUri");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldContactUri, "ContactUri");
 
 
 /*!
@@ -425,7 +417,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemRsvpInfo::FieldContactUri, "ContactUri");
    QOrganizerItemTimestamp type which describes the last modification date
    and time of an organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemTimestamp::FieldModificationTimestamp, "ModificationTimestamp");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::FieldModificationTimestamp, "ModificationTimestamp");
 
 /*!
    \variable QOrganizerItemTimestamp::FieldCreationTimestamp
@@ -434,7 +426,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemTimestamp::FieldModificationTimestamp, "Mo
    QOrganizerItemTimestamp type which describes the creation date and time
    of an organizer item.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemTimestamp::FieldCreationTimestamp, "CreationTimestamp");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::FieldCreationTimestamp, "CreationTimestamp");
 
 /*!
    \variable QOrganizerItemType::FieldType
@@ -442,42 +434,42 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemTimestamp::FieldCreationTimestamp, "Creati
    The constant key for the type value which is stored in details of
    the QOrganizerItemType definition.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::FieldType, "Type");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::FieldType, "Type");
 
 /*!
    \variable QOrganizerItemType::TypeEvent
 
    The constant attribute value which describes the organizer item as being an event.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeEvent, "Event");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeEvent, "Event");
 
 /*!
    \variable QOrganizerItemType::TypeInvitation
 
    The constant attribute value which describes the organizer item as being an invitation.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeInvitation, "Invitation");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeInvitation, "Invitation");
 
 /*!
    \variable QOrganizerItemType::TypeJournal
 
    The constant attribute value which describes the organizer item as being a journal.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeJournal, "Journal");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeJournal, "Journal");
 
 /*!
    \variable QOrganizerItemType::TypeNote
 
    The constant attribute value which describes the organizer item as being a note.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeNote, "Note");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeNote, "Note");
 
 /*!
    \variable QOrganizerItemType::TypeTodo
 
    The constant attribute value which describes the organizer item as being a todo.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeTodo, "Todo");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodo, "Todo");
 
 /*!
    \variable QOrganizerItemVisibilityTag::FieldTag
@@ -485,7 +477,7 @@ Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::TypeTodo, "Todo");
    The constant key for the tag value which is stored in details of
    the QOrganizerItemVisibilityTag definition.
  */
-Q_DEFINE_LATIN1_LITERAL(QOrganizerItemType::FieldTag, "Tag");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisibilityTag::FieldTag, "Tag");
 
 
 

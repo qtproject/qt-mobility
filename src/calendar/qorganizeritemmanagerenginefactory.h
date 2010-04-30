@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 /* Backend plugin API interface, creates engines for us */
 class QOrganizerItemManagerEngine;
-class Q_CONTACTS_EXPORT QOrganizerItemManagerEngineFactory
+class Q_CALENDAR_EXPORT QOrganizerItemManagerEngineFactory
 {
 public:
     // engine factory functions
@@ -64,8 +64,8 @@ public:
 QTM_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
-#define QT_CONTACTS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QOrganizerItemManagerEngineFactory, QT_CONTACTS_BACKEND_INTERFACE);
+#define QT_CALENDAR_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QOrganizerItemManagerEngineFactory, QT_CALENDAR_BACKEND_INTERFACE);
 QT_END_NAMESPACE
 
 #endif

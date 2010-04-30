@@ -45,7 +45,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -60,7 +60,7 @@ public:
     const char* FieldGuid;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemGuid, "Guid")
-    Q_DECLARE_LATIN1_LITERAL(FieldGuid, "Guid");
+    Q_DECLARE_LATIN1_CONSTANT(FieldGuid, "Guid");
 #endif
 
     void setGuid(const QString& guid) {setValue(FieldGuid, guid);}

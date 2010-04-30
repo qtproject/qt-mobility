@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemManagerEngine;
 class QOrganizerItemChangeSetData;
-class Q_CONTACTS_EXPORT QOrganizerItemChangeSet
+class Q_CALENDAR_EXPORT QOrganizerItemChangeSet
 {
 public:
     QOrganizerItemChangeSet();

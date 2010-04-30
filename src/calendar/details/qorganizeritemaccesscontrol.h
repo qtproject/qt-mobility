@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -61,9 +61,9 @@ public:
     const char* FieldWriteAccess;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemAccessControl, "AccessControl")
-    Q_DECLARE_LATIN1_LITERAL(FieldReadAccess, "ReadAccess");
-    Q_DECLARE_LATIN1_LITERAL(FieldShareAccess, "ShareAccess");
-    Q_DECLARE_LATIN1_LITERAL(FieldWriteAccess, "WriteAccess");
+    Q_DECLARE_LATIN1_CONSTANT(FieldReadAccess, "ReadAccess");
+    Q_DECLARE_LATIN1_CONSTANT(FieldShareAccess, "ShareAccess");
+    Q_DECLARE_LATIN1_CONSTANT(FieldWriteAccess, "WriteAccess");
 #endif
 
     // XXX TODO: requirements around this.

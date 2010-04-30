@@ -51,7 +51,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemSortOrderPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemSortOrder
+class Q_CALENDAR_EXPORT QOrganizerItemSortOrder
 {
 public:
     QOrganizerItemSortOrder();

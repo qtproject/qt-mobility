@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemRelationshipPrivate;
 
-class Q_CONTACTS_EXPORT QOrganizerItemRelationship
+class Q_CALENDAR_EXPORT QOrganizerItemRelationship
 {
 public:
 #ifdef Q_QDOC
@@ -92,9 +92,9 @@ private:
     QSharedDataPointer<QOrganizerItemRelationshipPrivate> d;
 };
 
-Q_CONTACTS_EXPORT uint qHash(const QOrganizerItemRelationship& key);
+Q_CALENDAR_EXPORT uint qHash(const QOrganizerItemRelationship& key);
 #ifndef QT_NO_DEBUG_STREAM
-Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemRelationship& rel);
+Q_CALENDAR_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemRelationship& rel);
 #endif
 
 QTM_END_NAMESPACE

@@ -51,7 +51,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemDetailFieldDefinitionPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemDetailFieldDefinition
+class Q_CALENDAR_EXPORT QOrganizerItemDetailFieldDefinition
 {
 public:
     QOrganizerItemDetailFieldDefinition();

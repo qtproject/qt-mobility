@@ -45,7 +45,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -62,9 +62,9 @@ public:
     const char* FieldLocationName;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemLocation, "Location")
-    Q_DECLARE_LATIN1_LITERAL(FieldGeoLocation, "GeoLocation");
-    Q_DECLARE_LATIN1_LITERAL(FieldAddress, "Address");
-    Q_DECLARE_LATIN1_LITERAL(FieldLocationName, "LocationName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldGeoLocation, "GeoLocation");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAddress, "Address");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLocationName, "LocationName");
 #endif
 
     // XXX TODO: functions / data types

@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -59,7 +59,7 @@ public:
     const char* FieldParticipationStatus;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemParticipationStatus, "ParticipationStatus")
-    Q_DECLARE_LATIN1_LITERAL(FieldParticipationStatus, "ParticipationStatus");
+    Q_DECLARE_LATIN1_CONSTANT(FieldParticipationStatus, "ParticipationStatus");
 #endif
 
     // XXX TODO: functions / data

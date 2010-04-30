@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -65,12 +65,12 @@ public:
     // etc?
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemType, "Type")
-    Q_DECLARE_LATIN1_LITERAL(FieldType, "Type");
-    Q_DECLARE_LATIN1_LITERAL(TypeEvent, "Event");
-    Q_DECLARE_LATIN1_LITERAL(TypeTodo, "Todo");
-    Q_DECLARE_LATIN1_LITERAL(TypeInvitation, "Invitation");
-    Q_DECLARE_LATIN1_LITERAL(TypeJournal, "Journal");
-    Q_DECLARE_LATIN1_LITERAL(TypeNote, "Note");
+    Q_DECLARE_LATIN1_CONSTANT(FieldType, "Type");
+    Q_DECLARE_LATIN1_CONSTANT(TypeEvent, "Event");
+    Q_DECLARE_LATIN1_CONSTANT(TypeTodo, "Todo");
+    Q_DECLARE_LATIN1_CONSTANT(TypeInvitation, "Invitation");
+    Q_DECLARE_LATIN1_CONSTANT(TypeJournal, "Journal");
+    Q_DECLARE_LATIN1_CONSTANT(TypeNote, "Note");
 #endif
 
     void setType(const QString& type) {setValue(FieldType, type);}

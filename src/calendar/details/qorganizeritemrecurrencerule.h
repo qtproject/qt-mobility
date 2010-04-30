@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -60,8 +60,8 @@ public:
     const char* FieldFirstDateTime;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemRecurrenceRule, "RecurrenceRule")
-    Q_DECLARE_LATIN1_LITERAL(FieldRecurrencePattern, "RecurrencePattern");
-    Q_DECLARE_LATIN1_LITERAL(FieldFirstDateTime, "FirstDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldRecurrencePattern, "RecurrencePattern");
+    Q_DECLARE_LATIN1_CONSTANT(FieldFirstDateTime, "FirstDateTime");
 #endif
 
     // XXX TODO: requirements, figure out what functions / data..

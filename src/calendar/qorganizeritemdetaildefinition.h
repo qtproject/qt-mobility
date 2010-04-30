@@ -54,7 +54,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemDetailDefinitionData;
-class Q_CONTACTS_EXPORT QOrganizerItemDetailDefinition
+class Q_CALENDAR_EXPORT QOrganizerItemDetailDefinition
 {
     friend class QOrganizerItemManager;
 

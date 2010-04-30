@@ -56,17 +56,16 @@
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemdisplaylabel.h"
 #include "qorganizeritemrelationship.h"
-#include "qorganizeritemrelationshipfilter.h"
 #include "qorganizeritemtype.h"
+#include "qorganizeritemnote.h"
 
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemManager;
 class QOrganizerItemData;
 class QOrganizerItemName;
-class QOrganizerItemAction;
 
-class Q_CONTACTS_EXPORT QOrganizerItem
+class Q_CALENDAR_EXPORT QOrganizerItem
 {
 public:
     QOrganizerItem();
@@ -96,11 +95,8 @@ public:
     bool isEmpty() const;
     void clearDetails();
 
-    /* Access details of particular type or which support a particular action */
     QOrganizerItemDetail detail(const QString& definitionId) const;
     QList<QOrganizerItemDetail> details(const QString& definitionId = QString()) const;
-    QOrganizerItemDetail detailWithAction(QOrganizerItemAction* action) const;
-    QList<QOrganizerItemDetail> detailsWithAction(QOrganizerItemAction* action) const;
 
     QList<QOrganizerItemDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 
@@ -170,16 +166,6 @@ public:
     QList<QOrganizerItemRelationship> relationships(const QString& relationshipType = QString()) const;
     QList<QOrganizerItemId> relatedContacts(const QString& relationshipType = QString(), QOrganizerItemRelationship::Role role = QOrganizerItemRelationship::Either) const;
 
-    /* Actions available to be performed on this organizeritem (publish details? set alarm? or..?) */
-    QList<QOrganizerItemActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
-
-    /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
-    bool setPreferredDetail(const QString& actionName, const QOrganizerItemDetail& preferredDetail);
-    bool isPreferredDetail(const QString& actionName, const QOrganizerItemDetail& detail) const;
-    QOrganizerItemDetail preferredDetail(const QString& actionName) const;
-    QMap<QString, QOrganizerItemDetail> preferredDetails() const;
-
-
     // Some common convenience detail accessors
     void setNote(QString note);
     QOrganizerItemNote note() const;
@@ -194,9 +180,9 @@ protected:
     QSharedDataPointer<QOrganizerItemData> d;
 };
 
-Q_CONTACTS_EXPORT uint qHash(const QOrganizerItem& key);
+Q_CALENDAR_EXPORT uint qHash(const QOrganizerItem& key);
 #ifndef QT_NO_DEBUG_STREAM
-Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem);
+Q_CALENDAR_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem);
 #endif
 
 QTM_END_NAMESPACE

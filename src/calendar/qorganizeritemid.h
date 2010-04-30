@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 typedef quint32 QOrganizerItemLocalId;
 
 class QOrganizerItemIdPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemId
+class Q_CALENDAR_EXPORT QOrganizerItemId
 {
 public:
     QOrganizerItemId();
@@ -75,9 +75,9 @@ private:
     QSharedDataPointer<QOrganizerItemIdPrivate> d;
 };
 
-Q_CONTACTS_EXPORT uint qHash(const QOrganizerItemId& key);
+Q_CALENDAR_EXPORT uint qHash(const QOrganizerItemId& key);
 #ifndef QT_NO_DEBUG_STREAM
-Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemId& id);
+Q_CALENDAR_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemId& id);
 #endif
 
 QTM_END_NAMESPACE

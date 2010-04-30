@@ -47,25 +47,18 @@
 
 #include "qtorganizeritemsglobal.h"                   // global exports
 #include "qorganizeritemabstractrequest.h"            // asynchronous request
-#include "qorganizeritemaction.h"                     // actions
-#include "qorganizeritemactiondescriptor.h"           // action descriptors
-#include "qorganizeritemactionfactory.h"              // action factory
 #include "qorganizeritemdetail.h"                     // organizeritem detail
 #include "qorganizeritemdetaildefinition.h"           // detail definition
 #include "qorganizeritemdetailfielddefinition.h"      // field in a detail definition
 #include "qorganizeritemdetails.h"                    // leaf detail classes
 #include "qorganizeritemfetchhint.h"                  // fetch hint class
 #include "qorganizeritemfilter.h"                     // organizeritem filter
-#include "qorganizeritemfilters.h"                    // leaf filter classes
 #include "qorganizeritem.h"                           // organizeritem
 #include "qorganizeritemid.h"                         // organizeritem identifier
 #include "qorganizeritemmanager.h"                    // manager
 #include "qorganizeritemmanagerengine.h"              // manager backend
 #include "qorganizeritemmanagerenginefactory.h"       // manage backend instantiator
-#include "qorganizeritemrecurrencerulecriteria.h"     // recurrence rule criteria
-#include "qorganizeritemrecurrencerules.h"            // recurrence rules made up of criteria
 #include "qorganizeritemrelationship.h"               // relationships between items
-#include "qorganizeritemrequests.h"                   // request leaf classes
 #include "qorganizeritemsortorder.h"                  // organizeritem sorting
 
 #endif

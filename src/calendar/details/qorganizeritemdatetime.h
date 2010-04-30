@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -59,12 +59,12 @@ public:
     const char* FieldDateTime;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemDateTime, "DateTime")
-    Q_DECLARE_LATIN1_LITERAL(FieldDateTime, "DateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");
 #endif
 
     // XXX: TODO: QDateTime needs upgrading (timezone etc)
-    void setDateTime(const QDateTime& dateTime) {setValue(FieldDateTime, dateTime);}
-    QDateTime dateTime() const {return value<QDateTime>(FieldDateTime);}
+    void setStartDateTime(const QDateTime& dateTime) {setValue(FieldStartDateTime, dateTime);}
+    QDateTime startDateTime() const {return value<QDateTime>(FieldStartDateTime);}
 };
 
 QTM_END_NAMESPACE

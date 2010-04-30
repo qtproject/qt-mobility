@@ -64,7 +64,7 @@ class QOrganizerItemFilter;
 class QOrganizerItemAction;
 
 class QOrganizerItemManagerData;
-class Q_CONTACTS_EXPORT QOrganizerItemManager : public QObject
+class Q_CALENDAR_EXPORT QOrganizerItemManager : public QObject
 {
     Q_OBJECT
 
@@ -146,10 +146,10 @@ public:
     bool removeRelationships(const QList<QOrganizerItemRelationship>& relationships, QMap<int, QOrganizerItemManager::Error>* errorMap);
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& contactType = QOrganizerItemType::TypeContact) const;
-    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType = QOrganizerItemType::TypeContact) const;
-    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& contactType = QOrganizerItemType::TypeContact);
-    bool removeDetailDefinition(const QString& definitionName, const QString& contactType = QOrganizerItemType::TypeContact);
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& contactType = QOrganizerItemType::TypeEvent) const;
+    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType = QOrganizerItemType::TypeEvent) const;
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& contactType = QOrganizerItemType::TypeEvent);
+    bool removeDetailDefinition(const QString& definitionName, const QString& contactType = QOrganizerItemType::TypeEvent);
 
     /* Functionality reporting */
     enum ManagerFeature {
@@ -164,8 +164,8 @@ public:
         Anonymous,
         ChangeLogs
     };
-    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& contactType = QOrganizerItemType::TypeContact) const;
-    bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType = QOrganizerItemType::TypeContact) const;
+    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& contactType = QOrganizerItemType::TypeEvent) const;
+    bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType = QOrganizerItemType::TypeEvent) const;
     QList<QVariant::Type> supportedDataTypes() const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
     QStringList supportedContactTypes() const;

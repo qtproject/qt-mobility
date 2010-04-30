@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -58,8 +58,8 @@ public:
     const char* DefinitionName;
     const char* FieldEndDateTime;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemDateTime, "EndDateTime")
-    Q_DECLARE_LATIN1_LITERAL(FieldEndDateTime, "EndDateTime");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemEndDateTime, "EndDateTime")
+    Q_DECLARE_LATIN1_CONSTANT(FieldEndDateTime, "EndDateTime");
 #endif
 
     // XXX: TODO: QDateTime needs upgrading (timezone etc)

@@ -45,7 +45,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -61,8 +61,8 @@ public:
     const char* FieldTimestamp;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemProvenance, "Provenance")
-    Q_DECLARE_LATIN1_LITERAL(FieldReceivedFrom, "ReceivedFrom");
-    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldReceivedFrom, "ReceivedFrom");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTimestamp, "Timestamp");
 #endif
 
     // XXX TODO: functions / data.

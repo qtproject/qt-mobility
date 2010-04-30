@@ -55,7 +55,6 @@
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemmanager.h"
 #include "qorganizeritemabstractrequest.h"
-#include "qorganizeritemrequests.h"
 #include "qorganizeritemfetchhint.h"
 
 QTM_BEGIN_NAMESPACE
@@ -63,7 +62,19 @@ QTM_BEGIN_NAMESPACE
 class QOrganizerItemFilter;
 class QOrganizerItemSortOrder;
 
-class Q_CONTACTS_EXPORT QOrganizerItemManagerEngine : public QObject
+/* Forward decls, since these don't actually exist yet */
+class QOrganizerItemLocalIdFetchRequest;
+class QOrganizerItemFetchRequest;
+class QOrganizerItemRemoveRequest;
+class QOrganizerItemSaveRequest;
+class QOrganizerItemDetailDefinitionSaveRequest;
+class QOrganizerItemDetailDefinitionRemoveRequest;
+class QOrganizerItemDetailDefinitionFetchRequest;
+class QOrganizerItemRelationshipSaveRequest;
+class QOrganizerItemRelationshipRemoveRequest;
+class QOrganizerItemRelationshipFetchRequest;
+
+class Q_CALENDAR_EXPORT QOrganizerItemManagerEngine : public QObject
 {
     Q_OBJECT
 
@@ -166,7 +177,6 @@ public:
     static void addSorted(QList<QOrganizerItem>* sorted, const QOrganizerItem& toAdd, const QList<QOrganizerItemSortOrder>& sortOrders);
     static int compareVariant(const QVariant& first, const QVariant& second, Qt::CaseSensitivity sensitivity);
     static bool testFilter(const QOrganizerItemFilter& filter, const QOrganizerItem& contact);
-    static bool validateActionFilter(const QOrganizerItemFilter& filter);
     static QList<QOrganizerItemLocalId> sortContacts(const QList<QOrganizerItem>& contacts, const QList<QOrganizerItemSortOrder>& sortOrders);
 
     static QOrganizerItemFilter canonicalizedFilter(const QOrganizerItemFilter& filter);

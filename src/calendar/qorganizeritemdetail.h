@@ -44,7 +44,6 @@
 #define QORGANIZERITEMDETAIL_H
 
 #include "qtorganizeritemsglobal.h"
-#include "qorganizeritemactiondescriptor.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -53,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemDetailPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemDetail
 {
 public:
     QOrganizerItemDetail();
@@ -207,21 +206,21 @@ private:
     QSharedDataPointer<QOrganizerItemDetailPrivate> d;
 };
 
-Q_CONTACTS_EXPORT uint qHash(const QOrganizerItemDetail& key);
+Q_CALENDAR_EXPORT uint qHash(const QOrganizerItemDetail& key);
 #ifndef QT_NO_DEBUG_STREAM
-Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemDetail& detail);
+Q_CALENDAR_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItemDetail& detail);
 #endif
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QOrganizerItemDetail::AccessConstraints);
 
-#define Q_DECLARE_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
+#define Q_DECLARE_CUSTOM_CALENDAR_DETAIL(className, definitionNameString) \
     className() : QOrganizerItemDetail(DefinitionName.latin1()) {} \
     className(const QOrganizerItemDetail& field) : QOrganizerItemDetail(field, DefinitionName.latin1()) {} \
     className& operator=(const QOrganizerItemDetail& other) {assign(other, DefinitionName.latin1()); return *this;} \
     \
     Q_DECLARE_LATIN1_CONSTANT(DefinitionName, definitionNameString);
 
-#define Q_IMPLEMENT_CUSTOM_CONTACT_DETAIL(className, definitionNameString) \
+#define Q_IMPLEMENT_CUSTOM_CALENDAR_DETAIL(className, definitionNameString) \
     Q_DEFINE_LATIN1_CONSTANT(className::DefinitionName, definitionNameString)
 
 QTM_END_NAMESPACE

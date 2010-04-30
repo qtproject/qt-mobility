@@ -55,3 +55,4 @@ symbian {
     for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
 include(../../features/deploy.pri)
+SOURCES += qorganizer.cpp

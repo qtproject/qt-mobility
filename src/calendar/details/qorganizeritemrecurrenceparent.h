@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 #include "qorganizeritemid.h"
@@ -61,12 +61,12 @@ public:
     const char* FieldParentEventLocalId;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemRecurrenceParent, "RecurrenceParent")
-    Q_DECLARE_LATIN1_LITERAL(FieldOriginalDateTime, "OriginalDateTime");
-    Q_DECLARE_LATIN1_LITERAL(FieldParentEventLocalId, "ParentEventLocalId");
+    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDateTime, "OriginalDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldParentEventLocalId, "ParentEventLocalId");
 #endif
 
     void setParentEventId(QOrganizerItemLocalId localId) {setValue(FieldParentEventLocalId, localId);}
-    QOrganizerItemLocalId parentEventId() const {return value<FieldParentEventLocalId>(FieldParentEventLocalId);}
+    QOrganizerItemLocalId parentEventId() const {return value<QOrganizerItemLocalId>(FieldParentEventLocalId);}
 
     // XXX: TODO: QDateTime needs upgrading (timezone etc)
     void setOriginalDateTime(const QDateTime& originalDateTime) {setValue(FieldOriginalDateTime, originalDateTime);}

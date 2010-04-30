@@ -47,7 +47,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CONTACTS_EXPORT QOrganizerEvent : public QOrganizerItem
+class Q_CALENDAR_EXPORT QOrganizerEvent : public QOrganizerItem
 {
 public:
     QOrganizerEvent();

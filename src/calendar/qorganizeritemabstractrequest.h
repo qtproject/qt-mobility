@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemManagerEngine;
 class QOrganizerItemAbstractRequestPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemAbstractRequest : public QObject
+class Q_CALENDAR_EXPORT QOrganizerItemAbstractRequest : public QObject
 {
     Q_OBJECT
 

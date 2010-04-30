@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemFetchHintPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemFetchHint {
+class Q_CALENDAR_EXPORT QOrganizerItemFetchHint {
 public:
     QOrganizerItemFetchHint();
     QOrganizerItemFetchHint(const QOrganizerItemFetchHint& other);

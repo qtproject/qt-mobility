@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -59,7 +59,7 @@ public:
     const char* FieldTag;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemVisibilityTag, "VisibilityTag")
-    Q_DECLARE_LATIN1_LITERAL(FieldTag, "Tag");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTag, "Tag");
 #endif
 
     void setTag(const QString& tag) {setValue(FieldTag, tag);}

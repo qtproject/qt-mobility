@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -59,7 +59,7 @@ public:
     const char* FieldNote;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemNote, "Note")
-    Q_DECLARE_LATIN1_LITERAL(FieldNote, "Note");
+    Q_DECLARE_LATIN1_CONSTANT(FieldNote, "Note");
 #endif
 
     void setNote(const QString& note) {setValue(FieldNote, note);}

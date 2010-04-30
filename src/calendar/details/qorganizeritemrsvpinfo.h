@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -61,9 +61,9 @@ public:
     const char* FieldResponseDate;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemRsvpInfo, "RsvpInfo")
-    Q_DECLARE_LATIN1_LITERAL(FieldDeadline, "Deadline");
-    Q_DECLARE_LATIN1_LITERAL(FieldContactUri, "ContactUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldResponseDate, "ResponseDate");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDeadline, "Deadline");
+    Q_DECLARE_LATIN1_CONSTANT(FieldContactUri, "ContactUri");
+    Q_DECLARE_LATIN1_CONSTANT(FieldResponseDate, "ResponseDate");
 #endif
 
     // XXX TODO: functions / data

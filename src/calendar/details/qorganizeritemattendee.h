@@ -44,7 +44,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -61,9 +61,9 @@ public:
     const char* FieldParticipationStatus;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemAttendee, "Attendee")
-    Q_DECLARE_LATIN1_LITERAL(FieldAttendeeDisplayLabel, "AttendeeDisplayLabel");
-    Q_DECLARE_LATIN1_LITERAL(FieldAttendeeContactUri, "AttendeeContactUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldParticipationStatus, "ParticipationStatus");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAttendeeDisplayLabel, "AttendeeDisplayLabel");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAttendeeContactUri, "AttendeeContactUri");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
 #endif
 
     void setAttendeeDisplayLabel(const QString& attendeeDisplayLabel) {setValue(FieldAttendeeDisplayLabel, attendeeDisplayLabel);}

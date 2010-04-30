@@ -59,7 +59,7 @@ QTM_BEGIN_NAMESPACE
     friend class Class##Private;
 
 class QOrganizerItemFilterPrivate;
-class Q_CONTACTS_EXPORT QOrganizerItemFilter
+class Q_CALENDAR_EXPORT QOrganizerItemFilter
 {
 public:
     QOrganizerItemFilter();
@@ -106,8 +106,8 @@ protected:
     QSharedDataPointer<QOrganizerItemFilterPrivate> d_ptr;
 };
 
-const Q_CONTACTS_EXPORT QOrganizerItemFilter operator&(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right);
-const Q_CONTACTS_EXPORT QOrganizerItemFilter operator|(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right);
+const Q_CALENDAR_EXPORT QOrganizerItemFilter operator&(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right);
+const Q_CALENDAR_EXPORT QOrganizerItemFilter operator|(const QOrganizerItemFilter& left, const QOrganizerItemFilter& right);
 
 QTM_END_NAMESPACE
 

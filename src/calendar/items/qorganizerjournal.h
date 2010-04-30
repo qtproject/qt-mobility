@@ -46,7 +46,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CONTACTS_EXPORT QOrganizerJournal : public QOrganizerItem
+class Q_CALENDAR_EXPORT QOrganizerJournal : public QOrganizerItem
 {
 public:
     QOrganizerJournal();

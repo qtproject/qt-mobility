@@ -45,7 +45,7 @@
 
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 
 QTM_BEGIN_NAMESPACE
@@ -59,7 +59,7 @@ public:
     const char* FieldLabel;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemDisplayLabel, "DisplayLabel")
-    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");
 #endif
 
     QString label() const {return value(FieldLabel);}

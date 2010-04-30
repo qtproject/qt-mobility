@@ -46,7 +46,7 @@
 #include <QtDebug>
 #include <QString>
 
-#include "qtcalendarglobal.h"
+#include "qtorganizeritemsglobal.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritem.h"
 
@@ -61,7 +61,7 @@ public:
     const char* FieldPriority;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemPriority, "Priority")
-    Q_DECLARE_LATIN1_LITERAL(FieldPriority, "Priority");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPriority, "Priority");
 #endif
 
     // XXX TODO: functions / data
