@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#include <qradiotuner.h>
-#include <qmediaservice.h>
-#include <qmediaobject_p.h>
-#include <qradiotunercontrol.h>
+#include "qradiotuner.h"
+#include "qmediaservice.h"
+#include "qmediaobject_p.h"
+#include "qradiotunercontrol.h"
 
 #include <QPair>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QRadioTuner
@@ -141,12 +141,12 @@ bool QRadioTuner::isAvailable() const
 /*!
     Returns the availability error state.
 */
-QtMedia::AvailabilityError QRadioTuner::availabilityError() const
+QtMediaServices::AvailabilityError QRadioTuner::availabilityError() const
 {
     if (d_func()->control != NULL)
         return d_func()->control->availabilityError();
     else
-        return QtMedia::ServiceMissingError;
+        return QtMediaServices::ServiceMissingError;
 }
 
 /*!
@@ -551,6 +551,7 @@ QString QRadioTuner::errorString() const
     \value FM 87.5 to 108.0 MHz, except Japan 76-90 MHz
     \value SW 1.711 to 30.0 MHz, divided into 15 bands. 5kHz channel spacing
     \value LW 148.5 to 283.5 kHz, 9kHz channel spacing (Europe, Africa, Asia)
+    \value FM2 range not defined, used when area supports more than one FM range.
 */
 
 /*!
@@ -579,5 +580,5 @@ QString QRadioTuner::errorString() const
  */
 
 #include "moc_qradiotuner.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

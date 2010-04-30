@@ -43,10 +43,10 @@
 #define QMEDIATIMERANGE_H
 
 #include <qmobilityglobal.h>
-#include <qtmedianamespace.h>
+#include "qtmedianamespace.h"
 #include <QtCore/qshareddata.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaTimeRangePrivate;
 
@@ -124,6 +124,6 @@ Q_MEDIA_EXPORT QMediaTimeRange operator+(const QMediaTimeRange&, const QMediaTim
 Q_MEDIA_EXPORT QMediaTimeRange operator-(const QMediaTimeRange&, const QMediaTimeRange&);
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMEDIATIMERANGE_H

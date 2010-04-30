@@ -47,8 +47,6 @@
 
 #include <QString>
 
-QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkNameFilterPrivate;
@@ -69,7 +67,5 @@ private:
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

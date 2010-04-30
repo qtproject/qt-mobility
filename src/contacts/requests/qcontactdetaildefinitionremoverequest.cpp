@@ -57,57 +57,39 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*!
-  \fn QContactDetailDefinitionRemoveRequest::progress(QContactDetailDefinitionRemoveRequest* self)
-  \deprecated
-  This signal is emitted when some progress has been made on the request, causing either a change of
-  status or an update of results, or both.  It identifies which request the signal originated from
-  by including a pointer to \a self.
- */
-
-/*! Constructs a new detail definition remove request */
-QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionRemoveRequestPrivate)
-{
-}
-
-/*! Cleans up the memory in use by this detail definition remove request */
-QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
+/*! Constructs a new detail definition remove request whose parent is the specified \a parent */
+QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionRemoveRequestPrivate, parent)
 {
 }
 
 /*!
- * \deprecated
- * Sets the names of the detail definitions to remove from the manager to be \a names
+  Sets the name of the detail definition to remove from the manager to \a definitionName.
+  Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
+  definitions exist for contacts of the given contact type, specified via setContactType().
+  Equivalent to calling:
+  \code
+      setDefinitionNames(QStringList(definitionName));
+  \endcode
+
+  \sa setContactType()
  */
-void Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::setNames(const QStringList& names)
+void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
-    qWarning("QContactDetailDefinitionRemoveRequest::setNames() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use setDefinitionNames() instead!");
-    d->m_names = names;
+    d->m_names.clear();
+    d->m_names.append(definitionName);
 }
 
 /*!
- * \deprecated
- * Returns the list of names of the detail definitions that will be removed from the manager
+  Sets the names of the detail definitions to remove from the manager to \a names.
+  Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
+  definitions exist for contacts of the given contact type, specified via setContactType().
+  \sa setContactType()
  */
-QStringList Q_DECL_DEPRECATED QContactDetailDefinitionRemoveRequest::names() const
-{
-    Q_D(const QContactDetailDefinitionRemoveRequest);
-    qWarning("QContactDetailDefinitionRemoveRequest::names() This function was deprecated in week 1 and will be removed after the transition period has elapsed!  Use definitionNames() instead!");
-    return d->m_names;
-}
-
-
-/*!
- * Sets the type of contact for which detail definitions should be removed to \a contactType, and the names of the detail definitions to remove from the manager to \a names.
- * Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
- * definitions exist for contacts of the given contact type, or if \a contactType is empty.
- */
-void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QString& contactType, const QStringList& names)
+void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
-    d->m_contactType = contactType;
     d->m_names = names;
 }
 
@@ -116,6 +98,15 @@ QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
     return d->m_names;
+}
+
+/*!
+  Sets the type of contact for which detail definitions should be removed to \a contactType
+ */
+void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType)
+{
+    Q_D(QContactDetailDefinitionRemoveRequest);
+    d->m_contactType = contactType;
 }
 
 /*! Returns the type of contact for which detail definitions will be removed */

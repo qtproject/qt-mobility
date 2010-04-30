@@ -6,37 +6,34 @@
 **
 ** This file is part of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this fi
-#include <QList>le in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-#include <QSqlRecord>
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-*#include <QStringList>
- *
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -49,6 +46,8 @@
 NotesManager::NotesManager(QObject *parent)
     : QObject(parent)
 {
+    m_search = "";
+
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("todoDB");
     db.open();
@@ -67,8 +66,8 @@ void NotesManager::nextAlarm()
 {
     QSqlQuery alarmQuery("SELECT * FROM todolist WHERE date > DATETIME('now', 'localtime') ORDER BY date");
     if (alarmQuery.next()) { 
-        setAlarm(QDateTime::fromString(alarmQuery.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
-        setMessage(alarmQuery.value(1).toString());
+        setAlarmTime(QDateTime::fromString(alarmQuery.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
+        setAlarmMessage(alarmQuery.value(1).toString());
     }
 }
 
@@ -77,31 +76,30 @@ void NotesManager::checkAlarm()
     QString currStr = QDateTime::currentDateTime().toString(Qt::ISODate);
     QDateTime curr = QDateTime::fromString(currStr, Qt::ISODate);
 
-    //qDebug() << "CHECKING..." << getAlarm() << " against now " << curr;
-    if (getAlarm() == curr)
-        emit soundAlarm(getAlarm());
+    if (getAlarmTime() == curr)
+        emit soundAlarm(getAlarmTime());
 
     nextAlarm();
 }
 
-QDateTime NotesManager::getAlarm() const
+QDateTime NotesManager::getAlarmTime() const
 {
-    return m_alarm;
+    return m_alarmTime;
 }
 
-void NotesManager::setAlarm(const QDateTime& alarm)
+void NotesManager::setAlarmTime(const QDateTime& alarm)
 {
-    m_alarm = alarm;
+    m_alarmTime = alarm;
 }
 
-QString NotesManager::getMessage() const
+QString NotesManager::getAlarmMessage() const
 {
-    return m_message;
+    return m_alarmMessage;
 }
 
-void NotesManager::setMessage(const QString& message)
+void NotesManager::setAlarmMessage(const QString& message)
 {
-    m_message = message;
+    m_alarmMessage = message;
 }
 
 void NotesManager::addNote(const QString& note, const QDateTime& alarm)
@@ -115,24 +113,37 @@ void NotesManager::removeNote(int id)
     QSqlQuery query("DELETE FROM todolist WHERE id='" + QString::number(id) + "'");
 }
 
-QList<Note> NotesManager::getNotes(const QString& search) const
+void NotesManager::setSearch(const QString& search)
 {
-    QList<Note> list;
+    m_search = search;
+}
+
+QList<QObject*> NotesManager::getNotes(const QString& search)
+{
+    m_notes.clear();
+    setSearch(search);
 
     QString queryString = "SELECT * FROM todolist";
-    if (search != "") queryString += " WHERE notes LIKE '%" + search + "%'"; 
+    if (m_search != "") queryString += " WHERE notes LIKE '%" + m_search + "%'"; 
     queryString += " ORDER BY date";
 
     QSqlQuery query(queryString);
     while (query.next()) {
-        Note entry;
-        entry.index = query.value(0).toInt();
-        entry.message = query.value(1).toString();
-        entry.alert = QDateTime::fromString(query.value(2).toString(), "yyyy-MM-dd HH:mm:ss");
+        Note *entry = new Note(this);
+        entry->setIndex(query.value(0).toInt());
+        entry->setMessage(query.value(1).toString());
+        entry->setAlarm(QDateTime::fromString(query.value(2).toString(), "yyyy-MM-dd HH:mm:ss"));
 
-        list << entry;
+        m_notes << entry;
     }
-
-    return list;
+   
+    return m_notes;
 }
 
+#ifdef DECLARATIVE
+QDeclarativeListProperty<QObject> NotesManager::noteSet()
+{
+    m_notes = getNotes(m_search);
+    return QDeclarativeListProperty<QObject>(this, m_notes);
+}
+#endif

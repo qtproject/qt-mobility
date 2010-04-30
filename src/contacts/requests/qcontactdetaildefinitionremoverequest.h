@@ -55,21 +55,17 @@ class Q_CONTACTS_EXPORT QContactDetailDefinitionRemoveRequest : public QContactA
     Q_OBJECT
 
 public:
-    QContactDetailDefinitionRemoveRequest();
-    ~QContactDetailDefinitionRemoveRequest();
+    QContactDetailDefinitionRemoveRequest(QObject* parent = 0);
 
     /* Selection */
-    void Q_DECL_DEPRECATED setNames(const QStringList& names);  // deprecated
-    QStringList Q_DECL_DEPRECATED names() const;                // deprecated
-    void setDefinitionNames(const QString& contactType, const QStringList& names);
-    QStringList definitionNames() const;               // replaces ^^
+    void setDefinitionName(const QString& definitionName);
+    void setDefinitionNames(const QStringList& names);
+    QStringList definitionNames() const;
+    void setContactType(const QString& contactType);
     QString contactType() const;
 
     /* Results */
     QMap<int, QContactManager::Error> errorMap() const;
-
-signals:
-    void progress(QContactDetailDefinitionRemoveRequest* self);  // deprecated
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionRemoveRequest)

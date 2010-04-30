@@ -64,6 +64,7 @@ namespace Support {
     QMessageId addMessage(const Parameters &params);
 
 #if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+
     bool mapiAvailable();
 #endif
 }

@@ -56,7 +56,7 @@ class QGstreamerMessage;
 
 class QGstreamerVideoRendererInterface;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerPlayerSession : public QObject, public QGstreamerSyncEventFilter
 {
@@ -69,7 +69,6 @@ public:
     QUrl url() const;
 
     QMediaPlayer::State state() const { return m_state; }
-    QMediaPlayer::MediaStatus mediaStatus() const { return m_mediaStatus; }
 
     qint64 duration() const;
     qint64 position() const;
@@ -92,7 +91,7 @@ public:
     void setPlaybackRate(qreal rate);
 
     QMap<QByteArray ,QVariant> tags() const { return m_tags; }
-    QMap<QtMedia::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
+    QMap<QtMediaServices::MetaData,QVariant> streamProperties(int streamNumber) const { return m_streamProperties[streamNumber]; }
     int streamCount() const { return m_streamProperties.count(); }
     QMediaStreamsControl::StreamType streamType(int streamNumber) { return m_streamTypes.value(streamNumber, QMediaStreamsControl::UnknownStream); }
 
@@ -104,11 +103,11 @@ public:
 public slots:
     void load(const QUrl &url);
 
-    void play();
-    void pause();
+    bool play();
+    bool pause();
     void stop();
 
-    void seek(qint64 pos);
+    bool seek(qint64 pos);
 
     void setVolume(int volume);
     void setMuted(bool muted);
@@ -117,7 +116,6 @@ signals:
     void durationChanged(qint64 duration);
     void positionChanged(qint64 position);
     void stateChanged(QMediaPlayer::State state);
-    void mediaStatusChanged(QMediaPlayer::MediaStatus mediaStatus);
     void volumeChanged(int volume);
     void mutedStateChanged(bool muted);
     void audioAvailableChanged(bool audioAvailable);
@@ -128,6 +126,7 @@ signals:
     void tagsChanged();
     void streamsChanged();
     void seekableChanged(bool);
+    void error(int error, const QString &errorString);
 
 private slots:
     void busMessage(const QGstreamerMessage &message);
@@ -135,11 +134,8 @@ private slots:
     void setSeekable(bool);
 
 private:
-    void setMediaStatus(QMediaPlayer::MediaStatus);
-
     QUrl m_url;
     QMediaPlayer::State m_state;
-    QMediaPlayer::MediaStatus m_mediaStatus;
     QGstreamerBusHelper* m_busHelper;
     GstElement* m_playbin;
     GstElement* m_nullVideoOutput;
@@ -147,7 +143,7 @@ private:
     QGstreamerVideoRendererInterface *m_renderer;
 
     QMap<QByteArray, QVariant> m_tags;
-    QList< QMap<QtMedia::MetaData,QVariant> > m_streamProperties;
+    QList< QMap<QtMediaServices::MetaData,QVariant> > m_streamProperties;
     QList<QMediaStreamsControl::StreamType> m_streamTypes;
     QMap<QMediaStreamsControl::StreamType, int> m_playbin2StreamOffset;
 

@@ -56,41 +56,25 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
+/*! Constructs a new contact remove request whose parent is the specified \a parent */
+QContactRemoveRequest::QContactRemoveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRemoveRequestPrivate, parent)
+{
+}
+
 /*!
-  \fn QContactRemoveRequest::progress(QContactRemoveRequest* self)
-  \deprecated
-  This signal is emitted when some progress has been made on the request, causing either a change of
-  status or an update of results, or both.  It identifies which request the signal originated from
-  by including a pointer to \a self.
+  Sets the id of the contact which will be removed to \a contactId.
+  Equivalent to calling:
+  \code
+      setContactIds(QList<QContactLocalId>() << contactIds);
+  \endcode
  */
-
-/*! Constructs a new contact remove request */
-QContactRemoveRequest::QContactRemoveRequest()
-    : QContactAbstractRequest(new QContactRemoveRequestPrivate)
-{
-}
-
-/*! Cleans up the memory in use by the contact remove request */
-QContactRemoveRequest::~QContactRemoveRequest()
-{
-}
-
-/*! Sets the filter which will be used to select the contacts to remove to \a filter */
-void QContactRemoveRequest::setFilter(const QContactFilter& filter)
+void QContactRemoveRequest::setContactId(const QContactLocalId& contactId)
 {
     Q_D(QContactRemoveRequest);
-    qWarning("QContactRemoveRequest::setFilter() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use setContacts() instead!");
-    d->m_filter = filter;
+    d->m_contactIds.clear();
+    d->m_contactIds.append(contactId);
 }
-
-/*! Returns the filter which will be used to select the contacts to remove */
-QContactFilter QContactRemoveRequest::filter() const
-{
-    Q_D(const QContactRemoveRequest);
-    qWarning("QContactRemoveRequest::setFilter() This function was deprecated in week 4 and will be removed once the transition period has elapsed.  Use contacts() instead!");
-    return d->m_filter;
-}
-
 
 /*! Sets the list of ids of contacts which will be removed to \a contactIds */
 void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactIds)

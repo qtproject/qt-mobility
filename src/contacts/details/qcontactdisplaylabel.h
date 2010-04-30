@@ -56,11 +56,11 @@ class Q_CONTACTS_EXPORT QContactDisplayLabel : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldLabel;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldLabel;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactDisplayLabel, "DisplayLabel")
-    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");
 #endif
 
     QString label() const {return value(FieldLabel);}

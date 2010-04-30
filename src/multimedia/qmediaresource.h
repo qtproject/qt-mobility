@@ -44,16 +44,18 @@
 
 #include <QtCore/qmap.h>
 #include <QtCore/qmetatype.h>
+#include <QtNetwork/qnetworkrequest.h>
 
 #include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QMediaResource
 {
 public:
     QMediaResource();
     QMediaResource(const QUrl &url, const QString &mimeType = QString());
+    QMediaResource(const QNetworkRequest &request, const QString &mimeType = QString());
     QMediaResource(const QMediaResource &other);
     QMediaResource &operator =(const QMediaResource &other);
     ~QMediaResource();
@@ -64,6 +66,7 @@ public:
     bool operator !=(const QMediaResource &other) const;
 
     QUrl url() const;
+    QNetworkRequest request() const;
     QString mimeType() const;
 
     QString language() const;
@@ -99,6 +102,7 @@ private:
     enum Property
     {
         Url,
+        Request,
         MimeType,
         Language,
         AudioCodec,
@@ -108,17 +112,17 @@ private:
         VideoBitRate,
         SampleRate,
         ChannelCount,
-        Resolution,
+        Resolution
     };
     QMap<int, QVariant> values;
 };
 
 typedef QList<QMediaResource> QMediaResourceList;
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaResource))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaResourceList))
+Q_DECLARE_METATYPE(QMediaResource)
+Q_DECLARE_METATYPE(QMediaResourceList)
 
 
 #endif

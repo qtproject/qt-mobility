@@ -103,8 +103,6 @@ PRIVATE_HEADERS += \
                     qlandmarkid_p.h \
                     qlandmarkintersectionfilter_p.h \
                     qlandmarkmanager_p.h \
-                    qlandmarkmanagerengine_sqlite_p.h \
-                    qlandmarkmanagerenginefactory_sqlite_p.h \
                     qlandmarknamefilter_p.h \
                     qlandmarknamesort_p.h \
                     qlandmarknearestfilter_p.h \
@@ -188,8 +186,8 @@ maemo5 {
                qgeopositioninfosource_maemo5.cpp \
                qgeosatelliteinfosource_maemo5.cpp \
                qgeoareamonitor_maemo.cpp
-    PRIVATE_HEADERS += gconfitem.h  \
-               liblocationwrapper.h \
+    HEADERS += gconfitem.h  \
+               liblocationwrapper_p.h \
                qgeopositioninfosource_maemo5_p.h \
                qgeosatelliteinfosource_maemo5_p.h \
                qgeoareamonitor_maemo_p.h
@@ -228,6 +226,7 @@ SOURCES += \
             qgeosatelliteinfo.cpp \
             qgeosatelliteinfosource.cpp \
             qlandmark.cpp \
+            qlandmarkmanager_p.cpp \
             qlandmarkabstractrequest.cpp \
             qlandmarkboxfilter.cpp \
             qlandmarkcategory.cpp \
@@ -250,9 +249,7 @@ SOURCES += \
             qlandmarkintersectionfilter.cpp \
             qlandmarkmanager.cpp \
             qlandmarkmanagerengine.cpp \
-            qlandmarkmanagerengine_sqlite.cpp \
             qlandmarkmanagerenginefactory.cpp \
-            qlandmarkmanagerenginefactory_sqlite.cpp \
             qlandmarknamefilter.cpp \
             qlandmarknamesort.cpp \
             qlandmarknearestfilter.cpp \
@@ -282,14 +279,13 @@ SOURCES += \
             qgeoboundingbox.cpp \
             qnmeapositioninfosource.cpp
 
-RESOURCES += qlandmarkmanagerengine_sqlite.qrc
-
 symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC83
 
     INCLUDEPATH += $${EPOCROOT}epoc32\include\osextensions \
-                   $${EPOCROOT}epoc32\include\LBTHeaders
+                   $${EPOCROOT}epoc32\include\LBTHeaders \
+                   $${EPOCROOT}epoc32\include\platform
     LIBS += -llbs
     contains(lbt_enabled, yes) {
         LIBS += -llbt

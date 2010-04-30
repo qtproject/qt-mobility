@@ -165,8 +165,8 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                         message.setType(QMessage::Mms);
                     } else if (type.toLower() == "sms") {
                         message.setType(QMessage::Sms);
-                    } else if (type.toLower() == "xmpp") {
-                        message.setType(QMessage::Xmpp);
+                    } else if (type.toLower() == "instantmessage") {
+                        message.setType(QMessage::InstantMessage);
                     } else {
                         message.setType(QMessage::Email);
                     }

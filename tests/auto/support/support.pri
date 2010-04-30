@@ -2,9 +2,11 @@
 HEADERS += \
     $$PWD/support.h
 
-symbian|wince*|maemo5|maemo6|win32|mac {
+symbian|wince*|maemo*|win32|mac {
     symbian {
         SOURCES += $$PWD/support_symbian.cpp
+        INCLUDEPATH += $$(EPOCROOT)epoc32/include/app
+        INCLUDEPATH += $$(EPOCROOT)epoc32/include/platform/app
     }
     win32 {
         SOURCES += $$PWD/support_win.cpp
@@ -15,9 +17,14 @@ symbian|wince*|maemo5|maemo6|win32|mac {
         else {
             LIBS += mapi32.lib Advapi32.lib
         }
-
     }
-    maemo5|maemo6|mac {
+    maemo5 {
+        QT += dbus
+        CONFIG += link_pkgconfig
+        PKGCONFIG += glib-2.0 gconf-2.0
+        SOURCES += $$PWD/support_maemo5.cpp
+    }
+    mac|maemo6 {
          SOURCES += $$PWD/support_stub.cpp       
     }
 } else {

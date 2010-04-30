@@ -54,6 +54,12 @@ navigate through and subscribe to change notifications.
 
 \tableofcontents
 
+\section1 Namespace
+
+The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility API's into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
 
 \section1 Overview
 
@@ -141,6 +147,11 @@ The Shared Memory layer has an order of 0x10000000.
         \o The Symbian Settings layer provides a permanent Value Space backing store using the
            Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository).
            The Symbian Settings layer has an order of 0.
+    \row
+        \o \l{GConf Layer}
+        \o The GConf Layer provides a permanent Value Space backing store using the
+           GConf configuration system designed for the GNOME desktop environment.
+           The GConf Layer has an order of 0 and it's the only available layer in Maemo 5.
 \endtable
 
 The Value Space has support for both client/server and peer-to-peer layer architectures.  If a
@@ -235,6 +246,19 @@ In practice this is not a problem since the unsupported data types are automatic
 QByteArray and stored as 8-bit byte form by SymbianSettingslayer. The serialization/deserialization
 is transparent operation to the API user but may cause interoperatibility issues with native Symbian codes
 that access the same data directly. The maximum size of the bytearray is 65535 for RPropery backing store.
+
+\section2 GConf Layer
+
+Publish and Subscribe API can be used to access the GConf configuration system.
+
+\section3 Limitations
+
+GConf can natively store only a limited set of QVariant data types. These types are Bool, Int, Double,
+String, StringList and List. When publishing other data types the values are automatically serialized
+and stored to GConf as BASE64 encoded strings. When reading these values they are automatically
+converted back to the original data types. The serialization/deserialization is transparent operation
+to the API user but may cause interoperatibility issues with native applications that access the same
+data directly.
 
 \section1 Examples
 

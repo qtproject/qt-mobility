@@ -66,62 +66,84 @@
 #include <QIODevice>
 #include <QList>
 #include <QPointer>
+#include <QScopedPointer>
 #include <QByteArray>
 #include <QMutex>
 #include <QWaitCondition>
+#include <QPair>
+#include <QHash>
+
+QT_BEGIN_NAMESPACE
+class QBuffer;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
+// The maximum number of bytes allowed to stay in memory after being read.  The smaller this is,
+// the more time spent moving bytes around.  The larger it is, the more memory is wasted.
+static const int MAX_OLD_BYTES_TO_KEEP = 8192;
+
+class Q_AUTOTEST_EXPORT VersitCursor
+{
+public:
+    VersitCursor() : position(-1), selection(-1) {}
+    explicit VersitCursor(const QByteArray& d) :data(d), position(0), selection(0) {}
+    QByteArray data;
+    int position;
+    int selection;
+
+    void setData(const QByteArray& d) {data = d; position = selection = 0;}
+    void setPosition(int pos) {position = pos; selection = qMax(pos, selection);}
+    void setSelection(int pos) {selection = qMax(pos, position);}
+    void dropOldData()
+    {
+        if (position > MAX_OLD_BYTES_TO_KEEP && selection >= position) {
+            data.remove(0, position);
+            selection -= position;
+            position = 0;
+        }
+    }
+};
+
+class Q_AUTOTEST_EXPORT LineReader
+{
+public:
+    LineReader(QIODevice* device, QTextCodec* codec, int chunkSize = 1000);
+    VersitCursor readLine();
+    int odometer();
+    bool atEnd();
+    QTextCodec* codec();
+
+private:
+    bool tryReadLine(VersitCursor& cursor, bool atEnd);
+
+    QIODevice* mDevice;
+    QTextCodec* mCodec;
+    int mChunkSize; // How many bytes to read in one go.
+    QList<QByteArrayMatcher> mCrlfList;
+    VersitCursor mBuffer;
+    int mOdometer;
+    int mSearchFrom;
+};
 
 class Q_AUTOTEST_EXPORT QVersitReaderPrivate : public QThread
 {
     Q_OBJECT
 
 public: // Constructors and destructor
-    QVersitReaderPrivate(); 
+    QVersitReaderPrivate();
     ~QVersitReaderPrivate();
+    void init(QVersitReader* reader);
 
 signals:
     void stateChanged(QVersitReader::State state);
-    void resultsAvailable(QList<QVersitDocument>& results);
+    void resultsAvailable();
+
+protected: // From QThread
+     void run();
 
 public: // New functions
     void read();
-
-    bool parseVersitDocument(VersitCursor& cursor,
-                             QVersitDocument& document,
-                             bool foundBegin = false);
-
-    QVersitProperty parseNextVersitProperty(
-        QVersitDocument::VersitType versitType,
-        VersitCursor& text);
-
-    void parseVCard21Property(
-        VersitCursor& text,
-        QVersitProperty& property);
-
-    void parseVCard30Property(
-        VersitCursor& text,
-        QVersitProperty& property);
-
-    void parseAgentProperty(
-        VersitCursor& text,
-        QVersitProperty& property);
-
-    bool setVersionFromProperty(
-        QVersitDocument& document,
-        const QVersitProperty& property) const;
-
-    void unencode(
-        QVariant& value,
-        VersitCursor& cursor,
-        QVersitProperty& property,
-        QTextCodec* codec) const;
-
-    QString decodeCharset(
-        const QByteArray& value,
-        QVersitProperty& property,
-        QTextCodec** codec) const;
 
     // mutexed getters and setters.
     void setState(QVersitReader::State);
@@ -131,11 +153,76 @@ public: // New functions
     void setCanceling(bool cancelling);
     bool isCanceling();
 
-protected: // From QThread
-     void run();
+    bool parseVersitDocument(LineReader& device,
+                             QVersitDocument& document,
+                             bool foundBegin = false);
+
+    QVersitProperty parseNextVersitProperty(
+        QVersitDocument::VersitType versitType,
+        LineReader& lineReader);
+
+    void parseVCard21Property(
+        VersitCursor& text,
+        QVersitProperty& property,
+        LineReader& lineReader);
+
+    void parseVCard30Property(
+        VersitCursor& text,
+        QVersitProperty& property,
+        LineReader& lineReader);
+
+    bool setVersionFromProperty(
+        QVersitDocument& document,
+        const QVersitProperty& property) const;
+
+    bool unencode(
+        QVariant& value,
+        VersitCursor& cursor,
+        QVersitProperty& property,
+        QTextCodec* codec,
+        LineReader& lineReader) const;
+
+    QString decodeCharset(
+        const QByteArray& value,
+        QVersitProperty& property,
+        QTextCodec* defaultCodec,
+        QTextCodec** codec) const;
+
+    void decodeQuotedPrintable(QString& text) const;
+
+
+    /* These functions operate on a cursor describing a single line */
+    QPair<QStringList,QString> extractPropertyGroupsAndName(VersitCursor& line, QTextCodec* codec)
+            const;
+    QByteArray extractPropertyValue(VersitCursor& line) const;
+    QMultiHash<QString,QString> extractVCard21PropertyParams(VersitCursor& line, QTextCodec* codec)
+            const;
+    QMultiHash<QString,QString> extractVCard30PropertyParams(VersitCursor& line, QTextCodec* codec)
+            const;
+
+    // "Private" functions
+    QList<QByteArray> extractParams(VersitCursor& line, QTextCodec *codec) const;
+    QList<QByteArray> extractParts(const QByteArray& text, const QByteArray& separator,
+                                   QTextCodec *codec) const;
+    QByteArray extractPart(const QByteArray& text, int startPosition, int length=-1) const;
+    QString paramName(const QByteArray& parameter, QTextCodec* codec) const;
+    QString paramValue(const QByteArray& parameter, QTextCodec* codec) const;
+    static bool containsAt(const QByteArray& text, const QByteArray& ba, int index);
+    bool splitStructuredValue(QVersitDocument::VersitType type,
+                              QVersitProperty& property,
+                              bool hasEscapedBackslashes) const;
+    static QStringList splitValue(const QString& string,
+                                  const QChar& sep,
+                                  QString::SplitBehavior behaviour,
+                                  bool hasEscapedBackslashes);
+    static void removeBackSlashEscaping(QString& text);
 
 public: // Data
+    /* key is the document type and property name, value is the type of property it is.
+       If there is no entry, assume it is a PlainType */
+    QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType> mValueTypeMap;
     QPointer<QIODevice> mIoDevice;
+    QScopedPointer<QBuffer> mInputBytes; // Holds the data set by setData()
     QList<QVersitDocument> mVersitDocuments;
     int mDocumentNestingLevel; // Depth in parsing nested Versit documents
     QTextCodec* mDefaultCodec;

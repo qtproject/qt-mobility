@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qvideowidgetcontrol.h>
-#include <qmediacontrol_p.h>
+#include "qvideowidgetcontrol.h"
+#include "qmediacontrol_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoWidgetControl
@@ -125,7 +125,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
 */
 
 /*!
-    \fn QVideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
+    \fn QVideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode mode)
 
     Sets the aspect ratio \a mode which determines how video is scaled to the fit the widget with
     respect to its aspect ratio.
@@ -229,5 +229,5 @@ QVideoWidgetControl::~QVideoWidgetControl()
 */
 
 #include "moc_qvideowidgetcontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

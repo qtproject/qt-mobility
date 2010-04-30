@@ -42,7 +42,9 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
+#include "qcontactid.h"
+#include <QSet>
+
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -55,17 +57,16 @@ Q_OBJECT
 public:
     tst_QContact();
     virtual ~tst_QContact();
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 private slots:
     void details();
-    void actions();
-    void preferences();
     void relationships();
     void displayName();
     void type();
     void emptiness();
+    void idLessThan();
+    void idHash();
+    void hash();
     void traits();
     void idTraits();
     void localIdTraits();
@@ -90,6 +91,10 @@ void tst_QContact::details()
     QVERIFY(c.details<QContactPhoneNumber>().count() == 0);
     QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(c.detail<QContactPhoneNumber>().isEmpty());
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName.latin1()).count() == 0);
+    QVERIFY(c.detail(QContactPhoneNumber::DefinitionName.latin1()).isEmpty());
+    QVERIFY(c.details(QLatin1String(QContactPhoneNumber::DefinitionName)).count() == 0);
+    QVERIFY(c.detail(QLatin1String(QContactPhoneNumber::DefinitionName)).isEmpty());
 
     // Test retrieving the first detail (the display label)
     QList<QContactDetail> details = c.details(QString());
@@ -113,9 +118,23 @@ void tst_QContact::details()
     QVERIFY(c.isEmpty() == false);
 
     QVERIFY(c.details().count() == 3);
+
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 1);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName, QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
+
+    QVERIFY(c.details(QLatin1String(QContactPhoneNumber::DefinitionName)).count() == 1);
+    QVERIFY(c.details(QLatin1String(QContactPhoneNumber::DefinitionName), QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
+    QVERIFY(c.details(QLatin1String(QContactPhoneNumber::DefinitionName), QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
+
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName.latin1()).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName.latin1(), QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
+    QVERIFY(c.details(QContactPhoneNumber::DefinitionName.latin1(), QString(), QString("12345678")).count() == c.details(QContactPhoneNumber::DefinitionName).count());
+
+    QVERIFY(c.details<QContactPhoneNumber>(QContactPhoneNumber::FieldNumber, QString("12345678")).count() == 1);
+    QVERIFY(c.details<QContactPhoneNumber>(QContactPhoneNumber::FieldNumber.latin1(), QString("12345678")).count() == 1);
+    QVERIFY(c.details<QContactPhoneNumber>(QLatin1String(QContactPhoneNumber::FieldNumber), QString("12345678")).count() == 1);
+
     QVERIFY(c.details<QContactPhoneNumber>().count() == 1);
     QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
@@ -186,15 +205,6 @@ void tst_QContact::details()
     QVERIFY(!c.detail<QContactPhoneNumber>().isEmpty());
     QCOMPARE(c.detail<QContactPhoneNumber>(), p);
     QVERIFY(c.removeDetail(&p2));
-
-    // now try removing a detail for which we've set a preference
-    QContactEmailAddress pref;
-    pref.setEmailAddress("test@test");
-    c.saveDetail(&pref);
-    c.setPreferredDetail("SendEmail", pref);
-    QVERIFY(c.isPreferredDetail(QString(), pref));
-    QVERIFY(c.removeDetail(&pref));
-    QVERIFY(!c.isPreferredDetail(QString(), pref));
 
     // Now try adding a detail to multiple contacts
 
@@ -334,7 +344,7 @@ void tst_QContact::details()
     four.setNumber("");
     c.saveDetail(&four);
     QVERIFY(c.details(QContactPhoneNumber::DefinitionName).count() == 2);
-    QVERIFY(!four.values().isEmpty()); // an empty qstring is not invalid; make sure it exists in the detail.
+    QVERIFY(!four.variantValues().isEmpty()); // an empty qstring is not invalid; make sure it exists in the detail.
 
     // ensure that clearing a contact's details works correctly
     QContactName nameDetail;
@@ -351,193 +361,6 @@ void tst_QContact::details()
     QCOMPARE(c.id(), oldId); // id shouldn't change.
 }
 
-void tst_QContact::actions()
-{
-    QContact c;  // empty contact.
-    QContact c2; // contact with email saved.
-    QContactEmailAddress e;
-    e.setEmailAddress("test@nokia.com");
-    c2.saveDetail(&e);
-
-
-    // XXX this is here to make the bulk
-    // of this test pass.  The first set
-    // of tests expect to not find plugins.
-    QString path = QApplication::applicationDirPath() + "/dummyplugin";
-    QApplication::addLibraryPath(path);
-    path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
-    QApplication::addLibraryPath(path);
-    path = QApplication::applicationDirPath() + "/dummyplugin/plugins/contacts";
-    QApplication::addLibraryPath(path);
-
-    // Prior to plugin loading:
-    // first, the empty contact
-    QList<QContactActionDescriptor> availableActions = c.availableActions(QString());
-    QVERIFY(availableActions.isEmpty());
-    QContactDetail d = c.detailWithAction("SendEmail");
-    QVERIFY(d.isEmpty());
-    QList<QContactDetail> dets = c.detailsWithAction("SendEmail");
-    QVERIFY(dets.isEmpty());
-    // then, the email contact
-    availableActions = c2.availableActions(QString());
-    QEXPECT_FAIL("", "Plugins are only loaded once", Continue);
-    QVERIFY(availableActions.isEmpty());
-    d = c2.detailWithAction("SendEmail");
-    QEXPECT_FAIL("", "Plugins are only loaded once", Continue);
-    QVERIFY(d.isEmpty());
-    dets = c2.detailsWithAction("SendEmail");
-    QEXPECT_FAIL("", "Plugins are only loaded once", Continue);
-    QVERIFY(dets.isEmpty());
-
-    // set the correct path to look for plugins and load them
-//    QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins/";
-//    QApplication::addLibraryPath(path);
-
-    // available actions - should be one there now.
-    // empty contact
-    availableActions = c.availableActions(QString());
-    QVERIFY(availableActions.isEmpty());
-    // contact with email
-    availableActions = c2.availableActions(QString());
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-
-    // try various combinations of version and name
-    availableActions = c2.availableActions();
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    availableActions = c2.availableActions("Test");
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    availableActions = c2.availableActions("Test", 1);
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    availableActions = c2.availableActions("Test", 5);
-    QVERIFY(availableActions.isEmpty()); // should NOT contain SendEmail
-    availableActions = c2.availableActions(QString(), 1);
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-
-    // detail with action:
-    // empty contact
-    d = c.detailWithAction("SendEmail");
-    QVERIFY(d.isEmpty());
-    d = c.detailWithAction("NonexistentAction");
-    QVERIFY(d.isEmpty());
-    d = c.detailWithAction(QString());
-    QVERIFY(d.isEmpty());
-    // contact with email
-    d = c2.detailWithAction("SendEmail");
-    QVERIFY(d == e);
-    d = c2.detailWithAction("NonexistentAction");
-    QVERIFY(d.isEmpty());
-    d = c2.detailWithAction(QString());
-    QVERIFY(d.isEmpty());
-
-    // details with action:
-    // empty contact
-    dets = c.detailsWithAction("SendEmail");
-    QVERIFY(dets.isEmpty());
-    dets = c.detailsWithAction("NonexistentAction");
-    QVERIFY(dets.isEmpty());
-    dets = c.detailsWithAction(QString());
-    QVERIFY(dets.isEmpty());
-    // contact with email
-    dets = c2.detailsWithAction("SendEmail");
-    QVERIFY(dets.contains(e));
-    dets = c2.detailsWithAction("NonexistentAction");
-    QVERIFY(dets.isEmpty());
-    dets = c2.detailsWithAction(QString());
-    QVERIFY(dets.isEmpty());
-
-    // remove the library path.
-    QApplication::removeLibraryPath(path);
-}
-
-void tst_QContact::preferences()
-{
-    QContact c;
-
-    // test first set
-    QContactDetail det("TestId");
-    det.setValue("test", QVariant("test1"));
-    c.saveDetail(&det);
-    QCOMPARE(c.isPreferredDetail("testAction", det), false);
-
-    QCOMPARE(c.setPreferredDetail("testAction", det), true);
-
-    QCOMPARE(c.isPreferredDetail("testAction", det), true);
-
-    QCOMPARE(c.isPreferredDetail(QString(), det), true);
-
-    QCOMPARE(c.preferredDetail("testAction"), det);
-
-    // test replacement
-    QContactDetail det2("TestId");
-    det2.setValue("test", QVariant("test2"));
-    c.saveDetail(&det2);
-    QCOMPARE(c.isPreferredDetail("testAction", det2), false);
-
-    QCOMPARE(c.setPreferredDetail("testAction", det2), true);
-
-    QCOMPARE(c.isPreferredDetail("testAction", det2), true);
-
-    QCOMPARE(c.isPreferredDetail("testAction", det), false);
-
-    QCOMPARE(c.preferredDetail("testAction"), det2);
-
-    // test for detail that is not part of the contact
-    QContactDetail det3("TestId");
-    det3.setValue("test", QVariant("test3"));
-    QCOMPARE(c.setPreferredDetail("testAction", det3), false);
-
-    QCOMPARE(c.preferredDetail("testAction"), det2); // shouldn't have changed.
-
-    // test invalid set
-    QCOMPARE(c.setPreferredDetail(QString(), det3), false);
-
-    QCOMPARE(c.setPreferredDetail(QString(), QContactDetail()), false);
-
-    QCOMPARE(c.setPreferredDetail("testAction", QContactDetail()), false);
-
-    QCOMPARE(c.preferredDetail("testAction"), det2); // shouldn't have changed.
-
-    // test invalid query
-    QContactDetail det4;
-    det4.setValue("test", QVariant("test4"));
-    c.saveDetail(&det4);
-    QCOMPARE(c.isPreferredDetail(QString(), QContactDetail()), false);
-
-    QCOMPARE(c.isPreferredDetail(QString(), det4), false); // valid detail, but no pref set.
-
-    QCOMPARE(c.isPreferredDetail("testAction", QContactDetail()), false);
-
-    // test retrieving preferred details
-    QContactDetail pd = c.preferredDetail(QString());
-    QVERIFY(pd.isEmpty());
-    pd = c.preferredDetail("testAction");
-    QVERIFY(pd == det2); // shouldn't have changed.
-
-    // test for preference for action that hasn't been added
-    QVERIFY(c.preferredDetail("NonexistentAction").isEmpty());
-
-    // Remove a non preferred detail
-    QContactDetail det2copy("TestId");
-    det2copy.setValue("test", QVariant("test2"));
-    QVERIFY(c.saveDetail(&det2copy));
-
-    QVERIFY(c.isPreferredDetail("testAction", det2) == true);
-    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
-    QVERIFY(c.removeDetail(&det2copy));
-    QVERIFY(c.isPreferredDetail("testAction", det2) == true);
-    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
-
-    // Add it again
-    QVERIFY(c.saveDetail(&det2copy));
-    QVERIFY(c.isPreferredDetail("testAction", det2) == true);
-    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
-
-    // Remove the preferred detail (the copy should not become preferred)
-    QVERIFY(c.removeDetail(&det2));
-    QVERIFY(c.isPreferredDetail("testAction", det2) == false);
-    QVERIFY(c.isPreferredDetail("testAction", det2copy) == false);
-}
-
 void tst_QContact::relationships()
 {
     QContact c;
@@ -550,7 +373,7 @@ void tst_QContact::relationships()
     related = c.relatedContacts(QContactRelationship::HasMember);
     QVERIFY(related.isEmpty());
 
-    related = c.relatedContacts(QContactRelationship::HasMember, QContactRelationshipFilter::First);
+    related = c.relatedContacts(QContactRelationship::HasMember, QContactRelationship::First);
     QVERIFY(related.isEmpty());
 
     QList<QContactRelationship> relationshipList = c.relationships();
@@ -558,27 +381,6 @@ void tst_QContact::relationships()
 
     relationshipList = c.relationships(QContactRelationship::HasMember);
     QVERIFY(relationshipList.isEmpty());
-
-    // now test that we can change the order of relationships regardless of the number of relationships
-    QList<QContactRelationship> orderedList = c.relationshipOrder();
-    QVERIFY(orderedList == relationshipList); // should be the same by default
-
-    QContactRelationship dummyRel;
-    QContactId firstId;
-    firstId.setManagerUri("test-nokia");
-    firstId.setLocalId(QContactLocalId(5));
-    QContactId secondId;
-    secondId.setManagerUri("test-nokia-2");
-    secondId.setLocalId(QContactLocalId(5));
-    dummyRel.setFirst(firstId);
-    dummyRel.setSecond(secondId);
-    dummyRel.setRelationshipType(QContactRelationship::HasAssistant);
-
-    QList<QContactRelationship> reorderedList;
-    reorderedList.append(dummyRel);
-    c.setRelationshipOrder(reorderedList);
-
-    QVERIFY(c.relationshipOrder() == reorderedList);
 }
 
 void tst_QContact::displayName()
@@ -598,11 +400,20 @@ void tst_QContact::displayName()
     QVERIFY(d.saveDetail(&name));
 
     /*
-     * The display label is not updated until you save the contact!
+     * The display label is not updated until you save the contact or call synthCDL
      */
-    QString synth = cm.synthesizedDisplayLabel(d);
     QVERIFY(d.displayLabel().isEmpty());
-    //QVERIFY(synth == name.customLabel()); // XXX Perhaps not guaranteed, depends on backend synth rules.
+
+    cm.synthesizeContactDisplayLabel(&d);
+    QVERIFY(d.displayLabel() == "Wesley");
+
+    name.setCustomLabel("Bosley");
+    d.saveDetail(&name);
+
+    QVERIFY(d.displayLabel() == "Wesley");
+
+    cm.synthesizeContactDisplayLabel(&d);
+    QVERIFY(d.displayLabel() == "Bosley");
 
     /* Remove the detail via removeDetail */
     QContactDisplayLabel old;
@@ -610,9 +421,6 @@ void tst_QContact::displayName()
     QVERIFY(!d.removeDetail(&old)); // should fail.
     QVERIFY(d.isEmpty() == false);
     QVERIFY(d.details().count() == 3); // it should not be removed!
-
-    /* Make sure we go back to the old synth version */
-    QVERIFY(d.displayLabel().isEmpty());
 }
 
 void tst_QContact::type()
@@ -643,6 +451,85 @@ void tst_QContact::emptiness()
     c.setType(QContactType::TypeContact);
     QVERIFY(c.type() == QString(QLatin1String(QContactType::TypeContact)));
     QVERIFY(c.isEmpty() == true); // type doesn't affect emptiness
+}
+
+void tst_QContact::idLessThan()
+{
+    QContactId id1;
+    id1.setManagerUri("a");
+    id1.setLocalId(1);
+    QContactId id2;
+    id2.setManagerUri("a");
+    id2.setLocalId(1);
+    QVERIFY(!(id1 < id2));
+    QVERIFY(!(id2 < id1));
+    QContactId id3;
+    id3.setManagerUri("a");
+    id3.setLocalId(2);
+    QContactId id4;
+    id4.setManagerUri("b");
+    id4.setLocalId(1);
+    QContactId id5; // no URI
+    id5.setLocalId(2);
+    QVERIFY(id1 < id3);
+    QVERIFY(!(id3 < id1));
+    QVERIFY(id1 < id4);
+    QVERIFY(!(id4 < id1));
+    QVERIFY(id3 < id4);
+    QVERIFY(!(id4 < id3));
+    QVERIFY(id5 < id1);
+    QVERIFY(!(id1 < id5));
+}
+
+void tst_QContact::idHash()
+{
+    QContactId id1;
+    id1.setManagerUri("a");
+    id1.setLocalId(1);
+    QContactId id2;
+    id2.setManagerUri("a");
+    id2.setLocalId(1);
+    QContactId id3;
+    id3.setManagerUri("b");
+    id3.setLocalId(1);
+    QVERIFY(qHash(id1) == qHash(id2));
+    QVERIFY(qHash(id1) != qHash(id3));
+    QSet<QContactId> set;
+    set.insert(id1);
+    set.insert(id2);
+    set.insert(id3);
+    QCOMPARE(set.size(), 2);
+}
+
+void tst_QContact::hash()
+{
+    QContactId id;
+    id.setManagerUri("a");
+    id.setLocalId(1);
+    QContact contact1;
+    contact1.setId(id);
+    QContactDetail detail1("definition");
+    detail1.setValue("key", "value");
+    contact1.saveDetail(&detail1);
+    QContact contact2;
+    contact2.setId(id);
+    contact2.saveDetail(&detail1);
+    QContact contact3;
+    contact3.setId(id);
+    QContactDetail detail3("definition");
+    detail3.setValue("key", "another value");
+    contact3.saveDetail(&detail3);
+    QContact contact4; // no details
+    contact4.setId(id);
+    QContact contact5; // preferred details and relationships shouldn't affect the hash
+    contact5.setId(id);
+    contact5.saveDetail(&detail1);
+    QContactRelationship rel;
+    QContactManagerEngine::setContactRelationships(&contact5, QList<QContactRelationship>() << rel);
+    QVERIFY(qHash(contact1) == qHash(contact2));
+    QVERIFY(qHash(contact1) != qHash(contact3));
+    QVERIFY(qHash(contact1) != qHash(contact4));
+    QVERIFY(qHash(contact1) == qHash(contact5));
 }
 
 void tst_QContact::traits()

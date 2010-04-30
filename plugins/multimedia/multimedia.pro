@@ -8,6 +8,10 @@ TEMPLATE = subdirs
 
 SUBDIRS += m3u
 
+win32 {
+    contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
+}
+
 win32:!wince* {
     win32-msvc2005|win32-msvc2008: SUBDIRS *= directshow wmp
 }
@@ -26,14 +30,12 @@ unix:!mac:!symbian {
         contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
     }
    
-    system(pkg-config --exists \'libpulse >= 0.9.14\'):SUBDIRS += pulseaudio
-
     SUBDIRS += v4l
 }
 
 mac {
-    contains(QT_CONFIG, phonon): SUBDIRS += phonon
     contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
+    SUBDIRS += qt7
 }
 
 symbian:SUBDIRS += symbian

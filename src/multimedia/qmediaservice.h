@@ -46,9 +46,9 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qstringlist.h>
 
-#include <qmediacontrol.h>
+#include "qmediacontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaServicePrivate;
 class Q_MEDIA_EXPORT QMediaService : public QObject
@@ -79,7 +79,7 @@ private:
     Q_DECLARE_PRIVATE(QMediaService)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QABSTRACTMEDIASERVICE_H
 

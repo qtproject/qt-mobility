@@ -126,14 +126,11 @@ static QString qGetInterfaceType(const QString &interface)
 
     ifreq request;
     strncpy(request.ifr_name, interface.toLocal8Bit().data(), sizeof(request.ifr_name));
-    if (ioctl(sock, SIOCGIFHWADDR, &request) >= 0) {
-        switch (request.ifr_hwaddr.sa_family) {
-        case ARPHRD_ETHER:
-            return QLatin1String("Ethernet");
-        }
-    }
-
+    int result = ioctl(sock, SIOCGIFHWADDR, &request);
     close(sock);
+
+    if (result >= 0 && request.ifr_hwaddr.sa_family == ARPHRD_ETHER)
+        return QLatin1String("Ethernet");
 #else
     Q_UNUSED(interface);
 #endif
@@ -178,7 +175,7 @@ QList<QNetworkConfigurationPrivate *> QGenericEngine::getConfigurations(bool *ok
         if (interface.flags() & QNetworkInterface::IsLoopBack)
             continue;
 
-        // ignore WLAN interface handled in seperate engine
+        // ignore WLAN interface handled in separate engine
         if (qGetInterfaceType(interface.name()) == "WLAN")
             continue;
 
@@ -201,7 +198,7 @@ QList<QNetworkConfigurationPrivate *> QGenericEngine::getConfigurations(bool *ok
         else
             cpPriv->bearer = qGetInterfaceType(interface.name());
 
-        if (interface.flags() & QNetworkInterface::IsUp)
+        if((interface.flags() & QNetworkInterface::IsUp) && !interface.addressEntries().isEmpty())
             cpPriv->state |= QNetworkConfiguration::Active;
 
         configurationInterface[identifier] = interface.name();

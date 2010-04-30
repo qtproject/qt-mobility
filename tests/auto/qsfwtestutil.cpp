@@ -116,7 +116,6 @@ void QSfwTestUtil::removeDirectory(const QString &path)
             QFile::Permissions perms = QFile::permissions(file.canonicalFilePath());
             perms = perms | QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner;
             QFile::setPermissions(file.canonicalFilePath(), perms);
-
             removeDirectory(file.canonicalFilePath());
         }
     }
@@ -128,12 +127,12 @@ void QSfwTestUtil::removeDirectory(const QString &path)
 #include <f32file.h>
 void QSfwTestUtil::removeDatabases()
 {
-    TFindServer findServer(_L("SFWDatabaseManagerServer"));
+    TFindServer findServer(_L("!qsfwdatabasemanagerserver"));
     TFullName name;
     if (findServer.Next(name) == KErrNone)
     {
         RProcess dbServer;
-        if (dbServer.Open(_L("SFWDatabaseManagerServer")) == KErrNone)
+        if (dbServer.Open(_L("qsfwdatabasemanagerserver")) == KErrNone)
         {
             dbServer.Kill(KErrNone);
             dbServer.Close();    
@@ -145,7 +144,7 @@ void QSfwTestUtil::removeDatabases()
     CleanupClosePushL(fs);
     CFileMan* fileMan=CFileMan::NewL(fs);
     CleanupStack::PushL(fileMan);
-    fileMan->RmDir(_L("c:\\private\\2002AC7F\\Nokia\\")); //Server's fixed UID3
+    fileMan->Delete(_L("c:\\private\\2002AC7F\\QtServiceFramework_4.6_system.db")); //Server's fixed UID3
     CleanupStack::PopAndDestroy(2, &fs);    
 }
 #endif

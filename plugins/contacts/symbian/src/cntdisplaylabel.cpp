@@ -74,15 +74,14 @@ void CntDisplayLabel::setDisplayLabelDetails()
     //Contact
     //Preferred details
     QList<QPair<QLatin1String, QLatin1String> > contactPrefferedDisplayLabelDetails;
-    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldFirst)));
-    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldLast)));
-    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
+    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldFirstName)));
+    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldLastName)));
     m_contactDisplayLabelDetails.append(contactPrefferedDisplayLabelDetails);
 
     //if preferred details doesn't exist use these
-    //QList<QPair<QLatin1String, QLatin1String> > contactPreffered2DisplayLabelDetails;
-    //contactPreffered2DisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
-    //m_contactDisplayLabelDetails.append(contactPreffered2DisplayLabelDetails);
+    QList<QPair<QLatin1String, QLatin1String> > contactSecondaryDisplayLabelDetails;
+    contactSecondaryDisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
+    m_contactDisplayLabelDetails.append(contactSecondaryDisplayLabelDetails);
     
     //Group
     QList<QPair<QLatin1String, QLatin1String> > preferredGroupDisplayLabelDetails;
@@ -96,23 +95,24 @@ void CntDisplayLabel::setDisplayLabelDetails()
  * \a error On return, contains the possible error.
  * \return synthesised display label 
  */
-QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
     QString displayLabel;
+    *error = QContactManager::NoError;
     
     //contact
     if(contact.type() == QContactType::TypeContact) {
-        displayLabel = generateDisplayLabel(contact, contactDisplayLabelDetails());    
+        displayLabel = generateDisplayLabel(contact, m_contactDisplayLabelDetails);    
     }
     
     //group
     else if (contact.type() == QContactType::TypeGroup) {
-        displayLabel = generateDisplayLabel(contact, groupDisplayLabelDetails());
+        displayLabel = generateDisplayLabel(contact, m_groupDisplayLabelDetails);
     } 
     
     //invalid type
     else {
-        error = QContactManager::InvalidContactTypeError;
+        *error = QContactManager::InvalidContactTypeError;
     }
     
     return displayLabel;
@@ -180,23 +180,6 @@ QString CntDisplayLabel::unNamned() const
 {
     return "Unnamed";
 }
-
-/*!
- * Returns the display name detail definition names used for a contact
- */
-QList<QList<QPair<QLatin1String, QLatin1String> > > CntDisplayLabel::contactDisplayLabelDetails() const
-{
-    return m_contactDisplayLabelDetails;
-}
-
-/*!
- * Returns the display name detail definition names used by groups
- */
-QList<QList<QPair<QLatin1String, QLatin1String> > > CntDisplayLabel::groupDisplayLabelDetails() const
-{
-    return m_groupDisplayLabelDetails;
-}
-
 
 /*!
  * Returns the details to be used for contact filtering

@@ -70,11 +70,19 @@ public:
 class Q_VERSIT_EXPORT QVersitContactExporter
 {
 public:
+    enum Error {
+        NoError = 0,
+        EmptyContactError,
+        NoNameError
+    };
+
     QVersitContactExporter();
     ~QVersitContactExporter();
 
-    QList<QVersitDocument> exportContacts(const QList<QContact>& contacts,
-        QVersitDocument::VersitType versitType=QVersitDocument::VCard30Type);
+    bool exportContacts(const QList<QContact>& contacts,
+        QVersitDocument::VersitType versitType);
+    QList<QVersitDocument> documents() const;
+    QMap<int, Error> errors() const;
 
     void setDetailHandler(QVersitContactExporterDetailHandler* handler);
     QVersitContactExporterDetailHandler* detailHandler() const;
@@ -82,25 +90,8 @@ public:
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
 
-    // Deprecated:
-    QVersitDocument Q_DECL_DEPRECATED exportContact(
-        const QContact& contact,
-        QVersitDocument::VersitType versitType=QVersitDocument::VCard30Type)
-    {
-        qWarning("QVersitContactExporter::exportContact(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  exportContacts() should be used instead.");
-        QList<QContact> list;
-        list.append(contact);
-        return exportContacts(list, versitType).first();
-    }
-
-    QList<QContactDetail> Q_DECL_DEPRECATED unknownContactDetails()
-    {
-        qWarning("QVersitContactExporter::unknownContactDetails(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  A QVersitContactExporterDetailHandler should be used to discover and handle unknown details.");
-        return QList<QContactDetail>();
-    }
-
 private:
-    QVersitContactExporterPrivate* d;    
+    QVersitContactExporterPrivate* d;
 };
 
 QTM_END_NAMESPACE

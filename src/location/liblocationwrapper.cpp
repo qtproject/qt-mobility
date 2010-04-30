@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "liblocationwrapper.h"
+#include "liblocationwrapper_p.h"
 
 using namespace std;
 
@@ -88,6 +88,7 @@ bool LiblocationWrapper::inited()
                                      static_cast<void*>(this));
                 locationState = LiblocationWrapper::Inited;
                 retval = true;
+                startcounter = 0;
             }
         }
     } else {
@@ -100,7 +101,6 @@ void LiblocationWrapper::locationError(LocationGPSDevice *device,
                                        gint errorCode, gpointer data)
 {
     Q_UNUSED(device);
-    Q_UNUSED(data);
     QString locationError;
 
     switch (errorCode) {
@@ -124,6 +124,10 @@ void LiblocationWrapper::locationError(LocationGPSDevice *device,
     }
 
     qDebug() << "Location error:" << locationError;
+
+    LiblocationWrapper *object;
+    object = (LiblocationWrapper *)data;
+    emit object->error();
 }
 
 void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
@@ -144,7 +148,7 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
     if (device) {
         if (device->fix) {
             if (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET) {
-                posInfo.setDateTime(QDateTime::fromTime_t(device->fix->time));
+                posInfo.setTimestamp(QDateTime::fromTime_t(device->fix->time));
             }
 
             if (device->fix->fields & LOCATION_GPS_DEVICE_LATLONG_SET) {
@@ -208,23 +212,19 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
 
     posInfo.setCoordinate(coordinate);
 
-    // Only position updates with time (3D) are provided.
-    if ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) ||
-            ((satellitesInUseCount >= 3) &&
-             (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET))) {
+    if ((device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET) && 
+        ((device->fix->mode == LOCATION_GPS_DEVICE_MODE_3D) || 
+         (device->fix->mode == LOCATION_GPS_DEVICE_MODE_2D))) {
         object->setLocation(posInfo, true);
     } else {
         object->setLocation(posInfo, false);
     }
 }
 
-void LiblocationWrapper::setLocation(const QGeoPositionInfo &update,
-                                     bool location3D)
+void LiblocationWrapper::setLocation(const QGeoPositionInfo &update, 
+                                     bool locationValid)
 {
-    if (!location3D)
-        validLastSatUpdate = false;
-    else
-        validLastSatUpdate = true;
+    validLastSatUpdate = locationValid;
     lastSatUpdate = update;
 }
 
@@ -296,7 +296,7 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
 
     // Only positions with time (3D) are provided.
     if (time) {
-        posInfo.setDateTime(QDateTime::fromTime_t(time));
+        posInfo.setTimestamp(QDateTime::fromTime_t(time));
         return posInfo;
     }
 
@@ -323,8 +323,9 @@ QList<QGeoSatelliteInfo> LiblocationWrapper::satellitesInUse()
     return satsInUse;
 }
 
-void LiblocationWrapper::start()
-{
+void LiblocationWrapper::start() {
+    startcounter++;
+
     if ((locationState & LiblocationWrapper::Inited) &&
             !(locationState & LiblocationWrapper::Started)) {
         if (!errorHandlerId) {
@@ -348,8 +349,12 @@ void LiblocationWrapper::start()
     }
 }
 
-void LiblocationWrapper::stop()
-{
+void LiblocationWrapper::stop() {
+    startcounter--;
+
+    if (startcounter > 0)
+        return;
+    
     if ((locationState & (LiblocationWrapper::Started |
                           LiblocationWrapper::Inited)) &&
             !(locationState & LiblocationWrapper::Stopped)) {
@@ -361,7 +366,7 @@ void LiblocationWrapper::stop()
                                         posChangedId);
         errorHandlerId = 0;
         posChangedId = 0;
-
+        startcounter = 0;
         location_gpsd_control_stop(locationControl);
 
         locationState &= ~LiblocationWrapper::Started;
@@ -369,6 +374,13 @@ void LiblocationWrapper::stop()
     }
 }
 
-#include "moc_liblocationwrapper.cpp"
+bool LiblocationWrapper::isActive() {
+    if (locationState & LiblocationWrapper::Started)
+        return true;
+    else
+        return false;
+}
+
+#include "moc_liblocationwrapper_p.cpp"
 QTM_END_NAMESPACE
 

@@ -21,35 +21,34 @@
     **
     ** This file is part of the Qt Mobility Components.
     **
-    ** $QT_BEGIN_LICENSE:LGPL$
-    ** No Commercial Usage
-    ** This file contains pre-release code and may not be distributed.
-    ** You may use this file in accordance with the terms and conditions
-    ** contained in the Technology Preview License Agreement accompanying
-    ** this package.
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
     **
-    ** GNU Lesser General Public License Usage
-    ** Alternatively, this file may be used under the terms of the GNU Lesser
-    ** General Public License version 2.1 as published by the Free Software
-    ** Foundation and appearing in the file LICENSE.LGPL included in the
-    ** packaging of this file.  Please review the following information to
-    ** ensure the GNU Lesser General Public License version 2.1 requirements
-    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
     **
-    ** In addition, as a special exception, Nokia gives you certain additional
-    ** rights.  These rights are described in the Nokia Qt LGPL Exception
-    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-    **
-    ** If you have questions regarding the use of this file, please contact
-    ** Nokia at qt-info@nokia.com.
-    **
-    **
-    **
-    **
-    **
-    **
-    **
-    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
     ** $QT_END_LICENSE$
     **
     ****************************************************************************/</span>
@@ -59,6 +58,7 @@
     #include &lt;qaudiocapturesource.h&gt;
     #include &lt;qmediarecorder.h&gt;
     #include &lt;qmediaservice.h&gt;
+    #include &lt;qaudioencodercontrol.h&gt;
 
     #include &lt;QtMultimedia/qaudioformat.h&gt;
 
@@ -69,41 +69,63 @@
         audiosource = new QAudioCaptureSource;
         capture = new QMediaRecorder(audiosource);
 
-        QAudioEncoderSettings audioSettings;
-        audioSettings.setQuality(QtMedia::LowQuality);
-        audioSettings.setEncodingMode(QtMedia::ConstantQualityEncoding);
-        audioSettings.setCodec(capture-&gt;supportedAudioCodecs().first());
-        capture-&gt;setEncodingSettings(audioSettings,QVideoEncoderSettings(),capture-&gt;supportedContainers().first());
+        if (capture-&gt;supportedAudioCodecs().size() &gt; 0) {
+            QAudioEncoderSettings audioSettings;
+            audioSettings.setQuality(QtMediaServices::LowQuality);
+            audioSettings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
+            audioSettings.setCodec(capture-&gt;supportedAudioCodecs().first());
+            capture-&gt;setEncodingSettings(audioSettings,QVideoEncoderSettings(),
+                    capture-&gt;supportedContainers().first());
+        }
 
         <span class="comment">// set a default file</span>
     #ifdef Q_OS_SYMBIAN
-        capture-&gt;setOutputLocation(QUrl(&quot;c:\\data\\test.wav&quot;));
+        capture-&gt;setOutputLocation(recordPathAudio(QUrl()));
     #else
         capture-&gt;setOutputLocation(QUrl(&quot;test.raw&quot;));
     #endif
 
         QWidget *window = new QWidget;
+        window-&gt;setMinimumSize(320,240);
+        window-&gt;setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+
         QGridLayout* layout = new QGridLayout;
 
         QLabel* deviceLabel = new QLabel;
-        deviceLabel-&gt;setText(&quot;Devices&quot;);
+        deviceLabel-&gt;setText(tr(&quot;Audio Device&quot;));
         deviceBox = new QComboBox(this);
-        deviceBox-&gt;setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+        deviceBox-&gt;setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+        deviceBox-&gt;setMinimumSize(200,10);
 
         QLabel* containerLabel = new QLabel;
-        containerLabel-&gt;setText(&quot;Container&quot;);
+        containerLabel-&gt;setText(tr(&quot;File Container&quot;));
         containersBox = new QComboBox(this);
-        containersBox-&gt;setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+        containersBox-&gt;setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+        containersBox-&gt;setMinimumSize(200,10);
 
         QLabel* codecLabel = new QLabel;
-        codecLabel-&gt;setText(&quot;Codec&quot;);
+        codecLabel-&gt;setText(tr(&quot;Audio Codec&quot;));
         codecsBox = new QComboBox(this);
-        codecsBox-&gt;setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+        codecsBox-&gt;setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+        codecsBox-&gt;setMinimumSize(200,10);
+
+        QLabel* sampleRateLabel = new QLabel;
+        sampleRateLabel-&gt;setText(tr(&quot;Sample Rate&quot;));
+        sampleRateBox = new QComboBox(this);
+        sampleRateBox-&gt;setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+        sampleRateBox-&gt;setMinimumSize(200,10);
+
+        QLabel* channelLabel = new QLabel;
+        channelLabel-&gt;setText(tr(&quot;Channel count&quot;));
+        channelBox = new QComboBox(this);
+        channelBox-&gt;setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+        channelBox-&gt;setMinimumSize(200,10);
 
         QLabel* qualityLabel = new QLabel;
-        qualityLabel-&gt;setText(&quot;Quality&quot;);
+        qualityLabel-&gt;setText(tr(&quot;Audio Quality&quot;));
         qualityBox = new QComboBox(this);
-        qualityBox-&gt;setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+        qualityBox-&gt;setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+        qualityBox-&gt;setMinimumSize(200,10);
 
         QList&lt;QString&gt; inputs = audiosource-&gt;audioInputs();
         for(int i = 0; i &lt; inputs.size(); i++)
@@ -117,12 +139,26 @@
         for(int i = 0; i &lt; containers.count(); i++)
             containersBox-&gt;addItem(containers.at(i));
 
-        qualityBox-&gt;addItem(&quot;Low&quot;);
-        qualityBox-&gt;addItem(&quot;Medium&quot;);
-        qualityBox-&gt;addItem(&quot;High&quot;);
+        QList&lt;int&gt; samplerates = capture-&gt;supportedAudioSampleRates();
+        for(int i = 0; i &lt; samplerates.count(); i++) {
+            QString rateString = QString(&quot;%1&quot;).arg(samplerates.at(i));
+            sampleRateBox-&gt;addItem(rateString, QVariant(samplerates.at(i)));
+        }
+
+        QList&lt;int&gt; channels;
+        channels &lt;&lt;1&lt;&lt;2;
+        for(int i = 0; i &lt; channels.count(); i++) {
+            QString channelString = QString(&quot;%1&quot;).arg(channels.at(i));
+            channelBox-&gt;addItem(channelString, QVariant(channels.at(i)));
+        }
+
+        qualityBox-&gt;addItem(tr(&quot;Low&quot;));
+        qualityBox-&gt;addItem(tr(&quot;Medium&quot;));
+        qualityBox-&gt;addItem(tr(&quot;High&quot;));
 
         connect(capture, SIGNAL(durationChanged(qint64)), this, SLOT(updateProgress(qint64)));
         connect(capture, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(stateChanged(QMediaRecorder::State)));
+        connect(capture, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(errorChanged(QMediaRecorder::Error)));
 
         layout-&gt;addWidget(deviceLabel,0,0,Qt::AlignHCenter);
         connect(deviceBox,SIGNAL(activated(int)),SLOT(deviceChanged(int)));
@@ -130,35 +166,79 @@
 
         layout-&gt;addWidget(containerLabel,1,0,Qt::AlignHCenter);
         connect(containersBox,SIGNAL(activated(int)),SLOT(containerChanged(int)));
-        layout-&gt;addWidget(containersBox,1,1,Qt::AlignLeft);
+        layout-&gt;addWidget(containersBox,1,1,1,3,Qt::AlignLeft);
 
-        layout-&gt;addWidget(codecLabel,1,2,Qt::AlignHCenter);
+        layout-&gt;addWidget(codecLabel,2,0,Qt::AlignHCenter);
         connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
-        layout-&gt;addWidget(codecsBox,1,3,Qt::AlignLeft);
+        layout-&gt;addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);
 
-        layout-&gt;addWidget(qualityLabel,2,0,Qt::AlignHCenter);
+        layout-&gt;addWidget(sampleRateLabel,3,0,Qt::AlignHCenter);
+        connect(sampleRateBox,SIGNAL(activated(int)),SLOT(sampleRateChanged(int)));
+        layout-&gt;addWidget(sampleRateBox,3,1,1,3,Qt::AlignLeft);
+
+        layout-&gt;addWidget(channelLabel,4,0,Qt::AlignHCenter);
+        connect(channelBox,SIGNAL(activated(int)),SLOT(channelCountChanged(int)));
+        layout-&gt;addWidget(channelBox,4,1,1,3,Qt::AlignLeft);
+
+        layout-&gt;addWidget(qualityLabel,5,0,Qt::AlignHCenter);
         connect(qualityBox,SIGNAL(activated(int)),SLOT(qualityChanged(int)));
-        layout-&gt;addWidget(qualityBox,2,1,Qt::AlignLeft);
+        layout-&gt;addWidget(qualityBox,5,1,1,3,Qt::AlignLeft);
 
         fileButton = new QPushButton(this);
         fileButton-&gt;setText(tr(&quot;Output File&quot;));
         connect(fileButton,SIGNAL(clicked()),SLOT(selectOutputFile()));
-        layout-&gt;addWidget(fileButton,3,0,Qt::AlignHCenter);
+        layout-&gt;addWidget(fileButton,6,0,Qt::AlignHCenter);
+
+        pauseButton = new QPushButton(this);
+        pauseButton-&gt;setText(tr(&quot;Pause&quot;));
+        connect(pauseButton,SIGNAL(clicked()),SLOT(togglePause()));
+        layout-&gt;addWidget(pauseButton,6,1,Qt::AlignHCenter);
 
         button = new QPushButton(this);
         button-&gt;setText(tr(&quot;Record&quot;));
         connect(button,SIGNAL(clicked()),SLOT(toggleRecord()));
-        layout-&gt;addWidget(button,3,1,Qt::AlignHCenter);
+        layout-&gt;addWidget(button,6,2,Qt::AlignHCenter);
+
+        statusLabel = new QLabel;
+        statusLabel-&gt;setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+        statusLabel-&gt;setMinimumSize(130,10);
+        statusLabel-&gt;setFrameStyle(QFrame::Panel | QFrame::Sunken);
+        statusLabel-&gt;setLineWidth(1);
+        layout-&gt;addWidget(statusLabel,7,0,Qt::AlignHCenter);
+
+        QLabel* durationLabel = new QLabel;
+        durationLabel-&gt;setText(tr(&quot;Duration&quot;));
+        layout-&gt;addWidget(durationLabel,7,1,Qt::AlignRight);
 
         recTime = new QLabel;
-        recTime-&gt;setText(&quot;0 sec&quot;);
-        layout-&gt;addWidget(recTime,4,0,Qt::AlignHCenter);
+        layout-&gt;addWidget(recTime,7,2,Qt::AlignLeft);
 
         window-&gt;setLayout(layout);
         setCentralWidget(window);
         window-&gt;show();
 
         active = false;
+        paused = false;
+    }
+
+    QUrl AudioRecorder::recordPathAudio(QUrl filePath)
+    {
+        if (!filePath.isEmpty())
+            return filePath;
+
+        QDir outputDir(QDir::rootPath());
+
+        int lastImage = 0;
+        int fileCount = 0;
+        foreach(QString fileName, outputDir.entryList(QStringList() &lt;&lt; &quot;testclip_*&quot;)) {
+            int imgNumber = fileName.mid(5, fileName.size()-9).toInt();
+            lastImage = qMax(lastImage, imgNumber);
+            if (outputDir.exists(fileName))
+                fileCount+=1;
+        }
+        lastImage+=fileCount;
+        QUrl location(QDir::toNativeSeparators(outputDir.canonicalPath()+QString(&quot;/testclip_%1&quot;).arg(lastImage+1,4,10,QLatin1Char('0'))));
+        return location;
     }
 
     AudioRecorder::~AudioRecorder()
@@ -171,13 +251,31 @@
     {
         currentTime = pos;
         if(currentTime == 0) currentTime = 1;
-        QString text = QString(&quot;%1 secs&quot;).arg(currentTime/1000);
+        QString text = QString(&quot;%1&quot;).arg(currentTime/1000);
         recTime-&gt;setText(text);
     }
 
     void AudioRecorder::stateChanged(QMediaRecorder::State state)
     {
-        Q_UNUSED(state)
+        if (capture-&gt;error() != QMediaRecorder::NoError)
+            return;
+
+        switch(state) {
+            case QMediaRecorder::RecordingState: {
+                statusLabel-&gt;setText(tr(&quot;Recording&quot;));
+                button-&gt;setText(tr(&quot;Stop&quot;));
+                break;
+            }
+            case QMediaRecorder::PausedState: {
+                statusLabel-&gt;setText(tr(&quot;Paused&quot;));
+                button-&gt;setText(tr(&quot;Record&quot;));
+                break;
+            }
+            default: {
+                statusLabel-&gt;setText(tr(&quot;Stopped&quot;));
+                button-&gt;setText(tr(&quot;Record&quot;));
+            }
+        }
     }
 
     void AudioRecorder::deviceChanged(int idx)
@@ -193,20 +291,41 @@
 
     void AudioRecorder::codecChanged(int idx)
     {
+        updateSamplerates(idx);
+        updateChannelCount(idx);
+        updateQuality(idx);
         QAudioEncoderSettings settings = capture-&gt;audioSettings();
         settings.setCodec(codecsBox-&gt;itemText(idx));
+        capture-&gt;setEncodingSettings(settings);
+    }
+
+    void AudioRecorder::sampleRateChanged(int idx)
+    {
+        QAudioEncoderSettings settings = capture-&gt;audioSettings();
+        settings.setSampleRate((sampleRateBox-&gt;itemData(idx).toInt()));
+        capture-&gt;setEncodingSettings(settings);
+    }
+
+    void AudioRecorder::channelCountChanged(int idx)
+    {
+        QAudioEncoderSettings settings = capture-&gt;audioSettings();
+        settings.setChannelCount((channelBox-&gt;itemData(idx).toInt()));
         capture-&gt;setEncodingSettings(settings);
     }
 
     void AudioRecorder::qualityChanged(int idx)
     {
         QAudioEncoderSettings settings = capture-&gt;audioSettings();
-        if(qualityBox-&gt;itemText(idx).compare(&quot;Low&quot;) == 0) {
-            settings.setQuality(QtMedia::LowQuality);
-        } else if(qualityBox-&gt;itemText(idx).compare(&quot;Medium&quot;) == 0) {
-            settings.setQuality(QtMedia::NormalQuality);
-        } else if(qualityBox-&gt;itemText(idx).compare(&quot;High&quot;) == 0) {
-            settings.setQuality(QtMedia::HighQuality);
+
+        switch(idx) {
+        case 0:
+            settings.setQuality(QtMediaServices::LowQuality);
+            break;
+        case 1:
+            settings.setQuality(QtMediaServices::NormalQuality);
+            break;
+        default:
+            settings.setQuality(QtMediaServices::HighQuality);
         }
         capture-&gt;setEncodingSettings(settings);
     }
@@ -214,16 +333,28 @@
     void AudioRecorder::toggleRecord()
     {
         if(!active) {
-            recTime-&gt;setText(&quot;0 sec&quot;);
-            currentTime = 0;
+            if(!paused) {
+                recTime-&gt;setText(&quot;0&quot;);
+                currentTime = 0;
+            }
+    #ifdef Q_OS_SYMBIAN
+        capture-&gt;setOutputLocation(recordPathAudio(destination));
+    #endif
             capture-&gt;record();
-
-            button-&gt;setText(tr(&quot;Stop&quot;));
             active = true;
+            paused = false;
         } else {
             capture-&gt;stop();
-            button-&gt;setText(tr(&quot;Record&quot;));
             active = false;
+        }
+    }
+
+    void AudioRecorder::togglePause()
+    {
+        if(active &amp;&amp; !paused) {
+            capture-&gt;pause();
+            active = false;
+            paused = true;
         }
     }
 
@@ -238,7 +369,63 @@
             fileNames = dialog.selectedFiles();
 
         if(fileNames.size() &gt; 0)
+    #ifdef Q_OS_SYMBIAN
+            destination = QUrl(fileNames.first());
+    #else
             capture-&gt;setOutputLocation(QUrl(fileNames.first()));
+
+    #endif
+    }
+
+    void AudioRecorder::errorChanged(QMediaRecorder::Error err)
+    {
+        Q_UNUSED(err)
+
+        statusLabel-&gt;setText(capture-&gt;errorString());
+    }
+
+    void AudioRecorder::updateSamplerates(int idx)
+    {
+        QAudioEncoderSettings settings;
+        settings.setCodec(codecsBox-&gt;itemText(idx));
+
+        QList&lt;int&gt; supportedSampleRates = capture-&gt;supportedAudioSampleRates(settings);
+        sampleRateBox-&gt;clear();
+        for(int i = 0; i &lt; supportedSampleRates.count(); i++) {
+            QString rateString = QString(&quot;%1&quot;).arg(supportedSampleRates.at(i));
+            sampleRateBox-&gt;addItem(rateString, QVariant(supportedSampleRates.at(i)));
+        }
+    }
+
+    void AudioRecorder::updateChannelCount(int idx)
+    {
+        QAudioEncoderControl *audioEncoder = qobject_cast&lt;QAudioEncoderControl*&gt;(capture-&gt;service()-&gt;control(QAudioEncoderControl_iid));
+        channelBox-&gt;clear();
+        QStringList list = audioEncoder-&gt;supportedEncodingOptions(codecsBox-&gt;itemText(idx));
+        QList&lt;int&gt; channels;
+        if (list.contains(&quot;channels&quot;))
+            channels &lt;&lt;1&lt;&lt;2;
+        else
+            channels &lt;&lt;1;
+        for(int i = 0; i &lt; channels.count(); i++) {
+            QString channelString = QString(&quot;%1&quot;).arg(channels.at(i));
+            channelBox-&gt;addItem(channelString, QVariant(channels.at(i)));
+        }
+    }
+
+    void AudioRecorder::updateQuality(int idx)
+    {
+        QAudioEncoderControl *audioEncoder = qobject_cast&lt;QAudioEncoderControl*&gt;(capture-&gt;service()-&gt;control(QAudioEncoderControl_iid));
+        qualityBox-&gt;clear();
+        QStringList list = audioEncoder-&gt;supportedEncodingOptions(codecsBox-&gt;itemText(idx));
+        QList&lt;int&gt; channels;
+        if (list.contains(&quot;quality&quot;)) {
+            qualityBox-&gt;addItem(tr(&quot;Low&quot;));
+            qualityBox-&gt;addItem(tr(&quot;Medium&quot;));
+            qualityBox-&gt;addItem(tr(&quot;High&quot;));
+        }else {
+            qualityBox-&gt;addItem(tr(&quot;Low&quot;));
+        }
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

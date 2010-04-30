@@ -44,7 +44,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <qmediaservice.h>
+#include "../../../src/multimedia/qmediaservice.h"
 
 class AudioCaptureSession;
 class AudioEncoderControl;
@@ -52,7 +52,7 @@ class AudioContainerControl;
 class AudioMediaRecorderControl;
 class AudioEndpointSelector;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureService : public QMediaService
 {

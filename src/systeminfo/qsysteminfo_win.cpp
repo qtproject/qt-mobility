@@ -43,7 +43,6 @@
 #include <qt_windows.h>
 
 #include <QtCore/qmutex.h>
-#include <QtCore/private/qmutexpool_p.h>
 
 #include <QStringList>
 #include <QSize>
@@ -359,6 +358,8 @@ static BluetoothFindFirstRadio local_BluetoothFindFirstRadio=0;
 
 QTM_BEGIN_NAMESPACE
 
+Q_GLOBAL_STATIC_WITH_ARGS(QMutex, dynamicLoadMutex, (QMutex::Recursive));
+
 static void resolveLibrary()
 {
 #if !defined( Q_OS_WINCE)
@@ -366,7 +367,7 @@ static void resolveLibrary()
 
     if (!triedResolve) {
 #ifndef QT_NO_THREAD
-        QMutexLocker locker(QMutexPool::globalInstanceGet(&local_WlanOpenHandle));
+        QMutexLocker locker(dynamicLoadMutex());
 #endif
 
         if (!triedResolve) {
@@ -463,7 +464,7 @@ QSystemInfoPrivate::~QSystemInfoPrivate()
 
 void QSystemInfoPrivate::currentLanguageTimeout()
 {
-    QString tmpLang = currentLanguage();
+    const QString tmpLang = currentLanguage();
     if(currentLanguageStr != tmpLang) {
         currentLanguageStr = tmpLang;
         emit currentLanguageChanged(currentLanguageStr);
@@ -474,7 +475,7 @@ void QSystemInfoPrivate::currentLanguageTimeout()
 
 QString QSystemInfoPrivate::currentLanguage() const
 {
- QString lang = QLocale::system().name().left(2);
+    QString lang = QLocale::system().name().left(2);
     if(lang.isEmpty() || lang == "C") {
         lang = "en";
     }
@@ -489,8 +490,8 @@ QStringList QSystemInfoPrivate::availableLanguages() const
     if(transDir.exists()) {
         QStringList localeList = transDir.entryList( QStringList() << "qt_*.qm" ,QDir::Files
                                                      | QDir::NoDotAndDotDot, QDir::Name);
-        foreach(QString localeName, localeList) {
-            QString lang = localeName.mid(3,2);
+        foreach(const QString localeName, localeList) {
+            const QString lang = localeName.mid(3,2);
             if(!langList.contains(lang) && !lang.isEmpty() && !lang.contains("help")) {
                 langList << lang;
             }
@@ -615,7 +616,7 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         {
             QSystemStorageInfo mi;
             QStringList drives = mi.logicalDrives();
-            foreach(QString drive, drives) {
+            foreach(const QString drive, drives) {
                 if(mi.typeForDrive(drive) == QSystemStorageInfo::RemovableDrive) {
                     featureSupported = true;
                 }
@@ -861,8 +862,8 @@ void QSystemNetworkInfoPrivate::networkStrengthTimeout()
     modeList << QSystemNetworkInfo::BluetoothMode;
     modeList << QSystemNetworkInfo::WimaxMode;
 
-    foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
-       networkSignalStrength(mode);
+    foreach(const QSystemNetworkInfo::NetworkMode mode, modeList) {
+        networkSignalStrength(mode);
     }
     switch(QSysInfo::WindowsVersion) {
     case QSysInfo::WV_VISTA:
@@ -886,8 +887,8 @@ void QSystemNetworkInfoPrivate::networkStatusTimeout()
     modeList << QSystemNetworkInfo::BluetoothMode;
     modeList << QSystemNetworkInfo::WimaxMode;
 
-    foreach(QSystemNetworkInfo::NetworkMode mode, modeList) {
-       networkStatus(mode);
+    foreach(const QSystemNetworkInfo::NetworkMode mode, modeList) {
+        networkStatus(mode);
     }
 
  }
@@ -1272,6 +1273,24 @@ bool QSystemNetworkInfoPrivate::isDefaultMode(QSystemNetworkInfo::NetworkMode mo
     return isDefaultGateway;
 }
 
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
+{
+    QList <QSystemNetworkInfo::NetworkMode> modeList;
+    modeList << QSystemNetworkInfo::GsmMode
+            << QSystemNetworkInfo::CdmaMode
+            << QSystemNetworkInfo::WcdmaMode
+            << QSystemNetworkInfo::WlanMode
+            << QSystemNetworkInfo::EthernetMode
+            << QSystemNetworkInfo::BluetoothMode
+            << QSystemNetworkInfo::WimaxMode;
+
+    for (int i = 0; i < modeList.size(); ++i) {
+        if ( isDefaultMode(modeList.at(i)))
+            return modeList.at(i);
+    }
+
+    return QSystemNetworkInfo::UnknownMode;
+}
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QObject *parent)
         : QObject(parent)
@@ -1682,12 +1701,12 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
-        return "Sim Not Available";
+        return "";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-        return "Sim Not Available";
+        return "";
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()

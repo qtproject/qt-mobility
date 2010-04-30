@@ -42,26 +42,26 @@
 #include <QtTest/QtTest>
 #include <QtTest/QSignalSpy>
 
-#include "qlandmark.h"
-#include "qlandmarkid.h"
-#include "qlandmarkcategory.h"
-#include "qlandmarkcategoryid.h"
-#include "qlandmarkmanager.h"
-#include "qgeolocation.h"
-#include "qgeocoordinate.h"
+#include <qlandmark.h>
+#include <qlandmarkid.h>
+#include <qlandmarkcategory.h>
+#include <qlandmarkcategoryid.h>
+#include <qlandmarkmanager.h>
+#include <qgeolocation.h>
+#include <qgeocoordinate.h>
 
-#include "qlandmarkfilter.h"
-#include "qlandmarknamefilter.h"
-#include "qlandmarkproximityfilter.h"
-#include "qlandmarknearestfilter.h"
-#include "qlandmarkcategoryfilter.h"
-#include "qlandmarkboxfilter.h"
-#include "qlandmarkintersectionfilter.h"
-#include "qlandmarkunionfilter.h"
+#include <qlandmarkfilter.h>
+#include <qlandmarknamefilter.h>
+#include <qlandmarkproximityfilter.h>
+#include <qlandmarknearestfilter.h>
+#include <qlandmarkcategoryfilter.h>
+#include <qlandmarkboxfilter.h>
+#include <qlandmarkintersectionfilter.h>
+#include <qlandmarkunionfilter.h>
 
-#include "qlandmarksortorder.h"
-#include "qlandmarknamesort.h"
-#include "qlandmarkdistancesort.h"
+#include <qlandmarksortorder.h>
+#include <qlandmarknamesort.h>
+#include <qlandmarkdistancesort.h>
 
 #include <QMetaType>
 #include <QDebug>

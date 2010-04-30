@@ -56,59 +56,74 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-main
 
   It allows a client to asynchronously request some functionality of a
-  particular QContactManager.
+  particular QContactManager.  Instances of the class will emit signals
+  when the state of the request changes, or when more results become
+  available.
+
+  Clients should not attempt to create instances of this class directly,
+  but should instead use the use-case-specific classes derived from this
+  class.
+
+  After creating any sort of request, the client retains ownership and
+  must delete the request to avoid leaking memory.  The client may either
+  do this directly (if not within a slot connected to a signal emitted
+  by the request) or by using the deleteLater() slot to schedule the
+  request for deletion when control returns to the event loop.
  */
 
 /*!
- * \fn QContactAbstractRequest::stateChanged(QContactAbstractRequest::State newState)
- * This signal is emitted when the state of the request is changed.  The new state of
- * the request will be contained in \a newState.
+  \fn QContactAbstractRequest::stateChanged(QContactAbstractRequest::State newState)
+  This signal is emitted when the state of the request is changed.  The new state of
+  the request will be contained in \a newState.
  */
 
 
 /*!
- * \fn QContactAbstractRequest::resultsAvailable()
- * This signal is emitted when new results are available.  Results can include
- * the operation error which may be accessed via error(), or derived-class-specific
- * results which are accessible through the derived class API.
- *
- * \sa error()
+  \fn QContactAbstractRequest::resultsAvailable()
+  This signal is emitted when new results are available.  Results can include
+  the operation error which may be accessed via error(), or derived-class-specific
+  results which are accessible through the derived class API.
+
+  \sa error()
  */
 
 /*!
- * \enum QContactAbstractRequest::RequestType
- * Enumerates the various possible types of asynchronous requests
- * \value InvalidRequest An invalid request
- * \value ContactFetchRequest A request to fetch a list of contacts
- * \value ContactLocalIdFetchRequest A request to fetch a list of local contact ids
- * \value ContactRemoveRequest A request to remove a list of contacts
- * \value ContactSaveRequest A request to save a list of contacts
- * \value DetailDefinitionFetchRequest A request to fetch a collection of detail definitions
- * \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
- * \value DetailDefinitionSaveRequest A request to save a list of detail definitions
- * \value RelationshipFetchRequest A request to fetch relationships between contacts
- * \value RelationshipRemoveRequest A request to remove any relationships which match the request criteria
- * \value RelationshipSaveRequest A request to save a list of relationships
+  \enum QContactAbstractRequest::RequestType
+  Enumerates the various possible types of asynchronous requests
+  \value InvalidRequest An invalid request
+  \value ContactFetchRequest A request to fetch a list of contacts
+  \value ContactLocalIdFetchRequest A request to fetch a list of local contact ids
+  \value ContactRemoveRequest A request to remove a list of contacts
+  \value ContactSaveRequest A request to save a list of contacts
+  \value DetailDefinitionFetchRequest A request to fetch a collection of detail definitions
+  \value DetailDefinitionRemoveRequest A request to remove a list of detail definitions
+  \value DetailDefinitionSaveRequest A request to save a list of detail definitions
+  \value RelationshipFetchRequest A request to fetch relationships between contacts
+  \value RelationshipRemoveRequest A request to remove any relationships which match the request criteria
+  \value RelationshipSaveRequest A request to save a list of relationships
  */
 
 /*!
- * \enum QContactAbstractRequest::State
- * Enumerates the various states that a request may be in at any given time
- * \value Inactive Operation not yet started
- * \value Active Operation started, not yet finished
- * \value Canceling Operation started then cancelled, not yet finished
- * \value Canceled Operation is finished due to cancellation
- * \value Finished Operation successfully completed
+  \enum QContactAbstractRequest::State
+  Enumerates the various states that a request may be in at any given time
+  \value InactiveState Operation not yet started
+  \value ActiveState Operation started, not yet finished
+  \value CanceledState Operation is finished due to cancellation
+  \value FinishedState Operation successfully completed
  */
 
 /*!
- * \fn QContactAbstractRequest::QContactAbstractRequest()
- * Constructs a new, invalid asynchronous request
+  \fn QContactAbstractRequest::QContactAbstractRequest(QObject* parent)
+  Constructs a new, invalid asynchronous request with the specified \a parent
  */
 
-/*! Constructs a new request from the given request data \a otherd */
-QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate* otherd)
-    : d_ptr(otherd)
+/*!
+  \internal
+  Constructs a new request from the given request data \a otherd with
+  the given parent \a parent
+*/
+QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate* otherd, QObject* parent)
+    : QObject(parent), d_ptr(otherd)
 {
 }
 
@@ -126,9 +141,9 @@ QContactAbstractRequest::~QContactAbstractRequest()
 }
 
 /*!
- * Returns true if the request is in the \c QContactAbstractRequest::InactiveState state; otherwise, returns false
- *
- * \sa state()
+  Returns true if the request is in the \c QContactAbstractRequest::InactiveState state; otherwise, returns false
+
+  \sa state()
  */
 bool QContactAbstractRequest::isInactive() const
 {
@@ -136,9 +151,9 @@ bool QContactAbstractRequest::isInactive() const
 }
 
 /*!
- * Returns true if the request is in the \c QContactAbstractRequest::ActiveState state; otherwise, returns false
- *
- * \sa state()
+  Returns true if the request is in the \c QContactAbstractRequest::ActiveState state; otherwise, returns false
+
+  \sa state()
  */
 bool QContactAbstractRequest::isActive() const
 {
@@ -146,9 +161,9 @@ bool QContactAbstractRequest::isActive() const
 }
 
 /*!
- * Returns true if the request is in the \c QContactAbstractRequest::FinishedState; otherwise, returns false
- *
- * \sa state()
+  Returns true if the request is in the \c QContactAbstractRequest::FinishedState; otherwise, returns false
+
+  \sa state()
  */
 bool QContactAbstractRequest::isFinished() const
 {
@@ -156,9 +171,9 @@ bool QContactAbstractRequest::isFinished() const
 }
 
 /*!
- * Returns true if the request is in the \c QContactAbstractRequest::CanceledState; otherwise, returns false
- *
- * \sa state()
+  Returns true if the request is in the \c QContactAbstractRequest::CanceledState; otherwise, returns false
+
+  \sa state()
  */
 bool QContactAbstractRequest::isCanceled() const
 {
@@ -172,17 +187,7 @@ QContactManager::Error QContactAbstractRequest::error() const
 }
 
 /*!
- * \deprecated
- * Returns the list of errors which occurred during the most recent asynchronous operation.  Each individual error in the list corresponds to a result in the result list.
- */
-QList<QContactManager::Error> QContactAbstractRequest::errors() const
-{
-    qWarning("QContactAbstractRequest::errors() This function is deprecated and will be removed in week 3!");
-    return QList<QContactManager::Error>();
-}
-
-/*!
- * Returns the type of this asynchronous request
+  Returns the type of this asynchronous request
  */
 QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 {
@@ -190,17 +195,7 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 }
 
 /*!
- * \deprecated
- * Returns the current status of the request.
- */
-QContactAbstractRequest::Status Q_DECL_DEPRECATED QContactAbstractRequest::status() const
-{
-    qWarning("QContactAbstractRequest::status() This function was deprecated in week 1 and will be removed after the transition period has elapsed.  Use QContactAbstractRequest::state() instead!");
-    return static_cast<QContactAbstractRequest::Status>(d_ptr->m_state);
-}
-
-/*!
- * Returns the current state of the request.
+  Returns the current state of the request.
  */
 QContactAbstractRequest::State QContactAbstractRequest::state() const
 {
@@ -253,22 +248,16 @@ bool QContactAbstractRequest::cancel()
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && (d_ptr->m_state == QContactAbstractRequest::ActiveState)) {
-        return engine->waitForRequestFinished(this, msecs);
-    }
-
-    return false; // unable to wait for operation; not in progress or no engine.
-}
-
-/*! Blocks until the manager engine signals that more partial results are available for the request, or until \a msecs milliseconds has elapsed.
-    If \a msecs is zero, this function will block indefinitely.
-    Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false. */
-bool QContactAbstractRequest::waitForProgress(int msecs)
-{
-    qWarning("QContactAbstractRequest::waitForProgress() This function was deprecated in week 1 and will be removed after the transition period has elapsed.");
-    QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && (d_ptr->m_state == QContactAbstractRequest::ActiveState)) {
-        return engine->waitForRequestProgress(this, msecs);
+    if (engine) {
+        switch (d_ptr->m_state) {
+        case QContactAbstractRequest::ActiveState:
+            return engine->waitForRequestFinished(this, msecs);
+        case QContactAbstractRequest::CanceledState:
+        case QContactAbstractRequest::FinishedState:
+            return true;
+        default:
+            return false;
+        }
     }
 
     return false; // unable to wait for operation; not in progress or no engine.

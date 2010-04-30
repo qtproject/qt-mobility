@@ -48,7 +48,7 @@
 #include <qradioplayercontrol.h>
 #include <qradioplayer.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class MockProvider : public QRadioPlayerControl
 {
     Q_OBJECT

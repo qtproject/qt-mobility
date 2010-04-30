@@ -44,11 +44,11 @@
 
 #include <QStringList>
 
-#include <qaudioendpointselector.h>
+#include "../../../src/multimedia/qaudioendpointselector.h"
 
 class AudioCaptureSession;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioEndpointSelector : public QAudioEndpointSelector
 {

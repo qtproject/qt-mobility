@@ -57,22 +57,24 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*!
- * \fn QContactSaveRequest::progress(QContactSaveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
- */
-
-/*! Constructs a new contact save request */
-QContactSaveRequest::QContactSaveRequest()
-    : QContactAbstractRequest(new QContactSaveRequestPrivate)
+/*! Constructs a new contact save request whose parent is the specified \a parent */
+QContactSaveRequest::QContactSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactSaveRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this contact save request */
-QContactSaveRequest::~QContactSaveRequest()
+/*!
+  Sets the contact to be saved to \a contact.
+  Equivalent to calling:
+  \code
+      setContacts(QList<QContact>() << contact);
+  \endcode
+ */
+void QContactSaveRequest::setContact(const QContact& contact)
 {
+    Q_D(QContactSaveRequest);
+    d->m_contacts.clear();
+    d->m_contacts.append(contact);
 }
 
 /*! Sets the list of contacts to be saved to \a contacts */

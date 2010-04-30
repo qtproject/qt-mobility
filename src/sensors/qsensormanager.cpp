@@ -44,8 +44,7 @@
 #include "qsensorpluginloader_p.h"
 #include "qsensorplugin.h"
 #include <QSettings>
-
-//#define LOG() if (1); else qDebug()
+#include "sensorlog_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -80,13 +79,13 @@ static void loadPlugins()
     QSensorManagerPrivate *d = sensorManagerPrivate();
     d->pluginsLoaded = true;
 
-    qDebug() << "initializing static plugins";
+    SENSORLOG() << "initializing static plugins";
     Q_FOREACH (CreatePluginFunc func, d->staticRegistrations) {
         QSensorPluginInterface *plugin = func();
         plugin->registerSensors();
     }
 
-    qDebug() << "initializing plugins";
+    SENSORLOG() << "initializing plugins";
     Q_FOREACH (QSensorPluginInterface *plugin, pluginLoader()->plugins()) {
         plugin->registerSensors();
     }
@@ -99,10 +98,11 @@ static void loadPlugins()
     \ingroup sensors_backend
 
     \preliminary
-    \brief The QSensorManager class returns the sensors on a device.
+    \brief The QSensorManager class handles registration and creation of sensor backends.
 
-    A given device will have a variety of sensors. The sensors are
-    categorized by type.
+    Sensor plugins register backends using the registerBackend() function.
+
+    When QSensor::connectToBackend() is called, the createBackend() function will be called.
 */
 
 /*!
@@ -117,7 +117,7 @@ void QSensorManager::registerBackend(const QByteArray &type, const QByteArray &i
         (void)d->backendsByType[type];
         d->firstIdentifierForType[type] = identifier;
     }
-    qDebug() << "registering backend for type" << type << "identifier" << identifier;// << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
+    SENSORLOG() << "registering backend for type" << type << "identifier" << identifier;// << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
     FactoryForIdentifierMap &factoryByIdentifier = d->backendsByType[type];
     factoryByIdentifier[identifier] = factory;
 }
@@ -142,10 +142,10 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     if (!d->pluginsLoaded)
         loadPlugins();
 
-    //LOG() << "QSensorManager::createBackend" << "type" << sensor->type() << "identifier" << sensor->identifier();
+    SENSORLOG() << "QSensorManager::createBackend" << "type" << sensor->type() << "identifier" << sensor->identifier();
 
     if (!d->backendsByType.contains(sensor->type())) {
-        qDebug() << "no backends of type" << sensor->type() << "have been registered.";
+        SENSORLOG() << "no backends of type" << sensor->type() << "have been registered.";
         return 0;
     }
 
@@ -155,41 +155,50 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
 
     if (sensor->identifier().isEmpty()) {
         QByteArray defaultIdentifier = QSensor::defaultSensorForType(sensor->type());
-        //LOG() << "Trying the default" << defaultIdentifier;
+        SENSORLOG() << "Trying the default" << defaultIdentifier;
         // No identifier set, try the default
         factory = factoryByIdentifier[defaultIdentifier];
-        //LOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
+        //SENSORLOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
         sensor->setIdentifier(defaultIdentifier); // the factory requires this
         backend = factory->createBackend(sensor);
-        if (backend) return backend; // Got it!
+        if (backend) goto gotbackend; // Got it!
 
         // The default failed to instantiate so try any other registered sensors for this type
         Q_FOREACH (const QByteArray &identifier, factoryByIdentifier.keys()) {
-            //LOG() << "Trying" << identifier;
+            SENSORLOG() << "Trying" << identifier;
             if (identifier == defaultIdentifier) continue; // Don't do the default one again
             factory = factoryByIdentifier[identifier];
-            //LOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
+            //SENSORLOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
             sensor->setIdentifier(identifier); // the factory requires this
             backend = factory->createBackend(sensor);
-            if (backend) return backend; // Got it!
+            if (backend) goto gotbackend; // Got it!
         }
-        //LOG() << "FAILED";
+        SENSORLOG() << "FAILED";
         sensor->setIdentifier(QByteArray()); // clear the identifier
     } else {
         if (!factoryByIdentifier.contains(sensor->identifier())) {
-            qDebug() << "no backend with identifier" << sensor->identifier() << "for type" << sensor->type();
+            SENSORLOG() << "no backend with identifier" << sensor->identifier() << "for type" << sensor->type();
             return 0;
         }
 
         // We were given an explicit identifier so don't substitute other backends if it fails to instantiate
         factory = factoryByIdentifier[sensor->identifier()];
-        //LOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
+        //SENSORLOG() << "factory" << QString().sprintf("0x%08x", (unsigned int)factory);
         backend = factory->createBackend(sensor);
-        if (backend) return backend; // Got it!
+        if (backend) goto gotbackend; // Got it!
     }
 
-    qDebug() << "no suitable backend found for requested identifier" << sensor->identifier() << "and type" << sensor->type();
+    SENSORLOG() << "no suitable backend found for requested identifier" << sensor->identifier() << "and type" << sensor->type();
     return 0;
+
+gotbackend:
+    if (sensor->availableDataRates().count() == 0) {
+        qWarning() << sensor->identifier() << "backend does not support any data rates. It cannot be used.";
+    }
+    if (sensor->dataRate() == 0) {
+        qWarning() << sensor->identifier() << "backend did not supply default data rate.";
+    }
+    return backend;
 }
 
 // =====================================================================
@@ -215,6 +224,10 @@ QList<QByteArray> QSensor::sensorsForType(const QByteArray &type)
     QSensorManagerPrivate *d = sensorManagerPrivate();
     if (!d->pluginsLoaded)
         loadPlugins();
+
+    // no sensors of that type exist
+    if (!d->backendsByType.contains(type))
+        return QList<QByteArray>();
 
     return d->backendsByType[type].keys();
 }

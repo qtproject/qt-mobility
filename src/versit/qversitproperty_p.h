@@ -55,6 +55,7 @@
 
 #include "qversitdocument.h"
 #include "qmobilityglobal.h"
+#include "qversitproperty.h"
 
 #include <QSharedData>
 #include <QString>
@@ -68,25 +69,27 @@ QTM_BEGIN_NAMESPACE
 class QVersitPropertyPrivate : public QSharedData
 {
 public:
-    QVersitPropertyPrivate() : QSharedData() 
+    QVersitPropertyPrivate() : QSharedData(), mValueType(QVersitProperty::PlainType)
     {
-    }   
-    
-    QVersitPropertyPrivate(const QVersitPropertyPrivate& other) 
+    }
+
+    QVersitPropertyPrivate(const QVersitPropertyPrivate& other)
         : QSharedData(other),
         mGroups(other.mGroups),
         mName(other.mName),
         mParameters(other.mParameters),
-        mValue(other.mValue)
+        mValue(other.mValue),
+        mValueType(other.mValueType)
     {
-    }     
-    
+    }
+
     ~QVersitPropertyPrivate() {}
-    
+
     QStringList mGroups;
     QString mName;
     QMultiHash<QString,QString> mParameters;
     QVariant mValue;
+    QVersitProperty::ValueType mValueType;
 };
 
 QTM_END_NAMESPACE

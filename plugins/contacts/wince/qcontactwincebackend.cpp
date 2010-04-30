@@ -68,10 +68,10 @@
  */
 
 
-QContactWinCEEngine::QContactWinCEEngine(ContactWinceFactory* factory, const QString& engineName, const QMap<QString, QString>& , QContactManager::Error& error)
+QContactWinCEEngine::QContactWinCEEngine(ContactWinceFactory* factory, const QString& engineName, const QMap<QString, QString>& , QContactManager::Error* error)
     : d(new QContactWinCEEngineData)
 {
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     
     buildHashForContactDetailToPoomPropId();
     d->m_engineName = engineName;
@@ -87,14 +87,14 @@ QContactWinCEEngine::QContactWinCEEngine(ContactWinceFactory* factory, const QSt
                 if(SUCCEEDED(d->m_app->GetDefaultFolder(olFolderContacts, &d->m_folder))) {
                     if(SUCCEEDED(d->m_folder->get_Items(&d->m_collection))) {
                         // Register/retrieve our custom ids
-                        LPCWSTR customIds[4] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META", L"QTCONTACTS_AVATAR_META",  L"QTCONTACTS_AVATAR_TYPE_META" };
+                        LPCWSTR customIds[4] = { L"QTCONTACTS_PHONE_META", L"QTCONTACTS_EMAIL_META", L"QTCONTACTS_AVATAR_IMAGE_META",  L"QTCONTACTS_AVATAR_VIDEO_META" };
                         CEPROPID outIds[4];
 
                         if (SUCCEEDED(d->m_app->GetIDsFromNames(4, customIds, PIM_CREATE | CEVT_LPWSTR, outIds))) {
                             d->m_phonemeta = outIds[0];
                             d->m_emailmeta = outIds[1];
-                            d->m_avatarmeta = outIds[2];
-                            d->m_avatartypemeta = outIds[3];
+                            d->m_avatarImageMeta = outIds[2];
+                            d->m_avatarVideoMeta = outIds[3];
                         }
 
                         // get an IPOLItems2 pointer for the collection, too
@@ -137,21 +137,15 @@ QContactWinCEEngine::~QContactWinCEEngine()
     d->m_factory->resetEngine();
 }
 
-void QContactWinCEEngine::deref()
-{
-    if (!d->m_refCount.deref())
-        delete this;
-}
-
 QString QContactWinCEEngine::managerName() const
 {
     return d->m_engineName;
 }
 
-QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, const QStringList& definitionRestrictions, QContactManager::Error& error) const
+QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, const QtMobility::QContactFetchHint& hint, QContactManager::Error* error) const
 {
     // TODO: implementation for definitionRestrictions!
-    Q_UNUSED(definitionRestrictions);
+    Q_UNUSED(hint);
     QContact ret;
 
     // id == 0 gives a bad argument error from POOM, so don't even try it
@@ -161,29 +155,29 @@ QContact QContactWinCEEngine::contact(const QContactLocalId& contactId, const QS
         HRESULT hr = d->m_app->GetItemFromOidEx(contactId, 0, &item);
         if (SUCCEEDED(hr)) {
             if (item) {
-                error = QContactManager::NoError;
+                *error = QContactManager::NoError;
                 ret = convertToQContact(item);
             } else {
-                error = QContactManager::DoesNotExistError;
+                *error = QContactManager::DoesNotExistError;
             }
         } else {
             if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
-                error = QContactManager::DoesNotExistError;
+                *error = QContactManager::DoesNotExistError;
             } else {
                 qWarning() << "Failed to retrieve contact:" << HRESULT_CODE(hr);
-                error = QContactManager::UnspecifiedError;
+                *error = QContactManager::UnspecifiedError;
             }
         }
     } else {
-        error = QContactManager::DoesNotExistError;
+        *error = QContactManager::DoesNotExistError;
     }
     return ret;
 }
 
-bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error& error)
+bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error* error)
 {
     if (contact == 0) {
-        error = QContactManager::BadArgumentError;
+        *error = QContactManager::BadArgumentError;
         return false;
     }
 
@@ -191,7 +185,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
 
     // ensure that the contact's details conform to their definitions
     if (!validateContact(*contact, error)) {
-        error = QContactManager::InvalidDetailError;
+        *error = QContactManager::InvalidDetailError;
         return false;
     }
 
@@ -206,11 +200,11 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
         } else {
             if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
                 // Well, doesn't exist any more
-                error = QContactManager::DoesNotExistError;
+                *error = QContactManager::DoesNotExistError;
                 d->m_ids.removeAll(contact->localId());
             } else {
                 qWarning() << "Didn't get old contact" << HRESULT_CODE(hr);
-                error = QContactManager::UnspecifiedError;
+                *error = QContactManager::UnspecifiedError;
             }
         }
     } else if (contact->localId() == 0) {
@@ -224,35 +218,35 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
             if (SUCCEEDED(hr)) {
             } else {
                 qWarning() << "Failed to query interface" << HRESULT_CODE(hr);
-                error = QContactManager::UnspecifiedError;
+                *error = QContactManager::UnspecifiedError;
             }
         } else {
             qWarning() << "Failed to create contact: "<< HRESULT_CODE(hr);
-            error = QContactManager::OutOfMemoryError;
+            *error = QContactManager::OutOfMemoryError;
         }
     } else {
         // Saving a contact with a non zero id, but that doesn't exist
-        error = QContactManager::DoesNotExistError;
+        *error = QContactManager::DoesNotExistError;
     }
 
     if (icontact) {
         // Convert our QContact to the Icontact (via setProps)
-        if (convertFromQContact(*contact, icontact, error)) {
+        if (convertFromQContact(*contact, icontact, *error)) {
             HRESULT hr = icontact->Save();
             if (SUCCEEDED(hr)) {
                 // yay! we also need to set the new contact id
                 long oid = 0;
                 hr = icontact->get_Oid(&oid);
                 if (SUCCEEDED(hr)) {
-                    error = QContactManager::NoError; 
-                    QContact c = this->contact((QContactLocalId)oid, QStringList(), error);
+                    *error = QContactManager::NoError;
+                    QContact c = this->contact((QContactLocalId)oid, QContactFetchHint(), error);
                     
-                    if (error == QContactManager::NoError) {
+                    if (*error == QContactManager::NoError) {
                         *contact = c;
                         if (wasOld) {
-                            cs.changedContacts().insert(contact->localId());
+                            cs.insertChangedContact(contact->localId());
                         } else {
-                            cs.addedContacts().insert(contact->localId());
+                            cs.insertAddedContact(contact->localId());
                             d->m_ids.append(contact->localId());
                         }
                     }
@@ -262,7 +256,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
                 }
                 qWarning() << "Saved contact, but couldn't retrieve id again??" << HRESULT_CODE(hr);
                 // Blargh.
-                error = QContactManager::UnspecifiedError;
+                *error = QContactManager::UnspecifiedError;
             } else {
                 qWarning() << "Failed to save contact" << HRESULT_CODE(hr);
             }
@@ -275,7 +269,7 @@ bool QContactWinCEEngine::saveContact(QContact* contact, QContactManager::Error&
     return false;
 }
 
-bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error& error)
+bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {
     // Fetch an IItem* for this
     if (contactId != 0) {
@@ -286,37 +280,37 @@ bool QContactWinCEEngine::removeContact(const QContactLocalId& contactId, QConta
         if (SUCCEEDED(hr)) {
             hr = item->Delete();
             if (SUCCEEDED(hr)) {
-                error = QContactManager::NoError;
+                *error = QContactManager::NoError;
                 d->m_ids.removeAll(contactId);
-                cs.removedContacts().insert(contactId);
+                cs.insertRemovedContact(contactId);
                 cs.emitSignals(this);
                 return true;
             }
             qWarning() << "Failed to delete:" << HRESULT_CODE(hr);
-            error = QContactManager::UnspecifiedError;
+            *error = QContactManager::UnspecifiedError;
         } else {
             if (HRESULT_CODE(hr) == ERROR_NOT_FOUND) {
-                error = QContactManager::DoesNotExistError;
+                *error = QContactManager::DoesNotExistError;
             } else {
                 qWarning() << "Failed to retrieve item pointer in delete" << HRESULT_CODE(hr);
-                error = QContactManager::UnspecifiedError;
+                *error = QContactManager::UnspecifiedError;
             }
         }
     } else {
         // Id 0 does not exist
-        error = QContactManager::DoesNotExistError;
+        *error = QContactManager::DoesNotExistError;
     }
     return false;
 }
 
-QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(const QString& contactType, QContactManager::Error& error) const
+QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(const QString& contactType, QContactManager::Error* error) const
 {
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
     QMap<QString, QMap<QString, QContactDetailDefinition> > defns = QContactManagerEngine::schemaDefinitions();
 
     // Remove the details we don't support
     defns[contactType].remove(QContactSyncTarget::DefinitionName);
-    defns[contactType].remove(QContactGeolocation::DefinitionName);
+    defns[contactType].remove(QContactGeoLocation::DefinitionName);
     defns[contactType].remove(QContactTimestamp::DefinitionName);
     defns[contactType].remove(QContactGuid::DefinitionName);
     defns[contactType].remove(QContactGender::DefinitionName); // ? Surprising
@@ -327,10 +321,10 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
     fields.remove(QContactAnniversary::FieldEvent);
     fields.remove(QContactAnniversary::FieldSubType);
     defns[contactType][QContactAnniversary::DefinitionName].setFields(fields);
-    
+
     // No logo for organisation
     fields = defns[contactType][QContactOrganization::DefinitionName].fields();
-    fields.remove(QContactOrganization::FieldLogo);
+    fields.remove(QContactOrganization::FieldLogoUrl);
     defns[contactType][QContactOrganization::DefinitionName].setFields(fields);
 
     // No subtypes for these details
@@ -340,12 +334,6 @@ QMap<QString, QContactDetailDefinition> QContactWinCEEngine::detailDefinitions(c
 
     // No contexts for these details
     fields =  defns[contactType][QContactAvatar::DefinitionName].fields();
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
-    fields.remove(QContactDetail::FieldContext);
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactAvatar::DefinitionName].setFields(fields);
 
@@ -392,8 +380,9 @@ bool QContactWinCEEngine::waitForRequestFinished(QContactAbstractRequest* req, i
 }
 
 /*! \reimp */
-bool QContactWinCEEngine::hasFeature(QContactManager::ManagerFeature feature) const
+bool QContactWinCEEngine::hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const
 {
+    Q_UNUSED(contactType);
     // The Windows CE backend is an "isolated" backend
     if (feature == QContactManager::Anonymous)
         return true;
@@ -403,7 +392,7 @@ bool QContactWinCEEngine::hasFeature(QContactManager::ManagerFeature feature) co
 }
 
 /* Synthesise the display label of a contact */
-QString QContactWinCEEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString QContactWinCEEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
     Q_UNUSED(error)
     // The POOM API (well, lack thereof) makes this a bit strange.
@@ -438,14 +427,14 @@ QString QContactWinCEEngine::synthesizedDisplayLabel(const QContact& contact, QC
 
 
 
-PROPID QContactWinCEEngine::metaAvatar() const
+PROPID QContactWinCEEngine::metaAvatarImage() const
 {
-    return d->m_avatarmeta;
+    return d->m_avatarImageMeta;
 }
 
-PROPID QContactWinCEEngine::metaAvatarType() const
+PROPID QContactWinCEEngine::metaAvatarVideo() const
 {
-    return d->m_avatartypemeta;
+    return d->m_avatarVideoMeta;
 }
 
 PROPID QContactWinCEEngine::metaEmail() const
@@ -474,6 +463,59 @@ bool QContactWinCEEngine::isFilterSupported(const QContactFilter& filter) const
     }
     return false;
 }
+
+/*! \reimp */
+int QContactWinCEEngine::managerVersion() const
+{
+    return QTCONTACTS_VERSION;
+}
+
+/*! \reimp */
+QList<QContact> QContactWinCEEngine::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
+{
+    QList<QContactLocalId> ids = contactIds(filter, sortOrders, error);
+    QList<QContact> cs;
+    if (*error == QContactManager::NoError) {
+        foreach (const QContactLocalId& id, ids) {
+            cs << contact(id, fetchHint, error);
+        }
+    }
+    return cs;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    bool ret = true;
+
+    for (int j = 0; j < contacts->size(); j++) {
+        if (!saveContact(&((*contacts)[j]), error)) {
+            ret = false;
+        }
+        if (*error != QContactManager::NoError) {
+            errorMap->insert(j, *error);
+        }
+    }
+    return ret;
+}
+
+/*! \reimp */
+bool QContactWinCEEngine::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
+{
+    bool ret = true;
+
+    for (int j = 0; j < contactIds.size(); j++) {
+        if (!removeContact(contactIds[j], error)) {
+            ret = false;
+        }
+
+        if (*error != QContactManager::NoError) {
+            errorMap->insert(j, *error);
+        }
+    }
+    return ret;
+}
+
 /*!
  * Returns the list of data types supported by the WinCE engine
  */
@@ -497,7 +539,7 @@ ContactWinceFactory::ContactWinceFactory()
 }
 
 /* Factory lives here in the basement */
-QContactManagerEngine* ContactWinceFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+QContactManagerEngine* ContactWinceFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
     QMutexLocker locker(&m_mutex);
     if (!m_engine) {
@@ -516,4 +558,4 @@ QString ContactWinceFactory::managerName() const
      QMutexLocker locker(&m_mutex);
      m_engine = 0;
  }
-Q_EXPORT_PLUGIN2(contacts_wince, ContactWinceFactory);
+Q_EXPORT_PLUGIN2(qtcontacts_wince, ContactWinceFactory);

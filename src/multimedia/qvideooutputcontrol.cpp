@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <qvideooutputcontrol.h>
+#include "qvideooutputcontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoOutputControl
@@ -129,5 +129,5 @@ QVideoOutputControl::~QVideoOutputControl()
 */
 
 #include "moc_qvideooutputcontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

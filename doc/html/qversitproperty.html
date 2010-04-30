@@ -14,11 +14,17 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVersitProperty Class Reference</h1>
-<p>The QVersitProperty class stores the name, value and parameters of a versit property. <a href="#details">More...</a></p>
+<p>The QVersitProperty class stores the name, value, groups and parameters of a Versit property. <a href="#details">More...</a></p>
 <pre>    #include &lt;QVersitProperty&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <ul>
 <li><a href="qversitproperty-members.html">List of all members, including inherited members</a></li>
 </ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#ValueType-enum">ValueType</a></b> { PlainType, CompoundType, ListType, BinaryType, VersitDocumentType }</td></tr>
+</table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
@@ -38,8 +44,10 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#setName">setName</a></b> ( const QString &amp; <i>name</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#setParameters">setParameters</a></b> ( const QMultiHash&lt;QString, QString&gt; &amp; <i>parameters</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#setValue">setValue</a></b> ( const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#value">value</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#value-2">value</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#setValueType">setValueType</a></b> ( ValueType <i>type</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#value">value</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#value-2">value</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ValueType </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#valueType">valueType</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#variantValue">variantValue</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#operator-not-eq">operator!=</a></b> ( const QVersitProperty &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVersitProperty &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qversitproperty.html#operator-eq">operator=</a></b> ( const QVersitProperty &amp; <i>other</i> )</td></tr>
@@ -48,11 +56,30 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QVersitProperty class stores the name, value and parameters of a versit property.</p>
+<p>The QVersitProperty class stores the name, value, groups and parameters of a Versit property.</p>
 <p>For example a vCard can be presented as a <a href="qversitdocument.html">QVersitDocument</a> that consists of a number of properties such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few. Each of these properties is stored as an instance of a QVersitProperty in a <a href="qversitdocument.html">QVersitDocument</a>.</p>
 <p>QVersitProperty supports implicit sharing. The property name and parameters of a QVersitProperty are converted to upper-case when they are stored to a QVersitProperty.</p>
 <p>The value of a QVersitProperty is stored as a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> and should always be one of three types: <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> for textual values, <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> for binary data (eg. images), or <a href="qversitdocument.html">QVersitDocument</a> for nested documents. The <a href="qversitreader.html">QVersitReader</a> will parse Versit properties and assign the correct type of object to the property value. The <a href="qversitwriter.html">QVersitWriter</a> will serialise objects of these types correctly into the (text-based) Versit format.</p>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QVersitProperty/ValueType"></a>
+<a name="//apple_ref/cpp/econst/QVersitProperty/PlainType"></a>
+<a name="//apple_ref/cpp/econst/QVersitProperty/CompoundType"></a>
+<a name="//apple_ref/cpp/econst/QVersitProperty/ListType"></a>
+<a name="//apple_ref/cpp/econst/QVersitProperty/BinaryType"></a>
+<a name="//apple_ref/cpp/econst/QVersitProperty/VersitDocumentType"></a>
+<h3 class="fn"><a name="ValueType-enum"></a>enum QVersitProperty::ValueType</h3>
+<p>Describes the type of data held in the property's value.</p>
+<p>The vCard and iCalendar specifications allows a property value to hold a string, binary data, or a nested document. String values can either be unstructured or structured. Structured strings can be either of compound type or list type. A compound value is one that is delimited by semicolons, allows empty components, and has a property-specific cardinality and ordering. A list value is one that is delimited by commas, does not have empty components, and has no restrictions on cardinality or ordering.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QVersitProperty::PlainType</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The property value holds an unstructured string and can be retrieved with <a href="qversitproperty.html#value">QVersitProperty::value</a>()</td></tr>
+<tr><td valign="top"><tt>QVersitProperty::CompoundType</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The property value holds a compound string and can be retrieved with QVersitProperty::value&lt;<a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a>&gt;()</td></tr>
+<tr><td valign="top"><tt>QVersitProperty::ListType</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The property value holds a list of strings and can be retrieved with QVersitProperty::value&lt;<a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a>&gt;()</td></tr>
+<tr><td valign="top"><tt>QVersitProperty::BinaryType</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The property value holds a binary value and can be retrieved with QVersitProperty::value&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt;()</td></tr>
+<tr><td valign="top"><tt>QVersitProperty::VersitDocumentType</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The property value holds a nested Versit document and can be retrieved with QVersitProperty::value&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt;()</td></tr>
+</table></p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitProperty/QVersitProperty"></a>
@@ -87,7 +114,7 @@
 <a name="//apple_ref/cpp/instm/QVersitProperty/removeParameter"></a>
 <h3 class="fn"><a name="removeParameter"></a>void QVersitProperty::removeParameter ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i> )</h3>
 <p>Removes a parameter with <i>name</i> and <i>value</i>.</p>
-<p>See also <a href="qversitproperty.html#removeParameters">removeParameters</a>() and <a href="http://qt.nokia.com/doc/4.6/examples-overview.html">;</a>.</p>
+<p>See also <a href="qversitproperty.html#removeParameters">removeParameters</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/removeParameters"></a>
 <h3 class="fn"><a name="removeParameters"></a>void QVersitProperty::removeParameters ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )</h3>
 <p>Removes all parameters with the given <i>name</i>.</p>
@@ -108,23 +135,33 @@
 <h3 class="fn"><a name="setValue"></a>void QVersitProperty::setValue ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets the property value to <i>value</i>.</p>
 <p>See also <a href="qversitproperty.html#value">value</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitProperty/setValueType"></a>
+<h3 class="fn"><a name="setValueType"></a>void QVersitProperty::setValueType ( <a href="qversitproperty.html#ValueType-enum">ValueType</a> <i>type</i> )</h3>
+<p>Sets the type of value held in the property to <i>type</i>.</p>
+<p>See also <a href="qversitproperty.html#valueType">valueType</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/value"></a>
-<h3 class="fn"><a name="value"></a>T QVersitProperty::value () const</h3>
+<h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QVersitProperty::value () const</h3>
 <p>Returns the value of the property as a string if possible, otherwise return an empty string. If the property is stored as a <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>, it is decoded using the charset specified in the property's parameters.</p>
 <p>See also <a href="qversitproperty.html#setValue">setValue</a>() and <a href="http://qt.nokia.com/doc/4.6/qvariant.html#toString">QVariant::toString</a>().</p>
-<h3 class="fn"><a name="value-2"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QVersitProperty::value () const</h3>
+<h3 class="fn"><a name="value-2"></a>T QVersitProperty::value () const</h3>
+<p>This is an overloaded function.</p>
+<p>Returns the value of the property as a <tt>T</tt>.</p>
+<a name="//apple_ref/cpp/instm/QVersitProperty/valueType"></a>
+<h3 class="fn"><a name="valueType"></a><a href="qversitproperty.html#ValueType-enum">ValueType</a> QVersitProperty::valueType () const</h3>
+<p>Returns the type of value held in the property.</p>
+<p>See also <a href="qversitproperty.html#setValueType">setValueType</a>().</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/variantValue"></a>
 <h3 class="fn"><a name="variantValue"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QVersitProperty::variantValue () const</h3>
 <p>Returns the value of the property.</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QVersitProperty::operator!= ( const QVersitProperty &amp; <i>other</i> ) const</h3>
-<p>Returns true if this is not equal to other; false otherwise.</p>
+<p>Returns true if this is not equal to <i>other</i>; false otherwise.</p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QVersitProperty &amp; QVersitProperty::operator= ( const QVersitProperty &amp; <i>other</i> )</h3>
 <p>Assigns this property to <i>other</i></p>
 <a name="//apple_ref/cpp/instm/QVersitProperty/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QVersitProperty::operator== ( const QVersitProperty &amp; <i>other</i> ) const</h3>
-<p>Returns true if this is equal to other; false otherwise.</p>
+<p>Returns true if this is equal to <i>other</i>; false otherwise.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

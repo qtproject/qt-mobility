@@ -36,10 +36,17 @@
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitContactImporterPropertyHandler/~QVersitContactImporterPropertyHandler"></a>
 <h3 class="fn"><a name="dtor.QVersitContactImporterPropertyHandler"></a>QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Frees any memory in use by this handler.</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporterPropertyHandler/postProcessProperty"></a>
 <h3 class="fn"><a name="postProcessProperty"></a>bool QVersitContactImporterPropertyHandler::postProcessProperty ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>document</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, bool <i>alreadyProcessed</i>, int <i>contactIndex</i>, <a href="qcontact.html">QContact</a> * <i>contact</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process <i>property</i> and update <i>contact</i> with the corresponding <a href="qcontactdetail.html">QContactDetail</a>(s). <i>document</i> provides the context within which the property was found. <i>contactIndex</i> specifies the position that <i>contact</i> will take in the list returned by <a href="qversitcontactimporter.html#importDocuments">QVersitContactImporter::importDocuments</a>(). <i>alreadyProcessed</i> is true if the detail has already been processed either by <a href="qversitcontactimporterpropertyhandler.html#preProcessProperty">preProcessProperty</a>() or by <a href="qversitcontactimporter.html">QVersitContactImporter</a> itself.</p>
+<p>Returns true if the property has been handled, false otherwise.</p>
+<p>This function is called on every <a href="qversitproperty.html">QVersitProperty</a> encountered during an import. This can be used to implement support for QVersitProperties not supported by <a href="qversitcontactimporter.html">QVersitContactImporter</a>.</p>
 <a name="//apple_ref/cpp/instm/QVersitContactImporterPropertyHandler/preProcessProperty"></a>
 <h3 class="fn"><a name="preProcessProperty"></a>bool QVersitContactImporterPropertyHandler::preProcessProperty ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>document</i>, const <a href="qversitproperty.html">QVersitProperty</a> &amp; <i>property</i>, int <i>contactIndex</i>, <a href="qcontact.html">QContact</a> * <i>contact</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Process <i>property</i> and update <i>contact</i> with the corresponding <a href="qcontactdetail.html">QContactDetail</a>(s). <i>document</i> provides the context within which the property was found. <i>contactIndex</i> specifies the position that <i>contact</i> will take in the list returned by <a href="qversitcontactimporter.html#importDocuments">QVersitContactImporter::importDocuments</a>().</p>
+<p>Returns true if the property has been handled and requires no further processing, false otherwise.</p>
+<p>This function is called on every <a href="qversitproperty.html">QVersitProperty</a> encountered during an import. Supply this function and return true to implement custom import behaviour.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

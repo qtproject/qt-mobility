@@ -6,8 +6,12 @@
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(mobapicontactspluginsymbiansim)
+TARGET = $$qtLibraryTarget(qtcontacts_symbiansim)
+PLUGIN_TYPE=contacts
+
 include(../../../common.pri)
+include(symbiansim_defines.pri)
+
 symbian: { 
     load(data_caging_paths)
     
@@ -23,14 +27,31 @@ symbian: {
     INCLUDEPATH += $$SOURCE_DIR/contacts/details
     INCLUDEPATH += $$SOURCE_DIR/contacts/filters
     INCLUDEPATH += $$SOURCE_DIR/contacts/requests
-
-    HEADERS += \
-        $$PUBLIC_HEADERS \
-        inc/cntsymbiansimengine.h
-      
-    SOURCES += \
-        src/cntsymbiansimengine.cpp
-
+    HEADERS += $$PUBLIC_HEADERS \
+        inc/cntsymbiansimengine.h \
+        inc/cntsymbiansimtransformerror.h \
+        inc/cntsimstore.h \
+        inc/cntsimstoreprivate.h \
+        inc/cntsimstoreeventlistener.h \
+        inc/cntabstractsimrequest.h \
+        inc/cntsimcontactfetchrequest.h \
+        inc/cntsimcontactlocalidfetchrequest.h \
+        inc/cntsimcontactremoverequest.h \
+        inc/cntsimcontactsaverequest.h \
+        inc/cntsimdetaildefinitionfetchrequest.h
+        
+    SOURCES += src/cntsymbiansimengine.cpp \
+        src/cntsymbiansimtransformerror.cpp \
+        src/cntsimstore.cpp \
+        src/cntsimstoreprivate.cpp \
+        src/cntsimstoreeventlistener.cpp \
+        src/cntabstractsimrequest.cpp \
+        src/cntsimcontactfetchrequest.cpp \
+        src/cntsimcontactlocalidfetchrequest.cpp \
+        src/cntsimcontactremoverequest.cpp \
+        src/cntsimcontactsaverequest.cpp \
+        src/cntsimdetaildefinitionfetchrequest.cpp
+        
     CONFIG += mobility
     MOBILITY = contacts
 
@@ -38,25 +59,11 @@ symbian: {
             -lflogger \
             -lefsrv
 
-    # Uncomment this to use Etel test server (instead of real Etel APIs)
-    #DEFINES += SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER
-
-    # add either real or test libraries for Etel
-    contains(DEFINES, SYMBIANSIM_BACKEND_USE_ETEL_TESTSERVER): {
-        message("Using Etel Test Server (not real Etel)")
-        INCLUDEPATH +=$${EPOCROOT}epoc32/include/internal
-        LIBS += -leteltestserverclient
-    } else {
-        message("Using real Etel APIs")
-        LIBS += -letel \
-                -letelmm
-    }
-
     target.path = /sys/bin
     INSTALLS += target
 
     symbianplugin.sources = $${TARGET}.dll
-    symbianplugin.path = /resource/qt/plugins/contacts
+    symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
 
 }

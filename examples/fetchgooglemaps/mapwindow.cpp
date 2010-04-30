@@ -6,35 +6,34 @@
 **
 ** This file is part of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -54,21 +53,31 @@
 
 #include "mapwindow.h"
 
+QTM_USE_NAMESPACE
+
 // Use the special 'localhost' key for the Google Maps key
 const QString GMAPS_STATICMAP_URL_TEMPLATE =  "http://maps.google.com/staticmap?center=%1,%2&zoom=14&size=%3x%4&map type=mobile&markers=%1,%2&key=ABQIAAAAnfs7bKE82qgb3Zc2YyS-oBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSySz_REpPq-4WZA27OwgbtyR3VcA&sensor=false";
 
 
 MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
         : QMainWindow(parent, flags),
-        webView(new QWebView),
-        posLabel(new QLabel),
-        headingAndSpeedLabel(new QLabel),
-        dateTimeLabel(new QLabel),
         loading(false),
         usingLogFile(false),
         location(0),
         waitingForFix(false)
 {
+    webView = new QWebView(this);
+    webView->setMaximumSize(640, 480);
+
+    posLabel = new QLabel(this);
+    posLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+    headingAndSpeedLabel = new QLabel(this);
+    headingAndSpeedLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
+    dateTimeLabel = new QLabel(this);
+    dateTimeLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
     location = QGeoPositionInfoSource::createDefaultSource(this);
     if (!location) {
         QNmeaPositionInfoSource *nmeaSource = new QNmeaPositionInfoSource(QNmeaPositionInfoSource::SimulationMode, this);
@@ -90,10 +99,30 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
 
     QWidget *mainWidget = new QWidget;
     QVBoxLayout *layout = new QVBoxLayout(mainWidget);
-    layout->addWidget(webView);
-    layout->addWidget(posLabel);
-    layout->addWidget(headingAndSpeedLabel);
-    layout->addWidget(dateTimeLabel);
+    layout->addWidget(webView, 1);
+    
+    QVBoxLayout *labelLayout = new QVBoxLayout();
+    labelLayout->addWidget(posLabel);
+    labelLayout->addWidget(headingAndSpeedLabel);
+    labelLayout->addWidget(dateTimeLabel);
+
+    layout->addLayout(labelLayout, 0);
+    layout->setSizeConstraint(QLayout::SetMaximumSize);
+
+    int maxHeight = webView->maximumSize().height();
+    maxHeight += posLabel->size().height();
+    maxHeight += headingAndSpeedLabel->size().height();
+    maxHeight += dateTimeLabel->size().height();
+
+    setMaximumHeight(maxHeight);
+
+    int maxWidth = webView->maximumWidth();
+    maxWidth = qMin(maxWidth, posLabel->maximumWidth());
+    maxWidth = qMin(maxWidth, headingAndSpeedLabel->maximumWidth());
+    maxWidth = qMin(maxWidth, dateTimeLabel->maximumWidth());
+    
+    setMaximumWidth(maxWidth);
+
     setCentralWidget(mainWidget);
 
 #if !defined(Q_OS_SYMBIAN)
@@ -128,14 +157,14 @@ void MapWindow::delayedInit()
     const bool canStartIAP = (manager.capabilities()
                               & QNetworkConfigurationManager::CanStartAndStopInterfaces);
     // Is there default access point, use it
-    QNetworkConfiguration cfg = manager.defaultConfiguration();
-    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QNetworkConfiguration::Active)) {
+    QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
+    if (!cfg.isValid() || (!canStartIAP && cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
         QMessageBox::information(this, tr("Flickr Demo"), tr(
                                      "Available Access Points not found."));
         return;
     }
 
-    session = new QNetworkSession(cfg, this);
+    session = new QTM_PREPEND_NAMESPACE(QNetworkSession)(cfg, this);
     session->open();
     session->waitForOpened(-1);
 #endif
@@ -194,12 +223,16 @@ void MapWindow::positionUpdated(const QGeoPositionInfo &info)
     headingAndSpeedLabel->setText(tr("Bearing %1, travelling at %2 km/h").arg(heading).arg(speed));
 
     dateTimeLabel->setText(tr("(Last update: %1)").
-                           arg(info.dateTime().toLocalTime().time().toString()));
+                           arg(info.timestamp().toLocalTime().time().toString()));
 
     if (!loading) {
         // Google Maps does not provide maps larger than 640x480
         int width = qMin(webView->width(), 640);
         int height = qMin(webView->height(), 480);
+
+        if ((width == 0) || (height == 0))
+            return;
+
         QString url = GMAPS_STATICMAP_URL_TEMPLATE
                       .arg(QString::number(info.coordinate().latitude()))
                       .arg(QString::number(info.coordinate().longitude()))

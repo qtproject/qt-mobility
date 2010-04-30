@@ -46,18 +46,18 @@
 #include <QtCore/qpointer.h>
 
 
-#include <qmediaplayer.h>
+#include "qmediaplayer.h"
 
-#include <qmediaobject_p.h>
-#include <qmediaservice.h>
-#include <qmediaplayercontrol.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaplaylist.h>
-#include <qmediaplaylistcontrol.h>
-#include <qvideowidget.h>
-#include <qgraphicsvideoitem.h>
+#include "qmediaobject_p.h"
+#include "qmediaservice.h"
+#include "qmediaplayercontrol.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaplaylist.h"
+#include "qmediaplaylistcontrol.h"
+#include "qvideowidget.h"
+#include "qgraphicsvideoitem.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlayer
@@ -240,10 +240,17 @@ void QMediaPlayerPrivate::_q_playlistDestroyed()
 
 static QMediaService *playerService(QMediaPlayer::Flags flags, QMediaServiceProvider *provider)
 {
-    if (flags && QMediaPlayer::LowLatency)
+    if (flags) {
+        QMediaServiceProviderHint::Features features = 0;
+        if (flags & QMediaPlayer::LowLatency)
+            features |= QMediaServiceProviderHint::LowLatencyPlayback;
+
+        if (flags & QMediaPlayer::StreamPlayback)
+            features |= QMediaServiceProviderHint::StreamPlayback;
+
         return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER,
-                                        QMediaServiceProviderHint(QMediaServiceProviderHint::LowLatencyPlayback));
-    else
+                                        QMediaServiceProviderHint(features));
+    } else
         return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER);
 }
 
@@ -642,7 +649,7 @@ void QMediaPlayer::unbind(QObject *obj)
     The \a flags argument allows additional requirements such as performance indicators to be
     specified.
 */
-QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
+QtMediaServices::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                const QStringList& codecs,
                                                Flags flags)
 {
@@ -942,8 +949,13 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
             The player is expected to be used with simple audio formats,
             but playback should start without significant delay.
             Such playback service can be used for beeps, ringtones, etc.
+
+    \value StreamPlayback
+            The player is expected to play QIODevice based streams.
+            If passed to QMediaPlayer constructor, the service supporting
+            streams playback will be choosen.
 */
 
 #include "moc_qmediaplayer.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

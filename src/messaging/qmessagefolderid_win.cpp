@@ -108,7 +108,7 @@ QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
 QMessageFolderId::QMessageFolderId(const QString& id)
     : d_ptr(new QMessageFolderIdPrivate(this))
 {
-    QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
+	QDataStream idStream(QByteArray::fromBase64(WinHelpers::stripIdPrefix(id).toLatin1()));
     d_ptr->_valid = true;
 #ifdef _WIN32_WCE
     idStream >> d_ptr->_entryId;
@@ -201,7 +201,7 @@ QString QMessageFolderId::toString() const
     if (d_ptr->_entryId.count())
         encodedIdStream << d_ptr->_entryId;
 #endif
-    return encodedId.toBase64();
+	return WinHelpers::addIdPrefix(encodedId.toBase64());
 }
 
 bool QMessageFolderId::isValid() const
