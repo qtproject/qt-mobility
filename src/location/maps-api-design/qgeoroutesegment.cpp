@@ -40,81 +40,154 @@
 ****************************************************************************/
 
 #include "qgeoroutesegment.h"
+#include "qgeoroutesegment_p.h"
 
 #include "qgeocoordinate.h"
 #include <QDateTime>
 
 QTM_BEGIN_NAMESPACE
 
-/*
-enum RouteSegmentType {
-    NormalSegment,
-    PrivateTransportSegment,
-    PublicTransportSegment,
-    TruckSegment
+/*!
+  \class QGeoRouteSegment
+  \brief The QGeoRouteSegment class
+  \ingroup maps
+
+*/
+
+/*!
+  \enum QGeoRouteSegment::SegmentType
+
+  description
+
+  \value NormalSegment description
+  \value PrivateTransportSegment description
+  \value PublicTransportSegment description
+  \value TruckSegment description
 };
 */
 
+/*!
+*/
 QGeoRouteSegment::QGeoRouteSegment()
-{
-}
+    : d_ptr(new QGeoRouteSegmentPrivate()) {}
 
+/*!
+*/
 QGeoRouteSegment::QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr)
-    : d_ptr(d_ptr)
-{
-}
+    : d_ptr(d_ptr) {}
 
+/*!
+*/
 QGeoRouteSegment::~QGeoRouteSegment()
 {
+    Q_D(QGeoRouteSegment);
+    delete d;
 }
 
-QGeoRouteSegment::RouteSegmentType QGeoRouteSegment::type() const
+/*!
+*/
+QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
 {
-    return NormalSegment;
+    Q_D(const QGeoRouteSegment);
+    return d->type;
 }
 
+/*!
+*/
 void QGeoRouteSegment::setDuration(const QDateTime &duration)
 {
-    Q_UNUSED(duration);
+    Q_D(QGeoRouteSegment);
+    d->duration = duration;
 }
 
+/*!
+*/
 QDateTime QGeoRouteSegment::duration() const
 {
-    return QDateTime();
+    Q_D(const QGeoRouteSegment);
+    return d->duration;
 }
 
+/*!
+*/
 void QGeoRouteSegment::setDistance(double value, QGeoMapWidget::DistanceUnits units)
 {
-    Q_UNUSED(value);
-    Q_UNUSED(units);
+    Q_D(QGeoRouteSegment);
+    d->distanceValue = value;
+    d->distanceUnits = units;
 }
 
+/*!
+*/
 double QGeoRouteSegment::distance(QGeoMapWidget::DistanceUnits units) const
 {
-    Q_UNUSED(units);
-    return 0.0;
+    Q_D(const QGeoRouteSegment);
+    return QGeoMapWidget::convertDistance(d->distanceValue,
+                                          d->distanceUnits,
+                                          units);
 }
 
 // bounds per segment?  or is bounds per route enough?
 
+/*!
+*/
 void QGeoRouteSegment::setGeometry(const QList<QGeoCoordinate> &geometry)
 {
-    Q_UNUSED(geometry);
+    Q_D(QGeoRouteSegment);
+    d->geometry = geometry;
 }
 
+/*!
+*/
 QList<QGeoCoordinate> QGeoRouteSegment::geometry() const
 {
-    return QList<QGeoCoordinate>();
+    Q_D(const QGeoRouteSegment);
+    return d->geometry;
 }
 
+/*!
+*/
 void QGeoRouteSegment::setInstructions(const QList<const QGeoNavigationInstruction *> &instructions)
 {
-    Q_UNUSED(instructions);
+    Q_D(QGeoRouteSegment);
+    d->instructions = instructions;
 }
 
+/*!
+*/
 QList<const QGeoNavigationInstruction*> QGeoRouteSegment::instructions() const
 {
-    return QList<const QGeoNavigationInstruction*>();
+    Q_D(const QGeoRouteSegment);
+    return d->instructions;
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
+{
+    type = QGeoRouteSegment::NormalSegment;
+}
+
+QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
+    : type(other.type),
+    duration(other.duration),
+    distanceValue(other.distanceValue),
+    distanceUnits(other.distanceUnits),
+    geometry(other.geometry),
+    instructions(other.instructions){}
+
+QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
+
+QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate &other)
+{
+    type = other.type;
+    duration = other.duration;
+    distanceValue = other.distanceValue;
+    distanceUnits = other.distanceUnits;
+    geometry = other.geometry;
+    instructions = other.instructions;
+    return *this;
 }
 
 QTM_END_NAMESPACE

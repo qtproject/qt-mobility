@@ -44,73 +44,151 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+  \class QGeoRouteRequestOptions
+  \brief The QGeoRouteRequestOptions class
+  \ingroup maps
+
+*/
+
+/*!
+*/
 QGeoRouteRequestOptions::QGeoRouteRequestOptions()
-{
-}
+    : d_ptr(new QGeoRouteRequestOptionsPrivate()) {}
 
+/*!
+*/
 QGeoRouteRequestOptions::QGeoRouteRequestOptions(const QGeoRouteRequestOptions &other)
-{
-    Q_UNUSED(other);
-}
+    : d_ptr(new QGeoRouteRequestOptionsPrivate(*(other.d_ptr))) {}
 
+/*!
+*/
 QGeoRouteRequestOptions::~QGeoRouteRequestOptions()
 {
+    Q_D(QGeoRouteRequestOptions);
+    delete d;
 }
 
+/*!
+*/
 QGeoRouteRequestOptions& QGeoRouteRequestOptions::operator= (const QGeoRouteRequestOptions &other)
 {
-    Q_UNUSED(other);
+    *d_ptr = *(other.d_ptr);
     return *this;
 }
 
-// default to 0
+/*!
+*/
 void QGeoRouteRequestOptions::setNumberAlternativeRoutes(int alternatives)
 {
-    Q_UNUSED(alternatives);
+    Q_D(QGeoRouteRequestOptions);
+    d->alternativeRoutes = alternatives;
 }
 
+/*!
+*/
 int QGeoRouteRequestOptions::numberAlternativeRoutes() const
 {
-    return 0;
+    Q_D(const QGeoRouteRequestOptions);
+    return d->alternativeRoutes;
 }
 
-// default to QGeoRoutingService::TravelByCar
+/*!
+*/
 void QGeoRouteRequestOptions::setTravelModes(QGeoRoutingService::TravelModes travelModes)
 {
-    Q_UNUSED(travelModes);
+    Q_D(QGeoRouteRequestOptions);
+    d->travelModes = travelModes;
 }
 
+/*!
+*/
 QGeoRoutingService::TravelModes QGeoRouteRequestOptions::travelModes() const
 {
-    return QGeoRoutingService::CarTravel;
+    Q_D(const QGeoRouteRequestOptions);
+    return d->travelModes;
 }
 
-// defaults to QGeoRoutingService::NoAvoidance
+/*!
+*/
 void QGeoRouteRequestOptions::setAvoidFeatureTypes(QGeoRoutingService::AvoidFeatureTypes avoidFeatureTypes)
 {
-    Q_UNUSED(avoidFeatureTypes);
+    Q_D(QGeoRouteRequestOptions);
+    d->avoidFeatureTypes = avoidFeatureTypes;
 }
 
+/*!
+*/
 QGeoRoutingService::AvoidFeatureTypes QGeoRouteRequestOptions::avoidFeatureTypes() const
 {
-    return QGeoRoutingService::AvoidNothing;
+    Q_D(const QGeoRouteRequestOptions);
+    return d->avoidFeatureTypes;
 }
 
-// defaults to QGeoRoutingService::OptimizeFastest
+/*!
+*/
 void QGeoRouteRequestOptions::setRouteOptimization(QGeoRoutingService::RouteOptimization optimization)
 {
-    Q_UNUSED(optimization);
+    Q_D(QGeoRouteRequestOptions);
+    d->routeOptimization = optimization;
 }
 
+/*!
+*/
 QGeoRoutingService::RouteOptimization QGeoRouteRequestOptions::routeOptimization() const
 {
-    return QGeoRoutingService::FastestRoute;
+    Q_D(const QGeoRouteRequestOptions);
+    return d->routeOptimization;
 }
 
 // defaults to empty - no subclass required yet
 // this is how we handle private / public / truck attributes
-//void QGeoRouteRequestOptions::setTransitOptions(const QList<const QGeoRouteTransitOptions *> &transitOptions);
-//QList<const QGeoRouteTransitOptions *> QGeoRouteRequestOptions::transitOptions() const;
+///*!
+//*/
+//void QGeoRouteRequestOptions::setTransitOptions(const QList<const QGeoRouteTransitOptions *> &transitOptions)
+//{
+//    Q_D(QGeoRouteRequestOptions);
+//    d->transitOptions = transitOptions;
+//}
+
+///*!
+//*/
+//QList<const QGeoRouteTransitOptions *> QGeoRouteRequestOptions::transitOptions() const
+//{
+//    Q_D(const QGeoRouteRequestOptions);
+//    return d->transitOptions;
+//}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoRouteRequestOptionsPrivate::QGeoRouteRequestOptionsPrivate()
+{
+    alternativeRoutes = 0;
+    travelModes = QGeoRoutingService::CarTravel;
+    avoidFeatureTypes = QGeoRoutingService::AvoidNothing;
+    routeOptimization = QGeoRoutingService::FastestRoute;
+}
+
+QGeoRouteRequestOptionsPrivate::QGeoRouteRequestOptionsPrivate(const QGeoRouteRequestOptionsPrivate &other)
+    : alternativeRoutes(other.alternativeRoutes),
+    travelModes(other.travelModes),
+    //transitOptions(other.transitOptions),
+    avoidFeatureTypes(other.avoidFeatureTypes),
+    routeOptimization(other.routeOptimization) {}
+
+QGeoRouteRequestOptionsPrivate::~QGeoRouteRequestOptionsPrivate() {}
+
+QGeoRouteRequestOptionsPrivate& QGeoRouteRequestOptionsPrivate::operator= (const QGeoRouteRequestOptionsPrivate &other)
+{
+    alternativeRoutes = other.alternativeRoutes;
+    travelModes = other.travelModes;
+    //transitOptions = other.transitOptions;
+    avoidFeatureTypes = other.avoidFeatureTypes;
+    routeOptimization = other.routeOptimization;
+
+    return *this;
+}
 
 QTM_END_NAMESPACE
 

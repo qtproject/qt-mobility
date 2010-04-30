@@ -28,18 +28,26 @@ PUBLIC_HEADERS += \
     qgeoroutereply.h \
     qgeorouterequestoptions.h \
     qgeoroutesegment.h \
-    qgeoroutingservice.h
+    qgeoroutingservice.h \
+    qgeoserviceprovider.h
 
 PRIVATE_HEADERS += \
     qgeoboundingbox_p.h \
+    qgeocodereply_p.h \
     qgeocoderequestoptions_p.h \
+    qgeocodingservice_p.h \
     qgeomapobject_p.h \
+    qgeomappingservice_p.h \
+    qgeomapreply_p.h \
     qgeomapwidget_p.h \
     qgeonavigationhelper_p.h \
     qgeonavigationinstruction_p.h \
     qgeoroute_p.h \
+    qgeoroutereply_p.h \
     qgeorouterequestoptions_p.h \
-    qgeoroutesegment_p.h
+    qgeoroutingservice_p.h \
+    qgeoroutesegment_p.h \
+    qgeoserviceprovider_p.h
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
@@ -58,7 +66,8 @@ SOURCES += \
     qgeoroutereply.cpp \
     qgeorouterequestoptions.cpp \
     qgeoroutesegment.cpp \
-    qgeoroutingservice.cpp
+    qgeoroutingservice.cpp \
+    qgeoserviceprovider.cpp
 
 CONFIG += middleware
 include(../../../features/deploy.pri)

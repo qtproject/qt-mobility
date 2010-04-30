@@ -55,7 +55,7 @@ class Q_LOCATION_EXPORT QGeoRouteSegment {
 
 public:
     
-    enum RouteSegmentType {
+    enum SegmentType {
         NormalSegment,
         PrivateTransportSegment,
         PublicTransportSegment,
@@ -65,7 +65,7 @@ public:
     QGeoRouteSegment();
     virtual ~QGeoRouteSegment();
 
-    virtual RouteSegmentType type() const;
+    virtual SegmentType type() const;
 
     void setDuration(const QDateTime &duration);
     QDateTime duration() const;

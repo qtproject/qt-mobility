@@ -45,30 +45,47 @@
 
 QTM_BEGIN_NAMESPACE
 
-        QGeoMapReply::QGeoMapReply(QObject *parent) : QObject(parent)
+/*!
+  \class QGeoMapReply
+  \brief The QGeoMapReply class
+  \ingroup maps
+
+*/
+
+/*!
+*/
+QGeoMapReply::QGeoMapReply(QObject *parent) : QObject(parent)
 {
 }
 
+/*!
+*/
 QGeoMapReply::~QGeoMapReply()
 {
 }
 
+/*!
+*/
 void QGeoMapReply::setMapImage(const QPixmap &image)
 {
     Q_UNUSED(image);
 }
 
+/*!
+*/
 QPixmap QGeoMapReply::mapImage() const
 {
     return QPixmap();
 }
 
-        /*
-    signals:
-        void finished();
-        void error(QGeoMappingService::ErrorCode errorCode,
-                   QString errorString);
-                   */
+/*!
+\fn void QGeoMapReply::finished()
+*/
+
+/*!
+\fn void QGeoMapReply::error(QGeoMappingService::ErrorCode errorCode,
+                             QString errorString)
+*/
 
 
 #include "moc_qgeomapreply.cpp"

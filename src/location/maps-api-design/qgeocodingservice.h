@@ -57,51 +57,29 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoCodeReply;
 
+class QGeoCodingServicePrivate;
+
 class Q_LOCATION_EXPORT QGeoCodingService : public QObject {
 
     Q_OBJECT
 
 public:
-    enum ServiceProvider {
-        NokiaServices
-    };
-
-    // Option - add a serviceoptions object, possible sublcassed per service provider
-    // ie createService(new QGeoCodingServiceOptionsNokia(... nokia service specific options...)
-    // means one public class per service / provider combination
-    //    already going to have 2 private classes per service / provider combination
-    //    good opening for service specific documentation
-    //    means more API to maintain
-    //    easier to document than string maps
-    //    can move the supported feature information to these classes
-    //        auth information is in here, so can be more nuanced in the reporting
-
-    static QGeoCodingService* createService(QGeoCodingService::ServiceProvider provider,
-                                            QString versionString,
-                                            QString token = QString());
-
-    // Option - add a servicerequest object, possible sublcassed per service provider
-
     enum ErrorCode {
         NoError
     };
 
     enum SupportLevel {
         NoSupport,
-        NoSupportWithCurrentToken,
-        SupportedWithCurrentToken,
+        NoSupportWithCurrentAuth,
+        SupportedWithCurrentAuth,
         Supported
     };
 
-    enum GeocodingFeature {
-        GeocodeFromAddress,
-        GeocodeFromString,
-        ReverseGeocodeFromCoordinate
+    enum RequestOption {
+        MaximumResults
     };
 
-    virtual SupportLevel featureSupported(QGeoCodingService::GeocodingFeature feature) = 0;
-
-    QGeoCodingService(QObject *parent = 0);
+    QGeoCodingService();
     virtual ~QGeoCodingService();
 
     virtual QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coord,
@@ -114,14 +92,22 @@ public:
                                     const QGeoBoundingBox &bounds = QGeoBoundingBox(),
                                     const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
 
+    SupportLevel supportedRequestOption(RequestOption option) const;
+
 signals:
     void replyFinished(QGeoCodeReply *reply);
     void replyError(QGeoCodeReply *reply,
                     QGeoCodingService::ErrorCode errorCode,
                     QString errorString);
 
+protected:
+    void setSupportedRequestOption(RequestOption option, SupportLevel level);
+
+    QGeoCodingServicePrivate* d_ptr;
+
 private:
     Q_DISABLE_COPY(QGeoCodingService)
+    Q_DECLARE_PRIVATE(QGeoCodingService)
 };
 
 QTM_END_NAMESPACE

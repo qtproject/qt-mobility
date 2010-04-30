@@ -42,4 +42,33 @@
 #ifndef QGEOROUTESEGMENT_P_H
 #define QGEOROUTESEGMENT_P_H
 
+#include "qgeomapwidget.h"
+#include "qgeoroutesegment.h"
+
+#include <QList>
+#include <QDateTime>
+
+QTM_BEGIN_NAMESPACE
+
+class QGeoCoordinate;
+class QGeoNavigationInstruction;
+
+class QGeoRouteSegmentPrivate {
+public:
+    QGeoRouteSegmentPrivate();
+    QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other);
+    ~QGeoRouteSegmentPrivate();
+
+    QGeoRouteSegmentPrivate& operator= (const QGeoRouteSegmentPrivate &other);
+
+    QGeoRouteSegment::SegmentType type;
+    QDateTime duration;
+    double distanceValue;
+    QGeoMapWidget::DistanceUnits distanceUnits;
+    QList<QGeoCoordinate> geometry;
+    QList<const QGeoNavigationInstruction*> instructions;
+};
+
+QTM_END_NAMESPACE
+
 #endif

@@ -44,33 +44,87 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoCodeRequestOptions
+    \brief The QGeoCodeRequestOptions class represents various options which
+    may be specified when requesting geocoding information with an instance of
+    QGeoCodingService.
+    \ingroup maps
+
+    The most common uses of the methods in QGeoCodingService will use a single
+    QGeoCoordinate, QGeoAddress or QString as their argument.  A GeoBoundingBox
+    can also be supplied to bias the results to a particular area.
+
+    The QGeoCodeRequestOptions represents the options corresponding to the
+    more advanced (or less common) options which can be passed to the
+    QGeoCodingService methods.
+*/
+
+/*!
+    Constructs a geocoding options object.
+*/
 QGeoCodeRequestOptions::QGeoCodeRequestOptions()
-{
-}
+    : d_ptr(new QGeoCodeRequestOptionsPrivate()) {}
 
+/*!
+    Constructs a geocoding options object from \a other.
+*/
 QGeoCodeRequestOptions::QGeoCodeRequestOptions(const QGeoCodeRequestOptions &other)
-{
-    Q_UNUSED(other);
-}
+    : d_ptr(new QGeoCodeRequestOptionsPrivate(*(other.d_ptr))) {}
 
+/*!
+    Destroys the geocoding options object.
+*/
 QGeoCodeRequestOptions::~QGeoCodeRequestOptions()
 {
+    Q_D(QGeoCodeRequestOptions);
+    delete d;
 }
 
+/*!
+    Assigns the value of \a other to this geocoding options object and
+    returns a reference to this geocoding options object.
+*/
 QGeoCodeRequestOptions& QGeoCodeRequestOptions::operator= (const QGeoCodeRequestOptions &other)
 {
-    Q_UNUSED(other);
+    *d_ptr = *(other.d_ptr);
     return *this;
 }
 
-void QGeoCodeRequestOptions::setMaxResponses(int maxResponses)
+/*!
+    Sets the maximum number of responses to request to \a maximumResponses.
+*/
+void QGeoCodeRequestOptions::setMaximumResponses(int maximumResponses)
 {
-    Q_UNUSED(maxResponses);
+    Q_D(QGeoCodeRequestOptions);
+    d->maximumResponses = maximumResponses;
 }
 
+/*!
+    Returns the maximum number of responses which will be requested.
+*/
 int QGeoCodeRequestOptions::maximumResponses() const
 {
-    return 0;
+    Q_D(const QGeoCodeRequestOptions);
+    return d->maximumResponses;
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoCodeRequestOptionsPrivate::QGeoCodeRequestOptionsPrivate() {
+    maximumResponses = 1;
+}
+
+QGeoCodeRequestOptionsPrivate::QGeoCodeRequestOptionsPrivate(const QGeoCodeRequestOptionsPrivate &other)
+    : maximumResponses(other.maximumResponses) {}
+
+QGeoCodeRequestOptionsPrivate::~QGeoCodeRequestOptionsPrivate() {}
+
+QGeoCodeRequestOptionsPrivate& QGeoCodeRequestOptionsPrivate::operator= (const QGeoCodeRequestOptionsPrivate &other)
+{
+    maximumResponses = other.maximumResponses;
+    return *this;
 }
 
 QTM_END_NAMESPACE

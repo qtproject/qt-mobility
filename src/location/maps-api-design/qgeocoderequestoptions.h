@@ -58,7 +58,7 @@ public:
 
     QGeoCodeRequestOptions& operator = (const QGeoCodeRequestOptions &other);
 
-    void setMaxResponses(int maxResponses);
+    void setMaximumResponses(int maximumResponses);
     int maximumResponses() const;
 
 private:

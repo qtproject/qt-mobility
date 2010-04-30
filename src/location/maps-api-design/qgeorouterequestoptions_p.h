@@ -42,4 +42,25 @@
 #ifndef QGEOROUTEREQUESTOPTIONS_P_H
 #define QGEOROUTEREQUESTOPTIONS_P_H
 
+#include "qgeoroutingservice.h"
+
+QTM_BEGIN_NAMESPACE
+
+class QGeoRouteRequestOptionsPrivate {
+public:
+    QGeoRouteRequestOptionsPrivate();
+    QGeoRouteRequestOptionsPrivate(const QGeoRouteRequestOptionsPrivate &other);
+    ~QGeoRouteRequestOptionsPrivate();
+
+    QGeoRouteRequestOptionsPrivate& operator= (const QGeoRouteRequestOptionsPrivate &other);
+
+    int alternativeRoutes;
+    QGeoRoutingService::TravelModes travelModes;
+    //QList<const QGeoRouteTransitOptions *> transitOptions;
+    QGeoRoutingService::AvoidFeatureTypes avoidFeatureTypes;
+    QGeoRoutingService::RouteOptimization routeOptimization;
+};
+
+QTM_END_NAMESPACE
+
 #endif

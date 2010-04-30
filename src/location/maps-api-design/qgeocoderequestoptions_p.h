@@ -42,4 +42,21 @@
 #ifndef QGEOCODEREQUESTOPTIONS_P_H
 #define QGEOCODEREQUESTOPTIONS_P_H
 
+#include "qmobilityglobal.h"
+
+QTM_BEGIN_NAMESPACE
+
+class QGeoCodeRequestOptionsPrivate {
+public:
+    QGeoCodeRequestOptionsPrivate();
+    QGeoCodeRequestOptionsPrivate(const QGeoCodeRequestOptionsPrivate &other);
+    ~QGeoCodeRequestOptionsPrivate();
+
+    QGeoCodeRequestOptionsPrivate& operator= (const QGeoCodeRequestOptionsPrivate &other);
+
+    int maximumResponses;
+};
+
+QTM_END_NAMESPACE
+
 #endif

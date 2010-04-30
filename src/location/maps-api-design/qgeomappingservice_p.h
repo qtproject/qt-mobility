@@ -39,34 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTE_P_H
-#define QGEOROUTE_P_H
+#ifndef QGEOMAPPINGSERVICE_P_H
+#define QGEOMAPPINGSERVICE_P_H
 
-#include "qgeomapwidget.h"
-#include "qgeoboundingbox.h"
+#include "qgeomappingservice.h"
 
-#include <QDateTime>
+#include <QSize>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoRouteSegment;
-
-class QGeoRoutePrivate {
+class QGeoMappingServicePrivate
+{
 public:
-    QGeoRoutePrivate();
-    QGeoRoutePrivate(const QGeoRoutePrivate &other);
-    ~QGeoRoutePrivate();
+    QGeoMappingServicePrivate();
+    QGeoMappingServicePrivate(const QGeoMappingServicePrivate &other);
+    ~QGeoMappingServicePrivate();
 
-    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
+    QGeoMappingServicePrivate& operator= (const QGeoMappingServicePrivate &other);
 
-    QList<QGeoCoordinate> routeOverview;
-    QGeoBoundingBox bounds;
-    QList<const QGeoRouteSegment*> routeSegments;
-    QDateTime duration;
-
-    double distanceValue;
-    QGeoMapWidget::DistanceUnits distanceUnits;
+    QList<QGeoMappingService::MapType> supportedMapTypes;
+    QList<QString> supportedImageFormats;
+    int minimumZoomLevel;
+    int maximumZoomLevel;
+    QSize minimumSize;
+    QSize maximumSize;
 };
 
 QTM_END_NAMESPACE

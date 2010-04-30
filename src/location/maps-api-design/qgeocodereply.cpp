@@ -45,34 +45,56 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoCodeReply
+    \brief The QGeoCodeReply class represents the result of a request for geocoding information.
+    \ingroup maps
+
+
+*/
+
+/*!
+  Constructs a geocoding reply with parent \a parent.
+*/
 QGeoCodeReply::QGeoCodeReply(QObject *parent) : QObject(parent)
 {
 }
 
+/*!
+  Destroys the geocoding reply object.
+*/
 QGeoCodeReply::~QGeoCodeReply()
 {
 }
 
 // ordered from most to least specific
+/*!
+*/
 void QGeoCodeReply::setLocation(const QList<QGeoLocation> &locations)
 {
     Q_UNUSED(locations);
 }
 
+/*!
+*/
 QList<QGeoLocation> QGeoCodeReply::locations() const
 {
     return QList<QGeoLocation>();
 }
 
+/*!
+*/
 void QGeoCodeReply::cancel()
 {
 }
-    /*
-    signals:
-        void finished();
-        void error(QGeoCodingService::ErrorCode errorCode,
-                   QString errorString);
-                   */
+
+/*!
+  \fn void QGeoCodeReply::finished();
+*/
+
+/*!
+  \fn void QGeoCodeReply::error(QGeoCodingService::ErrorCode errorCode, QString errorString)
+*/
 
 #include "moc_qgeocodereply.cpp"
 

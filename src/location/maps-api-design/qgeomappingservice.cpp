@@ -40,24 +40,11 @@
 ****************************************************************************/
 
 #include "qgeomappingservice.h"
+#include "qgeomappingservice_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMappingService* QGeoMappingService::createService(QGeoMappingService::ServiceProvider provider,
-                                                                QString versionString,
-                                                                QString token)
-{
-    Q_UNUSED(provider);
-    Q_UNUSED(versionString);
-    Q_UNUSED(token);
-    return 0;
-}
-
 /*
-        enum ServiceProvider {
-            NokiaServices
-        };
-
         // features supported (rotation, tilting, etc..)
 
         enum MapType {
@@ -72,23 +59,127 @@ QGeoMappingService* QGeoMappingService::createService(QGeoMappingService::Servic
         };
 */
 
-QGeoMappingService::QGeoMappingService(QObject *parent) : QObject(parent)
-{
-}
+/*!
+*/
+QGeoMappingService::QGeoMappingService()
+    : d_ptr(new QGeoMappingServicePrivate()) {}
 
+/*!
+*/
 QGeoMappingService::~QGeoMappingService()
 {
+    Q_D(QGeoMappingService);
+    delete d;
+}
+
+/*!
+*/
+QList<QGeoMappingService::MapType> QGeoMappingService::supportedMapTypes() const
+{
+    Q_D(const QGeoMappingService);
+    return d->supportedMapTypes;
+}
+
+/*!
+*/
+QList<QString> QGeoMappingService::supportedImageFormats() const
+{
+    Q_D(const QGeoMappingService);
+    return d->supportedImageFormats;
+}
+
+/*!
+*/
+int QGeoMappingService::minimumZoomLevel() const
+{
+    Q_D(const QGeoMappingService);
+    return d->minimumZoomLevel;
+}
+
+/*!
+*/
+int QGeoMappingService::maximumZoomLevel() const
+
+{
+    Q_D(const QGeoMappingService);
+    return d->maximumZoomLevel;
+}
+
+/*!
+*/
+QSize QGeoMappingService::minimumSize() const
+{
+    Q_D(const QGeoMappingService);
+    return d->minimumSize;
+}
+
+/*!
+*/
+QSize QGeoMappingService::maximumSize() const
+{
+    Q_D(const QGeoMappingService);
+    return d->maximumSize;
+}
+
+/*!
+\fn void QGeoMappingService::replyFinished(QGeoMapReply *reply)
+*/
+
+/*!
+\fn void QGeoMappingService::replyError(QGeoMapReply *reply,
+                                        QGeoMappingService::ErrorCode errorCode,
+                                        QString errorString);
+*/
+
+/*!
+*/
+void QGeoMappingService::setSupportedMapTypes(const QList<QGeoMappingService::MapType> &mapTypes)
+{
+    Q_D(QGeoMappingService);
+    d->supportedMapTypes = mapTypes;
+}
+
+/*!
+*/
+void QGeoMappingService::setSupportedImageFormats(const QList<QString> &imageFormats)
+{
+    Q_D(QGeoMappingService);
+    d->supportedImageFormats = imageFormats;
+}
+
+/*!
+*/
+void QGeoMappingService::setMinimumZoomLevel(int minimumZoom)
+{
+    Q_D(QGeoMappingService);
+    d->minimumZoomLevel = minimumZoom;
+}
+
+/*!
+*/
+void QGeoMappingService::setMaximumZoomLevel(int maximumZoom)
+{
+    Q_D(QGeoMappingService);
+    d->maximumZoomLevel = maximumZoom;
+}
+
+/*!
+*/
+void QGeoMappingService::setMinimumSize(const QSize &minimumSize)
+{
+    Q_D(QGeoMappingService);
+    d->minimumSize = minimumSize;
+}
+
+/*!
+*/
+void QGeoMappingService::setMaximumSize(const QSize &maximumSize)
+{
+    Q_D(QGeoMappingService);
+    d->maximumSize = maximumSize;
 }
 
         /*
-        virtual QList<MapType> supportedMapTypes() const = 0;
-        virtual QList<QString> supportedImageFormats() const = 0;
-
-        virtual int minimumZoomLevel() const = 0;
-        virtual int maximumZoomLevel() const = 0;
-
-        virtual QSize minimumSize() const = 0;
-        virtual QSize maximumSize() const = 0;
 
     // Option 1 - simplest
         virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
@@ -108,13 +199,34 @@ QGeoMappingService::~QGeoMappingService()
 
         // Option 4 - Could pass the map in along with other options
         // - it knows the center, zoom level and size
-
-    signals:
-        void replyFinished(QGeoMapReply *reply);
-        void replyError(QGeoMapReply *reply,
-                        QGeoMappingService::ErrorCode errorCode,
-                        QString errorString);
 */
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoMappingServicePrivate::QGeoMappingServicePrivate() {}
+
+QGeoMappingServicePrivate::QGeoMappingServicePrivate(const QGeoMappingServicePrivate &other)
+    : supportedMapTypes(other.supportedMapTypes),
+    supportedImageFormats(other.supportedImageFormats),
+    minimumZoomLevel(other.minimumZoomLevel),
+    maximumZoomLevel(other.maximumZoomLevel),
+    minimumSize(other.minimumSize),
+    maximumSize(other.maximumSize) {}
+
+QGeoMappingServicePrivate::~QGeoMappingServicePrivate() {}
+
+QGeoMappingServicePrivate& QGeoMappingServicePrivate::operator= (const QGeoMappingServicePrivate &other)
+{
+    supportedMapTypes = other.supportedMapTypes;
+    supportedImageFormats = other.supportedImageFormats;
+    minimumZoomLevel = other.minimumZoomLevel;
+    maximumZoomLevel = other.maximumZoomLevel;
+    minimumSize = other.minimumSize;
+    maximumSize = other.maximumSize;
+
+    return *this;
+}
 
 #include "moc_qgeomappingservice.cpp"
 

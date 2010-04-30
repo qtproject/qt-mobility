@@ -49,81 +49,166 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoRoute
+    \brief The QGeoRoute class represents a route between two points.
+    \ingroup maps
+
+    A QGeoRoute object contains high level information about a route, such
+    as the distance covered by the route, the estimated duration of the route,
+    and enough information to render a basic image of the route on a map.
+
+    The QGeoRoute object also contains a list of QGeoRouteSegment objecs, or
+    objects derived from QGeoRouteSegment, which describe subsections of the
+    route in greater detail.  The subclasses of QGeoRouteSegment are used to
+    provide specific information for the subsection of the route for particular
+    cases, as may be needed when the segment is to be traversed via public
+    transport or in a truck.
+*/
+
+/*!
+*/
 QGeoRoute::QGeoRoute()
-{
-}
+    : d_ptr(new QGeoRoutePrivate()) {}
 
+/*!
+*/
 QGeoRoute::QGeoRoute(const QGeoRoute &other)
-{
-    Q_UNUSED(other);
-}
+    : d_ptr(new QGeoRoutePrivate(*(other.d_ptr))) {}
 
+/*!
+*/
 QGeoRoute::~QGeoRoute()
 {
+    Q_D(QGeoRoute);
+    delete d;
 }
 
+/*!
+*/
 QGeoRoute& QGeoRoute::operator= (const QGeoRoute &other)
 {
-    Q_UNUSED(other);
+    *d_ptr = *(other.d_ptr);
     return *this;
 }
 
+/*!
+*/
 void QGeoRoute::setRouteOverview(const QList<QGeoCoordinate> &routeOverview)
 {
-    Q_UNUSED(routeOverview);
+    Q_D(QGeoRoute);
+    d->routeOverview = routeOverview;
 }
 
+/*!
+*/
 QList<QGeoCoordinate> QGeoRoute::routeOverview() const
 {
-    return QList<QGeoCoordinate>();
+    Q_D(const QGeoRoute);
+    return d->routeOverview;
 }
 
+/*!
+*/
 void QGeoRoute::setBounds(const QGeoBoundingBox &bounds)
 {
-    Q_UNUSED(bounds);
+    Q_D(QGeoRoute);
+    d->bounds = bounds;
 }
 
+/*!
+*/
 QGeoBoundingBox QGeoRoute::bounds() const
 {
-    return QGeoBoundingBox();
+    Q_D(const QGeoRoute);
+    return d->bounds;
 }
 
+/*!
+*/
 void QGeoRoute::setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments)
 {
-    Q_UNUSED(routeSegments);
+    Q_D(QGeoRoute);
+    d->routeSegments = routeSegments;
 }
 
+/*!
+*/
 QList<const QGeoRouteSegment *> QGeoRoute::routeSegments() const
 {
-    return QList<const QGeoRouteSegment *>();
+    Q_D(const QGeoRoute);
+    return d->routeSegments;
 }
 
+/*!
+*/
 void QGeoRoute::setDuration(const QDateTime &duration)
 {
-    Q_UNUSED(duration);
+    Q_D(QGeoRoute);
+    d->duration = duration;
 }
 
+/*!
+*/
 QDateTime QGeoRoute::duration() const
 {
-    return QDateTime();
+    Q_D(const QGeoRoute);
+    return d->duration;
 }
 
+/*!
+*/
 void QGeoRoute::setDistance(double value, QGeoMapWidget::DistanceUnits units)
 {
-    Q_UNUSED(value);
-    Q_UNUSED(units);
+    Q_D(QGeoRoute);
+    d->distanceValue = value;
+    d->distanceUnits = units;
 }
 
+/*!
+*/
 double QGeoRoute::distance(QGeoMapWidget::DistanceUnits units) const
 {
-    Q_UNUSED(units);
-    return 0.0;
+    Q_D(const QGeoRoute);
+
+    return QGeoMapWidget::convertDistance(d->distanceValue,
+                                          d->distanceUnits,
+                                          units);
 }
 
+/*!
+*/
 QGeoCoordinate QGeoRoute::closestPointOnRoute(const QGeoCoordinate &position) const
 {
+    // TODO implement
     Q_UNUSED(position);
     return QGeoCoordinate();
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoRoutePrivate::QGeoRoutePrivate() {}
+
+QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
+    : routeOverview(other.routeOverview),
+    bounds(other.bounds),
+    routeSegments(other.routeSegments),
+    duration(other.duration),
+    distanceValue(other.distanceValue),
+    distanceUnits(other.distanceUnits) {}
+
+QGeoRoutePrivate::~QGeoRoutePrivate() {}
+
+QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate &other)
+{
+    routeOverview = other.routeOverview;
+    bounds = other.bounds;
+    routeSegments = other.routeSegments;
+    duration = other.duration;
+    distanceValue = other.distanceValue;
+    distanceUnits = other.distanceUnits;
+    return *this;
 }
 
 QTM_END_NAMESPACE

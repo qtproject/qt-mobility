@@ -54,31 +54,17 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoMapReply;
 
+class QGeoMappingServicePrivate;
+
 class Q_LOCATION_EXPORT QGeoMappingService : public QObject{
 
     Q_OBJECT
 
 public:
-    enum ServiceProvider {
-        NokiaServices
+
+    enum ErrorCode {
+        NoError
     };
-
-    static QGeoMappingService* createService(QGeoMappingService::ServiceProvider provider,
-                                            QString versionString,
-                                            QString token = QString());
-
-
-    // Option - add a serviceoptions object, possible sublcassed per service provider
-    // ie createService(new QGeoMapServiceOptionsNokia(... nokia service specific options...)
-    // means one public class per service / provider combination
-    //    already going to have 2 private classes per service / provider combination
-    //    good opening for service specific documentation
-    //    means more API to maintain
-    //    easier to document than string maps
-    //    can move the supported feature information to these classes
-    //        auth information is in here, so can be more nuanced in the reporting
-
-    // features supported (rotation, tilting, etc..)
 
     enum MapType {
         StreetMap,
@@ -87,21 +73,9 @@ public:
         TerrainMap
     };
 
-    enum ErrorCode {
-        NoError
-    };
 
-    QGeoMappingService(QObject *parent = 0);
+    QGeoMappingService();
     virtual ~QGeoMappingService();
-
-    virtual QList<MapType> supportedMapTypes() const = 0;
-    virtual QList<QString> supportedImageFormats() const = 0;
-
-    virtual int minimumZoomLevel() const = 0;
-    virtual int maximumZoomLevel() const = 0;
-
-    virtual QSize minimumSize() const = 0;
-    virtual QSize maximumSize() const = 0;
 
 // Option 1 - simplest
     virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
@@ -122,14 +96,36 @@ public:
     // Option 4 - Could pass the map in along with other options
     // - it knows the center, zoom level and size
 
+    QList<MapType> supportedMapTypes() const;
+    QList<QString> supportedImageFormats() const;
+
+    int minimumZoomLevel() const;
+    int maximumZoomLevel() const;
+
+    QSize minimumSize() const;
+    QSize maximumSize() const;
+
 signals:
     void replyFinished(QGeoMapReply *reply);
     void replyError(QGeoMapReply *reply, 
                     QGeoMappingService::ErrorCode errorCode,
                     QString errorString);
 
+protected:
+    void setSupportedMapTypes(const QList<MapType> &mapTypes);
+    void setSupportedImageFormats(const QList<QString> &imageFormats);
+
+    void setMinimumZoomLevel(int minimumZoom);
+    void setMaximumZoomLevel(int maximumZoom);
+
+    void setMinimumSize(const QSize &minimumSize);
+    void setMaximumSize(const QSize &maximumSize);
+
+    QGeoMappingServicePrivate* d_ptr;
+
 private:
     Q_DISABLE_COPY(QGeoMappingService)
+    Q_DECLARE_PRIVATE(QGeoMappingService)
 };
 
 QTM_END_NAMESPACE

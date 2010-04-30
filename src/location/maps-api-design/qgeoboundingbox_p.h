@@ -42,4 +42,23 @@
 #ifndef QGEOBOUNDINGBOX_P_H
 #define QGEOBOUNDINGBOX_P_H
 
+#include "qgeocoordinate.h"
+
+QTM_BEGIN_NAMESPACE
+
+class QGeoBoundingBoxPrivate {
+public:
+    QGeoBoundingBoxPrivate();
+    QGeoBoundingBoxPrivate(const QGeoCoordinate &upperLeft, const QGeoCoordinate &lowerRight);
+    QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other);
+    ~QGeoBoundingBoxPrivate();
+
+    QGeoBoundingBoxPrivate& operator= (const QGeoBoundingBoxPrivate &other);
+
+    QGeoCoordinate upperLeft;
+    QGeoCoordinate lowerRight;
+};
+
+QTM_END_NAMESPACE
+
 #endif

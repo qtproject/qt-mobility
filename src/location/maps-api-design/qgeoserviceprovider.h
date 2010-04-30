@@ -39,36 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTE_P_H
-#define QGEOROUTE_P_H
+#ifndef QGEOSERVICEPROVIDER_H
+#define QGEOSERVICEPROVIDER_H
 
-#include "qgeomapwidget.h"
-#include "qgeoboundingbox.h"
+#include "qmobilityglobal.h"
 
-#include <QDateTime>
+#include <QList>
+
+class QString;
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoRouteSegment;
+class QGeoCodingService;
+class QGeoMappingService;
+class QGeoRoutingService;
 
-class QGeoRoutePrivate {
+class QGeoServiceProviderPrivate;
+
+class Q_LOCATION_EXPORT QGeoServiceProvider
+{
 public:
-    QGeoRoutePrivate();
-    QGeoRoutePrivate(const QGeoRoutePrivate &other);
-    ~QGeoRoutePrivate();
+    static QList<QString> availableServiceProviders();
 
-    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
+    QGeoServiceProvider(QString provider, QString authenticationString);
+    QGeoServiceProvider(const QGeoServiceProvider &other);
+    ~QGeoServiceProvider();
 
-    QList<QGeoCoordinate> routeOverview;
-    QGeoBoundingBox bounds;
-    QList<const QGeoRouteSegment*> routeSegments;
-    QDateTime duration;
+    QGeoServiceProvider& operator= (const QGeoServiceProvider &other);
 
-    double distanceValue;
-    QGeoMapWidget::DistanceUnits distanceUnits;
+    QGeoCodingService* geocodingService() const;
+    QGeoMappingService* mappingService() const;
+    QGeoRoutingService* routingService() const;
+
+private:
+    QGeoServiceProviderPrivate* d_ptr;
+    Q_DECLARE_PRIVATE(QGeoServiceProvider);
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

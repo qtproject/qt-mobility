@@ -46,51 +46,104 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*
-enum InstructionType {
-    NormalInstruction,
-    PrivateTransportInstruction,
-    PublicTransportInstruction,
-    TruckInstruction
-};
+/*!
+  \class QGeoNavigiationInstruction
+  \brief The QGeoNavigationInstruction class
+  \ingroup maps
+
 */
 
+/*!
+  \enum QGeoNavigiationInstruction::InstructionType
+
+description
+
+  \value NormalInstruction description
+  \value PrivateTransportInstruction description
+  \value PublicTransportInstruction description
+  \value TruckInstruction description
+*/
+
+/*!
+*/
 QGeoNavigationInstruction::QGeoNavigationInstruction()
-{
-}
+    : d_ptr(new QGeoNavigationInstructionPrivate()) {}
 
+/*!
+*/
 QGeoNavigationInstruction::QGeoNavigationInstruction(QGeoNavigationInstructionPrivate *d_ptr)
-    : d_ptr(d_ptr)
-{
-}
+    : d_ptr(d_ptr) {}
 
+/*!
+*/
 QGeoNavigationInstruction::~QGeoNavigationInstruction()
 {
+    Q_D(QGeoNavigationInstruction);
+    delete d;
 }
 
+/*!
+*/
 QGeoNavigationInstruction::InstructionType QGeoNavigationInstruction::type() const
 {
-    return NormalInstruction;
+    Q_D(const QGeoNavigationInstruction);
+    return d->type;
 }
 
+/*!
+*/
 void QGeoNavigationInstruction::setPosition(const QGeoCoordinate &position)
 {
-    Q_UNUSED(position);
+    Q_D(QGeoNavigationInstruction);
+    d->position = position;
 }
 
+/*!
+*/
 QGeoCoordinate QGeoNavigationInstruction::position() const
 {
-    return QGeoCoordinate();
+    Q_D(const QGeoNavigationInstruction);
+    return d->position;
 }
 
+/*!
+*/
 void QGeoNavigationInstruction::setInstructionText(const QString &instructionText)
 {
-    Q_UNUSED(instructionText);
+    Q_D(QGeoNavigationInstruction);
+    d->text = instructionText;
 }
 
+/*!
+*/
 QString QGeoNavigationInstruction::instructionText() const
 {
-    return QString();
+    Q_D(const QGeoNavigationInstruction);
+    return d->text;
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate()
+{
+    type = QGeoNavigationInstruction::NormalInstruction;
+}
+
+QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other)
+    : type(other.type),
+    position(other.position),
+    text(other.text) {}
+
+QGeoNavigationInstructionPrivate::~QGeoNavigationInstructionPrivate() {}
+
+QGeoNavigationInstructionPrivate& QGeoNavigationInstructionPrivate::operator= (const QGeoNavigationInstructionPrivate &other)
+{
+    type = other.type;
+    position = other.position;
+    text = other.text;
+
+    return *this;
 }
 
 QTM_END_NAMESPACE

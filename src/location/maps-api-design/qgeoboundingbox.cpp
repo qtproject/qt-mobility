@@ -46,54 +46,147 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoBoundingBox
+    \brief The QGeoBoundingBox class defines a rectangular geographic area.
+    \ingroup maps
+
+    The rectangular region is specified by the upper left and lower right
+    coordinates.
+
+    If either of these coordinates are invalid then the QGeoBoundingBox is
+    considered to be invalid as well.
+
+    The QGeoBoundingBox class is intended for use with the maps and navigation
+    services.  These services assume that the maps will be displayed using the
+    Mercator projection, under which the poles of the map can be asymptotically
+    approached but never reached.
+
+    A consequence of this is that is not possible to specify a QGeoBoundingBox
+    which is centred one one of the poles.
+
+    Note that this would be possible if the rectangular region was defined by
+    three coordiantes to eliminate potential ambiguity, however being able to
+    specify such a region is not useful in this context.
+*/
+
+/*!
+    Constructs an bounding box.
+
+    The bounding box will be invalid until setUpperLeft() and setLowerRight()
+    have been called.
+*/
 QGeoBoundingBox::QGeoBoundingBox()
-{
-}
+    : d_ptr(new QGeoBoundingBoxPrivate()) {}
 
+/*!
+    Constucts a bounding box from the contents of \a other.
+*/
 QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
-{
-    Q_UNUSED(other);
-}
+    : d_ptr(new QGeoBoundingBoxPrivate(*(other.d_ptr))) {}
 
-QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &upperLeft, const QGeoCoordinate &lowerRight)
-{
-    Q_UNUSED(upperLeft);
-    Q_UNUSED(lowerRight);
-}
+/*!
+    Constructs a bounding box with the given \a upperLeft and \a lowerRight
+    coordinates.
+*/
+QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &upperLeft,
+                                 const QGeoCoordinate &lowerRight)
+                                     : d_ptr(new QGeoBoundingBoxPrivate(upperLeft, lowerRight)) {}
 
+/*!
+  Destroys the bounding box object.
+*/
 QGeoBoundingBox::~QGeoBoundingBox()
 {
+    Q_D(QGeoBoundingBox);
+    delete d;
 }
 
+/*!
+    Assigns \a other to this bounding box and returns a reference to this
+    bounding box.
+*/
 QGeoBoundingBox& QGeoBoundingBox::operator= (const QGeoBoundingBox &other)
 {
-    Q_UNUSED(other);
+    *d_ptr = *(other.d_ptr);
     return *this;
 }
 
+/*!
+  Returns whether or not the bounding box is valid.
+
+  To be considered valid a bounding box must have valid coordinates
+  specified for the upper left and lower right coordinate.
+*/
 bool QGeoBoundingBox::isValid() const
 {
-    return false;
+    Q_D(const QGeoBoundingBox);
+    return (d->upperLeft.isValid() && d->lowerRight.isValid());
 }
 
+/*!
+  Sets the upper left coordinate to \a upperLeft.
+*/
 void QGeoBoundingBox::setUpperLeft(const QGeoCoordinate &upperLeft)
 {
-    Q_UNUSED(upperLeft);
+    Q_D(QGeoBoundingBox);
+    d->upperLeft = upperLeft;
 }
 
+/*!
+  Returns the upper left coordinate.
+
+  The returned value will be an invalid coordinate until the upper left
+  coordinate has been set.
+*/
 QGeoCoordinate QGeoBoundingBox::upperLeft() const
 {
-    return QGeoCoordinate();
+    Q_D(const QGeoBoundingBox);
+    return d->upperLeft;
 }
 
+/*!
+  Sets the lower right coordinate to \a lowerRight.
+*/
 void QGeoBoundingBox::setLowerRight(const QGeoCoordinate &lowerRight)
 {
-    Q_UNUSED(lowerRight);
+    Q_D(QGeoBoundingBox);
+    d->lowerRight = lowerRight;
 }
 
+/*!
+  Returns the lower right coordinate.
+
+  The returned value will be an invalid coordinate until the lower right
+  coordinate has been set.
+*/
 QGeoCoordinate QGeoBoundingBox::lowerRight() const
 {
-    return QGeoCoordinate();
+    Q_D(const QGeoBoundingBox);
+    return d->lowerRight;
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate() {}
+
+QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &upperLeft,
+                                               const QGeoCoordinate &lowerRight)
+                                                   : upperLeft(upperLeft),
+                                                   lowerRight(lowerRight) {}
+
+QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other)
+    : upperLeft(other.upperLeft),
+    lowerRight(other.lowerRight) {}
+
+QGeoBoundingBoxPrivate::~QGeoBoundingBoxPrivate() {}
+
+QGeoBoundingBoxPrivate& QGeoBoundingBoxPrivate::operator= (const QGeoBoundingBoxPrivate &other)
+{
+    upperLeft = other.upperLeft;
+    lowerRight = other.lowerRight;
+    return *this;
 }
 
 QTM_END_NAMESPACE

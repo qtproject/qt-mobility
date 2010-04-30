@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QGEOROUTINGSERVICE_H
 #define QGEOROUTINGSERVICE_H
 
@@ -54,30 +55,13 @@ class QGeoRoute;
 class QGeoRouteReply;
 class QGeoRouteRequestOptions;
 
+class QGeoRoutingServicePrivate;
+
 class Q_LOCATION_EXPORT QGeoRoutingService : public QObject {
 
     Q_OBJECT
 
 public:
-    enum ServiceProvider {
-        NokiaServices
-    };
-
-    static QGeoRoutingService* createService(QGeoRoutingService::ServiceProvider provider,
-                                            QString versionString,
-                                            QString token = QString());
-
-
-    // Option - add a serviceoptions object, possible sublcassed per service provider
-    // ie createService(new QGeoRoutingServiceOptionsNokia(... nokia service specific options...)
-    // means one public class per service / provider combination
-    //    already going to have 2 private classes per service / provider combination
-    //    good opening for service specific documentation
-    //    means more API to maintain
-    //    easier to document than string maps
-    //    can move the supported feature information to these classes
-    //        auth information is in here, so can be more nuanced in the reporting
-
     enum ErrorCode {
         NoError
     };
@@ -133,18 +117,8 @@ public:
     };
     Q_DECLARE_FLAGS(DirectionsDetails, DirectionsDetail)
 
-    QGeoRoutingService(QObject *parent = 0);
+    QGeoRoutingService();
     virtual ~QGeoRoutingService();
-
-    virtual TravelModes supportedTravelModes() const = 0;
-    virtual AvoidFeatureTypes supportedAvoidFeatureTypes() const = 0;
-    virtual RouteOptimizations supportedRouteOptimizations() const = 0;
-
-    // see above
-    //virtual TransitOptionTypes supportedTransitOptionTypes() const = 0;
-
-    virtual DirectionsDetails supportedDirectionDetails() const = 0;
-    virtual bool supportsUpdatingRoutes() const = 0;
 
     // Option 1, current favourite
     // TODO - fix include order fiasco preventing requestOptions using default constructor
@@ -165,6 +139,26 @@ public:
     virtual QGeoRouteReply* updateRoute(const QGeoRoute &route,
                                 const QGeoCoordinate &currentPosition) = 0;
 
+    TravelModes supportedTravelModes() const;
+    AvoidFeatureTypes supportedAvoidFeatureTypes() const;
+    RouteOptimizations supportedRouteOptimizations() const;
+
+    // see above
+    //TransitOptionTypes supportedTransitOptionTypes() const;
+
+    DirectionsDetails supportedDirectionDetails() const;
+    bool supportsUpdatingRoutes() const;
+
+protected:
+    void setSupportedTravelModes(TravelModes supportedTravelModes);
+    void setSupportedAvoidFeatureTypes(AvoidFeatureTypes avoidFeatureTypes);
+    void setSupportedRouteOptimizations(RouteOptimizations routeOptimizations);
+    // void setSupportedTransitOptionType(TransitOptionTypes transitOptionTypes);
+    void setSupportedDirectionDetails(DirectionsDetails directionsDetails);
+    void setSupportsUpdatingRoutes(bool updatingRoutes);
+
+    QGeoRoutingServicePrivate* d_ptr;
+
 signals:
     void replyFinished(QGeoRouteReply *reply);
     void replyError(QGeoRouteReply *reply, 
@@ -173,6 +167,7 @@ signals:
 
 private:
     Q_DISABLE_COPY(QGeoRoutingService)
+    Q_DECLARE_PRIVATE(QGeoRoutingService)
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoutingService::TravelModes)

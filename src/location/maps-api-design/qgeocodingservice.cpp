@@ -40,71 +40,120 @@
 ****************************************************************************/
 
 #include "qgeocodingservice.h"
+#include "qgeocodingservice_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoCodingService* QGeoCodingService::createService(QGeoCodingService::ServiceProvider provider,
-                                                    QString versionString,
-                                                    QString token)
-{
-    Q_UNUSED(provider);
-    Q_UNUSED(versionString);
-    Q_UNUSED(token);
-    return 0;
-}
+/*!
+  \class QGeoCodingService
+  \brief The QGeoCodingService class
+  \ingroup maps
 
-        /*
+*/
 
-        enum ServiceProvider {
-            NokiaServices
-        };
+/*!
+  \enum QGeoCodingService::ErrorCode
 
+  description
 
-        enum ErrorCode {
-            NoError
-        };
+  \value NoError description
+*/
 
-        enum SupportLevel {
-            NoSupport,
-            NoSupportWithCurrentToken,
-            SupportedWithCurrentToken,
-            Supported
-        };
+/*!
+  \enum QGeoCodingService::SupportLevel
 
-        enum GeocodingFeature {
-            GeocodeFromAddress,
-            GeocodeFromString,
-            ReverseGeocodeFromCoordinate
-        };
+  description
 
-        virtual SupportLevel featureSupported(QGeoCodingService::GeocodingFeature feature) = 0;
-        */
+  \value NoSupport description
+  \value NoSupportWithCurrentToken description
+  \value SupportedWithCurrentToken description
+  \value Supported description
+*/
 
-QGeoCodingService::QGeoCodingService(QObject *parent) : QObject(parent)
-{
-}
+/*!
+  \enum QGeoCodingService::GeocodingFeature
 
+  description
+
+  \value GeocodeFromAddress description
+  \value GeocodeFromString description
+  \value ReverseGeocodeFromCoordinate description
+*/
+
+/*!
+*/
+QGeoCodingService::QGeoCodingService()
+    : d_ptr(new QGeoCodingServicePrivate()) {}
+
+/*!
+*/
 QGeoCodingService::~QGeoCodingService()
 {
+    Q_D(QGeoCodingService);
+    delete d;
 }
 
-        /*
-        virtual QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coord,
-                                        const QGeoBoundingBox &bounds = QGeoBoundingBox(),
-                                        const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
-        virtual QGeoCodeReply* geocode(const QGeoAddress &address,
-                                        const QGeoBoundingBox &bounds = QGeoBoundingBox(),
-                                        const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
-        virtual QGeoCodeReply* geocode(const QString &locationString,
-                                        const QGeoBoundingBox &bounds = QGeoBoundingBox(),
-                                        const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
+/*!
+\fn QGeoCodeReply* QGeoCodingService::reverseGeocode(const QGeoCoordinate &coord,
+                                                     const QGeoBoundingBox &bounds,
+                                                     const QGeoCodeRequestOptions &options)
+*/
 
-    signals:
-        void replyFinished(QGeoCodeReply *reply);
-        void replyError(QGeoCodeReply *reply,
-                        QGeoCodingService::ErrorCode errorCode,
-                        QString errorString);
-                        */
+/*!
+\fn QGeoCodeReply* QGeoCodingService::geocode(const QGeoAddress &address,
+                                              const QGeoBoundingBox &bounds,
+                                              const QGeoCodeRequestOptions &options)
+*/
+
+/*!
+\fn QGeoCodeReply* QGeoCodingService::geocode(const QString &locationString,
+                                              const QGeoBoundingBox &bounds,
+                                              const QGeoCodeRequestOptions &options)
+*/
+
+/*!
+*/
+QGeoCodingService::SupportLevel QGeoCodingService::supportedRequestOption(QGeoCodingService::RequestOption option) const
+{
+    Q_D(const QGeoCodingService);
+    return d->supportedRequestOption[option];
+}
+
+/*!
+*/
+void QGeoCodingService::setSupportedRequestOption(QGeoCodingService::RequestOption option,
+                                                  QGeoCodingService::SupportLevel level)
+{
+    Q_D(QGeoCodingService);
+    d->supportedRequestOption.insert(option, level);
+}
+
+/*!
+\fn void QGeoCodingService::replyFinished(QGeoCodeReply *reply)
+*/
+
+/*!
+\fn void QGeoCodingService::replyError(QGeoCodeReply *reply,
+                                       QGeoCodingService::ErrorCode errorCode,
+                                       QString errorString)
+*/
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoCodingServicePrivate::QGeoCodingServicePrivate() {}
+
+QGeoCodingServicePrivate::QGeoCodingServicePrivate(const QGeoCodingServicePrivate &other)
+    : supportedRequestOption(other.supportedRequestOption) {}
+
+QGeoCodingServicePrivate::~QGeoCodingServicePrivate() {}
+
+QGeoCodingServicePrivate& QGeoCodingServicePrivate::operator= (const QGeoCodingServicePrivate &other)
+{
+    supportedRequestOption = other.supportedRequestOption;
+
+    return *this;
+}
 
 #include "moc_qgeocodingservice.cpp"
 

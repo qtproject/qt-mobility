@@ -39,7 +39,29 @@
 **
 ****************************************************************************/
 
-#ifdef QGEONAVIGATIONINSTRUCTION_P_H
+#ifndef QGEONAVIGATIONINSTRUCTION_P_H
 #define QGEONAVIGATIONINSTRUCTION_P_H
+
+#include "qgeocoordinate.h"
+#include "qgeonavigationinstruction.h"
+
+#include <QString>
+
+QTM_BEGIN_NAMESPACE
+
+class QGeoNavigationInstructionPrivate {
+public:
+    QGeoNavigationInstructionPrivate();
+    QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other);
+    ~QGeoNavigationInstructionPrivate();
+
+    QGeoNavigationInstructionPrivate& operator= (const QGeoNavigationInstructionPrivate &other);
+
+    QGeoNavigationInstruction::InstructionType type;
+    QGeoCoordinate position;
+    QString text;
+};
+
+QTM_END_NAMESPACE
 
 #endif

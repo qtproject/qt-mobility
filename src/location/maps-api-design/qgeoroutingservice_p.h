@@ -39,34 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTE_P_H
-#define QGEOROUTE_P_H
+#ifndef QGEOROUTINGSERVICE_P_H
+#define QGEOROUTINGSERVICE_P_H
 
-#include "qgeomapwidget.h"
-#include "qgeoboundingbox.h"
-
-#include <QDateTime>
+#include "qgeoroutingservice.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoRouteSegment;
-
-class QGeoRoutePrivate {
+class QGeoRoutingServicePrivate
+{
 public:
-    QGeoRoutePrivate();
-    QGeoRoutePrivate(const QGeoRoutePrivate &other);
-    ~QGeoRoutePrivate();
+    QGeoRoutingServicePrivate();
+    QGeoRoutingServicePrivate(const QGeoRoutingServicePrivate &other);
+    ~QGeoRoutingServicePrivate();
 
-    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
+    QGeoRoutingServicePrivate& operator= (const QGeoRoutingServicePrivate &other);
 
-    QList<QGeoCoordinate> routeOverview;
-    QGeoBoundingBox bounds;
-    QList<const QGeoRouteSegment*> routeSegments;
-    QDateTime duration;
-
-    double distanceValue;
-    QGeoMapWidget::DistanceUnits distanceUnits;
+    QGeoRoutingService::TravelModes supportedTravelModes;
+    QGeoRoutingService::AvoidFeatureTypes supportedAvoidFeatureTypes;
+    QGeoRoutingService::RouteOptimizations supportedRouteOptimizations;
+    //QGeoRoutingService::TransitOptionTypes supportedTransitOptionTypes;
+    QGeoRoutingService::DirectionsDetails supportedDirectionDetails;
+    bool supportsUpdatingRoutes;
 };
 
 QTM_END_NAMESPACE
