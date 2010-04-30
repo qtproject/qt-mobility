@@ -59,8 +59,7 @@ class QVersitReaderPrivate;
 // reads a QVersitDocument from i/o device
 class Q_VERSIT_EXPORT QVersitReader : public QObject
 {
-    Q_OBJECT  
-    
+    Q_OBJECT
 public:
     enum Error {
         NoError = 0,
@@ -68,32 +67,28 @@ public:
         IOError,
         OutOfMemoryError,
         NotReadyError,
-        ParseError,
-        InvalidCharsetError,
-        BadDeviceError
+        ParseError
     };
 
     enum State {
-        InactiveState = 0,   // operation not yet started
-        ActiveState,         // operation started, not yet finished
-        CanceledState,       // operation is finished due to cancelation
-        FinishedState        // operation successfully completed
+        InactiveState = 0,
+        ActiveState,
+        CanceledState,
+        FinishedState
     };
 
     QVersitReader();
+    QVersitReader(QIODevice* inputDevice);
+    QVersitReader(const QByteArray& inputData);
     ~QVersitReader();
 
     // input:
-    void setDevice(QIODevice* device);
+    void setDevice(QIODevice* inputDevice);
     QIODevice* device() const;
+    void setData(const QByteArray& inputData);
 
     void setDefaultCodec(QTextCodec* codec);
     QTextCodec* defaultCodec() const;
-
-    // reading:
-    bool startReading();
-    void cancel();
-    bool waitForFinished(int msec = -1);
 
     // output:
     QList<QVersitDocument> results() const;
@@ -101,25 +96,19 @@ public:
     State state() const;
     Error error() const;
 
-    // Deprecated
-    bool Q_DECL_DEPRECATED readAll()
-    {
-        qWarning("QVersitDocument::readAll(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  startReading() and waitForFinished() should be used instead.");
-        startReading();
-        return waitForFinished();
-    }
-    QList<QVersitDocument> Q_DECL_DEPRECATED result() const
-    {
-        qWarning("QVersitDocument::result(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  results() should be used instead.");
-        return results();
-    }
+    // reading:
+public Q_SLOTS:
+    bool startReading();
+    void cancel();
+public:
+    Q_INVOKABLE bool waitForFinished(int msec = -1);
 
-signals:
+Q_SIGNALS:
     void stateChanged(QVersitReader::State state);
-    void resultsAvailable(QList<QVersitDocument>& results);
-    
+    void resultsAvailable();
+
 private: // data
-    QVersitReaderPrivate* d;   
+    QVersitReaderPrivate* d;
 };
 
 QTM_END_NAMESPACE

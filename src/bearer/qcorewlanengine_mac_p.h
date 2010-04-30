@@ -56,6 +56,8 @@
 #include "qnetworksessionengine_p.h"
 #include <QMap>
 #include <QTimer>
+#include <SystemConfiguration/SystemConfiguration.h>
+
 QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
@@ -88,9 +90,20 @@ private:
     QTimer pollTimer;
     QList<QNetworkConfigurationPrivate *> scanForSsids(const QString &interfaceName);
 
-    bool isKnownSsid(const QString &interfaceName, const QString &ssid);
+    bool isKnownSsid(const QString &ssid);
     QList<QNetworkConfigurationPrivate *> foundConfigurations;
 
+    SCDynamicStoreRef storeSession;
+    CFRunLoopSourceRef runloopSource;
+    bool hasWifi;
+
+protected:
+   QMap<QString, QMap<QString,QString> > userProfiles;
+
+    void startNetworkChangeLoop();
+    void getUserConfigurations();
+    QString getNetworkNameFromSsid(const QString &ssid);
+    QString getSsidFromNetworkName(const QString &name);
 };
 
 QTM_END_NAMESPACE

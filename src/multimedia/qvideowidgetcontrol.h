@@ -42,12 +42,12 @@
 #ifndef QVIDEOWIDGETCONTROL_H
 #define QVIDEOWIDGETCONTROL_H
 
-#include <qvideowidget.h>
-#include <qmediacontrol.h>
+#include "qvideowidget.h"
+#include "qmediacontrol.h"
 
 #include <QtGui/qwidget.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QVideoWidgetControlPrivate;
 
@@ -60,8 +60,8 @@ public:
 
     virtual QWidget *videoWidget() = 0;
 
-    virtual QVideoWidget::AspectRatioMode aspectRatioMode() const = 0;
-    virtual void setAspectRatioMode(QVideoWidget::AspectRatioMode mode) = 0;
+    virtual Qt::AspectRatioMode aspectRatioMode() const = 0;
+    virtual void setAspectRatioMode(Qt::AspectRatioMode mode) = 0;
 
     virtual bool isFullScreen() const = 0;
     virtual void setFullScreen(bool fullScreen) = 0;
@@ -92,6 +92,6 @@ protected:
 #define QVideoWidgetControl_iid "com.nokia.Qt.QVideoWidgetControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QVideoWidgetControl, QVideoWidgetControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

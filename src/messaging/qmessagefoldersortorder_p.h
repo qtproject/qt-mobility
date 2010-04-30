@@ -64,7 +64,7 @@ public:
 #if defined(Q_OS_WIN)
     static bool lessthan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &left, const QMessageFolder &right);
 #endif
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     static bool lessThan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &folder1, const QMessageFolder &folder2);
 #endif    
 };

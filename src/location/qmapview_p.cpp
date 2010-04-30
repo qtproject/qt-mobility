@@ -207,6 +207,7 @@ void QMapViewPrivate::cancelPendingTiles()
 
     while (it.hasNext()) {
         it.next();
+        QMapTileReply* r = it.value();
         it.value()->cancel();
         it.value()->deleteLater();
     }

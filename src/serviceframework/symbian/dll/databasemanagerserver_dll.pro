@@ -1,15 +1,18 @@
 TEMPLATE = lib
-TARGET = SFWDatabaseManagerServer
+TARGET = qsfwdatabasemanagerserver
 QT = core sql
 
 TARGET.UID3 = 0x2002BFBE
 
 DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
 DEFINES += DATABASEMANAGERSERVER_LIBRARY
+DEFINES += QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
 
 DEPENDPATH += ../..
 
 include(../../../../common.pri)
+# override the defFilePath set by common.pri
+defFilePath=../../../s60installs
 
 
 DEPENDPATH += ..
@@ -37,4 +40,6 @@ SOURCES +=  servicemetadata.cpp \
             databasemanagersession.cpp \
             databasemanagersignalhandler.cpp
 
+# These capabilities cannot be reduced as long as QtServiceFramework.dll links against
+# this .dll
 TARGET.CAPABILITY = ALL -TCB

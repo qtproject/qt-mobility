@@ -43,6 +43,7 @@
 #define QCONTACTLOCALIDFILTER_H
 
 #include "qcontactfilter.h"
+#include "qcontactid.h"
 
 QTM_BEGIN_NAMESPACE
 

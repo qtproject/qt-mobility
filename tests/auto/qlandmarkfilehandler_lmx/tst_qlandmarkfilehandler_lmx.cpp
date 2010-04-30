@@ -39,9 +39,6 @@
 **
 ****************************************************************************/
 
-#include "../../../src/location/qlandmarkfilehandler_lmx_p.h"
-#include "../../../src/location/qlandmarkmanagerengine_sqlite_p.h"
-
 #include "qgeoaddress.h"
 #include "qgeocoordinate.h"
 #include "qlandmarkcategory.h"
@@ -52,6 +49,11 @@
 #include <QBuffer>
 
 #include <QDebug>
+
+#define private public
+#include <qlandmarkmanager.h>
+#include "../../../src/location/qlandmarkmanager_p.h"
+#include "../../../src/location/qlandmarkfilehandler_lmx_p.h"
 
 QTM_USE_NAMESPACE
 
@@ -64,19 +66,21 @@ class tst_QLandmarkLmxHandler : public QObject
     Q_OBJECT
 
 private:
-    QLandmarkManagerEngine *m_engine;
+    QLandmarkManager *m_manager;
     QLandmarkFileHandlerLmx *m_handler;
 
 private slots:
 
     void init() {
-        m_engine = new QLandmarkManagerEngineSqlite("test.db");
-        m_handler = new QLandmarkFileHandlerLmx(m_engine);
+        QMap<QString, QString> map;
+        map["filename"] = "test.db";
+        m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+        m_handler = new QLandmarkFileHandlerLmx(m_manager->d_ptr->engine);
     }
 
     void cleanup() {
         delete m_handler;
-        delete m_engine;
+        delete m_manager;
 
         QFile file("test.db");
         file.remove();
@@ -96,7 +100,8 @@ private slots:
 
         QLandmarkManager::Error error = QLandmarkManager::NoError;
         for (int i = 0; i < categories.size(); ++i) {
-            m_engine->saveCategory(&categories[i], &error, 0);
+            m_manager->saveCategory(&categories[i]);
+            error = m_manager->error();
             QCOMPARE(error, QLandmarkManager::NoError);
         }
 
@@ -123,7 +128,8 @@ private slots:
 
         QLandmarkManager::Error error;
         for (int i = 0; i < categories.size(); ++i) {
-            m_engine->saveCategory(&categories[i], &error, 0);
+            m_manager->saveCategory(&categories[i]);
+            error = m_manager->error();
             QCOMPARE(error, QLandmarkManager::NoError);
         }
 
@@ -324,13 +330,15 @@ private slots:
         catId2.setId("1");
         catId2.setManagerUri("wrongUri");
 
-        m_engine = new QLandmarkManagerEngineSqlite("test.db");
+        QMap<QString, QString> map;
+        map["filename"] = "test.db";
+        m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 
         QLandmarkCategoryId catId3;
         catId3.setId("100");
-        catId3.setManagerUri(m_engine->managerUri());
+        catId3.setManagerUri(m_manager->managerUri());
 
-        delete m_engine;
+        delete m_manager;
 
         QTest::newRow("invalid id")
                 << catId1
@@ -369,7 +377,8 @@ private slots:
         QCOMPARE(catId.isValid(), true);
 
         QLandmarkManager::Error error;
-        QLandmarkCategory cat = m_engine->category(catId, &error, 0);
+        QLandmarkCategory cat = m_manager->category(catId);
+        error = m_manager->error();
 
         QCOMPARE(error, QLandmarkManager::NoError);
         QCOMPARE(cat.name(), QString("cat0"));
@@ -388,21 +397,23 @@ private:
         QList<QLandmarkCategory> cats;
         QList<QLandmarkCategoryId> catIds;
 
-        m_engine = new QLandmarkManagerEngineSqlite("test.db");
+        QMap<QString, QString> map;
+        map["filename"] = "test.db";
+        m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 
         QLandmarkCategory cat0;
         cat0.setName("cat0");
-        m_engine->saveCategory(&cat0, 0, 0);
+        m_manager->saveCategory(&cat0);
 
         QLandmarkCategory cat1;
         cat1.setName("cat1");
-        m_engine->saveCategory(&cat1, 0, 0);
+        m_manager->saveCategory(&cat1);
 
         QLandmarkCategory cat2;
         cat2.setName("cat2");
-        m_engine->saveCategory(&cat2, 0, 0);
+        m_manager->saveCategory(&cat2);
 
-        delete m_engine;
+        delete m_manager;
         QFile file("test.db");
         file.remove();
 

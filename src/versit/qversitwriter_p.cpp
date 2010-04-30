@@ -49,6 +49,8 @@
 #include <QStringList>
 #include <QMutexLocker>
 #include <QScopedPointer>
+#include <QTextCodec>
+#include <QBuffer>
 
 QTM_USE_NAMESPACE
 
@@ -67,14 +69,12 @@ QVersitWriterPrivate::~QVersitWriterPrivate()
 {
 }
 
-/*!
- * Checks whether the writer is ready for writing.
- */
-bool QVersitWriterPrivate::isReady() const
+/*! Links the signals from this to the signals of \a writer. */
+void QVersitWriterPrivate::init(QVersitWriter* writer)
 {
-    return state() != QVersitWriter::ActiveState
-            && mIoDevice
-            && mIoDevice->isOpen();
+    qRegisterMetaType<QVersitWriter::State>("QVersitWriter::State");
+    connect(this, SIGNAL(stateChanged(QVersitWriter::State)),
+            writer, SIGNAL(stateChanged(QVersitWriter::State)), Qt::DirectConnection);
 }
 
 /*!
@@ -83,7 +83,7 @@ bool QVersitWriterPrivate::isReady() const
 void QVersitWriterPrivate::write()
 {
     bool canceled = false;
-    foreach (QVersitDocument document, mInput) {
+    foreach (const QVersitDocument& document, mInput) {
         if (isCanceling()) {
             canceled = true;
             break;
@@ -96,9 +96,10 @@ void QVersitWriterPrivate::write()
             else
                 codec = QTextCodec::codecForName("UTF-8");
         }
-        QByteArray output = writer->encodeVersitDocument(document, codec);
-        int c = mIoDevice->write(output);
-        if (c <= 0) {
+        writer->setCodec(codec);
+        writer->setDevice(mIoDevice);
+        writer->encodeVersitDocument(document);
+        if (!writer->mSuccessful) {
             setError(QVersitWriter::IOError);
             break;
         }

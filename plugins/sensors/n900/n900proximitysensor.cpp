@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "n900proximitysensor.h"
+#include <QFile>
 #include <QDebug>
 #include <string.h>
 #include <time.h>
@@ -51,6 +52,20 @@ n900proximitysensor::n900proximitysensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
 {
     setReading<QProximityReading>(&m_reading);
+    addDataRate(100, 100); // 100Hz
+    sensor->setDataRate(100); // default is 10Hz
+}
+
+void n900proximitysensor::start()
+{
+    if (!QFile::exists(QLatin1String(filename)))
+        goto error;
+
+    n900filebasedsensor::start();
+    return;
+
+error:
+    sensorStopped();
 }
 
 void n900proximitysensor::poll()
@@ -62,16 +77,17 @@ void n900proximitysensor::poll()
     fclose(fd);
     if (rs != 1) return;
 
-    QProximityReading::Proximity proximity = QProximityReading::Undefined;
+    bool close;
     if (strcmp(buffer, "closed") == 0) {
-        proximity = QProximityReading::Close;
+        close = true;
     } else {
-        proximity = QProximityReading::NotClose;
+        close = false;
     }
 
-    m_reading.setTimestamp(clock());
-    m_reading.setProximity(proximity);
-
-    newReadingAvailable();
+    if (close != m_reading.close()) {
+        m_reading.setTimestamp(clock());
+        m_reading.setClose(close);
+        newReadingAvailable();
+    }
 }
 

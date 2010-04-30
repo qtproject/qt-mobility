@@ -42,9 +42,10 @@
 #ifndef DIRECTSHOWMETADATACONTROL_H
 #define DIRECTSHOWMETADATACONTROL_H
 
-#include <qmetadatacontrol.h>
+#include "../../src/multimedia/qmetadatacontrol.h"
 
-#include <dshow.h>
+#include "directshowglobal.h"
+
 #include <qnetwork.h>
 
 #ifndef QT_NO_WMSDK
@@ -55,7 +56,7 @@
 
 class DirectShowPlayerService;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DirectShowMetaDataControl : public QMetaDataControl
 {
@@ -67,9 +68,9 @@ public:
     bool isWritable() const;
     bool isMetaDataAvailable() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMediaServices::MetaData key) const;
+    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
+    QList<QtMediaServices::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const;
     void setExtendedMetaData(const QString &key, const QVariant &value);

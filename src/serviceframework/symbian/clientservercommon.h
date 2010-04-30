@@ -43,7 +43,8 @@
 
 #include <e32base.h>
 
-_LIT(KDatabaseManagerServerName, "SFWDatabaseManagerServer");
+_LIT(KDatabaseManagerServerName, "!qsfwdatabasemanagerserver");
+_LIT(KDatabaseManagerServerProcess, "qsfwdatabasemanagerserver");
 
 const TUint KServerMajorVersionNumber = 0;
 const TUint KServerMinorVersionNumber = 1;

@@ -76,7 +76,8 @@ QTM_BEGIN_NAMESPACE
     \code
         // Emit updates every 10 seconds if available
         QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
-        source->setUpdateInterval(10000);
+        if (source)
+            source->setUpdateInterval(10000);
     \endcode
 
     To remove an update interval that was previously set, call
@@ -137,6 +138,11 @@ QGeoPositionInfoSource::~QGeoPositionInfoSource()
     interval as close to the requested interval as possible. If the requested
     interval is less than the minimumUpdateInterval(),
     the minimum interval is used instead.
+
+    Changes to the update interval will happen as soon as is practical, however the 
+    time the change takes may vary between implementations.  Whether or not the elapsed 
+    time from the previous interval is counted as part of the new interval is also 
+    implementation dependent.
 
     The default value for this property is 0.
 
@@ -254,7 +260,7 @@ QGeoPositionInfoSource *QGeoPositionInfoSource::createDefaultSource(QObject *par
     as soon as they become available.
 
     An updateTimout() signal will be emitted if this QGeoPositionInfoSource subclass determines
-    that it will not be able to provide regular updates.  This could happen if a satelllite fix is
+    that it will not be able to provide regular updates.  This could happen if a satellite fix is
     lost or if a hardware error is detected.  Position updates will recommence if the data becomes
     available later on.  The updateTimout() signal will not be emitted again until after the
     periodic updates resume.

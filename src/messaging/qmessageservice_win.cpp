@@ -230,7 +230,7 @@ static Lptstr createMCFRecipients(QMessageAddress::Type filterAddressType, const
     foreach(const QMessageAddress& a, addressList)
     {
         if(a.type() == filterAddressType)
-            temp.append(a.recipient());
+            temp.append(a.addressee());
     }
 
     return temp.isEmpty() ? Lptstr(0) : LptstrFromQString(temp.join(";"));

@@ -59,34 +59,44 @@ quint64 messageStatusMask(const QString &field)
 
 namespace QmfHelpers {
 
+QString stripIdentifierPrefix(const QString &s)
+{
+    return s.mid(4);
+}
+    
+QString prefixIdentifier(const QString &s)
+{
+    return "QMF_" + s;
+}
+    
 QMessageId convert(const QMailMessageId &id)
 {
-    return QMessageId(QString::number(id.toULongLong()));
+    return QMessageId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailMessageId convert(const QMessageId &id)
 {
-    return QMailMessageId(id.toString().toULongLong());
+    return QMailMessageId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 QMessageAccountId convert(const QMailAccountId &id)
 {
-    return QMessageAccountId(QString::number(id.toULongLong()));
+    return QMessageAccountId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailAccountId convert(const QMessageAccountId &id)
 {
-    return QMailAccountId(id.toString().toULongLong());
+    return QMailAccountId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 QMessageFolderId convert(const QMailFolderId &id)
 {
-    return QMessageFolderId(QString::number(id.toULongLong()));
+    return QMessageFolderId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailFolderId convert(const QMessageFolderId &id)
 {
-    return QMailFolderId(id.toString().toULongLong());
+    return QMailFolderId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 /* in qmessagecontentcontainerid_qmf.cpp
@@ -201,7 +211,7 @@ QMailMessage::MessageType convert(QMessage::Type t)
     if (t & QMessage::Email) {
         result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Email);
     }
-    if (t & QMessage::Xmpp) {
+    if (t & QMessage::InstantMessage) {
         result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Instant);
     }
 
@@ -223,7 +233,7 @@ QMessage::Type convert(QMailMessage::MessageType t)
         result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Email));
     }
     if (t & QMailMessage::Instant) {
-        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Xmpp));
+        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::InstantMessage));
     }
 
     return result;
@@ -377,8 +387,8 @@ QMessageAddress convert(const QMailAddress &address)
                 type = QMessageAddress::System;
             } else if (spec == "Phone") {
                 type = QMessageAddress::Phone;
-            } else if (spec == "XMPP") {
-                type = QMessageAddress::Xmpp;
+            } else if (spec == "InstantMessage") {
+                type = QMessageAddress::InstantMessage;
             }
         }
 
@@ -395,11 +405,11 @@ QMailAddress convert(const QMessageAddress &address)
         suffix = " (TYPE=System)";
     } else if (address.type() == QMessageAddress::Phone) {
         suffix = " (TYPE=Phone)";
-    } else if (address.type() == QMessageAddress::Xmpp) {
-        suffix = " (TYPE=XMPP)";
+    } else if (address.type() == QMessageAddress::InstantMessage) {
+        suffix = " (TYPE=InstantMessage)";
     }
 
-    return QMailAddress(address.recipient() + suffix);
+    return QMailAddress(address.addressee() + suffix);
 }
 
 QMessageAddressList convert(const QList<QMailAddress> &list)

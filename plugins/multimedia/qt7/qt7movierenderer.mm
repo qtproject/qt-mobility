@@ -56,7 +56,7 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class CVGLTextureVideoBuffer : public QAbstractVideoBuffer
 {
@@ -233,7 +233,9 @@ bool QT7MovieRenderer::createPixelBufferVisualContext()
                                                                              &kCFTypeDictionaryKeyCallBacks,
                                                                              &kCFTypeDictionaryValueCallBacks);
     CFDictionarySetValue(visualContextOptions, kQTVisualContextPixelBufferAttributesKey, pixelBufferOptions);
+
     CFDictionarySetValue(visualContextOptions, kQTVisualContextWorkingColorSpaceKey, CGColorSpaceCreateDeviceRGB());
+    CFDictionarySetValue(visualContextOptions, kQTVisualContextOutputColorSpaceKey, CGColorSpaceCreateDeviceRGB());
 
     OSStatus err = QTPixelBufferContextCreate(kCFAllocatorDefault,
                                                visualContextOptions,

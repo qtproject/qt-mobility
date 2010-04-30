@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include <qmediaplaylist.h>
-#include <qmediaplaylist_p.h>
-#include <qmediaplaylistprovider.h>
-#include <qlocalmediaplaylistprovider.h>
-#include <qmediaplaylistioplugin.h>
-#include <qmediaservice.h>
-#include <qmediaplaylistcontrol.h>
-#include <qmediaplayercontrol.h>
+#include "qmediaplaylist.h"
+#include "qmediaplaylist_p.h"
+#include "qmediaplaylistprovider.h"
+#include "qlocalmediaplaylistprovider.h"
+#include "qmediaplaylistioplugin.h"
+#include "qmediaservice.h"
+#include "qmediaplaylistcontrol.h"
+#include "qmediaplayercontrol.h"
 
 #include <QtCore/qlist.h>
 #include <QtCore/qfile.h>
@@ -54,9 +54,9 @@
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qcoreapplication.h>
 
-#include <qmediapluginloader_p.h>
+#include "qmediapluginloader_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
         (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))
@@ -714,5 +714,5 @@ void QMediaPlaylist::setCurrentIndex(int playlistPosition)
 
 #include "moc_qmediaplaylist.cpp"
 #include "moc_qmediaplaylist_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

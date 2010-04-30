@@ -46,7 +46,7 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworksession_s60_p.h"
-#elif Q_WS_MAEMO_6
+#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include "qnetworksession_maemo_p.h"
 #else
 #include "qnetworksession_p.h"
@@ -293,6 +293,8 @@ bool QNetworkSession::waitForOpened(int msecs)
 
     QEventLoop* loop = new QEventLoop(this);
     QObject::connect(d, SIGNAL(quitPendingWaitsForOpened()),
+                     loop, SLOT(quit()));
+    QObject::connect(this, SIGNAL(error(QNetworkSession::SessionError)),
                      loop, SLOT(quit()));
 
     //final call

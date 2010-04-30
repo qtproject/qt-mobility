@@ -49,16 +49,14 @@
 
 #include <QtGui/qmacdefines_mac.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QT7PlayerControl;
 class QMediaPlaylist;
 class QMediaPlaylistNavigator;
 class QT7VideoOutput;
 class QT7PlayerSession;
 class QT7PlayerService;
-QTM_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
 
 class QT7PlayerSession : public QObject
 {
@@ -93,6 +91,8 @@ public:
     bool isSeekable() const;
 
     qreal playbackRate() const;
+
+public slots:
     void setPlaybackRate(qreal rate);
 
     void setPosition(qint64 pos);
@@ -105,6 +105,8 @@ public:
     void setMuted(bool muted);
 
     void processEOS();
+    void processStateChange();
+    void processVolumeChange();
 
 signals:
     void positionChanged(qint64 position);
@@ -135,6 +137,6 @@ private:
     qreal m_rate;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

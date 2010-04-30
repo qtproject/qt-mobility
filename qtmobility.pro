@@ -19,7 +19,6 @@ include(staticconfig.pri)
     #happen if we are trying to shadow build w/o running configure
 }
 
-
 #don't build QtMobility if chosen config mismatches Qt's config
 win32:!contains(CONFIG_WIN32,build_all) {
    contains(QT_CONFIG,debug):!contains(QT_CONFIG,release):contains(CONFIG_WIN32,release) {
@@ -41,29 +40,46 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
 }
 
 
-#generate prf file for Qt integration
-PRF_OUTPUT=$${QT_MOBILITY_BUILD_TREE}/features/mobility.prf
+# MCL builds for Symbian do not run configure and require some manual setup steps.
+# This test permits SD builds to skip installation of mobility.prf from within qmake.
+# It is installed in a separate step. MCL builds for SD must set the
+# MOBILITY_SD_MCL_BUILD flag to yes.
+!contains(MOBILITY_SD_MCL_BUILD, yes) {
+    #generate prf file for Qt integration
+    PRF_OUTPUT=$${QT_MOBILITY_BUILD_TREE}/features/mobility.prf
 
-system(echo MOBILITY_PREFIX=$${QT_MOBILITY_PREFIX} > $$PRF_OUTPUT)
-system(echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE} >> $$PRF_OUTPUT)
-system(echo MOBILITY_LIB=$${QT_MOBILITY_LIB} >> $$PRF_OUTPUT)
+    system(echo MOBILITY_PREFIX=$${QT_MOBILITY_PREFIX} > $$PRF_OUTPUT)
+    system(echo MOBILITY_INCLUDE=$${QT_MOBILITY_INCLUDE} >> $$PRF_OUTPUT)
+    system(echo MOBILITY_LIB=$${QT_MOBILITY_LIB} >> $$PRF_OUTPUT)
 
-unix:!symbian:system(cat $${QT_MOBILITY_SOURCE_TREE}/features/mobility.prf.template >> $$PRF_OUTPUT)
-win32:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
-symbian:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
+    unix:!symbian:system(cat $${QT_MOBILITY_SOURCE_TREE}/features/mobility.prf.template >> $$PRF_OUTPUT)
+    win32:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
+    symbian:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
 
-#symbian does not generate make install rule. we have to copy prf manually 
-symbian:system(copy $${QT_MOBILITY_BUILD_TREE}\features\mobility.prf $$[QT_INSTALL_DATA]\mkspecs\features)
+    #symbian does not generate make install rule. we have to copy prf manually 
+    symbian {
+        FORMATDIR=$$[QT_INSTALL_DATA]\mkspecs\features
+        FORMATDIR=$$replace(FORMATDIR,/,\\ )
+        system(copy "$${QT_MOBILITY_BUILD_TREE}\features\mobility.prf $$FORMATDIR")
+    }
 
-# install feature file
-feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
-feature.files = $$QT_MOBILITY_BUILD_TREE/features/mobility.prf
-INSTALLS += feature
+    # install feature file
+    feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
+    feature.files = $$QT_MOBILITY_BUILD_TREE/features/mobility.prf
+    INSTALLS += feature
+}
 
 TEMPLATE = subdirs
 CONFIG+=ordered
 
-SUBDIRS += src tools plugins
+SUBDIRS += src
+
+contains(build_tools, yes) {
+    SUBDIRS += tools
+}
+
+SUBDIRS += plugins
+
 #built documentation snippets, if enabled
 contains(build_docs, yes) {
     SUBDIRS += doc

@@ -2,9 +2,9 @@ TEMPLATE = lib
 QT+=multimedia
 CONFIG += plugin
 QT+=multimedia
-TARGET = $$qtLibraryTarget(dsengine)
+TARGET = $$qtLibraryTarget(qtmedia_dsengine)
 
-PLUGIN_TYPE = mediaservice
+PLUGIN_TYPE=mediaservice
 
 include (../../../common.pri)
 INCLUDEPATH+=../../../src/multimedia
@@ -17,17 +17,10 @@ DEPENDPATH += .
 HEADERS += dsserviceplugin.h
 SOURCES += dsserviceplugin.cpp
 
-TMP_INCLUDE = $$quote($$(INCLUDE))
-TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
-TMP_REQUIRED_HEADERS =
-for(p, TMP_SEARCHPATHS) {
-    exists($${p}/qedit.h): TMP_REQUIRED_HEADERS *= qedit.h
-}
-contains(TMP_REQUIRED_HEADERS, qedit.h) {
-    include(camera/camera.pri)
-}
+!contains(TMP_REQUIRED_HEADERS, wmsdk.h): DEFINES += QT_NO_WMSDK
+
 include (player/player.pri)
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS+=target
 

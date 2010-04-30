@@ -45,13 +45,8 @@
 */
 
 /*!
-    \example cameracapture
-    \title Camera Capture Example
-*/
-
-/*!
-    \example declarative
-    \title Declarative Example
+    \example declarative-sfw-dialer
+    \title Declarative Service Framework Example
 */
 
 /*!
@@ -102,11 +97,6 @@
 /*!
     \example slideshow
     \title Slideshow Example
-*/
-
-/*!
-    \example streamplayer
-    \title Stream Player Example
 */
 
 /*!

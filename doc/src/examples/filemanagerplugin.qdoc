@@ -44,4 +44,22 @@
     \title File Manager Plugin Example
 
     This example shows how to write a service plugin for the \l{Qt Service Framework}{Service Framework}.
+
+    \section1 Registering the Service
+    The service can be registered by using the function \l{QServiceManager::}{addService()} which takes a path to the XML file that describes the service, \i{filemanagerservice.xml}.
+
+    \section1 Writing the Plug-In
+    A Service plug-in is made by deriving a new plugin class from the QServicePluginInterface class then implementing the function QServicePluginInterface::createInstance().
+
+    The FileManager plugin example has a simple \l {QServicePluginInterface::}{createInstance()}. It
+    only needs to create the appropriate object based on the interface name
+    and return a pointer to it.
+
+    \snippet ../../examples/filemanagerplugin/filemanagerplugin.cpp createinstance
+
+    The functionality of the FileManager and the FileTransfer classes are
+    in the separate classes FileManagerStorage and FileManagerTransfer respectively. The existing functions are merely test stubs to demonstrate
+    the concept.
+    
+    
 */

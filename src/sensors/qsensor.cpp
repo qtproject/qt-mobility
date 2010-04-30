@@ -63,6 +63,9 @@ QTM_BEGIN_NAMESPACE
 
 // A bit of a hack to call qRegisterMetaType when the library is loaded.
 static int qtimestamp_id = qRegisterMetaType<QtMobility::qtimestamp>("QtMobility::qtimestamp");
+static int qrange_id = qRegisterMetaType<QtMobility::qrange>("QtMobility::qrange");
+static int qrangelist_id = qRegisterMetaType<QtMobility::qrangelist>("QtMobility::qrangelist");
+static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>("QtMobility::qoutputrangelist");
 
 // =====================================================================
 
@@ -87,12 +90,13 @@ static int qtimestamp_id = qRegisterMetaType<QtMobility::qtimestamp>("QtMobility
 */
 
 /*!
-    Construct the sensor as a child of \a parent.
+    Construct the \a type sensor as a child of \a parent.
 */
-QSensor::QSensor(QObject *parent)
+QSensor::QSensor(const QByteArray &type, QObject *parent)
     : QObject(parent)
     , d(new QSensorPrivate)
 {
+    d->type = type;
 }
 
 /*!
@@ -112,15 +116,18 @@ QSensor::~QSensor()
 }
 
 /*!
-    \property QSensor::connected
+    \property QSensor::connectedToBackend
     \brief a value indicating if the sensor has connected to a backend.
 
     A sensor that has not been connected to a backend cannot do anything useful.
 
-    Call the connect() method to force the sensor to connect to a backend immediately.
+    Call the connectToBackend() method to force the sensor to connect to a backend
+    immediately. This is automatically called if you call start() so you only need
+    to do this if you need access to sensor properties (ie. to poll the sensor's
+    meta-data before you use it).
 */
 
-bool QSensor::isConnected() const
+bool QSensor::isConnectedToBackend() const
 {
     return (d->backend != 0);
 }
@@ -132,7 +139,7 @@ bool QSensor::isConnected() const
     Note that the identifier is filled out automatically
     when the sensor is connected to a backend. If you want
     to connect a specific backend, you should call
-    setIdentifier() before connect().
+    setIdentifier() before connectToBackend().
 */
 
 QByteArray QSensor::identifier() const
@@ -142,28 +149,21 @@ QByteArray QSensor::identifier() const
 
 void QSensor::setIdentifier(const QByteArray &identifier)
 {
-    Q_ASSERT(!d->backend);
+    if (d->backend) {
+        qWarning() << "ERROR: Cannot call QSensor::setIdentifier while connected to a backend!";
+        return;
+    }
     d->identifier = identifier;
 }
 
 /*!
     \property QSensor::type
     \brief the type of the sensor.
-
-    Note that setType() can only be used if you are using QSensor directly.
-    Sub-classes of QSensor call this automatically for you.
 */
 
 QByteArray QSensor::type() const
 {
     return d->type;
-}
-
-void QSensor::setType(const QByteArray &type)
-{
-    Q_ASSERT(!d->backend);
-    Q_ASSERT(QLatin1String(metaObject()->className()) == QLatin1String("QSensor") || QLatin1String(metaObject()->className()) == QLatin1String(type));
-    d->type = type;
 }
 
 /*!
@@ -173,28 +173,52 @@ void QSensor::setType(const QByteArray &type)
 
     The type must be set before calling this method if you are using QSensor directly.
 
-    \sa isConnected()
+    \sa isConnectedToBackend()
 */
-bool QSensor::connect()
+bool QSensor::connectToBackend()
 {
     if (d->backend)
         return true;
 
-    if (d->type.isEmpty()) {
-        qWarning() << "QSensor::connect - Cannot call this method unless the type is set.";
-        return false;
-    }
-
+    int rate = d->dataRate;
     d->backend = QSensorManager::createBackend(this);
+    if (rate != 0)
+        setDataRate(rate);
     return (d->backend != 0);
 }
 
 /*!
-    \property QSensor::running
-    \brief controls the running state of the sensor.
+    \property QSensor::busy
+    \brief a value to indicate if the sensor is busy.
 
-    This is provided for QML, set running: true to cause the sensor
-    to start on.
+    Some sensors may be on the system but unavailable for use.
+    This function will return true if the sensor is busy. You
+    will not be able to start() the sensor.
+
+    Note that this function does not return true if you
+    are using the sensor, only if another process is using
+    the sensor.
+
+    \sa busyChanged()
+*/
+
+bool QSensor::isBusy() const
+{
+    return d->busy;
+}
+
+/*!
+    \fn QSensor::busyChanged()
+
+    This signal is emitted when the busy state changes. This can
+    be used to grab a sensor when it becomes available.
+*/
+
+/*!
+    \property QSensor::active
+    \brief a value to indicate if the sensor is active.
+
+    This is true if the sensor is active (returning values). This is false otherwise.
 */
 
 bool QSensor::isActive() const
@@ -202,158 +226,88 @@ bool QSensor::isActive() const
     return d->active;
 }
 
-void QSensor::setActive(bool running)
+/*!
+    \property QSensor::availableDataRates
+    \brief the data rates that the sensor supports.
+
+    This is a list of the data rates that the sensor supports.
+    Entries in the list can represent discrete rates or a
+    continuous range of rates.
+    A discrete rate is noted by having both values the same.
+
+    See the sensor_explorer example for an example of how to interpret and use
+    this information.
+
+    \sa QSensor::dataRate
+*/
+
+qrangelist QSensor::availableDataRates() const
 {
-    if (d->complete) {
-        if (running)
-            start();
-        else
-            stop();
+    return d->availableDataRates;
+}
+
+/*!
+    \property QSensor::dataRate
+    \brief the data rate that the sensor should be run at.
+
+    The default value is determined by the backend.
+
+    This should be set before calling start() because the sensor may not
+    notice changes to this value while it is running.
+
+    \sa QSensor::availableDataRates
+*/
+
+int QSensor::dataRate() const
+{
+    return d->dataRate;
+}
+
+void QSensor::setDataRate(int rate)
+{
+    bool warn = true;
+    Q_FOREACH (const qrange &range, d->availableDataRates) {
+        if (rate >= range.first && rate <= range.second) {
+            warn = false;
+            d->dataRate = rate;
+            break;
+        }
+    }
+    if (warn) {
+        qWarning() << "setDataRate: rate" << rate << "is not supported by the sensor.";
     }
 }
 
 /*!
-    Returns true if the readingChanged() signal will be emitted.
-*/
-bool QSensor::isSignalEnabled() const
-{
-    return d->signalEnabled;
-}
-
-/*!
-    Call with \a enabled as false to turn off the readingChanged() signal.
-
-    You might want to do this for performance reasons. If you are polling
-    the sensor or using a filter in a performance-critical application
-    then the overhead of emitting the signal may be too high even if nothing
-    is connected to it.
-*/
-void QSensor::setSignalEnabled(bool enabled)
-{
-    d->signalEnabled = enabled;
-}
-
-/*!
-    \enum QSensor::UpdatePolicy
-
-    This enum is used to indicate to the sensor how often data will be collected.
-    Note that most sensors will only support one sensitivity. Setting an update
-    policy that the sensor does not support will result in undefined behaviour.
-    You can determine the policies the sensor supports with the
-    QSensor::supportedUpdatePolicies() method.
-
-    \value Undefined          The sensor has no specific update policy. Updates may
-                              arrive frequently or infrequently. Updates based on
-                              user interaction are likely to fit into this category.
-    \value OnChangeUpdates    Updates are delivered as they happen, usually based on
-                              user activity.
-    \value OccasionalUpdates  Updates are delivered occasionally, about one every
-                              5 seconds.
-    \value InfrequentUpdates  Updates are delivered infrequently, no more than once
-                              per second.
-    \value FrequentUpdates    Updates are delivered frequently, several per second.
-    \value TimedUpdates       Updates are delivered at a specific time interval.
-                              Note that not all sensors may be able to run with the
-                              exact timings requested and may operate slightly faster
-                              or slower.
-    \value PolledUpdates      Updates are retrieved when the currentReading()
-                              method is called.
-*/
-
-/*!
-    Change the update \a policy of the sensor. Note that not all
-    sensors support changing the update policy. If you set a
-    policy that the sensor does not support the behaviour is
-    undefined.
-
-    If you wish to use the TimedUpdates policy, please call
-    setUpdateInterval() with the desired interval.
-
-    \sa supportedUpdatePolicies()
-*/
-void QSensor::setUpdatePolicy(UpdatePolicy policy)
-{
-    if (policy == TimedUpdates)
-        return;
-
-    d->updatePolicy = policy;
-    d->updateInterval = 0;
-}
-
-void QSensor::setUpdateInterval(int interval)
-{
-    d->updatePolicy = TimedUpdates;
-    d->updateInterval = interval;
-}
-
-/*!
-    \property QSensor::updatePolicy
-    \brief the update policy of the sensor.
-*/
-
-/*!
-    Returns the update policy the sensor is using.
-*/
-QSensor::UpdatePolicy QSensor::updatePolicy() const
-{
-    return d->updatePolicy;
-}
-
-/*!
-    \property QSensor::updateInterval
-    \brief the update interval of the sensor.
-
-    This value is only useful if the QSensor::updatePolicy property is set to TimedUpdates.
-*/
-
-int QSensor::updateInterval() const
-{
-    return d->updateInterval;
-}
-
-/*!
-    \property QSensor::supportedUpdatePolicies
-    \brief the supported policies of the sensor.
-*/
-
-/*!
-    Returns the update policies that the sensor supports.
-
-    Note that this will return QSensor::Undefined until a sensor backend is connected.
-
-    \sa isConnected()
-*/
-QSensor::UpdatePolicies QSensor::supportedUpdatePolicies() const
-{
-    return d->supportedUpdatePolicies;
-}
-
-/*!
-    Poll the sensor.
-*/
-void QSensor::poll()
-{
-    if (!connect())
-        return;
-    if (d->updatePolicy == PolledUpdates)
-        d->backend->poll();
-}
-
-/*!
     Start retrieving values from the sensor.
+    Returns true if the sensor was started, false otherwise.
+
+    Note that the sensor may fail to start for several reasons.
+
+    \sa QSensor::busy
 */
-void QSensor::start()
+bool QSensor::start()
 {
     if (d->active)
-        return;
-    if (!connect())
-        return;
+        return true;
+    if (!connectToBackend())
+        return false;
+    if (d->availableDataRates.count() == 0)
+        return false;
+    // Set these flags to their defaults
     d->active = true;
+    d->busy = false;
+    // Backend will update the flags appropriately
     d->backend->start();
+    return d->active;
 }
 
 /*!
     Stop retrieving values from the sensor.
+
+    This releases the sensor so that other processes can use it.
+
+    \sa QSensor::busy
 */
 void QSensor::stop()
 {
@@ -369,9 +323,9 @@ void QSensor::stop()
 
     The reading class provides access to sensor readings.
 
-    Note that this will return 0 until a sensor backend is connected.
+    Note that this will return 0 until a sensor backend is connected to a backend.
 
-    \sa isConnected()
+    \sa isConnectedToBackend()
 */
 
 QSensorReading *QSensor::reading() const
@@ -389,6 +343,10 @@ QSensorReading *QSensor::reading() const
 */
 void QSensor::addFilter(QSensorFilter *filter)
 {
+    if (!filter) {
+        qWarning() << "addFilter: passed a null filter!";
+        return;
+    }
     d->filters << filter;
 }
 
@@ -399,6 +357,10 @@ void QSensor::addFilter(QSensorFilter *filter)
 */
 void QSensor::removeFilter(QSensorFilter *filter)
 {
+    if (!filter) {
+        qWarning() << "removeFilter: passed a null filter!";
+        return;
+    }
     d->filters.removeOne(filter);
     filter->setSensor(0);
 }
@@ -412,6 +374,75 @@ void QSensor::removeFilter(QSensorFilter *filter)
     \fn QSensor::readingChanged()
 
     This signal is emitted when the reading has changed.
+*/
+
+/*!
+    \property QSensor::outputRanges
+    \brief a list of output ranges the sensor supports.
+
+    A sensor may have more than one output range. Typically this is done
+    to give a greater measurement range at the cost of lowering accuracy.
+
+    \sa QSensor::outputRange
+*/
+
+qoutputrangelist QSensor::outputRanges() const
+{
+    return d->outputRanges;
+}
+
+/*!
+    \property QSensor::outputRange
+    \brief the output range in use by the sensor.
+
+    A sensor may have more than one output range. Typically this is done
+    to give a greater measurement range at the cost of lowering accuracy.
+
+    \sa QSensor::outputRanges
+*/
+
+int QSensor::outputRange() const
+{
+    return d->outputRange;
+}
+
+void QSensor::setOutputRange(int index)
+{
+    if (index < 0 || index >= d->outputRanges.count()) {
+        qWarning() << "ERROR: Output range" << index << "is not valid";
+        return;
+    }
+    d->outputRange = index;
+}
+
+/*!
+    \property QSensor::description
+    \brief a descriptive string for the sensor.
+*/
+
+QString QSensor::description() const
+{
+    return d->description;
+}
+
+/*!
+    \property QSensor::error
+    \brief the last error code set on the sensor.
+
+    Note that error codes are sensor-specific.
+*/
+
+int QSensor::error() const
+{
+    return d->error;
+}
+
+/*!
+    \fn QSensor::sensorError(int error)
+
+    This signal is emitted when an \a error code is set on the sensor.
+    Note that some errors will cause the sensor to stop working.
+    You should call isActive() to determine if the sensor is still running.
 */
 
 // =====================================================================
@@ -554,41 +585,31 @@ int QSensorReading::valueCount() const
     Returns the value of the property at \a index.
 
     Note that this function is slower than calling the data function directly.
-    Consider the following statement that provides the best performance.
+
+    Here is an example of getting a property via the different mechanisms available.
+
+    Accessing directly provides the best performance but requires compile-time knowledge
+    of the data you are accessing.
 
     \code
     QAccelerometerReading *reading = ...;
     qreal x = reading->x();
     \endcode
 
-    The slowest way to access a property is via name. To do this you must call
-    QObject::property().
+    You can also access a property by name. To do this you must call QObject::property().
 
     \code
     qreal x = reading->property("x").value<qreal>();
     \endcode
 
-    This is about 20 times slower than simply calling x(). There are 3 costs here.
-
-    \list
-    \o The cost of the string comparison.
-    \o The cost of using the meta-object system.
-    \o The cost of converting to/from QVariant.
-    \endlist
-
-    By looking up the property via numeric index, the string comparison cost is
-    removed.
+    Finally, you can access values via numeric index.
 
     \code
     qreal x = reading->value(0).value<qreal>();
     \endcode
 
-    While faster than name-based lookup this is still about 20 times slower than
-    simply calling x().
-
-    Reading classes can opt to re-implement this function and bypass the
-    meta-object system. If this is done this function will be about 3 times slower
-    than simply calling x().
+    Note that value() can only access properties declared with Q_PROPERTY() in sub-classes
+    of QSensorReading.
 
     \sa valueCount(), QObject::property()
 */
@@ -606,12 +627,6 @@ QVariant QSensorReading::value(int index) const
     // read the property
     return property.read(this);
 }
-
-/*
-    \fn QSensorReading::value(int index) const
-
-    Returns the value of the property at \a index.
-*/
 
 /*!
     \fn QSensorReading::copyValuesFrom(QSensorReading *other)

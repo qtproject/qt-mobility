@@ -42,18 +42,17 @@
 #include "qlandmarkmanager.h"
 #include "qlandmarkmanager_p.h"
 
-#include "qlandmarkmanagerenginefactory_sqlite_p.h"
-
 #include <QStringList>
 #include <QString>
 #include <QIODevice>
 #include <QFile>
 #include <QUrl>
+#include <QPluginLoader>
 #include "qlandmarkcategoryid.h"
 #include "qlandmarkcategory.h"
 #include "qlandmark.h"
 #include "qlandmarkmanagerengine.h"
-
+#include "qlandmarkmanagerenginefactory.h"
 
 QTM_USE_NAMESPACE
 /*!
@@ -94,7 +93,8 @@ QTM_USE_NAMESPACE
     The \a parent QObject will be used as the parent of this QLandmarkManager.
 */
 QLandmarkManager::QLandmarkManager(QObject *parent)
-        : d_ptr(new QLandmarkManagerPrivate())
+        : QObject(parent),
+          d_ptr(new QLandmarkManagerPrivate())
 {
     //TODO: implement
 }
@@ -108,57 +108,12 @@ QLandmarkManager::QLandmarkManager(QObject *parent)
     If an empty \a managerName is specified, the default implementation for the platform will be used.
 */
 QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters, QObject *parent)
-        : d_ptr(new QLandmarkManagerPrivate())
+        : QObject(parent),
+          d_ptr(new QLandmarkManagerPrivate())
 {
     Q_D(QLandmarkManager);
-
-    if (!availableManagers().contains(managerName)) {
-        d->errorCode = NotSupportedError;
-        d->errorString = QString("The landmark engine %1 is not supported.").arg(managerName);
-        d->engine = 0;
-        return;
-    }
-
-    if (managerName == "com.nokia.qt.landmarks.engines.sqlite") {
-        QLandmarkManagerEngineFactorySqlite factory;
-        d->engine = factory.engine(parameters,
-                                   &(d->errorCode),
-                                   &(d->errorString));
-    } else {
-        // set some kind of error? or use the else instead of the contains check?
-        // should there be a static list of factories for this and for availableManagers()?
-    }
-
-    if (d->engine) {
-        connect(d->engine,
-                SIGNAL(dataChanged()),
-                this,
-                SIGNAL(dataChanged()));
-        connect(d->engine,
-                SIGNAL(landmarksAdded(QList<QLandmarkId>)),
-                this,
-                SIGNAL(landmarksAdded(QList<QLandmarkId>)));
-        connect(d->engine,
-                SIGNAL(landmarksChanged(QList<QLandmarkId>)),
-                this,
-                SIGNAL(landmarksChanged(QList<QLandmarkId>)));
-        connect(d->engine,
-                SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
-                this,
-                SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
-        connect(d->engine,
-                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
-                this,
-                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
-        connect(d->engine,
-                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
-                this,
-                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
-        connect(d->engine,
-                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
-                this,
-                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
-    }
+    d->q_ptr = this;
+    d->createEngine(managerName, parameters);
 }
 
 /*!
@@ -171,30 +126,14 @@ QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QStrin
   If the specified implementation version is not available, the manager with the name \a managerName with the default implementation version is instantiated.
  */
 QLandmarkManager::QLandmarkManager(const QString& managerName, int implementationVersion, const QMap<QString, QString>& parameters, QObject* parent)
-        : d_ptr(new QLandmarkManagerPrivate())
+        : QObject(parent),
+          d_ptr(new QLandmarkManagerPrivate())
 {
     Q_D(QLandmarkManager);
-
-    if (!availableManagers().contains(managerName)) {
-        d->errorCode = NotSupportedError;
-        d->errorString = QString("The landmark engine %1 is not supported.").arg(managerName);
-        d->engine = 0;
-        return;
-    }
-
-    if (managerName == "com.nokia.qt.landmarks.engines.sqlite") {
-        QLandmarkManagerEngineFactorySqlite factory;
-        d->engine = factory.engine(parameters,
-                                   &(d->errorCode),
-                                   &(d->errorString));
-        // TODO check version versus supported versions - seems kind of pointless unless the above takes a version argument
-    } else {
-        // set some kind of error? or use the else instead of the contains check?
-        // should there be a static list of factories for this and for availableManagers()?
-        d->errorCode = NotSupportedError;
-        d->errorString = QString("The landmark engine %1 is not supported.").arg(managerName);
-        d->engine = 0;
-    }
+    d->q_ptr = this;
+    QMap<QString,QString> params = parameters;
+    params[QString(LANDMARKS_IMPLEMENTATION_VERSION_NAME)] = QString::number(implementationVersion);
+    d->createEngine(managerName, params);
 
     if (d->engine) {
         connect(d->engine,
@@ -793,9 +732,7 @@ int QLandmarkManager::managerVersion() const
 */
 QStringList QLandmarkManager::availableManagers()
 {
-    QStringList names;
-    names << "com.nokia.qt.landmarks.engines.sqlite";
-    return names;
+    return QLandmarkManagerPrivate::factories().keys();
 }
 
 /*! Returns a URI that completely describes a manager implementation, datastore,
@@ -941,14 +878,5 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 
     \sa categoriesAdded(), categoriesChanged()
 */
-
-/*******************************************************************************
-*******************************************************************************/
-
-QLandmarkManagerPrivate::QLandmarkManagerPrivate()
-        : engine(0),
-        errorCode(QLandmarkManager::NoError)
-{
-}
 
 #include "moc_qlandmarkmanager.cpp"

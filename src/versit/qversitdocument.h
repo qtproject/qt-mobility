@@ -47,6 +47,7 @@
 #include <QList>
 #include <QSharedDataPointer>
 #include <QVariant>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 class QTextCodec;
@@ -60,24 +61,20 @@ class QVersitProperty;
 class Q_VERSIT_EXPORT QVersitDocument
 {
 public:
+    enum VersitType {
+        InvalidType,
+        VCard21Type,   // vCard version 2.1
+        VCard30Type    // vCard version 3.0 (RFC 2426)
+    };
+
     QVersitDocument();
     QVersitDocument(const QVersitDocument& other);
+    QVersitDocument(VersitType type);
     ~QVersitDocument();
 
     QVersitDocument& operator=(const QVersitDocument& other);
     bool operator==(const QVersitDocument& other) const;
     bool operator!=(const QVersitDocument& other) const;
-    
-    /*! Versit document type */
-    enum VersitType {
-        InvalidType,
-        VCard21Type,   // vCard version 2.1
-        VCard30Type    // vCard version 3.0 (RFC 2426)
-        // Deprecated:
-        ,
-        VCard21 = VCard21Type,
-        VCard30 = VCard30Type
-    };
 
     // metadata about the versit document itself.
     void setType(VersitType type);
@@ -91,22 +88,15 @@ public:
     bool isEmpty() const;
     void clear();
 
-    // Deprecated:
-    void Q_DECL_DEPRECATED setVersitType(VersitType type)
-    {
-        qWarning("QVersitDocument::setVersitType(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  setType() should be used instead.");
-        setType(type);
-    }
-    VersitType Q_DECL_DEPRECATED versitType() const
-    {
-        qWarning("QVersitDocument::versitType(): This function was deprecated in week 4 and will be removed after the transition period has elapsed!  type() should be used instead.");
-        return type();
-    }
-
 private:
-    
+
     QSharedDataPointer<QVersitDocumentPrivate> d;
 };
+
+Q_VERSIT_EXPORT uint qHash(const QVersitDocument& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_VERSIT_EXPORT QDebug operator<<(QDebug dbg, const QVersitDocument& property);
+#endif
 
 QTM_END_NAMESPACE
 

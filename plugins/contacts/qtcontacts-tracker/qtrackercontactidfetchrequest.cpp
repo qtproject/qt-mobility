@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #include <qtrackercontactidfetchrequest.h>
 
 #include <qtcontacts.h>
@@ -63,22 +62,19 @@ QTrackerContactIdFetchRequest::QTrackerContactIdFetchRequest(QContactAbstractReq
     {
         fetchReq->setFilter(idfetchrequest->filter());
         // IMContacts needs to be fetched to use metacontact matching
-        fetchReq->setDefinitionRestrictions(QStringList()<<QContactOnlineAccount::DefinitionName);
+        QContactFetchHint fetchHint;
+        fetchHint.setDetailDefinitionsHint(QStringList() << QContactOnlineAccount::DefinitionName);
+        fetchReq->setFetchHint(fetchHint);
     }
 }
 
-void QTrackerContactIdFetchRequest::emitFinished()
+void QTrackerContactIdFetchRequest::emitFinished(QContactManager::Error error)
 {
-    delete req; // delete QContactFetchRequest we used to get the result
-    req = idfetchrequest;
     // for now this only serves get all contacts
     QList<QContactLocalId> results;
     foreach(const QContact &c, result) {
         results << c.localId();
     }
-    QContactManagerEngine::updateRequest(req, results, QContactManager::NoError,
-                              QList<QContactManager::Error> (),
-                              QContactAbstractRequest::Finished,
-                              false);
+    QContactManagerEngine::updateContactLocalIdFetchRequest(idfetchrequest, results, error, QContactAbstractRequest::FinishedState);
 }
 

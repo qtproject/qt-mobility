@@ -36,15 +36,16 @@
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitContactExporterDetailHandler/~QVersitContactExporterDetailHandler"></a>
 <h3 class="fn"><a name="dtor.QVersitContactExporterDetailHandler"></a>QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Frees any memory in use by this handler.</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporterDetailHandler/postProcessDetail"></a>
 <h3 class="fn"><a name="postProcessDetail"></a>bool QVersitContactExporterDetailHandler::postProcessDetail ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i>, bool <i>alreadyProcessed</i>, <a href="qversitdocument.html">QVersitDocument</a> * <i>document</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Process <i>detail</i> and update <i>document</i> with the corresponding <a href="qversitproperty.html">QVersitProperty</a>(s). <i>contact</i> provides the context within which the detail was found.</p>
+<p>Process <i>detail</i> and update <i>document</i> with the corresponding <a href="qversitproperty.html">QVersitProperty</a>(s). <i>contact</i> provides the context within which the detail was found. <i>alreadyProcessed</i> is true if the detail has already been processed either by <a href="qversitcontactexporterdetailhandler.html#preProcessDetail">preProcessDetail</a>() or by <a href="qversitcontactexporter.html">QVersitContactExporter</a> itself.</p>
 <p>Returns true if the detail has been handled, false otherwise.</p>
-<p>This function is called on every <a href="qcontactdetail.html">QContactDetail</a> encountered during an export which is not handled by either <a href="qversitcontactexporterdetailhandler.html#preProcessDetail">preProcessDetail</a>() or by <a href="qversitcontactexporter.html">QVersitContactExporter</a>. This can be used to implement support for QContactDetail(s) not supported by <a href="qversitcontactexporter.html">QVersitContactExporter</a>.</p>
+<p>This function is called on every <a href="qcontactdetail.html">QContactDetail</a> encountered during an export. This can be used to implement support for QContactDetails not supported by <a href="qversitcontactexporter.html">QVersitContactExporter</a>.</p>
 <a name="//apple_ref/cpp/instm/QVersitContactExporterDetailHandler/preProcessDetail"></a>
 <h3 class="fn"><a name="preProcessDetail"></a>bool QVersitContactExporterDetailHandler::preProcessDetail ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i>, const <a href="qcontactdetail.html">QContactDetail</a> &amp; <i>detail</i>, <a href="qversitdocument.html">QVersitDocument</a> * <i>document</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Process <i>detail</i> and update <i>document</i> with the corresponding <a href="qversitproperty.html">QVersitProperty</a>(s). <i>contact</i> provides the context within which the detail was found.</p>
-<p>Returns true if the detail has been handled and requires no furthur processing, false otherwise.</p>
+<p>Returns true if the detail has been handled and requires no further processing, false otherwise.</p>
 <p>This function is called on every <a href="qcontactdetail.html">QContactDetail</a> encountered during an export. Supply this function and return true to implement custom export behaviour.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

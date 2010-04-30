@@ -42,7 +42,6 @@
 #ifndef QTRACKERCONTACTSLIVE_H
 #define QTRACKERCONTACTSLIVE_H
 
-#include <qmobilityglobal.h>
 #include <qcontact.h>
 #include <qcontactdetail.h>
 #include <qcontactphonenumber.h>
@@ -54,14 +53,6 @@
 #include <QtTracker/ontologies/nco.h>
 
 using namespace SopranoLive;
-
-namespace ContactContext {
-    typedef enum Location {
-        Unknown = 0,
-        Home,
-        Work
-    };
-}
 
 QTM_USE_NAMESPACE
 

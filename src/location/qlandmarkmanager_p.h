@@ -55,19 +55,33 @@
 
 #include "qmobilityglobal.h"
 #include "qlandmarkmanager.h"
+#include <QHash>
+#include <QString>
+#include <QMap>
+
+#define LANDMARKS_IMPLEMENTATION_VERSION_NAME "com.nokia.qtmobility.landmarks.implentation.version"
 
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkManagerEngine;
+class QLandmarkManagerEngineFactory;
 
 class QLandmarkManagerPrivate
 {
 public:
     QLandmarkManagerPrivate();
+    void createEngine(const QString &managerName, const QMap<QString,QString> &parameters);
 
     QLandmarkManagerEngine *engine;
     mutable QLandmarkManager::Error errorCode;
     mutable QString errorString;
+    static void loadFactories();
+    static QHash<QString, QLandmarkManagerEngineFactory*> factories(bool reload = false);
+    static  void loadDynamicFactories (QHash<QString, QLandmarkManagerEngineFactory*> *factories);
+    static  void loadStaticFactories (QHash<QString, QLandmarkManagerEngineFactory*> *factories);
+
+    QLandmarkManager *q_ptr;
+    Q_DECLARE_PUBLIC(QLandmarkManager)
 };
 
 QTM_END_NAMESPACE

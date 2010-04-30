@@ -2,15 +2,21 @@ QT += testlib
 TEMPLATE = app
 TARGET = tst_qversit
 
+symbian*: {
+    VERSIT_TESTDATA.sources = testdata/*
+    VERSIT_TESTDATA.path = testdata
+    DEPLOYMENT += VERSIT_TESTDATA
+}
+
 wince* {
-    DEFINES+= TESTDATA_DIR=\\\".\\\"
+    DEFINES+= TESTDATA_DIR=\\\"./\\\"
 }else:!symbian {
     DEFINES += TESTDATA_DIR=\\\"$$PWD/\\\"
 }
 
 CONFIG += testcase
 include(../../../common.pri)
-DEFINES += BUILD_QTVERSIT QT_ASCII_CAST_WARNINGS
+DEFINES += QT_ASCII_CAST_WARNINGS
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../ \
@@ -19,8 +25,8 @@ INCLUDEPATH += . \
     ../../../src/contacts/details \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
-HEADERS += ut_qversit.h
-SOURCES += ut_qversit.cpp
+HEADERS += tst_qversit.h
+SOURCES += tst_qversit.cpp
 CONFIG += mobility
 MOBILITY = contacts \
     versit

@@ -47,9 +47,9 @@
 
 #include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-namespace QtMedia
+namespace QtMediaServices
 {
     enum MetaData
     {
@@ -142,7 +142,12 @@ namespace QtMedia
         Contrast,
         Saturation,
         Sharpness,
-        DeviceSettingDescription
+        DeviceSettingDescription,
+
+        PosterImage,
+        CoverArtImage,
+        ThumbnailImage
+
     };
 
     enum SupportEstimate
@@ -150,7 +155,7 @@ namespace QtMedia
         NotSupported,
         MaybeSupported,
         ProbablySupported,
-        PreferedService
+        PreferredService
     };
 
     enum EncodingQuality
@@ -180,6 +185,6 @@ namespace QtMedia
 
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

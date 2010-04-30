@@ -60,13 +60,12 @@ QTrackerRelationshipSaveRequest::QTrackerRelationshipSaveRequest(QContactAbstrac
 
     QList<QContactRelationship> links = r->relationships();
     if(links.isEmpty()) {
-        QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::BadArgumentError);
-        QContactManagerEngine::updateRequest(req, links, QContactManager::BadArgumentError, errors, QContactAbstractRequest::Finished);
+        QMap<int, QContactManager::Error> errors;
+        errors[0] = QContactManager::BadArgumentError;
+        QContactManagerEngine::updateRelationshipSaveRequest(r, links, QContactManager::BadArgumentError, errors, QContactAbstractRequest::FinishedState);
         return;
     }
-    QList<QContactManager::Error> dummy;
-    QContactManagerEngine::updateRequestStatus(req, QContactManager::NoError, dummy,
-            QContactAbstractRequest::Active);
+    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
 
 
     // the logic is like this
@@ -83,10 +82,10 @@ QTrackerRelationshipSaveRequest::QTrackerRelationshipSaveRequest(QContactAbstrac
     RDFVariable contact;
     QStringList idstrings(QStringList(ids.toList()));
     contact.property<nco::contactUID>().isMemberOf(idstrings);
-    nodes = ::tracker()->modelVariable(contact);
+    m_nodes = ::tracker()->modelVariable(contact);
 
     // need to store LiveNodes in order to receive notification from model
-    QObject::connect(nodes.model(), SIGNAL(modelUpdated()), this, SLOT(nodesDataReady()));
+    QObject::connect(m_nodes.model(), SIGNAL(modelUpdated()), this, SLOT(nodesDataReady()));
 
 }
 
@@ -98,9 +97,9 @@ void QTrackerRelationshipSaveRequest::nodesDataReady()
     connect(transaction_.data(), SIGNAL(commitError(QString)), this, SLOT(commitError(QString)));
 
     QHash<QString, Live<nco::PersonContact> > lContacts;
-    for(int i = 0; i < nodes->rowCount();i++)
+    for(int i = 0; i < m_nodes->rowCount(); i++)
     {
-        Live<nco::PersonContact> contact = nodes->liveNode(i);
+        Live<nco::PersonContact> contact = m_nodes->liveNode(i);
         lContacts[contact->getContactUID()] = contact;
     }
     QContactRelationshipSaveRequest* r = qobject_cast<QContactRelationshipSaveRequest*>(req);
@@ -109,14 +108,23 @@ void QTrackerRelationshipSaveRequest::nodesDataReady()
     QList<QContactRelationship> links = r->relationships();
     foreach(QContactRelationship rel, links)
     {
-        Live<nco::PersonContact> first = lContacts[QString::number(rel.first().localId())];
-        Live<nco::PersonContact> second = lContacts[QString::number(rel.second().localId())];
-        second->setMetacontact(first->getMetacontact());
+        Live<nco::PersonContact> first = lContacts.value(QString::number(rel.first().localId()));
+        Live<nco::PersonContact> second = lContacts.value(QString::number(rel.second().localId()));
+        //TODO: we should prefer the local contact information over the remote info.
+        mergeContacts(first, second);
     }
 
     transaction_->commit(false);
     // temporary fix - signals not yet implemented in libqttracker
     commitFinished();
+}
+
+void QTrackerRelationshipSaveRequest::mergeContacts(const Live<nco::PersonContact>& preferedContact, const Live<nco::PersonContact>& inferiorContact)
+{
+   QList<LiveNode> mergedNodes = preferedContact->getHasIMAddresss();
+   mergedNodes += inferiorContact->getHasIMAddresss();
+   preferedContact->setHasIMAddresss( mergedNodes );
+   inferiorContact->remove();
 }
 
 void QTrackerRelationshipSaveRequest::commitFinished()
@@ -125,8 +133,9 @@ void QTrackerRelationshipSaveRequest::commitFinished()
     if (r && r->isActive())
     {
         QContactManager::Error error = QContactManager::NoError;
-        QList<QContactManager::Error> errors; errors<<error;
-        QContactManagerEngine::updateRequest(r, r->relationships(), error, errors, QContactAbstractRequest::Finished);
+        QMap<int, QContactManager::Error> errors;
+        errors[0] = error;
+        QContactManagerEngine::updateRelationshipSaveRequest(r, r->relationships(), error, errors, QContactAbstractRequest::FinishedState);
     }
     else
         qWarning()<<Q_FUNC_INFO<<r;
@@ -139,13 +148,15 @@ void QTrackerRelationshipSaveRequest::commitError(QString message)
     if (r)
     {
         QContactManager::Error error = QContactManager::InvalidRelationshipError;
-        QList<QContactManager::Error> errors; errors<<error;
-        QContactManagerEngine::updateRequest(r, r->relationships(), error, errors, QContactAbstractRequest::Finished);
+        QMap<int, QContactManager::Error> errors; 
+        errors[0] = error;
+        QContactManagerEngine::updateRelationshipSaveRequest(r, r->relationships(), error, errors, QContactAbstractRequest::FinishedState);
     }
     else
     {
-        QList<QContactManager::Error> errors(QList<QContactManager::Error>()<<QContactManager::UnspecifiedError);
-        QContactManagerEngine::updateRequest(req, QList<QContactRelationship>(), QContactManager::UnspecifiedError, errors, QContactAbstractRequest::Finished);
+        QMap<int, QContactManager::Error> errors;
+        errors[0] = QContactManager::UnspecifiedError;
+        QContactManagerEngine::updateRelationshipSaveRequest(r, QList<QContactRelationship>(), QContactManager::UnspecifiedError, errors, QContactAbstractRequest::FinishedState);
         return;
     }
 }

@@ -13,9 +13,7 @@ symbian {
     TARGET.UID3 = 0x2002AC79
 }
 
-symbian|maemo* {
-    DEFINES += QTM_SMALL_SCREEN
-}
+include(../examples.pri)
 
 HEADERS = publisherdialog.h \
           subscriberdialog.h
@@ -24,10 +22,13 @@ SOURCES = main.cpp \
           publisherdialog.cpp \
           subscriberdialog.cpp
 
-FORMS = publisherdialog.ui \
-        subscriberdialog.ui
-
-include(../examples.pri)
+maemo5|maemo6 {
+    FORMS = publisherdialog_hor.ui \
+            subscriberdialog_hor.ui
+} else {
+    FORMS = publisherdialog.ui \
+            subscriberdialog.ui
+}
 
 CONFIG += mobility
 MOBILITY = publishsubscribe

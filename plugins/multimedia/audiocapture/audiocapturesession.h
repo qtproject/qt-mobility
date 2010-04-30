@@ -53,7 +53,7 @@
 #include <QtMultimedia/qaudioinput.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureSession : public QObject
 {
@@ -86,6 +86,7 @@ public slots:
 signals:
     void stateChanged(QMediaRecorder::State state);
     void positionChanged(qint64 position);
+    void error(int error, const QString &errorString);
 
 private slots:
     void stateChanged(QAudio::State state);

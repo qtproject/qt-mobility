@@ -65,7 +65,7 @@ QMessageFolderId::QMessageFolderId(const QMessageFolderId& other)
 QMessageFolderId::QMessageFolderId(const QString& id)
     : d_ptr(0)
 {
-    QMailFolderId fid(id.toULongLong());
+    QMailFolderId fid(QmfHelpers::stripIdentifierPrefix(id).toULongLong());
     if (fid.isValid()) {
         d_ptr = new QMessageFolderIdPrivate;
         d_ptr->_id = fid;
@@ -117,7 +117,8 @@ bool QMessageFolderId::operator<(const QMessageFolderId& other) const
 
 QString QMessageFolderId::toString() const
 {
-    return (isValid() ? QString::number(d_ptr->_id.toULongLong()) : QString());
+    QString result = (isValid() ? QString::number(d_ptr->_id.toULongLong()) : QString());
+    return QmfHelpers::prefixIdentifier(result);
 }
 
 bool QMessageFolderId::isValid() const

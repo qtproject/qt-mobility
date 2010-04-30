@@ -23,31 +23,23 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#QContactSaveRequest">QContactSaveRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#dtor.QContactSaveRequest">~QContactSaveRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#QContactSaveRequest">QContactSaveRequest</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContact&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#contacts">contacts</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#errorMap">errorMap</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#setContact">setContact</a></b> ( const QContact &amp; <i>contact</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#setContacts">setContacts</a></b> ( const QList&lt;QContact&gt; &amp; <i>contacts</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>9 public functions inherited from <a href="qcontactabstractrequest.html#public-functions">QContactAbstractRequest</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
-<hr />
-<a name="signals"></a>
-<h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsaverequest.html#progress">progress</a></b> ( QContactSaveRequest * <i>self</i> )</td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>3 public slots inherited from <a href="qcontactabstractrequest.html#public-slots">QContactAbstractRequest</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>2 signals inherited from <a href="qcontactabstractrequest.html#signals">QContactAbstractRequest</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -61,11 +53,8 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactSaveRequest/QContactSaveRequest"></a>
-<h3 class="fn"><a name="QContactSaveRequest"></a>QContactSaveRequest::QContactSaveRequest ()</h3>
-<p>Constructs a new contact save request</p>
-<a name="//apple_ref/cpp/instm/QContactSaveRequest/~QContactSaveRequest"></a>
-<h3 class="fn"><a name="dtor.QContactSaveRequest"></a>QContactSaveRequest::~QContactSaveRequest ()</h3>
-<p>Cleans up the memory in use by this contact save request</p>
+<h3 class="fn"><a name="QContactSaveRequest"></a>QContactSaveRequest::QContactSaveRequest ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new contact save request whose parent is the specified <i>parent</i></p>
 <a name="//apple_ref/cpp/instm/QContactSaveRequest/contacts"></a>
 <h3 class="fn"><a name="contacts"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; QContactSaveRequest::contacts () const</h3>
 <p>Returns the list of contacts which will be saved if called prior to calling <tt>start()</tt>, otherwise returns the list of contacts as they were saved in the contacts store</p>
@@ -73,9 +62,10 @@
 <a name="//apple_ref/cpp/instm/QContactSaveRequest/errorMap"></a>
 <h3 class="fn"><a name="errorMap"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactSaveRequest::errorMap () const</h3>
 <p>Returns the map of input definition list indices to errors which occurred</p>
-<a name="//apple_ref/cpp/instm/QContactSaveRequest/progress"></a>
-<h3 class="fn"><a name="progress"></a>void QContactSaveRequest::progress ( QContactSaveRequest * <i>self</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted when some progress has been made on the request, causing either a change of status or an update of results, or both. It identifies which request the signal originated from by including a pointer to <i>self</i>.</p>
+<a name="//apple_ref/cpp/instm/QContactSaveRequest/setContact"></a>
+<h3 class="fn"><a name="setContact"></a>void QContactSaveRequest::setContact ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> )</h3>
+<p>Sets the contact to be saved to <i>contact</i>. Equivalent to calling:</p>
+<pre>    setContacts(QList&lt;QContact&gt;() &lt;&lt; contact);</pre>
 <a name="//apple_ref/cpp/instm/QContactSaveRequest/setContacts"></a>
 <h3 class="fn"><a name="setContacts"></a>void QContactSaveRequest::setContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; &amp; <i>contacts</i> )</h3>
 <p>Sets the list of contacts to be saved to <i>contacts</i></p>

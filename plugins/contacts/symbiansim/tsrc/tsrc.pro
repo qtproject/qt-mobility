@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS += qcontactmanagersymbiansim
+SUBDIRS += tst_simcm \
+           tst_simcmasync

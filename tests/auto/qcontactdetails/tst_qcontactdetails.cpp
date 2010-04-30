@@ -42,7 +42,6 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -55,9 +54,6 @@ Q_OBJECT
 public:
     tst_QContactDetails();
     virtual ~tst_QContactDetails();
-
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();
@@ -81,7 +77,10 @@ private slots:
     void onlineAccount();
     void organization();
     void phoneNumber();
+    void ringtone();
     void syncTarget();
+    void tag();
+    void thumbnail();
     void timestamp();
     void type();
     void url();
@@ -237,34 +236,27 @@ void tst_QContactDetails::avatar()
     QContactAvatar a1, a2;
 
     // test property set
-    a1.setAvatar("1234");
-    QCOMPARE(a1.avatar(), QString("1234"));
-    QCOMPARE(a1.value(QContactAvatar::FieldAvatar), QString("1234"));
-    a1.setSubType(QContactAvatar::SubTypeAudioRingtone);
-    QCOMPARE(a1.subType(), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
-    QCOMPARE(a1.value(QContactAvatar::FieldSubType), QString(QLatin1String(QContactAvatar::SubTypeAudioRingtone)));
-
-    a1.setSubType(QContactAvatar::SubTypeImage);
-    
-    //pixmap
-    uchar pixDataRGB[] = {255, 0, 0, 0, 0, 255, 0, 0, 255, 255, 0, 0}; // Red, Blue, Red, Blue
-    QImage img(pixDataRGB, 2, 2, 6, QImage::Format_RGB888); // 2 pixels width, 2 pixels height, 6 bytes per line, RGB888 format
-    QImage scaled = img.scaled(100, 100); // Scale image to show results better
-    QPixmap pix = QPixmap::fromImage(scaled); // Create pixmap from image
-    a1.setPixmap(pix);
+    a1.setImageUrl(QUrl("1234"));
+    QCOMPARE(a1.imageUrl(), QUrl("1234"));
+    QCOMPARE(a1.value<QUrl>(QContactAvatar::FieldImageUrl), QUrl("1234"));
+    a2.setVideoUrl(QUrl("videoUrl"));
+    a2.setImageUrl(QUrl("imageUrl"));
+    QCOMPARE(a2.videoUrl(), QUrl("videoUrl"));
+    QCOMPARE(a2.value<QUrl>(QContactAvatar::FieldVideoUrl), QUrl("videoUrl"));
+    QCOMPARE(a2.imageUrl(), QUrl("imageUrl"));
+    QCOMPARE(a2.value<QUrl>(QContactAvatar::FieldImageUrl), QUrl("imageUrl"));
 
     // test property add
     QVERIFY(c.saveDetail(&a1));
     QCOMPARE(c.details(QContactAvatar::DefinitionName).count(), 1);
-    QCOMPARE(QContactAvatar(c.details(QContactAvatar::DefinitionName).value(0)).avatar(), a1.avatar());
-    QCOMPARE(a1.pixmap(), pix);
+    QCOMPARE(QContactAvatar(c.details(QContactAvatar::DefinitionName).value(0)).imageUrl(), a1.imageUrl());
 
     // test property update
     a1.setValue("label","label1");
-    a1.setAvatar("12345");
+    a1.setImageUrl(QUrl("12345"));
     QVERIFY(c.saveDetail(&a1));
     QCOMPARE(c.details(QContactAvatar::DefinitionName).value(0).value("label"), QString("label1"));
-    QCOMPARE(c.details(QContactAvatar::DefinitionName).value(0).value(QContactAvatar::FieldAvatar), QString("12345"));
+    QCOMPARE(c.details(QContactAvatar::DefinitionName).value(0).value<QUrl>(QContactAvatar::FieldImageUrl), QUrl("12345"));
 
     // test property remove
     QVERIFY(c.removeDetail(&a1));
@@ -327,13 +319,11 @@ void tst_QContactDetails::displayLabel()
 
     // test property add [== fail]
     QVERIFY(!c.saveDetail(&d2));
-    QVERIFY(d2.accessConstraints() & QContactDetail::ReadOnly);
     QCOMPARE(c.details(QContactDisplayLabel::DefinitionName).count(), 1);
 
     // test property update [== fail]
     d1 = c.detail<QContactDisplayLabel>();
     QVERIFY(!c.saveDetail(&d1));
-    QVERIFY(d1.accessConstraints() & QContactDetail::ReadOnly);
 
     // test property remove
     QVERIFY(!c.removeDetail(&d1)); // cannot remove display label
@@ -551,6 +541,27 @@ void tst_QContactDetails::name()
     QCOMPARE(n1.lastName(), QString("Gumboots"));
     QCOMPARE(n1.suffix(), QString("Esquire"));
 
+    // Values based (ql1c)
+    QCOMPARE(n1.value(QContactName::FieldPrefix), QString("Dr"));
+    QCOMPARE(n1.value(QContactName::FieldFirstName), QString("Freddy"));
+    QCOMPARE(n1.value(QContactName::FieldMiddleName), QString("William Preston"));
+    QCOMPARE(n1.value(QContactName::FieldLastName), QString("Gumboots"));
+    QCOMPARE(n1.value(QContactName::FieldSuffix), QString("Esquire"));
+
+    // Values based (const char *)
+    QCOMPARE(n1.value(QContactName::FieldPrefix.latin1()), QString("Dr"));
+    QCOMPARE(n1.value(QContactName::FieldFirstName.latin1()), QString("Freddy"));
+    QCOMPARE(n1.value(QContactName::FieldMiddleName.latin1()), QString("William Preston"));
+    QCOMPARE(n1.value(QContactName::FieldLastName.latin1()), QString("Gumboots"));
+    QCOMPARE(n1.value(QContactName::FieldSuffix.latin1()), QString("Esquire"));
+
+    // Values based (QLatin1String)
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldPrefix)), QString("Dr"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldFirstName)), QString("Freddy"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldMiddleName)), QString("William Preston"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldLastName)), QString("Gumboots"));
+    QCOMPARE(n1.value(QLatin1String(QContactName::FieldSuffix)), QString("Esquire"));
+
     // test property add
     QVERIFY(c.saveDetail(&n1));
     QCOMPARE(c.details(QContactName::DefinitionName).count(), 1);
@@ -608,6 +619,39 @@ void tst_QContactDetails::nickname()
     QCOMPARE(c.details(QContactNickname::DefinitionName).count(), 0);
 }
 
+void tst_QContactDetails::note()
+{
+    QContact c;
+    QContactNote n1, n2;
+
+    // test property set
+    n1.setNote("lorem ipsum");
+    QCOMPARE(n1.note(), QString("lorem ipsum"));
+    QCOMPARE(n1.value(QContactNote::FieldNote), QString("lorem ipsum"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&n1));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
+    QCOMPARE(QContactNote(c.details(QContactNote::DefinitionName).value(0)).note(), n1.note());
+
+    // test property update
+    n1.setValue("label","label1");
+    n1.setNote("orange gypsum");
+    QVERIFY(c.saveDetail(&n1));
+    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value(QContactNote::FieldNote), QString("orange gypsum"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&n1));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&n2));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&n2));
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&n2) == false);
+    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+}
+
 void tst_QContactDetails::onlineAccount()
 {
     QContact c;
@@ -617,15 +661,6 @@ void tst_QContactDetails::onlineAccount()
     o1.setAccountUri("test@nokia.com");
     QCOMPARE(o1.accountUri(), QString("test@nokia.com"));
     QCOMPARE(o1.value(QContactOnlineAccount::FieldAccountUri), QString("test@nokia.com"));
-    o1.setNickname("test");
-    QCOMPARE(o1.nickname(), QString("test"));
-    QCOMPARE(o1.value(QContactOnlineAccount::FieldNickname), QString("test"));
-    o1.setStatusMessage("Gone Fishing");
-    QCOMPARE(o1.statusMessage(), QString("Gone Fishing"));
-    QCOMPARE(o1.value(QContactOnlineAccount::FieldStatusMessage), QString("Gone Fishing"));
-    o1.setPresence("Extended Away");
-    QCOMPARE(o1.presence(), QString("Extended Away"));
-    QCOMPARE(o1.value(QContactOnlineAccount::FieldPresence), QString("Extended Away"));
 
     // Sub types
     o1.setSubTypes(QContactOnlineAccount::SubTypeSip);
@@ -643,9 +678,6 @@ void tst_QContactDetails::onlineAccount()
     QVERIFY(c.saveDetail(&o1));
     QCOMPARE(c.details(QContactOnlineAccount::DefinitionName).count(), 1);
     QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).accountUri(), o1.accountUri());
-    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).presence(), o1.presence());
-    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).nickname(), o1.nickname());
-    QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).statusMessage(), o1.statusMessage());
     QCOMPARE(QContactOnlineAccount(c.details(QContactOnlineAccount::DefinitionName).value(0)).accountUri(), o1.accountUri());
 
     // test property update
@@ -684,9 +716,9 @@ void tst_QContactDetails::organization()
     QCOMPARE(o1.location(), QString("location one"));
     QCOMPARE(o1.value(QContactOrganization::FieldLocation), QString("location one"));
 
-    o1.setLogo("logo one");
-    QCOMPARE(o1.logo(), QString("logo one"));
-    QCOMPARE(o1.value(QContactOrganization::FieldLogo), QString("logo one"));
+    o1.setLogoUrl(QUrl("logo one"));
+    QCOMPARE(o1.logoUrl(), QUrl("logo one"));
+    QCOMPARE(o1.value<QUrl>(QContactOrganization::FieldLogoUrl), QUrl("logo one"));
 
     o1.setTitle("title one");
     QCOMPARE(o1.title(), QString("title one"));
@@ -719,13 +751,13 @@ void tst_QContactDetails::organization()
     // organization-specific API testing
     o1.setDepartment(QStringList(QString("Imaginary Dept")));
     o1.setLocation("Utopia");
-    o1.setLogo("logo.png");
+    o1.setLogoUrl(QUrl("logo.png"));
     o1.setName("Utopian Megacorporation");
     o1.setTitle("Generic Employee");
     c.saveDetail(&o1);
     QVERIFY(c.detail(QContactOrganization::DefinitionName).value<QStringList>(QContactOrganization::FieldDepartment) == QStringList(QString("Imaginary Dept")));
     QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldLocation) == QString("Utopia"));
-    QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldLogo) == QString("logo.png"));
+    QVERIFY(c.detail(QContactOrganization::DefinitionName).value<QUrl>(QContactOrganization::FieldLogoUrl) == QUrl("logo.png"));
     QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldName) == QString("Utopian Megacorporation"));
     QVERIFY(c.detail(QContactOrganization::DefinitionName).value(QContactOrganization::FieldTitle) == QString("Generic Employee"));
 }
@@ -745,7 +777,7 @@ void tst_QContactDetails::phoneNumber()
     QCOMPARE(p1.subTypes(), QStringList() << QLatin1String(QContactPhoneNumber::SubTypeCar));
 
     QStringList sl;
-    sl << QLatin1String(QContactPhoneNumber::SubTypeMobile) << QLatin1String(QContactPhoneNumber::SubTypeFacsimile);
+    sl << QLatin1String(QContactPhoneNumber::SubTypeMobile) << QLatin1String(QContactPhoneNumber::SubTypeFax);
     p1.setSubTypes(sl);
     QCOMPARE(p1.subTypes(), sl);
 
@@ -764,7 +796,7 @@ void tst_QContactDetails::phoneNumber()
     p1.setSubTypes(QContactPhoneNumber::SubTypeDtmfMenu);
     c.saveDetail(&p1);
     QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).variantValue(QContactPhoneNumber::FieldSubTypes).toStringList() == QStringList(QString(QLatin1String(QContactPhoneNumber::SubTypeDtmfMenu))));
-    p1.setSubTypes(QStringList() << QContactPhoneNumber::SubTypeModem << QContactPhoneNumber::SubTypeFacsimile);
+    p1.setSubTypes(QStringList() << QContactPhoneNumber::SubTypeModem << QContactPhoneNumber::SubTypeFax);
     c.saveDetail(&p1);
     QVERIFY(c.detail(QContactPhoneNumber::DefinitionName).variantValue(QContactPhoneNumber::FieldSubTypes).toStringList() == p1.subTypes());
 
@@ -777,6 +809,47 @@ void tst_QContactDetails::phoneNumber()
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&p2) == false);
     QCOMPARE(c.details(QContactPhoneNumber::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::ringtone()
+{
+    QContact c;
+    QContactRingtone r1, r2;
+
+    // test property set
+    r1.setAudioRingtoneUrl(QUrl("audioUrl"));
+    QCOMPARE(r1.audioRingtoneUrl(), QUrl("audioUrl"));
+    QCOMPARE(r1.value<QUrl>(QContactRingtone::FieldAudioRingtoneUrl), QUrl("audioUrl"));
+
+    // and the other fields
+    r2.setVideoRingtoneUrl(QUrl("videoUrl"));
+    QCOMPARE(r2.videoRingtoneUrl(), QUrl("videoUrl"));
+    QCOMPARE(r2.value<QUrl>(QContactRingtone::FieldVideoRingtoneUrl), QUrl("videoUrl"));
+    r2.setVibrationRingtoneUrl(QUrl("vibrationUrl"));
+    QCOMPARE(r2.vibrationRingtoneUrl(), QUrl("vibrationUrl"));
+    QCOMPARE(r2.value<QUrl>(QContactRingtone::FieldVibrationRingtoneUrl), QUrl("vibrationUrl"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&r1));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 1);
+    QCOMPARE(QContactRingtone(c.details(QContactRingtone::DefinitionName).value(0)).audioRingtoneUrl(), r1.audioRingtoneUrl());
+
+    // test property update
+    r1.setValue("label","label1");
+    r1.setAudioRingtoneUrl(QUrl("audioUrl2"));
+    QVERIFY(c.saveDetail(&r1));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).value(0).value<QUrl>(QContactRingtone::FieldAudioRingtoneUrl), QUrl("audioUrl2"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&r1));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 0);
+    QVERIFY(c.saveDetail(&r2));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&r2));
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&r2) == false);
+    QCOMPARE(c.details(QContactRingtone::DefinitionName).count(), 0);
 }
 
 void tst_QContactDetails::syncTarget()
@@ -810,6 +883,77 @@ void tst_QContactDetails::syncTarget()
     QCOMPARE(c.details(QContactSyncTarget::DefinitionName).count(), 0);
     QVERIFY(c.removeDetail(&s2) == false);
     QCOMPARE(c.details(QContactSyncTarget::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::tag()
+{
+    QContact c;
+    QContactTag t1, t2;
+
+    // test property set
+    t1.setTag("red");
+    QCOMPARE(t1.tag(), QString("red"));
+    QCOMPARE(t1.value(QContactTag::FieldTag), QString("red"));
+
+    // test property add
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 1);
+    QCOMPARE(QContactTag(c.details(QContactTag::DefinitionName).value(0)).tag(), t1.tag());
+    QVERIFY(c.saveDetail(&t2));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 2);
+
+    // test property update
+    t1.setValue("label","label1");
+    t1.setTag("green");
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactTag::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactTag::DefinitionName).value(0).value(QContactTag::FieldTag), QString("green"));
+
+    // test property remove
+    QVERIFY(c.removeDetail(&t1));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 1);
+    QVERIFY(c.removeDetail(&t2));
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 0);
+    QVERIFY(c.removeDetail(&t2) == false);
+    QCOMPARE(c.details(QContactTag::DefinitionName).count(), 0);
+}
+
+void tst_QContactDetails::thumbnail()
+{
+    QContact c;
+    QContactThumbnail t1, t2;
+    QImage i1, i2; // XXX TODO: FIXME load an image from bytearray
+
+    // test property set
+    t1.setThumbnail(i1);
+    QCOMPARE(t1.thumbnail(), i1);
+    QCOMPARE(t1.value<QImage>(QContactThumbnail::FieldThumbnail), i1);
+
+    // Make sure we have none to start with
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 0);
+
+    // test property add
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
+    QCOMPARE(QContactThumbnail(c.details(QContactThumbnail::DefinitionName).value(0)).thumbnail(), t1.thumbnail());
+
+    // test property update
+    t1.setValue("label","label1");
+    t1.setThumbnail(i2);
+    QVERIFY(c.saveDetail(&t1));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).value(0).value("label"), QString("label1"));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).value(0).value<QImage>(QContactThumbnail::FieldThumbnail), i2);
+
+    // Uniqueness is not currently enforced
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
+    t2.setThumbnail(i1);
+    QVERIFY(c.saveDetail(&t2));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 2); // save should overwrite!
+    QCOMPARE(QContactThumbnail(c.details(QContactThumbnail::DefinitionName).value(0)).thumbnail(), i1);
+    QCOMPARE(QContactThumbnail(c.details(QContactThumbnail::DefinitionName).value(0)).thumbnail(), t2.thumbnail());
+
+    QVERIFY(c.removeDetail(&t1));
+    QCOMPARE(c.details(QContactThumbnail::DefinitionName).count(), 1);
 }
 
 void tst_QContactDetails::timestamp()
@@ -918,9 +1062,53 @@ void tst_QContactDetails::url()
     QCOMPARE(c.details(QContactUrl::DefinitionName).count(), 0);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+// define a custom detail to test inheritance/slicing
+class CustomTestDetail : public QContactDetail
+{
+public:
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(CustomTestDetail, "CustomTestDetail")
+    Q_DECLARE_LATIN1_CONSTANT(FieldTestLabel, "TestLabel");
+
+    ~CustomTestDetail()
+    {
+        // we define a dtor which does some random stuff
+        // to test that the virtual dtor works as expected.
+
+        int *temp = 0;
+        int random = qrand();
+        random += 1;
+        if (random > 0) {
+            temp = new int;
+            *temp = 5;
+        }
+
+        if (temp) {
+            delete temp;
+        }
+    }
+
+    void setTestLabel(const QString& testLabel) { setValue(FieldTestLabel, testLabel); }
+    QString testLabel() const { return value(FieldTestLabel); }
+};
+Q_DEFINE_LATIN1_CONSTANT(CustomTestDetail::FieldTestLabel, "TestLabel");
+Q_DEFINE_LATIN1_CONSTANT(CustomTestDetail::DefinitionName, "CustomTestDetail");
+
 void tst_QContactDetails::custom()
 {
     QContact c;
+
+    // first, test a custom definition detail
     QContactDetail c1("mycustom"), c2("mycustom");
 
     // test property set
@@ -946,39 +1134,63 @@ void tst_QContactDetails::custom()
     QCOMPARE(c.details("mycustom").count(), 0);
     QVERIFY(c.removeDetail(&c2) == false);
     QCOMPARE(c.details("mycustom").count(), 0);
-}
 
-void tst_QContactDetails::note()
-{
-    QContact c;
-    QContactNote n1, n2;
 
-    // test property set
-    n1.setNote("lorem ipsum");
-    QCOMPARE(n1.note(), QString("lorem ipsum"));
-    QCOMPARE(n1.value(QContactNote::FieldNote), QString("lorem ipsum"));
+    // then, test a custom subclass (we don't test registration of the custom definition, however)
+    CustomTestDetail ctd1, ctd2;
+    ctd1.setTestLabel("this is a test");
+    ctd2.setTestLabel("test 2");
+    QCOMPARE(ctd1.testLabel(), QString("this is a test"));
 
-    // test property add
-    QVERIFY(c.saveDetail(&n1));
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
-    QCOMPARE(QContactNote(c.details(QContactNote::DefinitionName).value(0)).note(), n1.note());
+    // prior to add
+    QCOMPARE(c.details("CustomTestDetail").count(), 0);
+    QCOMPARE(c.details<CustomTestDetail>().count(), 0);
 
-    // test property update
-    n1.setValue("label","label1");
-    n1.setNote("orange gypsum");
-    QVERIFY(c.saveDetail(&n1));
-    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value("label"), QString("label1"));
-    QCOMPARE(c.details(QContactNote::DefinitionName).value(0).value(QContactNote::FieldNote), QString("orange gypsum"));
+    // test detail add
+    QVERIFY(c.saveDetail(&ctd1));
+    QCOMPARE(c.details("CustomTestDetail").count(), 1);
+    QCOMPARE(c.details<CustomTestDetail>().count(), 1);
+    QCOMPARE(c.details<CustomTestDetail>().first().testLabel(), QString("this is a test"));
 
-    // test property remove
-    QVERIFY(c.removeDetail(&n1));
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
-    QVERIFY(c.saveDetail(&n2));
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 1);
-    QVERIFY(c.removeDetail(&n2));
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
-    QVERIFY(c.removeDetail(&n2) == false);
-    QCOMPARE(c.details(QContactNote::DefinitionName).count(), 0);
+    // test detail update
+    ctd1.setTestLabel("this is a modified test");
+    QVERIFY(c.saveDetail(&ctd1)); // should merely update
+    QCOMPARE(c.details("CustomTestDetail").count(), 1);
+    QCOMPARE(c.details<CustomTestDetail>().count(), 1);
+    QCOMPARE(c.details<CustomTestDetail>().first().testLabel(), QString("this is a modified test"));
+
+    // test detail remove
+    QVERIFY(c.removeDetail(&ctd1));
+    QCOMPARE(c.details("CustomTestDetail").count(), 0);
+    QCOMPARE(c.details<CustomTestDetail>().count(), 0);
+
+    // now test how custom details interact with foreach loops.
+    QVERIFY(c.saveDetail(&ctd1));
+    QVERIFY(c.saveDetail(&ctd2));
+    QVERIFY(c.saveDetail(&c1));
+
+    // first, definition agnostic foreach.
+    foreach (const QContactDetail& det, c.details()) {
+        QCOMPARE(det.definitionName().isEmpty(), false);
+    }
+
+    // second, definition parameter foreach, with assignment.
+    foreach (const QContactDetail& det, c.details("CustomTestDetail")) {
+        CustomTestDetail customDet = det;
+        QCOMPARE(det.definitionName(), QString("CustomTestDetail"));
+        QCOMPARE(customDet.testLabel().isEmpty(), false);
+    }
+
+    // third, definition parameter foreach, with cast.
+    foreach (const QContactDetail& det, c.details("CustomTestDetail")) {
+        QCOMPARE(static_cast<CustomTestDetail>(det).definitionName(), QString("CustomTestDetail"));
+        QCOMPARE(static_cast<CustomTestDetail>(det).testLabel().isEmpty(), false);
+    }
+
+    // fourth, parametrized foreach.
+    foreach (const CustomTestDetail& det, c.details<CustomTestDetail>()) {
+        QCOMPARE(det.definitionName(), QString("CustomTestDetail"));
+    }
 }
 
 

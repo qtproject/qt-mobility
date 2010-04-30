@@ -56,18 +56,15 @@ class Q_CONTACTS_EXPORT QContactSaveRequest : public QContactAbstractRequest
     Q_OBJECT
 
 public:
-    QContactSaveRequest();
-    ~QContactSaveRequest();
+    QContactSaveRequest(QObject* parent = 0);
 
     /* Selection */
+    void setContact(const QContact& contact);
     void setContacts(const QList<QContact>& contacts);
 
     /* Results */
     QList<QContact> contacts() const;
     QMap<int, QContactManager::Error> errorMap() const;
-
-signals:
-    void progress(QContactSaveRequest* self); // deprecated
 
 private:
     Q_DISABLE_COPY(QContactSaveRequest)

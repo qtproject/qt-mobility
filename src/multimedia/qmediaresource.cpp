@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <qmediaresource.h>
+#include "qmediaresource.h"
 
 #include <QtCore/qsize.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaResource
@@ -92,7 +92,17 @@ QMediaResource::QMediaResource()
 */
 QMediaResource::QMediaResource(const QUrl &url, const QString &mimeType)
 {
-    values.insert(Url, qVariantFromValue(url));
+    values.insert(Url, url);
+    values.insert(MimeType, mimeType);
+}
+
+/*!
+    Constructs a media resource with the given \a mimeType from a network \a request.
+*/
+QMediaResource::QMediaResource(const QNetworkRequest &request, const QString &mimeType)
+{
+    values.insert(Request, QVariant::fromValue(request));
+    values.insert(Url, request.url());
     values.insert(MimeType, mimeType);
 }
 
@@ -158,6 +168,17 @@ bool QMediaResource::isNull() const
 QUrl QMediaResource::url() const
 {
     return qvariant_cast<QUrl>(values.value(Url));
+}
+
+/*!
+    Returns the network request associated with this media resource.
+*/
+QNetworkRequest QMediaResource::request() const
+{
+    if(values.contains(Request))
+        return qvariant_cast<QNetworkRequest>(values.value(Request));
+
+    return QNetworkRequest(url());
 }
 
 /*!
@@ -372,5 +393,5 @@ void QMediaResource::setResolution(int width, int height)
     else
         values.remove(Resolution);
 }
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

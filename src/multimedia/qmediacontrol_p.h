@@ -55,7 +55,7 @@
 
 #include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaControl;
 
@@ -67,6 +67,6 @@ public:
     QMediaControl *q_ptr;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

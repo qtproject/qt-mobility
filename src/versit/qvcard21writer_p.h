@@ -55,7 +55,6 @@
 
 #include "qversitdocumentwriter_p.h"
 #include "qmobilityglobal.h"
-#include <QTextCodec>
 
 QTM_BEGIN_NAMESPACE
 
@@ -65,10 +64,11 @@ public:
     QVCard21Writer();
     ~QVCard21Writer();
 
-    QByteArray encodeVersitProperty(const QVersitProperty& property,
-                                    QTextCodec* codec = QTextCodec::codecForName("ISO-8859-1"));
-    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters,
-                                QTextCodec* codec = QTextCodec::codecForName("ISO-8859-1")) const;
+    void encodeVersitProperty(const QVersitProperty& property);
+    bool encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value);
+    void encodeParameters(const QMultiHash<QString,QString>& parameters);
+    bool quotedPrintableEncode(QString& text) const;
+    bool shouldBeQuotedPrintableEncoded(QChar chr) const;
 };
 
 QTM_END_NAMESPACE
