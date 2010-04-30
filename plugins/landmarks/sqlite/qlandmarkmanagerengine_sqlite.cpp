@@ -39,30 +39,30 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkmanagerengine_sqlite_p.h"
-#include "qlandmark.h"
-#include "qlandmarkid.h"
-#include "qlandmarkcategory.h"
-#include "qlandmarkcategoryid.h"
-#include "qgeolocation.h"
-#include "qgeoaddress.h"
-#include "qgeocoordinate.h"
+#include <qlandmarkmanagerengine_sqlite_p.h>
+#include <qlandmark.h>
+#include <qlandmarkid.h>
+#include <qlandmarkcategory.h>
+#include <qlandmarkcategoryid.h>
+#include <qgeolocation.h>
+#include <qgeoaddress.h>
+#include <qgeocoordinate.h>
 
-#include "qlandmarknamefilter.h"
-#include "qlandmarkproximityfilter.h"
-#include "qlandmarknearestfilter.h"
-#include "qlandmarkcategoryfilter.h"
-#include "qlandmarkboxfilter.h"
-#include "qlandmarkintersectionfilter.h"
-#include "qlandmarkunionfilter.h"
-#include "qlandmarkattributefilter.h"
+#include <qlandmarknamefilter.h>
+#include <qlandmarkproximityfilter.h>
+#include <qlandmarknearestfilter.h>
+#include <qlandmarkcategoryfilter.h>
+#include <qlandmarkboxfilter.h>
+#include <qlandmarkintersectionfilter.h>
+#include <qlandmarkunionfilter.h>
+#include <qlandmarkattributefilter.h>
 
-#include "qlandmarksortorder.h"
-#include "qlandmarknamesort.h"
-#include "qlandmarkdistancesort.h"
+#include <qlandmarksortorder.h>
+#include <qlandmarknamesort.h>
+#include <qlandmarkdistancesort.h>
 
-#include "qlandmarkfilehandler_gpx_p.h"
-#include "qlandmarkfilehandler_lmx_p.h"
+#include <qlandmarkfilehandler_gpx_p.h>
+#include <qlandmarkfilehandler_lmx_p.h>
 
 #include <math.h>
 #include <qnumeric.h>
@@ -79,8 +79,6 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
-
-QTM_BEGIN_NAMESPACE
 
 QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filename)
         : m_dbFilename(filename),
@@ -2107,9 +2105,3 @@ bool QLandmarkManagerEngineSqlite::waitForRequestFinished(QLandmarkAbstractReque
 {
     return false;
 }
-
-#include "moc_qlandmarkmanagerengine_sqlite_p.cpp"
-
-QTM_END_NAMESPACE
-
-

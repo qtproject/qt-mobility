@@ -39,51 +39,28 @@
 **
 ****************************************************************************/
 
-#include "qlandmarkmanagerenginefactory_sqlite_p.h"
-#include "qlandmarkmanagerengine_sqlite_p.h"
+#include <qlandmarkmanagerenginefactory.h>
+#include <qlandmarkmanagerengine.h>
+#include <QObject>
+#include <QtPlugin>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-QLandmarkManagerEngineFactorySqlite::QLandmarkManagerEngineFactorySqlite() {}
-
-QLandmarkManagerEngineFactorySqlite::~QLandmarkManagerEngineFactorySqlite() {}
-
-QList<int> QLandmarkManagerEngineFactorySqlite::supportedImplementationVersions() const
+class LandmarkManagerEngineFactoryDummyStatic : public QObject, public QLandmarkManagerEngineFactory
 {
-    QList<int> versions;
-    versions << 1;
-    return versions;
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QLandmarkManagerEngineFactory)
+public:
+    QLandmarkManagerEngine* engine(const QMap<QString,QString>&parameters, QLandmarkManager::Error *error,
+                                    QString *errorString);
+    QString managerName() const { return "LandmarkManagerFactoryDummyStatic";}
+};
+
+QLandmarkManagerEngine *LandmarkManagerEngineFactoryDummyStatic::engine(const QMap<QString,QString>&parameters, QLandmarkManager::Error *error,
+                                            QString *errorString) {
+    Q_UNUSED(parameters);
+    *error = QLandmarkManager::LockedError;
+    return 0;
 }
 
-QLandmarkManagerEngine* QLandmarkManagerEngineFactorySqlite::engine(const QMap<QString, QString> &parameters,
-        QLandmarkManager::Error *error,
-        QString *errorString)
-{
-    QString filename;
-
-    QList<QString> keys = parameters.keys();
-    for (int i = 0; i < keys.size(); ++i) {
-        QString key = keys.at(i);
-        if (key == "filename") {
-            filename = parameters.value(keys.at(i));
-        } else {
-            *error = QLandmarkManager::NotSupportedError;
-            *errorString = QString("The landmark engine %1 does not support the parameter %2").arg(managerName()).arg(key);
-            return NULL;
-        }
-    }
-
-    if (filename.isEmpty()) {
-        return new QLandmarkManagerEngineSqlite();
-    } else {
-        return new QLandmarkManagerEngineSqlite(filename);
-    }
-}
-
-QString QLandmarkManagerEngineFactorySqlite::managerName() const
-{
-    return "com.nokia.qt.landmarks.engines.sqlite";
-}
-
-QTM_END_NAMESPACE
-
+Q_EXPORT_PLUGIN2(landmarks_testdummystatic, LandmarkManagerEngineFactoryDummyStatic);

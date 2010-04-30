@@ -44,9 +44,10 @@
 #include <QObject>
 #include <QMap>
 #include "qmobilityglobal.h"
+
 #include "qlandmarkmanager.h"
 #include "qlandmarkabstractrequest.h"
-#include "qlandmarkfilter.h"
+
 
 class QIODevice;
 
@@ -64,6 +65,16 @@ class QLandmarkCategoryRemoveRequest;
 class QLandmarkCategorySaveRequest;
 class QLandmarkImportRequest;
 class QLandmarkExportRequest;
+
+class QLandmarkFilter;
+class QLandmarkNameFilter;
+class QLandmarkProximityFilter;
+class QLandmarkNearestFilter;
+class QLandmarkCategoryFilter;
+class QLandmarkBoxFilter;
+class QLandmarkUnionFilter;
+class QLandmarkIntersectionFilter;
+class QLandmarkAttributeFilter;
 
 class Q_LOCATION_EXPORT QLandmarkManagerEngine : public QObject
 {

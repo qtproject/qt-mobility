@@ -29,7 +29,8 @@ contains(mobility_modules,location) {
           qgeopositioninfosource \
           qgeoareamonitor \
           qlocationutils \
-          qnmeapositioninfosource
+          qnmeapositioninfosource \
+          qlandmarkmanagerplugins
 
     wince* {
         SUBDIRS += qgeoinfosources_wince

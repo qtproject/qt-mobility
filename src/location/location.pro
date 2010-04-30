@@ -103,8 +103,6 @@ PRIVATE_HEADERS += \
                     qlandmarkid_p.h \
                     qlandmarkintersectionfilter_p.h \
                     qlandmarkmanager_p.h \
-                    qlandmarkmanagerengine_sqlite_p.h \
-                    qlandmarkmanagerenginefactory_sqlite_p.h \
                     qlandmarknamefilter_p.h \
                     qlandmarknamesort_p.h \
                     qlandmarknearestfilter_p.h \
@@ -228,6 +226,7 @@ SOURCES += \
             qgeosatelliteinfo.cpp \
             qgeosatelliteinfosource.cpp \
             qlandmark.cpp \
+            qlandmarkmanager_p.cpp \
             qlandmarkabstractrequest.cpp \
             qlandmarkboxfilter.cpp \
             qlandmarkcategory.cpp \
@@ -250,9 +249,7 @@ SOURCES += \
             qlandmarkintersectionfilter.cpp \
             qlandmarkmanager.cpp \
             qlandmarkmanagerengine.cpp \
-            qlandmarkmanagerengine_sqlite.cpp \
             qlandmarkmanagerenginefactory.cpp \
-            qlandmarkmanagerenginefactory_sqlite.cpp \
             qlandmarknamefilter.cpp \
             qlandmarknamesort.cpp \
             qlandmarknearestfilter.cpp \
@@ -281,8 +278,6 @@ SOURCES += \
             qmapcontainer.cpp \
             qgeoboundingbox.cpp \
             qnmeapositioninfosource.cpp
-
-RESOURCES += qlandmarkmanagerengine_sqlite.qrc
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

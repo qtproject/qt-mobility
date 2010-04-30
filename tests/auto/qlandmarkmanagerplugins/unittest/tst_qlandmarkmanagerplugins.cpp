@@ -39,32 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKMANAGERENGINEFACTORY_H
-#define QLANDMARKMANAGERENGINEFACTORY_H
+#include <QtTest/QtTest>
+#include <QApplication>
 
-#include "qmobilityglobal.h"
-#include "qlandmarkmanager.h"
-#include <QList>
+#include <qlandmarkmanager.h>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QLandmarkManagerEngine;
-class Q_LOCATION_EXPORT QLandmarkManagerEngineFactory
+class tst_QLandmarkManagerPlugins : public QObject
 {
+Q_OBJECT
 public:
-    virtual QList<int> supportedImplementationVersions() const;
-    virtual ~QLandmarkManagerEngineFactory();
-    virtual QLandmarkManagerEngine *engine(const QMap<QString, QString> &parameters,
-                                           QLandmarkManager::Error *error,
-                                           QString *errorString) = 0;
-    virtual QString managerName() const = 0;
+    tst_QLandmarkManagerPlugins();
+    virtual ~tst_QLandmarkManagerPlugins();
+
+public slots:
+    void init();
+    void cleanup();
+private slots:
+    void testDummy();
 };
 
-QTM_END_NAMESPACE
+tst_QLandmarkManagerPlugins::tst_QLandmarkManagerPlugins()
+{
+}
 
-QT_BEGIN_NAMESPACE
-#define QT_LANDMARKS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QLandmarkManagerEngineFactory, QT_LANDMARKS_BACKEND_INTERFACE);
-QT_END_NAMESPACE
+tst_QLandmarkManagerPlugins::~tst_QLandmarkManagerPlugins()
+{
+}
 
+void tst_QLandmarkManagerPlugins::init()
+{
+}
+
+void tst_QLandmarkManagerPlugins::cleanup()
+{
+}
+
+Q_IMPORT_PLUGIN(landmarks_testdummystatic)
+
+void tst_QLandmarkManagerPlugins::testDummy()
+{
+    QVERIFY(QLandmarkManager::availableManagers().contains("LandmarkManagerFactoryDummyStatic"));
+    QVERIFY(QLandmarkManager::availableManagers().contains("LandmarkManagerFactoryDummyDynamic"));
+#if !defined (Q_OS_SYMBIAN) && !defined(Q_OS_WINCE) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+
+    QVERIFY(QLandmarkManager::availableManagers().contains("com.nokia.qt.landmarks.engines.sqlite"));
+    QLandmarkManager lm("com.nokia.qt.landmarks.engines.sqlite");
+    QVERIFY(lm.managerName() == "com.nokia.qt.landmarks.engines.sqlite");
 #endif
+}
+
+QTEST_MAIN(tst_QLandmarkManagerPlugins)
+#include "tst_qlandmarkmanagerplugins.moc"

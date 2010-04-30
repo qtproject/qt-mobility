@@ -39,32 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKMANAGERENGINEFACTORY_H
-#define QLANDMARKMANAGERENGINEFACTORY_H
+#ifndef QLANDMARKMANAGERENGINEFACTORY_SQLITE_P_H
+#define QLANDMARKMANAGERENGINEFACTORY_SQLITE_P_H
 
-#include "qmobilityglobal.h"
-#include "qlandmarkmanager.h"
-#include <QList>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QTM_BEGIN_NAMESPACE
+#include <qlandmarkmanagerenginefactory.h>
+#include <QObject>
 
-class QLandmarkManagerEngine;
-class Q_LOCATION_EXPORT QLandmarkManagerEngineFactory
+QTM_USE_NAMESPACE
+
+class QLandmarkManagerEngineFactorySqlite : public QObject, public QLandmarkManagerEngineFactory
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QLandmarkManagerEngineFactory)
 public:
-    virtual QList<int> supportedImplementationVersions() const;
-    virtual ~QLandmarkManagerEngineFactory();
-    virtual QLandmarkManagerEngine *engine(const QMap<QString, QString> &parameters,
-                                           QLandmarkManager::Error *error,
-                                           QString *errorString) = 0;
-    virtual QString managerName() const = 0;
+    QLandmarkManagerEngineFactorySqlite();
+    ~QLandmarkManagerEngineFactorySqlite();
+
+    QList<int> supportedImplementationVersions() const;
+
+    QLandmarkManagerEngine *engine(const QMap<QString, QString> &parameters,
+                                   QLandmarkManager::Error *error,
+                                   QString *errorString);
+    QString managerName() const;
 };
 
-QTM_END_NAMESPACE
-
-QT_BEGIN_NAMESPACE
-#define QT_LANDMARKS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QLandmarkManagerEngineFactory, QT_LANDMARKS_BACKEND_INTERFACE);
-QT_END_NAMESPACE
-
-#endif
+#endif // QLANDMARKMANAGERENGINEFACTORY_SQLITE_P_H

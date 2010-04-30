@@ -39,32 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKMANAGERENGINEFACTORY_H
-#define QLANDMARKMANAGERENGINEFACTORY_H
+#include <qlandmarkmanagerenginefactory.h>
+#include <qlandmarkmanagerengine.h>
+#include <QObject>
+#include <QtPlugin>
 
-#include "qmobilityglobal.h"
-#include "qlandmarkmanager.h"
-#include <QList>
+#define makestr(x) #x
+#define makename(x) makestr(x)
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QLandmarkManagerEngine;
-class Q_LOCATION_EXPORT QLandmarkManagerEngineFactory
+class LandmarkManagerEngineFactoryDummyDynamic : public QObject, public QLandmarkManagerEngineFactory
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QLandmarkManagerEngineFactory)
 public:
-    virtual QList<int> supportedImplementationVersions() const;
-    virtual ~QLandmarkManagerEngineFactory();
-    virtual QLandmarkManagerEngine *engine(const QMap<QString, QString> &parameters,
-                                           QLandmarkManager::Error *error,
-                                           QString *errorString) = 0;
-    virtual QString managerName() const = 0;
+    QLandmarkManagerEngine* engine(const QMap<QString,QString>&parameters, QLandmarkManager::Error *error,
+                                    QString *errorString);
+    QString managerName() const { return makename(DUMMYPLUGINNAME);}
 };
 
-QTM_END_NAMESPACE
+QLandmarkManagerEngine *LandmarkManagerEngineFactoryDummyDynamic::engine(const QMap<QString,QString>&parameters, QLandmarkManager::Error *error,
+                                            QString *errorString) {
+    Q_UNUSED(parameters);
+    *error = QLandmarkManager::LockedError;
+    return 0;
+}
 
-QT_BEGIN_NAMESPACE
-#define QT_LANDMARKS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QLandmarkManagerEngineFactory, QT_LANDMARKS_BACKEND_INTERFACE);
-QT_END_NAMESPACE
-
-#endif
+Q_EXPORT_PLUGIN2(DUMMYPLUGINTARGET, LandmarkManagerEngineFactoryDummyDynamic);

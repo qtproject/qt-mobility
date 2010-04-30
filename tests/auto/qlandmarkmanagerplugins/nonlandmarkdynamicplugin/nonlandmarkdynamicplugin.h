@@ -39,38 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKMANAGERENGINEFACTORY_SQLITE_P_H
-#define QLANDMARKMANAGERENGINEFACTORY_SQLITE_P_H
+#include <qlandmarkmanagerenginefactory.h>
+#include <qlandmarkmanagerengine.h>
+#include <QObject>
+#include <QtPlugin>
+#include <QDebug>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qlandmarkmanagerenginefactory.h"
-
-QTM_BEGIN_NAMESPACE
-
-class QLandmarkManagerEngineFactorySqlite : public QLandmarkManagerEngineFactory
+class NonLandmarkInterface
 {
 public:
-    QLandmarkManagerEngineFactorySqlite();
-    ~QLandmarkManagerEngineFactorySqlite();
-
-    QList<int> supportedImplementationVersions() const;
-
-    QLandmarkManagerEngine *engine(const QMap<QString, QString> &parameters,
-                                   QLandmarkManager::Error *error,
-                                   QString *errorString);
-    QString managerName() const;
+    virtual void doSomething() {qDebug() << "Do something";}
 };
 
-QTM_END_NAMESPACE
+Q_DECLARE_INTERFACE(NonLandmarkInterface, "nonlandmarkinterface/1.0");
 
-#endif // QLANDMARKMANAGERENGINEFACTORY_SQLITE_P_H
+class NonLandmarkDynamicPlugin : public QObject, public NonLandmarkInterface
+{
+    Q_OBJECT
+    Q_INTERFACES(NonLandmarkInterface)
+};
+
+Q_EXPORT_PLUGIN2(nonlandmarkdynamicplugin, NonLandmarkDynamicPlugin);

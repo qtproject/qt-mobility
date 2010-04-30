@@ -39,32 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKMANAGERENGINEFACTORY_H
-#define QLANDMARKMANAGERENGINEFACTORY_H
+#include "qlandmarkmanagerenginefactory_sqlite_p.h"
+#include "qlandmarkmanagerengine_sqlite_p.h"
+#include <QtPlugin>
 
-#include "qmobilityglobal.h"
-#include "qlandmarkmanager.h"
-#include <QList>
+QLandmarkManagerEngineFactorySqlite::QLandmarkManagerEngineFactorySqlite() {}
 
-QTM_BEGIN_NAMESPACE
+QLandmarkManagerEngineFactorySqlite::~QLandmarkManagerEngineFactorySqlite() {}
 
-class QLandmarkManagerEngine;
-class Q_LOCATION_EXPORT QLandmarkManagerEngineFactory
+QList<int> QLandmarkManagerEngineFactorySqlite::supportedImplementationVersions() const
 {
-public:
-    virtual QList<int> supportedImplementationVersions() const;
-    virtual ~QLandmarkManagerEngineFactory();
-    virtual QLandmarkManagerEngine *engine(const QMap<QString, QString> &parameters,
-                                           QLandmarkManager::Error *error,
-                                           QString *errorString) = 0;
-    virtual QString managerName() const = 0;
-};
+    QList<int> versions;
+    versions << 1;
+    return versions;
+}
 
-QTM_END_NAMESPACE
+QLandmarkManagerEngine* QLandmarkManagerEngineFactorySqlite::engine(const QMap<QString, QString> &parameters,
+        QLandmarkManager::Error *error,
+        QString *errorString)
+{
+    QString filename;
 
-QT_BEGIN_NAMESPACE
-#define QT_LANDMARKS_BACKEND_INTERFACE "com.nokia.qt.mobility.contacts.enginefactory/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QLandmarkManagerEngineFactory, QT_LANDMARKS_BACKEND_INTERFACE);
-QT_END_NAMESPACE
+    QList<QString> keys = parameters.keys();
+    for (int i = 0; i < keys.size(); ++i) {
+        QString key = keys.at(i);
+        if (key == "filename") {
+            filename = parameters.value(keys.at(i));
+        } else {
+            *error = QLandmarkManager::NotSupportedError;
+            *errorString = QString("The landmark engine %1 does not support the parameter %2").arg(managerName()).arg(key);
+            return NULL;
+        }
+    }
 
-#endif
+    if (filename.isEmpty()) {
+        return new QLandmarkManagerEngineSqlite();
+    } else {
+        return new QLandmarkManagerEngineSqlite(filename);
+    }
+}
+
+QString QLandmarkManagerEngineFactorySqlite::managerName() const
+{
+    return "com.nokia.qt.landmarks.engines.sqlite";
+}
+
+Q_EXPORT_PLUGIN2(qtlandmarks_sqlite, QLandmarkManagerEngineFactorySqlite)
+

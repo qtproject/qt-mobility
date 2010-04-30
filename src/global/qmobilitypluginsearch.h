@@ -40,6 +40,7 @@
 ****************************************************************************/
 #include <QApplication>
 #include <QStringList>
+#include <QDir>
 
 QTM_BEGIN_NAMESPACE
 

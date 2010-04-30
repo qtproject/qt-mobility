@@ -39,8 +39,10 @@
 **
 ****************************************************************************/
 
+#define private public
+#include "../../../src/location/qlandmarkmanager.h"
+
 #include "../../../src/location/qlandmarkfilehandler_gpx_p.h"
-#include "../../../src/location/qlandmarkmanagerengine_sqlite_p.h"
 
 #include "qgeocoordinate.h"
 
@@ -61,19 +63,22 @@ class tst_QLandmarkGpxHandler : public QObject
     Q_OBJECT
 
 private:
-    QLandmarkManagerEngine *m_engine;
+    QLandmarkManager *m_manager;
     QLandmarkFileHandlerGpx *m_handler;
 
 private slots:
 
     void init() {
-        m_engine = new QLandmarkManagerEngineSqlite("test.db");
-        m_handler = new QLandmarkFileHandlerGpx(m_engine);
+        QMap<QString, QString> map;
+        map["filename"] = "test.db";
+        m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
+
+        m_handler = new QLandmarkFileHandlerGpx(m_manager->engine());
     }
 
     void cleanup() {
         delete m_handler;
-        delete m_engine;
+        delete m_manager;
 
         QFile file("test.db");
         file.remove();

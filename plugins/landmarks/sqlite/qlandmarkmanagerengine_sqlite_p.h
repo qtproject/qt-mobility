@@ -57,16 +57,7 @@
 
 #include <QSqlDatabase>
 
-QTM_BEGIN_NAMESPACE
-
-class QLandmarkNameFilter;
-class QLandmarkProximityFilter;
-class QLandmarkNearestFilter;
-class QLandmarkCategoryFilter;
-class QLandmarkBoxFilter;
-class QLandmarkIntersectionFilter;
-class QLandmarkUnionFilter;
-class QLandmarkAttributeFilter;
+QTM_USE_NAMESPACE
 
 class Q_AUTOTEST_EXPORT QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
@@ -214,7 +205,5 @@ private:
     QString m_dbFilename;
     QString m_dbConnectionName;
 };
-
-QTM_END_NAMESPACE
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H
