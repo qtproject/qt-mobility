@@ -18,3 +18,8 @@ SUBDIRS += small_screen_sensors
 
 contains(QT_CONFIG,opengl):SUBDIRS += cubehouse
 
+SUBDIRS += compass
+
+SUBDIRS += metadata
+
+SUBDIRS += rotation
