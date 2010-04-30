@@ -108,18 +108,8 @@ public:
         Yearly
     };
 
-    enum Day {
-        Sunday,
-        Monday,
-        Tuesday,
-        Wednesday,
-        Thursday,
-        Friday,
-        Saturday
-    };
-
     enum Month {
-        January,
+        January = 1,
         February,
         March,
         April,
@@ -159,8 +149,8 @@ public:
 
     // Defaults for the below: empty
     // eg: Monday,Wednesday,Thursday == every Mon, Wed and Thurs.
-    bool setDayOfWeek(const QList<Day>& days);
-    QList<Day> dayOfWeek() const;
+    bool setDayOfWeek(const QList<Qt::DayOfWeek>& days);
+    QList<Qt::DayOfWeek> dayOfWeek() const;
     // eg: 31,-3 == 31st day of month (if it exists) and 3rd-last day of month
     bool setDayOfMonth(const QList<int>& days);
     QList<int> dayOfMonth() const;
@@ -183,8 +173,8 @@ public:
 
     // Default: Monday
     // sets the day that the week starts on (significant for Weekly with interval > 1, and for weekOfYear)
-    bool setWeekStart(Day day);
-    Day weekStart() const;
+    bool setWeekStart(Qt::DayOfWeek day);
+    Qt::DayOfWeek weekStart() const;
 };
 
 QTM_END_NAMESPACE
