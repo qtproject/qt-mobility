@@ -53,6 +53,9 @@
 
 QTM_USE_NAMESPACE
 
+typedef QList<QContactLocalId> QContactIds;
+Q_DECLARE_METATYPE(QContactIds);
+
 #ifndef QTRY_COMPARE
 #define QTRY_COMPARE(__expr, __expected) \
     do { \
@@ -82,8 +85,6 @@ public:
     virtual ~tst_SimCM();
 
 public slots:
-    void init();
-    void cleanup();
     void initTestCase();
     void cleanupTestCase();
 
@@ -107,6 +108,8 @@ private slots:
     void batchOperations();
     void detailFilter_data();
     void detailFilter();
+    void sortingAdn_data();
+    void sortingAdn();
 
     /* Test cases that take no data */
     void signalEmission();
@@ -147,20 +150,6 @@ tst_SimCM::~tst_SimCM()
 {
 }
 
-void tst_SimCM::init()
-{
-    // remove all contacts
-    QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(ids, 0);   
-}
-
-void tst_SimCM::cleanup()
-{
-    // remove all contacts
-    QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(ids, 0);   
-}
-
 void tst_SimCM::initTestCase()
 {
     initManager(QString());
@@ -172,6 +161,9 @@ void tst_SimCM::initTestCase()
 
 void tst_SimCM::cleanupTestCase()
 {
+    // remove all contacts
+    QList<QContactLocalId> ids = m_cm->contactIds();
+    m_cm->removeContacts(ids, 0);   
     delete m_cm;
     m_cm = 0;
 }
@@ -1325,7 +1317,180 @@ void tst_SimCM::fillSlots()
 #endif
 }
 
+void tst_SimCM::sortingAdn_data()
+{
+    QTest::addColumn<QString>("definitionName");
+    QTest::addColumn<QString>("fieldName");
+    QTest::addColumn<int>("direction");
+    QTest::addColumn<int>("caseSensitivity");
+    QTest::addColumn<int>("blankPolicy");
+    QTest::addColumn<QContactIds>("expectedResult");
+    QTest::addColumn<QContactIds>("unknownResult");
 
+    initManager("ADN");
+    QContact blankName = createContact(QString(""), QString("+44752222222"));
+    QVERIFY(m_cm->saveContact(&blankName));
+    QContact james = createContact(QString("James Hunt"), QString("+44753333333"));
+    QVERIFY(m_cm->saveContact(&james));
+    QContact kimi = createContact(QString("Kimi Räikkönen"), QString("+358441111111"));
+    QVERIFY(m_cm->saveContact(&kimi));
+    QContact kimiNoCaps = createContact(QString("kimi räikkönen"), QString("+358442222222"));
+    QVERIFY(m_cm->saveContact(&kimiNoCaps));
+    QContact sebastianNoPhone = createContact(QString("Sebastian Vettel"), QString(""));
+    QVERIFY(m_cm->saveContact(&sebastianNoPhone));
+
+    QString contactNameDef = QContactName::DefinitionName;
+    QString customLabel = QContactName::FieldCustomLabel;
+    QString phoneNumberDef = QContactPhoneNumber::DefinitionName;
+    QString phoneNumber = QContactPhoneNumber::FieldNumber;
+
+    // The relative order of "kimi" and "Kimi" are undefined in this case
+    QTest::newRow("custom label, ascending, case insensitive, blanks first")
+        << contactNameDef
+        << customLabel
+        << (int) Qt::AscendingOrder
+        << (int) Qt::CaseInsensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << blankName.localId()
+            << james.localId()
+            << kimi.localId()
+            << kimiNoCaps.localId()
+            << sebastianNoPhone.localId())
+        << (QContactIds()
+            << kimi.localId()
+            << kimiNoCaps.localId());
+
+    QTest::newRow("custom label, ascending, case sensitive, blanks first")
+        << contactNameDef
+        << customLabel
+        << (int) Qt::AscendingOrder
+        << (int) Qt::CaseSensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << blankName.localId()
+            << james.localId()
+            << kimiNoCaps.localId()
+            << kimi.localId()
+            << sebastianNoPhone.localId())
+        << QContactIds();
+
+    // The relative order of "kimi" and "Kimi" are undefined in this case
+    QTest::newRow("custom label, descending, case insensitive, blanks first")
+        << contactNameDef
+        << customLabel
+        << (int) Qt::DescendingOrder
+        << (int) Qt::CaseInsensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << blankName.localId()
+            << sebastianNoPhone.localId()
+            << kimi.localId()
+            << kimiNoCaps.localId()
+            << james.localId())
+        << (QContactIds()
+            << kimi.localId()
+            << kimiNoCaps.localId());
+
+    QTest::newRow("phone number, ascending, case insensitive, blanks first")
+        << phoneNumberDef
+        << phoneNumber
+        << (int) Qt::AscendingOrder
+        << (int) Qt::CaseInsensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << sebastianNoPhone.localId()
+            << kimi.localId()
+            << kimiNoCaps.localId()
+            << blankName.localId()
+            << james.localId())
+        << QContactIds();
+
+    QTest::newRow("phone number, ascending, case sensitive, blanks last")
+        << phoneNumberDef
+        << phoneNumber
+        << (int) Qt::AscendingOrder
+        << (int) Qt::CaseSensitive
+        << (int) QContactSortOrder::BlanksLast
+        << (QContactIds()
+            << kimi.localId()
+            << kimiNoCaps.localId()
+            << blankName.localId()
+            << james.localId()
+            << sebastianNoPhone.localId())
+        << QContactIds();
+
+    QTest::newRow("phone number, descending, case insensitive, blanks first")
+        << phoneNumberDef
+        << phoneNumber
+        << (int) Qt::DescendingOrder
+        << (int) Qt::CaseInsensitive
+        << (int) QContactSortOrder::BlanksFirst
+        << (QContactIds()
+            << sebastianNoPhone.localId()
+            << james.localId()
+            << blankName.localId()
+            << kimiNoCaps.localId()
+            << kimi.localId())
+        << QContactIds();
+}
+
+/*!
+ * Contact sorting needs to be tested here, because the system tests in
+ * \tests\auto\qcontactmanagerfiltering\tst_QContactManagerFiltering are not
+ * compatible with the sim backend.
+ */
+void tst_SimCM::sortingAdn()
+{
+    QFETCH(QString, definitionName);
+    QFETCH(QString, fieldName);
+    QFETCH(int, direction);
+    QFETCH(int, caseSensitivity);
+    QFETCH(int, blankPolicy);
+    QFETCH(QContactIds, expectedResult);
+    QFETCH(QContactIds, unknownResult);
+
+    QContactSortOrder sortOrder;
+    sortOrder.setDetailDefinitionName(definitionName, fieldName);
+    sortOrder.setDirection((Qt::SortOrder) direction);
+    sortOrder.setCaseSensitivity((Qt::CaseSensitivity) caseSensitivity);
+    sortOrder.setBlankPolicy((QContactSortOrder::BlankPolicy) blankPolicy);
+    QVERIFY(sortOrder.isValid());
+
+    QList<QContactSortOrder> sortOrders;
+    sortOrders.append(sortOrder);
+
+    /*
+    TODO
+    QList<QContact> contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
+    QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const;
+    */
+
+    // First variant
+    QList<QContactLocalId> ids = m_cm->contactIds(sortOrders);
+    qDebug() << "result: " << ids;
+    qDebug() << "expected: " << expectedResult;
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    if (unknownResult.count()) {
+        // TODO: how to check all possible alternatives?
+        foreach (QContactLocalId id, unknownResult) {
+            QVERIFY(expectedResult.removeOne(id));
+            QVERIFY(ids.removeOne(id));
+        }
+    }
+    QCOMPARE(ids, expectedResult);
+
+    // Second variant with filter
+    ids = m_cm->contactIds(QContactFilter(), sortOrders);
+    QCOMPARE(m_cm->error(), QContactManager::NoError);
+    if (unknownResult.count()) {
+        // TODO: how to check all possible alternatives?
+        foreach (QContactLocalId id, unknownResult) {
+            QVERIFY(ids.removeOne(id));
+        }
+    }
+    QCOMPARE(ids, expectedResult);
+}
 
 /*!
  * Private helper function for checking the data format that the store supports
