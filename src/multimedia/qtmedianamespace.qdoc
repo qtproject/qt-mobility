@@ -40,14 +40,15 @@
 ****************************************************************************/
 
 /*!
-    \namespace QtMedia
+    \namespace QtMediaServices
+    \ingroup multimedia
 
-    \brief The QtMedia namespace contains miscellaneous identifiers used throughout the Qt Media
-    library.
+    \brief The QtMediaServices namespace contains miscellaneous identifiers used throughout the Qt Media
+    services library.
 */
 
 /*!
-    \enum QtMedia::MetaData
+    \enum QtMediaServices::MetaData
 
     This enum provides identifiers for meta-data attributes.
 
@@ -77,12 +78,12 @@
     \value Duration The duration in millseconds of the media.  qint64.
 
     Audio attributes
-    \value AudioBitrate The bit rate of the media's audio stream in bits per second.  int.
+    \value AudioBitRate The bit rate of the media's audio stream in bits per second.  int.
     \value AudioCodec The codec of the media's audio stream.  QString.
     \value AverageLevel The average volume level of the media.  int.
-    \value Channels The number of channels in the media's audio stream. int.
+    \value ChannelCount The number of channels in the media's audio stream. int.
     \value PeakValue The peak volume of the media's audio stream. int
-    \value Frequency The frequency of the media's audio stream. int
+    \value SampleRate The sample rate of the media's audio stream in hertz. int
 
     Music attributes
     \value AlbumTitle The title of the album the media belongs to.  QString.
@@ -95,8 +96,9 @@
     \value TrackNumber The track number of the media.  int.
     \value TrackCount The number of tracks on the album containing the media.  int.
 
-    \value CoverArtUriSmall The URI of a small cover art image. QUrl.
-    \value CoverArtUriLarge The URI of a large cover art image. QUrl.
+    \value CoverArtUrlSmall The URL of a small cover art image. QUrl.
+    \value CoverArtUrlLarge The URL of a large cover art image. QUrl.
+    \value CoverArtImage An embedded cover art image. QImage.
 
     Image and video attributes
     \value Resolution The dimensions of an image or video.  QSize.
@@ -107,7 +109,8 @@
     \value VideoBitRate The bit rate of the media's video stream in bits per second.  int.
     \value VideoCodec The codec of the media's video stream.  QString.
 
-    \value PosterUri The URI of a poster image.  QUrl.
+    \value PosterUrl The URL of a poster image.  QUrl.
+    \value PosterImage An embedded poster image.  QImage.
 
     Movie attributes
     \value ChapterNumber The chapter number of the media.  int.
@@ -161,21 +164,23 @@
         Indicates the direction of sharpness processing applied by the camera when the image was shot.
     \value DeviceSettingDescription
         Exif tag, indicates information on the picture-taking conditions of a particular camera model. QString
+
+    \value ThumbnailImage An embedded thumbnail image.  QImage.
 */
 
 /*!
-    \enum QtMedia::SupportEstimate
+    \enum QtMediaServices::SupportEstimate
 
     Enumerates the levels of support a media service provider may have for a feature.
 
     \value NotSupported The feature is not supported.
     \value MaybeSupported The feature may be supported.
     \value ProbablySupported The feature is probably supported.
-    \value PreferedService The service is the preferred provider of a service.
+    \value PreferredService The service is the preferred provider of a service.
 */
 
 /*!
-    \enum QtMedia::EncodingQuality
+    \enum QtMediaServices::EncodingQuality
 
     Enumerates quality encoding levels.
 
@@ -187,12 +192,23 @@
 */
 
 /*!
-    \enum QtMedia::EncodingMode
+    \enum QtMediaServices::EncodingMode
 
     Enumerates encoding modes.
 
     \value ConstantQualityEncoding
-    \value ConstantBitrateEncoding
-    \value AverageBitrateEncoding
+    \value ConstantBitRateEncoding
+    \value AverageBitRateEncoding
     \value TwoPassEncoding
+*/
+
+/*!
+    \enum QtMediaServices::AvailabilityError
+
+    Enumerates Service status errors.
+
+    \value NoError
+    \value ServiceMissingError
+    \value ResourceError
+    \value BusyError
 */

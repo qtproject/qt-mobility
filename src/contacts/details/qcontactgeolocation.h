@@ -52,31 +52,32 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CONTACTS_EXPORT QContactGeolocation : public QContactDetail
+// replaces the below
+class Q_CONTACTS_EXPORT QContactGeoLocation : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldLabel;
-    const char* FieldLatitude;
-    const char* FieldLongitude;
-    const char* FieldAccuracy;
-    const char* FieldAltitude;
-    const char* FieldAltitudeAccuracy;
-    const char* FieldHeading;
-    const char* FieldSpeed;
-    const char* FieldTimestamp;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldLabel;
+    static const QLatin1Constant FieldLatitude;
+    static const QLatin1Constant FieldLongitude;
+    static const QLatin1Constant FieldAccuracy;
+    static const QLatin1Constant FieldAltitude;
+    static const QLatin1Constant FieldAltitudeAccuracy;
+    static const QLatin1Constant FieldHeading;
+    static const QLatin1Constant FieldSpeed;
+    static const QLatin1Constant FieldTimestamp;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeolocation, "Geolocation")
-    Q_DECLARE_LATIN1_LITERAL(FieldLabel, "Label");
-    Q_DECLARE_LATIN1_LITERAL(FieldLatitude, "Latitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldLongitude, "Longitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAccuracy, "Accuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitude, "Altitude");
-    Q_DECLARE_LATIN1_LITERAL(FieldAltitudeAccuracy, "AltitudeAccuracy");
-    Q_DECLARE_LATIN1_LITERAL(FieldHeading, "Heading");
-    Q_DECLARE_LATIN1_LITERAL(FieldSpeed, "Speed");
-    Q_DECLARE_LATIN1_LITERAL(FieldTimestamp, "Timestamp");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactGeoLocation, "GeoLocation")
+    Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLatitude, "Latitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLongitude, "Longitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAccuracy, "Accuracy");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAltitude, "Altitude");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAltitudeAccuracy, "AltitudeAccuracy");
+    Q_DECLARE_LATIN1_CONSTANT(FieldHeading, "Heading");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSpeed, "Speed");
+    Q_DECLARE_LATIN1_CONSTANT(FieldTimestamp, "Timestamp");
 #endif
 
     void setLabel(const QString& label) {setValue(FieldLabel, label);}

@@ -81,7 +81,7 @@ QMessageFolderId QMessagePrivate::standardFolderId(QMessage::StandardFolder fold
         QMessageFolderFilter pathFilter(QMessageFolderFilter::byPath(path));
         QMessageFolderFilter accountFilter(QMessageFolderFilter::byParentAccountId(QMessageAccountId()));
 
-        QMessageFolderId folderId(QMessageStore::instance()->queryFolders(pathFilter & accountFilter).first());
+        QMessageFolderId folderId(QMessageManager().queryFolders(pathFilter & accountFilter).first());
         it = standardFolderMap()->insert(folder, folderId);
     }
 
@@ -232,7 +232,7 @@ QMessage::QMessage()
 QMessage::QMessage(const QMessageId& id)
     : d_ptr(new QMessagePrivate)
 {
-    *this = QMessageStore::instance()->message(id);
+    *this = QMessageManager().message(id);
     setDerivedMessage(this);
     QMailStorePrivate::setUnmodified(&d_ptr->_message);
 }
@@ -294,6 +294,8 @@ QMessageFolderId QMessage::parentFolderId() const
 
 QMessage::StandardFolder QMessage::standardFolder() const
 {
+    if (!d_ptr->_message.parentFolderId().isValid())
+        return QMessage::DraftsFolder;
     return QMessagePrivate::standardFolder(convert(d_ptr->_message.parentFolderId()));
 }
 
@@ -423,16 +425,16 @@ void QMessage::setPriority(Priority newPriority)
     }
 }
 
-uint QMessage::size() const
+int QMessage::size() const
 {
     if ((d_ptr->_message.status() & QMailMessage::LocalOnly) && 
         (d_ptr->_message.dataModified() ||
          d_ptr->_message.contentModified())) {
         // We need to update the size estimate for this message
-        d_ptr->_message.setSize(d_ptr->_message.indicativeSize() * 1024);
+        d_ptr->_message.setSize(static_cast<int>(d_ptr->_message.indicativeSize()) * 1024);
     }
 
-    return d_ptr->_message.size();
+    return static_cast<int>(d_ptr->_message.size());
 }
 
 QMessageContentContainerId QMessage::bodyId() const

@@ -39,17 +39,17 @@
 **
 ****************************************************************************/
 
-#include <qvideooutputcontrol.h>
+#include "qvideooutputcontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoOutputControl
     \preliminary
+
     \brief The QVideoOutputControl class provides a means of selecting the
     active video output control.
 
-    \ingroup multimedia
     \ingroup multimedia-serv
 
     There are multiple controls which a QMediaService may use to output
@@ -129,5 +129,5 @@ QVideoOutputControl::~QVideoOutputControl()
 */
 
 #include "moc_qvideooutputcontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

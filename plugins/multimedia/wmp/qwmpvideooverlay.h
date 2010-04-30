@@ -48,7 +48,7 @@
 
 #include <wmp.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QWmpVideoOverlay
     : public QVideoWindowControl
     , public IOleInPlaceSite
@@ -75,8 +75,8 @@ public:
     QSize nativeSize() const;
     void setNativeSize(const QSize &size);
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     int brightness() const;
     void setBrightness(int brightness);
@@ -137,7 +137,7 @@ private:
     IOleObject *m_object;
     IOleInPlaceObject *m_inPlaceObject;
     WId m_winId;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_sizeHint;
     QRect m_displayRect;
     bool m_fullScreen;

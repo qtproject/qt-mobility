@@ -47,7 +47,7 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
-#include "qcontact.h"
+#include "qcontactfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,15 +56,18 @@ class Q_CONTACTS_EXPORT QContactEmailAddress : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldEmailAddress;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldEmailAddress;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactEmailAddress, "EmailAddress")
-    Q_DECLARE_LATIN1_LITERAL(FieldEmailAddress, "EmailAddress");
+    Q_DECLARE_LATIN1_CONSTANT(FieldEmailAddress, "EmailAddress");
 #endif
 
     void setEmailAddress(const QString& emailAddress) {setValue(FieldEmailAddress, emailAddress);}
     QString emailAddress() const {return value(FieldEmailAddress);}
+
+    // Convenience filter
+    static QContactFilter match(const QString& emailAddress);
 };
 
 QTM_END_NAMESPACE

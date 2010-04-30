@@ -48,16 +48,14 @@
 
 #include <qmobilityglobal.h>
 
-#include <qmediacontent.h>
+#include "qmediacontent.h"
 
+QT_BEGIN_NAMESPACE
 class QString;
 class QUrl;
 class QByteArray;
 class QIODevice;
 class QStringList;
-
-
-QTM_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QMediaPlaylistReader
 {
@@ -91,19 +89,13 @@ struct Q_MEDIA_EXPORT QMediaPlaylistIOInterface : public QFactoryInterface
     virtual QMediaPlaylistWriter *createWriter(QIODevice *device, const QByteArray &format) = 0;
 };
 
-QTM_END_NAMESPACE
-
 #define QMediaPlaylistIOInterface_iid "com.nokia.Qt.QMediaPlaylistIOInterface"
-//MOC doesn't recognire paramitized macros
-//Q_DECLARE_INTERFACE(QTM_PREPEND_NAMESPACE(QMediaPlaylistIOInterface), QMediaPlaylistIOInterface_iid);
-Q_DECLARE_INTERFACE(QtMobility::QMediaPlaylistIOInterface, QMediaPlaylistIOInterface_iid);
-
-QTM_BEGIN_NAMESPACE
+Q_DECLARE_INTERFACE(QMediaPlaylistIOInterface, QMediaPlaylistIOInterface_iid);
 
 class Q_MEDIA_EXPORT QMediaPlaylistIOPlugin : public QObject, public QMediaPlaylistIOInterface
 {
 Q_OBJECT
-Q_INTERFACES(QtMobility::QMediaPlaylistIOInterface:QFactoryInterface)
+Q_INTERFACES(QMediaPlaylistIOInterface:QFactoryInterface)
 public:
     explicit QMediaPlaylistIOPlugin(QObject *parent = 0);
     virtual ~QMediaPlaylistIOPlugin();
@@ -121,6 +113,6 @@ public:
     virtual QMediaPlaylistWriter *createWriter(QIODevice *device, const QByteArray &format) = 0;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTIOPLUGIN_H

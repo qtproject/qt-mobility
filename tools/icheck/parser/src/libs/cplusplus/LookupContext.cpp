@@ -1,0 +1,783 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include "LookupContext.h"
+#include "ResolveExpression.h"
+#include "Overview.h"
+#include "CppBindings.h"
+
+#include <CoreTypes.h>
+#include <Symbols.h>
+#include <Literals.h>
+#include <Names.h>
+#include <Scope.h>
+#include <Control.h>
+
+#include <QtDebug>
+
+uint CPlusPlus::qHash(const CPlusPlus::LookupItem &key)
+{
+    const uint h1 = QT_PREPEND_NAMESPACE(qHash)(key.type().type());
+    const uint h2 = QT_PREPEND_NAMESPACE(qHash)(key.lastVisibleSymbol());
+    return ((h1 << 16) | (h1 >> 16)) ^ h2;
+}
+
+using namespace CPlusPlus;
+
+/////////////////////////////////////////////////////////////////////
+// LookupContext
+/////////////////////////////////////////////////////////////////////
+LookupContext::LookupContext(Control *control)
+    : _control(control),
+      _symbol(0)
+{ }
+
+LookupContext::LookupContext(Symbol *symbol,
+                             Document::Ptr expressionDocument,
+                             Document::Ptr thisDocument,
+                             const Snapshot &snapshot)
+    : _symbol(symbol),
+      _expressionDocument(expressionDocument),
+      _thisDocument(thisDocument),
+      _snapshot(snapshot)
+{
+    _control = _expressionDocument->control();
+    _visibleScopes = buildVisibleScopes();
+}
+
+bool LookupContext::isValid() const
+{ return _control != 0; }
+
+Control *LookupContext::control() const
+{ return _control; }
+
+Symbol *LookupContext::symbol() const
+{ return _symbol; }
+
+Document::Ptr LookupContext::expressionDocument() const
+{ return _expressionDocument; }
+
+Document::Ptr LookupContext::thisDocument() const
+{ return _thisDocument; }
+
+Document::Ptr LookupContext::document(const QString &fileName) const
+{ return _snapshot.document(fileName); }
+
+Snapshot LookupContext::snapshot() const
+{ return _snapshot; }
+
+bool LookupContext::maybeValidSymbol(Symbol *symbol,
+                                     ResolveMode mode,
+                                     const QList<Symbol *> &candidates)
+{
+    if (((mode & ResolveNamespace)    && symbol->isNamespace())    ||
+        ((mode & ResolveClass)        && symbol->isClass())        ||
+        ((mode & ResolveObjCClass)    && symbol->isObjCClass())    ||
+        ((mode & ResolveObjCProtocol) && symbol->isObjCProtocol()) ||
+         (mode & ResolveSymbol)) {
+        return ! candidates.contains(symbol);
+    }
+
+    return false;
+}
+
+QList<Scope *> LookupContext::resolveNestedNameSpecifier(const QualifiedNameId *q,
+                                                         const QList<Scope *> &visibleScopes) const
+{
+    QList<Symbol *> candidates;
+    QList<Scope *> scopes = visibleScopes;
+
+    for (unsigned i = 0; i < q->nameCount() - 1; ++i) {
+        const Name *name = q->nameAt(i);
+
+        candidates = resolveClassOrNamespace(name, scopes);
+
+        if (candidates.isEmpty())
+            break;
+
+        scopes.clear();
+
+        foreach (Symbol *candidate, candidates) {
+            ScopedSymbol *scoped = candidate->asScopedSymbol();
+            Scope *members = scoped->members();
+
+            if (! scopes.contains(members))
+                scopes.append(members);
+        }
+    }
+
+    return scopes;
+}
+
+QList<Symbol *> LookupContext::resolveQualifiedNameId(const QualifiedNameId *q,
+                                                      const QList<Scope *> &visibleScopes,
+                                                      ResolveMode mode) const
+{
+    QList<Symbol *> candidates;
+
+    if (true || mode & ResolveClass) {
+        for (int i = 0; i < visibleScopes.size(); ++i) {
+            Scope *scope = visibleScopes.at(i);
+
+            for (Symbol *symbol = scope->lookat(q); symbol; symbol = symbol->next()) {
+                if (! symbol->name())
+                    continue;
+                else if (! symbol->isClass())
+                    continue;
+
+                const QualifiedNameId *qq = symbol->name()->asQualifiedNameId();
+
+                if (! qq)
+                    continue;
+                else if (! maybeValidSymbol(symbol, mode, candidates))
+                    continue;
+
+                if (! q->unqualifiedNameId()->isEqualTo(qq->unqualifiedNameId()))
+                    continue;
+
+                else if (qq->nameCount() == q->nameCount()) {
+                    unsigned j = 0;
+
+                    for (; j < q->nameCount(); ++j) {
+                        const Name *classOrNamespaceName1 = q->nameAt(j);
+                        const Name *classOrNamespaceName2 = qq->nameAt(j);
+
+                        if (! classOrNamespaceName1->isEqualTo(classOrNamespaceName2))
+                            break;
+                    }
+
+                    if (j == q->nameCount())
+                        candidates.append(symbol);
+                }
+            }
+        }
+    }
+
+    QList<Scope *> scopes;
+
+    if (q->nameCount() == 1)
+        scopes = visibleScopes;     // ### handle global scope lookup
+    else
+        scopes = resolveNestedNameSpecifier(q, visibleScopes);
+
+    QList<Scope *> expanded;
+    foreach (Scope *scope, scopes) {
+        expanded.append(scope);
+
+        for (unsigned i = 0; i < scope->symbolCount(); ++i) {
+            Symbol *member = scope->symbolAt(i);
+
+            if (ScopedSymbol *scopedSymbol = member->asScopedSymbol())
+                expandEnumOrAnonymousSymbol(scopedSymbol, &expanded);
+        }
+    }
+
+    candidates += resolve(q->unqualifiedNameId(), expanded, mode);
+
+    return candidates;
+}
+
+QList<Symbol *> LookupContext::resolveOperatorNameId(const OperatorNameId *opId,
+                                                     const QList<Scope *> &visibleScopes,
+                                                     ResolveMode) const
+{
+    QList<Symbol *> candidates;
+
+    for (int scopeIndex = 0; scopeIndex < visibleScopes.size(); ++scopeIndex) {
+        Scope *scope = visibleScopes.at(scopeIndex);
+
+        for (Symbol *symbol = scope->lookat(opId->kind()); symbol; symbol = symbol->next()) {
+            if (! opId->isEqualTo(symbol->name()))
+                continue;
+
+            if (! candidates.contains(symbol))
+                candidates.append(symbol);
+        }
+    }
+
+    return candidates;
+}
+
+QList<Symbol *> LookupContext::resolve(const Name *name, const QList<Scope *> &visibleScopes,
+                                       ResolveMode mode) const
+{
+    QList<Symbol *> candidates;
+
+    if (!name)
+        return candidates; // nothing to do, the symbol is anonymous.
+
+    else if (const QualifiedNameId *q = name->asQualifiedNameId())
+        return resolveQualifiedNameId(q, visibleScopes, mode);
+
+    else if (const OperatorNameId *opId = name->asOperatorNameId())
+        return resolveOperatorNameId(opId, visibleScopes, mode);
+
+    else if (const Identifier *id = name->identifier()) {
+        for (int scopeIndex = 0; scopeIndex < visibleScopes.size(); ++scopeIndex) {
+            Scope *scope = visibleScopes.at(scopeIndex);
+
+            for (Symbol *symbol = scope->lookat(id); symbol; symbol = symbol->next()) {
+                if (! symbol->name())
+                    continue; // nothing to do, the symbol is anonymous.
+
+                else if (! maybeValidSymbol(symbol, mode, candidates))
+                    continue; // skip it, we're not looking for this kind of symbols
+
+                else if (const Identifier *symbolId = symbol->identifier()) {
+                    if (! symbolId->isEqualTo(id))
+                        continue; // skip it, the symbol's id is not compatible with this lookup.
+                }
+
+                if (const QualifiedNameId *q = symbol->name()->asQualifiedNameId()) {
+
+                    if (name->isDestructorNameId() != q->unqualifiedNameId()->isDestructorNameId())
+                        continue;
+
+                    else if (q->nameCount() > 1) {
+                        const Name *classOrNamespaceName = control()->qualifiedNameId(q->names(),
+                                                                                      q->nameCount() - 1);
+
+                        if (const Identifier *classOrNamespaceNameId = identifier(classOrNamespaceName)) {
+                            if (classOrNamespaceNameId->isEqualTo(id))
+                                continue;
+                        }
+
+                        const QList<Symbol *> resolvedClassOrNamespace =
+                                resolveClassOrNamespace(classOrNamespaceName, visibleScopes);
+
+                        bool good = false;
+                        foreach (Symbol *classOrNamespace, resolvedClassOrNamespace) {
+                            ScopedSymbol *scoped = classOrNamespace->asScopedSymbol();
+                            if (visibleScopes.contains(scoped->members())) {
+                                good = true;
+                                break;
+                            }
+                        }
+
+                        if (! good)
+                            continue;
+                    }
+                } else if (symbol->name()->isDestructorNameId() != name->isDestructorNameId()) {
+                    // ### FIXME: this is wrong!
+                    continue;
+                }
+
+                if (! candidates.contains(symbol))
+                    candidates.append(symbol);
+            }
+        }
+    }
+
+    return candidates;
+}
+
+const Identifier *LookupContext::identifier(const Name *name) const
+{
+    if (name)
+        return name->identifier();
+
+    return 0;
+}
+
+void LookupContext::buildVisibleScopes_helper(Document::Ptr doc, QList<Scope *> *scopes,
+                                              QSet<QString> *processed)
+{
+    if (doc && ! processed->contains(doc->fileName())) {
+        processed->insert(doc->fileName());
+
+        if (doc->globalSymbolCount())
+            scopes->append(doc->globalSymbols());
+
+        foreach (const Document::Include &incl, doc->includes()) {
+            buildVisibleScopes_helper(_snapshot.document(incl.fileName()),
+                                      scopes, processed);
+        }
+    }
+}
+
+QList<Scope *> LookupContext::buildVisibleScopes()
+{
+    QList<Scope *> scopes;
+
+    if (_symbol) {
+        Scope *scope = _symbol->scope();
+
+        if (Function *fun = _symbol->asFunction())
+            scope = fun->members(); // handle ctor initializers.
+
+        for (; scope; scope = scope->enclosingScope()) {
+            if (scope == _thisDocument->globalSymbols())
+                break;
+
+            scopes.append(scope);
+        }
+    }
+
+    QSet<QString> processed;
+    buildVisibleScopes_helper(_thisDocument, &scopes, &processed);
+
+    while (true) {
+        QList<Scope *> expandedScopes;
+        expand(scopes, &expandedScopes);
+
+        if (expandedScopes.size() == scopes.size())
+            return expandedScopes;
+
+        scopes = expandedScopes;
+    }
+
+    return scopes;
+}
+
+QList<Scope *> LookupContext::visibleScopes(const LookupItem &result) const
+{ return visibleScopes(result.lastVisibleSymbol()); }
+
+QList<Scope *> LookupContext::visibleScopes(Symbol *symbol) const
+{
+    QList<Scope *> scopes;
+    if (symbol) {
+        for (Scope *scope = symbol->scope(); scope; scope = scope->enclosingScope())
+            scopes.append(scope);
+    }
+    scopes += visibleScopes();
+    scopes = expand(scopes);
+    return scopes;
+}
+
+void LookupContext::expandEnumOrAnonymousSymbol(ScopedSymbol *scopedSymbol,
+                                                QList<Scope *> *expandedScopes) const
+{
+    if (! scopedSymbol || expandedScopes->contains(scopedSymbol->members()))
+        return;
+
+    Scope *members = scopedSymbol->members();
+
+    if (scopedSymbol->isEnum())
+        expandedScopes->append(members);
+    else if (! scopedSymbol->name() && (scopedSymbol->isClass() || scopedSymbol->isNamespace())) {
+        // anonymous class or namespace
+
+        expandedScopes->append(members);
+
+        for (unsigned i = 0; i < members->symbolCount(); ++i) {
+            Symbol *member = members->symbolAt(i);
+
+            if (ScopedSymbol *nested = member->asScopedSymbol()) {
+                expandEnumOrAnonymousSymbol(nested, expandedScopes);
+            }
+        }
+    }
+}
+
+QList<Scope *> LookupContext::expand(const QList<Scope *> &scopes) const
+{
+    QList<Scope *> expanded;
+    expand(scopes, &expanded);
+    return expanded;
+}
+
+void LookupContext::expand(const QList<Scope *> &scopes, QList<Scope *> *expandedScopes) const
+{
+    for (int i = 0; i < scopes.size(); ++i) {
+        expand(scopes.at(i), scopes, expandedScopes);
+    }
+}
+
+void LookupContext::expandNamespace(Namespace *ns,
+                                    const QList<Scope *> &visibleScopes,
+                                    QList<Scope *> *expandedScopes) const
+{
+    //qDebug() << "*** expand namespace:" << ns->fileName() << ns->line() << ns->column();
+
+    if (Scope *encl = ns->enclosingNamespaceScope())
+        expand(encl, visibleScopes, expandedScopes);
+
+    if (const Name *nsName = ns->name()) {
+        const QList<Symbol *> namespaceList = resolveNamespace(nsName, visibleScopes);
+        foreach (Symbol *otherNs, namespaceList) {
+            if (otherNs == ns)
+                continue;
+            expand(otherNs->asNamespace()->members(), visibleScopes, expandedScopes);
+        }
+    }
+
+    for (unsigned i = 0; i < ns->memberCount(); ++i) { // ### make me fast
+        Symbol *symbol = ns->memberAt(i);
+        if (Namespace *otherNs = symbol->asNamespace()) {
+            if (! otherNs->name()) {
+                expand(otherNs->members(), visibleScopes, expandedScopes);
+            }
+        } else if (UsingNamespaceDirective *u = symbol->asUsingNamespaceDirective()) {
+            const QList<Symbol *> candidates = resolveNamespace(u->name(), visibleScopes);
+            for (int j = 0; j < candidates.size(); ++j) {
+                expand(candidates.at(j)->asNamespace()->members(),
+                       visibleScopes, expandedScopes);
+            }
+        } else if (Enum *e = symbol->asEnum()) {
+            expand(e->members(), visibleScopes, expandedScopes);
+        }
+    }
+}
+
+void LookupContext::expandClass(Class *klass,
+                                const QList<Scope *> &visibleScopes,
+                                QList<Scope *> *expandedScopes) const
+{
+    for (TemplateParameters *params = klass->templateParameters(); params; params = params->previous())
+        expand(params->scope(), visibleScopes, expandedScopes);
+
+    for (unsigned i = 0; i < klass->memberCount(); ++i) {
+        Symbol *symbol = klass->memberAt(i);
+        if (Class *nestedClass = symbol->asClass()) {
+            if (! nestedClass->name()) {
+                expand(nestedClass->members(), visibleScopes, expandedScopes);
+            }
+        } else if (Enum *e = symbol->asEnum()) {
+            expand(e->members(), visibleScopes, expandedScopes);
+        }
+    }
+
+    if (klass->baseClassCount()) {
+        QList<Scope *> classVisibleScopes = visibleScopes;
+        for (Scope *scope = klass->scope(); scope; scope = scope->enclosingScope()) {
+            if (scope->isNamespaceScope()) {
+                Namespace *enclosingNamespace = scope->owner()->asNamespace();
+                if (enclosingNamespace->name()) {
+                    const QList<Symbol *> nsList = resolveNamespace(enclosingNamespace->name(),
+                                                                    visibleScopes);
+                    foreach (Symbol *ns, nsList) {
+                        expand(ns->asNamespace()->members(), classVisibleScopes,
+                               &classVisibleScopes);
+                    }
+                }
+            }
+        }
+
+        for (unsigned i = 0; i < klass->baseClassCount(); ++i) {
+            BaseClass *baseClass = klass->baseClassAt(i);
+            const Name *baseClassName = baseClass->name();
+            const QList<Symbol *> baseClassCandidates = resolveClass(baseClassName,
+                                                                     classVisibleScopes);
+
+            for (int j = 0; j < baseClassCandidates.size(); ++j) {
+                if (Class *baseClassSymbol = baseClassCandidates.at(j)->asClass())
+                    expand(baseClassSymbol->members(), visibleScopes, expandedScopes);
+            }
+        }
+    }
+}
+
+void LookupContext::expandBlock(Block *blockSymbol,
+                                const QList<Scope *> &visibleScopes,
+                                QList<Scope *> *expandedScopes) const
+{
+    for (unsigned i = 0; i < blockSymbol->memberCount(); ++i) {
+        Symbol *symbol = blockSymbol->memberAt(i);
+        if (UsingNamespaceDirective *u = symbol->asUsingNamespaceDirective()) {
+            const QList<Symbol *> candidates = resolveNamespace(u->name(),
+                                                                visibleScopes);
+            for (int j = 0; j < candidates.size(); ++j) {
+                expand(candidates.at(j)->asNamespace()->members(),
+                       visibleScopes, expandedScopes);
+            }
+        }
+
+    }
+}
+
+void LookupContext::expandFunction(Function *function,
+                                   const QList<Scope *> &visibleScopes,
+                                   QList<Scope *> *expandedScopes) const
+{
+    for (TemplateParameters *params = function->templateParameters(); params; params = params->previous())
+        expand(params->scope(), visibleScopes, expandedScopes);
+
+    if (! expandedScopes->contains(function->arguments()))
+        expandedScopes->append(function->arguments());
+
+    if (const QualifiedNameId *q = function->name()->asQualifiedNameId()) {
+        const Name *nestedNameSpec = 0;
+        if (q->nameCount() == 1)
+            nestedNameSpec = q->nameAt(0);
+        else
+            nestedNameSpec = control()->qualifiedNameId(q->names(), q->nameCount() - 1,
+                                                        q->isGlobal());
+        const QList<Symbol *> candidates = resolveClassOrNamespace(nestedNameSpec, visibleScopes);
+        for (int j = 0; j < candidates.size(); ++j) {
+            if (ScopedSymbol *scopedSymbol = candidates.at(j)->asScopedSymbol())
+                expand(scopedSymbol->members(), visibleScopes, expandedScopes);
+        }
+    }
+}
+
+void LookupContext::expandObjCMethod(ObjCMethod *method,
+                                     const QList<Scope *> &,
+                                     QList<Scope *> *expandedScopes) const
+{
+    if (! expandedScopes->contains(method->arguments()))
+        expandedScopes->append(method->arguments());
+}
+
+void LookupContext::expandObjCClass(ObjCClass *klass,
+                                    const QList<Scope *> &visibleScopes,
+                                    QList<Scope *> *expandedScopes) const
+{
+    {// expand other @interfaces, @implementations and categories for this class:
+        const QList<Symbol *> classList = resolveObjCClass(klass->name(), visibleScopes);
+        foreach (Symbol *otherClass, classList) {
+            if (otherClass == klass)
+                continue;
+            expand(otherClass->asObjCClass()->members(), visibleScopes, expandedScopes);
+        }
+    }
+
+    // expand definitions in the currect class:
+    for (unsigned i = 0; i < klass->memberCount(); ++i) {
+        Symbol *symbol = klass->memberAt(i);
+        if (Class *nestedClass = symbol->asClass()) {
+            if (! nestedClass->name()) {
+                expand(nestedClass->members(), visibleScopes, expandedScopes);
+            }
+        } else if (Enum *e = symbol->asEnum()) {
+            expand(e->members(), visibleScopes, expandedScopes);
+        }
+    }
+
+    // expand the base class:
+    if (ObjCBaseClass *baseClass = klass->baseClass()) {
+        const Name *baseClassName = baseClass->name();
+        const QList<Symbol *> baseClassCandidates = resolveObjCClass(baseClassName,
+                                                                     visibleScopes);
+
+        for (int j = 0; j < baseClassCandidates.size(); ++j) {
+            if (ObjCClass *baseClassSymbol = baseClassCandidates.at(j)->asObjCClass())
+                expand(baseClassSymbol->members(), visibleScopes, expandedScopes);
+        }
+    }
+
+    // expand the protocols:
+    for (unsigned i = 0; i < klass->protocolCount(); ++i) {
+        const Name *protocolName = klass->protocolAt(i)->name();
+        const QList<Symbol *> protocolCandidates = resolveObjCProtocol(protocolName, visibleScopes);
+        for (int j = 0; j < protocolCandidates.size(); ++j) {
+            if (ObjCProtocol *protocolSymbol = protocolCandidates.at(j)->asObjCProtocol())
+                expandObjCProtocol(protocolSymbol, visibleScopes, expandedScopes);
+        }
+    }
+}
+
+void LookupContext::expandObjCProtocol(ObjCProtocol *protocol, const QList<Scope *> &visibleScopes, QList<Scope *> *expandedScopes) const
+{
+    // First expand the protocol itself
+    expand(protocol->members(), visibleScopes, expandedScopes);
+
+    // Then do the same for any incorporated protocol
+    for (unsigned i = 0; i < protocol->protocolCount(); ++i) {
+        ObjCBaseProtocol *baseProtocol = protocol->protocolAt(i);
+        const QList<Symbol *> protocolList = resolveObjCProtocol(baseProtocol->name(), visibleScopes);
+        foreach (Symbol *symbol, protocolList)
+            if (ObjCProtocol *protocolSymbol = symbol->asObjCProtocol())
+                expandObjCProtocol(protocolSymbol, visibleScopes, expandedScopes);
+    }
+}
+
+void LookupContext::expand(Scope *scope,
+                           const QList<Scope *> &visibleScopes,
+                           QList<Scope *> *expandedScopes) const
+{
+    if (expandedScopes->contains(scope))
+        return;
+
+    expandedScopes->append(scope);
+
+    if (Namespace *ns = scope->owner()->asNamespace()) {
+        expandNamespace(ns, visibleScopes, expandedScopes);
+    } else if (Class *klass = scope->owner()->asClass()) {
+        expandClass(klass, visibleScopes, expandedScopes);
+    } else if (Block *block = scope->owner()->asBlock()) {
+        expandBlock(block, visibleScopes, expandedScopes);
+    } else if (Function *fun = scope->owner()->asFunction()) {
+        expandFunction(fun, visibleScopes, expandedScopes);
+    } else if (ObjCMethod *meth = scope->owner()->asObjCMethod()) {
+        expandObjCMethod(meth, visibleScopes, expandedScopes);
+    } else if (ObjCClass *objcKlass = scope->owner()->asObjCClass()) {
+        expandObjCClass(objcKlass, visibleScopes, expandedScopes);
+    }
+}
+
+static void visibleClassBindings_helper(ClassBinding *classBinding,
+                                        QList<ClassBinding *> *allClassBindings,
+                                        QSet<ClassBinding *> *processed)
+{
+    if (! classBinding)
+        return;
+
+    else if (processed->contains(classBinding))
+        return;
+
+    processed->insert(classBinding);
+
+    foreach (ClassBinding *baseClassBinding, classBinding->baseClassBindings)
+        visibleClassBindings_helper(baseClassBinding, allClassBindings, processed);
+
+    allClassBindings->append(classBinding);
+}
+
+static QList<ClassBinding *> visibleClassBindings(Symbol *symbol, NamespaceBinding *globalNamespace)
+{
+    QList<ClassBinding *> classBindings;
+
+    if (! symbol)
+        return classBindings;
+
+    else if (Class *klass = symbol->asClass()) {
+        QSet<ClassBinding *> processed;
+
+        visibleClassBindings_helper(NamespaceBinding::find(klass, globalNamespace),
+                                    &classBindings, &processed);
+    }
+
+    return classBindings;
+}
+
+Symbol *LookupContext::canonicalSymbol(Symbol *symbol,
+                                       NamespaceBinding *globalNamespace)
+{
+    Symbol *canonicalSymbol = LookupContext::canonicalSymbol(symbol);
+    if (! canonicalSymbol)
+        return 0;
+
+    if (const Identifier *symbolId = canonicalSymbol->identifier()) {
+        if (symbolId && canonicalSymbol->type()->isFunctionType()) {
+            Class *enclosingClass = canonicalSymbol->scope()->owner()->asClass();
+            const QList<ClassBinding *> classBindings = visibleClassBindings(enclosingClass, globalNamespace);
+
+            foreach (ClassBinding *baseClassBinding, classBindings) {
+                if (! baseClassBinding)
+                    continue;
+
+                foreach (Class *baseClass, baseClassBinding->symbols) {
+                    if (! baseClass)
+                        continue;
+
+                    for (Symbol *c = baseClass->members()->lookat(symbolId); c; c = c->next()) {
+                        if (! symbolId->isEqualTo(c->identifier()))
+                            continue;
+                        else if (Function *f = c->type()->asFunctionType()) {
+                            if (f->isVirtual())
+                                return LookupContext::canonicalSymbol(f);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return canonicalSymbol;
+}
+
+Symbol *LookupContext::canonicalSymbol(const QList<Symbol *> &candidates,
+                                       NamespaceBinding *globalNamespaceBinding)
+{
+    if (candidates.isEmpty())
+        return 0;
+
+    return canonicalSymbol(candidates.first(), globalNamespaceBinding);
+}
+
+Symbol *LookupContext::canonicalSymbol(const QList<LookupItem> &results,
+                                       NamespaceBinding *globalNamespaceBinding)
+{
+    QList<Symbol *> candidates;
+
+    foreach (const LookupItem &result, results)
+        candidates.append(result.lastVisibleSymbol()); // ### not exactly.
+
+    return canonicalSymbol(candidates, globalNamespaceBinding);
+}
+
+
+Symbol *LookupContext::canonicalSymbol(Symbol *symbol)
+{
+    Symbol *canonical = symbol;
+    Class *canonicalClass = 0;
+    ObjCClass *canonicalObjCClass = 0;
+    ObjCProtocol *canonicalObjCProto = 0;
+
+    for (; symbol; symbol = symbol->next()) {
+        if (symbol->identifier() == canonical->identifier()) {
+            canonical = symbol;
+
+            if (Class *klass = symbol->asClass())
+                canonicalClass = klass;
+            else if (ObjCClass *clazz = symbol->asObjCClass())
+                canonicalObjCClass = clazz;
+            else if (ObjCProtocol *proto = symbol->asObjCProtocol())
+                canonicalObjCProto = proto;
+        }
+    }
+
+    if (canonicalClass) {
+        Q_ASSERT(canonical != 0);
+
+        if (canonical->isForwardClassDeclaration())
+            return canonicalClass; // prefer class declarations when available.
+    } else if (canonicalObjCClass) {
+        Q_ASSERT(canonical != 0);
+
+        if (canonical->isObjCForwardClassDeclaration())
+            return canonicalObjCClass;
+    } else if (canonicalObjCProto) {
+        Q_ASSERT(canonical != 0);
+
+        if (canonical->isObjCForwardProtocolDeclaration())
+            return canonicalObjCProto;
+    }
+
+    if (canonical && canonical->scope()->isClassScope()) {
+        Class *enclosingClass = canonical->scope()->owner()->asClass();
+
+        if (enclosingClass->identifier() == canonical->identifier())
+            return enclosingClass;
+    }
+
+    return canonical;
+}

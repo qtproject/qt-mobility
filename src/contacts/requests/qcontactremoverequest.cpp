@@ -48,39 +48,53 @@ QTM_BEGIN_NAMESPACE
   \class QContactRemoveRequest
   \brief The QContactRemoveRequest class allows a client to asynchronously
     request that certain contacts be removed from a contacts store.
-   \ingroup contacts-requests
+
+  For a QContactRemoveRequest, the resultsUpdated() signal will be emitted when
+  the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
+  operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
+
+/*! Constructs a new contact remove request whose parent is the specified \a parent */
+QContactRemoveRequest::QContactRemoveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRemoveRequestPrivate, parent)
+{
+}
 
 /*!
- * \fn QContactRemoveRequest::progress(QContactRemoveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
+  Sets the id of the contact which will be removed to \a contactId.
+  Equivalent to calling:
+  \code
+      setContactIds(QList<QContactLocalId>() << contactIds);
+  \endcode
  */
-
-/*! Constructs a new contact remove request */
-QContactRemoveRequest::QContactRemoveRequest()
-    : QContactAbstractRequest(new QContactRemoveRequestPrivate)
-{
-}
-
-/*! Cleans up the memory in use by the contact remove request */
-QContactRemoveRequest::~QContactRemoveRequest()
-{
-}
-
-/*! Sets the filter which will be used to select the contacts to remove to \a filter */
-void QContactRemoveRequest::setFilter(const QContactFilter& filter)
+void QContactRemoveRequest::setContactId(const QContactLocalId& contactId)
 {
     Q_D(QContactRemoveRequest);
-    d->m_filter = filter;
+    d->m_contactIds.clear();
+    d->m_contactIds.append(contactId);
 }
 
-/*! Returns the filter which will be used to select the contacts to remove */
-QContactFilter QContactRemoveRequest::filter() const
+/*! Sets the list of ids of contacts which will be removed to \a contactIds */
+void QContactRemoveRequest::setContactIds(const QList<QContactLocalId>& contactIds)
+{
+    Q_D(QContactRemoveRequest);
+    d->m_contactIds = contactIds;
+}
+
+/*! Returns the list of ids of contacts which will be removed */
+QList<QContactLocalId> QContactRemoveRequest::contactIds() const
 {
     Q_D(const QContactRemoveRequest);
-    return d->m_filter;
+    return d->m_contactIds;
+}
+
+/*! Returns the map of input contact list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactRemoveRequest::errorMap() const
+{
+    Q_D(const QContactRemoveRequest);
+    return d->m_errors;
 }
 
 #include "moc_qcontactremoverequest.cpp"

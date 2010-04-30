@@ -44,12 +44,14 @@
 
 #include <QObject>
 
-#include <qmediacontent.h>
-#include <qmediaplaylist.h>
+#include "qmediacontent.h"
+#include "qmediaplaylist.h"
 
+QT_BEGIN_NAMESPACE
 class QString;
+QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistProviderPrivate;
 class Q_MEDIA_EXPORT QMediaPlaylistProvider : public QObject
@@ -64,30 +66,30 @@ public:
     virtual bool save(const QUrl &location, const char *format = 0);
     virtual bool save(QIODevice * device, const char *format);
 
-    virtual int size() const = 0;
+    virtual int mediaCount() const = 0;
     virtual QMediaContent media(int index) const = 0;
 
     virtual bool isReadOnly() const;
 
-    virtual bool appendItem(const QMediaContent &content);
-    virtual bool appendItems(const QList<QMediaContent> &contentList);
-    virtual bool insertItem(int index, const QMediaContent &content);
-    virtual bool insertItems(int index, const QList<QMediaContent> &content);
-    virtual bool removeItem(int pos);
-    virtual bool removeItems(int start, int end);
+    virtual bool addMedia(const QMediaContent &content);
+    virtual bool addMedia(const QList<QMediaContent> &contentList);
+    virtual bool insertMedia(int index, const QMediaContent &content);
+    virtual bool insertMedia(int index, const QList<QMediaContent> &content);
+    virtual bool removeMedia(int pos);
+    virtual bool removeMedia(int start, int end);
     virtual bool clear();
 
 public Q_SLOTS:
     virtual void shuffle();
 
 Q_SIGNALS:
-    void itemsAboutToBeInserted(int start, int end);
-    void itemsInserted(int start, int end);
+    void mediaAboutToBeInserted(int start, int end);
+    void mediaInserted(int start, int end);
 
-    void itemsAboutToBeRemoved(int start, int end);
-    void itemsRemoved(int start, int end);
+    void mediaAboutToBeRemoved(int start, int end);
+    void mediaRemoved(int start, int end);
 
-    void itemsChanged(int start, int end);
+    void mediaChanged(int start, int end);
 
     void loaded();
     void loadFailed(QMediaPlaylist::Error, const QString& errorMessage);
@@ -100,6 +102,6 @@ private:
     Q_DECLARE_PRIVATE(QMediaPlaylistProvider)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTPROVIDER_H

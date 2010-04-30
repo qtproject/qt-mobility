@@ -52,8 +52,10 @@
 //
 // We mean it.
 //
-
 #include "qvaluespace_p.h"
+#include <QList>
+
+QT_USE_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 

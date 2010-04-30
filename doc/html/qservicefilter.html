@@ -22,7 +22,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#CapabilityMatchRule-enum">CapabilityMatchRule</a></b> { MatchAll, MatchLoadable }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#CapabilityMatchRule-enum">CapabilityMatchRule</a></b> { MatchMinimum, MatchLoadable }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#VersionMatchRule-enum">VersionMatchRule</a></b> { ExactVersionMatch, MinimumVersionMatch }</td></tr>
 </table>
 <hr />
@@ -35,16 +35,15 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#dtor.QServiceFilter">~QServiceFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#capabilities">capabilities</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">CapabilityMatchRule </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#capabilityMatchRule">capabilityMatchRule</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#clearCustomProperties">clearCustomProperties</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#customProperty">customProperty</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#customPropertyKeys">customPropertyKeys</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#interfaceMajorVersion">interfaceMajorVersion</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#interfaceMinorVersion">interfaceMinorVersion</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#clearCustomAttribute">clearCustomAttribute</a></b> ( const QString &amp; <i>key</i> = QString() )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#customAttribute">customAttribute</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#customAttributes">customAttributes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#interfaceName">interfaceName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a></b> ( const QString &amp; <i>key</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#majorVersion">majorVersion</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#minorVersion">minorVersion</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#serviceName">serviceName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#setCapabilities">setCapabilities</a></b> ( QServiceFilter::CapabilityMatchRule <i>rule</i>, const QStringList &amp; <i>capabilities</i> = QStringList() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#setCustomProperty">setCustomProperty</a></b> ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#setCustomAttribute">setCustomAttribute</a></b> ( const QString &amp; <i>key</i>, const QString &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#setInterface">setInterface</a></b> ( const QString &amp; <i>interfaceName</i>, const QString &amp; <i>version</i> = QString(), QServiceFilter::VersionMatchRule <i>rule</i> = QServiceFilter::MinimumVersionMatch )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#setServiceName">setServiceName</a></b> ( const QString &amp; <i>serviceName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">VersionMatchRule </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#versionMatchRule">versionMatchRule</a></b> () const</td></tr>
@@ -54,8 +53,8 @@
 <a name="related-non-members"></a>
 <h2>Related Non-Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#operator-lt-lt-80">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#operator-gt-gt-74">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#operator-lt-lt-88">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qservicefilter.html#operator-gt-gt-77">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -66,14 +65,34 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QServiceFilter/CapabilityMatchRule"></a>
-<a name="//apple_ref/cpp/econst/QServiceFilter/MatchAll"></a>
+<a name="//apple_ref/cpp/econst/QServiceFilter/MatchMinimum"></a>
 <a name="//apple_ref/cpp/econst/QServiceFilter/MatchLoadable"></a>
 <h3 class="fn"><a name="CapabilityMatchRule-enum"></a>enum QServiceFilter::CapabilityMatchRule</h3>
-<p>This enum describes the capability matching rule.</p>
+<p>This enum describes the capability/permission matching rules. Some platforms restrict what services clients can access using &quot;capabilities&quot; or permissions. Services with more capabilities require more privileged clients. Platforms without capabilities may ignore this type of matching rule as the default behavior is to ignore any capability restrictions.</p>
+<p>This is a brief example. Assuming that the system knows the services S1 - S6 which require capabilities as stated below:</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Service</th><th>Required capabilities</th></tr></thead>
+<tr valign="top" class="odd"><td>S1</td><td>{}</td></tr>
+<tr valign="top" class="even"><td>S2</td><td>{A}</td></tr>
+<tr valign="top" class="odd"><td>S3</td><td>{A,B}</td></tr>
+<tr valign="top" class="even"><td>S4</td><td>{A,B,C,D}</td></tr>
+<tr valign="top" class="odd"><td>S5</td><td>{A,D}</td></tr>
+<tr valign="top" class="even"><td>S6</td><td>{F}</td></tr>
+</table></p>
+<p>The matching rules would apply as follows:</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Matching rule</th><th>Filter's capabilities</th><th>Matching services</th></tr></thead>
+<tr valign="top" class="odd"><td>MatchLoadable</td><td>{}</td><td>S1</td></tr>
+<tr valign="top" class="even"><td>MatchLoadable</td><td>{A}</td><td>S1, S2</td></tr>
+<tr valign="top" class="odd"><td>MatchLoadable</td><td>{A,B,C}</td><td>S1, S2, S3</td></tr>
+<tr valign="top" class="even"><td>MatchMinimum</td><td>{}</td><td>S1, S2, S3, S4, S5, S6</td></tr>
+<tr valign="top" class="odd"><td>MatchMinimum</td><td>{A}</td><td>S2, S3, S4, S5</td></tr>
+<tr valign="top" class="even"><td>MatchMinimum</td><td>{A,B,C}</td><td>S4</td></tr>
+</table></p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QServiceFilter::MatchAll</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The filter matches any services that requires all of the given capabilities. This implies that the returned service may require more capabilities than the specified ones. If this rule is provided alongside an empty capability search list the filter will match all available services regardless of their respective capabilities. Such a search is equivalent to a wildcard match. This is the default matching rules.</td></tr>
-<tr><td valign="top"><tt>QServiceFilter::MatchLoadable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The filter matches any service that could be loaded if a client has all of the given capabilities. This includes services with no capabilities. If this rule is provided alongside an empty capability search list the returned services do not require any capabilities and thus can be accessed by any client.</td></tr>
+<tr><td valign="top"><tt>QServiceFilter::MatchMinimum</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The filter matches any service that requires at least the given filter capabilities. This may mean that the returned services may require more capabilities than the specified ones. Such a search is equivalent to a wildcard match if the passed filter's capability list is empty. In mathematical set notation this rule is equivalent to Cap<sub>(Filter)</sub> \ Cap<sub>(Service)</sub> = {}. This is the default matching rule.</td></tr>
+<tr><td valign="top"><tt>QServiceFilter::MatchLoadable</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The filter matches any service that could be loaded by the client. Using this matching rule guarantees that the returned services do not require more capabilites than specified by this rule. It includes services with no capability requirements. If this rule is provided alongside an empty capability search list the returned services do not require any capabilities and thus can be accessed by any client. The equivalent set notation is Cap<sub>(Service)</sub> \ Cap<sub>(Filter)</sub> = {}.</td></tr>
 </table></p>
 <a name="//apple_ref/cpp/tag/QServiceFilter/VersionMatchRule"></a>
 <a name="//apple_ref/cpp/econst/QServiceFilter/ExactVersionMatch"></a>
@@ -92,13 +111,13 @@
 <p>Creates a new filter object that matches all service implementations.</p>
 <h3 class="fn"><a name="QServiceFilter-2"></a>QServiceFilter::QServiceFilter ( const QServiceFilter &amp; <i>other</i> )</h3>
 <p>Creates a copy of <a href="qservicefilter.html">QServiceFilter</a> object contained in <i>other</i>.</p>
-<h3 class="fn"><a name="QServiceFilter-3"></a>QServiceFilter::QServiceFilter ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>interfaceName</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
+<h3 class="fn"><a name="QServiceFilter-3"></a>QServiceFilter::QServiceFilter ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>interfaceName</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
 <p>Creates a new filter object that matches all service implementations implementing <i>interfaceName</i> that match the specified <i>version</i> using the given <i>rule</i>.</p>
 <a name="//apple_ref/cpp/instm/QServiceFilter/~QServiceFilter"></a>
 <h3 class="fn"><a name="dtor.QServiceFilter"></a>QServiceFilter::~QServiceFilter ()</h3>
 <p>Destroys this instance of <a href="qservicefilter.html">QServiceFilter</a>.</p>
 <a name="//apple_ref/cpp/instm/QServiceFilter/capabilities"></a>
-<h3 class="fn"><a name="capabilities"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QServiceFilter::capabilities () const</h3>
+<h3 class="fn"><a name="capabilities"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QServiceFilter::capabilities () const</h3>
 <p>Returns the list of capabilities which are used to limit services searches.</p>
 <p>The filter matches any services that requires the given or less capabilities and thus enabling clients to query for services for which they have the required capabilties.</p>
 <p>See also <a href="qservicefilter.html#setCapabilities">setCapabilities</a>(), <a href="qservicefilter.html#capabilityMatchRule">capabilityMatchRule</a>(), and <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a>.</p>
@@ -106,52 +125,48 @@
 <h3 class="fn"><a name="capabilityMatchRule"></a><a href="qservicefilter.html#CapabilityMatchRule-enum">CapabilityMatchRule</a> QServiceFilter::capabilityMatchRule () const</h3>
 <p>Returns the capability matching rule for this filter.</p>
 <p>See also <a href="qservicefilter.html#setCapabilities">setCapabilities</a>() and <a href="qservicefilter.html#capabilities">capabilities</a>().</p>
-<a name="//apple_ref/cpp/instm/QServiceFilter/clearCustomProperties"></a>
-<h3 class="fn"><a name="clearCustomProperties"></a>void QServiceFilter::clearCustomProperties ()</h3>
-<p>Clears all custom properties from the filter's set of constraints</p>
-<p>See also <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
-<a name="//apple_ref/cpp/instm/QServiceFilter/customProperty"></a>
-<h3 class="fn"><a name="customProperty"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QServiceFilter::customProperty ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
-<p>Returns the value for the custom property <i>key</i>; otherwise returns a null string.</p>
-<p>See also <a href="qservicefilter.html#setCustomProperty">setCustomProperty</a>() and <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
-<a name="//apple_ref/cpp/instm/QServiceFilter/customPropertyKeys"></a>
-<h3 class="fn"><a name="customPropertyKeys"></a><a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> QServiceFilter::customPropertyKeys () const</h3>
+<a name="//apple_ref/cpp/instm/QServiceFilter/clearCustomAttribute"></a>
+<h3 class="fn"><a name="clearCustomAttribute"></a>void QServiceFilter::clearCustomAttribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> = QString() )</h3>
+<p>Clears the custom attribute <i>key</i> from the filter's set of constraints. If <i>key</i> is empty all custom attributes are cleared.</p>
+<p>See also <a href="qservicefilter.html#setCustomAttribute">setCustomAttribute</a>().</p>
+<a name="//apple_ref/cpp/instm/QServiceFilter/customAttribute"></a>
+<h3 class="fn"><a name="customAttribute"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QServiceFilter::customAttribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<p>Returns the value for the custom attribute <i>key</i>; otherwise returns a null string.</p>
+<p>See also <a href="qservicefilter.html#setCustomAttribute">setCustomAttribute</a>() and <a href="qservicefilter.html#clearCustomAttribute">clearCustomAttribute</a>().</p>
+<a name="//apple_ref/cpp/instm/QServiceFilter/customAttributes"></a>
+<h3 class="fn"><a name="customAttributes"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QServiceFilter::customAttributes () const</h3>
 <p>Returns the list of custom keys which have been added to the filter.</p>
-<a name="//apple_ref/cpp/instm/QServiceFilter/interfaceMajorVersion"></a>
-<h3 class="fn"><a name="interfaceMajorVersion"></a>int QServiceFilter::interfaceMajorVersion () const</h3>
-<p>Returns the major interface version for this filter.</p>
-<p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
-<a name="//apple_ref/cpp/instm/QServiceFilter/interfaceMinorVersion"></a>
-<h3 class="fn"><a name="interfaceMinorVersion"></a>int QServiceFilter::interfaceMinorVersion () const</h3>
-<p>Returns the minor interface version for this filter.</p>
-<p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
 <a name="//apple_ref/cpp/instm/QServiceFilter/interfaceName"></a>
-<h3 class="fn"><a name="interfaceName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QServiceFilter::interfaceName () const</h3>
+<h3 class="fn"><a name="interfaceName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QServiceFilter::interfaceName () const</h3>
 <p>Returns the interface name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
-<a name="//apple_ref/cpp/instm/QServiceFilter/removeCustomProperty"></a>
-<h3 class="fn"><a name="removeCustomProperty"></a>void QServiceFilter::removeCustomProperty ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i> )</h3>
-<p>Removes the custom property <i>key</i> from the filter's set of constraints</p>
-<p>See also <a href="qservicefilter.html#clearCustomProperties">clearCustomProperties</a>() and <a href="qservicefilter.html#setCustomProperty">setCustomProperty</a>().</p>
+<a name="//apple_ref/cpp/instm/QServiceFilter/majorVersion"></a>
+<h3 class="fn"><a name="majorVersion"></a>int QServiceFilter::majorVersion () const</h3>
+<p>Returns the major interface version for this filter.</p>
+<p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
+<a name="//apple_ref/cpp/instm/QServiceFilter/minorVersion"></a>
+<h3 class="fn"><a name="minorVersion"></a>int QServiceFilter::minorVersion () const</h3>
+<p>Returns the minor interface version for this filter.</p>
+<p>See also <a href="qservicefilter.html#setInterface">setInterface</a>().</p>
 <a name="//apple_ref/cpp/instm/QServiceFilter/serviceName"></a>
-<h3 class="fn"><a name="serviceName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QServiceFilter::serviceName () const</h3>
+<h3 class="fn"><a name="serviceName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QServiceFilter::serviceName () const</h3>
 <p>Returns the service name for this filter.</p>
 <p>See also <a href="qservicefilter.html#setServiceName">setServiceName</a>().</p>
 <a name="//apple_ref/cpp/instm/QServiceFilter/setCapabilities"></a>
-<h3 class="fn"><a name="setCapabilities"></a>void QServiceFilter::setCapabilities ( <a href="qservicefilter.html#CapabilityMatchRule-enum">QServiceFilter::CapabilityMatchRule</a> <i>rule</i>, const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>capabilities</i> = QStringList() )</h3>
+<h3 class="fn"><a name="setCapabilities"></a>void QServiceFilter::setCapabilities ( <a href="qservicefilter.html#CapabilityMatchRule-enum">QServiceFilter::CapabilityMatchRule</a> <i>rule</i>, const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>capabilities</i> = QStringList() )</h3>
 <p>Sets the list of <i>capabilities</i> which are used to constrain searches for services. The capabilities are matched according to the given <i>rule</i>.</p>
 <p>See also <a href="qservicefilter.html#capabilities">capabilities</a>() and <a href="qabstractsecuritysession.html">QAbstractSecuritySession</a>.</p>
-<a name="//apple_ref/cpp/instm/QServiceFilter/setCustomProperty"></a>
-<h3 class="fn"><a name="setCustomProperty"></a>void QServiceFilter::setCustomProperty ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i> )</h3>
-<p>The filter only matches implementations which have the custom property <i>key</i> with the given <i>value</i>. Such constraints are specified via the <i>&lt;customproperty&gt;</i> tag within the service xml.</p>
-<p>See also <a href="qservicefilter.html#customProperty">customProperty</a>() and <a href="qservicefilter.html#removeCustomProperty">removeCustomProperty</a>().</p>
+<a name="//apple_ref/cpp/instm/QServiceFilter/setCustomAttribute"></a>
+<h3 class="fn"><a name="setCustomAttribute"></a>void QServiceFilter::setCustomAttribute ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i> )</h3>
+<p>The filter only matches implementations which have the custom attribute <i>key</i> with the given <i>value</i>. Such constraints are specified via the <i>&lt;customproperty&gt;</i> tag within the service xml.</p>
+<p>See also <a href="qservicefilter.html#customAttribute">customAttribute</a>() and <a href="qservicefilter.html#clearCustomAttribute">clearCustomAttribute</a>().</p>
 <a name="//apple_ref/cpp/instm/QServiceFilter/setInterface"></a>
-<h3 class="fn"><a name="setInterface"></a>void QServiceFilter::setInterface ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>interfaceName</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
+<h3 class="fn"><a name="setInterface"></a>void QServiceFilter::setInterface ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>interfaceName</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>version</i> = QString(), <a href="qservicefilter.html#VersionMatchRule-enum">QServiceFilter::VersionMatchRule</a> <i>rule</i> = QServiceFilter::MinimumVersionMatch )</h3>
 <p>Sets the filter to match any interface implementation that implements <i>interfaceName</i> with version <i>version</i>. The version is matched according to the given <i>rule</i>. If <i>version</i> is not set, the filter matches any version of the interface implementation.</p>
 <p>This method does nothing if <i>version</i> is not a valid version string or if <i>interfaceName</i> is empty.</p>
 <p>A valid version string has the format x.y whereby x and y are positive integer numbers.</p>
 <a name="//apple_ref/cpp/instm/QServiceFilter/setServiceName"></a>
-<h3 class="fn"><a name="setServiceName"></a>void QServiceFilter::setServiceName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>serviceName</i> )</h3>
+<h3 class="fn"><a name="setServiceName"></a>void QServiceFilter::setServiceName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>serviceName</i> )</h3>
 <p>The filter only matches implementations which are provided by the service specified by <i>serviceName</i>.</p>
 <p>If the <i>serviceName</i> is empty the filter matches any service.</p>
 <p>See also <a href="qservicefilter.html#serviceName">serviceName</a>().</p>
@@ -164,14 +179,14 @@
 <p>Copies the content of the <a href="qservicefilter.html">QServiceFilter</a> object contained in <i>other</i> into this one.</p>
 <hr />
 <h2>Related Non-Members</h2>
-<h3 class="fn"><a name="operator-lt-lt-80"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</h3>
+<h3 class="fn"><a name="operator-lt-lt-88"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>out</i>, const QServiceFilter &amp; <i>sf</i> )</h3>
 <p>Writes service filter <i>sf</i> to the stream <i>out</i> and returns a reference to the stream.</p>
-<h3 class="fn"><a name="operator-gt-gt-74"></a><a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.5/qdatastream.html">QDataStream</a> &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</h3>
+<h3 class="fn"><a name="operator-gt-gt-77"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>in</i>, QServiceFilter &amp; <i>sf</i> )</h3>
 <p>Reads a service filter into <i>sf</i> from the stream <i>in</i> and returns a reference to the stream.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

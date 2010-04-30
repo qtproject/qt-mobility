@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- sensors.qdoc -->
+<head>
+  <title>Qt Mobility Project 1.0: Sensors Backend</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Sensors Backend<br /><span class="subtitle"></span>
+</h1>
+<p>The Sensors Backend connects the Sensors API to the platform services or hardware sensors.</p>
+<ul><li><a href="#overview">Overview</a></li>
+<li><a href="#backend-api">Backend API</a></li>
+<li><a href="#backend-classes">Backend Classes</a></li>
+</ul>
+<a name="overview"></a>
+<h3>Overview</h3>
+<a name="backend-api"></a>
+<h3>Backend API</h3>
+<p><a href="qsensor.html">QSensor</a> instances talk to a backend object. Backends are usually supplied with the QtSensors library for a specific device although third party backends may be used as well. A backend may talk directly to hardware or it may talk to a system service. In some instances it may even talk to another sensor. An example of this is the orientation sensor backend that talks to an accelerometer to determine the orientation.</p>
+<a name="backend-classes"></a>
+<h3>Backend Classes</h3>
+<p>If you are making sensors available through the Sensors API, these are the classes to use. <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qsensorbackend.html">QSensorBackend</a></th><td>Sensor implementation</td></tr>
+<tr valign="top" class="even"><th><a href="qsensorbackendfactory.html">QSensorBackendFactory</a></th><td>Instantiates instances of QSensorBackend</td></tr>
+<tr valign="top" class="odd"><th><a href="qsensormanager.html">QSensorManager</a></th><td>Handles registration and creation of sensor backends</td></tr>
+<tr valign="top" class="even"><th><a href="qsensorplugininterface.html">QSensorPluginInterface</a></th><td>The pure virtual interface to sensor plugins</td></tr>
+</table></p>
+</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

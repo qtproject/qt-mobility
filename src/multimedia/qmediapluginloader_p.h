@@ -58,8 +58,11 @@
 #include <QtCore/qstring.h>
 #include <QtCore/qmap.h>
 
+QT_BEGIN_NAMESPACE
 class QObject;
-QTM_BEGIN_NAMESPACE
+QT_END_NAMESPACE
+
+QT_BEGIN_NAMESPACE
 
 class QMediaServiceProviderPlugin;
 
@@ -84,6 +87,6 @@ private:
     QMap<QString, QObject*> m_instances;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMEDIAPLUGINLOADER_H

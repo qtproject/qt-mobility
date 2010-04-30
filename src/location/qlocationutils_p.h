@@ -54,8 +54,10 @@
 
 #include "qmobilityglobal.h"
 
+QT_BEGIN_NAMESPACE
 class QTime;
 class QByteArray;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,8 +65,12 @@ class QGeoPositionInfo;
 class QLocationUtils
 {
 public:
-    inline static bool isValidLat(double lat) { return lat >= -90 && lat <= 90; }
-    inline static bool isValidLong(double lng) { return lng >= -180 && lng <= 180; }
+    inline static bool isValidLat(double lat) {
+        return lat >= -90 && lat <= 90;
+    }
+    inline static bool isValidLong(double lng) {
+        return lng >= -180 && lng <= 180;
+    }
 
     /*
         Creates a QGeoPositionInfo from a GGA, GLL, RMC, VTG or ZDA sentence.

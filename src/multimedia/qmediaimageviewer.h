@@ -42,10 +42,10 @@
 #ifndef QMEDIAIMAGEVIEWER_H
 #define QMEDIAIMAGEVIEWER_H
 
-#include <qmediaobject.h>
-#include <qmediacontent.h>
+#include "qmediaobject.h"
+#include "qmediacontent.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 class QMediaImageViewerPrivate;
@@ -87,6 +87,7 @@ public:
     int elapsedTime() const;
 
     void bind(QObject *);
+    void unbind(QObject *);
 
 public Q_SLOTS:
     void setMedia(const QMediaContent &media);
@@ -112,6 +113,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed())
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

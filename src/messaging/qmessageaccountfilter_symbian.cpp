@@ -141,7 +141,7 @@ bool QMessageAccountFilterPrivate::filter(const QMessageAccount &messageAccount,
         }
     }
 
-    Qt::CaseSensitivity caseSensitivity = (filter._options & QMessageDataComparator::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive; 
+    Qt::CaseSensitivity caseSensitivity = (filter._matchFlags & QMessageDataComparator::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive; 
     
     switch (filter._field) {
     case QMessageAccountFilterPrivate::Id:
@@ -239,7 +239,7 @@ QMessageAccountFilterPrivate* QMessageAccountFilterPrivate::implementation(const
 QMessageAccountFilter::QMessageAccountFilter()
  : d_ptr(new QMessageAccountFilterPrivate(this))
 {
-	d_ptr->_options = 0;
+	d_ptr->_matchFlags = 0;
 	
 	d_ptr->_valid = true; // Empty filter is valid
 	d_ptr->_notFilter = false;
@@ -266,7 +266,7 @@ QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFil
     if (&other == this)
         return *this;
     
-    d_ptr->_options = other.d_ptr->_options;
+    d_ptr->_matchFlags = other.d_ptr->_matchFlags;
     
     d_ptr->_valid = other.d_ptr->_valid;
     d_ptr->_notFilter = other.d_ptr->_notFilter;
@@ -280,14 +280,14 @@ QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFil
     return *this;
 }
 
-void QMessageAccountFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageAccountFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
+    d_ptr->_matchFlags = matchFlags;
 }
 
-QMessageDataComparator::Options QMessageAccountFilter::options() const
+QMessageDataComparator::MatchFlags QMessageAccountFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageAccountFilter::isEmpty() const
@@ -489,10 +489,13 @@ QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountIdList &i
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountFilter &filter, QMessageDataComparator::InclusionComparator cmp)
 {
-    Q_UNUSED(filter)
-    Q_UNUSED(cmp)
-    //TODO:
-    return QMessageAccountFilter();
+    QMessageAccountFilter result;
+    *result.d_ptr = *filter.d_ptr;
+    if (cmp == QMessageDataComparator::Excludes) {
+        // Invert the sense of comparison
+        result = ~result;
+    }
+    return result;
 }
 
 QMessageAccountFilter QMessageAccountFilter::byName(const QString &value, QMessageDataComparator::EqualityComparator cmp)

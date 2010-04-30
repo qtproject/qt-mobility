@@ -44,11 +44,13 @@
 /*!
  * Constructor
  * 
- * \a conatctDatabase CContactDatabase with established connection to the database
+ * \a contactDatabase CContactDatabase with established connection to the database
+ * \a managerUri current manager uri
  * \a relationshipType name of the relationship type supported by the inherited class
  */
-CntAbstractRelationship::CntAbstractRelationship(CContactDatabase* contactDatabase, const QString &relationshipType) : 
+CntAbstractRelationship::CntAbstractRelationship(CContactDatabase *contactDatabase, const QString &managerUri, const QString &relationshipType) : 
     m_contactDatabase(contactDatabase),
+    m_managerUri(managerUri),
     m_relationshipType(relationshipType) 
 {}
 
@@ -69,7 +71,15 @@ QString CntAbstractRelationship::relationshipType() const
 /*!
  * \return the database instance
  */
-CContactDatabase* CntAbstractRelationship::database()
+CContactDatabase *CntAbstractRelationship::database()
 {
     return m_contactDatabase;
+}
+
+/*!
+ * \return the manager uri
+ */
+QString CntAbstractRelationship::managerUri()
+{
+    return m_managerUri;
 }

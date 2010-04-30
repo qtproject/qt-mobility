@@ -52,11 +52,9 @@ class DatabaseManagerSignalHandler : public QObject
     
     public:
         DatabaseManagerSignalHandler(CDatabaseManagerServerSession& databaseManagerServerSession);
-        ~DatabaseManagerSignalHandler();
 
     public Q_SLOTS:
-        void ServiceAdded(const QString& aServiceName);
-        void ServiceRemoved(const QString& aServiceName);
+        void databaseChanged(const QString &path);
         
     public:
         CDatabaseManagerServerSession& iDatabaseManagerServerSession;

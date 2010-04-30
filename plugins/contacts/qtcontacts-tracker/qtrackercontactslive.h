@@ -54,13 +54,7 @@
 
 using namespace SopranoLive;
 
-namespace ContactContext {
-    typedef enum Location {
-        Unknown = 0,
-        Home,
-        Work
-    };
-}
+QTM_USE_NAMESPACE
 
 /**
  * This class will abstact and hide how contact information is saved to Tracker
@@ -107,36 +101,6 @@ public:
      * what will be stored into Tracker.
      */
     void saveName();
-
-private:
-    /**
-     * \deprecated. soon to be removed. \sa method implementation comment
-     * Return a nco::Contact that is either a nco::Affiliation or
-     * nco::PersonContact depending on the context (work or home) for the given contact detail.
-     *
-     * \param det The contact detail that we are currently interested in and which
-     *            context we are examining.
-     * \param ncoContact The nco::PersonContact that we want to store the contact
-     *                    detail for.
-     * \return Returns a nco::Affiliation is the QContactDetail context is
-     *         work. Otherwise returns nco::PersonContact.
-     */
-    // TODO: We need to make these private once all savings are done using this class.
-    Live<nco::Role> contactByContext(const QContactDetail&, const Live<nco::PersonContact>&);
-
-
-    /**
-     * \deprecated. soon to be removed. \sa method implementation comment
-     *
-     * This will look at the context of the QContactDetail and return the data if this is
-     * home or work context.
-     *
-     * \param det The QContactDetail to investigate.
-     * \return ContactContext::Home for home QContactDetail context.
-     *         ContactContext::Work for work QContactDetail context.
-     */
-    // TODO: We need to make these private once all savings are done using this class.
-    ContactContext::Location locationContext(const QContactDetail& det) const;
 
 private:
     QContact editedContact_;

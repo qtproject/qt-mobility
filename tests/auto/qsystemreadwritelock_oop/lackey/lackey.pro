@@ -12,5 +12,6 @@ CONFIG+= testcase
 
 include(../../../../common.pri)
 
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe
 

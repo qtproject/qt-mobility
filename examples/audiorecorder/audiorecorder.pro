@@ -6,7 +6,8 @@ contains(QT_CONFIG, multimedia): QT += multimedia
 INCLUDEPATH += ../../src/multimedia
 include(../examples.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
 QMAKE_RPATHDIR += $$DESTDIR
 
@@ -16,4 +17,7 @@ HEADERS = \
 SOURCES = \
     main.cpp \
     audiorecorder.cpp
-    
+
+symbian: {
+    TARGET.CAPABILITY = UserEnvironment ReadDeviceData
+}

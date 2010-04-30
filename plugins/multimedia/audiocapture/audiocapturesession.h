@@ -46,14 +46,14 @@
 #include <QUrl>
 
 #include "audioencodercontrol.h"
-#include "audiodevicecontrol.h"
+#include "audioendpointselector.h"
 #include "audiomediarecordercontrol.h"
 
 #include <QtMultimedia/qaudioformat.h>
 #include <QtMultimedia/qaudioinput.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureSession : public QObject
 {
@@ -67,10 +67,10 @@ public:
     QAudioDeviceInfo* deviceInfo() const;
     bool isFormatSupported(const QAudioFormat &format) const;
     bool setFormat(const QAudioFormat &format);
-    QStringList supportedAudioCodecs() const;
-    QString codecDescription(const QString &codecName);
-    bool setAudioCodec(const QString &codecName);
-    QString audioCodec() const;
+    QStringList supportedContainers() const;
+    QString containerMimeType() const;
+    void setContainerMimeType(const QString &formatMimeType);
+    QString containerDescription(const QString &formatMimeType) const;
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);
@@ -86,6 +86,7 @@ public slots:
 signals:
     void stateChanged(QMediaRecorder::State state);
     void positionChanged(qint64 position);
+    void error(int error, const QString &errorString);
 
 private slots:
     void stateChanged(QAudio::State state);

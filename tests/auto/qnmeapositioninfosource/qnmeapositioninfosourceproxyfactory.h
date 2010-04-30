@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
 #define QNMEAPOSITIONINFOSOURCEPROXYFACTORY_H
 
@@ -45,8 +46,10 @@
 
 #include <qnmeapositioninfosource.h>
 
+QT_BEGIN_NAMESPACE
 class QTcpServer;
 class QIODevice;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 class QNmeaPositionInfoSource;

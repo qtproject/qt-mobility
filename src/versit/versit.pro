@@ -7,7 +7,8 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 # Contacts Includepath
 INCLUDEPATH += . \
@@ -23,10 +24,14 @@ PUBLIC_HEADERS +=  \
     qversitreader.h \
     qversitwriter.h \
     qversitcontactexporter.h \
-    qversitcontactimporter.h
+    qversitcontactimporter.h \
+    qversitresourcehandler.h
 
 # Private Headers
-PRIVATE_HEADERS += qversitdocument_p.h \
+PRIVATE_HEADERS += \
+    qversitdefaultresourcehandler_p.h \
+    qversitdocument_p.h \
+    qversitdocumentwriter_p.h \
     qversitproperty_p.h \
     qversitreader_p.h \
     qversitwriter_p.h \
@@ -34,11 +39,13 @@ PRIVATE_HEADERS += qversitdocument_p.h \
     qvcard30writer_p.h \
     qversitcontactexporter_p.h \
     qversitcontactimporter_p.h \
-    qversitdefs.h \
+    qversitdefs_p.h \
     versitutils_p.h
 
 # Implementation
 SOURCES += qversitdocument.cpp \
+    qversitdocument_p.cpp \
+    qversitdocumentwriter_p.cpp \
     qversitproperty.cpp \
     qversitreader.cpp \
     qversitreader_p.cpp \
@@ -50,6 +57,7 @@ SOURCES += qversitdocument.cpp \
     qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \
     qversitcontactimporter_p.cpp \
+    qversitresourcehandler.cpp \
     versitutils.cpp
 
 HEADERS += \
@@ -57,17 +65,20 @@ HEADERS += \
     $$PRIVATE_HEADERS
 
 symbian { 
+    TARGET.UID3 = 0x2002BFBF
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \
         -TCB
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    DEPLOYMENT += exportheaders
-    
-    # This is for new exporting system coming in garden
-    for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
 
-include(../../features/deploy.pri)
+maemo5|maemo6 {
+    CONFIG += create_pc create_prl
+    QMAKE_PKGCONFIG_DESCRIPTION = Qt Mobility - Versit API
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtVersit.pc
 
+    INSTALLS += pkgconfig
+}
+
+CONFIG += app
+include(../../features/deploy.pri)

@@ -14,7 +14,8 @@ SOURCES += ../qlocationtestutils.cpp \
            ../testqgeopositioninfosource.cpp \
            tst_qgeopositioninfosource.cpp
 
-qtAddLibrary(QtLocation)
+CONFIG += mobility
+MOBILITY = location
 
 symbian {
         TARGET.CAPABILITY = ALL -TCB

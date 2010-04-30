@@ -103,7 +103,7 @@ TInt CQMLBackendAO::ConstructL(QObject *aRequester, RequestType  aRequestType,
         else
             PosServer = mRequester->getPositionServer();
 
-        error  =  mPositioner.Open(PosServer,aModId);
+        error  =  mPositioner.Open(PosServer, aModId);
 
         if (error != KErrNone)
             return error;
@@ -211,7 +211,7 @@ void CQMLBackendAO::notifyDeviceStatus(TPositionModuleStatusEventBase &aStatusEv
 
     aStatusEvent.SetRequestedEvents(RequestedEvents);
 
-    PosServ.NotifyModuleStatusEvent(aStatusEvent,iStatus);
+    PosServ.NotifyModuleStatusEvent(aStatusEvent, iStatus);
 
     SetActive();
 
@@ -288,7 +288,6 @@ void CQMLBackendAO::requestUpdate(int aTimeout)
 {
     TPositionUpdateOptions  aPosOption;
 
-
     mPositioner.GetUpdateOptions(aPosOption);
 
     aPosOption.SetUpdateInterval(TTimeIntervalMicroSeconds(0));
@@ -297,7 +296,6 @@ void CQMLBackendAO::requestUpdate(int aTimeout)
 
     mPositioner.SetUpdateOptions(aPosOption);
 
-    //setUpdateInterval(aTimeout);
     startUpdates();
 }
 
@@ -372,20 +370,20 @@ void CQMLBackendAO::handlePosUpdateNotification(int aError)
             if (mRequestType == RegularUpdate) {
                 if (mRequester) {
                     initializePosInfo();
-                    mPositioner.NotifyPositionUpdate(*mPosInfo , iStatus);
+                    mPositioner.NotifyPositionUpdate(*mPosInfo, iStatus);
                 } else
-                    mPositioner.NotifyPositionUpdate(mPosSatInfo,iStatus);
+                    mPositioner.NotifyPositionUpdate(mPosSatInfo, iStatus);
 
                 SetActive();
             }
 
-            //KErrTimedOut should not be emited for regular update
-            if ((aError!= KErrTimedOut) || (mRequestType != RegularUpdate)) {
-                if (mRequester) {
-                    mRequester->updatePosition(positionInfo,aError);
-                    delete positionInfo;
-                } else
-                    mRequesterSatellite->updatePosition(satInfo,aError,(mRequestType == RegularUpdate));
+            if (mRequester) {
+                mRequester->updatePosition(positionInfo, aError);
+                delete positionInfo;
+            } else {
+                if ((aError != KErrTimedOut) || (mRequestType != RegularUpdate)) {
+                    mRequesterSatellite->updatePosition(satInfo, aError, (mRequestType == RegularUpdate));
+                }
             }
 
             break;
@@ -407,14 +405,15 @@ void CQMLBackendAO::handlePosUpdateNotification(int aError)
 int CQMLBackendAO::setUpdateInterval(int aMilliSec)
 {
     int minimumUpdateInterval = 0;
-    TInt64 mUpdateInterval = 0 ;
-
+    TInt64 mUpdateInterval = 0;
 
     if (mRequester)
         minimumUpdateInterval = mRequester->minimumUpdateInterval();
     else
         minimumUpdateInterval = mRequesterSatellite->minimumUpdateInterval();
 
+    if (minimumUpdateInterval < 0)
+        minimumUpdateInterval = 100;
     // if the current requesttype is  regular updates
     // then set the updateinterval otherwise ignore
     //if(mRequestType != REQ_REG_UPDATE)
@@ -431,23 +430,27 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
     // the interval will be set to the minimum interval.
     if (aMilliSec != 0 && aMilliSec <= minimumUpdateInterval) {
         mUpdateInterval = minimumUpdateInterval;
+    } else {
+        mUpdateInterval = aMilliSec;
     }
 
     // if the same value is being set then just ignore it.
-    if (currentUpdateInterval == aMilliSec) {
-        if (aMilliSec != mUpdateInterval)
-            mUpdateInterval = aMilliSec;
+    if (currentUpdateInterval == mUpdateInterval) {
         return mUpdateInterval;
-    }
-
-    // if Zero or above minimum value will be set.
-    if (aMilliSec == 0 || aMilliSec > minimumUpdateInterval) {
-        mUpdateInterval = aMilliSec;
     }
 
     // will set Either zero, minimum or +ve value
     // seconds converted to TTimeIntervalMicroSeconds
     aPosOption.SetUpdateInterval(TTimeIntervalMicroSeconds(mUpdateInterval * 1000));
+
+    // set the timeout to the smaller of 150% of interval or update interval + 10 seconds
+    TInt mUpdateTimeout = (mUpdateInterval * 3) / 2;
+    if (mUpdateTimeout > mUpdateInterval + 10000)
+        mUpdateTimeout = mUpdateInterval + 10000;
+
+    if (aMilliSec > 0)
+        aPosOption.SetUpdateTimeOut(TTimeIntervalMicroSeconds(mUpdateTimeout * 1000));
+
     error = mPositioner.SetUpdateOptions(aPosOption);
 
     return mUpdateInterval;

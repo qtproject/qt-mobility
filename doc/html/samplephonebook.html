@@ -16,22 +16,14 @@
 </h1>
 <p>Files:</p>
 <ul>
-<li><a href="samplephonebook-contactdetailsform-cpp.html">samplephonebook/contactdetailsform.cpp</a></li>
-<li><a href="samplephonebook-contactdetailsform-h.html">samplephonebook/contactdetailsform.h</a></li>
-<li><a href="samplephonebook-finddialog-cpp.html">samplephonebook/finddialog.cpp</a></li>
-<li><a href="samplephonebook-finddialog-h.html">samplephonebook/finddialog.h</a></li>
-<li><a href="samplephonebook-groupdetailsdialog-cpp.html">samplephonebook/groupdetailsdialog.cpp</a></li>
-<li><a href="samplephonebook-groupdetailsdialog-h.html">samplephonebook/groupdetailsdialog.h</a></li>
-<li><a href="samplephonebook-groupeditdialog-cpp.html">samplephonebook/groupeditdialog.cpp</a></li>
-<li><a href="samplephonebook-groupeditdialog-h.html">samplephonebook/groupeditdialog.h</a></li>
-<li><a href="samplephonebook-maindialogform-240-320-cpp.html">samplephonebook/maindialogform_240_320.cpp</a></li>
-<li><a href="samplephonebook-maindialogform-240-320-h.html">samplephonebook/maindialogform_240_320.h</a></li>
-<li><a href="samplephonebook-maindialogform-640-480-cpp.html">samplephonebook/maindialogform_640_480.cpp</a></li>
-<li><a href="samplephonebook-maindialogform-640-480-h.html">samplephonebook/maindialogform_640_480.h</a></li>
+<li><a href="samplephonebook-contacteditor-cpp.html">samplephonebook/contacteditor.cpp</a></li>
+<li><a href="samplephonebook-contacteditor-h.html">samplephonebook/contacteditor.h</a></li>
+<li><a href="samplephonebook-contactlistpage-cpp.html">samplephonebook/contactlistpage.cpp</a></li>
+<li><a href="samplephonebook-contactlistpage-h.html">samplephonebook/contactlistpage.h</a></li>
+<li><a href="samplephonebook-filterpage-cpp.html">samplephonebook/filterpage.cpp</a></li>
+<li><a href="samplephonebook-filterpage-h.html">samplephonebook/filterpage.h</a></li>
 <li><a href="samplephonebook-phonebook-cpp.html">samplephonebook/phonebook.cpp</a></li>
 <li><a href="samplephonebook-phonebook-h.html">samplephonebook/phonebook.h</a></li>
-<li><a href="samplephonebook-serialiser-cpp.html">samplephonebook/serialiser.cpp</a></li>
-<li><a href="samplephonebook-serialiser-h.html">samplephonebook/serialiser.h</a></li>
 <li><a href="samplephonebook-main-cpp.html">samplephonebook/main.cpp</a></li>
 <li><a href="samplephonebook-samplephonebook-pro.html">samplephonebook/samplephonebook.pro</a></li>
 </ul>
@@ -47,28 +39,43 @@
 <p>This example shows how to write a simple phonebook with the <a href="contacts.html">Contacts API</a>.</p>
 <a name="motivation"></a>
 <h3>Motivation</h3>
-<p>This application was written to provide an example to developers of how to use the Qt Contacts API. It also provides an example implementation of a vCard* serialiser and deserialiser, which enables persistent storage of <a href="qcontact.html">QContact</a> objects if no other persistent-storage backend is available.</p>
+<p>This application was written to provide an example to developers of how to use the QtContacts and QtVersit APIs.</p>
+<p>It provides an example of how to use the QtMobility libraries to:</p>
+<ul>
+<li>select a backend for persistent storage</li>
+<li>list the stored contacts</li>
+<li>add contacts</li>
+<li>edit contacts</li>
+<li>use filters to find contacts matching certain criteria</li>
+<li>import and export contact lists as vCards<sup>&reg;</sup> *</li>
+</ul>
 <p>[*] <i>vCard is a registered trademark of the Internet Mail Consortium</i></p>
 <a name="use-case"></a>
 <h3>Use Case</h3>
-<p>Most people have a need to store information (such as addresses, telephone numbers and email addresses) of people that they know. This sample application provides a simple phone book which allows users to store certain pieces of information about their contacts, and save them to disc.</p>
+<p>Most people have a need to store information (such as addresses, telephone numbers and email addresses) of people that they know. This sample application provides a simple phone book that allows users to store certain pieces of information about their contacts, and save them to the contacts database of their device.</p>
 <a name="interface"></a>
 <h3>Interface</h3>
-<p>The application is aimed at desktop platforms as opposed to mobile platforms, and thus uses regular widgets as the basis of the interface. The main screen consists of a list view on the left, the current contact's details in the middle, and several navigation and control buttons on the right.</p>
-<p align="center"><img src="images/spb-screen.png" alt="Screenshot of the sample phone book" /></p><p>The interface of the application is similar to that found in the Qt Addressbook Tutorial. Indeed, several sections of its code (including the &quot;Find Contact&quot; dialog code, and some of the main window interface and initialisation code) was recycled.</p>
+<p>The application is designed to work on desktop and mobile platforms with minimal differences in code between the platforms. The interface is organized into a paged view, showing the <i>Contact List</i> by default. Contacts can be added, edited or deleted using the buttons at the bottom of the contact list. To search for a contact in the list, a filter can be applied using the <i>Apply Filter</i> item in the <i>Contacts</i> menu.</p>
+<p>Here we see the <i>Contact List</i> with some names added.</p>
+<p align="center"><img src="images/sample-phonebook-1.png" /></p><p>When adding a new contact a new page is shown, with a <i>Set Picture</i> button to import an image. It is a good idea to use smaller images if you intend to export the contacts to a file later.</p>
+<p align="center"><img src="images/sample-phonebook-2.png" /></p><p>From the main menu, <i>Contacts</i>, you can select <i>Apply Filter</i>. This will display a new page which enables the user to specify filter criteria. In the screenshot below, we are selecting based on the first two characters of the Name,</p>
+<p align="center"><img src="images/sample-phonebook-3.png" /></p><p>which gives us a subset of the list of contacts.</p>
+<p align="center"><img src="images/sample-phonebook-4.png" /></p><p>To reset this, just select <i>Clear Filter</i> from the <i>Contacts</i> menu.</p>
+<p>The contact list can also be imported and exported to the vCard format through the <i>Import Contacts</i> and <i>Export Contacts</i> items in the <i>Contacts</i> menu. This functionality can be used to populate the list from another device or application.</p>
 <a name="known-issues"></a>
 <h3>Known Issues</h3>
 <p>The example is not intended to be feature complete. Only a very limited subset of detail types are supported by the application. It exercises only a very small portion of the Qt Contacts API.</p>
-<p>Furthermore:</p>
+<p>In particular:</p>
 <ul>
-<li>You cannot export an unsaved contact.</li>
-<li>Exporting a saved contact to which changes have been made where those changes have not been saved will result in the original, currently saved contact being exported.</li>
-<li>Duplicate contacts are not filtered out - importing the same contact twice results in two identical contacts appearing in the list.</li>
+<li>The example only exercises the synchronous API of QtContacts. For most real applications, the asynchronous API is the preferred interface to use as it does not block the UI while a query is made to the contacts backend.</li>
+<li>Detail subtypes and contexts are not supported by the interface.</li>
+<li>Duplicate contacts are not filtered out - importing the same contact twice results in two identical contacts appearing in the list. In a real application, more complex synchronization code may be required.</li>
+<li>Contact groups are not supported. The QtContacts API supports two methods of grouping contacts. One way is to use contacts of type <a href="qcontacttype.html#TypeGroup-var">TypeGroup</a>, along with the <a href="qcontactrelationship.html#HasMember-var">HasMember</a> <a href="qcontactrelationship.html">QContactRelationship</a>. The other way is to use the <a href="qcontacttag.html">QContactTag</a> detail by giving related contacts the same tag. A real application may support grouping via one or both of these methods.</li>
 </ul>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

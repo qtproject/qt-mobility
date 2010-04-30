@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qaudioencodercontrol.h>
+#include "qaudioencodercontrol.h"
 #include <QtCore/qstringlist.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -151,5 +151,5 @@ QAudioEncoderControl::~QAudioEncoderControl()
 */
 
 #include "moc_qaudioencodercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

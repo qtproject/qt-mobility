@@ -14,7 +14,8 @@ SOURCES += tst_qservicemanager.cpp \
            ../../sampleserviceplugin/sampleserviceplugin.cpp \
            ../qsfwtestutil.cpp
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian|wince* {
     symbian {

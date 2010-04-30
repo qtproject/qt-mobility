@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Qt Mobility Project 1.0: contacteditor.cpp Example File (samplephonebook/contacteditor.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">contacteditor.cpp Example File<br /><span class="small-subtitle">samplephonebook/contacteditor.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
+    **
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
+    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;contacteditor.h&quot;
+
+    #include &lt;QtGui&gt;
+
+    const int MAX_AVATAR_DISPLAY_SIZE = 120;
+
+    ContactEditor::ContactEditor(QWidget *parent)
+            :QWidget(parent)
+    {
+        m_manager = 0;
+        m_contactId = QContactLocalId(0);
+
+        m_nameEdit = new QLineEdit(this);
+        m_phoneEdit = new QLineEdit(this);
+        m_emailEdit = new QLineEdit(this);
+        m_addrEdit = new QLineEdit(this);
+        m_avatarBtn = new QPushButton(tr(&quot;Set picture&quot;), this);
+        m_clearAvatarBtn = new QPushButton(tr(&quot;Clear&quot;), this);
+        m_avatarView = new QLabel(this);
+        connect(m_avatarBtn, SIGNAL(clicked()), this, SLOT(avatarClicked()));
+        connect(m_clearAvatarBtn, SIGNAL(clicked()), this, SLOT(clearAvatarClicked()));
+
+        QFormLayout *detailsLayout = new QFormLayout;
+        QLabel *nameLabel = new QLabel(tr(&quot;Name&quot;), this);
+        QLabel *phoneLabel = new QLabel(tr(&quot;Phone&quot;), this);
+        QLabel *emailLabel = new QLabel(tr(&quot;Email&quot;), this);
+        QLabel *addressLabel = new QLabel(tr(&quot;Address&quot;), this);
+        QLabel *avatarLabel = new QLabel(tr(&quot;Picture&quot;), this);
+        QHBoxLayout *avatarBtnLayout = new QHBoxLayout;
+        avatarBtnLayout-&gt;addWidget(m_avatarBtn);
+        avatarBtnLayout-&gt;addWidget(m_clearAvatarBtn);
+        if (QApplication::desktop()-&gt;availableGeometry().width() &lt; 360) {
+            <span class="comment">// Narrow screen: put label on separate line to textbox</span>
+            detailsLayout-&gt;addRow(nameLabel);
+            detailsLayout-&gt;addRow(m_nameEdit);
+            detailsLayout-&gt;addRow(phoneLabel);
+            detailsLayout-&gt;addRow(m_phoneEdit);
+            detailsLayout-&gt;addRow(emailLabel);
+            detailsLayout-&gt;addRow(m_emailEdit);
+            detailsLayout-&gt;addRow(addressLabel);
+            detailsLayout-&gt;addRow(m_addrEdit);
+            detailsLayout-&gt;addRow(avatarLabel);
+            detailsLayout-&gt;addRow(avatarBtnLayout);
+            detailsLayout-&gt;addRow(m_avatarView);
+        } else {
+            <span class="comment">// Wide screen: put label on same line as textbox</span>
+            detailsLayout-&gt;addRow(nameLabel, m_nameEdit);
+            detailsLayout-&gt;addRow(phoneLabel, m_phoneEdit);
+            detailsLayout-&gt;addRow(emailLabel, m_emailEdit);
+            detailsLayout-&gt;addRow(addressLabel, m_addrEdit);
+            detailsLayout-&gt;addRow(avatarLabel, avatarBtnLayout);
+            detailsLayout-&gt;addRow(&quot;&quot;, m_avatarView);
+        }
+        detailsLayout-&gt;setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+        detailsLayout-&gt;setSizeConstraint(QLayout::SetMinAndMaxSize);
+
+        QScrollArea *detailsScrollArea = new QScrollArea(this);
+        detailsScrollArea-&gt;setWidgetResizable(true);
+        QWidget *detailsContainer = new QWidget(detailsScrollArea);
+        detailsContainer-&gt;setLayout(detailsLayout);
+        detailsScrollArea-&gt;setWidget(detailsContainer);
+
+        QVBoxLayout *editLayout = new QVBoxLayout;
+        editLayout-&gt;addWidget(detailsScrollArea);
+
+    #ifdef Q_OS_SYMBIAN
+        <span class="comment">// In symbian &quot;save&quot; and &quot;cancel&quot; buttons are softkeys.</span>
+        m_saveBtn = new QAction(tr(&quot;Save&quot;), this);
+        m_saveBtn-&gt;setSoftKeyRole(QAction::PositiveSoftKey);
+        addAction(m_saveBtn);
+        connect(m_saveBtn, SIGNAL(triggered(bool)), this, SLOT(saveClicked()));
+        m_cancelBtn = new QAction(tr(&quot;Cancel&quot;), this);
+        m_cancelBtn-&gt;setSoftKeyRole(QAction::NegativeSoftKey);
+        addAction(m_cancelBtn);
+        connect(m_cancelBtn, SIGNAL(triggered(bool)), this, SLOT(cancelClicked()));
+    #else
+        m_saveBtn = new QPushButton(tr(&quot;&amp;Save&quot;), this);
+        m_saveBtn-&gt;setDefault(true);
+        connect(m_saveBtn, SIGNAL(clicked()), this, SLOT(saveClicked()));
+        m_cancelBtn = new QPushButton(tr(&quot;&amp;Cancel&quot;), this);
+        connect(m_cancelBtn, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+        QHBoxLayout *btnLayout = new QHBoxLayout;
+        btnLayout-&gt;addWidget(m_saveBtn);
+        btnLayout-&gt;addWidget(m_cancelBtn);
+        editLayout-&gt;addLayout(btnLayout);
+    #endif
+
+        setLayout(editLayout);
+    }
+
+    ContactEditor::~ContactEditor()
+    {
+    }
+
+    void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId currentId)
+    {
+        m_manager = manager;
+        m_contactId = currentId;
+        m_newAvatarPath = QString();
+
+        <span class="comment">// Clear UI</span>
+        m_nameEdit-&gt;clear();
+        m_phoneEdit-&gt;clear();
+        m_emailEdit-&gt;clear();
+        m_addrEdit-&gt;clear();
+
+        if (manager == 0) {
+            m_saveBtn-&gt;setEnabled(false);
+            return;
+        }
+
+        <span class="comment">// enable the UI.</span>
+        m_saveBtn-&gt;setEnabled(true);
+
+        <span class="comment">// otherwise, build from the contact details.</span>
+        QContact curr;
+        if (m_contactId != QContactLocalId(0))
+            curr = manager-&gt;contact(m_contactId);
+
+        <span class="comment">// Disable fields &amp; buttons according to what the backend supports</span>
+        QMap&lt;QString, QContactDetailDefinition&gt; defs = m_manager-&gt;detailDefinitions(QContactType::TypeContact);
+
+        <span class="comment">// name</span>
+        <span class="comment">//QContactName nm = curr.detail(QContactName::DefinitionName);</span>
+        if (m_contactId != QContactLocalId(0))
+            m_nameEdit-&gt;setText(manager-&gt;synthesizedContactDisplayLabel(curr));
+
+        <span class="comment">// phonenumber</span>
+        QContactPhoneNumber phn = curr.detail(QContactPhoneNumber::DefinitionName);
+        m_phoneEdit-&gt;setText(phn.value(QContactPhoneNumber::FieldNumber));
+
+        <span class="comment">// email</span>
+        if (defs.contains(QContactEmailAddress::DefinitionName)) {
+            QContactEmailAddress em = curr.detail(QContactEmailAddress::DefinitionName);
+            m_emailEdit-&gt;setText(em.value(QContactEmailAddress::FieldEmailAddress));
+            m_emailEdit-&gt;setReadOnly(false);
+        } else {
+            m_emailEdit-&gt;setText(&quot;&lt;not supported&gt;&quot;);
+            m_emailEdit-&gt;setReadOnly(true);
+        }
+
+        <span class="comment">// address</span>
+        if (defs.contains(QContactAddress::DefinitionName)) {
+            QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
+            m_addrEdit-&gt;setText(adr.value(QContactAddress::FieldStreet)); <span class="comment">// ugly hack.</span>
+            m_addrEdit-&gt;setReadOnly(false);
+        } else {
+            m_addrEdit-&gt;setText(&quot;&lt;not supported&gt;&quot;);
+            m_addrEdit-&gt;setReadOnly(true);
+        }
+
+        <span class="comment">// avatar viewer</span>
+        if (defs.contains(QContactAvatar::DefinitionName)
+            &amp;&amp; defs.contains(QContactThumbnail::DefinitionName)) {
+            m_avatarBtn-&gt;setEnabled(true);
+            QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
+            QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
+            m_avatarView-&gt;clear();
+            m_newAvatarPath = av.imageUrl().toLocalFile();
+            m_thumbnail = thumb.thumbnail();
+            if (m_thumbnail.isNull()) {
+                if (m_newAvatarPath.isEmpty()) {
+                    m_avatarView-&gt;clear();
+                    m_clearAvatarBtn-&gt;setDisabled(true);
+                } else {
+                    setAvatarPixmap(QPixmap(av.imageUrl().toLocalFile()));
+                    m_thumbnail = QImage(av.imageUrl().toLocalFile());
+                }
+            } else {
+                setAvatarPixmap(QPixmap::fromImage(m_thumbnail));
+            }
+        } else {
+            m_avatarBtn-&gt;setDisabled(true);
+            m_clearAvatarBtn-&gt;setDisabled(true);
+        }
+    }
+
+    QString ContactEditor::nameField()
+    {
+        <span class="comment">// return the field which the name data should be saved in.</span>
+        if (!m_manager)
+            return QString();
+
+        QMap&lt;QString, QContactDetailDefinition&gt; defs = m_manager-&gt;detailDefinitions(QContactType::TypeContact);
+        QContactDetailDefinition nameDef = defs.value(QContactName::DefinitionName);
+        if (nameDef.fields().keys().contains(QContactName::FieldCustomLabel)) {
+            return QString(QLatin1String(QContactName::FieldCustomLabel));
+        } else if (nameDef.fields().keys().contains(QContactName::FieldFirstName)) {
+            return QString(QLatin1String(QContactName::FieldFirstName));
+        } else {
+            return QString();
+        }
+    }
+
+    void ContactEditor::setAvatarPixmap(const QPixmap &amp;pixmap)
+    {
+        if (pixmap.isNull())
+            return;
+        QPixmap scaled = pixmap.scaled(QSize(MAX_AVATAR_DISPLAY_SIZE, MAX_AVATAR_DISPLAY_SIZE),
+                                       Qt::KeepAspectRatio,
+                                       Qt::SmoothTransformation);
+        m_avatarView-&gt;setPixmap(scaled);
+        m_avatarView-&gt;setMaximumSize(scaled.size());
+        m_clearAvatarBtn-&gt;setEnabled(true);
+    }
+
+    void ContactEditor::clearAvatarClicked()
+    {
+        m_avatarView-&gt;clear();
+        m_thumbnail = QImage();
+        m_newAvatarPath.clear();
+        m_clearAvatarBtn-&gt;setDisabled(true);
+    }
+
+    void ContactEditor::avatarClicked()
+    {
+        <span class="comment">// put up a file dialog, and update the new avatar path.</span>
+        QString fileName = QFileDialog::getOpenFileName(this,
+           tr(&quot;Select Contact Picture&quot;), &quot;.&quot;, tr(&quot;Image Files (*.png *.jpg *.bmp)&quot;));
+
+        if (!fileName.isEmpty()) {
+            m_newAvatarPath = fileName;
+            m_thumbnail = QImage(m_newAvatarPath);
+            setAvatarPixmap(QPixmap::fromImage(m_thumbnail));
+        }
+    }
+
+    void ContactEditor::saveClicked()
+    {
+        if (!m_manager) {
+            qWarning() &lt;&lt; &quot;No manager selected; cannot save.&quot;;
+        } else {
+            QContact curr;
+            if (m_contactId != QContactLocalId(0))
+                curr = m_manager-&gt;contact(m_contactId);
+
+            if (m_nameEdit-&gt;text().isEmpty()) {
+                QMessageBox::information(this, &quot;Failed!&quot;, &quot;You must give a name for the contact!&quot;);
+                return;
+            }
+
+            if (m_nameEdit-&gt;text() != m_manager-&gt;synthesizedContactDisplayLabel(curr)) {
+                <span class="comment">// if the name has changed (ie, is different to the synthed label) then save it as a custom label.</span>
+                QString saveNameField = nameField();
+                if (!saveNameField.isEmpty()) {
+                    QContactName nm = curr.detail(QContactName::DefinitionName);
+                    nm.setValue(saveNameField, m_nameEdit-&gt;text());
+                    curr.saveDetail(&amp;nm);
+                }
+            }
+
+            QContactPhoneNumber phn = curr.detail(QContactPhoneNumber::DefinitionName);
+            phn.setNumber(m_phoneEdit-&gt;text());
+            curr.saveDetail(&amp;phn);
+
+            if (!m_emailEdit-&gt;isReadOnly()) {
+                QContactEmailAddress em = curr.detail(QContactEmailAddress::DefinitionName);
+                em.setEmailAddress(m_emailEdit-&gt;text());
+                curr.saveDetail(&amp;em);
+            }
+
+            if (!m_addrEdit-&gt;isReadOnly()) {
+                QContactAddress adr = curr.detail(QContactAddress::DefinitionName);
+                adr.setStreet(m_addrEdit-&gt;text());
+                curr.saveDetail(&amp;adr);
+            }
+
+            if (m_avatarBtn-&gt;isEnabled()) {
+                QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
+                av.setImageUrl(QUrl(m_newAvatarPath));
+                curr.saveDetail(&amp;av);
+
+                QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
+                QImage img(m_thumbnail);
+                thumb.setThumbnail(img);
+                curr.saveDetail(&amp;thumb);
+            }
+
+            bool success = m_manager-&gt;saveContact(&amp;curr);
+            if (!success)
+                QMessageBox::information(this, &quot;Failed!&quot;, QString(&quot;Failed to save contact!\n(error code %1)&quot;).arg(m_manager-&gt;error()));
+        }
+
+        emit showListPage();
+    }
+
+    void ContactEditor::cancelClicked()
+    {
+        emit showListPage();
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

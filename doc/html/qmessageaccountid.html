@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageAccountId Class Reference</h1>
 <p>The QMessageAccountId class provides a unique identifier for a <a href="qmessageaccount.html">QMessageAccount</a> messaging account, within the scope of the messaging store. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMessageAccountId&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<ul>
+<pre>    #include &lt;QMessageAccountId&gt;</pre><ul>
 <li><a href="qmessageaccountid-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -29,8 +28,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountid.html#dtor.QMessageAccountId">~QMessageAccountId</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountid.html#isValid">isValid</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountid.html#toString">toString</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessageAccountId &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountid.html#operator-eq">operator=</a></b> ( const QMessageAccountId &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountid.html#operator-eq-eq">operator==</a></b> ( const QMessageAccountId &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountid.html#operator-lt">operator&lt;</a></b> ( const QMessageAccountId &amp; <i>other</i> ) const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -47,7 +45,7 @@
 <p>Creates an invalid identifier, <a href="qmessageaccountid.html#toString">toString</a>() will return a null string.</p>
 <h3 class="fn"><a name="QMessageAccountId-2"></a>QMessageAccountId::QMessageAccountId ( const QMessageAccountId &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<h3 class="fn"><a name="QMessageAccountId-3"></a>QMessageAccountId::QMessageAccountId ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>id</i> )</h3>
+<h3 class="fn"><a name="QMessageAccountId-3"></a>QMessageAccountId::QMessageAccountId ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>id</i> )</h3>
 <p>Constructs an identifier from <i>id</i>.</p>
 <p>See also <a href="qmessageaccountid.html#toString">toString</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageAccountId/~QMessageAccountId"></a>
@@ -57,20 +55,17 @@
 <h3 class="fn"><a name="isValid"></a>bool QMessageAccountId::isValid () const</h3>
 <p>Returns true if this identifier is valid; otherwise returns false.</p>
 <a name="//apple_ref/cpp/instm/QMessageAccountId/toString"></a>
-<h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageAccountId::toString () const</h3>
+<h3 class="fn"><a name="toString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QMessageAccountId::toString () const</h3>
 <p>Returns the string representation of this identifier.</p>
 <p>A null string should be returned if and only if the identifier is invalid.</p>
 <p>String representations of identifiers should not be used to test for equality, instead the equality operator should be used.</p>
-<a name="//apple_ref/cpp/instm/QMessageAccountId/operator="></a>
-<h3 class="fn"><a name="operator-eq"></a>QMessageAccountId &amp; QMessageAccountId::operator= ( const QMessageAccountId &amp; <i>other</i> )</h3>
-<p>Assigns <i>other</i> to this identifier and returns a reference to this identifier.</p>
-<a name="//apple_ref/cpp/instm/QMessageAccountId/operator=="></a>
-<h3 class="fn"><a name="operator-eq-eq"></a>bool QMessageAccountId::operator== ( const QMessageAccountId &amp; <i>other</i> ) const</h3>
-<p>Returns true if this identifier and the <i>other</i> identifier are identical; otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QMessageAccountId/operator&lt;"></a>
+<h3 class="fn"><a name="operator-lt"></a>bool QMessageAccountId::operator&lt; ( const QMessageAccountId &amp; <i>other</i> ) const</h3>
+<p>Returns true if this identifier is ordered before <i>other</i> using an implementation-defined ordering.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -41,6 +41,7 @@
 
 #include "servicemetadata_p.h"
 #include <QFile>
+#include <QDebug>
 #include "qserviceinterfacedescriptor_p.h"
 
 //XML tags and attributes
@@ -59,8 +60,6 @@
 #define INTERFACE_CUSTOM_PROPERTY "customproperty"
 
 QTM_BEGIN_NAMESPACE
-
-static const char  PATH_SEPARATOR[] = "\\";
 
 #ifndef QT_NO_DATASTREAM
 QDataStream &operator<<(QDataStream &out, const ServiceMetaDataResults &r)
@@ -244,6 +243,54 @@ bool ServiceMetaData::extractMetadata()
     }
     if (parseError) {
         clearMetadata();
+        //provide better error reports
+        switch (latestError) {
+            case SFW_ERROR_NO_SERVICE:                              /* Can not find service root node in XML file*/
+                qDebug() << "Missing <service> tag";
+                break;
+            case SFW_ERROR_NO_SERVICE_NAME:                          /* Can not find service name in XML file */
+                qDebug() << "Missing or empty <name> tag within <service>";
+                break;
+            case SFW_ERROR_NO_SERVICE_FILEPATH:                      /* Can not find service filepath in XML file */
+                qDebug() << "Missing or empty <filepath> tag within <service>";
+                break;
+            case SFW_ERROR_NO_SERVICE_INTERFACE:                     /* No interface for the service in XML file*/
+                qDebug() << "Missing <interface> tag";
+                break;
+            case SFW_ERROR_NO_INTERFACE_VERSION:                     /* Can not find interface version in XML file */
+                qDebug() << "Missing or empty <version> tag within <interface>";
+                break;
+            case SFW_ERROR_NO_INTERFACE_NAME:                        /* Can not find interface name in XML file*/
+                qDebug() << "Missing or empty <name> tag within <interface>";
+                break;
+            case SFW_ERROR_UNABLE_TO_OPEN_FILE:                      /* Error opening XML file*/
+                qDebug() << "Unable to open service xml file";
+                break;
+            case SFW_ERROR_INVALID_XML_FILE:                         /* Not a valid XML file*/
+                qDebug() << "Not a valid service xml";
+                break;
+            case SFW_ERROR_PARSE_SERVICE:                            /* Error parsing service node */
+                qDebug() << "Invalid tag within <service> tags";
+                break;
+            case SFW_ERROR_PARSE_INTERFACE:                          /* Error parsing interface node */
+                qDebug() << "Invalid tag within <interface> tags";
+                break;
+            case SFW_ERROR_DUPLICATED_INTERFACE:                     /* The same interface is defined twice */
+                qDebug() << "The same interface has been defined more than once";
+                break;
+            case SFW_ERROR_INVALID_VERSION:
+                qDebug() << "Invalid version string, expected: x.y";
+                break;
+            case SFW_ERROR_DUPLICATED_TAG:                           /* The tag appears twice */
+                qDebug() << "XML tag appears twice";
+                break;
+            case SFW_ERROR_INVALID_CUSTOM_TAG:                       /* The customproperty tag is not correctly formatted or otherwise incorrect*/
+                qDebug() << "Invalid custom property tag";
+                break;
+            case SFW_ERROR_DUPLICATED_CUSTOM_KEY:                    /* The customproperty appears twice*/
+                qDebug() << "Same custom property appears multiple times";
+                break;
+        }
     }
     return !parseError;
 }
@@ -326,8 +373,8 @@ bool ServiceMetaData::processServiceElement(QXmlStreamReader &aXMLReader)
     }
     for (int i = 0; i<icount; i++) {
         serviceInterfaces.at(i).d->serviceName = serviceName;
-        serviceInterfaces.at(i).d->properties[QServiceInterfaceDescriptor::Location] = serviceLocation;
-        serviceInterfaces.at(i).d->properties[QServiceInterfaceDescriptor::ServiceDescription] = serviceDescription;
+        serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::Location] = serviceLocation;
+        serviceInterfaces.at(i).d->attributes[QServiceInterfaceDescriptor::ServiceDescription] = serviceDescription;
     }
 
     if (parseError) {
@@ -363,7 +410,7 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
             //Found <name> tag for interface
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == DESCRIPTION_TAG) {
             //Found <description> tag
-            aInterface.d->properties[QServiceInterfaceDescriptor::InterfaceDescription] = aXMLReader.readElementText();
+            aInterface.d->attributes[QServiceInterfaceDescriptor::InterfaceDescription] = aXMLReader.readElementText();
             dupITags[3]++;
         //Found </interface>, leave the loop
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_VERSION) {
@@ -386,21 +433,21 @@ bool ServiceMetaData::processInterfaceElement(QXmlStreamReader &aXMLReader)
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_CAPABILITY) {
             tmp.clear();
             tmp= aXMLReader.readElementText();
-            aInterface.d->properties[QServiceInterfaceDescriptor::Capabilities] = tmp.split(",", QString::SkipEmptyParts);
+            aInterface.d->attributes[QServiceInterfaceDescriptor::Capabilities] = tmp.split(",", QString::SkipEmptyParts);
             dupITags[2]++;
         } else if (aXMLReader.isStartElement() && aXMLReader.name() == INTERFACE_CUSTOM_PROPERTY) {
             parseError = true;
             if (aXMLReader.attributes().hasAttribute("key")) {
                 const QString ref = aXMLReader.attributes().value("key").toString();
                 if (!ref.isEmpty()) {
-                    if (aInterface.d->customProperties.contains(ref)) {
+                    if (aInterface.d->customAttributes.contains(ref)) {
                         latestError = SFW_ERROR_DUPLICATED_CUSTOM_KEY;
                         continue;
                     } else {
                         QString value = aXMLReader.readElementText();
                         if (value.isNull())
                             value = QString("");
-                        aInterface.d->customProperties[ref] = value;
+                        aInterface.d->customAttributes[ref] = value;
                         parseError = false;
                     }
                 }

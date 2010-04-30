@@ -44,7 +44,9 @@
 #include "qmobilityglobal.h"
 #include "qgeopositioninfosource.h"
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 
@@ -78,6 +80,12 @@ public Q_SLOTS:
     void startUpdates();
     void stopUpdates();
     void requestUpdate(int timeout = 0);
+
+protected:
+    virtual bool parsePosInfoFromNmeaData(const char *data,
+                                          int size,
+                                          QGeoPositionInfo *posInfo,
+                                          bool *hasFix);
 
 private:
     Q_DISABLE_COPY(QNmeaPositionInfoSource)

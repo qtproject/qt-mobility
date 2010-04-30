@@ -19,44 +19,148 @@
 <li><a href="qversitcontactimporter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#Error-enum">Error</a></b> { NoError, InvalidDocumentError, EmptyDocumentError }</td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#QVersitContactImporter">QVersitContactImporter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#dtor.QVersitContactImporter">~QVersitContactImporter</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#audioClipPath">audioClipPath</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#imagePath">imagePath</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#importContact">importContact</a></b> ( const QVersitDocument &amp; <i>versitDocument</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#setAudioClipPath">setAudioClipPath</a></b> ( const QString &amp; <i>path</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#setImagePath">setImagePath</a></b> ( const QString &amp; <i>path</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QVersitProperty&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#unknownVersitProperties">unknownVersitProperties</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContact&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#contacts">contacts</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;int, Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#errors">errors</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#importDocuments">importDocuments</a></b> ( const QList&lt;QVersitDocument&gt; &amp; <i>documents</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVersitContactImporterPropertyHandler * </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#propertyHandler">propertyHandler</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVersitResourceHandler * </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#resourceHandler">resourceHandler</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#setPropertyHandler">setPropertyHandler</a></b> ( QVersitContactImporterPropertyHandler * <i>handler</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qversitcontactimporter.html#setResourceHandler">setResourceHandler</a></b> ( QVersitResourceHandler * <i>handler</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QVersitContactImporter class creates QContacts from QVersitDocuments.</p>
-<p>The versit properties (<a href="qversitproperty.html">QVersitProperty</a>) that were not imported by <a href="qversitcontactimporter.html#importContact">QVersitContactImporter::importContact</a>() can be fetched after importing by calling <a href="qversitcontactimporter.html#unknownVersitProperties">QVersitContactImporter::unknownVersitProperties</a>(). For the returned properties, the client can perform the conversions from versit properties to contact details and add the converted details to the <a href="qcontact.html">QContact</a>.</p>
-<pre>    QVersitDocument document;
-    QVersitProperty property;
+<p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the importer to supply the behaviour for saving files to persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which does not save files to persistent storage. Note that although avatars found in vCards are not saved to disk by default, the importer does set the pixmap of the contact detail to the image. If a full-sized avatar image needs to be persisted, a custom <a href="qversitresourcehandler.html">QVersitResourceHandler</a> should be supplied which implements this.</p>
+<p>By associating a <a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a> with the importer using <a href="qversitcontactimporter.html#setPropertyHandler">setPropertyHandler</a>(), the client can pass in a handler to override the processing of properties and/or handle properties that QVersitContactImporter doesn't support.</p>
+<p>An example property handler that logs unknown properties:</p>
+<pre>    class MyPropertyHandler : public QVersitContactImporterPropertyHandler {
+    public:
+       bool preProcessProperty(const QVersitDocument&amp; document, const QVersitProperty&amp; property,
+                               int contactIndex, QContact* contact) {
+           Q_UNUSED(document) Q_UNUSED(property) Q_UNUSED(contactIndex) Q_UNUSED(contact)
+           return false;
+       }
+       bool postProcessProperty(const QVersitDocument&amp; document, const QVersitProperty&amp; property,
+                                bool alreadyProcessed, int contactIndex, QContact* contact) {
+           Q_UNUSED(document) Q_UNUSED(contactIndex) Q_UNUSED(contact)
+           if (!alreadyProcessed)
+               mUnknownProperties.append(property);
+           return false;
+       }
+       QList&lt;QVersitProperty&gt; mUnknownProperties;
+    };</pre>
+<p>An example usage of QVersitContactImporter</p>
+<pre>        QVersitContactImporter importer;
 
-    property.setName(QString::fromAscii(&quot;N&quot;));
-    property.setValue(&quot;Citizen;John;Q;;&quot;);
-    document.addProperty(property);
+        MyPropertyHandler propertyHandler;
+        importer.setPropertyHandler(&amp;propertyHandler);
 
-    property.setName(QString::fromAscii(&quot;X-UNKNOWN-PROPERTY&quot;));
-    property.setValue(&quot;some value&quot;);
-    document.addProperty(property);
+        QVersitDocument document;
 
-    QVersitContactImporter importer;
-    importer.setImagePath(QString::fromAscii(&quot;/my/image/path&quot;));
-    importer.setAudioClipPath(QString::fromAscii(&quot;my/audio_clip/path&quot;));
+        QVersitProperty property;
+        property.setName(QString::fromAscii(&quot;N&quot;));
+        property.setValue(&quot;Citizen;John;Q;;&quot;);
+        document.addProperty(property);
 
-    QContact contact = importer.importContact(document);
-<span class="comment">    // contact now contains the &quot;N&quot; property as a QContactName</span>
-    QList&lt;QVersitProperty&gt; unknownProperties = importer.unknownVersitProperties();
-<span class="comment">    // unknownProperties contains &quot;X-UNKNOWN-PROPERTY&quot;</span>
-<span class="comment">    // that can be handled by the client itself</span></pre>
-<p>See also <a href="qversitdocument.html">QVersitDocument</a> and <a href="qversitreader.html">QVersitReader</a>.</p>
+        property.setName(QString::fromAscii(&quot;X-UNKNOWN-PROPERTY&quot;));
+        property.setValue(&quot;some value&quot;);
+        document.addProperty(property);
+
+        if (importer.importDocuments(QList&lt;QVersitDocument&gt;() &lt;&lt; document)) {
+            QList&lt;QContact&gt; contactList = importer.contacts();
+            <span class="comment">// contactList.first() now contains the &quot;N&quot; property as a QContactName</span>
+            <span class="comment">// propertyHandler.mUnknownProperties contains the list of unknown properties</span>
+        }</pre>
+<a name="importing-categories"></a>
+<h3>Importing categories</h3>
+<p>The importer imports the vCard CATEGORIES property by converting each category to a <a href="qcontacttag.html">QContactTag</a>. Some managers may not have support for <a href="qcontacttag.html">QContactTag</a>, but instead support categorization using the <a href="qcontactrelationship.html#HasMember-var">HasMember</a> <a href="qcontactrelationship.html">QContactRelationship</a> along with contacts of type <a href="qcontacttype.html#TypeGroup-var">TypeGroup</a>. For these backends, if the categorization information needs to be retained through group relationships, extra work needs to be done to do the conversion. Below is some example code that does this translation.</p>
+<pre><span class="comment">    /*! Adds contacts in  \a newContacts into \a manager, converting categories specified
+      with tags into group membership relationships.  Note that this implementation uses the
+      synchronous API of QContactManager for clarity.  It is recommended that the asynchronous
+      API is used in practice.
+
+      Relationships are added so that if a contact, A, has a tag &quot;b&quot;, then a HasMember relationship is
+      created between a group contact in the manager, B with display label &quot;b&quot;, and contact A.  If there
+      does not exist a group contact with display label &quot;b&quot;, one is created.
+      */</span>
+    void insertWithGroups(const QList&lt;QContact&gt;&amp; newContacts, QContactManager* manager)
+    {
+        <span class="comment">// Cache map from group names to QContactIds</span>
+        QMap&lt;QString, QContactId&gt; groupMap;
+
+        foreach (QContact contact, newContacts) {
+            if (!manager-&gt;saveContact(&amp;contact))
+                continue; <span class="comment">// In practice, better error handling may be required</span>
+            foreach (const QContactTag&amp; tag, contact.details&lt;QContactTag&gt;()) {
+                QString groupName = tag.tag();
+                QContactId groupId;
+                if (groupMap.contains(groupName)) {
+                    <span class="comment">// We've already seen a group with the right name</span>
+                    groupId = groupMap.value(groupName);
+                } else {
+                    QContactDetailFilter groupFilter;
+                    groupFilter.setDetailDefinitionName(QContactType::DefinitionName);
+                    groupFilter.setValue(QLatin1String(QContactType::TypeGroup));
+                    groupFilter.setMatchFlags(QContactFilter::MatchExactly);
+                    <span class="comment">// In practice, some detail other than the display label could be used</span>
+                    QContactDetailFilter nameFilter = QContactDisplayLabel::match(groupName);
+                    QList&lt;QContactLocalId&gt; matchingGroups = manager-&gt;contactIds(groupFilter &amp; nameFilter);
+                    if (!matchingGroups.isEmpty()) {
+                        <span class="comment">// Found an existing group in the manager</span>
+                        QContactId groupId;
+                        groupId.setManagerUri(manager-&gt;managerUri());
+                        groupId.setLocalId(matchingGroups.first());
+                        groupMap.insert(groupName, groupId);
+                    }
+                    else {
+                        <span class="comment">// Make a new group</span>
+                        QContact groupContact;
+                        QContactName name;
+                        name.setCustomLabel(groupName);
+                        <span class="comment">// Beware that not all managers support custom label</span>
+                        groupContact.saveDetail(&amp;name);
+                        if (!manager-&gt;saveContact(&amp;groupContact))
+                            continue; <span class="comment">// In practice, better error handling may be required</span>
+                        groupId = groupContact.id();
+                        groupMap.insert(groupName, groupId);
+                    }
+                }
+                <span class="comment">// Add the relationship</span>
+                QContactRelationship rel;
+                rel.setFirst(groupId);
+                rel.setRelationshipType(QContactRelationship::HasMember);
+                rel.setSecond(contact.id());
+                manager-&gt;saveRelationship(&amp;rel);
+            }
+        }
+    }</pre>
+<p>See also <a href="qversitdocument.html">QVersitDocument</a>, <a href="qversitreader.html">QVersitReader</a>, and <a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QVersitContactImporter/Error"></a>
+<a name="//apple_ref/cpp/econst/QVersitContactImporter/NoError"></a>
+<a name="//apple_ref/cpp/econst/QVersitContactImporter/InvalidDocumentError"></a>
+<a name="//apple_ref/cpp/econst/QVersitContactImporter/EmptyDocumentError"></a>
+<h3 class="fn"><a name="Error-enum"></a>enum QVersitContactImporter::Error</h3>
+<p>This enum specifies an error that occurred during the most recent call to <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>()</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QVersitContactImporter::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The most recent operation was successful</td></tr>
+<tr><td valign="top"><tt>QVersitContactImporter::InvalidDocumentError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">One of the documents is not a vCard</td></tr>
+<tr><td valign="top"><tt>QVersitContactImporter::EmptyDocumentError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">One of the documents is empty</td></tr>
+</table></p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/QVersitContactImporter"></a>
@@ -65,32 +169,40 @@
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/~QVersitContactImporter"></a>
 <h3 class="fn"><a name="dtor.QVersitContactImporter"></a>QVersitContactImporter::~QVersitContactImporter ()</h3>
 <p>Frees the memory used by the importer</p>
-<a name="//apple_ref/cpp/instm/QVersitContactImporter/audioClipPath"></a>
-<h3 class="fn"><a name="audioClipPath"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QVersitContactImporter::audioClipPath () const</h3>
-<p>Returns the path where the contact related audio clips will be saved.</p>
-<p>See also <a href="qversitcontactimporter.html#setAudioClipPath">setAudioClipPath</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitContactImporter/imagePath"></a>
-<h3 class="fn"><a name="imagePath"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QVersitContactImporter::imagePath () const</h3>
-<p>Returns the path where the contact photos are saved.</p>
-<p>See also <a href="qversitcontactimporter.html#setImagePath">setImagePath</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitContactImporter/importContact"></a>
-<h3 class="fn"><a name="importContact"></a><a href="qcontact.html">QContact</a> QVersitContactImporter::importContact ( const <a href="qversitdocument.html">QVersitDocument</a> &amp; <i>versitDocument</i> )</h3>
-<p>Creates a <a href="qcontact.html">QContact</a> from <i>versitDocument</i>.</p>
-<a name="//apple_ref/cpp/instm/QVersitContactImporter/setAudioClipPath"></a>
-<h3 class="fn"><a name="setAudioClipPath"></a>void QVersitContactImporter::setAudioClipPath ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i> )</h3>
-<p>Sets the <i>path</i> where the contact related audio clips will be saved. This function should be called before calling <a href="qversitcontactimporter.html#importContact">importContact</a>(). If the audio clip path has not been set, the audio clips in the versit document will not be added to the contact. There is no default path for them.</p>
-<p>See also <a href="qversitcontactimporter.html#audioClipPath">audioClipPath</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitContactImporter/setImagePath"></a>
-<h3 class="fn"><a name="setImagePath"></a>void QVersitContactImporter::setImagePath ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i> )</h3>
-<p>Sets the <i>path</i> where the contact photos will be saved. This function should be called before calling <a href="qversitcontactimporter.html#importContact">importContact</a>(). If the image path has not been set, the images in the versit document will not be added to the contact. There is no default path for them.</p>
-<p>See also <a href="qversitcontactimporter.html#imagePath">imagePath</a>().</p>
-<a name="//apple_ref/cpp/instm/QVersitContactImporter/unknownVersitProperties"></a>
-<h3 class="fn"><a name="unknownVersitProperties"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qversitproperty.html">QVersitProperty</a>&gt; QVersitContactImporter::unknownVersitProperties ()</h3>
-<p>Returns the list of versit properties that were not imported by the most recent call of <a href="qversitcontactimporter.html#importContact">importContact</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitContactImporter/contacts"></a>
+<h3 class="fn"><a name="contacts"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; QVersitContactImporter::contacts () const</h3>
+<p>Returns the contacts imported in the most recent call to <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>().</p>
+<p>See also <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitContactImporter/errors"></a>
+<h3 class="fn"><a name="errors"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qversitcontactimporter.html#Error-enum">Error</a>&gt; QVersitContactImporter::errors () const</h3>
+<p>Returns the map of errors encountered in the most recent call to <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>(). The key is the index into the input list of documents and the value is the error that occurred on that document.</p>
+<p>See also <a href="qversitcontactimporter.html#importDocuments">importDocuments</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitContactImporter/importDocuments"></a>
+<h3 class="fn"><a name="importDocuments"></a>bool QVersitContactImporter::importDocuments ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt; &amp; <i>documents</i> )</h3>
+<p>Converts <i>documents</i> into a corresponding list of QContacts. After calling this, the converted contacts can be retrieved by calling <a href="qversitcontactimporter.html#contacts">contacts</a>(). Returns true on success. If any of the documents cannot be imported as contacts (eg. they aren't vCards), false is returned and <a href="qversitcontactimporter.html#errors">errors</a>() will return a list describing the errors that occurred. The successfully imported documents will still be available via <a href="qversitcontactimporter.html#contacts">contacts</a>().</p>
+<p>See also <a href="qversitcontactimporter.html#contacts">contacts</a>() and <a href="qversitcontactimporter.html#errors">errors</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitContactImporter/propertyHandler"></a>
+<h3 class="fn"><a name="propertyHandler"></a><a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a> * QVersitContactImporter::propertyHandler () const</h3>
+<p>Gets the handler for processing QVersitProperties.</p>
+<p>See also <a href="qversitcontactimporter.html#setPropertyHandler">setPropertyHandler</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitContactImporter/resourceHandler"></a>
+<h3 class="fn"><a name="resourceHandler"></a><a href="qversitresourcehandler.html">QVersitResourceHandler</a> * QVersitContactImporter::resourceHandler () const</h3>
+<p>Returns the associated resource handler.</p>
+<p>See also <a href="qversitcontactimporter.html#setResourceHandler">setResourceHandler</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitContactImporter/setPropertyHandler"></a>
+<h3 class="fn"><a name="setPropertyHandler"></a>void QVersitContactImporter::setPropertyHandler ( <a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a> * <i>handler</i> )</h3>
+<p>Sets <i>handler</i> to be the handler for processing QVersitProperties, or 0 to have no handler.</p>
+<p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
+<p>See also <a href="qversitcontactimporter.html#propertyHandler">propertyHandler</a>().</p>
+<a name="//apple_ref/cpp/instm/QVersitContactImporter/setResourceHandler"></a>
+<h3 class="fn"><a name="setResourceHandler"></a>void QVersitContactImporter::setResourceHandler ( <a href="qversitresourcehandler.html">QVersitResourceHandler</a> * <i>handler</i> )</h3>
+<p>Sets <i>handler</i> to be the handler to save files with, or 0 to have no handler.</p>
+<p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
+<p>See also <a href="qversitcontactimporter.html#resourceHandler">resourceHandler</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

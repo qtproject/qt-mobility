@@ -6,5 +6,6 @@ SOURCES += tst_qmediaplayer.cpp
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 

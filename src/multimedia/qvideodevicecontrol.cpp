@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <qvideodevicecontrol.h>
+#include "qvideodevicecontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoDeviceControl
@@ -89,19 +89,19 @@ QVideoDeviceControl::~QVideoDeviceControl()
 */
 
 /*!
-    \fn QVideoDeviceControl::name(int index) const
+    \fn QVideoDeviceControl::deviceName(int index) const
 
     Returns the name of the video device at \a index.
 */
 
 /*!
-    \fn QVideoDeviceControl::description(int index) const
+    \fn QVideoDeviceControl::deviceDescription(int index) const
 
     Returns a description of the video device at \a index.
 */
 
 /*!
-    \fn QVideoDeviceControl::icon(int index) const
+    \fn QVideoDeviceControl::deviceIcon(int index) const
 
     Returns an icon for the video device at \a index.
 */
@@ -143,5 +143,5 @@ QVideoDeviceControl::~QVideoDeviceControl()
 */
 
 #include "moc_qvideodevicecontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

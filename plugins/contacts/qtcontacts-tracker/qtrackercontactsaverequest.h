@@ -43,15 +43,23 @@
 #define QTRACKERCONTACTSAVEREQUEST_H_
 
 #include <QObject>
-#include <qtrackercontactasyncrequest.h>
 #include <QPair>
 #include <QList>
+#include <QSet>
 #include <QtTracker/QLive>
 #include <QtTracker/ontologies/nco.h>
+
+#include <qtrackercontactasyncrequest.h>
+
+#include <qmobilityglobal.h>
 #include <qtcontacts.h>
 
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
 class QContactManagerEngine;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class QTrackerContactSaveRequest: public QObject, public QTrackerContactAsyncRequest
 {
@@ -60,16 +68,19 @@ public:
     QTrackerContactSaveRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
     virtual ~QTrackerContactSaveRequest();
 
+private Q_SLOTS:
+    void onTrackerSignal(const QList<QContactLocalId> &ids);
+
 private:
     /* worker methods*/
-    void saveContact(QContact &contact);
-    void computeProgress();
+    void saveContacts(const QList<QContact> &contacts);
+    void computeProgress(const QList<QContactLocalId> &addedIds);
     void addAffiliation(SopranoLive::RDFServicePtr service, QContactLocalId contactId);
-    void saveContactDetails(SopranoLive::RDFServicePtr service,SopranoLive::Live<SopranoLive::nco::PersonContact>& ncoContact,const QContact &contact);
-    void saveAddresses(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details );
-    void saveEmails(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details );
-    void saveUrls(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details );
-    void savePhoneNumbers(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details );
+    void saveContactDetails(SopranoLive::RDFServicePtr service,SopranoLive::Live<SopranoLive::nco::PersonContact>& ncoContact,const QContact &contact, bool newContact);
+    void saveAddresses(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details, bool newContact );
+    void saveEmails(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details, bool newContact );
+    void saveUrls(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details, bool newContact );
+    void savePhoneNumbers(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QList<QContactDetail> &details, bool newContact );
     void deletePhoneNumbers(SopranoLive::RDFServicePtr service, const SopranoLive::RDFVariable& rdfContactIn);
     void addTag(SopranoLive::RDFServicePtr service, SopranoLive::RDFVariable &var, const QString &tag);
     void createTagIfItDoesntExistAlready(SopranoLive::RDFServicePtr service, const QString &tag);
@@ -77,11 +88,16 @@ private:
 private:
     /*holding the data about status of async operation*/
     QList<QContact> contactsFinished;
-    QList<QContactManager::Error> errorsOfContactsFinished;
+
+    QMap<int, QContactManager::Error> errorsOfContactsFinished;
+    // needed for error reporting - errorsOfContactsFinished is map (array index -> error)
+    QMap<QContactLocalId, int> id2Index;
+    int errorCount;
 
     /* extracted utilities */
     static QStringList detailsDefinitionsInContact(const QContact &c);
     static bool contactHasWorkRelatedDetails(const QContact &c);
+    QSet<QContactLocalId> pendingContactIds;
 
 };
 

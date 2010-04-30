@@ -101,7 +101,7 @@ QMessageAccountId addAccount(const Parameters &params)
 QMessageFolderId addFolder(const Parameters &params)
 {
     QString path(params["path"]);
-    QString displayName(params["displayName"]);
+    QString name(params["name"]);
     QString parentAccountName(params["parentAccountName"]);
     QString parentFolderPath(params["parentFolderPath"]);
 
@@ -113,8 +113,8 @@ QMessageFolderId addFolder(const Parameters &params)
             folder.setPath(path);
             folder.setParentAccountId(accountIds.first());
 
-            if (!displayName.isEmpty()) {
-                folder.setDisplayName(displayName);
+            if (!name.isEmpty()) {
+                folder.setDisplayName(name);
             }
 
             if (!parentFolderPath.isEmpty()) {
@@ -159,14 +159,16 @@ QMessageId addMessage(const Parameters &params)
     QString read(params["status-read"]);
     QString hasAttachments(params["status-hasAttachments"]);
 
+    QMessageManager mgr;
+
     if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
         !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
         // Find the named account
-        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
+        QMessageAccountIdList accountIds(mgr.queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
         if (accountIds.count() == 1) {
             // Find the specified folder
             QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath, QMessageDataComparator::Equal) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
-            QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
+            QMessageFolderIdList folderIds(mgr.queryFolders(filter));
             if (folderIds.count() == 1) {
                 QMessage message;
 
@@ -189,19 +191,19 @@ QMessageId addMessage(const Parameters &params)
 
                 QList<QMessageAddress> toList;
                 foreach (const QString &addr, to.split(",", QString::SkipEmptyParts)) {
-                    toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                    toList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
                 }
                 message.setTo(toList);
 
                 QList<QMessageAddress> ccList;
                 foreach (const QString &addr, cc.split(",", QString::SkipEmptyParts)) {
-                    ccList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                    ccList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
                 }
                 if (!ccList.isEmpty()) {
                     message.setCc(ccList);
                 }
 
-                message.setFrom(QMessageAddress(from, QMessageAddress::Email));
+                message.setFrom(QMessageAddress(QMessageAddress::Email, from));
                 message.setSubject(subject);
 
                 QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
@@ -215,8 +217,8 @@ QMessageId addMessage(const Parameters &params)
                         message.setType(QMessage::Mms);
                     } else if (type.toLower() == "sms") {
                         message.setType(QMessage::Sms);
-                    } else if (type.toLower() == "xmpp") {
-                        message.setType(QMessage::Xmpp);
+                    } else if (type.toLower() == "instantmessage") {
+                        message.setType(QMessage::InstantMessage);
                     } else {
                         message.setType(QMessage::Email);
                     }
@@ -256,7 +258,7 @@ QMessageId addMessage(const Parameters &params)
                     }
                 }
 
-                if (!QMessageStore::instance()->addMessage(&message)) {
+                if (!mgr.addMessage(&message)) {
                     qWarning() << "Unable to addMessage:" << to << from << date << subject;
                 } else {
                     return message.id();

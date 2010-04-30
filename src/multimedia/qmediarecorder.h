@@ -42,19 +42,19 @@
 #ifndef QMEDIARECORDER_H
 #define QMEDIARECORDER_H
 
-#include <qmediaobject.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaencodersettings.h>
+#include "qmediaobject.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaencodersettings.h"
 
 #include <QtCore/qpair.h>
 
-
+QT_BEGIN_NAMESPACE
 class QUrl;
 class QSize;
-
 class QAudioFormat;
+QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaRecorderService;
 class QAudioEncoderSettings;
@@ -87,6 +87,9 @@ public:
     QMediaRecorder(QMediaObject *mediaObject, QObject *parent = 0);
     ~QMediaRecorder();
 
+    bool isAvailable() const;
+    QtMediaServices::AvailabilityError availabilityError() const;
+
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &location);
 
@@ -97,8 +100,8 @@ public:
 
     qint64 duration() const;
 
-    QStringList supportedFormats() const;
-    QString formatDescription(const QString &formatMimeType) const;
+    QStringList supportedContainers() const;
+    QString containerDescription(const QString &containerMimeType) const;
 
     QStringList supportedAudioCodecs() const;
     QString audioCodecDescription(const QString &codecName) const;
@@ -117,11 +120,11 @@ public:
 
     QAudioEncoderSettings audioSettings() const;
     QVideoEncoderSettings videoSettings() const;
-    QString format() const;
+    QString containerMimeType() const;
 
     void setEncodingSettings(const QAudioEncoderSettings &audioSettings,
                              const QVideoEncoderSettings &videoSettings = QVideoEncoderSettings(),
-                             const QString &format = QString());
+                             const QString &containerMimeType = QString());
 
 public Q_SLOTS:
     void record();
@@ -141,9 +144,9 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::State);
-Q_DECLARE_METATYPE(QtMobility::QMediaRecorder::Error);
+Q_DECLARE_METATYPE(QMediaRecorder::State)
+Q_DECLARE_METATYPE(QMediaRecorder::Error)
 
 #endif  // QMEDIARECORDER_H

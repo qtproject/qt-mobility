@@ -55,15 +55,15 @@ class Q_CONTACTS_EXPORT QContactType : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldType;
-    const char* TypeContact;
-    const char* TypeGroup;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldType;
+    static const QLatin1Constant TypeContact;
+    static const QLatin1Constant TypeGroup;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactType, "Type")
-    Q_DECLARE_LATIN1_LITERAL(FieldType, "Type");
-    Q_DECLARE_LATIN1_LITERAL(TypeContact, "Contact");
-    Q_DECLARE_LATIN1_LITERAL(TypeGroup, "Group");
+    Q_DECLARE_LATIN1_CONSTANT(FieldType, "Type");
+    Q_DECLARE_LATIN1_CONSTANT(TypeContact, "Contact");
+    Q_DECLARE_LATIN1_CONSTANT(TypeGroup, "Group");
 #endif
 
     void setType(const QString& type) {setValue(FieldType, type);}

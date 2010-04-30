@@ -14,9 +14,11 @@ INCLUDEPATH += ../../../../src/contacts \
 
 INCLUDEPATH += ../../
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 SOURCES  += tst_qcontactasync.cpp
+HEADERS += ../../qcontactmanagerdataholder.h
 
 # App local deployment
 symbian:QCONTACTASYNC_PLUGINS_DEPLOY.sources = contacts_maliciousplugin.dll

@@ -66,7 +66,6 @@
 #include <qnetworkconfigmanager_p.h>
 
 
-
 QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
@@ -112,11 +111,10 @@ private:
 
     QStringList devicePaths;
 
-    void getActiveConnectionsPaths();
-    void getKnownSsids();
+    void updateActiveConnectionsPaths();
+    void updateKnownSsids();
     void accessPointConnections();
     void knownConnections();
-    void findConnections();
     QString deviceConnectionPath(const QString &mac);
 
     QList<QNetworkConfigurationPrivate *> foundConfigurations;
@@ -141,12 +139,9 @@ private:
 private slots:
     void updateDeviceInterfaceState(const QString &, quint32);
     void addDevice(QDBusObjectPath path);
-    void removeDevice(QDBusObjectPath path);
 
 Q_SIGNALS:
     void configurationChanged(const QNetworkConfiguration& config);
-    void updateAccessPointState(const QString &, quint32);
-//    void slotActivationFinished(QDBusPendingCallWatcher*);
 
 private slots:
     void accessPointAdded( const QString &aPath, QDBusObjectPath oPath);

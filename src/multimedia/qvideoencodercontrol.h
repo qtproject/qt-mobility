@@ -42,17 +42,18 @@
 #ifndef QVIDEOENCODERCONTROL_H
 #define QVIDEOENCODERCONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediarecorder.h>
+#include "qmediacontrol.h"
+#include "qmediarecorder.h"
 
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-
+QT_BEGIN_NAMESPACE
 class QByteArray;
 class QStringList;
+QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QVideoEncoderControl : public QMediaControl
 {
@@ -84,6 +85,6 @@ protected:
 #define QVideoEncoderControl_iid "com.nokia.Qt.QVideoEncoderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QVideoEncoderControl, QVideoEncoderControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

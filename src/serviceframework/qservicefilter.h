@@ -46,14 +46,16 @@
 
 #include "qmobilityglobal.h"
 
+QT_BEGIN_NAMESPACE
 class QDataStream;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 class QServiceFilterPrivate;
-class Q_SFW_EXPORT QServiceFilter
+class Q_SERVICEFW_EXPORT QServiceFilter
 {
 public:
     enum VersionMatchRule {
@@ -62,14 +64,14 @@ public:
     };
 
     enum CapabilityMatchRule {
-        MatchAll = 0,
+        MatchMinimum = 0,
         MatchLoadable
     };
 
     QServiceFilter();
     ~QServiceFilter();
     QServiceFilter(const QServiceFilter& other);
-    QServiceFilter(const QString& interfaceName,
+    explicit QServiceFilter(const QString& interfaceName,
                    const QString& version = QString(),
                    QServiceFilter::VersionMatchRule rule = QServiceFilter::MinimumVersionMatch);
 
@@ -82,15 +84,14 @@ public:
 
     QString serviceName() const;
     QString interfaceName() const;
-    int interfaceMajorVersion() const;
-    int interfaceMinorVersion() const;
+    int majorVersion() const;
+    int minorVersion() const;
     VersionMatchRule versionMatchRule() const;
 
-    QStringList customPropertyKeys() const;
-    QString customProperty(const QString& key) const;
-    void setCustomProperty(const QString& key, const QString& value);
-    void removeCustomProperty(const QString &key);
-    void clearCustomProperties();
+    QStringList customAttributes() const;
+    QString customAttribute(const QString& which) const;
+    void setCustomAttribute(const QString& key, const QString& value);
+    void clearCustomAttribute(const QString &key = QString());
 
     void setCapabilities(QServiceFilter::CapabilityMatchRule, const QStringList& capabilities = QStringList() );
     QStringList capabilities() const;
@@ -101,14 +102,14 @@ private:
     friend class QServiceManager;
     //friend class ServiceDatabase;
 #ifndef QT_NO_DATASTREAM
-    friend Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
-    friend Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
+    friend Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
+    friend Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
 #endif
 };
 
 #ifndef QT_NO_DATASTREAM
-Q_SFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
-Q_SFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
+Q_SERVICEFW_EXPORT QDataStream &operator<<(QDataStream &, const QServiceFilter &);
+Q_SERVICEFW_EXPORT QDataStream &operator>>(QDataStream &, QServiceFilter &);
 #endif
 
 QTM_END_NAMESPACE

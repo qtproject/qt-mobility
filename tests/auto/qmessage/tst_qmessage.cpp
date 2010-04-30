@@ -108,6 +108,8 @@ private slots:
     void testPreferredCharsets();
     void testMessageAddress_data();
     void testMessageAddress();
+    void testHeaderFields();
+    void testStandardFolder();
 
 private:
     QMessageAccountId testAccountId;
@@ -128,6 +130,11 @@ tst_QMessage::~tst_QMessage()
 
 void tst_QMessage::initTestCase()
 {
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+    if (!Support::mapiAvailable())
+        QSKIP("Skipping tests because a MAPI subsystem does not appear to be available", SkipAll);
+#endif
+
     Support::clearMessageStore();
 
     {
@@ -141,7 +148,7 @@ void tst_QMessage::initTestCase()
     {
         Support::Parameters p;
         p.insert("path", "/root");
-        p.insert("displayName", "Root");
+        p.insert("name", "Root");
         p.insert("parentAccountName", "testAccount");
 
         testFolderId = Support::addFolder(p);
@@ -188,13 +195,13 @@ void tst_QMessage::testFrom()
     QCOMPARE(msg.from(), QMessageAddress());
     QCOMPARE(msg.isModified(), false);
 
-    QMessageAddress addr("alice@example.org", QMessageAddress::Email);
+    QMessageAddress addr(QMessageAddress::Email, "alice@example.org");
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
     QCOMPARE(msg.from() != QMessageAddress(), true);
     QCOMPARE(msg.isModified(), true);
 
-    addr = QMessageAddress("bob@example.org", QMessageAddress::Xmpp);
+    addr = QMessageAddress(QMessageAddress::InstantMessage, "bob@example.org");
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
     QCOMPARE(msg.from() != QMessageAddress(), true);
@@ -255,15 +262,15 @@ void tst_QMessage::testTo()
     QCOMPARE(msg.isModified(), false);
 
     QMessageAddressList addresses;
-    addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
-    addresses.append(QMessageAddress("bob@example.org", QMessageAddress::Email));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "alice@example.org"));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "bob@example.org"));
 
     msg.setTo(addresses);
     QCOMPARE(msg.to(), addresses);
     QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::System));
+    addresses.append(QMessageAddress(QMessageAddress::System, "charlie@example.org"));
     msg.setTo(addresses);
     QCOMPARE(msg.to(), addresses);
 }
@@ -276,15 +283,15 @@ void tst_QMessage::testCc()
     QCOMPARE(msg.isModified(), false);
 
     QMessageAddressList addresses;
-    addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
-    addresses.append(QMessageAddress("bob@example.org", QMessageAddress::Email));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "alice@example.org"));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "bob@example.org"));
 
     msg.setCc(addresses);
     QCOMPARE(msg.cc(), addresses);
     QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Phone));
+    addresses.append(QMessageAddress(QMessageAddress::Phone, "charlie@example.org"));
     msg.setCc(addresses);
     QCOMPARE(msg.cc(), addresses);
 }
@@ -296,15 +303,15 @@ void tst_QMessage::testBcc()
     QCOMPARE(msg.isModified(), false);
 
     QMessageAddressList addresses;
-    addresses.append(QMessageAddress("alice@example.org", QMessageAddress::Email));
-    addresses.append(QMessageAddress("bob@example.org", QMessageAddress::Email));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "alice@example.org"));
+    addresses.append(QMessageAddress(QMessageAddress::Email, "bob@example.org"));
 
     msg.setBcc(addresses);
     QCOMPARE(msg.bcc(), addresses);
     QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress("charlie@example.org", QMessageAddress::Xmpp));
+    addresses.append(QMessageAddress(QMessageAddress::InstantMessage, "charlie@example.org"));
     msg.setBcc(addresses);
     QCOMPARE(msg.bcc(), addresses);
 }
@@ -375,8 +382,7 @@ void tst_QMessage::testPreferredCharsets()
     QFETCH(QString, text);
     QFETCH(QByteArray, preferred);
     QFETCH(QByteArray, encoded);
-
-#ifndef Q_OS_SYMBIAN    
+   
     QCOMPARE(QMessage::preferredCharsets(), QList<QByteArray>());
 
     QList<QByteArray> preferredCharsets;
@@ -394,7 +400,6 @@ void tst_QMessage::testPreferredCharsets()
     QCOMPARE(body.contentCharset().toLower(), encoded.toLower());
 
     QMessage::setPreferredCharsets(QList<QByteArray>());
-#endif
 }
 
 void tst_QMessage::testMessageAddress_data()
@@ -437,3 +442,23 @@ void tst_QMessage::testMessageAddress()
     QCOMPARE(targetAddress, address);
 }
 
+void tst_QMessage::testHeaderFields()
+{
+    QMessage msg;
+    
+    QCOMPARE(msg.headerFields().isEmpty(), true);
+    QCOMPARE(msg.headerFieldValues("Subject").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValues("From").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValues("To").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValues("X-None").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValue("Subject").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValue("From").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValue("To").isEmpty(), true);
+    QCOMPARE(msg.headerFieldValue("X-None").isEmpty(), true);
+}
+
+void tst_QMessage::testStandardFolder()
+{
+    QMessage msg;
+    QCOMPARE(msg.standardFolder(), QMessage::DraftsFolder);
+}

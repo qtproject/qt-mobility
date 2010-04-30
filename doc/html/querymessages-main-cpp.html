@@ -21,69 +21,91 @@
     **
     ** This file is part of the Qt Mobility Components.
     **
-    ** $QT_BEGIN_LICENSE:LGPL$
-    ** No Commercial Usage
-    ** This file contains pre-release code and may not be distributed.
-    ** You may use this file in accordance with the terms and conditions
-    ** contained in the Technology Preview License Agreement accompanying
-    ** this package.
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
     **
-    ** GNU Lesser General Public License Usage
-    ** Alternatively, this file may be used under the terms of the GNU Lesser
-    ** General Public License version 2.1 as published by the Free Software
-    ** Foundation and appearing in the file LICENSE.LGPL included in the
-    ** packaging of this file.  Please review the following information to
-    ** ensure the GNU Lesser General Public License version 2.1 requirements
-    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
     **
-    ** In addition, as a special exception, Nokia gives you certain additional
-    ** rights.  These rights are described in the Nokia Qt LGPL Exception
-    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-    **
-    ** If you have questions regarding the use of this file, please contact
-    ** Nokia at qt-info@nokia.com.
-    **
-    **
-    **
-    **
-    **
-    **
-    **
-    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
     ** $QT_END_LICENSE$
     **
     ****************************************************************************/</span>
 
-    #include &lt;QApplication&gt;
-
-    #include &lt;qmessagestore.h&gt;
+    #include &lt;QCoreApplication&gt;
+    #include &lt;qmessagemanager.h&gt;
     #include &lt;qdebug.h&gt;
+    #ifdef Q_OS_SYMBIAN
+    #include &lt;iostream&gt;
+    #endif
 
     QTM_USE_NAMESPACE
 
+    static void printMessage(const QString&amp; msg)
+    {
+    #ifdef Q_OS_SYMBIAN
+        std::cout &lt;&lt; qPrintable(msg) &lt;&lt; std::endl;
+    #else
+        qDebug() &lt;&lt; qPrintable(msg);
+    #endif
+    }
+
     int main(int argc, char *argv[])
     {
-        QApplication app(argc, argv);
+        QCoreApplication app(argc, argv);
+
+        printMessage(&quot;Querying messages...&quot;);
+
+        <span class="comment">// Match all messages whose status field includes the Incoming flag</span>
+        QMessageFilter filter(QMessageFilter::byStatus(QMessage::Incoming));
+
+        <span class="comment">// Order the matching results by their reception timestamp, in descending order</span>
+        QMessageSortOrder sortOrder(QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder));
+
+        <span class="comment">// Acquire a handle to the message manager</span>
+        QMessageManager manager;
+
+        <span class="comment">// Find the matching message IDs, limiting our results to a managable number</span>
+        const int max = 100;
+        const QMessageIdList matchingIds(manager.queryMessages(filter, sortOrder, max));
 
         int n = 0;
-        foreach (const QMessageId &amp;id, QMessageStore::instance()-&gt;queryMessages(QMessageFilter(), QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0)) {
-            QStringList result;
-            QMessage message(QMessageStore::instance()-&gt;message(id));
-            if (QMessageStore::instance()-&gt;lastError() == QMessageStore::NoError) {
+
+        <span class="comment">// Retrieve each message and print requested details</span>
+        foreach (const QMessageId &amp;id, matchingIds) {
+            QMessage message(manager.message(id));
+
+            if (manager.error() == QMessageManager::NoError) {
+                QStringList result;
+
                 if (app.arguments().count() &lt; 2) {
                     <span class="comment">// Default to printing only the subject</span>
                     result.append(message.subject());
                 } else {
+                    <span class="comment">// Extract the requested data items from this message</span>
                     foreach (const QString &amp;arg, app.arguments().mid(1)) {
-                        if ((arg == &quot;to&quot;) || (arg == &quot;cc&quot;) || (arg == &quot;bcc&quot;)) {
-                            QStringList addresses;
-                            foreach (const QMessageAddress &amp;addr, (arg == &quot;to&quot; ? message.to() : (arg == &quot;cc&quot; ? message.cc() : message.bcc()))) {
-                                addresses.append(addr.recipient());
-                            }
-                            result.append(addresses.join(&quot;,&quot;));
-                        } else if (arg == &quot;from&quot;) {
-                            result.append(message.from().recipient());
-                        } else if (arg == &quot;subject&quot;) {
+                        if (arg == &quot;subject&quot;) {
                             result.append(message.subject());
                         } else if (arg == &quot;date&quot;) {
                             result.append(message.date().toLocalTime().toString());
@@ -93,6 +115,14 @@
                             result.append(QString::number(message.size()));
                         } else if (arg == &quot;priority&quot;) {
                             result.append(message.priority() == QMessage::HighPriority ? &quot;High&quot; : (message.priority() == QMessage::LowPriority ? &quot;Low&quot; : &quot;Normal&quot;));
+                        } else if ((arg == &quot;to&quot;) || (arg == &quot;cc&quot;) || (arg == &quot;bcc&quot;)) {
+                            QStringList addresses;
+                            foreach (const QMessageAddress &amp;addr, (arg == &quot;to&quot; ? message.to() : (arg == &quot;cc&quot; ? message.cc() : message.bcc()))) {
+                                addresses.append(addr.addressee());
+                            }
+                            result.append(addresses.join(&quot;,&quot;));
+                        } else if (arg == &quot;from&quot;) {
+                            result.append(message.from().addressee());
                         } else if (arg == &quot;type&quot;) {
                             result.append(message.contentType() + '/' + message.contentSubType());
                         } else if (arg == &quot;body&quot;) {
@@ -106,10 +136,13 @@
                         }
                     }
                 }
-            }
 
-            qDebug() &lt;&lt; qPrintable(QString::number(++n) + '\t') &lt;&lt; qPrintable(result.join(&quot;\t&quot;));
+                printMessage(QString::number(++n) + '\t' + result.join(&quot;\t&quot;));
+            }
         }
+
+        if(matchingIds.isEmpty())
+            printMessage(&quot;No matching messages!&quot;);
 
         return 0;
     }</pre>
@@ -117,6 +150,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

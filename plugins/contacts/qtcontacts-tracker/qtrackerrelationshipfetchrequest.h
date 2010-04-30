@@ -50,7 +50,11 @@
 #include <QtTracker/ontologies/nco.h>
 #include <qtcontacts.h>
 
+QTM_BEGIN_NAMESPACE
 class QContactAbstractRequest;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class QTrackerRelationshipFetchRequest: public QObject, public QTrackerContactAsyncRequest
 {

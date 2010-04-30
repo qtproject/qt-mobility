@@ -6,51 +6,37 @@
 
 TEMPLATE = app
 TARGET = samplephonebook
+include(../examples.pri)
 DEPENDPATH += .
 INCLUDEPATH += . \
                ../../src/contacts\
                ../../src/contacts/filters \
                ../../src/contacts/requests \
-               ../../src/contacts/details 
+               ../../src/contacts/details \
+               ../../src/versit
 
-INCLUDEPATH += ../testmodel
-VPATH += ../testmodel
-
-
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
+contains(mobility_modules,versit) {
+    MOBILITY += versit
+    DEFINES += BUILD_VERSIT
+}
 
 # Input
-SOURCES =  contactdetailsform.cpp \
-            maindialogform_240_320.cpp \
-            maindialogform_640_480.cpp \
-            phonebook.cpp \
-            serialiser.cpp \
-            groupeditdialog.cpp \ 
-            groupdetailsdialog.cpp \
-            main.cpp \
-            finddialog.cpp
-
-HEADERS   = contactdetailsform.h \
-            maindialogform_240_320.h \
-            maindialogform_640_480.h \
-            phonebook.h \
-            serialiser.h \
-            finddialog.h \
-            ../incomingcalls/filterdialog.h \
-            groupeditdialog.h \
-            groupdetailsdialog.h
-
-FORMS += contactdetails_240_320.ui \
-         maindialog_240_320.ui \
-         maindialog_640_480.ui 
+SOURCES += main.cpp \
+           phonebook.cpp \
+           contacteditor.cpp \
+           contactlistpage.cpp \
+           filterpage.cpp
+HEADERS += phonebook.h \
+           contacteditor.h \
+           contactlistpage.h \
+           filterpage.h
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
                         WriteUserData \
                         ReadDeviceData \
                         WriteDeviceData \
-                        AllFiles \
                         SwEvent
 }
-include(../examples.pri)
-qtAddLibrary(QtContacts)

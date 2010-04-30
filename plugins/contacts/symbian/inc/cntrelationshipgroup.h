@@ -48,19 +48,20 @@ QTM_USE_NAMESPACE
 class CntRelationshipGroup: public CntAbstractRelationship
 {
 public: 
-    CntRelationshipGroup(CContactDatabase* contactDatabase);
+    CntRelationshipGroup(CContactDatabase *contactDatabase, const QString &managerUri);
     virtual ~CntRelationshipGroup();
 
 public:
-    QList<QContactRelationship> relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error);
-    bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error);
-    bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error);
-    
+    QList<QContactRelationship> relationshipsL(const QContactId &participantId, QContactRelationship::Role role, QContactManager::Error *error);
+    bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship *relationship, QContactManager::Error *error);
+    bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship &relationship, QContactManager::Error *error);
+    bool validateRelationship(const QContactRelationship &relationship, QContactManager::Error *error);
     
 private:
-    void isGroupMemberL(const CContactItem* contactItem, const TContactItemId groupId) const;
-    void fetchGroupMembersL(const QContactId& participantId, QList<QContactRelationship> *relationships);
-    void fetchMemberOfGroupsL(const QContactId& participantId, QList<QContactRelationship> *relationships);
+    void isGroupMemberL(const CContactItem *contactItem, const TContactItemId groupId) const;
+    void fetchGroupMembersL(const QContactLocalId &participantId, QList<QContactRelationship> *relationships);
+    void fetchMemberOfGroupsL(const QContactLocalId &participantId, QList<QContactRelationship> *relationships);
+    void fetchMembersOfAllGroupsL(QList<QContactRelationship> *relationships);
 };
 
 #endif

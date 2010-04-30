@@ -57,24 +57,27 @@ public:
         System = 1,
         Phone,
         Email,
-        Xmpp
+        InstantMessage
         // Extensible
     };
 
     QMessageAddress();
-    QMessageAddress(const QString &recipient, Type type);
+    QMessageAddress(Type type, const QString &addressee);
     QMessageAddress(const QMessageAddress &other);
+
+    virtual ~QMessageAddress();
 
     QMessageAddress& operator=(const QMessageAddress &other);
 
     bool operator==(const QMessageAddress &other) const;
     bool operator!=(const QMessageAddress &other) const;
 
-    virtual ~QMessageAddress();
-    QString recipient() const;
-    void setRecipient(const QString &recipient);
     Type type() const;
     void setType(Type type);
+
+    QString addressee() const;
+    void setAddressee(const QString &addressee);
+
     static void parseEmailAddress(const QString& emailAddress, QString *name, QString *address, QString *suffix = 0, bool *startDelimeterFound = 0, bool *endDelimeterFound = 0);
 
 private:

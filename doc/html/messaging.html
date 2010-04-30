@@ -15,7 +15,8 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Messaging<br /><span class="subtitle"></span>
 </h1>
 <p>The Qt Messaging API enables access to messaging services to search and sort messages, send messages, retrieve message data, and launch the preferred messaging client on the system to either display an existing message, compose a new message, or respond to an existing message.</p>
-<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#namespace">Namespace</a></li>
+<li><a href="#overview">Overview</a></li>
 <li><a href="#reference-documentation">Reference documentation</a></li>
 <ul><li><a href="#main-classes">Main classes</a></li>
 </ul>
@@ -28,10 +29,17 @@
 <li><a href="#messaging-services">Messaging Services</a></li>
 <li><a href="#concurrent-access-to-messaging-data">Concurrent Access to Messaging Data</a></li>
 <li><a href="#abstraction-of-messaging-data-storage-mechanism">Abstraction of Messaging Data Storage Mechanism</a></li>
+<li><a href="#examples">Examples</a></li>
+<ul><li><a href="#keep-in-touch">Keep In Touch</a></li>
+<li><a href="#service-actions">Service Actions</a></li>
 </ul>
+</ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
-<p>The messaging library provides a set of APIs for accessing messaging data. Interfaces are provided to retrieve and query messages, folders and accounts, also interfaces to create, modify, and store messages are provided. A unified interface for manipulation and storage of SMS, MMS, Email and XMPP messages is provided. Handling of internet media (MIME) messages that have only been partially retrieved is supported.</p>
+<p>The messaging library provides a set of APIs for accessing messaging data. Interfaces are provided to retrieve and query messages, folders and accounts, also interfaces to create, modify, and store messages are provided. A unified interface for manipulation and storage of SMS, MMS, MIME Email and TNEF Email messages is provided. Handling of messages that have only been partially retrieved is supported.</p>
 <p>An API to access messaging services to send messages and retrieve message data is provided, as well as messaging services to compose, reply to, forward and show messages using a native application.</p>
 <p>Notifications of addition, removal and updating of stored messages can be enabled.</p>
 <p>The library provides unified access to the messaging data on a device including concurrent access to messaging data by multiple applications, and independence from the mechanism used to store the messaging data on the device.</p>
@@ -46,7 +54,7 @@
 <tr valign="top" class="even"><th><a href="qmessageaccount.html">QMessageAccount</a></th><td>Represents a messaging account in the messaging store</td></tr>
 <tr valign="top" class="odd"><th><a href="qmessageaccountfilter.html">QMessageAccountFilter</a></th><td>Defines the parameters used for querying a subset of all available accounts from the messaging store</td></tr>
 <tr valign="top" class="even"><th><a href="qmessageaccountid.html">QMessageAccountId</a></th><td>Unique identifier for a QMessageAccount messaging account, within the scope of the messaging store</td></tr>
-<tr valign="top" class="odd"><th><a href="qmessageaccountordering.html">QMessageAccountOrdering</a></th><td>Defines the parameters used for sorting a subset of queried accounts from the messaging store</td></tr>
+<tr valign="top" class="odd"><th><a href="qmessageaccountsortorder.html">QMessageAccountSortOrder</a></th><td>Defines the parameters used for sorting a subset of queried accounts from the messaging store</td></tr>
 <tr valign="top" class="even"><th><a href="qmessageaddress.html">QMessageAddress</a></th><td>Interface for a message address</td></tr>
 <tr valign="top" class="odd"><th><a href="qmessagecontentcontainer.html">QMessageContentContainer</a></th><td>Interface for internet media (MIME) and Transport Neutral Encapsulation Format (TNEF) content that is possibly only partially retrieved</td></tr>
 <tr valign="top" class="even"><th><a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a></th><td>Unique identifier for QMessageContentContainer internet media (MIME) type entities, within the scope of the containing message</td></tr>
@@ -55,11 +63,11 @@
 <tr valign="top" class="odd"><th><a href="qmessagefolder.html">QMessageFolder</a></th><td>Interface for folders containing messages in the messaging store</td></tr>
 <tr valign="top" class="even"><th><a href="qmessagefolderfilter.html">QMessageFolderFilter</a></th><td>Defines the parameters used for querying a subset of all available folders from the messaging store</td></tr>
 <tr valign="top" class="odd"><th><a href="qmessagefolderid.html">QMessageFolderId</a></th><td>Unique identifier for a QMessageFolder message folder, within the scope of the messaging store</td></tr>
-<tr valign="top" class="even"><th><a href="qmessagefolderordering.html">QMessageFolderOrdering</a></th><td>Defines the parameters used for sorting a subset of queried folders from the messaging store</td></tr>
+<tr valign="top" class="even"><th><a href="qmessagefoldersortorder.html">QMessageFolderSortOrder</a></th><td>Defines the parameters used for sorting a subset of queried folders from the messaging store</td></tr>
 <tr valign="top" class="odd"><th><a href="qmessageid.html">QMessageId</a></th><td>Unique identifier for a QMessage message within the scope of the messaging store</td></tr>
-<tr valign="top" class="even"><th><a href="qmessageordering.html">QMessageOrdering</a></th><td>Defines the parameters used for sorting a subset of queried messages from the messaging store</td></tr>
-<tr valign="top" class="odd"><th><a href="qmessageserviceaction.html">QMessageServiceAction</a></th><td>The interface for requesting messaging services</td></tr>
-<tr valign="top" class="even"><th><a href="qmessagestore.html">QMessageStore</a></th><td>Represents the main interface for storage and retrieval of messages, folders and accounts in the messaging store</td></tr>
+<tr valign="top" class="even"><th><a href="qmessagemanager.html">QMessageManager</a></th><td>Represents the main interface for storage and retrieval of messages, folders and accounts in the system message store</td></tr>
+<tr valign="top" class="odd"><th><a href="qmessageservice.html">QMessageService</a></th><td>The interface for requesting messaging service operations</td></tr>
+<tr valign="top" class="even"><th><a href="qmessagesortorder.html">QMessageSortOrder</a></th><td>Defines the parameters used for sorting a subset of queried messages from the messaging store</td></tr>
 </table></p>
 <a name="composition-and-manipulation-of-messages"></a>
 <h3>Composition and Manipulation of Messages</h3>
@@ -86,25 +94,25 @@
 <a name="sorting-and-filtering-functionality"></a>
 <h3>Sorting and Filtering Functionality</h3>
 <p>The library provides a number of sort and filter functions to aid in selecting a useful view of data. This reduces the burden on the client of the library for managing the messaging data, as well as allowing better use of the underlying storage mechanism.</p>
-<p>Sorting is accomplished by providing a ordering object, specifying the sort order, and the message property upon which to order.</p>
+<p>Sorting is accomplished by providing a sorting object, specifying the sort order, and the message property upon which to order.</p>
 <p>Filtering is accomplished by providing a filtering condition, specifying a value, the property to match, and the desired relation between the value and the property.</p>
 <p>Filters can be combined using boolean operators to produce filters of arbitrary complexity.</p>
 <p>Classes to assist with sorting and filtering messages:</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Class</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td><a href="qmessagestore.html">QMessageStore</a></td><td>Represents the main interface for storage and retrieval of messages, folders and accounts from the messaging store.</td></tr>
+<tr valign="top" class="odd"><td><a href="qmessagemanager.html">QMessageManager</a></td><td>Represents the main interface for storage and retrieval of messages, folders and accounts from the messaging store.</td></tr>
 <tr valign="top" class="even"><td><a href="qmessagefilter.html">QMessageFilter</a></td><td>Defines the parameters used for querying a subset of all available messages from the messaging store.</td></tr>
-<tr valign="top" class="odd"><td><a href="qmessageordering.html">QMessageOrdering</a></td><td>Defines the parameters used for ordering messages queried from the messaging store.</td></tr>
+<tr valign="top" class="odd"><td><a href="qmessagesortorder.html">QMessageSortOrder</a></td><td>Defines the parameters used for sorting messages queried from the messaging store.</td></tr>
 <tr valign="top" class="even"><td><a href="qmessagefolderfilter.html">QMessageFolderFilter</a></td><td>Defines the parameters used for querying a subset of all available message folders from the messaging store.</td></tr>
-<tr valign="top" class="odd"><td><a href="qmessagefolderordering.html">QMessageFolderOrdering</a></td><td>Defines the parameters used for ordering message folders queried from the messaging store.</td></tr>
+<tr valign="top" class="odd"><td><a href="qmessagefoldersortorder.html">QMessageFolderSortOrder</a></td><td>Defines the parameters used for sorting message folders queried from the messaging store.</td></tr>
 <tr valign="top" class="even"><td><a href="qmessageaccountfilter.html">QMessageAccountFilter</a></td><td>Defines the parameters used for querying a subset of all available accounts from the messaging store.</td></tr>
-<tr valign="top" class="odd"><td><a href="qmessageaccountordering.html">QMessageAccountOrdering</a></td><td>Defines the parameters used for ordering accounts queried from the messaging store.</td></tr>
+<tr valign="top" class="odd"><td><a href="qmessageaccountsortorder.html">QMessageAccountSortOrder</a></td><td>Defines the parameters used for sorting accounts queried from the messaging store.</td></tr>
 </table></p>
 <a name="using-the-ordering-functions"></a>
 <h4>Using the Ordering Functions</h4>
 <p>An example of the use of Ordering functions can be found in the Send Message example.</p>
-<pre>    QMessageIdList ids = QMessageStore::instance()-&gt;queryMessages(QMessageFilter(),
-        QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);</pre>
+<pre>    QMessageIdList ids = QMessageManager().queryMessages(QMessageFilter(),
+        QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);</pre>
 <a name="using-the-filter-functions"></a>
 <h4>Using the Filter Functions</h4>
 <p>The following code is taken from the Keep In Touch example, it demonstrates the use of filters to achieve desired effects. You can also see how the filters once constructed can be operated on by typical boolean operators, in the same way you would manipulate bit settings in C. In this way we can build more complex conditions.</p>
@@ -122,20 +130,29 @@
     inclusionFilter = (outgoingFilter &amp; includeFilter &amp; ~excludeFilter);</pre>
 <a name="messaging-services"></a>
 <h3>Messaging Services</h3>
-<p>The library provides the <a href="qmessageserviceaction.html">QMessageServiceAction</a> class, which provides an interface to communicate with the system's native messaging services, including sending messages, retrieving message data, and composing or showing a message using a native application.</p>
+<p>The library provides the <a href="qmessageservice.html">QMessageService</a> class, which provides an interface to communicate with the system's native messaging services, including sending messages, retrieving message data, and composing or showing a message using a native application.</p>
 <p>Service actions communciate their operational status by emitting signals.</p>
-<p>Functions outside the <a href="qmessageserviceaction.html">QMessageServiceAction</a> class should not invoke network activity. That is only <a href="qmessageserviceaction.html">QMessageServiceAction</a> functions should be responsible for initiating network activity.</p>
+<p>Functions outside the <a href="qmessageservice.html">QMessageService</a> class should not invoke network activity. That is, only <a href="qmessageservice.html">QMessageService</a> functions should be responsible for initiating network activity (Note: this is not true for the Windows desktop and mobile platforms, where network activity can occur outside the client's control).</p>
 <a name="concurrent-access-to-messaging-data"></a>
 <h3>Concurrent Access to Messaging Data</h3>
 <p>The library provides a level of concurrent access to messaging data by multiple clients.</p>
 <p>The concurrent access does guarantee that data won't be corrupted by concurrent access, however it does not give any guarantees as to performance of messaging data access if accessed concurrently by multiple clients.</p>
+<p>A single client may access the messaging data from multiple threads, but only one thread may access the data concurrently.</p>
 <a name="abstraction-of-messaging-data-storage-mechanism"></a>
 <h3>Abstraction of Messaging Data Storage Mechanism</h3>
 <p>The library abstracts the storage method used to store messaging data.</p>
+<a name="examples"></a>
+<h3>Examples</h3>
+<a name="keep-in-touch"></a>
+<h4>Keep In Touch</h4>
+<p>The <a href="keepintouch.html">Keep In Touch</a> example shows how to extract useful information from the messages stored by the system.</p>
+<a name="service-actions"></a>
+<h4>Service Actions</h4>
+<p>The <a href="serviceactions.html">Service Actions</a> example is a program to demonstrate how to compose, send, show, query and retrieve messages, and also react to message store events using the Qt Mobility Messaging API.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -29,6 +29,7 @@ bin/vsexplorer*
 bin/examples/*
 bin/sysinfo*
 bin/qcrmlgen*
+bin/icheck*
 install/*
 lib/*
 *.app
@@ -51,6 +52,8 @@ qmakepluginstubs
 
 #Carbide project files
 *.project
+*.cproject
+*.settings
 plugin_commonU.def
 
 #Visual Studio files
@@ -62,4 +65,7 @@ plugin_commonU.def
 
 #QtCreator project files
 *.pro.user
+=======
+*.pro.user*
+*~
 

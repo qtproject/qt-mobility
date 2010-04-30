@@ -127,7 +127,7 @@ void tst_QAbstractSecuritySession::testSecSessionHandling()
     QVERIFY(simpleDesc.majorVersion() == 1);
     QVERIFY(simpleDesc.minorVersion() == 0);
     QVERIFY(simpleDesc.interfaceName() == QString("com.nokia.qt.ISimpleTypeTest"));
-    QCOMPARE(simpleDesc.property(QServiceInterfaceDescriptor::Capabilities).toStringList(),
+    QCOMPARE(simpleDesc.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(),
              QStringList() << "simple");
 
     QServiceFilter complexFilter;
@@ -139,7 +139,7 @@ void tst_QAbstractSecuritySession::testSecSessionHandling()
     QVERIFY(complexDesc.majorVersion() == 2);
     QVERIFY(complexDesc.minorVersion() == 3);
     QVERIFY(complexDesc.interfaceName() == QString("com.nokia.qt.IComplexTypeTest"));
-    QCOMPARE(complexDesc.property(QServiceInterfaceDescriptor::Capabilities).toStringList(),
+    QCOMPARE(complexDesc.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList(),
              QStringList() << "complex" << "simple");
 
     //no QAbstractSecuritySession object

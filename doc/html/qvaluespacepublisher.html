@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QValueSpacePublisher Class Reference</h1>
 <p>The QValueSpacePublisher class allows applications to publish values in the Value Space. <a href="#details">More...</a></p>
-<pre>    #include &lt;QValueSpacePublisher&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QValueSpacePublisher&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qvaluespacepublisher-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -32,7 +32,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacepublisher.html#sync">sync</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
@@ -42,7 +42,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacepublisher.html#setValue">setValue</a></b> ( const QString &amp; <i>name</i>, const QVariant &amp; <i>data</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
@@ -51,7 +51,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacepublisher.html#interestChanged">interestChanged</a></b> ( const QString &amp; <i>attribute</i>, bool <i>interested</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
 <a name="reimplemented-protected-functions"></a>
@@ -60,21 +60,21 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacepublisher.html#connectNotify">connectNotify</a></b> ( const char * <i>member</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QValueSpacePublisher class allows applications to publish values in the Value Space.</p>
-<p>When multiple Value Space layers are available QValueSpacePublisher only publishes values to the layer with the highest order. The layers that QValueSpacePublisher can access can be limited by specifying either a <a href="qvaluespace.html#LayerOption-enum">filter</a> or a <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a> at construction time.</p>
+<p>When multiple Value Space layers are available QValueSpacePublisher only publishes values to the layer with the highest order. The layers that QValueSpacePublisher can access can be limited by specifying either a <a href="qvaluespace.html#LayerOption-enum">filter</a> or a <a href="http://qt.nokia.com/doc/4.6/quuid.html">QUuid</a> at construction time.</p>
 <p>The lifetime of values published in the Value Space is specified by the particular Value Space layer that the value is published in. For details on the different behaviors see <a href="qvaluespace.html#LayerOption-enum">QValueSpace::LayerOption</a>.</p>
 <p>Once a value is published all applications in the system will have read access to it via the <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class.</p>
 <p>Although, logically, the Value Space is a simple collection of hierarchical paths, these paths can conceptually be visualized as a set of objects with attributes. For example, rather than viewing the following list as 12 distinct Value Space paths:</p>
@@ -96,14 +96,14 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QValueSpacePublisher/QValueSpacePublisher"></a>
-<h3 class="fn"><a name="QValueSpacePublisher"></a>QValueSpacePublisher::QValueSpacePublisher ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpacePublisher"></a>QValueSpacePublisher::QValueSpacePublisher ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> with the specified <i>parent</i> that publishes values under <i>path</i>.</p>
-<h3 class="fn"><a name="QValueSpacePublisher-2"></a>QValueSpacePublisher::QValueSpacePublisher ( <a href="qvaluespace.html#LayerOption-enum">QValueSpace::LayerOptions</a> <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpacePublisher-2"></a>QValueSpacePublisher::QValueSpacePublisher ( <a href="qvaluespace.html#LayerOption-enum">QValueSpace::LayerOptions</a> <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> with the specified <i>parent</i> that publishes values under <i>path</i>. The <i>filter</i> parameter is used to limit which layer this <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> will access.</p>
 <p>The constructed Value Space publisher will access the <a href="qabstractvaluespacelayer.html">layer</a> with the highest <a href="qabstractvaluespacelayer.html#order">order</a> that matches <i>filter</i> and for which <i>path</i> is a valid path.</p>
 <p>If no suitable <a href="qabstractvaluespacelayer.html">layer</a> is found, the constructed <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> will be unconnected.</p>
 <p>See also <a href="qvaluespacepublisher.html#isConnected">isConnected</a>().</p>
-<h3 class="fn"><a name="QValueSpacePublisher-3"></a>QValueSpacePublisher::QValueSpacePublisher ( const <a href="http://qt.nokia.com/doc/4.5/quuid.html">QUuid</a> &amp; <i>uuid</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QValueSpacePublisher-3"></a>QValueSpacePublisher::QValueSpacePublisher ( const <a href="http://qt.nokia.com/doc/4.6/quuid.html">QUuid</a> &amp; <i>uuid</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>path</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> with the specified <i>parent</i> that publishes values under <i>path</i>. Only the layer identified by <i>uuid</i> will be accessed by this publisher.</p>
 <p>Use of this constructor is not platform agnostic. If possible use one of the constructors that take a QAbstractValueSpaceLayer::LayerOptions parameter instead.</p>
 <p>If a layer with a matching <i>uuid</i> is not found, the constructed <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> will be unconnected.</p>
@@ -113,22 +113,22 @@
 <p>Destroys the <a href="qvaluespacepublisher.html">QValueSpacePublisher</a>. This will remove all values published by this publisher in <a href="qvaluespace.html#LayerOption-enum">non-permanent</a> layers.</p>
 <a name="//apple_ref/cpp/instm/QValueSpacePublisher/connectNotify"></a>
 <h3 class="fn"><a name="connectNotify"></a>void QValueSpacePublisher::connectNotify ( const char * <i>member</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.5/qobject.html#connectNotify">QObject::connectNotify</a>().</p>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qobject.html#connectNotify">QObject::connectNotify</a>().</p>
 <p>Registers this <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> for notifications when QValueSpaceSubscribers are interested in values under <a href="qvaluespacepublisher.html#path">path</a>().</p>
 <p>Generally you do not need to call this function as it is automatically called when connections are made to this classes signals. <i>member</i> is the signal that has been connected.</p>
 <p>If you reimplement this virtual function it is important that you call this implementation from your implementation.</p>
 <p>See also <a href="qvaluespacepublisher.html#interestChanged">interestChanged</a>().</p>
 <a name="//apple_ref/cpp/instm/QValueSpacePublisher/interestChanged"></a>
-<h3 class="fn"><a name="interestChanged"></a>void QValueSpacePublisher::interestChanged ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>attribute</i>, bool <i>interested</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="interestChanged"></a>void QValueSpacePublisher::interestChanged ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>attribute</i>, bool <i>interested</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when interest in <i>attribute</i> changes. If <i>interested</i> is true at least on <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> is interested in the value of <i>attribute</i>.</p>
 <a name="//apple_ref/cpp/instm/QValueSpacePublisher/isConnected"></a>
 <h3 class="fn"><a name="isConnected"></a>bool QValueSpacePublisher::isConnected () const</h3>
 <p>Returns true if this <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> is connected to an available layer; otherwise returns false.</p>
 <a name="//apple_ref/cpp/instm/QValueSpacePublisher/path"></a>
-<h3 class="fn"><a name="path"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QValueSpacePublisher::path () const</h3>
+<h3 class="fn"><a name="path"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QValueSpacePublisher::path () const</h3>
 <p>Returns the path that this <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> refers to.</p>
 <a name="//apple_ref/cpp/instm/QValueSpacePublisher/resetValue"></a>
-<h3 class="fn"><a name="resetValue"></a>void QValueSpacePublisher::resetValue ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>name</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="resetValue"></a>void QValueSpacePublisher::resetValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Removes the value <i>name</i> and all sub-attributes from the system.</p>
 <p>For example:</p>
 <pre>    QValueSpacePublisher publisher(&quot;/Device&quot;);
@@ -143,7 +143,7 @@
 <span class="comment">    // QValueSpaceSubscriber(&quot;/Device/State&quot;).value() == QVariant();</span>
 <span class="comment">    // QValueSpaceSubscriber(&quot;/Device/State/Memory&quot;).value() == QVariant();</span></pre>
 <a name="//apple_ref/cpp/instm/QValueSpacePublisher/setValue"></a>
-<h3 class="fn"><a name="setValue"></a>void QValueSpacePublisher::setValue ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>name</i>, const <a href="http://qt.nokia.com/doc/4.5/qvariant.html">QVariant</a> &amp; <i>data</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="setValue"></a>void QValueSpacePublisher::setValue ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>data</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Sets the value <i>name</i> on the publisher to <i>data</i>. If name is empty, this call will set the value of this publisher's path.</p>
 <p>For example:</p>
 <pre>    QValueSpacePublisher publisher(&quot;/Device&quot;);
@@ -160,6 +160,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

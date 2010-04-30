@@ -1,2 +1,7 @@
 TEMPLATE = subdirs
-SUBDIRS = lackey tst_qvaluespacesubscriber tst_qvaluespacesubscriber_oop
+
+SUBDIRS = tst_qvaluespacesubscriber
+!symbian {
+    SUBDIRS += lackey
+    !maemo5:SUBDIRS += tst_qvaluespacesubscriber_oop
+}

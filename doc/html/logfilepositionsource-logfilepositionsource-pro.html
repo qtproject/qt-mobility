@@ -25,13 +25,22 @@
     CONFIG += console
 
     include(../examples.pri)
-    qtAddLibrary(QtLocation)
 
-    symbian: {
-        addFiles.sources = simplelog.txt
-        DEPLOYMENT += addFiles
+    CONFIG += mobility
+    MOBILITY = location
 
-        TARGET.CAPABILITY = Location
+    symbian|wince*: {
+        symbian: {
+            addFiles.sources = simplelog.txt
+            DEPLOYMENT += addFiles
+
+            TARGET.CAPABILITY = Location
+        }
+        wince*: {
+            addFiles.sources = ./simplelog.txt
+            addFiles.path = .
+            DEPLOYMENT += addFiles
+        }
     } else {
         logfileexample.path = $$DESTDIR
         logfileexample.files = simplelog.txt
@@ -43,6 +52,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

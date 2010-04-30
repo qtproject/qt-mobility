@@ -95,7 +95,7 @@ QMessageAccount::QMessageAccount()
 QMessageAccount::QMessageAccount(const QMessageAccountId &id)
     : d_ptr(new QMessageAccountPrivate)
 {
-    *this = QMessageStore::instance()->account(id);
+    *this = QMessageManager().account(id);
 }
 
 QMessageAccount::QMessageAccount(const QMessageAccount &other) 

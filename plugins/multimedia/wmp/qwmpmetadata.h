@@ -47,13 +47,13 @@
 
 #include <wmp.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QMediaContent;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 class QWmpEvents;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QWmpMetaData : public QMetaDataControl
 {
@@ -65,9 +65,9 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMediaServices::MetaData key) const;
+    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
+    QList<QtMediaServices::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const ;
     void setExtendedMetaData(const QString &key, const QVariant &value);
@@ -78,7 +78,7 @@ public:
     static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
     static QMediaContent resources(IWMPMedia *media);
     static QVariant convertVariant(const VARIANT &variant);
-    static QVariant albumArtUri(IWMPMedia *media, const char *suffix);
+    static QVariant albumArtUrl(IWMPMedia *media, const char *suffix);
 
 private Q_SLOTS:
     void currentItemChangeEvent(IDispatch *dispatch);

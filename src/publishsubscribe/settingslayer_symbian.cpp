@@ -38,10 +38,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "settingslayer_symbian.h"
+
+#include "settingslayer_symbian_p.h"
 #include <QVariant>
 #include "xqsettingskey.h"
 #include "xqpublishandsubscribeutils.h"
+
+#ifdef __WINS__
+    #include "pathmapper_symbian.cpp"
+    #include "qcrmlparser.cpp"
+#else
+    #include "pathmapper_proxy_symbian.cpp"
+#endif
 
 #include <QDebug>
 
@@ -53,12 +61,14 @@ QVALUESPACE_AUTO_INSTALL_LAYER(SymbianSettingsLayer);
 SymbianSettingsLayer::SymbianSettingsLayer()
 {
     connect(&m_settingsManager, SIGNAL(valueChanged(const XQSettingsKey&, const QVariant&)),
-            this, SLOT(valueChanged(const XQSettingsKey&, const QVariant&)));
+            this, SLOT(notifyChange(const XQSettingsKey&)));
+    connect(&m_settingsManager, SIGNAL(itemDeleted(const XQSettingsKey&)),
+            this, SLOT(notifyChange(const XQSettingsKey&)));
 }
 
 SymbianSettingsLayer::~SymbianSettingsLayer()
 {
-    QMutableHashIterator<QString, SymbianSettingsHandle *> i(handles);
+    QMutableHashIterator<QString, SymbianSettingsHandle *> i(m_handles);
     while (i.hasNext()) {
         i.next();
 
@@ -144,16 +154,25 @@ bool SymbianSettingsLayer::value(Handle handle, const QString &subPath, QVariant
     fullPath.append(value);
 
     bool success = false;
-    if (sh) {
-        PathMapper::Target target;
-        quint32 category;
-        quint32 key;
-        if (pathMapper.resolvePath(fullPath, target, category, key)) {
-            XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
-            *data = m_settingsManager.readItemValue(settingsKey);
-            if (!data->isNull()) {
-                success = true;
+    PathMapper::Target target;
+    quint32 category;
+    quint32 key;
+    if (m_pathMapper.resolvePath(fullPath, target, category, key)) {
+        XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+        QVariant readValue = m_settingsManager.readItemValue(settingsKey);
+        if (readValue.type() == QVariant::ByteArray) {
+            QDataStream readStream(readValue.toByteArray());
+            QVariant serializedValue;
+            readStream >> serializedValue;
+            if (serializedValue.isValid()) {
+                *data = serializedValue;
+            } else {
+                *data = readValue;
             }
+            success = true;
+        } else {
+            *data = readValue;
+            success = data->isValid();
         }
     }
 
@@ -171,7 +190,7 @@ QSet<QString> SymbianSettingsLayer::children(Handle handle)
     if (!sh)
         return foundChildren;
 
-    pathMapper.getChildren(sh->path, foundChildren);
+    m_pathMapper.getChildren(sh->path, foundChildren);
     return foundChildren;
 }
 
@@ -200,15 +219,15 @@ QAbstractValueSpaceLayer::Handle SymbianSettingsLayer::item(Handle parent, const
             fullPath = sh->path + path;
     }
 
-    if (handles.contains(fullPath)) {
-        SymbianSettingsHandle *sh = handles.value(fullPath);
+    if (m_handles.contains(fullPath)) {
+        SymbianSettingsHandle *sh = m_handles.value(fullPath);
         ++sh->refCount;
         return Handle(sh);
     }
 
     // Create a new handle for path
     SymbianSettingsHandle *sh = new SymbianSettingsHandle(fullPath);
-    handles.insert(fullPath, sh);
+    m_handles.insert(fullPath, sh);
 
     return Handle(sh);
 }
@@ -219,18 +238,11 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
     if (!sh)
         return;
 
-    QSet<QString> children;
-    pathMapper.getChildren(sh->path, children);
-    foreach(QString child, children) {
-        QString fullPath = sh->path;
-        if (fullPath.right(1) != QLatin1String("/"))
-            fullPath += QLatin1Char('/');
-        fullPath += child;
-
+    foreach (const QString fullPath, m_pathMapper.childPaths(sh->path)) {
         PathMapper::Target target;
         quint32 category;
         quint32 key;
-        if (pathMapper.resolvePath(fullPath, target, category, key)) {
+        if (m_pathMapper.resolvePath(fullPath, target, category, key)) {
             XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
             QByteArray hash;
             hash += qHash(target);
@@ -238,13 +250,13 @@ void SymbianSettingsLayer::setProperty(Handle handle, Properties properties)
             hash += qHash((unsigned long)key);
 
             if (properties & QAbstractValueSpaceLayer::Publish) {
-                qDebug() << "Start monitoring" << fullPath;
                 m_settingsManager.startMonitoring(settingsKey);
                 m_monitoringHandles[hash] = sh;
+                m_monitoringPaths.insert(fullPath);
             } else {
-                qDebug() << "Stop monitoring" << fullPath;
                 m_settingsManager.stopMonitoring(settingsKey);
                 m_monitoringHandles.remove(hash);
+                m_monitoringPaths.remove(fullPath);
             }
         }
     }
@@ -259,7 +271,7 @@ void SymbianSettingsLayer::removeHandle(Handle handle)
     if (--sh->refCount)
         return;
 
-    handles.remove(sh->path);
+    m_handles.remove(sh->path);
 
     delete sh;
 }
@@ -306,27 +318,40 @@ bool SymbianSettingsLayer::setValue(QValueSpacePublisher *creator,
     PathMapper::Target target;
     quint32 category;
     quint32 key;
-    if (pathMapper.resolvePath(fullPath, target, category, key)) {
+    if (m_pathMapper.resolvePath(fullPath, target, category, key)) {
         if (target == PathMapper::TargetRPropery) {
             XQPublishAndSubscribeUtils utils(m_settingsManager);
 
             XQSettingsManager::Type type = XQSettingsManager::TypeVariant;
-            switch (data.type()) {
-            case QVariant::Int: type = XQSettingsManager::TypeInt; break;
-            case QVariant::String: type = XQSettingsManager::TypeString; break;
-            case QVariant::ByteArray: type = XQSettingsManager::TypeByteArray; break;
-            default:
-                return false;
+            if (data.type() == QVariant::Int) {
+                type = XQSettingsManager::TypeInt;
+            } else {
+                type = XQSettingsManager::TypeByteArray;
             }
-            utils.defineProperty(XQPublishAndSubscribeSettingsKey((long)category, (unsigned long)key), type);
+            utils.defineProperty(
+                XQPublishAndSubscribeSettingsKey((long)category, (unsigned long)key), type);
         }
-        XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);        
-        success = m_settingsManager.writeItemValue(settingsKey, data);
+
+        XQSettingsKey settingsKey(XQSettingsKey::Target(target), (long)category, (unsigned long)key);
+
+        if (m_monitoringPaths.contains(fullPath)) {
+            m_settingsManager.startMonitoring(settingsKey);
+        }
+
+        if (data.type() == QVariant::Int || data.type() == QVariant::ByteArray) {
+            //Write integers and bytearrays as such
+            success = m_settingsManager.writeItemValue(settingsKey, data);
+        } else {
+            //Write other data types serialized into a bytearray
+            QByteArray byteArray;
+            QDataStream writeStream(&byteArray, QIODevice::WriteOnly);
+            writeStream << data;
+            success = m_settingsManager.writeItemValue(settingsKey, QVariant(byteArray));
+        }
     }
 
     if (createdHandle)
         removeHandle(Handle(sh));
-
     return success;
 }
 
@@ -335,7 +360,7 @@ void SymbianSettingsLayer::sync()
     //Not needed
 }
 
-bool SymbianSettingsLayer::removeSubTree(QValueSpacePublisher *creator, Handle handle)
+bool SymbianSettingsLayer::removeSubTree(QValueSpacePublisher * /*creator*/, Handle /*handle*/)
 {
     //Not needed
     return false;
@@ -345,9 +370,54 @@ bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator,
     Handle handle,
     const QString &subPath)
 {
-    qDebug("bool SymbianSettingsLayer::removeValue(QValueSpacePublisher *creator, Handle handle, const QString &subPath)");
-    //TODO: Is this needed in Symbian?
-    return false;
+    SymbianSettingsHandle *sh = symbianSettingsHandle(handle);
+    if (!sh)
+        return false;
+
+    QString path(subPath);
+    while (path.endsWith(QLatin1Char('/')))
+        path.chop(1);
+
+    int index = path.lastIndexOf(QLatin1Char('/'), -1);
+
+    bool createdHandle = false;
+
+    QString value;
+    if (index == -1) {
+        value = path;
+    } else {
+        // want a value that is in a sub path under handle
+        value = path.mid(index + 1);
+        path.truncate(index);
+
+        if (path.isEmpty())
+            path.append(QLatin1Char('/'));
+
+        sh = symbianSettingsHandle(item(Handle(sh), path));
+        createdHandle = true;
+    }
+
+    QString fullPath(sh->path);
+    if (fullPath != QLatin1String("/"))
+        fullPath.append(QLatin1Char('/'));
+
+    fullPath.append(value);
+
+    bool success = false;
+    PathMapper::Target target;
+    quint32 category;
+    quint32 key;
+    if (m_pathMapper.resolvePath(fullPath, target, category, key)) {
+        if (target == PathMapper::TargetRPropery) {
+            XQPublishAndSubscribeUtils utils(m_settingsManager);
+            utils.deleteProperty(XQPublishAndSubscribeSettingsKey((long)category, (unsigned long)key));
+        }
+    }
+
+    if (createdHandle)
+        removeHandle(Handle(sh));
+
+    return success;
 }
 
 void SymbianSettingsLayer::addWatch(QValueSpacePublisher *, Handle)
@@ -371,9 +441,8 @@ bool SymbianSettingsLayer::notifyInterest(Handle, bool)
     return false;
 }
 
-void SymbianSettingsLayer::valueChanged(const XQSettingsKey& key, const QVariant& value)
+void SymbianSettingsLayer::notifyChange(const XQSettingsKey& key)
 {
-    qDebug("void SymbianSettingsLayer::valueChanged(const XQSettingsKey& key, const QVariant& value)");
     QByteArray hash;
     hash += qHash(key.target());
     hash += qHash(key.uid());
@@ -384,6 +453,6 @@ void SymbianSettingsLayer::valueChanged(const XQSettingsKey& key, const QVariant
     }
 }
 
-#include "moc_settingslayer_symbian.cpp"
+#include "moc_settingslayer_symbian_p.cpp"
 
 QTM_END_NAMESPACE

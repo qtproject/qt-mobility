@@ -106,10 +106,10 @@ MapiFolderIterator::MapiFolderIterator(MapiStorePtr store,
         if (parent->isValid()) {
             if (!_store->session()->equal(parent->entryId(), root->entryId()))
                 _folders.append(parent);
-            QMessageStore::ErrorCode ignored(QMessageStore::NoError);
+            QMessageManager::Error ignored(QMessageManager::NoError);
             while (true) {
                 MapiFolderPtr folder(parent->nextSubFolder(&ignored));
-                if (ignored != QMessageStore::NoError) {
+                if (ignored != QMessageManager::NoError) {
                     qWarning() << "MapiFolderIterator:: Error getting next subfolder";
                     break;
                 }
@@ -276,10 +276,10 @@ QMessageFilterPrivate* QMessageFilterPrivate::implementation(const QMessageFilte
     return filter.d_ptr;
 }
 
-MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store)
+MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &filter, QMessageManager::Error *error, const MapiStorePtr &store)
 {
     return MapiFolderIterator(store, 
-        store->rootFolder(lastError),
+        store->rootFolder(error),
         filter.d_ptr->_standardFoldersInclude, 
         filter.d_ptr->_standardFoldersExclude,
         filter.d_ptr->_parentInclude, 
@@ -288,9 +288,9 @@ MapiFolderIterator QMessageFilterPrivate::folderIterator(const QMessageFilter &f
         filter.d_ptr->_ancestorExclude);
 }
 
-MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session)
+MapiStoreIterator QMessageFilterPrivate::storeIterator(const QMessageFilter &filter, QMessageManager::Error *error, const MapiSessionPtr &session)
 {
-    return MapiStoreIterator(session->allStores(lastError), filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude);
+    return MapiStoreIterator(session->allStores(error), filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude);
 }
 
 QList<QMessageFilter> QMessageFilterPrivate::subfilters(const QMessageFilter &filter)
@@ -311,18 +311,18 @@ QList<QMessageFilter> QMessageFilterPrivate::subfilters(const QMessageFilter &fi
     return result;
 }
 
-// Several filters require QMessageStore::queryX to be called to evaluate filter member variables, 
+// Several filters require QMessageManager::queryX to be called to evaluate filter member variables, 
 // namely byIds(const QMessageFilter &, ...), byParentAccountId(const QMessageAccountFilter &, ...), 
 // byFolderIds(const QMessageFolderFilter &, ...), byAncestorFolderIds(const QMessageFolderFilter &, ...)
-QMessageFilter QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFilter &filter)
+QMessageFilter QMessageFilterPrivate::preprocess(QMessageManager::Error *error, MapiSessionPtr session, const QMessageFilter &filter)
 {
     QMessageFilter result(filter);
-    QMessageFilterPrivate::preprocess(lastError, session, &result);
+    QMessageFilterPrivate::preprocess(error, session, &result);
     return result;
 }
 
 // returns true if filter is modified
-bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter)
+bool QMessageFilterPrivate::preprocess(QMessageManager::Error *error, MapiSessionPtr session, QMessageFilter *filter)
 {
     if (!filter)
         return false;
@@ -341,14 +341,14 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
         if (filter->d_ptr->_messageFilter->isEmpty()) {
             result = ~result;  // match all for include, match none for exclude
         } else {
-            QMessageIdList ids(session->queryMessages(lastError, *filter->d_ptr->_messageFilter));
+            QMessageIdList ids(session->queryMessages(error, *filter->d_ptr->_messageFilter));
             result = QMessageFilter::byId(ids, inclusion ? QMessageDataComparator::Includes : QMessageDataComparator::Excludes);
         }
     } else if (filter->d_ptr->_field == AccountFilter) {
         if (filter->d_ptr->_accountFilter->isEmpty()) {
             result = ~result;  // match all for include, match none for exclude
         } else {
-            QList<MapiStorePtr> stores(session->filterStores(lastError, *filter->d_ptr->_accountFilter));
+            QList<MapiStorePtr> stores(session->filterStores(error, *filter->d_ptr->_accountFilter));
             foreach(MapiStorePtr store, stores) {
                 if (inclusion) {
                     result |= QMessageFilter::byParentAccountId(store->id());
@@ -361,7 +361,7 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
         if (filter->d_ptr->_folderFilter->isEmpty()) {
             result = ~result;  // match all for include, match none for exclude
         } else {
-            QList<MapiFolderPtr> folders(session->filterFolders(lastError, *filter->d_ptr->_folderFilter));
+            QList<MapiFolderPtr> folders(session->filterFolders(error, *filter->d_ptr->_folderFilter));
             foreach(MapiFolderPtr folder, folders) {
                 if (inclusion) {
                     result |= QMessageFilter::byParentFolderId(folder->id());
@@ -371,7 +371,7 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
             }
         }
     } else if (filter->d_ptr->_field == AncestorFilter) {
-        QList<MapiFolderPtr> folders(session->filterFolders(lastError, *filter->d_ptr->_folderFilter));
+        QList<MapiFolderPtr> folders(session->filterFolders(error, *filter->d_ptr->_folderFilter));
         foreach(MapiFolderPtr folder, folders) {
             if (inclusion) {
                 result |= QMessageFilter::byAncestorFolderIds(folder->id());
@@ -383,8 +383,8 @@ bool QMessageFilterPrivate::preprocess(QMessageStore::ErrorCode *lastError, Mapi
         QMessageFilter *l(filter->d_ptr->_left);
         QMessageFilter *r(filter->d_ptr->_right);
         bool modified(true); //TODO: should default to false but tst_qmessagestorekeys (id list exclusion 3) is failing
-        modified |= preprocess(lastError, session, l);
-        modified |= preprocess(lastError, session, r);
+        modified |= preprocess(error, session, l);
+        modified |= preprocess(error, session, r);
 
         // It's necessary to recombine bool op filters, because the operands may now have non-empty containerFilter parts,
         // specifically in the case that one of the operands has a *Filter field.
@@ -457,13 +457,13 @@ bool QMessageFilterPrivate::matchesMessage(const QMessageFilter &filter, const Q
     if (!sAccountIdMatches(accountId, filter.d_ptr->_accountsInclude, filter.d_ptr->_accountsExclude))
         return false;
 
-    QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+    QMessageManager::Error ignoredError(QMessageManager::NoError);
 #ifdef _WIN32_WCE
     MapiFolderPtr folder = store->openFolder(&ignoredError, QMessageIdPrivate::folderRecordKey(message.id()));
 #else
     MapiFolderPtr folder = store->openFolderWithKey(&ignoredError, QMessageIdPrivate::folderRecordKey(message.id()));
 #endif
-    if (ignoredError != QMessageStore::NoError)
+    if (ignoredError != QMessageManager::NoError)
         return false;
     if (!sFolderMatches(folder, 
         filter.d_ptr->_standardFoldersInclude, 
@@ -488,7 +488,7 @@ bool QMessageFilterPrivate::matchesMessageSimple(const QMessageFilter &filter, c
         return false;
     }
 
-    if (filter.d_ptr->_options & QMessageDataComparator::FullWord) {
+    if (filter.d_ptr->_matchFlags & QMessageDataComparator::MatchFullWord) {
         // TODO: Document Full word matching is not supported on MAPI
         qWarning("matchesMessage: Full word matching not supported on MAPI platforms.");
         return false;
@@ -526,7 +526,7 @@ bool QMessageFilterPrivate::matchesMessageSimple(const QMessageFilter &filter, c
             QString value(filter.d_ptr->_value.toString());
             QStringList messageStrings;
             QString tmp;
-            bool caseSensitive(filter.d_ptr->_options & QMessageDataComparator::CaseSensitive);
+            bool caseSensitive(filter.d_ptr->_matchFlags & QMessageDataComparator::MatchCaseSensitive);
             if (!caseSensitive) {
                 value = value.toLower();
             }
@@ -534,14 +534,14 @@ bool QMessageFilterPrivate::matchesMessageSimple(const QMessageFilter &filter, c
             if (filter.d_ptr->_field == QMessageFilterPrivate::Recipients) {
                 QMessageAddressList addresses(message.to() + message.cc() + message.bcc());
                 foreach(QMessageAddress address, addresses) {
-                    tmp = address.recipient();
+                    tmp = address.addressee();
                     if (!caseSensitive) {
                         tmp = tmp.toLower();
                     }
                     messageStrings.append(tmp);
                 }
             } else if (filter.d_ptr->_field == QMessageFilterPrivate::Sender) {
-                tmp = message.from().recipient();
+                tmp = message.from().addressee();
                 if (!caseSensitive) {
                     tmp = tmp.toLower();
                 }
@@ -738,7 +738,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
         qWarning("Invalid filter application ignored.");
         return;
     }
-    if (d_ptr->_options & QMessageDataComparator::FullWord) {
+    if (d_ptr->_matchFlags & QMessageDataComparator::MatchFullWord) {
         qWarning("Full word matching not supported on MAPI platforms.");
         return;
     }
@@ -905,7 +905,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
             complement();
         }
 
-        if ((d_ptr->_options & QMessageDataComparator::CaseSensitive) == 0) {
+        if ((d_ptr->_matchFlags & QMessageDataComparator::MatchCaseSensitive) == 0) {
             _subRestriction[1].res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
         }
 
@@ -961,7 +961,7 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
             complement();
         }
 
-        if ((d_ptr->_options & QMessageDataComparator::CaseSensitive) == 0)
+        if ((d_ptr->_matchFlags & QMessageDataComparator::MatchCaseSensitive) == 0)
             _restriction.res.resContent.ulFuzzyLevel |= FL_IGNORECASE;
 
         _valid = true;
@@ -1086,18 +1086,8 @@ MapiRestriction::MapiRestriction(const QMessageFilter &aFilter)
             QMessage::Status status(static_cast<QMessage::Status>(d_ptr->_value.toUInt()));
             switch (status) {
             case QMessage::Incoming:
-                _restriction.rt = RES_OR;
-                _restriction.res.resAnd.cRes = 2;
-                _restriction.res.resAnd.lpRes = &_subRestriction[0];
-                _subRestriction[0].rt = RES_EXIST;
-                _subRestriction[0].res.resExist.ulReserved1 = 0;
-                _subRestriction[0].res.resExist.ulPropTag = PR_RECEIVED_BY_ENTRYID;
-                _subRestriction[0].res.resExist.ulReserved2 = 0;
-                _subRestriction[1].rt = RES_EXIST;
-                _subRestriction[1].res.resExist.ulReserved1 = 0;
-                _subRestriction[1].res.resExist.ulPropTag = PR_END_DATE;
-                _subRestriction[1].res.resExist.ulReserved2 = 0;
-                _valid = true;
+                // Restriction is not possible in this case
+                _valid = false;
                 return;
             case QMessage::Read:
                 _restriction.res.resBitMask.relBMR = BMR_NEZ;
@@ -1250,7 +1240,7 @@ QMessageFilter QMessageFilterPrivate::containerFiltersPart()
 QMessageFilter QMessageFilterPrivate::nonContainerFiltersPart()
 {
     QMessageFilter result;
-    result.d_ptr->_options = _options;
+    result.d_ptr->_matchFlags = _matchFlags;
     result.d_ptr->_field = _field;
     result.d_ptr->_value = _value;
     result.d_ptr->_comparatorType = _comparatorType;
@@ -1298,7 +1288,7 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     d_ptr->_left = 0;
     delete d_ptr->_right;
     d_ptr->_right = 0;
-    d_ptr->_options = other.d_ptr->_options;
+    d_ptr->_matchFlags = other.d_ptr->_matchFlags;
     d_ptr->_field = other.d_ptr->_field;
     d_ptr->_value = other.d_ptr->_value;
     d_ptr->_comparatorType = other.d_ptr->_comparatorType;
@@ -1336,23 +1326,23 @@ QMessageFilter& QMessageFilter::operator=(const QMessageFilter& other)
     return *this;
 }
 
-void QMessageFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
-    if (d_ptr->_options & QMessageDataComparator::FullWord) {
+    d_ptr->_matchFlags = matchFlags;
+    if (d_ptr->_matchFlags & QMessageDataComparator::MatchFullWord) {
         qWarning("Full word matching not supported on MAPI platforms.");
         d_ptr->_valid = false;
     } else {
         if (d_ptr->_left)
-            d_ptr->_left->setOptions(options);
+            d_ptr->_left->setMatchFlags(matchFlags);
         if (d_ptr->_right)
-            d_ptr->_right->setOptions(options);
+            d_ptr->_right->setMatchFlags(matchFlags);
     }
 }
 
-QMessageDataComparator::Options QMessageFilter::options() const
+QMessageDataComparator::MatchFlags QMessageFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageFilter::isEmpty() const
@@ -1764,7 +1754,7 @@ QMessageFilter QMessageFilter::byType(QMessage::Type type, QMessageDataComparato
 
 QMessageFilter QMessageFilter::byType(QMessage::TypeFlags aType, QMessageDataComparator::InclusionComparator cmp)
 {
-    QMessage::TypeFlags type(aType & (QMessage::Sms | QMessage::Email)); // strip Mms, Xmpp
+    QMessage::TypeFlags type(aType & (QMessage::Sms | QMessage::Email)); // strip Mms, InstantMessage
     if (type == QMessage::Sms) {
         if (cmp == QMessageDataComparator::Includes) {
             return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::Equal);
@@ -1784,7 +1774,7 @@ QMessageFilter QMessageFilter::byType(QMessage::TypeFlags aType, QMessageDataCom
             return QMessageFilter(); // inclusion, match all
         return ~QMessageFilter(); // exclusion, match none
     }
-    // Mms/Xmpp only
+    // Mms/InstantMessage only
     if (cmp == QMessageDataComparator::Includes)
         return ~QMessageFilter(); // mms only inclusion, match none
     return QMessageFilter(); // mms only exclusion, match all
@@ -1987,16 +1977,25 @@ QMessageFilter QMessageFilter::byStatus(QMessage::StatusFlags mask, QMessageData
 {
     QMessageFilter result;
     QMessageDataComparator::EqualityComparator comparator(QMessageDataComparator::NotEqual);
-    if (cmp == QMessageDataComparator::Includes)
+    if (cmp == QMessageDataComparator::Includes) {
         comparator = QMessageDataComparator::Equal;
-    if (mask & QMessage::Incoming)
+    }
+    if (mask & QMessage::Incoming) {
         result &= QMessageFilter::byStatus(QMessage::Incoming, comparator);
-    if (mask & QMessage::Read)
+
+        // We can't use a restriction to enforce this filter
+        result.d_ptr->_restrictionPermitted = false;
+        result.d_ptr->_matchesRequired = true;
+    }
+    if (mask & QMessage::Read) {
         result &= QMessageFilter::byStatus(QMessage::Read, comparator);
-    if (mask & QMessage::Removed)
+    }
+    if (mask & QMessage::Removed) {
         result &= QMessageFilter::byStatus(QMessage::Removed, comparator);
-    if (mask & QMessage::HasAttachments)
+    }
+    if (mask & QMessage::HasAttachments) {
         result &= QMessageFilter::byStatus(QMessage::HasAttachments, comparator);
+    }
     if (result.isEmpty()) // Be consistent with QMF, but seems wrong. TODO verify correctness
         return ~result;
     return result;

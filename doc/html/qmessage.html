@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessage Class Reference</h1>
 <p>The QMessage class provides a convenient interface for working with messages. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMessage&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>.</p>
+<pre>    #include &lt;QMessage&gt;</pre><p>Inherits <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>.</p>
 <ul>
 <li><a href="qmessage-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -29,7 +28,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#StandardFolder-enum">StandardFolder</a></b> { InboxFolder, DraftsFolder, OutboxFolder, SentFolder, TrashFolder }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Status-enum">Status</a></b> { Read, HasAttachments, Incoming, Removed }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Status-enum">StatusFlags</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Type-enum">Type</a></b> { NoType, Mms, Sms, Email, Xmpp, AnyType }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Type-enum">Type</a></b> { NoType, Mms, Sms, Email, InstantMessage, AnyType }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#Type-enum">TypeFlags</a></b></td></tr>
 </table>
 <hr />
@@ -70,7 +69,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setTo">setTo</a></b> ( const QMessageAddressList &amp; <i>toList</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setTo-2">setTo</a></b> ( const QMessageAddress &amp; <i>address</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#setType">setType</a></b> ( Type <i>t</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">uint </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#size">size</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#size">size</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">StandardFolder </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#standardFolder">standardFolder</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">StatusFlags </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#status">status</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessage.html#subject">subject</a></b> () const</td></tr>
@@ -92,14 +91,14 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMessage class provides a convenient interface for working with messages.</p>
-<p>QMessage supports a number of types. Including internet email messages, the telephony types SMS and MMS, and also XMPP messages.</p>
-<p>The <a href="qmessageid.html">QMessageId</a> identifier for a message is returned by <a href="qmessage.html#id">id</a>(). Messages can be constructed by retrieval from the messaging store via their identifier using <a href="qmessagestore.html#message">QMessageStore::message</a>(). A QMessage can also be constructed piece by piece using functions such as <a href="qmessage.html#setType">setType</a>(), <a href="qmessage.html#setFrom">setFrom</a>(), <a href="qmessage.html#setTo">setTo</a>(), <a href="qmessage.html#setSubject">setSubject</a>(), <a href="qmessage.html#setBody">setBody</a>() and <a href="qmessage.html#appendAttachments">appendAttachments</a>().</p>
+<p>QMessage supports a number of types. Including internet email messages, and the telephony types SMS and MMS.</p>
+<p>The <a href="qmessageid.html">QMessageId</a> identifier for a message is returned by <a href="qmessage.html#id">id</a>(). Messages can be constructed by retrieval from the messaging store via their identifier using <a href="qmessagemanager.html#message">QMessageManager::message</a>(). A QMessage can also be constructed piece by piece using functions such as <a href="qmessage.html#setType">setType</a>(), <a href="qmessage.html#setFrom">setFrom</a>(), <a href="qmessage.html#setTo">setTo</a>(), <a href="qmessage.html#setSubject">setSubject</a>(), <a href="qmessage.html#setBody">setBody</a>() and <a href="qmessage.html#appendAttachments">appendAttachments</a>().</p>
 <p>If a message has been modified since it was last constructed <a href="qmessage.html#isModified">isModified</a>() returns true.</p>
 <p>A list of attachments identifiers will be returned by <a href="qmessage.html#attachmentIds">attachmentIds</a>() and an identifier for the message body will be returned by <a href="qmessage.html#bodyId">bodyId</a>(). Attachments can be appended to the content of the message using <a href="qmessage.html#appendAttachments">appendAttachments</a>(), the body of the message can be set with <a href="qmessage.html#setBody">setBody</a>().</p>
 <p>The folder and account a message is associated with are returned by <a href="qmessage.html#parentFolderId">parentFolderId</a>() and <a href="qmessage.html#parentAccountId">parentAccountId</a>() respectively.</p>
 <p>Message data that is less commonly accessed or relatively large should be lazily retrieved on demand by the associated getter function.</p>
-<p>Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid destination addresses for Email messages, MMS messages may be addressed to either phone numbers or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.</p>
-<p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>, <a href="qmessagestore.html">QMessageStore</a>, and <a href="qmessageid.html">QMessageId</a>.</p>
+<p>Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid destination addresses for Email messages, MMS messages may be addressed to either phone numbers or email addresses.</p>
+<p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>, <a href="qmessagemanager.html">QMessageManager</a>, and <a href="qmessageid.html">QMessageId</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QMessage/Priority"></a>
@@ -164,7 +163,7 @@
 <a name="//apple_ref/cpp/econst/QMessage/Mms"></a>
 <a name="//apple_ref/cpp/econst/QMessage/Sms"></a>
 <a name="//apple_ref/cpp/econst/QMessage/Email"></a>
-<a name="//apple_ref/cpp/econst/QMessage/Xmpp"></a>
+<a name="//apple_ref/cpp/econst/QMessage/InstantMessage"></a>
 <a name="//apple_ref/cpp/econst/QMessage/AnyType"></a>
 <a name="//apple_ref/cpp/tdef/QMessage/TypeFlags"></a>
 <h3 class="flags"><a name="Type-enum"></a>enum QMessage::Type<br />flags QMessage::TypeFlags</h3>
@@ -175,7 +174,7 @@
 <tr><td valign="top"><tt>QMessage::Mms</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">The message is an MMS, Multimedia Messaging Service object.</td></tr>
 <tr><td valign="top"><tt>QMessage::Sms</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">The message is an SMS, Short Message Service object.</td></tr>
 <tr><td valign="top"><tt>QMessage::Email</tt></td><td align="center" valign="top"><tt>0x4</tt></td><td valign="top">The message is an Email, Internet Message Format object.</td></tr>
-<tr><td valign="top"><tt>QMessage::Xmpp</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">The message is an XMPP, Extensible Messaging and Presence Protocol object.</td></tr>
+<tr><td valign="top"><tt>QMessage::InstantMessage</tt></td><td align="center" valign="top"><tt>0x8</tt></td><td valign="top">The message is an instant message object, such as XMPP.</td></tr>
 <tr><td valign="top"><tt>QMessage::AnyType</tt></td><td align="center" valign="top"><tt>0xFFFFFFFF</tt></td><td valign="top">Bitflag value that matches any message type defined.</td></tr>
 </table></p>
 <p>The TypeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;Type&gt;. It stores an OR combination of Type values.</p>
@@ -187,14 +186,14 @@
 <p>Constructs an empty message.</p>
 <h3 class="fn"><a name="QMessage-2"></a>QMessage::QMessage ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i> )</h3>
 <p>Constructs a message from data stored in the messaging store with identifier <i>id</i>.</p>
-<p>See also <a href="qmessagestore.html">QMessageStore</a>.</p>
+<p>See also <a href="qmessagemanager.html#message">QMessageManager::message</a>().</p>
 <h3 class="fn"><a name="QMessage-3"></a>QMessage::QMessage ( const QMessage &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
 <a name="//apple_ref/cpp/instm/QMessage/~QMessage"></a>
 <h3 class="fn"><a name="dtor.QMessage"></a>QMessage::~QMessage ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the message.</p>
 <a name="//apple_ref/cpp/instm/QMessage/appendAttachments"></a>
-<h3 class="fn"><a name="appendAttachments"></a>void QMessage::appendAttachments ( const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> &amp; <i>fileNames</i> )</h3>
+<h3 class="fn"><a name="appendAttachments"></a>void QMessage::appendAttachments ( const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>fileNames</i> )</h3>
 <p>Append the contents of the files specified by <i>fileNames</i> to the end of the list of attachments for the message. The internet media (MIME) type of the attachments will be determined by examining the files or file names.</p>
 <p>See also <a href="qmessage.html#attachmentIds">attachmentIds</a>() and <a href="qmessage.html#clearAttachments">clearAttachments</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/attachmentIds"></a>
@@ -221,9 +220,9 @@
 <a name="//apple_ref/cpp/instm/QMessage/createResponseMessage"></a>
 <h3 class="fn"><a name="createResponseMessage"></a>QMessage QMessage::createResponseMessage ( <a href="qmessage.html#ResponseType-enum">ResponseType</a> <i>type</i> ) const</h3>
 <p>Creates a new message as a response to this message, with properties predetermined according to <i>type</i>.</p>
-<p>See also <a href="qmessageserviceaction.html#compose">QMessageServiceAction::compose</a>().</p>
+<p>See also <a href="qmessageservice.html#compose">QMessageService::compose</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/date"></a>
-<h3 class="fn"><a name="date"></a><a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> QMessage::date () const</h3>
+<h3 class="fn"><a name="date"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QMessage::date () const</h3>
 <p>Returns the timestamp contained in the origination date header field of the message, if present; otherwise returns a null timestamp.</p>
 <p>See also <a href="qmessage.html#setDate">setDate</a>() and <a href="qmessagefilter.html#byTimeStamp">QMessageFilter::byTimeStamp</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/from"></a>
@@ -245,12 +244,12 @@
 <h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessage::parentFolderId () const</h3>
 <p>Returns the identifier of the folder that contains the message if any; otherwise returns an invalid identifier.</p>
 <a name="//apple_ref/cpp/clm/QMessage/preferredCharsetFor"></a>
-<h3 class="fn"><a name="preferredCharsetFor"></a><a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> QMessage::preferredCharsetFor ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>text</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="preferredCharsetFor"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QMessage::preferredCharsetFor ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>text</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns the first charset from the preferred list that is capable of encoding the content of <i>text</i>.</p>
 <p>See also <a href="qmessage.html#preferredCharsets">preferredCharsets</a>() and <a href="qmessage.html#setBody">setBody</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessage/preferredCharsets"></a>
-<h3 class="fn"><a name="preferredCharsets"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a>&gt; QMessage::preferredCharsets ()&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Returns an ordered-by-preference list of charset names to use when encoding unicode <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> data to a serialized form.</p>
+<h3 class="fn"><a name="preferredCharsets"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QMessage::preferredCharsets ()&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Returns an ordered-by-preference list of charset names to use when encoding unicode <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> data to a serialized form.</p>
 <p>See also <a href="qmessage.html#setPreferredCharsets">setPreferredCharsets</a>(), <a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a>(), and <a href="qmessage.html#setBody">setBody</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/priority"></a>
 <h3 class="fn"><a name="priority"></a><a href="qmessage.html#Priority-enum">Priority</a> QMessage::priority () const</h3>
@@ -258,7 +257,7 @@
 <p>The default is <a href="qmessage.html#Priority-enum">NormalPriority</a>.</p>
 <p>See also <a href="qmessage.html#setPriority">setPriority</a>() and <a href="qmessagefilter.html#byPriority">QMessageFilter::byPriority</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/receivedDate"></a>
-<h3 class="fn"><a name="receivedDate"></a><a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> QMessage::receivedDate () const</h3>
+<h3 class="fn"><a name="receivedDate"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QMessage::receivedDate () const</h3>
 <p>Returns the timestamp placed in the message during reception by the device, if present; otherwise returns a null timestamp.</p>
 <p>See also <a href="qmessage.html#setReceivedDate">setReceivedDate</a>() and <a href="qmessagefilter.html#byReceptionTimeStamp">QMessageFilter::byReceptionTimeStamp</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/setBcc"></a>
@@ -266,11 +265,11 @@
 <p>Set the list of bcc (blind carbon copy) recipients for the message to <i>bccList</i>.</p>
 <p>See also <a href="qmessage.html#bcc">bcc</a>(), <a href="qmessage.html#setTo">setTo</a>(), and <a href="qmessage.html#setCc">setCc</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/setBody"></a>
-<h3 class="fn"><a name="setBody"></a>void QMessage::setBody ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>body</i>, const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>mimeType</i> = QByteArray() )</h3>
+<h3 class="fn"><a name="setBody"></a>void QMessage::setBody ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>body</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>mimeType</i> = QByteArray() )</h3>
 <p>Sets the body text of the message to be the string <i>body</i>.</p>
 <p>The internet media (MIME) content type of the body is set to <i>mimeType</i>, if provided. If the <i>mimeType</i> is not specified, the content type will default to &quot;text/plain&quot;, and the encoding charset will be as determined by <a href="qmessage.html#preferredCharsets">preferredCharsets</a>().</p>
 <p>See also <a href="qmessage.html#bodyId">bodyId</a>() and <a href="qmessage.html#preferredCharsets">preferredCharsets</a>().</p>
-<h3 class="fn"><a name="setBody-2"></a>void QMessage::setBody ( <a href="http://qt.nokia.com/doc/4.5/qtextstream.html">QTextStream</a> &amp; <i>in</i>, const <a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a> &amp; <i>mimeType</i> = QByteArray() )</h3>
+<h3 class="fn"><a name="setBody-2"></a>void QMessage::setBody ( <a href="http://qt.nokia.com/doc/4.6/qtextstream.html">QTextStream</a> &amp; <i>in</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>mimeType</i> = QByteArray() )</h3>
 <p>Sets the body text of the message to be the text read from the stream <i>in</i>.</p>
 <p>The internet media (MIME) content type of the body is set to <i>mimeType</i>, if provided. If the <i>mimeType</i> is not specified, the content type will default to &quot;text/plain&quot;, and the encoding charset will be as determined by <a href="qmessage.html#preferredCharsets">preferredCharsets</a>().</p>
 <p>See also <a href="qmessage.html#bodyId">bodyId</a>() and <a href="qmessage.html#preferredCharsets">preferredCharsets</a>().</p>
@@ -279,7 +278,7 @@
 <p>Set the list of cc (carbon copy) recipients for the message to <i>ccList</i>.</p>
 <p>See also <a href="qmessage.html#cc">cc</a>(), <a href="qmessage.html#setTo">setTo</a>(), and <a href="qmessage.html#setBcc">setBcc</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/setDate"></a>
-<h3 class="fn"><a name="setDate"></a>void QMessage::setDate ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>d</i> )</h3>
+<h3 class="fn"><a name="setDate"></a>void QMessage::setDate ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>d</i> )</h3>
 <p>Sets the origination date header field specifying the timestamp of the message to <i>d</i>.</p>
 <p>See also <a href="qmessage.html#date">date</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/setFrom"></a>
@@ -292,15 +291,16 @@
 <p>This operation is only permitted on new messages that have not yet been inserted into the message store. Attempting to change the parent account of a message already in the message store will result in an error when attempting to update the message with QMessageStore::update().</p>
 <p>See also <a href="qmessage.html#parentAccountId">parentAccountId</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessage/setPreferredCharsets"></a>
-<h3 class="fn"><a name="setPreferredCharsets"></a>void QMessage::setPreferredCharsets ( const <a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qbytearray.html">QByteArray</a>&gt; &amp; <i>charsetNames</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Sets the ordered-by-preference list of names of charsets to use when encoding unicode <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> data to a serialized form to <i>charsetNames</i>.</p>
+<h3 class="fn"><a name="setPreferredCharsets"></a>void QMessage::setPreferredCharsets ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; &amp; <i>charsetNames</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Sets the ordered-by-preference list of names of charsets to use when encoding unicode <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> data to a serialized form to <i>charsetNames</i>.</p>
+<p>The set of valid charset names is returned by QTextCodec::availableCharsets().</p>
 <p>See also <a href="qmessage.html#preferredCharsets">preferredCharsets</a>(), <a href="qmessage.html#preferredCharsetFor">preferredCharsetFor</a>(), and <a href="qmessage.html#setBody">setBody</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/setPriority"></a>
 <h3 class="fn"><a name="setPriority"></a>void QMessage::setPriority ( <a href="qmessage.html#Priority-enum">Priority</a> <i>newPriority</i> )</h3>
 <p>Sets the priority of the message to <i>newPriority</i>.</p>
 <p>See also <a href="qmessage.html#priority">priority</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/setReceivedDate"></a>
-<h3 class="fn"><a name="setReceivedDate"></a>void QMessage::setReceivedDate ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>d</i> )</h3>
+<h3 class="fn"><a name="setReceivedDate"></a>void QMessage::setReceivedDate ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>d</i> )</h3>
 <p>Sets the timestamp indicating the time of message reception by the device to <i>d</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">receivedDate</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/setStatus"></a>
@@ -311,7 +311,7 @@
 <p>Sets the status flag <i>flag</i> for the message to have the value <i>set</i>.</p>
 <p>See also <a href="qmessage.html#status">status</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/setSubject"></a>
-<h3 class="fn"><a name="setSubject"></a>void QMessage::setSubject ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>text</i> )</h3>
+<h3 class="fn"><a name="setSubject"></a>void QMessage::setSubject ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>text</i> )</h3>
 <p>Sets the subject of the message to <i>text</i>.</p>
 <p>See also <a href="qmessage.html#subject">subject</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/setTo"></a>
@@ -327,19 +327,19 @@
 <p>The type of a message may be set for non-empty messages.</p>
 <p>See also <a href="qmessage.html#type">type</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/size"></a>
-<h3 class="fn"><a name="size"></a><a href="http://qt.nokia.com/doc/4.5/qtglobal.html#uint-typedef">uint</a> QMessage::size () const</h3>
+<h3 class="fn"><a name="size"></a>int QMessage::size () const</h3>
 <p>Returns the complete size of the message as indicated on the originating server.</p>
 <p>See also <a href="qmessagefilter.html#bySize">QMessageFilter::bySize</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/standardFolder"></a>
 <h3 class="fn"><a name="standardFolder"></a><a href="qmessage.html#StandardFolder-enum">StandardFolder</a> QMessage::standardFolder () const</h3>
 <p>Returns the standard folder of the message.</p>
-<p>Defaults to <a href="qmessage.html#StandardFolder-enum">InboxFolder</a>.</p>
+<p>Defaults to <a href="qmessage.html#StandardFolder-enum">DraftsFolder</a>.</p>
 <a name="//apple_ref/cpp/instm/QMessage/status"></a>
 <h3 class="fn"><a name="status"></a><a href="qmessage.html#Status-enum">StatusFlags</a> QMessage::status () const</h3>
 <p>Returns the status flags value for the message.</p>
 <p>See also <a href="qmessage.html#setStatus">setStatus</a>() and <a href="qmessagefilter.html#byStatus">QMessageFilter::byStatus</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/subject"></a>
-<h3 class="fn"><a name="subject"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessage::subject () const</h3>
+<h3 class="fn"><a name="subject"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QMessage::subject () const</h3>
 <p>Returns the subject of the message, if present; otherwise returns a null string.</p>
 <p>See also <a href="qmessage.html#setSubject">setSubject</a>() and <a href="qmessagefilter.html#bySubject">QMessageFilter::bySubject</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessage/to"></a>
@@ -354,6 +354,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

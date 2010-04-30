@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "qmessageaccount.h"
 #include "qmessageaccount_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #include "winhelpers_p.h"
 #include <QDebug>
 
@@ -64,7 +64,7 @@ QMessageAccount::QMessageAccount()
 QMessageAccount::QMessageAccount(const QMessageAccountId &id)
     :d_ptr(new QMessageAccountPrivate(this))
 {
-    *this = QMessageStore::instance()->account(id);
+    *this = QMessageManager().account(id);
 }
 
 QMessageAccount::QMessageAccount(const QMessageAccount &other)
@@ -106,9 +106,9 @@ QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
     QMessageAccountId result;
 
-    QMessageStore::ErrorCode code(QMessageStore::NoError);
+    QMessageManager::Error code(QMessageManager::NoError);
     MapiSessionPtr mapiSession(MapiSession::createSession(&code));
-    if (code == QMessageStore::NoError) {
+    if (code == QMessageManager::NoError) {
         result = mapiSession->defaultAccountId(&code, type);
     }
 

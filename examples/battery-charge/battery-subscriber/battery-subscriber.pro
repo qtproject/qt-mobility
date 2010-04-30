@@ -4,7 +4,8 @@ QT += declarative
 INCLUDEPATH += ../../../src/publishsubscribe
 DEPENDPATH += ../../../src/publishsubscribe
 include(../../examples.pri)
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe
 SOURCES = main.cpp
 RESOURCES = battery-subscriber.qrc
 OTHER_FILES += battery-meter.qml

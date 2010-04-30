@@ -1,8 +1,22 @@
-INCLUDEPATH += $${MOBILITY_INCLUDE}
+
+!symbian {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}
+} else {
+    load(data_caging_paths)
+    contains(MOBILITY, contacts|versit) {
+        INCLUDEPATH+=$$APP_LAYER_SYSTEMINCLUDE
+    }
+
+    contains(MOBILITY,bearer|location|publishsubscribe|systeminfo|multimedia|messaging|serviceframework|sensors) {
+        INCLUDEPATH+=$$MW_LAYER_SYSTEMINCLUDE
+    }
+}
 mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
+QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 
 contains(MOBILITY, bearer) {
+    DEFINES += QT_MOBILITY_BEARER
     qtAddLibrary(QtBearer)
 }
 
@@ -19,10 +33,14 @@ contains(MOBILITY, serviceframework) {
 }
 
 contains(MOBILITY, systeminfo) {
+    #QSystemInfo header requires QNetworkInterface
+    QT += network
     qtAddLibrary(QtSystemInfo)
 }
 
 contains(MOBILITY, multimedia) {
+    QT += network multimedia
+    contains(QT_CONFIG, opengl): QT += opengl
     qtAddLibrary(QtMedia)
 }
 
@@ -37,3 +55,18 @@ contains(MOBILITY, messaging) {
 contains(MOBILITY, versit) {
     qtAddLibrary(QtVersit)
 }
+
+contains(MOBILITY, sensors) {
+    qtAddLibrary(QtSensors)
+}
+
+# Add dependency to QtMobility package to all projects besides QtMobility package itself.
+# Mobility libs have UID3 0x2002AC89
+# self-signed Mobility libs have UID3 0xE002AC89
+symbian:contains(CONFIG, mobility):!contains(TARGET.UID3, 0x2002AC89):!contains(TARGET.UID3, 0xE002AC89) {
+    mobility_default_deployment.pkg_prerules += \
+        "; Default dependency to QtMobility libraries" \
+        "(0x2002AC89), 1, 0, 0, {\"QtMobility\"}"
+    DEPLOYMENT += mobility_default_deployment
+}
+

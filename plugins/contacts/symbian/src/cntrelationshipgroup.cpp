@@ -48,9 +48,10 @@
  * Conatructor
  * 
  * \a contactDatabase CContactDatabase with established connection to the database
+ * \a managerUri current contact manager uri
  */
-CntRelationshipGroup::CntRelationshipGroup(CContactDatabase* contactDatabase) :
-    CntAbstractRelationship(contactDatabase, QContactRelationship::HasMember)
+CntRelationshipGroup::CntRelationshipGroup(CContactDatabase *contactDatabase, const QString &managerUri) :
+    CntAbstractRelationship(contactDatabase, managerUri, QContactRelationship::HasMember)
 {
 }
 
@@ -68,80 +69,60 @@ CntRelationshipGroup::~CntRelationshipGroup()
  * \a relationship to be saved
  * \a error t
  */
-bool CntRelationshipGroup::saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error& error)
+bool CntRelationshipGroup::saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship* relationship, QContactManager::Error* error)
 {
-    bool returnValue(false);
-
-    if(relationship->relationshipType() == this->relationshipType())
-    {
-        QScopedPointer<QContactId> groupId(new QContactId( relationship->first()));
-        QScopedPointer<QContactId> contactId(new QContactId(relationship->second()));
-
-        if (groupId->localId() && contactId->localId())
-            {
-            //cntmodel accepts contact id 0, which is considered an error in qt contacts
-            database()->AddContactToGroupL(TContactItemId(contactId->localId()), TContactItemId(groupId->localId()));
-            }
-        else
-            {
-            User::Leave(KErrNotFound);
-            }
-        //add the group  and group member to the list of affected contacts
-        //note if the value already exists in the QSet nothing happens
-        affectedContactIds->insert(groupId->localId());
-        affectedContactIds->insert(contactId->localId());
-        
-        error = QContactManager::NoError;
-        returnValue = true;
-    }
-
-    else
-    {
-        error = QContactManager::NotSupportedError;
-        returnValue = false;
-    }
-
-    return returnValue;
+    //get the ids of the relationship
+    QScopedPointer<QContactId> groupId(new QContactId(relationship->first()));
+    QScopedPointer<QContactId> contactId(new QContactId(relationship->second()));
+    
+    //cntmodel accepts contact id 0, which is considered an error in qt contacts
+    database()->AddContactToGroupL(TContactItemId(contactId->localId()), TContactItemId(groupId->localId()));
+    
+    //add the group  and group member to the list of affected contacts
+    //note if the value already exists in the QSet nothing happens
+    affectedContactIds->insert(groupId->localId());
+    affectedContactIds->insert(contactId->localId());
+    
+    *error = QContactManager::NoError;
+    return true;
 }
 
-bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error& error)
+bool CntRelationshipGroup::removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship& relationship, QContactManager::Error* error)
 {
-    bool returnValue(false);
+    //get the ids of the relationship
+    QScopedPointer<QContactId> groupId(new QContactId(relationship.first()));
+    QScopedPointer<QContactId> contactId(new QContactId(relationship.second()));
 
-    if(relationship.relationshipType() == this->relationshipType())
-    {
-        //get the ids of the relationship
-        QScopedPointer<QContactId> groupId(new QContactId(relationship.first()));
-        QScopedPointer<QContactId> contactId(new QContactId(relationship.second()));
-
-        //read the contacts from the database
-        CContactItem* groupContact = database()->ReadContactLC(groupId->localId());
-        CContactItem* contact      = database()->ReadContactLC(contactId->localId());
-        
-        //Check if contact is part of the group
-        isGroupMemberL(contact, groupContact->Id());
-        
-        //remove contact doesn't return an error if the group is not part of the group
-        database()->RemoveContactFromGroupL(contact->Id(), groupContact->Id());
-
-        //add the removed group member to the list of affected contacts
-        affectedContactIds->insert(groupId->localId());
-        affectedContactIds->insert(contactId->localId());
+    //read the contacts from the database
+    CContactItem* groupContact = database()->ReadContactLC(groupId->localId());
+    CContactItem* contact      = database()->ReadContactLC(contactId->localId());
     
-        error = QContactManager::NoError;
-        returnValue = true;
-        
-        CleanupStack::PopAndDestroy(contact);
-        CleanupStack::PopAndDestroy(groupContact);
+    //Check if contact is part of the group
+    isGroupMemberL(contact, groupContact->Id());
+    
+    //remove contact doesn't return an error if the group is not part of the group
+    database()->RemoveContactFromGroupL(contact->Id(), groupContact->Id());
+
+    //add the removed group member to the list of affected contacts
+    affectedContactIds->insert(groupId->localId());
+    affectedContactIds->insert(contactId->localId());
+    
+    CleanupStack::PopAndDestroy(contact);
+    CleanupStack::PopAndDestroy(groupContact);
+
+    *error = QContactManager::NoError;
+    return true;
+}
+
+bool CntRelationshipGroup::validateRelationship(const QContactRelationship &relationship, QContactManager::Error* error)
+{
+    // check that "second" is in this manager
+    if (!relationship.second().managerUri().isEmpty() && relationship.second().managerUri() != managerUri()) {
+        *error = QContactManager::InvalidRelationshipError;
+        return false;
     }
 
-    else
-    {
-        error = QContactManager::NotSupportedError;
-        returnValue = false;
-    }
-
-    return returnValue;
+    return true;
 }
 
 /*
@@ -181,31 +162,41 @@ void CntRelationshipGroup::isGroupMemberL(const CContactItem* contactItem, const
 }
 
 //retrieve all the groups that the contact is part of
-QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error)
+QList<QContactRelationship> CntRelationshipGroup::relationshipsL(const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error)
 {
-    Q_UNUSED(error);
-
     QList<QContactRelationship> returnValue;
-
-    //role is a group
-    if(role == QContactRelationshipFilter::First || role == QContactRelationshipFilter::Either)
+    
+    if (participantId != QContactId())
     {
-        fetchGroupMembersL(participantId, &returnValue);
+        //role is a group
+        if(role == QContactRelationship::First || role == QContactRelationship::Either)
+        {
+            fetchGroupMembersL(participantId.localId(), &returnValue);
+        }
+    
+        //role is member of a group
+        if(role == QContactRelationship::Second || role == QContactRelationship::Either)
+        {
+            fetchMemberOfGroupsL(participantId.localId(), &returnValue);
+        }
     }
-
-    //role is member of a group
-    if(role == QContactRelationshipFilter::Second || role == QContactRelationshipFilter::Either)
+    else
     {
-        fetchMemberOfGroupsL(participantId, &returnValue);
+        // If participantId is the default-constructed id, role is ignored and
+        // all relationships of the given relationshipType are returned.
+        fetchMembersOfAllGroupsL(&returnValue);
     }
+    
+    if (returnValue.isEmpty())
+        *error = QContactManager::DoesNotExistError;
 
     return returnValue;
 }
 
-void CntRelationshipGroup::fetchGroupMembersL(const QContactId& participantId, QList<QContactRelationship> *relationships)
+void CntRelationshipGroup::fetchGroupMembersL(const QContactLocalId& participantId, QList<QContactRelationship> *relationships)
 {
     //fetch the contact item from the database
-    CContactItem *contactItem = database()->ReadContactLC(participantId.localId());
+    CContactItem *contactItem = database()->ReadContactLC(TContactItemId(participantId));
 
     //make sure it's a group
     if(contactItem && contactItem->Type() == KUidContactGroup)
@@ -226,10 +217,13 @@ void CntRelationshipGroup::fetchGroupMembersL(const QContactId& participantId, Q
         for(int i = 0; i < idArray->Count(); i++ )
         {
             //set participant id as first id
-            relationship.setFirst(participantId);
+            QContactId first;
+            first.setLocalId(participantId);
+            first.setManagerUri(managerUri());
+            relationship.setFirst(first);
 
             //set the manager uri
-            groupId.setManagerUri(participantId.managerUri());
+            groupId.setManagerUri(managerUri());
 
             groupId.setLocalId(idArray->operator[](i));
             relationship.setSecond(groupId);
@@ -242,9 +236,9 @@ void CntRelationshipGroup::fetchGroupMembersL(const QContactId& participantId, Q
 }
 
 
-void CntRelationshipGroup::fetchMemberOfGroupsL(const QContactId& participantId, QList<QContactRelationship> *relationships)
+void CntRelationshipGroup::fetchMemberOfGroupsL(const QContactLocalId& participantId, QList<QContactRelationship> *relationships)
 {
-    CContactItem *contactItem = database()->ReadContactLC(TContactItemId(participantId.localId()));
+    CContactItem *contactItem = database()->ReadContactLC(TContactItemId(participantId));
 
     if(contactItem &&
             (contactItem->Type() == KUidContactCard
@@ -268,14 +262,17 @@ void CntRelationshipGroup::fetchMemberOfGroupsL(const QContactId& participantId,
             for(int i = 0; i < idArray->Count(); i++ )
             {
                //set the manager uri
-               groupId.setManagerUri(participantId.managerUri());
+               groupId.setManagerUri(managerUri());
                groupId.setLocalId(idArray->operator[](i));
 
                //set the group as first
                relationship.setFirst(groupId);
 
                //set participant id as member of group
-               relationship.setSecond(participantId);
+               QContactId second;
+               second.setLocalId(participantId);
+               second.setManagerUri(managerUri());
+               relationship.setSecond(second);
 
                *relationships << relationship;
             }
@@ -283,4 +280,18 @@ void CntRelationshipGroup::fetchMemberOfGroupsL(const QContactId& participantId,
     }
 
     CleanupStack::PopAndDestroy(contactItem);
+}
+
+void CntRelationshipGroup::fetchMembersOfAllGroupsL(QList<QContactRelationship> *relationships)
+{
+    CContactIdArray *groupIdList = database()->GetGroupIdListL();
+    CleanupStack::PushL(groupIdList);
+    
+    int count = groupIdList->Count();
+    for (int i=0; i<count; i++)
+    {
+        fetchGroupMembersL(QContactLocalId((*groupIdList)[i]), relationships);
+    }
+    
+    CleanupStack::PopAndDestroy(groupIdList);
 }

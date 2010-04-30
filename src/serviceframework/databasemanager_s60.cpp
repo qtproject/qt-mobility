@@ -91,7 +91,18 @@ QTM_BEGIN_NAMESPACE
 */
 DatabaseManager::DatabaseManager()
 {
-    iSession.Connect();
+    int err = iSession.Connect();
+    
+    int i = 0;
+    while (err != KErrNone) {
+        if (i > 10)
+            qt_symbian_throwIfError(err);
+        
+        User::After(50);
+        err = iSession.Connect();
+        i++;
+    }
+    
     iDatabaseManagerSignalMonitor = new DatabaseManagerSignalMonitor(*this, iSession);
 }
 
@@ -284,7 +295,10 @@ void DatabaseManagerSignalMonitor::RunL()
 
 RDatabaseManagerSession::RDatabaseManagerSession()
     : RSessionBase()
-    {   
+    {
+#ifdef __WINS__
+    iServerThread = NULL;
+#endif
     }
 
 TVersion RDatabaseManagerSession::Version() const
@@ -307,6 +321,7 @@ TInt RDatabaseManagerSession::StartServer()
     TInt ret = KErrNone;
     TFindServer findServer(KDatabaseManagerServerName);
     TFullName name;
+
     if (findServer.Next(name) != KErrNone)
     {
 #ifdef __WINS__
@@ -315,8 +330,8 @@ TInt RDatabaseManagerSession::StartServer()
         iServerThread->wait(1);
 #else
         TRequestStatus status;
-        RProcess dbServer;
-        ret = dbServer.Create(KDatabaseManagerServerName, KNullDesC);
+        RProcess dbServer;	    
+        ret = dbServer.Create(KDatabaseManagerServerProcess, KNullDesC);
         if(ret != KErrNone)
             {
             return ret;
@@ -342,17 +357,12 @@ TInt RDatabaseManagerSession::StartServer()
         dbServer.Close();
 #endif
     }
+
     return ret;
     }
 
 void RDatabaseManagerSession::Close()
     {
-#ifdef __WINS__
-    iServerThread->quit();
-    iServerThread->wait();
-    delete iServerThread;
-    iServerThread = NULL;
-#endif
     RSessionBase::Close();
     }
 
@@ -504,7 +514,6 @@ void RDatabaseManagerSession::CancelNotifyServiceSignal() const
     }
 
 
-
 #ifdef __WINS__
 QTM_END_NAMESPACE
     #include "databasemanagerserver.h"
@@ -527,6 +536,7 @@ QTM_BEGIN_NAMESPACE
         RThread::Rendezvous(KErrNone);
 
         exec();
+        
         delete dbManagerServer;
     }
 #endif

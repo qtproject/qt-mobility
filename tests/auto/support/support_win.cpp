@@ -44,7 +44,7 @@
 #include <qmessagefolderid.h>
 #include <qmessageid.h>
 #include <qmessage_p.h>
-#include <qmessagestore.h>
+#include <qmessagemanager.h>
 #include <QDataStream>
 #include <QFile>
 #include <QVector>
@@ -57,6 +57,8 @@
 #ifdef _WIN32_WCE
 #include <cemapi.h>
 #endif
+
+#include <messagingutil_p.h>
 
 // Missing definitions
 #ifndef PR_PST_CONFIG_FLAGS
@@ -114,7 +116,7 @@ public:
 
     bool query();
     LPSRowSet rows() const;
-    QMessageStore::ErrorCode lastError() const;
+    QMessageManager::Error error() const;
 
 private:
     LPMAPITABLE m_table;
@@ -122,7 +124,7 @@ private:
     LPSRestriction m_restriction;
     LPSSortOrderSet m_sortOrderSet;
     LPSRowSet m_rows;
-    QMessageStore::ErrorCode m_lastError;
+    QMessageManager::Error m_error;
 };
 
 QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
@@ -136,7 +138,7 @@ QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
         m_restriction(pres),
         m_sortOrderSet(psos),
         m_rows(0),
-        m_lastError(QMessageStore::NoError)
+        m_error(QMessageManager::NoError)
 {
 #ifndef _WIN32_WCE
     const ULONG options(TBL_BATCH);
@@ -157,7 +159,7 @@ QueryAllRows::QueryAllRows(LPMAPITABLE ptable,
     if(setPosition)
         initFailed |= FAILED(m_table->SeekRow(BOOKMARK_BEGINNING, 0, NULL));
 
-    if(initFailed) m_lastError = QMessageStore::ContentInaccessible;
+    if(initFailed) m_error = QMessageManager::ContentInaccessible;
 }
 
 QueryAllRows::~QueryAllRows()
@@ -168,17 +170,17 @@ QueryAllRows::~QueryAllRows()
 
 bool QueryAllRows::query()
 {
-    if(m_lastError != QMessageStore::NoError)
+    if(m_error != QMessageManager::NoError)
         return false;
 
     FreeProws(m_rows);
     m_rows = 0;
-    m_lastError = QMessageStore::NoError;
+    m_error = QMessageManager::NoError;
 
     bool failed = FAILED(m_table->QueryRows( QueryAllRows::BatchSize, NULL, &m_rows));
 
     if(failed)
-        m_lastError = QMessageStore::ContentInaccessible;
+        m_error = QMessageManager::ContentInaccessible;
 
     if(failed || m_rows && !m_rows->cRows) return false;
 
@@ -190,9 +192,9 @@ LPSRowSet QueryAllRows::rows() const
     return m_rows;
 }
 
-QMessageStore::ErrorCode QueryAllRows::lastError() const
+QMessageManager::Error QueryAllRows::error() const
 {
-    return m_lastError;
+    return m_error;
 }
 
 #ifndef _WIN32_WCE
@@ -203,10 +205,8 @@ GUID GuidPSMAPI = { 0x00020328, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x
 
 void doInit()
 {
-    static QMessageStore *store(0);
-    if (!store) {
-        store = QMessageStore::instance();
-    }
+    static QMessageManager manager;
+    Q_UNUSED(manager)
 }
 
 QByteArray binaryResult(const SPropValue &prop)
@@ -261,7 +261,7 @@ QList<ProfileDetail> profileDetails(LPPROFADMIN profAdmin)
             }
         }
 
-        if(qar.lastError() != QMessageStore::NoError)
+        if(qar.error() != QMessageManager::NoError)
             qWarning() << "profileNames: QueryAllRows failed";
 
         profileTable->Release();
@@ -318,7 +318,7 @@ QList<ServiceDetail> serviceDetails(LPSERVICEADMIN svcAdmin)
             }
         }
 
-        if(qar.lastError() != QMessageStore::NoError)
+        if(qar.error() != QMessageManager::NoError)
             qWarning() << "serviceDetails: QueryAllRows failed";
 
         svcTable->Release();
@@ -369,7 +369,7 @@ QList<StoreDetail> storeDetails(LPMAPISESSION session)
             }
         }
 
-        if(qar.lastError() != QMessageStore::NoError)
+        if(qar.error() != QMessageManager::NoError)
             qWarning() << "storeDetails: QueryAllRows failed";
 
         storesTable->Release();
@@ -388,7 +388,7 @@ QMessageAccountId accountIdFromRecordKey(const QByteArray &recordKey)
         encodedIdStream << recordKey;
     }
 
-    return QMessageAccountId(encodedId.toBase64());
+    return QMessageAccountId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
 }
 
 QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByteArray &entryId, const QByteArray &storeKey)
@@ -409,7 +409,7 @@ QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByte
 #endif
     }
 
-    return QMessageFolderId(encodedId.toBase64());
+    return QMessageFolderId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
 }
 
 QByteArray objectProperty(IMAPIProp *object, ULONG tag)
@@ -592,7 +592,7 @@ MAPIUID findProviderUid(const QByteArray &name, IProviderAdmin *providerAdmin)
             }
         }
 
-        if(qar.lastError() != QMessageStore::NoError)
+        if(qar.error() != QMessageManager::NoError)
             qWarning() << "findProviderUid: QueryAllRows failed";
 
         providerTable->Release();
@@ -800,7 +800,7 @@ IMsgStore *openStoreByName(const QString &storeName, IMAPISession* session)
                 }
             }
 
-            if(qar.lastError() != QMessageStore::NoError)
+            if(qar.error() != QMessageManager::NoError)
                 qWarning() << "openStoreByName: QueryAllRows failed";
 
             storesTable->Release();
@@ -885,7 +885,7 @@ QList<QByteArray> subFolderEntryIds(IMAPIFolder *folder)
                 }
             }
 
-            if(qar.lastError() != QMessageStore::NoError)
+            if(qar.error() != QMessageManager::NoError)
                 qWarning() << "subFolderEntryIds: QueryAllRows failed";
 
             hierarchyTable->Release();
@@ -1215,7 +1215,7 @@ QMessageFolderId addFolder(const Parameters &params)
     doInit();
 
     QString folderPath(params["path"]);
-    QString folderName(params["displayName"]);
+    QString folderName(params["name"]);
     QString parentPath(params["parentFolderPath"]);
     QByteArray accountName(params["parentAccountName"].toAscii());
 
@@ -1309,14 +1309,16 @@ public:
         QString read(params["status-read"]);
         QString hasAttachments(params["status-hasAttachments"]);
 
+        QMessageManager manager;
+
         if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
             !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
             // Find the named account
-            QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
+            QMessageAccountIdList accountIds(manager.queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
             if (accountIds.count() == 1) {
                 // Find the specified folder
                 QMessageFolderFilter filter(QMessageFolderFilter::byPath(parentFolderPath, QMessageDataComparator::Equal) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
-                QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
+                QMessageFolderIdList folderIds(manager.queryFolders(filter));
                 if (folderIds.count() == 1) {
                     QMessage message;
 
@@ -1325,19 +1327,19 @@ public:
 
                     QList<QMessageAddress> toList;
                     foreach (const QString &addr, to.split(",", QString::SkipEmptyParts)) {
-                        toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                        toList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
                     }
                     message.setTo(toList);
 
                     QList<QMessageAddress> ccList;
                     foreach (const QString &addr, cc.split(",", QString::SkipEmptyParts)) {
-                        ccList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                        ccList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
                     }
                     if (!ccList.isEmpty()) {
                         message.setCc(ccList);
                     }
 
-                    message.setFrom(QMessageAddress(from, QMessageAddress::Email));
+                    message.setFrom(QMessageAddress(QMessageAddress::Email, from));
                     message.setSubject(subject);
 
                     QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
@@ -1351,8 +1353,8 @@ public:
                             message.setType(QMessage::Mms);
                         } else if (type.toLower() == "sms") {
                             message.setType(QMessage::Sms);
-                        } else if (type.toLower() == "xmpp") {
-                            message.setType(QMessage::Xmpp);
+                        } else if (type.toLower() == "instantmessage") {
+                            message.setType(QMessage::InstantMessage);
                         } else {
                             message.setType(QMessage::Email);
                         }
@@ -1393,7 +1395,7 @@ public:
                     }
                     message.setStatus(flags);
 
-                    if (!QMessageStore::instance()->addMessage(&message)) {
+                    if (!manager.addMessage(&message)) {
                         qWarning() << "Unable to addMessage:" << to << from << date << subject;
                     } else {
                         return message.id();
@@ -1421,5 +1423,44 @@ QMessageId addMessage(const Parameters &params)
     return MapiSession::addMessage(params);
 }
 
-}
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+/*
+ * Returns true if a MAPI subsystem is available, as per the
+ * information at
+ * http://msdn.microsoft.com/en-us/library/cc815368.aspx
+ *
+ * Returns false if a MAPI subsystem could not be found.
+ */
+bool mapiAvailable()
+{
+    bool mapix = false;
+    LONG res = -1;
+    HKEY key;
+    res = RegOpenKeyExW(HKEY_LOCAL_MACHINE,
+                        L"SOFTWARE\\Microsoft\\Windows Messaging Subsystem",
+                        0,
+                        KEY_READ,
+                        &key);
 
+    if (res == ERROR_SUCCESS) {
+        unsigned long type = REG_SZ;
+        unsigned long size = 512;
+        char ret[512] = "";
+        res = RegQueryValueExW(key,
+                               L"MAPIX",
+                               0,
+                               &type,
+                               (LPBYTE)&ret[0],
+                               &size);
+
+        if (res == ERROR_SUCCESS && (QString::fromUtf16((const ushort*)ret).toInt() == 1))
+            mapix = true;
+    }
+
+    RegCloseKey(key);
+
+    return mapix;
+}
+#endif
+
+}

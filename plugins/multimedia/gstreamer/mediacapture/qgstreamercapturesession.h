@@ -51,15 +51,14 @@
 
 #include "qgstreamerbushelper.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerMessage;
 class QGstreamerBusHelper;
 class QGstreamerAudioEncode;
 class QGstreamerVideoEncode;
-class QGstreamerImageEncode;
 class QGstreamerRecorderControl;
-class QGstreamerMediaFormatControl;
+class QGstreamerMediaContainerControl;
 
 class QGstreamerElementFactory
 {
@@ -88,15 +87,16 @@ public:
     QGstreamerCaptureSession(CaptureMode captureMode, QObject *parent);
     ~QGstreamerCaptureSession();
 
+    CaptureMode captureMode() const { return m_captureMode; }
+
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);
 
     QGstreamerAudioEncode *audioEncodeControl() const { return m_audioEncodeControl; }
     QGstreamerVideoEncode *videoEncodeControl() const { return m_videoEncodeControl; }
-    QGstreamerImageEncode *imageEncodeControl() const { return m_imageEncodeControl; }
 
     QGstreamerRecorderControl *recorderControl() const { return m_recorderControl; }
-    QGstreamerMediaFormatControl *mediaFormatControl() const { return m_mediaFormatControl; }
+    QGstreamerMediaContainerControl *mediaContainerControl() const { return m_mediaContainerControl; }
 
     QGstreamerElementFactory *audioInput() const { return m_audioInputFactory; }
     void setAudioInput(QGstreamerElementFactory *audioInput);
@@ -110,8 +110,6 @@ public:
     QGstreamerElementFactory *videoPreview() const { return m_videoPreviewFactory; }
     void setVideoPreview(QGstreamerElementFactory *videoPreview);
 
-    void captureImage(const QString &fileName);
-
     State state() const;
     qint64 duration() const;
 
@@ -121,7 +119,6 @@ signals:
     void stateChanged(QGstreamerCaptureSession::State state);
     void durationChanged(qint64 duration);
     void error(int error, const QString &errorString);
-    void imageCaptured(const QString &fileName, const QImage &img);
 
 public slots:
     void setState(QGstreamerCaptureSession::State);
@@ -142,7 +139,6 @@ private:
     GstElement *buildAudioPreview();
     GstElement *buildVideoSrc();
     GstElement *buildVideoPreview();
-    GstElement *buildImageCapture();
 
     void waitForStopped();
     bool rebuildGraph(QGstreamerCaptureSession::PipelineMode newMode);
@@ -151,6 +147,7 @@ private:
     QString m_captureDevice;
     State m_state;
     State m_pendingState;
+    bool m_waitingForEos;
     PipelineMode m_pipelineMode;
     QGstreamerCaptureSession::CaptureMode m_captureMode;
     QMap<QByteArray, QVariant> m_metaData;
@@ -162,9 +159,8 @@ private:
 
     QGstreamerAudioEncode *m_audioEncodeControl;
     QGstreamerVideoEncode *m_videoEncodeControl;
-    QGstreamerImageEncode *m_imageEncodeControl;
     QGstreamerRecorderControl *m_recorderControl;
-    QGstreamerMediaFormatControl *m_mediaFormatControl;
+    QGstreamerMediaContainerControl *m_mediaContainerControl;
 
     QGstreamerBusHelper *m_busHelper;
     GstBus* m_bus;

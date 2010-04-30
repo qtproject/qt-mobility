@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSystemDeviceInfo Class Reference</h1>
 <p>The QSystemDeviceInfo class provides access to device information from the system. <a href="#details">More...</a></p>
-<pre>    #include &lt;QSystemDeviceInfo&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QSystemDeviceInfo&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qsystemdeviceinfo-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -52,7 +52,7 @@
 </td></tr>
 </table></p>
 <ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
@@ -64,12 +64,17 @@
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::BatteryStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#batteryStatus-prop">batteryStatus</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::PowerState </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentPowerState-prop">currentPowerState</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentProfile-prop">currentProfile</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imei-prop">imei</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imsi-prop">imsi</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::InputMethodFlags </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#inputMethodType-prop">inputMethodType</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#isDeviceLocked-prop">isDeviceLocked</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#manufacturer-prop">manufacturer</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#model-prop">model</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#productName-prop">productName</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::SimStatus </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#simStatus-prop">simStatus</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
@@ -82,27 +87,15 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#powerStateChanged">powerStateChanged</a></b> ( QSystemDeviceInfo::PowerState <i>state</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
-</ul>
-<hr />
-<a name="static-public-members"></a>
-<h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imei-prop">imei</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#imsi-prop">imsi</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#manufacturer-prop">manufacturer</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#model-prop">model</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#productName-prop">productName</a></b> ()</td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -199,6 +192,7 @@
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QSystemDeviceInfo/batteryLevel"></a>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/batteryLevelChanged"></a>
 <h3 class="fn"><a name="batteryLevel-prop"></a>batteryLevel : const int</h3>
 <p>This property holds the battery level.</p>
 <p>Returns the battery charge level as percentage 1 - 100 scale.</p>
@@ -206,7 +200,12 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>batteryLevel</b> () const</td></tr>
 </table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#batteryLevelChanged">batteryLevelChanged</a></b> ( int <i>level</i> )</td></tr>
+</table>
 <a name="//apple_ref/cpp/instm/QSystemDeviceInfo/batteryStatus"></a>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/batteryStatusChanged"></a>
 <h3 class="fn"><a name="batteryStatus-prop"></a>batteryStatus : const <a href="qsystemdeviceinfo.html#BatteryStatus-enum">BatteryStatus</a></h3>
 <p>This property holds the battery status.</p>
 <p>Returns the battery charge status.</p>
@@ -214,7 +213,12 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::BatteryStatus </td><td class="memItemRight" valign="bottom"><b>batteryStatus</b> ()</td></tr>
 </table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#batteryStatusChanged">batteryStatusChanged</a></b> ( QSystemDeviceInfo::BatteryStatus <i>status</i> )</td></tr>
+</table>
 <a name="//apple_ref/cpp/instm/QSystemDeviceInfo/currentPowerState"></a>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/powerStateChanged"></a>
 <h3 class="fn"><a name="currentPowerState-prop"></a>currentPowerState : const <a href="qsystemdeviceinfo.html#PowerState-enum">PowerState</a></h3>
 <p>This property holds the power state.</p>
 <p>Gets the current QSystemDeviceInfo::currentPowerState state.</p>
@@ -222,25 +226,34 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::PowerState </td><td class="memItemRight" valign="bottom"><b>currentPowerState</b> ()</td></tr>
 </table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#powerStateChanged">powerStateChanged</a></b> ( QSystemDeviceInfo::PowerState <i>state</i> )</td></tr>
+</table>
 <a name="//apple_ref/cpp/instm/QSystemDeviceInfo/currentProfile"></a>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/currentProfileChanged"></a>
 <h3 class="fn"><a name="currentProfile-prop"></a>currentProfile : const <a href="qsystemdeviceinfo.html#Profile-enum">Profile</a></h3>
 <p>This property holds the device profile Gets the current QSystemDeviceInfo::currentProfile device profile.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QSystemDeviceInfo::Profile </td><td class="memItemRight" valign="bottom"><b>currentProfile</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/imei"></a>
-<h3 class="fn"><a name="imei-prop"></a>imei : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsystemdeviceinfo.html#currentProfileChanged">currentProfileChanged</a></b> ( QSystemDeviceInfo::Profile <i>profile</i> )</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/imei"></a>
+<h3 class="fn"><a name="imei-prop"></a>imei : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the IMEI.</p>
-<p>Returns the International Mobile Equipment Identity (IMEI), or a null <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> in the case of none.</p>
+<p>Returns the International Mobile Equipment Identity (IMEI), or a null <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> in the case of none.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>imei</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/imsi"></a>
-<h3 class="fn"><a name="imsi-prop"></a>imsi : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/imsi"></a>
+<h3 class="fn"><a name="imsi-prop"></a>imsi : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the IMSI.</p>
-<p>Returns the International Mobile Subscriber Identity (IMSI), or a null <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> in the case of none.</p>
+<p>Returns the International Mobile Subscriber Identity (IMSI), or a null <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> in the case of none.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>imsi</b> ()</td></tr>
@@ -261,24 +274,24 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isDeviceLocked</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/manufacturer"></a>
-<h3 class="fn"><a name="manufacturer-prop"></a>manufacturer : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/manufacturer"></a>
+<h3 class="fn"><a name="manufacturer-prop"></a>manufacturer : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the manufacture's name.</p>
 <p>Returns the name of the manufacturer of this device. In the case of desktops, the name of the vendor of the motherboard.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>manufacturer</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/model"></a>
-<h3 class="fn"><a name="model-prop"></a>model : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/model"></a>
+<h3 class="fn"><a name="model-prop"></a>model : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the model name.</p>
 <p>Returns the model information of the device. In the case of desktops where no model information is present, the CPU architect, such as i686, and machine type, such as Server, Desktop or Laptop.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>model</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemDeviceInfo/productName"></a>
-<h3 class="fn"><a name="productName-prop"></a>productName : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
+<a name="//apple_ref/cpp/instm/QSystemDeviceInfo/productName"></a>
+<h3 class="fn"><a name="productName-prop"></a>productName : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the product name.</p>
 <p>Returns the product name of the device. In the case where no product information is available,</p>
 <p><b>Access functions:</b></p>
@@ -295,7 +308,7 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QSystemDeviceInfo/QSystemDeviceInfo"></a>
-<h3 class="fn"><a name="QSystemDeviceInfo"></a>QSystemDeviceInfo::QSystemDeviceInfo ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QSystemDeviceInfo"></a>QSystemDeviceInfo::QSystemDeviceInfo ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a> with the given <i>parent</i>.</p>
 <a name="//apple_ref/cpp/instm/QSystemDeviceInfo/~QSystemDeviceInfo"></a>
 <h3 class="fn"><a name="dtor.QSystemDeviceInfo"></a>QSystemDeviceInfo::~QSystemDeviceInfo ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -319,6 +332,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

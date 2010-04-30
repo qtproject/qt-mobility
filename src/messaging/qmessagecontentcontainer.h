@@ -77,13 +77,13 @@ public:
     QByteArray suggestedFileName() const;
 
     bool isContentAvailable() const;
-    uint size() const;
+    int size() const;
 
     QString textContent() const;
     QByteArray content() const;
 
-    void writeTextContentTo(QTextStream &out) const;
-    void writeContentTo(QDataStream &out) const;
+    void writeTextContent(QTextStream &out) const;
+    void writeContent(QDataStream &out) const;
 
     QMessageContentContainerIdList contentIds() const;
 

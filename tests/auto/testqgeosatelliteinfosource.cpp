@@ -103,15 +103,6 @@ TestQGeoSatelliteInfoSource *TestQGeoSatelliteInfoSource::createDefaultSourceTes
     return test;
 }
 
-void TestQGeoSatelliteInfoSource::test_slot1()
-{
-}
-
-void TestQGeoSatelliteInfoSource::test_slot2()
-{
-	m_testSlot2Called = true;
-}
-
 void TestQGeoSatelliteInfoSource::base_initTestCase()
 {
     qRegisterMetaType<QList<QGeoSatelliteInfo> >();
@@ -153,26 +144,35 @@ void TestQGeoSatelliteInfoSource::cleanupTestCase()
     base_cleanupTestCase();
 }
 
+void TestQGeoSatelliteInfoSource::test_slot1()
+{
+}
+
+void TestQGeoSatelliteInfoSource::test_slot2()
+{
+    m_testSlot2Called = true;
+}
+
 void TestQGeoSatelliteInfoSource::constructor_withParent()
 {
-    QLocationTestUtils::uheap_mark();
+    //QLocationTestUtils::uheap_mark();
     QObject *parent = new QObject();
     new MySatelliteSource(parent);
     delete parent;
-    QLocationTestUtils::uheap_mark_end();
+    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoSatelliteInfoSource::constructor_noParent()
 {
-    QLocationTestUtils::uheap_mark();
+    //QLocationTestUtils::uheap_mark();
     MySatelliteSource *obj = new MySatelliteSource();
     delete obj;
-    QLocationTestUtils::uheap_mark_end();
+    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoSatelliteInfoSource::createDefaultSource()
 {
-    QLocationTestUtils::uheap_mark();
+    //QLocationTestUtils::uheap_mark();
     QObject *parent = new QObject;
 
     QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(parent);
@@ -180,27 +180,31 @@ void TestQGeoSatelliteInfoSource::createDefaultSource()
     QVERIFY(source != 0);
 #elif defined(Q_OS_WINCE)
     QVERIFY(source != 0);
-#else
+#elif defined(Q_WS_MAEMO_5)
+    QVERIFY(source != 0);
+#else    
     QVERIFY(source == 0);
 #endif
     delete parent;
-    QLocationTestUtils::uheap_mark_end();
+    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoSatelliteInfoSource::createDefaultSource_noParent()
 {
-    QLocationTestUtils::uheap_mark();
+    //QLocationTestUtils::uheap_mark();
 
     QGeoSatelliteInfoSource *source = QGeoSatelliteInfoSource::createDefaultSource(0);
 #if defined(Q_OS_SYMBIAN)
     QVERIFY(source != 0);
 #elif defined(Q_OS_WINCE)
     QVERIFY(source != 0);
+#elif defined(Q_WS_MAEMO_5)
+    QVERIFY(source != 0);
 #else
     QVERIFY(source == 0);
 #endif
     delete source;
-    QLocationTestUtils::uheap_mark_end();
+    //QLocationTestUtils::uheap_mark_end();
 }
 
 void TestQGeoSatelliteInfoSource::startUpdates()
@@ -296,6 +300,7 @@ void TestQGeoSatelliteInfoSource::requestUpdate_data()
 {
     QTest::addColumn<int>("timeout");
     QTest::newRow("less than zero") << -1;
+    QTest::newRow("very small timeout") << 1;
 }
 
 void TestQGeoSatelliteInfoSource::requestUpdate_validTimeout()
@@ -306,12 +311,14 @@ void TestQGeoSatelliteInfoSource::requestUpdate_validTimeout()
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
     QSignalSpy spyUse(m_source,
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
 
-    m_source->requestUpdate(60000);
+    m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 60000);
+    QTRY_VERIFY_WITH_TIMEOUT(
+            (spyView.count() == 1) && (spyUse.count() == 1 && (spyTimeout.count()) == 0), 7000);
 }
 
 void TestQGeoSatelliteInfoSource::requestUpdate_defaultTimeout()
@@ -322,12 +329,15 @@ void TestQGeoSatelliteInfoSource::requestUpdate_defaultTimeout()
                        SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)));
     QSignalSpy spyUse(m_source,
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
+    QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
 
     m_source->requestUpdate(0);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), MAX_WAITING_TIME);
+    QTRY_VERIFY_WITH_TIMEOUT(
+            (spyView.count() == 1) && (spyUse.count() == 1 && (spyTimeout.count()) == 0), 
+            MAX_WAITING_TIME);
 }
 
 void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
@@ -339,19 +349,19 @@ void TestQGeoSatelliteInfoSource::requestUpdate_repeatedCalls()
     QSignalSpy spyUse(m_source,
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
 
-    m_source->requestUpdate(12000);
+    m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 12000);
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
     spyView.clear();
     spyUse.clear();
 
-    m_source->requestUpdate(12000);
+    m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 12000);
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
 }
 
 void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
@@ -363,12 +373,12 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCalls()
     QSignalSpy spyUse(m_source,
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
 
-    m_source->requestUpdate(10000);
-    m_source->requestUpdate(10000);
+    m_source->requestUpdate(7000);
+    m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 20000);
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 7000);
 }
 
 void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
@@ -385,11 +395,11 @@ void TestQGeoSatelliteInfoSource::requestUpdate_overlappingCallsWithTimeout()
     m_source->requestUpdate(0);
     m_source->requestUpdate(1);
 	
-    QTRY_COMPARE_WITH_TIMEOUT(spyTimeout.count(), 0, 1000);
+    QTRY_COMPARE_WITH_TIMEOUT(spyTimeout.count(), 0, 7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1) || (spyTimeout.count() == 1), 20000);
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1) && (spyTimeout.count() == 0), 7000);
 }
 
 void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates()
@@ -410,7 +420,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateAfterStartUpdates()
     spyView.clear();
     spyUse.clear();
 
-    m_source->requestUpdate(5000);
+    m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
@@ -437,7 +447,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates()
                       SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)));
     QSignalSpy spyTimeout(m_source, SIGNAL(requestTimeout()));
 
-    m_source->requestUpdate(5000);
+    m_source->requestUpdate(7000);
 
     m_source->startUpdates();
 
@@ -451,7 +461,7 @@ void TestQGeoSatelliteInfoSource::requestUpdateBeforeStartUpdates()
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 10000);
+    QTRY_VERIFY_WITH_TIMEOUT((spyView.count() == 1) && (spyUse.count() == 1), 12000);
 
     m_source->stopUpdates();
 }
@@ -473,38 +483,38 @@ void TestQGeoSatelliteInfoSource::removeSlotForRequestTimeout()
 
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInUseUpdated()
 {
-	CHECK_SOURCE_VALID;
-	
-	bool i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
-	QVERIFY(i==true);
-	i = disconnect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	
-	m_source->requestUpdate(60000);
+    CHECK_SOURCE_VALID;
+
+    bool i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+    i = connect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
+    QVERIFY(i == true);
+    i = disconnect(m_source, SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+
+    m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
+    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 7000);
 }
 
 void TestQGeoSatelliteInfoSource::removeSlotForSatellitesInViewUpdated()
 {
-	CHECK_SOURCE_VALID;
-	
-	bool i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
-	QVERIFY(i==true);
-	i = disconnect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
-	QVERIFY(i==true);
-	
-	m_source->requestUpdate(60000);
+    CHECK_SOURCE_VALID;
+
+    bool i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+    i = connect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot2()));
+    QVERIFY(i == true);
+    i = disconnect(m_source, SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &)), this, SLOT(test_slot1()));
+    QVERIFY(i == true);
+
+    m_source->requestUpdate(7000);
 
     EXPECT_FAIL_WINCE_SEE_MOBILITY_337;
 
-    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 60000);
+    QTRY_VERIFY_WITH_TIMEOUT((m_testSlot2Called == true), 7000);
 }
 
 #include "testqgeosatelliteinfosource.moc"

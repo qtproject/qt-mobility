@@ -8,11 +8,13 @@ SOURCES += main.cpp\
         dialog.cpp
 
 HEADERS  += dialog.h
+RESOURCES = examples.qrc
 
 INCLUDEPATH += ../../src/systeminfo
 
 include(../examples.pri)
-qtAddLibrary(QtSystemInfo)
+CONFIG += mobility
+MOBILITY = systeminfo
 
 CONFIG += console
 
@@ -22,7 +24,11 @@ win32 {
 
 unix: {
     linux-*: {
-        FORMS += dialog.ui
+        maemo* {
+            FORMS += dialog_landscape.ui
+        } else {
+            FORMS += dialog.ui
+        }
     }
     
     mac: {
@@ -31,7 +37,7 @@ unix: {
 }
 
 symbian {
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData WriteUserData UserEnvironment Location  ReadDeviceData TrustedUI
     TARGET.UID3 = 0x2002ac7e
     FORMS    += dialog_s60.ui
 }

@@ -25,16 +25,32 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#QContactChangeSet">QContactChangeSet</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#QContactChangeSet-2">QContactChangeSet</a></b> ( const QContactChangeSet &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#dtor.QContactChangeSet">~QContactChangeSet</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#addedContacts">addedContacts</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#addedRelationshipsContacts">addedRelationshipsContacts</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#changedContacts">changedContacts</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#clear">clear</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#addedContacts">addedContacts</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#addedRelationshipsContacts">addedRelationshipsContacts</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#changedContacts">changedContacts</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#clearAddedContacts">clearAddedContacts</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#clearAddedRelationshipsContacts">clearAddedRelationshipsContacts</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#clearAll">clearAll</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#clearChangedContacts">clearChangedContacts</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#clearRemovedContacts">clearRemovedContacts</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#clearRemovedRelationshipsContacts">clearRemovedRelationshipsContacts</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#dataChanged">dataChanged</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#emitSignals">emitSignals</a></b> ( QContactManagerEngine * <i>engine</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QPair&lt;QContactLocalId, QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#oldAndNewSelfContactId">oldAndNewSelfContactId</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#removedContacts">removedContacts</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#removedRelationshipsContacts">removedRelationshipsContacts</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertAddedContact">insertAddedContact</a></b> ( QContactLocalId <i>addedContactId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertAddedContacts">insertAddedContacts</a></b> ( const QList&lt;QContactLocalId&gt; &amp; <i>addedContactIds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertAddedRelationshipsContact">insertAddedRelationshipsContact</a></b> ( QContactLocalId <i>affectedContactId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertAddedRelationshipsContacts">insertAddedRelationshipsContacts</a></b> ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertChangedContact">insertChangedContact</a></b> ( QContactLocalId <i>changedContactId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertChangedContacts">insertChangedContacts</a></b> ( const QList&lt;QContactLocalId&gt; &amp; <i>changedContactIds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertRemovedContact">insertRemovedContact</a></b> ( QContactLocalId <i>removedContactId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertRemovedContacts">insertRemovedContacts</a></b> ( const QList&lt;QContactLocalId&gt; &amp; <i>removedContactIds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertRemovedRelationshipsContact">insertRemovedRelationshipsContact</a></b> ( QContactLocalId <i>affectedContactId</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#insertRemovedRelationshipsContacts">insertRemovedRelationshipsContacts</a></b> ( const QList&lt;QContactLocalId&gt; &amp; <i>affectedContactIds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPair&lt;QContactLocalId, QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#oldAndNewSelfContactId">oldAndNewSelfContactId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#removedContacts">removedContacts</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSet&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#removedRelationshipsContacts">removedRelationshipsContacts</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#setDataChanged">setDataChanged</a></b> ( bool <i>dataChanged</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#setOldAndNewSelfContactId">setOldAndNewSelfContactId</a></b> ( const QPair&lt;QContactLocalId, QContactLocalId&gt; &amp; <i>oldAndNewContactId</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactChangeSet &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactchangeset.html#operator-eq">operator=</a></b> ( const QContactChangeSet &amp; <i>other</i> )</td></tr>
 </table>
 <a name="details"></a>
@@ -54,17 +70,32 @@
 <h3 class="fn"><a name="dtor.QContactChangeSet"></a>QContactChangeSet::~QContactChangeSet ()</h3>
 <p>Frees the memory used by this change set</p>
 <a name="//apple_ref/cpp/instm/QContactChangeSet/addedContacts"></a>
-<h3 class="fn"><a name="addedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::addedContacts ()</h3>
-<p>Returns a reference to the set of ids of contacts which have been added to the database.</p>
+<h3 class="fn"><a name="addedContacts"></a><a href="http://qt.nokia.com/doc/4.6/qset.html">QSet</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; QContactChangeSet::addedContacts () const</h3>
+<p>Returns the set of ids of contacts which have been added to the database.</p>
 <a name="//apple_ref/cpp/instm/QContactChangeSet/addedRelationshipsContacts"></a>
-<h3 class="fn"><a name="addedRelationshipsContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::addedRelationshipsContacts ()</h3>
-<p>Returns a reference to the set of ids of contacts which have been affected by the addition of relationships to the database.</p>
+<h3 class="fn"><a name="addedRelationshipsContacts"></a><a href="http://qt.nokia.com/doc/4.6/qset.html">QSet</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; QContactChangeSet::addedRelationshipsContacts () const</h3>
+<p>Returns the set of ids of contacts which have been affected by the addition of relationships to the database.</p>
 <a name="//apple_ref/cpp/instm/QContactChangeSet/changedContacts"></a>
-<h3 class="fn"><a name="changedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::changedContacts ()</h3>
-<p>Returns a reference to the set of ids of contacts which have been changed in the database.</p>
-<a name="//apple_ref/cpp/instm/QContactChangeSet/clear"></a>
-<h3 class="fn"><a name="clear"></a>void QContactChangeSet::clear ()</h3>
+<h3 class="fn"><a name="changedContacts"></a><a href="http://qt.nokia.com/doc/4.6/qset.html">QSet</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; QContactChangeSet::changedContacts () const</h3>
+<p>Returns the set of ids of contacts which have been changed in the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/clearAddedContacts"></a>
+<h3 class="fn"><a name="clearAddedContacts"></a>void QContactChangeSet::clearAddedContacts ()</h3>
+<p>Clears the set of ids of contacts which have been added to the database</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/clearAddedRelationshipsContacts"></a>
+<h3 class="fn"><a name="clearAddedRelationshipsContacts"></a>void QContactChangeSet::clearAddedRelationshipsContacts ()</h3>
+<p>Clears the set of ids of contacts which have been affected by the addition of a relationship to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/clearAll"></a>
+<h3 class="fn"><a name="clearAll"></a>void QContactChangeSet::clearAll ()</h3>
 <p>Clears all flags and sets of ids in this change set</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/clearChangedContacts"></a>
+<h3 class="fn"><a name="clearChangedContacts"></a>void QContactChangeSet::clearChangedContacts ()</h3>
+<p>Clears the set of ids of contacts which have been changed to the database</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/clearRemovedContacts"></a>
+<h3 class="fn"><a name="clearRemovedContacts"></a>void QContactChangeSet::clearRemovedContacts ()</h3>
+<p>Clears the set of ids of contacts which have been removed to the database</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/clearRemovedRelationshipsContacts"></a>
+<h3 class="fn"><a name="clearRemovedRelationshipsContacts"></a>void QContactChangeSet::clearRemovedRelationshipsContacts ()</h3>
+<p>Clears the set of ids of contacts which have been affected by the removal of a relationship to the database.</p>
 <a name="//apple_ref/cpp/instm/QContactChangeSet/dataChanged"></a>
 <h3 class="fn"><a name="dataChanged"></a>bool QContactChangeSet::dataChanged ()</h3>
 <p>Returns the value of the data changed flag</p>
@@ -72,19 +103,54 @@
 <a name="//apple_ref/cpp/instm/QContactChangeSet/emitSignals"></a>
 <h3 class="fn"><a name="emitSignals"></a>void QContactChangeSet::emitSignals ( <a href="qcontactmanagerengine.html">QContactManagerEngine</a> * <i>engine</i> )</h3>
 <p>Emits the appropriate signals from the given <i>engine</i> given the state of the change set</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertAddedContact"></a>
+<h3 class="fn"><a name="insertAddedContact"></a>void QContactChangeSet::insertAddedContact ( <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> <i>addedContactId</i> )</h3>
+<p>Inserts the given contact id <i>addedContactId</i> into the set of ids of contacts which have been added to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertAddedContacts"></a>
+<h3 class="fn"><a name="insertAddedContacts"></a>void QContactChangeSet::insertAddedContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; &amp; <i>addedContactIds</i> )</h3>
+<p>Inserts each of the given contact ids <i>addedContactIds</i> into the set of ids of contacts which have been added to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertAddedRelationshipsContact"></a>
+<h3 class="fn"><a name="insertAddedRelationshipsContact"></a>void QContactChangeSet::insertAddedRelationshipsContact ( <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> <i>affectedContactId</i> )</h3>
+<p>Inserts the given contact id <i>affectedContactId</i> into the set of ids of contacts which have been affected by the addition of a relationship to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertAddedRelationshipsContacts"></a>
+<h3 class="fn"><a name="insertAddedRelationshipsContacts"></a>void QContactChangeSet::insertAddedRelationshipsContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; &amp; <i>affectedContactIds</i> )</h3>
+<p>Inserts each of the given contact ids <i>affectedContactIds</i> into the set of ids of contacts which have been affected by the addition of a relationship to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertChangedContact"></a>
+<h3 class="fn"><a name="insertChangedContact"></a>void QContactChangeSet::insertChangedContact ( <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> <i>changedContactId</i> )</h3>
+<p>Inserts the given contact id <i>changedContactId</i> into the set of ids of contacts which have been changed to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertChangedContacts"></a>
+<h3 class="fn"><a name="insertChangedContacts"></a>void QContactChangeSet::insertChangedContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; &amp; <i>changedContactIds</i> )</h3>
+<p>Inserts each of the given contact ids <i>changedContactIds</i> into the set of ids of contacts which have been changed to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertRemovedContact"></a>
+<h3 class="fn"><a name="insertRemovedContact"></a>void QContactChangeSet::insertRemovedContact ( <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> <i>removedContactId</i> )</h3>
+<p>Inserts the given contact id <i>removedContactId</i> into the set of ids of contacts which have been removed to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertRemovedContacts"></a>
+<h3 class="fn"><a name="insertRemovedContacts"></a>void QContactChangeSet::insertRemovedContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; &amp; <i>removedContactIds</i> )</h3>
+<p>Inserts each of the given contact ids <i>removedContactIds</i> into the set of ids of contacts which have been removed to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertRemovedRelationshipsContact"></a>
+<h3 class="fn"><a name="insertRemovedRelationshipsContact"></a>void QContactChangeSet::insertRemovedRelationshipsContact ( <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> <i>affectedContactId</i> )</h3>
+<p>Inserts the given contact id <i>affectedContactId</i> into the set of ids of contacts which have been affected by the removal of a relationship to the database.</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/insertRemovedRelationshipsContacts"></a>
+<h3 class="fn"><a name="insertRemovedRelationshipsContacts"></a>void QContactChangeSet::insertRemovedRelationshipsContacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; &amp; <i>affectedContactIds</i> )</h3>
+<p>Inserts each of the given contact ids <i>affectedContactIds</i> into the set of ids of contacts which have been affected by the removal of a relationship to the database.</p>
 <a name="//apple_ref/cpp/instm/QContactChangeSet/oldAndNewSelfContactId"></a>
-<h3 class="fn"><a name="oldAndNewSelfContactId"></a><a href="http://qt.nokia.com/doc/4.5/qpair.html">QPair</a>&lt;QContactLocalId, QContactLocalId&gt; &amp; QContactChangeSet::oldAndNewSelfContactId ()</h3>
-<p>Returns a reference to the pair of ids which represents the old and new self contact ids. The first id in the pair is the old self contact id, while the second id in the pair is the new self contact id. If the new id is different to the old id at the point in time when <a href="qcontactchangeset.html#emitSignals">emitSignals</a>() is called, the <a href="qcontactmanagerengine.html#selfContactIdChanged">QContactManagerEngine::selfContactIdChanged</a>() signal will be emitted.</p>
+<h3 class="fn"><a name="oldAndNewSelfContactId"></a><a href="http://qt.nokia.com/doc/4.6/qpair.html">QPair</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>, <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; QContactChangeSet::oldAndNewSelfContactId () const</h3>
+<p>Returns the pair of ids which represents the old and new self contact ids. The first id in the pair is the old self contact id, while the second id in the pair is the new self contact id. If the new id is different to the old id at the point in time when <a href="qcontactchangeset.html#emitSignals">emitSignals</a>() is called, the <a href="qcontactmanagerengine.html#selfContactIdChanged">QContactManagerEngine::selfContactIdChanged</a>() signal will be emitted.</p>
+<p>See also <a href="qcontactchangeset.html#setOldAndNewSelfContactId">setOldAndNewSelfContactId</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactChangeSet/removedContacts"></a>
-<h3 class="fn"><a name="removedContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::removedContacts ()</h3>
-<p>Returns a reference to the set of ids of contacts which have been removed from the database.</p>
+<h3 class="fn"><a name="removedContacts"></a><a href="http://qt.nokia.com/doc/4.6/qset.html">QSet</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; QContactChangeSet::removedContacts () const</h3>
+<p>Returns the set of ids of contacts which have been removed from the database.</p>
 <a name="//apple_ref/cpp/instm/QContactChangeSet/removedRelationshipsContacts"></a>
-<h3 class="fn"><a name="removedRelationshipsContacts"></a><a href="http://qt.nokia.com/doc/4.5/qset.html">QSet</a>&lt;QContactLocalId&gt; &amp; QContactChangeSet::removedRelationshipsContacts ()</h3>
-<p>Returns a reference to the set of ids of contacts which have been affected by the removal of relationships from the database.</p>
+<h3 class="fn"><a name="removedRelationshipsContacts"></a><a href="http://qt.nokia.com/doc/4.6/qset.html">QSet</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; QContactChangeSet::removedRelationshipsContacts () const</h3>
+<p>Returns the set of ids of contacts which have been affected by the removal of relationships from the database.</p>
 <a name="//apple_ref/cpp/instm/QContactChangeSet/setDataChanged"></a>
 <h3 class="fn"><a name="setDataChanged"></a>void QContactChangeSet::setDataChanged ( bool <i>dataChanged</i> )</h3>
 <p>Sets the data changed flag to <i>dataChanged</i>. If this is set to true prior to calling <a href="qcontactchangeset.html#emitSignals">emitSignals</a>(), only the <a href="qcontactmanagerengine.html#dataChanged">QContactManagerEngine::dataChanged</a>() signal will be emitted; otherwise, the appropriate finer-grained signals will be emitted.</p>
 <p>See also <a href="qcontactchangeset.html#dataChanged">dataChanged</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactChangeSet/setOldAndNewSelfContactId"></a>
+<h3 class="fn"><a name="setOldAndNewSelfContactId"></a>void QContactChangeSet::setOldAndNewSelfContactId ( const <a href="http://qt.nokia.com/doc/4.6/qpair.html">QPair</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>, <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; &amp; <i>oldAndNewContactId</i> )</h3>
+<p>Sets the pair of ids which represent the old and new self contact ids to the given pair of ids <i>oldAndNewContactId</i>. The first id in the pair is the old self contact id, while the second id in the pair is the new self contact id. If the new id is different to the old id at the point in time when <a href="qcontactchangeset.html#emitSignals">emitSignals</a>() is called, the QContactManagerEngine::selfContactIdChanged signal will be emitted.</p>
+<p>See also <a href="qcontactchangeset.html#oldAndNewSelfContactId">oldAndNewSelfContactId</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactChangeSet/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QContactChangeSet &amp; QContactChangeSet::operator= ( const QContactChangeSet &amp; <i>other</i> )</h3>
 <p>Assigns this change set to be equal to <i>other</i></p>
@@ -92,6 +158,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

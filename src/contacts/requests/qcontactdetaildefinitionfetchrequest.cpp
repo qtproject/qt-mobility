@@ -48,37 +48,43 @@ QTM_BEGIN_NAMESPACE
   \class QContactDetailDefinitionFetchRequest
   \brief The QContactDetailDefinitionFetchRequest class allows a client to
     asynchronously request detail definitions from a contacts store manager.
-   \ingroup contacts-requests
+
+  For a QContactDetailDefinitionFetchRequest, the resultsAvailable() signal will be emitted when
+  either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
+  detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
 
-/*!
- * \fn QContactDetailDefinitionFetchRequest::progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
- * ordering of the results have been maintained since the last progress signal was emitted.
- */
-
-/*! Constructs a new detail definition fetch request */
-QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionFetchRequestPrivate)
+/*! Constructs a new detail definition fetch request whose parent is the specified \a parent */
+QContactDetailDefinitionFetchRequest::QContactDetailDefinitionFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionFetchRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this detail definition fetch request */
-QContactDetailDefinitionFetchRequest::~QContactDetailDefinitionFetchRequest()
+/*! Sets the name of the detail definition to retrieve to \a definitionName.
+    Equivalent to calling
+    \code
+        setDefinitionNames(QList<QContactDetailDefinition>() << definitionName);
+    \endcode
+ */
+void QContactDetailDefinitionFetchRequest::setDefinitionName(const QString& definitionName)
 {
+    Q_D(QContactDetailDefinitionFetchRequest);
+    d->m_names.clear();
+    d->m_names.append(definitionName);
 }
 
 /*! Sets the names of the detail definitions to retrieve to \a names */
-void QContactDetailDefinitionFetchRequest::setNames(const QStringList& names)
+void QContactDetailDefinitionFetchRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionFetchRequest);
     d->m_names = names;
 }
 
 /*! Returns the list of names of the detail definitions that will be retrieved */
-QStringList QContactDetailDefinitionFetchRequest::names() const
+QStringList QContactDetailDefinitionFetchRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_names;
@@ -98,11 +104,20 @@ QString QContactDetailDefinitionFetchRequest::contactType() const
     return d->m_contactType;
 }
 
-/*! Returns the map of detail definition names to detail definitions that was the result of the request */
+/*!
+  Returns the map of detail definition names to detail definitions that was the result of the request
+ */
 QMap<QString, QContactDetailDefinition> QContactDetailDefinitionFetchRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionFetchRequest);
     return d->m_definitions;
+}
+
+/*! Returns the map of input name list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactDetailDefinitionFetchRequest::errorMap() const
+{
+    Q_D(const QContactDetailDefinitionFetchRequest);
+    return d->m_errors;
 }
 
 #include "moc_qcontactdetaildefinitionfetchrequest.cpp"

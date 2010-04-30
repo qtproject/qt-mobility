@@ -39,17 +39,17 @@
 **
 ****************************************************************************/
 
-#include <qmediaimageviewerservice_p.h>
+#include "qmediaimageviewerservice_p.h"
 
-#include <qmediacontrol_p.h>
-#include <qmediaservice_p.h>
+#include "qmediacontrol_p.h"
+#include "qmediaservice_p.h"
 
-#include <qmediacontent.h>
-#include <qmediaresource.h>
-#include <qvideooutputcontrol.h>
-#include <qmediaobject_p.h>
-#include <qvideorenderercontrol.h>
-#include <qvideowidgetcontrol.h>
+#include "qmediacontent.h"
+#include "qmediaresource.h"
+#include "qvideooutputcontrol.h"
+#include "qmediaobject_p.h"
+#include "qvideorenderercontrol.h"
+#include "qvideowidgetcontrol.h"
 
 #include <QtCore/qdebug.h>
 
@@ -64,7 +64,7 @@
 #include <QtMultimedia/qabstractvideosurface.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaImageViewerServicePrivate : public QMediaServicePrivate
 {
@@ -283,7 +283,7 @@ public:
     {
     }
 
-    bool isImageType(const QUrl &uri, const QString &mimeType) const;
+    bool isImageType(const QUrl &url, const QString &mimeType) const;
 
     void loadImage();
     void cancelRequests();
@@ -300,13 +300,13 @@ public:
     QList<QMediaResource> possibleResources;
 };
 
-bool QMediaImageViewerControlPrivate::isImageType(const QUrl &uri, const QString &mimeType) const
+bool QMediaImageViewerControlPrivate::isImageType(const QUrl &url, const QString &mimeType) const
 {
     if (!mimeType.isEmpty()) {
         return mimeType.startsWith(QLatin1String("image/"))
                 || mimeType == QLatin1String("application/xml+svg");
-    } else if (uri.scheme() == QLatin1String("file")) {
-        QString path = uri.path();
+    } else if (url.scheme() == QLatin1String("file")) {
+        QString path = url.path();
 
         return path.endsWith(QLatin1String(".jpeg"), Qt::CaseInsensitive)
                 || path.endsWith(QLatin1String(".jpg"), Qt::CaseInsensitive)
@@ -331,16 +331,16 @@ void QMediaImageViewerControlPrivate::loadImage()
     while (!possibleResources.isEmpty() && !headReply && !getReply) {
         currentMedia = possibleResources.takeFirst();
 
-        QUrl uri = currentMedia.uri();
+        QUrl url = currentMedia.url();
         QString mimeType = currentMedia.mimeType();
 
-        if (isImageType(uri, mimeType)) {
-            getReply = network->get(QNetworkRequest(uri));
+        if (isImageType(url, mimeType)) {
+            getReply = network->get(QNetworkRequest(url));
             QObject::connect(getReply, SIGNAL(finished()), q_func(), SLOT(_q_getFinished()));
 
             status = QMediaImageViewer::LoadingMedia;
-        } else if (mimeType.isEmpty() && uri.scheme() != QLatin1String("file")) {
-            headReply = network->head(QNetworkRequest(currentMedia.uri()));
+        } else if (mimeType.isEmpty() && url.scheme() != QLatin1String("file")) {
+            headReply = network->head(QNetworkRequest(currentMedia.url()));
             QObject::connect(headReply, SIGNAL(finished()), q_func(), SLOT(_q_headFinished()));
 
             status = QMediaImageViewer::LoadingMedia;
@@ -394,17 +394,17 @@ void QMediaImageViewerControlPrivate::_q_headFinished()
 
     QString mimeType = headReply->header(QNetworkRequest::ContentTypeHeader)
             .toString().section(QLatin1Char(';'), 0, 0);
-    QUrl uri = headReply->url();
-    if (uri.isEmpty())
-        uri = headReply->request().url();
+    QUrl url = headReply->url();
+    if (url.isEmpty())
+        url = headReply->request().url();
 
     headReply->deleteLater();
     headReply = 0;
 
-    if (isImageType(uri, mimeType) || mimeType.isEmpty()) {
+    if (isImageType(url, mimeType) || mimeType.isEmpty()) {
         QNetworkAccessManager *network = service->networkManager();
 
-        getReply = network->get(QNetworkRequest(uri));
+        getReply = network->get(QNetworkRequest(url));
 
         QObject::connect(getReply, SIGNAL(finished()), q_func(), SLOT(_q_getFinished()));
     } else {
@@ -462,24 +462,11 @@ void QMediaImageViewerControl::showMedia(const QMediaContent &media)
         emit mediaStatusChanged(d->status);
     } else {
         d->possibleResources = media.resources();
-
-        QUrl posterUri = media.posterUri();
-        if (!posterUri.isEmpty())
-            d->possibleResources << QMediaResource(posterUri);
-
-        QUrl coverUriLarge = media.coverArtUriLarge();
-        if (!coverUriLarge.isEmpty())
-            d->possibleResources << QMediaResource(coverUriLarge);
-
-        QUrl coverUriSmall = media.coverArtUriSmall();
-        if (!coverUriSmall.isEmpty())
-            d->possibleResources << QMediaResource(coverUriSmall);
-
         d->loadImage();
     }
 }
 
 
 #include "moc_qmediaimageviewerservice_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

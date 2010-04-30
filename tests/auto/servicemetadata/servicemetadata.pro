@@ -28,4 +28,5 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework

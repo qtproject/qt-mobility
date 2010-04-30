@@ -1,0 +1,10 @@
+BEGIN:VCARD
+VERSION:3.0
+N:name;ひらがな;;;
+FN:ひらがな name
+ORG:ABC;
+EMAIL;type=INTERNET;type=WORK;type=pref:a@b.com
+TEL;type=WORK;type=pref:1234
+TEL;type=CELL:5678
+X-ABUID:71192A64-301C-420B-AF88-DA4E0CF1B8A4\:ABPerson
+END:VCARD

@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSystemInfo Class Reference</h1>
 <p>The QSystemInfo class provides access to various general information from the system. <a href="#details">More...</a></p>
-<pre>    #include &lt;QSystemInfo&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QSystemInfo&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qsysteminfo-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -35,7 +35,7 @@
 <li><div class="fn"><b><a href="qsysteminfo.html#currentLanguage-prop">currentLanguage</a></b> : const QString</div></li>
 </ul>
 <ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
@@ -43,11 +43,14 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#QSystemInfo">QSystemInfo</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#dtor.QSystemInfo">~QSystemInfo</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#availableLanguages-prop">availableLanguages</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#currentCountryCode-prop">currentCountryCode</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#currentLanguage-prop">currentLanguage</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#hasFeatureSupported">hasFeatureSupported</a></b> ( QSystemInfo::Feature <i>feature</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#version">version</a></b> ( QSystemInfo::Version <i>type</i>, const QString &amp; <i>parameter</i> = QString() )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
@@ -56,25 +59,15 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#currentLanguageChanged">currentLanguageChanged</a></b> ( const QString &amp; <i>lang</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
-</ul>
-<hr />
-<a name="static-public-members"></a>
-<h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#availableLanguages-prop">availableLanguages</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#currentCountryCode-prop">currentCountryCode</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#currentLanguage-prop">currentLanguage</a></b> ()</td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -140,45 +133,50 @@
 </table></p>
 <hr />
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/clm/QSystemInfo/availableLanguages"></a>
-<h3 class="fn"><a name="availableLanguages-prop"></a>availableLanguages : const <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a></h3>
+<a name="//apple_ref/cpp/instm/QSystemInfo/availableLanguages"></a>
+<h3 class="fn"><a name="availableLanguages-prop"></a>availableLanguages : const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a></h3>
 <p>This property holds list of available languages.</p>
-<p>Returns a <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> of available Qt language translations in 2 letter ISO 639-1 format. If the Qt translations cannot be found, returns the current system language.</p>
+<p>Returns a <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> of available Qt language translations in 2 letter ISO 639-1 format. If the Qt translations cannot be found, returns the current system language.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b>availableLanguages</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemInfo/currentCountryCode"></a>
-<h3 class="fn"><a name="currentCountryCode-prop"></a>currentCountryCode : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
+<a name="//apple_ref/cpp/instm/QSystemInfo/currentCountryCode"></a>
+<h3 class="fn"><a name="currentCountryCode-prop"></a>currentCountryCode : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the current locale country code.</p>
 <p>Returns the 2 letter ISO 3166-1 for the current country code.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>currentCountryCode</b> ()</td></tr>
 </table>
-<a name="//apple_ref/cpp/clm/QSystemInfo/currentLanguage"></a>
-<h3 class="fn"><a name="currentLanguage-prop"></a>currentLanguage : const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a></h3>
+<a name="//apple_ref/cpp/instm/QSystemInfo/currentLanguage"></a>
+<a name="//apple_ref/cpp/instm/QSystemInfo/currentLanguageChanged"></a>
+<h3 class="fn"><a name="currentLanguage-prop"></a>currentLanguage : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds the current Language Returns the current language in 2 letter ISO 639-1 format.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>currentLanguage</b> ()</td></tr>
 </table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsysteminfo.html#currentLanguageChanged">currentLanguageChanged</a></b> ( const QString &amp; <i>lang</i> )</td></tr>
+</table>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QSystemInfo/QSystemInfo"></a>
-<h3 class="fn"><a name="QSystemInfo"></a>QSystemInfo::QSystemInfo ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QSystemInfo"></a>QSystemInfo::QSystemInfo ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a <a href="qsysteminfo.html">QSystemInfo</a> object with the given <i>parent</i>.</p>
 <a name="//apple_ref/cpp/instm/QSystemInfo/~QSystemInfo"></a>
 <h3 class="fn"><a name="dtor.QSystemInfo"></a>QSystemInfo::~QSystemInfo ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qsysteminfo.html">QSystemInfo</a> object</p>
 <a name="//apple_ref/cpp/instm/QSystemInfo/currentLanguageChanged"></a>
-<h3 class="fn"><a name="currentLanguageChanged"></a>void QSystemInfo::currentLanguageChanged ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>lang</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="currentLanguageChanged"></a>void QSystemInfo::currentLanguageChanged ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>lang</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted whenever the current language changes, specified by <i>lang</i>, which is in 2 letter, ISO 639-1 specification form.</p>
 <a name="//apple_ref/cpp/instm/QSystemInfo/hasFeatureSupported"></a>
 <h3 class="fn"><a name="hasFeatureSupported"></a>bool QSystemInfo::hasFeatureSupported ( <a href="qsysteminfo.html#Feature-enum">QSystemInfo::Feature</a> <i>feature</i> )</h3>
 <p>Returns true if the <a href="qsysteminfo.html#Feature-enum">QSystemInfo::Feature</a> <i>feature</i> is supported, otherwise false.</p>
 <a name="//apple_ref/cpp/instm/QSystemInfo/version"></a>
-<h3 class="fn"><a name="version"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QSystemInfo::version ( <a href="qsysteminfo.html#Version-enum">QSystemInfo::Version</a> <i>type</i>, const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>parameter</i> = QString() )</h3>
+<h3 class="fn"><a name="version"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QSystemInfo::version ( <a href="qsysteminfo.html#Version-enum">QSystemInfo::Version</a> <i>type</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>parameter</i> = QString() )</h3>
 <p>Returns the version of <a href="qsysteminfo.html#Version-enum">QSystemInfo::Version</a> <i>type</i>, with optional platform dependent <i>parameter</i> as a string.</p>
 <p>Version will be returned in &quot;major.minor.build&quot; form.</p>
 <p>In case a particular version does not use the &quot;build&quot; part, it is set to 0. If a particular element is not available at all, an error &quot;Not Installed&quot; will be returned by the API.</p>
@@ -186,6 +184,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

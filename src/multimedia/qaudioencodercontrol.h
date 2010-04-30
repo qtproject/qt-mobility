@@ -42,16 +42,17 @@
 #ifndef QAUDIOENCODERCONTROL_H
 #define QAUDIOENCODERCONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediarecorder.h>
+#include "qmediacontrol.h"
+#include "qmediarecorder.h"
 #include <QtCore/qlist.h>
 #include <QtCore/qpair.h>
 
-
+QT_BEGIN_NAMESPACE
 class QStringList;
 class QAudioFormat;
+QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QAudioEncoderControl : public QMediaControl
 {
@@ -81,6 +82,6 @@ protected:
 #define QAudioEncoderControl_iid "com.nokia.Qt.QAudioEncoderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QAudioEncoderControl, QAudioEncoderControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QAUDIOCAPTUREPROPERTIESCONTROL_H

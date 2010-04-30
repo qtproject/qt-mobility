@@ -8,7 +8,8 @@ SOURCES  += tst_qsystemstorageinfo.cpp
 INCLUDEPATH += ../../../src/systeminfo
 
 include(../../../common.pri)
-qtAddLibrary(QtSystemInfo)
+CONFIG += mobility
+MOBILITY = systeminfo
 
 symbian {
     TARGET.CAPABILITY = All -TCB -DRM

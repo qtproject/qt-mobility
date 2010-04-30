@@ -53,7 +53,7 @@ class QServiceInterfaceDescriptor;
 class QServiceContext;
 class QAbstractSecuritySession;
 
-class Q_SFW_EXPORT QServicePluginInterface
+class Q_SERVICEFW_EXPORT QServicePluginInterface
 {
 public:
     QServicePluginInterface();
@@ -68,9 +68,11 @@ public:
 };
 QTM_END_NAMESPACE
 
+QT_BEGIN_NAMESPACE
 //moc doesn't understand QTM_PREPEND_NAMESPACE() macro. we have to be explicit
 //Q_DECLARE_INTERFACE(QTM_PREPEND_NAMESPACE(QServicePluginInterface), "com.nokia.qt.QServicePluginInterface/1.0")
 Q_DECLARE_INTERFACE(QtMobility::QServicePluginInterface, "com.nokia.qt.QServicePluginInterface/1.0")
+QT_END_NAMESPACE
 
 QT_END_HEADER
 #endif

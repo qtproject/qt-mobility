@@ -47,7 +47,7 @@
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
-#include "qcontact.h"
+#include "qcontactfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,36 +55,40 @@ class Q_CONTACTS_EXPORT QContactName : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldPrefix;
-    const char* FieldFirst;
-    const char* FieldMiddle;
-    const char* FieldLast;
-    const char* FieldSuffix;
-    const char* FieldCustomLabel;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldPrefix;
+    static const QLatin1Constant FieldFirstName;
+    static const QLatin1Constant FieldMiddleName;
+    static const QLatin1Constant FieldLastName;
+    static const QLatin1Constant FieldSuffix;
+    static const QLatin1Constant FieldCustomLabel;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
-    Q_DECLARE_LATIN1_LITERAL(FieldPrefix, "Prefix");
-    Q_DECLARE_LATIN1_LITERAL(FieldFirst, "First");
-    Q_DECLARE_LATIN1_LITERAL(FieldMiddle, "Middle");
-    Q_DECLARE_LATIN1_LITERAL(FieldLast, "Last");
-    Q_DECLARE_LATIN1_LITERAL(FieldSuffix, "Suffix");
-    Q_DECLARE_LATIN1_LITERAL(FieldCustomLabel, "CustomLabel");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPrefix, "Prefix");
+    Q_DECLARE_LATIN1_CONSTANT(FieldFirstName, "FirstName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldMiddleName, "MiddleName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLastName, "LastName");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSuffix, "Suffix");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCustomLabel, "CustomLabel");
 #endif
 
     QString prefix() const {return value(FieldPrefix);}
-    QString first() const {return value(FieldFirst);}
-    QString middle() const {return value(FieldMiddle);}
-    QString last() const {return value(FieldLast);}
+    QString firstName() const {return value(FieldFirstName);}
+    QString middleName() const {return value(FieldMiddleName);}
+    QString lastName() const {return value(FieldLastName);}
     QString suffix() const {return value(FieldSuffix);}
     QString customLabel() const{return value(FieldCustomLabel);}
 
     void setPrefix(const QString& prefix) {setValue(FieldPrefix, prefix);}
-    void setFirst(const QString& first) {setValue(FieldFirst, first);}
-    void setMiddle(const QString& middle) {setValue(FieldMiddle, middle);}
-    void setLast(const QString& last) {setValue(FieldLast, last);}
+    void setFirstName(const QString& firstName) {setValue(FieldFirstName, firstName);}
+    void setMiddleName(const QString& middleName) {setValue(FieldMiddleName, middleName);}
+    void setLastName(const QString& lastName) {setValue(FieldLastName, lastName);}
     void setSuffix(const QString& suffix) {setValue(FieldSuffix, suffix);}
     void setCustomLabel(const QString& customLabel) {setValue(FieldCustomLabel, customLabel);}
+
+    // Convenience filter
+    static QContactFilter match(const QString& name);
+    static QContactFilter match(const QString& firstName, const QString& lastName);
 };
 
 QTM_END_NAMESPACE

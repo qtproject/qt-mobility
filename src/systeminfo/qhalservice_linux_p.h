@@ -55,15 +55,15 @@
 
 #include <qmobilityglobal.h>
 
-#include <QtDBus>
-#include <QDBusConnection>
-#include <QDBusError>
-#include <QDBusInterface>
-#include <QDBusMessage>
-#include <QDBusReply>
-#include <QVariantList>
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusError>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusReply>
+#include <QtDBus/QDBusPendingCallWatcher>
 
-#include <QDBusPendingCallWatcher>
+#include <QVariantList>
 
 #define HAL_DBUS_SERVICE "org.freedesktop.Hal"
 

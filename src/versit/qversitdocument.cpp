@@ -43,30 +43,43 @@
 #include "qversitdocument_p.h"
 #include "qmobilityglobal.h"
 
+#include <QTextCodec>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
   \class QVersitDocument
- 
-  \brief The QVersitDocument class is a container for 0..n versit properties.
-
+  \brief The QVersitDocument class is a container for a list of versit properties.
   \ingroup versit
- 
-  For example a vCard can be presented as a QVersitDocument that
-  consists of 0..n properties such as a name (N),
-  a telephone number (TEL) and an email address (EMAIL) to name a few.
-  Each of these properties is stored as
-  an instance of a QVersitProperty in a QVersitDocument.
- 
+
+  For example a vCard can be presented as a QVersitDocument that consists of a number of properties
+  such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few.
+  Each of these properties is stored as an instance of a QVersitProperty in a QVersitDocument.
+
   QVersitDocument supports implicit sharing.
- 
+
   \sa QVersitProperty
+ */
+
+/*!
+  \enum QVersitDocument::VersitType
+  This enum describes a versit document type and version.
+  \value InvalidType No type specified or a document with an invalid type was parsed
+  \value VCard21Type vCard version 2.1
+  \value VCard30Type vCard version 3.0
  */
 
 /*! Constructs a new empty document */
 QVersitDocument::QVersitDocument() : d(new QVersitDocumentPrivate())
 {
 }
+
+/*! Constructs a new empty document with the type set to \a type */
+QVersitDocument::QVersitDocument(VersitType type) : d(new QVersitDocumentPrivate())
+{
+    d->mVersitType = type;
+}
+
 
 /*! Constructs a document that is a copy of \a other */
 QVersitDocument::QVersitDocument(const QVersitDocument& other) : d(other.d)
@@ -83,13 +96,47 @@ QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
 {
     if (this != &other)
         d = other.d;
-    return *this;    
+    return *this;
 }
+
+/*! Returns true if this is equal to \a other; false otherwise. */
+bool QVersitDocument::operator==(const QVersitDocument& other) const
+{
+    return d->mVersitType == other.d->mVersitType &&
+            d->mProperties == other.d->mProperties;
+}
+
+/*! Returns true if this is not equal to \a other; false otherwise. */
+bool QVersitDocument::operator!=(const QVersitDocument& other) const
+{
+    return !(*this == other);
+}
+
+/*! Returns the hash value for \a key. */
+uint qHash(const QVersitDocument &key)
+{
+    int hash = QT_PREPEND_NAMESPACE(qHash)(key.type());
+    foreach (const QVersitProperty& property, key.properties()) {
+        hash += qHash(property);
+    }
+    return hash;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QVersitDocument& document)
+{
+    dbg.nospace() << "QVersitDocument(" << document.type() << ')';
+    foreach (const QVersitProperty& property, document.properties()) {
+        dbg.space() << '\n' << property;
+    }
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
  * Sets the versit document type to \a type.
  */
-void QVersitDocument::setVersitType(VersitType type)
+void QVersitDocument::setType(VersitType type)
 {
     d->mVersitType = type;
 }
@@ -97,7 +144,7 @@ void QVersitDocument::setVersitType(VersitType type)
 /*!
  * Gets the versit document type.
  */
-QVersitDocument::VersitType QVersitDocument::versitType() const
+QVersitDocument::VersitType QVersitDocument::type() const
 {
     return d->mVersitType;
 }
@@ -112,16 +159,15 @@ void QVersitDocument::addProperty(const QVersitProperty& property)
 }
 
 /*!
- * Gets the list of the contained versit properties.
- * Note that the actual properties cannot be modified using the copy.
+ * Removes the property \a property from the versit document.
  */
-QList<QVersitProperty> QVersitDocument::properties() const
+void QVersitDocument::removeProperty(const QVersitProperty& property)
 {
-    return d->mProperties;  
+    d->mProperties.removeAll(property);
 }
 
 /*!
- * Removes all the properties with \a name from the versit document.
+ * Removes all the properties with the given \a name from the versit document.
  */
 void QVersitDocument::removeProperties(const QString& name)
 {
@@ -130,6 +176,33 @@ void QVersitDocument::removeProperties(const QString& name)
             d->mProperties.removeAt(i);
         }
     }
+}
+
+/*!
+ * Clears the document, removing all properties and metadata
+ * and resetting the codec to the default.
+ */
+void QVersitDocument::clear()
+{
+    d->mProperties.clear();
+    d->mVersitType = QVersitDocument::InvalidType;
+}
+
+/*!
+ * Gets the list of the contained versit properties.
+ * Note that the actual properties cannot be modified using the copy.
+ */
+QList<QVersitProperty> QVersitDocument::properties() const
+{
+    return d->mProperties;
+}
+
+/*!
+ * Returns true if the document is empty.
+ */
+bool QVersitDocument::isEmpty() const
+{
+    return d->mProperties.count() == 0 && d->mVersitType == QVersitDocument::InvalidType;
 }
 
 QTM_END_NAMESPACE

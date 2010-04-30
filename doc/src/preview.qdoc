@@ -44,22 +44,35 @@
 
 \title Technology Preview
 
-\brief The Technology Preview of interesting APIs not for official release.
-
+\brief The Technology Preview of additional APIs under development.
 
 \target {Management of Versit Documents}
 \section1 Management of Versit Documents
 
 \l{Versit API}{Versit API Documentation}
 
+An overview is available for the \l{versit.html}{Versit API}
+
 Versit Classes.
 \annotatedlist versit
 
+\target {Sensor Classes}
+\section1 Sensor API
 
-\target {Camera Support
-\section1 Camera Support
+An overview is available for the \l{sensors-api.html}{Sensor API}
 
-\annotatedlist camera
+\section2 Main Classes
+If you want to use the sensors on a device, these are the classes to use.
+\annotatedlist sensors
+
+\section2 Helper Classes
+These classes provide convenience wrappers that reduce the need for casting.
+\annotatedlist sensors_helpers
+
+\section2 Backend Classes
+If you are making sensors available through the Sensors API, these are the
+classes to use.
+\annotatedlist sensors_backend
 
 
 

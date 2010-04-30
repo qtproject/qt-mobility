@@ -90,7 +90,6 @@ private:
    QString m_wmiNamespace;
    QVariant  msVariantToQVariant(VARIANT msVariant, CIMTYPE variantType);
    void initializeWMI(const QString &wmiNamespace);
-  // QHash <QString, bool> initializedNamespaces;
 
 };
 

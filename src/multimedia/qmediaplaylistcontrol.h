@@ -43,11 +43,11 @@
 #ifndef QMEDIAPLAYLISTCONTROL_H
 #define QMEDIAPLAYLISTCONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediaplaylistnavigator.h>
+#include "qmediacontrol.h"
+#include "qmediaplaylistnavigator.h"
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistProvider;
 
@@ -61,10 +61,10 @@ public:
     virtual QMediaPlaylistProvider* playlistProvider() const = 0;
     virtual bool setPlaylistProvider(QMediaPlaylistProvider *playlist) = 0;
 
-    virtual int currentPosition() const = 0;
-    virtual void setCurrentPosition(int position) = 0;
-    virtual int nextPosition(int steps) const = 0;
-    virtual int previousPosition(int steps) const = 0;
+    virtual int currentIndex() const = 0;
+    virtual void setCurrentIndex(int position) = 0;
+    virtual int nextIndex(int steps) const = 0;
+    virtual int previousIndex(int steps) const = 0;
 
     virtual void next() = 0;
     virtual void previous() = 0;
@@ -74,7 +74,7 @@ public:
 
 Q_SIGNALS:
     void playlistProviderChanged();
-    void playlistPositionChanged(int position);
+    void currentIndexChanged(int position);
     void currentMediaChanged(const QMediaContent&);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
 
@@ -85,6 +85,6 @@ protected:
 #define QMediaPlaylistControl_iid "com.nokia.Qt.QMediaPlaylistControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaPlaylistControl, QMediaPlaylistControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTCONTROL_H

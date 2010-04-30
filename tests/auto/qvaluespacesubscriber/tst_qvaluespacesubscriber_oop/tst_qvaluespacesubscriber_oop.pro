@@ -17,7 +17,8 @@ SOURCES += tst_qvaluespacesubscriber_oop.cpp \
            tst_qvaluespacesubscribershared.cpp
 HEADERS += tst_qvaluespacesubscribershared.h
 
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

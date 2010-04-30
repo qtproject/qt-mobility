@@ -42,13 +42,13 @@
 #define QMESSAGEFOLDERFILTERPRIVATE_H
 #include "qmessagefolderfilter.h"
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include <qvariant.h>
 #include "qmessagefolder.h"
 #endif
 #ifdef Q_OS_WIN
 #include "winhelpers_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #endif
 #include <QSet>
 
@@ -58,7 +58,7 @@ class QMessageFolderFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderFilter)
 public:
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     enum Criterion { 
         None = 0, 
         IdEquality, 
@@ -92,7 +92,7 @@ public:
     ~QMessageFolderFilterPrivate();
     QMessageFolderFilter *q_ptr;
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     typedef QList<QMessageFolderFilter> SortedMessageFolderFilterList;
     
     bool filter(const QMessageFolder &messageFolder) const;
@@ -104,9 +104,9 @@ public:
     static bool lessThan(const QMessageFolderFilter filter1, const QMessageFolderFilter filter2); 
     static QMessageFolderFilterPrivate* implementation(const QMessageFolderFilter &filter);
 
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
     
-    enum Field {None = 0, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, DisplayName, Path };
+    enum Field {None = 0, ParentAccountIdFilter, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, Name, Path };
     enum Comparator {Equality = 0, Inclusion};
 
     bool _valid;
@@ -114,6 +114,7 @@ public:
     
     QMessageFolderIdList _ids;
     QVariant _value;
+    QMessageAccountFilter *_accountFilter;
     QMessageFolderFilterPrivate::Field _field;
 
     Comparator _comparatorType;
@@ -131,7 +132,7 @@ public:
     QString _value;
     QMessageDataComparator::EqualityComparator _equality;
     QMessageDataComparator::InclusionComparator _inclusion;
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
     bool _valid;
     QList<QMessageFolderFilter*> _arguments; // for bool ops
     QMessageAccountFilter *_accountFilter;
@@ -139,8 +140,8 @@ public:
 #endif
 
 #ifdef Q_OS_WIN
-    static QMessageFolderFilter preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFolderFilter &filter);
-    static void preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFolderFilter *filter);
+    static QMessageFolderFilter preprocess(QMessageManager::Error *error, MapiSessionPtr session, const QMessageFolderFilter &filter);
+    static void preprocess(QMessageManager::Error *error, MapiSessionPtr session, QMessageFolderFilter *filter);
     static bool matchesFolder(const QMessageFolderFilter &filter, const MapiFolderPtr &folder);
     static bool QMessageFolderFilterPrivate::isNonMatching(const QMessageFolderFilter &filter);
 #endif

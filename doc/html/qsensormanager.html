@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qsensormanager.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QSensorManager Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QSensorManager"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSensorManager Class Reference</h1>
+<p>The QSensorManager class handles registration and creation of sensor backends. <a href="#details">More...</a></p>
+<pre>    #include &lt;QSensorManager&gt;</pre><ul>
+<li><a href="qsensormanager-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="static-public-members"></a>
+<h2>Static Public Members</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QSensorBackend * </td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#createBackend">createBackend</a></b> ( QSensor * <i>sensor</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#registerBackend">registerBackend</a></b> ( const QByteArray &amp; <i>type</i>, const QByteArray &amp; <i>identifier</i>, QSensorBackendFactory * <i>factory</i> )</td></tr>
+</table>
+<hr />
+<a name="macros"></a>
+<h2>Macros</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsensormanager.html#REGISTER_STATIC_PLUGIN">REGISTER_STATIC_PLUGIN</a></b> (  <i>pluginname</i> )</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QSensorManager class handles registration and creation of sensor backends.</p>
+<p>Sensor plugins register backends using the <a href="qsensormanager.html#registerBackend">registerBackend</a>() function.</p>
+<p>When <a href="qsensor.html#connectToBackend">QSensor::connectToBackend</a>() is called, the <a href="qsensormanager.html#createBackend">createBackend</a>() function will be called.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/clm/QSensorManager/createBackend"></a>
+<h3 class="fn"><a name="createBackend"></a><a href="qsensorbackend.html">QSensorBackend</a> * QSensorManager::createBackend ( <a href="qsensor.html">QSensor</a> * <i>sensor</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Create a backend for <i>sensor</i>. Returns null if no suitable backend exists.</p>
+<a name="//apple_ref/cpp/clm/QSensorManager/registerBackend"></a>
+<h3 class="fn"><a name="registerBackend"></a>void QSensorManager::registerBackend ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>type</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>identifier</i>, <a href="qsensorbackendfactory.html">QSensorBackendFactory</a> * <i>factory</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<p>Register a sensor for <i>type</i>. The <i>identifier</i> must be unique.</p>
+<p>The <i>factory</i> will be asked to create instances of the backend.</p>
+<hr />
+<h2>Macro Documentation</h2>
+<a name="//apple_ref/cpp/macro//REGISTER_STATIC_PLUGIN"></a>
+<h3 class="fn"><a name="REGISTER_STATIC_PLUGIN"></a>REGISTER_STATIC_PLUGIN (  <i>pluginname</i> )</h3>
+<p>Registers a static plugin, <i>pluginname</i>.</p>
+<p>Note that this macro relies on static initialization so it may not be appropriate for use in a library and may not work on all platforms.</p>
+<p>See also <a href="creating-a-sensor-plugin.html">Creating a sensor plugin</a>.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

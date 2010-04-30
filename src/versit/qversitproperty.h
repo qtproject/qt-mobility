@@ -51,18 +51,31 @@
 #include <QByteArray>
 #include <QSharedDataPointer>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
+class QVariant;
+QT_END_NAMESPACE
 
+QTM_BEGIN_NAMESPACE
 class QVersitPropertyPrivate;
 
 class Q_VERSIT_EXPORT QVersitProperty
 {
 public:
+    enum ValueType {
+        PlainType,
+        CompoundType,
+        ListType,
+        BinaryType,
+        VersitDocumentType
+    };
+
     QVersitProperty();
     QVersitProperty(const QVersitProperty& other);
     ~QVersitProperty();
-    
+
     QVersitProperty& operator=(const QVersitProperty& other);
+    bool operator==(const QVersitProperty& other) const;
+    bool operator!=(const QVersitProperty& other) const;
 
     void setGroups(const QStringList& groups);
     QStringList groups() const;
@@ -70,21 +83,36 @@ public:
     void setName(const QString& name);
     QString name() const;
 
-    void addParameter(const QString& name, const QString& value);
+    void insertParameter(const QString& name, const QString& value);
     void removeParameter(const QString& name, const QString& value);
+    void removeParameters(const QString& name);
+
     void setParameters(const QMultiHash<QString,QString>& parameters);
     QMultiHash<QString,QString> parameters() const;
-    
-    void setValue(const QByteArray& value);
-    QByteArray value() const;
 
-    void setEmbeddedDocument(const QVersitDocument& document);
-    QVersitDocument embeddedDocument() const;
+    void setValue(const QVariant& value);
+    QVariant variantValue() const;
+    template <typename T> T value() const
+    {
+        return variantValue().value<T>();
+    }
+    QString value() const;
+
+    void setValueType(ValueType type);
+    ValueType valueType() const;
+
+    bool isEmpty() const;
+    void clear();
 
 private:
-    
+
     QSharedDataPointer<QVersitPropertyPrivate> d;
 };
+
+Q_VERSIT_EXPORT uint qHash(const QVersitProperty& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_VERSIT_EXPORT QDebug operator<<(QDebug dbg, const QVersitProperty& property);
+#endif
 
 QTM_END_NAMESPACE
 

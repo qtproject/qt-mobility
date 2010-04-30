@@ -50,7 +50,10 @@ public:
     virtual void callSlotAndSetName(const QString &s) = 0;
     virtual QString callSlotAndReturnName() const = 0;
 };
+
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(ISimpleTypeTest, "com.nokia.qt.test.ISimpleTypeTest/1");
+QT_END_NAMESPACE
 
 
 class IComplexTypeTest
@@ -60,7 +63,10 @@ public:
     virtual QObject* embeddedTestService() = 0;
 
 };
+
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(IComplexTypeTest, "com.nokia.qt.test.IComplexTypeTest/1");
+QT_END_NAMESPACE
 
 
 #endif //TESTSERVICEINTERFACE_H

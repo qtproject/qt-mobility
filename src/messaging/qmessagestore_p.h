@@ -42,7 +42,9 @@
 #define QMESSAGESTOREPRIVATE_H
 #include "qmessagestore.h"
 #ifdef Q_OS_WIN
+QT_BEGIN_NAMESPACE
 class QMutex;
+QT_END_NAMESPACE
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -61,9 +63,19 @@ public:
 
     QMessageStore *q_ptr;
     QMessageStorePrivatePlatform *p_ptr;
-
+#ifdef Q_WS_MAEMO_5
+    enum NotificationType
+    {
+        Added,
+        Updated,
+        Removed
+    };
+    void messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
+                             const QMessageManager::NotificationFilterIdSet &matchingFilters);
+#endif
 #ifdef Q_OS_WIN
     static QMutex* mutex(QMessageStore*);
+    static QMutex* mutex(QMessageManager&);
 #endif
 
 };

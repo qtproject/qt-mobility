@@ -73,7 +73,7 @@ struct PartLocator
 
 struct SizeAccumulator
 {
-    uint _size;
+    int _size;
 
     SizeAccumulator() : _size(0) {}
 
@@ -163,7 +163,7 @@ bool QMessageContentContainer::isContentAvailable() const
     return (d_ptr->_container->partCount() > 0) || d_ptr->_container->contentAvailable();
 }
 
-uint QMessageContentContainer::size() const
+int QMessageContentContainer::size() const
 {
     if (d_ptr->_container->hasBody()) {
         return d_ptr->_container->body().length();
@@ -185,14 +185,14 @@ QByteArray QMessageContentContainer::content() const
     return d_ptr->_container->body().data(QMailMessageBody::Decoded);
 }
 
-void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
+void QMessageContentContainer::writeTextContent(QTextStream& out) const
 {
     if (d_ptr->_container->hasBody()) {
         d_ptr->_container->body().toStream(out);
     }
 }
 
-void QMessageContentContainer::writeContentTo(QDataStream& out) const
+void QMessageContentContainer::writeContent(QDataStream& out) const
 {
     if (d_ptr->_container->hasBody()) {
         d_ptr->_container->body().toStream(out, QMailMessageBody::Decoded);

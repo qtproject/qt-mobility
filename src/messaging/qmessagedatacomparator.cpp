@@ -51,7 +51,7 @@
     \enum QMessageDataComparator::EqualityComparator
 
     Defines the comparison operations that can be used to compare data elements 
-    of QMessageStore objects for equality and inequality.
+    of QMessageManager objects for equality and inequality.
 
     \value Equal Represents the '==' operator.
     \value NotEqual Represents the '!=' operator.
@@ -61,7 +61,7 @@
     \enum QMessageDataComparator::InclusionComparator
 
     Defines the comparison operations that can be used to compare data elements 
-    of QMessageStore objects for inclusion or exclusion.
+    of QMessageManager objects for inclusion or exclusion.
 
     \value Includes Represents an operation in which an associated property is tested to 
                     determine whether it includes a value.
@@ -73,7 +73,7 @@
     \enum QMessageDataComparator::RelationComparator
 
     Defines the comparison operations that can be used to compare data elements 
-    of QMessageStore objects, according to a specific relation.
+    of QMessageManager objects, according to a specific relation.
 
     \value LessThan Represents the '<' operator.
     \value LessThanEqual Represents the '<=' operator.
@@ -82,10 +82,10 @@
 */
 
 /*!
-    \enum QMessageDataComparator::Option
+    \enum QMessageDataComparator::MatchFlag
 
     This enum describes additional matching criteria when performing a search.
     
-    \value FullWord        The key should only match a complete word. Not supported on Windows and QMF platforms.
-    \value CaseSensitive   The key should be case sensitive. Not supported on QMF platform.
+    \value MatchCaseSensitive   The key should be case sensitive. Not supported on QMF platform.
+    \value MatchFullWord        The key should only match a complete word. Not supported on Windows and QMF platforms.
 */

@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(audioengine)
+TARGET = $$qtLibraryTarget(qtmedia_audioengine)
 PLUGIN_TYPE=mediaservice
 
 QT += multimedia
@@ -8,28 +8,28 @@ QT += multimedia
 include (../../../common.pri)
 INCLUDEPATH += ../../../src/multimedia
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
 DEPENDPATH += .
 
 # Input
 HEADERS += audioencodercontrol.h \
+    audiocontainercontrol.h \
     audiomediarecordercontrol.h \
-    audiodevicecontrol.h \
+    audioendpointselector.h \
     audiocaptureservice.h \
     audiocaptureserviceplugin.h \
     audiocapturesession.h
 
 SOURCES += audioencodercontrol.cpp \
+    audiocontainercontrol.cpp \
     audiomediarecordercontrol.cpp \
-    audiodevicecontrol.cpp \
+    audioendpointselector.cpp \
     audiocaptureservice.cpp \
     audiocaptureserviceplugin.cpp \
     audiocapturesession.cpp
 
-symbian {
-    TARGET.CAPABILITY = ALL -TCB
-    TARGET.EPOCALLOWDLLDATA = 1
-}
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
+maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
 INSTALLS+=target

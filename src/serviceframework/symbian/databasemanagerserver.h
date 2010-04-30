@@ -60,6 +60,12 @@ class DATABASEMANAGERSERVER_EXPORT CDatabaseManagerServer : public CServer2
 
     public:
         static void PanicServer(TDatabaseManagerSerververPanic aPanic);
+        
+        void IncreaseSessions();
+        void DecreaseSessions();
+        
+    private:
+        int iSessionCount;
     };
 
 //QTM_END_NAMESPACE

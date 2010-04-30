@@ -51,73 +51,52 @@ QTM_BEGIN_NAMESPACE
   to asynchronously request that certain relationships be removed from
   a contacts store.
 
+  For a QContactRelationshipRemoveRequest, the resultsUpdated() signal will be emitted when
+  the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
+  operation error (which may be retrieved by calling error()) is updated.
+
   \ingroup contacts-requests
  */
 
+/*! Constructs a new relationship remove request whose parent is the specified \a parent */
+QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRelationshipRemoveRequestPrivate, parent)
+{
+}
+
 /*!
- * \fn QContactRelationshipRemoveRequest::progress(QContactRelationshipRemoveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
+  Sets the relationship which will be removed to \a relationship.
+  Equivalent to calling:
+  \code
+      setRelationships(QList<QContactRelationship>() << relationship);
+  \endcode
  */
-
-/*! Constructs a new relationship remove request */
-QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest()
-    : QContactAbstractRequest(new QContactRelationshipRemoveRequestPrivate)
-{
-}
-
-/*! Cleans up the memory in use by this relationship remove request */
-QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
-{
-}
-
-/*! Sets the first contact criterion of the remove request to \a firstId.
- *  If \a firstId is the default-constructed id, or the first contact is not set,
- *  the request will remove relationships involving any first contact. */
-void QContactRelationshipRemoveRequest::setFirst(const QContactId& firstId)
+void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationship& relationship)
 {
     Q_D(QContactRelationshipRemoveRequest);
-    d->m_first = firstId;
+    d->m_relationships.clear();
+    d->m_relationships.append(relationship);
 }
 
-/*! Returns the first contact criterion of the remove request */
-QContactId QContactRelationshipRemoveRequest::first() const
-{
-    Q_D(const QContactRelationshipRemoveRequest);
-    return d->m_first;
-}
-
-/*! Sets the relationship type criterion of the remove request to \a relationshipType.
- *  If \a relationshipType is empty, or the relationship type is not set,
- *  the request will remove relationships of any type. */
-void QContactRelationshipRemoveRequest::setRelationshipType(const QString& relationshipType)
+/*! Sets the list of relationships which will be removed to \a relationships */
+void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRelationship>& relationships)
 {
     Q_D(QContactRelationshipRemoveRequest);
-    d->m_relationshipType = relationshipType;
+    d->m_relationships = relationships;
 }
 
-/*! Returns the relationship type criterion of the fetch request */
-QString QContactRelationshipRemoveRequest::relationshipType() const
+/*! Returns the list of relationships which will be removed */
+QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
-    return d->m_relationshipType;
+    return d->m_relationships;
 }
 
-/*! Sets the second contact criterion of the remove request to \a secondId.
- *  If \a secondId is the default-constructed id, or the second contact is not set,
- *  the request will remove relationships involving any second contact. */
-void QContactRelationshipRemoveRequest::setSecond(const QContactId& secondId)
-{
-    Q_D(QContactRelationshipRemoveRequest);
-    d->m_second = secondId;
-}
-
-/*! Returns the second contact criterion of the remove request */
-QContactId QContactRelationshipRemoveRequest::second() const
+/*! Returns the map of input contact list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactRelationshipRemoveRequest::errorMap() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
-    return d->m_second;
+    return d->m_errors;
 }
 
 #include "moc_qcontactrelationshipremoverequest.cpp"

@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- undocumented.qdoc -->
+<!-- serviceactions.qdoc -->
 <head>
   <title>Qt Mobility Project 1.0: Service Actions Example</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -23,10 +23,236 @@
 <li><a href="serviceactions-main-cpp.html">serviceactions/main.cpp</a></li>
 <li><a href="serviceactions-serviceactions-pro.html">serviceactions/serviceactions.pro</a></li>
 </ul>
+<p>This simple example demonstrates how to compose, send, show, query and retrieve messages, and also react to message store events using the Qt Mobility Messaging API.</p>
+<p>Each of these actions is demonstrated in a separate sub example accessible from the &quot;File&quot; menu of each platform.</p>
+<a name="send-and-compose"></a>
+<h2>Send and Compose</h2>
+<p>Messages are sent and composed from a composition widget under the &quot;Compose/Send&quot; menu. Relevant message details such as sending account, recipients and message bodies (attachments for email accounts) can be entered by the user via corresponding UI elements. A <a href="qmessage.html">QMessage</a> is constructed using these details:</p>
+<pre>    QMessage ComposeSendWidget::constructQMessage(bool asHtml) const
+    {
+        QMessage message;
+
+        if(m_accountsWidget-&gt;isEmpty())
+        {
+            QMessageBox::critical(const_cast&lt;ComposeSendWidget*&gt;(this),&quot;No Accounts&quot;,&quot;Cannot send a message without any available accounts&quot;);
+            return message;
+        }
+
+        QMessageAccountId selectedAccountId = m_accountsWidget-&gt;currentAccount();
+        QMessageAccount selectedAccount(selectedAccountId);
+
+        bool composingSms = (selectedAccount.messageTypes() &amp; QMessage::Sms) &gt; 0;
+
+        QMessageAddressList toList;
+        QMessageAddressList ccList;
+        QMessageAddressList bccList;
+
+        QMessageAddress::Type addressType = QMessageAddress::Email;
+        if(composingSms)
+        {
+            addressType = QMessageAddress::Phone;
+            message.setType(QMessage::Sms);
+        }
+
+        foreach(QString s, m_toEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
+            toList.append(QMessageAddress(addressType, s));
+        message.setTo(toList);
+
+        if(!composingSms)
+        {
+            foreach(QString s, m_ccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
+                ccList.append(QMessageAddress(QMessageAddress::Email, s));
+            message.setCc(ccList);
+
+            foreach(QString s, m_bccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
+                bccList.append(QMessageAddress(QMessageAddress::Email, s));
+            message.setBcc(bccList);
+            message.setSubject(m_subjectEdit-&gt;text());
+
+            message.setType(QMessage::Email);
+
+            message.appendAttachments(m_attachmentList-&gt;attachments());
+        }
+
+        message.setParentAccountId(selectedAccountId);
+
+        if(!composingSms &amp;&amp; asHtml) {
+            <span class="comment">//create html body</span>
+            QString htmlBody(&quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h2 align=center&gt;%1&lt;/h2&gt;&lt;hr&gt;%2&lt;/body&gt;&lt;/html&gt;&quot;);
+            message.setBody(htmlBody.arg(message.subject()).arg(m_bodyEdit-&gt;toPlainText()),&quot;text/html&quot;);
+        }
+        else
+            message.setBody(m_bodyEdit-&gt;toPlainText());
+
+        return message;
+    }</pre>
+<p>The message is then passed to the <a href="qmessageservice.html#compose">QMessageService::compose</a>() or <a href="qmessageservice.html#send">QMessageService::send</a>() service actions to initiate sending of the message by the platform, or trigger display by the platforms' message composer with the <a href="qmessage.html">QMessage</a> contents:</p>
+<pre>    void ComposeSendWidget::composeButtonClicked()
+    {
+        QMessage message(constructQMessage());
+        m_service-&gt;compose(message);
+    }
+
+    void ComposeSendWidget::sendButtonClicked()
+    {
+        bool asHtml = (sender() == m_sendAsHTMLAction);
+        QMessage message(constructQMessage(asHtml));
+        notifyResult(m_service-&gt;send(message),&quot;Send message&quot;);
+    }</pre>
+<a name="show"></a>
+<h2>Show</h2>
+<p>Messages are displayed by a show widget under the &quot;Show&quot; menu. This widget displays the users last 50 messages. (Ensure the platform has one or more messages in its mail accounts).</p>
+<p>The last 50 messages (incoming/outgoing) are queried from the store using the <a href="qmessageservice.html#queryMessages">QMessageService::queryMessages</a>() service request:</p>
+<pre>    void RecentMessagesWidget::load()
+    {
+        m_ids.clear();
+        m_state = Loading;
+        bool b;
+
+        b=m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
+        <span class="comment">//    qDebug() &lt;&lt; &quot;RecentMessagesWidget::load&quot; &lt;&lt; b &lt;&lt; m_state;</span></pre>
+<p>Once the results of the query are returned via the <a href="qmessageservice.html#messagesFound">QMessageService::messagesFound</a>() signal, the widget loads each of the returned messages in turn and populates it's list with message subjects.</p>
+<pre>    void RecentMessagesWidget::messagesFound(const QMessageIdList&amp; ids)
+    {
+        m_ids.append(ids);
+    }
+    void RecentMessagesWidget::processResults()
+    {
+        if(!m_ids.isEmpty())
+        {
+            QMessageId id = m_ids.takeFirst();
+            QMessage message(id);
+
+            QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(&quot;:&quot;)+message.subject());
+                    newItem-&gt;setData(MessageIdRole,id.toString());
+            QFont itemFont = newItem-&gt;font();
+            bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
+            itemFont.setItalic(isPartialMessage);
+            newItem-&gt;setFont(itemFont);
+            m_messageListWidget-&gt;addItem(newItem);
+            m_indexMap.insert(id,newItem);
+            m_messageListWidget-&gt;update();
+            QTimer::singleShot(100,this,SLOT(processResults()));
+        }
+        else
+        {
+            m_state = Done;
+            updateState();
+        }
+    }</pre>
+<p>Selecting &quot;Show&quot; from the action menu will display the selected message using the platforms' message viewer via the <a href="qmessageservice.html#show">QMessageService::show</a>() service action.</p>
+<pre>    void ShowWidget::showButtonClicked()
+    {
+
+        QMessageId id = m_recentMessagesWidget-&gt;currentMessage();
+
+        if(id.isValid())
+            m_service-&gt;show(id);
+    }</pre>
+<a name="query-and-retrieve"></a>
+<h2>Query and Retrieve</h2>
+<p>Message contents are displayed/retrieved by a retrieve widget under the &quot;Query/Retrieve&quot; menu. This example displays the last 50 messages, as in the &quot;Show&quot; example, but also displays message content in a <a href="http://qt.nokia.com/doc/4.6/qtextbrowser.html">QTextBrowser</a> widget and provides the option to download messages that are incomplete.</p>
+<p>After the message list is populated, the message display widget will attempt to load and display the currently selected message. The completeness of the message body is checked using the QMessageContentContainer::isContentAvailable function. If the message body is partially downloaded, a download link is displayed.</p>
+<pre>    void MessageViewWidget::loadMessage()
+    {
+        m_messageBrowser-&gt;clear();
+
+        static const QString htmlTemplate(&quot;\
+        &lt;html&gt;\
+        &lt;head&gt;\
+        &lt;/head&gt;\
+        &lt;body&gt;\
+        &lt;table border=\&quot;0\&quot; cellspacing=\&quot;0\&quot;&gt;\
+            &lt;tr&gt;&lt;td&gt;&lt;b&gt;From: &lt;/b&gt;&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;\
+            &lt;tr&gt;&lt;td&gt;&lt;b&gt;Subject: &lt;/b&gt;&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;\
+            &lt;tr&gt;&lt;td&gt;&lt;b&gt;Date: &lt;/b&gt;&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;\
+        &lt;/table&gt;\
+        &lt;hr&gt;%4\
+        &lt;\body&gt;\
+        &lt;/html&gt;\
+        &quot;);
+
+        if(m_messageId.isValid())
+        {
+            QMessage message(m_messageId);
+
+            QMessageContentContainer bodyPart = message.find(message.bodyId());
+
+            QString bodyText;
+
+            <span class="comment">//for partial message display a download link instead</span>
+
+            bool bodyAvailable = bodyPart.isContentAvailable();
+
+            if(bodyAvailable)
+            {
+                if(bodyPart.contentType() == &quot;text&quot;)
+                    bodyText = bodyPart.textContent();
+                else bodyText = &quot;&lt;Non-text content&gt;&quot;;
+            }
+            else
+                bodyText = QString(&quot;&lt;p align=\&quot;center\&quot;&gt;&lt;a href=\&quot;%1\&quot;&gt;Download&lt;/a&gt;&lt;/p&gt;&quot;).arg(downloadLinkURL());
+            m_messageBrowser-&gt;setHtml(htmlTemplate\
+                                     .arg(message.from().addressee())\
+                                     .arg(message.subject())\
+                                     .arg(message.receivedDate().toString())\
+                                     .arg(bodyText));
+        }
+    }</pre>
+<p>When the download link is clicked, the message body is retrieved using the <a href="qmessageservice.html#retrieveBody">QMessageService::retrieveBody</a>() service action.</p>
+<pre>    bool MessageViewWidget::retrieveBody()
+    {
+        if(m_state != Loading &amp;&amp; !m_loadTimer.isActive())
+        {
+            m_loadTimer.setSingleShot(true);
+            m_loadTimer.start(LoadTimeLimit * 1000);
+            m_state = Unloaded;
+
+            return m_service-&gt;retrieveBody(m_messageId);
+        }
+
+        return false;
+    }</pre>
+<a name="store-signals"></a>
+<h2>Store Signals</h2>
+<p>This example displays the activities of the <a href="qmessagemanager.html">QMessageManager</a> in a <a href="http://qt.nokia.com/doc/4.6/qlistwidget.html">QListWidget</a> by connecting to QMessageManager::message(Added/Updated/Removed) signals.</p>
+<pre>    void StoreSignalsWidget::messageAdded(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
+    {
+        if(!filterSet.contains(m_notificationFilterId))
+            return;
+
+        QMessage message(id);
+
+        QString msg = QString(&quot;Added: %1&quot;).arg(message.subject());
+        m_activityListWidget-&gt;addItem(msg);
+    }
+
+    void StoreSignalsWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
+    {
+        if(!filterSet.contains(m_notificationFilterId))
+            return;
+
+        QMessage message(id);
+
+        QString msg = QString(&quot;Updated: %1&quot;).arg(message.subject());
+        m_activityListWidget-&gt;addItem(msg);
+    }
+
+    void StoreSignalsWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
+    {
+        if(!filterSet.contains(m_notificationFilterId))
+            return;
+
+        QString idString(id.toString());
+        idString.truncate(10);
+
+        QString msg = QString(&quot;Removed ID: %1 ...&quot;).arg(idString);
+        m_activityListWidget-&gt;addItem(msg);
+    }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

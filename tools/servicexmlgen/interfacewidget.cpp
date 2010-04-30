@@ -354,7 +354,7 @@ InterfaceWidget::InterfaceWidget(QWidget *parent)
     form->addRow(tr("* Version"), versions);
     form->addRow(tr("Description"), m_desc);
     form->addRow(tr("Capabilities"), m_capWidget);
-    form->addRow(tr("Custom properties"), m_customPropWidget);
+    form->addRow(tr("Custom attributes"), m_customPropWidget);
     setLayout(form);
 
     connect(m_name, SIGNAL(textEdited(QString)), SLOT(changedNameOrVersion()));
@@ -380,13 +380,13 @@ void InterfaceWidget::load(const QServiceInterfaceDescriptor &info)
     m_name->setText(p->interfaceName);
     m_verMajor->setValue(p->major);
     m_verMinor->setValue(p->minor);
-    if (p->properties.contains(QServiceInterfaceDescriptor::InterfaceDescription))
-        m_desc->setText(p->properties[QServiceInterfaceDescriptor::InterfaceDescription].toString());
+    if (p->attributes.contains(QServiceInterfaceDescriptor::InterfaceDescription))
+        m_desc->setText(p->attributes[QServiceInterfaceDescriptor::InterfaceDescription].toString());
 
-    if (p->properties.contains(QServiceInterfaceDescriptor::Capabilities))
-        m_capWidget->setCapabilities(p->properties[QServiceInterfaceDescriptor::Capabilities].toStringList());
-    if (!p->customProperties.isEmpty())
-        m_customPropWidget->setProperties(p->customProperties);
+    if (p->attributes.contains(QServiceInterfaceDescriptor::Capabilities))
+        m_capWidget->setCapabilities(p->attributes[QServiceInterfaceDescriptor::Capabilities].toStringList());
+    if (!p->customAttributes.isEmpty())
+        m_customPropWidget->setProperties(p->customAttributes);
 }
 
 void InterfaceWidget::validate(ErrorCollector *errors)

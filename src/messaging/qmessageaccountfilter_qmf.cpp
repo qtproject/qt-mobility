@@ -50,10 +50,10 @@ QTM_BEGIN_NAMESPACE
 class QMessageAccountFilterPrivate
 {
 public:
-    QMessageAccountFilterPrivate() : _key(), _options(0) {}
+    QMessageAccountFilterPrivate() : _key(), _matchFlags(0) {}
 
     QMailAccountKey _key;
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
 
     //static QMessageAccountFilter convert(const QMailAccountKey &key);
     static QMailAccountKey convert(const QMessageAccountFilter &key);
@@ -110,20 +110,20 @@ QMessageAccountFilter& QMessageAccountFilter::operator=(const QMessageAccountFil
 {
     if (&other != this) {
         d_ptr->_key = other.d_ptr->_key;
-        d_ptr->_options = other.d_ptr->_options;
+        d_ptr->_matchFlags = other.d_ptr->_matchFlags;
     }
 
     return *this;
 }
 
-void QMessageAccountFilter::setOptions(QMessageDataComparator::Options options)
+void QMessageAccountFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
 {
-    d_ptr->_options = options;
+    d_ptr->_matchFlags = matchFlags;
 }
 
-QMessageDataComparator::Options QMessageAccountFilter::options() const
+QMessageDataComparator::MatchFlags QMessageAccountFilter::matchFlags() const
 {
-    return d_ptr->_options;
+    return d_ptr->_matchFlags;
 }
 
 bool QMessageAccountFilter::isEmpty() const
@@ -133,7 +133,7 @@ bool QMessageAccountFilter::isEmpty() const
 
 bool QMessageAccountFilter::isSupported() const
 {
-    return !d_ptr->_options;
+    return !d_ptr->_matchFlags;
 }
 
 QMessageAccountFilter QMessageAccountFilter::operator~() const
@@ -147,7 +147,7 @@ QMessageAccountFilter QMessageAccountFilter::operator&(const QMessageAccountFilt
 {
     QMessageAccountFilter result;
     result.d_ptr->_key = d_ptr->_key & other.d_ptr->_key;
-    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
+    result.d_ptr->_matchFlags = d_ptr->_matchFlags | other.d_ptr->_matchFlags; // matchFlags not supported
     return result;
 }
 
@@ -155,28 +155,28 @@ QMessageAccountFilter QMessageAccountFilter::operator|(const QMessageAccountFilt
 {
     QMessageAccountFilter result;
     result.d_ptr->_key = d_ptr->_key | other.d_ptr->_key;
-    result.d_ptr->_options = d_ptr->_options | other.d_ptr->_options; // options not supported
+    result.d_ptr->_matchFlags = d_ptr->_matchFlags | other.d_ptr->_matchFlags; // matchFlags not supported
     return result;
 }
 
 const QMessageAccountFilter& QMessageAccountFilter::operator&=(const QMessageAccountFilter& other)
 {
     d_ptr->_key &= other.d_ptr->_key;
-    d_ptr->_options |= other.d_ptr->_options; // options not supported
+    d_ptr->_matchFlags |= other.d_ptr->_matchFlags; // matchFlags not supported
     return *this;
 }
 
 const QMessageAccountFilter& QMessageAccountFilter::operator|=(const QMessageAccountFilter& other)
 {
     d_ptr->_key |= other.d_ptr->_key;
-    d_ptr->_options |= other.d_ptr->_options; // options not supported
+    d_ptr->_matchFlags |= other.d_ptr->_matchFlags; // matchFlags not supported
     return *this;
 }
 
 bool QMessageAccountFilter::operator==(const QMessageAccountFilter& other) const
 {
     return ((d_ptr->_key == other.d_ptr->_key)
-            && (d_ptr->_options == other.d_ptr->_options));
+            && (d_ptr->_matchFlags == other.d_ptr->_matchFlags));
 }
 
 QMessageAccountFilter QMessageAccountFilter::byId(const QMessageAccountId &id, QMessageDataComparator::EqualityComparator cmp)

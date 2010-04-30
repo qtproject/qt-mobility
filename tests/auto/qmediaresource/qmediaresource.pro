@@ -4,7 +4,10 @@ INCLUDEPATH += ../../../src/multimedia
 
 include (../../../common.pri)
 
+QT += network
+
 SOURCES += tst_qmediaresource.cpp
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 

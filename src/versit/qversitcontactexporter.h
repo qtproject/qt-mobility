@@ -43,36 +43,55 @@
 #define QVERSITCONTACTEXPORTER_H
 
 #include "qmobilityglobal.h"
+#include "qversitresourcehandler.h"
 #include "qversitdocument.h"
 
 #include <qcontact.h>
 
-#include <QObject>
 #include <QImage>
 
 QTM_BEGIN_NAMESPACE
 
 class QVersitContactExporterPrivate;
 
-class Q_VERSIT_EXPORT QVersitContactExporter : public QObject
+class Q_VERSIT_EXPORT QVersitContactExporterDetailHandler
 {
-    Q_OBJECT
-
 public:
+    virtual ~QVersitContactExporterDetailHandler() {}
+    virtual bool preProcessDetail(const QContact& contact,
+                                  const QContactDetail& detail,
+                                  QVersitDocument* document) = 0;
+    virtual bool postProcessDetail(const QContact& contact,
+                                   const QContactDetail& detail,
+                                   bool alreadyProcessed,
+                                   QVersitDocument* document) = 0;
+};
+
+class Q_VERSIT_EXPORT QVersitContactExporter
+{
+public:
+    enum Error {
+        NoError = 0,
+        EmptyContactError,
+        NoNameError
+    };
+
     QVersitContactExporter();
     ~QVersitContactExporter();
 
-    QVersitDocument exportContact(
-        const QContact& contact,
-        QVersitDocument::VersitType versitType=QVersitDocument::VCard21);
-		
-    QList<QContactDetail> unknownContactDetails();
+    bool exportContacts(const QList<QContact>& contacts,
+        QVersitDocument::VersitType versitType);
+    QList<QVersitDocument> documents() const;
+    QMap<int, Error> errors() const;
 
-signals:
-    void scale(const QString& imageFileName, QByteArray& imageData);
+    void setDetailHandler(QVersitContactExporterDetailHandler* handler);
+    QVersitContactExporterDetailHandler* detailHandler() const;
+
+    void setResourceHandler(QVersitResourceHandler* handler);
+    QVersitResourceHandler* resourceHandler() const;
 
 private:
-    QVersitContactExporterPrivate* d;    
+    QVersitContactExporterPrivate* d;
 };
 
 QTM_END_NAMESPACE

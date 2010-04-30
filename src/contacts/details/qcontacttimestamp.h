@@ -55,13 +55,13 @@ class Q_CONTACTS_EXPORT QContactTimestamp : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldModificationTimestamp;
-    const char* FieldCreationTimestamp;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldModificationTimestamp;
+    static const QLatin1Constant FieldCreationTimestamp;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactTimestamp, "Timestamp")
-    Q_DECLARE_LATIN1_LITERAL(FieldModificationTimestamp, "ModificationTimestamp");
-    Q_DECLARE_LATIN1_LITERAL(FieldCreationTimestamp, "CreationTimestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldModificationTimestamp, "ModificationTimestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCreationTimestamp, "CreationTimestamp");
 #endif
 
     void setLastModified(const QDateTime& timestamp) {setValue(FieldModificationTimestamp, timestamp);}

@@ -43,18 +43,21 @@
 #include <QtCore/qmetaobject.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qdebug.h>
+#include <QtCore/qpointer.h>
 
 
-#include <qmediaplayer.h>
+#include "qmediaplayer.h"
 
-#include <qmediaobject_p.h>
-#include <qmediaservice.h>
-#include <qmediaplayercontrol.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaplaylist.h>
-#include <qmediaplaylistcontrol.h>
+#include "qmediaobject_p.h"
+#include "qmediaservice.h"
+#include "qmediaplayercontrol.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaplaylist.h"
+#include "qmediaplaylistcontrol.h"
+#include "qvideowidget.h"
+#include "qgraphicsvideoitem.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlayer
@@ -83,11 +86,13 @@ QTM_BEGIN_NAMESPACE
     \code
         player = new QMediaPlayer;
 
-        playlist = new QMediaPlaylist(player);
+        playlist = new QMediaPlaylist;
+        playlist->setMediaObject(player);
         playlist->append(QUrl("http://example.com/movie1.mp4"));
         playlist->append(QUrl("http://example.com/movie2.mp4"));
 
-        widget = new QVideoWidget(player);
+        widget = new QVideoWidget;
+        widget->setMediaObject(player);
         widget->show();
 
         player->play();
@@ -95,6 +100,20 @@ QTM_BEGIN_NAMESPACE
 
     \sa QMediaObject, QMediaService, QVideoWidget, QMediaPlaylist
 */
+
+namespace
+{
+class MediaPlayerRegisterMetaTypes
+{
+public:
+    MediaPlayerRegisterMetaTypes()
+    {
+        qRegisterMetaType<QMediaPlayer::State>("QMediaPlayer::State");
+        qRegisterMetaType<QMediaPlayer::MediaStatus>("QMediaPlayer::MediaStatus");
+        qRegisterMetaType<QMediaPlayer::Error>("QMediaPlayer::Error");
+    }
+} _registerPlayerMetaTypes;
+}
 
 class QMediaPlayerPrivate : public QMediaObjectPrivate
 {
@@ -104,6 +123,7 @@ public:
     QMediaPlayerPrivate()
         : provider(0)
         , control(0)
+        , playlistControl(0)
         , state(QMediaPlayer::StoppedState)
         , error(QMediaPlayer::NoError)
         , filterStates(false)
@@ -112,12 +132,15 @@ public:
 
     QMediaServiceProvider *provider;
     QMediaPlayerControl* control;
+    QMediaPlaylistControl* playlistControl;
     QMediaPlayer::State state;
     QMediaPlayer::Error error;
     QString errorString;
     bool filterStates;
 
     QMediaPlaylist *playlist;
+    QPointer<QVideoWidget> videoWidget;
+    QPointer<QGraphicsVideoItem> videoItem;
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -134,6 +157,7 @@ void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
         return;
 
     if (playlist
+            && !playlistControl //service should do this itself
             && ps != state && ps == QMediaPlayer::StoppedState
             && control->mediaStatus() == QMediaPlayer::EndOfMedia) {
         playlist->next();
@@ -216,10 +240,17 @@ void QMediaPlayerPrivate::_q_playlistDestroyed()
 
 static QMediaService *playerService(QMediaPlayer::Flags flags, QMediaServiceProvider *provider)
 {
-    if (flags && QMediaPlayer::LowLatency)
+    if (flags) {
+        QMediaServiceProviderHint::Features features = 0;
+        if (flags & QMediaPlayer::LowLatency)
+            features |= QMediaServiceProviderHint::LowLatencyPlayback;
+
+        if (flags & QMediaPlayer::StreamPlayback)
+            features |= QMediaServiceProviderHint::StreamPlayback;
+
         return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER,
-                                        QMediaServiceProviderHint(QMediaServiceProviderHint::LowLatencyPlayback));
-    else
+                                        QMediaServiceProviderHint(features));
+    } else
         return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER);
 }
 
@@ -244,6 +275,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
         d->error = ServiceMissingError;
     } else {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
+        d->playlistControl = qobject_cast<QMediaPlaylistControl*>(d->service->control(QMediaPlaylistControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(mediaChanged(QMediaContent)), SIGNAL(mediaChanged(QMediaContent)));
             connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
@@ -253,9 +285,10 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
 
             connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
             connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
-            connect(d->control, SIGNAL(videoAvailabilityChanged(bool)), SIGNAL(videoAvailabilityChanged(bool)));
+            connect(d->control, SIGNAL(audioAvailableChanged(bool)), SIGNAL(audioAvailableChanged(bool)));
+            connect(d->control, SIGNAL(videoAvailableChanged(bool)), SIGNAL(videoAvailableChanged(bool)));
             connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
-            connect(d->control, SIGNAL(mutingChanged(bool)), SIGNAL(mutingChanged(bool)));
+            connect(d->control, SIGNAL(mutedChanged(bool)), SIGNAL(mutedChanged(bool)));
             connect(d->control, SIGNAL(seekableChanged(bool)), SIGNAL(seekableChanged(bool)));
             connect(d->control, SIGNAL(playbackRateChanged(qreal)), SIGNAL(playbackRateChanged(qreal)));
 
@@ -373,6 +406,16 @@ int QMediaPlayer::bufferStatus() const
     return 0;
 }
 
+bool QMediaPlayer::isAudioAvailable() const
+{
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->isAudioAvailable();
+
+    return false;
+}
+
 bool QMediaPlayer::isVideoAvailable() const
 {
     Q_D(const QMediaPlayer);
@@ -433,8 +476,9 @@ void QMediaPlayer::play()
         return;
     }
 
-    if (d->playlist && d->playlist->currentPosition() == -1 && !d->playlist->isEmpty())
-        d->playlist->setCurrentPosition(0);
+    //if playlist control is available, the service should advance itself
+    if (d->playlist && !d->playlistControl && d->playlist->currentIndex() == -1 && !d->playlist->isEmpty())
+        d->playlist->setCurrentIndex(0);
 
     // Reset error conditions
     d->error = NoError;
@@ -515,6 +559,10 @@ void QMediaPlayer::setPlaybackRate(qreal rate)
     If a \a stream is supplied; media data will be read from it instead of resolving the media
     source.  In this case the media source may still be used to resolve additional information
     about the media such as mime type.
+
+    Setting the media to a null QMediaContent will cause the player to discard all
+    information relating to the current media source and to cease all I/O operations related
+    to that media.
 */
 
 void QMediaPlayer::setMedia(const QMediaContent &media, QIODevice *stream)
@@ -537,11 +585,61 @@ void QMediaPlayer::bind(QObject *obj)
         QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(obj);
 
         if (playlist) {
+            if (d->playlist)
+                d->playlist->setMediaObject(0);
+
             d->playlist = playlist;
             connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                     this, SLOT(_q_updateMedia(QMediaContent)));
             connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+            setMedia(playlist->currentMedia());
+
+            return;
         }
+
+        QVideoWidget *videoWidget = qobject_cast<QVideoWidget*>(obj);
+        QGraphicsVideoItem *videoItem = qobject_cast<QGraphicsVideoItem*>(obj);
+
+        if (videoWidget || videoItem) {
+            //detach the current video output
+            if (d->videoWidget) {
+                d->videoWidget->setMediaObject(0);
+                d->videoWidget = 0;
+            }
+
+            if (d->videoItem) {
+                d->videoItem->setMediaObject(0);
+                d->videoItem = 0;
+            }
+        }
+
+        if (videoWidget)
+            d->videoWidget = videoWidget;
+
+        if (videoItem)
+            d->videoItem = videoItem;
+    }
+}
+
+/*!
+    \internal
+*/
+
+void QMediaPlayer::unbind(QObject *obj)
+{
+    Q_D(QMediaPlayer);
+
+    if (obj == d->videoWidget) {
+        d->videoWidget = 0;
+    } else if (obj == d->videoItem) {
+        d->videoItem = 0;
+    } else if (obj == d->playlist) {
+        disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                this, SLOT(_q_updateMedia(QMediaContent)));
+        disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+        d->playlist = 0;
+        setMedia(QMediaContent());
     }
 }
 
@@ -551,7 +649,7 @@ void QMediaPlayer::bind(QObject *obj)
     The \a flags argument allows additional requirements such as performance indicators to be
     specified.
 */
-QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
+QtMediaServices::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                const QStringList& codecs,
                                                Flags flags)
 {
@@ -559,6 +657,18 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                                     mimeType,
                                                                     codecs,
                                                                     flags);
+}
+
+/*!
+    Returns a list of MIME types supported by the media player.
+
+    The \a flags argument causes the resultant list to be restricted to MIME types which can be supported
+    given additional requirements, such as performance indicators.
+*/
+QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
+{
+    return QMediaServiceProvider::defaultServiceProvider()->supportedMimeTypes(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER),
+                                                                               flags);
 }
 
 
@@ -678,6 +788,10 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
 
     By default this property has a null QMediaContent.
 
+    Setting this property to a null QMediaContent will cause the player to discard all
+    information relating to the current media source and to cease all I/O operations related
+    to that media.
+
     \sa QMediaContent
 */
 
@@ -741,13 +855,22 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
 */
 
 /*!
+    \property QMediaPlayer::audioAvailable
+    \brief the audio availabilty status for the current media.
+
+    As the life time of QMediaPlayer can be longer than the playback of one
+    QMediaContent, this property may change over time, the
+    audioAvailableChanged signal can be used to monitor it's status.
+*/
+
+/*!
     \property QMediaPlayer::videoAvailable
     \brief the video availability status for the current media.
 
     If available, the QVideoWidget class can be used to view the video. As the
     life time of QMediaPlayer can be longer than the playback of one
     QMediaContent, this property may change over time, the
-    videoAvailabilityChanged signal can be used to monitor it's status.
+    videoAvailableChanged signal can be used to monitor it's status.
 
     \sa QVideoWidget, QMediaContent
 */
@@ -796,15 +919,21 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
 */
 
 /*!
-    \fn void QMediaPlayer::mutingChanged(bool muted)
+    \fn void QMediaPlayer::mutedChanged(bool muted)
 
     Signal the mute state has changed to \a muted.
 */
 
 /*!
-    \fn void QMediaPlayer::videoAvailabilityChanged(bool videoAvailable)
+    \fn void QMediaPlayer::videoAvailableChanged(bool videoAvailable)
 
     Signal the availability of visual content has changed to \a videoAvailable.
+*/
+
+/*!
+    \fn void QMediaPlayer::audioAvailableChanged(bool available)
+
+    Signals the availability of audio content has changed to \a available.
 */
 
 /*!
@@ -820,8 +949,13 @@ QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
             The player is expected to be used with simple audio formats,
             but playback should start without significant delay.
             Such playback service can be used for beeps, ringtones, etc.
+
+    \value StreamPlayback
+            The player is expected to play QIODevice based streams.
+            If passed to QMediaPlayer constructor, the service supporting
+            streams playback will be choosen.
 */
 
 #include "moc_qmediaplayer.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

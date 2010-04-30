@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
-#include <QDebug>
-
 #include <qmediapluginloader_p.h>
 #include <qmediaserviceproviderplugin.h>
 
-QTM_USE_NAMESPACE
+#include <QtTest/QtTest>
+#include <QDebug>
+
+QT_USE_NAMESPACE
 
 class tst_QMediaPluginLoader : public QObject
 {
@@ -56,7 +56,6 @@ public slots:
     void cleanupTestCase();
 
 private slots:
-    void testKeys();
     void testInstance();
     void testInstances();
     void testInvalidKey();
@@ -75,12 +74,6 @@ void tst_QMediaPluginLoader::initTestCase()
 void tst_QMediaPluginLoader::cleanupTestCase()
 {
     delete loader;
-}
-
-void tst_QMediaPluginLoader::testKeys()
-{
-    // Each platform should have a plugin available.
-    QVERIFY(loader->keys().size() > 0);
 }
 
 void tst_QMediaPluginLoader::testInstance()

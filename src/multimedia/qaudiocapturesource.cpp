@@ -39,23 +39,22 @@
 **
 ****************************************************************************/
 
-#include <QIcon>
-#include <qmediaobject_p.h>
+#include "qmediaobject_p.h"
 #include <qaudiocapturesource.h>
-#include <qaudiodevicecontrol.h>
+#include "qaudioendpointselector.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QAudioCaptureSource
-    \brief The QAudioCaptureSource class provides an interface to query and select an audio input device.
+    \brief The QAudioCaptureSource class provides an interface to query and select an audio input endpoint.
     \ingroup multimedia
 
     \preliminary
 
-    QAudioCaptureSource provides access to the audio devices available on your system.
+    QAudioCaptureSource provides access to the audio inputs available on your system.
 
-    You can query these devices and select one to use.
+    You can query these inputs and select one to use.
 
     A typical implementation example:
     \code
@@ -65,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 
     The audiocapturesource interface is then used to:
 
-    - Get and Set the audio device to use.
+    - Get and Set the audio input to use.
 
     The capture interface is then used to:
 
@@ -81,9 +80,30 @@ QTM_BEGIN_NAMESPACE
 class QAudioCaptureSourcePrivate : public QMediaObjectPrivate
 {
 public:
-    QAudioCaptureSourcePrivate():provider(0), audioDeviceControl(0) {}
+    Q_DECLARE_PUBLIC(QAudioCaptureSource)
+
+    void initControls()
+    {
+        Q_Q(QAudioCaptureSource);
+
+        if (service != 0)
+            audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(service->control(QAudioEndpointSelector_iid));
+
+        if (audioEndpointSelector) {
+            q->connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)),
+                       SIGNAL(activeAudioInputChanged(const QString&)));
+            q->connect(audioEndpointSelector, SIGNAL(availableEndpointsChanged()),
+                       SIGNAL(availableAudioInputsChanged()));
+            q->connect(audioEndpointSelector, SIGNAL(availableEndpointsChanged()),
+                       SLOT(statusChanged()));
+            errorState = QtMediaServices::NoError;
+        }
+    }
+
+    QAudioCaptureSourcePrivate():provider(0), audioEndpointSelector(0), errorState(QtMediaServices::ServiceMissingError) {}
     QMediaServiceProvider *provider;
-    QAudioDeviceControl   *audioDeviceControl;
+    QAudioEndpointSelector   *audioEndpointSelector;
+    QtMediaServices::AvailabilityError errorState;
 };
 
 /*!
@@ -96,15 +116,20 @@ QAudioCaptureSource::QAudioCaptureSource(QObject *parent, QMediaServiceProvider 
     Q_D(QAudioCaptureSource);
 
     d->provider = provider;
+    d->initControls();
+}
 
-    if (d->service != 0)
-        d->audioDeviceControl = qobject_cast<QAudioDeviceControl*>(d->service->control(QAudioDeviceControl_iid));
+/*!
+    Construct a QAudioCaptureSource using the QMediaObject \a mediaObject, with \a parent.
+*/
 
-    if (d->audioDeviceControl) {
-        connect(d->audioDeviceControl, SIGNAL(selectedDeviceChanged(int)), SIGNAL(selectedDeviceChanged(int)));
-        connect(d->audioDeviceControl, SIGNAL(selectedDeviceChanged(QString)), SIGNAL(selectedDeviceChanged(QString)));
-        connect(d->audioDeviceControl, SIGNAL(devicesChanged()), SIGNAL(devicesChanged()));
-    }
+QAudioCaptureSource::QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent)
+    :QMediaObject(*new QAudioCaptureSourcePrivate, parent, mediaObject->service())
+{
+    Q_D(QAudioCaptureSource);
+
+    d->provider = 0;
+    d->initControls();
 }
 
 /*!
@@ -115,126 +140,138 @@ QAudioCaptureSource::~QAudioCaptureSource()
 {
     Q_D(QAudioCaptureSource);
 
-    d->provider->releaseService(d->service);
+    if (d->provider)
+        d->provider->releaseService(d->service);
 }
 
 /*!
-    Returns the number of audio input devices available.
+    Returns the error state of the audio capture service.
 */
 
-int QAudioCaptureSource::deviceCount() const
+QtMediaServices::AvailabilityError QAudioCaptureSource::availabilityError() const
 {
     Q_D(const QAudioCaptureSource);
 
-    if(d->audioDeviceControl)
-        return d->audioDeviceControl->deviceCount();
-
-    return 0;
+    return d->errorState;
 }
 
 /*!
-    Returns the name of the audio input device at \a index.
+    Returns true if the audio capture service is available, otherwise returns false.
 */
-
-QString QAudioCaptureSource::name(int index) const
+bool QAudioCaptureSource::isAvailable() const
 {
     Q_D(const QAudioCaptureSource);
 
-    QString text;
-
-    if(d->audioDeviceControl)
-        text = d->audioDeviceControl->name(index);
-
-    return text;
+    if (d->service != NULL) {
+        if (d->audioEndpointSelector && d->audioEndpointSelector->availableEndpoints().size() > 0)
+            return true;
+    }
+    return false;
 }
 
+
 /*!
-    Returns the description of the audio input device at \a index.
+    Returns a list of available audio inputs
 */
 
-QString QAudioCaptureSource::description(int index) const
+QList<QString> QAudioCaptureSource::audioInputs() const
 {
     Q_D(const QAudioCaptureSource);
 
-    QString text;
+    QList<QString> list;
+    if (d && d->audioEndpointSelector)
+        list <<d->audioEndpointSelector->availableEndpoints();
 
-    if(d->audioDeviceControl)
-        text = d->audioDeviceControl->description(index);
-
-    return text;
+    return list;
 }
 
 /*!
-    Returns the icon for the audio input device at \a index.
+    Returns the description of the audio input device with \a name.
 */
 
-QIcon QAudioCaptureSource::icon(int index) const
+QString QAudioCaptureSource::audioDescription(const QString& name) const
 {
     Q_D(const QAudioCaptureSource);
 
-    if(d->audioDeviceControl)
-        return d->audioDeviceControl->icon(index);
-
-    return QIcon();
+    if(d->audioEndpointSelector)
+        return d->audioEndpointSelector->endpointDescription(name);
+    else
+        return QString();
 }
 
 /*!
-    Returns the default audio input devices index.
+    Returns the default audio input name.
 */
 
-int QAudioCaptureSource::defaultDevice() const
+QString QAudioCaptureSource::defaultAudioInput() const
 {
     Q_D(const QAudioCaptureSource);
 
-    if(d->audioDeviceControl)
-        return d->audioDeviceControl->defaultDevice();
-
-    return 0;
+    if(d->audioEndpointSelector)
+        return d->audioEndpointSelector->defaultEndpoint();
+    else
+        return QString();
 }
 
 /*!
-    Returns the index of the currently selected audio input device.
+    Returns the active audio input name.
 */
 
-int QAudioCaptureSource::selectedDevice() const
+QString QAudioCaptureSource::activeAudioInput() const
 {
     Q_D(const QAudioCaptureSource);
 
-    if(d->audioDeviceControl)
-        return d->audioDeviceControl->selectedDevice();
-
-    return 0;
+    if(d->audioEndpointSelector)
+        return d->audioEndpointSelector->activeEndpoint();
+    else
+        return QString();
 }
 
 /*!
-    Sets the audio input device to \a index.
+    Set the active audio input to \a name.
 */
 
-void QAudioCaptureSource::setSelectedDevice(int index)
+void QAudioCaptureSource::setAudioInput(const QString& name)
 {
     Q_D(const QAudioCaptureSource);
 
-    if(d->audioDeviceControl)
-        d->audioDeviceControl->setSelectedDevice(index);
+    if(d->audioEndpointSelector)
+        return d->audioEndpointSelector->setActiveEndpoint(name);
 }
 
 /*!
-    \fn QAudioCaptureSource::selectedDeviceChanged(int index)
+    \fn QAudioCaptureSource::activeAudioInputChanged(const QString& name)
 
-    Signal emitted when selected audio device changes to \a index.
+    Signal emitted when active audio input changes to \a name.
 */
 
 /*!
-    \fn QAudioCaptureSource::selectedDeviceChanged(const QString &deviceName)
+    \fn QAudioCaptureSource::availableAudioInputsChanged()
 
-    Signal emitted when selected audio device changes to \a deviceName.
+    Signal is emitted when the available audio inputs change.
 */
 
 /*!
-    \fn QAudioCaptureSource::devicesChanged()
-
-    Signal is emitted when the available audio input devices has changed.
+  \internal
 */
+void QAudioCaptureSource::statusChanged()
+{
+    Q_D(QAudioCaptureSource);
+
+    if (d->audioEndpointSelector) {
+        if (d->audioEndpointSelector->availableEndpoints().size() > 0) {
+            d->errorState = QtMediaServices::NoError;
+            emit availabilityChanged(true);
+        } else {
+            d->errorState = QtMediaServices::BusyError;
+            emit availabilityChanged(false);
+        }
+    } else {
+        d->errorState = QtMediaServices::ServiceMissingError;
+        emit availabilityChanged(false);
+    }
+}
+
 #include "moc_qaudiocapturesource.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

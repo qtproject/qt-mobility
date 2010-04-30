@@ -47,8 +47,8 @@
 </ul>
 <a name="what-s-special-from-the-security-perspective"></a>
 <h2>What's special from the security perspective?</h2>
-<p>There is only one database in S60 because both databases (user and system) are combined to the same database. The database is located behind the server's private folder, (<tt>c:\private\2002AC7F</tt>). This ensures the database can't be thumbered (e.g&#x2e; remove, move or replace) without Allfiles capability which isn't user-grantable (More about the capabilities: <a href="http://wiki.forum.nokia.com/index.php/Capabilities">http://wiki.forum.nokia.com/index.php/Capabilities</a>). That makes it impossible for example to replace the whole database with the new one which might contain malicious services.</p>
-<p>Note! It doesn't matter which scope is used on Symbian as <a href="qservicemanager.html#Scope-enum">QServiceManager::UserScope</a> and <a href="qservicemanager.html#Scope-enum">QServiceManager::SystemScope</a> are mapped to the same database.</p>
+<p>There is only one database in S60 because both databases (user and system) are combined to the same database. The database is located behind the server's private folder, (<tt>c:\private\E3b48c24</tt>). This ensures the database can't be thumbered (e.g&#x2e; remove, move or replace) without Allfiles capability which isn't user-grantable (More about the capabilities: <a href="http://wiki.forum.nokia.com/index.php/Capabilities">http://wiki.forum.nokia.com/index.php/Capabilities</a>). That makes it impossible for example to replace the whole database with the new one which might contain malicious services.</p>
+<p>Note! It doesn't matter which scope is used on Symbian as <a href="qservice.html#Scope-enum">QService::UserScope</a> and <a href="qservice.html#Scope-enum">QService::SystemScope</a> are mapped to the same database.</p>
 <a name="directory-structure"></a>
 <h2>Directory structure</h2>
 <p>There are different implementations for the both emulator and device because emulator doesn't support multiple applications to be loaded at the same time, (Known issue: <a href="http://bugreports.qt.nokia.com/browse/QTBUG-2950">QTBUG-2950</a>). The dll approach must be used in the emulator environment and the exe approach instead of dll in the real device.</p>
@@ -57,6 +57,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

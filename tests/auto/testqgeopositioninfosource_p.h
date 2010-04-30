@@ -96,6 +96,7 @@ private slots:
     void setUpdateInterval_data();
 
     void lastKnownPosition();
+    void lastKnownPosition_data();
 
     void minimumUpdateInterval();
 

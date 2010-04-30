@@ -42,18 +42,16 @@
 #include "qgstreamercaptureservice.h"
 #include "qgstreamercapturesession.h"
 #include "qgstreamerrecordercontrol.h"
-#include "qgstreamermediaformatcontrol.h"
+#include "qgstreamermediacontainercontrol.h"
 #include "qgstreameraudioencode.h"
 #include "qgstreamervideoencode.h"
-#include "qgstreamerimageencode.h"
 #include "qgstreamerbushelper.h"
-#include "qgstreamercameracontrol.h"
+#include "qgstreamerv4l2input.h"
 #include "qgstreamercapturemetadatacontrol.h"
 
 #include "qgstreamervideooutputcontrol.h"
-#include "qgstreameraudioinputdevicecontrol.h"
+#include "qgstreameraudioinputendpointselector.h"
 #include "qgstreamervideoinputdevicecontrol.h"
-#include "qgstreamerimagecapturecontrol.h"
 
 #include "qgstreamervideooverlay.h"
 #include "qgstreamervideorenderer.h"
@@ -61,6 +59,8 @@
 #include "qgstreamervideowidget.h"
 
 #include <qmediaserviceprovider.h>
+
+#include <QtCore/qdebug.h>
 
 
 class QGstreamerVideoRendererWrapper : public QGstreamerElementFactory
@@ -82,6 +82,9 @@ public:
 
     GstElement *buildElement()
     {
+#ifdef Q_WS_MAEMO_5
+        return m_element = m_videoRenderer->videoSink();
+#endif
         if (m_bin == NULL) {
             GstBin * bin = GST_BIN(gst_bin_new(NULL));
 
@@ -130,10 +133,10 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
     }
 
     m_captureSession = 0;
-    m_cameraControl = 0;
     m_metaDataControl = 0;
 
-    m_audioInputDevice = 0;
+    m_videoInput = 0;
+    m_audioInputEndpointSelector = 0;
     m_videoInputDevice = 0;
 
     m_videoOutput = 0;
@@ -143,49 +146,53 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
     m_videoWindowFactory = 0;
     m_videoWidgetControl = 0;
     m_videoWidgetFactory = 0;
-    m_imageCaptureControl = 0;
-
 
     if (service == Q_MEDIASERVICE_AUDIOSOURCE) {
         m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::Audio, this);
     }
 
-   if (service == Q_MEDIASERVICE_CAMERA) {
-        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);
-        m_cameraControl = new QGstreamerCameraControl(m_captureSession);
-        m_captureSession->setVideoInput(m_cameraControl);
-        m_videoInputDevice = new QGstreamerVideoInputDeviceControl(m_captureSession);
-        m_imageCaptureControl = new QGstreamerImageCaptureControl(m_captureSession);
+    bool captureVideo = false;
+
+    if (captureVideo) {
+        m_captureSession = new QGstreamerCaptureSession(QGstreamerCaptureSession::AudioAndVideo, this);        
+        m_videoInput = new QGstreamerV4L2Input(this);
+        m_captureSession->setVideoInput(m_videoInput);
+        m_videoInputDevice = new QGstreamerVideoInputDeviceControl(this);
 
         connect(m_videoInputDevice, SIGNAL(selectedDeviceChanged(QString)),
-                m_cameraControl, SLOT(setDevice(QString)));
+                m_videoInput, SLOT(setDevice(QString)));
 
         if (m_videoInputDevice->deviceCount())
-            m_cameraControl->setDevice(m_videoInputDevice->name(m_videoInputDevice->selectedDevice()));
+            m_videoInput->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
+
+        m_videoOutput = new QGstreamerVideoOutputControl(this);
+        connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+                this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+
+        m_videoRenderer = new QGstreamerVideoRenderer(this);
+        m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
+        m_videoWindow = new QGstreamerVideoOverlay(this);
+        m_videoWindowFactory = new QGstreamerVideoRendererWrapper(m_videoWindow);
+
+        m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
+        m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(m_videoWidgetControl);
+
+        m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
+                                           << QVideoOutputControl::RendererOutput
+                                           << QVideoOutputControl::WindowOutput
+                                           << QVideoOutputControl::WidgetOutput);
     }
 
-    m_videoOutput = new QGstreamerVideoOutputControl(this);
-    connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-            this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+    if (!m_captureSession) {
+        qWarning() << "Service type is not supported:" << service;
+        return;
+    }
 
-    m_videoRenderer = new QGstreamerVideoRenderer(this);
-    m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
-    m_videoWindow = new QGstreamerVideoOverlay(this);
-    m_videoWindowFactory = new QGstreamerVideoRendererWrapper(m_videoWindow);
+    m_audioInputEndpointSelector = new QGstreamerAudioInputEndpointSelector(this);
+    connect(m_audioInputEndpointSelector, SIGNAL(activeEndpointChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
 
-    m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
-    m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(m_videoWidgetControl);
-
-    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
-            << QVideoOutputControl::RendererOutput
-            << QVideoOutputControl::WindowOutput
-            << QVideoOutputControl::WidgetOutput);
-
-    m_audioInputDevice = new QGstreamerAudioInputDeviceControl(this);
-    connect(m_audioInputDevice, SIGNAL(selectedDeviceChanged(QString)), m_captureSession, SLOT(setCaptureDevice(QString)));
-
-    if (m_captureSession && m_audioInputDevice->deviceCount())
-        m_captureSession->setCaptureDevice(m_audioInputDevice->name(m_audioInputDevice->selectedDevice()));
+    if (m_captureSession && m_audioInputEndpointSelector->availableEndpoints().size() > 0)
+        m_captureSession->setCaptureDevice(m_audioInputEndpointSelector->defaultEndpoint());
 
     m_metaDataControl = new QGstreamerCaptureMetaDataControl(this);
     connect(m_metaDataControl, SIGNAL(metaDataChanged(QMap<QByteArray,QVariant>)),
@@ -198,6 +205,9 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 
 QMediaControl *QGstreamerCaptureService::control(const char *name) const
 {
+    if (!m_captureSession)
+        return 0;
+
     if (qstrcmp(name, QVideoOutputControl_iid) == 0)
         return m_videoOutput;
 
@@ -210,8 +220,8 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
         return m_videoWidgetControl;
 
-    if (qstrcmp(name,QAudioDeviceControl_iid) == 0)
-        return m_audioInputDevice;
+    if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
+        return m_audioInputEndpointSelector;
 
     if (qstrcmp(name,QVideoDeviceControl_iid) == 0)
         return m_videoInputDevice;
@@ -225,21 +235,11 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QVideoEncoderControl_iid) == 0)
         return m_captureSession->videoEncodeControl();
 
-    if (qstrcmp(name,QImageEncoderControl_iid) == 0)
-        return m_captureSession->imageEncodeControl();
-
-
-    if (qstrcmp(name,QMediaFormatControl_iid) == 0)
-        return m_captureSession->mediaFormatControl();
-
-    if (qstrcmp(name,QCameraControl_iid) == 0)
-        return m_cameraControl;
+    if (qstrcmp(name,QMediaContainerControl_iid) == 0)
+        return m_captureSession->mediaContainerControl();
 
     if (qstrcmp(name,QMetaDataControl_iid) == 0)
         return m_metaDataControl;
-
-    if (qstrcmp(name, QImageCaptureControl_iid) == 0)
-        return m_imageCaptureControl;
 
     return 0;
 }
@@ -265,4 +265,3 @@ void QGstreamerCaptureService::videoOutputChanged(QVideoOutputControl::Output ou
         break;
     }
 }
-

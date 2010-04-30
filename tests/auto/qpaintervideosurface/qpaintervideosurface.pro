@@ -10,4 +10,5 @@ include (../../../common.pri)
 
 SOURCES += tst_qpaintervideosurface.cpp
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia

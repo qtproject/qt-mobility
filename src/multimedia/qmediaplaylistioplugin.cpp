@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <qmediaplaylistioplugin.h>
+#include "qmediaplaylistioplugin.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistReader
@@ -140,7 +140,7 @@ QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin()
 /*!
     \fn QMediaPlaylistIOPlugin::canRead(const QUrl& location, const QByteArray &format) const
 
-    Identifies if a plug-in can read \a format data from a URI \a location.
+    Identifies if a plug-in can read \a format data from a URL \a location.
 
     Returns true if the data can be read; and false otherwise.
 */
@@ -170,7 +170,7 @@ QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin()
 /*!
     \fn QMediaPlaylistIOPlugin::createReader(const QUrl& location, const QByteArray &format)
 
-    Returns a new QMediaPlaylistReader which reads \a format data from a URI \a location.
+    Returns a new QMediaPlaylistReader which reads \a format data from a URL \a location.
 
     If the location or the format is unsupported this will return a null pointer.
 */
@@ -184,5 +184,5 @@ QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin()
 */
 
 #include "moc_qmediaplaylistioplugin.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -39,24 +39,24 @@
 **
 ****************************************************************************/
 
-#include <qmediarecorder.h>
+#include "qmediarecorder.h"
 
-#include <qmediarecordercontrol.h>
-#include <qmediaobject_p.h>
-#include <qmediaservice.h>
-#include <qmediaserviceprovider.h>
-#include <qaudioencodercontrol.h>
-#include <qvideoencodercontrol.h>
-#include <qmediaformatcontrol.h>
+#include "qmediarecordercontrol.h"
+#include "qmediaobject_p.h"
+#include "qmediaservice.h"
+#include "qmediaserviceprovider.h"
+#include "qaudioencodercontrol.h"
+#include "qvideoencodercontrol.h"
+#include "qmediacontainercontrol.h"
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmetaobject.h>
 
-#include <QtMultimedia/QAudioFormat>
+#include <QtMultimedia/qaudioformat.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaRecorder
@@ -80,7 +80,7 @@ QTM_BEGIN_NAMESPACE
 
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("audio/vorbis");
-    audioSettings.setQuality(QtMedia::HighQuality);
+    audioSettings.setQuality(QtMediaServices::HighQuality);
 
     recorder->setEncodingSettings(audioSettings);
 
@@ -92,6 +92,20 @@ QTM_BEGIN_NAMESPACE
     \sa
 */
 
+namespace
+{
+class MediaRecorderRegisterMetaTypes
+{
+public:
+    MediaRecorderRegisterMetaTypes()
+    {
+        qRegisterMetaType<QMediaRecorder::State>("QMediaRecorder::State");
+        qRegisterMetaType<QMediaRecorder::Error>("QMediaRecorder::Error");
+    }
+} _registerRecorderMetaTypes;
+}
+
+
 class QMediaRecorderPrivate : public QMediaObjectPrivate
 {
     Q_DECLARE_NON_CONST_PUBLIC(QMediaRecorder)
@@ -101,7 +115,7 @@ public:
     void initControls();
 
     QMediaRecorderControl *control;
-    QMediaFormatControl *formatControl;
+    QMediaContainerControl *formatControl;
     QAudioEncoderControl *audioControl;
     QVideoEncoderControl *videoControl;
 
@@ -131,7 +145,7 @@ void QMediaRecorderPrivate::initControls()
         return;
 
     control = qobject_cast<QMediaRecorderControl*>(service->control(QMediaRecorderControl_iid));
-    formatControl = qobject_cast<QMediaFormatControl *>(service->control(QMediaFormatControl_iid));
+    formatControl = qobject_cast<QMediaContainerControl *>(service->control(QMediaContainerControl_iid));
     audioControl = qobject_cast<QAudioEncoderControl *>(service->control(QAudioEncoderControl_iid));
     videoControl = qobject_cast<QVideoEncoderControl *>(service->control(QVideoEncoderControl_iid));
 
@@ -207,6 +221,28 @@ QMediaRecorder::~QMediaRecorder()
     or the service doesn't support media recording.
 */
 
+/*!
+    Returns true if media recorder service ready to use.
+*/
+bool QMediaRecorder::isAvailable() const
+{
+    if (d_func()->control != NULL)
+        return true;
+    else
+        return false;
+}
+
+/*!
+    Returns the availability error code.
+*/
+QtMediaServices::AvailabilityError QMediaRecorder::availabilityError() const
+{
+    if (d_func()->control != NULL)
+        return QtMediaServices::NoError;
+    else
+        return QtMediaServices::ServiceMissingError;
+}
+
 QUrl QMediaRecorder::outputLocation() const
 {
     return d_func()->control ? d_func()->control->outputLocation() : QUrl();
@@ -219,7 +255,7 @@ bool QMediaRecorder::setOutputLocation(const QUrl &location)
 }
 
 /*!
-    Return the current media recorder state.
+    Returns the current media recorder state.
 
     \sa QMediaRecorder::State
 */
@@ -266,29 +302,29 @@ qint64 QMediaRecorder::duration() const
 /*!
     Returns a list of MIME types of supported container formats.
 */
-QStringList QMediaRecorder::supportedFormats() const
+QStringList QMediaRecorder::supportedContainers() const
 {
     return d_func()->formatControl ?
-           d_func()->formatControl->supportedFormats() : QStringList();
+           d_func()->formatControl->supportedContainers() : QStringList();
 }
 
 /*!
     Returns a description of a container format \a mimeType.
 */
-QString QMediaRecorder::formatDescription(const QString &mimeType) const
+QString QMediaRecorder::containerDescription(const QString &mimeType) const
 {
     return d_func()->formatControl ?
-           d_func()->formatControl->formatDescription(mimeType) : QString();
+           d_func()->formatControl->containerDescription(mimeType) : QString();
 }
 
 /*!
     Returns the MIME type of the selected container format.
 */
 
-QString QMediaRecorder::format() const
+QString QMediaRecorder::containerMimeType() const
 {
     return d_func()->formatControl ?
-           d_func()->formatControl->format() : QString();
+           d_func()->formatControl->containerMimeType() : QString();
 }
 
 /*!
@@ -415,7 +451,7 @@ QVideoEncoderSettings QMediaRecorder::videoSettings() const
 }
 
 /*!
-    Sets the \a audio and \a video encoder settings and container \a format MIME type.
+    Sets the \a audio and \a video encoder settings and \a container format MIME type.
 
     It's only possible to change setttings when the encoder
     is in the QMediaEncoder::StoppedState state.
@@ -426,12 +462,12 @@ QVideoEncoderSettings QMediaRecorder::videoSettings() const
     But while setEncodingSettings is optional, the backend can preload
     encoding pipeline to improve recording startup time.
 
-    \sa audioSettings(), videoSettings(), format()
+    \sa audioSettings(), videoSettings(), containerMimeType()
 */
 
 void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audio,
                                          const QVideoEncoderSettings &video,
-                                         const QString &format)
+                                         const QString &container)
 {
     Q_D(QMediaRecorder);
 
@@ -442,7 +478,7 @@ void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audio,
         d->videoControl->setVideoSettings(video);
 
     if (d->formatControl)
-        d->formatControl->setFormat(format);
+        d->formatControl->setContainerMimeType(container);
 
     if (d->control)
         d->control->applySettings();
@@ -527,5 +563,5 @@ void QMediaRecorder::stop()
 
 
 #include "moc_qmediarecorder.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

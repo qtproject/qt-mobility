@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qmfhelpers_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 
 #include <QRegExp>
 
@@ -51,41 +51,52 @@ namespace {
 
 quint64 messageStatusMask(const QString &field)
 {
-    return QmfHelpers::convert(QMessageStore::instance())->messageStatusMask(field);
+    QMessageManager mgr;
+    return QmfHelpers::convert(mgr)->messageStatusMask(field);
 }
 
 }
 
 namespace QmfHelpers {
 
+QString stripIdentifierPrefix(const QString &s)
+{
+    return s.mid(4);
+}
+    
+QString prefixIdentifier(const QString &s)
+{
+    return "QMF_" + s;
+}
+    
 QMessageId convert(const QMailMessageId &id)
 {
-    return QMessageId(QString::number(id.toULongLong()));
+    return QMessageId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailMessageId convert(const QMessageId &id)
 {
-    return QMailMessageId(id.toString().toULongLong());
+    return QMailMessageId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 QMessageAccountId convert(const QMailAccountId &id)
 {
-    return QMessageAccountId(QString::number(id.toULongLong()));
+    return QMessageAccountId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailAccountId convert(const QMessageAccountId &id)
 {
-    return QMailAccountId(id.toString().toULongLong());
+    return QMailAccountId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 QMessageFolderId convert(const QMailFolderId &id)
 {
-    return QMessageFolderId(QString::number(id.toULongLong()));
+    return QMessageFolderId(prefixIdentifier(QString::number(id.toULongLong())));
 }
 
 QMailFolderId convert(const QMessageFolderId &id)
 {
-    return QMailFolderId(id.toString().toULongLong());
+    return QMailFolderId(stripIdentifierPrefix(id.toString()).toULongLong());
 }
 
 /* in qmessagecontentcontainerid_qmf.cpp
@@ -200,7 +211,7 @@ QMailMessage::MessageType convert(QMessage::Type t)
     if (t & QMessage::Email) {
         result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Email);
     }
-    if (t & QMessage::Xmpp) {
+    if (t & QMessage::InstantMessage) {
         result = static_cast<QMailMessage::MessageType>(result | QMailMessage::Instant);
     }
 
@@ -222,7 +233,7 @@ QMessage::Type convert(QMailMessage::MessageType t)
         result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Email));
     }
     if (t & QMailMessage::Instant) {
-        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::Xmpp));
+        result = static_cast<QMessage::Type>(static_cast<uint>(result | QMessage::InstantMessage));
     }
 
     return result;
@@ -234,14 +245,14 @@ QMailMessage::MessageType convert(QMessage::TypeFlags v)
 }
 
 /*
-QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)
+QMailStore::ErrorCode convert(QMessageManager::Error v)
 {
     switch (v) {
-    case QMessageStore::InvalidId: return QMailStore::InvalidId;
-    case QMessageStore::ConstraintFailure: return QMailStore::ConstraintFailure;
-    case QMessageStore::ContentInaccessible: return QMailStore::ContentInaccessible;
-    case QMessageStore::NotYetImplemented: return QMailStore::NotYetImplemented;
-    case QMessageStore::FrameworkFault: return QMailStore::FrameworkFault;
+    case QMessageManager::InvalidId: return QMailStore::InvalidId;
+    case QMessageManager::ConstraintFailure: return QMailStore::ConstraintFailure;
+    case QMessageManager::ContentInaccessible: return QMailStore::ContentInaccessible;
+    case QMessageManager::NotYetImplemented: return QMailStore::NotYetImplemented;
+    case QMessageManager::FrameworkFault: return QMailStore::FrameworkFault;
     default: break;
     }
 
@@ -249,24 +260,24 @@ QMailStore::ErrorCode convert(QMessageStore::ErrorCode v)
 }
 */
 
-QMessageStore::ErrorCode convert(QMailStore::ErrorCode v)
+QMessageManager::Error convert(QMailStore::ErrorCode v)
 {
     switch (v) {
-    case QMailStore::InvalidId: return QMessageStore::InvalidId;
-    case QMailStore::ConstraintFailure: return QMessageStore::ConstraintFailure;
-    case QMailStore::ContentInaccessible: return QMessageStore::ContentInaccessible;
-    case QMailStore::NotYetImplemented: return QMessageStore::NotYetImplemented;
-    case QMailStore::FrameworkFault: return QMessageStore::FrameworkFault;
+    case QMailStore::InvalidId: return QMessageManager::InvalidId;
+    case QMailStore::ConstraintFailure: return QMessageManager::ConstraintFailure;
+    case QMailStore::ContentInaccessible: return QMessageManager::ContentInaccessible;
+    case QMailStore::NotYetImplemented: return QMessageManager::NotYetImplemented;
+    case QMailStore::FrameworkFault: return QMessageManager::FrameworkFault;
     default: break;
     }
 
-    return QMessageStore::NoError;
+    return QMessageManager::NoError;
 }
 
-QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v)
+QMailStore::MessageRemovalOption convert(QMessageManager::RemovalOption v)
 {
     switch (v) {
-    case QMessageStore::RemoveOnOriginatingServer: return QMailStore::CreateRemovalRecord;
+    case QMessageManager::RemoveOnOriginatingServer: return QMailStore::CreateRemovalRecord;
     default: break;
     }
 
@@ -274,41 +285,41 @@ QMailStore::MessageRemovalOption convert(QMessageStore::RemovalOption v)
 }
 
 /*
-QMessageStore::RemovalOption convert(QMailStore::MessageRemovalOption v)
+QMessageManager::RemovalOption convert(QMailStore::MessageRemovalOption v)
 {
     switch (v) {
-    case QMailStore::CreateRemovalRecord: return QMessageStore::RemoveOnOriginatingServer;
+    case QMailStore::CreateRemovalRecord: return QMessageManager::RemoveOnOriginatingServer;
     default: break;
     }
 
-    return QMessageStore::RemoveLocalCopyOnly;
+    return QMessageManager::RemoveLocalCopyOnly;
 }
 */
 
-QMailServiceAction::Activity convert(QMessageServiceAction::State v)
+QMailServiceAction::Activity convert(QMessageService::State v)
 {
     switch (v) {
-    case QMessageServiceAction::Pending: return QMailServiceAction::Pending;
-    case QMessageServiceAction::InProgress: return QMailServiceAction::InProgress;
-    case QMessageServiceAction::Successful: return QMailServiceAction::Successful;
-    case QMessageServiceAction::Failed: return QMailServiceAction::Failed;
+    case QMessageService::InactiveState: return QMailServiceAction::Pending;
+    case QMessageService::ActiveState: return QMailServiceAction::InProgress;
+    case QMessageService::CanceledState: return QMailServiceAction::Failed;
+    case QMessageService::FinishedState: return QMailServiceAction::Successful;
     default: break;
     }
 
     return QMailServiceAction::Pending;
 }
 
-QMessageServiceAction::State convert(QMailServiceAction::Activity v)
+QMessageService::State convert(QMailServiceAction::Activity v)
 {
     switch (v) {
-    case QMailServiceAction::Pending: return QMessageServiceAction::Pending;
-    case QMailServiceAction::InProgress: return QMessageServiceAction::InProgress;
-    case QMailServiceAction::Successful: return QMessageServiceAction::Successful;
-    case QMailServiceAction::Failed: return QMessageServiceAction::Failed;
+    case QMailServiceAction::Pending: return QMessageService::InactiveState;
+    case QMailServiceAction::InProgress: return QMessageService::ActiveState;
+    case QMailServiceAction::Successful: return QMessageService::FinishedState;
+    case QMailServiceAction::Failed: return QMessageService::FinishedState;
     default: break;
     }
 
-    return QMessageServiceAction::Pending;
+    return QMessageService::InactiveState;
 }
 
 QMessage::StatusFlags convert(quint64 v)
@@ -376,12 +387,12 @@ QMessageAddress convert(const QMailAddress &address)
                 type = QMessageAddress::System;
             } else if (spec == "Phone") {
                 type = QMessageAddress::Phone;
-            } else if (spec == "XMPP") {
-                type = QMessageAddress::Xmpp;
+            } else if (spec == "InstantMessage") {
+                type = QMessageAddress::InstantMessage;
             }
         }
 
-        return QMessageAddress(addr, type);
+        return QMessageAddress(type, addr);
     }
 
     return QMessageAddress();
@@ -394,11 +405,11 @@ QMailAddress convert(const QMessageAddress &address)
         suffix = " (TYPE=System)";
     } else if (address.type() == QMessageAddress::Phone) {
         suffix = " (TYPE=Phone)";
-    } else if (address.type() == QMessageAddress::Xmpp) {
-        suffix = " (TYPE=XMPP)";
+    } else if (address.type() == QMessageAddress::InstantMessage) {
+        suffix = " (TYPE=InstantMessage)";
     }
 
-    return QMailAddress(address.recipient() + suffix);
+    return QMailAddress(address.addressee() + suffix);
 }
 
 QMessageAddressList convert(const QList<QMailAddress> &list)
@@ -521,18 +532,18 @@ QMailMessageKey convert(const QMessageFilter &filter);
 */
 
 /* in qmessageaccountsortkey_qmf.cpp
-QMessageAccountOrdering convert(const QMailAccountSortKey &key);
-QMailAccountSortKey convert(const QMessageAccountOrdering &ordering);
+QMessageAccountSortOrder convert(const QMailAccountSortKey &key);
+QMailAccountSortKey convert(const QMessageAccountSortOrder &sortOrder);
 */
 
 /* in qmessagefoldersortkey_qmf.cpp
-QMessageFolderOrdering convert(const QMailFolderSortKey &key);
-QMailFolderSortKey convert(const QMessageFolderOrdering &ordering);
+QMessageFolderSortOrder convert(const QMailFolderSortKey &key);
+QMailFolderSortKey convert(const QMessageFolderSortOrder &sortOrder);
 */
 
 /* in qmessagesortkey_qmf.cpp
-QMessageOrdering convert(const QMailMessageSortKey &key);
-QMailMessageSortKey convert(const QMessageOrdering &ordering);
+QMessageSortOrder convert(const QMailMessageSortKey &key);
+QMailMessageSortKey convert(const QMessageSortOrder &sortOrder);
 */
 
 /* in qmessageaccount_qmf.cpp
@@ -553,7 +564,7 @@ QMailMessage* convert(QMessage *message);
 
 /* in qmessagestore_qmf.cpp
 QMailStore *convert(QMessageStore *store);
-const QMailStore *convert(const QMessageStore *store);
+QMailStore *convert(QMessageManager &manager);
 */
 
 quint64 highPriorityMask()

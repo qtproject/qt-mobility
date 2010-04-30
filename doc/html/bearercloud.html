@@ -36,7 +36,7 @@
 <p>This example consists of two main classes, the BearerCloud and Cloud classes. The Cloud class represents a single network session and associated network configuration. The BearerCloud class implements a Graphics View scene and manages the life-cycle of Cloud objects in response to notification signals from <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
 <a name="setting-the-scene"></a>
 <h2>Setting the scene</h2>
-<p>When constructing the scene we first calculate some random offsets using the global qsand() and <a href="http://qt.nokia.com/doc/4.5/qtglobal.html#qrand">qrand</a>() functions. We will use these offsets to scatter the initial position of new Cloud objects.</p>
+<p>When constructing the scene we first calculate some random offsets using the global qsand() and <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qrand">qrand</a>() functions. We will use these offsets to scatter the initial position of new Cloud objects.</p>
 <p>Next we place a text item in the center of the scene to represent the local device and surround it with four concentric circles to help visualize the orbits.</p>
 <p>Finally we connect up the network configuration notification signals and queue the initial population of the scene during the next iteration of the event loop.</p>
 <pre>    BearerCloud::BearerCloud(QObject *parent)
@@ -97,7 +97,7 @@
 <p>The configurationAdded() slot gets called when a new network configuration is added to the system.</p>
 <p>It stores the <a href="qnetworkconfiguration.html#identifier">identifier</a> of the network configuration in the <i>configStates</i> map, which is used to keep a count of the number of network configurations in each state. This in turn is used to calculate the initial position of new Cloud objects.</p>
 <p>Next we create a new Cloud object for this network configuration. Set its initial position and store it in the <i>configurations</i> hash.</p>
-<p>The last step is to add it to the scene by calling <a href="http://qt.nokia.com/doc/4.5/qgraphicsscene.html#addItem">QGraphicsScene::addItem</a>().</p>
+<p>The last step is to add it to the scene by calling <a href="http://qt.nokia.com/doc/4.6/qgraphicsscene.html#addItem">QGraphicsScene::addItem</a>().</p>
 <pre>    void BearerCloud::configurationAdded(const QNetworkConfiguration &amp;config)
     {
         const QNetworkConfiguration::StateFlags state = config.state();
@@ -148,7 +148,7 @@
 <h2>Responding to changes</h2>
 <p>Each network session and associated network configuration known to the system is represented in the scene as a Cloud object.</p>
 <p>In the Cloud constructor we first initialize member variables. Then we create a new <a href="qnetworksession.html">QNetworkSession</a> object bound to the network configuration. Next we connect the <a href="qnetworksession.html">QNetworkSession</a> signals which we use to monitor it for state changes.</p>
-<p>Next we set some <a href="http://qt.nokia.com/doc/4.5/qgraphicsitem.html">QGraphicsItem</a> properties. The <a href="http://qt.nokia.com/doc/4.5/qgraphicsitem.html#GraphicsItemFlag-enum">QGraphicsItem::ItemIsMovable</a> flag enables mouse interaction with the Cloud object.</p>
+<p>Next we set some <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html">QGraphicsItem</a> properties. The <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#GraphicsItemFlag-enum">QGraphicsItem::ItemIsMovable</a> flag enables mouse interaction with the Cloud object.</p>
 <p>The Cloud object consists of an icon and a text caption, these are constructed here. We will assign values to them later, as these will change as the sessions state changes.</p>
 <p>Next we set the initial animation state and call our newConfigurationActivated() slot to finish setting up the Cloud object based on the state of network session.</p>
 <pre>    Cloud::Cloud(const QNetworkConfiguration &amp;config, QGraphicsItem *parent)
@@ -182,7 +182,7 @@
 <p>Finally we call our stateChanged() slot.</p>
 <pre>    void Cloud::newConfigurationActivated()
     {
-        const QString bearerName = session-&gt;bearerName();
+        const QString bearerName = configuration.bearerName();
         if (!svgCache.contains(bearerName)) {
             if (bearerName == QLatin1String(&quot;WLAN&quot;))
                 svgCache.insert(bearerName, new QSvgRenderer(QLatin1String(&quot;:wlan.svg&quot;)));
@@ -235,7 +235,7 @@
             tooltip += tr(&quot;&lt;br&gt;Interface: %1&quot;).arg(interface.humanReadableName());
         tooltip += tr(&quot;&lt;br&gt;Id: %1&quot;).arg(configuration.identifier());
 
-        const QString bearerName = session-&gt;bearerName();
+        const QString bearerName = configuration.bearerName();
         if (!bearerName.isEmpty())
             tooltip += tr(&quot;&lt;br&gt;Bearer: %1&quot;).arg(bearerName);
 
@@ -266,10 +266,10 @@
             s = s.arg(tr(&quot;Unknown&quot;));
         }
 
-        if (session-&gt;isActive())
-            s = s.arg(tr(&quot;Active&quot;));
+        if (session-&gt;isOpen())
+            s = s.arg(tr(&quot;Open&quot;));
         else
-            s = s.arg(tr(&quot;Inactive&quot;));
+            s = s.arg(tr(&quot;Closed&quot;));
 
         tooltip += s;
 
@@ -279,11 +279,11 @@
 
         setToolTip(tooltip);
     }</pre>
-<p>In our reimplementation of the <a href="http://qt.nokia.com/doc/4.5/qgraphicsitem.html#mouseDoubleClickEvent">QGraphicsItem::mouseDoubleClickEvent</a>() function we call <a href="qnetworksession.html#open">QNetworkSession::open</a>() or <a href="qnetworksession.html#close">QNetworkSession::close</a>() to open or close the session in response to a double left click.</p>
+<p>In our reimplementation of the <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseDoubleClickEvent">QGraphicsItem::mouseDoubleClickEvent</a>() function we call <a href="qnetworksession.html#open">QNetworkSession::open</a>() or <a href="qnetworksession.html#close">QNetworkSession::close</a>() to open or close the session in response to a double left click.</p>
 <pre>    void Cloud::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     {
         if (event-&gt;button() == Qt::LeftButton) {
-            if (session-&gt;isActive())
+            if (session-&gt;isOpen())
                 session-&gt;close();
             else
                 session-&gt;open();
@@ -309,6 +309,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

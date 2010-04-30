@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageFolder Class Reference</h1>
 <p>The QMessageFolder class provides an interface for folders containing messages in the messaging store. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMessageFolder&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<ul>
+<pre>    #include &lt;QMessageFolder&gt;</pre><ul>
 <li><a href="qmessagefolder-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -27,8 +26,8 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessagefolder.html#QMessageFolder-2">QMessageFolder</a></b> ( const QMessageFolderId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessagefolder.html#QMessageFolder-3">QMessageFolder</a></b> ( const QMessageFolder &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefolder.html#dtor.QMessageFolder">~QMessageFolder</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefolder.html#displayName">displayName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageFolderId </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefolder.html#id">id</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefolder.html#name">name</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageAccountId </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefolder.html#parentAccountId">parentAccountId</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageFolderId </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefolder.html#parentFolderId">parentFolderId</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefolder.html#path">path</a></b> () const</td></tr>
@@ -51,12 +50,12 @@
 <a name="//apple_ref/cpp/instm/QMessageFolder/~QMessageFolder"></a>
 <h3 class="fn"><a name="dtor.QMessageFolder"></a>QMessageFolder::~QMessageFolder ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the <a href="qmessagefolder.html">QMessageFolder</a> object.</p>
-<a name="//apple_ref/cpp/instm/QMessageFolder/displayName"></a>
-<h3 class="fn"><a name="displayName"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageFolder::displayName () const</h3>
-<p>Returns the display name of the folder suitable for viewing in a user interface.</p>
 <a name="//apple_ref/cpp/instm/QMessageFolder/id"></a>
 <h3 class="fn"><a name="id"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessageFolder::id () const</h3>
 <p>Returns the identifier of the <a href="qmessagefolder.html">QMessageFolder</a> object. A <a href="qmessagefolder.html">QMessageFolder</a> with an invalid identifier does not yet exist in the messaging store.</p>
+<a name="//apple_ref/cpp/instm/QMessageFolder/name"></a>
+<h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QMessageFolder::name () const</h3>
+<p>Returns the display name of the folder suitable for viewing in a user interface. This is typically the same as, or a simplification of the <a href="qmessagefolder.html#path">path</a>() for the folder.</p>
 <a name="//apple_ref/cpp/instm/QMessageFolder/parentAccountId"></a>
 <h3 class="fn"><a name="parentAccountId"></a><a href="qmessageaccountid.html">QMessageAccountId</a> QMessageFolder::parentAccountId () const</h3>
 <p>Returns the identifier of the parent account of the folder. If the folder is not linked to an account an invalid identifier is returned.</p>
@@ -64,12 +63,12 @@
 <h3 class="fn"><a name="parentFolderId"></a><a href="qmessagefolderid.html">QMessageFolderId</a> QMessageFolder::parentFolderId () const</h3>
 <p>Returns the identifier of the parent folder. This folder is a root folder if the parent identifier is invalid.</p>
 <a name="//apple_ref/cpp/instm/QMessageFolder/path"></a>
-<h3 class="fn"><a name="path"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QMessageFolder::path () const</h3>
+<h3 class="fn"><a name="path"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QMessageFolder::path () const</h3>
 <p>Returns the path of the folder.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

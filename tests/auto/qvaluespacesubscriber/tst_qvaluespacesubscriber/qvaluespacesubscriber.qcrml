@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository target="RProperty" uidValue="0x2002ac86">
+<key ref="/home/user/bool" int="0x00000001"/>
+<key ref="/home/user/int" int="0x00000002"/>
+<key ref="/home/user/QString" int="0x00000003"/>
+<key ref="/home/user/QStringList" int="0x00000004"/>
+<key ref="/home/user/qint64" int="0x00000005"/>
+<key ref="/home/user/QByteArray" int="0x00000006"/>
+<key ref="/home/user/double" int="0x00000007"/>
+<key ref="/home/user/float" int="0x00000008"/>
+<key ref="/home/user/QChar" int="0x00000009"/>
+<key ref="/home/usercount" int="0x0000000a"/>
+<key ref="/layer/name" int="0x0000000b"/>
+<key ref="/layer/id" int="0x0000000c"/>
+<key ref="/layer/options" int="0x0000000d"/>
+<key ref="/usr/alex/busy" int="0x0000000e"/>
+<key ref="/usr/lorn/busy" int="0x0000000f"/>
+<key ref="/threads/value" int="0x00000010"/>
+<key ref="/home/user" int="0x00000011"/>
+
+<key ref="/usr/data/Int" int="0x00000012"/>
+<key ref="/usr/data/Bool" int="0x00000013"/>
+<key ref="/usr/data/UInt" int="0x00000014"/>
+<key ref="/usr/data/LongLong" int="0x00000015"/>
+<key ref="/usr/data/ULongLong" int="0x00000016"/>
+<key ref="/usr/data/Double" int="0x00000017"/>
+<key ref="/usr/data/Char" int="0x00000018"/>
+<key ref="/usr/data/QString" int="0x00000019"/>
+<key ref="/usr/data/QByteArray" int="0x0000001a"/>
+<key ref="/usr/data/QStringList" int="0x0000001b"/>
+<key ref="/usr/data/QRect" int="0x0000001c"/>
+<key ref="/usr/data/QDateTime" int="0x0000001d"/>
+</repository>

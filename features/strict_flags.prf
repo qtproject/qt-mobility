@@ -1,0 +1,38 @@
+# This functionality is opt-in via the STRICT environment variable
+# export STRICT=1 on Unix
+# set STRICT=1 on Windows
+STRICT=$$(STRICT)
+equals(STRICT,1) {
+    win32 {
+        QMAKE_CXXFLAGS+=-WX
+    } else {
+        QMAKE_CXXFLAGS+=-Werror
+        QMAKE_CXXFLAGS+=-Wall
+        # There are legitimate cases that conflict with this warning (QSensorFilter::filter)
+        #QMAKE_CXXFLAGS+=-Woverloaded-virtual
+        # This breaks in QML headers
+        #QMAKE_CXXFLAGS+=-Wold-style-cast
+        # This breaks in QML headers
+        #QMAKE_CXXFLAGS+=-pedantic
+        QMAKE_CXXFLAGS+=-ansi
+        QMAKE_CXXFLAGS+=-Wno-long-long
+        # This breaks in Qt headers
+        #QMAKE_CXXFLAGS+=-Wshadow
+        # This breaks everywhere
+        #QMAKE_CXXFLAGS+=-Wunreachable-code
+        QMAKE_CXXFLAGS+=-Wundef
+        QMAKE_CXXFLAGS+=-Wformat-nonliteral
+        QMAKE_CXXFLAGS+=-Wformat-security
+        QMAKE_CXXFLAGS+=-Wcast-align
+        QMAKE_CXXFLAGS+=-Wchar-subscripts
+        # This breaks in Qt headers
+        #QMAKE_CXXFLAGS+=-Wfloat-equal
+        QMAKE_LFLAGS+=-Wl,-no-undefined
+    }
+
+    contains(TEMPLATE,lib) {
+        DEFINES += QT_NO_CAST_FROM_ASCII
+        CONFIG += no_keywords
+    }
+}
+

@@ -86,7 +86,7 @@ private :
     void ConstructL(RLbtServer &aLbtServ);
 
     bool isValid() {
-        return subsessionCreated && (iTriggerMonitorInfo!=NULL);
+        return subsessionCreated && (iTriggerMonitorInfo != NULL);
     }
 private:
     //Design change

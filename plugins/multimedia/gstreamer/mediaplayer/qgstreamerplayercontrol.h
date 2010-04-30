@@ -49,14 +49,16 @@
 
 #include <limits.h>
 
-QTM_USE_NAMESPACE
-
+QT_BEGIN_NAMESPACE
 class QMediaPlaylist;
+class QMediaPlaylistNavigator;
+class QSocketNotifier;
+QT_END_NAMESPACE
+
+QT_USE_NAMESPACE
 
 class QGstreamerPlayerSession;
 class QGstreamerPlayerService;
-class QMediaPlaylistNavigator;
-class QSocketNotifier;
 
 class QGstreamerPlayerControl : public QMediaPlayerControl
 {
@@ -77,11 +79,12 @@ public:
     int volume() const;
     bool isMuted() const;
 
+    bool isAudioAvailable() const;
     bool isVideoAvailable() const;
     void setVideoOutput(QObject *output);
 
     bool isSeekable() const;
-    QPair<qint64, qint64> seekRange() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 
     qreal playbackRate() const;
     void setPlaybackRate(qreal rate);
@@ -104,11 +107,18 @@ private Q_SLOTS:
     void writeFifo();
     void fifoReadyWrite(int socket);
 
+    void updateState(QMediaPlayer::State);
+    void processEOS();
+    void setBufferProgress(int progress);
+
 private:
     bool openFifo();
     void closeFifo();
 
     QGstreamerPlayerSession *m_session;
+    QMediaPlayer::State m_state;
+    QMediaPlayer::MediaStatus m_mediaStatus;
+    int m_bufferProgress;
     QMediaContent m_currentResource;
     QIODevice *m_stream;
     QSocketNotifier *m_fifoNotifier;

@@ -40,7 +40,7 @@
 <p>The right-hand pane shows the attributes of an interface implementation that are invokable through the Qt meta-object system. Such attributes include signals, slots, properties and methods marked with the <tt>Q_INVOKABLE</tt> macro. If the &quot;Selected implementation&quot; radio button is checked, this view shows the attributes of the selected implementation in the bottom-left pane; otherwise, it shows the attributes of the <i>default</i> implementation for the interface of the selected implementation.</p>
 <a name="servicebrowser-class-definition"></a>
 <h2>ServiceBrowser Class Definition</h2>
-<p>The ServiceBrowser class inherits from <a href="http://qt.nokia.com/doc/4.5/qwidget.html">QWidget</a>. It has several slots for reloading the lists in the three information panes, and for changing the default implementation for an interface.</p>
+<p>The ServiceBrowser class inherits from <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a>. It has several slots for reloading the lists in the three information panes, and for changing the default implementation for an interface.</p>
 <pre>    class ServiceBrowser : public QWidget
     {
         Q_OBJECT
@@ -83,13 +83,14 @@
 
         servicesListWidget-&gt;addItem(showAllServicesItem);
     }</pre>
-<p>When the services list in the top-left pane needs to be refreshed, we call <a href="qservicemanager.html#findServices">QServiceManager::findServices</a>() to get a <a href="http://qt.nokia.com/doc/4.5/qstringlist.html">QStringList</a> of all services that are currently registered with the service framework.</p>
+<p>When the services list in the top-left pane needs to be refreshed, we call <a href="qservicemanager.html#findServices">QServiceManager::findServices</a>() to get a <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> of all services that are currently registered with the service framework.</p>
 <pre>    void ServiceBrowser::reloadInterfaceImplementationsList()
     {
         ...
         ...
         QList&lt;QServiceInterfaceDescriptor&gt; descriptors = serviceManager-&gt;findInterfaces(serviceName);
 
+        attributesListWidget-&gt;clear();
         interfacesListWidget-&gt;clear();
         for (int i=0; i&lt;descriptors.count(); i++) {
             QString text = QString(&quot;%1 %2.%3&quot;)
@@ -113,7 +114,7 @@
         ...
     }</pre>
 <p>To create the list of interface implementations in the bottom-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() to get a list of <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> objects. If a particular service has been selected in the top-left pane, we call <a href="qservicemanager.html#findInterfaces">QServiceManager::findInterfaces</a>() with the name of that service as the argument, so that it will only return the interface implementations provided by that service. Otherwise, it is called with no argument to retrieve a list of all implementations provided by all registered services.</p>
-<p>The example maps each entry in the interface implementations list to its corresponding <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object using the <a href="http://qt.nokia.com/doc/4.5/qlistwidgetitem.html#setData">QListWidgetItem::setData</a>() method.</p>
+<p>The example maps each entry in the interface implementations list to its corresponding <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> object using the <a href="http://qt.nokia.com/doc/4.6/qlistwidgetitem.html#setData">QListWidgetItem::setData</a>() method.</p>
 <p>Note how we also call QServiceManager::defaultServiceInterface() to determine whether an interface implementation is the default for that interface.</p>
 <pre>    void ServiceBrowser::reloadAttributesList()
     {
@@ -132,7 +133,7 @@
 
         ...</pre>
 <p>The <tt>reloadAttributesList()</tt> method creates the list in the right-hand pane that shows the attributes of an interface implementation that can be invoked through the Qt meta-object system.</p>
-<p><a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() is called to get an instance of the identified interface implementation. This method finds the corresponding service plugin and returns the <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> instance provided by the service plugin's <a href="qserviceplugininterface.html#createInstance">QServicePluginInterface::createInstance</a>() method.</p>
+<p><a href="qservicemanager.html#loadInterface">QServiceManager::loadInterface</a>() is called to get an instance of the identified interface implementation. This method finds the corresponding service plugin and returns the <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> instance provided by the service plugin's <a href="qserviceplugininterface.html#createInstance">QServicePluginInterface::createInstance</a>() method.</p>
 <pre>        ...
         const QMetaObject *metaObject = implementationRef-&gt;metaObject();
         attributesGroup-&gt;setTitle(tr(&quot;Invokable attributes for %1 class&quot;)
@@ -146,8 +147,8 @@
             attributesListWidget-&gt;addItem(&quot;[PROPERTY] &quot; + QString(property.name()));
         }
     }</pre>
-<p>Call <a href="http://qt.nokia.com/doc/4.5/qobject.html#metaObject">QObject::metaObject</a>() on the implementation instance to get a <a href="http://qt.nokia.com/doc/4.5/qmetaobject.html">QMetaObject</a> instance that reveals the dynamically invokable attributes for the instance. These attributes include properties, signals, slots, and methods marked with the <a href="http://qt.nokia.com/doc/4.5/qobject.html#Q_INVOKABLE">Q_INVOKABLE</a> macro. Call <a href="http://qt.nokia.com/doc/4.5/qmetaobject.html#method">QMetaObject::method</a>() to get information about a signal, slot or invokable method, and <a href="http://qt.nokia.com/doc/4.5/qmetaobject.html#property">QMetaObject::property</a>() to access a property of the instance.</p>
-<p>When you know the name of the method you wish to invoke, call QMetaObject::invoke() or <a href="http://qt.nokia.com/doc/4.5/qmetamethod.html#invoke">QMetaMethod::invoke</a>() to invoke it dynamically. Similarly, <a href="http://qt.nokia.com/doc/4.5/qmetaproperty.html#read">QMetaProperty::read</a>() and <a href="http://qt.nokia.com/doc/4.5/qmetaproperty.html#write">QMetaProperty::write</a>() can be used to read and modify the value of a property.</p>
+<p>Call <a href="http://qt.nokia.com/doc/4.6/qobject.html#metaObject">QObject::metaObject</a>() on the implementation instance to get a <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html">QMetaObject</a> instance that reveals the dynamically invokable attributes for the instance. These attributes include properties, signals, slots, and methods marked with the <a href="http://qt.nokia.com/doc/4.6/qobject.html#Q_INVOKABLE">Q_INVOKABLE</a> macro. Call <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html#method">QMetaObject::method</a>() to get information about a signal, slot or invokable method, and <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html#property">QMetaObject::property</a>() to access a property of the instance.</p>
+<p>When you know the name of the method you wish to invoke, call QMetaObject::invoke() or <a href="http://qt.nokia.com/doc/4.6/qmetamethod.html#invoke">QMetaMethod::invoke</a>() to invoke it dynamically. Similarly, <a href="http://qt.nokia.com/doc/4.6/qmetaproperty.html#read">QMetaProperty::read</a>() and <a href="http://qt.nokia.com/doc/4.6/qmetaproperty.html#write">QMetaProperty::write</a>() can be used to read and modify the value of a property.</p>
 <a name="invoking-attributes-an-example"></a>
 <h3>Invoking attributes: an example</h3>
 <p>Here is an example of invoking attributes on an implementation, using the <a href="filemanagerplugin.html">FileManagerPlugin</a> that is shown in the Service Browser.</p>
@@ -173,7 +174,7 @@
         QString directory;
     };</pre>
 <p>So if, in the ServiceBrowser application, we select the com.nokia.qt.examples.FileStorage implementation provided by FileManagerService, the browser would display all the dynamically invokable attributes of the FileManagerStorage class:</p>
-<p align="center"><img src="images/servicebrowser-attributes.png" /></p><p>As you can see, the FileManagerStorage::workingDirectory property, the FileManagerStorage::copyFile() slot and the FileManagerStorage::workingDirectoryChanged() signal are all listed. (The destroyed(), deleteLater() and _q_reregisterTimers() attributes are inherited from the <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> parent.)</p>
+<p align="center"><img src="images/servicebrowser-attributes.png" /></p><p>As you can see, the FileManagerStorage::workingDirectory property, the FileManagerStorage::copyFile() slot and the FileManagerStorage::workingDirectoryChanged() signal are all listed. (The destroyed(), deleteLater() and _q_reregisterTimers() attributes are inherited from the <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> parent.)</p>
 <p>To invoke the <tt>copyFile()</tt> slot, for example:</p>
 <pre>    QObject *interfaceImpl = QServiceManager::loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;, 0, 0);
     QMetaObject::invokeMethod(interfaceImpl, &quot;copyFile&quot;,
@@ -184,6 +185,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

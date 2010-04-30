@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <qmediaresource.h>
+#include "qmediaresource.h"
 
 #include <QtCore/qsize.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaResource
@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QMediaResource class provides a description of a media resource.
     \ingroup multimedia
 
-    A media resource is composed of a \l {uri()}{URI} containing the
+    A media resource is composed of a \l {url()}{URL} containing the
     location of the resource and a set of properties that describe the
     format of the resource.  The properties provide a means to assess a
     resource without first attempting to load it, and in situations where
@@ -69,7 +69,7 @@ QTM_BEGIN_NAMESPACE
     \l {videoBitRate()}{video} bit rates, and \l {resolution()}{resolution}
     so these constraints and others can be evaluated.
 
-    The only mandatory property of a QMediaResource is the uri().
+    The only mandatory property of a QMediaResource is the url().
 
     \sa QMediaContent
 */
@@ -88,11 +88,21 @@ QMediaResource::QMediaResource()
 }
 
 /*!
-    Constructs a media resource with the given \a mimeType from a \a uri.
+    Constructs a media resource with the given \a mimeType from a \a url.
 */
-QMediaResource::QMediaResource(const QUrl &uri, const QString &mimeType)
+QMediaResource::QMediaResource(const QUrl &url, const QString &mimeType)
 {
-    values.insert(Uri, qVariantFromValue(uri));
+    values.insert(Url, url);
+    values.insert(MimeType, mimeType);
+}
+
+/*!
+    Constructs a media resource with the given \a mimeType from a network \a request.
+*/
+QMediaResource::QMediaResource(const QNetworkRequest &request, const QString &mimeType)
+{
+    values.insert(Request, QVariant::fromValue(request));
+    values.insert(Url, request.url());
     values.insert(MimeType, mimeType);
 }
 
@@ -153,11 +163,22 @@ bool QMediaResource::isNull() const
 }
 
 /*!
-    Returns the URI of a media resource.
+    Returns the URL of a media resource.
 */
-QUrl QMediaResource::uri() const
+QUrl QMediaResource::url() const
 {
-    return qvariant_cast<QUrl>(values.value(Uri));
+    return qvariant_cast<QUrl>(values.value(Url));
+}
+
+/*!
+    Returns the network request associated with this media resource.
+*/
+QNetworkRequest QMediaResource::request() const
+{
+    if(values.contains(Request))
+        return qvariant_cast<QNetworkRequest>(values.value(Request));
+
+    return QNetworkRequest(url());
 }
 
 /*!
@@ -240,42 +261,20 @@ void QMediaResource::setVideoCodec(const QString &codec)
 
     This may be zero if the size is unknown.
 */
-qint64 QMediaResource::size() const
+qint64 QMediaResource::dataSize() const
 {
-    return qvariant_cast<qint64>(values.value(Size));
+    return qvariant_cast<qint64>(values.value(DataSize));
 }
 
 /*!
     Sets the \a size in bytes of a media resource.
 */
-void QMediaResource::setSize(const qint64 size)
+void QMediaResource::setDataSize(const qint64 size)
 {
     if (size != 0)
-        values.insert(Size, size);
+        values.insert(DataSize, size);
     else
-        values.remove(Size);
-}
-
-/*!
-    Returns the duration in milliseconds of a media resource.
-
-    This may be zero if the duration is unknown, or the resource has no explicit duration (i.e. the
-    resource is an image, or a live stream).
-*/
-qint64 QMediaResource::duration() const
-{
-    return qvariant_cast<qint64>(values.value(Duration));
-}
-
-/*!
-    Sets the \a duration in milliseconds of a media resource.
-*/
-void QMediaResource::setDuration(qint64 duration)
-{
-    if (duration != 0)
-        values.insert(Duration, duration);
-    else
-        values.remove(Duration);
+        values.remove(DataSize);
 }
 
 /*!
@@ -300,45 +299,24 @@ void QMediaResource::setAudioBitRate(int rate)
 }
 
 /*!
-    Returns the audio sample size in bits per sample of a media resource.
-
-    This may return zero if the sample size is unknown, or the resource contains no audio stream.
-*/
-int QMediaResource::sampleSize() const
-{
-    return qvariant_cast<int>(values.value(SampleSize));
-}
-
-/*!
-    Sets the audio sample \a size of a media resource.
-*/
-void QMediaResource::setSampleSize(int size)
-{
-    if (size != 0)
-        values.insert(SampleSize, size);
-    else
-        values.remove(SampleSize);
-}
-
-/*!
-    Returns the audio sample frequency of a media resource.
+    Returns the audio sample rate of a media resource.
 
     This may be zero if the sample size is unknown, or the resource contains no audio stream.
 */
-int QMediaResource::frequency() const
+int QMediaResource::sampleRate() const
 {
-    return qvariant_cast<int>(values.value(Frequency));
+    return qvariant_cast<int>(values.value(SampleRate));
 }
 
 /*!
-    Sets the audio sample \a frequency of a media resource.
+    Sets the audio \a sampleRate of a media resource.
 */
-void QMediaResource::setFrequency(int frequency)
+void QMediaResource::setSampleRate(int sampleRate)
 {
-    if (frequency != 0)
-        values.insert(Frequency, frequency);
+    if (sampleRate != 0)
+        values.insert(SampleRate, sampleRate);
     else
-        values.remove(Frequency);
+        values.remove(SampleRate);
 }
 
 /*!
@@ -346,20 +324,20 @@ void QMediaResource::setFrequency(int frequency)
 
     This may be zero if the sample size is unknown, or the resource contains no audio stream.
 */
-int QMediaResource::channels() const
+int QMediaResource::channelCount() const
 {
-    return qvariant_cast<int>(values.value(Channels));
+    return qvariant_cast<int>(values.value(ChannelCount));
 }
 
 /*!
     Sets the number of audio \a channels in a media resource.
 */
-void QMediaResource::setChannels(int channels)
+void QMediaResource::setChannelCount(int channels)
 {
     if (channels != 0)
-        values.insert(Channels, channels);
+        values.insert(ChannelCount, channels);
     else
-        values.remove(Channels);
+        values.remove(ChannelCount);
 }
 
 /*!
@@ -415,5 +393,5 @@ void QMediaResource::setResolution(int width, int height)
     else
         values.remove(Resolution);
 }
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

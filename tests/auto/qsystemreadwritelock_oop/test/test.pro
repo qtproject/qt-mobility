@@ -10,7 +10,8 @@ include(../../../../common.pri)
 # Input 
 SOURCES += ../tst_qsystemreadwritelock_oop.cpp
 
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

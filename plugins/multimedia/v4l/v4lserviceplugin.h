@@ -45,12 +45,12 @@
 
 #include <qmediaserviceproviderplugin.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class V4LServicePlugin : public QMediaServiceProviderPlugin, public QMediaServiceSupportedDevicesInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QMediaServiceSupportedDevicesInterface)
+    Q_INTERFACES(QMediaServiceSupportedDevicesInterface)
 public:
     QStringList keys() const;
     QMediaService* create(QString const& key);
@@ -58,12 +58,6 @@ public:
 
     QList<QByteArray> devices(const QByteArray &service) const;
     QString deviceDescription(const QByteArray &service, const QByteArray &device);
-
-private:
-    void updateDevices() const;
-
-    mutable QList<QByteArray> m_cameraDevices;
-    mutable QStringList m_cameraDescriptions;
 };
 
 #endif // V4LSERVICEPLUGIN_H

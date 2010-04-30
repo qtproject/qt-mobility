@@ -41,51 +41,61 @@
 
 
 #include <QtTracker/ontologies/nco.h>
-#include <QDebug>
 
 #include "trackerchangelistener.h"
 #include "qcontact.h"
 
 using namespace SopranoLive;
 
-TrackerChangeListener::TrackerChangeListener(QObject* parent)
-:QObject(parent)
+TrackerChangeListener::TrackerChangeListener(QContactManagerEngine *eng, QObject* parent) :
+    QObject(parent), engine(eng)
 {
-    SopranoLive::BackEnds::Tracker::ClassUpdateSignaler *signaler =
-            SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
-                    nco::Contact::iri());
-    // Note here that we are not using
-    // QAbstractItemModel signals from LiveNodes::model() because
-    // node list for which notification comes is fixed. Those are used for
-    // async implementation
-    if (signaler)
+    signaler_contact = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(nco::Contact::iri());
+    if (signaler_contact)
     {
-        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),
-                SLOT(subjectsAdded(const QStringList &)));
-        connect(signaler,
-                SIGNAL(baseRemoveSubjectsd(const QStringList &)),
-                SLOT(subjectsRemoved(const QStringList &)));
-        connect(signaler,
-                SIGNAL(subjectsChanged(const QStringList &)),
-                SLOT(subjectsChanged(const QStringList &)));
+        SopranoLive::BackEnds::Tracker::ClassUpdateSignaler * signaler = signaler_contact;
+        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)), SLOT(contactsAdded(const QStringList &)));
+        connect(signaler,SIGNAL(subjectsRemoved(const QStringList &)),SLOT(contactsRemoved(const QStringList &)));
+        connect(signaler,SIGNAL(subjectsChanged(const QStringList &)),SLOT(contactsChanged(const QStringList &)));
     }
-    //this corresponds with telepathysupport/ TrackerSink::onSimplePresenceChanged
-       signaler = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(
-                    nfo::IMAccount::iri());
-        connect(signaler,
-                SIGNAL(subjectsChanged(const QStringList &)),
-                SLOT(imAccountChanged(const QStringList &)));
+
+    signaler_imaccount = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(nco::IMAccount::iri());
+    if (signaler_imaccount)
+    {
+        // same for all signals - emit selfContact changed
+        SopranoLive::BackEnds::Tracker::ClassUpdateSignaler * signaler = signaler_imaccount;
+        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),SLOT(imAccountsChanged(const QStringList &)));
+        connect(signaler,SIGNAL(subjectsRemoved(const QStringList &)),SLOT(imAccountsChanged(const QStringList &)));
+        connect(signaler,SIGNAL(subjectsChanged(const QStringList &)),SLOT(imAccountsChanged(const QStringList &)));
+    }
+
+    signaler_imaddress = SopranoLive::BackEnds::Tracker::ClassUpdateSignaler::get(nco::IMAddress::iri());
+    if (signaler_imaddress)
+    {
+        // same for all signals - contact changed to be emitted
+        SopranoLive::BackEnds::Tracker::ClassUpdateSignaler * signaler = signaler_imaddress;
+        connect(signaler, SIGNAL(subjectsAdded(const QStringList &)),SLOT(imAddressesChanged(const QStringList &)));
+        connect(signaler,SIGNAL(subjectsRemoved(const QStringList &)),SLOT(imAddressesChanged(const QStringList &)));
+        connect(signaler,SIGNAL(subjectsChanged(const QStringList &)),SLOT(imAddressesChanged(const QStringList &)));
+    }
 
 }
 
 TrackerChangeListener::~TrackerChangeListener()
 {
+    if (signaler_imaddress)
+        signaler_imaddress->disconnect(this);
+    if (signaler_contact)
+        signaler_contact->disconnect(this);
+    if (signaler_imaccount)
+        signaler_imaccount->disconnect(this);
 }
-// TEMPORARY here we'll for now extract ids from tracker contact URI.
-// In future need nonblocking async way to get contact ids from tracker contact urls
-// let's see which signals will be used from libqttracker
+
 QContactLocalId url2UniqueId(const QString &contactUrl)
 {
+    /* handle conatact:interger URL types comming from
+       which are non telepathy url's
+    */
     QRegExp rx("(\\d+)");
     bool conversion = false;
     QContactLocalId id = 0;
@@ -96,84 +106,56 @@ QContactLocalId url2UniqueId(const QString &contactUrl)
     if( !conversion )
         qWarning() << Q_FUNC_INFO << "unparsed uri to uniqueI:" << contactUrl;
     return id;
-
 }
 
-void TrackerChangeListener::subjectsAdded(const QStringList &subjects)
+void TrackerChangeListener::contactsAdded(const QStringList &subjects)
 {
     QList<QContactLocalId> added;
     foreach(const QString &uri, subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug() << Q_FUNC_INFO << "added contactids:" << added;
     emit contactsAdded(added);
 }
 
-void TrackerChangeListener::subjectsRemoved(const QStringList &subjects)
+void TrackerChangeListener::contactsRemoved(const QStringList &subjects)
 {
     QList<QContactLocalId> added;
     foreach(const QString &uri, subjects)
     {
         added << url2UniqueId(uri);
     }
-    qDebug() << Q_FUNC_INFO << "removed contactids:" << added;
     emit contactsRemoved(added);
 }
 
-// TODO data changed for full query
-void TrackerChangeListener::subjectsChanged(const QStringList &subjects)
+
+void TrackerChangeListener::contactsChanged(const QStringList &subjects)
 {
-    QList<QContactLocalId> added;
-    foreach(const QString &uri, subjects)
-    {
-        added << url2UniqueId(uri);
-    }
-    qDebug() << Q_FUNC_INFO << "changed contactids:" << added;
-    emit contactsChanged(added);
-}
-
-void TrackerChangeListener::imAccountChanged(const QStringList& subjects) {
-    // leave the debug output for few days as TODO remainder to fix writing to tracker
-    qDebug() << Q_FUNC_INFO << subjects;
-
-    RDFVariable RDFContact = RDFVariable::fromType<nco::PersonContact>();
-    // fetch all changed contacts at once
-    QSet<QUrl> urls;
-    foreach(const QString &str, subjects)
-        urls << QUrl(str);
-    RDFContact.property<nco::hasIMAccount>().isMemberOf(urls.toList());
-    RDFSelect query;
-    query.addColumn("contactId", RDFContact.property<nco::contactUID>());
-
-    QSharedPointer<AsyncQuery> request = QSharedPointer<AsyncQuery> (new AsyncQuery(query),
-                       &QObject::deleteLater);
-    connect(request.data(), SIGNAL(queryReady(AsyncQuery*)), SLOT(imQueryReady(AsyncQuery*)));
-    pendingQueries[request.data()] = request;
-}
-
-AsyncQuery::AsyncQuery(RDFSelect selectQuery)
-{
-    nodes = ::tracker()->modelQuery(selectQuery);
-    QObject::connect(nodes.model(), SIGNAL(modelUpdated()), this,
-            SLOT(queryReady()));
-}
-
-void AsyncQuery::queryReady()
-{
-    emit queryReady(this);
-}
-
-void TrackerChangeListener::imQueryReady(AsyncQuery* req)
-{
-    if( pendingQueries.contains(req))
-    {
-        QSharedPointer<AsyncQuery> query = pendingQueries.take(req);
-        QSet<QContactLocalId> contactsChangedPresence;
-        for(int i=0; i<query->nodes->rowCount(); i++) {
-            contactsChangedPresence << query->nodes->index(i, 0).data().toUInt();
+    QList<QContactLocalId> changed;
+    foreach(const QString &uri, subjects) {
+        QContactLocalId id = url2UniqueId(uri);
+        if (changed.contains(id) == false) {
+            changed << id;
         }
-        if( !contactsChangedPresence.isEmpty() )
-            emit contactsChanged(contactsChangedPresence.toList());
     }
+    emit contactsChanged(changed);
+}
+
+void TrackerChangeListener::imAccountsChanged(const QStringList &subjects)
+{
+    Q_UNUSED(subjects)
+    QContactManager::Error error;
+    QContactLocalId selfId = engine->selfContactId(&error);
+    if (engine && QContactManager::NoError == error) {
+        emit contactsChanged(QList<QContactLocalId>()<<selfId);
+    } else {
+        qWarning() << __PRETTY_FUNCTION__ << "Signal not propagated:" << engine << error;
+    }
+}
+
+void TrackerChangeListener::imAddressesChanged(const QStringList &subjects)
+{
+    Q_UNUSED(subjects)
+    // TODO use QHash in engine - mapping IMAddress URIs to contacts
+    qWarning() << __PRETTY_FUNCTION__ << "Not implemented";
 }

@@ -21,41 +21,42 @@
     **
     ** This file is part of the Qt Mobility Components.
     **
-    ** $QT_BEGIN_LICENSE:LGPL$
-    ** No Commercial Usage
-    ** This file contains pre-release code and may not be distributed.
-    ** You may use this file in accordance with the terms and conditions
-    ** contained in the Technology Preview License Agreement accompanying
-    ** this package.
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
     **
-    ** GNU Lesser General Public License Usage
-    ** Alternatively, this file may be used under the terms of the GNU Lesser
-    ** General Public License version 2.1 as published by the Free Software
-    ** Foundation and appearing in the file LICENSE.LGPL included in the
-    ** packaging of this file.  Please review the following information to
-    ** ensure the GNU Lesser General Public License version 2.1 requirements
-    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
     **
-    ** In addition, as a special exception, Nokia gives you certain additional
-    ** rights.  These rights are described in the Nokia Qt LGPL Exception
-    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-    **
-    ** If you have questions regarding the use of this file, please contact
-    ** Nokia at qt-info@nokia.com.
-    **
-    **
-    **
-    **
-    **
-    **
-    **
-    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
     ** $QT_END_LICENSE$
     **
     ****************************************************************************/</span>
 
     #include &quot;mainwindow.h&quot;
-    #include &quot;qmessageserviceaction.h&quot;
+    #include &quot;attachmentlistwidget.h&quot;
+    #include &quot;qmessageservice.h&quot;
+    #include &lt;qmessagemanager.h&gt;
     #include &lt;QComboBox&gt;
     #include &lt;QListWidget&gt;
     #include &lt;QVBoxLayout&gt;
@@ -67,7 +68,6 @@
     #include &lt;QLineEdit&gt;
     #include &lt;QTextEdit&gt;
     #include &lt;QTextBrowser&gt;
-    #include &quot;attachmentlistwidget.h&quot;
     #include &lt;QFileDialog&gt;
     #include &lt;QTimer&gt;
     #include &lt;QMessageBox&gt;
@@ -79,10 +79,7 @@
     #include &lt;QApplication&gt;
     #include &lt;QStackedWidget&gt;
     #include &lt;QMutex&gt;
-    #include &lt;qmessagestore.h&gt;
     #include &lt;QKeyEvent&gt;
-
-    typedef QPointer&lt;QMessageServiceAction&gt; QMessageServiceActionPtr;
 
     static const QSize WindowGeometry(400,300);
     static const QString WindowTitle(&quot;Service-actions Example&quot;);
@@ -145,8 +142,8 @@
 
     void AccountsWidget::Loader::run()
     {
-        QMessageAccountIdList ids = QMessageStore::instance()-&gt;queryAccounts();
-        m_parent-&gt;setIds(ids);
+        QMessageManager manager;
+        m_parent-&gt;setIds(manager.queryAccounts());
     }
 
     AccountsWidget::AccountsWidget(QWidget* parent)
@@ -203,8 +200,17 @@
     void AccountsWidget::load()
     {
         static bool runonce = false;
+        <span class="comment">//#define NOTHREAD</span>
+    #ifdef NOTHREAD
+        QMessageManager manager;
         if(!runonce)
-            m_loader.start();
+         setIds(manager.queryAccounts());
+        <span class="comment">//        m_loader.start();</span>
+
+    #else
+        <span class="comment">//    if(</span>!runonce)
+             m_loader.start();
+    #endif
         runonce = true;
     }
 
@@ -250,6 +256,9 @@
 
         m_busyLabel = new QLabel(&quot;Loading...&quot;);
         m_stackedLayout-&gt;addWidget(m_busyLabel);
+
+        setSizePolicy(m_accountsCombo-&gt;sizePolicy());
+
     }
 
     void AccountsWidget::setIds(const QMessageAccountIdList&amp; ids)
@@ -284,9 +293,9 @@
     private slots:
         void currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
         void messagesFound(const QMessageIdList&amp; result);
-        void stateChanged(QMessageServiceAction::State s);
-        void messageUpdated(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filter);
-        void messageRemoved(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filter);
+        void stateChanged(QMessageService::State s);
+        void messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter);
+        void messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter);
         void processResults();
 
     private:
@@ -305,9 +314,10 @@
         QMessageIdList m_ids;
         QMap&lt;QMessageId,QListWidgetItem*&gt; m_indexMap;
         unsigned int m_maxRecent;
-        QMessageServiceAction* m_service;
+        QMessageService* m_service;
         State m_state;
-        QMessageStore::NotificationFilterId m_storeFilterId;
+        QMessageManager::NotificationFilterId m_storeFilterId;
+        QMessageManager m_manager;
     };
 
     RecentMessagesWidget::RecentMessagesWidget(QWidget* parent, unsigned int maxRecent)
@@ -317,26 +327,26 @@
     m_statusLabel(0),
     m_layout(0),
     m_maxRecent(maxRecent),
-    m_service(new QMessageServiceAction(this)),
+    m_service(new QMessageService(this)),
     m_state(Unloaded)
     {
         setupUi();
         connect(m_service,SIGNAL(messagesFound(const QMessageIdList&amp;)),this,SLOT(messagesFound(const QMessageIdList&amp;)));
-        connect(m_service,SIGNAL(stateChanged(QMessageServiceAction::State)),this,SLOT(stateChanged(QMessageServiceAction::State)));
+        connect(m_service,SIGNAL(stateChanged(QMessageService::State)),this,SLOT(stateChanged(QMessageService::State)));
 
         <span class="comment">//register for message update notifications</span>
 
-        connect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&amp;, const QMessageStore::NotificationFilterIdSet&amp;)),
-            this, SLOT(messageUpdated(const QMessageId&amp;, const QMessageStore::NotificationFilterIdSet&amp;)));
-        connect(QMessageStore::instance(),SIGNAL(messageRemoved(const QMessageId&amp;, const QMessageStore::NotificationFilterIdSet&amp;)),
-            this, SLOT(messageRemoved(const QMessageId&amp;, const QMessageStore::NotificationFilterIdSet&amp;)));
+        connect(&amp;m_manager, SIGNAL(messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)),
+            this, SLOT(messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)));
+        connect(&amp;m_manager, SIGNAL(messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)),
+            this, SLOT(messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;)));
 
-        m_storeFilterId = QMessageStore::instance()-&gt;registerNotificationFilter(QMessageFilter());
+        m_storeFilterId = m_manager.registerNotificationFilter(QMessageFilter());
     }
 
     RecentMessagesWidget::~RecentMessagesWidget()
     {
-         QMessageStore::instance()-&gt;unregisterNotificationFilter(m_storeFilterId);
+         m_manager.unregisterNotificationFilter(m_storeFilterId);
     }
 
     QMessageId RecentMessagesWidget::currentMessage() const
@@ -363,7 +373,7 @@
     {
         if(m_state == Loading || m_state == Processing)
         {
-            m_service-&gt;cancelOperation();
+            m_service-&gt;cancel();
             m_state = Unloaded;
             m_ids.clear();
         }
@@ -382,17 +392,21 @@
         m_ids.append(ids);
     }
 
-    void RecentMessagesWidget::stateChanged(QMessageServiceAction::State s)
+    void RecentMessagesWidget::stateChanged(QMessageService::State newState)
     {
-        if(s == QMessageServiceAction::Failed)
-            m_state = LoadFailed;
-        else if(s == QMessageServiceAction::Successful &amp;&amp; m_state != LoadFailed)
-            m_state = LoadFinished;
+        <span class="comment">//  qDebug() &lt;&lt; &quot;stateChanged state=&quot; &lt;&lt; m_state &lt;&lt; &quot; newState=&quot; &lt;&lt; newState &lt;&lt; &quot;error=&quot; &lt;&lt; m_service-&gt;error();</span>
+        if (newState == QMessageService::FinishedState) {
+            if ((m_state != LoadFailed) &amp;&amp; (m_service-&gt;error() == QMessageManager::NoError)) {
+                m_state = LoadFinished;
+            } else {
+                m_state = LoadFailed;
+            }
+        }
 
         updateState();
     }
 
-    void RecentMessagesWidget::messageUpdated(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filter)
+    void RecentMessagesWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter)
     {
         if(!filter.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || !m_indexMap.contains(id))
             return;
@@ -402,6 +416,7 @@
         QListWidgetItem* item = m_indexMap.value(id);
         if(item)
         {
+
             QMessage message(id);
             bool partialMessage = !message.find(message.bodyId()).isContentAvailable();
             QFont itemFont = item-&gt;font();
@@ -410,7 +425,7 @@
         }
     }
 
-    void RecentMessagesWidget::messageRemoved(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filter)
+    void RecentMessagesWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filter)
     {
         if(!filter.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || !m_indexMap.contains(id))
             return;
@@ -496,12 +511,12 @@
     void RecentMessagesWidget::load()
     {
         m_ids.clear();
+        m_state = Loading;
+        bool b;
 
-        if(!m_service-&gt;queryMessages(QMessageFilter(),QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent))
-            m_state = LoadFailed;
-        else
-            m_state = Loading;
-    }
+        b=m_service-&gt;queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
+        <span class="comment">//    qDebug() &lt;&lt; &quot;RecentMessagesWidget::load&quot; &lt;&lt; b &lt;&lt; m_state;</span>
+    };
 
     void RecentMessagesWidget::processResults()
     {
@@ -510,8 +525,8 @@
             QMessageId id = m_ids.takeFirst();
             QMessage message(id);
 
-            QListWidgetItem* newItem = new QListWidgetItem(message.subject());
-            newItem-&gt;setData(MessageIdRole,id.toString());
+            QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(&quot;:&quot;)+message.subject());
+                    newItem-&gt;setData(MessageIdRole,id.toString());
             QFont itemFont = newItem-&gt;font();
             bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
             itemFont.setItalic(isPartialMessage);
@@ -533,7 +548,7 @@
         Q_OBJECT
 
     public:
-        ComposeSendWidget(QMessageServiceAction* service, QWidget* parent = 0);
+        ComposeSendWidget(QMessageService* service, QWidget* parent = 0);
 
     signals:
         void actionsChanged();
@@ -550,7 +565,7 @@
 
     private:
         QStackedLayout* m_layoutStack;
-        QMessageServiceAction* m_service;
+        QMessageService* m_service;
         AccountsWidget* m_accountsWidget;
         QLineEdit* m_toEdit;
         QLineEdit* m_ccEdit;
@@ -565,7 +580,7 @@
         QAction* m_sendAsHTMLAction;
     };
 
-    ComposeSendWidget::ComposeSendWidget(QMessageServiceAction* service, QWidget* parent)
+    ComposeSendWidget::ComposeSendWidget(QMessageService* service, QWidget* parent)
     :
     QWidget(parent),
     m_layoutStack(0),
@@ -586,6 +601,17 @@
         setupUi();
     }
 
+    static void notifyResult(bool result, const QString&amp; description)
+    {
+    #ifndef _WIN32_WCE
+        if(result) QMessageBox::information(0,description,&quot;Succeeded!&quot;);
+        else QMessageBox::critical(0,description,&quot;Failed.&quot;);
+    #else
+        Q_UNUSED(result);
+        Q_UNUSED(description);
+    #endif
+    }
+
     void ComposeSendWidget::composeButtonClicked()
     {
         QMessage message(constructQMessage());
@@ -596,7 +622,7 @@
     {
         bool asHtml = (sender() == m_sendAsHTMLAction);
         QMessage message(constructQMessage(asHtml));
-        m_service-&gt;send(message);
+        notifyResult(m_service-&gt;send(message),&quot;Send message&quot;);
     }
 
     void ComposeSendWidget::addAttachmentButtonClicked()
@@ -607,8 +633,9 @@
 
     void ComposeSendWidget::accountChanged()
     {
-    #ifdef _WIN32_WCE
-        bool isSmsAccount = m_accountsWidget-&gt;currentAccountName() == &quot;SMS&quot;;
+        QMessageAccount currentAccount(m_accountsWidget-&gt;currentAccount());
+
+        bool isSmsAccount = (currentAccount.messageTypes() &amp; QMessage::Sms) &gt; 0;
 
         foreach(QWidget* emailSpecificWidget , QList&lt;QWidget*&gt;() &lt;&lt; m_bccEdit &lt;&lt; m_bccLabel &lt;&lt;
                                                                     m_ccEdit &lt;&lt;  m_ccLabel &lt;&lt;
@@ -618,7 +645,6 @@
 
         m_attachmentsAction-&gt;setEnabled(!isSmsAccount);
         m_sendAsHTMLAction-&gt;setEnabled(!isSmsAccount);
-    #endif
     }
 
     void ComposeSendWidget::setupUi()
@@ -630,6 +656,7 @@
 
         m_accountsWidget = new AccountsWidget(this);
         gl-&gt;addWidget(m_accountsWidget,0,1);
+
         connect(m_accountsWidget,SIGNAL(accountChanged()),this,SLOT(accountChanged()));
 
         QLabel* toLabel = new QLabel(&quot;To:&quot;,this);
@@ -695,12 +722,9 @@
         }
 
         QMessageAccountId selectedAccountId = m_accountsWidget-&gt;currentAccount();
-    #ifdef _WIN32_WCE
         QMessageAccount selectedAccount(selectedAccountId);
-        bool composingSms = selectedAccount.name() == &quot;SMS&quot;;
-    #else
-        bool composingSms = false;
-    #endif
+
+        bool composingSms = (selectedAccount.messageTypes() &amp; QMessage::Sms) &gt; 0;
 
         QMessageAddressList toList;
         QMessageAddressList ccList;
@@ -714,17 +738,17 @@
         }
 
         foreach(QString s, m_toEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
-            toList.append(QMessageAddress(s,addressType));
+            toList.append(QMessageAddress(addressType, s));
         message.setTo(toList);
 
         if(!composingSms)
         {
             foreach(QString s, m_ccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
-                ccList.append(QMessageAddress(s,QMessageAddress::Email));
+                ccList.append(QMessageAddress(QMessageAddress::Email, s));
             message.setCc(ccList);
 
             foreach(QString s, m_bccEdit-&gt;text().split(QRegExp(&quot;\\s&quot;),QString::SkipEmptyParts))
-                bccList.append(QMessageAddress(s,QMessageAddress::Email));
+                bccList.append(QMessageAddress(QMessageAddress::Email, s));
             message.setBcc(bccList);
             message.setSubject(m_subjectEdit-&gt;text());
 
@@ -773,11 +797,11 @@
         void hideEvent(QHideEvent* e);
 
     private slots:
-        void stateChanged(QMessageServiceAction::State s);
+        void stateChanged(QMessageService::State s);
         void loadTimeout();
         void linkClicked(const QUrl&amp;);
-        void messageUpdated(const QMessageId&amp;, const QMessageStore::NotificationFilterIdSet&amp; filterSet);
-        void messageRemoved(const QMessageId&amp;, const QMessageStore::NotificationFilterIdSet&amp; filterSet);
+        void messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp; filterSet);
+        void messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp; filterSet);
 
     private:
         enum State { Unloaded , Loaded, Loading, LoadFailed };
@@ -789,14 +813,15 @@
     private:
         QStackedLayout* m_layoutStack;
         QLabel* m_statusLabel;
-        QMessageServiceAction* m_service;
+        QMessageService* m_service;
         QLineEdit* m_fromLabel;
         QLineEdit* m_subjectLabel;
         QTextBrowser* m_messageBrowser;
         QMessageId m_messageId;
         State m_state;
         QTimer m_loadTimer;
-        QMessageStore::NotificationFilterId m_storeFilterId;
+        QMessageManager::NotificationFilterId m_storeFilterId;
+        QMessageManager m_manager;
     };
 
     MessageViewWidget::MessageViewWidget(QWidget* parent)
@@ -804,23 +829,23 @@
     QWidget(parent),
     m_layoutStack(0),
     m_statusLabel(0),
-    m_service(new QMessageServiceAction(this)),
+    m_service(new QMessageService(this)),
     m_messageBrowser(0),
     m_state(Unloaded)
     {
         setupUi();
         resetService();
         connect(&amp;m_loadTimer,SIGNAL(timeout()),this,SLOT(loadTimeout()));
-        connect(QMessageStore::instance(),SIGNAL(messageUpdated(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)),
-            this,SLOT(messageUpdated(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)));
-        connect(QMessageStore::instance(),SIGNAL(messageRemoved(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)),
-            this,SLOT(messageRemoved(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)));
-        m_storeFilterId = QMessageStore::instance()-&gt;registerNotificationFilter(QMessageFilter());
+        connect(&amp;m_manager, SIGNAL(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
+            this,SLOT(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
+        connect(&amp;m_manager, SIGNAL(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
+            this,SLOT(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
+        m_storeFilterId = m_manager.registerNotificationFilter(QMessageFilter());
     }
 
     MessageViewWidget::~MessageViewWidget()
     {
-        QMessageStore::instance()-&gt;unregisterNotificationFilter(m_storeFilterId);
+        m_manager.unregisterNotificationFilter(m_storeFilterId);
     }
 
     void MessageViewWidget::view(const QMessageId&amp; messageId)
@@ -845,6 +870,7 @@
         return false;
     }
 
+
     void MessageViewWidget::showEvent(QShowEvent* e)
     {
         updateState();
@@ -855,24 +881,23 @@
     {
         if(m_state == Loading)
         {
-            m_service-&gt;cancelOperation();
+            m_service-&gt;cancel();
             m_state = Unloaded;
         }
 
         QWidget::hideEvent(e);
     }
 
-    void MessageViewWidget::stateChanged(QMessageServiceAction::State s)
+    void MessageViewWidget::stateChanged(QMessageService::State newState)
     {
-        if(m_state == LoadFailed)
+        if (m_state == LoadFailed)
             return;
 
-        if(s == QMessageServiceAction::InProgress)
+        if (newState == QMessageService::ActiveState) {
             m_state = Loading;
-        else if(s == QMessageServiceAction::Failed)
-            m_state = LoadFailed;
-        else if(s == QMessageServiceAction::Successful)
-            m_state = Loaded;
+        } else if (newState == QMessageService::FinishedState) {
+            m_state = (m_service-&gt;error() == QMessageManager::NoError ? Loaded : LoadFailed);
+        }
 
         updateState();
     }
@@ -880,7 +905,7 @@
     void MessageViewWidget::loadTimeout()
     {
         qWarning() &lt;&lt; &quot;Load timeout&quot;;
-        m_service-&gt;cancelOperation();
+        m_service-&gt;cancel();
         m_state = LoadFailed;
         updateState();
     }
@@ -893,7 +918,7 @@
             retrieveBody();
     }
 
-    void MessageViewWidget::messageUpdated(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filterSet)
+    void MessageViewWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
     {
         if(!filterSet.contains(m_storeFilterId) || m_state == Loading || !id.isValid() || id != m_messageId)
             return;
@@ -901,7 +926,7 @@
         view(id);
     }
 
-    void MessageViewWidget::messageRemoved(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filterSet)
+    void MessageViewWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
     {
         if(id == m_messageId)
         {
@@ -950,8 +975,8 @@
                 if(m_loadTimer.isActive())
                 {
                     m_loadTimer.stop();
-                    if(m_service-&gt;state() == QMessageServiceAction::InProgress)
-                        m_service-&gt;cancelOperation();
+                    if(m_service-&gt;state() == QMessageService::ActiveState)
+                        m_service-&gt;cancel();
                 }
 
                 loadMessage();
@@ -992,26 +1017,20 @@
 
             QString bodyText;
 
+            <span class="comment">//for partial message display a download link instead</span>
+
             bool bodyAvailable = bodyPart.isContentAvailable();
 
             if(bodyAvailable)
             {
                 if(bodyPart.contentType() == &quot;text&quot;)
-                {
                     bodyText = bodyPart.textContent();
-
-                    <span class="comment">//if(bodyPart.contentSubType() == &quot;plain&quot;)</span>
-                    <span class="comment">//    qWarning() &lt;&lt; &quot;Blah&quot;;</span>
-                    <span class="comment">//else if(bodyPart.contentSubType() == &quot;html&quot; || bodyPart.contentSubType() == &quot;rtf&quot;)</span>
-                    <span class="comment">//     qWarning() &lt;&lt; &quot;FOO&quot;;</span>
-                    <span class="comment">//else bodyText = &quot;&lt;Unknown text content&gt;&quot;;</span>
-                }
                 else bodyText = &quot;&lt;Non-text content&gt;&quot;;
             }
             else
                 bodyText = QString(&quot;&lt;p align=\&quot;center\&quot;&gt;&lt;a href=\&quot;%1\&quot;&gt;Download&lt;/a&gt;&lt;/p&gt;&quot;).arg(downloadLinkURL());
             m_messageBrowser-&gt;setHtml(htmlTemplate\
-                                     .arg(message.from().recipient())\
+                                     .arg(message.from().addressee())\
                                      .arg(message.subject())\
                                      .arg(message.receivedDate().toString())\
                                      .arg(bodyText));
@@ -1022,8 +1041,8 @@
     {
         if(m_service)
             m_service-&gt;deleteLater();
-        m_service = new QMessageServiceAction(this);
-        connect(m_service,SIGNAL(stateChanged(QMessageServiceAction::State)),this,SLOT(stateChanged(QMessageServiceAction::State)));
+        m_service = new QMessageService(this);
+        connect(m_service,SIGNAL(stateChanged(QMessageService::State)),this,SLOT(stateChanged(QMessageService::State)));
     }
 
     class RetrieveWidget : public QWidget
@@ -1040,7 +1059,7 @@
         void setupUi();
 
     private:
-        QMessageServiceAction* m_service;
+        QMessageService* m_service;
         RecentMessagesWidget* m_recentMessagesWidget;
         MessageViewWidget* m_messageViewWidget;
         QAction* m_retrieveAction;
@@ -1088,7 +1107,7 @@
         Q_OBJECT
 
     public:
-        ShowWidget(QMessageServiceAction* service, QWidget* parent = 0);
+        ShowWidget(QMessageService* service, QWidget* parent = 0);
 
     private slots:
         void showButtonClicked();
@@ -1097,11 +1116,11 @@
         void setupUi();
 
     private:
-        QMessageServiceAction* m_service;
+        QMessageService* m_service;
         RecentMessagesWidget* m_recentMessagesWidget;
     };
 
-    ShowWidget::ShowWidget(QMessageServiceAction* service, QWidget* parent)
+    ShowWidget::ShowWidget(QMessageService* service, QWidget* parent)
     :
     QWidget(parent),
     m_service(service),
@@ -1112,7 +1131,6 @@
 
     void ShowWidget::showButtonClicked()
     {
-        <span class="comment">//get the selected account</span>
 
         QMessageId id = m_recentMessagesWidget-&gt;currentMessage();
 
@@ -1143,9 +1161,9 @@
         StoreSignalsWidget(QWidget* parent = 0);
 
     private slots:
-        void messageAdded(const QMessageId&amp;, const QMessageStore::NotificationFilterIdSet&amp;);
-        void messageUpdated(const QMessageId&amp;, const QMessageStore::NotificationFilterIdSet&amp;);
-        void messageRemoved(const QMessageId&amp;, const QMessageStore::NotificationFilterIdSet&amp;);
+        void messageAdded(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;);
+        void messageUpdated(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;);
+        void messageRemoved(const QMessageId&amp;, const QMessageManager::NotificationFilterIdSet&amp;);
 
     private:
         void setupUi();
@@ -1153,7 +1171,8 @@
 
     private:
         QListWidget* m_activityListWidget;
-        QMessageStore::NotificationFilterId m_notificationFilterId;
+        QMessageManager::NotificationFilterId m_notificationFilterId;
+        QMessageManager m_manager;
     };
 
     StoreSignalsWidget::StoreSignalsWidget(QWidget* parent)
@@ -1164,7 +1183,7 @@
         setupUi();
     }
 
-    void StoreSignalsWidget::messageAdded(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filterSet)
+    void StoreSignalsWidget::messageAdded(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
     {
         if(!filterSet.contains(m_notificationFilterId))
             return;
@@ -1175,7 +1194,7 @@
         m_activityListWidget-&gt;addItem(msg);
     }
 
-    void StoreSignalsWidget::messageUpdated(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filterSet)
+    void StoreSignalsWidget::messageUpdated(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
     {
         if(!filterSet.contains(m_notificationFilterId))
             return;
@@ -1186,7 +1205,7 @@
         m_activityListWidget-&gt;addItem(msg);
     }
 
-    void StoreSignalsWidget::messageRemoved(const QMessageId&amp; id, const QMessageStore::NotificationFilterIdSet&amp; filterSet)
+    void StoreSignalsWidget::messageRemoved(const QMessageId&amp; id, const QMessageManager::NotificationFilterIdSet&amp; filterSet)
     {
         if(!filterSet.contains(m_notificationFilterId))
             return;
@@ -1206,27 +1225,26 @@
         l-&gt;setContentsMargins(0,0,0,0);
         l-&gt;addWidget(m_activityListWidget);
 
-        connect(QMessageStore::instance(),
-                SIGNAL(messageAdded(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)),
+        connect(&amp;m_manager,
+                SIGNAL(messageAdded(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
                 this,
-                SLOT(messageAdded(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)));
+                SLOT(messageAdded(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
 
-        connect(QMessageStore::instance(),
-                SIGNAL(messageRemoved(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)),
+        connect(&amp;m_manager,
+                SIGNAL(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
                 this,
-                SLOT(messageRemoved(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)));
+                SLOT(messageRemoved(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
 
-        connect(QMessageStore::instance(),
-                SIGNAL(messageUpdated(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)),
+        connect(&amp;m_manager,
+                SIGNAL(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)),
                 this,
-                SLOT(messageUpdated(const QMessageId&amp;,const QMessageStore::NotificationFilterIdSet&amp;)));
+                SLOT(messageUpdated(const QMessageId&amp;,const QMessageManager::NotificationFilterIdSet&amp;)));
 
-        m_notificationFilterId = QMessageStore::instance()-&gt;registerNotificationFilter(QMessageFilter());
+        m_notificationFilterId = m_manager.registerNotificationFilter(QMessageFilter());
 
         QAction* clearAction = new QAction(&quot;Clear&quot;,this);
         connect(clearAction,SIGNAL(triggered(bool)),m_activityListWidget,SLOT(clear()));
         addAction(clearAction);
-
     }
 
     MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags f)
@@ -1235,20 +1253,21 @@
     m_tabWidget(0)
     {
 
-        m_serviceAction = new QMessageServiceAction(this);
+        m_service = new QMessageService(this);
 
-        connect(m_serviceAction,SIGNAL(stateChanged(QMessageServiceAction::State)),
-                this,SLOT(serviceStateChanged(QMessageServiceAction::State)));
+        connect(m_service,SIGNAL(stateChanged(QMessageService::State)),
+                this,SLOT(serviceStateChanged(QMessageService::State)));
 
         <span class="comment">//example widgets</span>
 
         m_widgetStack = new QStackedWidget(this);
         setCentralWidget(m_widgetStack);
 
-        foreach(QWidget* exampleWidget, QWidgetList() &lt;&lt; new ComposeSendWidget(m_serviceAction,this)
-                                                      &lt;&lt; new ShowWidget(m_serviceAction,this)
+        foreach(QWidget* exampleWidget, QWidgetList() &lt;&lt; new ComposeSendWidget(m_service,this)
+                                                      &lt;&lt; new ShowWidget(m_service,this)
                                                       &lt;&lt; new RetrieveWidget(this)
                                                       &lt;&lt; new StoreSignalsWidget(this)) {
+
             m_widgetStack-&gt;addWidget(exampleWidget);
     #ifdef _WIN32_WCE
             exampleWidget-&gt;installEventFilter(this);
@@ -1296,6 +1315,7 @@
 
         setWindowTitle(WindowTitle);
         resize(WindowGeometry);
+
     }
 
     #ifdef _WIN32_WCE
@@ -1308,9 +1328,9 @@
     }
     #endif
 
-    void MainWindow::serviceStateChanged(QMessageServiceAction::State state)
+    void MainWindow::serviceStateChanged(QMessageService::State newState)
     {
-        if(state == QMessageServiceAction::Failed)
+        if ((newState == QMessageService::FinishedState) &amp;&amp; (m_service-&gt;error() != QMessageManager::NoError))
             QMessageBox::critical(this,&quot;Error&quot;,&quot;One or more service actions failed&quot;);
     }
 
@@ -1348,6 +1368,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

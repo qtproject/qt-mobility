@@ -1,24 +1,27 @@
 TEMPLATE = subdirs
 
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../../staticconfig.pri)
 
-SUBDIRS += databasemanager \                #service framework
+contains(mobility_modules,serviceframework) {
+    SUBDIRS += databasemanager \                #service framework
            servicemetadata \
            qserviceinterfacedescriptor \
            qservicefilter \
-#           qservicemanager \  #remove until qhash namespace issue resolved
+           qservicemanager \
            qabstractsecuritysession \
-           qservicecontext
+           qservicecontext \
+           icheck \
+           servicedatabase
+}
 
-# servicedatabase is not compiled into the serviceframework library on symbian,
-# special handling is needed
-!symbian:SUBDIRS+=servicedatabase
-
-SUBDIRS += qnetworkconfigmanager \          #Bearer management
+contains(mobility_modules,bearer) {
+    SUBDIRS += qnetworkconfigmanager \          #Bearer management
            qnetworkconfiguration \
            qnetworksession
+}
 
-SUBDIRS += qgeocoordinate \                 #Location
+contains(mobility_modules,location) {
+    SUBDIRS += qgeocoordinate \                 #Location
           qgeopositioninfo \
           qgeosatelliteinfo \
           qgeosatelliteinfosource \
@@ -27,37 +30,44 @@ SUBDIRS += qgeocoordinate \                 #Location
           qlocationutils \
           qnmeapositioninfosource
 
-wince* {
-    SUBDIRS += qgeoinfosources_wince
+    wince* {
+        SUBDIRS += qgeoinfosources_wince
+    }
 }
 
-SUBDIRS += qvaluespace \                           #Publish and Subscribe
+
+contains(mobility_modules,publishsubscribe) {
+    SUBDIRS += qvaluespace \                           #Publish and Subscribe
            qvaluespacepublisher \
            qvaluespacesubscriber \
-	   qcrmlparser
+           qcrmlparser
 
-unix|win32 {
-    !symbian:!maemo: SUBDIRS+= \
-        qsystemreadwritelock \
-        qsystemreadwritelock_oop
+    unix|win32 {
+        !symbian:!maemo6:!maemo5: SUBDIRS+= \
+            qsystemreadwritelock \
+            qsystemreadwritelock_oop
+    }
+
+    unix:!symbian:!maemo6:!maemo5 {
+        SUBDIRS+= \
+               qpacket \
+               qmallocpool \
+               qpacketprotocol
+    }
 }
 
-unix:!symbian:!maemo: {
-    SUBDIRS+= \
-           qpacket \
-           qmallocpool \
-           qpacketprotocol
-}
-
-!maemo:SUBDIRS += qsysteminfo \                    #SystemInformation
+contains(mobility_modules,systeminfo) {
+    SUBDIRS += qsysteminfo \                    #SystemInformation
           qsystemdeviceinfo \
           qsystemdisplayinfo \
           qsystemstorageinfo \
           qsystemnetworkinfo \
           qsystemscreensaver
+}
 
-SUBDIRS +=  qcontact \                      #Contacts
-            qcontactactions \
+contains(mobility_modules,contacts) {
+    #Contacts
+    SUBDIRS +=  qcontact \
             qcontactasync \
             qcontactdetail \
             qcontactdetaildefinition \
@@ -66,24 +76,30 @@ SUBDIRS +=  qcontact \                      #Contacts
             qcontactmanager \
             qcontactmanagerplugins \
             qcontactmanagerfiltering \
-            qcontactrelationship
+            qcontactrelationship \
+            qlatin1constant
+    # This needs glibc:
+    linux*: SUBDIRS += qcontactmemusage
+}
 
-# Versit module
-SUBDIRS += \
+contains(mobility_modules,versit) {
+    # Versit module
+    SUBDIRS += \
             qvcard21writer \
             qvcard30writer \
+            qversit \
             qversitcontactexporter \
             qversitcontactimporter \
             qversitdocument \
             qversitproperty \
             qversitreader \
-            qversitutils \
             qversitwriter
+}
 
-
-SUBDIRS += \             #Multimedia
+contains(mobility_modules,multimedia) {
+    SUBDIRS += \             #Multimedia
         qaudiocapturesource \
-        qcamera \
+        qgraphicsvideoitem \
         qmediaimageviewer \
         qmediaobject \
         qmediaplayer \
@@ -96,19 +112,32 @@ SUBDIRS += \             #Multimedia
         qmediaserviceprovider \
         qmediacontent \
         qradiotuner \
-        qvideowidget
+        qpaintervideosurface \
+        qvideowidget \
+        qmediatimerange
 
-contains(QT_CONFIG, multimedia) {
-    SUBDIRS += \
-            qgraphicsvideoitem \
-            qpaintervideosurface
-
+    symbian: {
+        #symbian spesific autotests
+        SUBDIRS += symbian 
+        SUBDIRS -= \
+                qmediaplayer_s60 \
+                qradiotuner_s60 \
+                qmediaobject_s60 \
+                qmediarecorder_s60
+    }
 }
-
 #Messaging
-contains(qmf_enabled,yes)|wince*|win32|symbian|maemo {
+contains(mobility_modules,messaging) {
+    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
     !win32-g++:SUBDIRS += \
         qmessagestore \
         qmessagestorekeys \
-        qmessage
+        qmessage \
+        qmessageservice
+    }
+}
+
+# Sensors
+contains(mobility_modules,sensors) {
+    SUBDIRS += qsensor
 }

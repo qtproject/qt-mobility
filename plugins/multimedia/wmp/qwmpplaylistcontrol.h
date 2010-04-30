@@ -49,7 +49,7 @@
 class QWmpEvents;
 class QWmpPlaylist;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QWmpPlaylistControl : public QMediaPlaylistControl
 {
     Q_OBJECT
@@ -60,11 +60,11 @@ public:
     QMediaPlaylistProvider *playlistProvider() const;
     bool setPlaylistProvider(QMediaPlaylistProvider *playlist);
 
-    int currentPosition() const;
-    void setCurrentPosition(int position);
+    int currentIndex() const;
+    void setCurrentIndex(int position);
 
-    int nextPosition(int steps) const;
-    int previousPosition(int steps) const;
+    int nextIndex(int steps) const;
+    int previousIndex(int steps) const;
 
     void next();
     void previous();

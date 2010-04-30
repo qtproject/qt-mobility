@@ -18,26 +18,19 @@
 <li><a href="qcontactdetaildefinition-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
-<a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#AccessConstraint-enum">AccessConstraint</a></b> { NoConstraint, ReadOnly, CreateOnly }</td></tr>
-</table>
-<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#QContactDetailDefinition">QContactDetailDefinition</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#QContactDetailDefinition-2">QContactDetailDefinition</a></b> ( const QContactDetailDefinition &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#dtor.QContactDetailDefinition">~QContactDetailDefinition</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContactDetailDefinition::AccessConstraint </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#accessConstraint">accessConstraint</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QContactDetailDefinitionField&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#fields">fields</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QContactDetailDefinitionField&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#fields-2">fields</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QContactDetailFieldDefinition&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#fields">fields</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#insertField">insertField</a></b> ( const QString &amp; <i>key</i>, const QContactDetailFieldDefinition &amp; <i>field</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#isUnique">isUnique</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#name">name</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#setAccessConstraint">setAccessConstraint</a></b> ( const QContactDetailDefinition::AccessConstraint &amp; <i>constraint</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#setFields">setFields</a></b> ( const QMap&lt;QString, QContactDetailDefinitionField&gt; &amp; <i>fields</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#removeField">removeField</a></b> ( const QString &amp; <i>key</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#setFields">setFields</a></b> ( const QMap&lt;QString, QContactDetailFieldDefinition&gt; &amp; <i>fields</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#setName">setName</a></b> ( const QString &amp; <i>definitionName</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#setUnique">setUnique</a></b> ( bool <i>unique</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactdetaildefinition.html#operator-not-eq">operator!=</a></b> ( const QContactDetailDefinition &amp; <i>other</i> ) const</td></tr>
@@ -49,20 +42,6 @@
 <h2>Detailed Description</h2>
 <p>The QContactDetailDefinition class provides the specification for a detail that can be included in any particular <a href="qcontact.html">QContact</a>. The definition does not include any data, but defines the semantics of the representation and use of data details that are stored in a <a href="qcontact.html">QContact</a>.</p>
 <hr />
-<h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QContactDetailDefinition/AccessConstraint"></a>
-<a name="//apple_ref/cpp/econst/QContactDetailDefinition/NoConstraint"></a>
-<a name="//apple_ref/cpp/econst/QContactDetailDefinition/ReadOnly"></a>
-<a name="//apple_ref/cpp/econst/QContactDetailDefinition/CreateOnly"></a>
-<h3 class="fn"><a name="AccessConstraint-enum"></a>enum QContactDetailDefinition::AccessConstraint</h3>
-<p>This enum defines the access constraints which may be set on all details of this definition in the store for which the definition is valid.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactDetailDefinition::NoConstraint</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Details of definitions with this access constraint set have no special access semantics associated with them. Users can read, write, and otherwise modify such details in any manner.</td></tr>
-<tr><td valign="top"><tt>QContactDetailDefinition::ReadOnly</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Details of definitions with this access constraint set are dynamically modified by the backend. Users cannot write values to details of definitions with this access constraint set.</td></tr>
-<tr><td valign="top"><tt>QContactDetailDefinition::CreateOnly</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Details of definitions with this access constraint set are static once created. Their value cannot be changed dynamically, nor can they be written or read by users.</td></tr>
-</table></p>
-<hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/QContactDetailDefinition"></a>
 <h3 class="fn"><a name="QContactDetailDefinition"></a>QContactDetailDefinition::QContactDetailDefinition ()</h3>
@@ -72,17 +51,13 @@
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/~QContactDetailDefinition"></a>
 <h3 class="fn"><a name="dtor.QContactDetailDefinition"></a>QContactDetailDefinition::~QContactDetailDefinition ()</h3>
 <p>Frees the memory used by this <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a></p>
-<a name="//apple_ref/cpp/instm/QContactDetailDefinition/accessConstraint"></a>
-<h3 class="fn"><a name="accessConstraint"></a><a href="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::AccessConstraint</a> QContactDetailDefinition::accessConstraint () const</h3>
-<p>Returns the access constraint that is applied to details of this definition</p>
-<p>See also <a href="qcontactdetaildefinition.html#setAccessConstraint">setAccessConstraint</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/fields"></a>
-<h3 class="fn"><a name="fields"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinitionfield.html">QContactDetailDefinitionField</a>&gt; QContactDetailDefinition::fields () const</h3>
+<h3 class="fn"><a name="fields"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a>&gt; QContactDetailDefinition::fields () const</h3>
 <p>Returns the map of keys to fields which are present in details of this definition</p>
 <p>See also <a href="qcontactdetaildefinition.html#setFields">setFields</a>().</p>
-<h3 class="fn"><a name="fields-2"></a><a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinitionfield.html">QContactDetailDefinitionField</a>&gt; &amp; QContactDetailDefinition::fields ()</h3>
-<p>Returns a reference to the map of keys to fields which are present in details of this definition.</p>
-<p>You can make changes to the returned map.</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinition/insertField"></a>
+<h3 class="fn"><a name="insertField"></a>void QContactDetailDefinition::insertField ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i>, const <a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a> &amp; <i>field</i> )</h3>
+<p>Inserts the field <i>field</i> into the map of fields which constitute the data of details of this definition for the given field key <i>key</i>. If another field for that key already exists in the definition, it will be overwritten.</p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/isEmpty"></a>
 <h3 class="fn"><a name="isEmpty"></a>bool QContactDetailDefinition::isEmpty () const</h3>
 <p>Returns true if the id and fields of this definition are empty</p>
@@ -90,19 +65,18 @@
 <h3 class="fn"><a name="isUnique"></a>bool QContactDetailDefinition::isUnique () const</h3>
 <p>Returns the per-contact uniqueness of this definition</p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/name"></a>
-<h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QContactDetailDefinition::name () const</h3>
+<h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactDetailDefinition::name () const</h3>
 <p>Returns the identifier of this detail definition</p>
 <p>See also <a href="qcontactdetaildefinition.html#setName">setName</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactDetailDefinition/setAccessConstraint"></a>
-<h3 class="fn"><a name="setAccessConstraint"></a>void QContactDetailDefinition::setAccessConstraint ( const <a href="qcontactdetaildefinition.html#AccessConstraint-enum">QContactDetailDefinition::AccessConstraint</a> &amp; <i>constraint</i> )</h3>
-<p>Sets the access constraint that is applied to details of this definition to <i>constraint</i></p>
-<p>See also <a href="qcontactdetaildefinition.html#accessConstraint">accessConstraint</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactDetailDefinition/removeField"></a>
+<h3 class="fn"><a name="removeField"></a>void QContactDetailDefinition::removeField ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> )</h3>
+<p>Removes the field associated with the given field key <i>key</i> from the map of fields which constitute the data of details of this definition.</p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/setFields"></a>
-<h3 class="fn"><a name="setFields"></a>void QContactDetailDefinition::setFields ( const <a href="http://qt.nokia.com/doc/4.5/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a>, <a href="qcontactdetaildefinitionfield.html">QContactDetailDefinitionField</a>&gt; &amp; <i>fields</i> )</h3>
+<h3 class="fn"><a name="setFields"></a>void QContactDetailDefinition::setFields ( const <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</a>&gt; &amp; <i>fields</i> )</h3>
 <p>Sets the fields which constitute the data of details of this this definition to <i>fields</i></p>
 <p>See also <a href="qcontactdetaildefinition.html#fields">fields</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/setName"></a>
-<h3 class="fn"><a name="setName"></a>void QContactDetailDefinition::setName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>definitionName</i> )</h3>
+<h3 class="fn"><a name="setName"></a>void QContactDetailDefinition::setName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>definitionName</i> )</h3>
 <p>Sets the unique identifier of this detail type to <i>definitionName</i>.</p>
 <p>See also <a href="qcontactdetaildefinition.html#name">name</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/setUnique"></a>
@@ -111,17 +85,17 @@
 <p>See also <a href="qcontactdetaildefinition.html#isUnique">isUnique</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContactDetailDefinition::operator!= ( const QContactDetailDefinition &amp; <i>other</i> ) const</h3>
-<p>Returns true if this detail definition has different allowable field types, access constraints or uniqueness to the <i>other</i> definition</p>
+<p>Returns true if this detail definition has different allowable field types or uniqueness to the <i>other</i> definition</p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QContactDetailDefinition &amp; QContactDetailDefinition::operator= ( const QContactDetailDefinition &amp; <i>other</i> )</h3>
 <p>Assigns this <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a> to <i>other</i></p>
 <a name="//apple_ref/cpp/instm/QContactDetailDefinition/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactDetailDefinition::operator== ( const QContactDetailDefinition &amp; <i>other</i> ) const</h3>
-<p>Returns true if the definition has the same type, uniqueness, access constraint and allowable value datatypes as <i>other</i></p>
+<p>Returns true if the definition has the same type, uniqueness and allowable value datatypes as <i>other</i></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

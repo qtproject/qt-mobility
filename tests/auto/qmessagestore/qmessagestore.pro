@@ -7,10 +7,11 @@ QT += testlib
 include(../../../common.pri)
 include(../support/support.pri)
 
-qtAddLibrary(QtMessaging)
+CONFIG += mobility
+MOBILITY = messaging
 INCLUDEPATH += ../../../src/messaging
 
-symbian|wince*|maemo|win32 {
+symbian|wince*|maemo5|win32|mac {
 } else {
 # Temporarily link against local qtopiamail lib (should be part of the platform)
 LIBS += -L $$(QMF_LIBDIR) -lqtopiamail

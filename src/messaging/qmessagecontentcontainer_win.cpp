@@ -61,7 +61,7 @@ QByteArray attachmentContent(const QMessageId &id, ULONG number)
 {
     QByteArray result;
 
-    QMessageStore::ErrorCode error(QMessageStore::NoError);
+    QMessageManager::Error error(QMessageManager::NoError);
     MapiSessionPtr session(MapiSession::createSession(&error));
     if (session && session->isValid()) {
         result = session->attachmentData(&error, id, number);
@@ -74,12 +74,12 @@ QString attachmentTextContent(const QMessageId &id, ULONG number, const QByteArr
 {
     QString result;
 
-    QMessageStore::ErrorCode error(QMessageStore::NoError);
+    QMessageManager::Error error(QMessageManager::NoError);
     MapiSessionPtr session(MapiSession::createSession(&error));
     if (session && session->isValid()) {
         QByteArray data = session->attachmentData(&error, id, number);
 
-        if (error == QMessageStore::NoError) {
+        if (error == QMessageManager::NoError) {
             // Convert attachment data to string form
             QTextCodec *codec;
             if (!charset.isEmpty()) {
@@ -178,7 +178,7 @@ bool QMessageContentContainer::isContentAvailable() const
     return d_ptr->_available;
 }
 
-uint QMessageContentContainer::size() const
+int QMessageContentContainer::size() const
 {
     if (d_ptr->isMessage()) {
         d_ptr->_message->d_ptr->ensurePropertiesPresent(d_ptr->_message);
@@ -221,12 +221,12 @@ QByteArray QMessageContentContainer::content() const
     return d_ptr->_content;
 }
 
-void QMessageContentContainer::writeTextContentTo(QTextStream& out) const
+void QMessageContentContainer::writeTextContent(QTextStream& out) const
 {
     out << textContent();
 }
 
-void QMessageContentContainer::writeContentTo(QDataStream& out) const
+void QMessageContentContainer::writeContent(QDataStream& out) const
 {
     QByteArray data(content());
     out.writeRawData(data.constData(), data.length());

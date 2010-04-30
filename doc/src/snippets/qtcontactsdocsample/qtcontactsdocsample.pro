@@ -4,17 +4,25 @@
 #
 ######################################################################
 
-TEMPLATE = app
+TEMPLATE = lib
 TARGET = qtcontactsdocsample
 include(../../../../common.pri)
-INCLUDEPATH += ../../../../src/contacts \
-                ../../../../src/contacts/requests \
-                ../../../../src/contacts/filters \
-                ../../../../src/contacts/details
+INCLUDEPATH += ../../../../src/global \
+               ../../../../src/contacts \
+               ../../../../src/contacts/requests \
+               ../../../../src/contacts/filters \
+               ../../../../src/contacts/details
 
-DESTDIR = $$QT_MOBILITY_BUILD_TREE/bin/examples
+DESTDIR = $$QT_MOBILITY_BUILD_TREE/lib
 QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib
-qtAddLibrary(QtContacts)
 
-SOURCES += qtcontactsdocsample.cpp
+CONFIG += mobility console
+MOBILITY = contacts
+
+SOURCES += qtcontactsdocsample.cpp qtcontactsdocsampleasync.cpp
 HEADERS += requestexample.h
+
+symbian {
+    TARGET.EPOCALLOWDLLDATA = 1
+    MMP_RULES+="EXPORTUNFROZEN"
+}

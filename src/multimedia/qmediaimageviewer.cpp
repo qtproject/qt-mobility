@@ -39,20 +39,20 @@
 **
 ****************************************************************************/
 
-#include <qmediaimageviewer.h>
+#include "qmediaimageviewer.h"
 
-#include <qmediaobject_p.h>
-#include <qmediaimageviewerservice_p.h>
+#include "qmediaobject_p.h"
+#include "qmediaimageviewerservice_p.h"
 
-#include <qmediaplaylist.h>
-#include <qmediacontent.h>
-#include <qmediaresource.h>
+#include "qmediaplaylist.h"
+#include "qmediacontent.h"
+#include "qmediaresource.h"
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>
 #include <QtCore/qdatetime.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaImageViewerPrivate : public QMediaObjectPrivate
 {
@@ -99,7 +99,7 @@ void QMediaImageViewerPrivate::_q_mediaStatusChanged(QMediaImageViewer::MediaSta
 
         if (state == QMediaImageViewer::PlayingState) {
             playlist->next();
-            if (playlist->currentPosition() < 0)
+            if (playlist->currentIndex() < 0)
                 emit q_func()->stateChanged(state = QMediaImageViewer::StoppedState);
         }
         break;
@@ -131,21 +131,16 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     \ingroup multimedia
     \preliminary
 
-    The primary use of QMediaImageViewer is to display image media.  If
-    asked to display a non-image media type QMediaImageViewer will instead
-    display the media's \l {QMediaContent::coverArtUriLarge()}{cover art}
-    or \l {QMediaContent::posterUri()}{poster} if a URI is available for either.
-
-    In order to actually display an image the QMediaImageViewer class must
-    be coupled with a display output such as QVideoWidget.  A display
-    output is attached to the image viewer by passing a pointer the
-    QMediaImageViewer instance in the constructor of the display output,
-    and can be removed by deleting the display output.
+    QMediaImageViewer is used together with a media display object such as
+    QVideoWidget to present an image.  A display object is attached to the
+    image viewer by passing a pointer to the QMediaImageViewer instance to the
+    setMediaObject() function of the display object.
 
     \code
     viewer = new QMediaImageViewer(this);
 
-    display = new QVideoWidget(viewer);
+    display = new QVideoWidget;
+    display->setMediaObject(viewer);
     display->show();
     \endcode
 
@@ -161,11 +156,12 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     been displayed for.
 
     \code
-    playlist = new QMediaPlaylist(viewer, this);
+    playlist = new QMediaPlaylist(this);
+    playlist->setMediaObject(viewer);
     playlist->setPlaybackMode(QMediaPlaylist::Loop);
-    playlist->appendItem(image1);
-    playlist->appendItem(image2);
-    playlist->appendItem(image3);
+    playlist->addMedia(image1);
+    playlist->addMedia(image2);
+    playlist->addMedia(image3);
 
     viewer->setTimeout(5000);
     viewer->play();
@@ -258,11 +254,6 @@ QMediaImageViewer::MediaStatus QMediaImageViewer::mediaStatus() const
 /*!
     \property QMediaImageViewer::media
     \brief the media an image viewer is presenting.
-
-    If the media is on a non image type the image viewer will instead display the media's
-    \l {QMediaContent::coverArtUriLarge()}{cover art} or \l {QMediaContent::posterUri()}{poster} if
-    a URI is available for either.
-
 */
 
 QMediaContent QMediaImageViewer::media() const
@@ -364,14 +355,31 @@ void QMediaImageViewer::bind(QObject *object)
 
     if (QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist *>(object)) {
         if (d->playlist) {
-            qWarning("QMediaImageViewer::bind(): already bound to a playlist");
-        } else {
-            d->playlist = playlist;
-
-            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
-                    this, SLOT(_q_playlistMediaChanged(QMediaContent)));
-            connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+            qWarning("QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
+            d->playlist->setMediaObject(0);
         }
+        d->playlist = playlist;
+
+        connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                this, SLOT(_q_playlistMediaChanged(QMediaContent)));
+        connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+    }
+}
+
+/*!
+     \internal
+ */
+void QMediaImageViewer::unbind(QObject *object)
+{
+    Q_D(QMediaImageViewer);
+
+    if (object == d->playlist) {
+        disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                   this, SLOT(_q_playlistMediaChanged(QMediaContent)));
+        disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+        d->playlist = 0;
+        setMedia(QMediaContent());
     }
 }
 
@@ -387,14 +395,14 @@ void QMediaImageViewer::play()
 {
     Q_D(QMediaImageViewer);
 
-    if (d->playlist && d->playlist->size() > 0 && d->state != PlayingState) {
+    if (d->playlist && d->playlist->mediaCount() > 0 && d->state != PlayingState) {
         d->state = PlayingState;
 
         switch (d->viewerControl->mediaStatus()) {
         case NoMedia:
         case InvalidMedia:
             d->playlist->next();
-            if (d->playlist->currentPosition() < 0)
+            if (d->playlist->currentIndex() < 0)
                 d->state = StoppedState;
             break;
         case LoadingMedia:
@@ -475,7 +483,7 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
 
         d->playlist->next();
 
-        if (d->playlist->currentPosition() < 0) {
+        if (d->playlist->currentIndex() < 0) {
             d->pauseTime = 0;
             emit stateChanged(d->state = StoppedState);
             emit elapsedTimeChanged(0);
@@ -486,5 +494,5 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
 }
 
 #include "moc_qmediaimageviewer.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -66,9 +66,24 @@ class QContactInvalidEngine : public QContactManagerEngine
 {
 public:
     QContactInvalidEngine();
-    void deref();
     QString managerName() const;
-    QString synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const;
+
+    /*! \reimp */
+    int managerVersion() const {return 0;}
+
+    /*! \reimp */
+    virtual QString synthesizedDisplayLabel(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QString();
+    }
+
+    /*! \reimp */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QContact();
+    }
 };
 
 QTM_END_NAMESPACE

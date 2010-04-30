@@ -395,7 +395,7 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
 
         userDescriptorCount = descriptors.count();
         for (int i=0; i < userDescriptorCount; ++i) {
-            descriptors[i].d->systemScope = false;
+            descriptors[i].d->scope = QService::UserScope;
         }
     }
 
@@ -408,7 +408,7 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
         }
 
         for (int i = userDescriptorCount; i < descriptors.count(); ++i) {
-            descriptors[i].d->systemScope = true;
+            descriptors[i].d->scope = QService::SystemScope;
         }
     } else {
         if ( scope == SystemScope) {
@@ -488,7 +488,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
         descriptor = m_userDb->interfaceDefault(interfaceName, &interfaceID);
 
         if (m_userDb->lastError().code() == DBError::NoError) {
-            descriptor.d->systemScope = false;
+            descriptor.d->scope = QService::UserScope;
             return descriptor;
         } else if (m_userDb->lastError().code() == DBError::ExternalIfaceIDFound) {
             //default hasn't been found in user db, but we have found an ID
@@ -503,7 +503,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
             //found the service from the system database
             if (m_systemDb->lastError().code() == DBError::NoError) {
                 m_lastError.setError(DBError::NoError);
-                descriptor.d->systemScope = true;
+                descriptor.d->scope = QService::SystemScope;
                 return descriptor;
             } else if(m_systemDb->lastError().code() == DBError::NotFound){
                 //service implementing interface doesn't exist in the system db
@@ -511,7 +511,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
                 m_userDb->removeExternalDefaultServiceInterface(interfaceID);
 
                 QList<QServiceInterfaceDescriptor> descriptors;
-                descriptors = getInterfaces(interfaceName, UserScope);
+                descriptors = getInterfaces(QServiceFilter(interfaceName), UserScope);
 
                 //make the latest interface implementation the new
                 //default if there is one
@@ -551,7 +551,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
     } else {
         descriptor = m_systemDb->interfaceDefault(interfaceName);
         if (m_systemDb->lastError().code() == DBError::NoError) {
-            descriptor.d->systemScope = true;
+            descriptor.d->scope = QService::SystemScope;
             return descriptor;
         } else if (m_systemDb->lastError().code() == DBError::NotFound) {
             m_lastError = m_systemDb->lastError();
@@ -620,7 +620,7 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
     if (scope == UserScope) {
         if (!openDb(UserScope))
             return false;
-        if (!descriptor.inSystemScope()) { //if a user scope descriptor, just set it in the user db
+        if (descriptor.scope() == QService::UserScope) { //if a user scope descriptor, just set it in the user db
             if(m_userDb->setInterfaceDefault(descriptor)) {
                 m_lastError.setError(DBError::NoError);
                 return true;
@@ -648,7 +648,7 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
             }
         }
     } else {  //scope == SystemScope
-        if (!descriptor.inSystemScope()) {
+        if (descriptor.scope() == QService::UserScope) {
             QString errorText("Cannot set default service at system scope with a user scope "
                                 "interface descriptor");
             m_lastError.setError(DBError::InvalidDescriptorScope, errorText);
@@ -751,7 +751,7 @@ bool DatabaseManager::openDb(DbScope scope)
             if (m_userDb->lastError().code() == DBError::NotFound) {
                 m_userDb->removeExternalDefaultServiceInterface(defaultInfo.second);
                 QList<QServiceInterfaceDescriptor> descriptors;
-                descriptors = getInterfaces(defaultInfo.first, UserScope);
+                descriptors = getInterfaces(QServiceFilter(defaultInfo.first), UserScope);
 
                 if (descriptors.count() > 0 ) {
                     descriptor = latestDescriptor(descriptors);

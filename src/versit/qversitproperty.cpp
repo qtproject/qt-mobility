@@ -44,30 +44,54 @@
 #include "qmobilityglobal.h"
 
 #include <QStringList>
+#include <QTextCodec>
 
 QTM_BEGIN_NAMESPACE
 
 /*!
   \class QVersitProperty
- 
-  \brief The QVersitProperty class stores the name, value and parameters of a versit property.
-
+  \brief The QVersitProperty class stores the name, value, groups and parameters of a Versit property.
   \ingroup versit
- 
-  For example a vCard can be presented as a QVersitDocument that
-  consists of 0..n properties such as a name (N),
-  a telephone number (TEL) and an email address (EMAIL) to name a few.
-  Each of these properties is stored as
-  an instance of a QVersitProperty in a QVersitDocument.
- 
+
+  For example a vCard can be presented as a QVersitDocument that consists of a number of properties
+  such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few.
+  Each of these properties is stored as an instance of a QVersitProperty in a QVersitDocument.
+
   QVersitProperty supports implicit sharing.
-  The property name and parameters of a QVersitProperty are converted
-  to upper-case when they are stored to a QVersitProperty.
-  The value of a QVersitProperty is raw data and it is case-sensitive.
- 
+  The property name and parameters of a QVersitProperty are converted to upper-case when they are
+  stored to a QVersitProperty.
+
+  The value of a QVersitProperty is stored as a QVariant and should always be one of three types:
+  QString for textual values, QByteArray for binary data (eg. images), or QVersitDocument for
+  nested documents.  The \l QVersitReader will parse Versit properties and assign the correct type
+  of object to the property value.  The \l QVersitWriter will serialise objects of these types
+  correctly into the (text-based) Versit format.
+
   \sa QVersitDocument
  */
 
+/*!
+  \enum QVersitProperty::ValueType
+  Describes the type of data held in the property's value.
+
+  The vCard and iCalendar specifications allows a property value to hold a string, binary data, or a
+  nested document.  String values can either be unstructured or structured.  Structured strings can
+  be either of compound type or list type.  A compound value is one that is delimited by semicolons,
+  allows empty components, and has a property-specific cardinality and ordering.  A list value is
+  one that is delimited by commas, does not have empty components, and has no restrictions on
+  cardinality or ordering.
+
+  \value PlainType The property value holds an unstructured string and can be retrieved with
+  QVersitProperty::value()
+  \value CompoundType The property value holds a compound string and can be retrieved with
+  QVersitProperty::value<QStringList>()
+  \value ListType The property value holds a list of strings and can be retrieved with
+  QVersitProperty::value<QStringList>()
+  \value BinaryType The property value holds a binary value and can be retrieved with
+  QVersitProperty::value<QByteArray>()
+  \value VersitDocumentType The property value holds a nested Versit document and can be retrieved
+  with QVersitProperty::value<QVersitDocument>()
+ */
 
 /*! Constructs a new empty property */
 QVersitProperty::QVersitProperty() : d(new QVersitPropertyPrivate())
@@ -89,8 +113,70 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 {
     if (this != &other)
         d = other.d;
-    return *this;    
+    return *this;
 }
+
+/*! Returns true if this is equal to \a other; false otherwise. */
+bool QVersitProperty::operator==(const QVersitProperty& other) const
+{
+    bool equal = d->mGroups == other.d->mGroups &&
+            d->mName == other.d->mName &&
+            d->mParameters == other.d->mParameters &&
+            d->mValueType == other.d->mValueType;
+    if (!equal)
+        return false;
+
+    // QVariant doesn't support == on QVersitDocuments - do it manually
+    if (d->mValue.userType() == qMetaTypeId<QVersitDocument>())
+        return  other.d->mValue.userType() == qMetaTypeId<QVersitDocument>()
+            && d->mValue.value<QVersitDocument>() == other.d->mValue.value<QVersitDocument>();
+    else
+        return d->mValue == other.d->mValue;
+}
+
+/*! Returns true if this is not equal to \a other; false otherwise. */
+bool QVersitProperty::operator!=(const QVersitProperty& other) const
+{
+    return !(*this == other);
+}
+
+/*! Returns the hash value for \a key. */
+uint qHash(const QVersitProperty &key)
+{
+    uint hash = QT_PREPEND_NAMESPACE(qHash)(key.name()) + QT_PREPEND_NAMESPACE(qHash)(key.value());
+    foreach (const QString& group, key.groups()) {
+        hash += QT_PREPEND_NAMESPACE(qHash)(group);
+    }
+    QHash<QString,QString>::const_iterator it = key.parameters().constBegin();
+    QHash<QString,QString>::const_iterator end = key.parameters().constEnd();
+    while (it != end) {
+        hash += QT_PREPEND_NAMESPACE(qHash)(it.key()) + QT_PREPEND_NAMESPACE(qHash)(it.value());
+        ++it;
+    }
+    return hash;
+}
+
+#ifndef QT_NO_DEBUG_STREAM
+QDebug operator<<(QDebug dbg, const QVersitProperty& property)
+{
+    QStringList groups = property.groups();
+    QString name = property.name();
+    QMultiHash<QString,QString> parameters = property.parameters();
+    QString value = property.value();
+    dbg.nospace() << "QVersitProperty(";
+    foreach (const QString& group, groups) {
+        dbg.nospace() << group << '.';
+    }
+    dbg.nospace() << name;
+    QHash<QString,QString>::const_iterator it;
+    for (it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
+        dbg.nospace() << ';' << it.key() << '=' << it.value();
+    }
+    dbg.nospace() << ':' << value;
+    dbg.nospace() << ')';
+    return dbg.maybeSpace();
+}
+#endif
 
 /*!
  * Sets the groups in the property to the given list of \a groups.
@@ -98,13 +184,13 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 void QVersitProperty::setGroups(const QStringList& groups)
 {
     d->mGroups.clear();
-    foreach (QString group, groups) {
+    foreach (const QString& group, groups) {
         d->mGroups.append(group);
     }
 }
 
 /*!
- * Gets the groups part of the property.
+ * Gets the groups of the property.
  */
 QStringList QVersitProperty::groups() const
 {
@@ -143,7 +229,7 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
         QList<QString> values = parameters.values(key);
         for (int j=values.count()-1; j >= 0; j--) {
             // Convert all the parameter names and values to upper case
-            addParameter(key,values.at(j));
+            insertParameter(key,values.at(j));
         }
     }
 }
@@ -152,17 +238,29 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
  * Adds a new parameter with \a name and \a value.
  * Both the name and the value are converted to upper-case.
  */
-void QVersitProperty::addParameter(const QString& name, const QString& value)
+void QVersitProperty::insertParameter(const QString& name, const QString& value)
 {
-    d->mParameters.insert(name.toUpper(),value.toUpper());
+    d->mParameters.insert(name.toUpper(), value.toUpper());
 }
 
 /*!
  * Removes a parameter with \a name and \a value.
+ *
+ * \sa removeParameters()
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
-    d->mParameters.remove(name.toUpper(),value.toUpper());
+    d->mParameters.remove(name.toUpper(), value.toUpper());
+}
+
+/*!
+ * Removes all parameters with the given \a name.
+ *
+ * \sa removeParameter()
+ */
+void QVersitProperty::removeParameters(const QString& name)
+{
+    d->mParameters.remove(name.toUpper());
 }
 
 /*!
@@ -175,9 +273,9 @@ QMultiHash<QString,QString> QVersitProperty::parameters() const
 }
 
 /*!
- * Sets the \a value of the property.
+ * Sets the property value to \a value.
  */
-void QVersitProperty::setValue(const QByteArray& value)
+void QVersitProperty::setValue(const QVariant& value)
 {
     d->mValue = value;
 }
@@ -185,26 +283,75 @@ void QVersitProperty::setValue(const QByteArray& value)
 /*!
  * Returns the value of the property.
  */
-QByteArray QVersitProperty::value() const
+QVariant QVersitProperty::variantValue() const
 {
     return d->mValue;
 }
 
 /*!
- * Sets the embedded \a document of the property
+ * \fn T QVersitProperty::value() const
+ * \overload
+ * Returns the value of the property as a \tt T.
  */
-void QVersitProperty::setEmbeddedDocument(const QVersitDocument& document)
+
+/*!
+ * Returns the value of the property as a string if possible, otherwise return an empty string.
+ * If the property is stored as a QByteArray, it is decoded using the charset specified in the
+ * property's parameters.
+ * \sa QVariant::toString()
+ */
+QString QVersitProperty::value() const
 {
-    d->mDocument = document;
+    if (d->mValue.type() == QVariant::ByteArray) {
+        if (d->mParameters.contains(QLatin1String("CHARSET"))) {
+            QTextCodec* codec = QTextCodec::codecForName(
+                    d->mParameters.value(QLatin1String("CHARSET")).toAscii());
+            if (codec != NULL) {
+                return codec->toUnicode(d->mValue.toByteArray());
+            }
+        }
+        return QString();
+    } else {
+        return d->mValue.toString();
+    }
 }
 
 /*!
- * Returns the embedded document of the property.
- * If the embedded document has not been set, an empty document is returned.
+ * Sets the type of value held in the property to \a type.
  */
-QVersitDocument QVersitProperty::embeddedDocument() const
+void QVersitProperty::setValueType(QVersitProperty::ValueType type)
 {
-    return d->mDocument;
+    d->mValueType = type;
+}
+
+/*!
+ * Returns the type of value held in the property.
+ */
+QVersitProperty::ValueType QVersitProperty::valueType() const
+{
+    return d->mValueType;
+}
+
+/*!
+ * Returns true if the property is empty.
+ */
+bool QVersitProperty::isEmpty() const
+{
+    return d->mGroups.isEmpty()
+            && d->mName.isEmpty()
+            && d->mParameters.isEmpty()
+            && !d->mValue.isValid();
+}
+
+/*!
+ * Clears the contents of this property.
+ */
+void QVersitProperty::clear()
+{
+    d->mGroups.clear();
+    d->mName.clear();
+    d->mValue.clear();
+    d->mParameters.clear();
 }
 
 QTM_END_NAMESPACE

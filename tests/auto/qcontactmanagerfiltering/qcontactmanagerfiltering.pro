@@ -11,8 +11,10 @@ INCLUDEPATH += ../../../src/contacts \
                ../../../src/contacts/filters
 INCLUDEPATH += ../
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 SOURCES  += tst_qcontactmanagerfiltering.cpp
+HEADERS += ../qcontactmanagerdataholder.h
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \

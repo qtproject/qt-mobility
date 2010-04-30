@@ -42,7 +42,6 @@
 #include <QtTest/QtTest>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -55,8 +54,6 @@ Q_OBJECT
 public:
     tst_QContactDetailDefinition();
     virtual ~tst_QContactDetailDefinition();
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();
@@ -66,6 +63,8 @@ private slots:
     void testGetSet();
     void testEquality();
     void testEmpty();
+    void traits();
+    void fieldTraits();
 };
 
 tst_QContactDetailDefinition::tst_QContactDetailDefinition()
@@ -92,33 +91,29 @@ void tst_QContactDetailDefinition::testCtor()
     /* Check the ctor sets sane things */
     QVERIFY(def.isEmpty());
     QVERIFY(def.name().isEmpty());
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::NoConstraint);
     QVERIFY(def.fields().isEmpty());
     QVERIFY(def.isUnique() == false);
 
     /* Set a few things */
-    QMap<QString, QContactDetailDefinitionField> map;
-    QContactDetailDefinitionField currField;
+    QMap<QString, QContactDetailFieldDefinition> map;
+    QContactDetailFieldDefinition currField;
     currField.setDataType(QVariant::String);
     map.insert("string", currField);
     currField.setDataType(QVariant::DateTime);
     map.insert("datetime", currField);
 
     def.setName("Test ID");
-    def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
     def.setUnique(true);
     def.setFields(map);
 
     QVERIFY(def.name() == "Test ID");
     QVERIFY(def.isUnique());
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::CreateOnly);
     QVERIFY(def.fields() == map);
 
     QContactDetailDefinition def2(def);
 
     QVERIFY(def2.name() == "Test ID");
     QVERIFY(def2.isUnique());
-    QVERIFY(def2.accessConstraint() == QContactDetailDefinition::CreateOnly);
     QVERIFY(def2.fields() == map);
 
     QContactDetailDefinition def3;
@@ -126,7 +121,6 @@ void tst_QContactDetailDefinition::testCtor()
 
     QVERIFY(def3.name() == "Test ID");
     QVERIFY(def3.isUnique());
-    QVERIFY(def3.accessConstraint() == QContactDetailDefinition::CreateOnly);
     QVERIFY(def3.fields() == map);
 
     /* Make sure they aren't improperly shared */
@@ -156,19 +150,9 @@ void tst_QContactDetailDefinition::testGetSet()
     def.setUnique(false);
     QVERIFY(def.isUnique() == false);
 
-    /* Access constraints */
-    def.setAccessConstraint(QContactDetailDefinition::NoConstraint);
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::NoConstraint);
-
-    def.setAccessConstraint(QContactDetailDefinition::ReadOnly);
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::ReadOnly);
-
-    def.setAccessConstraint(QContactDetailDefinition::CreateOnly);
-    QVERIFY(def.accessConstraint() == QContactDetailDefinition::CreateOnly);
-
     /* Type map */
-    QMap<QString, QContactDetailDefinitionField> map;
-    QContactDetailDefinitionField currField;
+    QMap<QString, QContactDetailFieldDefinition> map;
+    QContactDetailFieldDefinition currField;
     currField.setDataType(QVariant::String);
     map.insert("string", currField);
     currField.setDataType(QVariant::DateTime);
@@ -177,17 +161,16 @@ void tst_QContactDetailDefinition::testGetSet()
     def.setFields(map);
     QVERIFY(def.fields() == map);
 
-    def.setFields(QMap<QString, QContactDetailDefinitionField>());
+    def.setFields(QMap<QString, QContactDetailFieldDefinition>());
     QVERIFY(def.fields().isEmpty());
 
-    /* Non const accessor */
-    def.fields() = map;
-    QVERIFY(def.fields() == map);
-
-    QMap<QString, QContactDetailDefinitionField>& rmap = def.fields();
-    def.fields().clear();
-
-    QVERIFY(rmap == def.fields());
+    /* Non const accessor - XXX TODO: remove after deprecation transition period. */
+    //def.fields() = map;
+    //QVERIFY(def.fields() == map);
+    //
+    //QMap<QString, QContactDetailDefinitionField>& rmap = def.fields();
+    //def.fields().clear();
+    //QVERIFY(rmap == def.fields());
 }
 
 void tst_QContactDetailDefinition::testEmpty()
@@ -200,8 +183,8 @@ void tst_QContactDetailDefinition::testEmpty()
     QVERIFY(!def.isEmpty());
     def.setName(QString());
     QVERIFY(def.isEmpty());
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField f;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition f;
     f.setDataType(QVariant::String);
     fields.insert("Field", f);
     def.setFields(fields);
@@ -245,21 +228,8 @@ void tst_QContactDetailDefinition::testEquality()
     QVERIFY(def1 == def2);
     QVERIFY(def2 == def1);
 
-    /* Access constraint */
-    def1.setAccessConstraint(QContactDetailDefinition::ReadOnly);
-    QVERIFY(def1 != def2);
-    QVERIFY(def2 != def1);
-
-    def1.setAccessConstraint(QContactDetailDefinition::CreateOnly);
-    QVERIFY(def1 != def2);
-    QVERIFY(def2 != def1);
-
-    def2.setAccessConstraint(QContactDetailDefinition::CreateOnly);
-    QVERIFY(def1 == def2);
-    QVERIFY(def2 == def1);
-
     /* Test Fields */
-    QContactDetailDefinitionField f1, f2;
+    QContactDetailFieldDefinition f1, f2;
     QVERIFY(f1 == f2);
     QVERIFY(f1.allowableValues().count() == 0);
     QVERIFY(f1.dataType() == QVariant::Invalid);
@@ -276,8 +246,8 @@ void tst_QContactDetailDefinition::testEquality()
     QVERIFY(f1 == f2);
 
     /* Field map */
-    QMap<QString, QContactDetailDefinitionField> fields;
-    QContactDetailDefinitionField currField;
+    QMap<QString, QContactDetailFieldDefinition> fields;
+    QContactDetailFieldDefinition currField;
     currField.setDataType(QVariant::String);
     fields.insert("string", currField);
     currField.setDataType(QVariant::DateTime);
@@ -301,6 +271,28 @@ void tst_QContactDetailDefinition::testEquality()
     def2.setFields(fields);
     QVERIFY(def1 == def2);
     QVERIFY(def2 == def1);
+}
+
+void tst_QContactDetailDefinition::traits()
+{
+    QCOMPARE(sizeof(QContactDetailDefinition), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactDetailDefinition)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
+}
+
+void tst_QContactDetailDefinition::fieldTraits()
+{
+    QCOMPARE(sizeof(QContactDetailFieldDefinition), sizeof(void *));
+    QTypeInfo<QTM_PREPEND_NAMESPACE(QContactDetailFieldDefinition)> ti;
+    QVERIFY(ti.isComplex);
+    QVERIFY(!ti.isStatic);
+    QVERIFY(!ti.isLarge);
+    QVERIFY(!ti.isPointer);
+    QVERIFY(!ti.isDummy);
 }
 
 

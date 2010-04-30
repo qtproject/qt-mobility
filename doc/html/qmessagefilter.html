@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageFilter Class Reference</h1>
 <p>The QMessageFilter class defines the parameters used for querying a subset of all available messages from the messaging store. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMessageFilter&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<ul>
+<pre>    #include &lt;QMessageFilter&gt;</pre><ul>
 <li><a href="qmessagefilter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -28,8 +27,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#dtor.QMessageFilter">~QMessageFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#isSupported">isSupported</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessageDataComparator::Options </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#options">options</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#setOptions">setOptions</a></b> ( QMessageDataComparator::Options <i>options</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMessageDataComparator::MatchFlags </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#matchFlags">matchFlags</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#setMatchFlags">setMatchFlags</a></b> ( QMessageDataComparator::MatchFlags <i>matchFlags</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageFilter </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#operator-and">operator&amp;</a></b> ( const QMessageFilter &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QMessageFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#operator-and-eq">operator&amp;=</a></b> ( const QMessageFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageFilter </td><td class="memItemRight" valign="bottom"><b><a href="qmessagefilter.html#operator-7c">operator|</a></b> ( const QMessageFilter &amp; <i>other</i> ) const</td></tr>
@@ -71,14 +70,14 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMessageFilter class defines the parameters used for querying a subset of all available messages from the messaging store.</p>
-<p>A QMessageFilter is composed of a message property, an optional comparison operator and a comparison value. The QMessageFilter class is used in conjunction with the <a href="qmessagestore.html#queryMessages">QMessageStore::queryMessages</a>(), <a href="qmessagestore.html#countMessages">QMessageStore::countMessages</a>(), <a href="qmessageserviceaction.html#queryMessages">QMessageServiceAction::queryMessages</a>(), and <a href="qmessageserviceaction.html#countMessages">QMessageServiceAction::countMessages</a>() functions to filter results which meet the criteria defined by the filter.</p>
+<p>A QMessageFilter is composed of a message property, an optional comparison operator and a comparison value. The QMessageFilter class is used in conjunction with the <a href="qmessagemanager.html#queryMessages">QMessageManager::queryMessages</a>(), <a href="qmessagemanager.html#countMessages">QMessageManager::countMessages</a>(), <a href="qmessageservice.html#queryMessages">QMessageService::queryMessages</a>(), and <a href="qmessageservice.html#countMessages">QMessageService::countMessages</a>() functions to filter results which meet the criteria defined by the filter.</p>
 <p>QMessageFilters can be combined using the logical operators (&amp;), (|) and (~) to create more refined queries.</p>
 <p>For example:</p>
 <p>To create a query for all messages sent from &quot;joe@user.com&quot; with subject &quot;meeting&quot;:</p>
 <pre>    QMessageFilter subjectFilter(QMessageFilter::bySubject(&quot;meeting&quot;));
     QMessageFilter senderFilter(QMessageFilter::bySender(&quot;joe@user.com&quot;));
-    QMessageIdList results = QMessageStore::instance()-&gt;queryMessages(subjectFilter &amp; senderFilter);</pre>
-<p>See also <a href="qmessagestore.html">QMessageStore</a> and <a href="qmessage.html">QMessage</a>.</p>
+    QMessageIdList results = QMessageManager().queryMessages(subjectFilter &amp; senderFilter);</pre>
+<p>See also <a href="qmessagemanager.html">QMessageManager</a> and <a href="qmessage.html">QMessage</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMessageFilter/QMessageFilter"></a>
@@ -127,21 +126,21 @@
 <p>Returns a filter matching messages whose priority matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#priority">QMessage::priority</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/byReceptionTimeStamp"></a>
-<h3 class="fn"><a name="byReceptionTimeStamp"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byReceptionTimeStamp"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose reception timestamp matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">QMessage::receivedDate</a>().</p>
-<h3 class="fn"><a name="byReceptionTimeStamp-2"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::RelationComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byReceptionTimeStamp-2"></a>QMessageFilter QMessageFilter::byReceptionTimeStamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::RelationComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose reception timestamp has the relation to <i>value</i> that is specified by <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#receivedDate">QMessage::receivedDate</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/byRecipients"></a>
-<h3 class="fn"><a name="byRecipients"></a>QMessageFilter QMessageFilter::byRecipients ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byRecipients"></a>QMessageFilter QMessageFilter::byRecipients ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose recipients include the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#to">QMessage::to</a>(), <a href="qmessage.html#cc">QMessage::cc</a>(), and <a href="qmessage.html#bcc">QMessage::bcc</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/bySender"></a>
-<h3 class="fn"><a name="bySender"></a>QMessageFilter QMessageFilter::bySender ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="bySender"></a>QMessageFilter QMessageFilter::bySender ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose sender matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#from">QMessage::from</a>().</p>
-<h3 class="fn"><a name="bySender-2"></a>QMessageFilter QMessageFilter::bySender ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="bySender-2"></a>QMessageFilter QMessageFilter::bySender ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose sender matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#from">QMessage::from</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/bySize"></a>
@@ -163,17 +162,17 @@
 <p>Returns a filter matching messages whose status is a bitwise match to <i>mask</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#status">QMessage::status</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/bySubject"></a>
-<h3 class="fn"><a name="bySubject"></a>QMessageFilter QMessageFilter::bySubject ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="bySubject"></a>QMessageFilter QMessageFilter::bySubject ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose subject matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#subject">QMessage::subject</a>().</p>
-<h3 class="fn"><a name="bySubject-2"></a>QMessageFilter QMessageFilter::bySubject ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="bySubject-2"></a>QMessageFilter QMessageFilter::bySubject ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose subject matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#subject">QMessage::subject</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/byTimeStamp"></a>
-<h3 class="fn"><a name="byTimeStamp"></a>QMessageFilter QMessageFilter::byTimeStamp ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byTimeStamp"></a>QMessageFilter QMessageFilter::byTimeStamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> = QMessageDataComparator::Equal )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose timestamp matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#date">QMessage::date</a>().</p>
-<h3 class="fn"><a name="byTimeStamp-2"></a>QMessageFilter QMessageFilter::byTimeStamp ( const <a href="http://qt.nokia.com/doc/4.5/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::RelationComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byTimeStamp-2"></a>QMessageFilter QMessageFilter::byTimeStamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#RelationComparator-enum">QMessageDataComparator::RelationComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching messages whose timestamp has the relation to <i>value</i> that is specified by <i>cmp</i>.</p>
 <p>See also <a href="qmessage.html#date">QMessage::date</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageFilter/byType"></a>
@@ -192,15 +191,15 @@
 <a name="//apple_ref/cpp/instm/QMessageFilter/isSupported"></a>
 <h3 class="fn"><a name="isSupported"></a>bool QMessageFilter::isSupported () const</h3>
 <p>Returns true if the filter is supported on the current platform; otherwise returns false.</p>
-<a name="//apple_ref/cpp/instm/QMessageFilter/options"></a>
-<h3 class="fn"><a name="options"></a><a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> QMessageFilter::options () const</h3>
-<p>Return the options for the search filter.</p>
-<p>Default is no options set.</p>
-<p>See also <a href="qmessagefilter.html#setOptions">setOptions</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageFilter/setOptions"></a>
-<h3 class="fn"><a name="setOptions"></a>void QMessageFilter::setOptions ( <a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> <i>options</i> )</h3>
-<p>Set the options for the search filter to <i>options</i>.</p>
-<p>See also <a href="qmessagefilter.html#options">options</a>().</p>
+<a name="//apple_ref/cpp/instm/QMessageFilter/matchFlags"></a>
+<h3 class="fn"><a name="matchFlags"></a><a href="qmessagedatacomparator.html#MatchFlag-enum">QMessageDataComparator::MatchFlags</a> QMessageFilter::matchFlags () const</h3>
+<p>Return the match flags for the search filter.</p>
+<p>Default is no match flags set.</p>
+<p>See also <a href="qmessagefilter.html#setMatchFlags">setMatchFlags</a>().</p>
+<a name="//apple_ref/cpp/instm/QMessageFilter/setMatchFlags"></a>
+<h3 class="fn"><a name="setMatchFlags"></a>void QMessageFilter::setMatchFlags ( <a href="qmessagedatacomparator.html#MatchFlag-enum">QMessageDataComparator::MatchFlags</a> <i>matchFlags</i> )</h3>
+<p>Set the match flags for the search filter to <i>matchFlags</i>.</p>
+<p>See also <a href="qmessagefilter.html#matchFlags">matchFlags</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageFilter/operator&amp;"></a>
 <h3 class="fn"><a name="operator-and"></a>QMessageFilter QMessageFilter::operator&amp; ( const QMessageFilter &amp; <i>other</i> ) const</h3>
 <p>Returns a filter that is the logical AND of this filter and the value of filter <i>other</i>.</p>
@@ -215,13 +214,13 @@
 <p>Performs a logical OR with this filter and the filter <i>other</i> and assigns the result to this filter.</p>
 <a name="//apple_ref/cpp/instm/QMessageFilter/operator~"></a>
 <h3 class="fn"><a name="operator-7e"></a>QMessageFilter QMessageFilter::operator~ () const</h3>
-<p>Returns a filter that is the logical NOT of the value of this filter (ignoring any <a href="qmessagefilter.html#options">options</a>() set on the filter).</p>
+<p>Returns a filter that is the logical NOT of the value of this filter (ignoring any <a href="qmessagefilter.html#matchFlags">matchFlags</a>() set on the filter).</p>
 <p>If this filter is empty, the result will be a non-matching filter; if this filter is non-matching, the result will be an empty filter.</p>
 <p>See also <a href="qmessagefilter.html#isEmpty">isEmpty</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

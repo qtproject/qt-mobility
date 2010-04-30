@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Qt Mobility Project 1.0: filterpage.cpp Example File (samplephonebook/filterpage.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">filterpage.cpp Example File<br /><span class="small-subtitle">samplephonebook/filterpage.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the Qt Mobility Components.
+    **
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
+    **
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
+    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &quot;filterpage.h&quot;
+
+    #include &lt;QtGui&gt;
+
+    FilterPage::FilterPage(QWidget* parent)
+            : QWidget(parent)
+    {
+        m_nameEdit = new QLineEdit(this);
+        m_phoneEdit = new QLineEdit(this);
+        m_emailEdit = new QLineEdit(this);
+        m_addressEdit = new QLineEdit(this);
+        QLabel *nameLabel = new QLabel(tr(&quot;Name&quot;), this);
+        QLabel *phoneLabel = new QLabel(tr(&quot;Phone&quot;), this);
+        QLabel *emailLabel = new QLabel(tr(&quot;Email&quot;), this);
+        QLabel *addressLabel = new QLabel(tr(&quot;Address&quot;), this);
+
+        QFormLayout *formLayout = new QFormLayout;
+        if (QApplication::desktop()-&gt;availableGeometry().width() &lt; 360) {
+            <span class="comment">// Narrow screen: put label on separate line to textbox</span>
+            formLayout-&gt;addRow(nameLabel);
+            formLayout-&gt;addRow(m_nameEdit);
+            formLayout-&gt;addRow(phoneLabel);
+            formLayout-&gt;addRow(m_phoneEdit);
+            formLayout-&gt;addRow(emailLabel);
+            formLayout-&gt;addRow(m_emailEdit);
+            formLayout-&gt;addRow(addressLabel);
+            formLayout-&gt;addRow(m_addressEdit);
+        } else {
+            <span class="comment">// Wide screen: put label on same line as textbox</span>
+            formLayout-&gt;addRow(nameLabel, m_nameEdit);
+            formLayout-&gt;addRow(phoneLabel, m_phoneEdit);
+            formLayout-&gt;addRow(emailLabel, m_emailEdit);
+            formLayout-&gt;addRow(addressLabel, m_addressEdit);
+        }
+
+        QVBoxLayout *pageLayout = new QVBoxLayout;
+
+        QScrollArea *formScrollArea = new QScrollArea(this);
+        formScrollArea-&gt;setWidgetResizable(true);
+        QWidget *formContainer = new QWidget(formScrollArea);
+        formContainer-&gt;setLayout(formLayout);
+        formScrollArea-&gt;setWidget(formContainer);
+        pageLayout-&gt;addWidget(formScrollArea);
+
+    #ifdef Q_OS_SYMBIAN
+        m_filterBtn = new QAction(tr(&quot;Filter&quot;), this);
+        m_filterBtn-&gt;setSoftKeyRole(QAction::PositiveSoftKey);
+        addAction(m_filterBtn);
+        connect(m_filterBtn, SIGNAL(triggered(bool)), this, SLOT(filterClicked()));
+        m_cancelBtn = new QAction(tr(&quot;Cancel&quot;), this);
+        m_cancelBtn-&gt;setSoftKeyRole(QAction::NegativeSoftKey);
+        addAction(m_cancelBtn);
+        connect(m_cancelBtn, SIGNAL(triggered(bool)), this, SLOT(cancelClicked()));
+    #else
+        m_filterBtn = new QPushButton(tr(&quot;&amp;Filter&quot;), this);
+        m_filterBtn-&gt;setDefault(true);
+        connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
+        m_cancelBtn = new QPushButton(tr(&quot;&amp;Cancel&quot;), this);
+        connect(m_cancelBtn, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+
+        QHBoxLayout *btnLayout = new QHBoxLayout;
+        btnLayout-&gt;addWidget(m_filterBtn);
+        btnLayout-&gt;addWidget(m_cancelBtn);
+        pageLayout-&gt;addLayout(btnLayout);
+    #endif
+
+        setLayout(pageLayout);
+    }
+
+    FilterPage::~FilterPage()
+    {
+    }
+
+    void FilterPage::clearFilter()
+    {
+        m_name.clear();
+        m_phone.clear();
+        m_email.clear();
+        m_address.clear();
+        m_nameEdit-&gt;clear();
+        m_phoneEdit-&gt;clear();
+        m_emailEdit-&gt;clear();
+        m_addressEdit-&gt;clear();
+        m_currentFilter = QContactIntersectionFilter();
+        emit showListPage(m_currentFilter);
+    }
+
+    void FilterPage::filterClicked()
+    {
+        m_name = m_nameEdit-&gt;text();
+        m_phone = m_phoneEdit-&gt;text();
+        m_email = m_emailEdit-&gt;text();
+        m_address = m_addressEdit-&gt;text();
+        <span class="comment">// The intersection filter ensures that non-empty field value must be found in the contact.</span>
+        m_currentFilter = QContactIntersectionFilter();
+        if (!m_nameEdit-&gt;text().isEmpty()) {
+            <span class="comment">// Search all fields of the name by building a union filter</span>
+            QContactUnionFilter nameFilter;
+            QStringList nameFields;
+            nameFields &lt;&lt; QContactName::FieldCustomLabel;
+            nameFields &lt;&lt; QContactName::FieldFirstName;
+            nameFields &lt;&lt; QContactName::FieldLastName;
+            nameFields &lt;&lt; QContactName::FieldMiddleName;
+            nameFields &lt;&lt; QContactName::FieldPrefix;
+            nameFields &lt;&lt; QContactName::FieldSuffix;
+            foreach (const QString&amp; fieldName, nameFields) {
+                QContactDetailFilter subFilter;
+                subFilter.setDetailDefinitionName(QContactName::DefinitionName, fieldName);
+                subFilter.setValue(m_nameEdit-&gt;text());
+                subFilter.setMatchFlags(QContactFilter::MatchContains);
+                nameFilter.append(subFilter);
+            }
+            m_currentFilter.append(nameFilter);
+        }
+        if (!m_phoneEdit-&gt;text().isEmpty()) {
+            QContactDetailFilter phoneFilter;
+            phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName,
+                                                QContactPhoneNumber::FieldNumber);
+            phoneFilter.setValue(m_phoneEdit-&gt;text());
+            phoneFilter.setMatchFlags(QContactFilter::MatchContains);
+            m_currentFilter.append(phoneFilter);
+        }
+        if (!m_emailEdit-&gt;text().isEmpty()) {
+            QContactDetailFilter emailFilter;
+            emailFilter.setDetailDefinitionName(QContactEmailAddress::DefinitionName,
+                                                QContactEmailAddress::FieldEmailAddress);
+            emailFilter.setValue(m_emailEdit-&gt;text());
+            emailFilter.setMatchFlags(QContactFilter::MatchContains);
+            m_currentFilter.append(emailFilter);
+        }
+        if (!m_addressEdit-&gt;text().isEmpty()) {
+            <span class="comment">// Search all fields of the address by building a union filter</span>
+            QContactUnionFilter addressFilter;
+            QStringList addressFields;
+            addressFields &lt;&lt; QContactAddress::FieldCountry;
+            addressFields &lt;&lt; QContactAddress::FieldLocality;
+            addressFields &lt;&lt; QContactAddress::FieldPostcode;
+            addressFields &lt;&lt; QContactAddress::FieldPostOfficeBox;
+            addressFields &lt;&lt; QContactAddress::FieldRegion;
+            addressFields &lt;&lt; QContactAddress::FieldStreet;
+            foreach (const QString&amp; fieldName, addressFields) {
+                QContactDetailFilter subFilter;
+                subFilter.setDetailDefinitionName(QContactAddress::DefinitionName, fieldName);
+                subFilter.setValue(m_addressEdit-&gt;text());
+                subFilter.setMatchFlags(QContactFilter::MatchContains);
+                addressFilter.append(subFilter);
+            }
+            m_currentFilter.append(addressFilter);
+        }
+        emit showListPage(m_currentFilter);
+    }
+
+    void FilterPage::cancelClicked()
+    {
+        m_nameEdit-&gt;setText(m_name);
+        m_phoneEdit-&gt;setText(m_phone);
+        m_emailEdit-&gt;setText(m_email);
+        m_addressEdit-&gt;setText(m_address);
+        emit showListPage(m_currentFilter);
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

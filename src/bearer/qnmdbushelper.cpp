@@ -44,7 +44,7 @@
 #include "qnmdbushelper_p.h"
 
 #if !defined(QT_NO_DBUS) && !defined(Q_OS_MAC)
-#include <NetworkManager/NetworkManager.h>
+#include "qnetworkmanagerservice_p.h"
 
 #include <QDBusError>
 #include <QDBusInterface>
@@ -55,6 +55,16 @@
 #include <QDebug>
 
 QTM_BEGIN_NAMESPACE
+
+
+QNmDBusHelper::QNmDBusHelper(QObject * parent)
+        : QObject(parent)
+{
+}
+
+QNmDBusHelper::~QNmDBusHelper()
+{
+}
 
 void QNmDBusHelper::deviceStateChanged(quint32 state)
  {

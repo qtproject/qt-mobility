@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <QtTest/QtTest>
 
 #include <qpaintervideosurface_p.h>
+#include <QtTest/QtTest>
 
 #include <QtGui/qapplication.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
@@ -51,7 +51,7 @@
 #include <QtOpenGL/qglframebufferobject.h>
 #endif
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class tst_QPainterVideoSurface : public QObject
 {
     Q_OBJECT

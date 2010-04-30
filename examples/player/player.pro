@@ -1,10 +1,13 @@
 TEMPLATE = app
 TARGET = player
+QT += network \
+      xml
 
 INCLUDEPATH += ../../src/multimedia
 
 include(../examples.pri)
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 
 HEADERS = \
     player.h \
@@ -16,3 +19,11 @@ SOURCES = main.cpp \
     playercontrols.cpp \
     playlistmodel.cpp \
     videowidget.cpp
+
+symbian {
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData NetworkServices SwEvent
+    HEADERS += mediakeysobserver.h
+    SOURCES += mediakeysobserver.cpp
+    LIBS += -lremconinterfacebase \
+            -lremconcoreapi
+ }

@@ -10,7 +10,8 @@ include(../../../common.pri)
 # Input 
 SOURCES += tst_qserviceinterfacedescriptor.cpp
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

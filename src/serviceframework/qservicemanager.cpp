@@ -51,7 +51,6 @@
 #include <QObject>
 #include <QPluginLoader>
 #include <QFile>
-//#include <QDebug>
 #include <QCoreApplication>
 #include <QDir>
 
@@ -74,21 +73,19 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
             libPath = fi.completeBaseName() + QLatin1String(".qtplugin");
         else
             libPath += QLatin1String(".qtplugin");
-#endif       
-        
+
+        QLibrary lib(libPath);
+        if (QFile::exists(libPath) && lib.load()) {
+            lib.unload();
+            return libPath;
+        }
+#else       
         QLibrary lib(libPath);  
         if (lib.load()) {
             lib.unload();
-#ifdef Q_OS_SYMBIAN
-         QFileInfo fi2(libPath);
-         QString fileName = lib.fileName();
-         fileName.chop(4); // .dll is removed
-         libPath = QDir::toNativeSeparators(fi2.absolutePath()) + QDir::separator() + fileName + QLatin1String(".qtplugin");
-         qDebug() << libPath;
-         return libPath;  
-#endif
             return lib.fileName();
         }
+#endif        
     }
     return QString();
 }
@@ -121,7 +118,7 @@ class QServiceManagerPrivate : public QObject
 public:
     QServiceManager *manager;
     DatabaseManager *dbManager;
-    QServiceManager::Scope scope;
+    QService::Scope scope;
     QServiceManager::Error error;
 
     QServiceManagerPrivate(QServiceManager *parent = 0)
@@ -183,15 +180,15 @@ public:
 private slots:
     void serviceAdded(const QString &service, DatabaseManager::DbScope dbScope)
     {
-        QServiceManager::Scope s = (dbScope == DatabaseManager::SystemScope ?
-                QServiceManager::SystemScope : QServiceManager::UserScope);
+        QService::Scope s = (dbScope == DatabaseManager::SystemScope ?
+                QService::SystemScope : QService::UserScope);
         emit manager->serviceAdded(service, s);
     }
 
     void serviceRemoved(const QString &service, DatabaseManager::DbScope dbScope)
     {
-        QServiceManager::Scope s = (dbScope == DatabaseManager::SystemScope ?
-                QServiceManager::SystemScope : QServiceManager::UserScope);
+        QService::Scope s = (dbScope == DatabaseManager::SystemScope ?
+                QService::SystemScope : QService::UserScope);
         emit manager->serviceRemoved(service, s);
     }
 };
@@ -204,7 +201,7 @@ private slots:
 
     A service is a stand-alone component that can be used by multiple clients.
     Each service implementation must derive from QObject. Clients request a
-    reference to a service via \l loadInterface() or \l getInterface().
+    reference to a service via \l loadInterface() or \l loadLocalTypedInterface().
 
     Services are separate deliveries in the form of plug-ins. New services can be (de)registered
     at any time via \l addService() and \l removeService() respectively. Such an event is
@@ -217,25 +214,6 @@ private slots:
     interface and their implementations please see QServiceInterfaceDescriptor.
 
     \sa QServicePluginInterface, QServiceContext, QAbstractSecuritySession
-*/
-
-/*!
-    \enum QServiceManager::Scope
-    Defines the scope to be used when accessing services. Note that Symbian
-    does not distinguish scopes and therefore UserScope and SystemScope may
-    be used interchangeably.
-
-    \value UserScope When adding and removing services, uses a storage location
-    specific to the current user.
-    When searching for services and interface implementations, first searches in the
-    user-specific location; if the service or interface implementation
-    is not found, searches in the system-wide storage location (if the user has
-    sufficient permissions to do so).
-
-    \value SystemScope When adding and removing services, use a system-wide
-    storage location accessible to all users. When searching
-    for services and interface implementations, search only in the system-wide
-    storage location.
 */
 
 /*!
@@ -256,26 +234,26 @@ private slots:
 */
 
 /*!
-    \fn void QServiceManager::serviceAdded(const QString& serviceName, QServiceManager::Scope scope)
+    \fn void QServiceManager::serviceAdded(const QString& serviceName, QService::Scope scope)
 
     This signal is emited whenever a new service with the given
     \a serviceName has been registered with the service manager.
     \a scope indicates where the service was added.
 
-    If the manager scope is QServiceManager::SystemScope, it will not receive
+    If the manager scope is QService::SystemScope, it will not receive
     notifications about services added in the user scope.
 
     \sa addService()
 */
 
 /*!
-    \fn void QServiceManager::serviceRemoved(const QString& serviceName, QServiceManager::Scope scope)
+    \fn void QServiceManager::serviceRemoved(const QString& serviceName, QService::Scope scope)
 
     This signal is emited whenever a service with the given
     \a serviceName has been deregistered with the service manager.
     \a scope indicates where the service was added.
 
-    If the manager scope is QServiceManager::SystemScope, it will not receive
+    If the manager scope is QService::SystemScope, it will not receive
     notifications about services removed in the user scope.
 
     \sa removeService()
@@ -284,19 +262,19 @@ private slots:
 /*!
     Creates a service manager with the given \a parent.
 
-    The scope will default to QServiceManager::UserScope.
+    The scope will default to QService::UserScope.
 */
 QServiceManager::QServiceManager(QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
-    d->scope = UserScope;
+    d->scope = QService::UserScope;
 }
 
 /*!
     Creates a service manager with the given \a scope and \a parent.
 */
-QServiceManager::QServiceManager(Scope scope, QObject *parent)
+QServiceManager::QServiceManager(QService::Scope scope, QObject *parent)
     : QObject(parent),
       d(new QServiceManagerPrivate(this))
 {
@@ -314,7 +292,7 @@ QServiceManager::~QServiceManager()
 /*!
     Returns the scope used for registering and searching of services.
 */
-QServiceManager::Scope QServiceManager::scope() const
+QService::Scope QServiceManager::scope() const
 {
     return d->scope;
 }
@@ -329,7 +307,7 @@ QStringList QServiceManager::findServices(const QString& interfaceName) const
     d->setError(NoError);
     QStringList services;
     services = d->dbManager->getServiceNames(interfaceName,
-            d->scope == SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
+            d->scope == QService::SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
     d->setError();
     return services;
 }
@@ -341,7 +319,7 @@ QList<QServiceInterfaceDescriptor> QServiceManager::findInterfaces(const QServic
 {
     d->setError(NoError);
     QList<QServiceInterfaceDescriptor> descriptors = d->dbManager->getInterfaces(filter,
-            d->scope == SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
+            d->scope == QService::SystemScope ? DatabaseManager::SystemScope : DatabaseManager::UserScope);
     if (descriptors.isEmpty() && d->dbManager->lastError().code() != DBError::NoError) {
         d->setError();
         return QList<QServiceInterfaceDescriptor>();
@@ -406,14 +384,14 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
         return 0;
     }
 
-    const QStringList serviceCaps = descriptor.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
+    const QStringList serviceCaps = descriptor.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList();
     if ( session && !session->isAllowed(serviceCaps) ) {
         d->setError(ServiceCapabilityDenied);
         return 0;
     }
 
     QString serviceFilePath = qservicemanager_resolveLibraryPath(
-            descriptor.property(QServiceInterfaceDescriptor::Location).toString());
+            descriptor.attribute(QServiceInterfaceDescriptor::Location).toString());
     if (serviceFilePath.isEmpty()) {
         d->setError(InvalidServiceLocation);
         return 0;
@@ -441,7 +419,7 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 }
 
 /*!
-    \fn T* QServiceManager::getInterface(const QString& interfaceName, QServiceContext* context, QAbstractSecuritySession* session)
+    \fn T* QServiceManager::loadLocalTypedInterface(const QString& interfaceName, QServiceContext* context, QAbstractSecuritySession* session)
 
     Loads the service object implementing \a interfaceName,
     as provided by the default service for this interface, using the given
@@ -449,6 +427,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     by the caller of this function. The template class must be derived from QObject.
 
     If \a interfaceName is not a known interface the returned pointer will be null.
+
+    Note that using this function implies that service and client share
+    the implamentation of T which means that service and client become tightly coupled.
+    This may cause issue during later updates as certain changes may require code changes
+    to the service and client.
 
     The caller takes ownership of the returned pointer.
 
@@ -462,13 +445,18 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 
 
 /*!
-    \fn T* QServiceManager::getInterface(const QServiceInterfaceDescriptor& serviceDescriptor, QServiceContext* context, QAbstractSecuritySession* session)
+    \fn T* QServiceManager::loadLocalTypedInterface(const QServiceInterfaceDescriptor& serviceDescriptor, QServiceContext* context, QAbstractSecuritySession* session)
 
     Loads the service object identified by \a serviceDescriptor
     using the given \a context and \a session. \a context and \a session object are owned
     by the caller of this function. The template class must be derived from QObject.
 
     If the \a serviceDescriptor is not valid the returned pointer will be null.
+
+    Note that using this function implies that service and client share
+    the implamentation of T which means that service and client become tightly coupled.
+    This may cause issue during later updates as certain changes may require code changes
+    to the service and client.
 
     The caller takes ownership of the returned pointer.
 
@@ -533,7 +521,7 @@ bool QServiceManager::addService(QIODevice *device)
     }
     const ServiceMetaDataResults data = parser.parseResults();
 
-    DatabaseManager::DbScope scope = d->scope == UserScope ?
+    DatabaseManager::DbScope scope = d->scope == QService::UserScope ?
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
     ServiceMetaDataResults results = parser.parseResults();
     bool result = d->dbManager->registerService(results, scope);
@@ -587,7 +575,7 @@ bool QServiceManager::removeService(const QString& serviceName)
     QSet<QString> pluginPathsSet;
     QList<QServiceInterfaceDescriptor> descriptors = findInterfaces(serviceName);
     for (int i=0; i<descriptors.count(); i++)
-        pluginPathsSet << descriptors[i].property(QServiceInterfaceDescriptor::Location).toString();
+        pluginPathsSet << descriptors[i].attribute(QServiceInterfaceDescriptor::Location).toString();
 
     QList<QString> pluginPaths = pluginPathsSet.toList();
     for (int i=0; i<pluginPaths.count(); i++) {
@@ -601,7 +589,7 @@ bool QServiceManager::removeService(const QString& serviceName)
         delete loader;
     }
 
-    if (!d->dbManager->unregisterService(serviceName, d->scope == UserScope ?
+    if (!d->dbManager->unregisterService(serviceName, d->scope == QService::UserScope ?
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope)) {
         d->setError();
         return false;
@@ -629,7 +617,7 @@ bool QServiceManager::setInterfaceDefault(const QString &service, const QString 
         d->setError(ComponentNotFound);
         return false;
     }
-    DatabaseManager::DbScope scope = d->scope == SystemScope ?
+    DatabaseManager::DbScope scope = d->scope == QService::SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
     if (!d->dbManager->setInterfaceDefault(service, interfaceName, scope)) {
         d->setError();
@@ -654,7 +642,7 @@ bool QServiceManager::setInterfaceDefault(const QString &service, const QString 
 bool QServiceManager::setInterfaceDefault(const QServiceInterfaceDescriptor& descriptor)
 {
     d->setError(NoError);
-    DatabaseManager::DbScope scope = d->scope == SystemScope ?
+    DatabaseManager::DbScope scope = d->scope == QService::SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
     if (!d->dbManager->setInterfaceDefault(descriptor, scope)) {
         d->setError();
@@ -669,7 +657,7 @@ bool QServiceManager::setInterfaceDefault(const QServiceInterfaceDescriptor& des
 QServiceInterfaceDescriptor QServiceManager::interfaceDefault(const QString& interfaceName) const
 {
     d->setError(NoError);
-    DatabaseManager::DbScope scope = d->scope == SystemScope ?
+    DatabaseManager::DbScope scope = d->scope == QService::SystemScope ?
             DatabaseManager::SystemScope : DatabaseManager::UserScope;
     QServiceInterfaceDescriptor info = d->dbManager->interfaceDefault(interfaceName, scope);
     if (d->dbManager->lastError().code() != DBError::NoError) {
@@ -692,9 +680,9 @@ QServiceManager::Error QServiceManager::error() const
 */
 void QServiceManager::connectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString,QServiceManager::Scope))
-            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) {
-        if (d->scope != QServiceManager::SystemScope)
+    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString,QService::Scope))
+            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QService::Scope))) {
+        if (d->scope != QService::SystemScope)
             d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, true);
         d->dbManager->setChangeNotificationsEnabled(DatabaseManager::SystemScope, true);
     }
@@ -705,11 +693,11 @@ void QServiceManager::connectNotify(const char *signal)
 */
 void QServiceManager::disconnectNotify(const char *signal)
 {
-    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString,QServiceManager::Scope))
-            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) {
-        if (receivers(SIGNAL(serviceAdded(QString,QServiceManager::Scope))) == 0
-                && receivers(SIGNAL(serviceRemoved(QString,QServiceManager::Scope))) == 0) {
-            if (d->scope != QServiceManager::SystemScope)
+    if (QLatin1String(signal) == SIGNAL(serviceAdded(QString,QService::Scope))
+            || QLatin1String(signal) == SIGNAL(serviceRemoved(QString,QService::Scope))) {
+        if (receivers(SIGNAL(serviceAdded(QString,QService::Scope))) == 0
+                && receivers(SIGNAL(serviceRemoved(QString,QService::Scope))) == 0) {
+            if (d->scope != QService::SystemScope)
                 d->dbManager->setChangeNotificationsEnabled(DatabaseManager::UserScope, false);
             d->dbManager->setChangeNotificationsEnabled(DatabaseManager::SystemScope, false);
         }

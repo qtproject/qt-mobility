@@ -19,13 +19,11 @@ include(requests/requests.pri)
 PUBLIC_HEADERS += \
     qcontact.h \
     qcontactabstractrequest.h \
-    qcontactaction.h \
-    qcontactactiondescriptor.h \
-    qcontactactionfactory.h \
     qcontactchangeset.h \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
-    qcontactdetaildefinitionfield.h \
+    qcontactdetailfielddefinition.h \
+    qcontactfetchhint.h \
     qcontactfilter.h \
     qcontactid.h \
     qcontactmanager.h \
@@ -40,11 +38,11 @@ PUBLIC_HEADERS += \
 PRIVATE_HEADERS += \
     qcontact_p.h \
     qcontactabstractrequest_p.h \
-    qcontactactiondescriptor_p.h \
     qcontactchangeset_p.h \
     qcontactdetail_p.h \
     qcontactdetaildefinition_p.h \
-    qcontactdetaildefinitionfield_p.h \
+    qcontactdetailfielddefinition_p.h \
+    qcontactfetchhint_p.h \
     qcontactfilter_p.h \
     qcontactid_p.h \
     qcontactmanager_p.h \
@@ -54,13 +52,11 @@ PRIVATE_HEADERS += \
 SOURCES += \
     qcontact.cpp \
     qcontactabstractrequest.cpp \
-    qcontactaction.cpp \
-    qcontactactiondescriptor.cpp \
-    qcontactactionfactory.cpp \
     qcontactchangeset.cpp \
     qcontactdetail.cpp \
     qcontactdetaildefinition.cpp \
-    qcontactdetaildefinitionfield.cpp \
+    qcontactdetailfielddefinition.cpp \
+    qcontactfetchhint.cpp \
     qcontactfilter.cpp \
     qcontactid.cpp \
     qcontactmanager_p.cpp \
@@ -74,25 +70,44 @@ HEADERS += \
     $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
 
+maemo5 {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=maemo5
+}
+
+maemo6 {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=tracker
+}
+
+maemo5|maemo6 {
+    CONFIG += create_pc create_prl
+    QMAKE_PKGCONFIG_DESCRIPTION = Qt Mobility - Contacts API
+    pkgconfig.path = $$QT_MOBILITY_LIB/pkgconfig
+    pkgconfig.files = QtContacts.pc
+
+    INSTALLS += pkgconfig
+}
+
+wince* {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=wince
+}
+
 symbian {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=symbian
+
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC7A
+
+    LIBS += -lefsrv
 
     ### Contacts
     # Main library
     CONTACTS_DEPLOYMENT.sources = QtContacts.dll
     CONTACTS_DEPLOYMENT.path = \sys\bin
     DEPLOYMENT += CONTACTS_DEPLOYMENT
-
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-
-    #export headers into EPOCROOT
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
 }
-include(../../features/deploy.pri)
 
+!isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_DEFAULT_ENGINE
+
+CONFIG += app
+include(../../features/deploy.pri)

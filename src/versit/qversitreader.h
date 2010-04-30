@@ -47,7 +47,10 @@
 
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
+class QTextCodec;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,30 +59,60 @@ class QVersitReaderPrivate;
 // reads a QVersitDocument from i/o device
 class Q_VERSIT_EXPORT QVersitReader : public QObject
 {
-    Q_OBJECT  
-    
+    Q_OBJECT
 public:
+    enum Error {
+        NoError = 0,
+        UnspecifiedError,
+        IOError,
+        OutOfMemoryError,
+        NotReadyError,
+        ParseError
+    };
+
+    enum State {
+        InactiveState = 0,
+        ActiveState,
+        CanceledState,
+        FinishedState
+    };
+
     QVersitReader();
+    QVersitReader(QIODevice* inputDevice);
+    QVersitReader(const QByteArray& inputData);
     ~QVersitReader();
 
     // input:
-    void setDevice(QIODevice* device);
+    void setDevice(QIODevice* inputDevice);
     QIODevice* device() const;
+    void setData(const QByteArray& inputData);
 
-    // reading:
-    bool startReading();
-    bool readAll();
+    void setDefaultCodec(QTextCodec* codec);
+    QTextCodec* defaultCodec() const;
 
     // output:
-    QList<QVersitDocument> result() const;
+    QList<QVersitDocument> results() const;
 
-signals:
-    void readingDone();
-    
+    State state() const;
+    Error error() const;
+
+    // reading:
+public Q_SLOTS:
+    bool startReading();
+    void cancel();
+public:
+    Q_INVOKABLE bool waitForFinished(int msec = -1);
+
+Q_SIGNALS:
+    void stateChanged(QVersitReader::State state);
+    void resultsAvailable();
+
 private: // data
-    QVersitReaderPrivate* d;   
+    QVersitReaderPrivate* d;
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QVersitReader::State))
 
 #endif // QVERSITREADER_H

@@ -55,6 +55,12 @@ or respond to an existing message.
 
 \tableofcontents
 
+\section1 Namespace
+
+The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility API's into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
 
 \section1 Overview
 
@@ -62,7 +68,7 @@ The messaging library provides a set of APIs for accessing messaging data.
 Interfaces are provided to retrieve and query messages, folders and
 accounts, also interfaces to create, modify, and store messages are
 provided. A unified interface for manipulation and storage of SMS, MMS,
-Email and XMPP messages is provided. Handling of internet media (MIME)
+MIME Email and TNEF Email messages is provided. Handling of
 messages that have only been partially retrieved is supported.
 
 An API to access messaging services to send messages and retrieve message
@@ -129,7 +135,7 @@ selecting a useful view of data. This reduces the burden on the client
 of the library for managing the messaging data, as well as allowing
 better use of the underlying storage mechanism.
 
-Sorting is accomplished by providing a ordering object, specifying the sort
+Sorting is accomplished by providing a sorting object, specifying the sort
 order, and the message property upon which to order.
 
 Filtering is accomplished by providing a filtering condition, specifying a
@@ -143,13 +149,13 @@ Classes to assist with sorting and filtering messages:
 
 \table
 \header \o Class \o Description
-\row \o QMessageStore \o Represents the main interface for storage and retrieval of messages, folders and accounts from the messaging store.
+\row \o QMessageManager \o Represents the main interface for storage and retrieval of messages, folders and accounts from the messaging store.
 \row \o QMessageFilter \o Defines the parameters used for querying a subset of all available messages from the messaging store.
-\row \o QMessageOrdering \o Defines the parameters used for ordering messages queried from the messaging store.
+\row \o QMessageSortOrder \o Defines the parameters used for sorting messages queried from the messaging store.
 \row \o QMessageFolderFilter \o Defines the parameters used for querying a subset of all available message folders from the messaging store.
-\row \o QMessageFolderOrdering \o Defines the parameters used for ordering message folders queried from the messaging store.
+\row \o QMessageFolderSortOrder \o Defines the parameters used for sorting message folders queried from the messaging store.
 \row \o QMessageAccountFilter \o Defines the parameters used for querying a subset of all available accounts from the messaging store.
-\row \o QMessageAccountOrdering \o Defines the parameters used for ordering accounts queried from the messaging store.
+\row \o QMessageAccountSortOrder \o Defines the parameters used for sorting accounts queried from the messaging store.
 \endtable
 
 \section2   Using the Ordering Functions
@@ -158,8 +164,8 @@ An example of the use of Ordering functions can be found in the Send Message
 example.
 
 \code
-    QMessageIdList ids = QMessageStore::instance()->queryMessages(QMessageFilter(),
-        QMessageOrdering::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);
+    QMessageIdList ids = QMessageManager().queryMessages(QMessageFilter(),
+        QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder), 100, 0);
 \endcode
 
 
@@ -190,16 +196,17 @@ In this way we can build more complex conditions.
 
 \section1 Messaging Services
 
-The library provides the QMessageServiceAction class, which provides an
+The library provides the QMessageService class, which provides an
 interface to communicate with the system's native messaging services,
 including sending messages, retrieving message data, and composing or
 showing a message using a native application.
 
 Service actions communciate their operational status by emitting signals.
 
-Functions outside the QMessageServiceAction class should not invoke
-network activity. That is only QMessageServiceAction functions should
-be responsible for initiating network activity.
+Functions outside the QMessageService class should not invoke network activity. 
+That is, only QMessageService functions should be responsible for initiating 
+network activity (Note: this is not true for the Windows desktop and mobile 
+platforms, where network activity can occur outside the client's control).
 
 \section1 Concurrent Access to Messaging Data
 
@@ -211,9 +218,26 @@ concurrent access, however it does not give any guarantees as to
 performance of messaging data access if accessed concurrently by
 multiple clients.
 
+A single client may access the messaging data from multiple threads, but 
+only one thread may access the data concurrently.
+
 \section1 Abstraction of Messaging Data Storage Mechanism
 
 The library abstracts the storage method used to store messaging data.
+
+\section1 Examples
+
+\section2 Keep In Touch
+
+The \l {keepintouch}{Keep In Touch} example shows how to extract useful
+information from the messages stored by the system.
+
+
+\section2 Service Actions
+
+The \l {serviceactions}{Service Actions} example is a program to demonstrate
+how to compose, send, show, query and retrieve messages, and also react to
+message store events using the Qt Mobility Messaging API.
 
 */
 

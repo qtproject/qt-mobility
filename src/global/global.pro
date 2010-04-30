@@ -1,4 +1,4 @@
-#for now we don't actually have anything to build
+#for now we do not actually have anything to build
 #just ensure installation of public headers
 TEMPLATE = subdirs
 
@@ -10,14 +10,16 @@ headers.path = $$QT_MOBILITY_INCLUDE
 INSTALLS+= headers
 
 symbian {
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
+    path=$$MW_LAYER_PUBLIC_EXPORT_PATH("")
 
-    #export headers into EPOCROOT
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
+    exportPath=$$EPOCROOT"."$$dirname(path)
+    nativePath=$$replace(exportPath, /,\)
+    exists($$nativePath) {
+    } else {
+        system($$QMAKE_MKDIR $$nativePath)
+    }
+
+    for(header, headers.files) {
+        BLD_INF_RULES.prj_exports += "$$header $$MW_LAYER_PUBLIC_EXPORT_PATH($$basename(header))"
     }
 }
-
-

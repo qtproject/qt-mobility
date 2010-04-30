@@ -41,6 +41,8 @@
 #include "qmessagecontentcontainer.h"
 #ifdef Q_OS_SYMBIAN
 #include "qmessagecontentcontainer_symbian_p.h"
+#elif defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "qmessagecontentcontainer_maemo_p.h"
 #else
 #include "qmessagecontentcontainer_p.h"
 #endif
@@ -49,7 +51,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageContentContainer
-    \preliminary
 
     \brief The QMessageContentContainer class provides an interface for internet media (MIME) 
     and Transport Neutral Encapsulation Format (TNEF) content that is possibly only 
@@ -189,14 +190,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageContentContainer::writeTextContentTo(QTextStream& out) const
+    \fn QMessageContentContainer::writeTextContent(QTextStream& out) const
     
     For a non-multipart container, writes the content as returned by textContent() 
     to the stream \a out; otherwise does nothing.
 */
 
 /*!
-    \fn QMessageContentContainer::writeContentTo(QDataStream& out) const
+    \fn QMessageContentContainer::writeContent(QDataStream& out) const
     
     For a non-multipart container, writes the content as returned by content() 
     to the stream \a out; otherwise does nothing.

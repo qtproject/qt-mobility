@@ -44,6 +44,7 @@
 
 #include "qmobilityglobal.h"
 
+#include "qservice.h"
 #include "qserviceinterfacedescriptor.h"
 #include "qservicefilter.h"
 
@@ -61,16 +62,12 @@ class QServiceContext;
 class QAbstractSecuritySession;
 class QServiceFilter;
 class QServiceManagerPrivate;
-class Q_SFW_EXPORT QServiceManager : public QObject
+class Q_SERVICEFW_EXPORT QServiceManager : public QObject
 {
     Q_OBJECT
 public:
-    enum Scope {
-        UserScope,
-        SystemScope
-    };
 
-    enum Error {
+   enum Error {
         NoError,
         StorageAccessError,
         InvalidServiceLocation,
@@ -85,10 +82,10 @@ public:
     };
 
     explicit QServiceManager(QObject *parent = 0);
-    explicit QServiceManager(Scope scope, QObject *parent = 0);
+    explicit QServiceManager(QService::Scope scope, QObject *parent = 0);
     ~QServiceManager();
 
-    Scope scope() const;
+    QService::Scope scope() const;
 
     QStringList findServices(const QString& interfaceName = QString()) const;
     QList<QServiceInterfaceDescriptor> findInterfaces(const QServiceFilter& filter = QServiceFilter()) const;
@@ -98,13 +95,13 @@ public:
     QObject* loadInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context = 0, QAbstractSecuritySession* session = 0);
 
     template <class T>
-    T* getInterface(const QString& interfaceName, QServiceContext* context = 0, QAbstractSecuritySession* session = 0)
+    T* loadLocalTypedInterface(const QString& interfaceName, QServiceContext* context = 0, QAbstractSecuritySession* session = 0)
     {
-        return getInterface<T>(interfaceDefault(interfaceName), context, session);
+        return loadLocalTypedInterface<T>(interfaceDefault(interfaceName), context, session);
     }
 
     template <class T>
-    T* getInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
+    T* loadLocalTypedInterface(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context = 0, QAbstractSecuritySession* session = 0)
     {
         T* instance = 0;
         if (descriptor.isValid()) {
@@ -145,8 +142,8 @@ protected:
     void disconnectNotify(const char *signal);
 
 Q_SIGNALS:
-    void serviceAdded(const QString& serviceName, QServiceManager::Scope scope);
-    void serviceRemoved(const QString& serviceName, QServiceManager::Scope scope);
+    void serviceAdded(const QString& serviceName, QService::Scope scope);
+    void serviceRemoved(const QString& serviceName, QService::Scope scope);
 
 private:
     friend class QServiceManagerPrivate;

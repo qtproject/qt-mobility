@@ -39,17 +39,14 @@
 **
 ****************************************************************************/
 
-#include <qmediaservice.h>
-#include <qmediaservice_p.h>
-
-#include <qaudiodevicecontrol.h>
-#include <qvideodevicecontrol.h>
+#include "qmediaservice.h"
+#include "qmediaservice_p.h"
 
 #include <QtCore/qtimer.h>
 
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -86,14 +83,6 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QMediaService::MediaEndpoint
-
-    Enumerates the possible end points a media service may have.
-
-    \value AudioDevice An audio device for either input or output.
-*/
-
-/*!
     Construct a media service with the given \a parent. This class is meant as a
     base class for Multimedia services so this constructor is protected.
 */
@@ -125,106 +114,6 @@ QMediaService::~QMediaService()
 }
 
 /*!
-    Return true if \a endpointType is available.
-*/
-
-bool QMediaService::isEndpointSupported(QMediaService::MediaEndpoint endpointType)
-{
-    Q_UNUSED(endpointType);
-
-    return control(QAudioDeviceControl_iid) != 0;
-}
-
-/*!
-    Returns the active endpoint for \a endpointType.
-*/
-
-QString QMediaService::activeEndpoint(QMediaService::MediaEndpoint endpointType)
-{
-    Q_UNUSED(endpointType);
-
-    QAudioDeviceControl *audioDeviceControl =
-                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
-
-    if (audioDeviceControl == 0)
-        return QString();
-
-    return audioDeviceControl->name(audioDeviceControl->selectedDevice());
-}
-
-/*!
-    Returns true if set of the active endpoint for \a endpointType to \a endpoint succeeds.
-*/
-
-bool QMediaService::setActiveEndpoint(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-    Q_UNUSED(endpointType);
-
-    QAudioDeviceControl *audioDeviceControl =
-                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
-
-    if (audioDeviceControl == 0) {
-        return false;
-    } else if (endpoint.isEmpty()) {
-        audioDeviceControl->setSelectedDevice(-1);
-
-        return true;
-    } else {
-        for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
-            if (endpoint == audioDeviceControl->name(i)) {
-                audioDeviceControl->setSelectedDevice(i);
-
-                return true;
-            }
-        }
-        return false;
-    }
-}
-
-/*!
-    Returns the description of the \a endpoint for the \a endpointType.
-*/
-
-QString QMediaService::endpointDescription(QMediaService::MediaEndpoint endpointType, const QString& endpoint)
-{
-    Q_UNUSED(endpointType);
-
-    QAudioDeviceControl *audioDeviceControl =
-                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
-
-    if (audioDeviceControl == 0)
-        return QString();
-
-    for (int i = audioDeviceControl->deviceCount() - 1; i >= 0; --i) {
-        if (endpoint == audioDeviceControl->name(i))
-            return audioDeviceControl->description(i);
-    }
-
-    return QString();
-}
-
-/*!
-    Returns a list of endpoints available for the \a endpointType.
-*/
-
-QStringList QMediaService::supportedEndpoints(QMediaService::MediaEndpoint endpointType) const
-{
-    Q_UNUSED(endpointType);
-
-    QAudioDeviceControl *audioDeviceControl =
-                            qobject_cast<QAudioDeviceControl*>(control(QAudioDeviceControl_iid));
-
-    QStringList endpoints;
-
-    if (audioDeviceControl != 0) {
-        for (int i = 0 ; i<audioDeviceControl->deviceCount(); ++i)
-            endpoints << audioDeviceControl->name(i);
-    }
-
-    return endpoints;
-}
-
-/*!
     \fn QMediaService::control(const char *interface) const
 
     Returns a pointer to the media control implementing \a interface.
@@ -240,20 +129,7 @@ QStringList QMediaService::supportedEndpoints(QMediaService::MediaEndpoint endpo
     If the service does not implment the control a null pointer is returned instead.
 */
 
-
-/*!
-    \fn void QMediaService::supportedEndpointsChanged()
-
-    This signal is emitted when there is a change in the availability of devices.
-*/
-
-/*!
-    \fn void QMediaService::activeEndpointChanged(QMediaService::MediaEndpoint endpointType, const QString &endpoint)
-
-    This signal emitted when the active endpoint of type \a endpointType has been changed to \a endpoint.
-*/
-
 #include "moc_qmediaservice.cpp"
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

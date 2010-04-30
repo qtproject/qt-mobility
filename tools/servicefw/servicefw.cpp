@@ -42,8 +42,11 @@
 #include <stdio.h>
 
 #include <QtCore>
-
+#include <QTextStream>
 #include <qservicemanager.h>
+#include <QString>
+
+QT_USE_NAMESPACE
 
 QTM_USE_NAMESPACE
 
@@ -230,7 +233,7 @@ bool CommandProcessor::setOptions(const QStringList &options)
     QMutableListIterator<QString> i(opts);
     while (i.hasNext()) {
         if (i.next() == "--system") {
-            serviceManager = new QServiceManager(QServiceManager::SystemScope, this);
+            serviceManager = new QServiceManager(QService::SystemScope, this);
             i.remove();
         }
     }
@@ -264,8 +267,8 @@ void CommandProcessor::showAllEntries()
 void CommandProcessor::showInterfaceInfo(const QServiceFilter &filter)
 {
     QString interface = filter.interfaceName();
-    if (filter.interfaceMajorVersion() >= 0 && filter.interfaceMinorVersion() >= 0) {
-        interface += QString(" %1.%2").arg(filter.interfaceMajorVersion()).arg(filter.interfaceMinorVersion());
+    if (filter.majorVersion() >= 0 && filter.minorVersion() >= 0) {
+        interface += QString(" %1.%2").arg(filter.majorVersion()).arg(filter.minorVersion());
         if (filter.versionMatchRule() == QServiceFilter::MinimumVersionMatch)
             interface += '+';
     }
@@ -289,15 +292,15 @@ void CommandProcessor::showServiceInfo(const QString &service)
         return;
     }
 
-    QString description = descriptors[0].property(
+    QString description = descriptors[0].attribute(
             QServiceInterfaceDescriptor::ServiceDescription).toString();
-    QStringList capabilities = descriptors[0].property(
+    QStringList capabilities = descriptors[0].attribute(
             QServiceInterfaceDescriptor::Capabilities).toStringList();
 
     *stdoutStream << service << ":\n";
     if (!description.isEmpty())
         *stdoutStream << '\t' << description << '\n';
-    *stdoutStream << "\tLibrary: " << descriptors[0].property(
+    *stdoutStream << "\tLibrary: " << descriptors[0].attribute(
                     QServiceInterfaceDescriptor::Location).toString() << '\n'
             << "\tCapabilities: " << (capabilities.isEmpty() ? "" : capabilities.join(", ")) << '\n'
             << "\tImplements:\n";

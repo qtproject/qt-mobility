@@ -47,10 +47,10 @@
 #include "qgstreamervideooutputcontrol.h"
 
 #include <gst/gst.h>
-QTM_BEGIN_NAMESPACE
-class QAudioDeviceControl;
+QT_BEGIN_NAMESPACE
+class QAudioEndpointSelector;
 class QVideoDeviceControl;
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 class QGstreamerCaptureSession;
 class QGstreamerCameraControl;
@@ -62,6 +62,7 @@ class QGstreamerVideoWidgetControl;
 class QGstreamerElementFactory;
 class QGstreamerCaptureMetaDataControl;
 class QGstreamerImageCaptureControl;
+class QGstreamerV4L2Input;
 
 class QGstreamerCaptureService : public QMediaService
 {
@@ -74,16 +75,16 @@ public:
     QMediaControl *control(const char *name) const;
 
 private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);
+    void videoOutputChanged(QVideoOutputControl::Output output);    
 
 private:
     void setAudioPreview(GstElement*);
 
     QGstreamerCaptureSession *m_captureSession;
-    QGstreamerCameraControl *m_cameraControl;
+    QGstreamerV4L2Input *m_videoInput;
     QGstreamerCaptureMetaDataControl *m_metaDataControl;
 
-    QAudioDeviceControl *m_audioInputDevice;
+    QAudioEndpointSelector *m_audioInputEndpointSelector;
     QVideoDeviceControl *m_videoInputDevice;
 
     QGstreamerVideoOutputControl *m_videoOutput;
@@ -93,7 +94,6 @@ private:
     QGstreamerElementFactory *m_videoWindowFactory;
     QGstreamerVideoWidgetControl *m_videoWidgetControl;
     QGstreamerElementFactory *m_videoWidgetFactory;
-    QGstreamerImageCaptureControl *m_imageCaptureControl;
 };
 
 #endif // QGSTREAMERCAPTURESERVICE_H

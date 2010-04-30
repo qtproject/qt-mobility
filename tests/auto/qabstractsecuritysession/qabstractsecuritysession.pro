@@ -11,7 +11,8 @@ HEADERS += ../qsfwtestutil.h
 SOURCES += tst_qabstractsecuritysession.cpp \
            ../qsfwtestutil.cpp
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian|wince* {
     

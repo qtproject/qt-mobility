@@ -41,11 +41,11 @@
 #ifndef QMESSAGEFILTERPRIVATE_H
 #define QMESSAGEFILTERPRIVATE_H
 #include "qmessagefilter.h"
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include <qvariant.h>
 #endif
 #if defined(Q_OS_WIN)
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #include "winhelpers_p.h"
 #include <qvariant.h>
 #include <qset.h>
@@ -107,9 +107,9 @@ public:
     ~QMessageFilterPrivate();
 
     QMessageFilter *q_ptr;
-    QMessageDataComparator::Options _options;
+    QMessageDataComparator::MatchFlags _matchFlags;
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     typedef QList<QMessageFilter> SortedMessageFilterList;
     
     bool filter(const QMessage &message) const;
@@ -121,7 +121,7 @@ public:
     static bool lessThan(const QMessageFilter filter1, const QMessageFilter filter2); 
     static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
 
-    enum Field {None = 0, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, Type, StandardFolder, TimeStamp, ReceptionTimeStamp, Sender, Recipients, Subject, Status, Priority, Size};
+    enum Field {None = 0, ParentAccountIdFilter, ParentFolderIdFilter, Id, ParentFolderId, AncestorFolderIds, ParentAccountId, Type, StandardFolder, TimeStamp, ReceptionTimeStamp, Sender, Recipients, Subject, Status, Priority, Size};
     enum Comparator {Equality = 0, Relation, Inclusion};
 
     bool _valid;
@@ -130,6 +130,8 @@ public:
 
     QMessageIdList _ids;
     QVariant _value;
+    QMessageAccountFilter *_accountFilter;
+    QMessageFolderFilter *_folderFilter;
     QMessageFilterPrivate::Field _field;
 
     Comparator _comparatorType;
@@ -175,12 +177,12 @@ public:
     static QMessageFilter from(QMessageFilterPrivate::Field field, const QVariant &value, QMessageDataComparator::InclusionComparator cmp);
     static QMessageFilterPrivate* implementation(const QMessageFilter &filter);
 
-    static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiStorePtr &store);
-    static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageStore::ErrorCode *lastError, const MapiSessionPtr &session);
+    static MapiFolderIterator folderIterator(const QMessageFilter &filter, QMessageManager::Error *error, const MapiStorePtr &store);
+    static MapiStoreIterator storeIterator(const QMessageFilter &filter, QMessageManager::Error *error, const MapiSessionPtr &session);
     static QList<QMessageFilter> subfilters(const QMessageFilter &filter);
 
-    static QMessageFilter preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, const QMessageFilter &filter);
-    static bool preprocess(QMessageStore::ErrorCode *lastError, MapiSessionPtr session, QMessageFilter *filter);
+    static QMessageFilter preprocess(QMessageManager::Error *error, MapiSessionPtr session, const QMessageFilter &filter);
+    static bool preprocess(QMessageManager::Error *error, MapiSessionPtr session, QMessageFilter *filter);
     static bool isNonMatching(const QMessageFilter &filter); // Possibly should be in public QMessageFilter API
     static bool matchesMessageSimple(const QMessageFilter &filter, const QMessage &message);
     static bool matchesMessage(const QMessageFilter &filter, const QMessage &message, MapiStore *store);

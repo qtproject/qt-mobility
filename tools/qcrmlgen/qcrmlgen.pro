@@ -3,16 +3,17 @@ TARGET=qcrmlgen
 CONFIG += core gui
 
 INCLUDEPATH += ../../src/publishsubscribe
-DEPENDPATH += ../../src/publishsubscribe
+INCLUDEPATH += ../../src/publishsubscribe/psmapperserver_symbian
 
 HEADERS = qcrmlgen.h \
-          qcrmlparser_p.h
+          ../../src/publishsubscribe/psmapperserver_symbian/qcrmlparser_p.h
 
 SOURCES=\
     main.cpp \
     qcrmlgen.cpp \
-    qcrmlparser.cpp
+    ../../src/publishsubscribe/psmapperserver_symbian/qcrmlparser.cpp
 
 include(../../common.pri)
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe
 include(../../features/deploy.pri)

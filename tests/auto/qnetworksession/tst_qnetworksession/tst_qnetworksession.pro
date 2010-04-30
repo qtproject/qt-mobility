@@ -8,7 +8,8 @@ QT = core network
 INCLUDEPATH += ../../../../src/bearer
 
 include(../../../../common.pri)
-qtAddLibrary(QtBearer)
+CONFIG += mobility
+MOBILITY = bearer
 
 wince* {
     LACKEY.sources = $$OUTPUT_DIR/build/tests/bin/qnetworksessionlackey.exe
@@ -17,5 +18,11 @@ wince* {
 }
 
 symbian {
-    TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData
+    TARGET.CAPABILITY = NetworkServices NetworkControl ReadUserData PowerMgmt
+}
+
+maemo6|maemo5 {
+    CONFIG += link_pkgconfig
+
+    PKGCONFIG += conninet
 }

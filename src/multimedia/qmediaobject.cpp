@@ -41,13 +41,13 @@
 
 #include <QtCore/qmetaobject.h>
 
-#include <qmediaobject_p.h>
+#include "qmediaobject_p.h"
 
-#include <qmediaservice.h>
-#include <qmetadatacontrol.h>
+#include "qmediaservice.h"
+#include "qmetadatacontrol.h"
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 void QMediaObjectPrivate::_q_notify()
 {
@@ -93,6 +93,24 @@ QMediaObject::~QMediaObject()
 }
 
 /*!
+    Returns the service availability error state.
+*/
+
+QtMediaServices::AvailabilityError QMediaObject::availabilityError() const
+{
+    return QtMediaServices::ServiceMissingError;
+}
+
+/*!
+    Returns true if the service is available for use.
+*/
+
+bool QMediaObject::isAvailable() const
+{
+    return false;
+}
+
+/*!
     Returns the media service that provides the functionality of a multimedia object.
 */
 
@@ -123,6 +141,14 @@ void QMediaObject::setNotifyInterval(int milliSeconds)
 void QMediaObject::bind(QObject*)
 {
 }
+
+/*!
+  \internal
+*/
+void QMediaObject::unbind(QObject*)
+{
+}
+
 
 /*!
     Constructs a media object which uses the functionality provided by a media \a service.
@@ -279,7 +305,7 @@ bool QMediaObject::isMetaDataWritable() const
 /*!
     Returns the value associated with a meta-data \a key.
 */
-QVariant QMediaObject::metaData(QtMedia::MetaData key) const
+QVariant QMediaObject::metaData(QtMediaServices::MetaData key) const
 {
     Q_D(const QMediaObject);
 
@@ -291,7 +317,7 @@ QVariant QMediaObject::metaData(QtMedia::MetaData key) const
 /*!
     Sets a \a value for a meta-data \a key.
 */
-void QMediaObject::setMetaData(QtMedia::MetaData key, const QVariant &value)
+void QMediaObject::setMetaData(QtMediaServices::MetaData key, const QVariant &value)
 {
     Q_D(QMediaObject);
 
@@ -302,13 +328,13 @@ void QMediaObject::setMetaData(QtMedia::MetaData key, const QVariant &value)
 /*!
     Returns a list of keys there is meta-data available for.
 */
-QList<QtMedia::MetaData> QMediaObject::availableMetaData() const
+QList<QtMediaServices::MetaData> QMediaObject::availableMetaData() const
 {
     Q_D(const QMediaObject);
 
     return d->metaDataControl
             ? d->metaDataControl->availableMetaData()
-            : QList<QtMedia::MetaData>();
+            : QList<QtMediaServices::MetaData>();
 }
 
 /*!
@@ -379,7 +405,13 @@ void QMediaObject::setupMetaData()
     }
 }
 
+/*!
+    \fn QMediaObject::availabilityChanged(bool available)
+
+    Signal emitted when the availability state has changed to \a available
+*/
+
 
 #include "moc_qmediaobject.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

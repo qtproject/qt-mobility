@@ -144,15 +144,15 @@ void tst_DatabaseManager::getInterfaces()
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QCOMPARE(descriptors.count(), 5);
     QVERIFY(compareDescriptor(descriptors[0], iface, "LuthorCorp", 1,2));
-    QCOMPARE(descriptors[0].inSystemScope(), false);
+    QCOMPARE(descriptors[0].scope(), QService::UserScope);
     QVERIFY(compareDescriptor(descriptors[1], iface, "Primatech", 1, 4));
-    QCOMPARE(descriptors[1].inSystemScope(), false);
+    QCOMPARE(descriptors[1].scope(), QService::UserScope);
     QVERIFY(compareDescriptor(descriptors[2], iface, "Primatech", 1, 2));
-    QCOMPARE(descriptors[2].inSystemScope(), false);
+    QCOMPARE(descriptors[2].scope(), QService::UserScope);
     QVERIFY(compareDescriptor(descriptors[3], iface, "OMNI", 1, 1));
-    QCOMPARE(descriptors[3].inSystemScope(), true);
+    QCOMPARE(descriptors[3].scope(), QService::SystemScope);
     QVERIFY(compareDescriptor(descriptors[4], iface, "WayneEnt", 2, 0));
-    QCOMPARE(descriptors[4].inSystemScope(), true);
+    QCOMPARE(descriptors[4].scope(), QService::SystemScope);
 
     //check that we can get descriptors for a service spread
     //over the user and system databases
@@ -163,40 +163,40 @@ void tst_DatabaseManager::getInterfaces()
 
     QStringList capabilities;
     QVERIFY(compareDescriptor(descriptors[0], "com.dharma.electro.discharge", "DharmaInitiative", 4, 0, capabilities, "C:/island/swan.dll"));
-    QCOMPARE(descriptors[0].inSystemScope(), false);
+    QCOMPARE(descriptors[0].scope(), QService::UserScope);
     QVERIFY(compareDescriptor(descriptors[1],  "com.dharma.electro.discharge","DharmaInitiative", 8, 0, capabilities, "C:/island/pearl.dll"));
-    QCOMPARE(descriptors[1].inSystemScope(), false);
+    QCOMPARE(descriptors[1].scope(), QService::UserScope);
     QVERIFY(compareDescriptor(descriptors[2], "com.dharma.electro.discharge", "DharmaInitiative", 15, 0, capabilities, "C:/island/flame.dll"));
-    QCOMPARE(descriptors[2].inSystemScope(), false);
+    QCOMPARE(descriptors[2].scope(), QService::UserScope);
     QVERIFY(compareDescriptor(descriptors[3], "com.dharma.radio", "DharmaInitiative", 8, 15, capabilities, "C:/island/flame.dll"));
-    QCOMPARE(descriptors[3].inSystemScope(), false);
+    QCOMPARE(descriptors[3].scope(), QService::UserScope);
     QVERIFY(compareDescriptor(descriptors[4], "com.dharma.electro.discharge", "DharmaInitiative", 16, 0, capabilities, "C:/island/flame.dll"));
-    QCOMPARE(descriptors[4].inSystemScope(), false);
+    QCOMPARE(descriptors[4].scope(), QService::UserScope);
     QVERIFY(compareDescriptor(descriptors[5], "com.dharma.electro.discharge", "DharmaInitiative", 23, 0, capabilities, "C:/island/hydra.dll"));
-    QCOMPARE(descriptors[5].inSystemScope(), true);
+    QCOMPARE(descriptors[5].scope(), QService::SystemScope);
     QVERIFY(compareDescriptor(descriptors[6], "com.dharma.electro.discharge", "DharmaInitiative", 42, 0, capabilities, "C:/island/hydra.dll"));
-    QCOMPARE(descriptors[6].inSystemScope(), true);
+    QCOMPARE(descriptors[6].scope(), QService::SystemScope);
     QVERIFY(compareDescriptor(descriptors[7], "com.dharma.cage", "DharmaInitiative", 3, 16, capabilities, "C:/island/hydra.dll"));
-    QCOMPARE(descriptors[7].inSystemScope(), true);
+    QCOMPARE(descriptors[7].scope(), QService::SystemScope);
     //note; the following system interface implementation overlaps with an interface implementation already provided in the user database
     QVERIFY(compareDescriptor(descriptors[8], "com.dharma.electro.discharge", "DharmaInitiative", 4, 0, capabilities, "C:/island/orchid.dll"));
-    QCOMPARE(descriptors[8].inSystemScope(), true);
+    QCOMPARE(descriptors[8].scope(), QService::SystemScope);
     QVERIFY(compareDescriptor(descriptors[9], "com.dharma.wheel", "DharmaInitiative", 1, 0, capabilities, "C:/island/orchid.dll"));
-    QCOMPARE(descriptors[9].inSystemScope(), true);
+    QCOMPARE(descriptors[9].scope(), QService::SystemScope);
 
     //do a system database only search
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::SystemScope);
     QCOMPARE(descriptors.count(), 5);
     QVERIFY(compareDescriptor(descriptors[0], "com.dharma.electro.discharge", "DharmaInitiative", 23, 0, capabilities, "C:/island/hydra.dll"));
-    QCOMPARE(descriptors[0].inSystemScope(), true);
+    QCOMPARE(descriptors[0].scope(), QService::SystemScope);
     QVERIFY(compareDescriptor(descriptors[1], "com.dharma.electro.discharge", "DharmaInitiative", 42, 0, capabilities, "C:/island/hydra.dll"));
-    QCOMPARE(descriptors[1].inSystemScope(), true);
+    QCOMPARE(descriptors[1].scope(), QService::SystemScope);
     QVERIFY(compareDescriptor(descriptors[2], "com.dharma.cage", "DharmaInitiative", 3, 16, capabilities, "C:/island/hydra.dll"));
-    QCOMPARE(descriptors[2].inSystemScope(), true);
+    QCOMPARE(descriptors[2].scope(), QService::SystemScope);
     QVERIFY(compareDescriptor(descriptors[3], "com.dharma.electro.discharge", "DharmaInitiative", 4, 0, capabilities, "C:/island/orchid.dll"));
-    QCOMPARE(descriptors[3].inSystemScope(), true);
+    QCOMPARE(descriptors[3].scope(), QService::SystemScope);
     QVERIFY(compareDescriptor(descriptors[4], "com.dharma.wheel", "DharmaInitiative", 1, 0, capabilities, "C:/island/orchid.dll"));
-    QCOMPARE(descriptors[4].inSystemScope(), true);
+    QCOMPARE(descriptors[4].scope(), QService::SystemScope);
 
     //search for a non-existent interface
     filter.setServiceName("");
@@ -252,12 +252,12 @@ void tst_DatabaseManager::defaultService()
     descriptor = m_dbm->interfaceDefault("com.omni.device.accelerometer",
                                                     DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor,"com.omni.device.accelerometer", "LuthorCorp", 1, 2));
-    QVERIFY(!descriptor.inSystemScope());
+    QVERIFY(descriptor.scope()==QService::UserScope);
 
     //get a sytem default from user scope
     descriptor = m_dbm->interfaceDefault("com.Dharma.wheel", DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor,"com.dharma.wheel", "DharmaInitiative", 1,0));
-    QVERIFY(descriptor.inSystemScope());
+    QVERIFY(descriptor.scope() == QService::SystemScope);
 
     //get a system default service at system scope
     descriptor = m_dbm->interfaceDefault("com.omni.device.accelerometer",
@@ -276,7 +276,7 @@ void tst_DatabaseManager::defaultService()
     descriptor = m_dbm->interfaceDefault("com.omni.device.accelerometer",
                                                     DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor,"com.omni.device.accelerometer", "Primatech", 1, 4));
-    QVERIFY(!descriptor.inSystemScope());
+    QVERIFY(descriptor.scope() == QService::UserScope);
 
     //set a system default from a  system interface implementation
     filter.setServiceName("WayneEnt");
@@ -288,7 +288,7 @@ void tst_DatabaseManager::defaultService()
     descriptor = m_dbm->interfaceDefault("com.omni.device.accelerometer",
                                                     DatabaseManager::SystemScope);
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer", "WayneEnt", 2,0));
-    QVERIFY(descriptor.inSystemScope());
+    QVERIFY(descriptor.scope() == QService::SystemScope );
 
     //set a user default with a system interface descriptor
     filter.setServiceName("omni");
@@ -300,7 +300,7 @@ void tst_DatabaseManager::defaultService()
                                                 DatabaseManager::UserScope);
     QVERIFY(descriptor.isValid());
     QVERIFY(compareDescriptor(descriptor, "com.omni.device.accelerometer", "omni", 1, 1));
-    QVERIFY(descriptor.inSystemScope());
+    QVERIFY(descriptor.scope() == QService::SystemScope );
 
     //set a system default using a user interface descriptor
     filter.setServiceName("Primatech");
@@ -327,7 +327,7 @@ void tst_DatabaseManager::defaultService()
                                                 DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
                             "DharmaInitiative", 4, 0));
-    QVERIFY(!descriptor.inSystemScope());
+    QVERIFY(descriptor.scope() == QService::UserScope);
     m_dbm->setInterfaceDefault("DharmaInitiative", "com.dharma.electro.discharge",
                                         DatabaseManager::UserScope);
 
@@ -426,7 +426,7 @@ bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interfac
 {
     if (interface.d == NULL )
         return false;
-    interface.d->properties[QServiceInterfaceDescriptor::Capabilities] = QStringList();
+    interface.d->attributes[QServiceInterfaceDescriptor::Capabilities] = QStringList();
 
     return compareDescriptor(interface, interfaceName, serviceName, majorVersion, minorVersion,
             QStringList());
@@ -462,9 +462,9 @@ bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interfac
         return false;
     }
 
-    if (capabilities.count() != 0 || interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList().count() != 0 ) {
+    if (capabilities.count() != 0 || interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList().count() != 0 ) {
         QStringList securityCapabilities;
-        securityCapabilities = interface.property(QServiceInterfaceDescriptor::Capabilities).toStringList();
+        securityCapabilities = interface.attribute(QServiceInterfaceDescriptor::Capabilities).toStringList();
 
         if(securityCapabilities.count() != capabilities.count()) {
             qWarning() << "Capabilities count mismatch: expected =" << capabilities.count()
@@ -484,23 +484,23 @@ bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interfac
     }
 
     if (!filePath.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::Location).toString() != filePath) {
+        if (interface.attribute(QServiceInterfaceDescriptor::Location).toString() != filePath) {
             qWarning() << "File path mismatch: expected =" << filePath
-                << " actual =" << interface.property(QServiceInterfaceDescriptor::Location).toString();
+                << " actual =" << interface.attribute(QServiceInterfaceDescriptor::Location).toString();
             return false;
         }
     }
     if (!serviceDescription.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::ServiceDescription).toString() != serviceDescription) {
+        if (interface.attribute(QServiceInterfaceDescriptor::ServiceDescription).toString() != serviceDescription) {
             qWarning() << "Service Description mismatch: expected =" << serviceDescription
-                        << " actual=" << interface.property(QServiceInterfaceDescriptor::ServiceDescription).toString();
+                        << " actual=" << interface.attribute(QServiceInterfaceDescriptor::ServiceDescription).toString();
             return false;
         }
     }
     if (!interfaceDescription.isEmpty()) {
-        if (interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString() != interfaceDescription) {
+        if (interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString() != interfaceDescription) {
             qWarning() << "Interface Description mismatch: expected =" << interfaceDescription
-                        << " actual =" << interface.property(QServiceInterfaceDescriptor::InterfaceDescription).toString();
+                        << " actual =" << interface.attribute(QServiceInterfaceDescriptor::InterfaceDescription).toString();
             return false;
         }
 
@@ -792,7 +792,7 @@ void tst_DatabaseManager::defaultServiceCornerCases()
                                                 DatabaseManager::UserScope);
     QVERIFY(compareDescriptor(descriptor, "com.dharma.electro.discharge",
                                 "DharmaInitiative", 42, 0));
-    QVERIFY(descriptor.inSystemScope());
+    QVERIFY(descriptor.scope() == QService::SystemScope);
     QVERIFY(m_dbm->unregisterService("DharmaInitiative", DatabaseManager::SystemScope));
     descriptor = m_dbm->interfaceDefault("com.dharma.electro.discharge",
                                                 DatabaseManager::UserScope);
@@ -1169,7 +1169,7 @@ void tst_DatabaseManager::nonWritableSystemDb()
                             QServiceFilter::ExactVersionMatch);
     descriptors = m_dbm->getInterfaces(filter, DatabaseManager::UserScope);
     QCOMPARE(descriptors.count(), 1);
-    QCOMPARE(descriptors[0].inSystemScope(), true);
+    QCOMPARE(descriptors[0].scope(), QService::SystemScope);
     QVERIFY(m_dbm->setInterfaceDefault(descriptors[0],
                                     DatabaseManager::UserScope));
     descriptor = m_dbm->interfaceDefault("com.omni.device.accelerometer",

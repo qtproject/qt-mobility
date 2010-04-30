@@ -53,7 +53,7 @@
 #include <sys/ioctl.h>
 #include <linux/videodev2.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class V4LRadioService;
 
@@ -63,6 +63,9 @@ class V4LRadioControl : public QRadioTunerControl
 public:
     V4LRadioControl(QObject *parent = 0);
     ~V4LRadioControl();
+
+    bool isAvailable() const;
+    QtMediaServices::AvailabilityError availabilityError() const;
 
     QRadioTuner::State state() const;
 

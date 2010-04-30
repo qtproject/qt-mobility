@@ -59,16 +59,15 @@ QList<QByteArray> charsets;
 /*!
     \class QMessage
 
-    \preliminary
     \brief The QMessage class provides a convenient interface for working with messages.
     
     \ingroup messaging
    
     QMessage supports a number of types. Including internet email messages, 
-    the telephony types SMS and MMS, and also XMPP messages.
+    and the telephony types SMS and MMS.
      
     The QMessageId identifier for a message is returned by id(). Messages can be constructed by 
-    retrieval from the messaging store via their identifier using QMessageStore::message(). A 
+    retrieval from the messaging store via their identifier using QMessageManager::message(). A 
     QMessage can also be constructed piece by piece using functions such as 
     setType(), setFrom(), setTo(), setSubject(), setBody() and appendAttachments(). 
     
@@ -86,9 +85,9 @@ QList<QByteArray> charsets;
         
     Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
-    or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.
+    or email addresses.
     
-    \sa QMessageContentContainer, QMessageStore, QMessageId
+    \sa QMessageContentContainer, QMessageManager, QMessageId
 */
 
 /*!
@@ -96,12 +95,12 @@ QList<QByteArray> charsets;
 
     This enum type is used to describe the type of a message.
     
-    \value NoType   The message type is not defined.
-    \value Mms      The message is an MMS, Multimedia Messaging Service object.
-    \value Sms      The message is an SMS, Short Message Service object.
-    \value Email    The message is an Email, Internet Message Format object.
-    \value Xmpp     The message is an XMPP, Extensible Messaging and Presence Protocol object.
-    \value AnyType  Bitflag value that matches any message type defined.
+    \value NoType             The message type is not defined.
+    \value Mms                The message is an MMS, Multimedia Messaging Service object.
+    \value Sms                The message is an SMS, Short Message Service object.
+    \value Email              The message is an Email, Internet Message Format object.
+    \value InstantMessage     The message is an instant message object, such as XMPP.
+    \value AnyType            Bitflag value that matches any message type defined.
     
     \sa type(), setType()
 */
@@ -158,11 +157,11 @@ QList<QByteArray> charsets;
 */
 
 /*!
-    \fn QMessage::(const QMessageId& id)
+    \fn QMessage::QMessage(const QMessageId& id)
 
     Constructs a message from data stored in the messaging store with identifier \a id.
     
-    \sa QMessageStore
+    \sa QMessageManager::message()
 */
 
 /*!
@@ -238,7 +237,7 @@ QList<QByteArray> charsets;
   
     Returns the standard folder of the message.
     
-    Defaults to InboxFolder.
+    Defaults to DraftsFolder.
 */
     
 /*!
@@ -486,7 +485,7 @@ QList<QByteArray> charsets;
 
     Creates a new message as a response to this message, with properties predetermined according to \a type.
   
-    \sa QMessageServiceAction::compose()
+    \sa QMessageService::compose()
 */
 
 /*!
@@ -494,6 +493,8 @@ QList<QByteArray> charsets;
     
     Sets the ordered-by-preference list of names of charsets to use when encoding 
     unicode QString data to a serialized form to \a charsetNames.
+
+    The set of valid charset names is returned by QTextCodec::availableCharsets().
 
     \sa preferredCharsets(), preferredCharsetFor(), setBody()
 */

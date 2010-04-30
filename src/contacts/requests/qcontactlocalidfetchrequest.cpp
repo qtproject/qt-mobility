@@ -48,25 +48,18 @@ QTM_BEGIN_NAMESPACE
   \class QContactLocalIdFetchRequest
   \brief The QContactLocalIdFetchRequest class allows a client to asynchronously
     request a list of contact ids from a contacts store manager.
-   \ingroup contacts-requests
+
+
+  For a QContactLocalIdFetchRequest, the resultsAvailable() signal will be emitted when the resultant
+  manager-local contact ids (which may be retrieved by calling ids()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
 
-/*!
- * \fn QContactLocalIdFetchRequest::progress(QContactLocalIdFetchRequest* self, bool appendOnly)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
- * ordering of the results have been maintained since the last progress signal was emitted.
- */
-
-/*! Constructs a new contact id fetch request */
-QContactLocalIdFetchRequest::QContactLocalIdFetchRequest()
-    : QContactAbstractRequest(new QContactLocalIdFetchRequestPrivate)
-{
-}
-
-/*! Cleans up the memory in use by this contact id fetch request */
-QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest()
+/*! Constructs a new contact id fetch request whose parent is the specified \a parent */
+QContactLocalIdFetchRequest::QContactLocalIdFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactLocalIdFetchRequestPrivate, parent)
 {
 }
 

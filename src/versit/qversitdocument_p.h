@@ -42,6 +42,17 @@
 #ifndef QVERSITDOCUMENT_P_H
 #define QVERSITDOCUMENT_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
@@ -49,24 +60,19 @@
 #include <QSharedData>
 #include <QList>
 
+QT_BEGIN_NAMESPACE
+class QTextCodec;
+QT_END_NAMESPACE
+
 QTM_BEGIN_NAMESPACE
 
 class QVersitDocumentPrivate : public QSharedData
 {
 public:
-    QVersitDocumentPrivate() 
-        : QSharedData(),
-        mVersitType(QVersitDocument::VCard21)
-    {
-    }
-    
-    QVersitDocumentPrivate(const QVersitDocumentPrivate& other) 
-        : QSharedData(other),
-        mVersitType(other.mVersitType),
-        mProperties(other.mProperties)
-    {
-    }    
-    
+    QVersitDocumentPrivate();
+
+    QVersitDocumentPrivate(const QVersitDocumentPrivate& other);
+
     ~QVersitDocumentPrivate()
     {
     }

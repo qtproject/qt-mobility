@@ -44,12 +44,12 @@
 
 #include <QtCore/qobject.h>
 
-#include <qmediaobject.h>
-#include <qmediaserviceprovider.h>
+#include "qmediaobject.h"
+#include "qmediaserviceprovider.h"
 
 #include <QPair>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QRadioTunerPrivate;
 class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
@@ -62,8 +62,8 @@ class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
     Q_PROPERTY(StereoMode stereoMode READ stereoMode WRITE setStereoMode)
     Q_PROPERTY(int signalStrength READ signalStrength NOTIFY signalStrengthChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutingChanged)
-    Q_PROPERTY(bool searching READ isSearching NOTIFY searchingStatusChanged)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
+    Q_PROPERTY(bool searching READ isSearching NOTIFY searchingChanged)
     Q_ENUMS(State)
     Q_ENUMS(Band)
     Q_ENUMS(Error)
@@ -71,12 +71,15 @@ class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
 
 public:
     enum State { ActiveState, StoppedState };
-    enum Band { AM, FM, SW, LW };
+    enum Band { AM, FM, SW, LW, FM2 };
     enum Error { NoError, ResourceError, OpenError, OutOfRangeError };
     enum StereoMode { ForceStereo, ForceMono, Auto };
 
     QRadioTuner(QObject *parent = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QRadioTuner();
+
+    bool isAvailable() const;
+    QtMediaServices::AvailabilityError availabilityError() const;
 
     State state() const;
 
@@ -121,10 +124,10 @@ Q_SIGNALS:
     void bandChanged(QRadioTuner::Band band);
     void frequencyChanged(int frequency);
     void stereoStatusChanged(bool stereo);
-    void searchingStatusChanged(bool searching);
+    void searchingChanged(bool searching);
     void signalStrengthChanged(int signalStrength);
     void volumeChanged(int volume);
-    void mutingChanged(bool muted);
+    void mutedChanged(bool muted);
     void error(Error err);
 
 private:
@@ -132,11 +135,11 @@ private:
     Q_DECLARE_PRIVATE(QRadioTuner)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::State);
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::Band);
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::Error);
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::StereoMode);
+Q_DECLARE_METATYPE(QRadioTuner::State);
+Q_DECLARE_METATYPE(QRadioTuner::Band);
+Q_DECLARE_METATYPE(QRadioTuner::Error);
+Q_DECLARE_METATYPE(QRadioTuner::StereoMode);
 
 #endif  // QRADIOPLAYER_H

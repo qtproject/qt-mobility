@@ -89,7 +89,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void positionUpdated(const QGeoPositionInfo &update);
-    void requestTimeout();
+    void updateTimeout();
 
 private:
     Q_DISABLE_COPY(QGeoPositionInfoSource)

@@ -2,7 +2,7 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- undocumented.qdoc -->
+<!-- querymessages.qdoc -->
 <head>
   <title>Qt Mobility Project 1.0: Query Messages Example</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
@@ -19,10 +19,38 @@
 <li><a href="querymessages-main-cpp.html">querymessages/main.cpp</a></li>
 <li><a href="querymessages-querymessages-pro.html">querymessages/querymessages.pro</a></li>
 </ul>
+<p>This simple example shows how to query messages stored in the system, using the Qt Mobility Messaging API.</p>
+<p>Messages are queried by using the <a href="qmessagemanager.html">QMessageManager</a> interface which provides access to the message data stored in the system. We will use the <a href="qmessagemanager.html#queryMessages">queryMessages</a> function to locate messages that match a filter object which defines the properties of the messages we would like to find.</p>
+<p>We define our query properties like this:</p>
+<pre>        <span class="comment">// Match all messages whose status field includes the Incoming flag</span>
+        QMessageFilter filter(QMessageFilter::byStatus(QMessage::Incoming));
+
+        <span class="comment">// Order the matching results by their reception timestamp, in descending order</span>
+        QMessageSortOrder sortOrder(QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder));</pre>
+<p>Then we use these properties to extract the set of matching message identifiers from the <a href="qmessagemanager.html">QMessageManager</a> instance:</p>
+<pre>        <span class="comment">// Acquire a handle to the message manager</span>
+        QMessageManager manager;
+
+        <span class="comment">// Find the matching message IDs, limiting our results to a managable number</span>
+        const int max = 100;
+        const QMessageIdList matchingIds(manager.queryMessages(filter, sortOrder, max));</pre>
+<p>Now we can iterate over our list of message identifiers, retrieving a <a href="qmessage.html">QMessage</a> instance containing the details of each message in turn:</p>
+<pre>        <span class="comment">// Retrieve each message and print requested details</span>
+        foreach (const QMessageId &amp;id, matchingIds) {
+            QMessage message(manager.message(id));</pre>
+<p>For each message we located, we now generate an output element corresponding to each data item requested at the command line:</p>
+<pre>                    <span class="comment">// Extract the requested data items from this message</span>
+                    foreach (const QString &amp;arg, app.arguments().mid(1)) {
+                        if (arg == &quot;subject&quot;) {
+                            result.append(message.subject());
+                        } else if (arg == &quot;date&quot;) {
+                            result.append(message.date().toLocalTime().toString());</pre>
+<p>Finally, we print the results accumulated for each message that matched our query.</p>
+<pre>                printMessage(QString::number(++n) + '\t' + result.join(&quot;\t&quot;));</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

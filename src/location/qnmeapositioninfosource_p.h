@@ -59,17 +59,18 @@
 #include <QQueue>
 #include <QPointer>
 
+QT_BEGIN_NAMESPACE
 class QBasicTimer;
 class QTimerEvent;
 class QTimer;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 class QNmeaReader;
-struct QPendingGeoPositionInfo
-{
+struct QPendingGeoPositionInfo {
     QGeoPositionInfo info;
     bool hasFix;
 };
@@ -85,6 +86,11 @@ public:
     void startUpdates();
     void stopUpdates();
     void requestUpdate(int msec);
+
+    bool parsePosInfoFromNmeaData(const char *data,
+                                  int size,
+                                  QGeoPositionInfo *posInfo,
+                                  bool *hasFix);
 
     void notifyNewUpdate(QGeoPositionInfo *update, bool fixStatus);
 
@@ -117,6 +123,7 @@ private:
     QDate m_currentDate;
     QTimer *m_requestTimer;
     bool m_noUpdateLastInterval;
+    bool m_updateTimeoutSent;
     bool m_connectedReadyRead;
 };
 
@@ -125,7 +132,7 @@ class QNmeaReader
 {
 public:
     explicit QNmeaReader(QNmeaPositionInfoSourcePrivate *sourcePrivate)
-        : m_proxy(sourcePrivate) {}
+            : m_proxy(sourcePrivate) {}
     virtual ~QNmeaReader() {}
 
     virtual void readAvailableData() = 0;

@@ -95,22 +95,45 @@ public:
     bool isEmpty() const;
     void clearDetails();
 
-    /* Access details of particular type or which support a particular action */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
-    QContactDetail detailWithAction(const QString& actionName) const;
-    QList<QContactDetail> detailsWithAction(const QString& actionName) const;
+
+    QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
+
+    QContactDetail detail(const char* definitionId) const;
+    QList<QContactDetail> details(const char* definitionId) const;
+    QList<QContactDetail> details(const char* definitionId, const char* fieldName, const QString& value) const;
+
+    /* Templated retrieval for definition names */
+#ifdef Q_QDOC
+    QContactDetail detail(const QLatin1Constant& definitionName) const;
+    QList<QContactDetail> details(const QLatin1Constant& definitionName) const;
+    QList<QContactDetail> details(const QLatin1Constant& definitionName, const QLatin1Constant& fieldName, const QString& value);
+#else
+    template <int N> QContactDetail detail(const QLatin1Constant<N>& definitionName) const
+    {
+        return detail(definitionName.latin1());
+    }
+    template <int N> QList<QContactDetail> details(const QLatin1Constant<N>& definitionName) const
+    {
+        return details(definitionName.latin1());
+    }
+    template <int N, int M> QList<QContactDetail> details(const QLatin1Constant<N>& definitionName, const QLatin1Constant<M>& fieldName, const QString& value)
+    {
+        return details(definitionName.latin1(), fieldName.latin1(), value);
+    }
+#endif
 
     /* Templated (type-specific) detail retrieval */
     template<typename T> QList<T> details() const
     {
-        QList<QContactDetail> props = details(T::DefinitionName);
+        QList<QContactDetail> props = details(T::DefinitionName.latin1());
         QList<T> ret;
         foreach(QContactDetail prop, props)
             ret.append(T(prop));
         return ret;
     }
-    
+
     /* Templated (type-specific) detail retrieval base on given detail field name and field value */
     template<typename T> QList<T> details(const QString& fieldName, const QString& value) const
     {
@@ -120,13 +143,19 @@ public:
             ret.append(T(prop));
         return ret;
     }
-    
-    /* Detail retrieval base on given detail definition name, field name and field value */
-    QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
+
+    template<typename T> QList<T> details(const char* fieldName, const QString& value) const
+    {
+        QList<QContactDetail> props = details(T::DefinitionName.latin1(), fieldName, value);
+        QList<T> ret;
+        foreach(QContactDetail prop, props)
+            ret.append(T(prop));
+        return ret;
+    }
 
     template<typename T> T detail() const
     {
-        return T(detail(T::DefinitionName));
+        return T(detail(T::DefinitionName.latin1()));
     }
 
     /* generic detail addition/removal functions */
@@ -135,17 +164,7 @@ public:
 
     /* Relationships that this contact was involved in when it was retrieved from the manager */
     QList<QContactRelationship> relationships(const QString& relationshipType = QString()) const;
-    QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
-    void setRelationshipOrder(const QList<QContactRelationship>& reordered);
-    QList<QContactRelationship> relationshipOrder() const;
-
-    /* Actions available to be performed on this contact */
-    QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
-
-    /* Preferences (eg, set a particular detail preferred for the SMS action) */
-    bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);
-    bool isPreferredDetail(const QString& actionName, const QContactDetail& detail) const;
-    QContactDetail preferredDetail(const QString& actionName) const;
+    QList<QContactId> relatedContacts(const QString& relationshipType = QString(), QContactRelationship::Role role = QContactRelationship::Either) const;
 
 private:
     friend class QContactManager;
@@ -155,7 +174,15 @@ private:
     QSharedDataPointer<QContactData> d;
 };
 
+Q_CONTACTS_EXPORT uint qHash(const QContact& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContact& contact);
+#endif
+
 QTM_END_NAMESPACE
+
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContact), Q_MOVABLE_TYPE);
+
 
 #endif
 

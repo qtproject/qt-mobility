@@ -25,6 +25,7 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#dtor.QRadioTunerControl">~QRadioTunerControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMediaServices::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#availabilityError">availabilityError</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QRadioTuner::Band </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#band">band</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#cancelSearch">cancelSearch</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QRadioTuner::Error </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#error">error</a></b> () const = 0</td></tr>
@@ -32,6 +33,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#frequency">frequency</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QPair&lt;int, int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#frequencyRange">frequencyRange</a></b> ( QRadioTuner::Band <i>band</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#frequencyStep">frequencyStep</a></b> ( QRadioTuner::Band <i>band</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#isAvailable">isAvailable</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#isBandSupported">isBandSupported</a></b> ( QRadioTuner::Band <i>band</i> ) const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#isMuted">isMuted</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#isSearching">isSearching</a></b> () const = 0</td></tr>
@@ -51,7 +53,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#volume">volume</a></b> () const = 0</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
@@ -60,15 +62,15 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#bandChanged">bandChanged</a></b> ( QRadioTuner::Band <i>band</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#error-2">error</a></b> ( QRadioTuner::Error <i>error</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#mutingChanged">mutingChanged</a></b> ( bool <i>muted</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#searchingStatusChanged">searchingStatusChanged</a></b> ( bool <i>searching</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#searchingChanged">searchingChanged</a></b> ( bool <i>searching</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>strength</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#stateChanged">stateChanged</a></b> ( QRadioTuner::State <i>state</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
 <a name="protected-functions"></a>
@@ -77,7 +79,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#QRadioTunerControl">QRadioTunerControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="macros"></a>
@@ -87,11 +89,11 @@
 </table>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -104,11 +106,14 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/QRadioTunerControl"></a>
-<h3 class="fn"><a name="QRadioTunerControl"></a>QRadioTunerControl::QRadioTunerControl ( <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="QRadioTunerControl"></a>QRadioTunerControl::QRadioTunerControl ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Constructs a radio tuner control with the given <i>parent</i>.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/~QRadioTunerControl"></a>
 <h3 class="fn"><a name="dtor.QRadioTunerControl"></a>QRadioTunerControl::~QRadioTunerControl ()</h3>
 <p>Destroys a radio tuner control.</p>
+<a name="//apple_ref/cpp/instm/QRadioTunerControl/availabilityError"></a>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmediaservices.html#AvailabilityError-enum">QtMediaServices::AvailabilityError</a> QRadioTunerControl::availabilityError () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the error state of the radio service.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/band"></a>
 <h3 class="fn"><a name="band"></a><a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> QRadioTunerControl::band () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the frequency band a radio tuner is tuned to.</p>
@@ -125,7 +130,7 @@
 <h3 class="fn"><a name="error-2"></a>void QRadioTunerControl::error ( <a href="qradiotuner.html#Error-enum">QRadioTuner::Error</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that an <i>error</i> has occured.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/errorString"></a>
-<h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QRadioTunerControl::errorString () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QRadioTunerControl::errorString () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a string describing a radio tuner's error state.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/frequency"></a>
 <h3 class="fn"><a name="frequency"></a>int QRadioTunerControl::frequency () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -135,11 +140,14 @@
 <h3 class="fn"><a name="frequencyChanged"></a>void QRadioTunerControl::frequencyChanged ( int <i>frequency</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>frequency</i> a radio tuner is tuned to has changed.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/frequencyRange"></a>
-<h3 class="fn"><a name="frequencyRange"></a><a href="http://qt.nokia.com/doc/4.5/qpair.html">QPair</a>&lt;int, int&gt; QRadioTunerControl::frequencyRange ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="frequencyRange"></a><a href="http://qt.nokia.com/doc/4.6/qpair.html">QPair</a>&lt;int, int&gt; QRadioTunerControl::frequencyRange ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns a frequency <i>band</i>'s minimum and maximum frequency.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/frequencyStep"></a>
 <h3 class="fn"><a name="frequencyStep"></a>int QRadioTunerControl::frequencyStep ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the number of Hertz to increment the frequency by when stepping through frequencies within a given <i>band</i>.</p>
+<a name="//apple_ref/cpp/instm/QRadioTunerControl/isAvailable"></a>
+<h3 class="fn"><a name="isAvailable"></a>bool QRadioTunerControl::isAvailable () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns true if the radio service is ready to use.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/isBandSupported"></a>
 <h3 class="fn"><a name="isBandSupported"></a>bool QRadioTunerControl::isBandSupported ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Identifies if a frequency <i>band</i> is supported.</p>
@@ -156,8 +164,8 @@
 <h3 class="fn"><a name="isStereo"></a>bool QRadioTunerControl::isStereo () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Identifies if a radio tuner is receiving a stereo signal.</p>
 <p>Returns true if the tuner is receiving a stereo signal, and false if it is not.</p>
-<a name="//apple_ref/cpp/instm/QRadioTunerControl/mutingChanged"></a>
-<h3 class="fn"><a name="mutingChanged"></a>void QRadioTunerControl::mutingChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QRadioTunerControl/mutedChanged"></a>
+<h3 class="fn"><a name="mutedChanged"></a>void QRadioTunerControl::mutedChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>muted</i> state of a radio tuner's audio output has changed.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/searchBackward"></a>
 <h3 class="fn"><a name="searchBackward"></a>void QRadioTunerControl::searchBackward ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -165,8 +173,8 @@
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/searchForward"></a>
 <h3 class="fn"><a name="searchForward"></a>void QRadioTunerControl::searchForward ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Starts a forward scan for a signal, starting from the current <a href="qradiotunercontrol.html#frequency">frequency</a>().</p>
-<a name="//apple_ref/cpp/instm/QRadioTunerControl/searchingStatusChanged"></a>
-<h3 class="fn"><a name="searchingStatusChanged"></a>void QRadioTunerControl::searchingStatusChanged ( bool <i>searching</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QRadioTunerControl/searchingChanged"></a>
+<h3 class="fn"><a name="searchingChanged"></a>void QRadioTunerControl::searchingChanged ( bool <i>searching</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>searching</i> state of a radio tuner has changed.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/setBand"></a>
 <h3 class="fn"><a name="setBand"></a>void QRadioTunerControl::setBand ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -231,6 +239,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -46,7 +46,6 @@ QTM_BEGIN_NAMESPACE
     \class QMessageFolderId
     \ingroup messaging
 
-    \preliminary
     \brief The QMessageFolderId class provides a unique identifier for a QMessageFolder message 
     folder, within the scope of the messaging store.
 
@@ -88,9 +87,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \internal
     \fn QMessageFolderId& QMessageFolderId::operator=(const QMessageFolderId &other)
-
-    Assigns \a other to this identifier and returns a reference to this identifier.
 */
 
 /*!
@@ -105,8 +103,9 @@ bool QMessageFolderId::operator!=(const QMessageFolderId &other) const
 }
 
 /*!
-    \internal
     \fn bool QMessageFolderId::operator<(const QMessageFolderId &other) const
+
+    Returns true if this identifier is ordered before \a other using an implementation-defined ordering.
 */
 
 /*!

@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qnmeapositioninfosourceproxyfactory.h"
 #include "../qlocationtestutils_p.h"
 

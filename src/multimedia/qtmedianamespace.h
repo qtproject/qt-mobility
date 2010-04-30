@@ -45,9 +45,11 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qmetatype.h>
 
-QTM_BEGIN_NAMESPACE
+#include <qmobilityglobal.h>
 
-namespace QtMedia
+QT_BEGIN_NAMESPACE
+
+namespace QtMediaServices
 {
     enum MetaData
     {
@@ -75,12 +77,12 @@ namespace QtMedia
         Duration,
 
         // Audio
-        AudioBitrate,
+        AudioBitRate,
         AudioCodec,
         AverageLevel,
-        Channels,
+        ChannelCount,
         PeakValue,
-        Frequency,
+        SampleRate,
 
         // Music
         AlbumTitle,
@@ -93,8 +95,8 @@ namespace QtMedia
         TrackNumber,
         TrackCount,
 
-        CoverArtUriSmall,
-        CoverArtUriLarge,
+        CoverArtUrlSmall,
+        CoverArtUrlLarge,
 
         // Image/Video
         Resolution,
@@ -105,7 +107,7 @@ namespace QtMedia
         VideoBitRate,
         VideoCodec,
 
-        PosterUri,
+        PosterUrl,
 
         // Movie
         ChapterNumber,
@@ -140,7 +142,12 @@ namespace QtMedia
         Contrast,
         Saturation,
         Sharpness,
-        DeviceSettingDescription
+        DeviceSettingDescription,
+
+        PosterImage,
+        CoverArtImage,
+        ThumbnailImage
+
     };
 
     enum SupportEstimate
@@ -148,7 +155,7 @@ namespace QtMedia
         NotSupported,
         MaybeSupported,
         ProbablySupported,
-        PreferedService
+        PreferredService
     };
 
     enum EncodingQuality
@@ -163,13 +170,21 @@ namespace QtMedia
     enum EncodingMode
     {
         ConstantQualityEncoding,
-        ConstantBitrateEncoding,
-        AverageBitrateEncoding,
+        ConstantBitRateEncoding,
+        AverageBitRateEncoding,
         TwoPassEncoding
+    };
+
+    enum AvailabilityError
+    {
+        NoError,
+        ServiceMissingError,
+        BusyError,
+        ResourceError
     };
 
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

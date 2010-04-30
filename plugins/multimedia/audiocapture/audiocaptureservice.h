@@ -44,14 +44,15 @@
 
 #include <QtCore/qobject.h>
 
-#include <qmediaservice.h>
+#include "../../../src/multimedia/qmediaservice.h"
 
 class AudioCaptureSession;
 class AudioEncoderControl;
+class AudioContainerControl;
 class AudioMediaRecorderControl;
-class AudioDeviceControl;
+class AudioEndpointSelector;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureService : public QMediaService
 {
@@ -63,8 +64,9 @@ public:
     QMediaControl *control(const char *name) const;
 private:
     AudioCaptureSession       *m_session;
-    AudioEncoderControl        *m_encoderControl;
-    AudioDeviceControl        *m_deviceControl;
+    AudioEncoderControl       *m_encoderControl;
+    AudioContainerControl     *m_containerControl;
+    AudioEndpointSelector     *m_endpointSelector;
     AudioMediaRecorderControl *m_mediaControl;
 };
 

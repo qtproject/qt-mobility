@@ -31,6 +31,7 @@ wince* {
 }
 
 # Add this too
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 

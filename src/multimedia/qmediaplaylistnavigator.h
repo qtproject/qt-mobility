@@ -42,18 +42,18 @@
 #ifndef QMEDIAPLAYLISTNAVIGATOR_H
 #define QMEDIAPLAYLISTNAVIGATOR_H
 
-#include <qmediaplaylistprovider.h>
-#include <qmediaplaylist.h>
+#include "qmediaplaylistprovider.h"
+#include "qmediaplaylist.h"
 #include <QtCore/qobject.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistNavigatorPrivate;
 class Q_MEDIA_EXPORT QMediaPlaylistNavigator : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QMediaPlaylist::PlaybackMode playbackMode READ playbackMode WRITE setPlaybackMode NOTIFY playbackModeChanged)
-    Q_PROPERTY(int currentPosition READ currentPosition WRITE jump NOTIFY currentPositionChanged)
+    Q_PROPERTY(int currentIndex READ currentIndex WRITE jump NOTIFY currentIndexChanged)
     Q_PROPERTY(QMediaContent currentItem READ currentItem NOTIFY currentItemChanged)
 
 public:
@@ -71,9 +71,9 @@ public:
 
     QMediaContent itemAt(int position) const;
 
-    int currentPosition() const;
-    int nextPosition(int steps = 1) const;
-    int previousPosition(int steps = 1) const;
+    int currentIndex() const;
+    int nextIndex(int steps = 1) const;
+    int previousIndex(int steps = 1) const;
 
 public Q_SLOTS:
     void next();
@@ -85,7 +85,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void activated(const QMediaContent &content);
-    void currentPositionChanged(int);
+    void currentIndexChanged(int);
     void playbackModeChanged(QMediaPlaylist::PlaybackMode mode);
 
     void surroundingItemsChanged();
@@ -97,11 +97,11 @@ private:
     Q_DISABLE_COPY(QMediaPlaylistNavigator)
     Q_DECLARE_PRIVATE(QMediaPlaylistNavigator)
 
-    Q_PRIVATE_SLOT(d_func(), void _q_itemsInserted(int start, int end))
-    Q_PRIVATE_SLOT(d_func(), void _q_itemsRemoved(int start, int end))
-    Q_PRIVATE_SLOT(d_func(), void _q_itemsChanged(int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_mediaInserted(int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_mediaRemoved(int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_mediaChanged(int start, int end))
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIAPLAYLISTNAVIGATOR_H

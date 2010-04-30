@@ -8,5 +8,6 @@ SOURCES += tst_qgraphicsvideoitem.cpp
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 

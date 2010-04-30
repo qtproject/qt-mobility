@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository target="RProperty" uidValue="0x2002AC87">
+<key ref="/value" int="0x00000001"/>
+<key ref="/testConstructor/value" int="0x00000002"/>
+<key ref="/testConstructor/subpath/value" int="0x00000003"/>
+<key ref="/valuePermanence/value" int="0x00000004"/>
+
+<key ref="/threads/thread0/key0" int="0x00000010"/>
+<key ref="/threads/thread0/key1" int="0x00000011"/>
+<key ref="/threads/thread0/key2" int="0x00000012"/>
+<key ref="/threads/thread0/key3" int="0x00000013"/>
+<key ref="/threads/thread0/key4" int="0x00000014"/>
+<key ref="/threads/thread0/key5" int="0x00000015"/>
+<key ref="/threads/thread0/key6" int="0x00000016"/>
+<key ref="/threads/thread0/key7" int="0x00000017"/>
+<key ref="/threads/thread0/key8" int="0x00000018"/>
+<key ref="/threads/thread0/key9" int="0x00000019"/>
+
+<key ref="/threads/thread1/key0" int="0x00000020"/>
+<key ref="/threads/thread1/key1" int="0x00000021"/>
+<key ref="/threads/thread1/key2" int="0x00000022"/>
+<key ref="/threads/thread1/key3" int="0x00000023"/>
+<key ref="/threads/thread1/key4" int="0x00000024"/>
+<key ref="/threads/thread1/key5" int="0x00000025"/>
+<key ref="/threads/thread1/key6" int="0x00000026"/>
+<key ref="/threads/thread1/key7" int="0x00000027"/>
+<key ref="/threads/thread1/key8" int="0x00000028"/>
+<key ref="/threads/thread1/key9" int="0x00000029"/>
+</repository>

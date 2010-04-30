@@ -12,7 +12,8 @@ INCLUDEPATH += ../../../../src/contacts \
 
 INCLUDEPATH += ../../
 
-qtAddLibrary(QtContacts)
+CONFIG += mobility
+MOBILITY = contacts
 
 DEFINES += MALICIOUSPLUGINTARGET=contacts_maliciousplugin
 DEFINES += MALICIOUSPLUGINNAME=maliciousplugin

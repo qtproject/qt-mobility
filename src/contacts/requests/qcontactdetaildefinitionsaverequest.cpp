@@ -49,26 +49,33 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactDetailDefinitionSaveRequest class allows a client to
   asynchronously request that certain detail definitions be saved in a
   contacts store.
+
+  For a QContactDetailDefinitionSaveRequest, the resultsAvailable() signal will be emitted when
+  either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
+  detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
   
   \ingroup contacts-requests
  */
 
-/*!
- * \fn QContactDetailDefinitionSaveRequest::progress(QContactDetailDefinitionSaveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
- */
-
-/*! Constructs a new detail definition save request */
-QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest()
-    : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate)
+/*! Constructs a new detail definition save request whose parent is the specified \a parent */
+QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this detail definition save request */
-QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest()
+/*!
+  Sets the definition to save to be the given \a definition.
+  Equivalent to calling:
+  \code
+      setDefinitions(QList<QContactDetailDefinition>() << definition);
+  \endcode
+ */
+void QContactDetailDefinitionSaveRequest::setDefinition(const QContactDetailDefinition& definition)
 {
+    Q_D(QContactDetailDefinitionSaveRequest);
+    d->m_definitions.clear();
+    d->m_definitions.append(definition);
 }
 
 /*! Sets the definitions to save to be \a definitions */
@@ -98,6 +105,13 @@ QString QContactDetailDefinitionSaveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
     return d->m_contactType;
+}
+
+/*! Returns the map of input definition list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactDetailDefinitionSaveRequest::errorMap() const
+{
+    Q_D(const QContactDetailDefinitionSaveRequest);
+    return d->m_errors;
 }
 
 #include "moc_qcontactdetaildefinitionsaverequest.cpp"

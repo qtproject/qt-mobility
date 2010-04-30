@@ -40,10 +40,10 @@
 ****************************************************************************/
 
 
-#include <qmediaplaylistcontrol.h>
-#include <qmediacontrol_p.h>
+#include "qmediaplaylistcontrol.h"
+#include "qmediacontrol_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistControl
@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
     If a QMediaService contains an internal playlist it will implement QMediaPlaylistControl.  This
     control provides access to the contents of the \l {playlistProvider()}{playlist}, as well as the
-    \l {currentPosition()}{position} of the current media, and a means of navigating to the
+    \l {currentIndex()}{position} of the current media, and a means of navigating to the
     \l {next()}{next} and \l {previous()}{previous} media.
 
     The functionality provided by the control is exposed to application code through the
@@ -113,21 +113,21 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 */
 
 /*!
-  \fn QMediaPlaylistControl::currentPosition() const
+  \fn QMediaPlaylistControl::currentIndex() const
 
   Returns position of the current media source in the playlist.
 */
 
 /*!
-  \fn QMediaPlaylistControl::setCurrentPosition(int position)
+  \fn QMediaPlaylistControl::setCurrentIndex(int position)
 
   Jump to the item at the given \a position.
 */
 
 /*!
-  \fn QMediaPlaylistControl::nextPosition(int step) const
+  \fn QMediaPlaylistControl::nextIndex(int step) const
 
-  Returns the position of item, which were current after calling next()
+  Returns the index of item, which were current after calling next()
   \a step times.
 
   Returned value depends on the size of playlist, current position
@@ -137,9 +137,9 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 */
 
 /*!
-  \fn QMediaPlaylistControl::previousPosition(int step) const
+  \fn QMediaPlaylistControl::previousIndex(int step) const
 
-  Returns the position of item, which were current after calling previous()
+  Returns the index of item, which were current after calling previous()
   \a step times.
 
   \sa QMediaPlaylist::playbackMode
@@ -180,7 +180,7 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 */
 
 /*!
-  \fn QMediaPlaylistControl::playlistPositionChanged(int position)
+  \fn QMediaPlaylistControl::currentIndexChanged(int position)
 
   Signal emited when the playlist \a position is changed.
 */
@@ -198,5 +198,5 @@ QMediaPlaylistControl::~QMediaPlaylistControl()
 */
 
 #include "moc_qmediaplaylistcontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -46,20 +46,19 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageAccountFilter
 
-    \preliminary
     \brief The QMessageAccountFilter class defines the parameters used for querying a subset of
     all available accounts from the messaging store.
     \ingroup messaging
 
     A QMessageAccountFilter is composed of an account property, an optional comparison operator
     and a comparison value. The QMessageAccountFilter class is used in conjunction with the 
-    QMessageStore::queryAccounts() and QMessageStore::countAccounts() functions to filter results 
+    QMessageManager::queryAccounts() and QMessageManager::countAccounts() functions to filter results 
     which meet the criteria defined by the filter.
 
     QMessageAccountFilters can be combined using the logical operators (&), (|) and (~) to
     create more refined queries.
 
-    \sa QMessageStore, QMessageAccount
+    \sa QMessageManager, QMessageAccount
 */
 
 /*!
@@ -90,21 +89,21 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QMessageAccountFilter::setOptions(QMessageDataComparator::Options options)
+    \fn QMessageAccountFilter::setMatchFlags(QMessageDataComparator::MatchFlags matchFlags)
   
-    Set the options for the search filter to \a options.
+    Set the match flags for the search filter to \a matchFlags.
 
-    \sa options()
+    \sa matchFlags()
 */
 
 /*!
-    \fn QMessageDataComparator::Options QMessageAccountFilter::options() const
+    \fn QMessageDataComparator::MatchFlags QMessageAccountFilter::matchFlags() const
   
-    Return the options for the search filter.
+    Return the match flags for the search filter.
     
-    Default is no options set.
+    Default is no match flags set.
 
-    \sa setOptions()
+    \sa setMatchFlags()
 */
 
 /*!
@@ -130,7 +129,7 @@ QTM_BEGIN_NAMESPACE
     \fn QMessageAccountFilter::operator~() const
   
     Returns a filter that is the logical NOT of the value of this filter (ignoring any
-    options() set on the filter).
+    matchFlags() set on the filter).
 
     If this filter is empty, the result will be a non-matching filter; if this filter is 
     non-matching, the result will be an empty filter.

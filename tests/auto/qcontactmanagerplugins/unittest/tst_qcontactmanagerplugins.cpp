@@ -48,7 +48,6 @@
 #include "qtcontacts.h"
 
 #include <QApplication>
-#include "qcontactmanagerdataholder.h"
 QTM_USE_NAMESPACE
 
 class tst_QContactManagerPlugins : public QObject
@@ -58,9 +57,6 @@ Q_OBJECT
 public:
     tst_QContactManagerPlugins();
     virtual ~tst_QContactManagerPlugins();
-
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();
@@ -75,14 +71,14 @@ class DummyStaticEngineFactory : public QObject, public QContactManagerEngineFac
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
         QString managerName() const {return "teststaticdummy";}
 };
 
-QContactManagerEngine* DummyStaticEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+QContactManagerEngine* DummyStaticEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
     Q_UNUSED(parameters);
-    error = QContactManager::LockedError; // random unlikely error
+    *error = QContactManager::LockedError; // random unlikely error
     return 0; // always fail, haha
 }
 
@@ -99,7 +95,7 @@ class ImpostorEngineFactory : public QObject, public QContactManagerEngineFactor
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
+        QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error* ) {return 0;}
         QString managerName() const {return "memory";}
 };
 
@@ -112,7 +108,7 @@ class ImpostorEngineFactory2 : public QObject, public QContactManagerEngineFacto
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
+        QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error* ) {return 0;}
         QString managerName() const {return "invalid";}
 };
 
@@ -126,7 +122,7 @@ class EmptyEngineFactory : public QObject, public QContactManagerEngineFactory
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error& ) {return 0;}
+        QContactManagerEngine* engine(const QMap<QString, QString>& , QContactManager::Error* ) {return 0;}
         QString managerName() const {return QString();}
 };
 
@@ -142,7 +138,9 @@ class BoringInterface
 
 };
 
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(BoringInterface, "REALLYBORING!")
+QT_END_NAMESPACE
 
 class BoringFactory : public QObject, public BoringInterface
 {

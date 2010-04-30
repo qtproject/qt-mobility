@@ -49,9 +49,9 @@ QTM_BEGIN_NAMESPACE
 class QGeoPositionInfoPrivate
 {
 public:
-    QDateTime dateTime;
+    QDateTime timestamp;
     QGeoCoordinate coord;
-    QHash<int, qreal> doubleProps;
+    QHash<int, qreal> doubleAttribs;
 };
 
 /*!
@@ -67,10 +67,10 @@ public:
 */
 
 /*!
-    \enum QGeoPositionInfo::Property
-    Defines the properties for positional information.
+    \enum QGeoPositionInfo::Attribute
+    Defines the attributes for positional information.
 
-    \value Heading The bearing to true north, in degrees.
+    \value Direction The bearing to true north from the direction of travel, in degrees.
     \value GroundSpeed The ground speed, in metres/sec.
     \value VerticalSpeed The vertical speed, in metres/sec.
     \value MagneticVariation The angle between the horizontal component of the magnetic field and true north, in degrees. Also known as magnetic declination. A positive value indicates a clockwise direction from true north and a negative value indicates a counter-clockwise direction.
@@ -84,17 +84,17 @@ public:
     \sa isValid()
 */
 QGeoPositionInfo::QGeoPositionInfo()
-    : d(new QGeoPositionInfoPrivate)
+        : d(new QGeoPositionInfoPrivate)
 {
 }
 
 /*!
-    Creates a QGeoPositionInfo for the given \a coordinate and \a dateTime.
+    Creates a QGeoPositionInfo for the given \a coordinate and \a timestamp.
 */
-QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &dateTime)
-    : d(new QGeoPositionInfoPrivate)
+QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDateTime &timestamp)
+        : d(new QGeoPositionInfoPrivate)
 {
-    d->dateTime = dateTime;
+    d->timestamp = timestamp;
     d->coord = coordinate;
 }
 
@@ -102,7 +102,7 @@ QGeoPositionInfo::QGeoPositionInfo(const QGeoCoordinate &coordinate, const QDate
     Creates a QGeoPositionInfo with the values of \a other.
 */
 QGeoPositionInfo::QGeoPositionInfo(const QGeoPositionInfo &other)
-    : d(new QGeoPositionInfoPrivate)
+        : d(new QGeoPositionInfoPrivate)
 {
     operator=(other);
 }
@@ -118,14 +118,14 @@ QGeoPositionInfo::~QGeoPositionInfo()
 /*!
     Assigns the values from \a other to this QGeoPositionInfo.
 */
-QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo &other)
+QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo & other)
 {
     if (this == &other)
         return *this;
 
-    d->dateTime = other.d->dateTime;
+    d->timestamp = other.d->timestamp;
     d->coord = other.d->coord;
-    d->doubleProps = other.d->doubleProps;
+    d->doubleAttribs = other.d->doubleAttribs;
 
     return *this;
 }
@@ -136,9 +136,9 @@ QGeoPositionInfo &QGeoPositionInfo::operator=(const QGeoPositionInfo &other)
 */
 bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 {
-    return d->dateTime == other.d->dateTime
-            && d->coord == other.d->coord
-            && d->doubleProps == other.d->doubleProps;
+    return d->timestamp == other.d->timestamp
+           && d->coord == other.d->coord
+           && d->doubleAttribs == other.d->doubleAttribs;
 }
 
 /*!
@@ -149,25 +149,25 @@ bool QGeoPositionInfo::operator==(const QGeoPositionInfo &other) const
 */
 
 /*!
-    Returns true if the dateTime() and coordinate() values are both valid.
+    Returns true if the timestamp() and coordinate() values are both valid.
 
     \sa QGeoCoordinate::isValid(), QDateTime::isValid()
 */
 bool QGeoPositionInfo::isValid() const
 {
-    return d->dateTime.isValid() && d->coord.isValid();
+    return d->timestamp.isValid() && d->coord.isValid();
 }
 
 /*!
-    Sets the date and time at which this position was reported to \a dateTime.
+    Sets the date and time at which this position was reported to \a timestamp.
 
-    The \a dateTime must be in UTC time.
+    The \a timestamp must be in UTC time.
 
-    \sa dateTime()
+    \sa timestamp()
 */
-void QGeoPositionInfo::setDateTime(const QDateTime &dateTime)
+void QGeoPositionInfo::setTimestamp(const QDateTime &timestamp)
 {
-    d->dateTime = dateTime;
+    d->timestamp = timestamp;
 }
 
 /*!
@@ -175,11 +175,11 @@ void QGeoPositionInfo::setDateTime(const QDateTime &dateTime)
 
     Returns an invalid QDateTime if no date/time value has been set.
 
-    \sa setDateTime()
+    \sa setTimestamp()
 */
-QDateTime QGeoPositionInfo::dateTime() const
+QDateTime QGeoPositionInfo::timestamp() const
 {
-    return d->dateTime;
+    return d->timestamp;
 }
 
 /*!
@@ -205,59 +205,63 @@ QGeoCoordinate QGeoPositionInfo::coordinate() const
 }
 
 /*!
-    Sets the value for \a property to \a value.
+    Sets the value for \a attribute to \a value.
 
-    \sa property()
+    \sa attribute()
 */
-void QGeoPositionInfo::setProperty(Property property, qreal value)
+void QGeoPositionInfo::setAttribute(Attribute attribute, qreal value)
 {
-    d->doubleProps[int(property)] = value;
+    d->doubleAttribs[int(attribute)] = value;
 }
 
 /*!
-    Returns the value of the specified \a property as a qreal value.
+    Returns the value of the specified \a attribute as a qreal value.
 
-    Returns -1 if the value has not been set.
+    Returns -1 if the value has not been set, although this may also
+    be a legitimate value for some attributes.
+    
+    The function hasAttribute() should be used to determine whether or 
+    not a value has been set for an attribute.
 
-    \sa hasProperty(), setProperty()
+    \sa hasAttribute(), setAttribute()
 */
-qreal QGeoPositionInfo::property(Property property) const
+qreal QGeoPositionInfo::attribute(Attribute attribute) const
 {
-    if (d->doubleProps.contains(int(property)))
-        return d->doubleProps[int(property)];
+    if (d->doubleAttribs.contains(int(attribute)))
+        return d->doubleAttribs[int(attribute)];
     return -1;
 }
 
 /*!
-    Removes the specified \a property and its value.
+    Removes the specified \a attribute and its value.
 */
-void QGeoPositionInfo::removeProperty(Property property)
+void QGeoPositionInfo::removeAttribute(Attribute attribute)
 {
-    d->doubleProps.remove(int(property));
+    d->doubleAttribs.remove(int(attribute));
 }
 
 /*!
-    Returns true if the specified \a property is present for this
+    Returns true if the specified \a attribute is present for this
     QGeoPositionInfo object.
 */
-bool QGeoPositionInfo::hasProperty(Property property) const
+bool QGeoPositionInfo::hasAttribute(Attribute attribute) const
 {
-    return d->doubleProps.contains(int(property));
+    return d->doubleAttribs.contains(int(attribute));
 }
 
 #ifndef QT_NO_DEBUG_STREAM
-QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
+QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info)
 {
-    dbg.nospace() << "QGeoPositionInfo(" << update.d->dateTime;
+    dbg.nospace() << "QGeoPositionInfo(" << info.d->timestamp;
     dbg.nospace() << ", ";
-    dbg.nospace() << update.d->coord;
+    dbg.nospace() << info.d->coord;
 
-    QList<int> props = update.d->doubleProps.keys();
-    for (int i=0; i<props.count(); i++) {
+    QList<int> attribs = info.d->doubleAttribs.keys();
+    for (int i = 0; i < attribs.count(); i++) {
         dbg.nospace() << ", ";
-        switch (props[i]) {
-            case QGeoPositionInfo::Heading:
-                dbg.nospace() << "Heading=";
+        switch (attribs[i]) {
+            case QGeoPositionInfo::Direction:
+                dbg.nospace() << "Direction=";
                 break;
             case QGeoPositionInfo::GroundSpeed:
                 dbg.nospace() << "GroundSpeed=";
@@ -275,7 +279,7 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
                 dbg.nospace() << "VerticalAccuracy=";
                 break;
         }
-        dbg.nospace() << update.d->doubleProps[props[i]];
+        dbg.nospace() << info.d->doubleAttribs[attribs[i]];
     }
     dbg.nospace() << ')';
     return dbg;
@@ -294,9 +298,9 @@ QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update)
 
 QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
 {
-    stream << info.d->dateTime;
+    stream << info.d->timestamp;
     stream << info.d->coord;
-    stream << info.d->doubleProps;
+    stream << info.d->doubleAttribs;
     return stream;
 }
 #endif
@@ -314,9 +318,9 @@ QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info)
 
 QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info)
 {
-    stream >> info.d->dateTime;
+    stream >> info.d->timestamp;
     stream >> info.d->coord;
-    stream >> info.d->doubleProps;
+    stream >> info.d->doubleAttribs;
     return stream;
 }
 #endif

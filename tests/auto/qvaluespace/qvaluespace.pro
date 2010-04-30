@@ -11,12 +11,9 @@ include(../../../common.pri)
 # Input 
 SOURCES += tst_qvaluespace.cpp
 
-qtAddLibrary(QtPublishSubscribe)
+CONFIG += mobility
+MOBILITY = publishsubscribe
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
-}
-
-maemo {
-    DEFINES += Q_WS_MAEMO_6
 }

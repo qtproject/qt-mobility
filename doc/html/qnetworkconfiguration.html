@@ -13,7 +13,7 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QNetworkConfiguration Class Reference<br /><span class="small-subtitle">[<a href="http://qt.nokia.com/doc/4.5/qtnetwork.html">QtNetwork</a> module]</span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QNetworkConfiguration Class Reference<br /><span class="small-subtitle">[<a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a> module]</span>
 </h1>
 <p>The QNetworkConfiguration class provides an abstraction of one or more access point configurations. <a href="#details">More...</a></p>
 <pre>    #include &lt;QNetworkConfiguration&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
@@ -36,6 +36,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#QNetworkConfiguration">QNetworkConfiguration</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#QNetworkConfiguration-2">QNetworkConfiguration</a></b> ( const QNetworkConfiguration &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#dtor.QNetworkConfiguration">~QNetworkConfiguration</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#bearerName">bearerName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QNetworkConfiguration&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#children">children</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#identifier">identifier</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfiguration.html#isRoamingAvailable">isRoamingAvailable</a></b> () const</td></tr>
@@ -92,7 +93,7 @@
 <tr><td valign="top"><tt>QNetworkConfiguration::Undefined</tt></td><td align="center" valign="top"><tt>0x0000001</tt></td><td valign="top">This state is used for transient configurations such as newly discovered WLANs for which the user has not actually created a configuration yet.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfiguration::Defined</tt></td><td align="center" valign="top"><tt>0x0000002</tt></td><td valign="top">Defined configurations are known to the system but are not immediately usable (e.g&#x2e; a configured WLAN is not within range or the Ethernet cable is currently not plugged into the machine).</td></tr>
 <tr><td valign="top"><tt>QNetworkConfiguration::Discovered</tt></td><td align="center" valign="top"><tt>0x0000006</tt></td><td valign="top">A discovered configuration can be immediately used to create a new <a href="qnetworksession.html">QNetworkSession</a>. An example of a discovered configuration could be a WLAN which is within in range. If the device moves out of range the discovered flag is dropped. A second example is a GPRS configuration which generally remains discovered for as long as the phone has network coverage. A configuration that has this state is also in state QNetworkConfiguration::Defined. If the configuration is a service network this flag is set if at least one of the underlying access points configurations has the Discovered state.</td></tr>
-<tr><td valign="top"><tt>QNetworkConfiguration::Active</tt></td><td align="center" valign="top"><tt>0x000000e</tt></td><td valign="top">The configuration is currently used by an open/active network session (see <a href="qnetworksession.html#isActive">QNetworkSession::isActive</a>()). However this does not mean that the current process is the entity that created the active session. It merely indicates that if a new <a href="qnetworksession.html">QNetworkSession</a> were to be constructed based on this configuration <a href="qnetworksession.html#state">QNetworkSession::state</a>() would return <a href="qnetworksession.html#State-enum">QNetworkSession::Connected</a>. This state implies the QNetworkConfiguration::Discovered state.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfiguration::Active</tt></td><td align="center" valign="top"><tt>0x000000e</tt></td><td valign="top">The configuration is currently used by an open network session (see <a href="qnetworksession.html#isOpen">QNetworkSession::isOpen</a>()). However this does not mean that the current process is the entity that created the open session. It merely indicates that if a new <a href="qnetworksession.html">QNetworkSession</a> were to be constructed based on this configuration <a href="qnetworksession.html#state">QNetworkSession::state</a>() would return <a href="qnetworksession.html#State-enum">QNetworkSession::Connected</a>. This state implies the QNetworkConfiguration::Discovered state.</td></tr>
 </table></p>
 <p>The StateFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;StateFlag&gt;. It stores an OR combination of StateFlag values.</p>
 <a name="//apple_ref/cpp/tag/QNetworkConfiguration/Type"></a>
@@ -120,11 +121,27 @@
 <a name="//apple_ref/cpp/instm/QNetworkConfiguration/~QNetworkConfiguration"></a>
 <h3 class="fn"><a name="dtor.QNetworkConfiguration"></a>QNetworkConfiguration::~QNetworkConfiguration ()</h3>
 <p>Frees the resources associated with the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object.</p>
+<a name="//apple_ref/cpp/instm/QNetworkConfiguration/bearerName"></a>
+<h3 class="fn"><a name="bearerName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QNetworkConfiguration::bearerName () const</h3>
+<p>Returns the type of bearer. The string is not translated and therefore can not be shown to the user. The subsequent table presents the currently known bearer types:</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Value</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>Unknown</td><td>The session is based on an unknown or unspecified bearer type.</td></tr>
+<tr valign="top" class="even"><td>Ethernet</td><td>The session is based on Ethernet.</td></tr>
+<tr valign="top" class="odd"><td>WLAN</td><td>The session is based on Wireless LAN.</td></tr>
+<tr valign="top" class="even"><td>2G</td><td>The session uses CSD, GPRS, HSCSD, EDGE or cdmaOne.</td></tr>
+<tr valign="top" class="odd"><td>CDMA2000</td><td>The session uses CDMA.</td></tr>
+<tr valign="top" class="even"><td>WCDMA</td><td>The session uses W-CDMA/UMTS.</td></tr>
+<tr valign="top" class="odd"><td>HSPA</td><td>The session uses High Speed Packet Access.</td></tr>
+<tr valign="top" class="even"><td>Bluetooth</td><td>The session uses Bluetooth.</td></tr>
+<tr valign="top" class="odd"><td>WiMAX</td><td>The session uses WiMAX.</td></tr>
+</table></p>
+<p>This function returns an empty string if this is an invalid configuration, a network configuration of type <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a> or <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::UserChoice</a>.</p>
 <a name="//apple_ref/cpp/instm/QNetworkConfiguration/children"></a>
-<h3 class="fn"><a name="children"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;QNetworkConfiguration&gt; QNetworkConfiguration::children () const</h3>
+<h3 class="fn"><a name="children"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QNetworkConfiguration&gt; QNetworkConfiguration::children () const</h3>
 <p>Returns all sub configurations of this network configuration. Only network configurations of type <a href="qnetworkconfiguration.html#Type-enum">ServiceNetwork</a> can have children. Otherwise this function returns an empty list.</p>
 <a name="//apple_ref/cpp/instm/QNetworkConfiguration/identifier"></a>
-<h3 class="fn"><a name="identifier"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QNetworkConfiguration::identifier () const</h3>
+<h3 class="fn"><a name="identifier"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QNetworkConfiguration::identifier () const</h3>
 <p>Returns the unique and platform specific identifier for this network configuration; otherwise an empty string.</p>
 <a name="//apple_ref/cpp/instm/QNetworkConfiguration/isRoamingAvailable"></a>
 <h3 class="fn"><a name="isRoamingAvailable"></a>bool QNetworkConfiguration::isRoamingAvailable () const</h3>
@@ -135,7 +152,7 @@
 <p>The addition and removal of configurations can be monitored via the <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
 <p>See also <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
 <a name="//apple_ref/cpp/instm/QNetworkConfiguration/name"></a>
-<h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> QNetworkConfiguration::name () const</h3>
+<h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QNetworkConfiguration::name () const</h3>
 <p>Returns the user visible name of this configuration.</p>
 <p>The name may either be the name of the underlying access point or the name for service network that this configuration represents.</p>
 <a name="//apple_ref/cpp/instm/QNetworkConfiguration/purpose"></a>
@@ -162,6 +179,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

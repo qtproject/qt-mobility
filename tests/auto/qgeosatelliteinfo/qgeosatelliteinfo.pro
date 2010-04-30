@@ -9,7 +9,8 @@ INCLUDEPATH += ../../../src/location
 # Input 
 SOURCES += tst_qgeosatelliteinfo.cpp
 
-qtAddLibrary(QtLocation)
+CONFIG += mobility
+MOBILITY = location
 
 symbian {
         TARGET.CAPABILITY = ALL -TCB

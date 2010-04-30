@@ -63,12 +63,16 @@ tst_qnetworksession.exe
 ::Location
 tst_qgeocoordinate.exe
 tst_qgeopositioninfo.exe
-tst_qsatelliteinfo.exe
-tst_qsatelliteinfosource.exe
+tst_qgeosatelliteinfo.exe
+tst_qgeosatelliteinfosource.exe
 tst_qgeopositioninfosource.exe
 tst_qgeoareamonitor.exe
 tst_qlocationutils.exe
-tst_qnmeapositioninfosource.exe
+tst_dummynmeapositioninfosource.exe
+tst_qnmeapositioninfosource_realtime.exe
+tst_qnmeapositioninfosource_realtime_generic.exe
+tst_qnmeapositioninfosource_simulation.exe
+tst_qnmeapositioninfosource_simulation_generic.exe
 
 ::Publish and Subscribe
 tst_qvaluespace.exe
@@ -89,7 +93,6 @@ tst_qsystemstorageinfo.exe
 
 ::QMedia
 tst_qaudiocapturesource.exe
-tst_qcamera.exe
 tst_qgraphicsvideoitem.exe
 tst_qmediacontent.exe
 tst_qmediaimageviewer.exe

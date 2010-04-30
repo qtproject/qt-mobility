@@ -48,25 +48,33 @@ QTM_BEGIN_NAMESPACE
   \class QContactRelationshipSaveRequest
   \brief The QContactRelationshipSaveRequest class allows a client to asynchronously
     request that certain groups be saved to a contacts store.
-   \ingroup contacts-requests
+
+  For a QContactRelationshipSaveRequest, the resultsAvailable() signal will be emitted when
+  either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
+  relationships (which may be retrieved by calling relationships()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
 
-/*!
- * \fn QContactRelationshipSaveRequest::progress(QContactRelationshipSaveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
- */
-
-/*! Constructs a new relationship save request */
-QContactRelationshipSaveRequest::QContactRelationshipSaveRequest()
-    : QContactAbstractRequest(new QContactRelationshipSaveRequestPrivate)
+/*! Constructs a new relationship save request whose parent is the specified \a parent */
+QContactRelationshipSaveRequest::QContactRelationshipSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRelationshipSaveRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this relationship save request */
-QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest()
+/*!
+  Sets the relationship to save to be \a contactRelationship.
+  Equivalent to calling:
+  \code
+      setRelationships(QList<QContactRelationship>() << contactRelationships);
+  \endcode
+ */
+void QContactRelationshipSaveRequest::setRelationship(const QContactRelationship& contactRelationship)
 {
+    Q_D(QContactRelationshipSaveRequest);
+    d->m_relationships.clear();
+    d->m_relationships.append(contactRelationship);
 }
 
 /*! Sets the relationships to save to be \a contactRelationships */
@@ -82,6 +90,13 @@ QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() con
 {
     Q_D(const QContactRelationshipSaveRequest);
     return d->m_relationships;
+}
+
+/*! Returns the map of input relationship list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactRelationshipSaveRequest::errorMap() const
+{
+    Q_D(const QContactRelationshipSaveRequest);
+    return d->m_errors;
 }
 
 #include "moc_qcontactrelationshipsaverequest.cpp"

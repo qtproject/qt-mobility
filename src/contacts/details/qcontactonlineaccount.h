@@ -56,55 +56,35 @@ class Q_CONTACTS_EXPORT QContactOnlineAccount : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldAccountUri;
-    const char* FieldServiceProvider;
-    const char* FieldSubTypes;
-    const char* FieldNickname;
-    const char* FieldPresence;
-    const char* FieldStatusMessage;
-    const char* PresenceAvailable;
-    const char* PresenceHidden;
-    const char* PresenceBusy;
-    const char* PresenceAway;
-    const char* PresenceExtendedAway;
-    const char* PresenceUnknown;
-    const char* PresenceOffline;
-    const char* SubTypeSip;
-    const char* SubTypeSipVoip;
-    const char* SubTypeImpp;
-    const char* SubTypeVideoShare;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldAccountUri;
+    static const QLatin1Constant FieldServiceProvider;
+    static const QLatin1Constant FieldCapabilities;
+    static const QLatin1Constant FieldSubTypes;
+    static const QLatin1Constant SubTypeSip;
+    static const QLatin1Constant SubTypeSipVoip;
+    static const QLatin1Constant SubTypeImpp;
+    static const QLatin1Constant SubTypeVideoShare;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactOnlineAccount, "OnlineAccount")
-    Q_DECLARE_LATIN1_LITERAL(FieldAccountUri, "AccountUri");
-    Q_DECLARE_LATIN1_LITERAL(FieldServiceProvider, "ServiceProvider");
-    Q_DECLARE_LATIN1_LITERAL(FieldNickname, "Nickname");
-    Q_DECLARE_LATIN1_LITERAL(FieldPresence, "Presence");
-    Q_DECLARE_LATIN1_LITERAL(FieldStatusMessage, "StatusMessage");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAvailable, "Available");
-    Q_DECLARE_LATIN1_LITERAL(PresenceHidden, "Hidden");
-    Q_DECLARE_LATIN1_LITERAL(PresenceBusy, "Busy");
-    Q_DECLARE_LATIN1_LITERAL(PresenceAway, "Away");
-    Q_DECLARE_LATIN1_LITERAL(PresenceExtendedAway, "ExtendedAway");
-    Q_DECLARE_LATIN1_LITERAL(PresenceUnknown, "Unknown");
-    Q_DECLARE_LATIN1_LITERAL(PresenceOffline, "Offline");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeSip, "Sip");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeSipVoip, "SipVoip");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeImpp, "Impp");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideoShare, "VideoShare");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAccountUri, "AccountUri");
+    Q_DECLARE_LATIN1_CONSTANT(FieldServiceProvider, "ServiceProvider");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCapabilities, "Capabilities");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeSip, "Sip");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeSipVoip, "SipVoip");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeImpp, "Impp");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeVideoShare, "VideoShare");
 #endif
 
     void setAccountUri(const QString& accountUri) {setValue(FieldAccountUri, accountUri);}
     QString accountUri() const {return value(FieldAccountUri);}
+
     void setServiceProvider(const QString& serviceProvider) {setValue(FieldServiceProvider, serviceProvider);}
     QString serviceProvider() const {return value(FieldServiceProvider);}
-    void setNickname(const QString& nickname) {setValue(FieldNickname, nickname);}
-    QString nickname() const {return value(FieldNickname);}
-    void setPresence(const QString& presence) {setValue(FieldPresence, presence);}
-    QString presence() const {return value(FieldPresence);}
-    void setStatusMessage(const QString& statusMessage) {setValue(FieldStatusMessage, statusMessage);}
-    QString statusMessage() const {return value(FieldStatusMessage);}
+
+    void setCapabilities(const QStringList& capabilities) {setValue(FieldCapabilities, capabilities);}
+    QStringList capabilities() const {return value<QStringList>(FieldCapabilities);}
 
     void setSubTypes(const QStringList& subTypes) {setValue(FieldSubTypes, subTypes);}
     void setSubTypes(const QString& subType) {setValue(FieldSubTypes, QStringList(subType));}

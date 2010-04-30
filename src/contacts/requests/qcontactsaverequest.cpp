@@ -48,25 +48,33 @@ QTM_BEGIN_NAMESPACE
   \class QContactSaveRequest
   \brief The QContactSaveRequest class allows a client to asynchronously
     request that certain contacts be saved to a contacts store.
-   \ingroup contacts-requests
+
+  For a QContactSaveRequest, the resultsAvailable() signal will be emitted when
+  either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
+  contacts (which may be retrieved by calling contacts()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
 
-/*!
- * \fn QContactSaveRequest::progress(QContactSaveRequest* self)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self.
- */
-
-/*! Constructs a new contact save request */
-QContactSaveRequest::QContactSaveRequest()
-    : QContactAbstractRequest(new QContactSaveRequestPrivate)
+/*! Constructs a new contact save request whose parent is the specified \a parent */
+QContactSaveRequest::QContactSaveRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactSaveRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this contact save request */
-QContactSaveRequest::~QContactSaveRequest()
+/*!
+  Sets the contact to be saved to \a contact.
+  Equivalent to calling:
+  \code
+      setContacts(QList<QContact>() << contact);
+  \endcode
+ */
+void QContactSaveRequest::setContact(const QContact& contact)
 {
+    Q_D(QContactSaveRequest);
+    d->m_contacts.clear();
+    d->m_contacts.append(contact);
 }
 
 /*! Sets the list of contacts to be saved to \a contacts */
@@ -82,6 +90,13 @@ QList<QContact> QContactSaveRequest::contacts() const
 {
     Q_D(const QContactSaveRequest);
     return d->m_contacts;
+}
+
+/*! Returns the map of input definition list indices to errors which occurred */
+QMap<int, QContactManager::Error> QContactSaveRequest::errorMap() const
+{
+    Q_D(const QContactSaveRequest);
+    return d->m_errors;
 }
 
 #include "moc_qcontactsaverequest.cpp"

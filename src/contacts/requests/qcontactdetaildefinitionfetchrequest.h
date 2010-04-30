@@ -57,20 +57,18 @@ class Q_CONTACTS_EXPORT QContactDetailDefinitionFetchRequest : public QContactAb
     Q_OBJECT
 
 public:
-    QContactDetailDefinitionFetchRequest();
-    ~QContactDetailDefinitionFetchRequest();
+    QContactDetailDefinitionFetchRequest(QObject* parent = 0);
 
     /* Selection */
-    void setNames(const QStringList& names);
-    QStringList names() const;
+    void setDefinitionName(const QString& definitionName);
+    void setDefinitionNames(const QStringList& names);
+    QStringList definitionNames() const;
     void setContactType(const QString& contactType);
     QString contactType() const;
 
     /* Results */
     QMap<QString, QContactDetailDefinition> definitions() const;
-
-signals:
-    void progress(QContactDetailDefinitionFetchRequest* self, bool appendOnly);
+    QMap<int, QContactManager::Error> errorMap() const;
 
 private:
     Q_DISABLE_COPY(QContactDetailDefinitionFetchRequest)

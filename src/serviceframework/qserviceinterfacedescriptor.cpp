@@ -85,22 +85,22 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QServiceInterfaceDescriptor::PropertyKey
+    \enum QServiceInterfaceDescriptor::Attribute
 
-    This enum describes the possible property types which can be attached
+    This enum describes the possible attribute types which can be attached
     to a QServiceInterfaceDescriptor.
 
-    \value      Capabilities            The capabilities property is a QStringList and
+    \value      Capabilities            The capabilities attribute is a QStringList and
                                         describes the capabilities that a service client
                                         would require to use the service if capability 
                                         checks are enforced.
-    \value      Location                This property points to the location
+    \value      Location                This attribute points to the location
                                         where the plug-in providing this service is stored.
                                         If the service is plug-in based the location is the
                                         name and/or path of the plugin.
-    \value      ServiceDescription      This property provides a general description for
+    \value      ServiceDescription      This attribute provides a general description for
                                         the service.
-    \value      InterfaceDescription    This property provides a description for the interface 
+    \value      InterfaceDescription    This attribute provides a description for the interface 
                                         implementation.
 */
 
@@ -189,15 +189,15 @@ bool QServiceInterfaceDescriptor::isValid() const
 }
 
 /*!
-    \fn  bool QServiceInterfaceDescriptor::inSystemScope() const
+    \fn  bool QServiceInterfaceDescriptor::scope() const
     
     Returns true if this implementation is provided for all users on the system.
 
-    \sa QServiceManager::Scope
+    \sa QService::Scope
 */
-bool QServiceInterfaceDescriptor::inSystemScope() const
+QService::Scope QServiceInterfaceDescriptor::scope() const
 {
-    return d ? d->systemScope : false;
+    return d ? d->scope : QService::UserScope;
 }
 
 /*!
@@ -245,38 +245,38 @@ int QServiceInterfaceDescriptor::minorVersion() const
 }
 
 /*!
-    \fn  QVariant QServiceInterfaceDescriptor::property(QServiceInterfaceDescriptor::PropertyKey key) const
+    \fn  QVariant QServiceInterfaceDescriptor::attribute(QServiceInterfaceDescriptor::Attribute which) const
     
-    Returns the value for the property \a key; otherwise returns 
+    Returns the value for the attribute \a which; otherwise returns 
     an invalid QVariant.
 */
-QVariant QServiceInterfaceDescriptor::property(QServiceInterfaceDescriptor::PropertyKey key) const
+QVariant QServiceInterfaceDescriptor::attribute(QServiceInterfaceDescriptor::Attribute which) const
 {
     if (d)
-        return d->properties.value(key);
+        return d->attributes.value(which);
     return QVariant();
 }
 
 /*!
-    \fn  QString QServiceInterfaceDescriptor::customProperty(const QString& key) const
+    \fn  QString QServiceInterfaceDescriptor::customAttribute(const QString& which) const
     
-    Returns the value for the custom property \a key; otherwise 
+    Returns the value for the custom attribute \a which; otherwise 
     returns a null string.
 */
-QString QServiceInterfaceDescriptor::customProperty(const QString& key) const
+QString QServiceInterfaceDescriptor::customAttribute(const QString& which) const
 {
     if (d)
-        return d->customProperties[key];
+        return d->customAttributes[which];
     return QString();
 }
 
 /*!
-  Returns a list of names of the custom properties.
+  Returns a list of custom attributes attached to the service.
  */
-QStringList QServiceInterfaceDescriptor::customPropertyKeys() const
+QStringList QServiceInterfaceDescriptor::customAttributes() const
 {
     if (d)
-        return d->customProperties.keys();
+        return d->customAttributes.keys();
     return QStringList();
 }
 
@@ -300,17 +300,17 @@ QDebug operator<<(QDebug dbg, const QServiceInterfaceDescriptor &desc)
 
 #ifndef QT_NO_DATASTREAM
 
-QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor::PropertyKey &k)
+QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor::Attribute &k)
 {
     out << qint8(k);
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor::PropertyKey &k)
+QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor::Attribute &k)
 {
     quint8 key;
     in >> key;
-    k = (QServiceInterfaceDescriptor::PropertyKey)key;
+    k = (QServiceInterfaceDescriptor::Attribute)key;
     return in;
 }
 /*! 
@@ -334,9 +334,9 @@ QDataStream &operator<<(QDataStream &out, const QServiceInterfaceDescriptor &dc)
        out << dc.d->interfaceName;
        out << dc.d->major;
        out << dc.d->minor;
-       out << dc.d->properties;
-       out << dc.d->customProperties;
-       out << dc.d->systemScope;
+       out << dc.d->attributes;
+       out << dc.d->customAttributes;
+       out << (qint8)dc.d->scope;
     }
     return out;
 }
@@ -378,9 +378,10 @@ QDataStream &operator>>(QDataStream &in, QServiceInterfaceDescriptor &dc)
         in >> dc.d->interfaceName;
         in >> dc.d->major;
         in >> dc.d->minor;
-        in >> dc.d->properties;
-        in >> dc.d->customProperties;
-        in >> dc.d->systemScope;
+        in >> dc.d->attributes;
+        in >> dc.d->customAttributes;
+        in >> valid;
+        dc.d->scope = (QService::Scope) valid;
     } else { //input stream contains invalid descriptor
         //use assignment operator
         dc = QServiceInterfaceDescriptor();

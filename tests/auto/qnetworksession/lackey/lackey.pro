@@ -9,4 +9,10 @@ CONFIG+= testcase
 
 include(../../../../common.pri)
 
-qtAddLibrary(QtBearer)
+symbian {
+     # Needed for interprocess communication and opening QNetworkSession
+     TARGET.CAPABILITY = NetworkControl NetworkServices
+}
+
+CONFIG += mobility
+MOBILITY = bearer

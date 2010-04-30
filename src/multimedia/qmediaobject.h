@@ -46,9 +46,9 @@
 #include <QtCore/qstringlist.h>
 
 #include <qmobilityglobal.h>
-#include <qtmedianamespace.h>
+#include "qtmedianamespace.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaService;
 
@@ -62,19 +62,23 @@ class Q_MEDIA_EXPORT QMediaObject : public QObject
 public:
     ~QMediaObject();
 
+    virtual bool isAvailable() const;
+    virtual QtMediaServices::AvailabilityError availabilityError() const;
+
     virtual QMediaService* service() const;
 
     int notifyInterval() const;
     void setNotifyInterval(int milliSeconds);
 
     virtual void bind(QObject*);
+    virtual void unbind(QObject*);
 
     bool isMetaDataAvailable() const;
     bool isMetaDataWritable() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMediaServices::MetaData key) const;
+    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
+    QList<QtMediaServices::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const;
     void setExtendedMetaData(const QString &key, const QVariant &value);
@@ -86,6 +90,8 @@ Q_SIGNALS:
     void metaDataAvailableChanged(bool available);
     void metaDataWritableChanged(bool writable);
     void metaDataChanged();
+
+    void availabilityChanged(bool available);
 
 protected:
     QMediaObject(QObject *parent, QMediaService *service);
@@ -104,6 +110,6 @@ private:
 };
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QABSTRACTMEDIAOBJECT_H

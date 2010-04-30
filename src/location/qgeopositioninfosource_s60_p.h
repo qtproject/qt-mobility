@@ -87,7 +87,7 @@ public:
  *
  */
 class CQGeoPositionInfoSourceS60 : public INotificationCallback,
-        public QGeoPositionInfoSource
+            public QGeoPositionInfoSource
 
 {
 public:
@@ -206,8 +206,6 @@ private:
     //get the more accuarte method with time to first fix < than timeout
     TInt getMoreAccurateMethod(TInt aTimeout, TUint8 aBits);
 
-    QGeoPositionInfo getLastknownPositionS60(TPositionModuleId aModuleID) const;
-
     void TPositionInfo2QGeoPositionInfo(HPositionGenericInfo *mPosInfo,
                                         QGeoPositionInfo& posUpdate);
 
@@ -218,9 +216,9 @@ protected:
 
 private:
     /**
-    * Active object for requestUpdate
+    *  current module ID
     */
-    CQMLBackendAO * mReqUpdateAO;
+    TPositionModuleId mCurrentModuleId;
 
     /**
     *prvmoduleID
@@ -233,15 +231,19 @@ private:
     CQMLBackendAO * mDevStatusUpdateAO;
 
     /**
-     * Positioner server
-     */
-    RPositionServer mPositionServer;
-
+    * Active object for requestUpdate
+    */
+    CQMLBackendAO * mReqUpdateAO;
 
     /**
     * Active object for regular updates.
     */
     CQMLBackendAO * mRegUpdateAO;
+
+    /**
+     * Positioner server
+     */
+    RPositionServer mPositionServer;
 
     /**
     *  list of supported position methods
@@ -251,11 +253,6 @@ private:
     PositioningMethods mSupportedMethods;
 
     PositioningMethod mCurrentMethod;
-
-    /**
-    *  current module ID
-    */
-    TPositionModuleId mCurrentModuleId;
 
     /**
      * maintaiss the size of thr CPosMethodInfo array
@@ -271,6 +268,8 @@ private:
      * maintain the startUpdates status
      */
     TBool mStartUpdates;
+
+    TBool mRegularUpdateTimedOut;
 
     /*
      * flags for the modules

@@ -47,8 +47,6 @@
 #include <Wbemidl.h>
 #include <Oleauto.h>
 #include <QStringList>
-#include <QtCore/qmutex.h>
-#include <QtCore/private/qmutexpool_p.h>
 #include <QUuid>
 
 QTM_BEGIN_NAMESPACE
@@ -84,7 +82,6 @@ void WMIHelper::initializeWMI(const QString &wmiNamespace)
                             wbemLocatorIid, (LPVOID *) &wbemLocator);
 
     if (hres == CO_E_NOTINITIALIZED) { // COM was not initialized
-      //  neededCoInit = true;
         CoInitializeEx(0, COINIT_MULTITHREADED);
         hres = CoCreateInstance(wbemLocatorClsid,0,CLSCTX_INPROC_SERVER,
                                 wbemLocatorIid, (LPVOID *) &wbemLocator);
@@ -102,7 +99,6 @@ void WMIHelper::initializeWMI(const QString &wmiNamespace)
         return ;
     }
 
-    /////////////////////
     hres = CoSetProxyBlanket( wbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, 0,
                               RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, 0, EOAC_NONE );
 
@@ -118,8 +114,6 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
     HRESULT hres;
     QVariant returnVariant;
 
-    ////
-    ////////////////////////
       wbemEnumerator = 0;
 
     if (!m_conditional.isEmpty()) {
@@ -144,7 +138,6 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
 
     ::SysFreeString(bstrQuery);
 
-    ///////////////////////
     wbemCLassObject = 0;
     ULONG result = 0;
 
@@ -155,7 +148,7 @@ QVariant WMIHelper::getWMIData(const QString &wmiNamespace, const QString &class
             break;
         }
 
-        foreach(QString property, classProperty) {
+        foreach(const QString property, classProperty) {
             VARIANT msVariant;
             CIMTYPE variantType;
             hr = wbemCLassObject->Get(property.utf16(), 0, &msVariant, &variantType, 0);

@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = QtPublishSubscribe
-QT = core network
+QT = core
 
 include(../../common.pri)
 
@@ -25,49 +25,63 @@ SOURCES += \
            qvaluespacesubscriber.cpp
 
 symbian {
-    DEPENDPATH += symbian
-    INCLUDEPATH += symbian
+    DEPENDPATH += xqsettingsmanager_symbian
+    INCLUDEPATH += xqsettingsmanager_symbian
     DEFINES += XQSETTINGSMANAGER_NO_LIBRARY
-    include(symbian/settingsmanager.pri)
+    DEFINES += XQSETTINGSMANAGER_NO_TRANSACTIONS
+    DEFINES += XQSETTINGSMANAGER_NO_CENREPKEY_CREATION_DELETION
+    include(xqsettingsmanager_symbian/settingsmanager.pri)
 
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
+    DEPENDPATH += psmapperserver_symbian
+    INCLUDEPATH += psmapperserver_symbian \
+               $${EPOCROOT}epoc32\include\platform
 
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
+    HEADERS += pathmapper_symbian_p.h \
+        pathmapper_proxy_symbian_p.h
+    LIBS += -lefsrv
 
     DEFINES += QT_BUILD_INTERNAL
-    HEADERS += settingslayer_symbian.h \
-        pathmapper_symbian.h \
-        qcrmlparser_p.h
-    SOURCES += settingslayer_symbian.cpp \
-        pathmapper_symbian.cpp \
-        qcrmlparser.cpp
+    HEADERS += settingslayer_symbian_p.h
+    SOURCES += settingslayer_symbian.cpp
+
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC78
 
-    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll
+    QtPublishSubscribeDeployment.sources = QtPublishSubscribe.dll qpspathmapperserver.exe
     QtPublishSubscribeDeployment.path = /sys/bin
-
     DEPLOYMENT += QtPublishSubscribeDeployment
 }
 
 unix:!symbian {
-    maemo {
-        DEFINES += Q_WS_MAEMO_6
+    maemo6 {
         SOURCES += contextkitlayer.cpp
         CONFIG += link_pkgconfig
         PKGCONFIG += contextsubscriber-1.0 QtDBus
     } else {
-        HEADERS += qsystemreadwritelock_p.h \
-           	   qmallocpool_p.h \
-		   qpacketprotocol_p.h
-        SOURCES += sharedmemorylayer.cpp \
-           	   qmallocpool.cpp \
-                   qsystemreadwritelock_unix.cpp \
-		   qpacketprotocol.cpp
+        QT += network
+
+        !mac:maemo5 { 
+            HEADERS += gconflayer_linux_p.h
+            SOURCES += gconflayer_linux.cpp
+
+            #As a workaround build GConfItem wrapper class with the project
+            HEADERS += gconfitem_p.h
+            SOURCES += gconfitem.cpp
+
+            CONFIG += link_pkgconfig
+            PKGCONFIG += glib-2.0 gconf-2.0
+        }
+
+        !maemo5 {
+            #do not use shared memory layer on Maemo5
+            HEADERS += qsystemreadwritelock_p.h \
+                       qmallocpool_p.h \
+                       qpacketprotocol_p.h
+            SOURCES += sharedmemorylayer.cpp \
+                       qmallocpool.cpp \
+                       qsystemreadwritelock_unix.cpp \
+                       qpacketprotocol.cpp
+        }
     }
 }
 
@@ -81,4 +95,5 @@ win32 {
     wince*:LIBS += -ltoolhelp
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

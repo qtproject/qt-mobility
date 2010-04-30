@@ -14,16 +14,24 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">fetchgooglemaps.pro Example File<br /><span class="small-subtitle">fetchgooglemaps/fetchgooglemaps.pro</span>
 </h1>
 <pre>    TEMPLATE=app
-    INCLUDEPATH += ../../src/location
+    INCLUDEPATH += ../../src/location \
+                    ../../src/bearer \
+                    ../../src/global \
+                    ../satellitedialog
 
     QT += webkit network
 
-    HEADERS = mapwindow.h
+    HEADERS = mapwindow.h \
+                ../satellitedialog/satellitedialog.h
     SOURCES = mapwindow.cpp \
-              main.cpp
+                ../satellitedialog/satellitedialog.cpp \
+                main.cpp
 
     include(../examples.pri)
-    qtAddLibrary(QtLocation)
+
+    CONFIG += mobility
+    MOBILITY = location
+    !maemo5:MOBILITY += bearer
 
     symbian: {
         addFiles.sources = nmealog.txt
@@ -41,6 +49,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

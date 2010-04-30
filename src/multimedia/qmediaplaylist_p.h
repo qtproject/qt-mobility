@@ -53,12 +53,12 @@
 // We mean it.
 //
 
-#include <qmediaplaylist.h>
-#include <qmediaplaylistcontrol.h>
-#include <qmediaplayer.h>
-#include <qmediaplayercontrol.h>
-#include <qlocalmediaplaylistprovider.h>
-#include <qmediaobject_p.h>
+#include "qmediaplaylist.h"
+#include "qmediaplaylistcontrol.h"
+#include "qmediaplayer.h"
+#include "qmediaplayercontrol.h"
+#include "qlocalmediaplaylistprovider.h"
+#include "qmediaobject_p.h"
 
 #include <QtCore/qdebug.h>
 
@@ -66,7 +66,7 @@
 # pragma Q_MOC_EXPAND_MACROS
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylistControl;
 class QMediaPlaylistProvider;
@@ -79,7 +79,9 @@ class QMediaPlaylistPrivate
     Q_DECLARE_PUBLIC(QMediaPlaylist)
 public:
     QMediaPlaylistPrivate()
-        :control(0),
+        :mediaObject(0),
+        control(0),
+        localPlaylistControl(0),
         error(QMediaPlaylist::NoError)
     {
     }
@@ -94,8 +96,21 @@ public:
         emit q_ptr->loadFailed();
     }
 
+    void _q_mediaObjectDeleted()
+    {
+        Q_Q(QMediaPlaylist);
+        mediaObject = 0;
+        if (control != localPlaylistControl)
+            control = 0;
+        q->setMediaObject(0);
+    }
+
+    QMediaObject *mediaObject;
+
     QMediaPlaylistControl *control;
     QMediaPlaylistProvider *playlist() const { return control->playlistProvider(); }
+
+    QMediaPlaylistControl *localPlaylistControl;
 
     bool readItems(QMediaPlaylistReader *reader);
     bool writeItems(QMediaPlaylistWriter *writer);
@@ -118,7 +133,7 @@ public:
         m_navigator = new QMediaPlaylistNavigator(playlist,this);
         m_navigator->setPlaybackMode(QMediaPlaylist::Linear);
 
-        connect(m_navigator, SIGNAL(currentPositionChanged(int)), SIGNAL(playlistPositionChanged(int)));
+        connect(m_navigator, SIGNAL(currentIndexChanged(int)), SIGNAL(currentIndexChanged(int)));
         connect(m_navigator, SIGNAL(activated(QMediaContent)), SIGNAL(currentMediaChanged(QMediaContent)));
     }
 
@@ -132,10 +147,10 @@ public:
         return true;
     }
 
-    int currentPosition() const { return m_navigator->currentPosition(); }
-    void setCurrentPosition(int position) { m_navigator->jump(position); }
-    int nextPosition(int steps) const { return m_navigator->nextPosition(steps); }
-    int previousPosition(int steps) const { return m_navigator->previousPosition(steps); }
+    int currentIndex() const { return m_navigator->currentIndex(); }
+    void setCurrentIndex(int position) { m_navigator->jump(position); }
+    int nextIndex(int steps) const { return m_navigator->nextIndex(steps); }
+    int previousIndex(int steps) const { return m_navigator->previousIndex(steps); }
 
     void next() { m_navigator->next(); }
     void previous() { m_navigator->previous(); }
@@ -148,6 +163,6 @@ private:
 };
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIAPLAYLIST_P_H

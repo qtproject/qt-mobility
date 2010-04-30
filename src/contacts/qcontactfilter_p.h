@@ -95,6 +95,7 @@ public:
 };
 QTM_END_NAMESPACE
 
+QT_BEGIN_NAMESPACE
 #if defined(Q_CC_MWERKS)
 // This results in multiple symbol definition errors on all other compilers
 // but not having a definition here results in an attempt to use the unspecialized
@@ -106,6 +107,7 @@ template<> QTM_PREPEND_NAMESPACE(QContactFilterPrivate) *QSharedDataPointer<QTM_
 #else
 template<> QTM_PREPEND_NAMESPACE(QContactFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QContactFilterPrivate)>::clone();
 #endif
+QT_END_NAMESPACE
 
 
 #endif

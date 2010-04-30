@@ -54,21 +54,20 @@ class Q_CONTACTS_EXPORT QContactAbstractRequest : public QObject
     Q_OBJECT
 
 public:
-    QContactAbstractRequest() {}
-    virtual ~QContactAbstractRequest();
+    ~QContactAbstractRequest();
 
-    enum Status {
-        Inactive = 0,   // operation not yet started
-        Active,         // operation started, not yet finished
-        Cancelling,     // operation started then cancelled, not yet finished
-        Cancelled,      // operation is finished due to cancellation
-        Finished        // operation successfully completed
+    enum State {
+        InactiveState = 0,   // operation not yet started
+        ActiveState,         // operation started, not yet finished
+        CanceledState,       // operation is finished due to cancellation
+        FinishedState        // operation either completed successfully or failed.  No further results will become available.
     };
 
-    Status status() const;
+    State state() const; // replaces status()
+    bool isInactive() const;
     bool isActive() const;
     bool isFinished() const;
-    QList<QContactManager::Error> errors() const;
+    bool isCanceled() const;
     QContactManager::Error error() const;
 
     enum RequestType {
@@ -91,20 +90,24 @@ public:
     QContactManager* manager() const;
     void setManager(QContactManager* manager);
 
-public slots:
+public Q_SLOTS:
     /* Verbs */
     bool start();
     bool cancel();
 
     /* waiting for stuff */
     bool waitForFinished(int msecs = 0);
-    bool waitForProgress(int msecs = 0);
+
+Q_SIGNALS:
+    void stateChanged(QContactAbstractRequest::State newState);
+    void resultsAvailable();
 
 protected:
-    QContactAbstractRequest(QContactAbstractRequestPrivate* otherd);
+    QContactAbstractRequest(QContactAbstractRequestPrivate* otherd, QObject* parent = 0);
     QContactAbstractRequestPrivate* d_ptr;
 
 private:
+    QContactAbstractRequest(QObject* parent = 0) : QObject(parent), d_ptr(0) {}
     Q_DISABLE_COPY(QContactAbstractRequest)
     friend class QContactManagerEngine;
 };

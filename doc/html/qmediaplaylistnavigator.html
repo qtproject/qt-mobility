@@ -16,7 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlaylistNavigator Class Reference</h1>
 <p>The QMediaPlaylistNavigator class provides navigation for a media playlist. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaPlaylistNavigator&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qmediaplaylistnavigator-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -24,12 +24,12 @@
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
+<li><div class="fn"><b><a href="qmediaplaylistnavigator.html#currentIndex-prop">currentIndex</a></b> : int</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistnavigator.html#currentItem-prop">currentItem</a></b> : const QMediaContent</div></li>
-<li><div class="fn"><b><a href="qmediaplaylistnavigator.html#currentPosition-prop">currentPosition</a></b> : int</div></li>
 <li><div class="fn"><b><a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a></b> : QMediaPlaylist::PlaybackMode</div></li>
 </ul>
 <ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
@@ -37,50 +37,50 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#QMediaPlaylistNavigator">QMediaPlaylistNavigator</a></b> ( QMediaPlaylistProvider * <i>playlist</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#dtor.QMediaPlaylistNavigator">~QMediaPlaylistNavigator</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentIndex-prop">currentIndex</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentItem-prop">currentItem</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentPosition-prop">currentPosition</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#itemAt">itemAt</a></b> ( int <i>position</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#nextIndex">nextIndex</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#nextItem">nextItem</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#nextPosition">nextPosition</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaPlaylist::PlaybackMode </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaPlaylistProvider * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#playlist">playlist</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#previousIndex">previousIndex</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#previousItem">previousItem</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#previousPosition">previousPosition</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#setPlaylist">setPlaylist</a></b> ( QMediaPlaylistProvider * <i>playlist</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentPosition-prop">jump</a></b> ( int <i>position</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentIndex-prop">jump</a></b> ( int <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#next">next</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#previous">previous</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#playbackMode-prop">setPlaybackMode</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#activated">activated</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentPositionChanged">currentPositionChanged</a></b> ( int <i>position</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#playbackModeChanged">playbackModeChanged</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#surroundingItemsChanged">surroundingItemsChanged</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -89,6 +89,22 @@
 <p>See also <a href="qmediaplaylist.html">QMediaPlaylist</a> and <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a>.</p>
 <hr />
 <h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/currentIndex"></a>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/jump"></a>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/currentIndexChanged"></a>
+<h3 class="fn"><a name="currentIndex-prop"></a>currentIndex : int</h3>
+<p>Contains the position of the current media.</p>
+<p>If no media is current, the property contains -1.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>currentIndex</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>jump</b> ( int <i>position</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>position</i> )</td></tr>
+</table>
+<p>See also <a href="qmediaplaylistnavigator.html#nextIndex">nextIndex</a>() and <a href="qmediaplaylistnavigator.html#previousIndex">previousIndex</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/currentItem"></a>
 <h3 class="fn"><a name="currentItem-prop"></a>currentItem : const <a href="qmediacontent.html">QMediaContent</a></h3>
 <p>Contains the media at the current position in the playlist.</p>
@@ -96,23 +112,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b>currentItem</b> () const</td></tr>
 </table>
-<p>See also <a href="qmediaplaylistnavigator.html#currentPosition-prop">currentPosition</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/currentPosition"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/jump"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/currentPositionChanged"></a>
-<h3 class="fn"><a name="currentPosition-prop"></a>currentPosition : int</h3>
-<p>Contains the position of the current media.</p>
-<p>If no media is current, the property contains -1.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>currentPosition</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>jump</b> ( int <i>position</i> )</td></tr>
-</table>
-<p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistnavigator.html#currentPositionChanged">currentPositionChanged</a></b> ( int <i>position</i> )</td></tr>
-</table>
-<p>See also <a href="qmediaplaylistnavigator.html#nextPosition">nextPosition</a>() and <a href="qmediaplaylistnavigator.html#previousPosition">previousPosition</a>().</p>
+<p>See also <a href="qmediaplaylistnavigator.html#currentIndex-prop">currentIndex</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/playbackMode"></a>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/setPlaybackMode"></a>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/playbackModeChanged"></a>
@@ -130,17 +130,17 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/QMediaPlaylistNavigator"></a>
-<h3 class="fn"><a name="QMediaPlaylistNavigator"></a>QMediaPlaylistNavigator::QMediaPlaylistNavigator ( <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * <i>playlist</i>, <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QMediaPlaylistNavigator"></a>QMediaPlaylistNavigator::QMediaPlaylistNavigator ( <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * <i>playlist</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a media playlist navigator for a <i>playlist</i>.</p>
-<p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/~QMediaPlaylistNavigator"></a>
 <h3 class="fn"><a name="dtor.QMediaPlaylistNavigator"></a>QMediaPlaylistNavigator::~QMediaPlaylistNavigator ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys a media playlist navigator.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/activated"></a>
 <h3 class="fn"><a name="activated"></a>void QMediaPlaylistNavigator::activated ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the current <i>media</i> has changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/currentPositionChanged"></a>
-<h3 class="fn"><a name="currentPositionChanged"></a>void QMediaPlaylistNavigator::currentPositionChanged ( int <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/currentIndexChanged"></a>
+<h3 class="fn"><a name="currentIndexChanged"></a>void QMediaPlaylistNavigator::currentIndexChanged ( int <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals the <i>position</i> of the current media has changed.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/itemAt"></a>
 <h3 class="fn"><a name="itemAt"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylistNavigator::itemAt ( int <i>position</i> ) const</h3>
@@ -148,16 +148,16 @@
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/next"></a>
 <h3 class="fn"><a name="next"></a>void QMediaPlaylistNavigator::next ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Advances to the next item in the playlist.</p>
-<p>See also <a href="qmediaplaylistnavigator.html#previous">previous</a>(), <a href="qmediaplaylistnavigator.html#currentPosition-prop">jump</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<p>See also <a href="qmediaplaylistnavigator.html#previous">previous</a>(), <a href="qmediaplaylistnavigator.html#currentIndex-prop">jump</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/nextIndex"></a>
+<h3 class="fn"><a name="nextIndex"></a>int QMediaPlaylistNavigator::nextIndex ( int <i>steps</i> = 1 ) const</h3>
+<p>Returns a position <i>steps</i> ahead of the current position accounting for the <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<p>If the position is beyond the end of the playlist, this value returned is -1.</p>
+<p>See also <a href="qmediaplaylistnavigator.html#currentIndex-prop">currentIndex</a>(), <a href="qmediaplaylistnavigator.html#previousIndex">previousIndex</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/nextItem"></a>
 <h3 class="fn"><a name="nextItem"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylistNavigator::nextItem ( int <i>steps</i> = 1 ) const</h3>
 <p>Returns the media that is <i>steps</i> positions ahead of the current position in the playlist.</p>
-<p>See also <a href="qmediaplaylistnavigator.html#nextPosition">nextPosition</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/nextPosition"></a>
-<h3 class="fn"><a name="nextPosition"></a>int QMediaPlaylistNavigator::nextPosition ( int <i>steps</i> = 1 ) const</h3>
-<p>Returns a position <i>steps</i> ahead of the current position accounting for the <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
-<p>If the position is beyond the end of the playlist, this value returned is -1.</p>
-<p>See also <a href="qmediaplaylistnavigator.html#currentPosition-prop">currentPosition</a>(), <a href="qmediaplaylistnavigator.html#previousPosition">previousPosition</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<p>See also <a href="qmediaplaylistnavigator.html#nextIndex">nextIndex</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/playbackModeChanged"></a>
 <h3 class="fn"><a name="playbackModeChanged"></a>void QMediaPlaylistNavigator::playbackModeChanged ( <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the playback <i>mode</i> has changed.</p>
@@ -168,16 +168,16 @@
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/previous"></a>
 <h3 class="fn"><a name="previous"></a>void QMediaPlaylistNavigator::previous ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Returns to the previous item in the playlist,</p>
-<p>See also <a href="qmediaplaylistnavigator.html#next">next</a>(), <a href="qmediaplaylistnavigator.html#currentPosition-prop">jump</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<p>See also <a href="qmediaplaylistnavigator.html#next">next</a>(), <a href="qmediaplaylistnavigator.html#currentIndex-prop">jump</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/previousIndex"></a>
+<h3 class="fn"><a name="previousIndex"></a>int QMediaPlaylistNavigator::previousIndex ( int <i>steps</i> = 1 ) const</h3>
+<p>Returns a position <i>steps</i> behind the current position accounting for the <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<p>If the position is prior to the beginning of the playlist this will return -1.</p>
+<p>See also <a href="qmediaplaylistnavigator.html#currentIndex-prop">currentIndex</a>(), <a href="qmediaplaylistnavigator.html#nextIndex">nextIndex</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/previousItem"></a>
 <h3 class="fn"><a name="previousItem"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylistNavigator::previousItem ( int <i>steps</i> = 1 ) const</h3>
 <p>Returns the media that is <i>steps</i> positions behind the current position in the playlist.</p>
-<p>See also <a href="qmediaplaylistnavigator.html#previousPosition">previousPosition</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/previousPosition"></a>
-<h3 class="fn"><a name="previousPosition"></a>int QMediaPlaylistNavigator::previousPosition ( int <i>steps</i> = 1 ) const</h3>
-<p>Returns a position <i>steps</i> behind the current position accounting for the <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
-<p>If the position is prior to the beginning of the playlist this will return -1.</p>
-<p>See also <a href="qmediaplaylistnavigator.html#currentPosition-prop">currentPosition</a>(), <a href="qmediaplaylistnavigator.html#nextPosition">nextPosition</a>(), and <a href="qmediaplaylistnavigator.html#playbackMode-prop">playbackMode</a>().</p>
+<p>See also <a href="qmediaplaylistnavigator.html#previousIndex">previousIndex</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistNavigator/setPlaylist"></a>
 <h3 class="fn"><a name="setPlaylist"></a>void QMediaPlaylistNavigator::setPlaylist ( <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * <i>playlist</i> )</h3>
 <p>Sets the <i>playlist</i> to navigate.</p>
@@ -189,6 +189,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -42,9 +42,9 @@
 #ifndef QLOCALMEDIAPAYLISTPROVIDER_H
 #define QLOCALMEDIAPAYLISTPROVIDER_H
 
-#include <qmediaplaylistprovider.h>
+#include "qmediaplaylistprovider.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QLocalMediaPlaylistProviderPrivate;
 class Q_MEDIA_EXPORT QLocalMediaPlaylistProvider : public QMediaPlaylistProvider
@@ -54,17 +54,17 @@ public:
     QLocalMediaPlaylistProvider(QObject *parent=0);
     virtual ~QLocalMediaPlaylistProvider();
 
-    virtual int size() const;
+    virtual int mediaCount() const;
     virtual QMediaContent media(int pos) const;
 
     virtual bool isReadOnly() const;
 
-    virtual bool appendItem(const QMediaContent &content);
-    virtual bool appendItems(const QList<QMediaContent> &items);
-    virtual bool insertItem(int pos, const QMediaContent &content);
-    virtual bool insertItems(int pos, const QList<QMediaContent> &items);
-    virtual bool removeItem(int pos);
-    virtual bool removeItems(int start, int end);
+    virtual bool addMedia(const QMediaContent &content);
+    virtual bool addMedia(const QList<QMediaContent> &items);
+    virtual bool insertMedia(int pos, const QMediaContent &content);
+    virtual bool insertMedia(int pos, const QList<QMediaContent> &items);
+    virtual bool removeMedia(int pos);
+    virtual bool removeMedia(int start, int end);
     virtual bool clear();
 
 public Q_SLOTS:
@@ -74,6 +74,6 @@ private:
     Q_DECLARE_PRIVATE(QLocalMediaPlaylistProvider)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QLOCALMEDIAPAYLISTSOURCE_H

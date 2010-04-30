@@ -11,7 +11,8 @@ include(../../../common.pri)
 HEADERS += 
 SOURCES += tst_qservicecontext.cpp 
 
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

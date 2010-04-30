@@ -58,25 +58,25 @@
 #include <QDateTime>
 
 #include <e32base.h>
-#include <CommDbConnPref.h>
+#include <commdbconnpref.h>
 #include <es_sock.h>
 #include <rconnmon.h>
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     #include <comms-infras/cs_mobility_apiext.h>
 #endif
-
-typedef int(*TOpenCSetdefaultifFunction)(const struct ifreq*);
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+    #include <extendedconnpref.h>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
 class ConnectionProgressNotifier;
 
+class QNetworkSessionPrivate : public QObject, public CActive,
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
-class QNetworkSessionPrivate : public QObject, public CActive, public MMobilityProtocolResp, 
-                               public MConnectionMonitorObserver
-#else
-class QNetworkSessionPrivate : public QObject, public CActive, public MConnectionMonitorObserver
+                               public MMobilityProtocolResp,
 #endif
+                               public MConnectionMonitorObserver
 {
     Q_OBJECT
 public:
@@ -92,7 +92,6 @@ public:
     QNetworkInterface currentInterface() const;
     QVariant sessionProperty(const QString& key) const;
     void setSessionProperty(const QString& key, const QVariant& value);
-    QString bearerName() const;
     
     void setALREnabled(bool enabled);
 
@@ -158,13 +157,10 @@ private: // data
     mutable QNetworkInterface activeInterface;
 
     QNetworkSession::State state;
-    bool isActive;
+    bool isOpen;
 
     QNetworkSession* q;
     QDateTime startTime;
-
-    RLibrary iOpenCLibrary;
-    TOpenCSetdefaultifFunction iDynamicSetdefaultif;
 
     mutable RSocketServ iSocketServ;
     mutable RConnection iConnection;
@@ -177,6 +173,7 @@ private: // data
     QNetworkSession::SessionError iError;
     TInt iALREnabled;
     TBool iALRUpgradingConnection;
+    TBool iConnectInBackground;
     
     QList<QString> iKnownConfigsBeforeConnectionStart;
     

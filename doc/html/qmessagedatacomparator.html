@@ -22,8 +22,8 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagedatacomparator.html#EqualityComparator-enum">EqualityComparator</a></b> { Equal, NotEqual }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagedatacomparator.html#InclusionComparator-enum">InclusionComparator</a></b> { Includes, Excludes }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagedatacomparator.html#Option-enum">Option</a></b> { FullWord, CaseSensitive }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmessagedatacomparator.html#Option-enum">Options</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagedatacomparator.html#MatchFlag-enum">MatchFlag</a></b> { MatchCaseSensitive, MatchFullWord }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmessagedatacomparator.html#MatchFlag-enum">MatchFlags</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmessagedatacomparator.html#RelationComparator-enum">RelationComparator</a></b> { LessThan, LessThanEqual, GreaterThan, GreaterThanEqual }</td></tr>
 </table>
 <a name="details"></a>
@@ -36,7 +36,7 @@
 <a name="//apple_ref/cpp/econst/QMessageDataComparator/Equal"></a>
 <a name="//apple_ref/cpp/econst/QMessageDataComparator/NotEqual"></a>
 <h3 class="fn"><a name="EqualityComparator-enum"></a>enum QMessageDataComparator::EqualityComparator</h3>
-<p>Defines the comparison operations that can be used to compare data elements of <a href="qmessagestore.html">QMessageStore</a> objects for equality and inequality.</p>
+<p>Defines the comparison operations that can be used to compare data elements of <a href="qmessagemanager.html">QMessageManager</a> objects for equality and inequality.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessageDataComparator::Equal</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Represents the '==' operator.</td></tr>
@@ -46,31 +46,31 @@
 <a name="//apple_ref/cpp/econst/QMessageDataComparator/Includes"></a>
 <a name="//apple_ref/cpp/econst/QMessageDataComparator/Excludes"></a>
 <h3 class="fn"><a name="InclusionComparator-enum"></a>enum QMessageDataComparator::InclusionComparator</h3>
-<p>Defines the comparison operations that can be used to compare data elements of <a href="qmessagestore.html">QMessageStore</a> objects for inclusion or exclusion.</p>
+<p>Defines the comparison operations that can be used to compare data elements of <a href="qmessagemanager.html">QMessageManager</a> objects for inclusion or exclusion.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessageDataComparator::Includes</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Represents an operation in which an associated property is tested to determine whether it includes a value.</td></tr>
 <tr><td valign="top"><tt>QMessageDataComparator::Excludes</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Represents an operation in which an associated property is tested to determine whether it is equal to the supplied value.</td></tr>
 </table></p>
-<a name="//apple_ref/cpp/tag/QMessageDataComparator/Option"></a>
-<a name="//apple_ref/cpp/econst/QMessageDataComparator/FullWord"></a>
-<a name="//apple_ref/cpp/econst/QMessageDataComparator/CaseSensitive"></a>
-<a name="//apple_ref/cpp/tdef/QMessageDataComparator/Options"></a>
-<h3 class="flags"><a name="Option-enum"></a>enum QMessageDataComparator::Option<br />flags QMessageDataComparator::Options</h3>
+<a name="//apple_ref/cpp/tag/QMessageDataComparator/MatchFlag"></a>
+<a name="//apple_ref/cpp/econst/QMessageDataComparator/MatchCaseSensitive"></a>
+<a name="//apple_ref/cpp/econst/QMessageDataComparator/MatchFullWord"></a>
+<a name="//apple_ref/cpp/tdef/QMessageDataComparator/MatchFlags"></a>
+<h3 class="flags"><a name="MatchFlag-enum"></a>enum QMessageDataComparator::MatchFlag<br />flags QMessageDataComparator::MatchFlags</h3>
 <p>This enum describes additional matching criteria when performing a search.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMessageDataComparator::FullWord</tt></td><td align="center" valign="top"><tt>0x1</tt></td><td valign="top">The key should only match a complete word. Not supported on Windows and QMF platforms.</td></tr>
-<tr><td valign="top"><tt>QMessageDataComparator::CaseSensitive</tt></td><td align="center" valign="top"><tt>0x2</tt></td><td valign="top">The key should be case sensitive. Not supported on QMF platform.</td></tr>
+<tr><td valign="top"><tt>QMessageDataComparator::MatchCaseSensitive</tt></td><td align="center" valign="top"><tt>Qt::MatchCaseSensitive</tt></td><td valign="top">The key should be case sensitive. Not supported on QMF platform.</td></tr>
+<tr><td valign="top"><tt>QMessageDataComparator::MatchFullWord</tt></td><td align="center" valign="top"><tt>128</tt></td><td valign="top">The key should only match a complete word. Not supported on Windows and QMF platforms.</td></tr>
 </table></p>
-<p>The Options type is a typedef for <a href="qflags.html">QFlags</a>&lt;Option&gt;. It stores an OR combination of Option values.</p>
+<p>The MatchFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;MatchFlag&gt;. It stores an OR combination of MatchFlag values.</p>
 <a name="//apple_ref/cpp/tag/QMessageDataComparator/RelationComparator"></a>
 <a name="//apple_ref/cpp/econst/QMessageDataComparator/LessThan"></a>
 <a name="//apple_ref/cpp/econst/QMessageDataComparator/LessThanEqual"></a>
 <a name="//apple_ref/cpp/econst/QMessageDataComparator/GreaterThan"></a>
 <a name="//apple_ref/cpp/econst/QMessageDataComparator/GreaterThanEqual"></a>
 <h3 class="fn"><a name="RelationComparator-enum"></a>enum QMessageDataComparator::RelationComparator</h3>
-<p>Defines the comparison operations that can be used to compare data elements of <a href="qmessagestore.html">QMessageStore</a> objects, according to a specific relation.</p>
+<p>Defines the comparison operations that can be used to compare data elements of <a href="qmessagemanager.html">QMessageManager</a> objects, according to a specific relation.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMessageDataComparator::LessThan</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Represents the '&lt;' operator.</td></tr>
@@ -82,6 +82,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

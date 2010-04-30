@@ -42,6 +42,17 @@
 #ifndef QVERSITCONTACTEXPORTER_P_H
 #define QVERSITCONTACTEXPORTER_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
@@ -52,23 +63,18 @@
 QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
-QTM_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate : public QObject
+class Q_AUTOTEST_EXPORT QVersitContactExporterPrivate
 {
-    Q_OBJECT
 public:
     QVersitContactExporterPrivate();
     ~QVersitContactExporterPrivate();
 
-    void exportContact(QVersitDocument& versitDocument, const QContact& contact);
-
-signals:
-    void scale(const QString& imageFileName, QByteArray& imageData);
+    bool exportContact(const QContact& contact, QVersitDocument& versitDocument,
+                       QVersitContactExporter::Error* error);
 
 protected:
+    static bool documentContainsName(const QVersitDocument& document);
     void encodeName(QVersitProperty& property, const QContactDetail& detail);
     void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
     void encodeEmail(QVersitProperty& property, const QContactDetail& detail);
@@ -82,11 +88,13 @@ protected:
     void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
     void encodeGender(QVersitProperty& property, const QContactDetail& detail);
     void encodeNickname(QVersitDocument& document, const QContactDetail& detail);
+    void encodeTag(QVersitDocument& document, const QContactDetail& detail);
     void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
     bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
     bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
-    bool encodeAvatar(QVersitProperty& property,
-        const QContactDetail& detail);
+    bool encodeRingtone(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeThumbnail(QVersitProperty& property, const QContactDetail& detail);
+    bool encodeAvatar(QVersitProperty& property, const QContactDetail& detail);
     bool encodeDisplayLabel(QVersitProperty& property,
         const QContactDetail& detail,
         const QContact& contact);
@@ -94,16 +102,14 @@ protected:
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,
         const QStringList& subTypes=QStringList());
-    bool encodeEmbeddedContent(const QString& resourcePath,
-        QVersitProperty& property,
-        bool performScaling);
-    void setEscapedValue(QVersitProperty& property,const QString& value);
-    QByteArray escape(const QByteArray& value);
+    bool encodeContentFromFile(const QString& resourcePath, QVersitProperty& property);
 
 public: // Data
-    QList<QContactDetail> mUnknownContactDetails;
-
-protected: // Data
+    QList<QVersitDocument> mDocuments;
+    QMap<int, QVersitContactExporter::Error> mErrors;
+    QVersitContactExporterDetailHandler* mDetailHandler;
+    QVersitDefaultResourceHandler* mDefaultResourceHandler;
+    QVersitResourceHandler* mResourceHandler;
     QHash<QString,QString> mPropertyMappings;
     QHash<QString,QString> mParameterMappings;
     QVersitDocument::VersitType mVersitType;

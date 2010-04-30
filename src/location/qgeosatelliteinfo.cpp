@@ -42,6 +42,7 @@
 
 #include <QHash>
 #include <QDebug>
+#include <QDataStream>
 
 QTM_BEGIN_NAMESPACE
 
@@ -50,7 +51,7 @@ class QGeoSatelliteInfoPrivate
 public:
     int prn;
     int signal;
-    QHash<int, qreal> doubleProps;
+    QHash<int, qreal> doubleAttribs;
 };
 
 
@@ -63,8 +64,8 @@ public:
 */
 
 /*!
-    \enum QGeoSatelliteInfo::Property
-    Defines the properties for the satellite information.
+    \enum QGeoSatelliteInfo::Attribute
+    Defines the attributes for the satellite information.
 
     \value Elevation The elevation of the satellite, in degrees.
     \value Azimuth The azimuth to true north, in degrees.
@@ -75,7 +76,7 @@ public:
     Creates a satellite information object.
 */
 QGeoSatelliteInfo::QGeoSatelliteInfo()
-    : d(new QGeoSatelliteInfoPrivate)
+        : d(new QGeoSatelliteInfoPrivate)
 {
     d->prn = -1;
     d->signal = -1;
@@ -86,7 +87,7 @@ QGeoSatelliteInfo::QGeoSatelliteInfo()
 */
 
 QGeoSatelliteInfo::QGeoSatelliteInfo(const QGeoSatelliteInfo &other)
-    : d(new QGeoSatelliteInfoPrivate)
+        : d(new QGeoSatelliteInfoPrivate)
 {
     operator=(other);
 }
@@ -102,14 +103,14 @@ QGeoSatelliteInfo::~QGeoSatelliteInfo()
 /*!
     Assigns the values from \a other to this object.
 */
-QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo &other)
+QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo & other)
 {
     if (this == &other)
         return *this;
 
     d->prn = other.d->prn;
     d->signal = other.d->signal;
-    d->doubleProps = other.d->doubleProps;
+    d->doubleAttribs = other.d->doubleAttribs;
     return *this;
 }
 
@@ -120,8 +121,8 @@ QGeoSatelliteInfo &QGeoSatelliteInfo::operator=(const QGeoSatelliteInfo &other)
 bool QGeoSatelliteInfo::operator==(const QGeoSatelliteInfo &other) const
 {
     return d->prn == other.d->prn
-            && d->signal == other.d->signal
-            && d->doubleProps == other.d->doubleProps;
+           && d->signal == other.d->signal
+           && d->doubleAttribs == other.d->doubleAttribs;
 }
 
 /*!
@@ -167,41 +168,41 @@ int QGeoSatelliteInfo::signalStrength() const
 }
 
 /*!
-    Sets the value for \a property to \a value.
+    Sets the value for \a attribute to \a value.
 */
-void QGeoSatelliteInfo::setProperty(Property property, qreal value)
+void QGeoSatelliteInfo::setAttribute(Attribute attribute, qreal value)
 {
-    d->doubleProps[int(property)] = value;
+    d->doubleAttribs[int(attribute)] = value;
 }
 
 /*!
-    Returns the value of the specified \a property as a qreal value.
+    Returns the value of the specified \a attribute as a qreal value.
 
     Returns -1 if the value has not been set.
 
-    \sa hasProperty(), setProperty()
+    \sa hasAttribute(), setAttribute()
 */
-qreal QGeoSatelliteInfo::property(Property property) const
+qreal QGeoSatelliteInfo::attribute(Attribute attribute) const
 {
-    if (d->doubleProps.contains(int(property)))
-        return d->doubleProps[int(property)];
+    if (d->doubleAttribs.contains(int(attribute)))
+        return d->doubleAttribs[int(attribute)];
     return -1;
 }
 
 /*!
-    Removes the specified \a property and its value.
+    Removes the specified \a attribute and its value.
 */
-void QGeoSatelliteInfo::removeProperty(Property property)
+void QGeoSatelliteInfo::removeAttribute(Attribute attribute)
 {
-    d->doubleProps.remove(int(property));
+    d->doubleAttribs.remove(int(attribute));
 }
 
 /*!
-    Returns true if the specified \a property is present in this update.
+    Returns true if the specified \a attribute is present in this update.
 */
-bool QGeoSatelliteInfo::hasProperty(Property property) const
+bool QGeoSatelliteInfo::hasAttribute(Attribute attribute) const
 {
-    return d->doubleProps.contains(int(property));
+    return d->doubleAttribs.contains(int(attribute));
 }
 
 #ifndef QT_NO_DEBUG_STREAM
@@ -211,10 +212,10 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
     dbg.nospace() << ", signal-strength=";
     dbg.nospace() << info.d->signal;
 
-    QList<int> props = info.d->doubleProps.keys();
-    for (int i=0; i<props.count(); i++) {
+    QList<int> attribs = info.d->doubleAttribs.keys();
+    for (int i = 0; i < attribs.count(); i++) {
         dbg.nospace() << ", ";
-        switch (props[i]) {
+        switch (attribs[i]) {
             case QGeoSatelliteInfo::Elevation:
                 dbg.nospace() << "Elevation=";
                 break;
@@ -222,10 +223,49 @@ QDebug operator<<(QDebug dbg, const QGeoSatelliteInfo &info)
                 dbg.nospace() << "Azimuth=";
                 break;
         }
-        dbg.nospace() << info.d->doubleProps[props[i]];
+        dbg.nospace() << info.d->doubleAttribs[attribs[i]];
     }
     dbg.nospace() << ')';
     return dbg;
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+    \fn QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
+    \relates QGeoSatelliteInfo
+
+    Writes the given \a info to the specified \a stream.
+
+    \sa {Format of the QDataStream Operators}
+*/
+
+QDataStream &operator<<(QDataStream &stream, const QGeoSatelliteInfo &info)
+{
+    stream << info.d->prn;
+    stream << info.d->signal;
+    stream << info.d->doubleAttribs;
+    return stream;
+}
+#endif
+
+#ifndef QT_NO_DATASTREAM
+/*!
+    \fn QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
+    \relates QGeoSatelliteInfo
+
+    Reads satellite information from the specified \a stream into the given
+    \a info.
+
+    \sa {Format of the QDataStream Operators}
+*/
+
+QDataStream &operator>>(QDataStream &stream, QGeoSatelliteInfo &info)
+{
+    stream >> info.d->prn;
+    stream >> info.d->signal;
+    stream >> info.d->doubleAttribs;
+    return stream;
 }
 #endif
 

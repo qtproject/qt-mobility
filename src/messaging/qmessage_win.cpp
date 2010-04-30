@@ -42,7 +42,7 @@
 #include "qmessage_p.h"
 #include "qmessageid_p.h"
 #include "qmessageaccountid_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #include "qmessagecontentcontainer_p.h"
 #include "qmessagefolderid_p.h"
 #include "winhelpers_p.h"
@@ -85,7 +85,7 @@ void QMessagePrivate::setSenderName(const QMessage &message, const QString &send
     message.d_ptr->_senderName = senderName;
 }
 
-void QMessagePrivate::setSize(const QMessage &message, uint size)
+void QMessagePrivate::setSize(const QMessage &message, int size)
 {
     message.d_ptr->_size = size;
 }
@@ -105,7 +105,7 @@ void QMessagePrivate::setStandardFolder(QMessage& message, QMessage::StandardFol
 void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
 {
     if (!_elementsPresent.properties && _id.isValid()) {
-        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageProperties(&ignoredError, msg);
@@ -116,7 +116,7 @@ void QMessagePrivate::ensurePropertiesPresent(QMessage *msg) const
 void QMessagePrivate::ensureRecipientsPresent(QMessage *msg) const
 {
     if (!_elementsPresent.recipients && _id.isValid()) {
-        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageRecipients(&ignoredError, msg);
@@ -127,7 +127,7 @@ void QMessagePrivate::ensureRecipientsPresent(QMessage *msg) const
 void QMessagePrivate::ensureBodyPresent(QMessage *msg) const
 {
     if (!_elementsPresent.body && _id.isValid()) {
-        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageBody(&ignoredError, msg);
@@ -138,7 +138,7 @@ void QMessagePrivate::ensureBodyPresent(QMessage *msg) const
 void QMessagePrivate::ensureAttachmentsPresent(QMessage *msg) const
 {
     if (!_elementsPresent.attachments && _id.isValid()) {
-        QMessageStore::ErrorCode ignoredError(QMessageStore::NoError);
+        QMessageManager::Error ignoredError(QMessageManager::NoError);
         MapiSessionPtr session(MapiSession::createSession(&ignoredError));
         if (!session.isNull()) {
             session->updateMessageAttachments(&ignoredError, msg);
@@ -162,7 +162,7 @@ QMessage::QMessage(const QMessageId& id)
     QMessageContentContainer(),
     d_ptr(new QMessagePrivate(this))
 {
-    *this = QMessageStore::instance()->message(id);
+    *this = QMessageManager().message(id);
     setDerivedMessage(this);
 }
 
@@ -356,9 +356,9 @@ void QMessage::setPriority(Priority newPriority)
     d_ptr->_priority = newPriority;
 }
 
-uint QMessage::size() const
+int QMessage::size() const
 {
-    uint size = 0;
+    int size = 0;
 
     d_ptr->ensurePropertiesPresent(const_cast<QMessage*>(this));
     if (d_ptr->_size != 0) {
@@ -516,6 +516,7 @@ bool QMessage::isModified() const
 QMessage QMessage::createResponseMessage(ResponseType type) const
 {
     QMessage response;
+    response.setType(this->type());
 
     if (type == Forward) {
         response.setSubject("Fwd:" + subject());
@@ -524,7 +525,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             // Forward the text content inline
             QStringList addresses;
             foreach (const QMessageAddress &address, to()) {
-                addresses.append(address.recipient());
+                addresses.append(address.addressee());
             }
 
             QString existingText(textContent());
@@ -532,7 +533,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
             QString prefix(QString("\r\n----- %1 -----\r\n\r\n").arg(qApp->translate("QMessage", "Forwarded Message")));
             prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Subject")).arg(subject()));
             prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "Date")).arg(date().toString()));
-            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "From")).arg(from().recipient()));
+            prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "From")).arg(from().addressee()));
             prefix.append(QString("%1: %2\r\n").arg(qApp->translate("QMessage", "To")).arg(addresses.join(",")));
 
             QString postfix("\r\n\r\n-----------------------------\r\n");
@@ -571,7 +572,7 @@ QMessage QMessage::createResponseMessage(ResponseType type) const
         // Prefer to reply to the trply-to address, if present
         QString replyTo(headerFieldValue("Reply-To"));
         if (!replyTo.isEmpty()) {
-            response.setTo(QMessageAddressList() << QMessageAddress(replyTo, QMessageAddress::Email));
+            response.setTo(QMessageAddressList() << QMessageAddress(QMessageAddress::Email, replyTo));
         } else {
             response.setTo(QMessageAddressList() << from());
         }

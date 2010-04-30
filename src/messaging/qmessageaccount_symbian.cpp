@@ -40,7 +40,7 @@
 ****************************************************************************/
 #include "qmessageaccount.h"
 #include "qmessageaccount_p.h"
-#include "qmessagestore.h"
+#include "qmessagemanager.h"
 #include "qmtmengine_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -64,7 +64,7 @@ QMessageAccount::QMessageAccount()
 QMessageAccount::QMessageAccount(const QMessageAccountId &id)
  : d_ptr(new QMessageAccountPrivate(this))
 {
-    *this = QMessageStore::instance()->account(id);
+    *this = QMessageManager().account(id);
 }
 
 QMessageAccount::QMessageAccount(const QMessageAccount &other)

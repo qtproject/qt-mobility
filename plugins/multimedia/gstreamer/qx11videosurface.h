@@ -49,6 +49,8 @@
 #include <X11/extensions/Xv.h>
 #include <X11/extensions/Xvlib.h>
 
+QT_USE_NAMESPACE
+
 class QX11VideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
@@ -61,6 +63,9 @@ public:
 
     QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
+
+    QRect viewport() const;
+    void setViewport(const QRect &rect);
 
     int brightness() const;
     void setBrightness(int brightness);

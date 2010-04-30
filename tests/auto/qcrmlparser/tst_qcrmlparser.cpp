@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "../../../src/publishsubscribe/qcrmlparser_p.h"
+#include "../../../src/publishsubscribe/psmapperserver_symbian/qcrmlparser_p.h"
 
 #include <qmobilityglobal.h>
 #include <QtTest/QTest>
@@ -58,6 +58,7 @@ class tst_QCrmlParser : public QObject
 
 private slots:
     void init();
+    void empty();
     void simple();
     void keyRangeSequence();
     void bitmaskKey();
@@ -86,12 +87,24 @@ void tst_QCrmlParser::init()
     testData.setPath(TESTDATA_DIR "/testdata");
 }
 
+void tst_QCrmlParser::empty()
+{
+    QList<KeyData> keyData;
+    KeyData *key = new KeyData();
+    keyData.append(*key);
+    KeyData::Target target = KeyData::RProperty;
+
+    QHash<QString, KeyData> keyHash = makeHash(keyData);
+    QVERIFY(verifyKeyData(keyHash, "", 0, target));
+}
+
 void tst_QCrmlParser::simple()
 {
     QCrmlParser parser;
     QList<KeyData> keyData;
     keyData = parser.parseQCrml("dontexist");
     QVERIFY(parser.error() == QCrmlParser::FileNotFound);
+    QCOMPARE(parser.errorString(), QString("File does not exist: dontexist"));
     QVERIFY(keyData.count() == 0);
 
     keyData = parser.parseQCrml(testData.absoluteFilePath("test1.qcrml"));
@@ -107,6 +120,11 @@ void tst_QCrmlParser::simple()
                           Q_UINT64_C(0x4815162300000002),target));
 
     QVERIFY(parser.error() == QCrmlParser::NoError);
+
+    for (int i = 0; i < keyData.count(); ++i) {
+        QVERIFY(keyData.at(i).keyId() == quint32(i));
+        QVERIFY(keyData.at(i).repoId() == (keyData.at(i).uid() >> 32));
+    }
 }
 
 void tst_QCrmlParser::keyRangeSequence()
@@ -136,6 +154,11 @@ void tst_QCrmlParser::keyRangeSequence()
         QVERIFY(verifyKeyData(keyHash,QString("/PIM/Contact/") + QString::number(i) + "/group",
                               uidPrefix + 0xf00f));
     }
+
+    for (int i = 0; i < keyData.count(); ++i) {
+        QVERIFY(keyData.at(i).keyId() == (keyData.at(i).uid() & 0xFFFFFFFF));
+        QVERIFY(keyData.at(i).repoId() == (keyData.at(i).uid() >> 32));
+    }
 }
 
 void tst_QCrmlParser::bitmaskKey()
@@ -153,6 +176,11 @@ void tst_QCrmlParser::bitmaskKey()
     QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Pearl"), uid, target, 2));
     QVERIFY(verifyKeyData(keyHash, QString("/Dharma/Hydra"), uid, target,32));
     QVERIFY(verifyKeyData(keyHash, QString("/Dharma/LookingGlass"), uid, target, 4));
+
+    for (int i = 0; i < keyData.count(); ++i) {
+        QVERIFY(keyData.at(i).keyId() == (keyData.at(i).uid() & 0xFFFFFFFF));
+        QVERIFY(keyData.at(i).repoId() == (keyData.at(i).uid() >> 32));
+    }
 }
 
 void tst_QCrmlParser::keyWithUnknownElements()
@@ -171,6 +199,10 @@ void tst_QCrmlParser::keyWithUnknownElements()
     QVERIFY(verifyKeyData(keyHash, "/sensors/accelerometer/z",
                           Q_UINT64_C(0x4815162300000002),target));
 
+    for (int i = 0; i < keyData.count(); ++i) {
+        QVERIFY(keyData.at(i).keyId() == (keyData.at(i).uid() & 0xFFFFFFFF));
+        QVERIFY(keyData.at(i).repoId() == (keyData.at(i).uid() >> 32));
+    }
 }
 
 void tst_QCrmlParser::keyRangeNoSequence()
@@ -190,6 +222,10 @@ void tst_QCrmlParser::keyRangeNoSequence()
                         uidPrefix + i));
     }
 
+    for (int i = 0; i < keyData.count(); ++i) {
+        QVERIFY(keyData.at(i).keyId() == (keyData.at(i).uid() & 0xFFFFFFFF));
+        QVERIFY(keyData.at(i).repoId() == (keyData.at(i).uid() >> 32));
+    }
 }
 
 void tst_QCrmlParser::singleKey()
@@ -202,6 +238,10 @@ void tst_QCrmlParser::singleKey()
     QVERIFY(verifyKeyData(keyHash, "/compass",
                           Q_UINT64_C(0x1111222298765432)));
 
+    for (int i = 0; i < keyData.count(); ++i) {
+        QVERIFY(keyData.at(i).keyId() == (keyData.at(i).uid() & 0xFFFFFFFF));
+        QVERIFY(keyData.at(i).repoId() == (keyData.at(i).uid() >> 32));
+    }
 }
 
 void tst_QCrmlParser::multipleKeyRanges()
@@ -236,6 +276,11 @@ void tst_QCrmlParser::multipleKeyRanges()
         QVERIFY(verifyKeyData(keyHash,QString("/obsidian/") + QString::number(i) + "/rank",
                               uidPrefix + 0x2));
     }
+
+    for (int i = 0; i < keyData.count(); ++i) {
+        QVERIFY(keyData.at(i).keyId() == (keyData.at(i).uid() & 0xFFFFFFFF));
+        QVERIFY(keyData.at(i).repoId() == (keyData.at(i).uid() >> 32));
+    }
 }
 
 void tst_QCrmlParser::multipleBitmaskKeys()
@@ -255,6 +300,11 @@ void tst_QCrmlParser::multipleBitmaskKeys()
     QVERIFY(verifyKeyData(keyHash, QString("/Ben"),Q_UINT64_C(0x123456780000000A),target,2));
     QVERIFY(verifyKeyData(keyHash, QString("/Tom"),Q_UINT64_C(0x123456780000000A),target,4));
     QVERIFY(verifyKeyData(keyHash, QString("/Ethan"),Q_UINT64_C(0x123456780000000A),target,5));
+
+    for (int i = 0; i < keyData.count(); ++i) {
+        QVERIFY(keyData.at(i).keyId() == (keyData.at(i).uid() & 0xFFFFFFFF));
+        QVERIFY(keyData.at(i).repoId() == (keyData.at(i).uid() >> 32));
+    }
 }
 
 void tst_QCrmlParser::wrongXmlFile()

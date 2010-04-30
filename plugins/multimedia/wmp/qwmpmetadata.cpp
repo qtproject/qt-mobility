@@ -57,75 +57,75 @@
 
 struct QWmpMetaDataKeyLookup
 {
-    QtMedia::MetaData key;
+    QtMediaServices::MetaData key;
     const wchar_t *token;
 };
 
 static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
 {
-    { QtMedia::Title, L"Title" },
-    { QtMedia::SubTitle, L"WM/SubTitle" },
-    { QtMedia::Author, L"Author" },
-    { QtMedia::Comment, L"Comment" },
-    { QtMedia::Description, L"Description" },
-    { QtMedia::Category, L"WM/Category" },
-    { QtMedia::Genre, L"WM/Genre" },
-    //{ QtMedia::Date, 0 },
-    { QtMedia::Year, L"WM/Year" },
-    { QtMedia::UserRating, L"UserRating" },
-    //{ QtMedia::MetaDatawords, 0 },
-    { QtMedia::Language, L"Language" },
-    { QtMedia::Publisher, L"WM/Publisher" },
-    { QtMedia::Copyright, L"Copyright" },
-    { QtMedia::ParentalRating, L"ParentalRating" },
-    { QtMedia::RatingOrganisation, L"RatingOrganisation" },
+    { QtMediaServices::Title, L"Title" },
+    { QtMediaServices::SubTitle, L"WM/SubTitle" },
+    { QtMediaServices::Author, L"Author" },
+    { QtMediaServices::Comment, L"Comment" },
+    { QtMediaServices::Description, L"Description" },
+    { QtMediaServices::Category, L"WM/Category" },
+    { QtMediaServices::Genre, L"WM/Genre" },
+    //{ QtMediaServices::Date, 0 },
+    { QtMediaServices::Year, L"WM/Year" },
+    { QtMediaServices::UserRating, L"UserRating" },
+    //{ QtMediaServices::MetaDatawords, 0 },
+    { QtMediaServices::Language, L"Language" },
+    { QtMediaServices::Publisher, L"WM/Publisher" },
+    { QtMediaServices::Copyright, L"Copyright" },
+    { QtMediaServices::ParentalRating, L"ParentalRating" },
+    { QtMediaServices::RatingOrganisation, L"RatingOrganisation" },
 
     // Media
-    { QtMedia::Size, L"FileSize" },
-    { QtMedia::MediaType, L"MediaType" },
-    { QtMedia::Duration, L"Duration" },
+    { QtMediaServices::Size, L"FileSize" },
+    { QtMediaServices::MediaType, L"MediaType" },
+    { QtMediaServices::Duration, L"Duration" },
 
     // Audio
-    { QtMedia::AudioBitrate, L"AudioBitrate" },
-    { QtMedia::AudioCodec, L"AudioCodec" },
-    { QtMedia::Channels, L"Channels" },
-    { QtMedia::Frequency, L"Frequency" },
+    { QtMediaServices::AudioBitRate, L"AudioBitrate" },
+    { QtMediaServices::AudioCodec, L"AudioCodec" },
+    { QtMediaServices::ChannelCount, L"Channels" },
+    { QtMediaServices::SampleRate, L"Frequency" },
 
     // Music
-    { QtMedia::AlbumTitle, L"WM/AlbumTitle" },
-    { QtMedia::AlbumArtist, L"WM/AlbumArtist" },
-    { QtMedia::ContributingArtist, L"Author" },
-    { QtMedia::Composer, L"WM/Composer" },
-    { QtMedia::Conductor, L"WM/Conductor" },
-    { QtMedia::Lyrics, L"WM/Lyrics" },
-    { QtMedia::Mood, L"WM/Mood" },
-    { QtMedia::TrackNumber, L"WM/TrackNumber" },
-    //{ QtMedia::TrackCount, 0 },
-    //{ QtMedia::CoverArtUriSmall, 0 },
-    //{ QtMedia::CoverArtUriLarge, 0 },
+    { QtMediaServices::AlbumTitle, L"WM/AlbumTitle" },
+    { QtMediaServices::AlbumArtist, L"WM/AlbumArtist" },
+    { QtMediaServices::ContributingArtist, L"Author" },
+    { QtMediaServices::Composer, L"WM/Composer" },
+    { QtMediaServices::Conductor, L"WM/Conductor" },
+    { QtMediaServices::Lyrics, L"WM/Lyrics" },
+    { QtMediaServices::Mood, L"WM/Mood" },
+    { QtMediaServices::TrackNumber, L"WM/TrackNumber" },
+    //{ QtMediaServices::TrackCount, 0 },
+    //{ QtMediaServices::CoverArtUrlSmall, 0 },
+    //{ QtMediaServices::CoverArtUrlLarge, 0 },
 
     // Image/Video
-    //{ QtMedia::Resolution, 0 },
-    //{ QtMedia::PixelAspectRatio, 0 },
+    //{ QtMediaServices::Resolution, 0 },
+    //{ QtMediaServices::PixelAspectRatio, 0 },
 
     // Video
-    //{ QtMedia::FrameRate, 0 },
-    { QtMedia::VideoBitRate, L"VideoBitRate" },
-    { QtMedia::VideoCodec, L"VideoCodec" },
+    //{ QtMediaServices::FrameRate, 0 },
+    { QtMediaServices::VideoBitRate, L"VideoBitRate" },
+    { QtMediaServices::VideoCodec, L"VideoCodec" },
 
-    //{ QtMedia::PosterUri, 0 },
+    //{ QtMediaServices::PosterUrl, 0 },
 
     // Movie
-    { QtMedia::ChapterNumber, L"ChapterNumber" },
-    { QtMedia::Director, L"WM/Director" },
-    { QtMedia::LeadPerformer, L"LeadPerformer" },
-    { QtMedia::Writer, L"WM/Writer" },
+    { QtMediaServices::ChapterNumber, L"ChapterNumber" },
+    { QtMediaServices::Director, L"WM/Director" },
+    { QtMediaServices::LeadPerformer, L"LeadPerformer" },
+    { QtMediaServices::Writer, L"WM/Writer" },
 
     // Photos
-    { QtMedia::CameraManufacturer, L"CameraManufacturer" },
-    { QtMedia::CameraModel, L"CameraModel" },
-    { QtMedia::Event, L"Event" },
-    { QtMedia::Subject, L"Subject" }
+    { QtMediaServices::CameraManufacturer, L"CameraManufacturer" },
+    { QtMediaServices::CameraModel, L"CameraModel" },
+    { QtMediaServices::Event, L"Event" },
+    { QtMediaServices::Subject, L"Subject" }
 };
 
 QWmpMetaData::QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
@@ -155,12 +155,12 @@ bool QWmpMetaData::isWritable() const
     return m_media != 0;
 }
 
-QVariant QWmpMetaData::metaData(QtMedia::MetaData key) const
+QVariant QWmpMetaData::metaData(QtMediaServices::MetaData key) const
 {
     static const int  count = sizeof(qt_wmpMetaDataKeys) / sizeof(QWmpMetaDataKeyLookup);
 
     switch (key) {
-    case QtMedia::Date:
+    case QtMediaServices::Date:
         {
             QVariant day = value(m_media, QAutoBStr(L"ReleaseDateDay"));
             QVariant month = value(m_media, QAutoBStr(L"ReleaseDateMonth"));
@@ -170,11 +170,11 @@ QVariant QWmpMetaData::metaData(QtMedia::MetaData key) const
                 return QDate(year.toInt(), month.toInt(), day.toInt());
         }
         break;
-    case QtMedia::CoverArtUriSmall:
-        return albumArtUri(m_media, "_Small.jpg");
-    case QtMedia::CoverArtUriLarge:
-        return albumArtUri(m_media, "_Large.jpg");
-    case QtMedia::Resolution:
+    case QtMediaServices::CoverArtUrlSmall:
+        return albumArtUrl(m_media, "_Small.jpg");
+    case QtMediaServices::CoverArtUrlLarge:
+        return albumArtUrl(m_media, "_Large.jpg");
+    case QtMediaServices::Resolution:
         {
             QVariant width = value(m_media, QAutoBStr(L"WM/VideoWidth"));
             QVariant height = value(m_media, QAutoBStr(L"WM/VideoHeight"));
@@ -183,7 +183,7 @@ QVariant QWmpMetaData::metaData(QtMedia::MetaData key) const
                 return QSize(width.toInt(), height.toInt());
         }
         break;
-    case QtMedia::PixelAspectRatio:
+    case QtMediaServices::PixelAspectRatio:
         {
             QVariant x = value(m_media, QAutoBStr(L"PixelAspectRatioX"));
             QVariant y = value(m_media, QAutoBStr(L"PixelAspectRatioY"));
@@ -192,7 +192,7 @@ QVariant QWmpMetaData::metaData(QtMedia::MetaData key) const
                 return QSize(x.toInt(), y.toInt());
         }
         break;
-    case QtMedia::VideoFrameRate:
+    case QtMediaServices::VideoFrameRate:
         break;
     default:
         for (int i = 0; i < count; ++i) {
@@ -204,7 +204,7 @@ QVariant QWmpMetaData::metaData(QtMedia::MetaData key) const
     return QVariant();
 }
 
-void QWmpMetaData::setMetaData(QtMedia::MetaData key, const QVariant &value)
+void QWmpMetaData::setMetaData(QtMediaServices::MetaData key, const QVariant &value)
 {
     static const int  count = sizeof(qt_wmpMetaDataKeys) / sizeof(QWmpMetaDataKeyLookup);
 
@@ -216,9 +216,9 @@ void QWmpMetaData::setMetaData(QtMedia::MetaData key, const QVariant &value)
     }
 }
 
-QList<QtMedia::MetaData> QWmpMetaData::availableMetaData() const
+QList<QtMediaServices::MetaData> QWmpMetaData::availableMetaData() const
 {
-    QList<QtMedia::MetaData> keys;
+    QList<QtMediaServices::MetaData> keys;
 
     if (m_media) {
         // WMP will return a list of all possible keys so there's no point in filtering the keys
@@ -229,7 +229,7 @@ QList<QtMedia::MetaData> QWmpMetaData::availableMetaData() const
 
         BSTR string = 0;
         if (m_media->get_sourceURL(&string) == S_OK) {
-            QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+            QString url = QString::fromWCharArray(static_cast<const wchar_t *>(string));
             ::SysFreeString(string);
 
             if (m_media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
@@ -239,12 +239,12 @@ QList<QtMedia::MetaData> QWmpMetaData::availableMetaData() const
                 QString albumArtLarge = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Large.jpg");
                 QString albumArtSmall = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Small.jpg");
 
-                QDir dir = QFileInfo(uri).absoluteDir();
+                QDir dir = QFileInfo(url).absoluteDir();
 
                 if (dir.exists(albumArtLarge))
-                    keys.append(QtMedia::CoverArtUriLarge);
+                    keys.append(QtMediaServices::CoverArtUrlLarge);
                 if (dir.exists(albumArtSmall))
-                    keys.append(QtMedia::CoverArtUriSmall);
+                    keys.append(QtMediaServices::CoverArtUrlSmall);
             }
         }
     }
@@ -371,26 +371,10 @@ QMediaContent QWmpMetaData::resources(IWMPMedia *media)
 
     BSTR string = 0;
     if (media->get_sourceURL(&string) == S_OK) {
-        QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+        QString url = QString::fromWCharArray(static_cast<const wchar_t *>(string));
         ::SysFreeString(string);
 
-        content = QMediaContent(QUrl(uri));
-
-        if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
-            QString uuid = QString::fromWCharArray(static_cast<const wchar_t *>(string));
-            ::SysFreeString(string);
-
-            QString albumArtLarge = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Large.jpg");
-            QString albumArtSmall = QLatin1String("AlbumArt_") + uuid + QLatin1String("_Small.jpg");
-
-            QDir dir = QFileInfo(uri).absoluteDir();
-
-            if (dir.exists(albumArtLarge))
-                content.setCoverArtUriLarge(QUrl(dir.absoluteFilePath(albumArtLarge)));
-
-            if (dir.exists(albumArtSmall))
-                content.setCoverArtUriSmall(QUrl(dir.absoluteFilePath(albumArtSmall)));
-        }
+        content = QMediaContent(QUrl(url));
     }
 
     return content;
@@ -424,15 +408,15 @@ QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
 
             if (variant.pdispVal->QueryInterface(
                     __uuidof(IWMPMetadataPicture), reinterpret_cast<void **>(&picture)) == S_OK) {
-                QUrl uri;
+                QUrl url;
                 BSTR string;
                 if (picture->get_URL(&string) == S_OK) {
-                    uri = QUrl(QString::fromWCharArray(string, ::SysStringLen(string)));
+                    url = QUrl(QString::fromWCharArray(string, ::SysStringLen(string)));
 
                     ::SysFreeString(string);
                 }
                 picture->Release();
-                return qVariantFromValue(uri);
+                return qVariantFromValue(url);
             } else if (variant.pdispVal->QueryInterface(
                     __uuidof(IWMPMetadataText), reinterpret_cast<void **>(&text)) == S_OK) {
                 QString description;
@@ -457,11 +441,11 @@ QVariant QWmpMetaData::convertVariant(const VARIANT &variant)
     return QVariant();
 }
 
-QVariant QWmpMetaData::albumArtUri(IWMPMedia *media, const char *suffix)
+QVariant QWmpMetaData::albumArtUrl(IWMPMedia *media, const char *suffix)
 {
     BSTR string = 0;
     if (media && media->get_sourceURL(&string) == S_OK) {
-        QString uri = QString::fromWCharArray(static_cast<const wchar_t *>(string));
+        QString url = QString::fromWCharArray(static_cast<const wchar_t *>(string));
         ::SysFreeString(string);
 
         if (media->getItemInfo(QAutoBStr(L"WM/WMCollectionGroupID"), &string) == S_OK) {
@@ -470,7 +454,7 @@ QVariant QWmpMetaData::albumArtUri(IWMPMedia *media, const char *suffix)
 
             QString fileName = QLatin1String("AlbumArt_") + uuid + QLatin1String(suffix);
 
-            QDir dir = QFileInfo(uri).absoluteDir();
+            QDir dir = QFileInfo(url).absoluteDir();
 
             if (dir.exists(fileName)) {
                 return qVariantFromValue(

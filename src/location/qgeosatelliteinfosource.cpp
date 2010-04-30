@@ -42,8 +42,12 @@
 
 #if defined(Q_OS_SYMBIAN)
 #   include "qgeosatelliteinfosource_s60_p.h"
-#elif defined(Q_OS_WINCE) 
+#elif defined(Q_OS_WINCE)
 #   include "qgeosatelliteinfosource_wince_p.h"
+#elif defined(Q_WS_MAEMO_6)
+#   include "qgeosatelliteinfosource_maemo_p.h"
+#elif defined(Q_WS_MAEMO_5)
+#   include "qgeosatelliteinfosource_maemo5_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -63,7 +67,7 @@ QTM_BEGIN_NAMESPACE
     When an update is available, satellitesInViewUpdated() and/or
     satellitesInUseUpdated() will be emitted.
 
-    \warning On Windows CE it is not possible to detect if a device is GPS enabled.  
+    \warning On Windows CE it is not possible to detect if a device is GPS enabled.
     The default satellite source on a Windows CE device without GPS support will never provide any satellite data.
 */
 
@@ -83,16 +87,28 @@ QGeoSatelliteInfoSource::QGeoSatelliteInfoSource(QObject *parent)
 */
 QGeoSatelliteInfoSource *QGeoSatelliteInfoSource::createDefaultSource(QObject *parent)
 {
-#if defined(Q_OS_SYMBIAN)   
-    CQGeoSatelliteInfoSourceS60 *ret = NULL;    
-    TRAPD(error,ret = CQGeoSatelliteInfoSourceS60::NewL(parent));
+#if defined(Q_OS_SYMBIAN)
+    CQGeoSatelliteInfoSourceS60 *ret = NULL;
+    TRAPD(error, ret = CQGeoSatelliteInfoSourceS60::NewL(parent));
+    if (error != KErrNone)
+        return 0;
     return ret;
 #elif defined(Q_OS_WINCE)
     return new QGeoSatelliteInfoSourceWinCE(parent);
+#elif (defined(Q_WS_MAEMO_6)) || (defined(Q_WS_MAEMO_5))
+    QGeoSatelliteInfoSourceMaemo *source = new QGeoSatelliteInfoSourceMaemo(parent);
+    int status = source->init();
+
+    if (status == -1) {
+        delete source;
+        return 0;
+    }
+
+    return source;
 #else
     Q_UNUSED(parent);
-#endif
     return 0;
+#endif
 }
 
 /*!

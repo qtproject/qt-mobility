@@ -42,9 +42,9 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-#include <qmediacontent.h>
+#include "qmediacontent.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 class QMediaContentPrivate : public QSharedData
@@ -56,31 +56,15 @@ public:
 
     QMediaContentPrivate(const QMediaContentPrivate &other):
         QSharedData(other),
-        resources(other.resources),
-        posterUri(other.posterUri),
-        coverArtUriSmall(other.coverArtUriSmall),
-        coverArtUriLarge(other.coverArtUriLarge),
-        thumbnailUriSmall(other.thumbnailUriSmall),
-        thumbnailUriLarge(other.thumbnailUriLarge)
+        resources(other.resources)
     {}
 
     bool operator ==(const QMediaContentPrivate &other) const
     {
-        return resources == other.resources
-                && posterUri == other.posterUri
-                && coverArtUriSmall == other.coverArtUriSmall
-                && coverArtUriLarge == other.coverArtUriLarge
-                && thumbnailUriSmall == other.thumbnailUriSmall
-                && thumbnailUriLarge == other.thumbnailUriLarge;
+        return resources == other.resources;
     }
 
     QMediaResourceList  resources;
-    QUrl posterUri;
-    QUrl coverArtUriSmall;
-    QUrl coverArtUriLarge;
-    QUrl thumbnailUriSmall;
-    QUrl thumbnailUriLarge;
-
 private:
     QMediaContentPrivate& operator=(const QMediaContentPrivate &other);
 };
@@ -94,12 +78,12 @@ private:
     \ingroup multimedia
 
     QMediaContent is used within the multimedia framework as the logical handle
-    to media content.  Media content can have multiple forms or other meta-data
-    like items attached, some examples would be different quality variants of
-    the primary stream, or extended meta-data such as a Poster for a movie.
+    to media content.  A QMediaContent object is composed of one or more
+    \l {QMediaResource}s where each resource provides the URL and format
+    information of a different encoding of the content.
 
     A non-null QMediaContent will always have a primary or canonical reference to
-    the content available through the canonicalUri() or canonicalResource()
+    the content available through the canonicalUrl() or canonicalResource()
     methods, any additional resources are optional.
 */
 
@@ -113,17 +97,30 @@ QMediaContent::QMediaContent()
 }
 
 /*!
-    Constructs a media source with \a uri providing a reference to the content.
+    Constructs a media content with \a url providing a reference to the content.
 */
 
-QMediaContent::QMediaContent(const QUrl &uri):
+QMediaContent::QMediaContent(const QUrl &url):
     d(new QMediaContentPrivate)
 {
-    d->resources << QMediaResource(uri);
+    d->resources << QMediaResource(url);
 }
 
 /*!
-    Constructs a media source with \a resource providing a reference to the content.
+    Constructs a media content with \a request providing a reference to the content.
+
+    This constructor can be used to reference media content via network protocols such as HTTP.
+    This may include additional information required to obtain the resource, such as Cookies or HTTP headers.
+*/
+
+QMediaContent::QMediaContent(const QNetworkRequest &request):
+    d(new QMediaContentPrivate)
+{
+    d->resources << QMediaResource(request);
+}
+
+/*!
+    Constructs a media content with \a resource providing a reference to the content.
 */
 
 QMediaContent::QMediaContent(const QMediaResource &resource):
@@ -133,7 +130,7 @@ QMediaContent::QMediaContent(const QMediaResource &resource):
 }
 
 /*!
-    Constructs a media source with \a resources providing a reference to the content.
+    Constructs a media content with \a resources providing a reference to the content.
 */
 
 QMediaContent::QMediaContent(const QMediaResourceList &resources):
@@ -142,7 +139,7 @@ QMediaContent::QMediaContent(const QMediaResourceList &resources):
 }
 
 /*!
-    Constructs a copy of media source \a other.
+    Constructs a copy of the media content \a other.
 */
 
 QMediaContent::QMediaContent(const QMediaContent &other):
@@ -201,9 +198,18 @@ bool QMediaContent::isNull() const
     Returns a QUrl that represents that canonical resource for this media content.
 */
 
-QUrl QMediaContent::canonicalUri() const
+QUrl QMediaContent::canonicalUrl() const
 {
-    return canonicalResource().uri();
+    return canonicalResource().url();
+}
+
+/*!
+    Returns a QNetworkRequest that represents that canonical resource for this media content.
+*/
+
+QNetworkRequest QMediaContent::canonicalRequest() const
+{
+    return canonicalResource().request();
 }
 
 /*!
@@ -229,108 +235,5 @@ QMediaResourceList QMediaContent::resources() const
             : QMediaResourceList();
 }
 
-/*!
-    Returns the URI of a poster image for this media content.
-*/
-
-QUrl QMediaContent::posterUri() const
-{
-    return d.constData() != 0
-            ? d->posterUri
-            : QUrl();
-}
-
-/*!
-    Sets the \a uri of a poster image for this media content.
-*/
-
-void QMediaContent::setPosterUri(const QUrl &uri)
-{
-    if (d.constData() != 0)
-        d->posterUri = uri;
-}
-
-/*!
-    Returns the URI of a small cover art image for this media content.
-*/
-QUrl QMediaContent::coverArtUriSmall() const
-{
-    return d.constData() != 0
-            ? d->coverArtUriSmall
-            : QUrl();
-}
-
-/*!
-    Sets the \a uri of a small cover art image for this media content.
-*/
-
-void QMediaContent::setCoverArtUriSmall(const QUrl &uri)
-{
-    if (d.constData() != 0)
-        d->coverArtUriSmall = uri;
-}
-
-/*!
-    Returns the URI of a large cover art image for this media content.
-*/
-
-QUrl QMediaContent::coverArtUriLarge() const
-{
-    return d.constData() != 0
-            ? d->coverArtUriLarge
-            : QUrl();
-}
-
-/*!
-    Sets the \a uri of a large cover art image for this media content.
-*/
-
-void QMediaContent::setCoverArtUriLarge(const QUrl &uri)
-{
-    if (d.constData() != 0)
-        d->coverArtUriLarge = uri;
-}
-
-/*!
-    Returns the URI of a small thumbnail image for this media content.
-*/
-
-QUrl QMediaContent::thumbnailUriSmall() const
-{
-    return d.constData() != 0
-            ? d->thumbnailUriSmall
-            : QUrl();
-}
-
-/*!
-    Sets the \a uri of a small thumbanil image for this media content.
-*/
-
-void QMediaContent::setThumbnailUriSmall(const QUrl &uri)
-{
-    if (d.constData() != 0)
-        d->thumbnailUriSmall = uri;
-}
-
-/*!
-    Returns the URI of a large thumbnail image for this media content.
-*/
-
-QUrl QMediaContent::thumbnailUriLarge() const
-{
-    return d.constData() != 0
-            ? d->thumbnailUriLarge
-            : QUrl();
-}
-
-/*!
-    Sets the \a uri of a large thumbnail image for this media content.
-*/
-
-void QMediaContent::setThumbnailUriLarge(const QUrl &uri)
-{
-    if (d.constData() != 0)
-        d->thumbnailUriLarge = uri;
-}
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

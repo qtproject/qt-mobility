@@ -9,7 +9,8 @@ TARGET = serviceframework_bluetoothtransferplugin
 DESTDIR = .
 
 include(../examples.pri)
-qtAddLibrary(QtServiceFramework)
+CONFIG += mobility
+MOBILITY = serviceframework
 
 symbian {
     load(data_caging_paths)
@@ -18,7 +19,7 @@ symbian {
     DEPLOYMENT += pluginDep
 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData WriteUserData UserEnvironment
 }
 
 xml.path = $$DESTDIR/xmldata

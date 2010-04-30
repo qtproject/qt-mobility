@@ -1,0 +1,287 @@
+EXPORTS
+	_ZN10QtMobility10QTapSensor11qt_metacallEN11QMetaObject4CallEiPPv @ 1 NONAME
+	_ZN10QtMobility10QTapSensor11qt_metacastEPKc @ 2 NONAME
+	_ZN10QtMobility10QTapSensor16staticMetaObjectE @ 3 NONAME DATA 16
+	_ZN10QtMobility10QTapSensor19getStaticMetaObjectEv @ 4 NONAME
+	_ZN10QtMobility10QTapSensor4typeE @ 5 NONAME DATA 4
+	_ZN10QtMobility11QTapReading11qt_metacallEN11QMetaObject4CallEiPPv @ 6 NONAME
+	_ZN10QtMobility11QTapReading11qt_metacastEPKc @ 7 NONAME
+	_ZN10QtMobility11QTapReading12setDoubleTapEb @ 8 NONAME
+	_ZN10QtMobility11QTapReading14copyValuesFromEPNS_14QSensorReadingE @ 9 NONAME
+	_ZN10QtMobility11QTapReading15setTapDirectionENS0_12TapDirectionE @ 10 NONAME
+	_ZN10QtMobility11QTapReading16staticMetaObjectE @ 11 NONAME DATA 16
+	_ZN10QtMobility11QTapReading19getStaticMetaObjectEv @ 12 NONAME
+	_ZN10QtMobility11QTapReadingC1EP7QObject @ 13 NONAME
+	_ZN10QtMobility11QTapReadingC2EP7QObject @ 14 NONAME
+	_ZN10QtMobility11QTapReadingD0Ev @ 15 NONAME
+	_ZN10QtMobility11QTapReadingD1Ev @ 16 NONAME
+	_ZN10QtMobility11QTapReadingD2Ev @ 17 NONAME
+	_ZN10QtMobility13QMagnetometer11qt_metacallEN11QMetaObject4CallEiPPv @ 18 NONAME
+	_ZN10QtMobility13QMagnetometer11qt_metacastEPKc @ 19 NONAME
+	_ZN10QtMobility13QMagnetometer16staticMetaObjectE @ 20 NONAME DATA 16
+	_ZN10QtMobility13QMagnetometer19getStaticMetaObjectEv @ 21 NONAME
+	_ZN10QtMobility13QMagnetometer4typeE @ 22 NONAME DATA 4
+	_ZN10QtMobility13QSensorFilter9setSensorEPNS_7QSensorE @ 23 NONAME
+	_ZN10QtMobility13QSensorFilterC2Ev @ 24 NONAME
+	_ZN10QtMobility13QSensorFilterD1Ev @ 25 NONAME
+	_ZN10QtMobility13QSensorFilterD2Ev @ 26 NONAME
+	_ZN10QtMobility14QAccelerometer11qt_metacallEN11QMetaObject4CallEiPPv @ 27 NONAME
+	_ZN10QtMobility14QAccelerometer11qt_metacastEPKc @ 28 NONAME
+	_ZN10QtMobility14QAccelerometer16staticMetaObjectE @ 29 NONAME DATA 16
+	_ZN10QtMobility14QAccelerometer19getStaticMetaObjectEv @ 30 NONAME
+	_ZN10QtMobility14QAccelerometer4typeE @ 31 NONAME DATA 4
+	_ZN10QtMobility14QSensorBackend10sensorBusyEv @ 32 NONAME
+	_ZN10QtMobility14QSensorBackend11addDataRateEff @ 33 NONAME
+	_ZN10QtMobility14QSensorBackend11qt_metacallEN11QMetaObject4CallEiPPv @ 34 NONAME
+	_ZN10QtMobility14QSensorBackend11qt_metacastEPKc @ 35 NONAME
+	_ZN10QtMobility14QSensorBackend11sensorErrorEi @ 36 NONAME
+	_ZN10QtMobility14QSensorBackend11setReadingsEPNS_14QSensorReadingES2_S2_ @ 37 NONAME
+	_ZN10QtMobility14QSensorBackend12setDataRatesEPKNS_7QSensorE @ 38 NONAME
+	_ZN10QtMobility14QSensorBackend13sensorStoppedEv @ 39 NONAME
+	_ZN10QtMobility14QSensorBackend14addOutputRangeEfff @ 40 NONAME
+	_ZN10QtMobility14QSensorBackend14setDescriptionERK7QString @ 41 NONAME
+	_ZN10QtMobility14QSensorBackend16staticMetaObjectE @ 42 NONAME DATA 16
+	_ZN10QtMobility14QSensorBackend19getStaticMetaObjectEv @ 43 NONAME
+	_ZN10QtMobility14QSensorBackend19newReadingAvailableEv @ 44 NONAME
+	_ZN10QtMobility14QSensorBackendC2EPNS_7QSensorE @ 45 NONAME
+	_ZN10QtMobility14QSensorBackendD0Ev @ 46 NONAME
+	_ZN10QtMobility14QSensorBackendD1Ev @ 47 NONAME
+	_ZN10QtMobility14QSensorBackendD2Ev @ 48 NONAME
+	_ZN10QtMobility14QSensorManager13createBackendEPNS_7QSensorE @ 49 NONAME
+	_ZN10QtMobility14QSensorManager15registerBackendERK10QByteArrayS3_PNS_21QSensorBackendFactoryE @ 50 NONAME
+	_ZN10QtMobility14QSensorManager20registerStaticPluginEPFPNS_22QSensorPluginInterfaceEvE @ 51 NONAME
+	_ZN10QtMobility14QSensorReading11qt_metacallEN11QMetaObject4CallEiPPv @ 52 NONAME
+	_ZN10QtMobility14QSensorReading11qt_metacastEPKc @ 53 NONAME
+	_ZN10QtMobility14QSensorReading12setTimestampENS_10qtimestampE @ 54 NONAME
+	_ZN10QtMobility14QSensorReading16staticMetaObjectE @ 55 NONAME DATA 16
+	_ZN10QtMobility14QSensorReading19getStaticMetaObjectEv @ 56 NONAME
+	_ZN10QtMobility14QSensorReadingC2EP7QObjectPNS_21QSensorReadingPrivateE @ 57 NONAME
+	_ZN10QtMobility14QSensorReadingD0Ev @ 58 NONAME
+	_ZN10QtMobility14QSensorReadingD1Ev @ 59 NONAME
+	_ZN10QtMobility14QSensorReadingD2Ev @ 60 NONAME
+	_ZN10QtMobility15QCompassReading10setAzimuthEf @ 61 NONAME
+	_ZN10QtMobility15QCompassReading11qt_metacallEN11QMetaObject4CallEiPPv @ 62 NONAME
+	_ZN10QtMobility15QCompassReading11qt_metacastEPKc @ 63 NONAME
+	_ZN10QtMobility15QCompassReading14copyValuesFromEPNS_14QSensorReadingE @ 64 NONAME
+	_ZN10QtMobility15QCompassReading16staticMetaObjectE @ 65 NONAME DATA 16
+	_ZN10QtMobility15QCompassReading19getStaticMetaObjectEv @ 66 NONAME
+	_ZN10QtMobility15QCompassReading19setCalibrationLevelEf @ 67 NONAME
+	_ZN10QtMobility15QCompassReadingC1EP7QObject @ 68 NONAME
+	_ZN10QtMobility15QCompassReadingC2EP7QObject @ 69 NONAME
+	_ZN10QtMobility15QCompassReadingD0Ev @ 70 NONAME
+	_ZN10QtMobility15QCompassReadingD1Ev @ 71 NONAME
+	_ZN10QtMobility15QCompassReadingD2Ev @ 72 NONAME
+	_ZN10QtMobility15QRotationSensor11qt_metacallEN11QMetaObject4CallEiPPv @ 73 NONAME
+	_ZN10QtMobility15QRotationSensor11qt_metacastEPKc @ 74 NONAME
+	_ZN10QtMobility15QRotationSensor16staticMetaObjectE @ 75 NONAME DATA 16
+	_ZN10QtMobility15QRotationSensor19getStaticMetaObjectEv @ 76 NONAME
+	_ZN10QtMobility15QRotationSensor4typeE @ 77 NONAME DATA 4
+	_ZN10QtMobility16QProximitySensor11qt_metacallEN11QMetaObject4CallEiPPv @ 78 NONAME
+	_ZN10QtMobility16QProximitySensor11qt_metacastEPKc @ 79 NONAME
+	_ZN10QtMobility16QProximitySensor16staticMetaObjectE @ 80 NONAME DATA 16
+	_ZN10QtMobility16QProximitySensor19getStaticMetaObjectEv @ 81 NONAME
+	_ZN10QtMobility16QProximitySensor4typeE @ 82 NONAME DATA 4
+	_ZN10QtMobility16QRotationReading11qt_metacallEN11QMetaObject4CallEiPPv @ 83 NONAME
+	_ZN10QtMobility16QRotationReading11qt_metacastEPKc @ 84 NONAME
+	_ZN10QtMobility16QRotationReading14copyValuesFromEPNS_14QSensorReadingE @ 85 NONAME
+	_ZN10QtMobility16QRotationReading16staticMetaObjectE @ 86 NONAME DATA 16
+	_ZN10QtMobility16QRotationReading19getStaticMetaObjectEv @ 87 NONAME
+	_ZN10QtMobility16QRotationReading4setXEf @ 88 NONAME
+	_ZN10QtMobility16QRotationReading4setYEf @ 89 NONAME
+	_ZN10QtMobility16QRotationReading4setZEf @ 90 NONAME
+	_ZN10QtMobility16QRotationReadingC1EP7QObject @ 91 NONAME
+	_ZN10QtMobility16QRotationReadingC2EP7QObject @ 92 NONAME
+	_ZN10QtMobility16QRotationReadingD0Ev @ 93 NONAME
+	_ZN10QtMobility16QRotationReadingD1Ev @ 94 NONAME
+	_ZN10QtMobility16QRotationReadingD2Ev @ 95 NONAME
+	_ZN10QtMobility17QProximityReading11qt_metacallEN11QMetaObject4CallEiPPv @ 96 NONAME
+	_ZN10QtMobility17QProximityReading11qt_metacastEPKc @ 97 NONAME
+	_ZN10QtMobility17QProximityReading14copyValuesFromEPNS_14QSensorReadingE @ 98 NONAME
+	_ZN10QtMobility17QProximityReading16staticMetaObjectE @ 99 NONAME DATA 16
+	_ZN10QtMobility17QProximityReading19getStaticMetaObjectEv @ 100 NONAME
+	_ZN10QtMobility17QProximityReading8setCloseEb @ 101 NONAME
+	_ZN10QtMobility17QProximityReadingC1EP7QObject @ 102 NONAME
+	_ZN10QtMobility17QProximityReadingC2EP7QObject @ 103 NONAME
+	_ZN10QtMobility17QProximityReadingD0Ev @ 104 NONAME
+	_ZN10QtMobility17QProximityReadingD1Ev @ 105 NONAME
+	_ZN10QtMobility17QProximityReadingD2Ev @ 106 NONAME
+	_ZN10QtMobility18QOrientationSensor11qt_metacallEN11QMetaObject4CallEiPPv @ 107 NONAME
+	_ZN10QtMobility18QOrientationSensor11qt_metacastEPKc @ 108 NONAME
+	_ZN10QtMobility18QOrientationSensor16staticMetaObjectE @ 109 NONAME DATA 16
+	_ZN10QtMobility18QOrientationSensor19getStaticMetaObjectEv @ 110 NONAME
+	_ZN10QtMobility18QOrientationSensor4typeE @ 111 NONAME DATA 4
+	_ZN10QtMobility19QAmbientLightSensor11qt_metacallEN11QMetaObject4CallEiPPv @ 112 NONAME
+	_ZN10QtMobility19QAmbientLightSensor11qt_metacastEPKc @ 113 NONAME
+	_ZN10QtMobility19QAmbientLightSensor16staticMetaObjectE @ 114 NONAME DATA 16
+	_ZN10QtMobility19QAmbientLightSensor19getStaticMetaObjectEv @ 115 NONAME
+	_ZN10QtMobility19QAmbientLightSensor4typeE @ 116 NONAME DATA 4
+	_ZN10QtMobility19QOrientationReading11qt_metacallEN11QMetaObject4CallEiPPv @ 117 NONAME
+	_ZN10QtMobility19QOrientationReading11qt_metacastEPKc @ 118 NONAME
+	_ZN10QtMobility19QOrientationReading14copyValuesFromEPNS_14QSensorReadingE @ 119 NONAME
+	_ZN10QtMobility19QOrientationReading14setOrientationENS0_11OrientationE @ 120 NONAME
+	_ZN10QtMobility19QOrientationReading16staticMetaObjectE @ 121 NONAME DATA 16
+	_ZN10QtMobility19QOrientationReading19getStaticMetaObjectEv @ 122 NONAME
+	_ZN10QtMobility19QOrientationReadingC1EP7QObject @ 123 NONAME
+	_ZN10QtMobility19QOrientationReadingC2EP7QObject @ 124 NONAME
+	_ZN10QtMobility19QOrientationReadingD0Ev @ 125 NONAME
+	_ZN10QtMobility19QOrientationReadingD1Ev @ 126 NONAME
+	_ZN10QtMobility19QOrientationReadingD2Ev @ 127 NONAME
+	_ZN10QtMobility20QAmbientLightReading11qt_metacallEN11QMetaObject4CallEiPPv @ 128 NONAME
+	_ZN10QtMobility20QAmbientLightReading11qt_metacastEPKc @ 129 NONAME
+	_ZN10QtMobility20QAmbientLightReading13setLightLevelENS0_10LightLevelE @ 130 NONAME
+	_ZN10QtMobility20QAmbientLightReading14copyValuesFromEPNS_14QSensorReadingE @ 131 NONAME
+	_ZN10QtMobility20QAmbientLightReading16staticMetaObjectE @ 132 NONAME DATA 16
+	_ZN10QtMobility20QAmbientLightReading19getStaticMetaObjectEv @ 133 NONAME
+	_ZN10QtMobility20QAmbientLightReadingC1EP7QObject @ 134 NONAME
+	_ZN10QtMobility20QAmbientLightReadingC2EP7QObject @ 135 NONAME
+	_ZN10QtMobility20QAmbientLightReadingD0Ev @ 136 NONAME
+	_ZN10QtMobility20QAmbientLightReadingD1Ev @ 137 NONAME
+	_ZN10QtMobility20QAmbientLightReadingD2Ev @ 138 NONAME
+	_ZN10QtMobility20QMagnetometerReading11qt_metacallEN11QMetaObject4CallEiPPv @ 139 NONAME
+	_ZN10QtMobility20QMagnetometerReading11qt_metacastEPKc @ 140 NONAME
+	_ZN10QtMobility20QMagnetometerReading14copyValuesFromEPNS_14QSensorReadingE @ 141 NONAME
+	_ZN10QtMobility20QMagnetometerReading16staticMetaObjectE @ 142 NONAME DATA 16
+	_ZN10QtMobility20QMagnetometerReading19getStaticMetaObjectEv @ 143 NONAME
+	_ZN10QtMobility20QMagnetometerReading19setCalibrationLevelEf @ 144 NONAME
+	_ZN10QtMobility20QMagnetometerReading4setXEf @ 145 NONAME
+	_ZN10QtMobility20QMagnetometerReading4setYEf @ 146 NONAME
+	_ZN10QtMobility20QMagnetometerReading4setZEf @ 147 NONAME
+	_ZN10QtMobility20QMagnetometerReadingC1EP7QObject @ 148 NONAME
+	_ZN10QtMobility20QMagnetometerReadingC2EP7QObject @ 149 NONAME
+	_ZN10QtMobility20QMagnetometerReadingD0Ev @ 150 NONAME
+	_ZN10QtMobility20QMagnetometerReadingD1Ev @ 151 NONAME
+	_ZN10QtMobility20QMagnetometerReadingD2Ev @ 152 NONAME
+	_ZN10QtMobility21QAccelerometerReading11qt_metacallEN11QMetaObject4CallEiPPv @ 153 NONAME
+	_ZN10QtMobility21QAccelerometerReading11qt_metacastEPKc @ 154 NONAME
+	_ZN10QtMobility21QAccelerometerReading14copyValuesFromEPNS_14QSensorReadingE @ 155 NONAME
+	_ZN10QtMobility21QAccelerometerReading16staticMetaObjectE @ 156 NONAME DATA 16
+	_ZN10QtMobility21QAccelerometerReading19getStaticMetaObjectEv @ 157 NONAME
+	_ZN10QtMobility21QAccelerometerReading4setXEf @ 158 NONAME
+	_ZN10QtMobility21QAccelerometerReading4setYEf @ 159 NONAME
+	_ZN10QtMobility21QAccelerometerReading4setZEf @ 160 NONAME
+	_ZN10QtMobility21QAccelerometerReadingC1EP7QObject @ 161 NONAME
+	_ZN10QtMobility21QAccelerometerReadingC2EP7QObject @ 162 NONAME
+	_ZN10QtMobility21QAccelerometerReadingD0Ev @ 163 NONAME
+	_ZN10QtMobility21QAccelerometerReadingD1Ev @ 164 NONAME
+	_ZN10QtMobility21QAccelerometerReadingD2Ev @ 165 NONAME
+	_ZN10QtMobility7QSensor11busyChangedEv @ 166 NONAME
+	_ZN10QtMobility7QSensor11qt_metacallEN11QMetaObject4CallEiPPv @ 167 NONAME
+	_ZN10QtMobility7QSensor11qt_metacastEPKc @ 168 NONAME
+	_ZN10QtMobility7QSensor11sensorErrorEi @ 169 NONAME
+	_ZN10QtMobility7QSensor11sensorTypesEv @ 170 NONAME
+	_ZN10QtMobility7QSensor11setDataRateEi @ 171 NONAME
+	_ZN10QtMobility7QSensor12removeFilterEPNS_13QSensorFilterE @ 172 NONAME
+	_ZN10QtMobility7QSensor13setIdentifierERK10QByteArray @ 173 NONAME
+	_ZN10QtMobility7QSensor14readingChangedEv @ 174 NONAME
+	_ZN10QtMobility7QSensor14sensorsForTypeERK10QByteArray @ 175 NONAME
+	_ZN10QtMobility7QSensor14setOutputRangeEi @ 176 NONAME
+	_ZN10QtMobility7QSensor16connectToBackendEv @ 177 NONAME
+	_ZN10QtMobility7QSensor16staticMetaObjectE @ 178 NONAME DATA 16
+	_ZN10QtMobility7QSensor19getStaticMetaObjectEv @ 179 NONAME
+	_ZN10QtMobility7QSensor20defaultSensorForTypeERK10QByteArray @ 180 NONAME
+	_ZN10QtMobility7QSensor4stopEv @ 181 NONAME
+	_ZN10QtMobility7QSensor5startEv @ 182 NONAME
+	_ZN10QtMobility7QSensor9addFilterEPNS_13QSensorFilterE @ 183 NONAME
+	_ZN10QtMobility7QSensorC1ERK10QByteArrayP7QObject @ 184 NONAME
+	_ZN10QtMobility7QSensorC2ERK10QByteArrayP7QObject @ 185 NONAME
+	_ZN10QtMobility7QSensorD0Ev @ 186 NONAME
+	_ZN10QtMobility7QSensorD1Ev @ 187 NONAME
+	_ZN10QtMobility7QSensorD2Ev @ 188 NONAME
+	_ZN10QtMobility8QCompass11qt_metacallEN11QMetaObject4CallEiPPv @ 189 NONAME
+	_ZN10QtMobility8QCompass11qt_metacastEPKc @ 190 NONAME
+	_ZN10QtMobility8QCompass16staticMetaObjectE @ 191 NONAME DATA 16
+	_ZN10QtMobility8QCompass19getStaticMetaObjectEv @ 192 NONAME
+	_ZN10QtMobility8QCompass4typeE @ 193 NONAME DATA 4
+	_ZNK10QtMobility10QTapSensor10metaObjectEv @ 194 NONAME
+	_ZNK10QtMobility11QTapReading10metaObjectEv @ 195 NONAME
+	_ZNK10QtMobility11QTapReading11isDoubleTapEv @ 196 NONAME
+	_ZNK10QtMobility11QTapReading12tapDirectionEv @ 197 NONAME
+	_ZNK10QtMobility13QMagnetometer10metaObjectEv @ 198 NONAME
+	_ZNK10QtMobility14QAccelerometer10metaObjectEv @ 199 NONAME
+	_ZNK10QtMobility14QSensorBackend10metaObjectEv @ 200 NONAME
+	_ZNK10QtMobility14QSensorBackend7readingEv @ 201 NONAME
+	_ZNK10QtMobility14QSensorReading10metaObjectEv @ 202 NONAME
+	_ZNK10QtMobility14QSensorReading10valueCountEv @ 203 NONAME
+	_ZNK10QtMobility14QSensorReading5valueEi @ 204 NONAME
+	_ZNK10QtMobility14QSensorReading9timestampEv @ 205 NONAME
+	_ZNK10QtMobility15QCompassReading10metaObjectEv @ 206 NONAME
+	_ZNK10QtMobility15QCompassReading16calibrationLevelEv @ 207 NONAME
+	_ZNK10QtMobility15QCompassReading7azimuthEv @ 208 NONAME
+	_ZNK10QtMobility15QRotationSensor10metaObjectEv @ 209 NONAME
+	_ZNK10QtMobility16QProximitySensor10metaObjectEv @ 210 NONAME
+	_ZNK10QtMobility16QRotationReading10metaObjectEv @ 211 NONAME
+	_ZNK10QtMobility16QRotationReading1xEv @ 212 NONAME
+	_ZNK10QtMobility16QRotationReading1yEv @ 213 NONAME
+	_ZNK10QtMobility16QRotationReading1zEv @ 214 NONAME
+	_ZNK10QtMobility17QProximityReading10metaObjectEv @ 215 NONAME
+	_ZNK10QtMobility17QProximityReading5closeEv @ 216 NONAME
+	_ZNK10QtMobility18QOrientationSensor10metaObjectEv @ 217 NONAME
+	_ZNK10QtMobility19QAmbientLightSensor10metaObjectEv @ 218 NONAME
+	_ZNK10QtMobility19QOrientationReading10metaObjectEv @ 219 NONAME
+	_ZNK10QtMobility19QOrientationReading11orientationEv @ 220 NONAME
+	_ZNK10QtMobility20QAmbientLightReading10lightLevelEv @ 221 NONAME
+	_ZNK10QtMobility20QAmbientLightReading10metaObjectEv @ 222 NONAME
+	_ZNK10QtMobility20QMagnetometerReading10metaObjectEv @ 223 NONAME
+	_ZNK10QtMobility20QMagnetometerReading16calibrationLevelEv @ 224 NONAME
+	_ZNK10QtMobility20QMagnetometerReading1xEv @ 225 NONAME
+	_ZNK10QtMobility20QMagnetometerReading1yEv @ 226 NONAME
+	_ZNK10QtMobility20QMagnetometerReading1zEv @ 227 NONAME
+	_ZNK10QtMobility21QAccelerometerReading10metaObjectEv @ 228 NONAME
+	_ZNK10QtMobility21QAccelerometerReading1xEv @ 229 NONAME
+	_ZNK10QtMobility21QAccelerometerReading1yEv @ 230 NONAME
+	_ZNK10QtMobility21QAccelerometerReading1zEv @ 231 NONAME
+	_ZNK10QtMobility7QSensor10identifierEv @ 232 NONAME
+	_ZNK10QtMobility7QSensor10metaObjectEv @ 233 NONAME
+	_ZNK10QtMobility7QSensor11descriptionEv @ 234 NONAME
+	_ZNK10QtMobility7QSensor11outputRangeEv @ 235 NONAME
+	_ZNK10QtMobility7QSensor12outputRangesEv @ 236 NONAME
+	_ZNK10QtMobility7QSensor18availableDataRatesEv @ 237 NONAME
+	_ZNK10QtMobility7QSensor20isConnectedToBackendEv @ 238 NONAME
+	_ZNK10QtMobility7QSensor4typeEv @ 239 NONAME
+	_ZNK10QtMobility7QSensor5errorEv @ 240 NONAME
+	_ZNK10QtMobility7QSensor6isBusyEv @ 241 NONAME
+	_ZNK10QtMobility7QSensor7readingEv @ 242 NONAME
+	_ZNK10QtMobility7QSensor8dataRateEv @ 243 NONAME
+	_ZNK10QtMobility7QSensor8isActiveEv @ 244 NONAME
+	_ZNK10QtMobility8QCompass10metaObjectEv @ 245 NONAME
+	_ZTIN10QtMobility10QTapSensorE @ 246 NONAME
+	_ZTIN10QtMobility11QTapReadingE @ 247 NONAME
+	_ZTIN10QtMobility13QMagnetometerE @ 248 NONAME
+	_ZTIN10QtMobility13QSensorFilterE @ 249 NONAME
+	_ZTIN10QtMobility14QAccelerometerE @ 250 NONAME
+	_ZTIN10QtMobility14QSensorBackendE @ 251 NONAME
+	_ZTIN10QtMobility14QSensorReadingE @ 252 NONAME
+	_ZTIN10QtMobility15QCompassReadingE @ 253 NONAME
+	_ZTIN10QtMobility15QRotationSensorE @ 254 NONAME
+	_ZTIN10QtMobility16QProximitySensorE @ 255 NONAME
+	_ZTIN10QtMobility16QRotationReadingE @ 256 NONAME
+	_ZTIN10QtMobility17QProximityReadingE @ 257 NONAME
+	_ZTIN10QtMobility18QOrientationSensorE @ 258 NONAME
+	_ZTIN10QtMobility19QAmbientLightSensorE @ 259 NONAME
+	_ZTIN10QtMobility19QOrientationReadingE @ 260 NONAME
+	_ZTIN10QtMobility20QAmbientLightReadingE @ 261 NONAME
+	_ZTIN10QtMobility20QMagnetometerReadingE @ 262 NONAME
+	_ZTIN10QtMobility21QAccelerometerReadingE @ 263 NONAME
+	_ZTIN10QtMobility7QSensorE @ 264 NONAME
+	_ZTIN10QtMobility8QCompassE @ 265 NONAME
+	_ZTVN10QtMobility10QTapSensorE @ 266 NONAME
+	_ZTVN10QtMobility11QTapReadingE @ 267 NONAME
+	_ZTVN10QtMobility13QMagnetometerE @ 268 NONAME
+	_ZTVN10QtMobility13QSensorFilterE @ 269 NONAME
+	_ZTVN10QtMobility14QAccelerometerE @ 270 NONAME
+	_ZTVN10QtMobility14QSensorBackendE @ 271 NONAME
+	_ZTVN10QtMobility14QSensorReadingE @ 272 NONAME
+	_ZTVN10QtMobility15QCompassReadingE @ 273 NONAME
+	_ZTVN10QtMobility15QRotationSensorE @ 274 NONAME
+	_ZTVN10QtMobility16QProximitySensorE @ 275 NONAME
+	_ZTVN10QtMobility16QRotationReadingE @ 276 NONAME
+	_ZTVN10QtMobility17QProximityReadingE @ 277 NONAME
+	_ZTVN10QtMobility18QOrientationSensorE @ 278 NONAME
+	_ZTVN10QtMobility19QAmbientLightSensorE @ 279 NONAME
+	_ZTVN10QtMobility19QOrientationReadingE @ 280 NONAME
+	_ZTVN10QtMobility20QAmbientLightReadingE @ 281 NONAME
+	_ZTVN10QtMobility20QMagnetometerReadingE @ 282 NONAME
+	_ZTVN10QtMobility21QAccelerometerReadingE @ 283 NONAME
+	_ZTVN10QtMobility7QSensorE @ 284 NONAME
+	_ZTVN10QtMobility8QCompassE @ 285 NONAME
+

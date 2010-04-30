@@ -52,7 +52,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class Q_SFW_EXPORT QServiceContext : public QObject
+class Q_SERVICEFW_EXPORT QServiceContext : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString clientId READ clientId WRITE setClientId)

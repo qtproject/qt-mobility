@@ -41,6 +41,7 @@
 
 #include "qgstreamervideoencode.h"
 #include "qgstreamercapturesession.h"
+#include "qgstreamermediacontainercontrol.h"
 
 #include <QtCore/qdebug.h>
 
@@ -74,12 +75,15 @@ QGstreamerVideoEncode::QGstreamerVideoEncode(QGstreamerCaptureSession *session)
             const gchar *descr = gst_element_factory_get_description(factory);
             m_codecDescriptions.insert(codecName, QString::fromUtf8(descr));
 
+            m_streamTypes.insert(codecName,
+                                 QGstreamerMediaContainerControl::supportedStreamTypes(factory, GST_PAD_SRC));
+
             gst_object_unref(GST_OBJECT(factory));
         }
     }
 
-    if (!m_codecs.isEmpty())
-        m_videoSettings.setCodec(m_codecs[0]);
+    //if (!m_codecs.isEmpty())
+    //    m_videoSettings.setCodec(m_codecs[0]);
 }
 
 QGstreamerVideoEncode::~QGstreamerVideoEncode()
@@ -150,7 +154,7 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     gst_bin_add(encoderBin, colorspace);
 
     QString codec = m_videoSettings.codec();
-    qDebug() << "create encoder for video codec" << codec;
+    //qDebug() << "create encoder for video codec" << codec;
 
     GstElement *encoderElement = gst_element_factory_make( m_elementNames.value(codec).constData(), "video-encoder");
     gst_bin_add(encoderBin, encoderElement);
@@ -167,8 +171,8 @@ GstElement *QGstreamerVideoEncode::createEncoder()
     gst_object_unref(GST_OBJECT(pad));
 
     if (encoderElement) {
-        if (m_videoSettings.encodingMode() == QtMedia::ConstantQualityEncoding) {
-            QtMedia::EncodingQuality qualityValue = m_videoSettings.quality();
+        if (m_videoSettings.encodingMode() == QtMediaServices::ConstantQualityEncoding) {
+            QtMediaServices::EncodingQuality qualityValue = m_videoSettings.quality();
 
             if (codec == QLatin1String("video/h264")) {
                 //constant quantizer mode
@@ -221,7 +225,7 @@ GstElement *QGstreamerVideoEncode::createEncoder()
                 g_object_set(G_OBJECT(encoderElement), "quality", quality, NULL);
             }
         } else {
-            int bitrate = m_videoSettings.bitrate();
+            int bitrate = m_videoSettings.bitRate();
             if (bitrate > 0) {
                 g_object_set(G_OBJECT(encoderElement), "bitrate", bitrate, NULL);
             }
@@ -318,4 +322,10 @@ QPair<int,int> QGstreamerVideoEncode::rateAsRational() const
     }
 
     return QPair<int,int>();
+}
+
+
+QSet<QString> QGstreamerVideoEncode::supportedStreamTypes(const QString &codecName) const
+{
+    return m_streamTypes.value(codecName);
 }

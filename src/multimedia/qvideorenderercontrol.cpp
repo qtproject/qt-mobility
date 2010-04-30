@@ -39,19 +39,20 @@
 **
 ****************************************************************************/
 
-#include <qvideorenderercontrol.h>
+#include "qvideorenderercontrol.h"
 
-#include <qmediacontrol_p.h>
+#include "qmediacontrol_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoRendererControl
     \preliminary
+
     \brief The QVideoRendererControl class provides a control for rendering
     to a video surface.
 
-    \ingroup multimedia
+    \ingroup multimedia-serv
 
     Using the surface() property of QVideoRendererControl a QAbstractVideoSurface
     may be set as the video render target of a QMediaService.
@@ -117,5 +118,5 @@ QVideoRendererControl::~QVideoRendererControl()
 */
 
 #include "moc_qvideorenderercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

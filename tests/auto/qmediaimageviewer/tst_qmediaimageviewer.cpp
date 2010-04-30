@@ -44,13 +44,13 @@
 
 #include <QtCore/qdir.h>
 
-#include <qmediaimageviewer.h>
-#include <qmediaimageviewerservice_p.h>
-#include <qmediaplaylist.h>
-#include <qmediaservice.h>
-#include <qvideooutputcontrol.h>
-#include <qvideorenderercontrol.h>
-#include <qvideowidgetcontrol.h>
+#include "../../../src/multimedia/qmediaimageviewer.h"
+#include "../../../src/multimedia/qmediaimageviewerservice_p.h"
+#include "../../../src/multimedia/qmediaplaylist.h"
+#include "../../../src/multimedia/qmediaservice.h"
+#include "../../../src/multimedia/qvideooutputcontrol.h"
+#include "../../../src/multimedia/qvideorenderercontrol.h"
+#include "../../../src/multimedia/qvideowidgetcontrol.h"
 
 #include <QtCore/qfile.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
@@ -63,7 +63,7 @@
 # define TESTDATA_DIR "./tst_qmediaimageviewer_images"
 #endif
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QtTestNetworkAccessManager;
 
 class tst_QMediaImageViewer : public QObject
@@ -89,7 +89,7 @@ public:
     tst_QMediaImageViewer() : m_network(0), m_imageDir(QLatin1String(TESTDATA_DIR)) {}
 
 private:
-    QUrl imageUri(const char *fileName) const {
+    QUrl imageUrl(const char *fileName) const {
         return QUrl::fromLocalFile(m_imageDir.absoluteFilePath(QLatin1String(fileName))); }
     QString imageFileName(const char *fileName) {
         return m_imageDir.absoluteFilePath(QLatin1String(fileName)); }
@@ -308,7 +308,7 @@ void tst_QMediaImageViewer::setMedia_data()
     QTest::addColumn<QMediaContent>("media");
 
     {
-        QMediaContent media(imageUri("image.png"));
+        QMediaContent media(imageUrl("image.png"));
 
         QTest::newRow("file: png image")
                 << media;
@@ -328,48 +328,9 @@ void tst_QMediaImageViewer::setMedia_data()
 
         QTest::newRow("network: png image, no mime type")
                 << media;
-    } {
-        QMediaContent media(imageUri("song.mp3"));
-        media.setCoverArtUriLarge(imageUri("coverart.png"));
-
-        QTest::newRow("file: png cover art")
-                << media;
-    } {
-        QMediaContent media(QUrl(QLatin1String("test://music/songs/mp3?id=1")));
-        media.setCoverArtUriLarge(QUrl(QLatin1String("test://music/covers/large?id=1")));
-
-        QTest::newRow("network: png cover art")
-                << media;
-    } {
-        QMediaContent media(QMediaResource(
-                QUrl(QLatin1String("test://music/songs/mp3?id=1")), QLatin1String("audio/mpeg")));
-        media.setCoverArtUriSmall(QUrl(QLatin1String("test://music/covers/small?id=1")));
-        media.setCoverArtUriLarge(QUrl(QLatin1String("test://music/covers/large?id=1")));
-
-        QTest::newRow("network: png cover art, explicit mime type")
-                << media;
-    } {
-        QMediaContent media(imageUri("movie.mp4"));
-        media.setPosterUri(imageUri("poster.png"));
-
-        QTest::newRow("file: png poster")
-                << media;
-    } {
-        QMediaContent media(QUrl(QLatin1String("test/movies/mp4?id=1")));
-        media.setPosterUri(QUrl(QLatin1String("test://video/posters/png?id=1")));
-
-        QTest::newRow("network: png poster")
-                << media;
-    } {
-        QMediaContent media(imageUri("image.png"));
-        media.setCoverArtUriLarge(imageUri("coverart.png"));
-        media.setPosterUri(imageUri("poster.png"));
-
-        QTest::newRow("file: png image with cover art and poster")
-                << media;
 #ifdef QTEST_HAVE_JPEG
     } {
-        QMediaContent media(imageUri("image.jpg"));
+        QMediaContent media(imageUrl("image.jpg"));
 
         QTest::newRow("file: jpg image")
                 << media;
@@ -406,8 +367,8 @@ void tst_QMediaImageViewer::setMedia()
 
 void tst_QMediaImageViewer::setConsecutiveMedia()
 {
-    QMediaContent fileMedia1(imageUri("image.png"));
-    QMediaContent fileMedia2(imageUri("coverart.png"));
+    QMediaContent fileMedia1(imageUrl("image.png"));
+    QMediaContent fileMedia2(imageUrl("coverart.png"));
     QMediaContent networkMedia1(QUrl(QLatin1String("test://image/png?id=1")));
     QMediaContent networkMedia2(QUrl(QLatin1String("test://image/png?id=2")));
 
@@ -471,7 +432,7 @@ void tst_QMediaImageViewer::setInvalidMedia()
             &QTestEventLoop::instance(), SLOT(exitLoop()));
 
     {
-        QMediaContent media(imageUri("invalid.png"));
+        QMediaContent media(imageUrl("invalid.png"));
 
         viewer.setMedia(media);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
@@ -480,7 +441,7 @@ void tst_QMediaImageViewer::setInvalidMedia()
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
         QCOMPARE(viewer.media(), media);
     } {
-        QMediaContent media(imageUri("deleted.png"));
+        QMediaContent media(imageUrl("deleted.png"));
 
         viewer.setMedia(media);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
@@ -489,8 +450,8 @@ void tst_QMediaImageViewer::setInvalidMedia()
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
         QCOMPARE(viewer.media(), media);
     } {
-        QMediaResource invalidResource(imageUri("invalid.png"));
-        QMediaResource deletedResource(imageUri("deleted.png"));
+        QMediaResource invalidResource(imageUrl("invalid.png"));
+        QMediaResource deletedResource(imageUrl("deleted.png"));
         QMediaContent media(QMediaResourceList() << invalidResource << deletedResource);
 
         viewer.setMedia(media);
@@ -500,15 +461,15 @@ void tst_QMediaImageViewer::setInvalidMedia()
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
         QCOMPARE(viewer.media(), media);
     } {
-        QMediaResource resource(imageUri("image.png"), QLatin1String("audio/mpeg"));
+        QMediaResource resource(imageUrl("image.png"), QLatin1String("audio/mpeg"));
         QMediaContent media(resource);
 
         viewer.setMedia(media);
         QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::InvalidMedia);
         QCOMPARE(viewer.media(), media);
     } {
-        QMediaResource audioResource(imageUri("image.png"), QLatin1String("audio/mpeg"));
-        QMediaResource invalidResource(imageUri("invalid.png"));
+        QMediaResource audioResource(imageUrl("image.png"), QLatin1String("audio/mpeg"));
+        QMediaResource invalidResource(imageUrl("invalid.png"));
         QMediaContent media(QMediaResourceList() << audioResource << invalidResource);
 
         viewer.setMedia(media);
@@ -549,9 +510,9 @@ void tst_QMediaImageViewer::setInvalidMedia()
 
 void tst_QMediaImageViewer::playlist()
 {
-    QMediaContent imageMedia(imageUri("image.png"));
-    QMediaContent posterMedia(imageUri("poster.png"));
-    QMediaContent coverArtMedia(imageUri("coverart.png"));
+    QMediaContent imageMedia(imageUrl("image.png"));
+    QMediaContent posterMedia(imageUrl("poster.png"));
+    QMediaContent coverArtMedia(imageUrl("coverart.png"));
 
     QMediaImageViewer viewer;
     viewer.setTimeout(250);
@@ -571,7 +532,8 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(stateSpy.count(), 0);
 
-    QMediaPlaylist playlist(&viewer);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&viewer);
 
     // Empty playlist so can't exit stopped state.
     viewer.play();
@@ -581,9 +543,9 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(stateSpy.count(), 0);
 
-    playlist.appendItem(imageMedia);
-    playlist.appendItem(posterMedia);
-    playlist.appendItem(coverArtMedia);
+    playlist.addMedia(imageMedia);
+    playlist.addMedia(posterMedia);
+    playlist.addMedia(coverArtMedia);
 
     // Play progresses immediately to the first image and starts loading.
     viewer.play();
@@ -592,25 +554,25 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(qvariant_cast<QMediaImageViewer::State>(stateSpy.last().value(0)),
              QMediaImageViewer::PlayingState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
-    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(playlist.currentIndex(), 0);
     QCOMPARE(viewer.media(), imageMedia);
 
     // Image is loaded asynchronously.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
-    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(playlist.currentIndex(), 0);
 
     // Time out causes progression to second image, which starts loading.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
-    QCOMPARE(playlist.currentPosition(), 1);
+    QCOMPARE(playlist.currentIndex(), 1);
     QCOMPARE(viewer.media(), posterMedia);
 
     // Image is loaded asynchronously.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.state(), QMediaImageViewer::PlayingState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
-    QCOMPARE(playlist.currentPosition(), 1);
+    QCOMPARE(playlist.currentIndex(), 1);
 
     // Pausing stops progression at current image.
     viewer.pause();
@@ -619,30 +581,30 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(qvariant_cast<QMediaImageViewer::State>(stateSpy.last().value(0)),
              QMediaImageViewer::PausedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
-    QCOMPARE(playlist.currentPosition(), 1);
+    QCOMPARE(playlist.currentIndex(), 1);
 
     // No time out.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.state(), QMediaImageViewer::PausedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
-    QCOMPARE(playlist.currentPosition(), 1);
+    QCOMPARE(playlist.currentIndex(), 1);
 
     // Resuming playback does not immediately progress to the next item
     viewer.play();
     QCOMPARE(viewer.state(), QMediaImageViewer::PlayingState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
-    QCOMPARE(playlist.currentPosition(), 1);
+    QCOMPARE(playlist.currentIndex(), 1);
 
     // Time out causes progression to next image, which starts loading.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
-    QCOMPARE(playlist.currentPosition(), 2);
+    QCOMPARE(playlist.currentIndex(), 2);
     QCOMPARE(viewer.media(), coverArtMedia);
 
     // Image is loaded asynchronously.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
-    QCOMPARE(playlist.currentPosition(), 2);
+    QCOMPARE(playlist.currentIndex(), 2);
 
     // Time out causes progression to end of list
     QTestEventLoop::instance().enterLoop(2);
@@ -651,14 +613,14 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(qvariant_cast<QMediaImageViewer::State>(stateSpy.last().value(0)),
              QMediaImageViewer::StoppedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
-    QCOMPARE(playlist.currentPosition(), -1);
+    QCOMPARE(playlist.currentIndex(), -1);
     QCOMPARE(viewer.media(), QMediaContent());
 
     // Stopped, no time out.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
-    QCOMPARE(playlist.currentPosition(), -1);
+    QCOMPARE(playlist.currentIndex(), -1);
 
     // Play progresses immediately to the first image and starts loading.
     viewer.play();
@@ -667,13 +629,13 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(qvariant_cast<QMediaImageViewer::State>(stateSpy.last().value(0)),
              QMediaImageViewer::PlayingState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
-    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(playlist.currentIndex(), 0);
     QCOMPARE(viewer.media(), imageMedia);
 
     // Image is loaded asynchronously.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
-    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(playlist.currentIndex(), 0);
 
     // Stop ends progress, but retains current index.
     viewer.stop();
@@ -682,13 +644,13 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(qvariant_cast<QMediaImageViewer::State>(stateSpy.last().value(0)),
              QMediaImageViewer::StoppedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadedMedia);
-    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(playlist.currentIndex(), 0);
     QCOMPARE(viewer.media(), imageMedia);
 
     // Stoppped, No time out.
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
-    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(playlist.currentIndex(), 0);
     QCOMPARE(viewer.media(), imageMedia);
 
     // Stop when already stopped doesn't emit additional signals.
@@ -735,28 +697,42 @@ void tst_QMediaImageViewer::playlist()
 
 void tst_QMediaImageViewer::multiplePlaylists()
 {
-    QMediaContent imageMedia(imageUri("image.png"));
-    QMediaContent posterMedia(imageUri("poster.png"));
-    QMediaContent coverArtMedia(imageUri("coverart.png"));
+    QMediaContent imageMedia(imageUrl("image.png"));
+    QMediaContent posterMedia(imageUrl("poster.png"));
+    QMediaContent coverArtMedia(imageUrl("coverart.png"));
 
     QMediaImageViewer viewer;
 
-    QMediaPlaylist *playlist1 = new QMediaPlaylist(&viewer);
-    playlist1->appendItem(imageMedia);
-    playlist1->appendItem(posterMedia);
+    QMediaPlaylist *playlist1 = new QMediaPlaylist;
+    playlist1->setMediaObject(&viewer);
+    playlist1->addMedia(imageMedia);
+    playlist1->addMedia(posterMedia);
 
-    playlist1->setCurrentPosition(0);
+    playlist1->setCurrentIndex(0);
     QCOMPARE(viewer.media(), imageMedia);
 
-    QMediaPlaylist *playlist2 = new QMediaPlaylist(&viewer);
-    playlist2->appendItem(coverArtMedia);
+    QMediaPlaylist *playlist2 = new QMediaPlaylist;
 
-    QCOMPARE(viewer.media(), imageMedia);
+    QTest::ignoreMessage(QtWarningMsg,
+                         "QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
+    playlist2->setMediaObject(&viewer);
+    playlist2->addMedia(coverArtMedia);
 
-    playlist2->setCurrentPosition(0);
-    QCOMPARE(viewer.media(), imageMedia);
+    //the first playlist is detached
+    QVERIFY(playlist1->mediaObject() == 0);
+
+    QVERIFY(viewer.media().isNull());
+
+    playlist2->setCurrentIndex(0);
+    QCOMPARE(viewer.media(), coverArtMedia);
 
     delete playlist2;
+    QVERIFY(viewer.media().isNull());
+    QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
+
+    playlist1->setMediaObject(&viewer);
+    playlist1->setCurrentIndex(0);
+    QCOMPARE(viewer.media(), imageMedia);
 
     viewer.play();
     QCOMPARE(viewer.state(), QMediaImageViewer::PlayingState);
@@ -768,8 +744,8 @@ void tst_QMediaImageViewer::multiplePlaylists()
 
 void tst_QMediaImageViewer::invalidPlaylist()
 {
-    QMediaContent imageMedia(imageUri("image.png"));
-    QMediaContent invalidMedia(imageUri("invalid.png"));
+    QMediaContent imageMedia(imageUrl("image.png"));
+    QMediaContent invalidMedia(imageUrl("invalid.png"));
 
     QMediaImageViewer viewer;
     viewer.setTimeout(250);
@@ -780,17 +756,18 @@ void tst_QMediaImageViewer::invalidPlaylist()
     QSignalSpy stateSpy(&viewer, SIGNAL(stateChanged(QMediaImageViewer::State)));
     QSignalSpy statusSpy(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)));
 
-    QMediaPlaylist playlist(&viewer);
-    playlist.appendItem(invalidMedia);
-    playlist.appendItem(imageMedia);
-    playlist.appendItem(invalidMedia);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&viewer);
+    playlist.addMedia(invalidMedia);
+    playlist.addMedia(imageMedia);
+    playlist.addMedia(invalidMedia);
 
     // Test play initially tries to load the first invalid image.
     viewer.play();
     QCOMPARE(viewer.state(), QMediaImageViewer::PlayingState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
     QCOMPARE(viewer.media(), invalidMedia);
-    QCOMPARE(playlist.currentPosition(), 0);
+    QCOMPARE(playlist.currentIndex(), 0);
     QCOMPARE(statusSpy.count(), 1);
     QCOMPARE(qvariant_cast<QMediaImageViewer::MediaStatus>(statusSpy.value(0).value(0)),
              QMediaImageViewer::LoadingMedia);
@@ -800,7 +777,7 @@ void tst_QMediaImageViewer::invalidPlaylist()
     QCOMPARE(viewer.state(), QMediaImageViewer::PlayingState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::LoadingMedia);
     QCOMPARE(viewer.media(), imageMedia);
-    QCOMPARE(playlist.currentPosition(), 1);
+    QCOMPARE(playlist.currentIndex(), 1);
     QCOMPARE(statusSpy.count(), 3);
     QCOMPARE(qvariant_cast<QMediaImageViewer::MediaStatus>(statusSpy.value(1).value(0)),
              QMediaImageViewer::InvalidMedia);
@@ -812,10 +789,10 @@ void tst_QMediaImageViewer::invalidPlaylist()
     QTestEventLoop::instance().enterLoop(2);
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
-    QCOMPARE(playlist.currentPosition(), -1);
+    QCOMPARE(playlist.currentIndex(), -1);
     QCOMPARE(stateSpy.count(), 2);
 
-    playlist.setCurrentPosition(2);
+    playlist.setCurrentIndex(2);
     QTestEventLoop::instance().enterLoop(2);
 
     // Test play immediately moves to the next item if the current one is invalid, and no state
@@ -823,13 +800,13 @@ void tst_QMediaImageViewer::invalidPlaylist()
     viewer.play();
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
     QCOMPARE(viewer.mediaStatus(), QMediaImageViewer::NoMedia);
-    QCOMPARE(playlist.currentPosition(), -1);
+    QCOMPARE(playlist.currentIndex(), -1);
     QCOMPARE(stateSpy.count(), 2);
 }
 
 void tst_QMediaImageViewer::elapsedTime()
 {
-    QMediaContent imageMedia(imageUri("image.png"));
+    QMediaContent imageMedia(imageUrl("image.png"));
 
     QMediaImageViewer viewer;
     viewer.setTimeout(250);
@@ -841,8 +818,9 @@ void tst_QMediaImageViewer::elapsedTime()
             &QTestEventLoop::instance(), SLOT(exitLoop()));
 
 
-    QMediaPlaylist playlist(&viewer);
-    playlist.appendItem(imageMedia);
+    QMediaPlaylist playlist;
+    playlist.setMediaObject(&viewer);
+    playlist.addMedia(imageMedia);
 
     QCOMPARE(viewer.elapsedTime(), 0);
 
@@ -966,7 +944,7 @@ void tst_QMediaImageViewer::rendererControl()
     outputControl->setOutput(QVideoOutputControl::RendererOutput);
 
     // Load an image so the viewer has some dimensions to work with.
-    viewer.setMedia(QMediaContent(imageUri("image.png")));
+    viewer.setMedia(QMediaContent(imageUrl("image.png")));
 
     connect(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             &QTestEventLoop::instance(), SLOT(exitLoop()));

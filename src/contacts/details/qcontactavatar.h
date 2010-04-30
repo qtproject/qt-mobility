@@ -43,6 +43,7 @@
 #define QCONTACTAVATAR_H
 
 #include <QString>
+#include <QUrl>
 
 #include "qtcontactsglobal.h"
 #include "qcontactdetail.h"
@@ -55,33 +56,23 @@ class Q_CONTACTS_EXPORT QContactAvatar : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldAvatar;
-    const char* FieldSubType;
-    const char* SubTypeImage;
-    const char* SubTypeVideo;
-    const char* SubTypeTexturedMesh;
-    const char* SubTypeAudioRingtone;
-    const char* SubTypeVideoRingtone;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldImageUrl;
+    static const QLatin1Constant FieldVideoUrl;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAvatar, "Avatar")
-    Q_DECLARE_LATIN1_LITERAL(FieldAvatar, "Avatar");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeImage, "Image");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideo, "Video");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeTexturedMesh, "TexturedMesh");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeAudioRingtone, "AudioRingtone");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeVideoRingtone, "VideoRingtone");
+    Q_DECLARE_LATIN1_CONSTANT(FieldImageUrl, "ImageUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldVideoUrl, "VideoUrl");
+    // MeshUri, VibetoneUri, Audio(theme)Uri, ...?
 #endif
 
-    void setAvatar(const QString& avatarPath) {setValue(FieldAvatar, avatarPath);}
-    QString avatar() const {return value(FieldAvatar);}
+    void setImageUrl(const QUrl& imageUrl) {setValue(FieldImageUrl, imageUrl);}
+    QUrl imageUrl() const {return value<QUrl>(FieldImageUrl);}
 
-    void setSubType(const QString& subType) {setValue(FieldSubType, subType);}
-    QString subType() const {return value(FieldSubType);}
+    void setVideoUrl(const QUrl& videoUrl) {setValue(FieldVideoUrl, videoUrl);}
+    QUrl videoUrl() const {return value<QUrl>(FieldVideoUrl);}
 };
 
 QTM_END_NAMESPACE
 
 #endif
-

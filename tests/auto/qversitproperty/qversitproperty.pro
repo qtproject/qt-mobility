@@ -4,7 +4,7 @@ TARGET=tst_qversitproperty
 CONFIG+=testcase
 
 include(../../../common.pri)
-DEFINES += BUILD_QTVERSIT QT_ASCII_CAST_WARNINGS
+DEFINES += QT_ASCII_CAST_WARNINGS
 
 DEPENDPATH += .
 INCLUDEPATH += \
@@ -16,11 +16,11 @@ INCLUDEPATH += \
     ../../../src/contacts/requests \
     ../../../src/contacts/filters
 
-HEADERS += ut_qversitproperty.h
-SOURCES += ut_qversitproperty.cpp
+HEADERS += tst_qversitproperty.h
+SOURCES += tst_qversitproperty.cpp
 
-qtAddLibrary(QtContacts)
-qtAddLibrary(QtVersit)
+CONFIG += mobility
+MOBILITY = contacts versit
 
 symbian: { 
     TARGET.CAPABILITY = ALL \

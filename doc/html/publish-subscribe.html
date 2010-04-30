@@ -38,11 +38,13 @@
 <pre>    private slots:
         void createNewObject();
         void intValueChanged(int value);
+        void unsetIntValue();
         void setStringValue();
         void setByteArrayValue();</pre>
 <p>And connect them to signals from the widgets in the constructor.</p>
 <pre>        connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(createNewObject()));
         connect(ui-&gt;intValue, SIGNAL(valueChanged(int)), this, SLOT(intValueChanged(int)));
+        connect(ui-&gt;unsetIntButton, SIGNAL(clicked()), this, SLOT(unsetIntValue()));
         connect(ui-&gt;setStringButton, SIGNAL(clicked()), this, SLOT(setStringValue()));
         connect(ui-&gt;setByteArrayButton, SIGNAL(clicked()), this, SLOT(setByteArrayValue()));</pre>
 <p>To publish values in the Value Space we first need to create a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a>. We do this in the <tt>createNewObject()</tt> slot, which is also used to handle changes in the base path. After the object is constructed we publish the initial values by explicitly calling the other two slots.</p>
@@ -60,6 +62,11 @@
 <pre>    void PublisherDialog::intValueChanged(int value)
     {
         publisher-&gt;setValue(&quot;intValue&quot;, value);
+    }
+
+    void PublisherDialog::unsetIntValue()
+    {
+        publisher-&gt;resetValue(&quot;intValue&quot;);
     }
 
     void PublisherDialog::setStringValue()
@@ -84,7 +91,10 @@
 <p>We explicitly call our <tt>itemChanged()</tt> slot to populate the table with the initial values.</p>
 <pre>    void SubscriberDialog::changeSubscriberPath()
     {
-        ui-&gt;values-&gt;clearContents();
+        if (listWidget)
+            listWidget-&gt;clear();
+        else if (tableWidget)
+            tableWidget-&gt;clearContents();
 
         if (!subscriber)
             subscriber = new QValueSpaceSubscriber(ui-&gt;basePath-&gt;text(), this);
@@ -98,26 +108,43 @@
 <p>In response to the <tt>contentsChanged()</tt> signal we update all the values in the table.</p>
 <pre>    void SubscriberDialog::subscriberChanged()
     {
-        ui-&gt;values-&gt;clearContents();
-
         QStringList subPaths = subscriber-&gt;subPaths();
-        ui-&gt;values-&gt;setRowCount(subPaths.count());
+
+        if (listWidget) {
+            listWidget-&gt;clear();
+        } else if (tableWidget) {
+            tableWidget-&gt;clearContents();
+            tableWidget-&gt;setRowCount(subPaths.count());
+        }
 
         for (int i = 0; i &lt; subPaths.count(); ++i) {
             QVariant v = subscriber-&gt;value(subPaths.at(i));
 
-            QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
-            QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
-            QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
-            ui-&gt;values-&gt;setItem(i, 0, pathItem);
-            ui-&gt;values-&gt;setItem(i, 1, valueItem);
-            ui-&gt;values-&gt;setItem(i, 2, typeItem);
+            if (listWidget) {
+                const QString itemTemplate(&quot;%1 (%2)\n%3&quot;);
+
+                QListWidgetItem *item =
+                    new QListWidgetItem(itemTemplate.arg(subPaths.at(i), v.typeName(), v.toString()));
+                item-&gt;setFlags(item-&gt;flags() &amp; ~Qt::ItemIsEditable);
+                listWidget-&gt;addItem(item);
+            } else if (tableWidget) {
+                QTableWidgetItem *pathItem = new QTableWidgetItem(subPaths.at(i));
+                pathItem-&gt;setFlags(pathItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
+                QTableWidgetItem *valueItem = new QTableWidgetItem(v.toString());
+                valueItem-&gt;setFlags(valueItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
+                QTableWidgetItem *typeItem = new QTableWidgetItem(v.typeName());
+                typeItem-&gt;setFlags(typeItem-&gt;flags() &amp; ~Qt::ItemIsEditable);
+
+                tableWidget-&gt;setItem(i, 0, pathItem);
+                tableWidget-&gt;setItem(i, 1, valueItem);
+                tableWidget-&gt;setItem(i, 2, typeItem);
+            }
         }
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

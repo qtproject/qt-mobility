@@ -45,12 +45,12 @@
 #include <QtCore/qmetatype.h>
 #include <QtCore/qshareddata.h>
 
-#include <qmediaresource.h>
+#include "qmediaresource.h"
 
 #include <qmobilityglobal.h>
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaContentPrivate;
 class Q_MEDIA_EXPORT QMediaContent
@@ -58,6 +58,7 @@ class Q_MEDIA_EXPORT QMediaContent
 public:
     QMediaContent();
     QMediaContent(const QUrl &contentUrl);
+    QMediaContent(const QNetworkRequest &contentRequest);
     QMediaContent(const QMediaResource &contentResource);
     QMediaContent(const QMediaResourceList &resources);
     QMediaContent(const QMediaContent &other);
@@ -70,33 +71,19 @@ public:
 
     bool isNull() const;
 
-    QUrl canonicalUri() const;
+    QUrl canonicalUrl() const;
+    QNetworkRequest canonicalRequest() const;
     QMediaResource canonicalResource() const;
 
     QMediaResourceList resources() const;
-
-    QUrl posterUri() const;
-    void setPosterUri(const QUrl &url);
-
-    QUrl coverArtUriSmall() const;
-    void setCoverArtUriSmall(const QUrl &url);
-
-    QUrl coverArtUriLarge() const;
-    void setCoverArtUriLarge(const QUrl &url);
-
-    QUrl thumbnailUriSmall() const;
-    void setThumbnailUriSmall(const QUrl &url);
-
-    QUrl thumbnailUriLarge() const;
-    void setThumbnailUriLarge(const QUrl &url);
 
 private:
     QSharedDataPointer<QMediaContentPrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaContent))
+Q_DECLARE_METATYPE(QMediaContent)
 
 
 

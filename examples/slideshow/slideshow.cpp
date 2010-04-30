@@ -6,35 +6,34 @@
 **
 ** This file is part of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -51,23 +50,40 @@ SlideShow::SlideShow(QWidget *parent)
     : QWidget(parent)
     , imageViewer(0)
     , playlist(0)
-    , imageLabel(0)
+    , statusLabel(0)
+    , countdownLabel(0)
     , playButton(0)
     , stopButton(0)
+    , viewerLayout(0)
 {
     imageViewer = new QMediaImageViewer(this);
 
     connect(imageViewer, SIGNAL(stateChanged(QMediaImageViewer::State)),
             this, SLOT(stateChanged(QMediaImageViewer::State)));
+    connect(imageViewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
+            this, SLOT(statusChanged(QMediaImageViewer::MediaStatus)));
+    connect(imageViewer, SIGNAL(elapsedTimeChanged(int)), this, SLOT(elapsedTimeChanged(int)));
 
-    playlist = new QMediaPlaylist(imageViewer);
+    playlist = new QMediaPlaylist;
+    playlist->setMediaObject(imageViewer);
 
-    QVideoWidget *videoWidget = new QVideoWidget(imageViewer);
+    connect(playlist, SIGNAL(loaded()), this, SLOT(playlistLoaded()));
+    connect(playlist, SIGNAL(loadFailed()), this, SLOT(playlistLoadFailed()));
+
+    QVideoWidget *videoWidget = new QVideoWidget;
+    videoWidget->setMediaObject(imageViewer);
+
+    statusLabel = new QLabel(tr("%1 Images").arg(0));
+    statusLabel->setAlignment(Qt::AlignCenter);
+
+    viewerLayout = new QStackedLayout;
+    viewerLayout->setStackingMode(QStackedLayout::StackAll);
+    viewerLayout->addWidget(videoWidget);
+    viewerLayout->addWidget(statusLabel);
 
     QMenu *openMenu = new QMenu(this);
     openMenu->addAction(tr("Directory..."), this, SLOT(openDirectory()));
     openMenu->addAction(tr("Playlist..."), this, SLOT(openPlaylist()));
-    openMenu->addAction(tr("Location..."), this, SLOT(openLocation()));
 
     QToolButton *openButton = new QToolButton;
     openButton->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
@@ -76,8 +92,10 @@ SlideShow::SlideShow(QWidget *parent)
 
     playButton = new QToolButton;
     playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    playButton->setEnabled(false);
 
     connect(playButton, SIGNAL(clicked()), this, SLOT(play()));
+    connect(this, SIGNAL(enableButtons(bool)), playButton, SLOT(setEnabled(bool)));
 
     stopButton = new QToolButton;
     stopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
@@ -87,13 +105,19 @@ SlideShow::SlideShow(QWidget *parent)
 
     QAbstractButton *nextButton = new QToolButton;
     nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+    nextButton->setEnabled(false);
 
     connect(nextButton, SIGNAL(clicked()), playlist, SLOT(next()));
+    connect(this, SIGNAL(enableButtons(bool)), nextButton, SLOT(setEnabled(bool)));
 
     QAbstractButton *previousButton = new QToolButton;
     previousButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+    previousButton->setEnabled(false);
 
     connect(previousButton, SIGNAL(clicked()), playlist, SLOT(previous()));
+    connect(this, SIGNAL(enableButtons(bool)), previousButton, SLOT(setEnabled(bool)));
+
+    countdownLabel = new QLabel;
 
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
@@ -104,9 +128,10 @@ SlideShow::SlideShow(QWidget *parent)
     controlLayout->addWidget(playButton);
     controlLayout->addWidget(nextButton);
     controlLayout->addStretch(1);
+    controlLayout->addWidget(countdownLabel);
 
     QBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(videoWidget, Qt::AlignCenter);
+    layout->addLayout(viewerLayout);
     layout->addLayout(controlLayout);
 
     setLayout(layout);
@@ -118,11 +143,8 @@ void SlideShow::openPlaylist()
     QString path = QFileDialog::getOpenFileName(this);
 
     if (!path.isEmpty()) {
-#ifndef Q_OS_WIN
-        playlist->load(QUrl(QLatin1String("file://") + path));
-#else
-        playlist->load(QUrl(QLatin1String("file:///") + path));
-#endif
+        playlist->clear();
+        playlist->load(QUrl::fromLocalFile(path));
     }
 }
 
@@ -135,40 +157,12 @@ void SlideShow::openDirectory()
 
         QDir dir(path);
 
-        foreach (const QString &fileName, dir.entryList(QDir::Files)) {
-            QString absolutePath = dir.absoluteFilePath(fileName);
-#ifndef Q_OS_WIN
-            playlist->appendItem(QUrl(QLatin1String("file://") + absolutePath));
-#else
-            playlist->appendItem(QUrl(QLatin1String("file:///") + absolutePath));
-#endif
-        }
-    }
-}
+        foreach (const QString &fileName, dir.entryList(QDir::Files))
+            playlist->addMedia(QUrl::fromLocalFile(dir.absoluteFilePath(fileName)));
 
-void SlideShow::openLocation()
-{
-    QLineEdit *urlEdit = new QLineEdit;
+        statusChanged(imageViewer->mediaStatus());
 
-    QDialogButtonBox *buttons = new QDialogButtonBox(
-            QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-
-    QFormLayout *layout = new QFormLayout;
-    layout->addRow(tr("Location"), urlEdit);
-    layout->addWidget(buttons);
-
-    QDialog dialog(this);
-    dialog.setLayout(layout);
-
-    connect(urlEdit, SIGNAL(returnPressed()), &dialog, SLOT(accept()));
-    connect(buttons, SIGNAL(accepted()), &dialog, SLOT(accept()));
-    connect(buttons, SIGNAL(rejected()), &dialog, SLOT(reject()));
-
-    if (dialog.exec() == QDialog::Accepted) {
-        QUrl url(urlEdit->text());
-
-        if (url.isValid())
-            playlist->load(url);
+        emit enableButtons(playlist->mediaCount() > 0);
     }
 }
 
@@ -201,4 +195,58 @@ void SlideShow::stateChanged(QMediaImageViewer::State state)
         playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
         break;
     }
+}
+
+void SlideShow::statusChanged(QMediaImageViewer::MediaStatus status)
+{
+    switch (status) {
+    case QMediaImageViewer::NoMedia:
+        statusLabel->setText(tr("%1 Images").arg(playlist->mediaCount()));
+        viewerLayout->setCurrentIndex(1);
+        break;
+    case QMediaImageViewer::LoadingMedia:
+        statusLabel->setText(tr("Image %1 of %2\nLoading...")
+                .arg(playlist->currentIndex())
+                .arg(playlist->mediaCount()));
+        viewerLayout->setCurrentIndex(1);
+        break;
+    case QMediaImageViewer::LoadedMedia:
+        statusLabel->setText(tr("Image %1 of %2")
+                .arg(playlist->currentIndex())
+                .arg(playlist->mediaCount()));
+        viewerLayout->setCurrentIndex(0);
+        break;
+    case QMediaImageViewer::InvalidMedia:
+        statusLabel->setText(tr("Image %1 of %2\nInvalid")
+                .arg(playlist->currentIndex())
+                .arg(playlist->mediaCount()));
+        viewerLayout->setCurrentIndex(1);
+        break;
+    default:
+        break;
+    }
+}
+
+void SlideShow::playlistLoaded()
+{
+    statusChanged(imageViewer->mediaStatus());
+
+    emit enableButtons(playlist->mediaCount() > 0);
+}
+
+void SlideShow::playlistLoadFailed()
+{
+    statusLabel->setText(playlist->errorString());
+    viewerLayout->setCurrentIndex(1);
+
+    emit enableButtons(false);
+}
+
+void SlideShow::elapsedTimeChanged(int time)
+{
+    const int remaining = (imageViewer->timeout() - time) / 1000;
+
+    countdownLabel->setText(tr("%1:%2")
+            .arg(remaining / 60, 2, 10, QLatin1Char('0'))
+            .arg(remaining % 60, 2, 10, QLatin1Char('0')));
 }

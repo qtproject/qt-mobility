@@ -40,6 +40,39 @@
 ##
 #############################################################################
 
+# return status of 1 if absolute path as first argument
+# also prints the return status
+isAbsPath() {
+    slash=$(echo $1 | cut -c 1)
+    if [ "$slash" != "/" ]; then
+        echo 0
+        return 0
+    fi
+    echo 1
+    return 1
+}
+
+# Returns the absolute path for $1 for target $2
+# as an example $2 might have value "maemo5".
+# This is required because when building in scratchbox for
+# maemo we do not want to follow symbolic links that are 
+# introduced by scratchbox
+absPath() {
+    
+    if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
+        if [ `isAbsPath $1` = '1' ]; then
+            echo $1;
+        else
+            echo "Relative prefix paths are not supported for Maemo"
+            exit 1;
+        fi
+    else
+        RESULT=`(cd "$1"; /bin/pwd)`
+        echo $RESULT
+    fi
+}
+
+
 # the current directory (shadow build dir)
 shadowpath=`/bin/pwd`
 # the name of this script
@@ -55,6 +88,8 @@ QT_MOBILITY_LIB=
 QT_MOBILITY_BIN=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
+BUILD_DOCS=yes
+BUILD_TOOLS=yes
 RELEASEMODE=
 BUILD_SILENT=
 LINUX_TARGET=
@@ -62,12 +97,17 @@ QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
 MAC_SDK=
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
+MOBILITY_MODULES_UNPARSED=
+QMKSPEC=
+OS="other"
 
 usage() 
 {
     echo "Usage: configure [-prefix <dir>] [headerdir <dir>] [libdir <dir>]"
-    echo "                 [-bindir <dir>] [-tests] [-examples]"
-    echo "                 [-debug] [-release] [-silent]"
+    echo "                 [-bindir <dir>] [-tests] [-examples] [-no-docs]"
+    echo "                 [-no-tools] [-debug] [-release] [-silent]"
+    echo "                 [-modules <list>]"
     echo
     echo "Options:"
     echo
@@ -86,9 +126,18 @@ usage()
     echo "                    Note, this adds test symbols to all libraries"
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
-    echo
-    echo "-maemo ............ Build Qt Mobility for Maemo."
-    echo "                    (default: Desktop Linux)"
+    echo "-no-docs .......... Do not build documentation (build by default)"
+    echo "-no-tools ......... Do not build tools (build by default)"
+    echo "-modules <list> ... Restrict list of modules to build (default all supported)"
+    echo "                    Choose from: bearer contacts location publishsubscribe"
+    echo "                    messaging multimedia systeminfo serviceframework versit"
+    echo "                    sensors"
+    echo "                    Modules should be separated by a space and surrounded"
+    echo "                    by double quotation. If a"
+    echo "                    selected module depends on other modules dependencies"
+    echo "                    will automatically be enabled."
+    echo "-maemo6 ........... Build Qt Mobility for Maemo6 (Harmattan)."
+    echo "-maemo5 ........... Build Qt Mobility for Maemo5 (Freemantle)."
     echo "-sdk <sdk>..........Build using Apple provided SDK <path/to/sdk>."
     echo "                    example: -sdk /Developer/SDKs/MacOSX10.6.sdk"
     echo
@@ -128,6 +177,12 @@ while [ "$#" -gt 0 ]; do
         -examples)
             BUILD_EXAMPLES="yes"
             ;;
+        -no-docs)
+            BUILD_DOCS=
+            ;;
+        -no-tools)
+            BUILD_TOOLS=
+            ;;
         -debug)
             RELEASEMODE=debug
             ;;
@@ -137,11 +192,38 @@ while [ "$#" -gt 0 ]; do
         -silent)
             BUILD_SILENT=yes
             ;;
-        -maemo)
-            LINUX_TARGET=maemo 
+        -maemo5)
+            LINUX_TARGET=maemo5
+            ;;
+        -maemo6)
+            LINUX_TARGET=maemo6
             ;;
         -sdk)
             MAC_SDK="$2"
+            shift
+            ;;
+        -modules)
+            MOBILITY_MODULES_UNPARSED=$2
+            #reset default selection
+            MOBILITY_MODULES=
+            for m in $MOBILITY_MODULES_UNPARSED; do
+                case "$m" in
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors)
+                        MOBILITY_MODULES="$MOBILITY_MODULES $m";
+                        ;;
+                    *)
+                        echo "Unknown module: $m"
+                        echo
+                        usage
+                        ;;
+
+                esac
+            done
+            if [ -z "$MOBILITY_MODULES" ]; then
+                echo "List of selected modules is empty."
+                echo 
+                usage
+            fi
             shift
             ;;
         *)
@@ -152,6 +234,15 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
+checkostype()
+{
+    match="darwin" 
+    if [ "$OSTYPE" = "${match}"* ]; then
+        OS="darwin"
+        QMKSPEC="-spec macx-g++"
+        echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"
+    fi
+}
 
 findframeworks()
 {
@@ -159,7 +250,7 @@ findframeworks()
 # if so, install in the correct place.
 # and fix rpath
     echo "contains(QT_CONFIG,qt_framework):message(1)" > 1.pro
-    SOMETHING=`qmake 1.pro 2>&1`
+    SOMETHING=`qmake -spec macx-g++ 1.pro 2>&1`
         if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
             LIB_PATH="Library/Frameworks"
             BIN_PATH="Applications"
@@ -167,10 +258,35 @@ findframeworks()
     rm 1.pro
 }
 
-findframeworks
+
+findUniversal()
+{
+    if [ -e "mac.inc" ]; then 
+        rm mac.inc
+    fi
+    echo "contains(QT_CONFIG,x86): system(echo CONFIG+=x86 >> mac.inc)" > 2.pro
+    echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
+    echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
+    echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
+    SOMETIME=`qmake -spec macx-g++ 2.pro 2>&1`
+    rm 2.pro
+    if [ -e "mac.inc" ]; then 
+         echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
+    fi
+}
+
+checkostype
+
+if [ "$OS" = "darwin" ] ; then
+    findframeworks
+fi
 
 if [ -n "$BUILD_SILENT" ]; then
     echo "CONFIG += silent"  > "$CONFIG_IN"
+fi
+
+if [ "$OS" = "darwin" ] ; then
+    findUniversal
 fi
 
 if [ -z "$RELEASEMODE" ]; then
@@ -180,17 +296,20 @@ echo "CONFIG += $RELEASEMODE" >> "$CONFIG_IN"
 
 #do we build for Maemo?
 if [ -n "$LINUX_TARGET" ]; then
-    echo "CONFIG+=maemo" >> "$CONFIG_IN"
+    if [ "$LINUX_TARGET" = "maemo5" ]; then
+        echo "CONFIG+=maemo5" >> "$CONFIG_IN"
+    elif [ "$LINUX_TARGET" = "maemo6" ]; then
+        echo "CONFIG+=maemo6" >> "$CONFIG_IN"
+    fi
 fi
 
 #process PREFIX
 if [ -d "$QT_MOBILITY_PREFIX" ]; then
-    QT_MOBILITY_PREFIX=`(cd "$QT_MOBILITY_PREFIX"; /bin/pwd)`
+    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
 else
     mkdir -p "$QT_MOBILITY_PREFIX"
-    absPath=`(cd "$QT_MOBILITY_PREFIX"; /bin/pwd)`
+    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
     rm -rf "$QT_MOBILITY_PREFIX"
-    QT_MOBILITY_PREFIX="$absPath"
 fi
 echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> "$CONFIG_IN"
 
@@ -198,12 +317,11 @@ echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> "$CONFIG_IN"
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
     QT_MOBILITY_INCLUDE="$QT_MOBILITY_PREFIX/include"
 elif [ -d "$QT_MOBILITY_INCLUDE" ]; then
-    QT_MOBILITY_INCLUDE=`(cd "$QT_MOBILITY_INCLUDE"; /bin/pwd)`
+    QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
 else
     mkdir -p "$QT_MOBILITY_INCLUDE"
-    absPath=`(cd "$QT_MOBILITY_INCLUDE"; /bin/pwd)`
+    QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
     rm -rf "$QT_MOBILITY_INCLUDE"
-    QT_MOBILITY_INCLUDE="$absPath"
 fi
 echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 
@@ -212,12 +330,11 @@ echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 if [ -z "$QT_MOBILITY_LIB" ]; then
     QT_MOBILITY_LIB="$QT_MOBILITY_PREFIX/$LIB_PATH"
 elif [ -d "$QT_MOBILITY_LIB" ]; then
-    QT_MOBILITY_LIB=`(cd "$QT_MOBILITY_LIB"; /bin/pwd)`
+    QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
 else
     mkdir -p "$QT_MOBILITY_LIB"
-    absPath=`(cd "$QT_MOBILITY_LIB"; /bin/pwd)`
+    QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
     rm -rf "$QT_MOBILITY_LIB"
-    QT_MOBILITY_LIB="$absPath"
 fi
 echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 
@@ -225,12 +342,11 @@ echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 if [ -z "$QT_MOBILITY_BIN" ]; then
     QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/$BIN_PATH"
 elif [ -d "$QT_MOBILITY_BIN" ]; then
-    QT_MOBILITY_BIN=`(cd "$QT_MOBILITY_BIN"; /bin/pwd)`
+    QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
 else
     mkdir -p "$QT_MOBILITY_BIN"
-    absPath=`(cd "$QT_MOBILITY_BIN"; /bin/pwd)`
+    QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
     rm -rf "$QT_MOBILITY_BIN"
-    QT_MOBILITY_BIN="$absPath"
 fi
 echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
 
@@ -254,6 +370,17 @@ else
     echo "build_examples = yes" >> "$CONFIG_IN"
 fi
 
+if [ -z "$BUILD_DOCS" ]; then
+    echo "build_docs = no" >> "$CONFIG_IN"
+else
+    echo "build_docs = yes" >> "$CONFIG_IN"
+fi
+
+if [ -z "$BUILD_TOOLS" ]; then
+    echo "build_tools = no" >> "$CONFIG_IN"
+else
+    echo "build_tools = yes" >> "$CONFIG_IN"
+fi
 
 echo "Configuring Qt Mobility"
 echo 
@@ -299,7 +426,7 @@ compileTest()
         cd config.tests/$2
     fi
 
-    qmake "$relpath/config.tests/$2/$2.pro" >> "$CONFIG_LOG"
+    qmake $QMKSPEC "$relpath/config.tests/$2/$2.pro" 2>> "$CONFIG_LOG" >> "$CONFIG_LOG"
     printf  " ."
     "$MAKE" clean >> "$CONFIG_LOG"
     printf "."
@@ -319,29 +446,93 @@ compileTest()
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
+compileTest "Maemo ICD" maemo-icd
+compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+if [ "$LINUX_TARGET" = maemo6 ]; then
+    compileTest sensord sensord
+else
+    echo "sensord_enabled = no" >> "$CONFIG_IN"
+fi
 
+# Now module selection
+# using 'expr match ....' should help a bit
+#if [ -n "$MOBILITY_MODULES_UNPARSED" ]; then
+    # In theory we should do some sanity checking here.
+#    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
+#fi
+
+# It's a lot easier to make qmake do the dependency checking...
+echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
+echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
+
+# If libicd-network-wlan-dev.h is not present, use own copy.
+# At time of writing, libicd-network-wlan-dev is not released for maemo5.
+echo "maemo5:contains(maemo-icd-network-wlan_enabled, no): INCLUDEPATH += $relpath/src/3rdparty/icd-network-wlan" >> "$CONFIG_IN"
+
+# Ideally we'd skip generating headers for modules that are not enabled
 echo "Generating Mobility Headers..."
 #remove old headers
 rm -rf $shadowpath/include
 mkdir $shadowpath/include
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/global
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/bearer
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/publishsubscribe
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/location
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/serviceframework
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-$relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
+for module in $MOBILITY_MODULES; do
+    case "$module" in 
+        bearer)
+            $relpath/bin/syncheaders $shadowpath/include/QtmBearer $relpath/src/bearer
+            ;;
+        publishsubscribe)
+            $relpath/bin/syncheaders $shadowpath/include/QtmPubSub $relpath/src/publishsubscribe
+            ;;
+        location)
+            $relpath/bin/syncheaders $shadowpath/include/QtmLocation $relpath/src/location
+            ;;
+        serviceframework)
+            $relpath/bin/syncheaders $shadowpath/include/QtmServiceFramework $relpath/src/serviceframework
+            ;;
+        systeminfo)
+            $relpath/bin/syncheaders $shadowpath/include/QtmSystemInfo $relpath/src/systeminfo
+            ;;
+        contacts)
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
+            ;;
+        multimedia)
+            $relpath/bin/syncheaders $shadowpath/include/QtmMedia $relpath/src/multimedia
+            ;;
+        messaging)
+            $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging
+            ;;
+        versit)
+            #versit implies contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/versit
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
+            ;;
+        sensors)
+            $relpath/bin/syncheaders $shadowpath/include/QtmSensors $relpath/src/sensors
+            ;;
+        *)
+            echo "Cannot generate headers for $module"
+            ;;
+    esac
+done
 
 mv "$CONFIG_IN" config.pri
 mkdir -p "$shadowpath/features"
+if [ "$shadowpath" != "$relpath" ]; then 
+    cp -f "$relpath/features/strict_flags.prf" "$shadowpath/features"
+fi
 
 echo "Running qmake..."
-if qmake -recursive "$relpath/qtmobility.pro"; then
+if qmake -makefile $QMKSPEC -recursive "$relpath/qtmobility.pro"; then
     echo ""
     echo "configure has finished. You may run make or gmake to build the project now."
 else
     echo ""
     echo "configure failed."
 fi
+

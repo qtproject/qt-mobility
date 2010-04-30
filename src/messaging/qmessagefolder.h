@@ -65,7 +65,7 @@ public:
     QMessageAccountId parentAccountId() const;
     QMessageFolderId parentFolderId() const;
 
-    QString displayName() const;
+    QString name() const;
     QString path() const;
 
 private:

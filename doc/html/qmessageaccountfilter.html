@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageAccountFilter Class Reference</h1>
 <p>The QMessageAccountFilter class defines the parameters used for querying a subset of all available accounts from the messaging store. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMessageAccountFilter&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<ul>
+<pre>    #include &lt;QMessageAccountFilter&gt;</pre><ul>
 <li><a href="qmessageaccountfilter-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -28,8 +27,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#dtor.QMessageAccountFilter">~QMessageAccountFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#isSupported">isSupported</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessageDataComparator::Options </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#options">options</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#setOptions">setOptions</a></b> ( QMessageDataComparator::Options <i>options</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMessageDataComparator::MatchFlags </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#matchFlags">matchFlags</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#setMatchFlags">setMatchFlags</a></b> ( QMessageDataComparator::MatchFlags <i>matchFlags</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageAccountFilter </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#operator-and">operator&amp;</a></b> ( const QMessageAccountFilter &amp; <i>other</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QMessageAccountFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#operator-and-eq">operator&amp;=</a></b> ( const QMessageAccountFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMessageAccountFilter </td><td class="memItemRight" valign="bottom"><b><a href="qmessageaccountfilter.html#operator-7c">operator|</a></b> ( const QMessageAccountFilter &amp; <i>other</i> ) const</td></tr>
@@ -50,9 +49,9 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMessageAccountFilter class defines the parameters used for querying a subset of all available accounts from the messaging store.</p>
-<p>A QMessageAccountFilter is composed of an account property, an optional comparison operator and a comparison value. The QMessageAccountFilter class is used in conjunction with the <a href="qmessagestore.html#queryAccounts">QMessageStore::queryAccounts</a>() and <a href="qmessagestore.html#countAccounts">QMessageStore::countAccounts</a>() functions to filter results which meet the criteria defined by the filter.</p>
+<p>A QMessageAccountFilter is composed of an account property, an optional comparison operator and a comparison value. The QMessageAccountFilter class is used in conjunction with the <a href="qmessagemanager.html#queryAccounts">QMessageManager::queryAccounts</a>() and <a href="qmessagemanager.html#countAccounts">QMessageManager::countAccounts</a>() functions to filter results which meet the criteria defined by the filter.</p>
 <p>QMessageAccountFilters can be combined using the logical operators (&amp;), (|) and (~) to create more refined queries.</p>
-<p>See also <a href="qmessagestore.html">QMessageStore</a> and <a href="qmessageaccount.html">QMessageAccount</a>.</p>
+<p>See also <a href="qmessagemanager.html">QMessageManager</a> and <a href="qmessageaccount.html">QMessageAccount</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMessageAccountFilter/QMessageAccountFilter"></a>
@@ -76,10 +75,10 @@
 <p>Returns a filter matching accounts whose identifier is a member of the set yielded by <i>filter</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessageaccount.html#id">QMessageAccount::id</a>().</p>
 <a name="//apple_ref/cpp/clm/QMessageAccountFilter/byName"></a>
-<h3 class="fn"><a name="byName"></a>QMessageAccountFilter QMessageAccountFilter::byName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byName"></a>QMessageAccountFilter QMessageAccountFilter::byName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::EqualityComparator</a> <i>cmp</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching accounts whose name matches <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessageaccount.html#name">QMessageAccount::name</a>().</p>
-<h3 class="fn"><a name="byName-2"></a>QMessageAccountFilter QMessageAccountFilter::byName ( const <a href="http://qt.nokia.com/doc/4.5/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="byName-2"></a>QMessageAccountFilter QMessageAccountFilter::byName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>value</i>, <a href="qmessagedatacomparator.html#InclusionComparator-enum">QMessageDataComparator::InclusionComparator</a> <i>cmp</i> = QMessageDataComparator::Includes )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Returns a filter matching accounts whose name matches the substring <i>value</i>, according to <i>cmp</i>.</p>
 <p>See also <a href="qmessageaccount.html#name">QMessageAccount::name</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageAccountFilter/isEmpty"></a>
@@ -91,15 +90,15 @@
 <a name="//apple_ref/cpp/instm/QMessageAccountFilter/isSupported"></a>
 <h3 class="fn"><a name="isSupported"></a>bool QMessageAccountFilter::isSupported () const</h3>
 <p>Returns true if the filter is supported on the current platform; otherwise returns false.</p>
-<a name="//apple_ref/cpp/instm/QMessageAccountFilter/options"></a>
-<h3 class="fn"><a name="options"></a><a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> QMessageAccountFilter::options () const</h3>
-<p>Return the options for the search filter.</p>
-<p>Default is no options set.</p>
-<p>See also <a href="qmessageaccountfilter.html#setOptions">setOptions</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageAccountFilter/setOptions"></a>
-<h3 class="fn"><a name="setOptions"></a>void QMessageAccountFilter::setOptions ( <a href="qmessagedatacomparator.html#Option-enum">QMessageDataComparator::Options</a> <i>options</i> )</h3>
-<p>Set the options for the search filter to <i>options</i>.</p>
-<p>See also <a href="qmessageaccountfilter.html#options">options</a>().</p>
+<a name="//apple_ref/cpp/instm/QMessageAccountFilter/matchFlags"></a>
+<h3 class="fn"><a name="matchFlags"></a><a href="qmessagedatacomparator.html#MatchFlag-enum">QMessageDataComparator::MatchFlags</a> QMessageAccountFilter::matchFlags () const</h3>
+<p>Return the match flags for the search filter.</p>
+<p>Default is no match flags set.</p>
+<p>See also <a href="qmessageaccountfilter.html#setMatchFlags">setMatchFlags</a>().</p>
+<a name="//apple_ref/cpp/instm/QMessageAccountFilter/setMatchFlags"></a>
+<h3 class="fn"><a name="setMatchFlags"></a>void QMessageAccountFilter::setMatchFlags ( <a href="qmessagedatacomparator.html#MatchFlag-enum">QMessageDataComparator::MatchFlags</a> <i>matchFlags</i> )</h3>
+<p>Set the match flags for the search filter to <i>matchFlags</i>.</p>
+<p>See also <a href="qmessageaccountfilter.html#matchFlags">matchFlags</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageAccountFilter/operator&amp;"></a>
 <h3 class="fn"><a name="operator-and"></a>QMessageAccountFilter QMessageAccountFilter::operator&amp; ( const QMessageAccountFilter &amp; <i>other</i> ) const</h3>
 <p>Returns a filter that is the logical AND of this filter and the value of filter <i>other</i>.</p>
@@ -114,13 +113,13 @@
 <p>Performs a logical OR with this filter and the filter <i>other</i> and assigns the result to this filter.</p>
 <a name="//apple_ref/cpp/instm/QMessageAccountFilter/operator~"></a>
 <h3 class="fn"><a name="operator-7e"></a>QMessageAccountFilter QMessageAccountFilter::operator~ () const</h3>
-<p>Returns a filter that is the logical NOT of the value of this filter (ignoring any <a href="qmessageaccountfilter.html#options">options</a>() set on the filter).</p>
+<p>Returns a filter that is the logical NOT of the value of this filter (ignoring any <a href="qmessageaccountfilter.html#matchFlags">matchFlags</a>() set on the filter).</p>
 <p>If this filter is empty, the result will be a non-matching filter; if this filter is non-matching, the result will be an empty filter.</p>
 <p>See also <a href="qmessageaccountfilter.html#isEmpty">isEmpty</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

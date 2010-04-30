@@ -213,6 +213,19 @@ RESOURCE ARRAY r_cntui_new_field_defns
 			category=EContactCategoryHome;
 			fieldName=STRING_r_cntui_new_field_defns11;
 			},
+      FIELD // Number: video calls (Home)
+          {
+	      fieldStorageType=KStorageTypeText;
+	      contactFieldType=KUidContactFieldPhoneNumberValue;
+	      vCardMapping=KIntContactFieldVCardMapTEL;
+	      extraMapping=
+              {
+	          MAPPING { mapping=KIntContactFieldVCardMapHOME; },
+	          MAPPING { mapping=KIntContactFieldVCardMapVIDEO; }
+	          };
+	      category=EContactCategoryHome;
+	      fieldName=qtn_phob_lbl_video_home;
+          },
       FIELD	// Email Address (Home)
 			{
 			fieldStorageType = KStorageTypeText;
@@ -417,6 +430,19 @@ RESOURCE ARRAY r_cntui_new_field_defns
 			category = EContactCategoryWork;
 			fieldName = qtn_phob_lbl_fax_work;
 			},
+		FIELD // Number: video calls (Work)
+		    {
+		    fieldStorageType=KStorageTypeText;
+		    contactFieldType=KUidContactFieldPhoneNumberValue;
+		    vCardMapping=KIntContactFieldVCardMapTEL;
+		    extraMapping=
+                {
+		        MAPPING { mapping=KIntContactFieldVCardMapWORK; },
+		        MAPPING { mapping=KIntContactFieldVCardMapVIDEO; }
+		        };
+		     category=EContactCategoryWork;
+		     fieldName=qtn_phob_lbl_video_work;
+		     },
 			FIELD //Assistant number
       {
       fieldStorageType=KStorageTypeText;
@@ -604,7 +630,18 @@ RESOURCE ARRAY r_cntui_new_field_defns
 			category = EContactCategoryNone;
 			fieldName = qtn_phob_lbl_fax;
 			},
-        
+      FIELD // Number: video calls (general)
+            {
+	        fieldStorageType=KStorageTypeText;
+	        contactFieldType=KUidContactFieldPhoneNumberValue;
+	        vCardMapping=KIntContactFieldVCardMapTEL;
+	        extraMapping=
+                {
+	            MAPPING { mapping=KIntContactFieldVCardMapVIDEO; }
+	            };
+	        category=EContactCategoryNone;
+	        fieldName=qtn_phob_lbl_video;
+	        },
       FIELD	// Email Address (general)
 			{
 			fieldStorageType = KStorageTypeText;

@@ -42,9 +42,9 @@
 #ifndef QVIDEODEVICECONTROL_H
 #define QVIDEODEVICECONTROL_H
 
-#include <qmediacontrol.h>
+#include "qmediacontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QVideoDeviceControl : public QMediaControl
 {
@@ -55,9 +55,9 @@ public:
 
     virtual int deviceCount() const = 0;
 
-    virtual QString name(int index) const = 0;
-    virtual QString description(int index) const = 0;
-    virtual QIcon icon(int index) const = 0;
+    virtual QString deviceName(int index) const = 0;
+    virtual QString deviceDescription(int index) const = 0;
+    virtual QIcon deviceIcon(int index) const = 0;
 
     virtual int defaultDevice() const = 0;
     virtual int selectedDevice() const = 0;
@@ -78,6 +78,6 @@ protected:
 Q_MEDIA_DECLARE_CONTROL(QVideoDeviceControl, QVideoDeviceControl_iid)
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QVIDEODEVICECONTROL_H

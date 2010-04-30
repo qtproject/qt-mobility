@@ -15,7 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactAbstractRequest Class Reference</h1>
 <p>The QContactAbstractRequest class provides a mechanism for asynchronous requests to be made of a manager if it supports them. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactAbstractRequest&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.5/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QContactAbstractRequest&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <p>Inherited by <a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a>, <a href="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</a>, <a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a>, <a href="qcontactfetchrequest.html">QContactFetchRequest</a>, <a href="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</a>, <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a>, <a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a>, <a href="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</a>, <a href="qcontactremoverequest.html">QContactRemoveRequest</a>, and <a href="qcontactsaverequest.html">QContactSaveRequest</a>.</p>
 <ul>
 <li><a href="qcontactabstractrequest-members.html">List of all members, including inherited members</a></li>
@@ -25,25 +25,25 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#RequestType-enum">RequestType</a></b> { InvalidRequest, ContactFetchRequest, ContactLocalIdFetchRequest, ContactRemoveRequest, ..., RelationshipSaveRequest }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#Status-enum">Status</a></b> { Inactive, Active, Cancelling, Cancelled, Finished }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#State-enum">State</a></b> { InactiveState, ActiveState, CanceledState, FinishedState }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#QContactAbstractRequest">QContactAbstractRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#dtor.QContactAbstractRequest">~QContactAbstractRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#dtor.QContactAbstractRequest">~QContactAbstractRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactManager::Error </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#error">error</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactManager::Error&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#errors">errors</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#isActive">isActive</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#isCanceled">isCanceled</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#isFinished">isFinished</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#isInactive">isInactive</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContactManager * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#manager">manager</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#setManager">setManager</a></b> ( QContactManager * <i>manager</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Status </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#status">status</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#state">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">RequestType </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#type">type</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
@@ -52,33 +52,35 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#cancel">cancel</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#start">start</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#waitForFinished">waitForFinished</a></b> ( int <i>msecs</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#waitForProgress">waitForProgress</a></b> ( int <i>msecs</i> = 0 )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-slots">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
-<a name="protected-functions"></a>
-<h2>Protected Functions</h2>
+<a name="signals"></a>
+<h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#QContactAbstractRequest-2">QContactAbstractRequest</a></b> ( QContactAbstractRequestPrivate * <i>otherd</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#resultsAvailable">resultsAvailable</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactabstractrequest.html#stateChanged">stateChanged</a></b> ( QContactAbstractRequest::State <i>newState</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.5/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QContactAbstractRequest class provides a mechanism for asynchronous requests to be made of a manager if it supports them.</p>
-<p>It allows a client to asynchronously request some functionality of a particular <a href="qcontactmanager.html">QContactManager</a>.</p>
+<p>It allows a client to asynchronously request some functionality of a particular <a href="qcontactmanager.html">QContactManager</a>. Instances of the class will emit signals when the state of the request changes, or when more results become available.</p>
+<p>Clients should not attempt to create instances of this class directly, but should instead use the use-case-specific classes derived from this class.</p>
+<p>After creating any sort of request, the client retains ownership and must delete the request to avoid leaking memory. The client may either do this directly (if not within a slot connected to a signal emitted by the request) or by using the <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() slot to schedule the request for deletion when control returns to the event loop.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactAbstractRequest/RequestType"></a>
@@ -109,31 +111,24 @@
 <tr><td valign="top"><tt>QContactAbstractRequest::RelationshipRemoveRequest</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A request to remove any relationships which match the request criteria</td></tr>
 <tr><td valign="top"><tt>QContactAbstractRequest::RelationshipSaveRequest</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">A request to save a list of relationships</td></tr>
 </table></p>
-<a name="//apple_ref/cpp/tag/QContactAbstractRequest/Status"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Inactive"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Active"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Cancelling"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Cancelled"></a>
-<a name="//apple_ref/cpp/econst/QContactAbstractRequest/Finished"></a>
-<h3 class="fn"><a name="Status-enum"></a>enum QContactAbstractRequest::Status</h3>
+<a name="//apple_ref/cpp/tag/QContactAbstractRequest/State"></a>
+<a name="//apple_ref/cpp/econst/QContactAbstractRequest/InactiveState"></a>
+<a name="//apple_ref/cpp/econst/QContactAbstractRequest/ActiveState"></a>
+<a name="//apple_ref/cpp/econst/QContactAbstractRequest/CanceledState"></a>
+<a name="//apple_ref/cpp/econst/QContactAbstractRequest/FinishedState"></a>
+<h3 class="fn"><a name="State-enum"></a>enum QContactAbstractRequest::State</h3>
 <p>Enumerates the various states that a request may be in at any given time</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Inactive</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Operation not yet started</td></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Active</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Operation started, not yet finished</td></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Cancelling</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Operation started then cancelled, not yet finished</td></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Cancelled</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Operation is finished due to cancellation</td></tr>
-<tr><td valign="top"><tt>QContactAbstractRequest::Finished</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Operation successfully completed</td></tr>
+<tr><td valign="top"><tt>QContactAbstractRequest::InactiveState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Operation not yet started</td></tr>
+<tr><td valign="top"><tt>QContactAbstractRequest::ActiveState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Operation started, not yet finished</td></tr>
+<tr><td valign="top"><tt>QContactAbstractRequest::CanceledState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Operation is finished due to cancellation</td></tr>
+<tr><td valign="top"><tt>QContactAbstractRequest::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Operation successfully completed</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QContactAbstractRequest/QContactAbstractRequest"></a>
-<h3 class="fn"><a name="QContactAbstractRequest"></a>QContactAbstractRequest::QContactAbstractRequest ()</h3>
-<p>Constructs a new, invalid asynchronous request</p>
-<h3 class="fn"><a name="QContactAbstractRequest-2"></a>QContactAbstractRequest::QContactAbstractRequest ( QContactAbstractRequestPrivate * <i>otherd</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Constructs a new request from the given request data <i>otherd</i></p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/~QContactAbstractRequest"></a>
-<h3 class="fn"><a name="dtor.QContactAbstractRequest"></a>QContactAbstractRequest::~QContactAbstractRequest ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QContactAbstractRequest"></a>QContactAbstractRequest::~QContactAbstractRequest ()</h3>
 <p>Cleans up the memory used by this request</p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/cancel"></a>
 <h3 class="fn"><a name="cancel"></a>bool QContactAbstractRequest::cancel ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
@@ -141,21 +136,30 @@
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/error"></a>
 <h3 class="fn"><a name="error"></a><a href="qcontactmanager.html#Error-enum">QContactManager::Error</a> QContactAbstractRequest::error () const</h3>
 <p>Returns the overall error of the most recent asynchronous operation</p>
-<a name="//apple_ref/cpp/instm/QContactAbstractRequest/errors"></a>
-<h3 class="fn"><a name="errors"></a><a href="http://qt.nokia.com/doc/4.5/qlist.html">QList</a>&lt;<a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt; QContactAbstractRequest::errors () const</h3>
-<p>Returns the list of errors which occurred during the most recent asynchronous operation. Each individual error in the list corresponds to a result in the result list.</p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/isActive"></a>
 <h3 class="fn"><a name="isActive"></a>bool QContactAbstractRequest::isActive () const</h3>
-<p>Returns true if the request is pending, processing or cancelling; otherwise, returns false.</p>
-<p>See also <a href="qcontactabstractrequest.html#status">status</a>().</p>
+<p>Returns true if the request is in the <tt>QContactAbstractRequest::ActiveState</tt> state; otherwise, returns false</p>
+<p>See also <a href="qcontactabstractrequest.html#state">state</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactAbstractRequest/isCanceled"></a>
+<h3 class="fn"><a name="isCanceled"></a>bool QContactAbstractRequest::isCanceled () const</h3>
+<p>Returns true if the request is in the <tt>QContactAbstractRequest::CanceledState</tt>; otherwise, returns false</p>
+<p>See also <a href="qcontactabstractrequest.html#state">state</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/isFinished"></a>
 <h3 class="fn"><a name="isFinished"></a>bool QContactAbstractRequest::isFinished () const</h3>
-<p>Returns true if the request is finished or cancelled; otherwise, returns false.</p>
-<p>See also <a href="qcontactabstractrequest.html#status">status</a>().</p>
+<p>Returns true if the request is in the <tt>QContactAbstractRequest::FinishedState</tt>; otherwise, returns false</p>
+<p>See also <a href="qcontactabstractrequest.html#state">state</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactAbstractRequest/isInactive"></a>
+<h3 class="fn"><a name="isInactive"></a>bool QContactAbstractRequest::isInactive () const</h3>
+<p>Returns true if the request is in the <tt>QContactAbstractRequest::InactiveState</tt> state; otherwise, returns false</p>
+<p>See also <a href="qcontactabstractrequest.html#state">state</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/manager"></a>
 <h3 class="fn"><a name="manager"></a><a href="qcontactmanager.html">QContactManager</a> * QContactAbstractRequest::manager () const</h3>
 <p>Returns a pointer to the manager of which this request instance requests operations</p>
 <p>See also <a href="qcontactabstractrequest.html#setManager">setManager</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactAbstractRequest/resultsAvailable"></a>
+<h3 class="fn"><a name="resultsAvailable"></a>void QContactAbstractRequest::resultsAvailable ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when new results are available. Results can include the operation error which may be accessed via <a href="qcontactabstractrequest.html#error">error</a>(), or derived-class-specific results which are accessible through the derived class API.</p>
+<p>See also <a href="qcontactabstractrequest.html#error">error</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/setManager"></a>
 <h3 class="fn"><a name="setManager"></a>void QContactAbstractRequest::setManager ( <a href="qcontactmanager.html">QContactManager</a> * <i>manager</i> )</h3>
 <p>Sets the manager of which this request instance requests operations to <i>manager</i></p>
@@ -163,23 +167,22 @@
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/start"></a>
 <h3 class="fn"><a name="start"></a>bool QContactAbstractRequest::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Attempts to start the request. Returns false if the request is not in the <tt>QContactAbstractRequest::Inactive</tt>, <tt>QContactAbstractRequest::Finished</tt> or <tt>QContactAbstractRequest::Cancelled</tt> states, or if the request was unable to be performed by the manager engine; otherwise returns true.</p>
-<a name="//apple_ref/cpp/instm/QContactAbstractRequest/status"></a>
-<h3 class="fn"><a name="status"></a><a href="qcontactabstractrequest.html#Status-enum">Status</a> QContactAbstractRequest::status () const</h3>
-<p>Returns the current status of the request.</p>
-<p>See also <a href="qcontactabstractrequest.html#isFinished">isFinished</a>() and <a href="qcontactabstractrequest.html#isActive">isActive</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactAbstractRequest/state"></a>
+<h3 class="fn"><a name="state"></a><a href="qcontactabstractrequest.html#State-enum">State</a> QContactAbstractRequest::state () const</h3>
+<p>Returns the current state of the request.</p>
+<a name="//apple_ref/cpp/instm/QContactAbstractRequest/stateChanged"></a>
+<h3 class="fn"><a name="stateChanged"></a>void QContactAbstractRequest::stateChanged ( <a href="qcontactabstractrequest.html#State-enum">QContactAbstractRequest::State</a> <i>newState</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when the state of the request is changed. The new state of the request will be contained in <i>newState</i>.</p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/type"></a>
 <h3 class="fn"><a name="type"></a><a href="qcontactabstractrequest.html#RequestType-enum">RequestType</a> QContactAbstractRequest::type () const</h3>
 <p>Returns the type of this asynchronous request</p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QContactAbstractRequest::waitForFinished ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Blocks until the request has been completed by the manager engine, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false.</p>
-<a name="//apple_ref/cpp/instm/QContactAbstractRequest/waitForProgress"></a>
-<h3 class="fn"><a name="waitForProgress"></a>bool QContactAbstractRequest::waitForProgress ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Blocks until the manager engine signals that more partial results are available for the request, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or more partial results were made available within the given period, otherwise false.</p>
+<p>Blocks until the request has been completed by the manager engine, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false. Some backends are unable to support this operation safely, and will return false immediately.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0 (Technology Preview)</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
 </tr></table></div></address></body>
 </html>

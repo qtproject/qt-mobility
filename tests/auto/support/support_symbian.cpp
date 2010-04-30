@@ -43,8 +43,9 @@
 #include <qmessageaccountid.h>
 #include <qmessagefolderid.h>
 #include <qmessageid.h>
-#include <qmessagestore.h>
+#include <qmessagemanager.h>
 #include <qmessage_symbian_p.h>
+#include <messagingutil_p.h>
 
 #include <QDebug>
 
@@ -56,13 +57,13 @@
 #include <metadatabase.h>
 #include <commsdat.h>
 
-_LIT(KPopServer, "ban-sindhub01.intra"); 
+_LIT(KPopServer, "ban-sindhub01.intra");
 _LIT8(KPopLoginName, "ban-sindhub01");
 _LIT8(KPopPassword, "ban-sindhub01");
 
-_LIT(KImapServer, "ban-sindhub01.intra");    
+_LIT(KImapServer, "ban-sindhub01.intra");
 _LIT8(KImapPassword,"ban-sindhub01");
-_LIT8(KImapLoginName,"ban-sindhub01"); 
+_LIT8(KImapLoginName,"ban-sindhub01");
 
 _LIT(KSmtpServerAddress, "ban-sindhub01.intra");
 _LIT(KEmailAlias, "Messaging example");
@@ -80,7 +81,7 @@ public:
 
 CSymbianMessagingSession::CSymbianMessagingSession()
 {
-    TRAPD(err, ipMsvSession = CMsvSession::OpenSyncL(*this));    
+    TRAPD(err, ipMsvSession = CMsvSession::OpenSyncL(*this));
     Q_UNUSED(err)
 }
 
@@ -94,6 +95,9 @@ void CSymbianMessagingSession::HandleSessionEventL(TMsvSessionEvent /*aEvent*/, 
 }
 
 QTM_BEGIN_NAMESPACE
+
+using namespace MessagingUtil;
+
 class MapiSession
 {
 public:
@@ -107,6 +111,7 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
     QString parentAccountName(params["parentAccountName"]);
     QString parentFolderPath(params["parentFolderPath"]);
     QString to(params["to"]);
+    QString cc(params["cc"]);
     QString from(params["from"]);
     QString date(params["date"]);
     QString receivedDate(params["receivedDate"]);
@@ -119,33 +124,44 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
     QString type(params["type"]);
     QString read(params["status-read"]);
     QString hasAttachments(params["status-hasAttachments"]);
-    
+
+    QMessageManager manager;
+
     if (!to.isEmpty() && !from.isEmpty() && !date.isEmpty() && !subject.isEmpty() &&
         !parentAccountName.isEmpty() && !parentFolderPath.isEmpty()) {
         // Find the named account
-        QMessageAccountIdList accountIds(QMessageStore::instance()->queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
+        QMessageAccountIdList accountIds(manager.queryAccounts(QMessageAccountFilter::byName(parentAccountName)));
         if (accountIds.count() == 1) {
             // Find the specified folder
-            QMessageFolderFilter filter(QMessageFolderFilter::byDisplayName(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
-            QMessageFolderIdList folderIds(QMessageStore::instance()->queryFolders(filter));
+            QMessageFolderFilter filter(QMessageFolderFilter::byName(parentFolderPath) & QMessageFolderFilter::byParentAccountId(accountIds.first()));
+            QMessageFolderIdList folderIds(manager.queryFolders(filter));
             if (folderIds.count() == 1) {
                 QMessage message;
-    
+
                 message.setParentAccountId(accountIds.first());
-                message.d_ptr->_parentFolderId = folderIds.first();                    
-    
+                message.d_ptr->_parentFolderId = folderIds.first();
+
                 QList<QMessageAddress> toList;
                 foreach (const QString &addr, to.split(",")) {
-                    toList.append(QMessageAddress(addr.trimmed(), QMessageAddress::Email));
+                    toList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
                 }
                 message.setTo(toList);
-                message.setFrom(QMessageAddress(from, QMessageAddress::Email));
+
+                QList<QMessageAddress> ccList;
+                foreach (const QString &addr, cc.split(",")) {
+					if (!addr.isEmpty()) {
+                    ccList.append(QMessageAddress(QMessageAddress::Email, addr.trimmed()));
+					}
+                }
+                message.setCc(ccList);
+
+                message.setFrom(QMessageAddress(QMessageAddress::Email, from));
                 message.setSubject(subject);
-    
+
                 QDateTime dt(QDateTime::fromString(date, Qt::ISODate));
                 dt.setTimeSpec(Qt::UTC);
                 message.setDate(dt);
-    
+
                 if (type.isEmpty()) {
                     message.setType(QMessage::Email);
                 } else {
@@ -153,19 +169,19 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                         message.setType(QMessage::Mms);
                     } else if (type.toLower() == "sms") {
                         message.setType(QMessage::Sms);
-                    } else if (type.toLower() == "xmpp") {
-                        message.setType(QMessage::Xmpp);
+                    } else if (type.toLower() == "instantmessage") {
+                        message.setType(QMessage::InstantMessage);
                     } else {
                         message.setType(QMessage::Email);
                     }
                 }
-    
+
                 if (!receivedDate.isEmpty()) {
                     QDateTime dt(QDateTime::fromString(receivedDate, Qt::ISODate));
                     dt.setTimeSpec(Qt::UTC);
                     message.setReceivedDate(dt);
                 }
-    
+
                 if (!priority.isEmpty()) {
                     if (priority.toLower() == "high") {
                         message.setPriority(QMessage::HighPriority);
@@ -173,19 +189,19 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                         message.setPriority(QMessage::LowPriority);
                     }
                 }
-    
+
                 /*if (!size.isEmpty()) {
                     message.d_ptr->_size = size.toUInt();
                 }*/
-    
+
                 if (!text.isEmpty()) {
                     message.setBody(text, mimeType.toAscii());
                 }
-    
+
                 if (!attachments.isEmpty()) {
                     message.appendAttachments(attachments.split("\n"));
                 }
-    
+
                 QMessage::StatusFlags flags(0);
                 if (read.toLower() == "true") {
                     flags |= QMessage::Read;
@@ -194,8 +210,8 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                     flags |= QMessage::HasAttachments;
                 }
                 message.setStatus(flags);
-    
-                if (!QMessageStore::instance()->addMessage(&message)) {
+
+                if (!manager.addMessage(&message)) {
                     qWarning() << "Unable to addMessage:" << to << from << date << subject;
                 } else {
                     return message.id();
@@ -209,7 +225,7 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
     } else {
         qWarning() << "Necessary information missing";
     }
-    
+
     return QMessageId();
 }
 QTM_END_NAMESPACE
@@ -243,7 +259,7 @@ void deleteServiceRelatedEntriesFromFolder(TMsvId serviceId, TMsvId folderId)
 void clearMessageStoreL()
 {
     CEmailAccounts* pEmailAccounts = CEmailAccounts::NewLC();
-    
+
     RArray<TImapAccount> imapAccounts(10);
     pEmailAccounts->GetImapAccountsL(imapAccounts);
     for (int i=0; i < imapAccounts.Count(); i++) {
@@ -282,7 +298,7 @@ void clearMessageStoreL()
         }
         CleanupStack::PopAndDestroy(settings);
     }
-    
+
     CleanupStack::PopAndDestroy(pEmailAccounts);
 }
 
@@ -298,17 +314,17 @@ QMessageAccountId createPopAndSmtpAccountL(const TDesC& accountName, const TDesC
 
     // Create IAP Preferences for IMAP & POP3
     CImIAPPreferences* pImIAPPreferences = CImIAPPreferences::NewLC();
-    
+
     // Create POP3 Account
     CImPop3Settings* pImPop3Settings = new(ELeave) CImPop3Settings();
     CleanupStack::PushL(pImPop3Settings);
     pEmailAccounts->PopulateDefaultPopSettingsL(*pImPop3Settings, *pImIAPPreferences);
     pImPop3Settings->SetServerAddressL(KPopServer);
-    pImPop3Settings->SetLoginNameL(KPopLoginName); 
+    pImPop3Settings->SetLoginNameL(KPopLoginName);
     pImPop3Settings->SetPasswordL(KPopPassword);
     pImPop3Settings->SetPort(110);
     TPopAccount popAccount = pEmailAccounts->CreatePopAccountL(accountName, *pImPop3Settings, *pImIAPPreferences, EFalse);
-    
+
     // Create SMTP Account
     CImSmtpSettings *pImSmtpSettings = new (ELeave) CImSmtpSettings();
     CleanupStack::PushL(pImSmtpSettings);
@@ -320,18 +336,18 @@ QMessageAccountId createPopAndSmtpAccountL(const TDesC& accountName, const TDesC
     pImSmtpSettings->SetReceiptAddressL(fromAddress);
     pImSmtpSettings->SetPort(25);
     pEmailAccounts->CreateSmtpAccountL(popAccount, *pImSmtpSettings, *pImIAPPreferences, EFalse);
-        
+
     CleanupStack::PopAndDestroy(pImSmtpSettings);
     CleanupStack::PopAndDestroy(pImPop3Settings);
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
 
-    return QMessageAccountId(QString::number(popAccount.iPopService));
+    return QMessageAccountId(addIdPrefix(QString::number(popAccount.iPopService)));
 }
 
 QMessageAccountId createPopAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
 {
-    QMessageAccountId retVal; 
+    QMessageAccountId retVal;
     TRAPD(err, retVal = createPopAndSmtpAccountL(accountName, fromAddress));
     Q_UNUSED(err)
     return retVal;
@@ -350,14 +366,14 @@ bool imapAccountByNameL(const TDesC& accountName, TImapAccount& account)
             return true;
         }
     }
-    
+
     CleanupStack::PopAndDestroy(pEmailAccounts);
     return false;
 }
 
 bool imapAccountByName(const TDesC& accountName, TImapAccount& account)
 {
-    bool retVal = false; 
+    bool retVal = false;
     TRAPD(err, retVal = imapAccountByNameL(accountName, account));
     Q_UNUSED(err)
     return retVal;
@@ -376,14 +392,14 @@ bool pop3AccountByNameL(const TDesC& accountName, TPopAccount& account)
             return true;
         }
     }
-    
+
     CleanupStack::PopAndDestroy(pEmailAccounts);
     return false;
 }
 
 bool pop3AccountByName(const TDesC& accountName, TPopAccount& account)
 {
-    bool retVal = false; 
+    bool retVal = false;
     TRAPD(err, retVal = pop3AccountByNameL(accountName, account));
     Q_UNUSED(err)
     return retVal;
@@ -402,14 +418,14 @@ bool smtpAccountByNameL(const TDesC& accountName, TSmtpAccount& account)
             return true;
         }
     }
-    
+
     CleanupStack::PopAndDestroy(pEmailAccounts);
     return false;
 }
 
 bool smtpAccountByName(const TDesC& accountName, TSmtpAccount& account)
 {
-    bool retVal = false; 
+    bool retVal = false;
     TRAPD(err, retVal = smtpAccountByNameL(accountName, account));
     Q_UNUSED(err)
     return retVal;
@@ -427,11 +443,11 @@ QMessageAccountId createImapAndSmtpAccountL(const TDesC& accountName, const TDes
     CleanupStack::PushL(pImap4Settings);
     pEmailAccounts->PopulateDefaultImapSettingsL(*pImap4Settings, *pImIAPPreferences);
     pImap4Settings->SetServerAddressL(KImapServer);
-    pImap4Settings->SetLoginNameL(KImapLoginName); 
+    pImap4Settings->SetLoginNameL(KImapLoginName);
     pImap4Settings->SetPasswordL(KImapPassword);
     pImap4Settings->SetPort(143);
     TImapAccount imapAccount = pEmailAccounts->CreateImapAccountL(accountName, *pImap4Settings, *pImIAPPreferences, EFalse);
-    
+
     // Create SMTP Account
     CImSmtpSettings* pImSmtpSettings = new (ELeave) CImSmtpSettings();
     CleanupStack::PushL(pImSmtpSettings);
@@ -443,18 +459,18 @@ QMessageAccountId createImapAndSmtpAccountL(const TDesC& accountName, const TDes
     pImSmtpSettings->SetReceiptAddressL(fromAddress);
     pImSmtpSettings->SetPort(25);
     pEmailAccounts->CreateSmtpAccountL(imapAccount, *pImSmtpSettings, *pImIAPPreferences, EFalse);
-    
+
     CleanupStack::PopAndDestroy(pImSmtpSettings);
     CleanupStack::PopAndDestroy(pImap4Settings);
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
-    
-    return QMessageAccountId(QString::number(imapAccount.iImapService));
+
+    return QMessageAccountId(addIdPrefix(QString::number(imapAccount.iImapService)));
 }
 
 QMessageAccountId createImapAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
 {
-    QMessageAccountId retVal; 
+    QMessageAccountId retVal;
     TRAPD(err, retVal = createImapAndSmtpAccountL(accountName, fromAddress));
     Q_UNUSED(err)
     return retVal;
@@ -477,16 +493,16 @@ QMessageFolderId addFolderL(const TDesC& symbianAccountName, const TDesC& symbia
 {
     TSmtpAccount account;
     bool retVal = smtpAccountByName(symbianAccountName, account);
-    TMsvId serviceEntryId = account.iSmtpService;
-    
+    Q_UNUSED(retVal)
+
     CSymbianMessagingSession* pSession = new CSymbianMessagingSession();
     CleanupStack::PushL(pSession);
     CMsvEntry* pEntry = CMsvEntry::NewL(*(pSession->ipMsvSession), KDocumentsEntryIdValue, TMsvSelectionOrdering(KMsvNoGrouping,EMsvSortByNone,ETrue));
     CleanupStack::PushL(pEntry);
-    
+
     TMsvEntry newFolder;
     newFolder.iType = KUidMsvFolderEntry;
-    newFolder.iMtm = KUidMsvLocalServiceMtm; 
+    newFolder.iMtm = KUidMsvLocalServiceMtm;
     newFolder.iServiceId = account.iSmtpService;
     newFolder.SetReadOnly(EFalse);
     newFolder.SetVisible(ETrue);
@@ -494,17 +510,17 @@ QMessageFolderId addFolderL(const TDesC& symbianAccountName, const TDesC& symbia
     newFolder.iDetails.Set(symbianFolderName);
     newFolder.iDate.HomeTime();
     pEntry->CreateL(newFolder);
-    TMsvId folderId = newFolder.Id(); 
+    TMsvId folderId = newFolder.Id();
 
     CleanupStack::PopAndDestroy(pEntry);
     CleanupStack::PopAndDestroy(pSession);
 
     QString nullString = "00000000";
-    QString serviceEntryIdString = QString::number(serviceEntryId);
+    QString serviceEntryIdString = QString::number(account.iRelatedService);
     serviceEntryIdString = nullString.left(8-serviceEntryIdString.length()) + serviceEntryIdString;
     QString folderIdString = QString::number(folderId);
     folderIdString = nullString.left(8-folderIdString.length()) + folderIdString;
-    return serviceEntryIdString+folderIdString;
+    return addIdPrefix(serviceEntryIdString+folderIdString);
 }
 
 QMessageFolderId addFolder(const Parameters &params)
@@ -513,10 +529,10 @@ QMessageFolderId addFolder(const Parameters &params)
     TPtrC16 symbianAccountName(KNullDesC);
     symbianAccountName.Set(reinterpret_cast<const TUint16*>(accountName.utf16()));
 
-    QString folderName(params["displayName"]);
+    QString folderName(params["name"]);
     TPtrC16 symbianFolderName(KNullDesC);
     symbianFolderName.Set(reinterpret_cast<const TUint16*>(folderName.utf16()));
-    
+
     QMessageFolderId id;
     TRAPD(err, id = addFolderL(symbianAccountName, symbianFolderName));
     Q_UNUSED(err)

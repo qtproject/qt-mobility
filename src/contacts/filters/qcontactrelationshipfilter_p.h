@@ -56,6 +56,7 @@
 #include "qcontactfilter_p.h"
 #include "qcontactfilter.h"
 #include "qcontactid.h"
+#include "qcontactrelationship.h"
 
 #include "qcontactrelationshipfilter.h"
 
@@ -70,24 +71,24 @@ class QContactRelationshipFilterPrivate : public QContactFilterPrivate
 public:
     QContactRelationshipFilterPrivate()
         : QContactFilterPrivate(),
-        m_roleInRelationship(QContactRelationshipFilter::Either)
+        m_relatedContactRole(QContactRelationship::Either)
     {
     }
 
     QContactRelationshipFilterPrivate(const QContactRelationshipFilterPrivate& other)
         : QContactFilterPrivate(other),
-        m_roleInRelationship(other.m_roleInRelationship),
-        m_otherParticipantId(other.m_otherParticipantId),
-        m_relationshipType(other.m_relationshipType)
+        m_relationshipType(other.m_relationshipType),
+        m_relatedContactId(other.m_relatedContactId),
+        m_relatedContactRole(other.m_relatedContactRole)
     {
     }
 
     virtual bool compare(const QContactFilterPrivate* other) const
     {
         const QContactRelationshipFilterPrivate *od = static_cast<const QContactRelationshipFilterPrivate*>(other);
-        if (m_roleInRelationship != od->m_roleInRelationship)
+        if (m_relatedContactRole != od->m_relatedContactRole)
             return false;
-        if (m_otherParticipantId != od->m_otherParticipantId)
+        if (m_relatedContactId != od->m_relatedContactId)
             return false;
         if (m_relationshipType != od->m_relationshipType)
             return false;
@@ -96,9 +97,9 @@ public:
 
     Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(QContactRelationshipFilter, QContactFilter::RelationshipFilter)
 
-    QContactRelationshipFilter::Role m_roleInRelationship;
-    QContactId m_otherParticipantId;
     QString m_relationshipType;
+    QContactId m_relatedContactId;
+    QContactRelationship::Role m_relatedContactRole;
 };
 
 QTM_END_NAMESPACE

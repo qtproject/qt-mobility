@@ -48,7 +48,7 @@
 #include <qradioplayercontrol.h>
 #include <qradioplayer.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class MockProvider : public QRadioPlayerControl
 {
     Q_OBJECT
@@ -133,7 +133,7 @@ public:
     void setMuted(bool muted)
     {
         m_muted = muted;
-        emit mutingChanged(m_muted);
+        emit mutedChanged(m_muted);
     }
 
     bool isSearching() const
@@ -144,19 +144,19 @@ public:
     void searchForward()
     {
         m_searching = true;
-        emit searchingStatusChanged(m_searching);
+        emit searchingChanged(m_searching);
     }
 
     void searchBackward()
     {
         m_searching = true;
-        emit searchingStatusChanged(m_searching);
+        emit searchingChanged(m_searching);
     }
 
     void cancelSearch()
     {
         m_searching = false;
-        emit searchingStatusChanged(m_searching);
+        emit searchingChanged(m_searching);
     }
 
 public:
@@ -281,7 +281,7 @@ void tst_QRadioPlayer::testStereo()
 
 void tst_QRadioPlayer::testMute()
 {
-    QSignalSpy readSignal(radio, SIGNAL(mutingChanged(bool)));
+    QSignalSpy readSignal(radio, SIGNAL(mutedChanged(bool)));
     radio->setMuted(true);
     QTestEventLoop::instance().enterLoop(1);
     QVERIFY(radio->isMuted());
@@ -290,7 +290,7 @@ void tst_QRadioPlayer::testMute()
 
 void tst_QRadioPlayer::testSearch()
 {
-    QSignalSpy readSignal(radio, SIGNAL(searchingStatusChanged(bool)));
+    QSignalSpy readSignal(radio, SIGNAL(searchingChanged(bool)));
     QVERIFY(!radio->isSearching());
 
     radio->searchForward();

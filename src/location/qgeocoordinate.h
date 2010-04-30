@@ -45,8 +45,10 @@
 
 #include <QString>
 
+QT_BEGIN_NAMESPACE
 class QDebug;
 class QDataStream;
+QT_END_NAMESPACE
 
 QT_BEGIN_HEADER
 
@@ -63,8 +65,8 @@ public:
     };
 
     enum CoordinateFormat {
-        DecimalDegrees,
-        DecimalDegreesWithHemisphere,
+        Degrees,
+        DegreesWithHemisphere,
         DegreesMinutes,
         DegreesMinutesWithHemisphere,
         DegreesMinutesSeconds,
@@ -80,7 +82,9 @@ public:
     QGeoCoordinate &operator=(const QGeoCoordinate &other);
 
     bool operator==(const QGeoCoordinate &other) const;
-    inline bool operator!=(const QGeoCoordinate &other) const { return !operator==(other); }
+    inline bool operator!=(const QGeoCoordinate &other) const {
+        return !operator==(other);
+    }
 
     bool isValid() const;
     CoordinateType type() const;

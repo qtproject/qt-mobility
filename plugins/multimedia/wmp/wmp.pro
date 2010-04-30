@@ -1,8 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qwmp)
+TARGET = $$qtLibraryTarget(qtmedia_wmp)
 
-PLUGIN_TYPE = mediaservice
+PLUGIN_TYPE=mediaservice
 
 INCLUDEPATH+=../../../src/multimedia
 include(../../../common.pri)
@@ -11,7 +11,8 @@ TMP_INCLUDE = $$quote($$(INCLUDE))
 TMP_SEARCHPATHS = $$split(TMP_INCLUDE, ";") $$QMAKE_INCDIR
 for(p, TMP_SEARCHPATHS): exists($${p}/evr.h): DEFINES *= QWMP_EVR
 
-qtAddLibrary(QtMedia)
+CONFIG += mobility
+MOBILITY = multimedia
 LIBS += -lstrmiids -lole32 -lOleaut32 -luser32 -lgdi32
 
 HEADERS = \
@@ -42,5 +43,6 @@ SOURCES = \
     qwmpvideooutputcontrol.cpp \
     qwmpvideooverlay.cpp
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
+maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
 INSTALLS+=target

@@ -45,23 +45,13 @@
 */
 
 /*!
-    \example cameracapture
-    \title Camera Capture Example
-*/
-
-/*!
-    \example declarative
-    \title Declarative Example
+    \example declarative-sfw-dialer
+    \title Declarative Service Framework Example
 */
 
 /*!
     \example fetchgooglemaps
     \title Fetch Google Maps Example
-*/
-
-/*!
-    \example incomingcalls
-    \title Incoming Calls Example
 */
 
 /*!
@@ -95,8 +85,8 @@
 */
 
 /*!
-    \example sendmessage
-    \title Send Message Example
+    \example writemessage
+    \title Write Message Example
 */
 
 /*!
@@ -107,11 +97,6 @@
 /*!
     \example slideshow
     \title Slideshow Example
-*/
-
-/*!
-    \example streamplayer
-    \title Stream Player Example
 */
 
 /*!

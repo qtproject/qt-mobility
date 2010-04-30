@@ -177,17 +177,17 @@ void Player::positionChanged(qint64 progress)
 
 void Player::metaDataChanged()
 {
-    //qDebug() << "update metadata" << player->metaData(QtMedia::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QtMediaServices::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(player->metaData(QtMedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMedia::Title).toString()));
+                .arg(player->metaData(QtMediaServices::AlbumArtist).toString())
+                .arg(player->metaData(QtMediaServices::Title).toString()));
 
         if (coverLabel) {
-            QUrl uri = player->metaData(QtMedia::CoverArtUriLarge).value<QUrl>();
+            QUrl url = player->metaData(QtMediaServices::CoverArtUrlLarge).value<QUrl>();
 
-            coverLabel->setPixmap(!uri.isEmpty()
-                    ? QPixmap(uri.toString())
+            coverLabel->setPixmap(!url.isEmpty()
+                    ? QPixmap(url.toString())
                     : QPixmap());
         }
     }
