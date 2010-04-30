@@ -70,9 +70,6 @@ class QOrganizerItemSaveRequest;
 class QOrganizerItemDetailDefinitionSaveRequest;
 class QOrganizerItemDetailDefinitionRemoveRequest;
 class QOrganizerItemDetailDefinitionFetchRequest;
-class QOrganizerItemRelationshipSaveRequest;
-class QOrganizerItemRelationshipRemoveRequest;
-class QOrganizerItemRelationshipFetchRequest;
 
 class Q_CALENDAR_EXPORT QOrganizerItemManagerEngine : public QObject
 {
@@ -96,8 +93,6 @@ public:
 
     virtual bool saveContact(QOrganizerItem* contact, QOrganizerItemManager::Error* error);
     virtual bool removeContact(const QOrganizerItemLocalId& contactId, QOrganizerItemManager::Error* error);
-    virtual bool saveRelationship(QOrganizerItemRelationship* relationship, QOrganizerItemManager::Error* error);
-    virtual bool removeRelationship(const QOrganizerItemRelationship& relationship, QOrganizerItemManager::Error* error);
 
     virtual bool saveContacts(QList<QOrganizerItem>* contacts, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     virtual bool removeContacts(const QList<QOrganizerItemLocalId>& contactIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
@@ -107,15 +102,6 @@ public:
 
     /* Synthesize the display label of a contact */
     virtual QString synthesizedDisplayLabel(const QOrganizerItem& contact, QOrganizerItemManager::Error* error) const;
-
-    /* "Self" contact id (MyCard) */
-    virtual bool setSelfContactId(const QOrganizerItemLocalId& contactId, QOrganizerItemManager::Error* error);
-    virtual QOrganizerItemLocalId selfContactId(QOrganizerItemManager::Error* error) const;
-
-    /* Relationships between contacts */
-    virtual QList<QOrganizerItemRelationship> relationships(const QString& relationshipType, const QOrganizerItemId& participantId, QOrganizerItemRelationship::Role role, QOrganizerItemManager::Error* error) const;
-    virtual bool saveRelationships(QList<QOrganizerItemRelationship>* relationships, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
-    virtual bool removeRelationships(const QList<QOrganizerItemRelationship>& relationships, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
     /* Validation for saving */
     virtual bool validateContact(const QOrganizerItem& contact, QOrganizerItemManager::Error* error) const;
@@ -135,7 +121,6 @@ public:
 
     /* Capabilities reporting */
     virtual bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& contactType) const;
-    virtual bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType) const;
     virtual bool isFilterSupported(const QOrganizerItemFilter& filter) const;
     virtual QList<QVariant::Type> supportedDataTypes() const;
     virtual QStringList supportedContactTypes() const;
@@ -148,9 +133,6 @@ Q_SIGNALS:
     void contactsAdded(const QList<QOrganizerItemLocalId>& contactIds);
     void contactsChanged(const QList<QOrganizerItemLocalId>& contactIds);
     void contactsRemoved(const QList<QOrganizerItemLocalId>& contactIds);
-    void relationshipsAdded(const QList<QOrganizerItemLocalId>& affectedContactIds);
-    void relationshipsRemoved(const QList<QOrganizerItemLocalId>& affectedContactIds);
-    void selfContactIdChanged(const QOrganizerItemLocalId& oldId, const QOrganizerItemLocalId& newId);
 
 public:
     // Async update functions
@@ -163,14 +145,10 @@ public:
     static void updateDefinitionSaveRequest(QOrganizerItemDetailDefinitionSaveRequest* req, const QList<QOrganizerItemDetailDefinition>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
     static void updateDefinitionRemoveRequest(QOrganizerItemDetailDefinitionRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
     static void updateDefinitionFetchRequest(QOrganizerItemDetailDefinitionFetchRequest* req, const QMap<QString, QOrganizerItemDetailDefinition>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
-    static void updateRelationshipSaveRequest(QOrganizerItemRelationshipSaveRequest* req, const QList<QOrganizerItemRelationship>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
-    static void updateRelationshipRemoveRequest(QOrganizerItemRelationshipRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);
-    static void updateRelationshipFetchRequest(QOrganizerItemRelationshipFetchRequest* req, const QList<QOrganizerItemRelationship>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State);
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
     static void setContactDisplayLabel(QOrganizerItem* contact, const QString& displayLabel);
-    static void setContactRelationships(QOrganizerItem* contact, const QList<QOrganizerItemRelationship>& relationships);
 
     /* Helper functions */
     static int compareContact(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders);

@@ -54,7 +54,6 @@
 #include "qtorganizeritemsglobal.h"
 #include "qorganizeritem.h"
 #include "qorganizeritemid.h"
-#include "qorganizeritemrelationship.h"
 #include "qorganizeritemsortorder.h"
 #include "qorganizeritemfetchhint.h"
 
@@ -95,7 +94,6 @@ public:
         DoesNotExistError,
         AlreadyExistsError,
         InvalidDetailError,
-        InvalidRelationshipError,
         LockedError,
         DetailAccessError,
         PermissionsError,
@@ -133,18 +131,6 @@ public:
     QString synthesizedContactDisplayLabel(const QOrganizerItem& contact) const;
     void synthesizeContactDisplayLabel(QOrganizerItem* contact) const;
 
-    /* "Self" contact id (MyCard) */
-    bool setSelfContactId(const QOrganizerItemLocalId& contactId);
-    QOrganizerItemLocalId selfContactId() const;
-
-    /* Relationships */
-    QList<QOrganizerItemRelationship> relationships(const QOrganizerItemId& participantId, QOrganizerItemRelationship::Role role = QOrganizerItemRelationship::Either) const;
-    QList<QOrganizerItemRelationship> relationships(const QString& relationshipType = QString(), const QOrganizerItemId& participantId = QOrganizerItemId(), QOrganizerItemRelationship::Role role = QOrganizerItemRelationship::Either ) const;
-    bool saveRelationship(QOrganizerItemRelationship* relationship);
-    bool saveRelationships(QList<QOrganizerItemRelationship>* relationships, QMap<int, QOrganizerItemManager::Error>* errorMap);
-    bool removeRelationship(const QOrganizerItemRelationship& relationship);
-    bool removeRelationships(const QList<QOrganizerItemRelationship>& relationships, QMap<int, QOrganizerItemManager::Error>* errorMap);
-
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& contactType = QOrganizerItemType::TypeEvent) const;
     QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& contactType = QOrganizerItemType::TypeEvent) const;
@@ -156,16 +142,12 @@ public:
         Groups = 0,               // backend supports QOrganizerItemType::TypeGroup type contacts (convenience for clients... should be deprecated)
         ActionPreferences,        // per-contact action preferences
         MutableDefinitions,
-        Relationships,
-        ArbitraryRelationshipTypes,
-        RelationshipOrdering,     // deprecated along with setRelationshipOrder() etc in QOrganizerItem.
         DetailOrdering,
         SelfContact,
         Anonymous,
         ChangeLogs
     };
     bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& contactType = QOrganizerItemType::TypeEvent) const;
-    bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType = QOrganizerItemType::TypeEvent) const;
     QList<QVariant::Type> supportedDataTypes() const;
     bool isFilterSupported(const QOrganizerItemFilter& filter) const;
     QStringList supportedContactTypes() const;
@@ -178,9 +160,6 @@ Q_SIGNALS:
     void contactsAdded(const QList<QOrganizerItemLocalId>& contactIds);
     void contactsChanged(const QList<QOrganizerItemLocalId>& contactIds);
     void contactsRemoved(const QList<QOrganizerItemLocalId>& contactIds);
-    void relationshipsAdded(const QList<QOrganizerItemLocalId>& affectedContactIds);
-    void relationshipsRemoved(const QList<QOrganizerItemLocalId>& affectedContactIds);
-    void selfContactIdChanged(const QOrganizerItemLocalId& oldId, const QOrganizerItemLocalId& newId); // need both? or just new?
 
 private:
     friend class QOrganizerItemManagerData;

@@ -55,9 +55,9 @@
 #include "qorganizeritemdetail.h"
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemrelationship.h"
 #include "qorganizeritemtype.h"
 #include "qorganizeritemnote.h"
+#include "qorganizeritemid.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -161,10 +161,6 @@ public:
     /* generic detail addition/removal functions */
     bool saveDetail(QOrganizerItemDetail* detail);   // modifies the detail - sets its ID if detail already exists
     bool removeDetail(QOrganizerItemDetail* detail); // modifies the detail - unsets its ID
-
-    /* Relationships that this organizeritem was involved in when it was retrieved from the manager */
-    QList<QOrganizerItemRelationship> relationships(const QString& relationshipType = QString()) const;
-    QList<QOrganizerItemId> relatedContacts(const QString& relationshipType = QString(), QOrganizerItemRelationship::Role role = QOrganizerItemRelationship::Either) const;
 
     // Some common convenience detail accessors
     void setNote(QString note);

@@ -81,19 +81,6 @@ public:
     void insertRemovedContacts(const QList<QOrganizerItemLocalId>& addedContactIds);
     void clearRemovedContacts();
 
-    QSet<QOrganizerItemLocalId> addedRelationshipsContacts() const;
-    void insertAddedRelationshipsContact(QOrganizerItemLocalId affectedContactId);
-    void insertAddedRelationshipsContacts(const QList<QOrganizerItemLocalId>& affectedContactIds);
-    void clearAddedRelationshipsContacts();
-
-    QSet<QOrganizerItemLocalId> removedRelationshipsContacts() const;
-    void insertRemovedRelationshipsContact(QOrganizerItemLocalId affectedContactId);
-    void insertRemovedRelationshipsContacts(const QList<QOrganizerItemLocalId>& affectedContactIds);
-    void clearRemovedRelationshipsContacts();
-
-    void setOldAndNewSelfContactId(const QPair<QOrganizerItemLocalId, QOrganizerItemLocalId>& oldAndNewContactId);
-    QPair<QOrganizerItemLocalId, QOrganizerItemLocalId> oldAndNewSelfContactId() const;
-
     void clearAll();
 
     void emitSignals(QOrganizerItemManagerEngine *engine);
