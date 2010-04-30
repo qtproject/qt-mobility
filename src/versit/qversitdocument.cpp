@@ -49,7 +49,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QVersitDocument
-  \preliminary
   \brief The QVersitDocument class is a container for a list of versit properties.
   \ingroup versit
 

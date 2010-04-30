@@ -2,14 +2,14 @@ INCLUDEPATH+=../../../src/sensors
 INCLUDEPATH+=../../sensors \epoc32\include\osextensions
 
 include(version.pri)
-include(symbian.pri)
+#include(symbian.pri)
 include(../../../common.pri)
 
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtsensors_sym)
 
-SOURCES +=  \
+SOURCES +=  \			
 			sensorbackendsym.cpp \
 			proximitysensorsym.cpp \
 			ambientlightsensorsym.cpp \
@@ -17,7 +17,10 @@ SOURCES +=  \
 			compasssym.cpp \
 			accelerometersym.cpp \
 			orientationsym.cpp \
-			main.cpp
+			rotationsensorsym.cpp \
+			tapsensorsym.cpp \			
+			main.cpp \
+			
 PRIVATE_HEADERS += \
 			sensorbackendsym.h \
 			sensorbackenddatasym.h \
@@ -26,7 +29,9 @@ PRIVATE_HEADERS += \
 			magnetometersensorsym.h \
 			compasssym.h \
 			accelerometersym.h \
-			orientationsym.h
+			orientationsym.h \
+			rotationsensorsym.h \
+			tapsensorsym.h \
            
 HEADERS = $$PRIVATE_HEADERS
 
@@ -47,6 +52,7 @@ DEFINES+=QT_MAKEDLL
 #target.path = $$SOURCE_DIR/plugins/sensors
 #INSTALLS += target
 symbian {
+    TARGET.UID3 = 0x2002BFC8
     TARGET.CAPABILITY = ALL -TCB    
     LIBS += -lSensrvClient
     LIBS += -lsensrvutil   
