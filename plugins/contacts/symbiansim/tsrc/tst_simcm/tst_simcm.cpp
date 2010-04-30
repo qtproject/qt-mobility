@@ -366,6 +366,10 @@ void tst_SimCM::addContact_data()
     QString es;
     QString tooLongText("James Hunt the 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890th");
 
+#ifdef __WINS__
+    qWarning("Etel test server (emulator) does report an error when saving if contact has too long details!");
+#endif
+    
     // TODO: what name field to use for a sim contact name?
     // Note: With the current implementation the value must not contain a ':' character
     QTest::newRow("ADN custom label")
@@ -399,7 +403,11 @@ void tst_SimCM::addContact_data()
 
     QTest::newRow("ADN too long custom label")
         << QString("ADN")
-        << 1 // expected to pass. Note: too long display label is truncated
+#ifdef __WINS__
+        << 1 // Etel test server does not enforce the max lengths
+#else
+        << 0 // expected to fail
+#endif
         << tooLongText
         << (QStringList()
             << (QString("Name:CustomLabel:").append(tooLongText)));
@@ -414,7 +422,11 @@ void tst_SimCM::addContact_data()
 
     QTest::newRow("ADN custom label and too long nick name")
         << QString("ADN")
-        << -1 // Depends on SIM card support (some cards support second name)
+#ifdef __WINS__
+        << 1 // Etel test server does not enforce the max lengths
+#else
+        << 0 // expected to fail
+#endif
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
@@ -522,7 +534,11 @@ void tst_SimCM::addContact_data()
 
     QTest::newRow("ADN custom label and too long email")
         << QString("ADN")
+#ifdef __WINS__
+        << 1 // Etel test server does not enforce the max lengths
+#else
         << 0 // long enough e-mail to fail on any SIM card
+#endif
         << "James Hunt"
         << (QStringList()
             << "Name:CustomLabel:James Hunt"
@@ -630,8 +646,8 @@ void tst_SimCM::addContact()
         // verify that the details were saved as expected
         compareDetails(contact, expectedDetails);
 
-        // verify display label, allow truncating to the max text length
-        QCOMPARE(contact.displayLabel(), expectedDisplayLabel.left(m_etelStoreInfo.iMaxTextLength));
+        // verify display label
+        QCOMPARE(contact.displayLabel(), expectedDisplayLabel);
 
         // TODO: verify that no extra details were added?
         //?QCOMPARE(contact.details().count(), detailsUnderTest.count() + 2);
@@ -1013,8 +1029,8 @@ void tst_SimCM::detailFilter_data()
     QTest::newRow("customlabel=frederik")
             << detail << field << "frederik" << 0 << "c";
     
-    QTest::newRow("customlabel=Juhani flags=MatchContains")
-            << detail << field << "Juhani" << (int) (QContactFilter::MatchContains) << "d";
+    QTest::newRow("customlabel=Kallasvuo flags=MatchContains")
+            << detail << field << "Kallasvuo" << (int) (QContactFilter::MatchContains) << "d";
     
     QTest::newRow("customlabel=Matti flags=MatchStartsWith")
             << detail << field << "Matti" << (int) (QContactFilter::MatchStartsWith) << "b";
@@ -1053,13 +1069,13 @@ void tst_SimCM::detailFilter()
     saved.insert(saveContact("Jorma Ollila", "123456789").localId(), "a");
     saved.insert(saveContact("Matti Nykänen", "+123456789").localId(), "b");
     saved.insert(saveContact("Frederik", "+123456789012").localId(), "c");
-    saved.insert(saveContact("Olli-Pekka Juhani Kallasvuo", "0718008000").localId(), "d");
+    saved.insert(saveContact("Olli-Pekka Kallasvuo", "0718008000").localId(), "d");
     saved.insert(saveContact("Foobar", "0987654321p").localId(), "e");
     saved.insert(saveContact("Telco", "0718008000#1234#123").localId(), "f");
     saved.insert(saveContact("Olli", "543253425").localId(), "g");
     saved.insert(saveContact("Donald Duck", "313").localId(), "h");
     saved.insert(saveContact("Daisy Duck", "0505555555").localId(), "i");
-    saved.insert(saveContact("Daisy Duck (international)", "+358505555555").localId(), "j");
+    saved.insert(saveContact("Daisy Duck (int)", "+358505555555").localId(), "j");
         
     QContactDetailFilter f;
     f.setDetailDefinitionName(detailName, detailField);
@@ -1436,18 +1452,6 @@ void tst_SimCM::compareDetails(QContact contact, QList<QContactDetail> expectedD
     foreach (QContactDetail expectedDetail, expectedDetails) {
         QContactDetail actualDetail = contact.detail(expectedDetail.definitionName());
         QVERIFY(!actualDetail.isEmpty());
-
-        // Allow truncating the custom label to the max text length
-        if (expectedDetail.definitionName() == QContactName::DefinitionName) {
-            QContactName nameDetail = static_cast<QContactName>(expectedDetail);
-            nameDetail.setCustomLabel(nameDetail.customLabel().left(m_etelStoreInfo.iMaxTextLength));
-            expectedDetail = static_cast<QContactDetail>(nameDetail);
-        // Allow truncating the nick name to the max text length
-        } else if (expectedDetail.definitionName() == QContactNickname::DefinitionName) {
-                QContactNickname nick = static_cast<QContactNickname>(expectedDetail);
-                nick.setNickname(nick.nickname().left(m_etelStoreInfo.iMaxTextLength));
-                expectedDetail = static_cast<QContactDetail>(nick);
-        }
 
         if(!contact.details().contains(expectedDetail)) {
             // FAIL! Make it easier to debug the output by

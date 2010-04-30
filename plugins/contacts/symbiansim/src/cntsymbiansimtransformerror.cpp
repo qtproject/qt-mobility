@@ -92,6 +92,7 @@ void CntSymbianSimTransformError::transformError(TInt symbianError, QContactMana
             *qtError = QContactManager::BadArgumentError;
             break;
         }
+        case KErrTooBig:
         case KErrGsmSimServSneFull:
         case KErrGsmSimServAnrFull:
         case KErrGsmSimServEmailFull:
