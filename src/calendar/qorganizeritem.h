@@ -168,7 +168,7 @@ public:
 
     // Some common convenience detail accessors
     void setNote(QString note);
-    QOrganizerItemNote note() const;
+    QString note() const;
     void setDateTime(const QDateTime& dateTime);
     QDateTime dateTime() const;
 
