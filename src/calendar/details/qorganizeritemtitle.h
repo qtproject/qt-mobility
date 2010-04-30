@@ -39,30 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+#ifndef QORGANIZERITEMTITLE_H
+#define QORGANIZERITEMTITLE_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Calendar API.
+#include <QString>
 
-#include "qorganizeritemaccesscontrol.h"
-#include "qorganizeritemattendee.h"
-#include "qorganizeritemdatetime.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemenddatetime.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemnote.h"
-#include "qorganizeritemparticipationrole.h"
-#include "qorganizeritemparticipationstatus.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemprovenance.h"
-#include "qorganizeritemrecurrenceparent.h"
-#include "qorganizeritemrecurrencerule.h"
-#include "qorganizeritemrsvpinfo.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtitle.h"
-#include "qorganizeritemtype.h"
-#include "qorganizeritemvisibilitytag.h"
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CALENDAR_EXPORT QOrganizerItemTitle : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldTitle;
+#else
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemTitle, "Title")
+    Q_DECLARE_LATIN1_CONSTANT(FieldTitle, "Title");
+#endif
+
+    void setTitle(const QString& title) {setValue(FieldTitle, title);}
+    QString title() const {return value(FieldTitle);}
+};
+
+QTM_END_NAMESPACE
 
 #endif
+

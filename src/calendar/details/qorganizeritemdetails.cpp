@@ -55,12 +55,17 @@ QTM_BEGIN_NAMESPACE
 
 /*!
    \class QOrganizerItemDateTime
-   \brief The QOrganizerItemDateTime class contains the start and end date and time of the event, appointment or invitation which the organizer item describes.
+   \brief The QOrganizerItemDateTime class contains the start time of the event, appointment or invitation which the organizer item describes, or the date associated with a todo, note or journal.
  */
 
 /*!
    \class QOrganizerItemDisplayLabel
-   \brief The QOrganizerItemBirthday class contains the backend-synthesized display label of the organizer item.
+   \brief The QOrganizerItemDisplayLabel class contains the backend-synthesized display label of the organizer item.
+ */
+
+/*!
+   \class QOrganizerItemEndDateTime
+   \brief The QOrganizerItemEndDateTime class contains the end time of an event, appointment or invitation.
  */
 
 /*!
@@ -100,10 +105,14 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
+   \class QOrganizerItemRecurrenceParent
+   \brief The QOrganizerItemRecurrenceParent class contains information about the instance in an event series (defined by a recurrence rule) that a QOrganizerEventOccurrence is the replacement for.
+  */
+
+/*!
    \class QOrganizerItemRecurrenceRule
    \deprecated
    \brief The QOrganizerItemRecurrenceRule class contains the recurrence rule which determines when the event described in the organizer item will occur.
-   NOTE: the QOrganizerItemRecurrenceRuleCriteria and QOrganizerItemRecurrenceRules classes may REPLACE this class -- ie, how the recurrence rules are stored is still under discussion.
  */
 
 /*!
@@ -114,6 +123,16 @@ QTM_BEGIN_NAMESPACE
 /*!
    \class QOrganizerItemTimestamp
    \brief The QOrganizerItemTimestamp class contains the creation and last-modified timestamp associated with the organizer item.  XXX TODO: what about last accessed?
+ */
+
+/*!
+   \class QOrganizerItemTitle
+   \brief The QOrganizerItemTitle class holds a short description of the organizer item.
+ */
+
+/*!
+   \class QOrganizerItemType
+   \brief The QOrganizerItemType class describes the type of the organizer item.  This detail may be automatically synthesized by the backend depending on other details in the organizer item.
  */
 
 /*!
@@ -140,7 +159,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::DefinitionName, "Attendee");
 
 /*!
    \variable QOrganizerItemDateTime::DefinitionName
-   The constant string which identifies the definition of details which contain the date and time of an event or appointment.
+   The constant string which identifies the definition of details which contain the date and time of an organizer item.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::DefinitionName, "DateTime");
 
@@ -151,6 +170,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::DefinitionName, "DateTime");
    which contain a display label of an organizer item.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::DefinitionName, "DisplayLabel");
+
+/*!
+   \variable QOrganizerItemEndDateTime::DefinitionName
+   The constant string which identifies the definition of details which contain the end date and time of an event or invitation.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::DefinitionName, "EndDateTime");
 
 /*!
    \variable QOrganizerItemGuid::DefinitionName
@@ -203,6 +228,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::DefinitionName, "Provenance")
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::DefinitionName, "RecurrenceRule");
 
 /*!
+   \variable QOrganizerItemRecurrenceParent::DefinitionName
+   The constant string which identifies the definition of details which contain the original instance of an event occurrence.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceParent::DefinitionName, "RecurrenceParent");
+
+/*!
    \variable QOrganizerItemRsvpInfo::DefinitionName
    The constant string which identifies the definition of details which contain the RSVP information for an organizer item.
  */
@@ -210,13 +241,19 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::DefinitionName, "RsvpInfo");
 
 /*!
    \variable QOrganizerItemTimestamp::DefinitionName
-   The constant string which identifies the definition of details which are contact synchronisation timestamps.
+   The constant string which identifies the definition of details which are organizer synchronisation timestamps.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::DefinitionName, "Timestamp");
 
 /*!
+   \variable QOrganizerItemTitle::DefinitionName
+   The constant string which identifies the definition of details which hold the title of the organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTitle::DefinitionName, "Title");
+
+/*!
    \variable QOrganizerItemType::DefinitionName
-   The constant string which identifies the definition of details which identify the type of the contact.
+   The constant string which identifies the definition of details which identify the type of the organizer item.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::DefinitionName, "Type");
 
@@ -290,12 +327,20 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeContactUri, "Atten
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
 
 /*!
-   \variable QOrganizerItemDateTime::FieldStartDateTime
+   \variable QOrganizerItemDateTime::FieldDateTime
 
-   The constant key for which the start datetime value of the organizer item is stored in
+   The constant key for which the datetime value of the organizer item is stored in
    details of the QOrganizerItemDateTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::FieldStartDateTime, "StartDateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::FieldDateTime, "DateTime");
+
+/*!
+   \variable QOrganizerItemEndDateTime::FieldEndDateTime
+
+   The constant key for which the end datetime value of the organizer item is stored in
+   details of the QOrganizerItemEndDateTime type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::FieldEndDateTime, "EndDateTime");
 
 /*!
    \variable QOrganizerItemDisplayLabel::FieldLabel

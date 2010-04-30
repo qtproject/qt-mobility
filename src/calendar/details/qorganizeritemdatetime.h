@@ -59,12 +59,12 @@ public:
     const char* FieldDateTime;
 #else
     Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemDateTime, "DateTime")
-    Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDateTime, "DateTime");
 #endif
 
     // XXX: TODO: QDateTime needs upgrading (timezone etc)
-    void setStartDateTime(const QDateTime& dateTime) {setValue(FieldStartDateTime, dateTime);}
-    QDateTime startDateTime() const {return value<QDateTime>(FieldStartDateTime);}
+    void setDateTime(const QDateTime& dateTime) {setValue(FieldDateTime, dateTime);}
+    QDateTime dateTime() const {return value<QDateTime>(FieldDateTime);}
 };
 
 QTM_END_NAMESPACE
