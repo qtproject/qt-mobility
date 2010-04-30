@@ -458,6 +458,8 @@ call :compileTest Symbian_Sensor_Framework sensors_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
+call :compileTest OpenMaxAl_support openmaxal_symbian
+
 echo End of compile tests
 echo.
 echo.
