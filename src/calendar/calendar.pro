@@ -13,9 +13,6 @@ include(details/details.pri)
 
 # Input
 PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
-    qorganizeritemaction.h \
-    qorganizeritemactiondescriptor.h \
-    qorganizeritemactionfactory.h \
     qorganizeritemchangeset.h \
     qorganizeritemdetail.h \
     qorganizeritemdetaildefinition.h \
@@ -27,7 +24,6 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qorganizeritemmanager.h \
     qorganizeritemmanagerengine.h \
     qorganizeritemmanagerenginefactory.h \
-    qorganizeritemrelationship.h \
     qorganizeritemsortorder.h \
     qtorganizeritemsglobal.h \
     qtorganizeritem.h
