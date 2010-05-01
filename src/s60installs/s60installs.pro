@@ -128,6 +128,9 @@ symbian: {
             "   \"$$EPOCROOT31\epoc32/release/armv5/urel/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
             "ELSE" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmedia_mmfengine.dll\"" \
+            "ENDIF" \
+            "IF package(0x20022E6D)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_xarecordservice.dll\" - \"!:\\sys\\bin\\qtmedia_xarecordservice.dll\"" \
             "ENDIF"
 
 

@@ -102,6 +102,7 @@ public:
     void setContainerType(const TDesC &aURI);
     TBool setCodec(const TDesC &aURI);
     void setBitRate(TUint32 aBitRate);
+    void setOptimalBitRate();
     void setChannels(TUint32 aChannels);
     void setOptimalChannelCount();
     void setSampleRate(TUint32 aSampleRate);
@@ -124,6 +125,8 @@ private:
     TInt32 setEncoderSettingsToMediaRecorder();
     TInt32 getBitratesByAudioCodecID(XAuint32 encoderId,
                           RArray<TUint32> &aBitrates);
+    TInt32 getSampleRatesByAudioCodecID(XAuint32 encoderId,
+                          RArray<TInt32> &aSampleRates);
 
 
 private:
