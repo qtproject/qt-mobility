@@ -136,13 +136,19 @@ symbian: {
             "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmedia_mmfengine.dll\"" \
             "ELSE" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmedia_mmfengine.dll\"" \
+            "ENDIF" \
+            "IF package(0x20022E6D)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_xarecordservice.dll\" - \"!:\\sys\\bin\\qtmedia_xarecordservice.dll\"" \
             "ENDIF"
 
         qtmobilitydeployment.pkg_postrules += multimedia
 
         pluginstubs += \
             "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/mmf/qmakepluginstubs/qtmedia_mmfengine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmedia_mmfengine.qtplugin\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmedia_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmedia_m3u.qtplugin\""
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/qtmedia_m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\qtmedia_m3u.qtplugin\"" \
+            "IF package(0x20022E6D)" \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/openmaxal/mediarecorder/qmakepluginstubs/qtmedia_xarecordservice.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\qtmedia_xarecordservice.qtplugin\"" \
+            "ENDIF"
     }
 
     contains(mobility_modules, sensors) {
