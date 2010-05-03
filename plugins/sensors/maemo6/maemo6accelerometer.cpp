@@ -60,7 +60,8 @@ maemo6accelerometer::maemo6accelerometer(QSensor *sensor)
             qWarning() << "Unable to initialize accelerometer sensor.";
 
         // adding metadata
-        addDataRate(100, 100); // 100Hz
+        addDataRate(142, 142); // 142Hz
+        sensor->setDataRate(142);
         //addDataRate(400, 400); // 400Hz
 
         // accuracy - or resolution???
@@ -77,9 +78,9 @@ void maemo6accelerometer::slotDataAvailable(const XYZ& data)
 {
     // Convert from milli-Gs to meters per second per second
     // Using 1 G = 9.80665 m/s^2
-    qreal ax = - data.x() * GRAVITY_EARTH_THOUSANDTH;
-    qreal ay = - data.y() * GRAVITY_EARTH_THOUSANDTH;
-    qreal az = - data.z() * GRAVITY_EARTH_THOUSANDTH;
+    qreal ax = -data.x() * GRAVITY_EARTH_THOUSANDTH;
+    qreal ay = -data.y() * GRAVITY_EARTH_THOUSANDTH;
+    qreal az = -data.z() * GRAVITY_EARTH_THOUSANDTH;
 
     m_reading.setX(ax);
     m_reading.setY(ay);
@@ -88,4 +89,3 @@ void maemo6accelerometer::slotDataAvailable(const XYZ& data)
     m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
     newReadingAvailable();
 }
-

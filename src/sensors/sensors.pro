@@ -13,6 +13,7 @@ symbian {
     SENSORS_DEPLOYMENT.sources = QtSensors.dll
     SENSORS_DEPLOYMENT.path = \sys\bin
     DEPLOYMENT += SENSORS_DEPLOYMENT
+    LIBS += -lefsrv
 }
 
 CONFIG += strict_flags

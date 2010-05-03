@@ -448,6 +448,11 @@ compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 compileTest "Maemo ICD" maemo-icd
 compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+if [ "$LINUX_TARGET" = maemo6 ]; then
+    compileTest sensord sensord
+else
+    echo "sensord_enabled = no" >> "$CONFIG_IN"
+fi
 
 # Now module selection
 # using 'expr match ....' should help a bit
@@ -473,42 +478,42 @@ mkdir $shadowpath/include
 for module in $MOBILITY_MODULES; do
     case "$module" in 
         bearer)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/bearer
+            $relpath/bin/syncheaders $shadowpath/include/QtmBearer $relpath/src/bearer
             ;;
         publishsubscribe)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/publishsubscribe
+            $relpath/bin/syncheaders $shadowpath/include/QtmPubSub $relpath/src/publishsubscribe
             ;;
         location)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/location
+            $relpath/bin/syncheaders $shadowpath/include/QtmLocation $relpath/src/location
             ;;
         serviceframework)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/serviceframework
+            $relpath/bin/syncheaders $shadowpath/include/QtmServiceFramework $relpath/src/serviceframework
             ;;
         systeminfo)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo
+            $relpath/bin/syncheaders $shadowpath/include/QtmSystemInfo $relpath/src/systeminfo
             ;;
         contacts)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
             ;;
         multimedia)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include/QtmMedia $relpath/src/multimedia
             ;;
         messaging)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
+            $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging
             ;;
         versit)
             #versit implies contacts
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/versit
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/versit
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
             ;;
         sensors)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/sensors
+            $relpath/bin/syncheaders $shadowpath/include/QtmSensors $relpath/src/sensors
             ;;
         *)
             echo "Cannot generate headers for $module"
