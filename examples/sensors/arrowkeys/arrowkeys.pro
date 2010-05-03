@@ -1,3 +1,3 @@
-include( ../examples.pri )
-TARGET=arrowkeys
+include(../sensors.pri)
 SOURCES=main.cpp
+TARGET=arrowkeys

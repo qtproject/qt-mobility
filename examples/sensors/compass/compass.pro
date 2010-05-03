@@ -1,3 +1,3 @@
-include( ../sensors.pri )
+include(../sensors.pri)
 SOURCES=main.cpp
-TARGET=compass
+TARGET=show_compass

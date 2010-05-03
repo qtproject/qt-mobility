@@ -1,3 +1,3 @@
 include(../sensors.pri)
 SOURCES=main.cpp
-TARGET=show_rotation
+TARGET=show_als

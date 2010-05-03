@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 include(../../common.pri)
 
-SUBDIRS += accel
+SUBDIRS += accel als arrowkeys compass magneticflux metadata prox rotation tap
 
 contains(QT_CONFIG, declarative) {
     SUBDIRS += orientation
@@ -17,9 +17,3 @@ SUBDIRS += reading_perf
 SUBDIRS += small_screen_sensors
 
 contains(QT_CONFIG,opengl):SUBDIRS += cubehouse
-
-SUBDIRS += compass
-
-SUBDIRS += metadata
-
-SUBDIRS += rotation

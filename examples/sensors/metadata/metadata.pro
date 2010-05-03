@@ -1,3 +1,3 @@
-include( ../sensors.pri )
+include(../sensors.pri)
 SOURCES=main.cpp
 TARGET=metadata
