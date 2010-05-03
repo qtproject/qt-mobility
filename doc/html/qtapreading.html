@@ -65,24 +65,7 @@
 <a name="qtapreading-units"></a>
 <h3>QTapReading Units</h3>
 <p>The tap sensor registers tap events in one of the six directions. There are 3 axes that originate from the phone. They are arranged as follows.</p>
-<pre>             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            <span class="comment">//|--/--- / |</span>
-           <span class="comment">// | /   //  /</span>
-          <span class="comment">//  |/   //  /</span>
-         <span class="comment">//   '--------------- +x</span>
-        <span class="comment">//       //  /</span>
-       <span class="comment">//       //  /</span>
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/</pre>
-<p>By default it returns double tap events. The <a href="qtapsensor.html#returnDoubleTapEvents-prop">QTapSensor::returnDoubleTapEvents</a> property must be set to false to return individual tap events.</p>
+<p align="center"><img src="images/sensors-coordinates2.jpg" /></p><p>By default it returns double tap events. The <a href="qtapsensor.html#returnDoubleTapEvents-prop">QTapSensor::returnDoubleTapEvents</a> property must be set to false to return individual tap events.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QTapReading/TapDirection"></a>

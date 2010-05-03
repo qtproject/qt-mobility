@@ -75,30 +75,12 @@
 <h3 class="fn"><a name="Orientation-enum"></a>enum QOrientationReading::Orientation</h3>
 <p>This enum represents the orientation of the device.</p>
 <p>To explain the meaning of each value it is helpful to refer to the following diagram.</p>
-<pre>                        Top
-
-
-                ----------
-               /  NOKIA  /|
-              /-------- / |
-             <span class="comment">//       //  /</span>
-            <span class="comment">//       //  /</span>
-    Left   <span class="comment">//  Face //  /    Right</span>
-          <span class="comment">//       //  /</span>
-         <span class="comment">//       //  /</span>
-        /---------/  /
-       /    O    /  /
-      /         /  /
-      ----------  /
-      |_________!/
-
-
-        Bottom</pre>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<p align="center"><img src="images/sensors-sides.jpg" /></p><p>The orientations are shown here in order: TopUp, TopDown, LeftUp, RightUp, FaceUp, FaceDown.</p>
+<p align="center"><img src="images/sensors-orientation.jpg" /></p><p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QOrientationReading::Undefined</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The orientation is unknown.</td></tr>
 <tr><td valign="top"><tt>QOrientationReading::TopUp</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The Top edge of the device is pointing up.</td></tr>
-<tr><td valign="top"><tt>QOrientationReading::TopDown</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The Bottom edge of the device is pointing up.</td></tr>
+<tr><td valign="top"><tt>QOrientationReading::TopDown</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The Top edge of the device is pointing down.</td></tr>
 <tr><td valign="top"><tt>QOrientationReading::LeftUp</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The Left edge of the device is pointing up.</td></tr>
 <tr><td valign="top"><tt>QOrientationReading::RightUp</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The Right edge of the device is pointing up.</td></tr>
 <tr><td valign="top"><tt>QOrientationReading::FaceUp</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The Face of the device is pointing up.</td></tr>

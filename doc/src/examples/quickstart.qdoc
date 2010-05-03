@@ -155,6 +155,8 @@ When developing on Symbian we will also need to add the required capabilites to 
 \row
 \endtable
 
+The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}. 
+
 And we're done.  If you are using the command line simply
 enter:
 \code
