@@ -677,10 +677,104 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
                 }
             }
         }
-        //else
+        if (pf->_filterList.count() > 0) {
+            // Filter contains filterlist (or filterlists), not just one single filter 
+            if (m_messageQueries[index].currentFilterListIndex == 0) {
+                m_messageQueries[index].ids << ids;
+                m_messageQueries[index].count = ids.count(); 
+            } else {
+                // Append new ids to resultset
+                for (int i=0; i < ids.count(); i++) {
+                    if (!m_messageQueries[index].ids.contains(ids[i])) {
+                        m_messageQueries[index].ids.append(ids[i]);
+                        m_messageQueries[index].count++;; 
+                    }
+                }
+            }
+            
+            m_messageQueries[index].currentFilterListIndex++;
+            if (m_messageQueries[index].currentFilterListIndex < pf->_filterList.count()) {
+                // There are still unhandled filter lists left
+                m_messageQueries[index].findOperation->filterAndOrderMessages(pf->_filterList[m_messageQueries[index].currentFilterListIndex],
+                                                                             m_messageQueries[index].sortOrder,
+                                                                             m_messageQueries[index].body,
+                                                                             m_messageQueries[index].matchFlags);
+                return;
+            } else {
+                // All filters successfully handled
+                if (m_messageQueries[index].isQuery) {
+                    if (!m_messageQueries[index].sortOrder.isEmpty()) {
+                        // Make sure that messages are correctly ordered
+                        orderMessages(m_messageQueries[index].ids, m_messageQueries[index].sortOrder);
+                    }
+                    applyOffsetAndLimitToMsgIds(m_messageQueries[index].ids,
+                                                m_messageQueries[index].offset,
+                                                m_messageQueries[index].limit);
+                    m_messageQueries[index].privateService->messagesFound(m_messageQueries[index].ids, true, true);
+
+                    //emit m_messageQueries[index].privateService->messagesFound(m_messageQueries[index].ids);
+                } else {
+                    emit m_messageQueries[index].privateService->messagesCounted(m_messageQueries[index].count);
+                }
+                m_messageQueries[index].privateService->_active = false;
+                emit m_messageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
+            }
+        } else {
+            // There was only one single filter to handle
+            if (numberOfHandledFilters == 0) {
+                // The one and only filter was not handled
+                // => Do filtering for all returned messages
+                for (int i=ids.count()-1; i >= 0; i--) {
+                    QMessage msg = message(ids[i]);
+                    if (!pf->filter(msg)) {
+                        ids.removeAt(i);
+                    }
+                }
+            }
+            // => All filters successfully handled
+            if (m_messageQueries[index].isQuery) {
+                // Make sure that messages are correctly ordered
+                if (!m_messageQueries[index].sortOrder.isEmpty() && !resultSetOrdered) {
+                    orderMessages(ids, m_messageQueries[index].sortOrder);
+                }
+                // Handle offest & limit
+                applyOffsetAndLimitToMsgIds(ids, m_messageQueries[index].offset, m_messageQueries[index].limit);
+                //emit m_messageQueries[index].privateService->messagesFound(ids);
+                m_messageQueries[index].privateService->messagesFound(ids, true, true);
+            } else {
+                emit m_messageQueries[index].privateService->messagesCounted(ids.count());
+            }
+            m_messageQueries[index].privateService->_active = false;
+            emit m_messageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
+        }
+    } else {
+        m_messageQueries[index].privateService->_active = false;
+        if (m_messageQueries[index].privateService->_error == QMessageManager::NoError) {
+            m_messageQueries[index].privateService->_error = QMessageManager::RequestIncomplete;
+        }
+        emit m_messageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
     }
-    
-    m_messageQueries[index].privateService->messagesFound(ids, true, resultSetOrdered);
+
+    delete m_messageQueries[index].findOperation;
+    m_messageQueries.removeAt(index);
+}
+
+void CFSEngine::applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const
+{
+    if (offset > 0) {
+        if (offset > idList.count()) {
+            idList.clear();
+        } else {
+            for (int i = 0; i < offset; i++) {
+                idList.removeFirst();
+            }
+        }
+    }
+    if (limit > 0) {
+        for (int i = idList.count()-1; i >= limit; i--) {
+            idList.removeAt(i);
+        }
+    }
 }
 
 QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
@@ -1000,7 +1094,25 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
         case QMessageFolderFilterPrivate::ParentFolderId:
             break;
         case QMessageFolderFilterPrivate::AncestorFolderIds:
-            break;
+            {
+                if (pf->_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
+                    QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                    if (!pf->_value.isNull()) { // QMessageFolderId
+                        if (cmp == QMessageDataComparator::Includes) {
+                            // TODO:
+                        } else { // Excludes
+                            // TODO:
+                        }
+                    } else { // QMessageFolderFilter
+                        if (cmp == QMessageDataComparator::Includes) {
+                            // TODO:
+                        } else { // Excludes
+                            // TODO:
+                        }
+                    }
+                }
+                break;
+            }
         case QMessageFolderFilterPrivate::ParentAccountIdFilter:
         case QMessageFolderFilterPrivate::None:
             break;        

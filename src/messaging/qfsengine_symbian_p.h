@@ -177,6 +177,7 @@ private:
 
     static bool messageLessThan(const QMessage& message1, const QMessage& message2);
     void orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder) const;
+    void applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const;
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
