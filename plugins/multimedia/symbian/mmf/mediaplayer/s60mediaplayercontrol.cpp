@@ -239,9 +239,8 @@ S60MediaPlayerSession* S60MediaPlayerControl::session()
 
 void S60MediaPlayerControl::setVideoOutput(QObject *output)
 {
-    S60MediaPlayerSession *session = NULL;
-    session = m_mediaPlayerResolver.VideoPlayerSession();
-    session->setVideoRenderer(output);
+    if (m_session)
+        m_session->setVideoRenderer(output);
 }
 
 bool S60MediaPlayerControl::isAudioAvailable() const

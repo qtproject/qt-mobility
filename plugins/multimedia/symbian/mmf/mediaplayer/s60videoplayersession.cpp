@@ -135,7 +135,7 @@ qint64 S60VideoPlayerSession::doGetDurationL() const
     return m_player->DurationL().Int64() / qint64(1000);   
 }
 
-void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
+void S60VideoPlayerSession::doSetVideoRenderer(QObject *videoOutput)
 {
     Q_UNUSED(videoOutput)
     QVideoOutputControl *videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));

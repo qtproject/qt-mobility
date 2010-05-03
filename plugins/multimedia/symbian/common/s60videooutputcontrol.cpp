@@ -45,6 +45,10 @@ S60VideoOutputControl::S60VideoOutputControl(QObject *parent)
     : QVideoOutputControl(parent)
     , m_output(NoOutput)
 {
+    setAvailableOutputs(QList<QVideoOutputControl::Output>()
+//                        << QVideoOutputControl::RendererOutput
+//                        << QVideoOutputControl::WindowOutput
+                        << QVideoOutputControl::WidgetOutput);
 }
 
 QList<QVideoOutputControl::Output> S60VideoOutputControl::availableOutputs() const
