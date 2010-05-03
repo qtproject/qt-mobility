@@ -97,11 +97,6 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
             m_videoOutput = new S60VideoOutputControl;
             connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
                     this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-            m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
-//                        << QVideoOutputControl::RendererOutput
-//                        << QVideoOutputControl::WindowOutput
-                        << QVideoOutputControl::WidgetOutput);
-            
         }
         return m_videoOutput;
     }

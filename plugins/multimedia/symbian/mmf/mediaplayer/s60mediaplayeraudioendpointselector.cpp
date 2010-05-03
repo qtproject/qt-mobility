@@ -49,26 +49,22 @@
 S60MediaPlayerAudioEndpointSelector::S60MediaPlayerAudioEndpointSelector(QObject *control, QObject *parent)
    :QAudioEndpointSelector(parent)
     , m_control(0)
-    , m_audioEndpointNames(0)
 {
     m_control = qobject_cast<S60MediaPlayerControl*>(control);
+    m_audioEndpointNames.append("Default");
+    m_audioEndpointNames.append("All");
+    m_audioEndpointNames.append("None");
+    m_audioEndpointNames.append("Earphone");
+    m_audioEndpointNames.append("Speaker");
 }
 
 S60MediaPlayerAudioEndpointSelector::~S60MediaPlayerAudioEndpointSelector()
 {
-    delete m_audioEndpointNames;
 }
 
 QList<QString> S60MediaPlayerAudioEndpointSelector::availableEndpoints() const
 {
-    if(m_audioEndpointNames->count() == 0) {
-        m_audioEndpointNames->append("Default");
-        m_audioEndpointNames->append("All");
-        m_audioEndpointNames->append("None");
-        m_audioEndpointNames->append("Earphone");
-        m_audioEndpointNames->append("Speaker");
-    }
-    return *m_audioEndpointNames;
+    return m_audioEndpointNames;
 }
 
 QString S60MediaPlayerAudioEndpointSelector::endpointDescription(const QString& name) const
