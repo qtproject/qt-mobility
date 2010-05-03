@@ -267,7 +267,7 @@ void CntSimStorePrivate::RunL()
         {
             QList<QContact> contacts = decodeSimContactsL(m_buffer);
 
-            // set sync target and set type as read only
+            // set sync target and read only access constraint and display label
             QList<QContact>::iterator i;
             for (i = contacts.begin(); i != contacts.end(); ++i) {
                 QContactSyncTarget syncTarget;
@@ -277,6 +277,7 @@ void CntSimStorePrivate::RunL()
                 QContactType contactType = i->detail(QContactType::DefinitionName);
                 m_engine.setReadOnlyAccessConstraint(&contactType);
                 i->saveDetail(&contactType);
+                m_engine.updateDisplayLabel(*i);
             }
             
             emit m_simStore.readComplete(contacts, QContactManager::NoError);

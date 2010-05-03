@@ -121,7 +121,7 @@ private:
     void getEtelStoreInfoL(const TDesC &phonebook, TDes8 &infoPckg) const;
     bool isContactSupported(QContact contact);
     void parseDetails(QContact &contact, QStringList details, QList<QContactDetail> &parsedDetails);
-    void compareDetails(QContact contact, QList<QContactDetail> expectedDetails);
+    bool compareDetails(QContact contact, QList<QContactDetail> expectedDetails);
     QContact createContact(QString name, QString number);
     QContact saveContact(QString name, QString number);
     void dumpStoreInfo();
@@ -157,13 +157,15 @@ void tst_SimCM::initTestCase()
     // TODO: how about other stores?
     TRAPD(err, getEtelStoreInfoL(KETelIccAdnPhoneBook, m_etelStoreInfoPckg));
     QCOMPARE(err, KErrNone);
+
+    // remove all contacts
+    m_cm->removeContacts(m_cm->contactIds(), 0);   
 }
 
 void tst_SimCM::cleanupTestCase()
 {
     // remove all contacts
-    QList<QContactLocalId> ids = m_cm->contactIds();
-    m_cm->removeContacts(ids, 0);   
+    m_cm->removeContacts(m_cm->contactIds(), 0);   
     delete m_cm;
     m_cm = 0;
 }
@@ -361,8 +363,7 @@ void tst_SimCM::addContact_data()
 #ifdef __WINS__
     qWarning("Etel test server (emulator) does report an error when saving if contact has too long details!");
 #endif
-    
-    // TODO: what name field to use for a sim contact name?
+
     // Note: With the current implementation the value must not contain a ':' character
     QTest::newRow("ADN custom label")
         << QString("ADN")
@@ -429,6 +430,14 @@ void tst_SimCM::addContact_data()
         << 1
         << unnamedLabel
         << (QStringList()
+            << "PhoneNumber:PhoneNumber:+44752222222");
+
+    QTest::newRow("ADN empty name and phone number")
+        << QString("ADN")
+        << 1
+        << unnamedLabel
+        << (QStringList()
+            << "Name:CustomLabel:"
             << "PhoneNumber:PhoneNumber:+44752222222");
 
     QTest::newRow("ADN custom label and phone number")
@@ -636,13 +645,18 @@ void tst_SimCM::addContact()
         QVERIFY(contact.id() != QContactId());
 
         // verify that the details were saved as expected
-        compareDetails(contact, expectedDetails);
+        QVERIFY(compareDetails(contact, expectedDetails));
 
         // verify display label
         QCOMPARE(contact.displayLabel(), expectedDisplayLabel);
 
         // TODO: verify that no extra details were added?
         //?QCOMPARE(contact.details().count(), detailsUnderTest.count() + 2);
+
+        // Read the contact from SIM and re-verify the result
+        contact = m_cm->contact(contact.localId());
+        QVERIFY(compareDetails(contact, expectedDetails));
+        QCOMPARE(contact.displayLabel(), expectedDisplayLabel);
 
         // verify contact removal
         QVERIFY(m_cm->removeContact(contact.localId()));
@@ -675,7 +689,8 @@ void tst_SimCM::fetchContacts_data()
         << QString("SDN")
         << int(0); // You cannot save a contact to SDN
 
-    // TODO: How to save to FDN? A dialog for PIN2 should be shown...
+    // Requires that PIN2 has been given (for example by activating and
+    // de-activating FDN via S60 Phonebook)
     QTest::newRow("FDN")
         << QString("FDN")
         << int(1);
@@ -864,7 +879,7 @@ void tst_SimCM::updateContactDetail()
     }
     QVERIFY(m_cm->saveContact(&contact));
     QCOMPARE(m_cm->error(), QContactManager::NoError);
-    compareDetails(contact, parsedDetails);
+    QVERIFY(compareDetails(contact, parsedDetails));
 
     // 3. Update contact detail and verify result
     foreach (const QContactDetail& detail, parsedDetails) {
@@ -878,7 +893,7 @@ void tst_SimCM::updateContactDetail()
     }
     QVERIFY(m_cm->saveContact(&contact));
     QCOMPARE(m_cm->error(), QContactManager::NoError);
-    compareDetails(contact, parsedDetails);
+    QVERIFY(compareDetails(contact, parsedDetails));
 
     // 4. Remove the contact
     QVERIFY(m_cm->removeContact(contact.localId()));
@@ -900,7 +915,8 @@ void tst_SimCM::batchOperations_data()
         << 10
         << false; // You cannot save contacts to SDN
 
-    // TODO: How to save to FDN? A dialog for PIN2 should be shown...
+    // Requires that PIN2 has been given (for example by activating and
+    // de-activating FDN via S60 Phonebook)
     QTest::newRow("FDN")
         << QString("FDN")
         << 10
@@ -1068,7 +1084,7 @@ void tst_SimCM::detailFilter()
     saved.insert(saveContact("Donald Duck", "313").localId(), "h");
     saved.insert(saveContact("Daisy Duck", "0505555555").localId(), "i");
     saved.insert(saveContact("Daisy Duck (int)", "+358505555555").localId(), "j");
-        
+
     QContactDetailFilter f;
     f.setDetailDefinitionName(detailName, detailField);
     f.setMatchFlags(QContactFilter::MatchFlags(flags));
@@ -1080,7 +1096,10 @@ void tst_SimCM::detailFilter()
     QString result;
     foreach (QContactLocalId id, ids)
         result += saved.value(id);
-    
+
+    // Remove all 
+    m_cm->removeContacts(m_cm->contactIds(), 0);   
+
     QCOMPARE(result, expected);
 }
 
@@ -1315,6 +1334,7 @@ void tst_SimCM::fillSlots()
 #else
     QVERIFY(compareContactLists(contacts, savedContacts));
 #endif
+    QVERIFY(m_cm->removeContacts(m_cm->contactIds(), 0));
 }
 
 void tst_SimCM::sortingAdn_data()
@@ -1597,11 +1617,11 @@ void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QCont
             contactDetail = contact.detail(detailParts[0]);
         }
 
-        // Set the field value only if not empty (do not add empty fields)  
-        if (!detailParts[2].isEmpty()) {
+        if (detailParts[2].isNull()) {
+            QVERIFY(contactDetail.setValue(detailParts[1], QString("")));
+        } else {
             QVERIFY(contactDetail.setValue(detailParts[1], detailParts[2]));
         }
-
         QVERIFY(contact.saveDetail(&contactDetail));
         parsedDetails.append(contactDetail);
     }
@@ -1610,24 +1630,45 @@ void tst_SimCM::parseDetails(QContact &contact, QStringList details, QList<QCont
 /*
  * Private helper function for comparing QContact details to a well-known set
  * of QContactDetails.
- * \return true if all the expected contact details have a match in the \contact.
  */
-void tst_SimCM::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
+bool tst_SimCM::compareDetails(QContact contact, QList<QContactDetail> expectedDetails)
 {
-    foreach (QContactDetail expectedDetail, expectedDetails) {
-        QContactDetail actualDetail = contact.detail(expectedDetail.definitionName());
-        QVERIFY(!actualDetail.isEmpty());
+    bool result(true);
 
-        if(!contact.details().contains(expectedDetail)) {
-            // FAIL! Make it easier to debug the output by
-            // comparing the contact detail field contents
-            foreach (const QString& key, expectedDetail.variantValues().keys()) {
-                QVariant value1 = actualDetail.value(key);
-                QVariant value2 = expectedDetail.value(key);
-                QCOMPARE(actualDetail.value(key), expectedDetail.value(key));
+    foreach (QContactDetail expectedDetail, expectedDetails) {
+        QString detailName = expectedDetail.definitionName();
+        foreach (const QString& key, expectedDetail.variantValues().keys()) {
+            bool match(false);
+            // Go through the actual details to see if the expected detail is included there
+            foreach (QContactDetail actualDetail, contact.details(expectedDetail.definitionName())) {
+                QString a = actualDetail.variantValue(key).toString();
+                QString b = expectedDetail.variantValue(key).toString();
+                if (!actualDetail.variantValues().contains(key)) {
+                    qDebug() << "field does not exist, detail:"
+                        << detailName
+                        << "key:"
+                        << key
+                        << " value: "
+                        << expectedDetail.variantValue(key);
+                } else if (actualDetail.variantValue(key) != expectedDetail.variantValue(key)) {
+                    qDebug() << "Detail found, but value does not match. Detail:"
+                        << detailName
+                        << "Expected: "
+                        << expectedDetail.variantValue(key)
+                        << " actual: "
+                        << actualDetail.variantValue(key);
+                } else {
+                    match = true;
+                }
+            }
+
+            // Allow empty details, since they are not saved
+            if (!match && !expectedDetail.variantValue(key).toString().isEmpty()) {
+                result = false;
             }
         }
     }
+    return result;
 }
 
 QContact tst_SimCM::createContact(QString name, QString number)
