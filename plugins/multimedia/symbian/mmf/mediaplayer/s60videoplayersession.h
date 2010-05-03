@@ -68,7 +68,6 @@ public:
     //From S60MediaPlayerSession
     bool isVideoAvailable() const;
     bool isAudioAvailable() const;
-    void setVideoRenderer(QObject *renderer);
 
     //From MVideoLoadingObserver
     void MvloLoadingStarted();
@@ -100,6 +99,7 @@ protected:
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
     void doSetAudioEndpoint(const QString& audioEndpoint);
+    void doSetVideoRenderer(QObject *renderer);
 
 private slots: 
     void resetVideoDisplay();

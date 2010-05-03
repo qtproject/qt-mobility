@@ -205,7 +205,7 @@ void S60MediaPlayerSession::reset()
 
 void S60MediaPlayerSession::setVideoRenderer(QObject *renderer)
 {
-    Q_UNUSED(renderer);   
+    doSetVideoRenderer(renderer);
 }
 
 int S60MediaPlayerSession::bufferStatus()
