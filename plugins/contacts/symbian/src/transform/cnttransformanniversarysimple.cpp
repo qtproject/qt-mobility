@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "CntTransformAnniversarySimple.h"
+#include "cnttransformanniversarysimple.h"
 
 QList<CContactItemField *> CntTransformAnniversarySimple::transformDetailL(const QContactDetail &detail)
 {
