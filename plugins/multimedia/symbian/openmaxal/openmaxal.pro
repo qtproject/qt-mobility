@@ -1,3 +1,5 @@
+# pro file for OpenMAX AL
+
 TEMPLATE = subdirs
 
 CONFIG += ordered
