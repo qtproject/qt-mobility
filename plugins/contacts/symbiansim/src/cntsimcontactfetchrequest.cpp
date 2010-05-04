@@ -108,7 +108,7 @@ void CntSimContactFetchRequest::readComplete(QList<QContact> contacts, QContactM
     // Filter & sort results
     QList<QContact> filteredAndSorted;
     for (int i=0; i<contacts.count(); i++) {
-        if (QContactManagerEngine::testFilter(r->filter(), contacts.at(i)))
+        if (engine()->filter(r->filter(), contacts.at(i)))
             QContactManagerEngine::addSorted(&filteredAndSorted, contacts.at(i), r->sorting());
     }
 

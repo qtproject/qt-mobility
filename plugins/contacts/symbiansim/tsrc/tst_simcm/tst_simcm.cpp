@@ -999,6 +999,7 @@ void tst_SimCM::detailFilter_data()
     QTest::addColumn<QString>("detailField");
     QTest::addColumn<QString>("value");
     QTest::addColumn<int>("flags");
+    QTest::addColumn<bool>("filterSupported");
     QTest::addColumn<QString>("expected");
 
     // Phone number
@@ -1007,59 +1008,59 @@ void tst_SimCM::detailFilter_data()
     QString field = QContactPhoneNumber::FieldNumber;
     
     QTest::newRow("phonenumber=123456789, flags=MatchExactly")
-        << detail << field << "123456789" << (int) QContactFilter::MatchExactly << "a";
+        << detail << field << "123456789" << (int) QContactFilter::MatchExactly << false << "a";
     
     QTest::newRow("phonenumber=123456789, flags=MatchContains")
-        << detail << field << "123456789" << (int) QContactFilter::MatchContains << "abc";
+        << detail << field << "123456789" << (int) QContactFilter::MatchContains << false << "abc";
     
     QTest::newRow("phonenumber=#, flags=MatchContains")
-        << detail << field << "#" << (int) QContactFilter::MatchContains << "f";
+        << detail << field << "#" << (int) QContactFilter::MatchContains << false << "f";
     
     QTest::newRow("phonenumber=p, flags=MatchContains")
-        << detail << field << "p" << (int) QContactFilter::MatchContains << "e";
+        << detail << field << "p" << (int) QContactFilter::MatchContains << false << "e";
         
     QTest::newRow("phonenumber=0, flags=MatchStartsWith")
-        << detail << field << "0" << (int) QContactFilter::MatchStartsWith << "defi";    
+        << detail << field << "0" << (int) QContactFilter::MatchStartsWith << false << "defi";    
     
     QTest::newRow("phonenumber=012, flags=MatchEndsWith")
-        << detail << field << "012" << (int) QContactFilter::MatchEndsWith << "c";
+        << detail << field << "012" << (int) QContactFilter::MatchEndsWith << false << "c";
     
     QTest::newRow("phonenumber=+358505555555, flags=MatchPhoneNumber")
-        << detail << field << "+358505555555" << (int) QContactFilter::MatchPhoneNumber << "ij"; // should match to 0505555555 also
+        << detail << field << "+358505555555" << (int) QContactFilter::MatchPhoneNumber << true << "ij";
     
     QTest::newRow("phonenumber=313, flags=MatchPhoneNumber")
-        << detail << field << "313" << (int) QContactFilter::MatchPhoneNumber << "h";
+        << detail << field << "313" << (int) QContactFilter::MatchPhoneNumber << true << "h";
     
     // Custom label
     detail = (QLatin1String) QContactName::DefinitionName;
     field = (QLatin1String) QContactName::FieldCustomLabel;
     
     QTest::newRow("customlabel=frederik")
-            << detail << field << "frederik" << 0 << "c";
+            << detail << field << "frederik" << 0 << false << "c";
     
     QTest::newRow("customlabel=Kallasvuo flags=MatchContains")
-            << detail << field << "Kallasvuo" << (int) (QContactFilter::MatchContains) << "d";
+            << detail << field << "Kallasvuo" << (int) (QContactFilter::MatchContains) << false << "d";
     
     QTest::newRow("customlabel=Matti flags=MatchStartsWith")
-            << detail << field << "Matti" << (int) (QContactFilter::MatchStartsWith) << "b";
+            << detail << field << "Matti" << (int) (QContactFilter::MatchStartsWith) << false << "b";
     
     QTest::newRow("customlabel=co flags=MatchEndsWith")
-            << detail << field << "co" << (int) (QContactFilter::MatchEndsWith) << "f";
+            << detail << field << "co" << (int) (QContactFilter::MatchEndsWith) << false << "f";
     
     // ITU-T standard keypad collation:
     // 2 = abc, 3 = def, 4 = ghi, 5 = jkl, 6 = mno, 7 = pqrs, 8 = tuv, 9 = wxyz, 0 = space
     
     QTest::newRow("customlabel T9 olli, flags=MatchKeypadCollation|MatchExactly")
-        << detail << field << "6554" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchExactly)<< "g";
+        << detail << field << "6554" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchExactly) << false << "g";
 
     QTest::newRow("customlabel T9 olli, flags=MatchKeypadCollation|MatchContains")
-        << detail << field << "6554" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchContains)<< "adg";
+        << detail << field << "6554" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchContains) << false << "adg";
     
     QTest::newRow("customlabel T9 jorma, flags=MatchKeypadCollation|MatchStartsWith")
-        << detail << field << "56762" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchStartsWith)<< "a";
+        << detail << field << "56762" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchStartsWith) << false << "a";
 
     QTest::newRow("customlabel T9 nen, flags=MatchKeypadCollation|MatchEndsWith")
-        << detail << field << "636" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchEndsWith)<< "b";
+        << detail << field << "636" << (int) (QContactFilter::MatchKeypadCollation | QContactFilter::MatchEndsWith) << false << "b";
 }
 
 void tst_SimCM::detailFilter()
@@ -1068,6 +1069,7 @@ void tst_SimCM::detailFilter()
     QFETCH(QString, detailField);
     QFETCH(QString, value);
     QFETCH(int, flags);
+    QFETCH(bool, filterSupported);
     QFETCH(QString, expected);
 
     initManager("ADN");
@@ -1089,6 +1091,8 @@ void tst_SimCM::detailFilter()
     f.setDetailDefinitionName(detailName, detailField);
     f.setMatchFlags(QContactFilter::MatchFlags(flags));
     f.setValue(value);
+    
+    QVERIFY(m_cm->isFilterSupported(f) == filterSupported);
 
     QList<QContactLocalId> ids = m_cm->contactIds(f);
     QVERIFY(m_cm->error() == QContactManager::NoError);

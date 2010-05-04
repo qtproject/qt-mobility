@@ -53,7 +53,19 @@
 #include <QTimer>
 #include <QDebug>
 
+#include <centralrepository.h>
+
 const int KRequestTimeout = 30000; // in ms
+
+// Telephony Configuration API
+// Keys under this category are used in defining telephony configuration.
+const TUid KCRUidTelConfiguration = {0x102828B8};
+// Amount of digits to be used in contact matching.
+// This allows a customer to variate the amount of digits to be matched.
+const TUint32 KTelMatchDigits                               = 0x00000001;
+// Default match length
+const TInt KDefaultMatchLength(7);
+
 
 CntSymbianSimEngineData::CntSymbianSimEngineData()
     :m_simStore(0)
@@ -85,6 +97,10 @@ CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameter
         //qDebug() << "Failed to open SIM store" << error;
         return;
     }
+    
+    // Get phone number match length from cenrep
+    d->m_phoneNumberMatchLen = KDefaultMatchLength;
+    TRAP_IGNORE(getMatchLengthL(d->m_phoneNumberMatchLen)); // ignore error and use default value
 
     if(d->m_simStore->storeInfo().m_storeName == KParameterValueSimStoreNameSdn) {
         // In case of SDN store we need to check if any SDN contacts exist to
@@ -460,6 +476,23 @@ bool CntSymbianSimEngine::hasFeature(QContactManager::ManagerFeature feature, co
 }
 
 /*!
+  Returns a whether the supplied \a filter can be implemented
+  natively by this engine.  If not, the base class implementation
+  will emulate the functionality.
+ */
+bool CntSymbianSimEngine::isFilterSupported(const QContactFilter& filter) const
+{
+    if (filter.type() == QContactFilter::ContactDetailFilter) {
+        QContactDetailFilter f(filter);
+        if (f.detailDefinitionName() == QContactPhoneNumber::DefinitionName && 
+            f.detailFieldName() == QContactPhoneNumber::FieldNumber &&
+            f.matchFlags() == QContactFilter::MatchPhoneNumber)
+            return true;
+    }
+    return false;
+}
+
+/*!
  * Returns the list of data types supported by the manager
  */
 QStringList CntSymbianSimEngine::supportedContactTypes() const
@@ -480,6 +513,36 @@ void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
 void CntSymbianSimEngine::setReadOnlyAccessConstraint(QContactDetail* detail) const
 {
     setDetailAccessConstraints(detail, QContactDetail::ReadOnly); 
+}
+
+
+/*!
+  Returns true if the supplied contact \a contact matches the supplied filter \a filter.
+ */
+bool CntSymbianSimEngine::filter(const QContactFilter &filter, const QContact &contact)
+{
+    // Special handling for phonenumber matching:
+    // Matching is done from the right by using a configurable number of digits.
+    // Default number of digits is 7. So for example if we filter with number
+    // +358505555555 the filter should match to +358505555555 and 0505555555.
+    if (filter.type() == QContactFilter::ContactDetailFilter) 
+    {
+        QContactDetailFilter f(filter);
+        if (f.detailDefinitionName() == QContactPhoneNumber::DefinitionName && 
+            f.detailFieldName() == QContactPhoneNumber::FieldNumber &&
+            f.matchFlags() == QContactFilter::MatchPhoneNumber) 
+        {
+            QString matchNumber = f.value().toString().right(d->m_phoneNumberMatchLen);
+            QList<QContactPhoneNumber> pns = contact.details<QContactPhoneNumber>();
+            foreach (QContactPhoneNumber pn, pns) {
+                QString number = pn.number().right(d->m_phoneNumberMatchLen);
+                if (number == matchNumber)
+                    return true;
+            }
+            return false;
+        }
+    }
+    return QContactManagerEngine::testFilter(filter, contact);
 }
 
 /*!
@@ -517,6 +580,20 @@ bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactM
         *qtError = req->error();
     
     return (*qtError == QContactManager::NoError);
+}
+
+/*
+ * Get the match length setting used in MatchPhoneNumber type filtering.
+ * \a matchLength Phone number digits to be used in matching (counted from
+ * right).
+ */
+void CntSymbianSimEngine::getMatchLengthL(int &matchLength)
+{
+    //Get number of digits used to match
+    CRepository* repository = CRepository::NewL(KCRUidTelConfiguration);
+    CleanupStack::PushL(repository);
+    User::LeaveIfError(repository->Get(KTelMatchDigits, matchLength));
+    CleanupStack::PopAndDestroy(repository);
 }
 
 QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
