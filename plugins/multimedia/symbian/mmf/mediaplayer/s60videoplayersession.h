@@ -61,6 +61,7 @@ class S60VideoPlayerSession : public S60MediaPlayerSession,
                               , public MAudioOutputObserver
 #endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER
 {
+    Q_OBJECT
 public:
     S60VideoPlayerSession(QMediaService *service);
     ~S60VideoPlayerSession();

@@ -67,6 +67,7 @@ class S60AudioPlayerSession : public S60MediaPlayerSession
                             , public MAudioOutputObserver
 #endif
 {
+    Q_OBJECT
 public:
     S60AudioPlayerSession(QObject *parent);
     ~S60AudioPlayerSession();
