@@ -1400,7 +1400,7 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
 
                         RFolderArray subfolders;
                         
-                        mailbox->GetFoldersL(subfolders);
+                        parentFolder->GetSubfoldersL(subfolders);
                         CleanupClosePushL(subfolders);
 
                         for(TInt i=0; i < subfolders.Count(); i++) {
