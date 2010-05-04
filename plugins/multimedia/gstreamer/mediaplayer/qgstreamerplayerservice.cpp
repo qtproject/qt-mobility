@@ -59,7 +59,10 @@
 #include <qmediaplaylist.h>
 
 QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
-     QMediaService(parent)
+     QMediaService(parent),
+     m_videoRenderer(0),
+     m_videoWindow(0),
+     m_videoWidget(0)
 {
     m_session = new QGstreamerPlayerSession(this);
     m_control = new QGstreamerPlayerControl(m_session, this);
@@ -69,14 +72,24 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
 
     connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+
     m_videoRenderer = new QGstreamerVideoRenderer(this);
+#ifdef Q_WS_X11
     m_videoWindow = new QGstreamerVideoOverlay(this);
     m_videoWidget = new QGstreamerVideoWidgetControl(this);
+#endif
 
-    m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
-            << QVideoOutputControl::RendererOutput
-            << QVideoOutputControl::WindowOutput
-            << QVideoOutputControl::WidgetOutput);
+    QList<QVideoOutputControl::Output> outputs;
+
+    if (m_videoRenderer)
+        outputs << QVideoOutputControl::RendererOutput;
+    if (m_videoWidget)
+        outputs << QVideoOutputControl::WidgetOutput;
+    if (m_videoWindow)
+        outputs << QVideoOutputControl::WindowOutput;
+
+
+    m_videoOutput->setAvailableOutputs(outputs);
 }
 
 QGstreamerPlayerService::~QGstreamerPlayerService()
