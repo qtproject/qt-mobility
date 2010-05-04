@@ -356,7 +356,6 @@ void tst_SimCM::addContact_data()
     QTest::addColumn<int>("expectedResult"); // 1 = pass, 0 = fail, -1 = depends on the SIM card
     QTest::addColumn<QString>("expectedDisplayLabel");
     QTest::addColumn<QStringList>("details"); // format is <detail definition name>:<field name>:<value>
-    QString unnamedLabel("Unnamed");
     QString es;
     QString tooLongText("James Hunt the 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890th");
 
@@ -428,14 +427,14 @@ void tst_SimCM::addContact_data()
     QTest::newRow("ADN phone number")
         << QString("ADN")
         << 1
-        << unnamedLabel
+        << es
         << (QStringList()
             << "PhoneNumber:PhoneNumber:+44752222222");
 
     QTest::newRow("ADN empty name and phone number")
         << QString("ADN")
         << 1
-        << unnamedLabel
+        << es
         << (QStringList()
             << "Name:CustomLabel:"
             << "PhoneNumber:PhoneNumber:+44752222222");
@@ -1183,7 +1182,6 @@ void tst_SimCM::sdnContacts()
     foreach(const QContact& c, contacts) {
         // Assume a valid SDN contact always has a display label and a phone number
         QVERIFY(!c.displayLabel().isEmpty());
-        QVERIFY(!c.displayLabel().contains("unnamed", Qt::CaseInsensitive));
         QVERIFY(!c.detail(QContactPhoneNumber::DefinitionName).isEmpty());
         foreach(const QContactDetail& d, c.details()) {
             qDebug() << "Detail: " << d.definitionName();
