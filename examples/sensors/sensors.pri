@@ -1,6 +1,6 @@
-include(../examples.pri)
+include($$PWD/../examples.pri)
 CONFIG+=mobility
-INCLUDEPATH += ../../src/sensors
+INCLUDEPATH += $$PWD/../../src/sensors
 MOBILITY+=sensors
 QT=core
 TEMPLATE=app
