@@ -1387,7 +1387,48 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
             break;
             }
         case QMessageFolderFilterPrivate::ParentFolderId:
+            {
+            if (pf->_comparatorType == QMessageFolderFilterPrivate::Equality) {
+                QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Equal) {
+                    MEmailFolder* parentFolder = fsFolderLC(QMessageFolderId(pf->_value.toString()));
+                    if (parentFolder) {
+                        TMailboxId mailboxId = parentFolder->FolderId().iMailboxId;
+                        MEmailMailbox* mailbox = NULL;
+                        mailbox = m_clientApi->MailboxL(mailboxId);
+                        CleanupReleasePushL(*mailbox);
+
+                        RFolderArray subfolders;
+                        
+                        mailbox->GetFoldersL(subfolders);
+                        CleanupClosePushL(subfolders);
+
+                        for(TInt i=0; i < subfolders.Count(); i++) {
+                            MEmailFolder *subFolder = subfolders[i];
+                            
+                            ids.append(QMessageFolderId(addIdPrefix(
+                                QString::number(subFolder->FolderId().iId), 
+                                SymbianHelpers::EngineTypeFreestyle)));
+
+                        }
+                        
+                        CleanupStack::PopAndDestroy(&subfolders);
+                        CleanupStack::PopAndDestroy(mailbox);
+                    }
+                    CleanupStack::PopAndDestroy(); // parentFolder
+                } else { // NotEqual
+                    // TODO:
+                }
+            } else if (pf->_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
+                QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Includes) {
+                    // TODO:
+                } else { // Excludes
+                    // TODO:
+                }
+            }
             break;
+            }
         case QMessageFolderFilterPrivate::AncestorFolderIds:
             {
                 if (pf->_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
