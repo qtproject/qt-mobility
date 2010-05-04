@@ -283,7 +283,6 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
             }            
         // display label, this is a special case that contains several name
         // fields and company name
-        //TODO: "unnamed" display label is not supported currently
         } else if (defName == QContactDisplayLabel::DefinitionName) {
             
             if (matchFlags == QContactFilter::MatchStartsWith) {

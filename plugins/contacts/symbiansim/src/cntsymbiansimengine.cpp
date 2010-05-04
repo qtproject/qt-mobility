@@ -163,8 +163,7 @@ QString CntSymbianSimEngine::synthesizedDisplayLabel(const QContact& contact, QC
     if(!name.customLabel().isEmpty()) {
         return name.customLabel();
     } else {
-        // TODO: localize unnamed
-        return QString("Unnamed");
+        return QString("");
     }
 }
 

@@ -453,35 +453,44 @@ void tst_QContactManagerSymbian::ringTone()
 void tst_QContactManagerSymbian::displayLabel_data()
 {
     // Expected display label
+    QTest::addColumn<QString>("contactType");
     QTest::addColumn<QString>("displayLabel");
     // A string list containing the detail fields in format <detail definition name>:<field name>:<value>
     // For example first name: Name:First:James
     // Note: With the current implementation the value must not contain a ':' character
     QTest::addColumn<QStringList>("details");
 
+    QString typeContact = QContactType::TypeContact;
+    QString typeGroup = QContactType::TypeGroup;
+
     QTest::newRow("first name")
+        << typeContact
         << "James"
         << (QStringList()
             << "Name:FirstName:James");
 
     QTest::newRow("last name")
+        << typeContact
         << "Hunt"
         << (QStringList()
             << "Name:LastName:Hunt");
 
     QTest::newRow("first and last name") // fail
+        << typeContact
         << "James Hunt"
         << (QStringList()
             << "Name:FirstName:James"
             << "Name:LastName:Hunt");
 
     QTest::newRow("multi-part first name and last name") // fail
+        << typeContact
         << "James Simon Wallis Hunt"
         << (QStringList()
             << "Name:FirstName:James Simon Wallis"
             << "Name:LastName:Hunt");
 
     QTest::newRow("all names")
+        << typeContact
         << "James Hunt"
         << (QStringList()
             << "Name:FirstName:James"
@@ -491,18 +500,21 @@ void tst_QContactManagerSymbian::displayLabel_data()
             << "Name:Prefix:Pre");
 
     QTest::newRow("first name, organization")
+        << typeContact
         << "James"
         << (QStringList()
             << "Name:FirstName:James"
             << "Organization:Name:McLaren");
 
     QTest::newRow("last name, organization")
+        << typeContact
         << "Hunt"
         << (QStringList()
             << "Name:LastName:Hunt"
             << "Organization:Name:McLaren");
 
     QTest::newRow("first name, last name, organization")
+        << typeContact
         << "James Hunt"
         << (QStringList()
             << "Name:FirstName:James"
@@ -510,9 +522,38 @@ void tst_QContactManagerSymbian::displayLabel_data()
             << "Organization:Name:McLaren");
 
     QTest::newRow("organization")
+        << typeContact
         << "McLaren"
         << (QStringList()
             << "Organization:Name:McLaren");
+
+    QTest::newRow("nick name")
+        << typeContact
+        << ""
+        << (QStringList()
+            << "Nickname:Nickname:The Shunt");
+
+    QTest::newRow("phone number")
+        << typeContact
+        << ""
+        << (QStringList()
+            << "PhoneNumber:PhoneNumber:+44759999999");
+
+    QTest::newRow("no details")
+        << typeContact
+        << ""
+        << QStringList();
+
+    QTest::newRow("group, custom label")
+        << typeGroup
+        << "McLaren"
+        << (QStringList()
+            << "Name:CustomLabel:McLaren");
+
+    QTest::newRow("group, no details")
+        << typeGroup
+        << ""
+        << QStringList();
 }
 
 /*
@@ -522,11 +563,16 @@ void tst_QContactManagerSymbian::displayLabel_data()
 void tst_QContactManagerSymbian::displayLabel()
 {
     qDebug() << QTest::currentDataTag();
+    QFETCH(QString, contactType);
     QFETCH(QString, displayLabel);
     QFETCH(QStringList, details);
 
-    // Parse details and add them to the contact
     QContact contact;
+    if (contactType == QContactType::TypeGroup) {
+        contact.setType(QContactType::TypeGroup);
+    }
+
+    // Parse details and add them to the contact
     foreach(const QString& detail, details) {
         // the expected format is <detail definition name>:<field name>:<value>
         QStringList detailParts = detail.split(QChar(':'), QString::KeepEmptyParts, Qt::CaseSensitive);
