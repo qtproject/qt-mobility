@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,27 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef VOIPDIALERPLUGIN_H
-#define VOIPDIALERPLUGIN_H
+#include <QtDeclarative/qdeclarativeextensionplugin.h>
+#include <QtDeclarative/qdeclarative.h>
 
-#include <QObject>
+#include "qdeclarativeservice.h"
 
-#include <qserviceplugininterface.h>
+QT_BEGIN_NAMESPACE
 
-QTM_USE_NAMESPACE
-
-//! [0]
-class VoipDialerPlugin : public QObject,
-                                public QServicePluginInterface
+class QServiceDeclarativeModule : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QServicePluginInterface)
-//! [0]
-
 public:
-    QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
-                            QServiceContext* context,
-                            QAbstractSecuritySession* session);
+    virtual void registerTypes(const char *uri)
+    {
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.serviceframework"));
+
+        qmlRegisterType<QServiceWrapper>(uri, 1, 0, "Service");
+        qmlRegisterType<QServiceListWrapper>(uri, 1, 0, "ServiceList");
+    }
 };
 
-#endif
+QT_END_NAMESPACE
+
+#include "serviceframework.moc"
+
+Q_EXPORT_PLUGIN2(qservicedeclarativemodule, QT_PREPEND_NAMESPACE(QServiceDeclarativeModule));
+
