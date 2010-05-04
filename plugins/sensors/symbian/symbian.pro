@@ -52,16 +52,11 @@ symbian {
     LIBS += -lsensrvutil   
 }
 symbian: {
-# Load predefined include paths (e.g. QT_PLUGINS_BASE_DIR) to be used in the pro-files
-load(data_caging_paths)
+    # Load predefined include paths (e.g. QT_PLUGINS_BASE_DIR) to be used in the pro-files
+    load(data_caging_paths)
  
-# Defines plugin files into Symbian .pkg package
-pluginDep.sources = qtsensors_sym.dll
-pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
-DEPLOYMENT += pluginDep
+    # Defines plugin files into Symbian .pkg package
+    pluginDep.sources = qtsensors_sym.dll
+    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
+    DEPLOYMENT += pluginDep
 }
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
-INSTALLS += target
-

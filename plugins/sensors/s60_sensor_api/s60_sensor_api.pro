@@ -22,7 +22,3 @@ MOBILITY+=sensors
 s60sensorapi.sources = $${TARGET}.dll
 s60sensorapi.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
 DEPLOYMENT += s60sensorapi
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
-INSTALLS += target
