@@ -43,8 +43,8 @@
 
 #include <QObject>
 #include <qmobilityglobal.h>
-#include <QContactManager>
-#include <QContactAbstractRequest>
+#include <qcontactmanager.h>
+#include <qcontactabstractrequest.h>
 
 #include "qmlcontact.h"
 
