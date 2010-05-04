@@ -1255,7 +1255,67 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
     
         switch (pf->_field) {
         case QMessageFolderFilterPrivate::Id:
+            {
+            if (pf->_comparatorType == QMessageFolderFilterPrivate::Equality) {
+                QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
+                if (pf->_value.toString().length() > QString(SymbianHelpers::mtmPrefix).length()) {
+                    bool folderOk = false;
+                    if (fsFolderLC(QMessageFolderId(pf->_value.toString()))) {
+                        folderOk = true;
+                        CleanupStack::PopAndDestroy();
+                    }
+                    if (cmp == QMessageDataComparator::Equal) {
+                        if (folderOk) {
+                            ids.append(QMessageFolderId(pf->_value.toString()));
+                        }
+                    } else { // NotEqual
+                        ids = allFolders();
+                        if (folderOk) {
+                            ids.removeOne(QMessageFolderId(pf->_value.toString()));
+                        }
+                    }
+                } else {
+                    if (cmp == QMessageDataComparator::NotEqual) {
+                        ids = allFolders();
+                    }
+                }
+                filterHandled = true;
+            } else if (pf->_comparatorType == QMessageFolderFilterPrivate::Inclusion) {
+                QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                if (pf->_ids.count() > 0) { // QMessageIdList
+                    QMessageFolderIdList ids2;
+                    for (int i=0; i < pf->_ids.count(); i++) {
+                        if (fsFolderLC(QMessageFolderId(pf->_ids[i]))) {
+                            ids2.append(pf->_ids[i]);
+                            CleanupStack::PopAndDestroy();
+                        }
+                    }
+                    if (cmp == QMessageDataComparator::Includes) {
+                        ids << ids2;
+                    } else { // Excludes
+                        ids = allFolders();
+                        for (int i=0; i < ids2.count(); i++) {
+                            ids.removeOne(ids2[i]);
+                        }
+                    }
+                    filterHandled = true;
+                } else {
+                    // Empty QMessageIdList as a list
+                    if (cmp == QMessageDataComparator::Excludes) {
+                        ids = allFolders();
+                    }
+                    filterHandled = true;
+                
+                    // QMessageFilter 
+                    /*if (cmp == QMessageDataComparator::Includes) {
+                        // TODO:
+                    } else { // Excludes
+                        // TODO:
+                    }*/
+                }
+            }
             break;
+            }
         case QMessageFolderFilterPrivate::Name:
             {
             if (pf->_comparatorType == QMessageFolderFilterPrivate::Equality) {
@@ -1416,6 +1476,31 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
     
     return folderIds;
 }
+
+MEmailFolder* CFSEngine::fsFolderLC(const QMessageFolderId& id) const
+{
+    MEmailFolder* fsFolder = NULL;
+    foreach (QMessageAccount account, m_accounts) {
+        TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
+        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+        
+        TFolderId folderId(
+            stripIdPrefix(id.toString()).toInt(),
+            mailboxId);
+            
+        MEmailFolder* fsFolder = NULL;
+        
+        TRAPD(err, fsFolder = mailbox->FolderL(folderId));
+        if (err == KErrNone) {               
+            CleanupReleasePushL(*fsFolder);
+            mailbox->Release();
+            return fsFolder;
+        }
+        mailbox->Release();
+    }
+    return fsFolder;
+}
+
 
 QMessage CFSEngine::message(const QMessageId& id) const
 {

@@ -65,6 +65,7 @@
 #include <mmailboxsyncobserver.h>
 #include <emailsorting.h>
 #include <memailmessagesearch.h>
+#include <memailfolder.h>
 
 using namespace EmailInterface;
 
@@ -161,6 +162,7 @@ private:
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;
     QMessageFolderIdList allFolders() const;
     QMessageFolder folderL(const QMessageFolderId &id) const;
+    MEmailFolder* fsFolderLC(const QMessageFolderId& id) const;
 
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
     QMessage CreateQMessageL(MEmailMessage* aMessage) const; 
@@ -183,7 +185,6 @@ private:
     void orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder) const;
     void applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const;
 
-    //void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter) const;
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
     
     friend class QMessageService;
