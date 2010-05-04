@@ -57,8 +57,10 @@ QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 QT_END_NAMESPACE
 
+#ifdef Q_WS_X11
 class QGstXvImageBuffer;
 class QGstXvImageBufferPool;
+#endif
 
 class QVideoSurfaceGstDelegate : public QObject
 {
@@ -133,7 +135,11 @@ private:
 
 private:
     QVideoSurfaceGstDelegate *delegate;
+
+#ifdef Q_WS_X11
     QGstXvImageBufferPool *pool;
+#endif
+
     GstCaps *lastRequestedCaps;
     GstCaps *lastBufferCaps;
     QVideoSurfaceFormat *lastSurfaceFormat;

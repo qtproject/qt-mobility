@@ -8,6 +8,7 @@ INCLUDEPATH+=../../../src/multimedia
 
 CONFIG += mobility
 MOBILITY = multimedia
+QT += multimedia
 
 DEPENDPATH += .
 
@@ -35,43 +36,41 @@ HEADERS += \
     qgstreamermessage.h \
     qgstreamerbushelper.h \
     qgstreamervideooutputcontrol.h \
-    qgstreamervideorendererinterface.h \
-    qgstreamervideowidget.h \
+    qgstreamervideorendererinterface.h \    
     qgstreamerserviceplugin.h \
     qgstreameraudioinputendpointselector.h \
+    qgstreamervideorenderer.h \
+    qgstvideobuffer.h \
+    qvideosurfacegstsink.h \
     qgstreamervideoinputdevicecontrol.h
 
 SOURCES += \
     qgstreamermessage.cpp \
     qgstreamerbushelper.cpp \
     qgstreamervideooutputcontrol.cpp \
-    qgstreamervideorendererinterface.cpp \
-    qgstreamervideowidget.cpp \
+    qgstreamervideorendererinterface.cpp \    
     qgstreamerserviceplugin.cpp \
     qgstreameraudioinputendpointselector.cpp \
+    qgstreamervideorenderer.cpp \
+    qgstvideobuffer.cpp \
+    qvideosurfacegstsink.cpp \
     qgstreamervideoinputdevicecontrol.cpp
 
-contains(QT_CONFIG, multimedia) {
-    QT += multimedia
 
-    SOURCES += \
-        qgstreamervideooverlay.cpp \
-        qgstreamervideorenderer.cpp \
-        qgstvideobuffer.cpp \
-        qvideosurfacegstsink.cpp \
-        qx11videosurface.cpp \
-        qgstxvimagebuffer.cpp
+!win32:!embedded:!mac:!symbian {
+    LIBS += -lXv
 
     HEADERS += \
         qgstreamervideooverlay.h \
-        qgstreamervideorenderer.h \
-        qgstvideobuffer.h \
-        qvideosurfacegstsink.h \
+        qgstreamervideowidget.h \
         qx11videosurface.h \
         qgstxvimagebuffer.h
 
-
-    LIBS += -lXv
+    SOURCES += \
+        qgstreamervideooverlay.cpp \
+        qgstreamervideowidget.cpp \
+        qx11videosurface.cpp \
+        qgstxvimagebuffer.cpp
 }
 
 include(mediaplayer/mediaplayer.pri)
