@@ -149,6 +149,10 @@ public: // from MMailboxSyncObserver
     void MailboxSynchronisedL(TInt aResult);
         
 private:
+
+    void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
+    void countMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter);
     
     void updateEmailAccountsL() const;
     MEmailMessage* createFSMessageL(const QMessage &message);
@@ -178,6 +182,9 @@ private:
     static bool messageLessThan(const QMessage& message1, const QMessage& message2);
     void orderMessages(QMessageIdList& messageIds,  const QMessageSortOrder &sortOrder) const;
     void applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const;
+
+    //void handleNestedFiltersFromFolderFilter(QMessageFolderFilter &filter) const;
+    void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
