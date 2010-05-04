@@ -62,6 +62,8 @@ class tst_QVersit : public QObject
 private slots: // Tests
     void testImportFiles();
     void testImportFiles_data();
+    void testExportImport();
+    void testExportImport_data();
 
 private:
 };

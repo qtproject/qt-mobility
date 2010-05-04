@@ -526,10 +526,58 @@ void tst_QContactFilter::detailFilter()
 
     QContactDetailFilter df2 = f;
     QVERIFY(df2 == df);
+    QVERIFY(df2.detailDefinitionName() == "Definition");
+    QVERIFY(df2.detailFieldName() == "Field");
 
     /* Self assignment should do nothing */
     df2 = df2;
     QVERIFY(df2 == df);
+
+    /* Some cross casting */
+    QContactDetailRangeFilter rf;
+
+    /* Directly */
+    df2 = rf;
+    QVERIFY(df2.type() == QContactFilter::ContactDetailFilter);
+    QVERIFY(df2.detailDefinitionName().isEmpty());
+    QVERIFY(df2.detailFieldName().isEmpty());
+    QVERIFY(df2.value().isNull());
+
+    /* reset it */
+    df2 = df;
+    QVERIFY(df2.detailDefinitionName() == "Definition");
+    QVERIFY(df2.detailFieldName() == "Field");
+
+    /* Through base class */
+    f = rf;
+    df2 = f;
+    QVERIFY(df2.detailDefinitionName().isEmpty());
+    QVERIFY(df2.detailFieldName().isEmpty());
+    QVERIFY(df2.value().isNull());
+
+    /* Now test copy ctor */
+    QContactDetailFilter df3(rf);
+    QVERIFY(df3.type() == QContactFilter::ContactDetailFilter);
+    QVERIFY(df3.detailDefinitionName().isEmpty());
+    QVERIFY(df3.detailFieldName().isEmpty());
+    QVERIFY(df3.value().isNull());
+
+    /* reset it */
+    df3 = df;
+    QVERIFY(df3.detailDefinitionName() == "Definition");
+    QVERIFY(df3.detailFieldName() == "Field");
+
+    /* Now test copy ctor through base class */
+    QContactDetailFilter df4(f);
+    QVERIFY(df4.type() == QContactFilter::ContactDetailFilter);
+    QVERIFY(df4.detailDefinitionName().isEmpty());
+    QVERIFY(df4.detailFieldName().isEmpty());
+    QVERIFY(df4.value().isNull());
+
+    /* reset it */
+    df4 = df;
+    QVERIFY(df4.detailDefinitionName() == "Definition");
+    QVERIFY(df4.detailFieldName() == "Field");
 }
 
 void tst_QContactFilter::detailRangeFilter()

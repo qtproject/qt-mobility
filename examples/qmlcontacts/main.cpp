@@ -44,7 +44,7 @@
 #include <QDeclarativeComponent>
 #include <QDebug>
 #include <QDeclarativeView>
-#include <QContactManager>
+#include <qcontactmanager.h>
 #include "qmlcontactsa.h"
 #include "qmlcontact.h"
 QT_USE_NAMESPACE

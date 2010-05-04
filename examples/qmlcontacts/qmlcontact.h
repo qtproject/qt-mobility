@@ -43,7 +43,7 @@
 
 #include <qmobilityglobal.h>
 #include <QObject>
-#include <QContact>
+#include <qcontact.h>
 #include <qdeclarative.h>
 
 QTM_USE_NAMESPACE
