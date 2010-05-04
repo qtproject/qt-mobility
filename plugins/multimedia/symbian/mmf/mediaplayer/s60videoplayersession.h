@@ -48,43 +48,43 @@
 #include <QtGui/qwidget.h>
 #include <qvideowidget.h>
 
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
 #include <AudioOutput.h>
 #include <MAudioOutputObserver.h>
-
+#endif
 class QTimer;
 
 class S60VideoPlayerSession : public S60MediaPlayerSession,
-                              public MVideoPlayerUtilityObserver, 
-                              public MVideoLoadingObserver,
-                              public MAudioOutputObserver
+                              public MVideoPlayerUtilityObserver,
+                              public MVideoLoadingObserver
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
+                              , public MAudioOutputObserver
+#endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER
 {
     Q_OBJECT
-
 public:
     S60VideoPlayerSession(QMediaService *service);
     ~S60VideoPlayerSession();
-    
+
     //From S60MediaPlayerSession
     bool isVideoAvailable() const;
     bool isAudioAvailable() const;
-    void setVideoRenderer(QObject *renderer);
-    
+
     //From MVideoLoadingObserver
     void MvloLoadingStarted();
     void MvloLoadingComplete();
-    
+
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     // From MAudioOutputObserver
     void DefaultAudioOutputChanged(CAudioOutput& aAudioOutput,
         CAudioOutput::TAudioOutputPreference aNewDefault);
-
+#endif //HAS_AUDIOROUTING_IN_VIDEOPLAYER
 public:
     // From S60MediaPlayerAudioEndpointSelector
     QString activeEndpoint() const;
     QString defaultEndpoint() const;
 public Q_SLOTS:
     void setActiveEndpoint(const QString& name);
-Q_SIGNALS:
-     void activeEndpointChanged(const QString &name);
 
 protected:
     //From S60MediaPlayerSession
@@ -100,6 +100,7 @@ protected:
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
     void doSetAudioEndpoint(const QString& audioEndpoint);
+    void doSetVideoRenderer(QObject *renderer);
 
 private slots: 
     void resetVideoDisplay();
@@ -111,8 +112,9 @@ private:
     QPair<qreal, qreal> scaleFactor();
     void startDirectScreenAccess();
     bool stopDirectScreenAccess();
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     QString qStringFromTAudioOutputPreference(CAudioOutput::TAudioOutputPreference output) const;
-    
+#endif
     
     // From MVideoPlayerUtilityObserver
     void MvpuoOpenComplete(TInt aError);
@@ -137,7 +139,9 @@ private:
     QMediaService &m_service;
     Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_originalSize;
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     CAudioOutput *m_audioOutput;
+#endif
     QString m_audioEndpoint;
 };
 

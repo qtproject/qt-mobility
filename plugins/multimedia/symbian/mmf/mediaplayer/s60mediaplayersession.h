@@ -86,7 +86,7 @@ public:
     QMap<QString, QVariant> availableMetaData() const;
     void load(QUrl url);
     int bufferStatus();
-    virtual void setVideoRenderer(QObject *renderer);
+    void setVideoRenderer(QObject *renderer);
     void setMediaStatus(QMediaPlayer::MediaStatus);
     void setState(QMediaPlayer::State state);
     void setAudioEndpoint(const QString& audioEndpoint);
@@ -104,6 +104,7 @@ protected:
     virtual int doGetBufferStatusL() const = 0;
     virtual qint64 doGetDurationL() const = 0;
     virtual void doSetAudioEndpoint(const QString& audioEndpoint) = 0;
+    virtual void doSetVideoRenderer(QObject *renderer) = 0;
 
 public:
     // From S60MediaPlayerAudioEndpointSelector

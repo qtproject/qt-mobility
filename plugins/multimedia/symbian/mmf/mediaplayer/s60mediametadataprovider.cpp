@@ -135,6 +135,7 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMediaServices::MetaData 
         case QtMediaServices::VideoBitRate: return "videobitrate";
         case QtMediaServices::Duration: return "duration";
         case QtMediaServices::MediaType: return "contenttype";
+        case QtMediaServices::CoverArtImage: return "attachedpicture";
         case QtMediaServices::SubTitle: // TODO: Find the matching metadata keys
         case QtMediaServices::Description:
         case QtMediaServices::Category:
@@ -158,7 +159,7 @@ QString S60MediaMetaDataProvider::metaDataKeyAsString(QtMediaServices::MetaData 
         case QtMediaServices::Mood:
         case QtMediaServices::TrackCount:
         case QtMediaServices::CoverArtUrlSmall:
-        case QtMediaServices::CoverArtUrlLarge:
+        case QtMediaServices::CoverArtUrlLarge:        
         case QtMediaServices::Resolution:
         case QtMediaServices::PixelAspectRatio:
         case QtMediaServices::VideoFrameRate:

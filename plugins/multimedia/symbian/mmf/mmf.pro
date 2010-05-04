@@ -11,15 +11,11 @@ include (../common/symbiancommon.pri)
 include(mediaplayer/mediaplayer_s60.pri)
 include(radio/radio.pri)
 
-# check if we are going to build openmax backend, if yes then disable mmf backend for audiorecording
-exists($${EPOCROOT}epoc32/include/platform/mw/khronos/OpenMAXAL.h) {
-    message("Not enabling mmf mediarecording backend")
-} else {
+# we include mmf audiorecording only if we are not building openmaxal based backend
+contains(openmaxal_symbian_enabled, no) {
     message("Enabling mmf mediarecording backend")
     include(audiosource/audiosource_s60.pri)
 }
-
-
 
 DEPENDPATH += .
 INCLUDEPATH += . \
