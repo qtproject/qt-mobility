@@ -2,14 +2,16 @@ INCLUDEPATH+=../../../src/sensors
 INCLUDEPATH+=../../sensors \epoc32\include\osextensions
 
 include(version.pri)
-include(symbian.pri)
+#include(symbian.pri)
 include(../../../common.pri)
+
+PLUGIN_TYPE = sensors
 
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtsensors_sym)
 
-SOURCES +=  \
+SOURCES +=  \			
 			sensorbackendsym.cpp \
 			proximitysensorsym.cpp \
 			ambientlightsensorsym.cpp \
@@ -17,7 +19,10 @@ SOURCES +=  \
 			compasssym.cpp \
 			accelerometersym.cpp \
 			orientationsym.cpp \
-			main.cpp
+			rotationsensorsym.cpp \
+			tapsensorsym.cpp \			
+			main.cpp \
+			
 PRIVATE_HEADERS += \
 			sensorbackendsym.h \
 			sensorbackenddatasym.h \
@@ -26,7 +31,9 @@ PRIVATE_HEADERS += \
 			magnetometersensorsym.h \
 			compasssym.h \
 			accelerometersym.h \
-			orientationsym.h
+			orientationsym.h \
+			rotationsensorsym.h \
+			tapsensorsym.h \
            
 HEADERS = $$PRIVATE_HEADERS
 
@@ -38,15 +45,8 @@ CONFIG+=mobility
 MOBILITY+=sensors
 DEFINES+=QT_MAKEDLL
 
-#QMAKE_CXXFLAGS+=-Werror
-
-#MOC_DIR = moc/
-#OBJECTS_DIR = obj/
-
-#DESTDIR = $$OUTPUT_DIR/bin/examples/sensors
-#target.path = $$SOURCE_DIR/plugins/sensors
-#INSTALLS += target
 symbian {
+    TARGET.UID3 = 0x2002BFC8
     TARGET.CAPABILITY = ALL -TCB    
     LIBS += -lSensrvClient
     LIBS += -lsensrvutil   
@@ -57,10 +57,11 @@ load(data_caging_paths)
  
 # Defines plugin files into Symbian .pkg package
 pluginDep.sources = qtsensors_sym.dll
-pluginDep.path = $$QT_PLUGINS_BASE_DIR/sensors
+pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
 DEPLOYMENT += pluginDep
 }
- 
-target.path += $$[QT_INSTALL_PLUGINS]/sensors
+
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
+maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
 INSTALLS += target
 

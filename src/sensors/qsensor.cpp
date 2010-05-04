@@ -73,7 +73,6 @@ static int qoutputrangelist_id = qRegisterMetaType<QtMobility::qoutputrangelist>
     \class QSensor
     \ingroup sensors_main
 
-    \preliminary
     \brief The QSensor class represents a single hardware sensor.
 
     The life cycle of a sensor is typically:
@@ -231,6 +230,8 @@ bool QSensor::isActive() const
     \brief the data rates that the sensor supports.
 
     This is a list of the data rates that the sensor supports.
+    Measured in Hertz.
+
     Entries in the list can represent discrete rates or a
     continuous range of rates.
     A discrete rate is noted by having both values the same.
@@ -249,6 +250,8 @@ qrangelist QSensor::availableDataRates() const
 /*!
     \property QSensor::dataRate
     \brief the data rate that the sensor should be run at.
+
+    Measured in Hertz.
 
     The default value is determined by the backend.
 
@@ -451,7 +454,6 @@ int QSensor::error() const
     \class QSensorFilter
     \ingroup sensors_main
 
-    \preliminary
     \brief The QSensorFilter class provides an efficient
            callback facility for asynchronous notifications of
            sensor changes.
@@ -516,7 +518,6 @@ void QSensorFilter::setSensor(QSensor *sensor)
     \class QSensorReading
     \ingroup sensors_main
 
-    \preliminary
     \brief The QSensorReading class holds the readings from the sensor.
 
     Note that QSensorReading is not particularly useful by itself. The interesting

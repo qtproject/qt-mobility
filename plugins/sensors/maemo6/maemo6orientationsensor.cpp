@@ -60,6 +60,8 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
             qWarning() << "Unable to initialize orientation sensor.";
 
         // metadata
+        addDataRate(142, 142); // 142Hz
+        sensor->setDataRate(142);
         addOutputRange(0, 6, 1);
         setDescription(QLatin1String("Orientation of the device screen"));
 

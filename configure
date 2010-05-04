@@ -99,6 +99,8 @@ BIN_PATH="bin"
 MAC_SDK=
 MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
 MOBILITY_MODULES_UNPARSED=
+QMKSPEC=
+OS="other"
 
 usage() 
 {
@@ -232,13 +234,23 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
+checkostype()
+{
+    match="darwin" 
+    if [ "$OSTYPE" = "${match}"* ]; then
+        OS="darwin"
+        QMKSPEC="-spec macx-g++"
+        echo "QMAKESPEC = "$QMKSPEC >> "$CONFIG_IN"
+    fi
+}
+
 findframeworks()
 {
 # figure out if Qt was built with frameworks
 # if so, install in the correct place.
 # and fix rpath
     echo "contains(QT_CONFIG,qt_framework):message(1)" > 1.pro
-    SOMETHING=`qmake 1.pro 2>&1`
+    SOMETHING=`qmake -spec macx-g++ 1.pro 2>&1`
         if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
             LIB_PATH="Library/Frameworks"
             BIN_PATH="Applications"
@@ -246,7 +258,6 @@ findframeworks()
     rm 1.pro
 }
 
-findframeworks
 
 findUniversal()
 {
@@ -257,19 +268,26 @@ findUniversal()
     echo "contains(QT_CONFIG,ppc): system(echo CONFIG+=ppc >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,ppc64): system(echo CONFIG+=ppc64 >> mac.inc)" >> 2.pro
     echo "contains(QT_CONFIG,x86_64): system(echo CONFIG+=x86_64 >> mac.inc)" >> 2.pro
-    SOMETIME=`qmake 2.pro 2>&1`
+    SOMETIME=`qmake -spec macx-g++ 2.pro 2>&1`
     rm 2.pro
     if [ -e "mac.inc" ]; then 
          echo "exists(mac.inc): include(mac.inc)" >> "$CONFIG_IN"
     fi
 }
 
+checkostype
+
+if [ "$OS" = "darwin" ] ; then
+    findframeworks
+fi
 
 if [ -n "$BUILD_SILENT" ]; then
     echo "CONFIG += silent"  > "$CONFIG_IN"
 fi
 
-findUniversal
+if [ "$OS" = "darwin" ] ; then
+    findUniversal
+fi
 
 if [ -z "$RELEASEMODE" ]; then
     RELEASEMODE="debug"
@@ -408,7 +426,7 @@ compileTest()
         cd config.tests/$2
     fi
 
-    qmake "$relpath/config.tests/$2/$2.pro" 2>> "$CONFIG_LOG" >> "$CONFIG_LOG"
+    qmake $QMKSPEC "$relpath/config.tests/$2/$2.pro" 2>> "$CONFIG_LOG" >> "$CONFIG_LOG"
     printf  " ."
     "$MAKE" clean >> "$CONFIG_LOG"
     printf "."
@@ -430,6 +448,11 @@ compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 compileTest "Maemo ICD" maemo-icd
 compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+if [ "$LINUX_TARGET" = maemo6 ]; then
+    compileTest sensord sensord
+else
+    echo "sensord_enabled = no" >> "$CONFIG_IN"
+fi
 
 # Now module selection
 # using 'expr match ....' should help a bit
@@ -455,42 +478,42 @@ mkdir $shadowpath/include
 for module in $MOBILITY_MODULES; do
     case "$module" in 
         bearer)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/bearer
+            $relpath/bin/syncheaders $shadowpath/include/QtmBearer $relpath/src/bearer
             ;;
         publishsubscribe)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/publishsubscribe
+            $relpath/bin/syncheaders $shadowpath/include/QtmPubSub $relpath/src/publishsubscribe
             ;;
         location)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/location
+            $relpath/bin/syncheaders $shadowpath/include/QtmLocation $relpath/src/location
             ;;
         serviceframework)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/serviceframework
+            $relpath/bin/syncheaders $shadowpath/include/QtmServiceFramework $relpath/src/serviceframework
             ;;
         systeminfo)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/systeminfo
+            $relpath/bin/syncheaders $shadowpath/include/QtmSystemInfo $relpath/src/systeminfo
             ;;
         contacts)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
             ;;
         multimedia)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include/QtmMedia $relpath/src/multimedia
             ;;
         messaging)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging
+            $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging
             ;;
         versit)
             #versit implies contacts
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/versit
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/versit
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
             ;;
         sensors)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/sensors
+            $relpath/bin/syncheaders $shadowpath/include/QtmSensors $relpath/src/sensors
             ;;
         *)
             echo "Cannot generate headers for $module"
@@ -505,7 +528,7 @@ if [ "$shadowpath" != "$relpath" ]; then
 fi
 
 echo "Running qmake..."
-if qmake -recursive "$relpath/qtmobility.pro"; then
+if qmake -makefile $QMKSPEC -recursive "$relpath/qtmobility.pro"; then
     echo ""
     echo "configure has finished. You may run make or gmake to build the project now."
 else

@@ -42,12 +42,9 @@
 /*!
 
 \page versit.html
-\title Versit API (technology preview)
+\title Versit API
 \brief An API to manage Versit documents.
 \ingroup mobility
-
-\warning This API should be considered in a technology preview state. It is
-under development and subject to change.
 
 \tableofcontents
 
