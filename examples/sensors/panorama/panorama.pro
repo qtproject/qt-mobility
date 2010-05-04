@@ -1,3 +1,4 @@
+include(../sensors.pri)
 SOURCES = main.cpp \
     view.cpp \
     inputcontroller.cpp \
@@ -9,21 +10,18 @@ SOURCES = main.cpp \
     timedcontroller.cpp \
     rotationcontroller.cpp
 RESOURCES = panorama.qrc
-CONFIG += mobility
-MOBILITY += sensors
-INCLUDEPATH += ../../maemo6
 
 # install
-target.path = $$[QT_INSTALL_EXAMPLES]/panorama/panorama
-sources.files = $$SOURCES \
-    $$HEADERS \
-    $$RESOURCES \
-    $$FORMS \
-    panorama.pro \
-    images
-sources.path = $$[QT_INSTALL_EXAMPLES]/panorama/panorama
-INSTALLS += target \
-    sources
+#target.path = $$[QT_INSTALL_EXAMPLES]/panorama/panorama
+#sources.files = $$SOURCES \
+#    $$HEADERS \
+#    $$RESOURCES \
+#    $$FORMS \
+#    panorama.pro \
+#    images
+#sources.path = $$[QT_INSTALL_EXAMPLES]/panorama/panorama
+#INSTALLS += target \
+#    sources
 HEADERS += view.h \
     inputcontroller.h \
     keycontroller.h \
@@ -34,3 +32,5 @@ HEADERS += view.h \
     rotationcontroller.h \
     tapcontroller.h \
     timedcontroller.h
+
+TARGET = panorama
