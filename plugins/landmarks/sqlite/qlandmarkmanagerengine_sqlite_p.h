@@ -96,7 +96,7 @@ public:
                                QString *errorString) const;
     QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
                                         QLandmarkManager::Error *error,
-                                        QString *errorString);
+                                        QString *errorString) const;
 
     /*saving and removing*/
     bool saveLandmark(QLandmark* landmark,

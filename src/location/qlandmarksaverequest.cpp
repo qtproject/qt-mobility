@@ -40,21 +40,11 @@
 ****************************************************************************/
 
 #include "qlandmarksaverequest.h"
-#include "qlandmarkabstractrequest_p.h"
+#include "qlandmarkrequests_p.h"
 #include "qlandmark.h"
 
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkSaveRequestPrivate : public QLandmarkAbstractRequestPrivate
-{
-public:
-    QLandmarkSaveRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr){}
-    QList<QLandmark> landmarks;
-    QMap<int, QLandmarkManager::Error> errorMap;
-
-};
 
 /*!
     \class QLandmarkSaveRequest

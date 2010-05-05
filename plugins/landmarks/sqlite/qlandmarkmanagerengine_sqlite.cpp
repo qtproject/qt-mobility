@@ -1264,7 +1264,7 @@ bool categoryNameCompare(const QLandmarkCategory &cat1, const QLandmarkCategory 
 
 QList<QLandmarkCategory> QLandmarkManagerEngineSqlite::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
         QLandmarkManager::Error *error,
-        QString *errorString)
+        QString *errorString) const
 {
     QList<QLandmarkCategory> result;
 

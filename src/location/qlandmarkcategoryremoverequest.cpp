@@ -40,23 +40,12 @@
 ****************************************************************************/
 
 #include "qlandmarkcategoryremoverequest.h"
-#include "qlandmarkabstractrequest_p.h"
+#include "qlandmarkrequests_p.h"
 #include "qlandmarkcategoryid.h"
 #include <QMap>
 
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkCategoryRemoveRequestPrivate : public QLandmarkAbstractRequestPrivate
-{
-public:
-    QLandmarkCategoryRemoveRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr) {}
-
-
-    QList<QLandmarkCategoryId> categoryIds;
-    QMap<int, QLandmarkManager::Error> errorMap;
-};
 
 /*!
     \class QLandmarkCategoryRemoveRequest

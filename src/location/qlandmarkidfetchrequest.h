@@ -50,6 +50,7 @@ class QLandmarkIdFetchRequestPrivate;
 class Q_LOCATION_EXPORT QLandmarkIdFetchRequest : public QLandmarkAbstractRequest
 {
     Q_OBJECT
+
 public:
     QLandmarkIdFetchRequest(QLandmarkManager *manager, QObject *parent = 0);
     ~QLandmarkIdFetchRequest();
@@ -65,6 +66,7 @@ public:
 private:
     Q_DISABLE_COPY(QLandmarkIdFetchRequest)
     Q_DECLARE_PRIVATE(QLandmarkIdFetchRequest)
+    friend class QLandmarkManagerEngine;
 };
 
 QTM_END_NAMESPACE

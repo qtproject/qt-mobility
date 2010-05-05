@@ -40,20 +40,10 @@
 ****************************************************************************/
 
 #include "qlandmarkremoverequest.h"
-#include "qlandmarkabstractrequest_p.h"
+#include "qlandmarkrequests_p.h"
 #include <QMap>
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkRemoveRequestPrivate : public QLandmarkAbstractRequestPrivate
-{
-public:
-    QLandmarkRemoveRequestPrivate(QLandmarkManager *manager)
-        : QLandmarkAbstractRequestPrivate(manager) {}
-
-    QList<QLandmarkId> landmarkIds;
-    QMap<int, QLandmarkManager::Error> errorMap;
-};
 
 /*!
     \class QLandmarkRemoveRequest

@@ -40,22 +40,12 @@
 ****************************************************************************/
 
 #include "qlandmarkfetchrequest.h"
-#include "qlandmarkabstractrequest_p.h"
+#include "qlandmarkrequests_p.h"
 #include "qlandmarkfilter.h"
 #include "qlandmarksortorder.h"
 #include "qlandmark.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
-{
-public:
-    QLandmarkFetchRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr) {}
-    QLandmarkFilter filter;
-    QList<QLandmarkSortOrder> sorting;
-    QList<QLandmark> landmarks;
-};
 
 /*!
     \class QLandmarkFetchRequest

@@ -45,6 +45,25 @@
 #include "qlandmarkid.h"
 #include "qlandmarkcategoryid.h"
 
+#include "qlandmarkrequests_p.h"
+
+#include "qlandmarkabstractrequest.h"
+#include "qlandmarkidfetchrequest.h"
+#include "qlandmarkfetchrequest.h"
+#include "qlandmarkremoverequest.h"
+#include "qlandmarksaverequest.h"
+#include "qlandmarkcategoryidfetchrequest.h"
+#include "qlandmarkcategoryfetchrequest.h"
+#include "qlandmarkcategoryremoverequest.h"
+#include "qlandmarkcategorysaverequest.h"
+#include "qlandmarkimportrequest.h";
+#include "qlandmarkexportrequest.h"
+
+#include "qlandmarknamesort.h"
+#include "qlandmarkdistancesort.h"
+
+#include "qgeocoordinate.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -182,7 +201,7 @@ QLandmarkCategory QLandmarkManagerEngine::category(const QLandmarkCategoryId &ca
     Overall operation errors are stored in \a error and \a errorString.
 */
 QList<QLandmarkCategory> QLandmarkManagerEngine::categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
-        QLandmarkManager::Error *error, QString *errorString)
+        QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmarkCategory>();
 }
@@ -545,6 +564,13 @@ bool QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* re
 */
 void QLandmarkManagerEngine::updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state)
 {
+    if (!req)
+        return;
+    if (req->d_ptr->state != state) {
+        req->d_ptr->state = state;
+        emit req->stateChanged(state);
+    }
+
 }
 
 /*!
@@ -562,6 +588,45 @@ void QLandmarkManagerEngine::updateLandmarkIdFetchRequest(QLandmarkIdFetchReques
         QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
+    if (!req)
+        return;
+    QLandmarkIdFetchRequestPrivate * rd = static_cast<QLandmarkIdFetchRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = error;
+    rd->landmarkIds = result;
+    bool emitState = rd->state != newState;
+    rd->state =newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
+}
+
+/*!
+    Updates the given QLandmarkFetchRequest \a req with the latest \a result,
+    and operation \a error and \a errorString.  In addition, the state of the request
+    will be changed to \a newState.
+
+    It then causes the request to emit its resultsAvailable() signal to notify clients of the
+    request progress.
+
+    If the new request state is different from the previous state, the stateChanged() signal will
+    also be emitted from the request.
+ */
+void QLandmarkManagerEngine::updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
+        QLandmarkManager::Error error, const QString &errorString,
+        QLandmarkAbstractRequest::State newState)
+{
+    if (!req)
+        return;
+    QLandmarkFetchRequestPrivate * rd = static_cast<QLandmarkFetchRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = error;
+    rd->landmarks = result;
+    bool emitState = rd->state != newState;
+    rd->state =newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
 }
 
 /*!
@@ -578,6 +643,15 @@ void QLandmarkManagerEngine::updateLandmarkIdFetchRequest(QLandmarkIdFetchReques
 void QLandmarkManagerEngine::updateLandmarkRemoveRequest(QLandmarkRemoveRequest* req, QLandmarkManager::Error error, const QString &errorString,
         const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
+    QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    rd->errorMap = errorMap;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
 }
 
 /*!
@@ -594,6 +668,16 @@ void QLandmarkManagerEngine::updateLandmarkRemoveRequest(QLandmarkRemoveRequest*
 void QLandmarkManagerEngine::updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result, QLandmarkManager::Error error,
         const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
+    QLandmarkSaveRequestPrivate* rd = static_cast<QLandmarkSaveRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    rd->errorMap = errorMap;
+    rd->landmarks = result;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
 }
 
 /*!
@@ -612,6 +696,42 @@ void QLandmarkManagerEngine::updateLandmarkCategoryIdFetchRequest(QLandmarkCateg
         QLandmarkAbstractRequest::State newState)
 
 {
+    QLandmarkCategoryIdFetchRequestPrivate* rd = static_cast<QLandmarkCategoryIdFetchRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    rd->categoryIds = result;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
+}
+
+/*!
+    Updates the given QLandmarkCategoryFetchRequest \a req with the latest \a result,
+    and operation \a error and \a errorString.  In addition, the state of the request
+    will be changed to \a newState.
+
+    It then causes the request to emit its resultsAvailable() signal to notify clients of the
+    request progress.
+
+    If the new request state is different from the previous state, the stateChanged() signal will
+    also be emitted from the request.
+ */
+void QLandmarkManagerEngine::updateLandmarkCategoryFetchRequest(QLandmarkCategoryFetchRequest* req, const QList<QLandmarkCategory>& result,
+        QLandmarkManager::Error error, const QString &errorString,
+        QLandmarkAbstractRequest::State newState)
+
+{
+    QLandmarkCategoryFetchRequestPrivate* rd = static_cast<QLandmarkCategoryFetchRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    rd->categories = result;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
 }
 
 /*!
@@ -628,6 +748,15 @@ void QLandmarkManagerEngine::updateLandmarkCategoryIdFetchRequest(QLandmarkCateg
 void QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req, QLandmarkManager::Error error, const QString &errorString,
         const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
+    QLandmarkRemoveRequestPrivate* rd = static_cast<QLandmarkRemoveRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    rd->errorMap = errorMap;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
 }
 
 /*!
@@ -644,6 +773,15 @@ void QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(QLandmarkCatego
 void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategorySaveRequest* req, const QList<QLandmarkCategory>& result, QLandmarkManager::Error error,
         const QString &errorString, const QMap<int, QLandmarkManager::Error>& errorMap, QLandmarkAbstractRequest::State newState)
 {
+    QLandmarkCategorySaveRequestPrivate* rd = static_cast<QLandmarkCategorySaveRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    rd->categories = result;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
 }
 
 /*!
@@ -659,6 +797,14 @@ void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategory
 void QLandmarkManagerEngine::updateLandmarkImportRequest(QLandmarkImportRequest *req, QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
+    QLandmarkImportRequestPrivate* rd = static_cast<QLandmarkImportRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
 }
 
 /*!
@@ -674,6 +820,14 @@ void QLandmarkManagerEngine::updateLandmarkImportRequest(QLandmarkImportRequest 
 void QLandmarkManagerEngine::updateLandmarkExportRequest(QLandmarkExportRequest *req, QLandmarkManager::Error error, const QString &errorString,
         QLandmarkAbstractRequest::State newState)
 {
+    QLandmarkExportRequestPrivate* rd = static_cast<QLandmarkExportRequestPrivate*>(req->d_ptr);
+    rd->error = error;
+    rd->errorString = errorString;
+    bool emitState = rd->state != newState;
+    rd->state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
 }
 
 /*!
@@ -683,7 +837,103 @@ void QLandmarkManagerEngine::updateLandmarkExportRequest(QLandmarkExportRequest 
  */
 int QLandmarkManagerEngine::compareLandmark(const QLandmark& a, const QLandmark& b, const QList<QLandmarkSortOrder>& sortOrders)
 {
-    return 0;
+    int comparison = 0;
+    for(int i=0; i < sortOrders.count(); ++i) {
+
+        switch (sortOrders.at(i).type())
+        {
+            case (QLandmarkSortOrder::NameSort):
+            {
+                const QLandmarkNameSort nameSort = sortOrders.at(i);
+                comparison = compareName(a, b, nameSort);
+                break;
+            }
+            case (QLandmarkSortOrder::DistanceSort):
+            {
+                const QLandmarkDistanceSort distanceSort = sortOrders.at(i);
+                comparison = compareName(a, b, distanceSort);
+                break;
+            }
+            default:
+                comparison =0;
+        }
+
+        if (comparison != 0)
+            break;
+    }
+    return comparison;
+}
+
+
+/*!
+  Compares two landmarks (\a a and \a b) by name.
+
+  Returns a negative number if \a a should appear before \a b according to the \a nameSort,
+  a positive number if \a a should appear after \a b according to the \a nameSort,
+  and zero if the two are unable to be sorted.
+
+  Assuming an ascending order sort, an integer less than, equal to, or greater than zero
+  is returned if \a a is less than, equal to or greater than \a b.
+
+  \a nameSort specifies whether an ascending or descending order is used and whether
+  the sort is case sensitive or not.
+ */
+int QLandmarkManagerEngine::compareName(const QLandmark &a, const QLandmark &b, const QLandmarkNameSort &nameSort)
+{
+    int result = QString::compare(a.name(), b.name(), nameSort.caseSensitivity());
+
+    if (nameSort.direction() == Qt::DescendingOrder)
+        result *= -1;
+
+    return result;
+}
+
+/*!
+  Compares two landmarks (\a a and \a b) by distance from a point given by \a distanceSort.
+  Returns a negative number if \a a should appear before \a b according to the sort order,
+  a positive number if \a a should appear after \a b according to the sort order,
+  and zero if the two are unable to be sorted.
+
+  Assuming an ascending order sort, a negative number is returned if \a is closer
+  and a positive number if \b is considered closer.  0 is returned if both are the same
+  distance away.
+
+  A invalid coordinate is considered to be an infinite distance away.
+ */
+int QLandmarkManagerEngine::compareDistance(const QLandmark &a, const QLandmark &b, const QLandmarkDistanceSort &distanceSort)
+{
+    int result = 0;
+
+    if (!distanceSort.coordinate().isValid())
+        return result;
+
+    if (a.coordinate().isValid()) {
+        if (b.coordinate().isValid()) {
+            double da = distanceSort.coordinate().distanceTo(a.coordinate());
+            double db = distanceSort.coordinate().distanceTo(b.coordinate());
+
+            if (da == db) { //TODO: Fix need to find a proper way to compare doubles
+                result = 0;
+            } else if (da < db) {
+                result = -1;
+            } else if (da > db) {
+                result = 1;
+            }
+        } else {
+            result = -1;
+        }
+    } else {
+        if (b.coordinate().isValid()) {
+            result = 1;
+        } else {
+            result = 0;
+        }
+    }
+
+    if (distanceSort.direction() == Qt::DescendingOrder)
+        result *= -1;
+
+    return result;
 }
 
 /*!

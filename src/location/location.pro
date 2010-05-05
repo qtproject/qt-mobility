@@ -108,6 +108,7 @@ PRIVATE_HEADERS += \
                     qlandmarksortorder_p.h \
                     qlandmarknamesort_p.h \
                     qlandmarkdistancesort_p.h \
+                    qlandmarkrequests_p.h \
                     qlocationutils_p.h \
                     qmaneuver_p.h \
                     qmapellipse_p.h \
