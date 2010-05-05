@@ -9,7 +9,7 @@ symbian: {
     TARGET = "QtMobility"
     TARGET.UID3 = 0x2002AC89
 
-    VERSION = 1.0.1
+    VERSION = 1.1.0
 
     vendorinfo = \
         "; Localised Vendor name" \
