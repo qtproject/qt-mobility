@@ -1521,9 +1521,22 @@ QContact QContactManagerEngine::compatibleContact(const QContact& original, QCon
             // if the allowable values is an empty list, any are allowed.
             if (!field.allowableValues().isEmpty()) {
                 // if the field datatype is a list, remove non-allowable values
-                if (field.dataType() == QVariant::List || field.dataType() == QVariant::StringList) {
-                    QList<QVariant> innerValues = variant.toList();
+                if (field.dataType() == QVariant::List) {
+                    QVariantList innerValues = variant.toList();
                     QMutableListIterator<QVariant> it(innerValues);
+                    while (it.hasNext()) {
+                        if (!field.allowableValues().contains(it.next())) {
+                            it.remove();
+                        }
+                    }
+                    if (innerValues.isEmpty())
+                        detail.removeValue(key);
+                    else
+                        detail.setValue(key, innerValues);
+                } 
+                if (field.dataType() == QVariant::StringList) {
+                    QStringList innerValues = variant.toStringList();
+                    QMutableListIterator<QString> it(innerValues);
                     while (it.hasNext()) {
                         if (!field.allowableValues().contains(it.next())) {
                             it.remove();
