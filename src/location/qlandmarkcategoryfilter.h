@@ -56,13 +56,14 @@ class Q_LOCATION_EXPORT QLandmarkCategoryFilter : public QLandmarkFilter
 {
 public:
     QLandmarkCategoryFilter(const QLandmarkCategoryId &categoryId = QLandmarkCategoryId());
+    QLandmarkCategoryFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkCategoryFilter();
 
     QLandmarkCategoryId categoryId() const;
     void setCategoryId(const QLandmarkCategoryId &categoryId);
 
 private:
-    Q_DECLARE_PRIVATE(QLandmarkCategoryFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkCategoryFilter)
 };
 
 QTM_END_NAMESPACE

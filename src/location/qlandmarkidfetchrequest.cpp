@@ -52,7 +52,7 @@ public:
     QLandmarkIdFetchRequestPrivate(QLandmarkManager *mgr)
         : QLandmarkAbstractRequestPrivate(mgr){}
 
-    const QLandmarkFilter *filter;
+    QLandmarkFilter filter;
     QList<const QLandmarkSortOrder*>sorting;
     QList<QLandmarkId> landmarkIds;
 };
@@ -91,7 +91,7 @@ QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest()
     By default, the filter's type will be a LandmarkFilter::DefaultFilter
     and thus match all landmarks.
 */
-const QLandmarkFilter *QLandmarkIdFetchRequest::filter() const
+QLandmarkFilter QLandmarkIdFetchRequest::filter() const
 {
     Q_D(const QLandmarkIdFetchRequest);
     return d->filter;
@@ -101,7 +101,7 @@ const QLandmarkFilter *QLandmarkIdFetchRequest::filter() const
     Sets the \a filter which will be used to select landmark identifiers.
 
 */
-void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter *filter)
+void QLandmarkIdFetchRequest::setFilter(const QLandmarkFilter &filter)
 {
     Q_D(QLandmarkIdFetchRequest);
     d->filter = filter;

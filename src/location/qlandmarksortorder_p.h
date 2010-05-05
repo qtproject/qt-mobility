@@ -54,20 +54,59 @@
 //
 
 #include "qlandmarksortorder.h"
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkSortOrderPrivate
+#define Q_IMPLEMENT_LANDMARKSORTORDER_PRIVATE(Class) \
+    Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
+    const Class##Private* Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
+    Class::Class(const QLandmarkSortOrder& other) : QLandmarkSortOrder() { Class##Private::copyIfPossible(d_ptr, other); }
+
+#define Q_IMPLEMENT_LANDMARKSORTORDER_VIRTUALCTORS(Class, Type) \
+    QLandmarkSortOrderPrivate* clone() const { return new Class##Private(*this); } \
+    static void copyIfPossible(QSharedDataPointer<QLandmarkSortOrderPrivate>& d_ptr, const QLandmarkSortOrder& other) \
+    { \
+        if (other.type() == Type) \
+            d_ptr = extract_d(other); \
+        else \
+            d_ptr = new Class##Private(); \
+    }
+
+class QLandmarkSortOrderPrivate : public QSharedData
 {
 public:
     QLandmarkSortOrderPrivate();
-    QLandmarkSortOrderPrivate(const QLandmarkSortOrderPrivate &other);
+    QLandmarkSortOrderPrivate(const QLandmarkSortOrderPrivate &);
     virtual ~QLandmarkSortOrderPrivate();
+
+    virtual bool compare(const QLandmarkSortOrderPrivate *other) const {
+        return order == other->order;
+    }
+
+    /* Helper functions for C++ protection rules */
+    static const QSharedDataPointer<QLandmarkSortOrderPrivate>& extract_d(const QLandmarkSortOrder& other) {return other.d_ptr;}
+
+    Q_IMPLEMENT_LANDMARKSORTORDER_VIRTUALCTORS(QLandmarkSortOrder, QLandmarkSortOrder::DefaultSort)
 
     QLandmarkSortOrder::SortType type;
     Qt::SortOrder order;
 };
 
 QTM_END_NAMESPACE
+
+#if defined(Q_CC_MWERKS)
+// This results in multiple symbol definition errors on all other compilers
+// but not having a definition here results in an attempt to use the unspecialized
+// clone (which fails because of the pure virtuals above)
+template<> QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate)>::clone()
+{
+    return d->clone();
+}
+#else
+template<> QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate)>::clone();
+#endif
+
+QT_END_NAMESPACE
 
 #endif

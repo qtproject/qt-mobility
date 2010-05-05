@@ -38,7 +38,6 @@ PUBLIC_HEADERS += \
                     qlandmarkcategoryremoverequest.h \
                     qlandmarkcategorysaverequest.h \
                     qlandmarkattributefilter.h \
-                    qlandmarkdistancesort.h \
                     qlandmarkexportrequest.h \
                     qlandmarkfetchrequest.h \
                     qlandmarkfilter.h \
@@ -50,7 +49,6 @@ PUBLIC_HEADERS += \
                     qlandmarkmanagerengine.h \
                     qlandmarkmanagerenginefactory.h \
                     qlandmarknamefilter.h \
-                    qlandmarknamesort.h \
                     qlandmarknearestfilter.h \
                     qlandmarkproximityfilter.h \
                     qlandmarkremoverequest.h \
@@ -71,7 +69,9 @@ PUBLIC_HEADERS += \
                     qmapview.h \
                     qmapcontainer.h \
                     qgeoboundingbox.h \
-                    qnmeapositioninfosource.h
+                    qnmeapositioninfosource.h \
+                    qlandmarknamesort.h \
+                    qlandmarkdistancesort.h
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
@@ -95,20 +95,19 @@ PRIVATE_HEADERS += \
                     qlandmarkcategory_p.h \
                     qlandmarkcategoryid_p.h \
                     qlandmarkcategoryfilter_p.h \
-                    qlandmarkdistancesort_p.h \
-                   qlandmarkfilehandler_gpx_p.h \
-                   qlandmarkfilehandler_lmx_p.h \
-                    qlandmarkfilter_p.h \
+                    qlandmarkfilehandler_gpx_p.h \
+                    qlandmarkfilehandler_lmx_p.h \
                     qlandmarkfilter_p.h \
                     qlandmarkid_p.h \
                     qlandmarkintersectionfilter_p.h \
                     qlandmarkmanager_p.h \
                     qlandmarknamefilter_p.h \
-                    qlandmarknamesort_p.h \
                     qlandmarknearestfilter_p.h \
                     qlandmarkproximityfilter_p.h \
-                    qlandmarksortorder_p.h \
                     qlandmarkunionfilter_p.h \
+                    qlandmarksortorder_p.h \
+                    qlandmarknamesort_p.h \
+                    qlandmarkdistancesort_p.h \
                     qlocationutils_p.h \
                     qmaneuver_p.h \
                     qmapellipse_p.h \
@@ -237,7 +236,6 @@ SOURCES += \
             qlandmarkcategoryremoverequest.cpp \
             qlandmarkcategorysaverequest.cpp \
             qlandmarkattributefilter.cpp \
-            qlandmarkdistancesort.cpp \
             qlandmarkexportrequest.cpp \
             qlandmarkfetchrequest.cpp \
             qlandmarkfilehandler_gpx.cpp \
@@ -251,7 +249,6 @@ SOURCES += \
             qlandmarkmanagerengine.cpp \
             qlandmarkmanagerenginefactory.cpp \
             qlandmarknamefilter.cpp \
-            qlandmarknamesort.cpp \
             qlandmarknearestfilter.cpp \
             qlandmarkproximityfilter.cpp \
             qlandmarkremoverequest.cpp \
@@ -277,7 +274,9 @@ SOURCES += \
             qmapview_p.cpp \
             qmapcontainer.cpp \
             qgeoboundingbox.cpp \
-            qnmeapositioninfosource.cpp
+            qnmeapositioninfosource.cpp \
+            qlandmarknamesort.cpp \
+            qlandmarkdistancesort.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

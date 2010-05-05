@@ -104,13 +104,13 @@ public:
     QList<QLandmarkCategoryId> categoryIds() const;
 
     QLandmark landmark(const QLandmarkId &landmarkId) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QList<const QLandmarkSortOrder*>& sortOrders) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter *filter, const QLandmarkSortOrder *sortOrder = 0) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<const QLandmarkSortOrder*>& sortOrders) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder *sortOrder = 0) const;
 
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
-    QList<QLandmarkId> landmarkIds(const QLandmarkFilter *filter,
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
                                    const QList<const QLandmarkSortOrder*> &sortOrders) const;
-    QList<QLandmarkId> landmarkIds(const QLandmarkFilter *filter, const QLandmarkSortOrder *sortOrder = 0) const;
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter, const QLandmarkSortOrder *sortOrder = 0) const;
 
     bool importLandmarks(QIODevice *device, Format format);
     bool importLandmarks(const QString &fileName, Format format);

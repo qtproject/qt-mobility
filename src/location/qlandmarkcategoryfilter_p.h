@@ -62,11 +62,19 @@ class QLandmarkCategoryId;
 class QLandmarkCategoryFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkCategoryFilterPrivate(const QLandmarkCategoryId &id);
+    QLandmarkCategoryFilterPrivate(const QLandmarkCategoryId &id = QLandmarkCategoryId());
     QLandmarkCategoryFilterPrivate(const QLandmarkCategoryFilterPrivate &other);
     virtual ~QLandmarkCategoryFilterPrivate();
 
+    virtual bool compare(const QLandmarkFilterPrivate *other) const
+    {
+        const QLandmarkCategoryFilterPrivate *od = static_cast<const QLandmarkCategoryFilterPrivate*>(other);
+            return id == od->id;
+    }
+
     QLandmarkCategoryId id;
+
+    Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkCategoryFilter, QLandmarkFilter::CategoryFilter)
 };
 
 QTM_END_NAMESPACE

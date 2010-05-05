@@ -55,6 +55,7 @@ class Q_LOCATION_EXPORT QLandmarkAttributeFilter : public QLandmarkFilter
 {
 public:
     QLandmarkAttributeFilter();
+    QLandmarkAttributeFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkAttributeFilter();
 
     QVariant attribute(const QString &key) const;
@@ -64,7 +65,7 @@ public:
     QStringList attributeKeys() const;
 
 private:
-    Q_DECLARE_PRIVATE(QLandmarkAttributeFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
 };
 
 QTM_END_NAMESPACE

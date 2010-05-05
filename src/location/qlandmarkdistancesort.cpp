@@ -52,13 +52,20 @@ QTM_BEGIN_NAMESPACE
     \ingroup landmarks-sort
 */
 
+Q_IMPLEMENT_LANDMARKSORTORDER_PRIVATE(QLandmarkDistanceSort)
+
 /*!
     Creates a sort order that sorts landmarks by distance from a given \a coordinate.
     If the \a direction is Qt::Ascending, it means that landmarks are listed in
     increasing order of distance.
 */
 QLandmarkDistanceSort::QLandmarkDistanceSort(const QGeoCoordinate &coordinate, Qt::SortOrder direction)
-        : QLandmarkSortOrder(new QLandmarkDistanceSortPrivate(coordinate, direction)) {}
+        : QLandmarkSortOrder(new QLandmarkDistanceSortPrivate())
+{
+    Q_D(QLandmarkDistanceSort);
+    d->origin = coordinate;
+    d->order = direction;
+}
 
 /*!
     Destroys the sort order.
@@ -89,16 +96,18 @@ void QLandmarkDistanceSort::setCoordinate(const QGeoCoordinate &coordinate)
 /*******************************************************************************
 *******************************************************************************/
 
-QLandmarkDistanceSortPrivate::QLandmarkDistanceSortPrivate(const QGeoCoordinate &origin, Qt::SortOrder direction)
-        : origin(origin)
+QLandmarkDistanceSortPrivate::QLandmarkDistanceSortPrivate()
+        : QLandmarkSortOrderPrivate(),
+         origin(QGeoCoordinate())
 {
     type = QLandmarkSortOrder::DistanceSort;
-    order = direction;
 }
 
 QLandmarkDistanceSortPrivate::QLandmarkDistanceSortPrivate(const QLandmarkDistanceSortPrivate &other)
         : QLandmarkSortOrderPrivate(other),
-        origin(other.origin) {}
+        origin(other.origin)
+{
+}
 
 QLandmarkDistanceSortPrivate::~QLandmarkDistanceSortPrivate() {}
 

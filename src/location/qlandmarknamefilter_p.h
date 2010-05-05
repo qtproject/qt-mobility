@@ -56,15 +56,25 @@
 #include "qlandmarkfilter_p.h"
 
 #include "qnamespace.h"
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkNameFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkNameFilterPrivate(const QString &name, Qt::CaseSensitivity sensitivity);
+    QLandmarkNameFilterPrivate(const QString &name = QString(), Qt::CaseSensitivity sensitivity = Qt::CaseInsensitive);
     QLandmarkNameFilterPrivate(const QLandmarkNameFilterPrivate &other);
     virtual ~QLandmarkNameFilterPrivate();
+
+    virtual bool compare(const QLandmarkFilterPrivate *other) const
+    {
+        const QLandmarkNameFilterPrivate *od = static_cast<const QLandmarkNameFilterPrivate*>(other);
+        return (name == od->name)
+            && (sensitivity == od->sensitivity);
+    }
+
+    Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkNameFilter, QLandmarkFilter::NameFilter)
 
     QString name;
     Qt::CaseSensitivity sensitivity;

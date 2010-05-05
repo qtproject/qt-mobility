@@ -56,13 +56,38 @@
 #include "qlandmarkfilter.h"
 #include <QSharedData>
 
+#define Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(Class) \
+    Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
+    const Class##Private* Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
+    Class::Class(const QLandmarkFilter& other) : QLandmarkFilter() { Class##Private::copyIfPossible(d_ptr, other); }
+
+#define Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(Class, Type) \
+    virtual QLandmarkFilterPrivate* clone() const { return new Class##Private(*this); } \
+    static void copyIfPossible(QSharedDataPointer<QLandmarkFilterPrivate>& d_ptr, const QLandmarkFilter& other) \
+    { \
+        if (other.type() == Type) \
+            d_ptr = extract_d(other); \
+        else \
+            d_ptr = new Class##Private(); \
+    }
+
 QTM_BEGIN_NAMESPACE
-class QLandmarkFilterPrivate
+class QLandmarkFilterPrivate : public QSharedData
 {
 public:
     QLandmarkFilterPrivate();
-    QLandmarkFilterPrivate(const QLandmarkFilterPrivate &);
+    QLandmarkFilterPrivate(const QLandmarkFilterPrivate &other);
     virtual ~QLandmarkFilterPrivate();
+
+    virtual bool compare(const QLandmarkFilterPrivate* other) const {
+        return type == other->type
+                && maxMatches == other->maxMatches;
+    }
+
+    /* Helper functions for C++ protection rules */
+    static const QSharedDataPointer<QLandmarkFilterPrivate>& extract_d(const QLandmarkFilter& other) {return other.d_ptr;}
+
+    Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkFilter, QLandmarkFilter::DefaultFilter)
 
     QLandmarkFilter::FilterType type;
     int maxMatches;
@@ -70,5 +95,18 @@ public:
 
 QTM_END_NAMESPACE
 
+QT_BEGIN_NAMESPACE
+#if defined(Q_CC_MWERKS)
+// This results in multiple symbol definition errors on all other compilers
+// but not having a definition here results in an attempt to use the unspecialized
+// clone (which fails because of the pure virtuals above)
+template<> QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone()
+{
+    return d->clone();
+}
+#else
+template<> QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone();
 #endif
+QT_END_NAMESPACE
 
+#endif

@@ -52,14 +52,16 @@
 QTM_BEGIN_NAMESPACE
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate()
-        : type(QLandmarkFilter::DefaultFilter),
-        maxMatches(-1)
+        : QSharedData(),
+          type(QLandmarkFilter::DefaultFilter),
+          maxMatches(-1)
 {
 }
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate(const QLandmarkFilterPrivate &other)
-        : type(other.type),
-        maxMatches(other.maxMatches)
+        : QSharedData(),
+          type(other.type),
+          maxMatches(other.maxMatches)
 {
 }
 
@@ -84,6 +86,13 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
 
 */
 
+#if !defined(Q_CC_MWERKS)
+template<> QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone()
+{
+    return d->clone();
+}
+#endif
+
 /*!
     \enum QLandmarkFilter::FilterType
     Describes the type of the filter
@@ -106,14 +115,14 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     Constructs an default landmark filter.
 */
 QLandmarkFilter::QLandmarkFilter()
-        : d_ptr(new QLandmarkFilterPrivate())
+        : d_ptr(new QLandmarkFilterPrivate)
 {
 }
 /*!
   Internal
 */
-QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *d_ptr)
-        : d_ptr(d_ptr)
+QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *dd)
+        : d_ptr(dd)
 {
 }
 
@@ -121,7 +130,7 @@ QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *d_ptr)
     Constructs a copy of \a other.
 */
 QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
-        : d_ptr(new QLandmarkFilterPrivate(*(other.d_ptr)))
+        : d_ptr(other.d_ptr)
 {
 }
 
@@ -130,7 +139,8 @@ QLandmarkFilter::QLandmarkFilter(const QLandmarkFilter &other)
 */
 QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter & other)
 {
-    *d_ptr = *(other.d_ptr);
+    if (this != &other)
+        d_ptr = (other.d_ptr);
     return *this;
 }
 
@@ -140,8 +150,6 @@ QLandmarkFilter &QLandmarkFilter::operator=(const QLandmarkFilter & other)
 */
 QLandmarkFilter::~QLandmarkFilter()
 {
-    Q_D(QLandmarkFilter);
-    delete d;
 }
 
 /*!
@@ -149,8 +157,7 @@ QLandmarkFilter::~QLandmarkFilter()
 */
 QLandmarkFilter::FilterType QLandmarkFilter::type() const
 {
-    Q_D(const QLandmarkFilter);
-    return d->type;
+    return d_ptr->type;
 }
 
 /*!
@@ -158,8 +165,7 @@ QLandmarkFilter::FilterType QLandmarkFilter::type() const
 */
 int QLandmarkFilter::maximumMatches() const
 {
-    Q_D(const QLandmarkFilter);
-    return d->maxMatches;
+    return d_ptr->maxMatches;
 }
 
 /*!
@@ -168,63 +174,62 @@ int QLandmarkFilter::maximumMatches() const
 */
 void QLandmarkFilter::setMaximumMatches(int maxMatches)
 {
-    Q_D(QLandmarkFilter);
-    d->maxMatches = maxMatches;
+    d_ptr->maxMatches = maxMatches;
 }
 
 /*!
+    \fn QLandmarkFilter::operator!=(const QLandmarkFilter &other) const
     Returns true if this filter is not identical to \a other.
 
     \sa operator==()
 */
-/*bool QLandmarkFilter::operator!=(const QLandmarkFilter &other) const
-{
-    if (d_ptr->type != other.d_ptr->type)
-        return true;
-    return (*d_ptr != *(other.d_ptr));
-}*/
 
 /*!
     Returns true if the filter has the same type and criteria as \a other.
     \sa operator!=()
 */
-/*bool QLandmarkFilter::operator==(const QLandmarkFilter &other) const
+bool QLandmarkFilter::operator==(const QLandmarkFilter& other) const
 {
-    if (d_ptr->type != other.d_ptr->type)
+    if(d_ptr->maxMatches != other.d_ptr->maxMatches)
         return false;
-    return (*d_ptr == *(other.d_ptr));
-}*/
+
+    /* Different types can't be equal */
+    if (other.type() != type())
+        return false;
+
+    /* Otherwise, use the virtual op == */
+    return d_ptr->compare(other.d_ptr);
+}
 
 /*!
  \relates QLandmarkFilter
  Returns a filter which is the intersection of the \a left and \a right filters
  \sa QLandmarkIntersectionFilter
  */
-//const QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right)
-//{
-//    /* TODO implement better handling when left or right is an intersection filter */
+const QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right)
+{
+    /* TODO implement better handling when left or right is an intersection filter */
 
-//    /* usual fallback case */
+    /* usual fallback case */
 
-//    QLandmarkIntersectionFilter nif;
-//    nif << left << right;
-//    return nif;
-//}
+    QLandmarkIntersectionFilter nif;
+    nif << left << right;
+    return nif;
+}
 
 /*!
  \relates QLandmarkFilter
  Returns a filter which is the union of the \a left and \a right filters
  \sa QLandmarkUnionFilter
  */
-//const QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right)
-//{
-//    /* TODO implement better handling when left or right is a union filter */
-//    /* usual fallback case */
+const QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right)
+{
+    /* TODO implement better handling when left or right is a union filter */
+    /* usual fallback case */
 
-//    return 0;
-//    QLandmarkUnionFilter nuf;
-//    nuf << left << right;
-//    return nuf;
-//}
+    QLandmarkUnionFilter nuf;
+    nuf << left << right;
+    return nuf;
+}
 
 QTM_END_NAMESPACE

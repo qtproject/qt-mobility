@@ -109,6 +109,13 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     of a category to a landmark is achieved by using the QLandmark class
     in conjunction with the QLandmarkCategoryId class.
 
+    Some categories may be designated as read-only.  Typically these are
+    intended to be "global" categories that are the same across landmark stores.
+    In practicality, not all landmark stores may necessarily have the same set of
+    global categories.  Localization is only possible for categories that
+    are read-only.  If the landmark store supports it localization, the locale may
+    be set through a QLandmarkManager and whenever categories are retrieved,
+    the translated names are used.
 
     A QLandmarkCategory instance is an in memory representation and may
     not reflect the state of the category found in persistent storage,

@@ -62,9 +62,17 @@ QTM_BEGIN_NAMESPACE
 class QLandmarkDistanceSortPrivate : public QLandmarkSortOrderPrivate
 {
 public:
-    QLandmarkDistanceSortPrivate(const QGeoCoordinate &origin, Qt::SortOrder direction);
+    QLandmarkDistanceSortPrivate();
     QLandmarkDistanceSortPrivate(const QLandmarkDistanceSortPrivate &other);
     virtual ~QLandmarkDistanceSortPrivate();
+
+    virtual bool compare(const QLandmarkSortOrderPrivate *other) const
+    {   //type and superclass variables already assumed to be the same
+        const QLandmarkDistanceSortPrivate *od = static_cast<const QLandmarkDistanceSortPrivate*>(other);
+        return origin == od->origin;
+    }
+
+    Q_IMPLEMENT_LANDMARKSORTORDER_VIRTUALCTORS(QLandmarkDistanceSort, QLandmarkSortOrder::DistanceSort)
 
     QGeoCoordinate origin;
 };

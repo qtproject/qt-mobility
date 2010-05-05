@@ -60,9 +60,18 @@ QTM_BEGIN_NAMESPACE
 class QLandmarkNameSortPrivate : public QLandmarkSortOrderPrivate
 {
 public:
-    QLandmarkNameSortPrivate(Qt::SortOrder direction);
+    QLandmarkNameSortPrivate();
     QLandmarkNameSortPrivate(const QLandmarkNameSortPrivate &other);
     virtual ~QLandmarkNameSortPrivate();
+
+    virtual bool compare(const QLandmarkSortOrderPrivate *other) const
+    {
+        //it is assumed that the types and superclass member variables already match
+        const QLandmarkNameSortPrivate *od = static_cast<const QLandmarkNameSortPrivate*>(other);
+        return sensitivity == od->sensitivity;
+    }
+
+    Q_IMPLEMENT_LANDMARKSORTORDER_VIRTUALCTORS(QLandmarkNameSort, QLandmarkSortOrder::NameSort)
 
     Qt::CaseSensitivity sensitivity;
 };

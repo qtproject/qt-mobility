@@ -55,6 +55,7 @@ class Q_LOCATION_EXPORT QLandmarkBoxFilter : public QLandmarkFilter
 public:
     QLandmarkBoxFilter(const QGeoCoordinate &topLeft = QGeoCoordinate(),
                        const QGeoCoordinate &bottomRight = QGeoCoordinate());
+    QLandmarkBoxFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkBoxFilter();
 
     QGeoCoordinate topLeftCoordinate() const;
@@ -64,7 +65,7 @@ public:
     void setBottomRightCoordinate(const QGeoCoordinate &bottomRight);
 
 private:
-    Q_DECLARE_PRIVATE(QLandmarkBoxFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkBoxFilter)
 };
 
 QTM_END_NAMESPACE

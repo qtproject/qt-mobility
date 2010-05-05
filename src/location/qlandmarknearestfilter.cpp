@@ -52,6 +52,8 @@ QTM_BEGIN_NAMESPACE
     \ingroup landmarks-filter
 */
 
+Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkNearestFilter)
+
 /*!
     Creates a filter that will match the landmark nearest to a given central
     \a coordinate.

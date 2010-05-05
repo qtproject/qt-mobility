@@ -62,9 +62,19 @@ class QGeoCoordinate;
 class QLandmarkNearestFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkNearestFilterPrivate(const QGeoCoordinate &coordinate, double radius);
+    QLandmarkNearestFilterPrivate(const QGeoCoordinate &coordinate = QGeoCoordinate(), double radius=-1);
     QLandmarkNearestFilterPrivate(const QLandmarkNearestFilterPrivate &other);
     virtual ~QLandmarkNearestFilterPrivate();
+
+    virtual bool compare(const QLandmarkFilterPrivate *other) const
+    {
+        //it is assumed that the types and superclass member variables already match
+        const QLandmarkNearestFilterPrivate *od = static_cast<const QLandmarkNearestFilterPrivate*>(other);
+            return (coordinate == od->coordinate)
+                    && (radius == od->radius);
+    }
+
+    Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkNearestFilter, QLandmarkFilter::NearestFilter)
 
     QGeoCoordinate coordinate;
     double radius;

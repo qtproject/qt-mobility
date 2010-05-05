@@ -52,19 +52,20 @@ class Q_LOCATION_EXPORT QLandmarkUnionFilter : public QLandmarkFilter
 {
 public:
     QLandmarkUnionFilter();
+    QLandmarkUnionFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkUnionFilter();
 
-    void setFilters(const QList<const QLandmarkFilter*>& filters);
+    void setFilters(const QList<QLandmarkFilter> &filters);
 
-    void prepend(const QLandmarkFilter *filter);
-    void append(const QLandmarkFilter *filter);
-    void remove(const QLandmarkFilter *filter);
+    void prepend(const QLandmarkFilter &filter);
+    void append(const QLandmarkFilter &filter);
+    void remove(const QLandmarkFilter &filter);
 
-    QLandmarkUnionFilter& operator<<(const QLandmarkFilter* filter);
-    QList<const QLandmarkFilter*> filters() const;
+    QLandmarkUnionFilter& operator<<(const QLandmarkFilter &filter);
+    QList<QLandmarkFilter> filters() const;
 
 private:
-    Q_DECLARE_PRIVATE(QLandmarkUnionFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkUnionFilter);
 };
 
 QTM_END_NAMESPACE

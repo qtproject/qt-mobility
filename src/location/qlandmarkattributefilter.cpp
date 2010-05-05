@@ -51,6 +51,15 @@ public:
     QLandmarkAttributeFilterPrivate();
     virtual ~QLandmarkAttributeFilterPrivate();
 
+    virtual bool compare(const QLandmarkFilterPrivate *other) const
+    {
+        //it is assumed that the types and superclass member variables already match
+        const QLandmarkAttributeFilterPrivate *od = static_cast<const QLandmarkAttributeFilterPrivate*>(other);
+        return attributes == od->attributes;
+    }
+
+    Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkAttributeFilter, QLandmarkFilter::AttributeFilter)
+
     QHash<QString, QVariant> attributes;
 };
 
@@ -59,6 +68,7 @@ QLandmarkAttributeFilterPrivate::QLandmarkAttributeFilterPrivate()
     : QLandmarkFilterPrivate(),
       attributes(QHash<QString, QVariant>())
 {
+    type = QLandmarkFilter::AttributeFilter;
 }
 
 QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
@@ -75,6 +85,7 @@ QLandmarkAttributeFilterPrivate::~QLandmarkAttributeFilterPrivate()
     returned, regardless of its value.  More than one attribute may be set in the filter, a landmark will
     only match if all attributes are matched.
 */
+Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
 
 /*!
     Creates an attribute filter.

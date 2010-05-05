@@ -54,6 +54,7 @@ class Q_LOCATION_EXPORT QLandmarkNameFilter : public QLandmarkFilter
 {
 public:
     QLandmarkNameFilter(const QString &name = QString(), Qt::CaseSensitivity sensitivity = Qt::CaseInsensitive);
+    QLandmarkNameFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkNameFilter();
 
     QString name() const;
@@ -63,7 +64,7 @@ public:
     void setCaseSensitivity(Qt::CaseSensitivity sensitivity);
 
 private:
-    Q_DECLARE_PRIVATE(QLandmarkNameFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkNameFilter)
 };
 
 QTM_END_NAMESPACE

@@ -66,7 +66,15 @@ public:
     QLandmarkIntersectionFilterPrivate(const QLandmarkIntersectionFilterPrivate &other);
     virtual ~QLandmarkIntersectionFilterPrivate();
 
-    QList<const QLandmarkFilter*> filters;
+    virtual bool compare(const QLandmarkFilterPrivate* other) const
+    {
+        const QLandmarkIntersectionFilterPrivate *od = static_cast<const QLandmarkIntersectionFilterPrivate*>(other);
+        return filters == od->filters;
+    }
+
+    Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkIntersectionFilter, QLandmarkFilter::IntersectionFilter)
+
+    QList<QLandmarkFilter> filters;
 };
 
 QTM_END_NAMESPACE

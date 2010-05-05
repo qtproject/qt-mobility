@@ -794,11 +794,6 @@ private slots:
         QCOMPARE(ids.at(2), cat3.id());
     }
 
-    void filterLandmarksNull() {
-        QList<QLandmark> lms = m_manager->landmarks(0, QList<const QLandmarkSortOrder*>());
-        QCOMPARE(lms.size(), 0);
-    }
-
     void filterLandmarksLimitMatches() {
         for (int i = 0; i < 50; ++i) {
             QLandmark lm;
@@ -806,24 +801,22 @@ private slots:
             QVERIFY(m_manager->saveLandmark(&lm));
         }
 
-        QLandmarkFilter* filter = new QLandmarkFilter();
-        filter->setMaximumMatches(-1);
+        QLandmarkFilter filter;
+        filter.setMaximumMatches(-1);
 
         QList<QLandmarkId> ids = m_manager->landmarkIds(filter, QList<const QLandmarkSortOrder*>());
 
         QCOMPARE(ids.size(), 50);
 
-        filter->setMaximumMatches(100);
+        filter.setMaximumMatches(100);
 
         ids = m_manager->landmarkIds(filter, QList<const QLandmarkSortOrder*>());
 
         QCOMPARE(ids.size(), 50);
 
-        filter->setMaximumMatches(25);
+        filter.setMaximumMatches(25);
 
         ids = m_manager->landmarkIds(filter, QList<const QLandmarkSortOrder*>());
-
-        delete filter;
     }
 
     void filterLandmarksDefault() {
@@ -839,7 +832,7 @@ private slots:
         lm3.setName("LM3");
         QVERIFY(m_manager->saveLandmark(&lm3));
 
-        QLandmarkFilter* filter = new QLandmarkFilter();
+        QLandmarkFilter filter;
 
         QList<QLandmarkId> ids = m_manager->landmarkIds(filter, QList<const QLandmarkSortOrder*>());
 
@@ -847,8 +840,6 @@ private slots:
         QCOMPARE(ids.at(0), lm1.id());
         QCOMPARE(ids.at(1), lm2.id());
         QCOMPARE(ids.at(2), lm3.id());
-
-        delete filter;
     }
 
     void filterLandmarksName() {
@@ -876,8 +867,8 @@ private slots:
         lm6.setName("junk3");
         QVERIFY(m_manager->saveLandmark(&lm6));
 
-        QLandmarkNameFilter* filter = new QLandmarkNameFilter("TEST");
-        filter->setCaseSensitivity(Qt::CaseInsensitive);
+        QLandmarkNameFilter filter("TEST");
+        filter.setCaseSensitivity(Qt::CaseInsensitive);
 
         QList<QLandmarkId> ids1 = m_manager->landmarkIds(filter, QList<const QLandmarkSortOrder*>());
 
@@ -886,17 +877,15 @@ private slots:
         QCOMPARE(ids1.at(1), lm3.id());
         QCOMPARE(ids1.at(2), lm5.id());
 
-        filter->setCaseSensitivity(Qt::CaseSensitive);
+        filter.setCaseSensitivity(Qt::CaseSensitive);
         QList<QLandmarkId> ids2 = m_manager->landmarkIds(filter, QList<const QLandmarkSortOrder*>());
 
         QCOMPARE(ids2.size(), 1);
         QCOMPARE(ids2.at(0), lm3.id());
 
-        filter->setName("No match");
+        filter.setName("No match");
         QList<QLandmarkId> ids3 = m_manager->landmarkIds(filter, QList<const QLandmarkSortOrder*>());
         QCOMPARE(ids3.size(), 0);
-
-        delete filter;
     }
 
     void filterLandmarksProximity() {
@@ -1004,7 +993,7 @@ private slots:
             QList<QGeoCoordinate> lmCoords = testSets.at(i).second;
 
             for (int j = 0; j < filterCoords.size(); ++j) {
-                QLandmarkProximityFilter* filter = new QLandmarkProximityFilter(filterCoords.at(j), dist);
+                QLandmarkProximityFilter filter(filterCoords.at(j), dist);
 
                 QList<QLandmark> lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
 
@@ -1020,8 +1009,6 @@ private slots:
                 for (int k = 0; k < lms.size(); ++k) {
                     QVERIFY(lmCoords.contains(lms.at(k).location().coordinate()));
                 }
-
-                delete filter;
             }
         }
     }
@@ -1149,31 +1136,25 @@ private slots:
             QGeoCoordinate filterCoord = testSets.at(i).first;
             QGeoCoordinate lmCoord = testSets.at(i).second;
 
-            QLandmarkNearestFilter* filter = new QLandmarkNearestFilter(filterCoord);
+            QLandmarkNearestFilter filter(filterCoord);
 
             QList<QLandmark> lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
 
             QCOMPARE(lms.size(), 1);
 
             QCOMPARE(lms.at(0).coordinate(), lmCoord);
-
-            delete filter;
         }
 
-        QLandmarkNearestFilter* filter = new QLandmarkNearestFilter(QGeoCoordinate(-10.0, -10.0), -1.0);
+        QLandmarkNearestFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
 
-        QList<QLandmark> lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
+        QList<QLandmark> lms = m_manager->landmarks(filter1, QList<const QLandmarkSortOrder*>());
         QCOMPARE(lms.size(), 1);
         QCOMPARE(lms.at(0).coordinate(), QGeoCoordinate(-1.0, -1.0));
 
-        delete filter;
+        QLandmarkNearestFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
 
-        filter = new QLandmarkNearestFilter(QGeoCoordinate(-10.0, -10.0), 100.0);
-
-        lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
+        lms = m_manager->landmarks(filter2, QList<const QLandmarkSortOrder*>());
         QCOMPARE(lms.size(), 0);
-
-        delete filter;
     }
 
     void filterLandmarksCategory() {
@@ -1218,7 +1199,7 @@ private slots:
         lm5.addCategory(cat3.id());
         QVERIFY(m_manager->saveLandmark(&lm5));
 
-        QLandmarkCategoryFilter *filter = new QLandmarkCategoryFilter(cat2.id());
+        QLandmarkCategoryFilter filter(cat2.id());
 
         QList<QLandmark> lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
 
@@ -1235,8 +1216,6 @@ private slots:
         expectedNames.insert("LM4");
 
         QCOMPARE(names, expectedNames);
-
-        delete filter;
     }
 
     void filterLandmarksBox() {
@@ -1362,7 +1341,7 @@ private slots:
             QVERIFY(m_manager->saveLandmark(&lm));
         }
 
-        QLandmarkBoxFilter *filter1 = new QLandmarkBoxFilter(QGeoCoordinate(5.0, -5.0), QGeoCoordinate(-5.0, 5.0));
+        QLandmarkBoxFilter filter1(QGeoCoordinate(5.0, -5.0), QGeoCoordinate(-5.0, 5.0));
         QList<QLandmark> lms1 = m_manager->landmarks(filter1, QList<const QLandmarkSortOrder*>());
 
         QCOMPARE(lms1.size(), inBox1.size());
@@ -1377,9 +1356,7 @@ private slots:
 
         QCOMPARE(testSet1, inBoxSet1);
 
-        delete filter1;
-
-        QLandmarkBoxFilter *filter2 = new QLandmarkBoxFilter(QGeoCoordinate(5.0, 10.0), QGeoCoordinate(-5.0, 20.0));
+        QLandmarkBoxFilter filter2(QGeoCoordinate(5.0, 10.0), QGeoCoordinate(-5.0, 20.0));
         QList<QLandmark> lms2 = m_manager->landmarks(filter2, QList<const QLandmarkSortOrder*>());
 
         QCOMPARE(lms2.size(), inBox2.size());
@@ -1394,9 +1371,7 @@ private slots:
 
         QCOMPARE(testSet2, inBoxSet2);
 
-        delete filter2;
-
-        QLandmarkBoxFilter *filter3 = new QLandmarkBoxFilter(QGeoCoordinate(20.0, -5.0), QGeoCoordinate(10.0, 5.0));
+        QLandmarkBoxFilter filter3(QGeoCoordinate(20.0, -5.0), QGeoCoordinate(10.0, 5.0));
         QList<QLandmark> lms3 = m_manager->landmarks(filter3, QList<const QLandmarkSortOrder*>());
 
         QCOMPARE(lms3.size(), inBox3.size());
@@ -1411,9 +1386,7 @@ private slots:
 
         QCOMPARE(testSet3, inBoxSet3);
 
-        delete filter3;
-
-        QLandmarkBoxFilter *filter4 = new QLandmarkBoxFilter(QGeoCoordinate(20.0, 10.0), QGeoCoordinate(10.0, 20.0));
+        QLandmarkBoxFilter filter4(QGeoCoordinate(20.0, 10.0), QGeoCoordinate(10.0, 20.0));
         QList<QLandmark> lms4 = m_manager->landmarks(filter4, QList<const QLandmarkSortOrder*>());
 
         QCOMPARE(lms4.size(), inBox4.size());
@@ -1428,9 +1401,7 @@ private slots:
 
         QCOMPARE(testSet4, inBoxSet4);
 
-        delete filter4;
-
-        QLandmarkBoxFilter *filter5 = new QLandmarkBoxFilter(QGeoCoordinate(5.0, 175.0), QGeoCoordinate(-5.0, -175.0));
+        QLandmarkBoxFilter filter5(QGeoCoordinate(5.0, 175.0), QGeoCoordinate(-5.0, -175.0));
         QList<QLandmark> lms5 = m_manager->landmarks(filter5, QList<const QLandmarkSortOrder*>());
 
         QCOMPARE(lms5.size(), inBox5.size());
@@ -1444,8 +1415,6 @@ private slots:
             inBoxSet5.insert(inBox5.at(i).toString());
 
         QCOMPARE(testSet5, inBoxSet5);
-
-        delete filter5;
     }
 
     void filterLandmarksIntersection() {
@@ -1491,12 +1460,12 @@ private slots:
             }
         }
 
-        QLandmarkCategoryFilter *f1 = new QLandmarkCategoryFilter(cat2.id());
-        QLandmarkNameFilter *f2 = new QLandmarkNameFilter("LM2");
-        QLandmarkProximityFilter *f3 = new QLandmarkProximityFilter(QGeoCoordinate(25.0, 25.0), 5.0);
+        QLandmarkCategoryFilter f1(cat2.id());
+        QLandmarkNameFilter f2("LM2");
+        QLandmarkProximityFilter f3(QGeoCoordinate(25.0, 25.0), 5.0);
 
-        QLandmarkIntersectionFilter *filter = new QLandmarkIntersectionFilter();
-        *filter << f1 << f2 << f3;
+        QLandmarkIntersectionFilter filter;
+        filter << f1 << f2 << f3;
 
         QList<QLandmark> lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
 
@@ -1517,7 +1486,7 @@ private slots:
             }
         }
 
-        filter->remove(f2);
+        filter.remove(f2);
 
         lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
 
@@ -1537,7 +1506,7 @@ private slots:
             }
         }
 
-        filter->prepend(f2);
+        filter.prepend(f2);
 
         lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
 
@@ -1557,11 +1526,6 @@ private slots:
                 QCOMPARE(idSet.contains(lm.id().id()), false);
             }
         }
-
-        delete filter;
-        delete f3;
-        delete f2;
-        delete f1;
     }
 
     void filterLandmarksUnion() {
@@ -1607,12 +1571,12 @@ private slots:
             }
         }
 
-        QLandmarkCategoryFilter *f1 = new QLandmarkCategoryFilter(cat2.id());
-        QLandmarkNameFilter *f2 = new QLandmarkNameFilter("LM2");
-        QLandmarkProximityFilter *f3 = new QLandmarkProximityFilter(QGeoCoordinate(25.0, 25.0), 5.0);
+        QLandmarkCategoryFilter f1(cat2.id());
+        QLandmarkNameFilter f2("LM2");
+        QLandmarkProximityFilter f3(QGeoCoordinate(25.0, 25.0), 5.0);
 
-        QLandmarkUnionFilter *filter = new QLandmarkUnionFilter();
-        *filter << f1 << f2 << f3;
+        QLandmarkUnionFilter filter;
+        filter << f1 << f2 << f3;
 
         QList<QLandmark> lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
 
@@ -1633,7 +1597,7 @@ private slots:
             }
         }
 
-        filter->remove(f2);
+        filter.remove(f2);
 
         lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
 
@@ -1653,7 +1617,7 @@ private slots:
             }
         }
 
-        filter->prepend(f2);
+        filter.prepend(f2);
 
         lms = m_manager->landmarks(filter, QList<const QLandmarkSortOrder*>());
 
@@ -1673,10 +1637,6 @@ private slots:
                 QCOMPARE(idSet.contains(lm.id().id()), false);
             }
         }
-        delete filter;
-        delete f3;
-        delete f2;
-        delete f1;
     }
 
     void sortLandmarksNull() {
@@ -1701,25 +1661,25 @@ private slots:
         QLandmarkSortOrder sortOrder;
         QList<const QLandmarkSortOrder*> sortOrders;
 
-        QList<QLandmark> lms = m_manager->landmarks(&filter, 0);
+        QList<QLandmark> lms = m_manager->landmarks(filter, 0);
         QCOMPARE(lms, expected);
 
-        lms = m_manager->landmarks(&filter, &sortOrder);
+        lms = m_manager->landmarks(filter, &sortOrder);
         QCOMPARE(lms, expected);
 
-        lms = m_manager->landmarks(&filter, sortOrders);
+        lms = m_manager->landmarks(filter, sortOrders);
         QCOMPARE(lms, expected);
 
         sortOrders << &sortOrder;
-        lms = m_manager->landmarks(&filter, sortOrders);
+        lms = m_manager->landmarks(filter, sortOrders);
         QCOMPARE(lms, expected);
 
         sortOrders << 0;
-        lms = m_manager->landmarks(&filter, sortOrders);
+        lms = m_manager->landmarks(filter, sortOrders);
         QCOMPARE(lms, expected);
 
         sortOrders << &sortOrder;
-        lms = m_manager->landmarks(&filter, sortOrders);
+        lms = m_manager->landmarks(filter, sortOrders);
         QCOMPARE(lms, expected);
     }
 
@@ -1749,14 +1709,14 @@ private slots:
         QLandmarkFilter filter;
         QLandmarkSortOrder *sortAscending = new QLandmarkNameSort(Qt::AscendingOrder);
 
-        QList<QLandmark> lms = m_manager->landmarks(&filter, sortAscending);
+        QList<QLandmark> lms = m_manager->landmarks(filter, sortAscending);
         QCOMPARE(lms, expectedAscending);
 
         delete sortAscending;
 
         QLandmarkNameSort *sortDescending = new QLandmarkNameSort(Qt::DescendingOrder);
 
-        lms = m_manager->landmarks(&filter, sortDescending);
+        lms = m_manager->landmarks(filter, sortDescending);
         QCOMPARE(lms, expectedDescending);
 
         delete sortDescending;
@@ -1793,7 +1753,7 @@ private slots:
         QLandmarkFilter filter;
         QLandmarkSortOrder *sortAscending = new QLandmarkDistanceSort(QGeoCoordinate(0.0, 0.0), Qt::AscendingOrder);
 
-        QList<QLandmark> lms = m_manager->landmarks(&filter, sortAscending);
+        QList<QLandmark> lms = m_manager->landmarks(filter, sortAscending);
 
         QCOMPARE(lms, expectedAscending);
 
@@ -1801,7 +1761,7 @@ private slots:
 
         QLandmarkDistanceSort *sortDescending = new QLandmarkDistanceSort(QGeoCoordinate(0.0, 0.0), Qt::DescendingOrder);
 
-        lms = m_manager->landmarks(&filter, sortDescending);
+        lms = m_manager->landmarks(filter, sortDescending);
 
         QCOMPARE(lms, expectedDescending);
 
