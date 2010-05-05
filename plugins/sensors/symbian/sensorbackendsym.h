@@ -92,7 +92,7 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
         void  DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
         
         /**
-         * DataError is called to indicate an error, fatal errors are inrecoverable
+         * DataError is called to indicate an error, fatal errors are unrecoverable
          */
         void  DataError(CSensrvChannel &aChannel, TSensrvErrorSeverity aError);
         
@@ -229,6 +229,9 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
          * Used to stop listening to the sensor
          */
         void StopListeningL();
+        
+    private:
+        TSensrvPropertyType propertyType(TSensrvPropertyId, TInt&);
 
     protected:
         TSensorBackendDataSym iBackendData;

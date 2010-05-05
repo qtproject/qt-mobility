@@ -104,17 +104,17 @@ void CRotationSensorSym::RecvData(CSensrvChannel &aChannel)
     
     // For x axis symbian provides reading from 0 to 359 range
     // This logic maps value to Qt range -90 to 90
-    if(iData.iDeviceRotationAboutXAxis >= 0 && iData.iDeviceRotationAboutXAxis <= 90)
+    if(iData.iDeviceRotationAboutXAxis >= 0 && iData.iDeviceRotationAboutXAxis <= 180)
         {
-        iReading.setX(iData.iDeviceRotationAboutXAxis);
+        iReading.setX(90 - iData.iDeviceRotationAboutXAxis);
         }
-    else if(iData.iDeviceRotationAboutXAxis > 90 && iData.iDeviceRotationAboutXAxis <= 270)
+    else if(iData.iDeviceRotationAboutXAxis > 180 && iData.iDeviceRotationAboutXAxis <= 270)
         {
-        iReading.setX(180 - iData.iDeviceRotationAboutXAxis);
+        iReading.setX(iData.iDeviceRotationAboutXAxis - 270);
         }
     else if(iData.iDeviceRotationAboutXAxis > 270 && iData.iDeviceRotationAboutXAxis < 360)
         {
-        iReading.setX(iData.iDeviceRotationAboutXAxis - 360);
+        iReading.setX(iData.iDeviceRotationAboutXAxis - 270);
         }
     
     // For y axis symbian provides reading from 0 to 359 range

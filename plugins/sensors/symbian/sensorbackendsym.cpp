@@ -42,6 +42,7 @@
 #include "sensorbackendsym.h"
 
 #include <sensrvgeneralproperties.h>
+#include <e32math.h>
 
 // Constants
 const TInt KDesiredReadingCount = 1;
@@ -63,6 +64,7 @@ void CSensorBackendSym::FindSensorL()
     CSensrvChannelFinder* finder = CSensrvChannelFinder::NewLC();
     RSensrvChannelInfoList channelList;
     TSensrvChannelInfo channelInfo;
+    channelInfo.iChannelType = iBackendData.iSensorType;
     // Retrieve the list of channels available    
     finder->FindChannelsL( channelList, channelInfo );
     CleanupStack::PopAndDestroy(finder);
@@ -153,6 +155,19 @@ TInt CSensorBackendSym::SetProperty(TSensrvPropertyId aPropertyId, TSensrvProper
     return iBackendData.iSensorChannel->SetProperty(prop);
     }
 
+TSensrvPropertyType CSensorBackendSym::propertyType(TSensrvPropertyId aPropertyId, TInt &errId)
+    {
+    TSensrvProperty propertyType;
+    //Getting the property to check the type
+    TRAPD(err, iBackendData.iSensorChannel->GetPropertyL(aPropertyId, ESensrvSingleProperty, propertyType));
+    if(err != KErrNone)
+        {
+        errId = err;
+        }
+    //Find the type of property
+    return propertyType.PropertyType();
+    }
+
 TInt CSensorBackendSym::SetMeasurementRange()
     {
     //Setting measurement range
@@ -161,15 +176,13 @@ TInt CSensorBackendSym::SetMeasurementRange()
         {
         return KErrNone;
         }
-    TSensrvProperty propertyType;
-    //Getting the property to check the type
-    TRAPD(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdMeasureRange, ESensrvSingleProperty, propertyType));
+    
+    TInt err = KErrNone;
+    TSensrvPropertyType type = propertyType(KSensrvPropIdMeasureRange, err);
     if(err != KErrNone)
         {
         return err;
         }
-    //Find the type of property
-    TSensrvPropertyType type = propertyType.PropertyType();
     //If type is integer
     if(type == ESensrvRealProperty)
         {    
@@ -196,13 +209,41 @@ TInt CSensorBackendSym::SetDataRate()
                 {
                 return KErrNone;
                 }
-            return SetProperty(KSensrvPropIdDataRate, ESensrvIntProperty,ESensrvArrayPropertyInfo,
-                    availableDataRates.indexOf(qrange(sensor()->dataRate(),sensor()->dataRate())));
+            TInt err = KErrNone;
+            TSensrvPropertyType type = propertyType(KSensrvPropIdDataRate, err);
+            if(err != KErrNone)
+                {
+                return err;
+                }
+            if(type == ESensrvIntProperty)
+                {
+                return SetProperty(KSensrvPropIdDataRate, ESensrvIntProperty, ESensrvArrayPropertyInfo,
+                            availableDataRates.indexOf(qrange(sensor()->dataRate(),sensor()->dataRate())));
+                }
+            else if(type == ESensrvRealProperty)
+                {
+                return SetProperty(KSensrvPropIdDataRate, ESensrvRealProperty, ESensrvArrayPropertyInfo,
+                            availableDataRates.indexOf(qrange(sensor()->dataRate(),sensor()->dataRate())));
+                }
             }
         else
             {
-            // Uses range value
-            return SetProperty(KSensrvPropIdDataRate, ESensrvIntProperty, ESensrvSingleProperty, sensor()->dataRate());
+            TInt err = KErrNone;
+            TSensrvPropertyType type = propertyType(KSensrvPropIdDataRate, err);
+            if(err != KErrNone)
+                {
+                return err;
+                }
+            if(type == ESensrvIntProperty)
+                {
+                // Uses range value
+                return SetProperty(KSensrvPropIdDataRate, ESensrvIntProperty, ESensrvSingleProperty, sensor()->dataRate());
+                }
+            else if(type == ESensrvRealProperty)
+                {
+                // Uses range value
+                return SetProperty(KSensrvPropIdDataRate, ESensrvIntProperty, ESensrvSingleProperty, sensor()->dataRate());
+                }
             }
         }
     // No data rates available
@@ -310,45 +351,71 @@ void CSensorBackendSym::GetDescription()
 
 void CSensorBackendSym::GetDataRate()
     {
-    RSensrvPropertyList list;
-    TRAPD(err, iBackendData.iSensorChannel->GetAllPropertiesL(KSensrvPropIdDataRate, list));
+    TSensrvProperty datarate_prop;
+    TInt err;
+    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdDataRate, KSensrvItemIndexNone, datarate_prop));
     if(err == KErrNone)
         {    
-        //if list has only one item then it is range of values and not descrete values, agreed with DS team
-        if(list.Count() == 1)               
-            {
-            TInt min, max, value;
-            list[0].GetMinValue(min);
-            list[0].GetMaxValue(max);
+        if(datarate_prop.GetArrayIndex() == ESensrvSingleProperty)
+        {
+            TReal min, max, value;
+            if(datarate_prop.PropertyType() == ESensrvIntProperty)
+                {
+                TInt intMin, intMax, intValue;
+                datarate_prop.GetMinValue(intMin);
+                datarate_prop.GetMaxValue(intMax);                
+                datarate_prop.GetValue(intValue);
+                min = intMin;
+                max = intMax;
+                value = intValue;                
+                }
+            else if(datarate_prop.PropertyType() == ESensrvRealProperty)
+                {
+                datarate_prop.GetMinValue(min);
+                datarate_prop.GetMaxValue(max);                
+                datarate_prop.GetValue(value);
+                }
             //Set datarate as range
             addDataRate(min, max);
-            list[0].GetValue(value);
             //Set current datarate as default
             sensor()->setDataRate(value);
-            }
+        }
         //if list has more than one item, data rate will be having descrete values, agreed with DS team
-        else                                
+        else if(datarate_prop.GetArrayIndex() == ESensrvArrayPropertyInfo)                             
             {
-            TInt datarate, index;
-            for(int i=0; i<list.Count(); i++)
+            TReal datarate;
+            TInt min, max, index;
+            datarate_prop.GetMinValue(min);
+            datarate_prop.GetMaxValue(max);
+            datarate_prop.GetValue(index);
+            for(int i=min; i<=max; i++)
                 {  
-                if(list[i].GetArrayIndex() == ESensrvArrayPropertyInfo)
+                TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdDataRate, KSensrvItemIndexNone, i, datarate_prop));
+                if(err == KErrNone)
                     {
-                    //If array index is ESensrvArrayPropertyInfo, getting the value to get current datarate
-                    list[i].GetValue(index);
-                    list[index].GetValue(datarate);
-                    //Setting current datarate as default
-                    sensor()->setDataRate(datarate);
-                    continue;
-                    }     
-                list[i].GetValue(datarate);
-                addDataRate(datarate, datarate);
+                    if(datarate_prop.PropertyType() == ESensrvIntProperty)
+                        {
+                        TInt intDatarate;
+                        datarate_prop.GetValue(intDatarate);
+                        datarate = intDatarate;
+                        }
+                    else if(datarate_prop.PropertyType() == ESensrvRealProperty)
+                        {
+                        datarate_prop.GetValue(datarate);
+                        }
+                    addDataRate(datarate, datarate);
+                    if(i == index)
+                        {
+                        //Setting current datarate as default
+                        sensor()->setDataRate(datarate);
+                        }
+                    }
                 }
             }
         }
     // QT requires atleast one datarate to be available, Sensor server does not
     // define a datarate for state based sensors, hence this hack
-    if(list.Count() == 0)
+    if(sensor()->availableDataRates().length() == 0)
         {
         addDataRate(KInvalidDataRate, KInvalidDataRate);
         }
@@ -368,7 +435,6 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
     */
     TReal accuracy = 0;
     RSensrvPropertyList accuracyList;
-    RSensrvPropertyList list;
     TInt err;
     TRAP(err, iBackendData.iSensorChannel->GetAllPropertiesL(KSensrvPropIdChannelAccuracy, accuracyList));
     if(err == KErrNone)
@@ -376,7 +442,16 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
         // If only one accuracy value present set value to accuracy
         if(accuracyList.Count() == 1)
             {
-            accuracyList[0].GetValue(accuracy);          
+            if(accuracyList[0].PropertyType() == ESensrvIntProperty)
+                {
+                TInt intAccuracy;
+                accuracyList[0].GetValue(intAccuracy);
+                accuracy = intAccuracy;
+                }
+            else if(accuracyList[0].PropertyType() == ESensrvRealProperty)
+                {
+                accuracyList[0].GetValue(accuracy);
+                }
             }
         // If more than one accuracy values present set accuracy to invalid
         else
@@ -384,67 +459,115 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
             accuracy = KAccuracyInvalid; 
             }
         }
-        
-    //measurement minimum & maximum
-    list.Reset();
-    TRAP(err, iBackendData.iSensorChannel->GetAllPropertiesL(KSensrvPropIdMeasureRange, list));
+       
+    //Scale
+    TSensrvProperty scale_prop;
+    TReal scale=1;
+    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelScale, KSensrvItemIndexNone, scale_prop));
     if(err == KErrNone)
-        {            
-        for(int i=0; i<list.Count(); i++)
+        {      
+        if(scale_prop.PropertyType() == ESensrvIntProperty)
             {
-            if(list[i].GetArrayIndex() == ESensrvArrayPropertyInfo)
+            TInt intScale;
+            scale_prop.GetValue(intScale);
+            scale = intScale;
+            }
+        else if(scale_prop.PropertyType() == ESensrvRealProperty)
+            {
+            scale_prop.GetValue(scale);
+            }
+            TReal scaleMultiplier;
+            Math::Pow(scaleMultiplier, 10, scale);
+            scale = scaleMultiplier;
+        }  
+       
+    //measurement minimum & maximum
+    TSensrvProperty measurerange_prop;    
+    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdMeasureRange, KSensrvItemIndexNone, measurerange_prop));
+    if(err == KErrNone)
+        {
+        if(measurerange_prop.GetArrayIndex() == ESensrvSingleProperty)
+        {
+            TReal measureMin, measureMax, value;
+            if(measurerange_prop.PropertyType() == ESensrvIntProperty)
                 {
-                continue;
+                TInt intMin, intMax;
+                measurerange_prop.GetMinValue(intMin);
+                measurerange_prop.GetMaxValue(intMax);
+                measureMin = intMin;
+                measureMax = intMax;
                 }
-            if(list[i].PropertyType() == ESensrvIntProperty )
+            else if(measurerange_prop.PropertyType() == ESensrvRealProperty)
                 {
-                TInt min, max;
-                list[i].GetMinValue(min);
-                list[i].GetMaxValue(max);
-                // If only one accuracy value is present set same accuracy for all 
-                if(accuracy != KAccuracyInvalid)
+                measurerange_prop.GetMinValue(measureMin);
+                measurerange_prop.GetMaxValue(measureMax);
+                }
+            //Set output as range
+            addOutputRange(measureMin*scale, measureMax*scale, accuracy);
+        }
+        //if list has more than one item, data rate will be having descrete values, agreed with DS team
+        else if(measurerange_prop.GetArrayIndex() == ESensrvArrayPropertyInfo)                             
+            {
+            TReal measureMin, measureMax;
+            TInt min, max, index;
+            if(measurerange_prop.PropertyType() == ESensrvIntProperty)
+                {
+                measurerange_prop.GetMinValue(min);
+                measurerange_prop.GetMaxValue(max);
+                measurerange_prop.GetValue(index);
+                }
+            else if(measurerange_prop.PropertyType() == ESensrvRealProperty)
+                {
+                TReal realMin, realMax, realValue;
+                measurerange_prop.GetMinValue(realMin);
+                measurerange_prop.GetMaxValue(realMax);
+                measurerange_prop.GetValue(realValue); 
+                min = realMin;
+                max = realMax;
+                index = realValue;
+                }
+            for(int i=min; i<=max; i++)
+                {  
+                TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdMeasureRange, KSensrvItemIndexNone, i, measurerange_prop));
+                if(err == KErrNone)
                     {
-                    addOutputRange(min, max, accuracy);
-                    }
-                // If more than one accuracy values are there then map them linearly
-                else
-                    {
-                    if(accuracyList.Count() > i)
+                    if(measurerange_prop.PropertyType() == ESensrvIntProperty)
                         {
-                        accuracyList[i].GetValue(accuracy);
-                        addOutputRange(min, max, accuracy);
+                        TInt intMeasureMin, intMeasureMax;
+                        measurerange_prop.GetMinValue(intMeasureMin);
+                        measurerange_prop.GetMaxValue(intMeasureMax);
+                        measureMin = intMeasureMin;
+                        measureMax = intMeasureMax;
                         }
+                    else if(measurerange_prop.PropertyType() == ESensrvRealProperty)
+                        {
+                        measurerange_prop.GetMinValue(measureMin);
+                        measurerange_prop.GetMaxValue(measureMax);
+                        }
+                    // If only one accuracy value is present set same accuracy for all 
+                    if(accuracy != KAccuracyInvalid)
+                        {
+                        addOutputRange(measureMin*scale, measureMax*scale, accuracy);
+                        }
+                    // If more than one accuracy values are there then map them linearly
                     else
                         {
-                        // If less accuracy values are present than measurement ranges then 
-                        // set invalid accuracy for rest of measument ranges
-                        addOutputRange(min, max, KAccuracyInvalid);
+                        if(accuracyList.Count() > (i - min))
+                            {
+                            accuracyList[i].GetValue(accuracy);
+                            addOutputRange(measureMin*scale, measureMax*scale, accuracy);
+                            }
+                        else
+                            {
+                            // If less accuracy values are present than measurement ranges then 
+                            // set invalid accuracy for rest of measument ranges
+                            addOutputRange(measureMin*scale, measureMax*scale, KAccuracyInvalid);
+                            }
                         }
-                    }
-                }
-            else if(list[i].PropertyType() == ESensrvRealProperty  )
-                {
-                TReal min, max;
-                list[i].GetMinValue(min);
-                list[i].GetMaxValue(max);
-                // If only one accuracy value is present set same accuracy for all 
-                if(accuracy != KAccuracyInvalid)
-                    {
-                    addOutputRange(min, max, accuracy);
-                    }
-                // If more than one accuracy values are there then map them linearly
-                else
-                    {
-                    if(accuracyList.Count() > i)
+                    if(i == index)
                         {
-                        accuracyList[i].GetValue(accuracy);
-                        addOutputRange(min, max, accuracy);
-                        }
-                    else
-                        {
-                        // If less accuracy values are present than measurement ranges then 
-                        // set invalid accuracy for rest of measument ranges
-                        addOutputRange(min, max, KAccuracyInvalid);
+                        //Setting current output range as default
+                        sensor()->setOutputRange(i - min);
                         }
                     }
                 }
