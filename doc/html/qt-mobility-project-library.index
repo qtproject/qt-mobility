@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QDOCINDEX>
-<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0.0">
+<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0.1">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationship" href="qcontactrelationship.html" location="qcontactrelationship.h" bases="" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="HasMember" fullname="QContactRelationship::HasMember" href="qcontactrelationship.html#HasMember-var" location="qcontactrelationship.h" type="const QLatin1Constant" static="true"/>
@@ -2818,7 +2818,7 @@
                 <parameter left="const QList&lt;QContactLocalId&gt; &amp;" right="" name="contactIds" default=""/>
                 <parameter left="QMap&lt;int, QContactManager::Error&gt; *" right="" name="errorMap" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="preliminary" name="compatibleContact" fullname="QContactManager::compatibleContact" href="qcontactmanager.html#compatibleContact" location="qcontactmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContact" signature="compatibleContact(const QContact &amp; original)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="compatibleContact" fullname="QContactManager::compatibleContact" href="qcontactmanager.html#compatibleContact" location="qcontactmanager.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QContact" signature="compatibleContact(const QContact &amp; original)">
                 <parameter left="const QContact &amp;" right="" name="original" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="synthesizedContactDisplayLabel" fullname="QContactManager::synthesizedContactDisplayLabel" href="qcontactmanager.html#synthesizedContactDisplayLabel" location="qcontactmanager.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="synthesizedContactDisplayLabel(const QContact &amp; contact) const">
@@ -7249,6 +7249,7 @@
             <contents name="building-on-windows" title="Building On Windows" level="2"/>
             <contents name="building-for-windows-ce" title="Building For Windows CE" level="2"/>
             <contents name="building-for-symbian-on-windows" title="Building For Symbian On Windows" level="2"/>
+            <contents name="building-for-mac-os-x" title="Building For Mac OS X" level="2"/>
             <contents name="building-individual-qt-mobility-modules" title="Building Individual Qt Mobility Modules" level="2"/>
             <contents name="making-the-libraries-available-to-applications" title="Making the libraries available to applications" level="1"/>
             <contents name="making-the-libraries-available-on-unix" title="Making the libraries available on Unix" level="2"/>
@@ -7390,6 +7391,27 @@
             <contents name="how-a-sensor-plugin-is-loaded" title="How a sensor plugin is loaded" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QRadioTunerControl_iid" href="qradiotunercontrol.html#QRadioTunerControl_iid" location="qradiotunercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QRadioTunerControl" type="" signature="QRadioTunerControl_iid()"/>
+        <page access="public" status="commendable" name="contactsengines.html" href="contactsengines.html" subtype="page" title="Qt Contacts Manager Engines" fulltitle="Qt Contacts Manager Engines" subtitle="" location="contactsengines.qdoc">
+            <contents name="introduction" title="Introduction" level="1"/>
+            <contents name="information-for-clients" title="Information For Clients" level="1"/>
+            <contents name="where-is-the-data-stored" title="Where Is The Data Stored?" level="2"/>
+            <contents name="schema-differences" title="Schema Differences" level="2"/>
+            <contents name="provided-engines" title="Provided Engines" level="2"/>
+            <contents name="in-memory-example-engine" title="In-Memory Example Engine" level="3"/>
+            <contents name="symbian-3-1-engine" title="Symbian 3.1 Engine" level="3"/>
+            <contents name="symbian-3-2-engine" title="Symbian 3.2 Engine" level="3"/>
+            <contents name="symbian-5-0-engine" title="Symbian 5.0 Engine" level="3"/>
+            <contents name="maemo-5-fremantle-engine" title="Maemo 5 (Fremantle) Engine" level="3"/>
+            <contents name="libqttracker-engine" title="libQtTracker Engine" level="3"/>
+            <contents name="information-for-engine-implementors" title="Information For Engine Implementors" level="1"/>
+            <contents name="which-functions-do-i-need-to-implement" title="Which Functions Do I Need To Implement" level="2"/>
+            <contents name="mandatory-functions" title="Mandatory Functions" level="3"/>
+            <contents name="optional-functionality" title="Optional Functionality" level="3"/>
+            <contents name="optional-implementation" title="Optional Implementation" level="3"/>
+            <contents name="which-signals-do-i-need-to-emit" title="Which Signals Do I Need To Emit" level="2"/>
+            <contents name="other-considerations" title="Other Considerations" level="2"/>
+            <contents name="example-implementation" title="Example Implementation" level="2"/>
+        </page>
         <page access="public" status="commendable" name="declarative-sfw-notes" href="declarative-sfw-notes.html" subtype="example" title="Declarative Service Framework Notes Manager" fulltitle="Declarative Service Framework Notes Manager" subtitle="" location="declarative-sfw-notes.qdoc">
             <page access="public" status="commendable" name="declarative-sfw-notes/qdeclarativeservice.cpp" href="declarative-sfw-notes-qdeclarativeservice-cpp.html" subtype="file" title="" fulltitle="qdeclarativeservice.cpp Example File" subtitle="declarative-sfw-notes/qdeclarativeservice.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-notes/qdeclarativeservice.h" href="declarative-sfw-notes-qdeclarativeservice-h.html" subtype="file" title="" fulltitle="qdeclarativeservice.h Example File" subtitle="declarative-sfw-notes/qdeclarativeservice.h" location=""/>

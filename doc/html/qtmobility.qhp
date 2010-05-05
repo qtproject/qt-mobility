@@ -634,6 +634,7 @@
                     <section ref="opensourceedition.html" title="Open Source Versions of Qt"/>
                     <section ref="publ-subs.html" title="Publish and Subscribe"/>
                     <section ref="bearer.html" title="Qt Bearer Management API"/>
+                    <section ref="contactsengines.html" title="Qt Contacts Manager Engines"/>
                     <section ref="contactsschema.html" title="Qt Contacts Schema"/>
                     <section ref="editions.html" title="Qt Editions"/>
                     <section ref="examples.html" title="Qt Mobility Examples"/>
@@ -3274,6 +3275,7 @@
             <keyword name="Q_DEFINE_LATIN1_CONSTANT" id="Q_DEFINE_LATIN1_CONSTANT" ref="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
+            <keyword name="Qt Contacts Manager Engines" id="Qt Contacts Manager Engines" ref="contactsengines.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="examples.html"/>
@@ -3469,6 +3471,7 @@
             <file>qmediaplayer-members.html</file>
             <file>samplephonebook-phonebook-h.html</file>
             <file>qmediaservicefeaturesinterface.html</file>
+            <file>images/sensors-orientation.jpg</file>
             <file>qmediaserviceproviderhint-members.html</file>
             <file>slideshow-slideshow-cpp.html</file>
             <file>qversitdocument.html</file>
@@ -3490,6 +3493,7 @@
             <file>qmessagefoldersortorder-members.html</file>
             <file>qmediastreamscontrol.html</file>
             <file>lightmaps-lightmaps-pro.html</file>
+            <file>images/sensors-rotation3.jpg</file>
             <file>qversitcontactimporter-members.html</file>
             <file>qvideodevicecontrol-members.html</file>
             <file>qcontactthumbnail.html</file>
@@ -3530,6 +3534,7 @@
             <file>battery-charge.html</file>
             <file>qmediaplaylistreader-members.html</file>
             <file>sfw-notes-sfwnotes-h.html</file>
+            <file>images/sensors-coordinates3.jpg</file>
             <file>qmediaplaylistprovider-members.html</file>
             <file>notesmanagerplugin-notesmanagerplugin-pro.html</file>
             <file>qcontactmemoryengine-members.html</file>
@@ -3584,6 +3589,7 @@
             <file>trademarks.html</file>
             <file>qversitcontactexporterdetailhandler.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-h.html</file>
+            <file>images/sensors-sides2.jpg</file>
             <file>qservice.html</file>
             <file>qmessageaccount-members.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
@@ -3608,11 +3614,12 @@
             <file>qcontactchangelogfilter-members.html</file>
             <file>qmediacontent.html</file>
             <file>qmediacontrol-members.html</file>
+            <file>images/sensors-coordinates.jpg</file>
             <file>qmediaservicesupporteddevicesinterface.html</file>
-            <file>qcontactmanagerenginefactory-members.html</file>
             <file>qcontactgeolocation.html</file>
             <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>annotated.html</file>
+            <file>qcontactmanagerenginefactory-members.html</file>
             <file>qnetworksession-members.html</file>
             <file>qtapsensor-members.html</file>
             <file>qcontactrelationshipsaverequest.html</file>
@@ -3638,7 +3645,6 @@
             <file>samplephonebook-contactlistpage-cpp.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qcontactpresence.html</file>
-            <file>images/axes.png</file>
             <file>qvideowidget-members.html</file>
             <file>qcompassreading-members.html</file>
             <file>qimageencodercontrol-members.html</file>
@@ -3698,8 +3704,8 @@
             <file>qcontactnote-members.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-h.html</file>
             <file>qcontactdetaildefinition-members.html</file>
-            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
+            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qsensorreading-members.html</file>
             <file>samplephonebook-filterpage-h.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
@@ -3731,14 +3737,16 @@
             <file>qmessagemanager-members.html</file>
             <file>qservicecontext-members.html</file>
             <file>audiorecorder-main-cpp.html</file>
+            <file>images/sensors-coordinates2.jpg</file>
             <file>qcontactrelationshipremoverequest-members.html</file>
+            <file>images/sensors-rotation-anim.gif</file>
             <file>sfw-notes-sfwnotes-cpp.html</file>
             <file>weatherinfo-icons-weather-sunny-svg.html</file>
             <file>fetchgooglemaps-mapwindow-cpp.html</file>
             <file>qmessagefolderfilter.html</file>
             <file>images/bearercloud-example.png</file>
-            <file>qcontactname-members.html</file>
             <file>qaudioendpointselector-members.html</file>
+            <file>qcontactname-members.html</file>
             <file>weatherinfo-weatherinfo-pro.html</file>
             <file>systeminfo.html</file>
             <file>quickstart-main-cpp.html</file>
@@ -3778,6 +3786,7 @@
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
+            <file>images/sensors-rotation2.jpg</file>
             <file>qmlcontacts-qmlcontact-h.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
@@ -3794,6 +3803,7 @@
             <file>qradiotuner-members.html</file>
             <file>qversitreader-members.html</file>
             <file>fetchgooglemaps-fetchgooglemaps-pro.html</file>
+            <file>images/sensors-rotation.jpg</file>
             <file>qcontactintersectionfilter.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-cpp.html</file>
             <file>player-player-pro.html</file>
@@ -3812,6 +3822,7 @@
             <file>qmediaservice-members.html</file>
             <file>qlatin1constant-members.html</file>
             <file>examples.html</file>
+            <file>images/sensors-geo-vs-raw-magnetism.jpg</file>
             <file>qcontacttag.html</file>
             <file>qcontactglobalpresence-members.html</file>
             <file>battery-charge-battery-publisher-batterypublisher-h.html</file>
@@ -3831,8 +3842,8 @@
             <file>images/publish-subscribe-subscriber.png</file>
             <file>qversitcontactimporterpropertyhandler-members.html</file>
             <file>qvideowidgetcontrol-members.html</file>
-            <file>qcontactmanagerengine-members.html</file>
             <file>bearermonitor-bearermonitor-pro.html</file>
+            <file>qcontactmanagerengine-members.html</file>
             <file>qvideorenderercontrol.html</file>
             <file>bearer.html</file>
             <file>qcontactonlineaccount.html</file>
@@ -3920,6 +3931,7 @@
             <file>qcontacttag-members.html</file>
             <file>images/sysinfo.png</file>
             <file>qimageencodercontrol.html</file>
+            <file>images/sensors-sides.jpg</file>
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
             <file>quickstart.html</file>
@@ -3960,7 +3972,6 @@
             <file>qrotationsensor.html</file>
             <file>qcontactinvalidengine-members.html</file>
             <file>qsensorbackend-members.html</file>
-            <file>images/Rotation_angles.png</file>
             <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
             <file>qmessagecontentcontainer-members.html</file>
@@ -3975,6 +3986,7 @@
             <file>qcontact.html</file>
             <file>editions.html</file>
             <file>samplephonebook-contactlistpage-h.html</file>
+            <file>contactsengines.html</file>
             <file>qaudioencodercontrol-members.html</file>
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
@@ -4063,35 +4075,44 @@
             <file>qcontactfamily.html</file>
             <file>qcontactlocalidfilter-members.html</file>
             <file>qvideoencodersettings-members.html</file>
-            <file>images/servicexmlgen.png</file>
-            <file>images/flickr-demo.png</file>
+            <file>images/sensors-coordinates2.jpg</file>
             <file>images/slideshow-img1.png</file>
-            <file>images/Rotation_angles.png</file>
-            <file>images/sample-phonebook-1.png</file>
-            <file>images/servicebrowser-attributes.png</file>
-            <file>images/sensors-overview.png</file>
-            <file>images/bearercloud-example.png</file>
-            <file>images/weatherinfo-bris.png</file>
-            <file>images/writemessage-example.png</file>
             <file>images/lightmaps-oslo.png</file>
-            <file>images/sample-phonebook-4.png</file>
-            <file>images/publish-subscribe-publisher.png</file>
-            <file>images/qtlogo.png</file>
-            <file>images/codeless.png</file>
-            <file>images/bearermonitor-example.png</file>
-            <file>images/publish-subscribe-subscriber.png</file>
-            <file>images/battery-subscriber.png</file>
-            <file>images/servicebrowser.png</file>
-            <file>images/sample-phonebook-3.png</file>
-            <file>images/battery-publisher.png</file>
-            <file>images/keepintouch-example.png</file>
-            <file>classic.css</file>
+            <file>images/sample-phonebook-1.png</file>
             <file>images/sysinfo.png</file>
-            <file>images/sample-phonebook-2.png</file>
+            <file>images/bearercloud-example.png</file>
+            <file>images/sensors-rotation-anim.gif</file>
+            <file>images/flickr-demo.png</file>
+            <file>images/sample-phonebook-4.png</file>
+            <file>images/battery-subscriber.png</file>
+            <file>images/publish-subscribe-subscriber.png</file>
+            <file>images/bearermonitor-example.png</file>
+            <file>images/sensors-orientation.jpg</file>
+            <file>images/sample-phonebook-3.png</file>
+            <file>images/sensors-coordinates3.jpg</file>
+            <file>images/codeless.png</file>
+            <file>images/sensors-rotation2.jpg</file>
+            <file>images/weatherinfo-bris.png</file>
             <file>images/roaming-states.png</file>
-            <file>images/DialerServiceGUI.png</file>
+            <file>classic.css</file>
+            <file>images/sensors-sides2.jpg</file>
+            <file>images/sensors-geo-vs-raw-magnetism.jpg</file>
+            <file>images/battery-publisher.png</file>
+            <file>images/sensors-rotation.jpg</file>
+            <file>images/servicexmlgen.png</file>
+            <file>images/sensors-coordinates.jpg</file>
+            <file>images/sensors-sides.jpg</file>
+            <file>images/sensors-rotation3.jpg</file>
+            <file>images/publish-subscribe-publisher.png</file>
+            <file>images/servicebrowser.png</file>
+            <file>images/writemessage-example.png</file>
+            <file>images/sensors-overview.png</file>
             <file>images/qserviceinterfacedescriptor.png</file>
-            <file>images/axes.png</file>
+            <file>images/servicebrowser-attributes.png</file>
+            <file>images/qtlogo.png</file>
+            <file>images/DialerServiceGUI.png</file>
+            <file>images/sample-phonebook-2.png</file>
+            <file>images/keepintouch-example.png</file>
         </files>
     </filterSection>
 </QtHelpProject>
