@@ -39,36 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTE_P_H
-#define QGEOROUTE_P_H
+#ifndef QGEODISTANCE_H
+#define QGEODISTANCE_H
 
-#include "qgeoroute.h"
-#include "qgeoboundingbox.h"
-#include "qgeodistance.h"
+#include "qmobilityglobal.h"
 
-#include <QDateTime>
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoRouteSegment;
+class QGeoDistancePrivate;
 
-class QGeoRoutePrivate {
+class Q_LOCATION_EXPORT QGeoDistance
+{
 public:
-    QGeoRoutePrivate();
-    QGeoRoutePrivate(const QGeoRoutePrivate &other);
-    ~QGeoRoutePrivate();
+    enum DistanceUnits {
+        Metres,
+        Kilometres,
+        Miles
+    };
 
-    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
+    QGeoDistance(double magnitude = 0.0, DistanceUnits units = Metres);
+    QGeoDistance(const QGeoDistance &other);
+    ~QGeoDistance();
 
-    QGeoRoute::DirectionsDetail directionsDetail;
-    QList<QGeoCoordinate> routeOverview;
-    QGeoBoundingBox bounds;
-    QList<const QGeoRouteSegment*> routeSegments;
-    QDateTime duration;
-    QGeoDistance distance;
+    QGeoDistance& operator= (const QGeoDistance &other);
+
+    void setMagnitude(double magnitude);
+    double magnitude() const;
+
+    // convert value first
+    void setUnits(DistanceUnits units, bool convert = false);
+    DistanceUnits units() const;
+
+    double convert(DistanceUnits units) const;
+
+private:
+    QGeoDistancePrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoDistance);
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

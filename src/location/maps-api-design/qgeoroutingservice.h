@@ -42,7 +42,8 @@
 #ifndef QGEOROUTINGSERVICE_H
 #define QGEOROUTINGSERVICE_H
 
-#include "qmobilityglobal.h"
+#include "qgeoroute.h"
+#include "qgeorouterequestoptions.h"
 
 #include <QObject>
 
@@ -51,9 +52,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-class QGeoRoute;
 class QGeoRouteReply;
-class QGeoRouteRequestOptions;
 
 class QGeoRoutingServicePrivate;
 
@@ -65,36 +64,6 @@ public:
     enum ErrorCode {
         NoError
     };
-
-    enum TravelMode {
-        CarTravel = 0x0001,
-        PedestrianTravel = 0x0002,
-        BicycleTravel = 0x0004,
-        PublicTransitTravel = 0x0008,
-        TruckTravel = 0x000F
-    };
-    Q_DECLARE_FLAGS(TravelModes, TravelMode)
-
-    enum AvoidFeatureType {
-        AvoidNothing = 0x00000000,
-        AvoidTolls = 0x00000001,
-        AvoidHighways = 0x00000002,
-        AvoidPublicTransit = 0x00000004,
-        AvoidFerries = 0x00000008,
-        AvoidTunnels = 0x0000000F,
-        AvoidDirtRoads = 0x00000010,
-        AvoidPark = 0x00000020,
-        AvoidMotorPoolLanes = 0x00000040
-    };
-    Q_DECLARE_FLAGS(AvoidFeatureTypes, AvoidFeatureType)
-
-    enum RouteOptimization {
-        ShortestRoute = 0x0001,
-        FastestRoute = 0x0002,
-        MostEconomicRoute = 0x0004,
-        MostScenicRoute = 0x0008
-    };
-    Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
 
     // TODO
     //- move to QGeoRouteTransitOption base class once when we require it
@@ -110,51 +79,37 @@ public:
     Q_DECLARE_FLAGS(TransitOptionTypes, TransitOptionType)
     */
 
-    enum DirectionsDetail {
-        NoDirections = 0x00001,
-        BasicDirections = 0x0002,
-        DetailedDirections = 0x0004
-    };
-    Q_DECLARE_FLAGS(DirectionsDetails, DirectionsDetail)
-
-    QGeoRoutingService();
     virtual ~QGeoRoutingService();
 
-    // Option 1, current favourite
-    // TODO - fix include order fiasco preventing requestOptions using default constructor
-    /*
     virtual QGeoRouteReply* requestRoute(const QGeoCoordinate &origin,
-                                const QGeoCoordinate &destination,
-                                DirectionsDetail detail = NoDirections,
-                                const QGeoRouteRequestOptions &requestOptions = 0) = 0;
+                                         const QGeoCoordinate &destination,
+                                         QGeoRoute::DirectionsDetail detail = QGeoRoute::NoDirections,
+                                         const QGeoRouteRequestOptions &requestOptions = QGeoRouteRequestOptions()) = 0;
     virtual QGeoRouteReply* requestRoute(const QList<QGeoCoordinate> &waypoints,
-                                 DirectionsDetail detail = NoDirections,
-                                const QGeoRouteRequestOptions &requestOptions = 0) = 0;
-    */
+                                         QGeoRoute::DirectionsDetail detail = QGeoRoute::NoDirections,
+                                         const QGeoRouteRequestOptions &requestOptions = QGeoRouteRequestOptions()) = 0;
 
-    // Option 2 - roll pathing info and directions level-of-detail into request
-    virtual QGeoRouteReply* requestRoute(const QGeoRouteRequestOptions &requestOptions) = 0;
-
-    // Present in both options
     virtual QGeoRouteReply* updateRoute(const QGeoRoute &route,
                                 const QGeoCoordinate &currentPosition) = 0;
 
-    TravelModes supportedTravelModes() const;
-    AvoidFeatureTypes supportedAvoidFeatureTypes() const;
-    RouteOptimizations supportedRouteOptimizations() const;
+    QGeoRoute::TravelModes supportedTravelModes() const;
+    QGeoRoute::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
+    QGeoRoute::RouteOptimizations supportedRouteOptimizations() const;
 
     // see above
     //TransitOptionTypes supportedTransitOptionTypes() const;
 
-    DirectionsDetails supportedDirectionDetails() const;
+    QGeoRoute::DirectionsDetails supportedDirectionDetails() const;
     bool supportsUpdatingRoutes() const;
 
 protected:
-    void setSupportedTravelModes(TravelModes supportedTravelModes);
-    void setSupportedAvoidFeatureTypes(AvoidFeatureTypes avoidFeatureTypes);
-    void setSupportedRouteOptimizations(RouteOptimizations routeOptimizations);
+    QGeoRoutingService();
+
+    void setSupportedTravelModes(QGeoRoute::TravelModes travelModes);
+    void setSupportedAvoidFeatureTypes(QGeoRoute::AvoidFeatureTypes avoidFeatureTypes);
+    void setSupportedRouteOptimizations(QGeoRoute::RouteOptimizations routeOptimizations);
     // void setSupportedTransitOptionType(TransitOptionTypes transitOptionTypes);
-    void setSupportedDirectionDetails(DirectionsDetails directionsDetails);
+    void setSupportedDirectionDetails(QGeoRoute::DirectionsDetails directionsDetails);
     void setSupportsUpdatingRoutes(bool updatingRoutes);
 
     QGeoRoutingServicePrivate* d_ptr;
@@ -169,13 +124,6 @@ private:
     Q_DISABLE_COPY(QGeoRoutingService)
     Q_DECLARE_PRIVATE(QGeoRoutingService)
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoutingService::TravelModes)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoutingService::AvoidFeatureTypes)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoutingService::RouteOptimizations)
-// see above
-//Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoutingService::TransitOptionTypes)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoutingService::DirectionsDetails)
 
 QTM_END_NAMESPACE
 

@@ -52,16 +52,19 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    Constructs a QGeoRouteRequestOptions object.
 */
 QGeoRouteRequestOptions::QGeoRouteRequestOptions()
     : d_ptr(new QGeoRouteRequestOptionsPrivate()) {}
 
 /*!
+    Constructs a QGeoRouteRequestOptions object from the contents of \a other.
 */
 QGeoRouteRequestOptions::QGeoRouteRequestOptions(const QGeoRouteRequestOptions &other)
     : d_ptr(new QGeoRouteRequestOptionsPrivate(*(other.d_ptr))) {}
 
 /*!
+    Destroys this QGeoRouteRequestOptions object.
 */
 QGeoRouteRequestOptions::~QGeoRouteRequestOptions()
 {
@@ -70,6 +73,8 @@ QGeoRouteRequestOptions::~QGeoRouteRequestOptions()
 }
 
 /*!
+    Assigns \a other to this QGeoRouteRequestOptions object and returns a
+    reference to this QGeoRouteRequestOptions object.
 */
 QGeoRouteRequestOptions& QGeoRouteRequestOptions::operator= (const QGeoRouteRequestOptions &other)
 {
@@ -78,6 +83,9 @@ QGeoRouteRequestOptions& QGeoRouteRequestOptions::operator= (const QGeoRouteRequ
 }
 
 /*!
+    Sets the number of alternative routes to request to \a alternatives.
+
+    \sa QGeoRouteRequestOptions::numberAlternativeRoutes()
 */
 void QGeoRouteRequestOptions::setNumberAlternativeRoutes(int alternatives)
 {
@@ -86,6 +94,9 @@ void QGeoRouteRequestOptions::setNumberAlternativeRoutes(int alternatives)
 }
 
 /*!
+    Returns the number of alternative routes which will be requested.
+
+    \sa QGeoRouteRequestOptions::setNumberAlternativeRoutes()
 */
 int QGeoRouteRequestOptions::numberAlternativeRoutes() const
 {
@@ -94,70 +105,82 @@ int QGeoRouteRequestOptions::numberAlternativeRoutes() const
 }
 
 /*!
+    Sets the travel modes which should be considered during the planning of the
+    route to \a travelModes.
+
+    \sa QGeoRoute::TravelModes
+    \sa QGeoRouteRequestOptions::travelModes()
 */
-void QGeoRouteRequestOptions::setTravelModes(QGeoRoutingService::TravelModes travelModes)
+void QGeoRouteRequestOptions::setTravelModes(QGeoRoute::TravelModes travelModes)
 {
     Q_D(QGeoRouteRequestOptions);
     d->travelModes = travelModes;
 }
 
 /*!
+    Returns the travel modes which this request specifies should be considered
+    during the planning of the route.
+
+    \sa QGeoRoute::TravelModes
+    \sa QGeoRouteRequestOptions::setTravelModes()
 */
-QGeoRoutingService::TravelModes QGeoRouteRequestOptions::travelModes() const
+QGeoRoute::TravelModes QGeoRouteRequestOptions::travelModes() const
 {
     Q_D(const QGeoRouteRequestOptions);
     return d->travelModes;
 }
 
 /*!
+    Sets the features to be avoided during the planning of the route to
+    \a avoidFeatureTypes.
+
+    \sa QGeoRoute::AvoidFeatureTypes
+    \sa QGeoRouteRequestOptions::avoidFeatureTypes()
 */
-void QGeoRouteRequestOptions::setAvoidFeatureTypes(QGeoRoutingService::AvoidFeatureTypes avoidFeatureTypes)
+void QGeoRouteRequestOptions::setAvoidFeatureTypes(QGeoRoute::AvoidFeatureTypes avoidFeatureTypes)
 {
     Q_D(QGeoRouteRequestOptions);
     d->avoidFeatureTypes = avoidFeatureTypes;
 }
 
 /*!
+    Returns the features which this request specifies should be avoided during
+    the planning of the route.
+
+    \sa QGeoRoute::AvoidFeatureTypes
+    \sa QGeoRouteRequestOptions::setAvoidFeatureTypes()
 */
-QGeoRoutingService::AvoidFeatureTypes QGeoRouteRequestOptions::avoidFeatureTypes() const
+QGeoRoute::AvoidFeatureTypes QGeoRouteRequestOptions::avoidFeatureTypes() const
 {
     Q_D(const QGeoRouteRequestOptions);
     return d->avoidFeatureTypes;
 }
 
 /*!
+    Sets the optimization criteria to use while planning the route to
+    \a optimization.
+
+    \sa QGeoRoute::RouteOptimization
+    \sa QGeoRouteRequestOptions::routeOptimization()
 */
-void QGeoRouteRequestOptions::setRouteOptimization(QGeoRoutingService::RouteOptimization optimization)
+void QGeoRouteRequestOptions::setRouteOptimization(QGeoRoute::RouteOptimization optimization)
 {
     Q_D(QGeoRouteRequestOptions);
     d->routeOptimization = optimization;
 }
 
 /*!
+    Returns the optimization criteria which this request specifies should be
+    used while planning the route.
+
+    \sa QGeoRoute::RouteOptimization
+    \sa QGeoRouteRequestOptions::setRouteOptimization()
 */
-QGeoRoutingService::RouteOptimization QGeoRouteRequestOptions::routeOptimization() const
+QGeoRoute::RouteOptimization QGeoRouteRequestOptions::routeOptimization() const
 {
     Q_D(const QGeoRouteRequestOptions);
     return d->routeOptimization;
 }
-
-// defaults to empty - no subclass required yet
-// this is how we handle private / public / truck attributes
-///*!
-//*/
-//void QGeoRouteRequestOptions::setTransitOptions(const QList<const QGeoRouteTransitOptions *> &transitOptions)
-//{
-//    Q_D(QGeoRouteRequestOptions);
-//    d->transitOptions = transitOptions;
-//}
-
-///*!
-//*/
-//QList<const QGeoRouteTransitOptions *> QGeoRouteRequestOptions::transitOptions() const
-//{
-//    Q_D(const QGeoRouteRequestOptions);
-//    return d->transitOptions;
-//}
 
 /*******************************************************************************
 *******************************************************************************/
@@ -165,9 +188,9 @@ QGeoRoutingService::RouteOptimization QGeoRouteRequestOptions::routeOptimization
 QGeoRouteRequestOptionsPrivate::QGeoRouteRequestOptionsPrivate()
 {
     alternativeRoutes = 0;
-    travelModes = QGeoRoutingService::CarTravel;
-    avoidFeatureTypes = QGeoRoutingService::AvoidNothing;
-    routeOptimization = QGeoRoutingService::FastestRoute;
+    travelModes = QGeoRoute::CarTravel;
+    avoidFeatureTypes = QGeoRoute::AvoidNothing;
+    routeOptimization = QGeoRoute::FastestRoute;
 }
 
 QGeoRouteRequestOptionsPrivate::QGeoRouteRequestOptionsPrivate(const QGeoRouteRequestOptionsPrivate &other)

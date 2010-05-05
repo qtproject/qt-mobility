@@ -110,21 +110,18 @@ QDateTime QGeoRouteSegment::duration() const
 
 /*!
 */
-void QGeoRouteSegment::setDistance(double value, QGeoMapWidget::DistanceUnits units)
+void QGeoRouteSegment::setDistance(const QGeoDistance &distance)
 {
     Q_D(QGeoRouteSegment);
-    d->distanceValue = value;
-    d->distanceUnits = units;
+    d->distance = distance;
 }
 
 /*!
 */
-double QGeoRouteSegment::distance(QGeoMapWidget::DistanceUnits units) const
+QGeoDistance QGeoRouteSegment::distance() const
 {
     Q_D(const QGeoRouteSegment);
-    return QGeoMapWidget::convertDistance(d->distanceValue,
-                                          d->distanceUnits,
-                                          units);
+    return d->distance;
 }
 
 // bounds per segment?  or is bounds per route enough?
@@ -172,8 +169,7 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
     : type(other.type),
     duration(other.duration),
-    distanceValue(other.distanceValue),
-    distanceUnits(other.distanceUnits),
+    distance(other.distance),
     geometry(other.geometry),
     instructions(other.instructions){}
 
@@ -183,8 +179,7 @@ QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegm
 {
     type = other.type;
     duration = other.duration;
-    distanceValue = other.distanceValue;
-    distanceUnits = other.distanceUnits;
+    distance = other.distance;
     geometry = other.geometry;
     instructions = other.instructions;
     return *this;

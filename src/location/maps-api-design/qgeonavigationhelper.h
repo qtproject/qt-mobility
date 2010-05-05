@@ -41,7 +41,7 @@
 #ifndef QGEONAVIGATIONHELPER_H
 #define QGEONAVIGATIONHELPER_H
 
-#include "qgeomapwidget.h"
+#include "qmobilityglobal.h"
 
 #include <QObject>
 
@@ -49,6 +49,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoDistance;
 class QGeoPositionInfo;
 class QGeoRoute;
 class QGeoNavigationInstruction;
@@ -70,10 +71,15 @@ public:
 
     QGeoNavigationHelper();
     QGeoNavigationHelper(const QGeoNavigationHelper &other);
-    QGeoNavigationHelper(const QGeoRoute &route);
     ~QGeoNavigationHelper();
 
     QGeoNavigationHelper& operator = (const QGeoNavigationHelper &other);
+
+    // set position source
+    // set routing service
+
+    // update route slot (take a reply)
+    // error signal (link to corresponding signal from routingservice)
 
     // TODO - decide on using routes or route services
     // route services allow us to request updates when we're off track
@@ -81,8 +87,8 @@ public:
 
     void setRoute(const QGeoRoute &route);
 
-    void setPositionTolerance(double radius, QGeoMapWidget::DistanceUnits units = QGeoMapWidget::Metres);
-    double positionTolerance(QGeoMapWidget::DistanceUnits units = QGeoMapWidget::Metres);
+    void setPositionTolerance(const QGeoDistance &radius);
+    QGeoDistance positionTolerance() const;
 
     QGeoRoute originalRoute() const;
     QGeoRoute completedRoute() const;

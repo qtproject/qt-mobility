@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QGEOMAPREPLY_H
 #define QGEOMAPREPLY_H
 
@@ -49,6 +50,8 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoMapReplyPrivate;
+
 class Q_LOCATION_EXPORT QGeoMapReply : public QObject {
 
     Q_OBJECT
@@ -57,15 +60,22 @@ public:
     QGeoMapReply(QObject *parent = 0);
     virtual ~QGeoMapReply();
 
-    void setMapImage(const QPixmap &image);
     QPixmap mapImage() const;
+
+public slots:
+    virtual void cancel() = 0;
 
 signals:
     void finished();
     void error(QGeoMappingService::ErrorCode errorCode,
                QString errorString);
 
+protected:
+    void setMapImage(const QPixmap &image);
+
 private:
+    QGeoMapReplyPrivate* d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMapReply);
     Q_DISABLE_COPY(QGeoMapReply)
 };
 

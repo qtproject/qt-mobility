@@ -18,9 +18,11 @@ PUBLIC_HEADERS += \
     qgeocodereply.h \
     qgeocoderequestoptions.h \
     qgeocodingservice.h \
+    qgeodistance.h \
     qgeomapobject.h \
     qgeomappingservice.h \
     qgeomapreply.h \
+    qgeomaprequestoptions.h \
     qgeomapwidget.h \
     qgeonavigationhelper.h \
     qgeonavigationinstruction.h \
@@ -36,9 +38,11 @@ PRIVATE_HEADERS += \
     qgeocodereply_p.h \
     qgeocoderequestoptions_p.h \
     qgeocodingservice_p.h \
+    qgeodistance_p.h \
     qgeomapobject_p.h \
     qgeomappingservice_p.h \
     qgeomapreply_p.h \
+    qgeomaprequestoptions_p.h \
     qgeomapwidget_p.h \
     qgeonavigationhelper_p.h \
     qgeonavigationinstruction_p.h \
@@ -56,9 +60,11 @@ SOURCES += \
     qgeocodereply.cpp \
     qgeocoderequestoptions.cpp \
     qgeocodingservice.cpp \
+    qgeodistance.cpp \
     qgeomapobject.cpp \
     qgeomappingservice.cpp \
     qgeomapreply.cpp \
+    qgeomaprequestoptions.cpp \
     qgeomapwidget.cpp \
     qgeonavigationhelper.cpp \
     qgeonavigationinstruction.cpp \

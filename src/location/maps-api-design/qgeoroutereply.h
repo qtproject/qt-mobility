@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QGEOROUTEREPLY_H
 #define QGEOROUTEREPLY_H
 
@@ -61,6 +62,9 @@ public:
 
     void setRoutes(const QList<QGeoRoute> &routes);
     QList<QGeoRoute> routes() const;
+
+public slots:
+    virtual void cancel() = 0;
 
 signals:
     void finished();

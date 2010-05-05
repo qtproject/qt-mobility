@@ -55,11 +55,11 @@ public:
 
     QGeoRoutingServicePrivate& operator= (const QGeoRoutingServicePrivate &other);
 
-    QGeoRoutingService::TravelModes supportedTravelModes;
-    QGeoRoutingService::AvoidFeatureTypes supportedAvoidFeatureTypes;
-    QGeoRoutingService::RouteOptimizations supportedRouteOptimizations;
-    //QGeoRoutingService::TransitOptionTypes supportedTransitOptionTypes;
-    QGeoRoutingService::DirectionsDetails supportedDirectionDetails;
+    QGeoRoute::TravelModes supportedTravelModes;
+    QGeoRoute::AvoidFeatureTypes supportedAvoidFeatureTypes;
+    QGeoRoute::RouteOptimizations supportedRouteOptimizations;
+    //QGeoRoute::TransitOptionTypes supportedTransitOptionTypes;
+    QGeoRoute::DirectionsDetails supportedDirectionDetails;
     bool supportsUpdatingRoutes;
 };
 

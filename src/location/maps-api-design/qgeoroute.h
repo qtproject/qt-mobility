@@ -42,7 +42,7 @@
 #ifndef QGEOROUTE_H
 #define QGEOROUTE_H
 
-#include "qgeomapwidget.h"
+#include "qmobilityglobal.h"
 
 #include <QList>
 
@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoBoundingBox;
 class QGeoCoordinate;
+class QGeoDistance;
 class QGeoRouteSegment;
 class QGeoNavigationInstruction;
 
@@ -62,11 +63,51 @@ class QGeoRoutePrivate;
 class Q_LOCATION_EXPORT QGeoRoute {
 
 public:
+    enum TravelMode {
+        CarTravel = 0x0001,
+        PedestrianTravel = 0x0002,
+        BicycleTravel = 0x0004,
+        PublicTransitTravel = 0x0008,
+        TruckTravel = 0x000F
+    };
+    Q_DECLARE_FLAGS(TravelModes, TravelMode)
+
+    enum AvoidFeatureType {
+        AvoidNothing = 0x00000000,
+        AvoidTolls = 0x00000001,
+        AvoidHighways = 0x00000002,
+        AvoidPublicTransit = 0x00000004,
+        AvoidFerries = 0x00000008,
+        AvoidTunnels = 0x0000000F,
+        AvoidDirtRoads = 0x00000010,
+        AvoidPark = 0x00000020,
+        AvoidMotorPoolLanes = 0x00000040
+    };
+    Q_DECLARE_FLAGS(AvoidFeatureTypes, AvoidFeatureType)
+
+    enum RouteOptimization {
+        ShortestRoute = 0x0001,
+        FastestRoute = 0x0002,
+        MostEconomicRoute = 0x0004,
+        MostScenicRoute = 0x0008
+    };
+    Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
+
+    enum DirectionsDetail {
+        NoDirections = 0x00001,
+        BasicDirections = 0x0002,
+        DetailedDirections = 0x0004
+    };
+    Q_DECLARE_FLAGS(DirectionsDetails, DirectionsDetail)
+
     QGeoRoute();
     QGeoRoute(const QGeoRoute &other);
     ~QGeoRoute();
 
     QGeoRoute& operator = (const QGeoRoute &other);
+
+    void setDirectionsDetail(DirectionsDetail directionsDetail);
+    DirectionsDetail directionsDetail() const;
 
     void setRouteOverview(const QList<QGeoCoordinate> &routeOverview);
     QList<QGeoCoordinate> routeOverview() const;
@@ -80,8 +121,8 @@ public:
     void setDuration(const QDateTime &duration);
     QDateTime duration() const;
 
-    void setDistance(double value, QGeoMapWidget::DistanceUnits units = QGeoMapWidget::Metres);
-    double distance(QGeoMapWidget::DistanceUnits units = QGeoMapWidget::Metres) const;
+    void setDistance(const QGeoDistance &distance);
+    QGeoDistance distance() const;
 
     QGeoCoordinate closestPointOnRoute(const QGeoCoordinate &position) const;
 
@@ -89,6 +130,11 @@ private:
     QGeoRoutePrivate* d_ptr;
     Q_DECLARE_PRIVATE(QGeoRoute)
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoute::TravelModes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoute::AvoidFeatureTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoute::RouteOptimizations)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRoute::DirectionsDetails)
 
 QTM_END_NAMESPACE
 

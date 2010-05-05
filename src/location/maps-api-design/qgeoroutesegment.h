@@ -42,12 +42,18 @@
 #ifndef QGEOROUTESEGMENT_H
 #define QGEOROUTESEGMENT_H
 
-#include "qgeomapwidget.h"
+#include "qmobilityglobal.h"
+
+#include <QList>
+
+class QDateTime;
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
+class QGeoDistance;
 class QGeoNavigationInstruction;
 class QGeoRouteSegmentPrivate;
 
@@ -70,8 +76,8 @@ public:
     void setDuration(const QDateTime &duration);
     QDateTime duration() const;
 
-    void setDistance(double value, QGeoMapWidget::DistanceUnits units = QGeoMapWidget::Metres);
-    double distance(QGeoMapWidget::DistanceUnits units = QGeoMapWidget::Metres) const;
+    void setDistance(const QGeoDistance &distance);
+    QGeoDistance distance() const;
 
     // bounds per segment?  or is bounds per route enough?
 

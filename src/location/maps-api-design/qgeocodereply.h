@@ -53,6 +53,8 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoLocation;
 
+class QGeoCodeReplyPrivate;
+
 class Q_LOCATION_EXPORT QGeoCodeReply : QObject {
 
     Q_OBJECT
@@ -61,19 +63,22 @@ public:
     QGeoCodeReply(QObject *parent = 0);
     virtual ~QGeoCodeReply();
 
-    // ordered from most to least specific
-    void setLocation(const QList<QGeoLocation> &locations);
     QList<QGeoLocation> locations() const;
 
 public slots:
-    virtual void cancel();
+    virtual void cancel() = 0;
 
 signals:
     void finished();
     void error(QGeoCodingService::ErrorCode errorCode,
                QString errorString);
 
+protected:
+    void setLocations(const QList<QGeoLocation> &locations);
+
 private:
+    QGeoCodeReplyPrivate* d_ptr;
+    Q_DECLARE_PRIVATE(QGeoCodeReply)
     Q_DISABLE_COPY(QGeoCodeReply)
 };
 

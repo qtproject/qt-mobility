@@ -39,36 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTE_P_H
-#define QGEOROUTE_P_H
+#ifndef QGEOMAPREQUESTOPTIONS_H
+#define QGEOMAPREQUESTOPTIONS_H
 
-#include "qgeoroute.h"
-#include "qgeoboundingbox.h"
-#include "qgeodistance.h"
+#include "qgeomapwidget.h"
 
-#include <QDateTime>
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoRouteSegment;
+class QGeoMapRequestOptionsPrivate;
 
-class QGeoRoutePrivate {
+class Q_LOCATION_EXPORT QGeoMapRequestOptions
+{
 public:
-    QGeoRoutePrivate();
-    QGeoRoutePrivate(const QGeoRoutePrivate &other);
-    ~QGeoRoutePrivate();
+    QGeoMapRequestOptions();
+    QGeoMapRequestOptions(const QGeoMapRequestOptions &other);
+    ~QGeoMapRequestOptions();
 
-    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
+    QGeoMapRequestOptions& operator= (const QGeoMapRequestOptions &other);
 
-    QGeoRoute::DirectionsDetail directionsDetail;
-    QList<QGeoCoordinate> routeOverview;
-    QGeoBoundingBox bounds;
-    QList<const QGeoRouteSegment*> routeSegments;
-    QDateTime duration;
-    QGeoDistance distance;
+    void setMapType(QGeoMapWidget::MapType mapType);
+    QGeoMapWidget::MapType mapType() const;
+
+    void setImageFormat(const QString &imageFormat);
+    QString imageFormat() const;
+
+private:
+    QGeoMapRequestOptionsPrivate *d_ptr;
+    Q_DECLARE_PRIVATE(QGeoMapRequestOptions);
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

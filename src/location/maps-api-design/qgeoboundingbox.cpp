@@ -71,7 +71,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs an bounding box.
+    Constructs a QGeoBoundingBox object.
 
     The bounding box will be invalid until setUpperLeft() and setLowerRight()
     have been called.
@@ -80,13 +80,13 @@ QGeoBoundingBox::QGeoBoundingBox()
     : d_ptr(new QGeoBoundingBoxPrivate()) {}
 
 /*!
-    Constucts a bounding box from the contents of \a other.
+    Constucts a QGeoBoundingBox object from the contents of \a other.
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
     : d_ptr(new QGeoBoundingBoxPrivate(*(other.d_ptr))) {}
 
 /*!
-    Constructs a bounding box with the given \a upperLeft and \a lowerRight
+    Constructs a QGeoBoundingBox object with the given \a upperLeft and \a lowerRight
     coordinates.
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &upperLeft,
@@ -94,7 +94,7 @@ QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &upperLeft,
                                      : d_ptr(new QGeoBoundingBoxPrivate(upperLeft, lowerRight)) {}
 
 /*!
-  Destroys the bounding box object.
+  Destroys this QGeoBoundingBox object.
 */
 QGeoBoundingBox::~QGeoBoundingBox()
 {
@@ -103,8 +103,8 @@ QGeoBoundingBox::~QGeoBoundingBox()
 }
 
 /*!
-    Assigns \a other to this bounding box and returns a reference to this
-    bounding box.
+    Assigns \a other to this QGeoBoundingBox and returns a reference
+    to this QGeoBoundingBox.
 */
 QGeoBoundingBox& QGeoBoundingBox::operator= (const QGeoBoundingBox &other)
 {
@@ -113,9 +113,9 @@ QGeoBoundingBox& QGeoBoundingBox::operator= (const QGeoBoundingBox &other)
 }
 
 /*!
-  Returns whether or not the bounding box is valid.
+  Returns whether or not this QGeoBoundingBox is valid.
 
-  To be considered valid a bounding box must have valid coordinates
+  To be considered valid a QGeoBoundingBox must have valid coordinates
   specified for the upper left and lower right coordinate.
 */
 bool QGeoBoundingBox::isValid() const

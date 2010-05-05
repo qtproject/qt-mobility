@@ -39,34 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTE_P_H
-#define QGEOROUTE_P_H
+#ifndef QGEODISTANCE_P_H
+#define QGEODISTANCE_P_H
 
-#include "qgeoroute.h"
-#include "qgeoboundingbox.h"
 #include "qgeodistance.h"
-
-#include <QDateTime>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoRouteSegment;
-
-class QGeoRoutePrivate {
+class QGeoDistancePrivate
+{
 public:
-    QGeoRoutePrivate();
-    QGeoRoutePrivate(const QGeoRoutePrivate &other);
-    ~QGeoRoutePrivate();
+    QGeoDistancePrivate(double magnitude, QGeoDistance::DistanceUnits units);
+    QGeoDistancePrivate(const QGeoDistancePrivate &other);
+    ~QGeoDistancePrivate();
 
-    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
+    QGeoDistancePrivate& operator= (const QGeoDistancePrivate &other);
 
-    QGeoRoute::DirectionsDetail directionsDetail;
-    QList<QGeoCoordinate> routeOverview;
-    QGeoBoundingBox bounds;
-    QList<const QGeoRouteSegment*> routeSegments;
-    QDateTime duration;
-    QGeoDistance distance;
+    double magnitude;
+    QGeoDistance::DistanceUnits units;
 };
 
 QTM_END_NAMESPACE
