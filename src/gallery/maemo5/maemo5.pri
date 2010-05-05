@@ -14,6 +14,7 @@ HEADERS += \
         $$PWD/qgallerytrackerfileeditresponse_p.h \
         $$PWD/qgallerytrackerfilemoveresponse_p.h \
         $$PWD/qgallerytrackerfileremoveresponse_p.h \
+        $$PWD/qgallerytrackeritemlist_p.h \
         $$PWD/qgallerytrackeritemlistresponse_p.h \
         $$PWD/qgallerytrackerlistresponse_p.h \
         $$PWD/qgallerytrackermetadataedit_p.h \
@@ -32,6 +33,7 @@ SOURCES += \
         $$PWD/qgallerytrackerlistresponse.cpp \
         $$PWD/qgallerytrackerfilemoveresponse.cpp \
         $$PWD/qgallerytrackerfileremoveresponse.cpp \
+        $$PWD/qgallerytrackeritemlist.cpp \
         $$PWD/qgallerytrackeritemlistresponse.cpp \
         $$PWD/qgallerytrackermetadataedit.cpp \
         $$PWD/qgallerytrackerschema.cpp \
