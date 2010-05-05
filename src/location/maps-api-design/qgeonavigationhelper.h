@@ -41,7 +41,7 @@
 #ifndef QGEONAVIGATIONHELPER_H
 #define QGEONAVIGATIONHELPER_H
 
-#include "qgeomapwidget.h"
+#include "qmobilityglobal.h"
 
 #include <QObject>
 
@@ -49,6 +49,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoDistance;
 class QGeoPositionInfo;
 class QGeoRoute;
 class QGeoNavigationInstruction;
@@ -81,8 +82,8 @@ public:
 
     void setRoute(const QGeoRoute &route);
 
-    void setPositionTolerance(double radius, QGeoMapWidget::DistanceUnits units = QGeoMapWidget::Metres);
-    double positionTolerance(QGeoMapWidget::DistanceUnits units = QGeoMapWidget::Metres);
+    void setPositionTolerance(const QGeoDistance &radius);
+    QGeoDistance positionTolerance() const;
 
     QGeoRoute originalRoute() const;
     QGeoRoute completedRoute() const;

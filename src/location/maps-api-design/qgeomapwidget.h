@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QGEOMAPWIDGET_H
 #define QGEOMAPWIDGET_H
 
@@ -56,6 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QGeoBoundingBox;
+class QGeoDistance;
 class QGeoMapObject;
 class QGeoMappingService;
 
@@ -66,20 +68,21 @@ class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
     Q_OBJECT
 
 public:
-    // TODO - is there a better place to put this?
-    enum DistanceUnits {
-        Metres,
-        Kilometres,
-        Miles
+    enum MapType {
+        StreetMap,
+        SatelliteMapDay,
+        SatelliteMapNight,
+        TerrainMap
     };
-
-    static double convertDistance(double value, DistanceUnits from, DistanceUnits to);
 
     QGeoMapWidget(QGraphicsItem *parent = 0);
     ~QGeoMapWidget();
 
     void setMapService(const QGeoMappingService* mapService);
     QGeoMappingService* mapService() const;
+
+    void setMapType(MapType mapType);
+    MapType mapType() const;
 
     void setZoomLevel(int zoomLevel);
     int zoomLevel() const;
@@ -105,7 +108,7 @@ public:
     void removeMapObject(const QGeoMapObject *object);
 
     QList<QGeoMapObject*> mapObjects() const;
-    QList<QGeoMapObject*> mapObjectsAt(const QPointF &center, int radius = 0, DistanceUnits units = Metres) const;
+    QList<QGeoMapObject*> mapObjectsAt(const QPointF &center, const QGeoDistance &radius) const;
     QList<QGeoMapObject*> mapObjectsAt(const QRectF &rectangle) const;
 
 private:

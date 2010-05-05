@@ -42,8 +42,8 @@
 #ifndef QGEOROUTESEGMENT_P_H
 #define QGEOROUTESEGMENT_P_H
 
-#include "qgeomapwidget.h"
 #include "qgeoroutesegment.h"
+#include "qgeodistance.h"
 
 #include <QList>
 #include <QDateTime>
@@ -63,8 +63,7 @@ public:
 
     QGeoRouteSegment::SegmentType type;
     QDateTime duration;
-    double distanceValue;
-    QGeoMapWidget::DistanceUnits distanceUnits;
+    QGeoDistance distance;
     QList<QGeoCoordinate> geometry;
     QList<const QGeoNavigationInstruction*> instructions;
 };

@@ -42,6 +42,7 @@
 #include "qgeonavigationhelper.h"
 #include "qgeonavigationhelper_p.h"
 
+#include "qgeodistance.h"
 #include "qgeoroute.h"
 #include "qgeopositioninfo.h"
 
@@ -84,16 +85,14 @@ void QGeoNavigationHelper::setRoute(const QGeoRoute &route)
     Q_UNUSED(route);
 }
 
-void QGeoNavigationHelper::setPositionTolerance(double radius, QGeoMapWidget::DistanceUnits units)
+void QGeoNavigationHelper::setPositionTolerance(const QGeoDistance &radius)
 {
     Q_UNUSED(radius);
-    Q_UNUSED(units);
 }
 
-double QGeoNavigationHelper::positionTolerance(QGeoMapWidget::DistanceUnits units)
+QGeoDistance QGeoNavigationHelper::positionTolerance() const
 {
-    Q_UNUSED(units);
-    return 0.0;
+    return QGeoDistance();
 }
 
 QGeoRoute QGeoNavigationHelper::originalRoute() const

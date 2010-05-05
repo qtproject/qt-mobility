@@ -47,14 +47,14 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoNavigiationInstruction
-  \brief The QGeoNavigationInstruction class
+  \class QGeoNavigationInstruction
+  \brief The QGeoNavigationInstruction class is
   \ingroup maps
 
 */
 
 /*!
-  \enum QGeoNavigiationInstruction::InstructionType
+  \enum QGeoNavigationInstruction::InstructionType
 
 description
 

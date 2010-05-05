@@ -42,7 +42,9 @@
 #ifndef QGEOMAPPINGSERVICE_H
 #define QGEOMAPPINGSERVICE_H
 
+#include "qgeomapwidget.h"
 #include "qgeocoordinate.h"
+#include "qgeomaprequestoptions.h"
 
 #include <QObject>
 
@@ -61,49 +63,25 @@ class Q_LOCATION_EXPORT QGeoMappingService : public QObject{
     Q_OBJECT
 
 public:
-
     enum ErrorCode {
         NoError
     };
 
-    enum MapType {
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap
-    };
-
-
-    QGeoMappingService();
     virtual ~QGeoMappingService();
 
-// Option 1 - simplest
     virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
-                             int zoomLevel,
-                             const QSize &size,
-                             MapType type,
-                             QString imageFormat) = 0;
+                                     int zoomLevel,
+                                     const QSize &size,
+                                     const QGeoMapRequestOptions &requestOptions = QGeoMapRequestOptions()) = 0;
 
-    // Option 2 - a little more extensible
-    //virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
-    //                                 int zoomLevel,
-    //                                 const QSize &size,
-    //                                 const QGeoMapRequestOptions &requestOptions = QGeoMapRequestOptions()) = 0;
-
-    // Option 3 - Could just use a request object straight up
-    // - means things don't get as awkward if/when there's server support for tilting and rotation
-
-    // Option 4 - Could pass the map in along with other options
-    // - it knows the center, zoom level and size
-
-    QList<MapType> supportedMapTypes() const;
+    QList<QGeoMapWidget::MapType> supportedMapTypes() const;
     QList<QString> supportedImageFormats() const;
 
     int minimumZoomLevel() const;
     int maximumZoomLevel() const;
 
-    QSize minimumSize() const;
-    QSize maximumSize() const;
+    QSize minimumImageSize() const;
+    QSize maximumImageSize() const;
 
 signals:
     void replyFinished(QGeoMapReply *reply);
@@ -112,7 +90,9 @@ signals:
                     QString errorString);
 
 protected:
-    void setSupportedMapTypes(const QList<MapType> &mapTypes);
+    QGeoMappingService();
+
+    void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);
     void setSupportedImageFormats(const QList<QString> &imageFormats);
 
     void setMinimumZoomLevel(int minimumZoom);

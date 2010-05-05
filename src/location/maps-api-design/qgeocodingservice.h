@@ -70,16 +70,16 @@ public:
 
     enum SupportLevel {
         NoSupport,
-        NoSupportWithCurrentAuth,
-        SupportedWithCurrentAuth,
+        NoSupportWithCurrentAuthorization,
+        SupportedWithCurrentAuthorization,
         Supported
     };
 
     enum RequestOption {
+        ViewportBiasing,
         MaximumResults
     };
 
-    QGeoCodingService();
     virtual ~QGeoCodingService();
 
     virtual QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coord,
@@ -101,6 +101,8 @@ signals:
                     QString errorString);
 
 protected:
+    QGeoCodingService();
+
     void setSupportedRequestOption(RequestOption option, SupportLevel level);
 
     QGeoCodingServicePrivate* d_ptr;

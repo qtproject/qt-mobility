@@ -43,25 +43,10 @@
 #include "qgeomapwidget_p.h"
 
 #include "qgeocoordinate.h"
+#include "qgeodistance.h"
 #include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
-
-        /*
-        enum DistanceUnits {
-            Metres,
-            Kilometres,
-            Miles
-        };
-        */
-
-double QGeoMapWidget::convertDistance(double value, DistanceUnits from, DistanceUnits to)
-{
-    Q_UNUSED(value);
-    Q_UNUSED(from);
-    Q_UNUSED(to);
-    return 0.0;
-}
 
 QGeoMapWidget::QGeoMapWidget(QGraphicsItem *parent) : QGraphicsWidget(parent, Qt::Widget)
 {
@@ -79,6 +64,16 @@ void QGeoMapWidget::setMapService(const QGeoMappingService* mapService)
 QGeoMappingService* QGeoMapWidget::mapService() const
 {
     return 0;
+}
+
+void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
+{
+    Q_UNUSED(mapType);
+}
+
+QGeoMapWidget::MapType QGeoMapWidget::mapType() const
+{
+    return StreetMap;
 }
 
 void QGeoMapWidget::setZoomLevel(int zoomLevel)
@@ -133,11 +128,10 @@ QList<QGeoMapObject*> QGeoMapWidget::mapObjects() const
     return QList<QGeoMapObject*>();
 }
 
-QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAt(const QPointF &center, int radius, DistanceUnits units) const
+QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAt(const QPointF &center, const QGeoDistance &radius) const
 {
     Q_UNUSED(center);
     Q_UNUSED(radius);
-    Q_UNUSED(units);
     return QList<QGeoMapObject*>();
 }
 

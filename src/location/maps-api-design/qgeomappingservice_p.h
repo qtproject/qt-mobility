@@ -42,7 +42,7 @@
 #ifndef QGEOMAPPINGSERVICE_P_H
 #define QGEOMAPPINGSERVICE_P_H
 
-#include "qgeomappingservice.h"
+#include "qgeomapwidget.h"
 
 #include <QSize>
 #include <QList>
@@ -58,7 +58,7 @@ public:
 
     QGeoMappingServicePrivate& operator= (const QGeoMappingServicePrivate &other);
 
-    QList<QGeoMappingService::MapType> supportedMapTypes;
+    QList<QGeoMapWidget::MapType> supportedMapTypes;
     QList<QString> supportedImageFormats;
     int minimumZoomLevel;
     int maximumZoomLevel;

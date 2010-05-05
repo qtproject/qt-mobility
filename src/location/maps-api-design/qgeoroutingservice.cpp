@@ -60,70 +60,6 @@ description
 */
 
 /*!
-  \enum QGeoRoutingService::TravelMode
-
-description
-
-  \value CarTravel description
-  \value PedestrianTravel description
-  \value BicycleTravel description
-  \value PublicTransitTravel description
-  \value TruckTravel description
-*/
-
-/*!
-  \enum QGeoRoutingService::AvoidFeatureType
-
-description
-
-  \value AvoidNothing description
-  \value AvoidTolls description
-  \value AvoidHighways description
-  \value AvoidPublicTransit description
-  \value AvoidFerries description
-  \value AvoidTunnels description
-  \value AvoidDirtRoads description
-  \value AvoidPark description
-  \value AvoidMotorPoolLanes description
-*/
-
-/*!
-  \enum QGeoRoutingService::RouteOptimization
-
-description
-
-  \value ShortestRoute description
-  \value FastestRoute description
-  \value MostEconomicRoute description
-  \value MostScenicRoute description
-*/
-
-// TODO
-//- move to QGeoRouteTransitOption base class once when we require it
-//- used to determine subclass type from instances of the base class
-///*!
-//  \enum QGeoRoutingService::TransitOptionType
-//
-//description
-//
-//  \value CarTravel description
-//  \value PedestrianTravel description
-//  \value BicycleTravel description
-//  \value PublicTransitTravel description
-//  \value TruckTravel description
-//*/
-
-/*!
-  \enum QGeoRoutingService::DirectionsDetail
-
-description
-
-  \value NoDirections description
-  \value BasicDirections description
-  \value DetailedDirections description
-*/
-
-/*!
 */
 QGeoRoutingService::QGeoRoutingService()
     : d_ptr(new QGeoRoutingServicePrivate()) {}
@@ -138,7 +74,7 @@ QGeoRoutingService::~QGeoRoutingService()
 
 /*!
 */
-QGeoRoutingService::TravelModes QGeoRoutingService::supportedTravelModes() const
+QGeoRoute::TravelModes QGeoRoutingService::supportedTravelModes() const
 {
     Q_D(const QGeoRoutingService);
     return d->supportedTravelModes;
@@ -146,7 +82,7 @@ QGeoRoutingService::TravelModes QGeoRoutingService::supportedTravelModes() const
 
 /*!
 */
-QGeoRoutingService::AvoidFeatureTypes QGeoRoutingService::supportedAvoidFeatureTypes() const
+QGeoRoute::AvoidFeatureTypes QGeoRoutingService::supportedAvoidFeatureTypes() const
 {
     Q_D(const QGeoRoutingService);
     return d->supportedAvoidFeatureTypes;
@@ -154,7 +90,7 @@ QGeoRoutingService::AvoidFeatureTypes QGeoRoutingService::supportedAvoidFeatureT
 
 /*!
 */
-QGeoRoutingService::RouteOptimizations QGeoRoutingService::supportedRouteOptimizations() const
+QGeoRoute::RouteOptimizations QGeoRoutingService::supportedRouteOptimizations() const
 {
     Q_D(const QGeoRoutingService);
     return d->supportedRouteOptimizations;
@@ -170,7 +106,7 @@ QGeoRoutingService::RouteOptimizations QGeoRoutingService::supportedRouteOptimiz
 
 /*!
 */
-QGeoRoutingService::DirectionsDetails QGeoRoutingService::supportedDirectionDetails() const
+QGeoRoute::DirectionsDetails QGeoRoutingService::supportedDirectionDetails() const
 {
     Q_D(const QGeoRoutingService);
     return d->supportedDirectionDetails;
@@ -216,7 +152,7 @@ bool QGeoRoutingService::supportsUpdatingRoutes() const
 
 /*!
 */
-void QGeoRoutingService::setSupportedTravelModes(QGeoRoutingService::TravelModes supportedTravelModes)
+void QGeoRoutingService::setSupportedTravelModes(QGeoRoute::TravelModes supportedTravelModes)
 {
     Q_D(QGeoRoutingService);
     d->supportedTravelModes = supportedTravelModes;
@@ -224,7 +160,7 @@ void QGeoRoutingService::setSupportedTravelModes(QGeoRoutingService::TravelModes
 
 /*!
 */
-void QGeoRoutingService::setSupportedAvoidFeatureTypes(QGeoRoutingService::AvoidFeatureTypes avoidFeatureTypes)
+void QGeoRoutingService::setSupportedAvoidFeatureTypes(QGeoRoute::AvoidFeatureTypes avoidFeatureTypes)
 {
     Q_D(QGeoRoutingService);
     d->supportedAvoidFeatureTypes = avoidFeatureTypes;
@@ -232,7 +168,7 @@ void QGeoRoutingService::setSupportedAvoidFeatureTypes(QGeoRoutingService::Avoid
 
 /*!
 */
-void QGeoRoutingService::setSupportedRouteOptimizations(QGeoRoutingService::RouteOptimizations routeOptimizations)
+void QGeoRoutingService::setSupportedRouteOptimizations(QGeoRoute::RouteOptimizations routeOptimizations)
 {
     Q_D(QGeoRoutingService);
     d->supportedRouteOptimizations = routeOptimizations;
@@ -248,7 +184,7 @@ void QGeoRoutingService::setSupportedRouteOptimizations(QGeoRoutingService::Rout
 
 /*!
 */
-void QGeoRoutingService::setSupportedDirectionDetails(QGeoRoutingService::DirectionsDetails directionsDetails)
+void QGeoRoutingService::setSupportedDirectionDetails(QGeoRoute::DirectionsDetails directionsDetails)
 {
     Q_D(QGeoRoutingService);
     d->supportedDirectionDetails = directionsDetails;

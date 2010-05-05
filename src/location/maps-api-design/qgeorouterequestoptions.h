@@ -42,7 +42,7 @@
 #ifndef QGEOROUTEREQUESTOPTIONS_H
 #define QGEOROUTEREQUESTOPTIONS_H
 
-#include "qgeoroutingservice.h"
+#include "qgeoroute.h"
 
 QT_BEGIN_HEADER
 
@@ -65,16 +65,16 @@ public:
     int numberAlternativeRoutes() const;
 
     // default to QGeoRoutingService::TravelByCar
-    void setTravelModes(QGeoRoutingService::TravelModes travelModes);
-    QGeoRoutingService::TravelModes travelModes() const;
+    void setTravelModes(QGeoRoute::TravelModes travelModes);
+    QGeoRoute::TravelModes travelModes() const;
 
-    // defaults to QGeoRoutingService::NoAvoidance
-    void setAvoidFeatureTypes(QGeoRoutingService::AvoidFeatureTypes avoidFeatureTypes);
-    QGeoRoutingService::AvoidFeatureTypes avoidFeatureTypes() const;
+    // defaults to QGeoRoute::NoAvoidance
+    void setAvoidFeatureTypes(QGeoRoute::AvoidFeatureTypes avoidFeatureTypes);
+    QGeoRoute::AvoidFeatureTypes avoidFeatureTypes() const;
 
-    // defaults to QGeoRoutingService::OptimizeFastest
-    void setRouteOptimization(QGeoRoutingService::RouteOptimization optimization);
-    QGeoRoutingService::RouteOptimization routeOptimization() const;
+    // defaults to QGeoRoute::OptimizeFastest
+    void setRouteOptimization(QGeoRoute::RouteOptimization optimization);
+    QGeoRoute::RouteOptimization routeOptimization() const;
 
     // defaults to empty - no subclass required yet
     // this is how we handle private / public / truck attributes

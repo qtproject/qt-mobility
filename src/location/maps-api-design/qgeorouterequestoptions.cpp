@@ -95,7 +95,7 @@ int QGeoRouteRequestOptions::numberAlternativeRoutes() const
 
 /*!
 */
-void QGeoRouteRequestOptions::setTravelModes(QGeoRoutingService::TravelModes travelModes)
+void QGeoRouteRequestOptions::setTravelModes(QGeoRoute::TravelModes travelModes)
 {
     Q_D(QGeoRouteRequestOptions);
     d->travelModes = travelModes;
@@ -103,7 +103,7 @@ void QGeoRouteRequestOptions::setTravelModes(QGeoRoutingService::TravelModes tra
 
 /*!
 */
-QGeoRoutingService::TravelModes QGeoRouteRequestOptions::travelModes() const
+QGeoRoute::TravelModes QGeoRouteRequestOptions::travelModes() const
 {
     Q_D(const QGeoRouteRequestOptions);
     return d->travelModes;
@@ -111,7 +111,7 @@ QGeoRoutingService::TravelModes QGeoRouteRequestOptions::travelModes() const
 
 /*!
 */
-void QGeoRouteRequestOptions::setAvoidFeatureTypes(QGeoRoutingService::AvoidFeatureTypes avoidFeatureTypes)
+void QGeoRouteRequestOptions::setAvoidFeatureTypes(QGeoRoute::AvoidFeatureTypes avoidFeatureTypes)
 {
     Q_D(QGeoRouteRequestOptions);
     d->avoidFeatureTypes = avoidFeatureTypes;
@@ -119,7 +119,7 @@ void QGeoRouteRequestOptions::setAvoidFeatureTypes(QGeoRoutingService::AvoidFeat
 
 /*!
 */
-QGeoRoutingService::AvoidFeatureTypes QGeoRouteRequestOptions::avoidFeatureTypes() const
+QGeoRoute::AvoidFeatureTypes QGeoRouteRequestOptions::avoidFeatureTypes() const
 {
     Q_D(const QGeoRouteRequestOptions);
     return d->avoidFeatureTypes;
@@ -127,7 +127,7 @@ QGeoRoutingService::AvoidFeatureTypes QGeoRouteRequestOptions::avoidFeatureTypes
 
 /*!
 */
-void QGeoRouteRequestOptions::setRouteOptimization(QGeoRoutingService::RouteOptimization optimization)
+void QGeoRouteRequestOptions::setRouteOptimization(QGeoRoute::RouteOptimization optimization)
 {
     Q_D(QGeoRouteRequestOptions);
     d->routeOptimization = optimization;
@@ -135,7 +135,7 @@ void QGeoRouteRequestOptions::setRouteOptimization(QGeoRoutingService::RouteOpti
 
 /*!
 */
-QGeoRoutingService::RouteOptimization QGeoRouteRequestOptions::routeOptimization() const
+QGeoRoute::RouteOptimization QGeoRouteRequestOptions::routeOptimization() const
 {
     Q_D(const QGeoRouteRequestOptions);
     return d->routeOptimization;
@@ -165,9 +165,9 @@ QGeoRoutingService::RouteOptimization QGeoRouteRequestOptions::routeOptimization
 QGeoRouteRequestOptionsPrivate::QGeoRouteRequestOptionsPrivate()
 {
     alternativeRoutes = 0;
-    travelModes = QGeoRoutingService::CarTravel;
-    avoidFeatureTypes = QGeoRoutingService::AvoidNothing;
-    routeOptimization = QGeoRoutingService::FastestRoute;
+    travelModes = QGeoRoute::CarTravel;
+    avoidFeatureTypes = QGeoRoute::AvoidNothing;
+    routeOptimization = QGeoRoute::FastestRoute;
 }
 
 QGeoRouteRequestOptionsPrivate::QGeoRouteRequestOptionsPrivate(const QGeoRouteRequestOptionsPrivate &other)

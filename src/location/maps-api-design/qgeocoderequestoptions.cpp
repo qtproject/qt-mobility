@@ -58,22 +58,24 @@ QTM_BEGIN_NAMESPACE
     The QGeoCodeRequestOptions represents the options corresponding to the
     more advanced (or less common) options which can be passed to the
     QGeoCodingService methods.
+
+    \sa QGeoCodingService
 */
 
 /*!
-    Constructs a geocoding options object.
+    Constructs a QGeoCodingRequestOptions object.
 */
 QGeoCodeRequestOptions::QGeoCodeRequestOptions()
     : d_ptr(new QGeoCodeRequestOptionsPrivate()) {}
 
 /*!
-    Constructs a geocoding options object from \a other.
+    Constructs a QGeoCodingRequestOptions object from \a other.
 */
 QGeoCodeRequestOptions::QGeoCodeRequestOptions(const QGeoCodeRequestOptions &other)
     : d_ptr(new QGeoCodeRequestOptionsPrivate(*(other.d_ptr))) {}
 
 /*!
-    Destroys the geocoding options object.
+    Destroys this QGeoCodingRequestOptions object.
 */
 QGeoCodeRequestOptions::~QGeoCodeRequestOptions()
 {
@@ -82,8 +84,8 @@ QGeoCodeRequestOptions::~QGeoCodeRequestOptions()
 }
 
 /*!
-    Assigns the value of \a other to this geocoding options object and
-    returns a reference to this geocoding options object.
+    Assigns the value of \a other to this QGeoCodingRequestOptions object and
+    returns a reference to this QGeoCodingRequestOptions object.
 */
 QGeoCodeRequestOptions& QGeoCodeRequestOptions::operator= (const QGeoCodeRequestOptions &other)
 {
