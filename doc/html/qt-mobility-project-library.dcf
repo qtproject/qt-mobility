@@ -3336,6 +3336,9 @@
     <section ref="bearer.html" title="Qt Bearer Management API">
         <keyword ref="bearer.html">Qt Bearer Management API</keyword>
     </section>
+    <section ref="contactsengines.html" title="Qt Contacts Manager Engines">
+        <keyword ref="contactsengines.html">Qt Contacts Manager Engines</keyword>
+    </section>
     <section ref="contactsschema.html" title="Qt Contacts Schema">
         <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>
     </section>

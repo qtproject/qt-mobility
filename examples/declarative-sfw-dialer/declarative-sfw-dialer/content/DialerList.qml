@@ -21,7 +21,7 @@ import QtMobility.serviceframework 1.0
 //---------------------------------
     
 Rectangle {
-    property var dialService: 0
+    property variant dialService: 0
     signal signalSelected
     
     Text {

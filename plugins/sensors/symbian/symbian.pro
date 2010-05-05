@@ -1,15 +1,15 @@
 INCLUDEPATH+=../../../src/sensors
 INCLUDEPATH+=../../sensors \epoc32\include\osextensions
 
-include(version.pri)
-#include(symbian.pri)
-include(../../../common.pri)
-
 PLUGIN_TYPE = sensors
 
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtsensors_sym)
+
+include(version.pri)
+#include(symbian.pri)
+include(../../../common.pri)
 
 SOURCES +=  \			
 			sensorbackendsym.cpp \
@@ -52,16 +52,11 @@ symbian {
     LIBS += -lsensrvutil   
 }
 symbian: {
-# Load predefined include paths (e.g. QT_PLUGINS_BASE_DIR) to be used in the pro-files
-load(data_caging_paths)
+    # Load predefined include paths (e.g. QT_PLUGINS_BASE_DIR) to be used in the pro-files
+    load(data_caging_paths)
  
-# Defines plugin files into Symbian .pkg package
-pluginDep.sources = qtsensors_sym.dll
-pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
-DEPLOYMENT += pluginDep
+    # Defines plugin files into Symbian .pkg package
+    pluginDep.sources = qtsensors_sym.dll
+    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
+    DEPLOYMENT += pluginDep
 }
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
-INSTALLS += target
-

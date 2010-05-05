@@ -65,11 +65,6 @@ This example uses the QSystemInfo headers to print out the
 system's current country code.  All the domain APIs are wrapped
 within a Qt Mobility namespace and thus developers 
 need to use the QTM_USE_NAMESPACE macro.
-(\bold{Note}:  If you are on the Symbian platform you will
-need to define the actual header file, in this case
-<qsysteminfo.h> rather than using the standard header form
-<QSystemInfo>, this is a known bug that is to be 
-addressed in a future release)
 
 In step 3, to specify that our project is using
 System Information we declare in the project file:
@@ -154,6 +149,8 @@ When developing on Symbian we will also need to add the required capabilites to 
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData
 \row
 \endtable
+
+The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}. 
 
 And we're done.  If you are using the command line simply
 enter:

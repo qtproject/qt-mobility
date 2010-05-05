@@ -23,7 +23,7 @@ import "content"
 //----------------------------------------------
 
 Rectangle {
-    property var dialerObject: defaultService.serviceObject
+    property variant dialerObject: defaultService.serviceObject
     
     id: mainPage
     width: 500
@@ -100,7 +100,7 @@ Rectangle {
     DialScreen {
         id: dialScreen
         property bool activeCall : false
-        property var currentDialer: 0;
+        property variant currentDialer: 0;
         anchors.topMargin: 5
         anchors.leftMargin: 5
         anchors.rightMargin: 5

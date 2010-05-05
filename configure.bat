@@ -80,6 +80,7 @@ if "%1" == "-prefix"            goto prefixTag
 if "%1" == "-libdir"            goto libTag
 if "%1" == "-bindir"            goto binTag
 if "%1" == "-headerdir"         goto headerTag
+if "%1" == "-plugindir"         goto pluginTag
 if "%1" == "-tests"             goto testTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-qt"                goto qtTag
@@ -112,6 +113,8 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     (default PREFIX/lib)
     echo -bindir (dir) ..... Executables will be installed to dir
     echo                     (default PREFIX/bin)
+    echo -plugindir (dir) .. Plug-ins will be installed to dir
+    echo                     (default PREFIX/plugins)
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
     echo -silent ........... Reduces build output
@@ -179,6 +182,13 @@ goto cmdline_parsing
 shift
 echo QT_MOBILITY_INCLUDE = %1 >> %PROJECT_CONFIG%
 shift
+goto cmdline_parsing
+
+:pluginTag
+shift
+echo QT_MOBILITY_PLUGINS = %1 >> %PROJECT_CONFIG%
+shift
+echo
 goto cmdline_parsing
 
 :unfrozenTag
@@ -331,6 +341,7 @@ echo qmf_enabled = no >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plugins >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 REM no Sysinfo support on Maemo yet
