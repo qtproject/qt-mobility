@@ -62,9 +62,18 @@ class QGeoCoordinate;
 class QLandmarkBoxFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkBoxFilterPrivate(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+    QLandmarkBoxFilterPrivate(const QGeoCoordinate &topLeft = QGeoCoordinate(), const QGeoCoordinate &bottomRight=QGeoCoordinate());
     QLandmarkBoxFilterPrivate(const QLandmarkBoxFilterPrivate &other);
     virtual ~QLandmarkBoxFilterPrivate();
+
+    virtual bool compare(const QLandmarkFilterPrivate* other) const
+    {
+        const QLandmarkBoxFilterPrivate *od = static_cast<const QLandmarkBoxFilterPrivate*>(other);
+        return (topLeftCoord == od->topLeftCoord)
+                && (bottomRightCoord == od->bottomRightCoord);
+    }
+
+    Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkBoxFilter, QLandmarkFilter::BoxFilter);
 
     QGeoCoordinate topLeftCoord;
     QGeoCoordinate bottomRightCoord;

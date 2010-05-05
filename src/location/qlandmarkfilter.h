@@ -43,14 +43,21 @@
 #define QLANDMARKFILTER_H
 
 #include "qmobilityglobal.h"
-
-QT_BEGIN_HEADER
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
+
+#define Q_DECLARE_LANDMARKFILTER_PRIVATE(Class) \
+    inline Class##Private* d_func(); \
+    inline const Class##Private* d_func() const; \
+    friend class Class##Private;
 
 class QLandmarkFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkFilter
 {
+
+friend class QLandmarkFilterPrivate;
+
 public:
     enum FilterType {InvalidFilter, DefaultFilter,
                      NameFilter, ProximityFilter,
@@ -68,20 +75,22 @@ public:
     int maximumMatches() const;
     void setMaximumMatches(int maxMatches);
 
-    //bool operator!=(const QLandmarkFilter &other) const;
-    //bool operator==(const QLandmarkFilter &other) const;
+    bool operator==(const QLandmarkFilter &other) const;
+    bool operator!=(const QLandmarkFilter &other) const {
+        return !(*this == other);
+    }
+
 protected:
-    QLandmarkFilter(QLandmarkFilterPrivate *d_ptr);
-    QLandmarkFilterPrivate *d_ptr;
-private:
-    Q_DECLARE_PRIVATE(QLandmarkFilter);
+    QLandmarkFilter(QLandmarkFilterPrivate *dd);
+    QSharedDataPointer<QLandmarkFilterPrivate> d_ptr;
 };
 
-//const Q_LOCATION_EXPORT QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right);
-//const Q_LOCATION_EXPORT QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right);
+const Q_LOCATION_EXPORT QLandmarkFilter operator&(const QLandmarkFilter &left, const QLandmarkFilter &right);
+const Q_LOCATION_EXPORT QLandmarkFilter operator|(const QLandmarkFilter &left, const QLandmarkFilter &right);
 
 QTM_END_NAMESPACE
 
-QT_END_HEADER
+Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QLandmarkFilter), Q_MOVABLE_TYPE);
+
 
 #endif

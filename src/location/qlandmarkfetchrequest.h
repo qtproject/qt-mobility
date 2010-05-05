@@ -54,12 +54,12 @@ public:
     QLandmarkFetchRequest(QLandmarkManager *manager, QObject *parent = 0);
     ~QLandmarkFetchRequest();
 
-    const QLandmarkFilter *filter() const;
-    void setFilter(const QLandmarkFilter *filter);
+    QLandmarkFilter filter() const;
+    void setFilter(const QLandmarkFilter &filter);
 
-    QList<const QLandmarkSortOrder *> sorting() const;
-    void setSorting(const QList<const QLandmarkSortOrder*> &sorting);
-    void setSorting(const QLandmarkSortOrder *sorting);
+    QList<QLandmarkSortOrder> sorting() const;
+    void setSorting(const QList<QLandmarkSortOrder> &sorting);
+    void setSorting(const QLandmarkSortOrder &sorting);
 
     QList<QLandmark> landmarks() const;
 private:

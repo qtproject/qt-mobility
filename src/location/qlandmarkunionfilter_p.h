@@ -66,7 +66,16 @@ public:
     QLandmarkUnionFilterPrivate(const QLandmarkUnionFilterPrivate &other);
     virtual ~QLandmarkUnionFilterPrivate();
 
-    QList<const QLandmarkFilter *> filters;
+    virtual bool compare(const QLandmarkFilterPrivate* other) const
+    {
+        //it is assumed that the types and superclass member variables already match
+        const QLandmarkUnionFilterPrivate *od = static_cast<const QLandmarkUnionFilterPrivate*>(other);
+        return filters == od->filters;
+    }
+
+    Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkUnionFilter, QLandmarkFilter::UnionFilter)
+
+    QList<QLandmarkFilter> filters;
 };
 
 QTM_END_NAMESPACE

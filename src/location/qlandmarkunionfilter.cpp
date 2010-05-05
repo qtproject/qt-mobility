@@ -54,6 +54,8 @@ QTM_BEGIN_NAMESPACE
     to select landmarks which match any one of it's constituent filters.
 */
 
+Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkUnionFilter);
+
 /*!
     Constructs a new union filter.
 */
@@ -74,7 +76,7 @@ QLandmarkUnionFilter::~QLandmarkUnionFilter()
     Sets the \a filters whose criteria will be unioned.
     \sa filters()
 */
-void QLandmarkUnionFilter::setFilters(const QList<const QLandmarkFilter*>& filters)
+void QLandmarkUnionFilter::setFilters(const QList<QLandmarkFilter>& filters)
 {
     Q_D(QLandmarkUnionFilter);
     d->filters = filters;
@@ -85,7 +87,7 @@ void QLandmarkUnionFilter::setFilters(const QList<const QLandmarkFilter*>& filte
 
     \sa append(), filters()
 */
-void QLandmarkUnionFilter::prepend(const QLandmarkFilter *filter)
+void QLandmarkUnionFilter::prepend(const QLandmarkFilter &filter)
 {
     Q_D(QLandmarkUnionFilter);
     d->filters.prepend(filter);
@@ -96,7 +98,7 @@ void QLandmarkUnionFilter::prepend(const QLandmarkFilter *filter)
 
     \sa operator<<(), prepend(), filters()
 */
-void QLandmarkUnionFilter::append(const QLandmarkFilter *filter)
+void QLandmarkUnionFilter::append(const QLandmarkFilter &filter)
 {
     Q_D(QLandmarkUnionFilter);
     d->filters.append(filter);
@@ -106,7 +108,7 @@ void QLandmarkUnionFilter::append(const QLandmarkFilter *filter)
     Removes the given \a filter from the union list.
     \sa filters(), append(), prepend()
 */
-void QLandmarkUnionFilter::remove(const QLandmarkFilter *filter)
+void QLandmarkUnionFilter::remove(const QLandmarkFilter &filter)
 {
     Q_D(QLandmarkUnionFilter);
     d->filters.removeAll(filter);
@@ -131,7 +133,7 @@ void QLandmarkUnionFilter::remove(const QLandmarkFilter *filter)
 
     \sa append()
  */
-QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter *filter)
+QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter &filter)
 {
     Q_D(QLandmarkUnionFilter);
     d->filters.append(filter);
@@ -143,7 +145,7 @@ QLandmarkUnionFilter& QLandmarkUnionFilter::operator<<(const QLandmarkFilter *fi
 
     \sa setFilters(), prepend(), append(), remove()
  */
-QList<const QLandmarkFilter*> QLandmarkUnionFilter::filters() const
+QList<QLandmarkFilter> QLandmarkUnionFilter::filters() const
 {
     Q_D(const QLandmarkUnionFilter);
     return d->filters;

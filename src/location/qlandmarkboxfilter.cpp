@@ -51,6 +51,8 @@ QTM_BEGIN_NAMESPACE
     \ingroup landmarks-filter
 */
 
+Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkBoxFilter);
+
 /*!
     Creates a filter that will search for landmarks within a bounding
     box defined by the \a topLeft and \a bottomRight coordinates.
@@ -114,7 +116,8 @@ void QLandmarkBoxFilter::setBottomRightCoordinate(const QGeoCoordinate &bottomRi
 
 QLandmarkBoxFilterPrivate::QLandmarkBoxFilterPrivate(const QGeoCoordinate &topLeft,
         const QGeoCoordinate &bottomRight)
-        : topLeftCoord(topLeft),
+        : QLandmarkFilterPrivate(),
+        topLeftCoord(topLeft),
         bottomRightCoord(bottomRight)
 {
     type = QLandmarkFilter::BoxFilter;

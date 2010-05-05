@@ -52,6 +52,8 @@ QTM_BEGIN_NAMESPACE
     \ingroup landmarks-filter
 */
 
+Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkProximityFilter)
+
 /*!
     Creates a filter that will select landmarks within a given \a radius around
     a central \a coordinate.

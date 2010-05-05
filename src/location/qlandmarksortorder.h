@@ -45,17 +45,26 @@
 #include "qmobilityglobal.h"
 #include "qnamespace.h"
 
+#include <QSharedDataPointer>
 #include <QList>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+
+#define Q_DECLARE_LANDMARKSORTORDER_PRIVATE(Class) \
+    inline Class##Private* d_func(); \
+    inline const Class##Private* d_func() const; \
+    friend class Class##Private;
+
 class QLandmarkId;
 class QLandmark;
 
 class QLandmarkSortOrderPrivate;
 class Q_LOCATION_EXPORT QLandmarkSortOrder
 {
+
+friend class QLandmarkSortOrderPrivate;
 
 public:
     enum SortType {DefaultSort, NameSort, DistanceSort};
@@ -69,11 +78,13 @@ public:
     Qt::SortOrder direction() const;
     void setDirection(Qt::SortOrder direction);
 
+    bool operator==(const QLandmarkSortOrder &other) const;
+    bool operator!=(const QLandmarkSortOrder &other) const {
+        return !(*this == other);
+    }
 protected:
-    QLandmarkSortOrder(QLandmarkSortOrderPrivate *d_ptr);
-    QLandmarkSortOrderPrivate *d_ptr;
-private:
-    Q_DECLARE_PRIVATE(QLandmarkSortOrder);
+    QLandmarkSortOrder(QLandmarkSortOrderPrivate *dd);
+    QSharedDataPointer<QLandmarkSortOrderPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

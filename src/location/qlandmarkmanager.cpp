@@ -429,7 +429,7 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter *filter, const QList<const QLandmarkSortOrder*> &sortOrders) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders) const
 {
     Q_D(const QLandmarkManager);
 
@@ -450,16 +450,15 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter *filter, cons
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the given \a sortOrder.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter *filter, const QLandmarkSortOrder *sortOrder) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
     if (!d->engine)
         return QList<QLandmark>();
 
-    QList<const QLandmarkSortOrder*> sortOrders;
-    if (sortOrder)
-        sortOrders.append(sortOrder);
+    QList<QLandmarkSortOrder> sortOrders;
+    sortOrders.append(sortOrder);
     QList<QLandmark> lms = d->engine->landmarks(filter,
                            sortOrders,
                            &(d->errorCode),
@@ -498,8 +497,8 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     Returns a list of landmark identifiers of landmarks that match the given \a filter, sorted
     according to the given \a sortOrders.
 */
-QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter *filter,
-        const QList<const QLandmarkSortOrder*> &sortOrders) const
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
+        const QList<QLandmarkSortOrder> &sortOrders) const
 {
     Q_D(const QLandmarkManager);
 
@@ -523,17 +522,17 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter *filter,
 
     This is a convenience function.
 */
-QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter *filter,
-        const QLandmarkSortOrder *sortOrder) const
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
+        const QLandmarkSortOrder &sortOrder) const
 {
     Q_D(const QLandmarkManager);
 
     if (!d->engine)
         return QList<QLandmarkId>();
 
-    QList<const QLandmarkSortOrder*> sortOrders;
-    if (sortOrder)
-        sortOrders.append(sortOrder);
+    QList<QLandmarkSortOrder> sortOrders;
+    sortOrders.append(sortOrder);
+
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
                              sortOrders,
                              &(d->errorCode),

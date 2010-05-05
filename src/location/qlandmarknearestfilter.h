@@ -54,6 +54,7 @@ class Q_LOCATION_EXPORT QLandmarkNearestFilter : public QLandmarkFilter
 {
 public:
     QLandmarkNearestFilter(const QGeoCoordinate &coordinate = QGeoCoordinate(), double radius = -1);
+    QLandmarkNearestFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkNearestFilter();
 
     QGeoCoordinate coordinate() const;
@@ -63,7 +64,7 @@ public:
     void setRadius(double radius);
 
 private:
-    Q_DECLARE_PRIVATE(QLandmarkNearestFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkNearestFilter);
 };
 
 QTM_END_NAMESPACE

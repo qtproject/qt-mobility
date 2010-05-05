@@ -169,7 +169,7 @@ QString quoteString(const QString &s)
 }
 
 /* Filtering */
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsDefault(const QLandmarkFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsDefault(const QLandmarkFilter &filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
@@ -189,7 +189,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsDefault(const QLandm
     return result;
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsName(const QLandmarkNameFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsName(const QLandmarkNameFilter &filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
@@ -201,12 +201,12 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsName(const QLandmark
     QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
 
     QSqlQuery query(db);
-    if (filter->caseSensitivity() == Qt::CaseSensitive) {
-        if (!query.exec(QString("SELECT id FROM landmark WHERE name = \"%1\";").arg(filter->name()))) {
+    if (filter.caseSensitivity() == Qt::CaseSensitive) {
+        if (!query.exec(QString("SELECT id FROM landmark WHERE name = \"%1\";").arg(filter.name()))) {
             return result;
         }
-    } else if (filter->caseSensitivity() == Qt::CaseInsensitive) {
-        if (!query.exec(QString("SELECT id FROM landmark WHERE name LIKE \"%1\";").arg(filter->name()))) {
+    } else if (filter.caseSensitivity() == Qt::CaseInsensitive) {
+        if (!query.exec(QString("SELECT id FROM landmark WHERE name LIKE \"%1\";").arg(filter.name()))) {
             return result;
         }
     } else {
@@ -377,22 +377,22 @@ QString queryStringForRadius(const QGeoCoordinate &coord, double radius)
     */
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsProximity(const QLandmarkProximityFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsProximity(const QLandmarkProximityFilter &filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
     QList<QLandmarkId> result;
     QString uri = managerUri();
 
-    if (filter->radius() <= 0.0)
+    if (filter.radius() <= 0.0)
         return result;
 
-    QGeoCoordinate coord = filter->coordinate();
+    QGeoCoordinate coord = filter.coordinate();
 
     if (!coord.isValid())
         return result;
 
-    double radius = filter->radius();
+    double radius = filter.radius();
 
     QString q = queryStringForRadius(coord, radius);
 
@@ -418,14 +418,14 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsProximity(const QLan
     return result;
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsNearest(const QLandmarkNearestFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsNearest(const QLandmarkNearestFilter &filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
     QList<QLandmarkId> result;
     QString uri = managerUri();
 
-    QGeoCoordinate coord = filter->coordinate();
+    QGeoCoordinate coord = filter.coordinate();
 
     if (!coord.isValid())
         return result;
@@ -434,7 +434,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsNearest(const QLandm
     double minDist = 0.0;
 
     // TODO do distance -> degrees conversion, use to limit lats and longs searched
-    double radius = filter->radius();
+    double radius = filter.radius();
 
     QString q = "SELECT id, latitude, longitude FROM landmark;";
     if (radius != -1)
@@ -469,19 +469,19 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsNearest(const QLandm
     return result;
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsCategory(const QLandmarkCategoryFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsCategory(const QLandmarkCategoryFilter &filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
     QList<QLandmarkId> result;
     QString uri = managerUri();
 
-    if (filter->categoryId().managerUri() != uri)
+    if (filter.categoryId().managerUri() != uri)
         return result;
 
     QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
 
-    QSqlQuery query(QString("SELECT landmark_id FROM landmark_category WHERE category_id = %1;").arg(filter->categoryId().id()), db);
+    QSqlQuery query(QString("SELECT landmark_id FROM landmark_category WHERE category_id = %1;").arg(filter.categoryId().id()), db);
     while (query.next()) {
         QLandmarkId id;
         id.setManagerUri(uri);
@@ -492,25 +492,25 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsCategory(const QLand
     return result;
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsBox(const QLandmarkBoxFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsBox(const QLandmarkBoxFilter &filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
     QList<QLandmarkId> result;
     QString uri = managerUri();
 
-    if (!filter->topLeftCoordinate().isValid())
+    if (!filter.topLeftCoordinate().isValid())
         return result;
 
-    if (!filter->bottomRightCoordinate().isValid())
+    if (!filter.bottomRightCoordinate().isValid())
         return result;
 
     QString q = "SELECT id FROM landmark WHERE (";
 
-    double tly = filter->topLeftCoordinate().latitude();
-    double bry = filter->bottomRightCoordinate().latitude();
-    double tlx = filter->topLeftCoordinate().longitude();
-    double brx = filter->bottomRightCoordinate().longitude();
+    double tly = filter.topLeftCoordinate().latitude();
+    double bry = filter.bottomRightCoordinate().latitude();
+    double tlx = filter.topLeftCoordinate().longitude();
+    double brx = filter.bottomRightCoordinate().longitude();
 
     bool latWrap = (tly < bry);
     bool lonWrap = (tlx > brx);
@@ -556,7 +556,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsBox(const QLandmarkB
     return result;
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsIntersection(const QLandmarkIntersectionFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsIntersection(const QLandmarkIntersectionFilter &filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
@@ -564,22 +564,22 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsIntersection(const Q
     QString uri = managerUri();
 
     QSet<QString> ids;
-    QList<const QLandmarkFilter*> filters = filter->filters();
+    QList<QLandmarkFilter> filters = filter.filters();
 
     if (filters.size() == 0)
         return result;
 
     if (filters.size() == 1)
-        return landmarkIds(filters.at(0), QList<const QLandmarkSortOrder*>(), error, errorString);
+        return landmarkIds(filters.at(0), QList<QLandmarkSortOrder>(), error, errorString);
 
-    QList<QLandmarkId> firstResult = landmarkIds(filters.at(0), QList<const QLandmarkSortOrder*>(), error, errorString);
+    QList<QLandmarkId> firstResult = landmarkIds(filters.at(0), QList<QLandmarkSortOrder>(), error, errorString);
     for (int j = 0; j < firstResult.size(); ++j) {
         if (firstResult.at(j).isValid() && firstResult.at(j).managerUri() == uri)
             ids.insert(firstResult.at(j).id());
     }
 
     for (int i = 0; i < filters.size(); ++i) {
-        QList<QLandmarkId> subResult = landmarkIds(filters.at(i), QList<const QLandmarkSortOrder*>(), error, errorString);
+        QList<QLandmarkId> subResult = landmarkIds(filters.at(i), QList<QLandmarkSortOrder>(), error, errorString);
         QSet<QString> subIds;
         for (int j = 0; j < subResult.size(); ++j) {
             if (subResult.at(j).isValid() && subResult.at(j).managerUri() == uri)
@@ -599,7 +599,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsIntersection(const Q
     return result;
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsUnion(const QLandmarkUnionFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsUnion(const QLandmarkUnionFilter& filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
@@ -607,16 +607,16 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsUnion(const QLandmar
     QString uri = managerUri();
 
     QSet<QString> ids;
-    QList<const QLandmarkFilter*> filters = filter->filters();
+    QList<QLandmarkFilter> filters = filter.filters();
 
     if (filters.size() == 0)
         return result;
 
     if (filters.size() == 1)
-        return landmarkIds(filters.at(0), QList<const QLandmarkSortOrder*>(), error, errorString);
+        return landmarkIds(filters.at(0), QList<QLandmarkSortOrder>(), error, errorString);
 
     for (int i = 0; i < filters.size(); ++i) {
-        QList<QLandmarkId> subResult = landmarkIds(filters.at(i), QList<const QLandmarkSortOrder*>(), error, errorString);
+        QList<QLandmarkId> subResult = landmarkIds(filters.at(i), QList<QLandmarkSortOrder>(), error, errorString);
         for (int j = 0; j < subResult.size(); ++j) {
             if (subResult.at(j).isValid() && subResult.at(j).managerUri() == uri)
                 ids.insert(subResult.at(j).id());
@@ -634,7 +634,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsUnion(const QLandmar
     return result;
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsAttribute(const QLandmarkAttributeFilter* filter,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsAttribute(const QLandmarkAttributeFilter& filter,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
@@ -661,19 +661,19 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsAttribute(const QLan
 class SortFunctor
 {
 public:
-    SortFunctor(const QList<const QLandmarkSortOrder*>& sortOrders);
+    SortFunctor(const QList<QLandmarkSortOrder>& sortOrders);
 
     bool operator()(const QLandmark &lm1, const QLandmark &lm2);
 
 private:
     int compare(const QLandmark &lm1, const QLandmark &lm2) const;
-    int compareName(const QLandmarkNameSort *sort, const QLandmark &lm1, const QLandmark &lm2) const;
-    int compareDistance(const QLandmarkDistanceSort *sort, const QLandmark &lm1, const QLandmark &lm2) const;
+    int compareName(const QLandmarkNameSort &sort, const QLandmark &lm1, const QLandmark &lm2) const;
+    int compareDistance(const QLandmarkDistanceSort &sort, const QLandmark &lm1, const QLandmark &lm2) const;
 
-    QList<const QLandmarkSortOrder*> m_sortOrders;
+    QList<QLandmarkSortOrder> m_sortOrders;
 };
 
-SortFunctor::SortFunctor(const QList<const QLandmarkSortOrder*> &sortOrders)
+SortFunctor::SortFunctor(const QList<QLandmarkSortOrder> &sortOrders)
         : m_sortOrders(sortOrders) {}
 
 bool SortFunctor::operator()(const QLandmark &lm1, const QLandmark &lm2)
@@ -685,17 +685,21 @@ int SortFunctor::compare(const QLandmark &lm1, const QLandmark &lm2) const
 {
     int result = 0;
     for (int i = 0; i < m_sortOrders.size(); ++i) {
-        if (!m_sortOrders.at(i))
-            continue;
-        switch (m_sortOrders.at(i)->type()) {
+        switch (m_sortOrders.at(i).type()) {
             case QLandmarkSortOrder::DefaultSort:
                 continue;
             case QLandmarkSortOrder::NameSort:
-                result = compareName(static_cast<const QLandmarkNameSort*>(m_sortOrders.at(i)), lm1, lm2);
+            {
+                QLandmarkNameSort nameSort = m_sortOrders.at(i);
+                result = compareName(nameSort, lm1, lm2);
                 break;
+            }
             case QLandmarkSortOrder::DistanceSort:
-                result = compareDistance(static_cast<const QLandmarkDistanceSort*>(m_sortOrders.at(i)), lm1, lm2);
+            {
+                QLandmarkDistanceSort distanceSort = m_sortOrders.at(i);
+                result = compareDistance(distanceSort, lm1, lm2);
                 break;
+            }
             default:
                 continue;
         }
@@ -706,24 +710,24 @@ int SortFunctor::compare(const QLandmark &lm1, const QLandmark &lm2) const
     return result;
 }
 
-int SortFunctor::compareName(const QLandmarkNameSort *sort, const QLandmark &lm1, const QLandmark &lm2) const
+int SortFunctor::compareName(const QLandmarkNameSort &sort, const QLandmark &lm1, const QLandmark &lm2) const
 {
-    int result = QString::compare(lm1.name(), lm2.name(), sort->caseSensitivity());
+    int result = QString::compare(lm1.name(), lm2.name(), sort.caseSensitivity());
 
-    if (sort->direction() == Qt::DescendingOrder)
+    if (sort.direction() == Qt::DescendingOrder)
         result *= -1;
 
     return result;
 }
 
-int SortFunctor::compareDistance(const QLandmarkDistanceSort *sort, const QLandmark &lm1, const QLandmark &lm2) const
+int SortFunctor::compareDistance(const QLandmarkDistanceSort &sort, const QLandmark &lm1, const QLandmark &lm2) const
 {
     int result = 0;
 
     if (lm1.coordinate().isValid()) {
         if (lm2.coordinate().isValid()) {
-            double d1 = sort->coordinate().distanceTo(lm1.coordinate());
-            double d2 = sort->coordinate().distanceTo(lm2.coordinate());
+            double d1 = sort.coordinate().distanceTo(lm1.coordinate());
+            double d2 = sort.coordinate().distanceTo(lm2.coordinate());
 
             if (d1 == d2) {
                 result = 0;
@@ -743,51 +747,48 @@ int SortFunctor::compareDistance(const QLandmarkDistanceSort *sort, const QLandm
         }
     }
 
-    if (sort->direction() == Qt::DescendingOrder)
+    if (sort.direction() == Qt::DescendingOrder)
         result *= -1;
 
     return result;
 }
 
-QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilter* filter,
-        const QList<const QLandmarkSortOrder*>& sortOrders,
+QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilter& filter,
+        const QList<QLandmarkSortOrder>& sortOrders,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
     QList<QLandmarkId> filterResult;
 
-    if (!filter)
-        return filterResult;
-
-    switch (filter->type()) {
+    switch (filter.type()) {
         case QLandmarkFilter::InvalidFilter:
             break;
         case QLandmarkFilter::DefaultFilter:
             filterResult = landmarkIdsDefault(filter, error, errorString);
             break;
         case QLandmarkFilter::NameFilter:
-            filterResult = landmarkIdsName(static_cast<const QLandmarkNameFilter*>(filter), error, errorString);
+            filterResult = landmarkIdsName(filter, error, errorString);
             break;
         case QLandmarkFilter::ProximityFilter:
-            filterResult = landmarkIdsProximity(static_cast<const QLandmarkProximityFilter*>(filter), error, errorString);
+            filterResult = landmarkIdsProximity(filter, error, errorString);
             break;
         case QLandmarkFilter::NearestFilter:
-            filterResult = landmarkIdsNearest(static_cast<const QLandmarkNearestFilter*>(filter), error, errorString);
+            filterResult = landmarkIdsNearest(filter, error, errorString);
             break;
         case QLandmarkFilter::CategoryFilter:
-            filterResult = landmarkIdsCategory(static_cast<const QLandmarkCategoryFilter*>(filter), error, errorString);
+            filterResult = landmarkIdsCategory(filter, error, errorString);
             break;
         case QLandmarkFilter::BoxFilter:
-            filterResult = landmarkIdsBox(static_cast<const QLandmarkBoxFilter*>(filter), error, errorString);
+            filterResult = landmarkIdsBox(filter, error, errorString);
             break;
         case QLandmarkFilter::IntersectionFilter:
-            filterResult = landmarkIdsIntersection(static_cast<const QLandmarkIntersectionFilter*>(filter), error, errorString);
+            filterResult = landmarkIdsIntersection(filter, error, errorString);
             break;
         case QLandmarkFilter::UnionFilter:
-            filterResult = landmarkIdsUnion(static_cast<const QLandmarkUnionFilter*>(filter), error, errorString);
+            filterResult = landmarkIdsUnion(filter, error, errorString);
             break;
         case QLandmarkFilter::AttributeFilter:
-            filterResult = landmarkIdsAttribute(static_cast<const QLandmarkAttributeFilter*>(filter), error, errorString);
+            filterResult = landmarkIdsAttribute(filter, error, errorString);
             break;
         default:
             break;
@@ -797,11 +798,11 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilt
     // sorting
     if ((sortOrders.length() == 0)
             || ((sortOrders.length() == 1)
-                && (sortOrders.at(0)->type() == QLandmarkSortOrder::DefaultSort))) {
+                && (sortOrders.at(0).type() == QLandmarkSortOrder::DefaultSort))) {
 
         // limit matches
-        if (filter && filter->maximumMatches() != -1) {
-            int matches = filter->maximumMatches();
+        if (filter.maximumMatches() != -1) {
+            int matches = filter.maximumMatches();
             if (filterResult.length() < matches)
                 return filterResult;
 
@@ -857,9 +858,9 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilt
     int matches = lms.size();
 
     // limit matches
-    if (filter && filter->maximumMatches() != -1) {
-        if (filter->maximumMatches() < matches)
-            matches = filter->maximumMatches();
+    if (filter.maximumMatches() != -1) {
+        if (filter.maximumMatches() < matches)
+            matches = filter.maximumMatches();
     }
 
     for (int i = 0; i < matches; ++i)
@@ -1140,8 +1141,8 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
     // QString(SELECT key, value from landmark_attribute WHERE id = %1).arg(landmarkId.id())
 }
 
-QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter *filter,
-        const QList<const QLandmarkSortOrder*>& sortOrders,
+QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter &filter,
+        const QList<QLandmarkSortOrder>& sortOrders,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {

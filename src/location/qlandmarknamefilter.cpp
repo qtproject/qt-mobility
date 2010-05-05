@@ -50,6 +50,8 @@ QTM_BEGIN_NAMESPACE
     \ingroup landmarks-filter
 */
 
+Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkNameFilter)
+
 /*!
     Creates a filter that selects landmarks by \a name.
 */

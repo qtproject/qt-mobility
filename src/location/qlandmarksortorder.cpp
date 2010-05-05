@@ -65,6 +65,13 @@ QTM_BEGIN_NAMESPACE
            coordinate.
 */
 
+#if !defined(Q_CC_MWERKS)
+template<> QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate)>::clone()
+{
+    return d->clone();
+}
+#endif
+
 /*!
     Constructs a landmark sort order.
 
@@ -72,27 +79,30 @@ QTM_BEGIN_NAMESPACE
 */
 QLandmarkSortOrder::QLandmarkSortOrder()
         : d_ptr(new QLandmarkSortOrderPrivate())
-{}
+{
+}
 
 /*!
   Internal
 */
 QLandmarkSortOrder::QLandmarkSortOrder(QLandmarkSortOrderPrivate *d_ptr)
-        : d_ptr(d_ptr) {}
+        : d_ptr(d_ptr)
+{
+}
 
 QLandmarkSortOrder::QLandmarkSortOrder(const QLandmarkSortOrder &other)
-        : d_ptr(new QLandmarkSortOrderPrivate(*(other.d_ptr))) {}
+        : d_ptr(other.d_ptr)
+{
+}
 
 QLandmarkSortOrder &QLandmarkSortOrder::operator=(const QLandmarkSortOrder & other)
 {
-    *d_ptr = *(other.d_ptr);
+    d_ptr = other.d_ptr;
     return *this;
 }
 
 QLandmarkSortOrder::~QLandmarkSortOrder()
 {
-    Q_D(QLandmarkSortOrder);
-    delete d;
 }
 
 /*!
@@ -100,8 +110,7 @@ QLandmarkSortOrder::~QLandmarkSortOrder()
 */
 QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 {
-    Q_D(const QLandmarkSortOrder);
-    return d->type;
+    return d_ptr->type;
 }
 
 /*!
@@ -109,8 +118,7 @@ QLandmarkSortOrder::SortType QLandmarkSortOrder::type() const
 */
 Qt::SortOrder QLandmarkSortOrder::direction() const
 {
-    Q_D(const QLandmarkSortOrder);
-    return d->order;
+    return d_ptr->order;
 }
 
 /*!
@@ -118,21 +126,42 @@ Qt::SortOrder QLandmarkSortOrder::direction() const
 */
 void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
 {
-    Q_D(QLandmarkSortOrder);
-    d->order = direction;
+    d_ptr->order = direction;
+}
+
+bool QLandmarkSortOrder::operator==(const QLandmarkSortOrder& other) const
+{
+
+    if(!d_ptr->QLandmarkSortOrderPrivate::compare(other.d_ptr))
+        return false;
+
+    /* Different types can't be equal */
+    if (other.type() != type())
+        return false;
+
+    /* Otherwise, use the virtual op == */
+    return d_ptr->compare(other.d_ptr);
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate()
-        : type(QLandmarkSortOrder::DefaultSort),
-        order(Qt::AscendingOrder) {}
+        : QSharedData(),
+          type(QLandmarkSortOrder::DefaultSort),
+          order(Qt::AscendingOrder)
+{
+}
 
 QLandmarkSortOrderPrivate::QLandmarkSortOrderPrivate(const QLandmarkSortOrderPrivate &other)
-        : type(other.type),
-        order(other.order) {}
+        : QSharedData(),
+          type(other.type),
+          order(other.order)
+{
+}
 
-QLandmarkSortOrderPrivate::~QLandmarkSortOrderPrivate() {}
+QLandmarkSortOrderPrivate::~QLandmarkSortOrderPrivate()
+{
+}
 
 QTM_END_NAMESPACE

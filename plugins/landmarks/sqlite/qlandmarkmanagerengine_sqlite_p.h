@@ -72,8 +72,8 @@ public:
     int managerVersion() const;
 
     /* Filtering */
-    QList<QLandmarkId> landmarkIds(const QLandmarkFilter* filter,
-                                   const QList<const QLandmarkSortOrder*>& sortOrders,
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter& filter,
+                                   const QList<QLandmarkSortOrder>& sortOrders,
                                    QLandmarkManager::Error *error,
                                    QString *errorString) const;
     QList<QLandmarkCategoryId> categoryIds(QLandmarkManager::Error *error,
@@ -83,8 +83,8 @@ public:
     QLandmark landmark(const QLandmarkId &landmarkId,
                        QLandmarkManager::Error *error,
                        QString *errorString) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter *filter,
-                               const QList<const QLandmarkSortOrder*>& sortOrders,
+    QList<QLandmark> landmarks(const QLandmarkFilter& filter,
+                               const QList<QLandmarkSortOrder>& sortOrders,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds,
@@ -140,39 +140,39 @@ public:
     bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs);
 
 private:
-    QList<QLandmarkId> landmarkIdsDefault(const QLandmarkFilter* filter,
+    QList<QLandmarkId> landmarkIdsDefault(const QLandmarkFilter &filter,
                                           QLandmarkManager::Error *error,
                                           QString *errorString) const;
 
-    QList<QLandmarkId> landmarkIdsName(const QLandmarkNameFilter* filter,
+    QList<QLandmarkId> landmarkIdsName(const QLandmarkNameFilter &filter,
                                        QLandmarkManager::Error *error,
                                        QString *errorString) const;
 
-    QList<QLandmarkId> landmarkIdsProximity(const QLandmarkProximityFilter* filter,
+    QList<QLandmarkId> landmarkIdsProximity(const QLandmarkProximityFilter &filter,
                                             QLandmarkManager::Error *error,
                                             QString *errorString) const;
 
-    QList<QLandmarkId> landmarkIdsNearest(const QLandmarkNearestFilter* filter,
+    QList<QLandmarkId> landmarkIdsNearest(const QLandmarkNearestFilter &filter,
                                           QLandmarkManager::Error *error,
                                           QString *errorString) const;
 
-    QList<QLandmarkId> landmarkIdsCategory(const QLandmarkCategoryFilter* filter,
+    QList<QLandmarkId> landmarkIdsCategory(const QLandmarkCategoryFilter &filter,
                                            QLandmarkManager::Error *error,
                                            QString *errorString) const;
 
-    QList<QLandmarkId> landmarkIdsBox(const QLandmarkBoxFilter* filter,
+    QList<QLandmarkId> landmarkIdsBox(const QLandmarkBoxFilter &filter,
                                       QLandmarkManager::Error *error,
                                       QString *errorString) const;
 
-    QList<QLandmarkId> landmarkIdsIntersection(const QLandmarkIntersectionFilter* filter,
+    QList<QLandmarkId> landmarkIdsIntersection(const QLandmarkIntersectionFilter &filter,
             QLandmarkManager::Error *error,
             QString *errorString) const;
 
-    QList<QLandmarkId> landmarkIdsUnion(const QLandmarkUnionFilter* filter,
+    QList<QLandmarkId> landmarkIdsUnion(const QLandmarkUnionFilter &filter,
                                         QLandmarkManager::Error *error,
                                         QString *errorString) const;
 
-    QList<QLandmarkId> landmarkIdsAttribute(const QLandmarkAttributeFilter* filter,
+    QList<QLandmarkId> landmarkIdsAttribute(const QLandmarkAttributeFilter &filter,
                                          QLandmarkManager::Error *error,
                                          QString *errorString) const;
 
