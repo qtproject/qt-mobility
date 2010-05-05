@@ -11,10 +11,10 @@ DEFINES += QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
 
 SOURCES += databasemanagerservermain.cpp
 
-include(../../../../common.pri)
+include(../../../common.pri)
 
 
-DEPENDPATH += ../ ../..
+DEPENDPATH += ../
 
 HEADERS +=  servicemetadata_p.h \
             servicedatabase_p.h \
