@@ -143,12 +143,6 @@ Support is present for the following System Info API classes
 \list
     \o Qt Mobility does not compile if Qt using a namespace.
     \o Not all example applications will display(fit) well on small screens.
-    \o S60: it is currently not possible to use Qt convenience header includes:
-    \code
-        #include <QSystemInfo> //does not work on Symbian
-        //use
-        #include <qsysteminfo.h>
-    \endcode
 \endlist
 
 \section2 Contacts API

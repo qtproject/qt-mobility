@@ -42,11 +42,7 @@
 #include <QApplication>
 #include <QLabel>
 
-#ifdef Q_OS_SYMBIAN
-#include <qsysteminfo.h>
-#else
 #include <QSystemInfo> //(1)
-#endif
 
 QTM_USE_NAMESPACE //(2)
 
