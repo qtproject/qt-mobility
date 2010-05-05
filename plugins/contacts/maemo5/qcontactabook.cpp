@@ -1768,7 +1768,7 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
                                                  image.hasAlphaChannel(), 8,
                                                  image.width(), image.height(),
                                                  image.bytesPerLine(), 0, 0);
-    osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, book, 0);
+    osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, 0, 0);
     g_object_unref(pixbuf);
 }
 
@@ -1792,7 +1792,7 @@ void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QCon
 //                                               image.hasAlphaChannel(), 8,
 //                                               image.width(), image.height(),
 //                                               image.bytesPerLine(), 0, 0);
-//  osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, book, 0);
+//  osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, 0, 0);
 //  g_object_unref(pixbuf);
 }
 
