@@ -51,7 +51,13 @@ QTM_USE_NAMESPACE
 // ----- QLandmarkCategoryPrivate -----
 
 QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
-    : QSharedData()
+    : QSharedData(),
+      name(QString()),
+      iconUrl(QUrl()),
+      description(QString()),
+      readOnly(false),
+      attributes(QHash<QString, QVariant>()),
+      id(QLandmarkCategoryId())
 {
 }
 

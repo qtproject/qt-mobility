@@ -53,7 +53,7 @@ public:
     QLandmarkFetchRequestPrivate(QLandmarkManager *mgr)
         : QLandmarkAbstractRequestPrivate(mgr) {}
     QLandmarkFilter filter;
-    QList<const QLandmarkSortOrder*> sorting;
+    QList<QLandmarkSortOrder> sorting;
     QList<QLandmark> landmarks;
 };
 
@@ -109,7 +109,7 @@ void QLandmarkFetchRequest::setFilter(const QLandmarkFilter &filter)
 /*!
     Returns the sort ordering which is used to sort the result.
 */
-QList<const QLandmarkSortOrder*> QLandmarkFetchRequest::sorting() const
+QList<QLandmarkSortOrder> QLandmarkFetchRequest::sorting() const
 {
     Q_D(const QLandmarkFetchRequest);
     return d->sorting;
@@ -120,7 +120,7 @@ QList<const QLandmarkSortOrder*> QLandmarkFetchRequest::sorting() const
     function will only have an effect on the results if invoked
     prior to calling \l QLandmarkAbstractRequest::start().
 */
-void QLandmarkFetchRequest::setSorting(const QList<const QLandmarkSortOrder*> &sorting)
+void QLandmarkFetchRequest::setSorting(const QList<QLandmarkSortOrder> &sorting)
 {
     Q_D(QLandmarkFetchRequest);
     d->sorting = sorting;
@@ -131,7 +131,7 @@ void QLandmarkFetchRequest::setSorting(const QList<const QLandmarkSortOrder*> &s
     will only have an effect on results if invoked prior to calling
     \l QLandmarkAbstractRequest::start()
 */
-void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder *sorting)
+void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 {
     Q_D(QLandmarkFetchRequest);
     d->sorting.clear();

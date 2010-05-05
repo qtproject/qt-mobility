@@ -111,7 +111,7 @@ int QLandmarkManagerEngine::managerVersion() const
     and \a errorString.
  */
 QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& filter,
-        const QList<const QLandmarkSortOrder*>& sortOrders, QLandmarkManager::Error* error,
+        const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error* error,
         QString *errorString) const
 {
     return QList<QLandmarkId>();
@@ -159,7 +159,7 @@ QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId> &lan
 
     Overall operation errors are stored in \a error and \a errorString.
 */
-QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter, const QList<const QLandmarkSortOrder*> &sortOrders,
+QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
         QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmark>();
