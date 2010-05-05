@@ -86,6 +86,7 @@ QT_MOBILITY_PREFIX=$shadowpath/install
 QT_MOBILITY_INCLUDE=
 QT_MOBILITY_LIB=
 QT_MOBILITY_BIN=
+QT_MOBILITY_PLUGINS=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
 BUILD_DOCS=yes
@@ -96,6 +97,7 @@ LINUX_TARGET=
 QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
+PLUGIN_PATH="plugins"
 MAC_SDK=
 MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
 MOBILITY_MODULES_UNPARSED=
@@ -119,6 +121,8 @@ usage()
     echo "                    (default PREFIX/lib)"
     echo "-bindir <dir> ..... Executables will be installed to <dir>"
     echo "                    (default PREFIX/bin)"
+    echo "-plugindir <dir> .. Plug-ins will be installed to <dir>"
+    echo "                    (default PREFIX/plugins)"
     echo "-debug ............ Build with debugging symbols"
     echo "-release .......... Build without debugging symbols"
     echo "-silent ........... Reduces build output"
@@ -169,6 +173,10 @@ while [ "$#" -gt 0 ]; do
             ;;
         -bindir)
             QT_MOBILITY_BIN="$2"
+            shift
+            ;;
+        -plugindir)
+            QT_MOBILITY_PLUGINS="$2"
             shift
             ;;
         -tests)
@@ -338,7 +346,7 @@ else
 fi
 echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 
-#process binary path
+#process bin path
 if [ -z "$QT_MOBILITY_BIN" ]; then
     QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/$BIN_PATH"
 elif [ -d "$QT_MOBILITY_BIN" ]; then
@@ -349,6 +357,19 @@ else
     rm -rf "$QT_MOBILITY_BIN"
 fi
 echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
+
+#process plugin path
+if [ -z "$QT_MOBILITY_PLUGINS" ]; then
+    QT_MOBILITY_PLUGINS="$QT_MOBILITY_PREFIX/$PLUGIN_PATH"
+elif [ -d "$QT_MOBILITY_PLUGINS" ]; then
+    QT_MOBILITY_PLUGINS=`absPath $QT_MOBILITY_PLUGINS $LINUX_TARGET`
+else
+    mkdir -p "$QT_MOBILITY_PLUGINS"
+    QT_MOBILITY_PLUGINS=`absPath $QT_MOBILITY_PLUGINS $LINUX_TARGET`
+    rm -rf "$QT_MOBILITY_PLUGINS"
+fi
+echo "QT_MOBILITY_PLUGINS = $QT_MOBILITY_PLUGINS" >> "$CONFIG_IN"
+
 
 echo "QT_MOBILITY_SOURCE_TREE = $relpath" >> "$QMAKE_CACHE"
 echo "QT_MOBILITY_BUILD_TREE = $shadowpath" >> "$QMAKE_CACHE"

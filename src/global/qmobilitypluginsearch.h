@@ -112,8 +112,8 @@ inline QStringList mobilityPlugins(const QString plugintype)
 #endif
 
     QStringList paths = QApplication::libraryPaths();
-#ifdef QTM_PREFIX_PATH
-    paths << QLatin1String(QTM_PREFIX_PATH);
+#ifdef QTM_PLUGIN_PATH
+    paths << QLatin1String(QTM_PLUGIN_PATH);
 #endif
 #if !defined QT_NO_DEBUG
     if (showDebug)

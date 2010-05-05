@@ -97,9 +97,7 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
         } else {
             #check that plugin_type is set or warn otherwise
             isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
-
-            maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
-            else:target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
+            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
             INSTALLS += target
         }
     }
@@ -177,4 +175,4 @@ LIBS += -L$$OUTPUT_DIR/lib
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
-!symbian:!wince*:DEFINES += QTM_PREFIX_PATH=\\\"$$replace(QT_MOBILITY_PREFIX, \\\\, /)\\\"
+!symbian:!wince*:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PLUGINS, \\\\, /)\\\"
