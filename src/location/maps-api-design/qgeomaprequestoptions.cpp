@@ -53,16 +53,19 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    Constructs a QGeoMapRequestOptions object.
 */
 QGeoMapRequestOptions::QGeoMapRequestOptions()
     : d_ptr(new QGeoMapRequestOptionsPrivate()) {}
 
 /*!
+    Constructs a QGeoMapRequestOptions object form \a other.
 */
 QGeoMapRequestOptions::QGeoMapRequestOptions(const QGeoMapRequestOptions &other)
     : d_ptr(new QGeoMapRequestOptionsPrivate(*(other.d_ptr))) {}
 
 /*!
+    Destroys this QGeoMapRequestOptions object.
 */
 QGeoMapRequestOptions::~QGeoMapRequestOptions()
 {
@@ -71,6 +74,8 @@ QGeoMapRequestOptions::~QGeoMapRequestOptions()
 }
 
 /*!
+    Assigns \a other to this QGeoMapRequestOptions object and returns a
+    reference to this QGeoMapRequestOptions object.
 */
 QGeoMapRequestOptions& QGeoMapRequestOptions::operator= (const QGeoMapRequestOptions &other)
 {
@@ -80,6 +85,10 @@ QGeoMapRequestOptions& QGeoMapRequestOptions::operator= (const QGeoMapRequestOpt
 }
 
 /*!
+    Sets the map type for the request to \a mapType.
+
+    \sa QGeoMapWidget::MapType
+    \sa QGeoMapRequestOptions::mapType()
 */
 void QGeoMapRequestOptions::setMapType(QGeoMapWidget::MapType mapType)
 {
@@ -88,6 +97,10 @@ void QGeoMapRequestOptions::setMapType(QGeoMapWidget::MapType mapType)
 }
 
 /*!
+    Returns the map type which will be requested.
+
+    \sa QGeoMapWidget::MapType
+    \sa QGeoMapRequestOptions::setMapType()
 */
 QGeoMapWidget::MapType QGeoMapRequestOptions::mapType() const
 {
@@ -96,6 +109,9 @@ QGeoMapWidget::MapType QGeoMapRequestOptions::mapType() const
 }
 
 /*!
+    Sets the image format for the request to \a imageFormat.
+
+    \sa QGeoMapRequestOptions::imageFormat()
 */
 void QGeoMapRequestOptions::setImageFormat(const QString &imageFormat)
 {
@@ -104,6 +120,9 @@ void QGeoMapRequestOptions::setImageFormat(const QString &imageFormat)
 }
 
 /*!
+    Returns the image format which will be requested.
+
+    \sa QGeoMapRequestOptions::setImageFormat()
 */
 QString QGeoMapRequestOptions::imageFormat() const
 {

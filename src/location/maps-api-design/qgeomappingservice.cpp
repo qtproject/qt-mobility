@@ -47,7 +47,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoMappingService
     \brief The QGeoMappingService class manages requests to and replies from
-    geographical map image service.
+    a geographical map image service.
     \ingroup maps
 
     The request functions return a QGeoMapReply instance, which is responsible

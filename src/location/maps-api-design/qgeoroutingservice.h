@@ -105,7 +105,7 @@ public:
 protected:
     QGeoRoutingService();
 
-    void setSupportedTravelModes(QGeoRoute::TravelModes supportedTravelModes);
+    void setSupportedTravelModes(QGeoRoute::TravelModes travelModes);
     void setSupportedAvoidFeatureTypes(QGeoRoute::AvoidFeatureTypes avoidFeatureTypes);
     void setSupportedRouteOptimizations(QGeoRoute::RouteOptimizations routeOptimizations);
     // void setSupportedTransitOptionType(TransitOptionTypes transitOptionTypes);

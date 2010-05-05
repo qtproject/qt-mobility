@@ -71,10 +71,15 @@ public:
 
     QGeoNavigationHelper();
     QGeoNavigationHelper(const QGeoNavigationHelper &other);
-    QGeoNavigationHelper(const QGeoRoute &route);
     ~QGeoNavigationHelper();
 
     QGeoNavigationHelper& operator = (const QGeoNavigationHelper &other);
+
+    // set position source
+    // set routing service
+
+    // update route slot (take a reply)
+    // error signal (link to corresponding signal from routingservice)
 
     // TODO - decide on using routes or route services
     // route services allow us to request updates when we're off track
