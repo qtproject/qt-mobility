@@ -107,7 +107,6 @@ protected:
     int doGetBufferStatusL() const;
     qint64 doGetDurationL() const;
     void doSetAudioEndpoint(const QString& audioEndpoint);
-    void doSetVideoRenderer(QObject *renderer){Q_UNUSED(renderer)}
     
 private:
 #ifdef S60_DRM_SUPPORTED    
