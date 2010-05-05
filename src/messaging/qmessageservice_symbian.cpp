@@ -101,8 +101,6 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
 
 bool QMessageServicePrivate::show(const QMessageId& id)
 {
-    QString i = id.toString();
-    qDebug() << "QMessageServicePrivate::show" << i;
     switch (idType(id)) {
         case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED

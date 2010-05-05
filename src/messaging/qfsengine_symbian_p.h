@@ -144,7 +144,6 @@ public:
                                      bool resultSetOrdered);
     
     void setMtmAccountIdList(QMessageAccountIdList accountList);
-    void notification(MEmailMessage* aMessage);
 
 public: // from MMailboxSyncObserver
     void MailboxSynchronisedL(TInt aResult);

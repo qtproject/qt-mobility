@@ -200,7 +200,7 @@ QMessageFolder QMessageStorePrivate::folder(const QMessageFolderId& id) const
 
 bool QMessageStorePrivate::addMessage(QMessage *m)
 {
-    switch (idType(m->id())) {
+    switch (idType(m->parentAccountId())) {
     case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
         return _fsEngine->addMessage(m);

@@ -573,7 +573,10 @@ bool CFSEngine::showMessage(const QMessageId &id)
 bool CFSEngine::composeMessage(const QMessage &message)
 {
     bool retVal = false;
-    MEmailMessage* fsMessage;
+    TMailboxId mailboxId(stripIdPrefix(message.parentAccountId().toString()).toInt());
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+    mailbox->EditNewMessageL();
+    /*MEmailMessage* fsMessage;
     TRAPD(err, 
         fsMessage = createFSMessageL(message);
         fsMessage->SaveChangesL();
@@ -582,7 +585,7 @@ bool CFSEngine::composeMessage(const QMessage &message)
     if (err != KErrNone)
         retVal = false;
     else
-        retVal = true;   
+        retVal = true; */  
     return retVal;
 }
 
@@ -1806,22 +1809,6 @@ TTime CFSEngine::qDateTimeToSymbianTTime(const QDateTime& date) const
     return TTime(dateTime);
 }
 
-void CFSEngine::notification(MEmailMessage* aMessage)
-{
-    QMessageManager::NotificationFilterIdSet matchingFilters;
-    bool messageRetrieved = false;
-    QMessage message;
-    message.setType(QMessage::Email);
-    QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
-    message = CreateQMessageL(aMessage);
-    messageRetrieved = true;
-    QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Added;
-    qDebug() << "call messageNotification";
-    ipMessageStorePrivate->messageNotification(notificationType, 
-                            QMessageId(addIdPrefix(QString::number(aMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)), 
-                            matchingFilters);             
-}
-
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
     : m_owner(aOwner), 
       m_operationId(aOperationId),
@@ -2191,13 +2178,7 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)
 {
     qDebug() << "CFSMessagesFindOperation::HandleResultL:";
-    if (!(aMessage->Flags() & EFlag_Read) && m_receiveNewMessages) { // new message
-        qDebug() << "CFSMessagesFindOperation::HandleResultL: call CreateQMessageL";
-        m_owner.notification(aMessage);
-    } else {
-        iIdList.append(QMessageId(addIdPrefix(QString::number(aMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)));
-    }
-    
+	iIdList.append(QMessageId(addIdPrefix(QString::number(aMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)));   
 }
 
 void CFSMessagesFindOperation::SearchCompletedL()
