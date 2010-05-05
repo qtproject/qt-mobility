@@ -3423,7 +3423,6 @@
             <file>images/writemessage-example.png</file>
             <file>logfilepositionsource-logfilepositionsource-cpp.html</file>
             <file>qmessagefolder-members.html</file>
-            <file>declarative-sfw-dialer-sfwexample-qdeclarativeservice-h.html</file>
             <file>qmessageaccountfilter-members.html</file>
             <file>contactsschema.html</file>
             <file>qgeocoordinate-members.html</file>
@@ -3448,7 +3447,6 @@
             <file>notesmanagerplugin-notesmanagerplugin-h.html</file>
             <file>lightmaps.html</file>
             <file>flickrdemo-flickr-icon-svg.html</file>
-            <file>declarative-sfw-dialer-sfwexample-main-cpp.html</file>
             <file>qsystemnetworkinfo-members.html</file>
             <file>qsystemdisplayinfo.html</file>
             <file>keepintouch-main-cpp.html</file>
@@ -3464,7 +3462,6 @@
             <file>fetchgooglemaps-mapwindow-h.html</file>
             <file>qradiotuner.html</file>
             <file>3rdparty.html</file>
-            <file>declarative-sfw-dialer-sfwexample-sfwexample-h.html</file>
             <file>creating-a-sensor-plugin.html</file>
             <file>qmagnetometer-members.html</file>
             <file>qcontactphonenumber.html</file>
@@ -3546,7 +3543,6 @@
             <file>qcontactthumbnail-members.html</file>
             <file>qcontactremoverequest-members.html</file>
             <file>publish-subscribe.html</file>
-            <file>declarative-sfw-notes-sfwnotes-cpp.html</file>
             <file>battery-charge-battery-publisher-batterypublisher-cpp.html</file>
             <file>qcontactmanagerenginefactory.html</file>
             <file>qcontactsortorder-members.html</file>
@@ -3574,7 +3570,6 @@
             <file>bluetoothtransferplugin-bluetoothtransfer-cpp.html</file>
             <file>qcontactanniversary.html</file>
             <file>qgeopositioninfosource-members.html</file>
-            <file>declarative-sfw-notes-sfwnotes-h.html</file>
             <file>qaudiocapturesource.html</file>
             <file>qsensorfilter.html</file>
             <file>qmediaserviceproviderhint.html</file>
@@ -3616,10 +3611,10 @@
             <file>qmediacontrol-members.html</file>
             <file>images/sensors-coordinates.jpg</file>
             <file>qmediaservicesupporteddevicesinterface.html</file>
+            <file>qcontactmanagerenginefactory-members.html</file>
             <file>qcontactgeolocation.html</file>
             <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>annotated.html</file>
-            <file>qcontactmanagerenginefactory-members.html</file>
             <file>qnetworksession-members.html</file>
             <file>qtapsensor-members.html</file>
             <file>qcontactrelationshipsaverequest.html</file>
@@ -3669,7 +3664,6 @@
             <file>flickrdemo-connectivityhelper-cpp.html</file>
             <file>bearer-management.html</file>
             <file>fetchgooglemaps-main-cpp.html</file>
-            <file>declarative-sfw-dialer-sfwexample-qdeclarativeservice-cpp.html</file>
             <file>qcontactbirthday-members.html</file>
             <file>publ-subs.html</file>
             <file>qversitcontactexporterdetailhandler-members.html</file>
@@ -3704,8 +3698,8 @@
             <file>qcontactnote-members.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-h.html</file>
             <file>qcontactdetaildefinition-members.html</file>
-            <file>qmessageid.html</file>
             <file>qcontactlocalidfetchrequest-members.html</file>
+            <file>qmessageid.html</file>
             <file>qsensorreading-members.html</file>
             <file>samplephonebook-filterpage-h.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
@@ -3731,7 +3725,6 @@
             <file>bearercloud-icons-qrc.html</file>
             <file>filemanagerplugin-filemanagerstorage-cpp.html</file>
             <file>serviceactions-mainwindow-h.html</file>
-            <file>declarative-sfw-notes-qdeclarativeservice-cpp.html</file>
             <file>qmediarecorder-members.html</file>
             <file>player-player-cpp.html</file>
             <file>qmessagemanager-members.html</file>
@@ -3745,8 +3738,8 @@
             <file>fetchgooglemaps-mapwindow-cpp.html</file>
             <file>qmessagefolderfilter.html</file>
             <file>images/bearercloud-example.png</file>
-            <file>qaudioendpointselector-members.html</file>
             <file>qcontactname-members.html</file>
+            <file>qaudioendpointselector-members.html</file>
             <file>weatherinfo-weatherinfo-pro.html</file>
             <file>systeminfo.html</file>
             <file>quickstart-main-cpp.html</file>
@@ -3764,7 +3757,6 @@
             <file>notesmanagerplugin-notesmanager-cpp.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
-            <file>declarative-sfw-notes-qdeclarativeservice-h.html</file>
             <file>qserviceinterfacedescriptor.html</file>
             <file>index.html</file>
             <file>bearercloud.html</file>
@@ -3842,8 +3834,8 @@
             <file>images/publish-subscribe-subscriber.png</file>
             <file>qversitcontactimporterpropertyhandler-members.html</file>
             <file>qvideowidgetcontrol-members.html</file>
-            <file>bearermonitor-bearermonitor-pro.html</file>
             <file>qcontactmanagerengine-members.html</file>
+            <file>bearermonitor-bearermonitor-pro.html</file>
             <file>qvideorenderercontrol.html</file>
             <file>bearer.html</file>
             <file>qcontactonlineaccount.html</file>
@@ -3867,7 +3859,6 @@
             <file>qmessagedatacomparator.html</file>
             <file>qcontactremoverequest.html</file>
             <file>logfilepositionsource-logfilepositionsource-h.html</file>
-            <file>declarative-sfw-notes-main-cpp.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialerplugin-cpp.html</file>
             <file>battery-charge-battery-subscriber-battery-subscriber-qrc.html</file>
             <file>notesmanagerplugin-notesmanager-h.html</file>
@@ -3882,8 +3873,8 @@
             <file>qcontactinvalidengine.html</file>
             <file>qmediaplayer.html</file>
             <file>qambientlightfilter-members.html</file>
-            <file>qgeoareamonitor.html</file>
             <file>qcontactphonenumber-members.html</file>
+            <file>qgeoareamonitor.html</file>
             <file>images/sample-phonebook-1.png</file>
             <file>qmediatimeinterval.html</file>
             <file>qmessagefoldersortorder.html</file>
@@ -3940,7 +3931,6 @@
             <file>player-player-h.html</file>
             <file>qmediaservice.html</file>
             <file>qcompassfilter-members.html</file>
-            <file>declarative-sfw-notes-sfwnotes-qrc.html</file>
             <file>sfw-notes-sfwnotes-qrc.html</file>
             <file>qcontactrelationship-members.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html</file>
@@ -3998,7 +3988,6 @@
             <file>qcontactsynctarget.html</file>
             <file>qradiotunercontrol-members.html</file>
             <file>qmediacontent-members.html</file>
-            <file>declarative-sfw-notes-declarative-sfw-notes-pro.html</file>
             <file>qmediacontainercontrol.html</file>
             <file>flickrdemo-flickrdemo-pro.html</file>
             <file>qmlcontacts-qmlcontacts-pro.html</file>
@@ -4009,8 +3998,6 @@
             <file>multimedia.html</file>
             <file>qcontactinvalidfilter-members.html</file>
             <file>qmagnetometerfilter-members.html</file>
-            <file>declarative-sfw-dialer-sfwexample-sfwexample-cpp.html</file>
-            <file>declarative-sfw-dialer-sfwexample-resource-qrc.html</file>
             <file>player-mediakeysobserver-cpp.html</file>
             <file>qmlcontacts-main-cpp.html</file>
             <file>qmediaserviceprovider.html</file>
@@ -4042,7 +4029,6 @@
             <file>weatherinfo-icons-weather-sleet-svg.html</file>
             <file>qgeopositioninfo-members.html</file>
             <file>images/battery-subscriber.png</file>
-            <file>declarative-sfw-dialer-sfwexample-sfwexample-pro.html</file>
             <file>qmessageservice.html</file>
             <file>qcontactfetchrequest-members.html</file>
             <file>qnmeapositioninfosource-members.html</file>
