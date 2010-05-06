@@ -57,86 +57,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerListColumn
-{
-public:
-    QGalleryTrackerListColumn(const QString &name, QGalleryProperty::Attributes attributes)
-        : m_name(name), m_attributes(attributes) {}
-    virtual ~QGalleryTrackerListColumn() {}
-
-    QString name() const { return m_name; }
-    QGalleryProperty::Attributes attributes() const { return m_attributes; }
-
-private:
-    const QString m_name;
-    const QGalleryProperty::Attributes m_attributes;
-};
-
-class QGalleryTrackerValueColumn : public QGalleryTrackerListColumn
-{
-public:
-    enum SortFlag
-    {
-        Sorted        = 0x01,
-        ReverseSorted = 0x2,
-        Ascending     = 0x4,
-        Descending    = 0x08
-    };
-
-    QGalleryTrackerValueColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, int sortFlags)
-        : QGalleryTrackerListColumn(name, attributes), m_sortFlags(sortFlags) {}
-
-    int sortFlags() const { return m_sortFlags; }
-
-    virtual QVariant toVariant(const QString &string) const = 0;
-    virtual QString toString(const QVariant &variant) const = 0;
-
-    virtual int compare(const QVariant &value1, const QVariant &value2) const = 0;
-
-private:
-    int m_sortFlags;
-};
-
-class QGalleryTrackerCompositeColumn : public QGalleryTrackerListColumn
-{
-public:
-    QGalleryTrackerCompositeColumn(const QString &name, QGalleryProperty::Attributes attributes)
-        : QGalleryTrackerListColumn(name, attributes) {}
-
-    virtual QVariant value(QVector<QVariant>::const_iterator row) const = 0;
-
-    virtual int compare(
-            QVector<QVariant>::const_iterator row1,
-            QVector<QVariant>::const_iterator row2) const = 0;
-    
-    virtual bool isEqual(
-            QVector<QVariant>::const_iterator row1,
-            QVector<QVariant>::const_iterator row2) const = 0;
-};
-
-class QGalleryTrackerAliasColumn : public QGalleryTrackerListColumn
-{
-public:
-    QGalleryTrackerAliasColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, int aliasedKey)
-        : QGalleryTrackerListColumn(name, attributes), m_aliasedKey(aliasedKey) {}
-
-    int aliasedKey() const { return m_aliasedKey; }
-
-private:
-    const int m_aliasedKey;
-};
-
-class QGalleryTrackerImageColumn : public QGalleryTrackerListColumn
-{
-public:
-    QGalleryTrackerImageColumn(const QString &name, QGalleryProperty::Attributes attributes)
-        : QGalleryTrackerListColumn(name, attributes) {}
-    virtual ~QGalleryTrackerImageColumn() {}
-
-    virtual QString imagePath(QVector<QVariant>::const_iterator row) const = 0;
-};
+class QGalleryTrackerAliasColumn;
+class QGalleryTrackerCompositeColumn;
+class QGalleryTrackerImageColumn;
+class QGalleryTrackerListColumn;
+class QGalleryTrackerValueColumn;
 
 class QGalleryTrackerItemListPrivate;
 

@@ -1329,4 +1329,15 @@ QString QGalleryTrackerSchema::typeFromService(const QString &service)
     return QString();
 }
 
+QString QGalleryTrackerSchema::prefixFromService(const QString &service)
+{
+    QGalleryTypeMap typeMap(qt_galleryTypeMap);
+
+    for (int i = 0; i < typeMap.count; ++i) {
+        if (typeMap.items[i].trackerKey == service)
+            return typeMap.items[i].prefix;
+    }
+    return QString();
+}
+
 QTM_END_NAMESPACE

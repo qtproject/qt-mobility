@@ -42,6 +42,7 @@
 #include "qgallerytrackeritemlist_p.h"
 
 #include "qgalleryabstractresponse_p.h"
+#include "qgallerytrackerlistcolumn_p.h"
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qcoreevent.h>

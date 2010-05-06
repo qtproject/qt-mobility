@@ -103,6 +103,7 @@ public:
     QPair<QString, AggregateType> aggregateField(const QString &propertyName) const;
 
     static QString typeFromService(const QString &service);
+    static QString prefixFromService(const QString &service);
 
 private:
     int m_fileTypeIndex;
