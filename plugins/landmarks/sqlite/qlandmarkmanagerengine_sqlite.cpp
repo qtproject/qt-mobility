@@ -2086,6 +2086,21 @@ bool QLandmarkManagerEngineSqlite::isFilterSupported(QLandmarkFilter::FilterType
     return false;
 }
 
+bool QLandmarkManagerEngineSqlite::isReadOnly() const
+{
+    return false;
+}
+
+bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkId &landmarkId) const
+{
+    return false;
+}
+
+bool QLandmarkManagerEngineSqlite::isReadOnly(const QLandmarkCategoryId &categoryId) const
+{
+    return false;
+}
+
 /* Asynchronous Request Support */
 void QLandmarkManagerEngineSqlite::requestDestroyed(QLandmarkAbstractRequest* request)
 {

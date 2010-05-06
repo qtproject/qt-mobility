@@ -78,8 +78,6 @@ public:
     QString description() const;
     void setDescription(const QString &description);
 
-    bool isReadOnly() const;
-
     QLandmarkCategoryId id() const;
     void setId(const QLandmarkCategoryId &id);
 

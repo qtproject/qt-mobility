@@ -55,7 +55,6 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate()
       name(QString()),
       iconUrl(QUrl()),
       description(QString()),
-      readOnly(false),
       attributes(QHash<QString, QVariant>()),
       id(QLandmarkCategoryId())
 {
@@ -66,7 +65,6 @@ QLandmarkCategoryPrivate::QLandmarkCategoryPrivate(const QLandmarkCategoryPrivat
       name(other.name),
       iconUrl(other.iconUrl),
       description(other.description),
-      readOnly(false),
       attributes(other.attributes),
       id(other.id)
 {
@@ -81,7 +79,6 @@ QLandmarkCategoryPrivate& QLandmarkCategoryPrivate::operator= (const QLandmarkCa
     name = other.name;
     iconUrl = other.iconUrl;
     description = other.description;
-    readOnly = other.readOnly;
     attributes = other.attributes;
     id = other.id;
 
@@ -93,7 +90,6 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     return ((name == other.name)
             && (iconUrl == other.iconUrl)
             && (description == other.description)
-            && (readOnly == other.readOnly)
             && (attributes == other.attributes)
             && (id == other.id));
 }
@@ -119,9 +115,10 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     intended to be "global" categories that are the same across landmark stores.
     In practicality, not all landmark stores may necessarily have the same set of
     global categories.  Localization is only possible for categories that
-    are read-only.  If the landmark store supports it localization, the locale may
-    be set through a QLandmarkManager and whenever categories are retrieved,
-    the translated names are used.
+    are read-only.  If the landmark store supports localization, the locale may
+    be set through a QLandmarkManager's parameters and whenever categories are
+    retrieved, the translated names are used.  QLandmarkManager::isReadOnly(const QLandmarkId & landmarkId)
+    may be used to determine if a category is read-only.
 
     A QLandmarkCategory instance is an in memory representation and may
     not reflect the state of the category found in persistent storage,
@@ -232,14 +229,6 @@ QString QLandmarkCategory::description() const
 void QLandmarkCategory::setDescription(const QString &description)
 {
     d->description = description;
-}
-
-/*!
-    Returns whether the category is read-only.
-*/
-bool QLandmarkCategory::isReadOnly() const
-{
-    return d->readOnly;
 }
 
 /*!

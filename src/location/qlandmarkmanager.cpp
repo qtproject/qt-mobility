@@ -674,6 +674,48 @@ bool QLandmarkManager::isFilterSupported(QLandmarkFilter::FilterType filterType)
 }
 
 /*!
+    Returns true if the manager is entirely read-only.  Meaning
+    landmarks and categories cannot be added, modified or removed.
+*/
+bool QLandmarkManager::isReadOnly() const
+{
+    Q_D(const QLandmarkManager);
+    if (!d->engine)
+        return true;
+    return d->engine->isReadOnly();
+}
+
+/*!
+    Returns true if the landmark identified by \a landmarkId
+    considered read-only by the manager.
+
+    If the \a landmarkId does not refer to an existing landmark,
+    it is considered writable unless the manager is exclusively read-only.
+*/
+bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
+{
+    Q_D(const QLandmarkManager);
+    if (!d->engine)
+        return true;
+    return d->engine->isReadOnly(landmarkId);
+}
+
+/*!
+    Returns true if the category identified by \a categoryId is
+    considered read-only by the manager.
+
+    If \a categoryId does not refer to an existing category,
+    it is considered writable unless the manager is exclusively read-only.
+*/
+bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
+{
+    Q_D(const QLandmarkManager);
+    if (!d->engine)
+        return true;
+    return d->engine->isReadOnly(categoryId);
+}
+
+/*!
     Returns the manager name for this QLandmarkManager
 */
 QString QLandmarkManager::managerName() const

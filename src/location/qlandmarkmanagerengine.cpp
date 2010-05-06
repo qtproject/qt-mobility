@@ -410,6 +410,34 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, QLandmarkManager
 */
 
 /*!
+    \fn bool QLandmarkManagerEngine::isReadOnly() const
+
+    Returns true if the manager engine is exclusively read only.  Meaning
+    landmarks and categories cannot be added, modified or removed
+*/
+
+/*!
+    \fn bool QLandmarkManagerEngine::isReadOnly(const QLandmarkId &landmarkId) const
+
+    Returns true if the landmark identified by \a landmarkId
+    considered read-only by the manager engine.
+
+    If the \a landmarkId does not refer to an existing landmark,
+    it is considered writable unless the manager engine. is exclusively read-only.
+
+ */
+
+ /*!
+    \fn bool QLandmarkManagerEngine::isReadOnly(const QLandmarkCategoryId &categoryId) const
+
+    Returns true if the category identified by \a categoryId is
+    considered read-only by the manager engine.
+
+    If \a categoryId does not refer to an existing category,
+    it is considered writable unless the manager engine is exclusively read-only.
+*/
+
+/*!
     Notifies the manager engine that the givan \a request has been destroyed.
 */
 void QLandmarkManagerEngine::requestDestroyed(QLandmarkAbstractRequest* request)

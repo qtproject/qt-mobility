@@ -131,6 +131,10 @@ public:
 
     virtual bool isFilterSupported(QLandmarkFilter::FilterType filterType) const = 0;
 
+    virtual bool isReadOnly() const = 0;
+    virtual bool isReadOnly(const QLandmarkId &landmarkId) const = 0;
+    virtual bool isReadOnly(const QLandmarkCategoryId &categoryId) const = 0;
+
     /* Asynchronous Request Support */
     virtual void requestDestroyed(QLandmarkAbstractRequest* request) = 0;
     virtual bool startRequest(QLandmarkAbstractRequest* request) = 0;
