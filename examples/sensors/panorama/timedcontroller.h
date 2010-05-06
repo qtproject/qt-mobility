@@ -23,6 +23,7 @@ protected:
     QTimer m_timer;
     QTime m_exTime;
     int m_delay;
+    int m_interval;
 
 };
 

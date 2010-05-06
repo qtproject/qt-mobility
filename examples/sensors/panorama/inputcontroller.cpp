@@ -12,14 +12,12 @@ const QString InputController::QKEYS = "Keys";
 
 
 
-InputController::InputController() : m_x(0), m_y(0) {
-}
+InputController::InputController() : m_x(0), m_y(0) {}
 
 void InputController::keyPressEvent(QKeyEvent *e){}
 
 
 void InputController::start(){
-
     startSensor();
     startTimer();
 }
@@ -31,22 +29,13 @@ void InputController::stop(){
 }
 
 
-int InputController::getX(){
-    int w = View::getImageWidth();
-    m_x = qAbs(m_x) < w ? m_x : m_x % w;
-    return m_x;
-}
+int InputController::getX(){return m_x;}
 
-int InputController::getY() {
-    return m_y;
-}
+int InputController::getY() {return m_y;}
 
+void InputController::setX(int x){m_x = x;}
 
-void InputController::setY(int y){
-    m_y = y;
-}
-
-
+void InputController::setY(int y){m_y = y;}
 
 
 void InputController::startTimer(){}

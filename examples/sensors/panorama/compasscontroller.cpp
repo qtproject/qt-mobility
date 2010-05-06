@@ -4,24 +4,19 @@
 #include "compasscontroller.h"
 #include "view.h"
 
-CompassController::CompassController( ): m_width(View::getImageWidth()){}
+CompassController::CompassController( ): m_width(View::m_imageWidth){}
 
 
 
 void CompassController::startSensor()
 {
-
     m_compass.connectToBackend();
     m_compass.start();
     connect(&m_compass, SIGNAL(readingChanged()), this, SLOT(update()));
 }
 
 
-void CompassController::stopSensor()
-{
-    m_compass.stop();
-}
-
+void CompassController::stopSensor(){ m_compass.stop();}
 
 
 void CompassController::update()

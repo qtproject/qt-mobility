@@ -5,9 +5,7 @@
 #include "view.h"
 #include <qmagnetometer.h>
 
-MagnetometerController::MagnetometerController(): m_width(View::getImageWidth()){
-
-}
+MagnetometerController::MagnetometerController(): m_width(View::m_imageWidth){}
 
 
 void MagnetometerController::startSensor()
@@ -18,11 +16,7 @@ void MagnetometerController::startSensor()
     connect(&m_magnetometer, SIGNAL(readingChanged()), this, SLOT(update()));
 }
 
-void MagnetometerController::stopSensor()
-{
-    m_magnetometer.stop();
-}
-
+void MagnetometerController::stopSensor() { m_magnetometer.stop();}
 
 
 void MagnetometerController::update()

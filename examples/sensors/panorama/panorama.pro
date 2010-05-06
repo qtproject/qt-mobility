@@ -1,36 +1,28 @@
 include(../sensors.pri)
-SOURCES = main.cpp \
-    view.cpp \
-    inputcontroller.cpp \
-    keycontroller.cpp \
-    accelerometercontroller.cpp \
-    compasscontroller.cpp \
-    orientationcontroller.cpp \
-    magnetometercontroller.cpp \
-    timedcontroller.cpp \
-    rotationcontroller.cpp
-RESOURCES = panorama.qrc
-
-# install
-#target.path = $$[QT_INSTALL_EXAMPLES]/panorama/panorama
-#sources.files = $$SOURCES \
-#    $$HEADERS \
-#    $$RESOURCES \
-#    $$FORMS \
-#    panorama.pro \
-#    images
-#sources.path = $$[QT_INSTALL_EXAMPLES]/panorama/panorama
-#INSTALLS += target \
-#    sources
-HEADERS += view.h \
-    inputcontroller.h \
+QT += gui \
+    core
+CONFIG += mobility
+MOBILITY += sensors
+HEADERS += inputcontroller.h \
     keycontroller.h \
+    timedcontroller.h \
+    view.h \
     accelerometercontroller.h \
     compasscontroller.h \
     magnetometercontroller.h \
     orientationcontroller.h \
     rotationcontroller.h \
-    tapcontroller.h \
-    timedcontroller.h
-
+    tapcontroller.h
+SOURCES += main.cpp \
+    inputcontroller.cpp \
+    keycontroller.cpp \
+    timedcontroller.cpp \
+    view.cpp \
+    accelerometercontroller.cpp \
+    compasscontroller.cpp \
+    magnetometercontroller.cpp \
+    orientationcontroller.cpp \
+    rotationcontroller.cpp \
+    tapcontroller.cpp
+RESOURCES += panorama.qrc
 TARGET = panorama

@@ -7,11 +7,9 @@
 #include "orientationcontroller.h"
 #include "compasscontroller.h"
 
-
 int View::m_imageWidth;
 int View::m_imageHeight;
 QString View::m_currentSensor;
-
 
 View::View(QGraphicsScene *scene) :
         QGraphicsView(scene), m_timer(this) ,m_delay(30){
@@ -20,20 +18,17 @@ View::View(QGraphicsScene *scene) :
 
     QPixmap bgPix(":/images/koskipuisto_pieni.jpg");
     m_pix = bgPix;
-    setImageWidth(bgPix.width());
-    setImageHeight(bgPix.height());
+    m_imageWidth = bgPix.width();
+    m_imageHeight = bgPix.height();
     int h= height();
-    int y = qAbs(getImageHeight()-height())/2;
+    int y = qAbs(m_imageHeight-h)/2;
     setSceneRect(0, y, width(), h);
 
-    setWindowTitle(QT_TRANSLATE_NOOP(QGraphicsView, "Panorama"));
     setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     setBackgroundBrush(bgPix);
     setCacheMode(QGraphicsView::CacheBackground);
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    setWindowTitle(tr("Panorama"));
-
-
+    setWindowTitle("Panorama");
 
     m_sensors.append(InputController::QACCELEROMETER);
     m_sensors.append(InputController::QORIENTATIONSENSOR);
@@ -43,6 +38,9 @@ View::View(QGraphicsScene *scene) :
     m_sensors.append(InputController::QCOMPASS);
     m_sensors.append(InputController::QKEYS);
 
+
+    m_menu = new QMenu(this);
+
     createActions();
     handleAction(NULL,InputController::QACCELEROMETER);
 
@@ -51,10 +49,7 @@ View::View(QGraphicsScene *scene) :
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
-View::~View(){
-    if (m_controller)
-        delete m_controller;
-}
+View::~View(){ if (m_controller) delete m_controller;}
 
 
 void View::resizeEvent(QResizeEvent *event)
@@ -66,10 +61,13 @@ void View::resizeEvent(QResizeEvent *event)
 
 
 void View::handleAction(QString oldSensor, QString newSensor){
+
+    m_menu->setVisible(false);
+
     if (oldSensor==newSensor) return;
 
 
-    QList<QAction*> tmpActions = actions();
+    QList<QAction*> tmpActions = m_menu->actions();
     for (int i=0; i<tmpActions.length(); i++){
         if (tmpActions.at(i)->text() ==  oldSensor){
             tmpActions.at(i)->setEnabled(true);
@@ -79,7 +77,6 @@ void View::handleAction(QString oldSensor, QString newSensor){
             tmpActions.at(i)->setEnabled(false);
         }
     }
-    setWindowTitle("Panorama: "+ newSensor);
     m_currentSensor = newSensor;
     switchController(m_currentSensor);
 
@@ -124,15 +121,12 @@ void View::createActions()
                 break;
             }
         }while (true);
-        addAction(tmp);
+        m_menu->addAction(tmp);
     }
-    setContextMenuPolicy(Qt::ActionsContextMenu);
 
 }
 
-
 void View::startAccelerometer(){
-
     handleAction(m_currentSensor, InputController::QACCELEROMETER);
 }
 
@@ -141,63 +135,46 @@ void View::startOrientationSensor(){
 }
 
 void View::startTapSensor(){
-
     handleAction(m_currentSensor, InputController::QTAPSENSOR);
 }
-void View::startMagnetometer(){
 
+void View::startMagnetometer(){
     handleAction(m_currentSensor, InputController::QMAGNETOMETER);
 }
 
 void View::startRotationSensor(){
-
     handleAction(m_currentSensor, InputController::QROTATIONSENSOR);
 }
+
 void View::startKeys(){
     handleAction(m_currentSensor, InputController::QKEYS);
 }
-void View::startCompass(){
 
+void View::startCompass(){
     handleAction(m_currentSensor, InputController::QCOMPASS);
 }
 
 
 void View::update(){
-    int x = View::getController()->getX();
-    int y = checkY(View::getController()->getY());
-    qDebug()<<"update called x="<<x<<" y="<<y;
-    setSceneRect(x, y, width(), height());
+    if (m_mouseMode){
+        m_x = checkX(m_x + m_dx);
+        m_y = checkY(m_y+ m_dy);
+    }
+    else{
+        if (m_controller){
+            m_x = checkX(m_controller->getX());
+            m_y = checkY(m_controller->getY());
+        }
+    }
+    setSceneRect(m_x, m_y, width(), height());
 }
 
-
-InputController* View::getController(){
-    return m_controller;
-}
-
-
-
-void View::setImageWidth(int imageWidth){
-    m_imageWidth = imageWidth;
-}
-int View::getImageWidth(){
-    return m_imageWidth;
-}
-
-
-void View::setImageHeight(int imageHeight){
-    m_imageHeight = imageHeight;
-}
-
-int View::getImageHeight(){
-    return m_imageHeight;
-}
 
 void View::keyPressEvent(QKeyEvent *e)
 {
     if (m_currentSensor!=InputController::QKEYS) return;
 
-    getController()->keyPressEvent(e);
-
+    if (m_controller) m_controller->keyPressEvent(e);
 }
 
 
@@ -240,31 +217,90 @@ void View::switchController(QString sensor){
 
     }while (true);
 
-    m_controller->start();
+    if (m_controller) m_controller->start();
 
+}
+
+
+int View::checkX(int x){
+    return qAbs(x) < m_imageWidth ? x : x % m_imageWidth;
 
 }
 
 int View::checkY(int y){
-    int limit = View::getImageHeight()-height();
+    int limit = m_imageHeight-height();
     if (y<0){
         y = limit<0?-limit/2:0;
-        m_controller->setY(y);
+        if (m_controller) m_controller->setY(y);
         return y;
     }
 
     if (limit<0){
         y=-limit/2;
-        m_controller->setY(y);
+        if (m_controller) m_controller->setY(y);
         return y;
     }
 
 
-    if (y< limit){
-        return y;
-    }
+    if (y< limit){ return y;}
 
     y = limit;
-    m_controller->setY(y);
+    if (m_controller) m_controller->setY(y);
     return y;
+}
+
+
+
+void View::mousePressEvent ( QMouseEvent* ){
+    m_mousePressTime = QTime::currentTime();
+    m_exController = m_controller;
+    m_mouseMode = false;
+}
+
+
+
+void View::mouseMoveEvent(QMouseEvent* event){
+
+    if (m_mouseMode){
+
+        m_dx = m_eventX - event->x();
+        m_dy = m_eventY - event->y();
+
+        update();
+
+        m_eventX = event->x();
+        m_eventY = event->y();
+        return;
+    }
+
+    if (m_mousePressTime.msecsTo(QTime::currentTime())>200){
+        m_menu->setVisible(false);
+        m_mouseMode = true;
+        m_eventX = event->x();
+        m_eventY = event->y();
+        m_controller = 0;
+    }
+
+}
+
+
+
+void View::mouseReleaseEvent(QMouseEvent* event){
+    m_controller = m_exController;
+
+    if (m_mouseMode){
+        if (m_controller){
+            m_controller->setX(m_x);
+            m_controller->setY(m_y);
+        }
+    }
+    m_mouseMode = false;
+
+    if (m_mousePressTime.msecsTo(QTime::currentTime())>200) return;
+
+    int x = event->x();
+    int y = event->y();
+    m_menu->move(x, y);
+    m_menu->setVisible(true);
+
 }

@@ -5,7 +5,7 @@
 #include <QWidget>
 
 
-class InputController : public QWidget
+class InputController : public QObject
 {
 //    Q_OBJECT
 public:
@@ -18,7 +18,7 @@ public:
     virtual void startSensor();
     virtual void stopSensor();
     int getX(), getY();
-    void setY(int y);
+    void setX(int x), setY(int y);
 
     virtual void keyPressEvent(QKeyEvent *e);
 
