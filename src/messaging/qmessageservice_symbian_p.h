@@ -86,8 +86,8 @@ private:
     mutable bool _active;
     mutable int _pendingRequestCount;
     QMessageIdList _ids;
-    bool _sorted;
-    bool _filtered;
+    mutable bool _sorted;
+    mutable bool _filtered;
 
     mutable QMessageFilter _filter;
     mutable QMessageSortOrder _sortOrder;

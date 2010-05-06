@@ -144,6 +144,8 @@ bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const Q
     _sortOrder = sortOrder;
     _limit = limit;
     _offset = offset;
+    _filtered = true;
+    _sorted = true;
 
     _pendingRequestCount++;
     CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
@@ -167,7 +169,9 @@ bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const Q
     _sortOrder = sortOrder;
     _limit = limit;
     _offset = offset;
-
+    _filtered = true;
+    _sorted = true;
+    
     _pendingRequestCount++;
     CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
 
@@ -175,6 +179,7 @@ bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const Q
     _pendingRequestCount++;
     CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
 #endif
+
     return _active;
 }
 
@@ -249,7 +254,6 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 
 void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)
 {
-  //  qDebug() << "QMessageServicePrivate::messagesFound";
     _pendingRequestCount--;
 
     if (!isFiltered) {
