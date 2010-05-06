@@ -171,8 +171,15 @@ public:
     QVariant metaData(int index, int key) const;
     void setMetaData(int index, int key, const QVariant &value);
 
+    bool event(QEvent *event);
+
+protected:
+    void updateResultSet(const QVector<QStringList> &resultSet, int index = 0);
+
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemList)
+    Q_PRIVATE_SLOT(d_func(), void _q_parseFinished())
+    Q_PRIVATE_SLOT(d_func(), void _q_synchronizeFinished())
 };
 
 
