@@ -49,6 +49,13 @@
 #include "qlandmarkid.h"
 #include "qgeocoordinate.h"
 
+#if !defined(Q_CC_MWERKS)
+template<> QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone()
+{
+    return d->clone();
+}
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 QLandmarkFilterPrivate::QLandmarkFilterPrivate()
@@ -85,13 +92,6 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     and may thus be used as a filter to match all landmarks.
 
 */
-
-#if !defined(Q_CC_MWERKS)
-template<> QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkFilterPrivate)>::clone()
-{
-    return d->clone();
-}
-#endif
 
 /*!
     \enum QLandmarkFilter::FilterType
