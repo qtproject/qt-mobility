@@ -129,6 +129,14 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     the setCategories() or addCategory() functions.  A landmark may
     be removed from a category by using the removeCategory() function.
 
+    Some landmarks may be designated as read-only, e.g. a publically accessible
+    landmark server may not want some of its content to be editable.
+    Localization is only possible for landmarks that are read-only.  If the
+    landmark store supports localization, the locale may be set through a
+    QLandmarkManager's parameters and whenever landmarks are retrieved,
+    the translated names are used.  The \c {QLandmarkManager::isReadOnly(const QLandmarkyId &)}
+    function may be used to determine if a category is read-only.
+
     Each QLandmark is an in memory representation of a landmark;
     it does not reflect the actual landmark state in persistent
     storage until the appropriate synchronization method is called

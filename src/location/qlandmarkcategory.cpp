@@ -117,8 +117,9 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
     global categories.  Localization is only possible for categories that
     are read-only.  If the landmark store supports localization, the locale may
     be set through a QLandmarkManager's parameters and whenever categories are
-    retrieved, the translated names are used.  QLandmarkManager::isReadOnly(const QLandmarkId & landmarkId)
-    may be used to determine if a category is read-only.
+    retrieved, the translated names are used.
+    The \c {QLandmarkManager::isReadOnly(const QLandmarkCategoryId &)}
+    function may be used to determine if a category is read-only.
 
     A QLandmarkCategory instance is an in memory representation and may
     not reflect the state of the category found in persistent storage,
