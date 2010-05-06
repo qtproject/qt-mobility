@@ -48,35 +48,53 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoRouteSegment
-  \brief The QGeoRouteSegment class
-  \ingroup maps
+    \class QGeoRouteSegment
+    \brief The QGeoRouteSegment class represents a segment of a route.
+    \ingroup maps
 
+    A QGeoRouteSegment instance has information about the physcial layout
+    of the route segment, the length of the route and the estimated time and
+    navigation instructions required to traverse the route segment.
+
+    Subclasses of QGeoRouteSegment will provide more detailed information about
+    the segment.  The type() function can be used to determine the subclass
+    that is being used.
+
+    \sa QGeoRouteSegment::SegmentType
 */
 
 /*!
-  \enum QGeoRouteSegment::SegmentType
+    \enum QGeoRouteSegment::SegmentType
 
-  description
+    This is used to distinguish between different subclasses of
+    QGeoRouteSegment when they are accessed as QGeoRouteSegment objects.
 
-  \value NormalSegment description
-  \value PrivateTransportSegment description
-  \value PublicTransportSegment description
-  \value TruckSegment description
-};
+    \value NormalSegment
+        The route segment information is not specialized.
+    \value PrivateTransportSegment
+        The route segment information is specialized for travel by private transport.
+    \value PublicTransportSegment
+        The route segment information is specialized for travel by public transport.
+    \value TruckSegment
+        The route segment information is specialized for travel by truck.
+
+    \sa QGeoRouteSegment::type()
 */
 
 /*!
+    Constructs a QGeoRouteSegment object.
 */
 QGeoRouteSegment::QGeoRouteSegment()
     : d_ptr(new QGeoRouteSegmentPrivate()) {}
 
-/*!
+/*
+    Internal use
 */
 QGeoRouteSegment::QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr)
     : d_ptr(d_ptr) {}
 
 /*!
+    Destroys this QGeoRouteSegment object.
 */
 QGeoRouteSegment::~QGeoRouteSegment()
 {
@@ -85,6 +103,13 @@ QGeoRouteSegment::~QGeoRouteSegment()
 }
 
 /*!
+    Returns the type of this segment.
+
+    If the type is something other than QGeoRouteSegment::NormalSegment then
+    this QGeoRouteSegment object has been created as a subclass of
+    QGeoRouteSegment which contains more detailed information about the segment.
+
+    \sa QGeoRouteSegment::SegmentType
 */
 QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
 {
@@ -93,40 +118,58 @@ QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
 }
 
 /*!
+    Sets an estimate of how long it will take to traverse this
+    segment of the route to \a travelTime.
+
+    \sa QGeoRouteSegment::esimatedTravelTime()
 */
-void QGeoRouteSegment::setDuration(const QDateTime &duration)
+void QGeoRouteSegment::setEstimatedTravelTime(const QDateTime &travelTime)
 {
     Q_D(QGeoRouteSegment);
-    d->duration = duration;
+    d->estimatedTravelTime = travelTime;
 }
 
 /*!
+    Returns an estimate of how long it will take to traverse this
+    segment of the route.
+
+    \sa QGeoRouteSegment::setEstimatedTravelTime()
 */
-QDateTime QGeoRouteSegment::duration() const
+QDateTime QGeoRouteSegment::estimatedTravelTime() const
 {
     Q_D(const QGeoRouteSegment);
-    return d->duration;
+    return d->estimatedTravelTime;
 }
 
 /*!
+    Sets the length of this segment of the route to \a length.
 */
-void QGeoRouteSegment::setDistance(const QGeoDistance &distance)
+void QGeoRouteSegment::setLength(const QGeoDistance &length)
 {
     Q_D(QGeoRouteSegment);
-    d->distance = distance;
+    d->length = length;
 }
 
 /*!
+    Returns the length of this segment of the route.
+
+    \sa QGeoRouteSegment::setLength()
 */
-QGeoDistance QGeoRouteSegment::distance() const
+QGeoDistance QGeoRouteSegment::length() const
 {
     Q_D(const QGeoRouteSegment);
-    return d->distance;
+    return d->length;
 }
 
 // bounds per segment?  or is bounds per route enough?
 
 /*!
+    Sets the geometric shape of this segment of the route to \a geometry.
+
+    The coordinates in \a geomerty should be listed in the order in which they
+    would be traversed by someone travelling along this segment of the route.
+
+    \sa QGeoRouteSegment::geometry()
 */
 void QGeoRouteSegment::setGeometry(const QList<QGeoCoordinate> &geometry)
 {
@@ -135,6 +178,12 @@ void QGeoRouteSegment::setGeometry(const QList<QGeoCoordinate> &geometry)
 }
 
 /*!
+    Returns the geometric shape of this route segment of the route.
+
+    The coordinates in \a geomerty should be listed in the order in which they
+    would be traversed by someone travelling along this segment of the route.
+
+    \sa QGeoRouteSegment::setGeometry()
 */
 QList<QGeoCoordinate> QGeoRouteSegment::geometry() const
 {
@@ -143,6 +192,9 @@ QList<QGeoCoordinate> QGeoRouteSegment::geometry() const
 }
 
 /*!
+    Sets the instructions for this route segement to \a instructions.
+
+    \sa QGeoRouteSegment::instructions.
 */
 void QGeoRouteSegment::setInstructions(const QList<const QGeoNavigationInstruction *> &instructions)
 {
@@ -151,6 +203,9 @@ void QGeoRouteSegment::setInstructions(const QList<const QGeoNavigationInstructi
 }
 
 /*!
+    Returns the instructions for this route segment.
+
+    \sa QGeoRouteSegment::setInstructions()
 */
 QList<const QGeoNavigationInstruction*> QGeoRouteSegment::instructions() const
 {
@@ -168,18 +223,18 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
     : type(other.type),
-    duration(other.duration),
-    distance(other.distance),
+    estimatedTravelTime(other.estimatedTravelTime),
+    length(other.length),
     geometry(other.geometry),
-    instructions(other.instructions){}
+    instructions(other.instructions) {}
 
 QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 
 QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate &other)
 {
     type = other.type;
-    duration = other.duration;
-    distance = other.distance;
+    estimatedTravelTime = other.estimatedTravelTime;
+    length = other.length;
     geometry = other.geometry;
     instructions = other.instructions;
     return *this;

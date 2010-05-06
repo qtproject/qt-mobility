@@ -47,34 +47,55 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoNavigationInstruction
-  \brief The QGeoNavigationInstruction class is
-  \ingroup maps
+    \class QGeoNavigationInstruction
+    \brief The QGeoNavigationInstruction class represnts a navigation instruction.
+    \ingroup maps
 
+    A QGeoNavigationInstruction instance has a position at which the
+    instruction applies and a textual instruction to provide at that position.
+
+    Subclasses of QGeoNavigationInstruction will provide more detailed
+    instruction information.  The type() function can be used to determine
+    the subclass that is being used.
+
+    \sa QGeoNavigationInstruction::InstructionType
 */
 
 /*!
-  \enum QGeoNavigationInstruction::InstructionType
+    \enum QGeoNavigationInstruction::InstructionType
 
-description
+    Describes the specialization of a QGeoNavigationInstruction object.
 
-  \value NormalInstruction description
-  \value PrivateTransportInstruction description
-  \value PublicTransportInstruction description
-  \value TruckInstruction description
+    This is used to distinguish between different subclasses of
+    QGeoNavigationInstruction when they are accessed as
+    QGeoNavigationInstruction objects.
+
+    \value NormalInstruction
+        The instruction is not specialized.
+    \value PrivateTransportInstruction
+        The instruction is specialized for those travelling by private transport.
+    \value PublicTransportInstruction
+        The instruction is specialized for those travelling by public transport
+    \value TruckInstruction
+        The instruction is specialized for those travelling by truck.
+
+    \sa QGeoNavigationInstruction::type()
 */
 
 /*!
+    Constructs a QGeoNavigationInstruction object.
 */
 QGeoNavigationInstruction::QGeoNavigationInstruction()
     : d_ptr(new QGeoNavigationInstructionPrivate()) {}
 
-/*!
+/*
+    For internal use
 */
 QGeoNavigationInstruction::QGeoNavigationInstruction(QGeoNavigationInstructionPrivate *d_ptr)
     : d_ptr(d_ptr) {}
 
 /*!
+    Destroys this QGeoNavigationInstruction object.
 */
 QGeoNavigationInstruction::~QGeoNavigationInstruction()
 {
@@ -83,6 +104,15 @@ QGeoNavigationInstruction::~QGeoNavigationInstruction()
 }
 
 /*!
+    Returns the type of this instruction.
+
+    If the type is something other than
+    QGeoNavigationInstruction::NormalInstruction then this
+    QGeoNavigationInstruction object has been created as a subclass of
+    QGeoNavigationInstruction which contains more detailed information about
+    the instructions.
+
+    \sa QGeoNavigationInstruction::InstructionType
 */
 QGeoNavigationInstruction::InstructionType QGeoNavigationInstruction::type() const
 {
@@ -91,6 +121,9 @@ QGeoNavigationInstruction::InstructionType QGeoNavigationInstruction::type() con
 }
 
 /*!
+    Sets the position where the instructions should be provided to \a position.
+
+    \sa QGeoNavigationInstruction::position()
 */
 void QGeoNavigationInstruction::setPosition(const QGeoCoordinate &position)
 {
@@ -99,6 +132,9 @@ void QGeoNavigationInstruction::setPosition(const QGeoCoordinate &position)
 }
 
 /*!
+    Returns the position where the instructions should be provided.
+
+    \sa QGeoNavigationInstruction::setPosition()
 */
 QGeoCoordinate QGeoNavigationInstruction::position() const
 {
@@ -107,6 +143,9 @@ QGeoCoordinate QGeoNavigationInstruction::position() const
 }
 
 /*!
+    Sets the textual navigation instructions to \a instructionText.
+
+    \sa GeoNavigationInstruction::instructionText()
 */
 void QGeoNavigationInstruction::setInstructionText(const QString &instructionText)
 {
@@ -115,6 +154,9 @@ void QGeoNavigationInstruction::setInstructionText(const QString &instructionTex
 }
 
 /*!
+    Returns the textual navigation instructions.
+
+    \sa GeoNavigationInstruction::setInstructionText()
 */
 QString QGeoNavigationInstruction::instructionText() const
 {

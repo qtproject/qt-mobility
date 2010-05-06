@@ -45,11 +45,19 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoMapRequestOptions
-  \brief The QGeoMapRequestOptions class is.
-  \ingroup maps
+    \class QGeoMapRequestOptions
+    \brief The QGeoMapRequestOptions class represents various options which
+    may be specified when requesting map images.
+    \ingroup maps
 
+    The most common uses of the request methods in QGeoMappingService will
+    specific a center coordinate, a zoom level and an image size.
 
+    The QGeoMapRequestOptions class represents the options corresponding to
+    the more advanced (or less common) options which can be passed to the
+    QGeoMappingService request methods.
+
+    \sa QGeoMappingService
 */
 
 /*!
@@ -87,6 +95,8 @@ QGeoMapRequestOptions& QGeoMapRequestOptions::operator= (const QGeoMapRequestOpt
 /*!
     Sets the map type for the request to \a mapType.
 
+    The default value is QGeoMapWidget::StreetMap.
+
     \sa QGeoMapWidget::MapType
     \sa QGeoMapRequestOptions::mapType()
 */
@@ -110,6 +120,8 @@ QGeoMapWidget::MapType QGeoMapRequestOptions::mapType() const
 
 /*!
     Sets the image format for the request to \a imageFormat.
+
+    The default value if none is set is "jpg".
 
     \sa QGeoMapRequestOptions::imageFormat()
 */

@@ -113,15 +113,14 @@ The results can then be retreived with QGeoMapReply::mapImage().
 If an error occurs then the QGeoMapReply object will emit QGeoMapReply::error()
 and this QGeoMappingService instance will emit QGeoMappingService::error().
 
-Additional options can also be set by passing a QGeoMapRequestionOptions in via
-\a requestOptions.  The supportedMapTypes() and supportedImageFormats() methods
-provide information on the acceptable values that can be used inside a
-QGeoMapRequestOptions object.
+Additional options can also be set with \a requestOptions.  The
+supportedMapTypes() and supportedImageFormats() methods provide information
+on the acceptable values that can be used inside a QGeoMapRequestOptions object.
 
 The service may impose restrictions on the allowable zoom levels and image
 sizes, which can be queried with other methods in this class.
 
-\sa QgeoMapRequestOptions
+\sa QGeoMapRequestOptions
 */
 
 /*!

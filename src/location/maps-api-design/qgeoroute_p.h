@@ -65,8 +65,8 @@ public:
     QList<QGeoCoordinate> routeOverview;
     QGeoBoundingBox bounds;
     QList<const QGeoRouteSegment*> routeSegments;
-    QDateTime duration;
-    QGeoDistance distance;
+    QDateTime estimatedTravelTime;
+    QGeoDistance length;
 };
 
 QTM_END_NAMESPACE

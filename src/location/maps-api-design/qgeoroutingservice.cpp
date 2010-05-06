@@ -99,17 +99,86 @@ QGeoRoutingService::~QGeoRoutingService()
                                                      const QGeoCoordinate &destination,
                                                      QGeoRoute::DirectionsDetail detail,
                                                      const QGeoRouteRequestOptions &requestOptions)
+
+Requests the calculation of a route from \a origin to \a destination, with
+directions having a level of detail as specified by \a detail.
+
+The return value is a QGeoRouteReply object, which manages the result of the
+request.  If the request completes successfully then the QGeoRouteReply object
+will emit the QGeoRouteReply::finished() signal and this QGeoRoutingService
+instance will emit the QGeoRoutingService::finished() signal.
+
+The resulting route (or routes) can then be retreived with
+QGeoRoutReply::routes().
+
+If an error occurs then the QGeoRouteReply object will emit
+QGeoRouteReply::error() and this QGeoRoutingService instance will emit
+QGeoRoutingService::error().
+
+Additional options can also be set with \a requestOptions.  A
+QGeoRoutingService instance can may not support these options, or may only
+support a subset of the values for each option, however there are functions
+which can be used to determine the level of support provided by the service.
+
+The use of unsupported options will cause on error() signal to be emitted.
+
+\sa QGeoRoute::DirectionsDetail
+\sa QGeoRouteRequestOptions
 */
 
 /*!
 \fn QGeoRouteReply* QGeoRoutingService::requestRoute(const QList<QGeoCoordinate> &waypoints,
                                                      QGeoRoute::DirectionsDetail detail,
-                                                     const QGeoRouteRequestOptions &requestOptions) = 0;
+                                                     const QGeoRouteRequestOptions &requestOptions)
+
+Requests the calculation of a route passing through each of the coordinates
+in \a waypoints in order, with directions having a level of detail as
+specified by \a detail.
+
+The return value is a QGeoRouteReply object, which manages the result of the
+request.  If the request completes successfully then the QGeoRouteReply object
+will emit the QGeoRouteReply::finished() signal and this QGeoRoutingService
+instance will emit the QGeoRoutingService::finished() signal.
+
+The resulting route (or routes) can then be retreived with
+QGeoRoutReply::routes().
+
+If an error occurs then the QGeoRouteReply object will emit
+QGeoRouteReply::error() and this QGeoRoutingService instance will emit
+QGeoRoutingService::error().
+
+Additional options can also be set with \a requestOptions.  A
+QGeoRoutingService instance can may not support these options, or may only
+support a subset of the values for each option, however there are functions
+which can be used to determine the level of support provided by the service.
+
+The use of unsupported options will cause on error() signal to be emitted.
+
+\sa QGeoRoute::DirectionsDetail
+\sa QGeoRouteRequestOptions
 */
 
 /*!
 \fn QGeoRouteReply* QGeoRoutingService::updateRoute(const QGeoRoute &route,
                                                     const QGeoCoordinate &currentPosition)
+
+Requests that a new route be calculated based on the previously calculated
+route \a route and a current position \a currentPosition, which will become
+the starting point of the new route.
+
+TODO bool supportsUpdatingRoutes() const;
+
+The return value is a QGeoRouteReply object, which manages the result of the
+request.  If the request completes successfully then the QGeoRouteReply object
+will emit the QGeoRouteReply::finished() signal and this QGeoRoutingService
+instance will emit the QGeoRoutingService::finished() signal.
+
+The resulting route (or routes) can then be retreived with
+QGeoRoutReply::routes().
+
+If an error occurs then the QGeoRouteReply object will emit
+QGeoRouteReply::error() and this QGeoRoutingService instance will emit
+QGeoRoutingService::error().
 */
 
 /*!

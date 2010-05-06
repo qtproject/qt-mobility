@@ -47,17 +47,17 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoCodeRequestOptions
     \brief The QGeoCodeRequestOptions class represents various options which
-    may be specified when requesting geocoding information with an instance of
-    QGeoCodingService.
+    may be specified when requesting geocoding information.
     \ingroup maps
 
-    The most common uses of the methods in QGeoCodingService will use a single
-    QGeoCoordinate, QGeoAddress or QString as their argument.  A GeoBoundingBox
-    can also be supplied to bias the results to a particular area.
+    The most common uses of the request methods in QGeoCodingService will use
+    a single QGeoCoordinate, QGeoAddress or QString as their argument.  A
+    QGeoBoundingBox can also be supplied to bias the results to a particular
+    area.
 
-    The QGeoCodeRequestOptions represents the options corresponding to the
+    The QGeoCodeRequestOptions class represents the options corresponding to the
     more advanced (or less common) options which can be passed to the
-    QGeoCodingService methods.
+    QGeoCodingService request methods.
 
     \sa QGeoCodingService
 */
@@ -95,6 +95,10 @@ QGeoCodeRequestOptions& QGeoCodeRequestOptions::operator= (const QGeoCodeRequest
 
 /*!
     Sets the maximum number of responses to request to \a maximumResponses.
+
+    The default value if none is set is 1.
+
+    \sa QGeoCodeRequestOptions::maximumResponses()
 */
 void QGeoCodeRequestOptions::setMaximumResponses(int maximumResponses)
 {
@@ -104,6 +108,8 @@ void QGeoCodeRequestOptions::setMaximumResponses(int maximumResponses)
 
 /*!
     Returns the maximum number of responses which will be requested.
+
+    \sa QGeoCodeRequestOptions::setMaximumResponses()
 */
 int QGeoCodeRequestOptions::maximumResponses() const
 {

@@ -46,9 +46,17 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QGeoRouteRequestOptions
-  \brief The QGeoRouteRequestOptions class
+  \brief The QGeoRouteRequestOptions class represents various options which
+  may be specified when requesting geographical routes.
   \ingroup maps
 
+    The most common uses of the request methods in QGeoMappingService will
+    specific waypoints and, optionally, the level of detail required for
+    directions.
+
+    The QGeoRouteRequestOptions class represents the options corresponding to
+    the more advanced (or less common) options which can be passed to the
+    QGeoRoutingService request methods.
 */
 
 /*!
@@ -85,6 +93,8 @@ QGeoRouteRequestOptions& QGeoRouteRequestOptions::operator= (const QGeoRouteRequ
 /*!
     Sets the number of alternative routes to request to \a alternatives.
 
+    The default value if none is set is 0.
+
     \sa QGeoRouteRequestOptions::numberAlternativeRoutes()
 */
 void QGeoRouteRequestOptions::setNumberAlternativeRoutes(int alternatives)
@@ -107,6 +117,8 @@ int QGeoRouteRequestOptions::numberAlternativeRoutes() const
 /*!
     Sets the travel modes which should be considered during the planning of the
     route to \a travelModes.
+
+    The default value if none is set is QGeoRoute::CarTravel.
 
     \sa QGeoRoute::TravelModes
     \sa QGeoRouteRequestOptions::travelModes()
@@ -134,6 +146,8 @@ QGeoRoute::TravelModes QGeoRouteRequestOptions::travelModes() const
     Sets the features to be avoided during the planning of the route to
     \a avoidFeatureTypes.
 
+    The default value if none is set is QGeoRoute::AvoidNothing.
+
     \sa QGeoRoute::AvoidFeatureTypes
     \sa QGeoRouteRequestOptions::avoidFeatureTypes()
 */
@@ -159,6 +173,8 @@ QGeoRoute::AvoidFeatureTypes QGeoRouteRequestOptions::avoidFeatureTypes() const
 /*!
     Sets the optimization criteria to use while planning the route to
     \a optimization.
+
+    The default value if none is set is QGeoRoute::FastestRoute.
 
     \sa QGeoRoute::RouteOptimization
     \sa QGeoRouteRequestOptions::routeOptimization()

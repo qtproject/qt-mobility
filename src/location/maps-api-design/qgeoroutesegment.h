@@ -73,11 +73,11 @@ public:
 
     virtual SegmentType type() const;
 
-    void setDuration(const QDateTime &duration);
-    QDateTime duration() const;
+    void setEstimatedTravelTime(const QDateTime &travelTime);
+    QDateTime estimatedTravelTime() const;
 
-    void setDistance(const QGeoDistance &distance);
-    QGeoDistance distance() const;
+    void setLength(const QGeoDistance &length);
+    QGeoDistance length() const;
 
     // bounds per segment?  or is bounds per route enough?
 
