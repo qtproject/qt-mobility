@@ -55,7 +55,7 @@ class Q_MESSAGING_EXPORT QMessageFolderId
 public:
     QMessageFolderId();
     QMessageFolderId(const QMessageFolderId &other);
-    QMessageFolderId(const QString &id);
+    QMessageFolderId(const QString& id);
     ~QMessageFolderId();
 
     QMessageFolderId& operator=(const QMessageFolderId &other);

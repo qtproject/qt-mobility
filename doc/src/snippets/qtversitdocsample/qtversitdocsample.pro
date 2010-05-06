@@ -24,4 +24,5 @@ SOURCES += qtversitdocsample.cpp
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
+    MMP_RULES+="EXPORTUNFROZEN"
 }
