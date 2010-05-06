@@ -103,9 +103,7 @@ public:
         Container,
         Filter,
         Count,
-        Remove,
-        Copy,
-        Move
+        Remove
     };
 
     explicit QGalleryAbstractRequest(Type type, QObject *parent = 0);
