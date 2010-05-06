@@ -192,8 +192,8 @@ private:
 private:
 
     CEmailInterfaceFactory* m_factory;
-    MEmailInterface* m_ifPtr;
-    MEmailClientApi* m_clientApi;
+    mutable MEmailInterface* m_ifPtr;
+    mutable MEmailClientApi* m_clientApi;
     mutable QHash<QString, QMessageAccount> m_accounts;
     mutable int m_operationIds;
     mutable QList<FSMessageQueryInfo> m_messageQueries;
