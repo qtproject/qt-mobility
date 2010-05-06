@@ -93,11 +93,11 @@ QGalleryTrackerItemListResponse::QGalleryTrackerItemListResponse(
             m_sortFields.append(field);
     }
 
-    if (properties.contains(QLatin1String("thumbnail"))) {
+    if (properties.contains(QLatin1String("thumbnailImage"))) {
         QGalleryThumbnailLoader *imageLoader = new QGalleryThumbnailLoader(this);
 
         setImageColumn(imageLoader, m_propertyNames.count() + 2);
-        m_propertyNames.append(QLatin1String("thumbnail"));
+        m_propertyNames.append(QLatin1String("thumbnailImage"));
         m_propertyAttributes.append(QGalleryProperty::CanRead);
     }
 }

@@ -78,7 +78,8 @@ public:
     static const QGalleryProperty subject;
     static const QGalleryProperty keywords;
     static const QGalleryProperty language;
-    static const QGalleryProperty thumbnail;
+    static const QGalleryProperty thumbnailImage;
+    static const QGalleryProperty thumbnailPixmap;
 
     // File
     static const QGalleryProperty path;

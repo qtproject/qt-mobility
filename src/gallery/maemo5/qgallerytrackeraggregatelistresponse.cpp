@@ -114,11 +114,11 @@ QGalleryTrackerAggregateListResponse::QGalleryTrackerAggregateListResponse(
     }
 
     if (schema.itemType() == QLatin1String("Album")
-            && properties.contains(QLatin1String("thumbnail"))) {
+            && properties.contains(QLatin1String("thumbnailImage"))) {
         QGalleryMediaArtLoader *imageLoader = new QGalleryMediaArtLoader(this);
 
         setImageColumn(imageLoader, m_propertyNames.count());
-        m_propertyNames.append(QLatin1String("thumbnail"));
+        m_propertyNames.append(QLatin1String("thumbnailImage"));
     }
 }
 
