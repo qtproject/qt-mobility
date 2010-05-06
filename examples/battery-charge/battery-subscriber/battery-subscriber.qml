@@ -1,7 +1,12 @@
-import Qt 4.6
+import Qt 4.7
+import QtMobility.publishsubscribe 1.0
+import Qt.labs.particles 1.0
+import "content"
 
 Rectangle {
     color: "white"
+    width: 100
+    height: 230
 
     Rectangle {
         x: 20
@@ -34,7 +39,7 @@ Rectangle {
             id: bubbles
             width: parent.width
             anchors.bottom: parent.bottom
-            source: "bubble.png"
+            source: "content/bubble.png"
             count: 0
             velocity: 30
             velocityDeviation: 10

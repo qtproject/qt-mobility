@@ -42,26 +42,29 @@
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 #include <QtDeclarative/qdeclarative.h>
 
-#include "qdeclarativeservice.h"
+#include "qvaluespacesubscriber.h"
 
 QT_BEGIN_NAMESPACE
 
-class QServiceDeclarativeModule : public QDeclarativeExtensionPlugin
+QTM_USE_NAMESPACE
+
+QML_DECLARE_TYPE(QValueSpaceSubscriber);
+
+class QSubscriberDeclarativeModule : public QDeclarativeExtensionPlugin
 {
     Q_OBJECT
 public:
     virtual void registerTypes(const char *uri)
     {
-        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.serviceframework"));
-        
-        qmlRegisterType<QDeclarativeService>(uri, 1, 0, "Service");
-        qmlRegisterType<QDeclarativeServiceList>(uri, 1, 0, "ServiceList");
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.publishsubscribe"));
+
+        qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 0, "ValueSpaceSubscriber");
     }
 };
 
 QT_END_NAMESPACE
 
-#include "serviceframework.moc"
+#include "publishsubscribe.moc"
 
-Q_EXPORT_PLUGIN2(qservicedeclarativemodule, QT_PREPEND_NAMESPACE(QServiceDeclarativeModule));
+Q_EXPORT_PLUGIN2(qsubscriberdeclarativemodule, QT_PREPEND_NAMESPACE(QSubscriberDeclarativeModule));
 
