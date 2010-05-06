@@ -80,7 +80,7 @@ QStringList QGalleryTrackerListResponse::row(int index) const
     return m_rows.value(index - m_rowOffset);
 }
 
-QString QGalleryTrackerListResponse::id(int index) const
+QVariant QGalleryTrackerListResponse::id(int index) const
 {
     return idFunc(m_rows.value(index - m_rowOffset));
 }

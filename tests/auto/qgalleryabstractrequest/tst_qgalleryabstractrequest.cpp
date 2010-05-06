@@ -87,7 +87,7 @@ public:
 
     int count() const { return 0; }
 
-    QString id(int) const { return QString(); }
+    QVariant id(int) const { return QVariant(); }
     QUrl url(int) const { return QUrl(); }
     QString type(int) const { return QString(); }
     QString parentId(int) const { return QString(); }

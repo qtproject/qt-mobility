@@ -1150,13 +1150,16 @@ QString QGalleryTrackerSchema::buildFilterQuery(
     return query;
 }
 
-QString QGalleryTrackerSchema::uriFromItemId(int *error, const QString &itemId) const
+QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId) const
 {
     QGalleryTypeMap typeMap(qt_galleryTypeMap);
-    int index = typeMap.indexOfItemId(itemId);
+
+    const QString idString = itemId.toString();
+
+    int index = typeMap.indexOfItemId(idString);
 
     if (index != -1) {
-        return typeMap.items[index].prefix.strip(itemId).toString();
+        return typeMap.items[index].prefix.strip(idString).toString();
     } else {
         *error = QGalleryAbstractRequest::InvalidItemError;
 
@@ -1164,19 +1167,21 @@ QString QGalleryTrackerSchema::uriFromItemId(int *error, const QString &itemId) 
     }
 }
 
-QStringList QGalleryTrackerSchema::urisFromItemIds(int *error, const QStringList &itemIds) const
+QStringList QGalleryTrackerSchema::urisFromItemIds(int *error, const QVariantList &itemIds) const
 {
     QStringList uris;
 
     QGalleryTypeMap typeMap(qt_galleryTypeMap);
 
-    for (QStringList::const_iterator itemId = itemIds.begin(), end = itemIds.end();
-            itemId != end;
-            ++itemId) {
-        int index = typeMap.indexOfItemId(*itemId);
+    for (QVariantList::const_iterator it = itemIds.begin(), end = itemIds.end();
+            it != end;
+            ++it) {
+        const QString itemId = it->toString();
+
+        int index = typeMap.indexOfItemId(itemId);
 
         if (index != -1)
-            uris.append(typeMap.items[index].prefix.strip(*itemId).toString());
+            uris.append(typeMap.items[index].prefix.strip(itemId).toString());
         else
             *error = QGalleryAbstractRequest::InvalidItemError;
     }

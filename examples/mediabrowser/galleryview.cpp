@@ -69,7 +69,7 @@ void GalleryView::setGallery(QAbstractGallery *gallery)
     countRequest->setGallery(gallery);
 }
 
-void GalleryView::showChildren(const QString &containerId)
+void GalleryView::showChildren(const QVariant &containerId)
 {
     request->setContainerId(containerId);
     request->execute();

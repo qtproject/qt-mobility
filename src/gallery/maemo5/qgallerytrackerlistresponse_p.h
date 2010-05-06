@@ -79,7 +79,7 @@ public:
 
     QStringList row(int index) const;
 
-    QString id(int index) const;
+    QVariant id(int index) const;
     virtual QUrl url(int index) const = 0;
     virtual QString type(int index) const = 0;
     virtual QList<QGalleryResource> resources(int index) const = 0;

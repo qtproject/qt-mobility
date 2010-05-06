@@ -120,9 +120,9 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     int result = QGalleryAbstractRequest::Succeeded;
 
     QGalleryTrackerSchema schema;
-    schema.resolveItemType(request->itemId());
+    schema.resolveItemType(request->itemId().toString());
 
-    QString query = schema.buildIdQuery(&result, request->itemId());
+    QString query = schema.buildIdQuery(&result, request->itemId().toString());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
@@ -174,7 +174,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
     QGalleryTrackerSchema schema;
     schema.setItemType(request->itemType());
 
-    QString query = schema.buildContainerQuery(&result, request->containerId());
+    QString query = schema.buildContainerQuery(&result, request->containerId().toString());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
@@ -219,7 +219,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
     QGalleryTrackerSchema schema;
     schema.setItemType(request->itemType());
 
-    QString query = schema.buildFilterQuery(&result, request->containerId(), request->filter());
+    QString query = schema.buildFilterQuery(
+            &result, request->containerId().toString(), request->filter());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
@@ -263,7 +264,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
     QGalleryTrackerSchema schema;
     schema.setItemType(request->itemType());
 
-    QString query = schema.buildFilterQuery(&result, request->containerId(), request->filter());
+    QString query = schema.buildFilterQuery(
+            &result, request->containerId().toString(), request->filter());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));

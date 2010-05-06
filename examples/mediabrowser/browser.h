@@ -66,11 +66,11 @@ public:
     ~Browser();
 
 public Q_SLOTS:
-    void showArtists(const QString &containerId = QString());
-    void showAlbumArtists(const QString &containerId = QString());
-    void showAlbums(const QString &containerId = QString());
-    void showSongs(const QString &containerId = QString());
-    void showPhotos(const QString &containerId = QString());
+    void showArtists(const QVariant &containerId = QVariant());
+    void showAlbumArtists(const QVariant &containerId = QVariant());
+    void showAlbums(const QVariant &containerId = QVariant());
+    void showSongs(const QVariant &containerId = QVariant());
+    void showPhotos(const QVariant &containerId = QVariant());
 
 private:
     QDocumentGallery *gallery;

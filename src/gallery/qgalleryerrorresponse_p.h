@@ -70,7 +70,7 @@ public:
 
     int count() const;
 
-    QString id(int index) const;
+    QVariant id(int index) const;
     QUrl url(int index) const;
     QString type(int index) const;
     QString parentId(int index) const;

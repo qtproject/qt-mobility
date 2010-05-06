@@ -96,9 +96,9 @@ int QGalleryTrackerCountResponse::count() const
     return m_count;
 }
 
-QString QGalleryTrackerCountResponse::id(int) const
+QVariant QGalleryTrackerCountResponse::id(int) const
 {
-    return QString();
+    return QVariant();
 }
 
 QUrl QGalleryTrackerCountResponse::url(int) const

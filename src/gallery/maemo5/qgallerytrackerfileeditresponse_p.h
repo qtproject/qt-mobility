@@ -83,7 +83,7 @@ public:
 
     int count() const;
 
-    QString id(int index) const;
+    QVariant id(int index) const;
     QUrl url(int index) const;
     QString type(int index) const;
     QList<QGalleryResource> resources(int index) const;

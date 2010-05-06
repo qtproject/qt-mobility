@@ -70,7 +70,7 @@ public:
 
     bool create;
     QUrl itemUrl;
-    QString itemId;
+    QVariant itemId;
     QString itemType;
 };
 
@@ -150,7 +150,7 @@ void QGalleryUrlRequest::setCreate(bool create)
     \brief The ID of the requested item.
 */
 
-QString QGalleryUrlRequest::itemId() const
+QVariant QGalleryUrlRequest::itemId() const
 {
     return d_func()->itemId;
 }

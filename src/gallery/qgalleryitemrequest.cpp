@@ -57,7 +57,7 @@ public:
 
     bool live;
     QStringList propertyNames;
-    QString itemId;
+    QVariant itemId;
 };
 
 /*!
@@ -142,12 +142,12 @@ void QGalleryItemRequest::setLive(bool live)
     \brief The ID of a item a item request should return.
 */
 
-QString QGalleryItemRequest::itemId() const
+QVariant QGalleryItemRequest::itemId() const
 {
     return d_func()->itemId;
 }
 
-void QGalleryItemRequest::setItemId(const QString &id)
+void QGalleryItemRequest::setItemId(const QVariant &id)
 {
     d_func()->itemId = id;
 }

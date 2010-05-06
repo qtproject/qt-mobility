@@ -57,7 +57,7 @@ class Q_GALLERY_EXPORT QGalleryUrlRequest : public QGalleryAbstractRequest
     Q_OBJECT
     Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl)
     Q_PROPERTY(bool create READ create WRITE setCreate)
-    Q_PROPERTY(QString itemId READ itemId NOTIFY itemChanged)
+    Q_PROPERTY(QVariant itemId READ itemId NOTIFY itemChanged)
     Q_PROPERTY(QString itemType READ itemType NOTIFY itemChanged)
 public:
     QGalleryUrlRequest(QObject *parent = 0);
@@ -72,7 +72,7 @@ public:
 
     // Results
 
-    QString itemId() const;
+    QVariant itemId() const;
     QString itemType() const;
 
 Q_SIGNALS:

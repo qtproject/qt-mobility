@@ -61,7 +61,7 @@ public:
     int count;
     bool live;
     QString itemType;
-    QString containerId;
+    QVariant containerId;
     QGalleryFilter filter;
 };
 
@@ -156,12 +156,12 @@ void QGalleryCountRequest::setItemType(const QString &type)
 
 */
 
-QString QGalleryCountRequest::containerId() const
+QVariant QGalleryCountRequest::containerId() const
 {
     return d_func()->containerId;
 }
 
-void QGalleryCountRequest::setContainerId(const QString &id)
+void QGalleryCountRequest::setContainerId(const QVariant &id)
 {
     d_func()->containerId = id;
 }

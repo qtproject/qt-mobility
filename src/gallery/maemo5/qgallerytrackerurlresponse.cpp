@@ -107,7 +107,7 @@ int QGalleryTrackerUrlResponse::count() const
     return !m_itemId.isNull() ? 1 : 0;
 }
 
-QString QGalleryTrackerUrlResponse::id(int) const
+QVariant QGalleryTrackerUrlResponse::id(int) const
 {
     return m_itemId;
 }

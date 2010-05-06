@@ -62,7 +62,7 @@ public:
     QStringList propertyNames;
     QStringList sortPropertyNames;
     QString itemType;
-    QString containerId;
+    QVariant containerId;
     QGalleryFilter filter;
 };
 
@@ -225,12 +225,12 @@ void QGalleryFilterRequest::setItemType(const QString &type)
 
 */
 
-QString QGalleryFilterRequest::containerId() const
+QVariant QGalleryFilterRequest::containerId() const
 {
     return d_func()->containerId;
 }
 
-void QGalleryFilterRequest::setContainerId(const QString &id)
+void QGalleryFilterRequest::setContainerId(const QVariant &id)
 {
     d_func()->containerId = id;
 }

@@ -42,7 +42,9 @@
 #ifndef QGALLERYREMOVEREQUEST_H
 #define QGALLERYREMOVEREQUEST_H
 
-#include "qgalleryabstractrequest.h"
+#include <qgalleryabstractrequest.h>
+
+#include <QtCore/qvariant.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,8 +57,8 @@ class Q_GALLERY_EXPORT QGalleryRemoveRequest : public QGalleryAbstractRequest
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryRemoveRequest)
     Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
-    Q_PROPERTY(QStringList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
+    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
+    Q_PROPERTY(QVariantList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
     Q_PROPERTY(QGalleryItemList *currentItem READ currentItem NOTIFY currentItemChanged)
 public:
     explicit QGalleryRemoveRequest(QObject *parent = 0);
@@ -66,11 +68,11 @@ public:
     QStringList propertyNames() const;
     void setPropertyNames(const QStringList &names);
 
-    QString itemId() const;
-    void setItemId(const QString &id);
+    QVariant itemId() const;
+    void setItemId(const QVariant &id);
 
-    QStringList itemIds() const;
-    void setItemIds(const QStringList &id);
+    QVariantList itemIds() const;
+    void setItemIds(const QVariantList &id);
 
     QGalleryItemList *currentItem() const;
 

@@ -66,7 +66,7 @@ public:
     Download(QNetworkReply *networkReply, QDocumentGallery *gallery, QObject *parent);
     ~Download();
 
-    QString itemId() const;
+    QVariant itemId() const;
 
 signals:
     void succeeded(Download *download);

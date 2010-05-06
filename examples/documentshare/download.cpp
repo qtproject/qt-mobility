@@ -67,7 +67,7 @@ Download::~Download()
     delete networkReply;
 }
 
-QString Download::itemId() const
+QVariant Download::itemId() const
 {
     return urlRequest->itemId();
 }

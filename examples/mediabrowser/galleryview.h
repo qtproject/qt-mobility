@@ -68,7 +68,7 @@ public:
     int count() const;
 
 public slots:
-    void showChildren(const QString &containerId);
+    void showChildren(const QVariant &containerId);
 
 Q_SIGNALS:
     void countChanged(int count);

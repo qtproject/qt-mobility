@@ -87,7 +87,7 @@ public:
 
     int count() const;
 
-    QString id(int index) const;
+    QVariant id(int index) const;
     QUrl url(int index) const;
     QString type(int index) const;
     QList<QGalleryResource> resources(int index) const;
@@ -107,7 +107,7 @@ private:
     QDBusPendingCallWatcher *m_watcher;
     QGalleryDBusInterfacePointer m_fileInterface;
     QUrl m_itemUrl;
-    QString m_itemId;
+    QVariant m_itemId;
     QString m_itemType;
 };
 

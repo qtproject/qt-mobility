@@ -58,8 +58,8 @@ public:
     ~ArtistView();
 
 signals:
-    void showAlbums(const QString &containerId);
-    void showSongs(const QString &containerId);
+    void showAlbums(const QVariant &containerId);
+    void showSongs(const QVariant &containerId);
 
 protected slots:
     void mediaChanged();

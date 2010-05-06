@@ -72,9 +72,9 @@ int QGalleryErrorResponse::count() const
     return 0;
 }
 
-QString QGalleryErrorResponse::id(int) const
+QVariant QGalleryErrorResponse::id(int) const
 {
-    return QString();
+    return QVariant();
 }
 
 QUrl QGalleryErrorResponse::url(int) const
