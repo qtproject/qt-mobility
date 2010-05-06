@@ -97,17 +97,17 @@ QString QContactMaemo5Engine::managerName() const
 /* Synthesise the display label of a contact */
 QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
-  Q_UNUSED(error)
-  QString label = QContactManagerEngine::synthesizedDisplayLabel(contact, error);
+  QString label;
   
-  if (label.isEmpty()) {
-    QContactNickname n = contact.detail(QContactNickname::DefinitionName);
-    label = n.nickname();
+  label = d->m_abook->getDisplayName(contact);
+  
+  
+  if (label.isEmpty()){
+    *error = QContactManager::UnspecifiedError;
+    return QString("No name");
   }
   
-  if (label.isEmpty())
-    label = "No name";
-  
+  *error = QContactManager::NoError;
   return label;
 }
 

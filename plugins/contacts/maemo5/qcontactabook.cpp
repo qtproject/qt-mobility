@@ -585,6 +585,36 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   return ok;
 }
 
+const QString QContactABook::getDisplayName(const QContact& contact) const{
+  //Get Osso ABook ID for the contact (stored as GUID detail)
+  const char* acontactID;
+  {
+    QContactGuid g = contact.detail(QContactGuid::DefinitionName);
+    acontactID = qPrintable(g.guid());
+  }
+  
+  //Get OssoABookContact
+  OssoABookContact *acontact= NULL;
+  {
+    GList* l= NULL;
+    l = osso_abook_aggregator_lookup(m_abookAgregator, acontactID);
+    
+    if (g_list_length(l) == 1) {
+      acontact = A_CONTACT(l->data);
+    }
+    g_list_free(l);
+    
+  }
+  
+  if (!acontact)
+    return QString();
+  
+  //Get Display name;
+  const char* displayName = osso_abook_contact_get_display_name(acontact);  
+
+  return QString::fromUtf8(displayName);
+}
+
 QContactLocalId QContactABook::selfContactId(QContactManager::Error* errors) const
 {
   QContactLocalId id;
