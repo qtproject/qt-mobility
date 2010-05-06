@@ -107,7 +107,7 @@ public:
 
     virtual int count() const = 0;
 
-    virtual QString id(int index) const = 0;
+    virtual QVariant id(int index) const = 0;
     virtual QUrl url(int index) const = 0;
     virtual QString type(int index) const = 0;
     virtual QList<QGalleryResource> resources(int index) const = 0;

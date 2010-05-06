@@ -54,7 +54,7 @@ public:
     }
 
     QStringList propertyNames;
-    QStringList itemIds;
+    QVariantList itemIds;
 };
 
 /*!
@@ -124,16 +124,16 @@ void QGalleryRemoveRequest::setPropertyNames(const QStringList &propertyNames)
     multiple \l itemIds this will be null.
 */
 
-QString QGalleryRemoveRequest::itemId() const
+QVariant QGalleryRemoveRequest::itemId() const
 {
     Q_D(const QGalleryRemoveRequest);
 
     return d->itemIds.count() == 1
             ? d->itemIds.first()
-            : QString();
+            : QVariant();
 }
 
-void QGalleryRemoveRequest::setItemId(const QString &id)
+void QGalleryRemoveRequest::setItemId(const QVariant &id)
 {
     Q_D(QGalleryRemoveRequest);
 
@@ -153,12 +153,12 @@ void QGalleryRemoveRequest::setItemId(const QString &id)
     If the list only contains one ID this is equivalent to \l itemId.
 */
 
-QStringList QGalleryRemoveRequest::itemIds() const
+QVariantList QGalleryRemoveRequest::itemIds() const
 {
     return d_func()->itemIds;
 }
 
-void QGalleryRemoveRequest::setItemIds(const QStringList &ids)
+void QGalleryRemoveRequest::setItemIds(const QVariantList &ids)
 {
     d_func()->itemIds = ids;
 

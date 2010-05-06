@@ -56,7 +56,7 @@ class Q_GALLERY_EXPORT QGalleryItemRequest : public QGalleryAbstractRequest
     Q_DECLARE_PRIVATE(QGalleryItemRequest)
     Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(QString itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged)
+    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged)
     Q_PROPERTY(QGalleryItemList* item READ item NOTIFY itemChanged)
 public:
     explicit QGalleryItemRequest(QObject *parent = 0);
@@ -69,8 +69,8 @@ public:
     bool isLive() const;
     void setLive(bool live);
 
-    QString itemId() const;
-    void setItemId(const QString &id);
+    QVariant itemId() const;
+    void setItemId(const QVariant &id);
 
     QGalleryItemList *item() const;
 

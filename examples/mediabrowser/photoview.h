@@ -57,9 +57,6 @@ public:
     PhotoView(QWidget *parent = 0);
     ~PhotoView();
 
-signals:
-    void showSongs(const QString &containerId);
-
 protected slots:
     void mediaChanged();
 

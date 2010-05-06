@@ -100,7 +100,7 @@ DownloadCompleteDialog::DownloadCompleteDialog(
     setWindowTitle(tr("Download Complete"));
 }
 
-void DownloadCompleteDialog::show(const QString &itemId)
+void DownloadCompleteDialog::show(const QVariant &itemId)
 {
     request->setItemId(itemId);
     request->execute();

@@ -62,7 +62,7 @@ public:
     QStringList propertyNames;
     QStringList sortPropertyNames;
     QString itemType;
-    QString containerId;
+    QVariant containerId;
 };
 
 /*!
@@ -225,12 +225,12 @@ void QGalleryContainerRequest::setItemType(const QString &type)
 */
 
 
-QString QGalleryContainerRequest::containerId() const
+QVariant QGalleryContainerRequest::containerId() const
 {
     return d_func()->containerId;
 }
 
-void QGalleryContainerRequest::setContainerId(const QString &id)
+void QGalleryContainerRequest::setContainerId(const QVariant &id)
 {
     d_func()->containerId = id;
 }

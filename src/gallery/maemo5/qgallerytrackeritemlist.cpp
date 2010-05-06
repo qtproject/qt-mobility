@@ -521,7 +521,7 @@ int QGalleryTrackerItemList::count() const
     return d_func()->rowCount;
 }
 
-QString QGalleryTrackerItemList::id(int index) const
+QVariant QGalleryTrackerItemList::id(int index) const
 {
     Q_D(const QGalleryTrackerItemList);
 
@@ -529,16 +529,14 @@ QString QGalleryTrackerItemList::id(int index) const
         index -= d->rCache.index;
 
         return index >= 0 && index <= d->rCache.count
-                ? d->idColumn->value(
-                        d->rCache.values.constBegin() + (index * d->tableWidth)).toString()
-                : QString();
+                ? d->idColumn->value(d->rCache.values.constBegin() + (index * d->tableWidth))
+                : QVariant();
     } else {
         index -= d->aCache.cutoff;
 
         return index >= 0 && index <= d->aCache.count
-                ? d->idColumn->value(
-                        d->aCache.values.constBegin() + (index * d->tableWidth)).toString()
-                : QString();
+                ? d->idColumn->value(d->aCache.values.constBegin() + (index * d->tableWidth))
+                : QVariant();
     }
 }
 

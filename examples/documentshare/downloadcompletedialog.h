@@ -69,7 +69,7 @@ public:
     DownloadCompleteDialog(
             QDocumentGallery *gallery, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
-    void show(const QString &itemId);
+    void show(const QVariant &itemId);
 
 private slots:
     void itemChanged();

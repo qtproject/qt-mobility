@@ -55,13 +55,13 @@ PhotoView::PhotoView(QWidget *parent)
     setType(QDocumentGallery::Image);
     setFields(QStringList()
             << QDocumentGallery::fileName
-            << QDocumentGallery::thumbnail);
+            << QDocumentGallery::thumbnailImage);
     setSortFields(QStringList()
             << QDocumentGallery::title);
 
     model = new GalleryModel;
     model->setDisplayFieldForColumn(0, QDocumentGallery::fileName);
-    model->setDecorationFieldForColumn(0, QDocumentGallery::thumbnail);
+    model->setDecorationFieldForColumn(0, QDocumentGallery::thumbnailImage);
 
     QListView *view = new QListView;
     view->setIconSize(QSize(124, 124));

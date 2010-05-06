@@ -234,12 +234,22 @@ const QGalleryProperty QDocumentGallery::keywords("keywords");
 const QGalleryProperty QDocumentGallery::language("language");
 
 /*!
-    \variable QDocumentGallery::thumbnail
+    \variable QDocumentGallery::thumbnailImage
 
-    This property contains a thumbnail representation of an item in the document gallery.
+    This property contains a QImage thumbnail representation of an item in the
+    document gallery.
 */
 
-const QGalleryProperty QDocumentGallery::thumbnail("thumbnail");
+const QGalleryProperty QDocumentGallery::thumbnailImage("thumbnailImage");
+
+/*!
+    \variable QDocumentGallery::thumbnailPixmap
+
+    This property contains a QPixmap thumbnail representation of an item in the
+    document gallery.
+*/
+
+const QGalleryProperty QDocumentGallery::thumbnailPixmap("thumbnailPixmap");
 
 // File
 

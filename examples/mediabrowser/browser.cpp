@@ -64,17 +64,17 @@ Browser::Browser(QWidget *parent, Qt::WindowFlags flags)
 
     artistView = new ArtistView(QDocumentGallery::Artist);
     artistView->setGallery(gallery);
-    connect(artistView, SIGNAL(showAlbums(QString)), this, SLOT(showAlbums(QString)));
-    connect(artistView, SIGNAL(showSongs(QString)), this, SLOT(showSongs(QString)));
+    connect(artistView, SIGNAL(showAlbums(QVariant)), this, SLOT(showAlbums(QVariant)));
+    connect(artistView, SIGNAL(showSongs(QVariant)), this, SLOT(showSongs(QVariant)));
 
     albumArtistView = new ArtistView(QDocumentGallery::AlbumArtist);
     albumArtistView->setGallery(gallery);
-    connect(albumArtistView, SIGNAL(showAlbums(QString)), this, SLOT(showAlbums(QString)));
-    connect(albumArtistView, SIGNAL(showSongs(QString)), this, SLOT(showSongs(QString)));
+    connect(albumArtistView, SIGNAL(showAlbums(QVariant)), this, SLOT(showAlbums(QVariant)));
+    connect(albumArtistView, SIGNAL(showSongs(QVariant)), this, SLOT(showSongs(QVariant)));
 
     albumView = new AlbumView;
     albumView->setGallery(gallery);
-    connect(albumView, SIGNAL(showSongs(QString)), this, SLOT(showSongs(QString)));
+    connect(albumView, SIGNAL(showSongs(QVariant)), this, SLOT(showSongs(QVariant)));
 
     songView = new SongView;
     songView->setGallery(gallery);
@@ -124,35 +124,35 @@ Browser::~Browser()
 {
 }
 
-void Browser::showArtists(const QString &containerId)
+void Browser::showArtists(const QVariant &containerId)
 {
     artistView->showChildren(containerId);
 
     stack->setCurrentWidget(artistView);
 }
 
-void Browser::showAlbumArtists(const QString &containerId)
+void Browser::showAlbumArtists(const QVariant &containerId)
 {
     albumArtistView->showChildren(containerId);
 
     stack->setCurrentWidget(albumArtistView);
 }
 
-void Browser::showAlbums(const QString &containerId)
+void Browser::showAlbums(const QVariant &containerId)
 {
     albumView->showChildren(containerId);
 
     stack->setCurrentWidget(albumView);
 }
 
-void Browser::showSongs(const QString &containerId)
+void Browser::showSongs(const QVariant &containerId)
 {
     songView->showChildren(containerId);
 
     stack->setCurrentWidget(songView);
 }
 
-void Browser::showPhotos(const QString &containerId)
+void Browser::showPhotos(const QVariant &containerId)
 {
     photoView->showChildren(containerId);
 

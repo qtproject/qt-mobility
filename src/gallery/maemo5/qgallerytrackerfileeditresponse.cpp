@@ -149,11 +149,11 @@ int QGalleryTrackerFileEditResponse::count() const
     return m_currentIndex != -1 ? 1 : 0;
 }
 
-QString QGalleryTrackerFileEditResponse::id(int index) const
+QVariant QGalleryTrackerFileEditResponse::id(int index) const
 {
     return m_currentIndex != -1 && index == 0
         ? idFunc(m_rows.at(m_currentIndex))
-        : QString();
+        : QVariant();
 }
 
 QUrl QGalleryTrackerFileEditResponse::url(int index) const
