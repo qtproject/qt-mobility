@@ -8,7 +8,7 @@ PLUGIN_TYPE = sensors
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(sensors_grueplugin)
+TARGET = $$qtLibraryTarget(qtsensors_grueplugin)
 symbian:TARGET.EPOCALLOWDLLDATA = 1
 
 QT=core
