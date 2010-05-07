@@ -35,6 +35,7 @@ SOURCES += qorganizer.cpp \
     qorganizeritem.cpp \
     qorganizeritemdetail.cpp \
     qorganizeritemdetaildefinition.cpp \
+    qorganizeritemdetailfielddefinition.cpp \
     qorganizeritemfetchhint.cpp \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
