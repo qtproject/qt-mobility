@@ -30,7 +30,17 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qtorganizeritem.h
 
 SOURCES += qorganizer.cpp \
-    qorganizeritem.cpp
+    qorganizeritemabstractrequest.cpp \
+    qorganizeritemchangeset.cpp \
+    qorganizeritem.cpp \
+    qorganizeritemdetail.cpp \
+    qorganizeritemdetaildefinition.cpp \
+    qorganizeritemfetchhint.cpp \
+    qorganizeritemfilter.cpp \
+    qorganizeritemid.cpp \
+    qorganizeritemmanagerengine.cpp \
+    qorganizeritemmanagerenginegfactory.cpp \
+    qorganizeritemsortorder.cpp
 
 # PRIVATE_HEADERS += \
 # SOURCES += \

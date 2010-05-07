@@ -39,151 +39,100 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEM_H
-#define QORGANIZERITEM_H
+#include "qorganizeritem.h"
 
-#include <QVariant>
-#include <QString>
-#include <QPair>
-#include <QMultiMap>
-#include <QList>
-#include <QDateTime>
-#include <QSharedDataPointer>
+QTM_USE_NAMESPACE
 
-#include "qtorganizeritemsglobal.h"
-
-#include "qorganizeritemdetail.h"
-#include "qorganizeritemdetaildefinition.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemtype.h"
-#include "qorganizeritemnote.h"
-#include "qorganizeritemid.h"
-
-QTM_BEGIN_NAMESPACE
-
-class QOrganizerItemManager;
-class QOrganizerItemData;
-class QOrganizerItemName;
-
-class Q_CALENDAR_EXPORT QOrganizerItem
+QOrganizerItem::QOrganizerItem()
 {
-public:
-    QOrganizerItem();
+}
 
-    ~QOrganizerItem();
+QOrganizerItem::~QOrganizerItem()
+{
+}
 
-    QOrganizerItem(const QOrganizerItem& other);
-    QOrganizerItem& operator=(const QOrganizerItem& other);
+QOrganizerItem::QOrganizerItem(const QOrganizerItem& other)
+{
+}
+QOrganizerItem& QOrganizerItem::operator=(const QOrganizerItem& other)
+{
+}
 
-    bool operator==(const QOrganizerItem &other) const;
-    bool operator!=(const QOrganizerItem &other) const {return !(other == *this);}
+bool QOrganizerItem::operator==(const QOrganizerItem &other) const
+{
+}
 
-    /* Unique ID */
-    QOrganizerItemId id() const;
-    void setId(const QOrganizerItemId& id);
-    QOrganizerItemLocalId localId() const;
+QOrganizerItemId QOrganizerItem::id() const
+{
+}
 
-    /* Type - event, todo, journal, invitation, ...  is the type backend synthesised? */
-    QString type() const;
-    void setType(const QString& type);
-    void setType(const QOrganizerItemType& type);
+void QOrganizerItem::setId(const QOrganizerItemId& id)
+{
+}
 
-    /* The (backend synthesized) display label of the organizeritem */
-    QString displayLabel() const;
+QOrganizerItemLocalId QOrganizerItem::localId() const
+{
+}
 
-    /* Is this an empty organizeritem? */
-    bool isEmpty() const;
-    void clearDetails();
+QString QOrganizerItem::type() const
+{
+}
 
-    QOrganizerItemDetail detail(const QString& definitionId) const;
-    QList<QOrganizerItemDetail> details(const QString& definitionId = QString()) const;
+void QOrganizerItem::setType(const QString& type)
+{
+}
 
-    QList<QOrganizerItemDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
+void QOrganizerItem::setType(const QOrganizerItemType& type)
+{
+}
 
-    QOrganizerItemDetail detail(const char* definitionId) const;
-    QList<QOrganizerItemDetail> details(const char* definitionId) const;
-    QList<QOrganizerItemDetail> details(const char* definitionId, const char* fieldName, const QString& value) const;
+QString QOrganizerItem::displayLabel() const
+{
+}
 
-    /* Templated retrieval for definition names */
-#ifdef Q_QDOC
-    QOrganizerItemDetail detail(const QLatin1Constant& definitionName) const;
-    QList<QOrganizerItemDetail> details(const QLatin1Constant& definitionName) const;
-    QList<QOrganizerItemDetail> details(const QLatin1Constant& definitionName, const QLatin1Constant& fieldName, const QString& value);
-#else
-    template <int N> QOrganizerItemDetail detail(const QLatin1Constant<N>& definitionName) const
-    {
-        return detail(definitionName.latin1());
-    }
-    template <int N> QList<QOrganizerItemDetail> details(const QLatin1Constant<N>& definitionName) const
-    {
-        return details(definitionName.latin1());
-    }
-    template <int N, int M> QList<QOrganizerItemDetail> details(const QLatin1Constant<N>& definitionName, const QLatin1Constant<M>& fieldName, const QString& value)
-    {
-        return details(definitionName.latin1(), fieldName.latin1(), value);
-    }
-#endif
+bool QOrganizerItem::isEmpty() const
+{
+}
+void QOrganizerItem::clearDetails()
+{
+}
 
-    /* Templated (type-specific) detail retrieval */
-    template<typename T> QList<T> details() const
-    {
-        QList<QOrganizerItemDetail> props = details(T::DefinitionName.latin1());
-        QList<T> ret;
-        foreach(QOrganizerItemDetail prop, props)
-            ret.append(T(prop));
-        return ret;
-    }
+QOrganizerItemDetail QOrganizerItem::detail(const QString& definitionId) const
+{
+}
 
-    /* Templated (type-specific) detail retrieval base on given detail field name and field value */
-    template<typename T> QList<T> details(const QString& fieldName, const QString& value) const
-    {
-        QList<QOrganizerItemDetail> props = details(T::DefinitionName, fieldName, value);
-        QList<T> ret;
-        foreach(QOrganizerItemDetail prop, props)
-            ret.append(T(prop));
-        return ret;
-    }
+QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionId = QString()) const
+{
+}
 
-    template<typename T> QList<T> details(const char* fieldName, const QString& value) const
-    {
-        QList<QOrganizerItemDetail> props = details(T::DefinitionName.latin1(), fieldName, value);
-        QList<T> ret;
-        foreach(QOrganizerItemDetail prop, props)
-            ret.append(T(prop));
-        return ret;
-    }
+QList<QOrganizerItemDetail> QOrganizerItem::details(const QString& definitionName, const QString& fieldName, const QString& value) const
+{
+}
 
-    template<typename T> T detail() const
-    {
-        return T(detail(T::DefinitionName.latin1()));
-    }
+QOrganizerItemDetail QOrganizerItem::detail(const char* definitionId) const
+{
+}
 
-    /* generic detail addition/removal functions */
-    bool saveDetail(QOrganizerItemDetail* detail);   // modifies the detail - sets its ID if detail already exists
-    bool removeDetail(QOrganizerItemDetail* detail); // modifies the detail - unsets its ID
+QList<QOrganizerItemDetail> QOrganizerItem::details(const char* definitionId) const
+{
+}
 
-    // Some common convenience detail accessors
-    // has to be things that all subclasses (including Occurrences) have.
-    void setNote(QString note);  // ??
-    QString note() const;        // ??
+QList<QOrganizerItemDetail> QOrganizerItem::details(const char* definitionId, const char* fieldName, const QString& value) const
+{
+}
 
-protected:
-    friend class QOrganizerItemManager;
-    friend class QOrganizerItemManagerData;
-    friend class QOrganizerItemManagerEngine;
+bool QOrganizerItem::saveDetail(QOrganizerItemDetail* detail)
+{
+}
+bool QOrganizerItem::removeDetail(QOrganizerItemDetail* detail)
+{
+}
 
-    QSharedDataPointer<QOrganizerItemData> d;
-};
+// NOT SURE ABOUT THE FOLLOWING: (conveniences for unique which are valid for all subclasses types...)
+void QOrganizerItem::setNote(QString note)
+{
+}
 
-Q_CALENDAR_EXPORT uint qHash(const QOrganizerItem& key);
-#ifndef QT_NO_DEBUG_STREAM
-Q_CALENDAR_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem);
-#endif
-
-QTM_END_NAMESPACE
-
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QOrganizerItem), Q_MOVABLE_TYPE);
-
-
-#endif
-
+QString QOrganizerItem::note() const
+{
+}
