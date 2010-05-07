@@ -46,7 +46,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoRouteRequestOptionsPrivate {
+class QGeoRouteRequestOptionsPrivate
+{
 public:
     QGeoRouteRequestOptionsPrivate();
     QGeoRouteRequestOptionsPrivate(const QGeoRouteRequestOptionsPrivate &other);

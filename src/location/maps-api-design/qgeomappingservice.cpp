@@ -83,7 +83,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoMappingService object.
 */
 QGeoMappingService::QGeoMappingService()
-    : d_ptr(new QGeoMappingServicePrivate()) {}
+        : d_ptr(new QGeoMappingServicePrivate()) {}
 
 /*!
     Destroys this QGeoMappingService object.
@@ -140,7 +140,7 @@ QList<QGeoMapWidget::MapType> QGeoMappingService::supportedMapTypes() const
     Returns a list of the image formats supported by this QGeoMappingService
     instance.
 
-    \sa QGeoMapService::setSupportedImageFormats()
+    \sa QGeoMappingService::setSupportedImageFormats()
 */
 QList<QString> QGeoMappingService::supportedImageFormats() const
 {
@@ -361,16 +361,16 @@ void QGeoMappingService::setMaximumSize(const QSize &maximumImageSize)
 QGeoMappingServicePrivate::QGeoMappingServicePrivate() {}
 
 QGeoMappingServicePrivate::QGeoMappingServicePrivate(const QGeoMappingServicePrivate &other)
-    : supportedMapTypes(other.supportedMapTypes),
-    supportedImageFormats(other.supportedImageFormats),
-    minimumZoomLevel(other.minimumZoomLevel),
-    maximumZoomLevel(other.maximumZoomLevel),
-    minimumImageSize(other.minimumImageSize),
-    maximumImageSize(other.maximumImageSize) {}
+        : supportedMapTypes(other.supportedMapTypes),
+        supportedImageFormats(other.supportedImageFormats),
+        minimumZoomLevel(other.minimumZoomLevel),
+        maximumZoomLevel(other.maximumZoomLevel),
+        minimumImageSize(other.minimumImageSize),
+        maximumImageSize(other.maximumImageSize) {}
 
 QGeoMappingServicePrivate::~QGeoMappingServicePrivate() {}
 
-QGeoMappingServicePrivate& QGeoMappingServicePrivate::operator= (const QGeoMappingServicePrivate &other)
+QGeoMappingServicePrivate& QGeoMappingServicePrivate::operator= (const QGeoMappingServicePrivate & other)
 {
     supportedMapTypes = other.supportedMapTypes;
     supportedImageFormats = other.supportedImageFormats;

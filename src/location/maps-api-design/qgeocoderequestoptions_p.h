@@ -46,7 +46,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCodeRequestOptionsPrivate {
+class QGeoCodeRequestOptionsPrivate
+{
 public:
     QGeoCodeRequestOptionsPrivate();
     QGeoCodeRequestOptionsPrivate(const QGeoCodeRequestOptionsPrivate &other);

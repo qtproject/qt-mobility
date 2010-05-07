@@ -49,7 +49,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoNavigationInstructionPrivate {
+class QGeoNavigationInstructionPrivate
+{
 public:
     QGeoNavigationInstructionPrivate();
     QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other);

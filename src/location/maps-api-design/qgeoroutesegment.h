@@ -57,10 +57,11 @@ class QGeoDistance;
 class QGeoNavigationInstruction;
 class QGeoRouteSegmentPrivate;
 
-class Q_LOCATION_EXPORT QGeoRouteSegment {
+class Q_LOCATION_EXPORT QGeoRouteSegment
+{
 
 public:
-    
+
     enum SegmentType {
         NormalSegment,
         PrivateTransportSegment,

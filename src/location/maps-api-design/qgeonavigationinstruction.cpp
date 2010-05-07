@@ -86,13 +86,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoNavigationInstruction object.
 */
 QGeoNavigationInstruction::QGeoNavigationInstruction()
-    : d_ptr(new QGeoNavigationInstructionPrivate()) {}
+        : d_ptr(new QGeoNavigationInstructionPrivate()) {}
 
 /*
     For internal use
 */
 QGeoNavigationInstruction::QGeoNavigationInstruction(QGeoNavigationInstructionPrivate *d_ptr)
-    : d_ptr(d_ptr) {}
+        : d_ptr(d_ptr) {}
 
 /*!
     Destroys this QGeoNavigationInstruction object.
@@ -145,7 +145,7 @@ QGeoCoordinate QGeoNavigationInstruction::position() const
 /*!
     Sets the textual navigation instructions to \a instructionText.
 
-    \sa GeoNavigationInstruction::instructionText()
+    \sa QGeoNavigationInstruction::instructionText()
 */
 void QGeoNavigationInstruction::setInstructionText(const QString &instructionText)
 {
@@ -156,7 +156,7 @@ void QGeoNavigationInstruction::setInstructionText(const QString &instructionTex
 /*!
     Returns the textual navigation instructions.
 
-    \sa GeoNavigationInstruction::setInstructionText()
+    \sa QGeoNavigationInstruction::setInstructionText()
 */
 QString QGeoNavigationInstruction::instructionText() const
 {
@@ -173,13 +173,13 @@ QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate()
 }
 
 QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other)
-    : type(other.type),
-    position(other.position),
-    text(other.text) {}
+        : type(other.type),
+        position(other.position),
+        text(other.text) {}
 
 QGeoNavigationInstructionPrivate::~QGeoNavigationInstructionPrivate() {}
 
-QGeoNavigationInstructionPrivate& QGeoNavigationInstructionPrivate::operator= (const QGeoNavigationInstructionPrivate &other)
+QGeoNavigationInstructionPrivate& QGeoNavigationInstructionPrivate::operator= (const QGeoNavigationInstructionPrivate & other)
 {
     type = other.type;
     position = other.position;

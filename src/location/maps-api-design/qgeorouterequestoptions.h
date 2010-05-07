@@ -52,8 +52,9 @@ class QGeoRouteTransitOptions;
 
 class QGeoRouteRequestOptionsPrivate;
 
-class Q_LOCATION_EXPORT QGeoRouteRequestOptions {
-public: 
+class Q_LOCATION_EXPORT QGeoRouteRequestOptions
+{
+public:
     QGeoRouteRequestOptions();
     QGeoRouteRequestOptions(const QGeoRouteRequestOptions &other);
     ~QGeoRouteRequestOptions();

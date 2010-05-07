@@ -63,13 +63,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoRouteRequestOptions object.
 */
 QGeoRouteRequestOptions::QGeoRouteRequestOptions()
-    : d_ptr(new QGeoRouteRequestOptionsPrivate()) {}
+        : d_ptr(new QGeoRouteRequestOptionsPrivate()) {}
 
 /*!
     Constructs a QGeoRouteRequestOptions object from the contents of \a other.
 */
 QGeoRouteRequestOptions::QGeoRouteRequestOptions(const QGeoRouteRequestOptions &other)
-    : d_ptr(new QGeoRouteRequestOptionsPrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoRouteRequestOptionsPrivate(*(other.d_ptr))) {}
 
 /*!
     Destroys this QGeoRouteRequestOptions object.
@@ -84,7 +84,7 @@ QGeoRouteRequestOptions::~QGeoRouteRequestOptions()
     Assigns \a other to this QGeoRouteRequestOptions object and returns a
     reference to this QGeoRouteRequestOptions object.
 */
-QGeoRouteRequestOptions& QGeoRouteRequestOptions::operator= (const QGeoRouteRequestOptions &other)
+QGeoRouteRequestOptions& QGeoRouteRequestOptions::operator= (const QGeoRouteRequestOptions & other)
 {
     *d_ptr = *(other.d_ptr);
     return *this;
@@ -210,15 +210,15 @@ QGeoRouteRequestOptionsPrivate::QGeoRouteRequestOptionsPrivate()
 }
 
 QGeoRouteRequestOptionsPrivate::QGeoRouteRequestOptionsPrivate(const QGeoRouteRequestOptionsPrivate &other)
-    : alternativeRoutes(other.alternativeRoutes),
-    travelModes(other.travelModes),
-    //transitOptions(other.transitOptions),
-    avoidFeatureTypes(other.avoidFeatureTypes),
-    routeOptimization(other.routeOptimization) {}
+        : alternativeRoutes(other.alternativeRoutes),
+        travelModes(other.travelModes),
+        //transitOptions(other.transitOptions),
+        avoidFeatureTypes(other.avoidFeatureTypes),
+        routeOptimization(other.routeOptimization) {}
 
 QGeoRouteRequestOptionsPrivate::~QGeoRouteRequestOptionsPrivate() {}
 
-QGeoRouteRequestOptionsPrivate& QGeoRouteRequestOptionsPrivate::operator= (const QGeoRouteRequestOptionsPrivate &other)
+QGeoRouteRequestOptionsPrivate& QGeoRouteRequestOptionsPrivate::operator= (const QGeoRouteRequestOptionsPrivate & other)
 {
     alternativeRoutes = other.alternativeRoutes;
     travelModes = other.travelModes;

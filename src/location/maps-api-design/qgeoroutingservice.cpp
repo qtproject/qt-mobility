@@ -83,7 +83,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoRoutingService object.
 */
 QGeoRoutingService::QGeoRoutingService()
-    : d_ptr(new QGeoRoutingServicePrivate()) {}
+        : d_ptr(new QGeoRoutingServicePrivate()) {}
 
 /*!
     Destroys this QGeoRoutingService object.
@@ -211,7 +211,7 @@ QGeoRoute::AvoidFeatureTypes QGeoRoutingService::supportedAvoidFeatureTypes() co
     instance.
 
     \sa QGeoRoute::RouteOptimizations
-    \sa QGeoRoute::setSupportedRouteOptimizations()
+    \sa QGeoRoutingService::setSupportedRouteOptimizations()
 */
 QGeoRoute::RouteOptimizations QGeoRoutingService::supportedRouteOptimizations() const
 {
@@ -225,7 +225,7 @@ QGeoRoute::RouteOptimizations QGeoRoutingService::supportedRouteOptimizations() 
     supports.
 
     \sa QGeoRoute::DirectionsDetails
-    \sa QGeoRoute::setSupportedDirectionDetails()
+    \sa QGeoRoutingService::setSupportedDirectionDetails()
 */
 QGeoRoute::DirectionsDetails QGeoRoutingService::supportedDirectionDetails() const
 {
@@ -250,7 +250,7 @@ bool QGeoRoutingService::supportsUpdatingRoutes() const
 
 /*!
     Sets the travel modes supported by this QGeoRoutingService instance to
-    \a supportedTravelModes.
+    \a travelModes.
 
     Subclasses of QGeoRoutingService should use this function to ensure that
     supportedTravelModes() provides accurate information.
@@ -371,16 +371,16 @@ void QGeoRoutingService::setSupportsUpdatingRoutes(bool updatingRoutes)
 QGeoRoutingServicePrivate::QGeoRoutingServicePrivate() {}
 
 QGeoRoutingServicePrivate::QGeoRoutingServicePrivate(const QGeoRoutingServicePrivate &other)
-    : supportedTravelModes(other.supportedTravelModes),
-    supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
-    supportedRouteOptimizations(other.supportedRouteOptimizations),
-    //supportedTransitOptionTypes(other.supportedTransitOptionTypes),
-    supportedDirectionDetails(other.supportedDirectionDetails),
-    supportsUpdatingRoutes(other.supportsUpdatingRoutes) {}
+        : supportedTravelModes(other.supportedTravelModes),
+        supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
+        supportedRouteOptimizations(other.supportedRouteOptimizations),
+        //supportedTransitOptionTypes(other.supportedTransitOptionTypes),
+        supportedDirectionDetails(other.supportedDirectionDetails),
+        supportsUpdatingRoutes(other.supportsUpdatingRoutes) {}
 
 QGeoRoutingServicePrivate::~QGeoRoutingServicePrivate() {}
 
-QGeoRoutingServicePrivate& QGeoRoutingServicePrivate::operator= (const QGeoRoutingServicePrivate &other)
+QGeoRoutingServicePrivate& QGeoRoutingServicePrivate::operator= (const QGeoRoutingServicePrivate & other)
 {
     supportedTravelModes = other.supportedTravelModes;
     supportedAvoidFeatureTypes = other.supportedAvoidFeatureTypes;

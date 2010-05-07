@@ -53,7 +53,8 @@ QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoRouteSegment;
 
-class QGeoRoutePrivate {
+class QGeoRoutePrivate
+{
 public:
     QGeoRoutePrivate();
     QGeoRoutePrivate(const QGeoRoutePrivate &other);

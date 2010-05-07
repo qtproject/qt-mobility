@@ -66,13 +66,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoCodingRequestOptions object.
 */
 QGeoCodeRequestOptions::QGeoCodeRequestOptions()
-    : d_ptr(new QGeoCodeRequestOptionsPrivate()) {}
+        : d_ptr(new QGeoCodeRequestOptionsPrivate()) {}
 
 /*!
     Constructs a QGeoCodingRequestOptions object from \a other.
 */
 QGeoCodeRequestOptions::QGeoCodeRequestOptions(const QGeoCodeRequestOptions &other)
-    : d_ptr(new QGeoCodeRequestOptionsPrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoCodeRequestOptionsPrivate(*(other.d_ptr))) {}
 
 /*!
     Destroys this QGeoCodingRequestOptions object.
@@ -87,7 +87,7 @@ QGeoCodeRequestOptions::~QGeoCodeRequestOptions()
     Assigns the value of \a other to this QGeoCodingRequestOptions object and
     returns a reference to this QGeoCodingRequestOptions object.
 */
-QGeoCodeRequestOptions& QGeoCodeRequestOptions::operator= (const QGeoCodeRequestOptions &other)
+QGeoCodeRequestOptions& QGeoCodeRequestOptions::operator= (const QGeoCodeRequestOptions & other)
 {
     *d_ptr = *(other.d_ptr);
     return *this;
@@ -120,16 +120,17 @@ int QGeoCodeRequestOptions::maximumResponses() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoCodeRequestOptionsPrivate::QGeoCodeRequestOptionsPrivate() {
+QGeoCodeRequestOptionsPrivate::QGeoCodeRequestOptionsPrivate()
+{
     maximumResponses = 1;
 }
 
 QGeoCodeRequestOptionsPrivate::QGeoCodeRequestOptionsPrivate(const QGeoCodeRequestOptionsPrivate &other)
-    : maximumResponses(other.maximumResponses) {}
+        : maximumResponses(other.maximumResponses) {}
 
 QGeoCodeRequestOptionsPrivate::~QGeoCodeRequestOptionsPrivate() {}
 
-QGeoCodeRequestOptionsPrivate& QGeoCodeRequestOptionsPrivate::operator= (const QGeoCodeRequestOptionsPrivate &other)
+QGeoCodeRequestOptionsPrivate& QGeoCodeRequestOptionsPrivate::operator= (const QGeoCodeRequestOptionsPrivate & other)
 {
     maximumResponses = other.maximumResponses;
     return *this;

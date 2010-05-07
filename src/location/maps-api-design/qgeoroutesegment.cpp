@@ -85,13 +85,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoRouteSegment object.
 */
 QGeoRouteSegment::QGeoRouteSegment()
-    : d_ptr(new QGeoRouteSegmentPrivate()) {}
+        : d_ptr(new QGeoRouteSegmentPrivate()) {}
 
 /*
     Internal use
 */
 QGeoRouteSegment::QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr)
-    : d_ptr(d_ptr) {}
+        : d_ptr(d_ptr) {}
 
 /*!
     Destroys this QGeoRouteSegment object.
@@ -121,7 +121,7 @@ QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
     Sets an estimate of how long it will take to traverse this
     segment of the route to \a travelTime.
 
-    \sa QGeoRouteSegment::esimatedTravelTime()
+    \sa QGeoRouteSegment::estimatedTravelTime()
 */
 void QGeoRouteSegment::setEstimatedTravelTime(const QDateTime &travelTime)
 {
@@ -166,7 +166,7 @@ QGeoDistance QGeoRouteSegment::length() const
 /*!
     Sets the geometric shape of this segment of the route to \a geometry.
 
-    The coordinates in \a geomerty should be listed in the order in which they
+    The coordinates in \a geometry should be listed in the order in which they
     would be traversed by someone travelling along this segment of the route.
 
     \sa QGeoRouteSegment::geometry()
@@ -180,7 +180,7 @@ void QGeoRouteSegment::setGeometry(const QList<QGeoCoordinate> &geometry)
 /*!
     Returns the geometric shape of this route segment of the route.
 
-    The coordinates in \a geomerty should be listed in the order in which they
+    The coordinates should be listed in the order in which they
     would be traversed by someone travelling along this segment of the route.
 
     \sa QGeoRouteSegment::setGeometry()
@@ -194,7 +194,7 @@ QList<QGeoCoordinate> QGeoRouteSegment::geometry() const
 /*!
     Sets the instructions for this route segement to \a instructions.
 
-    \sa QGeoRouteSegment::instructions.
+    \sa QGeoRouteSegment::instructions()
 */
 void QGeoRouteSegment::setInstructions(const QList<const QGeoNavigationInstruction *> &instructions)
 {
@@ -222,15 +222,15 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
 }
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
-    : type(other.type),
-    estimatedTravelTime(other.estimatedTravelTime),
-    length(other.length),
-    geometry(other.geometry),
-    instructions(other.instructions) {}
+        : type(other.type),
+        estimatedTravelTime(other.estimatedTravelTime),
+        length(other.length),
+        geometry(other.geometry),
+        instructions(other.instructions) {}
 
 QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 
-QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate &other)
+QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate & other)
 {
     type = other.type;
     estimatedTravelTime = other.estimatedTravelTime;

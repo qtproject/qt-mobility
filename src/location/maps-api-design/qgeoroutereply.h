@@ -52,11 +52,12 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoRoute;
 
-class Q_LOCATION_EXPORT QGeoRouteReply : public QObject {
+class Q_LOCATION_EXPORT QGeoRouteReply : public QObject
+{
 
     Q_OBJECT
 
-public: 
+public:
     QGeoRouteReply(QObject *parent = 0);
     virtual ~QGeoRouteReply();
 

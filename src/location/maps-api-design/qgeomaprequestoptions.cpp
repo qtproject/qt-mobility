@@ -64,13 +64,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoMapRequestOptions object.
 */
 QGeoMapRequestOptions::QGeoMapRequestOptions()
-    : d_ptr(new QGeoMapRequestOptionsPrivate()) {}
+        : d_ptr(new QGeoMapRequestOptionsPrivate()) {}
 
 /*!
     Constructs a QGeoMapRequestOptions object form \a other.
 */
 QGeoMapRequestOptions::QGeoMapRequestOptions(const QGeoMapRequestOptions &other)
-    : d_ptr(new QGeoMapRequestOptionsPrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoMapRequestOptionsPrivate(*(other.d_ptr))) {}
 
 /*!
     Destroys this QGeoMapRequestOptions object.
@@ -85,7 +85,7 @@ QGeoMapRequestOptions::~QGeoMapRequestOptions()
     Assigns \a other to this QGeoMapRequestOptions object and returns a
     reference to this QGeoMapRequestOptions object.
 */
-QGeoMapRequestOptions& QGeoMapRequestOptions::operator= (const QGeoMapRequestOptions &other)
+QGeoMapRequestOptions& QGeoMapRequestOptions::operator= (const QGeoMapRequestOptions & other)
 {
     *d_ptr = *(other.d_ptr);
 
@@ -150,12 +150,12 @@ QGeoMapRequestOptionsPrivate::QGeoMapRequestOptionsPrivate() :
         imageFormat("jpg") {}
 
 QGeoMapRequestOptionsPrivate::QGeoMapRequestOptionsPrivate(const QGeoMapRequestOptionsPrivate &other)
-    : mapType(other.mapType),
-    imageFormat(other.imageFormat) {}
+        : mapType(other.mapType),
+        imageFormat(other.imageFormat) {}
 
 QGeoMapRequestOptionsPrivate::~QGeoMapRequestOptionsPrivate() {}
 
-QGeoMapRequestOptionsPrivate& QGeoMapRequestOptionsPrivate::operator= (const QGeoMapRequestOptionsPrivate &other)
+QGeoMapRequestOptionsPrivate& QGeoMapRequestOptionsPrivate::operator= (const QGeoMapRequestOptionsPrivate & other)
 {
     mapType = other.mapType;
     imageFormat = other.imageFormat;

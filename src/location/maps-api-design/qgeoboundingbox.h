@@ -51,7 +51,8 @@ QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoBoundingBoxPrivate;
 
-class Q_LOCATION_EXPORT QGeoBoundingBox {
+class Q_LOCATION_EXPORT QGeoBoundingBox
+{
 public:
     QGeoBoundingBox();
     QGeoBoundingBox(const QGeoBoundingBox &other);

@@ -74,8 +74,8 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoMapReply object with parent \a parent.
 */
 QGeoMapReply::QGeoMapReply(QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoMapReplyPrivate()) {}
+        : QObject(parent),
+        d_ptr(new QGeoMapReplyPrivate()) {}
 
 /*!
     Destroys this QGeoMapReply object.
@@ -165,11 +165,11 @@ QPixmap QGeoMapReply::mapImage() const
 QGeoMapReplyPrivate::QGeoMapReplyPrivate() {}
 
 QGeoMapReplyPrivate::QGeoMapReplyPrivate(const QGeoMapReplyPrivate &other)
-    : mapImage(other.mapImage) {}
+        : mapImage(other.mapImage) {}
 
 QGeoMapReplyPrivate::~QGeoMapReplyPrivate() {}
 
-QGeoMapReplyPrivate& QGeoMapReplyPrivate::operator= (const QGeoMapReplyPrivate &other)
+QGeoMapReplyPrivate& QGeoMapReplyPrivate::operator= (const QGeoMapReplyPrivate & other)
 {
     mapImage = other.mapImage;
 

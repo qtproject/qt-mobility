@@ -154,13 +154,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a route object.
 */
 QGeoRoute::QGeoRoute()
-    : d_ptr(new QGeoRoutePrivate()) {}
+        : d_ptr(new QGeoRoutePrivate()) {}
 
 /*!
     Construcst a route object from the contents of \a other.
 */
 QGeoRoute::QGeoRoute(const QGeoRoute &other)
-    : d_ptr(new QGeoRoutePrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoRoutePrivate(*(other.d_ptr))) {}
 
 /*!
     Destroys a route object.
@@ -175,7 +175,7 @@ QGeoRoute::~QGeoRoute()
     Assigns the contents of \a other to this route and returns a reference to
     this route.
 */
-QGeoRoute& QGeoRoute::operator= (const QGeoRoute &other)
+QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 {
     *d_ptr = *(other.d_ptr);
     return *this;
@@ -356,17 +356,17 @@ QGeoCoordinate QGeoRoute::closestPointOnRoute(const QGeoCoordinate &position) co
 QGeoRoutePrivate::QGeoRoutePrivate() {}
 
 QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
-    :
-    directionsDetail(other.directionsDetail),
-    routeOverview(other.routeOverview),
-    bounds(other.bounds),
-    routeSegments(other.routeSegments),
-    estimatedTravelTime(other.estimatedTravelTime),
-    length(other.length) {}
+        :
+        directionsDetail(other.directionsDetail),
+        routeOverview(other.routeOverview),
+        bounds(other.bounds),
+        routeSegments(other.routeSegments),
+        estimatedTravelTime(other.estimatedTravelTime),
+        length(other.length) {}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
-QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate &other)
+QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
 {
     directionsDetail = other.directionsDetail;
     routeOverview = other.routeOverview;

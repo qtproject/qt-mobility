@@ -97,7 +97,7 @@ public:
 
     // animated zooming options?
     // animated panning options?
-    // rotation and tilting?  
+    // rotation and tilting?
     //   use graphicsview to fake it? or only support that if the map service has support for them?
 
     // TODO

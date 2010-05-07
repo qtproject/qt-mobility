@@ -60,7 +60,8 @@ class QGeoNavigationInstruction;
 
 class QGeoRoutePrivate;
 
-class Q_LOCATION_EXPORT QGeoRoute {
+class Q_LOCATION_EXPORT QGeoRoute
+{
 
 public:
     enum TravelMode {

@@ -46,7 +46,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoBoundingBoxPrivate {
+class QGeoBoundingBoxPrivate
+{
 public:
     QGeoBoundingBoxPrivate();
     QGeoBoundingBoxPrivate(const QGeoCoordinate &upperLeft, const QGeoCoordinate &lowerRight);
