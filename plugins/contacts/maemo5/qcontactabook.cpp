@@ -325,22 +325,27 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     return QContactManagerEngine::sortContacts(contacts, sortOrders);
   }
   
-  EBookQuery* query = convert(filter);
-  
-  GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-  if (query)
-      e_book_query_unref(query);
-  
-  while (l){
-    EContact *contact = E_CONTACT(l->data);
-    const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
-    QByteArray localId(data);
-    m_localIds << localId;
-    rtn.append(m_localIds[localId]);
-    QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
-    l = g_list_delete_link(l, l);
+  switch(filter.type()){
+    case QContactFilter::DefaultFilter: {
+      rtn = m_localIds.keys();
+    } break;
+    default: { 
+      EBookQuery* query = convert(filter);
+      GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
+      if (query)
+        e_book_query_unref(query);
+      
+      while (l){
+        EContact *contact = E_CONTACT(l->data);
+        const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
+        QByteArray localId(data);
+        m_localIds << localId;
+        rtn.append(m_localIds[localId]);
+        QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
+        l = g_list_delete_link(l, l);
+      }
+    }
   }
-  
   *error = QContactManager::NoError;
   return rtn;
   */
