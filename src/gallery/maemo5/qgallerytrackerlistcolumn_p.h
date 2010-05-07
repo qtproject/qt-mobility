@@ -75,27 +75,15 @@ private:
 class QGalleryTrackerValueColumn : public QGalleryTrackerListColumn
 {
 public:
-    enum SortFlag
-    {
-        Sorted        = 0x01,
-        ReverseSorted = 0x2,
-        Ascending     = 0x4,
-        Descending    = 0x08
-    };
-
     QGalleryTrackerValueColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, int sortFlags)
-        : QGalleryTrackerListColumn(name, attributes), m_sortFlags(sortFlags) {}
+            const QString &name, QGalleryProperty::Attributes attributes)
+        : QGalleryTrackerListColumn(name, attributes) {}
 
-    int sortFlags() const { return m_sortFlags; }
 
     virtual QVariant toVariant(const QString &string) const = 0;
     virtual QString toString(const QVariant &variant) const { return variant.toString(); }
 
     virtual int compare(const QVariant &value1, const QVariant &value2) const = 0;
-
-private:
-    int m_sortFlags;
 };
 
 class QGalleryTrackerCompositeColumn : public QGalleryTrackerListColumn
@@ -134,8 +122,8 @@ class QGalleryTrackerStringColumn : public QGalleryTrackerValueColumn
 {
 public:
     QGalleryTrackerStringColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, int sortFlags)
-        : QGalleryTrackerValueColumn(name, attributes, sortFlags) {}
+            const QString &name, QGalleryProperty::Attributes attributes)
+        : QGalleryTrackerValueColumn(name, attributes) {}
 
     QVariant toVariant(const QString &string) const;
 
@@ -146,8 +134,8 @@ class QGalleryTrackerIntegerColumn : public QGalleryTrackerValueColumn
 {
 public:
     QGalleryTrackerIntegerColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, int sortFlags)
-        : QGalleryTrackerValueColumn(name, attributes, sortFlags) {}
+            const QString &name, QGalleryProperty::Attributes attributes)
+        : QGalleryTrackerValueColumn(name, attributes) {}
 
     QVariant toVariant(const QString &string) const;
 
@@ -158,8 +146,8 @@ class QGalleryTrackerFloatColumn : public QGalleryTrackerValueColumn
 {
 public:
     QGalleryTrackerFloatColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, int sortFlags)
-        : QGalleryTrackerValueColumn(name, attributes, sortFlags) {}
+            const QString &name, QGalleryProperty::Attributes attributes)
+        : QGalleryTrackerValueColumn(name, attributes) {}
 
     QVariant toVariant(const QString &string) const;
 
@@ -170,8 +158,8 @@ class QGalleryTrackerDoubleColumn : public QGalleryTrackerValueColumn
 {
 public:
     QGalleryTrackerDoubleColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, int sortFlags)
-        : QGalleryTrackerValueColumn(name, attributes, sortFlags) {}
+            const QString &name, QGalleryProperty::Attributes attributes)
+        : QGalleryTrackerValueColumn(name, attributes) {}
 
     QVariant toVariant(const QString &string) const;
 
@@ -182,13 +170,26 @@ class QGalleryTrackerDateTimeColumn : public QGalleryTrackerValueColumn
 {
 public:
     QGalleryTrackerDateTimeColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, int sortFlags)
-        : QGalleryTrackerValueColumn(name, attributes, sortFlags) {}
+            const QString &name, QGalleryProperty::Attributes attributes)
+        : QGalleryTrackerValueColumn(name, attributes) {}
 
     QVariant toVariant(const QString &string) const;
     QString toString(const QVariant &variant) const;
 
     int compare(const QVariant &value1, const QVariant &value2) const;
+};
+
+class QGalleryTrackerStaticColumn : public QGalleryTrackerCompositeColumn
+{
+public:
+    QGalleryTrackerStaticColumn(
+            const QString &name, QGalleryProperty::Attributes attributes, const QVariant &value)
+        : QGalleryTrackerCompositeColumn(name, attributes), m_value(value) {}
+
+    QVariant value(QVector<QVariant>::const_iterator row) const;
+
+private:
+    const QVariant m_value;
 };
 
 class QGalleryTrackerPrefixColumn : public QGalleryTrackerCompositeColumn

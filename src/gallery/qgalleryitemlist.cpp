@@ -252,7 +252,7 @@ void QGalleryItemList::setCursorPosition(int position)
 
 int QGalleryItemList::minimumPagedItems() const
 {
-    return d_ptr->cacheSize;
+    return d_ptr->minimumPagedItems;
 }
 
 /*!

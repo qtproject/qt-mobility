@@ -39,205 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qgallerytrackeritemlist_p.h"
-
-#include "qgalleryabstractresponse_p.h"
-#include "qgallerytrackerlistcolumn_p.h"
+#include "qgallerytrackeritemlist_p_p.h"
 
 #include <QtCore/qcoreapplication.h>
-#include <QtCore/qcoreevent.h>
-#include <QtCore/qfuturewatcher.h>
 #include <QtCore/qtconcurrentrun.h>
-
-QTM_BEGIN_NAMESPACE
-
-class QGalleryTrackerItemListPrivate : public QGalleryAbstractResponsePrivate
-{
-    Q_DECLARE_PUBLIC(QGalleryTrackerItemList)
-public:
-    struct Row
-    {
-        Row() {}
-        Row(QVector<QVariant>::iterator begin, QVector<QVariant>::iterator end)
-            : begin(begin), end(end) {}
-
-        int width() const { return end - begin; }
-
-        Row &operator +=(int span) { begin += span; end += span; return *this; }
-        Row &operator -=(int span) { begin -= span; end -= span; return *this; }
-
-        bool isEqual(const Row &row, int count) const {
-            return qEqual(begin, row.begin, begin + count); }
-        bool isEqual(const Row &row, int index, int count) {
-            return qEqual(begin + index, row.begin + index, begin + count); }
-
-        QVector<QVariant>::iterator begin;
-        QVector<QVariant>::iterator end;
-    };
-
-    struct row_iterator
-    {
-        row_iterator() {}
-        row_iterator(QVector<QVariant>::iterator begin, QVector<QVariant>::iterator end)
-            : row(begin, end) {}
-        row_iterator(QVector<QVariant>::iterator begin, int width)
-            : row(begin, begin + width) {}
-        row_iterator(const Row &row) : row(row) {}
-
-        bool operator != (const row_iterator &other) const { return row.begin != other.row.begin; }
-        bool operator <(const row_iterator &other) const { return row.begin < other.row.begin; }
-
-        row_iterator &operator ++() { row += row.width(); return *this; }
-        row_iterator &operator --() { row -= row.width(); return *this; }
-
-        row_iterator operator ++(int) { row_iterator n(row); row += row.width(); return n; }
-        row_iterator operator --(int) { row_iterator n(row); row -= row.width(); return n; }
-
-        int operator -(const row_iterator &other) const {
-            return (row.begin - other.row.begin) / row.width(); }
-
-        row_iterator operator +(int span) const {
-            span *= row.width(); return row_iterator(row.begin + span, row.end + span); }
-
-        Row &operator *() {  return row; }
-        const Row &operator *() const {  return row; }
-
-        Row *operator ->() { return &row; }
-        const Row *operator ->() const { return &row; }
-
-        QVariant operator[] (int column) const { return *(row.begin + column); }
-
-        Row row;
-    };
-
-    enum RowEventType
-    {
-        RowsChanged = QEvent::User,
-        RowsInserted,
-        RowsRemoved
-    };
-
-    class RowEvent : public QEvent
-    {
-    public:
-        RowEvent(RowEventType type, const Row &aRow, const Row &rRow, const Row &endRow)
-            : QEvent(QEvent::Type(type))
-            , aRow(aRow)
-            , rRow(rRow)
-            , endRow(endRow)
-        {
-        }
-
-        const Row aRow;
-        const Row rRow;
-        const Row endRow;
-    };
-
-    struct Cache
-    {
-        Cache() : index(0), count(0), cutoff(0) {}
-
-        int index;
-        int count;
-        union
-        {
-            int offset;
-            int cutoff;
-        };
-        QVector<QVariant> values;
-    };
-
-    QGalleryTrackerCompositeColumn *idColumn;
-    QGalleryTrackerCompositeColumn *urlColumn;
-    QGalleryTrackerCompositeColumn *typeColumn;
-
-    int valueOffset;
-    union
-    {
-        int compositeOffset;
-        int tableWidth;
-    };
-    int aliasOffset;
-    int imageOffset;
-    int columnCount;
-    int rowCount;
-    QGalleryTrackerItemList::UpdateState updateState;
-    QStringList propertyNames;
-    QVector<QGalleryProperty::Attributes> propertyAttributes;
-    QVector<QGalleryTrackerValueColumn *> valueColumns;
-    QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
-    QVector<QGalleryTrackerAliasColumn *> aliasColumns;
-    QVector<QGalleryTrackerImageColumn *> imageColumns;
-    Cache aCache;   // Access cache.
-    Cache rCache;   // Replacement cache.
-
-    QFutureWatcher<QVector<QVariant> > parseWatcher;
-    QFutureWatcher<void> synchronizeWatcher;
-
-    QVector<QVariant> parseResultSet(const QVector<QStringList> &resultSet) const;
-    void sortRows(row_iterator begin, row_iterator end, int column, bool reversed = false) const;
-
-    void synchronize();
-    void synchronizeRows(
-            row_iterator &aBegin,
-            row_iterator &rBegin,
-            const row_iterator &aEnd,
-            const row_iterator &rEnd);
-    void rowsChanged(int aIndex, int rIndex, int count);
-    void rowsInserted(int aIndex, int rIndex, int count);
-    void rowsRemoved(int aIndex, int rIndex, int count);
-
-    void _q_parseFinished();
-    void _q_synchronizeFinished();
-};
-
-class QGalleryTrackerItemListLessThan
-{
-public:
-    QGalleryTrackerItemListLessThan(const QGalleryTrackerValueColumn *column, int index)
-        : m_column(column), m_index(index) {}
-
-    bool operator ()(
-            const QGalleryTrackerItemListPrivate::Row &row1,
-            const QGalleryTrackerItemListPrivate::Row &row2)
-    {
-        return m_column->compare(*(row1.begin + m_index), *(row2.begin + m_index)) < 0;
-    }
-
-private:
-    const QGalleryTrackerValueColumn *m_column;
-    int m_index;
-};
-
-class QGalleryTrackerItemListGreaterThan
-{
-public:
-    QGalleryTrackerItemListGreaterThan(const QGalleryTrackerValueColumn *column, int index)
-        : m_column(column), m_index(index) {}
-
-    bool operator ()(
-            const QGalleryTrackerItemListPrivate::Row &row1,
-            const QGalleryTrackerItemListPrivate::Row &row2)
-    {
-        return m_column->compare(*(row1.begin + m_index), *(row2.begin + m_index)) > 0;
-    }
-
-private:
-    const QGalleryTrackerValueColumn *m_column;
-    int m_index;
-};
-
-QTM_END_NAMESPACE
-
-template <> void qSwap<QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPrivate::Row)>(
-        QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPrivate::Row) &row1,
-        QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPrivate::Row) &row2)
-{
-    typedef QVector<QVariant>::iterator iterator;
-
-    for (iterator it1 = row1.begin, it2 = row2.begin; it1 != row1.end; ++it1, ++it2)
-        qSwap(*it1, *it2);
-}
 
 QTM_BEGIN_NAMESPACE
 
@@ -264,17 +69,33 @@ QVector<QVariant> QGalleryTrackerItemListPrivate::parseResultSet(
     sortRows(
             row_iterator(values.begin(), tableWidth),
             row_iterator(values.end(), tableWidth),
-            valueOffset);
+            sortCriteria.constBegin(),
+            sortCriteria.constEnd());
 
     return values;
 }
 
 void QGalleryTrackerItemListPrivate::sortRows(
-        row_iterator begin, row_iterator end, int column, bool reversed) const
+        row_iterator begin,
+        row_iterator end,
+        sort_iterator sortCriteria,
+        sort_iterator sortEnd,
+        bool reversed) const
 {
-    for (int vColumn = column - valueOffset; column != tableWidth; ++column, ++vColumn) {
-        int sortFlags = valueColumns.at(vColumn)->sortFlags();
-        if (sortFlags & QGalleryTrackerValueColumn::Sorted) {
+    int column;
+
+    for (;;) {
+        if (sortCriteria == sortEnd)
+            return;
+
+        column = sortCriteria->column;
+
+        const int sortFlags = sortCriteria->flags;
+        const int vColumn = column - valueOffset;
+
+        ++sortCriteria;
+
+        if (sortFlags & QGalleryTrackerSortCriteria::Sorted) {
             if (reversed) {
                 QAlgorithmsPrivate::qReverse(begin, end);
 
@@ -282,7 +103,7 @@ void QGalleryTrackerItemListPrivate::sortRows(
 
                 break;
             }
-        } else if (sortFlags & QGalleryTrackerValueColumn::ReverseSorted) {
+        } else if (sortFlags & QGalleryTrackerSortCriteria::ReverseSorted) {
             if (!reversed) {
                 QAlgorithmsPrivate::qReverse(begin, end);
 
@@ -290,16 +111,14 @@ void QGalleryTrackerItemListPrivate::sortRows(
 
                 break;
             }
-        } else if (sortFlags & QGalleryTrackerValueColumn::Ascending) {
+        } else if (sortFlags & QGalleryTrackerSortCriteria::Ascending) {
             qStableSort(begin, end, QGalleryTrackerItemListLessThan(
                     valueColumns.at(vColumn), column));
             break;
-        } else if (sortFlags & QGalleryTrackerValueColumn::Descending) {
+        } else if (sortFlags & QGalleryTrackerSortCriteria::Descending) {
             qStableSort(begin, end, QGalleryTrackerItemListGreaterThan(
                     valueColumns.at(vColumn), column));
             break;
-        } else {
-            return;
         }
     }
 
@@ -309,7 +128,7 @@ void QGalleryTrackerItemListPrivate::sortRows(
         for (upper = ++lower; upper != end && lower[column] != upper[column]; ++upper, ++count) {}
 
         if (count > 1)
-            sortRows(lower, upper, column, reversed);
+            sortRows(lower, upper, sortCriteria, sortEnd, reversed);
     }
 }
 
@@ -441,27 +260,34 @@ void QGalleryTrackerItemListPrivate::_q_synchronizeFinished()
 }
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
+        QGalleryTrackerItemListPrivate &dd,
+        int cursorPosition,
+        int minimumPagedItems,
+        int valueOffset,
         QGalleryTrackerCompositeColumn *idColumn,
         QGalleryTrackerCompositeColumn *urlColumn,
         QGalleryTrackerCompositeColumn *typeColumn,
-        int valueOffset,
         const QVector<QGalleryTrackerValueColumn *> &valueColumns,
         const QVector<QGalleryTrackerCompositeColumn *> &compositeColumns,
         const QVector<QGalleryTrackerAliasColumn *> &aliasColumns,
         const QVector<QGalleryTrackerImageColumn *> &imageColumns,
+        const QVector<QGalleryTrackerSortCriteria > &sortCriteria,
         QObject *parent)
-    : QGalleryAbstractResponse(*new QGalleryTrackerItemListPrivate, parent)
+    : QGalleryAbstractResponse(dd, parent)
 {
     Q_D(QGalleryTrackerItemList);
 
+    d->cursorPosition = cursorPosition;
+    d->minimumPagedItems = minimumPagedItems;
+    d->valueOffset = valueOffset;
     d->idColumn = idColumn;
     d->urlColumn = urlColumn;
     d->typeColumn = typeColumn;
-    d->valueOffset = valueOffset;
     d->valueColumns = valueColumns;
     d->compositeColumns = compositeColumns;
     d->aliasColumns = aliasColumns;
     d->imageColumns = imageColumns;
+    d->sortCriteria = sortCriteria;
 
     for (int i = 0; i < d->valueColumns.count(); ++i) {
         d->propertyNames.append(d->valueColumns.at(i)->name());

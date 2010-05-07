@@ -118,6 +118,11 @@ int QGalleryTrackerDateTimeColumn::compare(const QVariant &value1, const QVarian
     return value1.toDateTime().toTime_t() - value2.toDateTime().toTime_t();
 }
 
+QVariant QGalleryTrackerStaticColumn::value(QVector<QVariant>::const_iterator) const
+{
+    return m_value;
+}
+
 QVariant QGalleryTrackerPrefixColumn::value(QVector<QVariant>::const_iterator row) const
 {
     return m_prefix + (row + m_column)->toString();

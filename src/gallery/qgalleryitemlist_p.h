@@ -63,14 +63,14 @@ public:
     QGalleryItemListPrivate()
         : q_ptr(0)
         , cursorPosition(0)
-        , cacheSize(-1)
+        , minimumPagedItems(0)
     {
     }
     virtual ~QGalleryItemListPrivate() {}
 
     QGalleryItemList *q_ptr;
     int cursorPosition;
-    int cacheSize;
+    int minimumPagedItems;
 };
 
 QTM_END_NAMESPACE

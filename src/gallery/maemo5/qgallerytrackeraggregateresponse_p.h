@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYTRACKERITEMLIST_P_H
-#define QGALLERYTRACKERITEMLIST_P_H
+#ifndef QGALLERYTRACKERAGGREGATELISTRESPONSE_P_H
+#define QGALLERYTRACKERAGGREGATELISTRESPONSE_P_H
 
 //
 //  W A R N I N G
@@ -53,92 +53,64 @@
 // We mean it.
 //
 
-#include <qgalleryabstractresponse.h>
+#include "qgallerytrackeritemlist_p.h"
+
+#include "qgallerydbusinterface_p.h"
+
+#include <QtDBus/qdbusinterface.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerAliasColumn;
-class QGalleryTrackerCompositeColumn;
-class QGalleryTrackerImageColumn;
-class QGalleryTrackerListColumn;
-class QGalleryTrackerValueColumn;
+class QGalleryContainerRequest;
+class QGalleryFilterRequest;
+class QGalleryItemRequest;
+class QGalleryTrackerSchema;
 
-struct QGalleryTrackerSortCriteria
-{
-    enum Flag
-    {
-        Sorted        = 0x01,
-        ReverseSorted = 0x02,
-        Ascending     = 0x04,
-        Descending    = 0x08
-    };
+class QGalleryTrackerAggregateResponsePrivate;
 
-    QGalleryTrackerSortCriteria() : column(0), flags(0) {}
-    QGalleryTrackerSortCriteria(short column, short flags) : column(column), flags(flags) {}
-
-    short column;
-    short flags;
-};
-
-class QGalleryTrackerItemListPrivate;
-
-class QGalleryTrackerItemList : public QGalleryAbstractResponse
+class QGalleryTrackerAggregateResponse : public QGalleryTrackerItemList
 {
     Q_OBJECT
 public:
-    enum UpdateState
-    {
-        UpToDate,
-        Updating
-    };
+    ~QGalleryTrackerAggregateResponse();
 
-    ~QGalleryTrackerItemList();
+    void cancel();
 
-    UpdateState updateState() const;
+    bool waitForFinished(int msecs);
 
-    QStringList propertyNames() const;
-    int propertyKey(const QString &property) const;
-    QGalleryProperty::Attributes propertyAttributes(int key) const;
-
-    int count() const;
-
-    QVariant id(int index) const;
-    QUrl url(int index) const;
-    QString type(int index) const;
-    QList<QGalleryResource> resources(int index) const;
-    ItemStatus status(int index) const;
-
-    QVariant metaData(int index, int key) const;
-    void setMetaData(int index, int key, const QVariant &value);
-
-    bool event(QEvent *event);
+    static QGalleryAbstractResponse *createResponse(
+            const QGalleryDBusInterfacePointer &metaDataInterface,
+            const QGalleryTrackerSchema &schema,
+            const QGalleryItemRequest &request);
+    static QGalleryAbstractResponse *createResponse(
+            const QGalleryDBusInterfacePointer &metaDataInterface,
+            const QGalleryTrackerSchema &schema,
+            const QGalleryContainerRequest &request);
+    static QGalleryAbstractResponse *createResponse(
+            const QGalleryDBusInterfacePointer &metaDataInterface,
+            const QGalleryTrackerSchema &schema,
+            const QGalleryFilterRequest &request);
 
 protected:
-    QGalleryTrackerItemList(
-            QGalleryTrackerItemListPrivate &dd,
+    QGalleryTrackerAggregateResponse(
+            const QGalleryDBusInterfacePointer &metaDataInterface,
+            const QGalleryTrackerSchema &schema,
             int cursorPosition,
             int minimumPagedItems,
-            int valueOffset,
             QGalleryTrackerCompositeColumn *idColumn,
-            QGalleryTrackerCompositeColumn *urlColumn,
-            QGalleryTrackerCompositeColumn *typeColumn,
             const QVector<QGalleryTrackerValueColumn *> &valueColumns,
             const QVector<QGalleryTrackerCompositeColumn *> &compositeColumns,
             const QVector<QGalleryTrackerAliasColumn *> &aliasColumns,
             const QVector<QGalleryTrackerImageColumn *> &imageColumns,
             const QVector<QGalleryTrackerSortCriteria> &sortCriteria,
-            QObject *parent);
+            QObject *parent = 0);
 
-    void updateResultSet(const QVector<QStringList> &resultSet, int index = 0);
-
-    virtual void updateStateChanged(UpdateState state) = 0;
+    void updateStateChanged(UpdateState state);
 
 private:
-    Q_DECLARE_PRIVATE(QGalleryTrackerItemList)
-    Q_PRIVATE_SLOT(d_func(), void _q_parseFinished())
-    Q_PRIVATE_SLOT(d_func(), void _q_synchronizeFinished())
+    Q_DECLARE_PRIVATE(QGalleryTrackerAggregateResponse)
+    Q_PRIVATE_SLOT(d_func(), void _q_getValuesFinished(QDBusPendingCallWatcher *))
 };
-
 
 QTM_END_NAMESPACE
 
