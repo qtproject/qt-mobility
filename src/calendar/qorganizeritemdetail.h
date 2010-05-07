@@ -72,23 +72,6 @@ public:
 
     AccessConstraints accessConstraints() const;
 
-    // Predefined attribute names and values
-#ifdef Q_QDOC
-    static const QLatin1Constant FieldContext;
-    static const QLatin1Constant ContextHome;
-    static const QLatin1Constant ContextWork;
-    static const QLatin1Constant ContextOther;
-    static const QLatin1Constant FieldDetailUri;
-    static const QLatin1Constant FieldLinkedDetailUris;
-#else
-    Q_DECLARE_LATIN1_CONSTANT(FieldContext, "Context");
-    Q_DECLARE_LATIN1_CONSTANT(ContextHome, "Home");
-    Q_DECLARE_LATIN1_CONSTANT(ContextWork, "Work");
-    Q_DECLARE_LATIN1_CONSTANT(ContextOther, "Other");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDetailUri, "DetailUri");
-    Q_DECLARE_LATIN1_CONSTANT(FieldLinkedDetailUris, "LinkedDetailUris");
-#endif
-
     bool operator==(const QOrganizerItemDetail& other) const;
     bool operator!=(const QOrganizerItemDetail& other) const {return !(other == *this);}
 
@@ -153,46 +136,6 @@ public:
         return value<T>(key.latin1());
     }
 #endif
-
-    void setContexts(const QStringList& contexts)
-    {
-        setValue(FieldContext, contexts);
-    }
-
-    void setContexts(const QString& context)
-    {
-        setValue(FieldContext, QStringList(context));
-    }
-
-    QStringList contexts() const
-    {
-        return value<QStringList>(FieldContext);
-    }
-
-    void setDetailUri(const QString& detailUri)
-    {
-        setValue(FieldDetailUri, detailUri);
-    }
-
-    QString detailUri() const
-    {
-        return value(FieldDetailUri);
-    }
-
-    void setLinkedDetailUris(const QStringList& linkedDetailUris)
-    {
-        setValue(FieldLinkedDetailUris, linkedDetailUris);
-    }
-
-    void setLinkedDetailUris(const QString& linkedDetailUri)
-    {
-        setValue(FieldLinkedDetailUris, QStringList(linkedDetailUri));
-    }
-
-    QStringList linkedDetailUris() const
-    {
-        return value<QStringList>(FieldLinkedDetailUris);
-    }
 
 protected:
     QOrganizerItemDetail(const QOrganizerItemDetail &other, const QString& expectedDefinitionId);

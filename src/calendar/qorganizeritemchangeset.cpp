@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
+** OrganizerItem: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -39,6 +39,216 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritem.h"
+#include "qorganizeritemchangeset.h"
+#include "qorganizeritemchangeset_p.h"
+#include "qorganizeritemmanagerengine.h"
 
-//QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
+
+/*!
+   \class QOrganizerItemChangeSet
+
+   \brief The QOrganizerItemChangeSet class provides a simple API to
+   simplify the emission of state-change signals from
+   QOrganizerItemManagerEngine implementations.
+
+   This class can be utilised by backend implementations to ensure
+   correct emission of the \l QOrganizerItemManagerEngine::dataChanged(), \l
+   QOrganizerItemManagerEngine::organizeritemsAdded(), \l
+   QOrganizerItemManagerEngine::organizeritemsChanged() and \l
+   QOrganizerItemManagerEngine::organizeritemsRemoved().
+
+   \sa QOrganizerItemManagerEngine
+ */
+
+/*!
+   Constructs a new change set
+ */
+QOrganizerItemChangeSet::QOrganizerItemChangeSet()
+    : d(new QOrganizerItemChangeSetData)
+{
+}
+
+/*!
+   Constructs a copy of the \a other change set
+ */
+QOrganizerItemChangeSet::QOrganizerItemChangeSet(const QOrganizerItemChangeSet& other)
+    : d(other.d)
+{
+}
+
+/*!
+   Frees the memory used by this change set
+ */
+QOrganizerItemChangeSet::~QOrganizerItemChangeSet()
+{
+}
+
+/*!
+   Assigns this change set to be equal to \a other
+ */
+QOrganizerItemChangeSet& QOrganizerItemChangeSet::operator=(const QOrganizerItemChangeSet& other)
+{
+    d = other.d;
+    return *this;
+}
+
+/*!
+   Sets the data changed flag to \a dataChanged.  If this is set to true prior to calling \l emitSignals(),
+   only the \l QOrganizerItemManagerEngine::dataChanged() signal will be emitted; otherwise, the appropriate
+   finer-grained signals will be emitted.
+ */
+void QOrganizerItemChangeSet::setDataChanged(bool dataChanged)
+{
+    d->m_dataChanged = dataChanged;
+}
+
+/*!
+   Returns the value of the data changed flag
+ */
+bool QOrganizerItemChangeSet::dataChanged()
+{
+    return d->m_dataChanged;
+}
+
+/*!
+   Returns the set of ids of organizeritems which have been added to
+   the database.
+ */
+QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::addedOrganizerItems() const
+{
+    return d->m_addedOrganizerItems;
+}
+
+/*!
+  Inserts the given organizeritem id \a addedOrganizerItemId into the set of ids of organizeritems
+  which have been added to the database.
+ */
+void QOrganizerItemChangeSet::insertAddedOrganizerItem(QOrganizerItemLocalId addedOrganizerItemId)
+{
+    d->m_addedOrganizerItems.insert(addedOrganizerItemId);
+}
+
+/*!
+  Inserts each of the given organizeritem ids \a addedOrganizerItemIds into the set of ids of organizeritems
+  which have been added to the database.
+ */
+void QOrganizerItemChangeSet::insertAddedOrganizerItems(const QList<QOrganizerItemLocalId>& addedOrganizerItemIds)
+{
+    foreach (const QOrganizerItemLocalId& id, addedOrganizerItemIds)
+        d->m_addedOrganizerItems.insert(id);
+}
+
+/*!
+  Clears the set of ids of organizeritems which have been added to the database
+ */
+void QOrganizerItemChangeSet::clearAddedOrganizerItems()
+{
+    d->m_addedOrganizerItems.clear();
+}
+
+/*!
+   Returns the set of ids of organizeritems which have been changed in
+   the database.
+ */
+QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::changedOrganizerItems() const
+{
+    return d->m_changedOrganizerItems;
+}
+
+/*!
+  Inserts the given organizeritem id \a changedOrganizerItemId into the set of ids of organizeritems
+  which have been changed to the database.
+ */
+void QOrganizerItemChangeSet::insertChangedOrganizerItem(QOrganizerItemLocalId changedOrganizerItemId)
+{
+    d->m_changedOrganizerItems.insert(changedOrganizerItemId);
+}
+
+/*!
+  Inserts each of the given organizeritem ids \a changedOrganizerItemIds into the set of ids of organizeritems
+  which have been changed to the database.
+ */
+void QOrganizerItemChangeSet::insertChangedOrganizerItems(const QList<QOrganizerItemLocalId>& changedOrganizerItemIds)
+{
+    foreach (const QOrganizerItemLocalId& id, changedOrganizerItemIds)
+        d->m_changedOrganizerItems.insert(id);
+}
+
+/*!
+  Clears the set of ids of organizeritems which have been changed to the database
+ */
+void QOrganizerItemChangeSet::clearChangedOrganizerItems()
+{
+    d->m_changedOrganizerItems.clear();
+}
+
+/*!
+   Returns the set of ids of organizeritems which have been removed from
+   the database.
+ */
+QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::removedOrganizerItems() const
+{
+    return d->m_removedOrganizerItems;
+}
+
+/*!
+  Inserts the given organizeritem id \a removedOrganizerItemId into the set of ids of organizeritems
+  which have been removed to the database.
+ */
+void QOrganizerItemChangeSet::insertRemovedOrganizerItem(QOrganizerItemLocalId removedOrganizerItemId)
+{
+    d->m_removedOrganizerItems.insert(removedOrganizerItemId);
+}
+
+/*!
+  Inserts each of the given organizeritem ids \a removedOrganizerItemIds into the set of ids of organizeritems
+  which have been removed to the database.
+ */
+void QOrganizerItemChangeSet::insertRemovedOrganizerItems(const QList<QOrganizerItemLocalId>& removedOrganizerItemIds)
+{
+    foreach (const QOrganizerItemLocalId& id, removedOrganizerItemIds)
+        d->m_removedOrganizerItems.insert(id);
+}
+
+/*!
+  Clears the set of ids of organizeritems which have been removed to the database
+ */
+void QOrganizerItemChangeSet::clearRemovedOrganizerItems()
+{
+    d->m_removedOrganizerItems.clear();
+}
+
+
+/*!
+   Clears all flags and sets of ids in this change set
+ */
+void QOrganizerItemChangeSet::clearAll()
+{
+    d->m_dataChanged = false;
+    d->m_addedOrganizerItems.clear();
+    d->m_changedOrganizerItems.clear();
+    d->m_removedOrganizerItems.clear();
+}
+
+/*!
+   Emits the appropriate signals from the given \a engine given the state of the change set
+ */
+void QOrganizerItemChangeSet::emitSignals(QOrganizerItemManagerEngine *engine)
+{
+    if (!engine)
+        return;
+
+    if (d->m_dataChanged) {
+        emit engine->dataChanged();
+    } else {
+        if (!d->m_addedOrganizerItems.isEmpty())
+            emit engine->organizeritemsAdded(d->m_addedOrganizerItems.toList());
+        if (!d->m_changedOrganizerItems.isEmpty())
+            emit engine->organizeritemsChanged(d->m_changedOrganizerItems.toList());
+        if (!d->m_removedOrganizerItems.isEmpty())
+            emit engine->organizeritemsRemoved(d->m_removedOrganizerItems.toList());
+    }
+}
+
+QTM_END_NAMESPACE
