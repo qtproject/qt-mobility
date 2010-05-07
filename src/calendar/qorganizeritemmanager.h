@@ -78,7 +78,7 @@ public:
     explicit QOrganizerItemManager(QObject* parent);
 
     static QOrganizerItemManager* fromUri(const QString& uri, QObject* parent = 0);
-    ~QOrganizerItemManager();                     // dtor
+    ~QOrganizerItemManager();
 
     QString managerName() const;                       // e.g. "Symbian"
     QMap<QString, QString> managerParameters() const;  // e.g. "filename=private.db"
@@ -112,6 +112,7 @@ public:
     /* Item Instances - both items and item occurrences (occurrences either saved or generated) */
     QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint) const;
+    QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItem& recurrentItem, const QOrganizerItemFetchHint& fetchHint) const;
 
     /* Items - Accessors and Mutators */
     QList<QOrganizerItemLocalId> itemIds(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
@@ -141,11 +142,9 @@ public:
 
     /* Functionality reporting */
     enum ManagerFeature {
-        Groups = 0,               // backend supports QOrganizerItemType::TypeGroup type items (convenience for clients... should be deprecated)
         ActionPreferences,        // per-item action preferences
         MutableDefinitions,
         DetailOrdering,
-        SelfItem,
         Anonymous,
         ChangeLogs
     };
