@@ -43,87 +43,27 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-   \class QOrganizerItemAccessControl
-   \brief The QOrganizerItemAccessControl class contains the access control information of the organizer item.
- */
 
-/*!
-   \class QOrganizerItemAttendee
-   \brief The QOrganizerItemAttendee class contains the information of an attendee of the event to which the organizer item corresponds.
- */
 
-/*!
-   \class QOrganizerItemDateTime
-   \brief The QOrganizerItemDateTime class contains the start time of the event, appointment or invitation which the organizer item describes, or the date associated with a todo, note or journal.
- */
 
-/*!
-   \class QOrganizerItemDisplayLabel
-   \brief The QOrganizerItemDisplayLabel class contains the backend-synthesized display label of the organizer item.
- */
 
-/*!
-   \class QOrganizerItemEndDateTime
-   \brief The QOrganizerItemEndDateTime class contains the end time of an event, appointment or invitation.
- */
 
-/*!
-   \class QOrganizerItemGuid
-   \brief The QOrganizerItemGuid class contains the globally unique identifier of the organizer item, which can be used for synchronization purposes.
- */
 
-/*!
-   \class QOrganizerItemLocation
 
-   \brief The QOrganizerItemLocation class contains information about a location which is related to the organizer item in some manner.
- */
-
-/*!
-   \class QOrganizerItemNote
-   \brief The QOrganizerItemNote class contains some arbitrary information which is relevant to the organizer item.
- */
-
-/*!
-   \class QOrganizerItemParticipationRole
-   \brief The QOrganizerItemParticipationRole class contains information about the way in which a particular person or contact will participate in the event or appointment described by the organizer item.
- */
-
-/*!
-   \class QOrganizerItemParticipationStatus
-   \brief The QOrganizerItemParticipationStatus class contains information regarding the participation of a particular person or contact at or in the event, todo, or appointment described by the organizer item.
- */
-
-/*!
-   \class QOrganizerItemPriority
-   \brief The QOrganizerItemPriority class contains the priority of the organizer item, which may be used to resolve scheduling conflicts.
- */
-
-/*!
-   \class QOrganizerItemProvenance
-   \brief The QOrganizerItemProvenance class contains information about when and from where or whom the organizer item originated.
- */
-
-/*!
-   \class QOrganizerItemRecurrenceParent
-   \brief The QOrganizerItemRecurrenceParent class contains information about the instance in an event series (defined by a recurrence rule) that a QOrganizerEventOccurrence is the replacement for.
-  */
-
+/* --------- to be discussed */
 /*!
    \class QOrganizerItemRecurrenceRule
    \deprecated
    \brief The QOrganizerItemRecurrenceRule class contains the recurrence rule which determines when the event described in the organizer item will occur.
+   NOT SURE IF WE'LL USE THIS, OR USE SOMETHING ELSE.
  */
 
 /*!
-   \class QOrganizerItemRsvpInfo
-   \brief The QOrganizerItemRsvpInfo class contains information about when, where and to whom a person should RSVP or has RSVP'ed in order to signify their intention to attend the event or appointment described by the organizer item.
+   \variable QOrganizerItemRecurrenceRule::DefinitionName
+   The constant string which identifies the definition of details which contain the recurrence rule of an organizer item.
+   NOT SURE IF WE'LL USE THIS, OR USE SOMETHING ELSE.
  */
-
-/*!
-   \class QOrganizerItemTimestamp
-   \brief The QOrganizerItemTimestamp class contains the creation and last-modified timestamp associated with the organizer item.  XXX TODO: what about last accessed?
- */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::DefinitionName, "RecurrenceRule");
 
 /*!
    \class QOrganizerItemTitle
@@ -131,18 +71,29 @@ QTM_BEGIN_NAMESPACE
  */
 
 /*!
-   \class QOrganizerItemType
-   \brief The QOrganizerItemType class describes the type of the organizer item.  This detail may be automatically synthesized by the backend depending on other details in the organizer item.
+   \variable QOrganizerItemTitle::DefinitionName
+   The constant string which identifies the definition of details which hold the title of the organizer item.
  */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTitle::DefinitionName, "Title");
+/* --------- to be discussed */
 
-/*!
-   \class QOrganizerItemType
-   \brief The QOrganizerItemType class describes the type of the organizer item.  This detail may be automatically synthesized by the backend depending on other details in the organizer item.
- */
 
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==================== QOrganizerItemAccessControl ======================= */
 /*!
-   \class QOrganizerItemVisibilityTag
-   \brief The QOrganizerItemVisibilityTag class contains a hint which describes which sort of people should be able to view the information contained in the organizer item.  XXX TODO: should this be a part of every detail?  ie, allow everyone to see the date, time and location, but only some people to see the attendence list?
+   \class QOrganizerItemAccessControl
+   \brief The QOrganizerItemAccessControl class contains the access control information of the organizer item.
  */
 
 /*!
@@ -150,133 +101,6 @@ QTM_BEGIN_NAMESPACE
    The constant string which identifies the definition of details which contain access control information.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::DefinitionName, "AccessControl");
-
-/*!
-   \variable QOrganizerItemAttendee::DefinitionName
-   The constant string which identifies the definition of details which contain the information about an attendee.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::DefinitionName, "Attendee");
-
-/*!
-   \variable QOrganizerItemDateTime::DefinitionName
-   The constant string which identifies the definition of details which contain the date and time of an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::DefinitionName, "DateTime");
-
-/*!
-   \variable QOrganizerItemDisplayLabel::DefinitionName
-
-   The constant string which identifies the definition of details
-   which contain a display label of an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::DefinitionName, "DisplayLabel");
-
-/*!
-   \variable QOrganizerItemEndDateTime::DefinitionName
-   The constant string which identifies the definition of details which contain the end date and time of an event or invitation.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::DefinitionName, "EndDateTime");
-
-/*!
-   \variable QOrganizerItemGuid::DefinitionName
-   The constant string which identifies the definition of details which are globally unique identifiers.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::DefinitionName, "Guid");
-
-/*!
-   \variable QOrganizerItemLocation::DefinitionName
-
-   The constant string which identifies the definition of details
-   which describe a location associated with an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::DefinitionName, "Location");
-
-/*!
-   \variable QOrganizerItemNote::DefinitionName
-   The constant string which identifies the definition of details which are notes.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemNote::DefinitionName, "Note");
-
-/*!
-   \variable QOrganizerItemParticipationRole::DefinitionName
-   The constant string which identifies the definition of details which describe the participation role of a person or contact at the event or appointment described by the organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationRole::DefinitionName, "ParticipationRole");
-
-/*!
-   \variable QOrganizerItemParticipationStatus::DefinitionName
-   The constant string which identifies the definition of details which describe the participation status of a person or contact at the event or appointment described by the organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationStatus::DefinitionName, "ParticipationStatus");
-
-/*!
-   \variable QOrganizerItemPriority::DefinitionName
-   The constant string which identifies the definition of details which contain the priority of an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::DefinitionName, "Priority");
-
-/*!
-   \variable QOrganizerItemProvenance::DefinitionName
-   The constant string which identifies the definition of details which contain the provenance of an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::DefinitionName, "Provenance");
-
-/*!
-   \variable QOrganizerItemRecurrenceRule::DefinitionName
-   The constant string which identifies the definition of details which contain the recurrence rule of an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::DefinitionName, "RecurrenceRule");
-
-/*!
-   \variable QOrganizerItemRecurrenceParent::DefinitionName
-   The constant string which identifies the definition of details which contain the original instance of an event occurrence.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceParent::DefinitionName, "RecurrenceParent");
-
-/*!
-   \variable QOrganizerItemRsvpInfo::DefinitionName
-   The constant string which identifies the definition of details which contain the RSVP information for an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::DefinitionName, "RsvpInfo");
-
-/*!
-   \variable QOrganizerItemTimestamp::DefinitionName
-   The constant string which identifies the definition of details which are organizer synchronisation timestamps.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::DefinitionName, "Timestamp");
-
-/*!
-   \variable QOrganizerItemTitle::DefinitionName
-   The constant string which identifies the definition of details which hold the title of the organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTitle::DefinitionName, "Title");
-
-/*!
-   \variable QOrganizerItemType::DefinitionName
-   The constant string which identifies the definition of details which identify the type of the organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::DefinitionName, "Type");
-
-/*!
-   \variable QOrganizerItemVisibilityTag::DefinitionName
-   The constant string which identifies the definition of details which contain the visibility tag of an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisibilityTag::DefinitionName, "VisibilityTag");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*!
    \variable QOrganizerItemAccessControl::FieldReadAccess
@@ -300,7 +124,23 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldShareAccess, "ShareAc
    The constant key for which the write access value is stored in
    details of the QOrganizerItemAccessControl type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldWriteAccess, "WhiteAccess");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldWriteAccess, "WriteAccess");
+
+
+
+
+/* ==================== QOrganizerItemAttendee ======================= */
+// XXX TODO: attendees can also have participation status / role.
+/*!
+   \class QOrganizerItemAttendee
+   \brief The QOrganizerItemAttendee class contains the information of an attendee of the event to which the organizer item corresponds.
+ */
+
+/*!
+   \variable QOrganizerItemAttendee::DefinitionName
+   The constant string which identifies the definition of details which contain the information about an attendee.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::DefinitionName, "Attendee");
 
 /*!
    \variable QOrganizerItemAttendee::FieldAttendeeDisplayLabel
@@ -326,13 +166,48 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeContactUri, "Atten
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
 
+
+
+
+
+
+
+
+/* ==================== QOrganizerItemStartDateTime ======================= */
 /*!
-   \variable QOrganizerItemDateTime::FieldDateTime
+   \class QOrganizerItemStartDateTime
+   \brief The QOrganizerItemStartDateTime class contains the start time of the event, appointment or invitation which the organizer item describes, or the date associated with a todo, note or journal.
+ */
+
+/*!
+   \variable QOrganizerItemStartDateTime::DefinitionName
+   The constant string which identifies the definition of details which contain the date and time of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemStartDateTime::DefinitionName, "DateTime");
+
+/*!
+   \variable QOrganizerItemStartDateTime::FieldDateTime
 
    The constant key for which the datetime value of the organizer item is stored in
-   details of the QOrganizerItemDateTime type.
+   details of the QOrganizerItemStartDateTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::FieldDateTime, "DateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemStartDateTime::FieldDateTime, "DateTime");
+
+
+
+
+
+/* ==================== QOrganizerItemEndDateTime ======================= */
+/*!
+   \class QOrganizerItemEndDateTime
+   \brief The QOrganizerItemEndDateTime class contains the end time of an event, appointment or invitation.
+ */
+
+/*!
+   \variable QOrganizerItemEndDateTime::DefinitionName
+   The constant string which identifies the definition of details which contain the end date and time of an event or invitation.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::DefinitionName, "EndDateTime");
 
 /*!
    \variable QOrganizerItemEndDateTime::FieldEndDateTime
@@ -342,6 +217,30 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::FieldDateTime, "DateTime");
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::FieldEndDateTime, "EndDateTime");
 
+
+
+
+
+
+/* ==================== QOrganizerItemDisplayLabel ======================= */
+/*!
+   \class QOrganizerItemDisplayLabel
+   \brief The QOrganizerItemDisplayLabel class contains the backend-synthesized display label of the organizer item.
+*/
+
+/*!
+   \fn QOrganizerItemDisplayLabel::label() const
+   Returns the display label of the organizer item.
+ */
+
+/*!
+   \variable QOrganizerItemDisplayLabel::DefinitionName
+
+   The constant string which identifies the definition of details
+   which contain a display label of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::DefinitionName, "DisplayLabel");
+
 /*!
    \variable QOrganizerItemDisplayLabel::FieldLabel
 
@@ -349,6 +248,26 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::FieldEndDateTime, "EndDateTi
    details of the QOrganizerItemDisplayLabel type.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::FieldLabel, "Label");
+
+
+
+
+
+
+
+
+/* ==================== QOrganizerItemGuid ======================= */
+
+/*!
+   \class QOrganizerItemGuid
+   \brief The QOrganizerItemGuid class contains the globally unique identifier of the organizer item, which can be used for synchronization purposes.
+ */
+
+/*!
+   \variable QOrganizerItemGuid::DefinitionName
+   The constant string which identifies the definition of details which are globally unique identifiers.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::DefinitionName, "Guid");
 
 /*!
    \variable QOrganizerItemGuid::FieldGuid
@@ -359,28 +278,80 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::FieldLabel, "Label");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
 
 /*!
-   \variable QOrganizerItemLocation::FieldGeoLocation
+   \fn QOrganizerItemGuid::guid() const
+
+   Returns the globally unique identifier which is stored in this detail.
+ */
+
+/*!
+   \fn QOrganizerItemGuid::setGuid(const QString& guid)
+   Sets the globally unique identifier which is stored in this detail to \a guid.
+ */
+
+
+
+
+
+
+/* ==================== QOrganizerItemGeoLocation ======================= */
+// XXX TODO: do we include all three pieces of data into a single detail
+// ie, street address + geolocation + location string
+// Or, do we have three separate detail types?
+/*!
+   \class QOrganizerItemLocation
+
+   \brief The QOrganizerItemLocation class contains information about a location which is related to the organizer item in some manner.
+ */
+
+/*!
+\variable QOrganizerItemLocation::DefinitionName
+
+The constant string which identifies the definition of details
+which describe a location associated with an organizer item.
+*/
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::DefinitionName, "Location");
+
+/*!
+   \variable QOrganizerItemGeoLocation::FieldGeoLocation
 
    The constant key for which the geolocation value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldGeoLocation, "GeoLocation");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGeoLocation::FieldGeoLocation, "GeoLocation");
 
 /*!
-   \variable QOrganizerItemLocation::FieldAddress
-
-   The constant key for which the street address value is
-   stored in details of the QOrganizerItemLocation type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldAddress, "Address");
-
-/*!
-   \variable QOrganizerItemLocation::FieldLocationName
+   \variable QOrganizerItemGeoLocation::FieldLocationName
 
    The constant key for which the location label value is
-   stored in details of the QOrganizerItemLocation type.
+   stored in details of the QOrganizerIteGeomLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationName");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGeoLocation::FieldLocationName, "LocationName");
+
+/*!
+   \variable QOrganizerItemAddressLocation::FieldStreet
+
+   The constant key for which the street address value is
+   stored in details of the QOrganizerItemAddressLocation type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAddressLocation::FieldStreet, "Street");
+
+
+
+
+
+
+
+/* ==================== QOrganizerItemNote ======================= */
+/*!
+   \class QOrganizerItemNote
+   \brief The QOrganizerItemNote class contains some arbitrary information which is relevant to the organizer item.
+ */
+
+/*!
+   \variable QOrganizerItemNote::DefinitionName
+   The constant string which identifies the definition of details which are notes.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemNote::DefinitionName, "Note");
 
 /*!
    \variable QOrganizerItemNote::FieldNote
@@ -391,12 +362,42 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationNam
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemNote::FieldNote, "Note");
 
 /*!
-   \variable QOrganizerItemParticipationRole::FieldParticipationRole
+   \fn QOrganizerItemNote::setNote(const QString& note)
+   Sets a note associated with an organizer item to \a note.
+ */
+
+/*!
+   \fn QOrganizerItemNote::note() const
+   Returns a string for a note associated with an organizer item.
+ */
+
+
+
+
+
+/* ==================== QOrganizerItemParticipation ======================= */
+// XXX TODO: is participation a detail?  or status/role?  Attendees can have a participation role/status
+// so how do we implement that?
+// my personal opinion is that this participation detail should be for the "self" person
+// ie, the owner of the calendar.  other attendee participation should be listed in the attendee detail.
+/*!
+   \class QOrganizerItemParticipation
+   \brief The QOrganizerItemParticipation class contains information about the way in which the owner of the calendar will participate in the event or appointment described by the organizer item.
+ */
+
+/*!
+   \variable QOrganizerItemParticipation::DefinitionName
+   The constant string which identifies the definition of details which describe the participation role of a person or contact at the event or appointment described by the organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::DefinitionName, "Participation");
+
+/*!
+   \variable QOrganizerItemParticipation::FieldParticipationRole
 
    The constant key for which the participation role value is stored in details of
    the QOrganizerItemParticipationRole type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationRole::FieldParticipationRole, "ParticipationRole");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationRole, "ParticipationRole");
 
 /*!
    \variable QOrganizerItemParticipationStatus::FieldParticipationStatus
@@ -404,7 +405,22 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationRole::FieldParticipationRole
    The constant key for which the participation status value is stored in details of
    the QOrganizerItemParticipationStatus type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationStatus::FieldParticipationStatus, "ParticipationStatus");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationStatus, "ParticipationStatus");
+
+
+
+
+/* ==================== QOrganizerItemPriority ======================= */
+/*!
+   \class QOrganizerItemPriority
+   \brief The QOrganizerItemPriority class contains the priority of the organizer item, which may be used to resolve scheduling conflicts.
+ */
+
+/*!
+   \variable QOrganizerItemPriority::DefinitionName
+   The constant string which identifies the definition of details which contain the priority of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::DefinitionName, "Priority");
 
 /*!
    \variable QOrganizerItemPriority::FieldPriority
@@ -413,6 +429,25 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationStatus::FieldParticipationSt
    the QOrganizerItemPriority type.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemPriority::FieldPriority, "Priority");
+
+
+
+
+
+
+
+
+/* ==================== QOrganizerItemProvenance ======================= */
+/*!
+   \class QOrganizerItemProvenance
+   \brief The QOrganizerItemProvenance class contains information about when and from where or whom the organizer item originated.
+ */
+
+/*!
+   \variable QOrganizerItemProvenance::DefinitionName
+   The constant string which identifies the definition of details which contain the provenance of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::DefinitionName, "Provenance");
 
 /*!
    \variable QOrganizerItemProvenance::FieldReceivedFrom
@@ -429,6 +464,28 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldReceivedFrom, "ReceivedF
    the QOrganizerItemProvenance type.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldTimestamp, "Timestamp");
+
+
+
+
+
+
+
+
+
+
+
+/* ==================== QOrganizerItemRsvpInfo ======================= */
+/*!
+   \class QOrganizerItemRsvpInfo
+   \brief The QOrganizerItemRsvpInfo class contains information about when, where and to whom a person should RSVP or has RSVP'ed in order to signify their intention to attend the event or appointment described by the organizer item.
+ */
+
+/*!
+   \variable QOrganizerItemRsvpInfo::DefinitionName
+   The constant string which identifies the definition of details which contain the RSVP information for an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::DefinitionName, "RsvpInfo");
 
 /*!
    \variable QOrganizerItemRsvpInfo::FieldDeadline
@@ -455,6 +512,27 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldResponseDate, "ResponseDat
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRsvpInfo::FieldContactUri, "ContactUri");
 
 
+
+
+
+
+
+
+
+
+
+/* ==================== QOrganizerItemTimestamp ======================= */
+/*!
+   \class QOrganizerItemTimestamp
+   \brief The QOrganizerItemTimestamp class contains the creation and last-modified timestamp associated with the organizer item.  XXX TODO: what about last accessed?
+ */
+
+/*!
+   \variable QOrganizerItemTimestamp::DefinitionName
+   The constant string which identifies the definition of details which are organizer synchronisation timestamps.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::DefinitionName, "Timestamp");
+
 /*!
    \variable QOrganizerItemTimestamp::FieldModificationTimestamp
 
@@ -472,6 +550,46 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::FieldModificationTimestamp, "M
    of an organizer item.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::FieldCreationTimestamp, "CreationTimestamp");
+
+/*!
+   \fn QOrganizerItemTimestamp::created() const
+   Returns the creation timestamp saved in this detail.
+ */
+
+/*!
+   \fn QOrganizerItemTimestamp::lastModified() const
+   Returns the last-modified timestamp saved in this detail.
+ */
+
+/*!
+   \fn QOrganizerItemTimestamp::setCreated(const QDateTime& dateTime)
+   Sets the creation timestamp saved in this detail to \a dateTime.
+ */
+
+/*!
+   \fn QOrganizerItemTimestamp::setLastModified(const QDateTime& dateTime)
+   Sets the last-modified timestamp saved in this detail to \a dateTime.
+ */
+
+
+
+
+
+
+
+
+
+/* ==================== QOrganizerItemType ======================= */
+/*!
+   \class QOrganizerItemType
+   \brief The QOrganizerItemType class describes the type of the organizer item.  This detail may be automatically synthesized by the backend depending on other details in the organizer item.
+ */
+
+/*!
+   \variable QOrganizerItemType::DefinitionName
+   The constant string which identifies the definition of details which identify the type of the organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::DefinitionName, "Type");
 
 /*!
    \variable QOrganizerItemType::FieldType
@@ -517,6 +635,38 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeNote, "Note");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodo, "Todo");
 
 /*!
+   \fn QOrganizerItemType::type() const
+   Returns the organizer item type value stored in this detail.
+ */
+
+/*!
+   \fn QOrganizerItemType::setType(const QString& type)
+   Sets the type of the organizer item to be the give \a type.
+ */
+
+
+
+
+
+
+
+
+
+
+
+/* ==================== QOrganizerItemVisibilityTag ======================= */
+/*!
+   \class QOrganizerItemVisibilityTag
+   \brief The QOrganizerItemVisibilityTag class contains a hint which describes which sort of people should be able to view the information contained in the organizer item.  XXX TODO: should this be a part of every detail?  ie, allow everyone to see the date, time and location, but only some people to see the attendence list?
+ */
+
+/*!
+   \variable QOrganizerItemVisibilityTag::DefinitionName
+   The constant string which identifies the definition of details which contain the visibility tag of an organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisibilityTag::DefinitionName, "VisibilityTag");
+
+/*!
    \variable QOrganizerItemVisibilityTag::FieldTag
 
    The constant key for the tag value which is stored in details of
@@ -537,68 +687,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisibilityTag::FieldTag, "Tag");
 
 
 
-
-
-
-
-
-
-/*!
-   \fn QOrganizerItemGuid::guid() const
-
-   Returns the globally unique identifier which is stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemGuid::setGuid(const QString& guid)
-   Sets the globally unique identifier which is stored in this detail to \a guid.
- */
-
-/*!
-   \fn QOrganizerItemNote::setNote(const QString& note)
-   Sets a note associated with an organizer item to \a note.
- */
-
-/*!
-   \fn QOrganizerItemNote::note() const
-   Returns a string for a note associated with an organizer item.
- */
-
-/*!
-   \fn QOrganizerItemTimestamp::created() const
-   Returns the creation timestamp saved in this detail.
- */
-
-/*!
-   \fn QOrganizerItemTimestamp::lastModified() const
-   Returns the last-modified timestamp saved in this detail.
- */
-
-/*!
-   \fn QOrganizerItemTimestamp::setCreated(const QDateTime& dateTime)
-   Sets the creation timestamp saved in this detail to \a dateTime.
- */
-
-/*!
-   \fn QOrganizerItemTimestamp::setLastModified(const QDateTime& dateTime)
-   Sets the last-modified timestamp saved in this detail to \a dateTime.
- */
-
-/*!
-   \fn QOrganizerItemType::type() const
-   Returns the organizer item type value stored in this detail.
- */
-
-/*!
-   \fn QOrganizerItemType::setType(const QString& type)
-   Sets the type of the organizer item to be the give \a type.
- */
-
-
-/*!
-   \fn QOrganizerItemDisplayLabel::label() const
-   Returns the display label of the organizer item.
- */
 
 
 

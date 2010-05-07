@@ -39,8 +39,9 @@ SOURCES += qorganizer.cpp \
     qorganizeritemfetchhint.cpp \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
+    qorganizeritemmanager.cpp \
     qorganizeritemmanagerengine.cpp \
-    qorganizeritemmanagerenginegfactory.cpp \
+    qorganizeritemmanagerenginefactory.cpp \
     qorganizeritemsortorder.cpp
 
 # PRIVATE_HEADERS += \
