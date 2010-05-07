@@ -69,6 +69,12 @@ class QGalleryTrackerItemList : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:
+    enum UpdateState
+    {
+        UpToDate,
+        Updating
+    };
+
     QGalleryTrackerItemList(
             QGalleryTrackerCompositeColumn *idColumn,
             QGalleryTrackerCompositeColumn *urlColumn,
@@ -80,6 +86,8 @@ public:
             const QVector<QGalleryTrackerImageColumn *> &imageColumns,
             QObject *parent = 0);
     ~QGalleryTrackerItemList();
+
+    UpdateState updateState() const;
 
     QStringList propertyNames() const;
     int propertyKey(const QString &property) const;
@@ -100,6 +108,8 @@ public:
 
 protected:
     void updateResultSet(const QVector<QStringList> &resultSet, int index = 0);
+
+    virtual void updateStateChanged(UpdateState state) = 0;
 
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemList)

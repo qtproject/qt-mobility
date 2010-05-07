@@ -161,6 +161,7 @@ public:
     int imageOffset;
     int columnCount;
     int rowCount;
+    QGalleryTrackerItemList::UpdateState updateState;
     QStringList propertyNames;
     QVector<QGalleryProperty::Attributes> propertyAttributes;
     QVector<QGalleryTrackerValueColumn *> valueColumns;
@@ -423,6 +424,8 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
         rowCount = rCache.index + rCache.count;
 
         emit q_func()->inserted(0, rowCount);
+
+        q_func()->updateStateChanged(updateState = QGalleryTrackerItemList::UpToDate);
     } else {
         synchronizeWatcher.setFuture(
                 QtConcurrent::run(this, &QGalleryTrackerItemListPrivate::synchronize));
@@ -433,6 +436,8 @@ void QGalleryTrackerItemListPrivate::_q_synchronizeFinished()
 {
     aCache.values.clear();
     aCache.count = 0;
+
+    q_func()->updateStateChanged(updateState = QGalleryTrackerItemList::UpToDate);
 }
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
@@ -487,12 +492,16 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
     d->columnCount = d->imageOffset + d->imageColumns.count();
 
     d->rowCount = 0;
-
-
+    d->updateState = UpToDate;
 }
 
 QGalleryTrackerItemList::~QGalleryTrackerItemList()
 {
+}
+
+QGalleryTrackerItemList::UpdateState QGalleryTrackerItemList::updateState() const
+{
+    return d_func()->updateState;
 }
 
 QStringList QGalleryTrackerItemList::propertyNames() const
@@ -716,6 +725,10 @@ bool QGalleryTrackerItemList::event(QEvent *event)
 void QGalleryTrackerItemList::updateResultSet(const QVector<QStringList> &resultSet, int index)
 {
     Q_D(QGalleryTrackerItemList);
+
+    Q_ASSERT(d->updateState == UpToDate);
+
+    updateStateChanged(d->updateState = Updating);
 
     d->rCache.cutoff = 0;
 
