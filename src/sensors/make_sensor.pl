@@ -89,11 +89,9 @@ if (! -e $pheader) {
 // We mean it.
 //
 
-#include "qsensor_p.h"
-
 QTM_BEGIN_NAMESPACE
 
-class '.$reading_private.' : public QSensorReadingPrivate
+class '.$reading_private.'
 {
 public:
     '.$reading_private.'()
