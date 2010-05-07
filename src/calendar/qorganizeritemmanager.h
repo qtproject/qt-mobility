@@ -109,20 +109,22 @@ public:
     /* Error reporting */
     QOrganizerItemManager::Error error() const;
 
+    /* Item Instances - both items and item occurrences (occurrences either saved or generated) */
+    QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+    QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint) const;
+
     /* Items - Accessors and Mutators */
     QList<QOrganizerItemLocalId> itemIds(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
 
-    // these three functions replace the three deprecated functions above.
     QList<QOrganizerItem> items(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;  // retrieve an item
 
-    bool saveItem(QOrganizerItem* item);                 // note: MODIFIES item (sets the itemId)
-    bool removeItem(const QOrganizerItemLocalId& itemId);      // remove the item from the persistent store
-
-    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap); // batch API - save.
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap); // batch API - remove.
+    bool saveItem(QOrganizerItem* item);
+    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap);
+    bool removeItem(const QOrganizerItemLocalId& itemId);
+    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap);
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
     QOrganizerItem compatibleItem(const QOrganizerItem& original); // Preliminary function!
