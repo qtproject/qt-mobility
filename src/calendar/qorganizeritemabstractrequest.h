@@ -72,16 +72,14 @@ public:
 
     enum RequestType {
         InvalidRequest = 0,
+        ItemInstanceFetchRequest,
         ItemFetchRequest,
         ItemLocalIdFetchRequest,
         ItemRemoveRequest,
         ItemSaveRequest,
         DetailDefinitionFetchRequest,
         DetailDefinitionRemoveRequest,
-        DetailDefinitionSaveRequest,
-        RelationshipFetchRequest,
-        RelationshipRemoveRequest,
-        RelationshipSaveRequest
+        DetailDefinitionSaveRequest
     };
 
     RequestType type() const;
