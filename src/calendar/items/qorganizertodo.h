@@ -53,6 +53,15 @@ public:
 
     QOrganizerTodo(const QOrganizerTodo& other);
     QOrganizerTodo& operator=(const QOrganizerTodo& other);
+
+    // XXX TODO: some questions about "recurring periods and doneness"...
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
+    void setEndDateTime(const QDateTime& endDateTime);
+    QDateTime endDateTime() const;
+
+    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
+    QOrganizerItemRecurrence recurrence() const;
 };
 
 QTM_END_NAMESPACE

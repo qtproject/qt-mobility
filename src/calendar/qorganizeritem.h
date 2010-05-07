@@ -163,7 +163,7 @@ public:
     bool removeDetail(QOrganizerItemDetail* detail); // modifies the detail - unsets its ID
 
     // Some common convenience detail accessors
-    // has to be things that they ALL have.
+    // has to be things that all subclasses (including Occurrences) have.
     void setNote(QString note);  // ??
     QString note() const;        // ??
 

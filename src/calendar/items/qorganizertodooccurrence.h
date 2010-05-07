@@ -54,6 +54,9 @@ public:
     QOrganizerTodoOccurrence(const QOrganizerTodoOccurrence& other);
     QOrganizerTodoOccurrence& operator=(const QOrganizerTodoOccurrence& other);
 
+    // XXX TODO: see discussion in qorganizertodo.h
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
 

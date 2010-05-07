@@ -53,6 +53,12 @@ public:
 
     QOrganizerJournal(const QOrganizerJournal& other);
     QOrganizerJournal& operator=(const QOrganizerJournal& other);
+
+    // XXX TODO: research whether journal is a single point in time, or can cover a period of time...
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
+    void setEndDateTime(const QDateTime& endDateTime);
+    QDateTime endDateTime() const;
 };
 
 QTM_END_NAMESPACE

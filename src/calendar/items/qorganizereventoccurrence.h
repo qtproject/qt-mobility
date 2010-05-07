@@ -54,6 +54,8 @@ public:
     QOrganizerEventOccurrence(const QOrganizerEventOccurrence& other);
     QOrganizerEventOccurrence& operator=(const QOrganizerEventOccurrence& other);
 
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
 
