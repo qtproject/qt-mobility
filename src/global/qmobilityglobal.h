@@ -64,105 +64,79 @@
 #endif
 #include <QtCore/qglobal.h>
 
-#if defined(SYMBIAN_DATABASEMANAGER_SERVER)
-#  define Q_SERVICEFW_EXPORT
-#else
-#  if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
-#    if defined(QT_NODLL)
-#      undef QT_MAKEDLL
+#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
+#  if defined(QT_NODLL)
+#    undef QT_MAKEDLL
+#    undef QT_DLL
+#  elif defined(QT_MAKEDLL)
+#    if defined(QT_DLL)
 #      undef QT_DLL
-#    elif defined(QT_MAKEDLL)
-#      if defined(QT_DLL)
-#        undef QT_DLL
-#      endif
-#      if defined(QT_BUILD_BEARER_LIB)
-#        define Q_BEARER_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_BEARER_EXPORT Q_DECL_IMPORT
-#      endif
-#      if defined(QT_BUILD_CFW_LIB)
-#        define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
-#      endif
-#      if defined(QT_BUILD_CONTACTS_LIB)
-#        define Q_CONTACTS_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_CONTACTS_EXPORT Q_DECL_IMPORT
-#      endif
-#      if defined(QT_BUILD_VERSIT_LIB)
-#        define Q_VERSIT_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_VERSIT_EXPORT Q_DECL_IMPORT
-#      endif
-#      if defined(QT_BUILD_LOCATION_LIB)
-#        define Q_LOCATION_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_LOCATION_EXPORT Q_DECL_IMPORT
-#      endif
-#      if defined(QT_BUILD_MESSAGING_LIB)
-#        define Q_MESSAGING_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_MESSAGING_EXPORT Q_DECL_IMPORT
-#      endif
-#      if defined(QT_BUILD_MEDIA_LIB)
-#        define Q_MEDIA_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_MEDIA_EXPORT Q_DECL_IMPORT
-#      endif
-#      if defined(QT_BUILD_SFW_LIB)
-#        define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
-#      endif
-#      if defined(QT_BUILD_SYSINFO_LIB)
-#        define Q_SYSINFO_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_SYSINFO_EXPORT Q_DECL_IMPORT
-#      endif
-#      if defined(QT_BUILD_SENSORS_LIB)
-#        define Q_SENSORS_EXPORT Q_DECL_EXPORT
-#      else
-#        define Q_SENSORS_EXPORT Q_DECL_IMPORT
-#      endif
-#    elif defined(QT_DLL) /* use a Qt DLL library */
-#      define Q_BEARER_EXPORT Q_DECL_IMPORT
-#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
-#      define Q_CONTACTS_EXPORT Q_DECL_IMPORT
-#      define Q_VERSIT_EXPORT Q_DECL_IMPORT
-#      define Q_LOCATION_EXPORT Q_DECL_IMPORT
-#      define Q_MEDIA_EXPORT Q_DECL_IMPORT
-#      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
-#      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
-#      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
-#      define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #    endif
-#  else
-#  endif
-#  if !defined(Q_SERVICEFW_EXPORT)
-#    if defined(QT_SHARED)
+#    if defined(QT_BUILD_BEARER_LIB)
 #      define Q_BEARER_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_BEARER_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_CFW_LIB)
 #      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_CONTACTS_LIB)
 #      define Q_CONTACTS_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_CONTACTS_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_VERSIT_LIB)
 #      define Q_VERSIT_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_VERSIT_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_LOCATION_LIB)
 #      define Q_LOCATION_EXPORT Q_DECL_EXPORT
-#      define Q_MEDIA_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_LOCATION_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_MESSAGING_LIB)
 #      define Q_MESSAGING_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_MEDIA_LIB)
+#      define Q_MEDIA_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_MEDIA_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_SFW_LIB)
 #      define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_SYSINFO_LIB)
 #      define Q_SYSINFO_EXPORT Q_DECL_EXPORT
+#    else
+#      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
+#    endif
+#    if defined(QT_BUILD_SENSORS_LIB)
 #      define Q_SENSORS_EXPORT Q_DECL_EXPORT
 #    else
-#      define Q_BEARER_EXPORT
-#      define Q_PUBLISHSUBSCRIBE_EXPORT
-#      define Q_CONTACTS_EXPORT
-#      define Q_VERSIT_EXPORT
-#      define Q_LOCATION_EXPORT
-#      define Q_MEDIA_EXPORT
-#      define Q_MESSAGING_EXPORT
-#      define Q_SERVICEFW_EXPORT
-#      define Q_SYSINFO_EXPORT
-#      define Q_SENSORS_EXPORT
+#      define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #    endif
+#  elif defined(QT_DLL) /* use a Qt DLL library */
+#    define Q_BEARER_EXPORT Q_DECL_IMPORT
+#    define Q_PUBLISHSUBSCRIBE_EXPORT Q_DECL_IMPORT
+#    define Q_CONTACTS_EXPORT Q_DECL_IMPORT
+#    define Q_VERSIT_EXPORT Q_DECL_IMPORT
+#    define Q_LOCATION_EXPORT Q_DECL_IMPORT
+#    define Q_MEDIA_EXPORT Q_DECL_IMPORT
+#    define Q_MESSAGING_EXPORT Q_DECL_IMPORT
+#    if QTM_SERVICEFW_SYMBIAN_DATABASEMANAGER_SERVER
+#      define Q_SERVICEFW_EXPORT
+#    else
+#      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
+#    endif
+#    define Q_SYSINFO_EXPORT Q_DECL_IMPORT
+#    define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #  endif
 #endif
 

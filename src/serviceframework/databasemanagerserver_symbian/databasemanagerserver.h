@@ -44,7 +44,6 @@
 #include <qmobilityglobal.h>
 #include <e32base.h>
 #include "databasemanagerserver.pan"
-#include "databasemanagerserver_global.h"
 
 //QTM_BEGIN_NAMESPACE
 namespace QtMobility {
@@ -52,7 +51,7 @@ namespace QtMobility {
 // needed for creating server thread.
 const TUint KDefaultHeapSize = 0x10000;
 
-class DATABASEMANAGERSERVER_EXPORT CDatabaseManagerServer : public CServer2
+class CDatabaseManagerServer : public CServer2
     {
     public:
         CDatabaseManagerServer();
