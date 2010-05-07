@@ -74,7 +74,7 @@ void QLandmarkManagerPrivate::createEngine(const QString &managerName, const QMa
     QList<QLandmarkManagerEngineFactory *> factories = QLandmarkManagerPrivate::factories().values(managerName);
 
     bool ok;
-    int implementationVersion = parameters.value(LANDMARKS_IMPLEMENTATION_VERSION_NAME).toInt(&ok);
+    int implementationVersion = parameters.value(QTLANDMARKS_IMPLEMENTATION_VERSION_NAME).toInt(&ok);
     if (!ok)
         implementationVersion = -1;
 

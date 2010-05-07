@@ -48,6 +48,7 @@
 #include <QFile>
 #include <QUrl>
 #include <QPluginLoader>
+#include <QDebug>
 #include "qlandmarkcategoryid.h"
 #include "qlandmarkcategory.h"
 #include "qlandmark.h"
@@ -114,6 +115,12 @@ QLandmarkManager::QLandmarkManager(const QString &managerName, const QMap<QStrin
     Q_D(QLandmarkManager);
     d->q_ptr = this;
     d->createEngine(managerName, parameters);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager, name: %1").arg(managerName);
+        qWarning() << "Invalid QLandmarkManager instantiated with name: " << managerName;
+    }
 }
 
 /*!
@@ -132,38 +139,13 @@ QLandmarkManager::QLandmarkManager(const QString& managerName, int implementatio
     Q_D(QLandmarkManager);
     d->q_ptr = this;
     QMap<QString,QString> params = parameters;
-    params[QString(LANDMARKS_IMPLEMENTATION_VERSION_NAME)] = QString::number(implementationVersion);
+    params[QString(QTLANDMARKS_IMPLEMENTATION_VERSION_NAME)] = QString::number(implementationVersion);
     d->createEngine(managerName, params);
 
-    if (d->engine) {
-        connect(d->engine,
-                SIGNAL(dataChanged()),
-                this,
-                SIGNAL(dataChanged()));
-        connect(d->engine,
-                SIGNAL(landmarksAdded(QList<QLandmarkId>)),
-                this,
-                SIGNAL(landmarksAdded(QList<QLandmarkId>)));
-        connect(d->engine,
-                SIGNAL(landmarksChanged(QList<QLandmarkId>)),
-                this,
-                SIGNAL(landmarksChanged(QList<QLandmarkId>)));
-        connect(d->engine,
-                SIGNAL(landmarksRemoved(QList<QLandmarkId>)),
-                this,
-                SIGNAL(landmarksRemoved(QList<QLandmarkId>)));
-        connect(d->engine,
-                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)),
-                this,
-                SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
-        connect(d->engine,
-                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)),
-                this,
-                SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
-        connect(d->engine,
-                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)),
-                this,
-                SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager, name: %1").arg(managerName);
+        qWarning() << "Invalid QLandmarkManager instantiated with name: " << managerName;
     }
 }
 
@@ -203,8 +185,11 @@ bool QLandmarkManager::saveLandmark(QLandmark *landmark)
 {
     Q_D(QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return false;
+    }
 
     return d->engine->saveLandmark(landmark,
                                    &(d->errorCode),
@@ -234,8 +219,11 @@ bool QLandmarkManager::saveLandmarks(QList<QLandmark> *landmarks,
 {
     Q_D(QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return false;
+    }
 
     return d->engine->saveLandmarks(landmarks,
                                     errorMap,
@@ -253,8 +241,11 @@ bool QLandmarkManager::removeLandmark(const QLandmarkId &landmarkId)
 {
     Q_D(QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return false;
+    }
 
     return d->engine->removeLandmark(landmarkId,
                                      &(d->errorCode),
@@ -280,8 +271,11 @@ bool QLandmarkManager::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
 {
     Q_D(QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return false;
+    }
 
     return d->engine->removeLandmarks(landmarkIds,
                                       errorMap,
@@ -313,8 +307,11 @@ bool QLandmarkManager::saveCategory(QLandmarkCategory *category)
 {
     Q_D(QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return false;
+    }
 
     return d->engine->saveCategory(category,
                                    &(d->errorCode),
@@ -333,8 +330,11 @@ bool QLandmarkManager::removeCategory(const QLandmarkCategoryId &categoryId)
 {
     Q_D(QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return false;
+    }
 
     return d->engine->removeCategory(categoryId,
                                      &(d->errorCode),
@@ -348,8 +348,11 @@ QLandmarkCategory QLandmarkManager::category(const QLandmarkCategoryId &category
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QLandmarkCategory();
+    }
 
     QLandmarkCategory cat = d->engine->category(categoryId,
                             &(d->errorCode),
@@ -374,8 +377,11 @@ QList<QLandmarkCategory> QLandmarkManager::categories(const QList<QLandmarkCateg
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QList<QLandmarkCategory>();
+    }
 
     QList<QLandmarkCategory> cats = d->engine->categories(categoryIds,
                                     &(d->errorCode),
@@ -394,8 +400,11 @@ QList<QLandmarkCategoryId> QLandmarkManager::categoryIds() const
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QList<QLandmarkCategoryId>();
+    }
 
     QList<QLandmarkCategoryId> ids = d->engine->categoryIds(&(d->errorCode),
                                      &(d->errorString));
@@ -413,8 +422,11 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QLandmark();
+    }
 
     QLandmark lm = d->engine->landmark(landmarkId,
                                        &(d->errorCode),
@@ -433,8 +445,11 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QList<QLandmark>();
+    }
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
                            sortOrders,
@@ -454,8 +469,11 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QList<QLandmark>();
+    }
 
     QList<QLandmarkSortOrder> sortOrders;
     sortOrders.append(sortOrder);
@@ -478,8 +496,11 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QList<QLandmark>();
+    }
 
     // use the error map to add to the error string?
     // or use it to remove the landmarks which had errors?
@@ -502,8 +523,11 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QList<QLandmarkId>();
+    }
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
                              sortOrders,
@@ -527,8 +551,11 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QList<QLandmarkId>();
+    }
 
     QList<QLandmarkSortOrder> sortOrders;
     sortOrders.append(sortOrder);
@@ -556,8 +583,11 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, Format format)
 {
     Q_D(QLandmarkManager);
 
-    if (!d->engine)
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return false;
+    }
 
     return d->engine->importLandmarks(device,
                                       format,
@@ -605,8 +635,11 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, Format format, QList<Q
 {
     Q_D(QLandmarkManager);
 
-    if (!d->engine)
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return false;
+    }
 
     return d->engine->exportLandmarks(device,
                                       format,
@@ -667,8 +700,11 @@ bool QLandmarkManager::isFilterSupported(QLandmarkFilter::FilterType filterType)
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+     if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return false;
+    }
 
     return d->engine->isFilterSupported(filterType);
 }
@@ -680,8 +716,12 @@ bool QLandmarkManager::isFilterSupported(QLandmarkFilter::FilterType filterType)
 bool QLandmarkManager::isReadOnly() const
 {
     Q_D(const QLandmarkManager);
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return true;
+    }
+
     return d->engine->isReadOnly();
 }
 
@@ -695,8 +735,12 @@ bool QLandmarkManager::isReadOnly() const
 bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
 {
     Q_D(const QLandmarkManager);
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return true;
+    }
+
     return d->engine->isReadOnly(landmarkId);
 }
 
@@ -710,8 +754,12 @@ bool QLandmarkManager::isReadOnly(const QLandmarkId &landmarkId) const
 bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
 {
     Q_D(const QLandmarkManager);
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return true;
+    }
+
     return d->engine->isReadOnly(categoryId);
 }
 
@@ -722,8 +770,11 @@ QString QLandmarkManager::managerName() const
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QString();
+    }
 
     return d->engine->managerName();
 }
@@ -735,8 +786,11 @@ QMap<QString, QString> QLandmarkManager::managerParameters() const
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QMap<QString, QString>();
+    }
 
     return d->engine->managerParameters();
 }
@@ -748,8 +802,11 @@ QString QLandmarkManager::managerUri() const
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return QString();
+    }
 
     return d->engine->managerUri();
 }
@@ -761,8 +818,11 @@ int QLandmarkManager::managerVersion() const
 {
     Q_D(const QLandmarkManager);
 
-    if (!d->engine)
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
         return 0;
+    }
 
     return d->engine->managerVersion();
 }
@@ -781,17 +841,29 @@ QStringList QLandmarkManager::availableManagers()
     from the given \a managerName, \a params and an optional \a implementationVersion */
 QString QLandmarkManager::buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion)
 {
-    QUrl url;
-    url.setHost(managerName);
-    url.setPath(QString::number(implementationVersion));
-
-    QList<QString> keys = params.keys();
-    for (int i = 0; i < keys.size(); ++i) {
+    QString ret(QLatin1String("qtlandmarks:%1:%2"));
+    // we have to escape each param
+    QStringList escapedParams;
+    QStringList keys = params.keys();
+    for (int i=0; i < keys.size(); i++) {
         QString key = keys.at(i);
-        url.addQueryItem(key, params.value(key));
+        QString arg = params.value(key);
+        arg = arg.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+        arg = arg.replace(QLatin1Char('='), QLatin1String("&equ;"));
+        key = key.replace(QLatin1Char('&'), QLatin1String("&amp;"));
+        key = key.replace(QLatin1Char('='), QLatin1String("&equ;"));
+        key = key + QLatin1Char('=') + arg;
+        escapedParams.append(key);
     }
 
-    return url.toString();
+    if (implementationVersion != -1) {
+        QString versionString = QString(QLatin1String(QTLANDMARKS_IMPLEMENTATION_VERSION_NAME));
+        versionString += QString::fromAscii("=");
+        versionString += QString::number(implementationVersion);
+        escapedParams.append(versionString);
+    }
+
+    return ret.arg(managerName, escapedParams.join(QLatin1String("&")));
 }
 
 /*!
@@ -800,34 +872,17 @@ QString QLandmarkManager::buildUri(const QString& managerName, const QMap<QStrin
  */
 QLandmarkManager* QLandmarkManager::fromUri(const QString& storeUri, QObject* parent)
 {
-    return NULL;
-    QUrl url = QUrl::fromEncoded(storeUri.toUtf8(), QUrl::StrictMode);
-    if (!url.isValid()) {
-        return NULL;
-    }
-
-    QString managerName = url.host();
-
-    bool versionOk = false;
-    int version = -1;
-    if (!url.path().isEmpty()) {
-        version = url.path().toInt(&versionOk);
-        if (!versionOk)
-            return NULL;
-    }
-
-    QMap<QString, QString> parameters;
-
-    // TODO error on duplicate keys?
-    QList<QPair<QString, QString> > items = url.queryItems();
-    for (int i = 0; i < items.size(); ++i) {
-        parameters[items.at(i).first] = items.at(i).second;
-    }
-
-    if (versionOk) {
-        return new QLandmarkManager(managerName, parameters, parent);
+    if (storeUri.isEmpty()) {
+        return new QLandmarkManager(QString(), QMap<QString, QString>(), parent);
     } else {
-        return new QLandmarkManager(managerName, version, parameters, parent);
+        QString id;
+        QMap<QString, QString> parameters;
+        if (parseUri(storeUri, &id, &parameters)) {
+            return new QLandmarkManager(id, parameters, parent);
+        } else {
+            // invalid
+            return NULL;
+        }
     }
 }
 
@@ -838,19 +893,54 @@ QLandmarkManager* QLandmarkManager::fromUri(const QString& storeUri, QObject* pa
  */
 bool QLandmarkManager::parseUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
 {
-    QUrl url = QUrl::fromEncoded(uri.toUtf8(), QUrl::StrictMode);
-    if (!url.isValid()) {
+    // Format: qtlandmarks:<managerid>:<key>=<value>&<key>=<value>
+    // - it is assumed the prefix(qtlandmarks) and managerid cannot contain ':'
+    // - it is assumed keys and values do not contain '=' or '&'
+    //   but can contain &amp; and &equ;
+    QStringList colonSplit = uri.split(QLatin1Char(':'));
+    QString prefix = colonSplit.value(0);
+
+    if (prefix != QLatin1String("qtlandmarks"))
         return false;
+
+    QString managerName = colonSplit.value(1);
+
+    if (managerName.trimmed().isEmpty())
+        return false;
+
+    QString firstParts = prefix + QLatin1Char(':') + managerName + QLatin1Char(':');
+    QString paramString = uri.mid(firstParts.length());
+
+    QMap<QString, QString> outParams;
+
+    // Now we have to decode each parameter
+    if (!paramString.isEmpty()) {
+        QStringList params = paramString.split(QRegExp(QLatin1String("&(?!(amp;|equ;))")), QString::KeepEmptyParts);
+        // If we have an empty string for paramstring, we get one entry in params,
+        // so skip that case.
+        for(int i = 0; i < params.count(); i++) {
+            /* This should be something like "foo&amp;bar&equ;=grob&amp;" */
+            QStringList paramChunk = params.value(i).split(QLatin1String("="), QString::KeepEmptyParts);
+
+            if (paramChunk.count() != 2)
+                return false;
+
+            QString arg = paramChunk.value(0);
+            QString param = paramChunk.value(1);
+            arg.replace(QLatin1String("&equ;"), QLatin1String("="));
+            arg.replace(QLatin1String("&amp;"), QLatin1String("&"));
+            param.replace(QLatin1String("&equ;"), QLatin1String("="));
+            param.replace(QLatin1String("&amp;"), QLatin1String("&"));
+            if (arg.isEmpty())
+                return false;
+            outParams.insert(arg, param);
+        }
     }
 
-    *pManagerId = url.host();
-
-    // TODO error on duplicate keys?
-    QList<QPair<QString, QString> > items = url.queryItems();
-    for (int i = 0; i < items.size(); ++i) {
-        pParams->insert(items.at(i).first, items.at(i).second);
-    }
-
+    if (pParams)
+        *pParams = outParams;
+    if (pManagerId)
+        *pManagerId = managerName;
     return true;
 }
 

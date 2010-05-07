@@ -59,7 +59,7 @@
 #include <QString>
 #include <QMap>
 
-#define LANDMARKS_IMPLEMENTATION_VERSION_NAME "com.nokia.qtmobility.landmarks.implentation.version"
+#define QTLANDMARKS_IMPLEMENTATION_VERSION_NAME "com.nokia.qtmobility.landmarks.implentation.version"
 
 QTM_BEGIN_NAMESPACE
 

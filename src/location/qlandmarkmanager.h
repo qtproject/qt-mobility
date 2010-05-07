@@ -75,6 +75,7 @@ public:
         VersionMismatchError,
         NotSupportedError,
         BadArgumentError,
+        InvalidManagerError,
         UnknownError,
     };
 
