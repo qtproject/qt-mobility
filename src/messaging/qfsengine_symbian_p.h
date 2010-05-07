@@ -155,6 +155,7 @@ private:
     void countMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter);
     
     void updateEmailAccountsL() const;
+    void updateMessageL(QMessage* message);
     MEmailMessage* createFSMessageL(const QMessage &message);
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
     QMessageFolderIdList folderIdsByAccountIdL(const QMessageAccountId& accountId) const;

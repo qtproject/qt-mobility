@@ -112,11 +112,10 @@ bool CFSEngine::accountLessThan(const QMessageAccountId accountId1, const QMessa
 
 void CFSEngine::orderAccounts(QMessageAccountIdList& accountIds, const QMessageAccountSortOrder &sortOrder) const
 {
+    Q_UNUSED(accountIds);
     m_currentAccountOrdering = sortOrder;
     qSort(accountIds.begin(), accountIds.end(), CFSEngine::accountLessThan);
 }
-
-
 
 bool CFSEngine::folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2)
 {
@@ -231,6 +230,7 @@ QMessageAccount CFSEngine::account(const QMessageAccountId &id) const
 QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
 {
     // TODO
+    Q_UNUSED(type);
     return QMessageAccountId();
 }
 
@@ -422,6 +422,15 @@ bool CFSEngine::addMessage(QMessage* message)
 
 bool CFSEngine::updateMessage(QMessage* message)
 {
+    TRAPD(err, updateMessageL(message));
+    if (err != KErrNone)
+        return false;
+    else
+        return true;
+}
+
+void CFSEngine::updateMessageL(QMessage* message)
+{
     TMailboxId mailboxId(stripIdPrefix(message->parentAccountId().toString()).toInt());
     MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
   
@@ -543,12 +552,27 @@ bool CFSEngine::updateMessage(QMessage* message)
     
     fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message->subject().utf16())));
     fsMessage->SaveChangesL();
-    return true;
 }
 
 bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
 {
+    Q_UNUSED(option);
     bool retVal = false;
+    MEmailMessage* message = NULL;
+    TRAPD(err, message = fsMessageL(id));
+    if (err == KErrNone) {
+        TFolderId folderId(message->ParentFolderId());
+        TMailboxId mailboxId(folderId.iMailboxId);
+        TRAPD(err2,
+            MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+            MEmailFolder* folder = mailbox->FolderL(folderId);
+            REmailMessageIdArray messageIds;
+            messageIds.Append(message->MessageId());
+            folder->DeleteMessagesL(messageIds);
+            );
+        if (err2 == KErrNone)
+            retVal = true;
+    }
     return retVal;
 }
 
@@ -566,37 +590,32 @@ bool CFSEngine::showMessage(const QMessageId &id)
 bool CFSEngine::composeMessage(const QMessage &message)
 {
     bool retVal = false;
+    MEmailMailbox* mailbox;
     TMailboxId mailboxId(stripIdPrefix(message.parentAccountId().toString()).toInt());
-    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-    mailbox->EditNewMessageL();
-    /*MEmailMessage* fsMessage;
-    TRAPD(err, 
-        fsMessage = createFSMessageL(message);
-        fsMessage->SaveChangesL();
-        fsMessage->ShowMessageViewerL();
-    );
-    if (err != KErrNone)
-        retVal = false;
-    else
-        retVal = true; */  
+    TRAPD(err, mailbox = m_clientApi->MailboxL(mailboxId));
+    if (err == KErrNone) {
+        TRAPD(err2, mailbox->EditNewMessageL());
+        if (err2 == KErrNone)
+            retVal = true;
+    }
     return retVal;
 }
 
 bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
 {
-    // not supported in Email Client Api
+    // not supported in Email Client Api?
     return false;
 }
 
 bool CFSEngine::retrieveBody(const QMessageId& id)
 {
-    // not supported in Email Client Api
+    // not supported in Email Client Api?
      return false;
 }
 
 bool CFSEngine::retrieveHeader(const QMessageId& id)
 {
-    // not supported in Email Client Api
+    // not supported in Email Client Api?
     return false;
 }
 
