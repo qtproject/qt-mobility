@@ -1231,7 +1231,7 @@ QGalleryTrackerSchema::IdFunc QGalleryTrackerSchema::idFunc() const
 }
 
 
-QStringList QGalleryTrackerSchema::propertyNames() const
+QStringList QGalleryTrackerSchema::supportedPropertyNames() const
 {
     QStringList propertyNames;
 

@@ -330,7 +330,7 @@ QStringList QDocumentGallery::itemTypePropertyNames(const QString &itemType) con
     QGalleryTrackerSchema schema;
     schema.setItemType(itemType);
 
-    return schema.propertyNames();
+    return schema.supportedPropertyNames();
 }
 
 QGalleryProperty::Attributes QDocumentGallery::propertyAttributes(

@@ -94,7 +94,7 @@ public:
 
     IdFunc idFunc() const;
 
-    QStringList propertyNames() const;
+    QStringList supportedPropertyNames() const;
     QGalleryProperty::Attributes propertyAttributes(const QString &propertyName) const;
 
     QStringList identityFields() const;
