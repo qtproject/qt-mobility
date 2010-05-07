@@ -56,7 +56,31 @@
 #include "qgalleryfilter.h"
 #include "qgalleryproperty.h"
 
+#include <QtCore/qstringlist.h>
+
 QTM_BEGIN_NAMESPACE
+
+class QGalleryTrackerAliasColumn;
+class QGalleryTrackerCompositeColumn;
+class QGalleryTrackerImageColumn;
+class QGalleryTrackerValueColumn;
+
+struct QGalleryTrackerSortCriteria
+{
+    enum Flag
+    {
+        Sorted        = 0x01,
+        ReverseSorted = 0x02,
+        Ascending     = 0x04,
+        Descending    = 0x08
+    };
+
+    QGalleryTrackerSortCriteria() : column(0), flags(0) {}
+    QGalleryTrackerSortCriteria(short column, short flags) : column(column), flags(flags) {}
+
+    short column;
+    short flags;
+};
 
 class QGalleryTrackerSchema
 {
@@ -105,10 +129,45 @@ public:
     static QString typeFromService(const QString &service);
     static QString prefixFromService(const QString &service);
 
+    QStringList propertyNames() const { return m_propertyNames; }
+    void setPropertyNames(const QStringList &names);
+
+    QStringList sortPropertyNames() const { return m_sortPropertyNames; }
+    void setSortPropertyNames(const QStringList &names);
+
+    QStringList fields() const { return m_propertyFields; }
+    QStringList aggregations() const { return m_aggregations; }
+    QStringList aggregateFields() const { return m_aggregateFields; }
+    QStringList sortFields() const { return m_sortFields; }
+    QVector<QGalleryProperty::Attributes> propertyAttributes() const {
+        return m_propertyAttributes; }
+
+    QGalleryTrackerCompositeColumn *createIdColumn() const;
+    QGalleryTrackerCompositeColumn *createUrlColumn() const;
+    QGalleryTrackerCompositeColumn *createTypeColumn() const;
+
+    QVector<QGalleryTrackerValueColumn *> createValueColumns() const;
+    QVector<QGalleryTrackerCompositeColumn *> createCompositeColumns() const;
+    QVector<QGalleryTrackerAliasColumn *> createAliasColumns() const;
+    QVector<QGalleryTrackerImageColumn *> createImageColumns() const;
+
+    QVector<QGalleryTrackerSortCriteria> sortCriteria() const { return m_sortCriteria; }
+
 private:
     int m_fileTypeIndex;
     int m_aggregateTypeIndex;
     QString m_itemType;
+    QStringList m_propertyNames;
+    QStringList m_sortPropertyNames;
+    QStringList m_propertyFields;
+    QStringList m_aggregations;
+    QStringList m_aggregateFields;
+    QStringList m_sortFields;
+    QVector<QGalleryProperty::Attributes> m_propertyAttributes;
+    QVector<int> m_compositeColumns;
+    QVector<int> m_aliasColumns;
+    QVector<int> m_imageColumns;
+    QVector<QGalleryTrackerSortCriteria> m_sortCriteria;
 };
 
 QTM_END_NAMESPACE

@@ -56,8 +56,8 @@ class QGalleryTrackerAggregateResponsePrivate : public QGalleryTrackerItemListPr
 public:
     QGalleryDBusInterfacePointer metaDataInterface;
 
-    QString service;
     QString query;
+    QString service;
     QStringList identityFields;
     QStringList aggregates;
     QStringList aggregateFields;
@@ -111,33 +111,26 @@ void QGalleryTrackerAggregateResponsePrivate::getValuesFinished(
 QGalleryTrackerAggregateResponse::QGalleryTrackerAggregateResponse(
         const QGalleryDBusInterfacePointer &metaDataInterface,
         const QGalleryTrackerSchema &schema,
+        const QString &query,
         int cursorPosition,
         int minimumPagedItems,
-        QGalleryTrackerCompositeColumn *idColumn,
-        const QVector<QGalleryTrackerValueColumn *> &valueColumns,
-        const QVector<QGalleryTrackerCompositeColumn *> &compositeColumns,
-        const QVector<QGalleryTrackerAliasColumn *> &aliasColumns,
-        const QVector<QGalleryTrackerImageColumn *> &imageColumns,
-        const QVector<QGalleryTrackerSortCriteria> &sortCriteria,
         QObject *parent)
     : QGalleryTrackerItemList(
             *new QGalleryTrackerAggregateResponsePrivate,
+            schema,
             cursorPosition,
             minimumPagedItems,
             0,
-            idColumn,
-            new QGalleryTrackerStaticColumn(QString(), 0, QVariant()),
-            new QGalleryTrackerStaticColumn(QString(), 0, schema.itemType()),
-            valueColumns,
-            compositeColumns,
-            aliasColumns,
-            imageColumns,
-            sortCriteria,
             parent)
 {
     Q_D(QGalleryTrackerAggregateResponse);
 
     d->metaDataInterface = metaDataInterface;
+    d->query = query;
+    d->service = schema.service();
+    d->identityFields = schema.identityFields();
+    d->aggregates = schema.aggregations();
+    d->aggregateFields = schema.aggregateFields();
 
     d->getValues(0, 2048);
 }
@@ -155,45 +148,6 @@ bool QGalleryTrackerAggregateResponse::waitForFinished(int msecs)
 {
 
     return false;
-}
-
-void QGalleryTrackerAggregateResponse::updateStateChanged(UpdateState state)
-{
-    Q_D(QGalleryTrackerAggregateResponse);
-
-    if (state == UpToDate && !d->resultSet.isEmpty()) {
-        QVector<QStringList> resultSet = d->resultSet;
-
-        d->resultSet.clear();
-
-        updateResultSet(resultSet);
-    }
-}
-
-QGalleryAbstractResponse *QGalleryTrackerAggregateResponse::createResponse(
-        const QGalleryDBusInterfacePointer &metaDataInterface,
-        const QGalleryTrackerSchema &schema,
-        const QGalleryItemRequest &request)
-{
-    return 0;
-}
-
-QGalleryAbstractResponse *QGalleryTrackerAggregateResponse::createResponse(
-        const QGalleryDBusInterfacePointer &metaDataInterface,
-        const QGalleryTrackerSchema &schema,
-        const QGalleryContainerRequest &request)
-{
-
-    return 0;
-}
-
-QGalleryAbstractResponse *QGalleryTrackerAggregateResponse::createResponse(
-        const QGalleryDBusInterfacePointer &metaDataInterface,
-        const QGalleryTrackerSchema &schema,
-        const QGalleryFilterRequest &request)
-{
-
-    return 0;
 }
 
 #include "moc_qgallerytrackeraggregateresponse_p.cpp"

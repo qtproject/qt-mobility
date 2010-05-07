@@ -261,17 +261,10 @@ void QGalleryTrackerItemListPrivate::_q_synchronizeFinished()
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
         QGalleryTrackerItemListPrivate &dd,
+        const QGalleryTrackerSchema &schema,
         int cursorPosition,
         int minimumPagedItems,
         int valueOffset,
-        QGalleryTrackerCompositeColumn *idColumn,
-        QGalleryTrackerCompositeColumn *urlColumn,
-        QGalleryTrackerCompositeColumn *typeColumn,
-        const QVector<QGalleryTrackerValueColumn *> &valueColumns,
-        const QVector<QGalleryTrackerCompositeColumn *> &compositeColumns,
-        const QVector<QGalleryTrackerAliasColumn *> &aliasColumns,
-        const QVector<QGalleryTrackerImageColumn *> &imageColumns,
-        const QVector<QGalleryTrackerSortCriteria > &sortCriteria,
         QObject *parent)
     : QGalleryAbstractResponse(dd, parent)
 {
@@ -280,41 +273,20 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
     d->cursorPosition = cursorPosition;
     d->minimumPagedItems = minimumPagedItems;
     d->valueOffset = valueOffset;
-    d->idColumn = idColumn;
-    d->urlColumn = urlColumn;
-    d->typeColumn = typeColumn;
-    d->valueColumns = valueColumns;
-    d->compositeColumns = compositeColumns;
-    d->aliasColumns = aliasColumns;
-    d->imageColumns = imageColumns;
-    d->sortCriteria = sortCriteria;
-
-    for (int i = 0; i < d->valueColumns.count(); ++i) {
-        d->propertyNames.append(d->valueColumns.at(i)->name());
-        d->propertyAttributes.append(d->valueColumns.at(i)->attributes());
-    }
+    d->idColumn = schema.createIdColumn();
+    d->urlColumn = schema.createUrlColumn();
+    d->typeColumn = schema.createTypeColumn();
+    d->valueColumns = schema.createValueColumns();
+    d->compositeColumns = schema.createCompositeColumns();
+    d->aliasColumns = schema.createAliasColumns();
+    d->imageColumns = schema.createImageColumns();
+    d->sortCriteria = schema.sortCriteria();
+    d->propertyNames = schema.propertyNames();
+    d->propertyAttributes = schema.propertyAttributes();
 
     d->compositeOffset = d->valueOffset + d->valueColumns.count();
-
-    for (int i = 0; i < d->compositeColumns.count(); ++i) {
-        d->propertyNames.append(d->compositeColumns.at(i)->name());
-        d->propertyAttributes.append(d->compositeColumns.at(i)->attributes());
-    }
-
     d->aliasOffset = d->tableWidth + d->compositeColumns.count();
-
-    for (int i = 0; i < d->aliasColumns.count(); ++i) {
-        d->propertyNames.append(d->aliasColumns.at(i)->name());
-        d->propertyAttributes.append(d->aliasColumns.at(i)->attributes());
-    }
-
     d->imageOffset = d->aliasOffset + d->aliasColumns.count();
-
-    for (int i = 0; i < d->aliasColumns.count(); ++i) {
-        d->propertyNames.append(d->imageColumns.at(i)->name());
-        d->propertyAttributes.append(d->imageColumns.at(i)->attributes());
-    }
-
     d->columnCount = d->imageOffset + d->imageColumns.count();
 
     d->rowCount = 0;

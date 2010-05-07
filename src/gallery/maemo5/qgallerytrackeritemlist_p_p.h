@@ -58,6 +58,7 @@
 
 #include "qgalleryabstractresponse_p.h"
 #include "qgallerytrackerlistcolumn_p.h"
+#include "qgallerytrackerschema_p.h"
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qfuturewatcher.h>

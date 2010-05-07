@@ -42,6 +42,7 @@
 #include "qgallerytrackerschema_p.h"
 
 #include "qgalleryabstractrequest.h"
+#include "qgallerytrackerlistcolumn_p.h"
 
 #include <QtCore/qmetatype.h>
 #include <QtCore/qstringlist.h>
@@ -1343,6 +1344,59 @@ QString QGalleryTrackerSchema::prefixFromService(const QString &service)
             return typeMap.items[i].prefix;
     }
     return QString();
+}
+
+void QGalleryTrackerSchema::setPropertyNames(const QStringList &names)
+{
+
+}
+
+void QGalleryTrackerSchema::setSortPropertyNames(const QStringList &names)
+{
+
+}
+
+QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createIdColumn() const
+{
+    return 0;
+}
+
+QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createUrlColumn() const
+{
+    return 0;
+}
+
+QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createTypeColumn() const
+{
+    return 0;
+}
+
+QVector<QGalleryTrackerValueColumn *> QGalleryTrackerSchema::createValueColumns() const
+{
+    QVector<QGalleryTrackerValueColumn *> columns;
+
+    return columns;
+}
+
+QVector<QGalleryTrackerCompositeColumn *> QGalleryTrackerSchema::createCompositeColumns() const
+{
+    QVector<QGalleryTrackerCompositeColumn *> columns;
+
+    return columns;
+}
+
+QVector<QGalleryTrackerAliasColumn *> QGalleryTrackerSchema::createAliasColumns() const
+{
+    QVector<QGalleryTrackerAliasColumn *> columns;
+
+    return columns;
+}
+
+QVector<QGalleryTrackerImageColumn *> QGalleryTrackerSchema::createImageColumns() const
+{
+    QVector<QGalleryTrackerImageColumn *> columns;
+
+    return columns;
 }
 
 QTM_END_NAMESPACE

@@ -57,28 +57,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerAliasColumn;
-class QGalleryTrackerCompositeColumn;
-class QGalleryTrackerImageColumn;
-class QGalleryTrackerListColumn;
-class QGalleryTrackerValueColumn;
-
-struct QGalleryTrackerSortCriteria
-{
-    enum Flag
-    {
-        Sorted        = 0x01,
-        ReverseSorted = 0x02,
-        Ascending     = 0x04,
-        Descending    = 0x08
-    };
-
-    QGalleryTrackerSortCriteria() : column(0), flags(0) {}
-    QGalleryTrackerSortCriteria(short column, short flags) : column(column), flags(flags) {}
-
-    short column;
-    short flags;
-};
+class QGalleryTrackerSchema;
 
 class QGalleryTrackerItemListPrivate;
 
@@ -116,17 +95,10 @@ public:
 protected:
     QGalleryTrackerItemList(
             QGalleryTrackerItemListPrivate &dd,
+            const QGalleryTrackerSchema &schema,
             int cursorPosition,
             int minimumPagedItems,
             int valueOffset,
-            QGalleryTrackerCompositeColumn *idColumn,
-            QGalleryTrackerCompositeColumn *urlColumn,
-            QGalleryTrackerCompositeColumn *typeColumn,
-            const QVector<QGalleryTrackerValueColumn *> &valueColumns,
-            const QVector<QGalleryTrackerCompositeColumn *> &compositeColumns,
-            const QVector<QGalleryTrackerAliasColumn *> &aliasColumns,
-            const QVector<QGalleryTrackerImageColumn *> &imageColumns,
-            const QVector<QGalleryTrackerSortCriteria> &sortCriteria,
             QObject *parent);
 
     void updateResultSet(const QVector<QStringList> &resultSet, int index = 0);

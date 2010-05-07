@@ -72,39 +72,20 @@ class QGalleryTrackerAggregateResponse : public QGalleryTrackerItemList
 {
     Q_OBJECT
 public:
+    QGalleryTrackerAggregateResponse(
+            const QGalleryDBusInterfacePointer &metaDataInterface,
+            const QGalleryTrackerSchema &schema,
+            const QString &query,
+            int cursorPosition,
+            int minimumPagedItems,
+            QObject *parent = 0);
     ~QGalleryTrackerAggregateResponse();
 
     void cancel();
 
     bool waitForFinished(int msecs);
 
-    static QGalleryAbstractResponse *createResponse(
-            const QGalleryDBusInterfacePointer &metaDataInterface,
-            const QGalleryTrackerSchema &schema,
-            const QGalleryItemRequest &request);
-    static QGalleryAbstractResponse *createResponse(
-            const QGalleryDBusInterfacePointer &metaDataInterface,
-            const QGalleryTrackerSchema &schema,
-            const QGalleryContainerRequest &request);
-    static QGalleryAbstractResponse *createResponse(
-            const QGalleryDBusInterfacePointer &metaDataInterface,
-            const QGalleryTrackerSchema &schema,
-            const QGalleryFilterRequest &request);
-
 protected:
-    QGalleryTrackerAggregateResponse(
-            const QGalleryDBusInterfacePointer &metaDataInterface,
-            const QGalleryTrackerSchema &schema,
-            int cursorPosition,
-            int minimumPagedItems,
-            QGalleryTrackerCompositeColumn *idColumn,
-            const QVector<QGalleryTrackerValueColumn *> &valueColumns,
-            const QVector<QGalleryTrackerCompositeColumn *> &compositeColumns,
-            const QVector<QGalleryTrackerAliasColumn *> &aliasColumns,
-            const QVector<QGalleryTrackerImageColumn *> &imageColumns,
-            const QVector<QGalleryTrackerSortCriteria> &sortCriteria,
-            QObject *parent = 0);
-
     void updateStateChanged(UpdateState state);
 
 private:
