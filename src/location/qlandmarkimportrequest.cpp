@@ -40,22 +40,10 @@
 ****************************************************************************/
 
 #include "qlandmarkimportrequest.h"
-#include "qlandmarkabstractrequest_p.h"
+#include "qlandmarkrequests_p.h"
 #include <QFile>
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkImportRequestPrivate : public QLandmarkAbstractRequestPrivate
-{
-public:
-    QLandmarkImportRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr) {}
-
-    QIODevice *device;
-    QString fileName;
-    QLandmarkManager::Format format;
-    QList<QLandmarkId> landmarkIds;
-};
 
 /*!
     \class QLandmarkImportRequest

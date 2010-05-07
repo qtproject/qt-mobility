@@ -122,6 +122,10 @@ public:
 
     bool isFilterSupported(QLandmarkFilter::FilterType filterType) const;
 
+    bool isReadOnly() const;
+    bool isReadOnly(const QLandmarkId &id) const;
+    bool isReadOnly(const QLandmarkCategoryId &id) const;
+
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;
     QString managerUri() const;

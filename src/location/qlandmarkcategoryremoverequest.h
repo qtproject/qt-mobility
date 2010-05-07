@@ -62,6 +62,7 @@ public:
 private:
     Q_DISABLE_COPY(QLandmarkCategoryRemoveRequest)
     Q_DECLARE_PRIVATE(QLandmarkCategoryRemoveRequest)
+    friend class QLandmarkManagerEngine;
 };
 
 QTM_END_NAMESPACE

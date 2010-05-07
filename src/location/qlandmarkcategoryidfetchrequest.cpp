@@ -40,20 +40,10 @@
 ****************************************************************************/
 
 #include "qlandmarkcategoryidfetchrequest.h"
-#include "qlandmarkabstractrequest_p.h"
+#include "qlandmarkrequests_p.h"
 #include "qlandmarkcategoryid.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkCategoryIdFetchRequestPrivate: public QLandmarkAbstractRequestPrivate
-{
-public:
-    QLandmarkCategoryIdFetchRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr)
-    {}
-
-    QList<QLandmarkCategoryId> categoryIds;
-};
 
 /*!
     \class QLandmarkCategoryIdFetchRequest

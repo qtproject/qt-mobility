@@ -67,6 +67,7 @@ public:
 private:
     Q_DISABLE_COPY(QLandmarkImportRequest)
     Q_DECLARE_PRIVATE(QLandmarkImportRequest)
+    friend class QLandmarkManagerEngine;
 };
 
 QTM_END_NAMESPACE

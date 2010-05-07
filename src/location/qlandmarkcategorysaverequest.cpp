@@ -40,20 +40,10 @@
 ****************************************************************************/
 
 #include "qlandmarkcategorysaverequest.h"
-#include "qlandmarkabstractrequest_p.h"
+#include "qlandmarkrequests_p.h"
 #include "qlandmarkcategory.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QLandmarkCategorySaveRequestPrivate : public QLandmarkAbstractRequestPrivate
-{
-public:
-    QLandmarkCategorySaveRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr) {}
-
-    QList<QLandmarkCategory> categories;
-    QMap<int, QLandmarkManager::Error> errorMap;
-};
 
 /*!
     \class QLandmarkCategorySaveRequest

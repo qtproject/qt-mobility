@@ -96,7 +96,7 @@ public:
                                QString *errorString) const;
     QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds,
                                         QLandmarkManager::Error *error,
-                                        QString *errorString);
+                                        QString *errorString) const;
 
     /*saving and removing*/
     bool saveLandmark(QLandmark* landmark,
@@ -132,6 +132,10 @@ public:
                          QString *errorString);
 
     bool isFilterSupported(QLandmarkFilter::FilterType filterType) const;
+
+    bool isReadOnly() const;
+    bool isReadOnly(const QLandmarkId &landmarkId) const;
+    bool isReadOnly(const QLandmarkCategoryId &categoryId) const;
 
     /* Asynchronous Request Support */
     void requestDestroyed(QLandmarkAbstractRequest* request);

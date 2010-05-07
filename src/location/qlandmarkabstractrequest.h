@@ -51,6 +51,7 @@ class QLandmarkAbstractRequestPrivate;
 class Q_LOCATION_EXPORT QLandmarkAbstractRequest : public QObject
 {
     Q_OBJECT
+
 public:
     enum State {
         InactiveState = 0,
@@ -103,6 +104,7 @@ protected:
     QLandmarkAbstractRequestPrivate *d_ptr;
 private:
     Q_DISABLE_COPY(QLandmarkAbstractRequest)
+    friend class QLandmarkManagerEngine;
 };
 
 QTM_END_NAMESPACE

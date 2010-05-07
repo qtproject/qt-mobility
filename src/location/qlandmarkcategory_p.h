@@ -75,7 +75,6 @@ public:
     QString name;
     QUrl iconUrl;
     QString description;
-    bool readOnly;
     QHash<QString, QVariant> attributes;
     QLandmarkCategoryId id;
 };
