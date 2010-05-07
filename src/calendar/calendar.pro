@@ -10,6 +10,7 @@ DEFINES += QT_BUILD_CALENDAR_LIB \
     QT_ASCII_CAST_WARNINGS
 include(../../common.pri)
 include(details/details.pri)
+include(items/items.pri)
 
 # Input
 PUBLIC_HEADERS += qorganizeritemabstractrequest.h \

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZEREVENT_H
-#define QORGANIZEREVENT_H
+#ifndef QORGANIZERNOTE_H
+#define QORGANIZERNOTE_H
 
 #include "qtorganizeritem.h"
 

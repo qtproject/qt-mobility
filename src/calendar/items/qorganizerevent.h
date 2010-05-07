@@ -57,6 +57,7 @@ public:
 
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
+
     // XXX this takes a detail (not a field value), as a const ref (not a pointer, like for saveDetail)
     void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
     QOrganizerItemRecurrence recurrence() const;

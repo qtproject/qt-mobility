@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZEREVENT_H
-#define QORGANIZEREVENT_H
+#ifndef QORGANIZERINVITATION_H
+#define QORGANIZERINVITATION_H
 
 #include "qtorganizerevent.h"
 

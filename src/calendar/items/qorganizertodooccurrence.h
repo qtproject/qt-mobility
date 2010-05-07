@@ -39,20 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERJOURNAL_H
-#define QORGANIZERJOURNAL_H
+#ifndef QORGANIZERTODOOCCURRENCE_H
+#define QORGANIZERTODOOCCURRENCE_H
 
 #include "qtorganizeritem.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CALENDAR_EXPORT QOrganizerJournal : public QOrganizerItem
+class Q_CALENDAR_EXPORT QOrganizerEventOccurrence : public QOrganizerItem
 {
 public:
-    QOrganizerJournal();
+    QOrganizerEventOccurrence();
 
-    QOrganizerJournal(const QOrganizerJournal& other);
-    QOrganizerJournal& operator=(const QOrganizerJournal& other);
+    QOrganizerEventOccurrence(const QOrganizerEventOccurrence& other);
+    QOrganizerEventOccurrence& operator=(const QOrganizerEventOccurrence& other);
+
+    void setEndDateTime(const QDateTime& endDateTime);
+    QDateTime endDateTime() const;
+
+    void setParentItemId(const QOrganizerItemId& parentId) const;
+    QOrganizerItemId parentItemId() const;
+    void setOriginalDateTime(const QDateTime& dateTime);
+    QDateTime originalDateTime() const;
 };
 
 QTM_END_NAMESPACE
