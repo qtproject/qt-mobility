@@ -46,13 +46,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CALENDAR_EXPORT QOrganizerEventOccurrence : public QOrganizerItem
+class Q_CALENDAR_EXPORT QOrganizerNoteOccurrence : public QOrganizerItem
 {
 public:
-    QOrganizerEventOccurrence();
+    QOrganizerNoteOccurrence();
 
-    QOrganizerEventOccurrence(const QOrganizerEventOccurrence& other);
-    QOrganizerEventOccurrence& operator=(const QOrganizerEventOccurrence& other);
+    QOrganizerNoteOccurrence(const QOrganizerNoteOccurrence& other);
+    QOrganizerNoteOccurrence& operator=(const QOrganizerNoteOccurrence& other);
 
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;

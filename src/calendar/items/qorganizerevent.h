@@ -55,6 +55,9 @@ public:
     QOrganizerEvent(const QOrganizerEvent& other);
     QOrganizerEvent& operator=(const QOrganizerEvent& other);
 
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
+
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
 

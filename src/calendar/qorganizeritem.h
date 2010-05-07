@@ -163,10 +163,9 @@ public:
     bool removeDetail(QOrganizerItemDetail* detail); // modifies the detail - unsets its ID
 
     // Some common convenience detail accessors
-    void setNote(QString note);
-    QString note() const;
-    void setDateTime(const QDateTime& dateTime);
-    QDateTime dateTime() const;
+    // has to be things that they ALL have.
+    void setNote(QString note);  // ??
+    QString note() const;        // ??
 
 protected:
     friend class QOrganizerItemManager;
