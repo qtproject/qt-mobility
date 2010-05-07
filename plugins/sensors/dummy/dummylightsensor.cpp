@@ -49,6 +49,8 @@ dummylightsensor::dummylightsensor(QSensor *sensor)
     : dummycommon(sensor)
 {
     setReading<QAmbientLightReading>(&m_reading);
+    addDataRate(100,100);
+    sensor->setDataRate(100);
 }
 
 void dummylightsensor::poll()
