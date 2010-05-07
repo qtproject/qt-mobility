@@ -29,6 +29,9 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qtorganizeritemsglobal.h \
     qtorganizeritem.h
 
+SOURCES += qorganizer.cpp \
+    qorganizeritem.cpp
+
 # PRIVATE_HEADERS += \
 # SOURCES += \
 HEADERS += $$PUBLIC_HEADERS \
@@ -52,4 +55,3 @@ symbian {
     for(header, exportheaders.sources):BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
 }
 include(../../features/deploy.pri)
-SOURCES += qorganizer.cpp

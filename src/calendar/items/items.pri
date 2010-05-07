@@ -2,11 +2,16 @@ INCLUDEPATH += items \
                ./
 
 PUBLIC_HEADERS += \
-    qorganizerevent.h \
-    qorganizereventoccurrence.h \
-    qorganizerjournal.h \
-    qorganizernote.h \
-    qorganizertodo.h \
-    qorganizertodooccurrence.h
+    items/qorganizerevent.h \
+    items/qorganizereventoccurrence.h \
+    items/qorganizerjournal.h \
+    items/qorganizernote.h \
+    items/qorganizertodo.h \
+    items/qorganizertodooccurrence.h
 
-SOURCES += 
+SOURCES += items/qorganizerevent.cpp \
+    items/qorganizereventoccurrence.cpp \
+    items/qorganizerjournal.cpp \
+    items/qorganizernote.cpp \
+    items/qorganizertodo.cpp \
+    items/qorganizertodooccurrence.cpp
