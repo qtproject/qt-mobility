@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- sensors.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Sensors API</title>
+  <title>Qt Mobility Project 1.1: Sensors API</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -37,9 +37,11 @@
 <p>For a list of built-in sensor types, see the <a href="preview.html#sensor-classes">Sensor Classes</a> section below.</p>
 <a name="common-conventions"></a>
 <h3>Common Conventions</h3>
-<p>Unless otherwise specified, sensors shall use the <a href="http://en.wikipedia.org/wiki/Cartesian_coordinate_system">Right Hand Cartesian coordinate system</a>. An example of how the axes are arranged on a phone is included below.</p>
-<p align="center"><img src="images/axes.png" /></p><p>In general, sensor data is not reoriented to match the UI. Some specific sensors may reorient data to match the UI but most sensors will not do this.</p>
-<a name="using-a-sensor"></a>
+<p>Unless otherwise specified, sensors shall use the <a href="http://en.wikipedia.org/wiki/Cartesian_coordinate_system">Right Hand Cartesian coordinate system</a>.</p>
+<p align="center"><img src="images/sensors-coordinates.jpg" /></p><p>To allow for measurements in all 6 directions, negative values are used.</p>
+<p align="center"><img src="images/sensors-coordinates2.jpg" /></p><p>Where rotation around an axis is used, the rotation shall be expressed as a Right Hand rotation.</p>
+<p align="center"><img src="images/sensors-coordinates3.jpg" /></p><p>In general, sensor data is oriented to the top of the device. If values are to be displayed on the screen the values may need to be transformed so that they match the UI orientation. A sensor may define its data as being oriented to the UI. This will be noted in the documentation for the sensor.</p>
+<p align="center"><img src="images/sensors-sides2.jpg" /></p><a name="using-a-sensor"></a>
 <h3>Using a Sensor</h3>
 <p>The life cycle of a sensor is typically:</p>
 <ul>
@@ -128,8 +130,8 @@
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

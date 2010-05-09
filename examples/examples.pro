@@ -12,10 +12,15 @@ contains(mobility_modules,serviceframework) {
     !symbian:SUBDIRS+= sfw-notes
     
     contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative-sfw-notes \
-                   declarative-sfw-dialer
+        SUBDIRS += declarative-sfw-dialer
+
+        sources.files += declarative-sfw-notes \
+                         declarative-sfw-dialer/declarative-sfw-dialer
     }
 }
+
+sources.path = $$QT_MOBILITY_PREFIX/bin
+INSTALLS += sources
 
 #BearerManagement examples
 contains(mobility_modules,bearer) {

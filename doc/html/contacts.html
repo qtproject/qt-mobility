@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- contacts.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Contacts</title>
+  <title>Qt Mobility Project 1.1: Contacts</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -118,6 +118,7 @@
 <h4>Manager Engine</h4>
 <p>The functionality exposed by the <a href="qcontactmanager.html">QContactManager</a> class may be implemented by <a href="qcontactmanagerengine.html">engine</a> plugins which interface directly to a platform-specific backend or provide their own data storage backend. As such, the terms &quot;manager&quot;, &quot;plugin&quot; and &quot;backend&quot; are used interchangeably in this documentation to refer to any engine plugin which implements the functionality exposed by the <a href="qcontactmanager.html">QContactManager</a> interface. The plugin architecture allows dynamic loading of different manager engines at runtime.</p>
 <p>A manager backend may be implemented by subclassing <a href="qcontactmanagerengine.html">QContactManagerEngine</a>, and providing a <a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a> which can instantiate it when required.</p>
+<p>See <a href="contactsengines.html">Qt Contacts Manager Engines</a> for more information on available engines and how to write your own engine.</p>
 <a name="using-the-api"></a>
 <h3>Using the API</h3>
 <p>Some examples of common usage of the API may be found <a href="contactsusagehtml.html">here</a>.</p>
@@ -204,6 +205,7 @@
 <tr valign="top" class="odd"><th><a href="qcontactmanagerengine.html">QContactManagerEngine</a></th><td>The interface for all implementations of the contact manager backend functionality</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a></th><td>The interface for plugins that implement QContactManagerEngine functionality</td></tr>
 </table></p>
+<p>For more information on this topic, see please see the documentation on <a href="contactsengines.html">implementing manager engines</a>.</p>
 <a name="synchronization-and-serialization"></a>
 <h4>Synchronization and Serialization</h4>
 <p>The contacts API is used by another Qt Mobility module: the <a href="versit.html">Versit</a>* module. It allows serialization of a <a href="qcontact.html">QContact</a> into a vCard document, and vice versa.</p>
@@ -218,8 +220,8 @@
 <p>See also: <a href="contactsusagehtml.html">Contacts API Usage</a></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

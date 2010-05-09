@@ -149,7 +149,7 @@ void TestCntRelationship::invalidRelationship()
     }
 
     //remove relationships
-    QVERIFY(m_relationship->removeRelationships(&affectedContactIds, relationships, &errorMap, &error));
+    QVERIFY(!m_relationship->removeRelationships(&affectedContactIds, relationships, &errorMap, &error));
     QVERIFY(affectedContactIds.count() == 0);
     foreach (QContactManager::Error err, errorMap) {
         QVERIFY(err == QContactManager::NotSupportedError);
@@ -238,14 +238,9 @@ void TestCntRelationship::validGroupRelationship()
     expectedContacts += contact.localId();
     QVERIFY(true == validateRelationshipFilter(QContactRelationship::First, groupContact.id(), expectedContacts));
     
-    QList<QContactLocalId> expectedContacts1;
-    expectedContacts1 += groupContact.localId();
-    expectedContacts1 += contact.localId();
-    QList<QContactLocalId> expectedContacts2;
-    expectedContacts2 += contact.localId();
-    expectedContacts2 += groupContact.localId(); 
-    QVERIFY(true == (validateRelationshipFilter(QContactRelationship::Either, groupContact.id(), expectedContacts1) ||
-                     validateRelationshipFilter(QContactRelationship::Either, groupContact.id(), expectedContacts2)));
+    expectedContacts.clear();
+    expectedContacts += contact.localId();
+    QVERIFY(true == validateRelationshipFilter(QContactRelationship::Either, groupContact.id(), expectedContacts));
 
     expectedContacts.clear();
     expectedContacts += groupContact.localId();

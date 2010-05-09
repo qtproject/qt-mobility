@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactmanager.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QContactManager Class Reference</title>
+  <title>Qt Mobility Project 1.1: QContactManager Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -34,7 +34,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#QContactManager-2">QContactManager</a></b> ( const QString &amp; <i>managerName</i>, int <i>implementationVersion</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#QContactManager-3">QContactManager</a></b> ( QObject * <i>parent</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#dtor.QContactManager">~QContactManager</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#compatibleContact">compatibleContact</a></b> ( const QContact &amp; <i>original</i> )&nbsp;&nbsp;<tt> (preliminary)</tt></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#compatibleContact">compatibleContact</a></b> ( const QContact &amp; <i>original</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contact">contact</a></b> ( const QContactLocalId &amp; <i>contactId</i>, const QContactFetchHint &amp; <i>fetchHint</i> = QContactFetchHint() ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contactIds">contactIds</a></b> ( const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contactIds-2">contactIds</a></b> ( const QContactFilter &amp; <i>filter</i>, const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</td></tr>
@@ -199,9 +199,7 @@
 <p>Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given <i>managerName</i>, <i>params</i> and an optional <i>implementationVersion</i></p>
 <a name="//apple_ref/cpp/instm/QContactManager/compatibleContact"></a>
 <h3 class="fn"><a name="compatibleContact"></a><a href="qcontact.html">QContact</a> QContactManager::compatibleContact ( const <a href="qcontact.html">QContact</a> &amp; <i>original</i> )</h3>
-<p><b>This function is under development and is subject to change.</b></p>
 <p>Returns a pruned or modified version of the <i>original</i> contact which is valid and can be saved in the manager. The returned contact might have entire details removed or arbitrarily changed. The cache of relationships in the contact are ignored entirely when considering compatibility with the backend, as they are saved and validated separately.</p>
-<p>This function is preliminary and the behaviour is subject to change!</p>
 <a name="//apple_ref/cpp/instm/QContactManager/contact"></a>
 <h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManager::contact ( const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> &amp; <i>contactId</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3>
 <p>Returns the contact in the database identified by <i>contactId</i>.</p>
@@ -373,8 +371,8 @@
 <p>See also <a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

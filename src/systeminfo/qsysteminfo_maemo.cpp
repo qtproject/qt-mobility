@@ -55,7 +55,7 @@
 #include <QMapIterator>
 
 #if !defined(QT_NO_DBUS)
-#include "gconfitem.h" // Temporarily here.
+#include "gconfitem_p.h" // Temporarily here.
 #endif
 
 #ifdef Q_WS_X11
