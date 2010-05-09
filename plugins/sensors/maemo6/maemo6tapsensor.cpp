@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,6 +61,8 @@ maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
             qWarning() << "Unable to initialize tap sensor.";
 
         // metadata
+        addDataRate(100, 100); // 100Hz
+        sensor->setDataRate(100);
         addOutputRange(0, 9, 1);
         setDescription(QLatin1String("Measures single and double taps and gives tap direction"));
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,6 +59,9 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
             qWarning() << "Unable to initialize magnetometer sensor.";
 
         // metadata
+        addDataRate(43, 43); // 43Hz
+        sensor->setDataRate(43);
+        addOutputRange(-0.000614, 0.000614, 0.0000003); // -600 ... 600 mikroteslas, 0.3 uT resolution
         setDescription(QLatin1String("Magnetic flux density measured in teslas"));
 
         m_initDone = true;
@@ -69,14 +72,14 @@ void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
 {
     QVariant v = m_sensor->property("returnGeoValues");
     if (v.isValid() && v.toBool()) {
-        m_reading.setX(data.x());
-        m_reading.setY(data.y());
-        m_reading.setZ(data.z());
-        m_reading.setCalibrationLevel(data.level());
+        m_reading.setX( 0.0000003 * data.x() );
+        m_reading.setY( 0.0000003 * data.y() );
+        m_reading.setZ( 0.0000003 * data.z() );
+        m_reading.setCalibrationLevel( ((float) data.level()) / 3.0 );
     } else {
-        m_reading.setX(data.rx());
-        m_reading.setY(data.ry());
-        m_reading.setZ(data.rz());
+        m_reading.setX( 0.0000003 * data.rx() );
+        m_reading.setY( 0.0000003 * data.ry() );
+        m_reading.setZ( 0.0000003 * data.rz() );
         m_reading.setCalibrationLevel(1);
     }
     //m_reading.setTimestamp(data.timestamp());

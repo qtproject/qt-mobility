@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,8 +60,9 @@ maemo6compass::maemo6compass(QSensor *sensor)
         }
 
         // metadata TODO accuracy
-        addDataRate(10, 10); // 10Hz
-        addOutputRange(0, 359, 2);
+        addDataRate(43, 43); // 43Hz
+        sensor->setDataRate(43);
+        addOutputRange(0, 359, 1);
         setDescription(QLatin1String("Measures compass north in degrees"));
  
         m_initDone = true;
@@ -91,4 +92,3 @@ void maemo6compass::slotDegreesChanged(const int& degrees)
     m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
     newReadingAvailable();
 }
-

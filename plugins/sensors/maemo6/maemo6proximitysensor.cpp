@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,8 +57,10 @@ maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
         else
             qWarning() << "Unable to initialize proximity sensor.";
 
-        // close definition in meters - may be used as metadata even the sensor gives true/false values 
-        addOutputRange(0, 1, 1);
+        // metadata
+        addDataRate(2, 2); // 2Hz
+        sensor->setDataRate(2);
+        addOutputRange(0, 1, 1); // close definition in meters - may be used as metadata even the sensor gives true/false values
         setDescription(QLatin1String("Measures if a living object is in proximity or not"));
 
         m_initDone = true;

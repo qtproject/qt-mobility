@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,6 +60,8 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
             qWarning() << "Unable to initialize orientation sensor.";
 
         // metadata
+        addDataRate(142, 142); // 142Hz
+        sensor->setDataRate(142);
         addOutputRange(0, 6, 1);
         setDescription(QLatin1String("Orientation of the device screen"));
 

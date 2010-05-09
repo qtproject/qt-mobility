@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,6 +59,10 @@ maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
         else
             qWarning() << "Unable to initialize rotation sensor.";
 
+        // metadata
+        addDataRate(23, 23); // 23Hz
+        sensor->setDataRate(23);
+        addOutputRange(-180, 180, 1);
         setDescription(QLatin1String("Measures x, y, and z axes rotation"));
 
         m_initDone = true;
@@ -75,4 +79,3 @@ void maemo6rotationsensor::slotDataAvailable(const XYZ& data)
     m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
     newReadingAvailable();
 }
-

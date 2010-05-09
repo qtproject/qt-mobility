@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -230,6 +230,8 @@ bool QSensor::isActive() const
     \brief the data rates that the sensor supports.
 
     This is a list of the data rates that the sensor supports.
+    Measured in Hertz.
+
     Entries in the list can represent discrete rates or a
     continuous range of rates.
     A discrete rate is noted by having both values the same.
@@ -248,6 +250,8 @@ qrangelist QSensor::availableDataRates() const
 /*!
     \property QSensor::dataRate
     \brief the data rate that the sensor should be run at.
+
+    Measured in Hertz.
 
     The default value is determined by the backend.
 

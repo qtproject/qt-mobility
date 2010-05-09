@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -68,11 +68,15 @@ void maemo6sensorbase::start()
         return;
     if (m_sensorInterface) {
         int dataRate = sensor()->dataRate();
-        qDebug() << "Sensor data rate " << dataRate;
-
+        int interval = 1000 / dataRate;
+        // for testing max speed
+        //interval = 1;
+        //dataRate = 1000;
         if (dataRate > 0) {
-            qDebug() << "Setting data rate " << dataRate << " for " << m_sensorInterface->id();
-            m_sensorInterface->setInterval(dataRate);
+            qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << m_sensorInterface->id();
+            m_sensorInterface->setInterval(interval);
+        } else {
+            qDebug() << "Sensor data rate" << dataRate << "Hz";
         }
         m_sensorInterface->start();
     }
