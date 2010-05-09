@@ -242,6 +242,14 @@ QVersitReaderPrivate::QVersitReaderPrivate()
                          QVersitProperty::ListType);
     mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("CATEGORIES")),
                          QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-CHILDREN")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-CHILDREN")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard21Type, QString::fromAscii("X-NICKNAME")),
+                         QVersitProperty::ListType);
+    mValueTypeMap.insert(qMakePair(QVersitDocument::VCard30Type, QString::fromAscii("X-NICKNAME")),
+                         QVersitProperty::ListType);
 }
 
 /*! Destroy a reader. */
@@ -422,6 +430,11 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
     QVersitProperty property;
     property.setGroups(groupsAndName.first);
     property.setName(groupsAndName.second);
+    // set the propertyValueType
+    QPair<QVersitDocument::VersitType, QString> key =
+        qMakePair(versitType, property.name());
+    if (mValueTypeMap.contains(key))
+        property.setValueType(mValueTypeMap.value(key));
 
     if (versitType == QVersitDocument::VCard21Type)
         parseVCard21Property(cursor, property, lineReader);
@@ -440,8 +453,7 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
     property.setParameters(extractVCard21PropertyParams(cursor, lineReader.codec()));
 
     QByteArray value = extractPropertyValue(cursor);
-    if (mValueTypeMap.value(qMakePair(QVersitDocument::VCard21Type, property.name()))
-            == QVersitProperty::VersitDocumentType) {
+    if (property.valueType() == QVersitProperty::VersitDocumentType) {
         // Hack to handle cases where start of document is on the same or next line as "AGENT:"
         bool foundBegin = false;
         if (value == "BEGIN:VCARD") {
@@ -462,9 +474,10 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
         QVariant valueVariant(decodeCharset(value, property, lineReader.codec(), &codec));
         bool isBinary = unencode(valueVariant, cursor, property, codec, lineReader);
         property.setValue(valueVariant);
-        if (!isBinary) {
-            splitStructuredValue(QVersitDocument::VCard21Type, property, false);
-        }
+        if (isBinary)
+            property.setValueType(QVersitProperty::BinaryType);
+        else
+            splitStructuredValue(property, false);
     }
 }
 
@@ -481,8 +494,7 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
     QTextCodec* codec;
     QString valueString(decodeCharset(value, property, lineReader.codec(), &codec));
 
-    if (mValueTypeMap.value(qMakePair(QVersitDocument::VCard30Type, property.name()))
-            == QVersitProperty::VersitDocumentType) {
+    if (property.valueType() == QVersitProperty::VersitDocumentType) {
         removeBackSlashEscaping(valueString);
         // Make a line reader from the value of the property.
         QByteArray subDocumentValue(codec->fromUnicode(valueString));
@@ -501,8 +513,10 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
         QVariant valueVariant(valueString);
         bool isBinary = unencode(valueVariant, cursor, property, codec, lineReader);
         property.setValue(valueVariant);
-        if (!isBinary) {
-            bool isList = splitStructuredValue(QVersitDocument::VCard30Type, property, true);
+        if (isBinary) {
+            property.setValueType(QVersitProperty::BinaryType);
+        } else {
+            bool isList = splitStructuredValue(property, true);
             // Do backslash unescaping
             if (isList) {
                 QStringList list = property.value<QStringList>();
@@ -868,23 +882,19 @@ bool QVersitReaderPrivate::containsAt(const QByteArray& text, const QByteArray& 
  * exit).
  */
 bool QVersitReaderPrivate::splitStructuredValue(
-        QVersitDocument::VersitType type, QVersitProperty& property,
+        QVersitProperty& property,
         bool hasEscapedBackslashes) const
 {
     QVariant variant = property.variantValue();
-    QPair<QVersitDocument::VersitType,QString> key = qMakePair(type, property.name());
-    if (mValueTypeMap.contains(key)) {
-        if (mValueTypeMap.value(key) == QVersitProperty::CompoundType) {
-            variant.setValue(splitValue(variant.toString(), QLatin1Char(';'),
-                                        QString::KeepEmptyParts, hasEscapedBackslashes));
-            property.setValue(variant);
-            property.setValueType(QVersitProperty::CompoundType);
-        } else if (mValueTypeMap.value(key) == QVersitProperty::ListType) {
-            variant.setValue(splitValue(variant.toString(), QLatin1Char(','),
-                                        QString::SkipEmptyParts, hasEscapedBackslashes));
-            property.setValue(variant);
-            property.setValueType(QVersitProperty::ListType);
-        }
+    if (property.valueType() == QVersitProperty::CompoundType) {
+        variant.setValue(splitValue(variant.toString(), QLatin1Char(';'),
+                                    QString::KeepEmptyParts, hasEscapedBackslashes));
+        property.setValue(variant);
+        return true;
+    } else if (property.valueType() == QVersitProperty::ListType) {
+        variant.setValue(splitValue(variant.toString(), QLatin1Char(','),
+                                    QString::SkipEmptyParts, hasEscapedBackslashes));
+        property.setValue(variant);
         return true;
     }
     return false;

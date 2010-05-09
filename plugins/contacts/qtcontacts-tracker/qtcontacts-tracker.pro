@@ -42,6 +42,3 @@ SOURCES += qcontacttrackerbackend.cpp \
            qtrackerrelationshipsaverequest.cpp \
            qtrackercontactidfetchrequest.cpp \
            trackerchangelistener.cpp
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
-INSTALLS+=target

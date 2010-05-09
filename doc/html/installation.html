@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- installation.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Installation Guide</title>
+  <title>Qt Mobility Project 1.1: Installation Guide</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -22,6 +22,7 @@
 <li><a href="#building-on-windows">Building On Windows</a></li>
 <li><a href="#building-for-windows-ce">Building For Windows CE</a></li>
 <li><a href="#building-for-symbian-on-windows">Building For Symbian On Windows</a></li>
+<li><a href="#building-for-mac-os-x">Building For Mac OS X</a></li>
 <li><a href="#building-individual-qt-mobility-modules">Building Individual Qt Mobility Modules</a></li>
 </ul>
 <li><a href="#making-the-libraries-available-to-applications">Making the libraries available to applications</a></li>
@@ -74,11 +75,12 @@
     tar xvf %DISTNAME%.tar          #unpack it</pre>
 <p>This creates the directory <tt>/tmp/%DISTNAME%</tt> containing the files from the archive. We only support the GNU version of the tar archiving utility. Note on some systems it is called gtar.</p>
 <p>On windows, uncompress the zip file into the directory you want Qt Mobility Project installed, extracting to <tt>C:\QtMobility</tt> will create the directory <tt>C:\QtMobility\%DISTNAME%</tt></p>
-<p>NOTE: The install path must not contain any spaces.</p>
+<p>NOTE: The install path(prefix) must not contain any spaces.</p>
 <a name="building"></a>
 <h2>Building</h2>
 <p>Ensure that all compile time dependencies for your particular platform have been met before building.</p>
 <p>If Qt is installed for multiple platforms it is also important to ensure that the correct version of <tt>qmake</tt> is being used.</p>
+<p>bold{Note:} Static builds of Qt are not supported by Qt Mobility.</p>
 <a name="building-on-unix"></a>
 <h3>Building On Unix</h3>
 <p>To configure the Qt Mobility libraries for your machine, run the <tt>./configure</tt> script in the package directory.</p>
@@ -121,6 +123,11 @@
 <p>To create the libraries and tools for a device run:</p>
 <pre>    make release-gcce</pre>
 <p>Note: <tt>make install</tt> has no meaning for building on Symbian. The libraries will be deployed into the SDK (when running make) and will be ready to use for compiling applications for the emulator and/or device.</p>
+<a name="building-for-mac-os-x"></a>
+<h3>Building For Mac OS X</h3>
+<p>The process is the same as for Unix, with the additional configuration option of <tt>-sdk /Developer/SDKs/MacOSX10.5.sdk</tt> to specify an Apple SDK version other than the default.</p>
+<p>Note: QtMobility currently has no support for building with Xcode.</p>
+<p>Note: QtMobility will be built using the same frameworks configuration option that Qt was built with.</p>
 <a name="building-individual-qt-mobility-modules"></a>
 <h3>Building Individual Qt Mobility Modules</h3>
 <p>Qt Mobility is comprised of several modules but all of these may not need to be built. To specify which modules should be built, use the <tt>-modules</tt> switch with the configure script when performing the configure step as outlined above.</p>
@@ -148,14 +155,14 @@
 <p>For newer versions of windows, PATH can be extended through &quot;Start-&gt;Settings-&gt;Control Panel-&gt;System-&gt;Advanced-&gt; Environment variables&quot; and for older versions by editing <tt>C:\autoexec.bat</tt></p>
 <a name="making-the-libraries-available-on-windows-ce"></a>
 <h3>Making the libraries available on Windows CE</h3>
-<p>Environment variables do not exist on Windows CE, and so users of Qt Mobility for Windows CE have to do things slightly differently.</p>
+<p>Environment variables do not exist on Windows CE, and so users of Qt Mobility for Windows CE have to do things slightly differently. A pre-requisite for Qt Mobility applications is that the Qt libraries and plugins have been deployed as per Qt's documentation.</p>
 <p>The deployment of the libraries to the device is normally done with Microsoft Visual Studio or Microsoft ActiveSync.</p>
-<p>The libraries can be made globally available by deploying them to <tt>c:\Windows</tt> on the device, or can be deployed once per application by copying them into the same directory as the executable.</p>
+<p>The libraries can be made globally available by deploying them to <tt>C:\Windows</tt> on the device, or can be deployed once per application by copying them into the same directory as the executable. Mobility expects plug-ins in the subdirecty <tt>plugins/&lt;APIname&gt;</tt> in one of the locations specified by <a href="http://qt.nokia.com/doc/4.6/qcoreapplication.html#libraryPaths">QCoreApplication::libraryPaths</a>() which includes <tt>C:\Windows</tt> and the Mobility application's directory.</p>
 <p>And now the installation is complete, we hope you enjoy using Qt Mobility.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -24,4 +24,5 @@ HEADERS += requestexample.h
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
+    MMP_RULES+="EXPORTUNFROZEN"
 }
