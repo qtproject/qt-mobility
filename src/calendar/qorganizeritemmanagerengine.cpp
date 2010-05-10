@@ -2058,66 +2058,6 @@ void QOrganizerItemManagerEngine::updateDefinitionFetchRequest(QOrganizerItemDet
         emit req->stateChanged(newState);
 }
 
-/*!
-  Updates the given QOrganizerItemRelationshipSaveRequest \a req with the latest results \a result, operation error \a error, and map of input index to individual error \a errorMap.
-  In addition, the state of the request will be changed to \a newState.
-
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
- */
-void QOrganizerItemManagerEngine::updateRelationshipSaveRequest(QOrganizerItemRelationshipSaveRequest* req, const QList<QOrganizerItemRelationship>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
-{
-    QOrganizerItemRelationshipSaveRequestPrivate* rd = static_cast<QOrganizerItemRelationshipSaveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    rd->m_relationships = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
-}
-
-/*!
-  Updates the given QOrganizerItemRelationshipRemoveRequest \a req with the operation error \a error, and map of input index to individual error \a errorMap.
-  In addition, the state of the request will be changed to \a newState.
-
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
- */
-void QOrganizerItemManagerEngine::updateRelationshipRemoveRequest(QOrganizerItemRelationshipRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
-{
-    QOrganizerItemRelationshipRemoveRequestPrivate* rd = static_cast<QOrganizerItemRelationshipRemoveRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_errors = errorMap;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
-}
-
-/*!
-  Updates the given QOrganizerItemRelationshipFetchRequest \a req with the latest results \a result, and operation error \a error.
-  In addition, the state of the request will be changed to \a newState.
-
-  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
-
-  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
- */
-void QOrganizerItemManagerEngine::updateRelationshipFetchRequest(QOrganizerItemRelationshipFetchRequest* req, const QList<QOrganizerItemRelationship>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
-{
-    QOrganizerItemRelationshipFetchRequestPrivate* rd = static_cast<QOrganizerItemRelationshipFetchRequestPrivate*>(req->d_ptr);
-    req->d_ptr->m_error = error;
-    rd->m_relationships = result;
-    bool emitState = rd->m_state != newState;
-    rd->m_state = newState;
-    emit req->resultsAvailable();
-    if (emitState)
-        emit req->stateChanged(newState);
-}
 
 #include "moc_qorganizeritemmanagerengine.cpp"
 
