@@ -260,9 +260,6 @@ void QOrganizerItemManager::createEngine(const QString& managerName, const QMap<
     connect(d->m_engine, SIGNAL(organizeritemsAdded(QList<QOrganizerItemLocalId>)), this, SIGNAL(organizeritemsAdded(QList<QOrganizerItemLocalId>)));
     connect(d->m_engine, SIGNAL(organizeritemsChanged(QList<QOrganizerItemLocalId>)), this, SIGNAL(organizeritemsChanged(QList<QOrganizerItemLocalId>)));
     connect(d->m_engine, SIGNAL(organizeritemsRemoved(QList<QOrganizerItemLocalId>)), this, SIGNAL(organizeritemsRemoved(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(relationshipsAdded(QList<QOrganizerItemLocalId>)), this, SIGNAL(relationshipsAdded(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(relationshipsRemoved(QList<QOrganizerItemLocalId>)), this, SIGNAL(relationshipsRemoved(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(selfOrganizerItemIdChanged(QOrganizerItemLocalId,QOrganizerItemLocalId)), this, SIGNAL(selfOrganizerItemIdChanged(QOrganizerItemLocalId,QOrganizerItemLocalId)));
 }
 
 /*!
@@ -321,7 +318,7 @@ QOrganizerItemManager::Error QOrganizerItemManager::error() const
   The client may instruct the manager that it does not require all possible information about each instance by specifying a fetch hint \a fetchHint;
   the manager can choose to ignore the fetch hint, but if it does so, it must return all possible information about each instance.
   */
-QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
 {
     d->m_error = QOrganizerItemManager::NoError;
     return d->m_engine->itemInstances(filter, sortOrders, fetchHint);
