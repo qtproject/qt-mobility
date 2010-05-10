@@ -39,31 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZEREVENT_H
-#define QORGANIZEREVENT_H
+#ifndef QORGANIZERITEMSORTORDER_P_H
+#define QORGANIZERITEMSORTORDER_P_H
 
-#include "qtorganizeritem.h"
-#include "qorganizeritemrecurrence.h" // XXX TODO: is this a detail?
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qorganizeritemsortorder.h"
+
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CALENDAR_EXPORT QOrganizerEvent : public QOrganizerItem
+class QOrganizerItemSortOrderPrivate : public QSharedData
 {
 public:
-    QOrganizerEvent();
+    QOrganizerItemSortOrderPrivate()
+            : QSharedData()
+            , m_blankPolicy(QOrganizerItemSortOrder::BlanksLast)
+            , m_direction(Qt::AscendingOrder)
+            , m_sensitivity(Qt::CaseSensitive)
+    {
+    }
 
-    QOrganizerEvent(const QOrganizerEvent& other);
-    QOrganizerEvent& operator=(const QOrganizerEvent& other);
+    ~QOrganizerItemSortOrderPrivate()
+    {
+    }
 
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setEndDateTime(const QDateTime& endDateTime);
-    QDateTime endDateTime() const;
-
-    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
-    QOrganizerItemRecurrence recurrence() const;
-
-    // TODO attendees?  How to handle non-unique details?
+    QOrganizerItemSortOrder::BlankPolicy m_blankPolicy;
+    Qt::SortOrder m_direction;
+    Qt::CaseSensitivity m_sensitivity;
+    QString m_definitionName;
+    QString m_fieldName;
 };
 
 QTM_END_NAMESPACE

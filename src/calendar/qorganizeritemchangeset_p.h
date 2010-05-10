@@ -39,31 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZEREVENT_H
-#define QORGANIZEREVENT_H
 
-#include "qtorganizeritem.h"
-#include "qorganizeritemrecurrence.h" // XXX TODO: is this a detail?
+#ifndef QORGANIZERITEMCHANGESET_P_H
+#define QORGANIZERITEMCHANGESET_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qtorganizeritemsglobal.h"
+#include <QSharedData>
+#include <QSet>
+#include <QPair>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CALENDAR_EXPORT QOrganizerEvent : public QOrganizerItem
+class QOrganizerItemChangeSetData : public QSharedData
 {
 public:
-    QOrganizerEvent();
+    QOrganizerItemChangeSetData()
+        : QSharedData(),
+        m_dataChanged(false)
+    {
+    }
 
-    QOrganizerEvent(const QOrganizerEvent& other);
-    QOrganizerEvent& operator=(const QOrganizerEvent& other);
+    QOrganizerItemChangeSetData(const QOrganizerItemChangeSetData& other)
+        : QSharedData(other),
+        m_dataChanged(other.m_dataChanged),
+        m_addedContacts(other.m_addedContacts),
+        m_changedContacts(other.m_changedContacts),
+        m_removedContacts(other.m_removedContacts)
+    {
+    }
 
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setEndDateTime(const QDateTime& endDateTime);
-    QDateTime endDateTime() const;
+    ~QOrganizerItemChangeSetData()
+    {
+    }
 
-    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
-    QOrganizerItemRecurrence recurrence() const;
-
-    // TODO attendees?  How to handle non-unique details?
+    bool m_dataChanged;
+    QSet<QOrganizerItemLocalId> m_addedContacts;
+    QSet<QOrganizerItemLocalId> m_changedContacts;
+    QSet<QOrganizerItemLocalId> m_removedContacts;
 };
 
 QTM_END_NAMESPACE

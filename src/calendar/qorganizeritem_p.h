@@ -39,33 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZEREVENT_H
-#define QORGANIZEREVENT_H
+
+#ifndef QORGANIZERITEM_P_H
+#define QORGANIZERITEM_P_H
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QSharedData>
+#include <QList>
+#include <QDateTime>
+#include <QMultiHash>
 
 #include "qtorganizeritem.h"
-#include "qorganizeritemrecurrence.h" // XXX TODO: is this a detail?
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CALENDAR_EXPORT QOrganizerEvent : public QOrganizerItem
+class QOrganizerItemData : public QSharedData
 {
 public:
-    QOrganizerEvent();
+    QOrganizerItemData()
+        : QSharedData()
+    {
+    }
 
-    QOrganizerEvent(const QOrganizerEvent& other);
-    QOrganizerEvent& operator=(const QOrganizerEvent& other);
+    QOrganizerItemData(const QOrganizerItemData& other)
+        : QSharedData(other),
+        m_id(other.m_id),
+        m_details(other.m_details)
+    {
+    }
 
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setEndDateTime(const QDateTime& endDateTime);
-    QDateTime endDateTime() const;
+    ~QOrganizerItemData() {}
 
-    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
-    QOrganizerItemRecurrence recurrence() const;
-
-    // TODO attendees?  How to handle non-unique details?
+    QOrganizerItemId m_id;
+    QList<QOrganizerItemDetail> m_details;
 };
 
 QTM_END_NAMESPACE
 
 #endif
+

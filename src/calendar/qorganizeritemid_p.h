@@ -39,31 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZEREVENT_H
-#define QORGANIZEREVENT_H
+#ifndef QORGANIZERITEMID_P_H
+#define QORGANIZERITEMID_P_H
 
-#include "qtorganizeritem.h"
-#include "qorganizeritemrecurrence.h" // XXX TODO: is this a detail?
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QString>
+#include <QSharedData>
+
+#include "qorganizeritemid.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CALENDAR_EXPORT QOrganizerEvent : public QOrganizerItem
+class QOrganizerItemIdPrivate : public QSharedData
 {
 public:
-    QOrganizerEvent();
+    QOrganizerItemIdPrivate()
+            : QSharedData(),
+            m_localId(0)
+    {
+    }
 
-    QOrganizerEvent(const QOrganizerEvent& other);
-    QOrganizerEvent& operator=(const QOrganizerEvent& other);
+    QOrganizerItemIdPrivate(const QOrganizerItemIdPrivate& other)
+            : QSharedData(other),
+            m_managerUri(other.m_managerUri),
+            m_localId(other.m_localId)
+    {
+    }
 
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setEndDateTime(const QDateTime& endDateTime);
-    QDateTime endDateTime() const;
+    ~QOrganizerItemIdPrivate()
+    {
+    }
 
-    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
-    QOrganizerItemRecurrence recurrence() const;
-
-    // TODO attendees?  How to handle non-unique details?
+    QString m_managerUri;
+    QOrganizerItemLocalId m_localId;
 };
 
 QTM_END_NAMESPACE

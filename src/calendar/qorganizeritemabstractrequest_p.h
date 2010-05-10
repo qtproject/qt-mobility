@@ -39,31 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZEREVENT_H
-#define QORGANIZEREVENT_H
+#ifndef QORGANIZERITEMABSTRACTREQUEST_P_H
+#define QORGANIZERITEMABSTRACTREQUEST_P_H
 
-#include "qtorganizeritem.h"
-#include "qorganizeritemrecurrence.h" // XXX TODO: is this a detail?
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qorganizeritemmanager.h"
+#include "qorganizeritemabstractrequest.h"
+
+#include <QList>
+#include <QPointer>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CALENDAR_EXPORT QOrganizerEvent : public QOrganizerItem
+class QOrganizerItemAbstractRequestPrivate
 {
 public:
-    QOrganizerEvent();
+    QOrganizerItemAbstractRequestPrivate()
+        : m_error(QOrganizerItemManager::NoError),
+            m_state(QOrganizerItemAbstractRequest::InactiveState),
+            m_manager(0)
+    {
+    }
 
-    QOrganizerEvent(const QOrganizerEvent& other);
-    QOrganizerEvent& operator=(const QOrganizerEvent& other);
+    virtual ~QOrganizerItemAbstractRequestPrivate()
+    {
+    }
 
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setEndDateTime(const QDateTime& endDateTime);
-    QDateTime endDateTime() const;
+    virtual QOrganizerItemAbstractRequest::RequestType type() const
+    {
+        return QOrganizerItemAbstractRequest::InvalidRequest;
+    }
 
-    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
-    QOrganizerItemRecurrence recurrence() const;
-
-    // TODO attendees?  How to handle non-unique details?
+    QOrganizerItemManager::Error m_error;
+    QOrganizerItemAbstractRequest::State m_state;
+    QPointer<QOrganizerItemManager> m_manager;
 };
 
 QTM_END_NAMESPACE

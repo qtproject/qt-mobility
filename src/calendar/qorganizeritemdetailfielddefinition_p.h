@@ -39,31 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZEREVENT_H
-#define QORGANIZEREVENT_H
+#ifndef QORGANIZERITEMDETAILDEFINITIONFIELD_P_H
+#define QORGANIZERITEMDETAILDEFINITIONFIELD_P_H
 
-#include "qtorganizeritem.h"
-#include "qorganizeritemrecurrence.h" // XXX TODO: is this a detail?
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qorganizeritemdetailfielddefinition.h"
+
+#include <QSharedData>
+#include <QMap>
+#include <QString>
+#include <QVariant>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class Q_CALENDAR_EXPORT QOrganizerEvent : public QOrganizerItem
+class QOrganizerItemDetailFieldDefinitionPrivate : public QSharedData
 {
 public:
-    QOrganizerEvent();
+    QOrganizerItemDetailFieldDefinitionPrivate()
+        : QSharedData(),
+        m_dataType(QVariant::Invalid)
+    {
+    }
 
-    QOrganizerEvent(const QOrganizerEvent& other);
-    QOrganizerEvent& operator=(const QOrganizerEvent& other);
+    QOrganizerItemDetailFieldDefinitionPrivate(const QOrganizerItemDetailFieldDefinitionPrivate& other)
+        : QSharedData(other),
+        m_allowableValues(other.m_allowableValues),
+        m_dataType(other.m_dataType)
+    {
+    }
 
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setEndDateTime(const QDateTime& endDateTime);
-    QDateTime endDateTime() const;
+    ~QOrganizerItemDetailFieldDefinitionPrivate()
+    {
+    }
 
-    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
-    QOrganizerItemRecurrence recurrence() const;
-
-    // TODO attendees?  How to handle non-unique details?
+    QVariantList m_allowableValues;
+    QVariant::Type m_dataType;
 };
 
 QTM_END_NAMESPACE

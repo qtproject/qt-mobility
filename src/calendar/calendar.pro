@@ -11,6 +11,7 @@ DEFINES += QT_BUILD_CALENDAR_LIB \
 include(../../common.pri)
 include(details/details.pri)
 include(items/items.pri)
+include(requests/requests.pri)
 
 # Input
 PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
@@ -28,7 +29,17 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qorganizeritemsortorder.h \
     qtorganizeritemsglobal.h \
     qtorganizeritem.h
-PRIVATE_HEADERS += qorganizeritemmanager_p.h
+PRIVATE_HEADERS += qorganizeritemmanager_p.h \
+    qorganizeritemabstractrequest_p.h \
+    qorganizeritemchangeset_p.h \
+    qorganizeritem_p.h \
+    qorganizeritemdetail_p.h \
+    qorganizeritemid_p.h \
+    qorganizeritemfilter_p.h \
+    qorganizeritemfetchhint_p.h \
+    qorganizeritemdetailfielddefinition_p.h \
+    qorganizeritemdetaildefinition_p.h \
+    qorganizeritemsortorder_p.h
 SOURCES += qorganizer.cpp \
     qorganizeritemabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
