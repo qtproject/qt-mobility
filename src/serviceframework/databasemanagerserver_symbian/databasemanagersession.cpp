@@ -557,16 +557,7 @@ void CDatabaseManagerServerSession::initDbPath()
     {
     QString dbIdentifier = "_system";
     ServiceDatabase *db = iDb;
-#ifdef __WINS__
-    // In emulator use commmon place for service database
-    // instead of server's private directory (on emulator the server runs in the application's
-    // process - using private dir would mean that each application has its own storage, which others
-    // can't see.
-    QDir dir(QDir::toNativeSeparators("C:\\Data\\temp\\QtServiceFW"));
-#else
-    // On hardware, use this DB server's private directory (C:/Private/<UID3>)    
     QDir dir(QDir::toNativeSeparators(QCoreApplication::applicationDirPath()));
-#endif
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
     QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");

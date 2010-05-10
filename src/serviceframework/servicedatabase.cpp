@@ -1669,15 +1669,11 @@ QString ServiceDatabase::databasePath() const
 {
     QString path;
     if(m_databasePath.isEmpty()) {
-#if (defined(Q_OS_SYMBIAN) && defined(__WINS__))
-        // On Symbian, database location never changes. On emulator it is fixed
-        // and on hardware it is relative to the db managers private directory.
-        path = QDir::toNativeSeparators("C:\\Data\\temp\\QtServiceFW");
-#elif defined(Q_OS_SYMBIAN)
+#ifdef Q_OS_SYMBIAN
         QString qtVersion(qVersion());
         qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
         path = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "QtServiceFramework_" +
-                                        qtVersion + "_system" + QLatin1String(".db"));
+            qtVersion + "_system" + QLatin1String(".db"));
 #else
         QSettings settings(QSettings::SystemScope, "Nokia", "Services");
         path = settings.value("ServicesDB/Path").toString();
