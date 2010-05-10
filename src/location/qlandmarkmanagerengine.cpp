@@ -64,6 +64,9 @@
 
 #include "qlandmarkattributefilter.h"
 #include "qlandmarkboxfilter.h"
+#include "qlandmarkcategoryfilter.h"
+#include "qlandmarkintersectionfilter.h"
+
 
 #include "qgeocoordinate.h"
 
@@ -1042,6 +1045,34 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
 
             //landmark must be within the bounds to reach here.
             return true;
+        }
+        case QLandmarkFilter::CategoryFilter:
+        {
+            const QLandmarkCategoryFilter categoryFilter(filter);
+            QList<QLandmarkCategoryId> categories = landmark.categories();
+            foreach(const QLandmarkCategoryId id, categories)
+            {
+                if (id == categoryFilter.categoryId())
+                    return true;
+            }
+            return false;
+        }
+        case QLandmarkFilter::IntersectionFilter:
+        {
+            const QLandmarkIntersectionFilter andFilter(filter);
+            const QList<QLandmarkFilter>& terms = andFilter.filters();
+            if (terms.count() ==0)
+                return false;
+
+            for(int i=0; i < terms.count();i++) {
+                    if (!testFilter(terms.at(i), landmark))
+                        return false;
+            }
+            return true;
+        }
+        case QLandmarkFilter::InvalidFilter:
+        {
+            return false;
         }
     }
     return false;
