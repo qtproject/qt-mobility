@@ -60,7 +60,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactManagerEngine
-  \preliminary
   \brief The QContactManagerEngine class provides the interface for all
   implementations of the contact manager backend functionality.
   \ingroup contacts-backends
@@ -73,7 +72,8 @@ QTM_BEGIN_NAMESPACE
   can simply implement the functionality that is supported by
   the specific contacts engine that is being adapted.
 
-  More information on writing a contacts engine plugin is TODO.
+  More information on writing a contacts engine plugin is available in
+  the \l{Qt Contacts Manager Engines} documentation.
 
   \sa QContactManager, QContactManagerEngineFactory
  */
