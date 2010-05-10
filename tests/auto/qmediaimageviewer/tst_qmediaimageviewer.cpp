@@ -100,7 +100,7 @@ private:
 };
 
 Q_DECLARE_METATYPE(QMediaImageViewer::State)
-Q_DECLARE_METATYPE(QMediaImageViewer::MediaStatus);
+Q_DECLARE_METATYPE(QMediaImageViewer::MediaStatus)
 
 class QtTestVideoSurface : public QAbstractVideoSurface
 {
