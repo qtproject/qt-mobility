@@ -58,7 +58,8 @@ class QGeoNavigationHelperPrivate;
 
 // TODO - name could be better
 
-class Q_LOCATION_EXPORT QGeoNavigationHelper : public QObject {
+class Q_LOCATION_EXPORT QGeoNavigationHelper : public QObject
+{
 
     Q_OBJECT
 

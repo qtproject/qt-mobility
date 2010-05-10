@@ -83,7 +83,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoMappingService object.
 */
 QGeoMappingService::QGeoMappingService()
-    : d_ptr(new QGeoMappingServicePrivate()) {}
+        : d_ptr(new QGeoMappingServicePrivate()) {}
 
 /*!
     Destroys this QGeoMappingService object.
@@ -113,15 +113,14 @@ The results can then be retreived with QGeoMapReply::mapImage().
 If an error occurs then the QGeoMapReply object will emit QGeoMapReply::error()
 and this QGeoMappingService instance will emit QGeoMappingService::error().
 
-Additional options can also be set by passing a QGeoMapRequestionOptions in via
-\a requestOptions.  The supportedMapTypes() and supportedImageFormats() methods
-provide information on the acceptable values that can be used inside a
-QGeoMapRequestOptions object.
+Additional options can also be set with \a requestOptions.  The
+supportedMapTypes() and supportedImageFormats() methods provide information
+on the acceptable values that can be used inside a QGeoMapRequestOptions object.
 
 The service may impose restrictions on the allowable zoom levels and image
 sizes, which can be queried with other methods in this class.
 
-\sa QgeoMapRequestOptions
+\sa QGeoMapRequestOptions
 */
 
 /*!
@@ -141,7 +140,7 @@ QList<QGeoMapWidget::MapType> QGeoMappingService::supportedMapTypes() const
     Returns a list of the image formats supported by this QGeoMappingService
     instance.
 
-    \sa QGeoMapService::setSupportedImageFormats()
+    \sa QGeoMappingService::setSupportedImageFormats()
 */
 QList<QString> QGeoMappingService::supportedImageFormats() const
 {
@@ -362,16 +361,16 @@ void QGeoMappingService::setMaximumSize(const QSize &maximumImageSize)
 QGeoMappingServicePrivate::QGeoMappingServicePrivate() {}
 
 QGeoMappingServicePrivate::QGeoMappingServicePrivate(const QGeoMappingServicePrivate &other)
-    : supportedMapTypes(other.supportedMapTypes),
-    supportedImageFormats(other.supportedImageFormats),
-    minimumZoomLevel(other.minimumZoomLevel),
-    maximumZoomLevel(other.maximumZoomLevel),
-    minimumImageSize(other.minimumImageSize),
-    maximumImageSize(other.maximumImageSize) {}
+        : supportedMapTypes(other.supportedMapTypes),
+        supportedImageFormats(other.supportedImageFormats),
+        minimumZoomLevel(other.minimumZoomLevel),
+        maximumZoomLevel(other.maximumZoomLevel),
+        minimumImageSize(other.minimumImageSize),
+        maximumImageSize(other.maximumImageSize) {}
 
 QGeoMappingServicePrivate::~QGeoMappingServicePrivate() {}
 
-QGeoMappingServicePrivate& QGeoMappingServicePrivate::operator= (const QGeoMappingServicePrivate &other)
+QGeoMappingServicePrivate& QGeoMappingServicePrivate::operator= (const QGeoMappingServicePrivate & other)
 {
     supportedMapTypes = other.supportedMapTypes;
     supportedImageFormats = other.supportedImageFormats;

@@ -74,8 +74,8 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoRouteReply object with parent \a parent.
 */
 QGeoRouteReply::QGeoRouteReply(QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoRouteReplyPrivate()) {}
+        : QObject(parent),
+        d_ptr(new QGeoRouteReplyPrivate()) {}
 
 /*!
     Destroys this QGeoRouteReply object.
@@ -124,20 +124,20 @@ QList<QGeoRoute> QGeoRouteReply::routes() const
     The user is still responsible for deleting this QGeoRouteReply object.
 */
 
- /*!
-    \fn void QGeoRouteReply::finished()
+/*!
+   \fn void QGeoRouteReply::finished()
 
-    A QGeoRouteReply object represents the outcome of a request against a
-    QGeoMappingService instance.  If this signal is emitted it indicates that
-    the requested service was completed successfully.
+   A QGeoRouteReply object represents the outcome of a request against a
+   QGeoMappingService instance.  If this signal is emitted it indicates that
+   the requested service was completed successfully.
 
-    Note that the QGeoRoutingService::replyFinished() signal can be used instead
-    of this signal if it is more convinient to do so.
+   Note that the QGeoRoutingService::replyFinished() signal can be used instead
+   of this signal if it is more convinient to do so.
 
-    Do not delete this QGeoRouteReply object in a slot connected to this signal
-    - use deleteLater() if it is necessary to do so.
+   Do not delete this QGeoRouteReply object in a slot connected to this signal
+   - use deleteLater() if it is necessary to do so.
 
-    \sa QGeoRoutingService::replyFinished()
+   \sa QGeoRoutingService::replyFinished()
 */
 
 /*!
@@ -165,11 +165,11 @@ QList<QGeoRoute> QGeoRouteReply::routes() const
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate() {}
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteReplyPrivate &other)
-    : route(other.routes) {}
+        : route(other.routes) {}
 
 QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
 
-QGeoRouteReplyPrivate& QGeoRouteReplyPrivate::operator= (const QGeoRouteReplyPrivate &other)
+QGeoRouteReplyPrivate& QGeoRouteReplyPrivate::operator= (const QGeoRouteReplyPrivate & other)
 {
     routes = other.routes;
 

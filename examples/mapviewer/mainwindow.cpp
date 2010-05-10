@@ -144,7 +144,8 @@ void MainWindow::delayedInit()
 
     QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.40", 8080);
     mService->setProxy(proxy);
-    mService->setHost("origin.maptile.svc.tst.s2g.gate5.de");
+    //mService->setHost("origin.maptile.svc.tst.s2g.gate5.de");
+    mService->setHost("maptile.svc.nokia.com.edgesuite.net");
 
     mapService = mService;
     routingService = rService;

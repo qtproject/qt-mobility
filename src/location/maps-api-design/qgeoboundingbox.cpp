@@ -77,13 +77,13 @@ QTM_BEGIN_NAMESPACE
     have been called.
 */
 QGeoBoundingBox::QGeoBoundingBox()
-    : d_ptr(new QGeoBoundingBoxPrivate()) {}
+        : d_ptr(new QGeoBoundingBoxPrivate()) {}
 
 /*!
     Constucts a QGeoBoundingBox object from the contents of \a other.
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
-    : d_ptr(new QGeoBoundingBoxPrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoBoundingBoxPrivate(*(other.d_ptr))) {}
 
 /*!
     Constructs a QGeoBoundingBox object with the given \a upperLeft and \a lowerRight
@@ -91,7 +91,7 @@ QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &upperLeft,
                                  const QGeoCoordinate &lowerRight)
-                                     : d_ptr(new QGeoBoundingBoxPrivate(upperLeft, lowerRight)) {}
+        : d_ptr(new QGeoBoundingBoxPrivate(upperLeft, lowerRight)) {}
 
 /*!
   Destroys this QGeoBoundingBox object.
@@ -106,7 +106,7 @@ QGeoBoundingBox::~QGeoBoundingBox()
     Assigns \a other to this QGeoBoundingBox and returns a reference
     to this QGeoBoundingBox.
 */
-QGeoBoundingBox& QGeoBoundingBox::operator= (const QGeoBoundingBox &other)
+QGeoBoundingBox& QGeoBoundingBox::operator= (const QGeoBoundingBox & other)
 {
     *d_ptr = *(other.d_ptr);
     return *this;
@@ -172,17 +172,17 @@ QGeoCoordinate QGeoBoundingBox::lowerRight() const
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate() {}
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &upperLeft,
-                                               const QGeoCoordinate &lowerRight)
-                                                   : upperLeft(upperLeft),
-                                                   lowerRight(lowerRight) {}
+        const QGeoCoordinate &lowerRight)
+        : upperLeft(upperLeft),
+        lowerRight(lowerRight) {}
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other)
-    : upperLeft(other.upperLeft),
-    lowerRight(other.lowerRight) {}
+        : upperLeft(other.upperLeft),
+        lowerRight(other.lowerRight) {}
 
 QGeoBoundingBoxPrivate::~QGeoBoundingBoxPrivate() {}
 
-QGeoBoundingBoxPrivate& QGeoBoundingBoxPrivate::operator= (const QGeoBoundingBoxPrivate &other)
+QGeoBoundingBoxPrivate& QGeoBoundingBoxPrivate::operator= (const QGeoBoundingBoxPrivate & other)
 {
     upperLeft = other.upperLeft;
     lowerRight = other.lowerRight;

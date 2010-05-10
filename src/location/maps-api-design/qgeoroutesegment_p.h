@@ -53,7 +53,8 @@ QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoNavigationInstruction;
 
-class QGeoRouteSegmentPrivate {
+class QGeoRouteSegmentPrivate
+{
 public:
     QGeoRouteSegmentPrivate();
     QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other);
@@ -62,8 +63,8 @@ public:
     QGeoRouteSegmentPrivate& operator= (const QGeoRouteSegmentPrivate &other);
 
     QGeoRouteSegment::SegmentType type;
-    QDateTime duration;
-    QGeoDistance distance;
+    QDateTime estimatedTravelTime;
+    QGeoDistance length;
     QList<QGeoCoordinate> geometry;
     QList<const QGeoNavigationInstruction*> instructions;
 };

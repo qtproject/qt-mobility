@@ -69,14 +69,14 @@ QGeoServiceProvider::QGeoServiceProvider(QString provider, QString authenticatio
 
     } else {
     */
-        d_ptr = new QGeoServiceProviderPrivate(0, 0, 0);
+    d_ptr = new QGeoServiceProviderPrivate(0, 0, 0);
     /*
     }
     */
 }
 
 QGeoServiceProvider::QGeoServiceProvider(const QGeoServiceProvider &other)
-    : d_ptr(new QGeoServiceProviderPrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoServiceProviderPrivate(*(other.d_ptr))) {}
 
 QGeoServiceProvider::~QGeoServiceProvider()
 {
@@ -84,7 +84,7 @@ QGeoServiceProvider::~QGeoServiceProvider()
     delete d;
 }
 
-QGeoServiceProvider& QGeoServiceProvider::operator= (const QGeoServiceProvider &other)
+QGeoServiceProvider& QGeoServiceProvider::operator= (const QGeoServiceProvider & other)
 {
     *d_ptr = *(other.d_ptr);
     return *this;
@@ -112,16 +112,16 @@ QGeoRoutingService* QGeoServiceProvider::routingService() const
 *******************************************************************************/
 
 QGeoServiceProviderPrivate::QGeoServiceProviderPrivate(QGeoCodingService *geocodingService,
-                                                       QGeoMappingService *mappingService,
-                                                       QGeoRoutingService *routingService)
-                                                           : geocodingService(geocodingService),
-                                                           mappingService(mappingService),
-                                                           routingService(routingService) {}
+        QGeoMappingService *mappingService,
+        QGeoRoutingService *routingService)
+        : geocodingService(geocodingService),
+        mappingService(mappingService),
+        routingService(routingService) {}
 
 QGeoServiceProviderPrivate::QGeoServiceProviderPrivate(const QGeoServiceProviderPrivate &other)
-    : geocodingService(other.geocodingService),
-    mappingService(other.mappingService),
-    routingService(other.routingService) {}
+        : geocodingService(other.geocodingService),
+        mappingService(other.mappingService),
+        routingService(other.routingService) {}
 
 QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 {
@@ -133,7 +133,7 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
         delete routingService;
 }
 
-QGeoServiceProviderPrivate& QGeoServiceProviderPrivate::operator= (const QGeoServiceProviderPrivate &other)
+QGeoServiceProviderPrivate& QGeoServiceProviderPrivate::operator= (const QGeoServiceProviderPrivate & other)
 {
     geocodingService = other.geocodingService;
     mappingService = other.mappingService;

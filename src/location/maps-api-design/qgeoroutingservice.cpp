@@ -83,7 +83,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoRoutingService object.
 */
 QGeoRoutingService::QGeoRoutingService()
-    : d_ptr(new QGeoRoutingServicePrivate()) {}
+        : d_ptr(new QGeoRoutingServicePrivate()) {}
 
 /*!
     Destroys this QGeoRoutingService object.
@@ -99,17 +99,86 @@ QGeoRoutingService::~QGeoRoutingService()
                                                      const QGeoCoordinate &destination,
                                                      QGeoRoute::DirectionsDetail detail,
                                                      const QGeoRouteRequestOptions &requestOptions)
+
+Requests the calculation of a route from \a origin to \a destination, with
+directions having a level of detail as specified by \a detail.
+
+The return value is a QGeoRouteReply object, which manages the result of the
+request.  If the request completes successfully then the QGeoRouteReply object
+will emit the QGeoRouteReply::finished() signal and this QGeoRoutingService
+instance will emit the QGeoRoutingService::finished() signal.
+
+The resulting route (or routes) can then be retreived with
+QGeoRoutReply::routes().
+
+If an error occurs then the QGeoRouteReply object will emit
+QGeoRouteReply::error() and this QGeoRoutingService instance will emit
+QGeoRoutingService::error().
+
+Additional options can also be set with \a requestOptions.  A
+QGeoRoutingService instance can may not support these options, or may only
+support a subset of the values for each option, however there are functions
+which can be used to determine the level of support provided by the service.
+
+The use of unsupported options will cause on error() signal to be emitted.
+
+\sa QGeoRoute::DirectionsDetail
+\sa QGeoRouteRequestOptions
 */
 
 /*!
 \fn QGeoRouteReply* QGeoRoutingService::requestRoute(const QList<QGeoCoordinate> &waypoints,
                                                      QGeoRoute::DirectionsDetail detail,
-                                                     const QGeoRouteRequestOptions &requestOptions) = 0;
+                                                     const QGeoRouteRequestOptions &requestOptions)
+
+Requests the calculation of a route passing through each of the coordinates
+in \a waypoints in order, with directions having a level of detail as
+specified by \a detail.
+
+The return value is a QGeoRouteReply object, which manages the result of the
+request.  If the request completes successfully then the QGeoRouteReply object
+will emit the QGeoRouteReply::finished() signal and this QGeoRoutingService
+instance will emit the QGeoRoutingService::finished() signal.
+
+The resulting route (or routes) can then be retreived with
+QGeoRoutReply::routes().
+
+If an error occurs then the QGeoRouteReply object will emit
+QGeoRouteReply::error() and this QGeoRoutingService instance will emit
+QGeoRoutingService::error().
+
+Additional options can also be set with \a requestOptions.  A
+QGeoRoutingService instance can may not support these options, or may only
+support a subset of the values for each option, however there are functions
+which can be used to determine the level of support provided by the service.
+
+The use of unsupported options will cause on error() signal to be emitted.
+
+\sa QGeoRoute::DirectionsDetail
+\sa QGeoRouteRequestOptions
 */
 
 /*!
 \fn QGeoRouteReply* QGeoRoutingService::updateRoute(const QGeoRoute &route,
                                                     const QGeoCoordinate &currentPosition)
+
+Requests that a new route be calculated based on the previously calculated
+route \a route and a current position \a currentPosition, which will become
+the starting point of the new route.
+
+TODO bool supportsUpdatingRoutes() const;
+
+The return value is a QGeoRouteReply object, which manages the result of the
+request.  If the request completes successfully then the QGeoRouteReply object
+will emit the QGeoRouteReply::finished() signal and this QGeoRoutingService
+instance will emit the QGeoRoutingService::finished() signal.
+
+The resulting route (or routes) can then be retreived with
+QGeoRoutReply::routes().
+
+If an error occurs then the QGeoRouteReply object will emit
+QGeoRouteReply::error() and this QGeoRoutingService instance will emit
+QGeoRoutingService::error().
 */
 
 /*!
@@ -142,7 +211,7 @@ QGeoRoute::AvoidFeatureTypes QGeoRoutingService::supportedAvoidFeatureTypes() co
     instance.
 
     \sa QGeoRoute::RouteOptimizations
-    \sa QGeoRoute::setSupportedRouteOptimizations()
+    \sa QGeoRoutingService::setSupportedRouteOptimizations()
 */
 QGeoRoute::RouteOptimizations QGeoRoutingService::supportedRouteOptimizations() const
 {
@@ -156,7 +225,7 @@ QGeoRoute::RouteOptimizations QGeoRoutingService::supportedRouteOptimizations() 
     supports.
 
     \sa QGeoRoute::DirectionsDetails
-    \sa QGeoRoute::setSupportedDirectionDetails()
+    \sa QGeoRoutingService::setSupportedDirectionDetails()
 */
 QGeoRoute::DirectionsDetails QGeoRoutingService::supportedDirectionDetails() const
 {
@@ -181,7 +250,7 @@ bool QGeoRoutingService::supportsUpdatingRoutes() const
 
 /*!
     Sets the travel modes supported by this QGeoRoutingService instance to
-    \a supportedTravelModes.
+    \a travelModes.
 
     Subclasses of QGeoRoutingService should use this function to ensure that
     supportedTravelModes() provides accurate information.
@@ -302,16 +371,16 @@ void QGeoRoutingService::setSupportsUpdatingRoutes(bool updatingRoutes)
 QGeoRoutingServicePrivate::QGeoRoutingServicePrivate() {}
 
 QGeoRoutingServicePrivate::QGeoRoutingServicePrivate(const QGeoRoutingServicePrivate &other)
-    : supportedTravelModes(other.supportedTravelModes),
-    supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
-    supportedRouteOptimizations(other.supportedRouteOptimizations),
-    //supportedTransitOptionTypes(other.supportedTransitOptionTypes),
-    supportedDirectionDetails(other.supportedDirectionDetails),
-    supportsUpdatingRoutes(other.supportsUpdatingRoutes) {}
+        : supportedTravelModes(other.supportedTravelModes),
+        supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
+        supportedRouteOptimizations(other.supportedRouteOptimizations),
+        //supportedTransitOptionTypes(other.supportedTransitOptionTypes),
+        supportedDirectionDetails(other.supportedDirectionDetails),
+        supportsUpdatingRoutes(other.supportsUpdatingRoutes) {}
 
 QGeoRoutingServicePrivate::~QGeoRoutingServicePrivate() {}
 
-QGeoRoutingServicePrivate& QGeoRoutingServicePrivate::operator= (const QGeoRoutingServicePrivate &other)
+QGeoRoutingServicePrivate& QGeoRoutingServicePrivate::operator= (const QGeoRoutingServicePrivate & other)
 {
     supportedTravelModes = other.supportedTravelModes;
     supportedAvoidFeatureTypes = other.supportedAvoidFeatureTypes;

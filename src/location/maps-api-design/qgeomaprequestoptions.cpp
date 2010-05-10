@@ -45,24 +45,32 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoMapRequestOptions
-  \brief The QGeoMapRequestOptions class is.
-  \ingroup maps
+    \class QGeoMapRequestOptions
+    \brief The QGeoMapRequestOptions class represents various options which
+    may be specified when requesting map images.
+    \ingroup maps
 
+    The most common uses of the request methods in QGeoMappingService will
+    specific a center coordinate, a zoom level and an image size.
 
+    The QGeoMapRequestOptions class represents the options corresponding to
+    the more advanced (or less common) options which can be passed to the
+    QGeoMappingService request methods.
+
+    \sa QGeoMappingService
 */
 
 /*!
     Constructs a QGeoMapRequestOptions object.
 */
 QGeoMapRequestOptions::QGeoMapRequestOptions()
-    : d_ptr(new QGeoMapRequestOptionsPrivate()) {}
+        : d_ptr(new QGeoMapRequestOptionsPrivate()) {}
 
 /*!
     Constructs a QGeoMapRequestOptions object form \a other.
 */
 QGeoMapRequestOptions::QGeoMapRequestOptions(const QGeoMapRequestOptions &other)
-    : d_ptr(new QGeoMapRequestOptionsPrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoMapRequestOptionsPrivate(*(other.d_ptr))) {}
 
 /*!
     Destroys this QGeoMapRequestOptions object.
@@ -77,7 +85,7 @@ QGeoMapRequestOptions::~QGeoMapRequestOptions()
     Assigns \a other to this QGeoMapRequestOptions object and returns a
     reference to this QGeoMapRequestOptions object.
 */
-QGeoMapRequestOptions& QGeoMapRequestOptions::operator= (const QGeoMapRequestOptions &other)
+QGeoMapRequestOptions& QGeoMapRequestOptions::operator= (const QGeoMapRequestOptions & other)
 {
     *d_ptr = *(other.d_ptr);
 
@@ -86,6 +94,8 @@ QGeoMapRequestOptions& QGeoMapRequestOptions::operator= (const QGeoMapRequestOpt
 
 /*!
     Sets the map type for the request to \a mapType.
+
+    The default value is QGeoMapWidget::StreetMap.
 
     \sa QGeoMapWidget::MapType
     \sa QGeoMapRequestOptions::mapType()
@@ -110,6 +120,8 @@ QGeoMapWidget::MapType QGeoMapRequestOptions::mapType() const
 
 /*!
     Sets the image format for the request to \a imageFormat.
+
+    The default value if none is set is "jpg".
 
     \sa QGeoMapRequestOptions::imageFormat()
 */
@@ -138,12 +150,12 @@ QGeoMapRequestOptionsPrivate::QGeoMapRequestOptionsPrivate() :
         imageFormat("jpg") {}
 
 QGeoMapRequestOptionsPrivate::QGeoMapRequestOptionsPrivate(const QGeoMapRequestOptionsPrivate &other)
-    : mapType(other.mapType),
-    imageFormat(other.imageFormat) {}
+        : mapType(other.mapType),
+        imageFormat(other.imageFormat) {}
 
 QGeoMapRequestOptionsPrivate::~QGeoMapRequestOptionsPrivate() {}
 
-QGeoMapRequestOptionsPrivate& QGeoMapRequestOptionsPrivate::operator= (const QGeoMapRequestOptionsPrivate &other)
+QGeoMapRequestOptionsPrivate& QGeoMapRequestOptionsPrivate::operator= (const QGeoMapRequestOptionsPrivate & other)
 {
     mapType = other.mapType;
     imageFormat = other.imageFormat;

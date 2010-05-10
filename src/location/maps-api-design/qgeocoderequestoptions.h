@@ -50,8 +50,9 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoCodeRequestOptionsPrivate;
 
-class Q_LOCATION_EXPORT QGeoCodeRequestOptions {
-public: 
+class Q_LOCATION_EXPORT QGeoCodeRequestOptions
+{
+public:
     QGeoCodeRequestOptions();
     QGeoCodeRequestOptions(const QGeoCodeRequestOptions &other);
     ~QGeoCodeRequestOptions();

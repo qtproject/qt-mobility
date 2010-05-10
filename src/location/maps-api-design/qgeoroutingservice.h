@@ -56,7 +56,8 @@ class QGeoRouteReply;
 
 class QGeoRoutingServicePrivate;
 
-class Q_LOCATION_EXPORT QGeoRoutingService : public QObject {
+class Q_LOCATION_EXPORT QGeoRoutingService : public QObject
+{
 
     Q_OBJECT
 
@@ -90,7 +91,7 @@ public:
                                          const QGeoRouteRequestOptions &requestOptions = QGeoRouteRequestOptions()) = 0;
 
     virtual QGeoRouteReply* updateRoute(const QGeoRoute &route,
-                                const QGeoCoordinate &currentPosition) = 0;
+                                        const QGeoCoordinate &currentPosition) = 0;
 
     QGeoRoute::TravelModes supportedTravelModes() const;
     QGeoRoute::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
@@ -116,7 +117,7 @@ protected:
 
 signals:
     void replyFinished(QGeoRouteReply *reply);
-    void replyError(QGeoRouteReply *reply, 
+    void replyError(QGeoRouteReply *reply,
                     QGeoRoutingService::ErrorCode errorCode,
                     QString errorString);
 

@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
     \ingroup maps
 
     A QGeoRoute object contains high level information about a route, such
-    as the distance covered by the route, the estimated duration of the route,
+    as the length the route, the estimated travel time for the route,
     and enough information to render a basic image of the route on a map.
 
     The QGeoRoute object also contains a list of QGeoRouteSegment objecs, or
@@ -154,13 +154,13 @@ QTM_BEGIN_NAMESPACE
     Constructs a route object.
 */
 QGeoRoute::QGeoRoute()
-    : d_ptr(new QGeoRoutePrivate()) {}
+        : d_ptr(new QGeoRoutePrivate()) {}
 
 /*!
     Construcst a route object from the contents of \a other.
 */
 QGeoRoute::QGeoRoute(const QGeoRoute &other)
-    : d_ptr(new QGeoRoutePrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoRoutePrivate(*(other.d_ptr))) {}
 
 /*!
     Destroys a route object.
@@ -175,7 +175,7 @@ QGeoRoute::~QGeoRoute()
     Assigns the contents of \a other to this route and returns a reference to
     this route.
 */
-QGeoRoute& QGeoRoute::operator= (const QGeoRoute &other)
+QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 {
     *d_ptr = *(other.d_ptr);
     return *this;
@@ -293,47 +293,48 @@ QList<const QGeoRouteSegment *> QGeoRoute::routeSegments() const
 }
 
 /*!
-    Sets an estimate of how long it will take to traverse the route to \a duration.
+    Sets an estimate of how long it will take to traverse the route to \a
+    travelTime.
 
-    \sa QGeoRoute::duration()
+    \sa QGeoRoute::estimatedTravelTime()
 */
-void QGeoRoute::setDuration(const QDateTime &duration)
+void QGeoRoute::setEstimatedTravelTime(const QDateTime &travelTime)
 {
     Q_D(QGeoRoute);
-    d->duration = duration;
+    d->estimatedTravelTime = travelTime;
 }
 
 /*!
     Returns an estimate of how long it will take to travel the route.
 
-    \sa QGeoRoute::setDuration()
+    \sa QGeoRoute::setEstimatedTravelTime()
 */
-QDateTime QGeoRoute::duration() const
+QDateTime QGeoRoute::estimatedTravelTime() const
 {
     Q_D(const QGeoRoute);
-    return d->duration;
+    return d->estimatedTravelTime;
 }
 
 /*!
-    Sets the distance covered by the route to \a distance.
+    Sets the length of this route to \a length.
 
-    \sa QGeoRoute::distance()
+    \sa QGeoRoute::length()
 */
-void QGeoRoute::setDistance(const QGeoDistance &distance)
+void QGeoRoute::setLength(const QGeoDistance &length)
 {
     Q_D(QGeoRoute);
-    d->distance = distance;
+    d->length = length;
 }
 
 /*!
-    Returns the distance covered by the route.
+    Returns the length of this route.
 
-    \sa QGeoRoute::setDistance()
+    \sa QGeoRoute::setLength()
 */
-QGeoDistance QGeoRoute::distance() const
+QGeoDistance QGeoRoute::length() const
 {
     Q_D(const QGeoRoute);
-    return d->distance;
+    return d->length;
 }
 
 /*!
@@ -355,24 +356,24 @@ QGeoCoordinate QGeoRoute::closestPointOnRoute(const QGeoCoordinate &position) co
 QGeoRoutePrivate::QGeoRoutePrivate() {}
 
 QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
-    :
-    directionsDetail(other.directionsDetail),
-    routeOverview(other.routeOverview),
-    bounds(other.bounds),
-    routeSegments(other.routeSegments),
-    duration(other.duration),
-    distance(other.distance) {}
+        :
+        directionsDetail(other.directionsDetail),
+        routeOverview(other.routeOverview),
+        bounds(other.bounds),
+        routeSegments(other.routeSegments),
+        estimatedTravelTime(other.estimatedTravelTime),
+        length(other.length) {}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
-QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate &other)
+QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
 {
     directionsDetail = other.directionsDetail;
     routeOverview = other.routeOverview;
     bounds = other.bounds;
     routeSegments = other.routeSegments;
-    duration = other.duration;
-    distance = other.distance;
+    estimatedTravelTime = other.estimatedTravelTime;
+    length = other.length;
     return *this;
 }
 

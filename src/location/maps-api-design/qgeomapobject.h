@@ -68,7 +68,8 @@ class QGeoMapObjectPrivate;
 //      - the current QGeoMapObject subclasses would just subclass QGraphicsItem
 //        directly
 
-class Q_LOCATION_EXPORT QGeoMapObject : public QGraphicsItem {
+class Q_LOCATION_EXPORT QGeoMapObject : public QGraphicsItem
+{
 
 // graphics item can handle painting, hit detection, selection management etc
 
@@ -102,7 +103,8 @@ private:
 
 class QMapCircleObjectPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapCircleObject : public QGeoMapObject {
+class Q_LOCATION_EXPORT QGeoMapCircleObject : public QGeoMapObject
+{
 public:
     QGeoMapCircleObject(QGeoMapWidget *parent);
     ~QGeoMapCircleObject();
@@ -120,7 +122,8 @@ private:
 
 class QMapRectangleObjectPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapRectangleObject : public QGeoMapObject {
+class Q_LOCATION_EXPORT QGeoMapRectangleObject : public QGeoMapObject
+{
 public:
     QGeoMapRectangleObject(QGeoMapWidget *parent);
     ~QGeoMapRectangleObject();
@@ -135,7 +138,8 @@ private:
 
 class QMapCirclePolylinePrivate;
 
-class Q_LOCATION_EXPORT QGeoMapPolylineObject : public QGeoMapObject {
+class Q_LOCATION_EXPORT QGeoMapPolylineObject : public QGeoMapObject
+{
 public:
     QGeoMapPolylineObject(QGeoMapWidget *parent);
     ~QGeoMapPolylineObject();
@@ -150,7 +154,8 @@ private:
 
 class QMapPolygonObjectPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapPolygonObject : public QGeoMapObject {
+class Q_LOCATION_EXPORT QGeoMapPolygonObject : public QGeoMapObject
+{
 public:
     QGeoMapPolygonObject(QGeoMapWidget *parent);
     ~QGeoMapPolygonObject();
@@ -170,7 +175,8 @@ private:
 // UI guidelines, unclear what to do if this is the case for only some of
 // the marker types
 
-class Q_LOCATION_EXPORT QGeoMapMarkerObject : public QGeoMapObject {
+class Q_LOCATION_EXPORT QGeoMapMarkerObject : public QGeoMapObject
+{
 public:
     QGeoMapMarkerObject(QGeoMapWidget *parent);
     ~QGeoMapMarkerObject();
@@ -201,7 +207,8 @@ private:
     Q_DECLARE_PRIVATE(QGeoMapMarkerObject)
 };
 
-class Q_LOCATION_EXPORT QGeoMapBalloonObject : public QGeoMapObject {
+class Q_LOCATION_EXPORT QGeoMapBalloonObject : public QGeoMapObject
+{
 public:
     QGeoMapBalloonObject(QGeoMapWidget *parent);
     ~QGeoMapBalloonObject();
@@ -213,7 +220,8 @@ private:
     Q_DECLARE_PRIVATE(QGeoMapBalloonObject)
 };
 
-class Q_LOCATION_EXPORT QGeoMapRouteObject : public QGeoMapObject {
+class Q_LOCATION_EXPORT QGeoMapRouteObject : public QGeoMapObject
+{
 public:
     QGeoMapRouteObject(QGeoMapWidget *parent);
     ~QGeoMapRouteObject();

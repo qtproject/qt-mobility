@@ -55,11 +55,12 @@ class QGeoLocation;
 
 class QGeoCodeReplyPrivate;
 
-class Q_LOCATION_EXPORT QGeoCodeReply : QObject {
+class Q_LOCATION_EXPORT QGeoCodeReply : QObject
+{
 
     Q_OBJECT
 
-public: 
+public:
     QGeoCodeReply(QObject *parent = 0);
     virtual ~QGeoCodeReply();
 

@@ -48,13 +48,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-        /*
-        enum NavigationStatus {
-            OnRouteStatus,
-            OffRouteStatus,
-            ArrivedStatus
-        };
-        */
+/*
+enum NavigationStatus {
+    OnRouteStatus,
+    OffRouteStatus,
+    ArrivedStatus
+};
+*/
 
 QGeoNavigationHelper::QGeoNavigationHelper()
 {
@@ -74,7 +74,7 @@ QGeoNavigationHelper::~QGeoNavigationHelper()
 {
 }
 
-QGeoNavigationHelper& QGeoNavigationHelper::operator= (const QGeoNavigationHelper &other)
+QGeoNavigationHelper& QGeoNavigationHelper::operator= (const QGeoNavigationHelper & other)
 {
     Q_UNUSED(other);
     return *this;
@@ -130,12 +130,12 @@ void QGeoNavigationHelper::navigationInstructionPerformed(QGeoNavigationInstruct
 
 //need access to route service for this
 //void QGeoNavigationHelper::newRouteFromPosition(const QGeoPositionInfo &position) {}
-    /*
-    signals:
-        void nextNavigationInstruction(QGeoNavigationInstruction *instruction);
-        void statusChanged(NavigationStatus status);
-        void arrived();
-        */
+/*
+signals:
+    void nextNavigationInstruction(QGeoNavigationInstruction *instruction);
+    void statusChanged(NavigationStatus status);
+    void arrived();
+    */
 
 #include "moc_qgeonavigationhelper.cpp"
 

@@ -58,7 +58,8 @@ class QGeoMapReply;
 
 class QGeoMappingServicePrivate;
 
-class Q_LOCATION_EXPORT QGeoMappingService : public QObject{
+class Q_LOCATION_EXPORT QGeoMappingService : public QObject
+{
 
     Q_OBJECT
 
@@ -85,7 +86,7 @@ public:
 
 signals:
     void replyFinished(QGeoMapReply *reply);
-    void replyError(QGeoMapReply *reply, 
+    void replyError(QGeoMapReply *reply,
                     QGeoMappingService::ErrorCode errorCode,
                     QString errorString);
 

@@ -43,6 +43,13 @@
 #include "qlandmarksortorder_p.h"
 #include "qlandmarkid.h"
 
+#if !defined(Q_CC_MWERKS)
+template<> QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate)>::clone()
+{
+    return d->clone();
+}
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -64,13 +71,6 @@ QTM_BEGIN_NAMESPACE
     \value DistanceSort   Sorts landmarks by distance from a particular
            coordinate.
 */
-
-#if !defined(Q_CC_MWERKS)
-template<> QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate) *QSharedDataPointer<QTM_PREPEND_NAMESPACE(QLandmarkSortOrderPrivate)>::clone()
-{
-    return d->clone();
-}
-#endif
 
 /*!
     Constructs a landmark sort order.

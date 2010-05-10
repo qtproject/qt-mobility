@@ -59,7 +59,8 @@ class QGeoCodeReply;
 
 class QGeoCodingServicePrivate;
 
-class Q_LOCATION_EXPORT QGeoCodingService : public QObject {
+class Q_LOCATION_EXPORT QGeoCodingService : public QObject
+{
 
     Q_OBJECT
 
@@ -83,14 +84,14 @@ public:
     virtual ~QGeoCodingService();
 
     virtual QGeoCodeReply* reverseGeocode(const QGeoCoordinate &coord,
-                                    const QGeoBoundingBox &bounds = QGeoBoundingBox(),
-                                    const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
+                                          const QGeoBoundingBox &bounds = QGeoBoundingBox(),
+                                          const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
     virtual QGeoCodeReply* geocode(const QGeoAddress &address,
-                                    const QGeoBoundingBox &bounds = QGeoBoundingBox(),
-                                    const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
+                                   const QGeoBoundingBox &bounds = QGeoBoundingBox(),
+                                   const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
     virtual QGeoCodeReply* geocode(const QString &locationString,
-                                    const QGeoBoundingBox &bounds = QGeoBoundingBox(),
-                                    const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
+                                   const QGeoBoundingBox &bounds = QGeoBoundingBox(),
+                                   const QGeoCodeRequestOptions &options = QGeoCodeRequestOptions()) = 0;
 
     SupportLevel supportedRequestOption(RequestOption option) const;
 

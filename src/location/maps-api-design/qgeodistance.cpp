@@ -75,13 +75,13 @@ Represents a unit of measurement.
     \a units.
 */
 QGeoDistance::QGeoDistance(double magnitude, DistanceUnits units)
-    : d_ptr(new QGeoDistancePrivate(magnitude, units)) {}
+        : d_ptr(new QGeoDistancePrivate(magnitude, units)) {}
 
 /*!
     Constructs a QGeoDistance object from the contents of \a other.
 */
 QGeoDistance::QGeoDistance(const QGeoDistance &other)
-    :d_ptr(new QGeoDistancePrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoDistancePrivate(*(other.d_ptr))) {}
 
 /*!
     Destroys this QGeoDistance object.
@@ -96,7 +96,7 @@ QGeoDistance::~QGeoDistance()
     Assigns \a other to the current QGeoDistance object, then returns a reference
     to the current QGeoDistance object.
 */
-QGeoDistance& QGeoDistance::operator= (const QGeoDistance &other)
+QGeoDistance& QGeoDistance::operator= (const QGeoDistance & other)
 {
     *d_ptr = *(other.d_ptr);
     return *this;
@@ -161,16 +161,16 @@ double QGeoDistance::convert(QGeoDistance::DistanceUnits units) const
 *******************************************************************************/
 
 QGeoDistancePrivate::QGeoDistancePrivate(double magnitude, QGeoDistance::DistanceUnits units)
-    : magnitude(magnitude),
-    units(units) {}
+        : magnitude(magnitude),
+        units(units) {}
 
 QGeoDistancePrivate::QGeoDistancePrivate(const QGeoDistancePrivate &other)
-    : magnitude(other.magnitude),
-    units(other.units){}
+        : magnitude(other.magnitude),
+        units(other.units) {}
 
 QGeoDistancePrivate::~QGeoDistancePrivate() {}
 
-QGeoDistancePrivate& QGeoDistancePrivate::operator= (const QGeoDistancePrivate &other)
+QGeoDistancePrivate& QGeoDistancePrivate::operator= (const QGeoDistancePrivate & other)
 {
     magnitude = other.magnitude;
     units = other.units;

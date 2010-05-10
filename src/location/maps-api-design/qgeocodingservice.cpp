@@ -127,7 +127,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoCodingService object.
 */
 QGeoCodingService::QGeoCodingService()
-    : d_ptr(new QGeoCodingServicePrivate()) {}
+        : d_ptr(new QGeoCodingServicePrivate()) {}
 
 /*!
     Destroys this QGeoCodingService object.
@@ -265,7 +265,7 @@ QGeoCodingService::SupportLevel QGeoCodingService::supportedRequestOption(QGeoCo
     \sa QGeoCodingService::SupportLevel
 */
 void QGeoCodingService::setSupportedRequestOption(QGeoCodingService::RequestOption option,
-                                                  QGeoCodingService::SupportLevel level)
+        QGeoCodingService::SupportLevel level)
 {
     Q_D(QGeoCodingService);
     d->supportedRequestOption.insert(option, level);
@@ -314,11 +314,11 @@ void QGeoCodingService::setSupportedRequestOption(QGeoCodingService::RequestOpti
 QGeoCodingServicePrivate::QGeoCodingServicePrivate() {}
 
 QGeoCodingServicePrivate::QGeoCodingServicePrivate(const QGeoCodingServicePrivate &other)
-    : supportedRequestOption(other.supportedRequestOption) {}
+        : supportedRequestOption(other.supportedRequestOption) {}
 
 QGeoCodingServicePrivate::~QGeoCodingServicePrivate() {}
 
-QGeoCodingServicePrivate& QGeoCodingServicePrivate::operator= (const QGeoCodingServicePrivate &other)
+QGeoCodingServicePrivate& QGeoCodingServicePrivate::operator= (const QGeoCodingServicePrivate & other)
 {
     supportedRequestOption = other.supportedRequestOption;
 

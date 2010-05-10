@@ -74,8 +74,8 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoCodeReply object with parent \a parent.
 */
 QGeoCodeReply::QGeoCodeReply(QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoCodeReplyPrivate()) {}
+        : QObject(parent),
+        d_ptr(new QGeoCodeReplyPrivate()) {}
 
 /*!
     Destroys this QGeoCodeReply object.
@@ -188,11 +188,11 @@ QList<QGeoLocation> QGeoCodeReply::locations() const
 QGeoCodeReplyPrivate::QGeoCodeReplyPrivate() {}
 
 QGeoCodeReplyPrivate::QGeoCodeReplyPrivate(const QGeoCodeReplyPrivate &other)
-    : locations(other.locations) {}
+        : locations(other.locations) {}
 
 QGeoCodeReplyPrivate::~QGeoCodeReplyPrivate() {}
 
-QGeoCodeReplyPrivate& QGeoCodeReplyPrivate::operator= (const QGeoCodeReplyPrivate &other)
+QGeoCodeReplyPrivate& QGeoCodeReplyPrivate::operator= (const QGeoCodeReplyPrivate & other)
 {
     locations = other.locations;
     return *this;

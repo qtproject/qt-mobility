@@ -60,7 +60,8 @@ class QGeoNavigationInstruction;
 
 class QGeoRoutePrivate;
 
-class Q_LOCATION_EXPORT QGeoRoute {
+class Q_LOCATION_EXPORT QGeoRoute
+{
 
 public:
     enum TravelMode {
@@ -118,11 +119,11 @@ public:
     void setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments);
     QList<const QGeoRouteSegment *> routeSegments() const;
 
-    void setDuration(const QDateTime &duration);
-    QDateTime duration() const;
+    void setEstimatedTravelTime(const QDateTime &travelTime);
+    QDateTime estimatedTravelTime() const;
 
-    void setDistance(const QGeoDistance &distance);
-    QGeoDistance distance() const;
+    void setLength(const QGeoDistance &length);
+    QGeoDistance length() const;
 
     QGeoCoordinate closestPointOnRoute(const QGeoCoordinate &position) const;
 

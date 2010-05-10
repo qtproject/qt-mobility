@@ -68,7 +68,8 @@ class QGeoNavigationInstructionPrivate;
  which was already a close match to what I was after.
 */
 
-class Q_LOCATION_EXPORT QGeoNavigationInstruction {
+class Q_LOCATION_EXPORT QGeoNavigationInstruction
+{
 
 public:
     enum InstructionType {
