@@ -55,8 +55,6 @@
 
 #include <centralrepository.h>
 
-const int KRequestTimeout = 30000; // in ms
-
 // Telephony Configuration API
 // Keys under this category are used in defining telephony configuration.
 const TUid KCRUidTelConfiguration = {0x102828B8};
@@ -570,8 +568,8 @@ bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactM
     if (!engine.startRequest(req)) {
         *qtError = QContactManager::LockedError;
     } else {
-        if (!engine.waitForRequestFinished(req, KRequestTimeout))
-            *qtError = QContactManager::UnspecifiedError; // timeout occurred
+        if (!engine.waitForRequestFinished(req, 0)) // no timeout
+            *qtError = QContactManager::UnspecifiedError;
     }
     engine.requestDestroyed(req);
     
