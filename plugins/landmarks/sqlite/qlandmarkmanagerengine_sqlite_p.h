@@ -122,11 +122,11 @@ public:
                         QString *errorString);
 
     bool importLandmarks(QIODevice *device,
-                         QLandmarkManager::Format format,
+                         const QByteArray &format,
                          QLandmarkManager::Error *error,
                          QString *errorString);
     bool exportLandmarks(QIODevice *device,
-                         QLandmarkManager::Format format,
+                         const QByteArray &format,
                          QList<QLandmarkId> landmarkIds,
                          QLandmarkManager::Error *error,
                          QString *errorString);

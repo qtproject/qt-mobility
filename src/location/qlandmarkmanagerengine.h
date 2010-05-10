@@ -124,10 +124,10 @@ public:
     virtual bool saveCategory(QLandmarkCategory* category, QLandmarkManager::Error *error, QString *errorString) = 0;
     virtual bool removeCategory(const QLandmarkCategoryId &categoryId, QLandmarkManager::Error *error, QString *errorString) = 0;
 
-    virtual bool importLandmarks(QIODevice *device, QLandmarkManager::Format format, QLandmarkManager::Error *error,
-                                 QString *errorString) = 0;
-    virtual bool exportLandmarks(QIODevice *device, QLandmarkManager::Format format, QList<QLandmarkId> landmarkIds,
-                                 QLandmarkManager::Error *error, QString *errorString) = 0;
+    virtual bool importLandmarks(QIODevice *device, const QByteArray &format, QLandmarkManager::Error *error,
+                                 QString *errorString);
+    virtual bool exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds,
+                                 QLandmarkManager::Error *error, QString *errorString) const;
 
     virtual bool isFilterSupported(QLandmarkFilter::FilterType filterType) const = 0;
 

@@ -121,7 +121,7 @@ void QLandmarkImportRequest::setFileName(const QString &fileName)
 /*!
     Returns the expected data format for the import operation.
 */
-QLandmarkManager::Format QLandmarkImportRequest::format() const
+QByteArray QLandmarkImportRequest::format() const
 {
     Q_D(const QLandmarkImportRequest);
     return d->format;
@@ -130,7 +130,7 @@ QLandmarkManager::Format QLandmarkImportRequest::format() const
 /*!
     Sets the expected data \a format for the import operation.
 */
-void QLandmarkImportRequest::setFormat(QLandmarkManager::Format format)
+void QLandmarkImportRequest::setFormat(const QByteArray &format)
 {
     Q_D(QLandmarkImportRequest);
     d->format = format;

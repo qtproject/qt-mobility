@@ -126,7 +126,7 @@ void QLandmarkExportRequest::setFileName(const QString &fileName)
 /*!
     Returns the data format for the export operation.
 */
-QLandmarkManager::Format QLandmarkExportRequest::format() const
+QByteArray QLandmarkExportRequest::format() const
 {
     Q_D(const QLandmarkExportRequest);
     return d->format;
@@ -135,7 +135,7 @@ QLandmarkManager::Format QLandmarkExportRequest::format() const
 /*!
     Sets the data \a format for the export operation.
 */
-void QLandmarkExportRequest::setFormat(QLandmarkManager::Format format)
+void QLandmarkExportRequest::setFormat(const QByteArray &format)
 {
     Q_D(QLandmarkExportRequest);
     d->format = format;

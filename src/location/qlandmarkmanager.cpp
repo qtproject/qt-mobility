@@ -579,7 +579,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
     returns false.  It may be possible that only a subset of
     landmarks are imported.
 */
-bool QLandmarkManager::importLandmarks(QIODevice *device, Format format)
+bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &format)
 {
     Q_D(QLandmarkManager);
 
@@ -604,7 +604,7 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, Format format)
     returns false.  It may be possible that only a subset of landmarks
     are imported.
 */
-bool QLandmarkManager::importLandmarks(const QString &fileName, Format format)
+bool QLandmarkManager::importLandmarks(const QString &fileName, const QByteArray &format)
 {
     QFile file(fileName);
 
@@ -631,7 +631,7 @@ bool QLandmarkManager::importLandmarks(const QString &fileName, Format format)
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(QIODevice *device, Format format, QList<QLandmarkId> landmarkIds)
+bool QLandmarkManager::exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds)
 {
     Q_D(QLandmarkManager);
 
@@ -658,7 +658,7 @@ bool QLandmarkManager::exportLandmarks(QIODevice *device, Format format, QList<Q
     otherwise returns false.  It may be possible that only a subset
     of landmarks are exported.
 */
-bool QLandmarkManager::exportLandmarks(const QString &fileName, Format format, QList<QLandmarkId> landmarkIds)
+bool QLandmarkManager::exportLandmarks(const QString &fileName, const QByteArray &format, QList<QLandmarkId> landmarkIds)
 {
     QFile file(fileName);
 

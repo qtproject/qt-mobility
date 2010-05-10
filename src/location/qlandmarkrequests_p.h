@@ -151,7 +151,7 @@ public:
 
     QIODevice *device;
     QString fileName;
-    QLandmarkManager::Format format;
+    QByteArray format;
     QList<QLandmarkId> landmarkIds;
 };
 
@@ -163,7 +163,7 @@ public:
 
     QIODevice *device;
     QString fileName;
-    QLandmarkManager::Format format;
+    QByteArray format;
     QList<QLandmarkId> landmarkIds;
 };
 

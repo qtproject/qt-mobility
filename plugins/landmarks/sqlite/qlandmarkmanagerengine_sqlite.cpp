@@ -1908,24 +1908,20 @@ bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &cat
 }
 
 bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
-                                                   QLandmarkManager::Format format,
+                                                   const QByteArray &format,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
-    switch (format) {
-        case QLandmarkManager::LandmarkExchange:
+    if (format ==  "LmxV1.0") {
             return importLandmarksLmx(device, error, errorString);
-            break;
-        case QLandmarkManager::GPSExchange:
-            return importLandmarksGpx(device, error, errorString);
-            break;
-        default:
-            if (error)
-                *error = QLandmarkManager::NotSupportedError;
-            if (errorString)
-                *errorString = "The given format is not supported at this time";
-            return false;
-            break;
+    } else if (format == "GpxV1.1") {
+        return importLandmarksGpx(device, error, errorString);
+    } else {
+        if (error)
+            *error = QLandmarkManager::NotSupportedError;
+        if (errorString)
+            *errorString = "The given format is not supported at this time";
+        return false;
     }
 }
 
@@ -1980,25 +1976,21 @@ bool QLandmarkManagerEngineSqlite::importLandmarksGpx(QIODevice *device,
 }
 
 bool QLandmarkManagerEngineSqlite::exportLandmarks(QIODevice *device,
-                                                   QLandmarkManager::Format format,
+                                                   const QByteArray &format,
                                                    QList<QLandmarkId> landmarkIds,
                                                    QLandmarkManager::Error *error,
                                                    QString *errorString)
 {
-    switch (format) {
-        case QLandmarkManager::LandmarkExchange:
+    if (format ==  "LmxV1.0") {
             return exportLandmarksLmx(device, landmarkIds, error, errorString);
-            break;
-        case QLandmarkManager::GPSExchange:
-            return exportLandmarksGpx(device, landmarkIds, error, errorString);
-            break;
-        default:
-            if (error)
-                *error = QLandmarkManager::NotSupportedError;
-            if (errorString)
-                *errorString = "The given format is not supported at this time";
-            return false;
-            break;
+    } else if (format == "GpxV1.1") {
+        return exportLandmarksGpx(device, landmarkIds, error, errorString);
+    } else {
+        if (error)
+            *error = QLandmarkManager::NotSupportedError;
+        if (errorString)
+            *errorString = "The given format is not supported at this time";
+        return false;
     }
 }
 

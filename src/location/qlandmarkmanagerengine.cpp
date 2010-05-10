@@ -56,11 +56,14 @@
 #include "qlandmarkcategoryfetchrequest.h"
 #include "qlandmarkcategoryremoverequest.h"
 #include "qlandmarkcategorysaverequest.h"
-#include "qlandmarkimportrequest.h";
+#include "qlandmarkimportrequest.h"
 #include "qlandmarkexportrequest.h"
 
 #include "qlandmarknamesort.h"
 #include "qlandmarkdistancesort.h"
+
+#include "qlandmarkattributefilter.h"
+#include "qlandmarkboxfilter.h"
 
 #include "qgeocoordinate.h"
 
@@ -377,7 +380,7 @@ bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId &categoryI
     Overall operational errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, QLandmarkManager::Format format,
+bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, const QByteArray &format,
         QLandmarkManager::Error *error, QString *errorString)
 {
     return false;
@@ -396,8 +399,8 @@ bool QLandmarkManagerEngine::importLandmarks(QIODevice *device, QLandmarkManager
     Overall operation errors are stored in \a error and
     \a errorString.
 */
-bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, QLandmarkManager::Format format, QList<QLandmarkId> landmarkIds,
-        QLandmarkManager::Error *error, QString *errorString)
+bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds,
+        QLandmarkManager::Error *error, QString *errorString) const
 {
     return false;
 }
@@ -979,6 +982,68 @@ void QLandmarkManagerEngine::addSorted(QList<QLandmark>* sorted, const QLandmark
  */
 bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLandmark& landmark)
 {
+    switch(filter.type()) {
+        case QLandmarkFilter::DefaultFilter:
+            return true;
+
+        case QLandmarkFilter::AttributeFilter:
+        {
+            const QLandmarkAttributeFilter attribFilter(filter);
+            QStringList filterKeys = attribFilter.attributeKeys();
+            QStringList landmarkKeys = attribFilter.attributeKeys();
+
+            foreach(const QString filterKey, filterKeys)
+            {
+                if (landmarkKeys.contains(filterKey)) {
+                    if (!attribFilter.attribute(filterKey).isValid())
+                        continue;
+
+                    if (attribFilter.attribute(filterKey) == landmark.attribute(filterKey))
+                        continue;
+                    else
+                        return false;
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        }
+        case QLandmarkFilter::BoxFilter:
+        {
+            const QLandmarkBoxFilter boxFilter(filter);
+            if (!boxFilter.topLeftCoordinate().isValid())
+                return false;
+
+            if (!boxFilter.bottomRightCoordinate().isValid())
+                return false;
+
+            double tly = boxFilter.topLeftCoordinate().latitude();
+            double bry = boxFilter.bottomRightCoordinate().latitude();
+            double tlx = boxFilter.topLeftCoordinate().longitude();
+            double brx = boxFilter.bottomRightCoordinate().longitude();
+
+            bool latWrap = (tly < bry);
+            bool longWrap = (tlx > brx);
+
+            if (latWrap)
+                return false;
+
+            //check if landmark is outside the box's latitudes
+            if ( landmark.coordinate().latitude() < bry && landmark.coordinate().latitude() > tly)
+                return false;
+
+            if (longWrap) {
+                if (landmark.coordinate().longitude() >= brx || landmark.coordinate().longitude() <= tlx)
+                    return false;
+            } else {
+                if (landmark.coordinate().longitude() < tlx || landmark.coordinate().longitude() > brx)
+                    return false;
+            }
+
+            //landmark must be within the bounds to reach here.
+            return true;
+        }
+    }
     return false;
 }
 

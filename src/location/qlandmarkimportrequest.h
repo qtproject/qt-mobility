@@ -60,8 +60,8 @@ public:
     QString fileName() const;
     void setFileName(const QString &fileName);
 
-    QLandmarkManager::Format format() const;
-    void setFormat(QLandmarkManager::Format format);
+    QByteArray format() const;
+    void setFormat(const QByteArray &format);
 
     QList<QLandmarkId> landmarkIds() const;
 private:

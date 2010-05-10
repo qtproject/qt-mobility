@@ -113,10 +113,10 @@ public:
                                    const QList<QLandmarkSortOrder> &sortOrders) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
 
-    bool importLandmarks(QIODevice *device, Format format);
-    bool importLandmarks(const QString &fileName, Format format);
-    bool exportLandmarks(QIODevice *device, Format format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
-    bool exportLandmarks(const QString &, Format format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+    bool importLandmarks(QIODevice *device, const QByteArray &format= QByteArray());
+    bool importLandmarks(const QString &fileName, const QByteArray &format = QByteArray());
+    bool exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
+    bool exportLandmarks(const QString &, const QByteArray &format, QList<QLandmarkId> landmarkIds = QList<QLandmarkId>());
 
     Error error() const;
     QString errorString() const;
