@@ -1,4 +1,4 @@
-INCLUDE_PATH += requests
+INCLUDEPATH += requests
 
 PUBLIC_HEADERS += 
 

@@ -224,7 +224,7 @@ QString QOrganizerItem::type() const
     // type is detail 0
     QString type = d->m_details.at(0).value(QOrganizerItemType::FieldType);
     if (type.isEmpty())
-        return QString(QLatin1String(QOrganizerItemType::TypeOrganizerItem));
+        return QString(QLatin1String(QOrganizerItemType::TypeNote));
     return type;
 }
 

@@ -199,7 +199,7 @@ QString QOrganizerItemManager::buildUri(const QString& managerName, const QMap<Q
     }
 
     if (implementationVersion != -1) {
-        QString versionString = QString(QLatin1String(QTCONTACTS_IMPLEMENTATION_VERSION_NAME));
+        QString versionString = QString(QLatin1String(QTCALENDAR_IMPLEMENTATION_VERSION_NAME));
         versionString += QString::fromAscii("=");
         versionString += QString::number(implementationVersion);
         escapedParams.append(versionString);
@@ -276,7 +276,7 @@ QOrganizerItemManager::QOrganizerItemManager(const QString& managerName, int imp
     d(new QOrganizerItemManagerData)
 {
     QMap<QString, QString> params = parameters;
-    params[QString(QLatin1String(QTCONTACTS_IMPLEMENTATION_VERSION_NAME))] = QString::number(implementationVersion);
+    params[QString(QLatin1String(QTCALENDAR_IMPLEMENTATION_VERSION_NAME))] = QString::number(implementationVersion);
     createEngine(managerName, params);
 }
 
@@ -318,10 +318,10 @@ QOrganizerItemManager::Error QOrganizerItemManager::error() const
   The client may instruct the manager that it does not require all possible information about each instance by specifying a fetch hint \a fetchHint;
   the manager can choose to ignore the fetch hint, but if it does so, it must return all possible information about each instance.
   */
-QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->itemInstances(filter, sortOrders, fetchHint);
+    return d->m_engine->itemInstances(filter, sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -330,7 +330,7 @@ QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItemF
 QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->organizeritemIds(QOrganizerItemFilter(), sortOrders, &d->m_error);
+    return d->m_engine->itemIds(QOrganizerItemFilter(), sortOrders, &d->m_error);
 }
 
 /*!
@@ -340,7 +340,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganiz
 QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->organizeritemIds(filter, sortOrders, &d->m_error);
+    return d->m_engine->itemIds(filter, sortOrders, &d->m_error);
 }
 
 /*!
@@ -358,7 +358,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QOrganizerItem
 QList<QOrganizerItem> QOrganizerItemManager::items(const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->organizeritems(QOrganizerItemFilter(), sortOrders, fetchHint, &d->m_error);
+    return d->m_engine->items(QOrganizerItemFilter(), sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -379,7 +379,7 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QList<QOrganizerItemSor
 QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->organizeritems(filter, sortOrders, fetchHint, &d->m_error);
+    return d->m_engine->items(filter, sortOrders, fetchHint, &d->m_error);
 }
 
 /*!
@@ -400,7 +400,7 @@ QList<QOrganizerItem> QOrganizerItemManager::items(const QOrganizerItemFilter& f
 QOrganizerItem QOrganizerItemManager::item(const QOrganizerItemLocalId& organizeritemId, const QOrganizerItemFetchHint& fetchHint) const
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->organizeritem(organizeritemId, fetchHint, &d->m_error);
+    return d->m_engine->item(organizeritemId, fetchHint, &d->m_error);
 }
 
 /*!
@@ -435,7 +435,7 @@ bool QOrganizerItemManager::saveItem(QOrganizerItem* organizeritem)
 {
     if (organizeritem) {
         d->m_error = QOrganizerItemManager::NoError;
-        return d->m_engine->saveOrganizerItem(organizeritem, &d->m_error);
+        return d->m_engine->saveItem(organizeritem, &d->m_error);
     } else {
         d->m_error = QOrganizerItemManager::BadArgumentError;
         return false;
@@ -450,7 +450,7 @@ bool QOrganizerItemManager::saveItem(QOrganizerItem* organizeritem)
 bool QOrganizerItemManager::removeItem(const QOrganizerItemLocalId& organizeritemId)
 {
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->removeOrganizerItem(organizeritemId, &d->m_error);
+    return d->m_engine->removeItem(organizeritemId, &d->m_error);
 }
 
 /*!
@@ -474,12 +474,12 @@ bool QOrganizerItemManager::saveItems(QList<QOrganizerItem>* organizeritems, QMa
     if (errorMap)
         errorMap->clear();
     if (!organizeritems) {
-        d->m_error =QOrganizerItemManager::BadArgumentError;
+        d->m_error = QOrganizerItemManager::BadArgumentError;
         return false;
     }
 
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->saveOrganizerItems(organizeritems, errorMap, &d->m_error);
+    return d->m_engine->saveItems(organizeritems, errorMap, &d->m_error);
 }
 
 /*!
@@ -514,7 +514,7 @@ bool QOrganizerItemManager::removeItems(const QList<QOrganizerItemLocalId>& orga
     }
 
     d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->removeOrganizerItems(organizeritemIds, errorMap, &d->m_error);
+    return d->m_engine->removeItems(organizeritemIds, errorMap, &d->m_error);
 }
 
 /*!
@@ -579,8 +579,8 @@ void QOrganizerItemManager::synthesizeItemDisplayLabel(QOrganizerItem *organizer
  */
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemManager::detailDefinitions(const QString& organizeritemType) const
 {
-    if (!supportedOrganizerItemTypes().contains(organizeritemType)) {
-        d->m_error = QOrganizerItemManager::InvalidOrganizerItemTypeError;
+    if (!supportedItemTypes().contains(organizeritemType)) {
+        d->m_error = QOrganizerItemManager::InvalidItemTypeError;
         return QMap<QString, QOrganizerItemDetailDefinition>();
     }
 
@@ -591,8 +591,8 @@ QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemManager::detailDefin
 /*! Returns the definition identified by the given \a definitionName that is valid for the organizeritems whose type is the given \a organizeritemType in this store, or a default-constructed QOrganizerItemDetailDefinition if no such definition exists */
 QOrganizerItemDetailDefinition QOrganizerItemManager::detailDefinition(const QString& definitionName, const QString& organizeritemType) const
 {
-    if (!supportedOrganizerItemTypes().contains(organizeritemType)) {
-        d->m_error = QOrganizerItemManager::InvalidOrganizerItemTypeError;
+    if (!supportedItemTypes().contains(organizeritemType)) {
+        d->m_error = QOrganizerItemManager::InvalidItemTypeError;
         return QOrganizerItemDetailDefinition();
     }
 
@@ -603,8 +603,8 @@ QOrganizerItemDetailDefinition QOrganizerItemManager::detailDefinition(const QSt
 /*! Persists the given definition \a def in the database, which is valid for organizeritems whose type is the given \a organizeritemType.  Returns true if the definition was saved successfully, otherwise returns false */
 bool QOrganizerItemManager::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType)
 {
-    if (!supportedOrganizerItemTypes().contains(organizeritemType)) {
-        d->m_error = QOrganizerItemManager::InvalidOrganizerItemTypeError;
+    if (!supportedItemTypes().contains(organizeritemType)) {
+        d->m_error = QOrganizerItemManager::InvalidItemTypeError;
         return false;
     }
 
@@ -615,8 +615,8 @@ bool QOrganizerItemManager::saveDetailDefinition(const QOrganizerItemDetailDefin
 /*! Removes the detail definition identified by \a definitionName from the database, which is valid for organizeritems whose type is the given \a organizeritemType.  Returns true if the definition was removed successfully, otherwise returns false */
 bool QOrganizerItemManager::removeDetailDefinition(const QString& definitionName, const QString& organizeritemType)
 {
-    if (!supportedOrganizerItemTypes().contains(organizeritemType)) {
-        d->m_error = QOrganizerItemManager::InvalidOrganizerItemTypeError;
+    if (!supportedItemTypes().contains(organizeritemType)) {
+        d->m_error = QOrganizerItemManager::InvalidItemTypeError;
         return false;
     }
 
@@ -670,9 +670,9 @@ bool QOrganizerItemManager::isFilterSupported(const QOrganizerItemFilter& filter
   for the \c QOrganizerItemType::FieldType field of the QOrganizerItemType definition
   which is valid in this manager.
  */
-QStringList QOrganizerItemManager::supportedOrganizerItemTypes() const
+QStringList QOrganizerItemManager::supportedItemTypes() const
 {
-    return d->m_engine->supportedOrganizerItemTypes();
+    return d->m_engine->supportedItemTypes();
 }
 
 /*!

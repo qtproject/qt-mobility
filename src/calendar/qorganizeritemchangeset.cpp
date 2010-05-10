@@ -115,108 +115,108 @@ bool QOrganizerItemChangeSet::dataChanged()
    Returns the set of ids of organizeritems which have been added to
    the database.
  */
-QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::addedOrganizerItems() const
+QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::addedItems() const
 {
-    return d->m_addedOrganizerItems;
+    return d->m_addedItems;
 }
 
 /*!
   Inserts the given organizeritem id \a addedOrganizerItemId into the set of ids of organizeritems
   which have been added to the database.
  */
-void QOrganizerItemChangeSet::insertAddedOrganizerItem(QOrganizerItemLocalId addedOrganizerItemId)
+void QOrganizerItemChangeSet::insertAddedItem(QOrganizerItemLocalId addedOrganizerItemId)
 {
-    d->m_addedOrganizerItems.insert(addedOrganizerItemId);
+    d->m_addedItems.insert(addedOrganizerItemId);
 }
 
 /*!
   Inserts each of the given organizeritem ids \a addedOrganizerItemIds into the set of ids of organizeritems
   which have been added to the database.
  */
-void QOrganizerItemChangeSet::insertAddedOrganizerItems(const QList<QOrganizerItemLocalId>& addedOrganizerItemIds)
+void QOrganizerItemChangeSet::insertAddedItems(const QList<QOrganizerItemLocalId>& addedOrganizerItemIds)
 {
     foreach (const QOrganizerItemLocalId& id, addedOrganizerItemIds)
-        d->m_addedOrganizerItems.insert(id);
+        d->m_addedItems.insert(id);
 }
 
 /*!
   Clears the set of ids of organizeritems which have been added to the database
  */
-void QOrganizerItemChangeSet::clearAddedOrganizerItems()
+void QOrganizerItemChangeSet::clearAddedItems()
 {
-    d->m_addedOrganizerItems.clear();
+    d->m_addedItems.clear();
 }
 
 /*!
    Returns the set of ids of organizeritems which have been changed in
    the database.
  */
-QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::changedOrganizerItems() const
+QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::changedItems() const
 {
-    return d->m_changedOrganizerItems;
+    return d->m_changedItems;
 }
 
 /*!
   Inserts the given organizeritem id \a changedOrganizerItemId into the set of ids of organizeritems
   which have been changed to the database.
  */
-void QOrganizerItemChangeSet::insertChangedOrganizerItem(QOrganizerItemLocalId changedOrganizerItemId)
+void QOrganizerItemChangeSet::insertChangedItem(QOrganizerItemLocalId changedOrganizerItemId)
 {
-    d->m_changedOrganizerItems.insert(changedOrganizerItemId);
+    d->m_changedItems.insert(changedOrganizerItemId);
 }
 
 /*!
   Inserts each of the given organizeritem ids \a changedOrganizerItemIds into the set of ids of organizeritems
   which have been changed to the database.
  */
-void QOrganizerItemChangeSet::insertChangedOrganizerItems(const QList<QOrganizerItemLocalId>& changedOrganizerItemIds)
+void QOrganizerItemChangeSet::insertChangedItems(const QList<QOrganizerItemLocalId>& changedOrganizerItemIds)
 {
     foreach (const QOrganizerItemLocalId& id, changedOrganizerItemIds)
-        d->m_changedOrganizerItems.insert(id);
+        d->m_changedItems.insert(id);
 }
 
 /*!
   Clears the set of ids of organizeritems which have been changed to the database
  */
-void QOrganizerItemChangeSet::clearChangedOrganizerItems()
+void QOrganizerItemChangeSet::clearChangedItems()
 {
-    d->m_changedOrganizerItems.clear();
+    d->m_changedItems.clear();
 }
 
 /*!
    Returns the set of ids of organizeritems which have been removed from
    the database.
  */
-QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::removedOrganizerItems() const
+QSet<QOrganizerItemLocalId> QOrganizerItemChangeSet::removedItems() const
 {
-    return d->m_removedOrganizerItems;
+    return d->m_removedItems;
 }
 
 /*!
   Inserts the given organizeritem id \a removedOrganizerItemId into the set of ids of organizeritems
   which have been removed to the database.
  */
-void QOrganizerItemChangeSet::insertRemovedOrganizerItem(QOrganizerItemLocalId removedOrganizerItemId)
+void QOrganizerItemChangeSet::insertRemovedItem(QOrganizerItemLocalId removedOrganizerItemId)
 {
-    d->m_removedOrganizerItems.insert(removedOrganizerItemId);
+    d->m_removedItems.insert(removedOrganizerItemId);
 }
 
 /*!
   Inserts each of the given organizeritem ids \a removedOrganizerItemIds into the set of ids of organizeritems
   which have been removed to the database.
  */
-void QOrganizerItemChangeSet::insertRemovedOrganizerItems(const QList<QOrganizerItemLocalId>& removedOrganizerItemIds)
+void QOrganizerItemChangeSet::insertRemovedItems(const QList<QOrganizerItemLocalId>& removedOrganizerItemIds)
 {
     foreach (const QOrganizerItemLocalId& id, removedOrganizerItemIds)
-        d->m_removedOrganizerItems.insert(id);
+        d->m_removedItems.insert(id);
 }
 
 /*!
   Clears the set of ids of organizeritems which have been removed to the database
  */
-void QOrganizerItemChangeSet::clearRemovedOrganizerItems()
+void QOrganizerItemChangeSet::clearRemovedItems()
 {
-    d->m_removedOrganizerItems.clear();
+    d->m_removedItems.clear();
 }
 
 
@@ -226,9 +226,9 @@ void QOrganizerItemChangeSet::clearRemovedOrganizerItems()
 void QOrganizerItemChangeSet::clearAll()
 {
     d->m_dataChanged = false;
-    d->m_addedOrganizerItems.clear();
-    d->m_changedOrganizerItems.clear();
-    d->m_removedOrganizerItems.clear();
+    d->m_addedItems.clear();
+    d->m_changedItems.clear();
+    d->m_removedItems.clear();
 }
 
 /*!
@@ -242,12 +242,12 @@ void QOrganizerItemChangeSet::emitSignals(QOrganizerItemManagerEngine *engine)
     if (d->m_dataChanged) {
         emit engine->dataChanged();
     } else {
-        if (!d->m_addedOrganizerItems.isEmpty())
-            emit engine->organizeritemsAdded(d->m_addedOrganizerItems.toList());
-        if (!d->m_changedOrganizerItems.isEmpty())
-            emit engine->organizeritemsChanged(d->m_changedOrganizerItems.toList());
-        if (!d->m_removedOrganizerItems.isEmpty())
-            emit engine->organizeritemsRemoved(d->m_removedOrganizerItems.toList());
+        if (!d->m_addedItems.isEmpty())
+            emit engine->itemsAdded(d->m_addedItems.toList());
+        if (!d->m_changedItems.isEmpty())
+            emit engine->itemsChanged(d->m_changedItems.toList());
+        if (!d->m_removedItems.isEmpty())
+            emit engine->itemsRemoved(d->m_removedItems.toList());
     }
 }
 
