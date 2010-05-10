@@ -2012,6 +2012,20 @@ void tst_QContactManager::signalEmission()
     QTRY_COMPARE(spyCM.count(), 0);
 
     QScopedPointer<QContactManager> m2(QContactManager::fromUri(uri));
+    
+    // During construction SIM backend (m2) will try writing contacts with 
+    // nickname, email and additional number to find out if the SIM card
+    // will support these fields. The other backend (m1) will then receive
+    // signals about that. These need to be caught so they don't interfere
+    // with the tests. (This trial and error method is used because existing
+    // API for checking the availability of these fields is not public.)
+	// NOTE: This applies only to pre 10.1 platforms (S60 3.1, 3.2, ect.)
+    if (uri.contains("symbiansim")) {
+        QTest::qWait(0);
+        spyCA.clear();
+        spyCM.clear();
+        spyCR.clear();
+    }
 
     QVERIFY(m1->hasFeature(QContactManager::Anonymous) ==
         m2->hasFeature(QContactManager::Anonymous));
