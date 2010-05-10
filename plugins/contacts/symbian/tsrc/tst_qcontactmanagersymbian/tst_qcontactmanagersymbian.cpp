@@ -110,6 +110,8 @@ private slots:
     void displayLabel_data();
     void displayLabel();
     void timestamp();
+    void onlineAccount_data();
+    void onlineAccount();
     void invalidContactItems();
 
 private:
@@ -562,7 +564,7 @@ void tst_QContactManagerSymbian::displayLabel_data()
  */
 void tst_QContactManagerSymbian::displayLabel()
 {
-    qDebug() << QTest::currentDataTag();
+    //qDebug() << QTest::currentDataTag();
     QFETCH(QString, contactType);
     QFETCH(QString, displayLabel);
     QFETCH(QStringList, details);
@@ -625,6 +627,51 @@ void tst_QContactManagerSymbian::timestamp()
     QVERIFY(timestamp.lastModified().secsTo(current) >= 0);
 
     // Delete the contact
+    QVERIFY(m_cm->removeContact(contact.localId()));
+}
+
+void tst_QContactManagerSymbian::onlineAccount_data()
+{
+    QTest::addColumn<QString>("accountUri");
+    QTest::addColumn<QStringList>("subTypes");
+
+    QTest::newRow("SubTypeSip")
+        << QString("+44728888888")
+        << (QStringList()
+            << QContactOnlineAccount::SubTypeSip);
+    
+    QTest::newRow("SubTypeSipVoip")
+        << QString("+44727777777")
+        << (QStringList()
+            << QContactOnlineAccount::SubTypeSipVoip);
+
+    QTest::newRow("SubTypeVideoShare")
+        << QString("+44726666666")
+        << (QStringList()
+            << QContactOnlineAccount::SubTypeVideoShare);
+}
+
+void tst_QContactManagerSymbian::onlineAccount()
+{
+    QFETCH(QString, accountUri);
+    QFETCH(QStringList, subTypes);
+
+    // Save a contact
+    QContact contact = createContact(QContactType::TypeContact, "James", "Hunt");
+    QVERIFY(m_cm->saveContact(&contact));
+    QContactOnlineAccount onlineAccount;
+    onlineAccount.setAccountUri(accountUri);
+    onlineAccount.setSubTypes(subTypes);
+    contact.saveDetail(&onlineAccount);
+    QVERIFY(m_cm->saveContact(&contact));
+
+    // verify by reading the saved contact and comparing online account data
+    QContact retrievedContact = m_cm->contact(contact.localId());
+    QContactOnlineAccount retrievedOnlineAccount = contact.detail(QContactOnlineAccount::DefinitionName);
+    QCOMPARE(retrievedOnlineAccount.accountUri(), accountUri);
+    QCOMPARE(retrievedOnlineAccount.subTypes(), subTypes);
+
+    // Remove contact
     QVERIFY(m_cm->removeContact(contact.localId()));
 }
 

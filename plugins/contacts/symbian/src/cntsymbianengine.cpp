@@ -730,7 +730,6 @@ bool CntSymbianEngine::removeRelationships(const QList<QContactRelationship>& re
 
 QMap<QString, QContactDetailDefinition> CntSymbianEngine::detailDefinitions(const QString& contactType, QContactManager::Error* error) const
 {
-    // TODO: update for SIM contacts later
     if (contactType != QContactType::TypeContact && contactType != QContactType::TypeGroup) {
         *error = QContactManager::InvalidContactTypeError;
         return QMap<QString, QContactDetailDefinition>();
