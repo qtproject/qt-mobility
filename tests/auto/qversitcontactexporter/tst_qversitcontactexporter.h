@@ -70,6 +70,7 @@ private slots:
 
     void testConvertContact();
     void testContactDetailHandler();
+    void testContactDetailHandlerV2();
     void testEncodeName();
     void testEncodePhoneNumber();
     void testEncodeEmailAddress();
@@ -104,7 +105,6 @@ private:
 private: // Data
     QVersitContactExporter* mExporter;
     MyQVersitResourceHandler* mResourceHandler;
-    MyQVersitContactExporterDetailHandler* mDetailHandler;
 };
 
 #endif // tst_QVERSITCONTACTEXPORTER_H

@@ -206,14 +206,31 @@ QMap<int, QVersitContactExporter::Error> QVersitContactExporter::errors() const
  * Sets \a handler to be the handler for processing QContactDetails, or 0 to have no handler.
  *
  * Does not take ownership of the handler.  The client should ensure the handler remains valid for
- * the lifetime of the exporter.
+ * the lifetime of the exporter.  This function is used for version 1 handlers.
  */
 void QVersitContactExporter::setDetailHandler(QVersitContactExporterDetailHandler* handler)
 {
+    d->mDetailHandlerVersion = 1;
     d->mDetailHandler = handler;
+    d->mDetailHandler2 = 0;
 }
 
 /*!
+ * Sets \a handler to be the handler for processing QContactDetails, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.  This function is used for version 2 and above handlers.
+ */
+void QVersitContactExporter::setDetailHandler(QVersitContactExporterDetailHandlerV2* handler)
+{
+    if (handler)
+        d->mDetailHandlerVersion = handler->version();
+    d->mDetailHandler = 0;
+    d->mDetailHandler2 = handler;
+}
+
+/*!
+ * \deprecated
  * Gets the handler for processing QContactDetails.
  */
 QVersitContactExporterDetailHandler* QVersitContactExporter::detailHandler() const

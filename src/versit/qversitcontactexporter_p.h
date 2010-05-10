@@ -75,29 +75,93 @@ public:
 
 protected:
     static bool documentContainsName(const QVersitDocument& document);
-    void encodeName(QVersitProperty& property, const QContactDetail& detail);
-    void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
-    void encodeEmail(QVersitProperty& property, const QContactDetail& detail);
-    void encodeAddress(QVersitProperty& property, const QContactDetail& detail);
-    void encodeUrl(QVersitProperty& property, const QContactDetail& detail);
-    void encodeUid(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeRev(QVersitProperty& property, const QContactDetail& detail);
-    void encodeBirthDay(QVersitProperty& property, const QContactDetail& detail);
-    void encodeNote(QVersitProperty& property, const QContactDetail& detail);
-    void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
-    void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
-    void encodeGender(QVersitProperty& property, const QContactDetail& detail);
-    void encodeNickname(QVersitDocument& document, const QContactDetail& detail);
-    void encodeTag(QVersitDocument& document, const QContactDetail& detail);
-    void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
-    bool encodeRingtone(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeThumbnail(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeAvatar(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeDisplayLabel(QVersitProperty& property,
-        const QContactDetail& detail,
-        const QContact& contact);
+    void encodeName(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodePhoneNumber(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeEmail(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeAddress(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeUrl(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeUid(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeRev(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeBirthDay(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeNote(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeGeoLocation(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeOrganization(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeRingtone(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeThumbnail(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeAvatar(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeGender(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeNickname(
+            const QContactDetail &detail,
+            QVersitDocument* document,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeTag(
+            const QContactDetail &detail,
+            QVersitDocument* document,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeAnniversary(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeOnlineAccount(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeFamily(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
+    void encodeDisplayLabel(
+            const QContactDetail &detail,
+            const QContact& contact,
+            QList<QVersitProperty>* generatedProperties,
+            QStringList* processedDetails);
     bool isValidRemoteUrl(const QString& resourceIdentifier);
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,
@@ -108,6 +172,8 @@ public: // Data
     QList<QVersitDocument> mDocuments;
     QMap<int, QVersitContactExporter::Error> mErrors;
     QVersitContactExporterDetailHandler* mDetailHandler;
+    QVersitContactExporterDetailHandlerV2* mDetailHandler2;
+    int mDetailHandlerVersion;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
     QHash<QString,QString> mPropertyMappings;

@@ -65,6 +65,22 @@ public:
                                    const QContactDetail& detail,
                                    bool alreadyProcessed,
                                    QVersitDocument* document) = 0;
+
+};
+
+class Q_VERSIT_EXPORT QVersitContactExporterDetailHandlerV2
+{
+public:
+    virtual ~QVersitContactExporterDetailHandlerV2() {}
+    virtual bool preProcessDetail(const QContact& contact,
+                                  const QContactDetail& detail,
+                                  QVersitDocument* document) = 0;
+    virtual bool postProcessDetail(const QContact& contact,
+                                   const QContactDetail& detail,
+                                   const QStringList& processedFields,
+                                   QVersitDocument* document,
+                                   QList<QVersitProperty>* toBeAdded) = 0;
+    virtual int version() const { return 2; }
 };
 
 class Q_VERSIT_EXPORT QVersitContactExporter
@@ -85,6 +101,9 @@ public:
     QMap<int, Error> errors() const;
 
     void setDetailHandler(QVersitContactExporterDetailHandler* handler);
+    void setDetailHandler(QVersitContactExporterDetailHandlerV2* handler);
+
+    /* deprecated */
     QVersitContactExporterDetailHandler* detailHandler() const;
 
     void setResourceHandler(QVersitResourceHandler* handler);

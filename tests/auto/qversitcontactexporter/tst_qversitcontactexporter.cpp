@@ -121,6 +121,44 @@ public:
     QList<QContactDetail> mPostProcessedDetails;
 };
 
+/* This class just logs the arguments to the last call to postProcessDetail */
+class MyQVersitContactExporterDetailHandlerV2 : public QVersitContactExporterDetailHandlerV2
+{
+public:
+    MyQVersitContactExporterDetailHandlerV2()
+    {
+    }
+
+    bool preProcessDetail(const QContact& contact,
+                          const QContactDetail& detail,
+                          QVersitDocument* document)
+    {
+        Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
+        return false;
+    }
+
+    bool postProcessDetail(const QContact& contact,
+                           const QContactDetail& detail,
+                           const QStringList& processedFields,
+                           QVersitDocument* document,
+                           QList<QVersitProperty>* toBeAdded)
+    {
+        mContact = contact;
+        mDetail = detail;
+        mProcessedFields = processedFields;
+        mDocument = *document;
+        mToBeAdded = *toBeAdded;
+        return false;
+    }
+
+    QContact mContact;
+    QContactDetail mDetail;
+    QStringList mProcessedFields;
+    QVersitDocument mDocument;
+    QList<QVersitProperty> mToBeAdded;
+
+};
+
 class MyQVersitResourceHandler : public QVersitResourceHandler
 {
 public:
@@ -188,17 +226,12 @@ const QString TEST_AUDIO_FILE(QLatin1String("versitTest001.wav"));
 void tst_QVersitContactExporter::init()
 {
     mExporter = new QVersitContactExporter();
-    mDetailHandler = new MyQVersitContactExporterDetailHandler;
-    mExporter->setDetailHandler(mDetailHandler);
     mResourceHandler = new MyQVersitResourceHandler;
     mExporter->setResourceHandler(mResourceHandler);
 }
 
 void tst_QVersitContactExporter::cleanup()
 {
-    QVERIFY(mExporter->detailHandler() == mDetailHandler);
-    mExporter->setDetailHandler(0);
-    delete mDetailHandler;
     QVERIFY(mExporter->resourceHandler() == mResourceHandler);
     mExporter->setResourceHandler(0);
     delete mResourceHandler;
@@ -231,16 +264,18 @@ void tst_QVersitContactExporter::testConvertContact()
 
 void tst_QVersitContactExporter::testContactDetailHandler()
 {
+    MyQVersitContactExporterDetailHandler detailHandler;;
+    mExporter->setDetailHandler(&detailHandler);
+
     // Test1: Un-supported Avatar Test
     QContact contact(createContactWithName(QLatin1String("asdf")));
-    QVersitDocument document;
     QContactDetail unknownDetail;
     unknownDetail.setValue(QLatin1String("Unknown"), QLatin1String("Detail"));
     contact.saveDetail(&unknownDetail);
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
-    document = mExporter->documents().first();
+    QVersitDocument document = mExporter->documents().first();
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
-    QList<QContactDetail> unknownDetails = mDetailHandler->mUnknownDetails;
+    QList<QContactDetail> unknownDetails = detailHandler.mUnknownDetails;
     QVERIFY(unknownDetails.size() > 0);
     QString definitionName = unknownDetail.definitionName();
     QContactDetail detail = searchDetail(unknownDetails,definitionName);
@@ -252,11 +287,11 @@ void tst_QVersitContactExporter::testContactDetailHandler()
     onlineAccount.setAccountUri(testUri);
     onlineAccount.setSubTypes(QString::fromAscii("unsupported"));
     contact.saveDetail(&onlineAccount);
-    mDetailHandler->clear();
+    detailHandler.clear();
     QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
     document = mExporter->documents().first();
     QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT);
-    unknownDetails = mDetailHandler->mUnknownDetails;
+    unknownDetails = detailHandler.mUnknownDetails;
     QVERIFY(unknownDetails.size() > 0);
     definitionName = onlineAccount.definitionName();
     detail = searchDetail(unknownDetails, definitionName);
@@ -267,18 +302,44 @@ void tst_QVersitContactExporter::testContactDetailHandler()
     QContactName contactName;
     contactName.setFirstName(QLatin1String("John"));
     contact.saveDetail(&contactName);
-    mDetailHandler->clear();
-    mDetailHandler->mPreProcess = true;
+    detailHandler.clear();
+    detailHandler.mPreProcess = true;
     // Fails, with NoNameError
     QVERIFY(!mExporter->exportContacts(QList<QContact>() << contact,
             QVersitDocument::VCard30Type));
     QList<QVersitDocument> documents = mExporter->documents();
     QCOMPARE(documents.size(), 0);
-    QVERIFY(mDetailHandler->mPreProcessedDetails.count() > BASE_PROPERTY_COUNT);
-    QCOMPARE(mDetailHandler->mPostProcessedDetails.count(), 0);
-    QCOMPARE(mDetailHandler->mUnknownDetails.count(), 0);
+    QVERIFY(detailHandler.mPreProcessedDetails.count() > BASE_PROPERTY_COUNT);
+    QCOMPARE(detailHandler.mPostProcessedDetails.count(), 0);
+    QCOMPARE(detailHandler.mUnknownDetails.count(), 0);
 
-    QVERIFY(mExporter->detailHandler() == mDetailHandler);
+    QVERIFY(mExporter->detailHandler() == &detailHandler);
+    mExporter->setDetailHandler(static_cast<QVersitContactExporterDetailHandler*>(0));
+}
+
+void tst_QVersitContactExporter::testContactDetailHandlerV2()
+{
+    MyQVersitContactExporterDetailHandlerV2 detailHandler;
+    mExporter->setDetailHandler(&detailHandler);
+
+    QContact contact(createContactWithName(QLatin1String("asdf")));
+    QContactPhoneNumber phone;
+    phone.setNumber(QLatin1String("1234"));
+    phone.setValue(QLatin1String("ExtraField"), QLatin1String("Value"));
+    contact.saveDetail(&phone);
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
+
+    QCOMPARE(detailHandler.mProcessedFields.size(), 3);
+    QVERIFY(detailHandler.mProcessedFields.contains(QLatin1String(QContactPhoneNumber::FieldContext)));
+    QVERIFY(detailHandler.mProcessedFields.contains(QLatin1String(QContactPhoneNumber::FieldSubTypes)));
+    QVERIFY(detailHandler.mProcessedFields.contains(QLatin1String(QContactPhoneNumber::FieldNumber)));
+    QVersitProperty expectedProperty;
+    expectedProperty.setName(QLatin1String("TEL"));
+    expectedProperty.setValue(QLatin1String("1234"));
+    QCOMPARE(detailHandler.mToBeAdded.size(), 1);
+    QCOMPARE(detailHandler.mToBeAdded.first(), expectedProperty);
+
+    mExporter->setDetailHandler(static_cast<QVersitContactExporterDetailHandlerV2*>(0));
 }
 
 void tst_QVersitContactExporter::testEncodeName()
