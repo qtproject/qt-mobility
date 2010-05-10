@@ -38,8 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qsysteminfo.h>
-#include <qsysteminfo_maemo_p.h>
+#include "qsysteminfo.h"
+#include "qsysteminfo_maemo_p.h"
+
 #include <QStringList>
 #include <QSize>
 #include <QFile>
