@@ -191,16 +191,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::FmradioFeature :
          {
-             const QString sysPath = "/sys/class/video4linux/";
-             const QDir sysDir(sysPath);
-             QStringList filters;
-             filters << "*";
-             QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-             foreach(const QString dir, sysList) {
-                if (dir.contains("radio")) {
-                    featureSupported = true;
-                }
-            }
+             featureSupported = !(QDir("/sys/class/video4linux/").entryList(QStringList("radio*")).empty());
          }
          break;
      case QSystemInfo::IrFeature :
@@ -284,14 +275,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::VideoOutFeature :
          {
-             const QString sysPath = "/sys/class/video4linux/";
-             const QDir sysDir(sysPath);
-             QStringList filters;
-             filters << "*";
-             const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-             if(sysList.contains("video")) {
-                 featureSupported = true;
-             }
+             featureSupported = !(QDir("/sys/class/video4linux/").entryList(QStringList("video*")).empty());
          }
          break;
      case QSystemInfo::HapticsFeature:
