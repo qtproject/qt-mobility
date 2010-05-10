@@ -66,6 +66,9 @@
 #include "qlandmarkboxfilter.h"
 #include "qlandmarkcategoryfilter.h"
 #include "qlandmarkintersectionfilter.h"
+#include "qlandmarknamefilter.h"
+#include "qlandmarkproximityfilter.h"
+#include "qlandmarkunionfilter.h"
 
 
 #include "qgeocoordinate.h"
@@ -1072,6 +1075,39 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         }
         case QLandmarkFilter::InvalidFilter:
         {
+            return false;
+        }
+        case QLandmarkFilter::NameFilter:
+        {
+            QLandmarkNameFilter nameFilter(filter);
+            return QString::compare(nameFilter.name(), landmark.name(), nameFilter.caseSensitivity());
+        }
+        case QLandmarkFilter::NearestFilter:
+            //Since we have only one landmark to use, is considered the nearest
+            return true;
+        case QLandmarkFilter::ProximityFilter:
+        {
+            QLandmarkProximityFilter proximityFilter(filter);
+            double distance = proximityFilter.coordinate().distanceTo(landmark.coordinate());
+            if (distance < proximityFilter.radius() || qFuzzyCompare(distance, proximityFilter.radius()))
+                return true;
+            else
+                return false;
+        }
+        case QLandmarkFilter::UnionFilter:
+        {
+            const QLandmarkUnionFilter orFilter(filter);
+            const QList<QLandmarkFilter>& terms = orFilter.filters();
+            if (terms.count() == 0)
+                return false;
+            else {
+                for (int i=0; i < terms.count(); i++) {
+                      if (testFilter(terms.at(i), landmark))
+                        return true;
+                }
+                return false;
+            }
+            //should not be reachable
             return false;
         }
     }
