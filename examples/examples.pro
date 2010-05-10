@@ -92,3 +92,5 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+# Calendar
+SUBDIRS += timescape

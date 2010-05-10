@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>contents/application.qml</file>
+        <file>contents/components/Button.qml</file>
+        <file>contents/components/ScrollBar.qml</file>
+    </qresource>
+</RCC>
