@@ -39,6 +39,67 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritem.h"
 
-//QTM_USE_NAMESPACE
+#include "qorganizeritemmanagerenginefactory.h"
+
+QTM_BEGIN_NAMESPACE
+
+/*!
+  \class QOrganizerItemManagerEngineFactory
+  \brief The QOrganizerItemManagerEngineFactory class provides the interface for
+ plugins that implement QOrganizerItemManagerEngine functionality.
+  \ingroup organizeritems-backends
+
+  This class provides a simple interface for the creation of
+  manager engine instances.  Each factory has a specific id
+  associated with it, which forms the \c managerName parameter
+  when creating \l QOrganizerItemManager objects.
+
+  More information on writing a organizeritems engine plugin is available in
+  the \l{Qt OrganizerItems Manager Engines} documentation.
+
+  \sa QOrganizerItemManager, QOrganizerItemManagerEngine
+ */
+
+/*!
+  A default, empty destructor.
+ */
+QOrganizerItemManagerEngineFactory::~QOrganizerItemManagerEngineFactory()
+{
+}
+
+/*!
+  \fn QOrganizerItemManagerEngineFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
+
+  This function is called by the QOrganizerItemManager implementation to
+  create an instance of the engine provided by this factory.
+
+  The \a parameters supplied can be ignored or interpreted as desired.
+
+  If a supplied parameter results in an unfulfillable request, or some other error
+  occurs, this function may return a null pointer, and the client developer will get an
+  invalid QOrganizerItemManager in return.  Any error should be stored in the supplied \a error
+  reference.
+ */
+
+/*!
+  \fn QOrganizerItemManagerEngineFactory::managerName() const
+
+  This function should return a unique string that identifies
+  the engines provided by this factory.
+
+  Typically this would be of the form "com.nokia.qt.organizeritems.engines.memory", with
+  the appropriate domain and engine name substituted.
+ */
+
+/*!
+  \fn QOrganizerItemManagerEngineFactory::supportedImplementationVersions() const
+
+  This function should return a list of versions of the engine which this factory can instantiate.
+ */
+QList<int> QOrganizerItemManagerEngineFactory::supportedImplementationVersions() const
+{
+    return QList<int>();
+}
+
+QTM_END_NAMESPACE
