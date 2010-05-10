@@ -1,5 +1,6 @@
 import Qt 4.7
 
+// These buttons are very ugly
 Rectangle {
     id: container
 
