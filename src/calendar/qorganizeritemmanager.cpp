@@ -199,7 +199,7 @@ QString QOrganizerItemManager::buildUri(const QString& managerName, const QMap<Q
     }
 
     if (implementationVersion != -1) {
-        QString versionString = QString(QLatin1String(QTCALENDAR_IMPLEMENTATION_VERSION_NAME));
+        QString versionString = QString(QLatin1String(QTORGANIZERITEM_IMPLEMENTATION_VERSION_NAME));
         versionString += QString::fromAscii("=");
         versionString += QString::number(implementationVersion);
         escapedParams.append(versionString);
@@ -276,7 +276,7 @@ QOrganizerItemManager::QOrganizerItemManager(const QString& managerName, int imp
     d(new QOrganizerItemManagerData)
 {
     QMap<QString, QString> params = parameters;
-    params[QString(QLatin1String(QTCALENDAR_IMPLEMENTATION_VERSION_NAME))] = QString::number(implementationVersion);
+    params[QString(QLatin1String(QTORGANIZERITEM_IMPLEMENTATION_VERSION_NAME))] = QString::number(implementationVersion);
     createEngine(managerName, params);
 }
 
@@ -694,8 +694,8 @@ QMap<QString, QString> QOrganizerItemManager::managerParameters() const
 {
     QMap<QString, QString> params = d->m_engine->managerParameters();
 
-    params.remove(QString::fromAscii(QTCALENDAR_VERSION_NAME));
-    params.remove(QString::fromAscii(QTCALENDAR_IMPLEMENTATION_VERSION_NAME));
+    params.remove(QString::fromAscii(QTORGANIZERITEM_VERSION_NAME));
+    params.remove(QString::fromAscii(QTORGANIZERITEM_IMPLEMENTATION_VERSION_NAME));
     return params;
 }
 
