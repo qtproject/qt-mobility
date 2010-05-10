@@ -72,11 +72,18 @@ public:
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
-
+    QStringList args = app.arguments();
+    int rate_place = args.indexOf("-r");
+    int rate_val = 0;
+    if (rate_place != -1)
+        rate_val = args.at(rate_place + 1).toInt();
     QOrientationSensor sensor;
     if (!sensor.connectToBackend()) {
         qWarning("No orientation sensor available!");
         return 1;
+    }
+    if (rate_val > 0) {
+        sensor.setDataRate(rate_val);
     }
     OrientationSensorFilter filter;
     sensor.addFilter(&filter);

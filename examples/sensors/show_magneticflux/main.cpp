@@ -82,12 +82,19 @@ public:
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
-
+    QStringList args = app.arguments();
+    int rate_place = args.indexOf("-r");
+    int rate_val = 0;
+    if (rate_place != -1)
+        rate_val = args.at(rate_place + 1).toInt();
 
     QMagnetometer geosensor;
     if (!geosensor.connectToBackend()) {
         qWarning("No magnetometer available!");
         return 1;
+    }
+    if (rate_val > 0) {
+        geosensor.setDataRate(rate_val);
     }
     MagGeoFilter geofilter;
     geosensor.setProperty("returnGeoValues", true);
@@ -99,6 +106,9 @@ int main(int argc, char **argv)
     if (!rawsensor.connectToBackend()) {
         qWarning("No magnetometer available!");
         return 1;
+    }
+    if (rate_val > 0) {
+        rawsensor.setDataRate(rate_val);
     }
     MagRawFilter rawfilter;
     rawsensor.addFilter(&rawfilter);
