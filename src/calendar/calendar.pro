@@ -28,7 +28,7 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qorganizeritemsortorder.h \
     qtorganizeritemsglobal.h \
     qtorganizeritem.h
-
+PRIVATE_HEADERS += qorganizeritemmanager_p.h
 SOURCES += qorganizer.cpp \
     qorganizeritemabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
@@ -42,12 +42,12 @@ SOURCES += qorganizer.cpp \
     qorganizeritemmanager.cpp \
     qorganizeritemmanagerengine.cpp \
     qorganizeritemmanagerenginefactory.cpp \
-    qorganizeritemsortorder.cpp
+    qorganizeritemsortorder.cpp \
+    qorganizeritemmanager_p.cpp
 
-# PRIVATE_HEADERS += \
-# SOURCES += \
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
+
 symbian { 
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \
