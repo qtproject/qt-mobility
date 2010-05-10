@@ -111,8 +111,9 @@ public:
 
     /* Item Instances - both items and item occurrences (occurrences either saved or generated) */
     QList<QOrganizerItem> itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
-    QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint) const;
-    QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItem& recurrentItem, const QOrganizerItemFetchHint& fetchHint) const;
+    // following two are unnecessary conveniences which might be expensive anyway.
+    //QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItemFilter& filter, const QOrganizerItemFetchHint& fetchHint) const;
+    //QList<QOrganizerItem> nextItemInstance(const QDateTime& fromDate, const QOrganizerItem& recurrentItem, const QOrganizerItemFetchHint& fetchHint) const;
 
     /* Items - Accessors and Mutators */
     QList<QOrganizerItemLocalId> itemIds(const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>()) const;
