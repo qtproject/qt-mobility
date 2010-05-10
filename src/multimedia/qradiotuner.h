@@ -137,9 +137,9 @@ private:
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QRadioTuner::State);
-Q_DECLARE_METATYPE(QRadioTuner::Band);
-Q_DECLARE_METATYPE(QRadioTuner::Error);
-Q_DECLARE_METATYPE(QRadioTuner::StereoMode);
+Q_DECLARE_METATYPE(QRadioTuner::State)
+Q_DECLARE_METATYPE(QRadioTuner::Band)
+Q_DECLARE_METATYPE(QRadioTuner::Error)
+Q_DECLARE_METATYPE(QRadioTuner::StereoMode)
 
 #endif  // QRADIOPLAYER_H
