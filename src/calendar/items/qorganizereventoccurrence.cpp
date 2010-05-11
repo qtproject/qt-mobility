@@ -48,41 +48,52 @@ QOrganizerEventOccurrence::QOrganizerEventOccurrence()
 }
 
 QOrganizerEventOccurrence::QOrganizerEventOccurrence(const QOrganizerEventOccurrence& other)
+    :QOrganizerItem(other)
 {
 }
 
 QOrganizerEventOccurrence& QOrganizerEventOccurrence::operator=(const QOrganizerEventOccurrence& other)
 {
+    QOrganizerItem::operator =(other);
+    return *this;
 }
 
 void QOrganizerEventOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
+    Q_UNUSED(startDateTime);
 }
 
 QDateTime QOrganizerEventOccurrence::startDateTime() const
 {
+    return QDateTime();
 }
 
 void QOrganizerEventOccurrence::setEndDateTime(const QDateTime& endDateTime)
 {
+    Q_UNUSED(endDateTime);
 }
 
 QDateTime QOrganizerEventOccurrence::endDateTime() const
 {
+    return QDateTime();
 }
 
 void QOrganizerEventOccurrence::setParentItemId(const QOrganizerItemId& parentId) const
 {
+    Q_UNUSED(parentId);
 }
 
 QOrganizerItemId QOrganizerEventOccurrence::parentItemId() const
 {
+    return QOrganizerItemId();
 }
 void QOrganizerEventOccurrence::setOriginalDateTime(const QDateTime& dateTime)
 {
+    Q_UNUSED(dateTime);
 }
 
 QDateTime QOrganizerEventOccurrence::originalDateTime() const
 {
+    return QDateTime();
 }
 

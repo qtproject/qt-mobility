@@ -44,8 +44,9 @@
 #define QORGANIZERITEMRECURRENCE_H
 
 #include <QList>
+#include <QSharedDataPointer>
+
 class QDateTime;
-class QSharedDataPointer;
 class QOrganizerItemRecurrencePrivate;
 
 #include "qtorganizeritemsglobal.h"
@@ -59,9 +60,13 @@ QTM_BEGIN_NAMESPACE
 class Q_CALENDAR_EXPORT QOrganizerItemRecurrence
 {
 public:
-    virtual ~QOrganizerItemRecurrence() { delete d; }
+    QOrganizerItemRecurrence();
+    QOrganizerItemRecurrence(const QOrganizerItemRecurrence& other);
+    QOrganizerItemRecurrence& operator=(const QOrganizerItemRecurrence& other);
+
+    virtual ~QOrganizerItemRecurrence();
     // accessing the occurrence dates - lazy calculation, cached possibly?
-    virtual QList<QDateTime> occurrences(const QDateTime& startDate, const QDateTime& endDate) const = 0;
+    virtual QList<QDateTime> occurrences(const QDateTime& startDate, const QDateTime& endDate) const;
 
 protected:
     QSharedDataPointer<QOrganizerItemRecurrencePrivate> d;

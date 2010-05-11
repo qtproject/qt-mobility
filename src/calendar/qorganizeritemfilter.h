@@ -73,7 +73,6 @@ public:
         OrganizerItemDetailRangeFilter,
         ChangeLogFilter,
         ActionFilter,
-        RelationshipFilter,
         IntersectionFilter,
         UnionFilter,
         LocalIdFilter,

@@ -44,9 +44,6 @@
 QTM_USE_NAMESPACE
 
 // This is just here to make sure moc stuff goes in the right namespace
-#include "moc_qorganizeritemabstractrequest.cpp"
-#include "moc_qorganizeritemmanagerengine.cpp"
-#include "moc_qorganizeritemmanager.cpp"
 
 
 

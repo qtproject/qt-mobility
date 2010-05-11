@@ -49,31 +49,40 @@ QOrganizerEvent::QOrganizerEvent()
 }
 
 QOrganizerEvent::QOrganizerEvent(const QOrganizerEvent& other)
+    : QOrganizerItem(other)
 {
 }
 QOrganizerEvent& QOrganizerEvent::operator=(const QOrganizerEvent& other)
 {
+    QOrganizerItem::operator =(other);
+    return *this;
 }
 
 void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 {
+    Q_UNUSED(startDateTime);
 }
 
 QDateTime QOrganizerEvent::startDateTime() const
 {
+    return QDateTime();
 }
 
 void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
 {
+    Q_UNUSED(endDateTime);
 }
 
 QDateTime QOrganizerEvent::endDateTime() const
 {
+    return QDateTime();
 }
 
 void QOrganizerEvent::setRecurrence(const QOrganizerItemRecurrence& recurrence) const
 {
+    Q_UNUSED(recurrence);
 }
 QOrganizerItemRecurrence QOrganizerEvent::recurrence() const
 {
+    return QOrganizerItemRecurrence();
 }

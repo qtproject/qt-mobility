@@ -173,25 +173,25 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatu
 
 
 
-/* ==================== QOrganizerItemStartDateTime ======================= */
+/* ==================== QOrganizerItemDateTime ======================= */
 /*!
-   \class QOrganizerItemStartDateTime
-   \brief The QOrganizerItemStartDateTime class contains the start time of the event, appointment or invitation which the organizer item describes, or the date associated with a todo, note or journal.
+   \class QOrganizerItemDateTime
+   \brief The QOrganizerItemDateTime class contains the start time of the event, appointment or invitation which the organizer item describes, or the date associated with a todo, note or journal.
  */
 
 /*!
-   \variable QOrganizerItemStartDateTime::DefinitionName
+   \variable QOrganizerItemDateTime::DefinitionName
    The constant string which identifies the definition of details which contain the date and time of an organizer item.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemStartDateTime::DefinitionName, "DateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::DefinitionName, "DateTime");
 
 /*!
-   \variable QOrganizerItemStartDateTime::FieldDateTime
+   \variable QOrganizerItemDateTime::FieldDateTime
 
    The constant key for which the datetime value of the organizer item is stored in
-   details of the QOrganizerItemStartDateTime type.
+   details of the QOrganizerItemDateTime type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemStartDateTime::FieldDateTime, "DateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::FieldDateTime, "DateTime");
 
 
 
@@ -312,32 +312,20 @@ which describe a location associated with an organizer item.
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::DefinitionName, "Location");
 
 /*!
-   \variable QOrganizerItemGeoLocation::FieldGeoLocation
+   \variable QOrganizerItemLocation::FieldGeoLocation
 
    The constant key for which the geolocation value is
    stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGeoLocation::FieldGeoLocation, "GeoLocation");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldGeoLocation, "GeoLocation");
 
 /*!
-   \variable QOrganizerItemGeoLocation::FieldLocationName
+   \variable QOrganizerItemLocation::FieldLocationName
 
    The constant key for which the location label value is
-   stored in details of the QOrganizerIteGeomLocation type.
+   stored in details of the QOrganizerItemLocation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGeoLocation::FieldLocationName, "LocationName");
-
-/*!
-   \variable QOrganizerItemAddressLocation::FieldStreet
-
-   The constant key for which the street address value is
-   stored in details of the QOrganizerItemAddressLocation type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAddressLocation::FieldStreet, "Street");
-
-
-
-
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationName");
 
 
 
@@ -375,29 +363,38 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemNote::FieldNote, "Note");
 
 
 
-/* ==================== QOrganizerItemParticipation ======================= */
+/* ==================== QOrganizerItemParticipationRole ======================= */
 // XXX TODO: is participation a detail?  or status/role?  Attendees can have a participation role/status
 // so how do we implement that?
 // my personal opinion is that this participation detail should be for the "self" person
 // ie, the owner of the calendar.  other attendee participation should be listed in the attendee detail.
 /*!
-   \class QOrganizerItemParticipation
-   \brief The QOrganizerItemParticipation class contains information about the way in which the owner of the calendar will participate in the event or appointment described by the organizer item.
+   \class QOrganizerItemParticipationRole
+   \brief The QOrganizerItemParticipation class contains information about the way in which the owner of the
+        calendar will participate in the event or appointment described by the organizer item.
  */
 
 /*!
-   \variable QOrganizerItemParticipation::DefinitionName
+   \variable QOrganizerItemParticipationRole::DefinitionName
    The constant string which identifies the definition of details which describe the participation role of a person or contact at the event or appointment described by the organizer item.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::DefinitionName, "Participation");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationRole::DefinitionName, "ParticipationRole");
 
 /*!
-   \variable QOrganizerItemParticipation::FieldParticipationRole
+   \variable QOrganizerItemParticipationRole::FieldParticipationRole
 
    The constant key for which the participation role value is stored in details of
    the QOrganizerItemParticipationRole type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationRole, "ParticipationRole");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationRole::FieldParticipationRole, "ParticipationRole");
+
+/* ==================== QOrganizerItemParticipationStatus ======================= */
+
+/*!
+   \variable QOrganizerItemParticipationStatus::DefinitionName
+   The constant string which identifies the definition of details which describe the participation role of a person or contact at the event or appointment described by the organizer item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationStatus::DefinitionName, "ParticipationStatus");
 
 /*!
    \variable QOrganizerItemParticipationStatus::FieldParticipationStatus
@@ -405,10 +402,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationRole, "P
    The constant key for which the participation status value is stored in details of
    the QOrganizerItemParticipationStatus type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationStatus, "ParticipationStatus");
-
-
-
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationStatus::FieldParticipationStatus, "ParticipationStatus");
 
 /* ==================== QOrganizerItemPriority ======================= */
 /*!

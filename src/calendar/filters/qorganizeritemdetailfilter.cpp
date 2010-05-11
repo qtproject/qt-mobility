@@ -55,7 +55,7 @@ QTM_BEGIN_NAMESPACE
   It may be used to select organizeritems which contain a detail of a particular definition with a particular value
  */
 
-Q_IMPLEMENT_CONTACTFILTER_PRIVATE(QOrganizerItemDetailFilter);
+Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemDetailFilter);
 
 /*!
  * \fn QOrganizerItemDetailFilter::QOrganizerItemDetailFilter(const QOrganizerItemFilter& other)

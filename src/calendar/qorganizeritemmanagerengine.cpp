@@ -459,16 +459,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     QOrganizerItemDetailFieldDefinition f;
     QOrganizerItemDetailDefinition d;
 
-    // sync target
-    d.setName(QOrganizerItemSyncTarget::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemSyncTarget::FieldSyncTarget, f);
-    d.setFields(fields);
-    d.setUnique(true);
-    retn.insert(d.name(), d);
-
     // in the default schema, we have two organizeritem types: TypeOrganizerItem, TypeGroup.
     // the entire default schema is valid for both types.
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > retnSchema;
@@ -732,7 +722,7 @@ bool QOrganizerItemManagerEngine::saveItem(QOrganizerItem* organizeritem, QOrgan
         list.append(*organizeritem);
 
         QMap<int, QOrganizerItemManager::Error> errors;
-        bool ret = saveOrganizerItems(&list, &errors, error);
+        bool ret = saveItems(&list, &errors, error);
 
         if (errors.count() > 0)
             *error = errors.begin().value();
@@ -762,7 +752,7 @@ bool QOrganizerItemManagerEngine::removeItem(const QOrganizerItemLocalId& organi
     list.append(organizeritemId);
 
     QMap<int, QOrganizerItemManager::Error> errors;
-    bool ret = removeOrganizerItems(list, &errors, error);
+    bool ret = removeItems(list, &errors, error);
 
     if (errors.count() > 0)
         *error = errors.begin().value();
@@ -1363,7 +1353,7 @@ void QOrganizerItemManagerEngine::addSorted(QList<QOrganizerItem>* sorted, const
     if (sortOrders.count() > 0) {
         for (int i = 0; i < sorted->size(); i++) {
             // check to see if the new organizeritem should be inserted here
-            int comparison = compareOrganizerItem(sorted->at(i), toAdd, sortOrders);
+            int comparison = compareItem(sorted->at(i), toAdd, sortOrders);
             if (comparison > 0) {
                 sorted->insert(i, toAdd);
                 return;

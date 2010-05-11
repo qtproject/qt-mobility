@@ -20,6 +20,7 @@ PUBLIC_HEADERS += \
     details/qorganizeritemtitle.h \
     details/qorganizeritemtype.h \
     details/qorganizeritemvisibilitytag.h \
+    details/qorganizeritemgeolocation.h \
     details/qorganizeritemdetails.h
 
 SOURCES += details/qorganizeritemdetails.cpp

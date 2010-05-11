@@ -64,5 +64,6 @@
 #include "qorganizeritemtitle.h"
 #include "qorganizeritemtype.h"
 #include "qorganizeritemvisibilitytag.h"
+#include "qorganizeritemgeolocation.h"
 
 #endif

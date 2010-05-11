@@ -43,7 +43,7 @@
 #define QORGANIZERTODO_H
 
 #include "qtorganizeritem.h"
-
+#include "qorganizeritemrecurrence.h"
 QTM_BEGIN_NAMESPACE
 
 class Q_CALENDAR_EXPORT QOrganizerTodo : public QOrganizerItem

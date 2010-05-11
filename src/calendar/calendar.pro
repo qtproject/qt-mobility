@@ -8,6 +8,7 @@ TARGET = QtCalendar
 DEFINES += QT_BUILD_CALENDAR_LIB \
     QT_MAKEDLL \
     QT_ASCII_CAST_WARNINGS
+
 include(../../common.pri)
 include(details/details.pri)
 include(items/items.pri)
@@ -29,8 +30,10 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qorganizeritemmanagerengine.h \
     qorganizeritemmanagerenginefactory.h \
     qorganizeritemsortorder.h \
+    qorganizeritemrecurrence.h \
     qtorganizeritemsglobal.h \
     qtorganizeritem.h
+
 PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemabstractrequest_p.h \
     qorganizeritemchangeset_p.h \
@@ -42,6 +45,7 @@ PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
     qorganizeritemsortorder_p.h
+
 SOURCES += qorganizer.cpp \
     qorganizeritemabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
@@ -52,6 +56,7 @@ SOURCES += qorganizer.cpp \
     qorganizeritemfetchhint.cpp \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
+    qorganizeritemrecurrence.cpp \
     qorganizeritemmanager.cpp \
     qorganizeritemmanagerengine.cpp \
     qorganizeritemmanagerenginefactory.cpp \
