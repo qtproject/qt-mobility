@@ -8,7 +8,6 @@ TARGET = QtCalendar
 DEFINES += QT_BUILD_CALENDAR_LIB \
     QT_MAKEDLL \
     QT_ASCII_CAST_WARNINGS
-
 include(../../common.pri)
 include(details/details.pri)
 include(items/items.pri)
@@ -33,7 +32,6 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qorganizeritemrecurrence.h \
     qtorganizeritemsglobal.h \
     qtorganizeritem.h
-
 PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemabstractrequest_p.h \
     qorganizeritemchangeset_p.h \
@@ -45,7 +43,6 @@ PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
     qorganizeritemsortorder_p.h
-
 SOURCES += qorganizer.cpp \
     qorganizeritemabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
@@ -62,10 +59,8 @@ SOURCES += qorganizer.cpp \
     qorganizeritemmanagerenginefactory.cpp \
     qorganizeritemsortorder.cpp \
     qorganizeritemmanager_p.cpp
-
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
-
 symbian { 
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL \

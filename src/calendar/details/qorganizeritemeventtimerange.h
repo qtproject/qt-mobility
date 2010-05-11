@@ -39,27 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+#ifndef QORGANIZERITEMEVENTTIMERANGE_H
+#define QORGANIZERITEMEVENTTIMERANGE_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Calendar API.
+#include <QString>
 
-#include "qorganizeritemattendee.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemnote.h"
-#include "qorganizeritemparticipation.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemprovenance.h"
-#include "qorganizeritemrsvpinfo.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizeritemjournaltimerange.h"
-#include "qorganizeritemeventtimerange.h"
-#include "qorganizeritemtodoprogress.h"
-#include "qorganizeritemtodotimerange.h"
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CALENDAR_EXPORT QOrganizerItemEventTimeRange : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldStartDateTime;
+    const char* FieldEndDateTime;
+#else
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemEventTimeRange, "EventTimeRange")
+    Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldEndDateTime, "EndDateTime");
+#endif
+
+    void setStartDateTime(const QDateTime& startDateTime) {setValue(FieldStartDateTime, startDateTime);}
+    QDateTime startDateTime() const {return value<QDateTime>(FieldStartDateTime);}
+    void setEndDateTime(const QDateTime& endDateTime) {setValue(FieldEndDateTime, endDateTime);}
+    QDateTime endDateTime() const {return value<QDateTime>(FieldEndDateTime);}
+};
+
+QTM_END_NAMESPACE
 
 #endif
+

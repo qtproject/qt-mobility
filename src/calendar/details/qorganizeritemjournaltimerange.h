@@ -39,27 +39,34 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+#ifndef QORGANIZERITEMJOURNALTIMERANGE_H
+#define QORGANIZERITEMJOURNALTIMERANGE_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Calendar API.
+#include <QString>
 
-#include "qorganizeritemattendee.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemnote.h"
-#include "qorganizeritemparticipation.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemprovenance.h"
-#include "qorganizeritemrsvpinfo.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizeritemjournaltimerange.h"
-#include "qorganizeritemeventtimerange.h"
-#include "qorganizeritemtodoprogress.h"
-#include "qorganizeritemtodotimerange.h"
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CALENDAR_EXPORT QOrganizerItemJournalTimeRange : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldEntryDateTime;
+#else
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemJournalTimeRange, "JournalTimeRange")
+    Q_DECLARE_LATIN1_CONSTANT(FieldEntryDateTime, "EntryDateTime");
+#endif
+
+    void setEntryDateTime(const QDateTime& entryDateTime) {setValue(FieldEntryDateTime, entryDateTime);}
+    QDateTime entryDateTime() const {return value<QDateTime>(FieldEntryDateTime);}
+};
+
+QTM_END_NAMESPACE
 
 #endif
+

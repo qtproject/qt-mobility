@@ -14,6 +14,10 @@ PUBLIC_HEADERS += \
     details/qorganizeritemtimestamp.h \
     details/qorganizeritemtype.h \
     details/qorganizeritemgeolocation.h \
+    details/qorganizeritemjournaltimerange.h \
+    details/qorganizeritemeventtimerange.h \
+    details/qorganizeritemtodoprogress.h \
+    details/qorganizeritemtodotimerange.h \
     details/qorganizeritemdetails.h
 
 SOURCES += details/qorganizeritemdetails.cpp

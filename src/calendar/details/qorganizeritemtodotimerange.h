@@ -39,27 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+#ifndef QORGANIZERITEMTODOTIMERANGE_H
+#define QORGANIZERITEMTODOTIMERANGE_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Calendar API.
+#include <QString>
 
-#include "qorganizeritemattendee.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemnote.h"
-#include "qorganizeritemparticipation.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemprovenance.h"
-#include "qorganizeritemrsvpinfo.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtype.h"
-#include "qorganizeritemjournaltimerange.h"
-#include "qorganizeritemeventtimerange.h"
-#include "qorganizeritemtodoprogress.h"
-#include "qorganizeritemtodotimerange.h"
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_CALENDAR_EXPORT QOrganizerItemTodoTimeRange : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldDueDateTime;
+    const char* FieldNotBeforeDateTime;
+#else
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemTodoTimeRange, "TodoTimeRange")
+    Q_DECLARE_LATIN1_CONSTANT(FieldDueDateTime, "DueDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldNotBeforeDateTime, "NotBeforeDateTime");
+#endif
+
+    void setDueDateTime(const QDateTime& dueDateTime) {setValue(FieldDueDateTime, dueDateTime);}
+    QDateTime dueDateTime() const {return value<QDateTime>(FieldDueDateTime);}
+    void setNotBeforeDateTime(const QDateTime& notBeforeDateTime) {setValue(FieldNotBeforeDateTime, notBeforeDateTime);}
+    QDateTime notBeforeDateTime() const {return value<QDateTime>(FieldNotBeforeDateTime);}
+};
+
+QTM_END_NAMESPACE
 
 #endif
+
