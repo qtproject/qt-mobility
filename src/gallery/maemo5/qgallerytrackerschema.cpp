@@ -231,7 +231,10 @@ namespace
 
         bool operator ()(const QString &property1, const QString &property2) const
         {
-            return uint(m_sortOrder.indexOf(property1)) < uint(m_sortOrder.indexOf(property2));
+            uint index1 = m_sortOrder.indexOf(property1);
+            uint index2 = m_sortOrder.indexOf(property2);
+
+            return index1 < index2;
         }
 
     private:
@@ -917,8 +920,8 @@ static void qt_writeAlbumArtistIdCondition(int *, QXmlStreamWriter *xml, const Q
 
 static const QGalleryPropertyMapItem qt_galleryAlbumIdentity[] =
 {
-    QT_GALLERY_PROPERTY("title", "Audio:Album"       , CanRead | CanFilter),
-    QT_GALLERY_PROPERTY("artist", "Audio:AlbumArtist", CanRead | CanFilter)
+    QT_GALLERY_PROPERTY("artist", "Audio:AlbumArtist", CanRead | CanFilter),
+    QT_GALLERY_PROPERTY("title" , "Audio:Album"      , CanRead | CanFilter)
 };
 
 static const QGalleryPropertyMapItem qt_galleryAlbumPropertyMap[] =
@@ -1656,6 +1659,9 @@ int QGalleryTrackerSchema::resolveAggregateColumns()
 
     qSort(identityNames.begin(), identityNames.end(), QGalleryReorderLessThan(m_sortPropertyNames));
 
+    for (int i = 0; i < type.identity.count; ++i)
+        identityColumns.append(identityNames.indexOf(type.identity[i].galleryKey));
+
     for (QStringList::const_iterator it = identityNames.constBegin();
             it != identityNames.constEnd();
             ++it) {
@@ -1665,7 +1671,6 @@ int QGalleryTrackerSchema::resolveAggregateColumns()
         const QString field = properties[propertyIndex].trackerKey;
         Q_ASSERT(identityFields.indexOf(field) == -1);
 
-        identityColumns.append(it - identityNames.constBegin());
         identityFields.append(field);
         identityAttributes.append(properties[propertyIndex].attributes);
         identityTypes.append(QVariant::String);

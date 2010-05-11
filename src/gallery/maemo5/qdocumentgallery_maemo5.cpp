@@ -142,6 +142,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 
             return response;
         } else if (schema.isAggregateType()) {
+            schema.setPropertyNames(request->propertyNames());
             schema.resolveColumns();
 
             response = new QGalleryTrackerAggregateResponse(
@@ -195,6 +196,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
 
             return response;
         } else if (schema.isAggregateType()) {
+            schema.setPropertyNames(request->propertyNames());
+            schema.setSortPropertyNames(request->sortPropertyNames());
             schema.resolveColumns();
 
             response = new QGalleryTrackerAggregateResponse(
@@ -241,6 +244,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
 
             return response;
         } else if (schema.isAggregateType()) {
+            schema.setPropertyNames(request->propertyNames());
+            schema.setSortPropertyNames(request->sortPropertyNames());
             schema.resolveColumns();
 
             QGalleryAbstractResponse *response = new QGalleryTrackerAggregateResponse(

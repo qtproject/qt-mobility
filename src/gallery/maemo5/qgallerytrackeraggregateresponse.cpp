@@ -54,8 +54,8 @@ class QGalleryTrackerAggregateResponsePrivate : public QGalleryTrackerItemListPr
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerAggregateResponse)
 public:
+    bool descendingSortOrder;
     QGalleryDBusInterfacePointer metaDataInterface;
-
     QString query;
     QString service;
     QStringList identityFields;
@@ -93,7 +93,7 @@ void QGalleryTrackerAggregateResponsePrivate::getValues(int offset, int limit)
             query,
             aggregates,
             aggregateFields,
-            false,
+            descendingSortOrder,
             offset,
             limit);
 
@@ -138,6 +138,10 @@ QGalleryTrackerAggregateResponse::QGalleryTrackerAggregateResponse(
 {
     Q_D(QGalleryTrackerAggregateResponse);
 
+    const QVector<QGalleryTrackerSortCriteria> sortCriteria = schema.sortCriteria();
+
+    d->descendingSortOrder = !sortCriteria.isEmpty()
+            && sortCriteria.first().flags & QGalleryTrackerSortCriteria::Descending;
     d->metaDataInterface = metaDataInterface;
     d->query = query;
     d->service = schema.service();
