@@ -53,11 +53,17 @@ QTM_BEGIN_NAMESPACE
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkNameFilter)
 
 /*!
-    Creates a filter that selects landmarks by \a name.
+    Creates a filter that selects landmarks by \a name, according to the given
+    case \a sensitivity.
 */
 QLandmarkNameFilter::QLandmarkNameFilter(const QString &name,
         Qt::CaseSensitivity sensitivity)
         : QLandmarkFilter(new QLandmarkNameFilterPrivate(name, sensitivity)) {}
+
+/*!
+    \fn QLandmarkNameFilter::QLandmarkNameFilter(const QLandmarkFilter &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new name filter.
+*/
 
 /*!
     Destroys the filter.

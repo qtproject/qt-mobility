@@ -197,4 +197,4 @@ We may reuse the QLandmarkRemoveRequest by setting another category id and runni
 {start()} again.
 
 \snippet snippets/qtlandmarksdocsample/qtlandmarksdocsample.cpp Remove landmark asynchronously handler
-
+*/

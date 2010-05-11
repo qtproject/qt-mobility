@@ -83,7 +83,12 @@ QLandmarkSortOrder::QLandmarkSortOrder()
 }
 
 /*!
-  Internal
+    \fn QLandmarkSortOrder::QLandmarkSortOrder(const QLandmarkSortOrder &other)
+    Constructs a copy of \a other.
+*/
+
+/*!
+  \internal
 */
 QLandmarkSortOrder::QLandmarkSortOrder(QLandmarkSortOrderPrivate *d_ptr)
         : d_ptr(d_ptr)
@@ -129,6 +134,11 @@ void QLandmarkSortOrder::setDirection(Qt::SortOrder direction)
     d_ptr->order = direction;
 }
 
+/*!
+    \fn QLandmarkSortOrder::operator==(const QLandmarkSortOrder& other) const
+    Returns true if this sort order is identical to \a other.
+    \sa operator!=()
+*/
 bool QLandmarkSortOrder::operator==(const QLandmarkSortOrder& other) const
 {
 
@@ -142,6 +152,19 @@ bool QLandmarkSortOrder::operator==(const QLandmarkSortOrder& other) const
     /* Otherwise, use the virtual op == */
     return d_ptr->compare(other.d_ptr);
 }
+
+/*!
+    \fn QLandmarkSortOrder::operator!=(const QLandmarkSortOrder &other) const
+    Returns true if this sort order is not identical to \a other.
+
+    \sa operator==()
+*/
+
+/*!
+    \fn QLandmarkSortOrder::operator=(const QLandmarkSortOrder &other)
+    Assigns \a other to this sort order and returns a reference to this
+    sort order.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

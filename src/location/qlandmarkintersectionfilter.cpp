@@ -65,6 +65,11 @@ QLandmarkIntersectionFilter::QLandmarkIntersectionFilter()
 }
 
 /*!
+    \fn QLandmarkIntersectionFilter::QLandmarkIntersectionFilter(const QLandmarkFilter &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new intersection filter.
+*/
+
+/*!
     Destroys the filter.
 */
 QLandmarkIntersectionFilter::~QLandmarkIntersectionFilter()

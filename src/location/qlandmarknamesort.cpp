@@ -53,7 +53,8 @@ QTM_BEGIN_NAMESPACE
 Q_IMPLEMENT_LANDMARKSORTORDER_PRIVATE(QLandmarkNameSort)
 
 /*!
-    Creates a sort order that sorts by name in the given \a direction.
+    Creates a sort order that sorts by name according to the given \a direction and
+    case \a sensitivity.
 */
 QLandmarkNameSort::QLandmarkNameSort(Qt::SortOrder direction, Qt::CaseSensitivity sensitivity)
         : QLandmarkSortOrder(new QLandmarkNameSortPrivate())
@@ -62,6 +63,11 @@ QLandmarkNameSort::QLandmarkNameSort(Qt::SortOrder direction, Qt::CaseSensitivit
     d->order = direction;
     d->sensitivity = sensitivity;
 }
+
+/*!
+    \fn QLandmarkNameSort::QLandmarkNameSort(const QLandmarkSortOrder &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new name sort order.
+*/
 
 /*!
     Destroys the sort order.

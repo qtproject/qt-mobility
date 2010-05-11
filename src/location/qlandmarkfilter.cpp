@@ -119,7 +119,7 @@ QLandmarkFilter::QLandmarkFilter()
 {
 }
 /*!
-  Internal
+    \internal
 */
 QLandmarkFilter::QLandmarkFilter(QLandmarkFilterPrivate *dd)
         : d_ptr(dd)

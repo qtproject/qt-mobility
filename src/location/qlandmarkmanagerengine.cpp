@@ -931,8 +931,8 @@ int QLandmarkManagerEngine::compareName(const QLandmark &a, const QLandmark &b, 
   a positive number if \a a should appear after \a b according to the sort order,
   and zero if the two are unable to be sorted.
 
-  Assuming an ascending order sort, a negative number is returned if \a is closer
-  and a positive number if \b is considered closer.  0 is returned if both are the same
+  Assuming an ascending order sort, a negative number is returned if \a a is closer
+  and a positive number if \a b is considered closer.  0 is returned if both are the same
   distance away.
 
   A invalid coordinate is considered to be an infinite distance away.

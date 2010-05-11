@@ -64,6 +64,11 @@ QLandmarkBoxFilter::QLandmarkBoxFilter(const QGeoCoordinate &topLeft,
 }
 
 /*!
+    \fn QLandmarkBoxFilter::QLandmarkBoxFilter(const QLandmarkFilter &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new box filter.
+*/
+
+/*!
     Destroys the filter.
 */
 QLandmarkBoxFilter::~QLandmarkBoxFilter()

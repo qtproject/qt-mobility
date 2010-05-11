@@ -65,6 +65,11 @@ QLandmarkUnionFilter::QLandmarkUnionFilter()
 }
 
 /*!
+    \fn QLandmarkUnionFilter::QLandmarkUnionFilter(const QLandmarkFilter &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new union filter.
+*/
+
+/*!
     Destroys the filter.
 */
 QLandmarkUnionFilter::~QLandmarkUnionFilter()
@@ -113,20 +118,6 @@ void QLandmarkUnionFilter::remove(const QLandmarkFilter &filter)
     Q_D(QLandmarkUnionFilter);
     d->filters.removeAll(filter);
 }
-
-/*!
-  Internal
-*/
-//QLandmarkFilter* QLandmarkUnionFilter::createSubclassInstance(const QLandmarkFilter &filter)
-//{
-//    QLandmarkFilter *f = NULL;
-
-//    switch(filter.type()) {
-
-//    }
-
-//    return f;
-//}
 
 /*!
     Appends the given \a filter to the list of unioned filters.

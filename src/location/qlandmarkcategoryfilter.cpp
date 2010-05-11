@@ -64,6 +64,11 @@ QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkCategoryId &cate
 }
 
 /*!
+    \fn QLandmarkCategoryFilter::QLandmarkCategoryFilter(const QLandmarkFilter &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new category filter.
+*/
+
+/*!
     Destroys the filter.
 */
 QLandmarkCategoryFilter::~QLandmarkCategoryFilter()

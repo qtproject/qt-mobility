@@ -56,13 +56,20 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkNearestFilter)
 
 /*!
     Creates a filter that will match the landmark nearest to a given central
-    \a coordinate.
+    \a coordinate.  Only landmarks within the given \a radius are considered
+    candidates to be the nearest landmark.  A negative value for \a radius means
+    the \a radius is infinite.
 */
 QLandmarkNearestFilter::QLandmarkNearestFilter(const QGeoCoordinate &coordinate,
         double radius)
         : QLandmarkFilter(new QLandmarkNearestFilterPrivate(coordinate, radius))
 {
 }
+
+/*!
+    \fn QLandmarkNearestFilter::QLandmarkNearestFilter(const QLandmarkFilter &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new nearest filter.
+*/
 
 /*!
     Destroys the filter.

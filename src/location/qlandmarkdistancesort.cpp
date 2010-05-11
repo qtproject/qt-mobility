@@ -68,6 +68,11 @@ QLandmarkDistanceSort::QLandmarkDistanceSort(const QGeoCoordinate &coordinate, Q
 }
 
 /*!
+    \fn QLandmarkDistanceSort::QLandmarkDistanceSort(const QLandmarkSortOrder &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new distance sort order.
+*/
+
+/*!
     Destroys the sort order.
 */
 QLandmarkDistanceSort::~QLandmarkDistanceSort()

@@ -96,6 +96,11 @@ QLandmarkAttributeFilter::QLandmarkAttributeFilter()
 }
 
 /*!
+    \fn QLandmarkAttributeFilter::QLandmarkAttributeFilter(const QLandmarkFilter &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new attribute filter.
+*/
+
+/*!
     Destroys the filter.
 */
 QLandmarkAttributeFilter::~QLandmarkAttributeFilter()

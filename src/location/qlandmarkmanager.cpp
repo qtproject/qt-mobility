@@ -75,6 +75,8 @@ QTM_USE_NAMESPACE
     \value VersionMismatchError The most recent operation failed because the backend of the manager is not of the required version.
     \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store.
     \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid.
+    \value InvalidManagerError The most recent operation failed because the manager failed to initialize correctly and is invalid.
+           This could be due using a manager name that is not recognised/available.
     \value UnknownError The most recent operation failed for an unknown reason.
 */
 
