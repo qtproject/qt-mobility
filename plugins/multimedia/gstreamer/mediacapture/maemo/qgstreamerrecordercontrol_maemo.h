@@ -63,12 +63,15 @@ public:
 
     qint64 duration() const;
 
+    bool isMuted() const;
+
     void applySettings();
 
 public slots:
     void record();
     void pause();
     void stop();
+    void setMuted(bool);
 
 private slots:
     void updateState();

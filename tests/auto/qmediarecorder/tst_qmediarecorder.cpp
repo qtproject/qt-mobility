@@ -297,7 +297,8 @@ public:
     MockProvider(QObject *parent):
         QMediaRecorderControl(parent),
     m_state(QMediaRecorder::StoppedState),
-    m_position(0) {}
+    m_position(0),
+    m_muted(false) {}
 
     QUrl outputLocation() const
     {
@@ -318,6 +319,11 @@ public:
     qint64 duration() const
     {
         return m_position;
+    }
+
+    bool isMuted() const
+    {
+        return m_muted;
     }
 
     void applySettings() {}
@@ -346,10 +352,17 @@ public slots:
         emit stateChanged(m_state);
     }
 
+    void setMuted(bool muted)
+    {
+        if (m_muted != muted)
+            emit mutedChanged(m_muted = muted);
+    }
+
 public:
     QUrl       m_sink;
     QMediaRecorder::State m_state;
     qint64     m_position;
+    bool m_muted;
 };
 
 class MockService : public QMediaService
@@ -415,6 +428,7 @@ private slots:
     void testError();
     void testSink();
     void testRecord();
+    void testMute();
     void testAudioDeviceControl();
     void testAudioEncodeControl();
     void testMediaFormatsControl();
@@ -484,6 +498,9 @@ void tst_QMediaRecorder::testNullService()
     QCOMPARE(recorder.audioSettings(), QAudioEncoderSettings());
     QCOMPARE(recorder.videoSettings(), QVideoEncoderSettings());
     QCOMPARE(recorder.containerMimeType(), QString());
+    QVERIFY(!recorder.isMuted());
+    recorder.setMuted(true);
+    QVERIFY(!recorder.isMuted());
 }
 
 void tst_QMediaRecorder::testNullControls()
@@ -598,6 +615,26 @@ void tst_QMediaRecorder::testRecord()
     mock->stop();
     QCOMPARE(stateSignal.count(), 3);
 
+}
+
+void tst_QMediaRecorder::testMute()
+{
+    QSignalSpy mutedChanged(capture, SIGNAL(mutedChanged(bool)));
+    QVERIFY(!capture->isMuted());
+    capture->setMuted(true);
+
+    QCOMPARE(mutedChanged.size(), 1);
+    QCOMPARE(mutedChanged[0][0].toBool(), true);
+    QVERIFY(capture->isMuted());
+
+    capture->setMuted(false);
+
+    QCOMPARE(mutedChanged.size(), 2);
+    QCOMPARE(mutedChanged[1][0].toBool(), false);
+    QVERIFY(!capture->isMuted());
+
+    capture->setMuted(false);
+    QCOMPARE(mutedChanged.size(), 2);
 }
 
 void tst_QMediaRecorder::testAudioDeviceControl()

@@ -101,7 +101,8 @@ public:
     MockMediaRecorderControl(QObject *parent = 0):
             QMediaRecorderControl(parent),
             m_state(QMediaRecorder::StoppedState),
-            m_position(0) {}
+            m_position(0),
+            m_muted(false) {}
 
     ~MockMediaRecorderControl() {}
 
@@ -110,6 +111,7 @@ public:
     QMediaRecorder::State state() const { return m_state; }
     qint64 duration() const { return m_position; }
     void applySettings() {}
+    bool isMuted() const { return m_muted; }
 
 public slots:
     void record()
@@ -132,10 +134,17 @@ public slots:
         emit stateChanged(m_state);
     }
 
+    void setMuted(bool muted)
+    {
+        if (m_muted != muted)
+            emit mutedChanged(m_muted = muted);
+    }
+
 public:
     QUrl       m_sink;
     QMediaRecorder::State m_state;
     qint64     m_position;
+    bool m_muted;
 };
 
 class MockAudioEndpointSelector : public QAudioEndpointSelector
