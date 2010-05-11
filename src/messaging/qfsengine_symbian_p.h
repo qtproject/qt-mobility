@@ -62,10 +62,12 @@
 #include <memailmessagesearch.h>
 #include <memailmessage.h>
 #include <emailinterfacefactory.h>
-#include <mmailboxsyncobserver.h>
 #include <emailsorting.h>
 #include <memailmessagesearch.h>
 #include <memailfolder.h>
+#ifdef FREESTYLEMAILBOXOBSERVERUSED
+#include <mmailboxcontentobserver.h>
+#endif
 
 using namespace EmailInterface;
 
@@ -98,7 +100,11 @@ struct FSSearchOperation
     MEmailMessageSearchAsync* m_search;
 };
 
-class CFSEngine : public MMailboxSyncObserver
+#ifdef FREESTYLEMAILBOXOBSERVERUSED
+class CFSEngine : public MMailboxContentObserver
+#else
+class CFSEngine
+#endif
 {
 public: 
     
@@ -144,9 +150,16 @@ public:
                                      bool resultSetOrdered);
     
     void setMtmAccountIdList(QMessageAccountIdList accountList);
-
-public: // from MMailboxSyncObserver
-    void MailboxSynchronisedL(TInt aResult);
+    
+#ifdef FREESTYLEMAILBOXOBSERVERUSED
+    void setPluginObserversL();
+    
+public:
+        // from MMailboxContentObserver
+    void NewMessageEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aNewMessages, const TFolderId& aParentFolderId);
+    void MessageChangedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aChangedMessages, const TFolderId& aParentFolderId);
+    void MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aDeletedMessages, const TFolderId& aParentFolderId);       
+#endif
         
 private:
 

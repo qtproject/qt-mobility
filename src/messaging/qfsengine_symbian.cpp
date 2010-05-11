@@ -88,6 +88,10 @@ CFSEngine::CFSEngine()
     
     Q_UNUSED(err);
     m_clientApi = static_cast<MEmailClientApi*>(m_ifPtr);
+#ifdef FREESTYLEMAILBOXOBSERVERUSED
+    TRAPD(err2, setPluginObserversL());
+    Q_UNUSED(err2);
+#endif
 }
 
 CFSEngine::~CFSEngine()
@@ -287,6 +291,71 @@ void CFSEngine::updateEmailAccountsL() const
         m_accounts.remove(keys[i]);
     }   
 }
+
+#ifdef FREESTYLEMAILBOXOBSERVERUSED
+void CFSEngine::setPluginObserversL()
+{
+    RMailboxPtrArray mailboxes;
+    CleanupResetAndRelease<MEmailMailbox>::PushL(mailboxes);
+    m_clientApi->GetMailboxesL(mailboxes);    
+    for (TInt i = 0; i < mailboxes.Count(); i++) {
+        MEmailMailbox *mailbox = mailboxes[i];
+        mailbox->RegisterObserverL(*this);
+    }
+}
+
+void CFSEngine::NewMessageEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aNewMessages, const TFolderId& aParentFolderId)
+{
+    qDebug() << "CFSEngine: New message received";
+    QMessageManager::NotificationFilterIdSet matchingFilters;
+    QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Added;
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
+    MEmailFolder* folder = mailbox->FolderL(aParentFolderId);
+    if (folder->FolderType() == EInbox) {
+        for (TInt i = 0; i < aNewMessages.Count(); i++) {
+            TMessageId messageId(aNewMessages[i]);
+            MEmailMessage* fsMessage = mailbox->MessageL(messageId);  
+            QMessage message;
+            message = CreateQMessageL(fsMessage);  
+            ipMessageStorePrivate->messageNotification(notificationType, 
+                                QMessageId(addIdPrefix(QString::number(fsMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)), 
+                                matchingFilters);
+        }
+    }
+}
+
+void CFSEngine::MessageChangedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aChangedMessages, const TFolderId& aParentFolderId)
+{
+    qDebug() << "CFSEngine: Message changed";
+    QMessageManager::NotificationFilterIdSet matchingFilters;
+    QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Updated;
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
+    MEmailFolder* folder = mailbox->FolderL(aParentFolderId);   
+    for (TInt i = 0; i < aChangedMessages.Count(); i++) {
+        TMessageId messageId(aChangedMessages[i]);
+        MEmailMessage* fsMessage = mailbox->MessageL(messageId);  
+        ipMessageStorePrivate->messageNotification(notificationType, 
+                            QMessageId(addIdPrefix(QString::number(fsMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)), 
+                            matchingFilters);
+    }
+}
+
+void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aDeletedMessages, const TFolderId& aParentFolderId)
+{
+    qDebug() << "CFSEngine: Message deleted";
+    QMessageManager::NotificationFilterIdSet matchingFilters;
+    QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Removed;
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
+    MEmailFolder* folder = mailbox->FolderL(aParentFolderId);   
+    for (TInt i = 0; i < aDeletedMessages.Count(); i++) {
+        TMessageId messageId(aDeletedMessages[i]);
+       // MEmailMessage* fsMessage = mailbox->MessageL(messageId);  
+        ipMessageStorePrivate->messageNotification(notificationType, 
+                            QMessageId(addIdPrefix(QString::number(messageId.iId), SymbianHelpers::EngineTypeFreestyle)), 
+                            matchingFilters);
+    }
+}
+#endif
 
 MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
 {
@@ -593,12 +662,14 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
 bool CFSEngine::showMessage(const QMessageId &id)
 {
     MEmailMessage* message = NULL;
+    bool retVal = false;
     TRAPD(err, message = fsMessageL(id));
     if (err == KErrNone) {
         TRAPD(err2, message->ShowMessageViewerL());
-        Q_UNUSED(err2);
+        if (err2 == KErrNone)
+            retVal = true;
     } 
-    return true;
+    return retVal;
 }
 
 bool CFSEngine::composeMessage(const QMessage &message)
@@ -1676,13 +1747,6 @@ QByteArray CFSEngine::attachmentContent(long int messageId, unsigned int attachm
     // TODO:
     QByteArray result;
     return result;
-}
-
-
-void CFSEngine::MailboxSynchronisedL(TInt aResult)
-{
-   // check new mails
-    qDebug() << "CFSEngine::MailboxSynchronisedL:" << aResult;
 }
 
 QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
