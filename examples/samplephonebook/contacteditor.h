@@ -51,6 +51,7 @@ QT_BEGIN_NAMESPACE
 class QScrollArea;
 class QPushButton;
 class QLineEdit;
+class QLabel;
 QT_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -73,9 +74,11 @@ private slots:
     void saveClicked();
     void cancelClicked();
     void avatarClicked();
+    void clearAvatarClicked();
 
 private:
     QString nameField();
+    void setAvatarPixmap(const QPixmap& pixmap);
 
 #ifdef Q_OS_SYMBIAN
     QAction* m_saveBtn;
@@ -90,6 +93,8 @@ private:
     QLineEdit *m_emailEdit;
     QLineEdit *m_addrEdit;
     QPushButton *m_avatarBtn;
+    QPushButton *m_clearAvatarBtn;
+    QLabel *m_avatarView;
 
     // data
     QContactManager *m_manager;

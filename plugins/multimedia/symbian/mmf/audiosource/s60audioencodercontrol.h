@@ -86,7 +86,7 @@ private:
     void setSampleSize(int sampleSize);    
 private:
     S60AudioCaptureSession* m_session;
-    QtMultimedia::EncodingQuality m_quality;
+    QtMediaServices::EncodingQuality m_quality;
 };
 
 #endif

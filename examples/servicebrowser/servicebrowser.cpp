@@ -76,7 +76,11 @@ void ServiceBrowser::currentInterfaceImplChanged(QListWidgetItem *current, QList
 
     QServiceInterfaceDescriptor descriptor = current->data(Qt::UserRole).value<QServiceInterfaceDescriptor>();
     if (descriptor.isValid()) {
-        defaultInterfaceButton->setText(tr("Set as default implementation for %1") 
+#if defined(Q_WS_MAEMO_5)
+        defaultInterfaceButton->setText(tr("Set as default implementation for \n%1")
+#else
+        defaultInterfaceButton->setText(tr("Set as default implementation for %1")
+#endif
                 .arg(descriptor.interfaceName()));
         defaultInterfaceButton->setEnabled(true);
     }
@@ -225,7 +229,7 @@ void ServiceBrowser::initWidgets()
     attributesListWidget = new QListWidget;
     attributesListWidget->addItem(tr("(Select an interface implementation)"));
 
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5)
     interfacesListWidget->setMinimumWidth(450);
 #endif
 
@@ -264,12 +268,22 @@ void ServiceBrowser::initWidgets()
     attributesGroup = new QGroupBox(tr("Invokable attributes"));
     QVBoxLayout *attributesLayout = new QVBoxLayout;
     attributesLayout->addWidget(attributesListWidget);
+#if !defined(Q_WS_MAEMO_5)
+    // No space on the screen to show following title in Maemo
     attributesLayout->addWidget(new QLabel(tr("Show attributes for:")));
+#endif
     attributesLayout->addWidget(selectedImplRadioButton);
     attributesLayout->addWidget(defaultImplRadioButton);
     attributesGroup->setLayout(attributesLayout);
 
-#ifndef Q_OS_SYMBIAN
+#if defined(Q_WS_MAEMO_5)
+    // Maemo 5 style doesn't take group box titles into account.
+    int spacingHack = QFontMetrics(QFont()).height();
+    interfacesLayout->setContentsMargins(0, spacingHack, 0, 0);
+    attributesLayout->setContentsMargins(0, spacingHack, 0, 0);
+    servicesLayout->setContentsMargins(0, spacingHack, 0, 0);
+#endif
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5)
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(servicesGroup, 0, 0);
     layout->addWidget(attributesGroup, 0, 1, 2, 1);

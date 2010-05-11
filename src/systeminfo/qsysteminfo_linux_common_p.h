@@ -61,7 +61,7 @@
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
+#include "qhalservice_linux_p.h"
 #endif
 
 QT_BEGIN_HEADER

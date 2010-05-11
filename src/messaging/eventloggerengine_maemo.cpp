@@ -1,3 +1,44 @@
+/****************************************************************************
+**
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
 #include "eventloggerengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
 #include <QDebug>
@@ -14,17 +55,20 @@ EventLoggerEngine* EventLoggerEngine::instance()
 }
 
 
-EventLoggerEngine::EventLoggerEngine(QObject *parent)
+EventLoggerEngine::EventLoggerEngine(QObject *parent):QObject(parent)
 {
-  Q_UNUSED(parent);
   //    qDebug() << "EventLoggerEngine::EventLoggerEngine";
     DBusError err=DBUS_ERROR_INIT;
+    active = false;
     g_type_init();
     dbus = dbus_bus_get(DBUS_BUS_SESSION, &err); // Create dummy Dbus object and
     dbus_connection_setup_with_g_main (dbus, NULL); //add it to g_mainloop because eventlogger library expects that someone alse has added session bus to g_mainloop
     el=rtcom_el_new ();
     if(!RTCOM_IS_EL(el)) qDebug() << "EventLoggerEngine::EventLoggerEngine():Could't create RTComEl\n";
 
+    queryThread=0;
+    //    queryThread.run();
+    //    connect(queryThread, SIGNAL(messagesFound(const QMessageIdList &)),this, SLOT(messagesFound_(const QMessageIdList &)));
 
 
     g_signal_connect(G_OBJECT(el), "new-event", G_CALLBACK(new_event_cb),(void*)this);
@@ -34,6 +78,7 @@ void EventLoggerEngine::new_event_cb(RTComEl *el,int event_id,
                                     const char *local_uid,const char *remote_uid,const char *remote_ebook_uid,
                                     const char *group_uid,const char *service,EventLoggerEngine *p)
 {
+  Q_UNUSED(el);
   p->newEvent(event_id, local_uid,remote_uid ,remote_ebook_uid,group_uid,service);
 };
 
@@ -254,6 +299,56 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
 }
 #endif
 
+bool EventLoggerEngine::filterMessages(const QMessageFilter &filter,
+                                                    const QMessageSortOrder& sortOrder,
+                                                    QString body,
+                                                    QMessageDataComparator::MatchFlags matchFlags)
+{
+
+  //  qDebug() << "EventLoggerEngine::filterMessages";
+  if (active) {
+    qWarning() << "EventLoggerEngine::filterMessages::Service is currently busy";
+    return false;
+  }
+
+
+  active = true;
+  state = QMessageService::ActiveState;
+  emit stateChanged(state);
+
+  if(!queryThread) {
+    queryThread=new QueryThread();
+    connect(queryThread, SIGNAL(completed()), this, SLOT(reportMatchingIds()), Qt::QueuedConnection);
+  };
+  queryThread->setArgs(this, filter, body, matchFlags, sortOrder, 0,0);
+  queryThread->start();
+
+    //  return queryThread.queryMessages(filter,sortOrder,body,matchFlags);
+    return true;
+}
+
+void EventLoggerEngine::messagesFound_(const QMessageIdList &ids)
+{
+  //  qDebug() << "EventLoggerEngine::messagesFound";
+  emit messagesFound(ids,true,false); // filtered but not sorted
+}
+
+
+void EventLoggerEngine::reportMatchingIds()
+{
+  //  qDebug() << "EventLoggerEngine::messagesFound" << m_ids.count();
+  emit messagesFound(m_ids,true,false);
+  completed();
+}
+
+void EventLoggerEngine::completed()
+{
+    active = false;
+    state = QMessageService::FinishedState;
+    emit stateChanged(state);
+}
+
+
 QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &filter,
                                                     const QMessageSortOrder& sortOrder,
                                                     QString body,
@@ -326,5 +421,33 @@ QMessageIdList EventLoggerEngine::filterAndOrderMessages(const QMessageFilter &f
 #endif
     return idList;
 }
+
+
+QueryThread::QueryThread(): QThread()
+{
+}
+
+void QueryThread::setArgs(EventLoggerEngine *parent, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+{
+  _parent=parent;
+  _filter=filter;
+  _body=body;
+  _matchFlags=matchFlags;
+  _sortOrder=sortOrder;
+  _limit=limit;
+  _offset=offset;
+}
+
+void QueryThread::run()
+{
+  //  qDebug() << "QueryThread::run()";
+  _parent->m_ids=EventLoggerEngine::instance()->filterAndOrderMessages(_filter,_sortOrder,_body,_matchFlags);
+  //  qDebug() << "QueryThread::run() done" << _parent->m_ids.count();
+  emit completed();
+}
+
+
+
+#include "moc_eventloggerengine_maemo_p.cpp"
 
 QTM_END_NAMESPACE

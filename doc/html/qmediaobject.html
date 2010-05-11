@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaobject.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaObject Class Reference</title>
+  <title>Qt Mobility Project 1.1: QMediaObject Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -37,18 +37,18 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#dtor.QMediaObject">~QMediaObject</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QtMedia::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#availabilityError">availabilityError</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMediaServices::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#availabilityError">availabilityError</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#availableExtendedMetaData">availableExtendedMetaData</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QtMedia::MetaData&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#availableMetaData">availableMetaData</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QtMediaServices::MetaData&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#availableMetaData">availableMetaData</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#extendedMetaData">extendedMetaData</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#isAvailable">isAvailable</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaDataAvailable-prop">isMetaDataAvailable</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaDataWritable-prop">isMetaDataWritable</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaData">metaData</a></b> ( QtMedia::MetaData <i>key</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#metaData">metaData</a></b> ( QtMediaServices::MetaData <i>key</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#notifyInterval-prop">notifyInterval</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QMediaService * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#service">service</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#setExtendedMetaData">setExtendedMetaData</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#setMetaData">setMetaData</a></b> ( QtMedia::MetaData <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#setMetaData">setMetaData</a></b> ( QtMediaServices::MetaData <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaobject.html#notifyInterval-prop">setNotifyInterval</a></b> ( int <i>milliSeconds</i> )</td></tr>
 </table>
 <ul>
@@ -154,13 +154,13 @@
 <h3 class="fn"><a name="availabilityChanged"></a>void QMediaObject::availabilityChanged ( bool <i>available</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when the availability state has changed to <i>available</i></p>
 <a name="//apple_ref/cpp/instm/QMediaObject/availabilityError"></a>
-<h3 class="fn"><a name="availabilityError"></a><a href="qtmedia.html#AvailabilityError-enum">QtMedia::AvailabilityError</a> QMediaObject::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmediaservices.html#AvailabilityError-enum">QtMediaServices::AvailabilityError</a> QMediaObject::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns the service availability error state.</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/availableExtendedMetaData"></a>
 <h3 class="fn"><a name="availableExtendedMetaData"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMediaObject::availableExtendedMetaData () const</h3>
 <p>Returns a list of keys there is extended meta-data available for.</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/availableMetaData"></a>
-<h3 class="fn"><a name="availableMetaData"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qtmedia.html#MetaData-enum">QtMedia::MetaData</a>&gt; QMediaObject::availableMetaData () const</h3>
+<h3 class="fn"><a name="availableMetaData"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qtmediaservices.html#MetaData-enum">QtMediaServices::MetaData</a>&gt; QMediaObject::availableMetaData () const</h3>
 <p>Returns a list of keys there is meta-data available for.</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/extendedMetaData"></a>
 <h3 class="fn"><a name="extendedMetaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMediaObject::extendedMetaData ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
@@ -171,7 +171,7 @@
 <h3 class="fn"><a name="isAvailable"></a>bool QMediaObject::isAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Returns true if the service is available for use.</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/metaData"></a>
-<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMediaObject::metaData ( <a href="qtmedia.html#MetaData-enum">QtMedia::MetaData</a> <i>key</i> ) const</h3>
+<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMediaObject::metaData ( <a href="qtmediaservices.html#MetaData-enum">QtMediaServices::MetaData</a> <i>key</i> ) const</h3>
 <p>Returns the value associated with a meta-data <i>key</i>.</p>
 <p>See also <a href="qmediaobject.html#setMetaData">setMetaData</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/metaDataAvailableChanged"></a>
@@ -199,13 +199,13 @@
 <p>The naming and type of extended meta-data is not standardized, so the values and meaning of keys may vary between backends.</p>
 <p>See also <a href="qmediaobject.html#extendedMetaData">extendedMetaData</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/setMetaData"></a>
-<h3 class="fn"><a name="setMetaData"></a>void QMediaObject::setMetaData ( <a href="qtmedia.html#MetaData-enum">QtMedia::MetaData</a> <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
+<h3 class="fn"><a name="setMetaData"></a>void QMediaObject::setMetaData ( <a href="qtmediaservices.html#MetaData-enum">QtMediaServices::MetaData</a> <i>key</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i> )</h3>
 <p>Sets a <i>value</i> for a meta-data <i>key</i>.</p>
 <p>See also <a href="qmediaobject.html#metaData">metaData</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

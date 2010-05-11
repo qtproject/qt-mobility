@@ -119,7 +119,6 @@ void SymbianPluginPerfomance::createComplexContacts()
         number.setSubTypes("Mobile");
         number.setNumber("12345678");
         alice.saveDetail(&number);
-        alice.setPreferredDetail("DialAction", number);
 
         QContactPhoneNumber number2;
         number2.setContexts("Work");
@@ -417,7 +416,6 @@ void SymbianPluginPerfomance::createComplexContactsWithOnlineAccount()
         number.setSubTypes("Mobile");
         number.setNumber("12345678");
         alice.saveDetail(&number);
-        alice.setPreferredDetail("DialAction", number);
         QContactPhoneNumber number2;
         number2.setContexts("Work");
         number2.setSubTypes("Landline");

@@ -208,8 +208,7 @@ public: // New functions
     QString paramName(const QByteArray& parameter, QTextCodec* codec) const;
     QString paramValue(const QByteArray& parameter, QTextCodec* codec) const;
     static bool containsAt(const QByteArray& text, const QByteArray& ba, int index);
-    bool splitStructuredValue(QVersitDocument::VersitType type,
-                              QVersitProperty& property,
+    bool splitStructuredValue(QVersitProperty& property,
                               bool hasEscapedBackslashes) const;
     static QStringList splitValue(const QString& string,
                                   const QChar& sep,

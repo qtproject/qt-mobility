@@ -48,8 +48,11 @@
 #include <cntdb.h>
 #include <cntdef.h>
 #include <cntitem.h>
+#include <tz.h>
+#include <tzconverter.h>
 
 class CntTransformContactData;
+class CTzConverter;
 
 QTM_BEGIN_NAMESPACE
 class QContactDetailDefinition;
@@ -69,7 +72,7 @@ public:
 	        const CContactItem& contactItem,
 	        QContact& contact,
 	        const CContactDatabase &contactDatabase,
-	        QString managerUri) const;
+	        QString managerUri);
 	void transformContactL(
 	        QContact &contact,
 	        CContactItem &contactItem) const;
@@ -77,7 +80,7 @@ public:
     TUint32 GetIdForDetailL(const QContactDetailFilter& detailFilter,bool& isSubtype) const;
     void detailDefinitions(QMap<QString, QContactDetailDefinition>& defaultSchema, const QString& contactType, QContactManager::Error* error) const;
     QContactDetail *transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const;
-    QContactDetail *transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const;
+    QContactDetail *transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase);
 private:
 	enum ContactData
 	{
@@ -105,11 +108,11 @@ private:
 	void initializeCntTransformContactData();
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
-	void transformPreferredDetailL(const QContact& contact, const QContactDetail& detail, QList<CContactItemField*> &fieldList) const;
-	void transformPreferredDetail(const CContactItemField& field, const QContactDetail& detail, QContact& contact) const;
 
 private:
 	QMap<ContactData, CntTransformContactData*> m_transformContactData;
+	CTzConverter* m_tzConverter;
+	RTz m_tzoneServer;
 };
 
 #endif /* TRANSFORMCONCTACT_H_ */

@@ -44,7 +44,7 @@
 #include <QDir>
 
 #if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
+#include "qhalservice_linux_p.h"
 #include <QtDBus/QtDBus>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusError>
@@ -113,7 +113,6 @@ static bool halAvailable()
         }
     }
 #endif
-  //  qDebug() << "Hal is not running";
     return false;
 }
 
@@ -192,16 +191,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::FmradioFeature :
          {
-             const QString sysPath = "/sys/class/video4linux/";
-             const QDir sysDir(sysPath);
-             QStringList filters;
-             filters << "*";
-             QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-             foreach(const QString dir, sysList) {
-                if (dir.contains("radio")) {
-                    featureSupported = true;
-                }
-            }
+             featureSupported = !(QDir("/sys/class/video4linux/").entryList(QStringList("radio*")).empty());
          }
          break;
      case QSystemInfo::IrFeature :
@@ -285,14 +275,7 @@ bool QSystemInfoLinuxCommonPrivate::hasFeatureSupported(QSystemInfo::Feature fea
          break;
      case QSystemInfo::VideoOutFeature :
          {
-             const QString sysPath = "/sys/class/video4linux/";
-             const QDir sysDir(sysPath);
-             QStringList filters;
-             filters << "*";
-             const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-             if(sysList.contains("video")) {
-                 featureSupported = true;
-             }
+             featureSupported = !(QDir("/sys/class/video4linux/").entryList(QStringList("video*")).empty());
          }
          break;
      case QSystemInfo::HapticsFeature:
@@ -357,7 +340,7 @@ QString QSystemInfoLinuxCommonPrivate::version(QSystemInfo::Version type,
             const QString versionPath = QLatin1String("/proc/version");
             QFile versionFile(versionPath);
             if(!versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning() << "File not opened";
+                qDebug() << "File not opened";
             } else {
                 QString  strvalue;
                 strvalue = QLatin1String(versionFile.readAll().trimmed());
@@ -507,7 +490,7 @@ QString QSystemNetworkInfoLinuxCommonPrivate::networkName(QSystemNetworkInfo::Ne
                     netname = ssid;
                 }
             } else {
-                qWarning() << "no socket";
+                qDebug() << "no socket";
             }
             close(sock);
         }
@@ -605,7 +588,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
 {
     int ctl = socket(PF_BLUETOOTH,SOCK_RAW,BTPROTO_BNEP);
     if (ctl < 0) {
-        qWarning() << "Cannot open bnep socket";
+        qDebug() << "Cannot open bnep socket";
         return QSystemNetworkInfo::UndefinedStatus;
     }
 
@@ -616,7 +599,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoLinuxCommonPrivate::getBluet
     req.cnum = 36;
 
     if (ioctl(ctl,BNEPGETCONNLIST,&req) < 0) {
-        qWarning() << "Cannot get bnep connection list.";
+        qDebug() << "Cannot get bnep connection list.";
         return QSystemNetworkInfo::UndefinedStatus;
     }
     for (uint j = 0; j< req.cnum; j++) {
@@ -917,7 +900,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
             float curLevel = 0.0;
             QFile curBrightnessFile(backlightPath+brightnessFileName+"/LCD/brightness");
             if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
+                qDebug()<<"File not opened";
             } else {
                 const QString strvalue = curBrightnessFile.readAll().trimmed();
                 if(strvalue.contains("levels")) {
@@ -947,7 +930,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
         float curLevel = 0.0;
         QFile curBrightnessFile(backlightPath+brightnessFileName+"/brightness");
         if(!curBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qWarning()<<"File not opened";
+            qDebug()<<"File not opened";
         } else {
             QString strvalue;
             strvalue = curBrightnessFile.readLine().trimmed();
@@ -956,7 +939,7 @@ int QSystemDisplayInfoLinuxCommonPrivate::displayBrightness(int screen)
 
             QFile maxBrightnessFile(backlightPath+brightnessFileName+"/max_brightness");
             if(!maxBrightnessFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                qWarning()<<"File not opened";
+                qDebug()<<"File not opened";
             } else {
                 QString strvalue;
                 strvalue = maxBrightnessFile.readLine().trimmed();
@@ -1061,7 +1044,7 @@ QSystemStorageInfo::DriveType QSystemStorageInfoLinuxCommonPrivate::typeForDrive
 
         QFile file(dmFile);
         if (!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "Could not open sys file";
+            qDebug() << "Could not open sys file";
         } else {
             QTextStream sysinfo(&file);
             QString line = sysinfo.readAll();
@@ -1155,7 +1138,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                         if(halIfaceDevice->setConnections() ) {
                             if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                         this,SLOT(halChanged(int,QVariantList)))) {
-                                qWarning() << "connection malfunction";
+                                qDebug() << "connection malfunction";
                             }
                         }
                         break;
@@ -1172,7 +1155,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                     if(halIfaceDevice->setConnections() ) {
                         if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
-                            qWarning() << "connection malfunction";
+                            qDebug() << "connection malfunction";
                         }
                     }
                     break;
@@ -1188,7 +1171,7 @@ void QSystemDeviceInfoLinuxCommonPrivate::setConnection()
                     if(halIfaceDevice->setConnections()) {
                         if(!connect(halIfaceDevice,SIGNAL(propertyModified(int, QVariantList)),
                                     this,SLOT(halChanged(int,QVariantList)))) {
-                            qWarning() << "connection malfunction";
+                            qDebug() << "connection malfunction";
                         }
                     }
                     break;
@@ -1251,10 +1234,9 @@ QString QSystemDeviceInfoLinuxCommonPrivate::manufacturer()
         QTextStream cpuinfo(&vendorId);
         return cpuinfo.readLine().trimmed();
     } else {
-        //        qWarning() << "Could not open /sys/devices/virtual/dmi/id/board_vendor";
         QFile file("/proc/cpuinfo");
         if (!file.open(QIODevice::ReadOnly)) {
-            qWarning() << "Could not open /proc/cpuinfo";
+            qDebug() << "Could not open /proc/cpuinfo";
         } else {
             QTextStream cpuinfo(&file);
             QString line = cpuinfo.readLine();
@@ -1287,7 +1269,7 @@ QString QSystemDeviceInfoLinuxCommonPrivate::model()
     }
     QFile file("/proc/cpuinfo");
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/cpuinfo";
+        qDebug() << "Could not open /proc/cpuinfo";
     } else {
         QTextStream cpuinfo(&file);
         QString line = cpuinfo.readLine();
@@ -1347,7 +1329,7 @@ QString QSystemDeviceInfoLinuxCommonPrivate::productName()
 
     QFile file("/etc/issue");
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Could not open /proc/cpuinfo";
+        qDebug() << "Could not open /proc/cpuinfo";
     } else {
         QTextStream prodinfo(&file);
         QString line = prodinfo.readLine();
@@ -1374,10 +1356,10 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
         QHalInterface iface2;
         if (iface2.isValid()) {
             QStringList capList;
-            capList << QLatin1String("input.keyboard") 
+            capList << QLatin1String("input.keyboard")
                     << QLatin1String("input.keys")
-                    << QLatin1String("input.keypad") 
-                    << QLatin1String("input.mouse") 
+                    << QLatin1String("input.keypad")
+                    << QLatin1String("input.mouse")
                     << QLatin1String("input.tablet")
                     << QLatin1String("input.touchpad");
             for(int i = 0; i < capList.count(); i++) {
@@ -1418,7 +1400,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoLinuxCommonPrivate::inputMe
     foreach(const QString inputFileName, inputList) {
         QFile file(inputsPath+inputFileName+"/device/name");
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qWarning()<<"File not opened";
+            qDebug()<<"File not opened";
         } else {
             QString strvalue;
             strvalue = file.readLine();
@@ -1461,12 +1443,9 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             foreach(const QString dev, list) {
                 QHalDeviceInterface ifaceDevice(dev);
                 if (ifaceDevice.isValid()) {
-//                    qWarning() << ifaceDevice.getPropertyString("battery.type")
-//                            << ifaceDevice.getPropertyInt("battery.charge_level.percentage");
                     if(!ifaceDevice.getPropertyBool("battery.present")
                         && (ifaceDevice.getPropertyString("battery.type") != "pda"
                              || ifaceDevice.getPropertyString("battery.type") != "primary")) {
-                        qWarning() << "XXXXXXXXXXXXX";
                         return 0;
                     } else {
                         level = ifaceDevice.getPropertyInt("battery.charge_level.percentage");
@@ -1479,7 +1458,6 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
     } else {
         QFile infofile("/proc/acpi/battery/BAT0/info");
         if (!infofile.open(QIODevice::ReadOnly)) {
-            //   qWarning() << "Could not open /proc/acpi/battery/BAT0/info";
             return QSystemDeviceInfo::NoBatteryLevel;
         } else {
             QTextStream batinfo(&infofile);
@@ -1487,7 +1465,6 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             while (!line.isNull()) {
                 if(line.contains("design capacity")) {
                     levelWhenFull = line.split(" ").at(1).trimmed().toFloat();
-                    //qWarning() << levelWhenFull;
                     infofile.close();
                     break;
                 }
@@ -1498,7 +1475,6 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
 
         QFile statefile("/proc/acpi/battery/BAT0/state");
         if (!statefile.open(QIODevice::ReadOnly)) {
-            //     qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
             return QSystemDeviceInfo::NoBatteryLevel;
         } else {
             QTextStream batstate(&statefile);
@@ -1506,7 +1482,6 @@ int QSystemDeviceInfoLinuxCommonPrivate::batteryLevel() const
             while (!line.isNull()) {
                 if(line.contains("remaining capacity")) {
                     level = line.split(" ").at(1).trimmed().toFloat();
-                    //qWarning() << level;
                     statefile.close();
                     break;
                 }
@@ -1554,7 +1529,6 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
 #else
        QFile statefile("/proc/acpi/battery/BAT0/state");
        if (!statefile.open(QIODevice::ReadOnly)) {
-           //  qWarning() << "Could not open /proc/acpi/battery/BAT0/state";
        } else {
            QTextStream batstate(&statefile);
            QString line = batstate.readLine();
@@ -1597,7 +1571,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
                                             "org.bluez.Adapter",
                                             "PropertyChanged",
                                             this,SLOT(bluezPropertyChanged(QString, QDBusVariant)))) {
-                     qWarning() << "bluez could not connect signal";
+                     qDebug() << "bluez could not connect signal";
                  }
              }
          }

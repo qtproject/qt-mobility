@@ -57,16 +57,18 @@ public:
 
 private:
     DBusComm* dbusComm;
-    int client_id_;
-    void dbusMessages(const QByteArray &msg);
+    bool registered;
 
-public slots:
-    virtual void startUpdates();
+private Q_SLOTS:
+    void newSatellitesInView(const QList<QGeoSatelliteInfo> &update);
+    void newSatellitesInUse(const QList<QGeoSatelliteInfo> &update);
+    
+public Q_SLOTS:
+    void startUpdates();
     void stopUpdates();
-
     void requestUpdate(int timeout = 5000);
 
-signals:
+Q_SIGNALS:
     void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void requestTimeout();

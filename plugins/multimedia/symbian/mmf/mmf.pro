@@ -2,7 +2,7 @@ TEMPLATE = lib
 QT += multimedia
 CONFIG += plugin
 TARGET = qtmedia_mmfengine
-PLUGIN_SUBDIR = mediaservice
+PLUGIN_TYPE = mediaservice
 include (../../../../common.pri)
 qtAddLibrary(QtMedia)
 
@@ -45,7 +45,7 @@ MMP_RULES += EXPORTUNFROZEN
 
 #make a sis package from plugin + api + stub (plugin)
 pluginDep.sources = $${TARGET}.dll
-pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_SUBDIR}
+pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
 DEPLOYMENT += pluginDep      
 
 #Media API spesific deployment

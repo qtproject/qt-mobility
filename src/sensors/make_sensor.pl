@@ -181,7 +181,6 @@ IMPLEMENT_READING('.$reading.')
     \class '.$reading.'
     \ingroup sensors_reading
 
-    \preliminary
     \brief The '.$reading.' class holds readings from the [X] sensor.
 
     [Fill this out]
@@ -218,7 +217,6 @@ void '.$reading.'::setMyprop(qreal myprop)
     \class '.$filter.'
     \ingroup sensors_filter
 
-    \preliminary
     \brief The '.$filter.' class is a convenience wrapper around QSensorFilter.
 
     The only difference is that the filter() method features a pointer to '.$reading.'
@@ -239,7 +237,6 @@ const char *'.$sensor.'::type("'.$sensor.'");
     \class '.$sensor.'
     \ingroup sensors_type
 
-    \preliminary
     \brief The '.$sensor.' class is a convenience wrapper around QSensor.
 
     The only behavioural difference is that this class sets the type properly.

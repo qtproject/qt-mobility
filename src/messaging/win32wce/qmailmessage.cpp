@@ -1366,7 +1366,6 @@ void QMailMessageHeaderFieldPrivate::deserialize(Stream &stream)
 /*!
     \class QMailMessageHeaderField
 
-    \preliminary
     \brief The QMailMessageHeaderField class encapsulates the parsing of message header fields.
     
     \ingroup messaginglibrary
@@ -1681,7 +1680,6 @@ void QMailMessageHeaderField::deserialize(Stream &stream)
 /*!
     \class QMailMessageContentType
 
-    \preliminary
     \brief The QMailMessageContentType class encapsulates the parsing of the RFC 2822
     'Content-Type' header field.
     
@@ -1874,7 +1872,6 @@ void QMailMessageContentType::setCharset(const QByteArray& charset)
 /*!
     \class QMailMessageContentDisposition
 
-    \preliminary
     \brief The QMailMessageContentDisposition class encapsulates the parsing of the RFC 2822
     'Content-Disposition' header field.
     
@@ -2657,7 +2654,6 @@ void QMailMessageBodyPrivate::deserialize(Stream &stream)
 /*!
     \class QMailMessageBody
 
-    \preliminary
     \brief The QMailMessageBody class contains the body element of a message or message part.
     
     \ingroup messaginglibrary
@@ -3631,7 +3627,6 @@ void QMailMessagePartContainerPrivate::deserialize(Stream &stream)
 /*!
     \class QMailMessagePartContainer
 
-    \preliminary
     \brief The QMailMessagePartContainer class provides access to a collection of message parts.
     
     \ingroup messaginglibrary
@@ -4275,7 +4270,6 @@ QMailMessagePartContainerPrivate* QMailMessagePartContainerPrivate::privatePoint
 
 /*!
     \class QMailMessagePart
-    \preliminary
 
     \brief The QMailMessagePart class provides a convenient interface for working 
     with message attachments.
@@ -4308,7 +4302,6 @@ QMailMessagePartContainerPrivate* QMailMessagePartContainerPrivate::privatePoint
 
 /*!
     \class QMailMessagePart::Location
-    \preliminary
 
     \brief The Location class contains a specification of the location of a message part
     with the message that contains it.
@@ -5335,7 +5328,6 @@ void QMailMessageMetaDataPrivate::deserialize(Stream &stream)
 /*!
     \class QMailMessageMetaData
 
-    \preliminary
     \brief The QMailMessageMetaData class provides information about a message stored by Qtopia.
     
     \ingroup messaginglibrary
@@ -6376,7 +6368,6 @@ void QMailMessagePrivate::deserialize(Stream &stream)
 /*!
     \class QMailMessage
 
-    \preliminary
     \brief The QMailMessage class provides a convenient interface for working with messages.
     
     \ingroup messaginglibrary

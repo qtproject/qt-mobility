@@ -43,7 +43,8 @@
 
 #include <e32base.h>
 
-_LIT(KPSPathMapperServerName, "PSPathMapperServer");
+_LIT(KPSPathMapperServerName, "!qpspathmapperserver");
+_LIT(KPSPathMapperServerProcess, "qpspathmapperserver");
 
 const TUint KServerMajorVersionNumber = 0;
 const TUint KServerMinorVersionNumber = 1;
