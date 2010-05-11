@@ -45,27 +45,36 @@ QTM_USE_NAMESPACE
 
 QOrganizerJournal::QOrganizerJournal()
 {
+    // XXX TODO: set the QOrganizerItemType detail to == Journal.
 }
 
 QOrganizerJournal::QOrganizerJournal(const QOrganizerJournal& other)
+    : QOrganizerItem(other)
 {
 }
+
 QOrganizerJournal& QOrganizerJournal::operator=(const QOrganizerJournal& other)
 {
+    QOrganizerItem::operator =(other);
+    return *this;
 }
 
 void QOrganizerJournal::setStartDateTime(const QDateTime& startDateTime)
 {
+    Q_UNUSED(startDateTime);
 }
 
 QDateTime QOrganizerJournal::startDateTime() const
 {
+    return QDateTime();
 }
 
 void QOrganizerJournal::setEndDateTime(const QDateTime& endDateTime)
 {
+    Q_UNUSED(endDateTime);
 }
 
 QDateTime QOrganizerJournal::endDateTime() const
 {
+    return QDateTime();
 }

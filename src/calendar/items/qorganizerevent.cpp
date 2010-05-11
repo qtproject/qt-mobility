@@ -46,6 +46,7 @@ QTM_USE_NAMESPACE
 
 QOrganizerEvent::QOrganizerEvent()
 {
+    // XXX TODO: set the QOrganizerItemType detail to == Event.
 }
 
 QOrganizerEvent::QOrganizerEvent(const QOrganizerEvent& other)

@@ -48,41 +48,52 @@ QOrganizerTodoOccurrence::QOrganizerTodoOccurrence()
 }
 
 QOrganizerTodoOccurrence::QOrganizerTodoOccurrence(const QOrganizerTodoOccurrence& other)
+    : QOrganizerItem(other)
 {
 }
 
 QOrganizerTodoOccurrence& QOrganizerTodoOccurrence::operator=(const QOrganizerTodoOccurrence& other)
 {
+    QOrganizerItem::operator =(other);
+    return *this;
 }
 
 void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
+    Q_UNUSED(startDateTime);
 }
 
 QDateTime QOrganizerTodoOccurrence::startDateTime() const
 {
+    return QDateTime();
 }
 
 void QOrganizerTodoOccurrence::setEndDateTime(const QDateTime& endDateTime)
 {
+    Q_UNUSED(endDateTime);
 }
 
 QDateTime QOrganizerTodoOccurrence::endDateTime() const
 {
+    return QDateTime();
 }
 
 void QOrganizerTodoOccurrence::setParentItemId(const QOrganizerItemId& parentId) const
 {
+    Q_UNUSED(parentId);
 }
 
 QOrganizerItemId QOrganizerTodoOccurrence::parentItemId() const
 {
+    return QOrganizerItemId();
 }
 
 void QOrganizerTodoOccurrence::setOriginalDateTime(const QDateTime& dateTime)
 {
+    Q_UNUSED(dateTime);
 }
 
 QDateTime QOrganizerTodoOccurrence::originalDateTime() const
 {
+    return QDateTime();
 }

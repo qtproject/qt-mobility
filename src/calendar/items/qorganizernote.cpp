@@ -45,12 +45,17 @@ QTM_USE_NAMESPACE
 
 QOrganizerNote::QOrganizerNote()
 {
+    // XXX TODO: set the QOrganizerItemType detail to == Note.
+    // actually... probably the base type is Note.  This class doesn't need to exist.
 }
 
 QOrganizerNote::QOrganizerNote(const QOrganizerNote& other)
+    : QOrganizerItem(other)
 {
 }
 
 QOrganizerNote& QOrganizerNote::operator=(const QOrganizerNote& other)
 {
+    QOrganizerItem::operator =(other);
+    return *this;
 }

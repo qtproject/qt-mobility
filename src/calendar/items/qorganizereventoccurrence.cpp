@@ -48,7 +48,7 @@ QOrganizerEventOccurrence::QOrganizerEventOccurrence()
 }
 
 QOrganizerEventOccurrence::QOrganizerEventOccurrence(const QOrganizerEventOccurrence& other)
-    :QOrganizerItem(other)
+    : QOrganizerItem(other)
 {
 }
 

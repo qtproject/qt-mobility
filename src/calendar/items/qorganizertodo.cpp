@@ -46,37 +46,47 @@ QTM_USE_NAMESPACE
 
 QOrganizerTodo::QOrganizerTodo()
 {
+    // XXX TODO: set the QOrganizerItemType detail to == Todo.
 }
 
 QOrganizerTodo::QOrganizerTodo(const QOrganizerTodo& other)
+    : QOrganizerItem(other)
 {
 }
 
 QOrganizerTodo& QOrganizerTodo::operator=(const QOrganizerTodo& other)
 {
+    QOrganizerItem::operator =(other);
+    return *this;
 }
 
 void QOrganizerTodo::setStartDateTime(const QDateTime& startDateTime)
 {
+    Q_UNUSED(startDateTime);
 }
 
 QDateTime QOrganizerTodo::startDateTime() const
 {
+    return QDateTime();
 }
 
 void QOrganizerTodo::setEndDateTime(const QDateTime& endDateTime)
 {
+    Q_UNUSED(endDateTime);
 }
 
 QDateTime QOrganizerTodo::endDateTime() const
 {
+    return QDateTime();
 }
 
 void QOrganizerTodo::setRecurrence(const QOrganizerItemRecurrence& recurrence) const
 {
+    Q_UNUSED(recurrence);
 }
 
 QOrganizerItemRecurrence QOrganizerTodo::recurrence() const
 {
+    return QOrganizerItemRecurrence();
 }
 
