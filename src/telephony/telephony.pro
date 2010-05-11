@@ -22,14 +22,14 @@ win32 {
 }
 unix: {
     !maemo*: {
-        HEADERS += qtelephony_linux_p.h 
+        HEADERS += qtelephonyevent_linux_p.h 
     }
     maemo*: {
-        HEADERS += qtelephony_maemo_p.h
+        HEADERS += qtelephonyevent_maemo_p.h
     }
 }
 symbian:{
-    HEADERS += qtelephony_s60_p.h 
+    HEADERS += qtelephonyevent_s60_p.h 
 }
 
 

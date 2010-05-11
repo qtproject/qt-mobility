@@ -62,31 +62,32 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
+enum PrivateDataType{
+    MaemoContactCategory = 0
+};
+
 class QTelephonyEventPrivate : public QObject
 {
     Q_OBJECT
 public:
     QTelephonyEventPrivate(QObject *parent = 0);
     virtual ~QTelephonyEventPrivate();
+    CallStatus currentStatus() { return CallStatus::UnknownStatus; }
 };
 
 class QCallInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
-    enum DataType{
-        ContactIDMemoryOffset = 0
-    };
     QCallInfoPrivate(QObject *parent = 0);
     virtual ~QCallInfoPrivate();
     QString phoneNumber();
     unsigned long sipID();
     QList<QContactLocalId> contacts();
-    bool querryData( DataType datatype, const QObject& param, void** value);
+    bool querryData( PrivateDataType datatype, const QObject& param, void** value);
     CallType callType() { return CallType::UnknownType; }
     CallStatus callStatus() { return CallStatus::UnknownStatus; }
 };
-
 
 QTM_END_NAMESPACE
 
