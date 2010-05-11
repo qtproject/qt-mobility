@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfocommon.h"
+#include "qsysteminfo.h"
 #include "qsysteminfo_win_p.h"
 #include <qt_windows.h>
 

@@ -43,11 +43,6 @@
 
 #include <QWidget>
 #include <qsysteminfo.h>
-#include <qsystemdeviceinfo.h>
-#include <qsystemdisplayinfo.h>
-#include <qsystemnetworkinfo.h>
-#include <qsystemscreensaver.h>
-#include <qsystemstorageinfo.h>
 
 #ifdef QTM_EXAMPLES_PREFER_LANDSCAPE
 #include "ui_dialog_landscape.h"

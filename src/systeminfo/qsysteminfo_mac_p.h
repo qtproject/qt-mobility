@@ -57,17 +57,9 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
-#include "qsysteminfocommon.h"
-
-//#include "qmobilityglobal.h"
 
 #include "qsysteminfo.h"
-
-#include "qsystemdeviceinfo.h"
-#include "qsystemdisplayinfo.h"
-#include "qsystemnetworkinfo.h"
-#include "qsystemscreensaver.h"
-#include "qsystemstorageinfo.h"
+#include <qmobilityglobal.h>
 
 #include <QTimer>
 #include <QtCore/qthread.h>
