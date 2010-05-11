@@ -39,36 +39,59 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMCHANGELOGFILTER_H
-#define QORGANIZERITEMCHANGELOGFILTER_H
+#ifndef QORGANIZERITEMCHANGELOGFILTER_P_H
+#define QORGANIZERITEMCHANGELOGFILTER_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qorganizeritemfilter_p.h"
 #include "qorganizeritemfilter.h"
 
 #include <QDateTime>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemChangeLogFilterPrivate;
-class Q_CALENDAR_EXPORT QOrganizerItemChangeLogFilter: public QOrganizerItemFilter
+class QOrganizerItemChangeLogFilterPrivate : public QOrganizerItemFilterPrivate
 {
 public:
-    enum EventType {
-        EventAdded,
-        EventChanged,
-        EventRemoved
-    };
+    QOrganizerItemChangeLogFilterPrivate(QOrganizerItemChangeLogFilter::EventType type = QOrganizerItemChangeLogFilter::EventAdded)
+        : QOrganizerItemFilterPrivate()
+        , m_eventType(type)
+    {
 
-    explicit QOrganizerItemChangeLogFilter(QOrganizerItemChangeLogFilter::EventType type = QOrganizerItemChangeLogFilter::EventAdded);
-    QOrganizerItemChangeLogFilter(const QOrganizerItemFilter& other);
+    }
 
-    void setEventType(QOrganizerItemChangeLogFilter::EventType type);
-    void setSince(const QDateTime& since);
+    QOrganizerItemChangeLogFilterPrivate(const QOrganizerItemChangeLogFilterPrivate& other)
+        : QOrganizerItemFilterPrivate(other)
+        , m_eventType(other.m_eventType)
+        , m_since(other.m_since)
+    {
 
-    QDateTime since() const;
-    QOrganizerItemChangeLogFilter::EventType eventType() const;
+    }
 
-private:
-    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemChangeLogFilter)
+    virtual bool compare(const QOrganizerItemFilterPrivate* other) const
+    {
+        const QOrganizerItemChangeLogFilterPrivate *od = static_cast<const QOrganizerItemChangeLogFilterPrivate*>(other);
+        if (m_eventType != od->m_eventType)
+            return false;
+        if (m_since != od->m_since)
+            return false;
+        return true;
+    }
+
+    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemChangeLogFilter, QOrganizerItemFilter::ChangeLogFilter)
+
+    QOrganizerItemChangeLogFilter::EventType m_eventType;
+    QDateTime m_since;
 };
 
 QTM_END_NAMESPACE

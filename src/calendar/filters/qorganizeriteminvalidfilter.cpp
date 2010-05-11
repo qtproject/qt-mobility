@@ -39,18 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
-
-// this file includes all of the leaf filter classes
-// provided by the Qt Calendar API.
-
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
 #include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
+#include "qorganizeritemfilter_p.h"
 
-#endif
+/*!
+  \class QOrganizerItemInvalidFilter
+  \brief The QOrganizerItemInvalidFilter class matches no organizeritems.
+   \ingroup organizeritems-filters
+ 
+  This class provides a filter which will never match any organizeritems
+ */
+
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemInvalidFilterPrivate : public QOrganizerItemFilterPrivate
+{
+public:
+    QOrganizerItemInvalidFilterPrivate()
+       : QOrganizerItemFilterPrivate()
+    {
+    }
+
+    bool compare(const QOrganizerItemFilterPrivate*) const
+    {
+        return true; // all invalid filters are alike
+    }
+
+    /* There is no way this can be called - d is never detached */
+    QOrganizerItemFilterPrivate* clone() const
+    {
+        return new QOrganizerItemInvalidFilterPrivate();
+    }
+
+    QOrganizerItemFilter::FilterType type() const
+    {
+        return QOrganizerItemFilter::InvalidFilter;
+    }
+
+    QList<QOrganizerItemFilter> m_filters;
+};
+
+/*!
+ * Constructs a new invalid filter
+ */
+QOrganizerItemInvalidFilter::QOrganizerItemInvalidFilter()
+    : QOrganizerItemFilter(new QOrganizerItemInvalidFilterPrivate)
+{
+}
+
+/*!
+ * Constructs a new invalid filter, ignoring the \a other filter
+ */
+QOrganizerItemInvalidFilter::QOrganizerItemInvalidFilter(const QOrganizerItemFilter& other)
+    : QOrganizerItemFilter(new QOrganizerItemInvalidFilterPrivate)
+{
+    // Initializing a QCIF from anything is the same as just constructing a QCIF
+    Q_UNUSED(other);
+}
+
+QTM_END_NAMESPACE

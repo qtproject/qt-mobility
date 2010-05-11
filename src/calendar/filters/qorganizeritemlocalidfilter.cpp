@@ -39,18 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
-
-// this file includes all of the leaf filter classes
-// provided by the Qt Calendar API.
-
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
 #include "qorganizeritemlocalidfilter.h"
+#include "qorganizeritemlocalidfilter_p.h"
+#include "qorganizeritemfilter_p.h"
+#include "qorganizeritemmanager.h"
 
-#endif
+QTM_BEGIN_NAMESPACE
+
+/*!
+  \class QOrganizerItemLocalIdFilter
+  \brief The QOrganizerItemLocalIdFilter class provides a filter based around a list of organizeritem ids
+ 
+  \ingroup organizeritems-filters
+  
+  It may be used to select organizeritems whose ids are contained in the given list of ids.
+ */
+
+Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemLocalIdFilter);
+
+/*!
+ * \fn QOrganizerItemLocalIdFilter::QOrganizerItemLocalIdFilter(const QOrganizerItemFilter& other)
+ * Constructs a copy of \a other if possible, otherwise constructs a new organizeritem local id filter
+ */
+
+/*!
+ * Constructs a new organizeritem local id filter
+ */
+QOrganizerItemLocalIdFilter::QOrganizerItemLocalIdFilter()
+    : QOrganizerItemFilter(new QOrganizerItemLocalIdFilterPrivate)
+{
+}
+
+/*!
+ * Sets the list which contains the ids of possible matching organizeritems to \a ids
+ * \sa ids()
+ */
+void QOrganizerItemLocalIdFilter::setIds(const QList<QOrganizerItemLocalId>& ids)
+{
+    Q_D(QOrganizerItemLocalIdFilter);
+    d->m_ids = ids;
+}
+
+/*!
+ * Returns the list of ids of organizeritems which match this filter
+ * \sa setIds()
+ */
+QList<QOrganizerItemLocalId> QOrganizerItemLocalIdFilter::ids() const
+{
+    Q_D(const QOrganizerItemLocalIdFilter);
+    return d->m_ids;
+}
+
+QTM_END_NAMESPACE

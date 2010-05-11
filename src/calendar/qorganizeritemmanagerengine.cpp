@@ -430,7 +430,8 @@ QList<QVariant::Type> QOrganizerItemManagerEngine::supportedDataTypes() const
 QStringList QOrganizerItemManagerEngine::supportedItemTypes() const
 {
     QOrganizerItemManager::Error error;
-    QList<QVariant> allowableVals = detailDefinition(QOrganizerItemType::DefinitionName, QOrganizerItemType::TypeOrganizerItem, &error).fields().value(QOrganizerItemType::FieldType).allowableValues();
+    // XXX TODO: ensure that the TYPE field value for EVERY SINGLE TYPE contains all possible types...
+    QList<QVariant> allowableVals = detailDefinition(QOrganizerItemType::DefinitionName, QOrganizerItemType::TypeNote, &error).fields().value(QOrganizerItemType::FieldType).allowableValues();
     QStringList retn;
     for (int i = 0; i < allowableVals.size(); i++)
         retn += allowableVals.at(i).toString();

@@ -39,18 +39,55 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
+#ifndef QORGANIZERITEMIDLISTFILTER_P_H
+#define QORGANIZERITEMIDLISTFILTER_P_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Calendar API.
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
+#include "qorganizeritemfilter_p.h"
+#include "qorganizeritemfilter.h"
+
+#include <QString>
+#include <QVariant>
+
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemLocalIdFilterPrivate : public QOrganizerItemFilterPrivate
+{
+public:
+    QOrganizerItemLocalIdFilterPrivate()
+        : QOrganizerItemFilterPrivate()
+    {
+    }
+
+    QOrganizerItemLocalIdFilterPrivate(const QOrganizerItemLocalIdFilterPrivate& other)
+        : QOrganizerItemFilterPrivate(other),
+        m_ids(other.m_ids)
+    {
+    }
+
+    virtual bool compare(const QOrganizerItemFilterPrivate* other) const
+    {
+        const QOrganizerItemLocalIdFilterPrivate *od = static_cast<const QOrganizerItemLocalIdFilterPrivate*>(other);
+        if (m_ids != od->m_ids)
+            return false;
+        return true;
+    }
+
+    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemLocalIdFilter, QOrganizerItemFilter::LocalIdFilter)
+
+    QList<QOrganizerItemLocalId> m_ids;
+};
+
+QTM_END_NAMESPACE
 
 #endif

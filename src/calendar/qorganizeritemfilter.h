@@ -51,9 +51,9 @@
 
 QTM_BEGIN_NAMESPACE
 
-/* Manual Q_DECLARE_CALENDARFILTER_PRIVATE macro */
+/* Manual Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE macro */
 
-#define Q_DECLARE_CALENDARFILTER_PRIVATE(Class) \
+#define Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(Class) \
     inline Class##Private* d_func(); \
     inline const Class##Private* d_func() const; \
     friend class Class##Private;

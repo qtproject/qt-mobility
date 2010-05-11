@@ -1,5 +1,24 @@
 INCLUDEPATH += filters
-PUBLIC_HEADERS += qorganizeritemfilters.h \
-    qorganizeritemchangelogfilter.h
-PRIVATE_HEADERS +=
-SOURCES +=
+PUBLIC_HEADERS += filters/qorganizeritemfilters.h \
+    filters/qorganizeritemchangelogfilter.h \
+    filters/qorganizeritemdetailfilter.h \
+    filters/qorganizeritemdetailrangefilter.h \
+    filters/qorganizeritemintersectionfilter.h \
+    filters/qorganizeriteminvalidfilter.h \
+    filters/qorganizeritemlocalidfilter.h \
+    filters/qorganizeritemunionfilter.h
+PRIVATE_HEADERS += \
+    filters/qorganizeritemchangelogfilter_p.h \
+    filters/qorganizeritemdetailfilter_p.h \
+    filters/qorganizeritemdetailrangefilter_p.h \
+    filters/qorganizeritemintersectionfilter_p.h \
+    filters/qorganizeritemlocalidfilter_p.h \
+    filters/qorganizeritemunionfilter_p.h
+SOURCES += \
+    filters/qorganizeritemchangelogfilter.cpp \
+    filters/qorganizeritemdetailfilter.cpp \
+    filters/qorganizeritemdetailrangefilter.cpp \
+    filters/qorganizeritemintersectionfilter.cpp \
+    filters/qorganizeriteminvalidfilter.cpp \
+    filters/qorganizeritemlocalidfilter.cpp \
+    filters/qorganizeritemunionfilter.cpp

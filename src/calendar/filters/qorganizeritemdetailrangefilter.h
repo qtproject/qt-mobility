@@ -39,18 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
+#ifndef QORGANIZERITEMDETAILRANGEFILTER_H
+#define QORGANIZERITEMDETAILRANGEFILTER_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Calendar API.
+#include "qorganizeritemfilter.h"
 
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemDetailRangeFilterPrivate;
+class Q_CALENDAR_EXPORT QOrganizerItemDetailRangeFilter : public QOrganizerItemFilter
+{
+public:
+    QOrganizerItemDetailRangeFilter();
+    QOrganizerItemDetailRangeFilter(const QOrganizerItemFilter& other);
+
+    enum RangeFlag {
+        IncludeLower = 0, // [
+        IncludeUpper = 1, // ]
+        ExcludeLower = 2, // (
+        ExcludeUpper = 0  // ) - Default is [)
+    };
+    Q_DECLARE_FLAGS(RangeFlags, RangeFlag)
+
+    /* Mutators */
+    void setDetailDefinitionName(const QString& definition, const QString& fieldName = QString());
+    void setMatchFlags(QOrganizerItemFilter::MatchFlags flags);
+
+    /* Filter Criterion */
+    void setRange(const QVariant& min, const QVariant& max, RangeFlags flags = 0);
+
+    /* Accessors */
+    QString detailDefinitionName() const;
+    QString detailFieldName() const;
+    QOrganizerItemFilter::MatchFlags matchFlags() const;
+
+    QVariant minValue() const;
+    QVariant maxValue() const;
+    RangeFlags rangeFlags() const;
+
+private:
+    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemDetailRangeFilter)
+};
+Q_DECLARE_OPERATORS_FOR_FLAGS(QOrganizerItemDetailRangeFilter::RangeFlags)
+
+QTM_END_NAMESPACE
 
 #endif

@@ -39,18 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
+#ifndef QORGANIZERITEMLOCALIDFILTER_H
+#define QORGANIZERITEMLOCALIDFILTER_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Calendar API.
+#include "qorganizeritemfilter.h"
+#include "qorganizeritemid.h"
 
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemLocalIdFilterPrivate;
+class Q_CALENDAR_EXPORT QOrganizerItemLocalIdFilter : public QOrganizerItemFilter
+{
+public:
+    QOrganizerItemLocalIdFilter();
+    QOrganizerItemLocalIdFilter(const QOrganizerItemFilter& other);
+
+    /* Mutators */
+    void setIds(const QList<QOrganizerItemLocalId>& ids);
+
+    /* Accessors */
+    QList<QOrganizerItemLocalId> ids() const;
+
+private:
+    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemLocalIdFilter)
+};
+
+QTM_END_NAMESPACE
 
 #endif

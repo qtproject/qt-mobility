@@ -58,12 +58,12 @@
 
 
 /* Boiler plate code */
-#define Q_IMPLEMENT_CONTACTFILTER_PRIVATE(Class) \
+#define Q_IMPLEMENT_ORGANIZERITEMFILTER_PRIVATE(Class) \
     Class##Private* Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
     const Class##Private* Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
     Class::Class(const QOrganizerItemFilter& other) : QOrganizerItemFilter() { Class##Private::copyIfPossible(d_ptr, other); }
 
-#define Q_IMPLEMENT_CONTACTFILTER_VIRTUALCTORS(Class, Type) \
+#define Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(Class, Type) \
     QOrganizerItemFilterPrivate* clone() const { return new Class##Private(*this); } \
     virtual QOrganizerItemFilter::FilterType type() const {return Type;} \
     static void copyIfPossible(QSharedDataPointer<QOrganizerItemFilterPrivate>& d_ptr, const QOrganizerItemFilter& other) \

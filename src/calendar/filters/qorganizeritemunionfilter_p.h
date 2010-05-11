@@ -39,18 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
+#ifndef QORGANIZERITEMUNIONFILTER_P_H
+#define QORGANIZERITEMUNIONFILTER_P_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Calendar API.
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
+#include "qorganizeritemfilter_p.h"
+#include "qorganizeritemfilter.h"
+
+#include <QList>
+
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemUnionFilterPrivate : public QOrganizerItemFilterPrivate
+{
+public:
+    QOrganizerItemUnionFilterPrivate()
+       : QOrganizerItemFilterPrivate()
+    {
+
+    }
+
+    QOrganizerItemUnionFilterPrivate(const QOrganizerItemUnionFilterPrivate& other)
+       : QOrganizerItemFilterPrivate(other),
+       m_filters(other.m_filters)
+    {
+
+    }
+
+    virtual bool compare(const QOrganizerItemFilterPrivate* other) const
+    {
+        const QOrganizerItemUnionFilterPrivate *od = static_cast<const QOrganizerItemUnionFilterPrivate*>(other);
+        if (m_filters != od->m_filters)
+            return false;
+        return true;
+    }
+
+    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemUnionFilter, QOrganizerItemFilter::UnionFilter)
+
+    QList<QOrganizerItemFilter> m_filters;
+};
+
+QTM_END_NAMESPACE
 
 #endif
