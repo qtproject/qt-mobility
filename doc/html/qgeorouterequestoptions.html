@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeorouterequestoptions.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGeoRouteRequestOptions Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoRouteRequestOptions"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRouteRequestOptions Class Reference</h1>
+<p>The QGeoRouteRequestOptions class represents various options which may be specified when requesting geographical routes. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoRouteRequestOptions&gt;</pre><ul>
+<li><a href="qgeorouterequestoptions-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#QGeoRouteRequestOptions">QGeoRouteRequestOptions</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#QGeoRouteRequestOptions-2">QGeoRouteRequestOptions</a></b> ( const QGeoRouteRequestOptions &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#dtor.QGeoRouteRequestOptions">~QGeoRouteRequestOptions</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRoute::AvoidFeatureTypes </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#avoidFeatureTypes">avoidFeatureTypes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#numberAlternativeRoutes">numberAlternativeRoutes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRoute::RouteOptimization </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#routeOptimization">routeOptimization</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#setAvoidFeatureTypes">setAvoidFeatureTypes</a></b> ( QGeoRoute::AvoidFeatureTypes <i>avoidFeatureTypes</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#setNumberAlternativeRoutes">setNumberAlternativeRoutes</a></b> ( int <i>alternatives</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#setRouteOptimization">setRouteOptimization</a></b> ( QGeoRoute::RouteOptimization <i>optimization</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#setTravelModes">setTravelModes</a></b> ( QGeoRoute::TravelModes <i>travelModes</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRoute::TravelModes </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#travelModes">travelModes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequestOptions &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequestoptions.html#operator-eq">operator=</a></b> ( const QGeoRouteRequestOptions &amp; <i>other</i> )</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoRouteRequestOptions class represents various options which may be specified when requesting geographical routes.</p>
+<p>The most common uses of the request methods in <a href="qgeomappingservice.html">QGeoMappingService</a> will specific waypoints and, optionally, the level of detail required for directions.</p>
+<p>The QGeoRouteRequestOptions class represents the options corresponding to the more advanced (or less common) options which can be passed to the <a href="qgeoroutingservice.html">QGeoRoutingService</a> request methods.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/QGeoRouteRequestOptions"></a>
+<h3 class="fn"><a name="QGeoRouteRequestOptions"></a>QGeoRouteRequestOptions::QGeoRouteRequestOptions ()</h3>
+<p>Constructs a <a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a> object.</p>
+<h3 class="fn"><a name="QGeoRouteRequestOptions-2"></a>QGeoRouteRequestOptions::QGeoRouteRequestOptions ( const QGeoRouteRequestOptions &amp; <i>other</i> )</h3>
+<p>Constructs a <a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a> object from the contents of <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/~QGeoRouteRequestOptions"></a>
+<h3 class="fn"><a name="dtor.QGeoRouteRequestOptions"></a>QGeoRouteRequestOptions::~QGeoRouteRequestOptions ()</h3>
+<p>Destroys this <a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a> object.</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/avoidFeatureTypes"></a>
+<h3 class="fn"><a name="avoidFeatureTypes"></a>QGeoRoute::AvoidFeatureTypes QGeoRouteRequestOptions::avoidFeatureTypes () const</h3>
+<p>Returns the features which this request specifies should be avoided during the planning of the route.</p>
+<p>See also QGeoRoute::AvoidFeatureTypes and <a href="qgeorouterequestoptions.html#setAvoidFeatureTypes">QGeoRouteRequestOptions::setAvoidFeatureTypes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/numberAlternativeRoutes"></a>
+<h3 class="fn"><a name="numberAlternativeRoutes"></a>int QGeoRouteRequestOptions::numberAlternativeRoutes () const</h3>
+<p>Returns the number of alternative routes which will be requested.</p>
+<p>See also <a href="qgeorouterequestoptions.html#setNumberAlternativeRoutes">QGeoRouteRequestOptions::setNumberAlternativeRoutes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/routeOptimization"></a>
+<h3 class="fn"><a name="routeOptimization"></a>QGeoRoute::RouteOptimization QGeoRouteRequestOptions::routeOptimization () const</h3>
+<p>Returns the optimization criteria which this request specifies should be used while planning the route.</p>
+<p>See also QGeoRoute::RouteOptimization and <a href="qgeorouterequestoptions.html#setRouteOptimization">QGeoRouteRequestOptions::setRouteOptimization</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/setAvoidFeatureTypes"></a>
+<h3 class="fn"><a name="setAvoidFeatureTypes"></a>void QGeoRouteRequestOptions::setAvoidFeatureTypes ( QGeoRoute::AvoidFeatureTypes <i>avoidFeatureTypes</i> )</h3>
+<p>Sets the features to be avoided during the planning of the route to <i>avoidFeatureTypes</i>.</p>
+<p>The default value if none is set is QGeoRoute::AvoidNothing.</p>
+<p>See also QGeoRoute::AvoidFeatureTypes and <a href="qgeorouterequestoptions.html#avoidFeatureTypes">QGeoRouteRequestOptions::avoidFeatureTypes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/setNumberAlternativeRoutes"></a>
+<h3 class="fn"><a name="setNumberAlternativeRoutes"></a>void QGeoRouteRequestOptions::setNumberAlternativeRoutes ( int <i>alternatives</i> )</h3>
+<p>Sets the number of alternative routes to request to <i>alternatives</i>.</p>
+<p>The default value if none is set is 0.</p>
+<p>See also <a href="qgeorouterequestoptions.html#numberAlternativeRoutes">QGeoRouteRequestOptions::numberAlternativeRoutes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/setRouteOptimization"></a>
+<h3 class="fn"><a name="setRouteOptimization"></a>void QGeoRouteRequestOptions::setRouteOptimization ( QGeoRoute::RouteOptimization <i>optimization</i> )</h3>
+<p>Sets the optimization criteria to use while planning the route to <i>optimization</i>.</p>
+<p>The default value if none is set is QGeoRoute::FastestRoute.</p>
+<p>See also QGeoRoute::RouteOptimization and <a href="qgeorouterequestoptions.html#routeOptimization">QGeoRouteRequestOptions::routeOptimization</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/setTravelModes"></a>
+<h3 class="fn"><a name="setTravelModes"></a>void QGeoRouteRequestOptions::setTravelModes ( QGeoRoute::TravelModes <i>travelModes</i> )</h3>
+<p>Sets the travel modes which should be considered during the planning of the route to <i>travelModes</i>.</p>
+<p>The default value if none is set is QGeoRoute::CarTravel.</p>
+<p>See also QGeoRoute::TravelModes and <a href="qgeorouterequestoptions.html#travelModes">QGeoRouteRequestOptions::travelModes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/travelModes"></a>
+<h3 class="fn"><a name="travelModes"></a>QGeoRoute::TravelModes QGeoRouteRequestOptions::travelModes () const</h3>
+<p>Returns the travel modes which this request specifies should be considered during the planning of the route.</p>
+<p>See also QGeoRoute::TravelModes and <a href="qgeorouterequestoptions.html#setTravelModes">QGeoRouteRequestOptions::setTravelModes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequestOptions/operator="></a>
+<h3 class="fn"><a name="operator-eq"></a>QGeoRouteRequestOptions &amp; QGeoRouteRequestOptions::operator= ( const QGeoRouteRequestOptions &amp; <i>other</i> )</h3>
+<p>Assigns <i>other</i> to this <a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a> object and returns a reference to this <a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a> object.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

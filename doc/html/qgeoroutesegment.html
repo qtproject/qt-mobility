@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeoroutesegment.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGeoRouteSegment Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoRouteSegment"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRouteSegment Class Reference</h1>
+<p>The QGeoRouteSegment class represents a segment of a route. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoRouteSegment&gt;</pre><ul>
+<li><a href="qgeoroutesegment-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#SegmentType-enum">SegmentType</a></b> { NormalSegment, PrivateTransportSegment, PublicTransportSegment, TruckSegment }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#QGeoRouteSegment">QGeoRouteSegment</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#dtor.QGeoRouteSegment">~QGeoRouteSegment</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#estimatedTravelTime">estimatedTravelTime</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoCoordinate&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#geometry">geometry</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;const QGeoNavigationInstruction *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#instructions">instructions</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoDistance </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#length">length</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#setEstimatedTravelTime">setEstimatedTravelTime</a></b> ( const QDateTime &amp; <i>travelTime</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#setGeometry">setGeometry</a></b> ( const QList&lt;QGeoCoordinate&gt; &amp; <i>geometry</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#setInstructions">setInstructions</a></b> ( const QList&lt;const QGeoNavigationInstruction *&gt; &amp; <i>instructions</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#setLength">setLength</a></b> ( const QGeoDistance &amp; <i>length</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual SegmentType </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#type">type</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutesegment.html#QGeoRouteSegment-2">QGeoRouteSegment</a></b> ( QGeoRouteSegmentPrivate * <i>d_ptr</i> )</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoRouteSegment class represents a segment of a route.</p>
+<p>A QGeoRouteSegment instance has information about the physcial layout of the route segment, the length of the route and the estimated time and navigation instructions required to traverse the route segment.</p>
+<p>Subclasses of QGeoRouteSegment will provide more detailed information about the segment. The <a href="qgeoroutesegment.html#type">type</a>() function can be used to determine the subclass that is being used.</p>
+<p>See also <a href="qgeoroutesegment.html#SegmentType-enum">QGeoRouteSegment::SegmentType</a>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QGeoRouteSegment/SegmentType"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteSegment/NormalSegment"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteSegment/PrivateTransportSegment"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteSegment/PublicTransportSegment"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteSegment/TruckSegment"></a>
+<h3 class="fn"><a name="SegmentType-enum"></a>enum QGeoRouteSegment::SegmentType</h3>
+<p>This is used to distinguish between different subclasses of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> when they are accessed as <a href="qgeoroutesegment.html">QGeoRouteSegment</a> objects.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QGeoRouteSegment::NormalSegment</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The route segment information is not specialized.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteSegment::PrivateTransportSegment</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The route segment information is specialized for travel by private transport.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteSegment::PublicTransportSegment</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The route segment information is specialized for travel by public transport.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteSegment::TruckSegment</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The route segment information is specialized for travel by truck.</td></tr>
+</table></p>
+<p>See also <a href="qgeoroutesegment.html#type">QGeoRouteSegment::type</a>().</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/QGeoRouteSegment"></a>
+<h3 class="fn"><a name="QGeoRouteSegment"></a>QGeoRouteSegment::QGeoRouteSegment ()</h3>
+<p>Constructs a <a href="qgeoroutesegment.html">QGeoRouteSegment</a> object.</p>
+<h3 class="fn"><a name="QGeoRouteSegment-2"></a>QGeoRouteSegment::QGeoRouteSegment ( QGeoRouteSegmentPrivate * <i>d_ptr</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/~QGeoRouteSegment"></a>
+<h3 class="fn"><a name="dtor.QGeoRouteSegment"></a>QGeoRouteSegment::~QGeoRouteSegment ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys this <a href="qgeoroutesegment.html">QGeoRouteSegment</a> object.</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/estimatedTravelTime"></a>
+<h3 class="fn"><a name="estimatedTravelTime"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QGeoRouteSegment::estimatedTravelTime () const</h3>
+<p>Returns an estimate of how long it will take to traverse this segment of the route.</p>
+<p>See also <a href="qgeoroutesegment.html#setEstimatedTravelTime">QGeoRouteSegment::setEstimatedTravelTime</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/geometry"></a>
+<h3 class="fn"><a name="geometry"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRouteSegment::geometry () const</h3>
+<p>Returns the geometric shape of this route segment of the route.</p>
+<p>The coordinates should be listed in the order in which they would be traversed by someone travelling along this segment of the route.</p>
+<p>See also <a href="qgeoroutesegment.html#setGeometry">QGeoRouteSegment::setGeometry</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/instructions"></a>
+<h3 class="fn"><a name="instructions"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;const <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> *&gt; QGeoRouteSegment::instructions () const</h3>
+<p>Returns the instructions for this route segment.</p>
+<p>See also <a href="qgeoroutesegment.html#setInstructions">QGeoRouteSegment::setInstructions</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/length"></a>
+<h3 class="fn"><a name="length"></a><a href="qgeodistance.html">QGeoDistance</a> QGeoRouteSegment::length () const</h3>
+<p>Returns the length of this segment of the route.</p>
+<p>See also <a href="qgeoroutesegment.html#setLength">QGeoRouteSegment::setLength</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/setEstimatedTravelTime"></a>
+<h3 class="fn"><a name="setEstimatedTravelTime"></a>void QGeoRouteSegment::setEstimatedTravelTime ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>travelTime</i> )</h3>
+<p>Sets an estimate of how long it will take to traverse this segment of the route to <i>travelTime</i>.</p>
+<p>See also <a href="qgeoroutesegment.html#estimatedTravelTime">QGeoRouteSegment::estimatedTravelTime</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/setGeometry"></a>
+<h3 class="fn"><a name="setGeometry"></a>void QGeoRouteSegment::setGeometry ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>geometry</i> )</h3>
+<p>Sets the geometric shape of this segment of the route to <i>geometry</i>.</p>
+<p>The coordinates in <i>geometry</i> should be listed in the order in which they would be traversed by someone travelling along this segment of the route.</p>
+<p>See also <a href="qgeoroutesegment.html#geometry">QGeoRouteSegment::geometry</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/setInstructions"></a>
+<h3 class="fn"><a name="setInstructions"></a>void QGeoRouteSegment::setInstructions ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;const <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> *&gt; &amp; <i>instructions</i> )</h3>
+<p>Sets the instructions for this route segement to <i>instructions</i>.</p>
+<p>See also <a href="qgeoroutesegment.html#instructions">QGeoRouteSegment::instructions</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/setLength"></a>
+<h3 class="fn"><a name="setLength"></a>void QGeoRouteSegment::setLength ( const <a href="qgeodistance.html">QGeoDistance</a> &amp; <i>length</i> )</h3>
+<p>Sets the length of this segment of the route to <i>length</i>.</p>
+<p>See also <a href="qgeoroutesegment.html#length">length</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteSegment/type"></a>
+<h3 class="fn"><a name="type"></a><a href="qgeoroutesegment.html#SegmentType-enum">SegmentType</a> QGeoRouteSegment::type () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the type of this segment.</p>
+<p>If the type is something other than <a href="qgeoroutesegment.html#SegmentType-enum">QGeoRouteSegment::NormalSegment</a> then this <a href="qgeoroutesegment.html">QGeoRouteSegment</a> object has been created as a subclass of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> which contains more detailed information about the segment.</p>
+<p>See also <a href="qgeoroutesegment.html#SegmentType-enum">QGeoRouteSegment::SegmentType</a>.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>
