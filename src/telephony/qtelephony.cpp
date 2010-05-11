@@ -44,13 +44,13 @@
 #include "qcallinfo.h"
 
 #ifdef Q_OS_LINUX
-# include "qtelephony_linux_p.h"
+# include "qtelephonyevent_linux_p.h"
 #endif
 #ifdef Q_OS_WIN
 # include "qtelephonyevent_win_p.h"
 #endif
 #ifdef Q_OS_SYMBIAN
-# include "qtelephony_s60_p.h"
+# include "qtelephonyevent_s60_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
