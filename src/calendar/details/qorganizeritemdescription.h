@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMTITLE_H
-#define QORGANIZERITEMTITLE_H
+#ifndef QORGANIZERITEMDESCRIPTION_H
+#define QORGANIZERITEMDESCRIPTION_H
 
 #include <QString>
 
@@ -51,19 +51,19 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemTitle : public QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemDescription : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldTitle;
+    const char* FieldDescription;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemTitle, "Title")
-    Q_DECLARE_LATIN1_CONSTANT(FieldTitle, "Title");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemDescription, "Description")
+    Q_DECLARE_LATIN1_CONSTANT(FieldDescription, "Description");
 #endif
 
-    void setTitle(const QString& title) {setValue(FieldTitle, title);}
-    QString title() const {return value(FieldTitle);}
+    void setDescription(const QString& description) {setValue(FieldDescription, description);}
+    QString description() const {return value(FieldDescription);}
 };
 
 QTM_END_NAMESPACE

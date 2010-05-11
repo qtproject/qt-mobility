@@ -50,85 +50,6 @@ QTM_BEGIN_NAMESPACE
 
 
 
-/* --------- to be discussed */
-/*!
-   \class QOrganizerItemRecurrenceRule
-   \deprecated
-   \brief The QOrganizerItemRecurrenceRule class contains the recurrence rule which determines when the event described in the organizer item will occur.
-   NOT SURE IF WE'LL USE THIS, OR USE SOMETHING ELSE.
- */
-
-/*!
-   \variable QOrganizerItemRecurrenceRule::DefinitionName
-   The constant string which identifies the definition of details which contain the recurrence rule of an organizer item.
-   NOT SURE IF WE'LL USE THIS, OR USE SOMETHING ELSE.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::DefinitionName, "RecurrenceRule");
-
-/*!
-   \class QOrganizerItemTitle
-   \brief The QOrganizerItemTitle class holds a short description of the organizer item.
- */
-
-/*!
-   \variable QOrganizerItemTitle::DefinitionName
-   The constant string which identifies the definition of details which hold the title of the organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTitle::DefinitionName, "Title");
-/* --------- to be discussed */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ==================== QOrganizerItemAccessControl ======================= */
-/*!
-   \class QOrganizerItemAccessControl
-   \brief The QOrganizerItemAccessControl class contains the access control information of the organizer item.
- */
-
-/*!
-   \variable QOrganizerItemAccessControl::DefinitionName
-   The constant string which identifies the definition of details which contain access control information.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::DefinitionName, "AccessControl");
-
-/*!
-   \variable QOrganizerItemAccessControl::FieldReadAccess
-
-   The constant key for which the read access value is stored in
-   details of the QOrganizerItemAccessControl type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldReadAccess, "ReadAccess");
-
-/*!
-   \variable QOrganizerItemAccessControl::FieldShareAccess
-
-   The constant key for which the share access value is stored in
-   details of the QOrganizerItemAccessControl type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldShareAccess, "ShareAccess");
-
-/*!
-   \variable QOrganizerItemAccessControl::FieldWriteAccess
-
-   The constant key for which the write access value is stored in
-   details of the QOrganizerItemAccessControl type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAccessControl::FieldWriteAccess, "WriteAccess");
-
-
-
-
 /* ==================== QOrganizerItemAttendee ======================= */
 // XXX TODO: attendees can also have participation status / role.
 /*!
@@ -173,28 +94,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatu
 
 
 
-/* ==================== QOrganizerItemDateTime ======================= */
-/*!
-   \class QOrganizerItemDateTime
-   \brief The QOrganizerItemDateTime class contains the start time of the event, appointment or invitation which the organizer item describes, or the date associated with a todo, note or journal.
- */
-
-/*!
-   \variable QOrganizerItemDateTime::DefinitionName
-   The constant string which identifies the definition of details which contain the date and time of an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::DefinitionName, "DateTime");
-
-/*!
-   \variable QOrganizerItemDateTime::FieldDateTime
-
-   The constant key for which the datetime value of the organizer item is stored in
-   details of the QOrganizerItemDateTime type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDateTime::FieldDateTime, "DateTime");
-
-
-
 
 
 /* ==================== QOrganizerItemEndDateTime ======================= */
@@ -216,6 +115,42 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::DefinitionName, "EndDateTime
    details of the QOrganizerItemEndDateTime type.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::FieldEndDateTime, "EndDateTime");
+
+
+
+
+
+
+/* ==================== QOrganizerItemDescription ======================= */
+/*!
+   \class QOrganizerItemDescription
+   \brief The QOrganizerItemDescription class contains some arbitrary information which is relevant to the organizer item.
+ */
+
+/*!
+   \variable QOrganizerItemDescription::DefinitionName
+   The constant string which identifies the definition of details which are notes.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::DefinitionName, "Description");
+
+/*!
+   \variable QOrganizerItemDescription::FieldDescription
+
+   The constant key for which the description value is stored in details of
+   the QOrganizerItemDescription type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Description");
+
+/*!
+   \fn QOrganizerItemDescription::setDescription(const QString& description)
+   Sets a note associated with an organizer item to \a description.
+ */
+
+/*!
+   \fn QOrganizerItemDescription::description() const
+   Returns a string for a description associated with an organizer item.
+ */
+
 
 
 
@@ -369,40 +304,32 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemNote::FieldNote, "Note");
 // my personal opinion is that this participation detail should be for the "self" person
 // ie, the owner of the calendar.  other attendee participation should be listed in the attendee detail.
 /*!
-   \class QOrganizerItemParticipationRole
+   \class QOrganizerItemParticipation
    \brief The QOrganizerItemParticipation class contains information about the way in which the owner of the
         calendar will participate in the event or appointment described by the organizer item.
  */
 
 /*!
-   \variable QOrganizerItemParticipationRole::DefinitionName
+   \variable QOrganizerItemParticipation::DefinitionName
    The constant string which identifies the definition of details which describe the participation role of a person or contact at the event or appointment described by the organizer item.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationRole::DefinitionName, "ParticipationRole");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::DefinitionName, "Participation");
 
 /*!
-   \variable QOrganizerItemParticipationRole::FieldParticipationRole
+   \variable QOrganizerItemParticipation::FieldParticipationRole
 
    The constant key for which the participation role value is stored in details of
-   the QOrganizerItemParticipationRole type.
+   the QOrganizerItemParticipation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationRole::FieldParticipationRole, "ParticipationRole");
-
-/* ==================== QOrganizerItemParticipationStatus ======================= */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationRole, "ParticipationRole");
 
 /*!
-   \variable QOrganizerItemParticipationStatus::DefinitionName
-   The constant string which identifies the definition of details which describe the participation role of a person or contact at the event or appointment described by the organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationStatus::DefinitionName, "ParticipationStatus");
-
-/*!
-   \variable QOrganizerItemParticipationStatus::FieldParticipationStatus
+   \variable QOrganizerItemParticipation::FieldParticipationStatus
 
    The constant key for which the participation status value is stored in details of
-   the QOrganizerItemParticipationStatus type.
+   the QOrganizerItemParticipation type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipationStatus::FieldParticipationStatus, "ParticipationStatus");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemParticipation::FieldParticipationStatus, "ParticipationStatus");
 
 /* ==================== QOrganizerItemPriority ======================= */
 /*!
@@ -638,35 +565,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodo, "Todo");
    Sets the type of the organizer item to be the give \a type.
  */
 
-
-
-
-
-
-
-
-
-
-
-/* ==================== QOrganizerItemVisibilityTag ======================= */
-/*!
-   \class QOrganizerItemVisibilityTag
-   \brief The QOrganizerItemVisibilityTag class contains a hint which describes which sort of people should be able to view the information contained in the organizer item.  XXX TODO: should this be a part of every detail?  ie, allow everyone to see the date, time and location, but only some people to see the attendence list?
- */
-
-/*!
-   \variable QOrganizerItemVisibilityTag::DefinitionName
-   The constant string which identifies the definition of details which contain the visibility tag of an organizer item.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisibilityTag::DefinitionName, "VisibilityTag");
-
-/*!
-   \variable QOrganizerItemVisibilityTag::FieldTag
-
-   The constant key for the tag value which is stored in details of
-   the QOrganizerItemVisibilityTag definition.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemVisibilityTag::FieldTag, "Tag");
 
 
 

@@ -45,25 +45,19 @@
 // this file includes all of the leaf detail classes
 // provided by the Qt Calendar API.
 
-#include "qorganizeritemaccesscontrol.h"
 #include "qorganizeritemattendee.h"
-#include "qorganizeritemdatetime.h"
+#include "qorganizeritemdescription.h"
 #include "qorganizeritemdisplaylabel.h"
 #include "qorganizeritemenddatetime.h"
 #include "qorganizeritemguid.h"
 #include "qorganizeritemlocation.h"
 #include "qorganizeritemnote.h"
-#include "qorganizeritemparticipationrole.h"
-#include "qorganizeritemparticipationstatus.h"
+#include "qorganizeritemparticipation.h"
 #include "qorganizeritempriority.h"
 #include "qorganizeritemprovenance.h"
-#include "qorganizeritemrecurrenceparent.h"
-#include "qorganizeritemrecurrencerule.h"
 #include "qorganizeritemrsvpinfo.h"
 #include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtitle.h"
 #include "qorganizeritemtype.h"
-#include "qorganizeritemvisibilitytag.h"
 #include "qorganizeritemgeolocation.h"
 
 #endif

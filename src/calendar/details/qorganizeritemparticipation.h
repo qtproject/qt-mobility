@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMRECURRENCERULE_H
-#define QORGANIZERITEMRECURRENCERULE_H
+#ifndef QORGANIZERITEMPARTICIPATIONSTATUS_H
+#define QORGANIZERITEMPARTICIPATIONSTATUS_H
 
 #include <QString>
 
@@ -51,24 +51,22 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRule : public QOrganizerItemDetail
+class Q_CALENDAR_EXPORT QOrganizerItemParticipation : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldRecurrencePattern;
-    const char* FieldFirstDateTime;
+    const char* FieldParticipationRole;
+    const char* FieldParticipationStatus;
 #else
-    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemRecurrenceRule, "RecurrenceRule")
-    Q_DECLARE_LATIN1_CONSTANT(FieldRecurrencePattern, "RecurrencePattern");
-    Q_DECLARE_LATIN1_CONSTANT(FieldFirstDateTime, "FirstDateTime");
+    Q_DECLARE_CUSTOM_CALENDAR_DETAIL(QOrganizerItemParticipation, "Participation")
+    Q_DECLARE_LATIN1_CONSTANT(FieldParticipationRole, "ParticipationRole");
+    Q_DECLARE_LATIN1_CONSTANT(FieldParticipationStatus, "ParticipationStatus");
 #endif
 
-    // XXX TODO: requirements, figure out what functions / data..
-    // frequency, start + end date (or count), workday, workweek, ..?
-
-    // Maybe we don't model the recurrence rules as a detail after all?
-    // See documentation for more information.
+    // XXX TODO: functions / data
+    // roles: host, organizer, guest, participant, chairperson, minuter, boardmember, ...
+    // statuses: definitely attending, possibly attending, definitely not attending, currently attending, did attend, did not attend ?
 };
 
 QTM_END_NAMESPACE
