@@ -1988,11 +1988,11 @@ void tst_QContactManager::signalEmission()
 
     /* Batch modifies */
     QContactName modifiedName = c.detail(QContactName::DefinitionName);
-    saveContactName(&c, nameDef, &modifiedName, "This is modified number 1");
+    saveContactName(&c, nameDef, &modifiedName, "Modified number 1");
     modifiedName = c2.detail(QContactName::DefinitionName);
-    saveContactName(&c2, nameDef, &modifiedName, "This is modified number 2");
+    saveContactName(&c2, nameDef, &modifiedName, "Modified number 2");
     modifiedName = c3.detail(QContactName::DefinitionName);
-    saveContactName(&c3, nameDef, &modifiedName, "This is modified number 3");
+    saveContactName(&c3, nameDef, &modifiedName, "Modified number 3");
 
     batchAdd.clear();
     batchAdd << c << c2 << c3;
