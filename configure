@@ -99,7 +99,9 @@ LIB_PATH="lib"
 BIN_PATH="bin"
 PLUGIN_PATH="plugins"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
+# simulator only fully supports these modules
+MOBILITY_MODULES="location contacts publishsubscribe versit messaging systeminfo serviceframework sensors"
+#MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"

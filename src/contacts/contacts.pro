@@ -107,6 +107,15 @@ symbian {
     DEPLOYMENT += CONTACTS_DEPLOYMENT
 }
 
+simulator {
+    isEmpty(CONTACTS_DEFAULT_ENGINE): CONTACTS_DEFAULT_ENGINE=simulator
+
+    SOURCES += contactconnection_simulator.cpp engines/qcontactmemorybackenddata_simulator.cpp
+    HEADERS += contactconnection_simulator_p.h engines/qcontactmemorybackenddata_simulator_p.h
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
+}
+
 !isEmpty(CONTACTS_DEFAULT_ENGINE): DEFINES += Q_CONTACTS_DEFAULT_ENGINE=$$CONTACTS_DEFAULT_ENGINE
 
 CONFIG += app

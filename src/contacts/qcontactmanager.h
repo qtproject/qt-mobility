@@ -58,6 +58,10 @@
 #include "qcontactsortorder.h"
 #include "qcontactfetchhint.h"
 
+#ifdef SIMULATOR_APPLICATION
+    class MobilityClient;
+#endif
+
 QTM_BEGIN_NAMESPACE
 
 class QContactFilter;
@@ -182,6 +186,10 @@ private:
     Q_DISABLE_COPY(QContactManager)
     // private data pointer
     QContactManagerData* d;
+
+#ifdef SIMULATOR_APPLICATION
+    friend class ::MobilityClient;
+#endif
 };
 
 QTM_END_NAMESPACE

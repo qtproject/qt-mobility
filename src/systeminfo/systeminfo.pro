@@ -11,7 +11,7 @@ SOURCES += qsysteminfo.cpp
 DEFINES += QT_BUILD_SYSINFO_LIB QT_MAKEDLL
 
 
-win32 {
+win32:!simulator {
     contains(CONFIG,release) {
        CONFIG-=console
     }
@@ -40,7 +40,7 @@ win32 {
         -lCoredll
 }
 
-unix: {
+unix:!simulator {
     QT += gui
     maemo5|maemo6|linux-*: {
         SOURCES += qsysteminfo_linux_common.cpp
@@ -149,6 +149,12 @@ unix: {
         QtSystemInfoDeployment.path = /sys/bin
         DEPLOYMENT += QtSystemInfoDeployment
     }
+}
+simulator {
+    SOURCES += qsysteminfo_simulator.cpp qsysteminfodata_simulator.cpp
+    HEADERS += qsysteminfo_simulator_p.h qsysteminfodata_simulator_p.h
+    INCLUDEPATH += ../mobilitysimulator
+    qtAddLibrary(QtMobilitySimulator)
 }
 
 HEADERS += $$PUBLIC_HEADERS 

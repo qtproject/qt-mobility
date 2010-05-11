@@ -25,6 +25,7 @@ symbian {
 }
 
 SUBDIRS += generic
+simulator: SUBDIRS += simulator
 
 # Allow forcing extra plugins to build even if they won't run
 BUILD_ALL_PLUGINS=$$(BUILD_ALL_PLUGINS)

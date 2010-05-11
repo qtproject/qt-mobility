@@ -12,8 +12,11 @@
     }
 }
 mac: LIBS += -F$${MOBILITY_LIB}
+
 LIBS+= -L$${MOBILITY_LIB}
 QMAKE_RPATHDIR+=$${MOBILITY_LIB}
+
+simulator: qtAddLibrary(QtMobilitySimulator)
 
 contains(MOBILITY, bearer) {
     DEFINES += QT_MOBILITY_BEARER
@@ -54,6 +57,7 @@ contains(MOBILITY, contacts) {
 
 contains(MOBILITY, messaging) {
     qtAddLibrary(QtMessaging)
+    simulator:qtAddLibrary(qtopiamail)
 }
 
 contains(MOBILITY, versit) {

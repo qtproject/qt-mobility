@@ -39,7 +39,7 @@ mac {
 #one version but not the other we slently disable the impossible combination
 win32:contains(CONFIG_WIN32,build_all) {
     contains(QT_CONFIG,debug):contains(QT_CONFIG,release) {
-        contains(TEMPLATE,.*lib):!plugin {
+        contains(TEMPLATE,.*lib) {
             CONFIG += $$WAS_IN_DEBUG
             CONFIG += debug_and_release build_all
         }

@@ -46,6 +46,10 @@
 
 #include "qcontact_p.h"
 
+#ifdef QT_SIMULATOR
+#include "qcontactsimulatorbackend_p.h"
+#endif
+
 #include <QSharedData>
 #include <QtPlugin>
 #include <QPluginLoader>
@@ -103,6 +107,11 @@ void QContactManagerData::createEngine(const QString& managerName, const QMap<QS
     QString builtManagerName = managerName.isEmpty() ? QContactManager::availableManagers().value(0) : managerName;
     if (builtManagerName == QLatin1String("memory")) {
         m_engine = QContactMemoryEngine::createMemoryEngine(parameters);
+#ifdef QT_SIMULATOR
+    } else if (builtManagerName == QLatin1String("simulator")) {
+        QContactSimulatorEngine *simEngine = QContactSimulatorEngine::createSimulatorEngine(parameters);
+        m_engine = simEngine;
+#endif
     } else {
         int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
 

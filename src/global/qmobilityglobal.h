@@ -134,7 +134,11 @@
 #      define Q_MEDIA_EXPORT Q_DECL_IMPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
 #      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
-#      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
+#      ifndef SIMULATOR_APPLICATION
+#        define Q_SYSINFO_EXPORT Q_DECL_IMPORT
+#      else
+#        define Q_SYSINFO_EXPORT Q_DECL_EXPORT
+#      endif
 #      define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #    endif
 #  else

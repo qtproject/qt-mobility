@@ -41,6 +41,11 @@
 
 #include "qsysteminfo.h"
 
+#if defined(QT_SIMULATOR) || defined(SIMULATOR_APPLICATION)
+#define SIMULATOR
+#include "qsysteminfo_simulator_p.h"
+#else
+
 #ifdef Q_OS_LINUX
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include "qsysteminfo_maemo_p.h"
@@ -58,6 +63,8 @@
 #ifdef Q_OS_SYMBIAN
 #include "qsysteminfo_s60_p.h"
 #endif
+
+#endif // QT_SIMULATOR
 
 #include <QStringList>
 #include <QSize>
@@ -362,6 +369,14 @@ Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
+
+#ifdef QT_SIMULATOR
+QSystemInfoPrivate *getSystemInfoPrivate() { return sysinfoPrivate(); }
+QSystemNetworkInfoPrivate *getSystemNetworkInfoPrivate() { return netInfoPrivate(); }
+QSystemDisplayInfoPrivate *getSystemDisplayInfoPrivate() { return displayInfoPrivate(); }
+QSystemStorageInfoPrivate *getSystemStorageInfoPrivate() { return storageInfoPrivate(); }
+QSystemDeviceInfoPrivate *getSystemDeviceInfoPrivate() { return deviceInfoPrivate(); }
+#endif
 
  /*!
 \fn QSystemInfo::QSystemInfo(QObject *parent)
@@ -914,7 +929,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(SIMULATOR)
     d = new QSystemScreenSaverPrivate(static_cast<QSystemScreenSaverLinuxCommonPrivate*>(parent));
 #else
     d = new QSystemScreenSaverPrivate(parent);

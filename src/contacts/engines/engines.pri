@@ -8,3 +8,8 @@ SOURCES += engines/qcontactinvalidbackend.cpp
 PRIVATE_HEADERS += engines/qcontactmemorybackend_p.h
 SOURCES += engines/qcontactmemorybackend.cpp
 
+# simulator backend
+simulator {
+    PRIVATE_HEADERS += engines/qcontactsimulatorbackend_p.h
+    SOURCES += engines/qcontactsimulatorbackend.cpp
+}

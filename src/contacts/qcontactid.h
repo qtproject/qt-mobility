@@ -73,6 +73,11 @@ public:
 
 private:
     QSharedDataPointer<QContactIdPrivate> d;
+
+#if defined(SIMULATOR_APPLICATION) || defined(QT_SIMULATOR)
+    friend QDataStream &operator<<(QDataStream &, const QContactId &);
+    friend QDataStream &operator>>(QDataStream &, QContactId &);
+#endif
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContactId& key);

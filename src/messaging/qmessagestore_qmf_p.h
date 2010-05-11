@@ -53,7 +53,7 @@ class QMessageStorePrivate : public QObject
 public:
     QMessageStorePrivate() 
         : QObject(), 
-          _store(QMailStore::instance()), 
+          _store(QmfHelpers::mailStoreInstance()), 
           _error(QMessageManager::NoError), 
           _notify(true),
           _filterId(0)
@@ -98,7 +98,7 @@ private:
             QSet<QMailMessageId> filteredIds;
             if (!key.isEmpty()) {
                 // Empty key matches all messages; otherwise get the filtered set
-                filteredIds = QMailStore::instance()->queryMessages(key).toSet();
+                filteredIds = _store->queryMessages(key).toSet();
             }
 
             foreach (const QMailMessageId &id, ids) {

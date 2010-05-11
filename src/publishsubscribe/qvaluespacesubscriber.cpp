@@ -154,6 +154,9 @@ public:
     bool disconnect(QValueSpaceSubscriber * space);
 
     const QString path;
+#ifdef Q_SIMULATOR
+    const QString originalPath;
+#endif
     const LayerList readers;
 
     mutable QMutex lock;
@@ -199,7 +202,13 @@ static LayerList matchLayers(const QString &path, QValueSpace::LayerOptions filt
 
 QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &path,
                                                            QValueSpace::LayerOptions filter)
-:   path(qCanonicalPath(path)), readers(matchLayers(this->path, filter)), connections(0)
+#ifndef Q_SIMULATOR
+:   path(qCanonicalPath(path)),
+#else
+:   path(qAddSimulatorPrefix(qCanonicalPath(path)),
+    originalPath(qCanonicalPath(path),
+#endif
+    readers(matchLayers(this->path, filter)), connections(0)
 {
 }
 
@@ -231,7 +240,13 @@ static LayerList matchLayers(const QString &path, const QUuid &uuid)
 }
 
 QValueSpaceSubscriberPrivate::QValueSpaceSubscriberPrivate(const QString &path, const QUuid &uuid)
-:   path(qCanonicalPath(path)), readers(matchLayers(this->path, uuid)), connections(0)
+#ifndef Q_SIMULATOR
+:   path(qCanonicalPath(path)),
+#else
+:   path(qAddSimulatorPrefix(qCanonicalPath(path)),
+    originalPath(qCanonicalPath(path),
+#endif
+    readers(matchLayers(this->path, uuid)), connections(0)
 {
 }
 
@@ -372,7 +387,7 @@ QValueSpaceSubscriber::~QValueSpaceSubscriber()
 */
 void QValueSpaceSubscriber::setPath(const QString &path)
 {
-    if (d->path == path)
+    if (this->path() == path)
         return;
 
     d->disconnect(this);
@@ -401,7 +416,11 @@ void QValueSpaceSubscriber::setPath(QValueSpaceSubscriber *subscriber)
 
 QString QValueSpaceSubscriber::path() const
 {
+#ifndef Q_SIMULATOR
     return d->path;
+#else
+    return d->originalPath;
+#endif
 }
 
 /*!
@@ -413,7 +432,7 @@ void QValueSpaceSubscriber::cd(const QString &path)
     if (path.startsWith(QLatin1Char('/')))
         setPath(path);
     else
-        setPath(d->path + QLatin1Char('/') + path);
+        setPath(this->path() + QLatin1Char('/') + path);
 }
 
 /*!
@@ -421,10 +440,10 @@ void QValueSpaceSubscriber::cd(const QString &path)
 */
 void QValueSpaceSubscriber::cdUp()
 {
-    if (d->path == QLatin1String("/"))
+    if (path() == QLatin1String("/"))
         return;
 
-    QString p(d->path);
+    QString p(path());
 
     int index = p.lastIndexOf(QLatin1Char('/'));
 

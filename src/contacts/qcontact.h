@@ -172,6 +172,11 @@ private:
     friend class QContactManagerEngine;
 
     QSharedDataPointer<QContactData> d;
+
+#if defined(SIMULATOR_APPLICATION) || defined(QT_SIMULATOR)
+    friend QDataStream &operator<<(QDataStream &, const QContact &);
+    friend QDataStream &operator>>(QDataStream &, QContact &);
+#endif
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContact& key);

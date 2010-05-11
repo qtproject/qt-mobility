@@ -289,6 +289,10 @@ void DatabaseManager::initDbPath(DbScope scope)
         db = m_userDb;
     }
 
+#ifdef QT_SIMULATOR
+    dbIdentifier.append("_simulator");
+#endif
+
     QSettings settings(QSettings::IniFormat, settingsScope,
             QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
     QFileInfo fi(settings.fileName());
