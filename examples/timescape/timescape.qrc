@@ -3,5 +3,9 @@
         <file>contents/application.qml</file>
         <file>contents/components/Button.qml</file>
         <file>contents/components/ScrollBar.qml</file>
+        <file>contents/timelineview.qml</file>
+        <file>contents/monthview.qml</file>
+        <file>contents/settingsview.qml</file>
+        <file>contents/detailsview.qml</file>
     </qresource>
 </RCC>

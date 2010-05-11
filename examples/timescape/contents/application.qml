@@ -64,7 +64,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Text {text: "Month View"; anchors.centerIn: parent}
+            Loader {id: monthLoader; anchors.fill: parent; source: "monthview.qml";}
         }
         Rectangle {
             id: timelineView;
@@ -74,7 +74,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Text {text: "Timeline View"; anchors.centerIn: parent}
+            Loader {id: timelineLoader; anchors.fill: parent; source: "timelineview.qml";}
         }
         Rectangle {
             id: detailsView;
@@ -84,7 +84,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Text {text: "Details View"; anchors.centerIn: parent}
+            Loader {id: detailLoader; anchors.fill: parent; source: "detailsview.qml";}
         }
         Rectangle {
             id: settingsView;
@@ -94,7 +94,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Text {text: "Settings View"; anchors.centerIn: parent}
+            Loader {id: settingsLoader; anchors.fill: parent; source: "settingsview.qml";}
         }
     }
 }
