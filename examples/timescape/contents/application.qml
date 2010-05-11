@@ -33,7 +33,14 @@ Rectangle {
         id: menuBar;
         y:0;
         height:childrenRect.height;
+        width: parent.width;
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: activePalette.dark }
+            GradientStop { position: 1.0; color: Qt.darker(activePalette.dark); }
+        }
         Row {
+            spacing: 2
+            anchors.horizontalCenter: parent.horizontalCenter;
             TimeScape.Button {text: "Month"; onClicked: topItem.state="MonthView";}
             TimeScape.Button {text: "Timeline";onClicked: topItem.state="TimelineView";}
             TimeScape.Button {text: "Settings";onClicked: topItem.state="SettingsView";}

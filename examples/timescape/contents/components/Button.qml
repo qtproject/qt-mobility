@@ -11,17 +11,14 @@ Rectangle {
 
     color: activePalette.button;
     smooth: true
-    border.width: 2;
-    border.color: Qt.darker(activePalette.button);
+    border.width: 1;
+    border.color: Qt.darker(activePalette.dark);
     radius: 2;
 
 
     gradient: Gradient {
-        GradientStop { position: 0.0; color: activePalette.button }
-        GradientStop {
-            position: 1.0
-            color : mr.pressed ?  activePalette.light : activePalette.dark
-        }
+        GradientStop { position: 0.0; color: Qt.lighter(activePalette.button) }
+        GradientStop { position: 1.0; color : mr.pressed ?  Qt.lighter(activePalette.light) : Qt.darker(activePalette.dark) }
     }
     width: stuff.width + 4 * padding
     height: stuff.height + 2 * padding
