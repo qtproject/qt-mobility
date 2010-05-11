@@ -88,7 +88,8 @@ QContactDetail *CntTransformAnniversary::transformItemField(const CContactItemFi
 bool CntTransformAnniversary::supportsField(TUint32 fieldType) const
 {
     bool ret = false;
-    if (fieldType == KUidContactFieldAnniversary.iUid) {
+    if (fieldType == KUidContactFieldAnniversary.iUid ||
+        fieldType == KUidContactFieldAnniversaryEvent.iUid) {
         ret = true;
     }
     return ret;
