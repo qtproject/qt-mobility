@@ -17,6 +17,7 @@ contains(mobility_modules,bearer): SUBDIRS += bearer
 contains(mobility_modules,location): SUBDIRS += location
 contains(mobility_modules,multimedia): SUBDIRS += multimedia
 contains(mobility_modules,contacts): SUBDIRS += contacts
+contains(mobility_modules,telephony): SUBDIRS += telephony
 
 contains(mobility_modules,publishsubscribe) {
     SUBDIRS += publishsubscribe

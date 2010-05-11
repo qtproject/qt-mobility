@@ -15,6 +15,7 @@ headerdirs = ../../src/bearer \
              ../../src/multimedia \
              ../../src/messaging \
              ../../src/versit \
+             ../../src/telephony \
              .
 
 sourcedirs = ../../src/bearer \
@@ -26,6 +27,7 @@ sourcedirs = ../../src/bearer \
              ../../src/multimedia \
              ../../src/messaging \
              ../../src/versit \
+             ../../src/telephony \
              .
 
 excludedirs = ../../src/messaging/win32wce \

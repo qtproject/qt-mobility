@@ -1,0 +1,37 @@
+# #####################################################################
+# Telephony Mobility API
+# #####################################################################
+TEMPLATE = lib
+
+# Target gets fixed up in common.pri
+TARGET = QtTelephony
+DEFINES += QT_BUILD_TELEPHONY_LIB QT_MAKEDLL
+
+include(../../common.pri)
+
+# Input
+PUBLIC_HEADERS += qtelephony.h \
+                qcallinfo.h
+SOURCES += qtelephony.cpp \
+                qcallinfo.cpp
+
+# Private Headers and sources
+win32 {
+    HEADERS += qtelephonyevent_win_p.h 
+    SOURCES += qtelephonyevent_win.cpp 
+}
+unix: {
+    !maemo*: {
+        HEADERS += qtelephony_linux_p.h 
+    }
+    maemo*: {
+        HEADERS += qtelephony_maemo_p.h
+    }
+}
+symbian:{
+    HEADERS += qtelephony_s60_p.h 
+}
+
+
+HEADERS += $$PUBLIC_HEADERS 
+include (../../features/deploy.pri)
