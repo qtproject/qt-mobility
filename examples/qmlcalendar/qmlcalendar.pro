@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = timescape
+TARGET = qmlcalendar
 
 # CONFIG += mobility
 # MOBILITY = calendar versit
@@ -13,7 +13,7 @@ QT += script
 
 # Input
 SOURCES += main.cpp
-RESOURCES += timescape.qrc
+RESOURCES += qmlcalendar.qrc
 OTHER_FILES += contents/application.qml \
     contents/components/Button.qml \
     contents/components/ScrollBar.qml \

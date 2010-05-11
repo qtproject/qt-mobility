@@ -93,4 +93,5 @@ contains(mobility_modules,sensors) {
 }
 
 # Calendar
-SUBDIRS += timescape
+SUBDIRS += qmlcalendar
+
