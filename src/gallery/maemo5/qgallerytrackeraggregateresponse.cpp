@@ -62,6 +62,7 @@ public:
     QStringList aggregates;
     QStringList aggregateFields;
     QVector<QStringList> resultSet;
+    QDBusPendingCallWatcher *getValuesCall;
 
     void _q_getValuesFinished(QDBusPendingCallWatcher *watcher);
 
@@ -72,8 +73,13 @@ public:
 void QGalleryTrackerAggregateResponsePrivate::_q_getValuesFinished(QDBusPendingCallWatcher *watcher)
 {
     if (watcher->isError()) {
+        qWarning("DBUS error %s", qPrintable(watcher->error().message()));
 
+        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
     } else {
+        getValuesCall->deleteLater();
+        getValuesCall = 0;
+
         getValuesFinished(*watcher);
     }
 }
@@ -92,9 +98,16 @@ void QGalleryTrackerAggregateResponsePrivate::getValues(int offset, int limit)
             limit);
 
     if (call.isError()) {
+        qWarning("DBUS error %s", qPrintable(call.error().message()));
 
-    } else {
+        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+    } else if (call.isFinished()) {
         getValuesFinished(call);
+    } else {
+        getValuesCall = new QDBusPendingCallWatcher(call);
+
+        QObject::connect(getValuesCall, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                q_func(), SLOT(_q_getValuesFinished(QDBusPendingCallWatcher*)));
     }
 }
 
@@ -128,9 +141,10 @@ QGalleryTrackerAggregateResponse::QGalleryTrackerAggregateResponse(
     d->metaDataInterface = metaDataInterface;
     d->query = query;
     d->service = schema.service();
-    d->identityFields = schema.identityFields();
+    d->identityFields = schema.fields();
     d->aggregates = schema.aggregations();
     d->aggregateFields = schema.aggregateFields();
+    d->getValuesCall = 0;
 
     d->getValues(0, 2048);
 }
@@ -148,6 +162,12 @@ bool QGalleryTrackerAggregateResponse::waitForFinished(int msecs)
 {
 
     return false;
+}
+
+
+void QGalleryTrackerAggregateResponse::updateStateChanged(UpdateState state)
+{
+
 }
 
 #include "moc_qgallerytrackeraggregateresponse_p.cpp"

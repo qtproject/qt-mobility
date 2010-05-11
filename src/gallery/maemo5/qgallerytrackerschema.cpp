@@ -67,6 +67,10 @@ namespace
 
         const QGalleryPropertyMapItem *items;
         const int count;
+
+        int indexOfProperty(const QString &propertyName) const;
+
+        const QGalleryPropertyMapItem &operator [](int index) const { return items[index]; }
     };
 
     struct QGalleryAggregatePropertyMapItem
@@ -74,6 +78,7 @@ namespace
         QLatin1String galleryKey;
         QLatin1String trackerKey;
         QGalleryTrackerSchema::AggregateType type;
+        QLatin1String aggregate;
     };
 
     struct QGalleryAggregatePropertyMap
@@ -84,6 +89,11 @@ namespace
 
         const QGalleryAggregatePropertyMapItem *items;
         const int count;
+
+        int indexOfProperty(const QString &propertyName) const;
+
+        const QGalleryAggregatePropertyMapItem &operator [](int index) const {
+            return items[index]; }
     };
 
     struct QGalleryTypePrefix : public QLatin1String
@@ -116,6 +126,8 @@ namespace
 
         int indexOfType(const QString &type) const;
         int indexOfItemId(const QString &itemId) const;
+
+        const QGalleryTypeMapItem &operator [](int index) const { return items[index]; }
     };
 
     struct QGalleryAggregateTypeMapItem
@@ -140,7 +152,27 @@ namespace
 
         int indexOfType(const QString &type) const;
         int indexOfItemId(const QString &itemId) const;
+
+        const QGalleryAggregateTypeMapItem &operator [](int index) const { return items[index]; }
     };
+
+    int QGalleryPropertyMap::indexOfProperty(const QString &propertyName) const
+    {
+        for (int i = 0; i < count; ++i) {
+            if (items[i].galleryKey == propertyName)
+                return i;
+        }
+        return -1;
+    }
+
+    int QGalleryAggregatePropertyMap::indexOfProperty(const QString &propertyName) const
+    {
+        for (int i = 0; i < count; ++i) {
+            if (items[i].galleryKey == propertyName)
+                return i;
+        }
+        return -1;
+    }
 
     int QGalleryTypeMap::indexOfType(const QString &type) const
     {
@@ -186,13 +218,32 @@ namespace
         CanSort = QGalleryProperty::CanSort,
         CanFilter = QGalleryProperty::CanFilter
     };
+
+    class QGalleryReorderLessThan
+    {
+    public:
+        QGalleryReorderLessThan(const QStringList &sortOrder)
+            : m_sortOrder(QStringList(sortOrder)
+                    .replaceInStrings(QLatin1String("+"), QString())
+                    .replaceInStrings(QLatin1String("-"), QString()))
+        {
+        }
+
+        bool operator ()(const QString &property1, const QString &property2) const
+        {
+            return uint(m_sortOrder.indexOf(property1)) < uint(m_sortOrder.indexOf(property2));
+        }
+
+    private:
+        QStringList m_sortOrder;
+    };
 }
 
 #define QT_GALLERY_PROPERTY(GalleryKey, TrackerKey, Attr) \
 { QLatin1String(GalleryKey), QLatin1String(TrackerKey), QGalleryProperty::Attributes(Attr) }
 
-#define QT_GALLERY_AGGREGATE_PROPERTY(GalleryKey, TrackerKey, AggregateType) \
-{ QLatin1String(GalleryKey), QLatin1String(TrackerKey), QGalleryTrackerSchema::AggregateType }
+#define QT_GALLERY_AGGREGATE_PROPERTY(GalleryKey, TrackerKey, AggregateType, Aggregate) \
+{ QLatin1String(GalleryKey), QLatin1String(TrackerKey), QGalleryTrackerSchema::AggregateType, QLatin1String(Aggregate) }
 
 #define QT_GALLERY_FILE_TYPE(Type, Service, Prefix, PropertyMap) \
 { \
@@ -222,11 +273,11 @@ static bool qt_writePropertyName(
         const QGalleryPropertyMap &propertyMap)
 {
     for (int i = 0; i < propertyMap.count; ++i) {
-        if (field == propertyMap.items[i].galleryKey) {
+        if (field == propertyMap[i].galleryKey) {
             do {
                 xml->writeEmptyElement(QLatin1String("rdfq:Property"));
-                xml->writeAttribute(QLatin1String("name"), propertyMap.items[i].trackerKey);
-            } while (++i < propertyMap.count && field == propertyMap.items[i].galleryKey);
+                xml->writeAttribute(QLatin1String("name"), propertyMap[i].trackerKey);
+            } while (++i < propertyMap.count && field == propertyMap[i].galleryKey);
 
             return true;
         }
@@ -791,11 +842,11 @@ static QString qt_galleryFileId(const QStringList &row)
     QString service = row.value(1);
 
     for (int i = 0; i < typeMap.count; ++i) {
-        if (typeMap.items[i].trackerKey == service) {
-            return typeMap.items[i].prefix + row.value(0);
+        if (typeMap[i].trackerKey == service) {
+            return typeMap[i].prefix + row.value(0);
         }
     }
-    return typeMap.items[0].prefix + row.value(0);
+    return typeMap[0].prefix + row.value(0);
 }
 
 /////////
@@ -815,8 +866,8 @@ static const QGalleryPropertyMapItem qt_galleryArtistPropertyMap[] =
 
 static const QGalleryAggregatePropertyMapItem qt_galleryArtistAggregateMap[] =
 {
-    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", Sum),
-    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , Count),
+    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", Sum  , "SUM"),
+    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , Count, "COUNT"),
 };
 
 static QString qt_galleryArtistId(const QStringList &rows)
@@ -846,8 +897,8 @@ static const QGalleryPropertyMapItem qt_galleryAlbumArtistPropertyMap[] =
 
 static const QGalleryAggregatePropertyMapItem qt_galleryAlbumArtistAggregateMap[] =
 {
-    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", Sum),
-    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , Count),
+    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", Sum  , "SUM"),
+    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , Count, "COUNT"),
 };
 
 static QString qt_galleryAlbumArtistId(const QStringList &rows)
@@ -878,8 +929,8 @@ static const QGalleryPropertyMapItem qt_galleryAlbumPropertyMap[] =
 
 static const QGalleryAggregatePropertyMapItem qt_galleryAlbumAggregateMap[] =
 {
-    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", Sum),
-    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , Count),
+    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", Sum  , "SUM"),
+    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , Count, "COUNT"),
 };
 
 static QString qt_galleryAlbumId(const QStringList &row)
@@ -936,8 +987,8 @@ static const QGalleryPropertyMapItem qt_galleryAudioGenrePropertyMap[] =
 
 static const QGalleryAggregatePropertyMapItem qt_galleryAudioGenreAggregateMap[] =
 {
-    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", Sum),
-    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , Count),
+    QT_GALLERY_AGGREGATE_PROPERTY("duration"  , "Audio:Duration", Sum  , "SUM"),
+    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*"             , Count, "COUNT"),
 };
 
 static QString qt_galleryAudioGenreId(const QStringList &row)
@@ -966,7 +1017,7 @@ static const QGalleryPropertyMapItem qt_galleryPhotoAlbumPropertyMap[] =
 
 static const QGalleryAggregatePropertyMapItem qt_galleryPhotoAlbumAggregateMap[] =
 {
-    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*", Count),
+    QT_GALLERY_AGGREGATE_PROPERTY("trackCount", "*", Count, "COUNT")
 };
 
 static QString qt_galleryPhotoAlbumId(const QStringList &row)
@@ -1018,14 +1069,14 @@ void QGalleryTrackerSchema::resolveItemType(const QString &itemId)
     m_fileTypeIndex = typeMap.indexOfItemId(itemId);
 
     if (m_fileTypeIndex != -1) {
-        m_itemType = typeMap.items[m_fileTypeIndex].galleryKey;
+        m_itemType = typeMap[m_fileTypeIndex].galleryKey;
         m_aggregateTypeIndex = -1;
     } else {
         QGalleryAggregateTypeMap aggregateMap(qt_galleryAggregateTypeMap);
         m_aggregateTypeIndex = aggregateMap.indexOfItemId((itemId));
 
         if (m_aggregateTypeIndex != -1) {
-            m_itemType = aggregateMap.items[m_aggregateTypeIndex].galleryKey;
+            m_itemType = aggregateMap[m_aggregateTypeIndex].galleryKey;
         } else {
             m_itemType = QString();
         }
@@ -1070,7 +1121,7 @@ QString QGalleryTrackerSchema::buildContainerQuery(int *error, const QString &co
         QXmlStreamWriter xml(&query);
         xml.writeStartElement(QLatin1String("rdfq:Condition"));
 
-        qt_writeFileContainerCondition(error, &xml, typeMap.items[index].prefix.strip(containerId));
+        qt_writeFileContainerCondition(error, &xml, typeMap[index].prefix.strip(containerId));
 
         xml.writeEndElement();
     } else {
@@ -1081,8 +1132,8 @@ QString QGalleryTrackerSchema::buildContainerQuery(int *error, const QString &co
             QXmlStreamWriter xml(&query);
             xml.writeStartElement(QLatin1String("rdfq:Condition"));
 
-            aggregateMap.items[index].writeIdCondition(
-                    error, &xml, aggregateMap.items[index].prefix.strip(containerId));
+            aggregateMap[index].writeIdCondition(
+                    error, &xml, aggregateMap[index].prefix.strip(containerId));
 
             xml.writeEndElement();
         } else {
@@ -1111,14 +1162,14 @@ QString QGalleryTrackerSchema::buildFilterQuery(
         int index = typeMap.indexOfItemId(containerId);
 
         if (index != -1) {
-            qt_writeFileScopeCondition(error, &xml, typeMap.items[index].prefix.strip(containerId));
+            qt_writeFileScopeCondition(error, &xml, typeMap[index].prefix.strip(containerId));
         } else {
             QGalleryAggregateTypeMap aggregateMap(qt_galleryAggregateTypeMap);
             index = aggregateMap.indexOfItemId((containerId));
 
             if (index != -1) {
-                aggregateMap.items[index].writeIdCondition(
-                        error, &xml, aggregateMap.items[index].prefix.strip(containerId));
+                aggregateMap[index].writeIdCondition(
+                        error, &xml, aggregateMap[index].prefix.strip(containerId));
             } else {
                 *error = QGalleryAbstractRequest::InvalidItemError;
             }
@@ -1160,7 +1211,7 @@ QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId)
     int index = typeMap.indexOfItemId(idString);
 
     if (index != -1) {
-        return typeMap.items[index].prefix.strip(idString).toString();
+        return typeMap[index].prefix.strip(idString).toString();
     } else {
         *error = QGalleryAbstractRequest::InvalidItemError;
 
@@ -1182,7 +1233,7 @@ QStringList QGalleryTrackerSchema::urisFromItemIds(int *error, const QVariantLis
         int index = typeMap.indexOfItemId(itemId);
 
         if (index != -1)
-            uris.append(typeMap.items[index].prefix.strip(itemId).toString());
+            uris.append(typeMap[index].prefix.strip(itemId).toString());
         else
             *error = QGalleryAbstractRequest::InvalidItemError;
     }
@@ -1206,16 +1257,16 @@ QString QGalleryTrackerSchema::field(const QString &propertyName) const
         const QGalleryPropertyMap propertyMap = qt_galleryTypeMap[m_fileTypeIndex].propertyMap;
 
         for (int i = 0; i < propertyMap.count; ++i) {
-            if (propertyName == propertyMap.items[i].galleryKey)
-                return propertyMap.items[i].trackerKey;
+            if (propertyName == propertyMap[i].galleryKey)
+                return propertyMap[i].trackerKey;
         }
     } else if (m_aggregateTypeIndex >= 0) {
         const QGalleryPropertyMap propertyMap
                 = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].propertyMap;
 
         for (int i = 0; i < propertyMap.count; ++i) {
-            if (propertyName == propertyMap.items[i].galleryKey)
-                return propertyMap.items[i].trackerKey;
+            if (propertyName == propertyMap[i].galleryKey)
+                return propertyMap[i].trackerKey;
         }
     }
     return QString();
@@ -1240,13 +1291,13 @@ QStringList QGalleryTrackerSchema::supportedPropertyNames() const
         const QGalleryPropertyMap propertyMap = qt_galleryTypeMap[m_fileTypeIndex].propertyMap;
 
         for (int i = 0; i < propertyMap.count; ++i)
-            propertyNames.append(propertyMap.items[i].galleryKey);
+            propertyNames.append(propertyMap[i].galleryKey);
     } else if (m_aggregateTypeIndex >= 0) {
         const QGalleryPropertyMap propertyMap
                 = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].propertyMap;
 
         for (int i = 0; i < propertyMap.count; ++i)
-            propertyNames.append(propertyMap.items[i].galleryKey);
+            propertyNames.append(propertyMap[i].galleryKey);
     }
     return propertyNames;
 }
@@ -1257,21 +1308,21 @@ QGalleryProperty::Attributes QGalleryTrackerSchema::propertyAttributes(
     if (m_fileTypeIndex >= 0) {
         const QGalleryPropertyMap propertyMap = qt_galleryTypeMap[m_fileTypeIndex].propertyMap;
         for (int i = 0; i < propertyMap.count; ++i) {
-            if (propertyName == propertyMap.items[i].galleryKey)
-                return propertyMap.items[i].attributes;
+            if (propertyName == propertyMap[i].galleryKey)
+                return propertyMap[i].attributes;
         }
     } else if (m_aggregateTypeIndex >= 0) {
         const QGalleryPropertyMap propertyMap
                 = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].propertyMap;
         for (int i = 0; i < propertyMap.count; ++i) {
-            if (propertyName == propertyMap.items[i].galleryKey)
-                return propertyMap.items[i].attributes;
+            if (propertyName == propertyMap[i].galleryKey)
+                return propertyMap[i].attributes;
         }
 
         const QGalleryAggregatePropertyMap aggregateMap
                 = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].aggregatePropertyMap;
         for (int i = 0; i < aggregateMap.count; ++i) {
-            if (propertyName == aggregateMap.items[i].galleryKey)
+            if (propertyName == aggregateMap[i].galleryKey)
                 return QGalleryProperty::CanRead;
         }
     }
@@ -1288,7 +1339,7 @@ QStringList QGalleryTrackerSchema::identityFields() const
                 = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].identity;
 
         for (int i = 0; i < identity.count; ++i)
-            fields.append(identity.items[i].trackerKey);
+            fields.append(identity[i].trackerKey);
     }
     return fields;
 }
@@ -1302,7 +1353,7 @@ QStringList QGalleryTrackerSchema::identityPropertyNames() const
                 = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].identity;
 
         for (int i = 0; i < identity.count; ++i)
-            propertyNames.append(identity.items[i].galleryKey);
+            propertyNames.append(identity[i].galleryKey);
     }
     return propertyNames;
 }
@@ -1315,9 +1366,9 @@ QPair<QString, QGalleryTrackerSchema::AggregateType> QGalleryTrackerSchema::aggr
                 = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].aggregatePropertyMap;
 
         for (int i = 0; i < propertyMap.count; ++i) {
-            if (propertyName == propertyMap.items[i].galleryKey) {
+            if (propertyName == propertyMap[i].galleryKey) {
                 return QPair<QString, AggregateType>(
-                        propertyMap.items[i].trackerKey, propertyMap.items[i].type);
+                        propertyMap[i].trackerKey, propertyMap[i].type);
             }
         }
     }
@@ -1329,8 +1380,8 @@ QString QGalleryTrackerSchema::typeFromService(const QString &service)
     QGalleryTypeMap typeMap(qt_galleryTypeMap);
 
     for (int i = 0; i < typeMap.count; ++i) {
-        if (typeMap.items[i].trackerKey == service)
-            return typeMap.items[i].galleryKey;
+        if (typeMap[i].trackerKey == service)
+            return typeMap[i].galleryKey;
     }
     return QString();
 }
@@ -1340,40 +1391,90 @@ QString QGalleryTrackerSchema::prefixFromService(const QString &service)
     QGalleryTypeMap typeMap(qt_galleryTypeMap);
 
     for (int i = 0; i < typeMap.count; ++i) {
-        if (typeMap.items[i].trackerKey == service)
-            return typeMap.items[i].prefix;
+        if (typeMap[i].trackerKey == service)
+            return typeMap[i].prefix;
     }
     return QString();
 }
 
 void QGalleryTrackerSchema::setPropertyNames(const QStringList &names)
 {
-
+    m_propertyNames = names;
 }
 
 void QGalleryTrackerSchema::setSortPropertyNames(const QStringList &names)
 {
-
+    m_sortPropertyNames = names;
 }
 
 QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createIdColumn() const
 {
-    return 0;
+    if (m_fileTypeIndex >= 0) {
+        return new QGalleryTrackerServicePrefixColumn(QString(), 0, 0, 1);
+    } else if (m_aggregateTypeIndex >= 0) {
+        QGalleryAggregateTypeMap typeMap(qt_galleryAggregateTypeMap);
+
+        const QString prefix = typeMap[m_aggregateTypeIndex].prefix;
+
+        if (typeMap[m_aggregateTypeIndex].identity.count == 1) {
+            return new QGalleryTrackerPrefixColumn(QString(), 0, 0, prefix);
+        } else if (typeMap[m_aggregateTypeIndex].identity.count == 2) {
+            return new QGalleryTrackerCompositeIdColumn(QString(), 0, m_identityColumns, prefix);
+        }
+    }
+    return new QGalleryTrackerStaticColumn(QString(), 0, QVariant());
 }
 
 QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createUrlColumn() const
 {
-    return 0;
+    if (m_fileTypeIndex >= 0) {
+        return new QGalleryTrackerFileUrlColumn(QString(), 0, 0);
+    } else {
+        return new QGalleryTrackerStaticColumn(QString(), 0, QUrl());
+    }
 }
 
 QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createTypeColumn() const
 {
-    return 0;
+    if (m_fileTypeIndex >= 0) {
+        return new QGalleryTrackerServiceTypeColumn(QString(), 0, 1);
+    } else if (m_aggregateTypeIndex >= 0) {
+        return new QGalleryTrackerStaticColumn(
+                QString(), 0, QString(qt_galleryAggregateTypeMap[m_aggregateTypeIndex].galleryKey));
+    } else {
+        return new QGalleryTrackerStaticColumn(QString(), 0, QVariant());
+    }
 }
 
 QVector<QGalleryTrackerValueColumn *> QGalleryTrackerSchema::createValueColumns() const
 {
     QVector<QGalleryTrackerValueColumn *> columns;
+
+    columns.reserve(m_valueTypes.count());
+
+    for (int i = 0, count = m_valueTypes.count(); i < count; ++i) {
+        switch (m_valueTypes.at(i)) {
+        case QVariant::String:
+            columns.append(new QGalleryTrackerStringColumn(
+                    m_propertyNames.at(i), m_propertyAttributes.at(i)));
+            break;
+        case QVariant::Int:
+            columns.append(new QGalleryTrackerStringColumn(
+                    m_propertyNames.at(i), m_propertyAttributes.at(i)));
+            break;
+        case QVariant::Double:
+            columns.append(new QGalleryTrackerStringColumn(
+                    m_propertyNames.at(i), m_propertyAttributes.at(i)));
+            break;
+        case QVariant::DateTime:
+            columns.append(new QGalleryTrackerStringColumn(
+                    m_propertyNames.at(i), m_propertyAttributes.at(i)));
+            break;
+        default:
+            Q_ASSERT(false);
+            break;
+        }
+    }
 
     return columns;
 }
@@ -1389,6 +1490,17 @@ QVector<QGalleryTrackerAliasColumn *> QGalleryTrackerSchema::createAliasColumns(
 {
     QVector<QGalleryTrackerAliasColumn *> columns;
 
+    columns.reserve(m_aliasColumns.count());
+
+    for (int i = 0, count = m_aliasColumns.count(); i < count; ++i) {
+        const int propertyIndex = i + m_propertyFields.count();
+
+        columns.append(new QGalleryTrackerAliasColumn(
+                m_propertyNames.at(propertyIndex),
+                m_propertyAttributes.at(propertyIndex),
+                m_aliasColumns.at(i)));
+    }
+
     return columns;
 }
 
@@ -1397,6 +1509,238 @@ QVector<QGalleryTrackerImageColumn *> QGalleryTrackerSchema::createImageColumns(
     QVector<QGalleryTrackerImageColumn *> columns;
 
     return columns;
+}
+
+int QGalleryTrackerSchema::resolveColumns()
+{
+    if (m_fileTypeIndex >= 0)
+        return resolveFileColumns();
+    else if (m_aggregateTypeIndex >= 0)
+        return resolveAggregateColumns();
+    else
+        return QGalleryAbstractRequest::ItemTypeError;
+}
+
+int QGalleryTrackerSchema::resolveFileColumns()
+{
+    QStringList propertyFields;
+    QStringList valueNames;
+    QStringList aliasNames;
+    QVector<QGalleryProperty::Attributes> valueAttributes;
+    QVector<QGalleryProperty::Attributes> aliasAttributes;
+    QVector<QVariant::Type> valueTypes;
+    QVector<int> aliasColumns;
+    QVector<QGalleryTrackerSortCriteria> sortCriteria;
+
+    const QGalleryPropertyMap &properties = qt_galleryTypeMap[m_fileTypeIndex].propertyMap;
+
+    m_propertyNames.removeDuplicates();
+
+    for (QStringList::const_iterator it = m_propertyNames.constBegin();
+            it != m_propertyNames.constEnd();
+            ++it) {
+        int propertyIndex = properties.indexOfProperty(*it);
+
+        if (propertyIndex >= 0) {
+            const QString field = properties[propertyIndex].trackerKey;
+
+            int fieldIndex = propertyFields.indexOf(field);
+
+            if (fieldIndex >= 0) {
+                aliasColumns.append(fieldIndex + 2);
+                aliasNames.append(*it);
+                aliasAttributes.append(properties[propertyIndex].attributes);
+            } else {
+                propertyFields.append(field);
+                valueNames.append(*it);
+                valueAttributes.append(properties[propertyIndex].attributes);
+                valueTypes.append(QVariant::String);
+            }
+        } else if (*it == QLatin1String("filePath")) {
+            aliasColumns.append(0);
+            aliasNames.append(*it);
+            aliasAttributes.append(QGalleryProperty::CanRead);
+        }
+    }
+
+    bool descending = !m_sortPropertyNames.isEmpty()
+            && m_sortPropertyNames.first().startsWith(QLatin1Char('-'));
+
+    for (QStringList::const_iterator it = m_sortPropertyNames.constBegin();
+            it != m_sortPropertyNames.constEnd();
+            ++it) {
+        int sortFlags = QGalleryTrackerSortCriteria::Ascending;
+
+        QString propertyName = *it;
+
+        if (propertyName.startsWith(QLatin1Char('-'))) {
+            propertyName = propertyName.mid(1);
+            sortFlags = QGalleryTrackerSortCriteria::Descending;
+
+            sortFlags |= descending
+                    ? QGalleryTrackerSortCriteria::Sorted
+                    : QGalleryTrackerSortCriteria::ReverseSorted;
+        } else {
+            if (propertyName.startsWith(QLatin1Char('+')))
+                propertyName = propertyName.mid(1);
+
+            sortFlags |= descending
+                    ? QGalleryTrackerSortCriteria::ReverseSorted
+                    : QGalleryTrackerSortCriteria::Sorted;
+        }
+
+        int propertyIndex = properties.indexOfProperty(propertyName);
+
+        if (propertyIndex >= 0
+                && properties[propertyIndex].attributes & QGalleryProperty::CanSort) {
+            const QString field = properties[propertyIndex].trackerKey;
+
+            int fieldIndex = propertyFields.indexOf(field);
+
+            if (fieldIndex < 0) {
+                fieldIndex = propertyFields.count();
+                propertyFields.append(field);
+                valueNames.append(propertyName);
+                valueAttributes.append(properties[propertyIndex].attributes);
+                valueTypes.append(QVariant::String);
+            }
+
+            sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex + 2, sortFlags));
+        }
+    }
+
+    m_propertyFields = propertyFields;
+    m_aggregateFields = QStringList();
+    m_aggregations = QStringList();
+    m_propertyNames = valueNames + aliasNames;
+    m_propertyAttributes = valueAttributes + aliasAttributes;
+    m_valueTypes = valueTypes;
+    m_compositeColumns = QVector<int>();
+    m_aliasColumns = aliasColumns;
+    m_imageColumns = QVector<int>();
+    m_sortCriteria = sortCriteria;
+
+    return QGalleryAbstractRequest::Succeeded;
+}
+
+int QGalleryTrackerSchema::resolveAggregateColumns()
+{
+    QStringList identityFields;
+    QStringList aggregateFields;
+    QStringList aggregates;
+    QStringList identityNames;
+    QStringList aggregateNames;
+    QStringList aliasNames;
+    QVector<QGalleryProperty::Attributes> identityAttributes;
+    QVector<QGalleryProperty::Attributes> aggregateAttributes;
+    QVector<QGalleryProperty::Attributes> aliasAttributes;
+    QVector<QVariant::Type> identityTypes;
+    QVector<QVariant::Type> aggregateTypes;
+    QVector<int> identityColumns;
+    QVector<int> aliasColumns;
+    QVector<QGalleryTrackerSortCriteria> sortCriteria;
+
+    const QGalleryAggregateTypeMapItem &type = qt_galleryAggregateTypeMap[m_aggregateTypeIndex];
+    const QGalleryPropertyMap &properties = type.propertyMap;
+    const QGalleryAggregatePropertyMap &aggregateProperties = type.aggregatePropertyMap;
+
+    m_propertyNames.removeDuplicates();
+
+    for (int i = 0; i < type.identity.count; ++i) {
+        const QString &propertyName = type.identity[i].galleryKey;
+
+        identityNames.append(propertyName);
+
+        m_propertyNames.removeAll(propertyName);
+    }
+
+    qSort(identityNames.begin(), identityNames.end(), QGalleryReorderLessThan(m_sortPropertyNames));
+
+    for (QStringList::const_iterator it = identityNames.constBegin();
+            it != identityNames.constEnd();
+            ++it) {
+        int propertyIndex = properties.indexOfProperty(*it);
+        Q_ASSERT(propertyIndex >= 0);
+
+        const QString field = properties[propertyIndex].trackerKey;
+        Q_ASSERT(identityFields.indexOf(field) == -1);
+
+        identityColumns.append(it - identityNames.constBegin());
+        identityFields.append(field);
+        identityAttributes.append(properties[propertyIndex].attributes);
+        identityTypes.append(QVariant::String);
+    }
+
+    for (QStringList::const_iterator it = m_propertyNames.constBegin();
+            it != m_propertyNames.constEnd();
+            ++it) {
+        int propertyIndex = properties.indexOfProperty(*it);
+
+        if (propertyIndex >= 0) {
+            const QString field = properties[propertyIndex].trackerKey;
+
+            int fieldIndex = identityFields.indexOf(field);
+            Q_ASSERT(fieldIndex != -1);
+
+            aliasColumns.append(fieldIndex);
+            aliasNames.append(*it);
+            aliasAttributes.append(properties[propertyIndex].attributes);
+        } else if ((propertyIndex = aggregateProperties.indexOfProperty(*it)) >= 0) {
+            aggregateNames.append(*it);
+            aggregateFields.append(aggregateProperties[propertyIndex].trackerKey);
+            aggregates.append(aggregateProperties[propertyIndex].aggregate);
+            aggregateAttributes.append(QGalleryProperty::CanRead);
+            aggregateTypes.append(QVariant::String);
+
+            break;
+        }
+    }
+
+    bool descending = !m_sortPropertyNames.isEmpty()
+            && m_sortPropertyNames.first().startsWith(QLatin1Char('-'));
+
+    for (QStringList::const_iterator it = m_sortPropertyNames.constBegin();
+            it != m_sortPropertyNames.constEnd();
+            ++it) {
+        int sortFlags = QGalleryTrackerSortCriteria::Ascending;
+
+        QString propertyName = *it;
+
+        if (propertyName.startsWith(QLatin1Char('-'))) {
+            propertyName = propertyName.mid(1);
+            sortFlags = QGalleryTrackerSortCriteria::Descending;
+
+            sortFlags |= descending
+                    ? QGalleryTrackerSortCriteria::Sorted
+                    : QGalleryTrackerSortCriteria::ReverseSorted;
+        } else {
+            if (propertyName.startsWith(QLatin1Char('+')))
+                propertyName = propertyName.mid(1);
+
+            sortFlags |= descending
+                    ? QGalleryTrackerSortCriteria::ReverseSorted
+                    : QGalleryTrackerSortCriteria::Sorted;
+        }
+
+        int fieldIndex = identityNames.indexOf(propertyName);
+
+        if (fieldIndex >= 0)
+            sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex, sortFlags));
+    }
+
+    m_propertyFields = identityFields;
+    m_aggregateFields = aggregateFields;
+    m_aggregations = aggregates;
+    m_propertyNames = identityNames + aggregateNames + aliasNames;
+    m_propertyAttributes = identityAttributes + aggregateAttributes + aliasAttributes;
+    m_valueTypes = identityTypes + aggregateTypes;
+    m_identityColumns = identityColumns;
+    m_compositeColumns = QVector<int>();
+    m_aliasColumns = aliasColumns;
+    m_imageColumns = QVector<int>();
+    m_sortCriteria = sortCriteria;
+
+    return QGalleryAbstractRequest::Succeeded;
 }
 
 QTM_END_NAMESPACE

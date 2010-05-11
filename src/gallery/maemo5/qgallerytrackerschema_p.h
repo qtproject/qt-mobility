@@ -153,7 +153,12 @@ public:
 
     QVector<QGalleryTrackerSortCriteria> sortCriteria() const { return m_sortCriteria; }
 
+    int resolveColumns();
+
 private:
+    int resolveFileColumns();
+    int resolveAggregateColumns();
+
     int m_fileTypeIndex;
     int m_aggregateTypeIndex;
     QString m_itemType;
@@ -164,6 +169,8 @@ private:
     QStringList m_aggregateFields;
     QStringList m_sortFields;
     QVector<QGalleryProperty::Attributes> m_propertyAttributes;
+    QVector<QVariant::Type> m_valueTypes;
+    QVector<int> m_identityColumns;
     QVector<int> m_compositeColumns;
     QVector<int> m_aliasColumns;
     QVector<int> m_imageColumns;

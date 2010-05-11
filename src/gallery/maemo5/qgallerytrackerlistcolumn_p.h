@@ -142,18 +142,6 @@ public:
     int compare(const QVariant &value1, const QVariant &value2) const;
 };
 
-class QGalleryTrackerFloatColumn : public QGalleryTrackerValueColumn
-{
-public:
-    QGalleryTrackerFloatColumn(
-            const QString &name, QGalleryProperty::Attributes attributes)
-        : QGalleryTrackerValueColumn(name, attributes) {}
-
-    QVariant toVariant(const QString &string) const;
-
-    int compare(const QVariant &value1, const QVariant &value2) const;
-};
-
 class QGalleryTrackerDoubleColumn : public QGalleryTrackerValueColumn
 {
 public:
@@ -248,19 +236,16 @@ public:
     QGalleryTrackerCompositeIdColumn(
             const QString &name,
             QGalleryProperty::Attributes attributes,
-            int column1,
-            int column2,
+            const QVector<int> columns,
             const QString &prefix)
         : QGalleryTrackerCompositeColumn(name, attributes)
-        , m_column1(column1)
-        , m_column2(column2)
+        , m_columns(columns)
         , m_prefix(prefix) {}
 
     QVariant value(QVector<QVariant>::const_iterator row) const;
 
 private:
-    const int m_column1;
-    const int m_column2;
+    const QVector<int> m_columns;
     const QString m_prefix;
 };
 

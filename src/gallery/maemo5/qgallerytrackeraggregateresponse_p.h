@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYTRACKERAGGREGATELISTRESPONSE_P_H
-#define QGALLERYTRACKERAGGREGATELISTRESPONSE_P_H
+#ifndef QGALLERYTRACKERAGGREGATERESPONSE_P_H
+#define QGALLERYTRACKERAGGREGATERESPONSE_P_H
 
 //
 //  W A R N I N G

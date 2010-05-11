@@ -237,13 +237,16 @@ void QGalleryTrackerItemListPrivate::rowsRemoved(int aIndex, int rIndex, int cou
 void QGalleryTrackerItemListPrivate::_q_parseFinished()
 {
     rCache.values = parseWatcher.result();
-    rCache.count = rCache.values.count();
+    rCache.count = rCache.values.count() / tableWidth;
 
     if (aCache.count == 0) {
-        rowCount = rCache.index + rCache.count;
+        rCache.cutoff = rCache.count;
 
-        emit q_func()->inserted(0, rowCount);
+        if (rCache.count > 0) {
+            rowCount = rCache.index + rCache.count;
 
+            emit q_func()->inserted(0, rowCount);
+        }
         q_func()->updateStateChanged(updateState = QGalleryTrackerItemList::UpToDate);
     } else {
         synchronizeWatcher.setFuture(
@@ -291,6 +294,9 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
 
     d->rowCount = 0;
     d->updateState = UpToDate;
+
+    connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
+    connect(&d->synchronizeWatcher, SIGNAL(finished()), this, SLOT(_q_synchronizeFinished()));
 }
 
 QGalleryTrackerItemList::~QGalleryTrackerItemList()

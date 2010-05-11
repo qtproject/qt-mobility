@@ -52,6 +52,7 @@
 
 #include "qgalleryerrorresponse_p.h"
 #include "qgallerytrackeraggregatelistresponse_p.h"
+#include "qgallerytrackeraggregateresponse_p.h"
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackerfileremoveresponse_p.h"
 #include "qgallerytrackeritemlistresponse_p.h"
@@ -141,12 +142,13 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 
             return response;
         } else if (schema.isAggregateType()) {
-            response = new QGalleryTrackerAggregateListResponse(
+            schema.resolveColumns();
+
+            response = new QGalleryTrackerAggregateResponse(
                     metaDataInterface(),
                     schema,
                     query,
-                    request->propertyNames(),
-                    QStringList(),
+                    0,
                     1);
             response->setCursorPosition(0);
 
@@ -193,12 +195,13 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
 
             return response;
         } else if (schema.isAggregateType()) {
-            response = new QGalleryTrackerAggregateListResponse(
+            schema.resolveColumns();
+
+            response = new QGalleryTrackerAggregateResponse(
                     metaDataInterface(),
                     schema,
                     query,
-                    request->propertyNames(),
-                    request->sortPropertyNames(),
+                    request->initialCursorPosition(),
                     request->minimumPagedItems());
             response->setCursorPosition(request->initialCursorPosition());
 
@@ -238,12 +241,13 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
 
             return response;
         } else if (schema.isAggregateType()) {
-            QGalleryAbstractResponse *response = new QGalleryTrackerAggregateListResponse(
+            schema.resolveColumns();
+
+            QGalleryAbstractResponse *response = new QGalleryTrackerAggregateResponse(
                     metaDataInterface(),
                     schema,
                     query,
-                    request->propertyNames(),
-                    request->sortPropertyNames(),
+                    request->initialCursorPosition(),
                     request->minimumPagedItems());
             response->setCursorPosition(request->initialCursorPosition());
 

@@ -73,20 +73,6 @@ int QGalleryTrackerIntegerColumn::compare(const QVariant &value1, const QVariant
     return value1.toInt() - value2.toInt();
 }
 
-QVariant QGalleryTrackerFloatColumn::toVariant(const QString &string) const
-{
-    bool ok;
-
-    float number = string.toFloat(&ok);
-
-    return ok ? QVariant(number) : QVariant();
-}
-
-int QGalleryTrackerFloatColumn::compare(const QVariant &value1, const QVariant &value2) const
-{
-    return value1.toFloat() - value2.toFloat();
-}
-
 QVariant QGalleryTrackerDoubleColumn::toVariant(const QString &string) const
 {
     bool ok;
@@ -142,10 +128,10 @@ QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterat
 
 QVariant QGalleryTrackerCompositeIdColumn::value(QVector<QVariant>::const_iterator row) const
 {
-    QString fragment = (row + m_column1)->toString();
+    QString fragment = (row + m_columns.at(0))->toString();
     fragment.replace(QLatin1String("/"), QLatin1String("//"));
 
-    return m_prefix + fragment + QLatin1Char('/') + (row + m_column2)->toString();
+    return m_prefix + fragment + QLatin1Char('/') + (row + m_columns.at(1))->toString();
 }
 
 QVariant QGalleryTrackerFileUrlColumn::value(QVector<QVariant>::const_iterator row) const
