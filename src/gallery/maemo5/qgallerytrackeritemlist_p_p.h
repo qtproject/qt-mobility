@@ -119,7 +119,7 @@ public:
         Row *operator ->() { return &row; }
         const Row *operator ->() const { return &row; }
 
-        QVariant operator[] (int column) const { return *(row.begin + column); }
+        const QVariant &operator[] (int column) const { return *(row.begin + column); }
 
         Row row;
     };
