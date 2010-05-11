@@ -937,13 +937,20 @@ RESOURCE ARRAY r_cntui_new_field_defns
       },
     FIELD // Anniversary
       {
-      fieldStorageType=KStorageTypeText;
+      fieldStorageType=KStorageTypeDateTime;
       contactFieldType=KUidContactFieldAnniversaryValue;
       vCardMapping=KIntContactFieldVCardMapAnniversary;
       category=EContactCategoryOther;
-      fieldName=STRING_r_cntui_new_field_defns66;
-      }  
-
+      fieldName=qtn_phob_lbl_anniversary;
+      },  
+    FIELD // Anniversary Event
+      {
+      fieldStorageType=KStorageTypeText;
+      contactFieldType=KUidContactFieldAnniversaryEventValue;
+      vCardMapping=KIntContactFieldVCardMapUnknown;
+      category=EContactCategoryOther;
+      fieldName=STRING_r_cntui_new_field_defns15;
+      } 
     };
  }
 

@@ -108,7 +108,7 @@ private:
                                        TPtrC16 videoRingtoneField, QString videoRingtoneDetail);
     void validateCntTransformSyncTargetL(TPtrC16 field, QString detail);
     void validateCntTransformGenderL(TPtrC16 field, QString detail);
-    void validateCntTransformAnniversaryL(TPtrC16 field, QDate dateDetail, QString eventDetail);
+    void validateCntTransformAnniversaryL(TTime dateField, QDate dateDetail, TPtrC16 eventField, QString eventDetail);
     void validateCntTransformGeolocationL(TPtrC16 field, double latitudeDetail, double longitudeDetail);
     void validateCntTransformNoteL(TPtrC16 field, QString detail);
     void validateCntTransformFamilyL(TPtrC16 spouseField, QString spouseDetail,

@@ -81,6 +81,12 @@
  */
 #define KUidContactFieldGenderValue		0x200100E7
 
+/**
+ * Phonebook custom Field value.
+ * Anniversary event field type.
+ */
+#define KUidContactFieldAnniversaryEventValue     0x200100E8
+
 // !! In case this is undefined on earlier platforms
 #ifndef KUidContactFieldGEOValue
 #define KUidContactFieldGEOValue                0x10274DB2

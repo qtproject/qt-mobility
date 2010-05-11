@@ -226,9 +226,11 @@ void TestCntTransformContactData::executeCntTransformGender()
 
 void TestCntTransformContactData::executeCntTransformAnniversary()
 {
-    QDate dateDetail(2009, 9, 28);
-    TRAPD(err, validateCntTransformAnniversaryL(_L("2009-09-28,dummyevent"), dateDetail, QString("dummyevent"));
-        validateCntTransformAnniversaryL(_L("dummyevent"), QDate(), QString("dummyevent"));
+    TDateTime dateTime(2009, ESeptember, 27, 0, 0, 0, 0);
+    TTime field(dateTime);
+    QDate detail(2009, 9, 28);
+    
+    TRAPD(err, validateCntTransformAnniversaryL(field, detail, _L("dummyevent"), QString("dummyevent"));
         );
     QVERIFY(err == 0);
 }
@@ -1596,7 +1598,7 @@ void TestCntTransformContactData::validateCntTransformGenderL(TPtrC16 field, QSt
     delete transformGender;
 }
 
-void TestCntTransformContactData::validateCntTransformAnniversaryL(TPtrC16 field, QDate dateDetail, QString eventDetail)
+void TestCntTransformContactData::validateCntTransformAnniversaryL(TTime dateField, QDate dateDetail, TPtrC16 eventField, QString eventDetail)
 {
     CntTransformContactData* transformAnniversary = new CntTransformAnniversary();
     QVERIFY(transformAnniversary != 0);
@@ -1627,20 +1629,36 @@ void TestCntTransformContactData::validateCntTransformAnniversaryL(TPtrC16 field
     anniversary.setOriginalDate(dateDetail);
     anniversary.setEvent(eventDetail);
     QList<CContactItemField *> fields = transformAnniversary->transformDetailL(anniversary);
-    QVERIFY(fields.count() == 1);
-    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.count() == 2);
+    
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeDateTime);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldAnniversary));
-    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Year(), dateDetail.year());
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Month() + 1, dateDetail.month());
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Day() + 1, dateDetail.day());
+    
+    QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldAnniversaryEvent));
+    QCOMPARE(fields.at(1)->TextStorage()->Text().CompareF(eventField), 0);
 
-    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAnniversary);
-    newField->TextStorage()->SetTextL(field);
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeDateTime, KUidContactFieldAnniversary);
+    newField->DateTimeStorage()->SetTime(dateField);
     QContact contact;
     QContactDetail* contactDetail = transformAnniversary->transformItemField(*newField, contact);
     const QContactAnniversary* anniversaryInfo(static_cast<const QContactAnniversary*>(contactDetail));
-    QCOMPARE(anniversaryInfo->event(), eventDetail);
-    if (dateDetail.isValid()) {
-        QCOMPARE(anniversaryInfo->originalDate(), dateDetail);
-    }
+    QCOMPARE(anniversaryInfo->originalDate().year(), dateField.DateTime().Year());
+    QCOMPARE(anniversaryInfo->originalDate().month(), dateField.DateTime().Month() + 1);
+    QCOMPARE(anniversaryInfo->originalDate().day(), dateField.DateTime().Day() + 1);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAnniversaryEvent);
+    newField->TextStorage()->SetTextL(eventField);
+    contactDetail = transformAnniversary->transformItemField(*newField, contact);
+    const QContactAnniversary* anniversaryInfo2(static_cast<const QContactAnniversary*>(contactDetail));
+    QCOMPARE(anniversaryInfo2->event(), eventDetail);
 
     delete contactDetail;
     delete newField;
