@@ -575,7 +575,8 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 
 /*!
     Reads landmarks from the given \a device and saves them.  The data from the \a device
-    is expected to adhere to the provided \a format.
+    is expected to adhere to the provided \a format.  If no \a format is provided,
+    the manager tries to auto detect the \a format.
 
     Returns true if all landmarks could be imported, otherwise
     returns false.  It may be possible that only a subset of
@@ -599,7 +600,8 @@ bool QLandmarkManager::importLandmarks(QIODevice *device, const QByteArray &form
 
 /*!
     Convenience function that will read landmarks from \a fileName in
-    the expected \a format.  Internally a QFile is opened with
+    the expected \a format. If no \a format is provided, the manager tries
+    to auto detect the \a format.  Internally a QFile is opened with
     QIODevice::ReadOnly permissions.
 
     Returns true if all landmarks could be imported, otherwise

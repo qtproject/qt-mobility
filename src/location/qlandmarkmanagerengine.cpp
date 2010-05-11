@@ -378,7 +378,8 @@ bool QLandmarkManagerEngine::removeCategory(const QLandmarkCategoryId &categoryI
 
 /*!
     Reads landmarks from the given \a device and saves them.  The data from the \a device
-    is expected to adhere to the provided \a format.
+    is expected to adhere to the provided \a format.  If no \a format is provided,
+    the manager engine tries to autodetect the \a format.
 
     Returns true if all landmarks could be imported, otherwise returns false.
     It may be possible that only a subset of landmarks are imported.

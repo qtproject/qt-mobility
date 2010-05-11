@@ -120,6 +120,10 @@ void QLandmarkImportRequest::setFileName(const QString &fileName)
 
 /*!
     Returns the expected data format for the import operation.
+    If the format is an empty byte array or not set, then during the import,
+    an attempt is made to auto detect the format.
+
+    By default no format is set.
 */
 QByteArray QLandmarkImportRequest::format() const
 {
@@ -129,6 +133,8 @@ QByteArray QLandmarkImportRequest::format() const
 
 /*!
     Sets the expected data \a format for the import operation.
+    If an empty byte array is set, then during the import,
+    an attempt is made to auto detect the format.
 */
 void QLandmarkImportRequest::setFormat(const QByteArray &format)
 {
