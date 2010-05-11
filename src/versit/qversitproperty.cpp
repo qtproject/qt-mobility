@@ -161,7 +161,7 @@ QDebug operator<<(QDebug dbg, const QVersitProperty& property)
     }
     dbg.nospace() << name;
     QHash<QString,QString>::const_iterator it;
-    for (it = parameters.constBegin(); it != parameters.constEnd(); it++) {
+    for (it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
         dbg.nospace() << ';' << it.key() << '=' << it.value();
     }
     dbg.nospace() << ':' << value;

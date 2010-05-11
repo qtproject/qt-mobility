@@ -52,7 +52,7 @@
 
 #include <alsa/asoundlib.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class V4LRadioService;
 
@@ -64,7 +64,7 @@ public:
     ~V4LRadioControl();
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMultimedia::AvailabilityError availabilityError() const;
 
     QRadioTuner::State state() const;
 

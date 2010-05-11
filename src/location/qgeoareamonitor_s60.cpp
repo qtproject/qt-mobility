@@ -224,7 +224,7 @@ void QGeoAreaMonitorS60::TPositionInfoToQGeoPositionInfo(TPositionInfo& aPosInfo
                        datetime.MicroSecond() / 1000));
 
     //store the time stamp
-    aQInfo.setDateTime(dt);
+    aQInfo.setTimestamp(dt);
 
     //store the horizontal accuracy
     aQInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy, pos.HorizontalAccuracy());

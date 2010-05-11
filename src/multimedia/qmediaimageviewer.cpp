@@ -39,20 +39,20 @@
 **
 ****************************************************************************/
 
-#include <qmediaimageviewer.h>
+#include "qmediaimageviewer.h"
 
-#include <qmediaobject_p.h>
-#include <qmediaimageviewerservice_p.h>
+#include "qmediaobject_p.h"
+#include "qmediaimageviewerservice_p.h"
 
-#include <qmediaplaylist.h>
-#include <qmediacontent.h>
-#include <qmediaresource.h>
+#include "qmediaplaylist.h"
+#include "qmediacontent.h"
+#include "qmediaresource.h"
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>
 #include <QtCore/qdatetime.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaImageViewerPrivate : public QMediaObjectPrivate
 {
@@ -494,5 +494,5 @@ void QMediaImageViewer::timerEvent(QTimerEvent *event)
 }
 
 #include "moc_qmediaimageviewer.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

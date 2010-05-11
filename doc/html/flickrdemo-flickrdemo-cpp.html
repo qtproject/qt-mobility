@@ -65,25 +65,36 @@
     #include &lt;qnetworkconfigmanager.h&gt;
     #include &lt;qnetworksession.h&gt;
 
+    #include &lt;QAction&gt;
+    #include &lt;QApplication&gt;
+    #include &lt;QDialogButtonBox&gt;
+    #include &lt;QDir&gt;
+    #include &lt;QFile&gt;
+    #include &lt;QLabel&gt;
+    #include &lt;QMenuBar&gt;
+    #include &lt;QMessageBox&gt;
+    #include &lt;QNetworkAccessManager&gt;
+    #include &lt;QNetworkRequest&gt;
+    #include &lt;QProgressDialog&gt;
+    #include &lt;QPushButton&gt;
+    #include &lt;QTimer&gt;
+    #include &lt;QVBoxLayout&gt;
+    #include &lt;QWidget&gt;
+
 <span class="comment">    // static constant intialization</span>
 
     const QSize FlickrDemo::gridSize = QSize(52, 52);
     const QSize FlickrDemo::thumbnailSize = QSize(50, 50);
     const QSize FlickrDemo::imageSize = QSize(150, 150);
     const QString FlickrDemo::apikey = QString(&quot;e36784df8a03fea04c22ed93318b291c&quot;);
-    #ifdef Q_OS_SYMBIAN
-    const QString FlickrDemo::savePath = &quot;c:\\Data\\Images\\&quot;; <span class="comment">// In S60 Download images to Gallery</span>
-    #else
-    const QString FlickrDemo::savePath = QDir::tempPath();
-    #endif
 
     FlickrDemo::FlickrDemo(QWidget* parent) :
             QMainWindow(parent),
             m_logfileInUse(false),
             m_session(0),
-            m_file(0),
-            m_httpGetId(-1),
-            m_httpThumbnailGetId(-1),
+            m_pictureListReply(0),
+            m_thumbnailReply(0),
+            m_pictureReply(0),
             m_pages(0),
             m_page(1),
             m_satellitesInView(0),
@@ -91,7 +102,7 @@
             m_latitude(-1000),
             m_longitude(-1000),
             m_downloadPictureList(true),
-            m_downloadingThumbnails(false)
+            m_shuttingDown(false)
     {
         resize(252, 344);
 
@@ -147,24 +158,32 @@
                     this, SLOT(satellitesInUseUpdated(const QList&lt;QGeoSatelliteInfo&gt;&amp;)));
         }
 
-        <span class="comment">// QHttp</span>
-        m_http = new QHttp(this);
-        connect(m_http, SIGNAL(requestFinished(int, bool)),
-                this, SLOT(httpRequestFinished(int, bool)));
-        connect(m_http, SIGNAL(dataReadProgress(int, int)),
-                this, SLOT(updateDataReadProgress(int, int)));
-        connect(m_http, SIGNAL(responseHeaderReceived(const QHttpResponseHeader&amp;)),
-                this, SLOT(readResponseHeader(const QHttpResponseHeader&amp;)));
+        m_nam = new QNetworkAccessManager(this);
 
         QTimer::singleShot(0, this, SLOT(delayedInit()));
     }
 
     FlickrDemo::~FlickrDemo()
     {
+        m_shuttingDown = true;
+
         m_location-&gt;stopUpdates();
         if (m_satellite)
             m_satellite-&gt;stopUpdates();
-        m_http-&gt;abort();
+
+        if (m_pictureListReply) {
+            m_pictureListReply-&gt;abort();
+            delete m_pictureListReply;
+        }
+        if (m_thumbnailReply) {
+            m_thumbnailReply-&gt;abort();
+            delete m_thumbnailReply;
+        }
+        if (m_pictureReply) {
+            m_pictureReply-&gt;abort();
+            delete m_pictureReply;
+        }
+
         if (m_session)
             m_session-&gt;close();
     }
@@ -176,11 +195,11 @@
                                      tr(&quot;No GPS support detected, using GPS data from a sample log file instead.&quot;));
         }
 
-        QNetworkConfigurationManager manager;
+        QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager) manager;
         const bool canStartIAP = (manager.capabilities()
-                                  &amp; QNetworkConfigurationManager::CanStartAndStopInterfaces);
-        QNetworkConfiguration cfg = manager.defaultConfiguration();
-        if (!cfg.isValid() || (!canStartIAP &amp;&amp; cfg.state() != QNetworkConfiguration::Active)) {
+                                  &amp; QTM_PREPEND_NAMESPACE(QNetworkConfigurationManager)::CanStartAndStopInterfaces);
+        QTM_PREPEND_NAMESPACE(QNetworkConfiguration) cfg = manager.defaultConfiguration();
+        if (!cfg.isValid() || (!canStartIAP &amp;&amp; cfg.state() != QTM_PREPEND_NAMESPACE(QNetworkConfiguration)::Active)) {
             QMessageBox::information(this, tr(&quot;Flickr Demo&quot;), tr(&quot;Available Access Points not found.&quot;));
             return;
         }
@@ -297,10 +316,20 @@
 
         QUrl url(urlstring);
 
-        m_http-&gt;setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
-        m_httpRequestAborted = false;
-
-        m_httpGetId = m_http-&gt;get(urlstring);
+        QNetworkRequest req(url);
+        m_pictureListReply = m_nam-&gt;get(req);
+        connect(m_pictureListReply,
+                SIGNAL(downloadProgress(qint64, qint64)),
+                this,
+                SLOT(pictureListDownloadProgress(qint64, qint64)));
+        connect(m_pictureListReply,
+                SIGNAL(finished()),
+                this,
+                SLOT(pictureListFinished()));
+        connect(m_pictureListReply,
+                SIGNAL(error(QNetworkReply::NetworkError)),
+                this,
+                SLOT(pictureListError(QNetworkReply::NetworkError)));
 
         m_progressDialog-&gt;setWindowTitle(tr(&quot;FlickrDemo&quot;));
         m_progressDialog-&gt;setLabelText(tr(&quot;Downloading\nPicture List.&quot;));
@@ -381,49 +410,24 @@
         pictureUrl.append(&quot;_m.jpg&quot;);
 
         QUrl url(pictureUrl);
-        QFileInfo fileInfo(url.path());
-        QString fileName = fileInfo.fileName();
-        if (fileName.isEmpty()) {
-            fileName = &quot;test.jpg&quot;;
-        }
 
-        m_filePath = savePath;
-        m_filePath.append(fileName);
-
-        if (QFile::exists(m_filePath)) {
-            if (QMessageBox::question(this,
-                                      tr(&quot;Flickr Demo&quot;),
-                                      tr(&quot;File %1 is already downloaded.&quot;
-                                         &quot;Overwrite?&quot;).arg(fileName),
-                                      QMessageBox::Yes | QMessageBox::No,
-                                      QMessageBox::No)
-                    == QMessageBox::No) {
-                displayImage();
-                return;
-            }
-            QFile::remove(m_filePath);
-        }
-
-        m_file = new QFile(m_filePath);
-        if (!m_file-&gt;open(QIODevice::WriteOnly)) {
-            QMessageBox::information(this, tr(&quot;Flickr Demo&quot;),
-                                     tr(&quot;Unable to save the file %1: %2.&quot;).arg(m_filePath).arg(m_file-&gt;errorString()));
-            delete m_file;
-            m_file = 0;
-            return;
-        }
-
-        m_http-&gt;setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
-
-        m_httpRequestAborted = false;
-        QByteArray encodedUrl = QUrl::toPercentEncoding(url.path(), &quot;!$&amp;'()*+,;=:@/&quot;);
-        if (encodedUrl.isEmpty()) {
-            encodedUrl = &quot;/&quot;;
-        }
-        m_httpGetId = m_http-&gt;get(encodedUrl, m_file);
+        QNetworkRequest req(url);
+        m_pictureReply = m_nam-&gt;get(req);
+        connect(m_pictureReply,
+                SIGNAL(downloadProgress(qint64, qint64)),
+                this,
+                SLOT(pictureDownloadProgress(qint64, qint64)));
+        connect(m_pictureReply,
+                SIGNAL(finished()),
+                this,
+                SLOT(pictureFinished()));
+        connect(m_pictureReply,
+                SIGNAL(error(QNetworkReply::NetworkError)),
+                this,
+                SLOT(pictureError(QNetworkReply::NetworkError)));
 
         m_progressDialog-&gt;setWindowTitle(tr(&quot;Flickr Demo&quot;));
-        m_progressDialog-&gt;setLabelText(tr(&quot;Downloading:\n%1&quot;).arg(fileName));
+        m_progressDialog-&gt;setLabelText(tr(&quot;Downloading:\n%1&quot;).arg(pictureUrl));
         m_progressDialog-&gt;setMaximum(10);
         m_progressDialog-&gt;setValue(0);
         m_progressDialog-&gt;show();
@@ -433,121 +437,153 @@
 
     void FlickrDemo::cancelDownload()
     {
-        m_httpRequestAborted = true;
-        m_downloadingThumbnails = false;
-        m_http-&gt;abort();
+        if (m_pictureListReply) {
+            m_pictureListReply-&gt;abort();
+            delete m_pictureListReply;
+            m_pictureListReply = 0;
+        }
+
+        if (m_pictureReply) {
+            m_pictureReply-&gt;abort();
+            delete m_pictureReply;
+            m_pictureReply = 0;
+        }
+
         downloadButton-&gt;setEnabled(true);
     }
 
-    void FlickrDemo::httpRequestFinished(int requestId, bool error)
+    void FlickrDemo::pictureListDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
     {
-        if (m_downloadingThumbnails &amp;&amp; m_httpThumbnailGetId == requestId) {
-            if (!error) {
-                QByteArray picture = m_http-&gt;readAll();
-                if (!picture.isNull() &amp;&amp; picture.size() &gt; 0) {
-                    QListWidgetItem* item = listWidget-&gt;item(m_nameCounter);
-                    QImage image;
-                    if (image.loadFromData(picture, &quot;jpg&quot;)) {
-                        item-&gt;setIcon(QPixmap::fromImage(image.scaled(thumbnailSize,
-                                                         Qt::KeepAspectRatio, Qt::SmoothTransformation)));
-                        listWidget-&gt;update();
-                    }
-                }
-            }
-            downloadNextThumbnail();
-            return;
+        m_progressDialog-&gt;setMaximum(bytesTotal);
+        m_progressDialog-&gt;setValue(bytesReceived);
+    }
+
+    void FlickrDemo::pictureListFinished()
+    {
+        m_progressDialog-&gt;hide();
+        if (parsePictureList(QString::fromUtf8(m_pictureListReply-&gt;readAll()))) {
+            m_downloadPictureList = false;
+            downloadButton-&gt;setText(tr(&quot;Download Selected Picture&quot;));
+            m_downloadAct-&gt;setText(tr(&quot;Download Selected Picture&quot;));
         }
 
-        if (requestId != m_httpGetId) {
+        downloadButton-&gt;setEnabled(true);
+
+        QTimer::singleShot(0, this, SLOT(clearPictureListRequest()));
+    }
+
+    void FlickrDemo::pictureListError(QNetworkReply::NetworkError code)
+    {
+        if (m_shuttingDown)
             return;
-        }
 
         m_progressDialog-&gt;hide();
+        QMessageBox::information(this,
+                                 tr(&quot;Flickr Demo&quot;),
+                                 tr(&quot;Error downloading picture list: %1.&quot;).arg(m_pictureListReply-&gt;errorString()));
 
-        if (m_httpRequestAborted) {
-            if (m_file) {
-                m_file-&gt;close();
-                m_file-&gt;remove();
-                delete m_file;
-                m_file = 0;
-            }
-
-            return;
-        }
-
-        if (!m_downloadPictureList &amp;&amp; m_file) {
-            m_file-&gt;close();
-        }
-
-        if (error) {
-            if (!m_downloadPictureList &amp;&amp; m_file) {
-                m_file-&gt;remove();
-            }
-            QMessageBox::information(this,
-                                     tr(&quot;Flickr Demo&quot;),
-                                     tr(&quot;Download failed: %1.&quot;).arg(m_http-&gt;errorString()));
-        }
-
-        if (m_downloadPictureList) {
-            if (parsePictureList(QString::fromUtf8(m_http-&gt;readAll()))) {
-                m_downloadPictureList = false;
-                downloadButton-&gt;setText(tr(&quot;Download Selected Picture&quot;));
-                m_downloadAct-&gt;setText(tr(&quot;Download Selected Picture&quot;));
-            }
-        } else {
-            displayImage();
-        }
-
-        downloadButton-&gt;setEnabled(true);
+        QTimer::singleShot(0, this, SLOT(clearPictureListRequest()));
     }
 
-    void FlickrDemo::displayImage()
+    void FlickrDemo::clearPictureListRequest()
     {
-        PictureDialog dialog(m_filePath, listWidget-&gt;currentItem()-&gt;text(), this);
+        delete m_pictureListReply;
+        m_pictureListReply = 0;
+    }
+
+    void FlickrDemo::thumbnailFinished()
+    {
+        QByteArray picture = m_thumbnailReply-&gt;readAll();
+        if (!picture.isNull() &amp;&amp; picture.size() &gt; 0) {
+            QListWidgetItem* item = listWidget-&gt;item(m_nameCounter);
+            QImage image;
+            if (image.loadFromData(picture, &quot;jpg&quot;)) {
+                item-&gt;setIcon(QPixmap::fromImage(
+                                  image.scaled(thumbnailSize,
+                                               Qt::KeepAspectRatio,
+                                               Qt::SmoothTransformation)));
+                listWidget-&gt;update();
+            }
+        }
+        downloadNextThumbnail();
+    }
+
+    void FlickrDemo::thumbnailError(QNetworkReply::NetworkError code)
+    {
+        if (m_shuttingDown)
+            return;
+
+        QMessageBox::information(this,
+                                 tr(&quot;Flickr Demo&quot;),
+                                 tr(&quot;Error downloading thumbnails: %1.&quot;).arg(m_thumbnailReply-&gt;errorString()));
+
+        QTimer::singleShot(0, this, SLOT(clearThumbnailRequest()));
+    }
+
+    void FlickrDemo::clearThumbnailRequest()
+    {
+        delete m_thumbnailReply;
+        m_thumbnailReply = 0;
+    }
+
+    void FlickrDemo::pictureDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+    {
+        m_progressDialog-&gt;setMaximum(bytesTotal);
+        m_progressDialog-&gt;setValue(bytesReceived);
+    }
+
+    void FlickrDemo::pictureFinished()
+    {
+        m_progressDialog-&gt;hide();
+        downloadButton-&gt;setEnabled(true);
+
+        QByteArray picture = m_pictureReply-&gt;readAll();
+
+        if (picture.isNull() || picture.size() &lt;= 0)
+            return;
+
+        QImage image;
+        if (!image.loadFromData(picture, &quot;jpg&quot;))
+            return;
+
+        QPixmap pixmap = QPixmap::fromImage(
+                             image.scaled(imageSize,
+                                          Qt::KeepAspectRatio,
+                                          Qt::SmoothTransformation));
+
+        displayImage(pixmap);
+
+        QTimer::singleShot(0, this, SLOT(clearPictureRequest()));
+    }
+
+    void FlickrDemo::pictureError(QNetworkReply::NetworkError code)
+    {
+        if (m_shuttingDown)
+            return;
+
+        m_progressDialog-&gt;hide();
+        QMessageBox::information(this,
+                                 tr(&quot;Flickr Demo&quot;),
+                                 tr(&quot;Error downloading picture: %1.&quot;).arg(m_pictureReply-&gt;errorString()));
+
+        downloadButton-&gt;setEnabled(true);
+
+        QTimer::singleShot(0, this, SLOT(clearPictureRequest()));
+    }
+
+    void FlickrDemo::clearPictureRequest()
+    {
+        delete m_pictureReply;
+        m_pictureReply = 0;
+    }
+
+    void FlickrDemo::displayImage(const QPixmap &amp;pixmap)
+    {
+        PictureDialog dialog(pixmap, listWidget-&gt;currentItem()-&gt;text(), this);
     #if defined(Q_OS_SYMBIAN) || defined (Q_OS_WINCE)
         dialog.showMaximized();
     #endif
-        if (!dialog.exec()) {
-            if (m_file &amp;&amp; m_file-&gt;exists()) {
-                m_file-&gt;remove();
-            }
-        }
-        if(m_file)
-            delete m_file;
-        m_file = 0;
-    }
-
-    void FlickrDemo::readResponseHeader(const QHttpResponseHeader&amp; responseHeader)
-    {
-        switch (responseHeader.statusCode()) {
-            case 200: <span class="comment">// Ok</span>
-            case 301: <span class="comment">// Moved Permanently</span>
-            case 302: <span class="comment">// Found</span>
-            case 303: <span class="comment">// See Other</span>
-            case 307: <span class="comment">// Temporary Redirect</span>
-                <span class="comment">// these are not error conditions</span>
-                break;
-            default:
-                QMessageBox::information(this,
-                                         tr(&quot;Flickr Demo&quot;),
-                                         tr(&quot;Download failed: %1.&quot;).arg(responseHeader.reasonPhrase()));
-                m_downloadingThumbnails = false;
-                m_httpRequestAborted = true;
-                m_progressDialog-&gt;hide();
-                m_http-&gt;abort();
-        }
-    }
-
-    void FlickrDemo::updateDataReadProgress(int bytesRead, int totalBytes)
-    {
-        if (m_httpRequestAborted) {
-            return;
-        }
-
-        if (!m_downloadingThumbnails) {
-            m_progressDialog-&gt;setMaximum(totalBytes);
-            m_progressDialog-&gt;setValue(bytesRead);
-        }
+        dialog.exec();
     }
 
     void FlickrDemo::downloadNextThumbnail()
@@ -557,19 +593,23 @@
             QString pictureUrl = m_names[m_nameCounter];
             pictureUrl.append(&quot;_s.jpg&quot;);
             QUrl url(pictureUrl);
-            m_http-&gt;setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
-            m_downloadingThumbnails = true;
-            m_httpThumbnailGetId = m_http-&gt;get(pictureUrl);
+
+            QNetworkRequest req(url);
+            m_thumbnailReply = m_nam-&gt;get(req);
+            connect(m_thumbnailReply,
+                    SIGNAL(finished()),
+                    this,
+                    SLOT(thumbnailFinished()));
+            connect(m_thumbnailReply,
+                    SIGNAL(error(QNetworkReply::NetworkError)),
+                    this,
+                    SLOT(thumbnailError(QNetworkReply::NetworkError)));
         } else {
-            m_downloadingThumbnails = false;
+            QTimer::singleShot(0, this, SLOT(clearThumbnailRequest()));
         }
     }
 
-<span class="comment">    // static constant intialization</span>
-
-    const QSize PictureDialog::imageSize = QSize(150, 150);
-
-    PictureDialog::PictureDialog(const QString&amp; filePath, const QString&amp; pictureName, QWidget* parent) :
+    PictureDialog::PictureDialog(const QPixmap&amp; pixmap, const QString&amp; pictureName, QWidget* parent) :
             QDialog(parent)
     {
         resize(252, 361);
@@ -578,8 +618,7 @@
         verticalLayout-&gt;setContentsMargins(11, 11, 11, 11);
 
         label = new QLabel();
-        QString fileName = QFileInfo(filePath).fileName();
-        label-&gt;setText(tr(&quot;Downloaded:\n%1\n%2&quot;).arg(pictureName).arg(fileName));
+        label-&gt;setText(tr(&quot;Downloaded:\n%1&quot;).arg(pictureName));
 
         QSizePolicy sizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
@@ -590,10 +629,7 @@
         verticalLayout-&gt;addWidget(label);
 
         imageLabel = new QLabel();
-        QImage image;
-        image.load(filePath);
-        imageLabel-&gt;setPixmap(QPixmap::fromImage(image.scaled(imageSize, Qt::KeepAspectRatio,
-                              Qt::SmoothTransformation)));
+        imageLabel-&gt;setPixmap(pixmap);
 
         verticalLayout-&gt;addWidget(imageLabel);
 

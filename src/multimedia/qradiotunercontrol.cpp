@@ -40,10 +40,10 @@
 ****************************************************************************/
 
 #include <qmobilityglobal.h>
-#include <qradiotunercontrol.h>
-#include <qmediacontrol_p.h>
+#include "qradiotunercontrol.h"
+#include "qmediacontrol_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -103,7 +103,7 @@ QRadioTunerControl::~QRadioTunerControl()
 */
 
 /*!
-    \fn QtMedia::AvailabilityError QRadioTunerControl::availabilityError() const
+    \fn QtMultimedia::AvailabilityError QRadioTunerControl::availabilityError() const
 
     Returns the error state of the radio service.
 */
@@ -323,5 +323,5 @@ QRadioTunerControl::~QRadioTunerControl()
 */
 
 #include "moc_qradiotunercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

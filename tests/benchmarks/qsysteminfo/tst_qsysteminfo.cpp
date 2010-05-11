@@ -45,6 +45,8 @@
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QSystemInfo::Version);
 Q_DECLARE_METATYPE(QSystemInfo::Feature);
+Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkStatus);
+Q_DECLARE_METATYPE(QSystemNetworkInfo::NetworkMode)
 
 class tst_QSystemInfo : public QObject
 {
@@ -63,7 +65,25 @@ private slots:
 
     void tst_hasFeatures_data();
     void tst_hasFeatures();
+    
+    void tst_networkinfo_mode_data();
+    void tst_networkinfo_mode();
+    
+    void tst_networkinfo_misc_data();
+    void tst_networkinfo_misc();
+    
+    void tst_screeninfo_data();
+    void tst_screeninfo();
+    
+    void tst_storageinfo_data();
+    void tst_storageinfo();
 
+    void tst_deviceinfo_data();
+    void tst_deviceinfo();
+
+    void tst_screensaver_data();
+    void tst_screensaver();
+    
 };
 
 void tst_QSystemInfo::initTestCase()
@@ -109,10 +129,11 @@ void tst_QSystemInfo::tst_versions_data()
 
 void tst_QSystemInfo::tst_versions()
 {
-    QBENCHMARK {
-        QFETCH(QSystemInfo::Version, version);
-        QFETCH(QString, parameter);
-        QSystemInfo si;
+  QFETCH(QSystemInfo::Version, version);
+  QFETCH(QString, parameter);
+  QSystemInfo si;
+    
+    QBENCHMARK { 
         QString vers = si.version(version, parameter);
     }
 }
@@ -138,14 +159,251 @@ void tst_QSystemInfo::tst_hasFeatures_data()
 
 void tst_QSystemInfo::tst_hasFeatures()
 {
-    QBENCHMARK {
-        QFETCH(QSystemInfo::Feature, feature);
-        QSystemInfo si;        
+  QFETCH(QSystemInfo::Feature, feature);
+  QSystemInfo si;
+  
+    QBENCHMARK {        
         si.hasFeatureSupported(feature);
 
     }
 }
 
+void tst_QSystemInfo::tst_networkinfo_misc_data() {
+  QTest::addColumn<QString>("feature");
+  QTest::addColumn<int>("property");
+  
+  QSystemNetworkInfo obj;
+  const QMetaObject* metaObject = obj.metaObject();
+  QStringList methods;
+  for(int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i) {
+    QString name = QString::fromLatin1(metaObject->property(i).name());
+    QTest::newRow(name.toAscii()) << name << i;    
+  }
+}
+
+void tst_QSystemInfo::tst_networkinfo_misc() {
+  QFETCH(QString, feature);
+  QFETCH(int, property);  
+  
+  QSystemNetworkInfo obj;
+  const QMetaObject* metaObject = obj.metaObject();
+  QMetaProperty mprop = metaObject->property(property);
+  
+  if(mprop.isReadable()){
+    QBENCHMARK {
+      mprop.read(&obj);
+    }
+  }  
+  else {
+    QString s("Failed to find readable property: " + QString::fromLatin1(mprop.name()));
+    QFAIL(s.toAscii());
+  }
+}
+
+
+void tst_QSystemInfo::tst_networkinfo_mode_data()
+
+{
+  QTest::addColumn<QString>("feature");
+  QTest::addColumn<QString>("name");
+  QTest::addColumn<QSystemNetworkInfo::NetworkMode>("mode");
+  
+  
+  QList<QPair<QString, QSystemNetworkInfo::NetworkMode> > modes;
+   
+  modes += qMakePair(QString("GsmMode"), QSystemNetworkInfo::GsmMode);
+  modes += qMakePair(QString("CdmaMode"), QSystemNetworkInfo::CdmaMode);
+  modes += qMakePair(QString("WcdmaMode"), QSystemNetworkInfo::WcdmaMode);
+  modes += qMakePair(QString("WlanMode"), QSystemNetworkInfo::WlanMode);
+  modes += qMakePair(QString("EthernetMode"), QSystemNetworkInfo::EthernetMode);
+  modes += qMakePair(QString("BluetoothMode"), QSystemNetworkInfo::BluetoothMode);
+  modes += qMakePair(QString("WimaxMode"), QSystemNetworkInfo::WimaxMode);
+  
+  QPair<QString, QSystemNetworkInfo::NetworkMode> mode;
+  foreach(mode, modes){    
+    QTest::newRow(QString("networkStatus-" + mode.first).toAscii()) << "networkStatus" << mode.first << mode.second;  
+    QTest::newRow(QString("networkSignalStrength-" + mode.first).toAscii()) << "networkSignalStrength" << mode.first << mode.second;
+    QTest::newRow(QString("macAddress-" + mode.first).toAscii()) << "macAddress" << mode.first << mode.second;
+    QTest::newRow(QString("networkName-" + mode.first).toAscii()) << "networkName" << mode.first << mode.second;
+    QTest::newRow(QString("interfaceForMode-" + mode.first).toAscii()) << "interfaceForMode" << mode.first << mode.second;
+  }
+}
+
+void tst_QSystemInfo::tst_networkinfo_mode()
+{
+  QFETCH(QString, feature);
+  QFETCH(QString, name);
+  QFETCH(QSystemNetworkInfo::NetworkMode, mode);
+  
+  QSystemNetworkInfo ni;
+  
+  if(feature == "networkStatus"){
+    QSystemNetworkInfo::NetworkStatus s = QSystemNetworkInfo::UndefinedStatus;
+    QBENCHMARK {
+      s = ni.networkStatus(mode);
+    }
+    //qDebug() << "Status: " << s;
+  }
+  else if(feature == "networkSignalStrength") {
+    QBENCHMARK {
+      ni.networkSignalStrength(mode);
+    }
+  }
+  else if(feature == "macAddress"){
+    QBENCHMARK {
+      ni.macAddress(mode);
+    }
+  }
+  else if(feature == "networkName"){
+    QBENCHMARK {
+      ni.networkName(mode);
+    }
+  }
+  else if(feature == "interfaceForMode") {
+    QBENCHMARK {
+      ni.interfaceForMode(mode);
+    }
+  }
+}
+
+void tst_QSystemInfo::tst_screeninfo_data(){ 
+  QTest::addColumn<QString>("feature");
+  
+  QTest::newRow("construction") << "construction";
+  QTest::newRow("displayBrightness") << "displayBrightness";
+  QTest::newRow("colorDepth") << "colorDepth";
+    
+}
+
+void tst_QSystemInfo::tst_screeninfo(){
+  QFETCH(QString, feature);   
+
+  if(feature == "construction"){
+    QBENCHMARK {
+      QSystemDeviceInfo di2;
+    }
+  }
+  else if(feature == "displayBrightness"){
+    QBENCHMARK {
+      QSystemDisplayInfo::displayBrightness(0);// what screen shoiuld we pick?
+    }
+  }
+  else if(feature == "colorDepth"){
+    QBENCHMARK {
+      QSystemDisplayInfo::colorDepth(0);
+    }
+  }
+  else {    
+    QFAIL("Unkown feature");
+  }  
+}
+
+void tst_QSystemInfo::tst_storageinfo_data(){
+  QTest::addColumn<QString>("feature");
+  QTest::addColumn<QString>("drive");
+  
+  QString d;
+  QStringList drives = QSystemStorageInfo::logicalDrives();
+  
+  QString f;
+  QStringList features;
+  
+  features += "totalDiskSpace";
+  features += "availableDiskSpace";
+  features += "typeForDrive";
+  
+  foreach(d, drives){
+    foreach(f, features){
+      QString s = f + "_" + d;
+      QTest::newRow(s.toAscii()) << f << d;
+    }
+  }
+}
+
+void tst_QSystemInfo::tst_storageinfo(){
+  QFETCH(QString, feature);
+  QFETCH(QString, drive);
+  
+  QSystemStorageInfo si;
+  
+  if(feature == "totalDiskSpace"){
+   QBENCHMARK {
+     si.totalDiskSpace(drive);
+   }
+  }
+  else if(feature == "availableDiskSpace"){
+    QBENCHMARK {
+      si.availableDiskSpace(drive);
+    }
+    
+  }
+  else if(feature == "typeForDrive"){
+    QBENCHMARK {
+      si.typeForDrive(drive);
+    }
+  }
+  else {
+    QFAIL("Unkown feature");
+  }
+}
+
+void tst_QSystemInfo::tst_deviceinfo_data() {
+  QTest::addColumn<QString>("feature");
+  QTest::addColumn<int>("property");
+  
+  QSystemDeviceInfo obj;
+  const QMetaObject* metaObject = obj.metaObject();
+  QStringList methods;
+  for(int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i) {
+    QString name = QString::fromLatin1(metaObject->property(i).name());
+    QTest::newRow(name.toAscii()) << name << i;       
+  }
+}
+
+void tst_QSystemInfo::tst_deviceinfo() {
+  QFETCH(QString, feature);
+  QFETCH(int, property);
+  
+  QSystemDeviceInfo obj;
+  const QMetaObject* metaObject = obj.metaObject();
+  QMetaProperty mprop = metaObject->property(property);
+  
+  if(mprop.isReadable()){
+    QBENCHMARK {
+      mprop.read(&obj);
+    }
+  }  
+}
+
+void tst_QSystemInfo::tst_screensaver_data() {
+  QTest::addColumn<QString>("feature");
+  QTest::addColumn<int>("property");
+  
+  QSystemScreenSaver obj;
+  const QMetaObject* metaObject = obj.metaObject();
+  QStringList methods;
+  for(int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i) {
+    QString name = QString::fromLatin1(metaObject->property(i).name());
+    QTest::newRow(name.toAscii()) << name << i;       
+  }
+}
+
+void tst_QSystemInfo::tst_screensaver() {
+  QFETCH(QString, feature);
+  QFETCH(int, property);
+  
+  QSystemScreenSaver obj;
+  const QMetaObject* metaObject = obj.metaObject();
+  QMetaProperty mprop = metaObject->property(property);
+  
+  if(mprop.isReadable()){
+    QBENCHMARK {
+      mprop.read(&obj);
+    }
+  }  
+}
+
 
 QTEST_MAIN(tst_QSystemInfo)
 #include "tst_qsysteminfo.moc"
+ 

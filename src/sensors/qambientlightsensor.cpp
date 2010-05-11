@@ -67,7 +67,7 @@ IMPLEMENT_READING(QAmbientLightReading)
 
     \value Undefined  The light level is unknown.
     \value Dark       It is dark.
-    \value Twilight   It is darkish.
+    \value Twilight   It is moderately dark.
     \value Light      It is light (eg. internal lights).
     \value Bright     It is bright (eg. shade).
     \value Sunny      It is very bright (eg. direct sunlight).

@@ -68,9 +68,6 @@ QTM_BEGIN_NAMESPACE
 class Q_AUTOTEST_EXPORT VersitUtils
 {
 public:
-    static void backSlashEscape(QString& text);
-    static void removeBackSlashEscaping(QString& text);
-
     static QByteArray encode(const QByteArray& ba, QTextCodec* codec);
     static QByteArray encode(char ch, QTextCodec* codec);
     static QList<QByteArrayMatcher>* newlineList(QTextCodec* codec);

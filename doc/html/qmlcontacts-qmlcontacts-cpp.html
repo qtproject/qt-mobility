@@ -127,7 +127,7 @@
         QString list;
 
         for (int i = 0; i &lt; contactIds.count(); i++) {
-            list += QString::number(contactIds.at(i)) +  &quot; &quot;;
+            list += QString::number(contactIds.at(i)) +  ' ';
         }
 
         return list;
@@ -173,8 +173,7 @@
         }
 
         if(request-&gt;contacts().count() &gt; 0) {
-            QContact c;
-            foreach(c, request-&gt;contacts()) {
+            foreach(const QContact&amp; c, request-&gt;contacts()) {
                 QmlContact qmlc(c);
                 emit contactsLoaded(&amp;qmlc);
             }

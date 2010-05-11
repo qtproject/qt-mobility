@@ -74,15 +74,17 @@ public:
     QVariantMap metaData() const;
 
     QContactFilter contactFilter(const QVariant& value) const;
-    bool supportsDetail(const QContactDetail& detail) const;
-    void invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail());
-    QVariantMap result() const;
+    bool isDetailSupported(const QContactDetail& detail, const QContact& contact = QContact()) const;
+    QList<QContactDetail> supportedDetails(const QContact& contact) const;
+    bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& params = QVariantMap());
+    QVariantMap results() const;
+    State state() const {return QContactAction::FinishedState;}
 
 private slots:
     void performAction();
 };
 
-class Q_DECL_EXPORT QContactSendEmailActionFactory : public QContactActionFactory
+class QContactSendEmailActionFactory : public QContactActionFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactActionFactory)

@@ -42,12 +42,12 @@
 #ifndef QMETADATACONTROL_H
 #define QMETADATACONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediaobject.h>
+#include "qmediacontrol.h"
+#include "qmediaobject.h"
 
-#include <qmediaresource.h>
+#include "qmediaresource.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 class Q_MEDIA_EXPORT QMetaDataControl : public QMediaControl
@@ -60,9 +60,9 @@ public:
     virtual bool isWritable() const = 0;
     virtual bool isMetaDataAvailable() const = 0;
 
-    virtual QVariant metaData(QtMedia::MetaData key) const = 0;
-    virtual void setMetaData(QtMedia::MetaData key, const QVariant &value) = 0;
-    virtual QList<QtMedia::MetaData> availableMetaData() const = 0;
+    virtual QVariant metaData(QtMultimedia::MetaData key) const = 0;
+    virtual void setMetaData(QtMultimedia::MetaData key, const QVariant &value) = 0;
+    virtual QList<QtMultimedia::MetaData> availableMetaData() const = 0;
 
     virtual QVariant extendedMetaData(const QString &key) const = 0;
     virtual void setExtendedMetaData(const QString &key, const QVariant &value) = 0;
@@ -82,6 +82,6 @@ protected:
 #define QMetaDataControl_iid "com.nokia.Qt.QMetaDataControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMetaDataControl, QMetaDataControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMETADATAPROVIDER_H

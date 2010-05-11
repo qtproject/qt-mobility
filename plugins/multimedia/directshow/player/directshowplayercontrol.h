@@ -42,14 +42,14 @@
 #ifndef DIRECTSHOWPLAYERCONTROL_H
 #define DIRECTSHOWPLAYERCONTROL_H
 
-#include <qmediacontent.h>
-#include <qmediaplayercontrol.h>
+#include "../../src/multimedia/qmediacontent.h"
+#include "../../src/multimedia/qmediaplayercontrol.h"
 
 #include <QtCore/qcoreevent.h>
 
 #include "directshowplayerservice.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class DirectShowPlayerControl : public QMediaPlayerControl
 {

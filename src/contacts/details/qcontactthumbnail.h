@@ -56,8 +56,8 @@ class Q_CONTACTS_EXPORT QContactThumbnail : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldThumbnail;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldThumbnail;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactThumbnail, "Thumbnail")
     Q_DECLARE_LATIN1_CONSTANT(FieldThumbnail, "Thumbnail");

@@ -128,7 +128,7 @@ public:
         }
     };
 
-Q_EXPORT_PLUGIN2(libsensors_sym, SensorPluginSym);
+Q_EXPORT_PLUGIN2(qtsensors_sym, SensorPluginSym);
 
 #include "main.moc"
 

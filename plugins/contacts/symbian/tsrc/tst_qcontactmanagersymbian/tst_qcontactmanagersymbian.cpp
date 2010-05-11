@@ -94,19 +94,17 @@ public:
     virtual ~tst_QContactManagerSymbian();
 
 public slots:
-    //void initTestCase();
-    //void cleanupTestCase();
     void init();
     void cleanup();
 
 private slots:
     void signalEmission();
     void filtering();
-    void avatarSubTypes();
-    void avatarSubTypes_data();
-    void avatarPixmap();
-    void avatarPixmap_data();
-    void avatarPathAndPixmap();
+    void avatarImage();
+    void avatarImage_data();
+    void thumbnail_data();
+    void thumbnail();
+    void ringTone();
     void displayLabel_data();
     void displayLabel();
     void invalidContactItems();
@@ -149,7 +147,8 @@ void tst_QContactManagerSymbian::init()
 
 void tst_QContactManagerSymbian::cleanup()
 {
-    // Commented out => leave generated contacts into database
+    // If the following is commented out => the generated contacts are left into
+    // the database
     QVERIFY(m_cm->removeContact(m_contactId.localId()));
 }
 
@@ -320,65 +319,7 @@ void tst_QContactManagerSymbian::filtering()
     QCOMPARE(ids.count(), 0);
 }
 
-void tst_QContactManagerSymbian::avatarSubTypes_data()
-{
-    QTest::addColumn<QString>("fileName");
-    QTest::addColumn<QString>("subType");
-
-    QString emptyString;
-
-    // TODO: file names
-    QTest::newRow("Sub type image") << "C:\\Data\\Images\\avatar_sharks_s.jpg" << "Image";
-    //QTest::newRow("Sub type video") << "C:\\Data\\Videos\\video.mpg" << "Video";
-    //QTest::newRow("Sub type textured mesh") << "C:\\Data\\" << "TexturedMesh";
-    QTest::newRow("Sub type audio ringtone") << "C:\\Data\\Sounds\\avatar_sound.aac" << "AudioRingtone";
-    QTest::newRow("Sub type video ringtone") << "C:\\Data\\Videos\\avatar_video.3gp" << "VideoRingtone"; // TODO
-    QTest::newRow("No sub type") << "C:\\Data\\Images\\avatar_sharks_s.jpg" << emptyString;
-}
-
-/*
- * Special avatar cases that cannot be covered in QtMobility system level
- * test cases.
- */
-void tst_QContactManagerSymbian::avatarSubTypes()
-{
-    QFETCH(QString, fileName);
-    QFETCH(QString, subType);
-    QContact testContact = m_cm->contact(m_contactId.localId());
-
-    // Add avatar with sub type
-    QContactAvatar avatar;
-    avatar.setAvatar(fileName);
-
-    if(!subType.isEmpty()) {
-        avatar.setSubType(subType);
-    }
-    QVERIFY(testContact.saveDetail(&avatar));
-    QVERIFY(m_cm->saveContact(&testContact));
-
-    // Get avatar
-    testContact = m_cm->contact(m_contactId.localId());
-    QCOMPARE(testContact.details(QContactAvatar::DefinitionName).count(), 1);
-    QContactAvatar retrievedAvatar = testContact.detail(QContactAvatar::DefinitionName);
-    QVERIFY(!retrievedAvatar.isEmpty());
-    QCOMPARE(retrievedAvatar.avatar(), fileName);
-    if(subType.isEmpty()) {
-        // Known issue: If the sub type of a QContactAvatar is left empty, sub type
-        // image is used by default. A side effect is that after loading this kind
-        // of an avatar, the sub type has been set to sub type image.
-        // -> clear sub type to make the following compare pass
-        QVERIFY(retrievedAvatar.removeValue(QContactAvatar::FieldSubType));
-    }
-    QCOMPARE(retrievedAvatar, avatar);
-
-    // Remove avatar
-    retrievedAvatar = testContact.detail(QContactAvatar::DefinitionName);
-    QVERIFY(testContact.removeDetail(&retrievedAvatar));
-    QVERIFY(m_cm->saveContact(&testContact));
-    QCOMPARE(testContact.details(QContactAvatar::DefinitionName).count(), 0);
-}
-
-void tst_QContactManagerSymbian::avatarPixmap_data()
+void tst_QContactManagerSymbian::avatarImage_data()
 {
     QTest::addColumn<QString>("fileName");
 
@@ -388,58 +329,114 @@ void tst_QContactManagerSymbian::avatarPixmap_data()
     QTest::newRow("XXLarge JPEG") << "C:\\Data\\Images\\avatar_sharks_xxl.jpg";
 }
 
-void tst_QContactManagerSymbian::avatarPixmap()
+/*
+ * Special avatar cases that cannot be covered in QtMobility system level
+ * test cases.
+ */
+void tst_QContactManagerSymbian::avatarImage()
 {
     QFETCH(QString, fileName);
 
     QContact testContact = m_cm->contact(m_contactId.localId());
 
-    // Set pixmap
+    // Set image, the image file may or may not actually exist
     QContactAvatar avatar;
-    QPixmap pixmap(fileName);
-    QVERIFY(!pixmap.isNull());
-    QVERIFY(avatar.setPixmap(pixmap)); 
+    QUrl url(fileName);
+    QVERIFY(url.isValid());
+    avatar.setImageUrl(url);
     QVERIFY(testContact.saveDetail(&avatar));
     QVERIFY(m_cm->saveContact(&testContact));
 
-    // Get pixmap
+    // Get image
     testContact = m_cm->contact(m_contactId.localId());
     avatar = testContact.detail(QContactAvatar::DefinitionName);
     QVERIFY(!avatar.isEmpty());
-    pixmap = avatar.pixmap();
-    QVERIFY(!pixmap.isNull());
+    QCOMPARE(url, avatar.imageUrl());
+}
+
+void tst_QContactManagerSymbian::thumbnail_data()
+{
+    QTest::addColumn<QString>("fileName");
+
+    QTest::newRow("ExtraSmall JPEG") << "C:\\Data\\Images\\avatar_sharks_xs.jpg";
+    QTest::newRow("Small JPEG") << "C:\\Data\\Images\\avatar_sharks_s.jpg";
+    QTest::newRow("Medium JPEG") << "C:\\Data\\Images\\avatar_sharks_m.jpg";
+    QTest::newRow("XXLarge JPEG") << "C:\\Data\\Images\\avatar_sharks_xxl.jpg";
 }
 
 /*
- * Special avatar cases that cannot be covered in QtMobility system level
+ * Special thumbnail cases that cannot be covered in QtMobility system level
  * test cases.
  */
-void tst_QContactManagerSymbian::avatarPathAndPixmap()
+void tst_QContactManagerSymbian::thumbnail()
 {
-    QString fileName("C:\\Data\\Images\\avatar_sharks_s.jpg");
+    QFETCH(QString, fileName);
+
     QContact testContact = m_cm->contact(m_contactId.localId());
 
     // Set
-    QContactAvatar avatar;
-    avatar.setAvatar(fileName);
-    QVERIFY(avatar.setPixmap(QPixmap(fileName))); 
-    QVERIFY(testContact.saveDetail(&avatar));
+    QContactThumbnail thumb = testContact.detail(QContactThumbnail::DefinitionName);
+    QImage image(fileName);
+    QVERIFY(!image.isNull());
+    thumb.setThumbnail(image);
+    QVERIFY(testContact.saveDetail(&thumb));
     QVERIFY(m_cm->saveContact(&testContact));
 
     // Get pixmap
     testContact = m_cm->contact(m_contactId.localId());
-    avatar = testContact.detail(QContactAvatar::DefinitionName);
-    QVERIFY(!avatar.isEmpty());
-    QCOMPARE(avatar.avatar(), fileName);
-    QPixmap pixmap = avatar.pixmap();
-    QVERIFY(!pixmap.isNull());
+    thumb = testContact.detail(QContactThumbnail::DefinitionName);
+    QVERIFY(!thumb.isEmpty());
+    QVERIFY(!thumb.thumbnail().isNull());
+}
+
+/*
+ * Special ringing tone cases that cannot be covered in QtMobility system level
+ * test cases.
+ */
+void tst_QContactManagerSymbian::ringTone()
+{
+    QContact testContact = m_cm->contact(m_contactId.localId());
+
+    // these files are not actually included to the test data
+    QString audio("C:\\Data\\Sounds\\tone.wav");
+    QString video("C:\\Data\\Videos\\video.3gp");
+    
+    // Set audio ringtone
+    QContactRingtone tone = testContact.detail(QContactRingtone::DefinitionName);
+    QUrl audioRingtone(audio);
+    tone.setAudioRingtoneUrl(audioRingtone);
+    QVERIFY(testContact.saveDetail(&tone));
+    QVERIFY(m_cm->saveContact(&testContact));
+
+    // Get and verify ringtone
+    testContact = m_cm->contact(m_contactId.localId());
+    tone = testContact.detail(QContactRingtone::DefinitionName);
+    QVERIFY(!tone.isEmpty());
+    QCOMPARE(tone.audioRingtoneUrl(), audioRingtone);
+    QCOMPARE(tone.videoRingtoneUrl(), QUrl());
+    QCOMPARE(tone.vibrationRingtoneUrl(), QUrl());
+
+    // Set video ringtone
+    QUrl videoRingtone(video);
+    tone.setVideoRingtoneUrl(videoRingtone);
+    QVERIFY(testContact.saveDetail(&tone));
+    QVERIFY(m_cm->saveContact(&testContact));
+
+    // Get and verify ringtone
+    testContact = m_cm->contact(m_contactId.localId());
+    tone = testContact.detail(QContactRingtone::DefinitionName);
+    QVERIFY(!tone.isEmpty());
+    QCOMPARE(tone.audioRingtoneUrl(), audioRingtone);
+    QCOMPARE(tone.videoRingtoneUrl(), videoRingtone);
+    QCOMPARE(tone.vibrationRingtoneUrl(), QUrl());
 }
 
 void tst_QContactManagerSymbian::displayLabel_data()
 {
+    // Expected display label
+    QTest::addColumn<QString>("displayLabel");
     // A string list containing the detail fields in format <detail definition name>:<field name>:<value>
     // For example first name: Name:First:James
-    QTest::addColumn<QString>("displayLabel");
     // Note: With the current implementation the value must not contain a ':' character
     QTest::addColumn<QStringList>("details");
 
@@ -547,7 +544,7 @@ void tst_QContactManagerSymbian::invalidContactItems()
     // 1. Empty contact
     QContact empty;
     QVERIFY(m_cm->saveContact(&empty));
-    empty = m_cm->contact(empty.localId(), QStringList());
+    empty = m_cm->contact(empty.localId());
     QVERIFY(m_cm->error() == QContactManager::NoError);
     QVERIFY(empty.id() != QContactId());
     QVERIFY(m_cm->removeContact(empty.localId()));

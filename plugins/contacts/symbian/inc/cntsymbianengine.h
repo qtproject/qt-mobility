@@ -94,14 +94,7 @@ public:
     QString managerName() const;
 
     /* XXX TODO - implement these correctly */
-    QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}
     int managerVersion() const { return 1;}
-    bool validateContact(const QContact& contact, QContactManager::Error* error) const {return QContactManagerEngine::validateContact(contact, error);}
-    bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error* error) const {return QContactManagerEngine::validateDefinition(def, error);}
-    QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error) const  {return QContactManagerEngine::detailDefinition(definitionId, contactType, error);}
-    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error) {return QContactManagerEngine::saveDetailDefinition(def, contactType, error);}
-    bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error)  {return QContactManagerEngine::removeDetailDefinition(definitionId, contactType, error);}
-    QStringList supportedContactTypes() const {return QContactManagerEngine::supportedContactTypes();}
 
     /* Functions that are optional in the base API */
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error* error);

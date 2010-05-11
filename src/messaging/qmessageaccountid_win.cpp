@@ -90,7 +90,7 @@ QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
 QMessageAccountId::QMessageAccountId(const QString& id)
     : d_ptr(new QMessageAccountIdPrivate(this))
 {
-    QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
+	QDataStream idStream(QByteArray::fromBase64(WinHelpers::stripIdPrefix(id).toLatin1()));
     idStream >> d_ptr->_storeRecordKey;
 }
 
@@ -134,7 +134,7 @@ QString QMessageAccountId::toString() const
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
     encodedIdStream << d_ptr->_storeRecordKey;
 
-    return encodedId.toBase64();
+	return WinHelpers::addIdPrefix(encodedId.toBase64());
 }
 
 bool QMessageAccountId::isValid() const

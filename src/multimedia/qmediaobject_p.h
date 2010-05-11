@@ -57,9 +57,9 @@
 #include <QtCore/qset.h>
 #include <QtCore/qtimer.h>
 
-#include <qmediaobject.h>
+#include "qmediaobject.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMetaDataControl;
 
@@ -86,6 +86,6 @@ public:
     QMediaObject *q_ptr;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-#include <qcontacttrackerbackend_p.h>
 #include <qtrackercontactidfetchrequest.h>
 
 #include <qtcontacts.h>

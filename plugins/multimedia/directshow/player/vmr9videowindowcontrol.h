@@ -42,13 +42,13 @@
 #ifndef VMR9VIDEOWINDOWCONTROL_H
 #define VMR9VIDEOWINDOWCONTROL_H
 
-#include <qvideowindowcontrol.h>
+#include "../../src/multimedia/qvideowindowcontrol.h"
 
 #include <dshow.h>
 #include <d3d9.h>
 #include <vmr9.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class Vmr9VideoWindowControl : public QVideoWindowControl
 {

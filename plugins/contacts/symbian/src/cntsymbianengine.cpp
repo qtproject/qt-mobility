@@ -637,7 +637,7 @@ void CntSymbianEngine::updateDisplayLabel(QContact& contact) const
     QContactManager::Error error(QContactManager::NoError);
     QString label = synthesizedDisplayLabel(contact, &error);
     if(error == QContactManager::NoError) {
-        contact = setContactDisplayLabel(label, contact);
+        setContactDisplayLabel(&contact, label);
     }
 }
 
@@ -648,7 +648,12 @@ bool CntSymbianEngine::removeContacts(const QList<QContactLocalId>& contactIds, 
     if (errorMap) {
         // if the errormap argument is null, we just don't do fine-grained reporting.            
         errorMap->clear();
-    }    
+    }
+    
+    if (contactIds.count() == 0) {
+        *error = QContactManager::BadArgumentError;
+        return false;
+    }
     
     QContactManager::Error err;
     QContactLocalId selfCntId = selfContactId(&err); // err ignored
@@ -967,7 +972,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             QContactFetchHint fh = r->fetchHint();
 
             QContactManager::Error operationError;
-            QList<QContact> requestedContacts = QContactManagerEngine::contacts(filter, sorting, fh, &operationError);
+            QList<QContact> requestedContacts = contacts(filter, sorting, fh, &operationError);
 
             // update the request with the results.
             updateContactFetchRequest(r, requestedContacts, operationError, QContactAbstractRequest::FinishedState); // emit resultsAvailable()
@@ -981,7 +986,7 @@ void CntSymbianEngine::performAsynchronousOperation()
             QList<QContactSortOrder> sorting = r->sorting();
 
             QContactManager::Error operationError = QContactManager::NoError;
-            QList<QContactLocalId> requestedContactIds = QContactManagerEngine::contactIds(filter, sorting, &operationError);
+            QList<QContactLocalId> requestedContactIds = contactIds(filter, sorting, &operationError);
 
             updateContactLocalIdFetchRequest(r, requestedContactIds, operationError, QContactAbstractRequest::FinishedState);
         }
@@ -1154,6 +1159,6 @@ QString CntSymbianFactory::managerName() const
     return CNT_SYMBIAN_MANAGER_NAME;
 }
 
-Q_EXPORT_PLUGIN2(mobapicontactspluginsymbian, CntSymbianFactory);
+Q_EXPORT_PLUGIN2(qtcontacts_symbian, CntSymbianFactory);
 
 #endif  //PBK_UNIT_TEST

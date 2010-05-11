@@ -117,6 +117,7 @@ public:
 };
 //! [Resource handler]
 
+#if 0
 int main(int argc, char *argv[])
 {
     Q_UNUSED(argc)
@@ -125,6 +126,7 @@ int main(int argc, char *argv[])
     exportExample();
     importExample();
 }
+#endif
 
 void completeExample()
 {

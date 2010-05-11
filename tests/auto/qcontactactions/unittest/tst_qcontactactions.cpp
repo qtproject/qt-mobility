@@ -44,7 +44,6 @@
 #include <QApplication>
 
 #include "qtcontacts.h"
-#include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 #include "qcontactaction.h"
 #include "qcontactactionfactory.h"
 #include "qcontactactiondescriptor.h"
@@ -58,8 +57,6 @@ Q_OBJECT
 public:
     tst_QContactActions();
     virtual ~tst_QContactActions();
-private:
-    QContactManagerDataHolder managerDataHolder;
 
 public slots:
     void init();
@@ -316,7 +313,7 @@ void tst_QContactActions::testSendEmail()
     QVERIFY(sendEmail->actionDescriptor().implementationVersion() != -1);
     QVERIFY(sendEmail->actionDescriptor().implementationVersion() != 0);
     //QVERIFY(!sendEmail->contactFilter().isEmpty());
-    QVERIFY(sendEmail->supportsDetail(e));
+    QVERIFY(sendEmail->isDetailSupported(e));
     QVERIFY(sendEmail->supportedDetails(c).contains(e));
     //QVERIFY(sendEmail->performAction(c, e));
     //QVERIFY(sendEmail->performAction(c));
