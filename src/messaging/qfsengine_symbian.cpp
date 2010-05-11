@@ -1950,6 +1950,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                     m_numberOfHandledFilters++;
                     QMessageFolder messageFolder = m_owner.folder(QMessageFolderId(pf->_value.toString()));
                     getFolderSpecificMessagesL(messageFolder, sortCriteria);
+                    m_resultCorrectlyOrdered = true;
                 } else { // NotEqual
                     // TODO:
                 }
@@ -1973,27 +1974,16 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (!pf->_value.isNull() && pf->_value.toString().length() > QString(SymbianHelpers::freestylePrefix).length()) {
                     if (cmp == QMessageDataComparator::Equal) {
-                        long int messageId = stripIdPrefix(pf->_value.toString()).toLong();
-                        /*CMsvEntry* pEntry = iOwner.retrieveCMsvEntryAndPushToCleanupStack(messageId);
-                        if (pEntry) {
-                            const TMsvEntry& entry = pEntry->Entry();
-                            if (entry.iType == KUidMsvMessageEntry) {
-                                ipEntrySelection = new(ELeave)CMsvEntrySelection;
-                                ipEntrySelection->AppendL(messageId);
-                            }
-                            iOwner.releaseCMsvEntryAndPopFromCleanupStack(pEntry);
-                        }*/
+                        QMessage message = m_owner.message(QMessageId(pf->_value.toString()));
+                        m_idList.clear();
+                        m_idList.append(message.id());
                         m_resultCorrectlyOrdered = true;
+                        QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
+
                     } else { // NotEqual
-                        //ipEntrySelection = new(ELeave)CMsvEntrySelection;
+                        m_excludeIdList.clear();
+                        m_excludeIdList.append(QMessageId(pf->_value.toString()));
                         getAllMessagesL(sortCriteria);
-                        long int messageId = SymbianHelpers::stripIdPrefix(pf->_value.toString()).toLong();
-                        /*for (int i=0; i < ipEntrySelection->Count(); i++) {
-                            if (ipEntrySelection->At(i) == messageId) {
-                                ipEntrySelection->Delete(i);
-                                break;
-                            }
-                        }*/
                     }
                 } else {
                     if (cmp == QMessageDataComparator::NotEqual) {
@@ -2004,30 +1994,18 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                 QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
                 if (pf->_ids.count() > 0) { // QMessageIdList
                     if (cmp == QMessageDataComparator::Includes) {
-                        //ipEntrySelection = new(ELeave)CMsvEntrySelection;
                         for (int i=0; i < pf->_ids.count(); i++) {
-                            long int messageId = SymbianHelpers::stripIdPrefix(pf->_ids[i].toString()).toLong();
-                            /*CMsvEntry* pEntry = iOwner.retrieveCMsvEntryAndPushToCleanupStack(messageId);
-                            if (pEntry) {
-                                const TMsvEntry& entry = pEntry->Entry();
-                                if (entry.iType == KUidMsvMessageEntry) {
-                                    ipEntrySelection->AppendL(messageId);
-                                }
-                                iOwner.releaseCMsvEntryAndPopFromCleanupStack(pEntry);
-                            }*/
+                            QMessage message = m_owner.message(QMessageId(pf->_ids[i].toString()));
+                            m_idList.append(message.id());
                         }
+                        QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
                     } else { // Excludes
-                        //ipEntrySelection = new(ELeave)CMsvEntrySelection;
-                        getAllMessagesL(sortCriteria);
                         for (int i=0; i < pf->_ids.count(); i++) {
-                            long int messageId = SymbianHelpers::stripIdPrefix(pf->_ids[i].toString()).toLong();
-                            /*for (int i=0; i < ipEntrySelection->Count(); i++) {
-                                if (ipEntrySelection->At(i) == messageId) {
-                                    ipEntrySelection->Delete(i);
-                                    break;
-                                }
-                            }*/
+                            m_excludeIdList.clear();
+                            m_excludeIdList.append(QMessageId(pf->_ids[i].toString()));
+                            getAllMessagesL(sortCriteria);
                         }
+                        getAllMessagesL(sortCriteria);
                     }
                 } else {
                     //ipEntrySelection = new(ELeave)CMsvEntrySelection;
@@ -2055,6 +2033,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                 if (cmp == QMessageDataComparator::Equal) {
                     QMessageAccount messageAccount = m_owner.account(pf->_value.toString());
                     getAccountSpecificMessagesL(messageAccount, sortCriteria);
+                    m_resultCorrectlyOrdered = true;
                 } else { // NotEqual
                     QStringList exludedAccounts;
                     exludedAccounts << pf->_value.toString();
@@ -2170,7 +2149,8 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
 
     CleanupStack::PopAndDestroy(mailbox);
     CleanupStack::PopAndDestroy(&sortCriteriaArray);
-    m_owner.filterAndOrderMessagesReady(true, m_operationId, m_idList, 1, true);
+
+    QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
 }
 
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)
@@ -2194,7 +2174,7 @@ void CFSMessagesFindOperation::SearchCompletedL()
     
 void CFSMessagesFindOperation::SearchCompleted()
 {
-    m_owner.filterAndOrderMessagesReady(true, m_operationId, m_idList, 1, true);
+    m_owner.filterAndOrderMessagesReady(true, m_operationId, m_idList, 1, m_resultCorrectlyOrdered);
 }
 
 CFetchOperationWait* CFetchOperationWait::NewLC()
