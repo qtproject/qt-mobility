@@ -80,10 +80,14 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
         default:                 doubleTap = false;
     }
     QVariant v = m_sensor->property("returnDoubleTapEvents");
-    if (v.isValid() && v.toBool() == false)
-        m_reading.setDoubleTap(false);
-    else
-        m_reading.setDoubleTap(doubleTap);
+    if (v.isValid() && v.toBool() == false) {
+        if (doubleTap)
+            return;
+    } else {
+        if (! doubleTap)
+            return;
+    }
+    m_reading.setDoubleTap(doubleTap);
 
     // Set tap direction
     QTapReading::TapDirection o;
