@@ -7,39 +7,42 @@ Rectangle {
     signal clicked
     property string image: ""
     property string text: ""
+    property int padding: 4
 
-    color: activePalette.button; smooth: true
-    border.width: 1; border.color: Qt.darker(activePalette.button); radius: 8;
+    color: activePalette.button;
+    smooth: true
+    border.width: 2;
+    border.color: Qt.darker(activePalette.button);
+    radius: 2;
+
 
     gradient: Gradient {
+        GradientStop { position: 0.0; color: activePalette.button }
         GradientStop {
-            id: topGrad; position: 0.0
-            color : mr.pressed ?  activePalette.dark : activePalette.light
+            position: 1.0
+            color : mr.pressed ?  activePalette.light : activePalette.dark
         }
-        GradientStop { position: 1.0; color: activePalette.button }
     }
-    width: stuff.width + 4
-    height: stuff.height + 4
+    width: stuff.width + 4 * padding
+    height: stuff.height + 2 * padding
 
     Item {
         id: stuff
         width: childrenRect.width;
         height: childrenRect.height;
+        x: 2 * padding
+        y: padding
 
-        Image {
-            id: imgItem;
-            smooth: true
-            width: 16; height: 16;
-            source: container.image;
-            x: 8
-            y: 2;
-        }
+        Row {
+            Image {
+                id: imgItem;
+                smooth: true
+                width: 16; height: 16;
+                source: container.image;
+                opacity: source == "" ? 0 : 1;
+            }
 
-        Item {
-            width: txtItem.width + 12
-            height: txtItem.height
             Text {
-                x: 6
                 id: txtItem; text: container.text; font.pixelSize: 16; color: activePalette.buttonText
             }
         }
