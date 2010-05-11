@@ -135,6 +135,9 @@ public:
     QStringList sortPropertyNames() const { return m_sortPropertyNames; }
     void setSortPropertyNames(const QStringList &names);
 
+    int identityWidth() const { return m_fileTypeIndex >= 0 ? 2 : m_identityColumns.count(); }
+    int valueOffset() const { return m_fileTypeIndex >= 0 ? 2 : 0; }
+
     QStringList fields() const { return m_propertyFields; }
     QStringList aggregations() const { return m_aggregations; }
     QStringList aggregateFields() const { return m_aggregateFields; }

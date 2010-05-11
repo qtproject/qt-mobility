@@ -170,8 +170,8 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
         bool changed = false;
 
         do {    // Skip over identical rows.
-            if ((equal = aBegin->isEqual(*rBegin, valueOffset))
-                    && !(changed = !aBegin->isEqual(*rBegin, valueOffset, tableWidth))) {
+            if ((equal = aBegin->isEqual(*rBegin, identityWidth))
+                    && !(changed = !aBegin->isEqual(*rBegin, identityWidth, tableWidth))) {
                 ++aBegin;
                 ++rBegin;
             } else {
@@ -184,8 +184,8 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
             row_iterator rIt = rBegin;
 
             do {    // Skip over rows with equal IDs but different values.
-                if ((equal = aIt->isEqual(*rIt, valueOffset))
-                        && aIt->isEqual(*rIt, valueOffset, tableWidth)) {
+                if ((equal = aIt->isEqual(*rIt, identityWidth))
+                        && aIt->isEqual(*rIt, identityWidth, tableWidth)) {
                     ++aIt;
                     ++rIt;
                 } else {
@@ -203,12 +203,12 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
         for (row_iterator aIt = aBegin + 1, rIt = rBegin + 1;   // Scan for rows with common IDs.
                 aIt != aEnd && rIt != rEnd;
                 ++aIt, ++rIt) {
-            if ((equal = aIt->isEqual(*rBegin, valueOffset))) {
+            if ((equal = aIt->isEqual(*rBegin, identityWidth))) {
                 QCoreApplication::postEvent(q, new RowEvent(RowsRemoved, *aBegin, *rBegin, *aIt));
 
                 aBegin = aIt;
                 break;
-            } else if ((equal = rIt->isEqual(*aBegin, valueOffset))) {
+            } else if ((equal = rIt->isEqual(*aBegin, identityWidth))) {
                 QCoreApplication::postEvent(q, new RowEvent(RowsInserted, *aBegin, *rBegin, *rIt));
 
                 rBegin = rIt;
@@ -276,7 +276,6 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
         const QGalleryTrackerSchema &schema,
         int cursorPosition,
         int minimumPagedItems,
-        int valueOffset,
         QObject *parent)
     : QGalleryAbstractResponse(dd, parent)
 {
@@ -284,7 +283,8 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
 
     d->cursorPosition = cursorPosition;
     d->minimumPagedItems = minimumPagedItems;
-    d->valueOffset = valueOffset;
+    d->identityWidth = schema.identityWidth();
+    d->valueOffset = schema.valueOffset();
     d->idColumn = schema.createIdColumn();
     d->urlColumn = schema.createUrlColumn();
     d->typeColumn = schema.createTypeColumn();

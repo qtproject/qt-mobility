@@ -133,7 +133,6 @@ QGalleryTrackerAggregateResponse::QGalleryTrackerAggregateResponse(
             schema,
             cursorPosition,
             minimumPagedItems,
-            0,
             parent)
 {
     Q_D(QGalleryTrackerAggregateResponse);

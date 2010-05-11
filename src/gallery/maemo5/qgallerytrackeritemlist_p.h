@@ -98,7 +98,6 @@ protected:
             const QGalleryTrackerSchema &schema,
             int cursorPosition,
             int minimumPagedItems,
-            int valueOffset,
             QObject *parent);
 
     void updateResultSet(const QVector<QStringList> &resultSet, int index = 0);

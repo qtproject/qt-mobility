@@ -178,6 +178,7 @@ public:
     QGalleryTrackerCompositeColumn *urlColumn;
     QGalleryTrackerCompositeColumn *typeColumn;
 
+    int identityWidth;
     int valueOffset;
     union
     {
