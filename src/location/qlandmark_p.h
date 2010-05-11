@@ -81,7 +81,7 @@ public:
     double radius;
     QHash<QString, QVariant> attributes;
     QString phone;
-    QString url;
+    QUrl url;
     QLandmarkId id;
 };
 

@@ -437,7 +437,7 @@ private:
         a0.setPostCode("4000");
         w0.setAddress(a0);
         w0.setPhone("123456789");
-        w0.setUrl("http://example.com/testUrl");
+        w0.setUrl(QUrl("http://example.com/testUrl"));
         w0.setCategories(catIds);
         w << w0;
 
@@ -526,7 +526,7 @@ private:
         w << w13;
 
         QLandmark w14;
-        w14.setUrl("http://example.com/testUrl");
+        w14.setUrl(QUrl("http://example.com/testUrl"));
         w << w14;
 
         QLandmark w15;

@@ -883,7 +883,7 @@ bool QLandmarkFileHandlerLmx::writeAddressInfo(const QLandmark &landmark)
 bool QLandmarkFileHandlerLmx::writeMediaLink(const QLandmark &landmark)
 {
     m_writer->writeStartElement(m_ns, "mediaLink");
-    m_writer->writeTextElement(m_ns, "url", landmark.url());
+    m_writer->writeTextElement(m_ns, "url", landmark.url().toString());
     m_writer->writeEndElement();
 
     return true;

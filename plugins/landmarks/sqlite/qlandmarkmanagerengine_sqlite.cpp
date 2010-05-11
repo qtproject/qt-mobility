@@ -1480,7 +1480,7 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
 
     columns << "url";
     if (!landmark->url().isEmpty())
-        values << quoteString(landmark->url());
+        values << quoteString(landmark->url().toString());
     else
         values << "null";
 

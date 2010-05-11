@@ -421,7 +421,7 @@ void QLandmark::setPhone(const QString &phone)
 /*!
     Returns the url of the landmark.
 */
-QString QLandmark::url() const
+QUrl QLandmark::url() const
 {
     return d->url;
 }
@@ -429,7 +429,7 @@ QString QLandmark::url() const
 /*!
     Sets the \a url of the landmark.
 */
-void QLandmark::setUrl(const QString &url)
+void QLandmark::setUrl(const QUrl &url)
 {
     d->url = url;
 }

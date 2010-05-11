@@ -47,9 +47,8 @@
 #include <QObject>
 #include <QSharedDataPointer>
 #include <QVariant>
-
-class QStringList;
-class QUrl;
+#include <QStringList>
+#include <QUrl>
 
 QT_BEGIN_HEADER
 
@@ -105,8 +104,8 @@ public:
     QString phone() const;
     void setPhone(const QString &phone);
 
-    QString url() const;
-    void setUrl(const QString &url);
+    QUrl url() const;
+    void setUrl(const QUrl &url);
 
     QLandmarkId id() const;
     void setId(const QLandmarkId &id);
