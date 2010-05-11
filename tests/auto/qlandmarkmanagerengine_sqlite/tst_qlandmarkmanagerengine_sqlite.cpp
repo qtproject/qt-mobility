@@ -970,9 +970,7 @@ private slots:
             QList<QGeoCoordinate> c = coords.at(i);
             for (int j = 0; j < c.size(); ++j) {
                 QLandmark lm;
-                QGeoLocation location;
-                location.setCoordinate(c.at(j));
-                lm.setLocation(location);
+                lm.setCoordinate(c.at(j));
                 QVERIFY(m_manager->saveLandmark(&lm));
             }
         }
@@ -1007,7 +1005,7 @@ private slots:
                 QCOMPARE(lms.size(), lmCoords.size());
 
                 for (int k = 0; k < lms.size(); ++k) {
-                    QVERIFY(lmCoords.contains(lms.at(k).location().coordinate()));
+                    QVERIFY(lmCoords.contains(lms.at(k).coordinate()));
                 }
             }
         }
@@ -1095,9 +1093,7 @@ private slots:
             QList<QGeoCoordinate> c = coords.at(i);
             for (int j = 0; j < c.size(); ++j) {
                 QLandmark lm;
-                QGeoLocation location;
-                location.setCoordinate(c.at(j));
-                lm.setLocation(location);
+                lm.setCoordinate(c.at(j));
                 QVERIFY(m_manager->saveLandmark(&lm));
             }
         }
@@ -1335,9 +1331,7 @@ private slots:
 
         for (int i = 0; i < coords.size(); ++i) {
             QLandmark lm;
-            QGeoLocation location;
-            location.setCoordinate(coords.at(i));
-            lm.setLocation(location);
+            lm.setCoordinate(coords.at(i));
             QVERIFY(m_manager->saveLandmark(&lm));
         }
 

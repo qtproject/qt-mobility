@@ -219,26 +219,6 @@ void QLandmark::setName(const QString &name)
 }
 
 /*!
-    Returns the location (both coordinate and address) of the landmark.
-
-    \sa address(), coordinate()
-*/
-QGeoLocation QLandmark::location() const
-{
-    return d->location;
-}
-
-/*!
-    Sets the \a location (both coordinate and address) of the landmark.
-
-    \sa setCoordinate(), setAddress()
-*/
-void QLandmark::setLocation(const QGeoLocation &location)
-{
-    d->location = location;
-}
-
-/*!
     Returns the coordinate of the landmark.
 
     This is a convenience function to return the

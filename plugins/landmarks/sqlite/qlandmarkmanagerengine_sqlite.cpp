@@ -961,7 +961,6 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
         if (!query1.value(2).isNull())
             lm.setIconUrl(query1.value(2).toString());
 
-        QGeoLocation location;
         QGeoCoordinate coord;
         QGeoAddress address;
 
@@ -1001,7 +1000,7 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
             }
         }
 
-        location.setCoordinate(coord);
+        lm.setCoordinate(coord);
 
         ok = false;
         if (!query1.value(6).isNull()) {
@@ -1015,6 +1014,8 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
             }
         }
 
+/* TODO: remove since QLandmark no longer
+         has a geolocation and hence no bounding box.
         QRectF rect;
 
         ok = false;
@@ -1071,9 +1072,7 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
 
         rect.setTopLeft(QPointF(tlx, tly));
         rect.setBottomRight(QPointF(brx, bry));
-
-        location.setBoundingBox(rect);
-
+*/
         if (!query1.value(11).isNull())
             address.setCountry(query1.value(11).toString());
 
@@ -1104,9 +1103,7 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
         if (!query1.value(20).isNull())
             address.setPostOfficeBox(query1.value(20).toString());
 
-        location.setAddress(address);
-
-        lm.setLocation(location);
+        lm.setAddress(address);
 
         if (!query1.value(21).isNull())
             lm.setPhone(query1.value(21).toString());
@@ -1364,7 +1361,7 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
     else
         values << "null";
 
-    QGeoCoordinate coord = landmark->location().coordinate();
+    QGeoCoordinate coord = landmark->coordinate();
 
     columns << "latitude";
     if (!qIsNaN(coord.latitude()))
@@ -1390,7 +1387,11 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
     else
         values << "null";
 
-    QRectF rect = landmark->location().boundingBox();
+/*
+    //TODO: remove since qlandmark no longer has a
+    //      qgeolocation and hence no bounding box
+
+    QRectF rect;
 
     columns << "top_left_lat";
     columns << "top_left_lon";
@@ -1408,8 +1409,8 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
         values << "null";
         values << "null";
     }
-
-    QGeoAddress address = landmark->location().address();
+*/
+    QGeoAddress address = landmark->address();
 
     columns << "country";
     if (!address.country().isEmpty())

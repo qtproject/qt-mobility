@@ -78,9 +78,6 @@ public:
     QString name() const;
     void setName(const QString &name);
 
-    QGeoLocation location() const;
-    void setLocation(const QGeoLocation &location);
-
     QGeoAddress address() const;
     void setAddress(const QGeoAddress &address);
 
