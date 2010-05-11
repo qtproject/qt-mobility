@@ -154,6 +154,7 @@ private:
     void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
     void countMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter);
     
+    QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccountsL() const;
     void updateMessageL(QMessage* message);
     MEmailMessage* createFSMessageL(const QMessage &message);

@@ -234,6 +234,20 @@ QMessageAccountId CFSEngine::defaultAccount(QMessage::Type type) const
     return QMessageAccountId();
 }
 
+QMessageAccountIdList CFSEngine::accountsByType(QMessage::Type type) const
+{
+    QMessageAccountIdList accountIds = QMessageAccountIdList();
+    
+    foreach (QMessageAccount value, m_accounts) {
+        if ((value.messageTypes() & type) == (int)type) {
+            accountIds.append(value.id());
+        }
+    }
+    
+    return accountIds;
+}
+
+
 void CFSEngine::updateEmailAccountsL() const
 {
     QStringList keys = m_accounts.keys();
@@ -2082,8 +2096,53 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
             
         case QMessageFilterPrivate::AncestorFolderIds:
             break;
-        case QMessageFilterPrivate::Type:
+        case QMessageFilterPrivate::Type: {
+            m_numberOfHandledFilters++;
+            QMessageFilterPrivate* privateFilter = NULL;
+            // Check if next filter is StandardFolder filter 
+            if (filters.count() > m_numberOfHandledFilters) {
+                privateFilter = QMessageFilterPrivate::implementation(filters[m_numberOfHandledFilters]);
+                if (privateFilter->_field != QMessageFilterPrivate::StandardFolder) {
+                    privateFilter = NULL;
+                } else {
+                    m_numberOfHandledFilters++;
+                }
+            }
+            if (pf->_comparatorType == QMessageFilterPrivate::Equality) { // QMessage::Type
+                QMessage::Type type = static_cast<QMessage::Type>(pf->_value.toInt()); 
+                QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Equal) {
+                    QMessageAccountIdList accountIds = m_owner.accountsByType(type);
+                    for (int i = 0; i < accountIds.count(); i++) {
+                        QMessageAccount messageAccount = m_owner.account(accountIds[i]);
+                        getAccountSpecificMessagesL(messageAccount, sortCriteria);
+                    }
+                } else { // NotEqual
+                    foreach (QMessageAccount value, m_owner.m_accounts) {
+                        if (!(value.messageTypes() & type)) {
+                            getAccountSpecificMessagesL(value, sortCriteria);
+                        }
+                    }
+                }
+            } else if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) { // QMessage::TypeFlags
+                QMessage::TypeFlags typeFlags = static_cast<QMessage::TypeFlags>(pf->_value.toInt());
+                QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Includes) {
+                    foreach (QMessageAccount value, m_owner.m_accounts) {
+                        if (value.messageTypes() | typeFlags) {
+                            getAccountSpecificMessagesL(value, sortCriteria);
+                        }
+                    }
+                } else { // Excludes
+                    foreach (QMessageAccount value, m_owner.m_accounts) {
+                        if (!(value.messageTypes() & typeFlags)) {
+                            getAccountSpecificMessagesL(value, sortCriteria);
+                        }
+                    }
+                }
+            }
             break;
+            }
         case QMessageFilterPrivate::StandardFolder:
             break;
         case QMessageFilterPrivate::TimeStamp:
