@@ -43,6 +43,8 @@
 #ifndef QTELEPHONYGLOBAL_H
 #define QTELEPHONYGLOBAL_H
 
+#include "qmobilityglobal.h"
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -59,6 +61,7 @@ QTM_BEGIN_NAMESPACE
     \value Voice       The call is a Voice call.
     \value Video       The call is a Video call.
 */
+
 enum CallType {
     UnknownType = 0,
     VOIP = 1,
@@ -86,6 +89,22 @@ enum CallStatus {
     InProgress = 3,
     OnHold = 4
 };
+
+#ifdef Q_OS_LINUX
+enum PrivateDataType{
+    MaemoContactCategory = 0
+};
+#endif
+#ifdef Q_OS_WIN
+enum PrivateDataType{
+    ContactIDMemoryOffset = 0
+};
+#endif
+#ifdef Q_OS_SYMBIAN
+enum PrivateDataType{
+    S60ConctactBufferSize = 0
+};
+#endif
 
 QTM_END_NAMESPACE
 QT_END_HEADER

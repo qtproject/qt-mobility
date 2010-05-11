@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
 
 class QTelephonyEventPrivate;
 class QCallInfo;
-class Q_TELEPHONY_EXPORT QTelephonyEvent : public QObject
+class QTelephonyEvent : public QObject
 {
     Q_OBJECT
 public:

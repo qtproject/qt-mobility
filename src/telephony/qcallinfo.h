@@ -54,8 +54,6 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-extern enum PrivateDataType;
-
 class QCallInfoPrivate;
 class QCallInfo : public QObject
 {

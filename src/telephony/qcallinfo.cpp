@@ -158,7 +158,7 @@ CallType QCallInfo::callType()
 {
     if(d)
         return d->callType();
-    return CallType::UnknownType;
+    return UnknownType;
 }
 
 /*!
@@ -170,7 +170,7 @@ CallStatus QCallInfo::callStatus()
 {
     if(d)
         return d->callStatus();
-    return CallStatus::UnknownStatus;
+    return UnknownStatus;
 }
 
 #include "moc_qcallinfo.cpp"

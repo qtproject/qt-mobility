@@ -163,7 +163,7 @@ CallStatus QTelephonyEvent::currentStatus()
 {
     if(d)
         d->currentStatus();
-    return CallStatus::UnknownStatus;
+    return UnknownStatus;
 }
 
 #include "moc_qtelephony.cpp"

@@ -11,7 +11,8 @@ include(../../common.pri)
 
 # Input
 PUBLIC_HEADERS += qtelephony.h \
-                qcallinfo.h
+                qcallinfo.h \
+                qtelephonyglobal.h
 SOURCES += qtelephony.cpp \
                 qcallinfo.cpp
 
@@ -23,6 +24,7 @@ win32 {
 unix: {
     !maemo*: {
         HEADERS += qtelephonyevent_linux_p.h 
+        SOURCES += qtelephonyevent_linux.cpp
     }
     maemo*: {
         HEADERS += qtelephonyevent_maemo_p.h

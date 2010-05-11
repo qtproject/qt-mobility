@@ -62,17 +62,13 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-enum PrivateDataType{
-    S60ConctactBufferSize = 0
-};
-
 class QTelephonyEventPrivate : public QObject
 {
     Q_OBJECT
 public:
     QTelephonyEventPrivate(QObject *parent = 0);
     virtual ~QTelephonyEventPrivate();
-    CallStatus currentStatus() { return CallStatus::UnknownStatus; }
+    CallStatus currentStatus() { return UnknownStatus; }
 };
 
 class QCallInfoPrivate : public QObject
@@ -85,8 +81,8 @@ public:
     unsigned long sipID();
     QList<QContactLocalId> contacts();
     bool querryData( PrivateDataType datatype, const QObject& param, void** value);
-    CallType callType() { return CallType::UnknownType; }
-    CallStatus callStatus() { return CallStatus::UnknownStatus; }
+    CallType callType() { return UnknownType; }
+    CallStatus callStatus() { return UnknownStatus; }
 };
 
 QTM_END_NAMESPACE
