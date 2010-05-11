@@ -1,5 +1,4 @@
-INCLUDEPATH += items \
-               ./
+INCLUDEPATH += items
 
 PUBLIC_HEADERS += \
     items/qorganizerevent.h \

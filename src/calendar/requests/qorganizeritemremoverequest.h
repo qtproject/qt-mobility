@@ -39,21 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
+#ifndef QORGANIZERITEMREMOVEREQUEST_H
+#define QORGANIZERITEMREMOVEREQUEST_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemabstractrequest.h"
+#include "qorganizeritemfilter.h"
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+#include <QList>
 
-#include "qorganizeriteminstancefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemlocalidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemRemoveRequestPrivate;
+class Q_CALENDAR_EXPORT QOrganizerItemRemoveRequest : public QOrganizerItemAbstractRequest
+{
+    Q_OBJECT
+
+public:
+    QOrganizerItemRemoveRequest(QObject* parent = 0);
+
+    /* Selection */
+    void setItemId(const QOrganizerItemLocalId& organizeritemId);
+    void setItemIds(const QList<QOrganizerItemLocalId>& organizeritemIds);
+    QList<QOrganizerItemLocalId> itemIds() const;
+
+    /* Results */
+    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+
+private:
+    Q_DISABLE_COPY(QOrganizerItemRemoveRequest)
+    friend class QOrganizerItemManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemRemoveRequest)
+};
+
+QTM_END_NAMESPACE
 
 #endif
-

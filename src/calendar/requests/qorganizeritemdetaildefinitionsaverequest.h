@@ -39,21 +39,42 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
+#ifndef QORGANIZERITEMDETAILDEFINITIONSAVEREQUEST_H
+#define QORGANIZERITEMDETAILDEFINITIONSAVEREQUEST_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemabstractrequest.h"
+#include "qorganizeritemdetaildefinition.h"
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+#include <QList>
+#include <QStringList>
 
-#include "qorganizeriteminstancefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemlocalidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemDetailDefinitionSaveRequestPrivate;
+class Q_CALENDAR_EXPORT QOrganizerItemDetailDefinitionSaveRequest : public QOrganizerItemAbstractRequest
+{
+    Q_OBJECT
+
+public:
+    QOrganizerItemDetailDefinitionSaveRequest(QObject* parent = 0);
+
+    /* Selection */
+    void setDefinition(const QOrganizerItemDetailDefinition& definition);
+    void setDefinitions(const QList<QOrganizerItemDetailDefinition>& definitions);
+    void setItemType(const QString& organizeritemType);
+    QString itemType() const;
+
+    /* Results */
+    QList<QOrganizerItemDetailDefinition> definitions() const;
+    QMap<int, QOrganizerItemManager::Error> errorMap() const;
+
+private:
+    Q_DISABLE_COPY(QOrganizerItemDetailDefinitionSaveRequest)
+    friend class QOrganizerItemManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemDetailDefinitionSaveRequest)
+};
+
+QTM_END_NAMESPACE
 
 #endif
-

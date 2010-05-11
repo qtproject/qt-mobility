@@ -39,21 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#ifndef QCONTACTINVALIDBACKEND_P_H
+#define QCONTACTINVALIDBACKEND_P_H
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qorganizeriteminstancefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemlocalidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+#include "qorganizeritemmanager.h"
+#include "qorganizeritemmanager_p.h"
+
+#include <QMap>
+#include <QString>
+
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemInvalidEngine : public QOrganizerItemManagerEngine
+{
+public:
+    QOrganizerItemInvalidEngine();
+    QString managerName() const;
+
+    /*! \reimp */
+    int managerVersion() const {return 0;}
+
+    /*! \reimp */
+    virtual QString synthesizedDisplayLabel(const QOrganizerItem&, QOrganizerItemManager::Error* error) const
+    {
+        *error =  QOrganizerItemManager::NotSupportedError;
+        return QString();
+    }
+
+    /*! \reimp */
+    virtual QOrganizerItem compatibleItem(const QOrganizerItem&, QOrganizerItemManager::Error* error) const
+    {
+        *error =  QOrganizerItemManager::NotSupportedError;
+        return QOrganizerItem();
+    }
+};
+
+QTM_END_NAMESPACE
 
 #endif
 

@@ -1,5 +1,4 @@
-INCLUDEPATH += details \
-    ./
+INCLUDEPATH += details
 
 PUBLIC_HEADERS += \
     details/qorganizeritemaccesscontrol.h \

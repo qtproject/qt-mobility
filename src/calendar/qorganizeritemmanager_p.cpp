@@ -104,7 +104,7 @@ void QOrganizerItemManagerData::createEngine(const QString& managerName, const Q
     if (builtManagerName == QLatin1String("memory")) {
         m_engine = QOrganizerItemMemoryEngine::createMemoryEngine(parameters);
     } else {
-        int implementationVersion = parameterValue(parameters, QTCONTACTS_IMPLEMENTATION_VERSION_NAME, -1);
+        int implementationVersion = parameterValue(parameters, QTORGANIZERITEM_IMPLEMENTATION_VERSION_NAME, -1);
 
         bool found = false;
         bool loadedDynamic = false;

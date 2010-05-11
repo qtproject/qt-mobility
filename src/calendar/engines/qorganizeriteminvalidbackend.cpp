@@ -39,21 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
+#include "qorganizeriteminvalidbackend_p.h"
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include <QSharedData>
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+/*!
+  \class QOrganizerItemInvalidEngine
+  \brief The QOrganizerItemInvalidEngine class provides an implementation of
+  QOrganizerItemManagerEngine whose functions always return an error.
+  
+  The invalid engine may be used as a reference or test engine, but does nothing.
+ */
 
-#include "qorganizeriteminstancefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemlocalidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+QTM_BEGIN_NAMESPACE
 
-#endif
+/*! Constructs a new invalid organizeritems backend. */
+QOrganizerItemInvalidEngine::QOrganizerItemInvalidEngine()
+{
+}
 
+/*! \reimp */
+QString QOrganizerItemInvalidEngine::managerName() const
+{
+    return QString(QLatin1String("invalid"));
+}
+
+QTM_END_NAMESPACE

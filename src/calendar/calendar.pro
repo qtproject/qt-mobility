@@ -13,6 +13,7 @@ include(details/details.pri)
 include(items/items.pri)
 include(requests/requests.pri)
 include(filters/filters.pri)
+include(engines/engines.pri)
 
 # Input
 PUBLIC_HEADERS += qorganizeritemabstractrequest.h \

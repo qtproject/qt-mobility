@@ -39,21 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMREQUESTS_H
-#define QORGANIZERITEMREQUESTS_H
+#ifndef QORGANIZERITEMINSTANCEFETCHREQUEST_H
+#define QORGANIZERITEMINSTANCEFETCHREQUEST_H
 
-// this file includes all of the asynchronous request
-// leaf classes that are included in the public API
+#include "qtorganizeritemsglobal.h"
+#include "qorganizeritemabstractrequest.h"
+#include "qorganizeritemsortorder.h"
+#include "qorganizeritemfilter.h"
+#include "qorganizeritem.h"
+#include "qorganizeritemfetchhint.h"
 
-#include "qorganizeritemdetaildefinitionfetchrequest.h"
-#include "qorganizeritemdetaildefinitionremoverequest.h"
-#include "qorganizeritemdetaildefinitionsaverequest.h"
+#include <QList>
+#include <QStringList>
 
-#include "qorganizeriteminstancefetchrequest.h"
-#include "qorganizeritemfetchrequest.h"
-#include "qorganizeritemlocalidfetchrequest.h"
-#include "qorganizeritemremoverequest.h"
-#include "qorganizeritemsaverequest.h"
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemInstanceFetchRequestPrivate;
+class Q_CALENDAR_EXPORT QOrganizerItemInstanceFetchRequest : public QOrganizerItemAbstractRequest
+{
+    Q_OBJECT
+
+public:
+    QOrganizerItemInstanceFetchRequest(QObject* parent = 0);
+
+    /* Selection, restriction and sorting */
+    void setFilter(const QOrganizerItemFilter& filter);
+    void setSorting(const QList<QOrganizerItemSortOrder>& sorting);
+    void setFetchHint(const QOrganizerItemFetchHint& fetchHint);
+    QOrganizerItemFilter filter() const;
+    QList<QOrganizerItemSortOrder> sorting() const;
+    QOrganizerItemFetchHint fetchHint() const;
+
+    /* Results */
+    QList<QOrganizerItem> items() const;
+
+private:
+    Q_DISABLE_COPY(QOrganizerItemInstanceFetchRequest)
+    friend class QOrganizerItemManagerEngine;
+    Q_DECLARE_PRIVATE_D(d_ptr, QOrganizerItemInstanceFetchRequest)
+};
+
+QTM_END_NAMESPACE
 
 #endif
-
