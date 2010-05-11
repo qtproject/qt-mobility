@@ -30,7 +30,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#description">description</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QUrl </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#iconUrl">iconUrl</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkCategoryId </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#id">id</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#isReadOnly">isReadOnly</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#name">name</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#setAttribute">setAttribute</a></b> ( const QString &amp; <i>key</i>, const QVariant &amp; <i>value</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategory.html#setDescription">setDescription</a></b> ( const QString &amp; <i>description</i> )</td></tr>
@@ -47,6 +46,7 @@
 <p>The QLandmarkCategory class designates a grouping of landmarks of similar type.</p>
 <p>Landmarks of similar type may be grouped together into categories, e.g&#x2e; restaurants, accommodation etc. A QLandmarkCategory object represents one of these and allows access to category properties such as description and icon url.</p>
 <p>More than one category can be assigned to a landmark. Assignment of a category to a landmark is achieved by using the <a href="qlandmark.html">QLandmark</a> class in conjunction with the <a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> class.</p>
+<p>Some categories may be designated as read-only. Typically these are intended to be &quot;global&quot; categories that are the same across landmark stores. In practicality, not all landmark stores may necessarily have the same set of global categories. Localization is only possible for categories that are read-only. If the landmark store supports localization, the locale may be set through a <a href="qlandmarkmanager.html">QLandmarkManager</a>'s parameters and whenever categories are retrieved, the translated names are used. The <tt>QLandmarkManager::isReadOnly(const QLandmarkCategoryId &amp;)</tt> function may be used to determine if a category is read-only.</p>
 <p>A QLandmarkCategory instance is an in memory representation and may not reflect the state of the category found in persistent storage, until the appropriate synchronization method is called on the <a href="qlandmarkmanager.html">QLandmarkManager</a>(e.g&#x2e;<a href="qlandmarkmanager.html#saveCategory">saveCategory()</a>, <a href="qlandmarkmanager.html#removeCategory">removeCategory()</a>).</p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -80,9 +80,6 @@
 <h3 class="fn"><a name="id"></a><a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a> QLandmarkCategory::id () const</h3>
 <p>Returns the identifier of the category.</p>
 <p>See also <a href="qlandmarkcategory.html#setId">setId</a>().</p>
-<a name="//apple_ref/cpp/instm/QLandmarkCategory/isReadOnly"></a>
-<h3 class="fn"><a name="isReadOnly"></a>bool QLandmarkCategory::isReadOnly () const</h3>
-<p>Returns whether the category is read-only.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkCategory/name"></a>
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QLandmarkCategory::name () const</h3>
 <p>Returns the name of the category.</p>

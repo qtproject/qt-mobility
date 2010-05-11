@@ -180,13 +180,13 @@
         <span class="comment">//retrieval via ids</span>
         QList&lt;QLandmarkId&gt; landmarkIds;
         QLandmarkNameSort sortOrder(Qt::AscendingOrder);
-        landmarkIds = lm-&gt;landmarkIds(&amp;filter, &amp;sortOrder);
+        landmarkIds = lm-&gt;landmarkIds(filter, sortOrder);
         foreach(QLandmarkId id, landmarkIds) {
             qDebug() &lt;&lt; &quot;Found landmark:&quot; &lt;&lt; lm-&gt;landmark(id).name();
         }</pre>
 <p>Or alternatively retrieve the landmark objects directly:</p>
 <pre>        QList&lt;QLandmark&gt; landmarks;
-        landmarks = lm-&gt;landmarks(&amp;filter, &amp;sortOrder);
+        landmarks = lm-&gt;landmarks(filter, sortOrder);
         foreach(QLandmark landmark, landmarks) {
             qDebug() &lt;&lt; &quot;Found landmark:&quot; &lt;&lt; landmark.name();
         }</pre>
@@ -234,8 +234,8 @@
 
         <span class="comment">//lmFetchRequest was created with lmFetchRequest = new QLandmarkFetchRequest(lmManager)</span>
         <span class="comment">//in the ctor, where lmManager is a QLandmarkManger *</span>
-        lmFetchRequest-&gt;setFilter(&amp;filter);
-        lmFetchRequest-&gt;setSorting(&amp;sort);
+        lmFetchRequest-&gt;setFilter(filter);
+        lmFetchRequest-&gt;setSorting(sort);
 
         connect(lmFetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
                 this, SLOT(landmarkFetchRequestHandler(QLandmarkAbstractRequest::State)));
