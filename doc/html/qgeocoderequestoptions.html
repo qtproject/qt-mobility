@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeocoderequestoptions.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGeoCodeRequestOptions Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoCodeRequestOptions"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoCodeRequestOptions Class Reference</h1>
+<p>The QGeoCodeRequestOptions class represents various options which may be specified when requesting geocoding information. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoCodeRequestOptions&gt;</pre><ul>
+<li><a href="qgeocoderequestoptions-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeocoderequestoptions.html#QGeoCodeRequestOptions">QGeoCodeRequestOptions</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeocoderequestoptions.html#QGeoCodeRequestOptions-2">QGeoCodeRequestOptions</a></b> ( const QGeoCodeRequestOptions &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeocoderequestoptions.html#dtor.QGeoCodeRequestOptions">~QGeoCodeRequestOptions</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeocoderequestoptions.html#maximumResponses">maximumResponses</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeocoderequestoptions.html#setMaximumResponses">setMaximumResponses</a></b> ( int <i>maximumResponses</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCodeRequestOptions &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeocoderequestoptions.html#operator-eq">operator=</a></b> ( const QGeoCodeRequestOptions &amp; <i>other</i> )</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoCodeRequestOptions class represents various options which may be specified when requesting geocoding information.</p>
+<p>The most common uses of the request methods in <a href="qgeocodingservice.html">QGeoCodingService</a> will use a single <a href="qgeocoordinate.html">QGeoCoordinate</a>, <a href="qgeoaddress.html">QGeoAddress</a> or <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> as their argument. A <a href="qgeoboundingbox.html">QGeoBoundingBox</a> can also be supplied to bias the results to a particular area.</p>
+<p>The QGeoCodeRequestOptions class represents the options corresponding to the more advanced (or less common) options which can be passed to the <a href="qgeocodingservice.html">QGeoCodingService</a> request methods.</p>
+<p>See also <a href="qgeocodingservice.html">QGeoCodingService</a>.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoCodeRequestOptions/QGeoCodeRequestOptions"></a>
+<h3 class="fn"><a name="QGeoCodeRequestOptions"></a>QGeoCodeRequestOptions::QGeoCodeRequestOptions ()</h3>
+<p>Constructs a QGeoCodingRequestOptions object.</p>
+<h3 class="fn"><a name="QGeoCodeRequestOptions-2"></a>QGeoCodeRequestOptions::QGeoCodeRequestOptions ( const QGeoCodeRequestOptions &amp; <i>other</i> )</h3>
+<p>Constructs a QGeoCodingRequestOptions object from <i>other</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoCodeRequestOptions/~QGeoCodeRequestOptions"></a>
+<h3 class="fn"><a name="dtor.QGeoCodeRequestOptions"></a>QGeoCodeRequestOptions::~QGeoCodeRequestOptions ()</h3>
+<p>Destroys this QGeoCodingRequestOptions object.</p>
+<a name="//apple_ref/cpp/instm/QGeoCodeRequestOptions/maximumResponses"></a>
+<h3 class="fn"><a name="maximumResponses"></a>int QGeoCodeRequestOptions::maximumResponses () const</h3>
+<p>Returns the maximum number of responses which will be requested.</p>
+<p>See also <a href="qgeocoderequestoptions.html#setMaximumResponses">QGeoCodeRequestOptions::setMaximumResponses</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoCodeRequestOptions/setMaximumResponses"></a>
+<h3 class="fn"><a name="setMaximumResponses"></a>void QGeoCodeRequestOptions::setMaximumResponses ( int <i>maximumResponses</i> )</h3>
+<p>Sets the maximum number of responses to request to <i>maximumResponses</i>.</p>
+<p>The default value if none is set is 1.</p>
+<p>See also <a href="qgeocoderequestoptions.html#maximumResponses">QGeoCodeRequestOptions::maximumResponses</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoCodeRequestOptions/operator="></a>
+<h3 class="fn"><a name="operator-eq"></a>QGeoCodeRequestOptions &amp; QGeoCodeRequestOptions::operator= ( const QGeoCodeRequestOptions &amp; <i>other</i> )</h3>
+<p>Assigns the value of <i>other</i> to this QGeoCodingRequestOptions object and returns a reference to this QGeoCodingRequestOptions object.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

@@ -46,8 +46,8 @@ using namespace std;
 
 QTM_BEGIN_NAMESPACE
 
-QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent) 
-    : QGeoPositionInfoSource(parent)
+QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent)
+        : QGeoPositionInfoSource(parent)
 {
     // default values
     availableMethods = SatellitePositioningMethods;

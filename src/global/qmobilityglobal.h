@@ -100,6 +100,11 @@
 #      else
 #        define Q_LOCATION_EXPORT Q_DECL_IMPORT
 #      endif
+#      if defined(QT_BUILD_LANDMARKS_LIB)
+#        define Q_LANDMARKS_EXPORT Q_DECL_EXPORT
+#      else
+#        define Q_LANDMARKS_EXPORT Q_DECL_IMPORT
+#      endif
 #      if defined(QT_BUILD_MESSAGING_LIB)
 #        define Q_MESSAGING_EXPORT Q_DECL_EXPORT
 #      else
@@ -131,6 +136,7 @@
 #      define Q_CONTACTS_EXPORT Q_DECL_IMPORT
 #      define Q_VERSIT_EXPORT Q_DECL_IMPORT
 #      define Q_LOCATION_EXPORT Q_DECL_IMPORT
+#      define Q_LANDMARKS_EXPORT Q_DECL_IMPORT
 #      define Q_MEDIA_EXPORT Q_DECL_IMPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
 #      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
@@ -146,6 +152,7 @@
 #      define Q_CONTACTS_EXPORT Q_DECL_EXPORT
 #      define Q_VERSIT_EXPORT Q_DECL_EXPORT
 #      define Q_LOCATION_EXPORT Q_DECL_EXPORT
+#      define Q_LANDMARKS_EXPORT Q_DECL_EXPORT
 #      define Q_MEDIA_EXPORT Q_DECL_EXPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_EXPORT
 #      define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
@@ -157,6 +164,7 @@
 #      define Q_CONTACTS_EXPORT
 #      define Q_VERSIT_EXPORT
 #      define Q_LOCATION_EXPORT
+#      define Q_LANDMARKS_EXPORT
 #      define Q_MEDIA_EXPORT
 #      define Q_MESSAGING_EXPORT
 #      define Q_SERVICEFW_EXPORT
@@ -186,3 +194,4 @@
 QT_USE_NAMESPACE
 
 #endif // QMOBILITYGLOBAL_H
+

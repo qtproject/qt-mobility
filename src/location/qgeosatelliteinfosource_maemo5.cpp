@@ -150,10 +150,10 @@ void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
 
 void QGeoSatelliteInfoSourceMaemo::satelliteStatus()
 {
-    QList<QGeoSatelliteInfo> satellitesInView = 
-            LiblocationWrapper::instance()->satellitesInView();
-    QList<QGeoSatelliteInfo> satellitesInUse = 
-            LiblocationWrapper::instance()->satellitesInUse();
+    QList<QGeoSatelliteInfo> satellitesInView =
+        LiblocationWrapper::instance()->satellitesInView();
+    QList<QGeoSatelliteInfo> satellitesInUse =
+        LiblocationWrapper::instance()->satellitesInUse();
 
     if (satelliteInfoState & QGeoSatelliteInfoSourceMaemo::RequestActive) {
         satelliteInfoState &= ~QGeoSatelliteInfoSourceMaemo::RequestActive;

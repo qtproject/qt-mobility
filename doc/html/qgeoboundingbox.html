@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeoboundingbox.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGeoBoundingBox Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoBoundingBox"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoBoundingBox Class Reference</h1>
+<p>The QGeoBoundingBox class defines a rectangular geographic area. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoBoundingBox&gt;</pre><ul>
+<li><a href="qgeoboundingbox-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#QGeoBoundingBox">QGeoBoundingBox</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#QGeoBoundingBox-2">QGeoBoundingBox</a></b> ( const QGeoBoundingBox &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#QGeoBoundingBox-3">QGeoBoundingBox</a></b> ( const QGeoCoordinate &amp; <i>upperLeft</i>, const QGeoCoordinate &amp; <i>lowerRight</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#dtor.QGeoBoundingBox">~QGeoBoundingBox</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#lowerRight">lowerRight</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#setLowerRight">setLowerRight</a></b> ( const QGeoCoordinate &amp; <i>lowerRight</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#setUpperLeft">setUpperLeft</a></b> ( const QGeoCoordinate &amp; <i>upperLeft</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#upperLeft">upperLeft</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoboundingbox.html#operator-eq">operator=</a></b> ( const QGeoBoundingBox &amp; <i>other</i> )</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoBoundingBox class defines a rectangular geographic area.</p>
+<p>The rectangular region is specified by the upper left and lower right coordinates.</p>
+<p>If either of these coordinates are invalid then the QGeoBoundingBox is considered to be invalid as well.</p>
+<p>The QGeoBoundingBox class is intended for use with the maps and navigation services. These services assume that the maps will be displayed using the Mercator projection, under which the poles of the map can be asymptotically approached but never reached.</p>
+<p>A consequence of this is that is not possible to specify a QGeoBoundingBox which is centred one one of the poles.</p>
+<p>Note that this would be possible if the rectangular region was defined by three coordiantes to eliminate potential ambiguity, however being able to specify such a region is not useful in this context.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/QGeoBoundingBox"></a>
+<h3 class="fn"><a name="QGeoBoundingBox"></a>QGeoBoundingBox::QGeoBoundingBox ()</h3>
+<p>Constructs a <a href="qgeoboundingbox.html">QGeoBoundingBox</a> object.</p>
+<p>The bounding box will be invalid until <a href="qgeoboundingbox.html#setUpperLeft">setUpperLeft</a>() and <a href="qgeoboundingbox.html#setLowerRight">setLowerRight</a>() have been called.</p>
+<h3 class="fn"><a name="QGeoBoundingBox-2"></a>QGeoBoundingBox::QGeoBoundingBox ( const QGeoBoundingBox &amp; <i>other</i> )</h3>
+<p>Constucts a <a href="qgeoboundingbox.html">QGeoBoundingBox</a> object from the contents of <i>other</i>.</p>
+<h3 class="fn"><a name="QGeoBoundingBox-3"></a>QGeoBoundingBox::QGeoBoundingBox ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>upperLeft</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>lowerRight</i> )</h3>
+<p>Constructs a <a href="qgeoboundingbox.html">QGeoBoundingBox</a> object with the given <i>upperLeft</i> and <i>lowerRight</i> coordinates.</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/~QGeoBoundingBox"></a>
+<h3 class="fn"><a name="dtor.QGeoBoundingBox"></a>QGeoBoundingBox::~QGeoBoundingBox ()</h3>
+<p>Destroys this <a href="qgeoboundingbox.html">QGeoBoundingBox</a> object.</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/isValid"></a>
+<h3 class="fn"><a name="isValid"></a>bool QGeoBoundingBox::isValid () const</h3>
+<p>Returns whether or not this <a href="qgeoboundingbox.html">QGeoBoundingBox</a> is valid.</p>
+<p>To be considered valid a <a href="qgeoboundingbox.html">QGeoBoundingBox</a> must have valid coordinates specified for the upper left and lower right coordinate.</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/lowerRight"></a>
+<h3 class="fn"><a name="lowerRight"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoBoundingBox::lowerRight () const</h3>
+<p>Returns the lower right coordinate.</p>
+<p>The returned value will be an invalid coordinate until the lower right coordinate has been set.</p>
+<p>See also <a href="qgeoboundingbox.html#setLowerRight">setLowerRight</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/setLowerRight"></a>
+<h3 class="fn"><a name="setLowerRight"></a>void QGeoBoundingBox::setLowerRight ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>lowerRight</i> )</h3>
+<p>Sets the lower right coordinate to <i>lowerRight</i>.</p>
+<p>See also <a href="qgeoboundingbox.html#lowerRight">lowerRight</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/setUpperLeft"></a>
+<h3 class="fn"><a name="setUpperLeft"></a>void QGeoBoundingBox::setUpperLeft ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>upperLeft</i> )</h3>
+<p>Sets the upper left coordinate to <i>upperLeft</i>.</p>
+<p>See also <a href="qgeoboundingbox.html#upperLeft">upperLeft</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/upperLeft"></a>
+<h3 class="fn"><a name="upperLeft"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoBoundingBox::upperLeft () const</h3>
+<p>Returns the upper left coordinate.</p>
+<p>The returned value will be an invalid coordinate until the upper left coordinate has been set.</p>
+<p>See also <a href="qgeoboundingbox.html#setUpperLeft">setUpperLeft</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoBoundingBox/operator="></a>
+<h3 class="fn"><a name="operator-eq"></a>QGeoBoundingBox &amp; QGeoBoundingBox::operator= ( const QGeoBoundingBox &amp; <i>other</i> )</h3>
+<p>Assigns <i>other</i> to this <a href="qgeoboundingbox.html">QGeoBoundingBox</a> and returns a reference to this <a href="qgeoboundingbox.html">QGeoBoundingBox</a>.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

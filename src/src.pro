@@ -40,6 +40,12 @@ contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5 {
     }
 }
 
+contains(mobility_modules,landmarks): SUBDIRS += landmarks
+
+landmarks.subdir=landmarks
+landmarks.target=sub-landmarks
+landmarks.depends=location
+
 symbian {
     SUBDIRS += s60installs/s60installs.pro
 }

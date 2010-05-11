@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qlandmarknearestfilter.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QLandmarkNearestFilter Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QLandmarkNearestFilter"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkNearestFilter Class Reference</h1>
+<p>The QLandmarkNearestFilter class is used to search for the landmark nearest to a given coordinate. <a href="#details">More...</a></p>
+<pre>    #include &lt;QLandmarkNearestFilter&gt;</pre><p>Inherits <a href="qlandmarkfilter.html">QLandmarkFilter</a>.</p>
+<ul>
+<li><a href="qlandmarknearestfilter-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknearestfilter.html#QLandmarkNearestFilter">QLandmarkNearestFilter</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> = QGeoCoordinate(), double <i>radius</i> = -1 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknearestfilter.html#QLandmarkNearestFilter-2">QLandmarkNearestFilter</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknearestfilter.html#dtor.QLandmarkNearestFilter">~QLandmarkNearestFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknearestfilter.html#coordinate">coordinate</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">double </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknearestfilter.html#radius">radius</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknearestfilter.html#setCoordinate">setCoordinate</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarknearestfilter.html#setRadius">setRadius</a></b> ( double <i>radius</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>6 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QLandmarkNearestFilter class is used to search for the landmark nearest to a given coordinate.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QLandmarkNearestFilter/QLandmarkNearestFilter"></a>
+<h3 class="fn"><a name="QLandmarkNearestFilter"></a>QLandmarkNearestFilter::QLandmarkNearestFilter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> = QGeoCoordinate(), double <i>radius</i> = -1 )</h3>
+<p>Creates a filter that will match the landmark nearest to a given central <i>coordinate</i>. Only landmarks within the given <i>radius</i> are considered candidates to be the nearest landmark. A negative value for <i>radius</i> means the <i>radius</i> is infinite.</p>
+<h3 class="fn"><a name="QLandmarkNearestFilter-2"></a>QLandmarkNearestFilter::QLandmarkNearestFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new nearest filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkNearestFilter/~QLandmarkNearestFilter"></a>
+<h3 class="fn"><a name="dtor.QLandmarkNearestFilter"></a>QLandmarkNearestFilter::~QLandmarkNearestFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkNearestFilter/coordinate"></a>
+<h3 class="fn"><a name="coordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QLandmarkNearestFilter::coordinate () const</h3>
+<p>Returns the central coordinate of the filter.</p>
+<p>See also <a href="qlandmarknearestfilter.html#setCoordinate">setCoordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkNearestFilter/radius"></a>
+<h3 class="fn"><a name="radius"></a>double QLandmarkNearestFilter::radius () const</h3>
+<p>Returns the maximum radius which this filter which seach for landmarks.</p>
+<p>A radius of a negative number indicades a radius of infinite distance.</p>
+<p>See also <a href="qlandmarknearestfilter.html#setRadius">setRadius</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkNearestFilter/setCoordinate"></a>
+<h3 class="fn"><a name="setCoordinate"></a>void QLandmarkNearestFilter::setCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )</h3>
+<p>Sets the central <i>coordinate</i> of the filter.</p>
+<p>See also <a href="qlandmarknearestfilter.html#coordinate">coordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkNearestFilter/setRadius"></a>
+<h3 class="fn"><a name="setRadius"></a>void QLandmarkNearestFilter::setRadius ( double <i>radius</i> )</h3>
+<p>Sets the maximum <i>radius</i> from which this filter will search for landmarks.</p>
+<p>Setting <i>radius</i> to a negative number means a radius of infinite distance.</p>
+<p>See also <a href="qlandmarknearestfilter.html#radius">radius</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

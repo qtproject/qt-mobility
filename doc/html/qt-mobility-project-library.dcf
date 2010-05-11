@@ -217,12 +217,12 @@
         <keyword ref="qcontactaddress.html#country">country</keyword>
         <keyword ref="qcontactaddress.html#locality">locality</keyword>
         <keyword ref="qcontactaddress.html#postOfficeBox">postOfficeBox</keyword>
-        <keyword ref="qcontactaddress.html#postcode">postcode</keyword>
+        <keyword ref="qcontactaddress.html#postcodex">postcode</keyword>
         <keyword ref="qcontactaddress.html#region">region</keyword>
         <keyword ref="qcontactaddress.html#setCountry">setCountry</keyword>
         <keyword ref="qcontactaddress.html#setLocality">setLocality</keyword>
         <keyword ref="qcontactaddress.html#setPostOfficeBox">setPostOfficeBox</keyword>
-        <keyword ref="qcontactaddress.html#setPostcode">setPostcode</keyword>
+        <keyword ref="qcontactaddress.html#setPostcodex">setPostcode</keyword>
         <keyword ref="qcontactaddress.html#setRegion">setRegion</keyword>
         <keyword ref="qcontactaddress.html#setStreet">setStreet</keyword>
         <keyword ref="qcontactaddress.html#setSubTypes">setSubTypes</keyword>
@@ -1137,6 +1137,34 @@
         <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
     </section>
+    <section ref="qgeoaddress.html" title="QGeoAddress Class Reference">
+        <keyword ref="qgeoaddress.html">QGeoAddress</keyword>
+        <keyword ref="qgeoaddress.html#city">city</keyword>
+        <keyword ref="qgeoaddress.html#country">country</keyword>
+        <keyword ref="qgeoaddress.html#countryCode">countryCode</keyword>
+        <keyword ref="qgeoaddress.html#county">county</keyword>
+        <keyword ref="qgeoaddress.html#district">district</keyword>
+        <keyword ref="qgeoaddress.html#isEmpty">isEmpty</keyword>
+        <keyword ref="qgeoaddress.html#postCode">postCode</keyword>
+        <keyword ref="qgeoaddress.html#postOfficeBox">postOfficeBox</keyword>
+        <keyword ref="qgeoaddress.html#setCity">setCity</keyword>
+        <keyword ref="qgeoaddress.html#setCountry">setCountry</keyword>
+        <keyword ref="qgeoaddress.html#setCountryCode">setCountryCode</keyword>
+        <keyword ref="qgeoaddress.html#setCounty">setCounty</keyword>
+        <keyword ref="qgeoaddress.html#setDistrict">setDistrict</keyword>
+        <keyword ref="qgeoaddress.html#setPostCode">setPostCode</keyword>
+        <keyword ref="qgeoaddress.html#setPostOfficeBox">setPostOfficeBox</keyword>
+        <keyword ref="qgeoaddress.html#setState">setState</keyword>
+        <keyword ref="qgeoaddress.html#setThoroughfareName">setThoroughfareName</keyword>
+        <keyword ref="qgeoaddress.html#setThoroughfareNumber">setThoroughfareNumber</keyword>
+        <keyword ref="qgeoaddress.html#state">state</keyword>
+        <keyword ref="qgeoaddress.html#thoroughfareName">thoroughfareName</keyword>
+        <keyword ref="qgeoaddress.html#thoroughfareNumber">thoroughfareNumber</keyword>
+        <keyword ref="qgeoaddress.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qgeoaddress.html#operator-eq">operator=</keyword>
+        <keyword ref="qgeoaddress.html#operator-eq-eq">operator==</keyword>
+        <section ref="qgeoaddress-members.html" title="List of all members"/>
+    </section>
     <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
         <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
         <keyword ref="qgeoareamonitor.html#center-prop">center</keyword>
@@ -1147,6 +1175,60 @@
         <keyword ref="qgeoareamonitor.html#areaExited">areaExited</keyword>
         <keyword ref="qgeoareamonitor.html#createDefaultMonitor">createDefaultMonitor</keyword>
         <section ref="qgeoareamonitor-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeoboundingbox.html" title="QGeoBoundingBox Class Reference">
+        <keyword ref="qgeoboundingbox.html">QGeoBoundingBox</keyword>
+        <keyword ref="qgeoboundingbox.html#isValid">isValid</keyword>
+        <keyword ref="qgeoboundingbox.html#lowerRight">lowerRight</keyword>
+        <keyword ref="qgeoboundingbox.html#setLowerRight">setLowerRight</keyword>
+        <keyword ref="qgeoboundingbox.html#setUpperLeft">setUpperLeft</keyword>
+        <keyword ref="qgeoboundingbox.html#upperLeft">upperLeft</keyword>
+        <keyword ref="qgeoboundingbox.html#operator-eq">operator=</keyword>
+        <section ref="qgeoboundingbox-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeocodereply.html" title="QGeoCodeReply Class Reference">
+        <keyword ref="qgeocodereply.html">QGeoCodeReply</keyword>
+        <keyword ref="qgeocodereply.html#cancel">cancel</keyword>
+        <keyword ref="qgeocodereply.html#error">error</keyword>
+        <keyword ref="qgeocodereply.html#finished">finished</keyword>
+        <keyword ref="qgeocodereply.html#locations">locations</keyword>
+        <keyword ref="qgeocodereply.html#setLocations">setLocations</keyword>
+        <section ref="qgeocodereply-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeocoderequestoptions.html" title="QGeoCodeRequestOptions Class Reference">
+        <keyword ref="qgeocoderequestoptions.html">QGeoCodeRequestOptions</keyword>
+        <keyword ref="qgeocoderequestoptions.html#maximumResponses">maximumResponses</keyword>
+        <keyword ref="qgeocoderequestoptions.html#setMaximumResponses">setMaximumResponses</keyword>
+        <keyword ref="qgeocoderequestoptions.html#operator-eq">operator=</keyword>
+        <section ref="qgeocoderequestoptions-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeocodingservice.html" title="QGeoCodingService Class Reference">
+        <keyword ref="qgeocodingservice.html">QGeoCodingService</keyword>
+        <keyword ref="qgeocodingservice.html#ErrorCode-enum">ErrorCode</keyword>
+        <keyword ref="qgeocodingservice.html#ErrorCode-enum">QGeoCodingService::NoError</keyword>
+        <keyword ref="qgeocodingservice.html#RequestOption-enum">RequestOption</keyword>
+        <keyword ref="qgeocodingservice.html#RequestOption-enum">QGeoCodingService::MaximumResults</keyword>
+        <keyword ref="qgeocodingservice.html#RequestOption-enum">QGeoCodingService::ViewportBiasing</keyword>
+        <keyword ref="qgeocodingservice.html#SupportLevel-enum">SupportLevel</keyword>
+        <keyword ref="qgeocodingservice.html#SupportLevel-enum">QGeoCodingService::NoSupportWithCurrentAuthorization</keyword>
+        <keyword ref="qgeocodingservice.html#SupportLevel-enum">QGeoCodingService::Supported</keyword>
+        <keyword ref="qgeocodingservice.html#SupportLevel-enum">QGeoCodingService::NoSupport</keyword>
+        <keyword ref="qgeocodingservice.html#SupportLevel-enum">QGeoCodingService::SupportedWithCurrentAuthorization</keyword>
+        <keyword ref="qgeocodingservice.html#geocode">geocode</keyword>
+        <keyword ref="qgeocodingservice.html#replyError">replyError</keyword>
+        <keyword ref="qgeocodingservice.html#replyFinished">replyFinished</keyword>
+        <keyword ref="qgeocodingservice.html#reverseGeocode">reverseGeocode</keyword>
+        <keyword ref="qgeocodingservice.html#setSupportedRequestOption">setSupportedRequestOption</keyword>
+        <keyword ref="qgeocodingservice.html#supportedRequestOption">supportedRequestOption</keyword>
+        <section ref="qgeocodingservice-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeocodingservice.html" title="QGeocodingService Class Reference">
+        <keyword ref="qgeocodingservice.html">QGeocodingService</keyword>
+        <keyword ref="qgeocodingservice.html#error">error</keyword>
+        <keyword ref="qgeocodingservice.html#finished">finished</keyword>
+        <keyword ref="qgeocodingservice.html#geocode">geocode</keyword>
+        <keyword ref="qgeocodingservice.html#reverseGeocode">reverseGeocode</keyword>
+        <section ref="qgeocodingservice-members.html" title="List of all members"/>
     </section>
     <section ref="qgeocoordinate.html" title="QGeoCoordinate Class Reference">
         <keyword ref="qgeocoordinate.html">QGeoCoordinate</keyword>
@@ -1176,6 +1258,86 @@
         <keyword ref="qgeocoordinate.html#operator-eq">operator=</keyword>
         <keyword ref="qgeocoordinate.html#operator-eq-eq">operator==</keyword>
         <section ref="qgeocoordinate-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeodistance.html" title="QGeoDistance Class Reference">
+        <keyword ref="qgeodistance.html">QGeoDistance</keyword>
+        <keyword ref="qgeodistance.html#DistanceUnits-enum">DistanceUnits</keyword>
+        <keyword ref="qgeodistance.html#DistanceUnits-enum">QGeoDistance::Metres</keyword>
+        <keyword ref="qgeodistance.html#DistanceUnits-enum">QGeoDistance::Miles</keyword>
+        <keyword ref="qgeodistance.html#DistanceUnits-enum">QGeoDistance::Kilometres</keyword>
+        <keyword ref="qgeodistance.html#convert">convert</keyword>
+        <keyword ref="qgeodistance.html#magnitude">magnitude</keyword>
+        <keyword ref="qgeodistance.html#setMagnitude">setMagnitude</keyword>
+        <keyword ref="qgeodistance.html#setUnits">setUnits</keyword>
+        <keyword ref="qgeodistance.html#units">units</keyword>
+        <keyword ref="qgeodistance.html#operator-eq">operator=</keyword>
+        <section ref="qgeodistance-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeolocation.html" title="QGeoLocation Class Reference">
+        <keyword ref="qgeolocation.html">QGeoLocation</keyword>
+        <keyword ref="qgeolocation.html#address">address</keyword>
+        <keyword ref="qgeolocation.html#boundingBox">boundingBox</keyword>
+        <keyword ref="qgeolocation.html#coordinate">coordinate</keyword>
+        <keyword ref="qgeolocation.html#setAddress">setAddress</keyword>
+        <keyword ref="qgeolocation.html#setBoundingBox">setBoundingBox</keyword>
+        <keyword ref="qgeolocation.html#setCoordinate">setCoordinate</keyword>
+        <keyword ref="qgeolocation.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qgeolocation.html#operator-eq">operator=</keyword>
+        <keyword ref="qgeolocation.html#operator-eq-eq">operator==</keyword>
+        <section ref="qgeolocation-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeomappingservice.html" title="QGeoMappingService Class Reference">
+        <keyword ref="qgeomappingservice.html">QGeoMappingService</keyword>
+        <keyword ref="qgeomappingservice.html#ErrorCode-enum">ErrorCode</keyword>
+        <keyword ref="qgeomappingservice.html#ErrorCode-enum">QGeoMappingService::NoError</keyword>
+        <keyword ref="qgeomappingservice.html#maximumImageSize">maximumImageSize</keyword>
+        <keyword ref="qgeomappingservice.html#maximumZoomLevel">maximumZoomLevel</keyword>
+        <keyword ref="qgeomappingservice.html#minimumImageSize">minimumImageSize</keyword>
+        <keyword ref="qgeomappingservice.html#minimumZoomLevel">minimumZoomLevel</keyword>
+        <keyword ref="qgeomappingservice.html#replyError">replyError</keyword>
+        <keyword ref="qgeomappingservice.html#replyFinished">replyFinished</keyword>
+        <keyword ref="qgeomappingservice.html#requestMap">requestMap</keyword>
+        <keyword ref="qgeomappingservice.html#setMaximumSize">setMaximumSize</keyword>
+        <keyword ref="qgeomappingservice.html#setMaximumZoomLevel">setMaximumZoomLevel</keyword>
+        <keyword ref="qgeomappingservice.html#setMinimumSize">setMinimumSize</keyword>
+        <keyword ref="qgeomappingservice.html#setMinimumZoomLevel">setMinimumZoomLevel</keyword>
+        <keyword ref="qgeomappingservice.html#setSupportedImageFormats">setSupportedImageFormats</keyword>
+        <keyword ref="qgeomappingservice.html#setSupportedMapTypes">setSupportedMapTypes</keyword>
+        <keyword ref="qgeomappingservice.html#supportedImageFormats">supportedImageFormats</keyword>
+        <keyword ref="qgeomappingservice.html#supportedMapTypes">supportedMapTypes</keyword>
+        <section ref="qgeomappingservice-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeomapreply.html" title="QGeoMapReply Class Reference">
+        <keyword ref="qgeomapreply.html">QGeoMapReply</keyword>
+        <keyword ref="qgeomapreply.html#cancel">cancel</keyword>
+        <keyword ref="qgeomapreply.html#error">error</keyword>
+        <keyword ref="qgeomapreply.html#finished">finished</keyword>
+        <keyword ref="qgeomapreply.html#mapImage">mapImage</keyword>
+        <keyword ref="qgeomapreply.html#setMapImage">setMapImage</keyword>
+        <section ref="qgeomapreply-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeomaprequestoptions.html" title="QGeoMapRequestOptions Class Reference">
+        <keyword ref="qgeomaprequestoptions.html">QGeoMapRequestOptions</keyword>
+        <keyword ref="qgeomaprequestoptions.html#imageFormat">imageFormat</keyword>
+        <keyword ref="qgeomaprequestoptions.html#mapType">mapType</keyword>
+        <keyword ref="qgeomaprequestoptions.html#setImageFormat">setImageFormat</keyword>
+        <keyword ref="qgeomaprequestoptions.html#setMapType">setMapType</keyword>
+        <keyword ref="qgeomaprequestoptions.html#operator-eq">operator=</keyword>
+        <section ref="qgeomaprequestoptions-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeonavigationinstruction.html" title="QGeoNavigationInstruction Class Reference">
+        <keyword ref="qgeonavigationinstruction.html">QGeoNavigationInstruction</keyword>
+        <keyword ref="qgeonavigationinstruction.html#InstructionType-enum">InstructionType</keyword>
+        <keyword ref="qgeonavigationinstruction.html#InstructionType-enum">QGeoNavigationInstruction::PrivateTransportInstruction</keyword>
+        <keyword ref="qgeonavigationinstruction.html#InstructionType-enum">QGeoNavigationInstruction::PublicTransportInstruction</keyword>
+        <keyword ref="qgeonavigationinstruction.html#InstructionType-enum">QGeoNavigationInstruction::NormalInstruction</keyword>
+        <keyword ref="qgeonavigationinstruction.html#InstructionType-enum">QGeoNavigationInstruction::TruckInstruction</keyword>
+        <keyword ref="qgeonavigationinstruction.html#instructionText">instructionText</keyword>
+        <keyword ref="qgeonavigationinstruction.html#position">position</keyword>
+        <keyword ref="qgeonavigationinstruction.html#setInstructionText">setInstructionText</keyword>
+        <keyword ref="qgeonavigationinstruction.html#setPosition">setPosition</keyword>
+        <keyword ref="qgeonavigationinstruction.html#type">type</keyword>
+        <section ref="qgeonavigationinstruction-members.html" title="List of all members"/>
     </section>
     <section ref="qgeopositioninfo.html" title="QGeoPositionInfo Class Reference">
         <keyword ref="qgeopositioninfo.html">QGeoPositionInfo</keyword>
@@ -1221,6 +1383,125 @@
         <keyword ref="qgeopositioninfosource.html#supportedPositioningMethods">supportedPositioningMethods</keyword>
         <keyword ref="qgeopositioninfosource.html#updateTimeout">updateTimeout</keyword>
         <section ref="qgeopositioninfosource-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeoroute.html" title="QGeoRoute Class Reference">
+        <keyword ref="qgeoroute.html">QGeoRoute</keyword>
+        <keyword ref="qgeoroute.html#boundingBox">boundingBox</keyword>
+        <keyword ref="qgeoroute.html#distance">distance</keyword>
+        <keyword ref="qgeoroute.html#maneuvers">maneuvers</keyword>
+        <keyword ref="qgeoroute.html#setBoundingBox">setBoundingBox</keyword>
+        <keyword ref="qgeoroute.html#setDistance">setDistance</keyword>
+        <keyword ref="qgeoroute.html#setManeuvers">setManeuvers</keyword>
+        <keyword ref="qgeoroute.html#setTimeOfArrival">setTimeOfArrival</keyword>
+        <keyword ref="qgeoroute.html#setTimeOfDeparture">setTimeOfDeparture</keyword>
+        <keyword ref="qgeoroute.html#timeOfArrival">timeOfArrival</keyword>
+        <keyword ref="qgeoroute.html#timeOfDeparture">timeOfDeparture</keyword>
+        <keyword ref="qgeoroute.html#operator-eq">operator=</keyword>
+        <section ref="qgeoroute-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeoroutereply.html" title="QGeoRouteReply Class Reference">
+        <keyword ref="qgeoroutereply.html">QGeoRouteReply</keyword>
+        <keyword ref="qgeoroutereply.html#cancel">cancel</keyword>
+        <keyword ref="qgeoroutereply.html#error">error</keyword>
+        <keyword ref="qgeoroutereply.html#finished">finished</keyword>
+        <keyword ref="qgeoroutereply.html#routes">routes</keyword>
+        <keyword ref="qgeoroutereply.html#setRoutes">setRoutes</keyword>
+        <section ref="qgeoroutereply-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeorouterequest.html" title="QGeoRouteRequest Class Reference">
+        <keyword ref="qgeorouterequest.html">QGeoRouteRequest</keyword>
+        <keyword ref="qgeorouterequest.html#RouteAvoid-enum">RouteAvoid</keyword>
+        <keyword ref="qgeorouterequest.html#RouteAvoid-enum">QGeoRouteRequest::Dirtroads</keyword>
+        <keyword ref="qgeorouterequest.html#RouteAvoid-enum">QGeoRouteRequest::Tunnels</keyword>
+        <keyword ref="qgeorouterequest.html#RouteAvoid-enum">QGeoRouteRequest::Tollroads</keyword>
+        <keyword ref="qgeorouterequest.html#RouteAvoid-enum">QGeoRouteRequest::RailFerries</keyword>
+        <keyword ref="qgeorouterequest.html#RouteAvoid-enum">QGeoRouteRequest::Highways</keyword>
+        <keyword ref="qgeorouterequest.html#RouteAvoid-enum">QGeoRouteRequest::Ferries</keyword>
+        <keyword ref="qgeorouterequest.html#RouteMode-enum">RouteMode</keyword>
+        <keyword ref="qgeorouterequest.html#RouteMode-enum">QGeoRouteRequest::Pedestrian</keyword>
+        <keyword ref="qgeorouterequest.html#RouteMode-enum">QGeoRouteRequest::PublicTransport</keyword>
+        <keyword ref="qgeorouterequest.html#RouteMode-enum">QGeoRouteRequest::Car</keyword>
+        <keyword ref="qgeorouterequest.html#RouteType-enum">RouteType</keyword>
+        <keyword ref="qgeorouterequest.html#RouteType-enum">QGeoRouteRequest::Fastest</keyword>
+        <keyword ref="qgeorouterequest.html#RouteType-enum">QGeoRouteRequest::Economic</keyword>
+        <keyword ref="qgeorouterequest.html#RouteType-enum">QGeoRouteRequest::Shortest</keyword>
+        <keyword ref="qgeorouterequest.html#addStopOver">addStopOver</keyword>
+        <keyword ref="qgeorouterequest.html#alternatives">alternatives</keyword>
+        <keyword ref="qgeorouterequest.html#arrivalTime">arrivalTime</keyword>
+        <keyword ref="qgeorouterequest.html#avoid">avoid</keyword>
+        <keyword ref="qgeorouterequest.html#departureTime">departureTime</keyword>
+        <keyword ref="qgeorouterequest.html#destination">destination</keyword>
+        <keyword ref="qgeorouterequest.html#language">language</keyword>
+        <keyword ref="qgeorouterequest.html#mode">mode</keyword>
+        <keyword ref="qgeorouterequest.html#removeStopOver">removeStopOver</keyword>
+        <keyword ref="qgeorouterequest.html#requestString">requestString</keyword>
+        <keyword ref="qgeorouterequest.html#setAlternatives">setAlternatives</keyword>
+        <keyword ref="qgeorouterequest.html#setArrivalTime">setArrivalTime</keyword>
+        <keyword ref="qgeorouterequest.html#setAvoid">setAvoid</keyword>
+        <keyword ref="qgeorouterequest.html#setDepartureTime">setDepartureTime</keyword>
+        <keyword ref="qgeorouterequest.html#setDestination">setDestination</keyword>
+        <keyword ref="qgeorouterequest.html#setLanguage">setLanguage</keyword>
+        <keyword ref="qgeorouterequest.html#setMode">setMode</keyword>
+        <keyword ref="qgeorouterequest.html#setSource">setSource</keyword>
+        <keyword ref="qgeorouterequest.html#setTotalResults">setTotalResults</keyword>
+        <keyword ref="qgeorouterequest.html#setType">setType</keyword>
+        <keyword ref="qgeorouterequest.html#source">source</keyword>
+        <keyword ref="qgeorouterequest.html#stopOvers">stopOvers</keyword>
+        <keyword ref="qgeorouterequest.html#totalResults">totalResults</keyword>
+        <keyword ref="qgeorouterequest.html#type">type</keyword>
+        <keyword ref="qgeorouterequest.html#version">version</keyword>
+        <section ref="qgeorouterequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeorouterequestoptions.html" title="QGeoRouteRequestOptions Class Reference">
+        <keyword ref="qgeorouterequestoptions.html">QGeoRouteRequestOptions</keyword>
+        <keyword ref="qgeorouterequestoptions.html#avoidFeatureTypes">avoidFeatureTypes</keyword>
+        <keyword ref="qgeorouterequestoptions.html#numberAlternativeRoutes">numberAlternativeRoutes</keyword>
+        <keyword ref="qgeorouterequestoptions.html#routeOptimization">routeOptimization</keyword>
+        <keyword ref="qgeorouterequestoptions.html#setAvoidFeatureTypes">setAvoidFeatureTypes</keyword>
+        <keyword ref="qgeorouterequestoptions.html#setNumberAlternativeRoutes">setNumberAlternativeRoutes</keyword>
+        <keyword ref="qgeorouterequestoptions.html#setRouteOptimization">setRouteOptimization</keyword>
+        <keyword ref="qgeorouterequestoptions.html#setTravelModes">setTravelModes</keyword>
+        <keyword ref="qgeorouterequestoptions.html#travelModes">travelModes</keyword>
+        <keyword ref="qgeorouterequestoptions.html#operator-eq">operator=</keyword>
+        <section ref="qgeorouterequestoptions-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeoroutesegment.html" title="QGeoRouteSegment Class Reference">
+        <keyword ref="qgeoroutesegment.html">QGeoRouteSegment</keyword>
+        <keyword ref="qgeoroutesegment.html#SegmentType-enum">SegmentType</keyword>
+        <keyword ref="qgeoroutesegment.html#SegmentType-enum">QGeoRouteSegment::PublicTransportSegment</keyword>
+        <keyword ref="qgeoroutesegment.html#SegmentType-enum">QGeoRouteSegment::TruckSegment</keyword>
+        <keyword ref="qgeoroutesegment.html#SegmentType-enum">QGeoRouteSegment::NormalSegment</keyword>
+        <keyword ref="qgeoroutesegment.html#SegmentType-enum">QGeoRouteSegment::PrivateTransportSegment</keyword>
+        <keyword ref="qgeoroutesegment.html#estimatedTravelTime">estimatedTravelTime</keyword>
+        <keyword ref="qgeoroutesegment.html#geometry">geometry</keyword>
+        <keyword ref="qgeoroutesegment.html#instructions">instructions</keyword>
+        <keyword ref="qgeoroutesegment.html#length">length</keyword>
+        <keyword ref="qgeoroutesegment.html#setEstimatedTravelTime">setEstimatedTravelTime</keyword>
+        <keyword ref="qgeoroutesegment.html#setGeometry">setGeometry</keyword>
+        <keyword ref="qgeoroutesegment.html#setInstructions">setInstructions</keyword>
+        <keyword ref="qgeoroutesegment.html#setLength">setLength</keyword>
+        <keyword ref="qgeoroutesegment.html#type">type</keyword>
+        <section ref="qgeoroutesegment-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeoroutingservice.html" title="QGeoRoutingService Class Reference">
+        <keyword ref="qgeoroutingservice.html">QGeoRoutingService</keyword>
+        <keyword ref="qgeoroutingservice.html#ErrorCode-enum">ErrorCode</keyword>
+        <keyword ref="qgeoroutingservice.html#ErrorCode-enum">QGeoRoutingService::NoError</keyword>
+        <keyword ref="qgeoroutingservice.html#replyError">replyError</keyword>
+        <keyword ref="qgeoroutingservice.html#replyFinished">replyFinished</keyword>
+        <keyword ref="qgeoroutingservice.html#requestRoute">requestRoute</keyword>
+        <keyword ref="qgeoroutingservice.html#setSupportedAvoidFeatureTypes">setSupportedAvoidFeatureTypes</keyword>
+        <keyword ref="qgeoroutingservice.html#setSupportedDirectionDetails">setSupportedDirectionDetails</keyword>
+        <keyword ref="qgeoroutingservice.html#setSupportedRouteOptimizations">setSupportedRouteOptimizations</keyword>
+        <keyword ref="qgeoroutingservice.html#setSupportedTravelModes">setSupportedTravelModes</keyword>
+        <keyword ref="qgeoroutingservice.html#setSupportsUpdatingRoutes">setSupportsUpdatingRoutes</keyword>
+        <keyword ref="qgeoroutingservice.html#supportedAvoidFeatureTypes">supportedAvoidFeatureTypes</keyword>
+        <keyword ref="qgeoroutingservice.html#supportedDirectionDetails">supportedDirectionDetails</keyword>
+        <keyword ref="qgeoroutingservice.html#supportedRouteOptimizations">supportedRouteOptimizations</keyword>
+        <keyword ref="qgeoroutingservice.html#supportedTravelModes">supportedTravelModes</keyword>
+        <keyword ref="qgeoroutingservice.html#supportsUpdatingRoutes">supportsUpdatingRoutes</keyword>
+        <keyword ref="qgeoroutingservice.html#updateRoute">updateRoute</keyword>
+        <section ref="qgeoroutingservice-members.html" title="List of all members"/>
     </section>
     <section ref="qgeosatelliteinfo.html" title="QGeoSatelliteInfo Class Reference">
         <keyword ref="qgeosatelliteinfo.html">QGeoSatelliteInfo</keyword>
@@ -1292,6 +1573,429 @@
         <keyword ref="qimageencodersettings.html#operator-eq-eq">operator==</keyword>
         <section ref="qimageencodersettings-members.html" title="List of all members"/>
     </section>
+    <section ref="qlandmark.html" title="QLandmark Class Reference">
+        <keyword ref="qlandmark.html">QLandmark</keyword>
+        <keyword ref="qlandmark.html#addCategory">addCategory</keyword>
+        <keyword ref="qlandmark.html#address">address</keyword>
+        <keyword ref="qlandmark.html#attribute">attribute</keyword>
+        <keyword ref="qlandmark.html#attributeKeys">attributeKeys</keyword>
+        <keyword ref="qlandmark.html#categories">categories</keyword>
+        <keyword ref="qlandmark.html#coordinate">coordinate</keyword>
+        <keyword ref="qlandmark.html#description">description</keyword>
+        <keyword ref="qlandmark.html#iconUrl">iconUrl</keyword>
+        <keyword ref="qlandmark.html#id">id</keyword>
+        <keyword ref="qlandmark.html#location">location</keyword>
+        <keyword ref="qlandmark.html#name">name</keyword>
+        <keyword ref="qlandmark.html#phone">phone</keyword>
+        <keyword ref="qlandmark.html#radius">radius</keyword>
+        <keyword ref="qlandmark.html#removeCategory">removeCategory</keyword>
+        <keyword ref="qlandmark.html#setAddress">setAddress</keyword>
+        <keyword ref="qlandmark.html#setAttribute">setAttribute</keyword>
+        <keyword ref="qlandmark.html#setCategories">setCategories</keyword>
+        <keyword ref="qlandmark.html#setCoordinate">setCoordinate</keyword>
+        <keyword ref="qlandmark.html#setDescription">setDescription</keyword>
+        <keyword ref="qlandmark.html#setIconUrl">setIconUrl</keyword>
+        <keyword ref="qlandmark.html#setId">setId</keyword>
+        <keyword ref="qlandmark.html#setLocation">setLocation</keyword>
+        <keyword ref="qlandmark.html#setName">setName</keyword>
+        <keyword ref="qlandmark.html#setPhone">setPhone</keyword>
+        <keyword ref="qlandmark.html#setRadius">setRadius</keyword>
+        <keyword ref="qlandmark.html#setUrl">setUrl</keyword>
+        <keyword ref="qlandmark.html#url">url</keyword>
+        <keyword ref="qlandmark.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qlandmark.html#operator-eq">operator=</keyword>
+        <keyword ref="qlandmark.html#operator-eq-eq">operator==</keyword>
+        <section ref="qlandmark-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkabstractrequest.html" title="QLandmarkAbstractRequest Class Reference">
+        <keyword ref="qlandmarkabstractrequest.html">QLandmarkAbstractRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">RequestType</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::LandmarkSaveRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::CategoryFetchRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::CategorySaveRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::ExportRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::CategoryIdFetchRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::LandmarkIdFetchRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::ImportRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::InvalidRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::LandmarkFetchRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::CategoryRemoveRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#RequestType-enum">QLandmarkAbstractRequest::LandmarkRemoveRequest</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#State-enum">State</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#State-enum">QLandmarkAbstractRequest::CanceledState</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#State-enum">QLandmarkAbstractRequest::InactiveState</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#State-enum">QLandmarkAbstractRequest::ActiveState</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#State-enum">QLandmarkAbstractRequest::FinishedState</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#cancel">cancel</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#error">error</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#errorString">errorString</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#isActive">isActive</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#isCanceled">isCanceled</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#isFinished">isFinished</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#isInactive">isInactive</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#manager">manager</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#setManager">setManager</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#start">start</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#state">state</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#stateChanged">stateChanged</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#type">type</keyword>
+        <keyword ref="qlandmarkabstractrequest.html#waitForFinished">waitForFinished</keyword>
+        <section ref="qlandmarkabstractrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkattributefilter.html" title="QLandmarkAttributeFilter Class Reference">
+        <keyword ref="qlandmarkattributefilter.html">QLandmarkAttributeFilter</keyword>
+        <keyword ref="qlandmarkattributefilter.html#attribute">attribute</keyword>
+        <keyword ref="qlandmarkattributefilter.html#attributeKeys">attributeKeys</keyword>
+        <keyword ref="qlandmarkattributefilter.html#clearAttributes">clearAttributes</keyword>
+        <keyword ref="qlandmarkattributefilter.html#removeAttribute">removeAttribute</keyword>
+        <keyword ref="qlandmarkattributefilter.html#setAttribute">setAttribute</keyword>
+        <section ref="qlandmarkattributefilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkboxfilter.html" title="QLandmarkBoxFilter Class Reference">
+        <keyword ref="qlandmarkboxfilter.html">QLandmarkBoxFilter</keyword>
+        <keyword ref="qlandmarkboxfilter.html#bottomRightCoordinate">bottomRightCoordinate</keyword>
+        <keyword ref="qlandmarkboxfilter.html#setBottomRightCoordinate">setBottomRightCoordinate</keyword>
+        <keyword ref="qlandmarkboxfilter.html#setTopLeftCoordinate">setTopLeftCoordinate</keyword>
+        <keyword ref="qlandmarkboxfilter.html#topLeftCoordinate">topLeftCoordinate</keyword>
+        <section ref="qlandmarkboxfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkcategory.html" title="QLandmarkCategory Class Reference">
+        <keyword ref="qlandmarkcategory.html">QLandmarkCategory</keyword>
+        <keyword ref="qlandmarkcategory.html#attribute">attribute</keyword>
+        <keyword ref="qlandmarkcategory.html#attributes">attributes</keyword>
+        <keyword ref="qlandmarkcategory.html#description">description</keyword>
+        <keyword ref="qlandmarkcategory.html#iconUrl">iconUrl</keyword>
+        <keyword ref="qlandmarkcategory.html#id">id</keyword>
+        <keyword ref="qlandmarkcategory.html#name">name</keyword>
+        <keyword ref="qlandmarkcategory.html#setAttribute">setAttribute</keyword>
+        <keyword ref="qlandmarkcategory.html#setDescription">setDescription</keyword>
+        <keyword ref="qlandmarkcategory.html#setIconUrl">setIconUrl</keyword>
+        <keyword ref="qlandmarkcategory.html#setId">setId</keyword>
+        <keyword ref="qlandmarkcategory.html#setName">setName</keyword>
+        <keyword ref="qlandmarkcategory.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qlandmarkcategory.html#operator-eq">operator=</keyword>
+        <keyword ref="qlandmarkcategory.html#operator-eq-eq">operator==</keyword>
+        <section ref="qlandmarkcategory-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkcategoryfetchrequest.html" title="QLandmarkCategoryFetchRequest Class Reference">
+        <keyword ref="qlandmarkcategoryfetchrequest.html">QLandmarkCategoryFetchRequest</keyword>
+        <keyword ref="qlandmarkcategoryfetchrequest.html#categories">categories</keyword>
+        <section ref="qlandmarkcategoryfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkcategoryfilter.html" title="QLandmarkCategoryFilter Class Reference">
+        <keyword ref="qlandmarkcategoryfilter.html">QLandmarkCategoryFilter</keyword>
+        <keyword ref="qlandmarkcategoryfilter.html#categoryId">categoryId</keyword>
+        <keyword ref="qlandmarkcategoryfilter.html#setCategoryId">setCategoryId</keyword>
+        <section ref="qlandmarkcategoryfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkcategoryid.html" title="QLandmarkCategoryId Class Reference">
+        <keyword ref="qlandmarkcategoryid.html">QLandmarkCategoryId</keyword>
+        <keyword ref="qlandmarkcategoryid.html#id">id</keyword>
+        <keyword ref="qlandmarkcategoryid.html#isValid">isValid</keyword>
+        <keyword ref="qlandmarkcategoryid.html#managerUri">managerUri</keyword>
+        <keyword ref="qlandmarkcategoryid.html#setId">setId</keyword>
+        <keyword ref="qlandmarkcategoryid.html#setManagerUri">setManagerUri</keyword>
+        <keyword ref="qlandmarkcategoryid.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qlandmarkcategoryid.html#operator-eq">operator=</keyword>
+        <keyword ref="qlandmarkcategoryid.html#operator-eq-eq">operator==</keyword>
+        <section ref="qlandmarkcategoryid-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkcategoryidfetchrequest.html" title="QLandmarkCategoryIdFetchRequest Class Reference">
+        <keyword ref="qlandmarkcategoryidfetchrequest.html">QLandmarkCategoryIdFetchRequest</keyword>
+        <keyword ref="qlandmarkcategoryidfetchrequest.html#ids">ids</keyword>
+        <section ref="qlandmarkcategoryidfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkcategoryremoverequest.html" title="QLandmarkCategoryRemoveRequest Class Reference">
+        <keyword ref="qlandmarkcategoryremoverequest.html">QLandmarkCategoryRemoveRequest</keyword>
+        <keyword ref="qlandmarkcategoryremoverequest.html#categoryIds">categoryIds</keyword>
+        <keyword ref="qlandmarkcategoryremoverequest.html#errorMap">errorMap</keyword>
+        <keyword ref="qlandmarkcategoryremoverequest.html#setCategoryId">setCategoryId</keyword>
+        <keyword ref="qlandmarkcategoryremoverequest.html#setCategoryIds">setCategoryIds</keyword>
+        <section ref="qlandmarkcategoryremoverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkcategorysaverequest.html" title="QLandmarkCategorySaveRequest Class Reference">
+        <keyword ref="qlandmarkcategorysaverequest.html">QLandmarkCategorySaveRequest</keyword>
+        <keyword ref="qlandmarkcategorysaverequest.html#categories">categories</keyword>
+        <keyword ref="qlandmarkcategorysaverequest.html#errorMap">errorMap</keyword>
+        <keyword ref="qlandmarkcategorysaverequest.html#setCategories">setCategories</keyword>
+        <keyword ref="qlandmarkcategorysaverequest.html#setCategory">setCategory</keyword>
+        <section ref="qlandmarkcategorysaverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkdistancesort.html" title="QLandmarkDistanceSort Class Reference">
+        <keyword ref="qlandmarkdistancesort.html">QLandmarkDistanceSort</keyword>
+        <keyword ref="qlandmarkdistancesort.html#coordinate">coordinate</keyword>
+        <keyword ref="qlandmarkdistancesort.html#setCoordinate">setCoordinate</keyword>
+        <section ref="qlandmarkdistancesort-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkexportrequest.html" title="QLandmarkExportRequest Class Reference">
+        <keyword ref="qlandmarkexportrequest.html">QLandmarkExportRequest</keyword>
+        <keyword ref="qlandmarkexportrequest.html#device">device</keyword>
+        <keyword ref="qlandmarkexportrequest.html#fileName">fileName</keyword>
+        <keyword ref="qlandmarkexportrequest.html#format">format</keyword>
+        <keyword ref="qlandmarkexportrequest.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkexportrequest.html#setDevice">setDevice</keyword>
+        <keyword ref="qlandmarkexportrequest.html#setFileName">setFileName</keyword>
+        <keyword ref="qlandmarkexportrequest.html#setFormat">setFormat</keyword>
+        <keyword ref="qlandmarkexportrequest.html#setLandmarkIds">setLandmarkIds</keyword>
+        <section ref="qlandmarkexportrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkfetchrequest.html" title="QLandmarkFetchRequest Class Reference">
+        <keyword ref="qlandmarkfetchrequest.html">QLandmarkFetchRequest</keyword>
+        <keyword ref="qlandmarkfetchrequest.html#filter">filter</keyword>
+        <keyword ref="qlandmarkfetchrequest.html#landmarks">landmarks</keyword>
+        <keyword ref="qlandmarkfetchrequest.html#setFilter">setFilter</keyword>
+        <keyword ref="qlandmarkfetchrequest.html#setSorting">setSorting</keyword>
+        <keyword ref="qlandmarkfetchrequest.html#sorting">sorting</keyword>
+        <section ref="qlandmarkfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkfilter.html" title="QLandmarkFilter Class Reference">
+        <keyword ref="qlandmarkfilter.html">QLandmarkFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">FilterType</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::InvalidFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::ProximityFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::UnionFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::DefaultFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::NameFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::NearestFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::IntersectionFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::AttributeFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::CategoryFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::BoxFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#maximumMatches">maximumMatches</keyword>
+        <keyword ref="qlandmarkfilter.html#setMaximumMatches">setMaximumMatches</keyword>
+        <keyword ref="qlandmarkfilter.html#type">type</keyword>
+        <keyword ref="qlandmarkfilter.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qlandmarkfilter.html#operator-eq">operator=</keyword>
+        <keyword ref="qlandmarkfilter.html#operator-eq-eq">operator==</keyword>
+        <section ref="qlandmarkfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkid.html" title="QLandmarkId Class Reference">
+        <keyword ref="qlandmarkid.html">QLandmarkId</keyword>
+        <keyword ref="qlandmarkid.html#id">id</keyword>
+        <keyword ref="qlandmarkid.html#isValid">isValid</keyword>
+        <keyword ref="qlandmarkid.html#managerUri">managerUri</keyword>
+        <keyword ref="qlandmarkid.html#setId">setId</keyword>
+        <keyword ref="qlandmarkid.html#setManagerUri">setManagerUri</keyword>
+        <keyword ref="qlandmarkid.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qlandmarkid.html#operator-eq">operator=</keyword>
+        <keyword ref="qlandmarkid.html#operator-eq-eq">operator==</keyword>
+        <section ref="qlandmarkid-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkidfetchrequest.html" title="QLandmarkIdFetchRequest Class Reference">
+        <keyword ref="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</keyword>
+        <keyword ref="qlandmarkidfetchrequest.html#filter">filter</keyword>
+        <keyword ref="qlandmarkidfetchrequest.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkidfetchrequest.html#setFilter">setFilter</keyword>
+        <keyword ref="qlandmarkidfetchrequest.html#setSorting">setSorting</keyword>
+        <keyword ref="qlandmarkidfetchrequest.html#sorting">sorting</keyword>
+        <section ref="qlandmarkidfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkimportrequest.html" title="QLandmarkImportRequest Class Reference">
+        <keyword ref="qlandmarkimportrequest.html">QLandmarkImportRequest</keyword>
+        <keyword ref="qlandmarkimportrequest.html#device">device</keyword>
+        <keyword ref="qlandmarkimportrequest.html#fileName">fileName</keyword>
+        <keyword ref="qlandmarkimportrequest.html#format">format</keyword>
+        <keyword ref="qlandmarkimportrequest.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkimportrequest.html#setDevice">setDevice</keyword>
+        <keyword ref="qlandmarkimportrequest.html#setFileName">setFileName</keyword>
+        <keyword ref="qlandmarkimportrequest.html#setFormat">setFormat</keyword>
+        <section ref="qlandmarkimportrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkintersectionfilter.html" title="QLandmarkIntersectionFilter Class Reference">
+        <keyword ref="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</keyword>
+        <keyword ref="qlandmarkintersectionfilter.html#append">append</keyword>
+        <keyword ref="qlandmarkintersectionfilter.html#filters">filters</keyword>
+        <keyword ref="qlandmarkintersectionfilter.html#prepend">prepend</keyword>
+        <keyword ref="qlandmarkintersectionfilter.html#remove">remove</keyword>
+        <keyword ref="qlandmarkintersectionfilter.html#setFilters">setFilters</keyword>
+        <keyword ref="qlandmarkintersectionfilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
+        <section ref="qlandmarkintersectionfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkmanager.html" title="QLandmarkManager Class Reference">
+        <keyword ref="qlandmarkmanager.html">QLandmarkManager</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">Error</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::AlreadyExistsError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::NoError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::UnknownError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::DoesNotExistError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::OutOfMemoryError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::BadArgumentError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::PermissionsError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::VersionMismatchError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::LockedError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::InvalidManagerError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::NotSupportedError</keyword>
+        <keyword ref="qlandmarkmanager.html#Format-enum">Format</keyword>
+        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::GPSExchange</keyword>
+        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::CommaSeparatedValues</keyword>
+        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::LandmarkExchange</keyword>
+        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::KeyholeMarkupLanguage</keyword>
+        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::Custom</keyword>
+        <keyword ref="qlandmarkmanager.html#availableManagers">availableManagers</keyword>
+        <keyword ref="qlandmarkmanager.html#buildUri">buildUri</keyword>
+        <keyword ref="qlandmarkmanager.html#categories">categories</keyword>
+        <keyword ref="qlandmarkmanager.html#categoriesAdded">categoriesAdded</keyword>
+        <keyword ref="qlandmarkmanager.html#categoriesChanged">categoriesChanged</keyword>
+        <keyword ref="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</keyword>
+        <keyword ref="qlandmarkmanager.html#category">category</keyword>
+        <keyword ref="qlandmarkmanager.html#categoryIds">categoryIds</keyword>
+        <keyword ref="qlandmarkmanager.html#dataChanged">dataChanged</keyword>
+        <keyword ref="qlandmarkmanager.html#error">error</keyword>
+        <keyword ref="qlandmarkmanager.html#errorString">errorString</keyword>
+        <keyword ref="qlandmarkmanager.html#exportLandmarks">exportLandmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#fromUri">fromUri</keyword>
+        <keyword ref="qlandmarkmanager.html#importLandmarks">importLandmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#isFilterSupported">isFilterSupported</keyword>
+        <keyword ref="qlandmarkmanager.html#isReadOnly">isReadOnly</keyword>
+        <keyword ref="qlandmarkmanager.html#landmark">landmark</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarks">landmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarksAdded">landmarksAdded</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarksChanged">landmarksChanged</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarksRemoved">landmarksRemoved</keyword>
+        <keyword ref="qlandmarkmanager.html#managerName">managerName</keyword>
+        <keyword ref="qlandmarkmanager.html#managerParameters">managerParameters</keyword>
+        <keyword ref="qlandmarkmanager.html#managerUri">managerUri</keyword>
+        <keyword ref="qlandmarkmanager.html#managerVersion">managerVersion</keyword>
+        <keyword ref="qlandmarkmanager.html#parseUri">parseUri</keyword>
+        <keyword ref="qlandmarkmanager.html#removeCategory">removeCategory</keyword>
+        <keyword ref="qlandmarkmanager.html#removeLandmark">removeLandmark</keyword>
+        <keyword ref="qlandmarkmanager.html#removeLandmarks">removeLandmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#saveCategory">saveCategory</keyword>
+        <keyword ref="qlandmarkmanager.html#saveLandmark">saveLandmark</keyword>
+        <keyword ref="qlandmarkmanager.html#saveLandmarks">saveLandmarks</keyword>
+        <section ref="qlandmarkmanager-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkmanagerengine.html" title="QLandmarkManagerEngine Class Reference">
+        <keyword ref="qlandmarkmanagerengine.html">QLandmarkManagerEngine</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#addSorted">addSorted</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#cancelRequest">cancelRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#categories">categories</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#categoriesAdded">categoriesAdded</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#categoriesChanged">categoriesChanged</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#categoriesRemoved">categoriesRemoved</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#category">category</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#categoryIds">categoryIds</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#compareDistance">compareDistance</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#compareLandmark">compareLandmark</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#compareName">compareName</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#dataChanged">dataChanged</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#exportLandmarks">exportLandmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#importLandmarks">importLandmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#isFilterSupported">isFilterSupported</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#isReadOnly">isReadOnly</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#landmark">landmark</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#landmarks">landmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#landmarksAdded">landmarksAdded</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#landmarksChanged">landmarksChanged</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#landmarksRemoved">landmarksRemoved</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#managerName">managerName</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#managerParameters">managerParameters</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#managerUri">managerUri</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#managerVersion">managerVersion</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#removeCategory">removeCategory</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#removeLandmark">removeLandmark</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#removeLandmarks">removeLandmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#requestDestroyed">requestDestroyed</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#saveCategory">saveCategory</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#saveLandmark">saveLandmark</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#saveLandmarks">saveLandmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#sortLandmarks">sortLandmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#startRequest">startRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#testFilter">testFilter</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkCategoryFetchRequest">updateLandmarkCategoryFetchRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkCategoryIdFetchRequest">updateLandmarkCategoryIdFetchRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkCategoryRemoveRequest">updateLandmarkCategoryRemoveRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkCategorySaveRequest">updateLandmarkCategorySaveRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkExportRequest">updateLandmarkExportRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkFetchRequest">updateLandmarkFetchRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkIdFetchRequest">updateLandmarkIdFetchRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkImportRequest">updateLandmarkImportRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkRemoveRequest">updateLandmarkRemoveRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateLandmarkSaveRequest">updateLandmarkSaveRequest</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#updateRequestState">updateRequestState</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
+        <section ref="qlandmarkmanagerengine-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkmanagerenginefactory.html" title="QLandmarkManagerEngineFactory Class Reference">
+        <keyword ref="qlandmarkmanagerenginefactory.html">QLandmarkManagerEngineFactory</keyword>
+        <keyword ref="qlandmarkmanagerenginefactory.html#engine">engine</keyword>
+        <keyword ref="qlandmarkmanagerenginefactory.html#managerName">managerName</keyword>
+        <keyword ref="qlandmarkmanagerenginefactory.html#supportedImplementationVersions">supportedImplementationVersions</keyword>
+        <section ref="qlandmarkmanagerenginefactory-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarknamefilter.html" title="QLandmarkNameFilter Class Reference">
+        <keyword ref="qlandmarknamefilter.html">QLandmarkNameFilter</keyword>
+        <keyword ref="qlandmarknamefilter.html#caseSensitivity">caseSensitivity</keyword>
+        <keyword ref="qlandmarknamefilter.html#name">name</keyword>
+        <keyword ref="qlandmarknamefilter.html#setCaseSensitivity">setCaseSensitivity</keyword>
+        <keyword ref="qlandmarknamefilter.html#setName">setName</keyword>
+        <section ref="qlandmarknamefilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarknamesort.html" title="QLandmarkNameSort Class Reference">
+        <keyword ref="qlandmarknamesort.html">QLandmarkNameSort</keyword>
+        <keyword ref="qlandmarknamesort.html#caseSensitivity">caseSensitivity</keyword>
+        <keyword ref="qlandmarknamesort.html#setCaseSensitivity">setCaseSensitivity</keyword>
+        <section ref="qlandmarknamesort-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarknearestfilter.html" title="QLandmarkNearestFilter Class Reference">
+        <keyword ref="qlandmarknearestfilter.html">QLandmarkNearestFilter</keyword>
+        <keyword ref="qlandmarknearestfilter.html#coordinate">coordinate</keyword>
+        <keyword ref="qlandmarknearestfilter.html#radius">radius</keyword>
+        <keyword ref="qlandmarknearestfilter.html#setCoordinate">setCoordinate</keyword>
+        <keyword ref="qlandmarknearestfilter.html#setRadius">setRadius</keyword>
+        <section ref="qlandmarknearestfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkproximityfilter.html" title="QLandmarkProximityFilter Class Reference">
+        <keyword ref="qlandmarkproximityfilter.html">QLandmarkProximityFilter</keyword>
+        <keyword ref="qlandmarkproximityfilter.html#coordinate">coordinate</keyword>
+        <keyword ref="qlandmarkproximityfilter.html#radius">radius</keyword>
+        <keyword ref="qlandmarkproximityfilter.html#setCoordinate">setCoordinate</keyword>
+        <keyword ref="qlandmarkproximityfilter.html#setRadius">setRadius</keyword>
+        <section ref="qlandmarkproximityfilter-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkremoverequest.html" title="QLandmarkRemoveRequest Class Reference">
+        <keyword ref="qlandmarkremoverequest.html">QLandmarkRemoveRequest</keyword>
+        <keyword ref="qlandmarkremoverequest.html#errorMap">errorMap</keyword>
+        <keyword ref="qlandmarkremoverequest.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkremoverequest.html#setLandmarkId">setLandmarkId</keyword>
+        <keyword ref="qlandmarkremoverequest.html#setLandmarkIds">setLandmarkIds</keyword>
+        <section ref="qlandmarkremoverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarksaverequest.html" title="QLandmarkSaveRequest Class Reference">
+        <keyword ref="qlandmarksaverequest.html">QLandmarkSaveRequest</keyword>
+        <keyword ref="qlandmarksaverequest.html#errorMap">errorMap</keyword>
+        <keyword ref="qlandmarksaverequest.html#landmarks">landmarks</keyword>
+        <keyword ref="qlandmarksaverequest.html#setLandmark">setLandmark</keyword>
+        <keyword ref="qlandmarksaverequest.html#setLandmarks">setLandmarks</keyword>
+        <section ref="qlandmarksaverequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarksortorder.html" title="QLandmarkSortOrder Class Reference">
+        <keyword ref="qlandmarksortorder.html">QLandmarkSortOrder</keyword>
+        <keyword ref="qlandmarksortorder.html#SortType-enum">SortType</keyword>
+        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::NameSort</keyword>
+        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::DefaultSort</keyword>
+        <keyword ref="qlandmarksortorder.html#SortType-enum">QLandmarkSortOrder::DistanceSort</keyword>
+        <keyword ref="qlandmarksortorder.html#direction">direction</keyword>
+        <keyword ref="qlandmarksortorder.html#setDirection">setDirection</keyword>
+        <keyword ref="qlandmarksortorder.html#type">type</keyword>
+        <keyword ref="qlandmarksortorder.html#operator-not-eq">operator!=</keyword>
+        <keyword ref="qlandmarksortorder.html#operator-eq">operator=</keyword>
+        <keyword ref="qlandmarksortorder.html#operator-eq-eq">operator==</keyword>
+        <section ref="qlandmarksortorder-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkunionfilter.html" title="QLandmarkUnionFilter Class Reference">
+        <keyword ref="qlandmarkunionfilter.html">QLandmarkUnionFilter</keyword>
+        <keyword ref="qlandmarkunionfilter.html#append">append</keyword>
+        <keyword ref="qlandmarkunionfilter.html#filters">filters</keyword>
+        <keyword ref="qlandmarkunionfilter.html#prepend">prepend</keyword>
+        <keyword ref="qlandmarkunionfilter.html#remove">remove</keyword>
+        <keyword ref="qlandmarkunionfilter.html#setFilters">setFilters</keyword>
+        <keyword ref="qlandmarkunionfilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
+        <section ref="qlandmarkunionfilter-members.html" title="List of all members"/>
+    </section>
     <section ref="qlatin1constant.html" title="QLatin1Constant Class Reference">
         <keyword ref="qlatin1constant.html">QLatin1Constant</keyword>
         <keyword ref="qlatin1constant.html#latin1">latin1</keyword>
@@ -1323,6 +2027,192 @@
         <keyword ref="qmagnetometerreading.html#setY">setY</keyword>
         <keyword ref="qmagnetometerreading.html#setZ">setZ</keyword>
         <section ref="qmagnetometerreading-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmaneuver.html" title="QManeuver Class Reference">
+        <keyword ref="qmaneuver.html">QManeuver</keyword>
+        <keyword ref="qmaneuver.html#action">action</keyword>
+        <keyword ref="qmaneuver.html#description">description</keyword>
+        <keyword ref="qmaneuver.html#distance">distance</keyword>
+        <keyword ref="qmaneuver.html#duration">duration</keyword>
+        <keyword ref="qmaneuver.html#icon">icon</keyword>
+        <keyword ref="qmaneuver.html#maneuverPoints">maneuverPoints</keyword>
+        <keyword ref="qmaneuver.html#nextStreetName">nextStreetName</keyword>
+        <keyword ref="qmaneuver.html#routeName">routeName</keyword>
+        <keyword ref="qmaneuver.html#setAction">setAction</keyword>
+        <keyword ref="qmaneuver.html#setDescription">setDescription</keyword>
+        <keyword ref="qmaneuver.html#setDistance">setDistance</keyword>
+        <keyword ref="qmaneuver.html#setDuration">setDuration</keyword>
+        <keyword ref="qmaneuver.html#setIcon">setIcon</keyword>
+        <keyword ref="qmaneuver.html#setManeuverPoints">setManeuverPoints</keyword>
+        <keyword ref="qmaneuver.html#setNextStreetName">setNextStreetName</keyword>
+        <keyword ref="qmaneuver.html#setRouteName">setRouteName</keyword>
+        <keyword ref="qmaneuver.html#setSignPost">setSignPost</keyword>
+        <keyword ref="qmaneuver.html#setStreetName">setStreetName</keyword>
+        <keyword ref="qmaneuver.html#setTrafficDirection">setTrafficDirection</keyword>
+        <keyword ref="qmaneuver.html#setTurn">setTurn</keyword>
+        <keyword ref="qmaneuver.html#setWaypoints">setWaypoints</keyword>
+        <keyword ref="qmaneuver.html#signPost">signPost</keyword>
+        <keyword ref="qmaneuver.html#streetName">streetName</keyword>
+        <keyword ref="qmaneuver.html#trafficDirection">trafficDirection</keyword>
+        <keyword ref="qmaneuver.html#turn">turn</keyword>
+        <keyword ref="qmaneuver.html#wayPoints">wayPoints</keyword>
+        <keyword ref="qmaneuver.html#operator-eq">operator=</keyword>
+        <section ref="qmaneuver-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmapellipse.html" title="QMapEllipse Class Reference">
+        <keyword ref="qmapellipse.html">QMapEllipse</keyword>
+        <keyword ref="qmapellipse.html#bottomRight">bottomRight</keyword>
+        <keyword ref="qmapellipse.html#brush">brush</keyword>
+        <keyword ref="qmapellipse.html#compMapCoords">compMapCoords</keyword>
+        <keyword ref="qmapellipse.html#intersects">intersects</keyword>
+        <keyword ref="qmapellipse.html#paint">paint</keyword>
+        <keyword ref="qmapellipse.html#pen">pen</keyword>
+        <keyword ref="qmapellipse.html#topLeft">topLeft</keyword>
+        <section ref="qmapellipse-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmapline.html" title="QMapLine Class Reference">
+        <keyword ref="qmapline.html">QMapLine</keyword>
+        <keyword ref="qmapline.html#compMapCoords">compMapCoords</keyword>
+        <keyword ref="qmapline.html#intersects">intersects</keyword>
+        <keyword ref="qmapline.html#paint">paint</keyword>
+        <keyword ref="qmapline.html#pen">pen</keyword>
+        <keyword ref="qmapline.html#point1">point1</keyword>
+        <keyword ref="qmapline.html#point2">point2</keyword>
+        <section ref="qmapline-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmapmarker.html" title="QMapMarker Class Reference">
+        <keyword ref="qmapmarker.html">QMapMarker</keyword>
+        <keyword ref="qmapmarker.html#compMapCoords">compMapCoords</keyword>
+        <keyword ref="qmapmarker.html#constructIconMarker">constructIconMarker</keyword>
+        <keyword ref="qmapmarker.html#constructMarker">constructMarker</keyword>
+        <keyword ref="qmapmarker.html#font">font</keyword>
+        <keyword ref="qmapmarker.html#icon">icon</keyword>
+        <keyword ref="qmapmarker.html#intersects">intersects</keyword>
+        <keyword ref="qmapmarker.html#paint">paint</keyword>
+        <keyword ref="qmapmarker.html#point">point</keyword>
+        <keyword ref="qmapmarker.html#text">text</keyword>
+        <keyword ref="qmapmarker.html#textRect">textRect</keyword>
+        <section ref="qmapmarker-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmapobject.html" title="QMapObject Class Reference">
+        <keyword ref="qmapobject.html">QMapObject</keyword>
+        <keyword ref="qmapobject.html#MapObjectType-enum">MapObjectType</keyword>
+        <keyword ref="qmapobject.html#boundingRect">boundingRect</keyword>
+        <keyword ref="qmapobject.html#compIntersectingTiles">compIntersectingTiles</keyword>
+        <keyword ref="qmapobject.html#compMapCoords">compMapCoords</keyword>
+        <keyword ref="qmapobject.html#intersect">intersect</keyword>
+        <keyword ref="qmapobject.html#intersects">intersects</keyword>
+        <keyword ref="qmapobject.html#paint">paint</keyword>
+        <keyword ref="qmapobject.html#setParentView">setParentView</keyword>
+        <keyword ref="qmapobject.html#type">type</keyword>
+        <keyword ref="qmapobject.html#zValue">zValue</keyword>
+        <section ref="qmapobject-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmappixmap.html" title="QMapPixmap Class Reference">
+        <keyword ref="qmappixmap.html">QMapPixmap</keyword>
+        <keyword ref="qmappixmap.html#compMapCoords">compMapCoords</keyword>
+        <keyword ref="qmappixmap.html#intersects">intersects</keyword>
+        <keyword ref="qmappixmap.html#paint">paint</keyword>
+        <keyword ref="qmappixmap.html#pixmap">pixmap</keyword>
+        <keyword ref="qmappixmap.html#topLeft">topLeft</keyword>
+        <section ref="qmappixmap-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmappolygon.html" title="QMapPolygon Class Reference">
+        <keyword ref="qmappolygon.html">QMapPolygon</keyword>
+        <keyword ref="qmappolygon.html#brush">brush</keyword>
+        <keyword ref="qmappolygon.html#compMapCoords">compMapCoords</keyword>
+        <keyword ref="qmappolygon.html#intersects">intersects</keyword>
+        <keyword ref="qmappolygon.html#paint">paint</keyword>
+        <keyword ref="qmappolygon.html#pen">pen</keyword>
+        <keyword ref="qmappolygon.html#polygon">polygon</keyword>
+        <section ref="qmappolygon-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmaprect.html" title="QMapRect Class Reference">
+        <keyword ref="qmaprect.html">QMapRect</keyword>
+        <keyword ref="qmaprect.html#bottomRight">bottomRight</keyword>
+        <keyword ref="qmaprect.html#brush">brush</keyword>
+        <keyword ref="qmaprect.html#compMapCoords">compMapCoords</keyword>
+        <keyword ref="qmaprect.html#intersects">intersects</keyword>
+        <keyword ref="qmaprect.html#paint">paint</keyword>
+        <keyword ref="qmaprect.html#pen">pen</keyword>
+        <keyword ref="qmaprect.html#topLeft">topLeft</keyword>
+        <section ref="qmaprect-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmaproute.html" title="QMapRoute Class Reference">
+        <keyword ref="qmaproute.html">QMapRoute</keyword>
+        <keyword ref="qmaproute.html#compIntersectingTiles">compIntersectingTiles</keyword>
+        <keyword ref="qmaproute.html#compMapCoords">compMapCoords</keyword>
+        <keyword ref="qmaproute.html#intersects">intersects</keyword>
+        <keyword ref="qmaproute.html#paint">paint</keyword>
+        <keyword ref="qmaproute.html#pen">pen</keyword>
+        <section ref="qmaproute-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmaptilereply.html" title="QMapTileReply Class Reference">
+        <keyword ref="qmaptilereply.html">QMapTileReply</keyword>
+        <keyword ref="qmaptilereply.html#ErrorCode-enum">ErrorCode</keyword>
+        <keyword ref="qmaptilereply.html#cancel">cancel</keyword>
+        <keyword ref="qmaptilereply.html#col">col</keyword>
+        <keyword ref="qmaptilereply.html#data">data</keyword>
+        <keyword ref="qmaptilereply.html#done">done</keyword>
+        <keyword ref="qmaptilereply.html#error">error</keyword>
+        <keyword ref="qmaptilereply.html#finished">finished</keyword>
+        <keyword ref="qmaptilereply.html#level">level</keyword>
+        <keyword ref="qmaptilereply.html#row">row</keyword>
+        <keyword ref="qmaptilereply.html#setCol">setCol</keyword>
+        <keyword ref="qmaptilereply.html#setData">setData</keyword>
+        <keyword ref="qmaptilereply.html#setLevel">setLevel</keyword>
+        <keyword ref="qmaptilereply.html#setRow">setRow</keyword>
+        <section ref="qmaptilereply-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmaptileservice.html" title="QMapTileService Class Reference">
+        <keyword ref="qmaptileservice.html">QMapTileService</keyword>
+        <keyword ref="qmaptileservice.html#error">error</keyword>
+        <keyword ref="qmaptileservice.html#finished">finished</keyword>
+        <keyword ref="qmaptileservice.html#getMercatorTileIndex">getMercatorTileIndex</keyword>
+        <keyword ref="qmaptileservice.html#maxZoomLevel">maxZoomLevel</keyword>
+        <keyword ref="qmaptileservice.html#request">request</keyword>
+        <section ref="qmaptileservice-members.html" title="List of all members"/>
+    </section>
+    <section ref="qmapview.html" title="QMapView Class Reference">
+        <keyword ref="qmapview.html">QMapView</keyword>
+        <keyword ref="qmapview.html#addMapObject">addMapObject</keyword>
+        <keyword ref="qmapview.html#centerChanged">centerChanged</keyword>
+        <keyword ref="qmapview.html#centerOn">centerOn</keyword>
+        <keyword ref="qmapview.html#getCenter">getCenter</keyword>
+        <keyword ref="qmapview.html#getTopmostMapObject">getTopmostMapObject</keyword>
+        <keyword ref="qmapview.html#getViewportCenter">getViewportCenter</keyword>
+        <keyword ref="qmapview.html#getZoomLevel">getZoomLevel</keyword>
+        <keyword ref="qmapview.html#horizontalPadding">horizontalPadding</keyword>
+        <keyword ref="qmapview.html#init">init</keyword>
+        <keyword ref="qmapview.html#isPannable">isPannable</keyword>
+        <keyword ref="qmapview.html#mapClicked">mapClicked</keyword>
+        <keyword ref="qmapview.html#mapHeight">mapHeight</keyword>
+        <keyword ref="qmapview.html#mapObjectSelected">mapObjectSelected</keyword>
+        <keyword ref="qmapview.html#mapWidth">mapWidth</keyword>
+        <keyword ref="qmapview.html#maxZoomLevel">maxZoomLevel</keyword>
+        <keyword ref="qmapview.html#mouseMoveEvent">mouseMoveEvent</keyword>
+        <keyword ref="qmapview.html#mousePressEvent">mousePressEvent</keyword>
+        <keyword ref="qmapview.html#mouseReleaseEvent">mouseReleaseEvent</keyword>
+        <keyword ref="qmapview.html#paint">paint</keyword>
+        <keyword ref="qmapview.html#pan">pan</keyword>
+        <keyword ref="qmapview.html#releaseRemoteTiles">releaseRemoteTiles</keyword>
+        <keyword ref="qmapview.html#removeMapObject">removeMapObject</keyword>
+        <keyword ref="qmapview.html#resizeEvent">resizeEvent</keyword>
+        <keyword ref="qmapview.html#routeDetailLevel">routeDetailLevel</keyword>
+        <keyword ref="qmapview.html#setCenter">setCenter</keyword>
+        <keyword ref="qmapview.html#setHorizontalPadding">setHorizontalPadding</keyword>
+        <keyword ref="qmapview.html#setPannable">setPannable</keyword>
+        <keyword ref="qmapview.html#setRouteDetailLevel">setRouteDetailLevel</keyword>
+        <keyword ref="qmapview.html#setScheme">setScheme</keyword>
+        <keyword ref="qmapview.html#setVerticalPadding">setVerticalPadding</keyword>
+        <keyword ref="qmapview.html#setZoomLevel">setZoomLevel</keyword>
+        <keyword ref="qmapview.html#tileFetched">tileFetched</keyword>
+        <keyword ref="qmapview.html#translateFromViewport">translateFromViewport</keyword>
+        <keyword ref="qmapview.html#translateToViewport">translateToViewport</keyword>
+        <keyword ref="qmapview.html#verticalPadding">verticalPadding</keyword>
+        <keyword ref="qmapview.html#wheelEvent">wheelEvent</keyword>
+        <keyword ref="qmapview.html#zoomLevelChanged">zoomLevelChanged</keyword>
+        <section ref="qmapview-members.html" title="List of all members"/>
     </section>
     <section ref="qmediacontainercontrol.html" title="QMediaContainerControl Class Reference">
         <keyword ref="qmediacontainercontrol.html">QMediaContainerControl</keyword>
@@ -2454,6 +3344,19 @@
         <keyword ref="qrotationsensor.html#reading">reading</keyword>
         <section ref="qrotationsensor-members.html" title="List of all members"/>
     </section>
+    <section ref="qsearchresponse.html" title="QSearchResponse Class Reference">
+        <keyword ref="qsearchresponse.html">QSearchResponse</keyword>
+        <keyword ref="qsearchresponse.html#ErrorCode-enum">ErrorCode</keyword>
+        <keyword ref="qsearchresponse.html#addPlace">addPlace</keyword>
+        <keyword ref="qsearchresponse.html#cancel">cancel</keyword>
+        <keyword ref="qsearchresponse.html#description">description</keyword>
+        <keyword ref="qsearchresponse.html#error">error</keyword>
+        <keyword ref="qsearchresponse.html#finished">finished</keyword>
+        <keyword ref="qsearchresponse.html#places">places</keyword>
+        <keyword ref="qsearchresponse.html#setDescription">setDescription</keyword>
+        <keyword ref="qsearchresponse.html#setPlaces">setPlaces</keyword>
+        <section ref="qsearchresponse-members.html" title="List of all members"/>
+    </section>
     <section ref="qsensor.html" title="QSensor Class Reference">
         <keyword ref="qsensor.html">QSensor</keyword>
         <keyword ref="qsensor.html#active-prop">active</keyword>
@@ -3268,6 +4171,17 @@
         <keyword ref="qvideowindowcontrol.html#QVideoWindowControl_iid">QVideoWindowControl_iid</keyword>
         <section ref="qvideowindowcontrol-members.html" title="List of all members"/>
     </section>
+    <section ref="qmapview-tileiterator.html" title="TileIterator Class Reference">
+        <keyword ref="qmapview-tileiterator.html">TileIterator</keyword>
+        <keyword ref="qmapview-tileiterator.html#col">col</keyword>
+        <keyword ref="qmapview-tileiterator.html#hasNext">hasNext</keyword>
+        <keyword ref="qmapview-tileiterator.html#index">index</keyword>
+        <keyword ref="qmapview-tileiterator.html#isValid">isValid</keyword>
+        <keyword ref="qmapview-tileiterator.html#next">next</keyword>
+        <keyword ref="qmapview-tileiterator.html#row">row</keyword>
+        <keyword ref="qmapview-tileiterator.html#tileRect">tileRect</keyword>
+        <section ref="qmapview-tileiterator-members.html" title="List of all members"/>
+    </section>
 </section>
 <section ref="overviews.html" title="Overviews">
     <section ref="functions.html" title="All Functions">
@@ -3311,6 +4225,9 @@
     </section>
     <section ref="installation.html" title="Installation Guide">
         <keyword ref="installation.html">Installation Guide</keyword>
+    </section>
+    <section ref="landmarks.html" title="Landmarks">
+        <keyword ref="landmarks.html">Landmarks</keyword>
     </section>
     <section ref="location-overview.html" title="Location">
         <keyword ref="location-overview.html">Location</keyword>

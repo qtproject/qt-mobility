@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qmaproute.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QMapRoute Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QMapRoute"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMapRoute Class Reference</h1>
+<p>The QMapRoute classes represets a route on a map. <a href="#details">More...</a></p>
+<pre>    #include &lt;QMapRoute&gt;</pre><p>Inherits <a href="qmapobject.html">QMapObject</a>.</p>
+<ul>
+<li><a href="qmaproute-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmaproute.html#QMapRoute">QMapRoute</a></b> ( const QGeoRoute &amp; <i>route</i>, const QPen &amp; <i>pen</i> = QPen(), const QPixmap &amp; <i>endpointMarker</i> = QPixmap(), quint16 <i>layerIndex</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPen </td><td class="memItemRight" valign="bottom"><b><a href="qmaproute.html#pen">pen</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>2 public functions inherited from <a href="qmapobject.html#public-functions">QMapObject</a></li>
+</ul>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmaproute.html#QMapRoute-2">QMapRoute</a></b> ( QMapRoutePrivate &amp; <i>dd</i>, const QGeoRoute &amp; <i>route</i>, const QPen &amp; <i>pen</i> = QPen(), const QPixmap &amp; <i>endpointMarker</i> = QPixmap(), quint16 <i>layerIndex</i> = 0 )</td></tr>
+</table>
+<hr />
+<a name="reimplemented-protected-functions"></a>
+<h2>Reimplemented Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmaproute.html#compIntersectingTiles">compIntersectingTiles</a></b> ( const QRectF &amp; <i>box</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmaproute.html#compMapCoords">compMapCoords</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmaproute.html#intersects">intersects</a></b> ( const QRectF &amp; <i>rect</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmaproute.html#paint">paint</a></b> ( QPainter * <i>painter</i>, const QRectF &amp; <i>viewPort</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>5 protected functions inherited from <a href="qmapobject.html#protected-functions">QMapObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>2 static public members inherited from <a href="qmapobject.html#static-public-members">QMapObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QMapRoute classes represets a route on a map.</p>
+<p>The representation of a route that has been added to the map. It keeps track of all indivdual QGeoRouteSegments.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMapRoute/QMapRoute"></a>
+<h3 class="fn"><a name="QMapRoute"></a>QMapRoute::QMapRoute ( const <a href="qgeoroute.html">QGeoRoute</a> &amp; <i>route</i>, const <a href="http://qt.nokia.com/doc/4.6/qpen.html">QPen</a> &amp; <i>pen</i> = QPen(), const <a href="http://qt.nokia.com/doc/4.6/qpixmap.html">QPixmap</a> &amp; <i>endpointMarker</i> = QPixmap(), <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>layerIndex</i> = 0 )</h3>
+<p>Constructor. The <i>route</i> represents the route that this map route represents.</p>
+<h3 class="fn"><a name="QMapRoute-2"></a>QMapRoute::QMapRoute ( QMapRoutePrivate &amp; <i>dd</i>, const <a href="qgeoroute.html">QGeoRoute</a> &amp; <i>route</i>, const <a href="http://qt.nokia.com/doc/4.6/qpen.html">QPen</a> &amp; <i>pen</i> = QPen(), const <a href="http://qt.nokia.com/doc/4.6/qpixmap.html">QPixmap</a> &amp; <i>endpointMarker</i> = QPixmap(), <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>layerIndex</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapRoute/compIntersectingTiles"></a>
+<h3 class="fn"><a name="compIntersectingTiles"></a>void QMapRoute::compIntersectingTiles ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>box</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapRoute/compMapCoords"></a>
+<h3 class="fn"><a name="compMapCoords"></a>void QMapRoute::compMapCoords ()&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapRoute/intersects"></a>
+<h3 class="fn"><a name="intersects"></a>bool QMapRoute::intersects ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>rect</i> ) const&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapRoute/paint"></a>
+<h3 class="fn"><a name="paint"></a>void QMapRoute::paint ( <a href="http://qt.nokia.com/doc/4.6/qpainter.html">QPainter</a> * <i>painter</i>, const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>viewPort</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMapRoute/pen"></a>
+<h3 class="fn"><a name="pen"></a><a href="http://qt.nokia.com/doc/4.6/qpen.html">QPen</a> QMapRoute::pen () const</h3>
+<p>Retunrs the pen used for drawing this route.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

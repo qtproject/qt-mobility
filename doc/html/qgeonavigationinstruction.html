@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeonavigationinstruction.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QGeoNavigationInstruction Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoNavigationInstruction"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoNavigationInstruction Class Reference</h1>
+<p>The QGeoNavigationInstruction class represnts a navigation instruction. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoNavigationInstruction&gt;</pre><ul>
+<li><a href="qgeonavigationinstruction-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeonavigationinstruction.html#InstructionType-enum">InstructionType</a></b> { NormalInstruction, PrivateTransportInstruction, PublicTransportInstruction, TruckInstruction }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeonavigationinstruction.html#QGeoNavigationInstruction">QGeoNavigationInstruction</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeonavigationinstruction.html#dtor.QGeoNavigationInstruction">~QGeoNavigationInstruction</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeonavigationinstruction.html#instructionText">instructionText</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeonavigationinstruction.html#position">position</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeonavigationinstruction.html#setInstructionText">setInstructionText</a></b> ( const QString &amp; <i>instructionText</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeonavigationinstruction.html#setPosition">setPosition</a></b> ( const QGeoCoordinate &amp; <i>position</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual InstructionType </td><td class="memItemRight" valign="bottom"><b><a href="qgeonavigationinstruction.html#type">type</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeonavigationinstruction.html#QGeoNavigationInstruction-2">QGeoNavigationInstruction</a></b> ( QGeoNavigationInstructionPrivate * <i>d_ptr</i> )</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoNavigationInstruction class represnts a navigation instruction.</p>
+<p>A QGeoNavigationInstruction instance has a position at which the instruction applies and a textual instruction to provide at that position.</p>
+<p>Subclasses of QGeoNavigationInstruction will provide more detailed instruction information. The <a href="qgeonavigationinstruction.html#type">type</a>() function can be used to determine the subclass that is being used.</p>
+<p>See also <a href="qgeonavigationinstruction.html#InstructionType-enum">QGeoNavigationInstruction::InstructionType</a>.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QGeoNavigationInstruction/InstructionType"></a>
+<a name="//apple_ref/cpp/econst/QGeoNavigationInstruction/NormalInstruction"></a>
+<a name="//apple_ref/cpp/econst/QGeoNavigationInstruction/PrivateTransportInstruction"></a>
+<a name="//apple_ref/cpp/econst/QGeoNavigationInstruction/PublicTransportInstruction"></a>
+<a name="//apple_ref/cpp/econst/QGeoNavigationInstruction/TruckInstruction"></a>
+<h3 class="fn"><a name="InstructionType-enum"></a>enum QGeoNavigationInstruction::InstructionType</h3>
+<p>Describes the specialization of a <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> object.</p>
+<p>This is used to distinguish between different subclasses of <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> when they are accessed as <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> objects.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QGeoNavigationInstruction::NormalInstruction</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The instruction is not specialized.</td></tr>
+<tr><td valign="top"><tt>QGeoNavigationInstruction::PrivateTransportInstruction</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The instruction is specialized for those travelling by private transport.</td></tr>
+<tr><td valign="top"><tt>QGeoNavigationInstruction::PublicTransportInstruction</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The instruction is specialized for those travelling by public transport</td></tr>
+<tr><td valign="top"><tt>QGeoNavigationInstruction::TruckInstruction</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The instruction is specialized for those travelling by truck.</td></tr>
+</table></p>
+<p>See also <a href="qgeonavigationinstruction.html#type">QGeoNavigationInstruction::type</a>().</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoNavigationInstruction/QGeoNavigationInstruction"></a>
+<h3 class="fn"><a name="QGeoNavigationInstruction"></a>QGeoNavigationInstruction::QGeoNavigationInstruction ()</h3>
+<p>Constructs a <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> object.</p>
+<h3 class="fn"><a name="QGeoNavigationInstruction-2"></a>QGeoNavigationInstruction::QGeoNavigationInstruction ( QGeoNavigationInstructionPrivate * <i>d_ptr</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QGeoNavigationInstruction/~QGeoNavigationInstruction"></a>
+<h3 class="fn"><a name="dtor.QGeoNavigationInstruction"></a>QGeoNavigationInstruction::~QGeoNavigationInstruction ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys this <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> object.</p>
+<a name="//apple_ref/cpp/instm/QGeoNavigationInstruction/instructionText"></a>
+<h3 class="fn"><a name="instructionText"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoNavigationInstruction::instructionText () const</h3>
+<p>Returns the textual navigation instructions.</p>
+<p>See also <a href="qgeonavigationinstruction.html#setInstructionText">QGeoNavigationInstruction::setInstructionText</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoNavigationInstruction/position"></a>
+<h3 class="fn"><a name="position"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoNavigationInstruction::position () const</h3>
+<p>Returns the position where the instructions should be provided.</p>
+<p>See also <a href="qgeonavigationinstruction.html#setPosition">QGeoNavigationInstruction::setPosition</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoNavigationInstruction/setInstructionText"></a>
+<h3 class="fn"><a name="setInstructionText"></a>void QGeoNavigationInstruction::setInstructionText ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>instructionText</i> )</h3>
+<p>Sets the textual navigation instructions to <i>instructionText</i>.</p>
+<p>See also <a href="qgeonavigationinstruction.html#instructionText">QGeoNavigationInstruction::instructionText</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoNavigationInstruction/setPosition"></a>
+<h3 class="fn"><a name="setPosition"></a>void QGeoNavigationInstruction::setPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>position</i> )</h3>
+<p>Sets the position where the instructions should be provided to <i>position</i>.</p>
+<p>See also <a href="qgeonavigationinstruction.html#position">QGeoNavigationInstruction::position</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoNavigationInstruction/type"></a>
+<h3 class="fn"><a name="type"></a><a href="qgeonavigationinstruction.html#InstructionType-enum">InstructionType</a> QGeoNavigationInstruction::type () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the type of this instruction.</p>
+<p>If the type is something other than <a href="qgeonavigationinstruction.html#InstructionType-enum">QGeoNavigationInstruction::NormalInstruction</a> then this <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> object has been created as a subclass of <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> which contains more detailed information about the instructions.</p>
+<p>See also <a href="qgeonavigationinstruction.html#InstructionType-enum">QGeoNavigationInstruction::InstructionType</a>.</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

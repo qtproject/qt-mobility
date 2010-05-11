@@ -25,7 +25,9 @@ contains(mobility_modules,bearer) {
 #Location examples
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
-		satellitedialog
+		satellitedialog \
+        mapviewer \
+        qgeoapiui
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo \
 		    weatherinfo \

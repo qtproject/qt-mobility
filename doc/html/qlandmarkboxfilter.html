@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qlandmarkboxfilter.cpp -->
+<head>
+  <title>Qt Mobility Project 1.0: QLandmarkBoxFilter Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QLandmarkBoxFilter"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QLandmarkBoxFilter Class Reference</h1>
+<p>The QLandmarkBoxFilter class is used to search for landmarks within a given bounding box. <a href="#details">More...</a></p>
+<pre>    #include &lt;QLandmarkBoxFilter&gt;</pre><p>Inherits <a href="qlandmarkfilter.html">QLandmarkFilter</a>.</p>
+<ul>
+<li><a href="qlandmarkboxfilter-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkboxfilter.html#QLandmarkBoxFilter">QLandmarkBoxFilter</a></b> ( const QGeoCoordinate &amp; <i>topLeft</i> = QGeoCoordinate(), const QGeoCoordinate &amp; <i>bottomRight</i> = QGeoCoordinate() )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkboxfilter.html#QLandmarkBoxFilter-2">QLandmarkBoxFilter</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkboxfilter.html#dtor.QLandmarkBoxFilter">~QLandmarkBoxFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkboxfilter.html#bottomRightCoordinate">bottomRightCoordinate</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkboxfilter.html#setBottomRightCoordinate">setBottomRightCoordinate</a></b> ( const QGeoCoordinate &amp; <i>bottomRight</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkboxfilter.html#setTopLeftCoordinate">setTopLeftCoordinate</a></b> ( const QGeoCoordinate &amp; <i>topLeft</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkboxfilter.html#topLeftCoordinate">topLeftCoordinate</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>6 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QLandmarkBoxFilter class is used to search for landmarks within a given bounding box.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QLandmarkBoxFilter/QLandmarkBoxFilter"></a>
+<h3 class="fn"><a name="QLandmarkBoxFilter"></a>QLandmarkBoxFilter::QLandmarkBoxFilter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>topLeft</i> = QGeoCoordinate(), const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>bottomRight</i> = QGeoCoordinate() )</h3>
+<p>Creates a filter that will search for landmarks within a bounding box defined by the <i>topLeft</i> and <i>bottomRight</i> coordinates.</p>
+<h3 class="fn"><a name="QLandmarkBoxFilter-2"></a>QLandmarkBoxFilter::QLandmarkBoxFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3>
+<p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new box filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkBoxFilter/~QLandmarkBoxFilter"></a>
+<h3 class="fn"><a name="dtor.QLandmarkBoxFilter"></a>QLandmarkBoxFilter::~QLandmarkBoxFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys the filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkBoxFilter/bottomRightCoordinate"></a>
+<h3 class="fn"><a name="bottomRightCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QLandmarkBoxFilter::bottomRightCoordinate () const</h3>
+<p>Returns the bottom-right coordinate of the bounding box this filter uses to select landmarks.</p>
+<p>See also <a href="qlandmarkboxfilter.html#setBottomRightCoordinate">setBottomRightCoordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkBoxFilter/setBottomRightCoordinate"></a>
+<h3 class="fn"><a name="setBottomRightCoordinate"></a>void QLandmarkBoxFilter::setBottomRightCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>bottomRight</i> )</h3>
+<p>Sets the <i>bottomRight</i> coordinate of the bounding box this filter uses to select landmarks.</p>
+<p>See also <a href="qlandmarkboxfilter.html#bottomRightCoordinate">bottomRightCoordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkBoxFilter/setTopLeftCoordinate"></a>
+<h3 class="fn"><a name="setTopLeftCoordinate"></a>void QLandmarkBoxFilter::setTopLeftCoordinate ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>topLeft</i> )</h3>
+<p>Sets the <i>topLeft</i> corner of the bounding box this filter uses to select landmarks.</p>
+<p>See also <a href="qlandmarkboxfilter.html#topLeftCoordinate">topLeftCoordinate</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkBoxFilter/topLeftCoordinate"></a>
+<h3 class="fn"><a name="topLeftCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QLandmarkBoxFilter::topLeftCoordinate () const</h3>
+<p>Returns the top-left corner of the bounding box this filter uses to select landmarks.</p>
+<p>See also <a href="qlandmarkboxfilter.html#setTopLeftCoordinate">setTopLeftCoordinate</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>
