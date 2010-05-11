@@ -73,6 +73,9 @@ public:
     QTelephonyEventPrivate(QObject *parent = 0);
     virtual ~QTelephonyEventPrivate();
     CallStatus currentStatus() { return CallStatus::UnknownStatus; }
+Q_SIGNALS:
+    void callstatusChange(CallStatus status);
+    void calllistChange();
 };
 
 class QCallInfoPrivate : public QObject

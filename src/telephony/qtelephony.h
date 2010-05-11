@@ -63,8 +63,8 @@ public:
     QTelephonyEvent(QObject *parent = 0);
     virtual ~QTelephonyEvent();
 Q_SIGNALS:
-    void callStatusChanges(CallStatus status);
-    void callListChanges();
+    void callstatusChange(CallStatus status);
+    void calllistChange();
 public:
     QList<QCallInfo*> calllist();
     QList<QCallInfo*> calllist(CallType calltype);

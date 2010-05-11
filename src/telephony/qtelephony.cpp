@@ -88,6 +88,8 @@ Q_GLOBAL_STATIC(QTelephonyEventPrivate, telephonyeventPrivate)
 QTelephonyEvent::QTelephonyEvent(QObject *parent)
     : QObject(parent), d(telephonyeventPrivate())
 {
+    connect(d, SIGNAL(callstatusChange(CallStatus status)), this, SIGNAL(callstatusChange(CallStatus status)));
+    connect(d, SIGNAL(calllistChange()), this, SIGNAL(calllistChange()));
 }
 
 /*!
