@@ -4,7 +4,6 @@ PUBLIC_HEADERS += \
     details/qorganizeritemattendee.h \
     details/qorganizeritemdescription.h \
     details/qorganizeritemdisplaylabel.h \
-    details/qorganizeritemenddatetime.h \
     details/qorganizeritemguid.h \
     details/qorganizeritemlocation.h \
     details/qorganizeritemnote.h \

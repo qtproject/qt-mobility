@@ -94,33 +94,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatu
 
 
 
-
-
-/* ==================== QOrganizerItemEndDateTime ======================= */
-/*!
-   \class QOrganizerItemEndDateTime
-   \brief The QOrganizerItemEndDateTime class contains the end time of an event, appointment or invitation.
- */
-
-/*!
-   \variable QOrganizerItemEndDateTime::DefinitionName
-   The constant string which identifies the definition of details which contain the end date and time of an event or invitation.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::DefinitionName, "EndDateTime");
-
-/*!
-   \variable QOrganizerItemEndDateTime::FieldEndDateTime
-
-   The constant key for which the end datetime value of the organizer item is stored in
-   details of the QOrganizerItemEndDateTime type.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEndDateTime::FieldEndDateTime, "EndDateTime");
-
-
-
-
-
-
 /* ==================== QOrganizerItemDescription ======================= */
 /*!
    \class QOrganizerItemDescription
@@ -228,7 +201,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
 
 
 
-/* ==================== QOrganizerItemGeoLocation ======================= */
+/* ==================== QOrganizerItemLocation ======================= */
 // XXX TODO: do we include all three pieces of data into a single detail
 // ie, street address + geolocation + location string
 // Or, do we have three separate detail types?

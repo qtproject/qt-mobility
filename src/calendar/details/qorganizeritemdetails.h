@@ -48,7 +48,6 @@
 #include "qorganizeritemattendee.h"
 #include "qorganizeritemdescription.h"
 #include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemenddatetime.h"
 #include "qorganizeritemguid.h"
 #include "qorganizeritemlocation.h"
 #include "qorganizeritemnote.h"
@@ -58,6 +57,5 @@
 #include "qorganizeritemrsvpinfo.h"
 #include "qorganizeritemtimestamp.h"
 #include "qorganizeritemtype.h"
-#include "qorganizeritemgeolocation.h"
 
 #endif
