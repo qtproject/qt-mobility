@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfo.h"
+#include "qsysteminfocommon.h"
 #include "qsysteminfo_s60_p.h"
 
 #include <QStringList>
