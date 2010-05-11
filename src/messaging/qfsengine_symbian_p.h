@@ -251,8 +251,8 @@ public:
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
 
 public slots:
-    void ClearOperations();
-    
+    void SearchCompleted();
+
 private:
     // from memailmessagesearch
     virtual void HandleResultL(MEmailMessage* aMessage);
@@ -267,17 +267,17 @@ private:
     void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria);
     void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria);
     
-    
 private: // Data
     CFSEngine& m_owner;
     
-    int iNumberOfHandledFilters;
+    int m_numberOfHandledFilters;
     int m_operationId;
     int m_activeSearchCount;
     //TMsvSelectionOrdering iOrdering;
-    bool iResultCorrectlyOrdered;
-    QMessageIdList iIdList;
-    QMessageFilterPrivate::SortedMessageFilterList iFilterList;
+    bool m_resultCorrectlyOrdered;
+    QMessageIdList m_idList;
+    QMessageFilterPrivate::SortedMessageFilterList m_filterList;
+    QMessageIdList m_excludeIdList;
 
     MEmailClientApi* m_clientApi;
     RMailboxPtrArray m_mailboxes;
