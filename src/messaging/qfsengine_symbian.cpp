@@ -1834,6 +1834,18 @@ TTime CFSEngine::qDateTimeToSymbianTTime(const QDateTime& date) const
     return TTime(dateTime);
 }
 
+TFolderType CFSEngine::standardFolderId(QMessage::StandardFolder standardFolder)
+{
+    switch(standardFolder) {
+        case QMessage::InboxFolder: return EInbox;
+        case QMessage::OutboxFolder: return EOutbox;
+        case QMessage::DraftsFolder: return EDrafts;
+        case QMessage::SentFolder: return ESent;
+        case QMessage::TrashFolder: return EDeleted;
+        default: return EOther;
+    }
+}
+
 CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOperationId)
     : m_owner(aOwner), 
       m_operationId(aOperationId),
@@ -1965,6 +1977,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                     QMessageFolder messageFolder = m_owner.folder(QMessageFolderId(pf->_value.toString()));
                     getFolderSpecificMessagesL(messageFolder, sortCriteria);
                     m_resultCorrectlyOrdered = true;
+                    QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
                 } else { // NotEqual
                     // TODO:
                 }
@@ -2143,8 +2156,50 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
             }
             break;
             }
-        case QMessageFilterPrivate::StandardFolder:
+        case QMessageFilterPrivate::StandardFolder: {
+            m_numberOfHandledFilters++;
+            QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
+            QMessage::StandardFolder standardFolder = static_cast<QMessage::StandardFolder>(pf->_value.toInt());
+            TFolderType stdFolder = m_owner.standardFolderId(standardFolder);
+
+            if (cmp == QMessageDataComparator::Equal) {
+                foreach (QMessageAccount messageAccount, m_owner.m_accounts) {
+                    TMailboxId mailboxId(stripIdPrefix(messageAccount.id().toString()).toInt());
+                    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+                    CleanupReleasePushL(*mailbox);
+                    MEmailFolder* folder = mailbox->FolderByTypeL(stdFolder);
+                    CleanupReleasePushL(*folder);
+                    QMessageFolder standardFolder = m_owner.folder(
+                        QMessageFolderId(QString::number(folder->FolderId().iId)));
+                    getFolderSpecificMessagesL(standardFolder, sortCriteria);
+                    m_activeSearchCount++;
+                    CleanupStack::PopAndDestroy(2);
+                }
+                m_resultCorrectlyOrdered = true;
+                QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
+            } else { // NotEqual
+                foreach (QMessageAccount messageAccount, m_owner.m_accounts) {
+                    TMailboxId mailboxId(stripIdPrefix(messageAccount.id().toString()).toInt());
+                    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+                    CleanupReleasePushL(*mailbox);
+                    QMessage::StandardFolder i = QMessage::InboxFolder;
+                    while (i <= QMessage::TrashFolder) {
+                        if (i != standardFolder) {
+                            MEmailFolder* folder = mailbox->FolderByTypeL(m_owner.standardFolderId(i));
+                            CleanupReleasePushL(*folder);
+                            QMessageFolder standardFolder = m_owner.folder(
+                                QMessageFolderId(QString::number(folder->FolderId().iId)));
+                            getFolderSpecificMessagesL(standardFolder, sortCriteria);
+                            CleanupStack::PopAndDestroy(folder);
+                        }
+                        i = static_cast<QMessage::StandardFolder>(static_cast<int>(i) + 1);
+                    }
+                    CleanupStack::PopAndDestroy(mailbox);    
+                }
+                QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
+            }
             break;
+            }
         case QMessageFilterPrivate::TimeStamp:
             break;
         case QMessageFilterPrivate::ReceptionTimeStamp:
@@ -2201,15 +2256,12 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
     MMessageIterator* msgIterator = mailFolder->MessagesL(sortCriteriaArray);
         
     MEmailMessage* msg = NULL;
-    m_idList.clear();
     while ( NULL != (msg = msgIterator->NextL())) {
         m_idList.append(QMessageId(addIdPrefix(QString::number(msg->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)));
     }
 
     CleanupStack::PopAndDestroy(mailbox);
     CleanupStack::PopAndDestroy(&sortCriteriaArray);
-
-    QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
 }
 
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)

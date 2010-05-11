@@ -164,7 +164,8 @@ private:
     QMessageFolderIdList allFolders() const;
     QMessageFolder folderL(const QMessageFolderId &id) const;
     MEmailFolder* fsFolderLC(const QMessageFolderId& id) const;
-
+    TFolderType standardFolderId(QMessage::StandardFolder standardFolder);
+    
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
     QMessage CreateQMessageL(MEmailMessage* aMessage) const; 
     void AddContentToMessage(MEmailMessageContent* aContent, QMessage* aMessage) const;
