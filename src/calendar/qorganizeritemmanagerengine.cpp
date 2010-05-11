@@ -171,7 +171,7 @@ QString QOrganizerItemManagerEngine::managerUri() const
   The client may instruct the manager that it does not require all possible information about each instance by specifying a fetch hint \a fetchHint;
   the manager can choose to ignore the fetch hint, but if it does so, it must return all possible information about each instance.
   */
-QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders = QList<QOrganizerItemSortOrder>(), const QOrganizerItemFetchHint& fetchHint = QOrganizerItemFetchHint()) const;
+QList<QOrganizerItem> QOrganizerItemManagerEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(filter);
     Q_UNUSED(sortOrders);
@@ -250,64 +250,8 @@ QOrganizerItem QOrganizerItemManagerEngine::item(const QOrganizerItemLocalId& or
  */
 QString QOrganizerItemManagerEngine::synthesizedDisplayLabel(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
 {
-    // synthesize the display name from the name of the organizeritem, or, failing that, the organisation of the organizeritem.
-    *error = QOrganizerItemManager::NoError;
-    QList<QOrganizerItemDetail> allNames = organizeritem.details(QOrganizerItemName::DefinitionName);
-
-    const QLatin1String space(" ");
-
-    // synthesize the display label from the name.
-    for (int i=0; i < allNames.size(); i++) {
-        const QOrganizerItemName& name = allNames.at(i);
-
-        if (!name.customLabel().isEmpty()) {
-            // default behaviour is to allow the user to define a custom display label.
-            return name.customLabel();
-        }
-
-        QString result;
-        if (!name.value(QOrganizerItemName::FieldPrefix).trimmed().isEmpty()) {
-           result += name.value(QOrganizerItemName::FieldPrefix);
-        }
-
-        if (!name.value(QOrganizerItemName::FieldFirstName).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QOrganizerItemName::FieldFirstName);
-        }
-
-        if (!name.value(QOrganizerItemName::FieldMiddleName).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QOrganizerItemName::FieldMiddleName);
-        }
-
-        if (!name.value(QOrganizerItemName::FieldLastName).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QOrganizerItemName::FieldLastName);
-        }
-
-        if (!name.value(QOrganizerItemName::FieldSuffix).trimmed().isEmpty()) {
-            if (!result.isEmpty())
-                result += space;
-            result += name.value(QOrganizerItemName::FieldSuffix);
-        }
-
-        if (!result.isEmpty()) {
-            return result;
-        }
-    }
-
-    /* Well, we had no non empty names. if we have orgs, fall back to those */
-    QList<QOrganizerItemDetail> allOrgs = organizeritem.details(QOrganizerItemOrganization::DefinitionName);
-    for (int i=0; i < allOrgs.size(); i++) {
-        const QOrganizerItemOrganization& org = allOrgs.at(i);
-        if (!org.name().isEmpty()) {
-            return org.name();
-        }
-    }
-
+    Q_UNUSED(organizeritem);
+    // XXX TODO: FIXME
     *error = QOrganizerItemManager::UnspecifiedError;
     return QString();
 }
@@ -513,9 +457,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
     QOrganizerItemDetailFieldDefinition f;
     QOrganizerItemDetailDefinition d;
-    QVariantList contexts;
-    contexts << QString(QLatin1String(QOrganizerItemDetail::ContextHome)) << QString(QLatin1String(QOrganizerItemDetail::ContextWork)) << QString(QLatin1String(QOrganizerItemDetail::ContextOther));
-    QVariantList subTypes;
 
     // sync target
     d.setName(QOrganizerItemSyncTarget::DefinitionName);
@@ -523,419 +464,21 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemSyncTarget::FieldSyncTarget, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
     d.setFields(fields);
     d.setUnique(true);
-    retn.insert(d.name(), d);
-
-    // timestamp
-    d.setName(QOrganizerItemTimestamp::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::DateTime);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemTimestamp::FieldModificationTimestamp, f);
-    fields.insert(QOrganizerItemTimestamp::FieldCreationTimestamp, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(true);
-    retn.insert(d.name(), d);
-
-    // type
-    d.setName(QOrganizerItemType::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    subTypes.clear();
-    subTypes << QString(QLatin1String(QOrganizerItemType::TypeOrganizerItem)) << QString(QLatin1String(QOrganizerItemType::TypeGroup));
-    f.setAllowableValues(subTypes);
-    fields.insert(QOrganizerItemType::FieldType, f); // note: NO CONTEXT!!
-    d.setFields(fields);
-    d.setUnique(true);
-    retn.insert(d.name(), d);
-
-    // guid
-    d.setName(QOrganizerItemGuid::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemGuid::FieldGuid, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // display label
-    d.setName(QOrganizerItemDisplayLabel::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemDisplayLabel::FieldLabel, f);
-    d.setFields(fields);
-    d.setUnique(true);
-    retn.insert(d.name(), d);
-
-    // email address
-    d.setName(QOrganizerItemEmailAddress::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemEmailAddress::FieldEmailAddress, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // organisation
-    d.setName(QOrganizerItemOrganization::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemOrganization::FieldName, f);
-    fields.insert(QOrganizerItemOrganization::FieldLocation, f);
-    fields.insert(QOrganizerItemOrganization::FieldTitle, f);
-    f.setDataType(QVariant::Url);
-    fields.insert(QOrganizerItemOrganization::FieldLogoUrl, f);
-    f.setDataType(QVariant::StringList);
-    fields.insert(QOrganizerItemOrganization::FieldDepartment, f);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // phone number
-    d.setName(QOrganizerItemPhoneNumber::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemPhoneNumber::FieldNumber, f);
-    f.setDataType(QVariant::StringList); // can implement multiple subtypes
-    subTypes.clear();
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeAssistant));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeBulletinBoardSystem));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeCar));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeDtmfMenu));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeFax));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeLandline));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeMessagingCapable));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeMobile));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeModem));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypePager));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeVideo));
-    subTypes << QString(QLatin1String(QOrganizerItemPhoneNumber::SubTypeVoice));
-    f.setAllowableValues(subTypes);
-    fields.insert(QOrganizerItemPhoneNumber::FieldSubTypes, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // anniversary
-    d.setName(QOrganizerItemAnniversary::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::Date);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemAnniversary::FieldOriginalDate, f);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemAnniversary::FieldCalendarId, f);
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemAnniversary::FieldEvent, f);
-    f.setDataType(QVariant::String); // only allowed to be a single subtype.
-    subTypes.clear();
-    subTypes << QString(QLatin1String(QOrganizerItemAnniversary::SubTypeEmployment));
-    subTypes << QString(QLatin1String(QOrganizerItemAnniversary::SubTypeEngagement));
-    subTypes << QString(QLatin1String(QOrganizerItemAnniversary::SubTypeHouse));
-    subTypes << QString(QLatin1String(QOrganizerItemAnniversary::SubTypeMemorial));
-    subTypes << QString(QLatin1String(QOrganizerItemAnniversary::SubTypeWedding));
-    f.setAllowableValues(subTypes);
-    fields.insert(QOrganizerItemAnniversary::FieldSubType, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // birthday
-    d.setName(QOrganizerItemBirthday::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::Date);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemBirthday::FieldBirthday, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(true);
-    retn.insert(d.name(), d);
-
-    // nickname
-    d.setName(QOrganizerItemNickname::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemNickname::FieldNickname, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // note
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    d.setName(QOrganizerItemNote::DefinitionName);
-    fields.insert(QOrganizerItemNote::FieldNote, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // url
-    d.setName(QOrganizerItemUrl::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemUrl::FieldUrl, f);
-    f.setDataType(QVariant::String); // only allowed to be a single subtype
-    subTypes.clear();
-    subTypes << QString(QLatin1String(QOrganizerItemUrl::SubTypeFavourite));
-    subTypes << QString(QLatin1String(QOrganizerItemUrl::SubTypeHomePage));
-    f.setAllowableValues(subTypes);
-    fields.insert(QOrganizerItemUrl::FieldSubType, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // gender
-    d.setName(QOrganizerItemGender::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList() << QString(QLatin1String(QOrganizerItemGender::GenderMale)) << QString(QLatin1String(QOrganizerItemGender::GenderFemale)) << QString(QLatin1String(QOrganizerItemGender::GenderUnspecified)));
-    fields.insert(QOrganizerItemGender::FieldGender, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // online account
-    d.setName(QOrganizerItemOnlineAccount::DefinitionName);
-    fields.clear();
-    f.setAllowableValues(QVariantList());
-    f.setDataType(QVariant::String);
-    fields.insert(QOrganizerItemOnlineAccount::FieldAccountUri, f);
-    f.setDataType(QVariant::StringList);
-    fields.insert(QOrganizerItemOnlineAccount::FieldCapabilities, f);
-    f.setDataType(QVariant::String);
-    fields.insert(QOrganizerItemOnlineAccount::FieldAccountUri, f);
-    fields.insert(QOrganizerItemOnlineAccount::FieldServiceProvider, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    f.setAllowableValues(QVariantList()); // allow any subtypes!
-    fields.insert(QOrganizerItemOnlineAccount::FieldSubTypes, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // presence
-    d.setName(QOrganizerItemPresence::DefinitionName);
-    fields.clear();
-    f.setAllowableValues(QVariantList());
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemPresence::FieldTimestamp, f);
-    f.setDataType(QVariant::String);
-    fields.insert(QOrganizerItemPresence::FieldNickname, f);
-    fields.insert(QOrganizerItemPresence::FieldCustomMessage, f);
-    fields.insert(QOrganizerItemPresence::FieldPresenceStateText, f);
-    QVariantList presenceValues;
-    presenceValues << QOrganizerItemPresence::PresenceAvailable;
-    presenceValues << QOrganizerItemPresence::PresenceAway;
-    presenceValues << QOrganizerItemPresence::PresenceBusy;
-    presenceValues << QOrganizerItemPresence::PresenceExtendedAway;
-    presenceValues << QOrganizerItemPresence::PresenceHidden;
-    presenceValues << QOrganizerItemPresence::PresenceOffline;
-    presenceValues << QOrganizerItemPresence::PresenceUnknown;
-    f.setAllowableValues(presenceValues);
-    f.setDataType(QVariant::Int);
-    fields.insert(QOrganizerItemPresence::FieldPresenceState, f);
-    f.setAllowableValues(QVariantList());
-    f.setDataType(QVariant::Url);
-    fields.insert(QOrganizerItemPresence::FieldPresenceStateImageUrl, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // global presence
-    d.setName(QOrganizerItemGlobalPresence::DefinitionName);
-    fields.clear();
-    f.setAllowableValues(QVariantList());
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemGlobalPresence::FieldTimestamp, f);
-    f.setDataType(QVariant::String);
-    fields.insert(QOrganizerItemGlobalPresence::FieldNickname, f);
-    fields.insert(QOrganizerItemGlobalPresence::FieldCustomMessage, f);
-    fields.insert(QOrganizerItemGlobalPresence::FieldPresenceStateText, f);
-    f.setAllowableValues(presenceValues);
-    f.setDataType(QVariant::Int);
-    fields.insert(QOrganizerItemGlobalPresence::FieldPresenceState, f);
-    f.setAllowableValues(QVariantList());
-    f.setDataType(QVariant::Url);
-    fields.insert(QOrganizerItemGlobalPresence::FieldPresenceStateImageUrl, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(true); // unique and read only!
-    retn.insert(d.name(), d);
-
-    // avatar
-    d.setName(QOrganizerItemAvatar::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::Url);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemAvatar::FieldImageUrl, f);
-    fields.insert(QOrganizerItemAvatar::FieldVideoUrl, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // ringtone
-    d.setName(QOrganizerItemRingtone::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::Url);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemRingtone::FieldAudioRingtoneUrl, f);
-    fields.insert(QOrganizerItemRingtone::FieldVideoRingtoneUrl, f);
-    fields.insert(QOrganizerItemRingtone::FieldVibrationRingtoneUrl, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // thumbnail
-    d.setName(QOrganizerItemThumbnail::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::Image);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemThumbnail::FieldThumbnail, f);
-    d.setFields(fields);
-    d.setUnique(true); // only one thumbnail, no context.
-    retn.insert(d.name(), d);
-
-    // GeoLocation
-    d.setName(QOrganizerItemGeoLocation::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemGeoLocation::FieldLabel, f);
-    f.setDataType(QVariant::Double);
-    fields.insert(QOrganizerItemGeoLocation::FieldLatitude, f);
-    fields.insert(QOrganizerItemGeoLocation::FieldLongitude, f);
-    fields.insert(QOrganizerItemGeoLocation::FieldAccuracy, f);
-    fields.insert(QOrganizerItemGeoLocation::FieldAltitude, f);
-    fields.insert(QOrganizerItemGeoLocation::FieldAltitudeAccuracy, f);
-    fields.insert(QOrganizerItemGeoLocation::FieldSpeed, f);
-    fields.insert(QOrganizerItemGeoLocation::FieldHeading, f);
-    f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemGeoLocation::FieldTimestamp, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // street address
-    d.setName(QOrganizerItemAddress::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemAddress::FieldPostOfficeBox, f);
-    fields.insert(QOrganizerItemAddress::FieldStreet, f);
-    fields.insert(QOrganizerItemAddress::FieldLocality, f);
-    fields.insert(QOrganizerItemAddress::FieldRegion, f);
-    fields.insert(QOrganizerItemAddress::FieldPostcode, f);
-    fields.insert(QOrganizerItemAddress::FieldCountry, f);
-    f.setDataType(QVariant::StringList); // can implement multiple subtypes
-    subTypes.clear();
-    subTypes << QString(QLatin1String(QOrganizerItemAddress::SubTypeDomestic));
-    subTypes << QString(QLatin1String(QOrganizerItemAddress::SubTypeInternational));
-    subTypes << QString(QLatin1String(QOrganizerItemAddress::SubTypeParcel));
-    subTypes << QString(QLatin1String(QOrganizerItemAddress::SubTypePostal));
-    f.setAllowableValues(subTypes);
-    fields.insert(QOrganizerItemAddress::FieldSubTypes, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // name
-    d.setName(QOrganizerItemName::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemName::FieldPrefix, f);
-    fields.insert(QOrganizerItemName::FieldFirstName, f);
-    fields.insert(QOrganizerItemName::FieldMiddleName, f);
-    fields.insert(QOrganizerItemName::FieldLastName, f);
-    fields.insert(QOrganizerItemName::FieldSuffix, f);
-    fields.insert(QOrganizerItemName::FieldCustomLabel, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
-    retn.insert(d.name(), d);
-
-    // tag
-    d.setName(QOrganizerItemTag::DefinitionName);
-    fields.clear();
-    f.setDataType(QVariant::String);
-    f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemTag::FieldTag, f);
-    f.setDataType(QVariant::StringList);
-    f.setAllowableValues(contexts);
-    fields.insert(QOrganizerItemDetail::FieldContext, f);
-    d.setFields(fields);
-    d.setUnique(false);
     retn.insert(d.name(), d);
 
     // in the default schema, we have two organizeritem types: TypeOrganizerItem, TypeGroup.
     // the entire default schema is valid for both types.
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > retnSchema;
-    retnSchema.insert(QOrganizerItemType::TypeOrganizerItem, retn);
-    retnSchema.insert(QOrganizerItemType::TypeGroup, retn);
+    retnSchema.insert(QOrganizerItemType::TypeNote, retn);
+
+    // and then again for events
+    retnSchema.insert(QOrganizerItemType::TypeEvent, retn);
+
+    // and then again for todos
+
+    // and then again for journals
 
     return retnSchema;
 }
@@ -956,7 +499,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
   Any errors encountered during this operation should be stored to
   \a error.
  */
-bool QOrganizerItemManagerEngine::validateOrganizerItem(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
+bool QOrganizerItemManagerEngine::validateItem(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
 {
     QList<QString> uniqueDefinitionIds;
 
@@ -1923,7 +1466,7 @@ void QOrganizerItemManagerEngine::updateRequestState(QOrganizerItemAbstractReque
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerItemManagerEngine::updateOrganizerItemLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest* req, const QList<QOrganizerItemLocalId>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
+void QOrganizerItemManagerEngine::updateItemLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest* req, const QList<QOrganizerItemLocalId>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
 {
     QOrganizerItemLocalIdFetchRequestPrivate* rd = static_cast<QOrganizerItemLocalIdFetchRequestPrivate*>(req->d_ptr);
     req->d_ptr->m_error = error;
@@ -1943,7 +1486,7 @@ void QOrganizerItemManagerEngine::updateOrganizerItemLocalIdFetchRequest(QOrgani
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerItemManagerEngine::updateOrganizerItemFetchRequest(QOrganizerItemFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
+void QOrganizerItemManagerEngine::updateItemFetchRequest(QOrganizerItemFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
 {
     QOrganizerItemFetchRequestPrivate* rd = static_cast<QOrganizerItemFetchRequestPrivate*>(req->d_ptr);
     req->d_ptr->m_error = error;
@@ -1963,7 +1506,7 @@ void QOrganizerItemManagerEngine::updateOrganizerItemFetchRequest(QOrganizerItem
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerItemManagerEngine::updateOrganizerItemRemoveRequest(QOrganizerItemRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
+void QOrganizerItemManagerEngine::updateItemRemoveRequest(QOrganizerItemRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
     QOrganizerItemRemoveRequestPrivate* rd = static_cast<QOrganizerItemRemoveRequestPrivate*>(req->d_ptr);
     req->d_ptr->m_error = error;
@@ -1983,7 +1526,7 @@ void QOrganizerItemManagerEngine::updateOrganizerItemRemoveRequest(QOrganizerIte
 
   If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
  */
-void QOrganizerItemManagerEngine::updateOrganizerItemSaveRequest(QOrganizerItemSaveRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
+void QOrganizerItemManagerEngine::updateItemSaveRequest(QOrganizerItemSaveRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State newState)
 {
     QOrganizerItemSaveRequestPrivate* rd = static_cast<QOrganizerItemSaveRequestPrivate*>(req->d_ptr);
     req->d_ptr->m_error = error;

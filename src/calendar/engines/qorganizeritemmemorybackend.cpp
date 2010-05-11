@@ -163,7 +163,7 @@ QList<QOrganizerItemLocalId> QOrganizerItemMemoryEngine::itemIds(const QOrganize
     if (filter.type() == QOrganizerItemFilter::DefaultFilter && sortOrders.count() == 0) {
         return d->m_organizeritemIds;
     } else {
-        QList<QOrganizerItem> clist = organizeritems(filter, sortOrders, QOrganizerItemFetchHint(), error);
+        QList<QOrganizerItem> clist = items(filter, sortOrders, QOrganizerItemFetchHint(), error);
 
         /* Extract the ids */
         QList<QOrganizerItemLocalId> ids;
@@ -202,7 +202,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::items(const QOrganizerItemFilt
 bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error)
 {
     // ensure that the organizeritem's details conform to their definitions
-    if (!validateOrganizerItem(*theOrganizerItem, error)) {
+    if (!validateItem(*theOrganizerItem, error)) {
         return false;
     }
 
@@ -223,11 +223,11 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         theOrganizerItem->saveDetail(&ts);
 
         // synthesize the display label for the organizeritem.
-        setOrganizerItemDisplayLabel(theOrganizerItem, synthesizedDisplayLabel(*theOrganizerItem, error));
+        setItemDisplayLabel(theOrganizerItem, synthesizedDisplayLabel(*theOrganizerItem, error));
 
         // Looks ok, so continue
         d->m_organizeritems.replace(index, *theOrganizerItem);
-        changeSet.insertChangedOrganizerItem(theOrganizerItem->localId());
+        changeSet.insertChangedItem(theOrganizerItem->localId());
     } else {
         // id does not exist; if not zero, fail.
         QOrganizerItemId newId;
@@ -250,13 +250,13 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         theOrganizerItem->setId(newId);
 
         // synthesize the display label for the organizeritem.
-        setOrganizerItemDisplayLabel(theOrganizerItem, synthesizedDisplayLabel(*theOrganizerItem, error));
+        setItemDisplayLabel(theOrganizerItem, synthesizedDisplayLabel(*theOrganizerItem, error));
 
         // finally, add the organizeritem to our internal lists and return
         d->m_organizeritems.append(*theOrganizerItem);                   // add organizeritem to list
         d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizeritem id.
 
-        changeSet.insertAddedOrganizerItem(theOrganizerItem->localId());
+        changeSet.insertAddedItem(theOrganizerItem->localId());
     }
 
     *error = QOrganizerItemManager::NoError;     // successful.
@@ -280,7 +280,7 @@ bool QOrganizerItemMemoryEngine::saveItems(QList<QOrganizerItem>* organizeritems
     QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
     for (int i = 0; i < organizeritems->count(); i++) {
         current = organizeritems->at(i);
-        if (!saveOrganizerItem(&current, changeSet, error)) {
+        if (!saveItem(&current, changeSet, error)) {
             operationError = *error;
             errorMap->insert(i, operationError);
         } else {
@@ -305,32 +305,16 @@ bool QOrganizerItemMemoryEngine::removeItem(const QOrganizerItemLocalId& organiz
         return false;
     }
 
-    // remove the organizeritem from any relationships it was in.
+    // remove the organizeritem from the lists.
     QOrganizerItemId thisOrganizerItem;
     thisOrganizerItem.setManagerUri(managerUri());
     thisOrganizerItem.setLocalId(organizeritemId);
-    QList<QOrganizerItemRelationship> allRelationships = relationships(QString(), thisOrganizerItem, QOrganizerItemRelationship::Either, error);
-    if (*error != QOrganizerItemManager::NoError && *error != QOrganizerItemManager::DoesNotExistError) {
-        *error = QOrganizerItemManager::UnspecifiedError; // failed to clean up relationships
-        return false;
-    }
 
-    // this is meant to be a transaction, so if any of these fail, we're in BIG TROUBLE.
-    // a real backend will use DBMS transactions to ensure database integrity.
-    removeRelationships(allRelationships, 0, error);
-
-    // having cleaned up the relationships, remove the organizeritem from the lists.
     d->m_organizeritems.removeAt(index);
     d->m_organizeritemIds.removeAt(index);
     *error = QOrganizerItemManager::NoError;
 
-    // and if it was the self organizeritem, reset the self organizeritem id
-    if (organizeritemId == d->m_selfOrganizerItemId) {
-        d->m_selfOrganizerItemId = QOrganizerItemLocalId(0);
-        changeSet.setOldAndNewSelfOrganizerItemId(QPair<QOrganizerItemLocalId, QOrganizerItemLocalId>(organizeritemId, QOrganizerItemLocalId(0)));
-    }
-
-    changeSet.insertRemovedOrganizerItem(organizeritemId);
+    changeSet.insertRemovedItem(organizeritemId);
     return true;
 }
 
@@ -347,7 +331,7 @@ bool QOrganizerItemMemoryEngine::removeItems(const QList<QOrganizerItemLocalId>&
     QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
     for (int i = 0; i < organizeritemIds.count(); i++) {
         current = organizeritemIds.at(i);
-        if (!removeOrganizerItem(current, changeSet, error)) {
+        if (!removeItem(current, changeSet, error)) {
             operationError = *error;
             errorMap->insert(i, operationError);
         }
@@ -479,7 +463,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
     // Now perform the active request and emit required signals.
     Q_ASSERT(currentRequest->state() == QOrganizerItemAbstractRequest::ActiveState);
     switch (currentRequest->type()) {
-        case QOrganizerItemAbstractRequest::OrganizerItemFetchRequest:
+        case QOrganizerItemAbstractRequest::ItemFetchRequest:
         {
             QOrganizerItemFetchRequest* r = static_cast<QOrganizerItemFetchRequest*>(currentRequest);
             QOrganizerItemFilter filter = r->filter();
@@ -487,46 +471,46 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QOrganizerItemFetchHint fetchHint = r->fetchHint();
 
             QOrganizerItemManager::Error operationError;
-            QList<QOrganizerItem> requestedOrganizerItems = organizeritems(filter, sorting, fetchHint, &operationError);
+            QList<QOrganizerItem> requestedOrganizerItems = items(filter, sorting, fetchHint, &operationError);
 
             // update the request with the results.
             if (!requestedOrganizerItems.isEmpty() || operationError != QOrganizerItemManager::NoError)
-                updateOrganizerItemFetchRequest(r, requestedOrganizerItems, operationError, QOrganizerItemAbstractRequest::FinishedState);
+                updateItemFetchRequest(r, requestedOrganizerItems, operationError, QOrganizerItemAbstractRequest::FinishedState);
             else
                 updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
         }
         break;
 
-        case QOrganizerItemAbstractRequest::OrganizerItemLocalIdFetchRequest:
+        case QOrganizerItemAbstractRequest::ItemLocalIdFetchRequest:
         {
             QOrganizerItemLocalIdFetchRequest* r = static_cast<QOrganizerItemLocalIdFetchRequest*>(currentRequest);
             QOrganizerItemFilter filter = r->filter();
             QList<QOrganizerItemSortOrder> sorting = r->sorting();
 
             QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
-            QList<QOrganizerItemLocalId> requestedOrganizerItemIds = organizeritemIds(filter, sorting, &operationError);
+            QList<QOrganizerItemLocalId> requestedOrganizerItemIds = itemIds(filter, sorting, &operationError);
 
             if (!requestedOrganizerItemIds.isEmpty() || operationError != QOrganizerItemManager::NoError)
-                updateOrganizerItemLocalIdFetchRequest(r, requestedOrganizerItemIds, operationError, QOrganizerItemAbstractRequest::FinishedState);
+                updateItemLocalIdFetchRequest(r, requestedOrganizerItemIds, operationError, QOrganizerItemAbstractRequest::FinishedState);
             else
                 updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
         }
         break;
 
-        case QOrganizerItemAbstractRequest::OrganizerItemSaveRequest:
+        case QOrganizerItemAbstractRequest::ItemSaveRequest:
         {
             QOrganizerItemSaveRequest* r = static_cast<QOrganizerItemSaveRequest*>(currentRequest);
-            QList<QOrganizerItem> organizeritems = r->organizeritems();
+            QList<QOrganizerItem> organizeritems = r->items();
 
             QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
             QMap<int, QOrganizerItemManager::Error> errorMap;
-            saveOrganizerItems(&organizeritems, &errorMap, &operationError);
+            saveItems(&organizeritems, &errorMap, &operationError);
 
-            updateOrganizerItemSaveRequest(r, organizeritems, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
+            updateItemSaveRequest(r, organizeritems, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
         }
         break;
 
-        case QOrganizerItemAbstractRequest::OrganizerItemRemoveRequest:
+        case QOrganizerItemAbstractRequest::ItemRemoveRequest:
         {
             // this implementation provides scant information to the user
             // the operation either succeeds (all organizeritems matching the filter were removed)
@@ -535,12 +519,12 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             // error that occurred during the remove operation.
             QOrganizerItemRemoveRequest* r = static_cast<QOrganizerItemRemoveRequest*>(currentRequest);
             QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
-            QList<QOrganizerItemLocalId> organizeritemsToRemove = r->organizeritemIds();
+            QList<QOrganizerItemLocalId> organizeritemsToRemove = r->itemIds();
             QMap<int, QOrganizerItemManager::Error> errorMap;
 
             for (int i = 0; i < organizeritemsToRemove.size(); i++) {
                 QOrganizerItemManager::Error tempError;
-                removeOrganizerItem(organizeritemsToRemove.at(i), changeSet, &tempError);
+                removeItem(organizeritemsToRemove.at(i), changeSet, &tempError);
 
                 if (tempError != QOrganizerItemManager::NoError) {
                     errorMap.insert(i, tempError);
@@ -549,7 +533,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             }
 
             if (!errorMap.isEmpty() || operationError != QOrganizerItemManager::NoError)
-                updateOrganizerItemRemoveRequest(r, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
+                updateItemRemoveRequest(r, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
             else
                 updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
         }
@@ -563,11 +547,11 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QMap<QString, QOrganizerItemDetailDefinition> requestedDefinitions;
             QStringList names = r->definitionNames();
             if (names.isEmpty())
-                names = detailDefinitions(r->organizeritemType(), &operationError).keys(); // all definitions.
+                names = detailDefinitions(r->itemType(), &operationError).keys(); // all definitions.
 
             QOrganizerItemManager::Error tempError;
             for (int i = 0; i < names.size(); i++) {
-                QOrganizerItemDetailDefinition current = detailDefinition(names.at(i), r->organizeritemType(), &tempError);
+                QOrganizerItemDetailDefinition current = detailDefinition(names.at(i), r->itemType(), &tempError);
                 requestedDefinitions.insert(names.at(i), current);
 
                 if (tempError != QOrganizerItemManager::NoError) {
@@ -594,7 +578,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
             QOrganizerItemManager::Error tempError;
             for (int i = 0; i < definitions.size(); i++) {
                 QOrganizerItemDetailDefinition current = definitions.at(i);
-                saveDetailDefinition(current, r->organizeritemType(), changeSet, &tempError);
+                saveDetailDefinition(current, r->itemType(), changeSet, &tempError);
                 savedDefinitions.append(current);
 
                 if (tempError != QOrganizerItemManager::NoError) {
@@ -618,7 +602,7 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
 
             for (int i = 0; i < names.size(); i++) {
                 QOrganizerItemManager::Error tempError;
-                removeDetailDefinition(names.at(i), r->organizeritemType(), changeSet, &tempError);
+                removeDetailDefinition(names.at(i), r->itemType(), changeSet, &tempError);
 
                 if (tempError != QOrganizerItemManager::NoError) {
                     errorMap.insert(i, tempError);
@@ -628,64 +612,6 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
 
             // there are no results, so just update the status with the error.
             updateDefinitionRemoveRequest(r, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
-        }
-        break;
-
-        case QOrganizerItemAbstractRequest::RelationshipFetchRequest:
-        {
-            QOrganizerItemRelationshipFetchRequest* r = static_cast<QOrganizerItemRelationshipFetchRequest*>(currentRequest);
-            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
-            QList<QOrganizerItemManager::Error> operationErrors;
-            QList<QOrganizerItemRelationship> allRelationships = relationships(QString(), QOrganizerItemId(), QOrganizerItemRelationship::Either, &operationError);
-            QList<QOrganizerItemRelationship> requestedRelationships;
-
-            // select the requested relationships.
-            for (int i = 0; i < allRelationships.size(); i++) {
-                QOrganizerItemRelationship currRel = allRelationships.at(i);
-                if (r->first() != QOrganizerItemId() && r->first() != currRel.first())
-                    continue;
-                if (r->second() != QOrganizerItemId() && r->second() != currRel.second())
-                    continue;
-                if (!r->relationshipType().isEmpty() && r->relationshipType() != currRel.relationshipType())
-                    continue;
-                requestedRelationships.append(currRel);
-            }
-
-            // update the request with the results.
-            if (!requestedRelationships.isEmpty() || operationError != QOrganizerItemManager::NoError)
-                updateRelationshipFetchRequest(r, requestedRelationships, operationError, QOrganizerItemAbstractRequest::FinishedState);
-            else
-                updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
-        }
-        break;
-
-        case QOrganizerItemAbstractRequest::RelationshipRemoveRequest:
-        {
-            QOrganizerItemRelationshipRemoveRequest* r = static_cast<QOrganizerItemRelationshipRemoveRequest*>(currentRequest);
-            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
-            QList<QOrganizerItemRelationship> relationshipsToRemove = r->relationships();
-            QMap<int, QOrganizerItemManager::Error> errorMap;
-
-            removeRelationships(r->relationships(), &errorMap, &operationError);
-
-            if (!errorMap.isEmpty() || operationError != QOrganizerItemManager::NoError)
-                updateRelationshipRemoveRequest(r, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
-            else
-                updateRequestState(currentRequest, QOrganizerItemAbstractRequest::FinishedState);
-        }
-        break;
-
-        case QOrganizerItemAbstractRequest::RelationshipSaveRequest:
-        {
-            QOrganizerItemRelationshipSaveRequest* r = static_cast<QOrganizerItemRelationshipSaveRequest*>(currentRequest);
-            QOrganizerItemManager::Error operationError = QOrganizerItemManager::NoError;
-            QMap<int, QOrganizerItemManager::Error> errorMap;
-            QList<QOrganizerItemRelationship> requestRelationships = r->relationships();
-
-            saveRelationships(&requestRelationships, &errorMap, &operationError);
-
-            // update the request with the results.
-            updateRelationshipSaveRequest(r, requestRelationships, operationError, errorMap, QOrganizerItemAbstractRequest::FinishedState);
         }
         break;
 
@@ -702,41 +628,19 @@ void QOrganizerItemMemoryEngine::performAsynchronousOperation(QOrganizerItemAbst
  */
 bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const
 {
-    if (!supportedOrganizerItemTypes().contains(organizeritemType))
+    if (!supportedItemTypes().contains(organizeritemType))
         return false;
 
     switch (feature) {
-        case QOrganizerItemManager::Groups:
         case QOrganizerItemManager::ActionPreferences:
-        case QOrganizerItemManager::Relationships:
-        case QOrganizerItemManager::ArbitraryRelationshipTypes:
         case QOrganizerItemManager::MutableDefinitions:
             return true;
         case QOrganizerItemManager::Anonymous:
             return d->m_anonymous;
-        case QOrganizerItemManager::SelfOrganizerItem:
-            return true;
 
         default:
             return false;
     }
-}
-
-/*!
- * \reimp
- */
-bool QOrganizerItemMemoryEngine::isRelationshipTypeSupported(const QString& relationshipType, const QString& organizeritemType) const
-{
-    // the memory backend supports arbitrary relationship types
-    // but some relationship types don't make sense for groups.
-    if (organizeritemType == QOrganizerItemType::TypeGroup) {
-        if (relationshipType == QOrganizerItemRelationship::HasSpouse || relationshipType == QOrganizerItemRelationship::HasAssistant) {
-            return false;
-        }
-    }
-
-    // all other relationship types for all organizeritem types are supported.
-    return true;
 }
 
 /*!
