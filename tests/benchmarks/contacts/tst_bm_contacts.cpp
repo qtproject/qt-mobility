@@ -160,7 +160,7 @@ void tst_Contact::initTestCase()
     QStringList list = QContactManager::availableManagers();       
     while(!list.empty()){
       QString mgr = list.takeFirst();
-      if(mgr != "invalid"){
+      if((mgr != "invalid") && (mgr != "testdummy") && (mgr != "maliciousplugin")){
         m_managers.append(new QContactManager(mgr));
         if((mgr == "symbian") || (mgr == "tracker") || (mgr == "maemo5")) {
           qDebug() << "Found system manager: " << mgr;
