@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qnetworkconfiguration.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QNetworkConfiguration Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QNetworkConfiguration"></a>
@@ -16,8 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QNetworkConfiguration Class Reference<br /><span class="small-subtitle">[<a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a> module]</span>
 </h1>
 <p>The QNetworkConfiguration class provides an abstraction of one or more access point configurations. <a href="#details">More...</a></p>
-<pre>    #include &lt;QNetworkConfiguration&gt;</pre><p><b>This class is not part of the Qt GUI Framework Edition.</b></p>
-<ul>
+<pre>    #include &lt;QNetworkConfiguration&gt;</pre><ul>
 <li><a href="qnetworkconfiguration-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
@@ -51,6 +50,7 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QNetworkConfiguration class provides an abstraction of one or more access point configurations.</p>
 <p>QNetworkConfiguration encapsulates a single access point or service network. In most cases a single access point configuration can be mapped to one network interface. However a single network interface may not always map to only one access point configuration. Multiple configurations for the same network device may enable multiple access points. An example device that could exhibit such a configuration might be a Smartphone which allows the user to manage multiple WLAN configurations while the device itself has only one WLAN network device.</p>
@@ -63,8 +63,10 @@
 <p>The <a href="qnetworkconfiguration.html#StateFlag-enum">Active</a> state implies that the configuration is <a href="qnetworkconfiguration.html#StateFlag-enum">Discovered</a>. A configuration in this state is currently being used by an application. The underlying network interface has a valid IP configuration and can transfer IP packets between the device and the target network.</p>
 <p>The <a href="qnetworkconfiguration.html#StateFlag-enum">Undefined</a> state indicates that the system has knowledge of possible target networks but cannot actually use that knowledge to connect to it. An example for such a state could be an encrypted WLAN that has been discovered but the user hasn't actually saved a configuration including the required password which would allow the device to connect to it.</p>
 <p>Depending on the type of configuration some states are transient in nature. A GPRS/UMTS connection may almost always be <a href="qnetworkconfiguration.html#StateFlag-enum">Discovered</a> if the GSM/UMTS network is available. However if the GSM/UMTS network looses the connection the associated configuration may change its state from <a href="qnetworkconfiguration.html#StateFlag-enum">Discovered</a> to <a href="qnetworkconfiguration.html#StateFlag-enum">Defined</a> as well. A similar use case might be triggered by WLAN availability. <a href="qnetworkconfigurationmanager.html#updateConfigurations">QNetworkConfigurationManager::updateConfigurations</a>() can be used to manually trigger updates of states. Note that some platforms do not require such updates as they implicitly change the state once it has been discovered. If the state of a configuration changes all related QNetworkConfiguration instances change their state automatically.</p>
+</div>
 <p>See also <a href="qnetworksession.html">QNetworkSession</a> and <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QNetworkConfiguration/Purpose"></a>
 <a name="//apple_ref/cpp/econst/QNetworkConfiguration/UnknownPurpose"></a>
@@ -110,7 +112,9 @@
 <tr><td valign="top"><tt>QNetworkConfiguration::UserChoice</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The configuration is a placeholder which will be resolved to an actual configuration by the platform when a session is opened. Depending on the platform the selection may generate a popup dialog asking the user for his preferred choice.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfiguration::Invalid</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The configuration is invalid.</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QNetworkConfiguration/QNetworkConfiguration"></a>
 <h3 class="fn"><a name="QNetworkConfiguration"></a>QNetworkConfiguration::QNetworkConfiguration ()</h3>
@@ -175,6 +179,7 @@
 <a name="//apple_ref/cpp/instm/QNetworkConfiguration/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QNetworkConfiguration::operator== ( const QNetworkConfiguration &amp; <i>other</i> ) const</h3>
 <p>Returns true, if this configuration is the same as the <i>other</i> configuration given; otherwise returns false.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

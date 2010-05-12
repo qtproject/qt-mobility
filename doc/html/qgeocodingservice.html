@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qgeocodingservice.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QGeoCodingService Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QGeoCodingService"></a>
@@ -64,20 +64,23 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoCodingService class manages requests to and replies from a geocoding service.</p>
 <p>The request functions return a <a href="qgeocodereply.html">QGeoCodeReply</a> instance, which is responsible for delivering the status and results of the request.</p>
 <p>The rest of the class consists of functions providing metadata about the service provider, primarily dealing with the capabilities of the service and any limitations that may apply to the request inputs.</p>
 <p>The <a href="qgeocodereply.html">QGeoCodeReply</a> objects and the QGeoCodingService instance will both emit signals to indicate that a request has completed successfully or has resulted in an error.</p>
 <p><b>Note:</b> After the request has finished, it is the responsibility of the user to delete the <a href="qgeocodereply.html">QGeoCodeReply</a> object at an appropriate time. Do not directly delete it inside the slot connected to <a href="qgeocodingservice.html#replyFinished">replyFinished</a>() or <a href="qgeocodingservice.html#replyError">replyError</a>() - the <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() function should be used instead.</p>
+</div>
 <p>See also <a href="qgeocodereply.html">QGeoCodeReply</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QGeoCodingService/ErrorCode"></a>
 <a name="//apple_ref/cpp/econst/QGeoCodingService/NoError"></a>
@@ -115,7 +118,9 @@
 <tr><td valign="top"><tt>QGeoCodingService::Supported</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The feature is supported. This also implies that the feature does not requrie authorization to access.</td></tr>
 </table></p>
 <p>See also <a href="qgeocodingservice.html#RequestOption-enum">QGeoCodingService::RequestOption</a> and <a href="qgeocodingservice.html#supportedRequestOption">QGeoCodingService::supportedRequestOption</a>().</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoCodingService/QGeoCodingService"></a>
 <h3 class="fn"><a name="QGeoCodingServicex"></a>QGeoCodingService::QGeoCodingService ()&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -172,6 +177,7 @@
 <p>Returns the level of support for the request option <i>option</i>.</p>
 <p>The level of support will be determined by the subclasses of <a href="qgeocodingservice.html">QGeoCodingService</a> and the current authorization against the service.</p>
 <p>See also <a href="qgeocodingservice.html#setSupportedRequestOption">setSupportedRequestOption</a>(), <a href="qgeocodingservice.html#RequestOption-enum">QGeoCodingService::RequestOption</a>, and <a href="qgeocodingservice.html#SupportLevel-enum">QGeoCodingService::SupportLevel</a>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

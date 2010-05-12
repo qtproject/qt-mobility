@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qsensormanager.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QSensorManager Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QSensorManager"></a>
@@ -33,11 +33,14 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QSensorManager class handles registration and creation of sensor backends.</p>
 <p>Sensor plugins register backends using the <a href="qsensormanager.html#registerBackend">registerBackend</a>() function.</p>
 <p>When <a href="qsensor.html#connectToBackend">QSensor::connectToBackend</a>() is called, the <a href="qsensormanager.html#createBackend">createBackend</a>() function will be called.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/clm/QSensorManager/createBackend"></a>
 <h3 class="fn"><a name="createBackend"></a><a href="qsensorbackend.html">QSensorBackend</a> * QSensorManager::createBackend ( <a href="qsensor.html">QSensor</a> * <i>sensor</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
@@ -46,13 +49,16 @@
 <h3 class="fn"><a name="registerBackend"></a>void QSensorManager::registerBackend ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>type</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>identifier</i>, <a href="qsensorbackendfactory.html">QSensorBackendFactory</a> * <i>factory</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Register a sensor for <i>type</i>. The <i>identifier</i> must be unique.</p>
 <p>The <i>factory</i> will be asked to create instances of the backend.</p>
+</div>
 <hr />
+<div class="macros"/>
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//REGISTER_STATIC_PLUGIN"></a>
 <h3 class="fn"><a name="REGISTER_STATIC_PLUGIN"></a>REGISTER_STATIC_PLUGIN (  <i>pluginname</i> )</h3>
 <p>Registers a static plugin, <i>pluginname</i>.</p>
 <p>Note that this macro relies on static initialization so it may not be appropriate for use in a library and may not work on all platforms.</p>
 <p>See also <a href="creating-a-sensor-plugin.html">Creating a sensor plugin</a>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

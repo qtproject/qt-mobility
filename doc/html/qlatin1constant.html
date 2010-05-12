@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactdetail.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QLatin1Constant Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QLatin1Constant"></a>
@@ -35,9 +35,12 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLatin1Constant class holds a Latin 1 string constant</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLatin1Constant/latin1"></a>
 <h3 class="fn"><a name="latin1"></a>const char * QLatin1Constant::latin1 () const</h3>
@@ -48,7 +51,9 @@
 <a name="//apple_ref/cpp/instm/QLatin1Constant/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QLatin1Constant::operator== ( const QLatin1Constant &amp; <i>other</i> ) const</h3>
 <p>Returns true if this <a href="qlatin1constant.html">QLatin1Constant</a> is the same as <i>other</i> (either same object or same string literal), and false otherwise.</p>
+</div>
 <hr />
+<div class="macros"/>
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//Q_DECLARE_LATIN1_CONSTANT"></a>
 <h3 class="fn"><a name="Q_DECLARE_LATIN1_CONSTANT"></a>Q_DECLARE_LATIN1_CONSTANT</h3>
@@ -56,7 +61,7 @@
 <p>The resulting constant can be passed to functions accepting a <a href="http://qt.nokia.com/doc/4.6/qlatin1string.html">QLatin1String</a>, a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>.</p>
 <p>The first parameter is the name of the variable to declare. The second parameter is the value of the constant, as a string literal.</p>
 <p>For example:</p>
-<pre><span class="comment">    // in a header file</span>
+<pre>    // in a header file
     Q_DECLARE_LATIN1_CONSTANT(MyConstant, &quot;MYCONSTANT&quot;);</pre>
 <p>The declaration should be paired with a matching <a href="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT">Q_DEFINE_LATIN1_CONSTANT</a> with the same arguments to actually define the constant.</p>
 <p>See also <a href="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT">Q_DEFINE_LATIN1_CONSTANT</a>.</p>
@@ -66,13 +71,14 @@
 <p>The resulting constant can be passed to functions accepting a <a href="http://qt.nokia.com/doc/4.6/qlatin1string.html">QLatin1String</a>, a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, or a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a>.</p>
 <p>The first parameter is the name of the variable to define. The second parameter is the value of the constant, as a string literal.</p>
 <p>For example:</p>
-<pre><span class="comment">    // in a header file</span>
+<pre>    // in a header file
     Q_DECLARE_LATIN1_CONSTANT(MyConstant, &quot;MYCONSTANT&quot;);
 
 <span class="comment">    // in source file</span>
     Q_DEFINE_LATIN1_CONSTANT(MyConstant, &quot;MYCONSTANT&quot;);</pre>
 <p>You can use this macro without the matching DECLARE macro if you are using the constant only in a single compilation unit.</p>
 <p>See also <a href="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT">Q_DECLARE_LATIN1_CONSTANT</a>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

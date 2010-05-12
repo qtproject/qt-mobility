@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title>Qt Mobility Project 1.0: weatherinfo.cpp Example File (weatherinfo/weatherinfo.cpp)</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -343,7 +343,7 @@
 
         void requestTownName(QString longitude, QString latitude) {
             <span class="comment">// http://code.google.com/intl/en/apis/maps/documentation/geocoding/index.html#ReverseGeocoding</span>
-            QUrl url(&quot;http:<span class="comment">//maps.google.com/maps/geo&quot;);</span>
+            QUrl url(&quot;http://maps.google.com/maps/geo&quot;);
             url.addEncodedQueryItem(&quot;q&quot;, QUrl::toPercentEncoding(latitude + &quot;,&quot; + longitude));
             url.addEncodedQueryItem(&quot;output&quot;, QUrl::toPercentEncoding(&quot;xml&quot;));
 
@@ -362,7 +362,7 @@
         }
 
         void request(const QString &amp;location) {
-            QUrl url(&quot;http:<span class="comment">//www.google.com/ig/api&quot;);</span>
+            QUrl url(&quot;http://www.google.com/ig/api&quot;);
             url.addEncodedQueryItem(&quot;hl&quot;, &quot;en&quot;);
             url.addEncodedQueryItem(&quot;weather&quot;, QUrl::toPercentEncoding(location));
 

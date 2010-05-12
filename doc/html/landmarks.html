@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qlandmarks.qdoc -->
 <head>
   <title>Qt Mobility Project 1.0: Landmarks</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -75,7 +75,7 @@
         monks.setAddress(address);
 
         monks.setDescription(&quot;Jerry's favourite diner&quot;);
-        monks.addCategory(cafes.id());
+        monks.addCategoryId(cafes.categoryId());
 
         lm-&gt;saveLandmark(&amp;monks); <span class="comment">//lm  is a QLandmarkManager*</span></pre>
 <a name="asynchronous"></a>
@@ -271,12 +271,12 @@
 <h4>Deleting a category</h4>
 <p>To remove a category we simply pass the category id to a <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
 <pre>        <span class="comment">//category is a previously retrieved QLandmarkCategory object</span>
-        lm-&gt;removeCategory(category.id());</pre>
+        lm-&gt;removeCategory(category.categoryId());</pre>
 <a name="deleting-a-landmark"></a>
 <h4>Deleting a landmark</h4>
 <p>To remove a landmark we simply passs the landmark id to a <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
 <pre>        <span class="comment">//landmark is a previously retrieved QLandmark object</span>
-        lm-&gt;removeLandmark(landmark.id());</pre>
+        lm-&gt;removeLandmark(landmark.landmarkId());</pre>
 <a name="asynchronous"></a>
 <h3>Asynchronous</h3>
 <a name="deleting-a-category"></a>
@@ -286,7 +286,7 @@
     {
         <span class="comment">//catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest(lmManager)</span>
         <span class="comment">//in the ctor, where lmManager is a QLandmarkManager*</span>
-        catRemoveRequest-&gt;setCategoryId(category.id()); <span class="comment">//category is a previously retrieved QLandmarkCategory</span>
+        catRemoveRequest-&gt;setCategoryId(category.categoryId()); <span class="comment">//category is a previously retrieved QLandmarkCategory</span>
 
         connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
             this, SLOT(categoryRemoveRequestHandler(QLandmarkAbstractRequest::State)));
@@ -303,7 +303,7 @@
     {
         <span class="comment">//catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest(lmManager)</span>
         <span class="comment">//in the ctor, where lmManager is a QLandmarkManager*</span>
-        catRemoveRequest-&gt;setCategoryId(category.id()); <span class="comment">//category is a previously retrieved QLandmarkCategory</span>
+        catRemoveRequest-&gt;setCategoryId(category.categoryId()); <span class="comment">//category is a previously retrieved QLandmarkCategory</span>
 
         connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
             this, SLOT(categoryRemoveRequestHandler(QLandmarkAbstractRequest::State)));
@@ -322,7 +322,7 @@
     {
         <span class="comment">//lmRemoveRequest was created with lmRemoveRequest = new QLandmarkSaveRequest(lmManager)</span>
         <span class="comment">//in the ctor, where lmManager is a QLandmarkManager*</span>
-        lmRemoveRequest-&gt;setLandmarkId(landmark.id());  <span class="comment">//landmark is a previously retrieved QLandmark</span>
+        lmRemoveRequest-&gt;setLandmarkId(landmark.landmarkId());  <span class="comment">//landmark is a previously retrieved QLandmark</span>
 
         connect(lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
                 SLOT(landmarkRemoveRequestHandler(QLandmarkAbstractRequest::State)));

@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactmanager.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QContactManager Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QContactManager"></a>
@@ -34,7 +34,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#QContactManager-2">QContactManager</a></b> ( const QString &amp; <i>managerName</i>, int <i>implementationVersion</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#QContactManager-3">QContactManager</a></b> ( QObject * <i>parent</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#dtor.QContactManager">~QContactManager</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#compatibleContact">compatibleContact</a></b> ( const QContact &amp; <i>original</i> )&nbsp;&nbsp;<tt> (preliminary)</tt></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#compatibleContact">compatibleContact</a></b> ( const QContact &amp; <i>original</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contact">contact</a></b> ( const QContactLocalId &amp; <i>contactId</i>, const QContactFetchHint &amp; <i>fetchHint</i> = QContactFetchHint() ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contactIds">contactIds</a></b> ( const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contactIds-2">contactIds</a></b> ( const QContactFilter &amp; <i>filter</i>, const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</td></tr>
@@ -103,18 +103,21 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.</p>
 <p>This class provides an abstraction of a datastore or aggregation of datastores which contains contact information. It provides methods to retrieve and manipulate contact information, contact relationship information, and supported schema definitions. It also provides metadata and error information reporting.</p>
 <p>The functions provided by QContactManager are purely synchronous; to access the same functionality in an asynchronous manner, clients should use the use-case-specific classes derived from <a href="qcontactabstractrequest.html">QContactAbstractRequest</a>.</p>
 <p>Some functionality provided by QContactManager directly is not accessible using the asynchronous API; see the <a href="contactssync.html">synchronous</a> and <a href="contactsasync.html">asynchronous</a> API information from the <a href="contacts.html">contacts module</a> API documentation.</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactManager/Error"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/NoError"></a>
@@ -175,7 +178,9 @@
 <tr><td valign="top"><tt>QContactManager::ChangeLogs</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps</td></tr>
 <tr><td valign="top"><tt>QContactManager::Anonymous</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">The manager is isolated from other managers</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactManager/QContactManager"></a>
 <h3 class="fn"><a name="QContactManager"></a>QContactManager::QContactManager ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>managerName</i> = QString(), const <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; &amp; <i>parameters</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -199,9 +204,7 @@
 <p>Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given <i>managerName</i>, <i>params</i> and an optional <i>implementationVersion</i></p>
 <a name="//apple_ref/cpp/instm/QContactManager/compatibleContact"></a>
 <h3 class="fn"><a name="compatibleContact"></a><a href="qcontact.html">QContact</a> QContactManager::compatibleContact ( const <a href="qcontact.html">QContact</a> &amp; <i>original</i> )</h3>
-<p><b>This function is under development and is subject to change.</b></p>
 <p>Returns a pruned or modified version of the <i>original</i> contact which is valid and can be saved in the manager. The returned contact might have entire details removed or arbitrarily changed. The cache of relationships in the contact are ignored entirely when considering compatibility with the backend, as they are saved and validated separately.</p>
-<p>This function is preliminary and the behaviour is subject to change!</p>
 <a name="//apple_ref/cpp/instm/QContactManager/contact"></a>
 <h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManager::contact ( const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> &amp; <i>contactId</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3>
 <p>Returns the contact in the database identified by <i>contactId</i>.</p>
@@ -371,6 +374,7 @@
 <p>Returns a display label for a <i>contact</i> which is synthesized from its details in a manager specific manner.</p>
 <p>If you want to update the display label stored in the contact, use the <a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a>() function instead.</p>
 <p>See also <a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactfetchhint.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QContactFetchHint Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QContactFetchHint"></a>
@@ -42,6 +42,7 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactFetchHint class provides hints to the manager about which contact information needs to be retrieved in an asynchronous fetch request or a synchronous function call.</p>
 <p>All of the hints may be ignored at the discretion of the manager, however if a manager is able to optimize retrieval of contacts due to hints, it may do so. If a manager ignores a hint, it must retrieve the full set of data that the hint refers to.</p>
@@ -52,7 +53,9 @@
 <li>some optimization flags which allow the client to tell the backend if they are not interested in any relationships or any binary blobs (images etc).</li>
 </ul>
 <p>Important note: a client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactFetchHint/OptimizationHint"></a>
 <a name="//apple_ref/cpp/econst/QContactFetchHint/AllRequired"></a>
@@ -69,7 +72,9 @@
 <tr><td valign="top"><tt>QContactFetchHint::NoBinaryBlobs</tt></td><td align="center" valign="top"><tt>0x4</tt></td><td valign="top">Tells the backend that the client does not require retrieved contacts to include binary blobs such as thumbnail images</td></tr>
 </table></p>
 <p>The OptimizationHints type is a typedef for <a href="qflags.html">QFlags</a>&lt;OptimizationHint&gt;. It stores an OR combination of OptimizationHint values.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactFetchHint/QContactFetchHint"></a>
 <h3 class="fn"><a name="QContactFetchHint"></a>QContactFetchHint::QContactFetchHint ()</h3>
@@ -106,6 +111,7 @@
 <a name="//apple_ref/cpp/instm/QContactFetchHint/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QContactFetchHint &amp; QContactFetchHint::operator= ( const QContactFetchHint &amp; <i>other</i> )</h3>
 <p>Assigns this fetch hint to be equal to the <i>other</i> fetch hint</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

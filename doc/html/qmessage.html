@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmessage.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QMessage Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMessage"></a>
@@ -89,6 +89,7 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessage class provides a convenient interface for working with messages.</p>
 <p>QMessage supports a number of types. Including internet email messages, and the telephony types SMS and MMS.</p>
@@ -98,8 +99,10 @@
 <p>The folder and account a message is associated with are returned by <a href="qmessage.html#parentFolderId">parentFolderId</a>() and <a href="qmessage.html#parentAccountId">parentAccountId</a>() respectively.</p>
 <p>Message data that is less commonly accessed or relatively large should be lazily retrieved on demand by the associated getter function.</p>
 <p>Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid destination addresses for Email messages, MMS messages may be addressed to either phone numbers or email addresses.</p>
+</div>
 <p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>, <a href="qmessagemanager.html">QMessageManager</a>, and <a href="qmessageid.html">QMessageId</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QMessage/Priority"></a>
 <a name="//apple_ref/cpp/econst/QMessage/HighPriority"></a>
@@ -179,7 +182,9 @@
 </table></p>
 <p>The TypeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;Type&gt;. It stores an OR combination of Type values.</p>
 <p>See also <a href="qmessage.html#type">type</a>() and <a href="qmessage.html#setType">setType</a>().</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMessage/QMessage"></a>
 <h3 class="fn"><a name="QMessage"></a>QMessage::QMessage ()</h3>
@@ -350,6 +355,7 @@
 <h3 class="fn"><a name="type"></a><a href="qmessage.html#Type-enum">Type</a> QMessage::type () const</h3>
 <p>Returns the Type of the message.</p>
 <p>See also <a href="qmessage.html#setType">setType</a>() and <a href="qmessagefilter.html#byType">QMessageFilter::byType</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

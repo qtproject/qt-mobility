@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmessagecontentcontainer.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QMessageContentContainer Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMessageContentContainer"></a>
@@ -45,6 +45,7 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageContentContainer class provides an interface for internet media (MIME) and Transport Neutral Encapsulation Format (TNEF) content that is possibly only partially retrieved.</p>
 <p>A QMessageContentContainer object can either directly contain media such as text, image, audio, video, application or message data, or contain multiple parts of content, but can not contain both media and multiple parts directly.</p>
@@ -56,8 +57,10 @@
 <p>An indication of the size of the container and its contents on the originating server is given by <a href="qmessagecontentcontainer.html#size">size</a>(). If the content is entirely available on the device <a href="qmessagecontentcontainer.html#isContentAvailable">isContentAvailable</a>() will return true.</p>
 <p>Non-multipart content can be serialized to a <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> using writeContentTo(), or to a <a href="http://qt.nokia.com/doc/4.6/qtextstream.html">QTextStream</a> using writeTextContentTo().</p>
 <p>A container also stores name-value pairs known as header fields. Names are ASCII strings, while values are charset encoded unicode strings. A list of the header fields present in a container is returned by <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>(). The unicode string values associated with a particular header field name are returned by <a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a>().</p>
+</div>
 <p>See also <a href="qmessage.html">QMessage</a> and <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMessageContentContainer/QMessageContentContainer"></a>
 <h3 class="fn"><a name="QMessageContentContainer"></a>QMessageContentContainer::QMessageContentContainer ()</h3>
@@ -128,6 +131,7 @@
 <a name="//apple_ref/cpp/instm/QMessageContentContainer/writeTextContent"></a>
 <h3 class="fn"><a name="writeTextContent"></a>void QMessageContentContainer::writeTextContent ( <a href="http://qt.nokia.com/doc/4.6/qtextstream.html">QTextStream</a> &amp; <i>out</i> ) const</h3>
 <p>For a non-multipart container, writes the content as returned by <a href="qmessagecontentcontainer.html#textContent">textContent</a>() to the stream <i>out</i>; otherwise does nothing.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

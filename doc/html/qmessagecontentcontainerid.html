@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmessagecontentcontainerid.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QMessageContentContainerId Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMessageContentContainerId"></a>
@@ -31,6 +31,7 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageContentContainerId class provides a unique identifier for <a href="qmessagecontentcontainer.html">QMessageContentContainer</a> internet media (MIME) type entities, within the scope of the containing message.</p>
 <p>A QMessageContentContainerId can be constructed from a string, or converted to a string with <a href="qmessagecontentcontainerid.html#toString">toString</a>().</p>
@@ -38,8 +39,10 @@
 <p>A QMessageContentContainerId instance can be tested for validity with <a href="qmessagecontentcontainerid.html#isValid">isValid</a>(), and compared to other instances for equality.</p>
 <p>If the object a QMessageContentContainerId identifies is removed then the identifier may be reused.</p>
 <p>If the QMessageContentContainerId refers to an object that has a parent container, and the contents of that parent container are modified by removing or prepending contents (i.e&#x2e; message attachments are removed or a message body is created) or the parent container itself is removed then the identifier may become invalid, or be reused to reference a different object entirely.</p>
+</div>
 <p>See also <a href="qmessagecontentcontainer.html">QMessageContentContainer</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMessageContentContainerId/QMessageContentContainerId"></a>
 <h3 class="fn"><a name="QMessageContentContainerId"></a>QMessageContentContainerId::QMessageContentContainerId ()</h3>
@@ -60,6 +63,7 @@
 <p>Returns the string representation of this identifier.</p>
 <p>A null string should be returned if and only if the identifier is invalid.</p>
 <p>String representations of identifiers should not be used to test for equality, instead the equality operator should be used.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

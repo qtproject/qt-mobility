@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qlandmarkmanager.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QLandmarkManager Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QLandmarkManager"></a>
@@ -98,15 +98,18 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkManager class provides an interface for storage and retrieval of landmarks from a landmark store.</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QLandmarkManager/Error"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkManager/NoError"></a>
@@ -152,7 +155,9 @@
 <tr><td valign="top"><tt>QLandmarkManager::CommaSeparatedValues</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Comma separated values format (csv)</td></tr>
 <tr><td valign="top"><tt>QLandmarkManager::Custom</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Custom landmark format</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkManager/QLandmarkManager"></a>
 <h3 class="fn"><a name="QLandmarkManager"></a>QLandmarkManager::QLandmarkManager ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -311,6 +316,7 @@
 <p>The manager might populate <i>errorMap</i> (the map of indices of the <i>landmarks</i> list to the error which occurred when saving the landmark at that index) for every index for which the landmark could not be saved.</p>
 <p>The <a href="qlandmarkmanager.html#error">QLandmarkManager::error</a>() function will only return <tt>QLandmarkManager::NoError</tt> if all landmarks were saved successfully.</p>
 <p>For each newly saved landmark that was successful, the identifier of the landmark will be updated with a new value. If a failure occurs when saving a new landmark, the identifier will be cleared (and become an invalid identifier).</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

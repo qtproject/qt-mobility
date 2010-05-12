@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qversitcontactexporter.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QVersitContactExporter Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QVersitContactExporter"></a>
@@ -40,6 +40,7 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitContactExporter class converts <a href="qcontact.html">QContacts</a> into <a href="qversitdocument.html">QVersitDocuments</a>.</p>
 <p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the exporter to supply the behaviour for loading files from persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which supports basic resource loading from the file system. An alternative resource handler can be specified with <a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a>().</p>
@@ -135,8 +136,10 @@
             }
         }
     }</pre>
+</div>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>, <a href="qversitproperty.html">QVersitProperty</a>, <a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a>, and <a href="qversitresourcehandler.html">QVersitResourceHandler</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QVersitContactExporter/Error"></a>
 <a name="//apple_ref/cpp/econst/QVersitContactExporter/NoError"></a>
@@ -150,7 +153,9 @@
 <tr><td valign="top"><tt>QVersitContactExporter::EmptyContactError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">One of the contacts was empty</td></tr>
 <tr><td valign="top"><tt>QVersitContactExporter::NoNameError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">One of the contacts has no <a href="qcontactname.html">QContactName</a> field</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitContactExporter/QVersitContactExporter"></a>
 <h3 class="fn"><a name="QVersitContactExporter"></a>QVersitContactExporter::QVersitContactExporter ()</h3>
@@ -187,6 +192,7 @@
 <p>Sets <i>handler</i> to be the handler to load files with, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactexporter.html#resourceHandler">resourceHandler</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

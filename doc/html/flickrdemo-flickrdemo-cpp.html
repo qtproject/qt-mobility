@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title>Qt Mobility Project 1.0: flickrdemo.cpp Example File (flickrdemo/flickrdemo.cpp)</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -303,7 +303,7 @@
 
         QString
         urlstring =
-            &quot;http:<span class="comment">//api.flickr.com/services/rest/?min_taken_date=2000-01-01+0:00:00&amp;extras=date_taken&amp;method=flickr.photos.search&amp;per_page=30&amp;sort=date-taken-desc&quot;;</span>
+            &quot;http://api.flickr.com/services/rest/?min_taken_date=2000-01-01+0:00:00&amp;extras=date_taken&amp;method=flickr.photos.search&amp;per_page=30&amp;sort=date-taken-desc&quot;;
         urlstring.append(&quot;&amp;api_key=&quot;);
         urlstring.append(apikey);
         urlstring.append(&quot;&amp;lat=&quot;);
@@ -370,7 +370,7 @@
 
             QDomElement child = photosElement.firstChildElement(&quot;photo&quot;);
             while (!child.isNull()) {
-                QString url = &quot;http:<span class="comment">//farm&quot;;</span>
+                QString url = &quot;http://farm&quot;;
                 url.append(child.attribute(&quot;farm&quot;));
                 url.append(&quot;.static.flickr.com/&quot;);
                 url.append(child.attribute(&quot;server&quot;));

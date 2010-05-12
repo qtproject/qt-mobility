@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qserviceinterfacedescriptor.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QServiceInterfaceDescriptor Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QServiceInterfaceDescriptor"></a>
@@ -53,6 +53,7 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QServiceInterfaceDescriptor class identifies a service implementation.</p>
 <p>A service can implement multiple interfaces and each interface can have multiple implementations. The QServiceInterfaceDescriptor class enscapsulates this information, as illustrated by the diagram below.</p>
@@ -62,8 +63,10 @@
 <h3>Namespaces</h3>
 <p>A QServiceInterfaceDescriptor (the quadruble of service name, interface name, interface version and implementation version) uniquely identifies a service implementation on a device. Interface names follow the java namespace convention.</p>
 <p>The namespace <i>com.nokia.qt.*</i> is reserved for future Qt development.</p>
+</div>
 <p>See also <a href="qservicefilter.html">QServiceFilter</a> and <a href="qservicemanager.html">QServiceManager</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QServiceInterfaceDescriptor/Attribute"></a>
 <a name="//apple_ref/cpp/econst/QServiceInterfaceDescriptor/Capabilities"></a>
@@ -79,7 +82,9 @@
 <tr><td valign="top"><tt>QServiceInterfaceDescriptor::ServiceDescription</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">This attribute provides a general description for the service.</td></tr>
 <tr><td valign="top"><tt>QServiceInterfaceDescriptor::InterfaceDescription</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">This attribute provides a description for the interface implementation.</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/QServiceInterfaceDescriptor"></a>
 <h3 class="fn"><a name="QServiceInterfaceDescriptor"></a>QServiceInterfaceDescriptor::QServiceInterfaceDescriptor ()</h3>
@@ -127,12 +132,15 @@
 <a name="//apple_ref/cpp/instm/QServiceInterfaceDescriptor/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QServiceInterfaceDescriptor::operator== ( const QServiceInterfaceDescriptor &amp; <i>other</i> ) const</h3>
 <p>Compares a <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> to <i>other</i>. Returns true if they are equal and false otherwise.</p>
+</div>
 <hr />
+<div class="relnonmem"/>
 <h2>Related Non-Members</h2>
 <h3 class="fn"><a name="operator-lt-lt-90"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>out</i>, const QServiceInterfaceDescriptor &amp; <i>dc</i> )</h3>
 <p>Writes service interface descriptor <i>dc</i> to the stream <i>out</i> and returns a reference to the stream.</p>
 <h3 class="fn"><a name="operator-gt-gt-78"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>in</i>, QServiceInterfaceDescriptor &amp; <i>dc</i> )</h3>
 <p>Reads a service interface descriptor into <i>dc</i> from the stream <i>in</i> and returns a reference to the stream.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

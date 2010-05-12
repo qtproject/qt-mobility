@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qvaluespace.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QAbstractValueSpaceLayer Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QAbstractValueSpaceLayer"></a>
@@ -82,16 +82,19 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAbstractValueSpaceLayer class provides support for adding new logical data layers to the Qt Value Space.</p>
 <p>To create a new layer in the Value Space subclass this class and reimplement all of the virtual functions. The new layer is installed by either calling QValueSpace::installLayer() or by adding the <a href="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER">QVALUESPACE_AUTO_INSTALL_LAYER</a>() macro in your implementation file.</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tdef/QAbstractValueSpaceLayer/Handle"></a>
 <h3 class="fn"><a name="Handle-typedef"></a>typedef QAbstractValueSpaceLayer::Handle</h3>
@@ -114,7 +117,9 @@
 <tr><td valign="top"><tt>QAbstractValueSpaceLayer::Server</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The layer is being initialized in the &quot;server&quot; context.</td></tr>
 <tr><td valign="top"><tt>QAbstractValueSpaceLayer::Client</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The layer is being initialized in the &quot;client&quot; context.</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QAbstractValueSpaceLayer/addWatch"></a>
 <h3 class="fn"><a name="addWatch"></a>void QAbstractValueSpaceLayer::addWatch ( <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> * <i>creator</i>, <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -194,13 +199,16 @@
 <p>See also <a href="qabstractvaluespacelayer.html#setValue">setValue</a>().</p>
 <h3 class="fn"><a name="value-2"></a>bool QAbstractValueSpaceLayer::value ( <a href="qabstractvaluespacelayer.html#Handle-typedef">Handle</a> <i>handle</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>subPath</i>, <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> * <i>data</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the value for a particular <i>subPath</i> of <i>handle</i>. If a value is available, the layer will set <i>data</i> and return true. If no value is available, false is returned.</p>
+</div>
 <hr />
+<div class="macros"/>
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//QVALUESPACE_AUTO_INSTALL_LAYER"></a>
 <h3 class="fn"><a name="QVALUESPACE_AUTO_INSTALL_LAYER"></a>QVALUESPACE_AUTO_INSTALL_LAYER (  <i>className</i> )</h3>
 <p>This macro installs new Value Space layer. <i>className</i> is the name of the class implementing the new layer.</p>
 <p>The method <tt>className *className::instance()</tt> must exist and return a pointer to an instance of the layer to install. This method will only be invoked <i>after</i> <a href="http://qt.nokia.com/doc/4.6/qapplication.html">QApplication</a> has been constructed, making it safe to use any Qt class in your layer's constructor.</p>
 <p>This macro can only be used once for any given class and it should be used where the implementation is written rather than in a header file.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

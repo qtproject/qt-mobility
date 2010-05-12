@@ -364,6 +364,9 @@
                     <section ref="qlandmarkidfetchrequest.html" title="QLandmarkIdFetchRequest Class Reference">
                         <section ref="qlandmarkidfetchrequest-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qlandmarkidfilter.html" title="QLandmarkIdFilter Class Reference">
+                        <section ref="qlandmarkidfilter-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qlandmarkimportrequest.html" title="QLandmarkImportRequest Class Reference">
                         <section ref="qlandmarkimportrequest-members.html" title="List of all members"/>
                     </section>
@@ -821,6 +824,7 @@
                     <section ref="opensourceedition.html" title="Open Source Versions of Qt"/>
                     <section ref="publ-subs.html" title="Publish and Subscribe"/>
                     <section ref="bearer.html" title="Qt Bearer Management API"/>
+                    <section ref="contactsengines.html" title="Qt Contacts Manager Engines"/>
                     <section ref="contactsschema.html" title="Qt Contacts Schema"/>
                     <section ref="editions.html" title="Qt Editions"/>
                     <section ref="examples.html" title="Qt Mobility Examples"/>
@@ -2066,31 +2070,29 @@
             <keyword name="setResolution" id="QImageEncoderSettings::setResolution" ref="qimageencodersettings.html#setResolution"/>
             <keyword name="~QImageEncoderSettings" id="QImageEncoderSettings::~QImageEncoderSettings" ref="qimageencodersettings.html#dtor.QImageEncoderSettings"/>
             <keyword name="QLandmark" id="QLandmark" ref="qlandmark.html"/>
-            <keyword name="addCategory" id="QLandmark::addCategory" ref="qlandmark.html#addCategory"/>
+            <keyword name="addCategoryId" id="QLandmark::addCategoryId" ref="qlandmark.html#addCategoryId"/>
             <keyword name="address" id="QLandmark::address" ref="qlandmark.html#address"/>
             <keyword name="attribute" id="QLandmark::attribute" ref="qlandmark.html#attribute"/>
             <keyword name="attributeKeys" id="QLandmark::attributeKeys" ref="qlandmark.html#attributeKeys"/>
-            <keyword name="categories" id="QLandmark::categories" ref="qlandmark.html#categories"/>
+            <keyword name="categoryIds" id="QLandmark::categoryIds" ref="qlandmark.html#categoryIds"/>
             <keyword name="coordinate" id="QLandmark::coordinate" ref="qlandmark.html#coordinate"/>
             <keyword name="description" id="QLandmark::description" ref="qlandmark.html#description"/>
             <keyword name="iconUrl" id="QLandmark::iconUrl" ref="qlandmark.html#iconUrl"/>
-            <keyword name="id" id="QLandmark::id" ref="qlandmark.html#id"/>
-            <keyword name="location" id="QLandmark::location" ref="qlandmark.html#location"/>
+            <keyword name="landmarkId" id="QLandmark::landmarkId" ref="qlandmark.html#landmarkId"/>
             <keyword name="name" id="QLandmark::name" ref="qlandmark.html#name"/>
             <keyword name="operator!=" id="QLandmark::operator!=" ref="qlandmark.html#operator-not-eq"/>
             <keyword name="operator=" id="QLandmark::operator=" ref="qlandmark.html#operator-eq"/>
             <keyword name="operator==" id="QLandmark::operator==" ref="qlandmark.html#operator-eq-eq"/>
             <keyword name="phone" id="QLandmark::phone" ref="qlandmark.html#phone"/>
             <keyword name="radius" id="QLandmark::radius" ref="qlandmark.html#radius"/>
-            <keyword name="removeCategory" id="QLandmark::removeCategory" ref="qlandmark.html#removeCategory"/>
+            <keyword name="removeCategoryId" id="QLandmark::removeCategoryId" ref="qlandmark.html#removeCategoryId"/>
             <keyword name="setAddress" id="QLandmark::setAddress" ref="qlandmark.html#setAddress"/>
             <keyword name="setAttribute" id="QLandmark::setAttribute" ref="qlandmark.html#setAttribute"/>
-            <keyword name="setCategories" id="QLandmark::setCategories" ref="qlandmark.html#setCategories"/>
+            <keyword name="setCategoryIds" id="QLandmark::setCategoryIds" ref="qlandmark.html#setCategoryIds"/>
             <keyword name="setCoordinate" id="QLandmark::setCoordinate" ref="qlandmark.html#setCoordinate"/>
             <keyword name="setDescription" id="QLandmark::setDescription" ref="qlandmark.html#setDescription"/>
             <keyword name="setIconUrl" id="QLandmark::setIconUrl" ref="qlandmark.html#setIconUrl"/>
-            <keyword name="setId" id="QLandmark::setId" ref="qlandmark.html#setId"/>
-            <keyword name="setLocation" id="QLandmark::setLocation" ref="qlandmark.html#setLocation"/>
+            <keyword name="setLandmarkId" id="QLandmark::setLandmarkId" ref="qlandmark.html#setLandmarkId"/>
             <keyword name="setName" id="QLandmark::setName" ref="qlandmark.html#setName"/>
             <keyword name="setPhone" id="QLandmark::setPhone" ref="qlandmark.html#setPhone"/>
             <keyword name="setRadius" id="QLandmark::setRadius" ref="qlandmark.html#setRadius"/>
@@ -2147,38 +2149,40 @@
             <keyword name="QLandmarkCategory" id="QLandmarkCategory" ref="qlandmarkcategory.html"/>
             <keyword name="attribute" id="QLandmarkCategory::attribute" ref="qlandmarkcategory.html#attribute"/>
             <keyword name="attributes" id="QLandmarkCategory::attributes" ref="qlandmarkcategory.html#attributes"/>
+            <keyword name="categoryId" id="QLandmarkCategory::categoryId" ref="qlandmarkcategory.html#categoryId"/>
             <keyword name="description" id="QLandmarkCategory::description" ref="qlandmarkcategory.html#description"/>
             <keyword name="iconUrl" id="QLandmarkCategory::iconUrl" ref="qlandmarkcategory.html#iconUrl"/>
-            <keyword name="id" id="QLandmarkCategory::id" ref="qlandmarkcategory.html#id"/>
             <keyword name="name" id="QLandmarkCategory::name" ref="qlandmarkcategory.html#name"/>
             <keyword name="operator!=" id="QLandmarkCategory::operator!=" ref="qlandmarkcategory.html#operator-not-eq"/>
             <keyword name="operator=" id="QLandmarkCategory::operator=" ref="qlandmarkcategory.html#operator-eq"/>
             <keyword name="operator==" id="QLandmarkCategory::operator==" ref="qlandmarkcategory.html#operator-eq-eq"/>
             <keyword name="setAttribute" id="QLandmarkCategory::setAttribute" ref="qlandmarkcategory.html#setAttribute"/>
+            <keyword name="setCategoryId" id="QLandmarkCategory::setCategoryId" ref="qlandmarkcategory.html#setCategoryId"/>
             <keyword name="setDescription" id="QLandmarkCategory::setDescription" ref="qlandmarkcategory.html#setDescription"/>
             <keyword name="setIconUrl" id="QLandmarkCategory::setIconUrl" ref="qlandmarkcategory.html#setIconUrl"/>
-            <keyword name="setId" id="QLandmarkCategory::setId" ref="qlandmarkcategory.html#setId"/>
             <keyword name="setName" id="QLandmarkCategory::setName" ref="qlandmarkcategory.html#setName"/>
             <keyword name="~QLandmarkCategory" id="QLandmarkCategory::~QLandmarkCategory" ref="qlandmarkcategory.html#dtor.QLandmarkCategory"/>
             <keyword name="QLandmarkCategoryFetchRequest" id="QLandmarkCategoryFetchRequest" ref="qlandmarkcategoryfetchrequest.html"/>
             <keyword name="categories" id="QLandmarkCategoryFetchRequest::categories" ref="qlandmarkcategoryfetchrequest.html#categories"/>
+            <keyword name="categoryIds" id="QLandmarkCategoryFetchRequest::categoryIds" ref="qlandmarkcategoryfetchrequest.html#categoryIds"/>
+            <keyword name="setCategoryIds" id="QLandmarkCategoryFetchRequest::setCategoryIds" ref="qlandmarkcategoryfetchrequest.html#setCategoryIds"/>
             <keyword name="~QLandmarkCategoryFetchRequest" id="QLandmarkCategoryFetchRequest::~QLandmarkCategoryFetchRequest" ref="qlandmarkcategoryfetchrequest.html#dtor.QLandmarkCategoryFetchRequest"/>
             <keyword name="QLandmarkCategoryFilter" id="QLandmarkCategoryFilter" ref="qlandmarkcategoryfilter.html"/>
             <keyword name="categoryId" id="QLandmarkCategoryFilter::categoryId" ref="qlandmarkcategoryfilter.html#categoryId"/>
             <keyword name="setCategoryId" id="QLandmarkCategoryFilter::setCategoryId" ref="qlandmarkcategoryfilter.html#setCategoryId"/>
             <keyword name="~QLandmarkCategoryFilter" id="QLandmarkCategoryFilter::~QLandmarkCategoryFilter" ref="qlandmarkcategoryfilter.html#dtor.QLandmarkCategoryFilter"/>
             <keyword name="QLandmarkCategoryId" id="QLandmarkCategoryId" ref="qlandmarkcategoryid.html"/>
-            <keyword name="id" id="QLandmarkCategoryId::id" ref="qlandmarkcategoryid.html#id"/>
             <keyword name="isValid" id="QLandmarkCategoryId::isValid" ref="qlandmarkcategoryid.html#isValid"/>
+            <keyword name="localId" id="QLandmarkCategoryId::localId" ref="qlandmarkcategoryid.html#localId"/>
             <keyword name="managerUri" id="QLandmarkCategoryId::managerUri" ref="qlandmarkcategoryid.html#managerUri"/>
             <keyword name="operator!=" id="QLandmarkCategoryId::operator!=" ref="qlandmarkcategoryid.html#operator-not-eq"/>
             <keyword name="operator=" id="QLandmarkCategoryId::operator=" ref="qlandmarkcategoryid.html#operator-eq"/>
             <keyword name="operator==" id="QLandmarkCategoryId::operator==" ref="qlandmarkcategoryid.html#operator-eq-eq"/>
-            <keyword name="setId" id="QLandmarkCategoryId::setId" ref="qlandmarkcategoryid.html#setId"/>
+            <keyword name="setLocalId" id="QLandmarkCategoryId::setLocalId" ref="qlandmarkcategoryid.html#setLocalId"/>
             <keyword name="setManagerUri" id="QLandmarkCategoryId::setManagerUri" ref="qlandmarkcategoryid.html#setManagerUri"/>
             <keyword name="~QLandmarkCategoryId" id="QLandmarkCategoryId::~QLandmarkCategoryId" ref="qlandmarkcategoryid.html#dtor.QLandmarkCategoryId"/>
             <keyword name="QLandmarkCategoryIdFetchRequest" id="QLandmarkCategoryIdFetchRequest" ref="qlandmarkcategoryidfetchrequest.html"/>
-            <keyword name="ids" id="QLandmarkCategoryIdFetchRequest::ids" ref="qlandmarkcategoryidfetchrequest.html#ids"/>
+            <keyword name="categoryIds" id="QLandmarkCategoryIdFetchRequest::categoryIds" ref="qlandmarkcategoryidfetchrequest.html#categoryIds"/>
             <keyword name="~QLandmarkCategoryIdFetchRequest" id="QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest" ref="qlandmarkcategoryidfetchrequest.html#dtor.QLandmarkCategoryIdFetchRequest"/>
             <keyword name="QLandmarkCategoryRemoveRequest" id="QLandmarkCategoryRemoveRequest" ref="qlandmarkcategoryremoverequest.html"/>
             <keyword name="categoryIds" id="QLandmarkCategoryRemoveRequest::categoryIds" ref="qlandmarkcategoryremoverequest.html#categoryIds"/>
@@ -2210,6 +2214,7 @@
             <keyword name="filter" id="QLandmarkFetchRequest::filter" ref="qlandmarkfetchrequest.html#filter"/>
             <keyword name="landmarks" id="QLandmarkFetchRequest::landmarks" ref="qlandmarkfetchrequest.html#landmarks"/>
             <keyword name="setFilter" id="QLandmarkFetchRequest::setFilter" ref="qlandmarkfetchrequest.html#setFilter"/>
+            <keyword name="setLandmarkIds" id="QLandmarkFetchRequest::setLandmarkIds" ref="qlandmarkfetchrequest.html#setLandmarkIds"/>
             <keyword name="setSorting" id="QLandmarkFetchRequest::setSorting" ref="qlandmarkfetchrequest.html#setSorting"/>
             <keyword name="sorting" id="QLandmarkFetchRequest::sorting" ref="qlandmarkfetchrequest.html#sorting"/>
             <keyword name="~QLandmarkFetchRequest" id="QLandmarkFetchRequest::~QLandmarkFetchRequest" ref="qlandmarkfetchrequest.html#dtor.QLandmarkFetchRequest"/>
@@ -2225,6 +2230,7 @@
             <keyword name="QLandmarkFilter::IntersectionFilter" id="QLandmarkFilter::IntersectionFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::UnionFilter" id="QLandmarkFilter::UnionFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::AttributeFilter" id="QLandmarkFilter::AttributeFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
+            <keyword name="QLandmarkFilter::LandmarkIdFilter" id="QLandmarkFilter::LandmarkIdFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="maximumMatches" id="QLandmarkFilter::maximumMatches" ref="qlandmarkfilter.html#maximumMatches"/>
             <keyword name="operator!=" id="QLandmarkFilter::operator!=" ref="qlandmarkfilter.html#operator-not-eq"/>
             <keyword name="operator=" id="QLandmarkFilter::operator=" ref="qlandmarkfilter.html#operator-eq"/>
@@ -2233,13 +2239,13 @@
             <keyword name="type" id="QLandmarkFilter::type" ref="qlandmarkfilter.html#type"/>
             <keyword name="~QLandmarkFilter" id="QLandmarkFilter::~QLandmarkFilter" ref="qlandmarkfilter.html#dtor.QLandmarkFilter"/>
             <keyword name="QLandmarkId" id="QLandmarkId" ref="qlandmarkid.html"/>
-            <keyword name="id" id="QLandmarkId::id" ref="qlandmarkid.html#id"/>
             <keyword name="isValid" id="QLandmarkId::isValid" ref="qlandmarkid.html#isValid"/>
+            <keyword name="localId" id="QLandmarkId::localId" ref="qlandmarkid.html#localId"/>
             <keyword name="managerUri" id="QLandmarkId::managerUri" ref="qlandmarkid.html#managerUri"/>
             <keyword name="operator!=" id="QLandmarkId::operator!=" ref="qlandmarkid.html#operator-not-eq"/>
             <keyword name="operator=" id="QLandmarkId::operator=" ref="qlandmarkid.html#operator-eq"/>
             <keyword name="operator==" id="QLandmarkId::operator==" ref="qlandmarkid.html#operator-eq-eq"/>
-            <keyword name="setId" id="QLandmarkId::setId" ref="qlandmarkid.html#setId"/>
+            <keyword name="setLocalId" id="QLandmarkId::setLocalId" ref="qlandmarkid.html#setLocalId"/>
             <keyword name="setManagerUri" id="QLandmarkId::setManagerUri" ref="qlandmarkid.html#setManagerUri"/>
             <keyword name="~QLandmarkId" id="QLandmarkId::~QLandmarkId" ref="qlandmarkid.html#dtor.QLandmarkId"/>
             <keyword name="QLandmarkIdFetchRequest" id="QLandmarkIdFetchRequest" ref="qlandmarkidfetchrequest.html"/>
@@ -2249,6 +2255,10 @@
             <keyword name="setSorting" id="QLandmarkIdFetchRequest::setSorting" ref="qlandmarkidfetchrequest.html#setSorting"/>
             <keyword name="sorting" id="QLandmarkIdFetchRequest::sorting" ref="qlandmarkidfetchrequest.html#sorting"/>
             <keyword name="~QLandmarkIdFetchRequest" id="QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest" ref="qlandmarkidfetchrequest.html#dtor.QLandmarkIdFetchRequest"/>
+            <keyword name="QLandmarkIdFilter" id="QLandmarkIdFilter" ref="qlandmarkidfilter.html"/>
+            <keyword name="landmarkIds" id="QLandmarkIdFilter::landmarkIds" ref="qlandmarkidfilter.html#landmarkIds"/>
+            <keyword name="setLandmarkIds" id="QLandmarkIdFilter::setLandmarkIds" ref="qlandmarkidfilter.html#setLandmarkIds"/>
+            <keyword name="~QLandmarkIdFilter" id="QLandmarkIdFilter::~QLandmarkIdFilter" ref="qlandmarkidfilter.html#dtor.QLandmarkIdFilter"/>
             <keyword name="QLandmarkImportRequest" id="QLandmarkImportRequest" ref="qlandmarkimportrequest.html"/>
             <keyword name="device" id="QLandmarkImportRequest::device" ref="qlandmarkimportrequest.html#device"/>
             <keyword name="fileName" id="QLandmarkImportRequest::fileName" ref="qlandmarkimportrequest.html#fileName"/>
@@ -4262,6 +4272,7 @@
             <keyword name="Q_DEFINE_LATIN1_CONSTANT" id="Q_DEFINE_LATIN1_CONSTANT" ref="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
+            <keyword name="Qt Contacts Manager Engines" id="Qt Contacts Manager Engines" ref="contactsengines.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="examples.html"/>
@@ -4466,6 +4477,7 @@
             <file>qmediaplayer-members.html</file>
             <file>samplephonebook-phonebook-h.html</file>
             <file>qmediaservicefeaturesinterface.html</file>
+            <file>images/sensors-orientation.jpg</file>
             <file>qmediaserviceproviderhint-members.html</file>
             <file>slideshow-slideshow-cpp.html</file>
             <file>qversitdocument.html</file>
@@ -4487,6 +4499,7 @@
             <file>qmessagefoldersortorder-members.html</file>
             <file>qmediastreamscontrol.html</file>
             <file>lightmaps-lightmaps-pro.html</file>
+            <file>images/sensors-rotation3.jpg</file>
             <file>qgeoroute.html</file>
             <file>qversitcontactimporter-members.html</file>
             <file>qvideodevicecontrol-members.html</file>
@@ -4536,6 +4549,7 @@
             <file>qmediaplaylistreader-members.html</file>
             <file>sfw-notes-sfwnotes-h.html</file>
             <file>qmapobject-members.html</file>
+            <file>images/sensors-coordinates3.jpg</file>
             <file>qlandmarkfilter-members.html</file>
             <file>qmediaplaylistprovider-members.html</file>
             <file>notesmanagerplugin-notesmanagerplugin-pro.html</file>
@@ -4606,6 +4620,7 @@
             <file>qversitcontactexporterdetailhandler.html</file>
             <file>qlandmark.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-h.html</file>
+            <file>images/sensors-sides2.jpg</file>
             <file>qservice.html</file>
             <file>qgeoroutereply-members.html</file>
             <file>qmessageaccount-members.html</file>
@@ -4636,15 +4651,17 @@
             <file>qcontactchangelogfilter-members.html</file>
             <file>qmediacontent.html</file>
             <file>qmediacontrol-members.html</file>
+            <file>images/sensors-coordinates.jpg</file>
             <file>qlandmarkcategory-members.html</file>
             <file>qmediaservicesupporteddevicesinterface.html</file>
             <file>qcontactgeolocation.html</file>
-            <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>annotated.html</file>
+            <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>qcontactmanagerenginefactory-members.html</file>
             <file>qnetworksession-members.html</file>
             <file>qtapsensor-members.html</file>
             <file>qlandmarkremoverequest-members.html</file>
+            <file>qlandmarkidfilter-members.html</file>
             <file>qcontactrelationshipsaverequest.html</file>
             <file>qversitresourcehandler-members.html</file>
             <file>qvideowindowcontrol.html</file>
@@ -4661,8 +4678,8 @@
             <file>qlandmarkcategoryidfetchrequest.html</file>
             <file>qlandmarkimportrequest-members.html</file>
             <file>bearercloud-unknown-svg.html</file>
-            <file>weatherinfo-icons-weather-icy-svg.html</file>
             <file>qsystemstorageinfo.html</file>
+            <file>weatherinfo-icons-weather-icy-svg.html</file>
             <file>weatherinfo-icons-weather-thundershower-svg.html</file>
             <file>flickrdemo-flickrdemo-h.html</file>
             <file>qvideorenderercontrol-members.html</file>
@@ -4675,7 +4692,6 @@
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qgeoroutingservice.html</file>
             <file>qcontactpresence.html</file>
-            <file>images/axes.png</file>
             <file>qvideowidget-members.html</file>
             <file>qgeocodingservice-members.html</file>
             <file>qcompassreading-members.html</file>
@@ -4782,8 +4798,10 @@
             <file>qmessagemanager-members.html</file>
             <file>qservicecontext-members.html</file>
             <file>audiorecorder-main-cpp.html</file>
+            <file>images/sensors-coordinates2.jpg</file>
             <file>qcontactrelationshipremoverequest-members.html</file>
             <file>qmaprect-members.html</file>
+            <file>images/sensors-rotation-anim.gif</file>
             <file>sfw-notes-sfwnotes-cpp.html</file>
             <file>fetchgooglemaps-mapwindow-cpp.html</file>
             <file>weatherinfo-icons-weather-sunny-svg.html</file>
@@ -4844,6 +4862,7 @@
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>qgeocoderequestoptions-members.html</file>
             <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
+            <file>images/sensors-rotation2.jpg</file>
             <file>qmlcontacts-qmlcontact-h.html</file>
             <file>qgeomappingservice.html</file>
             <file>qgeoboundingbox-members.html</file>
@@ -4863,6 +4882,7 @@
             <file>qradiotuner-members.html</file>
             <file>qversitreader-members.html</file>
             <file>fetchgooglemaps-fetchgooglemaps-pro.html</file>
+            <file>images/sensors-rotation.jpg</file>
             <file>qcontactintersectionfilter.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-cpp.html</file>
             <file>player-player-pro.html</file>
@@ -4883,6 +4903,7 @@
             <file>qmediaservice-members.html</file>
             <file>qlatin1constant-members.html</file>
             <file>examples.html</file>
+            <file>images/sensors-geo-vs-raw-magnetism.jpg</file>
             <file>qlandmarkcategorysaverequest.html</file>
             <file>qcontacttag.html</file>
             <file>qcontactglobalpresence-members.html</file>
@@ -4927,9 +4948,9 @@
             <file>bearermonitor-bearermonitor-h.html</file>
             <file>qvideooutputcontrol-members.html</file>
             <file>qservicefilter.html</file>
-            <file>versit.html</file>
             <file>qvaluespace.html</file>
             <file>bearermonitor-sessionwidget-cpp.html</file>
+            <file>versit.html</file>
             <file>qmessagedatacomparator.html</file>
             <file>qcontactremoverequest.html</file>
             <file>logfilepositionsource-logfilepositionsource-h.html</file>
@@ -4961,6 +4982,7 @@
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>
+            <file>qlandmarkidfilter.html</file>
             <file>qaccelerometerfilter-members.html</file>
             <file>qgeomappingservice-members.html</file>
             <file>slideshow-main-cpp.html</file>
@@ -5011,6 +5033,7 @@
             <file>qimageencodercontrol.html</file>
             <file>qlandmarkcategoryfilter-members.html</file>
             <file>qlandmarkidfetchrequest.html</file>
+            <file>images/sensors-sides.jpg</file>
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
             <file>qlandmarkcategoryidfetchrequest-members.html</file>
@@ -5058,7 +5081,6 @@
             <file>qcontactinvalidengine-members.html</file>
             <file>qsensorbackend-members.html</file>
             <file>qmapellipse.html</file>
-            <file>images/Rotation_angles.png</file>
             <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
             <file>qmessagecontentcontainer-members.html</file>
@@ -5074,6 +5096,7 @@
             <file>qcontact.html</file>
             <file>editions.html</file>
             <file>samplephonebook-contactlistpage-h.html</file>
+            <file>contactsengines.html</file>
             <file>qaudioencodercontrol-members.html</file>
             <file>qmediaplaylistwriter.html</file>
             <file>qmapview-members.html</file>
@@ -5158,9 +5181,9 @@
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
-            <file>weatherinfo-icons-weather-haze-svg.html</file>
             <file>qmlcontacts-qmlcontacts-qrc.html</file>
             <file>writemessage-writemessage-pro.html</file>
+            <file>weatherinfo-icons-weather-haze-svg.html</file>
             <file>flickrdemo-main-cpp.html</file>
             <file>sensors-api.html</file>
             <file>qmessagefolderid-members.html</file>
@@ -5174,35 +5197,44 @@
             <file>qcontactfamily.html</file>
             <file>qcontactlocalidfilter-members.html</file>
             <file>qvideoencodersettings-members.html</file>
-            <file>images/servicexmlgen.png</file>
-            <file>images/flickr-demo.png</file>
+            <file>images/sensors-coordinates2.jpg</file>
             <file>images/slideshow-img1.png</file>
-            <file>images/Rotation_angles.png</file>
-            <file>images/sample-phonebook-1.png</file>
-            <file>images/servicebrowser-attributes.png</file>
-            <file>images/sensors-overview.png</file>
-            <file>images/bearercloud-example.png</file>
-            <file>images/weatherinfo-bris.png</file>
-            <file>images/writemessage-example.png</file>
             <file>images/lightmaps-oslo.png</file>
-            <file>images/sample-phonebook-4.png</file>
-            <file>images/publish-subscribe-publisher.png</file>
-            <file>images/qtlogo.png</file>
-            <file>images/codeless.png</file>
-            <file>images/bearermonitor-example.png</file>
-            <file>images/publish-subscribe-subscriber.png</file>
-            <file>images/battery-subscriber.png</file>
-            <file>images/servicebrowser.png</file>
-            <file>images/sample-phonebook-3.png</file>
-            <file>images/battery-publisher.png</file>
-            <file>images/keepintouch-example.png</file>
-            <file>classic.css</file>
+            <file>images/sample-phonebook-1.png</file>
             <file>images/sysinfo.png</file>
-            <file>images/sample-phonebook-2.png</file>
+            <file>images/bearercloud-example.png</file>
+            <file>images/sensors-rotation-anim.gif</file>
+            <file>images/flickr-demo.png</file>
+            <file>images/sample-phonebook-4.png</file>
+            <file>images/battery-subscriber.png</file>
+            <file>images/publish-subscribe-subscriber.png</file>
+            <file>images/bearermonitor-example.png</file>
+            <file>images/sensors-orientation.jpg</file>
+            <file>images/sample-phonebook-3.png</file>
+            <file>images/sensors-coordinates3.jpg</file>
+            <file>images/codeless.png</file>
+            <file>images/sensors-rotation2.jpg</file>
+            <file>images/weatherinfo-bris.png</file>
             <file>images/roaming-states.png</file>
-            <file>images/DialerServiceGUI.png</file>
+            <file>classic.css</file>
+            <file>images/sensors-sides2.jpg</file>
+            <file>images/sensors-geo-vs-raw-magnetism.jpg</file>
+            <file>images/battery-publisher.png</file>
+            <file>images/sensors-rotation.jpg</file>
+            <file>images/servicexmlgen.png</file>
+            <file>images/sensors-coordinates.jpg</file>
+            <file>images/sensors-sides.jpg</file>
+            <file>images/sensors-rotation3.jpg</file>
+            <file>images/publish-subscribe-publisher.png</file>
+            <file>images/servicebrowser.png</file>
+            <file>images/writemessage-example.png</file>
+            <file>images/sensors-overview.png</file>
             <file>images/qserviceinterfacedescriptor.png</file>
-            <file>images/axes.png</file>
+            <file>images/servicebrowser-attributes.png</file>
+            <file>images/qtlogo.png</file>
+            <file>images/DialerServiceGUI.png</file>
+            <file>images/sample-phonebook-2.png</file>
+            <file>images/keepintouch-example.png</file>
         </files>
     </filterSection>
 </QtHelpProject>

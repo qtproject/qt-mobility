@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactmanagerengine.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QContactManagerEngine Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QContactManagerEngine"></a>
@@ -112,19 +112,22 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactManagerEngine class provides the interface for all implementations of the contact manager backend functionality.</p>
 <p>Instances of this class are usually provided by a <a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a>, which is loaded from a plugin.</p>
 <p>The default implementation of this interface provides a basic level of functionality for some functions so that specific engines can simply implement the functionality that is supported by the specific contacts engine that is being adapted.</p>
-<p>More information on writing a contacts engine plugin is TODO.</p>
+<p>More information on writing a contacts engine plugin is available in the <a href="contactsengines.html">Qt Contacts Manager Engines</a> documentation.</p>
+</div>
 <p>See also <a href="qcontactmanager.html">QContactManager</a> and <a href="qcontactmanagerenginefactory.html">QContactManagerEngineFactory</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactManagerEngine/QContactManagerEngine"></a>
 <h3 class="fn"><a name="QContactManagerEngine"></a>QContactManagerEngine::QContactManagerEngine ()</h3>
@@ -416,6 +419,7 @@
 <h3 class="fn"><a name="waitForRequestFinished"></a>bool QContactManagerEngine::waitForRequestFinished ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, int <i>msecs</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Blocks until the manager engine has completed the given request <i>req</i> which was previously started, or until <i>msecs</i> milliseconds have passed. Returns true if the request was completed, and false if the request was not in the <tt>QContactAbstractRequest::Active</tt> state or no progress could be reported.</p>
 <p>See also <a href="qcontactmanagerengine.html#startRequest">startRequest</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

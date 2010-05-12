@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qservicecontext.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QServiceContext Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QServiceContext"></a>
@@ -54,19 +54,22 @@
 <ul>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QServiceContext class provides context information to services.</p>
 <p>A service context is created by clients and passed on to the service. It enables the opportunity to pass additional context information and errors between services, clients and the service framework.</p>
 <p>Clients must implement this abstract class to receive context information.</p>
+</div>
 <p>See also <a href="qservicemanager.html">QServiceManager</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QServiceContext/ContextType"></a>
 <a name="//apple_ref/cpp/econst/QServiceContext/DisplayContext"></a>
@@ -80,7 +83,9 @@
 <tr><td valign="top"><tt>QServiceContext::ScriptContext</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The service provides a script which may be executed by the client.</td></tr>
 <tr><td valign="top"><tt>QServiceContext::UserDefined</tt></td><td align="center" valign="top"><tt>100</tt></td><td valign="top">The first context type that can be used for service specific context information.</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QServiceContext/clientId"></a>
 <a name="//apple_ref/cpp/instm/QServiceContext/setClientId"></a>
@@ -102,7 +107,9 @@
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>clientName</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setClientName</b> ( const QString &amp; <i>name</i> )</td></tr>
 </table>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QServiceContext/QServiceContext"></a>
 <h3 class="fn"><a name="QServiceContext"></a>QServiceContext::QServiceContext ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -113,6 +120,7 @@
 <a name="//apple_ref/cpp/instm/QServiceContext/notify"></a>
 <h3 class="fn"><a name="notify"></a>void QServiceContext::notify ( <a href="qservicecontext.html#ContextType-enum">ContextType</a> <i>type</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>data</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Services may call this function to notify the service client about service related context information of the given <i>type</i>. The contextual information is stored in <i>data</i>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

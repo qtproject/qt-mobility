@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactabstractrequest.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QContactAbstractRequest Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QContactAbstractRequest"></a>
@@ -69,19 +69,22 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactAbstractRequest class provides a mechanism for asynchronous requests to be made of a manager if it supports them.</p>
 <p>It allows a client to asynchronously request some functionality of a particular <a href="qcontactmanager.html">QContactManager</a>. Instances of the class will emit signals when the state of the request changes, or when more results become available.</p>
 <p>Clients should not attempt to create instances of this class directly, but should instead use the use-case-specific classes derived from this class.</p>
 <p>After creating any sort of request, the client retains ownership and must delete the request to avoid leaking memory. The client may either do this directly (if not within a slot connected to a signal emitted by the request) or by using the <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() slot to schedule the request for deletion when control returns to the event loop.</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactAbstractRequest/RequestType"></a>
 <a name="//apple_ref/cpp/econst/QContactAbstractRequest/InvalidRequest"></a>
@@ -125,7 +128,9 @@
 <tr><td valign="top"><tt>QContactAbstractRequest::CanceledState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Operation is finished due to cancellation</td></tr>
 <tr><td valign="top"><tt>QContactAbstractRequest::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Operation successfully completed</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/~QContactAbstractRequest"></a>
 <h3 class="fn"><a name="dtor.QContactAbstractRequest"></a>QContactAbstractRequest::~QContactAbstractRequest ()</h3>
@@ -179,6 +184,7 @@
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QContactAbstractRequest::waitForFinished ( int <i>msecs</i> = 0 )&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Blocks until the request has been completed by the manager engine, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false. Some backends are unable to support this operation safely, and will return false immediately.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

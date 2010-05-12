@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qlandmarkcategoryfetchrequest.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QLandmarkCategoryFetchRequest Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QLandmarkCategoryFetchRequest"></a>
@@ -26,6 +26,8 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryfetchrequest.html#QLandmarkCategoryFetchRequest">QLandmarkCategoryFetchRequest</a></b> ( QLandmarkManager * <i>manager</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryfetchrequest.html#dtor.QLandmarkCategoryFetchRequest">~QLandmarkCategoryFetchRequest</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkCategory&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryfetchrequest.html#categories">categories</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkCategoryId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryfetchrequest.html#categoryIds">categoryIds</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkcategoryfetchrequest.html#setCategoryIds">setCategoryIds</a></b> ( const QList&lt;QLandmarkCategoryId&gt; &amp; <i>categoryIds</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>10 public functions inherited from <a href="qlandmarkabstractrequest.html#public-functions">QLandmarkAbstractRequest</a></li>
@@ -38,17 +40,20 @@
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkCategoryFetchRequest class allows a client to asynchronously request a list of categories from a landmark manager.</p>
 <p>For a QLandmarkCategoryFetchRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted as resultant categories are found (these are retrievable via the callings <a href="qlandmarkcategoryfetchrequest.html#categories">categories</a>()), as well as if an overall operation error occurred(which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">QLandmarkAbstractRequest::error</a>()).</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryFetchRequest/QLandmarkCategoryFetchRequest"></a>
 <h3 class="fn"><a name="QLandmarkCategoryFetchRequest"></a>QLandmarkCategoryFetchRequest::QLandmarkCategoryFetchRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -59,6 +64,17 @@
 <a name="//apple_ref/cpp/instm/QLandmarkCategoryFetchRequest/categories"></a>
 <h3 class="fn"><a name="categories"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategory.html">QLandmarkCategory</a>&gt; QLandmarkCategoryFetchRequest::categories () const</h3>
 <p>Returns the list of categories that have been found during the request.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategoryFetchRequest/categoryIds"></a>
+<h3 class="fn"><a name="categoryIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; QLandmarkCategoryFetchRequest::categoryIds () const</h3>
+<p>Returns a list of identifiers for categories which will be retrieved by the fetch request.</p>
+<p>By default no category ids are set, this means the fetch request will fetch all categories.</p>
+<p>See also <a href="qlandmarkcategoryfetchrequest.html#setCategoryIds">setCategoryIds</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkCategoryFetchRequest/setCategoryIds"></a>
+<h3 class="fn"><a name="setCategoryIds"></a>void QLandmarkCategoryFetchRequest::setCategoryIds ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a>&gt; &amp; <i>categoryIds</i> )</h3>
+<p>Sets the categories to be retrieved by the request as a list of <i>categoryIds</i>.</p>
+<p>If <i>categoryIds</i> is empty, then the request will fetch all categories.</p>
+<p>See also <a href="qlandmarkcategoryfetchrequest.html#categoryIds">categoryIds</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

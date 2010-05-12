@@ -1575,28 +1575,26 @@
     </section>
     <section ref="qlandmark.html" title="QLandmark Class Reference">
         <keyword ref="qlandmark.html">QLandmark</keyword>
-        <keyword ref="qlandmark.html#addCategory">addCategory</keyword>
+        <keyword ref="qlandmark.html#addCategoryId">addCategoryId</keyword>
         <keyword ref="qlandmark.html#address">address</keyword>
         <keyword ref="qlandmark.html#attribute">attribute</keyword>
         <keyword ref="qlandmark.html#attributeKeys">attributeKeys</keyword>
-        <keyword ref="qlandmark.html#categories">categories</keyword>
+        <keyword ref="qlandmark.html#categoryIds">categoryIds</keyword>
         <keyword ref="qlandmark.html#coordinate">coordinate</keyword>
         <keyword ref="qlandmark.html#description">description</keyword>
         <keyword ref="qlandmark.html#iconUrl">iconUrl</keyword>
-        <keyword ref="qlandmark.html#id">id</keyword>
-        <keyword ref="qlandmark.html#location">location</keyword>
+        <keyword ref="qlandmark.html#landmarkId">landmarkId</keyword>
         <keyword ref="qlandmark.html#name">name</keyword>
         <keyword ref="qlandmark.html#phone">phone</keyword>
         <keyword ref="qlandmark.html#radius">radius</keyword>
-        <keyword ref="qlandmark.html#removeCategory">removeCategory</keyword>
+        <keyword ref="qlandmark.html#removeCategoryId">removeCategoryId</keyword>
         <keyword ref="qlandmark.html#setAddress">setAddress</keyword>
         <keyword ref="qlandmark.html#setAttribute">setAttribute</keyword>
-        <keyword ref="qlandmark.html#setCategories">setCategories</keyword>
+        <keyword ref="qlandmark.html#setCategoryIds">setCategoryIds</keyword>
         <keyword ref="qlandmark.html#setCoordinate">setCoordinate</keyword>
         <keyword ref="qlandmark.html#setDescription">setDescription</keyword>
         <keyword ref="qlandmark.html#setIconUrl">setIconUrl</keyword>
-        <keyword ref="qlandmark.html#setId">setId</keyword>
-        <keyword ref="qlandmark.html#setLocation">setLocation</keyword>
+        <keyword ref="qlandmark.html#setLandmarkId">setLandmarkId</keyword>
         <keyword ref="qlandmark.html#setName">setName</keyword>
         <keyword ref="qlandmark.html#setPhone">setPhone</keyword>
         <keyword ref="qlandmark.html#setRadius">setRadius</keyword>
@@ -1664,14 +1662,14 @@
         <keyword ref="qlandmarkcategory.html">QLandmarkCategory</keyword>
         <keyword ref="qlandmarkcategory.html#attribute">attribute</keyword>
         <keyword ref="qlandmarkcategory.html#attributes">attributes</keyword>
+        <keyword ref="qlandmarkcategory.html#categoryId">categoryId</keyword>
         <keyword ref="qlandmarkcategory.html#description">description</keyword>
         <keyword ref="qlandmarkcategory.html#iconUrl">iconUrl</keyword>
-        <keyword ref="qlandmarkcategory.html#id">id</keyword>
         <keyword ref="qlandmarkcategory.html#name">name</keyword>
         <keyword ref="qlandmarkcategory.html#setAttribute">setAttribute</keyword>
+        <keyword ref="qlandmarkcategory.html#setCategoryId">setCategoryId</keyword>
         <keyword ref="qlandmarkcategory.html#setDescription">setDescription</keyword>
         <keyword ref="qlandmarkcategory.html#setIconUrl">setIconUrl</keyword>
-        <keyword ref="qlandmarkcategory.html#setId">setId</keyword>
         <keyword ref="qlandmarkcategory.html#setName">setName</keyword>
         <keyword ref="qlandmarkcategory.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qlandmarkcategory.html#operator-eq">operator=</keyword>
@@ -1681,6 +1679,8 @@
     <section ref="qlandmarkcategoryfetchrequest.html" title="QLandmarkCategoryFetchRequest Class Reference">
         <keyword ref="qlandmarkcategoryfetchrequest.html">QLandmarkCategoryFetchRequest</keyword>
         <keyword ref="qlandmarkcategoryfetchrequest.html#categories">categories</keyword>
+        <keyword ref="qlandmarkcategoryfetchrequest.html#categoryIds">categoryIds</keyword>
+        <keyword ref="qlandmarkcategoryfetchrequest.html#setCategoryIds">setCategoryIds</keyword>
         <section ref="qlandmarkcategoryfetchrequest-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkcategoryfilter.html" title="QLandmarkCategoryFilter Class Reference">
@@ -1691,10 +1691,10 @@
     </section>
     <section ref="qlandmarkcategoryid.html" title="QLandmarkCategoryId Class Reference">
         <keyword ref="qlandmarkcategoryid.html">QLandmarkCategoryId</keyword>
-        <keyword ref="qlandmarkcategoryid.html#id">id</keyword>
         <keyword ref="qlandmarkcategoryid.html#isValid">isValid</keyword>
+        <keyword ref="qlandmarkcategoryid.html#localId">localId</keyword>
         <keyword ref="qlandmarkcategoryid.html#managerUri">managerUri</keyword>
-        <keyword ref="qlandmarkcategoryid.html#setId">setId</keyword>
+        <keyword ref="qlandmarkcategoryid.html#setLocalId">setLocalId</keyword>
         <keyword ref="qlandmarkcategoryid.html#setManagerUri">setManagerUri</keyword>
         <keyword ref="qlandmarkcategoryid.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qlandmarkcategoryid.html#operator-eq">operator=</keyword>
@@ -1703,7 +1703,7 @@
     </section>
     <section ref="qlandmarkcategoryidfetchrequest.html" title="QLandmarkCategoryIdFetchRequest Class Reference">
         <keyword ref="qlandmarkcategoryidfetchrequest.html">QLandmarkCategoryIdFetchRequest</keyword>
-        <keyword ref="qlandmarkcategoryidfetchrequest.html#ids">ids</keyword>
+        <keyword ref="qlandmarkcategoryidfetchrequest.html#categoryIds">categoryIds</keyword>
         <section ref="qlandmarkcategoryidfetchrequest-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkcategoryremoverequest.html" title="QLandmarkCategoryRemoveRequest Class Reference">
@@ -1745,6 +1745,7 @@
         <keyword ref="qlandmarkfetchrequest.html#filter">filter</keyword>
         <keyword ref="qlandmarkfetchrequest.html#landmarks">landmarks</keyword>
         <keyword ref="qlandmarkfetchrequest.html#setFilter">setFilter</keyword>
+        <keyword ref="qlandmarkfetchrequest.html#setLandmarkIds">setLandmarkIds</keyword>
         <keyword ref="qlandmarkfetchrequest.html#setSorting">setSorting</keyword>
         <keyword ref="qlandmarkfetchrequest.html#sorting">sorting</keyword>
         <section ref="qlandmarkfetchrequest-members.html" title="List of all members"/>
@@ -1760,6 +1761,7 @@
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::NearestFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::IntersectionFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::AttributeFilter</keyword>
+        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkIdFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::CategoryFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::BoxFilter</keyword>
         <keyword ref="qlandmarkfilter.html#maximumMatches">maximumMatches</keyword>
@@ -1772,10 +1774,10 @@
     </section>
     <section ref="qlandmarkid.html" title="QLandmarkId Class Reference">
         <keyword ref="qlandmarkid.html">QLandmarkId</keyword>
-        <keyword ref="qlandmarkid.html#id">id</keyword>
         <keyword ref="qlandmarkid.html#isValid">isValid</keyword>
+        <keyword ref="qlandmarkid.html#localId">localId</keyword>
         <keyword ref="qlandmarkid.html#managerUri">managerUri</keyword>
-        <keyword ref="qlandmarkid.html#setId">setId</keyword>
+        <keyword ref="qlandmarkid.html#setLocalId">setLocalId</keyword>
         <keyword ref="qlandmarkid.html#setManagerUri">setManagerUri</keyword>
         <keyword ref="qlandmarkid.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qlandmarkid.html#operator-eq">operator=</keyword>
@@ -1790,6 +1792,12 @@
         <keyword ref="qlandmarkidfetchrequest.html#setSorting">setSorting</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#sorting">sorting</keyword>
         <section ref="qlandmarkidfetchrequest-members.html" title="List of all members"/>
+    </section>
+    <section ref="qlandmarkidfilter.html" title="QLandmarkIdFilter Class Reference">
+        <keyword ref="qlandmarkidfilter.html">QLandmarkIdFilter</keyword>
+        <keyword ref="qlandmarkidfilter.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkidfilter.html#setLandmarkIds">setLandmarkIds</keyword>
+        <section ref="qlandmarkidfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkimportrequest.html" title="QLandmarkImportRequest Class Reference">
         <keyword ref="qlandmarkimportrequest.html">QLandmarkImportRequest</keyword>
@@ -4252,6 +4260,9 @@
     </section>
     <section ref="bearer.html" title="Qt Bearer Management API">
         <keyword ref="bearer.html">Qt Bearer Management API</keyword>
+    </section>
+    <section ref="contactsengines.html" title="Qt Contacts Manager Engines">
+        <keyword ref="contactsengines.html">Qt Contacts Manager Engines</keyword>
     </section>
     <section ref="contactsschema.html" title="Qt Contacts Schema">
         <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>

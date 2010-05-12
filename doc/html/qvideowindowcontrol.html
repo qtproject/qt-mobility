@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qvideowindowcontrol.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QVideoWindowControl Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QVideoWindowControl"></a>
@@ -80,12 +80,13 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVideoWindowControl class provides a media control for rendering video to a window.</p>
 <p>The <a href="qvideowindowcontrol.html#winId">winId</a>() property QVideoWindowControl allows a platform specific window ID to be set as the video render target of a <a href="qmediaservice.html">QMediaService</a>. The <a href="qvideowindowcontrol.html#displayRect">displayRect</a>() property is used to set the region of the window the video should be rendered to, and the <a href="qvideowindowcontrol.html#aspectRatioMode">aspectRatioMode</a>() property indicates how the video should be scaled to fit the <a href="qvideowindowcontrol.html#displayRect">displayRect</a>().</p>
@@ -97,8 +98,10 @@
 <pre>    QVideoOutputControl *outputControl = mediaService-&gt;control&lt;QVideoOutputControl *&gt;();
     outputControl-&gt;setOutput(QVideoOutputControl::WindowOutput);</pre>
 <p>The interface name of QVideoWindowControl is <tt>com.nokia.Qt.QVideoWindowControl/1.0</tt> as defined in <a href="qvideowindowcontrol.html#QVideoWindowControl_iid">QVideoWindowControl_iid</a>.</p>
+</div>
 <p>See also <a href="qmediaservice.html#control">QMediaService::control</a>(), <a href="qvideooutputcontrol.html">QVideoOutputControl</a>, and <a href="qvideowidget.html">QVideoWidget</a>.</p>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVideoWindowControl/QVideoWindowControl"></a>
 <h3 class="fn"><a name="QVideoWindowControl"></a>QVideoWindowControl::QVideoWindowControl ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -202,12 +205,15 @@
 <h3 class="fn"><a name="winId"></a><a href="http://qt.nokia.com/doc/4.6/qwidget.html#WId-typedef">WId</a> QVideoWindowControl::winId () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the ID of the window a video overlay end point renders to.</p>
 <p>See also <a href="qvideowindowcontrol.html#setWinId">setWinId</a>().</p>
+</div>
 <hr />
+<div class="macros"/>
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//QVideoWindowControl_iid"></a>
 <h3 class="fn"><a name="QVideoWindowControl_iid"></a>QVideoWindowControl_iid</h3>
 <p><tt>com.nokia.Qt.QVideoWindowControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qvideowindowcontrol.html">QVideoWindowControl</a> class.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactmemorybackend.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QContactMemoryEngine Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QContactMemoryEngine"></a>
@@ -78,18 +78,21 @@
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>7 signals inherited from <a href="qcontactmanagerengine.html#signals">QContactManagerEngine</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactMemoryEngine class provides an in-memory implementation of a contacts backend.</p>
 <p>It may be used as a reference implementation, or when persistent storage is not required.</p>
 <p>During construction, it will load the in-memory data associated with the memory store identified by the &quot;id&quot; parameter from the given parameters if it exists, or a new, anonymous store if it does not.</p>
 <p>Data stored in this engine is only available in the current process.</p>
 <p>This engine supports sharing, so an internal reference count is increased whenever a manager uses this backend, and is decreased when the manager no longer requires this engine.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactMemoryEngine/QContactMemoryEngine"></a>
 <h3 class="fn"><a name="QContactMemoryEngine"></a>QContactMemoryEngine::QContactMemoryEngine ( QContactMemoryEngineData * <i>data</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -159,6 +162,7 @@
 <a name="//apple_ref/cpp/instm/QContactMemoryEngine/waitForRequestFinished"></a>
 <h3 class="fn"><a name="waitForRequestFinished"></a>bool QContactMemoryEngine::waitForRequestFinished ( <a href="qcontactabstractrequest.html">QContactAbstractRequest</a> * <i>req</i>, int <i>msecs</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qcontactmanagerengine.html#waitForRequestFinished">QContactManagerEngine::waitForRequestFinished</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

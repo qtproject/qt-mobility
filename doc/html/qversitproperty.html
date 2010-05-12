@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qversitproperty.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QVersitProperty Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QVersitProperty"></a>
@@ -54,13 +54,16 @@
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitProperty class stores the name, value, groups and parameters of a Versit property.</p>
 <p>For example a vCard can be presented as a <a href="qversitdocument.html">QVersitDocument</a> that consists of a number of properties such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few. Each of these properties is stored as an instance of a QVersitProperty in a <a href="qversitdocument.html">QVersitDocument</a>.</p>
 <p>QVersitProperty supports implicit sharing. The property name and parameters of a QVersitProperty are converted to upper-case when they are stored to a QVersitProperty.</p>
 <p>The value of a QVersitProperty is stored as a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> and should always be one of three types: <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> for textual values, <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> for binary data (eg. images), or <a href="qversitdocument.html">QVersitDocument</a> for nested documents. The <a href="qversitreader.html">QVersitReader</a> will parse Versit properties and assign the correct type of object to the property value. The <a href="qversitwriter.html">QVersitWriter</a> will serialise objects of these types correctly into the (text-based) Versit format.</p>
+</div>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QVersitProperty/ValueType"></a>
 <a name="//apple_ref/cpp/econst/QVersitProperty/PlainType"></a>
@@ -79,7 +82,9 @@
 <tr><td valign="top"><tt>QVersitProperty::BinaryType</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The property value holds a binary value and can be retrieved with QVersitProperty::value&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt;()</td></tr>
 <tr><td valign="top"><tt>QVersitProperty::VersitDocumentType</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The property value holds a nested Versit document and can be retrieved with QVersitProperty::value&lt;<a href="qversitdocument.html">QVersitDocument</a>&gt;()</td></tr>
 </table></p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitProperty/QVersitProperty"></a>
 <h3 class="fn"><a name="QVersitProperty"></a>QVersitProperty::QVersitProperty ()</h3>
@@ -161,6 +166,7 @@
 <a name="//apple_ref/cpp/instm/QVersitProperty/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QVersitProperty::operator== ( const QVersitProperty &amp; <i>other</i> ) const</h3>
 <p>Returns true if this is equal to <i>other</i>; false otherwise.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
