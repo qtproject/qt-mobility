@@ -1330,7 +1330,7 @@ void tst_QServiceManager::serviceAdded()
         QTRY_COMPARE(spyRemove.count(), 1);
     }
 
-#if not defined (Q_OS_WIN) && not defined (Q_OS_SYMBIAN)
+#if !defined (Q_OS_WIN) && !defined (Q_OS_SYMBIAN)
     // on win and symbian, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
@@ -1443,7 +1443,7 @@ void tst_QServiceManager::serviceRemoved()
     }
     listener->params.clear();
 
-#if not defined (Q_OS_WIN) && not defined (Q_OS_SYMBIAN)
+#if !defined (Q_OS_WIN) && !defined (Q_OS_SYMBIAN)
     // on win and symbian, cannot delete the database while it is in use
     // try it again after deleting the database
     deleteTestDatabasesAndWaitUntilDone();
