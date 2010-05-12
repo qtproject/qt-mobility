@@ -48,7 +48,7 @@
 
 #include "qgstvideobuffer.h"
 
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
 #include <QtGui/qx11info_x11.h>
 #include "qgstxvimagebuffer.h"
 #endif
@@ -133,7 +133,7 @@ GstFlowReturn QVideoSurfaceGstDelegate::render(GstBuffer *buffer)
 
     QGstVideoBuffer *videoBuffer = 0;
 
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     if (G_TYPE_CHECK_INSTANCE_TYPE(buffer, QGstXvImageBuffer::get_type())) {
         QGstXvImageBuffer *xvBuffer = reinterpret_cast<QGstXvImageBuffer *>(buffer);
         QVariant handle = QVariant::fromValue(xvBuffer->xvImage);
@@ -391,7 +391,7 @@ void QVideoSurfaceGstSink::instance_init(GTypeInstance *instance, gpointer g_cla
     Q_UNUSED(g_class);
 
     sink->delegate = 0;
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     sink->pool = new QGstXvImageBufferPool();
 #endif
     sink->lastRequestedCaps = 0;
@@ -402,7 +402,7 @@ void QVideoSurfaceGstSink::instance_init(GTypeInstance *instance, gpointer g_cla
 void QVideoSurfaceGstSink::finalize(GObject *object)
 {
     VO_SINK(object);
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     delete sink->pool;
     sink->pool = 0;
 #endif
@@ -597,7 +597,7 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
 
     *buffer = 0;
 
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
 
     if (sink->lastRequestedCaps && gst_caps_is_equal(sink->lastRequestedCaps, caps)) {
         //qDebug() << "reusing last caps";

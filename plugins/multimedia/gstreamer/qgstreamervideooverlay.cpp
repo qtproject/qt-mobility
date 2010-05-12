@@ -46,6 +46,8 @@
 
 #include "qx11videosurface.h"
 
+#ifndef QT_NO_XVIDEO
+
 QGstreamerVideoOverlay::QGstreamerVideoOverlay(QObject *parent)
     : QVideoWindowControl(parent)
     , m_surface(new QX11VideoSurface)
@@ -216,10 +218,11 @@ void QGstreamerVideoOverlay::setScaledDisplayRect()
 
             QRect viewport(QPoint(0, 0), size);
             viewport.moveCenter(formatViewport.center());
-
             m_surface->setDisplayRect(m_displayRect);
             m_surface->setViewport(viewport);
         }
         break;
     };
 }
+
+#endif //QT_NO_XVIDEO

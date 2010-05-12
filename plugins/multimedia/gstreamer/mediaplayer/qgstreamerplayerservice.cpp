@@ -74,7 +74,7 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
             this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
 
     m_videoRenderer = new QGstreamerVideoRenderer(this);
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     m_videoWindow = new QGstreamerVideoOverlay(this);
     m_videoWidget = new QGstreamerVideoWidgetControl(this);
 #endif
