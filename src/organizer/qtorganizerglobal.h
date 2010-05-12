@@ -46,8 +46,8 @@
 #include <QString>
 #include <QVariant>
 
-#define QTORGANIZER_VERSION_NAME "com.nokia.qt.mobility.organizeritem.api.version"
-#define QTORGANIZER_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.organizeritem.implementation.version"
+#define QTORGANIZER_VERSION_NAME "com.nokia.qt.mobility.organizer.api.version"
+#define QTORGANIZER_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.organizer.implementation.version"
 #define QTORGANIZER_VERSION 1
 
 QTM_BEGIN_NAMESPACE

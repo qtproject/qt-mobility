@@ -42,7 +42,9 @@
 #ifndef QORGANIZERITEMABSTRACTREQUEST_H
 #define QORGANIZERITEMABSTRACTREQUEST_H
 
+
 #include "qorganizeritemmanager.h"
+
 #include <QObject>
 
 QTM_BEGIN_NAMESPACE

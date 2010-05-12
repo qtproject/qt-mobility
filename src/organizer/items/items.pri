@@ -1,4 +1,5 @@
-INCLUDEPATH += items
+INCLUDEPATH += items \
+    ./
 
 PUBLIC_HEADERS += items/qorganizeritems.h \
     items/qorganizerevent.h \
@@ -8,7 +9,8 @@ PUBLIC_HEADERS += items/qorganizeritems.h \
     items/qorganizertodo.h \
     items/qorganizertodooccurrence.h
 
-SOURCES += items/qorganizerevent.cpp \
+SOURCES += \
+    items/qorganizerevent.cpp \
     items/qorganizereventoccurrence.cpp \
     items/qorganizerjournal.cpp \
     items/qorganizernote.cpp \

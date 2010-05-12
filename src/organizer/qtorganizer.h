@@ -45,8 +45,6 @@
 // this file includes all of the public header files
 // provided by the Qt Organizer API
 
-QTM_USE_NAMESPACE
-
 #include "qtorganizerglobal.h"                        // global exports
 
 #include "qorganizeritemabstractrequest.h"            // asynchronous request

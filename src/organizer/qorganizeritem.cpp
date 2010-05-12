@@ -50,6 +50,8 @@
 #include "qorganizeritemdetail_p.h"
 #include "qorganizeritemmanager_p.h"
 
+#include "qorganizeritemdisplaylabel.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!

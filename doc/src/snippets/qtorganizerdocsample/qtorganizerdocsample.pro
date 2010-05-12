@@ -8,7 +8,11 @@ TEMPLATE = lib
 TARGET = qtorganizerdocsample
 include(../../../../common.pri)
 INCLUDEPATH += ../../../../src/global \
-               ../../../../src/organizer
+               ../../../../src/organizer \
+               ../../../../src/organizer\details \
+               ../../../../src/organizer\requests \
+               ../../../../src/organizer\items \
+               ../../../../src/organizer\filters
 
 DESTDIR = $$QT_MOBILITY_BUILD_TREE/lib
 QMAKE_RPATHDIR+=$$OUTPUT_DIR/lib

@@ -1,4 +1,5 @@
-INCLUDEPATH += details
+INCLUDEPATH += details \
+    ./
 
 PUBLIC_HEADERS += \
     details/qorganizeritemattendee.h \

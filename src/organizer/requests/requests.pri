@@ -1,4 +1,5 @@
-INCLUDEPATH += requests
+INCLUDEPATH += requests \
+    ./
 
 PUBLIC_HEADERS += requests/qorganizeritemrequests.h \
     requests/qorganizeritemdetaildefinitionfetchrequest.h \

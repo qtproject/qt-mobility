@@ -50,7 +50,9 @@
 #include <QDateTime>
 #include <QSharedDataPointer>
 
-#include "qtorganizer.h"
+#include "qorganizeritemid.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritemtype.h"
 
 QTM_BEGIN_NAMESPACE
 

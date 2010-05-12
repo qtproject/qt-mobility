@@ -1,4 +1,6 @@
-INCLUDEPATH += filters
+INCLUDEPATH += filters \
+    ./
+
 PUBLIC_HEADERS += filters/qorganizeritemfilters.h \
     filters/qorganizeritemchangelogfilter.h \
     filters/qorganizeritemdetailfilter.h \
