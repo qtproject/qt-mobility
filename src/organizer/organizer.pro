@@ -43,7 +43,7 @@ PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
     qorganizeritemsortorder_p.h
-SOURCES += qorganizer.cpp \
+SOURCES += \
     qorganizeritemabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
     qorganizeritem.cpp \
