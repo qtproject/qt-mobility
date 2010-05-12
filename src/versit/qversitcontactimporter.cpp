@@ -206,14 +206,31 @@ QMap<int, QVersitContactImporter::Error> QVersitContactImporter::errors() const
  * Sets \a handler to be the handler for processing QVersitProperties, or 0 to have no handler.
  *
  * Does not take ownership of the handler.  The client should ensure the handler remains valid for
- * the lifetime of the exporter.
+ * the lifetime of the exporter.  This function is used for version 1 handlers.
  */
 void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandler* handler)
 {
+    d->mPropertyHandlerVersion = 1;
     d->mPropertyHandler = handler;
+    d->mPropertyHandler2 = NULL;
 }
 
 /*!
+ * Sets \a handler to be the handler for processing QVersitProperties, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.  This function is used for version 2 and above handlers.
+ */
+void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandlerV2* handler)
+{
+    if (handler)
+        d->mPropertyHandlerVersion = handler->version();
+    d->mPropertyHandler = 0;
+    d->mPropertyHandler2 = handler;
+}
+
+/*!
+ * \internal
  * Gets the handler for processing QVersitProperties.
  */
 QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler() const

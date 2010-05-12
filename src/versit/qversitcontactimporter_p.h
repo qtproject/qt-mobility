@@ -60,6 +60,7 @@
 #include <QDateTime>
 #include <QHash>
 #include <QPair>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 class QContact;
@@ -67,6 +68,23 @@ class QContactDetail;
 class QContactOrganization;
 class QVersitProperty;
 class QVersitDocument;
+
+/*!
+ * This is a map from Versit group names to the details that were generated from properties with the
+ * said groups.  Multiple details can be associated with a single group.
+ */
+class DetailGroupMap
+{
+public:
+    QList<QContactDetail> detailsInGroup(const QString& groupName) const;
+    void insert(const QString& groupName, const QContactDetail& detail);
+    void update(const QContactDetail& detail);
+    void clear();
+
+private:
+    QHash<int, QString> mDetailGroupName; // detailid -> group name
+    QHash<int, QContactDetail> mDetailById; // detailid -> detail
+};
 
 class Q_AUTOTEST_EXPORT QVersitContactImporterPrivate
 {
@@ -82,44 +100,47 @@ public:
 
 private:
     void importProperty(const QVersitDocument& document, const QVersitProperty& property,
-                        int contactIndex, QContact* contact) const;
-    bool createName(const QVersitProperty& property, QContact* contact) const;
-    bool createPhone(const QVersitProperty& property, QContact* contact) const;
-    bool createAddress(const QVersitProperty& property, QContact* contact) const;
-    bool createOrganization(const QVersitProperty& property, QContact* contact) const;
+                        int contactIndex, QContact* contact);
+    bool createName(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createPhone(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createAddress(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createOrganization(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
     void setOrganizationNames(QContactOrganization& org, const QVersitProperty& property) const;
     void setOrganizationLogo(QContactOrganization& org, const QVersitProperty& property) const;
-    bool createTimeStamp(const QVersitProperty& property, QContact* contact) const;
-    bool createAnniversary(const QVersitProperty& property, QContact* contact) const;
-    bool createBirthday(const QVersitProperty& property, QContact* contact) const;
-    bool createNicknames(const QVersitProperty& property, QContact* contact) const;
-    bool createTags(const QVersitProperty& property, QContact* contact) const;
-    bool createOnlineAccount(const QVersitProperty& property, QContact* contact) const;
-    bool createRingtone(const QVersitProperty& property, QContact* contact) const;
-    bool createThumbnail(const QVersitProperty& property, QContact* contact) const;
-    bool createGeoLocation(const QVersitProperty& property, QContact* contact) const;
-    bool createFamily(const QVersitProperty& property, QContact* contact) const;
-    bool createNameValueDetail(const QVersitProperty& property, QContact* contact) const;
-    bool createCustomLabel(const QVersitProperty& property, QContact* contact) const;
+    bool createTimeStamp(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createAnniversary(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createBirthday(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createNicknames(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createTags(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createOnlineAccount(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createRingtone(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createThumbnail(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createGeoLocation(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createFamily(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createNameValueDetail(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
+    bool createCustomLabel(const QString& groupName, const QVersitProperty& property, QContact* contact, QList<QContactDetail>* updatedDetails);
     QStringList extractContexts(const QVersitProperty& property) const;
     QStringList extractSubTypes(const QVersitProperty& property) const;
     QString takeFirst(QList<QString>& list) const;
     QDateTime parseDateTime(const QString& text, const QString& format) const;
     QString saveContentToFile(const QVersitProperty& property, const QByteArray& data) const;
     bool saveDataFromProperty(const QVersitProperty& property, QString* location, QByteArray* data) const;
-    void saveDetailWithContext(
-            QContact* contact, QContactDetail* detail, const QStringList& contexts) const;
+    void saveDetailWithContext(const QString& groupName, QList<QContactDetail>* updatedDetails,
+                               QContactDetail detail, const QStringList& contexts);
 
 public: // Data
     QList<QContact> mContacts;
     QMap<int, QVersitContactImporter::Error> mErrors;
     QVersitContactImporterPropertyHandler* mPropertyHandler;
+    QVersitContactImporterPropertyHandlerV2* mPropertyHandler2;
+    int mPropertyHandlerVersion;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
 
     QHash<QString,QPair<QString,QString> > mDetailMappings;
     QHash<QString,QString> mContextMappings;
     QHash<QString,QString> mSubTypeMappings;
+    DetailGroupMap mDetailGroupMap;
 };
 
 QTM_END_NAMESPACE
