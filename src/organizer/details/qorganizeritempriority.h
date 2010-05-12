@@ -64,8 +64,18 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldPriority, "Priority");
 #endif
 
-    // XXX TODO: functions / data
-    // enum? CriticalPriority, HighPriority, MediumPriority, LowPriority, NoPriority ?  granularity?  time vs impact priority?
+    // time vs impact priority?  greater granularity?
+    enum Priority {
+        UnknownPriority = 0,
+        VeryLowPriority,
+        LowPriority,
+        MediumPriority,
+        HighPriority,
+        VeryHighPriority
+    };
+
+    void setPriority(Priority priority) {setValue(FieldPriority, static_cast<int>(priority));}
+    Priority priority() const {return static_cast<Priority>(value<int>(FieldPriority));}
 
 };
 

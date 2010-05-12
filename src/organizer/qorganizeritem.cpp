@@ -253,14 +253,34 @@ void QOrganizerItem::setType(const QOrganizerItemType& type)
     d->m_details[0].d->m_access = QOrganizerItemDetail::Irremovable;
 }
 
-/*!
- * XXX TODO
- */
 QString QOrganizerItem::displayLabel() const
 {
-    qWarning("QOrganizerItem::displayLabel() -- TODO!");
+    qWarning("QOrganizerItem::displayLabel() -- XXX TODO!");
     return QString();
 }
+void QOrganizerItem::setDisplayLabel(const QString& label)
+{
+    Q_UNUSED(label);
+}
+void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
+{
+    Q_UNUSED(label);
+}
+
+QString QOrganizerItem::description() const
+{
+    qWarning("QOrganizerItem::description() -- TODO!");
+    return QString();
+}
+void QOrganizerItem::setDescription(const QString& description)
+{
+    Q_UNUSED(description);
+}
+void QOrganizerItem::setDescription(const QOrganizerItemDescription& description)
+{
+    Q_UNUSED(description);
+}
+
 
 /*!
  * Sets the id of this organizeritem to \a id.

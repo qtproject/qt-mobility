@@ -44,6 +44,7 @@
 
 #include "qtorganizer.h"
 #include "qorganizeritemrecurrence.h" // XXX TODO: is this a detail?
+#include "qorganizeritempriority.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -62,6 +63,16 @@ public:
 
     void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
     QOrganizerItemRecurrence recurrence() const;
+
+    void setPriority(QOrganizerItemPriority::Priority);
+    QOrganizerItemPriority::Priority priority() const;
+
+    QString locationName() const;
+    void setLocationName(const QString& locationName);
+    QString locationAddress() const;
+    void setLocationAddress(const QString& locationAddress);
+    QString locationGeoCoordinates() const;
+    void setLocationGeoCoordinates(const QString& locationCoordinates);
 
     // TODO attendees?  How to handle non-unique details?
 };

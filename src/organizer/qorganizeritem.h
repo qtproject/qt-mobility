@@ -53,6 +53,8 @@
 #include "qorganizeritemid.h"
 #include "qorganizeritemdetail.h"
 #include "qorganizeritemtype.h"
+#include "qorganizeritemdisplaylabel.h"
+#include "qorganizeritemdescription.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -78,13 +80,20 @@ public:
     void setId(const QOrganizerItemId& id);
     QOrganizerItemLocalId localId() const;
 
-    /* Type - event, todo, journal, invitation, ...  is the type backend synthesised? */
+    /* Type - event, todo, journal, note... */
     QString type() const;
     void setType(const QString& type);
     void setType(const QOrganizerItemType& type);
 
-    /* The (backend synthesized) display label of the organizeritem */
+    /* The display label of the organizeritem */
     QString displayLabel() const;
+    void setDisplayLabel(const QString& label);
+    void setDisplayLabel(const QOrganizerItemDisplayLabel& label);
+
+    /* The description of the organizeritem */
+    QString description() const;
+    void setDescription(const QString& description);
+    void setDescription(const QOrganizerItemDescription& description);
 
     /* Is this an empty organizeritem? */
     bool isEmpty() const;

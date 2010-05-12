@@ -70,10 +70,10 @@ void snippets()
     //! [Creating a recurrent event]
     QOrganizerEvent recEvent;
     /*recEvent.setRecurrence(7pm to 8pm every wednesday for three months);*/
-    recEvent.setPriority(QOrganizerItem::HighPriority);
-    recEvent.setLocation("Meeting Room 8");
+    recEvent.setPriority(QOrganizerItemPriority::HighPriority);
+    recEvent.setLocationName("Meeting Room 8");
     recEvent.setDescription("A meeting every wednesday to discuss the vitally important topic of marshmallows");
-    recEvent.setLabel("Marshmallow Conference");
+    recEvent.setDisplayLabel("Marshmallow Conference");
     defaultManager.saveItem(&recEvent);
     //! [Creating a recurrent event]
 
@@ -82,7 +82,7 @@ void snippets()
     // QOIM::itemInstances(item, startDateTime, endDateTime, count) ?
     // QOI::instanceFilter(start, end) ?
     QOrganizerItemDetailFilter dfil;
-    dfil.setDetailDefinition(QOrganizerItemParentInfo::DefinitionName, QOrganizerItemParentInfo::FieldParentId);
+    dfil.setDetailDefinitionName(QOrganizerItemParentInfo::DefinitionName, QOrganizerItemParentInfo::FieldParentId);
     dfil.setValue(recEvent.id());
 
     QOrganizerItemPeriodFilter pfil;

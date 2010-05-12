@@ -87,3 +87,40 @@ QOrganizerItemRecurrence QOrganizerEvent::recurrence() const
 {
     return QOrganizerItemRecurrence();
 }
+
+void QOrganizerEvent::setPriority(QOrganizerItemPriority::Priority priority)
+{
+    Q_UNUSED(priority);
+}
+
+QOrganizerItemPriority::Priority QOrganizerEvent::priority() const
+{
+    return QOrganizerItemPriority::UnknownPriority;
+}
+
+QString QOrganizerEvent::locationName() const
+{
+    return QString();
+}
+void QOrganizerEvent::setLocationName(const QString& locationName)
+{
+    Q_UNUSED(locationName);
+}
+
+QString QOrganizerEvent::locationAddress() const
+{
+    return QString();
+}
+void QOrganizerEvent::setLocationAddress(const QString& locationAddress)
+{
+    Q_UNUSED(locationAddress);
+}
+
+QString QOrganizerEvent::locationGeoCoordinates() const
+{
+    return QString();
+}
+void QOrganizerEvent::setLocationGeoCoordinates(const QString& locationCoordinates)
+{
+    Q_UNUSED(locationCoordinates);
+}
