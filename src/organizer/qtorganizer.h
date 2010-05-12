@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
-#ifndef QTORGANIZERITEM_H
-#define QTORGANIZERITEM_H
+#ifndef QTORGANIZER_H
+#define QTORGANIZER_H
 
 // this file includes all of the public header files
-// provided by the Qt Organizer Item API
+// provided by the Qt Organizer API
 
-#include "qtorganizerglobal.h"                   // global exports
+#include "qtorganizerglobal.h"                        // global exports
+
 #include "qorganizeritemabstractrequest.h"            // asynchronous request
 #include "qorganizeritemdetail.h"                     // organizeritem detail
 #include "qorganizeritemdetaildefinition.h"           // detail definition

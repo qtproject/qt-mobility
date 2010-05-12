@@ -39,16 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef QTORGANIZERITEMGLOBAL_H
-#define QTORGANIZERITEMGLOBAL_H
+#ifndef QTORGANIZERGLOBAL_H
+#define QTORGANIZERGLOBAL_H
 
 #include <qmobilityglobal.h>
 #include <QString>
 #include <QVariant>
 
-#define QTORGANIZERITEM_VERSION_NAME "com.nokia.qt.mobility.organizeritem.api.version"
-#define QTORGANIZERITEM_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.organizeritem.implementation.version"
-#define QTORGANIZERITEM_VERSION 1
+#define QTORGANIZER_VERSION_NAME "com.nokia.qt.mobility.organizeritem.api.version"
+#define QTORGANIZER_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.organizeritem.implementation.version"
+#define QTORGANIZER_VERSION 1
 
 QTM_BEGIN_NAMESPACE
 
