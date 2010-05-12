@@ -301,7 +301,8 @@ void CFSEngine::setPluginObserversL()
     for (TInt i = 0; i < mailboxes.Count(); i++) {
         MEmailMailbox *mailbox = mailboxes[i];
         mailbox->RegisterObserverL(*this);
-    }
+    }    
+    CleanupStack::PopAndDestroy();  
 }
 
 void CFSEngine::NewMessageEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aNewMessages, const TFolderId& aParentFolderId)
@@ -706,7 +707,24 @@ bool CFSEngine::retrieveHeader(const QMessageId& id)
 
 bool CFSEngine::exportUpdates(const QMessageAccountId &id)
 {
-    return false;
+    TRAPD(err, exportUpdatesL(id));
+    if (err != KErrNone) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void CFSEngine::exportUpdatesL(const QMessageAccountId &id)
+{
+    TMailboxId mailboxId(stripIdPrefix(id.toString()).toInt());
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+    mailbox->SynchroniseL(*this);
+}
+
+void CFSEngine::MailboxSynchronisedL(TInt aResult)
+{
+    
 }
 
 bool CFSEngine::removeMessages(const QMessageFilter& /*filter*/, QMessageManager::RemovalOption /*option*/)

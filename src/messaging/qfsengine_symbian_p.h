@@ -65,6 +65,7 @@
 #include <emailsorting.h>
 #include <memailmessagesearch.h>
 #include <memailfolder.h>
+#include <mmailboxsyncobserver.h>
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
 #include <mmailboxcontentobserver.h>
 #endif
@@ -101,9 +102,9 @@ struct FSSearchOperation
 };
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
-class CFSEngine : public MMailboxContentObserver
+class CFSEngine : public MMailboxContentObserver, public MMailboxSyncObserver
 #else
-class CFSEngine
+class CFSEngine : public MMailboxSyncObserver
 #endif
 {
 public: 
@@ -150,6 +151,9 @@ public:
                                      bool resultSetOrdered);
     
     void setMtmAccountIdList(QMessageAccountIdList accountList);
+    
+public: // from MMailboxSyncObserver
+    void MailboxSynchronisedL(TInt aResult);
     
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
     void setPluginObserversL();
@@ -201,6 +205,7 @@ private:
     void applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, int limit) const;
 
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
+    void exportUpdatesL(const QMessageAccountId &id);
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
