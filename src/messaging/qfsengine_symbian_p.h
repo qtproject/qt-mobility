@@ -284,8 +284,8 @@ private:
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
     
     void getAllMessagesL(TEmailSortCriteria& sortCriteria);
-    void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria);
-    void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria);
+    void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria, QString body);
+    void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria, QString body);
     
 private: // Data
     CFSEngine& m_owner;
