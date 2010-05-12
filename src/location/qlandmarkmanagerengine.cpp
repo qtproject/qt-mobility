@@ -1055,7 +1055,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         case QLandmarkFilter::CategoryFilter:
         {
             const QLandmarkCategoryFilter categoryFilter(filter);
-            QList<QLandmarkCategoryId> categories = landmark.categories();
+            QList<QLandmarkCategoryId> categories = landmark.categoryIds();
             foreach(const QLandmarkCategoryId id, categories)
             {
                 if (id == categoryFilter.categoryId())

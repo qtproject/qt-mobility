@@ -226,27 +226,27 @@ private slots:
         QLandmarkCategoryId lmCatId;
         lmCatId.setId("1");
         lmCatId.setManagerUri("qtlandmarks:mock:");
-        lm.addCategory(lmCatId);
+        lm.addCategoryId(lmCatId);
 
         QVERIFY(MockEngine::testFilter(categoryFilter,lm));
 
         //test category id doesn't match
-        lm.removeCategory(lmCatId);
-        QVERIFY(lm.categories().count() == 0);
+        lm.removeCategoryId(lmCatId);
+        QVERIFY(lm.categoryIds().count() == 0);
         lmCatId.setId("2");
-        lm.addCategory(lmCatId);
+        lm.addCategoryId(lmCatId);
 
         QVERIFY(!MockEngine::testFilter(categoryFilter,lm));
 
         //test category uri that doesn't match
         QList<QLandmarkCategoryId> catIdList;
-        lm.setCategories(catIdList);
-        QVERIFY(lm.categories().count() == 0);
+        lm.setCategoryIds(catIdList);
+        QVERIFY(lm.categoryIds().count() == 0);
         lmCatId.setId("1");
         lmCatId.setManagerUri("qtlandmarks:fake:");
         catIdList.append(lmCatId);
-        lm.setCategories(catIdList);
-        QVERIFY(lm.categories().count() == 1);
+        lm.setCategoryIds(catIdList);
+        QVERIFY(lm.categoryIds().count() == 1);
         QVERIFY(!MockEngine::testFilter(categoryFilter,lm));
 
 
@@ -267,7 +267,7 @@ private slots:
 
         catIdList.clear();
         catIdList << lmCatId << lmCatId2 << lmCatId3;
-        lm.setCategories(catIdList);
+        lm.setCategoryIds(catIdList);
 
         catFilterId.setId("2");
         catFilterId.setManagerUri("qtlandmarks:mock:");

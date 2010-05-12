@@ -1121,7 +1121,7 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
             QLandmarkCategoryId id;
             id.setManagerUri(uri);
             id.setId(query2.value(0).toString());
-            lm.addCategory(id);
+            lm.addCategoryId(id);
         }
     }
 
@@ -1503,12 +1503,12 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
 
     QStringList lmCats;
 
-    for (int i = landmark->categories().size() - 1; i >= 0; --i) {
-        QLandmarkCategoryId id = landmark->categories().at(i);
+    for (int i = landmark->categoryIds().size() - 1; i >= 0; --i) {
+        QLandmarkCategoryId id = landmark->categoryIds().at(i);
         if (id.managerUri() == uri)
             lmCats << id.id();
         else
-            landmark->removeCategory(id);
+            landmark->removeCategoryId(id);
     }
 
     QStringList queries;

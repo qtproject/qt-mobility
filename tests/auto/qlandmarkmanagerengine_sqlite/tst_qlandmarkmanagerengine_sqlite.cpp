@@ -201,7 +201,7 @@ private slots:
 
         QLandmark lm3;
         lm3.setName("LM3");
-        lm3.addCategory(cat3.id());
+        lm3.addCategoryId(cat3.id());
         QVERIFY(m_manager->saveLandmark(&lm3));
 
         QLandmarkId id3;
@@ -210,7 +210,7 @@ private slots:
         QCOMPARE(lm3, m_manager->landmark(id3));
     }
 
-    void addCategory() {
+    void addCategoryId() {
         QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
 
         // add - no attributes
@@ -305,7 +305,7 @@ private slots:
 
         QLandmark lm2;
         lm2.setName("LM2");
-        lm2.addCategory(cat1.id());
+        lm2.addCategoryId(cat1.id());
         QVERIFY(m_manager->saveLandmark(&lm2));
         QCOMPARE(lm2, m_manager->landmark(lm2.id()));
 
@@ -385,7 +385,7 @@ private slots:
 
         // adding categories
 
-        lm1.addCategory(cat1.id());
+        lm1.addCategoryId(cat1.id());
         QVERIFY(m_manager->saveLandmark(&lm1));
         QCOMPARE(lm1, m_manager->landmark(lm1.id()));
 
@@ -394,7 +394,7 @@ private slots:
         QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
         spyChange.clear();
 
-        lm1.addCategory(cat2.id());
+        lm1.addCategoryId(cat2.id());
         QVERIFY(m_manager->saveLandmark(&lm1));
         QCOMPARE(lm1, m_manager->landmark(lm1.id()));
 
@@ -403,7 +403,7 @@ private slots:
         QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
         spyChange.clear();
 
-        lm1.addCategory(cat3.id());
+        lm1.addCategoryId(cat3.id());
         QVERIFY(m_manager->saveLandmark(&lm1));
         QCOMPARE(lm1, m_manager->landmark(lm1.id()));
 
@@ -414,7 +414,7 @@ private slots:
 
         // removing categories
 
-        lm1.removeCategory(cat1.id());
+        lm1.removeCategoryId(cat1.id());
         QVERIFY(m_manager->saveLandmark(&lm1));
         QCOMPARE(lm1, m_manager->landmark(lm1.id()));
 
@@ -423,7 +423,7 @@ private slots:
         QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
         spyChange.clear();
 
-        lm1.removeCategory(cat2.id());
+        lm1.removeCategoryId(cat2.id());
         QVERIFY(m_manager->saveLandmark(&lm1));
         QCOMPARE(lm1, m_manager->landmark(lm1.id()));
 
@@ -432,7 +432,7 @@ private slots:
         QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
         spyChange.clear();
 
-        lm1.removeCategory(cat3.id());
+        lm1.removeCategoryId(cat3.id());
         QVERIFY(m_manager->saveLandmark(&lm1));
         QCOMPARE(lm1, m_manager->landmark(lm1.id()));
 
@@ -442,7 +442,7 @@ private slots:
         spyChange.clear();
     }
 
-    void removeCategory() {
+    void removeCategoryId() {
         QSignalSpy spyRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
 
         QLandmarkCategoryId id1;
@@ -476,7 +476,7 @@ private slots:
         QVERIFY(m_manager->saveLandmark(&lm1));
         QCOMPARE(lm1, m_manager->landmark(lm1.id()));
 
-        lm1.addCategory(cat3.id());
+        lm1.addCategoryId(cat3.id());
         QVERIFY(m_manager->saveLandmark(&lm1));
         QCOMPARE(lm1, m_manager->landmark(lm1.id()));
 
@@ -488,8 +488,8 @@ private slots:
 
         QLandmark lm2 = m_manager->landmark(lm1.id());
         QVERIFY(lm1 != lm2);
-        QCOMPARE(lm1.categories().size(), 1);
-        QCOMPARE(lm2.categories().size(), 0);
+        QCOMPARE(lm1.categoryIds().size(), 1);
+        QCOMPARE(lm2.categoryIds().size(), 0);
     }
 
     void removeLandmark() {
@@ -521,7 +521,7 @@ private slots:
 
         QLandmark lm3;
         lm3.setName("LM3");
-        lm3.addCategory(cat3.id());
+        lm3.addCategoryId(cat3.id());
         QVERIFY(m_manager->saveLandmark(&lm3));
 
         QVERIFY(m_manager->removeLandmark(lm3.id()));
@@ -1168,31 +1168,31 @@ private slots:
 
         QLandmark lm1;
         lm1.setName("LM1");
-        lm1.addCategory(cat1.id());
+        lm1.addCategoryId(cat1.id());
         QVERIFY(m_manager->saveLandmark(&lm1));
 
         QLandmark lm2;
         lm2.setName("LM2");
-        lm2.addCategory(cat1.id());
-        lm2.addCategory(cat2.id());
+        lm2.addCategoryId(cat1.id());
+        lm2.addCategoryId(cat2.id());
         QVERIFY(m_manager->saveLandmark(&lm2));
 
         QLandmark lm3;
         lm3.setName("LM3");
-        lm3.addCategory(cat1.id());
-        lm3.addCategory(cat2.id());
-        lm3.addCategory(cat3.id());
+        lm3.addCategoryId(cat1.id());
+        lm3.addCategoryId(cat2.id());
+        lm3.addCategoryId(cat3.id());
         QVERIFY(m_manager->saveLandmark(&lm3));
 
         QLandmark lm4;
         lm4.setName("LM4");
-        lm4.addCategory(cat2.id());
-        lm4.addCategory(cat3.id());
+        lm4.addCategoryId(cat2.id());
+        lm4.addCategoryId(cat3.id());
         QVERIFY(m_manager->saveLandmark(&lm4));
 
         QLandmark lm5;
         lm5.setName("LM5");
-        lm5.addCategory(cat3.id());
+        lm5.addCategoryId(cat3.id());
         QVERIFY(m_manager->saveLandmark(&lm5));
 
         QLandmarkCategoryFilter filter(cat2.id());
@@ -1445,7 +1445,7 @@ private slots:
             for (int j = 0; j < names.size(); ++j) {
                 for (int k = 0; k < coords.size(); ++k) {
                     QLandmark lm;
-                    lm.addCategory(ids.at(i));
+                    lm.addCategoryId(ids.at(i));
                     lm.setName(names.at(j));
                     lm.setCoordinate(coords.at(k));
                     QVERIFY(m_manager->saveLandmark(&lm));
@@ -1471,7 +1471,7 @@ private slots:
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categories().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.id())
                     && (lm.name() == "LM2")
                     && (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
                 QCOMPARE(idSet.contains(lm.id().id()), true);
@@ -1492,7 +1492,7 @@ private slots:
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categories().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.id())
                     && (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
                 QCOMPARE(idSet.contains(lm.id().id()), true);
             } else {
@@ -1512,7 +1512,7 @@ private slots:
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categories().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.id())
                     && (lm.name() == "LM2")
                     && (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
                 QCOMPARE(idSet.contains(lm.id().id()), true);
@@ -1556,7 +1556,7 @@ private slots:
             for (int j = 0; j < names.size(); ++j) {
                 for (int k = 0; k < coords.size(); ++k) {
                     QLandmark lm;
-                    lm.addCategory(ids.at(i));
+                    lm.addCategoryId(ids.at(i));
                     lm.setName(names.at(j));
                     lm.setCoordinate(coords.at(k));
                     QVERIFY(m_manager->saveLandmark(&lm));
@@ -1582,7 +1582,7 @@ private slots:
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categories().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.id())
                     || (lm.name() == "LM2")
                     || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
                 QCOMPARE(idSet.contains(lm.id().id()), true);
@@ -1603,7 +1603,7 @@ private slots:
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categories().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.id())
                     || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
                 QCOMPARE(idSet.contains(lm.id().id()), true);
             } else {
@@ -1623,7 +1623,7 @@ private slots:
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categories().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.id())
                     || (lm.name() == "LM2")
                     || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
                 QCOMPARE(idSet.contains(lm.id().id()), true);

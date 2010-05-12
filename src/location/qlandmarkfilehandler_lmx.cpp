@@ -310,16 +310,16 @@ bool QLandmarkFileHandlerLmx::readLandmark(QLandmark &landmark)
             return true;
     }
 
-    QList<QLandmarkCategoryId> categories;
+    QList<QLandmarkCategoryId> categoryIds;
 
     while (m_reader->name() == "category") {
         QLandmarkCategoryId id;
         if (!readCategory(id))
             return false;
-        categories << id;
+        categoryIds << id;
 
         if (!m_reader->readNextStartElement()) {
-            landmark.setCategories(categories);
+            landmark.setCategoryIds(categoryIds);
             return true;
         }
     }
@@ -796,8 +796,8 @@ bool QLandmarkFileHandlerLmx::writeLandmark(const QLandmark &landmark)
         if (!writeMediaLink(landmark))
             return false;
 
-    for (int i = 0; i < landmark.categories().size(); ++i) {
-        if (!writeCategory(landmark.categories().at(i)))
+    for (int i = 0; i < landmark.categoryIds().size(); ++i) {
+        if (!writeCategory(landmark.categoryIds().at(i)))
             return false;
     }
 

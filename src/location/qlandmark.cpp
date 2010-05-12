@@ -126,8 +126,8 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     Each QLandmark may be associated with zero or more categories.
     A category  defines a type of landmark such as restaurant or
     cinema.  To set the category that a landmark belongs to, use
-    the setCategories() or addCategory() functions.  A landmark may
-    be removed from a category by using the removeCategory() function.
+    the setCategoryId() or addCategoryId() functions.  A landmark may
+    be removed from a category by using the removeCategoryId() function.
 
     Some landmarks may be designated as read-only, e.g. a publically accessible
     landmark server may not want some of its content to be editable.
@@ -254,9 +254,9 @@ void QLandmark::setAddress(const QGeoAddress &address)
     Returns a of list identifiers of categories that this landmark
     belongs to.
 
-    \sa setCategories()
+    \sa setCategoryIds()
 */
-QList<QLandmarkCategoryId> QLandmark::categories() const
+QList<QLandmarkCategoryId> QLandmark::categoryIds() const
 {
     return d->categoryIds;
 }
@@ -265,10 +265,10 @@ QList<QLandmarkCategoryId> QLandmark::categories() const
     Sets the categories that this landmark belongs to via
     a list of \a categoryIds.
 
-    \sa addCategory(), removeCategory()
+    \sa addCategoryId(), removeCategoryId()
 
 */
-void QLandmark::setCategories(const QList<QLandmarkCategoryId> &categoryIds)
+void QLandmark::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
 
     d->categoryIds.clear();
@@ -284,9 +284,9 @@ void QLandmark::setCategories(const QList<QLandmarkCategoryId> &categoryIds)
     Adds another category that this landmark will be associated
     with via its \a categoryId.
 
-    \sa setCategories(), removeCategory()
+    \sa setCategoryIds(), removeCategoryId()
 */
-void QLandmark::addCategory(const QLandmarkCategoryId &categoryId)
+void QLandmark::addCategoryId(const QLandmarkCategoryId &categoryId)
 {
     if (!d->categoryIds.contains(categoryId))
         d->categoryIds.append(categoryId);
@@ -295,9 +295,9 @@ void QLandmark::addCategory(const QLandmarkCategoryId &categoryId)
 /*!
     Removes a category from a landmark, by using its \a categoryId.
 
-    \sa addCategory(), categories()
+    \sa addCategoryId(), categoryIds()
 */
-void QLandmark::removeCategory(const QLandmarkCategoryId &categoryId)
+void QLandmark::removeCategoryId(const QLandmarkCategoryId &categoryId)
 {
     d->categoryIds.removeAll(categoryId);
 }

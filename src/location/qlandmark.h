@@ -83,10 +83,10 @@ public:
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
 
-    QList<QLandmarkCategoryId> categories() const;
-    void setCategories(const QList<QLandmarkCategoryId> &categoryIds);
-    void addCategory(const QLandmarkCategoryId &categoryId);
-    void removeCategory(const QLandmarkCategoryId &categoryId);
+    QList<QLandmarkCategoryId> categoryIds() const;
+    void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds);
+    void addCategoryId(const QLandmarkCategoryId &categoryId);
+    void removeCategoryId(const QLandmarkCategoryId &categoryId);
 
     QString description() const;
     void setDescription(const QString &description);

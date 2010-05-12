@@ -315,7 +315,7 @@ void addLandmarkAndCategory(QLandmarkManager *lm)
     monks.setAddress(address);
 
     monks.setDescription("Jerry's favourite diner");
-    monks.addCategory(cafes.id());
+    monks.addCategoryId(cafes.id());
 
     lm->saveLandmark(&monks); //lm  is a QLandmarkManager*
     //! [Add landmark synchronously]

@@ -310,7 +310,7 @@ private slots:
 
         QList<QLandmark> landmarks;
         QLandmark lm;
-        lm.addCategory(catId);
+        lm.addCategoryId(catId);
         landmarks.append(lm);
         m_handler->setLandmarks(landmarks);
 
@@ -370,9 +370,9 @@ private slots:
 
         QLandmark lm = m_handler->landmarks().at(0);
 
-        QCOMPARE(lm.categories().size(), 1);
+        QCOMPARE(lm.categoryIds().size(), 1);
 
-        QLandmarkCategoryId catId = lm.categories().at(0);
+        QLandmarkCategoryId catId = lm.categoryIds().at(0);
 
         QCOMPARE(catId.isValid(), true);
 
@@ -438,7 +438,7 @@ private:
         w0.setAddress(a0);
         w0.setPhone("123456789");
         w0.setUrl(QUrl("http://example.com/testUrl"));
-        w0.setCategories(catIds);
+        w0.setCategoryIds(catIds);
         w << w0;
 
         QTest::newRow("convert-single")
@@ -530,7 +530,7 @@ private:
         w << w14;
 
         QLandmark w15;
-        w15.setCategories(catIds);
+        w15.setCategoryIds(catIds);
         w << w15;
 
         QTest::newRow("convert-collection")
