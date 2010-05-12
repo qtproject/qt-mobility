@@ -2322,25 +2322,20 @@ QMessage CMTMEngine::messageL(const QMessageId& id) const
     CleanupStack::PushL(pEntry);
     
     if (pEntry->Entry().iMtm == KUidMsgTypeSMS) {
-        if (!ipSmsMtm)
-            return message;
-        message = smsMessageL(*pEntry, messageId);
+        if (ipSmsMtm)
+            message = smsMessageL(*pEntry, messageId);
     } else if (pEntry->Entry().iMtm == KUidMsgTypeMultimedia) {
-        if (!ipMmsMtm)
-            return message;
-        message = mmsMessageL(*pEntry, messageId);
+        if (ipMmsMtm)
+            message = mmsMessageL(*pEntry, messageId);
     }  else if (pEntry->Entry().iMtm == KUidMsgTypeSMTP) {
-        if (!ipSmtpMtm)
-            return message;
-        message = emailMessageL(*pEntry, messageId);
+        if (ipSmtpMtm)
+            message = emailMessageL(*pEntry, messageId);
     } else if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4) {
-        if (!ipImap4Mtm)
-            return message;
-        message = emailMessageL(*pEntry, messageId);
+        if (ipImap4Mtm)
+            message = emailMessageL(*pEntry, messageId);
     } else if (pEntry->Entry().iMtm == KUidMsgTypePOP3) {
-        if (!ipPop3Mtm)
-            return message;
-        message = emailMessageL(*pEntry, messageId);
+        if (ipPop3Mtm)
+            message = emailMessageL(*pEntry, messageId);
     }
 
     CleanupStack::PopAndDestroy(pEntry);
