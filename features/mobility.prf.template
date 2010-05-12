@@ -3,7 +3,7 @@
     INCLUDEPATH += $${MOBILITY_INCLUDE}
 } else {
     load(data_caging_paths)
-    contains(MOBILITY, contacts|versit) {
+    contains(MOBILITY, contacts|versit|organizer) {
         INCLUDEPATH+=$$APP_LAYER_SYSTEMINCLUDE
     }
 
@@ -58,6 +58,10 @@ contains(MOBILITY, versit) {
 
 contains(MOBILITY, sensors) {
     qtAddLibrary(QtSensors)
+}
+
+contains(MOBILITY, organizer) {
+    qtAddLibrary(QtOrganizer)
 }
 
 # Add dependency to QtMobility package to all projects besides QtMobility package itself.
