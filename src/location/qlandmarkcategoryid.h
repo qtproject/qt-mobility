@@ -58,8 +58,8 @@ public:
     ~QLandmarkCategoryId();
 
     bool isValid() const;
-    QString id() const;
-    void setId(const QString &id);
+    QString localId() const;
+    void setLocalId(const QString &id);
 
     QString managerUri() const;
     void setManagerUri(const QString &uri);

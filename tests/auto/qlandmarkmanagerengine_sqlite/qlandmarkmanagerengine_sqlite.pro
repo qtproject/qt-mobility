@@ -1,6 +1,6 @@
 TEMPLATE = app
 CONFIG+=testcase
-TARGET=tst_qlandmarkmangerengine_sqlite
+TARGET=tst_qlandmarkmanagerengine_sqlite
 
 include (../../../common.pri)
 

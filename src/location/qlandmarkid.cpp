@@ -53,14 +53,14 @@ QTM_USE_NAMESPACE
     a landmark.
 
     It consists of a manager URI which identifies the manager which contains
-    the landmark, and a manager specific id for that landmark.
+    the landmark, and a manager specific local id for that landmark.
 */
 
 /*!
 
     Creates an invalid identifier.
 
-     id() and managerUri() will return null strings
+     The local id and manager uri are empty strings.
 */
 QLandmarkId::QLandmarkId()
         : d(new QLandmarkIdPrivate)
@@ -84,29 +84,29 @@ QLandmarkId::~QLandmarkId()
 
 /*!
     Returns true if the identifier is valid, meaning that both
-    a manager URI and id have been set.
+    a manager URI and local id have been set.
 */
 bool QLandmarkId::isValid() const
 {
-    return (!d->m_uri.isEmpty() && !d->m_id.isEmpty());
+    return (!d->m_uri.isEmpty() && !d->m_localId.isEmpty());
 }
 
 /*!
-    Returns the id of the landmark identifier.
+    Returns the local id of the landmark identifier.
 
     This id is specific to a particular landmark manager.
 */
-QString QLandmarkId::id() const
+QString QLandmarkId::localId() const
 {
-    return d->m_id;
+    return d->m_localId;
 }
 
 /*!
-    Sets the \a id of the landmark identifier.
+    Sets the local \a id of the landmark identifier.
 */
-void QLandmarkId::setId(const QString &id)
+void QLandmarkId::setLocalId(const QString &id)
 {
-    d->m_id = id;
+    d->m_localId = id;
 }
 
 /*!
@@ -142,13 +142,13 @@ QLandmarkId &QLandmarkId::operator=(const QLandmarkId & other)
     returns false.
 
     Two QLandmarkIds are considered equal if both have the same
-    manager URI and id.
+    manager URI and local id.
 
     \sa operator!=()
 */
 bool QLandmarkId::operator==(const QLandmarkId &other) const
 {
-    return ((d->m_id == other.d->m_id)
+    return ((d->m_localId == other.d->m_localId)
             && (d->m_uri == other.d->m_uri));
 }
 
@@ -156,7 +156,7 @@ bool QLandmarkId::operator==(const QLandmarkId &other) const
     Returns true if this landmark identifier is not equal to \a other,
     otherwise returns false.
 
-    If either the manager URIs or ids differ, then the
+    If either the manager URIs or local ids differ, then the
     QLandmarkIds are not considered equal.
 
     \sa operator==()

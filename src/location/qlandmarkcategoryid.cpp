@@ -53,14 +53,14 @@ QTM_USE_NAMESPACE
     a category.
 
     It consists of a manager URI which identifies the manager which contains
-    the category, and a manager specific id for that category.
+    the category, and a manager specific local id for that category.
 */
 
 /*!
 
     Creates an invalid identifier.
 
-    id() and managerUri() will return null strings.
+    The local id and manager URI are empty strings.
 */
 QLandmarkCategoryId::QLandmarkCategoryId()
         : d(new QLandmarkCategoryIdPrivate)
@@ -84,29 +84,29 @@ QLandmarkCategoryId::~QLandmarkCategoryId()
 
 /*!
     Returns true if the identifier is valid, meaning that both
-    a manager URI and id have been set
+    a manager URI and local id have been set
 */
 bool QLandmarkCategoryId::isValid() const
 {
-    return (!d->m_uri.isEmpty() && !d->m_id.isEmpty());
+    return (!d->m_uri.isEmpty() && !d->m_localId.isEmpty());
 }
 
 /*!
-    Returns the id of the category identifier.
+    Returns the local id of the category identifier.
 
     This id is specific to a particular landmark manager.
 */
-QString QLandmarkCategoryId::id() const
+QString QLandmarkCategoryId::localId() const
 {
-    return d->m_id;
+    return d->m_localId;
 }
 
 /*!
-    Sets the \a id of the category identifier.
+    Sets the local \a id of the category identifier.
 */
-void QLandmarkCategoryId::setId(const QString &id)
+void QLandmarkCategoryId::setLocalId(const QString &id)
 {
-    d->m_id = id;
+    d->m_localId = id;
 }
 
 /*!
@@ -142,13 +142,13 @@ QLandmarkCategoryId &QLandmarkCategoryId::operator=(const QLandmarkCategoryId & 
     returns false.
 
     Two QLandmarkCategoryIds are considered equal if both have the same
-    manager URI and id.
+    manager URI and local id.
 
     \sa operator!=()
 */
 bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
 {
-    return ((d->m_id == other.d->m_id)
+    return ((d->m_localId == other.d->m_localId)
             && (d->m_uri == other.d->m_uri));
 }
 
@@ -156,7 +156,7 @@ bool QLandmarkCategoryId::operator==(const QLandmarkCategoryId &other) const
     Returns true if this category identifier is not equal to \a other,
     otherwise returns false.
 
-    If either the manager URIs or ids differ, then the
+    If either the manager URIs or local ids differ, then the
     QLandmarkCategoryIds are not considered equal.
 
     \sa operator==()

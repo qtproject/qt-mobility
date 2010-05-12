@@ -147,8 +147,7 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 /*!
     Constructs an new landmark.
 
-    A new landmark will return an invalid QLandmarkId when
-    id() is called.
+    A new landmark will be assigned with invalid QLandmarkId.
 */
 QLandmark::QLandmark()
         : d(new QLandmarkPrivate)

@@ -218,13 +218,13 @@ private slots:
         //test category matches
         QLandmarkCategoryFilter categoryFilter;
         QLandmarkCategoryId catFilterId;
-        catFilterId.setId("1");
+        catFilterId.setLocalId("1");
         catFilterId.setManagerUri("qtlandmarks:mock:");
         categoryFilter.setCategoryId(catFilterId);
 
         QLandmark lm;
         QLandmarkCategoryId lmCatId;
-        lmCatId.setId("1");
+        lmCatId.setLocalId("1");
         lmCatId.setManagerUri("qtlandmarks:mock:");
         lm.addCategoryId(lmCatId);
 
@@ -233,7 +233,7 @@ private slots:
         //test category id doesn't match
         lm.removeCategoryId(lmCatId);
         QVERIFY(lm.categoryIds().count() == 0);
-        lmCatId.setId("2");
+        lmCatId.setLocalId("2");
         lm.addCategoryId(lmCatId);
 
         QVERIFY(!MockEngine::testFilter(categoryFilter,lm));
@@ -242,7 +242,7 @@ private slots:
         QList<QLandmarkCategoryId> catIdList;
         lm.setCategoryIds(catIdList);
         QVERIFY(lm.categoryIds().count() == 0);
-        lmCatId.setId("1");
+        lmCatId.setLocalId("1");
         lmCatId.setManagerUri("qtlandmarks:fake:");
         catIdList.append(lmCatId);
         lm.setCategoryIds(catIdList);
@@ -256,20 +256,20 @@ private slots:
         QLandmarkCategoryId lmCatId2;
         QLandmarkCategoryId lmCatId3;
 
-        lmCatId.setId("1");
+        lmCatId.setLocalId("1");
         lmCatId.setManagerUri("qtlandmarks:mock:");
 
-        lmCatId2.setId("2");
+        lmCatId2.setLocalId("2");
         lmCatId2.setManagerUri("qtlandmarks:mock:");
 
-        lmCatId3.setId("3");
+        lmCatId3.setLocalId("3");
         lmCatId3.setManagerUri("qtlandmarks:mock:");
 
         catIdList.clear();
         catIdList << lmCatId << lmCatId2 << lmCatId3;
         lm.setCategoryIds(catIdList);
 
-        catFilterId.setId("2");
+        catFilterId.setLocalId("2");
         catFilterId.setManagerUri("qtlandmarks:mock:");
 
         categoryFilter.setCategoryId(catFilterId);
@@ -277,7 +277,7 @@ private slots:
 
         //category id doesn't match when the landmark
         //has multipl catgories
-        catFilterId.setId("4");
+        catFilterId.setLocalId("4");
         categoryFilter.setCategoryId(catFilterId);
     }
 

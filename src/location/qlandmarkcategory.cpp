@@ -131,8 +131,7 @@ bool QLandmarkCategoryPrivate::operator == (const QLandmarkCategoryPrivate &othe
 /*!
     Constructs an empty category.
 
-    A new category will return an invalid QLandmarkCategoryId when
-    id() is called.
+    A new category will be assigned an invalid QLandmarkCategoryId.
 */
 QLandmarkCategory::QLandmarkCategory()
     : d(new QLandmarkCategoryPrivate)

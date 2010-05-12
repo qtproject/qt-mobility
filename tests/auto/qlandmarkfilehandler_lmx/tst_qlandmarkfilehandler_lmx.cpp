@@ -327,7 +327,7 @@ private slots:
         QLandmarkCategoryId catId1;
 
         QLandmarkCategoryId catId2;
-        catId2.setId("1");
+        catId2.setLocalId("1");
         catId2.setManagerUri("wrongUri");
 
         QMap<QString, QString> map;
@@ -335,7 +335,7 @@ private slots:
         m_manager = new QLandmarkManager("com.nokia.qt.landmarks.engines.sqlite", map);
 
         QLandmarkCategoryId catId3;
-        catId3.setId("100");
+        catId3.setLocalId("100");
         catId3.setManagerUri(m_manager->managerUri());
 
         delete m_manager;

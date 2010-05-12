@@ -63,20 +63,20 @@ class QLandmarkIdPrivate : public QSharedData
 public:
     QLandmarkIdPrivate()
             : QSharedData(),
-              m_id(QString()),
+              m_localId(QString()),
               m_uri(QString()){
     }
 
     QLandmarkIdPrivate(const QLandmarkIdPrivate &other)
             : QSharedData(other),
-            m_id(other.m_id),
+            m_localId(other.m_localId),
             m_uri(other.m_uri) {
     }
 
     ~QLandmarkIdPrivate() {
     }
 
-    QString m_id;
+    QString m_localId;
     QString m_uri;
 };
 

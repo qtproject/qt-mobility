@@ -182,7 +182,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsDefault(const QLandm
     while (query.next()) {
         QLandmarkId id;
         id.setManagerUri(uri);
-        id.setId(QString::number(query.value(0).toInt()));
+        id.setLocalId(QString::number(query.value(0).toInt()));
         result << id;
     }
 
@@ -216,7 +216,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsName(const QLandmark
     while (query.next()) {
         QLandmarkId id;
         id.setManagerUri(uri);
-        id.setId(QString::number(query.value(0).toInt()));
+        id.setLocalId(QString::number(query.value(0).toInt()));
         result << id;
     }
 
@@ -410,7 +410,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsProximity(const QLan
         if (dist <= radius) {
             QLandmarkId id;
             id.setManagerUri(uri);
-            id.setId(QString::number(query.value(0).toInt()));
+            id.setLocalId(QString::number(query.value(0).toInt()));
             result << id;
         }
     }
@@ -462,7 +462,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsNearest(const QLandm
     if (minId != -1) {
         QLandmarkId id;
         id.setManagerUri(uri);
-        id.setId(QString::number(minId));
+        id.setLocalId(QString::number(minId));
         result << id;
     }
 
@@ -481,11 +481,11 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsCategory(const QLand
 
     QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
 
-    QSqlQuery query(QString("SELECT landmark_id FROM landmark_category WHERE category_id = %1;").arg(filter.categoryId().id()), db);
+    QSqlQuery query(QString("SELECT landmark_id FROM landmark_category WHERE category_id = %1;").arg(filter.categoryId().localId()), db);
     while (query.next()) {
         QLandmarkId id;
         id.setManagerUri(uri);
-        id.setId(QString::number(query.value(0).toInt()));
+        id.setLocalId(QString::number(query.value(0).toInt()));
         result << id;
     }
 
@@ -549,7 +549,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsBox(const QLandmarkB
     while (query.next()) {
         QLandmarkId id;
         id.setManagerUri(uri);
-        id.setId(QString::number(query.value(0).toInt()));
+        id.setLocalId(QString::number(query.value(0).toInt()));
         result << id;
     }
 
@@ -575,7 +575,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsIntersection(const Q
     QList<QLandmarkId> firstResult = landmarkIds(filters.at(0), QList<QLandmarkSortOrder>(), error, errorString);
     for (int j = 0; j < firstResult.size(); ++j) {
         if (firstResult.at(j).isValid() && firstResult.at(j).managerUri() == uri)
-            ids.insert(firstResult.at(j).id());
+            ids.insert(firstResult.at(j).localId());
     }
 
     for (int i = 0; i < filters.size(); ++i) {
@@ -583,7 +583,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsIntersection(const Q
         QSet<QString> subIds;
         for (int j = 0; j < subResult.size(); ++j) {
             if (subResult.at(j).isValid() && subResult.at(j).managerUri() == uri)
-                subIds.insert(subResult.at(j).id());
+                subIds.insert(subResult.at(j).localId());
         }
         ids &= subIds;
     }
@@ -592,7 +592,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsIntersection(const Q
     for (int i = 0; i < idList.size(); ++i) {
         QLandmarkId id;
         id.setManagerUri(uri);
-        id.setId(idList.at(i));
+        id.setLocalId(idList.at(i));
         result << id;
     }
 
@@ -619,7 +619,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsUnion(const QLandmar
         QList<QLandmarkId> subResult = landmarkIds(filters.at(i), QList<QLandmarkSortOrder>(), error, errorString);
         for (int j = 0; j < subResult.size(); ++j) {
             if (subResult.at(j).isValid() && subResult.at(j).managerUri() == uri)
-                ids.insert(subResult.at(j).id());
+                ids.insert(subResult.at(j).localId());
         }
     }
 
@@ -627,7 +627,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsUnion(const QLandmar
     for (int i = 0; i < idList.size(); ++i) {
         QLandmarkId id;
         id.setManagerUri(uri);
-        id.setId(idList.at(i));
+        id.setLocalId(idList.at(i));
         result << id;
     }
 
@@ -647,7 +647,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIdsAttribute(const QLan
     while (query.next()) {
         QLandmarkId id;
         id.setManagerUri(uri);
-        id.setId(QString::number(query.value(0).toInt()));
+        id.setLocalId(QString::number(query.value(0).toInt()));
 
         QLandmarkManager::Error loopError;
         QLandmark lm = landmark(id, &loopError, 0);
@@ -881,7 +881,7 @@ QList<QLandmarkCategoryId> QLandmarkManagerEngineSqlite::categoryIds(QLandmarkMa
     while (query.next()) {
         QLandmarkCategoryId id;
         id.setManagerUri(uri);
-        id.setId(QString::number(query.value(0).toInt()));
+        id.setLocalId(QString::number(query.value(0).toInt()));
         result << id;
     }
 
@@ -938,7 +938,7 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
 
     bool transacting = db.transaction();
 
-    QString q1 = QString("SELECT %1 FROM landmark WHERE id = %2;").arg(columns.join(",")).arg(landmarkId.id());
+    QString q1 = QString("SELECT %1 FROM landmark WHERE id = %2;").arg(columns.join(",")).arg(landmarkId.localId());
     QSqlQuery query1(q1, db);
     bool found = false;
     while (query1.next()) {
@@ -1115,12 +1115,12 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
     }
 
     if (found) {
-        QString q2 = QString("SELECT category_id FROM landmark_category WHERE landmark_id = %1;").arg(landmarkId.id());
+        QString q2 = QString("SELECT category_id FROM landmark_category WHERE landmark_id = %1;").arg(landmarkId.localId());
         QSqlQuery query2(q2, db);
         while (query2.next()) {
             QLandmarkCategoryId id;
             id.setManagerUri(uri);
-            id.setId(query2.value(0).toString());
+            id.setLocalId(query2.value(0).toString());
             lm.addCategoryId(id);
         }
     }
@@ -1135,7 +1135,7 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
 
     return lm;
 
-    // QString(SELECT key, value from landmark_attribute WHERE id = %1).arg(landmarkId.id())
+    // QString(SELECT key, value from landmark_attribute WHERE id = %1).arg(landmarkId.localId())
 }
 
 QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter &filter,
@@ -1210,7 +1210,7 @@ QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategory
     QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
 
     bool transacting = db.transaction();
-    QString q1 = QString("SELECT %1 FROM category WHERE id = %2;").arg(columns.join(",")).arg(landmarkCategoryId.id());
+    QString q1 = QString("SELECT %1 FROM category WHERE id = %2;").arg(columns.join(",")).arg(landmarkCategoryId.localId());
     QSqlQuery query(q1, db);
     bool found = false;
     while (query.next()) {
@@ -1252,7 +1252,7 @@ QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategory
     }
     return cat;
 
-    // QString(SELECT key, value from category_attribute WHERE id = %1).arg(landmarkCategoryId.id())
+    // QString(SELECT key, value from category_attribute WHERE id = %1).arg(landmarkCategoryId.localId())
 }
 
 bool categoryNameCompare(const QLandmarkCategory &cat1, const QLandmarkCategory &cat2) {
@@ -1327,9 +1327,9 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
 
     if (update) {
         columns << "id";
-        values << landmark->landmarkId().id();
+        values << landmark->landmarkId().localId();
 
-        QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmark->landmarkId().id());
+        QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmark->landmarkId().localId());
         QSqlQuery query0(q0, db);
         if (!query0.next()) {
             if (transacting)
@@ -1497,7 +1497,7 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
     if (!update) {
         QLandmarkId id;
         id.setManagerUri(managerUri());
-        id.setId(query1.lastInsertId().toString());
+        id.setLocalId(query1.lastInsertId().toString());
         landmark->setLandmarkId(id);
     }
 
@@ -1506,7 +1506,7 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
     for (int i = landmark->categoryIds().size() - 1; i >= 0; --i) {
         QLandmarkCategoryId id = landmark->categoryIds().at(i);
         if (id.managerUri() == uri)
-            lmCats << id.id();
+            lmCats << id.localId();
         else
             landmark->removeCategoryId(id);
     }
@@ -1518,8 +1518,8 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
         queries << QString("INSERT INTO lc_refresh (i) VALUES (%1);").arg(lmCats.at(i));
     }
 
-    queries << QString("DELETE FROM landmark_category WHERE landmark_id = %1 AND category_id NOT IN lc_refresh;").arg(landmark->landmarkId().id());
-    queries << QString("REPLACE INTO landmark_category SELECT %1, i FROM lc_refresh;").arg(landmark->landmarkId().id());
+    queries << QString("DELETE FROM landmark_category WHERE landmark_id = %1 AND category_id NOT IN lc_refresh;").arg(landmark->landmarkId().localId());
+    queries << QString("REPLACE INTO landmark_category SELECT %1, i FROM lc_refresh;").arg(landmark->landmarkId().localId());
 
     queries << "DROP TABLE IF EXISTS lc_refresh;";
 
@@ -1649,7 +1649,7 @@ bool QLandmarkManagerEngineSqlite::removeLandmarkInternal(const QLandmarkId &lan
 
     bool transacting = db.transaction();
 
-    QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmarkId.id());
+    QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmarkId.localId());
     QSqlQuery query0(q0, db);
     // invalid id - not an error, but we need to detect this to avoid sending the signals
     if (!query0.next()) {
@@ -1658,7 +1658,7 @@ bool QLandmarkManagerEngineSqlite::removeLandmarkInternal(const QLandmarkId &lan
         return true;
     }
 
-    QString q1 = QString("DELETE FROM landmark WHERE id = %1;").arg(landmarkId.id());
+    QString q1 = QString("DELETE FROM landmark WHERE id = %1;").arg(landmarkId.localId());
     QSqlQuery query1(q1, db);
     if (!query1.exec()) {
         if (transacting)
@@ -1666,7 +1666,7 @@ bool QLandmarkManagerEngineSqlite::removeLandmarkInternal(const QLandmarkId &lan
         return false;
     }
 
-    QString q2 = QString("DELETE FROM landmark_category WHERE landmark_id = %1;").arg(landmarkId.id());
+    QString q2 = QString("DELETE FROM landmark_category WHERE landmark_id = %1;").arg(landmarkId.localId());
     QSqlQuery query2(q2, db);
     if (!query2.exec()) {
         if (transacting)
@@ -1770,9 +1770,9 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
 
     if (update) {
         columns << "id";
-        values << category->categoryId().id();
+        values << category->categoryId().localId();
 
-        QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(category->categoryId().id());
+        QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(category->categoryId().localId());
         QSqlQuery query0(q0, db);
         if (!query0.next()) {
             if (transacting)
@@ -1818,7 +1818,7 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
     if (!update) {
         QLandmarkCategoryId id;
         id.setManagerUri(uri);
-        id.setId(query1.lastInsertId().toString());
+        id.setLocalId(query1.lastInsertId().toString());
         category->setCategoryId(id);
     }
 
@@ -1868,7 +1868,7 @@ bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &cat
 
     bool transacting = db.transaction();
 
-    QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(categoryId.id());
+    QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(categoryId.localId());
     QSqlQuery query0(q0, db);
     // invalid id - not an error, but we need to detect this to avoid sending the signals
     if (!query0.next()) {
@@ -1877,7 +1877,7 @@ bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &cat
         return true;
     }
 
-    QString q1 = QString("DELETE FROM category WHERE id = %1;").arg(categoryId.id());
+    QString q1 = QString("DELETE FROM category WHERE id = %1;").arg(categoryId.localId());
     QSqlQuery query1(q1, db);
     if (!query1.exec()) {
         if (transacting)
@@ -1885,7 +1885,7 @@ bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &cat
         return false;
     }
 
-    QString q2 = QString("DELETE FROM landmark_category WHERE category_id = %1;").arg(categoryId.id());
+    QString q2 = QString("DELETE FROM landmark_category WHERE category_id = %1;").arg(categoryId.localId());
     QSqlQuery query2(q2, db);
     if (!query2.exec()) {
         if (transacting)

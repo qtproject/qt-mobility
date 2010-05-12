@@ -670,7 +670,7 @@ bool QLandmarkFileHandlerLmx::readCategory(QLandmarkCategoryId &categoryId)
             if (!idString.isEmpty()) {
                 QLandmarkCategoryId id;
                 id.setManagerUri(m_engine->managerUri());
-                id.setId(idString);
+                id.setLocalId(idString);
 
                 QLandmarkManager::Error error;
                 cat = m_engine->category(id, &error, &m_error);
@@ -892,7 +892,7 @@ bool QLandmarkFileHandlerLmx::writeMediaLink(const QLandmark &landmark)
 bool QLandmarkFileHandlerLmx::writeCategory(const QLandmarkCategoryId &id)
 {
     if (!id.isValid()) {
-        m_error = QString("The category with id \"%1\" from manager \"%2\" is invalid.").arg(id.id()).arg(id.managerUri());
+        m_error = QString("The category with id \"%1\" from manager \"%2\" is invalid.").arg(id.localId()).arg(id.managerUri());
         return false;
     }
 
@@ -903,7 +903,7 @@ bool QLandmarkFileHandlerLmx::writeCategory(const QLandmarkCategoryId &id)
     }
 
     m_writer->writeStartElement(m_ns, "category");
-    m_writer->writeTextElement(m_ns, "id", cat.categoryId().id());
+    m_writer->writeTextElement(m_ns, "id", cat.categoryId().localId());
     m_writer->writeTextElement(m_ns, "name", cat.name());
     m_writer->writeEndElement();
 
