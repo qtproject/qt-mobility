@@ -58,6 +58,7 @@
 
 #include <QList>
 #include <QPointer>
+#include <QMutex>
 
 QTM_BEGIN_NAMESPACE
 
@@ -83,6 +84,7 @@ public:
     QContactManager::Error m_error;
     QContactAbstractRequest::State m_state;
     QPointer<QContactManager> m_manager;
+    mutable QMutex m_mutex;
 };
 
 QTM_END_NAMESPACE
