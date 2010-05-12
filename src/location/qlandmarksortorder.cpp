@@ -83,11 +83,6 @@ QLandmarkSortOrder::QLandmarkSortOrder()
 }
 
 /*!
-    \fn QLandmarkSortOrder::QLandmarkSortOrder(const QLandmarkSortOrder &other)
-    Constructs a copy of \a other.
-*/
-
-/*!
   \internal
 */
 QLandmarkSortOrder::QLandmarkSortOrder(QLandmarkSortOrderPrivate *d_ptr)
@@ -95,17 +90,27 @@ QLandmarkSortOrder::QLandmarkSortOrder(QLandmarkSortOrderPrivate *d_ptr)
 {
 }
 
+/*!
+    Constructs a copy of \a other.
+*/
 QLandmarkSortOrder::QLandmarkSortOrder(const QLandmarkSortOrder &other)
         : d_ptr(other.d_ptr)
 {
 }
 
+/*!
+    Assigns \a other to this sort order and returns a reference to this
+    sort order.
+*/
 QLandmarkSortOrder &QLandmarkSortOrder::operator=(const QLandmarkSortOrder & other)
 {
     d_ptr = other.d_ptr;
     return *this;
 }
 
+/*!
+    Destroys the sort order
+*/
 QLandmarkSortOrder::~QLandmarkSortOrder()
 {
 }
@@ -158,12 +163,6 @@ bool QLandmarkSortOrder::operator==(const QLandmarkSortOrder& other) const
     Returns true if this sort order is not identical to \a other.
 
     \sa operator==()
-*/
-
-/*!
-    \fn QLandmarkSortOrder::operator=(const QLandmarkSortOrder &other)
-    Assigns \a other to this sort order and returns a reference to this
-    sort order.
 */
 
 /*******************************************************************************

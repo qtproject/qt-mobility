@@ -64,6 +64,11 @@ QLandmarkProximityFilter::QLandmarkProximityFilter(const QGeoCoordinate &coordin
 }
 
 /*!
+    \fn QLandmarkProximityFilter::QLandmarkProximityFilter(const QLandmarkFilter &other)
+    Constructs a copy of \a other if possible, otherwise constructs a new proximity filter.
+*/
+
+/*!
     Destroys the filter.
 */
 QLandmarkProximityFilter::~QLandmarkProximityFilter()

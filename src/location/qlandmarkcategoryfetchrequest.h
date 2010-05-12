@@ -43,6 +43,7 @@
 #define QLANDMARKCATEGORYFETCHREQUEST_H
 
 #include "qlandmarkabstractrequest.h"
+#include "qlandmarkcategoryid.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -53,6 +54,9 @@ class Q_LOCATION_EXPORT QLandmarkCategoryFetchRequest : public QLandmarkAbstract
 public:
     QLandmarkCategoryFetchRequest(QLandmarkManager *manager, QObject *parent=0);
     ~QLandmarkCategoryFetchRequest();
+
+    QList<QLandmarkCategoryId> categoryIds() const;
+    void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds);
 
     QList<QLandmarkCategory> categories() const;
 private:

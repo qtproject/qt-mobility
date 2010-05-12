@@ -119,6 +119,7 @@ public:
     }
 
     QList<QLandmarkCategory> categories;
+    QList<QLandmarkCategoryId> categoryIds;
 };
 
 

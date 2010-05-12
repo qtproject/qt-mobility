@@ -83,6 +83,31 @@ QList<QLandmarkCategory> QLandmarkCategoryFetchRequest::categories() const
     return d->categories;
 }
 
+/*!
+    Returns a list of identifiers for categories which will be retrieved
+    by the fetch request.
+
+    By default no category ids are set, this means the fetch request
+    will fetch all categories.
+*/
+QList<QLandmarkCategoryId> QLandmarkCategoryFetchRequest::categoryIds() const
+{
+    Q_D(const QLandmarkCategoryFetchRequest);
+    return d->categoryIds;
+}
+
+/*!
+    Sets the categories to be retrieved by the request as a list of
+    \a categoryIds.
+
+    If \a categoryIds is empty, then the request will fetch all categories.
+*/
+void QLandmarkCategoryFetchRequest::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
+{
+    Q_D(QLandmarkCategoryFetchRequest);
+    d->categoryIds = categoryIds;
+}
+
 #include "moc_qlandmarkcategoryfetchrequest.cpp"
 
 QTM_END_NAMESPACE
