@@ -46,6 +46,10 @@
 #include "servicedatabase.cpp"
 #else //defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
 
+#ifdef QTM_BUILD_UNITTESTS
+#include "servicedatabase.cpp"
+#endif
+
 #include "databasemanager_symbian_p.h"
 #include "clientservercommon.h"
 #include <qserviceinterfacedescriptor_p.h>

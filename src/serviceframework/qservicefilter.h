@@ -42,9 +42,8 @@
 #ifndef QSERVICEFILTER_H
 #define QSERVICEFILTER_H
 
-#include <QStringList>
-
 #include "qmobilityglobal.h"
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 class QDataStream;

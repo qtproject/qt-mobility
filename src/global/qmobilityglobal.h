@@ -140,6 +140,17 @@
 #  endif
 #endif
 
+#ifdef QTM_SERVICEFW_SYMBIAN_DATABASEMANAGER_SERVER
+#  ifdef Q_SERVICEFW_EXPORT
+#    undef Q_SERVICEFW_EXPORT
+#  endif
+#  define Q_SERVICEFW_EXPORT
+#  ifdef Q_AUTOTEST_EXPORT
+#    undef Q_AUTOTEST_EXPORT
+#  endif
+#  define Q_AUTOTEST_EXPORT
+#endif
+
 // The namespace is hardcoded as moc has issues resolving
 // macros which would be a prerequisite for a dynmamic namespace
 #define QTM_NAMESPACE QtMobility

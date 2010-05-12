@@ -53,8 +53,8 @@
 // We mean it.
 //
 
-#include <QString>
 #include "qmobilityglobal.h"
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
