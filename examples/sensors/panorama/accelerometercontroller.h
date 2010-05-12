@@ -11,16 +11,14 @@
 
 QTM_USE_NAMESPACE
 
-class AccelerometerController : public TimedController
+class AccelerometerController : public InputController
 {
     Q_OBJECT
 
 public:
     AccelerometerController();
-    virtual void startSensor();
-    virtual void stopSensor();
+    virtual ~AccelerometerController();
     virtual void updateCoordinates();
-
 
 public slots:
     void update();

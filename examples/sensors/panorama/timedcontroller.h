@@ -12,9 +12,7 @@ class TimedController : public InputController
 
 public:
     TimedController();
-    virtual void startTimer();
-    virtual void stopTimer();
-    virtual void updateCoordinates();
+    virtual ~TimedController();
 
 private slots:
     void handleTimedUpdate();
@@ -22,6 +20,7 @@ private slots:
 protected:
     QTimer m_timer;
     QTime m_exTime;
+    QTime m_exTimestamp;
     int m_delay;
     int m_interval;
 

@@ -5,16 +5,19 @@
 #include <QTime>
 #include <QDebug>
 
-TimedController::TimedController( ): m_delay(10){ m_exTime = QTime::currentTime(); }
-
-void TimedController::startTimer()
-{
+TimedController::TimedController(): m_delay(10), m_interval(0){
+    m_exTime = QTime::currentTime();
+    m_exTimestamp =QTime::currentTime();
     m_timer.setSingleShot(false);
     m_timer.start(m_delay);
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(handleTimedUpdate()));
+
 }
 
-void TimedController::stopTimer(){ m_timer.stop();}
+TimedController::~TimedController(){
+    m_timer.stop();
+    disconnect(&m_timer);
+}
 
 
 void TimedController::handleTimedUpdate()
@@ -25,6 +28,4 @@ void TimedController::handleTimedUpdate()
     m_exTime = QTime::currentTime();
 }
 
-
-void TimedController::updateCoordinates(){}
 

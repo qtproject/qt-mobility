@@ -16,8 +16,7 @@ class OrientationController : public KeyController
 
 public:
     OrientationController();
-    virtual void startSensor();
-    virtual void stopSensor();
+    virtual ~OrientationController();
     virtual void updateCoordinates();
 
 private slots:

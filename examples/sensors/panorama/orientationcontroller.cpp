@@ -5,25 +5,23 @@
 #include "view.h"
 
 
-OrientationController::OrientationController( ): KeyController(){
-    m_delay=20;
-    m_step=7;
-}
-
-
-void OrientationController::startSensor()
-{
+OrientationController::OrientationController(): KeyController(){
+    m_delay=10;
+    m_step=10;
     m_orientationSensor.connectToBackend();
     m_orientationSensor.start();
     connect(&m_orientationSensor, SIGNAL(readingChanged()), this, SLOT(update()));
+
 }
 
-void OrientationController::stopSensor(){ m_orientationSensor.stop();}
-
+OrientationController::~OrientationController(){
+     m_orientationSensor.stop();
+     disconnect(&m_orientationSensor);
+}
 
 void OrientationController::updateCoordinates(){
     handleKeyPress(m_exCode);
-    m_step = m_exCode!=0? m_step+2 : 5;
+    m_step = m_exCode!=0 ? m_step+5 : 10;
 }
 
 

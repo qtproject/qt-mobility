@@ -2,6 +2,7 @@ include(../sensors.pri)
 QT += gui \
     core
 CONFIG += mobility
+CONFIG += debug
 MOBILITY += sensors
 HEADERS += inputcontroller.h \
     keycontroller.h \

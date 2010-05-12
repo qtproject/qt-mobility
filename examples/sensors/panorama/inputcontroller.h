@@ -11,14 +11,11 @@ class InputController : public QObject
 public:
 
     InputController();
-    void start();
-    void stop();
-    virtual void startTimer();
-    virtual void stopTimer();
-    virtual void startSensor();
-    virtual void stopSensor();
-    int getX(), getY();
-    void setX(int x), setY(int y);
+    virtual ~InputController(){};
+    virtual void updateCoordinates();
+
+    static int getX(), getY();
+    static void setX(int x), setY(int y);
 
     virtual void keyPressEvent(QKeyEvent *e);
 
@@ -29,7 +26,7 @@ public:
 
 protected:
     //current coordinates
-    int m_x,m_y;
+    static int m_x,m_y;
 
 
 

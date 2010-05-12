@@ -12,8 +12,7 @@ class CompassController : public InputController
 
 public:
     CompassController();
-    virtual void startSensor();
-    virtual void stopSensor();
+    virtual ~CompassController();
 
 private slots:
     void update();

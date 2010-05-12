@@ -2,7 +2,10 @@
 #include "keycontroller.h"
 #include "view.h"
 
-KeyController::KeyController(): TimedController(){}
+KeyController::KeyController(): TimedController(), m_step(5){}
+
+KeyController::~KeyController(){}
+
 
 void KeyController::keyPressEvent(QKeyEvent *e)
 {

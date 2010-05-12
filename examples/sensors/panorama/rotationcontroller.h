@@ -9,14 +9,13 @@
 
 QTM_USE_NAMESPACE
 
-class RotationController : public TimedController
+class RotationController : public InputController
 {
     Q_OBJECT
 
 public:
     RotationController();
-    virtual void startSensor();
-    virtual void stopSensor();
+    virtual ~RotationController();
     virtual void updateCoordinates();
 
 

@@ -12,8 +12,7 @@ class MagnetometerController : public InputController
 
 public:
     MagnetometerController();
-    virtual void startSensor();
-    virtual void stopSensor();
+    virtual ~MagnetometerController();
 
 private slots:
     void update();

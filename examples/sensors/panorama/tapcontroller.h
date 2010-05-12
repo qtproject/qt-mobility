@@ -12,8 +12,7 @@ class TapController : public TimedController
 
 public:
     TapController();
-    virtual void startSensor();
-    virtual void stopSensor();
+    virtual ~TapController();
     virtual void updateCoordinates();
 
 private slots:

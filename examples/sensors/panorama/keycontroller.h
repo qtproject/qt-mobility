@@ -12,6 +12,7 @@ class KeyController : public TimedController
 
 public:
     KeyController();
+    virtual ~KeyController();
     void handleKeyPress(int code);
     virtual void updateCoordinates();
 

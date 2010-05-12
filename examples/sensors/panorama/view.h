@@ -22,6 +22,9 @@ public:
     View(QGraphicsScene *scene);
     virtual ~View();
     static int m_imageWidth;
+public slots:
+    void update();
+
 
 protected:
     QPixmap m_pix;
@@ -32,6 +35,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent* event);
     virtual void mouseReleaseEvent(QMouseEvent* event);
 
+
 private slots:
     void startAccelerometer();
     void startTapSensor();
@@ -40,7 +44,6 @@ private slots:
     void startOrientationSensor();
     void startCompass();
     void startKeys();
-    void update();
 
 private:
     int checkX(int x);
@@ -59,7 +62,6 @@ private:
     QTime m_mousePressTime;
     QMenu* m_menu;
     bool m_mouseMode;
-    int m_x, m_y;
     int m_eventX, m_eventY;
     int m_dx, m_dy;
 
