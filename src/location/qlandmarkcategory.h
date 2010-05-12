@@ -78,8 +78,8 @@ public:
     QString description() const;
     void setDescription(const QString &description);
 
-    QLandmarkCategoryId id() const;
-    void setId(const QLandmarkCategoryId &id);
+    QLandmarkCategoryId categoryId() const;
+    void setCategoryId(const QLandmarkCategoryId &id);
 
     QVariant attribute(const QString &key, const QVariant &defaulValue = QVariant()) const;
     void setAttribute(const QString &key, const QVariant &value);

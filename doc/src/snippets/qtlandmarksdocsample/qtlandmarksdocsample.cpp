@@ -232,7 +232,7 @@ void RequestExample::categoryRemoveRequest()
 {
     //catRemoveRequest was created with catRemoveRequest = new QLandmarkCategoryRemoveRequest(lmManager)
     //in the ctor, where lmManager is a QLandmarkManager*
-    catRemoveRequest->setCategoryId(category.id()); //category is a previously retrieved QLandmarkCategory
+    catRemoveRequest->setCategoryId(category.categoryId()); //category is a previously retrieved QLandmarkCategory
 
     connect(catRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)),
         this, SLOT(categoryRemoveRequestHandler(QLandmarkAbstractRequest::State)));
@@ -265,7 +265,7 @@ void RequestExample::landmarkRemoveRequest()
 {
     //lmRemoveRequest was created with lmRemoveRequest = new QLandmarkSaveRequest(lmManager)
     //in the ctor, where lmManager is a QLandmarkManager*
-    lmRemoveRequest->setLandmarkId(landmark.id());  //landmark is a previously retrieved QLandmark
+    lmRemoveRequest->setLandmarkId(landmark.landmarkId());  //landmark is a previously retrieved QLandmark
 
     connect(lmRemoveRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)), this,
             SLOT(landmarkRemoveRequestHandler(QLandmarkAbstractRequest::State)));
@@ -315,7 +315,7 @@ void addLandmarkAndCategory(QLandmarkManager *lm)
     monks.setAddress(address);
 
     monks.setDescription("Jerry's favourite diner");
-    monks.addCategoryId(cafes.id());
+    monks.addCategoryId(cafes.categoryId());
 
     lm->saveLandmark(&monks); //lm  is a QLandmarkManager*
     //! [Add landmark synchronously]
@@ -411,12 +411,12 @@ void deleteLandmarkAndCategory(QLandmarkManager *lm)
 {
     //! [Remove category synchronously]
     //category is a previously retrieved QLandmarkCategory object
-    lm->removeCategory(category.id());
+    lm->removeCategory(category.categoryId());
     //! [Remove category synchronously]
 
     //! [Remove landmark synchronously]
     //landmark is a previously retrieved QLandmark object
-    lm->removeLandmark(landmark.id());
+    lm->removeLandmark(landmark.landmarkId());
     //! [Remove landmark synchronously]
 }
 

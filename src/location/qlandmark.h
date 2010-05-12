@@ -107,8 +107,8 @@ public:
     QUrl url() const;
     void setUrl(const QUrl &url);
 
-    QLandmarkId id() const;
-    void setId(const QLandmarkId &id);
+    QLandmarkId landmarkId() const;
+    void setLandmarkId(const QLandmarkId &id);
 private:
     QSharedDataPointer<QLandmarkPrivate> d;
 };

@@ -864,7 +864,7 @@ QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilt
     }
 
     for (int i = 0; i < matches; ++i)
-        result << lms.at(i).id();
+        result << lms.at(i).landmarkId();
 
     return result;
 }
@@ -1111,7 +1111,7 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
         if (!query1.value(22).isNull())
             lm.setUrl(query1.value(22).toString());
 
-        lm.setId(landmarkId);
+        lm.setLandmarkId(landmarkId);
     }
 
     if (found) {
@@ -1164,7 +1164,7 @@ QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QList<QLandmarkId
     for (int i = 0; i < landmarkIds.size(); ++i) {
         QLandmarkManager::Error loopError;
         QLandmark lm = landmark(landmarkIds.at(i), &loopError, 0);
-        if (lm.id().isValid())
+        if (lm.landmarkId().isValid())
             result << lm;
         if (loopError != QLandmarkManager::NoError) {
             if (errorMap)
@@ -1233,7 +1233,7 @@ QLandmarkCategory QLandmarkManagerEngineSqlite::category(const QLandmarkCategory
         if (!query.value(2).isNull())
             cat.setIconUrl(query.value(2).toString());
 
-        cat.setId(landmarkCategoryId);
+        cat.setCategoryId(landmarkCategoryId);
     }
 
     if (transacting)
@@ -1303,7 +1303,7 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
 {
     QString uri = managerUri();
 
-    if (!landmark->id().managerUri().isEmpty() && landmark->id().managerUri() != uri) {
+    if (!landmark->landmarkId().managerUri().isEmpty() && landmark->landmarkId().managerUri() != uri) {
         if (error)
             *error = QLandmarkManager::DoesNotExistError;
         if (errorString)
@@ -1311,7 +1311,7 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
         return false;
     }
 
-    bool update = landmark->id().isValid();
+    bool update = landmark->landmarkId().isValid();
 
     if (added)
         *added = false;
@@ -1327,9 +1327,9 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
 
     if (update) {
         columns << "id";
-        values << landmark->id().id();
+        values << landmark->landmarkId().id();
 
-        QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmark->id().id());
+        QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmark->landmarkId().id());
         QSqlQuery query0(q0, db);
         if (!query0.next()) {
             if (transacting)
@@ -1498,7 +1498,7 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
         QLandmarkId id;
         id.setManagerUri(managerUri());
         id.setId(query1.lastInsertId().toString());
-        landmark->setId(id);
+        landmark->setLandmarkId(id);
     }
 
     QStringList lmCats;
@@ -1518,8 +1518,8 @@ bool QLandmarkManagerEngineSqlite::saveLandmarkInternal(QLandmark* landmark,
         queries << QString("INSERT INTO lc_refresh (i) VALUES (%1);").arg(lmCats.at(i));
     }
 
-    queries << QString("DELETE FROM landmark_category WHERE landmark_id = %1 AND category_id NOT IN lc_refresh;").arg(landmark->id().id());
-    queries << QString("REPLACE INTO landmark_category SELECT %1, i FROM lc_refresh;").arg(landmark->id().id());
+    queries << QString("DELETE FROM landmark_category WHERE landmark_id = %1 AND category_id NOT IN lc_refresh;").arg(landmark->landmarkId().id());
+    queries << QString("REPLACE INTO landmark_category SELECT %1, i FROM lc_refresh;").arg(landmark->landmarkId().id());
 
     queries << "DROP TABLE IF EXISTS lc_refresh;";
 
@@ -1564,13 +1564,13 @@ bool QLandmarkManagerEngineSqlite::saveLandmark(QLandmark* landmark,
 
     if (added) {
         QList<QLandmarkId> ids;
-        ids << landmark->id();
+        ids << landmark->landmarkId();
         emit landmarksAdded(ids);
     }
 
     if (changed) {
         QList<QLandmarkId> ids;
-        ids << landmark->id();
+        ids << landmark->landmarkId();
         emit landmarksChanged(ids);
     }
 
@@ -1603,9 +1603,9 @@ bool QLandmarkManagerEngineSqlite::saveLandmarks(QList<QLandmark> * landmark,
             errorMap->insert(i, loopError);
         }
         if (added)
-            addedIds << landmark->at(i).id();
+            addedIds << landmark->at(i).landmarkId();
         if (changed)
-            changedIds << landmark->at(i).id();
+            changedIds << landmark->at(i).landmarkId();
     }
 
     if (noErrors) {
@@ -1751,7 +1751,7 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
 {
     QString uri = managerUri();
 
-    if (!category->id().managerUri().isEmpty() && category->id().managerUri() != uri) {
+    if (!category->categoryId().managerUri().isEmpty() && category->categoryId().managerUri() != uri) {
         if (error)
             *error = QLandmarkManager::DoesNotExistError;
         if (errorString)
@@ -1759,7 +1759,7 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
         return false;
     }
 
-    bool update = category->id().isValid();
+    bool update = category->categoryId().isValid();
 
     QStringList columns;
     QStringList values;
@@ -1770,9 +1770,9 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
 
     if (update) {
         columns << "id";
-        values << category->id().id();
+        values << category->categoryId().id();
 
-        QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(category->id().id());
+        QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(category->categoryId().id());
         QSqlQuery query0(q0, db);
         if (!query0.next()) {
             if (transacting)
@@ -1819,7 +1819,7 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
         QLandmarkCategoryId id;
         id.setManagerUri(uri);
         id.setId(query1.lastInsertId().toString());
-        category->setId(id);
+        category->setCategoryId(id);
     }
 
     if (transacting)
@@ -1827,11 +1827,11 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
 
     if (!update) {
         QList<QLandmarkCategoryId> ids;
-        ids << category->id();
+        ids << category->categoryId();
         emit categoriesAdded(ids);
     } else {
         QList<QLandmarkCategoryId> ids;
-        ids << category->id();
+        ids << category->categoryId();
         emit categoriesChanged(ids);
     }
 

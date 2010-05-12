@@ -687,7 +687,7 @@ bool QLandmarkFileHandlerLmx::readCategory(QLandmarkCategoryId &categoryId)
                 return false;
             }
 
-            categoryId = cat.id();
+            categoryId = cat.categoryId();
             return true;
         }
     }
@@ -903,7 +903,7 @@ bool QLandmarkFileHandlerLmx::writeCategory(const QLandmarkCategoryId &id)
     }
 
     m_writer->writeStartElement(m_ns, "category");
-    m_writer->writeTextElement(m_ns, "id", cat.id().id());
+    m_writer->writeTextElement(m_ns, "id", cat.categoryId().id());
     m_writer->writeTextElement(m_ns, "name", cat.name());
     m_writer->writeEndElement();
 

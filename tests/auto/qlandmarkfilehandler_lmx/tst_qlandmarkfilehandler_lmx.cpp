@@ -418,7 +418,7 @@ private:
         file.remove();
 
         cats << cat0 << cat1 << cat2;
-        catIds << cat0.id() << cat1.id() << cat2.id();
+        catIds << cat0.categoryId() << cat1.categoryId() << cat2.categoryId();
 
         QList<QLandmark> w;
 

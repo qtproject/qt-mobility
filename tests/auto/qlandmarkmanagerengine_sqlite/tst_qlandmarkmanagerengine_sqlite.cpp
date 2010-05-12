@@ -165,7 +165,7 @@ private slots:
         QLandmarkCategoryId id1;
         id1.setManagerUri(m_manager->managerUri());
         id1.setId("1");
-        QCOMPARE(m_manager->category(id1).id().isValid(), false);
+        QCOMPARE(m_manager->category(id1).categoryId().isValid(), false);
 
         QLandmarkCategory cat2;
         cat2.setName("CAT2");
@@ -173,7 +173,7 @@ private slots:
 
         QLandmarkCategoryId id2;
         id2.setManagerUri(m_manager->managerUri());
-        id2.setId(cat2.id().id());
+        id2.setId(cat2.categoryId().id());
         QCOMPARE(cat2, m_manager->category(id2));
 
         // add  - with attributes
@@ -184,7 +184,7 @@ private slots:
         QLandmarkId id1;
         id1.setManagerUri(m_manager->managerUri());
         id1.setId("1");
-        QCOMPARE(m_manager->landmark(id1).id().isValid(), false);
+        QCOMPARE(m_manager->landmark(id1).landmarkId().isValid(), false);
 
         QLandmark lm2;
         lm2.setName("LM2");
@@ -192,7 +192,7 @@ private slots:
 
         QLandmarkId id2;
         id2.setManagerUri(m_manager->managerUri());
-        id2.setId(lm2.id().id());
+        id2.setId(lm2.landmarkId().id());
         QCOMPARE(lm2, m_manager->landmark(id2));
 
         QLandmarkCategory cat3;
@@ -201,12 +201,12 @@ private slots:
 
         QLandmark lm3;
         lm3.setName("LM3");
-        lm3.addCategoryId(cat3.id());
+        lm3.addCategoryId(cat3.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm3));
 
         QLandmarkId id3;
         id3.setManagerUri(m_manager->managerUri());
-        id3.setId(lm3.id().id());
+        id3.setId(lm3.landmarkId().id());
         QCOMPARE(lm3, m_manager->landmark(id3));
     }
 
@@ -217,10 +217,10 @@ private slots:
         QLandmarkCategory cat1;
         cat1.setName("CAT1");
         QVERIFY(m_manager->saveCategory(&cat1));
-        QCOMPARE(cat1, m_manager->category(cat1.id()));
+        QCOMPARE(cat1, m_manager->category(cat1.categoryId()));
 
         QCOMPARE(spyAdd.count(), 1);
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.id());
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
 
         // add - with attributes
     }
@@ -236,7 +236,7 @@ private slots:
         badCat1.setName("BAD1");
         badCatId1.setId("1");
         badCatId1.setManagerUri("bad manager uri");
-        badCat1.setId(badCatId1);
+        badCat1.setCategoryId(badCatId1);
 
         QVERIFY(!m_manager->saveCategory(&badCat1));
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
@@ -249,7 +249,7 @@ private slots:
         badCat2.setName("BAD2");
         badCatId2.setId("bad integer id");
         badCatId2.setManagerUri(m_manager->managerUri());
-        badCat2.setId(badCatId2);
+        badCat2.setCategoryId(badCatId2);
 
         QVERIFY(!m_manager->saveCategory(&badCat2));
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
@@ -260,21 +260,21 @@ private slots:
         cat1.setName("CAT1");
         //cat1.setAttribute("Key1", "Value1");
         QVERIFY(m_manager->saveCategory(&cat1));
-        QCOMPARE(cat1, m_manager->category(cat1.id()));
+        QCOMPARE(cat1, m_manager->category(cat1.categoryId()));
 
         QCOMPARE(spyAdd.count(), 1);
         QCOMPARE(spyChange.count(), 0);
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.id());
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
         spyAdd.clear();
 
         // update core
         cat1.setName("CAT1New");
         QVERIFY(m_manager->saveCategory(&cat1));
-        QCOMPARE(cat1, m_manager->category(cat1.id()));
+        QCOMPARE(cat1, m_manager->category(cat1.categoryId()));
 
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.id());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
 
         // update attributes - existing
         // update attributes - added
@@ -288,10 +288,10 @@ private slots:
         QLandmark lm1;
         lm1.setName("LM1");
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 1);
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         spyAdd.clear();
 
         // add - with attributes
@@ -301,16 +301,16 @@ private slots:
         QLandmarkCategory cat1;
         cat1.setName("CAT1");
         QVERIFY(m_manager->saveCategory(&cat1));
-        QCOMPARE(cat1, m_manager->category(cat1.id()));
+        QCOMPARE(cat1, m_manager->category(cat1.categoryId()));
 
         QLandmark lm2;
         lm2.setName("LM2");
-        lm2.addCategoryId(cat1.id());
+        lm2.addCategoryId(cat1.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm2));
-        QCOMPARE(lm2, m_manager->landmark(lm2.id()));
+        QCOMPARE(lm2, m_manager->landmark(lm2.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 1);
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.id());
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
     }
 
     void updateLandmark() {
@@ -324,7 +324,7 @@ private slots:
         badLm1.setName("BAD1");
         badLmId1.setId("1");
         badLmId1.setManagerUri("bad manager uri");
-        badLm1.setId(badLmId1);
+        badLm1.setLandmarkId(badLmId1);
 
         QVERIFY(!m_manager->saveLandmark(&badLm1));
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
@@ -337,7 +337,7 @@ private slots:
         badLm2.setName("BAD2");
         badLmId2.setId("bad integer id");
         badLmId2.setManagerUri(m_manager->managerUri());
-        badLm2.setId(badLmId2);
+        badLm2.setLandmarkId(badLmId2);
 
         QVERIFY(!m_manager->saveLandmark(&badLm2));
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
@@ -348,21 +348,21 @@ private slots:
         lm1.setName("LM1");
         //lm1.setAttribute("Key1", "Value1");
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 1);
         QCOMPARE(spyChange.count(), 0);
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         spyAdd.clear();
 
         // update core
         lm1.setName("LM1New");
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         spyChange.clear();
 
         // update attributes - existing
@@ -385,60 +385,60 @@ private slots:
 
         // adding categories
 
-        lm1.addCategoryId(cat1.id());
+        lm1.addCategoryId(cat1.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         spyChange.clear();
 
-        lm1.addCategoryId(cat2.id());
+        lm1.addCategoryId(cat2.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         spyChange.clear();
 
-        lm1.addCategoryId(cat3.id());
+        lm1.addCategoryId(cat3.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         spyChange.clear();
 
         // removing categories
 
-        lm1.removeCategoryId(cat1.id());
+        lm1.removeCategoryId(cat1.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         spyChange.clear();
 
-        lm1.removeCategoryId(cat2.id());
+        lm1.removeCategoryId(cat2.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         spyChange.clear();
 
-        lm1.removeCategoryId(cat3.id());
+        lm1.removeCategoryId(cat3.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
         spyChange.clear();
     }
 
@@ -457,10 +457,10 @@ private slots:
         cat2.setName("CAT2");
         QVERIFY(m_manager->saveCategory(&cat2));
 
-        QVERIFY(m_manager->removeCategory(cat2.id()));
+        QVERIFY(m_manager->removeCategory(cat2.categoryId()));
 
         QCOMPARE(spyRemove.count(), 1);
-        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat2.id());
+        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat2.categoryId());
         spyRemove.clear();
 
         // with attributes
@@ -474,19 +474,19 @@ private slots:
         QLandmark lm1;
         lm1.setName("LM1");
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-        lm1.addCategoryId(cat3.id());
+        lm1.addCategoryId(cat3.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm1));
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
 
-        QVERIFY(m_manager->removeCategory(cat3.id()));
+        QVERIFY(m_manager->removeCategory(cat3.categoryId()));
 
         QCOMPARE(spyRemove.count(), 1);
-        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat3.id());
+        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat3.categoryId());
         spyRemove.clear();
 
-        QLandmark lm2 = m_manager->landmark(lm1.id());
+        QLandmark lm2 = m_manager->landmark(lm1.landmarkId());
         QVERIFY(lm1 != lm2);
         QCOMPARE(lm1.categoryIds().size(), 1);
         QCOMPARE(lm2.categoryIds().size(), 0);
@@ -507,10 +507,10 @@ private slots:
         lm2.setName("LM2");
         QVERIFY(m_manager->saveLandmark(&lm2));
 
-        QVERIFY(m_manager->removeLandmark(lm2.id()));
+        QVERIFY(m_manager->removeLandmark(lm2.landmarkId()));
 
         QCOMPARE(spyRemove.count(), 1);
-        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.id());
+        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm2.landmarkId());
         spyRemove.clear();
 
         // with attributes
@@ -521,13 +521,13 @@ private slots:
 
         QLandmark lm3;
         lm3.setName("LM3");
-        lm3.addCategoryId(cat3.id());
+        lm3.addCategoryId(cat3.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm3));
 
-        QVERIFY(m_manager->removeLandmark(lm3.id()));
+        QVERIFY(m_manager->removeLandmark(lm3.landmarkId()));
 
         QCOMPARE(spyRemove.count(), 1);
-        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm3.id());
+        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm3.landmarkId());
         spyRemove.clear();
     }
 
@@ -537,17 +537,17 @@ private slots:
         QLandmarkCategory cat1;
         cat1.setName("CAT1");
         QVERIFY(m_manager->saveCategory(&cat1));
-        catIds << cat1.id();
+        catIds << cat1.categoryId();
 
         QLandmarkCategory cat3;
         cat3.setName("CAT3");
         QVERIFY(m_manager->saveCategory(&cat3));
-        catIds << cat3.id();
+        catIds << cat3.categoryId();
 
         QLandmarkCategory cat2;
         cat2.setName("CAT2");
         QVERIFY(m_manager->saveCategory(&cat2));
-        catIds << cat2.id();
+        catIds << cat2.categoryId();
 
         QString uri = m_manager->managerUri();
         int i = 1;
@@ -559,7 +559,7 @@ private slots:
             id.setManagerUri(uri);
             id.setId(QString::number(i));
             QLandmarkCategory cat = m_manager->category(id);
-            if (!cat.id().isValid()) {
+            if (!cat.categoryId().isValid()) {
                 invalidCatIds << id;
             }
             ++i;
@@ -574,11 +574,11 @@ private slots:
         QCOMPARE(cats.size(), 3);
 
         QCOMPARE(cats.at(0).name(), QString("CAT1"));
-        QCOMPARE(cats.at(0).id().isValid(), true);
+        QCOMPARE(cats.at(0).categoryId().isValid(), true);
         QCOMPARE(cats.at(1).name(), QString("CAT2"));
-        QCOMPARE(cats.at(1).id().isValid(), true);
+        QCOMPARE(cats.at(1).categoryId().isValid(), true);
         QCOMPARE(cats.at(2).name(), QString("CAT3"));
-        QCOMPARE(cats.at(2).id().isValid(), true);
+        QCOMPARE(cats.at(2).categoryId().isValid(), true);
     }
 
     void retrieveMultipleLandmarks() {
@@ -587,17 +587,17 @@ private slots:
         QLandmark lm1;
         lm1.setName("LM1");
         QVERIFY(m_manager->saveLandmark(&lm1));
-        lmIds << lm1.id();
+        lmIds << lm1.landmarkId();
 
         QLandmark lm2;
         lm2.setName("LM2");
         QVERIFY(m_manager->saveLandmark(&lm2));
-        lmIds << lm2.id();
+        lmIds << lm2.landmarkId();
 
         QLandmark lm3;
         lm3.setName("LM3");
         QVERIFY(m_manager->saveLandmark(&lm3));
-        lmIds << lm3.id();
+        lmIds << lm3.landmarkId();
 
         QString uri = m_manager->managerUri();
         int i = 1;
@@ -609,7 +609,7 @@ private slots:
             id.setManagerUri(uri);
             id.setId(QString::number(i));
             QLandmark lm = m_manager->landmark(id);
-            if (!lm.id().isValid()) {
+            if (!lm.landmarkId().isValid()) {
                 invalidLmIds << id;
             }
             ++i;
@@ -624,11 +624,11 @@ private slots:
         QCOMPARE(lms.size(), 3);
 
         QCOMPARE(lms.at(0).name(), QString("LM1"));
-        QCOMPARE(lms.at(0).id().isValid(), true);
+        QCOMPARE(lms.at(0).landmarkId().isValid(), true);
         QCOMPARE(lms.at(1).name(), QString("LM2"));
-        QCOMPARE(lms.at(1).id().isValid(), true);
+        QCOMPARE(lms.at(1).landmarkId().isValid(), true);
         QCOMPARE(lms.at(2).name(), QString("LM3"));
-        QCOMPARE(lms.at(2).id().isValid(), true);
+        QCOMPARE(lms.at(2).landmarkId().isValid(), true);
     }
 
     void saveMultipleLandmarks() {
@@ -655,16 +655,16 @@ private slots:
         lm2 = lms1.at(1);
         lm3 = lms1.at(2);
 
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
-        QCOMPARE(lm2, m_manager->landmark(lm2.id()));
-        QCOMPARE(lm3, m_manager->landmark(lm3.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
+        QCOMPARE(lm2, m_manager->landmark(lm2.landmarkId()));
+        QCOMPARE(lm3, m_manager->landmark(lm3.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 1);
         QCOMPARE(spyChange.count(), 0);
         QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().size(), 3);
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.id());
-        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm3.id());
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.landmarkId());
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm3.landmarkId());
         spyAdd.clear();
 
         QList<QLandmark> lms2;
@@ -684,16 +684,16 @@ private slots:
         lm2 = lms2.at(1);
         lm3 = lms2.at(2);
 
-        QCOMPARE(lm1, m_manager->landmark(lm1.id()));
-        QCOMPARE(lm2, m_manager->landmark(lm2.id()));
-        QCOMPARE(lm3, m_manager->landmark(lm3.id()));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
+        QCOMPARE(lm2, m_manager->landmark(lm2.landmarkId()));
+        QCOMPARE(lm3, m_manager->landmark(lm3.landmarkId()));
 
         QCOMPARE(spyAdd.count(), 0);
         QCOMPARE(spyChange.count(), 1);
         QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().size(), 3);
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.id());
-        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm3.id());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.landmarkId());
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkId> >().at(2), lm3.landmarkId());
         spyChange.clear();
     }
 
@@ -706,17 +706,17 @@ private slots:
         QLandmark lm1;
         lm1.setName("LM1");
         QVERIFY(m_manager->saveLandmark(&lm1));
-        lmIds1 << lm1.id();
+        lmIds1 << lm1.landmarkId();
 
         QLandmark lm2;
         lm2.setName("LM2");
         QVERIFY(m_manager->saveLandmark(&lm2));
-        lmIds1 << lm2.id();
+        lmIds1 << lm2.landmarkId();
 
         QLandmark lm3;
         lm3.setName("LM3");
         QVERIFY(m_manager->saveLandmark(&lm3));
-        lmIds2 << lm3.id();
+        lmIds2 << lm3.landmarkId();
 
         QString uri = m_manager->managerUri();
         int i = 1;
@@ -728,7 +728,7 @@ private slots:
             id.setManagerUri(uri);
             id.setId(QString::number(i));
             QLandmark lm = m_manager->landmark(id);
-            if (!lm.id().isValid()) {
+            if (!lm.landmarkId().isValid()) {
                 invalidLmIds << id;
             }
             ++i;
@@ -738,39 +738,39 @@ private slots:
         lmIds2.insert(0, invalidLmIds.at(1));
         lmIds2.insert(2, invalidLmIds.at(2));
 
-        QCOMPARE(m_manager->landmark(lmIds1.at(0)).id().isValid(), true);
-        QCOMPARE(m_manager->landmark(lmIds1.at(1)).id().isValid(), false);
-        QCOMPARE(m_manager->landmark(lmIds1.at(2)).id().isValid(), true);
-        QCOMPARE(m_manager->landmark(lmIds2.at(0)).id().isValid(), false);
-        QCOMPARE(m_manager->landmark(lmIds2.at(1)).id().isValid(), true);
-        QCOMPARE(m_manager->landmark(lmIds2.at(2)).id().isValid(), false);
+        QCOMPARE(m_manager->landmark(lmIds1.at(0)).landmarkId().isValid(), true);
+        QCOMPARE(m_manager->landmark(lmIds1.at(1)).landmarkId().isValid(), false);
+        QCOMPARE(m_manager->landmark(lmIds1.at(2)).landmarkId().isValid(), true);
+        QCOMPARE(m_manager->landmark(lmIds2.at(0)).landmarkId().isValid(), false);
+        QCOMPARE(m_manager->landmark(lmIds2.at(1)).landmarkId().isValid(), true);
+        QCOMPARE(m_manager->landmark(lmIds2.at(2)).landmarkId().isValid(), false);
 
         QVERIFY(m_manager->removeLandmarks(lmIds1, 0));
 
         QCOMPARE(spyRemove.count(), 1);
         QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().size(), 2);
-        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.id());
-        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.id());
+        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm1.landmarkId());
+        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(1), lm2.landmarkId());
         spyRemove.clear();
 
         for (int i = 0; i < lmIds1.size(); ++i)
-            QCOMPARE(m_manager->landmark(lmIds1.at(i)).id().isValid(), false);
+            QCOMPARE(m_manager->landmark(lmIds1.at(i)).landmarkId().isValid(), false);
 
-        QCOMPARE(m_manager->landmark(lmIds2.at(0)).id().isValid(), false);
-        QCOMPARE(m_manager->landmark(lmIds2.at(1)).id().isValid(), true);
-        QCOMPARE(m_manager->landmark(lmIds2.at(2)).id().isValid(), false);
+        QCOMPARE(m_manager->landmark(lmIds2.at(0)).landmarkId().isValid(), false);
+        QCOMPARE(m_manager->landmark(lmIds2.at(1)).landmarkId().isValid(), true);
+        QCOMPARE(m_manager->landmark(lmIds2.at(2)).landmarkId().isValid(), false);
 
         QVERIFY(m_manager->removeLandmarks(lmIds2, 0));
 
         QCOMPARE(spyRemove.count(), 1);
         QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().size(), 1);
-        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm3.id());
+        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkId> >().at(0), lm3.landmarkId());
         spyRemove.clear();
 
         for (int i = 0; i < lmIds1.size(); ++i)
-            QCOMPARE(m_manager->landmark(lmIds1.at(i)).id().isValid(), false);
+            QCOMPARE(m_manager->landmark(lmIds1.at(i)).landmarkId().isValid(), false);
         for (int i = 0; i < lmIds2.size(); ++i)
-            QCOMPARE(m_manager->landmark(lmIds2.at(i)).id().isValid(), false);
+            QCOMPARE(m_manager->landmark(lmIds2.at(i)).landmarkId().isValid(), false);
     }
 
     void listCategoryIds() {
@@ -789,9 +789,9 @@ private slots:
         QList<QLandmarkCategoryId> ids = m_manager->categoryIds();
 
         QCOMPARE(ids.size(), 3);
-        QCOMPARE(ids.at(0), cat1.id());
-        QCOMPARE(ids.at(1), cat2.id());
-        QCOMPARE(ids.at(2), cat3.id());
+        QCOMPARE(ids.at(0), cat1.categoryId());
+        QCOMPARE(ids.at(1), cat2.categoryId());
+        QCOMPARE(ids.at(2), cat3.categoryId());
     }
 
     void filterLandmarksLimitMatches() {
@@ -837,9 +837,9 @@ private slots:
         QList<QLandmarkId> ids = m_manager->landmarkIds(filter);
 
         QCOMPARE(ids.size(), 3);
-        QCOMPARE(ids.at(0), lm1.id());
-        QCOMPARE(ids.at(1), lm2.id());
-        QCOMPARE(ids.at(2), lm3.id());
+        QCOMPARE(ids.at(0), lm1.landmarkId());
+        QCOMPARE(ids.at(1), lm2.landmarkId());
+        QCOMPARE(ids.at(2), lm3.landmarkId());
     }
 
     void filterLandmarksName() {
@@ -873,15 +873,15 @@ private slots:
         QList<QLandmarkId> ids1 = m_manager->landmarkIds(filter);
 
         QCOMPARE(ids1.size(), 3);
-        QCOMPARE(ids1.at(0), lm1.id());
-        QCOMPARE(ids1.at(1), lm3.id());
-        QCOMPARE(ids1.at(2), lm5.id());
+        QCOMPARE(ids1.at(0), lm1.landmarkId());
+        QCOMPARE(ids1.at(1), lm3.landmarkId());
+        QCOMPARE(ids1.at(2), lm5.landmarkId());
 
         filter.setCaseSensitivity(Qt::CaseSensitive);
         QList<QLandmarkId> ids2 = m_manager->landmarkIds(filter);
 
         QCOMPARE(ids2.size(), 1);
-        QCOMPARE(ids2.at(0), lm3.id());
+        QCOMPARE(ids2.at(0), lm3.landmarkId());
 
         filter.setName("No match");
         QList<QLandmarkId> ids3 = m_manager->landmarkIds(filter);
@@ -1168,34 +1168,34 @@ private slots:
 
         QLandmark lm1;
         lm1.setName("LM1");
-        lm1.addCategoryId(cat1.id());
+        lm1.addCategoryId(cat1.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm1));
 
         QLandmark lm2;
         lm2.setName("LM2");
-        lm2.addCategoryId(cat1.id());
-        lm2.addCategoryId(cat2.id());
+        lm2.addCategoryId(cat1.categoryId());
+        lm2.addCategoryId(cat2.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm2));
 
         QLandmark lm3;
         lm3.setName("LM3");
-        lm3.addCategoryId(cat1.id());
-        lm3.addCategoryId(cat2.id());
-        lm3.addCategoryId(cat3.id());
+        lm3.addCategoryId(cat1.categoryId());
+        lm3.addCategoryId(cat2.categoryId());
+        lm3.addCategoryId(cat3.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm3));
 
         QLandmark lm4;
         lm4.setName("LM4");
-        lm4.addCategoryId(cat2.id());
-        lm4.addCategoryId(cat3.id());
+        lm4.addCategoryId(cat2.categoryId());
+        lm4.addCategoryId(cat3.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm4));
 
         QLandmark lm5;
         lm5.setName("LM5");
-        lm5.addCategoryId(cat3.id());
+        lm5.addCategoryId(cat3.categoryId());
         QVERIFY(m_manager->saveLandmark(&lm5));
 
-        QLandmarkCategoryFilter filter(cat2.id());
+        QLandmarkCategoryFilter filter(cat2.categoryId());
 
         QList<QLandmark> lms = m_manager->landmarks(filter);
 
@@ -1425,9 +1425,9 @@ private slots:
         QVERIFY(m_manager->saveCategory(&cat3));
 
         QList<QLandmarkCategoryId> ids;
-        ids << cat1.id();
-        ids << cat2.id();
-        ids << cat3.id();
+        ids << cat1.categoryId();
+        ids << cat2.categoryId();
+        ids << cat3.categoryId();
 
         QList<QString> names;
         names << "LM1";
@@ -1454,7 +1454,7 @@ private slots:
             }
         }
 
-        QLandmarkCategoryFilter f1(cat2.id());
+        QLandmarkCategoryFilter f1(cat2.categoryId());
         QLandmarkNameFilter f2("LM2");
         QLandmarkProximityFilter f3(QGeoCoordinate(25.0, 25.0), 5.0);
 
@@ -1467,16 +1467,16 @@ private slots:
 
         QSet<QString> idSet;
         for (int i = 0; i < lms.size(); ++i)
-            idSet.insert(lms.at(i).id().id());
+            idSet.insert(lms.at(i).landmarkId().id());
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categoryIds().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.categoryId())
                     && (lm.name() == "LM2")
                     && (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
-                QCOMPARE(idSet.contains(lm.id().id()), true);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), true);
             } else {
-                QCOMPARE(idSet.contains(lm.id().id()), false);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), false);
             }
         }
 
@@ -1488,15 +1488,15 @@ private slots:
 
         idSet.clear();
         for (int i = 0; i < lms.size(); ++i)
-            idSet.insert(lms.at(i).id().id());
+            idSet.insert(lms.at(i).landmarkId().id());
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categoryIds().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.categoryId())
                     && (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
-                QCOMPARE(idSet.contains(lm.id().id()), true);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), true);
             } else {
-                QCOMPARE(idSet.contains(lm.id().id()), false);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), false);
             }
         }
 
@@ -1508,16 +1508,16 @@ private slots:
 
         idSet.clear();
         for (int i = 0; i < lms.size(); ++i)
-            idSet.insert(lms.at(i).id().id());
+            idSet.insert(lms.at(i).landmarkId().id());
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categoryIds().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.categoryId())
                     && (lm.name() == "LM2")
                     && (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
-                QCOMPARE(idSet.contains(lm.id().id()), true);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), true);
             } else {
-                QCOMPARE(idSet.contains(lm.id().id()), false);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), false);
             }
         }
     }
@@ -1536,9 +1536,9 @@ private slots:
         QVERIFY(m_manager->saveCategory(&cat3));
 
         QList<QLandmarkCategoryId> ids;
-        ids << cat1.id();
-        ids << cat2.id();
-        ids << cat3.id();
+        ids << cat1.categoryId();
+        ids << cat2.categoryId();
+        ids << cat3.categoryId();
 
         QList<QString> names;
         names << "LM1";
@@ -1565,7 +1565,7 @@ private slots:
             }
         }
 
-        QLandmarkCategoryFilter f1(cat2.id());
+        QLandmarkCategoryFilter f1(cat2.categoryId());
         QLandmarkNameFilter f2("LM2");
         QLandmarkProximityFilter f3(QGeoCoordinate(25.0, 25.0), 5.0);
 
@@ -1578,16 +1578,16 @@ private slots:
 
         QSet<QString> idSet;
         for (int i = 0; i < lms.size(); ++i)
-            idSet.insert(lms.at(i).id().id());
+            idSet.insert(lms.at(i).landmarkId().id());
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categoryIds().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.categoryId())
                     || (lm.name() == "LM2")
                     || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
-                QCOMPARE(idSet.contains(lm.id().id()), true);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), true);
             } else {
-                QCOMPARE(idSet.contains(lm.id().id()), false);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), false);
             }
         }
 
@@ -1599,15 +1599,15 @@ private slots:
 
         idSet.clear();
         for (int i = 0; i < lms.size(); ++i)
-            idSet.insert(lms.at(i).id().id());
+            idSet.insert(lms.at(i).landmarkId().id());
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categoryIds().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.categoryId())
                     || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
-                QCOMPARE(idSet.contains(lm.id().id()), true);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), true);
             } else {
-                QCOMPARE(idSet.contains(lm.id().id()), false);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), false);
             }
         }
 
@@ -1619,16 +1619,16 @@ private slots:
 
         idSet.clear();
         for (int i = 0; i < lms.size(); ++i)
-            idSet.insert(lms.at(i).id().id());
+            idSet.insert(lms.at(i).landmarkId().id());
 
         for (int i = 0; i < lmPool.size(); ++i) {
             QLandmark lm = lmPool.at(i);
-            if ((lm.categoryIds().at(0) == cat2.id())
+            if ((lm.categoryIds().at(0) == cat2.categoryId())
                     || (lm.name() == "LM2")
                     || (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
-                QCOMPARE(idSet.contains(lm.id().id()), true);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), true);
             } else {
-                QCOMPARE(idSet.contains(lm.id().id()), false);
+                QCOMPARE(idSet.contains(lm.landmarkId().id()), false);
             }
         }
     }

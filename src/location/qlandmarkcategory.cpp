@@ -235,7 +235,7 @@ void QLandmarkCategory::setDescription(const QString &description)
 /*!
     Returns the identifier of the category.
 */
-QLandmarkCategoryId QLandmarkCategory::id() const
+QLandmarkCategoryId QLandmarkCategory::categoryId() const
 {
     return d->id;
 }
@@ -246,7 +246,7 @@ QLandmarkCategoryId QLandmarkCategory::id() const
     Note that saving a new category using a QLandmarkManager
     will automatically assign the category a valid identifier.
 */
-void QLandmarkCategory::setId(const QLandmarkCategoryId &id)
+void QLandmarkCategory::setCategoryId(const QLandmarkCategoryId &id)
 {
     d->id = id;
 }

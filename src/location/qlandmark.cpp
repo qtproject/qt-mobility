@@ -417,7 +417,7 @@ void QLandmark::setUrl(const QUrl &url)
 /*!
     Returns the identifier of the landmark.
 */
-QLandmarkId QLandmark::id() const
+QLandmarkId QLandmark::landmarkId() const
 {
     return d->id;
 }
@@ -428,7 +428,7 @@ QLandmarkId QLandmark::id() const
     Note that saving a new landmark using a QLandmarkManager
     will automatically assign the landmark a valid identifier.
 */
-void QLandmark::setId(const QLandmarkId &id)
+void QLandmark::setLandmarkId(const QLandmarkId &id)
 {
     d->id = id;
 }
