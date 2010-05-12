@@ -30,8 +30,8 @@ contains(mobility_modules,location) {
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo \
                    weatherinfo \
-                   lightmaps \
-                   mapviewer 
+                   lightmaps 
+                   #mapviewer (disable for now) 
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
