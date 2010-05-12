@@ -48,6 +48,8 @@
 #include <QtCore/qwaitcondition.h>
 #include <QtCore/qqueue.h>
 
+#ifndef QT_NO_XVIDEO
+
 #include <X11/Xlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -116,5 +118,7 @@ private:
     QList<QGstXvImageBuffer*> m_allBuffers;
     QList<XvShmImage> m_imagesToDestroy;
 };
+
+#endif //QT_NO_XVIDEO
 
 #endif
