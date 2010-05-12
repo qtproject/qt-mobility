@@ -1039,11 +1039,13 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             if ( landmark.coordinate().latitude() < bry && landmark.coordinate().latitude() > tly)
                 return false;
 
+            double lmx = landmark.coordinate().longitude();
             if (longWrap) {
-                if (landmark.coordinate().longitude() >= brx || landmark.coordinate().longitude() <= tlx)
+                //if (landmark.coordinate().longitude() <= tlx || landmark.coordinate().longitude() >= brx)
+                if ( ((lmx > 0.0) && (lmx<= tlx)) || ((lmx < 0.0) && (lmx >= brx)))
                     return false;
             } else {
-                if (landmark.coordinate().longitude() < tlx || landmark.coordinate().longitude() > brx)
+                if (lmx < tlx || lmx > brx)
                     return false;
             }
 
