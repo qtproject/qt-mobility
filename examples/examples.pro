@@ -92,6 +92,6 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
-# Calendar
+# Organizer
 SUBDIRS += qmlcalendar
 

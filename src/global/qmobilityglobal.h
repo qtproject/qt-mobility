@@ -125,10 +125,10 @@
 #      else
 #        define Q_SENSORS_EXPORT Q_DECL_IMPORT
 #      endif
-#      if defined(QT_BUILD_CALENDAR_LIB)
-#        define Q_CALENDAR_EXPORT Q_DECL_EXPORT
+#      if defined(QT_BUILD_ORGANIZER_LIB)
+#        define Q_ORGANIZER_EXPORT Q_DECL_EXPORT
 #      else
-#        define Q_CALENDAR_EXPORT Q_DECL_IMPORT
+#        define Q_ORGANIZER_EXPORT Q_DECL_IMPORT
 #      endif
 #    elif defined(QT_DLL) /* use a Qt DLL library */
 #      define Q_BEARER_EXPORT Q_DECL_IMPORT
@@ -141,7 +141,7 @@
 #      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
 #      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
 #      define Q_SENSORS_EXPORT Q_DECL_IMPORT
-#      define Q_CALENDAR_EXPORT Q_DECL_IMPORT
+#      define Q_ORGANIZER_EXPORT Q_DECL_IMPORT
 #    endif
 #  else
 #  endif
@@ -157,7 +157,7 @@
 #      define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
 #      define Q_SYSINFO_EXPORT Q_DECL_EXPORT
 #      define Q_SENSORS_EXPORT Q_DECL_EXPORT
-#      define Q_CALENDAR_EXPORT Q_DECL_EXPORT
+#      define Q_ORGANIZER_EXPORT Q_DECL_EXPORT
 #    else
 #      define Q_BEARER_EXPORT
 #      define Q_PUBLISHSUBSCRIBE_EXPORT
@@ -169,7 +169,7 @@
 #      define Q_SERVICEFW_EXPORT
 #      define Q_SYSINFO_EXPORT
 #      define Q_SENSORS_EXPORT
-#      define Q_CALENDAR_EXPORT
+#      define Q_ORGANIZER_EXPORT
 #    endif
 #  endif
 #endif

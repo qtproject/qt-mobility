@@ -97,7 +97,7 @@ QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
 MAC_SDK=
-MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors calendar"
+MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors organizer"
 MOBILITY_MODULES_UNPARSED=
 QMKSPEC=
 OS="other"
@@ -131,7 +131,7 @@ usage()
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
     echo "                    Choose from: bearer contacts location publishsubscribe"
     echo "                    messaging multimedia systeminfo serviceframework versit"
-    echo "                    sensors calendar"
+    echo "                    sensors organizer"
     echo "                    Modules should be separated by a space and surrounded"
     echo "                    by double quotation. If a"
     echo "                    selected module depends on other modules dependencies"
@@ -208,7 +208,7 @@ while [ "$#" -gt 0 ]; do
             MOBILITY_MODULES=
             for m in $MOBILITY_MODULES_UNPARSED; do
                 case "$m" in
-                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors|calendar)
+                    bearer|contacts|location|messaging|multimedia|publishsubscribe|serviceframework|systeminfo|versit|sensors|organizer)
                         MOBILITY_MODULES="$MOBILITY_MODULES $m";
                         ;;
                     *)
@@ -463,7 +463,7 @@ fi
 
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
-echo "contains(mobility_modules,versit): mobility_modules *= contacts calendar" >> "$CONFIG_IN"
+echo "contains(mobility_modules,versit): mobility_modules *= contacts organizer" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 
 # If libicd-network-wlan-dev.h is not present, use own copy.
@@ -505,19 +505,19 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging
             ;;
         versit)
-            #versit implies contacts & calendar
+            #versit implies contacts & organizer
             $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/versit
             $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
             $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
             $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
             $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
-            $relpath/bin/syncheaders $shadowpath/include/QtmCalendar $relpath/src/calendar
+            $relpath/bin/syncheaders $shadowpath/include/QtmOrganizer $relpath/src/organizer
             ;;
         sensors)
             $relpath/bin/syncheaders $shadowpath/include/QtmSensors $relpath/src/sensors
             ;;
-        calendar)
-            $relpath/bin/syncheaders $shadowpath/include/QtmCalendar $relpath/src/calendar
+        organizer)
+            $relpath/bin/syncheaders $shadowpath/include/QtmOrganizer $relpath/src/organizer
             ;;
         *)
             echo "Cannot generate headers for $module"

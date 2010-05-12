@@ -2,11 +2,11 @@ TEMPLATE = app
 TARGET = qmlcalendar
 
 # CONFIG += mobility
-# MOBILITY = calendar versit
+# MOBILITY = organizer versit
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../include \
-    ../../src/calendar \
+    ../../src/organizer \
     ../../src/versit
 QT += declarative
 QT += script
