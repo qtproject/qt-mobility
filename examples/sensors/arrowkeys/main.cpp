@@ -63,7 +63,7 @@ public:
 
 private:
     QString exArrow;
-    static const qreal THRESHOLD = 0.3;
+    static const qreal THRESHOLD;
 
     QString getArrowKey(qreal x, qreal y, qreal z){
 
@@ -80,6 +80,7 @@ private:
     static qreal abs(qreal value) {return value<0?-value:value;}
 };
 
+const qreal AccelerometerFilter::THRESHOLD = 0.3;
 
 int main(int argc, char **argv)
 {
