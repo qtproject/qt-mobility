@@ -2,6 +2,7 @@ TEMPLATE=app
 TARGET=sensors
 include(../../../../common.pri)
 INCLUDEPATH += ../../../../src/sensors
+DESTDIR=$$PWD
 SOURCES+=main.cpp\
     creating.cpp\
     start.cpp\

@@ -1,7 +1,5 @@
 TEMPLATE = subdirs
 
-include(../../common.pri)
-
 SUBDIRS += accel arrowkeys metadata
 
 contains(QT_CONFIG, declarative) {
