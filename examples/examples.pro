@@ -25,13 +25,13 @@ contains(mobility_modules,bearer) {
 #Location examples
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
-		satellitedialog \
-        mapviewer \
-        qgeoapiui
+               satellitedialog \
+               qgeoapiui
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo \
-		    weatherinfo \
-		    lightmaps
+                   weatherinfo \
+                   lightmaps \
+                   mapviewer 
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
