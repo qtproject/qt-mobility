@@ -611,6 +611,23 @@ void CDatabaseManagerServerSession::initDbPath()
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
     QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
     db->setDatabasePath(dir.path() + QDir::separator() + dbName);
+
+    // check if database is copied from Z drive; also valid for emulator
+    QFile dbFile(iDb->databasePath());
+    QFileInfo dbFileInfo(dbFile);
+    if (!dbFileInfo.exists()) {
+        // create folder first
+        if (!dbFileInfo.dir().exists()) 
+            QDir::root().mkpath(dbFileInfo.path());
+        // copy file from ROM
+        QFile romDb(QLatin1String("z:\\private\\2002ac7f\\") + dbFileInfo.fileName());
+        if (romDb.open(QIODevice::ReadOnly) && dbFile.open(QFile::WriteOnly)) {
+            QByteArray data = romDb.readAll();
+            dbFile.write(data);
+            dbFile.close();
+            romDb.close();
+        }
+    }
     
     openDb();
     }
