@@ -46,7 +46,7 @@
 #include <qservicefilter.h>
 #include "../qsfwtestutil.h"
 #include "servicemetadata_p.h"
-#include "databasemanager_s60_p.h"
+#include "databasemanager_symbian_p.h"
 
 QTM_USE_NAMESPACE
 class tst_DatabaseManager: public QObject
@@ -629,5 +629,5 @@ void tst_DatabaseManager::cleanupTestCase()
 
 QTEST_MAIN(tst_DatabaseManager)
 
-#include "tst_databasemanager_s60.moc"
+#include "tst_databasemanager_symbian.moc"
 
