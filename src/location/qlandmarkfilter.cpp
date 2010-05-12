@@ -109,6 +109,7 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
                                filters
     \value DefaultFilter A filter which matches all landmarks.
     \value AttributeFilter A filter which matches landmarks based on generic attributes.
+    \value LandmarkIdFilter A filter which matches landmarks based on a list of landmark ids.
 */
 
 /*!

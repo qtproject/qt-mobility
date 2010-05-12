@@ -41,6 +41,7 @@ PUBLIC_HEADERS += \
                     qlandmarkexportrequest.h \
                     qlandmarkfetchrequest.h \
                     qlandmarkfilter.h \
+                    qlandmarkidfilter.h \
                     qlandmarkid.h \
                     qlandmarkidfetchrequest.h \
                     qlandmarkimportrequest.h \
@@ -98,6 +99,7 @@ PRIVATE_HEADERS += \
                     qlandmarkfilehandler_gpx_p.h \
                     qlandmarkfilehandler_lmx_p.h \
                     qlandmarkfilter_p.h \
+                    qlandmarkidfilter_p.h \
                     qlandmarkid_p.h \
                     qlandmarkintersectionfilter_p.h \
                     qlandmarkmanager_p.h \
@@ -243,6 +245,7 @@ SOURCES += \
             qlandmarkfilehandler_lmx.cpp \
             qlandmarkfilter.cpp \
             qlandmarkid.cpp \
+            qlandmarkidfilter.cpp \
             qlandmarkidfetchrequest.cpp \
             qlandmarkimportrequest.cpp \
             qlandmarkintersectionfilter.cpp \

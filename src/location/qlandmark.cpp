@@ -220,11 +220,6 @@ void QLandmark::setName(const QString &name)
 
 /*!
     Returns the coordinate of the landmark.
-
-    This is a convenience function to return the
-    coordinate of the landmark's location.
-
-    \sa location()
 */
 QGeoCoordinate QLandmark::coordinate() const
 {
@@ -233,11 +228,6 @@ QGeoCoordinate QLandmark::coordinate() const
 
 /*!
     Sets the \a coordinate of the landmark.
-
-    This is a convenience function to set the coordinate
-    of the landmark's location.
-
-    \sa setLocation()
 */
 void QLandmark::setCoordinate(const QGeoCoordinate& coordinate)
 {
@@ -246,11 +236,6 @@ void QLandmark::setCoordinate(const QGeoCoordinate& coordinate)
 
 /*!
     Returns the landmark's address.
-
-    This is a convenience function to return the
-    address of the landmark's location.
-
-    \sa location()
 */
 QGeoAddress QLandmark::address() const
 {
@@ -259,11 +244,6 @@ QGeoAddress QLandmark::address() const
 
 /*!
     Sets the \a address of the landmark.
-
-    This is a convenience function to set the address
-    of the landmark's location.
-
-    \sa setLocation()
 */
 void QLandmark::setAddress(const QGeoAddress &address)
 {

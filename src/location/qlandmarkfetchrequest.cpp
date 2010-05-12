@@ -42,6 +42,7 @@
 #include "qlandmarkfetchrequest.h"
 #include "qlandmarkrequests_p.h"
 #include "qlandmarkfilter.h"
+#include "qlandmarkidfilter.h"
 #include "qlandmarksortorder.h"
 #include "qlandmark.h"
 
@@ -89,11 +90,24 @@ QLandmarkFilter QLandmarkFetchRequest::filter() const
 /*!
     Sets the \a filter which will be used to select landmarks.
 
+    \sa setLandmarkIds()
 */
 void QLandmarkFetchRequest::setFilter(const QLandmarkFilter &filter)
 {
     Q_D(QLandmarkFetchRequest);
     d->filter = filter;
+}
+
+/*!
+    This is a convenience function which will set a QLandmarkIdFilter
+    based on the given list of landmark \a ids.
+
+    \sa setFilter()
+*/
+void QLandmarkFetchRequest::setLandmarkIds(const QList<QLandmarkId> &ids)
+{
+    Q_D(QLandmarkFetchRequest);
+    d->filter = QLandmarkIdFilter(ids);
 }
 
 /*!
