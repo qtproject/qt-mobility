@@ -54,7 +54,7 @@ public:
     QLandmarkCategoryIdFetchRequest(QLandmarkManager *manager, QObject *parent = 0);
     ~QLandmarkCategoryIdFetchRequest();
 
-    QList<QLandmarkCategoryId> ids() const;
+    QList<QLandmarkCategoryId> categoryIds() const;
 private:
     Q_DISABLE_COPY(QLandmarkCategoryIdFetchRequest)
     Q_DECLARE_PRIVATE(QLandmarkCategoryIdFetchRequest)

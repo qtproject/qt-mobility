@@ -78,7 +78,7 @@ QLandmarkCategoryIdFetchRequest::~QLandmarkCategoryIdFetchRequest()
     Returns the list of category identifiers that have been found during the
     request.
 */
-QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::ids() const
+QList<QLandmarkCategoryId> QLandmarkCategoryIdFetchRequest::categoryIds() const
 {
     Q_D(const QLandmarkCategoryIdFetchRequest);
     return d->categoryIds;
