@@ -92,6 +92,10 @@ signals:
     void deviceDiscovered(const QBluetoothDeviceInfo &info);
     void finished();
     void error(QBluetoothDeviceDiscoveryAgent::Error error);
+
+private:
+    Q_PRIVATE_SLOT(d_func(), void _q_deviceFound(const QString &address, const QVariantMap &dict))
+    Q_PRIVATE_SLOT(d_func(), void _q_propertyChanged(const QString &name, const QDBusVariant &value))
 };
 
 QTM_END_NAMESPACE

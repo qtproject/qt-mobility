@@ -48,8 +48,6 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QBluetoothAddress)
-
 // Max time to wait for connection
 static const int MaxConnectTime = 60 * 1000;   // 1 minute in ms
 

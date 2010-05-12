@@ -52,6 +52,8 @@
 #include <bt_sock.h>
 #endif
 
+QT_FORWARD_DECLARE_CLASS(QSocketNotifier)
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -85,6 +87,8 @@ public:
     void HandleReceiveCompleteL(TInt aErr);
     void HandleSendCompleteL(TInt aErr);
     void HandleShutdownCompleteL(TInt aErr);
+#elif !defined(QT_NO_DBUS)
+    void _q_readNotify();
 #endif
 
 public:
@@ -101,6 +105,9 @@ public:
 
     TPtr8 rxDescriptor;
     TSockXfrLength rxLength;
+#elif !defined(QT_NO_DBUS)
+    int socket;
+    QSocketNotifier *readNotifier;
 #endif
 };
 

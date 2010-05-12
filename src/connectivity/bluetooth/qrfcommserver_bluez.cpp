@@ -54,22 +54,27 @@ void QRfcommServer::setMaxPendingConnections(int numConnections)
 
 bool QRfcommServer::listen(const QBluetoothAddress &address, quint16 port)
 {
+    return false;
 }
 
 bool QRfcommServer::hasPendingConnections() const
 {
+    return false;
 }
 
 QBluetoothSocket *QRfcommServer::nextPendingConnection()
 {
+    return 0;
 }
 
 QBluetoothAddress QRfcommServer::serverAddress() const
 {
+    return QBluetoothAddress();
 }
 
 quint16 QRfcommServer::serverPort() const
 {
+    return 0;
 }
 
 QRfcommServerPrivate::QRfcommServerPrivate()

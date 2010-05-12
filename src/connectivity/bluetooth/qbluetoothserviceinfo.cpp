@@ -476,8 +476,6 @@ int QBluetoothServiceInfo::protocolServiceMultiplexer() const
 */
 int QBluetoothServiceInfo::serverChannel() const
 {
-    Q_D(const QBluetoothServiceInfo);
-
     QBluetoothServiceInfo::Sequence parameters = protocolDescriptor(QBluetoothUuid::Rfcomm);
 
     if (parameters.isEmpty())
@@ -593,7 +591,6 @@ static void dumpAttributeVariant(const QVariant &var, const QString indent)
 
 QDebug operator<<(QDebug dbg, const QBluetoothServiceInfo &info)
 {
-    qDebug() << "ServiceInfo:";
     foreach (quint16 id, info.attributes()) {
         dumpAttributeVariant(info.attribute(id), QString("(%1)\t").arg(id));
     }

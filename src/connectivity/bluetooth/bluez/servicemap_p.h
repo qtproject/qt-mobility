@@ -39,48 +39,17 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHADDRESS_H
-#define QBLUETOOTHADDRESS_H
+#ifndef SERVICEMAP_P_H
+#define SERVICEMAP_P_H
 
-#include "qmobilityglobal.h"
-
-#include <QtCore/QByteArray>
+#include <QtCore/QMap>
 #include <QtCore/QString>
-#include <QtCore/QMetaType>
+#include <QtDBus/QDBusArgument>
 
-QT_BEGIN_HEADER
+typedef QMap<quint32, QString> ServiceMap;
 
-QTM_BEGIN_NAMESPACE
+const QDBusArgument &operator>>(const QDBusArgument &argument, ServiceMap &serviceMap);
 
-class Q_CONNECTIVITY_EXPORT QBluetoothAddress
-{
-public:
-    QBluetoothAddress();
-    explicit QBluetoothAddress(quint64 address);
-    explicit QBluetoothAddress(const QString &address);
-    QBluetoothAddress(const QBluetoothAddress &other);
+Q_DECLARE_METATYPE(ServiceMap)
 
-    QBluetoothAddress &operator=(const QBluetoothAddress &other);
-
-    bool isNull() const;
-
-    void clear();
-
-    bool operator<(const QBluetoothAddress &other) const;
-    bool operator==(const QBluetoothAddress &other) const;
-    inline bool operator!=(const QBluetoothAddress &other) const { return !operator==(other); }
-
-    quint64 toUInt64() const;
-    QString toString() const;
-
-private:
-    quint64 m_address;
-};
-
-QTM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QtMobility::QBluetoothAddress)
-
-QT_END_HEADER
-
-#endif
+#endif // SERVICEMAP_P_H

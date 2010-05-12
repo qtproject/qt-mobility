@@ -46,14 +46,17 @@ QTM_BEGIN_NAMESPACE
 
 bool QBluetoothServiceInfo::isRegistered() const
 {
+    return false;
 }
 
 bool QBluetoothServiceInfo::registerService() const
 {
+    return false;
 }
 
 bool QBluetoothServiceInfo::unregisterService() const
 {
+    return false;
 }
 
 QBluetoothServiceInfoPrivate::QBluetoothServiceInfoPrivate()

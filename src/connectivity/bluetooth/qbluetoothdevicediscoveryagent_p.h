@@ -51,6 +51,12 @@
 #include <bt_sock.h>
 #endif
 
+#ifndef QT_NO_DBUS
+class OrgBluezManagerInterface;
+class OrgBluezAdapterInterface;
+class QDBusVariant;
+#endif
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -69,6 +75,12 @@ public:
     void start();
     void stop();
 
+    // private slots
+#ifndef QT_NO_DBUS
+    void _q_deviceFound(const QString &address, const QVariantMap &dict);
+    void _q_propertyChanged(const QString &name, const QDBusVariant &value);
+#endif
+
 private:
 #ifdef Q_OS_SYMBIAN
     void RunL();
@@ -85,6 +97,9 @@ private:
     RHostResolver hostResolver;
     RSocketServ socketServer;
     TNameEntry entry;
+#elif !defined(QT_NO_DBUS)
+    OrgBluezManagerInterface *manager;
+    OrgBluezAdapterInterface *adapter;
 #endif
 };
 

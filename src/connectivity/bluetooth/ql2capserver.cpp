@@ -145,6 +145,7 @@ QL2capServer::~QL2capServer()
 */
 bool QL2capServer::isListening() const
 {
+    return false;
 }
 
 /*!
@@ -154,6 +155,7 @@ bool QL2capServer::isListening() const
 */
 int QL2capServer::maxPendingConnections() const
 {
+    return 0;
 }
 
 /*!

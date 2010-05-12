@@ -2,8 +2,6 @@
 TEMPLATE = lib
 TARGET   = QtConnectivity
 
-QT +=
-
 include(../../common.pri)
 
 DEFINES += QT_BUILD_CONNECTIVITY_LIB QT_MAKEDLL

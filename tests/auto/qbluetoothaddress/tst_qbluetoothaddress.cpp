@@ -47,8 +47,6 @@
 
 QTM_USE_NAMESPACE
 
-Q_DECLARE_METATYPE(QBluetoothAddress)
-
 class tst_QBluetoothAddress : public QObject
 {
     Q_OBJECT

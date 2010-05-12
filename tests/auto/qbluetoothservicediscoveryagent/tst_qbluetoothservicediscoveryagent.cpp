@@ -227,8 +227,6 @@ void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery()
     QFETCH(QBluetoothDeviceInfo, deviceInfo);
     QFETCH(QList<QBluetoothUuid>, uuidFilter);
 
-    qDebug() << "Discovering services of" << deviceInfo.address().toString();
-
     QBluetoothServiceDiscoveryAgent discoveryAgent(deviceInfo.address());
 
     QVERIFY(!discoveryAgent.isActive());

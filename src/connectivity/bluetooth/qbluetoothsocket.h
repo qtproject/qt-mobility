@@ -144,6 +144,9 @@ protected:
 
     void setSocketState(SocketState state);
     void setSocketError(SocketError error);
+
+private:
+    Q_PRIVATE_SLOT(d_func(), void _q_readNotify())
 };
 
 #ifndef QT_NO_DEBUG_STREAM

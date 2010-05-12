@@ -101,6 +101,7 @@ signals:
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_deviceDiscoveryFinished())
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDiscoveryFinished())
+    Q_PRIVATE_SLOT(d_func(), void _q_discoveredServices(QDBusPendingCallWatcher*))
 };
 
 QTM_END_NAMESPACE

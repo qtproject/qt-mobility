@@ -50,9 +50,11 @@ symbian {
         bluetooth/qrfcommserver_symbian.cpp
         
     LIBS *= -lesock -lbluetooth -lsdpagent -lsdpdatabase -lestlib
-}
+} else:contains(QT_CONFIG, dbus) {
+    QT += dbus
 
-unix:!symbian {
+    include(bluez/bluez.pri)
+
     SOURCES += \
         bluetooth/qbluetoothserviceinfo_bluez.cpp \
         bluetooth/qbluetoothdevicediscoveryagent_bluez.cpp \

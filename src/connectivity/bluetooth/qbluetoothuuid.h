@@ -48,6 +48,8 @@
 #include <QtCore/QMetaType>
 #include <QtCore/QUuid>
 
+#include <QtCore/QDebug>
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -112,9 +114,15 @@ public:
     quint128 toUInt128() const;
 };
 
+inline QDebug operator<<(QDebug debug, const QBluetoothUuid &uuid)
+{
+    debug << uuid.toString();
+    return debug;
+}
+
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QBluetoothUuid))
+Q_DECLARE_METATYPE(QtMobility::QBluetoothUuid)
 
 QT_END_HEADER
 

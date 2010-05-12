@@ -419,6 +419,9 @@ QList<QBluetoothUuid> QBluetoothDeviceInfo::serviceUuids(DataCompleteness *compl
 */
 QBluetoothDeviceInfo::DataCompleteness QBluetoothDeviceInfo::serviceUuidsCompleteness() const
 {
+    Q_D(const QBluetoothDeviceInfo);
+
+    return d->serviceUuidsCompleteness;
 }
 
 /*!
@@ -434,6 +437,7 @@ void QBluetoothDeviceInfo::setManufacturerSpecificData(const QByteArray &data)
 */
 QByteArray QBluetoothDeviceInfo::manufacturerSpecificData(bool *available) const
 {
+    return QByteArray();
 }
 
 QTM_END_NAMESPACE
