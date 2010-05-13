@@ -142,12 +142,14 @@ bool QVersitContactImporterPrivate::importContact(
 
     // First, do the properties with PREF set so they appear first in the contact details
     foreach (const QVersitProperty& property, properties) {
-        if (property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
+        QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+        if (typeParameters.contains(QLatin1String("PREF"), Qt::CaseInsensitive))
             importProperty(document, property, contactIndex, contact);
     }
     // ... then, do the rest of the properties.
     foreach (const QVersitProperty& property, properties) {
-        if (!property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
+        QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+        if (!typeParameters.contains(QLatin1String("PREF"), Qt::CaseInsensitive))
             importProperty(document, property, contactIndex, contact);
     }
 
@@ -594,11 +596,10 @@ bool QVersitContactImporterPrivate::createCustomLabel(
 QStringList QVersitContactImporterPrivate::extractContexts(
     const QVersitProperty& property) const
 {
-    QStringList types =
-        property.parameters().values(QLatin1String("TYPE"));
+    QStringList types = property.parameters().values(QLatin1String("TYPE"));
     QStringList contexts;
     foreach (const QString& type, types) {
-        QString value = mContextMappings.value(type);
+        QString value = mContextMappings.value(type.toUpper());
         if (value.length() > 0)
             contexts.append(value);
     }
@@ -611,11 +612,10 @@ QStringList QVersitContactImporterPrivate::extractContexts(
 QStringList QVersitContactImporterPrivate::extractSubTypes(
     const QVersitProperty& property) const
 {
-    QStringList types =
-        property.parameters().values(QLatin1String("TYPE"));
+    QStringList types = property.parameters().values(QLatin1String("TYPE"));
     QStringList subTypes;
     foreach (const QString& type, types) {
-        QString subType = mSubTypeMappings.value(type);
+        QString subType = mSubTypeMappings.value(type.toUpper());
         if (subType.length() > 0)
             subTypes += subType;
     }
