@@ -391,7 +391,7 @@ void QMediaObject::setupMetaData()
 
     if (d->service != 0) {
         d->metaDataControl =
-            qobject_cast<QMetaDataControl*>(d->service->control(QMetaDataControl_iid));
+            qobject_cast<QMetaDataControl*>(d->service->requestControl(QMetaDataControl_iid));
 
         if (d->metaDataControl) {
             connect(d->metaDataControl, SIGNAL(metaDataChanged()), SIGNAL(metaDataChanged()));
