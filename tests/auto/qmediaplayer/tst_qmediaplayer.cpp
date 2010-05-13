@@ -192,12 +192,16 @@ public:
         delete mockStreamsControl;
     }
 
-    QMediaControl* control(const char *iid) const
+    QMediaControl* requestControl(const char *iid)
     {
         if (qstrcmp(iid, QMediaPlayerControl_iid) == 0)
             return mockControl;
 
         return 0;
+    }
+
+    void releaseControl(QMediaControl *)
+    {
     }
 
     void setState(QMediaPlayer::State state) { emit mockControl->stateChanged(mockControl->_state = state); }

@@ -125,19 +125,24 @@ class QtTestMetaDataService : public QMediaService
 {
     Q_OBJECT
 public:
-    QtTestMetaDataService(QObject *parent = 0):QMediaService(parent), hasMetaData(true)
+    QtTestMetaDataService(QObject *parent = 0):QMediaService(parent), metaDataRef(0), hasMetaData(true)
     {
     }
 
-    QMediaControl *control(const char *iid) const
+    QMediaControl *requestControl(const char *iid)
     {
         if (hasMetaData && qstrcmp(iid, QMetaDataControl_iid) == 0)
-            return const_cast<QtTestMetaDataProvider *>(&metaData);
+            return &metaData;
         else
             return 0;
     }
 
+    void releaseControl(QMediaControl *)
+    {
+    }
+
     QtTestMetaDataProvider metaData;
+    int metaDataRef;
     bool hasMetaData;
 };
 

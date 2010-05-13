@@ -222,7 +222,7 @@ public:
         delete mockAudioEndpointSelector;
     }
 
-    QMediaControl* control(const char *iid) const
+    QMediaControl* requestControl(const char *iid)
     {
         if (qstrcmp(iid, QAudioEncoderControl_iid) == 0)
             return mockAudioEncoderControl;
@@ -235,6 +235,8 @@ public:
 
         return 0;
     }
+
+    void releaseControl(QMediaControl*) {}
 
     MockAudioEncoderControl *mockAudioEncoderControl;
     MockMediaRecorderControl *mockMediaRecorderControl;
