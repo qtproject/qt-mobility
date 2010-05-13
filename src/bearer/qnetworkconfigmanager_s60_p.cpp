@@ -231,7 +231,11 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
                 if (!iFirstUpdate) {
                     QNetworkConfiguration item;
                     item.d = ptr;
-                    emit configurationAdded(item);
+                    // Emit configuration added. Connected slots may throw execptions
+                    // which propagate here --> must be converted to leaves (standard
+                    // std::exception would cause any TRAP trapping this function to terminate
+                    // program).
+                    QT_TRYCATCH_LEAVING(emit configurationAdded(item));
                 }
             }
         }
@@ -252,10 +256,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             knownSnapConfigs.removeOne(ident);
         } else {
             QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-            CleanupStack::PushL(cpPriv);
     
             HBufC *pName = destination.NameLC();
-            cpPriv->name = QString::fromUtf16(pName->Ptr(),pName->Length());
+            QT_TRYCATCH_LEAVING(cpPriv->name = QString::fromUtf16(pName->Ptr(),pName->Length()));
             CleanupStack::PopAndDestroy(pName);
             pName = NULL;
     
@@ -274,10 +277,8 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             if (!iFirstUpdate) {
                 QNetworkConfiguration item;
                 item.d = ptr;
-                emit configurationAdded(item);
+                QT_TRYCATCH_LEAVING(emit configurationAdded(item));
             }
-            
-            CleanupStack::Pop(cpPriv);
         }
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> privSNAP = snapConfigurations.value(ident);
             
@@ -299,7 +300,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
                     if (!iFirstUpdate) {
                         QNetworkConfiguration item;
                         item.d = ptr;
-                        emit configurationAdded(item);
+                        QT_TRYCATCH_LEAVING(emit configurationAdded(item));
                     }
                     privSNAP->serviceNetworkMembers.append(ptr);
                 }
@@ -351,7 +352,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
                 if (!iFirstUpdate) {
                     QNetworkConfiguration item;
                     item.d = ptr;
-                    emit configurationAdded(item);
+                    QT_TRYCATCH_LEAVING(emit configurationAdded(item));
                 }
             } else {
                 delete cpPriv;
@@ -361,7 +362,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
     }
     CleanupStack::PopAndDestroy(pDbTView);
 #endif
-    updateActiveAccessPoints();
+    QT_TRYCATCH_LEAVING(updateActiveAccessPoints());
     
     foreach (const QString &oldIface, knownConfigs) {
         //remove non existing IAP
@@ -370,7 +371,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
         if (!iFirstUpdate) {
             QNetworkConfiguration item;
             item.d = priv;
-            emit configurationRemoved(item);
+            QT_TRYCATCH_LEAVING(emit configurationRemoved(item));
         }
         // Remove non existing IAP from SNAPs
         foreach (const QString &iface, snapConfigurations.keys()) {
@@ -391,7 +392,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
         if (!iFirstUpdate) {
             QNetworkConfiguration item;
             item.d = priv;
-            emit configurationRemoved(item);
+            QT_TRYCATCH_LEAVING(emit configurationRemoved(item));
         }
     }
 }
@@ -401,14 +402,12 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
         RCmConnectionMethod& connectionMethod)
 {
     QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
-    CleanupStack::PushL(cpPriv);
-    
     TUint32 iapId = connectionMethod.GetIntAttributeL(CMManager::ECmIapId);
     QString ident = QString::number(qHash(iapId));
     
     HBufC *pName = connectionMethod.GetStringAttributeL(CMManager::ECmName);
     CleanupStack::PushL(pName);
-    cpPriv->name = QString::fromUtf16(pName->Ptr(),pName->Length());
+    QT_TRYCATCH_LEAVING(cpPriv->name = QString::fromUtf16(pName->Ptr(),pName->Length()));
     CleanupStack::PopAndDestroy(pName);
     pName = NULL;
     
@@ -456,7 +455,7 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
 
     if (error == KErrNone && pName) {
         CleanupStack::PushL(pName);
-        cpPriv->mappingName = QString::fromUtf16(pName->Ptr(),pName->Length());
+        QT_TRYCATCH_LEAVING(cpPriv->mappingName = QString::fromUtf16(pName->Ptr(),pName->Length()));
         CleanupStack::PopAndDestroy(pName);
         pName = NULL;
     }
@@ -475,8 +474,6 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
     cpPriv->purpose = QNetworkConfiguration::UnknownPurpose;
     cpPriv->roamingSupported = false;
     cpPriv->manager = this;
-    
-    CleanupStack::Pop(cpPriv);
     return cpPriv;
 }
 #else
@@ -509,7 +506,7 @@ void QNetworkConfigurationManagerPrivate::readNetworkConfigurationValuesFromComm
     
     QString ident = QString::number(qHash(aApId));
     
-    apNetworkConfiguration->name = QString::fromUtf16(name.Ptr(),name.Length());
+    QT_TRYCATCH_LEAVING(apNetworkConfiguration->name = QString::fromUtf16(name.Ptr(),name.Length()));
     apNetworkConfiguration->isValid = true;
     apNetworkConfiguration->id = ident;
     apNetworkConfiguration->numericId = aApId;
@@ -846,14 +843,14 @@ void QNetworkConfigurationManagerPrivate::RunL()
             if (event == RDbNotifier::ECommit) {
                 TRAPD(error, updateConfigurationsL());
                 if (error == KErrNone) {
-                    updateStatesToSnaps();
+                    QT_TRYCATCH_LEAVING(updateStatesToSnaps());
                 }
                 waitRandomTime();
             } else {
                 waitRandomTime();
                 TRAPD(error, updateConfigurationsL());
                 if (error == KErrNone) {
-                    updateStatesToSnaps();
+                    QT_TRYCATCH_LEAVING(updateStatesToSnaps());
                 }   
             }
             iIgnoringUpdates = false; // Wait time done, allow updating again
@@ -900,7 +897,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
             if (priv.data()) {
                 priv.data()->connectionId = connectionId;
-                emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Connecting);
+                QT_TRYCATCH_LEAVING(emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Connecting));
             }
         } else if (connectionStatus == KLinkLayerOpen) {
             // Connection has been successfully opened
@@ -915,20 +912,22 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             if (priv.data()) {
                 priv.data()->connectionId = connectionId;
                 // Configuration is Active
-                if (changeConfigurationStateTo(priv, QNetworkConfiguration::Active)) {
-                    updateStatesToSnaps();
-                }
-                emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Connected);
-                if (!iOnline) {
-                    iOnline = true;
-                    emit this->onlineStateChanged(iOnline);
-                }
+                QT_TRYCATCH_LEAVING(
+                    if (changeConfigurationStateTo(priv, QNetworkConfiguration::Active)) {
+                        updateStatesToSnaps();
+                    }
+                    emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Connected);
+                    if (!iOnline) {
+                        iOnline = true;
+                        emit this->onlineStateChanged(iOnline);
+                    }
+                );
             }
         } else if (connectionStatus == KConfigDaemonStartingDeregistration) {
             TUint connectionId = realEvent->ConnectionId();
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = dataByConnectionId(connectionId);
             if (priv.data()) {
-                emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Closing);
+                QT_TRYCATCH_LEAVING(emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Closing));
             }
         } else if (connectionStatus == KLinkLayerClosed ||
                    connectionStatus == KConnectionClosed) {
@@ -938,10 +937,12 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = dataByConnectionId(connectionId);
             if (priv.data()) {
                 // Configuration is either Defined or Discovered
-                if (changeConfigurationStateAtMaxTo(priv, QNetworkConfiguration::Discovered)) {
-                    updateStatesToSnaps();
-                }
-                emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Disconnected);
+                QT_TRYCATCH_LEAVING(
+                    if (changeConfigurationStateAtMaxTo(priv, QNetworkConfiguration::Discovered)) {
+                        updateStatesToSnaps();
+                    }
+                    emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Disconnected);
+                );
             }
             
             bool online = false;
@@ -954,7 +955,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             }
             if (iOnline != online) {
                 iOnline = online;
-                emit this->onlineStateChanged(iOnline);
+                QT_TRYCATCH_LEAVING(emit this->onlineStateChanged(iOnline));
             }
         }
         }
@@ -971,7 +972,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
             if (priv.data()) {
                 // Configuration is either Discovered or Active 
-                changeConfigurationStateAtMinTo(priv, QNetworkConfiguration::Discovered);
+                QT_TRYCATCH_LEAVING(changeConfigurationStateAtMinTo(priv, QNetworkConfiguration::Discovered));
                 unDiscoveredConfigs.removeOne(ident);
             }
         }
@@ -979,7 +980,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
             if (priv.data()) {
                 // Configuration is Defined
-                changeConfigurationStateAtMaxTo(priv, QNetworkConfiguration::Defined);
+                QT_TRYCATCH_LEAVING(changeConfigurationStateAtMaxTo(priv, QNetworkConfiguration::Defined));
             }
         }
         }
@@ -1114,9 +1115,9 @@ void AccessPointsAvailabilityScanner::RunL()
 {
     if (iStatus.Int() != KErrNone) {
         iIapBuf().iCount = 0;
-        iOwner.accessPointScanningReady(false,iIapBuf());
+        QT_TRYCATCH_LEAVING(iOwner.accessPointScanningReady(false,iIapBuf()));
     } else {
-        iOwner.accessPointScanningReady(true,iIapBuf());
+        QT_TRYCATCH_LEAVING(iOwner.accessPointScanningReady(true,iIapBuf()));
     }
 }
 #include "moc_qnetworkconfigmanager_s60_p.cpp"
