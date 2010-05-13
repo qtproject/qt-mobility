@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- telephony.qdoc -->
+<head>
+  <title>Qt Mobility Project 1.0: Telephony API</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Telephony API<br /><span class="subtitle"></span>
+</h1>
+<p>The Qt Telephony API enables access to the telephony event services to provide telephony call notification that other applications can use to be notified. Using this API you can further get information abaout the status of all existing calls.</p>
+<ul><li><a href="#overview">Overview</a></li>
+<li><a href="#reference-documentation">Reference documentation</a></li>
+<ul><li><a href="#main-classes">Main classes</a></li>
+</ul>
+<li><a href="#information-and-events-of-calls">Information and Events of Calls</a></li>
+<li><a href="#call-status">Call Status</a></li>
+<li><a href="#call-type">Call Type</a></li>
+</ul>
+<a name="overview"></a>
+<h3>Overview</h3>
+<p>The telephony library provides a set of function for accessing existing calls and their information like. Using this API you are able to queries the current telephony state. e.g&#x2e; no call, ringing, call in-progress and call on-hold. Signals are provided to inform other application of changes of a call status. e.g&#x2e; ringing, on-hold, terminating or of a change of the list of the current existing calls. e.g&#x2e; call is ending. The Application can query call information using this API. e.g&#x2e; call type, phone number, SIP id, link to the caller contact.</p>
+<a name="reference-documentation"></a>
+<h3>Reference documentation</h3>
+<a name="main-classes"></a>
+<h4>Main classes</h4>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qcallinfo.html">QCallInfo</a></th><td>Represents a call including the type, status and other information of the call</td></tr>
+<tr valign="top" class="even"><th><a href="qtelephonyevent.html">QTelephonyEvent</a></th><td>Represents the call list container and the notifier about call changes</td></tr>
+</table></p>
+<a name="information-and-events-of-calls"></a>
+<h3>Information and Events of Calls</h3>
+<p>The library provides a number of classes and signals to assist with the access of the call data. Furthermore the library provides a couple of signals to provide notification of call changes.</p>
+<p>Classes and to assist sending call status change notification and reading the call information:</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Class</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td><a href="qtelephonyevent.html">QTelephonyEvent</a></td><td>Represents the call list container and the notifier about call changes.</td></tr>
+<tr valign="top" class="even"><td><a href="qcallinfo.html">QCallInfo</a></td><td>Represents a call including the type, status and other information of the call.</td></tr>
+</table></p>
+<a name="call-status"></a>
+<h3>Call Status</h3>
+<p>The library provides an enumerator to define the status of a call.</p>
+<p>Enum values relating to call status:</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>enum</th><th>value</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>CallStatus::</td><td>UnknownStatus</td><td>The status of the call is unknown.</td></tr>
+<tr valign="top" class="even"><td>CallStatus::</td><td>NoCall</td><td>No active calls are available.</td></tr>
+<tr valign="top" class="odd"><td>CallStatus::</td><td>Ringing</td><td>Call is ringing.</td></tr>
+<tr valign="top" class="even"><td>CallStatus::</td><td>InProgress</td><td>Call is in progress (dialing).</td></tr>
+<tr valign="top" class="odd"><td>CallStatus::</td><td>OnHold</td><td>Call is on hold.</td></tr>
+</table></p>
+<a name="call-type"></a>
+<h3>Call Type</h3>
+<p>The library provides an enumerator to differ between types of calls.</p>
+<p>Enum values relating to call types:</p>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>enum</th><th>value</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>CallType::</td><td>UnknownType</td><td>The type of the call is unknown.</td></tr>
+<tr valign="top" class="even"><td>CallType::</td><td>VOIP</td><td>The call is a VOIP call.</td></tr>
+<tr valign="top" class="odd"><td>CallType::</td><td>Voice</td><td>The call is a voice call.</td></tr>
+<tr valign="top" class="even"><td>CallType::</td><td>Video</td><td>The call is a video call.</td></tr>
+</table></p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+</tr></table></div></address></body>
+</html>

@@ -59,13 +59,13 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#error">error</a></b> ( int <i>error</i>, const QString &amp; <i>errorString</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus <i>status</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mutingChanged">mutingChanged</a></b> ( bool <i>mute</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mutedChanged">mutedChanged</a></b> ( bool <i>mute</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#seekRangeChanged">seekRangeChanged</a></b> ( const QPair&lt;qint64, qint64&gt; &amp; <i>range</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#videoAvailabilityChanged">videoAvailabilityChanged</a></b> ( bool <i>video</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#videoAvailableChanged">videoAvailableChanged</a></b> ( bool <i>video</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
 </table>
 <ul>
@@ -156,8 +156,8 @@
 <h3 class="fn"><a name="mediaStream"></a>const <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * QMediaPlayerControl::mediaStream () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the current media stream. This is only a valid if a stream was passed to <a href="qmediaplayercontrol.html#setMedia">setMedia</a>().</p>
 <p>See also <a href="qmediaplayercontrol.html#setMedia">setMedia</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayerControl/mutingChanged"></a>
-<h3 class="fn"><a name="mutingChanged"></a>void QMediaPlayerControl::mutingChanged ( bool <i>mute</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlayerControl/mutedChanged"></a>
+<h3 class="fn"><a name="mutedChanged"></a>void QMediaPlayerControl::mutedChanged ( bool <i>mute</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals a change in the <i>mute</i> status of a player control.</p>
 <p>See also <a href="qmediaplayercontrol.html#isMuted">isMuted</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayerControl/pause"></a>
@@ -200,6 +200,7 @@
 <a name="//apple_ref/cpp/instm/QMediaPlayerControl/setMedia"></a>
 <h3 class="fn"><a name="setMedia"></a>void QMediaPlayerControl::setMedia ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i>, <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>stream</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the current <i>media</i> source. If a <i>stream</i> is supplied; data will be read from that instead of attempting to resolve the media source. The media source may still be used to supply media information such as mime type.</p>
+<p>Setting the media to a null <a href="qmediacontent.html">QMediaContent</a> will cause the control to discard all information relating to the current media source and to cease all I/O operations related to that media.</p>
 <p>See also <a href="qmediaplayercontrol.html#media">media</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayerControl/setMuted"></a>
 <h3 class="fn"><a name="setMuted"></a>void QMediaPlayerControl::setMuted ( bool <i>mute</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -228,8 +229,8 @@
 <h3 class="fn"><a name="stop"></a>void QMediaPlayerControl::stop ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Stops playback of the current media.</p>
 <p>If succesful the player control will immediately enter the <a href="qmediaplayer.html#State-enum">stopped</a> state.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayerControl/videoAvailabilityChanged"></a>
-<h3 class="fn"><a name="videoAvailabilityChanged"></a>void QMediaPlayerControl::videoAvailabilityChanged ( bool <i>video</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlayerControl/videoAvailableChanged"></a>
+<h3 class="fn"><a name="videoAvailableChanged"></a>void QMediaPlayerControl::videoAvailableChanged ( bool <i>video</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that there has been a change in the availability of <i>video</i> output.</p>
 <p>See also <a href="qmediaplayercontrol.html#isVideoAvailable">isVideoAvailable</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayerControl/volume"></a>

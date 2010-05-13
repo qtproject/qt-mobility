@@ -72,25 +72,27 @@
         , slider(0)
         , colorDialog(0)
     {
-        player = new QMediaPlayer;
-        playlist = new QMediaPlaylist(player);
+        player = new QMediaPlayer(this);
+        playlist = new QMediaPlaylist(this);
+        playlist-&gt;setMediaObject(player);
 
         connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
         connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
         connect(player, SIGNAL(metaDataChanged()), SLOT(metaDataChanged()));
-        connect(playlist, SIGNAL(playlistPositionChanged(int)), SLOT(playlistPositionChanged(int)));
+        connect(playlist, SIGNAL(currentIndexChanged(int)), SLOT(playlistPositionChanged(int)));
         connect(player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),
                 this, SLOT(statusChanged(QMediaPlayer::MediaStatus)));
         connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
 
-        videoWidget = new VideoWidget(player);
+        videoWidget = new VideoWidget;
+        videoWidget-&gt;setMediaObject(player);
 
         playlistModel = new PlaylistModel(this);
         playlistModel-&gt;setPlaylist(playlist);
 
         playlistView = new QListView;
         playlistView-&gt;setModel(playlistModel);
-        playlistView-&gt;setCurrentIndex(playlistModel-&gt;index(playlist-&gt;currentPosition(), 0));
+        playlistView-&gt;setCurrentIndex(playlistModel-&gt;index(playlist-&gt;currentIndex(), 0));
 
         connect(playlistView, SIGNAL(activated(QModelIndex)), this, SLOT(jump(QModelIndex)));
 
@@ -120,7 +122,7 @@
         connect(player, SIGNAL(stateChanged(QMediaPlayer::State)),
                 controls, SLOT(setState(QMediaPlayer::State)));
         connect(player, SIGNAL(volumeChanged(int)), controls, SLOT(setVolume(int)));
-        connect(player, SIGNAL(mutingChanged(bool)), controls, SLOT(setMuted(bool)));
+        connect(player, SIGNAL(mutedChanged(bool)), controls, SLOT(setMuted(bool)));
 
         QPushButton *fullScreenButton = new QPushButton(tr(&quot;FullScreen&quot;));
         fullScreenButton-&gt;setCheckable(true);
@@ -163,6 +165,13 @@
         setLayout(layout);
 
         metaDataChanged();
+
+        QStringList fileNames = qApp-&gt;arguments();
+        fileNames.removeAt(0);
+        foreach (QString const &amp;fileName, fileNames) {
+            if (QFileInfo(fileName).exists())
+                playlist-&gt;addMedia(QUrl::fromLocalFile(fileName));
+        }
     }
 
     Player::~Player()
@@ -175,7 +184,7 @@
     {
         QStringList fileNames = QFileDialog::getOpenFileNames();
         foreach (QString const &amp;fileName, fileNames)
-            playlist-&gt;appendItem(QUrl::fromLocalFile(fileName));
+            playlist-&gt;addMedia(QUrl::fromLocalFile(fileName));
     }
 
     void Player::durationChanged(qint64 duration)
@@ -197,10 +206,10 @@
                     .arg(player-&gt;metaData(QtMedia::Title).toString()));
 
             if (coverLabel) {
-                QUrl uri = player-&gt;metaData(QtMedia::CoverArtUriLarge).value&lt;QUrl&gt;();
+                QUrl url = player-&gt;metaData(QtMedia::CoverArtUrlLarge).value&lt;QUrl&gt;();
 
-                coverLabel-&gt;setPixmap(!uri.isEmpty()
-                        ? QPixmap(uri.toString())
+                coverLabel-&gt;setPixmap(!url.isEmpty()
+                        ? QPixmap(url.toString())
                         : QPixmap());
             }
         }
@@ -209,7 +218,8 @@
     void Player::jump(const QModelIndex &amp;index)
     {
         if (index.isValid()) {
-            playlist-&gt;setCurrentPosition(index.row());
+            playlist-&gt;setCurrentIndex(index.row());
+            player-&gt;play();
         }
     }
 

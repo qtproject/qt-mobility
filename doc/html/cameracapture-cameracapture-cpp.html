@@ -68,9 +68,10 @@
     CameraCapture::CameraCapture(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::CameraCapture),
-        mediaRecorder(0),
         camera(0),
-        service(0),
+        imageCapture(0),
+        mediaRecorder(0),
+        audioSource(0),
         videoWidget(0)
     {
         ui-&gt;setupUi(this);
@@ -111,6 +112,7 @@
 
     void CameraCapture::setCamera(const QByteArray &amp;cameraDevice)
     {
+        delete imageCapture;
         delete mediaRecorder;
         delete videoWidget;
         delete camera;
@@ -125,30 +127,10 @@
         mediaRecorder = new QMediaRecorder(camera);
         connect(mediaRecorder, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(updateRecorderState(QMediaRecorder::State)));
 
-        service = camera-&gt;service();
+        imageCapture = new QStillImageCapture(camera);
 
-        <span class="comment">//audio devices</span>
-        ui-&gt;actionAudio-&gt;menu()-&gt;clear();
-        QActionGroup *audioDevicesGroup = new QActionGroup(this);
-        audioDevicesGroup-&gt;setExclusive(true);
-
-        if (service) {
-            foreach(const QString deviceName, service-&gt;supportedEndpoints(QMediaService::AudioDevice)) {
-                QString description = service-&gt;endpointDescription(QMediaService::AudioDevice, deviceName);
-                QAction *audioDeviceAction = new QAction(deviceName+&quot; &quot;+description, audioDevicesGroup);
-                audioDeviceAction-&gt;setData(QVariant(deviceName));
-                audioDeviceAction-&gt;setCheckable(true);
-
-                ui-&gt;actionAudio-&gt;menu()-&gt;addAction(audioDeviceAction);
-
-                if (service-&gt;activeEndpoint(QMediaService::AudioDevice) == deviceName)
-                    audioDeviceAction-&gt;setChecked(true);
-            }
-        } else {
-            qWarning() &lt;&lt; &quot;Camera service is not available&quot;;
-        }
-
-        connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
+        audioSource = new QAudioCaptureSource(camera);
+        connect(audioSource, SIGNAL(availableAudioInputsChanged()), SLOT(updateAudioDevices()));
 
         mediaRecorder-&gt;setOutputLocation(QUrl(&quot;test.mkv&quot;));
 
@@ -157,15 +139,43 @@
 
         camera-&gt;setMetaData(QtMedia::Title, QVariant(QLatin1String(&quot;Test Title&quot;)));
 
-        videoWidget = new QVideoWidget(mediaRecorder);
+        videoWidget = new QVideoWidget;
+        videoWidget-&gt;setMediaObject(camera);
         ui-&gt;stackedWidget-&gt;addWidget(videoWidget);
 
         updateCameraState(camera-&gt;state());
         updateRecorderState(mediaRecorder-&gt;state());
+        updateAudioDevices();
 
-        connect(camera, SIGNAL(readyForCaptureChanged(bool)), ui-&gt;imageCaptureBox, SLOT(setEnabled(bool)));
-        connect(camera, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
+        connect(imageCapture, SIGNAL(readyForCaptureChanged(bool)), ui-&gt;imageCaptureBox, SLOT(setEnabled(bool)));
+        connect(imageCapture, SIGNAL(imageCaptured(QString,QImage)), this, SLOT(processCapturedImage(QString,QImage)));
 
+    }
+
+    void CameraCapture::updateAudioDevices()
+    {
+        ui-&gt;actionAudio-&gt;menu()-&gt;clear();
+        QActionGroup *audioDevicesGroup = new QActionGroup(this);
+        audioDevicesGroup-&gt;setExclusive(true);
+
+        if (audioSource-&gt;isAvailable()) {
+            QList&lt;QString&gt; devices = audioSource-&gt;audioInputs();
+            for (int i=0; i&lt;devices.size(); i++) {
+                QString description = audioSource-&gt;audioDescription(devices.at(i));
+                QAction *audioDeviceAction = new QAction(devices.at(i)+&quot; &quot;+description, audioDevicesGroup);
+                audioDeviceAction-&gt;setData(devices.at(i));
+                audioDeviceAction-&gt;setCheckable(true);
+
+                ui-&gt;actionAudio-&gt;menu()-&gt;addAction(audioDeviceAction);
+
+                if (devices.at(i) == audioSource-&gt;activeAudioInput())
+                    audioDeviceAction-&gt;setChecked(true);
+            }
+        } else {
+            qWarning() &lt;&lt; &quot;Camera service is not available&quot;;
+        }
+
+        connect(audioDevicesGroup, SIGNAL(triggered(QAction*)), this, SLOT(updateAudioDevice(QAction*)));
     }
 
     void CameraCapture::updateRecordTime()
@@ -186,7 +196,7 @@
 
         settingsDialog.setAudioSettings(mediaRecorder-&gt;audioSettings());
         settingsDialog.setVideoSettings(mediaRecorder-&gt;videoSettings());
-        settingsDialog.setFormat(mediaRecorder-&gt;format());
+        settingsDialog.setFormat(mediaRecorder-&gt;containerMimeType());
 
         if (settingsDialog.exec()) {
             mediaRecorder-&gt;setEncodingSettings(
@@ -220,10 +230,10 @@
             lastImage = qMax(lastImage, imgNumber);
         }
 
-        camera-&gt;capture(QString(&quot;img_%1.jpg&quot;).arg(lastImage+1,
-                                                  4, <span class="comment">//fieldWidth</span>
-                                                  10,
-                                                  QLatin1Char('0')));
+        imageCapture-&gt;capture(QString(&quot;img_%1.jpg&quot;).arg(lastImage+1,
+                                                        4, <span class="comment">//fieldWidth</span>
+                                                        10,
+                                                        QLatin1Char('0')));
     }
 
     void CameraCapture::toggleCamera()
@@ -255,7 +265,7 @@
             ui-&gt;videoCaptureBox-&gt;setEnabled(false);
         }
 
-        if (camera-&gt;service()) {
+        if (camera-&gt;isAvailable()) {
             ui-&gt;startCameraButton-&gt;setEnabled(true);
         } else {
             ui-&gt;startCameraButton-&gt;setEnabled(false);
@@ -296,7 +306,7 @@
 
     void CameraCapture::updateAudioDevice(QAction *action)
     {
-        service-&gt;setActiveEndpoint(QMediaService::AudioDevice, action-&gt;data().toString());
+        audioSource-&gt;setAudioInput(action-&gt;data().toString());
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

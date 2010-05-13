@@ -18,11 +18,11 @@
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qabstractsecuritysession.html">QAbstractSecuritySession</a></th><td>Generic mechanism to enable permission checks for services</td></tr>
 <tr valign="top" class="even"><th><a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a></th><td>Support for adding new logical data layers to the Qt Value Space</td></tr>
-<tr valign="top" class="odd"><th><a href="qaudiocapturesource.html">QAudioCaptureSource</a></th><td>Interface to query and select an audio input device</td></tr>
-<tr valign="top" class="even"><th><a href="qaudiodevicecontrol.html">QAudioDeviceControl</a></th><td>Audio input/output device selector media control</td></tr>
-<tr valign="top" class="odd"><th><a href="qaudioencodercontrol.html">QAudioEncoderControl</a></th><td>Access to the settings of a media service that performs audio encoding</td></tr>
-<tr valign="top" class="even"><th><a href="qaudioencodersettings.html">QAudioEncoderSettings</a></th><td>Set of audio encoder settings</td></tr>
-<tr valign="top" class="odd"><th><a href="qaudioformat.html">QAudioFormat</a></th><td>Stores audio parameter information</td></tr>
+<tr valign="top" class="odd"><th><a href="qaudiocapturesource.html">QAudioCaptureSource</a></th><td>Interface to query and select an audio input endpoint</td></tr>
+<tr valign="top" class="even"><th><a href="qaudioencodercontrol.html">QAudioEncoderControl</a></th><td>Access to the settings of a media service that performs audio encoding</td></tr>
+<tr valign="top" class="odd"><th><a href="qaudioencodersettings.html">QAudioEncoderSettings</a></th><td>Set of audio encoder settings</td></tr>
+<tr valign="top" class="even"><th><a href="qaudioendpointselector.html">QAudioEndpointSelector</a></th><td>Audio endpoint selector media control</td></tr>
+<tr valign="top" class="odd"><th><a href="qcallinfo.html">QCallInfo</a></th><td>Represents a call including the type, status and other information of the call</td></tr>
 <tr valign="top" class="even"><th><a href="qcamera.html">QCamera</a></th><td>Interface for system camera devices</td></tr>
 <tr valign="top" class="odd"><th><a href="qcameracontrol.html">QCameraControl</a></th><td>Abstract base class for classes that control still cameras or video cameras</td></tr>
 <tr valign="top" class="even"><th><a href="qcameraexposurecontrol.html">QCameraExposureControl</a></th><td>Supplies control for exposure related camera parameters</td></tr>
@@ -95,9 +95,9 @@
 <tr valign="top" class="odd"><th><a href="qimageencodercontrol.html">QImageEncoderControl</a></th><td>Access to the settings of a media service that performs image encoding</td></tr>
 <tr valign="top" class="even"><th><a href="qimageencodersettings.html">QImageEncoderSettings</a></th><td>Set of image encoder settings</td></tr>
 <tr valign="top" class="odd"><th><a href="qimageprocessingcontrol.html">QImageProcessingControl</a></th><td>Abstract class for controling image processing parameters, like white balance, contrast, saturation, sharpening and denoising</td></tr>
-<tr valign="top" class="even"><th><a href="qmediacontent.html">QMediaContent</a></th><td>Access to the resources relating to a media content</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediacontrol.html">QMediaControl</a></th><td>Base interface for media service controls</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaformatcontrol.html">QMediaFormatControl</a></th><td>Access to the output format of a QMediaService</td></tr>
+<tr valign="top" class="even"><th><a href="qmediacontainercontrol.html">QMediaContainerControl</a></th><td>Access to the output container format of a QMediaService</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediacontent.html">QMediaContent</a></th><td>Access to the resources relating to a media content</td></tr>
+<tr valign="top" class="even"><th><a href="qmediacontrol.html">QMediaControl</a></th><td>Base interface for media service controls</td></tr>
 <tr valign="top" class="odd"><th><a href="qmediaimageviewer.html">QMediaImageViewer</a></th><td>Means of viewing image media</td></tr>
 <tr valign="top" class="even"><th><a href="qmediaobject.html">QMediaObject</a></th><td>Common base for multimedia objects</td></tr>
 <tr valign="top" class="odd"><th><a href="qmediaplayer.html">QMediaPlayer</a></th><td>Allows the playing of a media source</td></tr>
@@ -149,12 +149,14 @@
 <tr valign="top" class="odd"><th><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a></th><td>Identifies a service implementation</td></tr>
 <tr valign="top" class="even"><th><a href="qservicemanager.html">QServiceManager</a></th><td>Enables the loading of service plugins and the (de)registration of services</td></tr>
 <tr valign="top" class="odd"><th><a href="qserviceplugininterface.html">QServicePluginInterface</a></th><td>Defines the interface that every plug-in based service must implement</td></tr>
-<tr valign="top" class="even"><th><a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a></th><td>Access to device information from the system</td></tr>
-<tr valign="top" class="odd"><th><a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a></th><td>Access to display information from the system</td></tr>
-<tr valign="top" class="even"><th><a href="qsysteminfo.html">QSystemInfo</a></th><td>Access to various general information from the system</td></tr>
-<tr valign="top" class="odd"><th><a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a></th><td>Access to network information from the system</td></tr>
-<tr valign="top" class="even"><th><a href="qsystemscreensaver.html">QSystemScreenSaver</a></th><td>Access to screen saver and blanking</td></tr>
-<tr valign="top" class="odd"><th><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></th><td>Access to memory and disk information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qstillimagecapture.html">QStillImageCapture</a></th><td>Used for the recording of media content</td></tr>
+<tr valign="top" class="odd"><th><a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a></th><td>Access to device information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a></th><td>Access to display information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsysteminfo.html">QSystemInfo</a></th><td>Access to various general information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a></th><td>Access to network information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsystemscreensaver.html">QSystemScreenSaver</a></th><td>Access to screen saver and blanking</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></th><td>Access to memory and disk information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qtelephonyevent.html">QTelephonyEvent</a></th><td>Represents the call list container and the notifier about call changes</td></tr>
 <tr valign="top" class="even"><th><a href="qvaluespacepublisher.html">QValueSpacePublisher</a></th><td>Allows applications to publish values in the Value Space</td></tr>
 <tr valign="top" class="odd"><th><a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a></th><td>Allows applications to read and subscribe to Value Space paths</td></tr>
 <tr valign="top" class="even"><th><a href="qversitcontactexporter.html">QVersitContactExporter</a></th><td>Exports QContact(s) into QVersitDocument(s)</td></tr>

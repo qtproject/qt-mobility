@@ -25,9 +25,12 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#dtor.QCameraControl">~QCameraControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::CaptureMode </td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#captureMode">captureMode</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#setCaptureMode">setCaptureMode</a></b> ( QCamera::CaptureMode ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#start">start</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::State </td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#state">state</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#stop">stop</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QCamera::CaptureModes </td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#supportedCaptureModes">supportedCaptureModes</a></b> () const = 0</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -36,6 +39,7 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#captureModeChanged">captureModeChanged</a></b> ( QCamera::CaptureMode )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#error">error</a></b> ( int <i>error</i>, const QString &amp; <i>errorString</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcameracontrol.html#stateChanged">stateChanged</a></b> ( QCamera::State <i>state</i> )</td></tr>
 </table>
@@ -82,9 +86,17 @@
 <a name="//apple_ref/cpp/instm/QCameraControl/~QCameraControl"></a>
 <h3 class="fn"><a name="dtor.QCameraControl"></a>QCameraControl::~QCameraControl ()</h3>
 <p>Destruct the camera control object.</p>
+<a name="//apple_ref/cpp/instm/QCameraControl/captureMode"></a>
+<h3 class="fn"><a name="captureMode"></a><a href="qcamera.html#CaptureMode-enum">QCamera::CaptureMode</a> QCameraControl::captureMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qcameracontrol.html#setCaptureMode">setCaptureMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QCameraControl/captureModeChanged"></a>
+<h3 class="fn"><a name="captureModeChanged"></a>void QCameraControl::captureModeChanged ( <a href="qcamera.html#CaptureMode-enum">QCamera::CaptureMode</a> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <a name="//apple_ref/cpp/instm/QCameraControl/error"></a>
 <h3 class="fn"><a name="error"></a>void QCameraControl::error ( int <i>error</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>errorString</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when an error occurs with error code <i>error</i> and a description of the error <i>errorString</i>.</p>
+<a name="//apple_ref/cpp/instm/QCameraControl/setCaptureMode"></a>
+<h3 class="fn"><a name="setCaptureMode"></a>void QCameraControl::setCaptureMode ( <a href="qcamera.html#CaptureMode-enum">QCamera::CaptureMode</a> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>See also <a href="qcameracontrol.html#captureMode">captureMode</a>().</p>
 <a name="//apple_ref/cpp/instm/QCameraControl/start"></a>
 <h3 class="fn"><a name="start"></a>void QCameraControl::start ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Start the camera service.</p>
@@ -98,6 +110,8 @@
 <a name="//apple_ref/cpp/instm/QCameraControl/stop"></a>
 <h3 class="fn"><a name="stop"></a>void QCameraControl::stop ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Stop the camera service.</p>
+<a name="//apple_ref/cpp/instm/QCameraControl/supportedCaptureModes"></a>
+<h3 class="fn"><a name="supportedCaptureModes"></a><a href="qcamera.html#CaptureMode-enum">QCamera::CaptureModes</a> QCameraControl::supportedCaptureModes () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <hr />
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//QCameraControl_iid"></a>

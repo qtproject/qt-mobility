@@ -34,9 +34,10 @@
 <li><div class="fn"><b><a href="qvideowidget.html#aspectRatioMode-prop">aspectRatioMode</a></b> : AspectRatioMode</div></li>
 <li><div class="fn"><b><a href="qvideowidget.html#brightness-prop">brightness</a></b> : int</div></li>
 <li><div class="fn"><b><a href="qvideowidget.html#contrast-prop">contrast</a></b> : int</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qvideowidget.html#fullScreen-prop">fullScreen</a></b> : bool</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qvideowidget.html#hue-prop">hue</a></b> : int</div></li>
+<li><div class="fn"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> : QMediaObject *</div></li>
 <li><div class="fn"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> : int</div></li>
 </ul>
 </td></tr>
@@ -49,14 +50,16 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#QVideoWidget">QVideoWidget</a></b> ( QMediaObject * <i>object</i>, QWidget * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#QVideoWidget">QVideoWidget</a></b> ( QWidget * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#dtor.QVideoWidget">~QVideoWidget</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">AspectRatioMode </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#aspectRatioMode-prop">aspectRatioMode</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#brightness-prop">brightness</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#contrast-prop">contrast</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hue-prop">hue</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#fullScreen-prop">isFullScreen</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaObject * </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#mediaObject-prop">setMediaObject</a></b> ( QMediaObject * <i>object</i> )</td></tr>
 </table>
 <hr />
 <a name="reimplemented-public-functions"></a>
@@ -221,6 +224,15 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hueChanged">hueChanged</a></b> ( int <i>hue</i> )</td></tr>
 </table>
+<a name="//apple_ref/cpp/instm/QVideoWidget/mediaObject"></a>
+<a name="//apple_ref/cpp/instm/QVideoWidget/setMediaObject"></a>
+<h3 class="fn"><a name="mediaObject-prop"></a>mediaObject : <a href="qmediaobject.html">QMediaObject</a> *</h3>
+<p>This property holds the media object which provides the video displayed by a widget.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QMediaObject * </td><td class="memItemRight" valign="bottom"><b>mediaObject</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMediaObject</b> ( QMediaObject * <i>object</i> )</td></tr>
+</table>
 <a name="//apple_ref/cpp/instm/QVideoWidget/saturation"></a>
 <a name="//apple_ref/cpp/instm/QVideoWidget/setSaturation"></a>
 <a name="//apple_ref/cpp/instm/QVideoWidget/saturationChanged"></a>
@@ -239,8 +251,8 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVideoWidget/QVideoWidget"></a>
-<h3 class="fn"><a name="QVideoWidget"></a>QVideoWidget::QVideoWidget ( <a href="qmediaobject.html">QMediaObject</a> * <i>object</i>, <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> * <i>parent</i> = 0 )</h3>
-<p>Constructs a new widget which displays video produced by a media <i>object</i>.</p>
+<h3 class="fn"><a name="QVideoWidget"></a>QVideoWidget::QVideoWidget ( <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a new video widget.</p>
 <p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a>.</p>
 <a name="//apple_ref/cpp/instm/QVideoWidget/~QVideoWidget"></a>
 <h3 class="fn"><a name="dtor.QVideoWidget"></a>QVideoWidget::~QVideoWidget ()</h3>

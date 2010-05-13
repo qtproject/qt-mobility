@@ -106,8 +106,8 @@
         }
 
         <span class="comment">//containers</span>
-        foreach(const QString &amp;format, mediaRecorder-&gt;supportedFormats()) {
-            ui-&gt;containerFormatBox-&gt;addItem(format+&quot;:&quot;+mediaRecorder-&gt;formatDescription(format),
+        foreach(const QString &amp;format, mediaRecorder-&gt;supportedContainers()) {
+            ui-&gt;containerFormatBox-&gt;addItem(format+&quot;:&quot;+mediaRecorder-&gt;containerDescription(format),
                                             QVariant(format));
         }
     }

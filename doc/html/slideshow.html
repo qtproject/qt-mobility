@@ -26,9 +26,11 @@
 <pre>    connect(imageViewer, SIGNAL(stateChanged(QMediaImageViewer::State)),
             this, SLOT(stateChanged(QMediaImageViewer::State)));
 
-    playlist = new QMediaPlaylist(imageViewer);</pre>
+    playlist = new QMediaPlaylist;
+    playlist-&gt;setMediaObject(imageViewer);</pre>
 <p>We create a <a href="qvideowidget.html">QVideoWidget</a> to display the viewer and add it to the dialog.</p>
-<pre>    QVideoWidget *videoWidget = new QVideoWidget(imageViewer);</pre>
+<pre>    QVideoWidget *videoWidget = new QVideoWidget;
+    videoWidget-&gt;setMediaObject(imageViewer);</pre>
 <pre>    layout-&gt;addWidget(videoWidget, Qt::AlignCenter);</pre>
 <p>The timeout between images is set by changing the timeout property in <a href="qmediaimageviewer.html">QMediaImageViewer</a> which is in milliseconds. So to change the timeout to five seconds</p>
 <pre>    imageViewer-&gt;setTimeout( 5000 );</pre>
