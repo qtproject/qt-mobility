@@ -472,24 +472,91 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     // MUST BE KEPT UP TO DATE as definitions are added here.
 
     // the map we will eventually return
-    QMap<QString, QOrganizerItemDetailDefinition> retn;
+    QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > retnSchema;
+    QMap<QString, QOrganizerItemDetailDefinition> retn; // each type has a different schema.
 
     // local variables for reuse
     QMap<QString, QOrganizerItemDetailFieldDefinition> fields;
     QOrganizerItemDetailFieldDefinition f;
     QOrganizerItemDetailDefinition d;
 
-    // in the default schema, we have two organizeritem types: TypeOrganizerItem, TypeGroup.
-    // the entire default schema is valid for both types.
-    QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > retnSchema;
+    // build the schema for the Note item type.
     retnSchema.insert(QOrganizerItemType::TypeNote, retn);
 
     // and then again for events
+    retn.clear();
+
+    // type
+    d.setName(QOrganizerItemType::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+                         << QString(QLatin1String(QOrganizerItemType::TypeEvent))
+                         << QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence))
+                         << QString(QLatin1String(QOrganizerItemType::TypeJournal))
+                         << QString(QLatin1String(QOrganizerItemType::TypeNote))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodo))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
+    fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // priority
+    d.setName(QOrganizerItemPriority::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList()
+                         << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+    fields.insert(QOrganizerItemPriority::FieldPriority, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // location
+    d.setName(QOrganizerItemLocation::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemLocation::FieldAddress, f);
+    fields.insert(QOrganizerItemLocation::FieldGeoLocation, f);
+    fields.insert(QOrganizerItemLocation::FieldLocationName, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // display label
+    d.setName(QOrganizerItemDisplayLabel::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDisplayLabel::FieldLabel, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // description
+    d.setName(QOrganizerItemDescription::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDescription::FieldDescription, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeEvent, retn);
 
     // and then again for todos
+    retnSchema.insert(QOrganizerItemType::TypeTodo, retn);
 
     // and then again for journals
+    retnSchema.insert(QOrganizerItemType::TypeJournal, retn);
 
     return retnSchema;
 }

@@ -76,7 +76,8 @@ void snippets()
     recEvent.setLocationName("Meeting Room 8");
     recEvent.setDescription("A meeting every wednesday to discuss the vitally important topic of marshmallows");
     recEvent.setDisplayLabel("Marshmallow Conference");
-    defaultManager.saveItem(&recEvent);
+    if (!defaultManager.saveItem(&recEvent))
+        qDebug() << "Failed to save the recurrent event; error:" << defaultManager.error();
     //! [Creating a recurrent event]
 dumpItems(&defaultManager);
     //! [Retrieving occurrences of a particular recurrent event within a time period]
@@ -158,17 +159,21 @@ dumpItems(&defaultManager);
 
 void dumpItems(QOrganizerItemManager* manager)
 {
-    qDebug() << "=============================";
     QList<QOrganizerItem> items = manager->items();
-    foreach (const QOrganizerItem& curr, items) {
+    qDebug() << "dumping" << items.count() << "items:";
+    qDebug() << "=============================";
+    for (int i = 0; i < items.size(); ++i) {
+        QOrganizerItem curr = items.at(i);
         dumpItem(curr);
+        if (i < (items.size() - 1)) {
+            qDebug() << "--------------";
+        }
     }
     qDebug() << "=============================";
 }
 
 void dumpItem(const QOrganizerItem& item)
 {
-    qDebug() << "--------------";
     qDebug() << "item:" << item.displayLabel() << ", id:" << item.id();
     QList<QOrganizerItemDetail> dets = item.details();
     foreach (const QOrganizerItemDetail det, dets) {
