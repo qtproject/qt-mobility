@@ -53,7 +53,6 @@ class QMediaPlaylist;
 class QMediaPlaylistNavigator;
 class QT7PlayerControl;
 class QT7PlayerMetaDataControl;
-class QT7VideoOutputControl;
 class QT7VideoWindowControl;
 class QT7VideoWidgetControl;
 class QT7VideoRendererControl;
@@ -67,15 +66,15 @@ public:
     QT7PlayerService(QObject *parent = 0);
     ~QT7PlayerService();
 
-    QMediaControl *control(const char *name) const;
+    QMediaControl* requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 
 private slots:
     void updateVideoOutput();
 
 private:
     QT7PlayerSession *m_session;
-    QT7PlayerControl *m_control;    
-    QT7VideoOutputControl *m_videoOutputControl;
+    QT7PlayerControl *m_control;
     QT7VideoWindowControl *m_videoWidnowControl;
     QT7VideoWidgetControl *m_videoWidgetControl;
     QT7VideoRendererControl *m_videoRendererControl;

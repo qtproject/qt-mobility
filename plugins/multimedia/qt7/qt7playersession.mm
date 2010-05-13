@@ -46,7 +46,7 @@
 
 #include "qt7playersession.h"
 #include "qt7playercontrol.h"
-#include "qt7videooutputcontrol.h"
+#include "qt7videooutput.h"
 
 #include <qmediaplaylistnavigator.h>
 

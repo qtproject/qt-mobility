@@ -47,7 +47,7 @@
 #include "qt7playerservice.h"
 #include "qt7playercontrol.h"
 #include "qt7playersession.h"
-#include "qt7videooutputcontrol.h"
+#include "qt7videooutput.h"
 #include "qt7movieviewoutput.h"
 #include "qt7movieviewrenderer.h"
 #include "qt7movierenderer.h"
@@ -70,47 +70,34 @@ QT7PlayerService::QT7PlayerService(QObject *parent):
     m_playerMetaDataControl = new QT7PlayerMetaDataControl(m_session, this);
     connect(m_control, SIGNAL(mediaChanged(QMediaContent)), m_playerMetaDataControl, SLOT(updateTags()));
 
-    m_videoOutputControl = new QT7VideoOutputControl(this);
-
     m_videoWidnowControl = 0;
     m_videoWidgetControl = 0;
     m_videoRendererControl = 0;
 
 #if defined(QT_MAC_USE_COCOA)
     m_videoWidnowControl = new QT7MovieViewOutput(this);
-    m_videoOutputControl->enableOutput(QVideoOutputControl::WindowOutput);
     qDebug() << "Using cocoa";
 #endif
 
 #ifdef QUICKTIME_C_API_AVAILABLE
     m_videoRendererControl = new QT7MovieRenderer(this);
-    m_videoOutputControl->enableOutput(QVideoOutputControl::RendererOutput);
 
     m_videoWidgetControl = new QT7MovieVideoWidget(this);
-    m_videoOutputControl->enableOutput(QVideoOutputControl::WidgetOutput);
     qDebug() << "QuickTime C API is available";
 #else
     m_videoRendererControl = new QT7MovieViewRenderer(this);
-    m_videoOutputControl->enableOutput(QVideoOutputControl::RendererOutput);
     qDebug() << "QuickTime C API is not available";
 #endif
-
-
-    connect(m_videoOutputControl, SIGNAL(videoOutputChanged(QVideoOutputControl::Output)),
-            this, SLOT(updateVideoOutput()));
 }
 
 QT7PlayerService::~QT7PlayerService()
 {
 }
 
-QMediaControl *QT7PlayerService::control(const char *name) const
+QMediaControl *QT7PlayerService::requestControl(const char *name)
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
-
-    if (qstrcmp(name, QVideoOutputControl_iid) == 0)
-        return m_videoOutputControl;
 
     if (qstrcmp(name, QVideoWindowControl_iid) == 0)
         return m_videoWidnowControl;
@@ -127,23 +114,13 @@ QMediaControl *QT7PlayerService::control(const char *name) const
     return 0;
 }
 
+void QT7PlayerService::releaseControl(QMediaControl *control)
+{
+    delete control;
+}
+
 void QT7PlayerService::updateVideoOutput()
 {
-    qDebug() << "QT7PlayerService::updateVideoOutput" << m_videoOutputControl->output();
-
-    switch (m_videoOutputControl->output()) {
-    case QVideoOutputControl::WindowOutput:
-        m_session->setVideoOutput(m_videoWidnowControl);
-        break;
-    case QVideoOutputControl::RendererOutput:
-        m_session->setVideoOutput(m_videoRendererControl);
-        break;
-    case QVideoOutputControl::WidgetOutput:
-        m_session->setVideoOutput(m_videoWidgetControl);
-        break;
-    default:
-        m_session->setVideoOutput(0);
-    }
 }
 
 #include "moc_qt7playerservice.cpp"
