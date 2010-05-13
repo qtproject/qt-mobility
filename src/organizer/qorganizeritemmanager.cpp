@@ -257,9 +257,9 @@ void QOrganizerItemManager::createEngine(const QString& managerName, const QMap<
 {
     d->createEngine(managerName, parameters);
     connect(d->m_engine, SIGNAL(dataChanged()), this, SIGNAL(dataChanged()));
-    connect(d->m_engine, SIGNAL(organizeritemsAdded(QList<QOrganizerItemLocalId>)), this, SIGNAL(organizeritemsAdded(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(organizeritemsChanged(QList<QOrganizerItemLocalId>)), this, SIGNAL(organizeritemsChanged(QList<QOrganizerItemLocalId>)));
-    connect(d->m_engine, SIGNAL(organizeritemsRemoved(QList<QOrganizerItemLocalId>)), this, SIGNAL(organizeritemsRemoved(QList<QOrganizerItemLocalId>)));
+    connect(d->m_engine, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
+    connect(d->m_engine, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
+    connect(d->m_engine, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)), this, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
 }
 
 /*!

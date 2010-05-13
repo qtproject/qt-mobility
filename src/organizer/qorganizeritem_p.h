@@ -69,6 +69,7 @@ public:
     QOrganizerItemData()
         : QSharedData()
     {
+        m_details.append(QOrganizerItemType());
     }
 
     QOrganizerItemData(const QOrganizerItemData& other)

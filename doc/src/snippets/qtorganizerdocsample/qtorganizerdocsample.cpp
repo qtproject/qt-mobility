@@ -158,10 +158,12 @@ dumpItems(&defaultManager);
 
 void dumpItems(QOrganizerItemManager* manager)
 {
+    qDebug() << "=============================";
     QList<QOrganizerItem> items = manager->items();
     foreach (const QOrganizerItem& curr, items) {
         dumpItem(curr);
     }
+    qDebug() << "=============================";
 }
 
 void dumpItem(const QOrganizerItem& item)
