@@ -48,7 +48,6 @@
 #include <qmediaimageviewerservice_p.h>
 #include <qmediaplaylist.h>
 #include <qmediaservice.h>
-#include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
 #include <qvideowidgetcontrol.h>
 
@@ -82,7 +81,6 @@ private slots:
     void multiplePlaylists();
     void invalidPlaylist();
     void elapsedTime();
-    void outputControl();
     void rendererControl();
 
 public:
@@ -888,35 +886,6 @@ void tst_QMediaImageViewer::elapsedTime()
 
 }
 
-void tst_QMediaImageViewer::outputControl()
-{
-    QMediaImageViewer viewer;
-
-    QMediaService *service = viewer.service();
-    if (service == 0)
-        QSKIP("Image viewer object has no service.", SkipSingle);
-
-    QVideoOutputControl *outputControl = qobject_cast<QVideoOutputControl *>(
-            service->control(QVideoOutputControl_iid));
-
-    QVERIFY(outputControl != 0);
-
-    QVERIFY(outputControl->availableOutputs().contains(QVideoOutputControl::RendererOutput));
-    QVERIFY(!outputControl->availableOutputs().contains(QVideoOutputControl::WidgetOutput));
-    QVERIFY(!outputControl->availableOutputs().contains(QVideoOutputControl::UserOutput));
-
-    QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
-
-    outputControl->setOutput(QVideoOutputControl::WidgetOutput);
-    QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
-
-    outputControl->setOutput(QVideoOutputControl::RendererOutput);
-    QCOMPARE(outputControl->output(), QVideoOutputControl::RendererOutput);
-
-    outputControl->setOutput(QVideoOutputControl::UserOutput);
-    QCOMPARE(outputControl->output(), QVideoOutputControl::NoOutput);
-}
-
 void tst_QMediaImageViewer::rendererControl()
 {
     QtTestVideoSurface surfaceA;
@@ -929,19 +898,14 @@ void tst_QMediaImageViewer::rendererControl()
     if (service == 0)
         QSKIP("Image viewer object has no service.", SkipSingle);
 
-    QVideoOutputControl *outputControl = qobject_cast<QVideoOutputControl *>(
-            service->control(QVideoOutputControl_iid));
-    if (outputControl == 0)
-        QSKIP("Image viewer object has no video output control.", SkipSingle);
+    QMediaControl *mediaControl = service->requestControl(QVideoRendererControl_iid);
+    QVERIFY(mediaControl != 0);
 
-    QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(
-            service->control(QVideoRendererControl_iid));
+    QVideoRendererControl *rendererControl = qobject_cast<QVideoRendererControl *>(mediaControl);
     QVERIFY(rendererControl != 0);
 
     rendererControl->setSurface(&surfaceA);
     QCOMPARE(rendererControl->surface(), (QAbstractVideoSurface *)&surfaceA);
-
-    outputControl->setOutput(QVideoOutputControl::RendererOutput);
 
     // Load an image so the viewer has some dimensions to work with.
     viewer.setMedia(QMediaContent(imageUrl("image.png")));
@@ -967,11 +931,16 @@ void tst_QMediaImageViewer::rendererControl()
         QCOMPARE(frame.size(), QSize(75, 50));
     }
     // Test clearing the output stops the video surface.
-    outputControl->setOutput(QVideoOutputControl::NoOutput);
+    service->releaseControl(rendererControl);
     QCOMPARE(surfaceA.isActive(), false);
 
     // Test reseting the output restarts it.
-    outputControl->setOutput(QVideoOutputControl::RendererOutput);
+    mediaControl = service->requestControl(QVideoRendererControl_iid);
+    QVERIFY(mediaControl != 0);
+
+    rendererControl = qobject_cast<QVideoRendererControl *>(mediaControl);
+    rendererControl->setSurface(&surfaceA);
+    QVERIFY(rendererControl != 0);
     {
         QVideoSurfaceFormat format = surfaceA.surfaceFormat();
         QCOMPARE(format.handleType(), QAbstractVideoBuffer::NoHandle);

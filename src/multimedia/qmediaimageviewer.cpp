@@ -203,7 +203,7 @@ QMediaImageViewer::QMediaImageViewer(QObject *parent)
     Q_D(QMediaImageViewer);
 
     d->viewerControl = qobject_cast<QMediaImageViewerControl*>(
-            d->service->control(QMediaImageViewerControl_iid));
+            d->service->requestControl(QMediaImageViewerControl_iid));
 
     connect(d->viewerControl, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             this, SLOT(_q_mediaStatusChanged(QMediaImageViewer::MediaStatus)));
