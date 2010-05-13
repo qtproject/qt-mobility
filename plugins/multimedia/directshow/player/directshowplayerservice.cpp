@@ -45,7 +45,6 @@
 #include "directshowiosource.h"
 #include "directshowmetadatacontrol.h"
 #include "directshowplayercontrol.h"
-#include "directshowvideooutputcontrol.h"
 #include "directshowvideorenderercontrol.h"
 #include "vmr9videowindowcontrol.h"
 
@@ -77,7 +76,6 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
     : QMediaService(parent)
     , m_playerControl(0)
     , m_metaDataControl(0)
-    , m_videoOutputControl(0)
     , m_videoRendererControl(0)
     , m_videoWindowControl(0)
     , m_audioEndpointControl(0)
@@ -103,16 +101,10 @@ DirectShowPlayerService::DirectShowPlayerService(QObject *parent)
 {
     m_playerControl = new DirectShowPlayerControl(this);
     m_metaDataControl = new DirectShowMetaDataControl(this);
-    m_videoOutputControl = new DirectShowVideoOutputControl; 
     m_audioEndpointControl = new DirectShowAudioEndpointControl(this);
-    m_videoRendererControl = new DirectShowVideoRendererControl(m_loop);
-    m_videoWindowControl = new Vmr9VideoWindowControl;
 
     m_taskThread = new DirectShowPlayerServiceThread(this);
     m_taskThread->start();
-
-    connect(m_videoOutputControl, SIGNAL(outputChanged()), this, SLOT(videoOutputChanged()));
-    connect(m_videoRendererControl, SIGNAL(filterChanged()), this, SLOT(videoOutputChanged()));
 }
 
 DirectShowPlayerService::~DirectShowPlayerService()
@@ -142,29 +134,59 @@ DirectShowPlayerService::~DirectShowPlayerService()
     delete m_playerControl;
     delete m_audioEndpointControl;
     delete m_metaDataControl;
-    delete m_videoOutputControl;
     delete m_videoRendererControl;
     delete m_videoWindowControl;
 
     ::CloseHandle(m_taskHandle);
 }
 
-QMediaControl *DirectShowPlayerService::control(const char *name) const
+QMediaControl *DirectShowPlayerService::requestControl(const char *name)
 {
-    if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
+    if (qstrcmp(name, QMediaPlayerControl_iid) == 0) {
         return m_playerControl;
-    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
+    } else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0) {
         return m_audioEndpointControl;
-    else if (qstrcmp(name, QMetaDataControl_iid) == 0)
+    } else if (qstrcmp(name, QMetaDataControl_iid) == 0) {
         return m_metaDataControl;
-    else if (qstrcmp(name, QVideoOutputControl_iid) == 0)
-        return m_videoOutputControl;
-    else if (qstrcmp(name, QVideoRendererControl_iid) == 0)
-        return m_videoRendererControl;
-    else if (qstrcmp(name, QVideoWindowControl_iid) == 0)
-        return m_videoWindowControl;
-    else
-        return 0;
+    } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+        if (!m_videoRendererControl && !m_videoWindowControl) {
+            m_videoRendererControl = new DirectShowVideoRendererControl(m_loop);
+
+            connect(m_videoRendererControl, SIGNAL(filterChanged()),
+                    this, SLOT(videoOutputChanged()));
+
+            return m_videoRendererControl;
+        }
+    } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
+        if (!m_videoRendererControl && !m_videoWindowControl) {
+            m_videoWindowControl = new Vmr9VideoWindowControl;
+
+            setVideoOutput(m_videoWindowControl->filter());
+
+            return m_videoWindowControl;
+        }
+    }
+    return 0;
+}
+
+void DirectShowPlayerService::releaseControl(QMediaControl *control)
+{
+    if (!control) {
+        qWarning("QMediaService::releaseControl():"
+                " Attempted release of null control");
+    } else if (control == m_videoRendererControl) {
+        setVideoOutput(0);
+
+        delete m_videoRendererControl;
+
+        m_videoRendererControl = 0;
+    } else if (control == m_videoWindowControl) {
+        setVideoOutput(0);
+
+        delete m_videoWindowControl;
+
+        m_videoWindowControl = 0;
+    }
 }
 
 void DirectShowPlayerService::load(const QMediaContent &media, QIODevice *stream)
@@ -1120,20 +1142,7 @@ void DirectShowPlayerService::customEvent(QEvent *event)
 
 void DirectShowPlayerService::videoOutputChanged()
 {
-    IBaseFilter *videoOutput = 0;
-
-    switch (m_videoOutputControl->output()) {
-    case QVideoOutputControl::RendererOutput:
-        videoOutput = m_videoRendererControl->filter();
-        break;
-    case QVideoOutputControl::WindowOutput:
-        videoOutput = m_videoWindowControl->filter();
-        break;
-    default:
-        break;
-    }
-
-    setVideoOutput(videoOutput);
+    setVideoOutput(m_videoRendererControl->filter());
 }
 
 void DirectShowPlayerService::graphEvent(QMutexLocker *locker)

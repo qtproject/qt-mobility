@@ -15,7 +15,6 @@ HEADERS += \
         $$PWD\directshowplayercontrol.h \
         $$PWD\directshowplayerservice.h \
         $$PWD\directshowsamplescheduler.h \
-        $$PWD\directshowvideooutputcontrol.h \
         $$PWD\directshowvideorenderercontrol.h \
         $$PWD\mediasamplevideobuffer.h \
         $$PWD\videosurfacefilter.h \
@@ -33,7 +32,6 @@ SOURCES += \
         $$PWD\directshowplayercontrol.cpp \
         $$PWD\directshowplayerservice.cpp \
         $$PWD\directshowsamplescheduler.cpp \
-        $$PWD\directshowvideooutputcontrol.cpp \
         $$PWD\directshowvideorenderercontrol.cpp \
         $$PWD\mediasamplevideobuffer.cpp \
         $$PWD\videosurfacefilter.cpp \

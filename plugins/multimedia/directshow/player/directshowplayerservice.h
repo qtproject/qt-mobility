@@ -58,7 +58,6 @@
 class DirectShowAudioEndpointControl;
 class DirectShowMetaDataControl;
 class DirectShowPlayerControl;
-class DirectShowVideoOutputControl;
 class DirectShowVideoRendererControl;
 class Vmr9VideoWindowControl;
 
@@ -81,7 +80,8 @@ public:
     DirectShowPlayerService(QObject *parent = 0);
     ~DirectShowPlayerService();
 
-    QMediaControl* control(const char *name) const;
+    QMediaControl* requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 
     void load(const QMediaContent &media, QIODevice *stream);
     void play();
@@ -177,7 +177,6 @@ private:
 
     DirectShowPlayerControl *m_playerControl;
     DirectShowMetaDataControl *m_metaDataControl;
-    DirectShowVideoOutputControl *m_videoOutputControl;
     DirectShowVideoRendererControl *m_videoRendererControl;
     Vmr9VideoWindowControl *m_videoWindowControl;
     DirectShowAudioEndpointControl *m_audioEndpointControl;
