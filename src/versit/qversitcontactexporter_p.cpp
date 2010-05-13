@@ -144,7 +144,7 @@ bool QVersitContactExporterPrivate::exportContact(
             continue;
 
         QList<QVersitProperty> generatedProperties;
-        QStringList processedFields;
+        QSet<QString> processedFields;
 
         if (detail.definitionName() == QContactName::DefinitionName) {
             encodeName(detail, &document, &generatedProperties, &processedFields);
@@ -232,7 +232,7 @@ void QVersitContactExporterPrivate::encodeName(
     const QContactDetail& detail,
     QVersitDocument* document,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactName contactName = static_cast<QContactName>(detail);
     QVersitProperty property;
@@ -266,7 +266,7 @@ void QVersitContactExporterPrivate::encodeName(
     }
 
     *generatedProperties << fnProperty;
-    *processedDetails << QContactName::FieldLastName
+    *processedFields << QContactName::FieldLastName
                       << QContactName::FieldFirstName
                       << QContactName::FieldMiddleName
                       << QContactName::FieldPrefix
@@ -280,7 +280,7 @@ void QVersitContactExporterPrivate::encodeName(
 void QVersitContactExporterPrivate::encodePhoneNumber(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactPhoneNumber phoneNumber = static_cast<QContactPhoneNumber>(detail);
     QStringList subTypes = phoneNumber.subTypes();
@@ -292,7 +292,7 @@ void QVersitContactExporterPrivate::encodePhoneNumber(
     encodeParameters(property, phoneNumber.contexts(), subTypes);
     property.setValue(phoneNumber.number());
     *generatedProperties << property;
-    *processedDetails << QContactPhoneNumber::FieldContext
+    *processedFields << QContactPhoneNumber::FieldContext
                       << QContactPhoneNumber::FieldSubTypes
                       << QContactPhoneNumber::FieldNumber;
 }
@@ -303,7 +303,7 @@ void QVersitContactExporterPrivate::encodePhoneNumber(
 void QVersitContactExporterPrivate::encodeEmail(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactEmailAddress emailAddress = static_cast<QContactEmailAddress>(detail);
     QVersitProperty property;
@@ -311,7 +311,7 @@ void QVersitContactExporterPrivate::encodeEmail(
     encodeParameters(property, emailAddress.contexts());
     property.setValue(emailAddress.emailAddress());
     *generatedProperties << property;
-    *processedDetails << QContactEmailAddress::FieldContext
+    *processedFields << QContactEmailAddress::FieldContext
                       << QContactEmailAddress::FieldEmailAddress;
 }
 
@@ -321,7 +321,7 @@ void QVersitContactExporterPrivate::encodeEmail(
 void QVersitContactExporterPrivate::encodeAddress(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactAddress address = static_cast<QContactAddress>(detail);
     QVersitProperty property;
@@ -337,7 +337,7 @@ void QVersitContactExporterPrivate::encodeAddress(
                       << address.country());
     property.setValueType(QVersitProperty::CompoundType);
     *generatedProperties << property;
-    *processedDetails << QContactAddress::FieldContext
+    *processedFields << QContactAddress::FieldContext
                       << QContactAddress::FieldSubTypes
                       << QContactAddress::FieldPostOfficeBox
                       << QContactAddress::FieldStreet
@@ -353,7 +353,7 @@ void QVersitContactExporterPrivate::encodeAddress(
 void QVersitContactExporterPrivate::encodeUrl(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactUrl contactUrl = static_cast<QContactUrl>(detail);
     QVersitProperty property;
@@ -363,7 +363,7 @@ void QVersitContactExporterPrivate::encodeUrl(
     // No need to try to convert the subtypes to TYPEs.
     property.setValue(contactUrl.url());
     *generatedProperties << property;
-    *processedDetails << QContactUrl::FieldContext
+    *processedFields << QContactUrl::FieldContext
                       << QContactUrl::FieldUrl;
 }
 
@@ -373,14 +373,14 @@ void QVersitContactExporterPrivate::encodeUrl(
 void QVersitContactExporterPrivate::encodeUid(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactGuid uid = static_cast<QContactGuid>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
     property.setValue(uid.guid());
     *generatedProperties << property;
-    *processedDetails << QContactGuid::FieldGuid;
+    *processedFields << QContactGuid::FieldGuid;
 }
 
 /*!
@@ -389,7 +389,7 @@ void QVersitContactExporterPrivate::encodeUid(
 void QVersitContactExporterPrivate::encodeRev(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactTimestamp  rev = static_cast<QContactTimestamp>(detail);
     QString value;
@@ -405,7 +405,7 @@ void QVersitContactExporterPrivate::encodeRev(
         }
         property.setValue(value);
         *generatedProperties << property;
-        *processedDetails << QContactTimestamp::FieldModificationTimestamp;
+        *processedFields << QContactTimestamp::FieldModificationTimestamp;
     } else if ( rev.created().toString(Qt::ISODate).size()) {
         if ( rev.created().timeSpec() == Qt::UTC ) {
             value = rev.created().toString(Qt::ISODate) + QLatin1Char('Z');
@@ -415,7 +415,7 @@ void QVersitContactExporterPrivate::encodeRev(
         }
         property.setValue(value);
         *generatedProperties << property;
-        *processedDetails << QContactTimestamp::FieldCreationTimestamp;
+        *processedFields << QContactTimestamp::FieldCreationTimestamp;
     }
 }
 
@@ -425,7 +425,7 @@ void QVersitContactExporterPrivate::encodeRev(
 void QVersitContactExporterPrivate::encodeBirthDay(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactBirthday bday = static_cast<QContactBirthday>(detail);
     QVersitProperty property;
@@ -433,7 +433,7 @@ void QVersitContactExporterPrivate::encodeBirthDay(
     QString value = bday.date().toString(Qt::ISODate);
     property.setValue(value);
     *generatedProperties << property;
-    *processedDetails << QContactBirthday::FieldBirthday;
+    *processedFields << QContactBirthday::FieldBirthday;
 }
 
 /*!
@@ -442,14 +442,14 @@ void QVersitContactExporterPrivate::encodeBirthDay(
 void QVersitContactExporterPrivate::encodeNote(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactNote contactNote = static_cast<QContactNote>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
     property.setValue(contactNote.note());
     *generatedProperties << property;
-    *processedDetails << QContactNote::FieldNote;
+    *processedFields << QContactNote::FieldNote;
 }
 
 /*!
@@ -458,7 +458,7 @@ void QVersitContactExporterPrivate::encodeNote(
 void QVersitContactExporterPrivate::encodeGeoLocation(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactGeoLocation geoLocation = static_cast<QContactGeoLocation>(detail);
     QVersitProperty property;
@@ -467,7 +467,7 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
                       << QString::number(geoLocation.latitude()));
     property.setValueType(QVersitProperty::CompoundType);
     *generatedProperties << property;
-    *processedDetails << QContactGeoLocation::FieldLongitude
+    *processedFields << QContactGeoLocation::FieldLongitude
                       << QContactGeoLocation::FieldLatitude;
 }
 
@@ -477,7 +477,7 @@ void QVersitContactExporterPrivate::encodeGeoLocation(
 void QVersitContactExporterPrivate::encodeOrganization(
     const QContactDetail& detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactOrganization organization = static_cast<QContactOrganization>(detail);
     if (organization.title().length() > 0) {
@@ -485,7 +485,7 @@ void QVersitContactExporterPrivate::encodeOrganization(
         property.setName(QLatin1String("TITLE"));
         property.setValue(organization.title());
         *generatedProperties << property;
-        *processedDetails << QContactOrganization::FieldTitle;
+        *processedFields << QContactOrganization::FieldTitle;
     }
     if (organization.name().length() > 0 || organization.department().size() > 0) {
         QVersitProperty property;
@@ -495,7 +495,7 @@ void QVersitContactExporterPrivate::encodeOrganization(
         property.setValue(values);
         property.setValueType(QVersitProperty::CompoundType);
         *generatedProperties << property;
-        *processedDetails << QContactOrganization::FieldName
+        *processedFields << QContactOrganization::FieldName
                           << QContactOrganization::FieldDepartment;
     }
     if (organization.logoUrl().isValid()) {
@@ -503,7 +503,7 @@ void QVersitContactExporterPrivate::encodeOrganization(
         if (encodeContentFromFile(organization.logoUrl().toString(), property)) {
             property.setName(QLatin1String("LOGO"));
             *generatedProperties << property;
-            *processedDetails << QContactOrganization::FieldLogoUrl;
+            *processedFields << QContactOrganization::FieldLogoUrl;
         }
     }
     if (organization.assistantName().length() > 0) {
@@ -511,7 +511,7 @@ void QVersitContactExporterPrivate::encodeOrganization(
         property.setName(QLatin1String("X-ASSISTANT"));
         property.setValue(organization.assistantName());
         *generatedProperties << property;
-        *processedDetails << QContactOrganization::FieldAssistantName;
+        *processedFields << QContactOrganization::FieldAssistantName;
     }
 
     if (organization.role().length() > 0) {
@@ -519,21 +519,21 @@ void QVersitContactExporterPrivate::encodeOrganization(
         property.setName(QLatin1String("ROLE"));
         property.setValue(organization.role());
         *generatedProperties << property;
-        *processedDetails << QContactOrganization::FieldRole;
+        *processedFields << QContactOrganization::FieldRole;
     }
 }
 
 void QVersitContactExporterPrivate::encodeRingtone(
     const QContactDetail &detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactRingtone ringtone = static_cast<QContactRingtone>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
     if (encodeContentFromFile(ringtone.audioRingtoneUrl().toLocalFile(), property)) {
         *generatedProperties << property;
-        *processedDetails << QContactRingtone::FieldAudioRingtoneUrl;
+        *processedFields << QContactRingtone::FieldAudioRingtoneUrl;
     }
 }
 
@@ -543,7 +543,7 @@ void QVersitContactExporterPrivate::encodeRingtone(
 void QVersitContactExporterPrivate::encodeThumbnail(
     const QContactDetail &detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactThumbnail contactThumbnail = static_cast<QContactThumbnail>(detail);
     QVersitProperty property;
@@ -560,7 +560,7 @@ void QVersitContactExporterPrivate::encodeThumbnail(
     property.setValue(imageData);
     property.insertParameter(QLatin1String("TYPE"), QLatin1String("PNG"));
     *generatedProperties << property;
-    *processedDetails << QContactThumbnail::FieldThumbnail;
+    *processedFields << QContactThumbnail::FieldThumbnail;
 }
 
 /*!
@@ -569,7 +569,7 @@ void QVersitContactExporterPrivate::encodeThumbnail(
 void QVersitContactExporterPrivate::encodeAvatar(
     const QContactDetail &detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QVersitProperty property;
     property.setName(QLatin1String("PHOTO"));
@@ -581,11 +581,11 @@ void QVersitContactExporterPrivate::encodeAvatar(
         property.insertParameter(QLatin1String("VALUE"), QLatin1String("URL"));
         property.setValue(imageUrl.toString());
         *generatedProperties << property;
-        *processedDetails << QContactAvatar::FieldImageUrl;
+        *processedFields << QContactAvatar::FieldImageUrl;
     } else {
         if (encodeContentFromFile(contactAvatar.imageUrl().toString(), property)) {
             *generatedProperties << property;
-            *processedDetails << QContactAvatar::FieldImageUrl;
+            *processedFields << QContactAvatar::FieldImageUrl;
         }
     }
 }
@@ -596,14 +596,14 @@ void QVersitContactExporterPrivate::encodeAvatar(
 void QVersitContactExporterPrivate::encodeGender(
     const QContactDetail &detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactGender gender = static_cast<QContactGender>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
     property.setValue(gender.gender());
     *generatedProperties << property;
-    *processedDetails << QContactGender::FieldGender;
+    *processedFields << QContactGender::FieldGender;
 }
 
 /*!
@@ -613,7 +613,7 @@ void QVersitContactExporterPrivate::encodeNickname(
     const QContactDetail &detail,
     QVersitDocument* document,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactNickname nicknameDetail = static_cast<QContactNickname>(detail);
     QVersitProperty property = takeProperty(document, QLatin1String("X-NICKNAME"));
@@ -623,7 +623,7 @@ void QVersitContactExporterPrivate::encodeNickname(
     property.setValue(value);
     property.setValueType(QVersitProperty::ListType);
     *generatedProperties << property;
-    *processedDetails << QContactNickname::FieldNickname;
+    *processedFields << QContactNickname::FieldNickname;
 }
 
 /*!
@@ -633,7 +633,7 @@ void QVersitContactExporterPrivate::encodeTag(
     const QContactDetail &detail,
     QVersitDocument* document,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactTag tagDetail = static_cast<QContactTag>(detail);
     QVersitProperty property = takeProperty(document, QLatin1String("CATEGORIES"));
@@ -643,7 +643,7 @@ void QVersitContactExporterPrivate::encodeTag(
     property.setValue(value);
     property.setValueType(QVersitProperty::ListType);
     *generatedProperties << property;
-    *processedDetails << QContactTag::FieldTag;
+    *processedFields << QContactTag::FieldTag;
 }
 
 /*!
@@ -652,14 +652,14 @@ void QVersitContactExporterPrivate::encodeTag(
 void QVersitContactExporterPrivate::encodeAnniversary(
     const QContactDetail &detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactAnniversary anniversary = static_cast<QContactAnniversary>(detail);
     QVersitProperty property;
     property.setName(mPropertyMappings.value(detail.definitionName()));
     property.setValue(anniversary.originalDate().toString(Qt::ISODate));
     *generatedProperties << property;
-    *processedDetails << QContactAnniversary::FieldOriginalDate;
+    *processedFields << QContactAnniversary::FieldOriginalDate;
 }
 
 /*!
@@ -668,7 +668,7 @@ void QVersitContactExporterPrivate::encodeAnniversary(
 void QVersitContactExporterPrivate::encodeOnlineAccount(
     const QContactDetail &detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactOnlineAccount onlineAccount = static_cast<QContactOnlineAccount>(detail);
     QStringList subTypes = onlineAccount.subTypes();
@@ -685,7 +685,7 @@ void QVersitContactExporterPrivate::encodeOnlineAccount(
         property.setName(name);
         property.setValue(onlineAccount.accountUri());
         *generatedProperties << property;
-        *processedDetails << QContactOnlineAccount::FieldSubTypes
+        *processedFields << QContactOnlineAccount::FieldSubTypes
                           << QContactOnlineAccount::FieldAccountUri;
     }
 }
@@ -696,7 +696,7 @@ void QVersitContactExporterPrivate::encodeOnlineAccount(
 void QVersitContactExporterPrivate::encodeFamily(
     const QContactDetail &detail,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     QContactFamily family = static_cast<QContactFamily>(detail);
 
@@ -705,7 +705,7 @@ void QVersitContactExporterPrivate::encodeFamily(
         property.setName(QLatin1String("X-SPOUSE"));
         property.setValue(family.spouse());
         *generatedProperties << property;
-        *processedDetails << QContactFamily::FieldSpouse;
+        *processedFields << QContactFamily::FieldSpouse;
     }
 
     if (family.children().size()) {
@@ -714,7 +714,7 @@ void QVersitContactExporterPrivate::encodeFamily(
         property.setValue(family.children());
         property.setValueType(QVersitProperty::ListType);
         *generatedProperties << property;
-        *processedDetails << QContactFamily::FieldChildren;
+        *processedFields << QContactFamily::FieldChildren;
     }
 }
 
@@ -726,7 +726,7 @@ void QVersitContactExporterPrivate::encodeDisplayLabel(
     const QContactDetail &detail,
     QVersitDocument* document,
     QList<QVersitProperty>* generatedProperties,
-    QStringList* processedDetails)
+    QSet<QString>* processedFields)
 {
     // Override any previous FN property
     QVersitProperty property = takeProperty(document, QLatin1String("FN"));
@@ -735,7 +735,7 @@ void QVersitContactExporterPrivate::encodeDisplayLabel(
     if (!displayLabel.label().isEmpty()) {
         property.setValue(displayLabel.label());
         *generatedProperties << property;
-        *processedDetails << QContactDisplayLabel::FieldLabel;
+        *processedFields << QContactDisplayLabel::FieldLabel;
     }
 }
 

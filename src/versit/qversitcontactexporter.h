@@ -77,7 +77,7 @@ public:
                                   QVersitDocument* document) = 0;
     virtual bool postProcessDetail(const QContact& contact,
                                    const QContactDetail& detail,
-                                   const QStringList& processedFields,
+                                   const QSet<QString>& processedFields,
                                    QVersitDocument* document,
                                    QList<QVersitProperty>* toBeAdded) = 0;
     virtual int version() const { return 2; }

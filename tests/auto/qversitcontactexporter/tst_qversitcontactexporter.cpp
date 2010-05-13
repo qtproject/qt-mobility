@@ -139,7 +139,7 @@ public:
 
     bool postProcessDetail(const QContact& contact,
                            const QContactDetail& detail,
-                           const QStringList& processedFields,
+                           const QSet<QString>& processedFields,
                            QVersitDocument* document,
                            QList<QVersitProperty>* toBeAdded)
     {
@@ -153,7 +153,7 @@ public:
 
     QContact mContact;
     QContactDetail mDetail;
-    QStringList mProcessedFields;
+    QSet<QString> mProcessedFields;
     QVersitDocument mDocument;
     QList<QVersitProperty> mToBeAdded;
 
