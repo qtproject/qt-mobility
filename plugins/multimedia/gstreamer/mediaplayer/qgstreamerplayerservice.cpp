@@ -47,7 +47,6 @@
 #include "qgstreamerplayercontrol.h"
 #include "qgstreamerplayersession.h"
 #include "qgstreamermetadataprovider.h"
-#include "qgstreamervideooutputcontrol.h"
 
 #include "qgstreamervideooverlay.h"
 #include "qgstreamervideorenderer.h"
@@ -60,6 +59,7 @@
 
 QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
      QMediaService(parent),
+     m_videoOutput(0),
      m_videoRenderer(0),
      m_videoWindow(0),
      m_videoWidget(0)
@@ -67,36 +67,20 @@ QGstreamerPlayerService::QGstreamerPlayerService(QObject *parent):
     m_session = new QGstreamerPlayerSession(this);
     m_control = new QGstreamerPlayerControl(m_session, this);
     m_metaData = new QGstreamerMetaDataProvider(m_session, this);
-    m_videoOutput = new QGstreamerVideoOutputControl(this);
     m_streamsControl = new QGstreamerStreamsControl(m_session,this);
-
-    connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-            this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
 
     m_videoRenderer = new QGstreamerVideoRenderer(this);
 #if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     m_videoWindow = new QGstreamerVideoOverlay(this);
     m_videoWidget = new QGstreamerVideoWidgetControl(this);
 #endif
-
-    QList<QVideoOutputControl::Output> outputs;
-
-    if (m_videoRenderer)
-        outputs << QVideoOutputControl::RendererOutput;
-    if (m_videoWidget)
-        outputs << QVideoOutputControl::WidgetOutput;
-    if (m_videoWindow)
-        outputs << QVideoOutputControl::WindowOutput;
-
-
-    m_videoOutput->setAvailableOutputs(outputs);
 }
 
 QGstreamerPlayerService::~QGstreamerPlayerService()
 {
 }
 
-QMediaControl *QGstreamerPlayerService::control(const char *name) const
+QMediaControl *QGstreamerPlayerService::requestControl(const char *name)
 {
     if (qstrcmp(name,QMediaPlayerControl_iid) == 0)
         return m_control;
@@ -107,39 +91,28 @@ QMediaControl *QGstreamerPlayerService::control(const char *name) const
     if (qstrcmp(name,QMediaStreamsControl_iid) == 0)
         return m_streamsControl;
 
-    if (qstrcmp(name, QVideoOutputControl_iid) == 0)
-        return m_videoOutput;
+    if (!m_videoOutput) {
+        if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
+            m_videoOutput = m_videoWidget;
+        else if (qstrcmp(name, QVideoRendererControl_iid) == 0)
+            m_videoOutput = m_videoRenderer;
+        else  if (qstrcmp(name, QVideoWindowControl_iid) == 0)
+            m_videoOutput = m_videoWindow;
 
-    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
-        return m_videoWidget;
-
-    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
-        return m_videoRenderer;
-
-    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
-        return m_videoWindow;
+        if (m_videoOutput) {
+            m_control->setVideoOutput(m_videoOutput);
+            return m_videoOutput;
+        }
+    }
 
     return 0;
 }
 
-void QGstreamerPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
+void QGstreamerPlayerService::releaseControl(QMediaControl *control)
 {
-    switch (output) {
-    case QVideoOutputControl::NoOutput:
+    if (control == m_videoOutput) {
+        m_videoOutput = 0;
         m_control->setVideoOutput(0);
-        break;
-    case QVideoOutputControl::RendererOutput:
-        m_control->setVideoOutput(m_videoRenderer);
-        break;
-    case QVideoOutputControl::WindowOutput:
-        m_control->setVideoOutput(m_videoWindow);
-        break;
-    case QVideoOutputControl::WidgetOutput:
-        m_control->setVideoOutput(m_videoWidget);
-        break;
-    default:
-        qWarning("Invalid video output selection");
-        break;
     }
 }
 

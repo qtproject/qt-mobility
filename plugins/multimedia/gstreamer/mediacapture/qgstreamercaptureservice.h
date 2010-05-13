@@ -44,8 +44,6 @@
 
 #include <qmediaservice.h>
 
-#include "qgstreamervideooutputcontrol.h"
-
 #include <gst/gst.h>
 QT_BEGIN_NAMESPACE
 class QAudioEndpointSelector;
@@ -72,10 +70,8 @@ public:
     QGstreamerCaptureService(const QString &service, QObject *parent = 0);
     virtual ~QGstreamerCaptureService();
 
-    QMediaControl *control(const char *name) const;
-
-private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);    
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *);
 
 private:
     void setAudioPreview(GstElement*);
@@ -87,7 +83,8 @@ private:
     QAudioEndpointSelector *m_audioInputEndpointSelector;
     QVideoDeviceControl *m_videoInputDevice;
 
-    QGstreamerVideoOutputControl *m_videoOutput;
+    QMediaControl *m_videoOutput;
+
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerElementFactory *m_videoRendererFactory;
     QMediaControl *m_videoWindow;
