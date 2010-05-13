@@ -200,7 +200,7 @@ platform have been met before building.
 If Qt is installed for multiple platforms it is also important 
 to ensure that the correct version of \c{qmake} is being used.
 
-bold{Note:} Static builds of Qt are not supported by Qt Mobility.
+\bold{Note:} Static builds of Qt are not supported by Qt Mobility.
 
 \section2 Building On Unix
 
