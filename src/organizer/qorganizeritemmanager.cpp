@@ -325,6 +325,21 @@ QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItemF
 }
 
 /*!
+  Return the list of a maximum of \a maxCount organizer item instances which are occurrences of the given \a generator recurring item, which
+  occur between the given \a periodStart date and the given \a periodEnd date.
+
+  If \a periodStart is after \a periodEnd, the operation will fail.
+  If \a maxCount is negative, it is backend specific as to how many occurrences will be returned.
+  Some backends may return no instances, others may return some limited number of occurrences.
+  */
+QList<QOrganizerItem> QOrganizerItemManager::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->itemInstances(generator, periodStart, periodEnd, maxCount, &d->m_error);
+}
+
+
+/*!
   Return the list of organizeritem ids, sorted according to the given list of \a sortOrders
  */
 QList<QOrganizerItemLocalId> QOrganizerItemManager::itemIds(const QList<QOrganizerItemSortOrder>& sortOrders) const
