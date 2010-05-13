@@ -99,7 +99,8 @@ private slots:
 private:
     // Test Utility Functions
     QContact createContactWithName(QString name);
-    QContactDetail searchDetail(QList<QContactDetail> details, QString search);
+    int countProperties(const QVersitDocument& document);
+    QContactDetail findDetailByName(QList<QContactDetail> details, QString search);
     QVersitProperty findPropertyByName(const QVersitDocument& document,const QString& propertyName);
 
 private: // Data

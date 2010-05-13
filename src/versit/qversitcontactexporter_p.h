@@ -77,6 +77,7 @@ protected:
     static bool documentContainsName(const QVersitDocument& document);
     void encodeName(
             const QContactDetail& detail,
+            QVersitDocument* document,
             QList<QVersitProperty>* generatedProperties,
             QStringList* processedDetails);
     void encodePhoneNumber(
@@ -159,9 +160,10 @@ protected:
             QStringList* processedDetails);
     void encodeDisplayLabel(
             const QContactDetail &detail,
-            const QContact& contact,
+            QVersitDocument* document,
             QList<QVersitProperty>* generatedProperties,
             QStringList* processedDetails);
+    QVersitProperty takeProperty(QVersitDocument* document, const QString& propertyName);
     bool isValidRemoteUrl(const QString& resourceIdentifier);
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,

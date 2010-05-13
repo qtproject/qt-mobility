@@ -139,12 +139,15 @@ bool QVersitContactExporterPrivate::exportContact(
         if (mDetailHandler
             && mDetailHandler->preProcessDetail(contact, detail, &document))
             continue;
+        if (mDetailHandler2
+            && mDetailHandler2->preProcessDetail(contact, detail, &document))
+            continue;
 
         QList<QVersitProperty> generatedProperties;
         QStringList processedFields;
 
         if (detail.definitionName() == QContactName::DefinitionName) {
-            encodeName(detail, &generatedProperties, &processedFields);
+            encodeName(detail, &document, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactPhoneNumber::DefinitionName) {
             encodePhoneNumber(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactEmailAddress::DefinitionName) {
@@ -184,7 +187,7 @@ bool QVersitContactExporterPrivate::exportContact(
         } else if (detail.definitionName() == QContactFamily::DefinitionName) {
             encodeFamily(detail, &generatedProperties, &processedFields);
         } else if (detail.definitionName() == QContactDisplayLabel::DefinitionName) {
-            encodeDisplayLabel(detail, contact, &generatedProperties, &processedFields);
+            encodeDisplayLabel(detail, &document, &generatedProperties, &processedFields);
         }
 
         if (mDetailHandler && mDetailHandlerVersion == 1) {
@@ -227,6 +230,7 @@ bool QVersitContactExporterPrivate::documentContainsName(const QVersitDocument &
  */
 void QVersitContactExporterPrivate::encodeName(
     const QContactDetail& detail,
+    QVersitDocument* document,
     QList<QVersitProperty>* generatedProperties,
     QStringList* processedDetails)
 {
@@ -241,11 +245,33 @@ void QVersitContactExporterPrivate::encodeName(
                       << contactName.suffix());
     property.setValueType(QVersitProperty::CompoundType);
     *generatedProperties << property;
+
+    // Generate an FN field if none is already there
+    // Don't override previously exported FN properties (eg. exported by a DisplayLabel detail)
+    QVersitProperty fnProperty = takeProperty(document, QLatin1String("FN"));
+    if (fnProperty.value().isEmpty()) {
+        fnProperty.setName(QLatin1String("FN"));
+        if (!contactName.customLabel().isEmpty()) {
+            fnProperty.setValue(contactName.customLabel());
+        } else if (!contactName.firstName().isEmpty()) {
+            if (!contactName.lastName().isEmpty()) {
+                fnProperty.setValue(QString::fromAscii("%1 %2").arg(contactName.firstName(),
+                                                                    contactName.lastName()));
+            } else {
+                fnProperty.setValue(contactName.firstName());
+            }
+        } else if (!contactName.lastName().isEmpty()) {
+            fnProperty.setValue(contactName.lastName());
+        }
+    }
+
+    *generatedProperties << fnProperty;
     *processedDetails << QContactName::FieldLastName
                       << QContactName::FieldFirstName
                       << QContactName::FieldMiddleName
                       << QContactName::FieldPrefix
-                      << QContactName::FieldSuffix;
+                      << QContactName::FieldSuffix
+                      << QContactName::FieldCustomLabel;
 }
 
 /*!
@@ -590,23 +616,9 @@ void QVersitContactExporterPrivate::encodeNickname(
     QStringList* processedDetails)
 {
     QContactNickname nicknameDetail = static_cast<QContactNickname>(detail);
-    QVersitProperty property;
-    bool found = false;
-    // Collate X-NICKNAME properties
-    // Although we support NICKNAME and X-NICKNAME on import, we export as X-NICKNAME
-    // We only need to consolidate X-NICKNAME properties because that's the only ones we generate
-    foreach (const QVersitProperty& currentProperty, document->properties()) {
-        if (currentProperty.name() == QLatin1String("X-NICKNAME")) {
-            property = currentProperty;
-            // Remove the existing one
-            document->removeProperty(currentProperty);
-            found = true;
-            break;
-        }
-    }
+    QVersitProperty property = takeProperty(document, QLatin1String("X-NICKNAME"));
+    property.setName(QLatin1String("X-NICKNAME"));
     QStringList value(property.variantValue().toStringList());
-    if (!found)
-        property.setName(QLatin1String("X-NICKNAME"));
     value.append(nicknameDetail.nickname());
     property.setValue(value);
     property.setValueType(QVersitProperty::ListType);
@@ -624,20 +636,9 @@ void QVersitContactExporterPrivate::encodeTag(
     QStringList* processedDetails)
 {
     QContactTag tagDetail = static_cast<QContactTag>(detail);
-    QVersitProperty property;
-    bool found = false;
-    foreach (const QVersitProperty& currentProperty, document->properties()) {
-        if (currentProperty.name() == QLatin1String("CATEGORIES")) {
-            property = currentProperty;
-            // Remove the existing one
-            document->removeProperty(currentProperty);
-            found = true;
-            break;
-        }
-    }
+    QVersitProperty property = takeProperty(document, QLatin1String("CATEGORIES"));
+    property.setName(QLatin1String("CATEGORIES"));
     QStringList value(property.variantValue().toStringList());
-    if (!found)
-        property.setName(QLatin1String("CATEGORIES"));
     value.append(tagDetail.tag());
     property.setValue(value);
     property.setValueType(QVersitProperty::ListType);
@@ -723,42 +724,33 @@ void QVersitContactExporterPrivate::encodeFamily(
  */
 void QVersitContactExporterPrivate::encodeDisplayLabel(
     const QContactDetail &detail,
-    const QContact& contact,
+    QVersitDocument* document,
     QList<QVersitProperty>* generatedProperties,
     QStringList* processedDetails)
 {
-    QVersitProperty property;
+    // Override any previous FN property
+    QVersitProperty property = takeProperty(document, QLatin1String("FN"));
     property.setName(mPropertyMappings.value(detail.definitionName()));
     QContactDisplayLabel displayLabel = static_cast<QContactDisplayLabel>(detail);
-    if (displayLabel.label().size()) {
+    if (!displayLabel.label().isEmpty()) {
         property.setValue(displayLabel.label());
         *generatedProperties << property;
         *processedDetails << QContactDisplayLabel::FieldLabel;
-    } else {
-        QContactDetail contactDetail;
-        // TODO XXX: remove this ugly hack to fall back to QContactName on empty QCDisplayLabel
-        for (int i = 0; i < contact.details().count(); i++) {
-            contactDetail = contact.details().at(i);
-            if (contactDetail.definitionName() == QContactName::DefinitionName)
-                break;
-        }
-        QContactName name = static_cast<QContactName>(contactDetail);
-        QString value;
-        if (name.customLabel().length()) {
-            value = name.customLabel();
-            *processedDetails << QContactName::FieldCustomLabel;
-        } else {
-            value = name.firstName() + QLatin1Char(' ') + name.lastName();
-            *processedDetails << QContactName::FieldFirstName
-                              << QContactName::FieldLastName;
-        }
-        if (name.customLabel().length() ||
-            name.firstName().length() ||
-            name.lastName().length()) {
-            property.setValue(value);
-            *generatedProperties << property;
+    }
+}
+
+/*!
+ * Finds a property in the \a document with the given \a propertyName, removes it and returns it.
+ */
+QVersitProperty QVersitContactExporterPrivate::takeProperty(QVersitDocument* document,
+                                                            const QString& propertyName) {
+    foreach (const QVersitProperty& currentProperty, document->properties()) {
+        if (currentProperty.name() == propertyName) {
+            document->removeProperty(currentProperty);
+            return currentProperty;
         }
     }
+    return QVersitProperty();
 }
 
 /*!
