@@ -76,12 +76,14 @@ QTM_USE_NAMESPACE
  * Constructor.
  */
 QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
-    mDetailHandler(NULL),
-    mDetailHandler2(NULL),
+    mDefaultDetailHandler(new QVersitContactExporterDefaultDetailHandler),
     mDefaultResourceHandler(new QVersitDefaultResourceHandler),
     mVersitType(QVersitDocument::InvalidType)
 {
     mResourceHandler = mDefaultResourceHandler;
+    mDetailHandler = NULL;
+    mDetailHandler2 = mDefaultDetailHandler;
+    mDetailHandlerVersion = mDetailHandler2->version();
 
     // Detail mappings
     int versitPropertyCount =
@@ -114,6 +116,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
  */
 QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 {
+    delete mDefaultDetailHandler;
     delete mDefaultResourceHandler;
 }
 
@@ -140,7 +143,7 @@ bool QVersitContactExporterPrivate::exportContact(
             && mDetailHandler->preProcessDetail(contact, detail, &document))
             continue;
         if (mDetailHandler2
-            && mDetailHandler2->preProcessDetail(contact, detail, &document))
+            && mDetailHandler2->beforeProcessDetail(contact, detail, &document))
             continue;
 
         QList<QVersitProperty> generatedProperties;
@@ -194,7 +197,7 @@ bool QVersitContactExporterPrivate::exportContact(
             mDetailHandler->postProcessDetail(contact, detail, !processedFields.isEmpty(), &document);
         }
         if (mDetailHandler2 && mDetailHandlerVersion > 1) {
-            mDetailHandler2->postProcessDetail(contact, detail, processedFields, &document,
+            mDetailHandler2->afterProcessDetail(contact, detail, processedFields, &document,
                                                &generatedProperties);
         }
 

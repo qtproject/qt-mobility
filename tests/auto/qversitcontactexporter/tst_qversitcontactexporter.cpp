@@ -129,15 +129,17 @@ public:
     {
     }
 
-    bool preProcessDetail(const QContact& contact,
+    bool beforeProcessDetail(const QContact& contact,
                           const QContactDetail& detail,
                           QVersitDocument* document)
     {
-        Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
+        Q_UNUSED(contact)
+        Q_UNUSED(detail)
+        Q_UNUSED(document)
         return false;
     }
 
-    bool postProcessDetail(const QContact& contact,
+    bool afterProcessDetail(const QContact& contact,
                            const QContactDetail& detail,
                            const QSet<QString>& processedFields,
                            QVersitDocument* document,
