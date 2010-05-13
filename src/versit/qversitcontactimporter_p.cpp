@@ -304,11 +304,21 @@ bool QVersitContactImporterPrivate::createName(
             || variant.type() != QVariant::StringList)
         return false;
     QStringList values = variant.toStringList();
-    name.setLastName(takeFirst(values));
-    name.setFirstName(takeFirst(values));
-    name.setMiddleName(takeFirst(values));
-    name.setPrefix(takeFirst(values));
-    name.setSuffix(takeFirst(values));
+    QString value(takeFirst(values));
+    if (!value.isEmpty())
+        name.setLastName(value);
+    value = takeFirst(values);
+    if (!value.isEmpty())
+        name.setFirstName(value);
+    value = takeFirst(values);
+    if (!value.isEmpty())
+        name.setMiddleName(value);
+    value = takeFirst(values);
+    if (!value.isEmpty())
+        name.setPrefix(value);
+    value = takeFirst(values);
+    if (!value.isEmpty())
+        name.setSuffix(value);
 
     saveDetailWithContext(groupName, updatedDetails, name, extractContexts(property));
     return true;
@@ -351,15 +361,27 @@ bool QVersitContactImporterPrivate::createAddress(
             || variant.type() != QVariant::StringList)
         return false;
     QStringList addressParts = variant.toStringList();
-    address.setPostOfficeBox(takeFirst(addressParts));
+    QString value(takeFirst(addressParts));
+    if (!value.isEmpty())
+        address.setPostOfficeBox(value);
     // There is no setter for the Extended Address in QContactAddress:
     if (!addressParts.isEmpty())
         addressParts.removeFirst();
-    address.setStreet(takeFirst(addressParts));
-    address.setLocality(takeFirst(addressParts));
-    address.setRegion(takeFirst(addressParts));
-    address.setPostcode(takeFirst(addressParts));
-    address.setCountry(takeFirst(addressParts));
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setStreet(value);
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setLocality(value);
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setRegion(value);
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setPostcode(value);
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setCountry(value);
     address.setSubTypes(extractSubTypes(property));
 
     saveDetailWithContext(groupName, updatedDetails, address, extractContexts(property));
