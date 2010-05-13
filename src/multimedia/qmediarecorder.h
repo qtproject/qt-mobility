@@ -61,7 +61,7 @@ class QAudioEncoderSettings;
 class QVideoEncoderSettings;
 
 class QMediaRecorderPrivate;
-class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
+class Q_MEDIA_EXPORT QMediaRecorder : public QObject
 {
     Q_OBJECT
     Q_ENUMS(State)
@@ -87,6 +87,8 @@ public:
 
     QMediaRecorder(QMediaObject *mediaObject, QObject *parent = 0);
     ~QMediaRecorder();
+
+    void bind(QMediaObject *object);
 
     bool isAvailable() const;
     QtMediaServices::AvailabilityError availabilityError() const;
@@ -143,10 +145,12 @@ Q_SIGNALS:
     void error(QMediaRecorder::Error error);
 
 private:
+    QMediaRecorderPrivate *d_ptr;
     Q_DISABLE_COPY(QMediaRecorder)
     Q_DECLARE_PRIVATE(QMediaRecorder)
     Q_PRIVATE_SLOT(d_func(), void _q_stateChanged(QMediaRecorder::State))
     Q_PRIVATE_SLOT(d_func(), void _q_error(int, const QString &))
+    Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
 };
 
 QT_END_NAMESPACE
