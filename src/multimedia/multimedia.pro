@@ -49,7 +49,6 @@ PUBLIC_HEADERS += \
     qradiotuner.h \
     qradiotunercontrol.h \
     qtmedianamespace.h \
-    qvideooutputcontrol.h \
     qvideowidget.h \
     qvideowindowcontrol.h \
     qvideowidgetcontrol.h \
@@ -87,7 +86,6 @@ SOURCES += qmediacontrol.cpp \
     qmediastreamscontrol.cpp \
     qradiotuner.cpp \
     qradiotunercontrol.cpp \
-    qvideooutputcontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \
     qvideowidgetcontrol.cpp \
