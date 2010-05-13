@@ -108,7 +108,7 @@ Player::Player(QWidget *parent)
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
     
-    audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(player->service()->control(QAudioEndpointSelector_iid));
+    audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(player->service()->requestControl(QAudioEndpointSelector_iid));
     connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)), this, SLOT(handleAudioOutputChangedSignal(const QString&)));
 
 #ifndef Q_OS_SYMBIAN
