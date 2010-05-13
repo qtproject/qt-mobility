@@ -166,7 +166,7 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
     QMediaPlaylistControl *newControl = 0;
 
     if (service)
-        newControl = qobject_cast<QMediaPlaylistControl*>(service->control(QMediaPlaylistControl_iid));
+        newControl = qobject_cast<QMediaPlaylistControl*>(service->requestControl(QMediaPlaylistControl_iid));
 
     if (!newControl)
         newControl = d->localPlaylistControl;
@@ -193,6 +193,8 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
                     this, SIGNAL(currentIndexChanged(int)));
             disconnect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
                     this, SIGNAL(currentMediaChanged(QMediaContent)));
+
+            d->mediaObject->service()->releaseControl(d->control);
         }
 
         d->control = newControl;
