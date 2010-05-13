@@ -44,10 +44,10 @@
 #include <qmediaobject.h>
 #include <qmediaservice.h>
 #include <qpaintervideosurface_p.h>
-#include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
 
 #include <QtCore/qcoreevent.h>
+#include <QtCore/qpointer.h>
 
 #include <QtMultimedia/qvideosurfaceformat.h>
 
@@ -65,7 +65,6 @@ public:
         , surface(0)
         , mediaObject(0)
         , service(0)
-        , outputControl(0)
         , rendererControl(0)
         , aspectRatioMode(Qt::KeepAspectRatio)
         , updatePaintDevice(true)
@@ -76,9 +75,8 @@ public:
     QGraphicsVideoItem *q_ptr;
 
     QPainterVideoSurface *surface;
-    QMediaObject *mediaObject;
+    QPointer<QMediaObject> mediaObject;
     QMediaService *service;
-    QVideoOutputControl *outputControl;
     QVideoRendererControl *rendererControl;
     Qt::AspectRatioMode aspectRatioMode;
     bool updatePaintDevice;
@@ -93,18 +91,14 @@ public:
     void _q_present();
     void _q_formatChanged(const QVideoSurfaceFormat &format);
     void _q_serviceDestroyed();
-    void _q_mediaObjectDestroyed();
 };
 
 void QGraphicsVideoItemPrivate::clearService()
 {
-    if (outputControl) {
-        outputControl->setOutput(QVideoOutputControl::NoOutput);
-        outputControl = 0;
-    }
     if (rendererControl) {
         surface->stop();
         rendererControl->setSurface(0);
+        service->releaseControl(rendererControl);
         rendererControl = 0;
     }
     if (service) {
@@ -164,18 +158,11 @@ void QGraphicsVideoItemPrivate::_q_formatChanged(const QVideoSurfaceFormat &form
 void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 {
     rendererControl = 0;
-    outputControl = 0;
     service = 0;
 
     surface->stop();
 }
 
-void QGraphicsVideoItemPrivate::_q_mediaObjectDestroyed()
-{
-    mediaObject = 0;
-
-    clearService();
-}
 
 /*!
     \class QGraphicsVideoItem
@@ -229,9 +216,6 @@ QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
 */
 QGraphicsVideoItem::~QGraphicsVideoItem()
 {
-    if (d_ptr->outputControl)
-        d_ptr->outputControl->setOutput(QVideoOutputControl::NoOutput);
-
     if (d_ptr->rendererControl)
         d_ptr->rendererControl->setSurface(0);
 
@@ -259,36 +243,29 @@ void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
 
     d->clearService();
 
-    if (d->mediaObject) {
-        disconnect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
-        d->mediaObject->unbind(this);
-    }
-
     d->mediaObject = object;
 
     if (d->mediaObject) {
-        d->mediaObject->bind(this);
-
-        connect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
-
         d->service = d->mediaObject->service();
 
         if (d->service) {
-            connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+            QMediaControl *control = d->service->requestControl(QVideoRendererControl_iid);
+            if (control) {
+                d->rendererControl = qobject_cast<QVideoRendererControl *>(control);
 
-            d->outputControl = qobject_cast<QVideoOutputControl *>(
-                    d->service->control(QVideoOutputControl_iid));
-            d->rendererControl = qobject_cast<QVideoRendererControl *>(
-                    d->service->control(QVideoRendererControl_iid));
+                if (d->rendererControl) {
+                    d->rendererControl->setSurface(d->surface);
 
-            if (d->outputControl != 0 && d->rendererControl != 0) {
-                d->rendererControl->setSurface(d->surface);
+                    connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
 
-                if (isVisible())
-                    d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
+                    return /*true*/;
+                }
+                d->service->releaseControl(control);
             }
         }
     }
+
+    /*return false;*/
 }
 
 /*!

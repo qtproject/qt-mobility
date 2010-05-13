@@ -45,7 +45,6 @@
 #include "qmediaobject.h"
 #include "qmediaservice.h"
 #include "qpaintervideosurface_p.h"
-#include "qvideooutputcontrol.h"
 #include "qvideorenderercontrol.h"
 
 #include <QtMultimedia/qabstractvideosurface.h>
@@ -65,7 +64,6 @@ public slots:
 private slots:
     void nullObject();
     void nullService();
-    void nullOutputControl();
     void noOutputs();
     void serviceDestroyed();
     void mediaObjectDestroyed();
@@ -88,22 +86,6 @@ private slots:
 Q_DECLARE_METATYPE(const uchar *)
 Q_DECLARE_METATYPE(Qt::AspectRatioMode)
 
-class QtTestOutputControl : public QVideoOutputControl
-{
-public:
-    QtTestOutputControl() : m_output(NoOutput) {}
-
-    QList<Output> availableOutputs() const { return m_outputs; }
-    void setAvailableOutputs(const QList<Output> outputs) { m_outputs = outputs; }
-
-    Output output() const { return m_output; }
-    virtual void setOutput(Output output) { m_output = output; }
-
-private:
-    Output m_output;
-    QList<Output> m_outputs;
-};
-
 class QtTestRendererControl : public QVideoRendererControl
 {
 public:
@@ -124,31 +106,38 @@ class QtTestVideoService : public QMediaService
     Q_OBJECT
 public:
     QtTestVideoService(
-            QtTestOutputControl *output,
             QtTestRendererControl *renderer)
         : QMediaService(0)
-        , outputControl(output)
+        , rendererRef(0)
         , rendererControl(renderer)
     {
     }
 
     ~QtTestVideoService()
     {
-        delete outputControl;
         delete rendererControl;
     }
 
-    QMediaControl *control(const char *name) const
+    QMediaControl *requestControl(const char *name)
     {
-        if (qstrcmp(name, QVideoOutputControl_iid) == 0)
-            return outputControl;
-        else if (qstrcmp(name, QVideoRendererControl_iid) == 0)
+        if (qstrcmp(name, QVideoRendererControl_iid) == 0 && rendererControl) {
+            rendererRef += 1;
+
             return rendererControl;
-        else
+        } else {
             return 0;
+        }
     }
 
-    QtTestOutputControl *outputControl;
+    void releaseControl(QMediaControl *control)
+    {
+        Q_ASSERT(control);
+
+        if (control == rendererControl)
+            rendererRef -= 1;
+    }
+
+    int rendererRef;
     QtTestRendererControl *rendererControl;
 };
 
@@ -156,16 +145,10 @@ class QtTestVideoObject : public QMediaObject
 {
     Q_OBJECT
 public:
-    QtTestVideoObject(QtTestRendererControl *renderer):
-        QMediaObject(0, new QtTestVideoService(new QtTestOutputControl, renderer))
+    QtTestVideoObject(QtTestRendererControl *renderer)
+        : QMediaObject(0, new QtTestVideoService(renderer))
     {
         testService = qobject_cast<QtTestVideoService*>(service());
-        QList<QVideoOutputControl::Output> outputs;
-
-        if (renderer)
-            outputs.append(QVideoOutputControl::RendererOutput);
-
-        testService->outputControl->setAvailableOutputs(outputs);
     }
 
     QtTestVideoObject(QtTestVideoService *service):
@@ -250,24 +233,6 @@ void tst_QGraphicsVideoItem::nullService()
     graphicsView.show();
 }
 
-void tst_QGraphicsVideoItem::nullOutputControl()
-{
-    QtTestVideoObject object(new QtTestVideoService(0, 0));
-
-    QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
-    item->setMediaObject(&object);
-
-    QVERIFY(item->boundingRect().isEmpty());
-
-    item->hide();
-    item->show();
-
-    QGraphicsScene graphicsScene;
-    graphicsScene.addItem(item);
-    QGraphicsView graphicsView(&graphicsScene);
-    graphicsView.show();
-}
-
 void tst_QGraphicsVideoItem::noOutputs()
 {
     QtTestRendererControl *control = 0;
@@ -279,9 +244,7 @@ void tst_QGraphicsVideoItem::noOutputs()
     QVERIFY(item->boundingRect().isEmpty());
 
     item->hide();
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
     item->show();
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
 
     QGraphicsScene graphicsScene;
     graphicsScene.addItem(item);
@@ -296,11 +259,13 @@ void tst_QGraphicsVideoItem::serviceDestroyed()
     QGraphicsVideoItem item;
     item.setMediaObject(&object);
 
+    QCOMPARE(object.testService->rendererRef, 1);
+
     QtTestVideoService *service = object.testService;
     object.testService = 0;
 
     delete service;
-
+   
     QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
     QVERIFY(item.boundingRect().isEmpty());
 }
@@ -311,6 +276,8 @@ void tst_QGraphicsVideoItem::mediaObjectDestroyed()
 
     QGraphicsVideoItem item;
     item.setMediaObject(object);
+
+    QCOMPARE(object->testService->rendererRef, 1);
 
     delete object;
     object = 0;
@@ -327,23 +294,23 @@ void tst_QGraphicsVideoItem::setMediaObject()
     QGraphicsVideoItem item;
 
     QCOMPARE(item.mediaObject(), nullObject);
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QCOMPARE(object.testService->rendererRef, 0);
 
     item.setMediaObject(&object);
     QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
+    QCOMPARE(object.testService->rendererRef, 1);
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
     item.setMediaObject(0);
     QCOMPARE(item.mediaObject(), nullObject);
 
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QCOMPARE(object.testService->rendererRef, 0);
 
     item.setVisible(false);
 
     item.setMediaObject(&object);
     QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QCOMPARE(object.testService->rendererRef, 1);
     QVERIFY(object.testService->rendererControl->surface() != 0);
 }
 
@@ -354,14 +321,14 @@ void tst_QGraphicsVideoItem::show()
     item->setMediaObject(&object);
 
     // Graphics items are visible by default
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
+    QCOMPARE(object.testService->rendererRef, 1);
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
     item->hide();
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
+    QCOMPARE(object.testService->rendererRef, 1);
 
     item->show();
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
+    QCOMPARE(object.testService->rendererRef, 1);
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
     QVERIFY(item->boundingRect().isEmpty());
