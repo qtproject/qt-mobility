@@ -111,7 +111,6 @@ protected:
 private:
     Q_DECLARE_PRIVATE(QVideoWidget)
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
-    Q_PRIVATE_SLOT(d_func(), void _q_mediaObjectDestroyed())
     Q_PRIVATE_SLOT(d_func(), void _q_brightnessChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_contrastChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_hueChanged(int))
