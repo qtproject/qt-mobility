@@ -194,7 +194,8 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
             disconnect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
                     this, SIGNAL(currentMediaChanged(QMediaContent)));
 
-            d->mediaObject->service()->releaseControl(d->control);
+            if (d->mediaObject)
+                d->mediaObject->service()->releaseControl(d->control);
         }
 
         d->control = newControl;
