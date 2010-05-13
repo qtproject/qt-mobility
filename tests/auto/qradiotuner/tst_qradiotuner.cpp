@@ -231,10 +231,12 @@ public:
         QMediaService(parent),
         mockControl(control) {}
 
-    QMediaControl* control(const char *) const
+    QMediaControl* requestControl(const char *)
     {
         return mockControl;
     }
+
+    void releaseControl(QMediaControl*) {}
 
     QMediaControl   *mockControl;
 };
