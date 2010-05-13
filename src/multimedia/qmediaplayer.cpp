@@ -274,8 +274,8 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
     if (d->service == 0) {
         d->error = ServiceMissingError;
     } else {
-        d->control = qobject_cast<QMediaPlayerControl*>(d->service->control(QMediaPlayerControl_iid));
-        d->playlistControl = qobject_cast<QMediaPlaylistControl*>(d->service->control(QMediaPlaylistControl_iid));
+        d->control = qobject_cast<QMediaPlayerControl*>(d->service->requestControl(QMediaPlayerControl_iid));
+        d->playlistControl = qobject_cast<QMediaPlaylistControl*>(d->service->requestControl(QMediaPlaylistControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(mediaChanged(QMediaContent)), SIGNAL(mediaChanged(QMediaContent)));
             connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
@@ -309,6 +309,13 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
 QMediaPlayer::~QMediaPlayer()
 {
     Q_D(QMediaPlayer);
+
+    if (d->service) {
+        if (d->control)
+            d->service->releaseControl(d->control);
+        if (d->playlistControl)
+            d->service->releaseControl(d->playlistControl);
+    }
 
     d->provider->releaseService(d->service);
 }
