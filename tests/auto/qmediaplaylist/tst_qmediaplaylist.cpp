@@ -117,11 +117,15 @@ public:
     {        
     }
 
-    QMediaControl* control(const char *iid) const
+    QMediaControl* requestControl(const char *iid)
     {
         if (qstrcmp(iid, QMediaPlaylistControl_iid) == 0)
             return mockControl;
         return 0;
+    }
+
+    void releaseControl(QMediaControl *)
+    {
     }
 
     MockPlaylistControl *mockControl;
