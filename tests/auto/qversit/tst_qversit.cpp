@@ -261,7 +261,6 @@ void tst_QVersit::testImportFiles_data()
         name.setCustomLabel(QLatin1String("Firstname Lastname"));
         name.setFirstName(QLatin1String("Firstname"));
         name.setLastName(QLatin1String("Lastname"));
-        name.setMiddleName(QString());
         name.setPrefix(QLatin1String("Title"));
         name.setSuffix(QLatin1String("Suffix"));
         contact.saveDetail(&name);
@@ -297,9 +296,6 @@ void tst_QVersit::testImportFiles_data()
         name.setCustomLabel(QLatin1String("first last"));
         name.setFirstName(QLatin1String("first"));
         name.setLastName(QLatin1String("last"));
-        name.setMiddleName(QString());
-        name.setPrefix(QString());
-        name.setSuffix(QString());
         contact.saveDetail(&name);
         QContactOrganization org;
         org.setName(QLatin1String("Nokia"));
@@ -318,10 +314,6 @@ void tst_QVersit::testImportFiles_data()
         QContact contact;
         QContactName name;
         name.setFirstName(QLatin1String("name"));
-        name.setLastName(QString());
-        name.setMiddleName(QString());
-        name.setPrefix(QString());
-        name.setSuffix(QString());
         contact.saveDetail(&name);
         QContactFamily family;
         family.setChildren(QStringList(QLatin1String("Child1")));
