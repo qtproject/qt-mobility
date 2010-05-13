@@ -60,22 +60,22 @@ QOrganizerTodo& QOrganizerTodo::operator=(const QOrganizerTodo& other)
     return *this;
 }
 
-void QOrganizerTodo::setStartDateTime(const QDateTime& startDateTime)
+void QOrganizerTodo::setNotBeforeDateTime(const QDateTime& notBeforeDateTime)
 {
-    Q_UNUSED(startDateTime);
+    Q_UNUSED(notBeforeDateTime);
 }
 
-QDateTime QOrganizerTodo::startDateTime() const
+QDateTime QOrganizerTodo::notBeforeDateTime() const
 {
     return QDateTime();
 }
 
-void QOrganizerTodo::setEndDateTime(const QDateTime& endDateTime)
+void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
 {
-    Q_UNUSED(endDateTime);
+    Q_UNUSED(dueDateTime);
 }
 
-QDateTime QOrganizerTodo::endDateTime() const
+QDateTime QOrganizerTodo::dueDateTime() const
 {
     return QDateTime();
 }
@@ -88,5 +88,15 @@ void QOrganizerTodo::setRecurrence(const QOrganizerItemRecurrence& recurrence) c
 QOrganizerItemRecurrence QOrganizerTodo::recurrence() const
 {
     return QOrganizerItemRecurrence();
+}
+
+void QOrganizerTodo::setPriority(QOrganizerItemPriority::Priority priority)
+{
+    Q_UNUSED(priority);
+}
+
+QOrganizerItemPriority::Priority QOrganizerTodo::priority() const
+{
+    return QOrganizerItemPriority::UnknownPriority;
 }
 

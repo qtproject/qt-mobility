@@ -58,22 +58,22 @@ QOrganizerTodoOccurrence& QOrganizerTodoOccurrence::operator=(const QOrganizerTo
     return *this;
 }
 
-void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
+void QOrganizerTodoOccurrence::setNotBeforeDateTime(const QDateTime& notBeforeDateTime)
 {
-    Q_UNUSED(startDateTime);
+    Q_UNUSED(notBeforeDateTime);
 }
 
-QDateTime QOrganizerTodoOccurrence::startDateTime() const
+QDateTime QOrganizerTodoOccurrence::notBeforeDateTime() const
 {
     return QDateTime();
 }
 
-void QOrganizerTodoOccurrence::setEndDateTime(const QDateTime& endDateTime)
+void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
 {
-    Q_UNUSED(endDateTime);
+    Q_UNUSED(dueDateTime);
 }
 
-QDateTime QOrganizerTodoOccurrence::endDateTime() const
+QDateTime QOrganizerTodoOccurrence::dueDateTime() const
 {
     return QDateTime();
 }
@@ -94,6 +94,56 @@ void QOrganizerTodoOccurrence::setOriginalDateTime(const QDateTime& dateTime)
 }
 
 QDateTime QOrganizerTodoOccurrence::originalDateTime() const
+{
+    return QDateTime();
+}
+
+void QOrganizerTodoOccurrence::setPriority(QOrganizerItemPriority::Priority priority)
+{
+    Q_UNUSED(priority);
+}
+
+QOrganizerItemPriority::Priority QOrganizerTodoOccurrence::priority() const
+{
+    return QOrganizerItemPriority::UnknownPriority;
+}
+
+void QOrganizerTodoOccurrence::setProgressPercentage(int percentage)
+{
+    Q_UNUSED(percentage);
+}
+
+int QOrganizerTodoOccurrence::progressPercentage() const
+{
+    return 0;
+}
+
+void QOrganizerTodoOccurrence::setStatus(QOrganizerItemTodoProgress::Status status)
+{
+    Q_UNUSED(status);
+}
+
+QOrganizerItemTodoProgress::Status QOrganizerTodoOccurrence::status() const
+{
+    return QOrganizerItemTodoProgress::StatusNotStarted;
+}
+
+void QOrganizerTodoOccurrence::setStartedDateTime(const QDateTime& startDateTime)
+{
+    Q_UNUSED(startDateTime);
+}
+
+QDateTime QOrganizerTodoOccurrence::startedDateTime() const
+{
+    return QDateTime();
+}
+
+void QOrganizerTodoOccurrence::setFinishedDateTime(const QDateTime& finishedDateTime)
+{
+    Q_UNUSED(finishedDateTime);
+}
+
+QDateTime QOrganizerTodoOccurrence::finishedDateTime() const
 {
     return QDateTime();
 }

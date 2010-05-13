@@ -63,6 +63,16 @@ public:
     QOrganizerItemId parentItemId() const;
     void setOriginalDateTime(const QDateTime& dateTime);
     QDateTime originalDateTime() const;
+
+    void setPriority(QOrganizerItemPriority::Priority);
+    QOrganizerItemPriority::Priority priority() const;
+
+    QString locationName() const;
+    void setLocationName(const QString& locationName);
+    QString locationAddress() const;
+    void setLocationAddress(const QString& locationAddress);
+    QString locationGeoCoordinates() const;
+    void setLocationGeoCoordinates(const QString& locationCoordinates);
 };
 
 QTM_END_NAMESPACE

@@ -78,3 +78,14 @@ QDateTime QOrganizerJournal::endDateTime() const
 {
     return QDateTime();
 }
+
+
+void QOrganizerJournal::setNote(const QString& note)
+{
+    Q_UNUSED(note);
+}
+
+QString QOrganizerJournal::note() const
+{
+    return QString();
+}

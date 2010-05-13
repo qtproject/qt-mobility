@@ -59,6 +59,9 @@ public:
     QDateTime startDateTime() const;
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
+
+    void setNote(const QString& note);
+    QString note() const;
 };
 
 QTM_END_NAMESPACE

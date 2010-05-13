@@ -82,6 +82,7 @@ public:
     int percentageComplete() const {return value<int>(FieldPercentageComplete);}
 
     enum Status {
+        // what about: waited/blocked, and deferred?
         StatusNotStarted,
         StatusInProgress,
         StatusComplete,

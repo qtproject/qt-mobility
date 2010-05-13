@@ -97,3 +97,40 @@ QDateTime QOrganizerEventOccurrence::originalDateTime() const
     return QDateTime();
 }
 
+void QOrganizerEventOccurrence::setPriority(QOrganizerItemPriority::Priority priority)
+{
+    Q_UNUSED(priority);
+}
+
+QOrganizerItemPriority::Priority QOrganizerEventOccurrence::priority() const
+{
+    return QOrganizerItemPriority::UnknownPriority;
+}
+
+QString QOrganizerEventOccurrence::locationName() const
+{
+    return QString();
+}
+void QOrganizerEventOccurrence::setLocationName(const QString& locationName)
+{
+    Q_UNUSED(locationName);
+}
+
+QString QOrganizerEventOccurrence::locationAddress() const
+{
+    return QString();
+}
+void QOrganizerEventOccurrence::setLocationAddress(const QString& locationAddress)
+{
+    Q_UNUSED(locationAddress);
+}
+
+QString QOrganizerEventOccurrence::locationGeoCoordinates() const
+{
+    return QString();
+}
+void QOrganizerEventOccurrence::setLocationGeoCoordinates(const QString& locationCoordinates)
+{
+    Q_UNUSED(locationCoordinates);
+}
+

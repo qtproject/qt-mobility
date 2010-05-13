@@ -55,13 +55,16 @@ public:
     QOrganizerTodo& operator=(const QOrganizerTodo& other);
 
     // XXX TODO: some questions about "recurring periods and doneness"...
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setEndDateTime(const QDateTime& endDateTime);
-    QDateTime endDateTime() const;
+    void setNotBeforeDateTime(const QDateTime& notBeforeDateTime);
+    QDateTime notBeforeDateTime() const;
+    void setDueDateTime(const QDateTime& dueDateTime);
+    QDateTime dueDateTime() const;
 
     void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
     QOrganizerItemRecurrence recurrence() const;
+
+    void setPriority(QOrganizerItemPriority::Priority);
+    QOrganizerItemPriority::Priority priority() const;
 };
 
 QTM_END_NAMESPACE

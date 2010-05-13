@@ -43,6 +43,7 @@
 #define QORGANIZERTODOOCCURRENCE_H
 
 #include "qtorganizer.h"
+#include "qorganizeritemtodoprogress.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,15 +56,27 @@ public:
     QOrganizerTodoOccurrence& operator=(const QOrganizerTodoOccurrence& other);
 
     // XXX TODO: see discussion in qorganizertodo.h
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setEndDateTime(const QDateTime& endDateTime);
-    QDateTime endDateTime() const;
+    void setNotBeforeDateTime(const QDateTime& noteBeforeDateTime);
+    QDateTime notBeforeDateTime() const;
+    void setDueDateTime(const QDateTime& dueDateTime);
+    QDateTime dueDateTime() const;
 
     void setParentItemId(const QOrganizerItemId& parentId) const;
     QOrganizerItemId parentItemId() const;
     void setOriginalDateTime(const QDateTime& dateTime);
     QDateTime originalDateTime() const;
+
+    void setPriority(QOrganizerItemPriority::Priority);
+    QOrganizerItemPriority::Priority priority() const;
+
+    void setProgressPercentage(int percentage);
+    int progressPercentage() const;
+    void setStatus(QOrganizerItemTodoProgress::Status status);
+    QOrganizerItemTodoProgress::Status status() const;
+    void setStartedDateTime(const QDateTime& startDateTime);
+    QDateTime startedDateTime() const;
+    void setFinishedDateTime(const QDateTime& finishedDateTime);
+    QDateTime finishedDateTime() const;
 };
 
 QTM_END_NAMESPACE
