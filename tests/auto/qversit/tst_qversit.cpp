@@ -245,4 +245,52 @@ void tst_QVersit::testImportFiles_data()
     }
 }
 
+void tst_QVersit::testExportImport()
+{
+    // Test that a contact, when exported, then imported again, is unaltered
+    QFETCH(QContact, contact);
+
+    QVersitContactExporter exporter;
+    QVERIFY(exporter.exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
+    QList<QVersitDocument> documents = exporter.documents();
+    QCOMPARE(documents.size(), 1);
+
+    QVersitContactImporter importer;
+    QVERIFY(importer.importDocuments(documents));
+    QList<QContact> contacts = importer.contacts();
+    QCOMPARE(contacts.size(), 1);
+    if (contacts.first().details() != contact.details()) {
+        qDebug() << "Versit documents:" << documents;
+        qDebug() << "Actual:" << contacts.first();
+        qDebug() << "Expected:" << contact;
+        QCOMPARE(contacts.first().details(), contact.details());
+    }
+}
+
+void tst_QVersit::testExportImport_data()
+{
+    QTest::addColumn<QContact>("contact");
+
+    QContact contact;
+    QContactName name;
+    name.setFirstName(QLatin1String("first"));
+    name.setLastName(QLatin1String("last"));
+    name.setCustomLabel(QLatin1String("custom"));
+    name.setValue(QLatin1String("RandomField1"), QLatin1String("RandomValue1"));
+    name.setValue(QLatin1String("RandomField2"), QLatin1String("RandomValue1"));
+    contact.saveDetail(&name);
+    QContactDetail customDetail1("CustomDetail");
+    customDetail1.setValue(QLatin1String("CustomField11"), QLatin1String("Value11"));
+    customDetail1.setValue(QLatin1String("CustomField12"), QLatin1String("Value12"));
+    contact.saveDetail(&customDetail1);
+    QContactDetail customDetail2("CustomDetail");
+    customDetail2.setValue(QLatin1String("CustomField21"), QLatin1String("Value21"));
+    customDetail2.setValue(QLatin1String("CustomField22"), QByteArray("binary blob"));
+    contact.saveDetail(&customDetail2);
+    contact.setType(QContactType::TypeContact);
+    QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("custom"));
+
+    QTest::newRow("custom detail") << contact;
+}
+
 QTEST_MAIN(tst_QVersit)

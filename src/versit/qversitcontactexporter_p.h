@@ -56,6 +56,7 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
+#include "qversitcontactdefaulthandlers.h"
 
 #include <QHash>
 #include <QObject>
@@ -176,6 +177,7 @@ public: // Data
     QVersitContactExporterDetailHandler* mDetailHandler;
     QVersitContactExporterDetailHandlerV2* mDetailHandler2;
     int mDetailHandlerVersion;
+    QVersitContactExporterDefaultDetailHandler* mDefaultDetailHandler;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
     QHash<QString,QString> mPropertyMappings;

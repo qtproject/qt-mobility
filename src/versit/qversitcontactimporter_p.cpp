@@ -75,59 +75,16 @@
 QTM_USE_NAMESPACE
 
 /*!
- * Returns a list of details generated from a Versit group.
- */
-QList<QContactDetail> DetailGroupMap::detailsInGroup(const QString& groupName) const
-{
-    QList<int> detailIds = mDetailGroupName.keys(groupName);
-    QList<QContactDetail> details;
-    foreach (int detailId, detailIds) {
-        details << mDetailById[detailId];
-    }
-    return details;
-}
-
-/*!
- * Inserts the association between \a detail and \a groupName to the map.
- * The detail must have a key (ie. have already been saved in a contact) and the group name must not
- * be the empty string.
- */
-void DetailGroupMap::insert(const QString& groupName, const QContactDetail& detail)
-{
-    Q_ASSERT(detail.key());
-    Q_ASSERT(!groupName.isEmpty());
-    mDetailGroupName[detail.key()] = groupName;
-    mDetailById[detail.key()] = detail;
-}
-
-/*!
- * Replaces the detail currently in the map with \a detail.
- * The detail must have a key (ie. have already been saved in a contact).
- */
-void DetailGroupMap::update(const QContactDetail& detail)
-{
-    Q_ASSERT(detail.key());
-    mDetailById[detail.key()] = detail;
-}
-
-/*!
- * Removes details and groups from the map.
- */
-void DetailGroupMap::clear()
-{
-    mDetailGroupName.clear();
-    mDetailById.clear();
-}
-
-/*!
  * Constructor.
  */
 QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
     mPropertyHandler(NULL),
-    mPropertyHandler2(NULL),
+    mDefaultPropertyHandler(new QVersitContactImporterDefaultPropertyHandler),
     mDefaultResourceHandler(new QVersitDefaultResourceHandler)
 {
     mResourceHandler = mDefaultResourceHandler;
+    mPropertyHandler2 = mDefaultPropertyHandler;
+    mPropertyHandlerVersion = 2;
 
     // Contact detail mappings
     int versitPropertyCount =
@@ -165,6 +122,7 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
  */
 QVersitContactImporterPrivate::~QVersitContactImporterPrivate()
 {
+    delete mDefaultPropertyHandler;
     delete mDefaultResourceHandler;
 }
 
@@ -185,7 +143,6 @@ bool QVersitContactImporterPrivate::importContact(
         *error = QVersitContactImporter::EmptyDocumentError;
         return false;
     }
-    mDetailGroupMap.clear();
 
     // First, do the properties with PREF set so they appear first in the contact details
     foreach (const QVersitProperty& property, properties) {
@@ -215,7 +172,7 @@ void QVersitContactImporterPrivate::importProperty(
         return;
     if (mPropertyHandler2
         && mPropertyHandlerVersion > 1
-        && mPropertyHandler2->preProcessProperty(document, property, contactIndex, contact))
+        && mPropertyHandler2->beforeProcessProperty(document, property, contactIndex, contact))
         return;
 
     QPair<QString,QString> detailDefinition =
@@ -223,67 +180,61 @@ void QVersitContactImporterPrivate::importProperty(
     QString detailDefinitionName = detailDefinition.first;
 
     // To track X-NOKIA-QCONTACTFIELD properties to be grouped together in details
-    QString groupName;
-    if (!property.groups().isEmpty())
-        groupName = property.groups().first();
     QList<QContactDetail> updatedDetails;
 
     bool success = false;
 
     // The following functions create and save the details to the contact
     if (detailDefinitionName == QContactAddress::DefinitionName) {
-        success = createAddress(groupName, property, contact, &updatedDetails); // pass in group
+        success = createAddress(property, contact, &updatedDetails); // pass in group
     } else if (detailDefinitionName == QContactName::DefinitionName) {
-        success = createName(groupName, property, contact, &updatedDetails);
+        success = createName(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactBirthday::DefinitionName) {
-        success = createBirthday(groupName, property, contact, &updatedDetails);
+        success = createBirthday(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactGeoLocation::DefinitionName){
-        success = createGeoLocation(groupName, property, contact, &updatedDetails);
+        success = createGeoLocation(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactOrganization::DefinitionName) {
-        success = createOrganization(groupName, property, contact, &updatedDetails);
+        success = createOrganization(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactNickname::DefinitionName) {
-        success = createNicknames(groupName, property, contact, &updatedDetails);
+        success = createNicknames(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactRingtone::DefinitionName) {
-        success = createRingtone(groupName, property, contact, &updatedDetails);
+        success = createRingtone(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactThumbnail::DefinitionName) {
-        success = createThumbnail(groupName, property, contact, &updatedDetails);
+        success = createThumbnail(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactTimestamp::DefinitionName) {
-        success = createTimeStamp(groupName, property, contact, &updatedDetails);
+        success = createTimeStamp(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactPhoneNumber::DefinitionName) {
-        success = createPhone(groupName, property, contact, &updatedDetails);
+        success = createPhone(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactAnniversary::DefinitionName) {
-        success = createAnniversary(groupName, property, contact, &updatedDetails);
+        success = createAnniversary(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactFamily::DefinitionName) {
-        success = createFamily(groupName, property, contact, &updatedDetails);
+        success = createFamily(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactOnlineAccount::DefinitionName) {
-        success = createOnlineAccount(groupName, property, contact, &updatedDetails);
+        success = createOnlineAccount(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactTag::DefinitionName) {
-        success = createTags(groupName, property, contact, &updatedDetails);
+        success = createTags(property, contact, &updatedDetails);
     } else if (detailDefinitionName == QContactDisplayLabel::DefinitionName) {
         // This actually sets the QContactName's customLabel field (not QContactDisplayLabel)
-        success = createCustomLabel(groupName, property, contact, &updatedDetails);
+        success = createCustomLabel(property, contact, &updatedDetails);
     } else {
         // Look up mDetailMappings for a simple mapping from property to detail.
-        success = createNameValueDetail(groupName, property, contact, &updatedDetails);
+        success = createNameValueDetail(property, contact, &updatedDetails);
     }
 
     if (mPropertyHandler && mPropertyHandlerVersion == 1)
         mPropertyHandler->postProcessProperty(document, property, success, contactIndex, contact);
     if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
-        updatedDetails << mDetailGroupMap.detailsInGroup(groupName);
-        mPropertyHandler2->postProcessProperty(document, property, success, contactIndex, contact, &updatedDetails);
+        mPropertyHandler2->afterProcessProperty(document, property, success, contactIndex, contact, &updatedDetails);
     }
 
     foreach (QContactDetail detail, updatedDetails) {
         contact->saveDetail(&detail);
-        mDetailGroupMap.update(detail);
     }
 }
 /*!
  * Creates a QContactName from \a property
  */
 bool QVersitContactImporterPrivate::createName(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -320,7 +271,7 @@ bool QVersitContactImporterPrivate::createName(
     if (!value.isEmpty())
         name.setSuffix(value);
 
-    saveDetailWithContext(groupName, updatedDetails, name, extractContexts(property));
+    saveDetailWithContext(updatedDetails, name, extractContexts(property));
     return true;
 }
 
@@ -328,7 +279,6 @@ bool QVersitContactImporterPrivate::createName(
  * Creates a QContactPhoneNumber from \a property
  */
 bool QVersitContactImporterPrivate::createPhone(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -340,7 +290,7 @@ bool QVersitContactImporterPrivate::createPhone(
     if (property.name() == QLatin1String("X-ASSISTANT-TEL"))
         phone.setSubTypes(QContactPhoneNumber::SubTypeAssistant);
 
-    saveDetailWithContext(groupName, updatedDetails, phone, extractContexts(property));
+    saveDetailWithContext(updatedDetails, phone, extractContexts(property));
     return true;
 }
 
@@ -348,7 +298,6 @@ bool QVersitContactImporterPrivate::createPhone(
  * Creates a QContactAddress from \a property
  */
 bool QVersitContactImporterPrivate::createAddress(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -384,7 +333,7 @@ bool QVersitContactImporterPrivate::createAddress(
         address.setCountry(value);
     address.setSubTypes(extractSubTypes(property));
 
-    saveDetailWithContext(groupName, updatedDetails, address, extractContexts(property));
+    saveDetailWithContext(updatedDetails, address, extractContexts(property));
     return true;
 }
 
@@ -392,7 +341,6 @@ bool QVersitContactImporterPrivate::createAddress(
  * Creates a QContactOrganization from \a property
  */
 bool QVersitContactImporterPrivate::createOrganization(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -422,7 +370,7 @@ bool QVersitContactImporterPrivate::createOrganization(
         return false;
     }
 
-    saveDetailWithContext(groupName, updatedDetails, organization, extractContexts(property));
+    saveDetailWithContext(updatedDetails, organization, extractContexts(property));
     return true;
 }
 
@@ -458,7 +406,6 @@ void QVersitContactImporterPrivate::setOrganizationLogo(
  * Creates a QContactTimeStamp from \a property
  */
 bool QVersitContactImporterPrivate::createTimeStamp(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -475,7 +422,7 @@ bool QVersitContactImporterPrivate::createTimeStamp(
         dateTime.setTimeSpec(Qt::UTC);
     timeStamp.setLastModified(dateTime);
 
-    saveDetailWithContext(groupName, updatedDetails, timeStamp, extractContexts(property));
+    saveDetailWithContext(updatedDetails, timeStamp, extractContexts(property));
     return true;
 }
 
@@ -483,7 +430,6 @@ bool QVersitContactImporterPrivate::createTimeStamp(
  * Creates a QContactAnniversary from \a property
  */
 bool QVersitContactImporterPrivate::createAnniversary(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -494,7 +440,7 @@ bool QVersitContactImporterPrivate::createAnniversary(
         parseDateTime(property.value(), QLatin1String("yyyyMMdd"));
     anniversary.setOriginalDate(dateTime.date());
 
-    saveDetailWithContext(groupName, updatedDetails, anniversary, extractContexts(property));
+    saveDetailWithContext(updatedDetails, anniversary, extractContexts(property));
     return true;
 }
 
@@ -502,7 +448,6 @@ bool QVersitContactImporterPrivate::createAnniversary(
  * Creates a QContactBirthday from \a property
  */
 bool QVersitContactImporterPrivate::createBirthday(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -513,7 +458,7 @@ bool QVersitContactImporterPrivate::createBirthday(
         parseDateTime(property.value(), QLatin1String("yyyyMMdd"));
     bday.setDate(dateTime.date());
 
-    saveDetailWithContext(groupName, updatedDetails, bday, extractContexts(property));
+    saveDetailWithContext(updatedDetails, bday, extractContexts(property));
     return true;
 }
 
@@ -521,7 +466,6 @@ bool QVersitContactImporterPrivate::createBirthday(
  * Creates QContactNicknames from \a property
  */
 bool QVersitContactImporterPrivate::createNicknames(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -536,7 +480,7 @@ bool QVersitContactImporterPrivate::createNicknames(
     foreach(const QString& value, values) {
         QContactNickname nickName;
         nickName.setNickname(value);
-        saveDetailWithContext(groupName, updatedDetails, nickName, contexts);
+        saveDetailWithContext(updatedDetails, nickName, contexts);
     }
     return true;
 }
@@ -545,7 +489,6 @@ bool QVersitContactImporterPrivate::createNicknames(
  * Creates QContactTags from \a property
  */
 bool QVersitContactImporterPrivate::createTags(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -560,7 +503,7 @@ bool QVersitContactImporterPrivate::createTags(
     foreach(const QString& value, values) {
         QContactTag tag;
         tag.setTag(value);
-        saveDetailWithContext(groupName, updatedDetails, tag, contexts);
+        saveDetailWithContext(updatedDetails, tag, contexts);
     }
     return true;
 }
@@ -569,7 +512,6 @@ bool QVersitContactImporterPrivate::createTags(
  * Creates a QContactOnlineAccount from \a property
  */
 bool QVersitContactImporterPrivate::createOnlineAccount(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -592,7 +534,7 @@ bool QVersitContactImporterPrivate::createOnlineAccount(
         // NOP
     }
 
-    saveDetailWithContext(groupName, updatedDetails, onlineAccount, extractContexts(property));
+    saveDetailWithContext(updatedDetails, onlineAccount, extractContexts(property));
     return true;
 }
 
@@ -600,7 +542,6 @@ bool QVersitContactImporterPrivate::createOnlineAccount(
  * Creates a QContactRingtone from \a property
  */
 bool QVersitContactImporterPrivate::createRingtone(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -611,7 +552,7 @@ bool QVersitContactImporterPrivate::createRingtone(
     if (saveDataFromProperty(property, &location, &data) && !location.isEmpty()) {
         QContactRingtone ringtone;
         ringtone.setAudioRingtoneUrl(location);
-        saveDetailWithContext(groupName, updatedDetails, ringtone, extractContexts(property));
+        saveDetailWithContext(updatedDetails, ringtone, extractContexts(property));
         return true;
     }
     return false;
@@ -621,7 +562,6 @@ bool QVersitContactImporterPrivate::createRingtone(
  * Creates a QContactAvatar from \a property
  */
 bool QVersitContactImporterPrivate::createThumbnail(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -633,7 +573,7 @@ bool QVersitContactImporterPrivate::createThumbnail(
     if (saveDataFromProperty(property, &location, &data) && !location.isEmpty()) {
         QContactAvatar avatar;
         avatar.setImageUrl(location);
-        saveDetailWithContext(groupName, updatedDetails, avatar, extractContexts(property));
+        saveDetailWithContext(updatedDetails, avatar, extractContexts(property));
         success = true;
     }
     if (!data.isEmpty()) {
@@ -644,7 +584,7 @@ bool QVersitContactImporterPrivate::createThumbnail(
             if (thumbnail.isEmpty() || image.byteCount() < thumbnail.thumbnail().byteCount()) {
                 thumbnail.setThumbnail(image);
             }
-            saveDetailWithContext(groupName, updatedDetails, thumbnail, extractContexts(property));
+            saveDetailWithContext(updatedDetails, thumbnail, extractContexts(property));
             success = true;
         }
     }
@@ -656,7 +596,6 @@ bool QVersitContactImporterPrivate::createThumbnail(
  * Creates a QContactGeoLocation from \a property
  */
 bool QVersitContactImporterPrivate::createGeoLocation(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -671,7 +610,7 @@ bool QVersitContactImporterPrivate::createGeoLocation(
     geo.setLongitude(takeFirst(values).toDouble());
     geo.setLatitude(takeFirst(values).toDouble());
 
-    saveDetailWithContext(groupName, updatedDetails, geo, extractContexts(property));
+    saveDetailWithContext(updatedDetails, geo, extractContexts(property));
     return true;
 }
 
@@ -679,7 +618,6 @@ bool QVersitContactImporterPrivate::createGeoLocation(
  * Creates a QContactFamily from \a property
  */
 bool QVersitContactImporterPrivate::createFamily(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -697,7 +635,7 @@ bool QVersitContactImporterPrivate::createFamily(
         family.setChildren(values);
     }
 
-    saveDetailWithContext(groupName, updatedDetails, family, extractContexts(property));
+    saveDetailWithContext(updatedDetails, family, extractContexts(property));
     return true;
 }
 
@@ -705,7 +643,6 @@ bool QVersitContactImporterPrivate::createFamily(
  * Creates a simple name-value contact detail.
  */
 bool QVersitContactImporterPrivate::createNameValueDetail(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -719,7 +656,7 @@ bool QVersitContactImporterPrivate::createNameValueDetail(
     QContactDetail detail(nameAndValueType.first);
     detail.setValue(nameAndValueType.second, property.value());
 
-    saveDetailWithContext(groupName, updatedDetails, detail, extractContexts(property));
+    saveDetailWithContext(updatedDetails, detail, extractContexts(property));
     return true;
 }
 
@@ -727,7 +664,6 @@ bool QVersitContactImporterPrivate::createNameValueDetail(
  * Creates a simple name-value contact detail.
  */
 bool QVersitContactImporterPrivate::createCustomLabel(
-    const QString& groupName,
     const QVersitProperty& property,
     QContact* contact,
     QList<QContactDetail>* updatedDetails)
@@ -740,7 +676,7 @@ bool QVersitContactImporterPrivate::createCustomLabel(
 
     name.setCustomLabel(property.value());
 
-    saveDetailWithContext(groupName, updatedDetails, name, extractContexts(property));
+    saveDetailWithContext(updatedDetails, name, extractContexts(property));
     return true;
 }
 
@@ -841,11 +777,10 @@ QString QVersitContactImporterPrivate::saveContentToFile(
 }
 
 /*!
- * Adds \a detail to the \a updatedDetails list and stores the detail in the mDetailGroupMap.  Also
- * sets the contexts to \a contexts if it is not empty.
+ * Adds \a detail to the \a updatedDetails list.  Also sets the contexts to \a contexts if it is not
+ * empty.
  */
 void QVersitContactImporterPrivate::saveDetailWithContext(
-        const QString& groupName,
         QList<QContactDetail>* updatedDetails,
         QContactDetail detail,
         const QStringList& contexts)
@@ -853,8 +788,6 @@ void QVersitContactImporterPrivate::saveDetailWithContext(
     if (!contexts.isEmpty())
         detail.setContexts(contexts);
     updatedDetails->append(detail);
-    if (!groupName.isEmpty())
-        mDetailGroupMap.insert(groupName, detail);
 }
 
 /*! Synthesize the display label from the name of the contact, or, failing that, the nickname of
