@@ -46,22 +46,28 @@ QTM_USE_NAMESPACE
 
 void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 {
-    Q_UNUSED(startDateTime);
+    QOrganizerItemEventTimeRange etr = detail<QOrganizerItemEventTimeRange>();
+    etr.setStartDateTime(startDateTime);
+    saveDetail(&etr);
 }
 
 QDateTime QOrganizerEvent::startDateTime() const
 {
-    return QDateTime();
+    QOrganizerItemEventTimeRange etr = detail<QOrganizerItemEventTimeRange>();
+    return etr.startDateTime();
 }
 
 void QOrganizerEvent::setEndDateTime(const QDateTime& endDateTime)
 {
-    Q_UNUSED(endDateTime);
+    QOrganizerItemEventTimeRange etr = detail<QOrganizerItemEventTimeRange>();
+    etr.setEndDateTime(endDateTime);
+    saveDetail(&etr);
 }
 
 QDateTime QOrganizerEvent::endDateTime() const
 {
-    return QDateTime();
+    QOrganizerItemEventTimeRange etr = detail<QOrganizerItemEventTimeRange>();
+    return etr.endDateTime();
 }
 
 void QOrganizerEvent::setRecurrence(const QOrganizerItemRecurrence& recurrence) const
@@ -75,37 +81,53 @@ QOrganizerItemRecurrence QOrganizerEvent::recurrence() const
 
 void QOrganizerEvent::setPriority(QOrganizerItemPriority::Priority priority)
 {
-    Q_UNUSED(priority);
+    QOrganizerItemPriority pd = detail<QOrganizerItemPriority>();
+    pd.setPriority(priority);
+    saveDetail(&pd);
 }
 
 QOrganizerItemPriority::Priority QOrganizerEvent::priority() const
 {
-    return QOrganizerItemPriority::UnknownPriority;
+    QOrganizerItemPriority pd = detail<QOrganizerItemPriority>();
+    return pd.priority();
 }
 
 QString QOrganizerEvent::locationName() const
 {
-    return QString();
+    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
+    return ld.locationName();
 }
+
 void QOrganizerEvent::setLocationName(const QString& locationName)
 {
-    Q_UNUSED(locationName);
+    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
+    ld.setLocationName(locationName);
+    saveDetail(&ld);
 }
 
 QString QOrganizerEvent::locationAddress() const
 {
-    return QString();
+    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
+    return ld.address();
 }
+
 void QOrganizerEvent::setLocationAddress(const QString& locationAddress)
 {
-    Q_UNUSED(locationAddress);
+    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
+    ld.setAddress(locationAddress);
+    saveDetail(&ld);
 }
 
 QString QOrganizerEvent::locationGeoCoordinates() const
 {
-    return QString();
+    // XXX TODO: consistency with QOILocation API ?
+    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
+    return ld.geoLocation();
 }
+
 void QOrganizerEvent::setLocationGeoCoordinates(const QString& locationCoordinates)
 {
-    Q_UNUSED(locationCoordinates);
+    QOrganizerItemLocation ld = detail<QOrganizerItemLocation>();
+    ld.setGeoLocation(locationCoordinates);
+    saveDetail(&ld);
 }

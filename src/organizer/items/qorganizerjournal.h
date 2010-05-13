@@ -52,10 +52,8 @@ public:
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerJournal, QOrganizerItemType::TypeJournal)
 
     // XXX TODO: research whether journal is a single point in time, or can cover a period of time...
-    void setStartDateTime(const QDateTime& startDateTime);
-    QDateTime startDateTime() const;
-    void setEndDateTime(const QDateTime& endDateTime);
-    QDateTime endDateTime() const;
+    void setDateTime(const QDateTime& dateTime);
+    QDateTime dateTime() const;
 
     void setNote(const QString& note);
     QString note() const;

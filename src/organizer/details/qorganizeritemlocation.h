@@ -67,7 +67,12 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldLocationName, "LocationName");
 #endif
 
-    // XXX TODO: functions / data types
+    void setGeoLocation(const QString& stringCoords) {setValue(FieldGeoLocation, stringCoords);}
+    QString geoLocation() const {return value(FieldGeoLocation);}
+    void setAddress(const QString& address) {setValue(FieldAddress, address);}
+    QString address() const {return value(FieldAddress);}
+    void setLocationName(const QString& locationName) {setValue(FieldLocationName, locationName);}
+    QString locationName() const {return value(FieldLocationName);}
 };
 
 QTM_END_NAMESPACE

@@ -43,33 +43,28 @@
 
 QTM_USE_NAMESPACE
 
-void QOrganizerJournal::setStartDateTime(const QDateTime& startDateTime)
+void QOrganizerJournal::setDateTime(const QDateTime& dateTime)
 {
-    Q_UNUSED(startDateTime);
+    QOrganizerItemJournalTimeRange jtr = detail<QOrganizerItemJournalTimeRange>();
+    jtr.setEntryDateTime(dateTime);
+    saveDetail(&jtr);
 }
 
-QDateTime QOrganizerJournal::startDateTime() const
+QDateTime QOrganizerJournal::dateTime() const
 {
-    return QDateTime();
+    QOrganizerItemJournalTimeRange jtr = detail<QOrganizerItemJournalTimeRange>();
+    return jtr.entryDateTime();
 }
-
-void QOrganizerJournal::setEndDateTime(const QDateTime& endDateTime)
-{
-    Q_UNUSED(endDateTime);
-}
-
-QDateTime QOrganizerJournal::endDateTime() const
-{
-    return QDateTime();
-}
-
 
 void QOrganizerJournal::setNote(const QString& note)
 {
-    Q_UNUSED(note);
+    QOrganizerItemNote nd = detail<QOrganizerItemNote>();
+    nd.setNote(note);
+    saveDetail(&nd);
 }
 
 QString QOrganizerJournal::note() const
 {
-    return QString();
+    QOrganizerItemNote nd = detail<QOrganizerItemNote>();
+    return nd.note();
 }

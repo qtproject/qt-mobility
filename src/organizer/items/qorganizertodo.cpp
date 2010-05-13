@@ -46,22 +46,28 @@ QTM_USE_NAMESPACE
 
 void QOrganizerTodo::setNotBeforeDateTime(const QDateTime& notBeforeDateTime)
 {
-    Q_UNUSED(notBeforeDateTime);
+    QOrganizerItemTodoTimeRange ttr = detail<QOrganizerItemTodoTimeRange>();
+    ttr.setNotBeforeDateTime(notBeforeDateTime);
+    saveDetail(&ttr);
 }
 
 QDateTime QOrganizerTodo::notBeforeDateTime() const
 {
-    return QDateTime();
+    QOrganizerItemTodoTimeRange ttr = detail<QOrganizerItemTodoTimeRange>();
+    return ttr.notBeforeDateTime();
 }
 
 void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
 {
-    Q_UNUSED(dueDateTime);
+    QOrganizerItemTodoTimeRange ttr = detail<QOrganizerItemTodoTimeRange>();
+    ttr.setDueDateTime(dueDateTime);
+    saveDetail(&ttr);
 }
 
 QDateTime QOrganizerTodo::dueDateTime() const
 {
-    return QDateTime();
+    QOrganizerItemTodoTimeRange ttr = detail<QOrganizerItemTodoTimeRange>();
+    return ttr.dueDateTime();
 }
 
 void QOrganizerTodo::setRecurrence(const QOrganizerItemRecurrence& recurrence) const
@@ -76,11 +82,14 @@ QOrganizerItemRecurrence QOrganizerTodo::recurrence() const
 
 void QOrganizerTodo::setPriority(QOrganizerItemPriority::Priority priority)
 {
-    Q_UNUSED(priority);
+    QOrganizerItemPriority pd = detail<QOrganizerItemPriority>();
+    pd.setPriority(priority);
+    saveDetail(&pd);
 }
 
 QOrganizerItemPriority::Priority QOrganizerTodo::priority() const
 {
-    return QOrganizerItemPriority::UnknownPriority;
+    QOrganizerItemPriority pd = detail<QOrganizerItemPriority>();
+    return pd.priority();
 }
 

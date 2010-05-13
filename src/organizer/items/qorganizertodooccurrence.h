@@ -70,7 +70,7 @@ public:
     int progressPercentage() const;
     void setStatus(QOrganizerItemTodoProgress::Status status);
     QOrganizerItemTodoProgress::Status status() const;
-    void setStartedDateTime(const QDateTime& startDateTime);
+    void setStartedDateTime(const QDateTime& startedDateTime);
     QDateTime startedDateTime() const;
     void setFinishedDateTime(const QDateTime& finishedDateTime);
     QDateTime finishedDateTime() const;
