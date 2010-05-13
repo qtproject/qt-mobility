@@ -39,54 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTABSTRACTREQUEST_P_H
-#define QCONTACTABSTRACTREQUEST_P_H
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#ifndef TRANSFORMONLINEACCOUNTSIMPLE_H
+#define TRANSFORMONLINEACCOUNTSIMPLE_H
 
-#include "qcontactmanager.h"
-#include "qcontactabstractrequest.h"
+#include "cnttransformcontactdata.h"
 
-#include <QList>
-#include <QPointer>
-#include <QMutex>
+QTM_USE_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
-
-class QContactAbstractRequestPrivate
+class CntTransformOnlineAccount : public CntTransformContactData
 {
-public:
-    QContactAbstractRequestPrivate()
-        : m_error(QContactManager::NoError),
-            m_state(QContactAbstractRequest::InactiveState),
-            m_manager(0)
-    {
-    }
-
-    virtual ~QContactAbstractRequestPrivate()
-    {
-    }
-
-    virtual QContactAbstractRequest::RequestType type() const
-    {
-        return QContactAbstractRequest::InvalidRequest;
-    }
-
-    QContactManager::Error m_error;
-    QContactAbstractRequest::State m_state;
-    QPointer<QContactManager> m_manager;
-    mutable QMutex m_mutex;
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField &field, const QContact &contact);
+	bool supportsField(TUint32 fieldType) const;
+	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
+    bool supportsSubType(const QString &subType) const;
+    quint32 getIdForField(const QString &fieldName) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString &contactType) const;
 };
 
-QTM_END_NAMESPACE
+#endif // TRANSFORMONLINEACCOUNT_H
 
-#endif
+#endif // SYMBIAN_BACKEND_USE_SQLITE

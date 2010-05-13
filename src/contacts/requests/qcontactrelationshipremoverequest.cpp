@@ -149,6 +149,7 @@ QContactId QContactRelationshipRemoveRequest::second() const
 void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationship& relationship)
 {
     Q_D(QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships.clear();
     d->m_relationships.append(relationship);
 }
@@ -157,6 +158,7 @@ void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationsh
 void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRelationship>& relationships)
 {
     Q_D(QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships = relationships;
 }
 
@@ -164,6 +166,7 @@ void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRel
 QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_relationships;
 }
 
@@ -171,6 +174,7 @@ QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() c
 QMap<int, QContactManager::Error> QContactRelationshipRemoveRequest::errorMap() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

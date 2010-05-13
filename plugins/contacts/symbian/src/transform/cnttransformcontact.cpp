@@ -49,8 +49,9 @@
 #include "cnttransformaddress.h"
 #include "cnttransformbirthday.h"
 #include "cnttransformonlineaccount.h"
-#include "cnttransformpresence.h"
+#include "cnttransformonlineaccountsimple.h"
 #include "cnttransformorganisation.h"
+#include "cnttransformpresence.h"
 #include "cnttransformavatar.h"
 #include "cnttransformringtone.h"
 #include "cnttransformthumbnail.h"
@@ -142,6 +143,7 @@ void CntTransformContact::initializeCntTransformContactData()
 
     // variated transform classes
     m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
+    m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
 #endif
 }
 

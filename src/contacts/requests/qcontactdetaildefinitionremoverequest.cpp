@@ -86,6 +86,7 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QString& co
 void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names.clear();
     d->m_names.append(definitionName);
 }
@@ -99,6 +100,7 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& def
 void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names = names;
 }
 
@@ -106,6 +108,7 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList
 QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_names;
 }
 
@@ -115,6 +118,7 @@ QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contactType = contactType;
 }
 
@@ -122,6 +126,7 @@ void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contac
 QString QContactDetailDefinitionRemoveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contactType;
 }
 
@@ -129,6 +134,7 @@ QString QContactDetailDefinitionRemoveRequest::contactType() const
 QMap<int, QContactManager::Error> QContactDetailDefinitionRemoveRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

@@ -74,6 +74,7 @@ QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest(QObject
 void QContactDetailDefinitionSaveRequest::setDefinition(const QContactDetailDefinition& definition)
 {
     Q_D(QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_definitions.clear();
     d->m_definitions.append(definition);
 }
@@ -82,6 +83,7 @@ void QContactDetailDefinitionSaveRequest::setDefinition(const QContactDetailDefi
 void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDetailDefinition>& definitions)
 {
     Q_D(QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_definitions = definitions;
 }
 
@@ -90,6 +92,7 @@ void QContactDetailDefinitionSaveRequest::setDefinitions(const QList<QContactDet
 QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_definitions;
 }
 
@@ -97,6 +100,7 @@ QList<QContactDetailDefinition> QContactDetailDefinitionSaveRequest::definitions
 void QContactDetailDefinitionSaveRequest::setContactType(const QString& contactType)
 {
     Q_D(QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contactType = contactType;
 }
 
@@ -104,6 +108,7 @@ void QContactDetailDefinitionSaveRequest::setContactType(const QString& contactT
 QString QContactDetailDefinitionSaveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contactType;
 }
 
@@ -111,6 +116,7 @@ QString QContactDetailDefinitionSaveRequest::contactType() const
 QMap<int, QContactManager::Error> QContactDetailDefinitionSaveRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

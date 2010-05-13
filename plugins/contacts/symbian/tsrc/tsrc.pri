@@ -22,8 +22,9 @@ SYMBIAN_HEADERS += \
         ../../inc/transform/cnttransformurl.h \
         ../../inc/transform/cnttransformbirthday.h \
         ../../inc/transform/cnttransformonlineaccount.h \
-        ../../inc/transform/cnttransformpresence.h \
+        ../../inc/transform/cnttransformonlineaccountsimple.h \
         ../../inc/transform/cnttransformorganisation.h \
+        ../../inc/transform/cnttransformpresence.h \
         ../../inc/transform/cnttransformringtone.h \
         ../../inc/transform/cnttransformthumbnail.h \
         ../../inc/transform/cnttransformavatar.h \
@@ -71,8 +72,9 @@ SYMBIAN_SOURCES += \
         ../../src/transform/cnttransformurl.cpp \
         ../../src/transform/cnttransformbirthday.cpp \
         ../../src/transform/cnttransformonlineaccount.cpp \
-        ../../src/transform/cnttransformpresence.cpp \
+        ../../src/transform/cnttransformonlineaccountsimple.cpp \
         ../../src/transform/cnttransformorganisation.cpp \
+        ../../src/transform/cnttransformpresence.cpp \
         ../../src/transform/cnttransformringtone.cpp \
         ../../src/transform/cnttransformthumbnail.cpp \        
         ../../src/transform/cnttransformavatar.cpp \

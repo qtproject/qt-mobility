@@ -40,8 +40,9 @@ symbian: {
         inc/transform/cnttransformurl.h \
         inc/transform/cnttransformbirthday.h \
         inc/transform/cnttransformonlineaccount.h \
-        inc/transform/cnttransformpresence.h \
+        inc/transform/cnttransformonlineaccountsimple.h \
         inc/transform/cnttransformorganisation.h \
+        inc/transform/cnttransformpresence.h \
         inc/transform/cnttransformringtone.h \
         inc/transform/cnttransformthumbnail.h \
         inc/transform/cnttransformavatar.h \
@@ -60,8 +61,12 @@ symbian: {
         inc/filtering/cntdbinfo.h \
         inc/filtering/cntfilterdefault.h \
         inc/filtering/cntfilterintersection.h \
-        inc/filtering/cntfilterunion.h \   				
-				inc/filtering/cntabstractcontactsorter.h \
+        inc/filtering/cntfilterunion.h \
+        inc/filtering/cntfilterinvalid.h \
+        inc/filtering/cntfilterlocalid.h \
+        inc/filtering/cntfilterchangelog.h \
+        inc/filtering/cntfilterdetailrange.h \
+        inc/filtering/cntabstractcontactsorter.h \
         inc/filtering/cntabstractcontactfilter.h \
         inc/filtering/cntsymbianfilterdbms.h \
         inc/filtering/cntsymbianfiltersql.h \
@@ -81,8 +86,9 @@ symbian: {
         src/transform/cnttransformurl.cpp \
         src/transform/cnttransformbirthday.cpp \
         src/transform/cnttransformonlineaccount.cpp \
-        src/transform/cnttransformpresence.cpp \
+        src/transform/cnttransformonlineaccountsimple.cpp \
         src/transform/cnttransformorganisation.cpp \
+        src/transform/cnttransformpresence.cpp \
         src/transform/cnttransformringtone.cpp \
         src/transform/cnttransformthumbnail.cpp \
         src/transform/cnttransformavatar.cpp \
@@ -102,6 +108,10 @@ symbian: {
         src/filtering/cntfilterdefault.cpp \
         src/filtering/cntfilterintersection.cpp \
         src/filtering/cntfilterunion.cpp \
+        src/filtering/cntfilterinvalid.cpp \
+        src/filtering/cntfilterlocalid.cpp \
+        src/filtering/cntfilterchangelog.cpp \
+        src/filtering/cntfilterdetailrange.cpp \
         src/filtering/cntsymbianfilterdbms.cpp \
         src/filtering/cntsymbianfiltersql.cpp \
         src/filtering/cntsymbiansorterdbms.cpp \
