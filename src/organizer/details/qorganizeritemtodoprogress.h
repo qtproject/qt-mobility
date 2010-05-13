@@ -62,7 +62,7 @@ public:
     const char* FieldStatus;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemTodoProgress, "TodoProgress")
-    Q_DECLARE_LATIN1_CONSTANT(FieldStartedDateTime, "StartDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldStartedDateTime, "StartedDateTime");
     Q_DECLARE_LATIN1_CONSTANT(FieldFinishedDateTime, "FinishedDateTime");
     Q_DECLARE_LATIN1_CONSTANT(FieldPercentageComplete, "PercentageComplete");
     Q_DECLARE_LATIN1_CONSTANT(FieldStatus, "Status");

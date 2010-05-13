@@ -50,8 +50,10 @@
 QTM_USE_NAMESPACE
 
 static void snippets();
+static void dumpItems(QOrganizerItemManager* manager);
+static void dumpItem(const QOrganizerItem& item);
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
     snippets();
     return 0;
@@ -76,7 +78,7 @@ void snippets()
     recEvent.setDisplayLabel("Marshmallow Conference");
     defaultManager.saveItem(&recEvent);
     //! [Creating a recurrent event]
-
+dumpItems(&defaultManager);
     //! [Retrieving occurrences of a particular recurrent event within a time period]
     // XXX TODO: make this more convenient.
     // QOIM::itemInstances(item, startDateTime, endDateTime, count) ?
@@ -117,7 +119,7 @@ void snippets()
                     "recipe that combines both marshmallows and chocolate, by next Wednesday.");
     defaultManager.saveItem(&journal);
     //! [Creating a non-recurrent entry]
-
+dumpItems(&defaultManager);
 
     //! [Editing a non-recurrent entry]
     QOrganizerItemNote recipe;
@@ -125,6 +127,7 @@ void snippets()
     journal.saveDetail(&recipe);
     defaultManager.saveItem(&journal);
     //! [Editing a non-recurrent entry]
+dumpItems(&defaultManager);
 
     //! [Retrieving any entry (not occurrence) which matches a search criteria]
     // XXX TODO: make this more convenient.
@@ -146,10 +149,32 @@ void snippets()
                     "at the meeting.");
 
     // the following line should be made simpler via QOIM::itemInstances(item, startDateTime, endDateTime, count)...
-    QOrganizerEventOccurrence nextMarshmallowMeeting = QOrganizerEventOccurrence(defaultManager.itemInstances().first()); // should use dfil.
+    QOrganizerEventOccurrence nextMarshmallowMeeting = QOrganizerEventOccurrence(defaultManager.itemInstances().value(0)); // should use dfil.
     nextMarshmallowMeeting.saveDetail(&newTime);
     nextMarshmallowMeeting.saveDetail(&newNote);
     defaultManager.saveItem(&nextMarshmallowMeeting);
     //! [Creating an exception to a particular recurrent event]
 }
 
+void dumpItems(QOrganizerItemManager* manager)
+{
+    QList<QOrganizerItem> items = manager->items();
+    foreach (const QOrganizerItem& curr, items) {
+        dumpItem(curr);
+    }
+}
+
+void dumpItem(const QOrganizerItem& item)
+{
+    qDebug() << "--------------";
+    qDebug() << "item:" << item.displayLabel() << ", id:" << item.id();
+    QList<QOrganizerItemDetail> dets = item.details();
+    foreach (const QOrganizerItemDetail det, dets) {
+        qDebug() << "\tnew" << det.definitionName() << "detail:";
+        QVariantMap values = det.variantValues();
+        QStringList keys = values.keys();
+        foreach (const QString& key, keys) {
+            qDebug() << "\t" << key << "=" << values.value(key);
+        }
+    }
+}

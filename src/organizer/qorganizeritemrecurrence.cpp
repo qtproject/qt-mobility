@@ -39,6 +39,38 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritem.h"
+#include "qorganizeritemrecurrence.h"
+#include "qorganizeritemrecurrence_p.h"
 
-//QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
+
+QOrganizerItemRecurrence::QOrganizerItemRecurrence()
+    : d(new QOrganizerItemRecurrencePrivate)
+{
+
+}
+
+QOrganizerItemRecurrence::QOrganizerItemRecurrence(const QOrganizerItemRecurrence& other)
+    : d(other.d)
+{
+}
+
+QOrganizerItemRecurrence& QOrganizerItemRecurrence::operator=(const QOrganizerItemRecurrence& other)
+{
+    this->d = other.d;
+    return *this;
+}
+
+QOrganizerItemRecurrence::~QOrganizerItemRecurrence()
+{
+
+}
+
+QList<QDateTime> QOrganizerItemRecurrence::occurrences(const QDateTime& startDate, const QDateTime& endDate) const
+{
+    Q_UNUSED(startDate);
+    Q_UNUSED(endDate);
+    return QList<QDateTime>();
+}
+
+QTM_END_NAMESPACE

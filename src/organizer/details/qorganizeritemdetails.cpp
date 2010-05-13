@@ -163,6 +163,43 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDisplayLabel::FieldLabel, "Label");
 
 
 
+/* ==================== QOrganizerItemEventTimeRange ======================= */
+/*!
+   \class QOrganizerItemEventTimeRange
+   \brief The QOrganizerItemEventTimeRange class contains the start and end dates and times of a recurring event series,
+          or occurrence of an event.
+*/
+
+/*!
+   \variable QOrganizerItemEventTimeRange::DefinitionName
+
+   The constant string which identifies the definition of details
+   which contain a start and end timestamps of an event series or event occurrence.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEventTimeRange::DefinitionName, "EventTimeRange");
+
+/*!
+   \variable QOrganizerItemEventTimeRange::FieldEndDateTime
+
+   The constant key for which the end date and time value is stored in
+   details of the QOrganizerItemEventTimeRange type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEventTimeRange::FieldEndDateTime, "EndDateTime");
+
+/*!
+   \variable QOrganizerItemEventTimeRange::FieldStartDateTime
+
+   The constant key for which the start date and time value is stored in
+   details of the QOrganizerItemEventTimeRange type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemEventTimeRange::FieldStartDateTime, "StartDateTime");
+
+
+
+
+
+
+
 
 /* ==================== QOrganizerItemGuid ======================= */
 
@@ -200,6 +237,31 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
 
 
 
+/* ==================== QOrganizerItemJournalTimeRange ======================= */
+// XXX TODO: time range or just single instant in time?
+/*!
+   \class QOrganizerItemJournalTimeRange
+
+   \brief The QOrganizerItemJournalTimeRange class contains information about
+   the date and time for which a journal entry has been created.
+ */
+
+/*!
+\variable QOrganizerItemJournalTimeRange::DefinitionName
+
+The constant string which identifies the definition of details
+which describe the date and time associated with a journal item.
+*/
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemJournalTimeRange::DefinitionName, "JournalTimeRange");
+
+/*!
+   \variable QOrganizerItemJournalTimeRange::FieldEntryDateTime
+
+   The constant key for which the date and time of value for a journal entry is
+   stored in details of the QOrganizerItemJournalTimeRange type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemJournalTimeRange::FieldEntryDateTime, "EntryDateTime");
+
 
 /* ==================== QOrganizerItemLocation ======================= */
 // XXX TODO: do we include all three pieces of data into a single detail
@@ -226,6 +288,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::DefinitionName, "Location");
    stored in details of the QOrganizerItemLocation type.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldGeoLocation, "GeoLocation");
+
+/*!
+   \variable QOrganizerItemLocation::FieldAddress
+
+   The constant key for which the location address value is
+   stored in details of the QOrganizerItemLocation type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldAddress, "Address");
 
 /*!
    \variable QOrganizerItemLocation::FieldLocationName
@@ -469,8 +539,81 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTimestamp::FieldCreationTimestamp, "Creat
 
 
 
+/* ==================== QOrganizerItemTodoProgress ======================= */
+/*!
+   \class QOrganizerItemTodoProgress
+   \brief The QOrganizerItemTodoProgress class contains information about the progress of a todo item.
+ */
+
+/*!
+   \variable QOrganizerItemTodoProgress::DefinitionName
+   The constant string which identifies the definition of details which contain progress information about a todo item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTodoProgress::DefinitionName, "TodoProgress");
+
+/*!
+   \variable QOrganizerItemTodoProgress::FieldStatus
+
+   The constant key of the value which describes the current completion status of the
+   todo item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTodoProgress::FieldStatus, "Status");
+
+/*!
+   \variable QOrganizerItemTodoProgress::FieldPercentageComplete
+
+   The constant key of the value which contains the current completion percentage of the
+   todo item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTodoProgress::FieldPercentageComplete, "PercentageComplete");
+
+/*!
+   \variable QOrganizerItemTodoProgress::FieldStartedDateTime
+
+   The constant key of the date time value which contains the date and time at which the
+   todo item was started.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTodoProgress::FieldStartedDateTime, "StartedDateTime");
+
+/*!
+   \variable QOrganizerItemTodoProgress::FieldFinishedDateTime
+
+   The constant key of the date time value which contains the date and time at which the
+   todo item was completed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTodoProgress::FieldFinishedDateTime, "FinishedDateTime");
 
 
+
+
+
+/* ==================== QOrganizerItemTodoTimeRange ======================= */
+/*!
+   \class QOrganizerItemTodoTimeRange
+   \brief The QOrganizerItemTodoTimeRange class contains information about the time range of a todo item.
+ */
+
+/*!
+   \variable QOrganizerItemTodoTimeRange::DefinitionName
+   The constant string which identifies the definition of details which contain time-range information about a todo item.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTodoTimeRange::DefinitionName, "TodoTimeRange");
+
+/*!
+   \variable QOrganizerItemTodoTimeRange::FieldNotBeforeDateTime
+
+   The constant key of the date time value which describes the earliest date at which
+   the todo should be completed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTodoTimeRange::FieldNotBeforeDateTime, "NotBeforeDateTime");
+
+/*!
+   \variable QOrganizerItemTodoTimeRange::FieldDueDateTime
+
+   The constant key of the date time value which describes the latest date at which
+   the todo should be completed.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemTodoTimeRange::FieldDueDateTime, "DueDateTime");
 
 
 /* ==================== QOrganizerItemType ======================= */

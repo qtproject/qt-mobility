@@ -93,5 +93,7 @@ contains(mobility_modules,sensors) {
 }
 
 # Organizer
-SUBDIRS += qmlcalendar
+contains(QT_CONFIG, declarative) {
+    SUBDIRS += qmlcalendar
+}
 

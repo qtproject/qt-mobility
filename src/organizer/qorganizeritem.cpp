@@ -141,6 +141,7 @@ QOrganizerItem::QOrganizerItem(const QOrganizerItem& other)
 QOrganizerItem::QOrganizerItem(const char* type)
 {
     d = new QOrganizerItemData;
+    clearDetails();
     setType(QString(QLatin1String(type)));
 }
 

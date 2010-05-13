@@ -40,38 +40,35 @@
 ****************************************************************************/
 
 
-#ifndef QORGANIZERITEMRECURRENCE_H
-#define QORGANIZERITEMRECURRENCE_H
+#ifndef QORGANIZERITEMRECURRENCE_P_H
+#define QORGANIZERITEMRECURRENCE_P_H
 
-#include <QList>
-#include <QDateTime>
-#include <QSharedDataPointer>
-
-class QDateTime;
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
 #include "qtorganizerglobal.h"
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class QOrganizerItemRecurrencePrivate;
-
-/*
- * This is based on RDATE in iCalendar.
- */
-
-class Q_ORGANIZER_EXPORT QOrganizerItemRecurrence
+class QOrganizerItemRecurrencePrivate : public QSharedData
 {
 public:
-    QOrganizerItemRecurrence();
-    QOrganizerItemRecurrence(const QOrganizerItemRecurrence& other);
-    QOrganizerItemRecurrence& operator=(const QOrganizerItemRecurrence& other);
+    QOrganizerItemRecurrencePrivate() : QSharedData()
+    {
+    }
 
-    virtual ~QOrganizerItemRecurrence();
-    // accessing the occurrence dates - lazy calculation, cached possibly?
-    virtual QList<QDateTime> occurrences(const QDateTime& startDate, const QDateTime& endDate) const;
-
-protected:
-    QSharedDataPointer<QOrganizerItemRecurrencePrivate> d;
+    ~QOrganizerItemRecurrencePrivate()
+    {
+    }
 };
 
 QTM_END_NAMESPACE

@@ -42,6 +42,7 @@ PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemfetchhint_p.h \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
+    qorganizeritemrecurrence_p.h \
     qorganizeritemsortorder_p.h
 SOURCES += \
     qorganizeritemabstractrequest.cpp \
