@@ -65,8 +65,8 @@ class QXARecodMediaService : public QMediaService
 public:
     QXARecodMediaService(QObject *parent = 0);
     ~QXARecodMediaService();
-    QMediaControl *control(const char *name) const;
-
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 private:
     QXARecordSession *m_session;
     QXAMediaRecoderControl *m_control;

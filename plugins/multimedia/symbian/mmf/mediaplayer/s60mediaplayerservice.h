@@ -79,7 +79,8 @@ public:
     S60MediaPlayerService(QObject *parent = 0);
     ~S60MediaPlayerService();
 
-    QMediaControl *control(const char *name) const;
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 
 private slots:
     void videoOutputChanged(QVideoOutputControl::Output output);
