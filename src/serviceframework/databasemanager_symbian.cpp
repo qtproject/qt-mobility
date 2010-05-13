@@ -101,18 +101,10 @@ QTM_BEGIN_NAMESPACE
 */
 DatabaseManager::DatabaseManager()
 {
-    int err = iSession.Connect();
-    
-    int i = 0;
-    while (err != KErrNone) {
-        if (i > 10)
-            qt_symbian_throwIfError(err);
-        
-        User::After(50);
-        err = iSession.Connect();
-        i++;
-    }
-    
+    TInt err = iSession.Connect();
+    if (err != KErrNone)
+        qt_symbian_throwIfError(err);
+
     iDatabaseManagerSignalMonitor = new DatabaseManagerSignalMonitor(*this, iSession);
 }
 
@@ -315,12 +307,18 @@ TVersion RDatabaseManagerSession::Version() const
 
 TInt RDatabaseManagerSession::Connect()
     {
-    TInt err = StartServer();
-    if (err == KErrNone)
-    {
-        err = CreateSession(KDatabaseManagerServerName, Version()); //Default message slots
-    }
-    return err;
+    TInt retryCount = 2;
+    for (;;)
+        {
+        TInt err = CreateSession(KDatabaseManagerServerName, TVersion(), 8, EIpcSession_Sharable);
+        if (err != KErrNotFound && err != KErrServerTerminated)
+            return err;
+        if (--retryCount == 0)
+            return err;
+        err = StartServer();
+        if (err != KErrNone && err != KErrAlreadyExists)
+            return err;
+        }
     }
 
 TInt RDatabaseManagerSession::StartServer()

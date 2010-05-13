@@ -55,12 +55,16 @@ int main(int argc, char **argv)
     
     CDatabaseManagerServer* server = new CDatabaseManagerServer;
     TInt err = server->Start(KDatabaseManagerServerName);
-    if (err != KErrNone)
+    if (err != KErrAlreadyExists)
     {
-        CDatabaseManagerServer::PanicServer(ESvrStartServer);
-    }
-    RProcess::Rendezvous(err);
+        if (err != KErrNone)
+        {
+            CDatabaseManagerServer::PanicServer(ESvrStartServer);
+        }
+        RProcess::Rendezvous(err);
 
-    return app.exec();
+        return app.exec();
+    }
+    return 0;
 }
 

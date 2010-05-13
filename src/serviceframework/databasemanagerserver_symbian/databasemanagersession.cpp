@@ -91,11 +91,11 @@ CDatabaseManagerServerSession::CDatabaseManagerServerSession(CDatabaseManagerSer
 
 CDatabaseManagerServerSession::~CDatabaseManagerServerSession()
     {
-    iServer.DecreaseSessions();
     delete iDatabaseManagerSignalHandler;
     delete iDb;
     delete iByteArray;
     delete m_watcher;
+    iServer.DecreaseSessions();
     }
 
 void CDatabaseManagerServerSession::ServiceL(const RMessage2& aMessage)

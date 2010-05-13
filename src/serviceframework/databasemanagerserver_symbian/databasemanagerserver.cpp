@@ -41,14 +41,12 @@
 #include "databasemanagerserver.h"
 #include "clientservercommon.h"
 #include "databasemanagersession.h"
-#ifdef __WINS__
-#include <QThread>
-#endif
+//#include <QThread>
 
 QTM_BEGIN_NAMESPACE
 
 CDatabaseManagerServer::CDatabaseManagerServer()
-    : CServer2(EPriorityNormal)
+    : CServer2(EPriorityNormal, ESharableSessions)
     , iSessionCount(0)
     {
     }
@@ -80,9 +78,7 @@ void CDatabaseManagerServer::DecreaseSessions()
     iSessionCount--;
     if (iSessionCount <= 0)
         {
-#ifdef __WINS__        
-        QThread::currentThread()->quit();
-#endif
+        //QThread::currentThread()->quit();
         }
     }
 
