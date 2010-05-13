@@ -197,6 +197,7 @@ QMediaControl *QMediaImageViewerService::requestControl(const char *name)
     } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
         if (!d->rendererControl) {
             d->rendererControl = new QMediaImageViewerRenderer;
+            d->rendererControl->showImage(d->m_image);
 
             return d->rendererControl;
         }
