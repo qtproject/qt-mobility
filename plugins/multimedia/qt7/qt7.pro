@@ -30,7 +30,7 @@ DEPENDPATH += .
 HEADERS += \
     qt7backend.h \
     qt7playercontrol.h \
-    qt7videooutputcontrol.h \
+    qt7videooutput.h \
     qt7movieviewoutput.h \
     qt7movievideowidget.h \
     qt7movieviewrenderer.h \
@@ -52,7 +52,7 @@ OBJECTIVE_SOURCES += \
     qt7playermetadata.mm \
     qt7movierenderer.mm \
     qt7playercontrol.mm \
-    qt7videooutputcontrol.mm \
+    qt7videooutput.mm \
     qt7playerservice.mm \
     qcvdisplaylink.mm
 

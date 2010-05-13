@@ -40,12 +40,12 @@
 ****************************************************************************/
 
 #include "qt7playercontrol.h"
-#include "qt7videooutputcontrol.h"
 #include "qt7playersession.h"
 #include <QtCore/qdebug.h>
 
 QT_USE_NAMESPACE
 
+/*
 QT7VideoOutputControl::QT7VideoOutputControl(QObject *parent)
    :QVideoOutputControl(parent), 
     m_session(0),
@@ -88,3 +88,4 @@ void QT7VideoOutputControl::setOutput(Output output)
 
 #include "moc_qt7videooutputcontrol.cpp"
 
+*/

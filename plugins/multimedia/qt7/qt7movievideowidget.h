@@ -49,7 +49,7 @@
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
-#include "qt7videooutputcontrol.h"
+#include "qt7videooutput.h"
 
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <QuickTime/QuickTime.h>

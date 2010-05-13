@@ -43,7 +43,6 @@
 #define QWMPPLAYERSERVICE_H
 
 #include "qwmpevents.h"
-#include "qwmpvideooutputcontrol.h"
 
 #include <qmediaservice.h>
 

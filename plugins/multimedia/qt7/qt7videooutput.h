@@ -44,7 +44,6 @@
 
 #include <QtCore/qobject.h>
 
-#include <qvideooutputcontrol.h>
 #include <qvideowindowcontrol.h>
 #include <qvideowidgetcontrol.h>
 #include <qvideorenderercontrol.h>
@@ -99,30 +98,6 @@ protected:
     QT7VideoWidgetControl(QObject *parent)
         :QVideoWidgetControl(parent)
     {}
-};
-
-class QT7VideoOutputControl : public QVideoOutputControl
-{
-Q_OBJECT
-public:
-    QT7VideoOutputControl(QObject *parent = 0);
-    ~QT7VideoOutputControl();
-
-    void setSession(QT7PlayerSession *session);
-
-    QList<Output> availableOutputs() const;
-    void enableOutput(Output);
-
-    Output output() const;
-    void setOutput(Output output);
-
-signals:
-    void videoOutputChanged(QVideoOutputControl::Output);
-    
-private:
-    QT7PlayerSession *m_session;
-    Output m_output;
-    QList<Output> m_outputs;
 };
 
 QT_END_NAMESPACE

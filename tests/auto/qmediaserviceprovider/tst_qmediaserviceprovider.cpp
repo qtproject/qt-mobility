@@ -60,7 +60,8 @@ public:
     { setObjectName(name); }
     ~MockMediaService() {}
 
-    QMediaControl* control(const char *) const {return 0;}
+    QMediaControl* requestControl(const char *) {return 0;}
+    void releaseControl(QMediaControl *) {}
 };
 
 class MockServicePlugin1 : public QMediaServiceProviderPlugin,
