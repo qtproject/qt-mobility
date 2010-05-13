@@ -49,10 +49,7 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerTodo : public QOrganizerItem
 {
 public:
-    QOrganizerTodo();
-
-    QOrganizerTodo(const QOrganizerTodo& other);
-    QOrganizerTodo& operator=(const QOrganizerTodo& other);
+    Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodo, QOrganizerItemType::TypeTodo)
 
     // XXX TODO: some questions about "recurring periods and doneness"...
     void setNotBeforeDateTime(const QDateTime& notBeforeDateTime);

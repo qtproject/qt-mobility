@@ -50,10 +50,7 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerTodoOccurrence : public QOrganizerItem
 {
 public:
-    QOrganizerTodoOccurrence();
-
-    QOrganizerTodoOccurrence(const QOrganizerTodoOccurrence& other);
-    QOrganizerTodoOccurrence& operator=(const QOrganizerTodoOccurrence& other);
+    Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodoOccurrence, QOrganizerItemType::TypeTodoOccurrence)
 
     // XXX TODO: see discussion in qorganizertodo.h
     void setNotBeforeDateTime(const QDateTime& noteBeforeDateTime);

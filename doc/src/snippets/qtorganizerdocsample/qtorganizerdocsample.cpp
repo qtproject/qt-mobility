@@ -81,17 +81,20 @@ void snippets()
     // XXX TODO: make this more convenient.
     // QOIM::itemInstances(item, startDateTime, endDateTime, count) ?
     // QOI::instanceFilter(start, end) ?
-    QOrganizerItemDetailFilter dfil;
-    dfil.setDetailDefinitionName(QOrganizerItemParentInfo::DefinitionName, QOrganizerItemParentInfo::FieldParentId);
-    dfil.setValue(recEvent.id());
+//    QOrganizerItemDetailFilter dfil;
+//    dfil.setDetailDefinitionName(QOrganizerItemParentInfo::DefinitionName, QOrganizerItemParentInfo::FieldParentId);
+//    dfil.setValue(recEvent.id());
 
-    QOrganizerItemPeriodFilter pfil;
-    pfil.setStartDate(QDateTime::current(), endOfThisMonth());
 
-    QOrganizerItemIntersectionFilter ifil;
-    ifil << dfil << pfil;
+    // alternative to pfil: give me the instance view from this date to that date, with this filter ^^
+//    QOrganizerItemPeriodFilter pfil;
+//    pfil.setStartDate(QDateTime::current());
+//    pfil.setEndDate(endOfThisMonth());
 
-    QList<QOrganizerItem> instances = defaultManager.itemInstances(ifil);
+//    QOrganizerItemIntersectionFilter ifil;
+//    ifil << dfil << pfil;
+
+//    QList<QOrganizerItem> instances = defaultManager.itemInstances(ifil);
     //! [Retrieving occurrences of a particular recurrent event within a time period]
 
     //! [Retrieving the next 5 occurrences of a particular recurrent event]
@@ -127,15 +130,15 @@ void snippets()
     // XXX TODO: make this more convenient.
     // QOrganizerItemLocation::matchLocationName("Meeting Room 8") ?
     QOrganizerItemDetailFilter locationFilter;
-    locationFilter.setDetailDefinition(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLocationName);
+    locationFilter.setDetailDefinitionName(QOrganizerItemLocation::DefinitionName, QOrganizerItemLocation::FieldLocationName);
     locationFilter.setValue("Meeting Room 8");
     QList<QOrganizerItem> entries = defaultManager.items(locationFilter);
     //! [Retrieving any entry (not occurrence) which matches a search criteria]
 
     //! [Creating an exception to a particular recurrent event]
     QOrganizerItemEventTimeRange newTime;
-    newTime.setStartDateTime("6pm");
-    newTime.setEndDateTime("8pm");
+    newTime.setStartDateTime(QDateTime::fromString("13.05.2010 18:00:00", "dd.MM.yy hh:mm:ss"));
+    newTime.setEndDateTime(QDateTime::fromString("13.05.2010 20:00:00", "dd.MM.yy hh:mm:ss"));
     QOrganizerItemNote newNote;
     newNote.setNote("The next meeting will go for an hour longer (starting one "\
                     "hour earlier than usual), since we have scheduled one hour"\
@@ -143,7 +146,7 @@ void snippets()
                     "at the meeting.");
 
     // the following line should be made simpler via QOIM::itemInstances(item, startDateTime, endDateTime, count)...
-    QOrganizerEventOccurrence nextMarshmallowMeeting = QOrganizerEventOccurrence(defaultManager.itemInstances(dfil).first());
+    QOrganizerEventOccurrence nextMarshmallowMeeting = QOrganizerEventOccurrence(defaultManager.itemInstances().first()); // should use dfil.
     nextMarshmallowMeeting.saveDetail(&newTime);
     nextMarshmallowMeeting.saveDetail(&newNote);
     defaultManager.saveItem(&nextMarshmallowMeeting);

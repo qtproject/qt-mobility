@@ -51,10 +51,7 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerEvent : public QOrganizerItem
 {
 public:
-    QOrganizerEvent();
-
-    QOrganizerEvent(const QOrganizerEvent& other);
-    QOrganizerEvent& operator=(const QOrganizerEvent& other);
+    Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerEvent, QOrganizerItemType::TypeEvent)
 
     void setStartDateTime(const QDateTime& startDateTime);
     QDateTime startDateTime() const;

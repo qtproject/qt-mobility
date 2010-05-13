@@ -43,21 +43,6 @@
 
 QTM_USE_NAMESPACE
 
-QOrganizerTodoOccurrence::QOrganizerTodoOccurrence()
-{
-}
-
-QOrganizerTodoOccurrence::QOrganizerTodoOccurrence(const QOrganizerTodoOccurrence& other)
-    : QOrganizerItem(other)
-{
-}
-
-QOrganizerTodoOccurrence& QOrganizerTodoOccurrence::operator=(const QOrganizerTodoOccurrence& other)
-{
-    QOrganizerItem::operator =(other);
-    return *this;
-}
-
 void QOrganizerTodoOccurrence::setNotBeforeDateTime(const QDateTime& notBeforeDateTime)
 {
     Q_UNUSED(notBeforeDateTime);

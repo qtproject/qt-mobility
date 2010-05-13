@@ -49,10 +49,7 @@ QTM_BEGIN_NAMESPACE
 class Q_ORGANIZER_EXPORT QOrganizerJournal : public QOrganizerItem
 {
 public:
-    QOrganizerJournal();
-
-    QOrganizerJournal(const QOrganizerJournal& other);
-    QOrganizerJournal& operator=(const QOrganizerJournal& other);
+    Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerJournal, QOrganizerItemType::TypeJournal)
 
     // XXX TODO: research whether journal is a single point in time, or can cover a period of time...
     void setStartDateTime(const QDateTime& startDateTime);

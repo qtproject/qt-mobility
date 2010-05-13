@@ -44,22 +44,6 @@
 
 QTM_USE_NAMESPACE
 
-QOrganizerTodo::QOrganizerTodo()
-{
-    // XXX TODO: set the QOrganizerItemType detail to == Todo.
-}
-
-QOrganizerTodo::QOrganizerTodo(const QOrganizerTodo& other)
-    : QOrganizerItem(other)
-{
-}
-
-QOrganizerTodo& QOrganizerTodo::operator=(const QOrganizerTodo& other)
-{
-    QOrganizerItem::operator =(other);
-    return *this;
-}
-
 void QOrganizerTodo::setNotBeforeDateTime(const QDateTime& notBeforeDateTime)
 {
     Q_UNUSED(notBeforeDateTime);

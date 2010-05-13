@@ -172,6 +172,11 @@ public:
     QString note() const;        // ??
 
 protected:
+    explicit QOrganizerItem(const char* type);
+    QOrganizerItem(const QOrganizerItem &other, const char* expectedType);
+    QOrganizerItem& assign(const QOrganizerItem &other, const char* expectedType);
+
+protected:
     friend class QOrganizerItemManager;
     friend class QOrganizerItemManagerData;
     friend class QOrganizerItemManagerEngine;
@@ -183,6 +188,11 @@ Q_ORGANIZER_EXPORT uint qHash(const QOrganizerItem& key);
 #ifndef QT_NO_DEBUG_STREAM
 Q_ORGANIZER_EXPORT QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem);
 #endif
+
+#define Q_DECLARE_CUSTOM_ORGANIZER_ITEM(className, typeConstant) \
+    className() : QOrganizerItem(typeConstant.latin1()) {} \
+    className(const QOrganizerItem& other) : QOrganizerItem(other, typeConstant.latin1()) {} \
+    className& operator=(const QOrganizerItem& other) {assign(other, typeConstant.latin1()); return *this;}
 
 QTM_END_NAMESPACE
 

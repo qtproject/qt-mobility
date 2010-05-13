@@ -501,6 +501,13 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::FieldType, "Type");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeEvent, "Event");
 
 /*!
+   \variable QOrganizerItemType::TypeEventOccurrence
+
+   The constant attribute value which describes the organizer item as being an occurrence of an event.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeEventOccurrence, "EventOccurrence");
+
+/*!
    \variable QOrganizerItemType::TypeInvitation
 
    The constant attribute value which describes the organizer item as being an invitation.
@@ -527,6 +534,13 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeNote, "Note");
    The constant attribute value which describes the organizer item as being a todo.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodo, "Todo");
+
+/*!
+   \variable QOrganizerItemType::TypeTodoOccurrence
+
+   The constant attribute value which describes the organizer item as being an occurrence of a todo.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeTodoOccurrence, "TodoOccurrence");
 
 /*!
    \fn QOrganizerItemType::type() const

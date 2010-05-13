@@ -43,21 +43,6 @@
 
 QTM_USE_NAMESPACE
 
-QOrganizerEventOccurrence::QOrganizerEventOccurrence()
-{
-}
-
-QOrganizerEventOccurrence::QOrganizerEventOccurrence(const QOrganizerEventOccurrence& other)
-    : QOrganizerItem(other)
-{
-}
-
-QOrganizerEventOccurrence& QOrganizerEventOccurrence::operator=(const QOrganizerEventOccurrence& other)
-{
-    QOrganizerItem::operator =(other);
-    return *this;
-}
-
 void QOrganizerEventOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
     Q_UNUSED(startDateTime);

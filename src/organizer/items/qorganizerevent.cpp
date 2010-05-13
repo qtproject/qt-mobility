@@ -44,21 +44,6 @@
 
 QTM_USE_NAMESPACE
 
-QOrganizerEvent::QOrganizerEvent()
-{
-    // XXX TODO: set the QOrganizerItemType detail to == Event.
-}
-
-QOrganizerEvent::QOrganizerEvent(const QOrganizerEvent& other)
-    : QOrganizerItem(other)
-{
-}
-QOrganizerEvent& QOrganizerEvent::operator=(const QOrganizerEvent& other)
-{
-    QOrganizerItem::operator =(other);
-    return *this;
-}
-
 void QOrganizerEvent::setStartDateTime(const QDateTime& startDateTime)
 {
     Q_UNUSED(startDateTime);

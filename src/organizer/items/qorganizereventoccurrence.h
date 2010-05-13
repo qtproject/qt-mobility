@@ -43,16 +43,14 @@
 #define QORGANIZEREVENTOCCURRENCE_H
 
 #include "qtorganizer.h"
+#include "qorganizeritempriority.h"
 
 QTM_BEGIN_NAMESPACE
 
 class Q_ORGANIZER_EXPORT QOrganizerEventOccurrence : public QOrganizerItem
 {
 public:
-    QOrganizerEventOccurrence();
-
-    QOrganizerEventOccurrence(const QOrganizerEventOccurrence& other);
-    QOrganizerEventOccurrence& operator=(const QOrganizerEventOccurrence& other);
+    Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerEventOccurrence, QOrganizerItemType::TypeEventOccurrence)
 
     void setStartDateTime(const QDateTime& startDateTime);
     QDateTime startDateTime() const;

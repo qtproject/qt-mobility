@@ -134,6 +134,57 @@ QOrganizerItem::QOrganizerItem(const QOrganizerItem& other)
 }
 
 /*!
+    \internal
+
+    Constructs a new, empty item of the given type \a type.
+*/
+QOrganizerItem::QOrganizerItem(const char* type)
+{
+    d = new QOrganizerItemData;
+    setType(QString(QLatin1String(type)));
+}
+
+/*!
+    \internal
+
+    Constructs an item that is a copy of \a other if \a other is of the expected type
+    identified by \a expectedType, else constructs a new, empty item of the
+    type identified by the \a expectedType.
+
+    The \a expectedType pointer must be valid for the lifetime of the program.
+*/
+QOrganizerItem::QOrganizerItem(const QOrganizerItem& other, const char* expectedType)
+{
+    if (other.type() == QString(QLatin1String(expectedType))) {
+        d = other.d;
+    } else {
+        d = new QOrganizerItemData;
+        setType(QString(QLatin1String(expectedType)));
+    }
+}
+
+/*!
+    \internal
+
+    Assigns this item to \a other if the type of \a other is that identified
+    by the given \a expectedType, else assigns this item to be a new, empty
+    item of the type identified by the given \a expectedType
+*/
+QOrganizerItem& QOrganizerItem::assign(const QOrganizerItem& other, const char* expectedType)
+{
+    if (this != &other) {
+        if (other.type() == QString(QLatin1String(expectedType))) {
+            d = other.d;
+        } else {
+            d = new QOrganizerItemData;
+            setType(QString(QLatin1String(expectedType)));
+        }
+    }
+    return *this;
+}
+
+
+/*!
  * Returns true if this QOrganizerItem is empty, false if not.
  *
  * An empty QOrganizerItem has an empty label and no extra details.
