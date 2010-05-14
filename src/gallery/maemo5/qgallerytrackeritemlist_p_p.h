@@ -102,9 +102,9 @@ public:
         const Row &operator *() const {  return row = Row(begin, begin + width); }
 
         bool isEqual(const row_iterator &other, int count) const {
-            return qEqual(begin, other.begin, begin + count); }
+            return qEqual(begin, begin + count, other.begin); }
         bool isEqual(const row_iterator &other, int index, int count) {
-            return qEqual(begin + index, other.begin + index, begin + count); }
+            return qEqual(begin + index, begin + count, other.begin + index); }
 
         const QVariant &operator[] (int column) const { return *(begin + column); }
 
