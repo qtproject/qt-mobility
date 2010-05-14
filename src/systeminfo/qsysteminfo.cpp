@@ -607,6 +607,8 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
                                  networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
         netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
     }
+#else
+Q_UNUSED(signal)
 #endif
 }
 
@@ -627,6 +629,8 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
                                  networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
         netInfoPrivate()->setWlanSignalStrengthCheckEnabled(false);
     }
+#else
+Q_UNUSED(signal)
 #endif
 }
 
