@@ -39,56 +39,45 @@
 **
 ****************************************************************************/
 
+#ifndef QORGANIZERITEMRECURRENCERULE_P_H
+#define QORGANIZERITEMRECURRENCERULE_P_H
 
-#ifndef QORGANIZERITEMRECURRENCEDATES_H
-#define QORGANIZERITEMRECURRENCEDATES_H
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qtorganizerglobal.h"
-#include "qorganizeritemdetail.h"
-
-#include <QList>
-#include <QDateTime>
+#include <QMap>
+#include <QVariant>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-/*
- * This is based on RDATE in iCalendar.
- */
-
-class Q_ORGANIZER_EXPORT QOrganizerItemRecurrenceDates : public QOrganizerItemDetail
+class QOrganizerItemRecurrenceRulePrivate : public QSharedData
 {
 public:
-#ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldDunno;
-#else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemRecurrenceDates, "RecurrenceDates")
-    Q_DECLARE_LATIN1_CONSTANT(FieldOccurrenceDates, "OccurrenceDates");
-#endif
-
-    // total-specification of occurrence dates
-    void setOccurrenceDates(const QList<QDateTime>& occurrences)
+    QOrganizerItemRecurrenceRulePrivate()
+            : QSharedData()
     {
-        // XXX TODO: decide on the name of the field/class... (recurrence vs occurrence)
-        QVariantList variantDates;
-        foreach (const QDateTime& curr, occurrences) {
-            variantDates << curr;
-        }
-        setValue(FieldOccurrenceDates, variantDates);
     }
 
-    QList<QDateTime> occurrenceDates() const
+    QOrganizerItemRecurrenceRulePrivate(const QOrganizerItemRecurrenceRulePrivate& other)
+            : QSharedData(other),
+            m_variantValues(other.m_variantValues)
     {
-        // XXX TODO: decide on the name of the field/class... (recurrence vs occurrence)
-        QList<QDateTime> dates;
-        QVariantList variantDates = variantValue(FieldOccurrenceDates).toList();
-        foreach (const QVariant& date, variantDates) {
-            if (!date.toDateTime().isNull()) {
-                dates << date.toDateTime();
-            }
-        }
-        return dates;
     }
+
+    ~QOrganizerItemRecurrenceRulePrivate()
+    {
+    }
+
+    QVariantMap m_variantValues;
 };
 
 QTM_END_NAMESPACE

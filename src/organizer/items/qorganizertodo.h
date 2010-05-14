@@ -43,8 +43,7 @@
 #define QORGANIZERTODO_H
 
 #include "qtorganizer.h"
-#include "qorganizeritemrecurrencerule.h"
-#include "qorganizeritemrecurrencedates.h"
+#include "qorganizeritemrecurrence.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -59,10 +58,8 @@ public:
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
-    void setRecurrenceRule(const QOrganizerItemRecurrenceRule& recurrenceRule) const;
-    QOrganizerItemRecurrenceRule recurrenceRule() const;
-    void setRecurrenceDates(const QOrganizerItemRecurrenceDates& recurrenceDates) const;
-    QOrganizerItemRecurrenceDates recurrenceDates() const;
+    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
+    QOrganizerItemRecurrence recurrence() const;
 
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;

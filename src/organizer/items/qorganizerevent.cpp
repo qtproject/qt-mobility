@@ -70,22 +70,13 @@ QDateTime QOrganizerEvent::endDateTime() const
     return etr.endDateTime();
 }
 
-void QOrganizerEvent::setRecurrenceRule(const QOrganizerItemRecurrenceRule& recurrenceRule) const
+void QOrganizerEvent::setRecurrence(const QOrganizerItemRecurrence& recurrence) const
 {
-    Q_UNUSED(recurrenceRule);
+    Q_UNUSED(recurrence);
 }
-QOrganizerItemRecurrenceRule QOrganizerEvent::recurrenceRule() const
+QOrganizerItemRecurrence QOrganizerEvent::recurrence() const
 {
-    return QOrganizerItemRecurrenceRule();
-}
-
-void QOrganizerEvent::setRecurrenceDates(const QOrganizerItemRecurrenceDates& recurrenceDates) const
-{
-    Q_UNUSED(recurrenceDates);
-}
-QOrganizerItemRecurrenceDates QOrganizerEvent::recurrenceDates() const
-{
-    return QOrganizerItemRecurrenceDates();
+    return QOrganizerItemRecurrence();
 }
 
 void QOrganizerEvent::setPriority(QOrganizerItemPriority::Priority priority)

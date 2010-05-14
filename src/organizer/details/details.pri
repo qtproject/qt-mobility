@@ -13,8 +13,7 @@ PUBLIC_HEADERS += \
     details/qorganizeritemparticipation.h \
     details/qorganizeritempriority.h \
     details/qorganizeritemprovenance.h \
-    details/qorganizeritemrecurrencedates.h \
-    details/qorganizeritemrecurrencerule.h \
+    details/qorganizeritemrecurrence.h \
     details/qorganizeritemrsvpinfo.h \
     details/qorganizeritemtimestamp.h \
     details/qorganizeritemtodoprogress.h \

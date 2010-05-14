@@ -43,12 +43,12 @@
 #ifndef QORGANIZERITEMRECURRENCERULE_H
 #define QORGANIZERITEMRECURRENCERULE_H
 
-class QString;
-class QDateTime;
+#include <QString>
+#include <QDateTime>
 #include <QList>
 
 #include "qtorganizerglobal.h"
-#include "qorganizeritemdetail.h"
+#include "qorganizeritemrecurrencerule_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -95,11 +95,10 @@ QTM_BEGIN_NAMESPACE
  * For any cases not covered here, do not derive any of the fields.
  */
 
-class Q_ORGANIZER_EXPORT QOrganizerItemRecurrenceRule : public QOrganizerItemDetail
+class Q_ORGANIZER_EXPORT QOrganizerItemRecurrenceRule
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
     const char* FieldFrequency;
     const char* FieldCount;
     const char* FieldStartDate;
@@ -113,7 +112,6 @@ public:
     const char* FieldPosition;
     const char* FieldWeekStart;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemRecurrenceRule, "RecurrenceRule")
     Q_DECLARE_LATIN1_CONSTANT(FieldFrequency, "Frequency");
     Q_DECLARE_LATIN1_CONSTANT(FieldCount, "Count");
     Q_DECLARE_LATIN1_CONSTANT(FieldStartDate, "StartDate");
@@ -153,150 +151,67 @@ public:
     };
 
     // Compulsory for a valid rule
-    void setStartDate(const QDateTime& startDate) {setValue(FieldStartDate, startDate);}
-    QDateTime startDate() const {return variantValue(FieldStartDate).toDateTime();}
+    void setStartDate(const QDateTime& startDate);
+    QDateTime startDate() const;
 
     // Default: Weekly
-    void setFrequency(Frequency freq) {setValue(FieldFrequency, static_cast<int>(freq));}
-    Frequency frequency() const {return static_cast<Frequency>(variantValue(FieldFrequency).toInt());}
+    void setFrequency(Frequency freq);
+    Frequency frequency() const;
 
     /* end critierion: neither, either or both of count/endDate could be set.  If both is set, the
      * recurrence ends on whichever occurs first.  */
     // eg: 10 means ten times, 0 means not set.
     // Default: 0
-    void setCount(int count) {setValue(FieldCount, count);}
-    int count() const {return variantValue(FieldCount).toInt();}
+    void setCount(int count);
+    int count() const;
     // invalid means not set.
     // Default: null
-    void setEndDate(const QDateTime& endDate) {setValue(FieldEndDate, endDate);}
-    QDateTime endDate() const {return variantValue(FieldEndDate).toDateTime();}
+    void setEndDate(const QDateTime& endDate);
+    QDateTime endDate() const;
 
     // eg. if frequency = Daily and interval = 2, every second day
     // Default: 1
-    void setInterval(int interval) {setValue(FieldInterval, interval);}
-    int interval() const {return variantValue(FieldInterval).toInt();}
+    void setInterval(int interval);
+    int interval() const;
 
     // XXX TODO: move the implementations below to the details.cpp file.
 
     // Defaults for the below: empty
     // eg: Monday,Wednesday,Thursday == every Mon, Wed and Thurs.
-    void setDayOfWeek(const QList<Qt::DayOfWeek>& days)
-    {
-        QVariantList variantDays;
-        for (int i = 0; i < days.size(); ++i) {
-            variantDays << days.at(i);
-        }
-        setValue(FieldDayOfWeek, variantDays);
-    }
-    QList<Qt::DayOfWeek> dayOfWeek() const
-    {
-        QList<Qt::DayOfWeek> retn;
-        QVariantList variantDays = variantValue(FieldDayOfWeek).toList();
-        for (int i = 0; i < variantDays.size(); ++i) {
-            Qt::DayOfWeek curr = static_cast<Qt::DayOfWeek>(variantDays.at(i).toInt());
-            retn << curr;
-        }
-        return retn;
-    }
+    void setDayOfWeek(const QList<Qt::DayOfWeek>& days);
+    QList<Qt::DayOfWeek> dayOfWeek() const;
     // eg: 31,-3 == 31st day of month (if it exists) and 3rd-last day of month
-    void setDayOfMonth(const QList<int>& days)
-    {
-        QVariantList saveList;
-        for (int i = 0; i < days.size(); ++i) {
-            saveList << days.at(i);
-        }
-        setValue(FieldDayOfMonth, saveList);
-    }
-    QList<int> dayOfMonth() const
-    {
-        QList<int> retn;
-        QVariantList loadList = variantValue(FieldDayOfMonth).toList();
-        for (int i = 0; i < loadList.size(); ++i) {
-            retn << loadList.at(i).toInt();
-        }
-        return retn;
-    }
+    void setDayOfMonth(const QList<int>& days);
+    QList<int> dayOfMonth() const;
     // eg: 47th,-5 == 47th and 5th-last day of year
-    void setDayOfYear(const QList<int>& days)
-    {
-        QVariantList saveList;
-        for (int i = 0; i < days.size(); ++i) {
-            saveList << days.at(i);
-        }
-        setValue(FieldDayOfMonth, saveList);
-    }
-    QList<int> dayOfYear() const
-    {
-        QList<int> retn;
-        QVariantList loadList = variantValue(FieldDayOfYear).toList();
-        for (int i = 0; i < loadList.size(); ++i) {
-            retn << loadList.at(i).toInt();
-        }
-        return retn;
-    }
+    void setDayOfYear(const QList<int>& days);
+    QList<int> dayOfYear() const;
     // eg: January,February == during Jan and Feb
-    void setMonth(const QList<Month>& months)
-    {
-        QVariantList saveList;
-        for (int i = 0; i < months.size(); ++i) {
-            saveList << static_cast<int>(months.at(i));
-        }
-        setValue(FieldDayOfMonth, saveList);
-    }
-    QList<Month> month() const
-    {
-        QList<Month> retn;
-        QVariantList loadList = variantValue(FieldMonth).toList();
-        for (int i = 0; i < loadList.size(); ++i) {
-            retn << static_cast<Month>(loadList.at(i).toInt());
-        }
-        return retn;
-    }
+    void setMonth(const QList<Month>& months);
+    QList<Month> month() const;
     // eg. 13,53,-3 == weeks 13 and 53 (if it exists) and the 3rd-last week of the year
-    void setWeekOfYear(const QList<int>& weeks)
-    {
-        QVariantList saveList;
-        for (int i = 0; i < weeks.size(); ++i) {
-            saveList << weeks.at(i);
-        }
-        setValue(FieldDayOfMonth, saveList);
-    }
-    QList<int> weekOfYear() const
-    {
-        QList<int> retn;
-        QVariantList loadList = variantValue(FieldWeekOfYear).toList();
-        for (int i = 0; i < loadList.size(); ++i) {
-            retn << loadList.at(i).toInt();
-        }
-        return retn;
-    }
+    void setWeekOfYear(const QList<int>& weeks);
+    QList<int> weekOfYear() const;
 
     // eg. frequency = Monthly, dayOfWeek = Tuesday, positions = 1,-1 means first and last Tuesday
     // of every month.
     // All other criteria are applied first, then for each time period as specified by frequency,
     // dates are selected via the 1-based indices specified by position.
-    void setPosition(const QList<int>& pos)
-    {
-        QVariantList saveList;
-        for (int i = 0; i < pos.size(); ++i) {
-            saveList << pos.at(i);
-        }
-        setValue(FieldDayOfMonth, saveList);
-    }
-    QList<int> position() const
-    {
-        QList<int> retn;
-        QVariantList loadList = variantValue(FieldPosition).toList();
-        for (int i = 0; i < loadList.size(); ++i) {
-            retn << loadList.at(i).toInt();
-        }
-        return retn;
-    }
+    void setPosition(const QList<int>& pos);
+    QList<int> position() const;
 
     // Default: Monday
     // sets the day that the week starts on (significant for Weekly with interval > 1, and for weekOfYear)
-    void setWeekStart(Qt::DayOfWeek day) {setValue(FieldWeekStart, static_cast<int>(day));}
-    Qt::DayOfWeek weekStart() const {return static_cast<Qt::DayOfWeek>(variantValue(FieldWeekStart).toInt());}
+    void setWeekStart(Qt::DayOfWeek day);
+    Qt::DayOfWeek weekStart() const;
+
+    QVariantMap variantValues() const;
+
+    static QOrganizerItemRecurrenceRule fromVariantValues(const QVariantMap& variantValues);
+
+private:
+    void setVariantValues(const QVariantMap& variantValues);
+    QSharedDataPointer<QOrganizerItemRecurrenceRulePrivate> d;
 };
 
 QTM_END_NAMESPACE

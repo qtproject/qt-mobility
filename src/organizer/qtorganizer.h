@@ -58,6 +58,7 @@
 #include "qorganizeritemmanager.h"                    // manager
 #include "qorganizeritemmanagerengine.h"              // manager backend
 #include "qorganizeritemmanagerenginefactory.h"       // manage backend instantiator
+#include "qorganizeritemrecurrencerule.h"             // a single recurrence rule
 #include "qorganizeritemsortorder.h"                  // organizeritem sorting
 
 #include "qorganizeritems.h"                          // item derived classes
