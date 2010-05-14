@@ -47,6 +47,10 @@
 #include "qorganizeritemrequests.h"
 #include "qorganizeritemchangeset.h"
 #include "qorganizeritemdetails.h"
+#include "qorganizerevent.h"
+#include "qorganizereventoccurrence.h"
+#include "qorganizertodo.h"
+#include "qorganizertodooccurrence.h"
 
 #include "qorganizeritemmemorybackend_p.h"
 
@@ -172,6 +176,66 @@ QList<QOrganizerItemLocalId> QOrganizerItemMemoryEngine::itemIds(const QOrganize
 
         return ids;
     }
+}
+
+/*! \reimp */
+QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+{
+    Q_UNUSED(filter);
+    Q_UNUSED(sortOrders);
+    Q_UNUSED(fetchHint);
+    // not implemented. XXX TODO.
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QList<QOrganizerItem>();
+}
+
+/*! \reimp */
+QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+{
+    // given the generating item, grab it's QOrganizerItemRecurrence detail (if it exists), and calculate all of the dates within the given period.
+    // how would a real backend do this?
+    // Also, should this also return the exception instances (ie, return any persistent instances with parent information == generator?)
+
+    if (periodStart > periodEnd) {
+        *error = QOrganizerItemManager::BadArgumentError;
+        return QList<QOrganizerItem>();
+    }
+
+    QList<QOrganizerItem> retn;
+    QOrganizerItemRecurrence recur = generator.detail(QOrganizerItemRecurrence::DefinitionName);
+
+    QList<QDateTime> xdates = recur.exceptionDates();
+    // XXX TODO: xdates += dates calculated from the xrules.
+
+    QList<QOrganizerItemRecurrenceRule> rrules = recur.recurrenceRules();
+    foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
+        if (!(rrule.endDate() < periodStart || rrule.startDate() > periodEnd)) {
+            // we cannot skip it, since it applies in the given time period.
+            // XXX TODO: transform from rule elements to real dates...
+            // XXX TODO: if the real date is one of the exception dates, ignore...
+            // XXX TODO: else generate the item instance for that date
+        }
+    }
+
+    QList<QDateTime> rdates = recur.recurrenceDates();
+    foreach (const QDateTime& rdate, rdates) {
+        if (!xdates.contains(rdate)) {
+            QOrganizerItem instanceItem;
+            if (generator.type() == QOrganizerItemType::TypeEvent) {
+                instanceItem = QOrganizerEventOccurrence();
+                // XXX TODO: grab appropriate details from the generator, put in the occurrence
+                retn << instanceItem;
+            } else {
+                instanceItem = QOrganizerTodoOccurrence();
+                // XXX TODO: grab appropriate details from the generator, put in the occurrence
+                retn << instanceItem;
+            }
+        }
+    }
+
+    // now order the contents of retn by date
+    // and return the first maxCount entries.
+    return retn.mid(0, maxCount);
 }
 
 /*! \reimp */
