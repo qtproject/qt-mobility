@@ -69,10 +69,6 @@ int main(int argc, char **argv)
     if (rate_place != -1)
         rate_val = args.at(rate_place + 1).toInt();
     QCompass sensor;
-    if (!sensor.connectToBackend()) {
-        qWarning("No compass available!");
-        return 1;
-    }
     if (rate_val > 0) {
         sensor.setDataRate(rate_val);
     }

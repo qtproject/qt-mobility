@@ -71,16 +71,16 @@ int main(int argc, char **argv)
     if (rate_place != -1)
         rate_val = args.at(rate_place + 1).toInt();
     QProximitySensor sensor;
-    if (!sensor.connectToBackend()) {
-        qWarning("No proximity sensor available!");
-        return 1;
-    }
     if (rate_val > 0) {
         sensor.setDataRate(rate_val);
     }
     ProximitySensorFilter filter;
     sensor.addFilter(&filter);
     sensor.start();
+    if (!sensor.isActive()) {
+        qWarning("Proximitysensor didn't start!");
+        return 1;
+    }
 
     return app.exec();
 }

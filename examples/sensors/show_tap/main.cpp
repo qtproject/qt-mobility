@@ -84,17 +84,29 @@ int main(int argc, char **argv)
     int rate_val = 0;
     if (rate_place != -1)
         rate_val = args.at(rate_place + 1).toInt();
-    QTapSensor sensor;
-    if (!sensor.connectToBackend()) {
-        qWarning("No tap sensor available!");
-        return 1;
-    }
+
+    QTapSensor doublesensor;
     if (rate_val > 0) {
-        sensor.setDataRate(rate_val);
+        doublesensor.setDataRate(rate_val);
     }
     TapSensorFilter filter;
-    sensor.addFilter(&filter);
-    sensor.start();
+    doublesensor.addFilter(&filter);
+    doublesensor.start();
+    if (!doublesensor.isActive()) {
+        qWarning("Tapsensor (double) didn't start!");
+        return 1;
+    }
+
+    QTapSensor singlesensor;
+    if (rate_val > 0) {
+        singlesensor.setDataRate(rate_val);
+    }
+    singlesensor.addFilter(&filter);
+    singlesensor.start();
+    if (!singlesensor.isActive()) {
+        qWarning("Tapsensor (single) didn't start!");
+        return 1;
+    }
 
     return app.exec();
 }
