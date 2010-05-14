@@ -140,7 +140,7 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     viewer = new QMediaImageViewer(this);
 
     display = new QVideoWidget;
-    display->setMediaObject(viewer);
+    viewer->addVideoOutput(display);
     display->show();
     \endcode
 
@@ -349,21 +349,30 @@ int QMediaImageViewer::elapsedTime() const
 /*!
     \internal
 */
-void QMediaImageViewer::bind(QObject *object)
+bool QMediaImageViewer::bind(QObject *object)
 {
     Q_D(QMediaImageViewer);
 
     if (QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist *>(object)) {
         if (d->playlist) {
             qWarning("QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
-            d->playlist->setMediaObject(0);
+            unbind(d->playlist);
         }
-        d->playlist = playlist;
 
-        connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
-                this, SLOT(_q_playlistMediaChanged(QMediaContent)));
-        connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+        if (QMediaObject::bind(object)) {
+            d->playlist = playlist;
+
+            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                    this, SLOT(_q_playlistMediaChanged(QMediaContent)));
+            connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+            return true;
+        } else {
+            return false;
+        }
     }
+
+    return QMediaObject::bind(object);
 }
 
 /*!
@@ -373,7 +382,7 @@ void QMediaImageViewer::unbind(QObject *object)
 {
     Q_D(QMediaImageViewer);
 
-    if (object == d->playlist) {
+    if (object && object == d->playlist) {
         disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                    this, SLOT(_q_playlistMediaChanged(QMediaContent)));
         disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
@@ -381,6 +390,8 @@ void QMediaImageViewer::unbind(QObject *object)
         d->playlist = 0;
         setMedia(QMediaContent());
     }
+
+    QMediaObject::unbind(object);
 }
 
 /*!

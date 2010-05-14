@@ -450,7 +450,7 @@ void tst_QMediaPlayer::testNullService()
         QCOMPARE(spy.count(), 0);
     } {
         QMediaPlaylist playlist;
-        playlist.setMediaObject(&player);
+        player.bind(&playlist);
 
         QSignalSpy mediaSpy(&player, SIGNAL(mediaChanged(QMediaContent)));
         QSignalSpy statusSpy(&player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
@@ -847,7 +847,7 @@ void tst_QMediaPlayer::testPlaylist()
     mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::NoMedia);
 
     QMediaPlaylist *playlist = new QMediaPlaylist;
-    playlist->setMediaObject(player);
+    player->bind(playlist);
 
     QSignalSpy stateSpy(player, SIGNAL(stateChanged(QMediaPlayer::State)));
     QSignalSpy mediaSpy(player, SIGNAL(mediaChanged(QMediaContent)));
@@ -988,7 +988,8 @@ void tst_QMediaPlayer::testPlaylist()
 
     // Test the player can bind to playlist again
     playlist = new QMediaPlaylist;
-    playlist->setMediaObject(player);
+    player->bind(playlist);
+
     QCOMPARE(playlist->mediaObject(), qobject_cast<QMediaObject*>(player));
 
     QCOMPARE(player->media(), QMediaContent());
@@ -1012,7 +1013,7 @@ void tst_QMediaPlayer::testPlaylist()
     playlist2->setCurrentIndex(2);
 
     player->play();
-    playlist2->setMediaObject(player);
+    player->bind(playlist2);
     QCOMPARE(playlist2->mediaObject(), qobject_cast<QMediaObject*>(player));
     QVERIFY(playlist->mediaObject() == 0);
     QCOMPARE(player->media(), playlist2->currentMedia());

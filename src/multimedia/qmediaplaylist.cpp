@@ -78,7 +78,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     player = new QMediaPlayer;
 
     playlist = new QMediaPlaylist;
-    playlist->setMediaObject(player);
+    player->bind(playlist);
     playlist->append(QUrl("http://example.com/movie1.mp4"));
     playlist->append(QUrl("http://example.com/movie2.mp4"));
     playlist->append(QUrl("http://example.com/movie3.mp4"));
@@ -153,12 +153,12 @@ QMediaObject *QMediaPlaylist::mediaObject() const
   If \a mediaObject is null or doesn't have an intrinsic playlist,
   internal local memory playlist source will be created.
 */
-void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
+bool QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
 {
     Q_D(QMediaPlaylist);
 
     if (mediaObject && mediaObject == d->mediaObject)
-        return;
+        return true;
 
     QMediaService *service = mediaObject
             ? mediaObject->service() : 0;
@@ -227,12 +227,9 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
         }
     }
 
-    if (d->mediaObject)
-        d->mediaObject->unbind(this);
-
     d->mediaObject = mediaObject;
-    if (d->mediaObject)
-        d->mediaObject->bind(this);
+
+    return true;
 }
 
 /*!

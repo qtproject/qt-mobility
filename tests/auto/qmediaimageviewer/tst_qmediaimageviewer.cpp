@@ -531,7 +531,7 @@ void tst_QMediaImageViewer::playlist()
     QCOMPARE(stateSpy.count(), 0);
 
     QMediaPlaylist playlist;
-    playlist.setMediaObject(&viewer);
+    viewer.bind(&playlist);
 
     // Empty playlist so can't exit stopped state.
     viewer.play();
@@ -702,7 +702,7 @@ void tst_QMediaImageViewer::multiplePlaylists()
     QMediaImageViewer viewer;
 
     QMediaPlaylist *playlist1 = new QMediaPlaylist;
-    playlist1->setMediaObject(&viewer);
+    viewer.bind(playlist1);
     playlist1->addMedia(imageMedia);
     playlist1->addMedia(posterMedia);
 
@@ -711,9 +711,9 @@ void tst_QMediaImageViewer::multiplePlaylists()
 
     QMediaPlaylist *playlist2 = new QMediaPlaylist;
 
-    QTest::ignoreMessage(QtWarningMsg,
-                         "QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
-    playlist2->setMediaObject(&viewer);
+    //QTest::ignoreMessage(QtWarningMsg,
+    //                     "QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
+    viewer.bind(playlist2);
     playlist2->addMedia(coverArtMedia);
 
     //the first playlist is detached
@@ -728,7 +728,7 @@ void tst_QMediaImageViewer::multiplePlaylists()
     QVERIFY(viewer.media().isNull());
     QCOMPARE(viewer.state(), QMediaImageViewer::StoppedState);
 
-    playlist1->setMediaObject(&viewer);
+    viewer.bind(playlist1);
     playlist1->setCurrentIndex(0);
     QCOMPARE(viewer.media(), imageMedia);
 
@@ -755,7 +755,7 @@ void tst_QMediaImageViewer::invalidPlaylist()
     QSignalSpy statusSpy(&viewer, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)));
 
     QMediaPlaylist playlist;
-    playlist.setMediaObject(&viewer);
+    viewer.bind(&playlist);
     playlist.addMedia(invalidMedia);
     playlist.addMedia(imageMedia);
     playlist.addMedia(invalidMedia);
@@ -817,7 +817,7 @@ void tst_QMediaImageViewer::elapsedTime()
 
 
     QMediaPlaylist playlist;
-    playlist.setMediaObject(&viewer);
+    viewer.bind(&playlist);
     playlist.addMedia(imageMedia);
 
     QCOMPARE(viewer.elapsedTime(), 0);

@@ -45,6 +45,7 @@
 
 #include <qmediaservice.h>
 #include <qmetadatacontrol.h>
+#include <qmediabindableinterface.h>
 
 
 QT_BEGIN_NAMESPACE
@@ -136,17 +137,35 @@ void QMediaObject::setNotifyInterval(int milliSeconds)
 }
 
 /*!
-  \internal
 */
-void QMediaObject::bind(QObject*)
+bool QMediaObject::bind(QObject *object)
 {
+    QMediaBindableInterface *helper = qobject_cast<QMediaBindableInterface*>(object);
+    if (!helper)
+        return false;
+
+    QMediaObject *currentObject = helper->mediaObject();
+
+    if (currentObject == this)
+        return true;
+
+    if (currentObject)
+        currentObject->unbind(object);
+
+    return helper->setMediaObject(this);
 }
 
 /*!
-  \internal
 */
-void QMediaObject::unbind(QObject*)
+void QMediaObject::unbind(QObject *object)
 {
+    QMediaBindableInterface *helper = qobject_cast<QMediaBindableInterface*>(object);
+
+    Q_ASSERT(helper);
+    Q_ASSERT(helper->mediaObject() == this);
+
+    if (helper && helper->mediaObject() == this)
+        helper->setMediaObject(0);
 }
 
 

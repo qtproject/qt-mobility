@@ -220,7 +220,7 @@ void tst_QGraphicsVideoItem::nullService()
     QtTestVideoObject object(service);
 
     QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
-    item->setMediaObject(&object);
+    object.bind(item);
 
     QVERIFY(item->boundingRect().isEmpty());
 
@@ -239,7 +239,7 @@ void tst_QGraphicsVideoItem::noOutputs()
     QtTestVideoObject object(control);
 
     QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
-    item->setMediaObject(&object);
+    object.bind(item);
 
     QVERIFY(item->boundingRect().isEmpty());
 
@@ -257,7 +257,7 @@ void tst_QGraphicsVideoItem::serviceDestroyed()
     QtTestVideoObject object(new QtTestRendererControl);
 
     QGraphicsVideoItem item;
-    item.setMediaObject(&object);
+    object.bind(&item);
 
     QCOMPARE(object.testService->rendererRef, 1);
 
@@ -275,7 +275,7 @@ void tst_QGraphicsVideoItem::mediaObjectDestroyed()
     QtTestVideoObject *object = new QtTestVideoObject(new QtTestRendererControl);
 
     QGraphicsVideoItem item;
-    item.setMediaObject(object);
+    object->bind(&item);
 
     QCOMPARE(object->testService->rendererRef, 1);
 
@@ -296,19 +296,19 @@ void tst_QGraphicsVideoItem::setMediaObject()
     QCOMPARE(item.mediaObject(), nullObject);
     QCOMPARE(object.testService->rendererRef, 0);
 
-    item.setMediaObject(&object);
+    object.bind(&item);
     QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
     QCOMPARE(object.testService->rendererRef, 1);
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
-    item.setMediaObject(0);
+    object.unbind(&item);
     QCOMPARE(item.mediaObject(), nullObject);
 
     QCOMPARE(object.testService->rendererRef, 0);
 
     item.setVisible(false);
 
-    item.setMediaObject(&object);
+    object.bind(&item);
     QCOMPARE(item.mediaObject(), static_cast<QMediaObject *>(&object));
     QCOMPARE(object.testService->rendererRef, 1);
     QVERIFY(object.testService->rendererControl->surface() != 0);
@@ -318,7 +318,7 @@ void tst_QGraphicsVideoItem::show()
 {    
     QtTestVideoObject object(new QtTestRendererControl);
     QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
-    item->setMediaObject(&object);
+    object.bind(item);
 
     // Graphics items are visible by default
     QCOMPARE(object.testService->rendererRef, 1);
@@ -438,7 +438,7 @@ void tst_QGraphicsVideoItem::nativeSize()
 
     QtTestVideoObject object(new QtTestRendererControl);
     QGraphicsVideoItem item;
-    item.setMediaObject(&object);
+    object.bind(&item);
 
     QCOMPARE(item.nativeSize(), QSizeF());
 
@@ -572,7 +572,7 @@ void tst_QGraphicsVideoItem::boundingRect()
 
     QtTestVideoObject object(new QtTestRendererControl);
     QGraphicsVideoItem item;
-    item.setMediaObject(&object);
+    object.bind(&item);
 
     item.setOffset(offset);
     item.setSize(size);
@@ -595,7 +595,7 @@ void tst_QGraphicsVideoItem::paint()
 {
     QtTestVideoObject object(new QtTestRendererControl);
     QtTestGraphicsVideoItem *item = new QtTestGraphicsVideoItem;
-    item->setMediaObject(&object);
+    object.bind(item);
     
     QGraphicsScene graphicsScene;
     graphicsScene.addItem(item);

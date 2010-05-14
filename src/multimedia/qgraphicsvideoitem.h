@@ -45,6 +45,7 @@
 #include <QtGui/qgraphicsitem.h>
 
 #include <qvideowidget.h>
+#include <qmediabindableinterface.h>
 
 QT_BEGIN_NAMESPACE
 class QVideoSurfaceFormat;
@@ -53,9 +54,10 @@ QT_END_NAMESPACE
 QT_BEGIN_NAMESPACE
 
 class QGraphicsVideoItemPrivate;
-class  Q_MEDIA_EXPORT QGraphicsVideoItem : public QGraphicsObject
+class  Q_MEDIA_EXPORT QGraphicsVideoItem : public QGraphicsObject, public QMediaBindableInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QMediaBindableInterface)
     Q_PROPERTY(QMediaObject* mediaObject READ mediaObject WRITE setMediaObject)
     Q_PROPERTY(Qt::AspectRatioMode aspectRatioMode READ aspectRatioMode WRITE setAspectRatioMode)
     Q_PROPERTY(QPointF offset READ offset WRITE setOffset)
@@ -65,8 +67,7 @@ public:
     QGraphicsVideoItem(QGraphicsItem *parent = 0);
     ~QGraphicsVideoItem();
 
-    QMediaObject *mediaObject() const;
-    void setMediaObject(QMediaObject *object);
+    QMediaObject *mediaObject() const;    
 
     Qt::AspectRatioMode aspectRatioMode() const;
     void setAspectRatioMode(Qt::AspectRatioMode mode);
@@ -89,6 +90,8 @@ Q_SIGNALS:
 protected:
     void timerEvent(QTimerEvent *event);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+
+    bool setMediaObject(QMediaObject *object);
 
     QGraphicsVideoItemPrivate *d_ptr;
 

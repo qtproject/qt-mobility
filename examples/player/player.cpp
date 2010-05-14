@@ -80,7 +80,7 @@ Player::Player(QWidget *parent)
     player = new QMediaPlayer(this);
     // owerd by PlaylistModel
     playlist = new QMediaPlaylist();
-    playlist->setMediaObject(player);
+    player->bind(playlist);
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
@@ -92,7 +92,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
     videoWidget = new VideoWidget(this);
-    videoWidget->setMediaObject(player);
+    player->addVideoOutput(videoWidget);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);

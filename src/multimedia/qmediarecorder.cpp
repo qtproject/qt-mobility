@@ -176,7 +176,7 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
 
 void QMediaRecorderPrivate::_q_serviceDestroyed()
 {
-    q_func()->bind(0);
+    q_func()->setMediaObject(0);
 }
 
 
@@ -192,7 +192,7 @@ QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
 {
     Q_D(QMediaRecorder);
     d->q_ptr = this;
-    bind(mediaObject);
+    setMediaObject(mediaObject);
 }
 
 /*!
@@ -203,12 +203,17 @@ QMediaRecorder::~QMediaRecorder()
 {
 }
 
-void QMediaRecorder::bind(QMediaObject *object)
+QMediaObject *QMediaRecorder::mediaObject() const
+{
+    return d_func()->mediaObject;
+}
+
+bool QMediaRecorder::setMediaObject(QMediaObject *object)
 {
     Q_D(QMediaRecorder);
 
     if (object == d->mediaObject)
-        return;
+        return true;
 
     if (d->mediaObject) {
         if (d->control) {
@@ -253,8 +258,6 @@ void QMediaRecorder::bind(QMediaObject *object)
         QMediaService *service = d->mediaObject->service();
 
         if (service) {
-            connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
-
             d->control = qobject_cast<QMediaRecorderControl*>(service->requestControl(QMediaRecorderControl_iid));
 
             if (d->control) {
@@ -273,9 +276,17 @@ void QMediaRecorder::bind(QMediaObject *object)
 
                 connect(d->control, SIGNAL(error(int,QString)),
                         this, SLOT(_q_error(int,QString)));
+
+                connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+                return true;
             }
         }
+
+        d->mediaObject = 0;
+        return false;
     }
+
+    return true;
 }
 
 /*!

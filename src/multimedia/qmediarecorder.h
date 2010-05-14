@@ -45,6 +45,7 @@
 #include <qmediaobject.h>
 #include <qmediaserviceprovider.h>
 #include <qmediaencodersettings.h>
+#include <qmediabindableinterface.h>
 
 #include <QtCore/qpair.h>
 
@@ -61,9 +62,10 @@ class QAudioEncoderSettings;
 class QVideoEncoderSettings;
 
 class QMediaRecorderPrivate;
-class Q_MEDIA_EXPORT QMediaRecorder : public QObject
+class Q_MEDIA_EXPORT QMediaRecorder : public QObject, public QMediaBindableInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QMediaBindableInterface)
     Q_ENUMS(State)
     Q_ENUMS(Error)    
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
@@ -88,7 +90,7 @@ public:
     QMediaRecorder(QMediaObject *mediaObject, QObject *parent = 0);
     ~QMediaRecorder();
 
-    void bind(QMediaObject *object);
+    QMediaObject *mediaObject() const;
 
     bool isAvailable() const;
     QtMediaServices::AvailabilityError availabilityError() const;
@@ -143,6 +145,9 @@ Q_SIGNALS:
     void mutedChanged(bool muted);
 
     void error(QMediaRecorder::Error error);
+
+protected:
+    bool setMediaObject(QMediaObject *object);
 
 private:
     QMediaRecorderPrivate *d_ptr;

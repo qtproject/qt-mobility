@@ -180,7 +180,7 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
     player = new QMediaPlayer(this);
 
     QGraphicsVideoItem *item = new QGraphicsVideoItem;
-    item->setMediaObject(player);
+    player->addVideoOutput(item);
     graphicsView->scence()->addItem(item);
     graphicsView->show();
 
@@ -216,8 +216,10 @@ QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
 */
 QGraphicsVideoItem::~QGraphicsVideoItem()
 {
-    if (d_ptr->rendererControl)
+    if (d_ptr->rendererControl) {
         d_ptr->rendererControl->setSurface(0);
+        d_ptr->service->releaseControl(d_ptr->rendererControl);
+    }
 
     delete d_ptr->surface;
     delete d_ptr;
@@ -234,12 +236,12 @@ QMediaObject *QGraphicsVideoItem::mediaObject() const
     return d_func()->mediaObject;
 }
 
-void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
+bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
 {
     Q_D(QGraphicsVideoItem);
 
     if (object == d->mediaObject)
-        return;
+        return true;
 
     d->clearService();
 
@@ -258,14 +260,15 @@ void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
 
                     connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
 
-                    return /*true*/;
+                    return true;
                 }
-                d->service->releaseControl(control);
+                if (control)
+                    d->service->releaseControl(control);
             }
         }
     }
 
-    /*return false;*/
+    return false;
 }
 
 /*!

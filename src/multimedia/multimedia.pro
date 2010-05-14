@@ -29,6 +29,7 @@ PUBLIC_HEADERS += \
     qmediacontrol.h \
     qmediaobject.h \
     qmediaservice.h \
+    qmediabindableinterface.h \
     qlocalmediaplaylistprovider.h \
     qmediaimageviewer.h \
     qmediaplayer.h \
@@ -67,6 +68,7 @@ PUBLIC_HEADERS += \
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
     qmediaservice.cpp \
+    qmediabindableinterface.cpp \
     qlocalmediaplaylistprovider.cpp \
     qmediaimageviewer.cpp \
     qmediaimageviewerservice.cpp \

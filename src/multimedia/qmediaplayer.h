@@ -51,6 +51,8 @@ QT_BEGIN_HEADER
 QT_BEGIN_NAMESPACE
 
 class QMediaPlaylist;
+class QVideoWidget;
+class QGraphicsVideoItem;
 
 
 class QMediaPlayerPrivate;
@@ -119,6 +121,12 @@ public:
                                             Flags flags = 0);
     static QStringList supportedMimeTypes(Flags flags = 0);
 
+    bool addVideoOutput(QVideoWidget *);
+    bool addVideoOutput(QGraphicsVideoItem *);
+
+    void removeVideoOutput(QVideoWidget *);
+    void removeVideoOutput(QGraphicsVideoItem *);
+
     QMediaContent media() const;
     const QIODevice *mediaStream() const;
 
@@ -136,7 +144,7 @@ public:
     int bufferStatus() const;
 
     bool isSeekable() const;
-    qreal playbackRate() const;
+    qreal playbackRate() const;   
 
     Error error() const;
     QString errorString() const;
@@ -176,8 +184,8 @@ Q_SIGNALS:
     void error(QMediaPlayer::Error error);
 
 public:
-    virtual void bind(QObject*);
-    virtual void unbind(QObject*);
+    virtual bool bind(QObject *);
+    virtual void unbind(QObject *);
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)

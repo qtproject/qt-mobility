@@ -603,12 +603,12 @@ QMediaObject *QVideoWidget::mediaObject() const
     return d_func()->mediaObject;
 }
 
-void QVideoWidget::setMediaObject(QMediaObject *object)
+bool QVideoWidget::setMediaObject(QMediaObject *object)
 {
     Q_D(QVideoWidget);
 
     if (object == d->mediaObject)
-        return;
+        return true;
 
     d->clearService();
 
@@ -631,17 +631,17 @@ void QVideoWidget::setMediaObject(QMediaObject *object)
             d->service = 0;
             d->mediaObject = 0;
 
-            return /*false*/;
+            return false;
         }
 
         connect(d->service, SIGNAL(destroyed()), SLOT(_q_serviceDestroyed()));
     } else {
         d->mediaObject = 0;
 
-        return /*false*/;
+        return false;
     }
 
-    /*return true;*/
+    return true;
 }
 
 /*!

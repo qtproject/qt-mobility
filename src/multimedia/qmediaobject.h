@@ -51,6 +51,7 @@
 QT_BEGIN_NAMESPACE
 
 class QMediaService;
+class QMediaBindableInterface;
 
 class QMediaObjectPrivate;
 class Q_MEDIA_EXPORT QMediaObject : public QObject
@@ -70,8 +71,8 @@ public:
     int notifyInterval() const;
     void setNotifyInterval(int milliSeconds);
 
-    virtual void bind(QObject*);
-    virtual void unbind(QObject*);
+    virtual bool bind(QObject *);
+    virtual void unbind(QObject *);
 
     bool isMetaDataAvailable() const;
     bool isMetaDataWritable() const;

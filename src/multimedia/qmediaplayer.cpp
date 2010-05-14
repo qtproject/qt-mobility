@@ -92,7 +92,7 @@ QT_BEGIN_NAMESPACE
         playlist->append(QUrl("http://example.com/movie2.mp4"));
 
         widget = new QVideoWidget;
-        widget->setMediaObject(player);
+        player->addVideoOutput(widget);
         widget->show();
 
         player->play();
@@ -584,25 +584,33 @@ void QMediaPlayer::setMedia(const QMediaContent &media, QIODevice *stream)
     \internal
 */
 
-void QMediaPlayer::bind(QObject *obj)
+bool QMediaPlayer::bind(QObject *obj)
 {
     Q_D(QMediaPlayer);
+
+    if (!obj)
+        return false;
 
     if (d->control != 0) {
         QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(obj);
 
         if (playlist) {
             if (d->playlist)
-                d->playlist->setMediaObject(0);
+                unbind(d->playlist);
 
-            d->playlist = playlist;
-            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
-                    this, SLOT(_q_updateMedia(QMediaContent)));
-            connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+            if (QMediaObject::bind(obj)) {
+                d->playlist = playlist;
+                connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                        this, SLOT(_q_updateMedia(QMediaContent)));
+                connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
 
-            setMedia(playlist->currentMedia());
+                setMedia(playlist->currentMedia());
 
-            return;
+                return true;
+            } else {
+                d->playlist = 0;
+                return false;
+            }
         }
 
         QVideoWidget *videoWidget = qobject_cast<QVideoWidget*>(obj);
@@ -611,22 +619,29 @@ void QMediaPlayer::bind(QObject *obj)
         if (videoWidget || videoItem) {
             //detach the current video output
             if (d->videoWidget) {
-                d->videoWidget->setMediaObject(0);
+                unbind(d->videoWidget);
                 d->videoWidget = 0;
             }
 
             if (d->videoItem) {
-                d->videoItem->setMediaObject(0);
+                unbind(d->videoItem);
                 d->videoItem = 0;
             }
         }
 
-        if (videoWidget)
-            d->videoWidget = videoWidget;
+        if (QMediaObject::bind(obj)) {
+            if (videoWidget)
+                d->videoWidget = videoWidget;
 
-        if (videoItem)
-            d->videoItem = videoItem;
+            if (videoItem)
+                d->videoItem = videoItem;
+            return true;
+        } else {
+            return false;
+        }
     }
+
+    return QMediaObject::bind(obj);
 }
 
 /*!
@@ -648,6 +663,8 @@ void QMediaPlayer::unbind(QObject *obj)
         d->playlist = 0;
         setMedia(QMediaContent());
     }
+
+    QMediaObject::unbind(obj);
 }
 
 /*!
@@ -676,6 +693,58 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
 {
     return QMediaServiceProvider::defaultServiceProvider()->supportedMimeTypes(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER),
                                                                                flags);
+}
+
+/*!
+    Attach a QVideoWidget video \a output to the media player.
+
+    Returns true if the output was succesfuly attached, false otherwise.
+
+    Depending on backend capabilities, the media player may or may not
+    support multiple simultanious outputs.
+
+    \sa addVideoOutput(QGraphicsVideoItem*) removeVideoOutput(QVideoWidget*)
+*/
+bool QMediaPlayer::addVideoOutput(QVideoWidget *output)
+{
+    return bind(output);
+}
+
+/*!
+    Attach a QGraphicsVideoItem video \a output to the media player.
+
+    Returns true if the output was succesfuly attached, false otherwise.
+
+    Depending on backend capabilities, the media player may or may not
+    support multiple simultanious outputs.
+
+    \sa addVideoOutput(QVideoWidget*) removeVideoOutput(QGraphicsVideoItem*)
+*/
+bool QMediaPlayer::addVideoOutput(QGraphicsVideoItem *output)
+{
+    return bind(output);
+}
+
+/*!
+    Detach a QVideoWidget based video \a output,
+    previously attached with addVideoOutput(QVideoOutput*).
+
+    \sa addVideoOutput(QVideoWidget*)
+*/
+void QMediaPlayer::removeVideoOutput(QVideoWidget *output)
+{
+    unbind(output);
+}
+
+/*!
+    Detach a QGraphicsVideoItem based video \a output,
+    previously attached with addVideoOutput(QGraphicsVideoItem*).
+
+    \sa addVideoOutput(QGraphicsVideoItem*)
+*/
+void QMediaPlayer::removeVideoOutput(QGraphicsVideoItem *output)
+{
+    unbind(output);
 }
 
 

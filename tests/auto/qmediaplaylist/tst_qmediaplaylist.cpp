@@ -538,7 +538,7 @@ void tst_QMediaPlaylist::readOnlyPlaylist()
 {
     MockReadOnlyPlaylistObject mediaObject;
     QMediaPlaylist playlist;
-    playlist.setMediaObject(&mediaObject);
+    mediaObject.bind(&playlist);
 
     QVERIFY(playlist.isReadOnly());
     QVERIFY(!playlist.isEmpty());
@@ -608,17 +608,17 @@ void tst_QMediaPlaylist::setMediaObject()
     QVERIFY(playlist.mediaObject() == 0);
     QVERIFY(!playlist.isReadOnly());
 
-    playlist.setMediaObject(&mediaObject);
+    mediaObject.bind(&playlist);
     QCOMPARE(playlist.mediaObject(), qobject_cast<QMediaObject*>(&mediaObject));
     QCOMPARE(playlist.mediaCount(), 3);
     QVERIFY(playlist.isReadOnly());
 
-    playlist.setMediaObject(0);
+    mediaObject.unbind(&playlist);
     QVERIFY(playlist.mediaObject() == 0);
     QCOMPARE(playlist.mediaCount(), 0);
     QVERIFY(!playlist.isReadOnly());
 
-    playlist.setMediaObject(&mediaObject);
+    mediaObject.bind(&playlist);
     QCOMPARE(playlist.mediaObject(), qobject_cast<QMediaObject*>(&mediaObject));
     QCOMPARE(playlist.mediaCount(), 3);
     QVERIFY(playlist.isReadOnly());

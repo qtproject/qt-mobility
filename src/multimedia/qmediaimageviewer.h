@@ -86,7 +86,7 @@ public:
     int timeout() const;
     int elapsedTime() const;
 
-    void bind(QObject *);
+    bool bind(QObject *);
     void unbind(QObject *);
 
 public Q_SLOTS:

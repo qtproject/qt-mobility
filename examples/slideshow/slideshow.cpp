@@ -61,10 +61,10 @@ SlideShow::SlideShow(QWidget *parent)
             this, SLOT(stateChanged(QMediaImageViewer::State)));
 
     playlist = new QMediaPlaylist;
-    playlist->setMediaObject(imageViewer);
+    imageViewer->bind(playlist);
 
     QVideoWidget *videoWidget = new QVideoWidget;
-    videoWidget->setMediaObject(imageViewer);
+    imageViewer->bind(videoWidget);
 
     QMenu *openMenu = new QMenu(this);
     openMenu->addAction(tr("Directory..."), this, SLOT(openDirectory()));
