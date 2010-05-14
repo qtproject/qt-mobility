@@ -62,7 +62,6 @@ public:
 private:
     QTapReading m_reading;
     static bool m_initDone;
-    QSensor *m_sensor;
 
 private slots:
     void slotDataAvailable(const Tap&);

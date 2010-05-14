@@ -49,24 +49,27 @@ bool maemo6orientationsensor::m_initDone = false;
 maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    setReading<QOrientationReading>(&m_reading);
-
+    const QString sensorName = "orientationsensor";
     if (!m_initDone) {
-        initSensor<OrientationSensorChannelInterface>("orientationsensor");
-
-        if (m_sensorInterface)
-            QObject::connect(static_cast<OrientationSensorChannelInterface*>(m_sensorInterface), SIGNAL(orientationChanged(const Unsigned&)), this, SLOT(slotOrientationChanged(const Unsigned&)));
-        else
-            qWarning() << "Unable to initialize orientation sensor.";
-
-        // metadata
-        addDataRate(142, 142); // 142Hz
-        sensor->setDataRate(142);
-        addOutputRange(0, 6, 1);
-        setDescription(QLatin1String("Measures orientation of the device screen as 6 pre-defined levels"));
-
+        //initSensor<OrientationSensorChannelInterface>("orientationsensor");
+        m_remoteSensorManager->loadPlugin(sensorName);
+        m_remoteSensorManager->registerSensorInterface<OrientationSensorChannelInterface>(sensorName);
         m_initDone = true;
     }
+    m_sensorInterface = OrientationSensorChannelInterface::controlInterface(sensorName);
+    if (!m_sensorInterface)
+        m_sensorInterface = const_cast<OrientationSensorChannelInterface*>(OrientationSensorChannelInterface::listenInterface(sensorName));
+    if (m_sensorInterface)
+        QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)), this, SLOT(slotOrientationChanged(const Unsigned&)));
+    else
+        qWarning() << "Unable to initialize orientation sensor.";
+    setReading<QOrientationReading>(&m_reading);
+    // metadata
+    addDataRate(0, 0);
+    addDataRate(130, 130);
+    addDataRate(0, 130); // TODO: this is for testing only
+    addOutputRange(0, 6, 1);
+    setDescription(QLatin1String("Measures orientation of the device screen as 6 pre-defined levels"));
 }
 
 void maemo6orientationsensor::slotOrientationChanged(const Unsigned& data)

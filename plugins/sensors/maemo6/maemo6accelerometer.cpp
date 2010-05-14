@@ -47,31 +47,30 @@ bool maemo6accelerometer::m_initDone = false;
 maemo6accelerometer::maemo6accelerometer(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    setReading<QAccelerometerReading>(&m_reading);
-
+    const QString sensorName = "accelerometersensor";
     if (!m_initDone) {
-        qDBusRegisterMetaType<XYZ>();
-
-        initSensor<AccelerometerSensorChannelInterface>("accelerometersensor");
-
-        if (m_sensorInterface)
-            QObject::connect(static_cast<AccelerometerSensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
-        else
-            qWarning() << "Unable to initialize accelerometer sensor.";
-
-        // adding metadata
-        addDataRate(142, 142); // 142Hz
-        sensor->setDataRate(142);
-        //addDataRate(400, 400); // 400Hz
-
-        // accuracy - or resolution???
-        // 2^8 = 256    256/2 - 1 = 127
-        addOutputRange(-2*GRAVITY_EARTH, 2*GRAVITY_EARTH, 2*GRAVITY_EARTH/127); // 2G
-        addOutputRange(-8*GRAVITY_EARTH, 8*GRAVITY_EARTH, 8*GRAVITY_EARTH/127); // 8G
-        setDescription(QLatin1String("Measures x, y, and z axes accelerations in m/s^2"));
-
+        //qDBusRegisterMetaType<XYZ>();        initSensor<AccelerometerSensorChannelInterface>("accelerometersensor");
+        m_remoteSensorManager->loadPlugin(sensorName);
+        m_remoteSensorManager->registerSensorInterface<AccelerometerSensorChannelInterface>(sensorName);
         m_initDone = true;
     }
+    m_sensorInterface = AccelerometerSensorChannelInterface::controlInterface(sensorName);
+    if (!m_sensorInterface)
+        m_sensorInterface = const_cast<AccelerometerSensorChannelInterface*>(AccelerometerSensorChannelInterface::listenInterface(sensorName));
+    if (m_sensorInterface)
+        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
+    else
+        qWarning() << "Unable to initialize accelerometer sensor.";
+    setReading<QAccelerometerReading>(&m_reading);
+    // adding metadata
+    addDataRate(0, 130); // 130 Hz
+    //addDataRate(400, 400); // 400Hz
+
+    // accuracy - or resolution???
+    // 2^8 = 256    256/2 - 1 = 127
+    addOutputRange(-2*GRAVITY_EARTH, 2*GRAVITY_EARTH, 2*GRAVITY_EARTH/127); // 2G
+    addOutputRange(-8*GRAVITY_EARTH, 8*GRAVITY_EARTH, 8*GRAVITY_EARTH/127); // 8G
+    setDescription(QLatin1String("Measures x, y, and z axes accelerations in m/s^2"));
 }
 
 void maemo6accelerometer::slotDataAvailable(const XYZ& data)
