@@ -1,5 +1,4 @@
-import QMLContactManagerAsync 1.0
-import QmlContact 1.0
+import QmlContactModel 1.0
 import Qt 4.6
 
 Rectangle {
@@ -11,38 +10,9 @@ Rectangle {
 
     color: "#080808";
 
-    Script {
-        function startup() {
-            manager.contacts();
-        }
-        function gotContacts(c) {
-            if(c == undefined){
-                return;
-            }
-
-            var q = c.values("Presence");
-
-            nameModel.append({"name": c.name,
-                                "presence": "Status: " + q.Presence,
-                                "email": c.email,
-                                "avatarSource": c.avatar ? c.avatar : "qrc:/default.svg",
-                                "hasThumbnail" : c.hasThumbnail,
-                                "avatarImage": c.thumbnail,
-                                "interestLabel" : c.interestLabel,
-                                "interest" : c.interest});
-
-        }
-    }
-
-    Component.onCompleted: startup();
-
-    QMLContactManagerAsync {
-        id: "manager"
-
+    QmlContactModel {
+        id: "myModel"
         manager: "memory"
-        onDataChanged: print("Data changed!");
-        onContactsAdded: print("Contacts added: " + contactIds);
-        onContactsLoaded: gotContacts(contact);
     }
 
     Component {
@@ -80,8 +50,8 @@ Rectangle {
                             anchors.fill: parent;
                             anchors.margins: 3;
 
-                            pixmap: avatarImage
-                            source: hasThumbnail ? "" : avatarSource;
+                            pixmap: model.decoration
+                            source: model.avatar;
                             fillMode: Image.PreserveAspectFit
                         }
                     }
@@ -95,8 +65,8 @@ Rectangle {
                         Text {
                             id: nameTxt
                             y: 8;
-                            text: name
-                            color: "white";
+                            text: display
+                            color: "white"
                         }
                     }
 
@@ -108,11 +78,11 @@ Rectangle {
                         width: childrenRect.width;
                         Column {
                             Text {
-                                text: interestLabel + interest
+                                text: model.interestLabel + ": " + model.interest
                                 color: details.textColor;
                             }
                             Text {
-                                text: presence
+                                text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
                                 color: details.textColor;
                             }
                         }
@@ -121,7 +91,7 @@ Rectangle {
             }
 
             states: State {
-                name: "Details"
+                name: "MiniDetails"
                 when: wrapper.ListView.isCurrentItem;
                 PropertyChanges { target: wrapper; detailsOpacity: 1; }
                 PropertyChanges { target: wrapper; topColor: "#999999"; }
@@ -132,7 +102,7 @@ Rectangle {
             transitions:  [
                 Transition {
                     from: ""
-                    to: "Details"
+                    to: "MiniDetails"
                     reversible: false
                     SequentialAnimation {
                         NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
@@ -141,7 +111,7 @@ Rectangle {
                 },
                 Transition {
                     to: ""
-                    from: "Details"
+                    from: "MiniDetails"
                     reversible: false
                     SequentialAnimation {
                         NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
@@ -161,7 +131,7 @@ Rectangle {
 
     ListView {
         id: mainList
-        model: nameModel
+        model: myModel
         width: parent.width; height: parent.height
         delegate: listdelegate
         highlightFollowsCurrentItem: false
@@ -169,10 +139,6 @@ Rectangle {
         anchors.fill: parent
         highlightMoveSpeed: 5000
         keyNavigationWraps: true
-    }
-
-    ListModel {
-        id: nameModel
     }
 
     // Attach scrollbar to the right edge of the view.

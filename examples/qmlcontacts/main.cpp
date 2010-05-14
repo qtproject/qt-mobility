@@ -45,8 +45,8 @@
 #include <QDebug>
 #include <QDeclarativeView>
 #include <qcontactmanager.h>
-#include "qmlcontactsa.h"
-#include "qmlcontact.h"
+#include "qmlcontactmodel.h"
+
 QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
@@ -56,10 +56,8 @@ int main(int argc, char ** argv)
 
 
     QDeclarativeEngine engine;
-    QDeclarativeComponent component(&engine, ":example.qml");
 
-    qmlRegisterType<QmlContact>("QmlContact", 1, 0, "QmlContact");
-    qmlRegisterType<QMLContactManagerAsync>("QMLContactManagerAsync", 1, 0, "QMLContactManagerAsync");
+    qmlRegisterType<QMLContactModel>("QmlContactModel", 1, 0, "QmlContactModel");
 
     QWidget *b = new QWidget();
     QVBoxLayout *vbox = new QVBoxLayout;
@@ -71,7 +69,6 @@ int main(int argc, char ** argv)
     view->setSource(QUrl("qrc:/example.qml"));
     vbox->addWidget(view);
     b->setLayout(vbox);
-//    b->resize(800,480);
     b->show();    
 
     return app.exec();
