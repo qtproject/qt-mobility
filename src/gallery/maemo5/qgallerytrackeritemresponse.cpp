@@ -92,8 +92,8 @@ void QGalleryTrackerItemResponsePrivate::getValues(int index)
 {
     offset = index;
 
-    lowerThreshold = qMax(0, offset - 96);
-    upperThreshold = lowerThreshold + 160;
+    lowerThreshold = qMax(0, offset - 32);
+    upperThreshold = lowerThreshold + 96;
 
     QList<QVariant> arguments = QList<QVariant>()
             << 0 //live query id.

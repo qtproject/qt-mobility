@@ -160,12 +160,12 @@ void QGalleryTrackerItemListPrivate::synchronize()
         for (row_iterator aInner = aOuter, rInner = rOuter;
                 aInner != aEnd && rInner != rEnd;
                 ++aInner, ++rInner) {
-            if ((equal = aInner->isEqual(*rOuter, identityWidth))) {
+            if ((equal = aInner.isEqual(rOuter, identityWidth))) {
                 aIt = aInner;
                 rIt = rOuter;
 
                 break;
-            } else if ((equal = rInner->isEqual(*aOuter, identityWidth))) {
+            } else if ((equal = rInner.isEqual(aOuter, identityWidth))) {
                 aIt = aOuter;
                 rIt = rInner;
 
@@ -202,8 +202,8 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
         bool changed = false;
 
         do {    // Skip over identical rows.
-            if ((equal = aBegin->isEqual(*rBegin, identityWidth))
-                    && !(changed = !aBegin->isEqual(*rBegin, identityWidth, tableWidth))) {
+            if ((equal = aBegin.isEqual(rBegin, identityWidth))
+                    && !(changed = !aBegin.isEqual(rBegin, identityWidth, tableWidth))) {
                 ++aBegin;
                 ++rBegin;
             } else {
@@ -216,8 +216,8 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
             row_iterator rIt = rBegin;
 
             do {    // Skip over rows with equal IDs but different values.
-                if ((equal = aIt->isEqual(*rIt, identityWidth))
-                        && aIt->isEqual(*rIt, identityWidth, tableWidth)) {
+                if ((equal = aIt.isEqual(rIt, identityWidth))
+                        && aIt.isEqual(rIt, identityWidth, tableWidth)) {
                     ++aIt;
                     ++rIt;
                 } else {
@@ -227,9 +227,9 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
 
             QCoreApplication::postEvent(q, new RowEvent(
                     RowsChanged,
-                    (aBegin->begin - aCache.values.begin()) / tableWidth,
-                    (rBegin->begin - rCache.values.begin()) / tableWidth,
-                    (rIt->begin - rBegin->begin) / tableWidth));
+                    (aBegin.begin - aCache.values.begin()) / tableWidth,
+                    (rBegin.begin - rCache.values.begin()) / tableWidth,
+                    (rIt.begin - rBegin.begin) / tableWidth));
 
             continue;
         } else if (equal) {
@@ -237,44 +237,44 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
         }
 
         for (row_iterator aOuter = aBegin, rOuter = rBegin;
-                aOuter != aEnd && rOuter != rEnd;
+                aOuter != aEnd && rOuter != rEnd && !equal;
                 ++aOuter, ++rOuter) {
             for (row_iterator aInner = aOuter + 1, rInner = rOuter + 1;
                     aInner != aEnd && rInner != rEnd;
                     ++aInner, ++rInner) {
-                if (aInner->isEqual(*rOuter, identityWidth)) {
+                if ((equal = aInner.isEqual(rOuter, identityWidth))) {
                     if (rOuter != rBegin) {
                         QCoreApplication::postEvent(q, new RowEvent(
                                 RowsInserted,
-                                (aBegin->begin - aCache.values.begin()) / tableWidth + aCache.index,
-                                (rBegin->begin - rCache.values.begin()) / tableWidth + rCache.index,
-                                (rOuter->begin - rBegin->begin) / tableWidth));
+                                (aBegin.begin - aCache.values.begin()) / tableWidth + aCache.index,
+                                (rBegin.begin - rCache.values.begin()) / tableWidth + rCache.index,
+                                (rOuter.begin - rBegin.begin) / tableWidth));
                     }
 
                     QCoreApplication::postEvent(q, new RowEvent(
                             RowsRemoved,
-                            (aOuter->begin - aCache.values.begin()) / tableWidth + aCache.index,
-                            (aOuter->begin - rCache.values.begin()) / tableWidth + rCache.index,
-                            (aInner->begin - aOuter->begin) / tableWidth));
+                            (aOuter.begin - aCache.values.begin()) / tableWidth + aCache.index,
+                            (aOuter.begin - rCache.values.begin()) / tableWidth + rCache.index,
+                            (aInner.begin - aOuter.begin) / tableWidth));
 
                     aBegin = aInner;
                     rBegin = rOuter;
 
                     break;
-                } else if (rInner->isEqual(*aOuter, identityWidth)) {
+                } else if ((equal = rInner.isEqual(aOuter, identityWidth))) {
                     if (aOuter != aBegin) {
                         QCoreApplication::postEvent(q, new RowEvent(
                                 RowsRemoved,
-                                (aBegin->begin - aCache.values.begin()) / tableWidth + aCache.index,
-                                (rBegin->begin - rCache.values.begin()) / tableWidth + rCache.index,
-                                (aOuter->begin - aBegin->begin) / tableWidth));
+                                (aBegin.begin - aCache.values.begin()) / tableWidth + aCache.index,
+                                (rBegin.begin - rCache.values.begin()) / tableWidth + rCache.index,
+                                (aOuter.begin - aBegin.begin) / tableWidth));
                     }
 
                     QCoreApplication::postEvent(q, new RowEvent(
                             RowsInserted,
-                            (aOuter->begin - aCache.values.begin()) / tableWidth + aCache.index,
-                            (rOuter->begin - rCache.values.begin()) / tableWidth + rCache.index,
-                            (rInner->begin - rOuter->begin) / tableWidth));
+                            (aOuter.begin - aCache.values.begin()) / tableWidth + aCache.index,
+                            (rOuter.begin - rCache.values.begin()) / tableWidth + rCache.index,
+                            (rInner.begin - rOuter.begin) / tableWidth));
 
                     aBegin = aOuter;
                     rBegin = rInner;
@@ -537,7 +537,6 @@ bool QGalleryTrackerItemList::event(QEvent *event)
     switch (event->type()) {
     case QGalleryTrackerItemListPrivate::RowsChanged: {
             Q_D(QGalleryTrackerItemList);
-
             QGalleryTrackerItemListPrivate::RowEvent *rowEvent
                     = static_cast<QGalleryTrackerItemListPrivate::RowEvent *>(event);
 
@@ -550,7 +549,6 @@ bool QGalleryTrackerItemList::event(QEvent *event)
         }
     case QGalleryTrackerItemListPrivate::RowsInserted: {
             Q_D(QGalleryTrackerItemList);
-
             QGalleryTrackerItemListPrivate::RowEvent *rowEvent
                     = static_cast<QGalleryTrackerItemListPrivate::RowEvent *>(event);
 

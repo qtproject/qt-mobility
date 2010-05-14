@@ -75,16 +75,6 @@ public:
         Row(QVector<QVariant>::iterator begin, QVector<QVariant>::iterator end)
             : begin(begin), end(end) {}
 
-        int width() const { return end - begin; }
-
-        Row &operator +=(int span) { begin += span; end += span; return *this; }
-        Row &operator -=(int span) { begin -= span; end -= span; return *this; }
-
-        bool isEqual(const Row &row, int count) const {
-            return qEqual(begin, row.begin, begin + count); }
-        bool isEqual(const Row &row, int index, int count) {
-            return qEqual(begin + index, row.begin + index, begin + count); }
-
         QVector<QVariant>::iterator begin;
         QVector<QVariant>::iterator end;
     };
@@ -92,36 +82,35 @@ public:
     struct row_iterator
     {
         row_iterator() {}
-        row_iterator(QVector<QVariant>::iterator begin, QVector<QVariant>::iterator end)
-            : row(begin, end) {}
-        row_iterator(QVector<QVariant>::iterator begin, int width)
-            : row(begin, begin + width) {}
-        row_iterator(const Row &row) : row(row) {}
+        row_iterator(QVector<QVariant>::iterator begin, int width) : begin(begin), width(width) {}
 
-        bool operator != (const row_iterator &other) const { return row.begin != other.row.begin; }
-        bool operator <(const row_iterator &other) const { return row.begin < other.row.begin; }
+        bool operator != (const row_iterator &other) const { return begin != other.begin; }
+        bool operator <(const row_iterator &other) const { return begin < other.begin; }
 
-        row_iterator &operator ++() { row += row.width(); return *this; }
-        row_iterator &operator --() { row -= row.width(); return *this; }
+        row_iterator &operator ++() { begin += width; return *this; }
+        row_iterator &operator --() { begin -= width; return *this; }
 
-        row_iterator operator ++(int) { row_iterator n(row); row += row.width(); return n; }
-        row_iterator operator --(int) { row_iterator n(row); row -= row.width(); return n; }
+        row_iterator operator ++(int) { row_iterator n(*this); begin += width; return n; }
+        row_iterator operator --(int) { row_iterator n(*this); begin -= width; return n; }
 
-        int operator -(const row_iterator &other) const {
-            return (row.begin - other.row.begin) / row.width(); }
+        int operator -(const row_iterator &other) const { return (begin - other.begin) / width; }
 
         row_iterator operator +(int span) const {
-            span *= row.width(); return row_iterator(row.begin + span, row.end + span); }
+            span *= width; return row_iterator(begin + span, width); }
 
-        Row &operator *() {  return row; }
-        const Row &operator *() const {  return row; }
+        Row &operator *() {  return row = Row(begin, begin + width); }
+        const Row &operator *() const {  return row = Row(begin, begin + width); }
 
-        Row *operator ->() { return &row; }
-        const Row *operator ->() const { return &row; }
+        bool isEqual(const row_iterator &other, int count) const {
+            return qEqual(begin, other.begin, begin + count); }
+        bool isEqual(const row_iterator &other, int index, int count) {
+            return qEqual(begin + index, other.begin + index, begin + count); }
 
-        const QVariant &operator[] (int column) const { return *(row.begin + column); }
+        const QVariant &operator[] (int column) const { return *(begin + column); }
 
-        Row row;
+        QVector<QVariant>::iterator begin;
+        int width;
+        mutable Row row;
     };
 
     enum RowEventType
