@@ -258,7 +258,7 @@ void QGalleryTrackerItemListResponse::editFinished(QGalleryTrackerMetaDataEdit *
 
 QDBusPendingCall QGalleryTrackerItemListResponse::queryRows(int offset, int limit)
 {
-    QList<QVariant> arguments = QList<QVariant>()
+        QList<QVariant> arguments = QList<QVariant>()
             << 0 //live query id.
             << m_service
             << m_fields

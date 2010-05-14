@@ -56,6 +56,7 @@
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackerfileremoveresponse_p.h"
 #include "qgallerytrackeritemlistresponse_p.h"
+#include "qgallerytrackeritemresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 #include "qgallerytrackerurlresponse_p.h"
 
@@ -130,15 +131,15 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     } else {
         QGalleryAbstractResponse *response = 0;
         if (schema.isFileType()) {
-            response = new QGalleryTrackerItemListResponse(
+            schema.setPropertyNames(request->propertyNames());
+            schema.resolveColumns();
+
+            response = new QGalleryTrackerItemResponse(
                     searchInterface(),
-                    metaDataInterface(),
                     schema,
                     query,
-                    request->propertyNames(),
-                    QStringList(),
+                    0,
                     1);
-            response->setCursorPosition(0);
 
             return response;
         } else if (schema.isAggregateType()) {
@@ -151,7 +152,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
                     query,
                     0,
                     1);
-            response->setCursorPosition(0);
 
             return response;
         } else {
@@ -184,15 +184,16 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
     } else {
         QGalleryAbstractResponse *response = 0;
         if (schema.isFileType()) {
-            response = new QGalleryTrackerItemListResponse(
+            schema.setPropertyNames(request->propertyNames());
+            schema.setSortPropertyNames(request->sortPropertyNames());
+            schema.resolveColumns();
+
+            response = new QGalleryTrackerItemResponse(
                     searchInterface(),
-                    metaDataInterface(),
                     schema,
                     query,
-                    request->propertyNames(),
-                    request->sortPropertyNames(),
+                    request->initialCursorPosition(),
                     request->minimumPagedItems());
-            response->setCursorPosition(request->initialCursorPosition());
 
             return response;
         } else if (schema.isAggregateType()) {
@@ -206,7 +207,6 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
                     query,
                     request->initialCursorPosition(),
                     request->minimumPagedItems());
-            response->setCursorPosition(request->initialCursorPosition());
 
             return response;
         } else {
@@ -232,15 +232,16 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
         if (schema.isFileType()) {
-            QGalleryAbstractResponse *response = new QGalleryTrackerItemListResponse(
+            schema.setPropertyNames(request->propertyNames());
+            schema.setSortPropertyNames(request->sortPropertyNames());
+            schema.resolveColumns();
+
+            QGalleryAbstractResponse *response = new QGalleryTrackerItemResponse(
                     searchInterface(),
-                    metaDataInterface(),
                     schema,
                     query,
-                    request->propertyNames(),
-                    request->sortPropertyNames(),
+                    request->initialCursorPosition(),
                     request->minimumPagedItems());
-            response->setCursorPosition(request->initialCursorPosition());
 
             return response;
         } else if (schema.isAggregateType()) {

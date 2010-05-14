@@ -481,8 +481,6 @@ QVariant QGalleryTrackerItemList::metaData(int index, int key) const
 
         if (index >=0 && key >= d->valueOffset) {
             if (key < d->compositeOffset) {         // Value column.
-                key -= d->valueOffset;
-
                 return d->rCache.values.at((index * d->tableWidth) + key);
             } else if (key < d->aliasOffset) {      // Composite column.
                 key -= d->compositeOffset;
