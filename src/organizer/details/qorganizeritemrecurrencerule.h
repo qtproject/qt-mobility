@@ -153,45 +153,48 @@ public:
     };
 
     // Compulsory for a valid rule
-    bool setStartDate(const QDateTime& startDate);
-    QDateTime startDate() const;
+    void setStartDate(const QDateTime& startDate) {setValue(FieldStartDate, startDate);}
+    QDateTime startDate() const {return variantValue<QDateTime>(FieldStartDate);}
 
     // Default: Weekly
-    bool setFrequency(Frequency freq);                 // eg: Daily
-    Frequency frequency() const;
+    void setFrequency(Frequency freq) {setValue(FieldFrequency, static_cast<int>(freq));}
+    Frequency frequency() const {return static_cast<Frequency>(variantValue(FieldFrequency).toInt());}
 
     /* end critierion: neither, either or both of count/endDate could be set.  If both is set, the
      * recurrence ends on whichever occurs first.  */
     // eg: 10 means ten times, 0 means not set.
     // Default: 0
-    bool setCount(int count);
-    int count() const;
+    void setCount(int count) {setValue(FieldCount, count);}
+    int count() const {return variantValue(FieldCount).toInt();}
     // invalid means not set.
     // Default: null
-    bool setEndDate(const QDateTime& endDate);
-    QDateTime endDate() const;
+    void setEndDate(const QDateTime& endDate) {setValue(FieldEndDate, endDate);}
+    QDateTime endDate() const {return variantValue<QDateTime>(FieldEndDate);}
 
     // eg. if frequency = Daily and interval = 2, every second day
     // Default: 1
-    bool setInterval(int interval);
-    int interval() const;
+    void setInterval(int interval) {setValue(FieldInterval, interval);}
+    int interval() const {return variantValue(FieldInterval).toInt();}
+
+    // XXX TODO: register QList<int> as a metatype, perform custom list parsing;
+    // none of the below implementations actually compile/work, and are purely placeholders.
 
     // Defaults for the below: empty
     // eg: Monday,Wednesday,Thursday == every Mon, Wed and Thurs.
-    bool setDayOfWeek(const QList<Qt::DayOfWeek>& days);
-    QList<Qt::DayOfWeek> dayOfWeek() const;
+    bool setDayOfWeek(const QList<Qt::DayOfWeek>& days) {setValue(FieldDayOfWeek, days);}
+    QList<Qt::DayOfWeek> dayOfWeek() const {return variantValue<QList<int> >(FieldDayOfWeek);}
     // eg: 31,-3 == 31st day of month (if it exists) and 3rd-last day of month
-    bool setDayOfMonth(const QList<int>& days);
-    QList<int> dayOfMonth() const;
+    bool setDayOfMonth(const QList<int>& days) {setValue(FieldDayOfMonth, days);}
+    QList<int> dayOfMonth() const {return variantValue<QList<int> >(FieldDayOfMonth);}
     // eg: 47th,-5 == 47th and 5th-last day of year
-    bool setDayOfYear(const QList<int>& days);
-    QList<int> dayOfYear() const;
+    bool setDayOfYear(const QList<int>& days) {setValue(FieldDayOfYear, days);}
+    QList<int> dayOfYear() const {return variantValue<QList<int> >(FieldDayOfYear);}
     // eg: January,February == during Jan and Feb
-    bool setMonth(const QList<Month>& months);
-    QList<Month> month() const;
+    bool setMonth(const QList<Month>& months) {setValue(FieldMonth, months);}
+    QList<Month> month() const {return variantValue<QList<int> >(FieldMonth);}
     // eg. 13,53,-3 == weeks 13 and 53 (if it exists) and the 3rd-last week of the year
-    bool setWeekOfYear(const QList<int>& weeks);
-    QList<int> weekOfYear() const;
+    bool setWeekOfYear(const QList<int>& weeks) {setValue(FieldWeekOfYear, weeks);}
+    QList<int> weekOfYear() const {return variantValue<QList<int> >(FieldWeekOfYear);}
 
     // eg. frequency = Monthly, dayOfWeek = Tuesday, positions = 1,-1 means first and last Tuesday
     // of every month.
@@ -202,8 +205,8 @@ public:
 
     // Default: Monday
     // sets the day that the week starts on (significant for Weekly with interval > 1, and for weekOfYear)
-    bool setWeekStart(Qt::DayOfWeek day);
-    Qt::DayOfWeek weekStart() const;
+    bool setWeekStart(Qt::DayOfWeek day) {setValue(FieldWeekStart, static_cast<int>(day));}
+    Qt::DayOfWeek weekStart() const {return static_cast<Qt::DayOfWeek>(variantValue(FieldWeekStart).toInt());}
 };
 
 QTM_END_NAMESPACE

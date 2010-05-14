@@ -69,11 +69,13 @@ public:
     // total-specification of occurrence dates
     void setOccurrenceDates(const QList<QDateTime>& occurrences)
     {
+        // XXX TODO: register QList<QDateTime> as a metatype...
         setValue(FieldOccurrenceDates, occurrences);
     }
 
     QList<QDateTime>& occurrenceDates() const
     {
+        // XXX TODO: register QList<QDateTime> as a metatype...
         return variantValue<QList<QDateTime> >(FieldOccurrenceDates);
     }
 };
