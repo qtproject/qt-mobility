@@ -119,7 +119,7 @@ private:
     static QSystemInfoPrivate *self;
 
 private Q_SLOTS:
- protected:
+protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
 
@@ -242,6 +242,7 @@ protected:
     QDASessionThread *daSessionThread;
 };
 
+class QBluetoothListenerThread;
 class QSystemDeviceInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -267,7 +268,9 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
-    static QSystemDeviceInfoPrivate *instance() {return self;}
+    static QSystemDeviceInfoPrivate *instance();
+
+    bool currentBluetoothPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -282,6 +285,12 @@ private:
     QSystemDeviceInfo::PowerState currentPowerStateCache;
     QSystemDeviceInfo::BatteryStatus batteryStatusCache;
     static QSystemDeviceInfoPrivate *self;
+    QBluetoothListenerThread *btThread;
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 };
 
 
@@ -345,7 +354,6 @@ protected:
 
 private:
     QMutex mutex;
-
 private Q_SLOTS:
 };
 
@@ -365,6 +373,35 @@ Q_SIGNALS:
 
 protected:
     void run();
+
+private:
+    QMutex mutex;
+
+private Q_SLOTS:
+};
+
+class QBluetoothListenerThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QBluetoothListenerThread(QObject *parent = 0);
+    ~QBluetoothListenerThread();
+    bool keepRunning;
+
+public Q_SLOTS:
+    void emitBtPower(bool);
+    void stop();
+    void quit();
+
+Q_SIGNALS:
+    void bluetoothPower(bool);
+
+protected:
+    void run();
+    IONotificationPortRef port;
+    CFRunLoopRef rl;
+    CFRunLoopSourceRef rls;
 
 private:
     QMutex mutex;

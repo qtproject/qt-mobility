@@ -66,6 +66,7 @@ class  Q_SYSINFO_EXPORT QSystemDeviceInfo : public QObject
     Q_PROPERTY(QString productName READ productName CONSTANT)
     Q_PROPERTY(int batteryLevel READ batteryLevel NOTIFY batteryLevelChanged)
     Q_PROPERTY(bool isDeviceLocked READ isDeviceLocked)
+    Q_PROPERTY(bool currentBluetoothPowerState READ currentBluetoothPowerState)
 
 
     Q_ENUMS(BatteryStatus)
@@ -140,6 +141,7 @@ public:
     QSystemDeviceInfo::Profile currentProfile();
     QSystemDeviceInfo::PowerState currentPowerState();
 
+    bool currentBluetoothPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

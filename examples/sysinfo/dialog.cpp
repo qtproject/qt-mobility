@@ -224,6 +224,10 @@ void Dialog::setupDevice()
     }
 
     inputMethodLabel->setText(inputs.join(" "));
+
+    bluetoothPowerLabel->setText((di->currentBluetoothPowerState() ? "On" : "Off"));
+    connect(di,SIGNAL(bluetoothStateChanged(bool)), this,SLOT(bluetoothChanged(bool)));
+
 }
 
 void Dialog::updateDeviceLockedState()
@@ -815,4 +819,8 @@ void Dialog::storageChanged()
     setupStorage();
 }
 
+void Dialog::bluetoothChanged(bool b)
+{
+    bluetoothPowerLabel->setText((b ? "On" : "Off"));
+}
 
