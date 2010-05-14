@@ -59,8 +59,11 @@ public:
 
     enum Capability {
         //this might need to be extended
-        Envelope = 1
+        Envelope = 1,
+        Period = 2
     };
+    Q_DECLARE_FLAGS(Capabilities, Capability)
+
 
     enum State {
         Busy,
@@ -74,6 +77,8 @@ public:
     bool isValid() const;
     QString name() const;
     State state() const;
+
+    Capabilities supportedCapabilities() const;
 
     bool isEnabled() const;
     void setEnabled(bool);

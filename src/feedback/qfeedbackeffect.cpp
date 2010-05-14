@@ -162,4 +162,36 @@ QFeedbackDevice QFeedbackEffect::device() const
     return d_func()->device;
 }
 
+/*!
+    \property QFeedbackEffect::period
+    \brief set the period for the effect.
+
+    It has a default value of -1, which mean that it is not a periodic effect.
+    Note: not all devices can support periodic effects
+*/
+
+void QFeedbackEffect::setPeriod(int msecs)
+{
+    if (state() != Stopped) {
+        qWarning("QFeedbackEffect::setPeriod: the period can only  be changed if the effect is stopped");
+        return;
+    }
+    d_func()->period = msecs;
+}
+
+int QFeedbackEffect::period() const
+{
+    return d_func()->period;
+}
+
+
+/*!
+    \fn void QFeedbackDevice::play(InstantEffect effect)
+
+    plays instant feedback.
+
+    That feedback is defined by the theme of the system.
+*/
+
+
 QTM_END_NAMESPACE

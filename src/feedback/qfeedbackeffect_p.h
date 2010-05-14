@@ -69,7 +69,7 @@ class QFeedbackEffectPrivate : public QAbstractAnimationPrivate
 public:
     QFeedbackEffectPrivate() : duration(250),
                     intensity(1), attackTime(0), attackIntensity(0), fadeTime(0),
-                    device(QFeedbackDevice::defaultDevice()),
+                    period(-1), device(QFeedbackDevice::defaultDevice()),
 #ifdef Q_OS_SYMBIAN
                   m_feedback(0), m_vibra(0)
 #else
@@ -80,10 +80,7 @@ public:
     }
 
 #ifdef Q_OS_SYMBIAN
-    ~QFeedbackEffectPrivate()
-    {
-        delete m_vibra;
-    }
+    ~QFeedbackEffectPrivate();
 #endif
 
 
@@ -93,6 +90,7 @@ public:
     qreal attackIntensity;
     int fadeTime;
     qreal fadeIntensity;
+    int period;
     QFeedbackDevice device;
     
 #ifdef Q_OS_SYMBIAN

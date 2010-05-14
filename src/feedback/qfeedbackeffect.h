@@ -52,7 +52,7 @@ class QFeedbackDevice;
 class QFeedbackEffectPrivate;
 
 
-        //TODO: what to do with those enums?
+//TODO: what to do with this enum
 //continous
 enum ContinuousEffect {
     ContinuousNone, ContinuousSmooth, ContinuousSlider, ContinuousPopup,
@@ -63,15 +63,16 @@ enum ContinuousEffect {
 
 //instant
 enum InstantEffect {
-  InstantNone, InstantBasic, InstantSensitive, InstantBasicButton,
-  InstantSensitiveButton, InstantBasicKeypad, InstantSensitiveKeypad, InstantBasicSlider,
-  InstantSensitiveSlider, InstantBasicItem, InstantSensitiveItem, InstantItemScroll,
-  InstantItemPick, InstantItemDrop, InstantItemMoveOver, InstantBounceEffect,
-  InstantCheckbox, InstantMultipleCheckbox, InstantEditor, InstantTextSelection,
-  InstantBlankSelection, InstantLineSelection, InstantEmptyLineSelection, InstantPopUp,
-  InstantPopupOpen, InstantPopupClose, InstantFlick, InstantStopFlick,
-  InstantMultiInstantActivate, InstantRotateStep, InstantNumberOfInstantFeedbacks,
-  InstantNoOverride, InstantUser = 65535, InstantMaxUser = 262140
+    InstantNone, InstantBasic, InstantSensitive, InstantBasicButton, InstantSensitiveButton,
+    InstantBasicKeypad, InstantSensitiveKeypad, InstantBasicSlider, InstantSensitiveSlider,
+    InstantBasicItem, InstantSensitiveItem, InstantItemScroll, InstantItemPick, InstantItemDrop,
+    InstantItemMoveOver, InstantBounceEffect, InstantCheckbox, InstantMultipleCheckbox, InstantEditor,
+    InstantTextSelection, InstantBlankSelection, InstantLineSelection, InstantEmptyLineSelection,
+    InstantPopUp, InstantPopupOpen, InstantPopupClose, InstantFlick, InstantStopFlick,
+    InstantMultitouchActivate, InstantRotateStep, InstantLongPress, InstantPositiveTacticon,
+    InstantNeutralTacticon, InstantNegativeTacticon,
+    NumberOfInstantFeedbacks,
+    InstantUser = 65535
 };
 
 
@@ -83,7 +84,7 @@ public:
     Q_PROPERTY(int attackTime READ attackTime WRITE setAttackTime)
     Q_PROPERTY(qreal attackIntensity READ attackIntensity WRITE setAttackIntensity)
     Q_PROPERTY(int fadeTime READ fadeTime WRITE setFadeTime)
-    Q_PROPERTY(int priority READ priority WRITE setPriority)
+    Q_PROPERTY(int period READ period WRITE setPeriod)
     Q_PROPERTY(QFeedbackDevice device READ device WRITE setDevice)
 
     enum Duration {
@@ -98,6 +99,8 @@ public:
 
     QFeedbackEffect(QObject *parent = 0);
     ~QFeedbackEffect();
+
+    static void play(InstantEffect effect);
 
     void setDuration(int msecs);
     int duration() const;
@@ -117,6 +120,9 @@ public:
 
     void setFadeIntensity(qreal intensity);
     qreal fadeIntensity() const;
+
+    void setPeriod(int msecs);
+    int period() const;
 
     void setDevice(const QFeedbackDevice &device);
     QFeedbackDevice device() const;

@@ -94,6 +94,11 @@ QFeedbackDevice::State QFeedbackDevice::state() const
     return ret;
 }
 
+QFeedbackDevice::Capabilities QFeedbackDevice::supportedCapabilities() const
+{
+    return 0;
+}
+
 bool QFeedbackDevice::isEnabled() const
 {
     switch(m_id)

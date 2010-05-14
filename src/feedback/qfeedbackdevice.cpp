@@ -86,56 +86,56 @@ QTM_BEGIN_NAMESPACE
         */
 
         /*!
-            \fn QFeedbackDevice::id()
+            \fn int QFeedbackDevice::id()
 
             returns the id of the device
         */
 
         /*!
-            \fn QFeedbackDevice::isValid()
+            \fn bool QFeedbackDevice::isValid()
 
             returns true if the device is valid. Default constructed devices are invalid.
         */
 
 
         /*!
-            \fn QFeedbackDevice::name()
+            \fn QString QFeedbackDevice::name()
 
             returns the name of the device.
         */
 
         /*!
-            \fn QFeedbackDevice::state()
+            \fn QFeedbackDevice::State QFeedbackDevice::state()
 
             returns the state of the device.
         */
 
         /*!
-            \fn defaultDevice()
+            \fn QFeedbackDevice QFeedbackDevice::defaultDevice()
 
             returns the default device.
         */
 
         /*!
-            \fn defaultDevice(Type t)
+            \fn QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)
 
             returns the default device of the specified type.
         */
 
         /*!
-            \fn devices()
+            \fn QList<QFeedbackDevice> QFeedbackDevice::devices()
 
             returns the list of devices available on the system.
         */
 
         /*!
-            \fn  isEnabled()
+            \fn  bool QFeedbackDevice::isEnabled()
 
             returns true if you can use this device to start effects.
         */
 
         /*!
-            \fn  setEnabled()
+            \fn  void QFeedbackDevice::setEnabled()
 
             Allows to enable or disable a device.
         */

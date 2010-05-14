@@ -140,6 +140,10 @@ QFeedbackDevice::State QFeedbackDevice::state() const
 
 }
 
+QFeedbackDevice::Capabilities QFeedbackDevice::supportedCapabilities() const
+{
+    return Envelope | Period;
+}
 
 bool QFeedbackDevice::isEnabled() const
 {

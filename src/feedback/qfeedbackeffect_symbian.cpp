@@ -50,6 +50,12 @@
 
 QTM_BEGIN_NAMESPACE
 
+//Note: ADVANCED_TACTILE_SUPPORT should be defined for S60 5.2 and up
+
+
+
+//TODO: is activeWindow good enough
+//or should we create a widget for that?
 static CCoeControl *defaultWidget()
 {
     QWidget *w = QApplication::activeWindow();
@@ -85,9 +91,10 @@ static TTouchContinuousFeedback convertToSymbian(ContinuousEffect effect)
 
 #endif
 
-static TTouchLogicalFeedback convertToSymbian(InstantEffect effect)
-{
+static TTouchLogicalFeedback convertToSymbian(InstantEffect effect) {
+
     TTouchLogicalFeedback instantFeedbackSymbian = ETouchFeedbackBasic;
+
     switch (effect) {
     case InstantNone:
         instantFeedbackSymbian = ETouchFeedbackNone;
@@ -105,25 +112,85 @@ static TTouchLogicalFeedback convertToSymbian(InstantEffect effect)
     case InstantSensitiveButton:
         instantFeedbackSymbian = ETouchFeedbackSensitiveButton;
         break;
+    case InstantBasicItem:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantSensitiveItem:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
     case InstantBounceEffect:
-        instantFeedbackSymbian = ETouchFeedbackBoundaryList;
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case InstantPopupOpen:
-        instantFeedbackSymbian = ETouchFeedbackIncreasingPopUp;
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case InstantPopupClose:
-        instantFeedbackSymbian = ETouchFeedbackDecreasingPopUp;
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case InstantBasicSlider:
-        instantFeedbackSymbian = ETouchFeedbackSlider;
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case InstantSensitiveSlider:
-        instantFeedbackSymbian = ETouchFeedbackSlider;
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantStopFlick:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantFlick:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantEditor:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantTextSelection:
+        instantFeedbackSymbian = ETouchFeedbackTextSelection;
+        break;
+    case InstantBlankSelection:
+        instantFeedbackSymbian = ETouchFeedbackBlankSelection;
+        break;
+    case InstantLineSelection:
+        instantFeedbackSymbian = ETouchFeedbackLineSelection;
+        break;
+    case InstantEmptyLineSelection:
+        instantFeedbackSymbian = ETouchFeedbackEmptyLineSelection;
         break;
     case InstantCheckbox:
         instantFeedbackSymbian = ETouchFeedbackCheckbox;
         break;
-#endif
+    case InstantMultipleCheckbox:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantSensitiveKeypad:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantBasicKeypad:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantMultitouchActivate:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantRotateStep:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case InstantItemDrop:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case HbFeedback::ItemMoveOver:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case HbFeedback::ItemPick:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case HbFeedback::ItemScroll:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+    case HbFeedback::PopUp:
+        instantFeedbackSymbian = ETouchFeedbackPopUp;
+        break;
+    case HbFeedback::LongPress:
+        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        break;
+#endif //ADVANCED_TACTILE_SUPPORT
     default:
         break;
     }
@@ -165,6 +232,11 @@ public:
     }
 };
 #endif
+
+QFeedbackEffectPrivate::~QFeedbackEffectPrivate()
+{
+    delete m_vibra;
+}
 
 QTouchFeedback *QFeedbackEffectPrivate::feedback()
 {
@@ -210,14 +282,14 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
         switch(newState)
         {
         case Stopped:
-            d->feedback()->StopFeedback(defaultWidget()); //TODO: is activeWindow good enough?
+            d->feedback()->StopFeedback(defaultWidget());
             break;
         case Paused:
             //not supported, we call stop
             stop();
             break;
         case Running:
-            d->feedback()->StartFeedback(defaultWidget(), //we apparently need a widget
+            d->feedback()->StartFeedback(defaultWidget(),
                                          0, //what effect
                                          0, qRound(d->intensity * 100), d->duration);
             break;
@@ -277,5 +349,11 @@ void QFeedbackEffect::setFadeIntensity(qreal intensity)
 {
     Q_UNUSED(intensity);
 }
+
+void QFeedbackEffect::play(InstantEffect effect)
+{
+    QTouchFeedback::Instance()->InstantFeedback(convertToSymbian(effect));
+}
+
 
 QTM_END_NAMESPACE

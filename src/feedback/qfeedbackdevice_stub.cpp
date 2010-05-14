@@ -65,6 +65,11 @@ QList<QFeedbackDevice> QFeedbackDevice::devices()
     return ret;
 }
 
+QFeedbackDevice::Capabilities QFeedbackDevice::supportedCapabilities() const
+{
+    return 0;
+}
+
 bool QFeedbackDevice::isEnabled() const
 {
     return false;

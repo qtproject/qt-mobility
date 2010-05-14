@@ -56,16 +56,27 @@ void QFeedbackEffectPrivate::checkUpdateEffect()
         return;
 
     Q_Q(QFeedbackEffect);
-    ImmVibeModifyPlayingPeriodicEffect(qHandleForDevice(device),
-                                       m_hEffect,
-                                       q->totalDuration(),
-                                       intensity / qreal(VIBE_MAX_MAGNITUDE),
-                                       duration,
-                                       VIBE_DEFAULT_STYLE,
-                                       attackTime,
-                                       attackIntensity,
-                                       fadeTime,
-                                       fadeIntensity);
+    if (period > 0)
+        ImmVibeModifyPlayingPeriodicEffect(qHandleForDevice(device),
+                                           m_hEffect,
+                                           q->duration(),
+                                           intensity / qreal(VIBE_MAX_MAGNITUDE),
+                                           period,
+                                           VIBE_DEFAULT_STYLE,
+                                           attackTime,
+                                           attackIntensity,
+                                           fadeTime,
+                                           fadeIntensity);
+    else
+        ImmVibeModifyPlayingMagSweepEffect(qHandleForDevice(device),
+                                           m_hEffect,
+                                           q->duration(),
+                                           intensity / qreal(VIBE_MAX_MAGNITUDE),
+                                           VIBE_DEFAULT_STYLE,
+                                           attackTime,
+                                           attackIntensity,
+                                           fadeTime,
+                                           fadeIntensity);
 }
 
 
@@ -108,11 +119,17 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
     case Running:
         if (oldState == Paused)
             ImmVibeResumePausedEffect(qHandleForDevice(d->device), d->m_hEffect);
-        else
-            ImmVibePlayPeriodicEffect(qHandleForDevice(d->device), totalDuration(),
-                intensity() / qreal(VIBE_MAX_MAGNITUDE), duration(),
-                VIBE_STYLE_STRONG, attackTime(), attackIntensity(),
+        else if (d->period > 0) {
+            ImmVibePlayPeriodicEffect(qHandleForDevice(d->device), duration(),
+                intensity() / qreal(VIBE_MAX_MAGNITUDE), period(),
+                VIBE_DEFAULT_STYLE, attackTime(), attackIntensity(),
                 fadeTime(), fadeIntensity(), &d->m_hEffect);
+        } else {
+            ImmVibePlayMagSweepEffect(qHandleForDevice(d->device), duration(),
+                intensity() / qreal(VIBE_MAX_MAGNITUDE),
+                VIBE_DEFAULT_STYLE, attackTime(), attackIntensity(),
+                fadeTime(), fadeIntensity(), &d->m_hEffect);
+        }
         break;
     }
 
@@ -174,5 +191,13 @@ void QFeedbackEffect::setFadeIntensity(qreal intensity)
     d->fadeIntensity = intensity;
     d->checkUpdateEffect();
 }
+
+void QFeedbackEffect::play(InstantEffect effect)
+{
+    //TODO: we should use the platform/theme APIs for that
+    Q_UNUSED(effect);
+}
+
+
 
 QTM_END_NAMESPACE

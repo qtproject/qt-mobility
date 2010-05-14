@@ -78,6 +78,12 @@ void QFeedbackEffect::setFadeTime(int msecs)
     Q_UNUSED(msecs);
 }
 
+void QFeedbackEffect::play(InstantEffect effect)
+{
+    Q_UNUSED(effect);
+}
+
+
 QTM_END_NAMESPACE
 
 
