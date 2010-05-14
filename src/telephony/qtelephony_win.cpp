@@ -38,75 +38,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-
-#ifndef QTELEPHONYGLOBAL_H
-#define QTELEPHONYGLOBAL_H
-
-#include "qmobilityglobal.h"
-
-QT_BEGIN_HEADER
+#include "qtelephony.h"
+#include "qcallinfo.h"
+#include "qtelephony_win_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \enum CallType
+////////
+QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
+ : QObject(parent)
+{
+    QCallInfo ci = new QCallInfo();
+}
 
-    \ingroup telephony
+QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
+{
 
-    This enum type is used to describe the type of a call.
-    
-    \value UnknownType The call type is not defined.
-    \value VOIP        The call is a VOIP call.
-    \value Voice       The call is a Voice call.
-    \value Video       The call is a Video call.
-*/
+}
 
-enum CallType {
-    UnknownType = 0,
-    VOIP = 1,
-    Voice = 2,
-    Video = 3
-};
+QCallInfoPrivate::QCallInfoPrivate(QObject *parent)
+ : QObject(parent)
+{
+}
 
-/*!
-    \enum CallStatus
+QCallInfoPrivate::~QCallInfoPrivate()
+{
 
-    \ingroup telephony
+}
 
-    This enum type is used to describe the status of a call.
-    
-    \value UnknownStatus The call status is not defined.
-    \value NoCall        The status  of the call is no active call.
-    \value Ringing       The status  of the call is ringing.
-    \value InProgress    The status  of the call is in progress.
-    \value OnHold        The status  of the call is on hold.
-*/
-enum CallStatus {
-    UnknownStatus = 0,
-    NoCall = 1,
-    Ringing = 2,
-    InProgress = 3,
-    OnHold = 4
-};
+QString QCallInfoPrivate::callIdentifier()
+{
+    return "not implemented!";
+}
 
-#ifdef Q_OS_LINUX
-enum PrivateDataType{
-    MaemoContactCategory = 0
-};
-#endif
-#ifdef Q_OS_WIN
-enum PrivateDataType{
-    ContactIDMemoryOffset = 0
-};
-#endif
-#ifdef Q_OS_SYMBIAN
-enum PrivateDataType{
-    S60ConctactBufferSize = 0
-};
-#endif
+QList<quint32> QCallInfoPrivate::contacts()
+{
+    QList<quint32> ret;
+    return ret;
+}
+
+#include "moc_qtelephony_win_p.cpp"
 
 QTM_END_NAMESPACE
-QT_END_HEADER
-
-#endif

@@ -44,126 +44,143 @@
 #include "qcallinfo.h"
 
 #ifdef Q_OS_LINUX
-# include "qtelephonyevent_linux_p.h"
+# include "qtelephony_linux_p.h"
 #endif
 #ifdef Q_OS_WIN
-# include "qtelephonyevent_win_p.h"
+# include "qtelephony_win_p.h"
 #endif
 #ifdef Q_OS_SYMBIAN
-# include "qtelephonyevent_s60_p.h"
+# include "qtelephony_s60_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QTelephonyEvent
+    \class QTelephonyCallList
 
     \ingroup telephony
 
-    \brief The QTelephonyEvent class represents the call list container and the notifier about call changes.
+    \brief The QTelephonyCallList class represents the call list container and the notifier about call changes.
 
-    QTelephonyEvent supports calls event notification for other application and an access of the list of the 
+    QTelephonyCallList supports calls event notification for other application and an access of the list of the 
     existing calls.
 
 \table
 \header
     \o Class
 \row
-    \o QTelephonyEvent signal callStatusChanges
+    \o QTelephonyCallList signal callstatusChanged
 \row
-    \o QTelephonyEvent signal callListChanges
+    \o QTelephonyCallList signal callsChanged
 \row
-    \o QTelephonyEvent::calllist (+ 3 overloaded)
+    \o QTelephonyCallList::calls (+ 3 overloaded)
 \endtable
 */
 
 
-Q_GLOBAL_STATIC(QTelephonyEventPrivate, telephonyeventPrivate)
+Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonycalllistprivate)
 
 /*!
-    \fn QTelephonyEvent::QTelephonyEvent(QObject *parent)
+    \fn QTelephonyCallList::QTelephonyCallList(QObject *parent)
     
     Constructor for the Telephony Event object 
 */
-QTelephonyEvent::QTelephonyEvent(QObject *parent)
-    : QObject(parent), d(telephonyeventPrivate())
+QTelephonyCallList::QTelephonyCallList(QObject *parent)
+    : QObject(parent), d(telephonycalllistprivate())
 {
-    connect(d, SIGNAL(callstatusChange(CallStatus status)), this, SIGNAL(callstatusChange(CallStatus status)));
-    connect(d, SIGNAL(calllistChange()), this, SIGNAL(calllistChange()));
+    connect(d, SIGNAL(callstatusChanged(const QCallInfo::CallStatus status))
+        , this, SIGNAL(callstatusChanged(const QCallInfo::CallStatus status)));
+    connect(d, SIGNAL(callsChanged()), this, SIGNAL(callsChanged()));
 }
 
 /*!
-  Destroys the QTelephonyEvent object
+  Destroys the QTelephonyCallList object
 */
-QTelephonyEvent::~QTelephonyEvent()
+QTelephonyCallList::~QTelephonyCallList()
 {
 }
 
 /*!
-    \fn QTelephonyEvent::calllist()
+    \fn QTelephonyCallList::calls()
     
     Gives back a list of calls.
 */
-QList<QCallInfo*> QTelephonyEvent::calllist()
+QList<QCallInfo*> QTelephonyCallList::calls() const
 {
-    return calls;
+    QList<QCallInfo*> ret;
+    if(d)
+        ret = d->calls();
+    return ret;
 }
 
 /*!
-    \fn QTelephonyEvent::calllist(CallType calltype)
+    \fn QTelephonyCallList::calls(const QCallInfo::CallType calltype)
     
     Gives back a list of calls from type of calltype.
 */
-QList<QCallInfo*> QTelephonyEvent::calllist(CallType calltype)
+QList<QCallInfo*> QTelephonyCallList::calls(const QCallInfo::CallType& calltype) const
 {
     QList<QCallInfo*> ret;
-    for( int i = 0; i < calls.count(); i++){
-        if(calls[i]->callType() == calltype)
-            ret.push_back(calls[i]);
+    for( int i = 0; i < calls().count(); i++){
+        if(calls().at(i)->type() == calltype)
+            ret.push_back(calls().at(i));
     }
-    return calls; 
+    return ret; 
 }
 
 /*!
-    \fn QTelephonyEvent::calllist(CallStatus callstatus)
+    \fn QTelephonyCallList::calls(const QCallInfo::CallStatus& callstatus)
     
     Gives back a list of calls from status of callstatus.
 */
-QList<QCallInfo*> QTelephonyEvent::calllist(CallStatus callstatus)
+QList<QCallInfo*> QTelephonyCallList::calls(const QCallInfo::CallStatus& callstatus) const
 {
     QList<QCallInfo*> ret;
-    for( int i = 0; i < calls.count(); i++){
-        if(calls[i]->callStatus() == callstatus)
-            ret.push_back(calls[i]);
+    for( int i = 0; i < calls().count(); i++){
+        if(calls().at(i)->status() == callstatus)
+            ret.push_back(calls().at(i));
     }
-    return calls; 
+    return ret; 
 }
 
 /*!
-    \fn QTelephonyEvent::calllist(CallType calltype, CallStatus callstatus)
+    \fn QTelephonyCallList::calllist(const QCallInfo::CallType& calltype, const QCallInfo::CallStatus& callstatus)
     
     Gives back a list of calls from status of callstatus and type of calltype.
 */
-QList<QCallInfo*> QTelephonyEvent::calllist(CallType calltype, CallStatus callstatus)
+QList<QCallInfo*> QTelephonyCallList::calls(const QCallInfo::CallType& calltype
+                                            , const QCallInfo::CallStatus& callstatus) const
 {
     QList<QCallInfo*> ret;
-    for( int i = 0; i < calls.count(); i++){
-        if(calls[i]->callType() == calltype && calls[i]->callStatus() == callstatus)
-            ret.push_back(calls[i]);
+    for( int i = 0; i < calls().count(); i++){
+        if(calls().at(i)->type() == calltype && calls().at(i)->status() == callstatus)
+            ret.push_back(calls().at(i));
     }
-    return calls; 
+    return ret; 
 }
 
 /*!
-    \fn QTelephonyEvent::currentStatus()
+    \fn QTelephonyCallList::currentCall()
+    
+    Gives back the current active call.
+*/
+QCallInfo* QTelephonyCallList::currentCall()
+{
+    if(d)
+        return d->currentCall();
+    return 0; 
+}
+
+/*!
+    \fn QTelephonyCallList::currentCallStatus()
     
     Gives back the current telephony status.
 */
-CallStatus QTelephonyEvent::currentStatus()
+QCallInfo::CallStatus QTelephonyCallList::currentCallStatus()
 {
     if(d)
-        d->currentStatus();
-    return UnknownStatus;
+        d->currentCallStatus();
+    return QCallInfo::UnknownStatus;
 }
 
 #include "moc_qtelephony.cpp"

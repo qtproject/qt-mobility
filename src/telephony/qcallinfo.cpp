@@ -43,13 +43,13 @@
 #include "qcallinfo.h"
 
 #ifdef Q_OS_LINUX
-# include "qtelephonyevent_linux_p.h"
+# include "qtelephony_linux_p.h"
 #endif
 #ifdef Q_OS_WIN
-# include "qtelephonyevent_win_p.h"
+# include "qtelephony_win_p.h"
 #endif
 #ifdef Q_OS_SYMBIAN
-# include "qtelephonyevent_s60_p.h"
+# include "qtelephony_s60_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -65,17 +65,13 @@ QTM_BEGIN_NAMESPACE
 \header
     \o Class
 \row
-    \o QCallInfo::phoneNumber
-\row
-    \o QCallInfo::sipID
+    \o QCallInfo::callIdentifier
 \row
     \o QCallInfo::contacts
 \row
-    \o QCallInfo::querryData
+    \o QCallInfo::type
 \row
-    \o QCallInfo::callType
-\row
-    \o QCallInfo::callStatus
+    \o QCallInfo::status
 \endtable
 */
 
@@ -101,75 +97,51 @@ QCallInfo::~QCallInfo()
 }
 
 /*!
-    \fn QCallInfo::phoneNumber()
+    \fn QCallInfo::callIdentifier()
     
-    Gives back the phone number of a call.
+    Gives back the id of a call.
 */
-QString QCallInfo::phoneNumber()
+QString QCallInfo::callIdentifier() const
 {
     if(d)
-        return d->phoneNumber();
+        return d->callIdentifier();
     return "unknown";
 }
 
 /*!
-    \fn QCallInfo::sipID()
-    
-    Gives back the SIP ID of a call.
-*/
-unsigned long QCallInfo::sipID()
-{
-    if(d)
-        d->sipID();
-    return 0;
-}
-
-/*!
-    \fn QCallInfo::sipID()
+    \fn QCallInfo::contacts()
     
     Gives back a list of contact id (used in QContact).
 */
-QList<QContactLocalId> QCallInfo::contacts()
+QList<quint32> QCallInfo::contacts() const
 {
-    QList<QContactLocalId> ret;
+    QList<quint32> ret;
     if(d)
         ret = d->contacts();
     return ret;
 }
 
 /*!
-    \fn QCallInfo::querryData( PrivateDataType datatype, const QObject& param, void** value)
-    
-    Function that allows to querry special data out from the private QCallInfo implementation.
-*/
-bool QCallInfo::querryData( PrivateDataType datatype, const QObject& param, void** value)
-{
-    if(d)
-        return d->querryData( datatype, param, value);
-    return false;
-}
-
-/*!
-    \fn QCallInfo::callType()
+    \fn QCallInfo::type()
     
     Gives back the type of the call.
 */
-CallType QCallInfo::callType()
+QCallInfo::CallType QCallInfo::type() const
 {
     if(d)
-        return d->callType();
+        return d->type();
     return UnknownType;
 }
 
 /*!
-    \fn QCallInfo::callType()
+    \fn QCallInfo::status()
     
     Gives back the status of the call.
 */
-CallStatus QCallInfo::callStatus()
+QCallInfo::CallStatus QCallInfo::status() const
 {
     if(d)
-        return d->callStatus();
+        return d->status();
     return UnknownStatus;
 }
 

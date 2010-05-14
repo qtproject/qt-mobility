@@ -11,27 +11,26 @@ include(../../common.pri)
 
 # Input
 PUBLIC_HEADERS += qtelephony.h \
-                qcallinfo.h \
-                qtelephonyglobal.h
+                qcallinfo.h
 SOURCES += qtelephony.cpp \
                 qcallinfo.cpp
 
 # Private Headers and sources
 win32 {
-    HEADERS += qtelephonyevent_win_p.h 
-    SOURCES += qtelephonyevent_win.cpp 
+    HEADERS += qtelephony_win_p.h 
+    SOURCES += qtelephony_win.cpp 
 }
 unix: {
     !maemo*: {
-        HEADERS += qtelephonyevent_linux_p.h 
-        SOURCES += qtelephonyevent_linux.cpp
+        HEADERS += qtelephony_linux_p.h 
+        SOURCES += qtelephony_linux.cpp
     }
     maemo*: {
-        HEADERS += qtelephonyevent_maemo_p.h
+        HEADERS += qtelephony_maemo_p.h
     }
 }
 symbian:{
-    HEADERS += qtelephonyevent_s60_p.h 
+    HEADERS += qtelephony_s60_p.h 
 }
 
 

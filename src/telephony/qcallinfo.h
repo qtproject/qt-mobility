@@ -43,30 +43,69 @@
 #define QCALLINFO_H
 
 #include "qmobilityglobal.h"
-#include "qtelephonyglobal.h"
 
 #include <QObject>
 #include <QList>
 #include <QString>
-#include "../contacts/qtcontactsglobal.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
 class QCallInfoPrivate;
-class QCallInfo : public QObject
+class Q_TELEPHONY_EXPORT QCallInfo : public QObject
 {
+    friend class QTelephonyCallListPrivate;
     Q_OBJECT
-public:
+public: //Enumerator declaration
+    Q_ENUMS(CallType CallStatus)
+/*!
+    \enum CallType
+    \ingroup telephony
+    This enum type is used to describe the type of a call.
+    \value UnknownType The call type is not defined.
+    \value VOIP        The call is a VOIP call.
+    \value Voice       The call is a Voice call.
+    \value Video       The call is a Video call.
+*/
+    enum CallType {
+        UnknownType = 0,
+        VOIP = 1,
+        Voice = 2,
+        Video = 3
+    };
+/*!
+    \enum CallStatus
+    \ingroup telephony
+    This enum type is used to describe the status of a call.
+    \value UnknownStatus The call status is not defined.
+    \value NoCall        The status  of the call is no active call.
+    \value Ringing       The status  of the call is ringing.
+    \value InProgress    The status  of the call is in progress.
+    \value OnHold        The status  of the call is on hold.
+    \value Dropped       The call is dropped.
+*/
+    enum CallStatus {
+        UnknownStatus = 0,
+        NoCall = 1,
+        Ringing = 2,
+        InProgress = 3,
+        OnHold = 4,
+        Dropped = 5
+    };
+
+protected:
     QCallInfo(QObject *parent = 0);
+public:
     virtual ~QCallInfo();
-    QString phoneNumber();
-    unsigned long sipID();
-    QList<QContactLocalId> contacts();
-    bool querryData( PrivateDataType datatype, const QObject& param, void** value);
-    CallType callType();
-    CallStatus callStatus();
+    Q_PROPERTY(QString callIdentifier READ callIdentifier)
+    QString callIdentifier() const;
+    Q_PROPERTY(QList<quint32> contacts READ contacts)
+    QList<quint32> contacts() const;
+    Q_PROPERTY(CallType type READ type)
+    CallType type() const;
+    Q_PROPERTY(CallStatus status READ status)
+    CallStatus status() const;
 
 private:
     QCallInfoPrivate *d;

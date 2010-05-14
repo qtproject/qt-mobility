@@ -43,7 +43,7 @@
 #define QTELEPHONY_H
 
 #include "qmobilityglobal.h"
-#include "qtelephonyglobal.h"
+#include "qcallinfo.h"
 
 #include <QObject>
 #include <QList>
@@ -54,26 +54,29 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyEventPrivate;
+class QTelephonyCallListPrivate;
 class QCallInfo;
-class QTelephonyEvent : public QObject
+class Q_TELEPHONY_EXPORT QTelephonyCallList : public QObject
 {
     Q_OBJECT
 public:
-    QTelephonyEvent(QObject *parent = 0);
-    virtual ~QTelephonyEvent();
+    QTelephonyCallList(QObject *parent = 0);
+    virtual ~QTelephonyCallList();
 Q_SIGNALS:
-    void callstatusChange(CallStatus status);
-    void calllistChange();
+    void callstatusChanged(const QCallInfo::CallStatus status);
+    void callsChanged();
 public:
-    QList<QCallInfo*> calllist();
-    QList<QCallInfo*> calllist(CallType calltype);
-    QList<QCallInfo*> calllist(CallStatus callstatus);
-    QList<QCallInfo*> calllist(CallType calltype, CallStatus callStatus);
-    CallStatus currentStatus();
+    Q_PROPERTY(QList<QCallInfo*> calls READ calls)
+    QList<QCallInfo*> calls() const;
+    Q_INVOKABLE QList<QCallInfo*> calls(const QCallInfo::CallType& calltype) const;
+    Q_INVOKABLE QList<QCallInfo*> calls(const QCallInfo::CallStatus& callstatus) const;
+    Q_INVOKABLE QList<QCallInfo*> calls(const QCallInfo::CallType& calltype, const QCallInfo::CallStatus& callStatus) const;
+    //can't do Q_PROPERTY because of QCallInfo::CallStatus created parse error in moc
+    Q_INVOKABLE QCallInfo::CallStatus currentCallStatus();
+    Q_PROPERTY(QCallInfo* currentCall READ currentCall)
+    QCallInfo* currentCall();
 private:
-    QTelephonyEventPrivate *d;
-    QList<QCallInfo*> calls;
+    QTelephonyCallListPrivate *d;
 };
 
 QTM_END_NAMESPACE

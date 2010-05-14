@@ -39,17 +39,17 @@
 **
 ****************************************************************************/
 #include "qtelephony.h"
-#include "qtelephonyevent_win_p.h"
+#include "qtelephony_linux_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 ////////
-QTelephonyEventPrivate::QTelephonyEventPrivate(QObject *parent)
+QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
  : QObject(parent)
 {
 }
 
-QTelephonyEventPrivate::~QTelephonyEventPrivate()
+QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 {
 
 }
@@ -74,26 +74,12 @@ unsigned long QCallInfoPrivate::sipID()
     return 0;
 }
 
-QList<QContactLocalId> QCallInfoPrivate::contacts()
+QList<quint32> QCallInfoPrivate::contacts()
 {
-    QList<QContactLocalId> ret;
+    QList<quint32> ret;
     return ret;
 }
 
-bool QCallInfoPrivate::querryData( PrivateDataType datatype, const QObject& param, void** value)
-{
-    switch(datatype){
-        case ContactIDMemoryOffset:
-            {
-                int offset = 0x3324;
-                *value = &offset;
-                return true;
-            }
-            break;
-    }
-    return false;
-}
-
-#include "moc_qtelephonyevent_win_p.cpp"
+#include "moc_qtelephony_linux_p.cpp"
 
 QTM_END_NAMESPACE

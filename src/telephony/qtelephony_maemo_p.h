@@ -57,18 +57,23 @@
 
 #include <QObject>
 #include "qtelephony.h"
+#include "qcallinfo.h"
 #include "qmobilityglobal.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyEventPrivate : public QObject
+class QTelephonyCallListPrivate : public QObject
 {
     Q_OBJECT
 public:
-    QTelephonyEventPrivate(QObject *parent = 0);
-    virtual ~QTelephonyEventPrivate();
-    CallStatus currentStatus() { return UnknownStatus; }
+    QTelephonyCallListPrivate(QObject *parent = 0);
+    virtual ~QTelephonyCallListPrivate();
+    QCallInfo* currentCall() { return 0; }
+    QCallInfo::CallStatus currentCallStatus() { return QCallInfo::UnknownStatus; }
+    QList<QCallInfo*> calls() { return calllist; }
+private:
+    QList<QCallInfo*> calllist;
 };
 
 class QCallInfoPrivate : public QObject
@@ -77,12 +82,14 @@ class QCallInfoPrivate : public QObject
 public:
     QCallInfoPrivate(QObject *parent = 0);
     virtual ~QCallInfoPrivate();
-    QString phoneNumber();
-    unsigned long sipID();
-    QList<QContactLocalId> contacts();
-    bool querryData( PrivateDataType datatype, const QObject& param, void** value);
-    CallType callType() { return UnknownType; }
-    CallStatus callStatus() { return UnknownStatus; }
+    QString callIdentifier();
+    QList<quint32> contacts();
+    QCallInfo::CallType type() { return QCallInfo::UnknownType; }
+    QCallInfo::CallStatus status() { return QCallInfo::UnknownStatus; }
+
+public: //Declaration of properties (just an example)
+    Q_PROPERTY(int contactMaemoBufferSize READ contactMaemoBufferSize)
+    int contactMaemoBufferSize() const { return 124; };
 };
 
 QTM_END_NAMESPACE
