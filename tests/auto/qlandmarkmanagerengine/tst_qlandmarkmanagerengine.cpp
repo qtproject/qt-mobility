@@ -55,6 +55,9 @@
 #include <qlandmarkattributefilter.h>
 #include <qlandmarkboxfilter.h>
 #include <qlandmarkcategoryfilter.h>
+#include <qlandmarkintersectionfilter.h>
+#include <qlandmarkidfilter.h>
+#include <qlandmarknamefilter.h>
 
 QTM_USE_NAMESPACE
 
@@ -288,7 +291,92 @@ private slots:
         QVERIFY(MockEngine::testFilter(filter,lm));
     }
 
+    void testFilterIntersection()
+    {
+        //test a negative match
+        QLandmarkIntersectionFilter intersectionFilter;
+        QLandmarkNameFilter nameFilter1("Sasuke");
+        QLandmarkNameFilter nameFilter2("Kakashi");
+        QLandmarkNameFilter nameFilter3("Itachi");
 
+        QLandmark lm;
+        lm.setName("Kakashi");
+
+        intersectionFilter << nameFilter1 << nameFilter2 << nameFilter3;
+        QVERIFY(!MockEngine::testFilter(intersectionFilter,lm));
+
+        //test a positive match
+        QLandmarkCategoryId cat1;
+        cat1.setLocalId("konoha");
+        cat1.setManagerUri("qtlandmarks:mock:");
+        QLandmarkCategoryFilter categoryFilter(cat1);
+
+        QLandmarkAttributeFilter attributeFilter;
+        attributeFilter.setAttribute("eye","sharingan");
+
+        lm.setAttribute("eye", "sharingan");
+        lm.addCategoryId(cat1);
+
+        intersectionFilter.clear();
+        intersectionFilter << attributeFilter << categoryFilter << nameFilter2;
+
+        QVERIFY(MockEngine::testFilter(intersectionFilter,lm));
+    }
+
+    void testFilterLandmarkId()
+    {
+        //test landmark id filter that matches
+        QLandmarkId lmId1, lmId2, lmId3;
+        lmId1.setLocalId("1");
+        lmId1.setManagerUri("qtlandmarks:mock:");
+
+        lmId2.setLocalId("2");
+        lmId2.setManagerUri("qtlandmarks:mock:");
+
+        lmId3.setLocalId("3");
+        lmId3.setManagerUri("qtlandmarks:mock:");
+
+        QLandmarkIdFilter idFilter;
+        idFilter << lmId1 << lmId2 << lmId3;
+
+        QLandmark lm;
+        lm.setLandmarkId(lmId2);
+
+        QVERIFY(MockEngine::testFilter(idFilter,lm));
+
+        //test landmark id filter that doesn't match
+        QLandmarkId lmId4;
+        lmId4.setLocalId("4");
+        lmId4.setManagerUri("qtlandmarks:mock:");
+
+        lm.setLandmarkId(lmId4);
+        QVERIFY(!MockEngine::testFilter(idFilter, lm));
+    }
+
+    void testFilterName()
+    {
+        //test for match - case matches, filter-case insensitive
+        QLandmarkNameFilter nameFilter;
+        nameFilter.setName("madara");
+
+        QLandmark lm;
+        lm.setName("madara");
+
+        QVERIFY(MockEngine::testFilter(nameFilter, lm));
+
+        //test for match, case mismatch, filter is case insensitive
+        lm.setName("Madara");
+        QVERIFY(MockEngine::testFilter(nameFilter, lm));
+
+        //test for no match,case mismatch, filter is case sensitive
+        nameFilter.setCaseSensitivity(Qt::CaseSensitive);
+        QVERIFY(!MockEngine::testFilter(nameFilter,lm));
+
+        //test for match, case matches, filter is case sensitive
+        nameFilter.setName("Madara");
+        nameFilter.setCaseSensitivity(Qt::CaseSensitive);
+        QVERIFY(MockEngine::testFilter(nameFilter,lm));
+    }
 };
 
 QTEST_MAIN(tst_QLandmarkManagerEngine)

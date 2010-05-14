@@ -66,6 +66,7 @@
 #include "qlandmarkboxfilter.h"
 #include "qlandmarkcategoryfilter.h"
 #include "qlandmarkintersectionfilter.h"
+#include "qlandmarkidfilter.h"
 #include "qlandmarknamefilter.h"
 #include "qlandmarkproximityfilter.h"
 #include "qlandmarkunionfilter.h"
@@ -1076,6 +1077,16 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             }
             return true;
         }
+        case QLandmarkFilter::LandmarkIdFilter:
+        {
+            QLandmarkIdFilter idFilter(filter);
+            const QList<QLandmarkId> &ids = idFilter.landmarkIds();
+            foreach(const QLandmarkId id, ids) {
+                if (id == landmark.landmarkId())
+                    return true;
+            }
+            return false;
+        }
         case QLandmarkFilter::InvalidFilter:
         {
             return false;
@@ -1083,7 +1094,7 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
         case QLandmarkFilter::NameFilter:
         {
             QLandmarkNameFilter nameFilter(filter);
-            return QString::compare(nameFilter.name(), landmark.name(), nameFilter.caseSensitivity());
+            return QString::compare(nameFilter.name(), landmark.name(), nameFilter.caseSensitivity()) == 0;
         }
         case QLandmarkFilter::NearestFilter:
             //Since we have only one landmark to use, is considered the nearest

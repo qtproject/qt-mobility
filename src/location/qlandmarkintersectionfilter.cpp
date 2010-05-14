@@ -118,6 +118,15 @@ void QLandmarkIntersectionFilter::remove(const QLandmarkFilter &filter)
 }
 
 /*!
+    Removes all filters from the list of intersected filters.
+*/
+void QLandmarkIntersectionFilter::clear()
+{
+    Q_D(QLandmarkIntersectionFilter);
+    d->filters.clear();
+}
+
+/*!
     Appends the given \a filter to the list of intersected filters
     \sa append()
  */

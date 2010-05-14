@@ -58,6 +58,12 @@ public:
 
     QList<QLandmarkId> landmarkIds() const;
     void setLandmarkIds(const QList<QLandmarkId> &ids);
+    void prepend(const QLandmarkId &id);
+    void append(const QLandmarkId &id);
+    void remove(const QLandmarkId &id);
+    void clear();
+
+    QLandmarkIdFilter &operator<<(const QLandmarkId &);
 
 private:
     Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkIdFilter)

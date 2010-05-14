@@ -90,6 +90,52 @@ void QLandmarkIdFilter::setLandmarkIds(const QList<QLandmarkId> &ids)
     d->landmarkIds = ids;
 }
 
+/*!
+    Prepends \a id to the list of landmark ids this filter searches for.
+*/
+void QLandmarkIdFilter::prepend(const QLandmarkId &id)
+{
+    Q_D(QLandmarkIdFilter);
+    d->landmarkIds.prepend(id);
+}
+
+/*!
+    Appends \a id to the list of landmark ids this filter searches for.
+*/
+void QLandmarkIdFilter::append(const QLandmarkId &id)
+{
+    Q_D(QLandmarkIdFilter);
+    d->landmarkIds.prepend(id);
+}
+
+/*!
+    Removes \a id to the list of landmark ids this filter searches for.
+*/
+void QLandmarkIdFilter::remove(const QLandmarkId &id)
+{
+    Q_D(QLandmarkIdFilter);
+    d->landmarkIds.removeAll(id);
+}
+
+/*!
+    Removes all identifiers from the filter.
+*/
+void QLandmarkIdFilter::clear()
+{
+    Q_D(QLandmarkIdFilter);
+    d->landmarkIds.clear();
+}
+
+/*!
+    Appends the given \a id to the list of landmark identifiers
+    this filter searches for.
+*/
+QLandmarkIdFilter &QLandmarkIdFilter::operator<<(const QLandmarkId &id)
+{
+    Q_D(QLandmarkIdFilter);
+    d->landmarkIds.append(id);
+    return *this;
+}
 
 /*******************************************************************************
 *******************************************************************************/
