@@ -79,7 +79,7 @@ void snippets()
     if (!defaultManager.saveItem(&recEvent))
         qDebug() << "Failed to save the recurrent event; error:" << defaultManager.error();
     //! [Creating a recurrent event]
-dumpItems(&defaultManager);
+
     //! [Retrieving occurrences of a particular recurrent event within a time period]
     // XXX TODO: make this more convenient.
     // QOIM::itemInstances(item, startDateTime, endDateTime, count) ?
@@ -120,15 +120,13 @@ dumpItems(&defaultManager);
                     "recipe that combines both marshmallows and chocolate, by next Wednesday.");
     defaultManager.saveItem(&journal);
     //! [Creating a non-recurrent entry]
-dumpItems(&defaultManager);
 
     //! [Editing a non-recurrent entry]
     QOrganizerItemNote recipe;
     recipe.setNote("Serves: 8.  Ingredients: 500g Milk Chocolate, 500g Marshmallows.  Step 1: Put the marshmallows into 8 separate bowls.  Step 2: Melt the chocolate.  Step 3: Pour the chocolate over the marshmallows in the bowls.  Step 4: Put the bowls into the refrigerator for 20 minutes; serve chilled.");
     journal.saveDetail(&recipe);
-    defaultManager.saveItem(&journal);
+    if (!defaultManager.saveItem(&journal)) qDebug() << "Unable to save updated journal!  Error:" << defaultManager.error();
     //! [Editing a non-recurrent entry]
-dumpItems(&defaultManager);
 
     //! [Retrieving any entry (not occurrence) which matches a search criteria]
     // XXX TODO: make this more convenient.
@@ -155,6 +153,8 @@ dumpItems(&defaultManager);
     nextMarshmallowMeeting.saveDetail(&newNote);
     defaultManager.saveItem(&nextMarshmallowMeeting);
     //! [Creating an exception to a particular recurrent event]
+
+    dumpItems(&defaultManager);
 }
 
 void dumpItems(QOrganizerItemManager* manager)
@@ -177,11 +177,11 @@ void dumpItem(const QOrganizerItem& item)
     qDebug() << "item:" << item.displayLabel() << ", id:" << item.id();
     QList<QOrganizerItemDetail> dets = item.details();
     foreach (const QOrganizerItemDetail det, dets) {
-        qDebug() << "\tnew" << det.definitionName() << "detail:";
+        qDebug() << "    new" << det.definitionName() << "detail:";
         QVariantMap values = det.variantValues();
         QStringList keys = values.keys();
         foreach (const QString& key, keys) {
-            qDebug() << "\t" << key << "=" << values.value(key);
+            qDebug() << "        " << key << "=" << values.value(key);
         }
     }
 }

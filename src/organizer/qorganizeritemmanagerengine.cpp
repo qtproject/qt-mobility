@@ -283,10 +283,11 @@ QString QOrganizerItemManagerEngine::synthesizedDisplayLabel(const QOrganizerIte
  */
 void QOrganizerItemManagerEngine::setItemDisplayLabel(QOrganizerItem* organizeritem, const QString& displayLabel)
 {
-    QOrganizerItemDisplayLabel dl;
-    dl.setValue(QOrganizerItemDisplayLabel::FieldLabel, displayLabel);
-    setDetailAccessConstraints(&dl, QOrganizerItemDetail::Irremovable | QOrganizerItemDetail::ReadOnly);
-    organizeritem->d->m_details.replace(0, dl);
+    // XXX TODO - IMPLEMENT ME
+    //QOrganizerItemDisplayLabel dl;
+    //dl.setValue(QOrganizerItemDisplayLabel::FieldLabel, displayLabel);
+    //setDetailAccessConstraints(&dl, QOrganizerItemDetail::Irremovable | QOrganizerItemDetail::ReadOnly);
+    //organizeritem->d->m_details.replace(0, dl);
 }
 
 /*!
@@ -480,10 +481,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     QOrganizerItemDetailFieldDefinition f;
     QOrganizerItemDetailDefinition d;
 
-    // build the schema for the Note item type.
-    retnSchema.insert(QOrganizerItemType::TypeNote, retn);
-
-    // and then again for events
+    // build the schema for the NOTEs  =============================
     retn.clear();
 
     // type
@@ -498,6 +496,110 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // timestamp
+    d.setName(QOrganizerItemTimestamp::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTimestamp::FieldModificationTimestamp, f);
+    fields.insert(QOrganizerItemTimestamp::FieldCreationTimestamp, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // display label
+    d.setName(QOrganizerItemDisplayLabel::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDisplayLabel::FieldLabel, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // description
+    d.setName(QOrganizerItemDescription::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDescription::FieldDescription, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // note
+    d.setName(QOrganizerItemNote::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemNote::FieldNote, f);
+    d.setFields(fields);
+    d.setUnique(true);        // note consists of a single note?  XXX TODO verify this...
+    retn.insert(d.name(), d);
+
+    retnSchema.insert(QOrganizerItemType::TypeNote, retn);
+
+    // and then again for EVENTs =============================
+    retn.clear();
+
+    // type
+    d.setName(QOrganizerItemType::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+                         << QString(QLatin1String(QOrganizerItemType::TypeEvent))
+                         << QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence))
+                         << QString(QLatin1String(QOrganizerItemType::TypeJournal))
+                         << QString(QLatin1String(QOrganizerItemType::TypeNote))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodo))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
+    fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // timestamp
+    d.setName(QOrganizerItemTimestamp::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTimestamp::FieldModificationTimestamp, f);
+    fields.insert(QOrganizerItemTimestamp::FieldCreationTimestamp, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // display label
+    d.setName(QOrganizerItemDisplayLabel::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDisplayLabel::FieldLabel, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // description
+    d.setName(QOrganizerItemDescription::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDescription::FieldDescription, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // event time range
+    d.setName(QOrganizerItemEventTimeRange::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemEventTimeRange::FieldStartDateTime, f);
+    fields.insert(QOrganizerItemEventTimeRange::FieldEndDateTime, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -530,6 +632,38 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    retnSchema.insert(QOrganizerItemType::TypeEvent, retn);
+
+    // and then again for EVENTOCCURRENCEs =============================
+    retn.clear();
+
+    // type
+    d.setName(QOrganizerItemType::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+                         << QString(QLatin1String(QOrganizerItemType::TypeEvent))
+                         << QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence))
+                         << QString(QLatin1String(QOrganizerItemType::TypeJournal))
+                         << QString(QLatin1String(QOrganizerItemType::TypeNote))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodo))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
+    fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // timestamp
+    d.setName(QOrganizerItemTimestamp::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTimestamp::FieldModificationTimestamp, f);
+    fields.insert(QOrganizerItemTimestamp::FieldCreationTimestamp, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
     // display label
     d.setName(QOrganizerItemDisplayLabel::DefinitionName);
     fields.clear();
@@ -550,12 +684,289 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
-    retnSchema.insert(QOrganizerItemType::TypeEvent, retn);
+    // event time range
+    d.setName(QOrganizerItemEventTimeRange::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemEventTimeRange::FieldStartDateTime, f);
+    fields.insert(QOrganizerItemEventTimeRange::FieldEndDateTime, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
 
-    // and then again for todos
+    // priority
+    d.setName(QOrganizerItemPriority::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList()
+                         << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+    fields.insert(QOrganizerItemPriority::FieldPriority, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // location
+    d.setName(QOrganizerItemLocation::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemLocation::FieldAddress, f);
+    fields.insert(QOrganizerItemLocation::FieldGeoLocation, f);
+    fields.insert(QOrganizerItemLocation::FieldLocationName, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    retnSchema.insert(QOrganizerItemType::TypeEventOccurrence, retn);
+
+    // and then again for TODOs =============================
+    retn.clear();
+
+    // type
+    d.setName(QOrganizerItemType::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+                         << QString(QLatin1String(QOrganizerItemType::TypeEvent))
+                         << QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence))
+                         << QString(QLatin1String(QOrganizerItemType::TypeJournal))
+                         << QString(QLatin1String(QOrganizerItemType::TypeNote))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodo))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
+    fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // timestamp
+    d.setName(QOrganizerItemTimestamp::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTimestamp::FieldModificationTimestamp, f);
+    fields.insert(QOrganizerItemTimestamp::FieldCreationTimestamp, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // display label
+    d.setName(QOrganizerItemDisplayLabel::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDisplayLabel::FieldLabel, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // description
+    d.setName(QOrganizerItemDescription::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDescription::FieldDescription, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // todo time range
+    d.setName(QOrganizerItemTodoTimeRange::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTodoTimeRange::FieldNotBeforeDateTime, f);
+    fields.insert(QOrganizerItemTodoTimeRange::FieldDueDateTime, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // priority
+    d.setName(QOrganizerItemPriority::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList()
+                         << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+    fields.insert(QOrganizerItemPriority::FieldPriority, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeTodo, retn);
 
-    // and then again for journals
+    // and then again for TODOOCCURRENCEs =============================
+    retn.clear();
+
+    // type
+    d.setName(QOrganizerItemType::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+                         << QString(QLatin1String(QOrganizerItemType::TypeEvent))
+                         << QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence))
+                         << QString(QLatin1String(QOrganizerItemType::TypeJournal))
+                         << QString(QLatin1String(QOrganizerItemType::TypeNote))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodo))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
+    fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // timestamp
+    d.setName(QOrganizerItemTimestamp::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTimestamp::FieldModificationTimestamp, f);
+    fields.insert(QOrganizerItemTimestamp::FieldCreationTimestamp, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // display label
+    d.setName(QOrganizerItemDisplayLabel::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDisplayLabel::FieldLabel, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // description
+    d.setName(QOrganizerItemDescription::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDescription::FieldDescription, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // todo progress
+    d.setName(QOrganizerItemTodoProgress::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTodoProgress::FieldStartedDateTime, f);
+    fields.insert(QOrganizerItemTodoProgress::FieldFinishedDateTime, f);
+    f.setDataType(QVariant::Int);
+    fields.insert(QOrganizerItemTodoProgress::FieldPercentageComplete, f);
+    fields.insert(QOrganizerItemTodoProgress::FieldStatus, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // todo time range
+    d.setName(QOrganizerItemTodoTimeRange::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTodoTimeRange::FieldNotBeforeDateTime, f);
+    fields.insert(QOrganizerItemTodoTimeRange::FieldDueDateTime, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // priority
+    d.setName(QOrganizerItemPriority::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList()
+                         << static_cast<int>(QOrganizerItemPriority::UnknownPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryLowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::LowPriority)
+                         << static_cast<int>(QOrganizerItemPriority::MediumPriority)
+                         << static_cast<int>(QOrganizerItemPriority::HighPriority)
+                         << static_cast<int>(QOrganizerItemPriority::VeryHighPriority));
+    fields.insert(QOrganizerItemPriority::FieldPriority, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    retnSchema.insert(QOrganizerItemType::TypeTodoOccurrence, retn);
+
+    // and then again for JOURNALs =============================
+    retn.clear();
+
+    // type
+    d.setName(QOrganizerItemType::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList()
+                         << QString(QLatin1String(QOrganizerItemType::TypeEvent))
+                         << QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence))
+                         << QString(QLatin1String(QOrganizerItemType::TypeJournal))
+                         << QString(QLatin1String(QOrganizerItemType::TypeNote))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodo))
+                         << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
+    fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // timestamp
+    d.setName(QOrganizerItemTimestamp::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemTimestamp::FieldModificationTimestamp, f);
+    fields.insert(QOrganizerItemTimestamp::FieldCreationTimestamp, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // display label
+    d.setName(QOrganizerItemDisplayLabel::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDisplayLabel::FieldLabel, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // description
+    d.setName(QOrganizerItemDescription::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemDescription::FieldDescription, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // journal time range
+    d.setName(QOrganizerItemJournalTimeRange::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemJournalTimeRange::FieldEntryDateTime, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // note
+    d.setName(QOrganizerItemNote::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemNote::FieldNote, f);
+    d.setFields(fields);
+    d.setUnique(false);       // XXX TODO: verify that journals can have multiple notes saved...?
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeJournal, retn);
 
     return retnSchema;

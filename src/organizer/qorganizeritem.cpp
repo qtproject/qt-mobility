@@ -307,7 +307,7 @@ void QOrganizerItem::setType(const QOrganizerItemType& type)
 
 QString QOrganizerItem::displayLabel() const
 {
-    qWarning("QOrganizerItem::displayLabel() -- XXX TODO!");
+    // XXX TODO: implement this function...
     return QString();
 }
 void QOrganizerItem::setDisplayLabel(const QString& label)
