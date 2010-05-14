@@ -67,11 +67,15 @@ public:
     // time vs impact priority?  greater granularity?
     enum Priority {
         UnknownPriority = 0,
-        VeryLowPriority,
-        LowPriority,
-        MediumPriority,
-        HighPriority,
-        VeryHighPriority
+        HighestPriority = 1,
+        ExtremelyHighPriority = 2,
+        VeryHighPriority = 3,
+        HighPriority = 4,
+        MediumPriority = 5,
+        LowPriority = 6,
+        VeryLowPriority = 7,
+        ExtremelyLowPriority = 8,
+        LowestPriority = 9
     };
 
     void setPriority(Priority priority) {setValue(FieldPriority, static_cast<int>(priority));}
