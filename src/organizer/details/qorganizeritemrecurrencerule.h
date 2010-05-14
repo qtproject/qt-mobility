@@ -154,7 +154,7 @@ public:
 
     // Compulsory for a valid rule
     void setStartDate(const QDateTime& startDate) {setValue(FieldStartDate, startDate);}
-    QDateTime startDate() const {return variantValue<QDateTime>(FieldStartDate);}
+    QDateTime startDate() const {return variantValue(FieldStartDate).toDateTime();}
 
     // Default: Weekly
     void setFrequency(Frequency freq) {setValue(FieldFrequency, static_cast<int>(freq));}
@@ -169,43 +169,133 @@ public:
     // invalid means not set.
     // Default: null
     void setEndDate(const QDateTime& endDate) {setValue(FieldEndDate, endDate);}
-    QDateTime endDate() const {return variantValue<QDateTime>(FieldEndDate);}
+    QDateTime endDate() const {return variantValue(FieldEndDate).toDateTime();}
 
     // eg. if frequency = Daily and interval = 2, every second day
     // Default: 1
     void setInterval(int interval) {setValue(FieldInterval, interval);}
     int interval() const {return variantValue(FieldInterval).toInt();}
 
-    // XXX TODO: register QList<int> as a metatype, perform custom list parsing;
-    // none of the below implementations actually compile/work, and are purely placeholders.
+    // XXX TODO: move the implementations below to the details.cpp file.
 
     // Defaults for the below: empty
     // eg: Monday,Wednesday,Thursday == every Mon, Wed and Thurs.
-    bool setDayOfWeek(const QList<Qt::DayOfWeek>& days) {setValue(FieldDayOfWeek, days);}
-    QList<Qt::DayOfWeek> dayOfWeek() const {return variantValue<QList<int> >(FieldDayOfWeek);}
+    void setDayOfWeek(const QList<Qt::DayOfWeek>& days)
+    {
+        QVariantList variantDays;
+        for (int i = 0; i < days.size(); ++i) {
+            variantDays << days.at(i);
+        }
+        setValue(FieldDayOfWeek, variantDays);
+    }
+    QList<Qt::DayOfWeek> dayOfWeek() const
+    {
+        QList<Qt::DayOfWeek> retn;
+        QVariantList variantDays = variantValue(FieldDayOfWeek).toList();
+        for (int i = 0; i < variantDays.size(); ++i) {
+            Qt::DayOfWeek curr = static_cast<Qt::DayOfWeek>(variantDays.at(i).toInt());
+            retn << curr;
+        }
+        return retn;
+    }
     // eg: 31,-3 == 31st day of month (if it exists) and 3rd-last day of month
-    bool setDayOfMonth(const QList<int>& days) {setValue(FieldDayOfMonth, days);}
-    QList<int> dayOfMonth() const {return variantValue<QList<int> >(FieldDayOfMonth);}
+    void setDayOfMonth(const QList<int>& days)
+    {
+        QVariantList saveList;
+        for (int i = 0; i < days.size(); ++i) {
+            saveList << days.at(i);
+        }
+        setValue(FieldDayOfMonth, saveList);
+    }
+    QList<int> dayOfMonth() const
+    {
+        QList<int> retn;
+        QVariantList loadList = variantValue(FieldDayOfMonth).toList();
+        for (int i = 0; i < loadList.size(); ++i) {
+            retn << loadList.at(i).toInt();
+        }
+        return retn;
+    }
     // eg: 47th,-5 == 47th and 5th-last day of year
-    bool setDayOfYear(const QList<int>& days) {setValue(FieldDayOfYear, days);}
-    QList<int> dayOfYear() const {return variantValue<QList<int> >(FieldDayOfYear);}
+    void setDayOfYear(const QList<int>& days)
+    {
+        QVariantList saveList;
+        for (int i = 0; i < days.size(); ++i) {
+            saveList << days.at(i);
+        }
+        setValue(FieldDayOfMonth, saveList);
+    }
+    QList<int> dayOfYear() const
+    {
+        QList<int> retn;
+        QVariantList loadList = variantValue(FieldDayOfYear).toList();
+        for (int i = 0; i < loadList.size(); ++i) {
+            retn << loadList.at(i).toInt();
+        }
+        return retn;
+    }
     // eg: January,February == during Jan and Feb
-    bool setMonth(const QList<Month>& months) {setValue(FieldMonth, months);}
-    QList<Month> month() const {return variantValue<QList<int> >(FieldMonth);}
+    void setMonth(const QList<Month>& months)
+    {
+        QVariantList saveList;
+        for (int i = 0; i < months.size(); ++i) {
+            saveList << static_cast<int>(months.at(i));
+        }
+        setValue(FieldDayOfMonth, saveList);
+    }
+    QList<Month> month() const
+    {
+        QList<Month> retn;
+        QVariantList loadList = variantValue(FieldMonth).toList();
+        for (int i = 0; i < loadList.size(); ++i) {
+            retn << static_cast<Month>(loadList.at(i).toInt());
+        }
+        return retn;
+    }
     // eg. 13,53,-3 == weeks 13 and 53 (if it exists) and the 3rd-last week of the year
-    bool setWeekOfYear(const QList<int>& weeks) {setValue(FieldWeekOfYear, weeks);}
-    QList<int> weekOfYear() const {return variantValue<QList<int> >(FieldWeekOfYear);}
+    void setWeekOfYear(const QList<int>& weeks)
+    {
+        QVariantList saveList;
+        for (int i = 0; i < weeks.size(); ++i) {
+            saveList << weeks.at(i);
+        }
+        setValue(FieldDayOfMonth, saveList);
+    }
+    QList<int> weekOfYear() const
+    {
+        QList<int> retn;
+        QVariantList loadList = variantValue(FieldWeekOfYear).toList();
+        for (int i = 0; i < loadList.size(); ++i) {
+            retn << loadList.at(i).toInt();
+        }
+        return retn;
+    }
 
     // eg. frequency = Monthly, dayOfWeek = Tuesday, positions = 1,-1 means first and last Tuesday
     // of every month.
     // All other criteria are applied first, then for each time period as specified by frequency,
     // dates are selected via the 1-based indices specified by position.
-    bool setPosition(const QList<int>& pos);
-    QList<int> position() const;
+    void setPosition(const QList<int>& pos)
+    {
+        QVariantList saveList;
+        for (int i = 0; i < pos.size(); ++i) {
+            saveList << pos.at(i);
+        }
+        setValue(FieldDayOfMonth, saveList);
+    }
+    QList<int> position() const
+    {
+        QList<int> retn;
+        QVariantList loadList = variantValue(FieldPosition).toList();
+        for (int i = 0; i < loadList.size(); ++i) {
+            retn << loadList.at(i).toInt();
+        }
+        return retn;
+    }
 
     // Default: Monday
     // sets the day that the week starts on (significant for Weekly with interval > 1, and for weekOfYear)
-    bool setWeekStart(Qt::DayOfWeek day) {setValue(FieldWeekStart, static_cast<int>(day));}
+    void setWeekStart(Qt::DayOfWeek day) {setValue(FieldWeekStart, static_cast<int>(day));}
     Qt::DayOfWeek weekStart() const {return static_cast<Qt::DayOfWeek>(variantValue(FieldWeekStart).toInt());}
 };
 

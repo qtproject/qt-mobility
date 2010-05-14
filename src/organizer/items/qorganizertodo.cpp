@@ -70,14 +70,24 @@ QDateTime QOrganizerTodo::dueDateTime() const
     return ttr.dueDateTime();
 }
 
-void QOrganizerTodo::setRecurrence(const QOrganizerItemRecurrence& recurrence) const
+void QOrganizerTodo::setRecurrenceRule(const QOrganizerItemRecurrenceRule& recurrenceRule) const
 {
-    Q_UNUSED(recurrence);
+    Q_UNUSED(recurrenceRule);
 }
 
-QOrganizerItemRecurrence QOrganizerTodo::recurrence() const
+QOrganizerItemRecurrenceRule QOrganizerTodo::recurrenceRule() const
 {
-    return QOrganizerItemRecurrence();
+    return QOrganizerItemRecurrenceRule();
+}
+
+void QOrganizerTodo::setRecurrenceDates(const QOrganizerItemRecurrenceDates& recurrenceDates) const
+{
+    Q_UNUSED(recurrenceDates);
+}
+
+QOrganizerItemRecurrenceDates QOrganizerTodo::recurrenceDates() const
+{
+    return QOrganizerItemRecurrenceDates();
 }
 
 void QOrganizerTodo::setPriority(QOrganizerItemPriority::Priority priority)

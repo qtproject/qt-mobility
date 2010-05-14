@@ -436,6 +436,42 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemProvenance::FieldTimestamp, "Timestamp");
 
 
 
+/* ==================== QOrganizerItemRecurrenceDates ======================= */
+/*!
+   \class QOrganizerItemRecurrenceDates
+   \brief The QOrganizerItemRecurrenceDates class contains a list of dates on which the recurrent item occurs.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceDates::DefinitionName, "RecurrenceDates");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceDates::FieldOccurrenceDates, "OccurrenceDates");
+
+
+
+
+
+
+/* ==================== QOrganizerItemRecurrenceRule ======================= */
+/*!
+   \class QOrganizerItemRecurrenceRule
+   \brief The QOrganizerItemRecurrenceDates class contains a rule which defines the dates on which the recurrent item occurs.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::DefinitionName, "RecurrenceRule");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldFrequency, "Frequency");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldCount, "Count");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldStartDate, "StartDate");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldEndDate, "EndDate");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldInterval, "Interval");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDayOfWeek, "DayOfWeek");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDayOfMonth, "DayOfMonth");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDayOfYear, "DayOfYear");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldMonth, "Month");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekOfYear, "WeekOfYear");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldPosition, "Position");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStart");
+
+
+
+
+
 
 
 

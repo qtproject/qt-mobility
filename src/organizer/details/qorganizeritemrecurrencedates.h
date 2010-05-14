@@ -69,14 +69,25 @@ public:
     // total-specification of occurrence dates
     void setOccurrenceDates(const QList<QDateTime>& occurrences)
     {
-        // XXX TODO: register QList<QDateTime> as a metatype...
-        setValue(FieldOccurrenceDates, occurrences);
+        // XXX TODO: decide on the name of the field/class... (recurrence vs occurrence)
+        QVariantList variantDates;
+        foreach (const QDateTime& curr, occurrences) {
+            variantDates << curr;
+        }
+        setValue(FieldOccurrenceDates, variantDates);
     }
 
-    QList<QDateTime>& occurrenceDates() const
+    QList<QDateTime> occurrenceDates() const
     {
-        // XXX TODO: register QList<QDateTime> as a metatype...
-        return variantValue<QList<QDateTime> >(FieldOccurrenceDates);
+        // XXX TODO: decide on the name of the field/class... (recurrence vs occurrence)
+        QList<QDateTime> dates;
+        QVariantList variantDates = variantValue(FieldOccurrenceDates).toList();
+        foreach (const QVariant& date, variantDates) {
+            if (!date.toDateTime().isNull()) {
+                dates << date.toDateTime();
+            }
+        }
+        return dates;
     }
 };
 
