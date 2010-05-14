@@ -1,10 +1,11 @@
 import QmlContactModel 1.0
 import Qt 4.6
+import "contents"
 
 Rectangle {
     id: topItem
-    width: 320
-    height: 480
+    width: 360
+    height: 640
     x: 0
     y: 0
 
@@ -20,23 +21,32 @@ Rectangle {
         Rectangle {
             id: wrapper            
             border.width: 2
-            height: mainLabel.height;
+            height: mainLabel.height + 2;
             width: mainList.width;
 
             property color topColor: "#333333";
             property color bottomColor: "#111111";
             property real detailsOpacity: 0
+            property int detailsMode: 0
 
             gradient: Gradient {
                  GradientStop { position: 0.0; color: topColor }
                  GradientStop { position: 1.0; color: bottomColor }
             }
 
+            MouseArea {
+                id: mr
+                width: topItem.width;
+                height: wrapper.height;
+                anchors.centerIn: parent;
+                onClicked: {mainList.currentIndex = index;}
+            }
+
             Row {
                 spacing: 2
                 Item {
                     id: mainAvatar;
-                    height: wrapper.height;
+                    height: wrapper.detailsMode == 0 ? wrapper.height : wrapper.height;
                     width: height;
 
                     Rectangle {
@@ -88,16 +98,54 @@ Rectangle {
                         }
                     }
                 }
+
+                Item {
+                    id: "buttonBox"
+                    // Initially offscreen
+                    x: wrapper.width + 6;
+                    y: (wrapper.height - childrenRect.height) / 2;
+                    height:childrenRect.height
+                    opacity: details.opacity;
+                    Column {
+                        // Buttons
+                        MediaButton {
+                            id: dialButton;
+                            text: "Dial";
+                        }
+                        MediaButton {
+                            id: textButton
+                            text: "Send Text";
+                        }
+                        MediaButton {
+                            id: viewButton
+                            text: wrapper.detailsMode == 0 ? "View Details" : "Exit";
+//                            onClicked: wrapper.detailsMode = 1 - wrapper.detailsMode;
+                        }
+
+                    }
+                }
             }
 
-            states: State {
-                name: "MiniDetails"
-                when: wrapper.ListView.isCurrentItem;
-                PropertyChanges { target: wrapper; detailsOpacity: 1; }
-                PropertyChanges { target: wrapper; topColor: "#999999"; }
-                PropertyChanges { target: wrapper; bottomColor: "#444444"; }
-                PropertyChanges { target: wrapper; height: mainLabel.height + details.height + 4; }
-            }
+
+            states: [
+                    State {
+                        name: "MiniDetails"
+                        when: wrapper.ListView.isCurrentItem & wrapper.detailsMode == 0;
+                        PropertyChanges { target: wrapper; detailsOpacity: 1; }
+                        PropertyChanges { target: wrapper; topColor: "#999999"; }
+                        PropertyChanges { target: wrapper; bottomColor: "#444444"; }
+                        PropertyChanges { target: wrapper; height: Math.max(mainLabel.height + details.height + 4, buttonBox.height + 8); }
+                        PropertyChanges { target: buttonBox; x: wrapper.width - 6 - childrenRect.width; }
+                    },
+                    State {
+                        name: "Details"
+                        when: wrapper.detailsMode==1;
+                        PropertyChanges { target: wrapper.ListView.view; explicit: true; contentY: wrapper.y }
+                        PropertyChanges { target: wrapper.ListView.view; interactive: false }
+                    }
+            ]
+
+
 
             transitions:  [
                 Transition {
@@ -106,7 +154,10 @@ Rectangle {
                     reversible: false
                     SequentialAnimation {
                         NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
-                        ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                        ParallelAnimation {
+                            ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                            NumberAnimation { duration: 150; properties: "x"; }
+                        }
                     }
                 },
                 Transition {
@@ -114,18 +165,12 @@ Rectangle {
                     from: "MiniDetails"
                     reversible: false
                     SequentialAnimation {
-                        NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
-                        ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                        NumberAnimation { duration: 150; properties: "x"; }
+                        NumberAnimation { duration: 200; properties: "detailsOpacity,height" }
+                        ColorAnimation { duration: 200; properties: "topColor, bottomColor";}
                     }
                 }
             ]
-            MouseArea {
-                id: mr
-                width: topItem.width;
-                height: wrapper.height;
-                anchors.centerIn: parent;
-                onClicked: mainList.currentIndex = index;
-            }
         }
     }
 
