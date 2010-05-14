@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONY_WIN_H
-#define QTELEPHONY_WIN_H
+#ifndef QTELEPHONY_S60_H
+#define QTELEPHONY_S60_H
 
 
 //

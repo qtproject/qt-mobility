@@ -53,7 +53,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QCallInfo : public QObject
+class QCallInfo : public QObject
 {
     friend class QTelephonyCallListPrivate;
     Q_OBJECT

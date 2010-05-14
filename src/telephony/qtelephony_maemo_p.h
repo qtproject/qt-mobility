@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONY_WIN_H
-#define QTELEPHONY_WIN_H
+#ifndef QTELEPHONY_MAEMO_H
+#define QTELEPHONY_MAEMO_H
 
 
 //

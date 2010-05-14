@@ -64,14 +64,9 @@ QCallInfoPrivate::~QCallInfoPrivate()
 
 }
 
-QString QCallInfoPrivate::phoneNumber()
+QString QCallInfoPrivate::callIdentifier()
 {
     return "not implemented!";
-}
-
-unsigned long QCallInfoPrivate::sipID()
-{
-    return 0;
 }
 
 QList<quint32> QCallInfoPrivate::contacts()
