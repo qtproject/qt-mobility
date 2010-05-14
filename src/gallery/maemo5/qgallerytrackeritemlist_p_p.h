@@ -128,23 +128,24 @@ public:
     {
         RowsChanged = QEvent::User,
         RowsInserted,
-        RowsRemoved
+        RowsRemoved,
+        SyncFinalized
     };
 
     class RowEvent : public QEvent
     {
     public:
-        RowEvent(RowEventType type, const Row &aRow, const Row &rRow, const Row &endRow)
+        RowEvent(RowEventType type, int aIndex, int rIndex, int count)
             : QEvent(QEvent::Type(type))
-            , aRow(aRow)
-            , rRow(rRow)
-            , endRow(endRow)
+            , aIndex(aIndex)
+            , rIndex(rIndex)
+            , count(count)
         {
         }
 
-        const Row aRow;
-        const Row rRow;
-        const Row endRow;
+        const int aIndex;
+        const int rIndex;
+        const int count;
     };
 
     struct Cache
@@ -217,9 +218,6 @@ public:
             row_iterator &rBegin,
             const row_iterator &aEnd,
             const row_iterator &rEnd);
-    void rowsChanged(int aIndex, int rIndex, int count);
-    void rowsInserted(int aIndex, int rIndex, int count);
-    void rowsRemoved(int aIndex, int rIndex, int count);
 
     void _q_parseFinished();
     void _q_synchronizeFinished();
