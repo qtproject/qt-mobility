@@ -29,7 +29,6 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qorganizeritemmanagerengine.h \
     qorganizeritemmanagerenginefactory.h \
     qorganizeritemsortorder.h \
-    qorganizeritemrecurrence.h \
     qtorganizerglobal.h \
     qtorganizer.h
 PRIVATE_HEADERS += qorganizeritemmanager_p.h \
@@ -42,7 +41,6 @@ PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemfetchhint_p.h \
     qorganizeritemdetailfielddefinition_p.h \
     qorganizeritemdetaildefinition_p.h \
-    qorganizeritemrecurrence_p.h \
     qorganizeritemsortorder_p.h
 SOURCES += \
     qorganizeritemabstractrequest.cpp \
@@ -54,7 +52,6 @@ SOURCES += \
     qorganizeritemfetchhint.cpp \
     qorganizeritemfilter.cpp \
     qorganizeritemid.cpp \
-    qorganizeritemrecurrence.cpp \
     qorganizeritemmanager.cpp \
     qorganizeritemmanagerengine.cpp \
     qorganizeritemmanagerenginefactory.cpp \

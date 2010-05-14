@@ -47,8 +47,8 @@ class QString;
 class QDateTime;
 #include <QList>
 
-#include "qtorganizeritemsglobal.h"
-#include "qorganizeritemrecurrence.h"
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -95,9 +95,38 @@ QTM_BEGIN_NAMESPACE
  * For any cases not covered here, do not derive any of the fields.
  */
 
-class Q_CALENDAR_EXPORT QOrganizerItemRecurrenceRule : public QOrganizerItemRecurrence
+class Q_ORGANIZER_EXPORT QOrganizerItemRecurrenceRule : public QOrganizerItemDetail
 {
 public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldFrequency;
+    const char* FieldCount;
+    const char* FieldStartDate;
+    const char* FieldEndDate;
+    const char* FieldInterval;
+    const char* FieldDayOfWeek;
+    const char* FieldDayOfMonth;
+    const char* FieldDayOfYear;
+    const char* FieldMonth;
+    const char* FieldWeekOfYear;
+    const char* FieldPosition;
+    const char* FieldWeekStart;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemRecurrenceRule, "RecurrenceRule")
+    Q_DECLARE_LATIN1_CONSTANT(FieldFrequency, "Frequency");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCount, "Count");
+    Q_DECLARE_LATIN1_CONSTANT(FieldStartDate, "StartDate");
+    Q_DECLARE_LATIN1_CONSTANT(FieldEndDate, "EndDate");
+    Q_DECLARE_LATIN1_CONSTANT(FieldInterval, "Interval");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDayOfWeek, "DayOfWeek");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDayOfMonth, "DayOfMonth");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDayOfYear, "DayOfYear");
+    Q_DECLARE_LATIN1_CONSTANT(FieldMonth, "Month");
+    Q_DECLARE_LATIN1_CONSTANT(FieldWeekOfYear, "WeekOfYear");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPosition, "Position");
+    Q_DECLARE_LATIN1_CONSTANT(FieldWeekStart, "WeekStart");
+#endif
 
     // enums
 

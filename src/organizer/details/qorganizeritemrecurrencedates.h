@@ -40,38 +40,42 @@
 ****************************************************************************/
 
 
-#ifndef QORGANIZERITEMRECURRENCE_H
-#define QORGANIZERITEMRECURRENCE_H
+#ifndef QORGANIZERITEMRECURRENCEDATES_H
+#define QORGANIZERITEMRECURRENCEDATES_H
+
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
 
 #include <QList>
 #include <QDateTime>
-#include <QSharedDataPointer>
-
-class QDateTime;
-
-#include "qtorganizerglobal.h"
 
 QTM_BEGIN_NAMESPACE
-
-class QOrganizerItemRecurrencePrivate;
 
 /*
  * This is based on RDATE in iCalendar.
  */
 
-class Q_ORGANIZER_EXPORT QOrganizerItemRecurrence
+class Q_ORGANIZER_EXPORT QOrganizerItemRecurrenceDates : public QOrganizerItemDetail
 {
 public:
-    QOrganizerItemRecurrence();
-    QOrganizerItemRecurrence(const QOrganizerItemRecurrence& other);
-    QOrganizerItemRecurrence& operator=(const QOrganizerItemRecurrence& other);
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldDunno;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemRecurrenceDates, "RecurrenceDates")
+    Q_DECLARE_LATIN1_CONSTANT(FieldOccurrenceDates, "OccurrenceDates");
+#endif
 
-    virtual ~QOrganizerItemRecurrence();
-    // accessing the occurrence dates - lazy calculation, cached possibly?
-    virtual QList<QDateTime> occurrences(const QDateTime& startDate, const QDateTime& endDate) const;
+    // total-specification of occurrence dates
+    void setOccurrenceDates(const QList<QDateTime>& occurrences)
+    {
+        setValue(FieldOccurrenceDates, occurrences);
+    }
 
-protected:
-    QSharedDataPointer<QOrganizerItemRecurrencePrivate> d;
+    QList<QDateTime>& occurrenceDates() const
+    {
+        return variantValue<QList<QDateTime> >(FieldOccurrenceDates);
+    }
 };
 
 QTM_END_NAMESPACE
