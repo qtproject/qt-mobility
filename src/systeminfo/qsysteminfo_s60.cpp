@@ -47,18 +47,18 @@
 #include <QTimer>
 
 #include <sysutil.h>
-#include <PtiEngine.h>
+#include <ptiengine.h>
 #include <featdiscovery.h>
 #ifndef KFeatureIdMmc
 #include <featureinfo.h>
 #endif
 #include <hwrmvibra.h>
-#include <AknUtils.h>
+#include <aknutils.h>
 #include <w32std.h>
 #include <centralrepository.h>
-#include <MProEngEngine.h>
-#include <ProEngFactory.h>
-#include <MProEngNotifyHandler.h>
+#include <mproengengine.h>
+#include <proengfactory.h>
+#include <mproengnotifyhandler.h>
 #include <btserversdkcrkeys.h>
 #include <bt_subscribe.h>
 #include <bttypes.h>

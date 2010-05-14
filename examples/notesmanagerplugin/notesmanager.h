@@ -50,8 +50,8 @@
 
 
 #ifdef DECLARATIVE     
-#include <QtDeclarative/qdeclarativelist.h>
-#include <QtDeclarative/qdeclarative.h>
+#include <QtDeclarative/QtDeclarative>
+#include <QtDeclarative/QtDeclarative>
 #endif
 
 #include "note.h"
