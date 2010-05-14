@@ -26,12 +26,12 @@ contains(mobility_modules,bearer) {
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
                satellitedialog \
-               qgeoapiui
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo \
                    weatherinfo \
                    lightmaps 
                    #mapviewer (disable for now) 
+                   #qgeoapiui
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
