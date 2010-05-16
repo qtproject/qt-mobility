@@ -835,7 +835,21 @@ QString QSystemDeviceInfoPrivate::imei()
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
+#if defined(Q_WS_MAEMO_6)
+    /* Maemo 6 */
+    #if !defined(QT_NO_DBUS)
+        QDBusInterface connectionInterface("com.nokia.csd.SIM",
+                                           "/com/nokia/csd/sim",
+                                           "com.nokia.csd.SIM.Identity",
+                                           QDBusConnection::systemBus());
+        QDBusReply< QString > reply = connectionInterface.call("GetIMSI");
+        return reply.value();
+    #endif
+    return "";
+#else
+    /* Maemo 5 */
     return GConfItem("/system/nokia/location/sim_imsi").value().toString();
+#endif
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
