@@ -1939,7 +1939,8 @@ CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOpera
       m_operationId(aOperationId),
       m_resultCorrectlyOrdered(false),
       m_receiveNewMessages(false),
-      m_activeSearchCount(0)
+      m_activeSearchCount(0),
+      m_searchField(None)
 {
     TRAPD(err,
             m_factory = CEmailInterfaceFactory::NewL(); 
@@ -1984,14 +1985,14 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                                                     QString body,
                                                     QMessageDataComparator::MatchFlags matchFlags)
 {
-    Q_UNUSED(matchFlags);
-
     m_numberOfHandledFilters = 0;
     
     m_clientApi->GetMailboxesL(m_mailboxes);
     
     TEmailSortCriteria sortCriteria = TEmailSortCriteria();
     m_excludeIdList = QMessageIdList();
+
+    m_matchFlags = matchFlags;
     
     if (filters.count() == 0) {
         m_idList = QMessageIdList();
@@ -2058,7 +2059,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                 if (cmp == QMessageDataComparator::Equal) {
                     m_numberOfHandledFilters++;
                     QMessageFolder messageFolder = m_owner.folder(QMessageFolderId(pf->_value.toString()));
-                    getFolderSpecificMessagesL(messageFolder, sortCriteria, body);
+                    getFolderSpecificMessagesL(messageFolder, sortCriteria);
                     m_resultCorrectlyOrdered = true;
                     QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
                 } else { // NotEqual
@@ -2142,7 +2143,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (cmp == QMessageDataComparator::Equal) {
                     QMessageAccount messageAccount = m_owner.account(pf->_value.toString());
-                    getAccountSpecificMessagesL(messageAccount, sortCriteria, body);
+                    getAccountSpecificMessagesL(messageAccount, sortCriteria);
                     m_resultCorrectlyOrdered = true;
                 } else { // NotEqual
                     QStringList exludedAccounts;
@@ -2181,7 +2182,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                     
                     foreach (QMessageAccount value, m_owner.m_accounts) {
                         if (!exludedAccounts.contains(value.id().toString())) {
-                            getAccountSpecificMessagesL(value, sortCriteria, body);
+                            getAccountSpecificMessagesL(value, sortCriteria);
                         }
                     }
 
@@ -2229,12 +2230,12 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                     QMessageAccountIdList accountIds = m_owner.accountsByType(type);
                     for (int i = 0; i < accountIds.count(); i++) {
                         QMessageAccount messageAccount = m_owner.account(accountIds[i]);
-                        getAccountSpecificMessagesL(messageAccount, sortCriteria, body);
+                        getAccountSpecificMessagesL(messageAccount, sortCriteria);
                     }
                 } else { // NotEqual
                     foreach (QMessageAccount value, m_owner.m_accounts) {
                         if (!(value.messageTypes() & type)) {
-                            getAccountSpecificMessagesL(value, sortCriteria, body);
+                            getAccountSpecificMessagesL(value, sortCriteria);
                         }
                     }
                 }
@@ -2244,13 +2245,13 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                 if (cmp == QMessageDataComparator::Includes) {
                     foreach (QMessageAccount value, m_owner.m_accounts) {
                         if (value.messageTypes() | typeFlags) {
-                            getAccountSpecificMessagesL(value, sortCriteria, body);
+                            getAccountSpecificMessagesL(value, sortCriteria);
                         }
                     }
                 } else { // Excludes
                     foreach (QMessageAccount value, m_owner.m_accounts) {
                         if (!(value.messageTypes() & typeFlags)) {
-                            getAccountSpecificMessagesL(value, sortCriteria, body);
+                            getAccountSpecificMessagesL(value, sortCriteria);
                         }
                     }
                 }
@@ -2272,7 +2273,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                     CleanupReleasePushL(*folder);
                     QMessageFolder standardFolder = m_owner.folder(
                         QMessageFolderId(QString::number(folder->FolderId().iId)));
-                    getFolderSpecificMessagesL(standardFolder, sortCriteria, body);
+                    getFolderSpecificMessagesL(standardFolder, sortCriteria);
                     m_activeSearchCount++;
                     CleanupStack::PopAndDestroy(2);
                 }
@@ -2290,7 +2291,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                             CleanupReleasePushL(*folder);
                             QMessageFolder standardFolder = m_owner.folder(
                                 QMessageFolderId(QString::number(folder->FolderId().iId)));
-                            getFolderSpecificMessagesL(standardFolder, sortCriteria, body);
+                            getFolderSpecificMessagesL(standardFolder, sortCriteria);
                             CleanupStack::PopAndDestroy(folder);
                         }
                         i = static_cast<QMessage::StandardFolder>(static_cast<int>(i) + 1);
@@ -2306,6 +2307,31 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
         case QMessageFilterPrivate::ParentFolderIdFilter: 
         case QMessageFilterPrivate::TimeStamp:
         case QMessageFilterPrivate::ReceptionTimeStamp:
+        case QMessageFilterPrivate::Sender: {
+            m_searchField = Sender;
+            if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
+                QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Equal) {
+                    if (pf->_value.toString().length() > 0) {
+                        m_searchKey = pf->_value.toString();
+                        m_numberOfHandledFilters++;
+                        getAllMessagesL(sortCriteria);
+                    }
+                } else { // NotEqual
+                    // TODO:
+                }
+            } else if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
+                QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Includes) {
+                    // TODO:
+                } else { // Excludes
+                    // TODO:
+                }
+            }
+            break;
+        }
+
+        case QMessageFilterPrivate::Recipients:
         case QMessageFilterPrivate::Subject:
         case QMessageFilterPrivate::Status:
         case QMessageFilterPrivate::Priority:
@@ -2321,23 +2347,17 @@ void CFSMessagesFindOperation::getAllMessagesL(TEmailSortCriteria& sortCriteria)
 {
     // Get all messages from every known account
     foreach (QMessageAccount value, m_owner.m_accounts) {
-        getAccountSpecificMessagesL(value, sortCriteria, QString());
+        getAccountSpecificMessagesL(value, sortCriteria);
     }
 }
 
-void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria, QString body)
+void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria)
 {
-    TPtrC16 value(KNullDesC);
     TMailboxId mailboxId(stripIdPrefix(messageAccount.id().toString()).toInt());
     FSSearchOperation operation;
     operation.m_mailbox = m_clientApi->MailboxL(mailboxId);
     operation.m_search = operation.m_mailbox->MessageSearchL();
-    if (body.isEmpty()) {
-        operation.m_search->AddSearchKeyL(_L("*"));
-    } else {
-        value.Set(reinterpret_cast<const TUint16*>(body.utf16()));
-        operation.m_search->AddSearchKeyL(value);
-    }
+    operation.m_search->AddSearchKeyL(_L("*"));
     operation.m_search->SetSortCriteriaL( sortCriteria );
     operation.m_search->StartSearchL( *this ); // this implements MEmailSearchObserver
     m_activeSearchCount++;
@@ -2345,9 +2365,8 @@ void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& mess
 }
 
 
-void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria, QString body)
+void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria)
 {
-    Q_UNUSED(body);
     RSortCriteriaArray sortCriteriaArray;
     CleanupClosePushL(sortCriteriaArray);
     TFolderId folderId(stripIdPrefix(messageFolder.id().toString()).toInt(), 
@@ -2362,7 +2381,13 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
         
     MEmailMessage* msg = NULL;
     while ( NULL != (msg = msgIterator->NextL())) {
-        m_idList.append(QMessageId(addIdPrefix(QString::number(msg->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)));
+        QMessageId messageId(addIdPrefix(QString::number(msg->MessageId().iId), SymbianHelpers::EngineTypeFreestyle));
+        if (m_searchField != None) { 
+            if (fillsSearchKeyCriteria(messageId))
+                m_idList.append(messageId);   
+        } else if (!m_excludeIdList.contains(messageId)) {
+            m_idList.append(messageId);   
+        }
     }
 
     CleanupStack::PopAndDestroy(mailbox);
@@ -2372,8 +2397,12 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)
 {
     QMessageId messageId(addIdPrefix(QString::number(aMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle));
-    if (!m_excludeIdList.contains(messageId))
+    if (m_searchField != None){ 
+        if (fillsSearchKeyCriteria(messageId))
+            m_idList.append(messageId);   
+    } else if (!m_excludeIdList.contains(messageId)) {
         m_idList.append(messageId);   
+    }
 }
 
 void CFSMessagesFindOperation::SearchCompletedL()
@@ -2391,6 +2420,47 @@ void CFSMessagesFindOperation::SearchCompletedL()
 void CFSMessagesFindOperation::SearchCompleted()
 {
     m_owner.filterAndOrderMessagesReady(true, m_operationId, m_idList, 1, m_resultCorrectlyOrdered);
+}
+
+bool CFSMessagesFindOperation::fillsSearchKeyCriteria(QMessageId& messageId)
+{
+    QMessage message = m_owner.message(messageId);
+    
+    Qt::CaseSensitivity caseSensitivity = (m_matchFlags & QMessageDataComparator::MatchCaseSensitive) ?
+        Qt::CaseSensitive:Qt::CaseInsensitive;
+    
+    switch (m_searchField) {
+    case Sender: {
+        return message.from().addressee().contains(m_searchKey, caseSensitivity);
+        break;
+    }
+    case Subject: {
+        return message.subject().contains(m_searchKey, caseSensitivity);
+        break;
+    }
+    case Body: {
+        if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
+            // Message contains only body (not attachments)
+            QString messageBody = message.textContent();
+            return messageBody.contains(m_searchKey, caseSensitivity);
+        } else {
+            // Message contains body and attachments
+            QMessageContentContainerIdList contentIds = message.contentIds();
+            foreach (QMessageContentContainerId id, contentIds){
+                QMessageContentContainer container = message.find(id);
+                QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
+                if (pPrivateContainer->_id == message.bodyId()) {
+                    // ContentContainer is body
+                    container.textContent().contains(m_searchKey, caseSensitivity);
+                }
+            }
+        }
+        break;
+    }
+    default:
+        break;
+    }
+    return false;
 }
 
 CFetchOperationWait* CFetchOperationWait::NewLC()

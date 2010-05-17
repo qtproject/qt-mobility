@@ -270,6 +270,9 @@ public:
                                 const QString body = QString(),
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
 
+    enum Field {None = 0, Sender, Subject, Body};
+
+    
 public slots:
     void SearchCompleted();
 
@@ -284,8 +287,11 @@ private:
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
     
     void getAllMessagesL(TEmailSortCriteria& sortCriteria);
-    void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria, QString body);
-    void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria, QString body);
+    void getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria);
+    void getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria);
+    
+    bool fillsSearchKeyCriteria(QMessageId& messageId);
+
     
 private: // Data
     CFSEngine& m_owner;
@@ -306,6 +312,10 @@ private: // Data
     MEmailInterface* m_interfacePtr; 
     bool m_receiveNewMessages;
     QList<FSSearchOperation> m_searchOperations;
+    
+    Field m_searchField;
+    QMessageDataComparator::MatchFlags m_matchFlags;
+    QString m_searchKey;
 };
 
 
