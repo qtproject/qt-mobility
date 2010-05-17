@@ -63,6 +63,7 @@ class QOrganizerItemFilter;
 class QOrganizerItemSortOrder;
 
 /* Forward decls, since these don't actually exist yet */
+class QOrganizerItemInstanceFetchRequest;
 class QOrganizerItemLocalIdFetchRequest;
 class QOrganizerItemFetchRequest;
 class QOrganizerItemRemoveRequest;
@@ -140,6 +141,7 @@ public:
     // Async update functions
     static void updateRequestState(QOrganizerItemAbstractRequest* req, QOrganizerItemAbstractRequest::State state);
 
+    static void updateItemInstanceFetchRequest(QOrganizerItemInstanceFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State);
     static void updateItemLocalIdFetchRequest(QOrganizerItemLocalIdFetchRequest* req, const QList<QOrganizerItemLocalId>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State);
     static void updateItemFetchRequest(QOrganizerItemFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State);
     static void updateItemRemoveRequest(QOrganizerItemRemoveRequest* req, QOrganizerItemManager::Error error, const QMap<int, QOrganizerItemManager::Error>& errorMap, QOrganizerItemAbstractRequest::State);

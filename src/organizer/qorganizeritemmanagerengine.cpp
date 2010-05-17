@@ -2003,6 +2003,26 @@ void QOrganizerItemManagerEngine::updateRequestState(QOrganizerItemAbstractReque
 }
 
 /*!
+  Updates the given QOrganizerItemInstanceFetchRequest \a req with the latest results \a result, and operation error \a error.
+  In addition, the state of the request will be changed to \a newState.
+
+  It then causes the request to emit its resultsAvailable() signal to notify clients of the request progress.
+
+  If the new request state is different from the previous state, the stateChanged() signal will also be emitted from the request.
+ */
+void QOrganizerItemManagerEngine::updateItemInstanceFetchRequest(QOrganizerItemInstanceFetchRequest* req, const QList<QOrganizerItem>& result, QOrganizerItemManager::Error error, QOrganizerItemAbstractRequest::State newState)
+{
+    QOrganizerItemInstanceFetchRequestPrivate* rd = static_cast<QOrganizerItemInstanceFetchRequestPrivate*>(req->d_ptr);
+    req->d_ptr->m_error = error;
+    rd->m_organizeritems = result;
+    bool emitState = rd->m_state != newState;
+    rd->m_state = newState;
+    emit req->resultsAvailable();
+    if (emitState)
+        emit req->stateChanged(newState);
+}
+
+/*!
   Updates the given QOrganizerItemLocalIdFetchRequest \a req with the latest results \a result, and operation error \a error.
   In addition, the state of the request will be changed to \a newState.
 
