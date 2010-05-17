@@ -62,6 +62,12 @@ QString QOrganizerItemSkeletonFactory::managerName() const
 }
 Q_EXPORT_PLUGIN2(qtorganizer_skeleton, QOrganizerItemSkeletonFactory);
 
+
+QOrganizerItemSkeletonEngine::~QOrganizerItemSkeletonEngine()
+{
+    /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
+}
+
 QString QOrganizerItemSkeletonEngine::managerName() const
 {
     /* TODO - put your engine name here */
