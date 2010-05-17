@@ -60,11 +60,11 @@ int main(int argc, char **argv)
 {
 
     QApplication app(argc, argv);
-
     Q_INIT_RESOURCE(panorama);
     QGraphicsScene scene(0, 0, 700, 700);
     View *view = new View(&scene);
     view->show();
+
 
 #ifdef QT_KEYPAD_NAVIGATION
     QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
