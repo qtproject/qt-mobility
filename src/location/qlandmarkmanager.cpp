@@ -81,16 +81,6 @@ QTM_USE_NAMESPACE
 */
 
 /*!
-    \enum QLandmarkManager::Format
-    Defines the various file formats for import and exporting landmarks.
-    \value LandmarkExchange Nokia Landmark Exchange format(lmx)
-    \value GPSExchange  GPS Exchange format(gpx)
-    \value KeyholeMarkupLanguage Keyhole Markup Language format (kml)
-    \value CommaSeparatedValues Comma separated values format (csv)
-    \value Custom Custom landmark format
-*/
-
-/*!
     Constructs a QLandmarkManager. The default implementation for the platform will be used.
 
     The \a parent QObject will be used as the parent of this QLandmarkManager.

@@ -79,8 +79,6 @@ public:
         UnknownError,
     };
 
-    enum Format {LandmarkExchange, GPSExchange, KeyholeMarkupLanguage, CommaSeparatedValues, Custom};
-
 #ifdef Q_QDOC
     QLandmarkManager(QObject *parent = 0);
     QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters = 0, QObject *parent = 0);
