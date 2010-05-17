@@ -162,7 +162,7 @@ void QGalleryTrackerItemListPrivate::synchronize()
             aIt = aBegin + qMax(0, offset - 8);
         }
     } else if (aCache.index > rCache.index && aCache.index < rCache.index + rCache.count) {
-        const int offset = rCache.index - aCache.index;
+        const int offset = aCache.index - rCache.index;
 
         if ((equal = aBegin.isEqual(rBegin + offset, identityWidth))) {
             rIt = rBegin + offset;
@@ -532,7 +532,7 @@ QVariant QGalleryTrackerItemList::metaData(int index, int key) const
     } else {
         index -= d->aCache.offset;
 
-        if (index >= 0 && index <= d->aCache.count && key >= d->valueOffset) {
+        if (index >= 0 && index < d->aCache.count && key >= d->valueOffset) {
             if (key < d->compositeOffset) {         // Value column.
                 return d->aCache.values.at((index * d->tableWidth) + key);
             } else if (key < d->aliasOffset) {      // Composite column.
