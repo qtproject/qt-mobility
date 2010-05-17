@@ -96,7 +96,9 @@ public:
         int operator -(const row_iterator &other) const { return (begin - other.begin) / width; }
 
         row_iterator operator +(int span) const {
-            span *= width; return row_iterator(begin + span, width); }
+            return row_iterator(begin + (span * width), width); }
+
+        row_iterator &operator +=(int span) { begin += span * width; return *this; }
 
         Row &operator *() {  return row = Row(begin, begin + width); }
         const Row &operator *() const {  return row = Row(begin, begin + width); }

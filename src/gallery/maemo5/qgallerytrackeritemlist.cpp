@@ -149,27 +149,53 @@ void QGalleryTrackerItemListPrivate::synchronize()
     row_iterator aBegin(aCache.values.begin(), tableWidth);
     row_iterator rBegin(rCache.values.begin(), tableWidth);
 
-    row_iterator aIt = aEnd;
-    row_iterator rIt = rEnd;
+    row_iterator aIt = aBegin;
+    row_iterator rIt = rBegin;
 
     bool equal = false;
 
-    for (row_iterator aOuter = aBegin, rOuter = rBegin;     // Brute force search for common items.
-            aOuter != aEnd && rOuter != rEnd && !equal;
-            ++aOuter, ++rOuter) {
-        for (row_iterator aInner = aOuter, rInner = rOuter;
-                aInner != aEnd && rInner != rEnd;
-                ++aInner, ++rInner) {
-            if ((equal = aInner.isEqual(rOuter, identityWidth))) {
-                aIt = aInner;
-                rIt = rOuter;
+    if (rCache.index > aCache.index && rCache.index < aCache.index + aCache.count) {
+        const int offset = rCache.index - aCache.index;
 
-                break;
-            } else if ((equal = rInner.isEqual(aOuter, identityWidth))) {
-                aIt = aOuter;
-                rIt = rInner;
+        if ((equal = rBegin.isEqual(aBegin + offset, identityWidth))) {
+            aIt = aBegin + offset;
+        } else {
+            aIt = aBegin + qMax(0, offset - 8);
+        }
+    } else if (aCache.index > rCache.index && aCache.index < rCache.index + rCache.count) {
+        const int offset = rCache.index - aCache.index;
 
-                break;
+        if ((equal = aBegin.isEqual(rBegin + offset, identityWidth))) {
+            rIt = rBegin + offset;
+        } else {
+            rIt = rBegin + qMax(0, offset - 8);
+        }
+    }
+
+    if (!equal) {
+        row_iterator aOuterEnd = aBegin + (((aEnd - aBegin) + 15) & ~15);
+        row_iterator rOuterEnd = rBegin + (((rEnd - rBegin) + 15) & ~15);
+
+        row_iterator aInnerEnd = qMin(aIt + 16, aEnd);
+        row_iterator rInnerEnd = qMin(rIt + 16, rEnd);
+
+        for (row_iterator aOuter = aBegin, rOuter = rBegin;
+                !equal && aOuter != aOuterEnd && rOuter != rOuterEnd;
+                aOuter += 16, rOuter += 16) {
+            for (row_iterator aInner = aIt, rInner = rIt;
+                    aInner != aInnerEnd && rInner != rInnerEnd;
+                    ++aInner, ++rInner) {
+                if ((equal = aInner.isEqual(rOuter, identityWidth))) {
+                    aIt = aInner;
+                    rIt = rOuter;
+
+                    break;
+                } else if ((equal = rInner.isEqual(aOuter, identityWidth))) {
+                    aIt = aOuter;
+                    rIt = rInner;
+
+                    break;
+                }
             }
         }
     }
@@ -236,11 +262,17 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
             return;
         }
 
+        row_iterator aOuterEnd = aBegin + (((aEnd - aBegin) + 15) & ~15);
+        row_iterator rOuterEnd = rBegin + (((rEnd - rBegin) + 15) & ~15);
+
+        row_iterator aInnerEnd = qMin(aBegin + 16, aEnd);
+        row_iterator rInnerEnd = qMin(rBegin + 16, rEnd);
+
         for (row_iterator aOuter = aBegin, rOuter = rBegin;
-                aOuter != aEnd && rOuter != rEnd && !equal;
-                ++aOuter, ++rOuter) {
-            for (row_iterator aInner = aOuter + 1, rInner = rOuter + 1;
-                    aInner != aEnd && rInner != rEnd;
+                !equal && aOuter != aOuterEnd && rOuter != rOuterEnd;
+                aOuter += 16, rOuter += 16) {
+            for (row_iterator aInner = aBegin, rInner = rBegin;
+                    aInner != aInnerEnd && rInner != rInnerEnd;
                     ++aInner, ++rInner) {
                 if ((equal = aInner.isEqual(rOuter, identityWidth))) {
                     if (rOuter != rBegin) {
