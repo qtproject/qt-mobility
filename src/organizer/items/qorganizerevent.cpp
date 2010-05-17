@@ -70,13 +70,56 @@ QDateTime QOrganizerEvent::endDateTime() const
     return etr.endDateTime();
 }
 
-void QOrganizerEvent::setRecurrence(const QOrganizerItemRecurrence& recurrence) const
+void QOrganizerEvent::setRecurrenceDates(const QList<QDateTime>& rdates)
 {
-    Q_UNUSED(recurrence);
+    QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
+    rec.setRecurrenceDates(rdates);
+    saveDetail(&rec);
 }
-QOrganizerItemRecurrence QOrganizerEvent::recurrence() const
+
+QList<QDateTime> QOrganizerEvent::recurrenceDates() const
 {
-    return QOrganizerItemRecurrence();
+    QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
+    return rec.recurrenceDates();
+}
+
+void QOrganizerEvent::setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules)
+{
+    QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
+    rec.setRecurrenceRules(rrules);
+    saveDetail(&rec);
+}
+
+QList<QOrganizerItemRecurrenceRule> QOrganizerEvent::recurrenceRules() const
+{
+    QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
+    return rec.recurrenceRules();
+}
+
+void QOrganizerEvent::setExceptionDates(const QList<QDateTime>& exdates)
+{
+    QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
+    rec.setExceptionDates(exdates);
+    saveDetail(&rec);
+}
+
+QList<QDateTime> QOrganizerEvent::exceptionDates() const
+{
+    QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
+    return rec.exceptionDates();
+}
+
+void QOrganizerEvent::setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& exrules)
+{
+    QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
+    rec.setExceptionRules(exrules);
+    saveDetail(&rec);
+}
+
+QList<QOrganizerItemRecurrenceRule> QOrganizerEvent::exceptionRules() const
+{
+    QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
+    return rec.exceptionRules();
 }
 
 void QOrganizerEvent::setPriority(QOrganizerItemPriority::Priority priority)

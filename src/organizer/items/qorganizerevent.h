@@ -58,8 +58,14 @@ public:
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
 
-    void setRecurrence(const QOrganizerItemRecurrence& recurrence) const;
-    QOrganizerItemRecurrence recurrence() const;
+    void setRecurrenceDates(const QList<QDateTime>& rdates);
+    QList<QDateTime> recurrenceDates() const;
+    void setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules);
+    QList<QOrganizerItemRecurrenceRule> recurrenceRules() const;
+    void setExceptionDates(const QList<QDateTime>& exdates);
+    QList<QDateTime> exceptionDates() const;
+    void setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& exrules);
+    QList<QOrganizerItemRecurrenceRule> exceptionRules() const;
 
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;

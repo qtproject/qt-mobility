@@ -69,9 +69,18 @@ void snippets()
     QOrganizerItemManager specificManager("KCal");
     //! [Instantiating a specific manager]
 
+    // XXX TODO: use rrule instead of rdates.
+    QDateTime startDateTime = QDateTime::currentDateTime();
+    QDateTime firstOccDate = startDateTime.addDays(7);
+    QDateTime secondOccDate = startDateTime.addDays(14);
+    QDateTime thirdOccDate = startDateTime.addDays(21);
+    QDateTime endDateTime = startDateTime.addDays(28);
+    QList<QDateTime> rDates;
+    rDates << firstOccDate << secondOccDate << thirdOccDate;
+
     //! [Creating a recurrent event]
     QOrganizerEvent recEvent;
-    /*recEvent.setRecurrence(7pm to 8pm every wednesday for three months);*/
+    recEvent.setRecurrenceDates(rDates);
     recEvent.setPriority(QOrganizerItemPriority::HighPriority);
     recEvent.setLocationName("Meeting Room 8");
     recEvent.setDescription("A meeting every wednesday to discuss the vitally important topic of marshmallows");
@@ -81,28 +90,18 @@ void snippets()
     //! [Creating a recurrent event]
 
     //! [Retrieving occurrences of a particular recurrent event within a time period]
-    // XXX TODO: make this more convenient.
-    // QOIM::itemInstances(item, startDateTime, endDateTime, count) ?
-    // QOI::instanceFilter(start, end) ?
-//    QOrganizerItemDetailFilter dfil;
-//    dfil.setDetailDefinitionName(QOrganizerItemParentInfo::DefinitionName, QOrganizerItemParentInfo::FieldParentId);
-//    dfil.setValue(recEvent.id());
-
-
-    // alternative to pfil: give me the instance view from this date to that date, with this filter ^^
-//    QOrganizerItemPeriodFilter pfil;
-//    pfil.setStartDate(QDateTime::current());
-//    pfil.setEndDate(endOfThisMonth());
-
-//    QOrganizerItemIntersectionFilter ifil;
-//    ifil << dfil << pfil;
-
-//    QList<QOrganizerItem> instances = defaultManager.itemInstances(ifil);
+    QList<QOrganizerItem> instances = defaultManager.itemInstances(recEvent, startDateTime, endDateTime);
     //! [Retrieving occurrences of a particular recurrent event within a time period]
+    qDebug() << "dumping retrieved instances:";
+foreach(const QOrganizerItem& currInst, instances)
+{
+    dumpItem(currInst);
+    qDebug() << "....................";
+}
+
 
     //! [Retrieving the next 5 occurrences of a particular recurrent event]
-    // XXX TODO: make this more convenient.
-    // QOIM::itemInstances(item, startDateTime, endDateTime, count) ?
+    instances = defaultManager.itemInstances(recEvent, QDateTime::currentDateTime(), QDateTime(), 5);
     //! [Retrieving the next 5 occurrences of a particular recurrent event]
 
     //! [Retrieving the next 10 occurrences of any item (Agenda View)]

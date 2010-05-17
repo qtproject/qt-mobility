@@ -582,7 +582,7 @@ bool QOrganizerItem::saveDetail(QOrganizerItemDetail* detail)
     /* Also handle organizeritem type specially - only one of them. */
     if (QOrganizerItemDetailPrivate::detailPrivate(*detail)->m_definitionName == QOrganizerItemType::DefinitionName.latin1()) {
         detail->d->m_access |= QOrganizerItemDetail::Irremovable;
-        d->m_details[1] = *detail;
+        d->m_details[0] = *detail; // type is zeroth detail.
         return true;
     }
 

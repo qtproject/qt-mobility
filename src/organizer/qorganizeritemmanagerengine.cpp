@@ -592,6 +592,20 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // recurrence information
+    d.setName(QOrganizerItemRecurrence::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::List);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemRecurrence::FieldExceptionDates, f);
+    fields.insert(QOrganizerItemRecurrence::FieldRecurrenceDates, f);
+    f.setDataType(QVariant::Map);
+    fields.insert(QOrganizerItemRecurrence::FieldExceptionRules, f);
+    fields.insert(QOrganizerItemRecurrence::FieldRecurrenceRules, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
     // event time range
     d.setName(QOrganizerItemEventTimeRange::DefinitionName);
     fields.clear();
@@ -786,6 +800,20 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemDescription::FieldDescription, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // recurrence information
+    d.setName(QOrganizerItemRecurrence::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::List);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemRecurrence::FieldExceptionDates, f);
+    fields.insert(QOrganizerItemRecurrence::FieldRecurrenceDates, f);
+    f.setDataType(QVariant::Map);
+    fields.insert(QOrganizerItemRecurrence::FieldExceptionRules, f);
+    fields.insert(QOrganizerItemRecurrence::FieldRecurrenceRules, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
