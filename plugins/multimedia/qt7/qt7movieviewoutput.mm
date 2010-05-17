@@ -203,7 +203,10 @@ void QT7MovieViewOutput::setMovie(void *movie)
 
 void QT7MovieViewOutput::updateNaturalSize(const QSize &newSize)
 {
-    m_nativeSize = newSize;
+    if (m_nativeSize != newSize) {
+        m_nativeSize = newSize;
+        emit nativeSizeChanged();
+    }
 }
 
 WId QT7MovieViewOutput::winId() const
