@@ -62,7 +62,7 @@ QT_USE_NAMESPACE
 QT7PlayerService::QT7PlayerService(QObject *parent):
     QMediaService(parent)
 {
-    m_session = new QT7PlayerSession;
+    m_session = new QT7PlayerSession(this);
 
     m_control = new QT7PlayerControl(this);
     m_control->setSession(m_session);
@@ -92,6 +92,7 @@ QT7PlayerService::QT7PlayerService(QObject *parent):
 
 QT7PlayerService::~QT7PlayerService()
 {
+    m_session->setVideoOutput(0);
 }
 
 QMediaControl *QT7PlayerService::requestControl(const char *name)
