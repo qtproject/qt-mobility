@@ -74,16 +74,13 @@ class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandlerV2
 {
 public:
     virtual ~QVersitContactImporterPropertyHandlerV2() {}
-    virtual bool beforeProcessProperty(const QVersitDocument& document,
-                                      const QVersitProperty& property,
-                                      int contactIndex,
-                                      QContact* contact) = 0;
     virtual bool afterProcessProperty(const QVersitDocument& document,
                                       const QVersitProperty& property,
                                       bool alreadyProcessed,
-                                      int contactIndex,
-                                      QContact* contact,
+                                      const QContact& contact,
                                       QList<QContactDetail>* updatedDetails) = 0;
+    virtual void endDocument(const QVersitDocument& document,
+                             QContact* contact) = 0;
     virtual int version() { return 2; }
 };
 

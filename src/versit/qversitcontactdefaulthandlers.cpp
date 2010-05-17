@@ -72,7 +72,6 @@ class QVersitContactImporterDefaultPropertyHandlerPrivate
 {
 public:
     DetailGroupMap mDetailGroupMap; // remembers which details came from which groups
-    QContact* mCurrentContact; // just so we know when we're seeing a new contact
 };
 
 class QVersitContactExporterDefaultDetailHandlerPrivate
@@ -136,19 +135,6 @@ QVersitContactImporterDefaultPropertyHandler::QVersitContactImporterDefaultPrope
 {
 }
 
-bool QVersitContactImporterDefaultPropertyHandler::beforeProcessProperty(
-        const QVersitDocument& document,
-        const QVersitProperty& property,
-        int contactIndex,
-        QContact* contact)
-{
-    Q_UNUSED(document)
-    Q_UNUSED(property)
-    Q_UNUSED(contactIndex)
-    Q_UNUSED(contact)
-    return false;
-}
-
 /* eg. if the document has the properties:
  * G0.X-NOKIA-QCONTACTFIELD;DETAIL=Detail1;FIELD=Field1:Value1
  * G0.X-NOKIA-QCONTACTFIELD;DETAIL=Detail1;FIELD=Field2:Value2
@@ -161,17 +147,10 @@ bool QVersitContactImporterDefaultPropertyHandler::afterProcessProperty(
         const QVersitDocument& document,
         const QVersitProperty& property,
         bool alreadyProcessed,
-        int contactIndex,
-        QContact* contact,
+        const QContact& contact,
         QList<QContactDetail>* updatedDetails)
 {
     Q_UNUSED(document)
-    Q_UNUSED(contactIndex)
-    Q_UNUSED(contact)
-    if (contact != d->mCurrentContact) {
-        d->mDetailGroupMap.clear();
-        d->mCurrentContact = contact;
-    }
     QString group;
     if (!property.groups().isEmpty())
         group = property.groups().first();
@@ -214,6 +193,14 @@ bool QVersitContactImporterDefaultPropertyHandler::afterProcessProperty(
     return !alreadyProcessed;
 }
 
+void QVersitContactImporterDefaultPropertyHandler::endDocument(const QVersitDocument& document,
+                                                               QContact* contact)
+{
+    Q_UNUSED(document)
+    Q_UNUSED(contact)
+    d->mDetailGroupMap.clear();
+}
+
 QVersitContactExporterDefaultDetailHandlerPrivate::QVersitContactExporterDefaultDetailHandlerPrivate()
     : mDetailNumber(0)
 {
@@ -222,17 +209,6 @@ QVersitContactExporterDefaultDetailHandlerPrivate::QVersitContactExporterDefault
 QVersitContactExporterDefaultDetailHandler::QVersitContactExporterDefaultDetailHandler()
     : d(new QVersitContactExporterDefaultDetailHandlerPrivate)
 {
-}
-
-bool QVersitContactExporterDefaultDetailHandler::beforeProcessDetail(
-        const QContact& contact,
-        const QContactDetail& detail,
-        QVersitDocument* document)
-{
-    Q_UNUSED(contact)
-    Q_UNUSED(detail)
-    Q_UNUSED(document)
-    return false;
 }
 
 /* eg. a detail with definition name "Detail" and fields "Field1"="Value1" and
@@ -247,11 +223,13 @@ bool QVersitContactExporterDefaultDetailHandler::afterProcessDetail(
         const QContact& contact,
         const QContactDetail& detail,
         const QSet<QString>& processedFields,
-        QVersitDocument* document,
+        const QVersitDocument& document,
+        QList<QVersitProperty>* toBeRemoved,
         QList<QVersitProperty>* toBeAdded)
 {
     Q_UNUSED(contact)
     Q_UNUSED(document)
+    Q_UNUSED(toBeRemoved)
     if (detail.definitionName() == QContactType::DefinitionName)
         return false; // special case of an unhandled detail that we don't export
     QVariantMap fields = detail.variantValues();
@@ -280,4 +258,13 @@ bool QVersitContactExporterDefaultDetailHandler::afterProcessDetail(
         }
     }
     return true;
+}
+
+void QVersitContactExporterDefaultDetailHandler::endContact(
+        const QContact& contact,
+        QVersitDocument* document)
+{
+    Q_UNUSED(contact)
+    Q_UNUSED(document)
+    d->mDetailNumber = 0;
 }

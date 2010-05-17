@@ -78,7 +78,8 @@ protected:
     static bool documentContainsName(const QVersitDocument& document);
     void encodeName(
             const QContactDetail& detail,
-            QVersitDocument* document,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
     void encodePhoneNumber(
@@ -139,12 +140,14 @@ protected:
             QSet<QString>* processedFields);
     void encodeNickname(
             const QContactDetail &detail,
-            QVersitDocument* document,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
     void encodeTag(
             const QContactDetail &detail,
-            QVersitDocument* document,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
     void encodeAnniversary(
@@ -161,10 +164,12 @@ protected:
             QSet<QString>* processedFields);
     void encodeDisplayLabel(
             const QContactDetail &detail,
-            QVersitDocument* document,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
-    QVersitProperty takeProperty(QVersitDocument* document, const QString& propertyName);
+    QVersitProperty takeProperty(const QVersitDocument& document, const QString& propertyName,
+                                 QList<QVersitProperty>* toBeRemoved);
     bool isValidRemoteUrl(const QString& resourceIdentifier);
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,
