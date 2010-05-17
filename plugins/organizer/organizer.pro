@@ -8,3 +8,6 @@ include(../../common.pri)
 symbian:SUBDIRS += symbian
 maemo6:SUBDIRS += maemo6
 maemo5:SUBDIRS += maemo5
+
+# To start with
+SUBDIRS += skeleton
