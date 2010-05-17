@@ -46,12 +46,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-QVector<QVariant> QGalleryTrackerItemListPrivate::parseResultSet(
-        const QVector<QStringList> &resultSet) const
+void QGalleryTrackerItemListPrivate::parseResultSet(
+        const QVector<QStringList> &resultSet)
 {
     typedef QVector<QStringList>::const_iterator iterator;
 
-    QVector<QVariant> values;
+    QVector<QVariant> &values = rCache.values;
+    values.clear();
     values.reserve(resultSet.count() * tableWidth);
 
     for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
@@ -73,8 +74,6 @@ QVector<QVariant> QGalleryTrackerItemListPrivate::parseResultSet(
                 sortCriteria.constBegin(),
                 sortCriteria.constEnd());
     }
-
-    return values;
 }
 
 void QGalleryTrackerItemListPrivate::sortRows(
@@ -320,7 +319,6 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
 
 void QGalleryTrackerItemListPrivate::_q_parseFinished()
 {
-    rCache.values = parseWatcher.result();
     rCache.count = rCache.values.count() / tableWidth;
 
     if (aCache.count == 0) {
@@ -627,7 +625,6 @@ void QGalleryTrackerItemList::updateResultSet(const QVector<QStringList> &result
 
     d->rCache.index = index;
     d->rCache.count = 0;
-    d->rCache.values.clear();
 
     d->parseWatcher.setFuture(
             QtConcurrent::run(d, &QGalleryTrackerItemListPrivate::parseResultSet, resultSet));

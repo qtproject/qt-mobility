@@ -192,10 +192,10 @@ public:
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 
-    QFutureWatcher<QVector<QVariant> > parseWatcher;
+    QFutureWatcher<void> parseWatcher;
     QFutureWatcher<void> synchronizeWatcher;
 
-    QVector<QVariant> parseResultSet(const QVector<QStringList> &resultSet) const;
+    void parseResultSet(const QVector<QStringList> &resultSet);
     void sortRows(
             row_iterator begin,
             row_iterator end,
