@@ -211,6 +211,14 @@ void QGalleryTrackerItemListPrivate::synchronize()
                     q_func(), new RowEvent(RowsInserted, aIndex, rIndex, aIndex - rIndex));
         }
 
+        if (rIndex > rCache.index) {
+            QCoreApplication::postEvent(q_func(), new RowEvent(
+                    RowsChanged,
+                    aCache.index,
+                    rCache.index,
+                    rIndex - rCache.index));
+        }
+
         synchronizeRows(aIt, rIt, aEnd, rEnd);
     }
 }
@@ -341,15 +349,27 @@ void QGalleryTrackerItemListPrivate::_q_synchronizeFinished()
     aCache.values.clear();
     aCache.count = 0;
 
+    const int statusIndex = rCache.cutoff;
+
     rCache.cutoff = rCache.index + rCache.count;
 
     if (rCache.cutoff > rowCount) {
+        const int statusCount = rowCount - statusIndex;
+
         const int index = rowCount;
         const int count = rCache.cutoff - rowCount;
 
         rowCount = rCache.cutoff;
 
         emit q_func()->inserted(index, count);
+
+        if (statusCount > 0)
+            emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
+    } else {
+        const int statusCount = rCache.index - statusIndex;
+
+        if (statusCount > 0)
+            emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
     }
 
     q_func()->updateStateChanged(updateState = QGalleryTrackerItemList::UpToDate);
