@@ -104,6 +104,13 @@ SOURCES += qmediacontrol.cpp \
     qvideorenderercontrol.cpp \
     qmediatimerange.cpp
 
+mac {
+   HEADERS += qpaintervideosurface_mac_p.h
+   OBJECTIVE_SOURCES += qpaintervideosurface_mac.mm
+
+   LIBS += -framework AppKit -framework QuartzCore -framework QTKit
+}
+
 maemo5 {
     QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
     HEADERS += qxvideosurface_maemo5_p.h

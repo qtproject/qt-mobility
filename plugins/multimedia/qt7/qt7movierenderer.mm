@@ -46,6 +46,7 @@
 #include "qt7playercontrol.h"
 #include "qt7movierenderer.h"
 #include "qt7playersession.h"
+#include "qt7ciimagevideobuffer.h"
 #include "qcvdisplaylink.h"
 #include <QtCore/qdebug.h>
 #include <QtCore/qcoreapplication.h>
@@ -64,7 +65,7 @@ class CVGLTextureVideoBuffer : public QAbstractVideoBuffer
 {
 public:
     CVGLTextureVideoBuffer(CVOpenGLTextureRef buffer)
-        : QAbstractVideoBuffer(NoHandle)
+        : QAbstractVideoBuffer(GLTextureHandle)
         , m_buffer(buffer)
         , m_mode(NotMapped)
     {
@@ -80,11 +81,6 @@ public:
     {
         GLuint id = CVOpenGLTextureGetName(m_buffer);
         return QVariant(int(id));
-    }
-
-    HandleType handleType() const
-    {
-        return GLTextureHandle;
     }
 
     MapMode mapMode() const { return m_mode; }
@@ -305,9 +301,9 @@ void QT7MovieRenderer::setupVideoOutput()
             if (m_surface->isActive())
                 m_surface->stop();
 
-            qDebug() << "Starting the surface with format" << format;
             if (!m_surface->start(format)) {
-                qDebug() << "failed to start video surface" << m_surface->error();
+                qWarning() << "failed to start video surface" << m_surface->error();
+                qWarning() << "Surface format:" << format;
                 glSupported = false;
             } else {
                 m_usingGLContext = true;
@@ -326,8 +322,10 @@ void QT7MovieRenderer::setupVideoOutput()
 
             if (!m_surface->isActive()) {
                 qDebug() << "Starting the surface with format" << format;
-                if (!m_surface->start(format))
-                    qDebug() << "failed to start video surface" << m_surface->error();
+                if (!m_surface->start(format)) {
+                    qWarning() << "failed to start video surface" << m_surface->error();
+                    qWarning() << "Surface format:" << format;
+                }
             }
         }
     }
@@ -446,15 +444,14 @@ void QT7MovieRenderer::updateVideoFrame(const CVTimeStamp &ts)
         OSStatus status = QTVisualContextCopyImageForTime(m_visualContext, NULL, &ts, &imageBuffer);
 
         if (status == noErr && imageBuffer) {
-            //qDebug() << "render video frame";
             QAbstractVideoBuffer *buffer = 0;
 
             if (m_usingGLContext) {
-                buffer = new CVGLTextureVideoBuffer((CVOpenGLTextureRef)imageBuffer);
+                buffer = new QT7CIImageVideoBuffer([CIImage imageWithCVImageBuffer:imageBuffer]);
                 CVOpenGLTextureRelease((CVOpenGLTextureRef)imageBuffer);
-                //qDebug() << "render GL video frame" << buffer->handle();
             } else {
                 buffer = new CVPixelBufferVideoBuffer((CVPixelBufferRef)imageBuffer);
+                //buffer = new QT7CIImageVideoBuffer( [CIImage imageWithCVImageBuffer:imageBuffer] );
                 CVPixelBufferRelease((CVPixelBufferRef)imageBuffer);
             }
 
