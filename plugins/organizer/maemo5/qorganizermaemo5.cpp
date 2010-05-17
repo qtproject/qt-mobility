@@ -40,4 +40,125 @@
 ****************************************************************************/
 
 #include "qorganizermaemo5_p.h"
+#include "qtorganizer.h"
 
+//QTM_USE_NAMESPACE
+
+QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(parameters);
+    Q_UNUSED(error);
+
+    initDebugLogger();
+    QOrganizerItemMaemo5Engine* ret = new QOrganizerItemMaemo5Engine(); // manager takes ownership and will clean up.
+    ret->d->m_managerName = QString(QLatin1String("maemo5"));
+    ret->d->m_managerParameters = QMap<QString, QString>(); // no parameters to instantiate.
+    ret->d->m_managerVersion = 1;
+    return qobject_cast<QOrganizerItemManagerEngine*>(ret);
+}
+
+QString QOrganizerItemMaemo5Factory::managerName() const
+{
+    return QString("maemo5");
+}
+Q_EXPORT_PLUGIN2(qtorganizer_maemo5, QOrganizerItemMaemo5Factory);
+
+QString QOrganizerItemMaemo5Engine::managerName() const
+{
+    return d->m_managerName;
+}
+
+QMap<QString, QString> QOrganizerItemMaemo5Engine::managerParameters() const
+{
+    return d->m_managerParameters;
+}
+
+int QOrganizerItemMaemo5Engine::managerVersion() const
+{
+    return d->m_managerVersion;
+}
+
+QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
+{
+
+}
+
+QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+{
+
+}
+
+QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+{
+
+}
+
+QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
+{
+
+}
+
+bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+{
+
+}
+
+bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+{
+
+}
+
+QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo5Engine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
+{
+
+}
+
+QOrganizerItemDetailDefinition QOrganizerItemMaemo5Engine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
+{
+
+}
+
+bool QOrganizerItemMaemo5Engine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
+{
+
+}
+
+bool QOrganizerItemMaemo5Engine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
+{
+
+}
+
+bool QOrganizerItemMaemo5Engine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
+{
+
+}
+
+bool QOrganizerItemMaemo5Engine::isFilterSupported(const QOrganizerItemFilter& filter) const
+{
+
+}
+
+QList<QVariant::Type> QOrganizerItemMaemo5Engine::supportedDataTypes() const
+{
+
+}
+
+QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
+{
+
+}
+
+QOrganizerEvent convertCEvent(const CEvent& cevent)
+{
+
+}
+
+QOrganizerTodo convertCTodo(const CTodo& ctodo)
+{
+
+}
+
+QOrganizerJournal convertCJournal(const CJournal& cjournal)
+{
+
+}
