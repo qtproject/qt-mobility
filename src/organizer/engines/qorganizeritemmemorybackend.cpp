@@ -195,6 +195,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     // given the generating item, grab it's QOrganizerItemRecurrence detail (if it exists), and calculate all of the dates within the given period.
     // how would a real backend do this?
     // Also, should this also return the exception instances (ie, return any persistent instances with parent information == generator?)
+    // XXX TODO: in detail validation, ensure that the referenced parent Id exists...
 
     if (periodStart > periodEnd) {
         *error = QOrganizerItemManager::BadArgumentError;
@@ -204,38 +205,101 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     QList<QOrganizerItem> retn;
     QOrganizerItemRecurrence recur = generator.detail(QOrganizerItemRecurrence::DefinitionName);
 
-    QList<QDateTime> xdates = recur.exceptionDates();
-    // XXX TODO: xdates += dates calculated from the xrules.
+    // first, retrieve all persisted instances (exceptions) which occur between the specified datetimes.
+    QOrganizerItemDetailFilter parentFilter;
+    parentFilter.setDetailDefinitionName(QOrganizerItemInstanceOrigin::DefinitionName, QOrganizerItemInstanceOrigin::FieldParentLocalId);
+    parentFilter.setValue(generator.localId());
+    QList<QOrganizerItem> persistedExceptions = items(parentFilter, QList<QOrganizerItemSortOrder>(), QOrganizerItemFetchHint(), error);
+    foreach (const QOrganizerItem& currException, persistedExceptions) {
+        QDateTime lowerBound;
+        QDateTime upperBound;
+        if (currException.type() == QOrganizerItemType::TypeEventOccurrence) {
+            QOrganizerEventOccurrence instance = currException;
+            lowerBound = instance.startDateTime();
+            upperBound = instance.endDateTime();
+        } else {
+            QOrganizerTodoOccurrence instance = currException;
+            lowerBound = instance.notBeforeDateTime();
+            upperBound = instance.dueDateTime();
+        }
 
+        if ((lowerBound.isNull() || lowerBound > periodStart) && (upperBound.isNull() || upperBound < periodEnd)) {
+            // this occurrence fulfils the criteria.
+            retn.append(currException);
+        }
+    }
+
+    // then, generate the required (unchanged) instances from the generator.
+    QList<QDateTime> xdates = recur.exceptionDates();
+    QList<QOrganizerItemRecurrenceRule> xrules = recur.exceptionRules();
+    foreach (const QOrganizerItemRecurrenceRule& xrule, xrules) {
+        if (!(xrule.endDate() < periodStart || xrule.startDate() > periodEnd)) {
+            // we cannot skip it, since it applies in the given time period.
+            // XXX TODO: transform from rule elements to real dates...
+
+            //xdates += theTransformedRuleDate;
+        }
+    }
+
+    // now generate a list of rdates (from the recurrenceDates and recurrenceRules)
+    QList<QDateTime> rdates = recur.recurrenceDates();
     QList<QOrganizerItemRecurrenceRule> rrules = recur.recurrenceRules();
     foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
         if (!(rrule.endDate() < periodStart || rrule.startDate() > periodEnd)) {
             // we cannot skip it, since it applies in the given time period.
             // XXX TODO: transform from rule elements to real dates...
-            // XXX TODO: if the real date is one of the exception dates, ignore...
-            // XXX TODO: else generate the item instance for that date
+
+            //rdates += theTransformedRuleDate;
         }
     }
 
-    QList<QDateTime> rdates = recur.recurrenceDates();
+    // now for each rdate which isn't also an xdate
     foreach (const QDateTime& rdate, rdates) {
         if (!xdates.contains(rdate)) {
-            QOrganizerItem instanceItem;
-            if (generator.type() == QOrganizerItemType::TypeEvent) {
-                instanceItem = QOrganizerEventOccurrence();
-                // XXX TODO: grab appropriate details from the generator, put in the occurrence
-                retn << instanceItem;
-            } else {
-                instanceItem = QOrganizerTodoOccurrence();
-                // XXX TODO: grab appropriate details from the generator, put in the occurrence
-                retn << instanceItem;
-            }
+            // generate the required instance and add it to the return list.
+            retn.append(generateInstance(generator, rdate));
         }
     }
 
     // now order the contents of retn by date
+    // XXX TODO: sorting...
+
     // and return the first maxCount entries.
     return retn.mid(0, maxCount);
+}
+
+QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem& generator, const QDateTime& rdate)
+{
+    QOrganizerItem instanceItem;
+    if (generator.type() == QOrganizerItemType::TypeEvent) {
+        instanceItem = QOrganizerEventOccurrence();
+    } else {
+        instanceItem = QOrganizerTodoOccurrence();
+    }
+
+    // XXX TODO: something better than this linear search...
+    // Grab all details from the generator except the recurrence information.
+    QList<QOrganizerItemDetail> allDets = generator.details();
+    QList<QOrganizerItemDetail> occDets;
+    foreach (const QOrganizerItemDetail& det, allDets) {
+        if (det.definitionName() != QOrganizerItemRecurrence::DefinitionName) {
+            occDets.append(det);
+        }
+    }
+
+    // add the detail which identifies exactly which instance this item is.
+    QOrganizerItemInstanceOrigin currOrigin;
+    currOrigin.setParentLocalId(generator.localId());
+    currOrigin.setOriginalTimestamp(rdate);
+    occDets.append(currOrigin);
+
+    // save those details in the instance.
+    foreach (const QOrganizerItemDetail& det, occDets) {
+        QOrganizerItemDetail modifiable = det;
+        instanceItem.saveDetail(&modifiable);
+    }
+
+    return instanceItem;
 }
 
 /*! \reimp */

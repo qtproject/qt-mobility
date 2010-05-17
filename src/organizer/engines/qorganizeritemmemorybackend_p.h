@@ -207,6 +207,8 @@ private:
 
     void performAsynchronousOperation(QOrganizerItemAbstractRequest* request);
 
+    static QOrganizerItem generateInstance(const QOrganizerItem& generator, const QDateTime& rdate);
+
     QOrganizerItemMemoryEngineData* d;
     static QMap<QString, QOrganizerItemMemoryEngineData*> engineDatas;
 };
