@@ -2046,6 +2046,10 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
         sortCriteria.iAscending = fieldOrder.second == Qt::AscendingOrder?true:false;
     }
 
+    if (!body.isEmpty()) {
+        m_searchField = Body;
+        m_searchKey = body;
+    }
     
     switch (pf->_field) {
     
@@ -2344,7 +2348,29 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
             break;
         }
 
-        case QMessageFilterPrivate::Subject:
+        case QMessageFilterPrivate::Subject: {
+            m_searchField = Subject;
+            if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
+                QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Equal) {
+                    if (pf->_value.toString().length() > 0) {
+                        m_searchKey = pf->_value.toString();
+                        m_numberOfHandledFilters++;
+                        getAllMessagesL(sortCriteria);
+                    }
+                } else { // NotEqual
+                    // TODO:
+                }
+            } else if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
+                QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Includes) {
+                    // TODO:
+                } else { // Excludes
+                    // TODO:
+                }
+            }
+            break;
+        }
         case QMessageFilterPrivate::Status:
         case QMessageFilterPrivate::Priority:
         case QMessageFilterPrivate::Size:
