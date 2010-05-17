@@ -115,17 +115,6 @@ QContactDetail *CntTransformThumbnail::transformItemField(const CContactItemFiel
     return thumbnail;
 }
 
-bool CntTransformThumbnail::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldPicture.iUid
-        // Used as "extra mapping/extra field type" by thumbnail data fields
-        || fieldType == KUidContactFieldVCardMapJPEG.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformThumbnail::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -133,6 +122,14 @@ bool CntTransformThumbnail::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformThumbnail::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldPicture
+        // Used as "extra mapping/extra field type" by thumbnail data fields
+        << KUidContactFieldVCardMapJPEG;
 }
 
 QList<TUid> CntTransformThumbnail::supportedSortingFieldTypes(QString /*detailFieldName*/) const

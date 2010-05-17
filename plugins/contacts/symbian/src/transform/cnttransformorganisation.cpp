@@ -93,18 +93,6 @@ QContactDetail *CntTransformOrganisation::transformItemField(const CContactItemF
 	return organisation;
 }
 
-bool CntTransformOrganisation::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldCompanyName.iUid ||
-        fieldType == KUidContactFieldDepartmentName.iUid ||
-        fieldType == KUidContactFieldJobTitle.iUid ||
-        fieldType == KUidContactFieldAssistant.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformOrganisation::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -112,6 +100,15 @@ bool CntTransformOrganisation::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformOrganisation::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldCompanyName
+        << KUidContactFieldDepartmentName
+        << KUidContactFieldJobTitle
+        << KUidContactFieldAssistant;
 }
 
 QList<TUid> CntTransformOrganisation::supportedSortingFieldTypes(QString detailFieldName) const

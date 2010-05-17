@@ -199,20 +199,6 @@ QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItem
 	return onlineAccount;
 }
 
-bool CntTransformOnlineAccount::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldSIPID.iUid ||
-        fieldType == KUidContactFieldIMPP.iUid  ||
-        fieldType == KUidContactFieldServiceProvider.iUid  ||
-        fieldType == KUidContactFieldPresence.iUid  ||
-        fieldType == KUidContactFieldStatusMsg.iUid )         
-    {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -220,6 +206,16 @@ bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformOnlineAccount::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldSIPID
+        << KUidContactFieldIMPP
+        << KUidContactFieldServiceProvider
+        << KUidContactFieldPresence
+        << KUidContactFieldStatusMsg;
 }
 
 QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const

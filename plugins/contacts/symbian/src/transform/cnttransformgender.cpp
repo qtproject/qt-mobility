@@ -70,15 +70,6 @@ QContactDetail *CntTransformGender::transformItemField(const CContactItemField& 
 	return gender;
 }
 
-bool CntTransformGender::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldGender.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformGender::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -86,6 +77,12 @@ bool CntTransformGender::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformGender::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldGender;
 }
 
 QList<TUid> CntTransformGender::supportedSortingFieldTypes(QString detailFieldName) const

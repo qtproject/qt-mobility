@@ -67,7 +67,7 @@ public:
 	virtual ~CntTransformContact();
 
 public:
-	QContact transformContactL(CContactItem &contact, const QStringList& definitionRestrictions = QStringList()) const;
+	QContact transformContactL(CContactItem &contact);
 	void transformPostSaveDetailsL(
 	        const CContactItem& contactItem,
 	        QContact& contact,
@@ -77,6 +77,7 @@ public:
 	        QContact &contact,
 	        CContactItem &contactItem) const;
 	QList<TUid> supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName );
+	QList<TUid> itemFieldUidsL(const QString detailDefinitionName) const;
     TUint32 GetIdForDetailL(const QContactDetailFilter& detailFilter,bool& isSubtype) const;
     void detailDefinitions(QMap<QString, QContactDetailDefinition>& defaultSchema, const QString& contactType, QContactManager::Error* error) const;
     QContactDetail *transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const;

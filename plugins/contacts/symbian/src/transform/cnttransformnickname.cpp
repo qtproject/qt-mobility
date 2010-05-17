@@ -78,15 +78,6 @@ QContactDetail *CntTransformNickname::transformItemField(const CContactItemField
 	return name;
 }
 
-bool CntTransformNickname::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldSecondName.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformNickname::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -94,6 +85,12 @@ bool CntTransformNickname::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformNickname::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldSecondName;
 }
 
 QList<TUid> CntTransformNickname::supportedSortingFieldTypes(QString detailFieldName) const
@@ -112,7 +109,7 @@ QList<TUid> CntTransformNickname::supportedSortingFieldTypes(QString detailField
  */
 bool CntTransformNickname::supportsSubType(const QString& subType) const
 {
-	  Q_UNUSED(subType);
+    Q_UNUSED(subType);
     return false;
 }
 

@@ -145,7 +145,7 @@ void CntTransformContact::initializeCntTransformContactData()
  * \param contact A reference to a symbian contact item to be converted.
  * \return Qt Contact
  */
-QContact CntTransformContact::transformContactL(CContactItem &contact, const QStringList& definitionRestrictions) const
+QContact CntTransformContact::transformContactL(CContactItem &contact)
 {
     // Create a new QContact
     QContact newQtContact;
@@ -172,11 +172,7 @@ QContact CntTransformContact::transformContactL(CContactItem &contact, const QSt
 
         if(detail)
         {
-            // add detail if user requested it.
-            if(definitionRestrictions.isEmpty() || definitionRestrictions.contains(detail->definitionName())) 
-            {
-                newQtContact.saveDetail(detail);
-            }
+            newQtContact.saveDetail(detail);
             delete detail;
             detail = 0;
         }
@@ -290,6 +286,25 @@ QList<TUid> CntTransformContact::supportedSortingFieldTypes( QString detailDefin
     return uids;
 }
 
+QList<TUid> CntTransformContact::itemFieldUidsL(const QString detailDefinitionName) const
+{
+    QList<TUid> fieldUids;
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+
+    while (i != m_transformContactData.constEnd()) {
+        if (i.value()->supportsDetail(detailDefinitionName)) {
+            // The leaf class supports this detail, so check which field type
+            // uids it supports, use empty field name to get all the supported uids
+            fieldUids << i.value()->supportedFields();
+
+            // Assume there are no more leaf classes for this detail
+            break;
+        }
+        i++;
+    }
+    return fieldUids;
+}
+
 TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailFilter, bool& isSubtype) const
     {
     isSubtype = false;
@@ -368,14 +383,14 @@ QContactDetail *CntTransformContact::transformItemField(const CContactItemField&
 	if(field.ContentType().FieldTypeCount()) {
 	    TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 
-	    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
-	    while (i != m_transformContactData.constEnd()) {
-	        if (i.value()->supportsField(fieldType)) {
-	            detail = i.value()->transformItemField(field, contact);
-	            break;
-	        }
-	        ++i;
-	     }
+        QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+        while (i != m_transformContactData.constEnd()) {
+            if (i.value()->supportsField(fieldType)) {
+                detail = i.value()->transformItemField(field, contact);
+                break;
+            }
+            ++i;
+        }
 	}
 
 	return detail;

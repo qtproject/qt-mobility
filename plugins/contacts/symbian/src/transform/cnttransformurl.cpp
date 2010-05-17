@@ -94,15 +94,6 @@ QContactDetail *CntTransformUrl::transformItemField(const CContactItemField& fie
 	return url;
 }
 
-bool CntTransformUrl::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldUrl.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformUrl::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -110,6 +101,12 @@ bool CntTransformUrl::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformUrl::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldUrl;
 }
 
 QList<TUid> CntTransformUrl::supportedSortingFieldTypes(QString detailFieldName) const

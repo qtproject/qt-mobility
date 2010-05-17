@@ -83,16 +83,6 @@ QContactDetail *CntTransformFamily::transformItemField(const CContactItemField& 
 	return family;
 }
 
-bool CntTransformFamily::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldSpouse.iUid ||
-        fieldType == KUidContactFieldChildren.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformFamily::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -100,6 +90,13 @@ bool CntTransformFamily::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformFamily::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldSpouse
+        << KUidContactFieldChildren;
 }
 
 QList<TUid> CntTransformFamily::supportedSortingFieldTypes(QString /*detailFieldName*/) const
