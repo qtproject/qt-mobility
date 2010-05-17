@@ -131,7 +131,7 @@ SimulatorCommon::SimulatorCommon(QSensor *sensor)
     , m_timerid(0)
 {
     addDataRate(1, 100);
-    setDataRate(20);
+    sensor->setDataRate(20);
     ensureSimulatorConnection();
 }
 
