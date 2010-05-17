@@ -263,7 +263,7 @@ void QT7MovieVideoWidget::setupVideoOutput()
         return;
     }
 
-    NSSize size = [[(QTMovie*)m_movie attributeForKey:@"QTMovieCurrentSizeAttribute"] sizeValue];
+    NSSize size = [[(QTMovie*)m_movie attributeForKey:@"QTMovieNaturalSizeAttribute"] sizeValue];
     m_nativeSize = QSize(size.width, size.height);
     m_videoWidget->setNativeSize(m_nativeSize);
 
@@ -295,6 +295,14 @@ void QT7MovieVideoWidget::setMovie(void *movie)
     [(QTMovie*)m_movie retain];
 
     setupVideoOutput();
+}
+
+void QT7MovieVideoWidget::updateNaturalSize(const QSize &newSize)
+{
+    if (m_nativeSize != newSize) {
+        m_nativeSize = newSize;
+        setupVideoOutput();
+    }
 }
 
 bool QT7MovieVideoWidget::isFullScreen() const
