@@ -760,7 +760,6 @@ bool QOrganizerItemMemoryEngine::hasFeature(QOrganizerItemManager::ManagerFeatur
         return false;
 
     switch (feature) {
-        case QOrganizerItemManager::ActionPreferences:
         case QOrganizerItemManager::MutableDefinitions:
             return true;
         case QOrganizerItemManager::Anonymous:

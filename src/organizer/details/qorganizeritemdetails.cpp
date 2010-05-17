@@ -706,13 +706,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeEvent, "Event");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeEventOccurrence, "EventOccurrence");
 
 /*!
-   \variable QOrganizerItemType::TypeInvitation
-
-   The constant attribute value which describes the organizer item as being an invitation.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemType::TypeInvitation, "Invitation");
-
-/*!
    \variable QOrganizerItemType::TypeJournal
 
    The constant attribute value which describes the organizer item as being a journal.

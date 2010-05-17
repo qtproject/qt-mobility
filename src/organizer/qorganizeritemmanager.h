@@ -144,9 +144,7 @@ public:
 
     /* Functionality reporting */
     enum ManagerFeature {
-        ActionPreferences,        // per-item action preferences
         MutableDefinitions,
-        DetailOrdering,
         Anonymous,
         ChangeLogs
     };

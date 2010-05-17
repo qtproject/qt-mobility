@@ -59,7 +59,6 @@ public:
     const char* FieldType;
     const char* TypeEvent;
     const char* TypeTodo;
-    const char* TypeInvitation;
     const char* TypeJournal;
     const char* TypeNote;
     // etc?
@@ -70,7 +69,6 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(TypeEventOccurrence, "EventOccurrence");
     Q_DECLARE_LATIN1_CONSTANT(TypeTodo, "Todo");
     Q_DECLARE_LATIN1_CONSTANT(TypeTodoOccurrence, "TodoOccurrence");
-    Q_DECLARE_LATIN1_CONSTANT(TypeInvitation, "Invitation");
     Q_DECLARE_LATIN1_CONSTANT(TypeJournal, "Journal");
     Q_DECLARE_LATIN1_CONSTANT(TypeNote, "Note");
 #endif
