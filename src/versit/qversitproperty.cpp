@@ -162,7 +162,6 @@ QDebug operator<<(QDebug dbg, const QVersitProperty& property)
     QStringList groups = property.groups();
     QString name = property.name();
     QMultiHash<QString,QString> parameters = property.parameters();
-    QString value = property.value();
     dbg.nospace() << "QVersitProperty(";
     foreach (const QString& group, groups) {
         dbg.nospace() << group << '.';
@@ -172,7 +171,7 @@ QDebug operator<<(QDebug dbg, const QVersitProperty& property)
     for (it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
         dbg.nospace() << ';' << it.key() << '=' << it.value();
     }
-    dbg.nospace() << ':' << value;
+    dbg.nospace() << ':' << property.variantValue();
     dbg.nospace() << ')';
     return dbg.maybeSpace();
 }
