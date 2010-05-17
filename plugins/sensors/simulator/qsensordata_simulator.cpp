@@ -112,7 +112,7 @@ QDataStream &operator<<(QDataStream &out, const QMagnetometerReadingData &s)
 
 QDataStream &operator>>(QDataStream &in, QMagnetometerReadingData &s)
 {
-    in >> s.x >> s.y >> s.z >> s.calibrationLevel << s.timestamp;
+    in >> s.x >> s.y >> s.z >> s.calibrationLevel >> s.timestamp;
     return in;
 }
 
