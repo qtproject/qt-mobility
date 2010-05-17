@@ -104,7 +104,8 @@ qtmheaders.path = $${QT_MOBILITY_INCLUDE}
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmServiceFramework/* \
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmVersit/* \
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmSystemInfo/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmSensors/*
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmSensors/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtmOrganizer/*
     INSTALLS += qtmheaders
 } else {
 
@@ -128,7 +129,8 @@ qtmheaders.path = $${QT_MOBILITY_INCLUDE}
                        include/QtmPubSub/* \
                        include/QtmServiceFramework/* \
                        include/QtmSystemInfo/* \
-                       include/QtmSensors/*
+                       include/QtmSensors/* \
+                       include/QtmOrganizer/*
 
     contains(mobility_modules,contacts|versit) {
         for(api, qtmAppHeaders) {
@@ -142,7 +144,7 @@ qtmheaders.path = $${QT_MOBILITY_INCLUDE}
         }
     }
 
-    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging) {
+    contains(mobility_modules,serviceframework|location|bearer|publishsubscribe|systeminfo|multimedia|messaging|organizer) {
         for(api, qtmMwHeaders) {
             INCLUDEFILES=$$files($$api);
             #files() attaches a ';' at the end which we need to remove
