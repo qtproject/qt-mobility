@@ -408,8 +408,12 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     }
 
 
+    QUrl requestUrl = request.url();
+    if (requestUrl.scheme().isEmpty())
+        requestUrl.setScheme(QLatin1String("file"));
+
     NSError *err = 0;
-    NSString *urlString = qString2CFStringRef(request.url().toString());
+    NSString *urlString = qString2CFStringRef(requestUrl.toString());
 
     NSDictionary *attr = [NSDictionary dictionaryWithObjectsAndKeys:
                 [NSURL URLWithString:urlString], QTMovieURLAttribute,
