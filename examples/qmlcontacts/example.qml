@@ -21,13 +21,14 @@ Rectangle {
         Rectangle {
             id: wrapper            
             border.width: 2
-            height: mainLabel.height + 2;
+            height: 36;
             width: mainList.width;
 
-            property color topColor: "#333333";
-            property color bottomColor: "#111111";
-            property real detailsOpacity: 0
-            property int detailsMode: 0
+            property color topColor: "#999999";
+            property color bottomColor: "#444444";
+            property real detailsOpacity: 1
+            property int littleDetailsMode: 0;
+            property int bigDetailsMode: 0;
 
             gradient: Gradient {
                  GradientStop { position: 0.0; color: topColor }
@@ -39,26 +40,26 @@ Rectangle {
                 width: topItem.width;
                 height: wrapper.height;
                 anchors.centerIn: parent;
-                onClicked: {mainList.currentIndex = index;}
+                onClicked: { littleDetailsMode = !littleDetailsMode; mainList.currentIndex = index; }
             }
 
             Row {
                 spacing: 2
                 Item {
                     id: mainAvatar;
-                    height: wrapper.detailsMode == 0 ? wrapper.height : wrapper.height;
+                    height: wrapper.height;
                     width: height;
 
                     Rectangle {
                         border.width: 2;
                         radius: 4;
                         anchors.fill: parent;
-                        anchors.margins: 3;
+                        anchors.margins: 2;
 
                         Image {
                             id: avatar
                             anchors.fill: parent;
-                            anchors.margins: 3;
+                            anchors.margins: 2;
 
                             pixmap: model.decoration
                             source: model.avatar;
@@ -101,9 +102,8 @@ Rectangle {
 
                 Item {
                     id: "buttonBox"
-                    // Initially offscreen
-                    x: wrapper.width + 6;
-                    y: (wrapper.height - childrenRect.height) / 2;
+                    x: wrapper.width - 6 - childrenRect.width;
+                    y: 4;
                     height:childrenRect.height
                     opacity: details.opacity;
                     Column {
@@ -116,40 +116,59 @@ Rectangle {
                             id: textButton
                             text: "Send Text";
                         }
-                        MediaButton {
-                            id: viewButton
-                            text: wrapper.detailsMode == 0 ? "View Details" : "Exit";
-//                            onClicked: wrapper.detailsMode = 1 - wrapper.detailsMode;
+                        Item {
+                            height:childrenRect.height
+                            width: childrenRect.width
+                            MediaButton {
+                                id: viewButton
+                                text: "More..."
+                                opacity: 0;
+                                onClicked: wrapper.bigDetailsMode = 1;
+                            }
+                            MediaButton {
+                                id: smallAgainButton
+                                text: "Back";
+                                anchors.top:viewButton.top;
+                                opacity: 0;
+                                onClicked: wrapper.bigDetailsMode = 0;
+                            }
                         }
-
                     }
                 }
             }
 
-
             states: [
                     State {
+                        name: "List";
+                        when: mainList.currentIndex != index || wrapper.littleDetailsMode == 0
+                        PropertyChanges { target: wrapper; detailsOpacity: 0; }
+                        PropertyChanges { target: wrapper; topColor: "#333333"; }
+                        PropertyChanges { target: wrapper; bottomColor: "#111111"; }
+                        PropertyChanges { target: buttonBox; x: wrapper.width + 6; }
+                    },
+                    State {
                         name: "MiniDetails"
-                        when: wrapper.ListView.isCurrentItem & wrapper.detailsMode == 0;
-                        PropertyChanges { target: wrapper; detailsOpacity: 1; }
-                        PropertyChanges { target: wrapper; topColor: "#999999"; }
-                        PropertyChanges { target: wrapper; bottomColor: "#444444"; }
+                        when: (mainList.currentIndex == index) && (wrapper.littleDetailsMode == 1) && (wrapper.bigDetailsMode == 0);
+                        PropertyChanges { target: viewButton; opacity: 1; }
+                        PropertyChanges { target: smallAgainButton; opacity: 0; }
                         PropertyChanges { target: wrapper; height: Math.max(mainLabel.height + details.height + 4, buttonBox.height + 8); }
-                        PropertyChanges { target: buttonBox; x: wrapper.width - 6 - childrenRect.width; }
+                        PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y } // XXX I don't think this should be here
                     },
                     State {
                         name: "Details"
-                        when: wrapper.detailsMode==1;
-                        PropertyChanges { target: wrapper.ListView.view; explicit: true; contentY: wrapper.y }
-                        PropertyChanges { target: wrapper.ListView.view; interactive: false }
+                        when: (mainList.currentIndex == index) && (wrapper.bigDetailsMode == 1);
+                        PropertyChanges { target: wrapper; height: mainList.height; }
+                        PropertyChanges { target: viewButton; opacity: 0; }
+                        PropertyChanges { target: smallAgainButton; opacity: 1; }
+                        PropertyChanges { target: mainAvatar; height: 96; }
+                        PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y }
+                        PropertyChanges { target: mainList; interactive: false; }
                     }
             ]
 
-
-
             transitions:  [
                 Transition {
-                    from: ""
+                    from: "List"
                     to: "MiniDetails"
                     reversible: false
                     SequentialAnimation {
@@ -161,13 +180,45 @@ Rectangle {
                     }
                 },
                 Transition {
-                    to: ""
                     from: "MiniDetails"
+                    to: "Details"
+                    reversible: false
+                    ParallelAnimation {
+                        NumberAnimation { duration: 250; properties: "contentY,opacity"; }
+                        SequentialAnimation {
+                            NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
+                            ParallelAnimation {
+                                ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                                NumberAnimation { duration: 150; properties: "x"; }
+                            }
+                        }
+                    }
+                },
+                Transition {
+                    from: "Details"
+                    to: "MiniDetails"
+                    reversible: false
+                    ParallelAnimation {
+                        NumberAnimation { duration: 250; properties: "contentY,opacity"; }
+                        SequentialAnimation {
+                            ParallelAnimation {
+                                NumberAnimation { duration: 150; properties: "x"; }
+                                ColorAnimation { duration: 200; properties: "topColor, bottomColor";}
+                            }
+                            NumberAnimation { duration: 200; properties: "detailsOpacity,height" }
+                        }
+                    }
+                },
+                Transition {
+                    from: "MiniDetails"
+                    to: "List"
                     reversible: false
                     SequentialAnimation {
-                        NumberAnimation { duration: 150; properties: "x"; }
-                        NumberAnimation { duration: 200; properties: "detailsOpacity,height" }
-                        ColorAnimation { duration: 200; properties: "topColor, bottomColor";}
+                        NumberAnimation { duration: 100; properties: "x"; }
+                        ParallelAnimation{
+                            NumberAnimation { duration: 150; properties: "detailsOpacity,height" }
+                            ColorAnimation { duration: 150; properties: "topColor, bottomColor";}
+                        }
                     }
                 }
             ]
@@ -182,7 +233,6 @@ Rectangle {
         highlightFollowsCurrentItem: false
         focus: true
         anchors.fill: parent
-        highlightMoveSpeed: 5000
         keyNavigationWraps: true
     }
 
