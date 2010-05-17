@@ -39,29 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Organizer API.
+#ifndef QORGANIZERITEMINSTANCEORIGIN_H
+#define QORGANIZERITEMINSTANCEORIGIN_H
 
-#include "qorganizeritemattendee.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemeventtimerange.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeriteminstanceorigin.h"
-#include "qorganizeritemjournaltimerange.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemnote.h"
-#include "qorganizeritemparticipation.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemprovenance.h"
-#include "qorganizeritemrecurrence.h"
-#include "qorganizeritemrsvpinfo.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtodoprogress.h"
-#include "qorganizeritemtodotimerange.h"
-#include "qorganizeritemtype.h"
+#include <QString>
+
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemInstanceOrigin : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldParentLocalId;
+    const char* FieldOriginalTimestamp;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemInstanceOrigin, "InstanceOrigin")
+    Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");
+    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalTimestamp, "OriginalTimestamp");
+#endif
+
+    void setParentLocalId(QOrganizerItemLocalId parentId) {setValue(FieldParentLocalId, static_cast<int>(parentId));}
+    QOrganizerItemLocalId parentLocalId() const {return static_cast<QOrganizerItemLocalId>(variantValue(FieldParentLocalId).toInt());}
+
+    void setOriginalTimestamp(const QDateTime& timestamp) {setValue(FieldOriginalTimestamp, timestamp);}
+    QDateTime originalTimestamp() const {return variantValue(FieldOriginalTimestamp).toDateTime();}
+};
+
+QTM_END_NAMESPACE
 
 #endif
+

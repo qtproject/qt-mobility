@@ -237,6 +237,42 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemGuid::FieldGuid, "Guid");
 
 
 
+
+/* ==================== QOrganizerItemInstanceOrigin.h ======================= */
+/*!
+   \class QOrganizerItemInstanceOrigin
+   \brief The QOrganizerItemInstanceOrigin class contains information about when and from where or whom the organizer item originated.
+ */
+
+/*!
+   \variable QOrganizerItemInstanceOrigin::DefinitionName
+   The constant string which identifies the definition of details which contain information which identifies
+   the recurrent event of which the organizer item is a particular instance or exception of.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::DefinitionName, "InstanceOrigin");
+
+/*!
+   \variable QOrganizerItemInstanceOrigin::FieldParentLocalId
+
+   The constant key for the field in which the local id of the parent recurrent event
+   is stored in details of the QOrganizerItemInstanceOrigin type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldParentLocalId, "ParentLocalId");
+
+/*!
+   \variable QOrganizerItemInstanceOrigin::FieldOriginalTimestamp
+
+   The constant key for the field in which the original datetime of this instance
+   or exception according to the recurrent series of the parent item is stored.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalTimestamp, "OriginalTimestamp");
+
+
+
+
+
+
+
 /* ==================== QOrganizerItemJournalTimeRange ======================= */
 // XXX TODO: time range or just single instant in time?
 /*!

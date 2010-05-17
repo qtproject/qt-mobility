@@ -283,11 +283,10 @@ QString QOrganizerItemManagerEngine::synthesizedDisplayLabel(const QOrganizerIte
  */
 void QOrganizerItemManagerEngine::setItemDisplayLabel(QOrganizerItem* organizeritem, const QString& displayLabel)
 {
-    // XXX TODO - IMPLEMENT ME
-    //QOrganizerItemDisplayLabel dl;
-    //dl.setValue(QOrganizerItemDisplayLabel::FieldLabel, displayLabel);
-    //setDetailAccessConstraints(&dl, QOrganizerItemDetail::Irremovable | QOrganizerItemDetail::ReadOnly);
-    //organizeritem->d->m_details.replace(0, dl);
+    // XXX TODO: remove this function - useless code (since can save in organizeritem directly)
+    QOrganizerItemDisplayLabel dl = organizeritem->detail<QOrganizerItemDisplayLabel>();
+    dl.setLabel(displayLabel);
+    organizeritem->saveDetail(&dl);
 }
 
 /*!
@@ -688,6 +687,18 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // instance origin
+    d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalTimestamp, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
     // event time range
     d.setName(QOrganizerItemEventTimeRange::DefinitionName);
     fields.clear();
@@ -854,6 +865,18 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemDescription::FieldDescription, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // instance origin
+    d.setName(QOrganizerItemInstanceOrigin::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::Int);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
+    f.setDataType(QVariant::DateTime);
+    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalTimestamp, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);

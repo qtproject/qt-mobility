@@ -7,6 +7,7 @@ PUBLIC_HEADERS += \
     details/qorganizeritemdisplaylabel.h \
     details/qorganizeritemeventtimerange.h \
     details/qorganizeritemguid.h \
+    details/qorganizeriteminstanceorigin.h \
     details/qorganizeritemjournaltimerange.h \
     details/qorganizeritemlocation.h \
     details/qorganizeritemnote.h \

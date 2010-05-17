@@ -62,6 +62,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldLabel, "Label");
 #endif
 
+    void setLabel(const QString& label) {setValue(FieldLabel, label);}
     QString label() const {return value(FieldLabel);}
 };
 

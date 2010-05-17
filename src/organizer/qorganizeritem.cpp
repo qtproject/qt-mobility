@@ -307,30 +307,38 @@ void QOrganizerItem::setType(const QOrganizerItemType& type)
 
 QString QOrganizerItem::displayLabel() const
 {
-    // XXX TODO: implement this function...
-    return QString();
+    QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
+    return dl.label();
 }
 void QOrganizerItem::setDisplayLabel(const QString& label)
 {
-    Q_UNUSED(label);
+    QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
+    dl.setLabel(label);
+    saveDetail(&dl);
 }
 void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
 {
-    Q_UNUSED(label);
+    QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
+    dl.setLabel(label.label());
+    saveDetail(&dl);
 }
 
 QString QOrganizerItem::description() const
 {
-    qWarning("QOrganizerItem::description() -- TODO!");
-    return QString();
+    QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
+    return descr.description();
 }
 void QOrganizerItem::setDescription(const QString& description)
 {
-    Q_UNUSED(description);
+    QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
+    descr.setDescription(description);
+    saveDetail(&descr);
 }
 void QOrganizerItem::setDescription(const QOrganizerItemDescription& description)
 {
-    Q_UNUSED(description);
+    QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
+    descr.setDescription(description.description());
+    saveDetail(&descr);
 }
 
 
