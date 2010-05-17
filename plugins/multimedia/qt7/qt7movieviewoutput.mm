@@ -196,10 +196,6 @@ void QT7MovieViewOutput::setupVideoOutput()
     setDisplayRect(m_displayRect);
 }
 
-void QT7MovieViewOutput::setEnabled(bool)
-{
-}
-
 void QT7MovieViewOutput::setMovie(void *movie)
 {
     if (m_movie != movie) {

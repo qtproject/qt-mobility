@@ -69,7 +69,6 @@ public:
     QT7MovieVideoWidget(QObject *parent = 0);
     virtual ~QT7MovieVideoWidget();
 
-    void setEnabled(bool);
     void setMovie(void *movie);
     void updateNaturalSize(const QSize &newSize);
 

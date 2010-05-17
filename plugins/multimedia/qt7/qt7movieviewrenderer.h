@@ -65,7 +65,6 @@ public:
     QT7MovieViewRenderer(QObject *parent = 0);
     ~QT7MovieViewRenderer();
 
-    void setEnabled(bool);
     void setMovie(void *movie);
     void updateNaturalSize(const QSize &newSize);
 
