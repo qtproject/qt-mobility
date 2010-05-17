@@ -32,6 +32,7 @@ PUBLIC_HEADERS += qorganizeritemabstractrequest.h \
     qorganizeritemsortorder.h \
     qtorganizerglobal.h \
     qtorganizer.h
+
 PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemabstractrequest_p.h \
     qorganizeritemchangeset_p.h \
@@ -44,6 +45,7 @@ PRIVATE_HEADERS += qorganizeritemmanager_p.h \
     qorganizeritemdetaildefinition_p.h \
     qorganizeritemrecurrencerule_p.h \
     qorganizeritemsortorder_p.h
+
 SOURCES += \
     qorganizeritemabstractrequest.cpp \
     qorganizeritemchangeset.cpp \
@@ -60,14 +62,18 @@ SOURCES += \
     qorganizeritemrecurrencerule.cpp \
     qorganizeritemsortorder.cpp \
     qorganizeritemmanager_p.cpp
+
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
+
 symbian { 
     TARGET.EPOCALLOWDLLDATA = 1
-    TARGET.CAPABILITY = ALL \
-        -TCB
-    TARGET.UID3 = 0x2002AC7A
+    TARGET.CAPABILITY = ALL -TCB
+
+    #TARGET.UID3 = 0x2002AC7A
     
+    LIBS += -lefsrv
+
     # ## Organizer
     # Main library
     ORGANIZER_DEPLOYMENT.sources = QtOrganizer.dll
