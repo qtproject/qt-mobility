@@ -1,6 +1,5 @@
 TEMPLATE = app
 CONFIG+=testcase
-QT += xmlpatterns
 TARGET=tst_qlandmarkfilehandler_lmx
 
 include (../../../common.pri)
