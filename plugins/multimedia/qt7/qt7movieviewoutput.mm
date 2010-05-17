@@ -48,6 +48,9 @@
 #include "qt7playersession.h"
 #include <QtCore/qdebug.h>
 
+#include <QuartzCore/CIFilter.h>
+#include <QuartzCore/CIVector.h>
+
 
 QT_USE_NAMESPACE
 

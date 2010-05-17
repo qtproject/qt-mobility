@@ -53,7 +53,7 @@
 #include <QtGui/qmacdefines_mac.h>
 #include "qt7videooutput.h"
 
-#include <CoreVideo/CVOpenGLTexture.h>
+#include <QuartzCore/CVOpenGLTexture.h>
 #include <QuickTime/QuickTime.h>
 
 QT_BEGIN_NAMESPACE
