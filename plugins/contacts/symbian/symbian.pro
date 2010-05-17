@@ -62,10 +62,6 @@ symbian: {
         inc/filtering/cntfilterdefault.h \
         inc/filtering/cntfilterintersection.h \
         inc/filtering/cntfilterunion.h \
-        inc/filtering/cntfilterinvalid.h \
-        inc/filtering/cntfilterlocalid.h \
-        inc/filtering/cntfilterchangelog.h \
-        inc/filtering/cntfilterdetailrange.h \
         inc/filtering/cntabstractcontactsorter.h \
         inc/filtering/cntabstractcontactfilter.h \
         inc/filtering/cntsymbianfilterdbms.h \
@@ -108,10 +104,6 @@ symbian: {
         src/filtering/cntfilterdefault.cpp \
         src/filtering/cntfilterintersection.cpp \
         src/filtering/cntfilterunion.cpp \
-        src/filtering/cntfilterinvalid.cpp \
-        src/filtering/cntfilterlocalid.cpp \
-        src/filtering/cntfilterchangelog.cpp \
-        src/filtering/cntfilterdetailrange.cpp \
         src/filtering/cntsymbianfilterdbms.cpp \
         src/filtering/cntsymbianfiltersql.cpp \
         src/filtering/cntsymbiansorterdbms.cpp \
