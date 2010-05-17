@@ -148,6 +148,11 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
         }
         // The resulting filter is handled with a recursive function call
         result = contacts(intersectionFilter, sortOrders, filterSupportedFlag, error);
+    } else if (filter == QContactFilter()) {
+        // Empty filter -> don't do any filtering and tell the caller to not
+        // to do any filtering either
+        filterSupportedFlag = true;
+        result = filterContacts(QContactInvalidFilter(), error);
     } else {
         FilterSupport filterSupport = filterSupportLevel(filter);
         if (filterSupport == Supported) {
