@@ -157,6 +157,10 @@ bool QVersitContactImporterPrivate::importContact(
             importProperty(document, property, contactIndex, contact);
     }
 
+    if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
+        mPropertyHandler2->endDocument(document, contact);
+    }
+
     contact->setType(QContactType::TypeContact);
     QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(*contact));
     return true;
@@ -169,10 +173,6 @@ void QVersitContactImporterPrivate::importProperty(
     if (mPropertyHandler
         && mPropertyHandlerVersion == 1
         && mPropertyHandler->preProcessProperty(document, property, contactIndex, contact))
-        return;
-    if (mPropertyHandler2
-        && mPropertyHandlerVersion > 1
-        && mPropertyHandler2->beforeProcessProperty(document, property, contactIndex, contact))
         return;
 
     QPair<QString,QString> detailDefinition =
@@ -221,15 +221,16 @@ void QVersitContactImporterPrivate::importProperty(
         success = createNameValueDetail(property, contact, &updatedDetails);
     }
 
-    if (mPropertyHandler && mPropertyHandlerVersion == 1)
-        mPropertyHandler->postProcessProperty(document, property, success, contactIndex, contact);
     if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
-        mPropertyHandler2->afterProcessProperty(document, property, success, contactIndex, contact, &updatedDetails);
+        mPropertyHandler2->afterProcessProperty(document, property, success, *contact, &updatedDetails);
     }
 
     foreach (QContactDetail detail, updatedDetails) {
         contact->saveDetail(&detail);
     }
+
+    if (mPropertyHandler && mPropertyHandlerVersion == 1)
+        mPropertyHandler->postProcessProperty(document, property, success, contactIndex, contact);
 }
 /*!
  * Creates a QContactName from \a property

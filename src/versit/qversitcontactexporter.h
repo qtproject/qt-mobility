@@ -72,14 +72,14 @@ class Q_VERSIT_EXPORT QVersitContactExporterDetailHandlerV2
 {
 public:
     virtual ~QVersitContactExporterDetailHandlerV2() {}
-    virtual bool beforeProcessDetail(const QContact& contact,
-                                  const QContactDetail& detail,
-                                  QVersitDocument* document) = 0;
     virtual bool afterProcessDetail(const QContact& contact,
-                                   const QContactDetail& detail,
-                                   const QSet<QString>& processedFields,
-                                   QVersitDocument* document,
-                                   QList<QVersitProperty>* toBeAdded) = 0;
+                                    const QContactDetail& detail,
+                                    const QSet<QString>& processedFields,
+                                    const QVersitDocument& document,
+                                    QList<QVersitProperty>* toBeRemoved,
+                                    QList<QVersitProperty>* toBeAdded) = 0;
+    virtual void endContact(const QContact& contact,
+                            QVersitDocument* document) = 0;
     virtual int version() const { return 2; }
 };
 

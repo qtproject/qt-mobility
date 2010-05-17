@@ -129,36 +129,37 @@ public:
     {
     }
 
-    bool beforeProcessDetail(const QContact& contact,
-                          const QContactDetail& detail,
-                          QVersitDocument* document)
-    {
-        Q_UNUSED(contact)
-        Q_UNUSED(detail)
-        Q_UNUSED(document)
-        return false;
-    }
-
     bool afterProcessDetail(const QContact& contact,
                            const QContactDetail& detail,
                            const QSet<QString>& processedFields,
-                           QVersitDocument* document,
+                           const QVersitDocument& document,
+                           QList<QVersitProperty>* toBeRemoved,
                            QList<QVersitProperty>* toBeAdded)
     {
         mContact = contact;
         mDetail = detail;
         mProcessedFields = processedFields;
-        mDocument = *document;
+        mDocument = document;
+        mToBeRemoved = *toBeRemoved;
         mToBeAdded = *toBeAdded;
         return false;
+    }
+
+    void endContact(const QContact& contact, QVersitDocument* document)
+    {
+        mEndContact = contact;
+        mEndDocument = *document;
     }
 
     QContact mContact;
     QContactDetail mDetail;
     QSet<QString> mProcessedFields;
     QVersitDocument mDocument;
+    QList<QVersitProperty> mToBeRemoved;
     QList<QVersitProperty> mToBeAdded;
 
+    QContact mEndContact;
+    QVersitDocument mEndDocument;
 };
 
 class MyQVersitResourceHandler : public QVersitResourceHandler

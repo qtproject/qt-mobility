@@ -59,16 +59,13 @@ class Q_VERSIT_EXPORT QVersitContactImporterDefaultPropertyHandler
 {
 public:
     QVersitContactImporterDefaultPropertyHandler();
-    bool beforeProcessProperty(const QVersitDocument& document,
-                               const QVersitProperty& property,
-                               int contactIndex,
-                               QContact* contact);
     bool afterProcessProperty(const QVersitDocument& document,
                               const QVersitProperty& property,
                               bool alreadyProcessed,
-                              int contactIndex,
-                              QContact* contact,
+                              const QContact& contact,
                               QList<QContactDetail>* updatedDetails);
+    void endDocument(const QVersitDocument& document,
+            QContact* contact);
 
 private:
     QVersitContactImporterDefaultPropertyHandlerPrivate* d;
@@ -82,14 +79,14 @@ class Q_VERSIT_EXPORT QVersitContactExporterDefaultDetailHandler
 {
 public:
     QVersitContactExporterDefaultDetailHandler();
-    bool beforeProcessDetail(const QContact& contact,
-                             const QContactDetail& detail,
-                             QVersitDocument* document);
     bool afterProcessDetail(const QContact& contact,
                             const QContactDetail& detail,
                             const QSet<QString>& processedFields,
-                            QVersitDocument* document,
+                            const QVersitDocument& document,
+                            QList<QVersitProperty>* toBeRemoved,
                             QList<QVersitProperty>* toBeAdded);
+    void endContact(const QContact& contact,
+            QVersitDocument* document);
 private:
     QVersitContactExporterDefaultDetailHandlerPrivate* d;
 };
