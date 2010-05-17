@@ -49,6 +49,8 @@ QOrganizerItemManagerEngine* QOrganizerItemSkeletonFactory::engine(const QMap<QS
     Q_UNUSED(parameters);
     Q_UNUSED(error);
 
+    /* TODO - if you understand any specific parameters. save them in the engine so that engine::managerParameters can return them */
+
     QOrganizerItemSkeletonEngine* ret = new QOrganizerItemSkeletonEngine(); // manager takes ownership and will clean up.
     return ret;
 }
@@ -68,7 +70,7 @@ QString QOrganizerItemSkeletonEngine::managerName() const
 
 QMap<QString, QString> QOrganizerItemSkeletonEngine::managerParameters() const
 {
-    /* TODO - in case you have any actual parameters that are relevant, return them here */
+    /* TODO - in case you have any actual parameters that are relevant that you saved in the factory method, return them here */
     return QMap<QString, QString>();
 }
 
@@ -239,6 +241,99 @@ bool QOrganizerItemSkeletonEngine::removeDetailDefinition(const QString& definit
     return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
 }
 
+bool QOrganizerItemSkeletonEngine::startRequest(QOrganizerItemAbstractRequest* req)
+{
+    /*
+        TODO
+
+        This is the entry point to the async API.  The request object describes the
+        type of request (switch on req->type()).  Req will not be null when called
+        by the framework.
+
+        Generally, you can queue the request and process them at some later time
+        (probably in another thread).
+
+        Once you start a request, call the updateRequestState and/or the
+        specific updateXXXXXRequest functions to mark it in the active state.
+
+        If your engine is particularly fast, or the operation involves only in
+        memory data, you can process and complete the request here.  That is
+        probably not the case, though.
+
+        Note that when the client is threaded, and the request might live on a
+        different thread, you might need to be careful with locking.  In particular,
+        the request might be deleted while you are still working on it.  In this case,
+        your requestDestroyed function will be called while the request is still valid,
+        and you should block in that function until your worker thread (etc) has been
+        notified not to touch that request any more.
+
+        We plan to provide some boiler plate code that will allow you to:
+
+        1) implement the sync functions, and have the async versions call the sync
+           in another thread
+
+        2) or implement the async versions of the function, and have the sync versions
+           call the async versions.
+
+        It's not ready yet, though.
+
+        Return true if the request can be started, false otherwise.  You can set an error
+        in the request if you like.
+    */
+    return QOrganizerItemManagerEngine::startRequest(req);
+}
+
+bool QOrganizerItemSkeletonEngine::cancelRequest(QOrganizerItemAbstractRequest* req)
+{
+    /*
+        TODO
+
+        Cancel an in progress async request.  If not possible, return false from here.
+    */
+    return QOrganizerItemManagerEngine::cancelRequest(req);
+}
+
+bool QOrganizerItemSkeletonEngine::waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs)
+{
+    /*
+        TODO
+
+        Wait for a request to complete (up to a max of msecs milliseconds).
+
+        Return true if the request is finished (including if it was already).  False otherwise.
+
+        You should really implement this function, if nothing else than as a delay, since clients
+        may call this in a loop.
+
+        It's best to avoid processing events, if you can, or at least only process non-UI events.
+    */
+    return QOrganizerItemManagerEngine::waitForRequestFinished(req, msecs);
+}
+
+void QOrganizerItemSkeletonEngine::requestDestroyed(QOrganizerItemAbstractRequest* req)
+{
+    /*
+        TODO
+
+        This is called when a request is being deleted.  It lets you know:
+
+        1) the client doesn't care about the request any more.  You can still complete it if
+           you feel like it.
+        2) you can't reliably access any properties of the request pointer any more.  The pointer will
+           be invalid once this function returns.
+
+        This means that if you have a worker thread, you need to let that thread know that the
+        request object is not valid and block until that thread acknowledges it.  One way to do this
+        is to have a QSet<QOIAR*> (or QMap<QOIAR, MyCustomRequestState>) that tracks active requests, and
+        insert into that set in startRequest, and remove in requestDestroyed (or when it finishes or is
+        cancelled).  Protect that set/map with a mutex, and make sure you take the mutex in the worker
+        thread before calling any of the QOIAR::updateXXXXXXRequest functions.  And be careful of lock
+        ordering problems :D
+
+    */
+    return QOrganizerItemManagerEngine::requestDestroyed(req);
+}
+
 bool QOrganizerItemSkeletonEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const
 {
     // TODO - the answer to the question may depend on the type
@@ -261,7 +356,7 @@ bool QOrganizerItemSkeletonEngine::hasFeature(QOrganizerItemManager::ManagerFeat
 
 bool QOrganizerItemSkeletonEngine::isFilterSupported(const QOrganizerItemFilter& filter) const
 {
-    // TODO if you engine can natively support the filter, return true.  Otherwise it will be emulated.
+    // TODO if you engine can natively support the filter, return true.  Otherwise you should emulate support in the item{Ids} functions.
     Q_UNUSED(filter);
     return false;
 }

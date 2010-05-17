@@ -135,6 +135,12 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
     QStringList supportedItemTypes() const;
 
+    /* Asynchronous Request Support */
+    void requestDestroyed(QOrganizerItemAbstractRequest* req);
+    bool startRequest(QOrganizerItemAbstractRequest* req);
+    bool cancelRequest(QOrganizerItemAbstractRequest* req);
+    bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
+
 private:
     QOrganizerItemSkeletonEngineData* d;
 
