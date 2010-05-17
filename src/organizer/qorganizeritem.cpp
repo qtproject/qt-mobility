@@ -275,11 +275,8 @@ QOrganizerItemLocalId QOrganizerItem::localId() const
  */
 QString QOrganizerItem::type() const
 {
-    // type is detail 0
-    QString type = d->m_details.at(0).value(QOrganizerItemType::FieldType);
-    if (type.isEmpty())
-        return QString(QLatin1String(QOrganizerItemType::TypeNote));
-    return type;
+    QOrganizerItemType newType = detail<QOrganizerItemType>();
+    return newType.type();
 }
 
 /*!
@@ -287,12 +284,10 @@ QString QOrganizerItem::type() const
  */
 void QOrganizerItem::setType(const QString& type)
 {
-    // type is detail 0
-    QOrganizerItemType newType;
+    QOrganizerItemType newType = detail<QOrganizerItemType>();
     newType.setType(type);
     newType.d->m_access = QOrganizerItemDetail::Irremovable;
-
-    d->m_details[0] = newType;
+    saveDetail(&newType);
 }
 
 /*!
@@ -300,9 +295,11 @@ void QOrganizerItem::setType(const QString& type)
  */
 void QOrganizerItem::setType(const QOrganizerItemType& type)
 {
-    // type is detail 0
-    d->m_details[0] = type;
-    d->m_details[0].d->m_access = QOrganizerItemDetail::Irremovable;
+    // XXX TODO: may need to copy in _all_ fields, not just the type field?
+    QOrganizerItemType newType = detail<QOrganizerItemType>();
+    newType.setType(type.type());
+    newType.d->m_access = QOrganizerItemDetail::Irremovable;
+    saveDetail(&newType);
 }
 
 QString QOrganizerItem::displayLabel() const
@@ -581,14 +578,50 @@ bool QOrganizerItem::saveDetail(QOrganizerItemDetail* detail)
 
     /* Also handle organizeritem type specially - only one of them. */
     if (QOrganizerItemDetailPrivate::detailPrivate(*detail)->m_definitionName == QOrganizerItemType::DefinitionName.latin1()) {
-        detail->d->m_access |= QOrganizerItemDetail::Irremovable;
-        d->m_details[0] = *detail; // type is zeroth detail.
+        for (int i = 0; i < d->m_details.size(); i++) {
+            QOrganizerItemDetail curr = d->m_details.at(i);
+            if (detail->d->m_definitionName == curr.d->m_definitionName) {
+                curr.setValue(QOrganizerItemType::FieldType, detail->value(QOrganizerItemType::FieldType));
+                d->m_details.replace(i, curr);
+                return true;
+            }
+        }
+
+        // doesn't already exist; append it.
+        d->m_details.append(*detail);
+        return true;
+    }
+
+    /* And description */
+    if (QOrganizerItemDetailPrivate::detailPrivate(*detail)->m_definitionName == QOrganizerItemDescription::DefinitionName.latin1()) {
+        for (int i = 0; i < d->m_details.size(); i++) {
+            QOrganizerItemDetail curr = d->m_details.at(i);
+            if (detail->d->m_definitionName == curr.d->m_definitionName) {
+                curr.setValue(QOrganizerItemDescription::FieldDescription, detail->value(QOrganizerItemDescription::FieldDescription));
+                d->m_details.replace(i, curr);
+                return true;
+            }
+        }
+
+        // doesn't already exist; append it.
+        d->m_details.append(*detail);
         return true;
     }
 
     /* And display label.. */
     if (QOrganizerItemDetailPrivate::detailPrivate(*detail)->m_definitionName == QOrganizerItemDisplayLabel::DefinitionName.latin1()) {
-        return false;
+        for (int i = 0; i < d->m_details.size(); i++) {
+            QOrganizerItemDetail curr = d->m_details.at(i);
+            if (detail->d->m_definitionName == curr.d->m_definitionName) {
+                curr.setValue(QOrganizerItemDisplayLabel::FieldLabel, detail->value(QOrganizerItemDisplayLabel::FieldLabel));
+                d->m_details.replace(i, curr);
+                return true;
+            }
+        }
+
+        // doesn't already exist; append it.
+        d->m_details.append(*detail);
+        return true;
     }
 
     // try to find the "old version" of this field
