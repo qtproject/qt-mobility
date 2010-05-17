@@ -75,7 +75,7 @@ symbian: {
         inc/filtering/cntdisplaylabelsqlfilter.h \
         inc/filtering/cntsqlsearch.h
         
-    SOURCES += \       
+    SOURCES += \
         src/transform/cnttransformcontact.cpp \
         src/transform/cnttransformcontactdata.cpp \
         src/transform/cnttransformname.cpp \
@@ -99,7 +99,7 @@ symbian: {
         src/transform/cnttransformanniversarysimple.cpp \
         src/transform/cnttransformgeolocation.cpp \
         src/transform/cnttransformnote.cpp \
-        src/transform/cnttransformfamily.cpp \  
+        src/transform/cnttransformfamily.cpp \
         src/transform/cnttransformempty.cpp \
         src/filtering/cntfilterrelationship.cpp \
         src/filtering/cntfilterdetaildisplaylabel.cpp \
@@ -118,7 +118,7 @@ symbian: {
         src/filtering/cntsymbiansrvconnection.cpp \
         src/filtering/cntdisplaylabelsqlfilter.cpp \
         src/filtering/cntsqlsearch.cpp \
-    		src/cntsymbianengine.cpp \
+        src/cntsymbianengine.cpp \
         src/cntabstractrelationship.cpp \
         src/cntrelationshipgroup.cpp \
         src/cntsymbiantransformerror.cpp \
