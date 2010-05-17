@@ -43,6 +43,7 @@
 #define QT7PLAYERSERVICE_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qset.h>
 #include <qmediaservice.h>
 
 
@@ -75,9 +76,7 @@ private slots:
 private:
     QT7PlayerSession *m_session;
     QT7PlayerControl *m_control;
-    QT7VideoWindowControl *m_videoWidnowControl;
-    QT7VideoWidgetControl *m_videoWidgetControl;
-    QT7VideoRendererControl *m_videoRendererControl;
+    QSet<QMediaControl *> m_videoOutputs;
     QT7PlayerMetaDataControl *m_playerMetaDataControl;
 };
 

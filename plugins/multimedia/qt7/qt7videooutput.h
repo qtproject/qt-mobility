@@ -68,8 +68,14 @@ public:
     virtual void updateNaturalSize(const QSize &newSize) = 0;
 };
 
+#define QT7VideoOutput_iid \
+    "com.nokia.Qt.QT7VideoOutput/1.0"
+Q_DECLARE_INTERFACE(QT7VideoOutput, QT7VideoOutput_iid)
+
 class QT7VideoWindowControl : public QVideoWindowControl, public QT7VideoOutput
 {
+Q_OBJECT
+Q_INTERFACES(QT7VideoOutput)
 public:
     virtual ~QT7VideoWindowControl() {}
 
@@ -81,6 +87,8 @@ protected:
 
 class QT7VideoRendererControl : public QVideoRendererControl, public QT7VideoOutput
 {
+Q_OBJECT
+Q_INTERFACES(QT7VideoOutput)
 public:
     virtual ~QT7VideoRendererControl() {}
 
@@ -92,6 +100,8 @@ protected:
 
 class QT7VideoWidgetControl : public QVideoWidgetControl, public QT7VideoOutput
 {
+Q_OBJECT
+Q_INTERFACES(QT7VideoOutput)
 public:
     virtual ~QT7VideoWidgetControl() {}
 

@@ -43,6 +43,7 @@
 #define QT7PLAYERSESSION_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qset.h>
 
 #include <qmediaplayercontrol.h>
 #include <qmediaplayer.h>
@@ -68,7 +69,9 @@ public:
     void *movie() const;
 
     void setControl(QT7PlayerControl *control);
-    void setVideoOutput(QT7VideoOutput *output);
+
+    void addVideoOutput(QT7VideoOutput *output);
+    void removeVideoOutput(QT7VideoOutput *output);
 
     QMediaPlayer::State state() const;
     QMediaPlayer::MediaStatus mediaStatus() const;
@@ -129,7 +132,7 @@ private:
     QIODevice *m_mediaStream;
     QMediaContent m_resources;
 
-    QT7VideoOutput *m_videoOutput;
+    QSet<QT7VideoOutput *> m_videoOutputs;
 
     mutable qint64 m_currentTime;
 
