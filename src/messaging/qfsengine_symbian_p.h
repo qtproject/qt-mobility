@@ -270,7 +270,7 @@ public:
                                 const QString body = QString(),
                                 QMessageDataComparator::MatchFlags matchFlags = 0);
 
-    enum Field {None = 0, Sender, Subject, Body};
+    enum Field {None = 0, Sender, Recipients, Subject, Body};
 
     
 public slots:

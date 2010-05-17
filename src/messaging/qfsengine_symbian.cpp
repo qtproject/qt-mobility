@@ -2303,10 +2303,6 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
             break;
             }
 
-        case QMessageFilterPrivate::ParentAccountIdFilter:
-        case QMessageFilterPrivate::ParentFolderIdFilter: 
-        case QMessageFilterPrivate::TimeStamp:
-        case QMessageFilterPrivate::ReceptionTimeStamp:
         case QMessageFilterPrivate::Sender: {
             m_searchField = Sender;
             if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
@@ -2331,11 +2327,31 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
             break;
         }
 
-        case QMessageFilterPrivate::Recipients:
+        case QMessageFilterPrivate::Recipients: {
+            m_searchField = Recipients;
+            if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
+                QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                if (cmp == QMessageDataComparator::Includes) {
+                    if (pf->_value.toString().length() > 0) {
+                        m_searchKey = pf->_value.toString();
+                        m_numberOfHandledFilters++;
+                        getAllMessagesL(sortCriteria);
+                    }
+                } else { // Excludes
+                    //TODO:
+                }
+            }
+            break;
+        }
+
         case QMessageFilterPrivate::Subject:
         case QMessageFilterPrivate::Status:
         case QMessageFilterPrivate::Priority:
         case QMessageFilterPrivate::Size:
+        case QMessageFilterPrivate::ParentAccountIdFilter:
+        case QMessageFilterPrivate::ParentFolderIdFilter: 
+        case QMessageFilterPrivate::TimeStamp:
+        case QMessageFilterPrivate::ReceptionTimeStamp:
         case QMessageFilterPrivate::None:
         default:
             break;
@@ -2432,6 +2448,22 @@ bool CFSMessagesFindOperation::fillsSearchKeyCriteria(QMessageId& messageId)
     switch (m_searchField) {
     case Sender: {
         return message.from().addressee().contains(m_searchKey, caseSensitivity);
+        break;
+    }
+    case Recipients: {
+        foreach (QMessageAddress toRecipient, message.to()) {
+            if (toRecipient.addressee().contains(m_searchKey, caseSensitivity))
+                return true;
+        }
+        foreach (QMessageAddress ccRecipient, message.cc()) {
+            if (ccRecipient.addressee().contains(m_searchKey, caseSensitivity))
+                return true;
+        }
+        foreach (QMessageAddress bccRecipient, message.bcc()) {
+            if (bccRecipient.addressee().contains(m_searchKey, caseSensitivity))
+                return true;
+        }
+        return false;
         break;
     }
     case Subject: {
