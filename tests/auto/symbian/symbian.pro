@@ -13,6 +13,15 @@ contains(mobility_modules,multimedia) {
             qmediaobject_s60 \
             qmediaplayer_s60 \
             qmediaplaylist_s60 \
-            qradiotuner_s60 \
+            qradiotuner_s60
+
+    contains(openmaxal_symbian_enabled, no) {
+    SUBDIRS += \             
             qmediarecorder_s60
+    }
+
+    contains(openmaxal_symbian_enabled, yes) {
+    SUBDIRS += \             
+            qmediarecorder_xa
+    }
 }
