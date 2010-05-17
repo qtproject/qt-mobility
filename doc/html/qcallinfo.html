@@ -20,68 +20,85 @@
 <li><a href="qcallinfo-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
+<a name="properties"></a>
+<h2>Properties</h2>
+<ul>
+<li><div class="fn"><b><a href="qcallinfo.html#callIdentifier-prop">callIdentifier</a></b> : const QString</div></li>
+<li><div class="fn"><b><a href="qcallinfo.html#contacts-prop">contacts</a></b> : const QList&lt;quint32&gt;</div></li>
+<li><div class="fn"><b><a href="qcallinfo.html#status-prop">status</a></b> : const CallStatus</div></li>
+<li><div class="fn"><b><a href="qcallinfo.html#type-prop">type</a></b> : const CallType</div></li>
+</ul>
+<ul>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+</ul>
+<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#QCallInfo">QCallInfo</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#dtor.QCallInfo">~QCallInfo</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">CallStatus </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#callStatus">callStatus</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">CallType </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#callType">callType</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#contacts">contacts</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#phoneNumber">phoneNumber</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#querryData">querryData</a></b> ( PrivateDataType <i>datatype</i>, const QObject &amp; <i>param</i>, void ** <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">unsigned long </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#sipID">sipID</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#callIdentifier-prop">callIdentifier</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;quint32&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#contacts-prop">contacts</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">CallStatus </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#status-prop">status</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">CallType </td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#type-prop">type</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcallinfo.html#QCallInfo">QCallInfo</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QCallInfo class represents a call including the type, status and other information of the call.</p>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Class</th></tr></thead>
-<tr valign="top" class="odd"><td>QCallInfo::phoneNumber</td></tr>
-<tr valign="top" class="even"><td>QCallInfo::sipID</td></tr>
-<tr valign="top" class="odd"><td>QCallInfo::contacts</td></tr>
-<tr valign="top" class="even"><td>QCallInfo::querryData</td></tr>
-<tr valign="top" class="odd"><td>QCallInfo::callType</td></tr>
-<tr valign="top" class="even"><td>QCallInfo::callStatus</td></tr>
-</table></p>
+<hr />
+<h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QCallInfo/callIdentifier"></a>
+<h3 class="fn"><a name="callIdentifier-prop"></a>callIdentifier : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>callIdentifier</b> () const</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QCallInfo/contacts"></a>
+<h3 class="fn"><a name="contacts-prop"></a>contacts : const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a>&gt;</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;quint32&gt; </td><td class="memItemRight" valign="bottom"><b>contacts</b> () const</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QCallInfo/status"></a>
+<h3 class="fn"><a name="status-prop"></a>status : const CallStatus</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">CallStatus </td><td class="memItemRight" valign="bottom"><b>status</b> () const</td></tr>
+</table>
+<a name="//apple_ref/cpp/instm/QCallInfo/type"></a>
+<h3 class="fn"><a name="type-prop"></a>type : const CallType</h3>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">CallType </td><td class="memItemRight" valign="bottom"><b>type</b> () const</td></tr>
+</table>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QCallInfo/QCallInfo"></a>
-<h3 class="fn"><a name="QCallInfo"></a>QCallInfo::QCallInfo ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<h3 class="fn"><a name="QCallInfo"></a>QCallInfo::QCallInfo ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Constructor of a call info object.</p>
 <a name="//apple_ref/cpp/instm/QCallInfo/~QCallInfo"></a>
 <h3 class="fn"><a name="dtor.QCallInfo"></a>QCallInfo::~QCallInfo ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destructor of a call info object.</p>
-<a name="//apple_ref/cpp/instm/QCallInfo/callStatus"></a>
-<h3 class="fn"><a name="callStatus"></a>CallStatus QCallInfo::callStatus ()</h3>
-<a name="//apple_ref/cpp/instm/QCallInfo/callType"></a>
-<h3 class="fn"><a name="callType"></a>CallType QCallInfo::callType ()</h3>
-<p>Gives back the status of the call.</p>
-<a name="//apple_ref/cpp/instm/QCallInfo/contacts"></a>
-<h3 class="fn"><a name="contacts"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QContactLocalId&gt; QCallInfo::contacts ()</h3>
-<a name="//apple_ref/cpp/instm/QCallInfo/phoneNumber"></a>
-<h3 class="fn"><a name="phoneNumber"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QCallInfo::phoneNumber ()</h3>
-<p>Gives back the phone number of a call.</p>
-<a name="//apple_ref/cpp/instm/QCallInfo/querryData"></a>
-<h3 class="fn"><a name="querryData"></a>bool QCallInfo::querryData ( PrivateDataType <i>datatype</i>, const <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> &amp; <i>param</i>, void ** <i>value</i> )</h3>
-<p>Function that allows to querry special data out from the private <a href="qcallinfo.html">QCallInfo</a> implementation.</p>
-<a name="//apple_ref/cpp/instm/QCallInfo/sipID"></a>
-<h3 class="fn"><a name="sipID"></a>unsigned long QCallInfo::sipID ()</h3>
-<p>Gives back a list of contact id (used in <a href="qcontact.html">QContact</a>).</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

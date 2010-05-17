@@ -48,7 +48,6 @@
 #include <QObject>
 #include <QList>
 #include <QString>
-#include "../contacts/qtcontactsglobal.h"
 
 QT_BEGIN_HEADER
 
@@ -56,7 +55,7 @@ QTM_BEGIN_NAMESPACE
 
 class QTelephonyCallListPrivate;
 class QCallInfo;
-class QTelephonyCallList : public QObject
+class Q_TELEPHONY_EXPORT QTelephonyCallList : public QObject
 {
     Q_OBJECT
 public:
@@ -66,15 +65,14 @@ Q_SIGNALS:
     void callstatusChanged(const QCallInfo::CallStatus status);
     void callsChanged();
 public:
-    Q_PROPERTY(QList<QCallInfo*> calls READ calls)
-    QList<QCallInfo*> calls() const;
+    Q_PROPERTY(QCallInfo* currentCall READ currentCall)
+    QCallInfo* currentCall();
+    Q_INVOKABLE QList<QCallInfo*> calls() const;
     Q_INVOKABLE QList<QCallInfo*> calls(const QCallInfo::CallType& calltype) const;
     Q_INVOKABLE QList<QCallInfo*> calls(const QCallInfo::CallStatus& callstatus) const;
     Q_INVOKABLE QList<QCallInfo*> calls(const QCallInfo::CallType& calltype, const QCallInfo::CallStatus& callStatus) const;
     //can't do Q_PROPERTY because of QCallInfo::CallStatus created parse error in moc
     Q_INVOKABLE QCallInfo::CallStatus currentCallStatus();
-    Q_PROPERTY(QCallInfo* currentCall READ currentCall)
-    QCallInfo* currentCall();
 private:
     QTelephonyCallListPrivate *d;
 };

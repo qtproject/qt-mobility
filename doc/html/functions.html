@@ -309,11 +309,10 @@
 <li>bytesReceived: <a href="qnetworksession.html#bytesReceived">QNetworkSession</a></li>
 <li>bytesWritten: <a href="qnetworksession.html#bytesWritten">QNetworkSession</a></li>
 <li>calendarId:<a name="c"></a> <a href="qcontactanniversary.html#calendarId">QContactAnniversary</a></li>
-<li>callStatus: <a href="qcallinfo.html#callStatus">QCallInfo</a></li>
-<li>callType: <a href="qcallinfo.html#callType">QCallInfo</a></li>
-<li>calllist: <a href="qtelephonyevent.html#calllist-4">QTelephonyEvent</a></li>
-<li>calllistChange: <a href="qtelephonyevent.html#calllistChange">QTelephonyEvent</a></li>
-<li>callstatusChange: <a href="qtelephonyevent.html#callstatusChange">QTelephonyEvent</a></li>
+<li>callIdentifier: <a href="qcallinfo.html#callIdentifier-prop">QCallInfo</a></li>
+<li>calls: <a href="qtelephonycalllist.html#calls-4">QTelephonyCallList</a></li>
+<li>callsChanged: <a href="qtelephonycalllist.html#callsChanged">QTelephonyCallList</a></li>
+<li>callstatusChanged: <a href="qtelephonycalllist.html#callstatusChanged">QTelephonyCallList</a></li>
 <li>canRead: <a href="qmediaplaylistioplugin.html#canRead-2">QMediaPlaylistIOPlugin</a></li>
 <li>canWrite: <a href="qmediaplaylistioplugin.html#canWrite">QMediaPlaylistIOPlugin</a></li>
 <li>cancel: <a href="qcontactabstractrequest.html#cancel">QContactAbstractRequest</a> <a href="qmessageservice.html#cancel">QMessageService</a></li>
@@ -360,7 +359,7 @@
 <li>contact: <a href="qcontactmanager.html#contact">QContactManager</a> <a href="qcontactmanagerengine.html#contact">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#contact">QContactMemoryEngine</a></li>
 <li>contactFilter: <a href="qcontactaction.html#contactFilter">QContactAction</a></li>
 <li>contactType: <a href="qcontactdetaildefinitionfetchrequest.html#contactType">QContactDetailDefinitionFetchRequest</a> <a href="qcontactdetaildefinitionremoverequest.html#contactType">QContactDetailDefinitionRemoveRequest</a> <a href="qcontactdetaildefinitionsaverequest.html#contactType">QContactDetailDefinitionSaveRequest</a></li>
-<li>contacts: <a href="qcallinfo.html#contacts">QCallInfo</a> <a href="qcontactfetchrequest.html#contacts">QContactFetchRequest</a> <a href="qcontactmanager.html#contacts-2">QContactManager</a> <a href="qcontactmanagerengine.html#contacts-2">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#contacts">QContactMemoryEngine</a> <a href="qcontactsaverequest.html#contacts">QContactSaveRequest</a></li>
+<li>contacts: <a href="qcallinfo.html#contacts-prop">QCallInfo</a> <a href="qcontactfetchrequest.html#contacts">QContactFetchRequest</a> <a href="qcontactmanager.html#contacts-2">QContactManager</a> <a href="qcontactmanagerengine.html#contacts-2">QContactManagerEngine</a> <a href="qcontactmemoryengine.html#contacts">QContactMemoryEngine</a> <a href="qcontactsaverequest.html#contacts">QContactSaveRequest</a></li>
 <li>contactsAdded: <a href="qcontactmanager.html#contactsAdded">QContactManager</a> <a href="qcontactmanagerengine.html#contactsAdded">QContactManagerEngine</a></li>
 <li>contactsChanged: <a href="qcontactmanager.html#contactsChanged">QContactManager</a> <a href="qcontactmanagerengine.html#contactsChanged">QContactManagerEngine</a></li>
 <li>contactsRemoved: <a href="qcontactmanager.html#contactsRemoved">QContactManager</a> <a href="qcontactmanagerengine.html#contactsRemoved">QContactManagerEngine</a></li>
@@ -391,6 +390,8 @@
 <li>createResponseMessage: <a href="qmessage.html#createResponseMessage">QMessage</a></li>
 <li>createWriter: <a href="qmediaplaylistioplugin.html#createWriter">QMediaPlaylistIOPlugin</a></li>
 <li>created: <a href="qcontacttimestamp.html#created">QContactTimestamp</a></li>
+<li>currentCall: <a href="qtelephonycalllist.html#currentCall-prop">QTelephonyCallList</a></li>
+<li>currentCallStatus: <a href="qtelephonycalllist.html#currentCallStatus">QTelephonyCallList</a></li>
 <li>currentCountryCode: <a href="qsysteminfo.html#currentCountryCode-prop">QSystemInfo</a></li>
 <li>currentIndex: <a href="qmediaplaylist.html#currentIndex-prop">QMediaPlaylist</a> <a href="qmediaplaylistcontrol.html#currentIndex">QMediaPlaylistControl</a> <a href="qmediaplaylistnavigator.html#currentIndex-prop">QMediaPlaylistNavigator</a></li>
 <li>currentIndexChanged: <a href="qmediaplaylist.html#currentIndexChanged">QMediaPlaylist</a> <a href="qmediaplaylistcontrol.html#currentIndexChanged">QMediaPlaylistControl</a> <a href="qmediaplaylistnavigator.html#currentIndexChanged">QMediaPlaylistNavigator</a></li>
@@ -406,7 +407,6 @@
 <li>currentPowerState: <a href="qsystemdeviceinfo.html#currentPowerState-prop">QSystemDeviceInfo</a></li>
 <li>currentProfile: <a href="qsystemdeviceinfo.html#currentProfile-prop">QSystemDeviceInfo</a></li>
 <li>currentProfileChanged: <a href="qsystemdeviceinfo.html#currentProfileChanged">QSystemDeviceInfo</a></li>
-<li>currentStatus: <a href="qtelephonyevent.html#currentStatus">QTelephonyEvent</a></li>
 <li>customAttribute: <a href="qservicefilter.html#customAttribute">QServiceFilter</a> <a href="qserviceinterfacedescriptor.html#customAttribute">QServiceInterfaceDescriptor</a></li>
 <li>customAttributes: <a href="qservicefilter.html#customAttributes">QServiceFilter</a> <a href="qserviceinterfacedescriptor.html#customAttributes">QServiceInterfaceDescriptor</a></li>
 <li>customLabel: <a href="qcontactname.html#customLabel">QContactName</a></li>
@@ -722,7 +722,6 @@
 <li>participantRole: <a href="qcontactrelationshipfetchrequest.html#participantRole">QContactRelationshipFetchRequest</a></li>
 <li>path: <a href="qmessagefolder.html#path">QMessageFolder</a> <a href="qvaluespacepublisher.html#path">QValueSpacePublisher</a> <a href="qvaluespacesubscriber.html#path-prop">QValueSpaceSubscriber</a></li>
 <li>pause: <a href="qmediaimageviewer.html#pause">QMediaImageViewer</a> <a href="qmediaplayer.html#pause">QMediaPlayer</a> <a href="qmediaplayercontrol.html#pause">QMediaPlayerControl</a> <a href="qmediarecorder.html#pause">QMediaRecorder</a> <a href="qmediarecordercontrol.html#pause">QMediaRecorderControl</a></li>
-<li>phoneNumber: <a href="qcallinfo.html#phoneNumber">QCallInfo</a></li>
 <li>play: <a href="qmediaimageviewer.html#play">QMediaImageViewer</a> <a href="qmediaplayer.html#play">QMediaPlayer</a> <a href="qmediaplayercontrol.html#play">QMediaPlayerControl</a></li>
 <li>playbackMode: <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist</a> <a href="qmediaplaylistcontrol.html#playbackMode">QMediaPlaylistControl</a> <a href="qmediaplaylistnavigator.html#playbackMode-prop">QMediaPlaylistNavigator</a></li>
 <li>playbackModeChanged: <a href="qmediaplaylist.html#playbackModeChanged">QMediaPlaylist</a> <a href="qmediaplaylistcontrol.html#playbackModeChanged">QMediaPlaylistControl</a> <a href="qmediaplaylistnavigator.html#playbackModeChanged">QMediaPlaylistNavigator</a></li>
@@ -868,7 +867,6 @@
 <li>qt_extension: <a href="http://qt.nokia.com/doc/4.6/qextensionmanager.html#qt_extension">global</a></li>
 <li>qt_set_sequence_auto_mnemonic: <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qt_set_sequence_auto_mnemonic">global</a></li>
 <li>quality: <a href="qaudioencodersettings.html#quality">QAudioEncoderSettings</a> <a href="qimageencodersettings.html#quality">QImageEncoderSettings</a> <a href="qvideoencodersettings.html#quality">QVideoEncoderSettings</a></li>
-<li>querryData: <a href="qcallinfo.html#querryData">QCallInfo</a></li>
 <li>queryAccounts: <a href="qmessagemanager.html#queryAccounts-2">QMessageManager</a></li>
 <li>queryFolders: <a href="qmessagemanager.html#queryFolders-2">QMessageManager</a></li>
 <li>queryMessages: <a href="qmessagemanager.html#queryMessages-4">QMessageManager</a> <a href="qmessageservice.html#queryMessages-2">QMessageService</a></li>
@@ -1181,7 +1179,6 @@
 <li>signalStrengthChanged: <a href="qradiotuner.html#signalStrengthChanged">QRadioTuner</a> <a href="qradiotunercontrol.html#signalStrengthChanged">QRadioTunerControl</a></li>
 <li>simStatus: <a href="qsystemdeviceinfo.html#simStatus-prop">QSystemDeviceInfo</a></li>
 <li>since: <a href="qcontactchangelogfilter.html#since">QContactChangeLogFilter</a></li>
-<li>sipID: <a href="qcallinfo.html#sipID">QCallInfo</a></li>
 <li>size: <a href="qmessage.html#size">QMessage</a> <a href="qmessagecontentcontainer.html#size">QMessageContentContainer</a></li>
 <li>sizeHint: <a href="qvideowidget.html#sizeHint">QVideoWidget</a></li>
 <li>sortContacts: <a href="qcontactmanagerengine.html#sortContacts">QContactManagerEngine</a></li>
@@ -1199,7 +1196,7 @@
 <li>startup: <a href="qabstractvaluespacelayer.html#startup">QAbstractValueSpaceLayer</a></li>
 <li>state: <a href="qcamera.html#state-prop">QCamera</a> <a href="qcameracontrol.html#state">QCameraControl</a> <a href="qmediaimageviewer.html#state-prop">QMediaImageViewer</a> <a href="qmediaplayer.html#state-prop">QMediaPlayer</a> <a href="qmediaplayercontrol.html#state">QMediaPlayerControl</a> <a href="qmediarecorder.html#state">QMediaRecorder</a> <a href="qmediarecordercontrol.html#state">QMediaRecorderControl</a> <a href="qmessageservice.html#state">QMessageService</a> <a href="qnetworkconfiguration.html#state">QNetworkConfiguration</a> <a href="qnetworksession.html#state">QNetworkSession</a> <a href="qradiotuner.html#state-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#state">QRadioTunerControl</a></li>
 <li>stateChanged: <a href="qcamera.html#stateChanged">QCamera</a> <a href="qcameracontrol.html#stateChanged">QCameraControl</a> <a href="qmediaimageviewer.html#stateChanged">QMediaImageViewer</a> <a href="qmediaplayer.html#stateChanged">QMediaPlayer</a> <a href="qmediaplayercontrol.html#stateChanged">QMediaPlayerControl</a> <a href="qmediarecorder.html#stateChanged">QMediaRecorder</a> <a href="qmediarecordercontrol.html#stateChanged">QMediaRecorderControl</a> <a href="qmessageservice.html#stateChanged">QMessageService</a> <a href="qnetworksession.html#stateChanged">QNetworkSession</a> <a href="qradiotuner.html#stateChanged">QRadioTuner</a> <a href="qradiotunercontrol.html#stateChanged">QRadioTunerControl</a></li>
-<li>status: <a href="qcontactabstractrequest.html#status">QContactAbstractRequest</a> <a href="qmessage.html#status">QMessage</a></li>
+<li>status: <a href="qcallinfo.html#status-prop">QCallInfo</a> <a href="qcontactabstractrequest.html#status">QContactAbstractRequest</a> <a href="qmessage.html#status">QMessage</a></li>
 <li>statusMessage: <a href="qcontactonlineaccount.html#statusMessage">QContactOnlineAccount</a></li>
 <li>stereoMode: <a href="qradiotuner.html#stereoMode-prop">QRadioTuner</a> <a href="qradiotunercontrol.html#stereoMode">QRadioTunerControl</a></li>
 <li>stereoStatusChanged: <a href="qradiotuner.html#stereoStatusChanged">QRadioTuner</a> <a href="qradiotunercontrol.html#stereoStatusChanged">QRadioTunerControl</a></li>
@@ -1256,7 +1253,7 @@
 <li>to: <a href="qmessage.html#to">QMessage</a></li>
 <li>toString: <a href="qgeocoordinate.html#toString">QGeoCoordinate</a> <a href="qmessageaccountid.html#toString">QMessageAccountId</a> <a href="qmessagecontentcontainerid.html#toString">QMessageContentContainerId</a> <a href="qmessagefolderid.html#toString">QMessageFolderId</a> <a href="qmessageid.html#toString">QMessageId</a></li>
 <li>totalDiskSpace: <a href="qsystemstorageinfo.html#totalDiskSpace">QSystemStorageInfo</a></li>
-<li>type: <a href="qcontact.html#type">QContact</a> <a href="qcontactabstractrequest.html#type">QContactAbstractRequest</a> <a href="qcontactfilter.html#type">QContactFilter</a> <a href="qcontacttype.html#type">QContactType</a> <a href="qgeocoordinate.html#type">QGeoCoordinate</a> <a href="qmediaserviceproviderhint.html#type">QMediaServiceProviderHint</a> <a href="qmessage.html#type">QMessage</a> <a href="qmessageaddress.html#type">QMessageAddress</a> <a href="qnetworkconfiguration.html#type">QNetworkConfiguration</a></li>
+<li>type: <a href="qcallinfo.html#type-prop">QCallInfo</a> <a href="qcontact.html#type">QContact</a> <a href="qcontactabstractrequest.html#type">QContactAbstractRequest</a> <a href="qcontactfilter.html#type">QContactFilter</a> <a href="qcontacttype.html#type">QContactType</a> <a href="qgeocoordinate.html#type">QGeoCoordinate</a> <a href="qmediaserviceproviderhint.html#type">QMediaServiceProviderHint</a> <a href="qmessage.html#type">QMessage</a> <a href="qmessageaddress.html#type">QMessageAddress</a> <a href="qnetworkconfiguration.html#type">QNetworkConfiguration</a></li>
 <li>typeForDrive: <a href="qsystemstorageinfo.html#typeForDrive">QSystemStorageInfo</a></li>
 <li>uninstallService:<a name="u"></a> <a href="qserviceplugininterface.html#uninstallService">QServicePluginInterface</a></li>
 <li>unknownContactDetails: <a href="qversitcontactexporter.html#unknownContactDetails">QVersitContactExporter</a></li>

@@ -97,12 +97,10 @@
     </section>
     <section ref="qcallinfo.html" title="QCallInfo Class Reference">
         <keyword ref="qcallinfo.html">QCallInfo</keyword>
-        <keyword ref="qcallinfo.html#callStatus">callStatus</keyword>
-        <keyword ref="qcallinfo.html#callType">callType</keyword>
-        <keyword ref="qcallinfo.html#contacts">contacts</keyword>
-        <keyword ref="qcallinfo.html#phoneNumber">phoneNumber</keyword>
-        <keyword ref="qcallinfo.html#querryData">querryData</keyword>
-        <keyword ref="qcallinfo.html#sipID">sipID</keyword>
+        <keyword ref="qcallinfo.html#callIdentifier-prop">callIdentifier</keyword>
+        <keyword ref="qcallinfo.html#contacts-prop">contacts</keyword>
+        <keyword ref="qcallinfo.html#status-prop">status</keyword>
+        <keyword ref="qcallinfo.html#type-prop">type</keyword>
         <section ref="qcallinfo-members.html" title="List of all members"/>
     </section>
     <section ref="qcamera.html" title="QCamera Class Reference">
@@ -2741,13 +2739,14 @@
         <keyword ref="qsystemstorageinfo.html#typeForDrive">typeForDrive</keyword>
         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
     </section>
-    <section ref="qtelephonyevent.html" title="QTelephonyEvent Class Reference">
-        <keyword ref="qtelephonyevent.html">QTelephonyEvent</keyword>
-        <keyword ref="qtelephonyevent.html#calllist">calllist</keyword>
-        <keyword ref="qtelephonyevent.html#calllistChange">calllistChange</keyword>
-        <keyword ref="qtelephonyevent.html#callstatusChange">callstatusChange</keyword>
-        <keyword ref="qtelephonyevent.html#currentStatus">currentStatus</keyword>
-        <section ref="qtelephonyevent-members.html" title="List of all members"/>
+    <section ref="qtelephonycalllist.html" title="QTelephonyCallList Class Reference">
+        <keyword ref="qtelephonycalllist.html">QTelephonyCallList</keyword>
+        <keyword ref="qtelephonycalllist.html#currentCall-prop">currentCall</keyword>
+        <keyword ref="qtelephonycalllist.html#calls">calls</keyword>
+        <keyword ref="qtelephonycalllist.html#callsChanged">callsChanged</keyword>
+        <keyword ref="qtelephonycalllist.html#callstatusChanged">callstatusChanged</keyword>
+        <keyword ref="qtelephonycalllist.html#currentCallStatus">currentCallStatus</keyword>
+        <section ref="qtelephonycalllist-members.html" title="List of all members"/>
     </section>
     <section ref="qtmedia.html" title="QtMedia Namespace Reference">
         <keyword ref="qtmedia.html">QtMedia</keyword>

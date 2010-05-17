@@ -60,19 +60,6 @@ QTM_BEGIN_NAMESPACE
     \ingroup telephony
 
     \brief The QCallInfo class represents a call including the type, status and other information of the call.
-
-\table
-\header
-    \o Class
-\row
-    \o QCallInfo::callIdentifier
-\row
-    \o QCallInfo::contacts
-\row
-    \o QCallInfo::type
-\row
-    \o QCallInfo::status
-\endtable
 */
 
 Q_GLOBAL_STATIC(QCallInfoPrivate, callinfoprivate)
@@ -97,7 +84,7 @@ QCallInfo::~QCallInfo()
 }
 
 /*!
-    \fn QCallInfo::callIdentifier()
+    \fn QString QCallInfo::callIdentifier() const
     
     Gives back the id of a call.
 */
@@ -109,7 +96,7 @@ QString QCallInfo::callIdentifier() const
 }
 
 /*!
-    \fn QCallInfo::contacts()
+    \fn QList<quint32> QCallInfo::contacts() const
     
     Gives back a list of contact id (used in QContact).
 */
@@ -122,7 +109,7 @@ QList<quint32> QCallInfo::contacts() const
 }
 
 /*!
-    \fn QCallInfo::type()
+    \fn QCallInfo::CallType QCallInfo::type() const
     
     Gives back the type of the call.
 */
@@ -134,7 +121,7 @@ QCallInfo::CallType QCallInfo::type() const
 }
 
 /*!
-    \fn QCallInfo::status()
+    \fn QCallInfo::CallStatus QCallInfo::status() const
     
     Gives back the status of the call.
 */

@@ -430,8 +430,8 @@
                     <section ref="qsystemstorageinfo.html" title="QSystemStorageInfo Class Reference">
                         <section ref="qsystemstorageinfo-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qtelephonyevent.html" title="QTelephonyEvent Class Reference">
-                        <section ref="qtelephonyevent-members.html" title="List of all members"/>
+                    <section ref="qtelephonycalllist.html" title="QTelephonyCallList Class Reference">
+                        <section ref="qtelephonycalllist-members.html" title="List of all members"/>
                     </section>
                     <section ref="qvaluespacepublisher.html" title="QValueSpacePublisher Class Reference">
                         <section ref="qvaluespacepublisher-members.html" title="List of all members"/>
@@ -676,12 +676,10 @@
             <keyword name="~QAudioEndpointSelector" id="QAudioEndpointSelector::~QAudioEndpointSelector" ref="qaudioendpointselector.html#dtor.QAudioEndpointSelector"/>
             <keyword name="QAudioEndpointSelector_iid" id="QAudioEndpointSelector_iid" ref="qaudioendpointselector.html#QAudioEndpointSelector_iid"/>
             <keyword name="QCallInfo" id="QCallInfo" ref="qcallinfo.html"/>
-            <keyword name="callStatus" id="QCallInfo::callStatus" ref="qcallinfo.html#callStatus"/>
-            <keyword name="callType" id="QCallInfo::callType" ref="qcallinfo.html#callType"/>
-            <keyword name="contacts" id="QCallInfo::contacts" ref="qcallinfo.html#contacts"/>
-            <keyword name="phoneNumber" id="QCallInfo::phoneNumber" ref="qcallinfo.html#phoneNumber"/>
-            <keyword name="querryData" id="QCallInfo::querryData" ref="qcallinfo.html#querryData"/>
-            <keyword name="sipID" id="QCallInfo::sipID" ref="qcallinfo.html#sipID"/>
+            <keyword name="callIdentifier" id="QCallInfo::callIdentifier" ref="qcallinfo.html#callIdentifier-prop"/>
+            <keyword name="contacts" id="QCallInfo::contacts" ref="qcallinfo.html#contacts-prop"/>
+            <keyword name="status" id="QCallInfo::status" ref="qcallinfo.html#status-prop"/>
+            <keyword name="type" id="QCallInfo::type" ref="qcallinfo.html#type-prop"/>
             <keyword name="~QCallInfo" id="QCallInfo::~QCallInfo" ref="qcallinfo.html#dtor.QCallInfo"/>
             <keyword name="QCamera" id="QCamera" ref="qcamera.html"/>
             <keyword name="QCamera::CaptureMode" id="QCamera::CaptureMode" ref="qcamera.html#CaptureMode-enum"/>
@@ -2891,12 +2889,13 @@
             <keyword name="totalDiskSpace" id="QSystemStorageInfo::totalDiskSpace" ref="qsystemstorageinfo.html#totalDiskSpace"/>
             <keyword name="typeForDrive" id="QSystemStorageInfo::typeForDrive" ref="qsystemstorageinfo.html#typeForDrive"/>
             <keyword name="~QSystemStorageInfo" id="QSystemStorageInfo::~QSystemStorageInfo" ref="qsystemstorageinfo.html#dtor.QSystemStorageInfo"/>
-            <keyword name="QTelephonyEvent" id="QTelephonyEvent" ref="qtelephonyevent.html"/>
-            <keyword name="calllist" id="QTelephonyEvent::calllist" ref="qtelephonyevent.html#calllist"/>
-            <keyword name="calllistChange" id="QTelephonyEvent::calllistChange" ref="qtelephonyevent.html#calllistChange"/>
-            <keyword name="callstatusChange" id="QTelephonyEvent::callstatusChange" ref="qtelephonyevent.html#callstatusChange"/>
-            <keyword name="currentStatus" id="QTelephonyEvent::currentStatus" ref="qtelephonyevent.html#currentStatus"/>
-            <keyword name="~QTelephonyEvent" id="QTelephonyEvent::~QTelephonyEvent" ref="qtelephonyevent.html#dtor.QTelephonyEvent"/>
+            <keyword name="QTelephonyCallList" id="QTelephonyCallList" ref="qtelephonycalllist.html"/>
+            <keyword name="calls" id="QTelephonyCallList::calls" ref="qtelephonycalllist.html#calls"/>
+            <keyword name="callsChanged" id="QTelephonyCallList::callsChanged" ref="qtelephonycalllist.html#callsChanged"/>
+            <keyword name="callstatusChanged" id="QTelephonyCallList::callstatusChanged" ref="qtelephonycalllist.html#callstatusChanged"/>
+            <keyword name="currentCall" id="QTelephonyCallList::currentCall" ref="qtelephonycalllist.html#currentCall-prop"/>
+            <keyword name="currentCallStatus" id="QTelephonyCallList::currentCallStatus" ref="qtelephonycalllist.html#currentCallStatus"/>
+            <keyword name="~QTelephonyCallList" id="QTelephonyCallList::~QTelephonyCallList" ref="qtelephonycalllist.html#dtor.QTelephonyCallList"/>
             <keyword name="QVALUESPACE_AUTO_INSTALL_LAYER" id="QVALUESPACE_AUTO_INSTALL_LAYER" ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER"/>
             <keyword name="QVALUESPACE_CONTEXTKIT_LAYER" id="QVALUESPACE_CONTEXTKIT_LAYER" ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER"/>
             <keyword name="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" id="QVALUESPACE_NONVOLATILEREGISTRY_LAYER" ref="qvaluespace.html#QVALUESPACE_NONVOLATILEREGISTRY_LAYER"/>
@@ -3277,7 +3276,6 @@
             <file>qaudioendpointselector.html</file>
             <file>filemanagerplugin-filemanagerplugin-h.html</file>
             <file>messaging.html</file>
-            <file>qtelephonyevent.html</file>
             <file>qcontactabstractrequest-members.html</file>
             <file>battery-charge-battery-publisher-battery-publisher-pro.html</file>
             <file>serviceactions-mainwindow-cpp.html</file>
@@ -3383,7 +3381,6 @@
             <file>qmessagemanager.html</file>
             <file>qmessage-members.html</file>
             <file>qcontactemailaddress-members.html</file>
-            <file>qtelephonyevent-members.html</file>
             <file>qcontactactionfactory-members.html</file>
             <file>qmediarecordercontrol-members.html</file>
             <file>qcontactorganization.html</file>
@@ -3485,6 +3482,7 @@
             <file>filemanagerplugin.html</file>
             <file>qservicecontext.html</file>
             <file>qnetworkconfigurationmanager.html</file>
+            <file>qtelephonycalllist.html</file>
             <file>bearercloud-main-cpp.html</file>
             <file>qcontactintersectionfilter-members.html</file>
             <file>qsystemdeviceinfo.html</file>
@@ -3499,6 +3497,7 @@
             <file>qgeocoordinate.html</file>
             <file>qcontactnote-members.html</file>
             <file>qcontactactionfactory.html</file>
+            <file>qtelephonycalllist-members.html</file>
             <file>qcontactdetaildefinition-members.html</file>
             <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>

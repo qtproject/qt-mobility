@@ -135,6 +135,7 @@
 #      define Q_MESSAGING_EXPORT Q_DECL_IMPORT
 #      define Q_SERVICEFW_EXPORT Q_DECL_IMPORT
 #      define Q_SYSINFO_EXPORT Q_DECL_IMPORT
+#      define Q_TELEPHONY_EXPORT Q_DECL_IMPORT
 #    endif
 #  else
 #  endif
@@ -145,6 +146,7 @@
 #      define Q_CONTACTS_EXPORT Q_DECL_EXPORT
 #      define Q_VERSIT_EXPORT Q_DECL_EXPORT
 #      define Q_LOCATION_EXPORT Q_DECL_EXPORT
+#      define Q_TELEPHONY_EXPORT Q_DECL_EXPORT
 #      define Q_MEDIA_EXPORT Q_DECL_EXPORT
 #      define Q_MESSAGING_EXPORT Q_DECL_EXPORT
 #      define Q_SERVICEFW_EXPORT Q_DECL_EXPORT
@@ -155,6 +157,7 @@
 #      define Q_CONTACTS_EXPORT
 #      define Q_VERSIT_EXPORT
 #      define Q_LOCATION_EXPORT
+#      define Q_TELEPHONY_EXPORT
 #      define Q_MEDIA_EXPORT
 #      define Q_MESSAGING_EXPORT
 #      define Q_SERVICEFW_EXPORT

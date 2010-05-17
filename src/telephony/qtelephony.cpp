@@ -64,17 +64,6 @@ QTM_BEGIN_NAMESPACE
 
     QTelephonyCallList supports calls event notification for other application and an access of the list of the 
     existing calls.
-
-\table
-\header
-    \o Class
-\row
-    \o QTelephonyCallList signal callstatusChanged
-\row
-    \o QTelephonyCallList signal callsChanged
-\row
-    \o QTelephonyCallList::calls (+ 3 overloaded)
-\endtable
 */
 
 
@@ -94,16 +83,19 @@ QTelephonyCallList::QTelephonyCallList(QObject *parent)
 }
 
 /*!
-  Destroys the QTelephonyCallList object
+    \fn QTelephonyCallList::~QTelephonyCallList()
+    
+    Destructor of QTelephonyCallList.
 */
 QTelephonyCallList::~QTelephonyCallList()
 {
 }
 
+
 /*!
-    \fn QTelephonyCallList::calls()
+    \fn QList<QCallInfo*> QTelephonyCallList::calls() const
     
-    Gives back a list of calls.
+    Gives back a list of all active calls.
 */
 QList<QCallInfo*> QTelephonyCallList::calls() const
 {
@@ -114,7 +106,7 @@ QList<QCallInfo*> QTelephonyCallList::calls() const
 }
 
 /*!
-    \fn QTelephonyCallList::calls(const QCallInfo::CallType calltype)
+    \fn QTelephonyCallList::calls(const QCallInfo::CallType& calltype) const
     
     Gives back a list of calls from type of calltype.
 */
@@ -129,7 +121,7 @@ QList<QCallInfo*> QTelephonyCallList::calls(const QCallInfo::CallType& calltype)
 }
 
 /*!
-    \fn QTelephonyCallList::calls(const QCallInfo::CallStatus& callstatus)
+    \fn QTelephonyCallList::calls(const QCallInfo::CallStatus& callstatus) const
     
     Gives back a list of calls from status of callstatus.
 */
@@ -144,7 +136,7 @@ QList<QCallInfo*> QTelephonyCallList::calls(const QCallInfo::CallStatus& callsta
 }
 
 /*!
-    \fn QTelephonyCallList::calllist(const QCallInfo::CallType& calltype, const QCallInfo::CallStatus& callstatus)
+    \fn QTelephonyCallList::calls(const QCallInfo::CallType& calltype, const QCallInfo::CallStatus& callstatus) const
     
     Gives back a list of calls from status of callstatus and type of calltype.
 */
@@ -160,7 +152,7 @@ QList<QCallInfo*> QTelephonyCallList::calls(const QCallInfo::CallType& calltype
 }
 
 /*!
-    \fn QTelephonyCallList::currentCall()
+    \fn QCallInfo* QTelephonyCallList::currentCall()
     
     Gives back the current active call.
 */
