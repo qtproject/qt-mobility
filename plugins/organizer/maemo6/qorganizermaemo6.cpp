@@ -39,5 +39,5 @@
 **
 ****************************************************************************/
 
-#include "qorganizermaemo5_p.h"
+#include "qorganizermaemo6_p.h"
 

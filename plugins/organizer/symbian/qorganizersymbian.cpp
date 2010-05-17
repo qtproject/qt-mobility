@@ -39,5 +39,5 @@
 **
 ****************************************************************************/
 
-#include "qorganizermaemo5_p.h"
+#include "qorganizersymbian_p.h"
 
