@@ -75,12 +75,10 @@ SongView::SongView(QWidget *parent)
     model->setColumnName(3, tr("Artist"));
 
     QTableView *view = new QTableView;
-    view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     view->setShowGrid(false);
     view->verticalHeader()->setVisible(false);
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     view->setModel(model);
-    connect(view->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(sliderMoved(int)));
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
 
     QBoxLayout *layout = new QVBoxLayout;

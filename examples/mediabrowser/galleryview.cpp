@@ -100,12 +100,6 @@ QGalleryItemList *GalleryView::media() const
     return request->items();
 }
 
-void GalleryView::sliderMoved(int value)
-{
-    if (QGalleryItemList *list = request->items())
-        list->setCursorPosition(value - list->minimumPagedItems() / 3);
-}
-
 void GalleryView::requestCountChanged()
 {
     emit countChanged(countRequest->count());

@@ -69,11 +69,9 @@ PhotoView::PhotoView(QWidget *parent)
     view->setViewMode(QListView::IconMode);
     view->setSpacing(4);
     view->setUniformItemSizes(true);
-    view->setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     view->setWrapping(true);
     view->setModel(model);
     view->setItemDelegate(new PhotoDelegate(this));
-    connect(view->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(sliderMoved(int)));
     connect(view, SIGNAL(activated(QModelIndex)), this, SLOT(activated(QModelIndex)));
 
 

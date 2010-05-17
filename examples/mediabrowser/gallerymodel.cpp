@@ -106,11 +106,21 @@ Qt::ItemFlags GalleryModel::flags(const QModelIndex &index) const
 
 QModelIndex GalleryModel::index(int row, int column, const QModelIndex &parent) const
 {
-    return !parent.isValid() && mediaList
+    if (!parent.isValid() && mediaList
             && row >= 0 && row < mediaList->count()
-            && column >= 0 && column < displayFields.count()
-            ? createIndex(row, column)
-            : QModelIndex();
+            && column >= 0 && column < displayFields.count()) {
+
+        // Ideally we'd use the scroll position of the view to set the cursor position
+        if (row > 0 && row < mediaList->count() - 1) {
+            const int cursorPosition = row - mediaList->minimumPagedItems() / 2;
+
+            if (qAbs(mediaList->cursorPosition() - cursorPosition) > mediaList->minimumPagedItems())
+                const_cast<QGalleryItemList *>(mediaList)->setCursorPosition(cursorPosition);
+        }
+
+        return createIndex(row, column);
+    }
+    return QModelIndex();
 }
 
 QModelIndex GalleryModel::parent(const QModelIndex &) const

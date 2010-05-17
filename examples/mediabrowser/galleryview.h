@@ -83,8 +83,6 @@ protected:
 protected slots:
     virtual void mediaChanged() = 0;
 
-    void sliderMoved(int value);
-
 private slots:
     void requestCountChanged();
 
