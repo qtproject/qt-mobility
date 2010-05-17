@@ -18,4 +18,6 @@ symbian {
     }
 }
 wince*:SUBDIRS += wince
-maemo5:SUBDIRS += maemo5
+maemo5 {
+    contains(maemo5-contacts, yes): SUBDIRS += maemo5
+}
