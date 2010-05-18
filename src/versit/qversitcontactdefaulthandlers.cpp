@@ -245,7 +245,7 @@ bool QVersitContactExporterDefaultDetailHandler::afterProcessDetail(
             property.setName(QLatin1String("X-NOKIA-QCONTACTFIELD"));
             property.insertParameter(QLatin1String("DETAIL"), detail.definitionName());
             property.insertParameter(QLatin1String("FIELD"), it.key());
-            property.setValue(it.value());
+            property.setValue(it.value().toString());
             toBeAdded->append(property);
             propertiesSynthesized = true;
         }

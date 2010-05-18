@@ -41,6 +41,7 @@
 
 #include "qversitdefs_p.h"
 #include "tst_qversit.h"
+#include "qversitwriter.h"
 #include "qversitreader.h"
 #include "qversitreader_p.h"
 #include "qversitcontactexporter.h"
@@ -255,12 +256,22 @@ void tst_QVersit::testExportImport()
     QList<QVersitDocument> documents = exporter.documents();
     QCOMPARE(documents.size(), 1);
 
+    QByteArray documentBytes;
+    QVersitWriter writer(&documentBytes);
+    writer.startWriting(documents);
+    writer.waitForFinished();
+
+    QVersitReader reader(documentBytes);
+    reader.startReading();
+    reader.waitForFinished();
+    QList<QVersitDocument> readDocuments = reader.results();
+
     QVersitContactImporter importer;
-    QVERIFY(importer.importDocuments(documents));
+    QVERIFY(importer.importDocuments(readDocuments));
     QList<QContact> contacts = importer.contacts();
     QCOMPARE(contacts.size(), 1);
     if (contacts.first().details() != contact.details()) {
-        qDebug() << "Versit documents:" << documents;
+        qDebug() << "Versit documents:" << documentBytes;
         qDebug() << "Actual:" << contacts.first();
         qDebug() << "Expected:" << contact;
         QCOMPARE(contacts.first().details(), contact.details());
@@ -271,26 +282,98 @@ void tst_QVersit::testExportImport_data()
 {
     QTest::addColumn<QContact>("contact");
 
-    QContact contact;
-    QContactName name;
-    name.setFirstName(QLatin1String("first"));
-    name.setLastName(QLatin1String("last"));
-    name.setCustomLabel(QLatin1String("custom"));
-    name.setValue(QLatin1String("RandomField1"), QLatin1String("RandomValue1"));
-    name.setValue(QLatin1String("RandomField2"), QLatin1String("RandomValue1"));
-    contact.saveDetail(&name);
-    QContactDetail customDetail1("CustomDetail");
-    customDetail1.setValue(QLatin1String("CustomField11"), QLatin1String("Value11"));
-    customDetail1.setValue(QLatin1String("CustomField12"), QLatin1String("Value12"));
-    contact.saveDetail(&customDetail1);
-    QContactDetail customDetail2("CustomDetail");
-    customDetail2.setValue(QLatin1String("CustomField21"), QLatin1String("Value21"));
-    customDetail2.setValue(QLatin1String("CustomField22"), QByteArray("binary blob"));
-    contact.saveDetail(&customDetail2);
-    contact.setType(QContactType::TypeContact);
-    QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("custom"));
+    // The test contacts need at least a name (so the resulting vCard is valid and a display label (because
+    // otherwise, the imported display label will be set from the name or something)
+    {
+        QContact contact;
+        QContactName name;
+        name.setFirstName(QLatin1String("first"));
+        name.setLastName(QLatin1String("last"));
+        name.setCustomLabel(QLatin1String("custom"));
+        name.setValue(QLatin1String("RandomField1"), QLatin1String("RandomValue1"));
+        name.setValue(QLatin1String("RandomField2"), QLatin1String("RandomValue1"));
+        contact.saveDetail(&name);
+        QContactDetail customDetail1("CustomDetail");
+        customDetail1.setValue(QLatin1String("CustomField11"), QLatin1String("Value11"));
+        customDetail1.setValue(QLatin1String("CustomField12"), QLatin1String("Value12"));
+        contact.saveDetail(&customDetail1);
+        QContactDetail customDetail2("CustomDetail");
+        customDetail2.setValue(QLatin1String("CustomField21"), QLatin1String("Value21"));
+        contact.saveDetail(&customDetail2);
+        contact.setType(QContactType::TypeContact);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("custom"));
+        QTest::newRow("custom detail grouping") << contact;
+    }
 
-    QTest::newRow("custom detail") << contact;
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("just a name") << contact;
+    }
+
+    // Test of some non-string fields
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactDetail customDetail("CustomDetail");
+        customDetail.setValue(QLatin1String("CustomField"), QByteArray("blob"));
+        contact.saveDetail(&customDetail);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("binary field") << contact;
+    }
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactDetail customDetail("CustomDetail");
+        customDetail.setValue(QLatin1String("CustomField"), (int)42);
+        contact.saveDetail(&customDetail);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("integer field") << contact;
+    }
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactDetail customDetail("CustomDetail");
+        customDetail.setValue(QLatin1String("CustomField"), (bool)true);
+        contact.saveDetail(&customDetail);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("bool field") << contact;
+    }
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactDetail customDetail("CustomDetail");
+        customDetail.setValue(QLatin1String("CustomField"), (double)3.14159265);
+        contact.saveDetail(&customDetail);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("double field") << contact;
+    }
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactDetail customDetail("CustomDetail");
+        customDetail.setValue(QLatin1String("CustomField"), (float)3.14159265);
+        contact.saveDetail(&customDetail);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("float field") << contact;
+    }
 }
 
 QTEST_MAIN(tst_QVersit)

@@ -241,16 +241,22 @@ void QVersitContactExporterPrivate::encodeName(
     QSet<QString>* processedFields)
 {
     QContactName contactName = static_cast<QContactName>(detail);
-    QVersitProperty property;
-    property.setName(mPropertyMappings.value(detail.definitionName()));
-    property.setValue(QStringList()
-                      << contactName.lastName()
-                      << contactName.firstName()
-                      << contactName.middleName()
-                      << contactName.prefix()
-                      << contactName.suffix());
-    property.setValueType(QVersitProperty::CompoundType);
-    *generatedProperties << property;
+    if (!contactName.lastName().isEmpty()
+        || !contactName.firstName().isEmpty()
+        || !contactName.middleName().isEmpty()
+        || !contactName.prefix().isEmpty()
+        || !contactName.suffix().isEmpty()) {
+        QVersitProperty property;
+        property.setName(mPropertyMappings.value(detail.definitionName()));
+        property.setValue(QStringList()
+                          << contactName.lastName()
+                          << contactName.firstName()
+                          << contactName.middleName()
+                          << contactName.prefix()
+                          << contactName.suffix());
+        property.setValueType(QVersitProperty::CompoundType);
+        *generatedProperties << property;
+    }
 
     // Generate an FN field if none is already there
     // Don't override previously exported FN properties (eg. exported by a DisplayLabel detail)
@@ -273,11 +279,11 @@ void QVersitContactExporterPrivate::encodeName(
 
     *generatedProperties << fnProperty;
     *processedFields << QContactName::FieldLastName
-                      << QContactName::FieldFirstName
-                      << QContactName::FieldMiddleName
-                      << QContactName::FieldPrefix
-                      << QContactName::FieldSuffix
-                      << QContactName::FieldCustomLabel;
+                     << QContactName::FieldFirstName
+                     << QContactName::FieldMiddleName
+                     << QContactName::FieldPrefix
+                     << QContactName::FieldSuffix
+                     << QContactName::FieldCustomLabel;
 }
 
 /*!
