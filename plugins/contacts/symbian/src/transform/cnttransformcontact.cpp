@@ -84,6 +84,8 @@ CntTransformContact::~CntTransformContact()
     delete m_tzConverter;
     m_tzoneServer.Close();
 
+    m_fieldTypeToTransformContact.clear();
+
     QMap<ContactData, CntTransformContactData*>::iterator itr;
 
     for (itr = m_transformContactData.begin(); itr != m_transformContactData.end(); ++itr)
