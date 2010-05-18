@@ -72,6 +72,10 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
+#include "qorganizerjournal.h"
+#include "qorganizertodo.h"
+#include "qorganizerevent.h"
+
 QTM_USE_NAMESPACE
 
 class QOrganizerItemMaemo5Factory : public QObject, public QOrganizerItemManagerEngineFactory
@@ -101,6 +105,10 @@ public:
     }
 };
 
+
+class CEvent;
+class CTodo;
+class CJournal;
 class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
 {
     Q_OBJECT
