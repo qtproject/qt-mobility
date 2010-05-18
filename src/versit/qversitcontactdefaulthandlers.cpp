@@ -41,6 +41,7 @@
 
 #include <QList>
 #include <QString>
+#include <QTextStream>
 #include "qversitcontactdefaulthandlers.h"
 #include "qcontact.h"
 #include "qcontactdetail.h"
@@ -151,6 +152,7 @@ bool QVersitContactImporterDefaultPropertyHandler::afterProcessProperty(
         QList<QContactDetail>* updatedDetails)
 {
     Q_UNUSED(document)
+    Q_UNUSED(contact)
     QString group;
     if (!property.groups().isEmpty())
         group = property.groups().first();
@@ -174,7 +176,16 @@ bool QVersitContactImporterDefaultPropertyHandler::afterProcessProperty(
         // If not found, it's a new empty detail with the definitionName set.
 
         // Import the field
-        detail.setValue(fieldName, property.variantValue());
+        if (parameters.contains(QLatin1String("DATATYPE"), QLatin1String("V"))) {
+            // The value was stored as a QVariant serialized in a QByteArray
+            QDataStream stream(property.variantValue().toByteArray());
+            QVariant value;
+            stream >> value;
+            detail.setValue(fieldName, value);
+        } else {
+            // The value was stored as a QString or QByteArray
+            detail.setValue(fieldName, property.variantValue());
+        }
 
         // Replace the equivalent detail in updatedDetails with the new one
         QMutableListIterator<QContactDetail> it(*updatedDetails);
@@ -245,7 +256,21 @@ bool QVersitContactExporterDefaultDetailHandler::afterProcessDetail(
             property.setName(QLatin1String("X-NOKIA-QCONTACTFIELD"));
             property.insertParameter(QLatin1String("DETAIL"), detail.definitionName());
             property.insertParameter(QLatin1String("FIELD"), it.key());
-            property.setValue(it.value().toString());
+
+            // serialize the value
+            if (it.value().type() == QVariant::String
+                || it.value().type() == QVariant::ByteArray) {
+                // store QStrings and QByteArrays as-is
+                property.setValue(it.value());
+            } else {
+                // store other types by serializing the QVariant in a QByteArray
+                QByteArray valueBytes;
+                QDataStream stream(&valueBytes, QIODevice::WriteOnly);
+                stream << it.value();
+                property.insertParameter(QLatin1String("DATATYPE"), QLatin1String("V"));
+                property.setValue(valueBytes);
+            }
+
             toBeAdded->append(property);
             propertiesSynthesized = true;
         }
