@@ -180,7 +180,7 @@ symbian: {
 
     }
 
-    qtmobilitydeployment.pkg_postrules += pluginstubs
+    !isEmpty(pluginstubs):qtmobilitydeployment.pkg_postrules += pluginstubs
 
     qtmobilitydeployment.path = /sys/bin
 
