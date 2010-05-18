@@ -28,7 +28,7 @@ SYMBIAN_HEADERS += \
         ../../inc/transform/cnttransformringtone.h \
         ../../inc/transform/cnttransformthumbnail.h \
         ../../inc/transform/cnttransformavatar.h \
-        ../../inc/transform/cntthumbnailcreator.h \        
+        ../../inc/transform/cntthumbnailcreator.h \
         ../../inc/transform/cnttransformsynctarget.h \
         ../../inc/transform/cnttransformgender.h \
         ../../inc/transform/cnttransformanniversary.h \
@@ -76,7 +76,7 @@ SYMBIAN_SOURCES += \
         ../../src/transform/cnttransformorganisation.cpp \
         ../../src/transform/cnttransformpresence.cpp \
         ../../src/transform/cnttransformringtone.cpp \
-        ../../src/transform/cnttransformthumbnail.cpp \        
+        ../../src/transform/cnttransformthumbnail.cpp \
         ../../src/transform/cnttransformavatar.cpp \
         ../../src/transform/cntthumbnailcreator.cpp \
         ../../src/transform/cnttransformsynctarget.cpp \
@@ -104,7 +104,7 @@ SYMBIAN_SOURCES += \
         ../../src/filtering/cntfilterdefault.cpp \
         ../../src/filtering/cntfilterintersection.cpp \
         ../../src/filtering/cntfilterunion.cpp \
-        ../../src/filtering/cntfilterrelationship.cpp \     
+        ../../src/filtering/cntfilterrelationship.cpp \
         ../../src/filtering/cntfilterdetaildisplaylabel.cpp \
  
 SYMBIAN_LIBS += \
@@ -115,7 +115,7 @@ SYMBIAN_LIBS += \
         -lefsrv \
         -lfbscli \
         -limageconversion \
-        -lbitmaptransforms \ 
+        -lbitmaptransforms \
         -lbafl \
-        -lplatformenv
+        -lplatformenv \
         -ltzclient
