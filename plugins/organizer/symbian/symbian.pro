@@ -7,6 +7,13 @@ CONFIG += mobility
 MOBILITY = organizer
 
 include(../../../common.pri)
+
+INCLUDEPATH += ../../../src/organizer \
+                ../../../src/organizer/items \
+                ../../../src/organizer/requests \
+                ../../../src/organizer/filters \
+                ../../../src/organizer/details
+
 symbian: { 
     load(data_caging_paths)
 
@@ -29,7 +36,3 @@ symbian: {
     symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
 }
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
-INSTALLS+=target
