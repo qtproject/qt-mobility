@@ -42,9 +42,9 @@
 #include "qorganizermaemo5_p.h"
 #include "qtorganizer.h"
 
-#include <calendar-backend/CEvent.h>
-#include <calendar-backend/CJournal.h>
-#include <calendar-backend/CTodo.h>
+#include <CEvent.h>
+#include <CJournal.h>
+#include <CTodo.h>
 
 QTM_USE_NAMESPACE
 
