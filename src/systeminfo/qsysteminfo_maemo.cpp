@@ -38,8 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qsysteminfo.h>
-#include <qsysteminfo_maemo_p.h>
+#include "qsysteminfo.h"
+#include "qsysteminfo_maemo_p.h"
+
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -55,7 +56,7 @@
 #include <QMapIterator>
 
 #if !defined(QT_NO_DBUS)
-#include "gconfitem.h" // Temporarily here.
+#include "gconfitem_p.h" // Temporarily here.
 #endif
 
 #ifdef Q_WS_X11
@@ -162,18 +163,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             GConfItem locationValues("/system/nokia/location");
             const QStringList locationKeys = locationValues.listEntries();
             if(locationKeys.count()) {
-                featureSupported = true;
-            }
-        }
-        break;
-    case QSystemInfo::VideoOutFeature :
-        {
-            const QString sysPath = "/sys/class/video4linux/";
-            const QDir sysDir(sysPath);
-            QStringList filters;
-            filters << "*";
-            const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-            if(sysList.contains("video0")) {
                 featureSupported = true;
             }
         }
@@ -1023,23 +1012,23 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
         emit currentProfileChanged(currentProfile());
 }
 
-void QSystemDeviceInfoPrivate::profileChanged(bool, bool, QString profile, QList<ProfileDataValue> values)
+void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
-    const QSystemDeviceInfo::Profile previousProfile = currentProfile();
-
-    profileName = profile;
-    foreach (const ProfileDataValue value, values) {
-        if (value.key == "ringing.alert.type")
-            silentProfile = value.val == "silent";
-        else if (value.key == "vibrating.alert.enabled")
-            vibratingAlertEnabled = value.val == "On";
-        else if (value.key == "ringing.alert.volume")
-            ringingAlertVolume = value.val.toInt();
+    if (active) {
+        const QSystemDeviceInfo::Profile previousProfile = currentProfile();
+        profileName = profile;
+        foreach (const ProfileDataValue value, values) {
+            if (value.key == "ringing.alert.type")
+                silentProfile = value.val == "silent";
+            else if (value.key == "vibrating.alert.enabled")
+                vibratingAlertEnabled = value.val == "On";
+            else if (value.key == "ringing.alert.volume")
+                ringingAlertVolume = value.val.toInt();
+        }
+        QSystemDeviceInfo::Profile newProfile = currentProfile();
+        if (previousProfile != newProfile)
+           emit currentProfileChanged(newProfile);
     }
-
-    QSystemDeviceInfo::Profile newProfile = currentProfile();
-    if (previousProfile != newProfile)
-        emit currentProfileChanged(newProfile);
 }
 
 #endif

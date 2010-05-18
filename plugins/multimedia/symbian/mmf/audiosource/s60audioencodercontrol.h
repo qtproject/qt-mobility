@@ -75,8 +75,8 @@ private:
     int bitRate() const;
     void setBitRate(int);
 
-    QtMultimedia::EncodingQuality quality() const;
-    void setQuality(QtMultimedia::EncodingQuality);
+    QtMediaServices::EncodingQuality quality() const;
+    void setQuality(QtMediaServices::EncodingQuality);
 
     int sampleRate() const;
     void setSampleRate(int sampleRate);
@@ -86,7 +86,7 @@ private:
     void setSampleSize(int sampleSize);    
 private:
     S60AudioCaptureSession* m_session;
-    QtMultimedia::EncodingQuality m_quality;
+    QtMediaServices::EncodingQuality m_quality;
 };
 
 #endif

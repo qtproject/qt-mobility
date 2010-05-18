@@ -47,7 +47,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageAddress
 
-    \preliminary
     \brief The QMessageAddress class provides an interface for a message address.
 
     \ingroup messaging

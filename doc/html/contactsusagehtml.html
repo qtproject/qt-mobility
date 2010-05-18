@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- contactsusage.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Contacts API Usage</title>
+  <title>Qt Mobility Project 1.1: Contacts API Usage</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -429,7 +429,7 @@
                 result.append(groupRelationships.at(i));
             }
         }</pre>
-<p>Clients can inform the manager that they do not require this cache of relationships to be populated when retrieving a contact, which can allow a manager to optimize contact retrieval. Other retrieval optimizations are also possible to specify, for example that they do not require action preferences to be returned, or that they are only interested in certain types of details. The following code shows how the client can inform the manager that they are only interested in relationships of the <tt>HasMember</tt> type (groups):</p>
+<p>Clients can inform the manager that they do not require this cache of relationships to be populated when retrieving a contact, which can allow a manager to optimize contact retrieval. Other retrieval optimizations are also possible to specify, for example that they are only interested in certain types of details. The following code shows how the client can inform the manager that they are only interested in relationships of the <tt>HasMember</tt> type (groups):</p>
 <pre>        QContactFetchHint hasMemberRelationshipsOnly;
         hasMemberRelationshipsOnly.setRelationshipTypesHint(QStringList(QContactRelationship::HasMember));
 
@@ -500,8 +500,8 @@
 <p>Note that some managers do not support mutable definitions, and hence attempting to modify or remove detail definitions in those managers will fail.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

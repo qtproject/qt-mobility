@@ -330,8 +330,8 @@ TInt RDatabaseManagerSession::StartServer()
         iServerThread->wait(1);
 #else
         TRequestStatus status;
-        RProcess dbServer;
-        ret = dbServer.Create(KDatabaseManagerServerName, KNullDesC);
+        RProcess dbServer;	    
+        ret = dbServer.Create(KDatabaseManagerServerProcess, KNullDesC);
         if(ret != KErrNone)
             {
             return ret;
@@ -529,7 +529,7 @@ QTM_BEGIN_NAMESPACE
         __ASSERT_ALWAYS(dbManagerServer != NULL, CDatabaseManagerServer::PanicServer(ESrvCreateServer));
 
         TInt err = dbManagerServer->Start(KDatabaseManagerServerName);
-        if (err != KErrNone)
+        if (err != KErrNone && err != KErrAlreadyExists)
         {
             CDatabaseManagerServer::PanicServer(ESvrStartServer);
         }

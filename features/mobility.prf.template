@@ -13,6 +13,7 @@
 }
 mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
+QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 
 contains(MOBILITY, bearer) {
     DEFINES += QT_MOBILITY_BEARER
@@ -65,7 +66,7 @@ contains(MOBILITY, sensors) {
 symbian:contains(CONFIG, mobility):!contains(TARGET.UID3, 0x2002AC89):!contains(TARGET.UID3, 0xE002AC89) {
     mobility_default_deployment.pkg_prerules += \
         "; Default dependency to QtMobility libraries" \
-        "(0x2002AC89), 1, 0, 0, {\"QtMobility\"}"
+        "(0x2002AC89), 1, 1, 0, {\"QtMobility\"}"
     DEPLOYMENT += mobility_default_deployment
 }
 

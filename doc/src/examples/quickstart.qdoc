@@ -53,7 +53,7 @@ as per \l {Installation Guide}.
 One can start using Qt Mobility with 3 simple steps.
 \list 1
     \o Include the appropriate headers
-    \o Use the \c QtMobility namespace
+    \o Use the QTM_USE_NAMESPACE macro (defined in qmobilityglobal.h but implicitly included from any Qt Mobility header)
     \o Declare the usage of Qt Mobility
        and appropriate API(s) in the project(.pro) file
 \endlist
@@ -63,14 +63,8 @@ Steps 1 and 2 are shown in the example below:
 
 This example uses the QSystemInfo headers to print out the 
 system's current country code.  All the domain APIs are wrapped
-within the \c QtMobility namespace and thus developers either 
-need to declare \c {using namespace QtMobility} or
-qualify their symbols e.g. \c {QtMobility::QSystemInfo}.
-(\bold{Note}:  If you are on the Symbian platform you will
-need to define the actual header file, in this case
-<qsysteminfo.h> rather than using the standard header form
-<QSystemInfo>, this is a known bug that is to be 
-addressed in a future release)
+within a Qt Mobility namespace and thus developers 
+need to use the QTM_USE_NAMESPACE macro.
 
 In step 3, to specify that our project is using
 System Information we declare in the project file:
@@ -156,6 +150,8 @@ When developing on Symbian we will also need to add the required capabilites to 
 \row
 \endtable
 
+The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}. 
+
 And we're done.  If you are using the command line simply
 enter:
 \code
@@ -182,6 +178,6 @@ To make a release build and SIS package for a device run:
 
 For further details on how to build applications for
 Symbian see \l {http://qt.nokia.com/doc/4.6/symbian-with-qt-introduction.html} 
-{The Symbian Platform - Introduction to Qt}, \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
-{Qt Quick Start} and the \c {symbian\install.txt}
+{The Symbian Platform - Introduction to Qt} and \l {http://developer.symbian.org/wiki/index.php/Qt_Quick_Start}
+{Qt Quick Start}
 */

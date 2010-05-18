@@ -7,7 +7,11 @@ maemo5 {
 }
 
 maemo6 {
-    SUBDIRS += maemo6
+    equals(sensord_enabled,yes) {
+        SUBDIRS += maemo6
+    } else {
+        message("sensord library missing")
+    }
 }
 
 symbian {

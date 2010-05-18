@@ -229,14 +229,14 @@ information from the system.
    /*!
   \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
 
-  This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
+  This signal is emitted when the power state has changed, such as when a phone gets plugged in to the wall.
   \a state is the new power state.
  */
 
 /*!
   \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
 
-  This signal is emitted whenever the network profile changes, specified by \a profile.
+  This signal is emitted whenever the users active profile changes, specified by \a profile.
 */
 
 
@@ -539,7 +539,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
   \property QSystemNetworkInfo::homeMobileCountryCode
   \brief The home MNC.
 
-    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -550,7 +550,9 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
   \property QSystemNetworkInfo::homeMobileNetworkCode
   \brief The home MCC.
 
-    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Note: Some platforms don't support retrieving this info. In this case the Network Code is
+    returned only when the device is registered on home network.
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {

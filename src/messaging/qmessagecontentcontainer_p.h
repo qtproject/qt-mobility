@@ -44,6 +44,7 @@
 #include "qmessageglobal.h"
 #include "qmessagecontentcontainer.h"
 #include "qmessage.h"
+#include "messagingutil_p.h"
 
 #ifdef USE_QMF_IMPLEMENTATION
 #include "qmfhelpers_p.h"
@@ -355,7 +356,7 @@ public:
             return;
         }
 #endif
-		container.d_ptr->_id = QMessageContentContainerId(WinHelpers::addIdPrefix(QString::number(_attachments.count()+1)));
+        container.d_ptr->_id = QMessageContentContainerId(MessagingUtil::addIdPrefix(QString::number(_attachments.count()+1)));
         _attachments.append(container);
         return container.d_ptr->_id;
     }
@@ -370,14 +371,14 @@ public:
 #endif
         _attachments.prepend(container);
         for (int i = 0; i < _attachments.count(); ++i) {
-			_attachments[i].d_ptr->_id = QMessageContentContainerId(WinHelpers::addIdPrefix(QString::number(i+1)));
+            _attachments[i].d_ptr->_id = QMessageContentContainerId(MessagingUtil::addIdPrefix(QString::number(i+1)));
         }
         return _attachments[0].d_ptr->_id;
     }
 
     QMessageContentContainerId bodyContentId() const
     {
-		return QMessageContentContainerId(WinHelpers::addIdPrefix(QString::number(0)));
+        return QMessageContentContainerId(MessagingUtil::addIdPrefix(QString::number(0)));
     }
 
     static QString attachmentFilename(const QMessageContentContainer& container)

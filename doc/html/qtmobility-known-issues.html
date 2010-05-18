@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qtmobility-known-issues.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Release Notes of the QtMobility Project</title>
+  <title>Qt Mobility Project 1.1: Release Notes of the QtMobility Project</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -29,13 +29,10 @@
 <li><a href="#known-issues">Known Issues</a></li>
 <ul><li><a href="#non-api-specific-issues">Non-API specific issues</a></li>
 <li><a href="#contacts-api">Contacts API</a></li>
-<li><a href="#location-api">Location API</a></li>
 <li><a href="#messaging-api">Messaging API</a></li>
 <li><a href="#multimedia-api">Multimedia API</a></li>
-<li><a href="#publish-and-subscribe-api">Publish and Subscribe API</a></li>
 <li><a href="#sensors-api">Sensors API</a></li>
 <li><a href="#system-info-api">System Info API</a></li>
-<li><a href="#versit-api">Versit API</a></li>
 </ul>
 </ul>
 <a name="new-features"></a>
@@ -118,63 +115,56 @@
 <a name="non-api-specific-issues"></a>
 <h3>Non-API specific issues</h3>
 <ul>
-<li>Qt Mobility does not compile if Qt using a namespace</li>
-<li>Not all example applications will display(fit) well on small screens</li>
-<li>On S60, it is currently not possible to use Qt convenience header includes:<pre>    #include &lt;QSystemInfo&gt; <span class="comment">//does not work on Symbian</span>
-<span class="comment">    //use</span>
-    #include &lt;qsysteminfo.h&gt;</pre>
-</li>
+<li>Qt Mobility does not compile if Qt using a namespace.</li>
+<li>Not all example applications will display(fit) well on small screens.</li>
 </ul>
 <a name="contacts-api"></a>
 <h3>Contacts API</h3>
 <ul>
 <li>S60: Async contact operations not supported</li>
 <li>S60: Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.</li>
-</ul>
-<a name="location-api"></a>
-<h3>Location API</h3>
-<ul>
-<li>Maemo: backends are not yet fully implemented.</li>
+<li>S60 3.1: the Symbian contacts plugins are not loaded on a device.</li>
 </ul>
 <a name="messaging-api"></a>
 <h3>Messaging API</h3>
 <ul>
 <li>Messaging filtering and Sorting functions are not fully optimized.</li>
-<li>Maemo: Messaging backends are not fully implemented.</li>
-<li>S60: Exporting IMAP or POP3 Message Updates from client to server is not supported</li>
+<li>Fremantle: <tt>QMessageService::compose</tt> not supported for SMS type messages.</li>
+<li>Fremantle: queryMessages service action is synchronous for SMS type messages.</li>
+<li>Fremantle: <tt>QMessageService::show</tt> not supported for SMS type messages.</li>
+<li>Fremantle: <tt>QMessageManager::messageAdded</tt> signal is not reported for messages in inbox when inbox is open in modest.</li>
+<li>Fremantle: <tt>QMessageManager::updateMessage</tt> is not supported.</li>
+<li>Fremantle: <tt>QMessageManager::addMessage</tt> is not supported for SMS type messages.</li>
+<li>Fremantle: <tt>QMessageManager::addMessage</tt> can not be used to set priority and status of email messages.</li>
+<li>Fremantle and Windows: <tt>QMessageServiceAction::send</tt>: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's disgression.</li>
+<li>Fremantle, S60 and Windows: <tt>QMessageManager::addMessage</tt> can not be used to set size of messages.</li>
+<li>Fremantle and Windows: <tt>QMessageManager::addMessage</tt> can not be used to set the date of messages.</li>
+<li>S60: Exporting POP3 Message Updates from client to server is not supported.</li>
 <li>S60: Only one level of folders is supported &lt;=&gt; Symbian/S60 applications do not use nested folders</li>
-<li>S60: Complex filter cases are not supported where nested filters are used (for example: <tt>QMessageFilter::byParentAccountId(const QMessageAccountFilter ,...)</tt></li>
 <li>S60: ReceptionTimeStamp is not supported in filtering &lt;=&gt; Symbian reports only one date for SMS &amp; MMS which means that <tt>QMessage::date()</tt> field is used, not <tt>receivedDate()</tt>)</li>
-<li>S60: Message size reporting should be improved</li>
 <li>S60: Local services messages, for example bluetooth, are listed/read in Inbox</li>
 <li>Windows: <tt>QMessageServiceAction::queryMessages</tt> does not incrementally emit matching message identifiers or progress information.</li>
-<li>Windows: <tt>QMessageStore::instance</tt> shows a blocking modal dialog if MAPI is not installed.</li>
-<li>Windows mobile: <tt>QMessageServiceAction::exportUpdates</tt> : Full account synchronization currently unavailable due to lack of synchronous control of update progress.</li>
-<li>Windows mobile: <tt>QMessageSerivceAction::retrieve</tt> : Only retrieves content for messages bodies at present. Attachment retrieval overridden by mapi/mail client settings.</li>
-<li>Windows mobile: <tt>QMessageServiceAction::cancelOperation</tt> : Async nature of native calls used to implement service actions means that cancelOperation will only operate on <tt>::retieveBody</tt> at present.</li>
-<li>Windows Mobile: <tt>QMessageServiceAction::send</tt>: Provides no way of determining actual transmission failure.</li>
+<li>Windows: <tt>QMessageServiceAction::exportUpdates</tt>: Performs no operation as changes are automatically synchronized with external servers when a connection is available. control of update progress.</li>
+<li>Windows desktop: <tt>QMessageStore::instance</tt> shows a blocking modal dialog if MAPI is not installed.</li>
+<li>Windows mobile: <tt>QMessageSerivceAction::retrieve</tt>: Only retrieves content for messages bodies at present. Attachment retrieval overridden by mapi/mail client settings.</li>
+<li>Windows mobile: <tt>QMessageServiceAction::cancelOperation</tt>: Async nature of native calls used to implement service actions means that cancelOperation will only operate on the ::retrieveBody service action.</li>
 </ul>
 <a name="multimedia-api"></a>
 <h3>Multimedia API</h3>
 <ul>
-<li>S60: S60 specific play list not supported</li>
-<li>S60: Device specific play list management not supported.</li>
-<li>S60: Audio capture does not support currently any special features like format, encoding etc..&#x2e;</li>
+<li><b>Multimedia API is in beta state.</b></li>
+<li>S60: Audio capture does not support currently any special features like format, encoding etc.</li>
 <li>S60: seeking is not working properly</li>
 <li>S60: video size does not remain constant in repeated plays</li>
 <li>S60: full screen video not working OK</li>
 <li>S60: 3.2&#x2e;3 (E75 for example) player example don't work.</li>
 <li>Windows desktop: wmp multimedia plugin does not display video with Windows Media Player 10 or 12</li>
 </ul>
-<a name="publish-and-subscribe-api"></a>
-<h3>Publish and Subscribe API</h3>
-<ul>
-<li>Maemo: only supports subscribing but not publishing.</li>
-</ul>
 <a name="sensors-api"></a>
 <h3>Sensors API</h3>
 <ul>
-<li><b>Sensors API is in technology preview state.</b></li>
+<li>S60: The S60 sensor backends are under development and may not be complete.</li>
+<li>S60 3.1: src/s60installs/s60installs.pro: the s60_sensor_api plugin for 3.1 devices is not added to the sis file when generating the sis file for multiple SDKs.</li>
 </ul>
 <a name="system-info-api"></a>
 <h3>System Info API</h3>
@@ -183,15 +173,10 @@
 <li>S60: Phone is still charging but power state shows 100% and &quot;wall power&quot;.</li>
 <li>S60: number of bars for network reporting signal strength is hardcoded.</li>
 </ul>
-<a name="versit-api"></a>
-<h3>Versit API</h3>
-<ul>
-<li><b>Versit support for Contacts API is in technology preview state, see <tt>src/versit/README</tt>.</b></li>
-</ul>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>
