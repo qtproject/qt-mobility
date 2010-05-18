@@ -49,9 +49,12 @@
 QTM_USE_NAMESPACE
 
 /*!
+  \deprecated
   \class QVersitContactImporterPropertyHandler
   \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to
   implement custom import behaviour for versit properties
+
+  This interface is superceded by QVersitContactImporterPropertyHandlerV2.
 
   \ingroup versit
 
@@ -59,73 +62,120 @@ QTM_USE_NAMESPACE
  */
 
 /*!
- * \fn QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler()
- * Frees any memory in use by this handler.
+  \fn QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler()
+  Frees any memory in use by this handler.
  */
 
 /*!
- * \fn virtual bool QVersitContactImporterPropertyHandler::preProcessProperty(const QVersitDocument& document, const QVersitProperty& property, int contactIndex, QContact* contact) = 0;
- * Process \a property and update \a contact with the corresponding QContactDetail(s).
- * \a document provides the context within which the property was found.
- * \a contactIndex specifies the position that \a contact will take in the list returned by
- * \l QVersitContactImporter::importDocuments().
- *
- * Returns true if the property has been handled and requires no further processing, false
- * otherwise.
- *
- * This function is called on every QVersitProperty encountered during an import.  Supply this
- * function and return true to implement custom import behaviour.
+  \fn virtual bool QVersitContactImporterPropertyHandler::preProcessProperty(const QVersitDocument& document, const QVersitProperty& property, int contactIndex, QContact* contact) = 0;
+  Process \a property and update \a contact with the corresponding QContactDetail(s).
+  \a document provides the context within which the property was found.
+  \a contactIndex specifies the position that \a contact will take in the list returned by
+  \l QVersitContactImporter::importDocuments().
+
+  Returns true if the property has been handled and requires no further processing, false
+  otherwise.
+
+  This function is called on every QVersitProperty encountered during an import.  Supply this
+  function and return true to implement custom import behaviour.
  */
 
 /*!
- * \fn virtual bool QVersitContactImporterPropertyHandler::postProcessProperty(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, int contactIndex, QContact* contact) = 0;
- * Process \a property and update \a contact with the corresponding QContactDetail(s).
- * \a document provides the context within which the property was found.
- * \a contactIndex specifies the position that \a contact will take in the list returned by
- * \l QVersitContactImporter::importDocuments().
- * \a alreadyProcessed is true if the detail has already been processed either by
- * \l preProcessProperty() or by QVersitContactImporter itself.
- *
- * Returns true if the property has been handled, false otherwise.
- *
- * This function is called on every QVersitProperty encountered during an import.  This can be
- * used to implement support for QVersitProperties not supported by QVersitContactImporter.
+  \fn virtual bool QVersitContactImporterPropertyHandler::postProcessProperty(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, int contactIndex, QContact* contact) = 0;
+  Process \a property and update \a contact with the corresponding QContactDetail(s).
+  \a document provides the context within which the property was found.
+  \a contactIndex specifies the position that \a contact will take in the list returned by
+  \l QVersitContactImporter::importDocuments().
+  \a alreadyProcessed is true if the detail has already been processed either by
+  \l preProcessProperty() or by QVersitContactImporter itself.
+
+  Returns true if the property has been handled, false otherwise.
+
+  This function is called on every QVersitProperty encountered during an import.  This can be
+  used to implement support for versit properties not supported by QVersitContactImporter.
  */
 
 /*!
- * \class QVersitContactImporter
- * \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
- *
- * \ingroup versit
- *
- * A \l QVersitResourceHandler is associated with the importer to supply the behaviour for saving
- * files to persistent storage.  By default, this is set to a \l QVersitDefaultResourceHandler,
- * which does not save files to persistent storage.  Note that although avatars found in vCards
- * are not saved to disk by default, the importer does set the pixmap of the contact detail to the
- * image.  If a full-sized avatar image needs to be persisted, a custom QVersitResourceHandler
- * should be supplied which implements this.
- *
- * By associating a QVersitContactImporterPropertyHandler with the importer using
- * setPropertyHandler(), the client can pass in a handler to override the processing of properties
- * and/or handle properties that QVersitContactImporter doesn't support.
- *
- * An example property handler that decodes unknown properties generated by the example detail handler provided in the QVersitContactExporter documentation:
- * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Property handler
- *
- * An example usage of QVersitContactImporter
- * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import example
- *
- * \section1 Importing categories
- * The importer imports the vCard CATEGORIES property by converting each category to a QContactTag.
- * Some managers may not have support for QContactTag, but instead support categorization using the
- * \l{QContactRelationship::HasMember}{HasMember} QContactRelationship along with contacts of type
- * \l{QContactType::TypeGroup}{TypeGroup}.  For these backends, if the categorization information
- * needs to be retained through group relationships, extra work needs to be done to do the
- * conversion.  Below is some example code that does this translation.
- *
- * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import relationship example
- *
- * \sa QVersitDocument, QVersitReader, QVersitContactImporterPropertyHandler
+  \class QVersitContactImporterPropertyHandlerV2
+  \brief The QVersitContactImporterPropertyHandlerV2 class is an interface for clients wishing to
+  implement custom import behaviour for versit properties.
+
+  This interface supercedes QVersitContactImporterPropertyHandler.
+
+  \ingroup versit
+
+  \sa QVersitContactImporter
+ */
+
+/*!
+  \fn QVersitContactImporterPropertyHandlerV2::~QVersitContactImporterPropertyHandlerV2()
+  Frees any memory in use by this handler.
+ */
+
+/*!
+  \fn virtual void QVersitContactImporterPropertyHandlerV2::propertyProcessed(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, const QContact& contact, QList<QContactDetail>* updatedDetails) = 0;
+  Process \a property and provide a list of updated details by adding them to \a updatedDetails.
+  \a document provides the context within which the property was found.
+
+  This function is called on every QVersitProperty encountered during an import, after the property
+  has been processed by the QVersitContactImporter.  This can be used to implement support for
+  versit properties not supported by QVersitContactImporter.
+
+  \a alreadyProcessed is true if the QVersitContactImporter was successful in processing the
+  property.  \a contact holds the state of the contact before the property was processed by the
+  importer.  \a updatedDetails is initially filled with a list of details that the importer will
+  update, and can be modified (by removing, modifying or adding details to the list).
+ */
+
+/*!
+  \fn virtual void QVersitContactImporterPropertyHandlerV2::documentProcessed(const QVersitDocument& document, QContact* contact) = 0;
+  Perform any finalizing processing on the \a document, updating \a contact with the necessary
+  changes.
+
+  This function is called after all QVersitProperties have been handled by the
+  QVersitContactImporter.
+*/
+
+/*!
+  \fn virtual int QVersitContactImporterPropertyHandlerV2::version() const
+  Returns the version of the handler.  Currently, always returns 2.
+*/
+
+/*!
+  \class QVersitContactImporter
+  \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
+
+  \ingroup versit
+
+  A \l QVersitResourceHandler is associated with the importer to supply the behaviour for saving
+  files to persistent storage.  By default, this is set to a \l QVersitDefaultResourceHandler,
+  which does not save files to persistent storage.  Note that although avatars found in vCards
+  are not saved to disk by default, the importer does set the pixmap of the contact detail to the
+  image.  If a full-sized avatar image needs to be persisted, a custom QVersitResourceHandler
+  should be supplied which implements this.
+
+  By associating a QVersitContactImporterPropertyHandlerV2 with the importer using
+  setPropertyHandler(), the client can pass in a handler to override the processing of properties
+  and/or handle properties that QVersitContactImporter doesn't support.  By default, this is set
+  to a QVersitContactImporterDefaultPropertyHandler, which decodes properties generated by the
+  QVersitContactExporterDefaultDetailHandler.  This means that if a contact is exported
+  and then imported again, the resulting contact will be equal to the original one, even if
+  there are non-standard details.
+
+  An example usage of QVersitContactImporter
+  \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import example
+
+  \section1 Importing categories
+  The importer imports the vCard CATEGORIES property by converting each category to a QContactTag.
+  Some managers may not have support for QContactTag, but instead support categorization using the
+  \l{QContactRelationship::HasMember}{HasMember} QContactRelationship along with contacts of type
+  \l{QContactType::TypeGroup}{TypeGroup}.  For these backends, if the categorization information
+  needs to be retained through group relationships, extra work needs to be done to do the
+  conversion.  Below is some example code that does this translation.
+
+  \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import relationship example
+
+  \sa QVersitDocument, QVersitProperty, QVersitContactImporterPropertyHandlerV2, QVersitResourceHandler
  */
 
 /*!
@@ -203,6 +253,7 @@ QMap<int, QVersitContactImporter::Error> QVersitContactImporter::errors() const
 }
 
 /*!
+ * \deprecated
  * Sets \a handler to be the handler for processing QVersitProperties, or 0 to have no handler.
  *
  * Does not take ownership of the handler.  The client should ensure the handler remains valid for

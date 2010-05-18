@@ -158,7 +158,7 @@ bool QVersitContactImporterPrivate::importContact(
     }
 
     if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
-        mPropertyHandler2->endDocument(document, contact);
+        mPropertyHandler2->documentProcessed(document, contact);
     }
 
     contact->setType(QContactType::TypeContact);
@@ -222,7 +222,7 @@ void QVersitContactImporterPrivate::importProperty(
     }
 
     if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
-        mPropertyHandler2->afterProcessProperty(document, property, success, *contact, &updatedDetails);
+        mPropertyHandler2->propertyProcessed(document, property, success, *contact, &updatedDetails);
     }
 
     foreach (QContactDetail detail, updatedDetails) {

@@ -192,8 +192,8 @@ bool QVersitContactExporterPrivate::exportContact(
         }
 
         if (mDetailHandler2 && mDetailHandlerVersion > 1) {
-            mDetailHandler2->afterProcessDetail(contact, detail, processedFields, document,
-                                                &removedProperties, &generatedProperties);
+            mDetailHandler2->detailProcessed(contact, detail, processedFields, document,
+                                             &removedProperties, &generatedProperties);
         }
 
         foreach(const QVersitProperty& property, removedProperties) {
@@ -206,6 +206,10 @@ bool QVersitContactExporterPrivate::exportContact(
         if (mDetailHandler && mDetailHandlerVersion == 1) {
             mDetailHandler->postProcessDetail(contact, detail, !processedFields.isEmpty(), &document);
         }
+    }
+
+    if (mDetailHandler2 && mDetailHandlerVersion > 1) {
+        mDetailHandler2->contactProcessed(contact, &document);
     }
 
     // Search through the document for FN or N properties.  This will find it even if it was added
