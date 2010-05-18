@@ -264,10 +264,11 @@ void tst_QVersit::testExportImport()
     QVersitReader reader(documentBytes);
     reader.startReading();
     reader.waitForFinished();
-    QList<QVersitDocument> readDocuments = reader.results();
+    QList<QVersitDocument> parsedDocuments = reader.results();
+    QCOMPARE(parsedDocuments.size(), 1);
 
     QVersitContactImporter importer;
-    QVERIFY(importer.importDocuments(readDocuments));
+    QVERIFY(importer.importDocuments(parsedDocuments));
     QList<QContact> contacts = importer.contacts();
     QCOMPARE(contacts.size(), 1);
     if (contacts.first().details() != contact.details()) {
@@ -278,12 +279,23 @@ void tst_QVersit::testExportImport()
     }
 }
 
+enum Color { RED, GREEN, BLUE };
+
 void tst_QVersit::testExportImport_data()
 {
     QTest::addColumn<QContact>("contact");
 
     // The test contacts need at least a name (so the resulting vCard is valid and a display label (because
     // otherwise, the imported display label will be set from the name or something)
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("just a name") << contact;
+    }
+
     {
         QContact contact;
         QContactName name;
@@ -303,15 +315,6 @@ void tst_QVersit::testExportImport_data()
         contact.setType(QContactType::TypeContact);
         QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("custom"));
         QTest::newRow("custom detail grouping") << contact;
-    }
-
-    {
-        QContact contact;
-        QContactName name;
-        name.setCustomLabel(QLatin1String("name"));
-        contact.saveDetail(&name);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTest::newRow("just a name") << contact;
     }
 
     // Test of some non-string fields
@@ -373,6 +376,30 @@ void tst_QVersit::testExportImport_data()
         contact.saveDetail(&customDetail);
         QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
         QTest::newRow("float field") << contact;
+    }
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactDetail customDetail("CustomDetail");
+        customDetail.setValue(QLatin1String("CustomField"), QDateTime(QDate(2010, 5, 18), QTime(11, 25)));
+        contact.saveDetail(&customDetail);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("datetime field") << contact;
+    }
+
+    {
+        QContact contact;
+        QContactName name;
+        name.setCustomLabel(QLatin1String("name"));
+        contact.saveDetail(&name);
+        QContactDetail customDetail("CustomDetail");
+        customDetail.setValue(QLatin1String("CustomField"), RED);
+        contact.saveDetail(&customDetail);
+        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+        QTest::newRow("enum field") << contact;
     }
 }
 
