@@ -1413,39 +1413,39 @@ void QGalleryTrackerSchema::setSortPropertyNames(const QStringList &names)
 QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createIdColumn() const
 {
     if (m_fileTypeIndex >= 0) {
-        return new QGalleryTrackerServicePrefixColumn(QString(), 0, 0, 1);
+        return new QGalleryTrackerServicePrefixColumn(0, 1);
     } else if (m_aggregateTypeIndex >= 0) {
         QGalleryAggregateTypeMap typeMap(qt_galleryAggregateTypeMap);
 
         const QString prefix = typeMap[m_aggregateTypeIndex].prefix;
 
         if (typeMap[m_aggregateTypeIndex].identity.count == 1) {
-            return new QGalleryTrackerPrefixColumn(QString(), 0, 0, prefix);
+            return new QGalleryTrackerPrefixColumn(0, prefix);
         } else if (typeMap[m_aggregateTypeIndex].identity.count == 2) {
-            return new QGalleryTrackerCompositeIdColumn(QString(), 0, m_identityColumns, prefix);
+            return new QGalleryTrackerCompositeIdColumn(m_identityColumns, prefix);
         }
     }
-    return new QGalleryTrackerStaticColumn(QString(), 0, QVariant());
+    return new QGalleryTrackerStaticColumn(QVariant());
 }
 
 QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createUrlColumn() const
 {
     if (m_fileTypeIndex >= 0) {
-        return new QGalleryTrackerFileUrlColumn(QString(), 0, 0);
+        return new QGalleryTrackerFileUrlColumn(0);
     } else {
-        return new QGalleryTrackerStaticColumn(QString(), 0, QUrl());
+        return new QGalleryTrackerStaticColumn(QUrl());
     }
 }
 
 QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createTypeColumn() const
 {
     if (m_fileTypeIndex >= 0) {
-        return new QGalleryTrackerServiceTypeColumn(QString(), 0, 1);
+        return new QGalleryTrackerServiceTypeColumn(1);
     } else if (m_aggregateTypeIndex >= 0) {
-        return new QGalleryTrackerStaticColumn(
-                QString(), 0, QString(qt_galleryAggregateTypeMap[m_aggregateTypeIndex].galleryKey));
+        return new QGalleryTrackerStaticColumn(QString(
+                qt_galleryAggregateTypeMap[m_aggregateTypeIndex].galleryKey));
     } else {
-        return new QGalleryTrackerStaticColumn(QString(), 0, QVariant());
+        return new QGalleryTrackerStaticColumn(QVariant());
     }
 }
 
@@ -1458,20 +1458,16 @@ QVector<QGalleryTrackerValueColumn *> QGalleryTrackerSchema::createValueColumns(
     for (int i = 0, count = m_valueTypes.count(); i < count; ++i) {
         switch (m_valueTypes.at(i)) {
         case QVariant::String:
-            columns.append(new QGalleryTrackerStringColumn(
-                    m_propertyNames.at(i), m_propertyAttributes.at(i)));
+            columns.append(new QGalleryTrackerStringColumn);
             break;
         case QVariant::Int:
-            columns.append(new QGalleryTrackerStringColumn(
-                    m_propertyNames.at(i), m_propertyAttributes.at(i)));
+            columns.append(new QGalleryTrackerStringColumn);
             break;
         case QVariant::Double:
-            columns.append(new QGalleryTrackerStringColumn(
-                    m_propertyNames.at(i), m_propertyAttributes.at(i)));
+            columns.append(new QGalleryTrackerStringColumn);
             break;
         case QVariant::DateTime:
-            columns.append(new QGalleryTrackerStringColumn(
-                    m_propertyNames.at(i), m_propertyAttributes.at(i)));
+            columns.append(new QGalleryTrackerStringColumn);
             break;
         default:
             Q_ASSERT(false);
@@ -1498,10 +1494,7 @@ QVector<QGalleryTrackerAliasColumn *> QGalleryTrackerSchema::createAliasColumns(
     for (int i = 0, count = m_aliasColumns.count(); i < count; ++i) {
         const int propertyIndex = i + m_propertyFields.count();
 
-        columns.append(new QGalleryTrackerAliasColumn(
-                m_propertyNames.at(propertyIndex),
-                m_propertyAttributes.at(propertyIndex),
-                m_aliasColumns.at(i)));
+        columns.append(new QGalleryTrackerAliasColumn(m_aliasColumns.at(i)));
     }
 
     return columns;

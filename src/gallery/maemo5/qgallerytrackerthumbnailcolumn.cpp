@@ -93,8 +93,8 @@ public:
 
 
 QGalleryTrackerThumbnailColumn::QGalleryTrackerThumbnailColumn(
-        const QString &name, QGalleryProperty::Attributes attributes, QObject *parent)
-    : QGalleryTrackerImageColumn(name, attributes, parent)
+        const QGalleryDBusInterfacePointer &thumbnailInterface, QObject *parent)
+    : QGalleryTrackerImageColumn(parent)
 #ifdef Q_WS_MAEMO_5
     , m_croppedDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
                  + QLatin1String("/.thumbnails/cropped/"))
@@ -104,6 +104,7 @@ QGalleryTrackerThumbnailColumn::QGalleryTrackerThumbnailColumn(
 #endif
     , m_failDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
                 + QLatin1String("/.thumbnails/fail/"))
+    , m_thumbnailInterface(thumbnailInterface)
 {
 }
 

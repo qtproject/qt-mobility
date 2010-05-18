@@ -70,7 +70,7 @@ class QGalleryTrackerThumbnailColumn : public QGalleryTrackerImageColumn
     Q_OBJECT
 public:
     QGalleryTrackerThumbnailColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, QObject *parent = 0);
+            const QGalleryDBusInterfacePointer &thumbnailInterface, QObject *parent = 0);
     ~QGalleryTrackerThumbnailColumn();
 
     QVector<QGalleryTrackerImage> loadImages(
@@ -110,8 +110,6 @@ private:
 
     QVariant loadThumbnail(const QString &filePath);
 
-
-
 #ifdef Q_WS_MAEMO_5
     const QString m_croppedDir;
 #else
@@ -129,8 +127,8 @@ class QGalleryTrackerThumbnailImageColumn : public QGalleryTrackerThumbnailColum
 {
 public:
     QGalleryTrackerThumbnailImageColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, QObject *parent = 0)
-        : QGalleryTrackerThumbnailColumn(name, attributes, parent) {}
+            const QGalleryDBusInterfacePointer &thumbnailInterface, QObject *parent = 0)
+        : QGalleryTrackerThumbnailColumn(thumbnailInterface, parent) {}
     ~QGalleryTrackerThumbnailImageColumn() {}
 
 protected:
@@ -141,8 +139,8 @@ class QGalleryTrackerThumbnailPixmapColumn : public QGalleryTrackerThumbnailColu
 {
 public:
     QGalleryTrackerThumbnailPixmapColumn(
-            const QString &name, QGalleryProperty::Attributes attributes, QObject *parent = 0)
-        : QGalleryTrackerThumbnailColumn(name, attributes, parent) {}
+            const QGalleryDBusInterfacePointer &thumbnailInterface, QObject *parent = 0)
+        : QGalleryTrackerThumbnailColumn(thumbnailInterface, parent) {}
     ~QGalleryTrackerThumbnailPixmapColumn() {}
 
 protected:
