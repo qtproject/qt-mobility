@@ -4,8 +4,13 @@ import Qt 4.7
 Rectangle {
     id : timelineView
     anchors.fill : parent
-//    width:300
-//    height:400
+
+
+    Script {
+        function changeDate() {
+            //TODO
+        }
+    }
 
 
     //Day view
@@ -28,12 +33,18 @@ Rectangle {
             preferredHighlightBegin: dayList.height * 0.5
             preferredHighlightEnd: preferredHighlightBegin
             highlightFollowsCurrentItem : true
+            highlightMoveSpeed : 2000
+            keyNavigationWraps : true
+
             Component.onCompleted : {
                var now = new Date();
                var day = now.getUTCDate();
                dayList.positionViewAtIndex(day, Center);
                dayList.currentIndex = day;
             }
+
+            Keys.onUpPressed : changeDate()
+            Keys.onDownPressed : changeDate()
         }
 
         Component {
@@ -122,11 +133,17 @@ Rectangle {
             preferredHighlightBegin: monthList.height * 0.5
             preferredHighlightEnd: preferredHighlightBegin
             highlightFollowsCurrentItem : true
+            highlightMoveSpeed : 1000
             Component.onCompleted : {
                var now = new Date();
                var month = now.getMonth();
                monthList.currentIndex = month;
+               var  d = Date.parse("Feb 31, 2010");
             }
+//            onCurrentIndexChanged : {
+
+//            }
+
 
         }
 
