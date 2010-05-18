@@ -68,6 +68,7 @@ class Q_MEDIA_EXPORT QMediaRecorder : public QMediaObject
     Q_ENUMS(Error)    
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(QUrl outputLocation READ outputLocation WRITE setOutputLocation)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
 public:
 
     enum State
@@ -100,6 +101,8 @@ public:
 
     qint64 duration() const;
 
+    bool isMuted() const;
+
     QStringList supportedContainers() const;
     QString containerDescription(const QString &containerMimeType) const;
 
@@ -130,10 +133,12 @@ public Q_SLOTS:
     void record();
     void pause();
     void stop();
+    void setMuted(bool muted);
 
 Q_SIGNALS:
     void stateChanged(QMediaRecorder::State state);
     void durationChanged(qint64 duration);
+    void mutedChanged(bool muted);
 
     void error(QMediaRecorder::Error error);
 

@@ -153,6 +153,9 @@ void QMediaRecorderPrivate::initControls()
         q->connect(control, SIGNAL(stateChanged(QMediaRecorder::State)),
                 q, SLOT(_q_stateChanged(QMediaRecorder::State)));
 
+        q->connect(control, SIGNAL(mutedChanged(bool)),
+                q, SIGNAL(mutedChanged(bool)));
+
         q->connect(control, SIGNAL(error(int,QString)),
                 q, SLOT(_q_error(int,QString)));
     }
@@ -298,6 +301,24 @@ qint64 QMediaRecorder::duration() const
     return d_func()->control ? d_func()->control->duration() : 0;
 }
 
+/*!
+    \property QMediaRecorder::muted
+
+    \brief whether a recording audio stream is muted.
+*/
+
+bool QMediaRecorder::isMuted() const
+{
+    return d_func()->control ? d_func()->control->isMuted() : 0;
+}
+
+void QMediaRecorder::setMuted(bool muted)
+{
+    Q_D(QMediaRecorder);
+
+    if (d->control)
+        d->control->setMuted(muted);
+}
 
 /*!
     Returns a list of MIME types of supported container formats.

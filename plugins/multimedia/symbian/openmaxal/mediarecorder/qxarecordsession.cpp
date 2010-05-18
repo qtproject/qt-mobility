@@ -85,12 +85,13 @@ m_previousState(QMediaRecorder::StoppedState)
         if (m_impl->postConstruct() == KErrNone) {
             initCodecsList();
             initContainersList();
-            m_containerMimeType = QString();
+            m_containerMimeType = QString("audio/wav");
+            m_audioencodersettings.setCodec("pcm");
             m_audioencodersettings.setBitRate(0);
-            m_audioencodersettings.setChannelCount(-1);
+            m_audioencodersettings.setChannelCount(1);
             m_audioencodersettings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
-            m_audioencodersettings.setQuality(QtMediaServices::NormalQuality);
-            m_audioencodersettings.setSampleRate(-1);
+            m_audioencodersettings.setQuality(QtMediaServices::VeryLowQuality);
+            m_audioencodersettings.setSampleRate(8000);
             QT_TRACE1("Initialized implementation");
         }
         else {
@@ -123,9 +124,8 @@ bool QXARecordSession::setOutputLocation(const QUrl &location)
 
     RETURN_s_IF_m_impl_IS_NULL(false);
 
-    /* Location can only be set when the recorder is in the stopped
-     * state after creation. */
-    if ((state() != QMediaRecorder::StoppedState) || (m_state != m_previousState)) {
+    // Location can be set only when recorder is in stopped state.
+    if (state() != QMediaRecorder::StoppedState) {
         return false;
     }
     
@@ -144,6 +144,8 @@ bool QXARecordSession::setOutputLocation(const QUrl &location)
     if (m_impl->setURI(tempPtr) == 0) {
         QT_TRACE2("Location:", newUrlStr);
         m_outputLocation = location;
+        /* New file, so user can set new settings */
+        m_previousState = QMediaRecorder::StoppedState;
         retVal = true;
     }
     else {
@@ -432,7 +434,15 @@ QAudioEncoderSettings QXARecordSession::audioSettings()
 
 void QXARecordSession::setAudioSettings(const QAudioEncoderSettings &settings)
 {
-    m_audioencodersettings = settings;
+    /* Settings can only be set when the recorder is in the stopped
+     * state after creation. */
+    if ((state() == QMediaRecorder::StoppedState) && (m_state == m_previousState)) {
+        m_audioencodersettings = settings;
+    }
+    else {
+        emit error(QMediaRecorder::FormatError, tr("Settings cannot be changed once recording started"));
+        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Settings cannot be changed once recording started\"))");
+    }
 }
 
 QStringList QXARecordSession::supportedEncodingOptions(const QString &codec)
@@ -586,7 +596,10 @@ bool QXARecordSession::setEncoderSettingsToImpl()
 
     /* Validate and set bitrate only if encoding mode is other than quality encoding */
     if (m_audioencodersettings.encodingMode() != QtMediaServices::ConstantQualityEncoding) {
-        if (m_audioencodersettings.bitRate() < 0 ) {
+        if (m_audioencodersettings.bitRate() == -1) {
+            m_impl->setOptimalBitRate();
+        }
+        else if (m_audioencodersettings.bitRate() < 0 ) {
             emit error(QMediaRecorder::FormatError, tr("Invalid bitrate"));
             SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid bitrate\"))");
             return false;
@@ -683,16 +696,19 @@ bool QXARecordSession::setEncoderSettingsToImpl()
         }
     }; /* switch (m_audioencodersettings.encodingMode()) */
 
-    if (m_audioencodersettings.sampleRate() == -1) {
-        m_impl->setOptimalSampleRate();
-    }
-    else if (m_audioencodersettings.sampleRate() <= 0) {
-        emit error(QMediaRecorder::FormatError, tr("Invalid sample rate"));
-        SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid sample rate\"));");
-        return false;
-    }
-    else {
-        m_impl->setSampleRate(m_audioencodersettings.sampleRate());
+    /* Validate and set bitrate only if encoding mode is other than quality encoding */
+    if (m_audioencodersettings.encodingMode() != QtMediaServices::ConstantQualityEncoding) {
+        if (m_audioencodersettings.sampleRate() == -1) {
+            m_impl->setOptimalSampleRate();
+        }
+        else if (m_audioencodersettings.sampleRate() <= 0) {
+            emit error(QMediaRecorder::FormatError, tr("Invalid sample rate"));
+            SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid sample rate\"));");
+            return false;
+        }
+        else {
+            m_impl->setSampleRate(m_audioencodersettings.sampleRate());
+        }
     }
     m_appliedaudioencodersettings = m_audioencodersettings;
     QT_TRACE_FUNCTION_EXIT;

@@ -91,3 +91,12 @@ void AudioMediaRecorderControl::stop()
 {
     m_session->stop();
 }
+
+bool AudioMediaRecorderControl::isMuted() const
+{
+    return false;
+}
+
+void AudioMediaRecorderControl::setMuted(bool)
+{
+}

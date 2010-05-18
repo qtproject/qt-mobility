@@ -168,19 +168,26 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
         m_videoOutput = new QGstreamerVideoOutputControl(this);
         connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
                 this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+        
+        QList<QVideoOutputControl::Output> outputs;
 
         m_videoRenderer = new QGstreamerVideoRenderer(this);
         m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
-        m_videoWindow = new QGstreamerVideoOverlay(this);
-        m_videoWindowFactory = new QGstreamerVideoRendererWrapper(m_videoWindow);
+        outputs << QVideoOutputControl::RendererOutput;
 
-        m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
-        m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(m_videoWidgetControl);
+#ifndef QT_NO_XVIDEO
+        QGstreamerVideoOverlay *videoWindow = new QGstreamerVideoOverlay(this);
+        m_videoWindow = videoWindow;
+        m_videoWindowFactory = new QGstreamerVideoRendererWrapper(videoWindow);
+        outputs << QVideoOutputControl::WindowOutput;
 
-        m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
-                                           << QVideoOutputControl::RendererOutput
-                                           << QVideoOutputControl::WindowOutput
-                                           << QVideoOutputControl::WidgetOutput);
+        QGstreamerVideoWidgetControl *videoWidget = new QGstreamerVideoWidgetControl(this);
+        m_videoWidgetControl = videoWidget;
+        m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(videoWidget);
+        outputs << QVideoOutputControl::WidgetOutput;
+#endif
+
+        m_videoOutput->setAvailableOutputs(outputs);
     }
 
     if (!m_captureSession) {

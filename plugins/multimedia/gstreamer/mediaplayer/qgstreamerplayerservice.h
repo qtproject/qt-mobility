@@ -89,8 +89,8 @@ private:
     QGstreamerStreamsControl *m_streamsControl;
 
     QGstreamerVideoRenderer *m_videoRenderer;
-    QGstreamerVideoOverlay *m_videoWindow;
-    QGstreamerVideoWidgetControl *m_videoWidget;
+    QMediaControl *m_videoWindow;
+    QMediaControl *m_videoWidget;
 };
 
 #endif

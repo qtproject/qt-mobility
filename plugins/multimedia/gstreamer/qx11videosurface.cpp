@@ -44,6 +44,8 @@
 #include <QtGui/qx11info_x11.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
+#ifndef QT_NO_XVIDEO
+
 #include "qx11videosurface.h"
 
 Q_DECLARE_METATYPE(XvImage*);
@@ -530,3 +532,6 @@ void QX11VideoSurface::querySupportedFormats()
         XFree(attributes);
     }
 }
+
+#endif //QT_NO_XVIDEO
+

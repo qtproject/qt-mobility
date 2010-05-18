@@ -39,47 +39,39 @@
 **
 ****************************************************************************/
 
+#ifndef TST_QMEDIARECORDER_XA_MACROS_H
+#define TST_QMEDIARECORDER_XA_MACROS_H
 
-#ifndef QGSTREAMERRECORDERCONTROL_H
-#define QGSTREAMERRECORDERCONTROL_H
+#define QTRY_COMPARE(a,e)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if ((a) == (e)) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QCOMPARE(a, e)
 
-#include <qmediarecordercontrol.h>
-#include "qgstreamercapturesession.h"
-QT_USE_NAMESPACE
+#define QTRY_VERIFY(a)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if (a) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QVERIFY(a)
 
-class QGstreamerRecorderControl : public QMediaRecorderControl
-{
-    Q_OBJECT
-    Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
+#define QTEST_MAIN_S60(TestObject) \
+    int main(int argc, char *argv[]) { \
+        char *new_argv[3]; \
+        QApplication app(argc, argv); \
+        \
+        QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log"; \
+        QByteArray   bytes  = str.toAscii(); \
+        \
+        char arg1[] = "-o"; \
+        \
+        new_argv[0] = argv[0]; \
+        new_argv[1] = arg1; \
+        new_argv[2] = bytes.data(); \
+        \
+        TestObject tc; \
+        return QTest::qExec(&tc, 3, new_argv); \
+    }
 
-public:
-    QGstreamerRecorderControl(QGstreamerCaptureSession *session);
-    virtual ~QGstreamerRecorderControl();
-
-    QUrl outputLocation() const;
-    bool setOutputLocation(const QUrl &sink);
-
-    QMediaRecorder::State state() const;
-
-    qint64 duration() const;
-
-    bool isMuted() const;
-
-    void applySettings();
-
-public slots:
-    void record();
-    void pause();
-    void stop();
-    void setMuted(bool);
-
-private slots:
-    void updateState();
-
-private:
-    QGstreamerCaptureSession *m_session;
-    QMediaRecorder::State m_state;
-    bool m_hasPreviewState;
-};
-
-#endif // QGSTREAMERCAPTURECORNTROL_H
+#endif /* TST_QMEDIARECORDER_XA_MACROS_H */

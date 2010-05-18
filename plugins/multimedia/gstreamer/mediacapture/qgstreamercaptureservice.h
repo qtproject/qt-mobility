@@ -90,9 +90,9 @@ private:
     QGstreamerVideoOutputControl *m_videoOutput;
     QGstreamerVideoRenderer *m_videoRenderer;
     QGstreamerElementFactory *m_videoRendererFactory;
-    QGstreamerVideoOverlay *m_videoWindow;
+    QMediaControl *m_videoWindow;
     QGstreamerElementFactory *m_videoWindowFactory;
-    QGstreamerVideoWidgetControl *m_videoWidgetControl;
+    QMediaControl *m_videoWidgetControl;
     QGstreamerElementFactory *m_videoWidgetFactory;
 };
 

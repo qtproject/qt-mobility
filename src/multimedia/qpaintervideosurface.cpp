@@ -750,10 +750,15 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
     if (m_frame.isValid()) {
+        bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
+        bool scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
+
         painter->beginNativePainting();
 
-        glEnable(GL_STENCIL_TEST);
-        glEnable(GL_SCISSOR_TEST);
+        if (stencilTestEnabled)
+            glEnable(GL_STENCIL_TEST);
+        if (scissorTestEnabled)
+            glEnable(GL_SCISSOR_TEST);
 
         const float txLeft = source.left() / m_frameSize.width();
         const float txRight = source.right() / m_frameSize.width();
@@ -834,9 +839,6 @@ QAbstractVideoSurface::Error QVideoSurfaceArbFpPainter::paint(
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-        glDisable(GL_STENCIL_TEST);
-        glDisable(GL_SCISSOR_TEST);
 
         painter->endNativePainting();
     }
@@ -1083,10 +1085,15 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
         const QRectF &target, QPainter *painter, const QRectF &source)
 {
     if (m_frame.isValid()) {
+        bool stencilTestEnabled = glIsEnabled(GL_STENCIL_TEST);
+        bool scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
+
         painter->beginNativePainting();
 
-        glEnable(GL_STENCIL_TEST);
-        glEnable(GL_SCISSOR_TEST);
+        if (stencilTestEnabled)
+            glEnable(GL_STENCIL_TEST);
+        if (scissorTestEnabled)
+            glEnable(GL_SCISSOR_TEST);
 
         const int width = QGLContext::currentContext()->device()->width();
         const int height = QGLContext::currentContext()->device()->height();
@@ -1186,9 +1193,6 @@ QAbstractVideoSurface::Error QVideoSurfaceGlslPainter::paint(
 
         m_program.release();
 
-
-        glDisable(GL_SCISSOR_TEST);
-        glDisable(GL_STENCIL_TEST);
         painter->endNativePainting();
     }
     return QAbstractVideoSurface::NoError;

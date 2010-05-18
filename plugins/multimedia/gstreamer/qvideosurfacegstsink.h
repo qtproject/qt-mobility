@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 QT_END_NAMESPACE
 
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
 class QGstXvImageBuffer;
 class QGstXvImageBufferPool;
 #endif
@@ -136,7 +136,7 @@ private:
 private:
     QVideoSurfaceGstDelegate *delegate;
 
-#ifdef Q_WS_X11
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     QGstXvImageBufferPool *pool;
 #endif
 
