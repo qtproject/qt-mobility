@@ -70,13 +70,10 @@ public:
     QMediaControl* requestControl(const char *name);
     void releaseControl(QMediaControl *control);
 
-private slots:
-    void updateVideoOutput();
-
 private:
     QT7PlayerSession *m_session;
     QT7PlayerControl *m_control;
-    QSet<QMediaControl *> m_videoOutputs;
+    QMediaControl * m_videoOutput;
     QT7PlayerMetaDataControl *m_playerMetaDataControl;
 };
 

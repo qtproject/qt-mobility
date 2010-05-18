@@ -60,7 +60,8 @@
 QT_USE_NAMESPACE
 
 QT7PlayerService::QT7PlayerService(QObject *parent):
-    QMediaService(parent)
+    QMediaService(parent),
+    m_videoOutput(0)
 {
     m_session = new QT7PlayerSession(this);
 
@@ -73,7 +74,6 @@ QT7PlayerService::QT7PlayerService(QObject *parent):
 
 QT7PlayerService::~QT7PlayerService()
 {
-    Q_ASSERT(m_videoOutputs.isEmpty());
 }
 
 QMediaControl *QT7PlayerService::requestControl(const char *name)
@@ -84,34 +84,32 @@ QMediaControl *QT7PlayerService::requestControl(const char *name)
     if (qstrcmp(name, QMetaDataControl_iid) == 0)
         return m_playerMetaDataControl;
 
-    QMediaControl *videoOutputControl = 0;
-
-
-    if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
+    if (!m_videoOutput) {
+        if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
 #if defined(QT_MAC_USE_COCOA)
-        videoOutputControl = new QT7MovieViewOutput(this);
+            m_videoOutput = new QT7MovieViewOutput(this);
 #endif
-    }
+        }
 
-    if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+        if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
 #ifdef QUICKTIME_C_API_AVAILABLE
-        videoOutputControl = new QT7MovieRenderer(this);
+            m_videoOutput = new QT7MovieRenderer(this);
 #else
-        videoOutputControl = new QT7MovieViewRenderer(this);
+            m_videoOutput = new QT7MovieViewRenderer(this);
 #endif
-    }
+        }
 
-    if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
+        if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
 #ifdef QUICKTIME_C_API_AVAILABLE
-        videoOutputControl = new QT7MovieVideoWidget(this);
+            m_videoOutput = new QT7MovieVideoWidget(this);
 #endif
-    }
+        }
 
-    if (videoOutputControl) {
-        m_videoOutputs.insert(videoOutputControl);
-        QT7VideoOutput *videoOutput = qobject_cast<QT7VideoOutput*>(videoOutputControl);
-        m_session->addVideoOutput(videoOutput);
-        return videoOutputControl;
+        if (m_videoOutput) {
+            QT7VideoOutput *videoOutput = qobject_cast<QT7VideoOutput*>(m_videoOutput);
+            m_session->setVideoOutput(videoOutput);
+            return m_videoOutput;
+        }
     }
 
     return 0;
@@ -119,17 +117,11 @@ QMediaControl *QT7PlayerService::requestControl(const char *name)
 
 void QT7PlayerService::releaseControl(QMediaControl *control)
 {
-    if (m_videoOutputs.contains(control)) {
-        m_videoOutputs.remove(control);
-        QT7VideoOutput *videoOutput = qobject_cast<QT7VideoOutput*>(control);
-        if (videoOutput)
-            m_session->removeVideoOutput(videoOutput);
+    if (m_videoOutput == control) {
+        m_videoOutput = 0;
+        m_session->setVideoOutput(0);
         delete control;
     }
-}
-
-void QT7PlayerService::updateVideoOutput()
-{
 }
 
 #include "moc_qt7playerservice.cpp"

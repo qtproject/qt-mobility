@@ -165,6 +165,7 @@ QT7PlayerSession::QT7PlayerSession(QObject *parent)
    , m_state(QMediaPlayer::StoppedState)
    , m_mediaStatus(QMediaPlayer::NoMedia)
    , m_mediaStream(0)
+   , m_videoOutput(0)
    , m_muted(false)
    , m_volume(100)
    , m_rate(1.0)
@@ -187,26 +188,19 @@ void *QT7PlayerSession::movie() const
     return m_QTMovie;
 }
 
-void QT7PlayerSession::addVideoOutput(QT7VideoOutput *output)
+void QT7PlayerSession::setVideoOutput(QT7VideoOutput *output)
 {
-    if (!output || m_videoOutputs.contains(output))
+    if (m_videoOutput == output)
         return;
 
-    qDebug() << "add output" << output;
+    if (m_videoOutput)
+        m_videoOutput->setMovie(0);
 
-    m_videoOutputs.insert(output);
+    m_videoOutput = output;
 
-    if (m_state != QMediaPlayer::StoppedState)
-        output->setMovie(m_QTMovie);
+    if (m_videoOutput && m_state != QMediaPlayer::StoppedState)
+        m_videoOutput->setMovie(m_QTMovie);
 }
-
-void QT7PlayerSession::removeVideoOutput(QT7VideoOutput *output)
-{
-    qDebug() << "remove output" << output;
-    output->setMovie(0);
-    m_videoOutputs.remove(output);
-}
-
 
 qint64 QT7PlayerSession::position() const
 {
@@ -298,8 +292,8 @@ void QT7PlayerSession::setPosition(qint64 pos)
 
 void QT7PlayerSession::play()
 {
-    foreach(QT7VideoOutput *videoOutput, m_videoOutputs)
-        videoOutput->setMovie(m_QTMovie);
+    if (m_videoOutput)
+        m_videoOutput->setMovie(m_QTMovie);
 
     float preferredRate = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMoviePreferredRateAttribute"] floatValue];
     [(QTMovie*)m_QTMovie setRate:preferredRate*m_rate];
@@ -310,8 +304,8 @@ void QT7PlayerSession::play()
 
 void QT7PlayerSession::pause()
 {
-    foreach(QT7VideoOutput *videoOutput, m_videoOutputs)
-        videoOutput->setMovie(m_QTMovie);
+    if (m_videoOutput)
+        m_videoOutput->setMovie(m_QTMovie);
 
     m_state = QMediaPlayer::PausedState;
 
@@ -327,8 +321,8 @@ void QT7PlayerSession::stop()
     [(QTMovie*)m_QTMovie setRate:0];
     setPosition(0);
 
-    foreach(QT7VideoOutput *videoOutput, m_videoOutputs)
-        videoOutput->setMovie(0);
+    if (m_videoOutput)
+        m_videoOutput->setMovie(0);
 
     if (m_state == QMediaPlayer::StoppedState)
         emit stateChanged(m_state);
@@ -373,8 +367,8 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     if (m_QTMovie) {
         [(QTMovieObserver*)m_movieObserver setMovie:nil];
 
-        foreach(QT7VideoOutput *videoOutput, m_videoOutputs)
-            videoOutput->setMovie(0);
+        if (m_videoOutput)
+            m_videoOutput->setMovie(0);
 
         [(QTMovie*)m_QTMovie release];
         m_QTMovie = 0;
@@ -442,10 +436,8 @@ void QT7PlayerSession::setMedia(const QMediaContent &content, QIODevice *stream)
     } else {
         [(QTMovieObserver*)m_movieObserver setMovie:(QTMovie*)m_QTMovie];
 
-        if (m_state != QMediaPlayer::StoppedState) {
-            foreach(QT7VideoOutput *videoOutput, m_videoOutputs)
-                videoOutput->setMovie(m_QTMovie);
-        }
+        if (m_state != QMediaPlayer::StoppedState && m_videoOutput)
+            m_videoOutput->setMovie(m_QTMovie);
 
         processLoadStateChange();
 
@@ -475,8 +467,8 @@ bool QT7PlayerSession::isVideoAvailable() const
 void QT7PlayerSession::processEOS()
 {    
     m_mediaStatus = QMediaPlayer::EndOfMedia;
-    foreach(QT7VideoOutput *videoOutput, m_videoOutputs)
-        videoOutput->setMovie(0);
+    if (m_videoOutput)
+        m_videoOutput->setMovie(0);
     emit stateChanged(m_state = QMediaPlayer::StoppedState);
     emit mediaStatusChanged(m_mediaStatus);
 }
@@ -513,8 +505,8 @@ void QT7PlayerSession::processLoadStateChange()
 
     if (state == kMovieLoadStateError) {
         newStatus = QMediaPlayer::InvalidMedia;
-        foreach(QT7VideoOutput *videoOutput, m_videoOutputs)
-            videoOutput->setMovie(0);
+        if (m_videoOutput)
+            m_videoOutput->setMovie(0);
 
         emit error(QMediaPlayer::FormatError, tr("Failed to load media"));
         emit stateChanged(m_state = QMediaPlayer::StoppedState);
@@ -559,8 +551,8 @@ void QT7PlayerSession::processNaturalSizeChange()
     NSSize size = [[(QTMovie*)m_QTMovie attributeForKey:@"QTMovieNaturalSizeAttribute"] sizeValue];
     qDebug() << "Native size changed:" << QSize(size.width, size.height);
 
-    foreach(QT7VideoOutput *videoOutput, m_videoOutputs)
-        videoOutput->updateNaturalSize(QSize(size.width, size.height));
+    if (m_videoOutput)
+        m_videoOutput->updateNaturalSize(QSize(size.width, size.height));
 }
 
 #include "moc_qt7playersession.cpp"

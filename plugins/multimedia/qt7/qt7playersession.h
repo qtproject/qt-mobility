@@ -70,8 +70,7 @@ public:
 
     void setControl(QT7PlayerControl *control);
 
-    void addVideoOutput(QT7VideoOutput *output);
-    void removeVideoOutput(QT7VideoOutput *output);
+    void setVideoOutput(QT7VideoOutput *output);
 
     QMediaPlayer::State state() const;
     QMediaPlayer::MediaStatus mediaStatus() const;
@@ -132,7 +131,7 @@ private:
     QIODevice *m_mediaStream;
     QMediaContent m_resources;
 
-    QSet<QT7VideoOutput *> m_videoOutputs;
+    QT7VideoOutput * m_videoOutput;
 
     mutable qint64 m_currentTime;
 

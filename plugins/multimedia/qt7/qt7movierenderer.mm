@@ -371,7 +371,7 @@ void QT7MovieRenderer::setupVideoOutput()
 
 void QT7MovieRenderer::setMovie(void *movie)
 {
-    qDebug() << "QT7MovieRenderer::setMovie" << movie;
+    //qDebug() << "QT7MovieRenderer::setMovie" << movie;
 
 #ifdef QUICKTIME_C_API_AVAILABLE
     QMutexLocker locker(&m_mutex);
@@ -406,7 +406,7 @@ QAbstractVideoSurface *QT7MovieRenderer::surface() const
 
 void QT7MovieRenderer::setSurface(QAbstractVideoSurface *surface)
 {
-    qDebug() << "Set video surface" << surface;
+    //qDebug() << "Set video surface" << surface;
 
     if (surface == m_surface)
         return;
