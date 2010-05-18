@@ -1621,7 +1621,9 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
 
     if (mailbox == NULL)
         return QMessageFolderIdList();
-    
+
+    CleanupReleasePushL(*mailbox);
+
     RFolderArray folders;
     
     mailbox->GetFoldersL(folders);
@@ -1637,6 +1639,7 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
     }
     
     CleanupStack::PopAndDestroy(&folders);
+    CleanupStack::PopAndDestroy(mailbox);
     
     return folderIds;
 }
