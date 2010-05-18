@@ -109,6 +109,7 @@ public:
 class CEvent;
 class CTodo;
 class CJournal;
+
 class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
 {
     Q_OBJECT

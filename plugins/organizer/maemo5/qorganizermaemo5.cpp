@@ -42,7 +42,11 @@
 #include "qorganizermaemo5_p.h"
 #include "qtorganizer.h"
 
-//QTM_USE_NAMESPACE
+#include <calendar-backend/CEvent.h>
+#include <calendar-backend/CJournal.h>
+#include <calendar-backend/CTodo.h>
+
+QTM_USE_NAMESPACE
 
 QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
@@ -395,17 +399,17 @@ QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
 }
 
 
-QOrganizerEvent convertCEvent(const CEvent& cevent)
+QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEvent(const CEvent& cevent)
 {
 
 }
 
-QOrganizerTodo convertCTodo(const CTodo& ctodo)
+QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodo(const CTodo& ctodo)
 {
 
 }
 
-QOrganizerJournal convertCJournal(const CJournal& cjournal)
+QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournal(const CJournal& cjournal)
 {
 
 }

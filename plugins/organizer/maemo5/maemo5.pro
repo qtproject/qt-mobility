@@ -6,6 +6,9 @@ PLUGIN_TYPE=organizer
 CONFIG += mobility
 MOBILITY = organizer
 
+CONFIG += link_pkgconfig
+PKGCONFIG += calendar-backend-dev
+
 include(../../../common.pri)
 
 INCLUDEPATH += ../../../src/organizer \
@@ -22,5 +25,3 @@ SOURCES += \
 target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS += target
 
-CONFIG += link_pkgconfig
-PKGCONFIG += calendar-backend-dev
