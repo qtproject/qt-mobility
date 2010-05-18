@@ -267,14 +267,8 @@ simulator|contains(qmf_enabled, yes) {
     mac {
         QMAKE_LFLAGS += -F$$(QMF_LIBDIR)
             LIBS += -framework qtopiamail
-    } else:win32 {
-        CONFIG(debug, debug|release) {
-            LIBS += -L$$(QMF_LIBDIR) -lqtopiamaild
-        } else {
-            LIBS += -L$$(QMF_LIBDIR) -lqtopiamail
-        }
     } else {
-        LIBS += -L$$(QMF_LIBDIR) -lqtopiamail
+        LIBS += -L$$(QMF_LIBDIR) -l$$qtLibraryTarget(qtopiamail)
     }
 
     PRIVATE_HEADERS += qmfhelpers_p.h \
