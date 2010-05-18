@@ -60,7 +60,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerAliasColumn;
 class QGalleryTrackerCompositeColumn;
 class QGalleryTrackerImageColumn;
 class QGalleryTrackerValueColumn;
@@ -151,7 +150,7 @@ public:
 
     QVector<QGalleryTrackerValueColumn *> createValueColumns() const;
     QVector<QGalleryTrackerCompositeColumn *> createCompositeColumns() const;
-    QVector<QGalleryTrackerAliasColumn *> createAliasColumns() const;
+    QVector<int> aliasColumns() const;
     QVector<QGalleryTrackerImageColumn *> createImageColumns() const;
 
     QVector<QGalleryTrackerSortCriteria> sortCriteria() const { return m_sortCriteria; }

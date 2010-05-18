@@ -381,7 +381,7 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
     d->typeColumn = schema.createTypeColumn();
     d->valueColumns = schema.createValueColumns();
     d->compositeColumns = schema.createCompositeColumns();
-    d->aliasColumns = schema.createAliasColumns();
+    d->aliasColumns = schema.aliasColumns();
     d->imageColumns = schema.createImageColumns();
     d->sortCriteria = schema.sortCriteria();
     d->propertyNames = schema.propertyNames();
@@ -525,7 +525,7 @@ QVariant QGalleryTrackerItemList::metaData(int index, int key) const
                 return d->compositeColumns.at(key)->value(
                         d->rCache.values.constBegin() + (index * d->tableWidth));
             } else if (key < d->imageOffset) {      // Alias column.
-                key = d->aliasColumns.at(key - d->aliasOffset)->aliasedKey();
+                key = d->aliasColumns.at(key - d->aliasOffset);
 
                 return d->rCache.values.at((index * d->tableWidth) + key);
             } else if (key < d->columnCount) {      // Image column.
@@ -548,7 +548,7 @@ QVariant QGalleryTrackerItemList::metaData(int index, int key) const
                 return d->compositeColumns.at(key)->value(
                         d->aCache.values.constBegin() + (index * d->tableWidth));
             } else if (key < d->imageOffset) {      // Alias column.
-                key = d->aliasColumns.at(key - d->aliasOffset)->aliasedKey();
+                key = d->aliasColumns.at(key - d->aliasOffset);
 
                 return d->aCache.values.at((index * d->tableWidth) + key);
             } else if (key < d->columnCount) {      // Image column.

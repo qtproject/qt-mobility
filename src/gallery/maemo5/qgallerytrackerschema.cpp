@@ -1485,17 +1485,9 @@ QVector<QGalleryTrackerCompositeColumn *> QGalleryTrackerSchema::createComposite
     return columns;
 }
 
-QVector<QGalleryTrackerAliasColumn *> QGalleryTrackerSchema::createAliasColumns() const
+QVector<int> QGalleryTrackerSchema::aliasColumns() const
 {
-    QVector<QGalleryTrackerAliasColumn *> columns;
-
-    columns.reserve(m_aliasColumns.count());
-
-    for (int i = 0, count = m_aliasColumns.count(); i < count; ++i) {
-        columns.append(new QGalleryTrackerAliasColumn(m_aliasColumns.at(i)));
-    }
-
-    return columns;
+    return m_aliasColumns;
 }
 
 QVector<QGalleryTrackerImageColumn *> QGalleryTrackerSchema::createImageColumns() const

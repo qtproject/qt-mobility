@@ -76,18 +76,6 @@ public:
     virtual QVariant value(QVector<QVariant>::const_iterator row) const = 0;
 };
 
-class QGalleryTrackerAliasColumn
-{
-public:
-    QGalleryTrackerAliasColumn(int aliasedKey) : m_aliasedKey(aliasedKey) {}
-    virtual ~QGalleryTrackerAliasColumn() {}
-
-    int aliasedKey() const { return m_aliasedKey; }
-
-private:
-    const int m_aliasedKey;
-};
-
 class QGalleryTrackerImageData : public QSharedData
 {
 public:

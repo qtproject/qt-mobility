@@ -162,7 +162,6 @@ public:
         delete typeColumn;
         qDeleteAll(valueColumns);
         qDeleteAll(compositeColumns);
-        qDeleteAll(aliasColumns);
         qDeleteAll(imageColumns);
     }
 
@@ -186,7 +185,7 @@ public:
     QVector<QGalleryProperty::Attributes> propertyAttributes;
     QVector<QGalleryTrackerValueColumn *> valueColumns;
     QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
-    QVector<QGalleryTrackerAliasColumn *> aliasColumns;
+    QVector<int> aliasColumns;
     QVector<QGalleryTrackerImageColumn *> imageColumns;
     QVector<QGalleryTrackerSortCriteria> sortCriteria;
     Cache aCache;   // Access cache.
