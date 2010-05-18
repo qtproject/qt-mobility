@@ -120,6 +120,35 @@ struct ModestMessage
 };
 
 typedef enum {
+    MessagingModestFolderTypeUnknown,
+    MessagingModestFolderTypeNormal,
+    MessagingModestFolderTypeInbox,
+    MessagingModestFolderTypeOutbox,
+    MessagingModestFolderTypeTrash,
+    MessagingModestFolderTypeJunk,
+    MessagingModestFolderTypeSent,
+    MessagingModestFolderTypeRoot,
+    MessagingModestFolderTypeNotes,
+    MessagingModestFolderTypeDrafts,
+    MessagingModestFolderTypeContacts,
+    MessagingModestFolderTypeCalendar,
+    MessagingModestFolderTypeArchive,
+    MessagingModestFolderTypeMerge,
+    MessagingModestFolderTypeNum
+} MessagingModestFolderType;
+
+struct MessagingModestFolder
+{
+    QString id;
+    QString modestId;
+    QString parentAccountId;
+    QString parentFolderId;
+    MessagingModestFolderType type;
+    QString name;
+    QString localizedName;
+};
+
+typedef enum {
     MessagingModestMessageNotDefined  = 0,
     MessagingModestMessageAnswered    = 1<<0,
     MessagingModestMessageDeleted     = 1<<1,
@@ -280,6 +309,9 @@ public:
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
     QByteArray getMimePart (const QMessageId &id, const QString &attachmentId);
 
+    bool retrieveBody(QMessageService& messageService, const QMessageId &id);
+    bool retrieve(QMessageService& messageService, const QMessageId &messageId, const QMessageContentContainerId &id, QMessage *msg = 0);
+
     void clearHeaderCache();
 
 private:
@@ -289,6 +321,7 @@ private:
     QFileInfoList accountFolders(QMessageAccountId& accountId) const;
     QString localRootFolder() const;
     QString accountRootFolder(QMessageAccountId& accountId) const;
+    void foldersFromModest(QList<MessagingModestFolder>& folders) const;
     EmailProtocol accountEmailProtocol(QMessageAccountId& accountId) const;
     QString accountEmailProtocolAsString(const QMessageAccountId& accountId) const;
     QString accountUsername(QMessageAccountId& accountId) const;
@@ -358,6 +391,7 @@ private:
 private slots:
     void searchMessagesHeadersReceivedSlot(QDBusMessage msg);
     void searchMessagesHeadersFetchedSlot(QDBusMessage msg);
+    void mimePartDownloadFinishedSlot(QDBusMessage msg);
     void folderUpdatedSlot(QDBusMessage msg);
     void messageReadChangedSlot(QDBusMessage msg);
     void pendingGetUnreadMessagesFinishedSlot(QDBusPendingCallWatcher* pendingCallWatcher);
@@ -390,7 +424,10 @@ private: //Data
 
     mutable QStringList m_latestAddOrRemoveNotifications;
 
+    mutable QMap<QString, MessagingModestFolder> m_folderCache;
     mutable QMap<QString, QMessage> m_messageCache;
+
+    mutable QMap<int, QMessageServicePrivate*> m_pending_downloads;
 
     // Following variables are used for sync queries
     mutable QMessageService m_service;
@@ -416,6 +453,7 @@ Q_DECLARE_METATYPE(QtMobility::ModestUnreadMessageDBusStruct);
 Q_DECLARE_METATYPE(QtMobility::ModestAccountsUnreadMessagesDBusStruct);
 Q_DECLARE_METATYPE(QtMobility::ModestMessage);
 Q_DECLARE_METATYPE(QtMobility::MessagingModestMimePart);
+Q_DECLARE_METATYPE(QtMobility::MessagingModestFolder);
 
 #endif // MODESTENGINE_MAEMO_H
 
