@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -88,6 +88,7 @@
 #include <miutmsg.h>
 #include <charconv.h>
 #include <imcvtext.h> // KImcvMultipart declaration
+#include <smscmds.h>
 
 #include <QTextCodec>
 #include <messagingutil_p.h>
@@ -2432,12 +2433,35 @@ void CMTMEngine::storeSMSL(QMessage &message)
         destinationFolderId =  standardFolderId(message.standardFolder());
     }
     
-    // Current entry is the Draft folder.    
-    ipSmsMtm->SwitchCurrentEntryL(destinationFolderId);     
-    // Create a new SMS message entry as a child of the current context.    
-    ipSmsMtm->CreateMessageL(KUidMsgTypeSMS.iUid);     
-    TMsvEntry entry = ipSmsMtm->Entry().Entry();
+    // Switch current SMS MTM context to folder entry    
+    ipSmsMtm->SwitchCurrentEntryL(destinationFolderId);
+
+    // Create a new SMS message entry as a child of the current context
+    //
+    // Note: CreateMessageL sets following values to new message entry:
+    //       entry.iType = KUidMsvMessageEntry;
+    //       entry.iRelatedId = <ID of the current SMS service>;
+    //       entry.iServiceId = KMsvLocalServiceIndexEntryId;
+    //       entry.iMtm = <SMS Message Type UID>;
+    //       entry.SetVisible(EFalse);
+    //       entry.SetInPreparation(ETrue);
+    //       entry.iDate.UniversalTime(); <= Not set in older platforms
+    //
+    // Note: CreateMessageL automatically creates SMS header
+    //       that contains default service settings & default
+    //       service center address
+    //
+    // Note: CreateMessageL switches current SMS MTM context to
+    //       a new SMS message context
+    ipSmsMtm->CreateMessageL(KUidMsgTypeSMS.iUid);
     
+    // Get the current context (new message context)
+    CMsvEntry& newMessageContext = ipSmsMtm->Entry();
+    
+    // Copy entry values from the new message context index entry
+    TMsvEntry entry = newMessageContext.Entry();
+    
+    // Set priority values to message entry
     switch (message.priority()) {
     case QMessage::HighPriority:
         entry.SetPriority(EMsvHighPriority);
@@ -2449,6 +2473,8 @@ void CMTMEngine::storeSMSL(QMessage &message)
         entry.SetPriority(EMsvLowPriority);
         break;
     }
+    
+    // Set message read status to message entry
     if (message.status() & QMessage::Read) { 
         entry.SetUnread(false);
         entry.SetNew(false);
@@ -2456,8 +2482,9 @@ void CMTMEngine::storeSMSL(QMessage &message)
         entry.SetUnread(true);
         entry.SetNew(true);
     }
-    ipSmsMtm->Entry().ChangeL(entry);
     
+    // Set first message addressee to message entry
+    // and all message addressees to SMS message
     QList<QMessageAddress> list(message.to());
     if (!list.empty()){
         TPtrC16 receiver(KNullDesC);
@@ -2465,45 +2492,51 @@ void CMTMEngine::storeSMSL(QMessage &message)
         for (int i = 0; i < list.size(); ++i) {
             qreceiver = list.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            ipSmsMtm->AddAddresseeL(receiver); 
-            ipSmsMtm->SaveMessageL();
+            if (i == 0) {
+                // Set addressee to message entry 
+                entry.iDetails.Set(receiver);
             }
+            // Add addressee to SMS message
+            ipSmsMtm->AddAddresseeL(receiver); 
+        }
     }
     
-    CMsvStore* store = ipSmsMtm->Entry().EditStoreL(); 
-    CleanupStack::PushL(store);
-    
+    // Set body to message entry and SMS message
     QString body = message.textContent();
     if (!body.isEmpty()){
         TPtrC16 msg(reinterpret_cast<const TUint16*>(body.utf16()));
-        if (!ipRichText) {
-            ipCharFormatLayer = CCharFormatLayer::NewL();
-            ipParaFormatLayer = CParaFormatLayer::NewL();
-            ipRichText=CRichText::NewL(ipParaFormatLayer,ipCharFormatLayer);
-        }
-        ipRichText->Reset();
-        ipRichText->InsertL(0, msg);
-        store->StoreBodyTextL(*ipRichText);
-        store->CommitL();
-    } 
-    CleanupStack::PopAndDestroy(store);
-    
-    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(entry.Id()),SymbianHelpers::EngineTypeMTM));
-    
-    if (!message.receivedDate().isNull() || !message.date().isNull()) {
-        // Change the date to given date
-        CMsvEntry* pEntry = ipMsvSession->GetEntryL(entry.Id());
-        CleanupStack::PushL(pEntry);
-        TMsvEntry changedEntry = pEntry->Entry();
-        if (!message.date().isNull()) {
-            changedEntry.iDate = qDateTimeToSymbianTTime(message.date());
-        } else {
-            changedEntry.iDate = qDateTimeToSymbianTTime(message.receivedDate());
-        }
-        pEntry->ChangeL(changedEntry);
-        CleanupStack::PopAndDestroy(pEntry);
+
+        // Set body to message entry 
+        entry.iDescription.Set(msg);
+
+        // Set body to SMS message
+        CRichText& body = ipSmsMtm->Body();
+        body.Reset();
+        body.InsertL(0, msg);
     }
+
+    // Set date to message entry
+    if (!message.receivedDate().isNull() || !message.date().isNull()) {
+        if (!message.date().isNull()) {
+            entry.iDate = qDateTimeToSymbianTTime(message.date());
+        } else {
+            entry.iDate = qDateTimeToSymbianTTime(message.receivedDate());
+        }
+    }
+    
+    // Set new message's context's index entry to the specified values.
+    // <=> Changes are set into cache only
+    newMessageContext.ChangeL(entry);
+    
+    // Commit cached changes to the storage
+    // Note: SaveMessageL sets following values to message entry:
+    //       entry.SetVisible(ETrue);
+    //       entry.SetInPreparation(EFalse);
+    ipSmsMtm->SaveMessageL();  
+
+    // Get message id from new SMS message index entry 
+    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(entry.Id())));
 }
 
 bool CMTMEngine::sendSMS(QMessage &message)
@@ -2520,34 +2553,126 @@ bool CMTMEngine::sendSMS(QMessage &message)
     return true;
 }
 
+bool CMTMEngine::validateSMS()
+{
+    
+    // Validate SMS body.
+    TMsvPartList result(KMsvMessagePartNone);
+    result = ipSmsMtm->ValidateMessage(KMsvMessagePartBody);
+    if (result != KMsvMessagePartNone ) {
+        return false;
+    }
+    
+    // Validate SMS recipient
+    result = ipSmsMtm->ValidateMessage(KMsvMessagePartRecipient);
+    if ( result != KMsvMessagePartNone ) {
+        return false;
+    }
+    
+    return true;
+}
+
 void CMTMEngine::sendSMSL(QMessage &message)
 {
     if (!iSessionReady) {
         User::Leave(KErrNotReady);
     }
-    
+
     if (!message.id().isValid()) {
         QMessagePrivate::setStandardFolder(message, QMessage::DraftsFolder);
         storeSMSL(message);
     }
-    
+
     long int messageId = SymbianHelpers::stripIdPrefix(message.id().toString()).toLong();
     if (messageId == 0) {
         User::Leave(KErrNotReady);
     }
+
+    // Switch current SMS MTM context to message entry    
+    ipSmsMtm->SwitchCurrentEntryL(messageId);
     
-    CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
-    CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+    // Load the cache with the message data 
+    ipSmsMtm->LoadMessageL(); 
     
-    ipSmsMtm->SwitchCurrentEntryL(pMsvEntry->Entry().Parent());
-    // Following sends SMS and _moves_ SMS from Drafts Folder to Sent Folder
-    CMsvOperation* pMsvOperation = ipSmsMtm->Entry().CopyL(messageId, ipSmsMtm->ServiceId(), pMsvOperationWait->iStatus);
-    pMsvOperationWait->Start();
-    CActiveScheduler::Start();
-    delete pMsvOperation;    
+    // Copy entry values from the message context index entry
+    TMsvEntry entry = ipSmsMtm->Entry().Entry();    
+
+    // Update date to UniversalTime
+    // <=> Date field is used to control message send time
+    entry.iDate.UniversalTime();
+
+    // Update message sending state
+    entry.SetSendingState(KMsvSendStateWaiting);
     
-    CleanupStack::PopAndDestroy(pMsvOperationWait);
-    releaseCMsvEntryAndPopFromCleanupStack(pMsvEntry);    
+    // Set SMS Service & delivery settings to the SMS header
+    CSmsHeader& smsHeader = ipSmsMtm->SmsHeader();
+    CSmsSettings* pSmsSettings = CSmsSettings::NewL();
+    CleanupStack::PushL(pSmsSettings);
+ 
+    pSmsSettings->CopyL(ipSmsMtm->ServiceSettings());
+    pSmsSettings->SetDelivery(ESmsDeliveryImmediately);
+    pSmsSettings->SetDeliveryReport(EFalse);
+    smsHeader.SetSmsSettingsL(*pSmsSettings);
+ 
+    if (smsHeader.Message().ServiceCenterAddress().Length() == 0) {
+        CSmsSettings* pSmsServiceSettings = &(ipSmsMtm->ServiceSettings());
+        if (!pSmsServiceSettings->ServiceCenterCount()) {
+            User::Leave(KErrNotReady);
+        } else {
+            CSmsNumber* pSmsCenterNumber = CSmsNumber::NewL();
+            CleanupStack::PushL(pSmsCenterNumber);
+            pSmsCenterNumber->SetAddressL((pSmsServiceSettings->GetServiceCenter(pSmsServiceSettings->DefaultServiceCenter())).Address());
+            smsHeader.Message().SetServiceCenterAddressL(pSmsCenterNumber->Address());
+            CleanupStack::PopAndDestroy(pSmsCenterNumber);
+        }
+    }
+ 
+    CleanupStack::PopAndDestroy(pSmsSettings);    
+
+    // Update message's context's index entry to the new values.
+    // <=> Changes are set into cache only
+    ipSmsMtm->Entry().ChangeL(entry);
+    
+    // Commit cached changes to the storage
+    ipSmsMtm->SaveMessageL();
+    
+    if (validateSMS()) {
+        // Switch current SMS MTM context to SMS message parent folder entry
+        ipSmsMtm->SwitchCurrentEntryL(ipSmsMtm->Entry().Entry().Parent());
+        
+        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+    
+        // Move SMS Message to Outbox
+        CMsvOperation* pMsvOperation = ipSmsMtm->Entry().MoveL(messageId,
+                                                               KMsvGlobalOutBoxIndexEntryId,
+                                                               pMsvOperationWait->iStatus);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        delete pMsvOperation;
+        
+        // Send SMS Message
+        CMsvEntrySelection* pMsvEntrySelection = new(ELeave) CMsvEntrySelection;
+        CleanupStack::PushL(pMsvEntrySelection);
+    
+        // Add SMS Message Id to selection
+        pMsvEntrySelection->AppendL(messageId); 
+     
+        // Add selection (containing SMS Message Id) to task scheduler
+        TBuf8<1> dummyParams;
+        pMsvOperation = ipSmsMtm->InvokeAsyncFunctionL(ESmsMtmCommandScheduleCopy,
+                                                       *pMsvEntrySelection,
+                                                       dummyParams,
+                                                       pMsvOperationWait->iStatus);
+        pMsvOperationWait->Start();
+        CActiveScheduler::Start();
+        delete pMsvOperation;    
+     
+        CleanupStack::PopAndDestroy(pMsvEntrySelection);    
+    
+        CleanupStack::PopAndDestroy(pMsvOperationWait);
+    } else {
+        User::Leave(KErrCorrupt);
+    }
 }
 
 void CMTMEngine::storeMMSL(QMessage &message)
