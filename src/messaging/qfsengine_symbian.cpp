@@ -2307,70 +2307,9 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
             break;
             }
 
-        case QMessageFilterPrivate::Sender: {
-            m_searchField = Sender;
-            if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
-                QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
-                if (cmp == QMessageDataComparator::Equal) {
-                    if (pf->_value.toString().length() > 0) {
-                        m_searchKey = pf->_value.toString();
-                        m_numberOfHandledFilters++;
-                        getAllMessagesL(sortCriteria);
-                    }
-                } else { // NotEqual
-                    // TODO:
-                }
-            } else if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
-                QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
-                if (cmp == QMessageDataComparator::Includes) {
-                    // TODO:
-                } else { // Excludes
-                    // TODO:
-                }
-            }
-            break;
-        }
-
-        case QMessageFilterPrivate::Recipients: {
-            m_searchField = Recipients;
-            if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
-                QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
-                if (cmp == QMessageDataComparator::Includes) {
-                    if (pf->_value.toString().length() > 0) {
-                        m_searchKey = pf->_value.toString();
-                        m_numberOfHandledFilters++;
-                        getAllMessagesL(sortCriteria);
-                    }
-                } else { // Excludes
-                    //TODO:
-                }
-            }
-            break;
-        }
-
-        case QMessageFilterPrivate::Subject: {
-            m_searchField = Subject;
-            if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
-                QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
-                if (cmp == QMessageDataComparator::Equal) {
-                    if (pf->_value.toString().length() > 0) {
-                        m_searchKey = pf->_value.toString();
-                        m_numberOfHandledFilters++;
-                        getAllMessagesL(sortCriteria);
-                    }
-                } else { // NotEqual
-                    // TODO:
-                }
-            } else if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
-                QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
-                if (cmp == QMessageDataComparator::Includes) {
-                    // TODO:
-                } else { // Excludes
-                    // TODO:
-                }
-            }
-            break;
-        }
+        case QMessageFilterPrivate::Sender: 
+        case QMessageFilterPrivate::Recipients: 
+        case QMessageFilterPrivate::Subject: 
         case QMessageFilterPrivate::Status:
         case QMessageFilterPrivate::Priority:
         case QMessageFilterPrivate::Size:
@@ -2382,7 +2321,94 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
         default:
             break;
     
-    }    
+    }
+
+    if (body.isEmpty()) {
+        if (m_numberOfHandledFilters < filters.count()) {
+            pf = QMessageFilterPrivate::implementation(filters[m_numberOfHandledFilters]);
+            switch (pf->_field) {
+                case QMessageFilterPrivate::Sender: {
+                    m_searchField = Sender;
+                    if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
+                        QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
+                        if (cmp == QMessageDataComparator::Equal) {
+                            if (pf->_value.toString().length() > 0) {
+                                m_searchKey = pf->_value.toString();
+                                m_numberOfHandledFilters++;
+                            }
+                        } else { // NotEqual
+                            // TODO:
+                        }
+                    } else if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
+                        QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                        if (cmp == QMessageDataComparator::Includes) {
+                            // TODO:
+                        } else { // Excludes
+                            // TODO:
+                        }
+                    }
+                    break;
+                }
+    
+                case QMessageFilterPrivate::Recipients: {
+                    m_searchField = Recipients;
+                    if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
+                        QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                        if (cmp == QMessageDataComparator::Includes) {
+                            if (pf->_value.toString().length() > 0) {
+                                m_searchKey = pf->_value.toString();
+                                m_numberOfHandledFilters++;
+                            }
+                        } else { // Excludes
+                            //TODO:
+                        }
+                    }
+                    break;
+                }
+    
+                case QMessageFilterPrivate::Subject: {
+                    m_searchField = Subject;
+                    if (pf->_comparatorType == QMessageFilterPrivate::Equality) {
+                        QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
+                        if (cmp == QMessageDataComparator::Equal) {
+                            if (pf->_value.toString().length() > 0) {
+                                m_searchKey = pf->_value.toString();
+                                m_numberOfHandledFilters++;
+                            }
+                        } else { // NotEqual
+                            // TODO:
+                        }
+                    } else if (pf->_comparatorType == QMessageFilterPrivate::Inclusion) {
+                        QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(pf->_comparatorValue));
+                        if (cmp == QMessageDataComparator::Includes) {
+                            // TODO:
+                        } else { // Excludes
+                            // TODO:
+                        }
+                    }
+                    break;
+                }
+                case QMessageFilterPrivate::TimeStamp:
+                case QMessageFilterPrivate::ReceptionTimeStamp:
+                case QMessageFilterPrivate::Status:
+                case QMessageFilterPrivate::Priority:
+                case QMessageFilterPrivate::Size:
+                case QMessageFilterPrivate::ParentAccountIdFilter:
+                case QMessageFilterPrivate::ParentFolderIdFilter: 
+                case QMessageFilterPrivate::Id:
+                case QMessageFilterPrivate::ParentFolderId:
+                case QMessageFilterPrivate::AncestorFolderIds:
+                case QMessageFilterPrivate::ParentAccountId:
+                case QMessageFilterPrivate::Type:
+                case QMessageFilterPrivate::StandardFolder:
+                case QMessageFilterPrivate::None:
+                default:
+                    break;
+            }
+            if (m_activeSearchCount == 0)
+                getAllMessagesL(sortCriteria);
+        }
+    }
 }
 
 void CFSMessagesFindOperation::getAllMessagesL(TEmailSortCriteria& sortCriteria)
@@ -2409,6 +2435,7 @@ void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& mess
 
 void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messageFolder, TEmailSortCriteria sortCriteria)
 {
+    m_activeSearchCount++;
     RSortCriteriaArray sortCriteriaArray;
     CleanupClosePushL(sortCriteriaArray);
     TFolderId folderId(stripIdPrefix(messageFolder.id().toString()).toInt(), 
@@ -2424,10 +2451,7 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
     MEmailMessage* msg = NULL;
     while ( NULL != (msg = msgIterator->NextL())) {
         QMessageId messageId(addIdPrefix(QString::number(msg->MessageId().iId), SymbianHelpers::EngineTypeFreestyle));
-        if (m_searchField != None) { 
-            if (fillsSearchKeyCriteria(messageId))
-                m_idList.append(messageId);   
-        } else if (!m_excludeIdList.contains(messageId)) {
+        if (!m_excludeIdList.contains(messageId)) {
             m_idList.append(messageId);   
         }
     }
@@ -2439,10 +2463,7 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
 void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)
 {
     QMessageId messageId(addIdPrefix(QString::number(aMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle));
-    if (m_searchField != None){ 
-        if (fillsSearchKeyCriteria(messageId))
-            m_idList.append(messageId);   
-    } else if (!m_excludeIdList.contains(messageId)) {
+    if (!m_excludeIdList.contains(messageId)) {
         m_idList.append(messageId);   
     }
 }
@@ -2461,6 +2482,14 @@ void CFSMessagesFindOperation::SearchCompletedL()
     
 void CFSMessagesFindOperation::SearchCompleted()
 {
+    if (m_searchField != None) { 
+        QMessageIdList idList;
+        foreach (QMessageId messageId, m_idList) {
+            if (fillsSearchKeyCriteria(messageId))
+                idList.append(messageId);   
+        }
+        m_idList = idList;
+    }
     m_owner.filterAndOrderMessagesReady(true, m_operationId, m_idList, 1, m_resultCorrectlyOrdered);
 }
 
