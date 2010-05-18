@@ -2509,7 +2509,7 @@ bool CFSMessagesFindOperation::fillsSearchKeyCriteria(QMessageId& messageId)
                 QMessageContentContainerPrivate* pPrivateContainer = QMessageContentContainerPrivate::implementation(container);
                 if (pPrivateContainer->_id == message.bodyId()) {
                     // ContentContainer is body
-                    container.textContent().contains(m_searchKey, caseSensitivity);
+                    return container.textContent().contains(m_searchKey, caseSensitivity);
                 }
             }
         }
