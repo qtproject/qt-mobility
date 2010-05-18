@@ -66,7 +66,6 @@ QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryImageDataManager;
 
 class QGalleryImageData : public QSharedData
 {

@@ -139,4 +139,6 @@ QVariant QGalleryTrackerFileUrlColumn::value(QVector<QVariant>::const_iterator r
     return QUrl::fromLocalFile((row + m_column)->toString());
 }
 
+#include "moc_qgallerytrackerlistcolumn_p.cpp"
+
 QTM_END_NAMESPACE

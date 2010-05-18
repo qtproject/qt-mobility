@@ -55,6 +55,8 @@
 
 #include <qgalleryabstractresponse.h>
 
+#include <QtCore/qshareddata.h>
+
 QTM_BEGIN_NAMESPACE
 
 class QGalleryTrackerListColumn
@@ -108,14 +110,52 @@ private:
     const int m_aliasedKey;
 };
 
-class QGalleryTrackerImageColumn : public QGalleryTrackerListColumn
+class QGalleryTrackerImageData : public QSharedData
 {
 public:
-    QGalleryTrackerImageColumn(const QString &name, QGalleryProperty::Attributes attributes)
-        : QGalleryTrackerListColumn(name, attributes) {}
-    virtual ~QGalleryTrackerImageColumn() {}
+    QGalleryTrackerImageData(uint id) : id(id) {}
 
-    virtual QString imagePath(QVector<QVariant>::const_iterator row) const = 0;
+    uint id;
+    QVariant image;
+};
+
+class QGalleryTrackerImage
+{
+public:
+    QGalleryTrackerImage() {}
+    QGalleryTrackerImage(QGalleryTrackerImageData *data) : d(data) {}
+    QGalleryTrackerImage(const QGalleryTrackerImage &image) : d(image.d) {}
+    ~QGalleryTrackerImage() {}
+
+    QGalleryTrackerImage &operator =(const QGalleryTrackerImage &image);
+
+    uint id() const { return d->id; }
+    QVariant image() const { return d->image; }
+
+    QGalleryTrackerImageData *data() { return d.data(); }
+
+private:
+    QExplicitlySharedDataPointer<QGalleryTrackerImageData> d;
+};
+
+class QGalleryTrackerImageColumn : public QObject, public QGalleryTrackerListColumn
+{
+    Q_OBJECT
+public:
+    QGalleryTrackerImageColumn(
+            const QString &name, QGalleryProperty::Attributes attributes, QObject *parent = 0)
+        : QObject(parent), QGalleryTrackerListColumn(name, attributes) {}
+
+    virtual QVector<QGalleryTrackerImage> loadImages(
+            QVector<QVariant>::const_iterator begin,
+            QVector<QVariant>::const_iterator end,
+            int tableWidth,
+            uint abortId = 0) = 0;
+
+    virtual void abort(uint id) = 0;
+
+Q_SIGNALS:
+    void imagesLoaded(const QList<uint> &imageIds);
 };
 
 class QGalleryTrackerStringColumn : public QGalleryTrackerValueColumn

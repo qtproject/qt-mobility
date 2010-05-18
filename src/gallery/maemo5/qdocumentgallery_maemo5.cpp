@@ -78,10 +78,12 @@ private:
     QGalleryDBusInterfacePointer metaDataInterface();
     QGalleryDBusInterfacePointer searchInterface();
     QGalleryDBusInterfacePointer fileInterface();
+    QGalleryDBusInterfacePointer thumbnailInterface();
 
     QGalleryDBusInterfacePointer metaDataService;
     QGalleryDBusInterfacePointer searchService;
     QGalleryDBusInterfacePointer fileService;
+    QGalleryDBusInterfacePointer thumbnailService;
 };
 
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::metaDataInterface()
@@ -115,6 +117,17 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
                 QLatin1String("org.freedesktop.Tracker.Files"));
     }
     return fileService;
+}
+
+QGalleryDBusInterfacePointer QDocumentGalleryPrivate::thumbnailInterface()
+{
+    if (!thumbnailService) {
+        thumbnailService = new QGalleryDBusInterface(
+                QLatin1String("org.freedesktop.thumbnailer"),
+                QLatin1String("/org/freedesktop/thumbnailer/Generic"),
+                QLatin1String("org.freedesktop.thumbnailer.Generic"));
+    }
+    return thumbnailService;
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)

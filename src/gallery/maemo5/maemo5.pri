@@ -21,6 +21,7 @@ HEADERS += \
         $$PWD/qgallerytrackerlistresponse_p.h \
         $$PWD/qgallerytrackermetadataedit_p.h \
         $$PWD/qgallerytrackerschema_p.h \
+        $$PWD/qgallerytrackerthumbnailcolumn_p.h \
         $$PWD/qgallerytrackerurlresponse_p.h
 
 SOURCES += \
@@ -40,4 +41,5 @@ SOURCES += \
         $$PWD/qgallerytrackerlistresponse.cpp \
         $$PWD/qgallerytrackermetadataedit.cpp \
         $$PWD/qgallerytrackerschema.cpp \
+        $$PWD/qgallerytrackerthumbnailcolumn.cpp \
         $$PWD/qgallerytrackerurlresponse.cpp
