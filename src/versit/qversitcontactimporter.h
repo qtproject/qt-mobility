@@ -74,14 +74,14 @@ class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandlerV2
 {
 public:
     virtual ~QVersitContactImporterPropertyHandlerV2() {}
-    virtual bool afterProcessProperty(const QVersitDocument& document,
-                                      const QVersitProperty& property,
-                                      bool alreadyProcessed,
-                                      const QContact& contact,
-                                      QList<QContactDetail>* updatedDetails) = 0;
-    virtual void endDocument(const QVersitDocument& document,
-                             QContact* contact) = 0;
-    virtual int version() { return 2; }
+    virtual void propertyProcessed(const QVersitDocument& document,
+                                   const QVersitProperty& property,
+                                   bool alreadyProcessed,
+                                   const QContact& contact,
+                                   QList<QContactDetail>* updatedDetails) = 0;
+    virtual void documentProcessed(const QVersitDocument& document,
+                                   QContact* contact) = 0;
+    virtual int version() const { return 2; }
 };
 
 class Q_VERSIT_EXPORT QVersitContactImporter
@@ -100,16 +100,17 @@ public:
     QList<QContact> contacts() const;
     QMap<int, Error> errors() const;
 
-    void setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
     void setPropertyHandler(QVersitContactImporterPropertyHandlerV2* handler);
-
-    /* deprecated and internal */
-    QVersitContactImporterPropertyHandler* propertyHandler() const;
 
     void setResourceHandler(QVersitResourceHandler* handler);
     QVersitResourceHandler* resourceHandler() const;
 
+    // Deprecated:
+
     QList<QContact> Q_DECL_DEPRECATED importContacts(const QList<QVersitDocument>& documents);
+    void Q_DECL_DEPRECATED setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
+    /* deprecated and internal */
+    QVersitContactImporterPropertyHandler* Q_DECL_DEPRECATED propertyHandler() const;
 
 private:
     QVersitContactImporterPrivate* d;

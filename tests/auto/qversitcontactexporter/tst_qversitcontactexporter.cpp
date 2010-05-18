@@ -129,12 +129,12 @@ public:
     {
     }
 
-    bool afterProcessDetail(const QContact& contact,
-                           const QContactDetail& detail,
-                           const QSet<QString>& processedFields,
-                           const QVersitDocument& document,
-                           QList<QVersitProperty>* toBeRemoved,
-                           QList<QVersitProperty>* toBeAdded)
+    void detailProcessed(const QContact& contact,
+                         const QContactDetail& detail,
+                         const QSet<QString>& processedFields,
+                         const QVersitDocument& document,
+                         QList<QVersitProperty>* toBeRemoved,
+                         QList<QVersitProperty>* toBeAdded)
     {
         mContact = contact;
         mDetail = detail;
@@ -142,10 +142,9 @@ public:
         mDocument = document;
         mToBeRemoved = *toBeRemoved;
         mToBeAdded = *toBeAdded;
-        return false;
     }
 
-    void endContact(const QContact& contact, QVersitDocument* document)
+    void contactProcessed(const QContact& contact, QVersitDocument* document)
     {
         mEndContact = contact;
         mEndDocument = *document;

@@ -59,13 +59,13 @@ class Q_VERSIT_EXPORT QVersitContactImporterDefaultPropertyHandler
 {
 public:
     QVersitContactImporterDefaultPropertyHandler();
-    bool afterProcessProperty(const QVersitDocument& document,
-                              const QVersitProperty& property,
-                              bool alreadyProcessed,
-                              const QContact& contact,
-                              QList<QContactDetail>* updatedDetails);
-    void endDocument(const QVersitDocument& document,
-                     QContact* contact);
+    void propertyProcessed(const QVersitDocument& document,
+                           const QVersitProperty& property,
+                           bool alreadyProcessed,
+                           const QContact& contact,
+                           QList<QContactDetail>* updatedDetails);
+    void documentProcessed(const QVersitDocument& document,
+                           QContact* contact);
 
 private:
     QVersitContactImporterDefaultPropertyHandlerPrivate* d;
@@ -79,14 +79,14 @@ class Q_VERSIT_EXPORT QVersitContactExporterDefaultDetailHandler
 {
 public:
     QVersitContactExporterDefaultDetailHandler();
-    bool afterProcessDetail(const QContact& contact,
-                            const QContactDetail& detail,
-                            const QSet<QString>& processedFields,
-                            const QVersitDocument& document,
-                            QList<QVersitProperty>* toBeRemoved,
-                            QList<QVersitProperty>* toBeAdded);
-    void endContact(const QContact& contact,
-                    QVersitDocument* document);
+    void detailProcessed(const QContact& contact,
+                         const QContactDetail& detail,
+                         const QSet<QString>& processedFields,
+                         const QVersitDocument& document,
+                         QList<QVersitProperty>* toBeRemoved,
+                         QList<QVersitProperty>* toBeAdded);
+    void contactProcessed(const QContact& contact,
+                          QVersitDocument* document);
 private:
     QVersitContactExporterDefaultDetailHandlerPrivate* d;
 };
