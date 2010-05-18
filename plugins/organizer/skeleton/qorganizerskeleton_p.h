@@ -74,7 +74,7 @@
 
 QTM_USE_NAMESPACE
 
-class Q_DECL_EXPORT QOrganizerItemSkeletonFactory : public QObject, public QOrganizerItemManagerEngineFactory
+class QOrganizerItemSkeletonFactory : public QObject, public QOrganizerItemManagerEngineFactory
 {
   Q_OBJECT
   Q_INTERFACES(QtMobility::QOrganizerItemManagerEngineFactory)

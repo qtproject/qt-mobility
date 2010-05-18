@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtorganizer_skeleton5)
+TARGET = $$qtLibraryTarget(qtorganizer_skeleton)
 PLUGIN_TYPE=organizer
 
 include(../../../common.pri)

@@ -43,5 +43,110 @@
 #define QORGANIZERMAEMO6_P_H
 
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QSharedData>
+#include <QMap>
+#include <QMultiMap>
+#include <QList>
+#include <QQueue>
+#include <QPair>
+#include <QSet>
+#include <QDateTime>
+#include <QString>
+#include <QObject>
+
+#include "qorganizeritem.h"
+#include "qorganizeritemmanager.h"
+#include "qorganizeritemmanagerengine.h"
+#include "qorganizeritemmanagerenginefactory.h"
+#include "qorganizeritemdetaildefinition.h"
+#include "qorganizeritemabstractrequest.h"
+#include "qorganizeritemchangeset.h"
+
+QTM_USE_NAMESPACE
+
+class QOrganizerItemMaemo6Factory : public QObject, public QOrganizerItemManagerEngineFactory
+{
+  Q_OBJECT
+  Q_INTERFACES(QtMobility::QOrganizerItemManagerEngineFactory)
+  public:
+    QOrganizerItemManagerEngine* engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error*);
+    QString managerName() const;
+};
+
+class QOrganizerItemMaemo6EngineData : public QSharedData
+{
+public:
+    QOrganizerItemMaemo6EngineData()
+        : QSharedData()
+    {
+    }
+
+    QOrganizerItemMaemo6EngineData(const QOrganizerItemMaemo6EngineData& other)
+        : QSharedData(other)
+    {
+    }
+
+    ~QOrganizerItemMaemo6EngineData()
+    {
+    }
+};
+
+class QOrganizerItemMaemo6Engine : public QOrganizerItemManagerEngine
+{
+    Q_OBJECT
+
+public:
+    static QOrganizerItemMaemo6Engine *createSkeletonEngine(const QMap<QString, QString>& parameters);
+
+    ~QOrganizerItemMaemo6Engine();
+
+    /* URI reporting */
+    QString managerName() const;
+    QMap<QString, QString> managerParameters() const;
+    int managerVersion() const;
+
+    QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
+    QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+    QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
+
+    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+
+    /* Definitions - Accessors and Mutators */
+    QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
+    QOrganizerItemDetailDefinition detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const;
+    bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error);
+    bool removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error);
+
+    /* Capabilities reporting */
+    bool hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& itemType) const;
+    bool isFilterSupported(const QOrganizerItemFilter& filter) const;
+    QList<QVariant::Type> supportedDataTypes() const;
+    QStringList supportedItemTypes() const;
+
+    /* Asynchronous Request Support */
+    void requestDestroyed(QOrganizerItemAbstractRequest* req);
+    bool startRequest(QOrganizerItemAbstractRequest* req);
+    bool cancelRequest(QOrganizerItemAbstractRequest* req);
+    bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
+
+private:
+    QOrganizerItemMaemo6EngineData* d;
+
+    friend class QOrganizerItemMaemo6Factory;
+};
+
 #endif
 

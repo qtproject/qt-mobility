@@ -74,7 +74,7 @@
 
 QTM_USE_NAMESPACE
 
-class Q_DECL_EXPORT QOrganizerItemMaemo5Factory : public QObject, public QOrganizerItemManagerEngineFactory
+class QOrganizerItemMaemo5Factory : public QObject, public QOrganizerItemManagerEngineFactory
 {
   Q_OBJECT
   Q_INTERFACES(QtMobility::QOrganizerItemManagerEngineFactory)
@@ -92,21 +92,13 @@ public:
     }
 
     QOrganizerItemMaemo5EngineData(const QOrganizerItemMaemo5EngineData& other)
-        : QSharedData(other),
-        m_managerName(other.m_managerName),
-        m_managerParameters(other.m_managerParameters),
-        m_managerVersion(other.m_managerVersion)
+        : QSharedData(other)
     {
     }
 
     ~QOrganizerItemMaemo5EngineData()
     {
     }
-
-    QString m_managerName;
-    QString m_managerParameters;
-    int m_managerVersion;
-
 };
 
 class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
@@ -114,7 +106,7 @@ class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
     Q_OBJECT
 
 public:
-    static QOrganizerItemMaemo5Engine *createMaemo5Engine(const QMap<QString, QString>& parameters);
+    static QOrganizerItemMaemo5Engine *createSkeletonEngine(const QMap<QString, QString>& parameters);
 
     ~QOrganizerItemMaemo5Engine();
 
@@ -143,6 +135,12 @@ public:
     QList<QVariant::Type> supportedDataTypes() const;
     QStringList supportedItemTypes() const;
 
+    /* Asynchronous Request Support */
+    void requestDestroyed(QOrganizerItemAbstractRequest* req);
+    bool startRequest(QOrganizerItemAbstractRequest* req);
+    bool cancelRequest(QOrganizerItemAbstractRequest* req);
+    bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
+
 private:
     // conversion functions
     static QOrganizerEvent convertCEvent(const CEvent& cevent);
@@ -152,7 +150,7 @@ private:
 private:
     QOrganizerItemMaemo5EngineData* d;
 
-    friend class QOrganizerItemMaemo5EngineFactory;
+    friend class QOrganizerItemMaemo5Factory;
 };
 
 #endif
