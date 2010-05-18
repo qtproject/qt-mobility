@@ -16,8 +16,7 @@ SOURCES = mapwindow.cpp \
 include(../examples.pri)
 
 CONFIG += mobility
-MOBILITY = location
-!maemo5:MOBILITY += bearer
+MOBILITY = location bearer
 
 symbian|wince* {
     symbian {

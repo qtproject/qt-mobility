@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,6 +49,8 @@ dummylightsensor::dummylightsensor(QSensor *sensor)
     : dummycommon(sensor)
 {
     setReading<QAmbientLightReading>(&m_reading);
+    addDataRate(100,100);
+    sensor->setDataRate(100);
 }
 
 void dummylightsensor::poll()

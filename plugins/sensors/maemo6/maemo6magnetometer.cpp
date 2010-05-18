@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,25 +47,25 @@ bool maemo6magnetometer::m_initDone = false;
 maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     : maemo6sensorbase(sensor), m_sensor(sensor)
 {
-    setReading<QMagnetometerReading>(&m_reading);
-
+    const QString sensorName = "magnetometersensor";
     if (!m_initDone) {
-        qDBusRegisterMetaType<MagneticField>();
-        initSensor<MagnetometerSensorChannelInterface>("magnetometersensor");
-
-        if (m_sensorInterface)
-            QObject::connect(static_cast<const MagnetometerSensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const MagneticField&)), this, SLOT(slotDataAvailable(const MagneticField&)));
-        else
-            qWarning() << "Unable to initialize magnetometer sensor.";
-
-        // metadata
-        addDataRate(43, 43); // 43Hz
-        sensor->setDataRate(43);
-        addOutputRange(-0.000614, 0.000614, 0.0000003); // -600 ... 600 mikroteslas, 0.3 uT resolution
-        setDescription(QLatin1String("Magnetic flux density measured in teslas"));
-
+        //qDBusRegisterMetaType<MagneticField>();
+        m_remoteSensorManager->loadPlugin(sensorName);
+        m_remoteSensorManager->registerSensorInterface<MagnetometerSensorChannelInterface>(sensorName);
         m_initDone = true;
     }
+    m_sensorInterface = MagnetometerSensorChannelInterface::controlInterface(sensorName);
+    if (!m_sensorInterface)
+        m_sensorInterface = const_cast<MagnetometerSensorChannelInterface*>(MagnetometerSensorChannelInterface::listenInterface(sensorName));
+    if (m_sensorInterface)
+        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)), this, SLOT(slotDataAvailable(const MagneticField&)));
+    else
+        qWarning() << "Unable to initialize magnetometer sensor.";
+    setReading<QMagnetometerReading>(&m_reading);
+    // metadata
+    addDataRate(0, 130); // 43 Hz
+    addOutputRange(-0.000614, 0.000614, 0.0000003); // -600 ... 600 mikroteslas, 0.3 uT resolution
+    setDescription(QLatin1String("Measures magnetic flux density in teslas"));
 }
 
 void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
@@ -82,7 +82,6 @@ void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
         m_reading.setZ( 0.0000003 * data.rz() );
         m_reading.setCalibrationLevel(1);
     }
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.timestamp());
     newReadingAvailable();
 }

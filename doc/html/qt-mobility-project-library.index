@@ -6949,8 +6949,8 @@
         </page>
         <page access="public" status="commendable" name="bearer" href="bearer.html" subtype="group" title="Qt Bearer Management API" fulltitle="Qt Bearer Management API" subtitle="" location="bearermanagement.qdoc"/>
         <page access="public" status="commendable" name="bearer-management.html" href="bearer-management.html" subtype="page" title="Bearer Management" fulltitle="Bearer Management" subtitle="" location="bearermanagement.qdoc">
-            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
+            <contents name="migration-to-qt-4-7-or-higher" title="Migration to Qt 4.7 or higher" level="2"/>
             <contents name="the-api-in-detail" title="The API in Detail" level="2"/>
             <contents name="service-networks" title="Service networks" level="3"/>
             <contents name="managing-network-sessions" title="Managing network sessions" level="3"/>
@@ -6980,6 +6980,7 @@
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs Overview" fulltitle="Qt Mobility Project APIs Overview" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
             <contents name="the-new-qt-apis" title="The New Qt APIs" level="1"/>
