@@ -126,20 +126,6 @@ QContactDetail *CntTransformAddress::transformItemField(const CContactItemField&
     return detail;
 }
 
-bool CntTransformAddress::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldCountry.iUid ||
-        fieldType == KUidContactFieldPostcode.iUid ||
-        fieldType == KUidContactFieldAddress.iUid ||
-        fieldType == KUidContactFieldLocality.iUid ||
-        fieldType == KUidContactFieldRegion.iUid ||
-        fieldType == KUidContactFieldPostOffice.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformAddress::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -147,6 +133,17 @@ bool CntTransformAddress::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformAddress::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldAddress
+        << KUidContactFieldLocality
+        << KUidContactFieldRegion
+        << KUidContactFieldPostcode
+        << KUidContactFieldCountry
+        << KUidContactFieldPostOffice;
 }
 
 QList<TUid> CntTransformAddress::supportedSortingFieldTypes(QString detailFieldName) const

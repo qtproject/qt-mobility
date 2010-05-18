@@ -55,11 +55,6 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	//get the subType
 	QStringList subTypes = onlineAccount.subTypes();
 
-/*Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeSip, "Sip");
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeSipVoip, "SipVoip");
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeImpp, "Impp");
-Q_DEFINE_LATIN1_CONSTANT(QContactOnlineAccount::SubTypeVideoShare, "VideoShare");*/
-
 	//no subtype
     if(!subTypes.count())
     {
@@ -116,15 +111,6 @@ QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItem
 	return onlineAccount;
 }
 
-bool CntTransformOnlineAccount::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldSIPID.iUid ) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -132,6 +118,12 @@ bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformOnlineAccount::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldSIPID;
 }
 
 QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const

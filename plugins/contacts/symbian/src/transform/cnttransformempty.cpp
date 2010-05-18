@@ -55,16 +55,15 @@ QContactDetail *CntTransformEmpty::transformItemField(const CContactItemField& f
 	return new QContactDetail();
 }
 
-bool CntTransformEmpty::supportsField(TUint32 fieldType) const
-{
-    Q_UNUSED(fieldType);
-    return false;
-}
-
 bool CntTransformEmpty::supportsDetail(QString detailName) const
 {
     Q_UNUSED(detailName);
     return false;
+}
+
+QList<TUid> CntTransformEmpty::supportedFields() const
+{
+    return QList<TUid>();
 }
 
 QList<TUid> CntTransformEmpty::supportedSortingFieldTypes(QString detailFieldName) const

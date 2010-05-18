@@ -199,17 +199,6 @@ QContactDetail *CntTransformPhoneNumber::transformItemField(const CContactItemFi
 	return phoneNumber;
 }
 
-bool CntTransformPhoneNumber::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldPhoneNumber.iUid ||
-        fieldType == KUidContactFieldFax.iUid ||
-        fieldType == KUidContactFieldDTMF.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformPhoneNumber::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -217,6 +206,14 @@ bool CntTransformPhoneNumber::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformPhoneNumber::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldPhoneNumber
+        << KUidContactFieldFax
+        << KUidContactFieldDTMF;
 }
 
 QList<TUid> CntTransformPhoneNumber::supportedSortingFieldTypes(QString detailFieldName) const

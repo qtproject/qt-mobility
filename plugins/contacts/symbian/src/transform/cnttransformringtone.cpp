@@ -84,16 +84,6 @@ QContactDetail *CntTransformRingtone::transformItemField(const CContactItemField
     return ringtone;
 }
 
-bool CntTransformRingtone::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldRingTone.iUid ||
-        fieldType == KUidContactFieldVideoRingTone.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformRingtone::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -101,6 +91,13 @@ bool CntTransformRingtone::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformRingtone::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldRingTone
+        << KUidContactFieldVideoRingTone;
 }
 
 QList<TUid> CntTransformRingtone::supportedSortingFieldTypes(QString /*detailFieldName*/) const

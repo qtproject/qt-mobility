@@ -76,15 +76,6 @@ QContactDetail *CntTransformBirthday::transformItemField(const CContactItemField
 	return birthday;
 }
 
-bool CntTransformBirthday::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldBirthday.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformBirthday::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -92,6 +83,12 @@ bool CntTransformBirthday::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformBirthday::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldBirthday;
 }
 
 QList<TUid> CntTransformBirthday::supportedSortingFieldTypes(QString detailFieldName) const

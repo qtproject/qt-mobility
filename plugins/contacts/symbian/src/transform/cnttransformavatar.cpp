@@ -96,15 +96,6 @@ QContactDetail *CntTransformAvatar::transformItemField(const CContactItemField& 
     return avatar;
 }
 
-bool CntTransformAvatar::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldCodImage.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformAvatar::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -112,6 +103,12 @@ bool CntTransformAvatar::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformAvatar::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldCodImage;
 }
 
 QList<TUid> CntTransformAvatar::supportedSortingFieldTypes(QString /*detailFieldName*/) const

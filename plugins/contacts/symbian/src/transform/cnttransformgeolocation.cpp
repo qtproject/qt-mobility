@@ -117,15 +117,6 @@ QContactDetail *CntTransformGeolocation::transformItemField(const CContactItemFi
 	return geolocation;
 }
 
-bool CntTransformGeolocation::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldGEO.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformGeolocation::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -133,6 +124,12 @@ bool CntTransformGeolocation::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformGeolocation::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldGEO;
 }
 
 QList<TUid> CntTransformGeolocation::supportedSortingFieldTypes(QString /*detailFieldName*/) const

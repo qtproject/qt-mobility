@@ -85,16 +85,6 @@ QContactDetail *CntTransformAnniversary::transformItemField(const CContactItemFi
 	return anniversaryDetail;
 }
 
-bool CntTransformAnniversary::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldAnniversary.iUid ||
-        fieldType == KUidContactFieldAnniversaryEvent.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformAnniversary::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -102,6 +92,12 @@ bool CntTransformAnniversary::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformAnniversary::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldAnniversary;
 }
 
 QList<TUid> CntTransformAnniversary::supportedSortingFieldTypes(QString /*detailFieldName*/) const
