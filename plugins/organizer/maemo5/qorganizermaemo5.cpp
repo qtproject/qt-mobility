@@ -227,22 +227,49 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
 
 bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
+    *error = QOrganizerItemManager::NoError;
 
-        Save a list of items.
+    // still need a cache of id to string
+    // because on save (if update) need that string
+    // so that you can extract the calendar name
+    // and then check that the item still exists in that calendar
+    // if not, re-add, after setting id to zero and removing entry from map.
+    // if so, modify.
 
-        For each item, convert it to your local type, assign an item id, and update the
-        QOrganizerItem's ID (in the list above - e.g. *items[idx] = updated item).
-
-        If you encounter an error (e.g. converting to local type, or saving), insert an entry into
-        the map above at the corresponding index (e.g. errorMap->insert(idx, QOIM::InvalidDetailError).
-        You should set the "error" variable as well (first, last, most serious error etc).
-
-        The item passed in should be validated according to the schema.
-    */
-    return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
-
+    int calError;
+    for (int i = 0; i < items->size(); i++) {
+        QOrganizerItem curr = items->at(i);
+	if (curr.type() == QOrganizerItemType::TypeEvent) {
+            QOrganizerEvent event = curr;
+            CEvent* cevent = convertQEventToCEvent(event);
+            CCalendar *curr = d->m_mcInstance->getCalendarById(cevent->getCalendarId(), calError); // XXX TODO: this line won't work, see comment above.
+	    QString calName = QString::fromStdString(curr->getCalendarName());
+	    if (QString::fromStdString(cevent->getId()).isEmpty()) {
+                curr->modifyEvent(cevent, calError);
+            } else {
+                curr->addEvent(cevent, calError);
+                QString hashKey = calName + ":" + QString::fromStdString(cevent->getId());
+		d->m_cIdToQId.insert(hashKey, QOrganizerItemLocalId(qHash(hashKey)));
+            }
+	   
+            if (calError) {
+                if (errorMap)
+                    errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
+                *error = QOrganizerItemManager::UnspecifiedError;
+            } else {
+                items->replace(i, convertCEventToQEvent(cevent, calName));
+            }
+	    delete cevent;
+            delete curr;
+        } else if (curr.type() == QOrganizerItemType::TypeEventOccurrence) {
+	} else if (curr.type() == QOrganizerItemType::TypeTodo) {
+        } else if (curr.type() == QOrganizerItemType::TypeTodoOccurrence) {
+        } else if (curr.type() == QOrganizerItemType::TypeJournal) {
+        } else { // QOrganizerItemType::TypeNote
+        }
+    }
+    
+    return (*error == QOrganizerItemManager::NoError);
 }
 
 bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
@@ -506,3 +533,16 @@ QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal
     
     return ret;
 }
+
+CEvent* QOrganizerItemMaemo5Engine::convertQEventToCEvent(const QOrganizerEvent& event) const
+{
+    // first grab the QOILId, dehash it, find the calendar name, and then
+    // set the id and calendar id in the event item.
+    // then set all of the details and return.
+
+    CEvent* ret = new CEvent;
+    return ret;
+}
+
+
+

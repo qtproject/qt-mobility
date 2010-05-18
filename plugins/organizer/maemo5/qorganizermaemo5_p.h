@@ -77,6 +77,9 @@
 #include "qorganizerevent.h"
 
 #include <CMulticalendar.h>
+#include <CEvent.h>
+#include <CTodo.h>
+#include <CJournal.h>
 
 QTM_USE_NAMESPACE
 
@@ -118,10 +121,6 @@ public:
     CMulticalendar *m_mcInstance;
 };
 
-
-class CEvent;
-class CTodo;
-class CJournal;
 
 class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
 {
@@ -169,6 +168,8 @@ private:
     QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo, const QString& calendarName) const;
     QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
     QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal, const QString& calendarName) const;
+
+    CEvent* convertQEventToCEvent(const QOrganizerEvent& event) const;
 
 private:
     QOrganizerItemMaemo5EngineData* d;
