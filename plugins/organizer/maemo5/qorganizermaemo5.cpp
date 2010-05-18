@@ -53,7 +53,6 @@ QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QStr
     Q_UNUSED(parameters);
     Q_UNUSED(error);
 
-    /* TODO - if you understand any specific parameters. save them in the engine so that engine::managerParameters can return them */
 
     QOrganizerItemMaemo5Engine* ret = new QOrganizerItemMaemo5Engine(); // manager takes ownership and will clean up.
     return ret;
@@ -61,7 +60,6 @@ QOrganizerItemManagerEngine* QOrganizerItemMaemo5Factory::engine(const QMap<QStr
 
 QString QOrganizerItemMaemo5Factory::managerName() const
 {
-    /* TODO - put your engine name here */
     return QString("maemo5");
 }
 Q_EXPORT_PLUGIN2(qtorganizer_maemo5, QOrganizerItemMaemo5Factory);
@@ -69,24 +67,20 @@ Q_EXPORT_PLUGIN2(qtorganizer_maemo5, QOrganizerItemMaemo5Factory);
 
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()
 {
-    /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
 }
 
 QString QOrganizerItemMaemo5Engine::managerName() const
 {
-    /* TODO - put your engine name here */
     return QLatin1String("maemo5");
 }
 
 QMap<QString, QString> QOrganizerItemMaemo5Engine::managerParameters() const
 {
-    /* TODO - in case you have any actual parameters that are relevant that you saved in the factory method, return them here */
     return QMap<QString, QString>();
 }
 
 int QOrganizerItemMaemo5Engine::managerVersion() const
 {
-    /* TODO - implement this appropriately.  This is strictly defined by the engine, so return whatever you like */
     return 1;
 }
 
@@ -117,20 +111,48 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 
 QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
-    /*
-        TODO
+    *error = QOrganizerItemManager::NoError;
+    int calError = 0;
 
-        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return their ids.
+    QList<QOrganizerItem> partiallyFilteredItems;
 
-        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
-        functions to filter and sort it for you.
+    std::vector<CCalendar*> allCalendars = d->m_mcInstance->getListCalFromMc();
+    for (unsigned int i = 0; i < allCalendars.size(); i++) {
+        CCalendar *currCal = allCalendars[i];
+        QString calName = QString::fromStdString(currCal->getCalendarName());
 
-        If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
-    */
+	// get the events
+        std::vector<CEvent*> events = currCal->getEvents(calError);
+        if (calError) {
+            *error = QOrganizerItemManager::UnspecifiedError;
+        }
+        for (unsigned int j = 0; j < events.size(); ++j) {
+            partiallyFilteredItems.append(convertCEventToQEvent(events[j], calName));
+            delete events[j];
+        }
 
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+	// get the todos
+        std::vector<CTodo*> todos = currCal->getTodos(calError);
+        if (calError) {
+            *error = QOrganizerItemManager::UnspecifiedError;
+        }
+        for (unsigned int j = 0; j < todos.size(); ++j) {
+            partiallyFilteredItems.append(convertCTodoToQTodo(todos[j], calName));
+            delete todos[j];
+        }
 
-    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
+	// get the journals
+        std::vector<CJournal*> journals = currCal->getJournals(calError);
+        if (calError) {
+            *error = QOrganizerItemManager::UnspecifiedError;
+        }
+        for (unsigned int j = 0; j < journals.size(); ++j) {
+            partiallyFilteredItems.append(convertCJournalToQJournal(journals[j], calName));
+	    delete journals[j];
+        }
+    }
+    d->m_mcInstance->releaseListCalendars(allCalendars);
+    
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
@@ -144,22 +166,49 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
-    /*
-        TODO
-
-        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return them.
-
-        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
-        functions to filter and sort it for you.
-
-        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
-        fetch at least what is mentioned in the fetch hint).
-    */
-
     Q_UNUSED(fetchHint);
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+    *error = QOrganizerItemManager::NoError;
+    int calError = 0;
 
-    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
+    QList<QOrganizerItem> partiallyFilteredItems;
+
+    std::vector<CCalendar*> allCalendars = d->m_mcInstance->getListCalFromMc();
+    for (unsigned int i = 0; i < allCalendars.size(); i++) {
+        CCalendar *currCal = allCalendars[i];
+        QString calName = QString::fromStdString(currCal->getCalendarName());
+
+	// get the events
+        std::vector<CEvent*> events = currCal->getEvents(calError);
+        if (calError) {
+            *error = QOrganizerItemManager::UnspecifiedError;
+        }
+        for (unsigned int j = 0; j < events.size(); ++j) {
+            partiallyFilteredItems.append(convertCEventToQEvent(events[j], calName));
+            delete events[j];
+        }
+
+	// get the todos
+        std::vector<CTodo*> todos = currCal->getTodos(calError);
+        if (calError) {
+            *error = QOrganizerItemManager::UnspecifiedError;
+        }
+        for (unsigned int j = 0; j < todos.size(); ++j) {
+            partiallyFilteredItems.append(convertCTodoToQTodo(todos[j], calName));
+            delete todos[j];
+        }
+
+	// get the journals
+        std::vector<CJournal*> journals = currCal->getJournals(calError);
+        if (calError) {
+            *error = QOrganizerItemManager::UnspecifiedError;
+        }
+        for (unsigned int j = 0; j < journals.size(); ++j) {
+            partiallyFilteredItems.append(convertCJournalToQJournal(journals[j], calName));
+            delete journals[j];
+        }
+    }
+    d->m_mcInstance->releaseListCalendars(allCalendars);
+
     QList<QOrganizerItem> ret;
 
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
@@ -168,27 +217,11 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
         }
     }
 
-    /* An alternative formulation, depending on how your engine is implemented is just:
-
-        foreach(const QOrganizerItemLocalId& id, itemIds(filter, sortOrders, error)) {
-            ret.append(item(id, fetchHint, error);
-        }
-     */
-
     return ret;
 }
 
 QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
-    /*
-        TODO
-
-        Fetch a single item by id.
-
-        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
-        fetch at least what is mentioned in the fetch hint).
-
-    */
     return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
 }
 
@@ -399,7 +432,7 @@ QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
 }
 
 
-QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent)
+QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent, const QString& calendarName) const
 {
     QOrganizerEvent ret;
     ret.setLocationGeoCoordinates(QString(QLatin1String(cevent->getGeo().data())));
@@ -412,14 +445,15 @@ QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent
 
     QOrganizerItemId rId;
     rId.setManagerUri(managerUri());
-    rId.setLocalId(d->m_cIdToQId.value(QString(QLatin1String(cevent->getId().data()))));
+    QString hashKey = calendarName + ":" + QString::fromStdString(cevent->getId());
+    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
     ret.setId(rId);
     // and the recurrence information...
 
     return ret;
 }
 
-QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo)
+QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo, const QString& calendarName) const
 {
     QOrganizerTodo ret;
     ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(ctodo->getPriority()));
@@ -429,14 +463,15 @@ QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo)
 
     QOrganizerItemId rId;
     rId.setManagerUri(managerUri());
-    rId.setLocalId(d->m_cIdToQId.value(QString(QLatin1String(ctodo->getId().data()))));
+    QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
+    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
     ret.setId(rId);
     // and the recurrence information
 
     return ret;
 }
 
-QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurrence(CTodo* ctodo)
+QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const
 {
     QOrganizerTodoOccurrence ret;
     ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(ctodo->getPriority()));
@@ -451,20 +486,22 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
     // XXX TODO: set the parent information stuff.
     QOrganizerItemId rId;
     rId.setManagerUri(managerUri());
-    rId.setLocalId(d->m_cIdToQId.value(QString(QLatin1String(ctodo->getId().data()))));
+    QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
+    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
     ret.setId(rId);
 
     return ret;
 }
 
-QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal* cjournal)
+QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal* cjournal, const QString& calendarName) const
 {
     QOrganizerJournal ret;
     ret.setDescription(QString(QLatin1String(cjournal->getDescription().data())));
 
     QOrganizerItemId rId;
     rId.setManagerUri(managerUri());
-    rId.setLocalId(d->m_cIdToQId.value(QString(QLatin1String(cjournal->getId().data()))));
+    QString hashKey = calendarName + ":" + QString::fromStdString(cjournal->getId());
+    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
     ret.setId(rId);
     
     return ret;

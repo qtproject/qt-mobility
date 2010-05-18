@@ -76,6 +76,8 @@
 #include "qorganizertodo.h"
 #include "qorganizerevent.h"
 
+#include <CMulticalendar.h>
+
 QTM_USE_NAMESPACE
 
 class QOrganizerItemMaemo5Factory : public QObject, public QOrganizerItemManagerEngineFactory
@@ -91,22 +93,29 @@ class QOrganizerItemMaemo5EngineData : public QSharedData
 {
 public:
     QOrganizerItemMaemo5EngineData()
-        : QSharedData()
+        : QSharedData(),
+        m_mcInstance(CMulticalendar::MCInstance()) // XXX TODO: sharing?
     {
     }
 
     QOrganizerItemMaemo5EngineData(const QOrganizerItemMaemo5EngineData& other)
-        : QSharedData(other)
+        : QSharedData(other),
+        m_mcInstance(other.m_mcInstance)
     {
     }
 
     ~QOrganizerItemMaemo5EngineData()
     {
+        if (m_mcInstance)
+            delete m_mcInstance;
     }
 
     // key = QString(QLatin1String(CEvent.id().data()));
     // value = QOrganizerItemLocalId(qHash(key));
     QMap<QString, QOrganizerItemLocalId> m_cIdToQId;
+
+    // the multicalendar instance
+    CMulticalendar *m_mcInstance;
 };
 
 
@@ -156,10 +165,10 @@ public:
 
 private:
     // conversion functions
-    QOrganizerEvent convertCEventToQEvent(CEvent* cevent);
-    QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo);
-    QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo);
-    QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal);
+    QOrganizerEvent convertCEventToQEvent(CEvent* cevent, const QString& calendarName) const;
+    QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo, const QString& calendarName) const;
+    QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
+    QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal, const QString& calendarName) const;
 
 private:
     QOrganizerItemMaemo5EngineData* d;
