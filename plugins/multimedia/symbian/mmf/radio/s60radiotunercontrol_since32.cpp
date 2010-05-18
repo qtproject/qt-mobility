@@ -269,6 +269,8 @@ bool S60RadioTunerControl::initRadio()
 		m_radioUtility = CRadioUtility::NewL(ETrue);
 		// Get a tuner utility
 		m_fmTunerUtility = &m_radioUtility->RadioFmTunerUtilityL(*this);
+		// we want to listen radio in offline mode too
+		m_fmTunerUtility->EnableTunerInOfflineMode(ETrue);
 		// Get a player utility
 		m_playerUtility = &m_radioUtility->RadioPlayerUtilityL(*this);
 	);
