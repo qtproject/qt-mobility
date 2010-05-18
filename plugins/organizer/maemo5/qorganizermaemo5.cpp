@@ -399,17 +399,60 @@ QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
 }
 
 
-QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEvent(const CEvent& cevent)
+QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent)
 {
+    QOrganizerEvent ret;
+    ret.setLocationGeoCoordinates(QString(QLatin1String(cevent->getGeo().data())));
+    ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(cevent->getPriority())); // assume that the saved priority is vCal compliant.
+    ret.setDisplayLabel(QString(QLatin1String(cevent->getSummary().data())));
+    ret.setDescription(QString(QLatin1String(cevent->getDescription().data())));
+    ret.setLocationName(QString(QLatin1String(cevent->getLocation().data())));
+    ret.setStartDateTime(QDateTime::fromTime_t(cevent->getDateStart()));
+    ret.setEndDateTime(QDateTime::fromTime_t(cevent->getDateEnd()));
 
+    // XXX TODO: set the Id of the event.
+    // and the recurrence information...
+
+    return ret;
 }
 
-QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodo(const CTodo& ctodo)
+QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo)
 {
+    QOrganizerTodo ret;
+    ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(ctodo->getPriority()));
+    ret.setNotBeforeDateTime(QDateTime::fromTime_t(ctodo->getDateStart()));
+    ret.setDisplayLabel(QString(QLatin1String(ctodo->getSummary().data())));
+    ret.setDueDateTime(QDateTime::fromTime_t(ctodo->getDue()));
 
+    // XXX TODO: set the Id of the todo.
+    // and the recurrence information
+
+    return ret;
 }
 
-QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournal(const CJournal& cjournal)
+QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurrence(CTodo* ctodo)
 {
+    QOrganizerTodoOccurrence ret;
+    ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(ctodo->getPriority()));
+    ret.setNotBeforeDateTime(QDateTime::fromTime_t(ctodo->getDateStart()));
+    ret.setDisplayLabel(QString(QLatin1String(ctodo->getSummary().data())));
+    ret.setDueDateTime(QDateTime::fromTime_t(ctodo->getDue()));
+    ret.setProgressPercentage(ctodo->getPercentComplete());
+    ret.setStatus(static_cast<QOrganizerItemTodoProgress::Status>(ctodo->getStatus()));
+    ret.setFinishedDateTime(QDateTime::fromTime_t(ctodo->getCompleted()));
+    ret.setStartedDateTime(QDateTime::fromTime_t(ctodo->getDateStart()));
+    
+    // XXX TODO: the id of the occurrence is the parent occurrence.
 
+    return ret;
+}
+
+QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal* cjournal)
+{
+    QOrganizerJournal ret;
+    ret.setDescription(QString(QLatin1String(cjournal->getDescription().data())));
+
+    // XXX TODO: set the Id of the journal.
+    
+    return ret;
 }

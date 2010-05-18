@@ -152,9 +152,10 @@ public:
 
 private:
     // conversion functions
-    static QOrganizerEvent convertCEvent(const CEvent& cevent);
-    static QOrganizerTodo convertCTodo(const CTodo& ctodo);
-    static QOrganizerJournal convertCJournal(const CJournal& cjournal);
+    static QOrganizerEvent convertCEventToQEvent(CEvent* cevent);
+    static QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo);
+    static QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo);
+    static QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal);
 
 private:
     QOrganizerItemMaemo5EngineData* d;
