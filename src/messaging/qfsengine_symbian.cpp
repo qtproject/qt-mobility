@@ -282,6 +282,7 @@ void CFSEngine::updateEmailAccountsL() const
         } else {
             keys.removeOne(fsIdAsString);
         }
+        mailbox->Release();
     }  
     
     mailboxes.Reset();

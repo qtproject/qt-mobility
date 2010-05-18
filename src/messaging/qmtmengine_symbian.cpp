@@ -2863,7 +2863,7 @@ void CMTMEngine::storeMMSL(QMessage &message)
     CleanupStack::PopAndDestroy(); // store    
     
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(indexEntry,SymbianHelpers::EngineTypeMTM)));
+    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(indexEntry), SymbianHelpers::EngineTypeMTM));
     // Save the changes
     ipMmsMtm->SaveMessageL();
     
