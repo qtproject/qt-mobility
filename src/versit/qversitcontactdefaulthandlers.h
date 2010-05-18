@@ -65,7 +65,7 @@ public:
                               const QContact& contact,
                               QList<QContactDetail>* updatedDetails);
     void endDocument(const QVersitDocument& document,
-            QContact* contact);
+                     QContact* contact);
 
 private:
     QVersitContactImporterDefaultPropertyHandlerPrivate* d;
@@ -86,7 +86,7 @@ public:
                             QList<QVersitProperty>* toBeRemoved,
                             QList<QVersitProperty>* toBeAdded);
     void endContact(const QContact& contact,
-            QVersitDocument* document);
+                    QVersitDocument* document);
 private:
     QVersitContactExporterDefaultDetailHandlerPrivate* d;
 };
