@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -150,21 +150,23 @@ The client code has precise knowledge of the service and its interfaces.
 
 It is assumed that the client has knowledge of the interface but does not really care
 about the specific type or version of the service implementing the interface. In such cases the default
-service lookup can be utilized to create a service object instance. If the
-same service provides multiple versions of the same interface the latest
-version is returned. Therefore subsequent versions of the same interface
-must always be binary compatible to previous versions.
+service lookup can be utilized to create a service object instance.
 
 \code
     QServiceManager manager;
     manager.setInterfaceDefault("FileStorageService", "com.nokia.qt.examples.FileStorage");
 \endcode
 
-The above call to \l QServiceManager::setInterfaceDefault() registers the \i FileStorageService as default implementation. Whenever a client asks
-for an implementation of \i com.nokia.qt.examples.FileStorage the \i FileStorageService service will be loaded. The current scope of the service manager object
-determines whether the default assignment is valid for all users or whether it is valid for the current user only. The system default is used if the user
-scope has not been defined. This enables users to customize their personal preferences. By default the first service installing a so far unknown interface
-becomes the system wide default selection.
+The above call to \l QServiceManager::setInterfaceDefault() registers the \i FileStorageService as default implementation.
+Whenever a client asks for an implementation of \i com.nokia.qt.examples.FileStorage the \i FileStorageService
+service will be loaded. If (at the time of this call) the \i FileStorageService provides multiple registered implementations/versions for the
+same interface the latest version becomes the default. Therefore subsequent versions of the same interface
+must always be binary compatible to previous versions.
+
+The current scope of the service manager object determines whether the default assignment is valid for all users
+or whether it is valid for the current user only. The system default is used if the user
+scope has not been defined. This enables users to customize their personal preferences.
+By default the first service installing a so far unknown interface becomes the system wide default selection.
 
 \section3 QObject based services
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,14 +40,13 @@
 ****************************************************************************/
 
 #include "maemo6sensorbase.h"
-#include <ctime>
 
 SensorManagerInterface* maemo6sensorbase::m_remoteSensorManager = 0;
 const float maemo6sensorbase::GRAVITY_EARTH = 9.80665;
 const float maemo6sensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
-    : QSensorBackend(sensor), m_sensorRunning(false)
+    : QSensorBackend(sensor), m_sensorInterface(0), m_sensorRunning(false)
 {
     if (!m_remoteSensorManager)
         m_remoteSensorManager = &SensorManagerInterface::instance();
@@ -68,11 +67,15 @@ void maemo6sensorbase::start()
         return;
     if (m_sensorInterface) {
         int dataRate = sensor()->dataRate();
-        qDebug() << "Sensor data rate " << dataRate;
-
+        int interval = 1000 / dataRate;
+        // for testing max speed
+        //interval = 1;
+        //dataRate = 1000;
         if (dataRate > 0) {
-            qDebug() << "Setting data rate " << dataRate << " for " << m_sensorInterface->id();
-            m_sensorInterface->setInterval(dataRate);
+            qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << m_sensorInterface->id();
+            m_sensorInterface->setInterval(interval);
+        } else {
+            qDebug() << "Sensor data rate" << dataRate << "Hz";
         }
         m_sensorInterface->start();
     }
@@ -86,14 +89,4 @@ void maemo6sensorbase::stop()
     if (m_sensorInterface)
         m_sensorInterface->stop();
     m_sensorRunning = false;
-}
-
-qtimestamp maemo6sensorbase::createTimestamp()
-{
-    timespec stamp;
-    clock_gettime(CLOCK_MONOTONIC, &stamp);
-    qtimestamp data = stamp.tv_sec;
-    data = data * 1000000;
-    data = stamp.tv_nsec / 1000 + data;
-    return data;
 }
