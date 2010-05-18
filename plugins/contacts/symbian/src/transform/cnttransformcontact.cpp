@@ -376,24 +376,34 @@ QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactD
 	return itemFieldList;
 }
 
-QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
+QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	QContactDetail *detail(0);
 
-	if(field.ContentType().FieldTypeCount()) {
-	    TUint32 fieldType(field.ContentType().FieldType(0).iUid);
+    if(field.ContentType().FieldTypeCount()) {
+        TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 
-        QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
-        while (i != m_transformContactData.constEnd()) {
-            if (i.value()->supportsField(fieldType)) {
-                detail = i.value()->transformItemField(field, contact);
-                break;
+        // Check if the mapping from field type to transform class pointer is available
+        // (this is faster than iterating through all the transform classes)
+        if (m_fieldTypeToTransformContact.contains(fieldType)) {
+            detail = m_fieldTypeToTransformContact[fieldType]->transformItemField(field, contact);
+        } else {
+            // Mapping from field type to transform class pointer not found,
+            // find the correct transform class by iterating through all the
+            // transform classes
+            QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+            while (i != m_transformContactData.constEnd()) {
+                if (i.value()->supportsField(fieldType)) {
+                    detail = i.value()->transformItemField(field, contact);
+                    m_fieldTypeToTransformContact.insert(fieldType, i.value());
+                    break;
+                }
+                i++;
             }
-            ++i;
         }
-	}
+    }
 
-	return detail;
+    return detail;
 }
 
 QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
