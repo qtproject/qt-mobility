@@ -410,7 +410,10 @@ QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent
     ret.setStartDateTime(QDateTime::fromTime_t(cevent->getDateStart()));
     ret.setEndDateTime(QDateTime::fromTime_t(cevent->getDateEnd()));
 
-    // XXX TODO: set the Id of the event.
+    QOrganizerItemId rId;
+    rId.setManagerUri(managerUri());
+    rId.setLocalId(d->m_cIdToQId.value(QString(QLatin1String(cevent->getId().data()))));
+    ret.setId(rId);
     // and the recurrence information...
 
     return ret;
@@ -424,7 +427,10 @@ QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo)
     ret.setDisplayLabel(QString(QLatin1String(ctodo->getSummary().data())));
     ret.setDueDateTime(QDateTime::fromTime_t(ctodo->getDue()));
 
-    // XXX TODO: set the Id of the todo.
+    QOrganizerItemId rId;
+    rId.setManagerUri(managerUri());
+    rId.setLocalId(d->m_cIdToQId.value(QString(QLatin1String(ctodo->getId().data()))));
+    ret.setId(rId);
     // and the recurrence information
 
     return ret;
@@ -442,7 +448,11 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
     ret.setFinishedDateTime(QDateTime::fromTime_t(ctodo->getCompleted()));
     ret.setStartedDateTime(QDateTime::fromTime_t(ctodo->getDateStart()));
     
-    // XXX TODO: the id of the occurrence is the parent occurrence.
+    // XXX TODO: set the parent information stuff.
+    QOrganizerItemId rId;
+    rId.setManagerUri(managerUri());
+    rId.setLocalId(d->m_cIdToQId.value(QString(QLatin1String(ctodo->getId().data()))));
+    ret.setId(rId);
 
     return ret;
 }
@@ -452,7 +462,10 @@ QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal
     QOrganizerJournal ret;
     ret.setDescription(QString(QLatin1String(cjournal->getDescription().data())));
 
-    // XXX TODO: set the Id of the journal.
+    QOrganizerItemId rId;
+    rId.setManagerUri(managerUri());
+    rId.setLocalId(d->m_cIdToQId.value(QString(QLatin1String(cjournal->getId().data()))));
+    ret.setId(rId);
     
     return ret;
 }

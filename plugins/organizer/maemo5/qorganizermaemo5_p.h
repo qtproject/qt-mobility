@@ -103,6 +103,10 @@ public:
     ~QOrganizerItemMaemo5EngineData()
     {
     }
+
+    // key = QString(QLatin1String(CEvent.id().data()));
+    // value = QOrganizerItemLocalId(qHash(key));
+    QMap<QString, QOrganizerItemLocalId> m_cIdToQId;
 };
 
 
@@ -152,10 +156,10 @@ public:
 
 private:
     // conversion functions
-    static QOrganizerEvent convertCEventToQEvent(CEvent* cevent);
-    static QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo);
-    static QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo);
-    static QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal);
+    QOrganizerEvent convertCEventToQEvent(CEvent* cevent);
+    QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo);
+    QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo);
+    QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal);
 
 private:
     QOrganizerItemMaemo5EngineData* d;
