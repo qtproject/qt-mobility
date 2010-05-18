@@ -60,6 +60,7 @@ class Q_MEDIA_EXPORT QMediaPlayer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(QMediaContent media READ media WRITE setMedia NOTIFY mediaChanged)
+    Q_PROPERTY(QMediaPlaylist * playlist READ playlist WRITE setPlaylist)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
@@ -129,6 +130,7 @@ public:
 
     QMediaContent media() const;
     const QIODevice *mediaStream() const;
+    QMediaPlaylist *playlist() const;
 
     State state() const;
     MediaStatus mediaStatus() const;
@@ -161,6 +163,7 @@ public Q_SLOTS:
     void setPlaybackRate(qreal rate);
 
     void setMedia(const QMediaContent &media, QIODevice *stream = 0);
+    void setPlaylist(QMediaPlaylist *playlist);
 
 Q_SIGNALS:
     void mediaChanged(const QMediaContent &media);

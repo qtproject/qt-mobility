@@ -78,9 +78,8 @@ Player::Player(QWidget *parent)
 #endif
 {
     player = new QMediaPlayer(this);
-    // owerd by PlaylistModel
-    playlist = new QMediaPlaylist();
-    player->bind(playlist);
+    playlist = new QMediaPlaylist(this);
+    player->setPlaylist(playlist);
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));

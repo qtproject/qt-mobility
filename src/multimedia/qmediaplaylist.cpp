@@ -71,6 +71,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
     QMediaPlaylist is intended to be used with other media objects,
     like QMediaPlayer or QMediaImageViewer.
+
     QMediaPlaylist allows to access the service intrinsic playlist functionality
     if available, otherwise it provides the the local memory playlist implementation.
 
@@ -78,12 +79,13 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     player = new QMediaPlayer;
 
     playlist = new QMediaPlaylist;
-    player->bind(playlist);
     playlist->append(QUrl("http://example.com/movie1.mp4"));
     playlist->append(QUrl("http://example.com/movie2.mp4"));
     playlist->append(QUrl("http://example.com/movie3.mp4"));
 
     playlist->setCurrentIndex(1);
+
+    player->setPlaylist(playlist);
 
     player->play();
 \endcode

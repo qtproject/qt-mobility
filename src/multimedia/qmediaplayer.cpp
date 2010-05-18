@@ -54,6 +54,7 @@
 #include <qmediaserviceprovider.h>
 #include <qmediaplaylist.h>
 #include <qmediaplaylistcontrol.h>
+#include <qmediaplaylistsourcecontrol.h>
 #include <qvideowidget.h>
 #include <qgraphicsvideoitem.h>
 
@@ -84,12 +85,12 @@ QT_BEGIN_NAMESPACE
     for accessing playlist functionality.
 
     \code
-        player = new QMediaPlayer;
-
         playlist = new QMediaPlaylist;
-        playlist->setMediaObject(player);
         playlist->append(QUrl("http://example.com/movie1.mp4"));
         playlist->append(QUrl("http://example.com/movie2.mp4"));
+
+        player = new QMediaPlayer;
+        player->setPlaylist(playlist);
 
         widget = new QVideoWidget;
         player->addVideoOutput(widget);
@@ -123,7 +124,7 @@ public:
     QMediaPlayerPrivate()
         : provider(0)
         , control(0)
-        , playlistControl(0)
+        , playlistSourceControl(0)
         , state(QMediaPlayer::StoppedState)
         , error(QMediaPlayer::NoError)
         , filterStates(false)
@@ -132,7 +133,7 @@ public:
 
     QMediaServiceProvider *provider;
     QMediaPlayerControl* control;
-    QMediaPlaylistControl* playlistControl;
+    QMediaPlaylistSourceControl* playlistSourceControl;
     QMediaPlayer::State state;
     QMediaPlayer::Error error;
     QString errorString;
@@ -157,7 +158,6 @@ void QMediaPlayerPrivate::_q_stateChanged(QMediaPlayer::State ps)
         return;
 
     if (playlist
-            && !playlistControl //service should do this itself
             && ps != state && ps == QMediaPlayer::StoppedState
             && control->mediaStatus() == QMediaPlayer::EndOfMedia) {
         playlist->next();
@@ -206,6 +206,9 @@ void QMediaPlayerPrivate::_q_error(int error, const QString &errorString)
 
 void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 {
+    if (!control)
+        return;
+
     const QMediaPlayer::State currentState = state;
 
     filterStates = true;
@@ -234,6 +237,12 @@ void QMediaPlayerPrivate::_q_updateMedia(const QMediaContent &media)
 void QMediaPlayerPrivate::_q_playlistDestroyed()
 {
     playlist = 0;
+
+    if (!control)
+        return;
+
+    if (playlistSourceControl)
+        playlistSourceControl->setPlaylist(0);
 
     control->setMedia(QMediaContent(), 0);
 }
@@ -275,7 +284,8 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
         d->error = ServiceMissingError;
     } else {
         d->control = qobject_cast<QMediaPlayerControl*>(d->service->requestControl(QMediaPlayerControl_iid));
-        d->playlistControl = qobject_cast<QMediaPlaylistControl*>(d->service->requestControl(QMediaPlaylistControl_iid));
+        d->playlistSourceControl = qobject_cast<QMediaPlaylistSourceControl*>(d->service->requestControl(QMediaPlaylistSourceControl_iid));
+
         if (d->control != 0) {
             connect(d->control, SIGNAL(mediaChanged(QMediaContent)), SIGNAL(mediaChanged(QMediaContent)));
             connect(d->control, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(_q_stateChanged(QMediaPlayer::State)));
@@ -313,8 +323,6 @@ QMediaPlayer::~QMediaPlayer()
     if (d->service) {
         if (d->control)
             d->service->releaseControl(d->control);
-        if (d->playlistControl)
-            d->service->releaseControl(d->playlistControl);
     }
 
     d->provider->releaseService(d->service);
@@ -346,6 +354,48 @@ const QIODevice *QMediaPlayer::mediaStream() const
         return d->control->mediaStream();
 
     return 0;
+}
+
+QMediaPlaylist *QMediaPlayer::playlist() const
+{
+    return d_func()->playlistSourceControl ?
+            d_func()->playlistSourceControl->playlist() :
+            d_func()->playlist;
+}
+
+void QMediaPlayer::setPlaylist(QMediaPlaylist *playlist)
+{
+    Q_D(QMediaPlayer);
+
+    if (d->playlistSourceControl) {
+        if (d->playlistSourceControl->playlist())
+            disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+        d->playlistSourceControl->setPlaylist(playlist);
+
+        if (playlist)
+            connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+    } else {
+        if (d->playlist) {
+            disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                    this, SLOT(_q_updateMedia(QMediaContent)));
+            disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+        }
+
+        d->playlist = playlist;
+
+        if (d->playlist) {
+            connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                    this, SLOT(_q_updateMedia(QMediaContent)));
+            connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+            if (d->control != 0)
+                d->control->setMedia(playlist->currentMedia(), 0);
+        } else {
+            setMedia(QMediaContent(), 0);
+        }
+
+    }
 }
 
 QMediaPlayer::State QMediaPlayer::state() const
@@ -484,7 +534,7 @@ void QMediaPlayer::play()
     }
 
     //if playlist control is available, the service should advance itself
-    if (d->playlist && !d->playlistControl && d->playlist->currentIndex() == -1 && !d->playlist->isEmpty())
+    if (d->playlist && d->playlist->currentIndex() == -1 && !d->playlist->isEmpty())
         d->playlist->setCurrentIndex(0);
 
     // Reset error conditions
@@ -576,6 +626,9 @@ void QMediaPlayer::setMedia(const QMediaContent &media, QIODevice *stream)
 {
     Q_D(QMediaPlayer);
 
+    if (playlist() && playlist()->currentMedia() != media)
+        setPlaylist(0);
+
     if (d->control != 0)
         d_func()->control->setMedia(media, stream);
 }
@@ -586,61 +639,6 @@ void QMediaPlayer::setMedia(const QMediaContent &media, QIODevice *stream)
 
 bool QMediaPlayer::bind(QObject *obj)
 {
-    Q_D(QMediaPlayer);
-
-    if (!obj)
-        return false;
-
-    if (d->control != 0) {
-        QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist*>(obj);
-
-        if (playlist) {
-            if (d->playlist)
-                unbind(d->playlist);
-
-            if (QMediaObject::bind(obj)) {
-                d->playlist = playlist;
-                connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
-                        this, SLOT(_q_updateMedia(QMediaContent)));
-                connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
-
-                setMedia(playlist->currentMedia());
-
-                return true;
-            } else {
-                d->playlist = 0;
-                return false;
-            }
-        }
-
-        QVideoWidget *videoWidget = qobject_cast<QVideoWidget*>(obj);
-        QGraphicsVideoItem *videoItem = qobject_cast<QGraphicsVideoItem*>(obj);
-
-        if (videoWidget || videoItem) {
-            //detach the current video output
-            if (d->videoWidget) {
-                unbind(d->videoWidget);
-                d->videoWidget = 0;
-            }
-
-            if (d->videoItem) {
-                unbind(d->videoItem);
-                d->videoItem = 0;
-            }
-        }
-
-        if (QMediaObject::bind(obj)) {
-            if (videoWidget)
-                d->videoWidget = videoWidget;
-
-            if (videoItem)
-                d->videoItem = videoItem;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     return QMediaObject::bind(obj);
 }
 
@@ -650,20 +648,6 @@ bool QMediaPlayer::bind(QObject *obj)
 
 void QMediaPlayer::unbind(QObject *obj)
 {
-    Q_D(QMediaPlayer);
-
-    if (obj == d->videoWidget) {
-        d->videoWidget = 0;
-    } else if (obj == d->videoItem) {
-        d->videoItem = 0;
-    } else if (obj == d->playlist) {
-        disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
-                this, SLOT(_q_updateMedia(QMediaContent)));
-        disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
-        d->playlist = 0;
-        setMedia(QMediaContent());
-    }
-
     QMediaObject::unbind(obj);
 }
 
@@ -870,6 +854,24 @@ void QMediaPlayer::removeVideoOutput(QGraphicsVideoItem *output)
 
     \sa QMediaContent
 */
+
+/*!
+    \property QMediaPlayer::playlist
+    \brief the media playlist being used by the player object.
+
+    The player object will use the current playlist item for selection of the content to
+    be played.
+
+    By default this property is set to null.
+
+    If the media playlist is used as a source, QMediaPlayer::media is updated with
+    a current playlist item. The current source should be selected with
+    QMediaPlaylist::setCurrentIndex(int) instead of QMediaPlayer::setMedia(),
+    otherwise the current playlist will be discarded.
+
+    \sa QMediaContent
+*/
+
 
 /*!
     \property QMediaPlayer::mediaStatus

@@ -47,6 +47,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QMediaPlaylist;
 
 class QMediaImageViewerPrivate;
 class Q_MEDIA_EXPORT QMediaImageViewer : public QMediaObject
@@ -82,6 +83,7 @@ public:
     MediaStatus mediaStatus() const;
 
     QMediaContent media() const;
+    QMediaPlaylist *playlist() const;
 
     int timeout() const;
     int elapsedTime() const;
@@ -91,6 +93,7 @@ public:
 
 public Q_SLOTS:
     void setMedia(const QMediaContent &media);
+    void setPlaylist(QMediaPlaylist *playlist);
 
     void play();
     void pause();

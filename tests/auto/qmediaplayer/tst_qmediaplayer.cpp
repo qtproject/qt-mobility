@@ -450,7 +450,7 @@ void tst_QMediaPlayer::testNullService()
         QCOMPARE(spy.count(), 0);
     } {
         QMediaPlaylist playlist;
-        player.bind(&playlist);
+        player.setPlaylist(&playlist);
 
         QSignalSpy mediaSpy(&player, SIGNAL(mediaChanged(QMediaContent)));
         QSignalSpy statusSpy(&player, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
@@ -847,7 +847,7 @@ void tst_QMediaPlayer::testPlaylist()
     mockService->setState(QMediaPlayer::StoppedState, QMediaPlayer::NoMedia);
 
     QMediaPlaylist *playlist = new QMediaPlaylist;
-    player->bind(playlist);
+    player->setPlaylist(playlist);
 
     QSignalSpy stateSpy(player, SIGNAL(stateChanged(QMediaPlayer::State)));
     QSignalSpy mediaSpy(player, SIGNAL(mediaChanged(QMediaContent)));
@@ -988,9 +988,7 @@ void tst_QMediaPlayer::testPlaylist()
 
     // Test the player can bind to playlist again
     playlist = new QMediaPlaylist;
-    player->bind(playlist);
-
-    QCOMPARE(playlist->mediaObject(), qobject_cast<QMediaObject*>(player));
+    player->setPlaylist(playlist);
 
     QCOMPARE(player->media(), QMediaContent());
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);
@@ -1013,14 +1011,27 @@ void tst_QMediaPlayer::testPlaylist()
     playlist2->setCurrentIndex(2);
 
     player->play();
-    player->bind(playlist2);
-    QCOMPARE(playlist2->mediaObject(), qobject_cast<QMediaObject*>(player));
-    QVERIFY(playlist->mediaObject() == 0);
+    player->setPlaylist(playlist2);
     QCOMPARE(player->media(), playlist2->currentMedia());
     QCOMPARE(player->state(), QMediaPlayer::StoppedState);
 
     playlist2->setCurrentIndex(1);
     QCOMPARE(player->media(), playlist2->currentMedia());
+
+    {
+        QMediaPlaylist playlist;
+        playlist.addMedia(content1);
+        playlist.addMedia(content2);
+        playlist.addMedia(content3);
+        playlist.setCurrentIndex(1);
+
+        player->setPlaylist(&playlist);
+        QCOMPARE(player->playlist(), &playlist);
+        QCOMPARE(player->media(), content2);
+    } //playlist should be detached now
+
+    QVERIFY(player->playlist() == 0);
+    QCOMPARE(player->media(), QMediaContent());
 }
 
 QTEST_MAIN(tst_QMediaPlayer)
