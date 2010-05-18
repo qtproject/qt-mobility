@@ -196,7 +196,7 @@ public:
     QFutureWatcher<void> synchronizeWatcher;
 
     void parseResultSet(const QVector<QStringList> &resultSet);
-    void sortRows(
+    void correctRows(
             row_iterator begin,
             row_iterator end,
             const sort_iterator sortBegin,
@@ -212,42 +212,6 @@ public:
 
     void _q_parseFinished();
     void _q_synchronizeFinished();
-};
-
-class QGalleryTrackerItemListLessThan
-{
-public:
-    QGalleryTrackerItemListLessThan(const QGalleryTrackerValueColumn *column, int index)
-        : m_column(column), m_index(index) {}
-
-    bool operator ()(
-            const QGalleryTrackerItemListPrivate::Row &row1,
-            const QGalleryTrackerItemListPrivate::Row &row2)
-    {
-        return m_column->compare(*(row1.begin + m_index), *(row2.begin + m_index)) < 0;
-    }
-
-private:
-    const QGalleryTrackerValueColumn *m_column;
-    int m_index;
-};
-
-class QGalleryTrackerItemListGreaterThan
-{
-public:
-    QGalleryTrackerItemListGreaterThan(const QGalleryTrackerValueColumn *column, int index)
-        : m_column(column), m_index(index) {}
-
-    bool operator ()(
-            const QGalleryTrackerItemListPrivate::Row &row1,
-            const QGalleryTrackerItemListPrivate::Row &row2)
-    {
-        return m_column->compare(*(row1.begin + m_index), *(row2.begin + m_index)) > 0;
-    }
-
-private:
-    const QGalleryTrackerValueColumn *m_column;
-    int m_index;
 };
 
 QTM_END_NAMESPACE

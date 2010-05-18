@@ -68,7 +68,7 @@ void QGalleryTrackerItemListPrivate::parseResultSet(
     }
 
     if (!values.isEmpty()) {
-        sortRows(
+        correctRows(
                 row_iterator(values.begin(), tableWidth),
                 row_iterator(values.end(), tableWidth),
                 sortCriteria.constBegin(),
@@ -76,7 +76,7 @@ void QGalleryTrackerItemListPrivate::parseResultSet(
     }
 }
 
-void QGalleryTrackerItemListPrivate::sortRows(
+void QGalleryTrackerItemListPrivate::correctRows(
         row_iterator begin,
         row_iterator end,
         sort_iterator sortCriteria,
@@ -86,7 +86,6 @@ void QGalleryTrackerItemListPrivate::sortRows(
     int column = sortCriteria->column;
 
     const int sortFlags = sortCriteria->flags;
-    const int vColumn = column - valueOffset;
 
     if (sortFlags & QGalleryTrackerSortCriteria::Sorted) {
         if (reversed) {
@@ -116,18 +115,6 @@ void QGalleryTrackerItemListPrivate::sortRows(
             if (++sortCriteria == sortEnd)
                 return;
         } while(sortCriteria->flags & QGalleryTrackerSortCriteria::ReverseSorted);
-    } else if (sortFlags & QGalleryTrackerSortCriteria::Ascending) {
-        qStableSort(begin, end, QGalleryTrackerItemListLessThan(
-                valueColumns.at(vColumn), column));
-
-        if (++sortCriteria == sortEnd)
-            return;
-    } else if (sortFlags & QGalleryTrackerSortCriteria::Descending) {
-        qStableSort(begin, end, QGalleryTrackerItemListGreaterThan(
-                valueColumns.at(vColumn), column));
-
-        if (++sortCriteria == sortEnd)
-            return;
     }
 
     for (row_iterator upper, lower = begin; lower != end; lower = upper) {
@@ -136,7 +123,7 @@ void QGalleryTrackerItemListPrivate::sortRows(
         for (upper = lower + 1; upper != end && lower[column] == upper[column]; ++upper, ++count) {}
 
         if (count > 1)
-            sortRows(lower, upper, sortCriteria, sortEnd, reversed);
+            correctRows(lower, upper, sortCriteria, sortEnd, reversed);
     }
 }
 

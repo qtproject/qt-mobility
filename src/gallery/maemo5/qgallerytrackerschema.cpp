@@ -1492,8 +1492,6 @@ QVector<QGalleryTrackerAliasColumn *> QGalleryTrackerSchema::createAliasColumns(
     columns.reserve(m_aliasColumns.count());
 
     for (int i = 0, count = m_aliasColumns.count(); i < count; ++i) {
-        const int propertyIndex = i + m_propertyFields.count();
-
         columns.append(new QGalleryTrackerAliasColumn(m_aliasColumns.at(i)));
     }
 

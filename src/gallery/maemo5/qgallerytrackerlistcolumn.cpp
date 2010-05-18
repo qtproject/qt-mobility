@@ -53,12 +53,6 @@ QVariant QGalleryTrackerStringColumn::toVariant(const QString &string) const
     return QVariant(string);
 }
 
-int QGalleryTrackerStringColumn::compare(const QVariant &value1, const QVariant &value2) const
-{
-    return QString::compare(value1.toString(), value2.toString());
-}
-
-
 QVariant QGalleryTrackerIntegerColumn::toVariant(const QString &string) const
 {
     bool ok;
@@ -68,11 +62,6 @@ QVariant QGalleryTrackerIntegerColumn::toVariant(const QString &string) const
     return ok ? QVariant(number) : QVariant();
 }
 
-int QGalleryTrackerIntegerColumn::compare(const QVariant &value1, const QVariant &value2) const
-{
-    return value1.toInt() - value2.toInt();
-}
-
 QVariant QGalleryTrackerDoubleColumn::toVariant(const QString &string) const
 {
     bool ok;
@@ -80,11 +69,6 @@ QVariant QGalleryTrackerDoubleColumn::toVariant(const QString &string) const
     double number = string.toDouble(&ok);
 
     return ok ? QVariant(number) : QVariant();
-}
-
-int QGalleryTrackerDoubleColumn::compare(const QVariant &value1, const QVariant &value2) const
-{
-    return value1.toDouble() - value2.toDouble();
 }
 
 QVariant QGalleryTrackerDateTimeColumn::toVariant(const QString &string) const
@@ -97,11 +81,6 @@ QVariant QGalleryTrackerDateTimeColumn::toVariant(const QString &string) const
 QString QGalleryTrackerDateTimeColumn::toString(const QVariant &variant) const
 {
     return variant.toDateTime().toString(Qt::ISODate);
-}
-
-int QGalleryTrackerDateTimeColumn::compare(const QVariant &value1, const QVariant &value2) const
-{
-    return value1.toDateTime().toTime_t() - value2.toDateTime().toTime_t();
 }
 
 QVariant QGalleryTrackerStaticColumn::value(QVector<QVariant>::const_iterator) const

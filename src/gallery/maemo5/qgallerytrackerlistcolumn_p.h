@@ -66,8 +66,6 @@ public:
 
     virtual QVariant toVariant(const QString &string) const = 0;
     virtual QString toString(const QVariant &variant) const { return variant.toString(); }
-
-    virtual int compare(const QVariant &value1, const QVariant &value2) const = 0;
 };
 
 class QGalleryTrackerCompositeColumn
@@ -142,24 +140,18 @@ public:
     virtual ~QGalleryTrackerStringColumn() {}
 
     QVariant toVariant(const QString &string) const;
-
-    int compare(const QVariant &value1, const QVariant &value2) const;
 };
 
 class QGalleryTrackerIntegerColumn : public QGalleryTrackerValueColumn
 {
 public:
     QVariant toVariant(const QString &string) const;
-
-    int compare(const QVariant &value1, const QVariant &value2) const;
 };
 
 class QGalleryTrackerDoubleColumn : public QGalleryTrackerValueColumn
 {
 public:
     QVariant toVariant(const QString &string) const;
-
-    int compare(const QVariant &value1, const QVariant &value2) const;
 };
 
 class QGalleryTrackerDateTimeColumn : public QGalleryTrackerValueColumn
@@ -167,8 +159,6 @@ class QGalleryTrackerDateTimeColumn : public QGalleryTrackerValueColumn
 public:
     QVariant toVariant(const QString &string) const;
     QString toString(const QVariant &variant) const;
-
-    int compare(const QVariant &value1, const QVariant &value2) const;
 };
 
 class QGalleryTrackerStaticColumn : public QGalleryTrackerCompositeColumn
