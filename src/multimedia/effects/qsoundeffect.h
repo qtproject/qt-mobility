@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,20 +53,24 @@
 // We mean it.
 //
 
-
+#include <qmobilityglobal.h>
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
-#include <qml.h>
+
+
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
 
 class QSoundEffectPrivate;
-class QSoundEffect : public QObject
+
+class Q_MEDIA_EXPORT QSoundEffect : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(int loopCount READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
+    Q_PROPERTY(int loops READ loops WRITE setLoops NOTIFY loopsChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
-    Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
 
 public:
     explicit QSoundEffect(QObject *parent = 0);
@@ -75,8 +79,8 @@ public:
     QUrl source() const;
     void setSource(const QUrl &url);
 
-    int loopCount() const;
-    void setLoopCount(int loopCount);
+    int loops() const;
+    void setLoops(int loopCount);
 
     int volume() const;
     void setVolume(int volume);
@@ -84,33 +88,23 @@ public:
     bool isMuted() const;
     void setMuted(bool muted);
 
-    int duration() const;
-
-signals:
+Q_SIGNALS:
     void sourceChanged();
-    void loopCountChanged();
+    void loopsChanged();
     void volumeChanged();
     void mutedChanged();
-    void durationChanged();
 
-public slots:
+public Q_SLOTS:
     void play();
-    void stop();
-
-private slots:
-    void repeat();
 
 private:
     Q_DISABLE_COPY(QSoundEffect)
-
-    int m_loopCount;
-    int m_volume;
-    bool m_muted;
-    int m_runningCount;
-
     QSoundEffectPrivate* d;
 };
 
-QML_DECLARE_TYPE(QSoundEffect)
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
 
 #endif // QSOUNDEFFECT_H
