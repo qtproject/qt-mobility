@@ -242,11 +242,8 @@ void CntTransformAddress::detailDefinitions(QMap<QString, QContactDetailDefiniti
             << QLatin1String(QContactDetail::ContextWork));
         fields[QContactDetail::FieldContext] = f;
 
-        // Sub-types not supported in symbian back-end, replace with an empty list
-        f.setDataType(QVariant::StringList);
-        QVariantList subTypes;
-        f.setAllowableValues(subTypes);
-        fields[QContactAddress::FieldSubTypes] = f;
+        // Sub-types not supported in symbian back-end
+        fields.remove(QContactAddress::FieldSubTypes);
 
         d.setFields(fields);
 
