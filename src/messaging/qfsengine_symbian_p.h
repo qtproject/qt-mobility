@@ -174,7 +174,7 @@ private:
     QMessageAccountIdList accountsByType(QMessage::Type type) const;
     void updateEmailAccountsL() const;
     void updateMessageL(QMessage* message);
-    MEmailMessage* createFSMessageL(const QMessage &message);
+    MEmailMessage* createFSMessageL(const QMessage &message, const MEmailMailbox* mailbox);
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
     QMessageFolderIdList folderIdsByAccountIdL(const QMessageAccountId& accountId) const;
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;

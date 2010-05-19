@@ -359,12 +359,10 @@ void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMes
 }
 #endif
 
-MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
+MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmailMailbox* mailbox)
 {
-    TMailboxId mailboxId(stripIdPrefix(message.parentAccountId().toString()).toInt());
-    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-
     MEmailMessage* fsMessage = mailbox->CreateDraftMessageL();
+    CleanupReleasePushL(*fsMessage);
     
     switch (message.priority()) {
         case QMessage::HighPriority:
@@ -492,13 +490,25 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
     }
     fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
     fsMessage->SaveChangesL();
+    CleanupStack::Pop(fsMessage);
     return fsMessage;
 }
 
 bool CFSEngine::addMessage(QMessage* message)
 {
-    MEmailMessage* fsMessage;
-    TRAPD(err, fsMessage = createFSMessageL(*message));
+    TMailboxId mailboxId(stripIdPrefix(message->parentAccountId().toString()).toInt());
+    MEmailMailbox* mailbox;
+    TRAPD(mailerr, mailbox = m_clientApi->MailboxL(mailboxId));
+    if (mailerr != KErrNone)
+        return false;
+
+    MEmailMessage* fsMessage = NULL;
+    TRAPD(err, fsMessage = createFSMessageL(*message, mailbox));
+    if (fsMessage)
+        fsMessage->Release();
+    if (mailbox)
+        mailbox->Release();
+    
     if (err != KErrNone)
         return false;
     else
@@ -1733,12 +1743,21 @@ MEmailMessage* CFSEngine::fsMessageL(const QMessageId& id) const
 
 bool CFSEngine::sendEmail(QMessage &message)
 {
+    TMailboxId mailboxId(stripIdPrefix(message.parentAccountId().toString()).toInt());
+    MEmailMailbox* mailbox;
+    TRAPD(mailerr, mailbox = m_clientApi->MailboxL(mailboxId));
+
     MEmailMessage* fsMessage;
     TRAPD(err,
-        fsMessage = createFSMessageL(message);
+        fsMessage = createFSMessageL(message, mailbox);
         fsMessage->SaveChangesL();
         fsMessage->SendL(); 
     );
+
+    if (fsMessage)
+        fsMessage->Release();
+    if (mailbox)
+        mailbox->Release();
 
     if (err != KErrNone)
         return false;
