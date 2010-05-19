@@ -139,9 +139,8 @@ public:
     QString errorString;
     bool filterStates;
 
+    QPointer<QObject> videoOutput;
     QMediaPlaylist *playlist;
-    QPointer<QVideoWidget> videoWidget;
-    QPointer<QGraphicsVideoItem> videoItem;
 
     void _q_stateChanged(QMediaPlayer::State state);
     void _q_mediaStatusChanged(QMediaPlayer::MediaStatus status);
@@ -682,55 +681,44 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
 /*!
     Attach a QVideoWidget video \a output to the media player.
 
-    Returns true if the output was succesfuly attached, false otherwise.
+    If the media player has already video output attached,
+    it will be replaced with a new one.
 
-    Depending on backend capabilities, the media player may or may not
-    support multiple simultanious outputs.
-
-    \sa addVideoOutput(QGraphicsVideoItem*) removeVideoOutput(QVideoWidget*)
+    \sa setVideoOutput(QGraphicsVideoItem*)
 */
-bool QMediaPlayer::addVideoOutput(QVideoWidget *output)
+void QMediaPlayer::setVideoOutput(QVideoWidget *output)
 {
-    return bind(output);
+    Q_D(QMediaPlayer);
+
+    if (d->videoOutput)
+        unbind(d->videoOutput);
+
+    d->videoOutput = output;
+
+    if (d->videoOutput)
+        bind(d->videoOutput);
 }
 
 /*!
     Attach a QGraphicsVideoItem video \a output to the media player.
 
-    Returns true if the output was succesfuly attached, false otherwise.
+    If the media player has already video output attached,
+    it will be replaced with a new one.
 
-    Depending on backend capabilities, the media player may or may not
-    support multiple simultanious outputs.
-
-    \sa addVideoOutput(QVideoWidget*) removeVideoOutput(QGraphicsVideoItem*)
+    \sa setVideoOutput(QVideoWidget*)
 */
-bool QMediaPlayer::addVideoOutput(QGraphicsVideoItem *output)
+void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
 {
-    return bind(output);
+    Q_D(QMediaPlayer);
+
+    if (d->videoOutput)
+        unbind(d->videoOutput);
+
+    d->videoOutput = output;
+
+    if (d->videoOutput)
+        bind(d->videoOutput);
 }
-
-/*!
-    Detach a QVideoWidget based video \a output,
-    previously attached with addVideoOutput(QVideoOutput*).
-
-    \sa addVideoOutput(QVideoWidget*)
-*/
-void QMediaPlayer::removeVideoOutput(QVideoWidget *output)
-{
-    unbind(output);
-}
-
-/*!
-    Detach a QGraphicsVideoItem based video \a output,
-    previously attached with addVideoOutput(QGraphicsVideoItem*).
-
-    \sa addVideoOutput(QGraphicsVideoItem*)
-*/
-void QMediaPlayer::removeVideoOutput(QGraphicsVideoItem *output)
-{
-    unbind(output);
-}
-
 
 // Enums
 /*!

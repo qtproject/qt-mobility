@@ -91,7 +91,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
     videoWidget = new VideoWidget(this);
-    player->addVideoOutput(videoWidget);
+    player->setVideoOutput(videoWidget);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);

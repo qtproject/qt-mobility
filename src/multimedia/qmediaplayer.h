@@ -122,11 +122,8 @@ public:
                                             Flags flags = 0);
     static QStringList supportedMimeTypes(Flags flags = 0);
 
-    bool addVideoOutput(QVideoWidget *);
-    bool addVideoOutput(QGraphicsVideoItem *);
-
-    void removeVideoOutput(QVideoWidget *);
-    void removeVideoOutput(QGraphicsVideoItem *);
+    void setVideoOutput(QVideoWidget *);
+    void setVideoOutput(QGraphicsVideoItem *);
 
     QMediaContent media() const;
     const QIODevice *mediaStream() const;
