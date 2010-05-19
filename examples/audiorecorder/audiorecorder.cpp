@@ -54,15 +54,6 @@ AudioRecorder::AudioRecorder()
     audiosource = new QAudioCaptureSource;
     capture = new QMediaRecorder(audiosource);
 
-    if (capture->supportedAudioCodecs().size() > 0) {
-        QAudioEncoderSettings audioSettings;
-        audioSettings.setQuality(QtMediaServices::LowQuality);
-        audioSettings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
-        audioSettings.setCodec(capture->supportedAudioCodecs().first());
-        capture->setEncodingSettings(audioSettings,QVideoEncoderSettings(),
-                capture->supportedContainers().first());
-    }
-
     // set a default file
 #ifdef Q_OS_SYMBIAN
     capture->setOutputLocation(recordPathAudio(QUrl()));    
@@ -81,6 +72,12 @@ AudioRecorder::AudioRecorder()
     deviceBox = new QComboBox(this);
     deviceBox->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
     deviceBox->setMinimumSize(200,10);
+
+    QLabel* encmodeLabel = new QLabel;
+    encmodeLabel->setText(tr("Encode Mode"));
+    encModeBox = new QComboBox(this);
+    encModeBox->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
+    encModeBox->setMinimumSize(200,10);
 
     QLabel* containerLabel = new QLabel;
     containerLabel->setText(tr("File Container"));
@@ -116,7 +113,14 @@ AudioRecorder::AudioRecorder()
     for(int i = 0; i < inputs.size(); i++)
         deviceBox->addItem(inputs.at(i));
 
+    QList<QString> encmodes;
+    encmodes <<"ConstantQuality"<<"ConstantBitRate";
+    for(int i = 0; i < encmodes.size(); i++)
+        encModeBox->addItem(encmodes.at(i));
+
     QStringList codecs = capture->supportedAudioCodecs();
+    if (codecs.count() == 2)
+        swap(codecs[0], codecs[1]);
     for(int i = 0; i < codecs.count(); i++)
         codecsBox->addItem(codecs.at(i));
 
@@ -145,58 +149,71 @@ AudioRecorder::AudioRecorder()
     connect(capture, SIGNAL(stateChanged(QMediaRecorder::State)), this, SLOT(stateChanged(QMediaRecorder::State)));
     connect(capture, SIGNAL(error(QMediaRecorder::Error)), this, SLOT(errorChanged(QMediaRecorder::Error)));
 
+    if (codecs.count() > 0) {
+    QAudioEncoderSettings audioSettings;
+    audioSettings.setQuality(QtMediaServices::LowQuality);
+    audioSettings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
+    audioSettings.setCodec(codecs.first());
+    capture->setEncodingSettings(audioSettings,QVideoEncoderSettings(),
+            containers.first());
+    }
+
     layout->addWidget(deviceLabel,0,0,Qt::AlignHCenter);
     connect(deviceBox,SIGNAL(activated(int)),SLOT(deviceChanged(int)));
     layout->addWidget(deviceBox,0,1,1,3,Qt::AlignLeft);
 
-    layout->addWidget(containerLabel,1,0,Qt::AlignHCenter);
-    connect(containersBox,SIGNAL(activated(int)),SLOT(containerChanged(int)));
-    layout->addWidget(containersBox,1,1,1,3,Qt::AlignLeft);
+    layout->addWidget(encmodeLabel,1,0,Qt::AlignHCenter);
+    connect(encModeBox,SIGNAL(activated(int)),SLOT(encmodeChanged(int)));
+    layout->addWidget(encModeBox,1,1,1,3,Qt::AlignLeft);
 
-    layout->addWidget(codecLabel,2,0,Qt::AlignHCenter);
+    layout->addWidget(containerLabel,2,0,Qt::AlignHCenter);
+    connect(containersBox,SIGNAL(activated(int)),SLOT(containerChanged(int)));
+    layout->addWidget(containersBox,2,1,1,3,Qt::AlignLeft);
+
+    layout->addWidget(codecLabel,3,0,Qt::AlignHCenter);
     connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
-    layout->addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);   
+    layout->addWidget(codecsBox,3,1,1,3,Qt::AlignLeft);
     
-    layout->addWidget(sampleRateLabel,3,0,Qt::AlignHCenter);
+    layout->addWidget(sampleRateLabel,4,0,Qt::AlignHCenter);
     connect(sampleRateBox,SIGNAL(activated(int)),SLOT(sampleRateChanged(int)));
-    layout->addWidget(sampleRateBox,3,1,1,3,Qt::AlignLeft);
+    layout->addWidget(sampleRateBox,4,1,1,3,Qt::AlignLeft);
     
-    layout->addWidget(channelLabel,4,0,Qt::AlignHCenter);
+    layout->addWidget(channelLabel,5,0,Qt::AlignHCenter);
     connect(channelBox,SIGNAL(activated(int)),SLOT(channelCountChanged(int)));
-    layout->addWidget(channelBox,4,1,1,3,Qt::AlignLeft);
+    layout->addWidget(channelBox,5,1,1,3,Qt::AlignLeft);
     
-    layout->addWidget(qualityLabel,5,0,Qt::AlignHCenter);
+    layout->addWidget(qualityLabel,6,0,Qt::AlignHCenter);
     connect(qualityBox,SIGNAL(activated(int)),SLOT(qualityChanged(int)));
-    layout->addWidget(qualityBox,5,1,1,3,Qt::AlignLeft);
+    layout->addWidget(qualityBox,6,1,1,3,Qt::AlignLeft);
 
     fileButton = new QPushButton(this);
     fileButton->setText(tr("Output File"));    
     connect(fileButton,SIGNAL(clicked()),SLOT(selectOutputFile()));
-    layout->addWidget(fileButton,6,0,Qt::AlignHCenter);
+    layout->addWidget(fileButton,7,0,Qt::AlignHCenter);
     
     pauseButton = new QPushButton(this);    
     pauseButton->setText(tr("Pause"));
     connect(pauseButton,SIGNAL(clicked()),SLOT(togglePause()));
-    layout->addWidget(pauseButton,6,1,Qt::AlignHCenter);
+    layout->addWidget(pauseButton,7,1,Qt::AlignHCenter);
 
     button = new QPushButton(this);
     button->setText(tr("Record"));
     connect(button,SIGNAL(clicked()),SLOT(toggleRecord()));
-    layout->addWidget(button,6,2,Qt::AlignHCenter);
+    layout->addWidget(button,7,2,Qt::AlignHCenter);
 
     statusLabel = new QLabel;
     statusLabel->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Fixed);
     statusLabel->setMinimumSize(130,10);
     statusLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     statusLabel->setLineWidth(1);
-    layout->addWidget(statusLabel,7,0,Qt::AlignHCenter);
+    layout->addWidget(statusLabel,8,0,Qt::AlignHCenter);
     
     QLabel* durationLabel = new QLabel;
     durationLabel->setText(tr("Duration"));
-    layout->addWidget(durationLabel,7,1,Qt::AlignRight);
+    layout->addWidget(durationLabel,8,1,Qt::AlignRight);
 
     recTime = new QLabel;
-    layout->addWidget(recTime,7,2,Qt::AlignLeft);
+    layout->addWidget(recTime,8,2,Qt::AlignLeft);
     
     window->setLayout(layout);
     setCentralWidget(window);
@@ -311,6 +328,23 @@ void AudioRecorder::qualityChanged(int idx)
         break;
     default:
         settings.setQuality(QtMediaServices::HighQuality);
+    }
+    capture->setEncodingSettings(settings);
+}
+
+void AudioRecorder::encmodeChanged(int idx)
+{
+    QAudioEncoderSettings settings = capture->audioSettings();
+
+    switch(idx) {
+    case 0:
+        settings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
+        break;
+    case 1:
+        settings.setEncodingMode(QtMediaServices::ConstantBitRateEncoding);
+        break;
+    default:
+        settings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
     }
     capture->setEncodingSettings(settings);
 }
