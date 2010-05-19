@@ -400,6 +400,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
             MEmailAddress* address = mailbox->AddressL();
             address->SetAddressL(receiver);
+            address->SetDisplayNameL(receiver);
             address->SetRole(MEmailAddress::ETo);
             toAddress.Append(address);
         }
@@ -414,7 +415,9 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
         for (int i = 0; i < ccList.size(); ++i) {
             qreceiver = ccList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();;
+            MEmailAddress* address = mailbox->AddressL();
+            address->SetDisplayNameL(receiver);
+            address->SetRole(MEmailAddress::ECc);
             address->SetAddressL(receiver);
             ccAddress.Append(address);
         }
@@ -429,7 +432,9 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message)
         for (int i = 0; i < bccList.size(); ++i) {
             qreceiver = bccList.at(i).addressee();
             receiver.Set(reinterpret_cast<const TUint16*>(qreceiver.utf16()));
-            MEmailAddress* address = mailbox->AddressL();;
+            MEmailAddress* address = mailbox->AddressL();
+            address->SetDisplayNameL(receiver);
+            address->SetRole(MEmailAddress::EBcc);
             address->SetAddressL(receiver);
             bccAddress.Append(address);
         }
