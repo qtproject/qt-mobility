@@ -94,6 +94,6 @@ contains(mobility_modules,sensors) {
 
 # Organizer
 contains(QT_CONFIG, declarative) {
-    SUBDIRS += qmlcalendar
+    SUBDIRS += timescape
 }
 

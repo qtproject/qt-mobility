@@ -1,5 +1,6 @@
-import Qt 4.6
-import "qrc:/contents/components" as TimeScape
+import Qt 4.7
+import com.nokia.mobility 1.0
+import "contents" as TimeScape
 
 Rectangle {
     id: topItem
@@ -12,6 +13,10 @@ Rectangle {
     state: "MonthView";
 
     SystemPalette { id: activePalette }
+
+//    Organizer {
+//       id : organizer
+//    }
 
     // Quick hack top menu bar to change views
     states: [
@@ -64,7 +69,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Loader {id: monthLoader; anchors.fill: parent; source: "monthview.qml";}
+            Loader {id: monthLoader; anchors.fill: parent; source: "contents/monthview.qml";}
         }
         Rectangle {
             id: timelineView;
@@ -74,7 +79,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Loader {id: timelineLoader; anchors.fill: parent; source: "timelineview.qml";}
+            Loader {id: timelineLoader; anchors.fill: parent; source: "contents/timelineview.qml";}
         }
         Rectangle {
             id: detailsView;
@@ -84,7 +89,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Loader {id: detailLoader; anchors.fill: parent; source: "detailsview.qml";}
+            Loader {id: detailLoader; anchors.fill: parent; source: "contents/detailsview.qml";}
         }
         Rectangle {
             id: settingsView;
@@ -94,7 +99,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Loader {id: settingsLoader; anchors.fill: parent; source: "settingsview.qml";}
+            Loader {id: settingsLoader; anchors.fill: parent; source: "contents/settingsview.qml";}
         }
     }
 }

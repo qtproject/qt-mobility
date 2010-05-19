@@ -38,34 +38,39 @@
 **
 ****************************************************************************/
 
+
 #include <QApplication>
-#include <QtGui>
-#include <QDeclarativeEngine>
-#include <QDeclarativeComponent>
+#include <QtDeclarative>
+#include <QDeclarativeExtensionPlugin>
 #include <QDebug>
-#include <QDeclarativeView>
 
 QT_USE_NAMESPACE
 
-int main(int argc, char ** argv)
+
+class Organizer : public QObject
 {
-    QApplication app(argc, argv);
+    Q_OBJECT
+public:
+    Organizer(QObject* parent = 0) {
 
+    }
 
-    QDeclarativeEngine engine;
-//    QDeclarativeComponent component(&engine, ":example.qml");
+    ~Organizer() {
+    }
 
-    QWidget *b = new QWidget();
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setMargin(0);
+};
 
-    QDeclarativeView *view = new QDeclarativeView(b);
-    view->setFocusPolicy(Qt::StrongFocus);
-    view->setResizeMode(QDeclarativeView::SizeViewToRootObject);
-    view->setSource(QUrl("qrc:/contents/application.qml"));
-    vbox->addWidget(view);
-    b->setLayout(vbox);
-    b->show();
+class QOrganizerQmlPlugin : public QDeclarativeExtensionPlugin
+{
+    Q_OBJECT
+public:
+    void registerTypes(const char *uri)
+    {
+        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
+        qmlRegisterType<Organizer>(uri, 1, 0, "Organizer");
+    }
+};
 
-    return app.exec();
-}
+#include "plugin.moc"
+
+Q_EXPORT_PLUGIN2(qorganizerqmlplugin, QOrganizerQmlPlugin);
