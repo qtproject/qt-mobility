@@ -359,11 +359,13 @@ void QGalleryTrackerItemListPrivate::_q_queryFinished()
             emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
     }
 
-    const int index = cursorPosition & ~63;
 
-    if (index >= 0 && (index < lowerCursorThreshold || index >= upperCursorThreshold)) {
-        lowerCursorThreshold = qMax(0, index - 32);
-        upperCursorThreshold = lowerCursorThreshold + 96;
+    const int index = qMax(0, cursorPosition & ~63);
+    const int count = index + minimumPagedItems;
+
+    if (index > lowerThreshold || count < upperThreshold) {
+        upperThreshold = count;
+        lowerThreshold = index + queryLimit - minimumPagedItems;
 
         aCache.index = rCache.index;
         aCache.count = rCache.count;
@@ -393,7 +395,7 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
     Q_D(QGalleryTrackerItemList);
 
     d->cursorPosition = cursorPosition;
-    d->minimumPagedItems = minimumPagedItems;
+    d->minimumPagedItems = (minimumPagedItems + 15) & ~15;
     d->identityWidth = schema.identityWidth();
     d->valueOffset = schema.valueOffset();
     d->queryInterface = queryInterface;
@@ -418,14 +420,15 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
     d->columnCount = d->imageOffset + d->imageColumns.count();
 
     d->rowCount = 0;
-    d->queryLimit = qMax(256, 128 + ((minimumPagedItems + 63) & ~63));
+    d->queryLimit = qMax(256, 4 * d->minimumPagedItems);
 
     connect(&d->queryWatcher, SIGNAL(finished()), this, SLOT(_q_queryFinished()));
 
-    const int index = cursorPosition & ~63;
+    const int index = qMax(0, d->cursorPosition & ~63);
+    const int count = index + d->minimumPagedItems;
 
-    d->lowerCursorThreshold = qMax(0, index - 32);
-    d->upperCursorThreshold = d->lowerCursorThreshold + 96;
+    d->upperThreshold = count;
+    d->lowerThreshold = index + d->queryLimit - minimumPagedItems;
 
     d->queryWatcher.setFuture(QtConcurrent::run(
             d, &QGalleryTrackerItemListPrivate::queryRows, index));
@@ -470,26 +473,41 @@ void QGalleryTrackerItemList::setCursorPosition(int position)
 
     d->cursorPosition = position;
 
-    const int index = position & ~63;
+    if (d->queryWatcher.isFinished()) {
+        const int index = qMax(0, position & ~63);
+        const int count = index + d->minimumPagedItems;
 
-    if (d->queryWatcher.isFinished() && index >= 0
-            && (index < d->lowerCursorThreshold || index >= d->upperCursorThreshold)) {
+        if (index > d->lowerThreshold || count < d->upperThreshold) {
+            d->upperThreshold = count;
+            d->lowerThreshold = index + d->queryLimit - d->minimumPagedItems;
 
-        d->lowerCursorThreshold = qMax(0, index - 32);
-        d->upperCursorThreshold = d->lowerCursorThreshold + 96;
+            d->aCache.index = d->rCache.index;
+            d->aCache.count = d->rCache.count;
+            d->aCache.offset = d->rCache.index;
 
-        d->aCache.index = d->rCache.index;
-        d->aCache.count = d->rCache.count;
-        d->aCache.offset = d->rCache.index;
+            d->rCache.index = index;
+            d->rCache.count = 0;
+            d->rCache.cutoff = 0;
 
-        d->rCache.index = index;
-        d->rCache.count = 0;
-        d->rCache.cutoff = 0;
+            qSwap(d->aCache.values, d->rCache.values);
 
-        qSwap(d->aCache.values, d->rCache.values);
+            d->queryWatcher.setFuture(QtConcurrent::run(
+                    d, &QGalleryTrackerItemListPrivate::queryRows, index));
+        }
+    }
 
-        d->queryWatcher.setFuture(QtConcurrent::run(
-                d, &QGalleryTrackerItemListPrivate::queryRows, index));
+    if (d->rCache.cutoff > 0) {
+        const int imageIndex = qMax(0, position & ~7);
+        const int imageCount = imageIndex + ((d->minimumPagedItems + 7) & ~7);
+
+        if (imageIndex < d->imageCacheIndex) {
+
+
+        } else if (imageCount > d->imageCacheCount) {
+            for (int i = 0, count = d->imageColumns.count(); i < count; ++i) {
+
+            }
+        }
     }
 }
 
@@ -587,9 +605,8 @@ QVariant QGalleryTrackerItemList::metaData(int index, int key) const
         } else if (key < d->columnCount) {      // Image column.
             key -= d->imageOffset;
 
-            if (index < d->imageCaches.at(key).count
-                    && (index -= d->imageCaches.at(key).index) >= 0) {
-                return d->imageCaches.at(key).images.at(index).image();
+            if (index < d->imageCacheCount && (index -= d->imageCacheIndex) >= 0) {
+                return d->imageCaches.at(key).at(index).image();
             }
         }
     }

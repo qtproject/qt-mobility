@@ -189,9 +189,11 @@ public:
     int imageOffset;
     int columnCount;
     int rowCount;
-    int lowerCursorThreshold;
-    int upperCursorThreshold;
     int queryLimit;
+    int lowerThreshold;
+    int upperThreshold;
+    int imageCacheIndex;
+    int imageCacheCount;
     QGalleryDBusInterfacePointer queryInterface;
     QString queryMethod;
     QVariantList queryArguments;
@@ -202,7 +204,7 @@ public:
     QVector<int> aliasColumns;
     QVector<QGalleryTrackerImageColumn *> imageColumns;
     QVector<QGalleryTrackerSortCriteria> sortCriteria;
-    QVector<ImageCache> imageCaches;
+    QVector<QVector<QGalleryTrackerImage> > imageCaches;
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 
