@@ -109,13 +109,15 @@ private:
 
 	void initializeCntTransformContactData();
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
 	void transformPreferredDetailL(const QContact& contact, const QContactDetail& detail, QList<CContactItemField*> &fieldList) const;
 	void transformPreferredDetail(const CContactItemField& field, const QContactDetail& detail, QContact& contact) const;
 	void resetTransformObjects() const;
 	
+
 private:
 	QMap<ContactData, CntTransformContactData*> m_transformContactData;
+	QHash<TUint32, CntTransformContactData*> m_fieldTypeToTransformContact;
 	CTzConverter* m_tzConverter;
 	RTz m_tzoneServer;
 };
