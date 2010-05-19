@@ -68,6 +68,7 @@ private:
     void updateSamplerates(int idx);
     void updateChannelCount(int idx);
     void updateQuality(int idx);
+    static inline void swap(QString& a, QString& b){qSwap(a,b);}
     
 private slots:
     void deviceChanged(int idx);
@@ -76,6 +77,7 @@ private slots:
     void qualityChanged(int idx);
     void sampleRateChanged(int idx);
     void channelCountChanged(int idx);
+    void encmodeChanged(int idx);
     void selectOutputFile();
     void togglePause();
     void toggleRecord();
@@ -93,6 +95,7 @@ private:
     QComboBox*     qualityBox;
     QComboBox*     sampleRateBox; 
     QComboBox*     channelBox;
+    QComboBox*     encModeBox;
     QLabel*        recTime;
     QLabel*        statusLabel;
     QPushButton*   button;
