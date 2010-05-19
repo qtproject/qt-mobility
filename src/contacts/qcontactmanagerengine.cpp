@@ -2021,10 +2021,7 @@ void QContactManagerEngine::setContactRelationships(QContact* contact, const QLi
  */
 int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, const QList<QContactSortOrder>& sortOrders)
 {
-    QList<QContactSortOrder> copy = sortOrders;
-    while (copy.size()) {
-        // retrieve the next sort order in the list
-        QContactSortOrder sortOrder = copy.takeFirst();
+    foreach(const QContactSortOrder& sortOrder, sortOrders) {
         if (!sortOrder.isValid())
             break;
 
@@ -2061,36 +2058,45 @@ int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, 
     return 0; // or according to id? return (a.id() < b.id() ? -1 : 1);
 }
 
+/* A functor that returns true iff a is less than b, according to the sortOrders passed in to the
+ * ctor.  The sortOrders pointer passed in must remain valid for the lifetime of the functor. */
+class ContactLessThan {
+    public:
+        ContactLessThan(const QList<QContactSortOrder>* sortOrders) : mSortOrders(sortOrders) {}
+        bool operator()(const QContact& a, const QContact& b) const
+        {
+            return QContactManagerEngine::compareContact(a, b, *mSortOrders) < 0;
+        }
+    private:
+        const QList<QContactSortOrder>* mSortOrders;
+};
 
 /*!
   Performs insertion sort of the contact \a toAdd into the \a sorted list, according to the provided \a sortOrders list.
-  The first QContactSortOrder in the list has the highest priority; if the contact \a toAdd is deemed equal to another
-  in the \a sorted list, the second QContactSortOrder in the list is used (and so on until either the contact is inserted
-  or there are no more sort order objects in the list).
+  The first QContactSortOrder in the list has the highest priority: if the contact \a toAdd is deemed equal to another
+  in the \a sorted list according to the first QContactSortOrder, the second QContactSortOrder in the list is used (and
+  so on until either the contact is inserted or there are no more sort order objects in the list).
+
+  If a contact is equal to another contact according to all sort orders, it is inserted after the previously-added contact.
  */
 void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& toAdd, const QList<QContactSortOrder>& sortOrders)
 {
     if (sortOrders.count() > 0) {
-        for (int i = 0; i < sorted->size(); i++) {
-            // check to see if the new contact should be inserted here
-            int comparison = compareContact(sorted->at(i), toAdd, sortOrders);
-            if (comparison > 0) {
-                sorted->insert(i, toAdd);
-                return;
-            }
-        }
+        ContactLessThan lessThan(&sortOrders);
+        QList<QContact>::iterator it(qUpperBound(sorted->begin(), sorted->end(), toAdd, lessThan));
+        sorted->insert(it, toAdd);
+    } else {
+        // no sort order? just add it to the end
+        sorted->append(toAdd);
     }
-
-    // hasn't been inserted yet?  append to the list.
-    sorted->append(toAdd);
 }
 
 /*! Sorts the given list of contacts \a cs according to the provided \a sortOrders */
 QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
 {
     QList<QContactLocalId> sortedIds;
-    QList<QContact> sortedContacts;
     if (!sortOrders.isEmpty()) {
+        QList<QContact> sortedContacts;
         foreach (const QContact& c, cs) {
             QContactManagerEngine::addSorted(&sortedContacts, c, sortOrders);
         }
