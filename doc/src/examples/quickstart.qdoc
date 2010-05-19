@@ -111,7 +111,7 @@ corresponding values that can be assigned to \c MOBILITY.
     \o \l {System Information}
     \o systeminfo
 \row
-    \o \l {Future Additional APIs}{Versit}
+    \o \l {Versit API}{Versit}
     \o versit
 \endtable
 
@@ -162,6 +162,8 @@ on which parts of an API is utilized by an application.
     \o \l {System Information}
     \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData
 \row
+    \o \l {Versit API}
+    \o No additional capabilities required.
 \endtable
 
 The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}. 
