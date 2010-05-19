@@ -44,7 +44,11 @@
 
 #include "s60mediaplayersession.h"
 #include "s60mediaplayeraudioendpointselector.h"
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+#include <videoplayer2.h>
+#else
 #include <videoplayer.h>
+#endif // MMF_VIDEO_SURFACES_SUPPORTED
 #include <QtGui/qwidget.h>
 #include <qvideowidget.h>
 
@@ -125,7 +129,11 @@ private:
 
 private:
     // Qwn
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+    CVideoPlayerUtility2 *m_player;
+#else
     CVideoPlayerUtility *m_player;
+#endif // MMF_VIDEO_SURFACES_SUPPORTED
     TRect m_rect;
     QVideoOutputControl::Output m_output;
     WId m_windowId;
@@ -136,6 +144,7 @@ private:
     RWsSession &m_wsSession;
     CWsScreenDevice &m_screenDevice;
     RWindowBase *m_window;
+    RWindow *m_displayWindow;
     QMediaService &m_service;
     Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_originalSize;
