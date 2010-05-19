@@ -64,6 +64,10 @@ QString QOrganizerItemMaemo5Factory::managerName() const
 }
 Q_EXPORT_PLUGIN2(qtorganizer_maemo5, QOrganizerItemMaemo5Factory);
 
+QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
+    : d(new QOrganizerItemMaemo5EngineData)
+{
+}
 
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()
 {
@@ -169,14 +173,12 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
     Q_UNUSED(fetchHint);
     *error = QOrganizerItemManager::NoError;
     int calError = 0;
-
     QList<QOrganizerItem> partiallyFilteredItems;
 
     std::vector<CCalendar*> allCalendars = d->m_mcInstance->getListCalFromMc();
     for (unsigned int i = 0; i < allCalendars.size(); i++) {
         CCalendar *currCal = allCalendars[i];
         QString calName = QString::fromStdString(currCal->getCalendarName());
-
 	// get the events
         std::vector<CEvent*> events = currCal->getEvents(calError);
         if (calError) {

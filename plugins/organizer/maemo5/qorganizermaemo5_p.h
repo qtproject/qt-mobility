@@ -131,8 +131,6 @@ class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
     Q_OBJECT
 
 public:
-    static QOrganizerItemMaemo5Engine *createSkeletonEngine(const QMap<QString, QString>& parameters);
-
     ~QOrganizerItemMaemo5Engine();
 
     /* URI reporting */
@@ -170,6 +168,9 @@ private:
     CEvent* convertQEventToCEvent(const QOrganizerEvent& event) const;
     CTodo* convertQTodoToCTodo(const QOrganizerTodo& todo) const;
     CJournal* convertQJournalToCJournal(const QOrganizerJournal& journal) const;
+
+    // ctor
+    QOrganizerItemMaemo5Engine();
 
 private:
     QOrganizerItemMaemo5EngineData* d;
