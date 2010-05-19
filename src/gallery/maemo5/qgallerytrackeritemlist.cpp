@@ -59,11 +59,11 @@ int QGalleryTrackerItemListPrivate::queryRows(int offset)
 
         const QVector<QStringList> resultSet = reply.value();
 
-        rCache.count = resultSet.count();
+        rCache.count = rCache.index + resultSet.count();
 
         QVector<QVariant> &values = rCache.values;
         values.clear();
-        values.reserve(rCache.count * tableWidth);
+        values.reserve(resultSet.count() * tableWidth);
 
         for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
             for (int i = 0, count = qMin(valueOffset, it->count()); i < count; ++i)
@@ -159,7 +159,7 @@ void QGalleryTrackerItemListPrivate::synchronize()
 
     bool equal = false;
 
-    if (rCache.index > aCache.index && rCache.index < aCache.index + aCache.count) {
+    if (rCache.index > aCache.index && rCache.index < aCache.count) {
         const int offset = rCache.index - aCache.index;
 
         if ((equal = rBegin.isEqual(aBegin + offset, identityWidth))) {
@@ -167,7 +167,7 @@ void QGalleryTrackerItemListPrivate::synchronize()
         } else {
             aIt = aBegin + qMax(0, offset - 8);
         }
-    } else if (aCache.index > rCache.index && aCache.index < rCache.index + rCache.count) {
+    } else if (aCache.index > rCache.index && aCache.index < rCache.count) {
         const int offset = aCache.index - rCache.index;
 
         if ((equal = aBegin.isEqual(rBegin + offset, identityWidth))) {
@@ -338,7 +338,7 @@ void QGalleryTrackerItemListPrivate::_q_queryFinished()
 
     const int statusIndex = rCache.cutoff;
 
-    rCache.cutoff = rCache.index + rCache.count;
+    rCache.cutoff = rCache.count;
 
     if (rCache.cutoff > rowCount) {
         const int statusCount = rowCount - statusIndex;
@@ -359,7 +359,7 @@ void QGalleryTrackerItemListPrivate::_q_queryFinished()
             emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
     }
 
-    const int index = (cursorPosition + 63) & ~63;
+    const int index = cursorPosition & ~63;
 
     if (index >= 0 && (index < lowerCursorThreshold || index >= upperCursorThreshold)) {
         lowerCursorThreshold = qMax(0, index - 32);
@@ -410,6 +410,8 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
     d->propertyNames = schema.propertyNames();
     d->propertyAttributes = schema.propertyAttributes();
 
+    d->imageCaches.resize(d->imageColumns.count());
+
     d->compositeOffset = d->valueOffset + d->valueColumns.count();
     d->aliasOffset = d->tableWidth + d->compositeColumns.count();
     d->imageOffset = d->aliasOffset + d->aliasColumns.count();
@@ -420,7 +422,7 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
 
     connect(&d->queryWatcher, SIGNAL(finished()), this, SLOT(_q_queryFinished()));
 
-    const int index = (cursorPosition + 63) & ~63;
+    const int index = cursorPosition & ~63;
 
     d->lowerCursorThreshold = qMax(0, index - 32);
     d->upperCursorThreshold = d->lowerCursorThreshold + 96;
@@ -468,9 +470,9 @@ void QGalleryTrackerItemList::setCursorPosition(int position)
 
     d->cursorPosition = position;
 
-    const int index = (position + 63) & ~63;
+    const int index = position & ~63;
 
-    if (d->queryWatcher.isFinished() && index >= 0 && index
+    if (d->queryWatcher.isFinished() && index >= 0
             && (index < d->lowerCursorThreshold || index >= d->upperCursorThreshold)) {
 
         d->lowerCursorThreshold = qMax(0, index - 32);
@@ -496,18 +498,13 @@ QVariant QGalleryTrackerItemList::id(int index) const
     Q_D(const QGalleryTrackerItemList);
 
     if (index < d->rCache.cutoff) {
-        index -= d->rCache.index;
-
-        return index >= 0 && index <= d->rCache.count
-                ? d->idColumn->value(d->rCache.values.constBegin() + (index * d->tableWidth))
-                : QVariant();
-    } else {
-        index -= d->aCache.cutoff;
-
-        return index >= 0 && index <= d->aCache.count
-                ? d->idColumn->value(d->aCache.values.constBegin() + (index * d->tableWidth))
-                : QVariant();
+        if ((index -= d->rCache.index) >= 0)
+            return d->idColumn->value(d->rCache.values.begin() + (index * d->tableWidth));
+    } else if (index < d->aCache.count && (index -= d->aCache.offset) >= 0) {
+        return d->idColumn->value(d->aCache.values.begin() + (index * d->tableWidth));
     }
+
+    return QVariant();
 }
 
 QUrl QGalleryTrackerItemList::url(int index) const
@@ -515,20 +512,13 @@ QUrl QGalleryTrackerItemList::url(int index) const
     Q_D(const QGalleryTrackerItemList);
 
     if (index < d->rCache.cutoff) {
-        index -= d->rCache.index;
-
-        return index >= 0
-                ? d->urlColumn->value(
-                        d->rCache.values.constBegin() + (index * d->tableWidth)).toUrl()
-                : QUrl();
-    } else {
-        index -= d->aCache.cutoff;
-
-        return index >= 0 && index <= d->aCache.count
-                ? d->urlColumn->value(
-                        d->aCache.values.constBegin() + (index * d->tableWidth)).toUrl()
-                : QUrl();
+        if ((index -= d->rCache.index) >= 0)
+            return d->urlColumn->value(d->rCache.values.begin() + (index * d->tableWidth)).toUrl();
+    } else if (index < d->aCache.count && (index -= d->aCache.offset) >= 0) {
+        return d->urlColumn->value(d->aCache.values.begin() + (index * d->tableWidth)).toUrl();
     }
+
+    return QUrl();
 }
 
 QString QGalleryTrackerItemList::type(int index) const
@@ -536,20 +526,15 @@ QString QGalleryTrackerItemList::type(int index) const
     Q_D(const QGalleryTrackerItemList);
 
     if (index < d->rCache.cutoff) {
-        index -= d->rCache.index;
-
-        return index >= 0
-                ? d->typeColumn->value(
-                        d->rCache.values.constBegin() + (index * d->tableWidth)).toString()
-                : QString();
-    } else {
-        index -= d->aCache.cutoff;
-
-        return index >= 0 && index <= d->aCache.count
-                ? d->typeColumn->value(
-                        d->aCache.values.constBegin() + (index * d->tableWidth)).toString()
-                : QString();
+        if ((index -= d->rCache.index) >= 0) {
+            return d->typeColumn->value(
+                    d->rCache.values.begin() + (index * d->tableWidth)).toString();
+        }
+    } else if (index < d->aCache.count && (index -= d->aCache.offset) >= 0) {
+        return d->typeColumn->value(d->aCache.values.begin() + (index * d->tableWidth)).toString();
     }
+
+    return QString();
 }
 
 QList<QGalleryResource> QGalleryTrackerItemList::resources(int index) const
@@ -570,50 +555,41 @@ QVariant QGalleryTrackerItemList::metaData(int index, int key) const
 {
     Q_D(const QGalleryTrackerItemList);
 
-    if (index < d->rCache.cutoff) {
-        index -= d->rCache.index;
-
-        if (index >=0 && key >= d->valueOffset) {
-            if (key < d->compositeOffset) {         // Value column.
-                return d->rCache.values.at((index * d->tableWidth) + key);
-            } else if (key < d->aliasOffset) {      // Composite column.
-                key -= d->compositeOffset;
-
-                return d->compositeColumns.at(key)->value(
-                        d->rCache.values.constBegin() + (index * d->tableWidth));
-            } else if (key < d->imageOffset) {      // Alias column.
-                key = d->aliasColumns.at(key - d->aliasOffset);
-
-                return d->rCache.values.at((index * d->tableWidth) + key);
-            } else if (key < d->columnCount) {      // Image column.
-                key -= d->imageOffset;
-
-                // TBD
-
-                return QVariant();
+    if (key >= d->valueOffset) {
+        if (key < d->compositeOffset) {         // Value column.
+            if (index < d->rCache.cutoff) {
+                if ((index -= d->rCache.index) >= 0)
+                    return d->rCache.values.at(index * d->tableWidth + key);
+            } else if (index < d->aCache.count && (index -= d->aCache.offset) >= 0) {
+                return d->aCache.values.at(index * d->tableWidth + key);
             }
-        }
-    } else {
-        index -= d->aCache.offset;
+        } else if (key < d->aliasOffset) {      // Composite column.
+            key -= d->compositeOffset;
 
-        if (index >= 0 && index < d->aCache.count && key >= d->valueOffset) {
-            if (key < d->compositeOffset) {         // Value column.
-                return d->aCache.values.at((index * d->tableWidth) + key);
-            } else if (key < d->aliasOffset) {      // Composite column.
-                key -= d->compositeOffset;
-
+            if (index < d->rCache.cutoff) {
+                if ((index -= d->rCache.index) >= 0) {
+                    return d->compositeColumns.at(key)->value(
+                            d->rCache.values.begin() + (index * d->tableWidth));
+                }
+            } else if (index < d->aCache.count && (index -= d->aCache.offset) >= 0) {
                 return d->compositeColumns.at(key)->value(
-                        d->aCache.values.constBegin() + (index * d->tableWidth));
-            } else if (key < d->imageOffset) {      // Alias column.
-                key = d->aliasColumns.at(key - d->aliasOffset);
+                        d->aCache.values.begin() + (index * d->tableWidth));
+            }
+        } else if (key < d->imageOffset) {      // Alias column.
+            key = d->aliasColumns.at(key - d->aliasOffset);
 
-                return d->aCache.values.at((index * d->tableWidth) + key);
-            } else if (key < d->columnCount) {      // Image column.
-                key -= d->imageOffset;
+            if (index < d->rCache.cutoff) {
+                if ((index -= d->rCache.index) >= 0)
+                    return d->rCache.values.at(index * d->tableWidth + key);
+            } else if (index < d->aCache.count && (index -= d->aCache.offset) >= 0) {
+                return d->aCache.values.at(index * d->tableWidth + key);
+            }
+        } else if (key < d->columnCount) {      // Image column.
+            key -= d->imageOffset;
 
-                // TBD
-
-                return QVariant();
+            if (index < d->imageCaches.at(key).count
+                    && (index -= d->imageCaches.at(key).index) >= 0) {
+                return d->imageCaches.at(key).images.at(index).image();
             }
         }
     }
@@ -631,10 +607,11 @@ void QGalleryTrackerItemList::cancel()
 
 }
 
-bool QGalleryTrackerItemList::waitForFinished(int msecs)
+bool QGalleryTrackerItemList::waitForFinished(int)
 {
+    d_func()->queryWatcher.waitForFinished();
 
-    return false;
+    return true;
 }
 
 bool QGalleryTrackerItemList::event(QEvent *event)

@@ -153,6 +153,15 @@ public:
         QVector<QVariant> values;
     };
 
+    struct ImageCache
+    {
+        ImageCache() : index(0), count(0) {}
+
+        int index;
+        int count;
+        QVector<QGalleryTrackerImage> images;
+    };
+
     typedef QVector<QGalleryTrackerSortCriteria>::const_iterator sort_iterator;
 
     ~QGalleryTrackerItemListPrivate()
@@ -193,6 +202,7 @@ public:
     QVector<int> aliasColumns;
     QVector<QGalleryTrackerImageColumn *> imageColumns;
     QVector<QGalleryTrackerSortCriteria> sortCriteria;
+    QVector<ImageCache> imageCaches;
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 
