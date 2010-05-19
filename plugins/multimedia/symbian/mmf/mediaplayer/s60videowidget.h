@@ -47,7 +47,28 @@
 
 QT_USE_NAMESPACE
 
-class QBlackWidget : public QWidget
+class QAbstractVideoWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    QAbstractVideoWidget(QWidget *parent = 0);
+    virtual ~QAbstractVideoWidget();
+};
+
+class QBlackSurface : public QAbstractVideoWidget
+{
+    Q_OBJECT
+
+public:
+    QBlackSurface(QWidget *parent = 0);
+    virtual ~QBlackSurface();
+
+protected:
+    void paintEvent(QPaintEvent *event);
+};
+
+class QBlackWidget : public QAbstractVideoWidget
 {
     Q_OBJECT
     
@@ -95,6 +116,9 @@ public:
 
     //new methods
     WId videoWidgetWId();
+    QSize videoWidgetSize();
+private:
+    void initializeVideoOutput();
     
 signals:
     void widgetUpdated();
@@ -105,7 +129,7 @@ private slots:
     void videoStateChanged(QMediaPlayer::State state);
     
 private:
-    QBlackWidget *m_widget;
+    QAbstractVideoWidget *m_widget;
     Qt::AspectRatioMode m_aspectRatioMode;
 };
 
