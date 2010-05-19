@@ -55,12 +55,20 @@ QTM_BEGIN_NAMESPACE
     To discovery nearby Bluetooth devices create an instance of QBluetoothDeviceDiscoveryAgent,
     connect to either the deviceDiscovered() or finished() signals and call start().
 
-    \code
-        QBluetoothDeviceDiscoveryAgent *discoveryAgent = new QBluetoothDeviceDiscoveryAgent(this);
-        connect(discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
-                this, SLOT(deviceDiscovered(const QBluetoothDeviceInfo&)));
-        discoveryAgent->start();
-    \endcode
+    \snippet snippets/connectivity/devicediscovery.cpp Device discovery
+
+    To retrieve results asynchronously connect to the deviceDiscovered() signal. To get a list of
+    all discovered devices call discoveredDevices() after the finished() signal is emitted.
+*/
+
+/*!
+    \enum QBluetoothDeviceDiscoveryAgent::Error
+
+    Indicates all possible error conditions found during Bluetooth device discovery.
+
+    \value NoError          No error has occured.
+    \value Canceled         Device discovery was canceled by a call to stop().
+    \value UnknownError     An unknown error has occured.
 */
 
 /*!
@@ -83,10 +91,17 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn void QBluetoothDeviceDiscoveryAgent::finished(bool error)
+    \fn void QBluetoothDeviceDiscoveryAgent::finished()
 
-    This signal is emitted when Bluetooth device discovery completes. \a error is true if an
-    error caused Bluetooth device discovery to abort.
+    This signal is emitted when Bluetooth device discovery completes.
+*/
+
+/*!
+    \fn void QBluetoothDeviceDiscoveryAgent::error(QBluetoothDeviceDiscoveryAgent::Error error)
+
+    This signal is emiited when an \a error occurs during Bluetooth device discovery.
+
+    \sa error(), errorString()
 */
 
 /*!
@@ -94,6 +109,7 @@ QTM_BEGIN_NAMESPACE
 
     Returns true if the agent is currently discovering Bluetooth devices, other returns false.
 */
+
 
 
 /*!
@@ -163,6 +179,22 @@ void QBluetoothDeviceDiscoveryAgent::stop()
 
     if (isActive())
         d->stop();
+}
+
+/*!
+    Returns the last error which has occured.
+*/
+QBluetoothDeviceDiscoveryAgent::Error QBluetoothDeviceDiscoveryAgent::error() const
+{
+    return NoError;
+}
+
+/*!
+    Returns a human-readable description of the last error that occurred.
+*/
+QString QBluetoothDeviceDiscoveryAgent::errorString() const
+{
+    return QString();
 }
 
 #include "moc_qbluetoothdevicediscoveryagent.cpp"

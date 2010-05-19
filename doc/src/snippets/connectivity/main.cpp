@@ -39,63 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_H
-#define QBLUETOOTHDEVICEDISCOVERYAGENT_H
-
-#include "qmobilityglobal.h"
-
-#include <QObject>
-
-#include "qbluetoothdeviceinfo.h"
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QBluetoothDeviceDiscoveryAgentPrivate;
-
-class Q_CONNECTIVITY_EXPORT QBluetoothDeviceDiscoveryAgent : public QObject
+int main(int /*argc*/, char ** /*argv*/)
 {
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QBluetoothDeviceDiscoveryAgent)
-    Q_PROPERTY(QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType READ inquiryType WRITE setInquiryType)
+    return 0;
+}
 
-public:
-    enum Error {
-        NoError,
-        Canceled,
-        UnknownError = 100
-    };
-
-    enum InquiryType {
-        GeneralUnlimitedInquiry,
-        LimitedInquiry,
-    };
-
-    QBluetoothDeviceDiscoveryAgent(QObject *parent = 0);
-
-    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType() const;
-    void setInquiryType(QBluetoothDeviceDiscoveryAgent::InquiryType type);
-
-    bool isActive() const;
-
-    Error error() const;
-    QString errorString() const;
-
-    QList<QBluetoothDeviceInfo> discoveredDevices() const;
-
-public slots:
-    void start();
-    void stop();
-
-signals:
-    void deviceDiscovered(const QBluetoothDeviceInfo &info);
-    void finished();
-    void error(QBluetoothDeviceDiscoveryAgent::Error error);
-};
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif

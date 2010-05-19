@@ -39,63 +39,39 @@
 **
 ****************************************************************************/
 
-#ifndef QBLUETOOTHDEVICEDISCOVERYAGENT_H
-#define QBLUETOOTHDEVICEDISCOVERYAGENT_H
+#include <bluetooth/qbluetoothdevicediscoveryagent.h>
 
-#include "qmobilityglobal.h"
+#include <QtCore/QObject>
 
-#include <QObject>
+QTM_USE_NAMESPACE
 
-#include "qbluetoothdeviceinfo.h"
-
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-class QBluetoothDeviceDiscoveryAgentPrivate;
-
-class Q_CONNECTIVITY_EXPORT QBluetoothDeviceDiscoveryAgent : public QObject
+class Discoverer : public QObject
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QBluetoothDeviceDiscoveryAgent)
-    Q_PROPERTY(QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType READ inquiryType WRITE setInquiryType)
 
 public:
-    enum Error {
-        NoError,
-        Canceled,
-        UnknownError = 100
-    };
+    void deviceDiscovery();
 
-    enum InquiryType {
-        GeneralUnlimitedInquiry,
-        LimitedInquiry,
-    };
-
-    QBluetoothDeviceDiscoveryAgent(QObject *parent = 0);
-
-    QBluetoothDeviceDiscoveryAgent::InquiryType inquiryType() const;
-    void setInquiryType(QBluetoothDeviceDiscoveryAgent::InquiryType type);
-
-    bool isActive() const;
-
-    Error error() const;
-    QString errorString() const;
-
-    QList<QBluetoothDeviceInfo> discoveredDevices() const;
-
-public slots:
-    void start();
-    void stop();
-
-signals:
+private slots:
     void deviceDiscovered(const QBluetoothDeviceInfo &info);
-    void finished();
-    void error(QBluetoothDeviceDiscoveryAgent::Error error);
 };
 
-QTM_END_NAMESPACE
+void Discoverer::deviceDiscovery()
+{
+//! [Device discovery]
+    QBluetoothDeviceDiscoveryAgent *discoveryAgent = new QBluetoothDeviceDiscoveryAgent(this);
 
-QT_END_HEADER
+    connect(discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
+            this, SLOT(deviceDiscovered(const QBluetoothDeviceInfo&)));
 
-#endif
+    // Automatically delete agent when device discovery finishes.
+    connect(discoveryAgent, SIGNAL(finished()), this, SLOT(deleteLater()));
+
+    discoveryAgent->start();
+//! [Device discovery]
+}
+
+void Discoverer::deviceDiscovered(const QBluetoothDeviceInfo &info)
+{
+    Q_UNUSED(info);
+}
