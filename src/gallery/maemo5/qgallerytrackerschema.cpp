@@ -1410,6 +1410,54 @@ void QGalleryTrackerSchema::setSortPropertyNames(const QStringList &names)
     m_sortPropertyNames = names;
 }
 
+QString QGalleryTrackerSchema::queryMethod() const
+{
+    if (m_fileTypeIndex >= 0)
+        return QLatin1String("Query");
+    else if (m_aggregateTypeIndex >= 0)
+        return QLatin1String("GetUniqueValuesWithAggregates");
+    else
+        return QString();
+}
+
+QVariantList QGalleryTrackerSchema::queryArguments(const QString &query) const
+{
+    if (m_fileTypeIndex >= 0) {
+        const int liveQueryId = 0;
+        const QString service = qt_galleryTypeMap[m_fileTypeIndex].trackerKey;
+        const QString searchText;
+        const QStringList keywords;
+        const bool sortByService = false;
+        const bool descendingSortOrder = !m_sortCriteria.isEmpty()
+                && m_sortCriteria.first().flags & QGalleryTrackerSortCriteria::Descending;
+
+        return QVariantList()
+                << liveQueryId
+                << service
+                << m_propertyFields
+                << searchText
+                << keywords
+                << query
+                << sortByService
+                << m_sortFields
+                << descendingSortOrder;
+    } else if (m_aggregateTypeIndex >= 0) {
+        const QString service = qt_galleryAggregateTypeMap[m_aggregateTypeIndex].trackerKey;
+        const bool descendingSortOrder = !m_sortCriteria.isEmpty()
+                && m_sortCriteria.first().flags & QGalleryTrackerSortCriteria::Descending;
+
+        return QVariantList()
+                << service
+                << m_propertyFields
+                << query
+                << m_aggregations
+                << m_aggregateFields
+                << descendingSortOrder;
+    } else {
+        return QVariantList();
+    }
+}
+
 QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createIdColumn() const
 {
     if (m_fileTypeIndex >= 0) {

@@ -81,16 +81,8 @@ public:
             QObject *parent = 0);
     ~QGalleryTrackerAggregateResponse();
 
-    void cancel();
-
-    bool waitForFinished(int msecs);
-
-protected:
-    void updateStateChanged(UpdateState state);
-
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerAggregateResponse)
-    Q_PRIVATE_SLOT(d_func(), void _q_getValuesFinished(QDBusPendingCallWatcher *))
 };
 
 QTM_END_NAMESPACE

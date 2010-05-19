@@ -54,72 +54,8 @@ class QGalleryTrackerAggregateResponsePrivate : public QGalleryTrackerItemListPr
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerAggregateResponse)
 public:
-    bool descendingSortOrder;
-    QGalleryDBusInterfacePointer metaDataInterface;
-    QString query;
-    QString service;
-    QStringList identityFields;
-    QStringList aggregates;
-    QStringList aggregateFields;
-    QVector<QStringList> resultSet;
-    QDBusPendingCallWatcher *getValuesCall;
 
-    void _q_getValuesFinished(QDBusPendingCallWatcher *watcher);
-
-    void getValues(int offset, int limit);
-    void getValuesFinished(const QDBusPendingReply<QVector<QStringList> > &reply);
 };
-
-void QGalleryTrackerAggregateResponsePrivate::_q_getValuesFinished(QDBusPendingCallWatcher *watcher)
-{
-    if (watcher->isError()) {
-        qWarning("DBUS error %s", qPrintable(watcher->error().message()));
-
-        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
-    } else {
-        getValuesCall->deleteLater();
-        getValuesCall = 0;
-
-        getValuesFinished(*watcher);
-    }
-}
-
-void QGalleryTrackerAggregateResponsePrivate::getValues(int offset, int limit)
-{
-    QDBusPendingCall call = metaDataInterface->asyncCall(
-            QLatin1String("GetUniqueValuesWithAggregates"),
-            service,
-            identityFields,
-            query,
-            aggregates,
-            aggregateFields,
-            descendingSortOrder,
-            offset,
-            limit);
-
-    if (call.isError()) {
-        qWarning("DBUS error %s", qPrintable(call.error().message()));
-
-        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
-    } else if (call.isFinished()) {
-        getValuesFinished(call);
-    } else {
-        getValuesCall = new QDBusPendingCallWatcher(call);
-
-        QObject::connect(getValuesCall, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                q_func(), SLOT(_q_getValuesFinished(QDBusPendingCallWatcher*)));
-    }
-}
-
-void QGalleryTrackerAggregateResponsePrivate::getValuesFinished(
-        const QDBusPendingReply<QVector<QStringList> > &reply)
-{
-    if (updateState == QGalleryTrackerItemList::UpToDate) {
-        q_func()->updateResultSet(reply.value());
-    } else {
-        resultSet = reply.value();
-    }
-}
 
 QGalleryTrackerAggregateResponse::QGalleryTrackerAggregateResponse(
         const QGalleryDBusInterfacePointer &metaDataInterface,
@@ -131,47 +67,18 @@ QGalleryTrackerAggregateResponse::QGalleryTrackerAggregateResponse(
     : QGalleryTrackerItemList(
             *new QGalleryTrackerAggregateResponsePrivate,
             schema,
+            metaDataInterface,
+            query,
             cursorPosition,
             minimumPagedItems,
             parent)
 {
-    Q_D(QGalleryTrackerAggregateResponse);
-
-    const QVector<QGalleryTrackerSortCriteria> sortCriteria = schema.sortCriteria();
-
-    d->descendingSortOrder = !sortCriteria.isEmpty()
-            && sortCriteria.first().flags & QGalleryTrackerSortCriteria::Descending;
-    d->metaDataInterface = metaDataInterface;
-    d->query = query;
-    d->service = schema.service();
-    d->identityFields = schema.fields();
-    d->aggregates = schema.aggregations();
-    d->aggregateFields = schema.aggregateFields();
-    d->getValuesCall = 0;
-
-    d->getValues(0, 2048);
 }
 
 QGalleryTrackerAggregateResponse::~QGalleryTrackerAggregateResponse()
 {
 }
 
-void QGalleryTrackerAggregateResponse::cancel()
-{
-
-}
-
-bool QGalleryTrackerAggregateResponse::waitForFinished(int msecs)
-{
-
-    return false;
-}
-
-
-void QGalleryTrackerAggregateResponse::updateStateChanged(UpdateState state)
-{
-
-}
 
 #include "moc_qgallerytrackeraggregateresponse_p.cpp"
 

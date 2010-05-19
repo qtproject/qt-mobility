@@ -55,15 +55,8 @@
 
 #include "qgallerytrackeritemlist_p.h"
 
-#include "qgallerydbusinterface_p.h"
-
-#include <QtDBus/qdbusinterface.h>
-
 QTM_BEGIN_NAMESPACE
 
-class QGalleryContainerRequest;
-class QGalleryFilterRequest;
-class QGalleryItemRequest;
 class QGalleryTrackerSchema;
 
 class QGalleryTrackerItemResponsePrivate;
@@ -81,18 +74,8 @@ public:
             QObject *parent = 0);
     ~QGalleryTrackerItemResponse();
 
-    void setCursorPosition(int position);
-
-    void cancel();
-
-    bool waitForFinished(int msecs);
-
-protected:
-    void updateStateChanged(UpdateState state);
-
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemResponse)
-    Q_PRIVATE_SLOT(d_func(), void _q_getValuesFinished(QDBusPendingCallWatcher *))
 };
 
 QTM_END_NAMESPACE

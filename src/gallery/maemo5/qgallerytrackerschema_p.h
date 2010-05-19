@@ -144,6 +144,9 @@ public:
     QVector<QGalleryProperty::Attributes> propertyAttributes() const {
         return m_propertyAttributes; }
 
+    QString queryMethod() const;
+    QVariantList queryArguments(const QString &query) const;
+
     QGalleryTrackerCompositeColumn *createIdColumn() const;
     QGalleryTrackerCompositeColumn *createUrlColumn() const;
     QGalleryTrackerCompositeColumn *createTypeColumn() const;

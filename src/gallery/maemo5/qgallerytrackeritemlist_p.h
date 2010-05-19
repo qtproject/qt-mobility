@@ -55,6 +55,8 @@
 
 #include <qgalleryabstractresponse.h>
 
+#include "qgallerydbusinterface_p.h"
+
 QTM_BEGIN_NAMESPACE
 
 class QGalleryTrackerSchema;
@@ -73,11 +75,11 @@ public:
 
     ~QGalleryTrackerItemList();
 
-    UpdateState updateState() const;
-
     QStringList propertyNames() const;
     int propertyKey(const QString &property) const;
     QGalleryProperty::Attributes propertyAttributes(int key) const;
+
+    void setCursorPosition(int position);
 
     int count() const;
 
@@ -90,24 +92,25 @@ public:
     QVariant metaData(int index, int key) const;
     void setMetaData(int index, int key, const QVariant &value);
 
+    void cancel();
+
+    bool waitForFinished(int msecs);
+
     bool event(QEvent *event);
 
 protected:
     QGalleryTrackerItemList(
             QGalleryTrackerItemListPrivate &dd,
             const QGalleryTrackerSchema &schema,
+            const QGalleryDBusInterfacePointer &queryInterface,
+            const QString &query,
             int cursorPosition,
             int minimumPagedItems,
             QObject *parent);
 
-    void updateResultSet(const QVector<QStringList> &resultSet, int index = 0);
-
-    virtual void updateStateChanged(UpdateState state) = 0;
-
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemList)
-    Q_PRIVATE_SLOT(d_func(), void _q_parseFinished())
-    Q_PRIVATE_SLOT(d_func(), void _q_synchronizeFinished())
+    Q_PRIVATE_SLOT(d_func(), void _q_queryFinished())
 };
 
 

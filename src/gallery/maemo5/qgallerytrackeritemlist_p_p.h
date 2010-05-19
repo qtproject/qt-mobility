@@ -180,7 +180,12 @@ public:
     int imageOffset;
     int columnCount;
     int rowCount;
-    QGalleryTrackerItemList::UpdateState updateState;
+    int lowerCursorThreshold;
+    int upperCursorThreshold;
+    int queryLimit;
+    QGalleryDBusInterfacePointer queryInterface;
+    QString queryMethod;
+    QVariantList queryArguments;
     QStringList propertyNames;
     QVector<QGalleryProperty::Attributes> propertyAttributes;
     QVector<QGalleryTrackerValueColumn *> valueColumns;
@@ -191,10 +196,9 @@ public:
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 
-    QFutureWatcher<void> parseWatcher;
-    QFutureWatcher<void> synchronizeWatcher;
+    QFutureWatcher<int> queryWatcher;
 
-    void parseResultSet(const QVector<QStringList> &resultSet);
+    int queryRows(int offset);
     void correctRows(
             row_iterator begin,
             row_iterator end,
@@ -209,8 +213,7 @@ public:
             const row_iterator &aEnd,
             const row_iterator &rEnd);
 
-    void _q_parseFinished();
-    void _q_synchronizeFinished();
+    void _q_queryFinished();
 };
 
 QTM_END_NAMESPACE

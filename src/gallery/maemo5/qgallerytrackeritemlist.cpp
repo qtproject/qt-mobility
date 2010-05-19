@@ -43,36 +43,55 @@
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qtconcurrentrun.h>
+#include <QtDBus/qdbusreply.h>
+
+Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
 
-void QGalleryTrackerItemListPrivate::parseResultSet(
-        const QVector<QStringList> &resultSet)
+int QGalleryTrackerItemListPrivate::queryRows(int offset)
 {
-    typedef QVector<QStringList>::const_iterator iterator;
+    QDBusReply<QVector<QStringList> > reply = queryInterface->callWithArgumentList(
+            QDBus::Block, queryMethod, QVariantList(queryArguments) << offset << queryLimit);
 
-    QVector<QVariant> &values = rCache.values;
-    values.clear();
-    values.reserve(resultSet.count() * tableWidth);
+    if (reply.isValid()) {
+        typedef QVector<QStringList>::const_iterator iterator;
 
-    for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
-        for (int i = 0, count = qMin(valueOffset, it->count()); i < count; ++i)
-            values.append(it->at(i));
+        const QVector<QStringList> resultSet = reply.value();
 
-        for (int i = valueOffset, count = qMin(tableWidth, it->count()); i < count; ++i)
-            values.append(valueColumns.at(i - valueOffset)->toVariant(it->at(i)));
+        rCache.count = resultSet.count();
 
-        // The rows should all have a count equal to tableWidth, but check just in case.
-        for (int i = qMin(tableWidth, it->count()); i < tableWidth; ++i)
-            values.append(QVariant());
-    }
+        QVector<QVariant> &values = rCache.values;
+        values.clear();
+        values.reserve(rCache.count * tableWidth);
 
-    if (!values.isEmpty()) {
-        correctRows(
-                row_iterator(values.begin(), tableWidth),
-                row_iterator(values.end(), tableWidth),
-                sortCriteria.constBegin(),
-                sortCriteria.constEnd());
+        for (iterator it = resultSet.begin(), end = resultSet.end(); it != end; ++it) {
+            for (int i = 0, count = qMin(valueOffset, it->count()); i < count; ++i)
+                values.append(it->at(i));
+
+            for (int i = valueOffset, count = qMin(tableWidth, it->count()); i < count; ++i)
+                values.append(valueColumns.at(i - valueOffset)->toVariant(it->at(i)));
+
+            // The rows should all have a count equal to tableWidth, but check just in case.
+            for (int i = qMin(tableWidth, it->count()); i < tableWidth; ++i)
+                values.append(QVariant());
+        }
+
+        if (!values.isEmpty()) {
+            correctRows(
+                    row_iterator(values.begin(), tableWidth),
+                    row_iterator(values.end(), tableWidth),
+                    sortCriteria.constBegin(),
+                    sortCriteria.constEnd());
+
+            synchronize();
+        }
+
+        return QGalleryAbstractRequest::Succeeded;
+    } else {
+        qWarning("DBUS error %s", qPrintable(reply.error().message()));
+
+        return QGalleryAbstractRequest::ConnectionError;
     }
 }
 
@@ -312,26 +331,7 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
     }
 }
 
-void QGalleryTrackerItemListPrivate::_q_parseFinished()
-{
-    rCache.count = rCache.values.count() / tableWidth;
-
-    if (aCache.count == 0) {
-        rCache.cutoff = rCache.count;
-
-        if (rCache.count > 0) {
-            rowCount = rCache.index + rCache.count;
-
-            emit q_func()->inserted(0, rowCount);
-        }
-        q_func()->updateStateChanged(updateState = QGalleryTrackerItemList::UpToDate);
-    } else {
-        synchronizeWatcher.setFuture(
-                QtConcurrent::run(this, &QGalleryTrackerItemListPrivate::synchronize));
-    }
-}
-
-void QGalleryTrackerItemListPrivate::_q_synchronizeFinished()
+void QGalleryTrackerItemListPrivate::_q_queryFinished()
 {
     aCache.values.clear();
     aCache.count = 0;
@@ -359,12 +359,32 @@ void QGalleryTrackerItemListPrivate::_q_synchronizeFinished()
             emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
     }
 
-    q_func()->updateStateChanged(updateState = QGalleryTrackerItemList::UpToDate);
+    const int index = (cursorPosition + 63) & ~63;
+
+    if (index >= 0 && (index < lowerCursorThreshold || index >= upperCursorThreshold)) {
+        lowerCursorThreshold = qMax(0, index - 32);
+        upperCursorThreshold = lowerCursorThreshold + 96;
+
+        aCache.index = rCache.index;
+        aCache.count = rCache.count;
+        aCache.offset = rCache.index;
+
+        rCache.index = index;
+        rCache.count = 0;
+        rCache.cutoff = 0;
+
+        qSwap(aCache.values, rCache.values);
+
+        queryWatcher.setFuture(QtConcurrent::run(
+                this, &QGalleryTrackerItemListPrivate::queryRows, index));
+    }
 }
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
         QGalleryTrackerItemListPrivate &dd,
         const QGalleryTrackerSchema &schema,
+        const QGalleryDBusInterfacePointer &queryInterface,
+        const QString &query,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
@@ -376,6 +396,9 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
     d->minimumPagedItems = minimumPagedItems;
     d->identityWidth = schema.identityWidth();
     d->valueOffset = schema.valueOffset();
+    d->queryInterface = queryInterface;
+    d->queryMethod = schema.queryMethod();
+    d->queryArguments = schema.queryArguments(query);
     d->idColumn = schema.createIdColumn();
     d->urlColumn = schema.createUrlColumn();
     d->typeColumn = schema.createTypeColumn();
@@ -393,19 +416,24 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
     d->columnCount = d->imageOffset + d->imageColumns.count();
 
     d->rowCount = 0;
-    d->updateState = UpToDate;
+    d->queryLimit = qMax(256, 128 + ((minimumPagedItems + 63) & ~63));
 
-    connect(&d->parseWatcher, SIGNAL(finished()), this, SLOT(_q_parseFinished()));
-    connect(&d->synchronizeWatcher, SIGNAL(finished()), this, SLOT(_q_synchronizeFinished()));
+    connect(&d->queryWatcher, SIGNAL(finished()), this, SLOT(_q_queryFinished()));
+
+    const int index = (cursorPosition + 63) & ~63;
+
+    d->lowerCursorThreshold = qMax(0, index - 32);
+    d->upperCursorThreshold = d->lowerCursorThreshold + 96;
+
+    d->queryWatcher.setFuture(QtConcurrent::run(
+            d, &QGalleryTrackerItemListPrivate::queryRows, index));
 }
 
 QGalleryTrackerItemList::~QGalleryTrackerItemList()
 {
-}
+    Q_D(QGalleryTrackerItemList);
 
-QGalleryTrackerItemList::UpdateState QGalleryTrackerItemList::updateState() const
-{
-    return d_func()->updateState;
+    d->queryWatcher.waitForFinished();
 }
 
 QStringList QGalleryTrackerItemList::propertyNames() const
@@ -432,6 +460,35 @@ QGalleryProperty::Attributes QGalleryTrackerItemList::propertyAttributes(int key
 int QGalleryTrackerItemList::count() const
 {
     return d_func()->rowCount;
+}
+
+void QGalleryTrackerItemList::setCursorPosition(int position)
+{
+    Q_D(QGalleryTrackerItemList);
+
+    d->cursorPosition = position;
+
+    const int index = (position + 63) & ~63;
+
+    if (d->queryWatcher.isFinished() && index >= 0 && index
+            && (index < d->lowerCursorThreshold || index >= d->upperCursorThreshold)) {
+
+        d->lowerCursorThreshold = qMax(0, index - 32);
+        d->upperCursorThreshold = d->lowerCursorThreshold + 96;
+
+        d->aCache.index = d->rCache.index;
+        d->aCache.count = d->rCache.count;
+        d->aCache.offset = d->rCache.index;
+
+        d->rCache.index = index;
+        d->rCache.count = 0;
+        d->rCache.cutoff = 0;
+
+        qSwap(d->aCache.values, d->rCache.values);
+
+        d->queryWatcher.setFuture(QtConcurrent::run(
+                d, &QGalleryTrackerItemListPrivate::queryRows, index));
+    }
 }
 
 QVariant QGalleryTrackerItemList::id(int index) const
@@ -569,6 +626,17 @@ void QGalleryTrackerItemList::setMetaData(int, int, const QVariant &)
 
 }
 
+void QGalleryTrackerItemList::cancel()
+{
+
+}
+
+bool QGalleryTrackerItemList::waitForFinished(int msecs)
+{
+
+    return false;
+}
+
 bool QGalleryTrackerItemList::event(QEvent *event)
 {
     switch (event->type()) {
@@ -616,25 +684,6 @@ bool QGalleryTrackerItemList::event(QEvent *event)
     default:
         return QGalleryAbstractResponse::event(event);
     }
-}
-
-void QGalleryTrackerItemList::updateResultSet(const QVector<QStringList> &resultSet, int index)
-{
-    Q_D(QGalleryTrackerItemList);
-
-    Q_ASSERT(d->updateState == UpToDate);
-
-    updateStateChanged(d->updateState = Updating);
-
-    d->rCache.cutoff = 0;
-
-    d->aCache = d->rCache;
-
-    d->rCache.index = index;
-    d->rCache.count = 0;
-
-    d->parseWatcher.setFuture(
-            QtConcurrent::run(d, &QGalleryTrackerItemListPrivate::parseResultSet, resultSet));
 }
 
 #include "moc_qgallerytrackeritemlist_p.cpp"
