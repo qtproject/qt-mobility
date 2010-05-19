@@ -58,6 +58,9 @@
 #include <qlandmarkintersectionfilter.h>
 #include <qlandmarkidfilter.h>
 #include <qlandmarknamefilter.h>
+#include <qlandmarknearestfilter.h>
+#include <qlandmarkproximityfilter.h>
+#include <qlandmarkunionfilter.h>
 
 QTM_USE_NAMESPACE
 
@@ -376,6 +379,75 @@ private slots:
         nameFilter.setName("Madara");
         nameFilter.setCaseSensitivity(Qt::CaseSensitive);
         QVERIFY(MockEngine::testFilter(nameFilter,lm));
+    }
+
+    void testNearestFilter()
+    {
+        QLandmarkNearestFilter nearestFilter;
+        nearestFilter.setCoordinate(QGeoCoordinate(30,30));
+        QLandmark lm;
+        lm.setCoordinate(QGeoCoordinate(40,30));
+        QVERIFY(MockEngine::testFilter(nearestFilter,lm));
+    }
+
+    void testProximityFilter()
+    {
+        QLandmarkProximityFilter proximityFilter;
+        proximityFilter.setCoordinate(QGeoCoordinate(30,30));
+        proximityFilter.setRadius( QGeoCoordinate(30,30).distanceTo(QGeoCoordinate(30,32)) );
+
+        //test landmark in the centre
+        QLandmark lm;
+        lm.setCoordinate(QGeoCoordinate(30,30));
+        QVERIFY(MockEngine::testFilter(proximityFilter, lm));
+
+        //test landmark just within the radius
+        lm.setCoordinate(QGeoCoordinate(30,28.1));
+        QVERIFY(MockEngine::testFilter(proximityFilter, lm));
+
+        //test landmark on the edge the radius
+        lm.setCoordinate(QGeoCoordinate(30,28.0));
+        QVERIFY(MockEngine::testFilter(proximityFilter, lm));
+
+        //test landmark just outside radius
+        lm.setCoordinate(QGeoCoordinate(30,27.9));
+        QVERIFY(!MockEngine::testFilter(proximityFilter, lm));
+
+        //test landmark outside radius
+        lm.setCoordinate(QGeoCoordinate(30,26));
+        QVERIFY(!MockEngine::testFilter(proximityFilter, lm));
+    }
+
+    void testUnionFilter()
+    {
+        QLandmarkCategoryId catId;
+        catId.setLocalId("1");
+        catId.setManagerUri("qtlandmarks:mock:");
+
+        QLandmarkCategoryId catId2;
+        catId2.setLocalId("2");
+        catId2.setManagerUri("qtlandmarks:mock:");
+
+        //test a match with the union filter
+        QLandmarkUnionFilter unionFilter;
+        QLandmarkNameFilter nameFilter("beach");
+        QLandmarkProximityFilter proximityFilter(QGeoCoordinate(30,30));
+        proximityFilter.setRadius(QGeoCoordinate(30,30).distanceTo(QGeoCoordinate(30,32)));
+        QLandmarkCategoryFilter categoryFilter;
+        categoryFilter.setCategoryId(catId);
+
+        QLandmark lm;
+        lm.setName("statue");
+        lm.setCoordinate(QGeoCoordinate(-30,-29));
+        lm.addCategoryId(catId);
+
+        unionFilter << nameFilter << categoryFilter << proximityFilter;
+        QVERIFY(MockEngine::testFilter(unionFilter,lm));
+
+        //test no match with union filter
+        lm.removeCategoryId(catId);
+        lm.addCategoryId(catId2);
+        QVERIFY(!MockEngine::testFilter(unionFilter,lm));
     }
 };
 
