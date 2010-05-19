@@ -1568,10 +1568,41 @@ QContact QContactManagerEngine::compatibleContact(const QContact& original, QCon
     return conforming;
 }
 
+
+/* This implements the string comparison behaviour required for compareVariant, amongst others */
+static inline int compareStrings(const QString& left, const QString& right, Qt::CaseSensitivity sensitivity)
+{
+    if (sensitivity == Qt::CaseSensitive) {
+        return left.localeAwareCompare(right);
+    } else {
+        return left.toCaseFolded().localeAwareCompare(right.toCaseFolded());
+    }
+}
+
 /*!
   Compares \a first against \a second.  If the types are
   strings (QVariant::String), the \a sensitivity argument controls
-  case sensitivity when comparing.
+  case sensitivity when comparing.  Also, when comparing strings,
+  a locale aware comparison is used, and if the sensitivity is
+  CaseSensitive, strings that are identical under a case insensitive
+  sort are then sorted case sensitively within that context.
+
+
+  For example:
+
+  aaron
+  Bob
+  Aaron
+  aAron
+  Carol
+
+  would sort as:
+
+  aaron
+  aAron
+  Aaron
+  Bob
+  Carol
 
   Returns:
   <0 if \a first is less than \a second
@@ -1599,7 +1630,7 @@ int QContactManagerEngine::compareVariant(const QVariant& first, const QVariant&
             return first.toULongLong() - second.toULongLong();
 
        case QVariant::String:
-            return first.toString().compare(second.toString(), sensitivity);
+            return compareStrings(first.toString(), second.toString(), sensitivity);
 
         case QVariant::Double:
             {
@@ -1792,7 +1823,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                             return true;
                         if (matchContains && var.contains(needle, cs))
                             return true;
-                        if (QString::compare(var, needle, cs) == 0)
+                        if (compareStrings(var, needle, cs) == 0)
                             return true;
                     }
                     return false;
@@ -1811,6 +1842,8 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 
         case QContactFilter::ContactDetailRangeFilter:
             {
+                /* The only supported flags are: MatchExactly, MatchFixedString, MatchCaseSensitive */
+
                 const QContactDetailRangeFilter cdf(filter);
                 if (cdf.detailDefinitionName().isEmpty())
                     return false; /* we do not know which field to check */
@@ -1839,55 +1872,44 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 const int minComp = cdf.rangeFlags() & QContactDetailRangeFilter::ExcludeLower ? 1 : 0;
                 const int maxComp = cdf.rangeFlags() & QContactDetailRangeFilter::IncludeUpper ? 1 : 0;
 
-                const bool testMin = cdf.minValue().isValid();
-                const bool testMax = cdf.maxValue().isValid();
-
-                /* At this point we know that at least of testMin & testMax is true */
-
                 /* Case sensitivity, for those parts that use it */
                 Qt::CaseSensitivity cs = (cdf.matchFlags() & QContactFilter::MatchCaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
 
                 /* See what flags are requested, since we're looking at a value */
-                if (cdf.matchFlags() & (QContactFilter::MatchEndsWith | QContactFilter::MatchStartsWith | QContactFilter::MatchContains | QContactFilter::MatchFixedString)) {
+                if (cdf.matchFlags() & QContactFilter::MatchFixedString) {
                     /* We're strictly doing string comparisons here */
-                    //bool matchStarts = (cdf.matchFlags() & 7) == QContactFilter::MatchStartsWith;
-                    bool matchEnds = (cdf.matchFlags() & 7) == QContactFilter::MatchEndsWith;
-                    bool matchContains = (cdf.matchFlags() & 7) == QContactFilter::MatchContains;
-
-                    /* Min/Max and contains do not make sense */
-                    if (matchContains)
-                        return false;
-
                     QString minVal = cdf.minValue().toString();
                     QString maxVal = cdf.maxValue().toString();
 
-                    /* Starts with is the normal compare case, endsWith is a bit trickier */
+                    const bool testMin = !minVal.isEmpty();
+                    const bool testMax = !maxVal.isEmpty();
+
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
+
+                        // The detail has to have a field of this type in order to be compared.
+                        if (!detail.variantValue(cdf.detailFieldName()).isValid())
+                            continue;
                         const QString& var = detail.value(cdf.detailFieldName());
-                        if (!matchEnds) {
-                            // MatchStarts or MatchFixedString
-                            if (testMin && QString::compare(var, minVal, cs) < minComp)
-                                continue;
-                            if (testMax && QString::compare(var, maxVal, cs) >= maxComp)
-                                continue;
-                            return true;
-                        } else {
-                            /* Have to test the length of min & max */
-                            // using refs means the parameter order is backwards, so negate the result of compare
-                            if (testMin && -QString::compare(minVal, var.rightRef(minVal.length()), cs) < minComp)
-                                continue;
-                            if (testMax && -QString::compare(maxVal, var.rightRef(maxVal.length()), cs) >= maxComp)
-                                continue;
-                            return true;
-                        }
+                        if (testMin && compareStrings(var, minVal, cs) < minComp)
+                            continue;
+                        if (testMax && compareStrings(var, maxVal, cs) >= maxComp)
+                            continue;
+                        return true;
                     }
                     // Fall through to end
                 } else {
+                    const bool testMin = cdf.minValue().isValid();
+                    const bool testMax = cdf.maxValue().isValid();
+
                     /* Nope, testing the values as a variant */
                     for(int j=0; j < details.count(); j++) {
                         const QContactDetail& detail = details.at(j);
                         const QVariant& var = detail.variantValue(cdf.detailFieldName());
+
+                        // The detail has to have a field of this type in order to be compared.
+                        if (!var.isValid())
+                            continue;
 
                         if (testMin && compareVariant(var, cdf.minValue(), cs) < minComp)
                             continue;
