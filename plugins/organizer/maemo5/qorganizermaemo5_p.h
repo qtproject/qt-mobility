@@ -117,6 +117,10 @@ public:
     // value = QOrganizerItemLocalId(qHash(key));
     QMap<QString, QOrganizerItemLocalId> m_cIdToQId;
 
+    // the cId consists of a calendar name and an item id
+    // we need to be able to separate both of these parts.
+    QMap<QString, QString> m_cIdToCName;
+
     // the multicalendar instance
     CMulticalendar *m_mcInstance;
 };
