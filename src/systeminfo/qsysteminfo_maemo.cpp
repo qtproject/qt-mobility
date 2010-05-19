@@ -817,20 +817,21 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
- #if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.phone.SIM",
+#if !defined(QT_NO_DBUS)
+    #if defined(Q_WS_MAEMO_6)
+        QString dBusService = "com.nokia.csd.Info";
+    #else
+        /* Maemo 5 */
+        QString dBusService = "com.nokia.phone.SIM";
+    #endif
+    QDBusInterface connectionInterface(dBusService,
                                        "/com/nokia/csd/info",
                                        "com.nokia.csd.Info",
                                         QDBusConnection::systemBus());
-    if(!connectionInterface.isValid()) {
-        qWarning() << "interfacenot valid";
-    }
-
     QDBusReply< QString > reply = connectionInterface.call("GetIMEINumber");
     return reply.value();
-
 #endif
-        return "Not Available";
+    return "";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
