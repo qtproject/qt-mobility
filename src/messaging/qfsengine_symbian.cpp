@@ -662,20 +662,33 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
 {
     Q_UNUSED(option);
     bool retVal = false;
-    MEmailMessage* message = NULL;
-    TRAPD(err, message = fsMessageL(id));
-    if (err == KErrNone) {
-        TFolderId folderId(message->ParentFolderId());
-        TMailboxId mailboxId(folderId.iMailboxId);
-        TRAPD(err2,
-            MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-            MEmailFolder* folder = mailbox->FolderL(folderId);
-            REmailMessageIdArray messageIds;
-            messageIds.Append(message->MessageId());
-            folder->DeleteMessagesL(messageIds);
-            );
-        if (err2 == KErrNone)
-            retVal = true;
+    foreach (QMessageAccount account, m_accounts) {
+        MEmailMessage* message = NULL;
+        TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
+        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+        
+        TMessageId messageId(
+            stripIdPrefix(id.toString()).toInt(),
+            0, 
+            mailboxId);
+        
+        TRAPD(err, message = mailbox->MessageL(messageId));
+
+        if (err == KErrNone) {
+            TFolderId folderId(message->ParentFolderId());
+            TRAPD(err2,
+                MEmailFolder* folder = mailbox->FolderL(folderId);
+                REmailMessageIdArray messageIds;
+                messageIds.Append(message->MessageId());
+                folder->DeleteMessagesL(messageIds);
+                folder->Release();
+                );
+            if (err2 == KErrNone)
+                retVal = true;
+            mailbox->Release();
+            break; // no need to continue
+        }
+        mailbox->Release();
     }
     return retVal;
 }
@@ -684,11 +697,27 @@ bool CFSEngine::showMessage(const QMessageId &id)
 {
     MEmailMessage* message = NULL;
     bool retVal = false;
-    TRAPD(err, message = fsMessageL(id));
-    if (err == KErrNone) {
-        TRAPD(err2, message->ShowMessageViewerL());
-        if (err2 == KErrNone)
-            retVal = true;
+    foreach (QMessageAccount account, m_accounts) {
+        MEmailMessage* message = NULL;
+        TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
+        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+        
+        TMessageId messageId(
+            stripIdPrefix(id.toString()).toInt(),
+            0, 
+            mailboxId);
+        
+        TRAPD(err, message = mailbox->MessageL(messageId));
+
+        if (err == KErrNone) {
+            TRAPD(err2, message->ShowMessageViewerL());
+            if (err2 == KErrNone)
+                retVal = true;
+            message->Release();
+            mailbox->Release();
+            break; // no need to continue
+        }
+        mailbox->Release();
     } 
     return retVal;
 }
@@ -703,6 +732,7 @@ bool CFSEngine::composeMessage(const QMessage &message)
         TRAPD(err2, mailbox->EditNewMessageL());
         if (err2 == KErrNone)
             retVal = true;
+        mailbox->Release();
     }
     return retVal;
 }
@@ -744,6 +774,7 @@ void CFSEngine::exportUpdatesL(const QMessageAccountId &id)
     TMailboxId mailboxId(stripIdPrefix(id.toString()).toInt());
     MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
     mailbox->SynchroniseL(*this);
+    mailbox->Release();
 }
 
 void CFSEngine::MailboxSynchronisedL(TInt aResult)
@@ -1356,17 +1387,17 @@ QMessageFolder CFSEngine::folderL(const QMessageFolderId &id) const
         if (ids.contains(id)) {
             TMailboxId mailboxId(stripIdPrefix(accountId.toString()).toInt());
             mailbox = m_clientApi->MailboxL(mailboxId);
+            CleanupReleasePushL(*mailbox);
+            TFolderId folderId(stripIdPrefix(id.toString()).toInt(), mailbox->MailboxId());
+            MEmailFolder* emailFolder = mailbox->FolderL(folderId);
+            CleanupReleasePushL(*emailFolder);
+            QString name = QString::fromUtf16(emailFolder->Name().Ptr(), emailFolder->Name().Length());
+            folder = QMessageFolderPrivate::from(id, accountId, parentId, name, name);
+            CleanupStack::PopAndDestroy(emailFolder);
+            CleanupStack::PopAndDestroy(mailbox);
             break;
         }
     }
-
-    TFolderId folderId(stripIdPrefix(id.toString()).toInt(), mailbox->MailboxId());
-    MEmailFolder* emailFolder = mailbox->FolderL(folderId);
-    CleanupReleasePushL(*emailFolder);
-    QString name = QString::fromUtf16(emailFolder->Name().Ptr(), emailFolder->Name().Length());
-    folder = QMessageFolderPrivate::from(id, accountId, parentId, name, name);
-    CleanupStack::PopAndDestroy();
-    
     return folder;
 }
 
@@ -1402,9 +1433,13 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (pf->_value.toString().length() > QString(SymbianHelpers::mtmPrefix).length()) {
                     bool folderOk = false;
-                    if (fsFolderLC(QMessageFolderId(pf->_value.toString()))) {
+                    MEmailMailbox* mailbox = NULL;
+                    MEmailFolder* folder = NULL;;
+                    if (fsFolderL(QMessageFolderId(pf->_value.toString()), mailbox, folder)) {
                         folderOk = true;
-                        CleanupStack::PopAndDestroy();
+                        // cleanup
+                        folder->Release();
+                        mailbox->Release();
                     }
                     if (cmp == QMessageDataComparator::Equal) {
                         if (folderOk) {
@@ -1427,9 +1462,13 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
                 if (pf->_ids.count() > 0) { // QMessageIdList
                     QMessageFolderIdList ids2;
                     for (int i=0; i < pf->_ids.count(); i++) {
-                        if (fsFolderLC(QMessageFolderId(pf->_ids[i]))) {
+                        MEmailMailbox* mailbox = NULL;
+                        MEmailFolder* folder = NULL;
+                        if (fsFolderL(QMessageFolderId(pf->_ids[i]), mailbox, folder)) {
                             ids2.append(pf->_ids[i]);
-                            CleanupStack::PopAndDestroy();
+                            // cleanup
+                            folder->Release();
+                            mailbox->Release();
                         }
                     }
                     if (cmp == QMessageDataComparator::Includes) {
@@ -1533,12 +1572,11 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
             if (pf->_comparatorType == QMessageFolderFilterPrivate::Equality) {
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
                 if (cmp == QMessageDataComparator::Equal) {
-                    MEmailFolder* parentFolder = fsFolderLC(QMessageFolderId(pf->_value.toString()));
-                    if (parentFolder) {
-                        TMailboxId mailboxId = parentFolder->FolderId().iMailboxId;
-                        MEmailMailbox* mailbox = NULL;
-                        mailbox = m_clientApi->MailboxL(mailboxId);
+                    MEmailMailbox* mailbox = NULL;
+                    MEmailFolder* parentFolder = NULL;
+                    if (fsFolderL(QMessageFolderId(pf->_value.toString()), mailbox, parentFolder)) {
                         CleanupReleasePushL(*mailbox);
+                        CleanupReleasePushL(*parentFolder);
 
                         RFolderArray subfolders;
                         
@@ -1551,13 +1589,14 @@ QMessageFolderIdList CFSEngine::filterMessageFoldersL(const QMessageFolderFilter
                             ids.append(QMessageFolderId(addIdPrefix(
                                 QString::number(subFolder->FolderId().iId), 
                                 SymbianHelpers::EngineTypeFreestyle)));
-
+                            
+                            subFolder->Release();
                         }
                         
                         CleanupStack::PopAndDestroy(&subfolders);
+                        CleanupStack::PopAndDestroy(parentFolder);
                         CleanupStack::PopAndDestroy(mailbox);
                     }
-                    CleanupStack::PopAndDestroy(); // parentFolder
                 } else { // NotEqual
                     // TODO:
                 }
@@ -1655,6 +1694,7 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
         folderIds.append(QMessageFolderId(fsIdAsString));
 
         //TODO: Support for subfolders?
+        mailFolder->Release();
     }
     
     CleanupStack::PopAndDestroy(&folders);
@@ -1663,28 +1703,27 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
     return folderIds;
 }
 
-MEmailFolder* CFSEngine::fsFolderLC(const QMessageFolderId& id) const
+bool CFSEngine::fsFolderL(const QMessageFolderId& id, MEmailMailbox* mailbox, MEmailFolder* folder) const
 {
     MEmailFolder* fsFolder = NULL;
     foreach (QMessageAccount account, m_accounts) {
         TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
-        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+        mailbox = m_clientApi->MailboxL(mailboxId);
         
         TFolderId folderId(
             stripIdPrefix(id.toString()).toInt(),
             mailboxId);
             
-        MEmailFolder* fsFolder = NULL;
-        
-        TRAPD(err, fsFolder = mailbox->FolderL(folderId));
+        TRAPD(err, folder = mailbox->FolderL(folderId));
         if (err == KErrNone) {               
             CleanupReleasePushL(*fsFolder);
-            mailbox->Release();
-            return fsFolder;
+            return true;
         }
         mailbox->Release();
     }
-    return fsFolder;
+    mailbox = NULL;
+    folder = NULL;
+    return false;
 }
 
 
@@ -1702,6 +1741,7 @@ QMessage CFSEngine::messageL(const QMessageId& id) const
     foreach (QMessageAccount account, m_accounts) {
         TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
         MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+        CleanupReleasePushL(*mailbox);
         
         TMessageId messageId(
             stripIdPrefix(id.toString()).toInt(),
@@ -1712,42 +1752,20 @@ QMessage CFSEngine::messageL(const QMessageId& id) const
         
         TRAPD(err, fsMessage = mailbox->MessageL(messageId));
         if (err == KErrNone) {
+            CleanupReleasePushL(*fsMessage);
             message = CreateQMessageL(fsMessage);
             
             QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
             privateMessage->_id = id; 
             privateMessage->_modified = false;
                 
-            fsMessage->Release();
-            mailbox->Release();
-
+            CleanupStack::PopAndDestroy(fsMessage);
+            CleanupStack::PopAndDestroy(mailbox);
             return message;
         }
-        mailbox->Release();
+        CleanupStack::PopAndDestroy(mailbox);
     }
     return message;
-}
-
-MEmailMessage* CFSEngine::fsMessageL(const QMessageId& id) const
-{
-    MEmailMessage* fsMessage = NULL;
-    foreach (QMessageAccount account, m_accounts) {
-        TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
-        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-        
-        TMessageId messageId(
-            stripIdPrefix(id.toString()).toInt(),
-            0, //stripIdPrefix(folderId.toString()).toInt(), 
-            mailboxId);
-        
-        TRAPD(err, fsMessage = mailbox->MessageL(messageId));
-        if (err == KErrNone) {               
-            mailbox->Release();
-            return fsMessage;
-        }
-        mailbox->Release();
-    }
-    return fsMessage;
 }
 
 bool CFSEngine::sendEmail(QMessage &message)
@@ -1898,9 +1916,13 @@ void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aM
 {
     MEmailMultipart* mPart = aContent->AsMultipartOrNull();
     if (mPart) {
-        TInt partCount = mPart->PartCountL();
-        for (TInt i = 0; i < partCount; i++) {
-            AddContentToMessage(mPart->PartByIndexL(i), aMessage);                            
+        TInt partCount = 0;
+        TRAPD(err, partCount = mPart->PartCountL());
+        if (err == KErrNone) {
+            for (TInt i = 0; i < partCount; i++) {
+                TRAPD(err2, AddContentToMessage(mPart->PartByIndexL(i), aMessage));
+                Q_UNUSED(err2);
+            }
         }
         mPart->Release();
         return;
@@ -1918,9 +1940,12 @@ void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aM
         CleanupStack::PopAndDestroy(op);
         availableSize = textContent->AvailableSize();            
         TInt totalSize = textContent->TotalSize();
-        TPtrC body = textContent->ContentL();
-        QString text = QString::fromUtf16(body.Ptr(), body.Length());
-        aMessage->setBody(text, mimeType);
+        TRAPD(err, 
+            TPtrC body = textContent->ContentL();
+            QString text = QString::fromUtf16(body.Ptr(), body.Length());
+            aMessage->setBody(text, mimeType);
+            );
+        Q_UNUSED(err);
         textContent->Release();
         return;
     }
