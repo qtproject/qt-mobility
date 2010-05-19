@@ -229,7 +229,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     QString entireItemId = d->m_cIdToQId.key(itemId);
     QString calendarName = d->m_cIdToCName.value(entireItemId);
     QString calItemId = entireItemId.mid(calendarName.size(), -1); // entireItemId = calendarName:cId
-    CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString());
+    CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString(), calError);
 
     // now attempt to get the item.
     CEvent* event = calendar->getEvent(calItemId.toStdString(), calError);
