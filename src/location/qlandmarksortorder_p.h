@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
     Class::Class(const QLandmarkSortOrder& other) : QLandmarkSortOrder() { Class##Private::copyIfPossible(d_ptr, other); }
 
 #define Q_IMPLEMENT_LANDMARKSORTORDER_VIRTUALCTORS(Class, Type) \
-    QLandmarkSortOrderPrivate* clone() const { return new Class##Private(*this); } \
+    virtual QLandmarkSortOrderPrivate* clone() const { return new Class##Private(*this); } \
     static void copyIfPossible(QSharedDataPointer<QLandmarkSortOrderPrivate>& d_ptr, const QLandmarkSortOrder& other) \
     { \
         if (other.type() == Type) \
