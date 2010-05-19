@@ -174,6 +174,8 @@ private:
     QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal, const QString& calendarName) const;
 
     CEvent* convertQEventToCEvent(const QOrganizerEvent& event) const;
+    CTodo* convertQTodoToCTodo(const QOrganizerTodo& todo) const;
+    CJournal* convertQJournalToCJournal(const QOrganizerJournal& journal) const;
 
 private:
     QOrganizerItemMaemo5EngineData* d;
