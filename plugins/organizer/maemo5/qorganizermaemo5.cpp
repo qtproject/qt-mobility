@@ -263,13 +263,6 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
     *error = QOrganizerItemManager::NoError;
     QOrganizerItemChangeSet cs;
 
-    // still need a cache of id to string
-    // because on save (if update) need that string
-    // so that you can extract the calendar name
-    // and then check that the item still exists in that calendar
-    // if not, re-add, after setting id to zero and removing entry from map.
-    // if so, modify.
-
     int calError = 0;
     for (int i = 0; i < items->size(); i++) {
         QOrganizerItem curr = items->at(i);
@@ -405,7 +398,8 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
         }
     }
 
-    // XXX TODO: emit signals...
+    // emit signals...
+    cs.emitSignals(this);
     
     return (*error == QOrganizerItemManager::NoError);
 }
@@ -416,6 +410,7 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
     // supports removal by component id.
     *error = QOrganizerItemManager::NoError;
     int calError = 0;
+    QOrganizerItemChangeSet cs;
     
     for (int i = 0; i < itemIds.size(); ++i) {
         QOrganizerItemLocalId currId = itemIds.at(i);
@@ -430,6 +425,8 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
                 if (errorMap) {
                     errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
                 }
+            } else {
+                cs.insertRemovedItem(currId);
             }
         } else {
             // XXX TODO: make a "InvalidCalendar" error
@@ -440,6 +437,9 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
         }
 	delete calendar;
     }
+
+    // emit signals
+    cs.emitSignals(this);
 
     return (*error == QOrganizerItemManager::NoError);
 }
@@ -686,8 +686,12 @@ CEvent* QOrganizerItemMaemo5Engine::convertQEventToCEvent(const QOrganizerEvent&
     // if not, set the id to empty string.
     // we'd use CCalendar::checkEntryExist() but no idea what the tableName should be...
     CEvent *ret = destinationCal->getEvent(eventStrId.toStdString(), calError);
-    if (!ret) // if doesn exist, clear the id.
+    if (!ret) {
+        // if doesn't exist, clear the id, and remove the entries from the map (cache).
         eventStrId.clear();
+        d->m_cIdToQId.remove(entireId);
+        d->m_cIdToCName.remove(entireId);
+    }
     ret->setId(eventStrId.toStdString());
     ret->setCalendarId(calId);
     
@@ -730,8 +734,12 @@ CTodo* QOrganizerItemMaemo5Engine::convertQTodoToCTodo(const QOrganizerTodo& tod
     // if not, set the id to empty string.
     // we'd use CCalendar::checkEntryExist() but no idea what the tableName should be...
     CTodo* ret = destinationCal->getTodo(todoStrId.toStdString(), calError);
-    if (!ret) // if doesn exist, clear the id.
+    if (!ret) {
+        // if doesn't exist, clear the id, and remove the entries from the map (cache).
         todoStrId.clear();
+        d->m_cIdToQId.remove(entireId);
+        d->m_cIdToCName.remove(entireId);
+    }
     ret->setId(todoStrId.toStdString());
     ret->setCalendarId(calId);
     
@@ -770,8 +778,12 @@ CJournal* QOrganizerItemMaemo5Engine::convertQJournalToCJournal(const QOrganizer
     // if not, set the id to empty string.
     // we'd use CCalendar::checkEntryExist() but no idea what the tableName should be...
     CJournal *ret = destinationCal->getJournal(journalStrId.toStdString(), calError);
-    if (!ret) // if doesn exist, clear the id.
+    if (!ret) {
+        // if doesn't exist, clear the id, and remove the entries from the map (cache).
         journalStrId.clear();
+        d->m_cIdToQId.remove(entireId);
+        d->m_cIdToCName.remove(entireId);
+    }
     ret->setId(journalStrId.toStdString());
     ret->setCalendarId(calId);
     
