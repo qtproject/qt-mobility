@@ -393,17 +393,36 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
 
 bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
+    // this is much simpler, since the maemo5 calendar-backend API
+    // supports removal by component id.
+    *error = QOrganizerItemManager::NoError;
+    int calError = 0;
+    
+    for (int i = 0; i < itemIds.size(); ++i) {
+        QOrganizerItemLocalId currId = itemIds.at(i);
+        QString entireId = d->m_cIdToQId.key(currId);
+        QString calendarName = d->m_cIdToCName.value(entireId);
+        QString cId = entireId.mid(calendarName.size(), -1); // entireId = calendarName:cId
+        CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString(), calError);
+        if (calendar) {
+            calendar->deleteComponent(cId.toStdString(), calError);
+            if (calError != 0) {
+                *error = QOrganizerItemManager::DoesNotExistError;
+                if (errorMap) {
+                    errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
+                }
+            }
+        } else {
+            // XXX TODO: make a "InvalidCalendar" error
+            *error = QOrganizerItemManager::DoesNotExistError;
+            if (errorMap) {
+                errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
+            }
+        }
+	delete calendar;
+    }
 
-        Remove a list of items, given by their id.
-
-        If you encounter an error, insert an error into the appropriate place in the error map,
-        and update the error variable as well.
-
-        DoesNotExistError should be used if the id refers to a non existent item.
-    */
-    return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
+    return (*error == QOrganizerItemManager::NoError);
 }
 
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo5Engine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
