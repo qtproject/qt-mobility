@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QMediaPlaylistControl is \c com.nokia.Qt.QMediaPlaylistControl/1.0 as
     defined in QMediaPlaylistControl_iid.
 
-    \sa QMediaService::control(), QMediaPlayer
+    \sa QMediaService::requestControl(), QMediaPlayer
 */
 
 /*!

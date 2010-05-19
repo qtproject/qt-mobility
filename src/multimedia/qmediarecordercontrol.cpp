@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QMediaRecorderControl is \c com.nokia.Qt.QMediaRecorderControl/1.0 as
     defined in QMediaRecorderControl_iid.
 
-    \sa QMediaService::control(), QMediaRecorder
+    \sa QMediaService::requestControl(), QMediaRecorder
 
 */
 

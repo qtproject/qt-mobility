@@ -58,10 +58,14 @@ QT_BEGIN_NAMESPACE
     This control should be implemented if backend benefits from knowing the
     next media source to be played, for example for preloading, cross fading or gapeless playback.
 
+    If QMediaPlaylistSourceControl is provided, the backend must
+    listen for current playlist item changes to load corresponding media source and
+    advance the playlist  with QMediaPlaylist::next() when playback of the current media is finished.
+
     The interface name of QMediaPlaylistSourceControl is \c com.nokia.Qt.QMediaPlaylistSourceControl/1.0 as
     defined in QMediaPlaylistSourceControl_iid.
 
-    \sa QMediaService::control(), QMediaPlayer
+    \sa QMediaService::requestControl(), QMediaPlayer
 */
 
 /*!
@@ -94,13 +98,16 @@ QMediaPlaylistSourceControl::~QMediaPlaylistSourceControl()
   \fn QMediaPlaylistSourceControl::playlist() const
 
   Returns the current playlist.
-  Should return 0 if no playlist is assigned.
+  Should return a null pointer if no playlist is assigned.
 */
 
 /*!
   \fn QMediaPlaylistSourceControl::setPlaylist(QMediaPlaylist *playlist)
 
   Set the playlist of this media player to \a playlist.
+  If a null pointer is passed, the playlist source should be disabled.
+
+  The current media should be replaced with the current item of the media playlist.
 */
 
 

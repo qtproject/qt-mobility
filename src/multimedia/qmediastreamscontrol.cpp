@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QMediaStreamsControl is \c com.nokia.Qt.MediaStreamsControl as
     defined in QMediaStreamsControl_iid.
 
-    \sa QMediaService::control()
+    \sa QMediaService::requestControl()
 */
 
 /*!

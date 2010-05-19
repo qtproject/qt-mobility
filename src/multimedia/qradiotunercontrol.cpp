@@ -66,7 +66,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QRadioTunerControl is \c com.nokia.Qt.QRadioTunerControl/1.0 as
     defined in QRadioTunerControl_iid.
 
-    \sa QMediaService::control(), QRadioTuner
+    \sa QMediaService::requestControl(), QRadioTuner
 */
 
 /*!

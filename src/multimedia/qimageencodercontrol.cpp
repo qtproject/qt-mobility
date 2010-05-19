@@ -60,7 +60,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QImageEncoderControl is \c com.nokia.Qt.QImageEncoderControl/1.0 as
     defined in QImageEncoderControl_iid.
 
-    \sa QImageEncoderSettings, QMediaService::control()
+    \sa QImageEncoderSettings, QMediaService::requestControl()
 */
 
 /*!

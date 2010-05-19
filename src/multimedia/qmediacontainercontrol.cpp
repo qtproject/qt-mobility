@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QMediaContainerControl is \c com.nokia.Qt.QMediaContainerControl/1.0 as
     defined in QMediaContainerControl_iid.
 
-    \sa QMediaService::control(), QMediaRecorder
+    \sa QMediaService::requestControl(), QMediaRecorder
 */
 
 /*!
