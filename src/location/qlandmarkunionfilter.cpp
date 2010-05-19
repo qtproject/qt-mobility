@@ -120,6 +120,16 @@ void QLandmarkUnionFilter::remove(const QLandmarkFilter &filter)
 }
 
 /*!
+    Removes all filters from the union list.
+    \sa remove()
+*/
+void QLandmarkUnionFilter::clear()
+{
+    Q_D(QLandmarkUnionFilter);
+    d->filters.clear();
+}
+
+/*!
     Appends the given \a filter to the list of unioned filters.
 
     \sa append()

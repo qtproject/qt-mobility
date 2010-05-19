@@ -324,6 +324,10 @@ private slots:
         intersectionFilter << attributeFilter << categoryFilter << nameFilter2;
 
         QVERIFY(MockEngine::testFilter(intersectionFilter,lm));
+
+        //test empty intersection filter
+        intersectionFilter.clear();
+        QVERIFY(!MockEngine::testFilter(intersectionFilter,lm));
     }
 
     void testFilterLandmarkId()
@@ -447,6 +451,10 @@ private slots:
         //test no match with union filter
         lm.removeCategoryId(catId);
         lm.addCategoryId(catId2);
+        QVERIFY(!MockEngine::testFilter(unionFilter,lm));
+
+        //test empty union filter
+        unionFilter.clear();
         QVERIFY(!MockEngine::testFilter(unionFilter,lm));
     }
 };
