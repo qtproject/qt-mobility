@@ -261,6 +261,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
 bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     *error = QOrganizerItemManager::NoError;
+    QOrganizerItemChangeSet cs;
 
     // still need a cache of id to string
     // because on save (if update) need that string
@@ -275,36 +276,42 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
 	if (curr.type() == QOrganizerItemType::TypeEvent) {
             QOrganizerEvent event = curr;
             CEvent* cevent = convertQEventToCEvent(event);
-            CCalendar *curr = d->m_mcInstance->getCalendarById(cevent->getCalendarId(), calError); // note: during the conversion phase we set the calendar id... likely to be very slow.
-	    QString calName = QString::fromStdString(curr->getCalendarName());
+            CCalendar *currCal = d->m_mcInstance->getCalendarById(cevent->getCalendarId(), calError); // note: during the conversion phase we set the calendar id... likely to be very slow.
+	    QString calName = QString::fromStdString(currCal->getCalendarName());
 
             // the convert function will set the id to empty string if has been deleted in meantime.
 	    if (!QString::fromStdString(cevent->getId()).isEmpty()) {
-                curr->modifyEvent(cevent, calError);
+                currCal->modifyEvent(cevent, calError);
+                if (calError == 0) {
+                    items->replace(i, convertCEventToQEvent(cevent, calName));
+                    cs.insertChangedItem(curr.localId());
+                } else {
+                    if (errorMap) {
+                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
+                    }
+                    *error = QOrganizerItemManager::UnspecifiedError;
+                }
             } else {
                 // this is a new (or previously deleted) event.  save it new.
-                curr->addEvent(cevent, calError);
+                currCal->addEvent(cevent, calError);
 		if (calError == 0) {
                     // success.  add the details to our internal maps.
                     QString hashKey = calName + ":" + QString::fromStdString(cevent->getId());
                     d->m_cIdToQId.insert(hashKey, QOrganizerItemLocalId(qHash(hashKey)));
                     d->m_cIdToCName.insert(hashKey, calName);
+                    items->replace(i, convertCEventToQEvent(cevent, calName));
+                    cs.insertAddedItem(d->m_cIdToQId.value(hashKey));
+                } else {
+                    if (errorMap) {
+                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
+                    }
+                    *error = QOrganizerItemManager::UnspecifiedError;
                 }
-            }
-
-            // handle errors as required. 
-            if (calError) {
-                if (errorMap) {
-                    errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-                }
-                *error = QOrganizerItemManager::UnspecifiedError;
-            } else {
-                items->replace(i, convertCEventToQEvent(cevent, calName));
             }
 
             // clean up.
 	    delete cevent;
-            delete curr;
+            delete currCal;
         } else if (curr.type() == QOrganizerItemType::TypeEventOccurrence) {
             // check if there are any differences from the "generated" occurrence for this date
             // if not, then save can fail (already exists error)
@@ -315,72 +322,84 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
             // other than that concern, the code for a todo is similar to that of event.
             QOrganizerTodo todo = curr;
             CTodo* ctodo = convertQTodoToCTodo(todo);
-            CCalendar *curr = d->m_mcInstance->getCalendarById(ctodo->getCalendarId(), calError); // note: during the conversion phase we set the calendar id... likely to be very slow.
-	    QString calName = QString::fromStdString(curr->getCalendarName());
+            CCalendar *currCal = d->m_mcInstance->getCalendarById(ctodo->getCalendarId(), calError); // note: during the conversion phase we set the calendar id... likely to be very slow.
+	    QString calName = QString::fromStdString(currCal->getCalendarName());
 
             // the convert function will set the id to empty string if has been deleted in meantime.
 	    if (!QString::fromStdString(ctodo->getId()).isEmpty()) {
-                curr->modifyTodo(ctodo, calError);
+                currCal->modifyTodo(ctodo, calError);
+                if (calError == 0) {
+                    items->replace(i, convertCTodoToQTodo(ctodo, calName));
+                    cs.insertChangedItem(curr.localId());
+                } else {
+                    if (errorMap) {
+                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
+                    }
+                    *error = QOrganizerItemManager::UnspecifiedError;
+                }
             } else {
                 // this is a new (or previously deleted) event.  save it new.
-                curr->addTodo(ctodo, calError);
+                currCal->addTodo(ctodo, calError);
 		if (calError == 0) {
                     // success.  add the details to our internal maps.
                     QString hashKey = calName + ":" + QString::fromStdString(ctodo->getId());
                     d->m_cIdToQId.insert(hashKey, QOrganizerItemLocalId(qHash(hashKey)));
                     d->m_cIdToCName.insert(hashKey, calName);
+                    items->replace(i, convertCTodoToQTodo(ctodo, calName));
+                    cs.insertAddedItem(d->m_cIdToQId.value(hashKey));
+                } else {
+                    if (errorMap) {
+                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
+                    }
+                    *error = QOrganizerItemManager::UnspecifiedError;
                 }
-            }
-
-            // handle errors as required. 
-            if (calError) {
-                if (errorMap) {
-                    errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-                }
-                *error = QOrganizerItemManager::UnspecifiedError;
-            } else {
-                items->replace(i, convertCTodoToQTodo(ctodo, calName));
             }
 
             // clean up.
 	    delete ctodo;
-            delete curr;
+            delete currCal;
         } else if (curr.type() == QOrganizerItemType::TypeTodoOccurrence) {
             // modifies the actual todo in the datastore...
         } else if (curr.type() == QOrganizerItemType::TypeJournal) {
             // basically the same as code for the event.
             QOrganizerJournal journal = curr;
             CJournal* cjournal = convertQJournalToCJournal(journal);
-            CCalendar *curr = d->m_mcInstance->getCalendarById(cjournal->getCalendarId(), calError); // note: during the conversion phase we set the calendar id... likely to be very slow.
-	    QString calName = QString::fromStdString(curr->getCalendarName());
+            CCalendar *currCal = d->m_mcInstance->getCalendarById(cjournal->getCalendarId(), calError); // note: during the conversion phase we set the calendar id... likely to be very slow.
+	    QString calName = QString::fromStdString(currCal->getCalendarName());
 
             // the convert function will set the id to empty string if has been deleted in meantime.
 	    if (!QString::fromStdString(cjournal->getId()).isEmpty()) {
-                curr->modifyJournal(cjournal, calError);
+                currCal->modifyJournal(cjournal, calError);
+                if (calError == 0) {
+                    items->replace(i, convertCJournalToQJournal(cjournal, calName));
+                    cs.insertChangedItem(curr.localId());
+                } else {
+                    if (errorMap) {
+                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
+                    }
+                    *error = QOrganizerItemManager::UnspecifiedError;
+                }
             } else {
                 // this is a new (or previously deleted) event.  save it new.
-                curr->addJournal(cjournal, calError);
+                currCal->addJournal(cjournal, calError);
 		if (calError == 0) {
                     // success.  add the details to our internal maps.
                     QString hashKey = calName + ":" + QString::fromStdString(cjournal->getId());
                     d->m_cIdToQId.insert(hashKey, QOrganizerItemLocalId(qHash(hashKey)));
                     d->m_cIdToCName.insert(hashKey, calName);
+                    items->replace(i, convertCJournalToQJournal(cjournal, calName));
+                    cs.insertAddedItem(d->m_cIdToQId.value(hashKey));
+                } else {
+                    if (errorMap) {
+                        errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
+                    }
+                    *error = QOrganizerItemManager::UnspecifiedError;
                 }
-            }
-
-            // handle errors as required. 
-            if (calError) {
-                if (errorMap) {
-                    errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-                }
-                *error = QOrganizerItemManager::UnspecifiedError;
-            } else {
-                items->replace(i, convertCJournalToQJournal(cjournal, calName));
             }
 
             // clean up.
 	    delete cjournal;
-            delete curr;
+            delete currCal;
         } else { // QOrganizerItemType::TypeNote
             // not sure what to do here - should be similar to journal without datestart??
         }
@@ -423,30 +442,6 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
     }
 
     return (*error == QOrganizerItemManager::NoError);
-}
-
-QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo5Engine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
-{
-    /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return detailDefinitions(itemType, error);
-}
-
-QOrganizerItemDetailDefinition QOrganizerItemMaemo5Engine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
-{
-    /* TODO - the default implementation just calls the base detailDefinitions function.  If that's inefficent, implement this */
-    return QOrganizerItemManagerEngine::detailDefinition(definitionId, itemType, error);
-}
-
-bool QOrganizerItemMaemo5Engine::saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& itemType, QOrganizerItemManager::Error* error)
-{
-    /* TODO - if you support adding custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::saveDetailDefinition(def, itemType, error);
-}
-
-bool QOrganizerItemMaemo5Engine::removeDetailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error)
-{
-    /* TODO - if you support removing custom fields, do that here.  Otherwise call the base functionality. */
-    return QOrganizerItemManagerEngine::removeDetailDefinition(definitionId, itemType, error);
 }
 
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req)
