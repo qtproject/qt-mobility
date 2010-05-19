@@ -108,6 +108,9 @@ corresponding values that can be assigned to \c MOBILITY.
     \o \l {Qt Service Framework} {Service Framework}
     \o serviceframework
 \row
+    \o \l {Sensor API}
+    \o sensors
+\row
     \o \l {System Information}
     \o systeminfo
 \row
