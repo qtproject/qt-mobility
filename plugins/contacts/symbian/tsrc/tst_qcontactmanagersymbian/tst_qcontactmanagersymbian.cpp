@@ -703,6 +703,12 @@ void tst_QContactManagerSymbian::displayLabel()
 
 void tst_QContactManagerSymbian::timestamp()
 {
+    if (!m_cm->detailDefinitions().keys().contains(QContactTimestamp::DefinitionName)) {
+        // S60 3.1 does not support timestamps because cntmodel API for
+        // that is not exported.
+        QSKIP("Backend does not support timestamp!", SkipSingle);
+    }
+    
     // Save a contact
     QContact contact = createContact(QContactType::TypeContact, "Jame", "Hunt");
     QVERIFY(m_cm->saveContact(&contact));
