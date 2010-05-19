@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -166,12 +166,11 @@ void tst_QContactManagerFiltering::initTestCase()
     managerNames.removeAll("testdummy");
     managerNames.removeAll("teststaticdummy");
     managerNames.removeAll("maliciousplugin");
-#if defined(Q_OS_SYMBIAN)
-    // TODO: Analyze fails on symbiansim backend. Simply disable testing of
-    // symbiansim backend for now to make sure the fails do not steal attention
-    // from possible fails in symbian backend.
+    // Symbiansim backend does not support the required details for these
+	// tests to pass. Symbiansim backend specific unit test tst_simcm is
+	// testing filtering instead.
     managerNames.removeAll("symbiansim");
-#endif
+
 
     foreach(QString mgr, managerNames) {
         QMap<QString, QString> params;

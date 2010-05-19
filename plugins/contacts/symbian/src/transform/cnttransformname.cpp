@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -101,20 +101,6 @@ QContactDetail *CntTransformName::transformItemField(const CContactItemField& fi
     return name;
 }
 
-bool CntTransformName::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldPrefixName.iUid
-        || fieldType == KUidContactFieldGivenName.iUid
-        || fieldType == KUidContactFieldAdditionalName.iUid
-        || fieldType == KUidContactFieldFamilyName.iUid
-        || fieldType == KUidContactFieldSuffixName.iUid
-        || fieldType == KUidContactFieldTemplateLabel.iUid ) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformName::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -122,6 +108,17 @@ bool CntTransformName::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformName::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldPrefixName
+        << KUidContactFieldGivenName
+        << KUidContactFieldAdditionalName
+        << KUidContactFieldFamilyName
+        << KUidContactFieldSuffixName
+        << KUidContactFieldTemplateLabel;
 }
 
 QList<TUid> CntTransformName::supportedSortingFieldTypes(QString detailFieldName) const

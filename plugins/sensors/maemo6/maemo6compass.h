@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,9 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qcompass.h>
-#include <qsensorbackend.h>
 
-#include <sensord/compasssensor_i.h>
+#include <compasssensor_i.h>
+#include <compass.h>
 
 QTM_USE_NAMESPACE
 
@@ -63,8 +63,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotLevelChanged(const int& level);
-    void slotDegreesChanged(const int& degrees);
+    void dataAvailable(const Compass& data);
 };
 
 #endif

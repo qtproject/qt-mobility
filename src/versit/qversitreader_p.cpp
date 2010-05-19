@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -541,8 +541,10 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
     bool valid = true;
     if (property.name() == QLatin1String("VERSION")) {
         QString value = property.value().trimmed();
-        if (property.parameters().contains(QLatin1String("ENCODING"),QLatin1String("BASE64"))
-            || property.parameters().contains(QLatin1String("TYPE"),QLatin1String("BASE64")))
+        QStringList encodingParameters = property.parameters().values(QLatin1String("ENCODING"));
+        QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+        if (encodingParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
+            || typeParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive))
             value = QLatin1String(QByteArray::fromBase64(value.toAscii()));
         if (value == QLatin1String("2.1")) {
             document.setType(QVersitDocument::VCard21Type);
@@ -567,7 +569,9 @@ bool QVersitReaderPrivate::unencode(QVariant& value, VersitCursor& cursor,
 
     QString valueString = value.toString();
 
-    if (property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"))) {
+    QStringList encodingParameters = property.parameters().values(QLatin1String("ENCODING"));
+    QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+    if (encodingParameters.contains(QLatin1String("QUOTED-PRINTABLE"), Qt::CaseInsensitive)) {
         // At this point, we need to accumulate bytes until we hit a real line break (no = before
         // it) value already contains everything up to the character before the newline
         while (valueString.endsWith(QLatin1Char('='))) {
@@ -583,10 +587,10 @@ bool QVersitReaderPrivate::unencode(QVariant& value, VersitCursor& cursor,
         property.removeParameters(QLatin1String("ENCODING"));
         value.setValue(valueString);
         return false;
-    } else if (property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("BASE64"))
-        || property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("B"))
-        || property.parameters().contains(QLatin1String("TYPE"), QLatin1String("BASE64"))
-        || property.parameters().contains(QLatin1String("TYPE"), QLatin1String("B"))) {
+    } else if (encodingParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
+        || encodingParameters.contains(QLatin1String("B"), Qt::CaseInsensitive)
+        || typeParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
+        || typeParameters.contains(QLatin1String("B"), Qt::CaseInsensitive)) {
         value.setValue(QByteArray::fromBase64(valueString.toAscii()));
         // Remove the encoding parameter as the value is now decoded
         property.removeParameters(QLatin1String("ENCODING"));

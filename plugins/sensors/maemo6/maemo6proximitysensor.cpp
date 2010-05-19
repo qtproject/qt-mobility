@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,36 +47,36 @@ bool maemo6proximitysensor::m_initDone = false;
 maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    setReading<QProximityReading>(&m_reading);
-
+    const QString sensorName = "proximitysensor";
     if (!m_initDone) {
-        initSensor<ProximitySensorChannelInterface>("proximitysensor");
-
-        if (m_sensorInterface)
-            QObject::connect(static_cast<ProximitySensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const int&)), this, SLOT(slotDataAvailable(const int&)));
-        else
-            qWarning() << "Unable to initialize proximity sensor.";
-
-        // metadata
-        addDataRate(2, 2); // 2Hz
-        sensor->setDataRate(2);
-        addOutputRange(0, 1, 1); // close definition in meters - may be used as metadata even the sensor gives true/false values
-        setDescription(QLatin1String("Measures if a living object is in proximity or not"));
-
+        //initSensor<ProximitySensorChannelInterface>("proximitysensor");
+        m_remoteSensorManager->loadPlugin(sensorName);
+        m_remoteSensorManager->registerSensorInterface<ProximitySensorChannelInterface>(sensorName);
         m_initDone = true;
     }
+    m_sensorInterface = ProximitySensorChannelInterface::controlInterface(sensorName);
+    if (!m_sensorInterface)
+        m_sensorInterface = const_cast<ProximitySensorChannelInterface*>(ProximitySensorChannelInterface::listenInterface(sensorName));
+    if (m_sensorInterface)
+        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)), this, SLOT(slotDataAvailable(const Unsigned&)));
+    else
+        qWarning() << "Unable to initialize proximity sensor.";
+    setReading<QProximityReading>(&m_reading);
+    // metadata
+    addDataRate(0, 0);
+    addDataRate(2, 2); // 2 Hz
+    addOutputRange(0, 1, 1); // close definition in meters - may be used as metadata even the sensor gives true/false values
+    setDescription(QLatin1String("Measures if a living object is in proximity or not"));
 }
 
-void maemo6proximitysensor::slotDataAvailable(const int& data)
+void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
 {
     bool close;
-    if (data)
+    if (data.x())
         close = true;
     else
         close = false;
-
     m_reading.setClose(close);
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
 }

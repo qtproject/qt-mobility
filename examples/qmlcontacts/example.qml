@@ -1,48 +1,19 @@
-import QMLContactManagerAsync 1.0
-import QmlContact 1.0
+import QmlContactModel 1.0
 import Qt 4.6
+import "contents"
 
 Rectangle {
     id: topItem
-    width: 320
-    height: 480
+    width: 360
+    height: 640
     x: 0
     y: 0
 
     color: "#080808";
 
-    Script {
-        function startup() {
-            manager.contacts();
-        }
-        function gotContacts(c) {
-            if(c == undefined){
-                return;
-            }
-
-            var q = c.values("Presence");
-
-            nameModel.append({"name": c.name,
-                                "presence": "Status: " + q.Presence,
-                                "email": c.email,
-                                "avatarSource": c.avatar ? c.avatar : "qrc:/default.svg",
-                                "hasThumbnail" : c.hasThumbnail,
-                                "avatarImage": c.thumbnail,
-                                "interestLabel" : c.interestLabel,
-                                "interest" : c.interest});
-
-        }
-    }
-
-    Component.onCompleted: startup();
-
-    QMLContactManagerAsync {
-        id: "manager"
-
+    QmlContactModel {
+        id: "myModel"
         manager: "memory"
-        onDataChanged: print("Data changed!");
-        onContactsAdded: print("Contacts added: " + contactIds);
-        onContactsLoaded: gotContacts(contact);
     }
 
     Component {
@@ -50,16 +21,26 @@ Rectangle {
         Rectangle {
             id: wrapper            
             border.width: 2
-            height: mainLabel.height;
+            height: 36;
             width: mainList.width;
 
-            property color topColor: "#333333";
-            property color bottomColor: "#111111";
-            property real detailsOpacity: 0
+            property color topColor: "#999999";
+            property color bottomColor: "#444444";
+            property real detailsOpacity: 1
+            property int littleDetailsMode: 0;
+            property int bigDetailsMode: 0;
 
             gradient: Gradient {
                  GradientStop { position: 0.0; color: topColor }
                  GradientStop { position: 1.0; color: bottomColor }
+            }
+
+            MouseArea {
+                id: mr
+                width: topItem.width;
+                height: wrapper.height;
+                anchors.centerIn: parent;
+                onClicked: { littleDetailsMode = !littleDetailsMode; mainList.currentIndex = index; }
             }
 
             Row {
@@ -73,15 +54,15 @@ Rectangle {
                         border.width: 2;
                         radius: 4;
                         anchors.fill: parent;
-                        anchors.margins: 3;
+                        anchors.margins: 2;
 
                         Image {
                             id: avatar
                             anchors.fill: parent;
-                            anchors.margins: 3;
+                            anchors.margins: 2;
 
-                            pixmap: avatarImage
-                            source: hasThumbnail ? "" : avatarSource;
+                            pixmap: model.decoration
+                            source: model.avatar;
                             fillMode: Image.PreserveAspectFit
                         }
                     }
@@ -95,8 +76,8 @@ Rectangle {
                         Text {
                             id: nameTxt
                             y: 8;
-                            text: name
-                            color: "white";
+                            text: display
+                            color: "white"
                         }
                     }
 
@@ -108,71 +89,151 @@ Rectangle {
                         width: childrenRect.width;
                         Column {
                             Text {
-                                text: interestLabel + interest
+                                text: model.interestLabel + ": " + model.interest
                                 color: details.textColor;
                             }
                             Text {
-                                text: presence
+                                text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
                                 color: details.textColor;
+                            }
+                        }
+                    }
+                }
+
+                Item {
+                    id: "buttonBox"
+                    x: wrapper.width - 6 - childrenRect.width;
+                    y: 4;
+                    height:childrenRect.height
+                    opacity: details.opacity;
+                    Column {
+                        // Buttons
+                        MediaButton {
+                            id: dialButton;
+                            text: "Dial";
+                        }
+                        MediaButton {
+                            id: textButton
+                            text: "Send Text";
+                        }
+                        Item {
+                            height:childrenRect.height
+                            width: childrenRect.width
+                            MediaButton {
+                                id: viewButton
+                                text: "More..."
+                                opacity: 0;
+                                onClicked: wrapper.bigDetailsMode = 1;
+                            }
+                            MediaButton {
+                                id: smallAgainButton
+                                text: "Back";
+                                anchors.top:viewButton.top;
+                                opacity: 0;
+                                onClicked: wrapper.bigDetailsMode = 0;
                             }
                         }
                     }
                 }
             }
 
-            states: State {
-                name: "Details"
-                when: wrapper.ListView.isCurrentItem;
-                PropertyChanges { target: wrapper; detailsOpacity: 1; }
-                PropertyChanges { target: wrapper; topColor: "#999999"; }
-                PropertyChanges { target: wrapper; bottomColor: "#444444"; }
-                PropertyChanges { target: wrapper; height: mainLabel.height + details.height + 4; }
-            }
+            states: [
+                    State {
+                        name: "List";
+                        when: mainList.currentIndex != index || wrapper.littleDetailsMode == 0
+                        PropertyChanges { target: wrapper; detailsOpacity: 0; }
+                        PropertyChanges { target: wrapper; topColor: "#333333"; }
+                        PropertyChanges { target: wrapper; bottomColor: "#111111"; }
+                        PropertyChanges { target: buttonBox; x: wrapper.width + 6; }
+                    },
+                    State {
+                        name: "MiniDetails"
+                        when: (mainList.currentIndex == index) && (wrapper.littleDetailsMode == 1) && (wrapper.bigDetailsMode == 0);
+                        PropertyChanges { target: viewButton; opacity: 1; }
+                        PropertyChanges { target: smallAgainButton; opacity: 0; }
+                        PropertyChanges { target: wrapper; height: Math.max(mainLabel.height + details.height + 4, buttonBox.height + 8); }
+                        PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y } // XXX I don't think this should be here
+                    },
+                    State {
+                        name: "Details"
+                        when: (mainList.currentIndex == index) && (wrapper.bigDetailsMode == 1);
+                        PropertyChanges { target: wrapper; height: mainList.height; }
+                        PropertyChanges { target: viewButton; opacity: 0; }
+                        PropertyChanges { target: smallAgainButton; opacity: 1; }
+                        PropertyChanges { target: mainAvatar; height: 96; }
+                        PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y }
+                        PropertyChanges { target: mainList; interactive: false; }
+                    }
+            ]
 
             transitions:  [
                 Transition {
-                    from: ""
-                    to: "Details"
+                    from: "List"
+                    to: "MiniDetails"
                     reversible: false
                     SequentialAnimation {
                         NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
-                        ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                        ParallelAnimation {
+                            ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                            NumberAnimation { duration: 150; properties: "x"; }
+                        }
                     }
                 },
                 Transition {
-                    to: ""
+                    from: "MiniDetails"
+                    to: "Details"
+                    reversible: false
+                    ParallelAnimation {
+                        NumberAnimation { duration: 250; properties: "contentY,opacity"; }
+                        SequentialAnimation {
+                            NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
+                            ParallelAnimation {
+                                ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                                NumberAnimation { duration: 150; properties: "x"; }
+                            }
+                        }
+                    }
+                },
+                Transition {
                     from: "Details"
+                    to: "MiniDetails"
+                    reversible: false
+                    ParallelAnimation {
+                        NumberAnimation { duration: 250; properties: "contentY,opacity"; }
+                        SequentialAnimation {
+                            ParallelAnimation {
+                                NumberAnimation { duration: 150; properties: "x"; }
+                                ColorAnimation { duration: 200; properties: "topColor, bottomColor";}
+                            }
+                            NumberAnimation { duration: 200; properties: "detailsOpacity,height" }
+                        }
+                    }
+                },
+                Transition {
+                    from: "MiniDetails"
+                    to: "List"
                     reversible: false
                     SequentialAnimation {
-                        NumberAnimation { duration: 100; properties: "detailsOpacity,height" }
-                        ColorAnimation { duration: 100; properties: "topColor, bottomColor";}
+                        NumberAnimation { duration: 100; properties: "x"; }
+                        ParallelAnimation{
+                            NumberAnimation { duration: 150; properties: "detailsOpacity,height" }
+                            ColorAnimation { duration: 150; properties: "topColor, bottomColor";}
+                        }
                     }
                 }
             ]
-            MouseArea {
-                id: mr
-                width: topItem.width;
-                height: wrapper.height;
-                anchors.centerIn: parent;
-                onClicked: mainList.currentIndex = index;
-            }
         }
     }
 
     ListView {
         id: mainList
-        model: nameModel
+        model: myModel
         width: parent.width; height: parent.height
         delegate: listdelegate
         highlightFollowsCurrentItem: false
         focus: true
         anchors.fill: parent
-        highlightMoveSpeed: 5000
         keyNavigationWraps: true
-    }
-
-    ListModel {
-        id: nameModel
     }
 
     // Attach scrollbar to the right edge of the view.
