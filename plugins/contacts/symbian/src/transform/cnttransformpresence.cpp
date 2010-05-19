@@ -126,15 +126,11 @@ QContactDetail *CntTransformPresence::transformItemField(const CContactItemField
 	return presenceDetail;
 }
 
-bool CntTransformPresence::supportsField(TUint32 fieldType) const
+QList<TUid> CntTransformPresence::supportedFields() const
 {
-    bool ret = false;
-    if (fieldType == KUidContactFieldPresence.iUid  ||
-        fieldType == KUidContactFieldStatusMsg.iUid )         
-    {
-        ret = true;
-    }
-    return ret;
+    return QList<TUid>()
+        << KUidContactFieldPresence
+        << KUidContactFieldStatusMsg;
 }
 
 bool CntTransformPresence::supportsDetail(QString detailName) const

@@ -56,7 +56,7 @@ public:
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
-	bool supportsField(TUint32 fieldType) const;
+	QList<TUid> supportedFields() const;
 	bool supportsDetail(QString detailName) const;
 	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
     bool supportsSubType(const QString& subType) const;
