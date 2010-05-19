@@ -148,14 +148,8 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::SimFeature :
         {
-            GConfItem locationValues("/system/nokia/location");
-            const QStringList locationKeys = locationValues.listEntries();
-
-            foreach (const QString str, locationKeys) {
-                if (str.contains("sim_imsi"))
-                    featureSupported = true;
-                break;
-            }
+            QSystemDeviceInfoPrivate d;
+            featureSupported = (d.simStatus() != QSystemDeviceInfo::SimNotAvailable);
         }
         break;
     case QSystemInfo::LocationFeature :
@@ -309,11 +303,12 @@ QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    QString imsi = GConfItem("/system/nokia/location/sim_imsi").value().toString();
+    QSystemDeviceInfoPrivate d;
+    QString imsi = d.imsi();
     if (imsi.length() >= 3) {
         return imsi.left(3);
     }
-        return QString();
+    return "";
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
@@ -855,21 +850,12 @@ QString QSystemDeviceInfoPrivate::imsi()
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-    GConfItem locationValues("/system/nokia/location");
-    const QStringList locationKeys = locationValues.listEntries();
-    QStringList result;
-    int count = 0;
-    foreach (const QString str, locationKeys) {
-        if (str.contains("sim_imsi"))
-            count++;
+    QSystemDeviceInfo::SimStatus simStatus = QSystemDeviceInfo::SimNotAvailable;
+    QString imsi = QSystemDeviceInfoPrivate::imsi();
+    if (imsi.length() > 0) {
+        simStatus = QSystemDeviceInfo::SingleSimAvailable;
     }
-
-    if(count == 1) {
-        return QSystemDeviceInfo::SingleSimAvailable;
-    } else if (count == 2) {
-        return QSystemDeviceInfo::DualSimAvailable;
-    }
-    return QSystemDeviceInfo::SimNotAvailable;
+    return simStatus;
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
