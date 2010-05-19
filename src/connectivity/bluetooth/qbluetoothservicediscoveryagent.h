@@ -70,16 +70,18 @@ public:
     };
 
     enum DiscoveryMode {
-        QuickDiscovery,
-        FullDiscovery,
-        FullDiscoveryAfterQuick,
+        MinimalDiscovery,
+        FullDiscovery
     };
 
     QBluetoothServiceDiscoveryAgent(QObject *parent = 0);
     QBluetoothServiceDiscoveryAgent(const QBluetoothAddress &remoteAddress, QObject *parent = 0);
 
     bool isActive() const;
+
     Error error() const;
+    QString errorString() const;
+
     QList<QBluetoothServiceInfo> discoveredServices() const;
 
     void setUuidFilter(const QList<QBluetoothUuid> &uuids);
@@ -87,17 +89,18 @@ public:
     QList<QBluetoothUuid> uuidFilter() const;
 
 public slots:
-    void start(DiscoveryMode mode = FullDiscovery);
+    void start(DiscoveryMode mode = MinimalDiscovery);
     void stop();
     void clear();
 
 signals:
     void serviceDiscovered(const QBluetoothServiceInfo &info);
-    void finished(bool error);
+    void finished();
+    void error(QBluetoothServiceDiscoveryAgent::Error error);
 
 private:
-    Q_PRIVATE_SLOT(d_func(), void _q_deviceDiscoveryFinished(bool error))
-    Q_PRIVATE_SLOT(d_func(), void _q_serviceDiscoveryFinished(bool error))
+    Q_PRIVATE_SLOT(d_func(), void _q_deviceDiscoveryFinished())
+    Q_PRIVATE_SLOT(d_func(), void _q_serviceDiscoveryFinished())
 };
 
 QTM_END_NAMESPACE

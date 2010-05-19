@@ -54,16 +54,18 @@ QTM_BEGIN_NAMESPACE
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
 
-    To query the services provided by a Bluetooth device create an instance of
+    To query the services provided by all contactable Bluetooth devices create an instance of
     QBluetoothServiceDiscoveryAgent, connect to either the serviceDiscovered() or finished()
     signals and call start().
 
-    \code
-        QBluetoothServiceDiscoveryAgent *discoveryAgent = new QBluetoothServiceDiscoveryAgent(deviceAddress, this);
-        connect(discoveryAgent, SIGNAL(serviceDiscovered(const QBluetoothServiceInfo&)),
-                this, SLOT(serviceDiscovered(const QBluetoothServiceInfo&)));
-        discoveryAgent->start();
-    \endcode
+    \snippet snippets/connectivity/servicediscovery.cpp Service discovery
+
+    By default a minimal service discovery is performed. In this mode the QBluetotohServiceInfo
+    objects returned are guaranteed to contain only device and service UUID information. Depending
+    on platform and device capabilities other service information may also be available. For most
+    use cases this is adequate as QBluetoothSocket::connectToService() will perform additional
+    discovery if required.  If full service information is required pass \l FullDiscovery as the
+    discoveryMode parameter to start().
 */
 
 /*!
@@ -82,16 +84,10 @@ QTM_BEGIN_NAMESPACE
 
     This enum describes the service discovery mode.
 
-    \value QuickDiscovery           Discovers the service UUIDs supported by devices within range.
-
-                                    QuickDiscovery is only available for device that support the
-                                    Bluetooth 2.1 specification and Extended Inquiry Response
-                                    (EIR).
-    \value FullDiscovery            Performs a full service discovery.
-    \value FullDiscoveryAfterQuick  Performs a full service discovery after a quick service
-                                    discovery. The devices that service discovery queries are sent
-                                    to is limited based on the results of the quick service
-                                    discovery.
+    \value MinimalDiscovery     Performs a minimal service discovery. The QBluetoothServiceInfo
+                                objects returned may be incomplete and are only guaranteed to
+                                contain device and service UUID information.
+    \value FullDiscovery        Performs a full service discovery.
 */
 
 /*!
@@ -101,14 +97,20 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn QBluetoothServiceDiscoveryAgent::finished(bool error)
+    \fn QBluetoothServiceDiscoveryAgent::finished()
 
-    This signal is emitted when Bluetooth service discovery completes. \a error is true if an
-    error caused Bluetooth service discovery to abort.
+    This signal is emitted when Bluetooth service discovery completes.
 */
 
 /*!
-    Constructs a new QBluetoothServiceDiscoveryAgent with parent \a parent.
+    \fn void QBluetoothServiceDiscoveryAgent::error(QBluetoothServiceDiscoveryAgent::Error error)
+
+    This signal is emitted when an error occurs. The \a error parameter describes the error that
+    occurred.
+*/
+
+/*!
+    Constructs a new QBluetoothServiceDiscoveryAgent with \a parent.
 */
 QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(QObject *parent)
 : QObject(*new QBluetoothServiceDiscoveryAgentPrivate(QBluetoothAddress()), parent)
@@ -117,6 +119,9 @@ QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(QObject *parent
 
 /*!
     Constructs a new QBluetoothServiceDiscoveryAgent for \a remoteAddress and with \a parent.
+
+    If \a remoteAddress is invalid the agent will discover services on all contactable Bluetooth
+    devices.
 */
 QBluetoothServiceDiscoveryAgent::QBluetoothServiceDiscoveryAgent(const QBluetoothAddress &remoteAddress, QObject *parent)
 : QObject(*new QBluetoothServiceDiscoveryAgentPrivate(remoteAddress), parent)
@@ -204,6 +209,8 @@ void QBluetoothServiceDiscoveryAgent::stop()
         break;
     case QBluetoothServiceDiscoveryAgentPrivate::ServiceDiscovery:
         d->stopServiceDiscovery();
+    default:
+        ;
     }
 
     d->discoveredDevices.clear();
@@ -242,6 +249,14 @@ QBluetoothServiceDiscoveryAgent::Error QBluetoothServiceDiscoveryAgent::error() 
 }
 
 /*!
+    Returns a human-readable description of the last error that occurred.
+*/
+QString QBluetoothServiceDiscoveryAgent::errorString() const
+{
+    return QString();
+}
+
+/*!
     Starts device discovery.
 */
 void QBluetoothServiceDiscoveryAgentPrivate::startDeviceDiscovery()
@@ -274,11 +289,9 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopDeviceDiscovery()
 /*!
     Called when device discovery finishes.
 */
-void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscoveryFinished(bool error)
+void QBluetoothServiceDiscoveryAgentPrivate::_q_deviceDiscoveryFinished()
 {
-    Q_Q(QBluetoothServiceDiscoveryAgent);
-
-    if (error) {
+    if (deviceDiscoveryAgent->error() != QBluetoothDeviceDiscoveryAgent::NoError) {
         error = QBluetoothServiceDiscoveryAgent::DeviceDiscoveryError;
 
         setDiscoveryState(Inactive);
@@ -305,7 +318,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::startServiceDiscovery()
 
     if (discoveredDevices.isEmpty()) {
         setDiscoveryState(Inactive);
-        emit q->finished(error != QBluetoothServiceDiscoveryAgent::NoError);
+        emit q->finished();
         return;
     }
 
@@ -323,7 +336,7 @@ void QBluetoothServiceDiscoveryAgentPrivate::stopServiceDiscovery()
     setDiscoveryState(Inactive);
 }
 
-void QBluetoothServiceDiscoveryAgentPrivate::_q_serviceDiscoveryFinished(bool error)
+void QBluetoothServiceDiscoveryAgentPrivate::_q_serviceDiscoveryFinished()
 {
     discoveredDevices.removeFirst();
 

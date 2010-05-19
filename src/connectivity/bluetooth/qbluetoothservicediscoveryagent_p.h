@@ -87,8 +87,8 @@ public:
     DiscoveryState discoveryState() { return state; }
 
     // private slots
-    void _q_deviceDiscoveryFinished(bool error);
-    void _q_serviceDiscoveryFinished(bool error);
+    void _q_deviceDiscoveryFinished();
+    void _q_serviceDiscoveryFinished();
 
 #ifdef Q_OS_SYMBIAN
     /* MSdpAgentNotifier virtual functions */
