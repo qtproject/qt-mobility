@@ -533,11 +533,13 @@ void CFSEngine::updateMessageL(QMessage* message)
 {
     TMailboxId mailboxId(stripIdPrefix(message->parentAccountId().toString()).toInt());
     MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+    CleanupReleasePushL(*mailbox);
   
     TMessageId messageId(message->id().toString().toInt(),
                             message->parentFolderId().toString().toInt(), 
                             mailboxId);
     MEmailMessage* fsMessage = mailbox->MessageL(messageId);
+    CleanupReleasePushL(*fsMessage);
     
     switch (message->priority()) {
         case QMessage::HighPriority:
@@ -652,6 +654,8 @@ void CFSEngine::updateMessageL(QMessage* message)
     
     fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message->subject().utf16())));
     fsMessage->SaveChangesL();
+    CleanupStack::PopAndDestroy(fsMessage);
+    CleanupStack::PopAndDestroy(mailbox);
 }
 
 bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOption option)
