@@ -111,6 +111,8 @@ QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap
     : d_ptr(new QGeoServiceProviderPrivate())
 {
     d_ptr->loadPlugin(providerName, parameters);
+    if(d_ptr->plugin)
+        d_ptr->plugin->initialize(parameters,&d_ptr->error,&d_ptr->errorString);
 }
 
 /*!

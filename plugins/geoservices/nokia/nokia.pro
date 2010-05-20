@@ -29,3 +29,14 @@ SOURCES += \
             qgeoserviceproviderplugin_nokia.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/location
+
+symbian {
+    TARGET.EPOCALLOWDLLDATA = 1
+    TARGET.CAPABILITY = ALL -TCB
+    pluginDep.sources = $${TARGET}.dll
+    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
+    DEPLOYMENT += pluginDep      
+}
+
+target.path=$$QT_MOBILITY_PREFIX/plugins/$${PLUGIN_TYPE}
+INSTALLS+=target

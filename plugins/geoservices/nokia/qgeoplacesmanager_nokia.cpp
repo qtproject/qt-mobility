@@ -51,11 +51,8 @@ QGeoPlacesManagerNokia::QGeoPlacesManagerNokia(QObject *parent)
     : QGeoPlacesManager(parent)
 {
     m_networkManager = new QNetworkAccessManager(this);
-    m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
-                                             "172.16.42.137",
-                                             8080));
-//    m_host = "dev-a7.bln.gate5.de";
-    m_host = "loc.desktop.maps.svc.ovi.com";
+    setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
+    setHost("loc.desktop.maps.svc.ovi.com");
 
     setSupportsGeocoding(true);
     setSupportsViewportBiasing(false);
@@ -66,6 +63,16 @@ QGeoPlacesManagerNokia::QGeoPlacesManagerNokia(QObject *parent)
 }
 
 QGeoPlacesManagerNokia::~QGeoPlacesManagerNokia() {}
+
+void QGeoPlacesManagerNokia::setProxy(const QNetworkProxy &proxy)
+{
+    m_networkManager->setProxy(proxy);
+}
+
+void QGeoPlacesManagerNokia::setHost(QString host)
+{
+    m_host = host;
+}
 
 QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
 {
@@ -111,20 +118,7 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoAddress &address, con
         requestString += address.thoroughfareNumber();
     }
 
-    QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(requestString)));
-    QGeoPlacesReplyNokia *reply = new QGeoPlacesReplyNokia(networkReply, this);
-
-    connect(reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(placesFinished()));
-
-    connect(reply,
-            SIGNAL(error(QGeoPlacesReply::Error,QString)),
-            this,
-            SLOT(placesError(QGeoPlacesReply::Error,QString)));
-
-    return reply;
+    return search(requestString);
 }
 
 QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
@@ -141,20 +135,7 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoCoordinate &coordinat
     //requestString += "&lg=";
     //requestString += request->locale().language();
 
-    QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(requestString)));
-    QGeoPlacesReplyNokia *reply = new QGeoPlacesReplyNokia(networkReply, this);
-
-    connect(reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(placesFinished()));
-
-    connect(reply,
-            SIGNAL(error(QGeoPlacesReply::Error,QString)),
-            this,
-            SLOT(placesError(QGeoPlacesReply::Error,QString)));
-
-    return reply;
+    return search(requestString);
 }
 
 QGeoPlacesReply* QGeoPlacesManagerNokia::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
@@ -179,6 +160,11 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::placesSearch(const QString &searchStrin
     requestString += "&obloc=";
     requestString += searchString;
 
+    return search(requestString);
+}
+
+QGeoPlacesReply* QGeoPlacesManagerNokia::search(QString requestString)
+{
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(requestString)));
     QGeoPlacesReplyNokia *reply = new QGeoPlacesReplyNokia(networkReply, this);
 

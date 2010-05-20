@@ -45,6 +45,7 @@
 #include "qgeoroutingmanager_nokia_p.h"
 
 #include <QtPlugin>
+#include <QNetworkProxy>
 
 QGeoServiceProviderPluginNokia::QGeoServiceProviderPluginNokia()
     : m_placesManager(0),
@@ -72,16 +73,44 @@ bool QGeoServiceProviderPluginNokia::initialize(const QMap<QString, QString> &pa
                                                 QGeoServiceProvider::Error *error,
                                                 QString *errorString)
 {
+    QList<QString> keys = parameters.keys();
+    
     if (m_placesManager)
         delete m_placesManager;
 
-    m_placesManager = new QGeoPlacesManagerNokia();
+    QGeoPlacesManagerNokia* placesManager = new QGeoPlacesManagerNokia();
+    if(keys.contains("places.proxy")) {
+        QString proxy = parameters.value("places.proxy");
+        if(proxy.isEmpty())
+            placesManager->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
+        else
+            placesManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
+    }
+    if(keys.contains("places.host")) {
+        QString host = parameters.value("places.host");
+        if(!host.isEmpty())
+            placesManager->setHost(host);
+    }
+    m_placesManager = placesManager;
 
     if (m_routingManager)
         delete m_routingManager;
 
-    m_routingManager = new QGeoRoutingManagerNokia();
-
+    QGeoRoutingManagerNokia* routingManager = new QGeoRoutingManagerNokia();
+    if(keys.contains("places.proxy")) {
+        QString proxy = parameters.value("routing.proxy");
+        if(proxy.isEmpty())
+            routingManager->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
+        else
+            routingManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
+    }
+    if(keys.contains("places.host")) {
+        QString host = parameters.value("routing.host");
+        if(!host.isEmpty())
+            routingManager->setHost(host);
+    }
+    
+    m_routingManager = routingManager;
 
     if (error)
         *error = QGeoServiceProvider::NoError;

@@ -50,11 +50,9 @@ QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(QObject *parent)
     : QGeoRoutingManager(parent)
 {
     m_networkManager = new QNetworkAccessManager(this);
-
-    m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,
-                                             "172.16.42.137",
-                                             8080));
-    m_host = "route.desktop.maps.svc.ovi.com";
+    
+    setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
+    setHost("route.desktop.maps.svc.ovi.com");
 
     setSupportsAlternativeRoutes(true);
 
@@ -83,6 +81,16 @@ QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(QObject *parent)
 }
 
 QGeoRoutingManagerNokia::~QGeoRoutingManagerNokia() {}
+
+void QGeoRoutingManagerNokia::setProxy(const QNetworkProxy &proxy)
+{
+    m_networkManager->setProxy(proxy);
+}
+
+void QGeoRoutingManagerNokia::setHost(QString host)
+{
+    m_host = host;
+}
 
 QString QGeoRoutingManagerNokia::requestString(const QGeoRouteRequest &request)
 {

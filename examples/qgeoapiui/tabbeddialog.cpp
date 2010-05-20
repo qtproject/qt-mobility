@@ -75,7 +75,13 @@ TabbedDialog::TabbedDialog(QWidget *parent)
     session->open();
     session->waitForOpened(-1);
 #endif
-    serviceProvider = new QGeoServiceProvider("nokia");
+    QMap<QString,QString> parameters;
+    parameters.insert("places.proxy", "172.16.42.137");
+    parameters.insert("places.host", "dev-a7.bln.gate5.de");
+    parameters.insert("routing.proxy", "172.16.42.137");
+    parameters.insert("routing.host", "172.24.32.155");
+    
+    serviceProvider = new QGeoServiceProvider("nokia", parameters);
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("QGeoApiUI Example"), tr(
                                      "Unable to find the nokia geoservices plugin."));

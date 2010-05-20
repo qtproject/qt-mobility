@@ -75,12 +75,16 @@ public:
                                   SearchTypes searchTypes = SearchTypes(SearchAll),
                                   const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
+    void setProxy(const QNetworkProxy &proxy);
+    void setHost(QString host);
+
 private slots:
     void placesFinished();
     void placesError(QGeoPlacesReply::Error error, const QString &errorString);
 
 private:
     static QString trimDouble(qreal degree, int decimalDigits = 10);
+    QGeoPlacesReply* search(QString requestString);
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;
