@@ -75,6 +75,10 @@ QGeoPlacesReply::QGeoPlacesReply(QObject *parent)
 {
 }
 
+QGeoPlacesReply::QGeoPlacesReply(Error error, const QString &errorString, QObject *parent)
+    : QObject(parent),
+    d_ptr(new QGeoPlacesReplyPrivate(error, errorString)) {}
+
 /*!
     Destructor.
 */
@@ -82,6 +86,37 @@ QGeoPlacesReply::~QGeoPlacesReply()
 {
     delete d_ptr;
 }
+
+void QGeoPlacesReply::setFinished(bool finished)
+{
+    d_ptr->isFinished = finished;
+    if (d_ptr->isFinished)
+        emit this->finished();
+}
+
+bool QGeoPlacesReply::isFinished() const
+{
+    return d_ptr->isFinished;
+}
+
+void QGeoPlacesReply::setError(QGeoPlacesReply::Error error, const QString &errorString)
+{
+    d_ptr->error = error;
+    d_ptr->errorString = errorString;
+    emit this->error(error, errorString);
+    setFinished(true);
+}
+
+QGeoPlacesReply::Error QGeoPlacesReply::error() const
+{
+    return d_ptr->error;
+}
+
+QString QGeoPlacesReply::errorString() const
+{
+    return d_ptr->errorString;
+}
+
 
 /*!
     Returns a list of places corresponding to the request.
@@ -108,10 +143,9 @@ void QGeoPlacesReply::setPlaces(const QList<QGeoLocation> &places)
 }
 
 /*!
-    \fn void QGeoPlacesReply::abort()
-
     Cancels the receiving of this reply if the reply hasn't been received already.
 */
+void QGeoPlacesReply::abort() {}
 
 /*!
     \fn void QGeoPlacesReply::finished()
@@ -127,16 +161,31 @@ void QGeoPlacesReply::setPlaces(const QList<QGeoLocation> &places)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate() {}
+QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate()
+    : error(QGeoPlacesReply::NoError),
+    errorString(""),
+    isFinished(false) {}
+
+QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate(QGeoPlacesReply::Error error, const QString &errorString)
+    : error(error),
+    errorString(errorString),
+    isFinished(true) {}
 
 QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate(const QGeoPlacesReplyPrivate &other)
-    : places(other.places) {}
+    : error(error),
+    errorString(errorString),
+    isFinished(isFinished),
+    places(other.places) {}
 
 QGeoPlacesReplyPrivate::~QGeoPlacesReplyPrivate() {}
 
 QGeoPlacesReplyPrivate& QGeoPlacesReplyPrivate::operator= (const QGeoPlacesReplyPrivate &other)
 {
+    error = other.error;
+    errorString = other.errorString;
+    isFinished = other.isFinished;
     places = other.places;
+
     return *this;
 }
 

@@ -103,6 +103,9 @@ public:
 
     QGeoRouteRequest& operator= (const QGeoRouteRequest &other);
 
+    void updateRoute(const QGeoCoordinate &currentPosition, const QList<QGeoCoordinate> &waypointsPassed = QList<QGeoCoordinate>());
+    bool isUpdate() const;
+
     void setWaypoints(const QList<QGeoCoordinate> &waypoints);
     QList<QGeoCoordinate> waypoints() const;
 

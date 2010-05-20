@@ -70,7 +70,7 @@ void QGeoPlacesReplyNokia::abort()
 void QGeoPlacesReplyNokia::networkFinished()
 {
     if (m_reply->error() != QNetworkReply::NoError) {
-        emit error(QGeoPlacesReply::NetworkError, m_reply->errorString());
+        setError(QGeoPlacesReply::CommunicationError, m_reply->errorString());
         m_reply->deleteLater();
         return;
     }
@@ -79,10 +79,10 @@ void QGeoPlacesReplyNokia::networkFinished()
 
     if (parser.parse(m_reply)) {
         setPlaces(parser.results());
-        emit finished();
+        setFinished(true);
     } else {
         // add a qWarning with the actual parser.errorString()
-        emit error(QGeoPlacesReply::ParsingError, "TODO generic parsing error");
+        setError(QGeoPlacesReply::ParseError, "The response from the service was not in a recognisable format.");
     }
 
     m_reply->deleteLater();
@@ -90,6 +90,6 @@ void QGeoPlacesReplyNokia::networkFinished()
 
 void QGeoPlacesReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    emit this->error(QGeoPlacesReply::NetworkError, m_reply->errorString());
+    setError(QGeoPlacesReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
 }

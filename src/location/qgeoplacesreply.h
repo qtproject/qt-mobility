@@ -59,27 +59,33 @@ public:
     // TODO populate this some more...
     enum Error {
         NoError,
-        // flesh out the more common specific network errors
-        NetworkError,
-        // File errors
-        NoContentError,
-        ParsingError,
+        CommunicationError,
+        ParseError,
+        UnsupportedOptionError,
         UnknownError
     };
 
     QGeoPlacesReply(QObject *parent = 0);
+    QGeoPlacesReply(Error error, const QString &errorString, QObject *parent = 0);
     virtual ~QGeoPlacesReply();
+
+    bool isFinished() const;
+    Error error() const;
+    QString errorString() const;
 
     QList<QGeoLocation> places() const;
 
 public slots:
-    virtual void abort() = 0;
+    virtual void abort();
 
 signals:
     void finished();
     void error(QGeoPlacesReply::Error error, const QString &errorString = QString());
 
 protected:
+    void setError(Error error, const QString &errorString);
+    void setFinished(bool finished);
+
     void addPlace(const QGeoLocation &place);
     void setPlaces(const QList<QGeoLocation> &places);
 

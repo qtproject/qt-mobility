@@ -69,6 +69,12 @@ QGeoPlacesManagerNokia::~QGeoPlacesManagerNokia() {}
 
 QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
 {
+    if (!supportsGeocoding()) {
+        QGeoPlacesReply *reply = new QGeoPlacesReply(QGeoPlacesReply::UnsupportedOptionError, "Geocoding is not supported by this service provider.", this);
+        emit error(reply, reply->error(), reply->errorString());
+        return reply;
+    }
+
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/geocoder/gc/1.0?referer=localhost";
@@ -151,9 +157,16 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoCoordinate &coordinat
     return reply;
 }
 
-QGeoPlacesReply* QGeoPlacesManagerNokia::placesSearch(const QString &searchString, QGeoPlacesManager::SearchType searchType, const QGeoBoundingBox &bounds)
+QGeoPlacesReply* QGeoPlacesManagerNokia::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 {
-    // TODO handle case where searchType is landmarks only
+
+    if ((searchTypes != QGeoPlacesManager::SearchTypes(QGeoPlacesManager::SearchAll))
+        && ((searchTypes & supportedSearchTypes()) != searchTypes)) {
+
+        QGeoPlacesReply *reply = new QGeoPlacesReply(QGeoPlacesReply::UnsupportedOptionError, "The selected search type is not supported by this service provider.", this);
+        emit error(reply, reply->error(), reply->errorString());
+        return reply;
+    }
 
     QString requestString = "http://";
     requestString += m_host;

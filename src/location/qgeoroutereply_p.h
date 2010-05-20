@@ -54,6 +54,7 @@
 //
 
 #include "qgeorouterequest.h"
+#include "qgeoroutereply.h"
 
 #include <QList>
 
@@ -65,10 +66,15 @@ class QGeoRouteReplyPrivate
 {
 public:
     QGeoRouteReplyPrivate(const QGeoRouteRequest &request);
+    QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QString errorString);
     QGeoRouteReplyPrivate(const QGeoRouteReplyPrivate &other);
     ~QGeoRouteReplyPrivate();
 
     QGeoRouteReplyPrivate& operator= (const QGeoRouteReplyPrivate &other);
+
+    QGeoRouteReply::Error error;
+    QString errorString;
+    bool isFinished;
 
     QGeoRouteRequest request;
     QList<QGeoRoute> routes;

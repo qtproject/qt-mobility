@@ -60,21 +60,24 @@ class Q_LOCATION_EXPORT QGeoRouteReply : public QObject
 public:
     enum Error {
         NoError,
-        // flesh out the more common specific network errors
-        NetworkError,
-        // File errors
-        NoContentError,
-        ParsingError,
+        CommunicationError,
+        ParseError,
+        UnsupportedOptionError,
         UnknownError
     };
 
+    QGeoRouteReply(Error error, const QString &errorString, QObject *parent = 0);
     virtual ~QGeoRouteReply();
+
+    bool isFinished() const;
+    Error error() const;
+    QString errorString() const;
 
     QGeoRouteRequest request() const;
     QList<QGeoRoute> routes() const;
 
 public slots:
-    virtual void abort() = 0;
+    virtual void abort();
 
 signals:
     void finished();
@@ -82,6 +85,10 @@ signals:
 
 protected:
     QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent = 0);
+
+    void setError(Error error, const QString &errorString);
+    void setFinished(bool finished);
+
     void setRoutes(const QList<QGeoRoute> &routes);
 
 private:

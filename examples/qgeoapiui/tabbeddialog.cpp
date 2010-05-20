@@ -49,10 +49,9 @@
 
 #include <QApplication>
 #include <QTimer>
-#include <QDebug>
+#include <QMessageBox>
 
 #ifdef Q_OS_SYMBIAN
-#include <QMessageBox>
 #include <qnetworkconfigmanager.h>
 #endif
 
@@ -78,7 +77,8 @@ TabbedDialog::TabbedDialog(QWidget *parent)
 #endif
     serviceProvider = new QGeoServiceProvider("nokia");
     if (serviceProvider->error() != QGeoServiceProvider::NoError) {
-        qWarning() << "Unable to find the nokia geoservices plugin.";
+        QMessageBox::information(this, tr("QGeoApiUI Example"), tr(
+                                     "Unable to find the nokia geoservices plugin."));
         QTimer::singleShot(0, qApp, SLOT(quit()));
         return;
     }

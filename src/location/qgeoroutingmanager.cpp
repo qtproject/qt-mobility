@@ -138,7 +138,8 @@ QGeoRouteRequest::DirectionsDetails QGeoRoutingManager::supportedDirectionsDetai
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate() {}
+QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
+    : supportsAlternativeRoutes(false) {}
 
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate(const QGeoRoutingManagerPrivate &other)
     : supportsAlternativeRoutes(other.supportsAlternativeRoutes),

@@ -72,7 +72,7 @@ public:
                              const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
     QGeoPlacesReply* placesSearch(const QString &searchString,
-                                  SearchType searchType = SearchAll,
+                                  SearchTypes searchTypes = SearchTypes(SearchAll),
                                   const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
 private slots:

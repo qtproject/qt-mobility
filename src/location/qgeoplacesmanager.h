@@ -75,7 +75,7 @@ public:
                                      const QGeoBoundingBox &bounds = QGeoBoundingBox()) = 0;
 
     virtual QGeoPlacesReply* placesSearch(const QString &searchString,
-                                          SearchType searchType = SearchAll,
+                                          SearchTypes searchTypes = SearchTypes(SearchAll),
                                           const QGeoBoundingBox &bounds = QGeoBoundingBox()) = 0;
 
     bool supportsViewportBiasing() const;

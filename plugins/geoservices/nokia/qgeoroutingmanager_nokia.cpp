@@ -56,7 +56,6 @@ QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(QObject *parent)
                                              8080));
     m_host = "route.desktop.maps.svc.ovi.com";
 
-    // TODO set up support information
     setSupportsAlternativeRoutes(true);
 
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatures;
@@ -87,6 +86,26 @@ QGeoRoutingManagerNokia::~QGeoRoutingManagerNokia() {}
 
 QString QGeoRoutingManagerNokia::requestString(const QGeoRouteRequest &request)
 {
+    bool supported = true;
+
+    if ((request.avoidFeatureTypes() & supportedAvoidFeatureTypes()) != request.avoidFeatureTypes())
+        supported = false;
+
+    // TODO
+    //setSupportedDirectionsDetails();
+
+    if ((request.routeOptimization() & supportedRouteOptimizations()) != request.routeOptimization())
+        supported = false;
+
+    if ((request.travelModes() & supportedTravelModes()) != request.travelModes())
+        supported = false;
+
+    if ((request.numberAlternativeRoutes() != 0) && !supportsAlternativeRoutes())
+        supported = false;
+
+    if (!supported)
+        return "";
+
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/routing/rt/1.0?referer=localhost";
@@ -183,7 +202,11 @@ QGeoRouteReply* QGeoRoutingManagerNokia::getRoute(const QGeoRouteRequest& reques
 {
     QString reqString = requestString(request);
 
-    // TODO handle case where reqString is empty (unsupported option error)
+    if (reqString.isEmpty()) {
+        QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The give route request options are not supported by this service provider.", this);
+        emit error(reply, reply->error(), reply->errorString());
+        return reply;
+    }
 
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(reqString)));
     QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(request, networkReply, this);

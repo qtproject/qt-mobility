@@ -80,7 +80,7 @@ QGeoPlacesManager::~QGeoPlacesManager()
 */
 
 /*!
-\fn QGeoPlacesReply* QGeoPlacesManager::placesSearch(const QString &searchString, QGeoPlacesManager::SearchType searchType, const QGeoBoundingBox &bounds)
+\fn QGeoPlacesReply* QGeoPlacesManager::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 */
 
 /*!
@@ -157,7 +157,9 @@ QGeoPlacesManager::SearchTypes QGeoPlacesManager::supportedSearchTypes() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoPlacesManagerPrivate::QGeoPlacesManagerPrivate() {}
+QGeoPlacesManagerPrivate::QGeoPlacesManagerPrivate()
+    : supportsViewportBiasing(false),
+    supportsGeocoding(false) {}
 
 QGeoPlacesManagerPrivate::QGeoPlacesManagerPrivate(const QGeoPlacesManagerPrivate &other)
     : //landmarkManagers(other.landmarkManagers),

@@ -55,6 +55,8 @@
 
 #include "qgeolocation.h"
 
+#include "qgeoplacesreply.h"
+
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
@@ -63,10 +65,15 @@ class QGeoPlacesReplyPrivate
 {
 public:
     QGeoPlacesReplyPrivate();
+    QGeoPlacesReplyPrivate(QGeoPlacesReply::Error error, const QString& errorString);
     QGeoPlacesReplyPrivate(const QGeoPlacesReplyPrivate &other);
     ~QGeoPlacesReplyPrivate();
 
     QGeoPlacesReplyPrivate& operator= (const QGeoPlacesReplyPrivate &other);
+
+    QGeoPlacesReply::Error error;
+    QString errorString;
+    bool isFinished;
 
     QList<QGeoLocation> places;
 };

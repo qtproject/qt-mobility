@@ -67,6 +67,10 @@ QTM_BEGIN_NAMESPACE
         An error occurred which does not fit into any of the other categories.
 */
 
+QGeoRouteReply::QGeoRouteReply(Error error, const QString &errorString, QObject *parent)
+    : QObject(parent),
+    d_ptr(new QGeoRouteReplyPrivate(error, errorString)) {}
+
 /*!
     Constructs a route reply object based on \a request, with parent \a parent.
 */
@@ -82,6 +86,36 @@ QGeoRouteReply::QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent)
 QGeoRouteReply::~QGeoRouteReply()
 {
     delete d_ptr;
+}
+
+void QGeoRouteReply::setFinished(bool finished)
+{
+    d_ptr->isFinished = finished;
+    if (d_ptr->isFinished)
+        emit this->finished();
+}
+
+bool QGeoRouteReply::isFinished() const
+{
+    return d_ptr->isFinished;
+}
+
+void QGeoRouteReply::setError(QGeoRouteReply::Error error, const QString &errorString)
+{
+    d_ptr->error = error;
+    d_ptr->errorString = errorString;
+    emit this->error(error, errorString);
+    setFinished(true);
+}
+
+QGeoRouteReply::Error QGeoRouteReply::error() const
+{
+    return d_ptr->error;
+}
+
+QString QGeoRouteReply::errorString() const
+{
+    return d_ptr->errorString;
 }
 
 /*!
@@ -109,10 +143,9 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 }
 
 /*!
-    \fn void QGeoRouteReply::abort()
-
     Cancels the route calculation operation if the reply hasn't been received already.
 */
+void QGeoRouteReply::abort() {}
 
 /*!
     \fn void QGeoRouteReply::finished()
@@ -129,16 +162,30 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 *******************************************************************************/
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteRequest &request)
-    : request(request) {}
+    : error(QGeoRouteReply::NoError),
+    errorString(""),
+    isFinished(false),
+    request(request) {}
+
+QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QString errorString)
+    : error(error),
+    errorString(errorString),
+    isFinished(true) {}
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteReplyPrivate &other)
-    : request(other.request),
+    : error(other.error),
+    errorString(other.errorString),
+    isFinished(other.isFinished),
+    request(other.request),
     routes(other.routes) {}
 
 QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
 
 QGeoRouteReplyPrivate& QGeoRouteReplyPrivate::operator= (const QGeoRouteReplyPrivate &other)
 {
+    error = other.error;
+    errorString = other.errorString;
+    isFinished = other.isFinished;
     request = other.request;
     routes = other.routes;
 

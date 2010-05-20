@@ -70,7 +70,7 @@ void QGeoRouteReplyNokia::abort()
 void QGeoRouteReplyNokia::networkFinished()
 {
     if (m_reply->error() != QNetworkReply::NoError) {
-        emit error(QGeoRouteReply::NetworkError, m_reply->errorString());
+        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
         m_reply->deleteLater();
         return;
     }
@@ -79,10 +79,10 @@ void QGeoRouteReplyNokia::networkFinished()
 
     if (parser.parse(m_reply)) {
         setRoutes(parser.results());
-        emit finished();
+        setFinished(true);
     } else {
         // add a qWarning with the actual parser.errorString()
-        emit error(QGeoRouteReply::ParsingError, "TODO generic parsing error");
+        setError(QGeoRouteReply::ParseError, "The response from the service was not in a recognisable format.");
     }
 
     m_reply->deleteLater();
@@ -90,6 +90,6 @@ void QGeoRouteReplyNokia::networkFinished()
 
 void QGeoRouteReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    emit this->error(QGeoRouteReply::NetworkError, m_reply->errorString());
+    setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
 }
