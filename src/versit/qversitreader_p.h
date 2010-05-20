@@ -83,26 +83,72 @@ QTM_BEGIN_NAMESPACE
 // the more time spent moving bytes around.  The larger it is, the more memory is wasted.
 static const int MAX_OLD_BYTES_TO_KEEP = 8192;
 
+/*
+ * A VersitCursor has a subset of QByteArray's interface, plus an efficient chopLeft function
+ * 
+ * It stores a QByteArray internally, plus a marker of where it starts and where it ends.
+ */
 class Q_AUTOTEST_EXPORT VersitCursor
 {
 public:
-    VersitCursor() : position(-1), selection(-1) {}
-    explicit VersitCursor(const QByteArray& d) :data(d), position(0), selection(0) {}
-    QByteArray data;
-    int position;
-    int selection;
+    VersitCursor() : mStart(0), mEnd(0) {}
+    explicit VersitCursor(const QByteArray& d) :mData(d), mStart(0), mEnd(d.size()) {}
+    bool isEmpty() const {
+        return mEnd <= mStart;
+    }
+    char at(int i) const {
+        return mData.at(mStart + i);
+    }
+    QByteArray toByteArray() const {
+        return mData.mid(mStart, mEnd-mStart);
+    }
+    /* Removes \a n bytes from the start of the QByteArray. */ 
+    void chopLeft(int n) {
+        Q_ASSERT(size() >= n && n >= 0);
+        mStart += n;
+    }
+    QByteArray left(int n) {
+        Q_ASSERT(size() >= n && n >= 0);
+        return mData.mid(mStart, n);
+    }
+    int indexOf(const QByteArray& needle) {
+        int index = mData.indexOf(needle, mStart) - mStart;
+        if (index < size())
+            return index;
+        return -1;
+    }
+    int size() const {
+        return mEnd - mStart;
+    }
+    const char* constData() const {
+        return mData.constData() + mStart;
+    }
+    VersitCursor& operator=(const QByteArray& ba) {
+        mData = ba;
+        mStart = 0;
+        mEnd = mData.size();
+        return *this;
+    }
+    bool operator==(const QByteArray& ba) {
+        return toByteArray() == ba;
+    }
+    bool operator!=(const QByteArray& ba) {
+        return toByteArray() != ba;
+    }
 
-    void setData(const QByteArray& d) {data = d; position = selection = 0;}
-    void setPosition(int pos) {position = pos; selection = qMax(pos, selection);}
-    void setSelection(int pos) {selection = qMax(pos, position);}
-    void dropOldData()
-    {
-        if (position > MAX_OLD_BYTES_TO_KEEP && selection >= position) {
-            data.remove(0, position);
-            selection -= position;
-            position = 0;
+private:
+    /* Clears the memory of bytes before the start marker */
+    void dropOldData() {
+        if (mStart > MAX_OLD_BYTES_TO_KEEP && mEnd >= mStart) {
+            mData.remove(0, mStart);
+            mEnd -= mStart;
+            mStart = 0;
         }
     }
+    QByteArray mData;
+    int mStart;
+    int mEnd;
+    friend class LineReader;
 };
 
 class Q_AUTOTEST_EXPORT LineReader
@@ -176,7 +222,6 @@ public: // New functions
 
     bool unencode(
         QVariant& value,
-        VersitCursor& cursor,
         QVersitProperty& property,
         QTextCodec* codec,
         LineReader& lineReader) const;
@@ -193,7 +238,6 @@ public: // New functions
     /* These functions operate on a cursor describing a single line */
     QPair<QStringList,QString> extractPropertyGroupsAndName(VersitCursor& line, QTextCodec* codec)
             const;
-    QByteArray extractPropertyValue(VersitCursor& line) const;
     QMultiHash<QString,QString> extractVCard21PropertyParams(VersitCursor& line, QTextCodec* codec)
             const;
     QMultiHash<QString,QString> extractVCard30PropertyParams(VersitCursor& line, QTextCodec* codec)
@@ -206,7 +250,7 @@ public: // New functions
     QByteArray extractPart(const QByteArray& text, int startPosition, int length=-1) const;
     QString paramName(const QByteArray& parameter, QTextCodec* codec) const;
     QString paramValue(const QByteArray& parameter, QTextCodec* codec) const;
-    static bool containsAt(const QByteArray& text, const QByteArray& ba, int index);
+    template <class T> static bool containsAt(const T& text, const QByteArray& ba, int index);
     bool splitStructuredValue(QVersitProperty& property,
                               bool hasEscapedBackslashes) const;
     static QStringList splitValue(const QString& string,

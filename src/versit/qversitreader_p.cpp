@@ -78,19 +78,17 @@ LineReader::LineReader(QIODevice* device, QTextCodec *codec, int chunkSize)
 }
 
 /*!
-  Attempts to read a line and returns a VersitCursor describing the line.  The cursor returned
-  includes the data, as well as the position and selection index bounds.  Data within those bounds
-  represents the line.  Data outside those bounds should not be used.
- */
+  Attempts to read a line and returns a VersitCursor containing the line.
+  */
 VersitCursor LineReader::readLine()
 {
-    mBuffer.position = mBuffer.selection;
-    mSearchFrom = mBuffer.position;
+    mBuffer.mStart = mBuffer.mEnd;
+    mSearchFrom = mBuffer.mStart;
 
     // First, look for a newline in the already-existing buffer.  If found, return the line.
     if (tryReadLine(mBuffer, false)) {
         mBuffer.dropOldData();
-        mOdometer += mBuffer.selection - mBuffer.position;
+        mOdometer += mBuffer.size();
         return mBuffer;
     }
 
@@ -98,10 +96,10 @@ VersitCursor LineReader::readLine()
     while (!mDevice->atEnd()) {
         QByteArray temp = mDevice->read(mChunkSize);
         if (!temp.isEmpty()) {
-            mBuffer.data.append(temp);
+            mBuffer.mData.append(temp);
             if (tryReadLine(mBuffer, false)) {
                 mBuffer.dropOldData();
-                mOdometer += mBuffer.selection - mBuffer.position;
+                mOdometer += mBuffer.size();
                 return mBuffer;
             }
         } else {
@@ -112,7 +110,7 @@ VersitCursor LineReader::readLine()
     // We've reached the end of the stream.  Find a newline from the buffer (or return what's left).
     tryReadLine(mBuffer, true);
     mBuffer.dropOldData();
-    mOdometer += mBuffer.selection - mBuffer.position;
+    mOdometer += mBuffer.size();
     return mBuffer;
 }
 
@@ -127,11 +125,11 @@ int LineReader::odometer()
 /*!
   Returns true if there are no more lines left for readLine() to return.  It is possible for atEnd()
   to return false and for there to be no more data left (eg. if there are trailing newlines at the
-  end of the input.  In this case, readLine() will return an empty line (ie. position == selection).
+  end of the input.  In this case, readLine() will return an empty line.
  */
 bool LineReader::atEnd()
 {
-    return mDevice->atEnd() && mBuffer.selection == mBuffer.data.size();
+    return mDevice->atEnd() && mBuffer.mEnd == mBuffer.mData.size();
 }
 
 /*!
@@ -147,7 +145,7 @@ QTextCodec* LineReader::codec()
  * sequences of newline-space from the retrieved line.  Skips over any newlines at the start of the
  * input.
  *
- * Returns a VersitCursor containing and selecting the line.
+ * Returns a VersitCursor containing the line.
  */
 bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
 {
@@ -160,21 +158,21 @@ bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
     forever {
         foreach(const QByteArrayMatcher& crlf, mCrlfList) {
             int crlfLength = crlf.pattern().length();
-            crlfPos = crlf.indexIn(cursor.data, mSearchFrom);
-            if (crlfPos == cursor.position) {
-                // Newline at start of line.  Set position to directly after it.
-                cursor.position += crlfLength;
-                mSearchFrom = cursor.position;
+            crlfPos = crlf.indexIn(cursor.mData, mSearchFrom);
+            if (crlfPos == cursor.mStart) {
+                // Newline at start of line.  Set mStart to directly after it.
+                cursor.mStart += crlfLength;
+                mSearchFrom = cursor.mStart;
                 break;
-            } else if (crlfPos > cursor.position) {
+            } else if (crlfPos > cursor.mStart) {
                 // Found the CRLF.
-                if (QVersitReaderPrivate::containsAt(cursor.data, space, crlfPos + crlfLength)
-                    || QVersitReaderPrivate::containsAt(cursor.data, tab, crlfPos + crlfLength)) {
+                if (QVersitReaderPrivate::containsAt(cursor.mData, space, crlfPos + crlfLength)
+                    || QVersitReaderPrivate::containsAt(cursor.mData, tab, crlfPos + crlfLength)) {
                     // If it's followed by whitespace, collapse it.
-                    cursor.data.remove(crlfPos, crlfLength + spaceLength);
+                    cursor.mData.remove(crlfPos, crlfLength + spaceLength);
                     mSearchFrom = crlfPos;
                     break;
-                } else if (!atEnd && crlfPos + crlfLength + spaceLength >= cursor.data.size()) {
+                } else if (!atEnd && crlfPos + crlfLength + spaceLength >= cursor.mData.size()) {
                     // If our CRLF is at the end of the current buffer but there's more to read,
                     // it's possible that a space could be hiding on the next read from the device.
                     // Just pretend we didn't see the CRLF and pick it up the next time round.
@@ -182,14 +180,14 @@ bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
                     return false;
                 } else {
                     // Found the CRLF.
-                    cursor.selection = crlfPos;
+                    cursor.mEnd = crlfPos;
                     return true;
                 }
             }
         }
         if (crlfPos == -1) {
             // No CRLF found.
-            cursor.selection = cursor.data.size();
+            cursor.mEnd = cursor.mData.size();
             return false;
         }
     }
@@ -435,7 +433,7 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
         LineReader& lineReader)
 {
     VersitCursor cursor = lineReader.readLine();
-    if (cursor.position >= cursor.selection)
+    if (cursor.isEmpty())
         return QVersitProperty();
 
     // Otherwise, do stuff.
@@ -467,7 +465,7 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
 {
     property.setParameters(extractVCard21PropertyParams(cursor, lineReader.codec()));
 
-    QByteArray value = extractPropertyValue(cursor);
+    QByteArray value = cursor.toByteArray();
     if (property.valueType() == QVersitProperty::VersitDocumentType) {
         // Hack to handle cases where start of document is on the same or next line as "AGENT:"
         bool foundBegin = false;
@@ -487,7 +485,7 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
     } else {
         QTextCodec* codec;
         QVariant valueVariant(decodeCharset(value, property, lineReader.codec(), &codec));
-        bool isBinary = unencode(valueVariant, cursor, property, codec, lineReader);
+        bool isBinary = unencode(valueVariant, property, codec, lineReader);
         property.setValue(valueVariant);
         if (isBinary)
             property.setValueType(QVersitProperty::BinaryType);
@@ -504,7 +502,7 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
 {
     property.setParameters(extractVCard30PropertyParams(cursor, lineReader.codec()));
 
-    QByteArray value = extractPropertyValue(cursor);
+    QByteArray value = cursor.toByteArray();
 
     QTextCodec* codec;
     QString valueString(decodeCharset(value, property, lineReader.codec(), &codec));
@@ -526,7 +524,7 @@ void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitPro
         }
     } else {
         QVariant valueVariant(valueString);
-        bool isBinary = unencode(valueVariant, cursor, property, codec, lineReader);
+        bool isBinary = unencode(valueVariant, property, codec, lineReader);
         property.setValue(valueVariant);
         if (isBinary) {
             property.setValueType(QVersitProperty::BinaryType);
@@ -574,8 +572,9 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
  * On entry, \a value should hold a QString.  On exit, it may be either a QString or a QByteArray.
  * Returns true if and only if the property value is turned into a QByteArray.
  */
-bool QVersitReaderPrivate::unencode(QVariant& value, VersitCursor& cursor,
-                                    QVersitProperty& property, QTextCodec* codec,
+bool QVersitReaderPrivate::unencode(QVariant& value,
+                                    QVersitProperty& property,
+                                    QTextCodec* codec,
                                     LineReader& lineReader) const
 {
     Q_ASSERT(value.type() == QVariant::String);
@@ -588,9 +587,7 @@ bool QVersitReaderPrivate::unencode(QVariant& value, VersitCursor& cursor,
         while (valueString.endsWith(QLatin1Char('='))) {
             valueString.chop(1); // Get rid of '='
             // We add each line (minus the escaped = and newline chars)
-            cursor = lineReader.readLine();
-            QString line = codec->toUnicode(
-                    cursor.data.mid(cursor.position, cursor.selection-cursor.position));
+            QString line = codec->toUnicode(lineReader.readLine().toByteArray());
             valueString.append(line);
         }
         decodeQuotedPrintable(valueString);
@@ -670,8 +667,8 @@ void QVersitReaderPrivate::decodeQuotedPrintable(QString& text) const
 /*!
  * Extracts the groups and the name of the property using \a codec to determine the delimiters
  *
- * On entry, \a line should select a whole line.
- * On exit, \a line will be updated to point after the groups and name.
+ * On entry, \a line should contain a whole line
+ * On exit, \a line will be updated to remove the groups and name
  */
 QPair<QStringList,QString>QVersitReaderPrivate::extractPropertyGroupsAndName(
         VersitCursor& line, QTextCodec *codec) const
@@ -681,20 +678,17 @@ QPair<QStringList,QString>QVersitReaderPrivate::extractPropertyGroupsAndName(
     const QByteArray backslash = VersitUtils::encode('\\', codec);
     QPair<QStringList,QString> groupsAndName;
     int length = 0;
-    Q_ASSERT(line.data.size() >= line.position);
 
     int separatorLength = semicolon.length();
-    for (int i = line.position; i < line.selection - separatorLength + 1; i++) {
-        if ((containsAt(line.data, semicolon, i)
-                && !containsAt(line.data, backslash, i-separatorLength))
-            || containsAt(line.data, colon, i)) {
-            length = i - line.position;
+    for (int i = 0; i < line.size() - separatorLength + 1; i++) {
+        if ((containsAt(line, semicolon, i) && !containsAt(line, backslash, i-separatorLength))
+            || containsAt(line, colon, i)) {
+            length = i;
             break;
         }
     }
     if (length > 0) {
-        QString trimmedGroupsAndName =
-                codec->toUnicode(line.data.mid(line.position, length)).trimmed();
+        QString trimmedGroupsAndName = codec->toUnicode(line.left(length)).trimmed();
         QStringList parts = trimmedGroupsAndName.split(QLatin1Char('.'));
         if (parts.count() > 1) {
             groupsAndName.second = parts.takeLast();
@@ -702,34 +696,18 @@ QPair<QStringList,QString>QVersitReaderPrivate::extractPropertyGroupsAndName(
         } else {
             groupsAndName.second = trimmedGroupsAndName;
         }
-        line.setPosition(length + line.position);
+        line.chopLeft(length);
     }
 
     return groupsAndName;
 }
 
 /*!
- * Extracts the value of the property.
- * Returns an empty string if the value was not found.
- *
- * On entry \a line should point to the value anyway.
- * On exit \a line should point to newline after the value
- */
-QByteArray QVersitReaderPrivate::extractPropertyValue(VersitCursor& line) const
-{
-    QByteArray value = line.data.mid(line.position, line.selection - line.position);
-
-    /* Now advance the cursor in all cases. */
-    line.position = line.selection;
-    return value;
-}
-
-/*!
  * Extracts the property parameters as a QMultiHash using \a codec to determine the delimiters.
  * The parameters without names are added as "TYPE" parameters.
  *
- * On entry \a line should contain the entire line.
- * On exit, line will be updated to point to the start of the value.
+ * On entry \a line should contain the line sans the group and name
+ * On exit, line will be updated to have the parameters removed.
  */
 QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard21PropertyParams(
         VersitCursor& line, QTextCodec *codec) const
@@ -749,6 +727,9 @@ QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard21PropertyParams(
 /*!
  * Extracts the property parameters as a QMultiHash using \a codec to determine the delimiters.
  * The parameters without names are added as "TYPE" parameters.
+ *
+ * On entry \a line should contain the line sans the group and name
+ * On exit, line will be updated to have the parameters removed.
  */
 QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard30PropertyParams(
         VersitCursor& line, QTextCodec *codec) const
@@ -773,8 +754,8 @@ QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard30PropertyParams(
 /*!
  * Extracts the parameters as delimited by semicolons using \a codec to determine the delimiters.
  *
- * On entry \a line should point to the start of the parameter section (past the name).
- * On exit, \a line will be updated to point to the start of the value.
+ * On entry \a line should contain the content line sans the group and name
+ * On exit, \a line will be updated to only have the value remain
  */
 QList<QByteArray> QVersitReaderPrivate::extractParams(VersitCursor& line, QTextCodec *codec) const
 {
@@ -782,16 +763,16 @@ QList<QByteArray> QVersitReaderPrivate::extractParams(VersitCursor& line, QTextC
     QList<QByteArray> params;
 
     /* find the end of the name&params */
-    int colonIndex = line.data.indexOf(colon, line.position);
-    if (colonIndex > line.position && colonIndex < line.selection) {
-        QByteArray nameAndParamsString = line.data.mid(line.position, colonIndex - line.position);
+    int colonIndex = line.indexOf(colon);
+    if (colonIndex > 0) {
+        QByteArray nameAndParamsString = line.left(colonIndex);
         params = extractParts(nameAndParamsString, VersitUtils::encode(';', codec), codec);
 
         /* Update line */
-        line.setPosition(colonIndex + colon.length());
-    } else if (colonIndex == line.position) {
+        line.chopLeft(colonIndex + colon.length());
+    } else if (colonIndex == 0) {
         // No parameters.. advance past it
-        line.setPosition(line.position + colon.length());
+        line.chopLeft(colon.length());
     }
 
     return params;
@@ -879,11 +860,13 @@ QString QVersitReaderPrivate::paramValue(const QByteArray& parameter, QTextCodec
  * Returns true if and only if \a text contains \a ba at \a index
  *
  * On entry, index must be >= 0
+ *
+ * T is either a QByteArray or VersitCursor
  */
-bool QVersitReaderPrivate::containsAt(const QByteArray& text, const QByteArray& match, int index)
+template <class T> bool QVersitReaderPrivate::containsAt(const T& text, const QByteArray& match, int index)
 {
     int n = match.length();
-    if (text.length() - index < n)
+    if (text.size() - index < n)
         return false;
     const char* textData = text.constData();
     const char* matchData = match.constData();
