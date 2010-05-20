@@ -697,6 +697,8 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
     QTest::addColumn<bool>("supportedFormat");
 
     QList<QPair<QPainterVideoSurface::ShaderType, QByteArray> > types;
+
+
 #ifndef QT_OPENGL_ES
     types << qMakePair(QPainterVideoSurface::FragmentProgramShader, QByteArray("ARBfp: "));
 #endif
@@ -753,6 +755,7 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
                 << QSize(-1024, -768)
                 << true
                 << false;
+#ifndef Q_WS_MAC
         QTest::newRow((type.second + "YUV420P 640x480").constData())
                 << type.first
                 << QAbstractVideoBuffer::NoHandle
@@ -767,6 +770,7 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
                 << QSize(640, -480)
                 << true
                 << false;
+#endif
         QTest::newRow((type.second + "Y8 640x480").constData())
                 << type.first
                 << QAbstractVideoBuffer::NoHandle
@@ -788,6 +792,7 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
                 << QSize(-640, 480)
                 << true
                 << false;
+#ifndef Q_WS_MAC
         QTest::newRow((type.second + "Texture: rgb565 32x32").constData())
                 << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
@@ -802,6 +807,7 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
                 << QSize(0, 0)
                 << false
                 << false;
+#endif
         QTest::newRow((type.second + "Texture argb32 256x256").constData())
                 << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
@@ -809,6 +815,7 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
                 << QSize(256, 256)
                 << true
                 << true;
+#ifndef Q_WS_MAC
         QTest::newRow((type.second + "Texture: rgb24 1024x768").constData())
                 << type.first
                 << QAbstractVideoBuffer::GLTextureHandle
@@ -837,6 +844,7 @@ void tst_QPainterVideoSurface::shaderSupportedFormat_data()
                 << QSize(640, -480)
                 << false
                 << false;
+#endif
         QTest::newRow(type.second + "User Buffer: rgb32 256x256")
                 << type.first
                 << QAbstractVideoBuffer::UserHandle
@@ -927,7 +935,7 @@ void tst_QPainterVideoSurface::shaderPresent_data()
                 << static_cast<const uchar *>(rgb565ImageData)
                 << int(sizeof(rgb565ImageData))
                 << 4;
-
+#ifndef Q_WS_MAC
         QTest::newRow((type.second + "rgb32 -> yuv420p").constData())
                 << type.first
                 << QVideoFrame::Format_RGB32
@@ -953,6 +961,7 @@ void tst_QPainterVideoSurface::shaderPresent_data()
                 << static_cast<const uchar *>(rgb32ImageData)
                 << int(sizeof(rgb32ImageData))
                 << 8;
+#endif
     }
 }
 
