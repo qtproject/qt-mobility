@@ -40,14 +40,13 @@
 ****************************************************************************/
 
 #include "maemo6sensorbase.h"
-#include <ctime>
 
 SensorManagerInterface* maemo6sensorbase::m_remoteSensorManager = 0;
 const float maemo6sensorbase::GRAVITY_EARTH = 9.80665;
 const float maemo6sensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
-    : QSensorBackend(sensor), m_sensorRunning(false)
+    : QSensorBackend(sensor), m_sensorInterface(0), m_sensorRunning(false)
 {
     if (!m_remoteSensorManager)
         m_remoteSensorManager = &SensorManagerInterface::instance();
@@ -90,14 +89,4 @@ void maemo6sensorbase::stop()
     if (m_sensorInterface)
         m_sensorInterface->stop();
     m_sensorRunning = false;
-}
-
-qtimestamp maemo6sensorbase::createTimestamp()
-{
-    timespec stamp;
-    clock_gettime(CLOCK_MONOTONIC, &stamp);
-    qtimestamp data = stamp.tv_sec;
-    data = data * 1000000;
-    data = stamp.tv_nsec / 1000 + data;
-    return data;
 }

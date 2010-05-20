@@ -136,7 +136,7 @@ private:
     QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error* error);
 
-    QContact fetchContactL(const QContactLocalId &localId, const QStringList& definitionRestrictions) const;
+    QContact fetchContactL(const QContactLocalId &localId, const QStringList& detailDefinitionsHint) const;
 
     /* Add contact */
     bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error* qtError);

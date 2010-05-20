@@ -469,6 +469,7 @@ compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 compileTest "Maemo ICD" maemo-icd
 compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+compileTest "Maemo5 contacts dependencies" maemo5-contacts
 if [ "$LINUX_TARGET" = maemo6 ]; then
     compileTest sensord sensord
 else

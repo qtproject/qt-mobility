@@ -75,6 +75,8 @@ public:
   bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
   bool saveContact(QContact* contact, QContactManager::Error* error);
 
+  const QString getDisplayName(const QContact& contact) const;
+  
   QContactLocalId selfContactId(QContactManager::Error* errors) const;
 
 Q_SIGNALS:

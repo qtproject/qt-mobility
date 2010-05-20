@@ -43,8 +43,8 @@
 #define MAEMO6SENSORBASE_H
 
 #include <qsensorbackend.h>
-#include "sensord/sensormanagerinterface.h"
-#include "sensord/abstractsensor_i.h"
+#include <sensormanagerinterface.h>
+#include <abstractsensor_i.h>
 
 QTM_USE_NAMESPACE
 
@@ -64,19 +64,6 @@ protected:
 
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
-
-    template<typename T>
-    void initSensor(QString sensorName)
-    {
-        m_remoteSensorManager->loadPlugin(sensorName);
-        m_remoteSensorManager->registerSensorInterface<T>(sensorName);
-        m_sensorInterface = T::controlInterface(sensorName);
-        if (!m_sensorInterface) {
-            m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
-        }
-    }
-
-    qtimestamp createTimestamp();
 };
 
 #endif

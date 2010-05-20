@@ -41,33 +41,33 @@
 
 #include "maemo6tapsensor.h"
 
-#include "sensord/filters/tapdata.h"
-
 const char *maemo6tapsensor::id("maemo6.tapsensor");
 bool maemo6tapsensor::m_initDone = false;
 
 maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
-    : maemo6sensorbase(sensor), m_sensor(sensor)
+    : maemo6sensorbase(sensor)
 {
-    setReading<QTapReading>(&m_reading);
-
+    const QString sensorName = "tapsensor";
     if (!m_initDone) {
-        qDBusRegisterMetaType<Tap>();
-        initSensor<TapSensorChannelInterface>("tapsensor");
-
-        if (m_sensorInterface)
-            QObject::connect(static_cast<TapSensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const Tap&)), this, SLOT(slotDataAvailable(const Tap&)));
-        else
-            qWarning() << "Unable to initialize tap sensor.";
-
-        // metadata
-        addDataRate(100, 100); // 100Hz
-        sensor->setDataRate(100);
-        addOutputRange(0, 9, 1);
-        setDescription(QLatin1String("Measures single and double taps and gives tap direction"));
-
+        //qDBusRegisterMetaType<Tap>();        initSensor<TapSensorChannelInterface>("tapsensor");
+        m_remoteSensorManager->loadPlugin(sensorName);
+        m_remoteSensorManager->registerSensorInterface<TapSensorChannelInterface>(sensorName);
         m_initDone = true;
     }
+    m_sensorInterface = TapSensorChannelInterface::controlInterface(sensorName);
+    if (!m_sensorInterface)
+        m_sensorInterface = const_cast<TapSensorChannelInterface*>(TapSensorChannelInterface::listenInterface(sensorName));
+    if (m_sensorInterface)
+        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Tap&)), this, SLOT(slotDataAvailable(const Tap&)));
+    else
+        qWarning() << "Unable to initialize tap sensor.";
+    setReading<QTapReading>(&m_reading);
+    // metadata
+    addDataRate(0, 0);
+    addDataRate(130, 130);
+    addDataRate(0, 130); // TODO: this is for testing only
+    addOutputRange(0, 9, 1);
+    setDescription(QLatin1String("Measures single and double taps and gives tap direction"));
 }
 
 void maemo6tapsensor::slotDataAvailable(const Tap& data)
@@ -79,11 +79,15 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
         case TapData::SingleTap: doubleTap = false; break;
         default:                 doubleTap = false;
     }
-    QVariant v = m_sensor->property("returnDoubleTapEvents");
-    if (v.isValid() && v.toBool() == false)
-        m_reading.setDoubleTap(false);
-    else
-        m_reading.setDoubleTap(doubleTap);
+    QVariant v = sensor()->property("returnDoubleTapEvents");
+    if (v.isValid() && v.toBool() == false) {
+        if (doubleTap)
+            return;
+    } else {
+        if (! doubleTap)
+            return;
+    }
+    m_reading.setDoubleTap(doubleTap);
 
     // Set tap direction
     QTapReading::TapDirection o;
@@ -101,7 +105,6 @@ void maemo6tapsensor::slotDataAvailable(const Tap& data)
     }
     m_reading.setTapDirection(o);
 
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.tapData().timestamp_);
     newReadingAvailable();
 }
