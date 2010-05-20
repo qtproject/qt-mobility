@@ -56,10 +56,10 @@
 #include <QRectF>
 #include <QSharedData>
 
+#include "qgeolocation.h"
 #include "qgeoaddress.h"
 #include "qgeoboundingbox.h"
 #include "qgeocoordinate.h"
-
 
 QTM_BEGIN_NAMESPACE
 
@@ -74,6 +74,7 @@ public:
 
     virtual bool operator== (const QGeoLocationPrivate &other) const;
 
+    QGeoLocation::LocationType type;
     QGeoBoundingBox boundingBox;
     QGeoCoordinate coordinate;
     QGeoAddress address;

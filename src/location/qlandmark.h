@@ -76,8 +76,6 @@ public:
         return !(*this == other);
     }
 
-    bool isLandmark() const;
-
     QString name() const;
     void setName(const QString &name);
 

@@ -50,20 +50,13 @@
 #include "revgeocodingtab.h"
 
 #include "placepresenter.h"
-#include "qgeocodingservice_nokia_p.h"
-#include "qsearchrequest.h"
 
-ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
-    QWidget(parent)
+ReverseGeocodingTab::ReverseGeocodingTab(QGeoPlacesManager *placesManager, QWidget *parent) :
+    QWidget(parent),
+    placesManager(placesManager)
 {
-    QGeocodingServiceNokia *service = new QGeocodingServiceNokia();
-    service->setProxy( QNetworkProxy(QNetworkProxy::HttpProxy, "172.16.42.137", 8080) );
-    service->setHost("loc.desktop.maps.svc.ovi.com");
-
-    geocodingService = service;
-    searchController=new QSearchControllerNokia(geocodingService);
-    QObject::connect(searchController, SIGNAL(searchRequestFinished(QSearchResponse*)),
-                     this, SLOT(replyFinished(QSearchResponse*)));
+    QObject::connect(placesManager, SIGNAL(finished(QGeoPlacesReply*)),
+                     this, SLOT(replyFinished(QGeoPlacesReply*)));
 
     QLabel *locationlbl = new QLabel(tr("Location:"));
     locLong = new QLineEdit("13.377");
@@ -95,21 +88,20 @@ ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
 
 ReverseGeocodingTab::~ReverseGeocodingTab()
 {
-    delete searchController;
 }
 
 void ReverseGeocodingTab::on_btnRequest_clicked()
 {
     QGeoCoordinate coord(locLat->text().toDouble(), locLong->text().toDouble());
-    QSearchRequest request;
-    request.locationFilter().setCoordinate(coord);
+
     resultTree->clear();
 
-    searchController->reverseGeocode(request);
+    placesManager->geocode(coord);
 }
 
-void ReverseGeocodingTab::replyFinished(QSearchResponse* reply)
+void ReverseGeocodingTab::replyFinished(QGeoPlacesReply* reply)
 {
     PlacePresenter presenter(resultTree, reply);
     presenter.show();
+    reply->deleteLater();
 }

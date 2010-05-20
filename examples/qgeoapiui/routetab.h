@@ -43,7 +43,8 @@
 #define ROUTETAB_H_
 
 #include <QWidget>
-#include "qgeoroutingservice.h"
+
+#include <qgeoroutingmanager.h>
 
 class QTreeWidget;
 class QLineEdit;
@@ -55,13 +56,15 @@ class RouteTab: public QWidget
     Q_OBJECT
 
 public:
-    RouteTab(QWidget *parent = 0);
+    RouteTab(QGeoRoutingManager *routingManager, QWidget *parent = 0);
     ~RouteTab();
+
 private slots:
     void on_btnRequest_clicked();
     void replyFinished(QGeoRouteReply* reply);
+
 private:
-    QGeoRoutingService *routingService;
+    QGeoRoutingManager *routingManager;
     QLineEdit *srcLong;
     QLineEdit *srcLat;
     QLineEdit *destLong;

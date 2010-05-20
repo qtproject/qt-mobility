@@ -43,9 +43,8 @@
 #define REVERSEGEOCODINGTAB_H_
 
 #include <QWidget>
-#include "qsearchresponse.h"
-#include "qgeocodingservice_nokia_p.h"
-#include "qsearchcontroller_nokia_p.h"
+
+#include <qgeoplacesmanager.h>
 
 class QTreeWidget;
 class QLineEdit;
@@ -57,16 +56,15 @@ class ReverseGeocodingTab: public QWidget
     Q_OBJECT
 
 public:
-    ReverseGeocodingTab(QWidget *parent = 0);
+    ReverseGeocodingTab(QGeoPlacesManager *placesManager, QWidget *parent = 0);
     ~ReverseGeocodingTab();
 
 private slots:
     void on_btnRequest_clicked();
-    void replyFinished(QSearchResponse* reply);
+    void replyFinished(QGeoPlacesReply* reply);
 
 private:
-    QGeocodingServiceNokia *geocodingService; //owned by searchController
-    QSearchController *searchController;
+    QGeoPlacesManager *placesManager;
     QLineEdit *locLong;
     QLineEdit *locLat;
     QTreeWidget *resultTree;

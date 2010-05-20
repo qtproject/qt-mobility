@@ -42,7 +42,7 @@
 #include "placepresenter.h"
 #include "qgeoaddress.h"
 
-PlacePresenter::PlacePresenter(QTreeWidget *treeWidget, const QSearchResponse* codingReply)
+PlacePresenter::PlacePresenter(QTreeWidget *treeWidget, const QGeoPlacesReply* codingReply)
         : GeoPresenter(treeWidget), codingReply(codingReply)
 {
 }
@@ -70,10 +70,6 @@ QTreeWidgetItem* PlacePresenter::showPlaces()
     */
 
     QTreeWidgetItem* prop = new QTreeWidgetItem(top);
-    prop->setText(0, "description");
-    prop->setText(1, codingReply->description());
-
-    prop = new QTreeWidgetItem(top);
     prop->setText(0, "count");
     prop->setText(1, QString().setNum(codingReply->places().size()));
 
@@ -86,7 +82,7 @@ void PlacePresenter::showPlace(QTreeWidgetItem* top, const QGeoLocation& place)
     QTreeWidgetItem* placeItem = new QTreeWidgetItem(top);
     placeItem->setText(0, "place");
 
-    if (!place.boundingBox().isEmpty())
+    if (!place.boundingBox().isValid())
         showBoundingBox(placeItem, place.boundingBox());
 
     prop = new QTreeWidgetItem(placeItem);

@@ -48,8 +48,11 @@
 class QTabWidget;
 #ifdef Q_OS_SYMBIAN
 #include <qnetworksession.h>
-QTM_USE_NAMESPACE
 #endif
+
+#include <qgeoserviceprovider.h>
+
+QTM_USE_NAMESPACE
 
 class TabbedDialog: public QDialog
 {
@@ -64,6 +67,7 @@ private:
 #ifdef Q_OS_SYMBIAN
     QNetworkSession *session;
 #endif
+    QGeoServiceProvider *serviceProvider;
 };
 
 #endif /* TABBEDDIALOG_H_ */

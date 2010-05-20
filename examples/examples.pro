@@ -34,9 +34,9 @@ contains(mobility_modules,location) {
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo \
                    weatherinfo \
-                   lightmaps 
+                   lightmaps \
                    #mapviewer (disable for now) 
-                   #qgeoapiui
+                   qgeoapiui
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }

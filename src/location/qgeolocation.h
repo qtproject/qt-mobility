@@ -60,6 +60,11 @@ class QGeoLocationPrivate;
 class Q_LOCATION_EXPORT QGeoLocation
 {
 public:
+    enum LocationType {
+        GeoLocationType,
+        LandmarkType
+    };
+
     QGeoLocation();
     QGeoLocation(const QGeoLocation &other);
     virtual ~QGeoLocation();
@@ -68,9 +73,6 @@ public:
 
     bool operator==(const QGeoLocation &other) const;
     bool operator!=(const QGeoLocation &other) const;
-
-    virtual bool isLandmark() const;
-    QLandmark* asLandmark();
 
     QGeoBoundingBox boundingBox() const;
     void setBoundingBox(const QGeoBoundingBox &boundingBox);

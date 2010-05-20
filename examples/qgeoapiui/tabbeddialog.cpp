@@ -45,7 +45,11 @@
 #include "routetab.h"
 #include "geocodingtab.h"
 #include "revgeocodingtab.h"
-#include "maptiletab.h"
+//#include "maptiletab.h"
+
+#include <QApplication>
+#include <QTimer>
+#include <QDebug>
 
 #ifdef Q_OS_SYMBIAN
 #include <QMessageBox>
@@ -72,11 +76,18 @@ TabbedDialog::TabbedDialog(QWidget *parent)
     session->open();
     session->waitForOpened(-1);
 #endif
+    serviceProvider = new QGeoServiceProvider("nokia");
+    if (serviceProvider->error() != QGeoServiceProvider::NoError) {
+        qWarning() << "Unable to find the nokia geoservices plugin.";
+        QTimer::singleShot(0, qApp, SLOT(quit()));
+        return;
+    }
+
     tabWidget = new QTabWidget;
-    tabWidget->addTab(new RouteTab(), tr("Route"));
-    tabWidget->addTab(new GeocodingTab(), tr("Geocoding"));
-    tabWidget->addTab(new ReverseGeocodingTab(), tr("Reverse Geocoding"));
-    tabWidget->addTab(new MapTileTab(), tr("Map Tile"));
+    tabWidget->addTab(new RouteTab(serviceProvider->routingManager()), tr("Route"));
+    tabWidget->addTab(new GeocodingTab(serviceProvider->placesManager()), tr("Geocoding"));
+    tabWidget->addTab(new ReverseGeocodingTab(serviceProvider->placesManager()), tr("Reverse Geocoding"));
+    //tabWidget->addTab(new MapTileTab(), tr("Map Tile"));
     
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(tabWidget);
@@ -86,5 +97,6 @@ TabbedDialog::TabbedDialog(QWidget *parent)
 
 TabbedDialog::~TabbedDialog()
 {
+    delete serviceProvider;
 }
 

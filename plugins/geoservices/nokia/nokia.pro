@@ -7,10 +7,8 @@ include(../../../common.pri)
 
 QT += network
 
-#CONFIG += mobility
-#MOBILITY = location
-
-qtAddLibrary(QtLocation)
+CONFIG += mobility
+MOBILITY = location
 
 HEADERS += \
             qgeocodexmlparser_p.h \
@@ -31,8 +29,4 @@ SOURCES += \
             qgeoserviceproviderplugin_nokia.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/location
-
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-INSTALLS += target
 

@@ -118,21 +118,6 @@ bool QGeoLocation::operator!= (const QGeoLocation &other) const
     return (!this->operator ==(other));
 }
 
-bool QGeoLocation::isLandmark() const
-{
-    return false;
-}
-
-QLandmark* QGeoLocation::asLandmark()
-{
-    if (isLandmark()) {
-        return static_cast<QLandmark*>(this);
-        return 0;
-    } else {
-        return 0;
-    }
-}
-
 /*!
     Returns the bounding box that completely encloses the location.
 
@@ -194,10 +179,12 @@ void QGeoLocation::setAddress(const QGeoAddress &address)
 *******************************************************************************/
 
 QGeoLocationPrivate::QGeoLocationPrivate()
-    : QSharedData() {}
+    : QSharedData(),
+    type(QGeoLocation::GeoLocationType){}
 
 QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
     : QSharedData(other),
+    type(other.type),
     boundingBox(other.boundingBox),
     coordinate(other.coordinate),
     address(other.address) {}
@@ -206,6 +193,7 @@ QGeoLocationPrivate::~QGeoLocationPrivate(){}
 
 QGeoLocationPrivate& QGeoLocationPrivate::operator= (const QGeoLocationPrivate &other)
 {
+    type = other.type;
     boundingBox = other.boundingBox;
     coordinate = other.coordinate;
     address = other.address;
@@ -215,7 +203,8 @@ QGeoLocationPrivate& QGeoLocationPrivate::operator= (const QGeoLocationPrivate &
 
 bool QGeoLocationPrivate::operator== (const QGeoLocationPrivate &other) const
 {
-    return ((boundingBox == other.boundingBox)
+    return ((type == other.type)
+            && (boundingBox == other.boundingBox)
             && (coordinate == other.coordinate)
             && (address == other.address));
 }

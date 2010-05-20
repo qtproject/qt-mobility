@@ -86,7 +86,7 @@ QGeoPlacesReply::~QGeoPlacesReply()
 /*!
     Returns a list of places corresponding to the request.
 */
-QList<QGeoLocation*> QGeoPlacesReply::places() const
+QList<QGeoLocation> QGeoPlacesReply::places() const
 {
     return d_ptr->places;
 }
@@ -94,7 +94,7 @@ QList<QGeoLocation*> QGeoPlacesReply::places() const
 /*!
     Adds \a place to the list of places in this reply.
 */
-void QGeoPlacesReply::addPlace(QGeoLocation *place)
+void QGeoPlacesReply::addPlace(const QGeoLocation &place)
 {
     d_ptr->places.append(place);
 }
@@ -102,7 +102,7 @@ void QGeoPlacesReply::addPlace(QGeoLocation *place)
 /*!
     Sets the list of places in the reply to \a places.
 */
-void QGeoPlacesReply::setPlaces(const QList<QGeoLocation*> &places)
+void QGeoPlacesReply::setPlaces(const QList<QGeoLocation> &places)
 {
     d_ptr->places = places;
 }

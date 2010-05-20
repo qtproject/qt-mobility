@@ -50,21 +50,15 @@
 #include "geocodingtab.h"
 
 #include "placepresenter.h"
-#include "qsearchrequest.h"
-#include "qgeocodingservice_nokia_p.h"
 
-GeocodingTab::GeocodingTab(QWidget *parent) :
-    QWidget(parent)
-{
-    QGeocodingServiceNokia *service = new QGeocodingServiceNokia();
-    service->setProxy( QNetworkProxy(QNetworkProxy::HttpProxy, "172.16.42.137", 8080) );
-    service->setHost("loc.desktop.maps.svc.ovi.com");
+#include <qgeoaddress.h>
 
-    geocodingService = service;
-    searchController=new QSearchControllerNokia(geocodingService);
-    
-    QObject::connect(searchController, SIGNAL(searchRequestFinished(QSearchResponse*)),
-                     this, SLOT(replyFinished(QSearchResponse*)));
+GeocodingTab::GeocodingTab(QGeoPlacesManager *placesManager, QWidget *parent) :
+    QWidget(parent),
+    placesManager(placesManager)
+{    
+    QObject::connect(placesManager, SIGNAL(finished(QGeoPlacesReply*)),
+                     this, SLOT(replyFinished(QGeoPlacesReply*)));
 
     obloc = new QLineEdit("Deutschland, München");
     QLabel *countrylbl = new QLabel(tr("Country:"));
@@ -124,37 +118,32 @@ GeocodingTab::GeocodingTab(QWidget *parent) :
 
 GeocodingTab::~GeocodingTab()
 {
-    delete searchController;
 }
 
 void GeocodingTab::on_btnRequest_clicked()
 {
-    QSearchRequest request;
     QString s = obloc->text();
 
+    resultTree->clear();
+
     if (!s.isEmpty()) {
-        request.setSearchText(s);
+        placesManager->placesSearch(s, QGeoPlacesManager::SearchGeocodeOnly);
     }
     else {
-        request.locationFilter().setCountry(country->text());
-        request.locationFilter().setState(state->text());
-        request.locationFilter().setCity(city->text());
-        request.locationFilter().setPostalCode(zip->text());
-        request.locationFilter().setStreet(street->text());
-        request.locationFilter().setHouseNumber(streetNumber->text());
+        QGeoAddress address;
+        address.setCountry(country->text());
+        address.setState(state->text());
+        address.setCity(city->text());
+        address.setPostCode(zip->text());
+        address.setThoroughfareName(street->text());
+        address.setThoroughfareNumber(streetNumber->text());
+        placesManager->geocode(address);
     }
-    resultTree->clear();
-    searchController->geocode(request);
 }
 
-void GeocodingTab::testReplyFinishedSignal()
-{
-    int x = 1;
-    x++;
-}
-
-void GeocodingTab::replyFinished(QSearchResponse* reply)
+void GeocodingTab::replyFinished(QGeoPlacesReply* reply)
 {
     PlacePresenter presenter(resultTree, reply);
     presenter.show();
+    reply->deleteLater();
 }

@@ -43,9 +43,7 @@
 #define GEOCODINGTAB_H_
 
 #include <QWidget>
-#include "qsearchresponse.h"
-#include "qgeocodingservice_nokia_p.h"
-#include "qsearchcontroller_nokia_p.h"
+#include <qgeoplacesmanager.h>
 
 class QTreeWidget;
 class QLineEdit;
@@ -57,17 +55,15 @@ class GeocodingTab: public QWidget
     Q_OBJECT
 
 public:
-    GeocodingTab(QWidget *parent = 0);
+    GeocodingTab(QGeoPlacesManager *placesManager, QWidget *parent = 0);
     ~GeocodingTab();
 
 private slots:
     void on_btnRequest_clicked();
-    void replyFinished(QSearchResponse* reply);
-    void testReplyFinishedSignal();
+    void replyFinished(QGeoPlacesReply* reply);
     
 private:
-    QGeocodingServiceNokia *geocodingService; //owned by searchController
-    QSearchController *searchController;
+    QGeoPlacesManager *placesManager;
     QLineEdit *obloc;
     QLineEdit *country;
     QLineEdit *state;

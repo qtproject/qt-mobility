@@ -44,15 +44,16 @@
 
 #include <QTreeWidget>
 
-#include "qsearchresponse.h"
 #include "geopresenter.h"
+
+#include <qgeoplacesreply.h>
 
 QTM_USE_NAMESPACE
 
 class PlacePresenter : GeoPresenter
 {
 public:
-    PlacePresenter(QTreeWidget* treeWidget, const QSearchResponse* codingReply);
+    PlacePresenter(QTreeWidget* treeWidget, const QGeoPlacesReply* codingReply);
     virtual void show();
 
 private:
@@ -61,7 +62,7 @@ private:
     void showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& address);
 
 private:
-    const QSearchResponse* codingReply;
+    const QGeoPlacesReply* codingReply;
 };
 
 #endif

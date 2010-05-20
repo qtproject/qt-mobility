@@ -13,16 +13,16 @@ SOURCES += main.cpp\
         tabbeddialog.cpp \
         routetab.cpp \
         geocodingtab.cpp \
-        revgeocodingtab.cpp \
-        maptiletab.cpp
+        revgeocodingtab.cpp
+        #maptiletab.cpp
 
 HEADERS  += routepresenter.h \
         placepresenter.h \
         tabbeddialog.h \
         routetab.h \
         geocodingtab.h \
-        revgeocodingtab.h \
-        maptiletab.h
+        revgeocodingtab.h
+        #maptiletab.h
 
 include(../examples.pri)
 

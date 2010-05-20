@@ -70,7 +70,7 @@ public:
     QGeoPlacesReply(QObject *parent = 0);
     virtual ~QGeoPlacesReply();
 
-    QList<QGeoLocation*> places() const;
+    QList<QGeoLocation> places() const;
 
 public slots:
     virtual void abort() = 0;
@@ -80,8 +80,8 @@ signals:
     void error(QGeoPlacesReply::Error error, const QString &errorString = QString());
 
 protected:
-    void addPlace(QGeoLocation* place);
-    void setPlaces(const QList<QGeoLocation*> &places);
+    void addPlace(const QGeoLocation &place);
+    void setPlaces(const QList<QGeoLocation> &places);
 
 private:
     QGeoPlacesReplyPrivate *d_ptr;

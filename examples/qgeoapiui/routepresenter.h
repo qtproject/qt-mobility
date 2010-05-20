@@ -45,8 +45,10 @@
 #include <QTreeWidget>
 
 #include "geopresenter.h"
-#include "qgeoroutereply.h"
-#include "qgeocoordinate.h"
+
+#include <qgeoroutereply.h>
+#include <qgeocoordinate.h>
+#include <qgeoroutesegment.h>
 
 QTM_USE_NAMESPACE
 
@@ -59,7 +61,7 @@ public:
 private:
     QTreeWidgetItem* showRoutes();
     void showRoute(QTreeWidgetItem* top, const QGeoRoute& route);
-    void showManeuver(QTreeWidgetItem* routeItem, const QManeuver& maneuver);
+    void showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment *segment);
     void showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points);
 
 private:

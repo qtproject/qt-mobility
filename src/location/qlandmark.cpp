@@ -49,7 +49,9 @@
 
 #include "qgeoaddress.h"
 #include "qgeocoordinate.h"
-#include <qgeolocation_p.h>
+
+#include "qgeolocation.h"
+#include "qgeolocation_p.h"
 
 #include <QVariant>
 #include <QStringList>
@@ -61,6 +63,7 @@ QTM_USE_NAMESPACE
 QLandmarkPrivate::QLandmarkPrivate()
         : QGeoLocationPrivate()
 {
+    type = QGeoLocation::LandmarkType;
     radius = -1.0;
 }
 
@@ -211,16 +214,6 @@ bool QLandmark::operator== (const QLandmark &other) const
 
     \sa operator==()
 */
-
-/*!
-    Returns true if this is a QLandmark instance, otherwise this is a
-    QGeoLocation instance and this function returns false.
-*/
-bool QLandmark::isLandmark() const
-{
-    Q_D(const QLandmark);
-    return true;
-}
 
 /*!
     Returns the name of the landmark.

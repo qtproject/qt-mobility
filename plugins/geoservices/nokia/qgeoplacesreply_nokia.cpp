@@ -78,7 +78,7 @@ void QGeoPlacesReplyNokia::networkFinished()
     QGeoCodeXmlParser parser;
 
     if (parser.parse(m_reply)) {
-        //setPlaces(parser.results());
+        setPlaces(parser.results());
         emit finished();
     } else {
         // add a qWarning with the actual parser.errorString()

@@ -68,7 +68,7 @@ public:
 
     QGeoPlacesReplyPrivate& operator= (const QGeoPlacesReplyPrivate &other);
 
-    QList<QGeoLocation*> places;
+    QList<QGeoLocation> places;
 };
 
 QTM_END_NAMESPACE

@@ -48,18 +48,15 @@
 #include <QPushButton>
 
 #include "routetab.h"
-
 #include "routepresenter.h"
-#include "qgeoroutingservice_nokia_p.h"
 
-RouteTab::RouteTab(QWidget *parent) :
-    QWidget(parent)
+#include <qgeorouterequest.h>
+
+RouteTab::RouteTab(QGeoRoutingManager *routingManager, QWidget *parent) :
+    QWidget(parent),
+    routingManager(routingManager)
 {
-    QGeoRoutingServiceNokia *service = new QGeoRoutingServiceNokia();    
-    //service->setHost("route.maps.svc.ovi.com");
-    
-    routingService=service;
-    QObject::connect(routingService, SIGNAL(finished(QGeoRouteReply*)),
+    QObject::connect(routingManager, SIGNAL(finished(QGeoRouteReply*)),
                      this, SLOT(replyFinished(QGeoRouteReply*)));
 
     QLabel *source = new QLabel(tr("Source:"));
@@ -100,20 +97,18 @@ RouteTab::RouteTab(QWidget *parent) :
 
 RouteTab::~RouteTab()
 {
-    delete routingService;
 }
 
 void RouteTab::on_btnRequest_clicked()
 {
     QGeoCoordinate src(srcLat->text().toDouble(), srcLong->text().toDouble());
     QGeoCoordinate dst(destLat->text().toDouble(), destLong->text().toDouble());
-    QGeoRouteRequest request;
 
-    request.setSource(src);
-    request.setDestination(dst);
+    QGeoRouteRequest request(src, dst);
 
     resultTree->clear();
-    routingService->getRoute(request);
+
+    routingManager->getRoute(request);
 }
 
 void RouteTab::replyFinished(QGeoRouteReply* reply)
