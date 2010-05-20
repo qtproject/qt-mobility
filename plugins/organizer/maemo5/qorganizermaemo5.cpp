@@ -68,6 +68,8 @@ Q_EXPORT_PLUGIN2(qtorganizer_maemo5, QOrganizerItemMaemo5Factory);
 QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
     : d(new QOrganizerItemMaemo5EngineData)
 {
+    // XXX TODO: on construction, we need to enumerate all items in
+    // the database and fill out our maps of ids and calendar names.
 }
 
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()
@@ -114,13 +116,21 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
     return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
 }
 
-QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+/*!
+  Loads all items from all calendars, updates the private data maps of cId to qId and cId to cName, and updates the changeset with any changes which were noticed during enumeration.  Does not emit signals.
+  */
+QList<QOrganizerItem> QOrganizerItemMaemo5Engine::enumerateAllItems(QOrganizerItemChangeSet *cs, QOrganizerItemManager::Error* error) const
 {
     *error = QOrganizerItemManager::NoError;
     int calError = CALENDAR_OPERATION_SUCCESSFUL; // default is no error
 
-    QList<QOrganizerItem> partiallyFilteredItems;
+    QList<QOrganizerItem> allItems;
 
+    // update our map arguments and changeset where needed.
+    QMap<QString, QOrganizerItemLocalId> newIdMap;
+    QMap<QString, QString> newCNameMap;
+    QString entireId;
+    
     std::vector<CCalendar*> allCalendars = d->m_mcInstance->getListCalFromMc();
     for (unsigned int i = 0; i < allCalendars.size(); i++) {
         CCalendar *currCal = allCalendars[i];
@@ -133,7 +143,10 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
             calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
         }
         for (unsigned int j = 0; j < events.size(); ++j) {
-            partiallyFilteredItems.append(convertCEventToQEvent(events[j], calName));
+            entireId = calName + ":" + QString::fromStdString(events[j]->getId());
+	    newIdMap.insert(entireId, QOrganizerItemLocalId(qHash(entireId)));
+	    newCNameMap.insert(entireId, calName);
+            allItems.append(convertCEventToQEvent(events[j], calName));
             delete events[j];
         }
 
@@ -144,7 +157,10 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
             calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
         }
         for (unsigned int j = 0; j < todos.size(); ++j) {
-            partiallyFilteredItems.append(convertCTodoToQTodo(todos[j], calName));
+            entireId = calName + ":" + QString::fromStdString(todos[j]->getId());
+	    newIdMap.insert(entireId, QOrganizerItemLocalId(qHash(entireId)));
+	    newCNameMap.insert(entireId, calName);
+            allItems.append(convertCTodoToQTodo(todos[j], calName));
             delete todos[j];
         }
 
@@ -155,19 +171,55 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
             calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
         }
         for (unsigned int j = 0; j < journals.size(); ++j) {
-            partiallyFilteredItems.append(convertCJournalToQJournal(journals[j], calName));
+            entireId = calName + ":" + QString::fromStdString(journals[j]->getId());
+	    newIdMap.insert(entireId, QOrganizerItemLocalId(qHash(entireId)));
+	    newCNameMap.insert(entireId, calName);
+            allItems.append(convertCJournalToQJournal(journals[j], calName));
 	    delete journals[j];
         }
     }
     d->m_mcInstance->releaseListCalendars(allCalendars);
     
-    QList<QOrganizerItem> ret;
+    // before returning, build the changeset and emit appropriate signals
+    // then replace our maps with our newly updated ones.
+    QStringList origKeys = d->m_cIdToQId.keys();
+    QStringList newKeys = newIdMap.keys();
+    foreach (const QString& key, origKeys) {
+        if (!newKeys.contains(key)) {
+            // this id is only in the old map (ie, has been removed)
+            cs->insertRemovedItem(d->m_cIdToQId.value(key));
+        } else {
+            // this id is in both (ie, hasn been added or removed)
+            newKeys.removeOne(key);
+        }
+    }
 
-    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
+    foreach (const QString& key, newKeys) {
+        // this id is only in the new map (ie, has been added)
+        cs->insertAddedItem(newIdMap.value(key));
+    }
+
+    // update our maps.
+    d->m_cIdToQId = newIdMap;
+    d->m_cIdToCName = newCNameMap;
+
+    // caller should emit signals from cs if they want to.
+    return allItems;
+}
+
+QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
+{
+    // build the list of items which we'll return
+    QOrganizerItemChangeSet cs;
+    QList<QOrganizerItem> allItems = enumerateAllItems(&cs, error);
+    QList<QOrganizerItem> ret;
+    foreach(const QOrganizerItem& item, allItems) {
         if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
             ret.append(item);
         }
     }
+
+    //cs.emitSignals(this); // XXX TODO: does this break synchronous behaviour?
 
     return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
 }
@@ -175,56 +227,17 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
-    *error = QOrganizerItemManager::NoError;
-    int calError = CALENDAR_OPERATION_SUCCESSFUL;
-    QList<QOrganizerItem> partiallyFilteredItems;
 
-    std::vector<CCalendar*> allCalendars = d->m_mcInstance->getListCalFromMc();
-    for (unsigned int i = 0; i < allCalendars.size(); i++) {
-        CCalendar *currCal = allCalendars[i];
-        QString calName = QString::fromStdString(currCal->getCalendarName());
-	// get the events
-        std::vector<CEvent*> events = currCal->getEvents(calError);
-        if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-            *error = QOrganizerItemManager::UnspecifiedError;
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-        }
-        for (unsigned int j = 0; j < events.size(); ++j) {
-            partiallyFilteredItems.append(convertCEventToQEvent(events[j], calName));
-            delete events[j];
-        }
-
-	// get the todos
-        std::vector<CTodo*> todos = currCal->getTodos(calError);
-        if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-            *error = QOrganizerItemManager::UnspecifiedError;
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset the error variable
-        }
-        for (unsigned int j = 0; j < todos.size(); ++j) {
-            partiallyFilteredItems.append(convertCTodoToQTodo(todos[j], calName));
-            delete todos[j];
-        }
-
-	// get the journals
-        std::vector<CJournal*> journals = currCal->getJournals(calError);
-        if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-            *error = QOrganizerItemManager::UnspecifiedError;
-            calError = CALENDAR_OPERATION_SUCCESSFUL;
-        }
-        for (unsigned int j = 0; j < journals.size(); ++j) {
-            partiallyFilteredItems.append(convertCJournalToQJournal(journals[j], calName));
-            delete journals[j];
-        }
-    }
-    d->m_mcInstance->releaseListCalendars(allCalendars);
-
+    QOrganizerItemChangeSet cs;
+    QList<QOrganizerItem> allItems = enumerateAllItems(&cs, error);
     QList<QOrganizerItem> ret;
-
-    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
+    foreach(const QOrganizerItem& item, allItems) {
         if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
             QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
+
+    //cs.emitSignals(this); // XXX TODO: does this break synchronous behaviour?
 
     return ret;
 }
@@ -236,6 +249,11 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     *error = QOrganizerItemManager::NoError;
 
     QString entireItemId = d->m_cIdToQId.key(itemId);
+    if (entireItemId.isEmpty()) {
+        // user has specified a nonexistent id.
+        *error = QOrganizerItemManager::DoesNotExistError;
+        return QOrganizerItem();
+    }
     QString calendarName = d->m_cIdToCName.value(entireItemId);
     QString calItemId = entireItemId.mid(calendarName.size(), -1); // entireItemId = calendarName:cId
     CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString(), calError);
@@ -262,6 +280,13 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
         return retn;
     }
 
+    // the id exists in our maps but not in the database.  we need to update our maps.
+    QOrganizerItemChangeSet cs;
+    cs.insertRemovedItem(d->m_cIdToQId.value(entireItemId));
+    d->m_cIdToQId.remove(entireItemId);
+    d->m_cIdToCName.remove(entireItemId);
+    //cs.emitSignals(this); // XXX TODO: does this break synchronous behaviour?
+    
     // none of the above exist in the specified calendar, so return error.
     *error = QOrganizerItemManager::DoesNotExistError;
     return QOrganizerItem();
@@ -416,6 +441,9 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
         }
     }
 
+    // ensure that the changes are committed to the dbase.
+    d->m_mcInstance->commitAllChanges();
+
     // emit signals...
     cs.emitSignals(this);
     
@@ -429,10 +457,20 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
     *error = QOrganizerItemManager::NoError;
     int calError = 1; // no error.
     QOrganizerItemChangeSet cs;
-    
+   
     for (int i = 0; i < itemIds.size(); ++i) {
         QOrganizerItemLocalId currId = itemIds.at(i);
         QString entireId = d->m_cIdToQId.key(currId);
+        if (entireId.isEmpty()) {
+            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
+            *error = QOrganizerItemManager::DoesNotExistError;
+            if (errorMap) {
+                errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
+            }
+
+            // user has specified a nonexistent id to remove.
+            continue;
+        }
         QString calendarName = d->m_cIdToCName.value(entireId);
         QString cId = entireId.mid(calendarName.size(), -1); // entireId = calendarName:cId
         CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString(), calError);
@@ -446,6 +484,9 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
                     errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
                 }
             } else {
+                // remove the item from our maps.
+                d->m_cIdToQId.remove(entireId);
+                d->m_cIdToCName.remove(entireId);
                 cs.insertRemovedItem(currId);
             }
         } else {
@@ -453,15 +494,17 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
             calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
             *error = QOrganizerItemManager::DoesNotExistError;
             if (errorMap) {
-                errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
+                errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
             }
         }
 	delete calendar;
     }
 
+    // ensure that the changes are committed to the dbase.
+    d->m_mcInstance->commitAllChanges();
+
     // emit signals
     cs.emitSignals(this);
-
     return (*error == QOrganizerItemManager::NoError);
 }
 
@@ -719,6 +762,9 @@ QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal
     QString tempstr = QString::fromStdString(cjournal->getDescription());
     if (!tempstr.isEmpty())
         ret.setDescription(tempstr);
+    tempstr = QString::fromStdString(cjournal->getSummary());
+    if (!tempstr.isEmpty())
+        ret.setDisplayLabel(tempstr);
 
     QOrganizerItemId rId;
     rId.setManagerUri(managerUri());
