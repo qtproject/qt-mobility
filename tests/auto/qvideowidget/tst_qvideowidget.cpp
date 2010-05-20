@@ -1524,6 +1524,7 @@ void tst_QVideoWidget::paintRendererControl()
     QVideoWidget widget;
     object.bind(&widget);
     widget.setWindowFlags(Qt::X11BypassWindowManagerHint);
+    widget.resize(640,480);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
 
