@@ -111,6 +111,7 @@ QContactDetail *CntTransformPresence::transformItemField(const CContactItemField
             QContactPresence *presence = new QContactPresence();
             QContact& currentContact = const_cast<QContact&>(contact);
             currentContact.saveDetail(presence);
+            delete presence;
         }
         presenceDetails = contact.details(QContactPresence::DefinitionName);
     }

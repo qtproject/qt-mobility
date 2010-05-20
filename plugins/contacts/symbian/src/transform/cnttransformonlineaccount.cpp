@@ -158,6 +158,7 @@ QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItem
             QContactOnlineAccount *account = new QContactOnlineAccount();
             QContact& currentContact = const_cast<QContact&>(contact);
             currentContact.saveDetail(account);
+            delete account;
         }
         onlineAccounts = contact.details(QContactOnlineAccount::DefinitionName);
     }
