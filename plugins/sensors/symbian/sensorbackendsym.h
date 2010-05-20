@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -92,7 +92,7 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
         void  DataReceived(CSensrvChannel &aChannel, TInt aCount, TInt aDataLost);
         
         /**
-         * DataError is called to indicate an error, fatal errors are inrecoverable
+         * DataError is called to indicate an error, fatal errors are unrecoverable
          */
         void  DataError(CSensrvChannel &aChannel, TSensrvErrorSeverity aError);
         
@@ -194,7 +194,7 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
          * GetMeasurementrangeAndAccuracy used to get measurement ranges and accuracy from
          * symbian and set as outputRanges in Qt
          */
-        void GetMeasurementrangeAndAccuracy();
+        virtual void GetMeasurementrangeAndAccuracy();
         
         /*
          * Close is used to release all the sensor server objects
@@ -229,6 +229,9 @@ class CSensorBackendSym : public CBase, public QSensorBackend, public MSensrvDat
          * Used to stop listening to the sensor
          */
         void StopListeningL();
+        
+    private:
+        TSensrvPropertyType propertyType(TSensrvPropertyId, TInt&);
 
     protected:
         TSensorBackendDataSym iBackendData;
