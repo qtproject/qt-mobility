@@ -106,7 +106,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
     \value CurrentItemInLoop  The current item is played in the loop.
 
-    \value Linear             Playback starts from the first to the last items and stops.
+    \value Sequential         Playback starts from the current to the last items and stops.
                               next item is a null item when the last one is currently playing.
 
     \value Loop               Playback continues from the first item after the last one finished playing.

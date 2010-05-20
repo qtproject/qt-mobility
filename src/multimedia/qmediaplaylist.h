@@ -64,7 +64,7 @@ class Q_MEDIA_EXPORT QMediaPlaylist : public QObject, public QMediaBindableInter
     Q_ENUMS(PlaybackMode Error)
 
 public:
-    enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random };
+    enum PlaybackMode { CurrentItemOnce, CurrentItemInLoop, Sequential, Loop, Random };
     enum Error { NoError, FormatError, FormatNotSupportedError, NetworkError, AccessDeniedError };
 
     QMediaPlaylist(QObject *parent = 0);

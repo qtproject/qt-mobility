@@ -466,9 +466,9 @@ void tst_QMediaPlaylist::playbackMode_data()
     QTest::addColumn<int>("pos");
     QTest::addColumn<int>("expectedNext");
 
-    QTest::newRow("Linear, 0") << QMediaPlaylist::Linear << -1 << 0 << 1;
-    QTest::newRow("Linear, 1") << QMediaPlaylist::Linear << 0 << 1 << 2;
-    QTest::newRow("Linear, 2") << QMediaPlaylist::Linear << 1 << 2 << -1;
+    QTest::newRow("Sequential, 0") << QMediaPlaylist::Sequential << -1 << 0 << 1;
+    QTest::newRow("Sequential, 1") << QMediaPlaylist::Sequential << 0 << 1 << 2;
+    QTest::newRow("Sequential, 2") << QMediaPlaylist::Sequential << 1 << 2 << -1;
 
     QTest::newRow("Loop, 0") << QMediaPlaylist::Loop << 2 << 0 << 1;
     QTest::newRow("Loop, 1") << QMediaPlaylist::Loop << 0 << 1 << 2;
@@ -491,7 +491,7 @@ void tst_QMediaPlaylist::playbackMode()
     playlist.addMedia(content2);
     playlist.addMedia(content3);
 
-    QCOMPARE(playlist.playbackMode(), QMediaPlaylist::Linear);
+    QCOMPARE(playlist.playbackMode(), QMediaPlaylist::Sequential);
     QCOMPARE(playlist.currentIndex(), -1);
 
     playlist.setPlaybackMode(playbackMode);
