@@ -20,16 +20,15 @@ win32 {
     HEADERS += qtelephony_win_p.h 
     SOURCES += qtelephony_win.cpp 
 }
-unix: {
-    !maemo*: {
+unix:!symbian {
+    maemo5|maemo6 {
+        HEADERS += qtelephony_maemo_p.h
+    } else {
         HEADERS += qtelephony_linux_p.h 
         SOURCES += qtelephony_linux.cpp
     }
-    maemo*: {
-        HEADERS += qtelephony_maemo_p.h
-    }
 }
-symbian:{
+symbian{
     HEADERS += qtelephony_s60_p.h 
 }
 
