@@ -78,6 +78,7 @@ public:
     }
 
     QVersitDocument::VersitType mVersitType;
+    QString mComponentType;
     QList<QVersitProperty> mProperties;
 };
 

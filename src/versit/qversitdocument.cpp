@@ -134,7 +134,8 @@ QDebug operator<<(QDebug dbg, const QVersitDocument& document)
 #endif
 
 /*!
- * Sets the versit document type to \a type.
+ * Sets the versit document type to \a type.  This determines the format in which the document is
+ * to be serialized.
  */
 void QVersitDocument::setType(VersitType type)
 {
@@ -147,6 +148,22 @@ void QVersitDocument::setType(VersitType type)
 QVersitDocument::VersitType QVersitDocument::type() const
 {
     return d->mVersitType;
+}
+
+/*!
+ * Sets the versit component type (eg. VCARD, VCALENDAR, VEVENT, etc.)
+ */
+void QVersitDocument::setComponentType(QString componentType)
+{
+    d->mComponentType = componentType;
+}
+
+/*!
+ * Gets the versit component type
+ */
+QString QVersitDocument::componentType() const
+{
+    return d->mComponentType;
 }
 
 /*!
