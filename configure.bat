@@ -119,7 +119,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
-    echo                     messaging multimedia systeminfo serviceframework versit
+    echo                     messaging multimedia systeminfo serviceframework telephony versit
     echo                     Modules should be separated by a space and surrounded
     echo                     by double quotation. If a
     echo                     selected module depends on other modules dependencies
@@ -242,6 +242,8 @@ if %FIRST% == bearer (
     echo     Systeminfo selected
 ) else if %FIRST% == serviceframework (
     echo     SerficeFramework selected
+) else if %FIRST% == telpehony (
+    echo     Telephony selected
 ) else if %FIRST% == versit (
     echo     Versit selected ^(implies Contacts^)
 ) else (
@@ -467,6 +469,8 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\systeminfo
 ) else if %FIRST% == serviceframework (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\serviceframework
+) else if %FIRST% == telephony (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\telephony
 ) else if %FIRST% == versit (
     REM versit implies contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\versit
