@@ -49,7 +49,8 @@
 CntFilterUnion::CntFilterUnion(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo) : 
                     m_contactdatabase(contactDatabase),
                     m_srvConnection(cntServer),
-                    m_dbInfo(dbInfo)
+                    m_dbInfo(dbInfo),
+                    m_emulateBestMatching(false)
 {
 }
 
@@ -133,7 +134,12 @@ void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,
             QContactDetailFilter detailfilter(filter);
             if (detailfilter.detailDefinitionName() == QContactPhoneNumber::DefinitionName ) {
                 CntFilterDetail dtlfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
-                dtlfltr.createMatchPhoneNumberQuery(filter,sqlSelectQuery,error);
+#ifdef PBK_UNIT_TEST
+            if (m_emulateBestMatching) {
+                dtlfltr.emulateBestMatching();
+            }
+#endif
+            dtlfltr.createMatchPhoneNumberQuery(filter,sqlSelectQuery,error);
             }
             else {
                 CntFilterDetail dtlfltr(m_contactdatabase,m_srvConnection,m_dbInfo);
@@ -166,4 +172,11 @@ void CntFilterUnion::getSelectQueryforFilter(const QContactFilter& filter,
         }
     }
 }
-   
+
+#ifdef PBK_UNIT_TEST
+void CntFilterUnion::emulateBestMatching()
+{
+    m_emulateBestMatching = true;
+}
+#endif
+

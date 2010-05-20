@@ -50,6 +50,8 @@
 
 QTM_USE_NAMESPACE
 
+enum TNumberType { ENotInitialized, EUnknown, EDigit, EPlus, EOneZero, ETwoZeros };
+
 class CntFilterDetail : public CntAbstractContactFilter
 {
 private:
@@ -63,6 +65,10 @@ private:
             static void stripOutNonDigitChars(TDes& text);
             static TInt32 padOutPhoneMatchNumber(TInt32& phoneNumber,
                                                  TInt padOutLength);
+            static TBool validateBestMatchingRulesL(const TDesC& phoneNumber, const TDesC& matchNumber);
+            static TBool checkBestMatchingRules(const TDesC& numberA, TNumberType numberAType,
+                                         const TDesC& numberB, TNumberType numberBType);
+            static TInt formatAndCheckNumberType(TDes& number);
         public:
             TInt32 iLowerSevenDigits;
             TInt32 iUpperDigits;
@@ -79,23 +85,27 @@ public:
             QContactManager::Error* error);
     bool filterSupported(const QContactFilter& filter) ;
     
-    void getTableNameWhereClause( const QContactDetailFilter& filter,
-                                  QString& tableName,
-                                  QString& sqlWhereClause ,
-                                  QContactManager::Error* error) const;
+    void getTableNameWhereClause(const QContactDetailFilter& filter,
+                                 QString& tableName,
+                                 QString& sqlWhereClause ,
+                                 QContactManager::Error* error) const;
     void createSelectQuery(const QContactFilter& filter,
-                                 QString& sqlQuery,
-                                 QContactManager::Error* error);
+                           QString& sqlQuery,
+                           QContactManager::Error* error);
     void createMatchPhoneNumberQuery(const QContactFilter& filter,
                                      QString& sqlQuery,
                                      QContactManager::Error* error);
+#ifdef PBK_UNIT_TEST
+    void emulateBestMatching();
+#endif //PBK_UNIT_TEST
+    
 private:
     void updateForMatchFlag( const QContactDetailFilter& filter,
                              QString& fieldToUpdate ,
                              QContactManager::Error* error) const;
     QList<QContactLocalId>  HandlePredictiveSearchFilter(const QContactFilter& filter,
                                                          QContactManager::Error* error);
-
+    
     CntFilterDetail::TMatch createPaddedPhoneDigits(const TDesC& number, 
                                                     const TInt numLowerDigits,
                                                     const TInt numUpperDigits,
@@ -105,11 +115,17 @@ private:
                                                    TInt upperMatchLength,
                                                    QContactManager::Error* error);
     bool getMatchLengthL(TInt& matchLength);
+    bool bestMatchingEnabled();
+    QList<QContactLocalId> getBestMatchPhoneNumbersL(const QString number,
+                                                     const QList<QContactLocalId>& idList,
+                                                     QContactManager::Error* error);
+    
     
 protected:
     CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;
     CntDbInfo& m_dbInfo;
+    bool m_emulateBestMatching; //PBK_UNIT_TEST
 };
 
 #endif

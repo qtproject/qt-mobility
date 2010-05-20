@@ -43,7 +43,8 @@
 #include "cntfilterdetail.h"
 
 
-CntDbInfo::CntDbInfo()       
+CntDbInfo::CntDbInfo(QContactManagerEngine* engine):
+    m_engine(engine)
 {
     QString id("%1.%2");
     contactsTableIdColumNameMapping.insert(id.arg(QContactName::DefinitionName, QContactName::FieldFirstName), "first_name");
@@ -58,9 +59,13 @@ CntDbInfo::CntDbInfo()
 
 CntDbInfo::~CntDbInfo()
 {
-
     contactsTableIdColumNameMapping.clear();
     commAddrTableIdColumNameMapping.clear();
+}
+
+QContactManagerEngine* CntDbInfo::engine()
+{
+    return m_engine;
 }
 
 bool CntDbInfo::SupportsDetail(QString definitionName, QString fieldName)
