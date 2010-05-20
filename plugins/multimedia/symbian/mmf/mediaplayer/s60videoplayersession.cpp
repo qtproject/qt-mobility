@@ -415,6 +415,7 @@ void S60VideoPlayerSession::resetVideoDisplay()
             m_player->RemoveDisplayWindow(*m_displayWindow);
         RWindow *window = static_cast<RWindow *>(m_window);
         if (window) {
+            window->SetBackgroundColor(TRgb(0, 0, 0, 255));
             TRAPD(err,
                m_player->AddDisplayWindowL(m_wsSession,
                                            m_screenDevice,
