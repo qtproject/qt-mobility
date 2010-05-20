@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QROUTE_P_H
-#define QROUTE_P_H
+#ifndef QGEOROUTE_P_H
+#define QGEOROUTE_P_H
 
 //
 //  W A R N I N G
@@ -53,29 +53,31 @@
 // We mean it.
 //
 
-#include "qmaneuver.h"
-
-#include <QDateTime>
-#include <QList>
-#include <QRectF>
+#include "qgeoroute.h"
+#include "qgeoboundingbox.h"
+#include "qgeodistance.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoCoordinate;
+class QGeoRouteSegment;
 
 class QGeoRoutePrivate
 {
 public:
     QGeoRoutePrivate();
-    QGeoRoutePrivate(const QGeoRoutePrivate &rp);
-    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &rp);
+    QGeoRoutePrivate(const QGeoRoutePrivate &other);
+    ~QGeoRoutePrivate();
 
-    quint32 distance;
-    QDateTime timeOfArrival;
-    QDateTime timeOfDeparture;
+    QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
 
-    QRectF boundingBox;
-    QList<QManeuver> maneuvers;
+    QList<QGeoCoordinate> routeOverview;
+    QGeoBoundingBox bounds;
+    QList<const QGeoRouteSegment*> routeSegments;
+    int estimatedTravelTime;
+    QGeoDistance length;
 };
 
 QTM_END_NAMESPACE
 
-#endif // QROUTE_P_H
+#endif

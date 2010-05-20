@@ -68,39 +68,28 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a QGeoRouteReply with parent \a parent.
+    Constructs a route reply object based on \a request, with parent \a parent.
 */
-QGeoRouteReply::QGeoRouteReply(QObject *parent)
+QGeoRouteReply::QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoRouteReplyPrivate)
+        d_ptr(new QGeoRouteReplyPrivate(request))
 {
 }
 
 /*!
-    Destructor.
+    Destroys the route reply object.
 */
 QGeoRouteReply::~QGeoRouteReply()
 {
-    Q_D(QGeoRouteReply);
-    delete d;
+    delete d_ptr;
 }
 
 /*!
-    Returns the description of the route or routes.
+    Returns the route request which specified the route.
 */
-QString QGeoRouteReply::description() const
+QGeoRouteRequest QGeoRouteReply::request() const
 {
-    Q_D(const QGeoRouteReply);
-    return d->description;
-}
-
-/*!
-    Sets the description of the route or routes to \a description.
-*/
-void QGeoRouteReply::setDescription(const QString &description)
-{
-    Q_D(QGeoRouteReply);
-    d->description = description;
+    return d_ptr->request;
 }
 
 /*!
@@ -108,8 +97,7 @@ void QGeoRouteReply::setDescription(const QString &description)
 */
 QList<QGeoRoute> QGeoRouteReply::routes() const
 {
-    Q_D(const QGeoRouteReply);
-    return d->routes;
+    return d_ptr->routes;
 }
 
 /*!
@@ -117,14 +105,13 @@ QList<QGeoRoute> QGeoRouteReply::routes() const
 */
 void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 {
-    Q_D(QGeoRouteReply);
-    d->routes = routes;
+    d_ptr->routes = routes;
 }
 
 /*!
-    \fn void QGeoRouteReply::cancel()
+    \fn void QGeoRouteReply::abort()
 
-    Cancels the receiving of this reply if the reply hasn't been received already.
+    Cancels the route calculation operation if the reply hasn't been received already.
 */
 
 /*!
@@ -133,7 +120,7 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
     Indicates that the reply has been received and processed without error, and is ready to be used.
 */
 /*!
-    \fn void QGeoRouteReply::error(QGeoRouteReply::ErrorCode errorCode, const QString &errorString = QString())
+    \fn void QGeoRouteReply::error(QGeoRouteReply::Error error, const QString &errorString)
 
     Indicates that an error occurred during the receiving or processing of the reply.
 */
@@ -141,7 +128,22 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoRouteReplyPrivate::QGeoRouteReplyPrivate() {}
+QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteRequest &request)
+    : request(request) {}
+
+QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteReplyPrivate &other)
+    : request(other.request),
+    routes(other.routes) {}
+
+QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
+
+QGeoRouteReplyPrivate& QGeoRouteReplyPrivate::operator= (const QGeoRouteReplyPrivate &other)
+{
+    request = other.request;
+    routes = other.routes;
+
+    return *this;
+}
 
 #include "moc_qgeoroutereply.cpp"
 

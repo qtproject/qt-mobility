@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEREQUEST_P_H
-#define QLOCATION_ROUTEREQUEST_P_H
+#ifndef QGEOROUTEREQUEST_P_H
+#define QGEOROUTEREQUEST_P_H
 
 //
 //  W A R N I N G
@@ -53,12 +53,9 @@
 // We mean it.
 //
 
-#include <QString>
-#include <QDateTime>
-#include <QList>
-
-#include "qgeocoordinate.h"
 #include "qgeorouterequest.h"
+
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,27 +63,21 @@ class QGeoRouteRequestPrivate
 {
 public:
     QGeoRouteRequestPrivate();
+    QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other);
+    ~QGeoRouteRequestPrivate();
 
-    QString requestString(const QString &host) const;
+    QGeoRouteRequestPrivate& operator= (const QGeoRouteRequestPrivate &other);
 
-    QString typeToString() const;
-    QString modeToString() const;
-    QString avoidToString() const;
+    QList<QGeoCoordinate> waypoints;
+    int numberAlternativeRoutes;
+    QGeoRouteRequest::TravelModes travelModes;
+    QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes;
+    QGeoRouteRequest::RouteOptimization routeOptimization;
+    QGeoRouteRequest::DirectionsDetail directionsDetail;
 
-    QString trimDouble(qreal degree, int decimalDigits = 10) const;
-
-    QString version;
-    QGeoCoordinate src;
-    QGeoCoordinate dst;
-    quint32 nTotal;
-    quint16 nAlternatives;
-    QString languageCode;
-    QDateTime departureTime;
-    QDateTime arrivalTime;
-    QGeoRouteRequest::RouteType routeType;
-    QGeoRouteRequest::RouteMode routeMode;
-    QList<QGeoRouteRequest::RouteAvoid> avoid;
-    QList<QGeoCoordinate> stopOvers;
+    // defaults to empty - no subclass required yet
+    // this is how we handle private / public / truck attributes
+    //QList<const QGeoRouteTransitOptions *> transitOptions;
 };
 
 QTM_END_NAMESPACE

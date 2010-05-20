@@ -39,38 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOBOUNDINGBOX_H_
-#define QGEOBOUNDINGBOX_H_
+#ifndef QGEOBOUNDINGBOX_H
+#define QGEOBOUNDINGBOX_H
 
-#include "qgeocoordinate.h"
+#include "qmobilityglobal.h"
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoCoordinate;
+class QGeoBoundingBoxPrivate;
 
 class Q_LOCATION_EXPORT QGeoBoundingBox
 {
 public:
     QGeoBoundingBox();
-    QGeoBoundingBox(const QGeoCoordinate topLeft, const QGeoCoordinate bottomRight);
-    virtual ~QGeoBoundingBox();
-    QGeoCoordinate topLeft() const;
-    QGeoCoordinate bottomRight() const;
-    bool contains(const QGeoCoordinate coord);
-    bool contains(const QGeoBoundingBox bbox);
-    QGeoCoordinate getCenter() const;
-    double getHeight() const;
-    double getWidth() const;
-    bool intersects(const QGeoBoundingBox bbox) const;
-    bool isEmpty() const;
-    //QGeoBoundingBox merge(QGeoBoundingBox[] boundingBoxes);
-    //QGeoBoundingBox union(QGeoBoundingBox bbox);
-    void resizeToCenter(const QGeoCoordinate center);
-    void setTopLeft(const QGeoCoordinate topLeft);
-    void setBottomRight(const QGeoCoordinate bottomRight);
+    QGeoBoundingBox(const QGeoBoundingBox &other);
+    QGeoBoundingBox(const QGeoCoordinate &upperLeft, const QGeoCoordinate &lowerRight);
+    ~QGeoBoundingBox();
+
+    QGeoBoundingBox& operator = (const QGeoBoundingBox &other);
+
+    bool operator == (const QGeoBoundingBox &other) const;
+
+    bool isValid() const;
+
+    void setUpperLeft(const QGeoCoordinate &upperLeft);
+    QGeoCoordinate upperLeft() const;
+
+    void setLowerRight(const QGeoCoordinate &lowerRight);
+    QGeoCoordinate lowerRight() const;
+
+    // contains / intersects methods?
+
 private:
-    QGeoCoordinate coordTL;
-    QGeoCoordinate coordBR;
+    QGeoBoundingBoxPrivate *d_ptr;
 };
 
 QTM_END_NAMESPACE
 
-#endif /* QGEOBOUNDINGBOX_H_ */
+QT_END_HEADER
+
+#endif
+

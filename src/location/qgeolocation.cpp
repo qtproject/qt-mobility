@@ -42,24 +42,9 @@
 #include "qgeolocation.h"
 #include "qgeolocation_p.h"
 
+#include "qlandmark.h"
+
 QTM_BEGIN_NAMESPACE
-
-QGeoLocationPrivate::QGeoLocationPrivate()
-        : QSharedData()
-{
-}
-
-QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
-        : QSharedData(other),
-        box(other.box),
-        coord(other.coord),
-        addr(other.addr)
-{
-}
-
-QGeoLocationPrivate::~QGeoLocationPrivate()
-{
-}
 
 /*!
     \class QGeoLocation
@@ -73,15 +58,18 @@ QGeoLocationPrivate::~QGeoLocationPrivate()
     Default constructor.
 */
 QGeoLocation::QGeoLocation()
-        : d(new QGeoLocationPrivate)
+        : d_ptr(new QGeoLocationPrivate())
 {
 }
+
+QGeoLocation::QGeoLocation(QGeoLocationPrivate *dd)
+    : d_ptr(dd) {}
 
 /*!
     Constructs a copy of \a other.
 */
 QGeoLocation::QGeoLocation(const QGeoLocation &other)
-        : d(other.d)
+        : d_ptr(other.d_ptr)
 {
 }
 
@@ -96,29 +84,54 @@ QGeoLocation::~QGeoLocation()
     Assigns \a other to this location and returns a reference
     to this location.
 */
-QGeoLocation &QGeoLocation::operator=(const QGeoLocation & other)
+QGeoLocation &QGeoLocation::operator= (const QGeoLocation & other)
 {
-    d = other.d;
+    d_ptr = other.d_ptr;
     return *this;
+}
+
+inline QGeoLocationPrivate* QGeoLocation::d_func()
+{
+    return reinterpret_cast<QGeoLocationPrivate*>(d_ptr.data());
+}
+
+inline const QGeoLocationPrivate* QGeoLocation::d_func() const
+{
+    return reinterpret_cast<const QGeoLocationPrivate*>(d_ptr.constData());
 }
 
 /*!
     Returns true if \a other is equal to this location,
     otherwise returns false.
 */
-bool QGeoLocation::operator==(const QGeoLocation &other) const
+bool QGeoLocation::operator== (const QGeoLocation &other) const
 {
-    return (d->box == other.boundingBox())
-           && (d->coord == other.coordinate())
-           && (d->addr == other.address());
+    return (d_ptr.constData() == other.d_ptr.constData());
 }
 
 /*!
-    \fn bool QGeoLocation::operator!=(const QGeoLocation &other) const
-
     Returns true if \a other is not equal to this location,
     otherwise returns false.
 */
+bool QGeoLocation::operator!= (const QGeoLocation &other) const
+{
+    return (!this->operator ==(other));
+}
+
+bool QGeoLocation::isLandmark() const
+{
+    return false;
+}
+
+QLandmark* QGeoLocation::asLandmark()
+{
+    if (isLandmark()) {
+        return static_cast<QLandmark*>(this);
+        return 0;
+    } else {
+        return 0;
+    }
+}
 
 /*!
     Returns the bounding box that completely encloses the location.
@@ -126,17 +139,19 @@ bool QGeoLocation::operator==(const QGeoLocation &other) const
     The x coordinates of the corner points represent longitudes,
     the y coordinates represent latitudes.
 */
-QRectF QGeoLocation::boundingBox() const
+QGeoBoundingBox QGeoLocation::boundingBox() const
 {
-    return d->box;
+    Q_D(const QGeoLocation);
+    return d->boundingBox;
 }
 
 /*!
     Sets the \a boundingBox of the location.
 */
-void QGeoLocation::setBoundingBox(const QRectF &boundingBox)
+void QGeoLocation::setBoundingBox(const QGeoBoundingBox &boundingBox)
 {
-    d->box = boundingBox;
+    Q_D(QGeoLocation);
+    d->boundingBox = boundingBox;
 }
 
 /*!
@@ -144,7 +159,8 @@ void QGeoLocation::setBoundingBox(const QRectF &boundingBox)
 */
 QGeoCoordinate QGeoLocation::coordinate() const
 {
-    return d->coord;
+    Q_D(const QGeoLocation);
+    return d->coordinate;
 }
 
 /*!
@@ -152,7 +168,8 @@ QGeoCoordinate QGeoLocation::coordinate() const
 */
 void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    d->coord = coordinate;
+    Q_D(QGeoLocation);
+    d->coordinate = coordinate;
 }
 
 /*!
@@ -160,7 +177,8 @@ void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
 */
 QGeoAddress QGeoLocation::address() const
 {
-    return d->addr;
+    Q_D(const QGeoLocation);
+    return d->address;
 }
 
 /*!
@@ -168,7 +186,38 @@ QGeoAddress QGeoLocation::address() const
 */
 void QGeoLocation::setAddress(const QGeoAddress &address)
 {
-    d->addr = address;
+    Q_D(QGeoLocation);
+    d->address = address;
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoLocationPrivate::QGeoLocationPrivate()
+    : QSharedData() {}
+
+QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
+    : QSharedData(other),
+    boundingBox(other.boundingBox),
+    coordinate(other.coordinate),
+    address(other.address) {}
+
+QGeoLocationPrivate::~QGeoLocationPrivate(){}
+
+QGeoLocationPrivate& QGeoLocationPrivate::operator= (const QGeoLocationPrivate &other)
+{
+    boundingBox = other.boundingBox;
+    coordinate = other.coordinate;
+    address = other.address;
+
+    return *this;
+}
+
+bool QGeoLocationPrivate::operator== (const QGeoLocationPrivate &other) const
+{
+    return ((boundingBox == other.boundingBox)
+            && (coordinate == other.coordinate)
+            && (address == other.address));
 }
 
 QTM_END_NAMESPACE

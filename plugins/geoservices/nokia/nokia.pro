@@ -1,0 +1,38 @@
+TEMPLATE = lib
+CONFIG += plugin
+TARGET = $$qtLibraryTarget(qtgeoservices_nokia)
+PLUGIN_TYPE=geoservices
+
+include(../../../common.pri)
+
+QT += network
+
+#CONFIG += mobility
+#MOBILITY = location
+
+qtAddLibrary(QtLocation)
+
+HEADERS += \
+            qgeocodexmlparser_p.h \
+            qgeoplacesmanager_nokia_p.h \
+            qgeoplacesreply_nokia_p.h \
+            qgeoroutereply_nokia_p.h \
+            qgeoroutexmlparser_p.h \
+            qgeoroutingmanager_nokia_p.h \
+            qgeoserviceproviderplugin_nokia_p.h
+
+SOURCES += \
+            qgeocodexmlparser.cpp \
+            qgeoplacesmanager_nokia.cpp \
+            qgeoplacesreply_nokia.cpp \
+            qgeoroutereply_nokia.cpp \
+            qgeoroutexmlparser.cpp \
+            qgeoroutingmanager_nokia.cpp \
+            qgeoserviceproviderplugin_nokia.cpp
+
+INCLUDEPATH += $$SOURCE_DIR/src/location
+
+
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
+INSTALLS += target
+

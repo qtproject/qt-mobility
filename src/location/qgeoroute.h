@@ -39,46 +39,57 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTE_H
-#define QLOCATION_ROUTE_H
+#ifndef QGEOROUTE_H
+#define QGEOROUTE_H
 
-#include <QDateTime>
+#include "qgeocoordinate.h"
+
 #include <QList>
-#include <QRectF>
 
-#include "qmaneuver.h"
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoBoundingBox;
+class QGeoDistance;
+class QGeoRouteSegment;
+class QGeoNavigationInstruction;
+
 class QGeoRoutePrivate;
+
 class Q_LOCATION_EXPORT QGeoRoute
 {
+
 public:
     QGeoRoute();
-    QGeoRoute(const QGeoRoute& route);
-    QGeoRoute& operator=(const QGeoRoute& route);
+    QGeoRoute(const QGeoRoute &other);
     ~QGeoRoute();
 
-    QDateTime timeOfDeparture() const;
-    void setTimeOfDeparture(const QDateTime &timeOfDeparture);
+    QGeoRoute& operator = (const QGeoRoute &other);
 
-    QDateTime timeOfArrival() const;
-    void setTimeOfArrival(const QDateTime &timeOfArrival);
+    void setRouteOverview(const QList<QGeoCoordinate> &routeOverview);
+    QList<QGeoCoordinate> routeOverview() const;
 
-    quint32 distance() const;
-    void setDistance(quint32 distance);
+    void setBounds(const QGeoBoundingBox &bounds);
+    QGeoBoundingBox bounds() const;
 
-    const QRectF& boundingBox() const;
-    void setBoundingBox(const QRectF &boundingBox);
+    void setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments);
+    QList<const QGeoRouteSegment *> routeSegments() const;
 
-    QList<QManeuver> maneuvers() const;
-    void setManeuvers(const QList<QManeuver> &maneuvers);
+    void setEstimatedTravelTime(int travelTimeSeconds);
+    int estimatedTravelTime() const;
+
+    void setLength(const QGeoDistance &length);
+    QGeoDistance length() const;
+
+    QGeoCoordinate closestPointOnRoute(const QGeoCoordinate &position) const;
 
 private:
-    QGeoRoutePrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoRoute);
+    QGeoRoutePrivate* d_ptr;
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

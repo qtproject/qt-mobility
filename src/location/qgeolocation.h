@@ -39,36 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_GEOPLACE_H
-#define QLOCATION_GEOPLACE_H
+#ifndef QGEOLOCATION_H
+#define QGEOLOCATION_H
 
 #include "qmobilityglobal.h"
 #include <QSharedDataPointer>
 
 class QString;
-class QRectF;
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
 class QGeoAddress;
+class QGeoBoundingBox;
+class QGeoCoordinate;
+
+class QLandmark;
 
 class QGeoLocationPrivate;
+
 class Q_LOCATION_EXPORT QGeoLocation
 {
 public:
     QGeoLocation();
-    QGeoLocation(const QGeoLocation &gl);
-    QGeoLocation& operator=(const QGeoLocation &gl);
-    ~QGeoLocation();
+    QGeoLocation(const QGeoLocation &other);
+    virtual ~QGeoLocation();
+
+    QGeoLocation& operator=(const QGeoLocation &other);
 
     bool operator==(const QGeoLocation &other) const;
-    bool operator!=(const QGeoLocation &other) const {
-        return !(*this == other);
-    }
+    bool operator!=(const QGeoLocation &other) const;
 
-    QRectF boundingBox() const;
-    void setBoundingBox(const QRectF &boundingBox);
+    virtual bool isLandmark() const;
+    QLandmark* asLandmark();
+
+    QGeoBoundingBox boundingBox() const;
+    void setBoundingBox(const QGeoBoundingBox &boundingBox);
 
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &coordinate);
@@ -76,8 +81,13 @@ public:
     QGeoAddress address() const;
     void setAddress(const QGeoAddress &address);
 
+protected:
+    QGeoLocation(QGeoLocationPrivate *dd);
+    QSharedDataPointer<QGeoLocationPrivate> d_ptr;
+
 private:
-    QSharedDataPointer<QGeoLocationPrivate> d;
+    QGeoLocationPrivate* d_func();
+    const QGeoLocationPrivate* d_func() const;
 };
 
 QTM_END_NAMESPACE

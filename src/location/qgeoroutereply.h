@@ -39,23 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QROUTEREPLY_H
-#define QROUTEREPLY_H
+#ifndef QGEOROUTEREPLY_H
+#define QGEOROUTEREPLY_H
 
 #include "qgeoroute.h"
 
 #include <QList>
+#include <QObject>
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoRouteRequest;
 class QGeoRouteReplyPrivate;
+
 class Q_LOCATION_EXPORT QGeoRouteReply : public QObject
 {
     Q_OBJECT
-
 public:
-    // TODO populate this some more...
-    enum ErrorCode {
+    enum Error {
         NoError,
         // flesh out the more common specific network errors
         NetworkError,
@@ -65,28 +68,29 @@ public:
         UnknownError
     };
 
-    QGeoRouteReply(QObject *parent = 0);
     virtual ~QGeoRouteReply();
 
-    QString description() const;
-    void setDescription(const QString &description);
-
+    QGeoRouteRequest request() const;
     QList<QGeoRoute> routes() const;
-    void setRoutes(const QList<QGeoRoute> &routes);
 
 public slots:
-    virtual void cancel() = 0;
+    virtual void abort() = 0;
 
 signals:
     void finished();
-    void error(QGeoRouteReply::ErrorCode errorCode, const QString &errorString = QString());
+    void error(QGeoRouteReply::Error error, const QString &errorString = QString());
 
-    // CHOICE: could lose the setters and make this protected
+protected:
+    QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent = 0);
+    void setRoutes(const QList<QGeoRoute> &routes);
+
 private:
     QGeoRouteReplyPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoRouteReply);
+    Q_DISABLE_COPY(QGeoRouteReply)
 };
 
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

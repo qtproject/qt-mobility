@@ -44,6 +44,8 @@
 
 #include "qmobilityglobal.h"
 
+#include "qgeolocation.h"
+
 #include <QObject>
 #include <QSharedDataPointer>
 #include <QVariant>
@@ -61,7 +63,7 @@ class QGeoAddress;
 class QGeoCoordinate;
 
 class QLandmarkPrivate;
-class Q_LOCATION_EXPORT QLandmark
+class Q_LOCATION_EXPORT QLandmark : public QGeoLocation
 {
 public:
     QLandmark();
@@ -74,14 +76,10 @@ public:
         return !(*this == other);
     }
 
+    bool isLandmark() const;
+
     QString name() const;
     void setName(const QString &name);
-
-    QGeoAddress address() const;
-    void setAddress(const QGeoAddress &address);
-
-    QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &coordinate);
 
     QList<QLandmarkCategoryId> categoryIds() const;
     void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds);
@@ -109,8 +107,10 @@ public:
 
     QLandmarkId landmarkId() const;
     void setLandmarkId(const QLandmarkId &id);
+
 private:
-    QSharedDataPointer<QLandmarkPrivate> d;
+    QLandmarkPrivate* d_func();
+    const QLandmarkPrivate* d_func() const;
 };
 
 QTM_END_NAMESPACE

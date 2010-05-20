@@ -39,96 +39,109 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEREQUEST_H
-#define QLOCATION_ROUTEREQUEST_H
+#ifndef QGEOROUTEREQUEST_H
+#define QGEOROUTEREQUEST_H
 
-#include <QObject>
-#include <QString>
-#include <QDateTime>
+#include "qmobilityglobal.h"
+
 #include <QList>
 
-#include "qgeocoordinate.h"
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoCoordinate;
 
 class QGeoRouteRequestPrivate;
 
 class Q_LOCATION_EXPORT QGeoRouteRequest
 {
-    friend class QGeoNetworkManager;
-
 public:
-
-    enum RouteType {
-        Fastest,
-        Shortest,
-        Economic
+    enum TravelMode {
+        CarTravel = 0x0001,
+        PedestrianTravel = 0x0002,
+        BicycleTravel = 0x0004,
+        PublicTransitTravel = 0x0008,
+        TruckTravel = 0x000F
     };
+    Q_DECLARE_FLAGS(TravelModes, TravelMode)
 
-    enum RouteMode {
-        Car,
-        Pedestrian,
-        PublicTransport
+    enum AvoidFeatureType {
+        AvoidNothing = 0x00000000,
+        AvoidTolls = 0x00000001,
+        AvoidHighways = 0x00000002,
+        AvoidPublicTransit = 0x00000004,
+        AvoidFerries = 0x00000008,
+        AvoidTunnels = 0x0000000F,
+        AvoidDirtRoads = 0x00000010,
+        AvoidPark = 0x00000020,
+        AvoidMotorPoolLanes = 0x00000040
     };
+    Q_DECLARE_FLAGS(AvoidFeatureTypes, AvoidFeatureType)
 
-    enum RouteAvoid {
-        Highways,
-        Tollroads,
-        Ferries,
-        Tunnels,
-        Dirtroads,
-        RailFerries
+    enum RouteOptimization {
+        ShortestRoute = 0x0001,
+        FastestRoute = 0x0002,
+        MostEconomicRoute = 0x0004,
+        MostScenicRoute = 0x0008
     };
+    Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
 
-public:
-    QGeoRouteRequest();
+    enum DirectionsDetail {
+        NoDirections = 0x00001,
+        BasicDirections = 0x0002,
+        DetailedDirections = 0x0004
+    };
+    Q_DECLARE_FLAGS(DirectionsDetails, DirectionsDetail)
+
+    QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints = QList<QGeoCoordinate>());
+    QGeoRouteRequest(const QGeoCoordinate &origin,
+                     const QGeoCoordinate &destination);
+    QGeoRouteRequest(const QGeoRouteRequest &other);
+
     ~QGeoRouteRequest();
 
-    QString version() const;
+    QGeoRouteRequest& operator= (const QGeoRouteRequest &other);
 
-    void setSource(const QGeoCoordinate& source);
-    QGeoCoordinate source() const;
+    void setWaypoints(const QList<QGeoCoordinate> &waypoints);
+    QList<QGeoCoordinate> waypoints() const;
 
-    void setDestination(const QGeoCoordinate& destination);
-    QGeoCoordinate destination() const;
+    // default to 0
+    void setNumberAlternativeRoutes(int alternatives);
+    int numberAlternativeRoutes() const;
 
-    void setTotalResults(quint32 totalResults);
-    quint32 totalResults() const;
+    // default to TravelByCar
+    void setTravelModes(TravelModes travelModes);
+    TravelModes travelModes() const;
 
-    void setAlternatives(quint16 nAlternatives);
-    quint16 alternatives() const;
+    // defaults to NoAvoidance
+    void setAvoidFeatureTypes(AvoidFeatureTypes avoidFeatureTypes);
+    AvoidFeatureTypes avoidFeatureTypes() const;
 
-    void setLanguage(const QString& code);
-    QString language() const;
+    // defaults to OptimizeFastest
+    void setRouteOptimization(RouteOptimization optimization);
+    RouteOptimization routeOptimization() const;
 
-    void setDepartureTime(const QDateTime& departureTime);
-    QDateTime departureTime() const;
+    // default to NoDirections
+    void setDirectionsDetail(DirectionsDetail directionsDetail);
+    DirectionsDetail directionsDetail() const;
 
-    void setArrivalTime(const QDateTime& arrivalTime);
-    QDateTime arrivalTime() const;
-
-    void setType(RouteType type);
-    RouteType type() const;
-
-    void setMode(RouteMode mode);
-    RouteMode mode() const;
-
-    void setAvoid(QList<RouteAvoid> avoid);
-    QList<RouteAvoid> avoid() const;
-
-    void addStopOver(const QGeoCoordinate& stopOver);
-    void removeStopOver(const QGeoCoordinate& stopOver);
-    const QList<QGeoCoordinate>& stopOvers() const;
-
-    QString requestString(const QString &host) const;
+    // defaults to empty - no subclass required yet
+    // this is how we handle private / public / truck attributes
+    //void setTransitOptions(const QList<const QGeoRouteTransitOptions *> &transitOptions);
+    //QList<const QGeoRouteTransitOptions *> transitOptions() const;
 
 private:
     QGeoRouteRequestPrivate *d_ptr;
-
-    Q_DECLARE_PRIVATE(QGeoRouteRequest)
-    Q_DISABLE_COPY(QGeoRouteRequest)
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::TravelModes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::AvoidFeatureTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::RouteOptimizations)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::DirectionsDetails)
+
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

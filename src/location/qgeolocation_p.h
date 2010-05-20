@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_GEOLOCATION_P_H
-#define QLOCATION_GEOLOCATION_P_H
+#ifndef QGEOLOCATION_P_H
+#define QGEOLOCATION_P_H
 
 //
 //  W A R N I N G
@@ -56,8 +56,10 @@
 #include <QRectF>
 #include <QSharedData>
 
-#include "qgeocoordinate.h"
 #include "qgeoaddress.h"
+#include "qgeoboundingbox.h"
+#include "qgeocoordinate.h"
+
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,11 +68,15 @@ class QGeoLocationPrivate : public QSharedData
 public:
     QGeoLocationPrivate();
     QGeoLocationPrivate(const QGeoLocationPrivate &other);
-    ~QGeoLocationPrivate();
+    virtual ~QGeoLocationPrivate();
 
-    QRectF box;
-    QGeoCoordinate coord;
-    QGeoAddress addr;
+    QGeoLocationPrivate& operator= (const QGeoLocationPrivate &other);
+
+    virtual bool operator== (const QGeoLocationPrivate &other) const;
+
+    QGeoBoundingBox boundingBox;
+    QGeoCoordinate coordinate;
+    QGeoAddress address;
 };
 
 QTM_END_NAMESPACE

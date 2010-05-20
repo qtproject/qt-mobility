@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -43,145 +42,202 @@
 #include "qgeoroute.h"
 #include "qgeoroute_p.h"
 
+#include "qgeodistance.h"
+#include "qgeoboundingbox.h"
+
+#include <QDateTime>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRoute
-    \brief The QGeoRoute class is a representation of a route.
-    \ingroup location
+    \brief The QGeoRoute class represents a route between two points.
+    \ingroup maps
 
-    This class represents a route as contained in a QGeoRouteReply.
-    A QGeoRoute contains a collection of QManeuver objects.
+    A QGeoRoute object contains high level information about a route, such
+    as the length the route, the estimated travel time for the route,
+    and enough information to render a basic image of the route on a map.
+
+    The QGeoRoute object also contains a list of QGeoRouteSegment objecs, or
+    objects derived from QGeoRouteSegment, which describe subsections of the
+    route in greater detail.  The subclasses of QGeoRouteSegment are used to
+    provide specific information for the subsection of the route for particular
+    cases, as may be needed when the segment is to be traversed via public
+    transport or in a truck.
+
+    An instance QGeoRoutingService of will normally be responsible for the
+    creation and setup of QGeoRoute objects.
+
+    \sa QGeoRoutingService
 */
 
 /*!
-    The default constructor.
+    Constructs a route object.
 */
 QGeoRoute::QGeoRoute()
-        : d_ptr(new QGeoRoutePrivate())
-{}
-
+        : d_ptr(new QGeoRoutePrivate()) {}
 
 /*!
-    The copy constructor.
+    Construcst a route object from the contents of \a other.
 */
-QGeoRoute::QGeoRoute(const QGeoRoute& route)
-        : d_ptr(new QGeoRoutePrivate(*(route.d_ptr)))
-{
-}
+QGeoRoute::QGeoRoute(const QGeoRoute &other)
+        : d_ptr(new QGeoRoutePrivate(*(other.d_ptr))) {}
 
 /*!
-    The assignment operator.
-*/
-QGeoRoute& QGeoRoute::operator=(const QGeoRoute & route)
-{
-    *d_ptr = *(route.d_ptr);
-    return *this;
-}
-
-/*!
-    The destructor.
+    Destroys a route object.
 */
 QGeoRoute::~QGeoRoute()
 {
-    Q_D(QGeoRoute);
-    delete d;
+    delete d_ptr;
 }
 
 /*!
-    Returns the departure time of this route.
+    Assigns the contents of \a other to this route and returns a reference to
+    this route.
 */
-QDateTime QGeoRoute::timeOfDeparture() const
+QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 {
-    Q_D(const QGeoRoute);
-    return d->timeOfDeparture;
+    *d_ptr = *(other.d_ptr);
+    return *this;
+}
+
+// TODO
+// this comes from the various specs
+// - won't this be highly dependent on zoom levels?
+// - could probably use the level of detail trick (min pixels distance)
+//   in order to generate a list of points per zoom level
+// - could then cache them in the route
+// - these methods would then me modified to have a zoom level parameter
+
+/*!
+    Sets the list of coordinates suitable for providing a graphical
+    overview of the route to \a routeOverview.
+
+    Acutal routing information may describe the geographic path of the route
+    in much higher detail than is necessary to draw the route at most scales,
+
+    \sa QGeoRoute::routeOverview()
+*/
+void QGeoRoute::setRouteOverview(const QList<QGeoCoordinate> &routeOverview)
+{
+    d_ptr->routeOverview = routeOverview;
 }
 
 /*!
-    Sets the time of departure for this route to \a timeOfDeparture
+    Returns a list of coordinates suitable for providing a graphical
+    overview of the route.
+
+    \sa QGeoRoute::setRouteOverview()
 */
-void QGeoRoute::setTimeOfDeparture(const QDateTime &timeOfDeparture)
+QList<QGeoCoordinate> QGeoRoute::routeOverview() const
 {
-    Q_D(QGeoRoute);
-    d->timeOfDeparture = timeOfDeparture;
+    return d_ptr->routeOverview;
 }
 
 /*!
-    Returns the arrival time of this route.
+    Sets the bounding box which encompasses the entire route to \a bounds.
+
+    \sa QGeoRoute::bounds()
 */
-QDateTime QGeoRoute::timeOfArrival() const
+void QGeoRoute::setBounds(const QGeoBoundingBox &bounds)
 {
-    Q_D(const QGeoRoute);
-    return d->timeOfArrival;
+    d_ptr->bounds = bounds;
 }
 
 /*!
-    Sets the time of arrival for this route to \a timeOfArrival
+    Returns a bounding box which encompasses the entire route.
+
+    \sa QGeoRoute::setBounds()
 */
-void QGeoRoute::setTimeOfArrival(const QDateTime &timeOfArrival)
+QGeoBoundingBox QGeoRoute::bounds() const
 {
-    Q_D(QGeoRoute);
-    d->timeOfArrival = timeOfArrival;
+    return d_ptr->bounds;
 }
 
 /*!
-    Returns the distance covered by this route in meters.
+    Sets the list of route segements to \a routeSegments.
+
+    QGeoRouteSegment contains more detailed information than QGeoRoute
+    and can be subclasses to provide more specialized information, such as
+    for the description of segments of the journey for those who are travelling
+    by public transport, or by truck.
+
+    \sa QGeoRouteSegment
+    \sa QGeoRoute::routeSegments()
 */
-quint32 QGeoRoute::distance() const
+void QGeoRoute::setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments)
 {
-    Q_D(const QGeoRoute);
-    return d->distance;
+    d_ptr->routeSegments = routeSegments;
 }
 
 /*!
-  Sets the distance covered by this route to \a distance metres.
+    Returns the list of route segments.
+
+    QGeoRouteSegment contains more detailed information than QGeoRoute
+    and can be subclasses to provide more specialized information, such as
+    for the description of segments of the journey for those who are travelling
+    by public transport, or by truck.
+
+    \sa QGeoRouteSegment
+    \sa QGeoRoute::setRouteSegments()
 */
-void QGeoRoute::setDistance(quint32 distance)
+QList<const QGeoRouteSegment *> QGeoRoute::routeSegments() const
 {
-    Q_D(QGeoRoute);
-    d->distance = distance;
+    return d_ptr->routeSegments;
 }
 
 /*!
-    Returns the bounding box that completely encloses the route.
+    Sets an estimate of how long it will take to traverse the route to \a
+    travelTime seconds.
 
-    The x coordinates of the corner points represent longitudes
-    and the y coordinates represent latitudes.
+    \sa QGeoRoute::estimatedTravelTime()
 */
-const QRectF& QGeoRoute::boundingBox() const
+void QGeoRoute::setEstimatedTravelTime(int travelTimeSeconds)
 {
-    Q_D(const QGeoRoute);
-    return d->boundingBox;
+    d_ptr->estimatedTravelTime = travelTimeSeconds;
 }
 
 /*!
-    Sets the bounding box which completely encloses the route to \a boundingBox
+    Returns an estimate of how long it will take to travel the route in seconds.
 
-    The x coordinates of the corner points represent longitudes
-    and the y coordinates represent latitudes.
+    \sa QGeoRoute::setEstimatedTravelTime()
 */
-void QGeoRoute::setBoundingBox(const QRectF &boundingBox)
+int QGeoRoute::estimatedTravelTime() const
 {
-    Q_D(QGeoRoute);
-    d->boundingBox = boundingBox;
+    return d_ptr->estimatedTravelTime;
 }
 
 /*!
-    Returns the list of all maneuvers comprising the route.
+    Sets the length of this route to \a length.
+
+    \sa QGeoRoute::length()
 */
-QList<QManeuver> QGeoRoute::maneuvers() const
+void QGeoRoute::setLength(const QGeoDistance &length)
 {
-    Q_D(const QGeoRoute);
-    return d->maneuvers;
+    d_ptr->length = length;
 }
 
 /*!
-    Sets the list of maneuvers which define the route to \a maneuvers.
+    Returns the length of this route.
+
+    \sa QGeoRoute::setLength()
 */
-void QGeoRoute::setManeuvers(const QList<QManeuver> &maneuvers)
+QGeoDistance QGeoRoute::length() const
 {
-    Q_D(QGeoRoute);
-    d->maneuvers = maneuvers;
+    return d_ptr->length;
+}
+
+/*!
+    Returns the point on the route which is closest to \a position.
+
+    If several points are equally close to \a position, the point that occurs
+    first in the ordering of the points on the route will be used.
+*/
+QGeoCoordinate QGeoRoute::closestPointOnRoute(const QGeoCoordinate &position) const
+{
+    // TODO implement
+    Q_UNUSED(position);
+    return QGeoCoordinate();
 }
 
 /*******************************************************************************
@@ -189,23 +245,23 @@ void QGeoRoute::setManeuvers(const QList<QManeuver> &maneuvers)
 
 QGeoRoutePrivate::QGeoRoutePrivate() {}
 
-QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &rp)
-        : timeOfArrival(rp.timeOfArrival),
-        timeOfDeparture(rp.timeOfDeparture),
-        distance(rp.distance),
-        boundingBox(rp.boundingBox),
-        maneuvers(rp.maneuvers)
-{}
+QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
+        : routeOverview(other.routeOverview),
+        bounds(other.bounds),
+        routeSegments(other.routeSegments),
+        estimatedTravelTime(other.estimatedTravelTime),
+        length(other.length) {}
 
-QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & rp)
+QGeoRoutePrivate::~QGeoRoutePrivate() {}
+
+QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
 {
-    timeOfArrival = rp.timeOfArrival;
-    timeOfDeparture = rp.timeOfDeparture;
-    distance = rp.distance;
-    boundingBox = rp.boundingBox;
-    maneuvers = rp.maneuvers;
+    routeOverview = other.routeOverview;
+    bounds = other.bounds;
+    routeSegments = other.routeSegments;
+    estimatedTravelTime = other.estimatedTravelTime;
+    length = other.length;
     return *this;
 }
 
 QTM_END_NAMESPACE
-

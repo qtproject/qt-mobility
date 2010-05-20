@@ -1,4 +1,3 @@
-
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -43,455 +42,316 @@
 #include "qgeorouterequest.h"
 #include "qgeorouterequest_p.h"
 
+#include "qgeocoordinate.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRouteRequest
-    \brief The QGeoRouteRequest class represents a request for a route between two points.
-    \ingroup location
+    \brief The QGeoRouteRequest class handles asynchronous requests
+    for geographical routing information.
+    \ingroup maps
 
-    This is the base class representing a route request from a given source to a given destination.
+    Describes a route travelling along waypoints().
+
+    The route will traverse the elements of waypoints() in order.
+
+    If the routing calculation is successful results() will return a list of
+    QGeoRoute objects containing information about the route, including
+    alternative routes if they were requested.  Otherwise results() will
+    return an empty list.
+
+    Regardless of the success of the operation, the results of error() and
+    errorString() will be updated.
+
+    If nothing went wrong, error() will return QGeoCodingManager::NoError and
+    errorString() will return an empty QString, otherwise error() and
+    errorString() will provide details of the error.
+
+    The equivalent synchronous method is
+    QGeoRoutingManager::calculateRoute(const QGeoCoordinate&, const QGeoCoordinate&)
+    and
+    QGeoRoutingManager::calculateRoute(const QList<QGeoCoordinate>&),
+    which are simpler to use but offers less fine-grained control.
 */
 
 /*!
-    \enum QGeoRouteRequest::RouteType
+    \enum QGeoRouteRequest::TravelMode
 
-    \value Fastest
-        fastest route (default)
-    \value Shortest
-        shortest route
-    \value Economic
-        economic route
+    Defines modes of travel to be used for a route.
+
+    \value CarTravel
+        The route will be optimized for someone who is driving a car.
+    \value PedestrianTravel
+        The route will be optimized for someone who is walking.
+    \value BicycleTravel
+        The route will be optimized for someone who is riding a bicycle.
+    \value PublicTransitTravel
+        The route will be optimized for someone who is making use of public transit.
+    \value TruckTravel
+        The route will be optimized for someone who is driving a truck.
 */
 
 /*!
-    \enum QGeoRouteRequest::RouteMode
+    \enum QGeoRouteRequest::AvoidFeatureType
 
-    \value Car
-        car route (default)
-    \value Pedestrian
-        pedestrian route
-    \value PublicTransport
-        public transport route
+    Defines features to be avoided while planning a route.
+
+    \value AvoidNothing
+        The route can be planned without considering features to be avoided.
+    \value AvoidTolls
+        Avoid routes that require the use of tollways.
+    \value AvoidHighways
+        Avoid routes that require the use of highways.
+    \value AvoidPublicTransit
+        Avoid routes that require the use of public transit.
+    \value AvoidFerries
+        Avoid routes that require the use of ferries.
+    \value AvoidTunnels
+        Avoid routes that require the use of tunnels.
+    \value AvoidDirtRoads
+        Avoid routes that require the use of dirt roads.
+    \value AvoidPark
+        Avoid routes that require the travel through parks.
+    \value AvoidMotorPoolLanes
+        Avoid routes that require the use of motor pool lanes.
+*/
+
+// TODO improve description of MostScenicRoute
+/*!
+    \enum QGeoRouteRequest::RouteOptimization
+
+    Defines the type of optimization which is applied to the planning of the route.
+
+    \value ShortestRoute
+        Minimize the length of the journey.
+    \value FastestRoute
+        Minimize the travelling time for the journey.
+    \value MostEconomicRoute
+        Minimize the cost of the journey.
+    \value MostScenicRoute
+        Maximize the scenic potential of the journey.
 */
 
 /*!
-    \enum QGeoRouteRequest::RouteAvoid
+    \enum QGeoRouteRequest::DirectionsDetail
 
-    Values that specify which components the route will not contain.
+    Defines the amount of direction information that should be included with the
+    route.
 
-    \value Highways
-        avoid highways
-    \value Tollroads
-        avoid tollroads
-    \value Ferries
-        avoid ferries
-    \value Tunnels
-        avoid tunnels
-    \value Dirtroads
-        avoid dirt roads
-    \value RailFerries
-        avoid rail ferries
+    \value NoDirections
+        No directions should be included with the route.
+    \value BasicDirections
+        Basic directions will be included with the route.  This will typically
+        include QGeoNavigationInstruction::instructionText().
+    \value DetailedDirections
+        Detailed directions will be included with the route.  This will typically
+        mean that subclasses of QNavigationInstruction are used to provide
+        data structures describing the directions.  See QGeoNavigationInstruction
+        and its subclasses for more details.
+
+    \sa QGeoNavigationInstruction
 */
 
 /*!
-    The default constructor.
+    Constructs a request to calculate a route through the coordinates \a waypoints.
+
+    The route will traverse the elements of \a waypoints in order.
 */
-QGeoRouteRequest::QGeoRouteRequest()
-        : d_ptr(new QGeoRouteRequestPrivate)
+QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
+    : d_ptr(new QGeoRouteRequestPrivate())
 {
+    d_ptr->waypoints = waypoints;
 }
 
 /*!
-    Destroys the route request.
+    Constructs a request to calculate a route between \a origin and
+    \a destination.
+*/
+QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoordinate &destination)
+    : d_ptr(new QGeoRouteRequestPrivate())
+{
+    d_ptr->waypoints.append(origin);
+    d_ptr->waypoints.append(destination);
+}
+
+/*!
+    Constructs a route request object from the contents of \a other.
+*/
+QGeoRouteRequest::QGeoRouteRequest(const QGeoRouteRequest &other)
+    : d_ptr(new QGeoRouteRequestPrivate(*(other.d_ptr))) {}
+
+/*!
+    Destroys the request.
 */
 QGeoRouteRequest::~QGeoRouteRequest()
 {
-    Q_D(QGeoRouteRequest);
-    delete d;
+    delete d_ptr;
 }
 
 /*!
-    Returns the service version.
-
-    Currently the only supported version is 1.0.
+    Assigns \a other to this route request object and then returns a reference
+    to this route request object.
 */
-QString QGeoRouteRequest::version() const
+QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest &other)
 {
-    Q_D(const QGeoRouteRequest);
-    return d->version;
+    *d_ptr = *(other.d_ptr);
+    return *this;
 }
 
 /*!
-    Sets the source geo coordinate for this request to \a source.
+    Sets \a waypoints as the waypoints that the route should pass through.
+
+    The waypoints should be given in order from origin to destination.
+
+    This request will be invalid until the waypoints have been set to a
+    list containing two or more coordinates.
 */
-void QGeoRouteRequest::setSource(const QGeoCoordinate& source)
+void QGeoRouteRequest::setWaypoints(const QList<QGeoCoordinate> &waypoints)
 {
-    Q_D(QGeoRouteRequest);
-    d->src = source;
+    d_ptr->waypoints = waypoints;
 }
 
 /*!
-    Returns the source geo coordinate for this request.
+    Returns the waypoints that the route will pass through.
 */
-QGeoCoordinate QGeoRouteRequest::source() const
+QList<QGeoCoordinate> QGeoRouteRequest::waypoints() const
 {
-    Q_D(const QGeoRouteRequest);
-    return d->src;
+    return d_ptr->waypoints;
 }
 
 /*!
-    Sets the destination geo coordinate for this request to \a destination.
+    Sets the number of alternative routes to request to \a alternatives.
+
+    The default value is 0.
 */
-void QGeoRouteRequest::setDestination(const QGeoCoordinate& destination)
+void QGeoRouteRequest::setNumberAlternativeRoutes(int alternatives)
 {
-    Q_D(QGeoRouteRequest);
-    d->dst = destination;
+    d_ptr->numberAlternativeRoutes = alternatives;
 }
 
 /*!
-    Returns the destination geo coordinate for this request.
+    Returns the number of alternative routes which will be requested.
 */
-QGeoCoordinate QGeoRouteRequest::destination() const
+int QGeoRouteRequest::numberAlternativeRoutes() const
 {
-    Q_D(const QGeoRouteRequest);
-    return d->dst;
+    return d_ptr->numberAlternativeRoutes;
 }
 
 /*!
-    Sets the maximum number of response results.
+    Sets the travel modes which should be considered during the planning of the
+    route to \a travelModes.
 
-    If set to 0 all possible results will be returned.
+    The default value is QGeoRouteRequest::CarTravel.
 */
-void QGeoRouteRequest::setTotalResults(quint32 totalResults)
+void QGeoRouteRequest::setTravelModes(QGeoRouteRequest::TravelModes travelModes)
 {
-    Q_D(QGeoRouteRequest);
-    d->nTotal = totalResults;
+    d_ptr->travelModes = travelModes;
 }
 
 /*!
-    Returns the maximum number of response results.
+    Returns the travel modes which this request specifies should be considered
+    during the planning of the route.
 */
-quint32 QGeoRouteRequest::totalResults() const
+QGeoRouteRequest::TravelModes QGeoRouteRequest::travelModes() const
 {
-    Q_D(const QGeoRouteRequest);
-    return d->nTotal;
+    return d_ptr->travelModes;
 }
 
 /*!
-    Sets the maximum number of alternative routes the server will try to generate.
+    Sets the features to be avoided during the planning of the route to
+    \a avoidFeatureTypes.
 
-    If set to 0 the result will contain no alternative routes (only one result is returned if any).
+    The default value is QGeoRouteRequest::AvoidNothing.
 */
-void QGeoRouteRequest::setAlternatives(quint16 nAlternatives)
+void QGeoRouteRequest::setAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
 {
-    Q_D(QGeoRouteRequest);
-    d->nAlternatives = nAlternatives;
+    d_ptr->avoidFeatureTypes = avoidFeatureTypes;
 }
 
 /*!
-    Returns the maximum number of alternatives to be returned.
+    Returns the features which this request specifies should be avoided during
+    the planning of the route.
 */
-quint16 QGeoRouteRequest::alternatives() const
+QGeoRouteRequest::AvoidFeatureTypes QGeoRouteRequest::avoidFeatureTypes() const
 {
-    Q_D(const QGeoRouteRequest);
-    return d->nAlternatives;
+    return d_ptr->avoidFeatureTypes;
 }
 
 /*!
-    Sets he RFC 3066 language code of the response to \a code.
+    Sets the optimization criteria to use while planning the route to
+    \a optimization.
 
-    The language code should look like en-US or de-DE.
+    The default value is QGeoRouteRequest::FastestRoute.
 */
-void QGeoRouteRequest::setLanguage(const QString& code)
+void QGeoRouteRequest::setRouteOptimization(QGeoRouteRequest::RouteOptimization optimization)
 {
-    Q_D(QGeoRouteRequest);
-    d->languageCode = code;
+    d_ptr->routeOptimization = optimization;
 }
 
 /*!
-    Returns the RFC 3066 language code of the response.
+    Returns the optimization criteria which this request specifies should be
+    used while planning the route.
 */
-QString QGeoRouteRequest::language() const
+QGeoRouteRequest::RouteOptimization QGeoRouteRequest::routeOptimization() const
 {
-    Q_D(const QGeoRouteRequest);
-    return d->languageCode;
+    return d_ptr->routeOptimization;
 }
 
 /*!
-    Sets the planned time of departure to \a tod.
+    Sets the level of the detail to use when representing routing directions
+    to \a directionsDetail.
+
+    The default value is QGeoRouteRequest::BasicDirections.
 */
-void QGeoRouteRequest::setDepartureTime(const QDateTime& departureTime)
+
+void QGeoRouteRequest::setDirectionsDetail(QGeoRouteRequest::DirectionsDetail directionsDetail)
 {
-    Q_D(QGeoRouteRequest);
-    d->departureTime = departureTime;
+    d_ptr->directionsDetail = directionsDetail;
 }
 
 /*!
-    Returns the planned time of departure.
+    Returns the level of detail which is used in the representation of routing
+    directions.
 */
-QDateTime QGeoRouteRequest::departureTime() const
+QGeoRouteRequest::DirectionsDetail QGeoRouteRequest::directionsDetail() const
 {
-    Q_D(const QGeoRouteRequest);
-    return d->departureTime;
+    return d_ptr->directionsDetail;
 }
 
-/*!
-    Sets the planned time of arrival to \a toa.
-*/
-void QGeoRouteRequest::setArrivalTime(const QDateTime& arrivalTime)
-{
-    Q_D(QGeoRouteRequest);
-    d->arrivalTime = arrivalTime;
-}
-
-/*!
-    Returns the planned time of departure.
-*/
-QDateTime QGeoRouteRequest::arrivalTime() const
-{
-    Q_D(const QGeoRouteRequest);
-    return d->arrivalTime;
-}
-
-/*!
-    Sets the type of the route the server will calculate to \a type.
-
-    \sa RouteType
-*/
-void QGeoRouteRequest::setType(RouteType type)
-{
-    Q_D(QGeoRouteRequest);
-    d->routeType = type;
-}
-
-/*!
-    Returns the route type.
-*/
-QGeoRouteRequest::RouteType QGeoRouteRequest::type() const
-{
-    Q_D(const QGeoRouteRequest);
-    return d->routeType;
-}
-
-/*!
-    Sets the movement mode of the route to \a mode.
-
-    \sa RouteMode
-*/
-void QGeoRouteRequest::setMode(RouteMode mode)
-{
-    Q_D(QGeoRouteRequest);
-    d->routeMode = mode;
-}
-
-/*!
-    Returns the route mode.
-*/
-QGeoRouteRequest::RouteMode QGeoRouteRequest::mode() const
-{
-    Q_D(const QGeoRouteRequest);
-    return d->routeMode;
-}
-
-/*!
-    Specifies which route components should not be part of the calculated route to \a avoid.
-
-    The components are avoided on a best effort basis.
-
-    \sa RouteAvoid
-*/
-void QGeoRouteRequest::setAvoid(QList<RouteAvoid> avoid)
-{
-    Q_D(QGeoRouteRequest);
-    d->avoid = avoid;
-}
-
-/*!
-    Returns a list containing all routes components to be avoided.
-*/
-QList<QGeoRouteRequest::RouteAvoid> QGeoRouteRequest::avoid() const
-{
-    Q_D(const QGeoRouteRequest);
-    return d->avoid;
-}
-
-/*!
-    Adds the stop over \a stopOver to the requested route.
-
-    The server calculates a route that contains these waypoints (in the given order)
-    as part of the route. These waypoints must be between the destination and the source.
-*/
-void QGeoRouteRequest::addStopOver(const QGeoCoordinate& stopOver)
-{
-    Q_D(QGeoRouteRequest);
-    d->stopOvers += stopOver;
-}
-
-/*!
-    Removes the stop over \a stopOver from the requested route.
-
-    \sa addStopOver()
-*/
-void QGeoRouteRequest::removeStopOver(const QGeoCoordinate& stopOver)
-{
-    Q_D(QGeoRouteRequest);
-    int i = 0;
-
-    while (i < d->stopOvers.length()) {
-        if (d->stopOvers[i] == stopOver)
-            d->stopOvers.removeAt(i);
-        else
-            i++;
-    }
-}
-
-/*!
-    Returns all added stop overs.
-*/
-const QList<QGeoCoordinate>& QGeoRouteRequest::stopOvers() const
-{
-    Q_D(const QGeoRouteRequest);
-    return d->stopOvers;
-}
-
-/*!
-    Returns the request string for this request and a given \a host.
-*/
-QString QGeoRouteRequest::requestString(const QString &host) const
-{
-    Q_D(const QGeoRouteRequest);
-    return d->requestString(host);
-}
-/*****************************************************************************
- *****************************************************************************/
+/*******************************************************************************
+*******************************************************************************/
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
-        : version("1.0"), nTotal(0),
-        nAlternatives(0),
-        languageCode(""),
-        routeType(QGeoRouteRequest::Fastest),
-        routeMode(QGeoRouteRequest::Car)
+        : numberAlternativeRoutes(0),
+        travelModes(QGeoRouteRequest::CarTravel),
+        avoidFeatureTypes(QGeoRouteRequest::AvoidNothing),
+        routeOptimization(QGeoRouteRequest::FastestRoute),
+        directionsDetail(QGeoRouteRequest::BasicDirections) {}
+
+QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
+        : waypoints(other.waypoints),
+        numberAlternativeRoutes(other.numberAlternativeRoutes),
+        travelModes(other.travelModes),
+        avoidFeatureTypes(other.avoidFeatureTypes),
+        routeOptimization(other.routeOptimization),
+        directionsDetail(other.directionsDetail)
+        //transitOptions(other.transitOptions)
 {}
 
-QString QGeoRouteRequestPrivate::typeToString() const
+QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
+
+QGeoRouteRequestPrivate& QGeoRouteRequestPrivate::operator= (const QGeoRouteRequestPrivate & other)
 {
-    if (routeType == QGeoRouteRequest::Fastest)
-        return "fastest";
-    else if (routeType == QGeoRouteRequest::Shortest)
-        return "shortest";
-    else if (routeType == QGeoRouteRequest::Economic)
-        return "economic";
+    waypoints = other.waypoints;
+    numberAlternativeRoutes = other.numberAlternativeRoutes;
+    travelModes = other.travelModes;
+    avoidFeatureTypes = other.avoidFeatureTypes;
+    routeOptimization = other.routeOptimization;
+    directionsDetail = other.directionsDetail;
+    //transitOptions = other.transitOptions
 
-    return "";
-}
-
-QString QGeoRouteRequestPrivate::modeToString() const
-{
-    if (routeMode == QGeoRouteRequest::Car)
-        return "car";
-    else if (routeMode == QGeoRouteRequest::Pedestrian)
-        return "pedestrian";
-    else if (routeMode == QGeoRouteRequest::PublicTransport)
-        return "public transport";
-
-    return "";
-}
-
-QString QGeoRouteRequestPrivate::avoidToString() const
-{
-    QString s;
-
-    for (int i = 0; i < avoid.count(); i++) {
-        if (avoid[i] == QGeoRouteRequest::Highways)
-            s += "highways,";
-        else if (avoid[i] == QGeoRouteRequest::Tollroads)
-            s += "tollroads,";
-        else if (avoid[i] == QGeoRouteRequest::Ferries)
-            s += "ferries,";
-        else if (avoid[i] == QGeoRouteRequest::Tunnels)
-            s += "tunnels,";
-        else if (avoid[i] == QGeoRouteRequest::Dirtroads)
-            s += "dirtroads,";
-        else if (avoid[i] == QGeoRouteRequest::RailFerries)
-            s += "rail ferries,";
-    }
-
-    if (s.endsWith(","))
-        return s.left(s.length() - 1);
-
-    return "";
-}
-
-QString QGeoRouteRequestPrivate::requestString(const QString &host) const
-{
-    QString request = "http://";
-    request += host;
-    request += "/routing/rt/";
-    request += version;
-    request += "?referer=localhost";
-    request += "&slong=";
-    request += trimDouble(src.longitude());
-    request += "&slat=";
-    request += trimDouble(src.latitude());
-    request += "&dlong=";
-    request += trimDouble(dst.longitude());
-    request += "&dlat=";
-    request += trimDouble(dst.latitude());
-
-    if (nTotal > 0) {
-        request += "&total=";
-        request += QString::number(nTotal);
-    }
-
-    if (nAlternatives > 0) {
-        request += "&alternatives=";
-        request += QString::number(nAlternatives);
-    }
-    if (languageCode != "") {
-        request += "&lg=";
-        request += languageCode;
-    }
-    if (departureTime.isValid()) {
-        request += "&tod=";
-        request += departureTime.toUTC().toString();
-    }
-    if (arrivalTime.isValid()) {
-        request += "&toa=";
-        request += arrivalTime.toUTC().toString();
-    }
-
-    request += "&type=";
-    request += typeToString();
-    request += "&mode=";
-    request += modeToString();
-
-    if (avoid.count() > 0) {
-        request += "&avoid=";
-        request += avoidToString();
-    }
-
-    for (int i = 0; i < stopOvers.length(); i++) {
-        request += QString::number(stopOvers[i].latitude(), 'f');
-        request += ",";
-        request += QString::number(stopOvers[i].longitude(), 'f');
-        request += " ";
-    }
-
-    return request;
-}
-
-QString QGeoRouteRequestPrivate::trimDouble(qreal degree, int decimalDigits) const
-{
-    QString sDegree = QString::number(degree, 'g', decimalDigits);
-
-    int index = sDegree.indexOf('.');
-
-    if (index == -1)
-        return sDegree;
-    else
-        return QString::number(degree, 'g', decimalDigits + index);
+    return *this;
 }
 
 QTM_END_NAMESPACE
-

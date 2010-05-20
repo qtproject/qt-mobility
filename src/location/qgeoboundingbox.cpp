@@ -40,145 +40,160 @@
 ****************************************************************************/
 
 #include "qgeoboundingbox.h"
+#include "qgeoboundingbox_p.h"
+
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoBoundingBox
+    \brief The QGeoBoundingBox class defines a rectangular geographic area.
+    \ingroup maps
+
+    The rectangular region is specified by the upper left and lower right
+    coordinates.
+
+    If either of these coordinates are invalid then the QGeoBoundingBox is
+    considered to be invalid as well.
+
+    The QGeoBoundingBox class is intended for use with the maps and navigation
+    services.  These services assume that the maps will be displayed using the
+    Mercator projection, under which the poles of the map can be asymptotically
+    approached but never reached.
+
+    A consequence of this is that is not possible to specify a QGeoBoundingBox
+    which is centred one one of the poles.
+
+    Note that this would be possible if the rectangular region was defined by
+    three coordiantes to eliminate potential ambiguity, however being able to
+    specify such a region is not useful in this context.
+*/
+
+/*!
+    Constructs a QGeoBoundingBox object.
+
+    The bounding box will be invalid until setUpperLeft() and setLowerRight()
+    have been called.
+*/
 QGeoBoundingBox::QGeoBoundingBox()
-{
-}
+        : d_ptr(new QGeoBoundingBoxPrivate()) {}
 
-QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate topLeft, const QGeoCoordinate bottomRight)
-{
-    coordTL = topLeft;
-    coordBR = bottomRight;
-}
+/*!
+    Constucts a QGeoBoundingBox object from the contents of \a other.
+*/
+QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
+        : d_ptr(new QGeoBoundingBoxPrivate(*(other.d_ptr))) {}
 
+/*!
+    Constructs a QGeoBoundingBox object with the given \a upperLeft and \a lowerRight
+    coordinates.
+*/
+QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &upperLeft,
+                                 const QGeoCoordinate &lowerRight)
+        : d_ptr(new QGeoBoundingBoxPrivate(upperLeft, lowerRight)) {}
+
+/*!
+  Destroys this QGeoBoundingBox object.
+*/
 QGeoBoundingBox::~QGeoBoundingBox()
 {
+    delete d_ptr;
 }
 
-QGeoCoordinate QGeoBoundingBox::topLeft() const
+/*!
+    Assigns \a other to this QGeoBoundingBox and returns a reference
+    to this QGeoBoundingBox.
+*/
+QGeoBoundingBox& QGeoBoundingBox::operator= (const QGeoBoundingBox & other)
 {
-    return coordTL;
+    *d_ptr = *(other.d_ptr);
+    return *this;
 }
 
-QGeoCoordinate QGeoBoundingBox::bottomRight() const
+bool QGeoBoundingBox::operator == (const QGeoBoundingBox &other) const
 {
-    return coordBR;    
+    return *d_ptr == *(other.d_ptr);
 }
-void QGeoBoundingBox::setTopLeft(const QGeoCoordinate topLeft)
+
+/*!
+  Returns whether or not this QGeoBoundingBox is valid.
+
+  To be considered valid a QGeoBoundingBox must have valid coordinates
+  specified for the upper left and lower right coordinate.
+*/
+bool QGeoBoundingBox::isValid() const
 {
-    coordTL = topLeft;
+    return (d_ptr->upperLeft.isValid() && d_ptr->lowerRight.isValid());
 }
 
-void QGeoBoundingBox::setBottomRight(const QGeoCoordinate bottomRight)
+/*!
+  Sets the upper left coordinate to \a upperLeft.
+*/
+void QGeoBoundingBox::setUpperLeft(const QGeoCoordinate &upperLeft)
 {
-    coordBR = bottomRight;    
+    d_ptr->upperLeft = upperLeft;
 }
 
-QGeoCoordinate QGeoBoundingBox::getCenter() const
+/*!
+  Returns the upper left coordinate.
+
+  The returned value will be an invalid coordinate until the upper left
+  coordinate has been set.
+*/
+QGeoCoordinate QGeoBoundingBox::upperLeft() const
 {
-    if(!coordTL.isValid() || !coordBR.isValid())
-        return QGeoCoordinate(0, 0, 0);
-
-    double cLat = (coordTL.latitude()+coordBR.latitude())/2;
-
-    double left = coordTL.longitude();
-    double cLong = (getWidth()/2)+left;
-    if(cLong>180) //going over date line
-        cLong -= 360.0;
-
-    double cAlt = (coordTL.altitude()+coordBR.altitude())/2;
-
-    return QGeoCoordinate(cLat, cLong, cAlt);
+    return d_ptr->upperLeft;
 }
 
-double QGeoBoundingBox::getHeight() const
+/*!
+  Sets the lower right coordinate to \a lowerRight.
+*/
+void QGeoBoundingBox::setLowerRight(const QGeoCoordinate &lowerRight)
 {
-    return coordTL.latitude()-coordBR.latitude();
+    d_ptr->lowerRight = lowerRight;
 }
 
-double QGeoBoundingBox::getWidth() const
+/*!
+  Returns the lower right coordinate.
+
+  The returned value will be an invalid coordinate until the lower right
+  coordinate has been set.
+*/
+QGeoCoordinate QGeoBoundingBox::lowerRight() const
 {
-    double left = coordTL.longitude();
-    double right = coordBR.longitude();
-    if(left>right) //going over date line
-        right += 360;
-
-    return right-left;
+    return d_ptr->lowerRight;
 }
 
-void QGeoBoundingBox::resizeToCenter(const QGeoCoordinate /*center*/)
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate() {}
+
+QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &upperLeft,
+        const QGeoCoordinate &lowerRight)
+        : upperLeft(upperLeft),
+        lowerRight(lowerRight) {}
+
+QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other)
+        : upperLeft(other.upperLeft),
+        lowerRight(other.lowerRight) {}
+
+QGeoBoundingBoxPrivate::~QGeoBoundingBoxPrivate() {}
+
+QGeoBoundingBoxPrivate& QGeoBoundingBoxPrivate::operator= (const QGeoBoundingBoxPrivate & other)
 {
-    // TODO: implement QGeoBoundingBox::resizeToCenter
+    upperLeft = other.upperLeft;
+    lowerRight = other.lowerRight;
+    return *this;
 }
 
-bool QGeoBoundingBox::contains(const QGeoCoordinate coord)
+bool QGeoBoundingBoxPrivate::operator== (const QGeoBoundingBoxPrivate &other) const
 {
-    if(isEmpty() || !coord.isValid())
-        return false;
-
-    if (coord.latitude() > coordTL.latitude() || coord.latitude() < coordBR.latitude())
-        return false;
-    
-    double left = coordTL.longitude();
-    double right = coordBR.longitude();
-    
-    double cLong = coord.longitude();
-    if (left>right) { //going over date line
-        if(cLong<left && cLong > right)
-            return false;
-    }
-    else if (cLong < left || cLong > right) {
-        return false;
-    }
-
-    return true;
+    return ((upperLeft == other.upperLeft)
+            && (lowerRight == other.lowerRight));
 }
 
-bool QGeoBoundingBox::contains(const QGeoBoundingBox bbox)
-{
-    return contains(bbox.topLeft()) && contains(bbox.bottomRight());
-}
-
-bool QGeoBoundingBox::intersects(const QGeoBoundingBox bbox) const
-{
-    double top = coordTL.latitude();
-    double bot = coordBR.latitude();
-    double bbTop = bbox.topLeft().latitude();
-    double bbBot = bbox.bottomRight().latitude();
-    if (top < bbBot || bbTop < bot)
-        return false;
-    
-    double left = coordTL.longitude();
-    double right = coordBR.longitude();
-    double bbLeft = bbox.topLeft().longitude();
-    double bbRight = bbox.bottomRight().longitude();
-    
-    if (left>right) //going over date line
-        right += 360;
-    if (bbLeft>bbRight) //going over date line
-        bbRight += 360;
-    else if (right>180) {
-        bbRight += 360;
-        bbLeft += 360;
-    }
-
-    if (left > bbRight || bbLeft > right)
-        return false;
-
-    return true;
-}
-
-bool QGeoBoundingBox::isEmpty() const
-{
-    if(!coordTL.isValid() || !coordBR.isValid())
-        return true;
-
-    if(getWidth()==0 || getHeight()==0)
-        return true;
-
-    return false;
-}
 
 QTM_END_NAMESPACE
+

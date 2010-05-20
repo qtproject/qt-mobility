@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_ROUTEREPLY_P_H
-#define QLOCATION_ROUTEREPLY_P_H
+#ifndef QGEOROUTEREPLY_P_H
+#define QGEOROUTEREPLY_P_H
 
 //
 //  W A R N I N G
@@ -53,18 +53,24 @@
 // We mean it.
 //
 
-#include <QString>
+#include "qgeorouterequest.h"
 
-#include "qgeoroute.h"
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoRoute;
 
 class QGeoRouteReplyPrivate
 {
 public:
-    QGeoRouteReplyPrivate();
+    QGeoRouteReplyPrivate(const QGeoRouteRequest &request);
+    QGeoRouteReplyPrivate(const QGeoRouteReplyPrivate &other);
+    ~QGeoRouteReplyPrivate();
 
-    QString description;
+    QGeoRouteReplyPrivate& operator= (const QGeoRouteReplyPrivate &other);
+
+    QGeoRouteRequest request;
     QList<QGeoRoute> routes;
 };
 
