@@ -29,4 +29,3 @@ SOURCES += \
             qgeoserviceproviderplugin_nokia.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/location
-
