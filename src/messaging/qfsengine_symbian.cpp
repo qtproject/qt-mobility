@@ -1872,6 +1872,8 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     
     //to
     REmailAddressArray toRecipients;
+    CleanupResetAndRelease<MEmailAddress>::PushL(toRecipients);
+
     aMessage->GetRecipientsL(MEmailAddress::ETo, toRecipients);
     QList<QMessageAddress> toList;
     for(TInt i = 0; i < toRecipients.Count(); i++) {
@@ -1879,9 +1881,12 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
         toList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(to.Ptr(), to.Length())));
     }
     message.setTo(toList);
-   
+    CleanupStack::PopAndDestroy(&toRecipients);
+    toRecipients.Close();
+    
     //cc
     REmailAddressArray ccRecipients;
+    CleanupResetAndRelease<MEmailAddress>::PushL(ccRecipients);
     aMessage->GetRecipientsL(MEmailAddress::ECc, ccRecipients);
     QList<QMessageAddress> ccList;
     for(TInt i = 0; i < ccRecipients.Count(); i++) {
@@ -1889,9 +1894,12 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
         ccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(cc.Ptr(), cc.Length())));
     }
     message.setCc(ccList); 
-
+    CleanupStack::PopAndDestroy(&ccRecipients);
+    ccRecipients.Close();
+    
     //bcc
     REmailAddressArray bccRecipients;
+    CleanupResetAndRelease<MEmailAddress>::PushL(bccRecipients);
     aMessage->GetRecipientsL(MEmailAddress::EBcc, bccRecipients);
     QList<QMessageAddress> bccList;
     for(TInt i = 0; i < bccRecipients.Count(); i++) {
@@ -1899,6 +1907,8 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
         bccList.append(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(bcc.Ptr(), bcc.Length())));
     }
     message.setBcc(bccList);
+    CleanupStack::PopAndDestroy(&bccRecipients);
+    bccRecipients.Close();
     
     // Read message subject   
     TPtrC subject = aMessage->Subject();
@@ -2014,7 +2024,6 @@ CFSMessagesFindOperation::~CFSMessagesFindOperation()
     }
     
     m_receiveNewMessages = false;
-    m_mailboxes.Close();
     m_clientApi->Release();
     delete m_factory;
 
@@ -2043,8 +2052,6 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                                                     QMessageDataComparator::MatchFlags matchFlags)
 {
     m_numberOfHandledFilters = 0;
-    
-    m_clientApi->GetMailboxesL(m_mailboxes);
     
     TEmailSortCriteria sortCriteria = TEmailSortCriteria();
     m_excludeIdList = QMessageIdList();
@@ -2336,7 +2343,8 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                         QMessageFolderId(QString::number(folder->FolderId().iId)));
                     getFolderSpecificMessagesL(standardFolder, sortCriteria);
                     m_activeSearchCount++;
-                    CleanupStack::PopAndDestroy(2);
+                    CleanupStack::PopAndDestroy(folder);
+                    CleanupStack::PopAndDestroy(mailbox);
                 }
                 m_resultCorrectlyOrdered = true;
                 QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
@@ -2500,10 +2508,12 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
     MEmailMailbox* mailbox = m_clientApi->MailboxL(stripIdPrefix(messageFolder.parentAccountId().toString()).toInt());
     CleanupReleasePushL(*mailbox);
     MEmailFolder *mailFolder = mailbox->FolderL(folderId);
+    CleanupReleasePushL(*mailFolder);
         
     sortCriteriaArray.Append(sortCriteria);
     
     MMessageIterator* msgIterator = mailFolder->MessagesL(sortCriteriaArray);
+    CleanupReleasePushL(*msgIterator);
         
     MEmailMessage* msg = NULL;
     while ( NULL != (msg = msgIterator->NextL())) {
@@ -2511,8 +2521,11 @@ void CFSMessagesFindOperation::getFolderSpecificMessagesL(QMessageFolder& messag
         if (!m_excludeIdList.contains(messageId)) {
             m_idList.append(messageId);   
         }
+        msg->Release();
     }
 
+    CleanupStack::PopAndDestroy(msgIterator);
+    CleanupStack::PopAndDestroy(mailFolder);
     CleanupStack::PopAndDestroy(mailbox);
     CleanupStack::PopAndDestroy(&sortCriteriaArray);
 }
@@ -2523,6 +2536,7 @@ void CFSMessagesFindOperation::HandleResultL(MEmailMessage* aMessage)
     if (!m_excludeIdList.contains(messageId)) {
         m_idList.append(messageId);   
     }
+    aMessage->Release();
 }
 
 void CFSMessagesFindOperation::SearchCompletedL()

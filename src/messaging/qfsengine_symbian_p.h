@@ -305,7 +305,6 @@ private: // Data
     QMessageIdList m_excludeIdList;
 
     MEmailClientApi* m_clientApi;
-    RMailboxPtrArray m_mailboxes;
     
     CEmailInterfaceFactory* m_factory; 
     MEmailInterface* m_interfacePtr; 
