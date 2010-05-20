@@ -44,6 +44,7 @@
 #include "qfsengine_symbian_p.h"
 #endif
 #include "messagingutil_p.h"
+#include "maemohelpers_p.h" // contains non-meamo specific helpers for messaging
 
 #include <QString>
 
@@ -141,12 +142,16 @@ void QMessageStorePrivate::messagesCounted(int count)
 QMessageAccountIdList QMessageStorePrivate::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder, uint limit, uint offset) const
 {
     QMessageAccountIdList idList;
-    
+
     idList << _mtmEngine->queryAccounts(filter, sortOrder, limit, offset);
+
 #ifdef FREESTYLEMAILUSED    
     _fsEngine->setMtmAccountIdList(idList);
     idList << _fsEngine->queryAccounts(filter, sortOrder, limit, offset);
 #endif
+
+    MessagingHelper::orderAccounts(idList, sortOrder);
+    
     return idList;
 }
 
@@ -167,6 +172,8 @@ QMessageFolderIdList QMessageStorePrivate::queryFolders(const QMessageFolderFilt
     idList << _fsEngine->queryFolders(filter, sortOrder, limit, offset);
 #endif
     idList << _mtmEngine->queryFolders(filter, sortOrder, limit, offset);
+ 
+    MessagingHelper::orderFolders(idList, sortOrder);
     return idList;
 }
 
