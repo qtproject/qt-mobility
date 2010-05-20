@@ -146,7 +146,7 @@ When developing on Symbian we will also need to add the required capabilites to 
     \o No capabilities requried by itself, the plugins may have capability requirements.
 \row
     \o \l {System Information}
-    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData
+    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location ReadDeviceData
 \row
 \endtable
 
