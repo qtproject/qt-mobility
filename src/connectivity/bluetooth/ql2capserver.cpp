@@ -106,13 +106,20 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \fn QBluetoothSocket *QL2capServer::nextPendingConnection()
+
+    Returns a pointer to a QBluetoothSocket for the next pending connection. It is the callers
+    responsibility to delete the pointer.
+*/
+
+/*!
     \fn QBluetoothAddress QL2capServer::serverAddress() const
 
     Returns the server address.
 */
 
 /*!
-    \fn quint16 QL2cap::serverPort() const
+    \fn quint16 QL2capServer::serverPort() const
 
     Returns the server's port number.
 */
@@ -147,6 +154,22 @@ bool QL2capServer::isListening() const
 */
 int QL2capServer::maxPendingConnections() const
 {
+}
+
+/*!
+    Sets the Bluetooth security flags to \a security. This function must be called prior to calling
+    listen().
+*/
+void QL2capServer::setSecurityFlags(QBluetooth::SecurityFlags security)
+{
+}
+
+/*!
+    Returns the Bluetooth security flags.
+*/
+QBluetooth::SecurityFlags QL2capServer::securityFlags() const
+{
+    return QBluetooth::NoSecurity;
 }
 
 #include "moc_ql2capserver.cpp"

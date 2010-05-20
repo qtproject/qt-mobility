@@ -7,7 +7,8 @@ CONFIG += mobility
 MOBILITY = connectivity
 
 SOURCES = main.cpp \
-    devicediscovery.cpp
+    devicediscovery.cpp \
+    servicediscovery.cpp
 
 HEADERS =
 

@@ -39,62 +39,23 @@
 **
 ****************************************************************************/
 
-#ifndef QRFCOMMSERVER_H
-#define QRFCOMMSERVER_H
-
-#include "qmobilityglobal.h"
-
-#include <QObject>
-
-#include "qbluetoothaddress.h"
 #include "qbluetooth.h"
 
-QT_BEGIN_HEADER
+/*!
+    \namespace QBluetooth
+    \brief The QBluetooth namespace contains functions and definitions related to Bluetooth.
 
-QTM_BEGIN_NAMESPACE
+    \ingroup connectivity-bluetooth
+    \inmodule QtConnectivity
+*/
 
-class QRfcommServerPrivate;
-class QBluetoothSocket;
+/*!
+    \enum QBluetooth::Security
 
-class Q_CONNECTIVITY_EXPORT QRfcommServer : public QObject
-{
-    Q_OBJECT
+    This enum describe the security requirements of a Bluetooth service.
 
-public:
-    QRfcommServer(QObject *parent = 0);
-    ~QRfcommServer();
-
-    void close();
-
-    bool listen(const QBluetoothAddress &address = QBluetoothAddress(), quint16 port = 0);
-    bool isListening() const;
-
-    void setMaxPendingConnections(int numConnections);
-    int maxPendingConnections() const;
-
-    bool hasPendingConnections() const;
-    QBluetoothSocket *nextPendingConnection();
-
-    QBluetoothAddress serverAddress() const;
-    quint16 serverPort() const;
-
-    void setSecurityFlags(QBluetooth::SecurityFlags security);
-    QBluetooth::SecurityFlags securityFlags() const;
-
-signals:
-    void newConnection();
-
-protected:
-    QRfcommServerPrivate *d_ptr;
-
-private:
-    Q_DECLARE_PRIVATE(QRfcommServer)
-};
-
-
-
-QTM_END_NAMESPACE
-
-QT_END_HEADER
-
-#endif
+    \value NoSecurity       The service does not require any security.
+    \value Authorization    The service requires authorization.
+    \value Authentication   The service requires authentication.
+    \value Encryption       The service requires that the communications link be encrypted.
+*/

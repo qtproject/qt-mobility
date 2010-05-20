@@ -47,6 +47,7 @@
 #include <QObject>
 
 #include "qbluetoothaddress.h"
+#include "qbluetooth.h"
 
 QT_BEGIN_HEADER
 
@@ -76,6 +77,9 @@ public:
 
     QBluetoothAddress serverAddress() const;
     quint16 serverPort() const;
+
+    void setSecurityFlags(QBluetooth::SecurityFlags security);
+    QBluetooth::SecurityFlags securityFlags() const;
 
 signals:
     void newConnection();

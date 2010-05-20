@@ -39,62 +39,59 @@
 **
 ****************************************************************************/
 
-#ifndef QRFCOMMSERVER_H
-#define QRFCOMMSERVER_H
+
+#ifndef QBLUETOOTHLOCALDEVICE_H
+#define QBLUETOOTHLOCALDEVICE_H
 
 #include "qmobilityglobal.h"
 
-#include <QObject>
-
-#include "qbluetoothaddress.h"
-#include "qbluetooth.h"
+#include <QtCore/QList>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QRfcommServerPrivate;
-class QBluetoothSocket;
+class QBluetoothAddress;
 
-class Q_CONNECTIVITY_EXPORT QRfcommServer : public QObject
+class QBluetoothLocalDevice
 {
-    Q_OBJECT
-
 public:
-    QRfcommServer(QObject *parent = 0);
-    ~QRfcommServer();
+    enum Pairing {
+        Unpaired,
+        Paired,
+        AuthorizedPaired
+    };
 
-    void close();
+    enum PowerState {
+        PowerOn,
+        PowerOff
+    };
 
-    bool listen(const QBluetoothAddress &address = QBluetoothAddress(), quint16 port = 0);
-    bool isListening() const;
+    enum HostMode {
+        HostConnectable,
+        HostDiscoverable
+    };
 
-    void setMaxPendingConnections(int numConnections);
-    int maxPendingConnections() const;
+    QBluetoothLocalDevice();
+    ~QBluetoothLocalDevice();
 
-    bool hasPendingConnections() const;
-    QBluetoothSocket *nextPendingConnection();
+    bool isValid() const;
 
-    QBluetoothAddress serverAddress() const;
-    quint16 serverPort() const;
+    void setPairing(const QBluetoothAddress &address, Pairing pairing);
+    Pairing pairing(const QBluetoothAddress &address) const;
 
-    void setSecurityFlags(QBluetooth::SecurityFlags security);
-    QBluetooth::SecurityFlags securityFlags() const;
+    void setPowerState(PowerState powerState);
+    PowerState powerState() const;
 
-signals:
-    void newConnection();
+    void setHostMode(QBluetoothLocalDevice::HostMode mode);
+    HostMode hostMode() const;
 
-protected:
-    QRfcommServerPrivate *d_ptr;
-
-private:
-    Q_DECLARE_PRIVATE(QRfcommServer)
+    static QBluetoothLocalDevice defaultDevice();
+    static QList<QBluetoothLocalDevice> allDevices();
 };
-
-
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif
+#endif // QBLUETOOTHLOCALDEVICE_H

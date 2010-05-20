@@ -39,62 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QRFCOMMSERVER_H
-#define QRFCOMMSERVER_H
+
+#ifndef QBLUETOOTH_H
+#define QBLUETOOTH_H
 
 #include "qmobilityglobal.h"
-
-#include <QObject>
-
-#include "qbluetoothaddress.h"
-#include "qbluetooth.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QRfcommServerPrivate;
-class QBluetoothSocket;
-
-class Q_CONNECTIVITY_EXPORT QRfcommServer : public QObject
-{
-    Q_OBJECT
-
-public:
-    QRfcommServer(QObject *parent = 0);
-    ~QRfcommServer();
-
-    void close();
-
-    bool listen(const QBluetoothAddress &address = QBluetoothAddress(), quint16 port = 0);
-    bool isListening() const;
-
-    void setMaxPendingConnections(int numConnections);
-    int maxPendingConnections() const;
-
-    bool hasPendingConnections() const;
-    QBluetoothSocket *nextPendingConnection();
-
-    QBluetoothAddress serverAddress() const;
-    quint16 serverPort() const;
-
-    void setSecurityFlags(QBluetooth::SecurityFlags security);
-    QBluetooth::SecurityFlags securityFlags() const;
-
-signals:
-    void newConnection();
-
-protected:
-    QRfcommServerPrivate *d_ptr;
-
-private:
-    Q_DECLARE_PRIVATE(QRfcommServer)
+namespace QBluetooth {
+enum Security {
+    NoSecurity = 0x00,
+    Authorization = 0x01,
+    Authentication = 0x02,
+    Encryption = 0x04
 };
 
+Q_DECLARE_FLAGS(SecurityFlags, Security)
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(SecurityFlags)
+
+}
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif
+#endif // QBLUETOOTH_H
