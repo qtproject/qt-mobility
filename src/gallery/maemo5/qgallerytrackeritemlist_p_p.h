@@ -190,8 +190,6 @@ public:
     int columnCount;
     int rowCount;
     int queryLimit;
-    int lowerThreshold;
-    int upperThreshold;
     int imageCacheIndex;
     int imageCacheCount;
     QGalleryDBusInterfacePointer queryInterface;

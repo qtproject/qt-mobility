@@ -51,9 +51,6 @@ QTM_BEGIN_NAMESPACE
 
 void QGalleryTrackerItemListPrivate::update(int index)
 {
-    upperThreshold = index + minimumPagedItems;
-    lowerThreshold = index + queryLimit - minimumPagedItems;
-
     aCache.index = rCache.index;
     aCache.count = rCache.count;
     aCache.offset = rCache.index;
@@ -378,10 +375,11 @@ void QGalleryTrackerItemListPrivate::_q_queryFinished()
             emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
     }
 
-
-    const int index = qMax(0, cursorPosition & ~63);
-    if (index > lowerThreshold || index + minimumPagedItems < upperThreshold)
-        update(index);
+    if (cursorPosition > rCache.index + queryLimit - minimumPagedItems) {
+        update(qMax(0, cursorPosition - minimumPagedItems) & ~63);
+    } else if (cursorPosition < rCache.index) {
+        update(qMax(0, cursorPosition - queryLimit + 2 * minimumPagedItems) & ~63);
+    }
 }
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
@@ -426,14 +424,8 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
 
     connect(&d->queryWatcher, SIGNAL(finished()), this, SLOT(_q_queryFinished()));
 
-    const int index = qMax(0, d->cursorPosition & ~63);
-    const int count = index + d->minimumPagedItems;
-
-    d->upperThreshold = count;
-    d->lowerThreshold = index + d->queryLimit - minimumPagedItems;
-
     d->queryWatcher.setFuture(QtConcurrent::run(
-            d, &QGalleryTrackerItemListPrivate::queryRows, index));
+            d, &QGalleryTrackerItemListPrivate::queryRows, qMax(0, d->cursorPosition) & ~63));
 }
 
 QGalleryTrackerItemList::~QGalleryTrackerItemList()
@@ -476,10 +468,11 @@ void QGalleryTrackerItemList::setCursorPosition(int position)
     d->cursorPosition = position;
 
     if (d->queryWatcher.isFinished()) {
-        const int index = qMax(0, position & ~63);
-
-        if (index > d->lowerThreshold || index + d->minimumPagedItems < d->upperThreshold)
-            d->update(index);
+        if (position > d->rCache.index + d->queryLimit - d->minimumPagedItems) {
+            d->update(qMax(0, position - d->minimumPagedItems) & ~63);
+        } else if (position < d->rCache.index) {
+            d->update(qMax(0, position - d->queryLimit + 2 * d->minimumPagedItems) & ~63);
+        }
     }
 
     if (d->rCache.cutoff > 0) {
