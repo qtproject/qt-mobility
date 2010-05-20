@@ -472,6 +472,7 @@ call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
 call :compileTest OpenMaxAl_support openmaxal_symbian
+call :compileTest Surfaces_s60 surfaces_s60
 
 echo End of compile tests
 echo.
