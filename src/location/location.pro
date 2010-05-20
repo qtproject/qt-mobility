@@ -244,6 +244,7 @@ SOURCES += \
 symbian {
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC83
+    MMP_RULES += EXPORTUNFROZEN
 
     INCLUDEPATH += $${EPOCROOT}epoc32\include\osextensions \
                    $${EPOCROOT}epoc32\include\LBTHeaders \

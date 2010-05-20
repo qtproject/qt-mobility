@@ -91,7 +91,7 @@ protected:
 
 private:
     QGeoPlacesReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoPlacesReply);
+    Q_DISABLE_COPY(QGeoPlacesReply)
 };
 
 QTM_END_NAMESPACE

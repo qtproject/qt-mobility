@@ -70,7 +70,7 @@ public:
     };
 
     static QStringList availableServiceProviders();
-    QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = QMap<QString, QString>());
+    QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
 
     ~QGeoServiceProvider();
 
